@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68F632EC41
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:20:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCDA22ED71
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:37:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731914AbfE3DTa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:19:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38524 "EHLO mail.kernel.org"
+        id S1733185AbfE3DX5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:23:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728892AbfE3DPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:15:24 -0400
+        id S1731224AbfE3DRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:43 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B711924557;
-        Thu, 30 May 2019 03:15:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 57D7F246EE;
+        Thu, 30 May 2019 03:17:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186123;
-        bh=pGdJXlPA3D7iOZ8ln5P2oeV31hWaclZe70Axgm70Nb0=;
+        s=default; t=1559186262;
+        bh=kNhMMzXAe84h3vGa1fylrwuHVRkYskw/3R/d2L47mCg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sINZ7mRByq0QrY9j1OdaEDqiffee9bHLlDj8qVkIr8T7g7YYRiNr6cD75bcB21NvH
-         oH8wGXy3awrpFPi4msACYBKn34liHBRFiyjgoHHlM5S8HYiKnV1iVh9E6+WXTz1E1s
-         aCQDW06jFVKrofXdgBO99+FF758zvLsnVvBJeMkM=
+        b=Npkn3aq7iUmKQM0foKFy6kqh3fEAKu1KM60MdY9vWD8xrbVzE1qrpgXglCg5IssN0
+         iznuycRJ/7Un+pVx0kLG893QasbJSbke6CXEYrKdyP4nBYsSL2RCH/ZKYpzzbKvSsk
+         bXYDm4Bfmg5p7MVyHFpahH94RR+D680INyLG1WA0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>,
-        Antonio Quartulli <a@unstable.cc>,
-        Sven Eckelmann <sven@narfation.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
+        Piotr Figiel <p.figiel@camlintechnologies.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 281/346] batman-adv: allow updating DAT entry timeouts on incoming ARP Replies
+Subject: [PATCH 4.19 196/276] brcmfmac: fix WARNING during USB disconnect in case of unempty psq
 Date:   Wed, 29 May 2019 20:05:54 -0700
-Message-Id: <20190530030555.157536107@linuxfoundation.org>
+Message-Id: <20190530030537.375788322@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,55 +45,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 099e6cc1582dc2903fecb898bbeae8f7cf4262c7 ]
+[ Upstream commit c80d26e81ef1802f30364b4ad1955c1443a592b9 ]
 
-Currently incoming ARP Replies, for example via a DHT-PUT message, do
-not update the timeout for an already existing DAT entry. These ARP
-Replies are dropped instead.
+brcmu_pkt_buf_free_skb emits WARNING when attempting to free a sk_buff
+which is part of any queue. After USB disconnect this may have happened
+when brcmf_fws_hanger_cleanup() is called as per-interface psq was never
+cleaned when removing the interface.
+Change brcmf_fws_macdesc_cleanup() in a way that it removes the
+corresponding packets from hanger table (to avoid double-free when
+brcmf_fws_hanger_cleanup() is called) and add a call to clean-up the
+interface specific packet queue.
 
-This however defeats the purpose of the DHCPACK snooping, for instance.
-Right now, a DAT entry in the DHT will be purged every five minutes,
-likely leading to a mesh-wide ARP Request broadcast after this timeout.
-Which then recreates the entry. The idea of the DHCPACK snooping is to
-be able to update an entry before a timeout happens, to avoid ARP Request
-flooding.
+Below is a WARNING during USB disconnect with Raspberry Pi WiFi dongle
+running in AP mode. This was reproducible when the interface was
+transmitting during the disconnect and is fixed with this commit.
 
-This patch fixes this issue by updating a DAT entry on incoming
-ARP Replies even if a matching DAT entry already exists. While still
-filtering the ARP Reply towards the soft-interface, to avoid duplicate
-messages on the client device side.
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 1171 at drivers/net/wireless/broadcom/brcm80211/brcmutil/utils.c:49 brcmu_pkt_buf_free_skb+0x3c/0x40
+Modules linked in: nf_log_ipv4 nf_log_common xt_LOG xt_limit iptable_mangle xt_connmark xt_tcpudp xt_conntrack nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 iptable_filter ip_tables x_tables usb_f_mass_storage usb_f_rndis u_ether cdc_acm smsc95xx usbnet ci_hdrc_imx ci_hdrc ulpi usbmisc_imx 8250_exar 8250_pci 8250 8250_base libcomposite configfs udc_core
+CPU: 0 PID: 1171 Comm: kworker/0:0 Not tainted 4.19.23-00075-gde33ed8 #99
+Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
+Workqueue: usb_hub_wq hub_event
+[<8010ff84>] (unwind_backtrace) from [<8010bb64>] (show_stack+0x10/0x14)
+[<8010bb64>] (show_stack) from [<80840278>] (dump_stack+0x88/0x9c)
+[<80840278>] (dump_stack) from [<8011f5ec>] (__warn+0xfc/0x114)
+[<8011f5ec>] (__warn) from [<8011f71c>] (warn_slowpath_null+0x40/0x48)
+[<8011f71c>] (warn_slowpath_null) from [<805a476c>] (brcmu_pkt_buf_free_skb+0x3c/0x40)
+[<805a476c>] (brcmu_pkt_buf_free_skb) from [<805bb6c4>] (brcmf_fws_cleanup+0x1e4/0x22c)
+[<805bb6c4>] (brcmf_fws_cleanup) from [<805bc854>] (brcmf_fws_del_interface+0x58/0x68)
+[<805bc854>] (brcmf_fws_del_interface) from [<805b66ac>] (brcmf_remove_interface+0x40/0x150)
+[<805b66ac>] (brcmf_remove_interface) from [<805b6870>] (brcmf_detach+0x6c/0xb0)
+[<805b6870>] (brcmf_detach) from [<805bdbb8>] (brcmf_usb_disconnect+0x30/0x4c)
+[<805bdbb8>] (brcmf_usb_disconnect) from [<805e5d64>] (usb_unbind_interface+0x5c/0x1e0)
+[<805e5d64>] (usb_unbind_interface) from [<804aab10>] (device_release_driver_internal+0x154/0x1ec)
+[<804aab10>] (device_release_driver_internal) from [<804a97f4>] (bus_remove_device+0xcc/0xf8)
+[<804a97f4>] (bus_remove_device) from [<804a6fc0>] (device_del+0x118/0x308)
+[<804a6fc0>] (device_del) from [<805e488c>] (usb_disable_device+0xa0/0x1c8)
+[<805e488c>] (usb_disable_device) from [<805dcf98>] (usb_disconnect+0x70/0x1d8)
+[<805dcf98>] (usb_disconnect) from [<805ddd84>] (hub_event+0x464/0xf50)
+[<805ddd84>] (hub_event) from [<80135a70>] (process_one_work+0x138/0x3f8)
+[<80135a70>] (process_one_work) from [<80135d5c>] (worker_thread+0x2c/0x554)
+[<80135d5c>] (worker_thread) from [<8013b1a0>] (kthread+0x124/0x154)
+[<8013b1a0>] (kthread) from [<801010e8>] (ret_from_fork+0x14/0x2c)
+Exception stack(0xecf8dfb0 to 0xecf8dff8)
+dfa0:                                     00000000 00000000 00000000 00000000
+dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+---[ end trace 38d234018e9e2a90 ]---
+------------[ cut here ]------------
 
-Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
-Acked-by: Antonio Quartulli <a@unstable.cc>
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Signed-off-by: Piotr Figiel <p.figiel@camlintechnologies.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/batman-adv/distributed-arp-table.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ .../broadcom/brcm80211/brcmfmac/fwsignal.c    | 42 +++++++++++--------
+ 1 file changed, 24 insertions(+), 18 deletions(-)
 
-diff --git a/net/batman-adv/distributed-arp-table.c b/net/batman-adv/distributed-arp-table.c
-index b9ffe1826527e..0b8d84ece7db6 100644
---- a/net/batman-adv/distributed-arp-table.c
-+++ b/net/batman-adv/distributed-arp-table.c
-@@ -1398,7 +1398,6 @@ bool batadv_dat_snoop_incoming_arp_reply(struct batadv_priv *bat_priv,
- 			   hw_src, &ip_src, hw_dst, &ip_dst,
- 			   dat_entry->mac_addr,	&dat_entry->ip);
- 		dropped = true;
--		goto out;
- 	}
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
+index f3cbf78c8899c..5a0a29c4cdea3 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
+@@ -579,24 +579,6 @@ static bool brcmf_fws_ifidx_match(struct sk_buff *skb, void *arg)
+ 	return ifidx == *(int *)arg;
+ }
  
- 	/* Update our internal cache with both the IP addresses the node got
-@@ -1407,6 +1406,9 @@ bool batadv_dat_snoop_incoming_arp_reply(struct batadv_priv *bat_priv,
- 	batadv_dat_entry_add(bat_priv, ip_src, hw_src, vid);
- 	batadv_dat_entry_add(bat_priv, ip_dst, hw_dst, vid);
+-static void brcmf_fws_psq_flush(struct brcmf_fws_info *fws, struct pktq *q,
+-				int ifidx)
+-{
+-	bool (*matchfn)(struct sk_buff *, void *) = NULL;
+-	struct sk_buff *skb;
+-	int prec;
+-
+-	if (ifidx != -1)
+-		matchfn = brcmf_fws_ifidx_match;
+-	for (prec = 0; prec < q->num_prec; prec++) {
+-		skb = brcmu_pktq_pdeq_match(q, prec, matchfn, &ifidx);
+-		while (skb) {
+-			brcmu_pkt_buf_free_skb(skb);
+-			skb = brcmu_pktq_pdeq_match(q, prec, matchfn, &ifidx);
+-		}
+-	}
+-}
+-
+ static void brcmf_fws_hanger_init(struct brcmf_fws_hanger *hanger)
+ {
+ 	int i;
+@@ -668,6 +650,28 @@ static inline int brcmf_fws_hanger_poppkt(struct brcmf_fws_hanger *h,
+ 	return 0;
+ }
  
-+	if (dropped)
-+		goto out;
++static void brcmf_fws_psq_flush(struct brcmf_fws_info *fws, struct pktq *q,
++				int ifidx)
++{
++	bool (*matchfn)(struct sk_buff *, void *) = NULL;
++	struct sk_buff *skb;
++	int prec;
++	u32 hslot;
 +
- 	/* If BLA is enabled, only forward ARP replies if we have claimed the
- 	 * source of the ARP reply or if no one else of the same backbone has
- 	 * already claimed that client. This prevents that different gateways
++	if (ifidx != -1)
++		matchfn = brcmf_fws_ifidx_match;
++	for (prec = 0; prec < q->num_prec; prec++) {
++		skb = brcmu_pktq_pdeq_match(q, prec, matchfn, &ifidx);
++		while (skb) {
++			hslot = brcmf_skb_htod_tag_get_field(skb, HSLOT);
++			brcmf_fws_hanger_poppkt(&fws->hanger, hslot, &skb,
++						true);
++			brcmu_pkt_buf_free_skb(skb);
++			skb = brcmu_pktq_pdeq_match(q, prec, matchfn, &ifidx);
++		}
++	}
++}
++
+ static int brcmf_fws_hanger_mark_suppressed(struct brcmf_fws_hanger *h,
+ 					    u32 slot_id)
+ {
+@@ -2168,6 +2172,8 @@ void brcmf_fws_del_interface(struct brcmf_if *ifp)
+ 	brcmf_fws_lock(fws);
+ 	ifp->fws_desc = NULL;
+ 	brcmf_dbg(TRACE, "deleting %s\n", entry->name);
++	brcmf_fws_macdesc_cleanup(fws, &fws->desc.iface[ifp->ifidx],
++				  ifp->ifidx);
+ 	brcmf_fws_macdesc_deinit(entry);
+ 	brcmf_fws_cleanup(fws, ifp->ifidx);
+ 	brcmf_fws_unlock(fws);
 -- 
 2.20.1
 
