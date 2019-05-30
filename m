@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF62B2EE6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:47:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AAB92F227
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:19:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732625AbfE3DrS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:47:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58924 "EHLO mail.kernel.org"
+        id S1731264AbfE3ETE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:19:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732249AbfE3DUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:20:34 -0400
+        id S1730303AbfE3DP2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:28 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A901124943;
-        Thu, 30 May 2019 03:20:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA10224557;
+        Thu, 30 May 2019 03:15:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186433;
-        bh=/pDqDNEd+ZchBPS5nftXJWLhONyWci4VjpyUw20lDR0=;
+        s=default; t=1559186127;
+        bh=E/EYYlcgbQtQS2gTJGEww6lOw4QQeGZBhvt4msuHt0o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jnqRSaCuc0TYY7BpLQMdatXaij8yCnwCFsZdzCEiADtTWMFFhhJT/1B0/lUv7h+Ka
-         pKu9e4wryMCYWHMWJKh4bcwju+wOmdCse/uRooQ23bVue9ecxmJ+wVHCXAAkbuwCI7
-         sY2Ld8cHusU1flbt6OXP8AhbEnILkhm4Stof2pNI=
+        b=h9e5X6ny16Tlosap+d2Braqi8Hji8HthIDKTRfKT3S9F+3Cbg8gDhMxKl/RNtNsil
+         wFwv0+sZ+kieNBMzGFagWeOs6bi9Zg2Q9lNbaeeWbBGFzer9/t/0AHjQjSYdlyEbNL
+         MURIpq6awKEPh6na2AMVDxBRuPBpUnIlxQQzqlLM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org,
+        Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>,
+        Tony Cheng <Tony.Cheng@amd.com>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 028/128] ASoC: hdmi-codec: unlock the device on startup errors
-Date:   Wed, 29 May 2019 20:06:00 -0700
-Message-Id: <20190530030439.734601548@linuxfoundation.org>
+Subject: [PATCH 5.0 288/346] drm/amd/display: fix releasing planes when exiting odm
+Date:   Wed, 29 May 2019 20:06:01 -0700
+Message-Id: <20190530030555.482788966@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +47,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 30180e8436046344b12813dc954b2e01dfdcd22d ]
+[ Upstream commit bc2193992b00488f5734613ac95b78ef2d2803ab ]
 
-If the hdmi codec startup fails, it should clear the current_substream
-pointer to free the device. This is properly done for the audio_startup()
-callback but for snd_pcm_hw_constraint_eld().
+Releasing planes should not release the 2nd odm pipe right away,
+this change leaves us with 2 pipes with null planes and same stream
+when planes are released during odm.
 
-Make sure the pointer cleared if an error is reported.
-
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>
+Reviewed-by: Tony Cheng <Tony.Cheng@amd.com>
+Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/hdmi-codec.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/display/dc/core/dc_resource.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
-index 90b5948e0ff36..cba5b5a29da0f 100644
---- a/sound/soc/codecs/hdmi-codec.c
-+++ b/sound/soc/codecs/hdmi-codec.c
-@@ -137,8 +137,12 @@ static int hdmi_codec_startup(struct snd_pcm_substream *substream,
- 		if (!ret) {
- 			ret = snd_pcm_hw_constraint_eld(substream->runtime,
- 							hcp->eld);
--			if (ret)
-+			if (ret) {
-+				mutex_lock(&hcp->current_stream_lock);
-+				hcp->current_stream = NULL;
-+				mutex_unlock(&hcp->current_stream_lock);
- 				return ret;
-+			}
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
+index 76137df74a535..c6aa80d7e639b 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
+@@ -1266,10 +1266,12 @@ bool dc_remove_plane_from_context(
+ 			 * For head pipe detach surfaces from pipe for tail
+ 			 * pipe just zero it out
+ 			 */
+-			if (!pipe_ctx->top_pipe) {
++			if (!pipe_ctx->top_pipe ||
++				(!pipe_ctx->top_pipe->top_pipe &&
++					pipe_ctx->top_pipe->stream_res.opp != pipe_ctx->stream_res.opp)) {
+ 				pipe_ctx->plane_state = NULL;
+ 				pipe_ctx->bottom_pipe = NULL;
+-			} else  {
++			} else {
+ 				memset(pipe_ctx, 0, sizeof(*pipe_ctx));
+ 			}
  		}
- 	}
- 	return 0;
 -- 
 2.20.1
 
