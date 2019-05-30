@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D7B22F2F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:25:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B2992EF90
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:56:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730248AbfE3EZG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:25:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35654 "EHLO mail.kernel.org"
+        id S2387950AbfE3D4j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:56:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729984AbfE3DOr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:14:47 -0400
+        id S1731758AbfE3DS6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:18:58 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A31F024559;
-        Thu, 30 May 2019 03:14:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4C1724807;
+        Thu, 30 May 2019 03:18:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186086;
-        bh=wu2UiETOHpDMk85zi6HmzdGCjZjRP7IcwSTkCaWKgdI=;
+        s=default; t=1559186337;
+        bh=CLzmkCeDUTXeQSAoIWSMUtN2s/dle3ux9x8AjJvHwHA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lNrA6+RjuseYm6PubStO10htadKioNOWqR3sC76NkCXLBM2uDhnwdPnvGjGRqkOUF
-         k67Pb3wLTvuMlyMadwmlORocNNjJPDBhQgRkBm2bmLYRpL36ZDmSELcQU65Qf9eYxZ
-         utzAqfHCrnpbd+6qwJAdqb6y5Kmj8D9P9eWYlQf8=
+        b=UZZPG0eB9TvTz1R/qwTSy7srtMXvmd2xiMG8B/iyObW09CqUdA8tSvkLI78rEa7mE
+         uv9GGKjQK+ZkQRkikrAB+HdqpKd/kFJns0mIcF37SGUdP6WXPwzyJSoVEPmT+zLOai
+         sQV5oYZZNhja+4gjiYoTMuDroPFZVK6oGRqGfqTQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-pm@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 206/346] cpufreq: ppc_cbe: fix possible object reference leak
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        Qu Wenruo <wqu@suse.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.14 025/193] btrfs: honor path->skip_locking in backref code
 Date:   Wed, 29 May 2019 20:04:39 -0700
-Message-Id: <20190530030551.578361464@linuxfoundation.org>
+Message-Id: <20190530030452.374190769@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,41 +44,154 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 233298032803f2802fe99892d0de4ab653bfece4 ]
+From: Josef Bacik <josef@toxicpanda.com>
 
-The call to of_get_cpu_node returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
+commit 38e3eebff643db725633657d1d87a3be019d1018 upstream.
 
-Detected by coccinelle with the following warnings:
-./drivers/cpufreq/ppc_cbe_cpufreq.c:89:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 76, but without a corresponding object release within this function.
-./drivers/cpufreq/ppc_cbe_cpufreq.c:89:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 76, but without a corresponding object release within this function.
+Qgroups will do the old roots lookup at delayed ref time, which could be
+while walking down the extent root while running a delayed ref.  This
+should be fine, except we specifically lock eb's in the backref walking
+code irrespective of path->skip_locking, which deadlocks the system.
+Fix up the backref code to honor path->skip_locking, nobody will be
+modifying the commit_root when we're searching so it's completely safe
+to do.
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-pm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+This happens since fb235dc06fac ("btrfs: qgroup: Move half of the qgroup
+accounting time out of commit trans"), kernel may lockup with quota
+enabled.
+
+There is one backref trace triggered by snapshot dropping along with
+write operation in the source subvolume.  The example can be reliably
+reproduced:
+
+  btrfs-cleaner   D    0  4062      2 0x80000000
+  Call Trace:
+   schedule+0x32/0x90
+   btrfs_tree_read_lock+0x93/0x130 [btrfs]
+   find_parent_nodes+0x29b/0x1170 [btrfs]
+   btrfs_find_all_roots_safe+0xa8/0x120 [btrfs]
+   btrfs_find_all_roots+0x57/0x70 [btrfs]
+   btrfs_qgroup_trace_extent_post+0x37/0x70 [btrfs]
+   btrfs_qgroup_trace_leaf_items+0x10b/0x140 [btrfs]
+   btrfs_qgroup_trace_subtree+0xc8/0xe0 [btrfs]
+   do_walk_down+0x541/0x5e3 [btrfs]
+   walk_down_tree+0xab/0xe7 [btrfs]
+   btrfs_drop_snapshot+0x356/0x71a [btrfs]
+   btrfs_clean_one_deleted_snapshot+0xb8/0xf0 [btrfs]
+   cleaner_kthread+0x12b/0x160 [btrfs]
+   kthread+0x112/0x130
+   ret_from_fork+0x27/0x50
+
+When dropping snapshots with qgroup enabled, we will trigger backref
+walk.
+
+However such backref walk at that timing is pretty dangerous, as if one
+of the parent nodes get WRITE locked by other thread, we could cause a
+dead lock.
+
+For example:
+
+           FS 260     FS 261 (Dropped)
+            node A        node B
+           /      \      /      \
+       node C      node D      node E
+      /   \         /  \        /     \
+  leaf F|leaf G|leaf H|leaf I|leaf J|leaf K
+
+The lock sequence would be:
+
+      Thread A (cleaner)             |       Thread B (other writer)
+-----------------------------------------------------------------------
+write_lock(B)                        |
+write_lock(D)                        |
+^^^ called by walk_down_tree()       |
+                                     |       write_lock(A)
+                                     |       write_lock(D) << Stall
+read_lock(H) << for backref walk     |
+read_lock(D) << lock owner is        |
+                the same thread A    |
+                so read lock is OK   |
+read_lock(A) << Stall                |
+
+So thread A hold write lock D, and needs read lock A to unlock.
+While thread B holds write lock A, while needs lock D to unlock.
+
+This will cause a deadlock.
+
+This is not only limited to snapshot dropping case.  As the backref
+walk, even only happens on commit trees, is breaking the normal top-down
+locking order, makes it deadlock prone.
+
+Fixes: fb235dc06fac ("btrfs: qgroup: Move half of the qgroup accounting time out of commit trans")
+CC: stable@vger.kernel.org # 4.14+
+Reported-and-tested-by: David Sterba <dsterba@suse.com>
+Reported-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+[ rebase to latest branch and fix lock assert bug in btrfs/007 ]
+[ backport to linux-4.19.y branch, solve minor conflicts ]
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+[ copy logs and deadlock analysis from Qu's patch ]
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/cpufreq/ppc_cbe_cpufreq.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/btrfs/backref.c |   17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/cpufreq/ppc_cbe_cpufreq.c b/drivers/cpufreq/ppc_cbe_cpufreq.c
-index 41a0f0be3f9ff..8414c3a4ea08c 100644
---- a/drivers/cpufreq/ppc_cbe_cpufreq.c
-+++ b/drivers/cpufreq/ppc_cbe_cpufreq.c
-@@ -86,6 +86,7 @@ static int cbe_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	if (!cbe_get_cpu_pmd_regs(policy->cpu) ||
- 	    !cbe_get_cpu_mic_tm_regs(policy->cpu)) {
- 		pr_info("invalid CBE regs pointers for cpufreq\n");
-+		of_node_put(cpu);
- 		return -EINVAL;
- 	}
+--- a/fs/btrfs/backref.c
++++ b/fs/btrfs/backref.c
+@@ -718,7 +718,7 @@ out:
+  * read tree blocks and add keys where required.
+  */
+ static int add_missing_keys(struct btrfs_fs_info *fs_info,
+-			    struct preftrees *preftrees)
++			    struct preftrees *preftrees, bool lock)
+ {
+ 	struct prelim_ref *ref;
+ 	struct extent_buffer *eb;
+@@ -742,12 +742,14 @@ static int add_missing_keys(struct btrfs
+ 			free_extent_buffer(eb);
+ 			return -EIO;
+ 		}
+-		btrfs_tree_read_lock(eb);
++		if (lock)
++			btrfs_tree_read_lock(eb);
+ 		if (btrfs_header_level(eb) == 0)
+ 			btrfs_item_key_to_cpu(eb, &ref->key_for_search, 0);
+ 		else
+ 			btrfs_node_key_to_cpu(eb, &ref->key_for_search, 0);
+-		btrfs_tree_read_unlock(eb);
++		if (lock)
++			btrfs_tree_read_unlock(eb);
+ 		free_extent_buffer(eb);
+ 		prelim_ref_insert(fs_info, &preftrees->indirect, ref, NULL);
+ 		cond_resched();
+@@ -1228,7 +1230,7 @@ again:
  
--- 
-2.20.1
-
+ 	btrfs_release_path(path);
+ 
+-	ret = add_missing_keys(fs_info, &preftrees);
++	ret = add_missing_keys(fs_info, &preftrees, path->skip_locking == 0);
+ 	if (ret)
+ 		goto out;
+ 
+@@ -1290,9 +1292,14 @@ again:
+ 				}
+ 				btrfs_tree_read_lock(eb);
+ 				btrfs_set_lock_blocking_rw(eb, BTRFS_READ_LOCK);
++				if (!path->skip_locking) {
++					btrfs_tree_read_lock(eb);
++					btrfs_set_lock_blocking_rw(eb, BTRFS_READ_LOCK);
++				}
+ 				ret = find_extent_in_eb(eb, bytenr,
+ 							*extent_item_pos, &eie);
+-				btrfs_tree_read_unlock_blocking(eb);
++				if (!path->skip_locking)
++					btrfs_tree_read_unlock_blocking(eb);
+ 				free_extent_buffer(eb);
+ 				if (ret < 0)
+ 					goto out;
 
 
