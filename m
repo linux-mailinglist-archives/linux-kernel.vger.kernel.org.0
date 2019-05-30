@@ -2,129 +2,325 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBCEE2FDFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 16:37:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43C172FE04
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 16:40:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726535AbfE3Ohr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 10:37:47 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:35817 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726065AbfE3Ohr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 10:37:47 -0400
-Received: by mail-wm1-f67.google.com with SMTP id c6so1063402wml.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 07:37:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BDWtQFm+WAzDqApfOL3f1+PtlUxOkj1j4sNRaB1SPIU=;
-        b=hWSVtcjJZOIrECbWF+cqlhzrgoPipyWe7boEc6ikHzB+um9Z11/GN2zX6GvWr+WT/g
-         m8ROPVjiHKyM/M50lUjpBUzhgt8MVkxnLpucQCCI1szffFHXQsKIWOW2HQWVV2xn5mnE
-         gxWYtWwhLwAodwWEPfuH61lkIQMGd4RrC/b9mVdwwa98izPl3EycEvLa9qOXoRuMrvvq
-         0wXbDVCAEMVvsS/HHafIwkc5WfSg1FFSquxxeWrNpNLTrtk9vnqB8FESdcmUzbH3ITa4
-         b13XGs2XExYTn7Apk66yJGKmHuroJtYlDHpRCQ8/SpFECgo6WODjck/hJ6wTDg+uIVDG
-         izgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BDWtQFm+WAzDqApfOL3f1+PtlUxOkj1j4sNRaB1SPIU=;
-        b=q28qb7RS93g6ZKT2zHEDEehCYeaE8nJUV0r6j9SEIDavag0egtkVP8TQqz7IZuEGus
-         nWZ4ls1HBH+sBmWOOeHmjgLvY1glYiDRk+Kwu8RNhHQfttEF897IJLUgoO5tXi+kWlbE
-         O6CVslwySG086y4vAu1cFJHaswRFAQ4jwwRaiLj9uVSj+fBSFFOVPoci7WO6A4sRqNl8
-         gt99mwHEBZx6xSE2h2yD43u1EnDIiyCasTo9n+Dl/eLpItlFzcfIvZY0Vp34aRxGJc9M
-         K/9KPT0Dzl6p78Y/pFSGVDUY4EDeNwDJLIZGK9//N7Wa3vDvy5yCPK7BCCQtw8XQMnC0
-         NNjQ==
-X-Gm-Message-State: APjAAAUOKxuZ7cXEOJK+Q5cuHrT8CaBoI2QyNm2XuH8s7ad8D3Vk4dFQ
-        T5qW3XWpK7dqZ3YXBIJvrjjJTmYv43YQE479MS32Mw==
-X-Google-Smtp-Source: APXvYqwjcA3hHjDD/ENJ0QBQOv2caz7VXByz8oSrnxwgrl0j5NsYAqFVW27F2fEjhjzR0PCqftacvysL5G+T+AA7h6Q=
-X-Received: by 2002:a7b:cd84:: with SMTP id y4mr2525587wmj.79.1559227065647;
- Thu, 30 May 2019 07:37:45 -0700 (PDT)
+        id S1727059AbfE3OkO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 10:40:14 -0400
+Received: from mta-01.yadro.com ([89.207.88.251]:39102 "EHLO mta-01.yadro.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726106AbfE3OkM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 10:40:12 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mta-01.yadro.com (Postfix) with ESMTP id 1155741940;
+        Thu, 30 May 2019 14:40:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=yadro.com; h=
+        content-type:content-type:content-transfer-encoding:mime-version
+        :x-mailer:message-id:date:date:subject:subject:from:from
+        :received:received:received; s=mta-01; t=1559227207; x=
+        1561041608; bh=OyeSkkF7vh1keHnBi2+5GfZBoCXBuVr5OjdSuFdJzwI=; b=M
+        3FThrQ4iBEIjDW3ITlAXPdn7GZvPpTCrSG/u/jHqjxZWhBJovcY4H1QGOWAlrR1T
+        d0KG+pgxdSiG6oW9xzt25QgNZMaKHRJKqbmHiN28oGzqtim9x+wsOCV5Hvw5cA+K
+        m/BQ76xJb/5WSFG99wvm/B314e0LVAGV+072dTTVzE=
+X-Virus-Scanned: amavisd-new at yadro.com
+Received: from mta-01.yadro.com ([127.0.0.1])
+        by localhost (mta-01.yadro.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id lXPc8gRPmnaL; Thu, 30 May 2019 17:40:07 +0300 (MSK)
+Received: from T-EXCH-02.corp.yadro.com (t-exch-02.corp.yadro.com [172.17.10.102])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mta-01.yadro.com (Postfix) with ESMTPS id 6ACEA41907;
+        Thu, 30 May 2019 17:40:07 +0300 (MSK)
+Received: from bbwork.com (172.17.14.115) by T-EXCH-02.corp.yadro.com
+ (172.17.10.102) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id 15.1.669.32; Thu, 30
+ May 2019 17:40:07 +0300
+From:   Alexander Filippov <a.filippov@yadro.com>
+To:     <linux-aspeed@lists.ozlabs.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Joel Stanley <joel@jms.id.au>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Alexander Filippov <a.filippov@yadro.com>
+Subject: [PATCH v2] ARM: dts: aspeed: Add YADRO VESNIN BMC
+Date:   Thu, 30 May 2019 17:39:33 +0300
+Message-ID: <20190530143933.25414-1-a.filippov@yadro.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <1558742162-73402-1-git-send-email-fenghua.yu@intel.com> <1558742162-73402-2-git-send-email-fenghua.yu@intel.com>
-In-Reply-To: <1558742162-73402-2-git-send-email-fenghua.yu@intel.com>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Thu, 30 May 2019 07:37:34 -0700
-Message-ID: <CALCETrWOUCOaEct4EA65WfZ-ZbmB6N8s-1aHNvH6rdKhPJ-CPg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/5] x86/cpufeatures: Enumerate user wait instructions
-To:     Fenghua Yu <fenghua.yu@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [172.17.14.115]
+X-ClientProxiedBy: T-EXCH-01.corp.yadro.com (172.17.10.101) To
+ T-EXCH-02.corp.yadro.com (172.17.10.102)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 24, 2019 at 5:05 PM Fenghua Yu <fenghua.yu@intel.com> wrote:
->
-> umonitor, umwait, and tpause are a set of user wait instructions.
->
-> umonitor arms address monitoring hardware using an address. The
-> address range is determined by using CPUID.0x5. A store to
-> an address within the specified address range triggers the
-> monitoring hardware to wake up the processor waiting in umwait.
->
-> umwait instructs the processor to enter an implementation-dependent
-> optimized state while monitoring a range of addresses. The optimized
-> state may be either a light-weight power/performance optimized state
-> (C0.1 state) or an improved power/performance optimized state
-> (C0.2 state).
->
-> tpause instructs the processor to enter an implementation-dependent
-> optimized state C0.1 or C0.2 state and wake up when time-stamp counter
-> reaches specified timeout.
->
-> The three instructions may be executed at any privilege level.
->
-> The instructions provide power saving method while waiting in
-> user space. Additionally, they can allow a sibling hyperthread to
-> make faster progress while this thread is waiting. One example of an
-> application usage of umwait is when waiting for input data from another
-> application, such as a user level multi-threaded packet processing
-> engine.
->
-> Availability of the user wait instructions is indicated by the presence
-> of the CPUID feature flag WAITPKG CPUID.0x07.0x0:ECX[5].
->
-> Detailed information on the instructions and CPUID feature WAITPKG flag
-> can be found in the latest Intel Architecture Instruction Set Extensions
-> and Future Features Programming Reference and Intel 64 and IA-32
-> Architectures Software Developer's Manual.
->
+VESNIN is an OpenPower machine with an Aspeed 2400 BMC SoC manufactured
+by YADRO.
 
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Alexander Filippov <a.filippov@yadro.com>
+---
+ arch/arm/boot/dts/Makefile                  |   1 +
+ arch/arm/boot/dts/aspeed-bmc-opp-vesnin.dts | 234 ++++++++++++++++++++
+ 2 files changed, 235 insertions(+)
+ create mode 100644 arch/arm/boot/dts/aspeed-bmc-opp-vesnin.dts
 
-> Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
-> Reviewed-by: Ashok Raj <ashok.raj@intel.com>
-> ---
->  arch/x86/include/asm/cpufeatures.h | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-> index 75f27ee2c263..b8bd428ae5bc 100644
-> --- a/arch/x86/include/asm/cpufeatures.h
-> +++ b/arch/x86/include/asm/cpufeatures.h
-> @@ -322,6 +322,7 @@
->  #define X86_FEATURE_UMIP               (16*32+ 2) /* User Mode Instruction Protection */
->  #define X86_FEATURE_PKU                        (16*32+ 3) /* Protection Keys for Userspace */
->  #define X86_FEATURE_OSPKE              (16*32+ 4) /* OS Protection Keys Enable */
-> +#define X86_FEATURE_WAITPKG            (16*32+ 5) /* UMONITOR/UMWAIT/TPAUSE Instructions */
->  #define X86_FEATURE_AVX512_VBMI2       (16*32+ 6) /* Additional AVX512 Vector Bit Manipulation Instructions */
->  #define X86_FEATURE_GFNI               (16*32+ 8) /* Galois Field New Instructions */
->  #define X86_FEATURE_VAES               (16*32+ 9) /* Vector AES */
-> --
-> 2.19.1
->
-
-
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 834cce80d1b8..811e9312cf22 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -1259,6 +1259,7 @@ dtb-$(CONFIG_ARCH_ASPEED) += \
+ 	aspeed-bmc-microsoft-olympus.dtb \
+ 	aspeed-bmc-opp-lanyang.dtb \
+ 	aspeed-bmc-opp-palmetto.dtb \
++	aspeed-bmc-opp-vesnin.dtb \
+ 	aspeed-bmc-opp-romulus.dtb \
+ 	aspeed-bmc-opp-swift.dtb \
+ 	aspeed-bmc-opp-witherspoon.dtb \
+diff --git a/arch/arm/boot/dts/aspeed-bmc-opp-vesnin.dts b/arch/arm/boot/dts/aspeed-bmc-opp-vesnin.dts
+new file mode 100644
+index 000000000000..20f07f5bb4f4
+--- /dev/null
++++ b/arch/arm/boot/dts/aspeed-bmc-opp-vesnin.dts
+@@ -0,0 +1,234 @@
++// SPDX-License-Identifier: GPL-2.0+
++// Copyright 2019 YADRO
++/dts-v1/;
++
++#include "aspeed-g4.dtsi"
++#include <dt-bindings/gpio/aspeed-gpio.h>
++
++/ {
++	model = "Vesnin BMC";
++	compatible = "yadro,vesnin-bmc", "aspeed,ast2400";
++
++	chosen {
++		stdout-path = &uart5;
++		bootargs = "console=ttyS4,115200 earlyprintk";
++	};
++
++	memory {
++		reg = <0x40000000 0x20000000>;
++	};
++
++	reserved-memory {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		vga_memory: framebuffer@5f000000 {
++			no-map;
++			reg = <0x5f000000 0x01000000>; /* 16MB */
++		};
++		flash_memory: region@5c000000 {
++			no-map;
++			reg = <0x5c000000 0x02000000>; /* 32M */
++		};
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		heartbeat {
++			gpios = <&gpio ASPEED_GPIO(R, 4) GPIO_ACTIVE_LOW>;
++		};
++		power_red {
++			gpios = <&gpio ASPEED_GPIO(N, 1) GPIO_ACTIVE_LOW>;
++		};
++
++		id_blue {
++			gpios = <&gpio ASPEED_GPIO(O, 0) GPIO_ACTIVE_LOW>;
++		};
++
++		alarm_red {
++			gpios = <&gpio ASPEED_GPIO(N, 6) GPIO_ACTIVE_LOW>;
++		};
++
++		alarm_yel {
++			gpios = <&gpio ASPEED_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
++		};
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		button_checkstop {
++			label = "checkstop";
++			linux,code = <74>;
++			gpios = <&gpio ASPEED_GPIO(P, 5) GPIO_ACTIVE_LOW>;
++		};
++
++		button_identify {
++			label = "identify";
++			linux,code = <152>;
++			gpios = <&gpio ASPEED_GPIO(O, 7) GPIO_ACTIVE_LOW>;
++		};
++	};
++};
++
++&fmc {
++	status = "okay";
++	flash@0 {
++		status = "okay";
++		m25p,fast-read;
++        label = "bmc";
++#include "openbmc-flash-layout.dtsi"
++	};
++};
++
++&spi {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_spi1debug_default>;
++
++	flash@0 {
++		status = "okay";
++		label = "pnor";
++		m25p,fast-read;
++	};
++};
++
++&mac0 {
++	status = "okay";
++
++	use-ncsi;
++	no-hw-checksum;
++
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_rmii1_default>;
++};
++
++
++&uart5 {
++	status = "okay";
++};
++
++&lpc_ctrl {
++	status = "okay";
++	memory-region = <&flash_memory>;
++	flash = <&spi>;
++};
++
++&ibt {
++	status = "okay";
++};
++
++&lpc_host {
++    sio_regs: regs {
++        compatible = "aspeed,bmc-misc";
++    };
++};
++
++&mbox {
++	status = "okay";
++};
++
++&uart3 {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_txd2_default &pinctrl_rxd2_default>;
++};
++
++&i2c0 {
++	status = "okay";
++
++	eeprom@50 {
++		compatible = "atmel,24c256";
++		reg = <0x50>;
++		pagesize = <64>;
++	};
++};
++
++&i2c1 {
++	status = "okay";
++
++	tmp75@49 {
++		compatible = "ti,tmp75";
++		reg = <0x49>;
++	};
++};
++
++&i2c2 {
++	status = "okay";
++};
++
++&i2c3 {
++	status = "okay";
++};
++
++&i2c4 {
++	status = "okay";
++
++	occ-hwmon@50 {
++		compatible = "ibm,p8-occ-hwmon";
++		reg = <0x50>;
++	};
++};
++
++&i2c5 {
++	status = "okay";
++
++	occ-hwmon@51 {
++		compatible = "ibm,p8-occ-hwmon";
++		reg = <0x51>;
++	};
++};
++
++&i2c6 {
++	status = "okay";
++
++	w83795g@2f {
++		compatible = "nuvoton,w83795g";
++		reg = <0x2f>;
++	};
++};
++
++&i2c7 {
++	status = "okay";
++
++	occ-hwmon@56 {
++		compatible = "ibm,p8-occ-hwmon";
++		reg = <0x56>;
++	};
++};
++
++&i2c9 {
++	status = "okay";
++};
++
++&i2c10 {
++	status = "okay";
++};
++
++&i2c11 {
++	status = "okay";
++
++	occ-hwmon@57 {
++		compatible = "ibm,p8-occ-hwmon";
++		reg = <0x57>;
++	};
++};
++
++&i2c12 {
++	status = "okay";
++
++	rtc@68 {
++		compatible = "maxim,ds3231";
++		reg = <0x68>;
++	};
++};
++
++&i2c13 {
++	status = "okay";
++};
++
++&vuart {
++	status = "okay";
++};
 -- 
-Andy Lutomirski
-AMA Capital Management, LLC
+2.20.1
+
