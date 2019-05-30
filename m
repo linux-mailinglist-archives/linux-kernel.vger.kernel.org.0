@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 701E12F269
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:22:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C91E12EE56
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:46:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730489AbfE3EVf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:21:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37752 "EHLO mail.kernel.org"
+        id S1733106AbfE3Dqi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:46:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730165AbfE3DPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:15:13 -0400
+        id S1732269AbfE3DUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:20:38 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09FC7245AF;
-        Thu, 30 May 2019 03:15:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A6C824935;
+        Thu, 30 May 2019 03:20:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186113;
-        bh=euFCMq21m3y1BXTjDRjTUdYs8uNkzhAkYGQVfs6Tq60=;
+        s=default; t=1559186437;
+        bh=6KJafuH6llrOvttrKDhoolzegH4pyFHwrtCkHP+4gNw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KX788rLCxJQuk96SaGmxw9ULODbC8idAj47E+wUiQV007bfb04X4pW93na8voetzB
-         zbyTcxmBaBpSWGztMGN4NMP92ot1no6JhoqBC26cgs0LKkd8BD6DIiF1dzpM5gN+Zc
-         UV7Bkkl618csO1esYrFE3s/j5MGT2Lhq4IhlNJ4s=
+        b=pdF7/+UFAddpT9uEnJLOVwJJgAl6DdMjrrTEX/Z8ZmBVNYAgMGsgLk7NLtKhvSIP7
+         XzjJhCfSmphTp3N9IsL9bz3HXudbo34AwysLq/R+hFJfhdTJ3koiyGFpR2TiQVCONB
+         KJ3zF3WTZhCuQaQ/ukRzCyE//6ty4h7GV/+7j01U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 263/346] drm: rcar-du: lvds: Set LVEN and LVRES bits together on D3
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.9 004/128] Revert "scsi: sd: Keep disk read-only when re-reading partition"
 Date:   Wed, 29 May 2019 20:05:36 -0700
-Message-Id: <20190530030554.303614499@linuxfoundation.org>
+Message-Id: <20190530030433.924169073@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,41 +43,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 00d082cc4ea6e42ec4fed832a1020231bb1ca150 ]
+From: Martin K. Petersen <martin.petersen@oracle.com>
 
-On the D3 SoC the LVDS PHY must be enabled in the same register write
-that enables the LVDS output. Skip writing the LVEN bit independently
-on that platform, it will be set by the write that sets LVRES.
+commit 8acf608e602f6ec38b7cc37b04c80f1ce9a1a6cc upstream.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+This reverts commit 20bd1d026aacc5399464f8328f305985c493cde3.
+
+This patch introduced regressions for devices that come online in
+read-only state and subsequently switch to read-write.
+
+Given how the partition code is currently implemented it is not
+possible to persist the read-only flag across a device revalidate
+call. This may need to get addressed in the future since it is common
+for user applications to proactively call BLKRRPART.
+
+Reverting this commit will re-introduce a regression where a
+device-initiated revalidate event will cause the admin state to be
+forgotten. A separate patch will address this issue.
+
+Fixes: 20bd1d026aac ("scsi: sd: Keep disk read-only when re-reading partition")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/gpu/drm/rcar-du/rcar_lvds.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/scsi/sd.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-index 534a128a869d5..ccdfc64e122a8 100644
---- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-@@ -427,9 +427,13 @@ static void rcar_lvds_enable(struct drm_bridge *bridge)
- 	}
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -2403,7 +2403,6 @@ sd_read_write_protect_flag(struct scsi_d
+ 	int res;
+ 	struct scsi_device *sdp = sdkp->device;
+ 	struct scsi_mode_data data;
+-	int disk_ro = get_disk_ro(sdkp->disk);
+ 	int old_wp = sdkp->write_prot;
  
- 	if (lvds->info->quirks & RCAR_LVDS_QUIRK_GEN3_LVEN) {
--		/* Turn on the LVDS PHY. */
-+		/*
-+		 * Turn on the LVDS PHY. On D3, the LVEN and LVRES bit must be
-+		 * set at the same time, so don't write the register yet.
-+		 */
- 		lvdcr0 |= LVDCR0_LVEN;
--		rcar_lvds_write(lvds, LVDCR0, lvdcr0);
-+		if (!(lvds->info->quirks & RCAR_LVDS_QUIRK_PWD))
-+			rcar_lvds_write(lvds, LVDCR0, lvdcr0);
- 	}
- 
- 	if (!(lvds->info->quirks & RCAR_LVDS_QUIRK_EXT_PLL)) {
--- 
-2.20.1
-
+ 	set_disk_ro(sdkp->disk, 0);
+@@ -2444,7 +2443,7 @@ sd_read_write_protect_flag(struct scsi_d
+ 			  "Test WP failed, assume Write Enabled\n");
+ 	} else {
+ 		sdkp->write_prot = ((data.device_specific & 0x80) != 0);
+-		set_disk_ro(sdkp->disk, sdkp->write_prot || disk_ro);
++		set_disk_ro(sdkp->disk, sdkp->write_prot);
+ 		if (sdkp->first_scan || old_wp != sdkp->write_prot) {
+ 			sd_printk(KERN_NOTICE, sdkp, "Write Protect is %s\n",
+ 				  sdkp->write_prot ? "on" : "off");
 
 
