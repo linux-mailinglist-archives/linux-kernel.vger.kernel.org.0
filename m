@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A0CC2F66A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:56:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31CEF2F42B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:36:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389189AbfE3E4B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:56:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46330 "EHLO mail.kernel.org"
+        id S2388471AbfE3Efu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:35:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727982AbfE3DKM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:10:12 -0400
+        id S1727566AbfE3DNH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:13:07 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 485F9244B1;
-        Thu, 30 May 2019 03:10:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1CED124526;
+        Thu, 30 May 2019 03:13:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185812;
-        bh=BVFPEq2252lRkspmWfxez9TenSlGcURuz34/DoGJY80=;
+        s=default; t=1559185987;
+        bh=iYBZAM86OS7sJphh+w2os+mRE+9+QibDBnFo8TrVdMY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jiYT0NYflqyEfHh0DDxhPbzMjnXGLYdWf63zZtSsxXLyPHf/M1PNiujAaMa+w3uld
-         mbBGhjvU8Me9sGu0Lz2l42I9cV186HUF2cKwCCpZHd6VCZUlV+ktfFUwFjRwGLI+YL
-         /cY5bDfzFfAgDN7PyicJVpN7MzZKBxWYst9d2aIw=
+        b=QhlHcRilnvNhJT63UKgbDoQG8AwawMPXzut1V6x1G4GLP82O6S69ejXt2UZRHbgh/
+         jJlneMWPfm1plCkJcYtESzxe25zKFOlmkv5ttpL5swV69o4pQTj1kwFuDf1lwJNnqf
+         CNhq00lfq28yzROFzfX29h6K9DV/Mo4eBDTRI4aM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Manish Rangankar <mrangankar@marvell.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 102/405] scsi: qedi: Abort ep termination if offload not scheduled
-Date:   Wed, 29 May 2019 20:01:40 -0700
-Message-Id: <20190530030546.182249721@linuxfoundation.org>
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        Qu Wenruo <wqu@suse.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 5.0 028/346] btrfs: honor path->skip_locking in backref code
+Date:   Wed, 29 May 2019 20:01:41 -0700
+Message-Id: <20190530030542.182651394@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,74 +44,156 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f848bfd8e167210a29374e8a678892bed591684f ]
+From: Josef Bacik <josef@toxicpanda.com>
 
-Sometimes during connection recovery when there is a failure to resolve
-ARP, and offload connection was not issued, driver tries to flush pending
-offload connection work which was not queued up.
+commit 38e3eebff643db725633657d1d87a3be019d1018 upstream.
 
-kernel: WARNING: CPU: 19 PID: 10110 at kernel/workqueue.c:3030 __flush_work.isra.34+0x19c/0x1b0
-kernel: CPU: 19 PID: 10110 Comm: iscsid Tainted: G W 5.1.0-rc4 #11
-kernel: Hardware name: Dell Inc. PowerEdge R730/0599V5, BIOS 2.9.1 12/04/2018
-kernel: RIP: 0010:__flush_work.isra.34+0x19c/0x1b0
-kernel: Code: 8b fb 66 0f 1f 44 00 00 31 c0 eb ab 48 89 ef c6 07 00 0f 1f 40 00 fb 66 0f 1f 44 00 00 31 c0 eb 96 e8 08 16 fe ff 0f 0b eb 8d <0f> 0b 31 c0 eb 87 0f 1f 40 00 66 2e 0f 1
-f 84 00 00 00 00 00 0f 1f
-kernel: RSP: 0018:ffffa6b4054dba68 EFLAGS: 00010246
-kernel: RAX: 0000000000000000 RBX: ffff91df21c36fc0 RCX: 0000000000000000
-kernel: RDX: 0000000000000001 RSI: 0000000000000000 RDI: ffff91df21c36fc0
-kernel: RBP: ffff91df21c36ef0 R08: 0000000000000000 R09: 0000000000000000
-kernel: R10: 0000000000000038 R11: ffffa6b4054dbd60 R12: ffffffffc05e72c0
-kernel: R13: ffff91db10280820 R14: 0000000000000048 R15: 0000000000000000
-kernel: FS:  00007f5d83cc1740(0000) GS:ffff91df2f840000(0000) knlGS:0000000000000000
-kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-kernel: CR2: 0000000001cc5000 CR3: 0000000465450002 CR4: 00000000001606e0
-kernel: Call Trace:
-kernel: ? try_to_del_timer_sync+0x4d/0x80
-kernel: qedi_ep_disconnect+0x3b/0x410 [qedi]
-kernel: ? 0xffffffffc083c000
-kernel: ? klist_iter_exit+0x14/0x20
-kernel: ? class_find_device+0x93/0xf0
-kernel: iscsi_if_ep_disconnect.isra.18+0x58/0x70 [scsi_transport_iscsi]
-kernel: iscsi_if_recv_msg+0x10e2/0x1510 [scsi_transport_iscsi]
-kernel: ? copyout+0x22/0x30
-kernel: ? _copy_to_iter+0xa0/0x430
-kernel: ? _cond_resched+0x15/0x30
-kernel: ? __kmalloc_node_track_caller+0x1f9/0x270
-kernel: iscsi_if_rx+0xa5/0x1e0 [scsi_transport_iscsi]
-kernel: netlink_unicast+0x17f/0x230
-kernel: netlink_sendmsg+0x2d2/0x3d0
-kernel: sock_sendmsg+0x36/0x50
-kernel: ___sys_sendmsg+0x280/0x2a0
-kernel: ? timerqueue_add+0x54/0x80
-kernel: ? enqueue_hrtimer+0x38/0x90
-kernel: ? hrtimer_start_range_ns+0x19f/0x2c0
-kernel: __sys_sendmsg+0x58/0xa0
-kernel: do_syscall_64+0x5b/0x180
-kernel: entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Qgroups will do the old roots lookup at delayed ref time, which could be
+while walking down the extent root while running a delayed ref.  This
+should be fine, except we specifically lock eb's in the backref walking
+code irrespective of path->skip_locking, which deadlocks the system.
+Fix up the backref code to honor path->skip_locking, nobody will be
+modifying the commit_root when we're searching so it's completely safe
+to do.
 
-Signed-off-by: Manish Rangankar <mrangankar@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+This happens since fb235dc06fac ("btrfs: qgroup: Move half of the qgroup
+accounting time out of commit trans"), kernel may lockup with quota
+enabled.
+
+There is one backref trace triggered by snapshot dropping along with
+write operation in the source subvolume.  The example can be reliably
+reproduced:
+
+  btrfs-cleaner   D    0  4062      2 0x80000000
+  Call Trace:
+   schedule+0x32/0x90
+   btrfs_tree_read_lock+0x93/0x130 [btrfs]
+   find_parent_nodes+0x29b/0x1170 [btrfs]
+   btrfs_find_all_roots_safe+0xa8/0x120 [btrfs]
+   btrfs_find_all_roots+0x57/0x70 [btrfs]
+   btrfs_qgroup_trace_extent_post+0x37/0x70 [btrfs]
+   btrfs_qgroup_trace_leaf_items+0x10b/0x140 [btrfs]
+   btrfs_qgroup_trace_subtree+0xc8/0xe0 [btrfs]
+   do_walk_down+0x541/0x5e3 [btrfs]
+   walk_down_tree+0xab/0xe7 [btrfs]
+   btrfs_drop_snapshot+0x356/0x71a [btrfs]
+   btrfs_clean_one_deleted_snapshot+0xb8/0xf0 [btrfs]
+   cleaner_kthread+0x12b/0x160 [btrfs]
+   kthread+0x112/0x130
+   ret_from_fork+0x27/0x50
+
+When dropping snapshots with qgroup enabled, we will trigger backref
+walk.
+
+However such backref walk at that timing is pretty dangerous, as if one
+of the parent nodes get WRITE locked by other thread, we could cause a
+dead lock.
+
+For example:
+
+           FS 260     FS 261 (Dropped)
+            node A        node B
+           /      \      /      \
+       node C      node D      node E
+      /   \         /  \        /     \
+  leaf F|leaf G|leaf H|leaf I|leaf J|leaf K
+
+The lock sequence would be:
+
+      Thread A (cleaner)             |       Thread B (other writer)
+-----------------------------------------------------------------------
+write_lock(B)                        |
+write_lock(D)                        |
+^^^ called by walk_down_tree()       |
+                                     |       write_lock(A)
+                                     |       write_lock(D) << Stall
+read_lock(H) << for backref walk     |
+read_lock(D) << lock owner is        |
+                the same thread A    |
+                so read lock is OK   |
+read_lock(A) << Stall                |
+
+So thread A hold write lock D, and needs read lock A to unlock.
+While thread B holds write lock A, while needs lock D to unlock.
+
+This will cause a deadlock.
+
+This is not only limited to snapshot dropping case.  As the backref
+walk, even only happens on commit trees, is breaking the normal top-down
+locking order, makes it deadlock prone.
+
+Fixes: fb235dc06fac ("btrfs: qgroup: Move half of the qgroup accounting time out of commit trans")
+CC: stable@vger.kernel.org # 4.14+
+Reported-and-tested-by: David Sterba <dsterba@suse.com>
+Reported-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+[ rebase to latest branch and fix lock assert bug in btrfs/007 ]
+[ solve conflicts and backport to linux-5.0.y ]
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+[ copy logs and deadlock analysis from Qu's patch ]
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/scsi/qedi/qedi_iscsi.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/btrfs/backref.c |   19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/scsi/qedi/qedi_iscsi.c b/drivers/scsi/qedi/qedi_iscsi.c
-index 6d6d6013e35b8..bf371e7b957d0 100644
---- a/drivers/scsi/qedi/qedi_iscsi.c
-+++ b/drivers/scsi/qedi/qedi_iscsi.c
-@@ -1000,6 +1000,9 @@ static void qedi_ep_disconnect(struct iscsi_endpoint *ep)
- 	qedi_ep = ep->dd_data;
- 	qedi = qedi_ep->qedi;
+--- a/fs/btrfs/backref.c
++++ b/fs/btrfs/backref.c
+@@ -712,7 +712,7 @@ out:
+  * read tree blocks and add keys where required.
+  */
+ static int add_missing_keys(struct btrfs_fs_info *fs_info,
+-			    struct preftrees *preftrees)
++			    struct preftrees *preftrees, bool lock)
+ {
+ 	struct prelim_ref *ref;
+ 	struct extent_buffer *eb;
+@@ -737,12 +737,14 @@ static int add_missing_keys(struct btrfs
+ 			free_extent_buffer(eb);
+ 			return -EIO;
+ 		}
+-		btrfs_tree_read_lock(eb);
++		if (lock)
++			btrfs_tree_read_lock(eb);
+ 		if (btrfs_header_level(eb) == 0)
+ 			btrfs_item_key_to_cpu(eb, &ref->key_for_search, 0);
+ 		else
+ 			btrfs_node_key_to_cpu(eb, &ref->key_for_search, 0);
+-		btrfs_tree_read_unlock(eb);
++		if (lock)
++			btrfs_tree_read_unlock(eb);
+ 		free_extent_buffer(eb);
+ 		prelim_ref_insert(fs_info, &preftrees->indirect, ref, NULL);
+ 		cond_resched();
+@@ -1227,7 +1229,7 @@ again:
  
-+	if (qedi_ep->state == EP_STATE_OFLDCONN_START)
-+		goto ep_exit_recover;
-+
- 	flush_work(&qedi_ep->offload_work);
+ 	btrfs_release_path(path);
  
- 	if (qedi_ep->conn) {
--- 
-2.20.1
-
+-	ret = add_missing_keys(fs_info, &preftrees);
++	ret = add_missing_keys(fs_info, &preftrees, path->skip_locking == 0);
+ 	if (ret)
+ 		goto out;
+ 
+@@ -1288,11 +1290,14 @@ again:
+ 					ret = -EIO;
+ 					goto out;
+ 				}
+-				btrfs_tree_read_lock(eb);
+-				btrfs_set_lock_blocking_rw(eb, BTRFS_READ_LOCK);
++				if (!path->skip_locking) {
++					btrfs_tree_read_lock(eb);
++					btrfs_set_lock_blocking_rw(eb, BTRFS_READ_LOCK);
++				}
+ 				ret = find_extent_in_eb(eb, bytenr,
+ 							*extent_item_pos, &eie, ignore_offset);
+-				btrfs_tree_read_unlock_blocking(eb);
++				if (!path->skip_locking)
++					btrfs_tree_read_unlock_blocking(eb);
+ 				free_extent_buffer(eb);
+ 				if (ret < 0)
+ 					goto out;
 
 
