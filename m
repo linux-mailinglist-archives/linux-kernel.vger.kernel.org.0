@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 014E32F0D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:07:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAA5C2ED58
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:35:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727001AbfE3EHt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:07:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46894 "EHLO mail.kernel.org"
+        id S2387761AbfE3D0r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:26:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53372 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730287AbfE3DRZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:17:25 -0400
+        id S1731770AbfE3DTA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:19:00 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4073F24499;
-        Thu, 30 May 2019 03:17:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C7C4624807;
+        Thu, 30 May 2019 03:18:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186245;
-        bh=s4kCazaRSWnzkH+QoFib8l1lxFponnhzdXNy2kqfGz0=;
+        s=default; t=1559186339;
+        bh=ChpmML56fJOS8+8t9YjrOkx4LFxFbfujQGW0dRMef/U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RTG6PsEME2qIO2LDZqn78nSQi+2WDWCDVcsqzPAAOivRP1v8MVwdTmCmISfJ/oBHD
-         A30x3jIQR5nat0IQ3S2eSYGduEfQnyqn4R0b7TJ3fNUcsqfHdsZUaSLv37cp4yNYmJ
-         4/y2yuzGi1kyCEA15jFKJpL3gMpwoVlvIm0FvrXE=
+        b=ezjuykmWlvjRnFLOVnNzHGPLHzbIwTTMM5YXkbdnTbY8FtrXEWT00yRGpa/TWwn0O
+         Ka8Yyz/D3E+pGnRkkADknoWheNVkkkCZmN/HkJbQTte6X0aNYY7Hom/iAUfh/RqSHJ
+         XlcghZew8cNy6RIAHghSkIJWshZ+4YCdbOOCGOZo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kefeng Wang <wangkefeng.wang@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org, Manish Rangankar <mrangankar@marvell.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 160/276] hwmon: (pc87427) Use request_muxed_region for Super-IO accesses
+Subject: [PATCH 4.14 064/193] scsi: qedi: Abort ep termination if offload not scheduled
 Date:   Wed, 29 May 2019 20:05:18 -0700
-Message-Id: <20190530030535.500200616@linuxfoundation.org>
+Message-Id: <20190530030458.350313429@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,67 +44,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 755a9b0f8aaa5639ba5671ca50080852babb89ce ]
+[ Upstream commit f848bfd8e167210a29374e8a678892bed591684f ]
 
-Super-IO accesses may fail on a system with no or unmapped LPC bus.
+Sometimes during connection recovery when there is a failure to resolve
+ARP, and offload connection was not issued, driver tries to flush pending
+offload connection work which was not queued up.
 
-Also, other drivers may attempt to access the LPC bus at the same time,
-resulting in undefined behavior.
+kernel: WARNING: CPU: 19 PID: 10110 at kernel/workqueue.c:3030 __flush_work.isra.34+0x19c/0x1b0
+kernel: CPU: 19 PID: 10110 Comm: iscsid Tainted: G W 5.1.0-rc4 #11
+kernel: Hardware name: Dell Inc. PowerEdge R730/0599V5, BIOS 2.9.1 12/04/2018
+kernel: RIP: 0010:__flush_work.isra.34+0x19c/0x1b0
+kernel: Code: 8b fb 66 0f 1f 44 00 00 31 c0 eb ab 48 89 ef c6 07 00 0f 1f 40 00 fb 66 0f 1f 44 00 00 31 c0 eb 96 e8 08 16 fe ff 0f 0b eb 8d <0f> 0b 31 c0 eb 87 0f 1f 40 00 66 2e 0f 1
+f 84 00 00 00 00 00 0f 1f
+kernel: RSP: 0018:ffffa6b4054dba68 EFLAGS: 00010246
+kernel: RAX: 0000000000000000 RBX: ffff91df21c36fc0 RCX: 0000000000000000
+kernel: RDX: 0000000000000001 RSI: 0000000000000000 RDI: ffff91df21c36fc0
+kernel: RBP: ffff91df21c36ef0 R08: 0000000000000000 R09: 0000000000000000
+kernel: R10: 0000000000000038 R11: ffffa6b4054dbd60 R12: ffffffffc05e72c0
+kernel: R13: ffff91db10280820 R14: 0000000000000048 R15: 0000000000000000
+kernel: FS:  00007f5d83cc1740(0000) GS:ffff91df2f840000(0000) knlGS:0000000000000000
+kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+kernel: CR2: 0000000001cc5000 CR3: 0000000465450002 CR4: 00000000001606e0
+kernel: Call Trace:
+kernel: ? try_to_del_timer_sync+0x4d/0x80
+kernel: qedi_ep_disconnect+0x3b/0x410 [qedi]
+kernel: ? 0xffffffffc083c000
+kernel: ? klist_iter_exit+0x14/0x20
+kernel: ? class_find_device+0x93/0xf0
+kernel: iscsi_if_ep_disconnect.isra.18+0x58/0x70 [scsi_transport_iscsi]
+kernel: iscsi_if_recv_msg+0x10e2/0x1510 [scsi_transport_iscsi]
+kernel: ? copyout+0x22/0x30
+kernel: ? _copy_to_iter+0xa0/0x430
+kernel: ? _cond_resched+0x15/0x30
+kernel: ? __kmalloc_node_track_caller+0x1f9/0x270
+kernel: iscsi_if_rx+0xa5/0x1e0 [scsi_transport_iscsi]
+kernel: netlink_unicast+0x17f/0x230
+kernel: netlink_sendmsg+0x2d2/0x3d0
+kernel: sock_sendmsg+0x36/0x50
+kernel: ___sys_sendmsg+0x280/0x2a0
+kernel: ? timerqueue_add+0x54/0x80
+kernel: ? enqueue_hrtimer+0x38/0x90
+kernel: ? hrtimer_start_range_ns+0x19f/0x2c0
+kernel: __sys_sendmsg+0x58/0xa0
+kernel: do_syscall_64+0x5b/0x180
+kernel: entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Use request_muxed_region() to ensure that IO access on the requested
-address space is supported, and to ensure that access by multiple drivers
-is synchronized.
-
-Fixes: ba224e2c4f0a7 ("hwmon: New PC87427 hardware monitoring driver")
-Reported-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-Reported-by: John Garry <john.garry@huawei.com>
-Cc: John Garry <john.garry@huawei.com>
-Acked-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Manish Rangankar <mrangankar@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/pc87427.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/scsi/qedi/qedi_iscsi.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/hwmon/pc87427.c b/drivers/hwmon/pc87427.c
-index dc5a9d5ada516..81a05cd1a5121 100644
---- a/drivers/hwmon/pc87427.c
-+++ b/drivers/hwmon/pc87427.c
-@@ -106,6 +106,13 @@ static const char *logdev_str[2] = { DRVNAME " FMC", DRVNAME " HMC" };
- #define LD_IN		1
- #define LD_TEMP		1
+diff --git a/drivers/scsi/qedi/qedi_iscsi.c b/drivers/scsi/qedi/qedi_iscsi.c
+index 45f044f35cea8..0b7267e683360 100644
+--- a/drivers/scsi/qedi/qedi_iscsi.c
++++ b/drivers/scsi/qedi/qedi_iscsi.c
+@@ -1008,6 +1008,9 @@ static void qedi_ep_disconnect(struct iscsi_endpoint *ep)
+ 	qedi_ep = ep->dd_data;
+ 	qedi = qedi_ep->qedi;
  
-+static inline int superio_enter(int sioaddr)
-+{
-+	if (!request_muxed_region(sioaddr, 2, DRVNAME))
-+		return -EBUSY;
-+	return 0;
-+}
++	if (qedi_ep->state == EP_STATE_OFLDCONN_START)
++		goto ep_exit_recover;
 +
- static inline void superio_outb(int sioaddr, int reg, int val)
- {
- 	outb(reg, sioaddr);
-@@ -122,6 +129,7 @@ static inline void superio_exit(int sioaddr)
- {
- 	outb(0x02, sioaddr);
- 	outb(0x02, sioaddr + 1);
-+	release_region(sioaddr, 2);
- }
+ 	flush_work(&qedi_ep->offload_work);
  
- /*
-@@ -1220,7 +1228,11 @@ static int __init pc87427_find(int sioaddr, struct pc87427_sio_data *sio_data)
- {
- 	u16 val;
- 	u8 cfg, cfg_b;
--	int i, err = 0;
-+	int i, err;
-+
-+	err = superio_enter(sioaddr);
-+	if (err)
-+		return err;
- 
- 	/* Identify device */
- 	val = force_id ? force_id : superio_inb(sioaddr, SIOREG_DEVID);
+ 	if (qedi_ep->conn) {
 -- 
 2.20.1
 
