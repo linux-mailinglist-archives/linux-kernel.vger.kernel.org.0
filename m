@@ -2,89 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23D25303BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 23:04:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 894C1303C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 23:05:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbfE3VEI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 17:04:08 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:42678 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726079AbfE3VEI (ORCPT
+        id S1726682AbfE3VFD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 17:05:03 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:35020 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726079AbfE3VFD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 17:04:08 -0400
-Received: by mail-qt1-f196.google.com with SMTP id s15so8767407qtk.9;
-        Thu, 30 May 2019 14:04:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QvB7om0vcev2wAaZ6mNs20WHEWnppnnUocSSe4PmuQc=;
-        b=R+OBAIIDsIp//zF5ukSuUovTfYFEJoCkFYDnb9WiLXH8OEUgBUOh8R1UVMP2YHb3OF
-         eReMh3bHTFhHiOFpIbZPL1rHF0/tIz4ay3Qv6E+WxX61iPzm6Sq8L/tCl1fC9591Rcn8
-         kqtj2T9JMKOVskaMpfkZ6QK7TIZrXEBSr4ePs+hZSUnoxKdhtgqKNuoB1oHBjubmzhsT
-         KaGYvH9sdz6DY7yn5Jssy8UUZ7WJkyXdsclyjAELQYnkmjwVcilDK3603hs/0AuGOMAT
-         S3UDgagjoQMIyUs2GB1tFWADaSHLRMNcXQHy0YOcfEcgyb09aUl/4338+95fDdYqk13y
-         gFVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QvB7om0vcev2wAaZ6mNs20WHEWnppnnUocSSe4PmuQc=;
-        b=H6TIWx0j7Z6e7u+TWiYq5Fb8MshsijsG3R0AwNDGHj9p4mXtdfN0qeZs4F8ZZIzCHm
-         RPWkRmsjA694Kvn1sfmnhG1NXyA9mZ5xTH4o99TlvvB5JY7PafCN455Ctkay0xbybJvJ
-         B4USv7eBERSblpBlf6A6NECe8IAK4UxEqTfre59yfJor/qZ+O37RPYp10eRTE5vuHJgp
-         yLh2zvbJPUnPP6DpwndFoPrF3FuV5wK1Nv7y8ygO0dQuvigzZ8UVSKdvgspmc41FSUbs
-         UcXf0eozpFUMMicMxojzR/J4OnFJK//rilLOtL55jyDlL8xcY7SlTDhYxvLO+K/XXrWH
-         4u6w==
-X-Gm-Message-State: APjAAAWSP9Udo/sLXdotEAdgqXQ6SJD4IGI0Qcp9S1nchYMkOLiRr+RB
-        5oNZ47yXeq4+zEEXMYJc8w0=
-X-Google-Smtp-Source: APXvYqyuw30OhbxT+Mwrh13RKA2Ran/Eh9ndJGKcIcll5oZCsLcDaad1o0WbLY5JhpP7ztngQo8/zg==
-X-Received: by 2002:a0c:9499:: with SMTP id j25mr5385466qvj.155.1559250246854;
-        Thu, 30 May 2019 14:04:06 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::1:658d])
-        by smtp.gmail.com with ESMTPSA id v2sm2107944qtf.24.2019.05.30.14.04.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 May 2019 14:04:05 -0700 (PDT)
-Date:   Thu, 30 May 2019 14:04:04 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Odin Ugedal <odin@ugedal.com>
-Cc:     Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] docs cgroups: add another example size for hugetlb
-Message-ID: <20190530210404.GX374014@devbig004.ftw2.facebook.com>
-References: <20190529222425.30879-1-odin@ugedal.com>
+        Thu, 30 May 2019 17:05:03 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 7BC2E80342; Thu, 30 May 2019 23:04:51 +0200 (CEST)
+Date:   Thu, 30 May 2019 23:05:01 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     pavel@ucw.cz
+Cc:     linux-kernel@vger.kernel.org, Yonghong Song <yhs@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.19 051/276] selftests/bpf: set RLIMIT_MEMLOCK properly
+ for test_libbpf_open.c
+Message-ID: <20190530210500.GA9685@amd>
+References: <20190530030523.133519668@linuxfoundation.org>
+ <20190530030528.215407626@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="PNTmBPCT7hxwcZjr"
 Content-Disposition: inline
-In-Reply-To: <20190529222425.30879-1-odin@ugedal.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190530030528.215407626@linuxfoundation.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 12:24:25AM +0200, Odin Ugedal wrote:
-> Add another example to clarify that HugePages smaller than 1MB will
-> be displayed using "KB", with an uppercased K (eg. 20KB), and not the
-> normal SI prefix kilo (small k).
-> 
-> Because of a misunderstanding/copy-paste error inside runc
-> (see https://github.com/opencontainers/runc/pull/2065), it tried
-> accessing the cgroup control file of a 64kB HugePage using
-> "hugetlb.64kB._____" instead of the correct "hugetlb.64KB._____".
-> 
-> Adding a new example will make it clear how sizes smaller than 1MB are
-> handled.
-> 
-> Signed-off-by: Odin Ugedal <odin@ugedal.com>
 
-Applied to cgroup/for-5.2-fixes.
+--PNTmBPCT7hxwcZjr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks.
 
--- 
-tejun
+> Signed-off-by: Yonghong Song <yhs@fb.com>
+> Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  tools/testing/selftests/bpf/test_libbpf_open.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/tools/testing/selftests/bpf/test_libbpf_open.c b/tools/testi=
+ng/selftests/bpf/test_libbpf_open.c
+> index 8fcd1c076add0..cbd55f5f8d598 100644
+> --- a/tools/testing/selftests/bpf/test_libbpf_open.c
+> +++ b/tools/testing/selftests/bpf/test_libbpf_open.c
+> @@ -11,6 +11,8 @@ static const char *__doc__ =3D
+>  #include <bpf/libbpf.h>
+>  #include <getopt.h>
+> =20
+> +#include "bpf_rlimit.h"
+> +
+>  static const struct option long_options[] =3D {
+>  	{"help",	no_argument,		NULL, 'h' },
+>  	{"debug",	no_argument,		NULL, 'D' },
+
+header file with side effects... That's no header file, that's a .c
+file. Perhaps we should name it as such?
+
+I thought "this can't be right" when I first saw it..
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--PNTmBPCT7hxwcZjr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlzwRXwACgkQMOfwapXb+vLfnQCfR+p2zSdyfd03hPRp3sVU8Aiz
+c6cAnj8WiR8dSJVcpBeUFyiC7r0YcTML
+=1Dwe
+-----END PGP SIGNATURE-----
+
+--PNTmBPCT7hxwcZjr--
