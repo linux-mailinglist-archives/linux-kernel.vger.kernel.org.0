@@ -2,118 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7034301C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 20:21:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8435C301D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 20:25:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726934AbfE3SVK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 14:21:10 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43148 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726489AbfE3SVH (ORCPT
+        id S1726636AbfE3SWz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 14:22:55 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:50084 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726079AbfE3SWz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 14:21:07 -0400
-Received: by mail-pg1-f193.google.com with SMTP id f25so2471692pgv.10;
-        Thu, 30 May 2019 11:21:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=UBdHo+2366MDlEoeBRVocLtq/sBDv973ycyrjE7aJxY=;
-        b=E9/E6LUYd4D0dAqav89AsTQRFk4R1QQPe/2zZVQ1sMKi/zbT8bCNF/4M9bO28+HJIT
-         q0yzcUXDCxtVeNzPZ7VKJMhpBjg2Q6Lu1qr3Ckh8oml4xO5W+UjxRqcYp4i1Z+B0IdJ6
-         tTh8MGPWzycRuZvWMRNZA0bK++6I2FM9cysX2JG3zReSYiNsEqLokRRXF8hRhBbu37VD
-         zwZ/8hD0oPvtj6PuRPlVebNsUHXIEl0cmVq1lsFJWSMedtOh2Nmgy6SmDn91m0gczDYC
-         0jr11Wpg6iwP1Q/UD8Og/95UsOzVthnfeMY+xXlDoO6792WVztBqn3OlH6vADw+K5IJF
-         Mbjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=UBdHo+2366MDlEoeBRVocLtq/sBDv973ycyrjE7aJxY=;
-        b=bB96MK96w5+scM9p5gOlso+sYXFWMRLovu3tJCNLJZ8qbTfgY4YMF+BcVkmSfWOvhs
-         13M7hUiPHxHnFvUYMNToOuEw3Xt42jkZap4U/BEuMWtBTk3C2BcpgwGcDTkGoSTm0Lj/
-         heltmI3Ir5SZd8mEgpcgcJADesi7I+5ycdTLNodYCotWp2+EACd75a+X4IDSX/SxHghu
-         raktI6iwBEwxc4dd4JHOMHC6jY61F0rMP3tLeaMwyYljPj7aA1t5+I3+zri0ARsQhech
-         LDEG676N+nKY+46F6p0cymqNpPyVt4lKCl0YZOWJQ/mk01wnXp34sY4nZrZSm8O8SJGJ
-         ksyQ==
-X-Gm-Message-State: APjAAAXql8NlMYLBmKQOnQVhpG8rHw520N9Dq4SFtKVqqc417SJ+DWBl
-        /YlVv5an4DGRl8qCF760BW0=
-X-Google-Smtp-Source: APXvYqwI/dOtmxmOjPbR8FshFhAOZ0ab7pn9JQXRzgbKq1I1gC2KkVRR+g8hGqFnge93QOnLy87pAw==
-X-Received: by 2002:a63:dd17:: with SMTP id t23mr4921994pgg.57.1559240467368;
-        Thu, 30 May 2019 11:21:07 -0700 (PDT)
-Received: from hari-Inspiron-1545 ([183.83.89.153])
-        by smtp.gmail.com with ESMTPSA id e4sm3141399pgi.80.2019.05.30.11.21.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 May 2019 11:21:06 -0700 (PDT)
-Date:   Thu, 30 May 2019 23:51:02 +0530
-From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
-To:     Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: dpt_i2o: Remove call memset after dma_alloc_coherent
-Message-ID: <20190530182102.GA8140@hari-Inspiron-1545>
+        Thu, 30 May 2019 14:22:55 -0400
+Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 97543C00B0;
+        Thu, 30 May 2019 18:23:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1559240584; bh=tXKhvVlPB83lnrd1soG4Udon/Z/gh72d6RoQk4zGMQY=;
+        h=From:Subject:To:CC:Date:From;
+        b=AWJDMB/lKPYORIWltA0gVIDA/bblb/OfrBvX4EsMpJtq5ysYbRaFFJNcKic+AmHEt
+         bFW6N58qK4VY5vpdBkf6rI3gew7gnjCfI9XQQsNoF3ZGHcX/Dsm7ZlXUQI6U7WBS4S
+         fVcTZcUQ0QX1ut8uC73HLqCcw+MZBH2C5W1RFaQgt836+zxTOmBNL5fF/mhlD5EP8N
+         x0yChiH+/zJ5prVF3ahLy3REMlahcxJZDAeFcN5vRAG0HhblkGDrTbGWyArSHw0RGU
+         lD6jt4lQhljX1J5jPd0J3PjVZMMXufV2+uY/2HFUTRkPjGPWpVuOWg0T3tEHWy6CtH
+         LGJjQckwzDhsg==
+Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
+        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 19922A0095;
+        Thu, 30 May 2019 18:22:51 +0000 (UTC)
+Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.106) by
+ US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 30 May 2019 11:22:51 -0700
+Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.103) by
+ IN01WEHTCB.internal.synopsys.com (10.144.199.105) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 30 May 2019 23:52:50 +0530
+Received: from [10.10.161.35] (10.10.161.35) by
+ IN01WEHTCA.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 30 May 2019 23:53:02 +0530
+X-Mozilla-News-Host: news://gmane.comp.lib.uclibc.buildroot:119
+From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vgupta@synopsys.com; keydata=
+ mQINBFEffBMBEADIXSn0fEQcM8GPYFZyvBrY8456hGplRnLLFimPi/BBGFA24IR+B/Vh/EFk
+ B5LAyKuPEEbR3WSVB1x7TovwEErPWKmhHFbyugdCKDv7qWVj7pOB+vqycTG3i16eixB69row
+ lDkZ2RQyy1i/wOtHt8Kr69V9aMOIVIlBNjx5vNOjxfOLux3C0SRl1veA8sdkoSACY3McOqJ8
+ zR8q1mZDRHCfz+aNxgmVIVFN2JY29zBNOeCzNL1b6ndjU73whH/1hd9YMx2Sp149T8MBpkuQ
+ cFYUPYm8Mn0dQ5PHAide+D3iKCHMupX0ux1Y6g7Ym9jhVtxq3OdUI5I5vsED7NgV9c8++baM
+ 7j7ext5v0l8UeulHfj4LglTaJIvwbUrCGgtyS9haKlUHbmey/af1j0sTrGxZs1ky1cTX7yeF
+ nSYs12GRiVZkh/Pf3nRLkjV+kH++ZtR1GZLqwamiYZhAHjo1Vzyl50JT9EuX07/XTyq/Bx6E
+ dcJWr79ZphJ+mR2HrMdvZo3VSpXEgjROpYlD4GKUApFxW6RrZkvMzuR2bqi48FThXKhFXJBd
+ JiTfiO8tpXaHg/yh/V9vNQqdu7KmZIuZ0EdeZHoXe+8lxoNyQPcPSj7LcmE6gONJR8ZqAzyk
+ F5voeRIy005ZmJJ3VOH3Gw6Gz49LVy7Kz72yo1IPHZJNpSV5xwARAQABtCpWaW5lZXQgR3Vw
+ dGEgKGFsaWFzKSA8dmd1cHRhQHN5bm9wc3lzLmNvbT6JAj4EEwECACgCGwMGCwkIBwMCBhUI
+ AgkKCwQWAgMBAh4BAheABQJbBYpwBQkLx0HcAAoJEGnX8d3iisJeChAQAMR2UVbJyydOv3aV
+ jmqP47gVFq4Qml1weP5z6czl1I8n37bIhdW0/lV2Zll+yU1YGpMgdDTHiDqnGWi4pJeu4+c5
+ xsI/VqkH6WWXpfruhDsbJ3IJQ46//jb79ogjm6VVeGlOOYxx/G/RUUXZ12+CMPQo7Bv+Jb+t
+ NJnYXYMND2Dlr2TiRahFeeQo8uFbeEdJGDsSIbkOV0jzrYUAPeBwdN8N0eOB19KUgPqPAC4W
+ HCg2LJ/o6/BImN7bhEFDFu7gTT0nqFVZNXlOw4UcGGpM3dq/qu8ZgRE0turY9SsjKsJYKvg4
+ djAaOh7H9NJK72JOjUhXY/sMBwW5vnNwFyXCB5t4ZcNxStoxrMtyf35synJVinFy6wCzH3eJ
+ XYNfFsv4gjF3l9VYmGEJeI8JG/ljYQVjsQxcrU1lf8lfARuNkleUL8Y3rtxn6eZVtAlJE8q2
+ hBgu/RUj79BKnWEPFmxfKsaj8of+5wubTkP0I5tXh0akKZlVwQ3lbDdHxznejcVCwyjXBSny
+ d0+qKIXX1eMh0/5sDYM06/B34rQyq9HZVVPRHdvsfwCU0s3G+5Fai02mK68okr8TECOzqZtG
+ cuQmkAeegdY70Bpzfbwxo45WWQq8dSRURA7KDeY5LutMphQPIP2syqgIaiEatHgwetyVCOt6
+ tf3ClCidHNaGky9KcNSQ
+Subject: single copy atomicity for double load/stores on 32-bit systems
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <Will.Deacon@arm.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+CC:     arcml <linux-snps-arc@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Message-ID: <2fd3a455-6267-5d21-c530-41964a4f6ce9@synopsys.com>
+Date:   Thu, 30 May 2019 11:22:42 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.10.161.35]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes below warning reported by coccicheck
+Hi Peter,
 
-/drivers/scsi/dpt_i2o.c:3092:11-29: WARNING: dma_alloc_coherent use in
-sys_tbl already zeroes out memory,  so memset is not needed
-./drivers/scsi/dpt_i2o.c:2802:10-28: WARNING: dma_alloc_coherent use in
-status already zeroes out memory,  so memset is not needed
-./drivers/scsi/dpt_i2o.c:2856:20-38: WARNING: dma_alloc_coherent use in
-pHba -> reply_pool already zeroes out memory,  so memset is not needed
-./drivers/scsi/dpt_i2o.c:1331:10-28: WARNING: dma_alloc_coherent use in
-status already zeroes out memory,  so memset is not needed
+Had an interesting lunch time discussion with our hardware architects pertinent to
+"minimal guarantees expected of a CPU" section of memory-barriers.txt
 
-Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
----
- drivers/scsi/dpt_i2o.c | 4 ----
- 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
-index a3afd14..128d4f9 100644
---- a/drivers/scsi/dpt_i2o.c
-+++ b/drivers/scsi/dpt_i2o.c
-@@ -1334,7 +1334,6 @@ static s32 adpt_i2o_reset_hba(adpt_hba* pHba)
- 		printk(KERN_ERR"IOP reset failed - no free memory.\n");
- 		return -ENOMEM;
- 	}
--	memset(status,0,4);
- 
- 	msg[0]=EIGHT_WORD_MSG_SIZE|SGL_OFFSET_0;
- 	msg[1]=I2O_CMD_ADAPTER_RESET<<24|HOST_TID<<12|ADAPTER_TID;
-@@ -2806,7 +2805,6 @@ static s32 adpt_i2o_init_outbound_q(adpt_hba* pHba)
- 			pHba->name);
- 		return -ENOMEM;
- 	}
--	memset(status, 0, 4);
- 
- 	writel(EIGHT_WORD_MSG_SIZE| SGL_OFFSET_6, &msg[0]);
- 	writel(I2O_CMD_OUTBOUND_INIT<<24 | HOST_TID<<12 | ADAPTER_TID, &msg[1]);
-@@ -2860,7 +2858,6 @@ static s32 adpt_i2o_init_outbound_q(adpt_hba* pHba)
- 		printk(KERN_ERR "%s: Could not allocate reply pool\n", pHba->name);
- 		return -ENOMEM;
- 	}
--	memset(pHba->reply_pool, 0 , pHba->reply_fifo_size * REPLY_FRAME_SIZE * 4);
- 
- 	for(i = 0; i < pHba->reply_fifo_size; i++) {
- 		writel(pHba->reply_pool_pa + (i * REPLY_FRAME_SIZE * 4),
-@@ -3095,7 +3092,6 @@ static int adpt_i2o_build_sys_table(void)
- 		printk(KERN_WARNING "SysTab Set failed. Out of memory.\n");	
- 		return -ENOMEM;
- 	}
--	memset(sys_tbl, 0, sys_tbl_len);
- 
- 	sys_tbl->num_entries = hba_count;
- 	sys_tbl->version = I2OVERSION;
--- 
-2.7.4
+|  (*) These guarantees apply only to properly aligned and sized scalar
+|     variables.  "Properly sized" currently means variables that are
+|     the same size as "char", "short", "int" and "long".  "Properly
+|     aligned" means the natural alignment, thus no constraints for
+|     "char", two-byte alignment for "short", four-byte alignment for
+|     "int", and either four-byte or eight-byte alignment for "long",
+|     on 32-bit and 64-bit systems, respectively.
 
+
+I'm not sure how to interpret "natural alignment" for the case of double
+load/stores on 32-bit systems where the hardware and ABI allow for 4 byte
+alignment (ARCv2 LDD/STD, ARM LDRD/STRD ....)
+
+I presume (and the question) that lkmm doesn't expect such 8 byte load/stores to
+be atomic unless 8-byte aligned
+
+ARMv7 arch ref manual seems to confirm this. Quoting
+
+| LDM, LDC, LDC2, LDRD, STM, STC, STC2, STRD, PUSH, POP, RFE, SRS, VLDM, VLDR,
+| VSTM, and VSTR instructions are executed as a sequence of word-aligned word
+| accesses. Each 32-bit word access is guaranteed to be single-copy atomic. A
+| subsequence of two or more word accesses from the sequence might not exhibit
+| single-copy atomicity
+
+While it seems reasonable form hardware pov to not implement such atomicity by
+default it seems there's an additional burden on application writers. They could
+be happily using a lockless algorithm with just a shared flag between 2 threads
+w/o need for any explicit synchronization. But upgrade to a new compiler which
+aggressively "packs" struct rendering long long 32-bit aligned (vs. 64-bit before)
+causing the code to suddenly stop working. Is the onus on them to declare such
+memory as c11 atomic or some such.
+
+Thx,
+-Vineet
