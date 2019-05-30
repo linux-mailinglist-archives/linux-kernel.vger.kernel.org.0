@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C7292F494
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:39:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47AD12EF07
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:52:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388584AbfE3Ejy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:39:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55746 "EHLO mail.kernel.org"
+        id S1731965AbfE3DTh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:19:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729120AbfE3DMg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:36 -0400
+        id S1730357AbfE3DPd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:33 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23AEB21BE2;
-        Thu, 30 May 2019 03:12:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F6FA24557;
+        Thu, 30 May 2019 03:15:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185956;
-        bh=jQeLfbc24WqIqBDon1czJa4L8rIcHQyFNvuEV7UatyI=;
+        s=default; t=1559186133;
+        bh=wNIIGNdY+3Ff5ByT6wZINYkqc6SV4Xy+MelFjAUT/GE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ImRkrb3nPwdFAdyX9KwLizZI1+RmSk86hVd4XoP05dVD7MQWbbBFLiKyvXd1dMMII
-         dHONF58Vh1khXso24IkhjhwClqkb017vm139zVt9htEpIiF0jCkecTbPXnbkQ/RmYW
-         Dns9urN//p8+mI9i9cRdo47Ig31PVpXASmxBLVhs=
+        b=fmHJmoDF9jErKUYofZgWa1vUzDHHkUg//l5ZDgbMMGj7B2LCyHvuQi9NrjV9fPY9G
+         qIfFhyRXL9WBMArNG3qw0taTEXbPQ+7mc4M7fMnWory2Zvlr0uZzJKF2KOLfGQi1fd
+         cIGizZ1a/oL5Kk1MejTwwe+NEDEB0enEa0EkQC3M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Matthias Schwarzott <zzam@gentoo.org>,
+        Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 372/405] spi : spi-topcliff-pch: Fix to handle empty DMA buffers
+Subject: [PATCH 5.0 297/346] media: si2165: fix a missing check of return value
 Date:   Wed, 29 May 2019 20:06:10 -0700
-Message-Id: <20190530030559.549780257@linuxfoundation.org>
+Message-Id: <20190530030555.908707442@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,63 +46,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f37d8e67f39e6d3eaf4cc5471e8a3d21209843c6 ]
+[ Upstream commit 0ab34a08812a3334350dbaf69a018ee0ab3d2ddd ]
 
-pch_alloc_dma_buf allocated tx, rx DMA buffers which can fail. Further,
-these buffers are used without a check. The patch checks for these
-failures and sends the error upstream.
+si2165_readreg8() may fail. Looking into si2165_readreg8(), we will find
+that "val_tmp" will be an uninitialized value when regmap_read() fails.
+"val_tmp" is then assigned to "val". So if si2165_readreg8() fails,
+"val" will be a random value. Further use will lead to undefined
+behaviors. The fix checks if si2165_readreg8() fails, and if so, returns
+its error code upstream.
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Reviewed-by: Matthias Schwarzott <zzam@gentoo.org>
+Tested-by: Matthias Schwarzott <zzam@gentoo.org>
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-topcliff-pch.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ drivers/media/dvb-frontends/si2165.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
-index fba3f180f233b..8a5966963834c 100644
---- a/drivers/spi/spi-topcliff-pch.c
-+++ b/drivers/spi/spi-topcliff-pch.c
-@@ -1299,18 +1299,27 @@ static void pch_free_dma_buf(struct pch_spi_board_data *board_dat,
- 				  dma->rx_buf_virt, dma->rx_buf_dma);
- }
+diff --git a/drivers/media/dvb-frontends/si2165.c b/drivers/media/dvb-frontends/si2165.c
+index feacd8da421da..d55d8f169dca6 100644
+--- a/drivers/media/dvb-frontends/si2165.c
++++ b/drivers/media/dvb-frontends/si2165.c
+@@ -275,18 +275,20 @@ static u32 si2165_get_fe_clk(struct si2165_state *state)
  
--static void pch_alloc_dma_buf(struct pch_spi_board_data *board_dat,
-+static int pch_alloc_dma_buf(struct pch_spi_board_data *board_dat,
- 			      struct pch_spi_data *data)
+ static int si2165_wait_init_done(struct si2165_state *state)
  {
- 	struct pch_spi_dma_ctrl *dma;
+-	int ret = -EINVAL;
 +	int ret;
+ 	u8 val = 0;
+ 	int i;
  
- 	dma = &data->dma;
-+	ret = 0;
- 	/* Get Consistent memory for Tx DMA */
- 	dma->tx_buf_virt = dma_alloc_coherent(&board_dat->pdev->dev,
- 				PCH_BUF_SIZE, &dma->tx_buf_dma, GFP_KERNEL);
-+	if (!dma->tx_buf_virt)
-+		ret = -ENOMEM;
-+
- 	/* Get Consistent memory for Rx DMA */
- 	dma->rx_buf_virt = dma_alloc_coherent(&board_dat->pdev->dev,
- 				PCH_BUF_SIZE, &dma->rx_buf_dma, GFP_KERNEL);
-+	if (!dma->rx_buf_virt)
-+		ret = -ENOMEM;
-+
-+	return ret;
+ 	for (i = 0; i < 3; ++i) {
+-		si2165_readreg8(state, REG_INIT_DONE, &val);
++		ret = si2165_readreg8(state, REG_INIT_DONE, &val);
++		if (ret < 0)
++			return ret;
+ 		if (val == 0x01)
+ 			return 0;
+ 		usleep_range(1000, 50000);
+ 	}
+ 	dev_err(&state->client->dev, "init_done was not set\n");
+-	return ret;
++	return -EINVAL;
  }
  
- static int pch_spi_pd_probe(struct platform_device *plat_dev)
-@@ -1387,7 +1396,9 @@ static int pch_spi_pd_probe(struct platform_device *plat_dev)
- 
- 	if (use_dma) {
- 		dev_info(&plat_dev->dev, "Use DMA for data transfers\n");
--		pch_alloc_dma_buf(board_dat, data);
-+		ret = pch_alloc_dma_buf(board_dat, data);
-+		if (ret)
-+			goto err_spi_register_master;
- 	}
- 
- 	ret = spi_register_master(master);
+ static int si2165_upload_firmware_block(struct si2165_state *state,
 -- 
 2.20.1
 
