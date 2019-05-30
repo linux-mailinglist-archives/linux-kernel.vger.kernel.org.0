@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60AB52EE58
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:47:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C28E82F461
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:38:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732248AbfE3DUd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:20:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40642 "EHLO mail.kernel.org"
+        id S2388380AbfE3Ehx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:37:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730526AbfE3DPz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:15:55 -0400
+        id S1727459AbfE3DMu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:12:50 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F7CA24595;
-        Thu, 30 May 2019 03:15:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B16C24532;
+        Thu, 30 May 2019 03:12:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186155;
-        bh=xKdvYiTrysXl8tAQY5xmYsYmJtshszSnb1+V0B/wqFY=;
+        s=default; t=1559185969;
+        bh=BJ39WeU6Gz7O+UFcSfdaXtCV0vuqbjEefStskKc/mqo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dDc0gcDMuhkCf9mhEZL7b3B5dntyVvtGiT5V1mr6n1prwlVHh79HMn2BfgJtk9CAf
-         BPT++tFukthArCmhSDsIr7UgnLTIac7JKJSRIMswvjcbU+3l6CeUuS2zksEMgojD72
-         iNSGmajThSkD9yN2LOuBDSKNBOs6s44WaUhPbSss=
+        b=GEHJfF5FttDMxuPAIUEOZGv8nHpQAvUCpU4rnwTzQBA5fg17T0KdT5Sohl21muIXM
+         v3k3LLEbwyaigDiK0yB/2BYhv36IeeEs9gIlXNysHrtTNEA2PDngUSQ4lMRu6s5Oc9
+         dtItXFyglqOegmFPK8tRLr9twR2ymiMfFZXexbiA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Jiada Wang <jiada_wang@mentor.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Trent Piepho <tpiepho@impinj.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 306/346] media: gspca: do not resubmit URBs when streaming has stopped
-Date:   Wed, 29 May 2019 20:06:19 -0700
-Message-Id: <20190530030556.342442279@linuxfoundation.org>
+Subject: [PATCH 5.1 382/405] spi: imx: stop buffer overflow in RX FIFO flush
+Date:   Wed, 29 May 2019 20:06:20 -0700
+Message-Id: <20190530030600.062448385@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,67 +48,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e6f8bd59c28f758feea403a70d6c3ef28c50959f ]
+[ Upstream commit c842749ea1d32513f9e603c074d60d7aa07cb2ef ]
 
-When streaming is stopped all URBs are killed, but in fill_frame and in
-bulk_irq this results in an attempt to resubmit the killed URB. That is
-not what you want and causes spurious kernel messages.
+Commit 71abd29057cb ("spi: imx: Add support for SPI Slave mode") added
+an RX FIFO flush before start of a transfer.  In slave mode, the master
+may have sent more data than expected and this data will still be in the
+RX FIFO at the start of the next transfer, and so needs to be flushed.
 
-So check if streaming has stopped before resubmitting.
+However, the code to do the flush was accidentally saving this data into
+the previous transfer's RX buffer, clobbering the contents of whatever
+followed that buffer.
 
-Also check against gspca_dev->streaming rather than vb2_start_streaming_called()
-since vb2_start_streaming_called() will return true when in stop_streaming,
-but gspca_dev->streaming is set to false when stop_streaming is called.
+Change it to empty the FIFO and throw away the data.  Every one of the
+RX functions for the different eCSPI versions and modes reads the RX
+FIFO data using the same readl() call, so just use that, rather than
+using the spi_imx->rx function pointer and making sure all the different
+rx functions have a working "throw away" mode.
 
-Fixes: 6992effe5344 ("gspca: Kill all URBs before releasing any of them")
+There is another issue, which affects master mode when switching from
+DMA to PIO.  There can be extra data in the RX FIFO which triggers this
+flush code, causing memory corruption in the same manner.  I don't know
+why this data is unexpectedly in the FIFO.  It's likely there is a
+different bug or erratum responsible for that.  But regardless of that,
+I think this is proper fix the for bug at hand here.
 
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: 71abd29057cb ("spi: imx: Add support for SPI Slave mode")
+Cc: Jiada Wang <jiada_wang@mentor.com>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Stefan Agner <stefan@agner.ch>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Trent Piepho <tpiepho@impinj.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/usb/gspca/gspca.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/spi/spi-imx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/gspca/gspca.c b/drivers/media/usb/gspca/gspca.c
-index cac8e5f0543be..bdb81e93b74dd 100644
---- a/drivers/media/usb/gspca/gspca.c
-+++ b/drivers/media/usb/gspca/gspca.c
-@@ -314,6 +314,8 @@ static void fill_frame(struct gspca_dev *gspca_dev,
- 	}
+diff --git a/drivers/spi/spi-imx.c b/drivers/spi/spi-imx.c
+index 6ec647bbba772..a81ae29aa68a9 100644
+--- a/drivers/spi/spi-imx.c
++++ b/drivers/spi/spi-imx.c
+@@ -1494,7 +1494,7 @@ static int spi_imx_transfer(struct spi_device *spi,
  
- resubmit:
-+	if (!gspca_dev->streaming)
-+		return;
- 	/* resubmit the URB */
- 	st = usb_submit_urb(urb, GFP_ATOMIC);
- 	if (st < 0)
-@@ -330,7 +332,7 @@ static void isoc_irq(struct urb *urb)
- 	struct gspca_dev *gspca_dev = (struct gspca_dev *) urb->context;
+ 	/* flush rxfifo before transfer */
+ 	while (spi_imx->devtype_data->rx_available(spi_imx))
+-		spi_imx->rx(spi_imx);
++		readl(spi_imx->base + MXC_CSPIRXDATA);
  
- 	gspca_dbg(gspca_dev, D_PACK, "isoc irq\n");
--	if (!vb2_start_streaming_called(&gspca_dev->queue))
-+	if (!gspca_dev->streaming)
- 		return;
- 	fill_frame(gspca_dev, urb);
- }
-@@ -344,7 +346,7 @@ static void bulk_irq(struct urb *urb)
- 	int st;
- 
- 	gspca_dbg(gspca_dev, D_PACK, "bulk irq\n");
--	if (!vb2_start_streaming_called(&gspca_dev->queue))
-+	if (!gspca_dev->streaming)
- 		return;
- 	switch (urb->status) {
- 	case 0:
-@@ -367,6 +369,8 @@ static void bulk_irq(struct urb *urb)
- 				urb->actual_length);
- 
- resubmit:
-+	if (!gspca_dev->streaming)
-+		return;
- 	/* resubmit the URB */
- 	if (gspca_dev->cam.bulk_nurbs != 0) {
- 		st = usb_submit_urb(urb, GFP_ATOMIC);
+ 	if (spi_imx->slave_mode)
+ 		return spi_imx_pio_transfer_slave(spi, transfer);
 -- 
 2.20.1
 
