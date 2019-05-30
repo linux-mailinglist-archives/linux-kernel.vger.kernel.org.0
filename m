@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCE772F332
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:27:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B64D2F0B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:06:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728967AbfE3DOW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:14:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52834 "EHLO mail.kernel.org"
+        id S1727065AbfE3EGc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:06:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47768 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728765AbfE3DL6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:11:58 -0400
+        id S1731169AbfE3DRf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:35 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 11FB6244D8;
-        Thu, 30 May 2019 03:11:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9544A246BB;
+        Thu, 30 May 2019 03:17:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185918;
-        bh=j91OqkTwZ//nGyohl+Vy3HK8li34gMyfqkFAoBEWr/c=;
+        s=default; t=1559186254;
+        bh=NVvAzGOIg97qKyAva+g4y1yXfLiTQHg1ERmm+Zug250=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TI2ic4naXztl2bflKzPw4318muKGk3Ab8IlsBonGRmUywe8NovuPQNpsP8bAQS5uZ
-         U5ZI9l3Hl/o3A6zqnOni1ZRZVc91Nu2urf9dCrVCctmPspls14wxF7c/jgUZi9z26e
-         ii+viWqUeiSvIvjw2qoM66HBsD1zFVJSM88+qd/U=
+        b=ATaeByppsrPo4o3JKwpRYydMSOClOnM2SCg8109Ra+r/DtrHetn7aupF3C95JRVSi
+         ZzD8tc51zpSahUSc784MsYF0Y2mTd8BAfl+iDB3MCK+7Vlxh1LmKFw7A1prqkAiKzy
+         MnKZkXoNmiihuumWQH3bqe8rw/0fJhvB2wxjT1VQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot <syzbot+f648cfb7e0b52bf7ae32@syzkaller.appspotmail.com>,
-        Kay Sievers <kay@vrfy.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Sasha Levin <sashal@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 5.1 285/405] kobject: Dont trigger kobject_uevent(KOBJ_REMOVE) twice.
+        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 125/276] audit: fix a memory leak bug
 Date:   Wed, 29 May 2019 20:04:43 -0700
-Message-Id: <20190530030555.293958176@linuxfoundation.org>
+Message-Id: <20190530030533.643045833@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,70 +45,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c03a0fd0b609e2f5c669c2b7f27c8e1928e9196e ]
+[ Upstream commit 70c4cf17e445264453bc5323db3e50aa0ac9e81f ]
 
-syzbot is hitting use-after-free bug in uinput module [1]. This is because
-kobject_uevent(KOBJ_REMOVE) is called again due to commit 0f4dafc0563c6c49
-("Kobject: auto-cleanup on final unref") after memory allocation fault
-injection made kobject_uevent(KOBJ_REMOVE) from device_del() from
-input_unregister_device() fail, while uinput_destroy_device() is expecting
-that kobject_uevent(KOBJ_REMOVE) is not called after device_del() from
-input_unregister_device() completed.
+In audit_rule_change(), audit_data_to_entry() is firstly invoked to
+translate the payload data to the kernel's rule representation. In
+audit_data_to_entry(), depending on the audit field type, an audit tree may
+be created in audit_make_tree(), which eventually invokes kmalloc() to
+allocate the tree.  Since this tree is a temporary tree, it will be then
+freed in the following execution, e.g., audit_add_rule() if the message
+type is AUDIT_ADD_RULE or audit_del_rule() if the message type is
+AUDIT_DEL_RULE. However, if the message type is neither AUDIT_ADD_RULE nor
+AUDIT_DEL_RULE, i.e., the default case of the switch statement, this
+temporary tree is not freed.
 
-That commit intended to catch cases where nobody even attempted to send
-"remove" uevents. But there is no guarantee that an event will ultimately
-be sent. We are at the point of no return as far as the rest of the kernel
-is concerned; there are no repeats or do-overs.
+To fix this issue, only allocate the tree when the type is AUDIT_ADD_RULE
+or AUDIT_DEL_RULE.
 
-Also, it is not clear whether some subsystem depends on that commit.
-If no subsystem depends on that commit, it will be better to remove
-the state_{add,remove}_uevent_sent logic. But we don't want to risk
-a regression (in a patch which will be backported) by trying to remove
-that logic. Therefore, as a first step, let's avoid the use-after-free bug
-by making sure that kobject_uevent(KOBJ_REMOVE) won't be triggered twice.
-
-[1] https://syzkaller.appspot.com/bug?id=8b17c134fe938bbddd75a45afaa9e68af43a362d
-
-Reported-by: syzbot <syzbot+f648cfb7e0b52bf7ae32@syzkaller.appspotmail.com>
-Analyzed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Fixes: 0f4dafc0563c6c49 ("Kobject: auto-cleanup on final unref")
-Cc: Kay Sievers <kay@vrfy.org>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Reviewed-by: Richard Guy Briggs <rgb@redhat.com>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/kobject_uevent.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ kernel/auditfilter.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
-index f05802687ba4d..7998affa45d49 100644
---- a/lib/kobject_uevent.c
-+++ b/lib/kobject_uevent.c
-@@ -466,6 +466,13 @@ int kobject_uevent_env(struct kobject *kobj, enum kobject_action action,
- 	int i = 0;
- 	int retval = 0;
+diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
+index bf309f2592c46..425c67e4f5681 100644
+--- a/kernel/auditfilter.c
++++ b/kernel/auditfilter.c
+@@ -1114,22 +1114,24 @@ int audit_rule_change(int type, int seq, void *data, size_t datasz)
+ 	int err = 0;
+ 	struct audit_entry *entry;
  
-+	/*
-+	 * Mark "remove" event done regardless of result, for some subsystems
-+	 * do not want to re-trigger "remove" event via automatic cleanup.
-+	 */
-+	if (action == KOBJ_REMOVE)
-+		kobj->state_remove_uevent_sent = 1;
-+
- 	pr_debug("kobject: '%s' (%p): %s\n",
- 		 kobject_name(kobj), kobj, __func__);
- 
-@@ -567,10 +574,6 @@ int kobject_uevent_env(struct kobject *kobj, enum kobject_action action,
- 		kobj->state_add_uevent_sent = 1;
- 		break;
- 
--	case KOBJ_REMOVE:
--		kobj->state_remove_uevent_sent = 1;
--		break;
+-	entry = audit_data_to_entry(data, datasz);
+-	if (IS_ERR(entry))
+-		return PTR_ERR(entry);
 -
- 	case KOBJ_UNBIND:
- 		zap_modalias_env(env);
+ 	switch (type) {
+ 	case AUDIT_ADD_RULE:
++		entry = audit_data_to_entry(data, datasz);
++		if (IS_ERR(entry))
++			return PTR_ERR(entry);
+ 		err = audit_add_rule(entry);
+ 		audit_log_rule_change("add_rule", &entry->rule, !err);
  		break;
+ 	case AUDIT_DEL_RULE:
++		entry = audit_data_to_entry(data, datasz);
++		if (IS_ERR(entry))
++			return PTR_ERR(entry);
+ 		err = audit_del_rule(entry);
+ 		audit_log_rule_change("remove_rule", &entry->rule, !err);
+ 		break;
+ 	default:
+-		err = -EINVAL;
+ 		WARN_ON(1);
++		return -EINVAL;
+ 	}
+ 
+ 	if (err || type == AUDIT_DEL_RULE) {
 -- 
 2.20.1
 
