@@ -2,88 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D7B02FCD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 15:59:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A70872FC99
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 15:45:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727312AbfE3N7W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 09:59:22 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:18056 "EHLO huawei.com"
+        id S1727075AbfE3Npw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 09:45:52 -0400
+Received: from mail-eopbgr20089.outbound.protection.outlook.com ([40.107.2.89]:27968
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726232AbfE3N7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 09:59:21 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 6E5F5EED7AC29741A111;
-        Thu, 30 May 2019 21:59:19 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Thu, 30 May 2019
- 21:59:10 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <jeyu@kernel.org>, <gregkh@linuxfoundation.org>
-CC:     <linux-kernel@vger.kernel.org>, <paulmck@linux.ibm.com>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH v2] kernel/module: Fix mem leak in module_add_modinfo_attrs
-Date:   Thu, 30 May 2019 21:43:04 +0800
-Message-ID: <20190530134304.4976-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-In-Reply-To: <20190515161212.28040-1-yuehaibing@huawei.com>
-References: <20190515161212.28040-1-yuehaibing@huawei.com>
+        id S1726851AbfE3Npv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 09:45:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TNuPzzuKwevPJZO0nIXfqNwbwVit452pWgKVnnPz04c=;
+ b=a4w65cG1JtTVNOGrwhcdpml1TQraoPKn0kPH4vUJZJ1JoZFDCLV6Pp9KzaKjHLIgD8z8X0HHatx0/e7n9jYXGnKZaXmBb2/WwvDRMCLSVdYjXcLpaqTYGIMtVSMlcXK0ousD9VEpu2AEApcC4oHqA5yeicBH0cODwi8Y1LF7dz4=
+Received: from VI1PR04MB4445.eurprd04.prod.outlook.com (20.177.55.161) by
+ VI1PR04MB6304.eurprd04.prod.outlook.com (20.179.28.148) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1922.18; Thu, 30 May 2019 13:45:47 +0000
+Received: from VI1PR04MB4445.eurprd04.prod.outlook.com
+ ([fe80::39fd:f3c3:46fc:f872]) by VI1PR04MB4445.eurprd04.prod.outlook.com
+ ([fe80::39fd:f3c3:46fc:f872%7]) with mapi id 15.20.1922.021; Thu, 30 May 2019
+ 13:45:47 +0000
+From:   Iuliana Prodan <iuliana.prodan@nxp.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+CC:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH] crypto: gcm - fix cacheline sharing
+Thread-Topic: [PATCH] crypto: gcm - fix cacheline sharing
+Thread-Index: AQHVFkF/PjPULMOhfkiEXDJZ6fiBzQ==
+Date:   Thu, 30 May 2019 13:45:47 +0000
+Message-ID: <VI1PR04MB444562A2352FE4BAD7F681258C180@VI1PR04MB4445.eurprd04.prod.outlook.com>
+References: <1559149856-7938-1-git-send-email-iuliana.prodan@nxp.com>
+ <20190529202728.GA35103@gmail.com>
+ <CAKv+Gu-4KqcY=WhwY98JigTzeXaL5ggYEcu7+kNzNtpO2FLQXg@mail.gmail.com>
+ <VI1PR04MB44459EEF7BCD3458BB3D143D8C180@VI1PR04MB4445.eurprd04.prod.outlook.com>
+ <20190530133427.qrwjzctac2x6nsby@gondor.apana.org.au>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=iuliana.prodan@nxp.com; 
+x-originating-ip: [212.146.100.6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: fdc518eb-467f-48d6-18bc-08d6e5051ecb
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB6304;
+x-ms-traffictypediagnostic: VI1PR04MB6304:
+x-microsoft-antispam-prvs: <VI1PR04MB6304CFA91476FBC72E9929E08C180@VI1PR04MB6304.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 00531FAC2C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(136003)(376002)(39860400002)(346002)(189003)(199004)(55016002)(66066001)(5660300002)(6116002)(3846002)(54906003)(256004)(66446008)(8676002)(81166006)(9686003)(86362001)(64756008)(81156014)(68736007)(2906002)(25786009)(74316002)(14454004)(76176011)(52536014)(316002)(8936002)(71190400001)(446003)(99286004)(6436002)(7696005)(478600001)(6506007)(102836004)(53546011)(305945005)(4326008)(186003)(26005)(73956011)(476003)(66946007)(486006)(53936002)(71200400001)(66556008)(66476007)(6916009)(7736002)(6246003)(44832011)(229853002)(4744005)(33656002)(76116006);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB6304;H:VI1PR04MB4445.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: aVa2+YfeH68Fjdmp3lt1TeFEjGJH8+w2aYa9VHrnwzb1Ci2xTZKvwxHyp6L8OWPtfWm8xx0EA4w4JU9QOukuPsF3q5BxWwicWkhfopSmObzPUKUDrmg6Rfr/ToL+GCbCjpHVWQu5Qwc5IiApxQ8aTgptR0gFxtOy8tK71IMnS3nmpe0P64QVmlf3OyUEqaHfHn77pYFDwLwfw0k9KUwoHT1AaLNjZzPH1RMtKAwlZAyfzLXgrpjnbdbcXwVcHKm7tV5JNqpXCK+W0LOR6qqkBbWkbXx/caDxm/jH+/81rhnAAFVBpUgBaml3CQA4E3a9N9ZcnE/M/z7D9/JCz7fcxiktOuvJjxplsbYO8qe5cXXWqG/HvMYjMLyDN3gkTyhOjIZorXN/6OEBSR9ekAOcbPoz8DdgnLNYq4lbfIg3CuY=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fdc518eb-467f-48d6-18bc-08d6e5051ecb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 May 2019 13:45:47.2378
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: iuliana.prodan@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6304
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In module_add_modinfo_attrs if sysfs_create_file
-fails, we forget to free allocated modinfo_attrs
-and roll back the sysfs files.
-
-Fixes: 03e88ae1b13d ("[PATCH] fix module sysfs files reference counting")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
-v2: free from '--i' instead of 'i--'  
----
- kernel/module.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/module.c b/kernel/module.c
-index 6e6712b..78e21a7 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -1723,15 +1723,29 @@ static int module_add_modinfo_attrs(struct module *mod)
- 		return -ENOMEM;
- 
- 	temp_attr = mod->modinfo_attrs;
--	for (i = 0; (attr = modinfo_attrs[i]) && !error; i++) {
-+	for (i = 0; (attr = modinfo_attrs[i]); i++) {
- 		if (!attr->test || attr->test(mod)) {
- 			memcpy(temp_attr, attr, sizeof(*temp_attr));
- 			sysfs_attr_init(&temp_attr->attr);
- 			error = sysfs_create_file(&mod->mkobj.kobj,
- 					&temp_attr->attr);
-+			if (error)
-+				goto error_out;
- 			++temp_attr;
- 		}
- 	}
-+
-+	return 0;
-+
-+error_out:
-+	for (; (attr = &mod->modinfo_attrs[i]) && i >= 0; --i) {
-+		if (!attr->attr.name)
-+			break;
-+		sysfs_remove_file(&mod->mkobj.kobj, &attr->attr);
-+		if (attr->free)
-+			attr->free(mod);
-+	}
-+	kfree(mod->modinfo_attrs);
- 	return error;
- }
- 
--- 
-2.7.4
-
-
+On 5/30/2019 4:34 PM, Herbert Xu wrote:=0A=
+> On Thu, May 30, 2019 at 01:29:41PM +0000, Iuliana Prodan wrote:=0A=
+>>=0A=
+>> I've tried coping the IV before the extended descriptor allocation, but=
+=0A=
+>> is not working and to make it work will need to make more changes in=0A=
+>> CAAM. We need the original iv, and if we move it before=0A=
+>> skcipher_edesc_alloc we lose it.=0A=
+>> The fix exclusively in CAAM drv, to copy iv before DMA map, is more comp=
+lex.=0A=
+> =0A=
+> Why doesn't it work (apart from the fact that this only makes sense=0A=
+> for CBC and yet you're doing it for everything including CTR)?=0A=
+> =0A=
+> Cheers,=0A=
+> =0A=
+=0A=
+On the current structure of caamalg, to work, iv needs to be copied =0A=
+before memcpy(iv, req->iv, ivsize), from skcipher_edesc_alloc function. =0A=
+For this we need edesc, but this cannot be allocated before knowing how =0A=
+much memory we need. So, to make it work, we'll need to modify more in CAAM=
+.=0A=
+=0A=
+Thanks,=0A=
+Iulia=0A=
