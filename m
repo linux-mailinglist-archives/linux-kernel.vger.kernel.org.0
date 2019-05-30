@@ -2,53 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 437D830467
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 23:59:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3057F3047E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 00:02:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbfE3V6u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 17:58:50 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:60928 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726839AbfE3V6u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 17:58:50 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 8473314DB3D28;
-        Thu, 30 May 2019 14:49:07 -0700 (PDT)
-Date:   Thu, 30 May 2019 14:49:07 -0700 (PDT)
-Message-Id: <20190530.144907.723803908854753596.davem@davemloft.net>
-To:     ivan.khoronzhuk@linaro.org
-Cc:     grygorii.strashko@ti.com, linux-omap@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: ethernet: ti: cpsw_ethtool: fix ethtool ring
- param set
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190529214753.21804-1-ivan.khoronzhuk@linaro.org>
-References: <20190529214753.21804-1-ivan.khoronzhuk@linaro.org>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 30 May 2019 14:49:07 -0700 (PDT)
+        id S1726823AbfE3WB7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 18:01:59 -0400
+Received: from ozlabs.org ([203.11.71.1]:57473 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726576AbfE3WB6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 18:01:58 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45FLsl1nFVz9s4Y;
+        Fri, 31 May 2019 07:52:42 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1559253163;
+        bh=gOBTgmZaBjxqpDUeDB6t2pE2Hbw5l3eOipRGnzHP7pY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=vI/yXlJ9Kg2gUNdSiinuIHNmEvmSkpTp3/pZuQBUx72Lj5c2/lRxR37AUTv/wlZCd
+         CgacJXRf0cfNQ57AaXcUf+an8tk0Js8H/SBK+kHfJ6ILwubtosii3uhGm+mkNfwSh0
+         l+DZce03wE21SVbFQPGmmZLHvIC/6PahnBtLnoBqdHCnq2lkEIbgLd/icrRVr9R8dL
+         /5ILl0P987A6lbjzzZk4R10ejU4OQGvcwvtNYkDOllGZAIhtQjqH6GYEV+h9eDA3mz
+         olag97kuov6+H5ary9uK0D60SbYvD+3+/05hW4C54Mmaw+Cg1ebnDbbc5DegjSQuP2
+         WcYrSAUI/e/vA==
+Date:   Fri, 31 May 2019 07:52:41 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Parav Pandit <parav@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: linux-next: Fixes tag needs some work in the net tree
+Message-ID: <20190531075241.63c45a9a@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/APS2ye.u3t/PPPabyavOeAO"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Date: Thu, 30 May 2019 00:47:53 +0300
+--Sig_/APS2ye.u3t/PPPabyavOeAO
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Fixes: 37e2d99b59c4765112533a1d38174fea58d28a51 ("ethtool: Ensure new
-> ring parameters are within bounds during SRINGPARAM")
-> 
-> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Hi all,
 
-Please do not chop up Fixes: tags into multiple lines.
+In commit
 
-Please do not place an empty line between Fixes: and other tags,
-they should all be together.
+  9414277a5df3 ("net/mlx5: Avoid double free in fs init error unwinding pat=
+h")
 
-Thank you.
+Fixes tag
+
+  Fixes: 40c3eebb49e51 ("net/mlx5: Add support in RDMA RX steering")
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Did you mean
+
+Fixes: 905f6bd30bb6 ("net/mlx5: Avoid double free of root ns in the error f=
+low path")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/APS2ye.u3t/PPPabyavOeAO
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzwUKkACgkQAVBC80lX
+0Gwb6Qf/WbXbNdJOvEKybT0z9SB+Ts6v8F2pQ3rKuW3RpXSwxg1qKSHfJc7To/rg
+VEdinIe7DURap+dkR5LzWHl/nN28iAENzCSPSXaAlGoMl3Rag3XDG94H7TEF8s9G
+vPQ4YX98Yl2GySnO60gMPxcPRVj6AKMBk/MNtwE/0kXKy9xeUwf/bd9F7FOcQoCv
+eWZv8MreB8o4CA/dYYalShE4hx+UyB8O39nv5uYa3hUZ+jjc8Hc/mQEJTIID9JVl
+Qd4F85ZmdO/Cknvd4K75TRdIKjd3r8xINQez6727buS4yH4HxLEJhy9F7mOylVGe
+KYBKrJM/J2fi1F7UpGkb0NudTzZRxQ==
+=Iy6v
+-----END PGP SIGNATURE-----
+
+--Sig_/APS2ye.u3t/PPPabyavOeAO--
