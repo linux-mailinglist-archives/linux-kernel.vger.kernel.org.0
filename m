@@ -2,97 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF1093021F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 20:43:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44EC630224
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 20:45:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726652AbfE3Snd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 14:43:33 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:39423 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726376AbfE3Snc (ORCPT
+        id S1726649AbfE3SpS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 14:45:18 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:56986 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726100AbfE3SpS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 14:43:32 -0400
-Received: by mail-qk1-f195.google.com with SMTP id i125so4569188qkd.6
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 11:43:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vUie64/qC+90Uz/gKolRXnUiAy4nHqngEGJ4fSt7KR8=;
-        b=DaZtLdpScPYOOF/BjxCxP3yGwR9TR5PeBbqHHquAFF79GiEXdykaOA1nAEk1QxqUYY
-         3KZGTVPojYgQlSQ5Gv3C+gId0iQBm7z0qKiQ8SJrtxHFqNDmmMQDiZ5lZWqWC0Jz4dtf
-         Rc+k9fHE98G8sueQYP0tWzZGODkOO5GFgkeIJ5kQhjt1Jd/CKDSaOfs4erhVpNWMEKUQ
-         OV8CPaUjCHIzblfU6Uuoj3XSHO3nSvjN0w3gqZPNT6fUVnOeUze7kqdzPmM3nn3A79+e
-         ENs8NXSyuFFopnP+cct7CRx0SFtGRSkRqXk9OumLDpbJJ1p+2LBmFAMUN7RWFq1Cc9KE
-         XQuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vUie64/qC+90Uz/gKolRXnUiAy4nHqngEGJ4fSt7KR8=;
-        b=AoY1jUzcm48AkBE0pcTLNQu7Ky/he9Gyk7sdqzgK/SDUDrSInQGsBoY+f2smIvhQvN
-         VGy5w1bpHKUOQGmZXhHqdi0l6vCKlu9ylsQfDDBj5+u939Ow1tdAbWQ7BPMdB/q/Yd3Y
-         HwS2eq2BbzdKaxoI5cuSSOqPpPtTq7ffKJxK579r0JQ9UWMW4GTVlnL0fyR1u/8avy0i
-         VH1BntKRsCLG5eE12c7Rvq//N0ba/bJvNfMCHE1BmIYxrvf5224VJ4LIqm5MsjBVuUv4
-         py8vwAZrdHgQv09n1j6UjtJy934CourC0YcjZ/8VZ/uDRYYYPvm7KDtLyZKjGpJUjHbR
-         HIVQ==
-X-Gm-Message-State: APjAAAVRTBe8U0RAp6gsS+GeU2bNoiLBjxBtVZFTFDeiusKftd0WVbxh
-        Y1lgLSLOzCEBcq0Yn6fPMePbWg==
-X-Google-Smtp-Source: APXvYqxLbqSRX5R4cR9BBYQXTcp54f3lB3QkcHo6jQRSMrdnMZAsFM01QpFSNz+egvbe8hz1F2Y7cw==
-X-Received: by 2002:a05:620a:12d9:: with SMTP id e25mr4647750qkl.279.1559241811722;
-        Thu, 30 May 2019 11:43:31 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id p1sm307063qti.83.2019.05.30.11.43.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 30 May 2019 11:43:31 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hWQ1S-0007kH-Up; Thu, 30 May 2019 15:43:30 -0300
-Date:   Thu, 30 May 2019 15:43:30 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] IB/hfi1: Use struct_size() helper
-Message-ID: <20190530184330.GC29724@ziepe.ca>
-References: <20190529151528.GA24148@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190529151528.GA24148@embeddedor>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Thu, 30 May 2019 14:45:18 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id CE53314D99A83;
+        Thu, 30 May 2019 11:45:17 -0700 (PDT)
+Date:   Thu, 30 May 2019 11:45:17 -0700 (PDT)
+Message-Id: <20190530.114517.2038537000773947362.davem@davemloft.net>
+To:     92siuyang@gmail.com
+Cc:     ecree@solarflare.com, mhabets@solarflare.com, fw@strlen.de,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] falcon: pass valid pointer from ef4_enqueue_unwind.
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1559096139-25698-1-git-send-email-92siuyang@gmail.com>
+References: <1559096139-25698-1-git-send-email-92siuyang@gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 30 May 2019 11:45:18 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 10:15:28AM -0500, Gustavo A. R. Silva wrote:
-> Make use of the struct_size() helper instead of an open-coded version
-> in order to avoid any potential type mistakes, in particular in the
-> context in which this code is being used.
-> 
-> So, replace the following form:
-> 
-> sizeof(struct opa_port_status_rsp) + num_vls * sizeof(struct _vls_pctrs)
-> 
-> with:
-> 
-> struct_size(rsp, vls, num_vls)
-> 
-> and so on...
-> 
-> Also, notice that variable size is unnecessary, hence it is removed.
-> 
-> This code was detected with the help of Coccinelle.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-> ---
->  drivers/infiniband/hw/hfi1/mad.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
+From: Young Xiao <92siuyang@gmail.com>
+Date: Wed, 29 May 2019 10:15:39 +0800
 
-Applied to for-next, thanks
+> The bytes_compl and pkts_compl pointers passed to ef4_dequeue_buffers
+> cannot be NULL. Add a paranoid warning to check this condition and fix
+> the one case where they were NULL.
+> 
+> Signed-off-by: Young Xiao <92siuyang@gmail.com>
 
-Jason
+EF4_TX_BUF_SKB will be clear in this situation, so your patch is not
+necessary.
