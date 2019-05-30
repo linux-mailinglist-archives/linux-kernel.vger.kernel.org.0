@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06A842ED2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:32:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C8842F48A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:39:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388400AbfE3D3d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:29:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59750 "EHLO mail.kernel.org"
+        id S2388066AbfE3EjW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:39:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56518 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732312AbfE3DUo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:20:44 -0400
+        id S1727857AbfE3DMx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:12:53 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E9C524934;
-        Thu, 30 May 2019 03:20:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D00CA2449A;
+        Thu, 30 May 2019 03:12:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186444;
-        bh=tZflS49DPNtO7Lc38JLA01S4YHi42nusf2afGwu/Y7Q=;
+        s=default; t=1559185972;
+        bh=bYeRNb566ivJGa6XUw7lhUgJLMTq33R8psS/bZAxKNQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z38nWaLz4LH60RyyDxLeMkFQcv/sER9h34wnpjCYDXkAfJunR9fZtlqw/hscNcuIm
-         mv3tgzecGGgLSwo0PCxQWeSP9yTldaoQfuV+2qn39wr9avw9Cl3IUwGFH/DwitH+eN
-         3FFBN8lBao6NqJ0Gp5tIvii95nkFd2Bpv0qMyY8M=
+        b=AAOL0aF/Rz3oeC646nG4xJ8rgzj0oMEGO4YOOQoAnBd4+IkzQAqQChXuNI0Dnb182
+         rCjk9Cj5xhHb3mdY++totuDyLNPcSF5YpeDpMVv0roX/NysWLo6ILAbRHbeisjAaax
+         87sC4WE1GbA/SibTeDyOPRBHFbeWAUy/WF/ooOu8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 049/128] bcache: avoid clang -Wunintialized warning
+Subject: [PATCH 5.1 383/405] regulator: lp8755: Fix notifier mutex lock warning
 Date:   Wed, 29 May 2019 20:06:21 -0700
-Message-Id: <20190530030443.598433870@linuxfoundation.org>
+Message-Id: <20190530030600.104456668@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,73 +46,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 78d4eb8ad9e1d413449d1b7a060f50b6efa81ebd ]
+[ Upstream commit 89b2758c192c35068b07766a6830433bfbdc1f44 ]
 
-clang has identified a code path in which it thinks a
-variable may be unused:
+The mutex for the regulator_dev must be controlled by the caller of
+the regulator_notifier_call_chain(), as described in the comment
+for that function.
 
-drivers/md/bcache/alloc.c:333:4: error: variable 'bucket' is used uninitialized whenever 'if' condition is false
-      [-Werror,-Wsometimes-uninitialized]
-                        fifo_pop(&ca->free_inc, bucket);
-                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/md/bcache/util.h:219:27: note: expanded from macro 'fifo_pop'
- #define fifo_pop(fifo, i)       fifo_pop_front(fifo, (i))
-                                ^~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/md/bcache/util.h:189:6: note: expanded from macro 'fifo_pop_front'
-        if (_r) {                                                       \
-            ^~
-drivers/md/bcache/alloc.c:343:46: note: uninitialized use occurs here
-                        allocator_wait(ca, bch_allocator_push(ca, bucket));
-                                                                  ^~~~~~
-drivers/md/bcache/alloc.c:287:7: note: expanded from macro 'allocator_wait'
-                if (cond)                                               \
-                    ^~~~
-drivers/md/bcache/alloc.c:333:4: note: remove the 'if' if its condition is always true
-                        fifo_pop(&ca->free_inc, bucket);
-                        ^
-drivers/md/bcache/util.h:219:27: note: expanded from macro 'fifo_pop'
- #define fifo_pop(fifo, i)       fifo_pop_front(fifo, (i))
-                                ^
-drivers/md/bcache/util.h:189:2: note: expanded from macro 'fifo_pop_front'
-        if (_r) {                                                       \
-        ^
-drivers/md/bcache/alloc.c:331:15: note: initialize the variable 'bucket' to silence this warning
-                        long bucket;
-                                   ^
+Failure to mutex lock and unlock surrounding the notifier call results
+in a kernel WARN_ON_ONCE() which will dump a backtrace for the
+regulator_notifier_call_chain() when that function call is first made.
+The mutex can be controlled using the regulator_lock/unlock() API.
 
-This cannot happen in practice because we only enter the loop
-if there is at least one element in the list.
-
-Slightly rearranging the code makes this clearer to both the
-reader and the compiler, which avoids the warning.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Coly Li <colyli@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: b59320cc5a5e ("regulator: lp8755: new driver for LP8755")
+Suggested-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Signed-off-by: Steve Twiss <stwiss.opensource@diasemi.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/bcache/alloc.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/regulator/lp8755.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
-index dd344ee9e62b7..ebacd21714efa 100644
---- a/drivers/md/bcache/alloc.c
-+++ b/drivers/md/bcache/alloc.c
-@@ -322,10 +322,11 @@ static int bch_allocator_thread(void *arg)
- 		 * possibly issue discards to them, then we add the bucket to
- 		 * the free list:
- 		 */
--		while (!fifo_empty(&ca->free_inc)) {
-+		while (1) {
- 			long bucket;
+diff --git a/drivers/regulator/lp8755.c b/drivers/regulator/lp8755.c
+index 14fd388071349..2e16a6ab491d6 100644
+--- a/drivers/regulator/lp8755.c
++++ b/drivers/regulator/lp8755.c
+@@ -372,10 +372,13 @@ static irqreturn_t lp8755_irq_handler(int irq, void *data)
+ 	for (icnt = 0; icnt < LP8755_BUCK_MAX; icnt++)
+ 		if ((flag0 & (0x4 << icnt))
+ 		    && (pchip->irqmask & (0x04 << icnt))
+-		    && (pchip->rdev[icnt] != NULL))
++		    && (pchip->rdev[icnt] != NULL)) {
++			regulator_lock(pchip->rdev[icnt]);
+ 			regulator_notifier_call_chain(pchip->rdev[icnt],
+ 						      LP8755_EVENT_PWR_FAULT,
+ 						      NULL);
++			regulator_unlock(pchip->rdev[icnt]);
++		}
  
--			fifo_pop(&ca->free_inc, bucket);
-+			if (!fifo_pop(&ca->free_inc, bucket))
-+				break;
+ 	/* read flag1 register */
+ 	ret = lp8755_read(pchip, 0x0E, &flag1);
+@@ -389,18 +392,24 @@ static irqreturn_t lp8755_irq_handler(int irq, void *data)
+ 	/* send OCP event to all regulator devices */
+ 	if ((flag1 & 0x01) && (pchip->irqmask & 0x01))
+ 		for (icnt = 0; icnt < LP8755_BUCK_MAX; icnt++)
+-			if (pchip->rdev[icnt] != NULL)
++			if (pchip->rdev[icnt] != NULL) {
++				regulator_lock(pchip->rdev[icnt]);
+ 				regulator_notifier_call_chain(pchip->rdev[icnt],
+ 							      LP8755_EVENT_OCP,
+ 							      NULL);
++				regulator_unlock(pchip->rdev[icnt]);
++			}
  
- 			if (ca->discard) {
- 				mutex_unlock(&ca->set->bucket_lock);
+ 	/* send OVP event to all regulator devices */
+ 	if ((flag1 & 0x02) && (pchip->irqmask & 0x02))
+ 		for (icnt = 0; icnt < LP8755_BUCK_MAX; icnt++)
+-			if (pchip->rdev[icnt] != NULL)
++			if (pchip->rdev[icnt] != NULL) {
++				regulator_lock(pchip->rdev[icnt]);
+ 				regulator_notifier_call_chain(pchip->rdev[icnt],
+ 							      LP8755_EVENT_OVP,
+ 							      NULL);
++				regulator_unlock(pchip->rdev[icnt]);
++			}
+ 	return IRQ_HANDLED;
+ 
+ err_i2c:
 -- 
 2.20.1
 
