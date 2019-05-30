@@ -2,168 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC85B30256
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 20:54:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F4E22FA73
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 12:44:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726684AbfE3Sx5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 14:53:57 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:52827 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725961AbfE3Sx5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 14:53:57 -0400
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id F15C2240003;
-        Thu, 30 May 2019 18:53:48 +0000 (UTC)
-Date:   Thu, 30 May 2019 12:42:42 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Chen-Yu Tsai <wens@csie.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Bhushan Shah <bshah@mykolab.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        =?utf-8?B?5Z2a5a6a5YmN6KGM?= <powerpan@qq.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH v10 02/11] drm/sun4i: dsi: Update start value in video
- start delay
-Message-ID: <20190530104242.d6ktwv7lip27vc3x@flea>
-References: <20190520090318.27570-1-jagan@amarulasolutions.com>
- <20190520090318.27570-3-jagan@amarulasolutions.com>
- <20190523203754.2lhi37veeh4rwiy3@flea>
- <CAMty3ZBvJ-7Ndq7NSfNMSFX=8hjYVhYsdA=nfyw5mMxOf6vW1Q@mail.gmail.com>
+        id S1726830AbfE3KoF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 06:44:05 -0400
+Received: from mail-eopbgr30058.outbound.protection.outlook.com ([40.107.3.58]:31110
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725440AbfE3KoE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 06:44:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VDyy5oM6CejoAPXC8eRyn4WaMFvf43wM9mhb2FcfdTE=;
+ b=wXKeDR6cPpg0DSyLhv3tNPpaxW1KGrUgGtLoRN2aJfx7iDVWB1lswpugBb9/s3JKKh1IGEyDKHERxfNlKC2EXhdjfqwgECyuwdFPmX6MeT5kCftulesVs4jdZr/da9d0X+1+pT6dp71RHIf48of8ebP2N1NLNjmnjEVOPGCjtHw=
+Received: from VE1PR08MB5006.eurprd08.prod.outlook.com (10.255.159.31) by
+ VE1PR08MB4942.eurprd08.prod.outlook.com (10.255.158.23) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1922.16; Thu, 30 May 2019 10:43:58 +0000
+Received: from VE1PR08MB5006.eurprd08.prod.outlook.com
+ ([fe80::206b:5cf6:97e:1358]) by VE1PR08MB5006.eurprd08.prod.outlook.com
+ ([fe80::206b:5cf6:97e:1358%7]) with mapi id 15.20.1922.021; Thu, 30 May 2019
+ 10:43:58 +0000
+From:   "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+To:     Liviu Dudau <Liviu.Dudau@arm.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "sean@poorly.run" <sean@poorly.run>
+CC:     "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        "thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
+        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
+        Ayan Halder <Ayan.Halder@arm.com>,
+        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
+        "Yiqi Kang (Arm Technology China)" <Yiqi.Kang@arm.com>,
+        nd <nd@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Ben Davis <Ben.Davis@arm.com>,
+        "Oscar Zhang (Arm Technology China)" <Oscar.Zhang@arm.com>,
+        "Channing Chen (Arm Technology China)" <Channing.Chen@arm.com>,
+        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+Subject: [PATCH 0/2] drm/komeda: Add writeback downscaling split support
+Thread-Topic: [PATCH 0/2] drm/komeda: Add writeback downscaling split support
+Thread-Index: AQHVFtSWfnHeHgfsa0Wgx/8gmSiP5A==
+Date:   Thu, 30 May 2019 10:43:58 +0000
+Message-ID: <20190530104335.2395-1-james.qian.wang@arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [113.29.88.7]
+x-clientproxiedby: HK2PR04CA0069.apcprd04.prod.outlook.com
+ (2603:1096:202:15::13) To VE1PR08MB5006.eurprd08.prod.outlook.com
+ (2603:10a6:803:113::31)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=james.qian.wang@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 3b90f080-5868-457a-202e-08d6e4ebb865
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4618075)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:VE1PR08MB4942;
+x-ms-traffictypediagnostic: VE1PR08MB4942:
+x-ms-exchange-purlcount: 10
+nodisclaimer: True
+x-microsoft-antispam-prvs: <VE1PR08MB4942D13C33DF6437D2887A14B3180@VE1PR08MB4942.eurprd08.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 00531FAC2C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(136003)(346002)(376002)(396003)(189003)(199004)(25786009)(26005)(66476007)(6116002)(3846002)(73956011)(103116003)(54906003)(66446008)(4326008)(476003)(2616005)(66556008)(256004)(68736007)(186003)(64756008)(386003)(14454004)(6306002)(66946007)(55236004)(102836004)(110136005)(52116002)(99286004)(6506007)(966005)(2201001)(50226002)(6436002)(8676002)(86362001)(6512007)(305945005)(6486002)(81156014)(71200400001)(81166006)(2501003)(66066001)(8936002)(36756003)(7736002)(2906002)(486006)(5660300002)(316002)(1076003)(53936002)(478600001)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR08MB4942;H:VE1PR08MB5006.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: PsKcoIq43BomiEetCo3Rn79j73h5LTHXbpmAC9YaYndyXbhtjR9sGIjRBN/PNjQsh4xBb7PW32YEu7vd0mHjGC/IXSDdcTwtlKPuZOwWlTY0rRiGJNQEvM7ribnVj6mCZJjX/y78nPbUNGJaAohmMQ/b0saz/vfPHUwUDCVL4EwR+ZgjP1g1+NycvWauSDXa+BdK6PQfAIcMRHmQxayi1eovBaRHT0QnxfdY+p9C7Rhos5vmqsuebAV28gmSpcbPIO+arioMJFFck9Z6ZAom4Y74CMUuk4zsEvEfhDTMs6X99OQtWd/X+fBoEh7aZAyNe6bYCvKeBgWUJDmeLkh7Z5ngMQ88Tj6cAA3EgcqIlaMH+HlYrcH44vQGvbpBquGSCigjRa+63q/j5nDytkgMNq7ZuAtUx5JfaXEBe1BGlxE=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZBvJ-7Ndq7NSfNMSFX=8hjYVhYsdA=nfyw5mMxOf6vW1Q@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3b90f080-5868-457a-202e-08d6e4ebb865
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 May 2019 10:43:58.4994
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: james.qian.wang@arm.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR08MB4942
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 24, 2019 at 03:55:42PM +0530, Jagan Teki wrote:
-> On Fri, May 24, 2019 at 2:07 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> >
-> > On Mon, May 20, 2019 at 02:33:09PM +0530, Jagan Teki wrote:
-> > > start value in video start delay computation done in below commit
-> > > is as per the legacy bsp drivers/video/sunxi/legacy..
-> > > "drm/sun4i: dsi: Change the start delay calculation"
-> > > (sha1: da676c6aa6413d59ab0a80c97bbc273025e640b2)
-> > >
-> > > This existing start delay computation gives start value of 35,
-> > > for "bananapi,s070wv20-ct16" panel timings which indeed trigger
-> > > panel flip_done timed out as:
-> > >
-> > >  WARNING: CPU: 0 PID: 31 at drivers/gpu/drm/drm_atomic_helper.c:1429 drm_atomic_helper_wait_for_vblanks.part.1+0x298/0x2a0
-> > >  [CRTC:46:crtc-0] vblank wait timed out
-> > >  Modules linked in:
-> > >  CPU: 0 PID: 31 Comm: kworker/0:1 Tainted: G        W         5.1.0-next-20190514-00025-gf928bc7cc146 #15
-> > >  Hardware name: Allwinner sun8i Family
-> > >  Workqueue: events deferred_probe_work_func
-> > >  [<c010ed54>] (unwind_backtrace) from [<c010b76c>] (show_stack+0x10/0x14)
-> > >  [<c010b76c>] (show_stack) from [<c0688c90>] (dump_stack+0x84/0x98)
-> > >  [<c0688c90>] (dump_stack) from [<c011d9e4>] (__warn+0xfc/0x114)
-> > >  [<c011d9e4>] (__warn) from [<c011da40>] (warn_slowpath_fmt+0x44/0x68)
-> > >  [<c011da40>] (warn_slowpath_fmt) from [<c040cd50>] (drm_atomic_helper_wait_for_vblanks.part.1+0x298/0x2a0)
-> > >  [<c040cd50>] (drm_atomic_helper_wait_for_vblanks.part.1) from [<c040e694>] (drm_atomic_helper_commit_tail_rpm+0x5c/0x6c)
-> > >  [<c040e694>] (drm_atomic_helper_commit_tail_rpm) from [<c040e4dc>] (commit_tail+0x40/0x6c)
-> > >  [<c040e4dc>] (commit_tail) from [<c040e5cc>] (drm_atomic_helper_commit+0xbc/0x128)
-> > >  [<c040e5cc>] (drm_atomic_helper_commit) from [<c0411b64>] (restore_fbdev_mode_atomic+0x1cc/0x1dc)
-> > >  [<c0411b64>] (restore_fbdev_mode_atomic) from [<c0411cb0>] (drm_fb_helper_pan_display+0xac/0x1d0)
-> > >  [<c0411cb0>] (drm_fb_helper_pan_display) from [<c03a4e84>] (fb_pan_display+0xcc/0x134)
-> > >  [<c03a4e84>] (fb_pan_display) from [<c03b1214>] (bit_update_start+0x14/0x30)
-> > >  [<c03b1214>] (bit_update_start) from [<c03afe94>] (fbcon_switch+0x3d8/0x4e0)
-> > >  [<c03afe94>] (fbcon_switch) from [<c03ec930>] (redraw_screen+0x174/0x238)
-> > >  [<c03ec930>] (redraw_screen) from [<c03aceb4>] (fbcon_prepare_logo+0x3c4/0x400)
-> > >  [<c03aceb4>] (fbcon_prepare_logo) from [<c03ad2b8>] (fbcon_init+0x3c8/0x5ac)
-> > >  [<c03ad2b8>] (fbcon_init) from [<c03eb8a0>] (visual_init+0xbc/0x104)
-> > >  [<c03eb8a0>] (visual_init) from [<c03ed1b8>] (do_bind_con_driver+0x1b0/0x390)
-> > >  [<c03ed1b8>] (do_bind_con_driver) from [<c03ed780>] (do_take_over_console+0x13c/0x1c4)
-> > >  [<c03ed780>] (do_take_over_console) from [<c03ad800>] (do_fbcon_takeover+0x74/0xcc)
-> > >  [<c03ad800>] (do_fbcon_takeover) from [<c013c9c8>] (notifier_call_chain+0x44/0x84)
-> > >  [<c013c9c8>] (notifier_call_chain) from [<c013cd20>] (__blocking_notifier_call_chain+0x48/0x60)
-> > >  [<c013cd20>] (__blocking_notifier_call_chain) from [<c013cd50>] (blocking_notifier_call_chain+0x18/0x20)
-> > >  [<c013cd50>] (blocking_notifier_call_chain) from [<c03a6e44>] (register_framebuffer+0x1e0/0x2f8)
-> > >  [<c03a6e44>] (register_framebuffer) from [<c04153c0>] (__drm_fb_helper_initial_config_and_unlock+0x2fc/0x50c)
-> > >  [<c04153c0>] (__drm_fb_helper_initial_config_and_unlock) from [<c04158c8>] (drm_fbdev_client_hotplug+0xe8/0x1b8)
-> > >  [<c04158c8>] (drm_fbdev_client_hotplug) from [<c0415a20>] (drm_fbdev_generic_setup+0x88/0x118)
-> > >  [<c0415a20>] (drm_fbdev_generic_setup) from [<c043f060>] (sun4i_drv_bind+0x128/0x160)
-> > >  [<c043f060>] (sun4i_drv_bind) from [<c044b5b0>] (try_to_bring_up_master+0x164/0x1a0)
-> > >  [<c044b5b0>] (try_to_bring_up_master) from [<c044b680>] (__component_add+0x94/0x140)
-> > >  [<c044b680>] (__component_add) from [<c0445e1c>] (sun6i_dsi_probe+0x144/0x234)
-> > >  [<c0445e1c>] (sun6i_dsi_probe) from [<c0452f0c>] (platform_drv_probe+0x48/0x9c)
-> > >  [<c0452f0c>] (platform_drv_probe) from [<c04512e4>] (really_probe+0x1dc/0x2c8)
-> > >  [<c04512e4>] (really_probe) from [<c0451530>] (driver_probe_device+0x60/0x160)
-> > >  [<c0451530>] (driver_probe_device) from [<c044f7bc>] (bus_for_each_drv+0x74/0xb8)
-> > >  [<c044f7bc>] (bus_for_each_drv) from [<c0451094>] (__device_attach+0xd0/0x13c)
-> > >  [<c0451094>] (__device_attach) from [<c045048c>] (bus_probe_device+0x84/0x8c)
-> > >  [<c045048c>] (bus_probe_device) from [<c0450918>] (deferred_probe_work_func+0x64/0x90)
-> > >  [<c0450918>] (deferred_probe_work_func) from [<c0135970>] (process_one_work+0x204/0x420)
-> > >  [<c0135970>] (process_one_work) from [<c013690c>] (worker_thread+0x274/0x5a0)
-> > >  [<c013690c>] (worker_thread) from [<c013b3d8>] (kthread+0x11c/0x14c)
-> > >  [<c013b3d8>] (kthread) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
-> > >  Exception stack(0xde539fb0 to 0xde539ff8)
-> > >  9fa0:                                     00000000 00000000 00000000 00000000
-> > >  9fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-> > >  9fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-> > >  ---[ end trace 755e10f62b83f396 ]---
-> > >  Console: switching to colour frame buffer device 100x30
-> > >  [drm:drm_atomic_helper_wait_for_dependencies] *ERROR* [CRTC:46:crtc-0] flip_done timed out
-> > >  [drm:drm_atomic_helper_wait_for_dependencies] *ERROR* [CONNECTOR:48:DSI-1] flip_done timed out
-> > >  [drm:drm_atomic_helper_wait_for_dependencies] *ERROR* [PLANE:30:plane-0] flip_done timed out
-> > >
-> > > But the expected start delay value is 1 which is confirmed from
-> > > new bsp [2].
-> >
-> > If you're saying that the "legacy" link (second one) is the new BSP.
->
-> Will update, thanks.
->
-> >
-> > > The important and unclear note on legacy and new bsp codes [1] [2]
-> > > is both use similar start computation initially but it later reassign
-> > > it to 1 in new bsp.
-> >
-> > Then start_delay is never reassigned to 1 in that link, and is clamped
-> > between 8 and 100 as the code that you are removing is doing.
->
-> Please see the link one more please
-> https://github.com/BPI-SINOVOIP/BPI-M2M-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp/de/lowlevel_sun8iw5/de_dsi.c#L807
->
-> >
-> > > Unfortunately we don't have any evidence or documentation for this
-> > > reassignment to 1 in new bsp, but it is working with all supported
-> > > panels in A33, A64.
-> >
-> > No, it's not. That was added to fix a panel that is supported today.
->
-> No, I have see this in A33, A64. and these are controller drivers
-> right, if it panel fix and it should be part of panel driver isn't
-> it?
-
-I'm not sure to follow that argument. You're submitting that fix to
-allow other panels to work, right? So surely, some issues that can be
-found using a given panel might not be solely fixed in the panel driver.
-
-> We can even see the same in pin64 longsleep kernel and others.
->
-> https://github.com/BPI-SINOVOIP/BPI-M2M-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp/de/lowlevel_sun8iw5/de_dsi.c#L807
-> https://github.com/longsleep/linux-pine64/blob/pine64-hacks-1.2/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c#L730
-
-Yeah, and both of these have the legacy driver part with the clamping
-too.
-
-I'll test these patches again some time next week
-
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+V3JpdGViYWNrIHNwbGl0IGlzIGFsc28gZm9yIHdvcmthcm91bmQgdGhlIHNpemUgbGltaXRhdGlv
+biBvZiBkNzEgc2NhbGVyLg0KTGlrZSBsYXllcl9zcGxpdCwgd3JpdGViYWNrIGRvd25zY2FsaW5n
+IGFsc28gY2FuIHVzZSB0d28gc2NhbGVycyB0byBoYW5kbGUNCnRoZSBzY2FsaW5nIGhhbGYtYnkt
+aGFsZi4gVGhlIG9ubHkgZGlmZmVybmVuY2UgaXMgd3JpdGJhY2sgbmVlZHMgYQ0Kc3RhbmRhbG9u
+ZSBjb21wb25lbnQgKHNwbGl0dGVyKSdzIGhlbHAgdG8gc3BsaXQgdGhlIGNvbXBvc2l0aW9uIHJl
+c3VsdC4NClRoZSBkYXRhIHBpcGVsaW5lIG9mIHdyaXRlYmFjayBzcGxpdCBhcyBiZWxvdzoNCg0K
+ICAgICAgICAgICAgICAgICAgIC8tPiBzY2FsZXItMCAtPlwNCiBjb21waXogLT4gc3BsaXR0ZXIg
+ICAgICAgICAgICAgICAgbWVyZ2VyIC0+IHdiX2xheWVyIC0+IG1lbW9yeQ0KICAgICAgICAgICAg
+ICAgICAgIFwtPiBzY2FsZXItMSAtPi8NCg0KRGVwZW5kcyBvbjoNCi0gaHR0cHM6Ly9wYXRjaHdv
+cmsuZnJlZWRlc2t0b3Aub3JnL3Nlcmllcy81ODcxMC8NCi0gaHR0cHM6Ly9wYXRjaHdvcmsuZnJl
+ZWRlc2t0b3Aub3JnL3Nlcmllcy81OTAwMC8NCi0gaHR0cHM6Ly9wYXRjaHdvcmsuZnJlZWRlc2t0
+b3Aub3JnL3Nlcmllcy81OTAwMi8NCi0gaHR0cHM6Ly9wYXRjaHdvcmsuZnJlZWRlc2t0b3Aub3Jn
+L3Nlcmllcy81OTc0Ny8NCi0gaHR0cHM6Ly9wYXRjaHdvcmsuZnJlZWRlc2t0b3Aub3JnL3Nlcmll
+cy81OTkxNS8NCi0gaHR0cHM6Ly9wYXRjaHdvcmsuZnJlZWRlc2t0b3Aub3JnL3Nlcmllcy82MDA4
+My8NCi0gaHR0cHM6Ly9wYXRjaHdvcmsuZnJlZWRlc2t0b3Aub3JnL3Nlcmllcy82MDY5OC8NCi0g
+aHR0cHM6Ly9wYXRjaHdvcmsuZnJlZWRlc2t0b3Aub3JnL3Nlcmllcy82MDg1Ni8NCi0gaHR0cHM6
+Ly9wYXRjaHdvcmsuZnJlZWRlc2t0b3Aub3JnL3Nlcmllcy82MDg5My8NCi0gaHR0cHM6Ly9wYXRj
+aHdvcmsuZnJlZWRlc2t0b3Aub3JnL3Nlcmllcy82MTM3MC8NCg0KSmFtZXMgUWlhbiBXYW5nIChB
+cm0gVGVjaG5vbG9neSBDaGluYSkgKDIpOg0KICBkcm0va29tZWRhOiBBZGQgbmV3IGNvbXBvbmVu
+dCBrb21lZGFfc3BsaXR0ZXINCiAgZHJtL2tvbWVkYTogRW5hYmxlIHdyaXRlYmFjayBzcGxpdCBz
+dXBwb3J0DQoNCiAuLi4vYXJtL2Rpc3BsYXkva29tZWRhL2Q3MS9kNzFfY29tcG9uZW50LmMgICAg
+fCAgNjMgKysrKysrKysrKw0KIC4uLi9kcm0vYXJtL2Rpc3BsYXkva29tZWRhL2tvbWVkYV9waXBl
+bGluZS5jICB8ICAgMyArDQogLi4uL2RybS9hcm0vZGlzcGxheS9rb21lZGEva29tZWRhX3BpcGVs
+aW5lLmggIHwgIDIzICsrKy0NCiAuLi4vZGlzcGxheS9rb21lZGEva29tZWRhX3BpcGVsaW5lX3N0
+YXRlLmMgICAgfCAxMTcgKysrKysrKysrKysrKysrKy0tDQogLi4uL2FybS9kaXNwbGF5L2tvbWVk
+YS9rb21lZGFfcHJpdmF0ZV9vYmouYyAgIHwgIDUwICsrKysrKysrDQogLi4uL2FybS9kaXNwbGF5
+L2tvbWVkYS9rb21lZGFfd2JfY29ubmVjdG9yLmMgIHwgIDE3ICsrLQ0KIDYgZmlsZXMgY2hhbmdl
+ZCwgMjU3IGluc2VydGlvbnMoKyksIDE2IGRlbGV0aW9ucygtKQ0KDQotLQ0KMi4xNy4xDQo=
