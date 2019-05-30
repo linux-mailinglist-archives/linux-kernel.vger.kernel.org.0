@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A09E32F4AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:42:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BDA92EE63
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:47:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388431AbfE3EkZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:40:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55594 "EHLO mail.kernel.org"
+        id S1733140AbfE3Dqs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:46:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729100AbfE3DMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:34 -0400
+        id S1732268AbfE3DUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:20:37 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 757AA23F4C;
-        Thu, 30 May 2019 03:12:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29B2E24934;
+        Thu, 30 May 2019 03:20:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185953;
-        bh=D5sRcs3SwtZUPrs/1DaxUqQKn2kN5i+/jrA8gD7B3NM=;
+        s=default; t=1559186437;
+        bh=KnTVExqNKtl5Xl8ksL32IR1ybhO8+AKU6IU8voJuysE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fpccSM6bgyMJHEygXDIpMB5XEiQDSISbcnS17RkBvPnGyTj9/WqYVmdY3wTZue5XC
-         AnoMaU3DKPE2nBSW/7agsJSaJz7a1sYKww89U2NXQm93wpL5rqRWe3gTF/eZMPRAIA
-         Y/131qUtuHGk0nNe25612qhBCgCCizlCX/bOxRnM=
+        b=dNYLMMLIfGpQClsXSAIXC+yFZde+v2MK1gnHRyVTBhnUlvUi+gCrFJHTRhmFLPPdX
+         R18DM5HZeWtHMKDbJ9oEG3jxbxXDqMh7QyKzU3XnJCGuGmyq7lJ1dcSVBNXkbwayd3
+         gKbmqsVFfrEp95bejfMERlOsHzaEqhOF6OnoEnWg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <jsmart2021@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 368/405] scsi: lpfc: Resolve inconsistent check of hdwq in lpfc_scsi_cmd_iocb_cmpl
+Subject: [PATCH 4.9 034/128] arm64: Fix compiler warning from pte_unmap() with -Wunused-but-set-variable
 Date:   Wed, 29 May 2019 20:06:06 -0700
-Message-Id: <20190530030559.343432436@linuxfoundation.org>
+Message-Id: <20190530030440.503603979@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,40 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ff6bf89717b0dc7b8dd0934d1c065f29069831e7 ]
+[ Upstream commit 74dd022f9e6260c3b5b8d15901d27ebcc5f21eda ]
 
-A prior patch which added support for non-uniform allocation of MSIX
-vectors now causes a smatch complaint:
+When building with -Wunused-but-set-variable, the compiler shouts about
+a number of pte_unmap() users, since this expands to an empty macro on
+arm64:
 
- drivers/scsi/lpfc/lpfc_scsi.c:3674 lpfc_scsi_cmd_iocb_cmpl()
-   error: we previously assumed 'phba->sli4_hba.hdwq' could be
-          null (see line 3667)
+  | mm/gup.c: In function 'gup_pte_range':
+  | mm/gup.c:1727:16: warning: variable 'ptem' set but not used
+  | [-Wunused-but-set-variable]
+  | mm/gup.c: At top level:
+  | mm/memory.c: In function 'copy_pte_range':
+  | mm/memory.c:821:24: warning: variable 'orig_dst_pte' set but not used
+  | [-Wunused-but-set-variable]
+  | mm/memory.c:821:9: warning: variable 'orig_src_pte' set but not used
+  | [-Wunused-but-set-variable]
+  | mm/swap_state.c: In function 'swap_ra_info':
+  | mm/swap_state.c:641:15: warning: variable 'orig_pte' set but not used
+  | [-Wunused-but-set-variable]
+  | mm/madvise.c: In function 'madvise_free_pte_range':
+  | mm/madvise.c:318:9: warning: variable 'orig_pte' set but not used
+  | [-Wunused-but-set-variable]
 
-Resolve by removing the unnecessary check for a NULL hdwq table.
+Rewrite pte_unmap() as a static inline function, which silences the
+warnings.
 
-Fixes 6a828b0f6192: ("scsi: lpfc: Support non-uniform allocation of MSIX vectors to hardware queues")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <jsmart2021@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Qian Cai <cai@lca.pw>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/lpfc/lpfc_scsi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/include/asm/pgtable.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_scsi.c b/drivers/scsi/lpfc/lpfc_scsi.c
-index a497b2c0cb798..25501d4605ff3 100644
---- a/drivers/scsi/lpfc/lpfc_scsi.c
-+++ b/drivers/scsi/lpfc/lpfc_scsi.c
-@@ -3670,7 +3670,7 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba *phba, struct lpfc_iocbq *pIocbIn,
- #ifdef CONFIG_SCSI_LPFC_DEBUG_FS
- 	if (phba->cpucheck_on & LPFC_CHECK_SCSI_IO) {
- 		cpu = smp_processor_id();
--		if (cpu < LPFC_CHECK_CPU_CNT)
-+		if (cpu < LPFC_CHECK_CPU_CNT && phba->sli4_hba.hdwq)
- 			phba->sli4_hba.hdwq[idx].cpucheck_cmpl_io[cpu]++;
- 	}
- #endif
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index 3a30a3994e4a2..73e3718356b05 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -413,6 +413,8 @@ static inline phys_addr_t pmd_page_paddr(pmd_t pmd)
+ 	return pmd_val(pmd) & PHYS_MASK & (s32)PAGE_MASK;
+ }
+ 
++static inline void pte_unmap(pte_t *pte) { }
++
+ /* Find an entry in the third-level page table. */
+ #define pte_index(addr)		(((addr) >> PAGE_SHIFT) & (PTRS_PER_PTE - 1))
+ 
+@@ -421,7 +423,6 @@ static inline phys_addr_t pmd_page_paddr(pmd_t pmd)
+ 
+ #define pte_offset_map(dir,addr)	pte_offset_kernel((dir), (addr))
+ #define pte_offset_map_nested(dir,addr)	pte_offset_kernel((dir), (addr))
+-#define pte_unmap(pte)			do { } while (0)
+ #define pte_unmap_nested(pte)		do { } while (0)
+ 
+ #define pte_set_fixmap(addr)		((pte_t *)set_fixmap_offset(FIX_PTE, addr))
 -- 
 2.20.1
 
