@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 622462F4C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:42:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98C642F23C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:20:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729233AbfE3ElZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:41:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55100 "EHLO mail.kernel.org"
+        id S1730551AbfE3ETx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:19:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728269AbfE3DM0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:26 -0400
+        id S1729210AbfE3DPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:24 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D787218B6;
-        Thu, 30 May 2019 03:12:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C29C24502;
+        Thu, 30 May 2019 03:15:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185945;
-        bh=gs5R8LLX3qSwO7Dx4y9hcIyLtjyrMZRGY5AoORF1j+A=;
+        s=default; t=1559186123;
+        bh=giia1H8fV3MI0n0b6NEl9yVmTOqXajqyIE74fhzbvmw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H4t7o8qid7m68NrTK+l0+tK8hgj4/9a5AFN2PSQ47SzV+QVHJ2e1mG9PNd8cK1MdE
-         FtH5YqI2cW0HSfeSYH8nt1un5lovpiKWlduTMsVbEtr1TK8zpS4fCdVwOgKECOR6pZ
-         FKJBOcQaqCeq2ZV7XJuSoMzI2BgYN4pygipORByY=
+        b=XXGCEXEwhbKvTLku+0TU1Of8J1FJn78Vq/KH7/NEjKO0CjAcjfQOhq30cBtyE/6Wz
+         dTW6xJz3g12masUCTUyK3c9QJzNXdjZBtxchv8Sq5L8UUGgNKB+2Iu7Iym0xf71zUM
+         b91JB4/bmVaGqVSoIJ2hxPMiLtEJHBVKLqtbHmCo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Paul Moore <paul@paul-moore.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 354/405] media: gspca: do not resubmit URBs when streaming has stopped
-Date:   Wed, 29 May 2019 20:05:52 -0700
-Message-Id: <20190530030558.553604000@linuxfoundation.org>
+Subject: [PATCH 5.0 280/346] selinux: avoid uninitialized variable warning
+Date:   Wed, 29 May 2019 20:05:53 -0700
+Message-Id: <20190530030555.107475369@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,67 +44,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e6f8bd59c28f758feea403a70d6c3ef28c50959f ]
+[ Upstream commit 98bbbb76f2edcfb8fb2b8f4b3ccc7b6e99d64bd8 ]
 
-When streaming is stopped all URBs are killed, but in fill_frame and in
-bulk_irq this results in an attempt to resubmit the killed URB. That is
-not what you want and causes spurious kernel messages.
+clang correctly points out a code path that would lead
+to an uninitialized variable use:
 
-So check if streaming has stopped before resubmitting.
+security/selinux/netlabel.c:310:6: error: variable 'addr' is used uninitialized whenever 'if' condition is false
+      [-Werror,-Wsometimes-uninitialized]
+        if (ip_hdr(skb)->version == 4) {
+            ^~~~~~~~~~~~~~~~~~~~~~~~~
+security/selinux/netlabel.c:322:40: note: uninitialized use occurs here
+        rc = netlbl_conn_setattr(ep->base.sk, addr, &secattr);
+                                              ^~~~
+security/selinux/netlabel.c:310:2: note: remove the 'if' if its condition is always true
+        if (ip_hdr(skb)->version == 4) {
+        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+security/selinux/netlabel.c:291:23: note: initialize the variable 'addr' to silence this warning
+        struct sockaddr *addr;
+                             ^
+                              = NULL
 
-Also check against gspca_dev->streaming rather than vb2_start_streaming_called()
-since vb2_start_streaming_called() will return true when in stop_streaming,
-but gspca_dev->streaming is set to false when stop_streaming is called.
+This is probably harmless since we should not see ipv6 packets
+of CONFIG_IPV6 is disabled, but it's better to rearrange the code
+so this cannot happen.
 
-Fixes: 6992effe5344 ("gspca: Kill all URBs before releasing any of them")
-
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+[PM: removed old patchwork link, fixed checkpatch.pl style errors]
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/usb/gspca/gspca.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ security/selinux/netlabel.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/media/usb/gspca/gspca.c b/drivers/media/usb/gspca/gspca.c
-index 128935f2a217e..4d7517411cc2d 100644
---- a/drivers/media/usb/gspca/gspca.c
-+++ b/drivers/media/usb/gspca/gspca.c
-@@ -314,6 +314,8 @@ static void fill_frame(struct gspca_dev *gspca_dev,
+diff --git a/security/selinux/netlabel.c b/security/selinux/netlabel.c
+index 186e727b737b9..6fd9954e1c085 100644
+--- a/security/selinux/netlabel.c
++++ b/security/selinux/netlabel.c
+@@ -288,11 +288,8 @@ int selinux_netlbl_sctp_assoc_request(struct sctp_endpoint *ep,
+ 	int rc;
+ 	struct netlbl_lsm_secattr secattr;
+ 	struct sk_security_struct *sksec = ep->base.sk->sk_security;
+-	struct sockaddr *addr;
+ 	struct sockaddr_in addr4;
+-#if IS_ENABLED(CONFIG_IPV6)
+ 	struct sockaddr_in6 addr6;
+-#endif
+ 
+ 	if (ep->base.sk->sk_family != PF_INET &&
+ 				ep->base.sk->sk_family != PF_INET6)
+@@ -310,16 +307,15 @@ int selinux_netlbl_sctp_assoc_request(struct sctp_endpoint *ep,
+ 	if (ip_hdr(skb)->version == 4) {
+ 		addr4.sin_family = AF_INET;
+ 		addr4.sin_addr.s_addr = ip_hdr(skb)->saddr;
+-		addr = (struct sockaddr *)&addr4;
+-#if IS_ENABLED(CONFIG_IPV6)
+-	} else {
++		rc = netlbl_conn_setattr(ep->base.sk, (void *)&addr4, &secattr);
++	} else if (IS_ENABLED(CONFIG_IPV6) && ip_hdr(skb)->version == 6) {
+ 		addr6.sin6_family = AF_INET6;
+ 		addr6.sin6_addr = ipv6_hdr(skb)->saddr;
+-		addr = (struct sockaddr *)&addr6;
+-#endif
++		rc = netlbl_conn_setattr(ep->base.sk, (void *)&addr6, &secattr);
++	} else {
++		rc = -EAFNOSUPPORT;
  	}
  
- resubmit:
-+	if (!gspca_dev->streaming)
-+		return;
- 	/* resubmit the URB */
- 	st = usb_submit_urb(urb, GFP_ATOMIC);
- 	if (st < 0)
-@@ -330,7 +332,7 @@ static void isoc_irq(struct urb *urb)
- 	struct gspca_dev *gspca_dev = (struct gspca_dev *) urb->context;
+-	rc = netlbl_conn_setattr(ep->base.sk, addr, &secattr);
+ 	if (rc == 0)
+ 		sksec->nlbl_state = NLBL_LABELED;
  
- 	gspca_dbg(gspca_dev, D_PACK, "isoc irq\n");
--	if (!vb2_start_streaming_called(&gspca_dev->queue))
-+	if (!gspca_dev->streaming)
- 		return;
- 	fill_frame(gspca_dev, urb);
- }
-@@ -344,7 +346,7 @@ static void bulk_irq(struct urb *urb)
- 	int st;
- 
- 	gspca_dbg(gspca_dev, D_PACK, "bulk irq\n");
--	if (!vb2_start_streaming_called(&gspca_dev->queue))
-+	if (!gspca_dev->streaming)
- 		return;
- 	switch (urb->status) {
- 	case 0:
-@@ -367,6 +369,8 @@ static void bulk_irq(struct urb *urb)
- 				urb->actual_length);
- 
- resubmit:
-+	if (!gspca_dev->streaming)
-+		return;
- 	/* resubmit the URB */
- 	if (gspca_dev->cam.bulk_nurbs != 0) {
- 		st = usb_submit_urb(urb, GFP_ATOMIC);
 -- 
 2.20.1
 
