@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 829D22F46C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:38:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 456982F046
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:03:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388568AbfE3EiM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:38:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56214 "EHLO mail.kernel.org"
+        id S1731768AbfE3ECO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:02:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728205AbfE3DMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:46 -0400
+        id S1731393AbfE3DSC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:18:02 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 136A524502;
-        Thu, 30 May 2019 03:12:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 10A5124733;
+        Thu, 30 May 2019 03:18:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185966;
-        bh=ID128AdOvohhUlVirNhpCMtz499mR40R1nvT+k2SiIM=;
+        s=default; t=1559186282;
+        bh=688BSSCjm1VH0CTrn3FpYfvI2i1PqdHOIh0iUUQkLaU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=no7b5bvPK+FmpKMdbAPqihNuaYf7WxOBb2uwkzUr/9L/ISAIXpNxbhogJsP8vAqav
-         S+L+UCxN9A0uGvlpzdNAHDkTkTf65NtCAa8mls103mf3C9gvRpOkhllAcVRT9FM97W
-         Wq+OW21IY7PLckB12k9uR41yCmQpEpBDYKCkbFQI=
+        b=P34Zv68LFL3/cYDXPVYwafE860h8YKS9vUxxkVBjEs7s+Re3M04xA2q67BJS/EgU4
+         3WljBeo7XzIiHjVtT6YKMXIfSL8oBpdiuMDshBt0W45IUFOnk1YcoFvF+r3V1Qz/yC
+         Qpd0+MdWO4ov/BDq48uzynMKfXSkBt3ebZMty/zc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Anholt <eric@anholt.net>,
-        Dave Emett <david.emett@broadcom.com>,
+        stable@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 394/405] drm/v3d: Handle errors from IRQ setup.
+Subject: [PATCH 4.19 234/276] rcuperf: Fix cleanup path for invalid perf_type strings
 Date:   Wed, 29 May 2019 20:06:32 -0700
-Message-Id: <20190530030600.532094254@linuxfoundation.org>
+Message-Id: <20190530030539.764604914@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,95 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit fc22771547e7e8a63679f0218e943d72b107de65 ]
+[ Upstream commit ad092c027713a68a34168942a5ef422e42e039f4 ]
 
-Noted in review by Dave Emett for V3D 4.2 support.
+If the specified rcuperf.perf_type is not in the rcu_perf_init()
+function's perf_ops[] array, rcuperf prints some console messages and
+then invokes rcu_perf_cleanup() to set state so that a future torture
+test can run.  However, rcu_perf_cleanup() also attempts to end the
+test that didn't actually start, and in doing so relies on the value
+of cur_ops, a value that is not particularly relevant in this case.
+This can result in confusing output or even follow-on failures due to
+attempts to use facilities that have not been properly initialized.
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190308174336.7866-1-eric@anholt.net
-Reviewed-by: Dave Emett <david.emett@broadcom.com>
+This commit therefore sets the value of cur_ops to NULL in this case and
+inserts a check near the beginning of rcu_perf_cleanup(), thus avoiding
+relying on an irrelevant cur_ops value.
+
+Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/v3d/v3d_drv.c |  8 ++++++--
- drivers/gpu/drm/v3d/v3d_drv.h |  2 +-
- drivers/gpu/drm/v3d/v3d_irq.c | 13 +++++++++++--
- 3 files changed, 18 insertions(+), 5 deletions(-)
+ kernel/rcu/rcuperf.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/gpu/drm/v3d/v3d_drv.c b/drivers/gpu/drm/v3d/v3d_drv.c
-index f0afcec72c348..30ae1c74edaa8 100644
---- a/drivers/gpu/drm/v3d/v3d_drv.c
-+++ b/drivers/gpu/drm/v3d/v3d_drv.c
-@@ -312,14 +312,18 @@ static int v3d_platform_drm_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto dev_destroy;
+diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
+index 34244523550e1..19249b86fb33e 100644
+--- a/kernel/rcu/rcuperf.c
++++ b/kernel/rcu/rcuperf.c
+@@ -561,6 +561,10 @@ rcu_perf_cleanup(void)
  
--	v3d_irq_init(v3d);
-+	ret = v3d_irq_init(v3d);
-+	if (ret)
-+		goto gem_destroy;
+ 	if (torture_cleanup_begin())
+ 		return;
++	if (!cur_ops) {
++		torture_cleanup_end();
++		return;
++	}
  
- 	ret = drm_dev_register(drm, 0);
- 	if (ret)
--		goto gem_destroy;
-+		goto irq_disable;
- 
- 	return 0;
- 
-+irq_disable:
-+	v3d_irq_disable(v3d);
- gem_destroy:
- 	v3d_gem_destroy(drm);
- dev_destroy:
-diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
-index fdda3037f7af7..2fdb456b72d32 100644
---- a/drivers/gpu/drm/v3d/v3d_drv.h
-+++ b/drivers/gpu/drm/v3d/v3d_drv.h
-@@ -310,7 +310,7 @@ void v3d_reset(struct v3d_dev *v3d);
- void v3d_invalidate_caches(struct v3d_dev *v3d);
- 
- /* v3d_irq.c */
--void v3d_irq_init(struct v3d_dev *v3d);
-+int v3d_irq_init(struct v3d_dev *v3d);
- void v3d_irq_enable(struct v3d_dev *v3d);
- void v3d_irq_disable(struct v3d_dev *v3d);
- void v3d_irq_reset(struct v3d_dev *v3d);
-diff --git a/drivers/gpu/drm/v3d/v3d_irq.c b/drivers/gpu/drm/v3d/v3d_irq.c
-index 69338da70ddce..29d746cfce572 100644
---- a/drivers/gpu/drm/v3d/v3d_irq.c
-+++ b/drivers/gpu/drm/v3d/v3d_irq.c
-@@ -156,7 +156,7 @@ v3d_hub_irq(int irq, void *arg)
- 	return status;
- }
- 
--void
-+int
- v3d_irq_init(struct v3d_dev *v3d)
- {
- 	int ret, core;
-@@ -173,13 +173,22 @@ v3d_irq_init(struct v3d_dev *v3d)
- 	ret = devm_request_irq(v3d->dev, platform_get_irq(v3d->pdev, 0),
- 			       v3d_hub_irq, IRQF_SHARED,
- 			       "v3d_hub", v3d);
-+	if (ret)
-+		goto fail;
-+
- 	ret = devm_request_irq(v3d->dev, platform_get_irq(v3d->pdev, 1),
- 			       v3d_irq, IRQF_SHARED,
- 			       "v3d_core0", v3d);
- 	if (ret)
--		dev_err(v3d->dev, "IRQ setup failed: %d\n", ret);
-+		goto fail;
- 
- 	v3d_irq_enable(v3d);
-+	return 0;
-+
-+fail:
-+	if (ret != -EPROBE_DEFER)
-+		dev_err(v3d->dev, "IRQ setup failed: %d\n", ret);
-+	return ret;
- }
- 
- void
+ 	if (reader_tasks) {
+ 		for (i = 0; i < nrealreaders; i++)
+@@ -681,6 +685,7 @@ rcu_perf_init(void)
+ 			pr_cont(" %s", perf_ops[i]->name);
+ 		pr_cont("\n");
+ 		firsterr = -EINVAL;
++		cur_ops = NULL;
+ 		goto unwind;
+ 	}
+ 	if (cur_ops->init)
 -- 
 2.20.1
 
