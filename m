@@ -2,140 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBCBE304F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 00:50:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 801FD30500
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 00:53:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726694AbfE3Wut (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 18:50:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58216 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726045AbfE3Wut (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 18:50:49 -0400
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6638B262B7;
-        Thu, 30 May 2019 22:50:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559256647;
-        bh=hjWqKFlJP4/yUgQMwqUdhZkErpO8lhwWKHylFyTK9uA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=1M9ZC5ANvJgXHP4foCQorjUJ/I07kCeNHrXMQm5rWFcbagVU/aeM244UAXe+MxPuK
-         fjXDzTxT7RK7oEIZeiMY95zZfE+HiIZ28GB1/Lvg2sqlrwv17x8NjVM18bvSbDV21c
-         wSahg+yB57xeRoyJEUxQWmJxsI9JHrbxJUP0+6Mc=
-Received: by mail-wm1-f53.google.com with SMTP id y3so4879919wmm.2;
-        Thu, 30 May 2019 15:50:47 -0700 (PDT)
-X-Gm-Message-State: APjAAAUoQ8gRf8cMdv/D6dzPAelgs6Mff+UNTthW8Xv/HIyzhh8HmXcL
-        CTnIJzDcOiPKcJ4qIYmI0EhAAc+OtE23Pup5iUs=
-X-Google-Smtp-Source: APXvYqzcn6C73pVcqdKVZsxUqEXkCfOCjxE1QAYlQcPsoykEW/jt3tkTj4k3F9uoyu3sRjkb0vm04eM9ByDOVS/ZKbI=
-X-Received: by 2002:a1c:c2d5:: with SMTP id s204mr3672258wmf.174.1559256645963;
- Thu, 30 May 2019 15:50:45 -0700 (PDT)
+        id S1726701AbfE3Wwy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 18:52:54 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:37111 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726326AbfE3Www (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 18:52:52 -0400
+Received: by mail-io1-f66.google.com with SMTP id e5so6573514iok.4;
+        Thu, 30 May 2019 15:52:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WqRv1eYw87mitTUNX+jAkK8xXVXgILIBliBYFvqQpD4=;
+        b=I8iFh+NzZRRRmN4wFokO7NUD8Nl70epcfUqFJXm0ax32zPrw0fbtQOXpjJ+ASVFPop
+         rcyFRKUAtpL1Qn/JL0/w3QO8aZWmlwtrrmoHAP8P+PcK+8o71mx1iAlsmbb6rkw5Twie
+         Q9ebWpONgW+g62jc7oJYbYF5+i/5BHNbKv886LuIw2DA/cuMmYoWGv0hDlZw76TzLUM0
+         qFN/dK79vIwfYGjca79Bjkf1SfES+/eyyyERts9sYN7PoCbhV0gzMaIE4EzPo9JoZm8c
+         jrQa2yJqVtZHH83foz663BibaVn9KLPy96H7Y1/6xB2mgQRaPEdJzb74o6qO1r8D7Mmm
+         zVRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WqRv1eYw87mitTUNX+jAkK8xXVXgILIBliBYFvqQpD4=;
+        b=NjmnMyiXTeKZzV5WH99kny2sNVsnvnRq4nIsnk25Fkkvyk7nR/7me4mqdk2Vmp5SXo
+         Hue6hm/UvPAtyaZqPpD6FhgIWOdDKa/CjKaOigRljuJX6oQCrhbcKtLZTdCbhWhuV7uc
+         4G0j/XCqRwstegWxwpd8KLxbM8OUaDM2DughpCH/jw3Y1wy73rKbv+VFtyBqc4H76DDD
+         bzqilDVl7x8VKQs3+77vZsyH64z9Zr7SgEddG05JeA6SG055smkzNv6azpXhpb1gL01Z
+         8XzRd3fdGd109kv31KjVUIFW66zhABxqSjAp6OMgc2PLokFzGzMkxh6GKo12+DmyFQTD
+         9RwA==
+X-Gm-Message-State: APjAAAXoeYzEUFtx3I/xQOhC6Gh5fcLhPkFf1zLtB+UmPWrG1RgUW63z
+        ShMWDigcIYzL+pI+7yFcAiz55BjK7tszN58Naag=
+X-Google-Smtp-Source: APXvYqw21dbtGqaaBiNIsp5/5TmlV3uYnegrqAHgYw+u67wKWL83EtBiw3w4VYHNeNegwbc0gky4NnkC9v56bjEY488=
+X-Received: by 2002:a5e:8b41:: with SMTP id z1mr164559iom.42.1559256770970;
+ Thu, 30 May 2019 15:52:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <1558946326-13630-1-git-send-email-neal.liu@mediatek.com> <1558946326-13630-2-git-send-email-neal.liu@mediatek.com>
-In-Reply-To: <1558946326-13630-2-git-send-email-neal.liu@mediatek.com>
-From:   Sean Wang <sean.wang@kernel.org>
-Date:   Thu, 30 May 2019 15:50:35 -0700
-X-Gmail-Original-Message-ID: <CAGp9LzpkhDhSHL=go3fvzn2Oh8DrsW8F=1YKP4ne9TDvWQVq6Q@mail.gmail.com>
-Message-ID: <CAGp9LzpkhDhSHL=go3fvzn2Oh8DrsW8F=1YKP4ne9TDvWQVq6Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] soc: mediatek: add SMC fid table for SIP interface
-To:     Neal Liu <neal.liu@mediatek.com>
-Cc:     Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>, wsd_upstream@mediatek.com,
-        Crystal Guo <Crystal.Guo@mediatek.com>
+References: <e070e241-fb65-a5b0-3155-7380a9203bcf@molgen.mpg.de>
+ <8627ea1e-8e51-c425-97f6-aeb57176e11a@gmail.com> <eb730f01-0c6d-0589-36cc-7193d64c1ee8@molgen.mpg.de>
+ <CANn89i+VvwMaHy2Br-0CcC3gPQ+PmG3Urpn4KpqL0P7XBykmcw@mail.gmail.com> <20190529093548.3df7ee73@hermes.lan>
+In-Reply-To: <20190529093548.3df7ee73@hermes.lan>
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+Date:   Thu, 30 May 2019 15:52:40 -0700
+Message-ID: <CAKgT0UdWmu3GjeMd9jmA=5FGQ=5cLnFb51arf+zkX7omc-G1fg@mail.gmail.com>
+Subject: Re: Driver has suspect GRO implementation, TCP performance may be compromised.
+To:     Stephen Hemminger <stephen@networkplumber.org>
+Cc:     Eric Dumazet <edumazet@google.com>,
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
+        netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Neal,
-
-On Mon, May 27, 2019 at 1:39 AM Neal Liu <neal.liu@mediatek.com> wrote:
+On Wed, May 29, 2019 at 9:38 AM Stephen Hemminger
+<stephen@networkplumber.org> wrote:
 >
-> 1. Add a header file to provide SIP interface to ARM Trusted
-> Firmware(ATF)
-> 2. Add hwrng SMC fid
+> On Wed, 29 May 2019 09:00:54 -0700
+> Eric Dumazet <edumazet@google.com> wrote:
 >
-> Signed-off-by: Neal Liu <neal.liu@mediatek.com>
-> ---
->  include/linux/soc/mediatek/mtk_sip_svc.h |   51 ++++++++++++++++++++++++++++++
->  1 file changed, 51 insertions(+)
->  create mode 100644 include/linux/soc/mediatek/mtk_sip_svc.h
+> > On Wed, May 29, 2019 at 7:49 AM Paul Menzel <pmenzel@molgen.mpg.de> wrote:
+> > >
+> > > Dear Eric,
+> > >
+> > >
+> > > Thank you for the quick reply.
+> > >
+> > > On 05/28/19 19:18, Eric Dumazet wrote:
+> > > > On 5/28/19 8:42 AM, Paul Menzel wrote:
+> > >
+> > > >> Occasionally, Linux outputs the message below on the workstation Dell
+> > > >> OptiPlex 5040 MT.
+> > > >>
+> > > >>     TCP: net00: Driver has suspect GRO implementation, TCP performance may be compromised.
+> > > >>
+> > > >> Linux 4.14.55 and Linux 5.2-rc2 show the message, and the WWW also
+> > > >> gives some hits [1][2].
+> > > >>
+> > > >> ```
+> > > >> $ sudo ethtool -i net00
+> > > >> driver: e1000e
+> > > >> version: 3.2.6-k
+> > > >> firmware-version: 0.8-4
+> > > >> expansion-rom-version:
+> > > >> bus-info: 0000:00:1f.6
+> > > >> supports-statistics: yes
+> > > >> supports-test: yes
+> > > >> supports-eeprom-access: yes
+> > > >> supports-register-dump: yes
+> > > >> supports-priv-flags: no
+> > > >> ```
+> > > >>
+> > > >> Can the driver e1000e be improved?
+> > > >>
+> > > >> Any idea, what triggers this, as I do not see it every boot? Download
+> > > >> of big files?
+> > > >>
+> > > > Maybe the driver/NIC can receive frames bigger than MTU, although this would be strange.
+> > > >
+> > > > diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+> > > > index c61edd023b352123e2a77465782e0d32689e96b0..cb0194f66125bcba427e6e7e3cacf0c93040ef61 100644
+> > > > --- a/net/ipv4/tcp_input.c
+> > > > +++ b/net/ipv4/tcp_input.c
+> > > > @@ -150,8 +150,10 @@ static void tcp_gro_dev_warn(struct sock *sk, const struct sk_buff *skb,
+> > > >                 rcu_read_lock();
+> > > >                 dev = dev_get_by_index_rcu(sock_net(sk), skb->skb_iif);
+> > > >                 if (!dev || len >= dev->mtu)
+> > > > -                       pr_warn("%s: Driver has suspect GRO implementation, TCP performance may be compromised.\n",
+> > > > -                               dev ? dev->name : "Unknown driver");
+> > > > +                       pr_warn("%s: Driver has suspect GRO implementation, TCP performance may be compromised."
+> > > > +                               " len %u mtu %u\n",
+> > > > +                               dev ? dev->name : "Unknown driver",
+> > > > +                               len, dev ? dev->mtu : 0);
+> > > >                 rcu_read_unlock();
+> > > >         }
+> > > >  }
+> > >
+> > > I applied your patch on commit 9fb67d643 (Merge tag 'pinctrl-v5.2-2' of
+> > > git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl):
+> > >
+> > >      [ 5507.291769] TCP: net00: Driver has suspect GRO implementation, TCP performance may be compromised. len 1856 mtu 1500
+> >
+> >
+> > The 'GRO' in the warning can be probably ignored, since this NIC does
+> > not implement its own GRO.
+> >
+> > You can confirm this with this debug patch:
+> >
+> > diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c
+> > b/drivers/net/ethernet/intel/e1000e/netdev.c
+> > index 0e09bede42a2bd2c912366a68863a52a22def8ee..014a43ce77e09664bda0568dd118064b006acd67
+> > 100644
+> > --- a/drivers/net/ethernet/intel/e1000e/netdev.c
+> > +++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+> > @@ -561,6 +561,9 @@ static void e1000_receive_skb(struct e1000_adapter *adapter,
+> >         if (staterr & E1000_RXD_STAT_VP)
+> >                 __vlan_hwaccel_put_tag(skb, htons(ETH_P_8021Q), tag);
+> >
+> > +       if (skb->len > netdev->mtu)
+> > +               pr_err_ratelimited("received packet bigger (%u) than
+> > MTU (%u)\n",
+> > +                                  skb->len, netdev->mtu);
+> >         napi_gro_receive(&adapter->napi, skb);
+> >  }
 >
-> diff --git a/include/linux/soc/mediatek/mtk_sip_svc.h b/include/linux/soc/mediatek/mtk_sip_svc.h
-> new file mode 100644
-> index 0000000..f65d403
-> --- /dev/null
-> +++ b/include/linux/soc/mediatek/mtk_sip_svc.h
-> @@ -0,0 +1,51 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (c) 2019 MediaTek Inc.
-> + */
-> +
-> +#ifndef _MTK_SECURE_API_H_
-> +#define _MTK_SECURE_API_H_
-> +
-> +#include <linux/kernel.h>
-> +
-> +/* Error Code */
-> +#define SIP_SVC_E_SUCCESS                      0
-> +#define SIP_SVC_E_NOT_SUPPORTED                        -1
-> +#define SIP_SVC_E_INVALID_PARAMS               -2
-> +#define SIP_SVC_E_INVALID_RANGE                        -3
-> +#define SIP_SVC_E_PERMISSION_DENY              -4
-> +
-> +#ifdef CONFIG_ARM64
-> +#define MTK_SIP_SMC_AARCH_BIT                  0x40000000
-
-#define MTK_SIP_SMC_AARCH_BIT                  BIT(30)
-
-> +#else
-> +#define MTK_SIP_SMC_AARCH_BIT                  0x00000000
-
-#define MTK_SIP_SMC_AARCH_BIT                  0
-
-> +#endif
-> +
-> +/*******************************************************************************
-> + * Defines for Mediatek runtime services func ids
-> + ******************************************************************************/
-
-It would be good if remove the trivial and below all unused comments.
-
-> +
-> +/* Debug feature and ATF related SMC call */
-> +
-> +/* CPU operations related SMC call */
-> +
-> +/* SPM related SMC call */
-> +
-> +/* Low power related SMC call */
-> +
-> +/* AMMS related SMC call */
-> +
-> +/* Security related SMC call */
-> +/* HWRNG */
-> +#define MTK_SIP_KERNEL_GET_RND \
-> +       (0x82000206 | MTK_SIP_SMC_AARCH_BIT)
-> +
-> +/* Storage Encryption related SMC call */
-> +
-> +/* Platform related SMC call */
-> +
-> +/* Pheripheral related SMC call */
-> +
-> +/* MM related SMC call */
-> +
-> +#endif /* _MTK_SECURE_API_H_ */
-> --
-> 1.7.9.5
+> I think e1000 is one of those devices that only has receive limit as power of 2.
+> Therefore frames up to 2K can be received.
 >
+> There always some confusion in Linux about whether MTU is transmit only or devices
+> have to enforce it on receive.
+
+Actually I think there are some parts that don't have any receive
+limits that are supported by the e1000 part. What ends up happening is
+that we only drop the packet if it spans more than one buffer if I
+recall correctly, and buffer size is determined by MTU.
+
+I always thought MTU only applied to transmit since it is kind of in
+the name. As a result I am pretty sure igb and ixgbe will be able to
+trigger this warning under certain circumstances as well. Also what
+about the case where someone sets the MTU to less than 1500? I think
+most NICs probably don't update their limits in such a case and
+wouldn't it also trigger a similar error?
