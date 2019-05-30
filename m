@@ -2,89 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 315672FE8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 16:54:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14FD72FE9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 16:56:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727506AbfE3OxH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 10:53:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60310 "EHLO mail.kernel.org"
+        id S1727367AbfE3Oyl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 10:54:41 -0400
+Received: from mga01.intel.com ([192.55.52.88]:62323 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727450AbfE3OxF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 10:53:05 -0400
-Received: from localhost.localdomain (user-0ccsrjt.cable.mindspring.com [24.206.110.125])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25BB425BC9;
-        Thu, 30 May 2019 14:53:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559227984;
-        bh=loxtaV3vpN1GZcin4CrVgRGNdtHrvPKkBB7Yu208iPA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lw0rhC6rewH+XhgZR5YTdVfuGou4v7weJKJZw2g4Ui8O8pzPWo6oXZb6/Oij/V37Q
-         6lPmwTrXoEfMyMUle3AawYb3/4zSN1HOr6mQbhP+TNtdhNzmflpQKURbr3jB8Vgf4s
-         kNF51wW0UDG4R9Uqca8x9ERXOeq/zIjh2LWUM/54=
-From:   Alan Tull <atull@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Moritz Fischer <mdf@kernel.org>, Alan Tull <atull@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH 1/1] fpga: zynqmp-fpga: Correctly handle error pointer
-Date:   Thu, 30 May 2019 09:52:59 -0500
-Message-Id: <20190530145259.4189-2-atull@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530145259.4189-1-atull@kernel.org>
-References: <20190530145259.4189-1-atull@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1725934AbfE3Oyl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 10:54:41 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 May 2019 07:54:40 -0700
+X-ExtLoop1: 1
+Received: from otc-lr-04.jf.intel.com ([10.54.39.157])
+  by orsmga006.jf.intel.com with ESMTP; 30 May 2019 07:54:40 -0700
+From:   kan.liang@linux.intel.com
+To:     acme@kernel.org, jolsa@kernel.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org
+Cc:     peterz@infradead.org, ak@linux.intel.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH V2 1/5] perf cpumap: Retrieve die id information
+Date:   Thu, 30 May 2019 07:53:45 -0700
+Message-Id: <1559228029-5876-1-git-send-email-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Moritz Fischer <mdf@kernel.org>
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Fixes the following static checker errors:
+There is no function to retrieve die id information of a given CPU.
 
-drivers/fpga/zynqmp-fpga.c:50 zynqmp_fpga_ops_write()
-error: 'eemi_ops' dereferencing possible ERR_PTR()
+Add cpu_map__get_die_id() to retrieve die id information.
 
-drivers/fpga/zynqmp-fpga.c:84 zynqmp_fpga_ops_state()
-error: 'eemi_ops' dereferencing possible ERR_PTR()
-
-Note: This does not handle the EPROBE_DEFER value in a
-      special manner.
-
-Fixes commit c09f7471127e ("fpga manager: Adding FPGA Manager support for
-Xilinx zynqmp")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Moritz Fischer <mdf@kernel.org>
-Acked-by: Alan Tull <atull@kernel.org>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
- drivers/fpga/zynqmp-fpga.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/fpga/zynqmp-fpga.c b/drivers/fpga/zynqmp-fpga.c
-index f7cbaadf49ab..b8a88d21d038 100644
---- a/drivers/fpga/zynqmp-fpga.c
-+++ b/drivers/fpga/zynqmp-fpga.c
-@@ -47,7 +47,7 @@ static int zynqmp_fpga_ops_write(struct fpga_manager *mgr,
- 	char *kbuf;
- 	int ret;
+New patch for V2.
+
+ tools/perf/util/cpumap.c | 7 +++++++
+ tools/perf/util/cpumap.h | 1 +
+ 2 files changed, 8 insertions(+)
+
+diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
+index 0b59922..7db1365 100644
+--- a/tools/perf/util/cpumap.c
++++ b/tools/perf/util/cpumap.c
+@@ -373,6 +373,13 @@ int cpu_map__build_map(struct cpu_map *cpus, struct cpu_map **res,
+ 	return 0;
+ }
  
--	if (!eemi_ops || !eemi_ops->fpga_load)
-+	if (IS_ERR_OR_NULL(eemi_ops) || !eemi_ops->fpga_load)
- 		return -ENXIO;
- 
- 	priv = mgr->priv;
-@@ -81,7 +81,7 @@ static enum fpga_mgr_states zynqmp_fpga_ops_state(struct fpga_manager *mgr)
- 	const struct zynqmp_eemi_ops *eemi_ops = zynqmp_pm_get_eemi_ops();
- 	u32 status;
- 
--	if (!eemi_ops || !eemi_ops->fpga_get_status)
-+	if (IS_ERR_OR_NULL(eemi_ops) || !eemi_ops->fpga_get_status)
- 		return FPGA_MGR_STATE_UNKNOWN;
- 
- 	eemi_ops->fpga_get_status(&status);
++int cpu_map__get_die_id(int cpu)
++{
++	int value, ret = cpu__get_topology_int(cpu, "die_id", &value);
++
++	return ret ?: value;
++}
++
+ int cpu_map__get_core_id(int cpu)
+ {
+ 	int value, ret = cpu__get_topology_int(cpu, "core_id", &value);
+diff --git a/tools/perf/util/cpumap.h b/tools/perf/util/cpumap.h
+index f00ce62..6762ff9 100644
+--- a/tools/perf/util/cpumap.h
++++ b/tools/perf/util/cpumap.h
+@@ -25,6 +25,7 @@ size_t cpu_map__snprint_mask(struct cpu_map *map, char *buf, size_t size);
+ size_t cpu_map__fprintf(struct cpu_map *map, FILE *fp);
+ int cpu_map__get_socket_id(int cpu);
+ int cpu_map__get_socket(struct cpu_map *map, int idx, void *data);
++int cpu_map__get_die_id(int cpu);
+ int cpu_map__get_core_id(int cpu);
+ int cpu_map__get_core(struct cpu_map *map, int idx, void *data);
+ int cpu_map__build_socket_map(struct cpu_map *cpus, struct cpu_map **sockp);
 -- 
-2.21.0
+2.7.4
 
