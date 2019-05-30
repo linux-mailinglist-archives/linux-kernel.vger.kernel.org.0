@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5735B2EFEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:01:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D71142F57A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:48:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729506AbfE3DSJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:18:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34576 "EHLO mail.kernel.org"
+        id S1729280AbfE3Er1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:47:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51314 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729868AbfE3DO2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:14:28 -0400
+        id S1728593AbfE3DLd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:11:33 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4BA524565;
-        Thu, 30 May 2019 03:14:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DAEB82449A;
+        Thu, 30 May 2019 03:11:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186068;
-        bh=LTGs/ZQ0ZWor2mCV+mT5jRrLzyYC3NSzLDS7oOfHpEM=;
+        s=default; t=1559185893;
+        bh=fNIicfzKqgNknvOL8kafg05oEuWLA66QXO1DUGfYGHg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=phxZyWK43yI5GQzrpxdTmILn2X//6GkoCYbQtf8m94Yaz7uhIPHmzhRDZH0foHSFF
-         Bhw3I+vuMi5TORiLLZeZ2pPWbOAxRelAF9nA3/EW9WscimFB/78NeECPxP/wrL8DXq
-         WNmDEPCJEsHaKBn4jO7N6PeCU3HqyZNrP4o7Am/I=
+        b=O+JD9dI+MZI7FextB6lsqaqRMA5joo51f/d9tL37qRcF5e8dcy8Rhfkbbu+8AjWAQ
+         WHp1bjwZjBftr35Nz//wZZQ2KHxe53dAg/H4TUXieeTfh33Q1HNEp5DxaSzhJSz984
+         8/kD1ectpqbi0XiM6uKuuDlYxZwbWj/gQQI/4KBI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        stable@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 179/346] PM / devfreq: Fix static checker warning in try_then_request_governor
-Date:   Wed, 29 May 2019 20:04:12 -0700
-Message-Id: <20190530030550.194295001@linuxfoundation.org>
+Subject: [PATCH 5.1 255/405] rtc: xgene: fix possible race condition
+Date:   Wed, 29 May 2019 20:04:13 -0700
+Message-Id: <20190530030553.877766892@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,51 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b53b0128052ffd687797d5f4deeb76327e7b5711 ]
+[ Upstream commit a652e00ee1233e251a337c28e18a1da59224e5ce ]
 
-The patch 23c7b54ca1cd: "PM / devfreq: Fix devfreq_add_device() when
-drivers are built as modules." leads to the following static checker
-warning:
+The IRQ is requested before the struct rtc is allocated and registered, but
+this struct is used in the IRQ handler. This may lead to a NULL pointer
+dereference.
 
-    drivers/devfreq/devfreq.c:1043 governor_store()
-    warn: 'governor' can also be NULL
+Switch to devm_rtc_allocate_device/rtc_register_device to allocate the rtc
+struct before requesting the IRQ.
 
-The reason is that the try_then_request_governor() function returns both
-error pointers and NULL. It should just return error pointers, so fix
-this by returning a ERR_PTR to the error intead of returning NULL.
-
-Fixes: 23c7b54ca1cd ("PM / devfreq: Fix devfreq_add_device() when drivers are built as modules.")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/devfreq/devfreq.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/rtc/rtc-xgene.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index 0ae3de76833b7..839621b044f49 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -228,7 +228,7 @@ static struct devfreq_governor *find_devfreq_governor(const char *name)
-  * if is not found. This can happen when both drivers (the governor driver
-  * and the driver that call devfreq_add_device) are built as modules.
-  * devfreq_list_lock should be held by the caller. Returns the matched
-- * governor's pointer.
-+ * governor's pointer or an error pointer.
-  */
- static struct devfreq_governor *try_then_request_governor(const char *name)
- {
-@@ -254,7 +254,7 @@ static struct devfreq_governor *try_then_request_governor(const char *name)
- 		/* Restore previous state before return */
- 		mutex_lock(&devfreq_list_lock);
- 		if (err)
--			return NULL;
-+			return ERR_PTR(err);
+diff --git a/drivers/rtc/rtc-xgene.c b/drivers/rtc/rtc-xgene.c
+index 153820876a820..2f741f455c30a 100644
+--- a/drivers/rtc/rtc-xgene.c
++++ b/drivers/rtc/rtc-xgene.c
+@@ -168,6 +168,10 @@ static int xgene_rtc_probe(struct platform_device *pdev)
+ 	if (IS_ERR(pdata->csr_base))
+ 		return PTR_ERR(pdata->csr_base);
  
- 		governor = find_devfreq_governor(name);
++	pdata->rtc = devm_rtc_allocate_device(&pdev->dev);
++	if (IS_ERR(pdata->rtc))
++		return PTR_ERR(pdata->rtc);
++
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+ 		dev_err(&pdev->dev, "No IRQ resource\n");
+@@ -198,15 +202,15 @@ static int xgene_rtc_probe(struct platform_device *pdev)
+ 		return ret;
  	}
+ 
+-	pdata->rtc = devm_rtc_device_register(&pdev->dev, pdev->name,
+-					 &xgene_rtc_ops, THIS_MODULE);
+-	if (IS_ERR(pdata->rtc)) {
+-		clk_disable_unprepare(pdata->clk);
+-		return PTR_ERR(pdata->rtc);
+-	}
+-
+ 	/* HW does not support update faster than 1 seconds */
+ 	pdata->rtc->uie_unsupported = 1;
++	pdata->rtc->ops = &xgene_rtc_ops;
++
++	ret = rtc_register_device(pdata->rtc);
++	if (ret) {
++		clk_disable_unprepare(pdata->clk);
++		return ret;
++	}
+ 
+ 	return 0;
+ }
 -- 
 2.20.1
 
