@@ -2,86 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BEC62F934
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 11:20:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BC612F93B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 11:20:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727609AbfE3JUA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 05:20:00 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53811 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727557AbfE3JTz (ORCPT
+        id S1727659AbfE3JUd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 05:20:33 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:54873 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726902AbfE3JUd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 05:19:55 -0400
-Received: by mail-wm1-f65.google.com with SMTP id d17so3466268wmb.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 02:19:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=bXmoJNEbrPXtWcbWaevtm55gchiD7AFUrh4STNUZ8Vc=;
-        b=nR/wDqAhThFQpDAt0t7fisYVPaGagEct2ncHBo3lqtvJiBaQQMsP+YIb048tnk9Ztm
-         1kTcPA/BMG+dRLHtS21T146K0WbYoeo7e5q3xz0Jcx6QlACw6rarriRmMTCFd+/jZzD7
-         q2K0eLVmg7GjA59vIZhYrzfa1GPUZZigQ9HjXTWGW58Uq7LZx1nUJm4MPHG9hYWo42V3
-         eEIzAL6iYNISZPBX5B8oitYtt2lehRdOTEkjDD4ayjTUNFHxSONoWwrxRksMyz5TZtWi
-         DmHuFV4ag72ZwI9SVy1bcAG3bszl2L02YiSVeUT1xrLK6KnGLsWRqOEg7iKILR8GIVTk
-         z5ng==
-X-Gm-Message-State: APjAAAUeJi5WitKIF0fyoiE4tCR22kvPxkuPpw01D+pGbBtYlOpQ/AR1
-        Z10jKoE6zlZBNwKDOIPs8Ehk9A==
-X-Google-Smtp-Source: APXvYqym7eo9mlaZEgk8nPuv2JK3WdsfJ+nEJnkLnO59sCZpkapBxwuZUf4hpQsVVYr6MgVmAweumw==
-X-Received: by 2002:a1c:cc02:: with SMTP id h2mr1594795wmb.13.1559207993643;
-        Thu, 30 May 2019 02:19:53 -0700 (PDT)
-Received: from raver.teknoraver.net (net-93-144-152-91.cust.vodafonedsl.it. [93.144.152.91])
-        by smtp.gmail.com with ESMTPSA id f24sm1513381wmb.16.2019.05.30.02.19.52
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 30 May 2019 02:19:52 -0700 (PDT)
-From:   Matteo Croce <mcroce@redhat.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH] tipc: remove two unused variables
-Date:   Thu, 30 May 2019 11:19:52 +0200
-Message-Id: <20190530091952.4108-1-mcroce@redhat.com>
-X-Mailer: git-send-email 2.21.0
+        Thu, 30 May 2019 05:20:33 -0400
+X-UUID: 9149feeb84aa422f92ccb81a361bb777-20190530
+X-UUID: 9149feeb84aa422f92ccb81a361bb777-20190530
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <biao.huang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1333165472; Thu, 30 May 2019 17:20:24 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 30 May 2019 17:20:22 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 30 May 2019 17:20:21 +0800
+From:   Biao Huang <biao.huang@mediatek.com>
+To:     <davem@davemloft.net>, Jose Abreu <joabreu@synopsys.com>
+CC:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <netdev@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <yt.shen@mediatek.com>,
+        <biao.huang@mediatek.com>, <jianguo.zhang@mediatek.com>,
+        <boon.leong.ong@intel.com>, <andrew@lunn.ch>
+Subject: [v6, PATCH] add some features in stmmac
+Date:   Thu, 30 May 2019 17:20:18 +0800
+Message-ID: <1559208019-2778-1-git-send-email-biao.huang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 00D74C4A67192BF2D8FCF3A20E60CE58346C2B4688C88E87FBC1C8D124E4871A2000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove two variables which are unused after merging 6a33853c5773 and
-generate the following warnings:
-
-      CC [M]  net/tipc/sysctl.o
-    net/tipc/sysctl.c:42:12: warning: ‘one’ defined but not used [-Wunused-variable]
-       42 | static int one = 1;
-          |            ^~~
-    net/tipc/sysctl.c:41:12: warning: ‘zero’ defined but not used [-Wunused-variable]
-       41 | static int zero;
-          |            ^~~~
-
-Fixes: 6a33853c5773 ("proc/sysctl: add shared variables for range check")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Matteo Croce <mcroce@redhat.com>
----
- net/tipc/sysctl.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/net/tipc/sysctl.c b/net/tipc/sysctl.c
-index 9df82a573aa7..180574ff3a3f 100644
---- a/net/tipc/sysctl.c
-+++ b/net/tipc/sysctl.c
-@@ -38,8 +38,6 @@
- 
- #include <linux/sysctl.h>
- 
--static int zero;
--static int one = 1;
- static struct ctl_table_header *tipc_ctl_hdr;
- 
- static struct ctl_table tipc_table[] = {
--- 
-2.21.0
+Changes in v6:                                                                  
+        update commit message with selftest output log when flow control on        
+                                                                                
+Changes in v5:                                                                  
+        1. run checkpatch.pl to fix coding style issue.                         
+        2. apply reverse xmas tree.                                             
+        3. add output log of "ethtool -t eth0" to commit message.               
+                                                                                
+Changes in v4:                                                                  
+        retain the reverse xmas tree ordering.                                  
+                                                                                
+Changes in v3:                                                                  
+        rewrite the patch base on serires in                                    
+        https://patchwork.ozlabs.org/project/netdev/list/?series=109699         
+                                                                                
+Changes in v2;                                                                  
+        1. reverse Christmas tree order in dwmac4_set_filter.                   
+        2. remove clause 45 patch, waiting for cl45 patch from Boon Leong          
+                                                                                
+v1:                                                                             
+This series add some features in stmmac driver.                                 
+        1. add support for hash table size 128/256                              
+        2. add mdio clause 45 access from mac device for dwmac4.                
+                                                                                
+Biao Huang (1):                                                                 
+  net: stmmac: add support for hash table size 128/256 in dwmac4                
+                                                                                
+ drivers/net/ethernet/stmicro/stmmac/common.h      |    7 +--                   
+ drivers/net/ethernet/stmicro/stmmac/dwmac4.h      |    4 +-                    
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c |   49 ++++++++++++--------- 
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c  |    1 +                     
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    6 +++                   
+ 5 files changed, 42 insertions(+), 25 deletions(-)                             
+                                                                                
+--                                                                              
+1.7.9.5
 
