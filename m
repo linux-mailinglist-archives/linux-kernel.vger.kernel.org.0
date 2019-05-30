@@ -2,74 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 040B8304B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 00:22:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F7A63048F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 00:04:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbfE3WWX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 18:22:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33618 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726326AbfE3WWX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 18:22:23 -0400
-Received: from localhost (unknown [207.225.69.115])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D466D261CE;
-        Thu, 30 May 2019 21:25:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559251519;
-        bh=8MgfUmuzxK42VbrpBBlF+a1Qa90gCAfIPee+BPMwH0g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bTrx5JrjxtNwuKsaVAT9K/1RrgMVFBIenItMO5BOMSzvJU9P1CAz/WBuRx5AfdZSH
-         wX2LpcE0cIxf5inzF8M5ObUtMjHuoydajrV41G7huwSI/xBHKSHQdXe4/ftXs/i1p0
-         Kn5DQsClgmyWtlFYfFBX3OpkCZRX9udwzlWgOQ3c=
-Date:   Thu, 30 May 2019 14:25:19 -0700
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Nishka Dasgupta <nishkadg.linux@gmail.com>
-Cc:     devel@driverdev.osuosl.org, code@wizofe.uk,
-        linux-kernel@vger.kernel.org, hans.verkuil@cisco.com,
-        mchehab@kernel.org, ezequiel@collabora.com,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH] staging: media: davinci_vpfe: Remove variable vpfe_dev
-Message-ID: <20190530212519.GB18779@kroah.com>
-References: <20190530204718.29892-1-nishkadg.linux@gmail.com>
- <20190530205540.GA5308@kroah.com>
- <9b870baa-4d15-cb72-0579-6bb6ca57cadd@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9b870baa-4d15-cb72-0579-6bb6ca57cadd@gmail.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+        id S1727059AbfE3WDv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 18:03:51 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:32870 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726430AbfE3WDu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 18:03:50 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 090C814DB034D;
+        Thu, 30 May 2019 14:26:26 -0700 (PDT)
+Date:   Thu, 30 May 2019 14:26:26 -0700 (PDT)
+Message-Id: <20190530.142626.1471109804622294121.davem@davemloft.net>
+To:     tonylu@linux.alibaba.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        laoar.shao@gmail.com, songliubraving@fb.com
+Subject: Re: [PATCH net-next 0/3] introduce two new tracepoints for udp
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190529130656.23979-1-tonylu@linux.alibaba.com>
+References: <20190529130656.23979-1-tonylu@linux.alibaba.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 30 May 2019 14:26:27 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 31, 2019 at 02:39:23AM +0530, Nishka Dasgupta wrote:
-> On 31/05/19 2:25 AM, Greg KH wrote:
-> > On Fri, May 31, 2019 at 02:17:18AM +0530, Nishka Dasgupta wrote:
-> > > Remove variable vpfe_dev and replace it with its value (since the
-> > > function otherwise uses values directly instead of local variables).
-> > 
-> > This says _what_ you do.  But we can see that in the patch itself.
-> > 
-> > You need to say _why_ you are doing this.
-> > 
-> > There's no need for this change at all.  Again, as I have said before,
-> > we write code for developers to read first, the compiler second.  By
-> > making these types of changes you are making it harder to
-> > read/understand by a developer, and providing absolutely no benifit to
-> > the compiler at all.
-> > 
-> > So it's actually making the code worse!
-> > 
-> > not good at all.
-> > 
-> > Please reconsider this type of change, as I keep asking you to.
-> 
-> Okay. In this case I thought it wouldn't make it worse since the function is
-> low on local variables anyway? Clearly I was wrong, so I won't count this
-> case as an exception in future.
+From: Tony Lu <tonylu@linux.alibaba.com>
+Date: Wed, 29 May 2019 21:06:54 +0800
 
-Did you check the object file output to verify this?  Try it and see :)
+> This series introduces two new tracepoints trace_udp_send and
+> trace_udp_queue_rcv, and removes redundant new line from
+> tcp_event_sk_skb.
 
+Why?
+
+Is it faster than using kprobes?
+
+Is it more reliable?
+
+Are the events _so_ useful that they warrant a tracepoint and thus
+creating a semi-stable interface for tracing and introspection via
+ebpf and similar technologies?
+
+Again, you have to say why in your log message(s).
