@@ -2,141 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0DEE2FC55
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 15:28:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 848532FC58
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 15:29:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbfE3N2K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 09:28:10 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43124 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726225AbfE3N2K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 09:28:10 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 62792308421A;
-        Thu, 30 May 2019 13:27:59 +0000 (UTC)
-Received: from krava (unknown [10.43.17.136])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 33ED16F93D;
-        Thu, 30 May 2019 13:27:50 +0000 (UTC)
-Date:   Thu, 30 May 2019 15:27:49 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Leo Yan <leo.yan@linaro.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Stanislav Fomichev <sdf@fomichev.me>,
-        Song Liu <songliubraving@fb.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCHv3 00/12] perf tools: Display eBPF code in intel_pt trace
-Message-ID: <20190530132749.GB3669@krava>
-References: <20190508132010.14512-1-jolsa@kernel.org>
- <20190530105439.GA5927@leoy-ThinkPad-X240s>
- <20190530120709.GA3669@krava>
- <20190530125709.GB5927@leoy-ThinkPad-X240s>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190530125709.GB5927@leoy-ThinkPad-X240s>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 30 May 2019 13:28:10 +0000 (UTC)
+        id S1727137AbfE3N3w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 09:29:52 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:35933 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727036AbfE3N3t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 09:29:49 -0400
+Received: by mail-pl1-f194.google.com with SMTP id d21so2584540plr.3;
+        Thu, 30 May 2019 06:29:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=MKbB7PTDLyUPgE5LxpgYdWEo36N/ezyeckgzW0tkbcQ=;
+        b=KZICn+MNu+poaBOe9RL+jAsJOYKwlZroU8gM9qXOm1buylOI+ckaGSCpzu0HAaZ1fz
+         eH6NacBTzFYqNbNgQCqvLz3oKYb8KtNvkIRUPB3uhyTwrRXB9amGji94WnqVJzygJtxU
+         vdC83UACQ6cZtj2kTM4c4gFm6DXUtgehocpSmHR4XvER2I1cifLjzY7nUg8EavsiS6Df
+         I73uRU7gI1pq5i920VU/aEEubl4vJnSCjuomNzU5M2egUB5Di4lsCv5yoAYYx8B846FB
+         8YJWDZt3wvR+rGF3RfYhayUDndQeGB0fpPxmiyySLoLpocDWDnnLNHSNZUL+Zj1RyxBW
+         O0Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=MKbB7PTDLyUPgE5LxpgYdWEo36N/ezyeckgzW0tkbcQ=;
+        b=t3O4O1QSePU8LHThDslro5iH1XV73cG/HcWqjJtzb9H1bG9uOQNpa3oIFG2t3gBUls
+         V6qWeebWFPIk5DT59ZX+h7jFkB/s9Uukrlo4867+vHlyrDrDEtOoMlP3cYQYWqpsYx2s
+         d/9960fOX/bvhDqs9RyIebPnvQsG/HM3CXT0Ldo2a9Dv4aiPc4nzptqlbB2G8QHrpGjs
+         hbSVV0fG64pCMtHr85BE4PgPX1SRzIOkY5snZDUvOjYGSLyMs2aUyjrjIh2yNQHtc40V
+         IfDD4JVuoM1z6IsBltKCuxdXLruCE+2Ks+M+aDGQqgXWL0nLZ75ChpKr4WNAcPy74mMJ
+         C/MQ==
+X-Gm-Message-State: APjAAAWxa6JAHgtv+Xv7rFgosiseM7pmFNw4Cfc8rK4g5ac2aR4r6Ld6
+        U2OwLwA+5P/QXAx9a/nGbIo=
+X-Google-Smtp-Source: APXvYqyd7YiO3Ny5IPDNTGCQIaW42td9HCoDVpD98+8Zf/7AAlJG29s6U+Z3tA2vUib7HazFDmcKbg==
+X-Received: by 2002:a17:902:2869:: with SMTP id e96mr3613687plb.203.1559222988499;
+        Thu, 30 May 2019 06:29:48 -0700 (PDT)
+Received: from node5.localdomain ([203.100.54.194])
+        by smtp.gmail.com with ESMTPSA id a5sm1402442pjo.29.2019.05.30.06.29.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 May 2019 06:29:47 -0700 (PDT)
+From:   ufo19890607 <ufo19890607@gmail.com>
+To:     peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        dsahern@gmail.com, namhyung@kernel.org, milian.wolff@kdab.com,
+        arnaldo.melo@gmail.com, yuzhoujian@didichuxing.com,
+        adrian.hunter@intel.com, wangnan0@huawei.com
+Cc:     linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        acme@redhat.com
+Subject: [PATCH] perf record: Add support to collect callchains from kernel or user space only.
+Date:   Thu, 30 May 2019 14:29:22 +0100
+Message-Id: <1559222962-22891-1-git-send-email-ufo19890607@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 08:57:09PM +0800, Leo Yan wrote:
-> Hi Jiri,
-> 
-> On Thu, May 30, 2019 at 02:07:10PM +0200, Jiri Olsa wrote:
-> > On Thu, May 30, 2019 at 06:54:39PM +0800, Leo Yan wrote:
-> > > Hi Jiri,
-> > > 
-> > > On Wed, May 08, 2019 at 03:19:58PM +0200, Jiri Olsa wrote:
-> > > > hi,
-> > > > this patchset adds dso support to read and display
-> > > > bpf code in intel_pt trace output. I had to change
-> > > > some of the kernel maps processing code, so hopefully
-> > > > I did not break too many things ;-)
-> > > > 
-> > > > It's now possible to see bpf code flow via:
-> > > > 
-> > > >   # perf-with-kcore record pt -e intel_pt//ku -- sleep 1
-> > > >   # perf-with-kcore script pt --insn-trace --xed
-> > > 
-> > > This is very interesting work for me!
-> > > 
-> > > I want to verify this feature with Arm CoreSight trace, I have one
-> > > question so that I have more direction for the tesing:
-> > > 
-> > > What's the bpf program you are suing for the testing?  e.g. some
-> > > testing program under the kernel's folder $kernel/samples/bpf?
-> > > Or you uses perf command to launch bpf program?
-> > 
-> > for this I was using tools/testing/selftests/bpf/test_verifier
-> > 
-> > I isolated some tests and ran the perf on top of them, like:
-> > 
-> >   # perf-with-kcore record pt -e intel_pt//ku -- ./test_verifier ...
-> 
-> Thanks a lot for sharing the info and quick responsing.
-> 
-> I tried to use the program $kernel/samples/bpf/sampleip to verify this
-> patch set, but seems eBPF dso is not contained properly; below is my
-> detailed steps:
-> 
->     # In the first tty
->     # cd $kernel/samples/bpf/
->     # ./sampleip -F 200 20  => sample ip with 200Hz for 20s
-> 
->     # In the second tty
->     # perf-with-kcore record arm_test -e cs_etm/@20070000.etr/uk -- sleep 1
-> 
-> If I output DSO info with report command it give below info, which
-> doesn't contain any info for eBPF DSO?
-> 
->     # perf-with-kcore report arm_test -F,dso
-> 
->     # Samples: 6M of event 'branches:ku'
->     # Event count (approx.): 6340896
->     #
->     # Shared Object     
->     # ..................
->     #
->       [kernel.kallsyms] 
->       ld-2.28.so        
->       libc-2.28.so      
->       libpthread-2.28.so
->       perf              
->       sleep             
->       [unknown]         
-> 
-> > I had to add some small sleep before the test_verifier exit,
-> > so the perf bpf thread could catch up and download the program
-> > details before test_verifier exited.
-> 
-> This seems to me for a 'real' eBPF program, do we also need extra sleep
-> so that perf bpf can save dso properly?
+From: yuzhoujian <yuzhoujian@didichuxing.com>
 
-no it's just test_verifier exits right away with ebpf code,
-and perf does not have a chance to get the ebpf prog info
+One can just record callchains in the kernel or user space with
+this new options. We can use it together with "--all-kernel" options.
+This two options is used just like print_stack(sys) or print_ustack(usr)
+for systemtap.
 
-your example above should be fine.. I'll try
+Show below is the usage of this new option combined with "--all-kernel"
+options.
+	1. Configure all used events to run in kernel space and just
+collect kernel callchains.
+	$ perf record -a -g --all-kernel --kernel-callchains
+	2. Configure all used events to run in kernel space and just
+collect user callchains.
+	$ perf record -a -g --all-kernel --user-callchains
 
-> 
-> BTW, I have another question: to display eBPF code, except this feature
-> can be used by hardware tracing (e.g. intel_pt), it also can be used
-> by other PMU events and timer events, right?
+Signed-off-by: yuzhoujian <yuzhoujian@didichuxing.com>
+---
+ tools/perf/Documentation/perf-record.txt | 6 ++++++
+ tools/perf/builtin-record.c              | 4 ++++
+ tools/perf/perf.h                        | 2 ++
+ tools/perf/util/evsel.c                  | 4 ++++
+ 4 files changed, 16 insertions(+)
 
-yes, the standard sample/annotate support was already in perf
+diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
+index de269430720a..b647eb3db0c6 100644
+--- a/tools/perf/Documentation/perf-record.txt
++++ b/tools/perf/Documentation/perf-record.txt
+@@ -490,6 +490,12 @@ Configure all used events to run in kernel space.
+ --all-user::
+ Configure all used events to run in user space.
+ 
++--kernel-callchains::
++Collect callchains from kernel space.
++
++--user-callchains::
++Collect callchains from user space.
++
+ --timestamp-filename
+ Append timestamp to output file name.
+ 
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index e2c3a585a61e..dca55997934e 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -2191,6 +2191,10 @@ static struct option __record_options[] = {
+ 	OPT_BOOLEAN_FLAG(0, "all-user", &record.opts.all_user,
+ 			 "Configure all used events to run in user space.",
+ 			 PARSE_OPT_EXCLUSIVE),
++	OPT_BOOLEAN(0, "kernel-callchains", &record.opts.kernel_callchains,
++		    "collect kernel callchains"),
++	OPT_BOOLEAN(0, "user-callchains", &record.opts.user_callchains,
++		    "collect user callchains"),
+ 	OPT_STRING(0, "clang-path", &llvm_param.clang_path, "clang path",
+ 		   "clang binary to use for compiling BPF scriptlets"),
+ 	OPT_STRING(0, "clang-opt", &llvm_param.clang_opt, "clang options",
+diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+index d59dee61b64d..711e009381ec 100644
+--- a/tools/perf/perf.h
++++ b/tools/perf/perf.h
+@@ -61,6 +61,8 @@ struct record_opts {
+ 	bool	     record_switch_events;
+ 	bool	     all_kernel;
+ 	bool	     all_user;
++	bool	     kernel_callchains;
++	bool	     user_callchains;
+ 	bool	     tail_synthesize;
+ 	bool	     overwrite;
+ 	bool	     ignore_missing_thread;
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index a6f572a40deb..a606b2833e27 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -680,6 +680,10 @@ static void __perf_evsel__config_callchain(struct perf_evsel *evsel,
+ 
+ 	attr->sample_max_stack = param->max_stack;
+ 
++	if (opts->kernel_callchains)
++		attr->exclude_callchain_user = 1;
++	if (opts->user_callchains)
++		attr->exclude_callchain_kernel = 1;
+ 	if (param->record_mode == CALLCHAIN_LBR) {
+ 		if (!opts->branch_stack) {
+ 			if (attr->exclude_user) {
+-- 
+2.14.1
 
-jirka
