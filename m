@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21C992EED5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:50:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F06EB2F459
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:38:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732794AbfE3Du0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:50:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57262 "EHLO mail.kernel.org"
+        id S2388665AbfE3EhX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:37:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732076AbfE3DT4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:19:56 -0400
+        id S1728482AbfE3DMx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:12:53 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F015B248F2;
-        Thu, 30 May 2019 03:19:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3EF68244B0;
+        Thu, 30 May 2019 03:12:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186396;
-        bh=VMGfWRwBmFr2ssnEfJgw36U9a0a4gbCJ+vV7i2R05Cs=;
+        s=default; t=1559185973;
+        bh=JgN37LjgXSRNCtPU8BWPOAtUz0V1fcZPJhyRBE7O2SQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bl2GYGrzzrpjOpXMX96/2rEoITdMfoHb57u4R5Qo7HG/5QRmi9vgxZTDlYyea/QhB
-         w+WfsRn7lV535BSC76qHsl5Fn0fo51gDHbrIu+iUCoBtyOPJhfGF67in3VS1Il6I8Q
-         QoSopQEztPq+MQwwkcDUwTXMGEsrEZ/AH9DpmlkY=
+        b=TkJ9GWfeHUoszPq1ID2UHLVhO7Rma9ogLWpJcDEzaph4/Bc1pbtjREQHRB2pnfZm5
+         sP3U3s3fS6VysWqYyjWscKtNZq0rl3TKm3xEB7eTnepjBlWlRqFPtJ7zCWY+wd4dxx
+         8wqE6Nl6XRKF43BDOODZQLL6CYqD9Tg4foTzvc4A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 127/193] s390: zcrypt: initialize variables before_use
-Date:   Wed, 29 May 2019 20:06:21 -0700
-Message-Id: <20190530030506.217079100@linuxfoundation.org>
+Subject: [PATCH 5.1 384/405] regulator: da9211: Fix notifier mutex lock warning
+Date:   Wed, 29 May 2019 20:06:22 -0700
+Message-Id: <20190530030600.144343924@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,72 +46,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 913140e221567b3ecd21b4242257a7e3fa279026 ]
+[ Upstream commit 65378de3359d30ebce44762d8b8027f372b5b1c4 ]
 
-The 'func_code' variable gets printed in debug statements without
-a prior initialization in multiple functions, as reported when building
-with clang:
+The mutex for the regulator_dev must be controlled by the caller of
+the regulator_notifier_call_chain(), as described in the comment
+for that function.
 
-drivers/s390/crypto/zcrypt_api.c:659:6: warning: variable 'func_code' is used uninitialized whenever 'if' condition is true
-      [-Wsometimes-uninitialized]
-        if (mex->outputdatalength < mex->inputdatalength) {
-            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/s390/crypto/zcrypt_api.c:725:29: note: uninitialized use occurs here
-        trace_s390_zcrypt_rep(mex, func_code, rc,
-                                   ^~~~~~~~~
-drivers/s390/crypto/zcrypt_api.c:659:2: note: remove the 'if' if its condition is always false
-        if (mex->outputdatalength < mex->inputdatalength) {
-        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/s390/crypto/zcrypt_api.c:654:24: note: initialize the variable 'func_code' to silence this warning
-        unsigned int func_code;
-                              ^
+Failure to mutex lock and unlock surrounding the notifier call results
+in a kernel WARN_ON_ONCE() which will dump a backtrace for the
+regulator_notifier_call_chain() when that function call is first made.
+The mutex can be controlled using the regulator_lock/unlock() API.
 
-Add initializations to all affected code paths to shut up the warning
-and make the warning output consistent.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fixes: 1028a37daa14 ("regulator: da9211: new regulator driver")
+Suggested-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Signed-off-by: Steve Twiss <stwiss.opensource@diasemi.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/s390/crypto/zcrypt_api.c | 4 ++++
+ drivers/regulator/da9211-regulator.c | 4 ++++
  1 file changed, 4 insertions(+)
 
-diff --git a/drivers/s390/crypto/zcrypt_api.c b/drivers/s390/crypto/zcrypt_api.c
-index a9a56aa9c26b7..3743828106db8 100644
---- a/drivers/s390/crypto/zcrypt_api.c
-+++ b/drivers/s390/crypto/zcrypt_api.c
-@@ -237,6 +237,7 @@ static long zcrypt_rsa_modexpo(struct ica_rsa_modexpo *mex)
- 	trace_s390_zcrypt_req(mex, TP_ICARSAMODEXPO);
+diff --git a/drivers/regulator/da9211-regulator.c b/drivers/regulator/da9211-regulator.c
+index 109ee12d43626..4d7fe4819c1ce 100644
+--- a/drivers/regulator/da9211-regulator.c
++++ b/drivers/regulator/da9211-regulator.c
+@@ -322,8 +322,10 @@ static irqreturn_t da9211_irq_handler(int irq, void *data)
+ 		goto error_i2c;
  
- 	if (mex->outputdatalength < mex->inputdatalength) {
-+		func_code = 0;
- 		rc = -EINVAL;
- 		goto out;
+ 	if (reg_val & DA9211_E_OV_CURR_A) {
++	        regulator_lock(chip->rdev[0]);
+ 		regulator_notifier_call_chain(chip->rdev[0],
+ 			REGULATOR_EVENT_OVER_CURRENT, NULL);
++	        regulator_unlock(chip->rdev[0]);
+ 
+ 		err = regmap_write(chip->regmap, DA9211_REG_EVENT_B,
+ 			DA9211_E_OV_CURR_A);
+@@ -334,8 +336,10 @@ static irqreturn_t da9211_irq_handler(int irq, void *data)
  	}
-@@ -311,6 +312,7 @@ static long zcrypt_rsa_crt(struct ica_rsa_modexpo_crt *crt)
- 	trace_s390_zcrypt_req(crt, TP_ICARSACRT);
  
- 	if (crt->outputdatalength < crt->inputdatalength) {
-+		func_code = 0;
- 		rc = -EINVAL;
- 		goto out;
- 	}
-@@ -492,6 +494,7 @@ static long zcrypt_send_ep11_cprb(struct ep11_urb *xcrb)
+ 	if (reg_val & DA9211_E_OV_CURR_B) {
++	        regulator_lock(chip->rdev[1]);
+ 		regulator_notifier_call_chain(chip->rdev[1],
+ 			REGULATOR_EVENT_OVER_CURRENT, NULL);
++	        regulator_unlock(chip->rdev[1]);
  
- 		targets = kcalloc(target_num, sizeof(*targets), GFP_KERNEL);
- 		if (!targets) {
-+			func_code = 0;
- 			rc = -ENOMEM;
- 			goto out;
- 		}
-@@ -499,6 +502,7 @@ static long zcrypt_send_ep11_cprb(struct ep11_urb *xcrb)
- 		uptr = (struct ep11_target_dev __force __user *) xcrb->targets;
- 		if (copy_from_user(targets, uptr,
- 				   target_num * sizeof(*targets))) {
-+			func_code = 0;
- 			rc = -EFAULT;
- 			goto out;
- 		}
+ 		err = regmap_write(chip->regmap, DA9211_REG_EVENT_B,
+ 			DA9211_E_OV_CURR_B);
 -- 
 2.20.1
 
