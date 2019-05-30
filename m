@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C61AE2F181
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:13:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3C6A2F582
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:48:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730180AbfE3ENW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:13:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43312 "EHLO mail.kernel.org"
+        id S2388763AbfE3Erz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:47:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50990 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730762AbfE3DQl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:16:41 -0400
+        id S1728545AbfE3DL0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:11:26 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC3C0245F8;
-        Thu, 30 May 2019 03:16:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E42F24482;
+        Thu, 30 May 2019 03:11:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186201;
-        bh=uIbglvcgcCD288qkSn4ygSDW/GSXl/64XOYxAqgcNZM=;
+        s=default; t=1559185885;
+        bh=LTGs/ZQ0ZWor2mCV+mT5jRrLzyYC3NSzLDS7oOfHpEM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nrTDqrGaKmIld68UrRx2K7JQsxVFjxwKYFAkf4gcR7Ao0Ro2P84eCtaF+R1Bkdmac
-         5yu1xxoxvqTLJke62yr6Av1EdG3Ybjs0OI49WFmJ1KF0Q2CMnTPKCQfBO6u69QGy+t
-         PDs+vidcky6rPr3xleMuLjOo+KpYBjrz7GTdPBQQ=
+        b=oGMtPZX9LdSvmOoUoXgKD7gSYpotlYmB9xDaepx22Ifg16Dl6IP0OCCghSEBzU0GS
+         WczEfK3dPg7oe/pkeqtGySN2mKrlOpWmB35rGnZdhon+8sLyuDlN1kflMTAfRk2WWq
+         ztbEmBKQothkTcHFrJ+7ffiQST530gdjEv+PvXSM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        Syzbot <syzbot+4180ff9ca6810b06c1e9@syzkaller.appspotmail.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.19 036/276] media: vb2: add waiting_in_dqbuf flag
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 196/405] PM / devfreq: Fix static checker warning in try_then_request_governor
 Date:   Wed, 29 May 2019 20:03:14 -0700
-Message-Id: <20190530030526.499360569@linuxfoundation.org>
+Message-Id: <20190530030550.927772449@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,113 +46,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hverkuil@xs4all.nl>
+[ Upstream commit b53b0128052ffd687797d5f4deeb76327e7b5711 ]
 
-commit d65842f7126aa1a87fb44b7c9980c12630ed4f33 upstream.
+The patch 23c7b54ca1cd: "PM / devfreq: Fix devfreq_add_device() when
+drivers are built as modules." leads to the following static checker
+warning:
 
-Calling VIDIOC_DQBUF can release the core serialization lock pointed to
-by vb2_queue->lock if it has to wait for a new buffer to arrive.
+    drivers/devfreq/devfreq.c:1043 governor_store()
+    warn: 'governor' can also be NULL
 
-However, if userspace dup()ped the video device filehandle, then it is
-possible to read or call DQBUF from two filehandles at the same time.
+The reason is that the try_then_request_governor() function returns both
+error pointers and NULL. It should just return error pointers, so fix
+this by returning a ERR_PTR to the error intead of returning NULL.
 
-It is also possible to call REQBUFS from one filehandle while the other
-is waiting for a buffer. This will remove all the buffers and reallocate
-new ones. Removing all the buffers isn't the problem here (that's already
-handled correctly by DQBUF), but the reallocating part is: DQBUF isn't
-aware that the buffers have changed.
-
-This is fixed by setting a flag whenever the lock is released while waiting
-for a buffer to arrive. And checking the flag where needed so we can return
--EBUSY.
-
-Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
-Reported-by: Syzbot <syzbot+4180ff9ca6810b06c1e9@syzkaller.appspotmail.com>
-Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 23c7b54ca1cd ("PM / devfreq: Fix devfreq_add_device() when drivers are built as modules.")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/common/videobuf2/videobuf2-core.c |   22 ++++++++++++++++++++++
- include/media/videobuf2-core.h                  |    1 +
- 2 files changed, 23 insertions(+)
+ drivers/devfreq/devfreq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/media/common/videobuf2/videobuf2-core.c
-+++ b/drivers/media/common/videobuf2/videobuf2-core.c
-@@ -668,6 +668,11 @@ int vb2_core_reqbufs(struct vb2_queue *q
- 		return -EBUSY;
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index 0ae3de76833b7..839621b044f49 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -228,7 +228,7 @@ static struct devfreq_governor *find_devfreq_governor(const char *name)
+  * if is not found. This can happen when both drivers (the governor driver
+  * and the driver that call devfreq_add_device) are built as modules.
+  * devfreq_list_lock should be held by the caller. Returns the matched
+- * governor's pointer.
++ * governor's pointer or an error pointer.
+  */
+ static struct devfreq_governor *try_then_request_governor(const char *name)
+ {
+@@ -254,7 +254,7 @@ static struct devfreq_governor *try_then_request_governor(const char *name)
+ 		/* Restore previous state before return */
+ 		mutex_lock(&devfreq_list_lock);
+ 		if (err)
+-			return NULL;
++			return ERR_PTR(err);
+ 
+ 		governor = find_devfreq_governor(name);
  	}
- 
-+	if (q->waiting_in_dqbuf && *count) {
-+		dprintk(1, "another dup()ped fd is waiting for a buffer\n");
-+		return -EBUSY;
-+	}
-+
- 	if (*count == 0 || q->num_buffers != 0 ||
- 	    (q->memory != VB2_MEMORY_UNKNOWN && q->memory != memory)) {
- 		/*
-@@ -797,6 +802,10 @@ int vb2_core_create_bufs(struct vb2_queu
- 	}
- 
- 	if (!q->num_buffers) {
-+		if (q->waiting_in_dqbuf && *count) {
-+			dprintk(1, "another dup()ped fd is waiting for a buffer\n");
-+			return -EBUSY;
-+		}
- 		memset(q->alloc_devs, 0, sizeof(q->alloc_devs));
- 		q->memory = memory;
- 		q->waiting_for_buffers = !q->is_output;
-@@ -1466,6 +1475,11 @@ static int __vb2_wait_for_done_vb(struct
- 	for (;;) {
- 		int ret;
- 
-+		if (q->waiting_in_dqbuf) {
-+			dprintk(1, "another dup()ped fd is waiting for a buffer\n");
-+			return -EBUSY;
-+		}
-+
- 		if (!q->streaming) {
- 			dprintk(1, "streaming off, will not wait for buffers\n");
- 			return -EINVAL;
-@@ -1493,6 +1507,7 @@ static int __vb2_wait_for_done_vb(struct
- 			return -EAGAIN;
- 		}
- 
-+		q->waiting_in_dqbuf = 1;
- 		/*
- 		 * We are streaming and blocking, wait for another buffer to
- 		 * become ready or for streamoff. Driver's lock is released to
-@@ -1513,6 +1528,7 @@ static int __vb2_wait_for_done_vb(struct
- 		 * the locks or return an error if one occurred.
- 		 */
- 		call_void_qop(q, wait_finish, q);
-+		q->waiting_in_dqbuf = 0;
- 		if (ret) {
- 			dprintk(1, "sleep was interrupted\n");
- 			return ret;
-@@ -2361,6 +2377,12 @@ static size_t __vb2_perform_fileio(struc
- 	if (!data)
- 		return -EINVAL;
- 
-+	if (q->waiting_in_dqbuf) {
-+		dprintk(3, "another dup()ped fd is %s\n",
-+			read ? "reading" : "writing");
-+		return -EBUSY;
-+	}
-+
- 	/*
- 	 * Initialize emulator on first call.
- 	 */
---- a/include/media/videobuf2-core.h
-+++ b/include/media/videobuf2-core.h
-@@ -551,6 +551,7 @@ struct vb2_queue {
- 	unsigned int			start_streaming_called:1;
- 	unsigned int			error:1;
- 	unsigned int			waiting_for_buffers:1;
-+	unsigned int			waiting_in_dqbuf:1;
- 	unsigned int			is_multiplanar:1;
- 	unsigned int			is_output:1;
- 	unsigned int			copy_timestamp:1;
+-- 
+2.20.1
+
 
 
