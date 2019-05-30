@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 014892F105
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:09:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D6F32F2B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:24:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbfE3EJU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:09:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45502 "EHLO mail.kernel.org"
+        id S1732967AbfE3EYZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:24:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730963AbfE3DRN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:17:13 -0400
+        id S1729222AbfE3DOw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:14:52 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8934824667;
-        Thu, 30 May 2019 03:17:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B476B2457B;
+        Thu, 30 May 2019 03:14:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186232;
-        bh=Sggf7DE/dWqdGOyyTn7HrVZ2bSeYDvsNmoVhtkxp1Tw=;
+        s=default; t=1559186091;
+        bh=5fioCsNuVKfp+dVL/Jb9n4sQ/DuqOvenb4BPghvFY1o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ybYMDG7pNuUiujDHnVoCG0mHWhOIKNW5+JarrZStXJ2L9AcwX4/6oNP0Z9H1iR896
-         kGT0uYedBmkpAuAZHhIqkAyra0vjPw0szrax90W5SoPv0mPdp3U6i/t3NP0N5yXjW5
-         4N0HqrUHKlDrxwc74IOx+EgZwCQsxdLlQV0UGqRs=
+        b=QphgkamgMg1Y7cnMGizKGI1s4jWPL/qIXX58mAdCigXUP8ULavmyQyNs4drYS1iWN
+         eIultUkcexW6O/x/yqBiD5z5ZvrYKeBHaUb52g0yrnKvdlEIEkfnuaZh3XIg4WzgW0
+         xiAmnGfJwTkXBBZur/ohCdKBOphDaToeQeYqI05g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 138/276] sched/core: Handle overflow in cpu_shares_write_u64
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 223/346] rtlwifi: fix a potential NULL pointer dereference
 Date:   Wed, 29 May 2019 20:04:56 -0700
-Message-Id: <20190530030534.341055704@linuxfoundation.org>
+Message-Id: <20190530030552.374046738@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,44 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5b61d50ab4ef590f5e1d4df15cd2cea5f5715308 ]
+[ Upstream commit 765976285a8c8db3f0eb7f033829a899d0c2786e ]
 
-Bit shift in scale_load() could overflow shares. This patch saturates
-it to MAX_SHARES like following sched_group_set_shares().
+In case alloc_workqueue fails, the fix reports the error and
+returns to avoid NULL pointer dereference.
 
-Example:
-
- # echo 9223372036854776832 > cpu.shares
- # cat cpu.shares
-
-Before patch: 1024
-After pattch: 262144
-
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Acked-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/155125501891.293431.3345233332801109696.stgit@buzz
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sched/core.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/wireless/realtek/rtlwifi/base.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index bd5ae34c20c0b..6138754e5030f 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -6491,6 +6491,8 @@ static void cpu_cgroup_attach(struct cgroup_taskset *tset)
- static int cpu_shares_write_u64(struct cgroup_subsys_state *css,
- 				struct cftype *cftype, u64 shareval)
- {
-+	if (shareval > scale_load_down(ULONG_MAX))
-+		shareval = MAX_SHARES;
- 	return sched_group_set_shares(css_tg(css), scale_load(shareval));
- }
- 
+diff --git a/drivers/net/wireless/realtek/rtlwifi/base.c b/drivers/net/wireless/realtek/rtlwifi/base.c
+index ef9b502ce576b..a3189294ecb80 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/base.c
++++ b/drivers/net/wireless/realtek/rtlwifi/base.c
+@@ -469,6 +469,11 @@ static void _rtl_init_deferred_work(struct ieee80211_hw *hw)
+ 	/* <2> work queue */
+ 	rtlpriv->works.hw = hw;
+ 	rtlpriv->works.rtl_wq = alloc_workqueue("%s", 0, 0, rtlpriv->cfg->name);
++	if (unlikely(!rtlpriv->works.rtl_wq)) {
++		pr_err("Failed to allocate work queue\n");
++		return;
++	}
++
+ 	INIT_DELAYED_WORK(&rtlpriv->works.watchdog_wq,
+ 			  (void *)rtl_watchdog_wq_callback);
+ 	INIT_DELAYED_WORK(&rtlpriv->works.ips_nic_off_wq,
 -- 
 2.20.1
 
