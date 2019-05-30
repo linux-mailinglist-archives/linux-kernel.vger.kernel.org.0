@@ -2,91 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B515F2FB6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 14:07:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DBAE2FB6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 14:08:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727249AbfE3MHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 08:07:21 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:34302 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726935AbfE3MHV (ORCPT
+        id S1727198AbfE3MIY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 08:08:24 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:46349 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726991AbfE3MIX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 08:07:21 -0400
-Received: by mail-ed1-f66.google.com with SMTP id i11so7041138edn.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 05:07:20 -0700 (PDT)
+        Thu, 30 May 2019 08:08:23 -0400
+Received: by mail-ed1-f65.google.com with SMTP id n12so827002edt.13
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 05:08:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=shutemov-name.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=3JV/VQkyO6ESrIi+x0cheGcU2SxYAPhzRd/KHj8yO4s=;
-        b=GGWtO+amrl1+ByU0pLLXPn/FxONeBh3xk65sx+eVgGXegyl/y1LDn8hY8HfW0lN0HI
-         F6tOFyn8FyW0H+lgDjB1GvK4rCsAYArwu2PsNX4X+RCzMi+WeWEUMIsPxShAEdwtNAjS
-         oC6vb9ozpg+eemJSTav8I0lovUy2ngMBcVIVJW7UR7QKCmnA5o3CcG1SD+meazD7SJSW
-         ub6snA54JUX9HeqXA1X1GZDLnAaYNIWoW5DKNnWfHHM0qZz+qfZ7ID/FEvEThOzus/ei
-         dPQdj2OvjOWJZclDuUpyYCBuvuV/WXHgW3jdCY8WkJ1VFr/RDUCRCKEe4XmbReGAeniR
-         wKOw==
+        bh=pTUXDtN/G8tAI7G/XWKZT9rjJMafN/rAkwsNs0hRrJ8=;
+        b=zXrO8KZU/bIpALQ5nQ7nlUslj6ODQZSWnIyQchfuY9cAMGZ6QY9HVEbpN44ZVtsAtY
+         UcSf2lRJYAfprTOv2qmbx5dCYaJeK2Fv0x9uGw9JH7dQnmjw6YQVVE7aKd08Nlg2knEE
+         opr44llZBxLoORCxnLzANIKsBMHOI44URrT5ObPeEdkHJgOqQhYmoyrZ9WWZ+gVAKfpJ
+         jNlu3NTUpT93k9miVXATJVKEk6pFx2oJu91CNQu3OreOVJHN7y0EYVRnhdJ5FiIKNqdR
+         Ent82r0XiPyT3XwYoZM5/j7npQnH8q9TneS+HpniB0NkkWt80uVODvzr9oD2RJR54Ha0
+         M7qQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3JV/VQkyO6ESrIi+x0cheGcU2SxYAPhzRd/KHj8yO4s=;
-        b=rlxQUaNOUr7M/24WEf8jkf/VJzkKfIYSmLdmbm/lYI4Q31BxnQqa5+SPkQSzWpgYNI
-         H17cxjyG9Pk16DFYI2yu2bKiPIRcgAKUEARkSVVzh9oHy+p//wAXva/eqwlVY4tdRK9K
-         2JrV8n8GtVg3ReFZoRKNXxwHZIuKN6vWuk9wSHaviZYoiFs2gVJpD0qHQi+rwinafHhA
-         PF6F8rnMTYxEo0xTYtV1LXGknMxsM2ZRW4P2QcL1yQtQXL7ieHQxGycUtp08sWPePvoy
-         j6zc3x2A9b0PMm6CHX092ZvlG3cyAoLaRA5rV2cxsw7DHbiILK/zeys+Lx4RMfVPXEde
-         GVAw==
-X-Gm-Message-State: APjAAAVjF7AqZB1aEfj2jxPmV4jShoJATM3593Pzsqt3wYMTUDM+R+38
-        5GFM/rt/eu3NLEDLqI9R7KEHEQ==
-X-Google-Smtp-Source: APXvYqzboVQ4IYoNX3TXCypP75fPfr4CCzJ6DUX3ZRs+3ZHWE6njrMWRYnkMJveH6jDCZ34/kA6D1A==
-X-Received: by 2002:a17:906:e282:: with SMTP id gg2mr3253914ejb.38.1559218040079;
-        Thu, 30 May 2019 05:07:20 -0700 (PDT)
+        bh=pTUXDtN/G8tAI7G/XWKZT9rjJMafN/rAkwsNs0hRrJ8=;
+        b=cZEQei0Ei4tzgZYoaCmQCIRzC3F1cY3bLQfFPJH6/9i4GYXzj2sBiyXVg/tfjZmRaO
+         1wjhYCX6zi56m1r8t6Kt97a519iGefceKfItsvbijZ/8DMnSPWR7LT1fcAKWSMW8pJeH
+         pnSKDes5JDmY2dIwtH/ieGMNnP4bKacdDey0kFel2+1Wh4L6TJOAYDsskVMRMPV5Dybp
+         2riQpmt5wjUJHUMm2HhlqxjaKGgcdWbK1vKxbejXqxkA/T22Y/sSsBWaUy8v2zts2vb3
+         bTrKWbAtE7ixSWsLcIpsIqezpobuYiO7th8VLOOr4t9TYfqJLSk6ddNjOIqE4ia3gnF3
+         jWKA==
+X-Gm-Message-State: APjAAAU1YCgKEoKm4ys6Cw2poXex+gJhQr1c1DpK2+9Wp1Tb3GB1FPLG
+        BuBb/KFNjZTDVPlmGTEQa3hArw==
+X-Google-Smtp-Source: APXvYqzKJsNIKOFT+ULZ9yJACrnn3QN4bI+DsmkrXTovJ/S8j3DqZH7dMiwGajoNuYn3Y8aUpYhN8w==
+X-Received: by 2002:a17:906:470a:: with SMTP id y10mr3092113ejq.238.1559218102315;
+        Thu, 30 May 2019 05:08:22 -0700 (PDT)
 Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id c12sm392594edt.38.2019.05.30.05.07.18
+        by smtp.gmail.com with ESMTPSA id p27sm401293ejf.65.2019.05.30.05.08.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 May 2019 05:07:19 -0700 (PDT)
+        Thu, 30 May 2019 05:08:21 -0700 (PDT)
 Received: by box.localdomain (Postfix, from userid 1000)
-        id 185351041ED; Thu, 30 May 2019 15:07:18 +0300 (+03)
-Date:   Thu, 30 May 2019 15:07:18 +0300
+        id 6FB831041ED; Thu, 30 May 2019 15:08:20 +0300 (+03)
+Date:   Thu, 30 May 2019 15:08:20 +0300
 From:   "Kirill A. Shutemov" <kirill@shutemov.name>
 To:     Yang Shi <yang.shi@linux.alibaba.com>
 Cc:     ktkhai@virtuozzo.com, hannes@cmpxchg.org, mhocko@suse.com,
         kirill.shutemov@linux.intel.com, hughd@google.com,
         shakeelb@google.com, akpm@linux-foundation.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] mm: thp: make deferred split shrinker memcg aware
-Message-ID: <20190530120718.52xuxgezkzsmaxqi@box>
+Subject: Re: [PATCH 3/3] mm: shrinker: make shrinker not depend on memcg kmem
+Message-ID: <20190530120820.l5crrblgybcii63f@box>
 References: <1559047464-59838-1-git-send-email-yang.shi@linux.alibaba.com>
- <1559047464-59838-2-git-send-email-yang.shi@linux.alibaba.com>
+ <1559047464-59838-4-git-send-email-yang.shi@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1559047464-59838-2-git-send-email-yang.shi@linux.alibaba.com>
+In-Reply-To: <1559047464-59838-4-git-send-email-yang.shi@linux.alibaba.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 28, 2019 at 08:44:22PM +0800, Yang Shi wrote:
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index bc74d6a..9ff5fab 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -316,6 +316,12 @@ struct mem_cgroup {
->  	struct list_head event_list;
->  	spinlock_t event_list_lock;
->  
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +	struct list_head split_queue;
-> +	unsigned long split_queue_len;
-> +	spinlock_t split_queue_lock;
+On Tue, May 28, 2019 at 08:44:24PM +0800, Yang Shi wrote:
+> @@ -81,6 +79,7 @@ struct shrinker {
+>  /* Flags */
+>  #define SHRINKER_NUMA_AWARE	(1 << 0)
+>  #define SHRINKER_MEMCG_AWARE	(1 << 1)
+> +#define SHRINKER_NONSLAB	(1 << 3)
 
-Maybe we should wrap there into a struct and have helper that would return
-pointer to the struct which is right for the page: from pgdat or from
-memcg, depending on the situation?
-
-This way we will be able to kill most of code duplication, right?
+Why 3?
 
 -- 
  Kirill A. Shutemov
