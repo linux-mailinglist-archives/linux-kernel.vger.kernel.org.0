@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2B4C2F130
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:11:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E79232F311
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:26:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbfE3ELB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:11:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44330 "EHLO mail.kernel.org"
+        id S2387552AbfE3E0S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:26:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730866AbfE3DQ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:16:56 -0400
+        id S1729136AbfE3DOe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:14:34 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5D742463F;
-        Thu, 30 May 2019 03:16:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D259624587;
+        Thu, 30 May 2019 03:14:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186216;
-        bh=51h9W7jm+N2K/Rbbz/PlPliMaIU8cxTjg5mDJa6/Bno=;
+        s=default; t=1559186073;
+        bh=25pFTBoD6N4oU3ZGvpFp9ZGtLP/CfMK1rvuyWPEpq8Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K+X23mkUoy8tF5IPVnyVxy4+ReZJDtDQOHInjYLGLVEkTz+YBSOeVk2u/z34eVt3+
-         Co9FfifWJMT3xbgUwl0y1zfC2mYVhmMRe+CBhSGnViKMlZb+nfM12g4vCEoEPDzXUY
-         3O+Vp9M4XRVjxxXh31BSDdtC8D0vWU5Kxkh7Gjb4=
+        b=ryESb2AAWn+LxkhRvUzMsJmA8tS1b4wdes+8VSENkCvt/axFm4QYpcU94MsYKwNe9
+         Nfg7ecEbatFepy3XzxMgjUVhdf4rUIjfas6ZJYWtXQRPKoZnBjb6T8PNwdPxz5ntp5
+         qkFczVppsvWFYbbW+LkdsxSCvFrQYdW4s7a070YU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
-        Hannes Reinecke <hare@suse.com>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Yinbo Zhu <yinbo.zhu@nxp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 103/276] bcache: return error immediately in bch_journal_replay()
-Date:   Wed, 29 May 2019 20:04:21 -0700
-Message-Id: <20190530030532.508804458@linuxfoundation.org>
+Subject: [PATCH 5.0 189/346] mmc: sdhci-of-esdhc: add erratum A-009204 support
+Date:   Wed, 29 May 2019 20:04:22 -0700
+Message-Id: <20190530030550.649914916@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,50 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 68d10e6979a3b59e3cd2e90bfcafed79c4cf180a ]
+[ Upstream commit 5dd195522562542bc6ebe6e7bd47890d8b7ca93c ]
 
-When failure happens inside bch_journal_replay(), calling
-cache_set_err_on() and handling the failure in async way is not a good
-idea. Because after bch_journal_replay() returns, registering code will
-continue to execute following steps, and unregistering code triggered
-by cache_set_err_on() is running in same time. First it is unnecessary
-to handle failure and unregister cache set in an async way, second there
-might be potential race condition to run register and unregister code
-for same cache set.
+In the event of that any data error (like, IRQSTAT[DCE]) occurs
+during an eSDHC data transaction where DMA is used for data
+transfer to/from the system memory, setting the SYSCTL[RSTD]
+register may cause a system hang. If software sets the register
+SYSCTL[RSTD] to 1 for error recovery while DMA transferring is
+not complete, eSDHC may hang the system bus. This happens because
+the software register SYSCTL[RSTD] resets the DMA engine without
+waiting for the completion of pending system transactions. This
+erratum is to fix this issue.
 
-So in this patch, if failure happens in bch_journal_replay(), we don't
-call cache_set_err_on(), and just print out the same error message to
-kernel message buffer, then return -EIO immediately caller. Then caller
-can detect such failure and handle it in synchrnozied way.
-
-Signed-off-by: Coly Li <colyli@suse.de>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/bcache/journal.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/mmc/host/sdhci-of-esdhc.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
-index 772258ee1f517..07da39ac2d110 100644
---- a/drivers/md/bcache/journal.c
-+++ b/drivers/md/bcache/journal.c
-@@ -330,9 +330,12 @@ int bch_journal_replay(struct cache_set *s, struct list_head *list)
- 	list_for_each_entry(i, list, list) {
- 		BUG_ON(i->pin && atomic_read(i->pin) != 1);
+diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-esdhc.c
+index 9da53e548691b..4fc4d2c7643c5 100644
+--- a/drivers/mmc/host/sdhci-of-esdhc.c
++++ b/drivers/mmc/host/sdhci-of-esdhc.c
+@@ -694,6 +694,9 @@ static void esdhc_reset(struct sdhci_host *host, u8 mask)
+ 	sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
+ 	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
  
--		cache_set_err_on(n != i->j.seq, s,
--"bcache: journal entries %llu-%llu missing! (replaying %llu-%llu)",
--				 n, i->j.seq - 1, start, end);
-+		if (n != i->j.seq) {
-+			pr_err("bcache: journal entries %llu-%llu missing! (replaying %llu-%llu)",
-+			n, i->j.seq - 1, start, end);
-+			ret = -EIO;
-+			goto err;
-+		}
- 
- 		for (k = i->j.start;
- 		     k < bset_bkey_last(&i->j);
++	if (of_find_compatible_node(NULL, NULL, "fsl,p2020-esdhc"))
++		mdelay(5);
++
+ 	if (mask & SDHCI_RESET_ALL) {
+ 		val = sdhci_readl(host, ESDHC_TBCTL);
+ 		val &= ~ESDHC_TB_EN;
 -- 
 2.20.1
 
