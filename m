@@ -2,88 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45B1B30465
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 23:59:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4AF630473
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 23:59:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726888AbfE3V6j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 17:58:39 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:59483 "EHLO ozlabs.org"
+        id S1726735AbfE3V7m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 17:59:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726636AbfE3V6j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 17:58:39 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1726485AbfE3V7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 17:59:42 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45FM0X0754z9s4V;
-        Fri, 31 May 2019 07:58:35 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1559253516;
-        bh=pO6+tsCaXa4Sf/7hycMujzNJySqAMkvnXSPwwGUVOHk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Op+fP+LKjDYtyecH57DlJ1IOv9IeAcVWbeOGOAi+E3Nhm2jQBABswYgmD0aJhkPk8
-         bWWxQbEMq6fI8S38ZJsQA7WtS7UNlhdWo15t4ZCEfhJs9iPJD4XGlgEFDdmLMxNgkY
-         r8jMz764rw5oSPf+ouepsxI5HQZeqD1i7FuNAffKnlos1AxMqpdnP3l0MdexPP52WK
-         jEyUOoijiiA1McFwKii+NLsW55tvU3XIcEgLYrF67gpYrIPW4sC1eSQbif2YZhNSnk
-         rHsXtW+uHfzIL9hju1uwvI3w3KIRqnMe3u+V8moLX2PFgdKvW4WW8ZEgBC8qlu6ucE
-         GRKbXT5qQqbmw==
-Date:   Fri, 31 May 2019 07:58:34 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Anna Schumaker <Anna.Schumaker@Netapp.com>,
-        Trond Myklebust <trondmy@gmail.com>,
-        NFS Mailing List <linux-nfs@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Olga Kornievskaia <kolga@netapp.com>
-Subject: linux-next: Fixes tag needs some work in the nfs-anna tree
-Message-ID: <20190531075834.78bbdeaf@canb.auug.org.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id 49CD426242;
+        Thu, 30 May 2019 21:59:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559253581;
+        bh=5qshIW5Gt3KAVKJzOXgOCt/l0/l0VeA73U46WzDaneQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=n6sSxJzuf3xuFlAw42kcZMQtZwPqy4EA3EwSchHYq4dw9FZKzPMYsAdMQrpM/uCDL
+         gy4f4NddeT1JGDWQgD1HuttweHMtIDWMxpBgFxGSbHCxaPvxAxYnRsSLwme2dWUJ+M
+         IVWAu2z8T2PHmGT5Y5mBrf5sfnrn+wz14UHX9V54=
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH] scripts/sphinx-pre-install: fix "dependenties" typo
+Date:   Thu, 30 May 2019 16:59:14 -0500
+Message-Id: <20190530215914.67896-1-helgaas@kernel.org>
+X-Mailer: git-send-email 2.22.0.rc1.257.g3120a18244-goog
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/G=V4Jqd3sQno0kV7pCsaf5B"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/G=V4Jqd3sQno0kV7pCsaf5B
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-Hi all,
+Fix typo ("dependenties" for "dependencies").
 
-In commit
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+---
+ scripts/sphinx-pre-install | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  ec6017d90359 ("SUNRPC fix regression in umount of a secure mount")
+diff --git a/scripts/sphinx-pre-install b/scripts/sphinx-pre-install
+index f6a5c0bae31e..78bcd29139b2 100755
+--- a/scripts/sphinx-pre-install
++++ b/scripts/sphinx-pre-install
+@@ -559,7 +559,7 @@ sub check_needs()
+ 	}
+ 	printf "\n";
+ 
+-	print "All optional dependenties are met.\n" if (!$optional);
++	print "All optional dependencies are met.\n" if (!$optional);
+ 
+ 	if ($need == 1) {
+ 		die "Can't build as $need mandatory dependency is missing";
+-- 
+2.22.0.rc1.257.g3120a18244-goog
 
-Fixes tag
-
-  Fixes: c8485e4d63 ("SUNRPC: Handle ECONNREFUSED correctly in xprt_transmi=
-t()")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/G=V4Jqd3sQno0kV7pCsaf5B
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzwUgoACgkQAVBC80lX
-0Gw/XggAkpbAg9ArAfpP3jcqqudkDXSoWQkbTb4SnGRQm8LD3f8lIjdf8fifk++J
-3r4WNXOaRxkw9CbClcPENnWfrMAOziIzW5hN2XLqcDGTSOGTeYpIQHkbvW4V4FUW
-RJw/vDjygqiZPohs6/QadMdePOyw6qT9ODTxrPVfl3SEbsY9m/9mJtMZeXZTpQr9
-FbJNST9MDLgwq//ZUa9TdBo561CJ8xnE7NBnHPD32U0UJ1RlWiK6Hp/BfKF26R83
-P1H8ew/1YOxYVO7Uko1EcoWqyoByJwoANzTX3v/yR33biIIiLYHcp9fAipKTRnMZ
-vHtSejahWOtsrOl6rKL92fdwax1hMQ==
-=N/Lv
------END PGP SIGNATURE-----
-
---Sig_/G=V4Jqd3sQno0kV7pCsaf5B--
