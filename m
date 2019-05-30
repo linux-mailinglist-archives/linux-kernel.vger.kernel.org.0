@@ -2,119 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C521330020
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 18:23:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 610E23001D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 18:22:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727524AbfE3QWj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 12:22:39 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:45818 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727180AbfE3QWj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 12:22:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=3kgTdo02E09r0Og/xJIfjwXUfONzBeGtXYyX4dAdahU=; b=GvpSLRjWIZcMSQnSrU6NlCPkd
-        4GgdrNg1JUKpxUmF0KRYP+9AIO6S0jfabyoLT/MO4nUiaJaxhoDocAjahPovhRCK783KHto5H+I3L
-        YeRWs3S0B1UnWxn7SZ9OvQaOOkcOA049rMEVHFOQOFZXehZ8zf+JvQfeCrpBJiOWL0LZ6xHtNd/ts
-        e1b+xLNcjxKU8f3wIGWMKXseLrbe5UOkEj58WUzf0QOaVkpok/qUTQwqcBw6h46DuV72hPgRIoQkS
-        86dKC5355W1BSaOKY/AKXO+Galfvburird4v78S41JPneh5Fmc3XTqQcNfEQXTWl6tcJsVlFTdrnS
-        HD/jgHkRw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:52716)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1hWNos-0003sF-QT; Thu, 30 May 2019 17:22:22 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1hWNop-0005Y0-Ja; Thu, 30 May 2019 17:22:19 +0100
-Date:   Thu, 30 May 2019 17:22:19 +0100
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     l00383200 <liucheng32@huawei.com>
-Cc:     tglx@linutronix.de, peterz@infradead.org,
-        gregkh@linuxfoundation.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Stacktrace in ARM32 architecture has jumped the first 2
- layers, which may ignore the display of save_stack_trace_tsk.
-Message-ID: <20190530162219.dtooagpeyczfaazb@shell.armlinux.org.uk>
-References: <1559228799-84473-1-git-send-email-liucheng32@huawei.com>
+        id S1727100AbfE3QW3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 12:22:29 -0400
+Received: from foss.arm.com ([217.140.101.70]:39348 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726045AbfE3QW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 12:22:28 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 13CAF341;
+        Thu, 30 May 2019 09:22:28 -0700 (PDT)
+Received: from redmoon (e121166-lin.cambridge.arm.com [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 23AA43F5AF;
+        Thu, 30 May 2019 09:22:26 -0700 (PDT)
+Date:   Thu, 30 May 2019 17:22:23 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Alan Mikhak <alan.mikhak@sifive.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        gustavo.pimentel@synopsys.com, wen.yang99@zte.com.cn, kjlu@umn.edu
+Subject: Re: [PATCH v2] PCI: endpoint: Skip odd BAR when skipping 64bit BAR
+Message-ID: <20190530162223.GG13993@redmoon>
+References: <1558648540-14239-1-git-send-email-alan.mikhak@sifive.com>
+ <CABEDWGzHkt4p_byEihOAs9g97t450h9-Z0Qu2b2-O1pxCNPX+A@mail.gmail.com>
+ <baa68439-f703-a453-34a2-24387bb9112d@ti.com>
+ <CABEDWGyJpfX=DzBgXAGwu29rEwmY3s_P9QPC0eJOJ3KBysRWtA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1559228799-84473-1-git-send-email-liucheng32@huawei.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CABEDWGyJpfX=DzBgXAGwu29rEwmY3s_P9QPC0eJOJ3KBysRWtA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 11:06:39PM +0800, l00383200 wrote:
-> Without optimization, both save_stack_trace_tsk and __save_stack_trace
-> will have stacktrace information in ARM32.
+On Fri, May 24, 2019 at 11:50:41AM -0700, Alan Mikhak wrote:
+> Hi Kishon,
 > 
-> In this situation, "data.skip += 2" operation will skip the first two layers,
-> which may make the stacktrace strange and different from other architectures.
+> Yes. This change is still applicable even when the platform specifies
+> that it only supports 64-bit BARs by setting the bar_fixed_64bit
+> member of epc_features.
 > 
-> A simple example is as follows:
-> In ARM32 architecture:
-> [<ffffff80083cb3f8>] proc_pid_stack+0xac/0x12c
-> [<ffffff80083c7c70>] proc_single_show+0x5c/0xa8
-> [<ffffff800838aca8>] seq_read+0x130/0x420
-> [<ffffff8008365c54>] __vfs_read+0x60/0x11c
-> [<ffffff80083665dc>] vfs_read+0x8c/0x140
-> [<ffffff800836717c>] SyS_read+0x6c/0xcc
-> [<ffffff8008202cb8>] __sys_trace_return+0x0/0x4
-> [<ffffffffffffffff>] 0xffffffffffffffff
+> The issue being fixed is this: If the 'continue' statement is executed
+> within the loop, the loop index 'bar' needs to advanced by two, not
+> one, when the BAR is 64-bit. Otherwise the next loop iteration will be
+> on an odd BAR which doesn't exist.
 > 
-> In some other architectures(ARM64):
-> [<ffffff8008209be0>] save_stack_trace_tsk+0x0/0xf0
-> [<ffffff80083cb3f8>] proc_pid_stack+0xac/0x12c
-> [<ffffff80083c7c70>] proc_single_show+0x5c/0xa8
-> [<ffffff800838aca8>] seq_read+0x130/0x420
-> [<ffffff8008365c54>] __vfs_read+0x60/0x11c
-> [<ffffff80083665dc>] vfs_read+0x8c/0x140
-> [<ffffff800836717c>] SyS_read+0x6c/0xcc
-> [<ffffff8008202cb8>] __sys_trace_return+0x0/0x4
-> [<ffffffffffffffff>] 0xffffffffffffffff
+> The PCI_BASE_ADDRESS_MEM_TYPE_64 flag in epf_bar->flag reflects the
+> value set by the platform in the bar_fixed_64bit member of
+> epc_features.
 > 
-> Therefore, we'd better just jump only one layer to ensure accuracy and consistency.
+> This patch moves the checking of  PCI_BASE_ADDRESS_MEM_TYPE_64 in
+> epf_bar->flags to before the 'continue' statement to advance the 'bar'
+> loop index accordingly. The comment you see about 'pci_epc_set_bar()'
+> preceding the moved code is the original comment and was also moved
+> along with the code.
 
-Why do we want to log the function we called to save the stack trace
-_in_ the stack trace?  What useful purpose does it serve?
+@Kishon, I would need your ACK to merge this patch.
 
-I've always taken the attitude that if we want a stack trace from a
-certain point in the function, then that's the point that the stack
-trace should start.  It's entirely sensible.
+Thanks,
+Lorenzo
 
+> Regards,
+> Alan Mikhak
 > 
-> Signed-off-by: liucheng <liucheng32@huawei.com>
-> ---
->  arch/arm/kernel/stacktrace.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/kernel/stacktrace.c b/arch/arm/kernel/stacktrace.c
-> index 71778bb..bb3da38 100644
-> --- a/arch/arm/kernel/stacktrace.c
-> +++ b/arch/arm/kernel/stacktrace.c
-> @@ -125,7 +125,7 @@ static noinline void __save_stack_trace(struct task_struct *tsk,
->  #endif
->  	} else {
->  		/* We don't want this function nor the caller */
-> -		data.skip += 2;
-> +		data.skip += 1;
->  		frame.fp = (unsigned long)__builtin_frame_address(0);
->  		frame.sp = current_stack_pointer;
->  		frame.lr = (unsigned long)__builtin_return_address(0);
-> -- 
-> 1.8.5.6
-> 
-> 
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+> On Fri, May 24, 2019 at 1:51 AM Kishon Vijay Abraham I <kishon@ti.com> wrote:
+> >
+> > Hi,
+> >
+> > On 24/05/19 5:25 AM, Alan Mikhak wrote:
+> > > +Bjorn Helgaas, +Gustavo Pimentel, +Wen Yang, +Kangjie Lu
+> > >
+> > > On Thu, May 23, 2019 at 2:55 PM Alan Mikhak <alan.mikhak@sifive.com> wrote:
+> > >>
+> > >> Always skip odd bar when skipping 64bit BARs in pci_epf_test_set_bar()
+> > >> and pci_epf_test_alloc_space().
+> > >>
+> > >> Otherwise, pci_epf_test_set_bar() will call pci_epc_set_bar() on odd loop
+> > >> index when skipping reserved 64bit BAR. Moreover, pci_epf_test_alloc_space()
+> > >> will call pci_epf_alloc_space() on bind for odd loop index when BAR is 64bit
+> > >> but leaks on subsequent unbind by not calling pci_epf_free_space().
+> > >>
+> > >> Signed-off-by: Alan Mikhak <alan.mikhak@sifive.com>
+> > >> Reviewed-by: Paul Walmsley <paul.walmsley@sifive.com>
+> > >> ---
+> > >>  drivers/pci/endpoint/functions/pci-epf-test.c | 25 ++++++++++++-------------
+> > >>  1 file changed, 12 insertions(+), 13 deletions(-)
+> > >>
+> > >> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+> > >> index 27806987e93b..96156a537922 100644
+> > >> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> > >> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> > >> @@ -389,7 +389,7 @@ static void pci_epf_test_unbind(struct pci_epf *epf)
+> > >>
+> > >>  static int pci_epf_test_set_bar(struct pci_epf *epf)
+> > >>  {
+> > >> -       int bar;
+> > >> +       int bar, add;
+> > >>         int ret;
+> > >>         struct pci_epf_bar *epf_bar;
+> > >>         struct pci_epc *epc = epf->epc;
+> > >> @@ -400,8 +400,14 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
+> > >>
+> > >>         epc_features = epf_test->epc_features;
+> > >>
+> > >> -       for (bar = BAR_0; bar <= BAR_5; bar++) {
+> > >> +       for (bar = BAR_0; bar <= BAR_5; bar += add) {
+> > >>                 epf_bar = &epf->bar[bar];
+> > >> +               /*
+> > >> +                * pci_epc_set_bar() sets PCI_BASE_ADDRESS_MEM_TYPE_64
+> > >> +                * if the specific implementation required a 64-bit BAR,
+> > >> +                * even if we only requested a 32-bit BAR.
+> > >> +                */
+> >
+> > set_bar shouldn't set PCI_BASE_ADDRESS_MEM_TYPE_64. If a platform supports only
+> > 64-bit BAR, that should be specified in epc_features bar_fixed_64bit member.
+> >
+> > Thanks
+> > Kishon
