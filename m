@@ -2,44 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF3D72ECD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:27:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5111E2F25D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:21:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387795AbfE3D05 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:26:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53996 "EHLO mail.kernel.org"
+        id S1731058AbfE3EVN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:21:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37858 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731810AbfE3DTJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:19:09 -0400
+        id S1730182AbfE3DPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:15 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9BFA92483C;
-        Thu, 30 May 2019 03:19:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E89024555;
+        Thu, 30 May 2019 03:15:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186348;
-        bh=Tl5/7jqDJfLV6WJFej4cv+HQKoDaH2ceYmadyWG+yuw=;
+        s=default; t=1559186114;
+        bh=dJfhr74dfhlzBQ06oDacfJP3wgeQgcEy2cx2MN0M1ss=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c9FWP9focdmaFDztFzptxDm3O7EhKBGLmMJqONzdNZjpCEtfOHLsX/WzB5hq61Ht/
-         ICi1O2mAsYbkNkDwwh44YB4zi3mE4jVyhR6OrMziJY9rZp7xDqSZlnL/KX4p/tkXp8
-         y4L97hLiubGyA0rOOlb3Y8i4Y4jJ4z3IOUqYQE1c=
+        b=y1OApNmR/LCwrSjWkESRNfJJ4vzvecRIr8/Epy2ftWiXH3MuVoXkQThHWu/T5mWiN
+         sIjS7zPQoesVoW/a4N11G2YJ8I5p3+M6C+/42CrHBcdk3ylRZq6h680YJYTDjpKe2U
+         KLd14k2Sw0WrnQCy78Vto/IRr0cjZejsgozhXtRk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        stable@vger.kernel.org, siliu@redhat.com,
+        Pankaj Gupta <pagupta@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 085/193] pinctrl: samsung: fix leaked of_node references
+Subject: [PATCH 5.0 266/346] virtio_console: initialize vtermno value for ports
 Date:   Wed, 29 May 2019 20:05:39 -0700
-Message-Id: <20190530030500.804526252@linuxfoundation.org>
+Message-Id: <20190530030554.455579593@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,43 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 44b9f86cd41db6c522effa5aec251d664a52fbc0 ]
+[ Upstream commit 4b0a2c5ff7215206ea6135a405f17c5f6fca7d00 ]
 
-The call to of_find_compatible_node returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
+For regular serial ports we do not initialize value of vtermno
+variable. A garbage value is assigned for non console ports.
+The value can be observed as a random integer with [1].
 
-Detected by coccinelle with the following warnings:
-./drivers/pinctrl/samsung/pinctrl-exynos-arm.c:76:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 66, but without a corresponding object release within this function.
-./drivers/pinctrl/samsung/pinctrl-exynos-arm.c:82:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 66, but without a corresponding object release within this function.
+[1] vim /sys/kernel/debug/virtio-ports/vport*p*
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+This patch initialize the value of vtermno for console serial
+ports to '1' and regular serial ports are initiaized to '0'.
+
+Reported-by: siliu@redhat.com
+Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/samsung/pinctrl-exynos-arm.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/char/virtio_console.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-index afeb4876ffb2c..07eb4f071fa87 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-@@ -76,6 +76,7 @@ s5pv210_retention_init(struct samsung_pinctrl_drv_data *drvdata,
- 	}
+diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
+index fbeb71953526a..05dbfdb9f4aff 100644
+--- a/drivers/char/virtio_console.c
++++ b/drivers/char/virtio_console.c
+@@ -75,7 +75,7 @@ struct ports_driver_data {
+ 	/* All the console devices handled by this driver */
+ 	struct list_head consoles;
+ };
+-static struct ports_driver_data pdrvdata;
++static struct ports_driver_data pdrvdata = { .next_vtermno = 1};
  
- 	clk_base = of_iomap(np, 0);
-+	of_node_put(np);
- 	if (!clk_base) {
- 		pr_err("%s: failed to map clock registers\n", __func__);
- 		return ERR_PTR(-EINVAL);
+ static DEFINE_SPINLOCK(pdrvdata_lock);
+ static DECLARE_COMPLETION(early_console_added);
+@@ -1394,6 +1394,7 @@ static int add_port(struct ports_device *portdev, u32 id)
+ 	port->async_queue = NULL;
+ 
+ 	port->cons.ws.ws_row = port->cons.ws.ws_col = 0;
++	port->cons.vtermno = 0;
+ 
+ 	port->host_connected = port->guest_connected = false;
+ 	port->stats = (struct port_stats) { 0 };
 -- 
 2.20.1
 
