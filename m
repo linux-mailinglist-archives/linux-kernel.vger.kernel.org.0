@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 222822F3C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:33:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE5DE2F4E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:42:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388267AbfE3EcO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:32:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59634 "EHLO mail.kernel.org"
+        id S1728907AbfE3DMP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:12:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48628 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729545AbfE3DNl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:13:41 -0400
+        id S1728212AbfE3DKp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:10:45 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E1E424561;
-        Thu, 30 May 2019 03:13:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32D37244B2;
+        Thu, 30 May 2019 03:10:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186020;
-        bh=kWmMwuPTRb+1T90BSCkgw5VI7OQpnESmY40S8zU9mM4=;
+        s=default; t=1559185845;
+        bh=B0H+g/8USRbal6cUg08JsxAQPv2okvZdDnuC5cZMagk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bJFnVMe20z2UcNXbQ4kCayKNgAYPRlPu83d61H+qoPck4rRVKDflwjrNMeQhMFbNM
-         oVDWaTFvel+6V65LRRNimKApw2xQGpZkKpP+zs/RGJzWHZ6ek66oMMBL5HwFjNYjcA
-         PsnAgIAVNrdGAZFz1smSTgz/q0bECVNkDnDfzQFE=
+        b=J28QRjhCOcDNlraqf4iKPKD4T2itTKej0QpRhBT9hxADIerf15BTBUWzLb1r1SW2f
+         IGWtns1bH+wsTIVVme8JNJ88xh8ndgK4/xOlBwxmra5aeJb/k3wekmRR4uVAwYzWTW
+         uiuXobEWLeWiHijzhgHw7OzvSpGQD/YYVrAZWbP0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 089/346] btrfs: Dont panic when we cant find a root key
-Date:   Wed, 29 May 2019 20:02:42 -0700
-Message-Id: <20190530030545.672744731@linuxfoundation.org>
+        stable@vger.kernel.org, Jon DeVree <nuxi@vault24.org>,
+        Theodore Tso <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 165/405] random: fix CRNG initialization when random.trust_cpu=1
+Date:   Wed, 29 May 2019 20:02:43 -0700
+Message-Id: <20190530030549.478535388@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,49 +43,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7ac1e464c4d473b517bb784f30d40da1f842482e ]
+[ Upstream commit fe6f1a6a8eedc1aa538fee0baa612b6a59639cf8 ]
 
-When we failed to find a root key in btrfs_update_root(), we just panic.
+When the system boots with random.trust_cpu=1 it doesn't initialize the
+per-NUMA CRNGs because it skips the rest of the CRNG startup code. This
+means that the code from 1e7f583af67b ("random: make /dev/urandom scalable
+for silly userspace programs") is not used when random.trust_cpu=1.
 
-That's definitely not cool, fix it by outputting an unique error
-message, aborting current transaction and return -EUCLEAN. This should
-not normally happen as the root has been used by the callers in some
-way.
+crash> dmesg | grep random:
+[    0.000000] random: get_random_bytes called from start_kernel+0x94/0x530 with crng_init=0
+[    0.314029] random: crng done (trusting CPU's manufacturer)
+crash> print crng_node_pool
+$6 = (struct crng_state **) 0x0
 
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+After adding the missing call to numa_crng_init() the per-NUMA CRNGs are
+initialized again:
+
+crash> dmesg | grep random:
+[    0.000000] random: get_random_bytes called from start_kernel+0x94/0x530 with crng_init=0
+[    0.314031] random: crng done (trusting CPU's manufacturer)
+crash> print crng_node_pool
+$1 = (struct crng_state **) 0xffff9a915f4014a0
+
+The call to invalidate_batched_entropy() was also missing. This is
+important for architectures like PPC and S390 which only have the
+arch_get_random_seed_* functions.
+
+Fixes: 39a8883a2b98 ("random: add a config option to trust the CPU's hwrng")
+Signed-off-by: Jon DeVree <nuxi@vault24.org>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/root-tree.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/char/random.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/root-tree.c b/fs/btrfs/root-tree.c
-index fb205ebeca391..3228d3b3084a4 100644
---- a/fs/btrfs/root-tree.c
-+++ b/fs/btrfs/root-tree.c
-@@ -135,11 +135,14 @@ int btrfs_update_root(struct btrfs_trans_handle *trans, struct btrfs_root
- 	if (ret < 0)
- 		goto out;
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index 38c6d1af6d1c0..d4d45ccfeefc0 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -777,6 +777,7 @@ static struct crng_state **crng_node_pool __read_mostly;
+ #endif
  
--	if (ret != 0) {
--		btrfs_print_leaf(path->nodes[0]);
--		btrfs_crit(fs_info, "unable to update root key %llu %u %llu",
--			   key->objectid, key->type, key->offset);
--		BUG_ON(1);
-+	if (ret > 0) {
-+		btrfs_crit(fs_info,
-+			"unable to find root key (%llu %u %llu) in tree %llu",
-+			key->objectid, key->type, key->offset,
-+			root->root_key.objectid);
-+		ret = -EUCLEAN;
-+		btrfs_abort_transaction(trans, ret);
-+		goto out;
+ static void invalidate_batched_entropy(void);
++static void numa_crng_init(void);
+ 
+ static bool trust_cpu __ro_after_init = IS_ENABLED(CONFIG_RANDOM_TRUST_CPU);
+ static int __init parse_trust_cpu(char *arg)
+@@ -805,7 +806,9 @@ static void crng_initialize(struct crng_state *crng)
+ 		}
+ 		crng->state[i] ^= rv;
  	}
- 
- 	l = path->nodes[0];
+-	if (trust_cpu && arch_init) {
++	if (trust_cpu && arch_init && crng == &primary_crng) {
++		invalidate_batched_entropy();
++		numa_crng_init();
+ 		crng_init = 2;
+ 		pr_notice("random: crng done (trusting CPU's manufacturer)\n");
+ 	}
 -- 
 2.20.1
 
