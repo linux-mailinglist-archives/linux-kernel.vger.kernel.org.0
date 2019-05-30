@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06FDA2EDA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:40:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4086C2F01A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:01:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730226AbfE3DkO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:40:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34986 "EHLO mail.kernel.org"
+        id S1731656AbfE3EAj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:00:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732585AbfE3DV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:21:29 -0400
+        id S1730010AbfE3DSV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:18:21 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3E0224A15;
-        Thu, 30 May 2019 03:21:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5856D2479B;
+        Thu, 30 May 2019 03:18:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186488;
-        bh=d03wGcSLh8G/HpcgAyBKycnljy+lMikE51SomgRCph0=;
+        s=default; t=1559186301;
+        bh=BqQOaGoHrd8Qb5pIChnRMgyyNk5t7UY4NN7cO91/rhk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a8fbKN8rY6FrlR7vR4dCY4YPj3Fs1BDsy4aqonGbvbuMHLcRScQAK2sTTv8rKLWAy
-         57RvtCPqVat3zQD7IiZ6qTw87czDkTj2SxMqqkr3XTlLEsYLDfABbAdQ38fgi4kQgw
-         4pCEBTNsGvvVXnuqdZe9VRYsbsVASCkhDhNLNBMM=
+        b=SIwe5Ju7wicvRlKMHlQbJmVyX72lVW2PSgdsO0PEnuxLi7iXf2rWGPMyEC9W+U0s7
+         WgaQ4iaO69vLx8X2gwTslSHZwo4eng3dizR3ZUKD/txD/e5ZrmoEckmtIHh+E+eP6w
+         Q5v8J5fg5LX6VQP8VwJ8dK6H2CKoYL/0g9sRZjrI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 091/128] iio: common: ssp_sensors: Initialize calculated_time in ssp_common_process_data
-Date:   Wed, 29 May 2019 20:07:03 -0700
-Message-Id: <20190530030451.119446450@linuxfoundation.org>
+Subject: [PATCH 4.19 266/276] spi: rspi: Fix sequencer reset during initialization
+Date:   Wed, 29 May 2019 20:07:04 -0700
+Message-Id: <20190530030541.834613754@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,46 +45,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 6f9ca1d3eb74b81f811a87002de2d51640d135b1 ]
+[ Upstream commit 26843bb128590edd7eba1ad7ce22e4b9f1066ce3 ]
 
-When building with -Wsometimes-uninitialized, Clang warns:
+While the sequencer is reset after each SPI message since commit
+880c6d114fd79a69 ("spi: rspi: Add support for Quad and Dual SPI
+Transfers on QSPI"), it was never reset for the first message, thus
+relying on reset state or bootloader settings.
 
-drivers/iio/common/ssp_sensors/ssp_iio.c:95:6: warning: variable
-'calculated_time' is used uninitialized whenever 'if' condition is false
-[-Wsometimes-uninitialized]
+Fix this by initializing it explicitly during configuration.
 
-While it isn't wrong, this will never be a problem because
-iio_push_to_buffers_with_timestamp only uses calculated_time
-on the same condition that it is assigned (when scan_timestamp
-is not zero). While iio_push_to_buffers_with_timestamp is marked
-as inline, Clang does inlining in the optimization stage, which
-happens after the semantic analysis phase (plus inline is merely
-a hint to the compiler).
-
-Fix this by just zero initializing calculated_time.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/394
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Fixes: 0b2182ddac4b8837 ("spi: add support for Renesas RSPI")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/common/ssp_sensors/ssp_iio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi-rspi.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/iio/common/ssp_sensors/ssp_iio.c b/drivers/iio/common/ssp_sensors/ssp_iio.c
-index a3ae165f8d9f3..16180e6321bd4 100644
---- a/drivers/iio/common/ssp_sensors/ssp_iio.c
-+++ b/drivers/iio/common/ssp_sensors/ssp_iio.c
-@@ -80,7 +80,7 @@ int ssp_common_process_data(struct iio_dev *indio_dev, void *buf,
- 			    unsigned int len, int64_t timestamp)
- {
- 	__le32 time;
--	int64_t calculated_time;
-+	int64_t calculated_time = 0;
- 	struct ssp_sensor_data *spd = iio_priv(indio_dev);
+diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+index b37de1d991d6a..d61120822f026 100644
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -279,7 +279,8 @@ static int rspi_set_config_register(struct rspi_data *rspi, int access_size)
+ 	/* Sets parity, interrupt mask */
+ 	rspi_write8(rspi, 0x00, RSPI_SPCR2);
  
- 	if (indio_dev->scan_bytes == 0)
+-	/* Sets SPCMD */
++	/* Resets sequencer */
++	rspi_write8(rspi, 0, RSPI_SPSCR);
+ 	rspi->spcmd |= SPCMD_SPB_8_TO_16(access_size);
+ 	rspi_write16(rspi, rspi->spcmd, RSPI_SPCMD0);
+ 
+@@ -323,7 +324,8 @@ static int rspi_rz_set_config_register(struct rspi_data *rspi, int access_size)
+ 	rspi_write8(rspi, 0x00, RSPI_SSLND);
+ 	rspi_write8(rspi, 0x00, RSPI_SPND);
+ 
+-	/* Sets SPCMD */
++	/* Resets sequencer */
++	rspi_write8(rspi, 0, RSPI_SPSCR);
+ 	rspi->spcmd |= SPCMD_SPB_8_TO_16(access_size);
+ 	rspi_write16(rspi, rspi->spcmd, RSPI_SPCMD0);
+ 
+@@ -374,7 +376,8 @@ static int qspi_set_config_register(struct rspi_data *rspi, int access_size)
+ 	/* Sets buffer to allow normal operation */
+ 	rspi_write8(rspi, 0x00, QSPI_SPBFCR);
+ 
+-	/* Sets SPCMD */
++	/* Resets sequencer */
++	rspi_write8(rspi, 0, RSPI_SPSCR);
+ 	rspi_write16(rspi, rspi->spcmd, RSPI_SPCMD0);
+ 
+ 	/* Sets RSPI mode */
 -- 
 2.20.1
 
