@@ -2,47 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBC482F0C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:07:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EDB92F4A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:42:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731115AbfE3DR1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:17:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60512 "EHLO mail.kernel.org"
+        id S1729104AbfE3DMe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:12:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49808 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729644AbfE3DN7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:13:59 -0400
+        id S1728349AbfE3DLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:11:05 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B9B1C24547;
-        Thu, 30 May 2019 03:13:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 755B1244E5;
+        Thu, 30 May 2019 03:11:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186038;
-        bh=pM1kv8vnaDOl1N/LUuTf4DaiXw4vOEWZ891Shpbm7lE=;
+        s=default; t=1559185864;
+        bh=KZyKSxQ5KrdEIWBcqojCwCgX/h/V1zXxE97Z7mqPKlE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k+PDcT1f6w7gjrhHbSJ1v8DzoTLRCYJNhoqNpCO0/OocAU1KhfYgNs+20RK7NxMFz
-         rLVFRCZl81gqWsLwCbIJv+avdahHoc9l/cgZhlmUH+jF+d79UyFxtas9YdNBCljVPe
-         7FZTznlJ/g7BI7tTfbjw5ONAAa6fiPXa+/s3k8hg=
+        b=SAe+sMjadhayEmeVXo3KSixE6crZbIMjkf9VxKB/kuyJqPjibNIY84fUe/P8IBDvg
+         foCCBtcDkV6VGyHxqOZm9ud+CwLySANgZAmHRSHzxa9FR8YL/D3GjD8jEboGf4/3/s
+         ik4WziL/gnqoFJNOz11/Vc/K7B5PY+29kJ1SqlAM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicolai Stange <nstange@suse.de>,
-        Jiri Kosina <jkosina@suse.cz>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 127/346] x86/mm: Remove in_nmi() warning from 64-bit implementation of vmalloc_fault()
+        stable@vger.kernel.org, John Garry <john.garry@huawei.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 202/405] scsi: libsas: Do discovery on empty PHY to update PHY info
 Date:   Wed, 29 May 2019 20:03:20 -0700
-Message-Id: <20190530030547.546028339@linuxfoundation.org>
+Message-Id: <20190530030551.392430763@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -52,59 +44,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a65c88e16f32aa9ef2e8caa68ea5c29bd5eb0ff0 ]
+[ Upstream commit d8649fc1c5e40e691d589ed825998c36a947491c ]
 
-In-NMI warnings have been added to vmalloc_fault() via:
+When we discover the PHY is empty in sas_rediscover_dev(), the PHY
+information (like negotiated linkrate) is not updated.
 
-  ebc8827f75 ("x86: Barf when vmalloc and kmemcheck faults happen in NMI")
+As such, for a user examining sysfs for that PHY, they would see
+incorrect values:
 
-back in the time when our NMI entry code could not cope with nested NMIs.
+root@(none)$ cd /sys/class/sas_phy/phy-0:0:20
+root@(none)$ more negotiated_linkrate
+3.0 Gbit
+root@(none)$ echo 0 > enable
+root@(none)$ more negotiated_linkrate
+3.0 Gbit
 
-These days, it's perfectly fine to take a fault in NMI context and we
-don't have to care about the fact that IRET from the fault handler might
-cause NMI nesting.
+So fix this, simply discover the PHY again, even though we know it's empty;
+in the above example, this gives us:
 
-This warning has already been removed from 32-bit implementation of
-vmalloc_fault() in:
+root@(none)$ more negotiated_linkrate
+Phy disabled
 
-  6863ea0cda8 ("x86/mm: Remove in_nmi() warning from vmalloc_fault()")
+We must do this after unregistering the device associated with the PHY
+(in sas_unregister_devs_sas_addr()).
 
-but the 64-bit version was omitted.
-
-Remove the bogus warning also from 64-bit implementation of vmalloc_fault().
-
-Reported-by: Nicolai Stange <nstange@suse.de>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Joerg Roedel <jroedel@suse.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 6863ea0cda8 ("x86/mm: Remove in_nmi() warning from vmalloc_fault()")
-Link: http://lkml.kernel.org/r/nycvar.YFH.7.76.1904240902280.9803@cbobk.fhfr.pm
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/mm/fault.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/scsi/libsas/sas_expander.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 9d5c75f022956..55233dec5ff4a 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -359,8 +359,6 @@ static noinline int vmalloc_fault(unsigned long address)
- 	if (!(address >= VMALLOC_START && address < VMALLOC_END))
- 		return -1;
- 
--	WARN_ON_ONCE(in_nmi());
--
- 	/*
- 	 * Copy kernel mappings over when needed. This can also
- 	 * happen within a race in page table update. In the later
+diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
+index 17b45a0c7bc38..3611a4ef0d150 100644
+--- a/drivers/scsi/libsas/sas_expander.c
++++ b/drivers/scsi/libsas/sas_expander.c
+@@ -2052,6 +2052,11 @@ static int sas_rediscover_dev(struct domain_device *dev, int phy_id, bool last)
+ 	if ((SAS_ADDR(sas_addr) == 0) || (res == -ECOMM)) {
+ 		phy->phy_state = PHY_EMPTY;
+ 		sas_unregister_devs_sas_addr(dev, phy_id, last);
++		/*
++		 * Even though the PHY is empty, for convenience we discover
++		 * the PHY to update the PHY info, like negotiated linkrate.
++		 */
++		sas_ex_phy_discover(dev, phy_id);
+ 		return res;
+ 	} else if (SAS_ADDR(sas_addr) == SAS_ADDR(phy->attached_sas_addr) &&
+ 		   dev_type_flutter(type, phy->attached_dev_type)) {
 -- 
 2.20.1
 
