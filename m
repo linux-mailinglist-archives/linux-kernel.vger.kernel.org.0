@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EEAE2ECC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:26:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A3002F2A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:24:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387690AbfE3D0R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:26:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52636 "EHLO mail.kernel.org"
+        id S1732754AbfE3EYE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:24:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731735AbfE3DSv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:51 -0400
+        id S1729251AbfE3DO5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:14:57 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 490CA24800;
-        Thu, 30 May 2019 03:18:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B94C24555;
+        Thu, 30 May 2019 03:14:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186331;
-        bh=UtnwMd7rG4/JK9kDlDjr3EYelZzqIrF4r2eMMgFde5M=;
+        s=default; t=1559186097;
+        bh=fNIicfzKqgNknvOL8kafg05oEuWLA66QXO1DUGfYGHg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1GgpICQm9QVLLFMQbeoEvnolovkV9+/oN4AOH4k/UGRuYRDc0AhHjE4sNauba0R/S
-         D/O/TnoL1SHqvUDleuT7A0aPMzOZUY5rFRi19rtbFbNHcsYlwRaYYclLGdZQu8XksM
-         qMvqiEX+cyJw+K0RS6NfDU+XykP1iNs9M06+ts6o=
+        b=nuRTFfMcEbm6G31ZhH5XRtWpLLwSJYunTIr0ymgv9uaqeVCab94KYDK1Tqym7nFPS
+         0LiNUOAJmyKTbueUuqANGvfDYmOfGqum5XUO+Sxr679V+dj3EWC7x/l58oO3hno4V9
+         BZlpcwi1dqU3TmbjsX13fRSxOie5qEjDcTCm80bk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Flavio Suligoi <f.suligoi@asem.it>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 050/193] spi: pxa2xx: fix SCR (divisor) calculation
+Subject: [PATCH 5.0 231/346] rtc: xgene: fix possible race condition
 Date:   Wed, 29 May 2019 20:05:04 -0700
-Message-Id: <20190530030456.637295396@linuxfoundation.org>
+Message-Id: <20190530030552.758686128@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,59 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 29f2133717c527f492933b0622a4aafe0b3cbe9e ]
+[ Upstream commit a652e00ee1233e251a337c28e18a1da59224e5ce ]
 
-Calculate the divisor for the SCR (Serial Clock Rate), avoiding
-that the SSP transmission rate can be greater than the device rate.
+The IRQ is requested before the struct rtc is allocated and registered, but
+this struct is used in the IRQ handler. This may lead to a NULL pointer
+dereference.
 
-When the division between the SSP clock and the device rate generates
-a reminder, we have to increment by one the divisor.
-In this way the resulting SSP clock will never be greater than the
-device SPI max frequency.
+Switch to devm_rtc_allocate_device/rtc_register_device to allocate the rtc
+struct before requesting the IRQ.
 
-For example, with:
-
- - ssp_clk  = 50 MHz
- - dev freq = 15 MHz
-
-without this patch the SSP clock will be greater than 15 MHz:
-
- - 25 MHz for PXA25x_SSP and CE4100_SSP
- - 16,56 MHz for the others
-
-Instead, with this patch, we have in both case an SSP clock of 12.5MHz,
-so the max rate of the SPI device clock is respected.
-
-Signed-off-by: Flavio Suligoi <f.suligoi@asem.it>
-Reviewed-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Reviewed-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-pxa2xx.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/rtc/rtc-xgene.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
-index c0e915d8da5d2..efdae686a7619 100644
---- a/drivers/spi/spi-pxa2xx.c
-+++ b/drivers/spi/spi-pxa2xx.c
-@@ -938,10 +938,14 @@ static unsigned int ssp_get_clk_div(struct driver_data *drv_data, int rate)
+diff --git a/drivers/rtc/rtc-xgene.c b/drivers/rtc/rtc-xgene.c
+index 153820876a820..2f741f455c30a 100644
+--- a/drivers/rtc/rtc-xgene.c
++++ b/drivers/rtc/rtc-xgene.c
+@@ -168,6 +168,10 @@ static int xgene_rtc_probe(struct platform_device *pdev)
+ 	if (IS_ERR(pdata->csr_base))
+ 		return PTR_ERR(pdata->csr_base);
  
- 	rate = min_t(int, ssp_clk, rate);
++	pdata->rtc = devm_rtc_allocate_device(&pdev->dev);
++	if (IS_ERR(pdata->rtc))
++		return PTR_ERR(pdata->rtc);
++
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+ 		dev_err(&pdev->dev, "No IRQ resource\n");
+@@ -198,15 +202,15 @@ static int xgene_rtc_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
  
-+	/*
-+	 * Calculate the divisor for the SCR (Serial Clock Rate), avoiding
-+	 * that the SSP transmission rate can be greater than the device rate
-+	 */
- 	if (ssp->type == PXA25x_SSP || ssp->type == CE4100_SSP)
--		return (ssp_clk / (2 * rate) - 1) & 0xff;
-+		return (DIV_ROUND_UP(ssp_clk, 2 * rate) - 1) & 0xff;
- 	else
--		return (ssp_clk / rate - 1) & 0xfff;
-+		return (DIV_ROUND_UP(ssp_clk, rate) - 1)  & 0xfff;
+-	pdata->rtc = devm_rtc_device_register(&pdev->dev, pdev->name,
+-					 &xgene_rtc_ops, THIS_MODULE);
+-	if (IS_ERR(pdata->rtc)) {
+-		clk_disable_unprepare(pdata->clk);
+-		return PTR_ERR(pdata->rtc);
+-	}
+-
+ 	/* HW does not support update faster than 1 seconds */
+ 	pdata->rtc->uie_unsupported = 1;
++	pdata->rtc->ops = &xgene_rtc_ops;
++
++	ret = rtc_register_device(pdata->rtc);
++	if (ret) {
++		clk_disable_unprepare(pdata->clk);
++		return ret;
++	}
+ 
+ 	return 0;
  }
- 
- static unsigned int pxa2xx_ssp_get_clk_div(struct driver_data *drv_data,
 -- 
 2.20.1
 
