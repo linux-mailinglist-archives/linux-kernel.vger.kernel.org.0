@@ -2,98 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3AFF303E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 23:13:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6E76303F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 23:15:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbfE3VMq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 17:12:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47700 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726100AbfE3VMp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 17:12:45 -0400
-Received: from localhost (unknown [207.225.69.115])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE53621985;
-        Thu, 30 May 2019 21:12:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559250765;
-        bh=8ogzh1kXxnB4e4k6xpIqU2Y6rtedLnLHRgwK4C8BkxQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=y+4fRKmJ9QXOZWZLpA/DAp88qHyQyRLnoGL/6/Dme0ree+A+GQ/SE7E5acG8x6hLz
-         dV0Cf3jLUqaAQ/GpVK8kfEk0EixWb7d9Y0YZs4F52VX8IUzFN+XNGSmDdkD8TifKsA
-         3ypNkO2Oz4EdiXRAtsp+XS30uh5NuIAVr+H6z1eQ=
-Date:   Thu, 30 May 2019 14:12:44 -0700
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Nishka Dasgupta <nishkadg.linux@gmail.com>
-Cc:     larry.finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
-        himadri18.07@gmail.com, daniela.mormocea@gmail.com,
-        straube.linux@gmail.com, vatsalanarang@gmail.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8712: Remove unnecessary variable in
- rtl8712_recv.c
-Message-ID: <20190530211244.GA24020@kroah.com>
-References: <20190529132031.6493-1-nishkadg.linux@gmail.com>
+        id S1726609AbfE3VPe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 17:15:34 -0400
+Received: from mailoutvs35.siol.net ([185.57.226.226]:55309 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726100AbfE3VPd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 17:15:33 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id 77B93522867;
+        Thu, 30 May 2019 23:15:30 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id Q4d6PDinGsox; Thu, 30 May 2019 23:15:30 +0200 (CEST)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id 23ACA522869;
+        Thu, 30 May 2019 23:15:30 +0200 (CEST)
+Received: from localhost.localdomain (cpe-86-58-52-202.static.triera.net [86.58.52.202])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Postfix) with ESMTPSA id 41B70522867;
+        Thu, 30 May 2019 23:15:28 +0200 (CEST)
+From:   Jernej Skrabec <jernej.skrabec@siol.net>
+To:     paul.kocialkowski@bootlin.com, maxime.ripard@bootlin.com
+Cc:     wens@csie.org, mchehab@kernel.org, gregkh@linuxfoundation.org,
+        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/7] media: cedrus: Improvements/cleanup
+Date:   Thu, 30 May 2019 23:15:09 +0200
+Message-Id: <20190530211516.1891-1-jernej.skrabec@siol.net>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190529132031.6493-1-nishkadg.linux@gmail.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 06:50:31PM +0530, Nishka Dasgupta wrote:
-> Remove unnecessary variable last_evm in rtl8712_recv.c and use its value
-> directly.
-> Issue found with Coccinelle.
-> 
-> Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
-> ---
->  drivers/staging/rtl8712/rtl8712_recv.c | 5 ++---
->  drivers/staging/rtl8712/rtl871x_cmd.c  | 2 +-
->  2 files changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8712/rtl8712_recv.c b/drivers/staging/rtl8712/rtl8712_recv.c
-> index 82ddc0c3ecd4..f6f7cd5fd0f2 100644
-> --- a/drivers/staging/rtl8712/rtl8712_recv.c
-> +++ b/drivers/staging/rtl8712/rtl8712_recv.c
-> @@ -885,7 +885,7 @@ static void query_rx_phy_status(struct _adapter *padapter,
->  static void process_link_qual(struct _adapter *padapter,
->  			      union recv_frame *prframe)
->  {
-> -	u32	last_evm = 0, tmpVal;
-> +	u32	tmpVal;
->  	struct rx_pkt_attrib *pattrib;
->  	struct smooth_rssi_data *sqd = &padapter->recvpriv.signal_qual_data;
->  
-> @@ -898,8 +898,7 @@ static void process_link_qual(struct _adapter *padapter,
->  		 */
->  		if (sqd->total_num++ >= PHY_LINKQUALITY_SLID_WIN_MAX) {
->  			sqd->total_num = PHY_LINKQUALITY_SLID_WIN_MAX;
-> -			last_evm = sqd->elements[sqd->index];
-> -			sqd->total_val -= last_evm;
-> +			sqd->total_val -= sqd->elements[sqd->index];
+Here is first batch of random Cedrus improvements/cleanups. Only patch 2
+has a change which raises a question about H264 controls.
 
-Nope, original code is easier to understand :(
+Changes were tested on H3 SoC using modified ffmpeg and Kodi.
 
->  		}
->  		sqd->total_val += pattrib->signal_qual;
->  		sqd->elements[sqd->index++] = pattrib->signal_qual;
-> diff --git a/drivers/staging/rtl8712/rtl871x_cmd.c b/drivers/staging/rtl8712/rtl871x_cmd.c
-> index 05a78ac24987..7c437ee9e022 100644
-> --- a/drivers/staging/rtl8712/rtl871x_cmd.c
-> +++ b/drivers/staging/rtl8712/rtl871x_cmd.c
-> @@ -880,7 +880,7 @@ void r8712_createbss_cmd_callback(struct _adapter *padapter,
->  		}
->  		r8712_indicate_connect(padapter);
->  	} else {
-> -		pwlan = _r8712_alloc_network(pmlmepriv);
-> +		pwlan = r8712_alloc_network(pmlmepriv);
+Please take a look.
 
-what does this change have to do with your changelog?
+Best regards,
+Jernej
 
-confused,
+Jernej Skrabec (7):
+  media: cedrus: Disable engine after each slice decoding
+  media: cedrus: Fix H264 default reference index count
+  media: cedrus: Fix decoding for some H264 videos
+  media: cedrus: Remove dst_bufs from context
+  media: cedrus: Don't set chroma size for scale & rotation
+  media: cedrus: Add infra for extra buffers connected to capture
+    buffers
+  media: cedrus: Improve H264 memory efficiency
 
-greg k-h
+ drivers/staging/media/sunxi/cedrus/cedrus.h   |  12 +-
+ .../staging/media/sunxi/cedrus/cedrus_h264.c  | 115 ++++++++----------
+ .../staging/media/sunxi/cedrus/cedrus_hw.c    |   4 +-
+ .../staging/media/sunxi/cedrus/cedrus_video.c |  25 ++--
+ 4 files changed, 68 insertions(+), 88 deletions(-)
+
+--=20
+2.21.0
+
