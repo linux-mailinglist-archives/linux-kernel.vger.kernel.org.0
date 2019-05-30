@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4AC42F12B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:11:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFC202EFFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:01:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727437AbfE3EKo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:10:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44490 "EHLO mail.kernel.org"
+        id S1731556AbfE3DS1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:18:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730878AbfE3DQ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:16:59 -0400
+        id S1729914AbfE3DOg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:14:36 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C1F724627;
-        Thu, 30 May 2019 03:16:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CD2B24502;
+        Thu, 30 May 2019 03:14:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186218;
-        bh=4db5lcLgJ3ET8TrH4aWhQ7EKOifDOX0uLXxtvfOh7nM=;
+        s=default; t=1559186075;
+        bh=uehieXudrxU2deCpWjUOTsxJYwDki7icIgGbHkm1yKo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ytsp3uqcOBlnb6sRDhZxJfJOPuQtZq6QEbTu/DMyifb4SpLXXHfr+gX0t+muoUPr/
-         O7i1if/+8sALyUghzXfCbRhf99891mwSrhV7oPcNfT8NEMe0RIjMuU37OJO5imnb0d
-         okjn1B+cMc0Hv2w0ekVHHrifNMkSnDWJ/wNZlOxo=
+        b=bhG+WFGdLCeJ0IPPr0dOjVwfOX1pevY9KqkcKnoCAWJGQr/IjknGgvfMW+XE7jSbz
+         wuVbgaQ0BVSPLddKj2VjM1q2dN/c9Bwz24mPMhO38uS84ixBaQhbF/y8TvfvOME8Cy
+         /YCMwLikEbUAaAlPr+A/9k1Q6NrPuIhRr3OSOBCM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
-        Daniel Jurgens <danielj@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Chunming Zhou <david1.zhou@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 107/276] RDMA/cma: Consider scope_id while binding to ipv6 ll address
+Subject: [PATCH 5.0 192/346] drm/amdgpu: fix old fence check in amdgpu_fence_emit
 Date:   Wed, 29 May 2019 20:04:25 -0700
-Message-Id: <20190530030532.719815315@linuxfoundation.org>
+Message-Id: <20190530030550.803212918@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,80 +46,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5d7ed2f27bbd482fd29e6b2e204b1a1ee8a0b268 ]
+[ Upstream commit 3d2aca8c8620346abdba96c6300d2c0b90a1d0cc ]
 
-When two netdev have same link local addresses (such as vlan and non
-vlan), two rdma cm listen id should be able to bind to following different
-addresses.
+We don't hold a reference to the old fence, so it can go away
+any time we are waiting for it to signal.
 
-listener-1: addr=lla, scope_id=A, port=X
-listener-2: addr=lla, scope_id=B, port=X
-
-However while comparing the addresses only addr and port are considered,
-due to which 2nd listener fails to listen.
-
-In below example of two listeners, 2nd listener is failing with address in
-use error.
-
-$ rping -sv -a fe80::268a:7ff:feb3:d113%ens2f1 -p 4545&
-
-$ rping -sv -a fe80::268a:7ff:feb3:d113%ens2f1.200 -p 4545
-rdma_bind_addr: Address already in use
-
-To overcome this, consider the scope_ids as well which forms the accurate
-IPv6 link local address.
-
-Signed-off-by: Parav Pandit <parav@mellanox.com>
-Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Christian König <christian.koenig@amd.com>
+Reviewed-by: Chunming Zhou <david1.zhou@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/core/cma.c | 25 +++++++++++++++++++------
- 1 file changed, 19 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c | 24 ++++++++++++++++-------
+ 1 file changed, 17 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/infiniband/core/cma.c b/drivers/infiniband/core/cma.c
-index 6f5be78024762..39dc7be56884a 100644
---- a/drivers/infiniband/core/cma.c
-+++ b/drivers/infiniband/core/cma.c
-@@ -1078,18 +1078,31 @@ static inline bool cma_any_addr(const struct sockaddr *addr)
- 	return cma_zero_addr(addr) || cma_loopback_addr(addr);
- }
- 
--static int cma_addr_cmp(struct sockaddr *src, struct sockaddr *dst)
-+static int cma_addr_cmp(const struct sockaddr *src, const struct sockaddr *dst)
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c
+index ee47c11e92ce7..4dee2326b29c3 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c
+@@ -136,8 +136,9 @@ int amdgpu_fence_emit(struct amdgpu_ring *ring, struct dma_fence **f,
  {
- 	if (src->sa_family != dst->sa_family)
- 		return -1;
+ 	struct amdgpu_device *adev = ring->adev;
+ 	struct amdgpu_fence *fence;
+-	struct dma_fence *old, **ptr;
++	struct dma_fence __rcu **ptr;
+ 	uint32_t seq;
++	int r;
  
- 	switch (src->sa_family) {
- 	case AF_INET:
--		return ((struct sockaddr_in *) src)->sin_addr.s_addr !=
--		       ((struct sockaddr_in *) dst)->sin_addr.s_addr;
--	case AF_INET6:
--		return ipv6_addr_cmp(&((struct sockaddr_in6 *) src)->sin6_addr,
--				     &((struct sockaddr_in6 *) dst)->sin6_addr);
-+		return ((struct sockaddr_in *)src)->sin_addr.s_addr !=
-+		       ((struct sockaddr_in *)dst)->sin_addr.s_addr;
-+	case AF_INET6: {
-+		struct sockaddr_in6 *src_addr6 = (struct sockaddr_in6 *)src;
-+		struct sockaddr_in6 *dst_addr6 = (struct sockaddr_in6 *)dst;
-+		bool link_local;
+ 	fence = kmem_cache_alloc(amdgpu_fence_slab, GFP_KERNEL);
+ 	if (fence == NULL)
+@@ -153,15 +154,24 @@ int amdgpu_fence_emit(struct amdgpu_ring *ring, struct dma_fence **f,
+ 			       seq, flags | AMDGPU_FENCE_FLAG_INT);
+ 
+ 	ptr = &ring->fence_drv.fences[seq & ring->fence_drv.num_fences_mask];
++	if (unlikely(rcu_dereference_protected(*ptr, 1))) {
++		struct dma_fence *old;
 +
-+		if (ipv6_addr_cmp(&src_addr6->sin6_addr,
-+					  &dst_addr6->sin6_addr))
-+			return 1;
-+		link_local = ipv6_addr_type(&dst_addr6->sin6_addr) &
-+			     IPV6_ADDR_LINKLOCAL;
-+		/* Link local must match their scope_ids */
-+		return link_local ? (src_addr6->sin6_scope_id !=
-+				     dst_addr6->sin6_scope_id) :
-+				    0;
++		rcu_read_lock();
++		old = dma_fence_get_rcu_safe(ptr);
++		rcu_read_unlock();
++
++		if (old) {
++			r = dma_fence_wait(old, false);
++			dma_fence_put(old);
++			if (r)
++				return r;
++		}
 +	}
 +
- 	default:
- 		return ib_addr_cmp(&((struct sockaddr_ib *) src)->sib_addr,
- 				   &((struct sockaddr_ib *) dst)->sib_addr);
+ 	/* This function can't be called concurrently anyway, otherwise
+ 	 * emitting the fence would mess up the hardware ring buffer.
+ 	 */
+-	old = rcu_dereference_protected(*ptr, 1);
+-	if (old && !dma_fence_is_signaled(old)) {
+-		DRM_INFO("rcu slot is busy\n");
+-		dma_fence_wait(old, false);
+-	}
+-
+ 	rcu_assign_pointer(*ptr, dma_fence_get(&fence->base));
+ 
+ 	*f = &fence->base;
 -- 
 2.20.1
 
