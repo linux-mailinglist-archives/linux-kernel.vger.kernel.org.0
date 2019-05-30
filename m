@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 951B72EE41
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:45:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB3122F21A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:18:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732480AbfE3Dpm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:45:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59924 "EHLO mail.kernel.org"
+        id S1730334AbfE3DPb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:15:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732322AbfE3DUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:20:47 -0400
+        id S1728221AbfE3DMz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:12:55 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA5032496D;
-        Thu, 30 May 2019 03:20:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A66C024528;
+        Thu, 30 May 2019 03:12:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186445;
-        bh=qydilEWEQqasVCq9cYkBAWbqdN+AQcFoT0hQC5NMJ3g=;
+        s=default; t=1559185974;
+        bh=5pDeNerl/1DxJPk5v26/hzMb2wiiuMRCLy2pj8wIa3g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=POtrs3nm9ynx4f5GEUc6Y1cy1y6a1pUcxixIXTWKNzLklLRfXJQEj7b9xu5YQXubM
-         2rj+i3Q4LGeShFyXSeDBw8WkP46H880jR5JpEb2lxGwnoXINebYEKqG460tnAeAGnL
-         +Kqt40YWBTuOaqR4O7Y+50HmXepbltKnH0cr55dI=
+        b=eIBRR4qu4dKVC8RWfQRHyvqaAJ1Rx6LBef8Z+GxQc63h4kA10jBZrLLj+cPn1/Igd
+         ZeDQQA4JGchG0p5VdWWElIhx5cmenW1mKOvenRFsXfzNTfIonl5sSl/xPo6gonssig
+         KXJGil/41fLgVvOtf8Ovy69Fv7SWaoHC2zNk2P3c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, luto@kernel.org,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 053/128] mm/uaccess: Use unsigned long to placate UBSAN warnings on older GCC versions
+        stable@vger.kernel.org,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 387/405] regulator: wm831x: Fix notifier mutex lock warning
 Date:   Wed, 29 May 2019 20:06:25 -0700
-Message-Id: <20190530030444.261281524@linuxfoundation.org>
+Message-Id: <20190530030600.258027127@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,74 +47,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 29da93fea3ea39ab9b12270cc6be1b70ef201c9e ]
+[ Upstream commit 119c4f5085c45b60cb23c5595e45d06135b89518 ]
 
-Randy reported objtool triggered on his (GCC-7.4) build:
+The mutex for the regulator_dev must be controlled by the caller of
+the regulator_notifier_call_chain(), as described in the comment
+for that function.
 
-  lib/strncpy_from_user.o: warning: objtool: strncpy_from_user()+0x315: call to __ubsan_handle_add_overflow() with UACCESS enabled
-  lib/strnlen_user.o: warning: objtool: strnlen_user()+0x337: call to __ubsan_handle_sub_overflow() with UACCESS enabled
+Failure to mutex lock and unlock surrounding the notifier call results
+in a kernel WARN_ON_ONCE() which will dump a backtrace for the
+regulator_notifier_call_chain() when that function call is first made.
+The mutex can be controlled using the regulator_lock/unlock() API.
 
-This is due to UBSAN generating signed-overflow-UB warnings where it
-should not. Prior to GCC-8 UBSAN ignored -fwrapv (which the kernel
-uses through -fno-strict-overflow).
-
-Make the functions use 'unsigned long' throughout.
-
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: luto@kernel.org
-Link: http://lkml.kernel.org/r/20190424072208.754094071@infradead.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: e4ee831f949a ("regulator: Add WM831x DC-DC buck convertor support")
+Suggested-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Signed-off-by: Steve Twiss <stwiss.opensource@diasemi.com>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/strncpy_from_user.c | 5 +++--
- lib/strnlen_user.c      | 4 ++--
- 2 files changed, 5 insertions(+), 4 deletions(-)
+ drivers/regulator/wm831x-dcdc.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/lib/strncpy_from_user.c b/lib/strncpy_from_user.c
-index 7e35fc450c5bb..5a07f19059c36 100644
---- a/lib/strncpy_from_user.c
-+++ b/lib/strncpy_from_user.c
-@@ -22,10 +22,11 @@
-  * hit it), 'max' is the address space maximum (and we return
-  * -EFAULT if we hit it).
-  */
--static inline long do_strncpy_from_user(char *dst, const char __user *src, long count, unsigned long max)
-+static inline long do_strncpy_from_user(char *dst, const char __user *src,
-+					unsigned long count, unsigned long max)
+diff --git a/drivers/regulator/wm831x-dcdc.c b/drivers/regulator/wm831x-dcdc.c
+index 12b422373580c..d1873f94bca74 100644
+--- a/drivers/regulator/wm831x-dcdc.c
++++ b/drivers/regulator/wm831x-dcdc.c
+@@ -183,9 +183,11 @@ static irqreturn_t wm831x_dcdc_uv_irq(int irq, void *data)
  {
- 	const struct word_at_a_time constants = WORD_AT_A_TIME_CONSTANTS;
--	long res = 0;
-+	unsigned long res = 0;
+ 	struct wm831x_dcdc *dcdc = data;
  
- 	/*
- 	 * Truncate 'max' to the user-specified limit, so that
-diff --git a/lib/strnlen_user.c b/lib/strnlen_user.c
-index 8e105ed4df12b..9ff4f3bbb1aae 100644
---- a/lib/strnlen_user.c
-+++ b/lib/strnlen_user.c
-@@ -27,7 +27,7 @@
- static inline long do_strnlen_user(const char __user *src, unsigned long count, unsigned long max)
++	regulator_lock(dcdc->regulator);
+ 	regulator_notifier_call_chain(dcdc->regulator,
+ 				      REGULATOR_EVENT_UNDER_VOLTAGE,
+ 				      NULL);
++	regulator_unlock(dcdc->regulator);
+ 
+ 	return IRQ_HANDLED;
+ }
+@@ -194,9 +196,11 @@ static irqreturn_t wm831x_dcdc_oc_irq(int irq, void *data)
  {
- 	const struct word_at_a_time constants = WORD_AT_A_TIME_CONSTANTS;
--	long align, res = 0;
-+	unsigned long align, res = 0;
- 	unsigned long c;
+ 	struct wm831x_dcdc *dcdc = data;
  
- 	/*
-@@ -41,7 +41,7 @@ static inline long do_strnlen_user(const char __user *src, unsigned long count,
- 	 * Do everything aligned. But that means that we
- 	 * need to also expand the maximum..
- 	 */
--	align = (sizeof(long) - 1) & (unsigned long)src;
-+	align = (sizeof(unsigned long) - 1) & (unsigned long)src;
- 	src -= align;
- 	max += align;
++	regulator_lock(dcdc->regulator);
+ 	regulator_notifier_call_chain(dcdc->regulator,
+ 				      REGULATOR_EVENT_OVER_CURRENT,
+ 				      NULL);
++	regulator_unlock(dcdc->regulator);
  
+ 	return IRQ_HANDLED;
+ }
 -- 
 2.20.1
 
