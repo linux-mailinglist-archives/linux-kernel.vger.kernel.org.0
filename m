@@ -2,113 +2,253 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DE4C2F868
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 10:17:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2620D2F86A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 10:18:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727151AbfE3IRg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 04:17:36 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:60849 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbfE3IRf (ORCPT
+        id S1726813AbfE3ISL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 04:18:11 -0400
+Received: from mail.windriver.com ([147.11.1.11]:44040 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725440AbfE3ISL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 04:17:35 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4U8Gte02905184
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 30 May 2019 01:16:55 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4U8Gte02905184
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1559204216;
-        bh=emgwORxdB8CkVtvtgC0tsEMlgEFIslty5A0OUQmTyKE=;
-        h=Date:From:Cc:Reply-To:To:Subject:From;
-        b=Wwta/Nfz9o1+A0c7zAF8Om89/fMTwlRCQ5l484v6EFW/9GDA4Zfbq3kD2VEiC50GY
-         m+VZJIUj9jHmqO5q6tmc6WPLATgoUPTkEi57L6YcdhNgAP3kcMjtHbY9jpbE23oTgD
-         pu7NF61mJJAuhCibhhwL9FSl2U+Vmo22l22N0PlFRPHbv5jZAx9DgG0n44ByZp01uL
-         fPkScOVtDerp9MgrQbAe/jDuoWw8KGT5bI6+Wai4DYWnNs1HhrurVJTW2dy+AXNxXJ
-         LYicA+jiqugGSY3xGODiyNUNUyK2U71TB0tpILcGPd+8FRLpLErtX2l7Nn4O8AnZS8
-         254VEFDHh7sEw==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4U8GscR2905178;
-        Thu, 30 May 2019 01:16:54 -0700
-Date:   Thu, 30 May 2019 01:16:54 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-whpnfnw6xtd939odgt9bw9as@git.kernel.org>
-Cc:     wangnan0@huawei.com, ast@fb.com, acme@redhat.com,
-        daniel@iogearbox.net, kafai@fb.com, adrian.hunter@intel.com,
-        lclaudio@redhat.com, tglx@linutronix.de, andrii.nakryiko@gmail.com,
-        yhs@fb.com, songliubraving@fb.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, jolsa@kernel.org,
-        namhyung@kernel.org, mingo@kernel.org
-Reply-To: namhyung@kernel.org, mingo@kernel.org, jolsa@kernel.org,
-          andrii.nakryiko@gmail.com, yhs@fb.com,
-          linux-kernel@vger.kernel.org, songliubraving@fb.com,
-          hpa@zytor.com, kafai@fb.com, adrian.hunter@intel.com,
-          daniel@iogearbox.net, tglx@linutronix.de, lclaudio@redhat.com,
-          wangnan0@huawei.com, acme@redhat.com, ast@fb.com
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf top: Lower message level for failure on
- synthesizing events for pre-existing BPF programs
-Git-Commit-ID: 2d45ef7033ec90104ae8e4c3996227bdad24dc76
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 30 May 2019 04:18:11 -0400
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id x4U8H6DC006300
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Thu, 30 May 2019 01:17:06 -0700 (PDT)
+Received: from [128.224.162.221] (128.224.162.221) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 30 May
+ 2019 01:17:05 -0700
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        LKML <linux-kernel@vger.kernel.org>
+From:   He Zhe <zhe.he@windriver.com>
+Subject: User Stack Tracer Causes Crash 2
+Message-ID: <0c437829-3a13-0f5c-15a2-14414be65514@windriver.com>
+Date:   Thu, 30 May 2019 16:17:01 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=1.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Level: *
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+Content-Language: en-US
+X-Originating-IP: [128.224.162.221]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2d45ef7033ec90104ae8e4c3996227bdad24dc76
-Gitweb:     https://git.kernel.org/tip/2d45ef7033ec90104ae8e4c3996227bdad24dc76
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Mon, 20 May 2019 11:04:08 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 28 May 2019 18:37:45 -0300
+Hi,
 
-perf top: Lower message level for failure on synthesizing events for pre-existing BPF programs
+https://lore.kernel.org/lkml/20190320221534.165ab87b@oasis.local.home/ didn't get merged. And the crash it was trying to fix still happens on the latest master branch. If rebasing the patch on the latest top, the following new crash come up.
 
-Move it from being a pr_warning() to a pr_debug(). Also capitalize BPF
-and explain what gets missing when we're not able to synthesize these
-events: we'll not be able to resolve symbols, etc.
+Sometimes,
 
-Reported-by: Ingo Molnar <mingo@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexei Starovoitov <ast@fb.com>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
-Cc: Martin KaFai Lau <kafai@fb.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Song Liu <songliubraving@fb.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Cc: Yonghong Song <yhs@fb.com>
-Link: https://lkml.kernel.org/n/tip-whpnfnw6xtd939odgt9bw9as@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-top.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+root@intel-x86-64:~# echo 1 > /sys/kernel/debug/tracing/options/userstacktrace
+root@intel-x86-64:~# echo 1 > /sys/kernel/debug/tracing/events/preemptirq/irq_disable/enable
+root@intel-x86-64:~# echo 1 > /proc/sys/kernel/stack_tracer_enabled
+hangs...
 
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 31d78d874fc7..6651377fd762 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -1215,7 +1215,7 @@ static int __cmd_top(struct perf_top *top)
- 						&top->session->machines.host,
- 						&top->record_opts);
- 	if (ret < 0)
--		pr_warning("Couldn't synthesize bpf events.\n");
-+		pr_debug("Couldn't synthesize BPF events: Pre-existing BPF programs won't have symbols resolved.\n");
- 
- 	machine__synthesize_threads(&top->session->machines.host, &opts->target,
- 				    top->evlist->threads, false,
+Sometimes,
+
+root@intel-x86-64:~# echo 1 > /sys/kernel/debug/tracing/options/userstacktrace
+root@intel-x86-64:~# echo 1 > /sys/kernel/debug/tracing/events/preemptirq/irq_disable/enable
+root@intel-x86-64:~# echo 1 > /proc/sys/kernel/stack_tracer_enabled
+PANIC: double fault, error_code: 0x0
+CPU: 0 PID: 492 Comm: sh Not tainted 5.2.0-rc2 #1
+Hardware name: Intel Corporation Broadwell Client platform/Basking Ridge, BIOS BDW-E2R1.86C.0118.R01.1503110618 03/11/2015
+RIP: 0010:error_entry+0x32/0x100
+Code: 89 7c 24 08 52 31 d2 51 31 c9 50 41 50 45 31 c0 41 51 45 31 c9 41 52 45 31 d2 41 53 45 31 db 53 31 db 55 31 ed 41 54 45 31 e4 <41> 55 45 31 ed 41 56 45 31 f6 41 57 45 31 ff 56 48 8d 6c 24 09 f6
+RSP: 0018:ffff9ab680000000 EFLAGS: 00010046
+RAX: 00000000ae200a97 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffffae200ec9 RDI: ffffffffae201176
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+FS:  00007f2c078a4740(0000) GS:ffff988fb8a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffff9ab67ffffff8 CR3: 000000005b8ee003 CR4: 00000000003606f0
+Call Trace:
+ <IRQ>
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_thunk_cr2+0x1a/0x1c
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? error_entry+0x86/0x100
+ ? int3+0x29/0x40
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_thunk_cr2+0x1a/0x1c
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? error_entry+0x86/0x100
+ ? int3+0x29/0x40
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_thunk_cr2+0x1a/0x1c
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? error_entry+0x86/0x100
+ ? int3+0x29/0x40
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_thunk_cr2+0x1a/0x1c
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? error_entry+0x86/0x100
+ ? int3+0x29/0x40
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_thunk_cr2+0x1a/0x1c
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? error_entry+0x86/0x100
+ ? int3+0x29/0x40
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_thunk_cr2+0x1a/0x1c
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? error_entry+0x86/0x100
+ ? int3+0x29/0x40
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_thunk_cr2+0x1a/0x1c
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? error_entry+0x86/0x100
+ ? int3+0x29/0x40
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_thunk_cr2+0x1a/0x1c
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? error_entry+0x86/0x100
+ ? int3+0x29/0x40
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_thunk_cr2+0x1a/0x1c
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? error_entry+0x86/0x100
+ ? int3+0x29/0x40
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_thunk_cr2+0x1a/0x1c
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? error_entry+0x86/0x100
+ ? int3+0x29/0x40
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_thunk_cr2+0x1a/0x1c
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? error_entry+0x86/0x100
+ ? int3+0x29/0x40
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_thunk_cr2+0x1a/0x1c
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? error_entry+0x86/0x100
+ ? int3+0x29/0x40
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_thunk_cr2+0x1a/0x1c
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? error_entry+0x86/0x100
+ ? int3+0x29/0x40
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_thunk_cr2+0x1a/0x1c
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? error_entry+0x86/0x100
+ ? int3+0x29/0x40
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_thunk_cr2+0x1a/0x1c
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? error_entry+0x86/0x100
+ ? int3+0x29/0x40
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_caller_cr2+0x1/0x20
+ ? trace_hardirqs_off_thunk_cr2+0x1a/0x1c
+ ? native_iret+0x7/0x7
+ ? int3+0x29/0x40
+ ? error_entry+0x86/0x100
+ ? error_entry+0x86/0x100
+ ? int3+0x29/0x40
+ ? native_iret+0x7/0x7
