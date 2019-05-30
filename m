@@ -2,52 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E86FC2FF52
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 17:20:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEC182FF44
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 17:20:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727937AbfE3PTh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 11:19:37 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44388 "EHLO
+        id S1726593AbfE3PSW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 11:18:22 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55470 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726694AbfE3PTe (ORCPT
+        by vger.kernel.org with ESMTP id S1727696AbfE3PSU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 11:19:34 -0400
+        Thu, 30 May 2019 11:18:20 -0400
 Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4UFIFu6040926;
-        Thu, 30 May 2019 11:18:48 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2stgu3tmyw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 30 May 2019 11:18:46 -0400
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x4UFIP2x042125;
-        Thu, 30 May 2019 11:18:25 -0400
-Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2stgu3tkv0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 30 May 2019 11:18:25 -0400
-Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
-        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x4UDFQ3B006878;
-        Thu, 30 May 2019 13:17:27 GMT
-Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma01dal.us.ibm.com with ESMTP id 2spwb96tkq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 30 May 2019 13:17:27 +0000
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4UFIFEA040895
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 11:18:19 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2stgu3tkxn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 11:18:17 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 30 May 2019 16:17:18 +0100
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 30 May 2019 16:17:13 +0100
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4UFHCtj31981758
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4UFHCMN24641552
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Thu, 30 May 2019 15:17:12 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 87741B2066;
+        by IMSVA (Postfix) with ESMTP id 7FFD9B2078;
         Thu, 30 May 2019 15:17:12 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 64362B2068;
+        by IMSVA (Postfix) with ESMTP id 6437BB206C;
         Thu, 30 May 2019 15:17:12 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.216])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Thu, 30 May 2019 15:17:12 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id DDF1B16C5DC5; Thu, 30 May 2019 08:17:13 -0700 (PDT)
+        id E306316C63E5; Thu, 30 May 2019 08:17:13 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
@@ -57,13 +51,20 @@ Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 16/21] torture: Run kernel build in source directory
-Date:   Thu, 30 May 2019 08:17:07 -0700
-Message-Id: <20190530151712.1612-16-paulmck@linux.ibm.com>
+Subject: [PATCH tip/core/rcu 17/21] torture: Make --cpus override idleness calculations
+Date:   Thu, 30 May 2019 08:17:08 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190530151650.GA422@linux.ibm.com>
 References: <20190530151650.GA422@linux.ibm.com>
 X-TM-AS-GCONF: 00
+x-cbid: 19053015-0040-0000-0000-000004F68406
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011185; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000286; SDB=6.01210791; UDB=6.00636161; IPR=6.00991826;
+ MB=3.00027120; MTD=3.00000008; XFM=3.00000015; UTC=2019-05-30 15:17:17
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19053015-0041-0000-0000-000009029E58
+Message-Id: <20190530151712.1612-17-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-30_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -76,210 +77,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For historical reasons, rcutorture places its build products in a
-tools/testing/selftests/rcutorture/b1 directory using the O= kbuild
-command-line argument.  However, doing this requires that the source
-directory be pristine: Not just "make clean" pristine, but instead "make
-mrproper" (or, equivalently, "make distclean") pristine.  Therefore,
-rcutorture executes a "make mrproper" before each build.  Unfortunately,
-"make mrproper" has the side effect of removing pretty much everything,
-including tags files and cscope databases, which can be inconvenient
-to people whose workflow centers around a single source tree.
+Currently, rcutorture will use relatively few CPUs to build the kernel
+on a busy system, which is often as it should be.  However, if the user
+has used the --cpus argument to dedicate a specified number of CPUs to
+this torture test, it would be good if the kernel build also made use
+of them.  This commit therefore changes the cpus2use.sh script to use
+--cpus when specified and to do the idleness calculations otherwise.
 
-This commit therefore makes rcutorture do the build directly in the
-source directory, removing the need for "make mrproper".  This works
-because all needed build products are moved to their proper place in the
-"res" directory immediately after the build completes, so that multiple
-rcutorture kernels can still run concurrently.
-
-Reported-by: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 ---
- .../selftests/rcutorture/bin/configinit.sh    | 36 +++++--------------
- .../selftests/rcutorture/bin/kvm-build.sh     |  9 +++--
- .../rcutorture/bin/kvm-test-1-run.sh          | 21 +++++------
- tools/testing/selftests/rcutorture/bin/kvm.sh |  3 +-
- 4 files changed, 22 insertions(+), 47 deletions(-)
+ tools/testing/selftests/rcutorture/bin/cpus2use.sh | 5 +++++
+ tools/testing/selftests/rcutorture/bin/kvm.sh      | 3 +++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/tools/testing/selftests/rcutorture/bin/configinit.sh b/tools/testing/selftests/rcutorture/bin/configinit.sh
-index 40359486b3a8..bbeae6f67c36 100755
---- a/tools/testing/selftests/rcutorture/bin/configinit.sh
-+++ b/tools/testing/selftests/rcutorture/bin/configinit.sh
-@@ -1,7 +1,7 @@
- #!/bin/bash
- # SPDX-License-Identifier: GPL-2.0+
- #
--# Usage: configinit.sh config-spec-file build-output-dir results-dir
-+# Usage: configinit.sh config-spec-file results-dir
- #
- # Create a .config file from the spec file.  Run from the kernel source tree.
- # Exits with 0 if all went well, with 1 if all went well but the config
-@@ -11,10 +11,6 @@
- # desired settings, for example, "CONFIG_NO_HZ=y".  For best results,
- # this should be a full pathname.
- #
--# The second argument is a optional path to a build output directory,
--# for example, "O=/tmp/foo".  If this argument is omitted, the .config
--# file will be generated directly in the current directory.
--#
- # Copyright (C) IBM Corporation, 2013
+diff --git a/tools/testing/selftests/rcutorture/bin/cpus2use.sh b/tools/testing/selftests/rcutorture/bin/cpus2use.sh
+index ff7102212703..4e9485590c10 100755
+--- a/tools/testing/selftests/rcutorture/bin/cpus2use.sh
++++ b/tools/testing/selftests/rcutorture/bin/cpus2use.sh
+@@ -9,6 +9,11 @@
  #
  # Authors: Paul E. McKenney <paulmck@linux.ibm.com>
-@@ -26,34 +22,20 @@ mkdir $T
- # Capture config spec file.
  
- c=$1
--buildloc=$2
--resdir=$3
--builddir=
--if echo $buildloc | grep -q '^O='
--then
--	builddir=`echo $buildloc | sed -e 's/^O=//'`
--	if test ! -d $builddir
--	then
--		mkdir $builddir
--	fi
--else
--	echo Bad build directory: \"$buildloc\"
--	exit 2
--fi
-+resdir=$2
- 
- sed -e 's/^\(CONFIG[0-9A-Z_]*\)=.*$/grep -v "^# \1" |/' < $c > $T/u.sh
- sed -e 's/^\(CONFIG[0-9A-Z_]*=\).*$/grep -v \1 |/' < $c >> $T/u.sh
- grep '^grep' < $T/u.sh > $T/upd.sh
- echo "cat - $c" >> $T/upd.sh
--make mrproper
--make $buildloc distclean > $resdir/Make.distclean 2>&1
--make $buildloc $TORTURE_DEFCONFIG > $resdir/Make.defconfig.out 2>&1
--mv $builddir/.config $builddir/.config.sav
--sh $T/upd.sh < $builddir/.config.sav > $builddir/.config
--cp $builddir/.config $builddir/.config.new
--yes '' | make $buildloc oldconfig > $resdir/Make.oldconfig.out 2> $resdir/Make.oldconfig.err
-+make clean > $resdir/Make.clean 2>&1
-+make $TORTURE_DEFCONFIG > $resdir/Make.defconfig.out 2>&1
-+mv .config .config.sav
-+sh $T/upd.sh < .config.sav > .config
-+cp .config .config.new
-+yes '' | make oldconfig > $resdir/Make.oldconfig.out 2> $resdir/Make.oldconfig.err
- 
- # verify new config matches specification.
--configcheck.sh $builddir/.config $c
-+configcheck.sh .config $c
- 
- exit 0
-diff --git a/tools/testing/selftests/rcutorture/bin/kvm-build.sh b/tools/testing/selftests/rcutorture/bin/kvm-build.sh
-index c27a0bbb9c02..18d6518504ee 100755
---- a/tools/testing/selftests/rcutorture/bin/kvm-build.sh
-+++ b/tools/testing/selftests/rcutorture/bin/kvm-build.sh
-@@ -3,7 +3,7 @@
- #
- # Build a kvm-ready Linux kernel from the tree in the current directory.
- #
--# Usage: kvm-build.sh config-template build-dir resdir
-+# Usage: kvm-build.sh config-template resdir
- #
- # Copyright (C) IBM Corporation, 2011
- #
-@@ -15,8 +15,7 @@ then
- 	echo "kvm-build.sh :$config_template: Not a readable file"
- 	exit 1
- fi
--builddir=${2}
--resdir=${3}
-+resdir=${2}
- 
- T=${TMPDIR-/tmp}/test-linux.sh.$$
- trap 'rm -rf $T' 0
-@@ -29,14 +28,14 @@ CONFIG_VIRTIO_PCI=y
- CONFIG_VIRTIO_CONSOLE=y
- ___EOF___
- 
--configinit.sh $T/config O=$builddir $resdir
-+configinit.sh $T/config $resdir
- retval=$?
- if test $retval -gt 1
- then
- 	exit 2
- fi
- ncpus=`cpus2use.sh`
--make O=$builddir -j$ncpus $TORTURE_KMAKE_ARG > $resdir/Make.out 2>&1
-+make -j$ncpus $TORTURE_KMAKE_ARG > $resdir/Make.out 2>&1
- retval=$?
- if test $retval -ne 0 || grep "rcu[^/]*": < $resdir/Make.out | egrep -q "Stop|Error|error:|warning:" || egrep -q "Stop|Error|error:" < $resdir/Make.out
- then
-diff --git a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-index 003511494fd9..27b7b5693ede 100755
---- a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-+++ b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-@@ -36,11 +36,6 @@ config_template=${1}
- config_dir=`echo $config_template | sed -e 's,/[^/]*$,,'`
- title=`echo $config_template | sed -e 's/^.*\///'`
- builddir=${2}
--if test -z "$builddir" -o ! -d "$builddir" -o ! -w "$builddir"
--then
--	echo "kvm-test-1-run.sh :$builddir: Not a writable directory, cannot build into it"
--	exit 1
--fi
- resdir=${3}
- if test -z "$resdir" -o ! -d "$resdir" -o ! -w "$resdir"
- then
-@@ -85,18 +80,18 @@ then
- 	ln -s $base_resdir/.config $resdir  # for kvm-recheck.sh
- 	# Arch-independent indicator
- 	touch $resdir/builtkernel
--elif kvm-build.sh $T/Kc2 $builddir $resdir
-+elif kvm-build.sh $T/Kc2 $resdir
- then
- 	# Had to build a kernel for this test.
--	QEMU="`identify_qemu $builddir/vmlinux`"
-+	QEMU="`identify_qemu vmlinux`"
- 	BOOT_IMAGE="`identify_boot_image $QEMU`"
--	cp $builddir/vmlinux $resdir
--	cp $builddir/.config $resdir
--	cp $builddir/Module.symvers $resdir > /dev/null || :
--	cp $builddir/System.map $resdir > /dev/null || :
-+	cp vmlinux $resdir
-+	cp .config $resdir
-+	cp Module.symvers $resdir > /dev/null || :
-+	cp System.map $resdir > /dev/null || :
- 	if test -n "$BOOT_IMAGE"
- 	then
--		cp $builddir/$BOOT_IMAGE $resdir
-+		cp $BOOT_IMAGE $resdir
- 		KERNEL=$resdir/${BOOT_IMAGE##*/}
- 		# Arch-independent indicator
- 		touch $resdir/builtkernel
-@@ -107,7 +102,7 @@ then
- 	parse-build.sh $resdir/Make.out $title
- else
- 	# Build failed.
--	cp $builddir/.config $resdir || :
-+	cp .config $resdir || :
- 	echo Build failed, not running KVM, see $resdir.
- 	if test -f $builddir.wait
- 	then
++if test -n "$TORTURE_ALLOTED_CPUS"
++then
++	echo $TORTURE_ALLOTED_CPUS
++	exit 0
++fi
+ ncpus=`grep '^processor' /proc/cpuinfo | wc -l`
+ idlecpus=`mpstat | tail -1 | \
+ 	awk -v ncpus=$ncpus '{ print ncpus * ($7 + $NF) / 100 }'`
 diff --git a/tools/testing/selftests/rcutorture/bin/kvm.sh b/tools/testing/selftests/rcutorture/bin/kvm.sh
-index 3b4868906794..8c43eb43409b 100755
+index 8c43eb43409b..ea6289a335f2 100755
 --- a/tools/testing/selftests/rcutorture/bin/kvm.sh
 +++ b/tools/testing/selftests/rcutorture/bin/kvm.sh
-@@ -342,7 +342,7 @@ function dump(first, pastlast, batchnum)
- 	print "needqemurun="
- 	jn=1
- 	for (j = first; j < pastlast; j++) {
--		builddir=KVM "/b1"
-+		builddir=KVM "/b" j - first + 1
- 		cpusr[jn] = cpus[j];
- 		if (cfrep[cf[j]] == "") {
- 			cfr[jn] = cf[j];
-@@ -358,7 +358,6 @@ function dump(first, pastlast, batchnum)
- 		print "echo ", cfr[jn], cpusr[jn] ovf ": Starting build. `date` | tee -a " rd "log";
- 		print "rm -f " builddir ".*";
- 		print "touch " builddir ".wait";
--		print "mkdir " builddir " > /dev/null 2>&1 || :";
- 		print "mkdir " rd cfr[jn] " || :";
- 		print "kvm-test-1-run.sh " CONFIGDIR cf[j], builddir, rd cfr[jn], dur " \"" TORTURE_QEMU_ARG "\" \"" TORTURE_BOOTARGS "\" > " rd cfr[jn]  "/kvm-test-1-run.sh.out 2>&1 &"
- 		print "echo ", cfr[jn], cpusr[jn] ovf ": Waiting for build to complete. `date` | tee -a " rd "log";
+@@ -24,6 +24,7 @@ dur=$((30*60))
+ dryrun=""
+ KVM="`pwd`/tools/testing/selftests/rcutorture"; export KVM
+ PATH=${KVM}/bin:$PATH; export PATH
++TORTURE_ALLOTED_CPUS=""
+ TORTURE_DEFCONFIG=defconfig
+ TORTURE_BOOT_IMAGE=""
+ TORTURE_INITRD="$KVM/initrd"; export TORTURE_INITRD
+@@ -89,6 +90,7 @@ do
+ 	--cpus)
+ 		checkarg --cpus "(number)" "$#" "$2" '^[0-9]*$' '^--'
+ 		cpus=$2
++		TORTURE_ALLOTED_CPUS="$2"
+ 		shift
+ 		;;
+ 	--datestamp)
+@@ -285,6 +287,7 @@ cat << ___EOF___ > $T/script
+ CONFIGFRAG="$CONFIGFRAG"; export CONFIGFRAG
+ KVM="$KVM"; export KVM
+ PATH="$PATH"; export PATH
++TORTURE_ALLOTED_CPUS="$TORTURE_ALLOTED_CPUS"; export TORTURE_ALLOTED_CPUS
+ TORTURE_BOOT_IMAGE="$TORTURE_BOOT_IMAGE"; export TORTURE_BOOT_IMAGE
+ TORTURE_BUILDONLY="$TORTURE_BUILDONLY"; export TORTURE_BUILDONLY
+ TORTURE_DEFCONFIG="$TORTURE_DEFCONFIG"; export TORTURE_DEFCONFIG
 -- 
 2.17.1
 
