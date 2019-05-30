@@ -2,54 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DA092F826
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 09:58:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8B692F867
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 10:17:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727835AbfE3H6i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 03:58:38 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57853 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726638AbfE3H6h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 03:58:37 -0400
+        id S1727032AbfE3IR3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 04:17:29 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53271 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725440AbfE3IR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 04:17:29 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4U7tXNg2899989
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4U7uIni2900042
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 30 May 2019 00:55:33 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4U7tXNg2899989
+        Thu, 30 May 2019 00:56:19 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4U7uIni2900042
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1559202934;
-        bh=2MQ5twDQclop9Lhg3OvxGH0hHZhtQ57iu1DY2lcjYYo=;
+        s=2019051801; t=1559202979;
+        bh=xNWCPfEpSC/tFibFnuA1OKl5+d/pV7LHcS/KOass5m8=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=FNoQF98Oor6fJoRP1zleewAh0atv1+M9wsBKraueC0MS2VFWWtiIvTtZANn7C2Vx9
-         oPEkr5XdoZ5jawk+d8HVxNaJLedQ+k9/MdWyOQsIiYr8uBFm06ZafWLEk3gtgAoDF+
-         j5AfGMSVOZGlJwUio1cDarpdPph2hI0IGDt8rexVd3f18ZlQWxRgYULUzvJ95nBOnU
-         QKN+mXa6VDIhZV2wA9oa64Fve/4kQPQPEve4MhRx7Yaj1/7jSugMFnS4XxGK0dZ3Do
-         w6ZErJ99NNo9a4Tlnjj8C1Rvf6W1cvMNwVo9EPwZzkJhozhiNHkD/Pe5Xh0s95Rd7a
-         EFXXQ8kYKR90Q==
+        b=C3wq7Q+q3svuAW/du6njlWpx/Nt0lP5aEGzJyxkCE7DitB5AlsaYY2VYrCBMmEoQw
+         SIWfloqL/m6cdTrAQ8TQI/OLZfZTgzsr+/Np5VgPuzooI5v2y/Pl5WopMOlm6owSKx
+         MkvFy8USwG/sVsM2lCugFrLbnMt1215XomtloMLUyPntYX7OZlXbP6dt5yA5hdao+A
+         7d1WkfTfdHzpbkOO6KlIVWYsXMBPIt314yilr1q6Cbn6Rao1GJCMWT3aPDcxHQX8Sf
+         tigsnxUGzJ+LdKAZapWpslt7FqNrESUoLyZcvcUTUhIV+49qpijsRCLZbAWhPUpHSM
+         MqSFVGxqwe8ZA==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4U7tWCu2899986;
-        Thu, 30 May 2019 00:55:32 -0700
-Date:   Thu, 30 May 2019 00:55:32 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4U7uIic2900039;
+        Thu, 30 May 2019 00:56:18 -0700
+Date:   Thu, 30 May 2019 00:56:18 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-8529f2e67313fb623da7ce81bc14cf12ccc0e12f@git.kernel.org>
-Cc:     ak@linux.intel.com, adrian.hunter@intel.com, hpa@zytor.com,
-        peterz@infradead.org, alexander.shishkin@linux.intel.com,
-        linux-kernel@vger.kernel.org, acme@redhat.com, tglx@linutronix.de,
-        mingo@kernel.org, songliubraving@fb.com, sdf@google.com,
-        jolsa@kernel.org, namhyung@kernel.org
-Reply-To: peterz@infradead.org, ak@linux.intel.com,
-          adrian.hunter@intel.com, hpa@zytor.com, mingo@kernel.org,
-          songliubraving@fb.com, sdf@google.com, jolsa@kernel.org,
-          namhyung@kernel.org, linux-kernel@vger.kernel.org,
-          alexander.shishkin@linux.intel.com, tglx@linutronix.de,
+Message-ID: <tip-fb5a88d4131a9ee8bec3f4bb7c034d7a4e9cf5ea@git.kernel.org>
+Cc:     songliubraving@fb.com, linux-kernel@vger.kernel.org,
+        namhyung@kernel.org, peterz@infradead.org, tglx@linutronix.de,
+        ak@linux.intel.com, hpa@zytor.com,
+        alexander.shishkin@linux.intel.com, adrian.hunter@intel.com,
+        acme@redhat.com, mingo@kernel.org, sdf@google.com, jolsa@kernel.org
+Reply-To: alexander.shishkin@linux.intel.com, hpa@zytor.com,
+          adrian.hunter@intel.com, ak@linux.intel.com,
+          peterz@infradead.org, namhyung@kernel.org, tglx@linutronix.de,
+          songliubraving@fb.com, linux-kernel@vger.kernel.org,
+          sdf@google.com, jolsa@kernel.org, mingo@kernel.org,
           acme@redhat.com
-In-Reply-To: <20190508132010.14512-7-jolsa@kernel.org>
-References: <20190508132010.14512-7-jolsa@kernel.org>
+In-Reply-To: <20190508132010.14512-9-jolsa@kernel.org>
+References: <20190508132010.14512-9-jolsa@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf machine: Keep zero in pgoff BPF map
-Git-Commit-ID: 8529f2e67313fb623da7ce81bc14cf12ccc0e12f
+Subject: [tip:perf/core] perf tools: Preserve eBPF maps when loading kcore
+Git-Commit-ID: fb5a88d4131a9ee8bec3f4bb7c034d7a4e9cf5ea
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -67,51 +66,158 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8529f2e67313fb623da7ce81bc14cf12ccc0e12f
-Gitweb:     https://git.kernel.org/tip/8529f2e67313fb623da7ce81bc14cf12ccc0e12f
+Commit-ID:  fb5a88d4131a9ee8bec3f4bb7c034d7a4e9cf5ea
+Gitweb:     https://git.kernel.org/tip/fb5a88d4131a9ee8bec3f4bb7c034d7a4e9cf5ea
 Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Wed, 8 May 2019 15:20:04 +0200
+AuthorDate: Wed, 8 May 2019 15:20:06 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 28 May 2019 18:37:42 -0300
 
-perf machine: Keep zero in pgoff BPF map
+perf tools: Preserve eBPF maps when loading kcore
 
-With pgoff set to zero, the map__map_ip function will return BPF
-addresses based from 0, which is what we need when we read the data from
-a BPF DSO.
+We need to preserve eBPF maps even if they are covered by kcore, because
+we need to access eBPF dso for source data.
 
-Adding BPF symbols with mapped IP addresses as well.
+Add the map_groups__merge_in function to do that.  It merges a map into
+map_groups by splitting the new map within the existing map regions.
 
+Suggested-by: Adrian Hunter <adrian.hunter@intel.com>
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Acked-by: Song Liu <songliubraving@fb.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Stanislav Fomichev <sdf@google.com>
-Link: http://lkml.kernel.org/r/20190508132010.14512-7-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20190508132010.14512-9-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/machine.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/util/symbol.c | 97 ++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 93 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index dc7aafe45a2b..f5569f005cf3 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -704,12 +704,12 @@ static int machine__process_ksymbol_register(struct machine *machine,
- 			return -ENOMEM;
+diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+index 5cbad55cd99d..29780fcd049c 100644
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -1166,6 +1166,85 @@ static int kcore_mapfn(u64 start, u64 len, u64 pgoff, void *data)
+ 	return 0;
+ }
  
- 		map->start = event->ksymbol_event.addr;
--		map->pgoff = map->start;
- 		map->end = map->start + event->ksymbol_event.len;
- 		map_groups__insert(&machine->kmaps, map);
++/*
++ * Merges map into map_groups by splitting the new map
++ * within the existing map regions.
++ */
++static int map_groups__merge_in(struct map_groups *kmaps, struct map *new_map)
++{
++	struct map *old_map;
++	LIST_HEAD(merged);
++
++	for (old_map = map_groups__first(kmaps); old_map;
++	     old_map = map_groups__next(old_map)) {
++
++		/* no overload with this one */
++		if (new_map->end < old_map->start ||
++		    new_map->start >= old_map->end)
++			continue;
++
++		if (new_map->start < old_map->start) {
++			/*
++			 * |new......
++			 *       |old....
++			 */
++			if (new_map->end < old_map->end) {
++				/*
++				 * |new......|     -> |new..|
++				 *       |old....| ->       |old....|
++				 */
++				new_map->end = old_map->start;
++			} else {
++				/*
++				 * |new.............| -> |new..|       |new..|
++				 *       |old....|    ->       |old....|
++				 */
++				struct map *m = map__clone(new_map);
++
++				if (!m)
++					return -ENOMEM;
++
++				m->end = old_map->start;
++				list_add_tail(&m->node, &merged);
++				new_map->start = old_map->end;
++			}
++		} else {
++			/*
++			 *      |new......
++			 * |old....
++			 */
++			if (new_map->end < old_map->end) {
++				/*
++				 *      |new..|   -> x
++				 * |old.........| -> |old.........|
++				 */
++				map__put(new_map);
++				new_map = NULL;
++				break;
++			} else {
++				/*
++				 *      |new......| ->         |new...|
++				 * |old....|        -> |old....|
++				 */
++				new_map->start = old_map->end;
++			}
++		}
++	}
++
++	while (!list_empty(&merged)) {
++		old_map = list_entry(merged.next, struct map, node);
++		list_del_init(&old_map->node);
++		map_groups__insert(kmaps, old_map);
++		map__put(old_map);
++	}
++
++	if (new_map) {
++		map_groups__insert(kmaps, new_map);
++		map__put(new_map);
++	}
++	return 0;
++}
++
+ static int dso__load_kcore(struct dso *dso, struct map *map,
+ 			   const char *kallsyms_filename)
+ {
+@@ -1222,7 +1301,12 @@ static int dso__load_kcore(struct dso *dso, struct map *map,
+ 	while (old_map) {
+ 		struct map *next = map_groups__next(old_map);
+ 
+-		if (old_map != map)
++		/*
++		 * We need to preserve eBPF maps even if they are
++		 * covered by kcore, because we need to access
++		 * eBPF dso for source data.
++		 */
++		if (old_map != map && !__map__is_bpf_prog(old_map))
+ 			map_groups__remove(kmaps, old_map);
+ 		old_map = next;
+ 	}
+@@ -1256,11 +1340,16 @@ static int dso__load_kcore(struct dso *dso, struct map *map,
+ 			map_groups__remove(kmaps, map);
+ 			map_groups__insert(kmaps, map);
+ 			map__put(map);
++			map__put(new_map);
+ 		} else {
+-			map_groups__insert(kmaps, new_map);
++			/*
++			 * Merge kcore map into existing maps,
++			 * and ensure that current maps (eBPF)
++			 * stay intact.
++			 */
++			if (map_groups__merge_in(kmaps, new_map))
++				goto out_err;
+ 		}
+-
+-		map__put(new_map);
  	}
  
--	sym = symbol__new(event->ksymbol_event.addr, event->ksymbol_event.len,
-+	sym = symbol__new(map->map_ip(map, map->start),
-+			  event->ksymbol_event.len,
- 			  0, 0, event->ksymbol_event.name);
- 	if (!sym)
- 		return -ENOMEM;
+ 	if (machine__is(machine, "x86_64")) {
