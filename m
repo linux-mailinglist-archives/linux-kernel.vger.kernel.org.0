@@ -2,91 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF0B1304B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 00:18:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ED73304B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 00:22:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726590AbfE3WSe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 18:18:34 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34831 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726045AbfE3WSd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 18:18:33 -0400
-Received: by mail-ed1-f68.google.com with SMTP id p26so11384652edr.2;
-        Thu, 30 May 2019 15:18:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Qzbfu0dliCkkEmJ1UFnYukQdP9RWNNavonlb+Fp2x7g=;
-        b=N6vjmWjy73gJGAwNl3ai5Uybv0PFyuyvJaAPxAibzRxqUVjyvhUg2NhHoega74+C8c
-         B1nVuyy3hJ9/oHxD9EMRLQ9Rp3o0aMiKODRU3frOrC616DVBH9SAaW6w8NX37vRyhW/O
-         L2G7hByWBQr2BCsqkm+KpOmOLAZmcS7FobnGSvlGeKWLpUriE8ZAZZ3zQeMFdS7WUH5b
-         vWS+n+5SATB6kCzCtSLQrCdtIdVYsHxiBmWZugnMX0mNrpziiDRxpy4VVfo4mUzNLCN1
-         T9DKSmHlkGChdIlLj1LoCb3UqZXMPTjyLxBtlNKx1ue7I6z8bdFeI8LyEZnTrKLt6D5i
-         lrAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Qzbfu0dliCkkEmJ1UFnYukQdP9RWNNavonlb+Fp2x7g=;
-        b=E8VuGNGlDNTcZNq7E6zo1ocpFqCV3P3WXpwLG9M9yuz3/2yyWnukKHbxBV1CNHsXXL
-         bDMukssXSz97ZYI49PCV9e1pR32kaVaRJF6E34d7+pOTCYWRPoE46Kjpm2Ej9Zc5Gjrn
-         ogYWgOIZmqjoiIAn7JQz0/sMyJGiv/gPsgbNh3PcccGOfP4dF23jx1XMwF7cPEK3soWv
-         z95Mh0aU2dlwNkLVTmBYrmBoisDIKa3t0kzK21jSjv70aRwBZ0m3RW6zhIUD3AIT04Xu
-         ZajVTuiOr8WaBZr2bPUvjEx4NGMFAkpMqnGfLzIAClSKZyC9sGDqboltftCMdOiHj8cX
-         4o4w==
-X-Gm-Message-State: APjAAAWOEcMBuNvtUX02UGiUJhj6c0wtNZ2zbYIUq/xb6BtxdZc5E/Sg
-        RVk/IAnzAduHOrLJNiJrwkrRDMD/
-X-Google-Smtp-Source: APXvYqzRR8gKNI+QpfK/2N0R8st5YfVLx33/T/e2b+X2T7vDp5V2dfBvEgtcUFXa4rQ2gOUlOrnsNw==
-X-Received: by 2002:a17:906:3b8f:: with SMTP id u15mr5624827ejf.6.1559251284636;
-        Thu, 30 May 2019 14:21:24 -0700 (PDT)
-Received: from mail.broadcom.com ([192.19.231.250])
-        by smtp.gmail.com with ESMTPSA id h25sm597082ejz.10.2019.05.30.14.21.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 May 2019 14:21:24 -0700 (PDT)
-From:   Kamal Dasu <kdasu.kdev@gmail.com>
-To:     linux-mtd@lists.infradead.org
-Cc:     bcm-kernel-feedback-list@broadcom.com,
-        linux-kernel@vger.kernel.org, Kamal Dasu <kdasu.kdev@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [PATCH 3/3] dt: bindings: mtd: brcmand: Add brcmnand,brcmnand-v7.3 support
-Date:   Thu, 30 May 2019 17:20:37 -0400
-Message-Id: <1559251257-12383-3-git-send-email-kdasu.kdev@gmail.com>
-X-Mailer: git-send-email 1.9.0.138.g2de3478
-In-Reply-To: <1559251257-12383-1-git-send-email-kdasu.kdev@gmail.com>
-References: <1559251257-12383-1-git-send-email-kdasu.kdev@gmail.com>
+        id S1726674AbfE3WW0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 18:22:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33622 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726355AbfE3WWX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 18:22:23 -0400
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4AC82261D7
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 21:23:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559251401;
+        bh=oq8IWdqTe7Bw3zkTzFHzZXXeKKTFiHHCQoJ8FlQJtDA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=sO+/27uEIYIVD27JT/3qbo5sArzvjKlEGCApT/NRFm8PZUybMSDNtYcCNE9AKE3dg
+         R0SKX00e65Gnt+OTdg4kxYHTKeMgLxiF3jt4Es+nxN12WHDXEclud4mVoQ4pXA0M9l
+         uKy0uqC+kwlmx87W2DHQSPEVOwGRRcRCibMJy/WU=
+Received: by mail-wm1-f44.google.com with SMTP id t5so4642260wmh.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 14:23:21 -0700 (PDT)
+X-Gm-Message-State: APjAAAUMKyBWXvDlF4zxewLvcjpSwhq3nd12vyt2Z1FtUqXcIr0OagJQ
+        /E62t394f7VLBJKVP9ge322qNfwnGgKfA4exg5a/5g==
+X-Google-Smtp-Source: APXvYqzqp2zMLoO2RDdQMQlKBb7HWmxN353ZRZxh55Vp7c/ony/bJntaxeyf8uLUEQzVh/OwZRtPY3VzT8ksz9FPz1Q=
+X-Received: by 2002:a05:600c:489:: with SMTP id d9mr3262525wme.173.1559251399871;
+ Thu, 30 May 2019 14:23:19 -0700 (PDT)
+MIME-Version: 1.0
+References: <960B34DE67B9E140824F1DCDEC400C0F654E9824@ORSMSX116.amr.corp.intel.com>
+ <20190528202407.GB13158@linux.intel.com> <285f279f-b500-27f0-ab42-fb1dbcc5ab18@tycho.nsa.gov>
+ <960B34DE67B9E140824F1DCDEC400C0F654EB487@ORSMSX116.amr.corp.intel.com>
+ <678a37af-797d-7bd5-a406-32548a270e3d@tycho.nsa.gov> <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com>
+ <c1135352-0b5e-4694-b1a9-105876095877@tycho.nsa.gov> <CALCETrWsEXzUC33eJpGCpdMCBO4aYVviZLRD-CLMNaG5Jv-TCA@mail.gmail.com>
+ <20190530180110.GB23930@linux.intel.com> <CALCETrX2PgUc_jetXHqp85aaS0a0jHB8E7=T1rsW+5vyRgwnUA@mail.gmail.com>
+ <20190530211645.GB27551@linux.intel.com>
+In-Reply-To: <20190530211645.GB27551@linux.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 30 May 2019 14:23:07 -0700
+X-Gmail-Original-Message-ID: <CALCETrVAoDppmdJzkpwagt3q64M-QpNajXbKGR1yQdqyofeANQ@mail.gmail.com>
+Message-ID: <CALCETrVAoDppmdJzkpwagt3q64M-QpNajXbKGR1yQdqyofeANQ@mail.gmail.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        William Roberts <bill.c.roberts@gmail.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added brcm,brcmnand-v7.3 as possible compatible string to support
-brcmnand controller v7.3.
+On Thu, May 30, 2019 at 2:16 PM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
+>
+> On Thu, May 30, 2019 at 12:20:45PM -0700, Andy Lutomirski wrote:
+> > On Thu, May 30, 2019 at 11:01 AM Sean Christopherson
+> > <sean.j.christopherson@intel.com> wrote:
+> > >
+> > > On Thu, May 30, 2019 at 09:14:10AM -0700, Andy Lutomirski wrote:
+> > > > Enclave file -- that is, the file backing the vma from which the data is loaded.
+> > >
+> > > It wasn't explicitly called out in Andy's proposal(s), but the idea is
+> > > that the SGX driver would effectively inherit permissions from the source
+> > > VMA (EADD needs a source for the initial value of the encave page).
+> >
+> > I actually meant for it to *not* work like this.  I don't want the
+> > source VMA to have to be VM_EXEC.  I think the LSM should just check
+> > permissions on ->vm_file.
+>
+> But if ->vm_file is NULL, i.e. the enclave is not backed by a file,
+> then PROCESS__EXECMEM is required (or more likely, ENCLAVE__EXECMEM).
+>
 
-Signed-off-by: Kamal Dasu <kdasu.kdev@gmail.com>
----
- Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt b/Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt
-index 0b7c373..ad4cd30 100644
---- a/Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt
-+++ b/Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt
-@@ -28,6 +28,7 @@ Required properties:
-                          brcm,brcmnand-v7.0
-                          brcm,brcmnand-v7.1
-                          brcm,brcmnand-v7.2
-+                         brcm,brcmnand-v7.3
-                          brcm,brcmnand
- - reg              : the register start and length for NAND register region.
-                      (optional) Flash DMA register range (if present)
--- 
-1.9.0.138.g2de3478
-
+If ->vm_file is NULL, then I think some privilege is needed.  I
+suppose the policy could have a new lesser permission EXECUNTRUSTED
+which is like EXECMOD but you can't modify it.  I'm not convinced this
+is particular important.
