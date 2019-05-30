@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 463822EFB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:57:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E42032EFAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:57:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733189AbfE3D5h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:57:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52696 "EHLO mail.kernel.org"
+        id S1731712AbfE3DSr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:18:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731724AbfE3DSs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:48 -0400
+        id S1730034AbfE3DOy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:14:54 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5AFC62479B;
-        Thu, 30 May 2019 03:18:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C3632456F;
+        Thu, 30 May 2019 03:14:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186328;
-        bh=U6QRBARhgUq1qClnks2XAmFSTxuDMrCfnmBuBHfkHUQ=;
+        s=default; t=1559186093;
+        bh=TGNn3w8UnNTGFgYzmWMeqqAhTOy7qEZ3VF+fUmhdAb8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rqNnwFGJIaOd4KfXGuyBjMwsvwmTuui1lbekDmilgWEip79KeSAQrfYMlpjg8zF4Z
-         C+6zmpxShMHMn/sWeVHXhrr8RUIomO5ef9aCneVjNi3JOEesNsJIB6Z6/v3UPCOj3p
-         GPLjysf+aC1Gi3aWVgAau/Uwr0gidZfi+0j2JBGo=
+        b=G/ogOevLP2HqSkAjCgcgC3bQbqEb40csgofO3BbzwX/9F1rlnr0CWEwm2uxTpDLQg
+         qQkzR6RpC7J1dzobp7zvEVWTHE9OJ6bAMUONKeZPHDNo9YOo+60aZZZWU103fRZIRp
+         PHh4muqTvTbqR85Gm28jKe2GieIu+OS0vCQtqPWs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sameeh Jubran <sameehj@amazon.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 044/193] net: ena: gcc 8: fix compilation warning
+Subject: [PATCH 5.0 225/346] brcmfmac: fix missing checks for kmemdup
 Date:   Wed, 29 May 2019 20:04:58 -0700
-Message-Id: <20190530030455.777703122@linuxfoundation.org>
+Message-Id: <20190530030552.468522421@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,45 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f913308879bc6ae437ce64d878c7b05643ddea44 ]
+[ Upstream commit 46953f97224d56a12ccbe9c6acaa84ca0dab2780 ]
 
-GCC 8 contains a number of new warnings as well as enhancements to existing
-checkers. The warning - Wstringop-truncation - warns for calls to bounded
-string manipulation functions such as strncat, strncpy, and stpncpy that
-may either truncate the copied string or leave the destination unchanged.
+In case kmemdup fails, the fix sets conn_info->req_ie_len and
+conn_info->resp_ie_len to zero to avoid buffer overflows.
 
-In our case the destination string length (32 bytes) is much shorter than
-the source string (64 bytes) which causes this warning to show up. In
-general the destination has to be at least a byte larger than the length
-of the source string with strncpy for this warning not to showup.
-
-This can be easily fixed by using strlcpy instead which already does the
-truncation to the string. Documentation for this function can be
-found here:
-
-https://elixir.bootlin.com/linux/latest/source/lib/string.c#L141
-
-Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
-Signed-off-by: Sameeh Jubran <sameehj@amazon.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/amazon/ena/ena_netdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.c b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-index 3c7813f04962b..db6f6a877f630 100644
---- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-@@ -2229,7 +2229,7 @@ static void ena_config_host_info(struct ena_com_dev *ena_dev)
- 
- 	host_info->os_type = ENA_ADMIN_OS_LINUX;
- 	host_info->kernel_ver = LINUX_VERSION_CODE;
--	strncpy(host_info->kernel_ver_str, utsname()->version,
-+	strlcpy(host_info->kernel_ver_str, utsname()->version,
- 		sizeof(host_info->kernel_ver_str) - 1);
- 	host_info->os_dist = 0;
- 	strncpy(host_info->os_dist_str, utsname()->release,
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+index 9f85eec3d79f4..ded629460fc05 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -5376,6 +5376,8 @@ static s32 brcmf_get_assoc_ies(struct brcmf_cfg80211_info *cfg,
+ 		conn_info->req_ie =
+ 		    kmemdup(cfg->extra_buf, conn_info->req_ie_len,
+ 			    GFP_KERNEL);
++		if (!conn_info->req_ie)
++			conn_info->req_ie_len = 0;
+ 	} else {
+ 		conn_info->req_ie_len = 0;
+ 		conn_info->req_ie = NULL;
+@@ -5392,6 +5394,8 @@ static s32 brcmf_get_assoc_ies(struct brcmf_cfg80211_info *cfg,
+ 		conn_info->resp_ie =
+ 		    kmemdup(cfg->extra_buf, conn_info->resp_ie_len,
+ 			    GFP_KERNEL);
++		if (!conn_info->resp_ie)
++			conn_info->resp_ie_len = 0;
+ 	} else {
+ 		conn_info->resp_ie_len = 0;
+ 		conn_info->resp_ie = NULL;
 -- 
 2.20.1
 
