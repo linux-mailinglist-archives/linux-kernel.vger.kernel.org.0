@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F6272ED79
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:37:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E584E2F23F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:20:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732319AbfE3DXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:23:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48210 "EHLO mail.kernel.org"
+        id S1730315AbfE3EUH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:20:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731212AbfE3DRl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:17:41 -0400
+        id S1727599AbfE3DPW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:22 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA5D224703;
-        Thu, 30 May 2019 03:17:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF07D245AF;
+        Thu, 30 May 2019 03:15:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186261;
-        bh=CORdcStFkjX1oyFVU9FuSam+RRAFqpTQpB8ocBBwANI=;
+        s=default; t=1559186121;
+        bh=Z9anbQd/siXILZd3R/mi5TSR9HtA3TXq3b/rWwdRsLI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EDKq5owO6rBPNErEG+ZhhdRS1ed1eSvrgBbAVgqJnjopFFBS4+bpraD46GNqBUda3
-         vK054az5s/MbCkwiLkOx4a6OTyP4Isu42BQhSd9GmkQfmvAZIAtdwxEkG93waRiPAH
-         LXyGpye0hTDR/gzDWLduC1ndOFB8NX48nmbaqpwU=
+        b=hq/nouIdCVXFXrQQxxqQRs2DjvaL1HKaw/bY7SIKmPUtXKGPKr1STibnDQH+1AOvo
+         PgFdu/Q3MKH35qj1eRQ0bZ4TnVpYZO6TErRJ95EP+IXj3xDQOkKIo/Wl4Q2GHuLJSv
+         YDwo/14AhCfAQmQOUlXec4nq7NVkT7u0LXMXa1Fo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        James Smart <james.smart@broadcom.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 193/276] brcmfmac: fix missing checks for kmemdup
+Subject: [PATCH 5.0 278/346] scsi: lpfc: avoid uninitialized variable warning
 Date:   Wed, 29 May 2019 20:05:51 -0700
-Message-Id: <20190530030537.215775382@linuxfoundation.org>
+Message-Id: <20190530030555.013326270@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,41 +45,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 46953f97224d56a12ccbe9c6acaa84ca0dab2780 ]
+[ Upstream commit faf5a744f4f8d76e7c03912b5cd381ac8045f6ec ]
 
-In case kmemdup fails, the fix sets conn_info->req_ie_len and
-conn_info->resp_ie_len to zero to avoid buffer overflows.
+clang -Wuninitialized incorrectly sees a variable being used without
+initialization:
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+drivers/scsi/lpfc/lpfc_nvme.c:2102:37: error: variable 'localport' is uninitialized when used here
+      [-Werror,-Wuninitialized]
+                lport = (struct lpfc_nvme_lport *)localport->private;
+                                                  ^~~~~~~~~
+drivers/scsi/lpfc/lpfc_nvme.c:2059:38: note: initialize the variable 'localport' to silence this warning
+        struct nvme_fc_local_port *localport;
+                                            ^
+                                             = NULL
+1 error generated.
+
+This is clearly in dead code, as the condition leading up to it is always
+false when CONFIG_NVME_FC is disabled, and the variable is always
+initialized when nvme_fc_register_localport() got called successfully.
+
+Change the preprocessor conditional to the equivalent C construct, which
+makes the code more readable and gets rid of the warning.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: James Smart <james.smart@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/scsi/lpfc/lpfc_nvme.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-index fa1a2e5ab03fb..c7c520f327f2b 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-@@ -5368,6 +5368,8 @@ static s32 brcmf_get_assoc_ies(struct brcmf_cfg80211_info *cfg,
- 		conn_info->req_ie =
- 		    kmemdup(cfg->extra_buf, conn_info->req_ie_len,
- 			    GFP_KERNEL);
-+		if (!conn_info->req_ie)
-+			conn_info->req_ie_len = 0;
- 	} else {
- 		conn_info->req_ie_len = 0;
- 		conn_info->req_ie = NULL;
-@@ -5384,6 +5386,8 @@ static s32 brcmf_get_assoc_ies(struct brcmf_cfg80211_info *cfg,
- 		conn_info->resp_ie =
- 		    kmemdup(cfg->extra_buf, conn_info->resp_ie_len,
- 			    GFP_KERNEL);
-+		if (!conn_info->resp_ie)
-+			conn_info->resp_ie_len = 0;
- 	} else {
- 		conn_info->resp_ie_len = 0;
- 		conn_info->resp_ie = NULL;
+diff --git a/drivers/scsi/lpfc/lpfc_nvme.c b/drivers/scsi/lpfc/lpfc_nvme.c
+index 8c9f790422288..56df8b510186b 100644
+--- a/drivers/scsi/lpfc/lpfc_nvme.c
++++ b/drivers/scsi/lpfc/lpfc_nvme.c
+@@ -2471,15 +2471,15 @@ lpfc_nvme_create_localport(struct lpfc_vport *vport)
+ 	if (!cstat)
+ 		return -ENOMEM;
+ 
++	if (!IS_ENABLED(CONFIG_NVME_FC))
++		return ret;
++
+ 	/* localport is allocated from the stack, but the registration
+ 	 * call allocates heap memory as well as the private area.
+ 	 */
+-#if (IS_ENABLED(CONFIG_NVME_FC))
++
+ 	ret = nvme_fc_register_localport(&nfcp_info, &lpfc_nvme_template,
+ 					 &vport->phba->pcidev->dev, &localport);
+-#else
+-	ret = -ENOMEM;
+-#endif
+ 	if (!ret) {
+ 		lpfc_printf_vlog(vport, KERN_INFO, LOG_NVME | LOG_NVME_DISC,
+ 				 "6005 Successfully registered local "
 -- 
 2.20.1
 
