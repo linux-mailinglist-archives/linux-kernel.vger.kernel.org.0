@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BB442F64C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:54:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 420B32F421
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:36:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389131AbfE3Eys (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:54:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46954 "EHLO mail.kernel.org"
+        id S2388446AbfE3EfW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:35:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728040AbfE3DKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:10:20 -0400
+        id S1729381AbfE3DNO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:13:14 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C782244C5;
-        Thu, 30 May 2019 03:10:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 646C5244EA;
+        Thu, 30 May 2019 03:13:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185819;
-        bh=wuTJFjnd0fE2xg30wPdCtn3UAvUzITI1qIY5UXPwr6Q=;
+        s=default; t=1559185994;
+        bh=pkrYt45KKdk5c84Ve5J+EfLCCGC9mP22vg+IvgPQH2w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VFyLYsmze/s8cqpc6vDAQ1mUENB1NDGNXJD6G4WKAsWIyhTKhbmn0RlULFRWHAPiT
-         feO46Du/yBi3bDj1K4TBal6BFJ3mW50rjJjRUyK2hVdkG0KFT+Dn5efB6YlBaKrVwA
-         Qzy+I+r6RDHqAD6Oo43+7mc0a/qr6hR9ux8uZlq8=
+        b=I9SpoOcnM8wc5jm9NgLSVQvZPcs0moHhUOMF1RANmY2XrCJekoo9jReL6gNBsmw7c
+         FLIRQk/PI41k4cT3H35q+Yr/o+8ETkpZIScZTJJuKTKArYQiC4B41tNH6lidG6NpAw
+         rj/dlxrHg9ceQ2qkFix8iPSZLWO6H0Xu+lkczhmk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sugar Zhang <sugar.zhang@rock-chips.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 114/405] dmaengine: pl330: _stop: clear interrupt status
-Date:   Wed, 29 May 2019 20:01:52 -0700
-Message-Id: <20190530030546.767460667@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Kristian Evensen <kristian.evensen@gmail.com>
+Subject: [PATCH 5.0 040/346] netfilter: ctnetlink: Resolve conntrack L3-protocol flush regression
+Date:   Wed, 29 May 2019 20:01:53 -0700
+Message-Id: <20190530030542.881377799@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,92 +45,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2da254cc7908105a60a6bb219d18e8dced03dcb9 ]
+From: Kristian Evensen <kristian.evensen@gmail.com>
 
-This patch kill instructs the DMAC to immediately terminate
-execution of a thread. and then clear the interrupt status,
-at last, stop generating interrupts for DMA_SEV. to guarantee
-the next dma start is clean. otherwise, one interrupt maybe leave
-to next start and make some mistake.
+commit f8e608982022fad035160870f5b06086d3cba54d upstream.
 
-we can reporduce the problem as follows:
+Commit 59c08c69c278 ("netfilter: ctnetlink: Support L3 protocol-filter
+on flush") introduced a user-space regression when flushing connection
+track entries. Before this commit, the nfgen_family field was not used
+by the kernel and all entries were removed. Since this commit,
+nfgen_family is used to filter out entries that should not be removed.
+One example a broken tool is conntrack. conntrack always sets
+nfgen_family to AF_INET, so after 59c08c69c278 only IPv4 entries were
+removed with the -F parameter.
 
-DMASEV: modify the event-interrupt resource, and if the INTEN sets
-function as interrupt, the DMAC will set irq<event_num> HIGH to
-generate interrupt. write INTCLR to clear interrupt.
+Pablo Neira Ayuso suggested using nfgenmsg->version to resolve the
+regression, and this commit implements his suggestion. nfgenmsg->version
+is so far set to zero, so it is well-suited to be used as a flag for
+selecting old or new flush behavior. If version is 0, nfgen_family is
+ignored and all entries are used. If user-space sets the version to one
+(or any other value than 0), then the new behavior is used. As version
+only can have two valid values, I chose not to add a new
+NFNETLINK_VERSION-constant.
 
-	DMA EXECUTING INSTRUCTS		DMA TERMINATE
-		|				|
-		|				|
-	       ...			      _stop
-		|				|
-		|			spin_lock_irqsave
-	     DMASEV				|
-		|				|
-		|			    mask INTEN
-		|				|
-		|			     DMAKILL
-		|				|
-		|			spin_unlock_irqrestore
+Fixes: 59c08c69c278 ("netfilter: ctnetlink: Support L3 protocol-filter on flush")
+Reported-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Suggested-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Kristian Evensen <kristian.evensen@gmail.com>
+Tested-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-in above case, a interrupt was left, and if we unmask INTEN, the DMAC
-will set irq<event_num> HIGH to generate interrupt.
-
-to fix this, do as follows:
-
-	DMA EXECUTING INSTRUCTS		DMA TERMINATE
-		|				|
-		|				|
-	       ...			      _stop
-		|				|
-		|			spin_lock_irqsave
-	     DMASEV				|
-		|				|
-		|			     DMAKILL
-		|				|
-		|			   clear INTCLR
-		|			    mask INTEN
-		|				|
-		|			spin_unlock_irqrestore
-
-Signed-off-by: Sugar Zhang <sugar.zhang@rock-chips.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/pl330.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ net/netfilter/nf_conntrack_netlink.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-index eec79fdf27a5b..56695ffb5d377 100644
---- a/drivers/dma/pl330.c
-+++ b/drivers/dma/pl330.c
-@@ -966,6 +966,7 @@ static void _stop(struct pl330_thread *thrd)
- {
- 	void __iomem *regs = thrd->dmac->base;
- 	u8 insn[6] = {0, 0, 0, 0, 0, 0};
-+	u32 inten = readl(regs + INTEN);
+--- a/net/netfilter/nf_conntrack_netlink.c
++++ b/net/netfilter/nf_conntrack_netlink.c
+@@ -1254,7 +1254,7 @@ static int ctnetlink_del_conntrack(struc
+ 	struct nf_conntrack_tuple tuple;
+ 	struct nf_conn *ct;
+ 	struct nfgenmsg *nfmsg = nlmsg_data(nlh);
+-	u_int8_t u3 = nfmsg->nfgen_family;
++	u_int8_t u3 = nfmsg->version ? nfmsg->nfgen_family : AF_UNSPEC;
+ 	struct nf_conntrack_zone zone;
+ 	int err;
  
- 	if (_state(thrd) == PL330_STATE_FAULT_COMPLETING)
- 		UNTIL(thrd, PL330_STATE_FAULTING | PL330_STATE_KILLING);
-@@ -978,10 +979,13 @@ static void _stop(struct pl330_thread *thrd)
- 
- 	_emit_KILL(0, insn);
- 
--	/* Stop generating interrupts for SEV */
--	writel(readl(regs + INTEN) & ~(1 << thrd->ev), regs + INTEN);
--
- 	_execute_DBGINSN(thrd, insn, is_manager(thrd));
-+
-+	/* clear the event */
-+	if (inten & (1 << thrd->ev))
-+		writel(1 << thrd->ev, regs + INTCLR);
-+	/* Stop generating interrupts for SEV */
-+	writel(inten & ~(1 << thrd->ev), regs + INTEN);
- }
- 
- /* Start doing req 'idx' of thread 'thrd' */
--- 
-2.20.1
-
 
 
