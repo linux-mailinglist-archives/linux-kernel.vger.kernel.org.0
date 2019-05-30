@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53C7D2F237
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:20:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48C0E2EE2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:45:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730270AbfE3DPY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:15:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56346 "EHLO mail.kernel.org"
+        id S1732915AbfE3Do7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:44:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728421AbfE3DMr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:47 -0400
+        id S1732366AbfE3DUw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:20:52 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 17CBE21BE2;
-        Thu, 30 May 2019 03:12:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77F9524986;
+        Thu, 30 May 2019 03:20:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185967;
-        bh=64YVpBKbQ6cl3JEdzie9z2NZtDnvSDmVNbTanJeWREI=;
+        s=default; t=1559186451;
+        bh=kPpuXnGtSplKJksfGgD1n92b9qfy7QWBcnnqB42Lqlo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zvj2VTacL34Xst7InSkxE/21qHNRSXh82Nk9yDMmMwIU+PHJrNw/OKKT3uRoH5yMA
-         yJXYEPuSiYp8w8bHsZgcQdJv8h94HRYFQNXm2cWjaCiEmeVRfbCDSVbP7T1XJTG42J
-         ycIH12ygEpQKd/CNrJ48LR9EN1O4aGiXe8TfxXjc=
+        b=K3ml6/TaUKoLhsZA+u+wVXxB7WEDRBjUnHdkT9aMD2TYc4uQCwc3jlIoDu9P4ZiXF
+         76vJAsw7yiGUeGf0N3JTqsMBWQBL7Hh6gB17GLoP7kfTDQRK+YQvVDZX5ORckmuE+S
+         foJ9KE736t45WxP9l2gFCONdK26PmGhljJBuGOHY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
-        Anthony Koo <Anthony.Koo@amd.com>,
-        Harry Wentland <Harry.Wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 396/405] drm/amd/display: Reset planes that were disabled in init_pipes
+Subject: [PATCH 4.9 062/128] media: au0828: Fix NULL pointer dereference in au0828_analog_stream_enable()
 Date:   Wed, 29 May 2019 20:06:34 -0700
-Message-Id: <20190530030600.624638663@linuxfoundation.org>
+Message-Id: <20190530030445.891266836@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,70 +45,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 4bc46da4a3aeeb4d55e83dd276cf72756e908286 ]
+[ Upstream commit 898bc40bfcc26abb6e06e960d6d4754c36c58b50 ]
 
-[Why]
-Seamless boot tries to reuse planes that were enabled for the first
-commit applied.
+Fix au0828_analog_stream_enable() to check if device is in the right
+state first. When unbind happens while bind is in progress, usbdev
+pointer could be invalid in au0828_analog_stream_enable() and a call
+to usb_ifnum_to_if() will result in the null pointer dereference.
 
-In the case where Raven is booting with two monitors connected and the
-first commit contains two streams the screen corruption would occur
-because the second stream was trying to re-use a tg and plane that
-weren't previously enabled.
+This problem is found with the new media_dev_allocator.sh test.
 
-The state on the first commit looks something like the following:
+kernel: [  590.359623] BUG: unable to handle kernel NULL pointer dereference at 00000000000004e8
+kernel: [  590.359627] #PF error: [normal kernel read fault]
+kernel: [  590.359629] PGD 0 P4D 0
+kernel: [  590.359632] Oops: 0000 [#1] SMP PTI
+kernel: [  590.359634] CPU: 3 PID: 1458 Comm: v4l_id Not tainted 5.1.0-rc2+ #30
+kernel: [  590.359636] Hardware name: Dell Inc. OptiPlex 7 90/0HY9JP, BIOS A18 09/24/2013
+kernel: [  590.359641] RIP: 0010:usb_ifnum_to_if+0x6/0x60
+kernel: [  590.359643] Code: 5d 41 5e 41 5f 5d c3 48 83 c4
+ 10 b8 fa ff ff ff 5b 41 5c 41 5d 41 5e 41 5f 5d c3 b8 fa ff ff ff c3 0f 1f 00 6
+6 66 66 66 90 55 <48> 8b 97 e8 04 00 00 48 89 e5 48 85 d2 74 41 0f b6 4a 04 84 c
+9 74
+kernel: [  590.359645] RSP: 0018:ffffad3cc3c1fc00 EFLAGS: 00010246
+kernel: [  590.359646] RAX: 0000000000000000 RBX: ffff8ded b1f3c000 RCX: 1f377e4500000000
+kernel: [  590.359648] RDX: ffff8dedfa3a6b50 RSI: 00000000 00000000 RDI: 0000000000000000
+kernel: [  590.359649] RBP: ffffad3cc3c1fc28 R08: 00000000 8574acc2 R09: ffff8dedfa3a6b50
+kernel: [  590.359650] R10: 0000000000000001 R11: 00000000 00000000 R12: 0000000000000000
+kernel: [  590.359652] R13: ffff8dedb1f3f0f0 R14: ffffffff adcf7ec0 R15: 0000000000000000
+kernel: [  590.359654] FS:  00007f7917198540(0000) GS:ffff 8dee258c0000(0000) knlGS:0000000000000000
+kernel: [  590.359655] CS:  0010 DS: 0000 ES: 0000 CR0: 00 00000080050033
+kernel: [  590.359657] CR2: 00000000000004e8 CR3: 00000001 a388e002 CR4: 00000000000606e0
+kernel: [  590.359658] Call Trace:
+kernel: [  590.359664]  ? au0828_analog_stream_enable+0x2c/0x180
+kernel: [  590.359666]  au0828_v4l2_open+0xa4/0x110
+kernel: [  590.359670]  v4l2_open+0x8b/0x120
+kernel: [  590.359674]  chrdev_open+0xa6/0x1c0
+kernel: [  590.359676]  ? cdev_put.part.3+0x20/0x20
+kernel: [  590.359678]  do_dentry_open+0x1f6/0x360
+kernel: [  590.359681]  vfs_open+0x2f/0x40
+kernel: [  590.359684]  path_openat+0x299/0xc20
+kernel: [  590.359688]  do_filp_open+0x9b/0x110
+kernel: [  590.359695]  ? _raw_spin_unlock+0x27/0x40
+kernel: [  590.359697]  ? __alloc_fd+0xb2/0x160
+kernel: [  590.359700]  do_sys_open+0x1ba/0x260
+kernel: [  590.359702]  ? do_sys_open+0x1ba/0x260
+kernel: [  590.359712]  __x64_sys_openat+0x20/0x30
+kernel: [  590.359715]  do_syscall_64+0x5a/0x120
+kernel: [  590.359718]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-TG0: enabled=1
-TG1: enabled=0
-TG2: enabled=0
-TG3: enabled=0
-
-New state: pipe=0, stream=0,    plane=0,       new_tg=0
-New state: pipe=1, stream=1,    plane=1,       new_tg=1
-New state: pipe=2, stream=NULL, plane=NULL,    new_tg=NULL
-New state: pipe=3, stream=NULL, plane=NULL,    new_tg=NULL
-
-Only one plane/tg is setup before we enter accelerated mode so
-we really want to disabling everything but that first plane.
-
-[How]
-
-Check if the stream is not NULL and if the tg is enabled before
-deciding whether to skip the plane disable.
-
-Also ensure we're also disabling on the current state's pipe_ctx so
-we don't overwrite the fields in the new pending state.
-
-Signed-off-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
-Reviewed-by: Anthony Koo <Anthony.Koo@amd.com>
-Acked-by: Harry Wentland <Harry.Wentland@amd.com>
-Acked-by: Leo Li <sunpeng.li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Shuah Khan <shuah@kernel.org>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/media/usb/au0828/au0828-video.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-index 401ea9561618e..5b551a544e82d 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-@@ -1008,9 +1008,14 @@ static void dcn10_init_pipes(struct dc *dc, struct dc_state *context)
- 		 * to non-preferred front end. If pipe_ctx->stream is not NULL,
- 		 * we will use the pipe, so don't disable
- 		 */
--		if (pipe_ctx->stream != NULL)
-+		if (pipe_ctx->stream != NULL &&
-+		    pipe_ctx->stream_res.tg->funcs->is_tg_enabled(
-+			    pipe_ctx->stream_res.tg))
- 			continue;
+diff --git a/drivers/media/usb/au0828/au0828-video.c b/drivers/media/usb/au0828/au0828-video.c
+index 40594c8a71f4f..48eeb5a6a2099 100644
+--- a/drivers/media/usb/au0828/au0828-video.c
++++ b/drivers/media/usb/au0828/au0828-video.c
+@@ -764,6 +764,9 @@ static int au0828_analog_stream_enable(struct au0828_dev *d)
  
-+		/* Disable on the current state so the new one isn't cleared. */
-+		pipe_ctx = &dc->current_state->res_ctx.pipe_ctx[i];
+ 	dprintk(1, "au0828_analog_stream_enable called\n");
+ 
++	if (test_bit(DEV_DISCONNECTED, &d->dev_state))
++		return -ENODEV;
 +
- 		dpp->funcs->dpp_reset(dpp);
- 
- 		pipe_ctx->stream_res.tg = tg;
+ 	iface = usb_ifnum_to_if(d->usbdev, 0);
+ 	if (iface && iface->cur_altsetting->desc.bAlternateSetting != 5) {
+ 		dprintk(1, "Changing intf#0 to alt 5\n");
 -- 
 2.20.1
 
