@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94B7D2F5ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:51:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA0AA2F1A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:14:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388779AbfE3Evh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:51:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49366 "EHLO mail.kernel.org"
+        id S1731006AbfE3EOp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:14:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727494AbfE3DK4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:10:56 -0400
+        id S1730607AbfE3DQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:16:10 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDFD424482;
-        Thu, 30 May 2019 03:10:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94CBE245C1;
+        Thu, 30 May 2019 03:16:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185855;
-        bh=LUA98mtYbLoFF5SBGBxmbooAGm/0s25pCjeNGGv4PpI=;
+        s=default; t=1559186169;
+        bh=PUMGySMOvqViDwthjrKLycmSFSgpXE5ZVGTIsv2lKDs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h4CtVDH1Wu5HNwLiD/R5u1XF7R5h0dez/K+jrxwFzkTiUIFtQSdOK2EAWjnfYJ9tL
-         kP6bDFt0kLaV8mRpnLt7zbgP4JmXtcN0OYbv7YIug5vrLLcbua61qhR86ts9La6ek6
-         RHeUGGPws4P1nn8qQ5D80w2gStz1vskbmAe5LAEA=
+        b=NEI1Mlfk17nZBAQdNfCtU4vqReHciVNvT73jrasZWIL69OZIVqtQwNaFgv56k7Z8R
+         O0hmOD6/QF6mzp6ZQYuR0uDnBjEgdoUNKSuyYwIXN40T8QJtuqRyxyN2lxJrlDRyS0
+         FY+eyUjsrP6ir00hD67RKjt3XgcuyUfucxmA8qgE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 183/405] phy: sun4i-usb: Make sure to disable PHY0 passby for peripheral mode
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Bernie Thompson <bernie@plugable.com>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Colin Ian King <colin.king@canonical.com>,
+        Wen Yang <wen.yang99@zte.com.cn>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 4.19 023/276] udlfb: fix some inconsistent NULL checking
 Date:   Wed, 29 May 2019 20:03:01 -0700
-Message-Id: <20190530030550.331971065@linuxfoundation.org>
+Message-Id: <20190530030525.612759499@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,48 +48,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e6f32efb1b128344a2c7df9875bc1a1abaa1d395 ]
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-On platforms where the MUSB and HCI controllers share PHY0, PHY passby
-is required when using the HCI controller with the PHY, but it must be
-disabled when the MUSB controller is used instead.
+commit c143a559b073aeea688b9bb7c5b46f3cf322d569 upstream.
 
-Without this, PHY0 passby is always enabled, which results in broken
-peripheral mode on such platforms (e.g. H3/H5).
+In the current kernel, then kzalloc() can't fail for small allocations,
+but if it did fail then we would have a NULL dereference in the error
+handling.  Also in dlfb_usb_disconnect() if "info" were NULL then it
+would cause an Oops inside the unregister_framebuffer() function but it
+can't be NULL so let's remove that check.
 
-Fixes: ba4bdc9e1dc0 ("PHY: sunxi: Add driver for sunxi usb phy")
+Fixes: 68a958a915ca ("udlfb: handle unplug properly")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Bernie Thompson <bernie@plugable.com>
+Cc: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Cc: Colin Ian King <colin.king@canonical.com>
+Cc: Wen Yang <wen.yang99@zte.com.cn>
+[b.zolnierkie: added "Fixes:" tag]
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/phy/allwinner/phy-sun4i-usb.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/video/fbdev/udlfb.c |   14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/phy/allwinner/phy-sun4i-usb.c b/drivers/phy/allwinner/phy-sun4i-usb.c
-index 4bbd9ede38c83..cc5af961778d6 100644
---- a/drivers/phy/allwinner/phy-sun4i-usb.c
-+++ b/drivers/phy/allwinner/phy-sun4i-usb.c
-@@ -554,6 +554,7 @@ static void sun4i_usb_phy0_id_vbus_det_scan(struct work_struct *work)
- 	struct sun4i_usb_phy_data *data =
- 		container_of(work, struct sun4i_usb_phy_data, detect.work);
- 	struct phy *phy0 = data->phys[0].phy;
-+	struct sun4i_usb_phy *phy = phy_get_drvdata(phy0);
- 	bool force_session_end, id_notify = false, vbus_notify = false;
- 	int id_det, vbus_det;
+--- a/drivers/video/fbdev/udlfb.c
++++ b/drivers/video/fbdev/udlfb.c
+@@ -1659,7 +1659,7 @@ static int dlfb_usb_probe(struct usb_int
+ 	dlfb = kzalloc(sizeof(*dlfb), GFP_KERNEL);
+ 	if (!dlfb) {
+ 		dev_err(&intf->dev, "%s: failed to allocate dlfb\n", __func__);
+-		goto error;
++		return -ENOMEM;
+ 	}
  
-@@ -610,6 +611,9 @@ static void sun4i_usb_phy0_id_vbus_det_scan(struct work_struct *work)
- 			mutex_unlock(&phy0->mutex);
- 		}
+ 	INIT_LIST_HEAD(&dlfb->deferred_free);
+@@ -1769,7 +1769,7 @@ static int dlfb_usb_probe(struct usb_int
+ error:
+ 	if (dlfb->info) {
+ 		dlfb_ops_destroy(dlfb->info);
+-	} else if (dlfb) {
++	} else {
+ 		usb_put_dev(dlfb->udev);
+ 		kfree(dlfb);
+ 	}
+@@ -1796,12 +1796,10 @@ static void dlfb_usb_disconnect(struct u
+ 	/* this function will wait for all in-flight urbs to complete */
+ 	dlfb_free_urb_list(dlfb);
  
-+		/* Enable PHY0 passby for host mode only. */
-+		sun4i_usb_phy_passby(phy, !id_det);
-+
- 		/* Re-route PHY0 if necessary */
- 		if (data->cfg->phy0_dual_route)
- 			sun4i_usb_phy0_reroute(data, id_det);
--- 
-2.20.1
-
+-	if (info) {
+-		/* remove udlfb's sysfs interfaces */
+-		for (i = 0; i < ARRAY_SIZE(fb_device_attrs); i++)
+-			device_remove_file(info->dev, &fb_device_attrs[i]);
+-		device_remove_bin_file(info->dev, &edid_attr);
+-	}
++	/* remove udlfb's sysfs interfaces */
++	for (i = 0; i < ARRAY_SIZE(fb_device_attrs); i++)
++		device_remove_file(info->dev, &fb_device_attrs[i]);
++	device_remove_bin_file(info->dev, &edid_attr);
+ 
+ 	unregister_framebuffer(info);
+ }
 
 
