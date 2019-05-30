@@ -2,41 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D48223045E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 23:59:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45B1B30465
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 23:59:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbfE3V56 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 17:57:58 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:60906 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726307AbfE3V55 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 17:57:57 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 34AFF14DB8589;
-        Thu, 30 May 2019 14:57:57 -0700 (PDT)
-Date:   Thu, 30 May 2019 14:57:56 -0700 (PDT)
-Message-Id: <20190530.145756.1997834415586073195.davem@davemloft.net>
-To:     xuechaojing@huawei.com
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        luoshaokai@huawei.com, cloud.wangxiaoyun@huawei.com,
-        chiqijun@huawei.com, wulike1@huawei.com
-Subject: Re: [net-next]hinic: add LRO support
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190530013920.16544-1-xuechaojing@huawei.com>
-References: <20190530013920.16544-1-xuechaojing@huawei.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 30 May 2019 14:57:57 -0700 (PDT)
+        id S1726888AbfE3V6j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 17:58:39 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:59483 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726636AbfE3V6j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 17:58:39 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45FM0X0754z9s4V;
+        Fri, 31 May 2019 07:58:35 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1559253516;
+        bh=pO6+tsCaXa4Sf/7hycMujzNJySqAMkvnXSPwwGUVOHk=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Op+fP+LKjDYtyecH57DlJ1IOv9IeAcVWbeOGOAi+E3Nhm2jQBABswYgmD0aJhkPk8
+         bWWxQbEMq6fI8S38ZJsQA7WtS7UNlhdWo15t4ZCEfhJs9iPJD4XGlgEFDdmLMxNgkY
+         r8jMz764rw5oSPf+ouepsxI5HQZeqD1i7FuNAffKnlos1AxMqpdnP3l0MdexPP52WK
+         jEyUOoijiiA1McFwKii+NLsW55tvU3XIcEgLYrF67gpYrIPW4sC1eSQbif2YZhNSnk
+         rHsXtW+uHfzIL9hju1uwvI3w3KIRqnMe3u+V8moLX2PFgdKvW4WW8ZEgBC8qlu6ucE
+         GRKbXT5qQqbmw==
+Date:   Fri, 31 May 2019 07:58:34 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Trond Myklebust <trondmy@gmail.com>,
+        NFS Mailing List <linux-nfs@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Olga Kornievskaia <kolga@netapp.com>
+Subject: linux-next: Fixes tag needs some work in the nfs-anna tree
+Message-ID: <20190531075834.78bbdeaf@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/G=V4Jqd3sQno0kV7pCsaf5B"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/G=V4Jqd3sQno0kV7pCsaf5B
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-All of these module params are a non-starter.
+Hi all,
+
+In commit
+
+  ec6017d90359 ("SUNRPC fix regression in umount of a secure mount")
+
+Fixes tag
+
+  Fixes: c8485e4d63 ("SUNRPC: Handle ECONNREFUSED correctly in xprt_transmi=
+t()")
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/G=V4Jqd3sQno0kV7pCsaf5B
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzwUgoACgkQAVBC80lX
+0Gw/XggAkpbAg9ArAfpP3jcqqudkDXSoWQkbTb4SnGRQm8LD3f8lIjdf8fifk++J
+3r4WNXOaRxkw9CbClcPENnWfrMAOziIzW5hN2XLqcDGTSOGTeYpIQHkbvW4V4FUW
+RJw/vDjygqiZPohs6/QadMdePOyw6qT9ODTxrPVfl3SEbsY9m/9mJtMZeXZTpQr9
+FbJNST9MDLgwq//ZUa9TdBo561CJ8xnE7NBnHPD32U0UJ1RlWiK6Hp/BfKF26R83
+P1H8ew/1YOxYVO7Uko1EcoWqyoByJwoANzTX3v/yR33biIIiLYHcp9fAipKTRnMZ
+vHtSejahWOtsrOl6rKL92fdwax1hMQ==
+=N/Lv
+-----END PGP SIGNATURE-----
+
+--Sig_/G=V4Jqd3sQno0kV7pCsaf5B--
