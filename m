@@ -2,38 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 831202F085
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:05:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31DCA2F157
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:12:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731268AbfE3DRt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:17:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33498 "EHLO mail.kernel.org"
+        id S1727702AbfE3EMP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:12:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729755AbfE3DOM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:14:12 -0400
+        id S1730770AbfE3DQm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:16:42 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0AB5324559;
-        Thu, 30 May 2019 03:14:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA74824619;
+        Thu, 30 May 2019 03:16:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186052;
-        bh=TGPE+Un5k5alRAKi5pkZV8/9DcpJclLT7FgrlSKdwaY=;
+        s=default; t=1559186201;
+        bh=6z7WVvFQ35yDx4R7rxkvUBwCMe5hVgwFCEIcw1q0/OI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w+yQKFLpo5fAnxnu78X6arWziPg/3zjcpsNkCyS3pTqqTnu7Ra1waXB7VHjya2X+o
-         3rEveOo5QsOLBUhx0YmN88ZprYDs3ymOU2o8pFbbrLrxhJXeD4bxvpyNLGyv12Y/Nb
-         uR9f5b1l17uINGmIz6eUhmHbOm+Q/+gJ7R/p5NGk=
+        b=iw8JDZwhc789RcUogpYG/TcGUJ+CyZ4aF1Wfn5xz8RYiWDcRsTyWecg7zyS38CsKs
+         ZmB9YodDWaPDsou8cz7OPGnCVWVXl1zp6c2oybcXqIpi9c3/R7HSazRG4hN8wMP3hy
+         5eAPo+WNNVj6q1dNVITvbSaMAHyPZTXWfZEDE+uc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>,
-        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 113/346] nvme-rdma: fix a NULL deref when an admin connect times out
+        stable@vger.kernel.org,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.19 028/276] brcmfmac: assure SSID length from firmware is limited
 Date:   Wed, 29 May 2019 20:03:06 -0700
-Message-Id: <20190530030546.817661947@linuxfoundation.org>
+Message-Id: <20190530030525.966049895@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,51 +48,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1007709d7d06fab09bf2d007657575958676282b ]
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
 
-If we timeout the admin startup sequence we might not yet have
-an I/O tagset allocated which causes the teardown sequence to crash.
-Make nvme_tcp_teardown_io_queues safe by not iterating inflight tags
-if the tagset wasn't allocated.
+commit 1b5e2423164b3670e8bc9174e4762d297990deff upstream.
 
-Fixes: 4c174e636674 ("nvme-rdma: fix timeout handler")
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The SSID length as received from firmware should not exceed
+IEEE80211_MAX_SSID_LEN as that would result in heap overflow.
+
+Reviewed-by: Hante Meuleman <hante.meuleman@broadcom.com>
+Reviewed-by: Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>
+Reviewed-by: Franky Lin <franky.lin@broadcom.com>
+Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/nvme/host/rdma.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/nvme/host/rdma.c b/drivers/nvme/host/rdma.c
-index 52abc3a6de129..1b1645a77daf5 100644
---- a/drivers/nvme/host/rdma.c
-+++ b/drivers/nvme/host/rdma.c
-@@ -922,8 +922,9 @@ static void nvme_rdma_teardown_admin_queue(struct nvme_rdma_ctrl *ctrl,
- {
- 	blk_mq_quiesce_queue(ctrl->ctrl.admin_q);
- 	nvme_rdma_stop_queue(&ctrl->queues[0]);
--	blk_mq_tagset_busy_iter(&ctrl->admin_tag_set, nvme_cancel_request,
--			&ctrl->ctrl);
-+	if (ctrl->ctrl.admin_tagset)
-+		blk_mq_tagset_busy_iter(ctrl->ctrl.admin_tagset,
-+			nvme_cancel_request, &ctrl->ctrl);
- 	blk_mq_unquiesce_queue(ctrl->ctrl.admin_q);
- 	nvme_rdma_destroy_admin_queue(ctrl, remove);
- }
-@@ -934,8 +935,9 @@ static void nvme_rdma_teardown_io_queues(struct nvme_rdma_ctrl *ctrl,
- 	if (ctrl->ctrl.queue_count > 1) {
- 		nvme_stop_queues(&ctrl->ctrl);
- 		nvme_rdma_stop_io_queues(ctrl);
--		blk_mq_tagset_busy_iter(&ctrl->tag_set, nvme_cancel_request,
--				&ctrl->ctrl);
-+		if (ctrl->ctrl.tagset)
-+			blk_mq_tagset_busy_iter(ctrl->ctrl.tagset,
-+				nvme_cancel_request, &ctrl->ctrl);
- 		if (remove)
- 			nvme_start_queues(&ctrl->ctrl);
- 		nvme_rdma_destroy_io_queues(ctrl, remove);
--- 
-2.20.1
-
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -3466,6 +3466,8 @@ brcmf_wowl_nd_results(struct brcmf_if *i
+ 	}
+ 
+ 	netinfo = brcmf_get_netinfo_array(pfn_result);
++	if (netinfo->SSID_len > IEEE80211_MAX_SSID_LEN)
++		netinfo->SSID_len = IEEE80211_MAX_SSID_LEN;
+ 	memcpy(cfg->wowl.nd->ssid.ssid, netinfo->SSID, netinfo->SSID_len);
+ 	cfg->wowl.nd->ssid.ssid_len = netinfo->SSID_len;
+ 	cfg->wowl.nd->n_channels = 1;
 
 
