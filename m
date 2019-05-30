@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 895652EE98
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:49:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 970EB2ED27
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:32:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732626AbfE3Dsp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:48:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58016 "EHLO mail.kernel.org"
+        id S2388200AbfE3DaU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:30:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732147AbfE3DUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:20:18 -0400
+        id S1732527AbfE3DVW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:21:22 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C3362490A;
-        Thu, 30 May 2019 03:20:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C36DB2499E;
+        Thu, 30 May 2019 03:21:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186417;
-        bh=qpIVF3Cx9pKmLiimFB7271ld1ODQuXJahy+4CSBYWh0=;
+        s=default; t=1559186479;
+        bh=R1Y/Uxnl9zCkAKdG+RQhuidqwjK17ZPDNJ3eFv/YJNc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tp8a7dRkQRCgUE4oTArpY0OX4pLoaFNbsk4KqiVXExl4n9U+feELHrLWRzi1yIQVJ
-         AnNFPtmC32cXsdhdrrGyUXl3TnT9xsyyJeycqaH31lhxTan4NMgUNMvL7+qzGlstu6
-         MQ6UegWZp5jrFGhSKQAvVZALl4WhMIKFf+7QPZgw=
+        b=ARmSnt3GBPZd4znfD1cTPpH+auovG+29d+RN08XN9cWfGFeHoqmV3Hkw/KQdgXsob
+         KFKcMaHfX2kH5rmis4xOFWF8j86TwdE5/yD1k3dtwCyIJ49XZ0Xk/CG4LvsIWxiWBt
+         Y3K/jNISJGiHLV6yzgvjeKOFIbGHUg2YF4MWRxKc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Farman <farman@linux.ibm.com>,
-        Farhan Ali <alifm@linux.ibm.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
+        stable@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 192/193] vfio-ccw: Prevent quiesce function going into an infinite loop
-Date:   Wed, 29 May 2019 20:07:26 -0700
-Message-Id: <20190530030513.378820673@linuxfoundation.org>
+Subject: [PATCH 4.9 115/128] rcuperf: Fix cleanup path for invalid perf_type strings
+Date:   Wed, 29 May 2019 20:07:27 -0700
+Message-Id: <20190530030455.194275136@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,87 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d1ffa760d22aa1d8190478e5ef555c59a771db27 ]
+[ Upstream commit ad092c027713a68a34168942a5ef422e42e039f4 ]
 
-The quiesce function calls cio_cancel_halt_clear() and if we
-get an -EBUSY we go into a loop where we:
-	- wait for any interrupts
-	- flush all I/O in the workqueue
-	- retry cio_cancel_halt_clear
+If the specified rcuperf.perf_type is not in the rcu_perf_init()
+function's perf_ops[] array, rcuperf prints some console messages and
+then invokes rcu_perf_cleanup() to set state so that a future torture
+test can run.  However, rcu_perf_cleanup() also attempts to end the
+test that didn't actually start, and in doing so relies on the value
+of cur_ops, a value that is not particularly relevant in this case.
+This can result in confusing output or even follow-on failures due to
+attempts to use facilities that have not been properly initialized.
 
-During the period where we are waiting for interrupts or
-flushing all I/O, the channel subsystem could have completed
-a halt/clear action and turned off the corresponding activity
-control bits in the subchannel status word. This means the next
-time we call cio_cancel_halt_clear(), we will again start by
-calling cancel subchannel and so we can be stuck between calling
-cancel and halt forever.
+This commit therefore sets the value of cur_ops to NULL in this case and
+inserts a check near the beginning of rcu_perf_cleanup(), thus avoiding
+relying on an irrelevant cur_ops value.
 
-Rather than calling cio_cancel_halt_clear() immediately after
-waiting, let's try to disable the subchannel. If we succeed in
-disabling the subchannel then we know nothing else can happen
-with the device.
-
-Suggested-by: Eric Farman <farman@linux.ibm.com>
-Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
-Message-Id: <4d5a4b98ab1b41ac6131b5c36de18b76c5d66898.1555449329.git.alifm@linux.ibm.com>
-Reviewed-by: Eric Farman <farman@linux.ibm.com>
-Acked-by: Halil Pasic <pasic@linux.ibm.com>
-Signed-off-by: Cornelia Huck <cohuck@redhat.com>
+Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/s390/cio/vfio_ccw_drv.c | 32 ++++++++++++++++++--------------
- 1 file changed, 18 insertions(+), 14 deletions(-)
+ kernel/rcu/rcuperf.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/s390/cio/vfio_ccw_drv.c b/drivers/s390/cio/vfio_ccw_drv.c
-index 59eb5e6d9c79d..6cd41086f23e4 100644
---- a/drivers/s390/cio/vfio_ccw_drv.c
-+++ b/drivers/s390/cio/vfio_ccw_drv.c
-@@ -38,26 +38,30 @@ int vfio_ccw_sch_quiesce(struct subchannel *sch)
- 	if (ret != -EBUSY)
- 		goto out_unlock;
+diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
+index 123ccbd224492..2b8579d5a5445 100644
+--- a/kernel/rcu/rcuperf.c
++++ b/kernel/rcu/rcuperf.c
+@@ -453,6 +453,10 @@ rcu_perf_cleanup(void)
  
-+	iretry = 255;
- 	do {
--		iretry = 255;
+ 	if (torture_cleanup_begin())
+ 		return;
++	if (!cur_ops) {
++		torture_cleanup_end();
++		return;
++	}
  
- 		ret = cio_cancel_halt_clear(sch, &iretry);
--		while (ret == -EBUSY) {
--			/*
--			 * Flush all I/O and wait for
--			 * cancel/halt/clear completion.
--			 */
--			private->completion = &completion;
--			spin_unlock_irq(sch->lock);
- 
--			wait_for_completion_timeout(&completion, 3*HZ);
-+		if (ret == -EIO) {
-+			pr_err("vfio_ccw: could not quiesce subchannel 0.%x.%04x!\n",
-+			       sch->schid.ssid, sch->schid.sch_no);
-+			break;
-+		}
-+
-+		/*
-+		 * Flush all I/O and wait for
-+		 * cancel/halt/clear completion.
-+		 */
-+		private->completion = &completion;
-+		spin_unlock_irq(sch->lock);
- 
--			private->completion = NULL;
--			flush_workqueue(vfio_ccw_work_q);
--			spin_lock_irq(sch->lock);
--			ret = cio_cancel_halt_clear(sch, &iretry);
--		};
-+		if (ret == -EBUSY)
-+			wait_for_completion_timeout(&completion, 3*HZ);
- 
-+		private->completion = NULL;
-+		flush_workqueue(vfio_ccw_work_q);
-+		spin_lock_irq(sch->lock);
- 		ret = cio_disable_subchannel(sch);
- 	} while (ret == -EBUSY);
- out_unlock:
+ 	if (reader_tasks) {
+ 		for (i = 0; i < nrealreaders; i++)
+@@ -574,6 +578,7 @@ rcu_perf_init(void)
+ 			pr_alert(" %s", perf_ops[i]->name);
+ 		pr_alert("\n");
+ 		firsterr = -EINVAL;
++		cur_ops = NULL;
+ 		goto unwind;
+ 	}
+ 	if (cur_ops->init)
 -- 
 2.20.1
 
