@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D6862F517
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:44:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD2292F29E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:23:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388785AbfE3Eoe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:44:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52812 "EHLO mail.kernel.org"
+        id S1732112AbfE3EXs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:23:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36638 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728793AbfE3DMB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:01 -0400
+        id S1729237AbfE3DO7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:14:59 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0BA024516;
-        Thu, 30 May 2019 03:12:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B887924569;
+        Thu, 30 May 2019 03:14:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185921;
-        bh=Qo4uhTRuwdTgrgWmIGr4DOtuQXlL6wBHRQOi1G4vB5E=;
+        s=default; t=1559186098;
+        bh=gSI9psuYD1xCKfYVsfhwSr3FUrN4RZvPlcIQLpg1+4c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QaAY5HskRixk/BSuAA57LqUjAqvgJfTemUDaaVN3aVt4z6SdCf5l0XzHlFvMcdI/q
-         4a8snNqCJxbXtv1VJLHdYcXl8McKP2+ElD7HHS/fvtJRh/kWh6EFqE2LmIli2zYK/O
-         tZebnTjFAAG+AnreLpPhYAisi0+wwJ4hljJJCeik=
+        b=KQzgoSWQG/XnxYIRfwlLBGCQrt9DShNhbRSdzlhQ/qSufflSQ0dteDDyWOS6+EQFZ
+         fk2poLNh4OHEHy0otZahYI4PdrG3BIWxBEgSlOvrQQdXtAjlAKv9fRPZ/lAjtRHrkn
+         dAMoliBJ1msOeFcHAsx6W7AgJ766qshzzx9l6g78=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        stable@vger.kernel.org, Stanley Chu <stanley.chu@mediatek.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 308/405] rcuperf: Fix cleanup path for invalid perf_type strings
-Date:   Wed, 29 May 2019 20:05:06 -0700
-Message-Id: <20190530030556.389622669@linuxfoundation.org>
+Subject: [PATCH 5.0 234/346] scsi: ufs: Avoid configuring regulator with undefined voltage range
+Date:   Wed, 29 May 2019 20:05:07 -0700
+Message-Id: <20190530030552.898014194@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,50 +46,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ad092c027713a68a34168942a5ef422e42e039f4 ]
+[ Upstream commit 3b141e8cfd54ba3e5c610717295b2a02aab26a05 ]
 
-If the specified rcuperf.perf_type is not in the rcu_perf_init()
-function's perf_ops[] array, rcuperf prints some console messages and
-then invokes rcu_perf_cleanup() to set state so that a future torture
-test can run.  However, rcu_perf_cleanup() also attempts to end the
-test that didn't actually start, and in doing so relies on the value
-of cur_ops, a value that is not particularly relevant in this case.
-This can result in confusing output or even follow-on failures due to
-attempts to use facilities that have not been properly initialized.
+For regulators used by UFS, vcc, vccq and vccq2 will have voltage range
+initialized by ufshcd_populate_vreg(), however other regulators may have
+undefined voltage range if dt-bindings have no such definition.
 
-This commit therefore sets the value of cur_ops to NULL in this case and
-inserts a check near the beginning of rcu_perf_cleanup(), thus avoiding
-relying on an irrelevant cur_ops value.
+In above undefined case, both "min_uV" and "max_uV" fields in ufs_vreg
+struct will be zero values and these values will be configured on
+regulators in different power modes.
 
-Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+Currently this may have no harm if both "min_uV" and "max_uV" always keep
+"zero values" because regulator_set_voltage() will always bypass such
+invalid values and return "good" results.
+
+However improper values shall be fixed to avoid potential bugs.  Simply
+bypass voltage configuration if voltage range is not defined.
+
+Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
+Reviewed-by: Avri Altman <avri.altman@wdc.com>
+Acked-by: Alim Akhtar <alim.akhtar@samsung.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/rcu/rcuperf.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/scsi/ufs/ufshcd.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
-index c297611528744..7a6890b23c5f5 100644
---- a/kernel/rcu/rcuperf.c
-+++ b/kernel/rcu/rcuperf.c
-@@ -494,6 +494,10 @@ rcu_perf_cleanup(void)
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 75d7267b73879..c02e704287110 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -7056,12 +7056,15 @@ static int ufshcd_config_vreg(struct device *dev,
+ 	name = vreg->name;
  
- 	if (torture_cleanup_begin())
- 		return;
-+	if (!cur_ops) {
-+		torture_cleanup_end();
-+		return;
-+	}
+ 	if (regulator_count_voltages(reg) > 0) {
+-		min_uV = on ? vreg->min_uV : 0;
+-		ret = regulator_set_voltage(reg, min_uV, vreg->max_uV);
+-		if (ret) {
+-			dev_err(dev, "%s: %s set voltage failed, err=%d\n",
++		if (vreg->min_uV && vreg->max_uV) {
++			min_uV = on ? vreg->min_uV : 0;
++			ret = regulator_set_voltage(reg, min_uV, vreg->max_uV);
++			if (ret) {
++				dev_err(dev,
++					"%s: %s set voltage failed, err=%d\n",
+ 					__func__, name, ret);
+-			goto out;
++				goto out;
++			}
+ 		}
  
- 	if (reader_tasks) {
- 		for (i = 0; i < nrealreaders; i++)
-@@ -614,6 +618,7 @@ rcu_perf_init(void)
- 		pr_cont("\n");
- 		WARN_ON(!IS_MODULE(CONFIG_RCU_PERF_TEST));
- 		firsterr = -EINVAL;
-+		cur_ops = NULL;
- 		goto unwind;
- 	}
- 	if (cur_ops->init)
+ 		uA_load = on ? vreg->max_uA : 0;
 -- 
 2.20.1
 
