@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26E1B2F477
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:39:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C25B2F233
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:19:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730669AbfE3Eim (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:38:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56100 "EHLO mail.kernel.org"
+        id S1730370AbfE3ETl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:19:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38610 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727641AbfE3DMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:43 -0400
+        id S1730279AbfE3DPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:25 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A3A121BE2;
-        Thu, 30 May 2019 03:12:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC0482459C;
+        Thu, 30 May 2019 03:15:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185963;
-        bh=X+M34Of9+XS9yLB9PcXbJYs5GWQNKdBWPGagIpDaQ/I=;
+        s=default; t=1559186124;
+        bh=joNhK/ROcodXxZke0Sa4iVMfvbCBd77Z4mWlUohCtzE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z7ETZwkEn3+uvsdQ/vGYAuSIgbbAB4vvZs3SMS6r0eOZoUjpkWuty/JBV8OCf1fS2
-         OUzie5cbs2GkUifRilCs9L2fO2sV/ytXu05WIII3BV+fUI6hdBoB7Pn5NNnjaKLzU1
-         kXFiWt03oWJYR5rjPbsaQx5N8U4PRqJqk/w81N/g=
+        b=xFXLZvW5HZMKP5dqlSINnFBtCWVuYLgE1HncX8MMO7I47Fz5r2cJ07sFd/Gq1dvTK
+         9FlsIY/kltOZOBqAtM3b9hDm6S7pSAqONrIuk53i3w+AZKAYqhw+lT263ucCA1Sg/I
+         GftbuRD6tQtPa/4tPMkpTDfofYlqXci9A0tdQC48=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Samson Tam <Samson.Tam@amd.com>,
-        Aric Cyr <Aric.Cyr@amd.com>, Anthony Koo <Anthony.Koo@amd.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 331/405] drm/amd/display: Link train only when link is DP and backend is enabled
+        stable@vger.kernel.org,
+        syzbot <syzbot+f648cfb7e0b52bf7ae32@syzkaller.appspotmail.com>,
+        Kay Sievers <kay@vrfy.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Sasha Levin <sashal@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 5.0 256/346] kobject: Dont trigger kobject_uevent(KOBJ_REMOVE) twice.
 Date:   Wed, 29 May 2019 20:05:29 -0700
-Message-Id: <20190530030557.480084620@linuxfoundation.org>
+Message-Id: <20190530030553.966661442@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,57 +47,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 66acd4418d7de131ef3831e52a8af3d2480e5b15 ]
+[ Upstream commit c03a0fd0b609e2f5c669c2b7f27c8e1928e9196e ]
 
-[Why]
-In certain cases we do link training when we don't have a backend.
+syzbot is hitting use-after-free bug in uinput module [1]. This is because
+kobject_uevent(KOBJ_REMOVE) is called again due to commit 0f4dafc0563c6c49
+("Kobject: auto-cleanup on final unref") after memory allocation fault
+injection made kobject_uevent(KOBJ_REMOVE) from device_del() from
+input_unregister_device() fail, while uinput_destroy_device() is expecting
+that kobject_uevent(KOBJ_REMOVE) is not called after device_del() from
+input_unregister_device() completed.
 
-[How]
-In dc_link_set_preferred_link_settings(), store preferred link settings
-first and then verify that the link is DP and the link stream's backend is
-enabled.  If either is false, then we will not do any link retraining.
+That commit intended to catch cases where nobody even attempted to send
+"remove" uevents. But there is no guarantee that an event will ultimately
+be sent. We are at the point of no return as far as the rest of the kernel
+is concerned; there are no repeats or do-overs.
 
-Signed-off-by: Samson Tam <Samson.Tam@amd.com>
-Reviewed-by: Aric Cyr <Aric.Cyr@amd.com>
-Acked-by: Anthony Koo <Anthony.Koo@amd.com>
-Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Also, it is not clear whether some subsystem depends on that commit.
+If no subsystem depends on that commit, it will be better to remove
+the state_{add,remove}_uevent_sent logic. But we don't want to risk
+a regression (in a patch which will be backported) by trying to remove
+that logic. Therefore, as a first step, let's avoid the use-after-free bug
+by making sure that kobject_uevent(KOBJ_REMOVE) won't be triggered twice.
+
+[1] https://syzkaller.appspot.com/bug?id=8b17c134fe938bbddd75a45afaa9e68af43a362d
+
+Reported-by: syzbot <syzbot+f648cfb7e0b52bf7ae32@syzkaller.appspotmail.com>
+Analyzed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Fixes: 0f4dafc0563c6c49 ("Kobject: auto-cleanup on final unref")
+Cc: Kay Sievers <kay@vrfy.org>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/core/dc.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ lib/kobject_uevent.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc.c b/drivers/gpu/drm/amd/display/dc/core/dc.c
-index a6cda201c964c..c1a308c1dcbea 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc.c
-@@ -524,6 +524,14 @@ void dc_link_set_preferred_link_settings(struct dc *dc,
- 	struct dc_stream_state *link_stream;
- 	struct dc_link_settings store_settings = *link_setting;
+diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
+index 27c6118afd1ce..bd26df36757f0 100644
+--- a/lib/kobject_uevent.c
++++ b/lib/kobject_uevent.c
+@@ -466,6 +466,13 @@ int kobject_uevent_env(struct kobject *kobj, enum kobject_action action,
+ 	int i = 0;
+ 	int retval = 0;
  
-+	link->preferred_link_setting = store_settings;
-+
-+	/* Retrain with preferred link settings only relevant for
-+	 * DP signal type
++	/*
++	 * Mark "remove" event done regardless of result, for some subsystems
++	 * do not want to re-trigger "remove" event via automatic cleanup.
 +	 */
-+	if (!dc_is_dp_signal(link->connector_signal))
-+		return;
++	if (action == KOBJ_REMOVE)
++		kobj->state_remove_uevent_sent = 1;
 +
- 	for (i = 0; i < MAX_PIPES; i++) {
- 		pipe = &dc->current_state->res_ctx.pipe_ctx[i];
- 		if (pipe->stream && pipe->stream->link) {
-@@ -538,7 +546,10 @@ void dc_link_set_preferred_link_settings(struct dc *dc,
+ 	pr_debug("kobject: '%s' (%p): %s\n",
+ 		 kobject_name(kobj), kobj, __func__);
  
- 	link_stream = link->dc->current_state->res_ctx.pipe_ctx[i].stream;
+@@ -567,10 +574,6 @@ int kobject_uevent_env(struct kobject *kobj, enum kobject_action action,
+ 		kobj->state_add_uevent_sent = 1;
+ 		break;
  
--	link->preferred_link_setting = store_settings;
-+	/* Cannot retrain link if backend is off */
-+	if (link_stream->dpms_off)
-+		return;
-+
- 	if (link_stream)
- 		decide_link_settings(link_stream, &store_settings);
- 
+-	case KOBJ_REMOVE:
+-		kobj->state_remove_uevent_sent = 1;
+-		break;
+-
+ 	case KOBJ_UNBIND:
+ 		zap_modalias_env(env);
+ 		break;
 -- 
 2.20.1
 
