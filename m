@@ -2,44 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84F1A2EEF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:51:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EB662EE7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:49:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387471AbfE3Dv1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:51:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56600 "EHLO mail.kernel.org"
+        id S1732161AbfE3DUU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:20:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732016AbfE3DTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:19:47 -0400
+        id S1730512AbfE3DPv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:51 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFF2F248C9;
-        Thu, 30 May 2019 03:19:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 444CD24559;
+        Thu, 30 May 2019 03:15:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186385;
-        bh=6LftdqdCwOE0CXY9XVp3kFa+SyP6F6qzttsv7v36EZw=;
+        s=default; t=1559186151;
+        bh=zXBT3MGxgwPuZn7f4wKcOXvF+MuMgwG9Fd/Zs7Ewpk4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=huKsPXVMiemKW4g10QsrysZW49Q4Tl17KAnVS7nLb14UsEVwqsAlLb3fdHPMPHBOt
-         AvMVoBm3gF2TSzkLZyRtyQRT64cYhOAebif5D1T6qvzhmKBXaJGxXIloyDOaryFgSt
-         b/Jvk1fYw7HCoywLzTnG2IaiW4i0ejmAHsswW6Qo=
+        b=dfc+/TjMKktkOU8072WdrMFuGPoS+gWfjI2FkdB5o4+4P7VhbGdAPEe0CxI/dyaJE
+         wCsclu5TK22MXPY2QK8QSq28f0+oAmgvwVRL4QAIV6I2KiB0f2YWwIWe0TUkC1rqrB
+         RJI++grexpiflNNdFPqPyWJut8IFDJDMcvOp8QFk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 153/193] x86/uaccess, signal: Fix AC=1 bloat
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 334/346] regulator: da9062: Fix notifier mutex lock warning
 Date:   Wed, 29 May 2019 20:06:47 -0700
-Message-Id: <20190530030509.655232817@linuxfoundation.org>
+Message-Id: <20190530030557.666152416@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,109 +46,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 88e4718275c1bddca6f61f300688b4553dc8584b ]
+[ Upstream commit 978995def0f6030aa6b3b494682f673aca13881b ]
 
-Occasionally GCC is less agressive with inlining and the following is
-observed:
+The mutex for the regulator_dev must be controlled by the caller of
+the regulator_notifier_call_chain(), as described in the comment
+for that function.
 
-  arch/x86/kernel/signal.o: warning: objtool: restore_sigcontext()+0x3cc: call to force_valid_ss.isra.5() with UACCESS enabled
-  arch/x86/kernel/signal.o: warning: objtool: do_signal()+0x384: call to frame_uc_flags.isra.0() with UACCESS enabled
+Failure to mutex lock and unlock surrounding the notifier call results
+in a kernel WARN_ON_ONCE() which will dump a backtrace for the
+regulator_notifier_call_chain() when that function call is first made.
+The mutex can be controlled using the regulator_lock/unlock() API.
 
-Cure this by moving this code out of the AC=1 region, since it really
-isn't needed for the user access.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 4068e5182ada ("regulator: da9062: DA9062 regulator driver")
+Suggested-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Signed-off-by: Steve Twiss <stwiss.opensource@diasemi.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/signal.c | 29 +++++++++++++++++------------
- 1 file changed, 17 insertions(+), 12 deletions(-)
+ drivers/regulator/da9062-regulator.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-index 4cdc0b27ec82f..01741834fd6a0 100644
---- a/arch/x86/kernel/signal.c
-+++ b/arch/x86/kernel/signal.c
-@@ -131,16 +131,6 @@ static int restore_sigcontext(struct pt_regs *regs,
- 		COPY_SEG_CPL3(cs);
- 		COPY_SEG_CPL3(ss);
+diff --git a/drivers/regulator/da9062-regulator.c b/drivers/regulator/da9062-regulator.c
+index 34a70d9dc450e..5224304c10b3f 100644
+--- a/drivers/regulator/da9062-regulator.c
++++ b/drivers/regulator/da9062-regulator.c
+@@ -974,8 +974,10 @@ static irqreturn_t da9062_ldo_lim_event(int irq, void *data)
+ 			continue;
  
--#ifdef CONFIG_X86_64
--		/*
--		 * Fix up SS if needed for the benefit of old DOSEMU and
--		 * CRIU.
--		 */
--		if (unlikely(!(uc_flags & UC_STRICT_RESTORE_SS) &&
--			     user_64bit_mode(regs)))
--			force_valid_ss(regs);
--#endif
--
- 		get_user_ex(tmpflags, &sc->flags);
- 		regs->flags = (regs->flags & ~FIX_EFLAGS) | (tmpflags & FIX_EFLAGS);
- 		regs->orig_ax = -1;		/* disable syscall checks */
-@@ -149,6 +139,15 @@ static int restore_sigcontext(struct pt_regs *regs,
- 		buf = (void __user *)buf_val;
- 	} get_user_catch(err);
- 
-+#ifdef CONFIG_X86_64
-+	/*
-+	 * Fix up SS if needed for the benefit of old DOSEMU and
-+	 * CRIU.
-+	 */
-+	if (unlikely(!(uc_flags & UC_STRICT_RESTORE_SS) && user_64bit_mode(regs)))
-+		force_valid_ss(regs);
-+#endif
-+
- 	err |= fpu__restore_sig(buf, IS_ENABLED(CONFIG_X86_32));
- 
- 	force_iret();
-@@ -460,6 +459,7 @@ static int __setup_rt_frame(int sig, struct ksignal *ksig,
- {
- 	struct rt_sigframe __user *frame;
- 	void __user *fp = NULL;
-+	unsigned long uc_flags;
- 	int err = 0;
- 
- 	frame = get_sigframe(&ksig->ka, regs, sizeof(struct rt_sigframe), &fp);
-@@ -472,9 +472,11 @@ static int __setup_rt_frame(int sig, struct ksignal *ksig,
- 			return -EFAULT;
+ 		if (BIT(regl->info->oc_event.lsb) & bits) {
++			regulator_lock(regl->rdev);
+ 			regulator_notifier_call_chain(regl->rdev,
+ 					REGULATOR_EVENT_OVER_CURRENT, NULL);
++			regulator_unlock(regl->rdev);
+ 			handled = IRQ_HANDLED;
+ 		}
  	}
- 
-+	uc_flags = frame_uc_flags(regs);
-+
- 	put_user_try {
- 		/* Create the ucontext.  */
--		put_user_ex(frame_uc_flags(regs), &frame->uc.uc_flags);
-+		put_user_ex(uc_flags, &frame->uc.uc_flags);
- 		put_user_ex(0, &frame->uc.uc_link);
- 		save_altstack_ex(&frame->uc.uc_stack, regs->sp);
- 
-@@ -540,6 +542,7 @@ static int x32_setup_rt_frame(struct ksignal *ksig,
- {
- #ifdef CONFIG_X86_X32_ABI
- 	struct rt_sigframe_x32 __user *frame;
-+	unsigned long uc_flags;
- 	void __user *restorer;
- 	int err = 0;
- 	void __user *fpstate = NULL;
-@@ -554,9 +557,11 @@ static int x32_setup_rt_frame(struct ksignal *ksig,
- 			return -EFAULT;
- 	}
- 
-+	uc_flags = frame_uc_flags(regs);
-+
- 	put_user_try {
- 		/* Create the ucontext.  */
--		put_user_ex(frame_uc_flags(regs), &frame->uc.uc_flags);
-+		put_user_ex(uc_flags, &frame->uc.uc_flags);
- 		put_user_ex(0, &frame->uc.uc_link);
- 		compat_save_altstack_ex(&frame->uc.uc_stack, regs->sp);
- 		put_user_ex(0, &frame->uc.uc__pad0);
 -- 
 2.20.1
 
