@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE5112EED2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:50:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A99E72ED6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:36:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733121AbfE3DuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:50:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57126 "EHLO mail.kernel.org"
+        id S1732682AbfE3DZL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:25:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732080AbfE3DT5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:19:57 -0400
+        id S1731521AbfE3DSW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:18:22 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6852248DE;
-        Thu, 30 May 2019 03:19:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2FBA247AD;
+        Thu, 30 May 2019 03:18:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186396;
-        bh=v5+OdRiroJNePL+EMSWqYBpZD6+2xfylolszboFxqXU=;
+        s=default; t=1559186300;
+        bh=vadiD9nOAC2sEEEAsCaxI1oHCY6Dqzonpd/E1Ic6hHU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=INF/nDx4m0r56DicK5CZZ1aAvgGd2O2iS30QUmV9S5/5pje0moxpvUm68hyGii+4R
-         1sUzxghSjXBKlcN3cDHQmcWNhArvRzpmZ45ECIJsfvGKUAu02zC144Ume4SwLiWwtq
-         WxuaoliIQ15WDzxarSZQ2XCaitCw/2JcwzRYe9+o=
+        b=Pmd9SeoHDiBQjJ3sGo1mpvpD5R/xOqwgRqWfXYuRLoETAm0I4EWrW9pExIzxnJd2E
+         Q1aluEmLEcUvsc3lq+V98PCiiiqvRYsU/w0tZ4U3w7lfKgSCPRep+vbb0+y4siw9UV
+         TrdoCMAcjHb56ZHqSxi7TuNi7grBe5i6cjR4lWW8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 168/193] tty: ipwireless: fix missing checks for ioremap
-Date:   Wed, 29 May 2019 20:07:02 -0700
-Message-Id: <20190530030511.425589404@linuxfoundation.org>
+Subject: [PATCH 4.19 265/276] drm/omap: dsi: Fix PM for display blank with paired dss_pll calls
+Date:   Wed, 29 May 2019 20:07:03 -0700
+Message-Id: <20190530030541.777974877@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,47 +44,165 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1bbb1c318cd8a3a39e8c3e2e83d5e90542d6c3e3 ]
+[ Upstream commit fe4ed1b457943113ee1138c939fbdeede4af6cf3 ]
 
-ipw->attr_memory and ipw->common_memory are assigned with the
-return value of ioremap. ioremap may fail, but no checks
-are enforced. The fix inserts the checks to avoid potential
-NULL pointer dereferences.
+Currently dsi_display_init_dsi() calls dss_pll_enable() but it is not
+paired with dss_pll_disable() in dsi_display_uninit_dsi(). This leaves
+the DSS clocks enabled when the display is blanked wasting about extra
+5mW of power while idle.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The clock that is left on by not calling dss_pll_disable() is
+DSS_CLKCTRL bit 10 OPTFCLKEN_SYS_CLK that is the source clock for
+DSI PLL.
+
+We can fix this issue by by making the current dsi_pll_uninit() into
+dsi_pll_disable(). This way we can just call dss_pll_disable() from
+dsi_display_uninit_dsi() and the code becomes a bit easier to follow.
+
+However, we need to also consider that DSI PLL can be muxed for DVI too
+as pointed out by Tomi Valkeinen <tomi.valkeinen@ti.com>. In the DVI
+case, we want to unconditionally disable the clocks. To get around this
+issue, we separate out the DSI lane handling from dsi_pll_enable() and
+dsi_pll_disable() as suggested by Tomi in an earlier experimental patch.
+
+So we must only toggle the DSI regulator based on the vdds_dsi_enabled
+flag from dsi_display_init_dsi() and dsi_display_uninit_dsi().
+
+We need to make these two changes together to avoid breaking things
+for DVI when fixing the DSI clock handling. And this all causes a
+slight renumbering of the error path for dsi_display_init_dsi().
+
+Suggested-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/ipwireless/main.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/gpu/drm/omapdrm/dss/dsi.c | 60 ++++++++++++++++---------------
+ 1 file changed, 31 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/tty/ipwireless/main.c b/drivers/tty/ipwireless/main.c
-index 655c7948261c7..2fa4f91234693 100644
---- a/drivers/tty/ipwireless/main.c
-+++ b/drivers/tty/ipwireless/main.c
-@@ -113,6 +113,10 @@ static int ipwireless_probe(struct pcmcia_device *p_dev, void *priv_data)
+diff --git a/drivers/gpu/drm/omapdrm/dss/dsi.c b/drivers/gpu/drm/omapdrm/dss/dsi.c
+index 74467b3087218..8160954ebc257 100644
+--- a/drivers/gpu/drm/omapdrm/dss/dsi.c
++++ b/drivers/gpu/drm/omapdrm/dss/dsi.c
+@@ -1386,12 +1386,9 @@ static int dsi_pll_enable(struct dss_pll *pll)
+ 	 */
+ 	dsi_enable_scp_clk(dsi);
  
- 	ipw->common_memory = ioremap(p_dev->resource[2]->start,
- 				resource_size(p_dev->resource[2]));
-+	if (!ipw->common_memory) {
-+		ret = -ENOMEM;
-+		goto exit1;
-+	}
- 	if (!request_mem_region(p_dev->resource[2]->start,
- 				resource_size(p_dev->resource[2]),
- 				IPWIRELESS_PCCARD_NAME)) {
-@@ -133,6 +137,10 @@ static int ipwireless_probe(struct pcmcia_device *p_dev, void *priv_data)
+-	if (!dsi->vdds_dsi_enabled) {
+-		r = regulator_enable(dsi->vdds_dsi_reg);
+-		if (r)
+-			goto err0;
+-		dsi->vdds_dsi_enabled = true;
+-	}
++	r = regulator_enable(dsi->vdds_dsi_reg);
++	if (r)
++		goto err0;
  
- 	ipw->attr_memory = ioremap(p_dev->resource[3]->start,
- 				resource_size(p_dev->resource[3]));
-+	if (!ipw->attr_memory) {
-+		ret = -ENOMEM;
-+		goto exit3;
+ 	/* XXX PLL does not come out of reset without this... */
+ 	dispc_pck_free_enable(dsi->dss->dispc, 1);
+@@ -1416,36 +1413,25 @@ static int dsi_pll_enable(struct dss_pll *pll)
+ 
+ 	return 0;
+ err1:
+-	if (dsi->vdds_dsi_enabled) {
+-		regulator_disable(dsi->vdds_dsi_reg);
+-		dsi->vdds_dsi_enabled = false;
+-	}
++	regulator_disable(dsi->vdds_dsi_reg);
+ err0:
+ 	dsi_disable_scp_clk(dsi);
+ 	dsi_runtime_put(dsi);
+ 	return r;
+ }
+ 
+-static void dsi_pll_uninit(struct dsi_data *dsi, bool disconnect_lanes)
++static void dsi_pll_disable(struct dss_pll *pll)
+ {
++	struct dsi_data *dsi = container_of(pll, struct dsi_data, pll);
++
+ 	dsi_pll_power(dsi, DSI_PLL_POWER_OFF);
+-	if (disconnect_lanes) {
+-		WARN_ON(!dsi->vdds_dsi_enabled);
+-		regulator_disable(dsi->vdds_dsi_reg);
+-		dsi->vdds_dsi_enabled = false;
+-	}
++
++	regulator_disable(dsi->vdds_dsi_reg);
+ 
+ 	dsi_disable_scp_clk(dsi);
+ 	dsi_runtime_put(dsi);
+ 
+-	DSSDBG("PLL uninit done\n");
+-}
+-
+-static void dsi_pll_disable(struct dss_pll *pll)
+-{
+-	struct dsi_data *dsi = container_of(pll, struct dsi_data, pll);
+-
+-	dsi_pll_uninit(dsi, true);
++	DSSDBG("PLL disable done\n");
+ }
+ 
+ static void dsi_dump_dsi_clocks(struct dsi_data *dsi, struct seq_file *s)
+@@ -4195,11 +4181,11 @@ static int dsi_display_init_dsi(struct dsi_data *dsi)
+ 
+ 	r = dss_pll_enable(&dsi->pll);
+ 	if (r)
+-		goto err0;
++		return r;
+ 
+ 	r = dsi_configure_dsi_clocks(dsi);
+ 	if (r)
+-		goto err1;
++		goto err0;
+ 
+ 	dss_select_dsi_clk_source(dsi->dss, dsi->module_id,
+ 				  dsi->module_id == 0 ?
+@@ -4207,6 +4193,14 @@ static int dsi_display_init_dsi(struct dsi_data *dsi)
+ 
+ 	DSSDBG("PLL OK\n");
+ 
++	if (!dsi->vdds_dsi_enabled) {
++		r = regulator_enable(dsi->vdds_dsi_reg);
++		if (r)
++			goto err1;
++
++		dsi->vdds_dsi_enabled = true;
 +	}
- 	if (!request_mem_region(p_dev->resource[3]->start,
- 				resource_size(p_dev->resource[3]),
- 				IPWIRELESS_PCCARD_NAME)) {
++
+ 	r = dsi_cio_init(dsi);
+ 	if (r)
+ 		goto err2;
+@@ -4235,10 +4229,13 @@ static int dsi_display_init_dsi(struct dsi_data *dsi)
+ err3:
+ 	dsi_cio_uninit(dsi);
+ err2:
+-	dss_select_dsi_clk_source(dsi->dss, dsi->module_id, DSS_CLK_SRC_FCK);
++	regulator_disable(dsi->vdds_dsi_reg);
++	dsi->vdds_dsi_enabled = false;
+ err1:
+-	dss_pll_disable(&dsi->pll);
++	dss_select_dsi_clk_source(dsi->dss, dsi->module_id, DSS_CLK_SRC_FCK);
+ err0:
++	dss_pll_disable(&dsi->pll);
++
+ 	return r;
+ }
+ 
+@@ -4257,7 +4254,12 @@ static void dsi_display_uninit_dsi(struct dsi_data *dsi, bool disconnect_lanes,
+ 
+ 	dss_select_dsi_clk_source(dsi->dss, dsi->module_id, DSS_CLK_SRC_FCK);
+ 	dsi_cio_uninit(dsi);
+-	dsi_pll_uninit(dsi, disconnect_lanes);
++	dss_pll_disable(&dsi->pll);
++
++	if (disconnect_lanes) {
++		regulator_disable(dsi->vdds_dsi_reg);
++		dsi->vdds_dsi_enabled = false;
++	}
+ }
+ 
+ static int dsi_display_enable(struct omap_dss_device *dssdev)
 -- 
 2.20.1
 
