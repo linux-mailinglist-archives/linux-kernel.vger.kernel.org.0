@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FF262EBEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:17:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A21522EE27
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:44:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728598AbfE3DRE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:17:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60002 "EHLO mail.kernel.org"
+        id S1732375AbfE3DUy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:20:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41206 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728651AbfE3DNq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:13:46 -0400
+        id S1730581AbfE3DQF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:16:05 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B284244EF;
-        Thu, 30 May 2019 03:13:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7CA952455E;
+        Thu, 30 May 2019 03:16:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186025;
-        bh=3uMj+D0XcaHqhNjcBGc39/zrvuS/hjzi5oRXqURL7zc=;
+        s=default; t=1559186164;
+        bh=w0FNEcwamqYLDkj3GaVPl4jMvnrBDG1Rp3VxgMOjzwE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EriFqvLoXB+6SNrm971yHdYacy3ZpBxxW3V7HmwzUap/fTSxvYDwGSX72AUzOWtL5
-         aCkLQDsXFP58HqdO1aIuk1eNDBIespuNjlcIbPTlUe7HpJ01tYuY3uERoKWjjYsi5n
-         xJgvK4cIWSPMBuJ5nVS6sTp65jmg/UJJ0JDafUNo=
+        b=wgGItlKffiEnG6L/MXKFJ1fxmRg4z9BaYF2Lsjfn9ALsjjAngO7+mXSDJc9v4EuCj
+         Jqxm26eGaoZGL7gD8rQ7DHKChq518PuJMwn8D/DPaD8tofCP5rS+Fs1+erSIgi4QmI
+         cdxC935e1kWurXV0KAhTGgqbWspEPFyp3mo+A7fs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yunsheng Lin <linyunsheng@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Huazhong Tan <tanhuazhong@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 099/346] net: hns3: fix for TX clean num when cleaning TX BD
-Date:   Wed, 29 May 2019 20:02:52 -0700
-Message-Id: <20190530030546.171533760@linuxfoundation.org>
+        stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.19 015/276] arm64/iommu: handle non-remapped addresses in ->mmap and ->get_sgtable
+Date:   Wed, 29 May 2019 20:02:53 -0700
+Message-Id: <20190530030524.868919123@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,54 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 63380a1ae4ced8aef67659ff9547c69ef8b9613a ]
+From: Christoph Hellwig <hch@lst.de>
 
-hns3_desc_unused() returns how many BD have been cleaned, but new
-buffer has not been attached to them. The register of
-HNS3_RING_RX_RING_FBDNUM_REG returns how many BD need allocating new
-buffer to or need to cleaned. So the remaining BD need to be clean
-is HNS3_RING_RX_RING_FBDNUM_REG - hns3_desc_unused().
+commit a98d9ae937d256ed679a935fc82d9deaa710d98e upstream.
 
-Also, new buffer can not attach to the pending BD when the last BD is
-not handled, because memcpy has not been done on the first pending BD.
+DMA allocations that can't sleep may return non-remapped addresses, but
+we do not properly handle them in the mmap and get_sgtable methods.
+Resolve non-vmalloc addresses using virt_to_page to handle this corner
+case.
 
-This patch fixes by subtracting the pending BD num from unused_count
-after 'HNS3_RING_RX_RING_FBDNUM_REG - unused_count' is used to calculate
-the BD bum need to be clean.
+Cc: <stable@vger.kernel.org>
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Fixes: e55970950556 ("net: hns3: Add handling of GRO Pkts not fully RX'ed in NAPI poll")
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm64/mm/dma-mapping.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index 40b69eaf2cb3f..ecadd280ab28d 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -2708,7 +2708,7 @@ int hns3_clean_rx_ring(
- #define RCB_NOF_ALLOC_RX_BUFF_ONCE 16
- 	struct net_device *netdev = ring->tqp->handle->kinfo.netdev;
- 	int recv_pkts, recv_bds, clean_count, err;
--	int unused_count = hns3_desc_unused(ring) - ring->pending_buf;
-+	int unused_count = hns3_desc_unused(ring);
- 	struct sk_buff *skb = ring->skb;
- 	int num;
+--- a/arch/arm64/mm/dma-mapping.c
++++ b/arch/arm64/mm/dma-mapping.c
+@@ -664,6 +664,11 @@ static int __iommu_mmap_attrs(struct dev
+ 	if (dma_mmap_from_dev_coherent(dev, vma, cpu_addr, size, &ret))
+ 		return ret;
  
-@@ -2717,6 +2717,7 @@ int hns3_clean_rx_ring(
++	if (!is_vmalloc_addr(cpu_addr)) {
++		unsigned long pfn = page_to_pfn(virt_to_page(cpu_addr));
++		return __swiotlb_mmap_pfn(vma, pfn, size);
++	}
++
+ 	if (attrs & DMA_ATTR_FORCE_CONTIGUOUS) {
+ 		/*
+ 		 * DMA_ATTR_FORCE_CONTIGUOUS allocations are always remapped,
+@@ -687,6 +692,11 @@ static int __iommu_get_sgtable(struct de
+ 	unsigned int count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+ 	struct vm_struct *area = find_vm_area(cpu_addr);
  
- 	recv_pkts = 0, recv_bds = 0, clean_count = 0;
- 	num -= unused_count;
-+	unused_count -= ring->pending_buf;
- 
- 	while (recv_pkts < budget && recv_bds < num) {
- 		/* Reuse or realloc buffers */
--- 
-2.20.1
-
++	if (!is_vmalloc_addr(cpu_addr)) {
++		struct page *page = virt_to_page(cpu_addr);
++		return __swiotlb_get_sgtable_page(sgt, page, size);
++	}
++
+ 	if (attrs & DMA_ATTR_FORCE_CONTIGUOUS) {
+ 		/*
+ 		 * DMA_ATTR_FORCE_CONTIGUOUS allocations are always remapped,
 
 
