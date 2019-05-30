@@ -2,206 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 595482F916
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 11:16:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBDBB2F919
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 11:16:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbfE3JQZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 05:16:25 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33772 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726720AbfE3JQZ (ORCPT
+        id S1727279AbfE3JQv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 05:16:51 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:54946 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726809AbfE3JQu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 05:16:25 -0400
-Received: by mail-wr1-f68.google.com with SMTP id d9so3708510wrx.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 02:16:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from:cc;
-        bh=I1S45cdBL20CvsZSK3Vkt5vNQs2upcXyMnAlHyCghAk=;
-        b=T/zpFN2mPAF3SQ6lAYgD6tKWR5rWJJKb+Vg78eR5EnH6kVWssEFzfrz7I2myTpjEdB
-         uRkmZO+NoVexKFmHUeXkljCY5nm83dRV0RLjjrLfznDqneZnA9sWlGMJamwGwHCigzkE
-         7+Alug2hguo3mnDp+AwCxnHvvkK15NWLUoixFH0SSYGC8rYghtuVOVtqfqCk5Hm1E9GU
-         eBJ8gUfitrYtKDyJA0iUIUvWm3+Ea31uPaBLHH44p/Eta5cZ1lA7r3dUIkKybPRU5Ka3
-         BAoMB1z/wGTYzDScpSzI43QCMknpV1PmB5x7nxwTrfXAa6sGKd7kJzpjfOBor6+SWLUV
-         7X9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from:cc;
-        bh=I1S45cdBL20CvsZSK3Vkt5vNQs2upcXyMnAlHyCghAk=;
-        b=rOC1x3blQ7ehvckfQqnyNq0X4OBRR9wKPnUJPAwvr0WGKTQCLXXXWswbUYTqfgdqhY
-         2Dq6zJPtKrdjDaSiHWCWG1DVdbcke1Y3NJpxGEB3Wnc5UHMey1tybpoKIGXKTk0nALe9
-         fmzgetSRNlP1nHo10Uu5OGaAEUMbpTG5oc6/4iE2RSfZtwKtZbiYxChrKrJWA2koCZP2
-         L93KKCauDB6/ZzBX40zr20BMZTX8eTwvE+GZJ+yKnktUkYgWp8IpqMcJTLAUSs207hOL
-         qZyZJZR3yTqIISsWyWhevHGmiP7tW7TX3sfP37CHQUkDqG832EBqdJ51cpVGS3J8vtt9
-         7mCQ==
-X-Gm-Message-State: APjAAAWm+iw8hBuExUUaFsK9+tq4Lm1Y0Zq6Au8HUqJZQtPgdlPB2Caj
-        i2ZLtu0rFYRnq2AdiPwBcw6EIQ==
-X-Google-Smtp-Source: APXvYqxPO+aU4NLmBYmMxBYv7zcWu35kkFoFjlVAjNqdxL18t/kYSZuTrJJ9GNOUC02j/lF4ntsIyw==
-X-Received: by 2002:adf:cf0c:: with SMTP id o12mr1865157wrj.182.1559207783309;
-        Thu, 30 May 2019 02:16:23 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id y132sm3504881wmd.35.2019.05.30.02.16.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 May 2019 02:16:22 -0700 (PDT)
-Message-ID: <5cef9f66.1c69fb81.39f30.21e8@mx.google.com>
-Date:   Thu, 30 May 2019 02:16:22 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+        Thu, 30 May 2019 05:16:50 -0400
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190530091648epoutp0366128e4bbfb5a2d492eb471821a3e6ec~jaz2Xespl2935829358epoutp03a
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 09:16:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190530091648epoutp0366128e4bbfb5a2d492eb471821a3e6ec~jaz2Xespl2935829358epoutp03a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1559207808;
+        bh=/+wagvowwO5ybjT2UwhBWkybZc/JAXTt0vCjAQj+cw8=;
+        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+        b=P07+rVUjsPGNOyyzRGHX+MQaLSAJkJKRjL9nN6Qw4aBwL4hVTwvKA1z4aVoFWuUVa
+         wneCO8kWcF+z0D78uCnVIx6lama33ZoZzEricit4Rn0WUB/VdNuGWSDCsv0h9OY8rO
+         3kEFE6123ZgD6aUiDEp+jtMapj0Duxh3PAcdgsnI=
+Received: from epsmges5p2new.samsung.com (unknown [182.195.40.196]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20190530091646epcas5p47ecd53aaceaff4f4d45b041539478bbd~jaz00cdUG0674706747epcas5p4s;
+        Thu, 30 May 2019 09:16:46 +0000 (GMT)
+X-AuditID: b6c32a4a-973ff70000000fe2-7b-5cef9f7eadc6
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        04.55.04066.E7F9FEC5; Thu, 30 May 2019 18:16:46 +0900 (KST)
+Mime-Version: 1.0
+Subject: RE: [PATCH 2/2] zstd: use U16 data type for rankPos
+Reply-To: v.narang@samsung.com
+From:   Vaneet Narang <v.narang@samsung.com>
+To:     Maninder Singh <maninder1.s@samsung.com>,
+        "terrelln@fb.com" <terrelln@fb.com>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "gustavo@embeddedor.com" <gustavo@embeddedor.com>
+CC:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        AMIT SAHRAWAT <a.sahrawat@samsung.com>,
+        PANKAJ MISHRA <pankaj.m@samsung.com>,
+        Vaneet Narang <v.narang@samsung.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <1557468839-3388-1-git-send-email-maninder1.s@samsung.com>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20190530091628epcms5p2ea7c6837c3ab3963815585d8b16c7838@epcms5p2>
+Date:   Thu, 30 May 2019 14:46:28 +0530
+X-CMS-MailID: 20190530091628epcms5p2ea7c6837c3ab3963815585d8b16c7838
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: bisect
-X-Kernelci-Tree: next
-X-Kernelci-Lab-Name: lab-baylibre
-X-Kernelci-Branch: master
-X-Kernelci-Kernel: next-20190528
-Subject: next/master boot bisection: next-20190528 on
- sun8i-h3-libretech-all-h3-cc
-To:     Mark Brown <broonie@kernel.org>, tomeu.vizoso@collabora.com,
-        guillaume.tucker@collabora.com, mgalka@collabora.com,
-        broonie@kernel.org,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        matthew.hart@linaro.org, khilman@baylibre.com,
-        enric.balletbo@collabora.com
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIJsWRmVeSWpSXmKPExsWy7bCmpm7d/PcxBr0PlSwu7k61mHO+hcVi
+        6x5Vi+5XMhZnunMt7t/7yWRxedccNovD89tYLO692cpk8erfNTaLQyfnMjpwe8xuuMjisWXl
+        TSaPdQdVPSY2v2P32HZA1aNvyypGj8+b5ALYo3JsMlITU1KLFFLzkvNTMvPSbZW8g+Od403N
+        DAx1DS0tzJUU8hJzU22VXHwCdN0yc4DOU1IoS8wpBQoFJBYXK+nb2RTll5akKmTkF5fYKqUW
+        pOQUGBoV6BUn5haX5qXrJefnWhkaGBiZAlUm5GQsOLCMreAUW8Xe35uYGxjXsXUxcnJICJhI
+        LJu4Fsjm4hAS2M0osaFlJ2MXIwcHr4CgxN8dwiA1wgI2Eq92rGUFsYUE5CSO39jNCBHXkTgx
+        bw1YOZuAlsTHlnCQsIjAciaJXUcsQUYyC/xilDi/+hwTxC5eiRntT1kgbGmJ7cu3gs3hFHCX
+        OLp4C1RcVOLm6rfsMPb7Y/MZIWwRidZ7Z5khbEGJBz93g+2VEJCR2PVWHGSXhEA3o8SEc8tZ
+        IZwZjBKnet9ANZhLnD85H8zmFfCVmLv1BNhQFgFViZu7VkMtc5F4uWcV2BHMAtoSyxa+ZgZZ
+        wCygKbF+lz5EiazE1FPrmCBK+CR6fz+B+2vHPBhbSeLcwZ3QsJWQeNI5E+oED4lPe38zQcK5
+        j1HizumVzBMYFWYhgnoWks2zEDYvYGRexSiZWlCcm55abFpglJdajhzBmxjByVXLawfjsnM+
+        hxgFOBiVeHgn5L+LEWJNLCuuzD3EKMHBrCTC+3M5UIg3JbGyKrUoP76oNCe1+BCjKTAMJjJL
+        iSbnAxN/Xkm8oamRmZmBpYGpsYWZoZI47yTWqzFCAumJJanZqakFqUUwfUwcnFINjEVfBQQE
+        1Zjeu3Hc0Xu9s8PR7brz7HmHZO8dP2+WmmBVZ5Tm5Pfb+zmjk0mme7aQeuCqFf+CjQ0u/VA5
+        ZfvqvNPqCT2WnJk81kbu+bweElw/7px6ut9L8VSme2DtzzPNoX4OvF6/ypl6M1jPP47Ktz3J
+        9kRB4Uep4/FvJ3n2sJfNk2hWVK5TYinOSDTUYi4qTgQAdPqeGcQDAAA=
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190510061418epcas5p3679447cedd01f3ec70139f79ac7bcca1
+References: <1557468839-3388-1-git-send-email-maninder1.s@samsung.com>
+        <CGME20190510061418epcas5p3679447cedd01f3ec70139f79ac7bcca1@epcms5p2>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-* This automated bisection report was sent to you on the basis  *
-* that you may be involved with the breaking commit it has      *
-* found.  No manual investigation has been done to verify it,   *
-* and the root cause of the problem may be somewhere else.      *
-* Hope this helps!                                              *
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+=5BReminder=5D Any Comments?
 
-next/master boot bisection: next-20190528 on sun8i-h3-libretech-all-h3-cc
-
-Summary:
-  Start:      531b0a360899 Add linux-next specific files for 20190528
-  Details:    https://kernelci.org/boot/id/5cece0fd59b5144bc47a362b
-  Plain log:  https://storage.kernelci.org//next/master/next-20190528/arm/s=
-unxi_defconfig/gcc-8/lab-baylibre/boot-sun8i-h3-libretech-all-h3-cc.txt
-  HTML log:   https://storage.kernelci.org//next/master/next-20190528/arm/s=
-unxi_defconfig/gcc-8/lab-baylibre/boot-sun8i-h3-libretech-all-h3-cc.html
-  Result:     34ac3c3eb8f0 ASoC: core: lock client_mutex while removing lin=
-k components
-
-Checks:
-  revert:     PASS
-  verify:     PASS
-
-Parameters:
-  Tree:       next
-  URL:        git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next=
-.git
-  Branch:     master
-  Target:     sun8i-h3-libretech-all-h3-cc
-  CPU arch:   arm
-  Lab:        lab-baylibre
-  Compiler:   gcc-8
-  Config:     sunxi_defconfig
-  Test suite: boot
-
-Breaking commit found:
-
----------------------------------------------------------------------------=
-----
-commit 34ac3c3eb8f0c07252ceddf0a22dd240e5c91ccb
-Author: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-Date:   Thu May 23 10:12:01 2019 -0700
-
-    ASoC: core: lock client_mutex while removing link components
-    =
-
-    Removing link components results in topology unloading. So,
-    acquire the client_mutex before removing components in
-    soc_remove_link_components. This will prevent the lockdep warning
-    seen when dai links are removed during topology removal.
-    =
-
-    Signed-off-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-    Signed-off-by: Mark Brown <broonie@kernel.org>
-
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 2403bec2fccf..7c9415987ac7 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -1005,12 +1005,14 @@ static void soc_remove_link_components(struct snd_s=
-oc_card *card,
- 	struct snd_soc_component *component;
- 	struct snd_soc_rtdcom_list *rtdcom;
- =
-
-+	mutex_lock(&client_mutex);
- 	for_each_rtdcom(rtd, rtdcom) {
- 		component =3D rtdcom->component;
- =
-
- 		if (component->driver->remove_order =3D=3D order)
- 			soc_remove_component(component);
- 	}
-+	mutex_unlock(&client_mutex);
- }
- =
-
- static void soc_remove_dai_links(struct snd_soc_card *card)
----------------------------------------------------------------------------=
-----
-
-
-Git bisection log:
-
----------------------------------------------------------------------------=
-----
-git bisect start
-# good: [cd6c84d8f0cdc911df435bb075ba22ce3c605b07] Linux 5.2-rc2
-git bisect good cd6c84d8f0cdc911df435bb075ba22ce3c605b07
-# bad: [531b0a360899269bd99a38ba9852a8ba46852bcd] Add linux-next specific f=
-iles for 20190528
-git bisect bad 531b0a360899269bd99a38ba9852a8ba46852bcd
-# bad: [0b61d4c3b7d7938ef0014778c328e3f65c0d6d57] Merge remote-tracking bra=
-nch 'crypto/master'
-git bisect bad 0b61d4c3b7d7938ef0014778c328e3f65c0d6d57
-# bad: [6179e21b065dc0f592cd3d9d3676bd64d4278025] Merge remote-tracking bra=
-nch 'xtensa/xtensa-for-next'
-git bisect bad 6179e21b065dc0f592cd3d9d3676bd64d4278025
-# bad: [3e085f66fe7e93575f2a583a3d434415cef2d860] Merge remote-tracking bra=
-nch 'amlogic/for-next'
-git bisect bad 3e085f66fe7e93575f2a583a3d434415cef2d860
-# bad: [b9afa223a3420432bc483d2b43429c88c6a5d0e0] Merge remote-tracking bra=
-nch 'staging.current/staging-linus'
-git bisect bad b9afa223a3420432bc483d2b43429c88c6a5d0e0
-# good: [fc6557648e19dbd207dc815c6e09fc6452f01e63] Merge remote-tracking br=
-anch 'bpf/master'
-git bisect good fc6557648e19dbd207dc815c6e09fc6452f01e63
-# bad: [6c3f2a0e0f236f31b47d63ab7d3f4ec889821d0d] Merge remote-tracking bra=
-nch 'spi-fixes/for-linus'
-git bisect bad 6c3f2a0e0f236f31b47d63ab7d3f4ec889821d0d
-# bad: [20a5f9c8649d74407aa657ce5b76cf8b0bbb17e3] Merge branch 'asoc-5.2' i=
-nto asoc-linus
-git bisect bad 20a5f9c8649d74407aa657ce5b76cf8b0bbb17e3
-# good: [ad6eecbfc01c987e0253371f274c3872042e4350] ASoC: cs42xx8: Add regca=
-che mask dirty
-git bisect good ad6eecbfc01c987e0253371f274c3872042e4350
-# good: [069d037aea98ffa64c26d4b1dc958fb8f39f5c2b] ASoC: simple-card: Fix c=
-onfiguration of DAI format
-git bisect good 069d037aea98ffa64c26d4b1dc958fb8f39f5c2b
-# good: [df9366131a452296d040a7a496d93108f1fc240c] ASoC: Intel: sof-rt5682:=
- fix AMP quirk support
-git bisect good df9366131a452296d040a7a496d93108f1fc240c
-# bad: [34ac3c3eb8f0c07252ceddf0a22dd240e5c91ccb] ASoC: core: lock client_m=
-utex while removing link components
-git bisect bad 34ac3c3eb8f0c07252ceddf0a22dd240e5c91ccb
-# good: [4819d06292c9b57eabdd6d1603e49a27baf183be] ASoC: simple-card: Resto=
-re original configuration of DAI format
-git bisect good 4819d06292c9b57eabdd6d1603e49a27baf183be
-# first bad commit: [34ac3c3eb8f0c07252ceddf0a22dd240e5c91ccb] ASoC: core: =
-lock client_mutex while removing link components
----------------------------------------------------------------------------=
-----
+>rankPos=C2=A0structure=C2=A0variables=C2=A0value=C2=A0can=C2=A0not=C2=A0be=
+=C2=A0more=C2=A0than=C2=A0512.=0D=0A>So=C2=A0it=C2=A0can=C2=A0easily=C2=A0b=
+e=C2=A0declared=C2=A0as=C2=A0U16=C2=A0rather=C2=A0than=C2=A0U32.=0D=0A=C2=
+=A0=0D=0A>It=C2=A0will=C2=A0reduce=C2=A0stack=C2=A0usage=C2=A0of=C2=A0HUF_s=
+ort=C2=A0from=C2=A0256=C2=A0bytes=C2=A0to=C2=A0128=C2=A0bytes=0D=0A=C2=A0=
+=0D=0A>original:=0D=0A>e24ddc01=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0sub=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0sp,=C2=A0sp,=C2=A0=23256=C2=A0=C2=A0=
+=C2=A0=C2=A0;=C2=A00x100=0D=0A=C2=A0=0D=0A>changed:=0D=0A>e24dd080=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0sub=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0sp,=
+=C2=A0sp,=C2=A0=23128=C2=A0=C2=A0=C2=A0=C2=A0;=C2=A00x80=0D=0A=C2=A0=0D=0AR=
+egards,=0D=0AVaneet=20Narang=0D=0A
