@@ -2,72 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 178E32FBE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 15:04:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77DD32FBE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 15:04:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726634AbfE3NEH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 09:04:07 -0400
-Received: from smtprelay0017.hostedemail.com ([216.40.44.17]:35238 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725919AbfE3NEH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 09:04:07 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 8215F3AB9;
-        Thu, 30 May 2019 13:04:05 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::::::::::,RULES_HIT:41:355:379:599:800:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:2911:3138:3139:3140:3141:3142:3352:3622:3865:3866:3870:3871:3872:3873:4250:4321:4425:5007:6119:6742:10004:10400:10848:11026:11232:11658:11914:12043:12050:12438:12679:12740:12760:12895:13069:13311:13357:13439:14096:14097:14181:14659:14721:21080:21451:21627:30054:30064:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
-X-HE-Tag: need41_405f0fead5e31
-X-Filterd-Recvd-Size: 2102
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf07.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 30 May 2019 13:04:02 +0000 (UTC)
-Message-ID: <8bc749161a8b8640ebdf78d693111d5350514638.camel@perches.com>
-Subject: Re: [PATCH 2/2] edac: add support for Amazon's Annapurna Labs EDAC
-From:   Joe Perches <joe@perches.com>
-To:     hhhawa@amazon.com, Greg KH <gregkh@linuxfoundation.org>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, bp@alien8.de,
-        mchehab@kernel.org, james.morse@arm.com, davem@davemloft.net,
-        nicolas.ferre@microchip.com, paulmck@linux.ibm.com,
-        dwmw@amazon.co.uk, benh@amazon.com, ronenk@amazon.com,
-        talel@amazon.com, jonnyc@amazon.com, hanochu@amazon.com,
-        linux-edac@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 30 May 2019 06:04:00 -0700
-In-Reply-To: <0ebfe8d7-3e0c-e0be-abd5-5e10b7d4b6aa@amazon.com>
-References: <1559211329-13098-1-git-send-email-hhhawa@amazon.com>
-         <1559211329-13098-3-git-send-email-hhhawa@amazon.com>
-         <20190530115732.GB14088@kroah.com>
-         <0ebfe8d7-3e0c-e0be-abd5-5e10b7d4b6aa@amazon.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726799AbfE3NEK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 09:04:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34526 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725919AbfE3NEI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 09:04:08 -0400
+Received: from localhost (173-25-83-245.client.mchsi.com [173.25.83.245])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14EC425945;
+        Thu, 30 May 2019 13:04:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559221448;
+        bh=k3Go0/VjoRePfOIkwYY5BwatXzbg2FsH2u8FcDlRKFM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FhO5mVtSSmTcf9VNmJ7aR+BQE7/uJc2lpymo3nie3NH0Cs1EO13BbnIROZqR2OAi6
+         pZv5R0G5PbCzF9k9VlnqrjMMtc9pRtHxVGzmlBlG67yssp04MQVS0tL5A+/Rhcsl5J
+         92u2eBIAnTLY6DvjwAEH6/fbARJhYgFdxfG7WuMw=
+Date:   Thu, 30 May 2019 08:04:07 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Changbin Du <changbin.du@gmail.com>, linux-pci@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mchehab+samsung@kernel.org
+Subject: Re: [PATCH v6 00/12] Include linux PCI docs into Sphinx TOC tree
+Message-ID: <20190530130407.GJ28250@google.com>
+References: <20190514144734.19760-1-changbin.du@gmail.com>
+ <20190520061014.qtq6tc366pnnqcio@mail.google.com>
+ <20190529163510.3dd4dc2d@lwn.net>
+ <20190530030139.GI28250@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190530030139.GI28250@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-05-30 at 15:52 +0300, hhhawa@amazon.com wrote:
-> On 5/30/19 2:57 PM, Greg KH wrote:
-> > On Thu, May 30, 2019 at 01:15:29PM +0300, Hanna Hawa wrote:
-> > > +static void al_a57_edac_cpumerrsr(void *arg)
-> > > +{
-> > > +	struct edac_device_ctl_info *edac_dev =
-> > > +		(struct edac_device_ctl_info *)arg;
-> > No need for casting anything here, just assign it.  Doesn't checkpatch
-> > catch this type of thing these days?  You did run it, right?
+On Wed, May 29, 2019 at 10:01:39PM -0500, Bjorn Helgaas wrote:
+> On Wed, May 29, 2019 at 04:35:10PM -0600, Jonathan Corbet wrote:
+> > On Mon, 20 May 2019 06:10:15 +0000
+> > Changbin Du <changbin.du@gmail.com> wrote:
+> > 
+> > > Bjorn and Jonathan,
+> > > Could we consider to merge this serias now? Thanks.
+> > 
+> > Somewhat belatedly, but I think we could.  Bjorn, do you have a preference
+> > for which tree this goes through?  I don't remember if we'd come to an
+> > agreement on that or not, sorry...
 > 
-> I did, but checkpatch didn't catch this. I'll fix in next patch-set.
-> 
-> Thanks for your review.
+> Actually, let me at least take a look at these.  I noticed that
+> renames caused some of the ACPI docs to end up with lines >80 columns,
+> and I'd prefer to avoid that.  So maybe I'll take these after all if
+> that's OK.
 
-checkpatch is brainless about the types of variables/arguments.
-
-coccinelle is another very useful tool so you could also run
-scripts/coccicheck on your sources.
-
-see: Documentation/dev-tools/coccinelle.rst
-
-
+I applied these to pci/docs for v5.3, thanks!
