@@ -2,270 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66AD02FA10
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 12:15:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFC312FA45
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 12:28:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728032AbfE3KPx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 06:15:53 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33778 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725440AbfE3KPw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 06:15:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C25D9374;
-        Thu, 30 May 2019 03:15:51 -0700 (PDT)
-Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8E2533F5AF;
-        Thu, 30 May 2019 03:15:50 -0700 (PDT)
-Date:   Thu, 30 May 2019 11:15:45 +0100
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-api@vger.kernel.org
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: [PATCH v9 00/16] Add utilization clamping support
-Message-ID: <20190530101545.gdznufqxeddl3rjp@e110439-lin>
-References: <20190515094459.10317-1-patrick.bellasi@arm.com>
+        id S1728048AbfE3K1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 06:27:51 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33312 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726428AbfE3K1u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 06:27:50 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4UAM3sX135888
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 06:27:48 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2stc763tjk-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 06:27:48 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Thu, 30 May 2019 11:27:46 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 30 May 2019 11:27:41 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4UAReQt47120454
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 30 May 2019 10:27:40 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 794BC4C046;
+        Thu, 30 May 2019 10:27:40 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9ABA84C040;
+        Thu, 30 May 2019 10:27:37 +0000 (GMT)
+Received: from [9.124.31.34] (unknown [9.124.31.34])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 30 May 2019 10:27:37 +0000 (GMT)
+Subject: Re: [PATCH] perf: Fix oops when kthread execs user process
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Young Xiao <92siuyang@gmail.com>, linux@armlinux.org.uk,
+        mark.rutland@arm.com, mingo@redhat.com, bp@alien8.de,
+        hpa@zytor.com, x86@kernel.org, kan.liang@linux.intel.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ravi.bangoria@linux.vnet.ibm.com, mpe@ellerman.id.au,
+        acme@redhat.com, eranian@google.com, fweisbec@gmail.com,
+        jolsa@redhat.com, Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <1559046689-24091-1-git-send-email-92siuyang@gmail.com>
+ <20190528140103.GT2623@hirez.programming.kicks-ass.net>
+ <20190528153224.GE20758@fuggles.cambridge.arm.com>
+ <20190528173228.GW2623@hirez.programming.kicks-ass.net>
+ <20190529091733.GA4485@fuggles.cambridge.arm.com>
+ <20190529101042.GN2623@hirez.programming.kicks-ass.net>
+ <20190529102022.GC4485@fuggles.cambridge.arm.com>
+ <20190529125557.GU2623@hirez.programming.kicks-ass.net>
+ <efcd5cf4-3501-f3b6-bf47-145a9ef19a53@linux.ibm.com>
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date:   Thu, 30 May 2019 15:57:36 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190515094459.10317-1-patrick.bellasi@arm.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <efcd5cf4-3501-f3b6-bf47-145a9ef19a53@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19053010-0020-0000-0000-00000341EE47
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19053010-0021-0000-0000-00002194F31E
+Message-Id: <8b55f79a-c324-0701-e85f-c7797a60a708@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-30_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905300079
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tejun,
-this is just a gentle ping.
 
-I had a chance to speak with Peter and Rafael at the last OSPM and
-they both seems to be reasonably happy with the current status of the
-core bits.
 
-Thus, it would be very useful if you can jump into the discussion and
-start the review of the cgroups integration bits.
-You can find them in the last 5 patches of this series.
+On 5/30/19 2:08 PM, Ravi Bangoria wrote:
+>> ---
+>> Subject: perf: Fix perf_sample_regs_user()
+>> From: Peter Zijlstra <peterz@infradead.org>
+>> Date: Wed May 29 14:37:24 CEST 2019
+>>
+>> perf_sample_regs_user() uses 'current->mm' to test for the presence of
+>> userspace, but this is insufficient, consider use_mm().
+>>
+>> A better test is: '!(current->flags & PF_KTHREAD)', exec() clears
+>> PF_KTHREAD after it sets the new ->mm but before it drops to userspace
+>> for the first time.
+> 
+> This looks correct. I'll give it a try.
+> 
+>>
+>> Possibly obsoletes: bf05fc25f268 ("powerpc/perf: Fix oops when kthread execs user process")
+>>
+>> Reported-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+>> Reported-by: Young Xiao <92siuyang@gmail.com>
+>> Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+>> Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+>> Cc: Michael Ellerman <mpe@ellerman.id.au>
+>> Cc: Jiri Olsa <jolsa@redhat.com>
+>> Cc: Frederic Weisbecker <fweisbec@gmail.com>
+>> Cc: Stephane Eranian <eranian@google.com>
+>> Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+>> Acked-by: Will Deacon <will.deacon@arm.com>
+>> Fixes: 4018994f3d87 ("perf: Add ability to attach user level registers dump to sample")
+>> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+>> ---
+>>  kernel/events/core.c |    2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> --- a/kernel/events/core.c
+>> +++ b/kernel/events/core.c
+>> @@ -5923,7 +5923,7 @@ static void perf_sample_regs_user(struct
+>>  	if (user_mode(regs)) {
+>>  		regs_user->abi = perf_reg_abi(current);
+>>  		regs_user->regs = regs;
+>> -	} else if (current->mm) {
+>> +	} else if (!(current->flags & PF_KTHREAD)) {
 
-Luckily on the CGroup side, we don't start from ground zero.
-Many aspects and pain points have been already discussed in the past
-and have been addressed by the current version.
+With this patch applied and my patch reverted, I still see it crashing
+because current->flags does not have PF_KTHREAD set. Sample trace with
+v5.0 kernel:
 
-For you benefit, here is a list of previously discussed items:
 
- - A child can never obtain more than its ancestors
-   https://lore.kernel.org/lkml/20180426185845.GO1911913@devbig577.frc2.facebook.com/
+   BUG: Kernel NULL pointer dereference at 0x00000000
+   Faulting instruction address: 0xc0000000000f1a6c
+   Oops: Kernel access of bad area, sig: 11 [#1]
+   LE SMP NR_CPUS=2048 NUMA pSeries
+   CPU: 17 PID: 3241 Comm: systemd-cgroups Kdump: loaded Not tainted 5.0.0+ #7
+   NIP:  c0000000000f1a6c LR: c0000000002acc7c CTR: c0000000002a8f90
+   REGS: c0000001e80469a0 TRAP: 0300   Not tainted  (5.0.0+)
+   MSR:  8000000000001033 <SF,ME,IR,DR,RI,LE>  CR: 48022448  XER: 20000000
+   CFAR: c00000000000deb4 DAR: 0000000000000000 DSISR: 40000000 IRQMASK: 1 
+   GPR00: c0000000002acc7c c0000001e8046c30 c000000001607500 0000000000000000 
+   GPR04: 0000000000000000 0000000000000000 0000000000000000 c000000000128618 
+   GPR08: 000007ffffffffff 0000000000000000 ffffffffffffffff c00000000001cd40 
+   GPR12: c000000000446fd8 c00000003ffdf080 00000000ffff0000 0000000000000007 
+   GPR16: c0000001edd74988 c0000001edd60400 00007fff89801130 000000000005e1b0 
+   GPR20: c0000001edb77a08 c0000001e8047208 c0000001f03d9800 c0000001e8046e00 
+   GPR24: 000000000000b1af c000000001126938 c0000001f03d9b28 0000000000010000 
+   GPR28: c0000001e8046d30 0000000000000000 0000000000000000 0000000000000000 
+   NIP [c0000000000f1a6c] perf_reg_value+0x5c/0xc0
+   LR [c0000000002acc7c] perf_output_sample_regs+0x6c/0xd0
+   Call Trace:
+   [c0000001e8046c30] [c0000000002acc7c] perf_output_sample_regs+0x6c/0xd0 (unreliable)
+   [c0000001e8046c80] [c0000000002b9cd0] perf_output_sample+0x620/0x8c0
+   [c0000001e8046d10] [c0000000002ba6b4] perf_event_output_forward+0x64/0x90
+   [c0000001e8046d80] [c0000000002b2908] __perf_event_overflow+0x88/0x1e0
+   [c0000001e8046dd0] [c0000000000f3d18] record_and_restart+0x288/0x670
+   [c0000001e8047180] [c0000000000f4c18] perf_event_interrupt+0x2b8/0x4b0
+   [c0000001e8047280] [c00000000002b380] performance_monitor_exception+0x50/0x70
+   [c0000001e80472a0] [c000000000009ca0] performance_monitor_common+0x110/0x120
+   --- interrupt: f01 at slice_scan_available+0x20/0xc0
+       LR = slice_find_area+0x174/0x210
+   [c0000001e8047630] [c000000000083ea0] slice_get_unmapped_area+0x3d0/0x7f0
+   [c0000001e8047ae0] [c00000000032d5b0] get_unmapped_area+0xa0/0x170
+   [c0000001e8047b10] [c00000000001cd40] arch_setup_additional_pages+0xc0/0x1c0
+   [c0000001e8047b60] [c000000000446fd8] load_elf_binary+0xb48/0x1580
+   [c0000001e8047c80] [c0000000003c3938] search_binary_handler+0xe8/0x2a0
+   [c0000001e8047d10] [c0000000003c42f4] __do_execve_file.isra.13+0x694/0x980
+   [c0000001e8047de0] [c000000000128618] call_usermodehelper_exec_async+0x248/0x290
+   [c0000001e8047e20] [c00000000000b65c] ret_from_kernel_thread+0x5c/0x80
+   Instruction dump:
+   7c9e2378 7c7f1b78 f8010010 f821ffd1 419e0044 3d22ff6b 7bc41764 3929ae10 
+   7d29202e 2b890150 419d003c 38210030 <7c7f482a> e8010010 ebc1fff0 ebe1fff8 
+   ---[ end trace 54f3492ad1d403d8 ]---
 
- - Enforcing consistency rules among parent-child groups
-   https://lore.kernel.org/lkml/20180410200514.GA793541@devbig577.frc2.facebook.com/
 
- - Use "effective" attributes to enforce restrictions:
-   https://lore.kernel.org/lkml/20180409222417.GK3126663@devbig577.frc2.facebook.com
-   https://lore.kernel.org/lkml/20180410200514.GA793541@devbig577.frc2.facebook.com
-
- - Tasks on a subgroup can only be more boosted and/or capped,
-   i.e. parent always set an upper bound on both max and min clamps
-   https://lore.kernel.org/lkml/20180409222417.GK3126663@devbig577.frc2.facebook.com
-   https://lore.kernel.org/lkml/20180410200514.GA793541@devbig577.frc2.facebook.com
-
- - Put everything at system level outside of the cgroup interface,
-   i.e. no root group tunable attributes
-   https://lore.kernel.org/lkml/20180409222417.GK3126663@devbig577.frc2.facebook.com/
-
- - CGroups don't need any hierarchical behaviors on their own
-   https://lore.kernel.org/lkml/20180723153040.GG1934745@devbig577.frc2.facebook.com/
-
-Looking forward to get some more feedbacks from you.
-
-Cheers,
-Patrick
-
-On 15-May 10:44, Patrick Bellasi wrote:
-> Hi all, this is a respin of:
-> 
->   https://lore.kernel.org/lkml/20190402104153.25404-1-patrick.bellasi@arm.com/
-> 
-> which includes the following main changes:
-> 
->  - fix "max local update" by moving into uclamp_rq_inc_id()
->  - use for_each_clamp_id() and uclamp_se_set() to make code less fragile
->  - rename sysfs node: s/sched_uclamp_util_{min,max}/sched_util_clamp_{min,max}/
->  - removed not used uclamp_eff_bucket_id()
->  - move uclamp_bucket_base_value() definition into patch using it
->  - get rid of not necessary SCHED_POLICY_MAX define
->  - update sched_setattr() syscall to just force the current policy on
->    SCHED_FLAG_KEEP_POLICY
->  - return EOPNOTSUPP from uclamp_validate() on !CONFIG_UCLAMP_TASK
->  - make alloc_uclamp_sched_group() a void function
->  - simplify bits_per() definition
->  - add rq's lockdep assert to uclamp_rq_{inc,dec}_id()
-> 
-> With the above, I think we captured all the major inputs from Peter [1].
-> Thus, this v9 is likely the right version to unlock Tejun's review [2] on the
-> remaining cgroup related bits, i.e. patches [12-16].
-> 
-> Cheers Patrick
-> 
-> 
-> Series Organization
-> ===================
-> 
-> The series is organized into these main sections:
-> 
->  - Patches [01-07]: Per task (primary) API
->  - Patches [08-09]: Schedutil integration for FAIR and RT tasks
->  - Patches [10-11]: Integration with EAS's energy_compute()
->  - Patches [12-16]: Per task group (secondary) API
-> 
-> It is based on today's tip/sched/core and the full tree is available here:
-> 
->    git://linux-arm.org/linux-pb.git   lkml/utilclamp_v9
->    http://www.linux-arm.org/git?p=linux-pb.git;a=shortlog;h=refs/heads/lkml/utilclamp_v9
-> 
-> 
-> Newcomer's Short Abstract
-> =========================
-> 
-> The Linux scheduler tracks a "utilization" signal for each scheduling entity
-> (SE), e.g. tasks, to know how much CPU time they use. This signal allows the
-> scheduler to know how "big" a task is and, in principle, it can support
-> advanced task placement strategies by selecting the best CPU to run a task.
-> Some of these strategies are represented by the Energy Aware Scheduler [3].
-> 
-> When the schedutil cpufreq governor is in use, the utilization signal allows
-> the Linux scheduler to also drive frequency selection. The CPU utilization
-> signal, which represents the aggregated utilization of tasks scheduled on that
-> CPU, is used to select the frequency which best fits the workload generated by
-> the tasks.
-> 
-> The current translation of utilization values into a frequency selection is
-> simple: we go to max for RT tasks or to the minimum frequency which can
-> accommodate the utilization of DL+FAIR tasks.
-> However, utilization values by themselves cannot convey the desired
-> power/performance behaviors of each task as intended by user-space.
-> As such they are not ideally suited for task placement decisions.
-> 
-> Task placement and frequency selection policies in the kernel can be improved
-> by taking into consideration hints coming from authorized user-space elements,
-> like for example the Android middleware or more generally any "System
-> Management Software" (SMS) framework.
-> 
-> Utilization clamping is a mechanism which allows to "clamp" (i.e. filter) the
-> utilization generated by RT and FAIR tasks within a range defined by user-space.
-> The clamped utilization value can then be used, for example, to enforce a
-> minimum and/or maximum frequency depending on which tasks are active on a CPU.
-> 
-> The main use-cases for utilization clamping are:
-> 
->  - boosting: better interactive response for small tasks which
->    are affecting the user experience.
-> 
->    Consider for example the case of a small control thread for an external
->    accelerator (e.g. GPU, DSP, other devices). Here, from the task utilization
->    the scheduler does not have a complete view of what the task's requirements
->    are and, if it's a small utilization task, it keeps selecting a more energy
->    efficient CPU, with smaller capacity and lower frequency, thus negatively
->    impacting the overall time required to complete task activations.
-> 
->  - capping: increase energy efficiency for background tasks not affecting the
->    user experience.
-> 
->    Since running on a lower capacity CPU at a lower frequency is more energy
->    efficient, when the completion time is not a main goal, then capping the
->    utilization considered for certain (maybe big) tasks can have positive
->    effects, both on energy consumption and thermal headroom.
->    This feature allows also to make RT tasks more energy friendly on mobile
->    systems where running them on high capacity CPUs and at the maximum
->    frequency is not required.
-> 
-> From these two use-cases, it's worth noticing that frequency selection
-> biasing, introduced by patches 9 and 10 of this series, is just one possible
-> usage of utilization clamping. Another compelling extension of utilization
-> clamping is in helping the scheduler in making tasks placement decisions.
-> 
-> Utilization is (also) a task specific property the scheduler uses to know
-> how much CPU bandwidth a task requires, at least as long as there is idle time.
-> Thus, the utilization clamp values, defined either per-task or per-task_group,
-> can represent tasks to the scheduler as being bigger (or smaller) than what
-> they actually are.
-> 
-> Utilization clamping thus enables interesting additional optimizations, for
-> example on asymmetric capacity systems like Arm big.LITTLE and DynamIQ CPUs,
-> where:
-> 
->  - boosting: try to run small/foreground tasks on higher-capacity CPUs to
->    complete them faster despite being less energy efficient.
-> 
->  - capping: try to run big/background tasks on low-capacity CPUs to save power
->    and thermal headroom for more important tasks
-> 
-> This series does not present this additional usage of utilization clamping but
-> it's an integral part of the EAS feature set, where [4] is one of its main
-> components.
-> 
-> Android kernels use SchedTune, a solution similar to utilization clamping, to
-> bias both 'frequency selection' and 'task placement'. This series provides the
-> foundation to add similar features to mainline while focusing, for the
-> time being, just on schedutil integration.
-> 
-> 
-> References
-> ==========
-> 
-> [1] Message-ID: <20190509130215.GV2623@hirez.programming.kicks-ass.net>
->     https://lore.kernel.org/lkml/20190509130215.GV2623@hirez.programming.kicks-ass.net/
-> 
-> [2] Message-ID: <20180911162827.GJ1100574@devbig004.ftw2.facebook.com>
->     https://lore.kernel.org/lkml/20180911162827.GJ1100574@devbig004.ftw2.facebook.com/
-> 
-> [3] Energy Aware Scheduling
->     https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/scheduler/sched-energy.txt?h=v5.1
-> 
-> [4] Expressing per-task/per-cgroup performance hints
->     Linux Plumbers Conference 2018
->     https://linuxplumbersconf.org/event/2/contributions/128/
-> 
-> 
-> Patrick Bellasi (16):
->   sched/core: uclamp: Add CPU's clamp buckets refcounting
->   sched/core: uclamp: Add bucket local max tracking
->   sched/core: uclamp: Enforce last task's UCLAMP_MAX
->   sched/core: uclamp: Add system default clamps
->   sched/core: Allow sched_setattr() to use the current policy
->   sched/core: uclamp: Extend sched_setattr() to support utilization
->     clamping
->   sched/core: uclamp: Reset uclamp values on RESET_ON_FORK
->   sched/core: uclamp: Set default clamps for RT tasks
->   sched/cpufreq: uclamp: Add clamps for FAIR and RT tasks
->   sched/core: uclamp: Add uclamp_util_with()
->   sched/fair: uclamp: Add uclamp support to energy_compute()
->   sched/core: uclamp: Extend CPU's cgroup controller
->   sched/core: uclamp: Propagate parent clamps
->   sched/core: uclamp: Propagate system defaults to root group
->   sched/core: uclamp: Use TG's clamps to restrict TASK's clamps
->   sched/core: uclamp: Update CPU's refcount on TG's clamp changes
-> 
->  Documentation/admin-guide/cgroup-v2.rst |  46 ++
->  include/linux/log2.h                    |  34 ++
->  include/linux/sched.h                   |  58 ++
->  include/linux/sched/sysctl.h            |  11 +
->  include/linux/sched/topology.h          |   6 -
->  include/uapi/linux/sched.h              |  14 +-
->  include/uapi/linux/sched/types.h        |  66 ++-
->  init/Kconfig                            |  75 +++
->  kernel/sched/core.c                     | 754 +++++++++++++++++++++++-
->  kernel/sched/cpufreq_schedutil.c        |  22 +-
->  kernel/sched/fair.c                     |  44 +-
->  kernel/sched/rt.c                       |   4 +
->  kernel/sched/sched.h                    | 123 +++-
->  kernel/sysctl.c                         |  16 +
->  14 files changed, 1229 insertions(+), 44 deletions(-)
-> 
-> -- 
-> 2.21.0
-> 
-
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
