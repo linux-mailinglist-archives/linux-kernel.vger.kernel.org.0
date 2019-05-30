@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 274672EDDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:42:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 613B22EEA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:49:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732722AbfE3Dlx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:41:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33922 "EHLO mail.kernel.org"
+        id S2387586AbfE3DtG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:49:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57952 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731836AbfE3DVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:21:17 -0400
+        id S1728539AbfE3DUQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:20:16 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F07F249E9;
-        Thu, 30 May 2019 03:21:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2659248AB;
+        Thu, 30 May 2019 03:20:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186476;
-        bh=EgEBR+LW7aPityi0nSX6jest/8qVjEOqYTWihBjxUd0=;
+        s=default; t=1559186415;
+        bh=+djWcGgy2No/+yoPtO7vIEh47nbEQRqJVwaSz8tf3Vc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H1UKHKFVqBMh/CLjwsAiWPTN4zuUGV7WXEuk/ioccdJw47GMhF9nR55uLb9cFwKXP
-         B8mlraLmF8ph17dx6IxmA0ssuFZdDyNdRk2+fvZZpOzekttt4cZrh42V1pzqeK1olk
-         /elfli+4eJOYEQcXFHTwzMJf6fL3ohXn+jXoeNZ4=
+        b=T/gFYsFbBpiBV4ir/Kxc/okcAzOLwt2xBIdGQgRkQsrIXjfVX7rre1qAE+N8iFbfU
+         iZNsuYhYI07E+ExrlA+iCGMQEMkkNHtqxQ499idG8c/BVFr++lzRKNH3sYzAX53CTH
+         9bsVO5TyCbQAdlDKURUju1+97AuEOssD58dh/RI0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        stable@vger.kernel.org, Chris Lesiak <chris.lesiak@licor.com>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 109/128] spi: tegra114: reset controller on probe
-Date:   Wed, 29 May 2019 20:07:21 -0700
-Message-Id: <20190530030454.205476919@linuxfoundation.org>
+Subject: [PATCH 4.14 188/193] spi: Fix zero length xfer bug
+Date:   Wed, 29 May 2019 20:07:22 -0700
+Message-Id: <20190530030513.151403941@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,104 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 019194933339b3e9b486639c8cb3692020844d65 ]
+[ Upstream commit 5442dcaa0d90fc376bdfc179a018931a8f43dea4 ]
 
-Fixes: SPI driver can be built as module so perform SPI controller reset
-on probe to make sure it is in valid state before initiating transfer.
+This fixes a bug for messages containing both zero length and
+unidirectional xfers.
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+The function spi_map_msg will allocate dummy tx and/or rx buffers
+for use with unidirectional transfers when the hardware can only do
+a bidirectional transfer.  That dummy buffer will be used in place
+of a NULL buffer even when the xfer length is 0.
+
+Then in the function __spi_map_msg, if he hardware can dma,
+the zero length xfer will have spi_map_buf called on the dummy
+buffer.
+
+Eventually, __sg_alloc_table is called and returns -EINVAL
+because nents == 0.
+
+This fix prevents the error by not using the dummy buffer when
+the xfer length is zero.
+
+Signed-off-by: Chris Lesiak <chris.lesiak@licor.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-tegra114.c | 32 ++++++++++++++++++--------------
- 1 file changed, 18 insertions(+), 14 deletions(-)
+ drivers/spi/spi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index 73779cecc3bbc..705f515863d4f 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -1067,27 +1067,19 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 
- 	spi_irq = platform_get_irq(pdev, 0);
- 	tspi->irq = spi_irq;
--	ret = request_threaded_irq(tspi->irq, tegra_spi_isr,
--			tegra_spi_isr_thread, IRQF_ONESHOT,
--			dev_name(&pdev->dev), tspi);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "Failed to register ISR for IRQ %d\n",
--					tspi->irq);
--		goto exit_free_master;
--	}
- 
- 	tspi->clk = devm_clk_get(&pdev->dev, "spi");
- 	if (IS_ERR(tspi->clk)) {
- 		dev_err(&pdev->dev, "can not get clock\n");
- 		ret = PTR_ERR(tspi->clk);
--		goto exit_free_irq;
-+		goto exit_free_master;
- 	}
- 
- 	tspi->rst = devm_reset_control_get(&pdev->dev, "spi");
- 	if (IS_ERR(tspi->rst)) {
- 		dev_err(&pdev->dev, "can not get reset\n");
- 		ret = PTR_ERR(tspi->rst);
--		goto exit_free_irq;
-+		goto exit_free_master;
- 	}
- 
- 	tspi->max_buf_size = SPI_FIFO_DEPTH << 2;
-@@ -1095,7 +1087,7 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 
- 	ret = tegra_spi_init_dma_param(tspi, true);
- 	if (ret < 0)
--		goto exit_free_irq;
-+		goto exit_free_master;
- 	ret = tegra_spi_init_dma_param(tspi, false);
- 	if (ret < 0)
- 		goto exit_rx_dma_free;
-@@ -1117,18 +1109,32 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "pm runtime get failed, e = %d\n", ret);
- 		goto exit_pm_disable;
- 	}
-+
-+	reset_control_assert(tspi->rst);
-+	udelay(2);
-+	reset_control_deassert(tspi->rst);
- 	tspi->def_command1_reg  = SPI_M_S;
- 	tegra_spi_writel(tspi, tspi->def_command1_reg, SPI_COMMAND1);
- 	pm_runtime_put(&pdev->dev);
-+	ret = request_threaded_irq(tspi->irq, tegra_spi_isr,
-+				   tegra_spi_isr_thread, IRQF_ONESHOT,
-+				   dev_name(&pdev->dev), tspi);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to register ISR for IRQ %d\n",
-+			tspi->irq);
-+		goto exit_pm_disable;
-+	}
- 
- 	master->dev.of_node = pdev->dev.of_node;
- 	ret = devm_spi_register_master(&pdev->dev, master);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "can not register to master err %d\n", ret);
--		goto exit_pm_disable;
-+		goto exit_free_irq;
- 	}
- 	return ret;
- 
-+exit_free_irq:
-+	free_irq(spi_irq, tspi);
- exit_pm_disable:
- 	pm_runtime_disable(&pdev->dev);
- 	if (!pm_runtime_status_suspended(&pdev->dev))
-@@ -1136,8 +1142,6 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 	tegra_spi_deinit_dma_param(tspi, false);
- exit_rx_dma_free:
- 	tegra_spi_deinit_dma_param(tspi, true);
--exit_free_irq:
--	free_irq(spi_irq, tspi);
- exit_free_master:
- 	spi_master_put(master);
- 	return ret;
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 670dbb7a8500a..56035637d8f6c 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -991,6 +991,8 @@ static int spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
+ 		if (max_tx || max_rx) {
+ 			list_for_each_entry(xfer, &msg->transfers,
+ 					    transfer_list) {
++				if (!xfer->len)
++					continue;
+ 				if (!xfer->tx_buf)
+ 					xfer->tx_buf = ctlr->dummy_tx;
+ 				if (!xfer->rx_buf)
 -- 
 2.20.1
 
