@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DAF92F1F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:17:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C9142ECBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:25:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732167AbfE3ERS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:17:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39024 "EHLO mail.kernel.org"
+        id S2387531AbfE3DZY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:25:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730427AbfE3DPl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:15:41 -0400
+        id S1730078AbfE3DS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:18:26 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CECD24547;
-        Thu, 30 May 2019 03:15:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3C5C247C2;
+        Thu, 30 May 2019 03:18:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186140;
-        bh=IDRiz9yMnUVa9EqiwOcEISUc1H4lpoejZIC77XXYcXc=;
+        s=default; t=1559186305;
+        bh=i1++ugkGFy9cTN8Pw+YwfRoCFDrSB4l8XHeSdcQnPQ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YtbbNe5/LUDUwvqGUtkNQdzeEO2+iizIeLxTlohA9dNFnKC3osxPOezLuyvf/EJmM
-         vPfnMctVezrPR1d1lCINoSm9+Qfc52ZRh4Kyciu3uFzaupm1l8kGILKbudAg3IP6CM
-         rXSzA5Y+YfJq9vTa0ZVXjFFJf3BmJ8szQ6tpv1ro=
+        b=rg9YKHunu036IWBb0qgJSb3zg2aiOJDghrSQot/TXAaD0tg0PgPgvGQ+6zf4puISp
+         94ZanE0aJ38vUc//g4bI8d5dcFJqH9bZBIksG0rqMqfl6hNDB5wyECbhwC8YLghH6J
+         CyAv51R84fEShfsPhuGkMc7unf5sKM+mf4WvpHR0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <jsmart2021@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
+        Kees Cook <keescook@chromium.org>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 315/346] scsi: lpfc: Fix use-after-free mailbox cmd completion
+Subject: [PATCH 4.19 230/276] overflow: Fix -Wtype-limits compilation warnings
 Date:   Wed, 29 May 2019 20:06:28 -0700
-Message-Id: <20190530030556.781145612@linuxfoundation.org>
+Message-Id: <20190530030539.509570163@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,57 +46,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9b1640686470fbbd1c6efb35ada6fe1427ea8d0f ]
+[ Upstream commit dc7fe518b0493faa0af0568d6d8c2a33c00f58d0 ]
 
-When unloading the driver, mailbox commands may be sent without holding a
-reference on the ndlp. By the time the mailbox command completes, the ndlp
-may have reduced its ref counts and been freed.  The problem was reported
-by KASAN.
+Attempt to use check_shl_overflow() with inputs of unsigned type
+produces the following compilation warnings.
 
-While unregistering due to driver unload, have the completion noop'd by
-setting the ndlp context NULL'd. Due to the unload, no further action was
-necessary.  Also, while reviewing this path, the generic nulling of the
-context after handling should be slightly moved.
+drivers/infiniband/hw/mlx5/qp.c: In function _set_user_rq_size_:
+./include/linux/overflow.h:230:6: warning: comparison of unsigned
+expression >= 0 is always true [-Wtype-limits]
+   _s >= 0 && _s < 8 * sizeof(*d) ? _s : 0;  \
+      ^~
+drivers/infiniband/hw/mlx5/qp.c:5820:6: note: in expansion of macro _check_shl_overflow_
+  if (check_shl_overflow(rwq->wqe_count, rwq->wqe_shift,
+&rwq->buf_size))
+      ^~~~~~~~~~~~~~~~~~
+./include/linux/overflow.h:232:26: warning: comparison of unsigned expression < 0 is always false [-Wtype-limits]
+  (_to_shift != _s || *_d < 0 || _a < 0 ||   \
+                          ^
+drivers/infiniband/hw/mlx5/qp.c:5820:6: note: in expansion of macro _check_shl_overflow_
+  if (check_shl_overflow(rwq->wqe_count, rwq->wqe_shift, &rwq->buf_size))
+      ^~~~~~~~~~~~~~~~~~
+./include/linux/overflow.h:232:36: warning: comparison of unsigned expression < 0 is always false [-Wtype-limits]
+  (_to_shift != _s || *_d < 0 || _a < 0 ||   \
+                                    ^
+drivers/infiniband/hw/mlx5/qp.c:5820:6: note: in expansion of macro _check_shl_overflow_
+  if (check_shl_overflow(rwq->wqe_count, rwq->wqe_shift,&rwq->buf_size))
+      ^~~~~~~~~~~~~~~~~~
 
-Reported by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <jsmart2021@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 0c66847793d1 ("overflow.h: Add arithmetic shift helper")
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Acked-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/lpfc/lpfc_hbadisc.c | 4 ++++
- drivers/scsi/lpfc/lpfc_sli.c     | 2 +-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ include/linux/overflow.h | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_hbadisc.c b/drivers/scsi/lpfc/lpfc_hbadisc.c
-index 2f01e5397a11d..8d553cfb85aa1 100644
---- a/drivers/scsi/lpfc/lpfc_hbadisc.c
-+++ b/drivers/scsi/lpfc/lpfc_hbadisc.c
-@@ -4879,6 +4879,10 @@ lpfc_unreg_rpi(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp)
- 					 * accept PLOGIs after unreg_rpi_cmpl
- 					 */
- 					acc_plogi = 0;
-+				} else if (vport->load_flag & FC_UNLOADING) {
-+					mbox->ctx_ndlp = NULL;
-+					mbox->mbox_cmpl =
-+						lpfc_sli_def_mbox_cmpl;
- 				} else {
- 					mbox->ctx_ndlp = ndlp;
- 					mbox->mbox_cmpl =
-diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
-index 2242e9b3ca128..d3a942971d818 100644
---- a/drivers/scsi/lpfc/lpfc_sli.c
-+++ b/drivers/scsi/lpfc/lpfc_sli.c
-@@ -2518,8 +2518,8 @@ lpfc_sli_def_mbox_cmpl(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmb)
- 			} else {
- 				ndlp->nlp_flag &= ~NLP_UNREG_INP;
- 			}
-+			pmb->ctx_ndlp = NULL;
- 		}
--		pmb->ctx_ndlp = NULL;
- 	}
+diff --git a/include/linux/overflow.h b/include/linux/overflow.h
+index 40b48e2133cb8..15eb85de92269 100644
+--- a/include/linux/overflow.h
++++ b/include/linux/overflow.h
+@@ -36,6 +36,12 @@
+ #define type_max(T) ((T)((__type_half_max(T) - 1) + __type_half_max(T)))
+ #define type_min(T) ((T)((T)-type_max(T)-(T)1))
  
- 	/* Check security permission status on INIT_LINK mailbox command */
++/*
++ * Avoids triggering -Wtype-limits compilation warning,
++ * while using unsigned data types to check a < 0.
++ */
++#define is_non_negative(a) ((a) > 0 || (a) == 0)
++#define is_negative(a) (!(is_non_negative(a)))
+ 
+ #ifdef COMPILER_HAS_GENERIC_BUILTIN_OVERFLOW
+ /*
+@@ -227,10 +233,10 @@
+ 	typeof(d) _d = d;						\
+ 	u64 _a_full = _a;						\
+ 	unsigned int _to_shift =					\
+-		_s >= 0 && _s < 8 * sizeof(*d) ? _s : 0;		\
++		is_non_negative(_s) && _s < 8 * sizeof(*d) ? _s : 0;	\
+ 	*_d = (_a_full << _to_shift);					\
+-	(_to_shift != _s || *_d < 0 || _a < 0 ||			\
+-		(*_d >> _to_shift) != _a);				\
++	(_to_shift != _s || is_negative(*_d) || is_negative(_a) ||	\
++	(*_d >> _to_shift) != _a);					\
+ })
+ 
+ /**
 -- 
 2.20.1
 
