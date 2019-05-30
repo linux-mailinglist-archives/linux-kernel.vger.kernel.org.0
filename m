@@ -2,50 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 278D22F820
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 09:55:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DA092F826
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 09:58:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727787AbfE3HzD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 03:55:03 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:39859 "EHLO
+        id S1727835AbfE3H6i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 03:58:38 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:57853 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726027AbfE3HzC (ORCPT
+        with ESMTP id S1726638AbfE3H6h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 03:55:02 -0400
+        Thu, 30 May 2019 03:58:37 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4U7sm7Z2899831
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4U7tXNg2899989
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 30 May 2019 00:54:49 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4U7sm7Z2899831
+        Thu, 30 May 2019 00:55:33 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4U7tXNg2899989
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1559202889;
-        bh=LK8Cf6X9rKPqO355G3EsTQDa9jTgl+V8xjJ9X6E7rlU=;
+        s=2019051801; t=1559202934;
+        bh=2MQ5twDQclop9Lhg3OvxGH0hHZhtQ57iu1DY2lcjYYo=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=PXtXDXkkm2adzMjd6a6jg1FP5mexo3GxOYTcQGPgXPXAo8nR4Bgepola5KEkFKjo9
-         L5G6c0ubnYFv29xQK3Wji9BGmPqKvS/yX8hS8/Ghwicmkm7HiGQrNXNFjkoAce84jG
-         9kS6v9WyaNmtYV4wZi07qzsOBGNoy3T8hna/66Dn6kS2ck+JYTuBBhH2SgMt3KfncG
-         8dBb1Pe19l3xnyUDfSzQH8Qwey4xZdEoo5uK9hb4bbJ9zLVy5A05KQp5aRDqs1c/hX
-         llCbSHqDOlSYpARSMH9FNHPefiBVIpLAXrFKP0M5DUKu/hdko+xuAHwm1Z5EQlNeEy
-         2KrwWzUnsqKVA==
+        b=FNoQF98Oor6fJoRP1zleewAh0atv1+M9wsBKraueC0MS2VFWWtiIvTtZANn7C2Vx9
+         oPEkr5XdoZ5jawk+d8HVxNaJLedQ+k9/MdWyOQsIiYr8uBFm06ZafWLEk3gtgAoDF+
+         j5AfGMSVOZGlJwUio1cDarpdPph2hI0IGDt8rexVd3f18ZlQWxRgYULUzvJ95nBOnU
+         QKN+mXa6VDIhZV2wA9oa64Fve/4kQPQPEve4MhRx7Yaj1/7jSugMFnS4XxGK0dZ3Do
+         w6ZErJ99NNo9a4Tlnjj8C1Rvf6W1cvMNwVo9EPwZzkJhozhiNHkD/Pe5Xh0s95Rd7a
+         EFXXQ8kYKR90Q==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4U7smGU2899828;
-        Thu, 30 May 2019 00:54:48 -0700
-Date:   Thu, 30 May 2019 00:54:48 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4U7tWCu2899986;
+        Thu, 30 May 2019 00:55:32 -0700
+Date:   Thu, 30 May 2019 00:55:32 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-a2d8a1585e35444789c1c8cf7e2e51fb15589880@git.kernel.org>
-Cc:     adrian.hunter@intel.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, acme@redhat.com, jolsa@redhat.com,
-        hpa@zytor.com, mingo@kernel.org
-Reply-To: mingo@kernel.org, hpa@zytor.com, adrian.hunter@intel.com,
-          linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          acme@redhat.com, jolsa@redhat.com
-In-Reply-To: <20190520113728.14389-4-adrian.hunter@intel.com>
-References: <20190520113728.14389-4-adrian.hunter@intel.com>
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-8529f2e67313fb623da7ce81bc14cf12ccc0e12f@git.kernel.org>
+Cc:     ak@linux.intel.com, adrian.hunter@intel.com, hpa@zytor.com,
+        peterz@infradead.org, alexander.shishkin@linux.intel.com,
+        linux-kernel@vger.kernel.org, acme@redhat.com, tglx@linutronix.de,
+        mingo@kernel.org, songliubraving@fb.com, sdf@google.com,
+        jolsa@kernel.org, namhyung@kernel.org
+Reply-To: peterz@infradead.org, ak@linux.intel.com,
+          adrian.hunter@intel.com, hpa@zytor.com, mingo@kernel.org,
+          songliubraving@fb.com, sdf@google.com, jolsa@kernel.org,
+          namhyung@kernel.org, linux-kernel@vger.kernel.org,
+          alexander.shishkin@linux.intel.com, tglx@linutronix.de,
+          acme@redhat.com
+In-Reply-To: <20190508132010.14512-7-jolsa@kernel.org>
+References: <20190508132010.14512-7-jolsa@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf intel-pt: Fix itrace defaults for perf script
- intel-pt documentation
-Git-Commit-ID: a2d8a1585e35444789c1c8cf7e2e51fb15589880
+Subject: [tip:perf/core] perf machine: Keep zero in pgoff BPF map
+Git-Commit-ID: 8529f2e67313fb623da7ce81bc14cf12ccc0e12f
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -63,59 +67,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a2d8a1585e35444789c1c8cf7e2e51fb15589880
-Gitweb:     https://git.kernel.org/tip/a2d8a1585e35444789c1c8cf7e2e51fb15589880
-Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Mon, 20 May 2019 14:37:09 +0300
+Commit-ID:  8529f2e67313fb623da7ce81bc14cf12ccc0e12f
+Gitweb:     https://git.kernel.org/tip/8529f2e67313fb623da7ce81bc14cf12ccc0e12f
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Wed, 8 May 2019 15:20:04 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 28 May 2019 18:37:42 -0300
 
-perf intel-pt: Fix itrace defaults for perf script intel-pt documentation
+perf machine: Keep zero in pgoff BPF map
 
-Fix intel-pt documentation to reflect the change of itrace defaults for
-perf script.
+With pgoff set to zero, the map__map_ip function will return BPF
+addresses based from 0, which is what we need when we read the data from
+a BPF DSO.
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: stable@vger.kernel.org
-Fixes: 4eb068157121 ("perf script: Make itrace script default to all calls")
-Link: http://lkml.kernel.org/r/20190520113728.14389-4-adrian.hunter@intel.com
+Adding BPF symbols with mapped IP addresses as well.
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Acked-by: Song Liu <songliubraving@fb.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stanislav Fomichev <sdf@google.com>
+Link: http://lkml.kernel.org/r/20190508132010.14512-7-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Documentation/intel-pt.txt | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ tools/perf/util/machine.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/Documentation/intel-pt.txt b/tools/perf/Documentation/intel-pt.txt
-index 115eaacc455f..60d99e5e7921 100644
---- a/tools/perf/Documentation/intel-pt.txt
-+++ b/tools/perf/Documentation/intel-pt.txt
-@@ -88,16 +88,16 @@ smaller.
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index dc7aafe45a2b..f5569f005cf3 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -704,12 +704,12 @@ static int machine__process_ksymbol_register(struct machine *machine,
+ 			return -ENOMEM;
  
- To represent software control flow, "branches" samples are produced.  By default
- a branch sample is synthesized for every single branch.  To get an idea what
--data is available you can use the 'perf script' tool with no parameters, which
--will list all the samples.
-+data is available you can use the 'perf script' tool with all itrace sampling
-+options, which will list all the samples.
+ 		map->start = event->ksymbol_event.addr;
+-		map->pgoff = map->start;
+ 		map->end = map->start + event->ksymbol_event.len;
+ 		map_groups__insert(&machine->kmaps, map);
+ 	}
  
- 	perf record -e intel_pt//u ls
--	perf script
-+	perf script --itrace=ibxwpe
- 
- An interesting field that is not printed by default is 'flags' which can be
- displayed as follows:
- 
--	perf script -Fcomm,tid,pid,time,cpu,event,trace,ip,sym,dso,addr,symoff,flags
-+	perf script --itrace=ibxwpe -F+flags
- 
- The flags are "bcrosyiABEx" which stand for branch, call, return, conditional,
- system, asynchronous, interrupt, transaction abort, trace begin, trace end, and
-@@ -713,7 +713,7 @@ Having no option is the same as
- 
- which, in turn, is the same as
- 
--	--itrace=ibxwpe
-+	--itrace=cepwx
- 
- The letters are:
- 
+-	sym = symbol__new(event->ksymbol_event.addr, event->ksymbol_event.len,
++	sym = symbol__new(map->map_ip(map, map->start),
++			  event->ksymbol_event.len,
+ 			  0, 0, event->ksymbol_event.name);
+ 	if (!sym)
+ 		return -ENOMEM;
