@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C009D2FEFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 17:09:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9F822FEF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 17:08:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727727AbfE3PJD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 11:09:03 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50264 "EHLO
+        id S1727547AbfE3PIz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 11:08:55 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51794 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727603AbfE3PI4 (ORCPT
+        by vger.kernel.org with ESMTP id S1727445AbfE3PIy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 11:08:56 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4UF2DYC094883
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 11:08:55 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2stepvhjkh-1
+        Thu, 30 May 2019 11:08:54 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4UF2buk085426
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 11:08:53 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2stf2187qm-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 11:08:55 -0400
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 11:08:53 -0400
 Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 30 May 2019 16:08:54 +0100
+        Thu, 30 May 2019 16:08:52 +0100
 Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Thu, 30 May 2019 16:08:48 +0100
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4UF8kn423134604
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4UF8kUZ18612722
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Thu, 30 May 2019 15:08:47 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D3CC4B205F;
+        by IMSVA (Postfix) with ESMTP id BF2F4B2067;
         Thu, 30 May 2019 15:08:46 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9A37BB206C;
+        by IMSVA (Postfix) with ESMTP id 9D601B2070;
         Thu, 30 May 2019 15:08:46 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.216])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Thu, 30 May 2019 15:08:46 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 6730716C3620; Thu, 30 May 2019 08:08:48 -0700 (PDT)
+        id 6D17816C4086; Thu, 30 May 2019 08:08:48 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
@@ -51,20 +51,20 @@ Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E . McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 1/4] rcu/sync: Kill rcu_sync_type/gp_type
-Date:   Thu, 30 May 2019 08:08:43 -0700
+Subject: [PATCH tip/core/rcu 2/4] uprobes: Use DEFINE_STATIC_PERCPU_RWSEM() to initialize dup_mmap_sem
+Date:   Thu, 30 May 2019 08:08:44 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190530150816.GA32130@linux.ibm.com>
 References: <20190530150816.GA32130@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19053015-0072-0000-0000-000004354E9A
+x-cbid: 19053015-0060-0000-0000-00000349F775
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00011185; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01210788; UDB=6.00636159; IPR=6.00991823;
- MB=3.00027120; MTD=3.00000008; XFM=3.00000015; UTC=2019-05-30 15:08:52
+ PH=3.00000004; SC=3.00000286; SDB=6.01210788; UDB=6.00636160; IPR=6.00991822;
+ MB=3.00027120; MTD=3.00000008; XFM=3.00000015; UTC=2019-05-30 15:08:51
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19053015-0073-0000-0000-00004C6B664E
-Message-Id: <20190530150846.32644-1-paulmck@linux.ibm.com>
+x-cbparentid: 19053015-0061-0000-0000-0000498DFFAF
+Message-Id: <20190530150846.32644-2-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-30_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -79,230 +79,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oleg Nesterov <oleg@redhat.com>
 
-Now that the RCU flavors have been consolidated, rcu_sync_type makes no
-sense because none of internal update functions aside from .held() depend
-on gp_type.  This commit therefore removes this field and consolidates
-the relevant code.
+Use DEFINE_STATIC_PERCPU_RWSEM() to initialize dup_mmap_sem.
 
 Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-[ paulmck: Added RCU and RCU-bh checks to rcu_sync_is_idle(). ]
-[ paulmck: And applied subsequent feedback from Oleg Nesterov. ]
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 ---
- include/linux/percpu-rwsem.h  |  2 +-
- include/linux/rcu_sync.h      | 36 +++++++----------------
- kernel/locking/percpu-rwsem.c |  2 +-
- kernel/rcu/sync.c             | 55 ++++-------------------------------
- 4 files changed, 17 insertions(+), 78 deletions(-)
+ kernel/events/uprobes.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/include/linux/percpu-rwsem.h b/include/linux/percpu-rwsem.h
-index 03cb4b6f842e..6887636ea169 100644
---- a/include/linux/percpu-rwsem.h
-+++ b/include/linux/percpu-rwsem.h
-@@ -20,7 +20,7 @@ struct percpu_rw_semaphore {
- #define DEFINE_STATIC_PERCPU_RWSEM(name)				\
- static DEFINE_PER_CPU(unsigned int, __percpu_rwsem_rc_##name);		\
- static struct percpu_rw_semaphore name = {				\
--	.rss = __RCU_SYNC_INITIALIZER(name.rss, RCU_SCHED_SYNC),	\
-+	.rss = __RCU_SYNC_INITIALIZER(name.rss),			\
- 	.read_count = &__percpu_rwsem_rc_##name,			\
- 	.rw_sem = __RWSEM_INITIALIZER(name.rw_sem),			\
- 	.writer = __RCUWAIT_INITIALIZER(name.writer),			\
-diff --git a/include/linux/rcu_sync.h b/include/linux/rcu_sync.h
-index 6fc53a1345b3..87971e85519c 100644
---- a/include/linux/rcu_sync.h
-+++ b/include/linux/rcu_sync.h
-@@ -13,8 +13,6 @@
- #include <linux/wait.h>
- #include <linux/rcupdate.h>
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 78f61bfc6b79..97c367f0a9aa 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -46,7 +46,7 @@ static DEFINE_SPINLOCK(uprobes_treelock);	/* serialize rbtree access */
+ static struct mutex uprobes_mmap_mutex[UPROBES_HASH_SZ];
+ #define uprobes_mmap_hash(v)	(&uprobes_mmap_mutex[((unsigned long)(v)) % UPROBES_HASH_SZ])
  
--enum rcu_sync_type { RCU_SYNC, RCU_SCHED_SYNC, RCU_BH_SYNC };
+-static struct percpu_rw_semaphore dup_mmap_sem;
++DEFINE_STATIC_PERCPU_RWSEM(dup_mmap_sem);
+ 
+ /* Have a copy of original instruction */
+ #define UPROBE_COPY_INSN	0
+@@ -2302,7 +2302,5 @@ void __init uprobes_init(void)
+ 	for (i = 0; i < UPROBES_HASH_SZ; i++)
+ 		mutex_init(&uprobes_mmap_mutex[i]);
+ 
+-	BUG_ON(percpu_init_rwsem(&dup_mmap_sem));
 -
- /* Structure to mediate between updaters and fastpath-using readers.  */
- struct rcu_sync {
- 	int			gp_state;
-@@ -23,52 +21,38 @@ struct rcu_sync {
- 
- 	int			cb_state;
- 	struct rcu_head		cb_head;
--
--	enum rcu_sync_type	gp_type;
- };
- 
--extern void rcu_sync_lockdep_assert(struct rcu_sync *);
--
- /**
-  * rcu_sync_is_idle() - Are readers permitted to use their fastpaths?
-  * @rsp: Pointer to rcu_sync structure to use for synchronization
-  *
-- * Returns true if readers are permitted to use their fastpaths.
-- * Must be invoked within an RCU read-side critical section whose
-- * flavor matches that of the rcu_sync struture.
-+ * Returns true if readers are permitted to use their fastpaths.  Must be
-+ * invoked within some flavor of RCU read-side critical section.
-  */
- static inline bool rcu_sync_is_idle(struct rcu_sync *rsp)
- {
--#ifdef CONFIG_PROVE_RCU
--	rcu_sync_lockdep_assert(rsp);
--#endif
-+	RCU_LOCKDEP_WARN(!rcu_read_lock_held() &&
-+			 !rcu_read_lock_bh_held() &&
-+			 !rcu_read_lock_sched_held(),
-+			 "suspicious rcu_sync_is_idle() usage");
- 	return !rsp->gp_state; /* GP_IDLE */
- }
- 
--extern void rcu_sync_init(struct rcu_sync *, enum rcu_sync_type);
-+extern void rcu_sync_init(struct rcu_sync *);
- extern void rcu_sync_enter_start(struct rcu_sync *);
- extern void rcu_sync_enter(struct rcu_sync *);
- extern void rcu_sync_exit(struct rcu_sync *);
- extern void rcu_sync_dtor(struct rcu_sync *);
- 
--#define __RCU_SYNC_INITIALIZER(name, type) {				\
-+#define __RCU_SYNC_INITIALIZER(name) {					\
- 		.gp_state = 0,						\
- 		.gp_count = 0,						\
- 		.gp_wait = __WAIT_QUEUE_HEAD_INITIALIZER(name.gp_wait),	\
- 		.cb_state = 0,						\
--		.gp_type = type,					\
- 	}
- 
--#define	__DEFINE_RCU_SYNC(name, type)	\
--	struct rcu_sync_struct name = __RCU_SYNC_INITIALIZER(name, type)
--
--#define DEFINE_RCU_SYNC(name)		\
--	__DEFINE_RCU_SYNC(name, RCU_SYNC)
--
--#define DEFINE_RCU_SCHED_SYNC(name)	\
--	__DEFINE_RCU_SYNC(name, RCU_SCHED_SYNC)
--
--#define DEFINE_RCU_BH_SYNC(name)	\
--	__DEFINE_RCU_SYNC(name, RCU_BH_SYNC)
-+#define	DEFINE_RCU_SYNC(name)	\
-+	struct rcu_sync name = __RCU_SYNC_INITIALIZER(name)
- 
- #endif /* _LINUX_RCU_SYNC_H_ */
-diff --git a/kernel/locking/percpu-rwsem.c b/kernel/locking/percpu-rwsem.c
-index f17dad99eec8..48cab93a47fd 100644
---- a/kernel/locking/percpu-rwsem.c
-+++ b/kernel/locking/percpu-rwsem.c
-@@ -17,7 +17,7 @@ int __percpu_init_rwsem(struct percpu_rw_semaphore *sem,
- 		return -ENOMEM;
- 
- 	/* ->rw_sem represents the whole percpu_rw_semaphore for lockdep */
--	rcu_sync_init(&sem->rss, RCU_SCHED_SYNC);
-+	rcu_sync_init(&sem->rss);
- 	__init_rwsem(&sem->rw_sem, name, rwsem_key);
- 	rcuwait_init(&sem->writer);
- 	sem->readers_block = 0;
-diff --git a/kernel/rcu/sync.c b/kernel/rcu/sync.c
-index a8304d90573f..ee427e138dad 100644
---- a/kernel/rcu/sync.c
-+++ b/kernel/rcu/sync.c
-@@ -10,65 +10,20 @@
- #include <linux/rcu_sync.h>
- #include <linux/sched.h>
- 
--#ifdef CONFIG_PROVE_RCU
--#define __INIT_HELD(func)	.held = func,
--#else
--#define __INIT_HELD(func)
--#endif
--
--static const struct {
--	void (*sync)(void);
--	void (*call)(struct rcu_head *, void (*)(struct rcu_head *));
--	void (*wait)(void);
--#ifdef CONFIG_PROVE_RCU
--	int  (*held)(void);
--#endif
--} gp_ops[] = {
--	[RCU_SYNC] = {
--		.sync = synchronize_rcu,
--		.call = call_rcu,
--		.wait = rcu_barrier,
--		__INIT_HELD(rcu_read_lock_held)
--	},
--	[RCU_SCHED_SYNC] = {
--		.sync = synchronize_rcu,
--		.call = call_rcu,
--		.wait = rcu_barrier,
--		__INIT_HELD(rcu_read_lock_sched_held)
--	},
--	[RCU_BH_SYNC] = {
--		.sync = synchronize_rcu,
--		.call = call_rcu,
--		.wait = rcu_barrier,
--		__INIT_HELD(rcu_read_lock_bh_held)
--	},
--};
--
- enum { GP_IDLE = 0, GP_PENDING, GP_PASSED };
- enum { CB_IDLE = 0, CB_PENDING, CB_REPLAY };
- 
- #define	rss_lock	gp_wait.lock
- 
--#ifdef CONFIG_PROVE_RCU
--void rcu_sync_lockdep_assert(struct rcu_sync *rsp)
--{
--	RCU_LOCKDEP_WARN(!gp_ops[rsp->gp_type].held(),
--			 "suspicious rcu_sync_is_idle() usage");
--}
--
--EXPORT_SYMBOL_GPL(rcu_sync_lockdep_assert);
--#endif
--
- /**
-  * rcu_sync_init() - Initialize an rcu_sync structure
-  * @rsp: Pointer to rcu_sync structure to be initialized
-  * @type: Flavor of RCU with which to synchronize rcu_sync structure
-  */
--void rcu_sync_init(struct rcu_sync *rsp, enum rcu_sync_type type)
-+void rcu_sync_init(struct rcu_sync *rsp)
- {
- 	memset(rsp, 0, sizeof(*rsp));
- 	init_waitqueue_head(&rsp->gp_wait);
--	rsp->gp_type = type;
- }
- 
- /**
-@@ -114,7 +69,7 @@ void rcu_sync_enter(struct rcu_sync *rsp)
- 
- 	WARN_ON_ONCE(need_wait && need_sync);
- 	if (need_sync) {
--		gp_ops[rsp->gp_type].sync();
-+		synchronize_rcu();
- 		rsp->gp_state = GP_PASSED;
- 		wake_up_all(&rsp->gp_wait);
- 	} else if (need_wait) {
-@@ -167,7 +122,7 @@ static void rcu_sync_func(struct rcu_head *rhp)
- 		 * to catch a later GP.
- 		 */
- 		rsp->cb_state = CB_PENDING;
--		gp_ops[rsp->gp_type].call(&rsp->cb_head, rcu_sync_func);
-+		call_rcu(&rsp->cb_head, rcu_sync_func);
- 	} else {
- 		/*
- 		 * We're at least a GP after rcu_sync_exit(); eveybody will now
-@@ -195,7 +150,7 @@ void rcu_sync_exit(struct rcu_sync *rsp)
- 	if (!--rsp->gp_count) {
- 		if (rsp->cb_state == CB_IDLE) {
- 			rsp->cb_state = CB_PENDING;
--			gp_ops[rsp->gp_type].call(&rsp->cb_head, rcu_sync_func);
-+			call_rcu(&rsp->cb_head, rcu_sync_func);
- 		} else if (rsp->cb_state == CB_PENDING) {
- 			rsp->cb_state = CB_REPLAY;
- 		}
-@@ -220,7 +175,7 @@ void rcu_sync_dtor(struct rcu_sync *rsp)
- 	spin_unlock_irq(&rsp->rss_lock);
- 
- 	if (cb_state != CB_IDLE) {
--		gp_ops[rsp->gp_type].wait();
-+		rcu_barrier();
- 		WARN_ON_ONCE(rsp->cb_state != CB_IDLE);
- 	}
+ 	BUG_ON(register_die_notifier(&uprobe_exception_nb));
  }
 -- 
 2.17.1
