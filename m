@@ -2,43 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF5BE2F081
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:04:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E1992ED22
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:32:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731531AbfE3EEl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:04:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48858 "EHLO mail.kernel.org"
+        id S2388481AbfE3DaC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:30:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731276AbfE3DRu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:17:50 -0400
+        id S1732447AbfE3DVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:21:06 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 08B3B2472D;
-        Thu, 30 May 2019 03:17:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFCFE249BA;
+        Thu, 30 May 2019 03:21:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186270;
-        bh=dCVDXips007izB5sZEkFSjcUty+mk+m6uZJDYn5+XbQ=;
+        s=default; t=1559186465;
+        bh=78dTw/2Ij/o4RIrj5YvCJVkYMev6x6q0GKgvZBu8x3w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rnx3H752W2wD973HP3sBnCKfni1EpPTyU7dI/byW4cZwozskJV/JbA+Uyah+Lz2Kn
-         W9+topTJRqY1Q7zHn5rjUn2lp75wgsjL0IPYuwnsTd7z2Rva155A1Y+f/OGdj7MYn3
-         3CUTyf/W0/0s5bm1SADxnTAg5oqvQ2ET6aMuWIuQ=
+        b=YvcpnOPIqBjY0n2UKz+uopuW07mxPljmeOSGcaGtlDMEeXUEId5y09WKxNxClzvap
+         HG/LYYuh2vpiyWGTuSGZQbGxthDRQjh8DRdGlsXX2SjThjBoE1JDlob+2vizuh4goB
+         G3WtnkO0Bxt+QMmIjgW022LutB2TB97qO7WOGupA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
+        stable@vger.kernel.org, "Tobin C. Harding" <tobin@kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
         Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 209/276] x86/uaccess: Fix up the fixup
+Subject: [PATCH 4.9 035/128] sched/cpufreq: Fix kobject memleak
 Date:   Wed, 29 May 2019 20:06:07 -0700
-Message-Id: <20190530030538.201874533@linuxfoundation.org>
+Message-Id: <20190530030440.634225526@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,51 +49,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b69656fa7ea2f75e47d7bd5b9430359fa46488af ]
+[ Upstream commit 9a4f26cc98d81b67ecc23b890c28e2df324e29f3 ]
 
-New tooling got confused about this:
+Currently the error return path from kobject_init_and_add() is not
+followed by a call to kobject_put() - which means we are leaking
+the kobject.
 
-  arch/x86/lib/memcpy_64.o: warning: objtool: .fixup+0x7: return with UACCESS enabled
+Fix it by adding a call to kobject_put() in the error path of
+kobject_init_and_add().
 
-While the code isn't wrong, it is tedious (if at all possible) to
-figure out what function a particular chunk of .fixup belongs to.
-
-This then confuses the objtool uaccess validation. Instead of
-returning directly from the .fixup, jump back into the right function.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Tobin C. Harding <tobin@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tobin C. Harding <tobin@kernel.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Link: http://lkml.kernel.org/r/20190430001144.24890-1-tobin@kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/lib/memcpy_64.S | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/cpufreq/cpufreq.c          | 1 +
+ drivers/cpufreq/cpufreq_governor.c | 2 ++
+ 2 files changed, 3 insertions(+)
 
-diff --git a/arch/x86/lib/memcpy_64.S b/arch/x86/lib/memcpy_64.S
-index 3b24dc05251c7..9d05572370edc 100644
---- a/arch/x86/lib/memcpy_64.S
-+++ b/arch/x86/lib/memcpy_64.S
-@@ -257,6 +257,7 @@ ENTRY(__memcpy_mcsafe)
- 	/* Copy successful. Return zero */
- .L_done_memcpy_trap:
- 	xorl %eax, %eax
-+.L_done:
- 	ret
- ENDPROC(__memcpy_mcsafe)
- EXPORT_SYMBOL_GPL(__memcpy_mcsafe)
-@@ -273,7 +274,7 @@ EXPORT_SYMBOL_GPL(__memcpy_mcsafe)
- 	addl	%edx, %ecx
- .E_trailing_bytes:
- 	mov	%ecx, %eax
--	ret
-+	jmp	.L_done
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index a38a23f0b3f41..e917521a3ef9b 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -1065,6 +1065,7 @@ static struct cpufreq_policy *cpufreq_policy_alloc(unsigned int cpu)
+ 				   cpufreq_global_kobject, "policy%u", cpu);
+ 	if (ret) {
+ 		pr_err("%s: failed to init policy->kobj: %d\n", __func__, ret);
++		kobject_put(&policy->kobj);
+ 		goto err_free_real_cpus;
+ 	}
  
- 	/*
- 	 * For write fault handling, given the destination is unaligned,
+diff --git a/drivers/cpufreq/cpufreq_governor.c b/drivers/cpufreq/cpufreq_governor.c
+index 38d1a8216084c..32c9524a6ec54 100644
+--- a/drivers/cpufreq/cpufreq_governor.c
++++ b/drivers/cpufreq/cpufreq_governor.c
+@@ -449,6 +449,8 @@ int cpufreq_dbs_governor_init(struct cpufreq_policy *policy)
+ 	/* Failure, so roll back. */
+ 	pr_err("initialization failed (dbs_data kobject init error %d)\n", ret);
+ 
++	kobject_put(&dbs_data->attr_set.kobj);
++
+ 	policy->governor_data = NULL;
+ 
+ 	if (!have_governor_per_policy())
 -- 
 2.20.1
 
