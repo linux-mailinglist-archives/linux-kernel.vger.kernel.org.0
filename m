@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC9E12ED34
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:33:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60ADB2F254
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:21:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388270AbfE3D3A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:29:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58518 "EHLO mail.kernel.org"
+        id S1731470AbfE3EUp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:20:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727760AbfE3DUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:20:25 -0400
+        id S1728814AbfE3DPS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:18 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FF4B2490A;
-        Thu, 30 May 2019 03:20:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0960245AF;
+        Thu, 30 May 2019 03:15:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186424;
-        bh=qFkxutTbj0TRkageDbkkvxXWLLYOJQBF3JpcacOw0hY=;
+        s=default; t=1559186117;
+        bh=G4hVXeq2ByHVmP4mBWsFS8NLtjwe5l/gnn3w99tu5ZI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UKs1QtIpmTTwvdmUOGm9NKrfcRegxg+2mR0sLyRodU9vdFsmFKLVShfQ0Cud4I/o3
-         MLgeJ0k1zRR4IjuOexKXb86352IIJg0Gi1JKZh36IyXThlhmCDaSZk5cFQR1LhecGG
-         ZPDMUn38D2q8WYfI+DJVfZQQkuhc05yUjDhDPNFs=
+        b=0mjsWtASOCUaq4uqBcb20r8XUNtHHRXTfdw4b2UfBEcYw1DhaamkgKsV5APcbNXWP
+         Td6B1eF5nBnM/iajNIOemqgj43oMEChP2GY6KHIkliI/S+mgQ+6zpnbypTY4G6kXRv
+         z2pwujXE6Fx1G0DWzYixamw0p8p+WmhYEqNmMZvc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Tobin C. Harding" <tobin@kernel.org>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.9 012/128] btrfs: sysfs: dont leak memory when failing add fsid
+        stable@vger.kernel.org, kernel test robot <rong.a.chen@intel.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 271/346] rcutorture: Fix cleanup path for invalid torture_type strings
 Date:   Wed, 29 May 2019 20:05:44 -0700
-Message-Id: <20190530030436.622023744@linuxfoundation.org>
+Message-Id: <20190530030554.692352966@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,53 +44,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tobin C. Harding <tobin@kernel.org>
+[ Upstream commit b813afae7ab6a5e91b4e16cc567331d9c2ae1f04 ]
 
-commit e32773357d5cc271b1d23550b3ed026eb5c2a468 upstream.
+If the specified rcutorture.torture_type is not in the rcu_torture_init()
+function's torture_ops[] array, rcutorture prints some console messages
+and then invokes rcu_torture_cleanup() to set state so that a future
+torture test can run.  However, rcu_torture_cleanup() also attempts to
+end the test that didn't actually start, and in doing so relies on the
+value of cur_ops, a value that is not particularly relevant in this case.
+This can result in confusing output or even follow-on failures due to
+attempts to use facilities that have not been properly initialized.
 
-A failed call to kobject_init_and_add() must be followed by a call to
-kobject_put().  Currently in the error path when adding fs_devices we
-are missing this call.  This could be fixed by calling
-btrfs_sysfs_remove_fsid() if btrfs_sysfs_add_fsid() returns an error or
-by adding a call to kobject_put() directly in btrfs_sysfs_add_fsid().
-Here we choose the second option because it prevents the slightly
-unusual error path handling requirements of kobject from leaking out
-into btrfs functions.
+This commit therefore sets the value of cur_ops to NULL in this case
+and inserts a check near the beginning of rcu_torture_cleanup(),
+thus avoiding relying on an irrelevant cur_ops value.
 
-Add a call to kobject_put() in the error path of kobject_add_and_init().
-This causes the release method to be called if kobject_init_and_add()
-fails.  open_tree() is the function that calls btrfs_sysfs_add_fsid()
-and the error code in this function is already written with the
-assumption that the release method is called during the error path of
-open_tree() (as seen by the call to btrfs_sysfs_remove_fsid() under the
-fail_fsdev_sysfs label).
-
-Cc: stable@vger.kernel.org # v4.4+
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Tobin C. Harding <tobin@kernel.org>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reported-by: kernel test robot <rong.a.chen@intel.com>
+Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/sysfs.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ kernel/rcu/rcutorture.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/fs/btrfs/sysfs.c
-+++ b/fs/btrfs/sysfs.c
-@@ -751,7 +751,12 @@ int btrfs_sysfs_add_fsid(struct btrfs_fs
- 	fs_devs->fsid_kobj.kset = btrfs_kset;
- 	error = kobject_init_and_add(&fs_devs->fsid_kobj,
- 				&btrfs_ktype, parent, "%pU", fs_devs->fsid);
--	return error;
-+	if (error) {
-+		kobject_put(&fs_devs->fsid_kobj);
-+		return error;
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index f6e85faa4ff4b..584b0d1da0a3b 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -2092,6 +2092,10 @@ rcu_torture_cleanup(void)
+ 			cur_ops->cb_barrier();
+ 		return;
+ 	}
++	if (!cur_ops) {
++		torture_cleanup_end();
++		return;
 +	}
-+
-+	return 0;
- }
  
- int btrfs_sysfs_add_mounted(struct btrfs_fs_info *fs_info)
+ 	rcu_torture_barrier_cleanup();
+ 	torture_stop_kthread(rcu_torture_fwd_prog, fwd_prog_task);
+@@ -2257,6 +2261,7 @@ rcu_torture_init(void)
+ 		pr_cont("\n");
+ 		WARN_ON(!IS_MODULE(CONFIG_RCU_TORTURE_TEST));
+ 		firsterr = -EINVAL;
++		cur_ops = NULL;
+ 		goto unwind;
+ 	}
+ 	if (cur_ops->fqs == NULL && fqs_duration != 0) {
+-- 
+2.20.1
+
 
 
