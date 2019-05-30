@@ -2,39 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69E082F309
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:26:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC3362F38D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:33:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730227AbfE3EZz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:25:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35454 "EHLO mail.kernel.org"
+        id S1727724AbfE3DNu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:13:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729938AbfE3DOl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:14:41 -0400
+        id S1728661AbfE3DLp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:11:45 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A7B223D83;
-        Thu, 30 May 2019 03:14:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 742332449A;
+        Thu, 30 May 2019 03:11:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186080;
-        bh=uhUTGgs0Qbrk39i5znOTzYXW2P3rC5XQlxdAYOie0qQ=;
+        s=default; t=1559185904;
+        bh=dI6k68iBI9a6EZae/YyfhT5m9Df2yEszOFsOyZfW4Ow=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NQP0exsI1gWtQ7pIRxsaEYjEilQqCcOAsEk9g24XZxrmI/mWRhHBRAyCQkVy3CBxK
-         y3OKuLnH3TkGYvhcARb0G71CoYEcbSuXjBXQ+AmDdLs6uitiMP9E5RgqsbDIV6frv4
-         F7bWVTwbqxzJdcG8cM2VYvMiRUAv+0T6zlZ10F7o=
+        b=gYJLN38BcTwjpG+T79mNaV/INQ4uNJjYuo1X2GedKLeJcvOZvVdfx5T/aahpKwXed
+         Cbqjt/sIPZehyYzgGu9OuiMbY9hEyAuM8LLnySySjLYmwXtOwt+rPdCRZ/sdfrw+nv
+         q0N+BoZfopwo/qp4uyBVakmj0ACkU6nlfgKvRn6I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jann Horn <jannh@google.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 199/346] x86/microcode: Fix the ancient deprecated microcode loading method
-Date:   Wed, 29 May 2019 20:04:32 -0700
-Message-Id: <20190530030551.315782824@linuxfoundation.org>
+        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        Timur Tabi <timur@kernel.org>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linuxppc-dev@lists.ozlabs.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 275/405] ASoC: fsl_utils: fix a leaked reference by adding missing of_node_put
+Date:   Wed, 29 May 2019 20:04:33 -0700
+Message-Id: <20190530030554.808270059@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +51,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 24613a04ad1c0588c10f4b5403ca60a73d164051 ]
+[ Upstream commit c705247136a523488eac806bd357c3e5d79a7acd ]
 
-Commit
+The call to of_parse_phandle returns a node pointer with refcount
+incremented thus it must be explicitly decremented after the last
+usage.
 
-  2613f36ed965 ("x86/microcode: Attempt late loading only when new microcode is present")
+Detected by coccinelle with the following warnings:
+./sound/soc/fsl/fsl_utils.c:74:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 38, but without a corresponding     object release within this function.
 
-added the new define UCODE_NEW to denote that an update should happen
-only when newer microcode (than installed on the system) has been found.
-
-But it missed adjusting that for the old /dev/cpu/microcode loading
-interface. Fix it.
-
-Fixes: 2613f36ed965 ("x86/microcode: Attempt late loading only when new microcode is present")
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jann Horn <jannh@google.com>
-Link: https://lkml.kernel.org/r/20190405133010.24249-3-bp@alien8.de
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: Timur Tabi <timur@kernel.org>
+Cc: Nicolin Chen <nicoleotsuka@gmail.com>
+Cc: Xiubo Li <Xiubo.Lee@gmail.com>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.com>
+Cc: alsa-devel@alsa-project.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/microcode/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/soc/fsl/fsl_utils.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
-index 97f9ada9cedaf..fc70d39b804f0 100644
---- a/arch/x86/kernel/cpu/microcode/core.c
-+++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -418,8 +418,9 @@ static int do_microcode_update(const void __user *buf, size_t size)
- 		if (ustate == UCODE_ERROR) {
- 			error = -1;
- 			break;
--		} else if (ustate == UCODE_OK)
-+		} else if (ustate == UCODE_NEW) {
- 			apply_microcode_on_target(cpu);
-+		}
+diff --git a/sound/soc/fsl/fsl_utils.c b/sound/soc/fsl/fsl_utils.c
+index 9981668ab5909..040d06b89f00a 100644
+--- a/sound/soc/fsl/fsl_utils.c
++++ b/sound/soc/fsl/fsl_utils.c
+@@ -71,6 +71,7 @@ int fsl_asoc_get_dma_channel(struct device_node *ssi_np,
+ 	iprop = of_get_property(dma_np, "cell-index", NULL);
+ 	if (!iprop) {
+ 		of_node_put(dma_np);
++		of_node_put(dma_channel_np);
+ 		return -EINVAL;
  	}
- 
- 	return error;
+ 	*dma_id = be32_to_cpup(iprop);
 -- 
 2.20.1
 
