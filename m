@@ -2,115 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B60F42F049
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:03:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A81292F06E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:04:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387994AbfE3EC3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:02:29 -0400
-Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:6226 "EHLO
-        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388150AbfE3ECW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 00:02:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1559188941; x=1590724941;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=UkRYNR5hm0gc7X8fxqjNJQmr3n5Ab3tDm3l1W9pl4Bw=;
-  b=W98FsN7u+uCMaZmEJeuY//BVPO9DY4FRBfJ3Hx77kb2QEbdgKN1rMghY
-   bHjOg+WrOT69K23mYXqkh65CIom9I5wWqzYQpxoZW/kp8gxE+vEliyxBl
-   2zXW/jStey7QStRjvDC5ytNo2ft00BJDDHBZTYYDeA02PU9uV/hmO8wMz
-   s=;
-X-IronPort-AV: E=Sophos;i="5.60,529,1549929600"; 
-   d="scan'208";a="768214243"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2c-168cbb73.us-west-2.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP; 30 May 2019 04:02:19 +0000
-Received: from EX13MTAUWB001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan3.pdx.amazon.com [10.236.137.198])
-        by email-inbound-relay-2c-168cbb73.us-west-2.amazon.com (Postfix) with ESMTPS id 0630FA2204;
-        Thu, 30 May 2019 04:02:18 +0000 (UTC)
-Received: from EX13D05UWB002.ant.amazon.com (10.43.161.50) by
- EX13MTAUWB001.ant.amazon.com (10.43.161.249) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 30 May 2019 04:02:18 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (10.43.61.82) by
- EX13D05UWB002.ant.amazon.com (10.43.161.50) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 30 May 2019 04:02:18 +0000
-Received: from localhost (10.94.220.85) by mail-relay.amazon.com
- (10.43.61.243) with Microsoft SMTP Server id 15.0.1367.3 via Frontend
- Transport; Thu, 30 May 2019 04:02:17 +0000
-Date:   Wed, 29 May 2019 21:02:17 -0700
-From:   Eduardo Valentin <eduval@amazon.com>
-To:     "Wang, Haiyue" <haiyue.wang@linux.intel.com>
-CC:     Eduardo Valentin <eduval@amazon.com>, <wsa@the-dreams.de>,
-        <brendanhiggins@google.com>, <linux-i2c@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <openbmc@lists.ozlabs.org>,
-        <jarkko.nikula@linux.intel.com>, <andriy.shevchenko@intel.com>,
-        <jae.hyun.yoo@linux.intel.com>
-Subject: Re: [PATCH i2c/slave-mqueue v5] i2c: slave-mqueue: add a slave
- backend to receive and queue messages
-Message-ID: <20190530040217.GB17772@u40b0340c692b58f6553c.ant.amazon.com>
-References: <1524503192-4176-1-git-send-email-haiyue.wang@linux.intel.com>
- <20190523220345.GA3417@u40b0340c692b58f6553c.ant.amazon.com>
- <35a9d066-c732-cb00-04a5-438c948915ae@linux.intel.com>
- <20190524173353.GA6428@u40b0340c692b58f6553c.ant.amazon.com>
- <bf1e8f0b-5bd0-fb43-c19b-9487603b9ee3@linux.intel.com>
- <20190529231100.GA18339@u40b0340c692b58f6553c.ant.amazon.com>
- <75cb9514-bb3a-9c3b-05df-0c3517bd775a@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <75cb9514-bb3a-9c3b-05df-0c3517bd775a@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1725897AbfE3ED7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:03:59 -0400
+Received: from mga12.intel.com ([192.55.52.136]:6382 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726031AbfE3EDz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 00:03:55 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 May 2019 21:03:54 -0700
+X-ExtLoop1: 1
+Received: from hyungwoo-ubuntu.sc.intel.com ([10.3.62.78])
+  by FMSMGA003.fm.intel.com with ESMTP; 29 May 2019 21:03:54 -0700
+From:   Hyungwoo Yang <hyungwoo.yang@intel.com>
+To:     enric.balletbo@collabora.com
+Cc:     linux-kernel@vger.kernel.org, rushikesh.s.kadam@intel.com,
+        jettrink@chromium.org
+Subject: [PATCH] platform/chrome: fix crash during suspend
+Date:   Wed, 29 May 2019 21:03:54 -0700
+Message-Id: <1559189034-11268-1-git-send-email-hyungwoo.yang@intel.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 09:33:34AM +0800, Wang, Haiyue wrote:
-> 
-> 在 2019-05-30 07:11, Eduardo Valentin 写道:
-> >>>>>>+
-> >>>>>>+	case I2C_SLAVE_WRITE_RECEIVED:
-> >>>>>>+		if (msg->len < MQ_MSGBUF_SIZE) {
-> >>>>>>+			msg->buf[msg->len++] = *val;
-> >>>>>Do we need to lock the accesses to msg->buf? how about to msg->len?
-> >>>this code goes access and modify data here, e.g. msg->len and msg->buf.
-> >>>
-> >>>On this case (I2C_SLAVE_WRITE_RECEIVED), this code wont protect access.
-> >>>
-> >>>This can cause concurrence issues if you receive an IRQ when the user
-> >>>is on your bin_read().
-> >>User will not touch 'msg = mq->curr;', just touch 'msg =
-> >>&mq->queue[mq->out];'
-> >What happens if mq->curr == mq->queue[mq->out]?
-> >
-> 1. The Read will check.
-> 
-> +	spin_lock_irqsave(&mq->lock, flags);
-> +	if (mq->out != mq->in) {
-> +		msg = &mq->queue[mq->out];
-> 
-> 2. Flush the oldeast message. ^_^
-> 
-> +	case I2C_SLAVE_STOP:
-> +		if (unlikely(mq->truncated || msg->len < 2))
-> +			break;
-> +
-> +		spin_lock(&mq->lock);
-> +		mq->in = MQ_QUEUE_NEXT(mq->in);
-> +		mq->curr = &mq->queue[mq->in];
-> +		mq->curr->len = 0;
-> +
-> +		/* Flush the oldest message */
-> +		if (mq->out == mq->in)
-> +			mq->out = MQ_QUEUE_NEXT(mq->out);
+Kernel crashes during suspend due to wrong conversion in
+suspend and resume functions.
 
-Yeah, I see. We keep on dropping messages (old ones) when the queue is full...
+Use the proper helper to get ishtp_cl_device instance.
 
-> +		spin_unlock(&mq->lock);
-> 
+Signed-off-by: Hyungwoo Yang <hyungwoo.yang@intel.com>
+---
+ drivers/platform/chrome/cros_ec_ishtp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/platform/chrome/cros_ec_ishtp.c b/drivers/platform/chrome/cros_ec_ishtp.c
+index e504d25..430731c 100644
+--- a/drivers/platform/chrome/cros_ec_ishtp.c
++++ b/drivers/platform/chrome/cros_ec_ishtp.c
+@@ -707,7 +707,7 @@ static int cros_ec_ishtp_reset(struct ishtp_cl_device *cl_device)
+  */
+ static int __maybe_unused cros_ec_ishtp_suspend(struct device *device)
+ {
+-	struct ishtp_cl_device *cl_device = dev_get_drvdata(device);
++	struct ishtp_cl_device *cl_device = ishtp_dev_to_cl_device(device);
+ 	struct ishtp_cl	*cros_ish_cl = ishtp_get_drvdata(cl_device);
+ 	struct ishtp_cl_data *client_data = ishtp_get_client_data(cros_ish_cl);
+ 
+@@ -722,7 +722,7 @@ static int __maybe_unused cros_ec_ishtp_suspend(struct device *device)
+  */
+ static int __maybe_unused cros_ec_ishtp_resume(struct device *device)
+ {
+-	struct ishtp_cl_device *cl_device = dev_get_drvdata(device);
++	struct ishtp_cl_device *cl_device = ishtp_dev_to_cl_device(device);
+ 	struct ishtp_cl	*cros_ish_cl = ishtp_get_drvdata(cl_device);
+ 	struct ishtp_cl_data *client_data = ishtp_get_client_data(cros_ish_cl);
+ 
 -- 
-All the best,
-Eduardo Valentin
+1.9.1
+
