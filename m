@@ -2,41 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 586602EBA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:14:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDE942F285
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:22:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729953AbfE3DOm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:14:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53606 "EHLO mail.kernel.org"
+        id S1730299AbfE3EWy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:22:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728835AbfE3DMH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:07 -0400
+        id S1730086AbfE3DPE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:04 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D13124481;
-        Thu, 30 May 2019 03:12:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6FB9C2456F;
+        Thu, 30 May 2019 03:15:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185927;
-        bh=KcYU3017Pfj0zJ3/1ozBROPqeL6TleTPQN8FGt/U3Lg=;
+        s=default; t=1559186103;
+        bh=dCVDXips007izB5sZEkFSjcUty+mk+m6uZJDYn5+XbQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tsVRsgXZH+j+yn2XEcnyoZPGSEQK3u8xLJF5lBqWvJ4Gk0icNu+RZwBwO4ayIp19d
-         1XmIkyJ7QkKDA7vGA3SnUNAUBaMGl1HRq7bwEdk0ylg7GykSKV36YgS6k2dlvzStX5
-         hxxsY5erfIrnz7iDjrG1fiuWJhQc9wRZp51FnJdw=
+        b=UPGifUcY5Wjymn70p98zbRy9hQ4f/O5ZjmteeuIyN114XU7Lhfczc/0zaiFz65IZ3
+         uJB+1Iav1Zb1Ykk606k49guyQrkads7hUcQw9akiMwT92LgxB4Gm9YBlVZ5Onv48nQ
+         CJUwtIojvFF99hBwsVMVFDWwjD3eyWXSYZ76NUqw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Ertman <david.m.ertman@intel.com>,
-        Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 318/405] ice: Prevent unintended multiple chain resets
+        stable@vger.kernel.org,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 243/346] x86/uaccess: Fix up the fixup
 Date:   Wed, 29 May 2019 20:05:16 -0700
-Message-Id: <20190530030556.862559289@linuxfoundation.org>
+Message-Id: <20190530030553.322995002@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,48 +48,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2ebd4428d93a2f6ce0c813b10a1a43b6a8241fe5 ]
+[ Upstream commit b69656fa7ea2f75e47d7bd5b9430359fa46488af ]
 
-In the current implementation of ice_reset_subtask, if multiple reset
-types are set in the pf->state, the most intrusive one is meant to be
-performed only, but the bits requesting the other types are not being
-cleared. This would lead to another reset being performed the next time
-the service task is scheduled.
+New tooling got confused about this:
 
-Change the flow of ice_reset_subtask so that all reset request bits in
-pf->state are cleared, and we still perform the most intrusive of the
-resets requested.
+  arch/x86/lib/memcpy_64.o: warning: objtool: .fixup+0x7: return with UACCESS enabled
 
-Signed-off-by: Dave Ertman <david.m.ertman@intel.com>
-Signed-off-by: Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+While the code isn't wrong, it is tedious (if at all possible) to
+figure out what function a particular chunk of .fixup belongs to.
+
+This then confuses the objtool uaccess validation. Instead of
+returning directly from the .fixup, jump back into the right function.
+
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/ice/ice_main.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ arch/x86/lib/memcpy_64.S | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
-index ac30288720f71..ba9f88cd138de 100644
---- a/drivers/net/ethernet/intel/ice/ice_main.c
-+++ b/drivers/net/ethernet/intel/ice/ice_main.c
-@@ -416,8 +416,14 @@ static void ice_reset_subtask(struct ice_pf *pf)
- 	 * for the reset now), poll for reset done, rebuild and return.
- 	 */
- 	if (test_bit(__ICE_RESET_OICR_RECV, pf->state)) {
--		clear_bit(__ICE_GLOBR_RECV, pf->state);
--		clear_bit(__ICE_CORER_RECV, pf->state);
-+		/* Perform the largest reset requested */
-+		if (test_and_clear_bit(__ICE_CORER_RECV, pf->state))
-+			reset_type = ICE_RESET_CORER;
-+		if (test_and_clear_bit(__ICE_GLOBR_RECV, pf->state))
-+			reset_type = ICE_RESET_GLOBR;
-+		/* return if no valid reset type requested */
-+		if (reset_type == ICE_RESET_INVAL)
-+			return;
- 		if (!test_bit(__ICE_PREPARED_FOR_RESET, pf->state))
- 			ice_prepare_for_reset(pf);
+diff --git a/arch/x86/lib/memcpy_64.S b/arch/x86/lib/memcpy_64.S
+index 3b24dc05251c7..9d05572370edc 100644
+--- a/arch/x86/lib/memcpy_64.S
++++ b/arch/x86/lib/memcpy_64.S
+@@ -257,6 +257,7 @@ ENTRY(__memcpy_mcsafe)
+ 	/* Copy successful. Return zero */
+ .L_done_memcpy_trap:
+ 	xorl %eax, %eax
++.L_done:
+ 	ret
+ ENDPROC(__memcpy_mcsafe)
+ EXPORT_SYMBOL_GPL(__memcpy_mcsafe)
+@@ -273,7 +274,7 @@ EXPORT_SYMBOL_GPL(__memcpy_mcsafe)
+ 	addl	%edx, %ecx
+ .E_trailing_bytes:
+ 	mov	%ecx, %eax
+-	ret
++	jmp	.L_done
  
+ 	/*
+ 	 * For write fault handling, given the destination is unaligned,
 -- 
 2.20.1
 
