@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8EAB2F23A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:20:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E1C12EE70
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:47:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730517AbfE3ETo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:19:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38554 "EHLO mail.kernel.org"
+        id S2387541AbfE3Drd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:47:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730273AbfE3DPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:15:25 -0400
+        id S1732217AbfE3DUc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:20:32 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D7D324559;
-        Thu, 30 May 2019 03:15:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6A0E2492F;
+        Thu, 30 May 2019 03:20:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186124;
-        bh=NNX8TfOE1eoiQ0tEo8mNTq/l4fQjj0DGRchKEYf1pdQ=;
+        s=default; t=1559186431;
+        bh=WksFeKBKm23ZOKJUdAGeHa17sDokfaDq+8RAvwQ/XTw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g9rLcTr1AK3GEDm1NooLEjMY5ERGFaTRI18Tb/C16Y4VQ67fG/B/n9Vtf/aJd3uPx
-         RE/0MQfNzRbzRb2ZrHLit13ls7/fQgi2HFAc+js8MFJX2Ppol38+rFtnNIL4EUfSlz
-         MBRpZMqSt9+M+uy+jCpK/qEhoG7bmCNqazJWCOVk=
+        b=eSqEyP28PsTMsUpatIThmXy0Tcn5BVmEmwIaoeysDWedNt6jQtGBSZ8qd6wnUEUh5
+         aGvgp5WuKAFJOe7k67li64Ut+APX5p8AztBwhiLRcZy40q6PF3mHUP9xDtTKag4MCH
+         ZVaCkUH9oyGZCLAAtJUZ4zvb31WSNnSo/kM8YFc4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mohan Kumar D <mkumard@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sameer Pujar <spujar@nvidia.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 282/346] dmaengine: tegra210-adma: use devm_clk_*() helpers
+        stable@vger.kernel.org, Ross Lagerwall <ross.lagerwall@citrix.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 023/128] gfs2: Fix lru_count going negative
 Date:   Wed, 29 May 2019 20:05:55 -0700
-Message-Id: <20190530030555.208967873@linuxfoundation.org>
+Message-Id: <20190530030438.979746132@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,108 +44,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f6ed6491d565c336a360471e0c29228e34f4380e ]
+[ Upstream commit 7881ef3f33bb80f459ea6020d1e021fc524a6348 ]
 
-adma driver is using pm_clk_*() interface for managing clock resources.
-With this it is observed that clocks remain ON always. This happens on
-Tegra devices which use BPMP co-processor to manage clock resources,
-where clocks are enabled during prepare phase. This is necessary because
-clocks to BPMP are always blocking. When pm_clk_*() interface is used on
-such Tegra devices, clock prepare count is not balanced till remove call
-happens for the driver and hence clocks are seen ON always. Thus this
-patch replaces pm_clk_*() with devm_clk_*() framework.
+Under certain conditions, lru_count may drop below zero resulting in
+a large amount of log spam like this:
 
-Suggested-by: Mohan Kumar D <mkumard@nvidia.com>
-Reviewed-by: Jonathan Hunter <jonathanh@nvidia.com>
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+vmscan: shrink_slab: gfs2_dump_glock+0x3b0/0x630 [gfs2] \
+    negative objects to delete nr=-1
+
+This happens as follows:
+1) A glock is moved from lru_list to the dispose list and lru_count is
+   decremented.
+2) The dispose function calls cond_resched() and drops the lru lock.
+3) Another thread takes the lru lock and tries to add the same glock to
+   lru_list, checking if the glock is on an lru list.
+4) It is on a list (actually the dispose list) and so it avoids
+   incrementing lru_count.
+5) The glock is moved to lru_list.
+5) The original thread doesn't dispose it because it has been re-added
+   to the lru list but the lru_count has still decreased by one.
+
+Fix by checking if the LRU flag is set on the glock rather than checking
+if the glock is on some list and rearrange the code so that the LRU flag
+is added/removed precisely when the glock is added/removed from lru_list.
+
+Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/tegra210-adma.c | 27 ++++++++++++---------------
- 1 file changed, 12 insertions(+), 15 deletions(-)
+ fs/gfs2/glock.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
-index 08b10274284a8..09b6756366c30 100644
---- a/drivers/dma/tegra210-adma.c
-+++ b/drivers/dma/tegra210-adma.c
-@@ -22,7 +22,6 @@
- #include <linux/of_device.h>
- #include <linux/of_dma.h>
- #include <linux/of_irq.h>
--#include <linux/pm_clock.h>
- #include <linux/pm_runtime.h>
- #include <linux/slab.h>
+diff --git a/fs/gfs2/glock.c b/fs/gfs2/glock.c
+index 7a8b1d72e3d91..efd44d5645d83 100644
+--- a/fs/gfs2/glock.c
++++ b/fs/gfs2/glock.c
+@@ -136,22 +136,26 @@ static int demote_ok(const struct gfs2_glock *gl)
  
-@@ -141,6 +140,7 @@ struct tegra_adma {
- 	struct dma_device		dma_dev;
- 	struct device			*dev;
- 	void __iomem			*base_addr;
-+	struct clk			*ahub_clk;
- 	unsigned int			nr_channels;
- 	unsigned long			rx_requests_reserved;
- 	unsigned long			tx_requests_reserved;
-@@ -637,8 +637,9 @@ static int tegra_adma_runtime_suspend(struct device *dev)
- 	struct tegra_adma *tdma = dev_get_drvdata(dev);
+ void gfs2_glock_add_to_lru(struct gfs2_glock *gl)
+ {
++	if (!(gl->gl_ops->go_flags & GLOF_LRU))
++		return;
++
+ 	spin_lock(&lru_lock);
  
- 	tdma->global_cmd = tdma_read(tdma, ADMA_GLOBAL_CMD);
-+	clk_disable_unprepare(tdma->ahub_clk);
- 
--	return pm_clk_suspend(dev);
-+	return 0;
- }
- 
- static int tegra_adma_runtime_resume(struct device *dev)
-@@ -646,10 +647,11 @@ static int tegra_adma_runtime_resume(struct device *dev)
- 	struct tegra_adma *tdma = dev_get_drvdata(dev);
- 	int ret;
- 
--	ret = pm_clk_resume(dev);
--	if (ret)
-+	ret = clk_prepare_enable(tdma->ahub_clk);
-+	if (ret) {
-+		dev_err(dev, "ahub clk_enable failed: %d\n", ret);
- 		return ret;
--
-+	}
- 	tdma_write(tdma, ADMA_GLOBAL_CMD, tdma->global_cmd);
- 
- 	return 0;
-@@ -692,13 +694,11 @@ static int tegra_adma_probe(struct platform_device *pdev)
- 	if (IS_ERR(tdma->base_addr))
- 		return PTR_ERR(tdma->base_addr);
- 
--	ret = pm_clk_create(&pdev->dev);
--	if (ret)
--		return ret;
--
--	ret = of_pm_clk_add_clk(&pdev->dev, "d_audio");
--	if (ret)
--		goto clk_destroy;
-+	tdma->ahub_clk = devm_clk_get(&pdev->dev, "d_audio");
-+	if (IS_ERR(tdma->ahub_clk)) {
-+		dev_err(&pdev->dev, "Error: Missing ahub controller clock\n");
-+		return PTR_ERR(tdma->ahub_clk);
+-	if (!list_empty(&gl->gl_lru))
+-		list_del_init(&gl->gl_lru);
+-	else
++	list_del(&gl->gl_lru);
++	list_add_tail(&gl->gl_lru, &lru_list);
++
++	if (!test_bit(GLF_LRU, &gl->gl_flags)) {
++		set_bit(GLF_LRU, &gl->gl_flags);
+ 		atomic_inc(&lru_count);
 +	}
  
- 	pm_runtime_enable(&pdev->dev);
- 
-@@ -775,8 +775,6 @@ static int tegra_adma_probe(struct platform_device *pdev)
- 	pm_runtime_put_sync(&pdev->dev);
- rpm_disable:
- 	pm_runtime_disable(&pdev->dev);
--clk_destroy:
--	pm_clk_destroy(&pdev->dev);
- 
- 	return ret;
+-	list_add_tail(&gl->gl_lru, &lru_list);
+-	set_bit(GLF_LRU, &gl->gl_flags);
+ 	spin_unlock(&lru_lock);
  }
-@@ -794,7 +792,6 @@ static int tegra_adma_remove(struct platform_device *pdev)
  
- 	pm_runtime_put_sync(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
--	pm_clk_destroy(&pdev->dev);
+ static void gfs2_glock_remove_from_lru(struct gfs2_glock *gl)
+ {
+ 	spin_lock(&lru_lock);
+-	if (!list_empty(&gl->gl_lru)) {
++	if (test_bit(GLF_LRU, &gl->gl_flags)) {
+ 		list_del_init(&gl->gl_lru);
+ 		atomic_dec(&lru_count);
+ 		clear_bit(GLF_LRU, &gl->gl_flags);
+@@ -1048,8 +1052,7 @@ void gfs2_glock_dq(struct gfs2_holder *gh)
+ 		    !test_bit(GLF_DEMOTE, &gl->gl_flags))
+ 			fast_path = 1;
+ 	}
+-	if (!test_bit(GLF_LFLUSH, &gl->gl_flags) && demote_ok(gl) &&
+-	    (glops->go_flags & GLOF_LRU))
++	if (!test_bit(GLF_LFLUSH, &gl->gl_flags) && demote_ok(gl))
+ 		gfs2_glock_add_to_lru(gl);
  
- 	return 0;
- }
+ 	trace_gfs2_glock_queue(gh, 0);
+@@ -1349,6 +1352,7 @@ __acquires(&lru_lock)
+ 		if (!spin_trylock(&gl->gl_lockref.lock)) {
+ add_back_to_lru:
+ 			list_add(&gl->gl_lru, &lru_list);
++			set_bit(GLF_LRU, &gl->gl_flags);
+ 			atomic_inc(&lru_count);
+ 			continue;
+ 		}
+@@ -1356,7 +1360,6 @@ __acquires(&lru_lock)
+ 			spin_unlock(&gl->gl_lockref.lock);
+ 			goto add_back_to_lru;
+ 		}
+-		clear_bit(GLF_LRU, &gl->gl_flags);
+ 		gl->gl_lockref.count++;
+ 		if (demote_ok(gl))
+ 			handle_callback(gl, LM_ST_UNLOCKED, 0, false);
+@@ -1392,6 +1395,7 @@ static long gfs2_scan_glock_lru(int nr)
+ 		if (!test_bit(GLF_LOCK, &gl->gl_flags)) {
+ 			list_move(&gl->gl_lru, &dispose);
+ 			atomic_dec(&lru_count);
++			clear_bit(GLF_LRU, &gl->gl_flags);
+ 			freed++;
+ 			continue;
+ 		}
 -- 
 2.20.1
 
