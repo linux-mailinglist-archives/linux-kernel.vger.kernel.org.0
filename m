@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 761A02F496
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:42:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F16192F3B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:33:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728124AbfE3DMY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:12:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49144 "EHLO mail.kernel.org"
+        id S1730144AbfE3EbS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:31:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60160 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728267AbfE3DKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:10:53 -0400
+        id S1729592AbfE3DNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:13:48 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87192244A6;
-        Thu, 30 May 2019 03:10:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F19C24526;
+        Thu, 30 May 2019 03:13:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185852;
-        bh=u8DTJcCxboMwaCpnCA+BRD1412Fvgn3zc28Z0ceiVQw=;
+        s=default; t=1559186028;
+        bh=F60ovf0n5l2kPM8Qyh6dLDCgATr4YEityKsVWQ5te1o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P/tcl29THtS/FLl8aHnrcdtmqIkgUx26yxmT1UKU/3Mh1moWZcEyK7a0niGbWlXXM
-         vjoGcGr1aXnhH3G6cziFYzvRNS01Nx7ywmNsfUfg1bycl9bhwUMnZ0KrneAoYcr/ch
-         Xel03zGMtTvS9alw9HHcfPvmdPXIBeTKGmY11NdU=
+        b=qnCDeBP9z1BSy4tS38gy6ubafZYmvneyodWB1KSBxwiLk+aS2rbtHWiFySscksJsj
+         5jfJ3AGVxpAiZmz8DJdt5aRcb5V1fNn32LpnIcXH1IBCFBYFtdshwiMyIZjykRKbQB
+         D6m7ap74yAGB1hnpZ4vaHEDE+kOCvvHd6f0bSvFc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 178/405] s390/qeth: handle error from qeth_update_from_chp_desc()
+        stable@vger.kernel.org, Sugar Zhang <sugar.zhang@rock-chips.com>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 103/346] dmaengine: pl330: _stop: clear interrupt status
 Date:   Wed, 29 May 2019 20:02:56 -0700
-Message-Id: <20190530030550.098999881@linuxfoundation.org>
+Message-Id: <20190530030546.355562064@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,79 +43,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a4cdc9baee0740748f16e50cd70c2607510df492 ]
+[ Upstream commit 2da254cc7908105a60a6bb219d18e8dced03dcb9 ]
 
-Subsequent code relies on the values that qeth_update_from_chp_desc()
-reads from the CHP descriptor. Rather than dealing with weird errors
-later on, just handle it properly here.
+This patch kill instructs the DMAC to immediately terminate
+execution of a thread. and then clear the interrupt status,
+at last, stop generating interrupts for DMA_SEV. to guarantee
+the next dma start is clean. otherwise, one interrupt maybe leave
+to next start and make some mistake.
 
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+we can reporduce the problem as follows:
+
+DMASEV: modify the event-interrupt resource, and if the INTEN sets
+function as interrupt, the DMAC will set irq<event_num> HIGH to
+generate interrupt. write INTCLR to clear interrupt.
+
+	DMA EXECUTING INSTRUCTS		DMA TERMINATE
+		|				|
+		|				|
+	       ...			      _stop
+		|				|
+		|			spin_lock_irqsave
+	     DMASEV				|
+		|				|
+		|			    mask INTEN
+		|				|
+		|			     DMAKILL
+		|				|
+		|			spin_unlock_irqrestore
+
+in above case, a interrupt was left, and if we unmask INTEN, the DMAC
+will set irq<event_num> HIGH to generate interrupt.
+
+to fix this, do as follows:
+
+	DMA EXECUTING INSTRUCTS		DMA TERMINATE
+		|				|
+		|				|
+	       ...			      _stop
+		|				|
+		|			spin_lock_irqsave
+	     DMASEV				|
+		|				|
+		|			     DMAKILL
+		|				|
+		|			   clear INTCLR
+		|			    mask INTEN
+		|				|
+		|			spin_unlock_irqrestore
+
+Signed-off-by: Sugar Zhang <sugar.zhang@rock-chips.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/s390/net/qeth_core_main.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ drivers/dma/pl330.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/s390/net/qeth_core_main.c b/drivers/s390/net/qeth_core_main.c
-index 44bd6f04c145d..8c73a99daff3e 100644
---- a/drivers/s390/net/qeth_core_main.c
-+++ b/drivers/s390/net/qeth_core_main.c
-@@ -1308,7 +1308,7 @@ static void qeth_set_multiple_write_queues(struct qeth_card *card)
- 	card->qdio.no_out_queues = 4;
- }
- 
--static void qeth_update_from_chp_desc(struct qeth_card *card)
-+static int qeth_update_from_chp_desc(struct qeth_card *card)
+diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+index cff1b143fff5d..9b7a49fc76971 100644
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -966,6 +966,7 @@ static void _stop(struct pl330_thread *thrd)
  {
- 	struct ccw_device *ccwdev;
- 	struct channel_path_desc_fmt0 *chp_dsc;
-@@ -1318,7 +1318,7 @@ static void qeth_update_from_chp_desc(struct qeth_card *card)
- 	ccwdev = card->data.ccwdev;
- 	chp_dsc = ccw_device_get_chp_desc(ccwdev, 0);
- 	if (!chp_dsc)
--		goto out;
-+		return -ENOMEM;
+ 	void __iomem *regs = thrd->dmac->base;
+ 	u8 insn[6] = {0, 0, 0, 0, 0, 0};
++	u32 inten = readl(regs + INTEN);
  
- 	card->info.func_level = 0x4100 + chp_dsc->desc;
- 	if (card->info.type == QETH_CARD_TYPE_IQD)
-@@ -1333,6 +1333,7 @@ static void qeth_update_from_chp_desc(struct qeth_card *card)
- 	kfree(chp_dsc);
- 	QETH_DBF_TEXT_(SETUP, 2, "nr:%x", card->qdio.no_out_queues);
- 	QETH_DBF_TEXT_(SETUP, 2, "lvl:%02x", card->info.func_level);
-+	return 0;
+ 	if (_state(thrd) == PL330_STATE_FAULT_COMPLETING)
+ 		UNTIL(thrd, PL330_STATE_FAULTING | PL330_STATE_KILLING);
+@@ -978,10 +979,13 @@ static void _stop(struct pl330_thread *thrd)
+ 
+ 	_emit_KILL(0, insn);
+ 
+-	/* Stop generating interrupts for SEV */
+-	writel(readl(regs + INTEN) & ~(1 << thrd->ev), regs + INTEN);
+-
+ 	_execute_DBGINSN(thrd, insn, is_manager(thrd));
++
++	/* clear the event */
++	if (inten & (1 << thrd->ev))
++		writel(1 << thrd->ev, regs + INTCLR);
++	/* Stop generating interrupts for SEV */
++	writel(inten & ~(1 << thrd->ev), regs + INTEN);
  }
  
- static void qeth_init_qdio_info(struct qeth_card *card)
-@@ -4986,7 +4987,9 @@ int qeth_core_hardsetup_card(struct qeth_card *card, bool *carrier_ok)
- 
- 	QETH_DBF_TEXT(SETUP, 2, "hrdsetup");
- 	atomic_set(&card->force_alloc_skb, 0);
--	qeth_update_from_chp_desc(card);
-+	rc = qeth_update_from_chp_desc(card);
-+	if (rc)
-+		return rc;
- retry:
- 	if (retries < 3)
- 		QETH_DBF_MESSAGE(2, "Retrying to do IDX activates on device %x.\n",
-@@ -5641,7 +5644,9 @@ static int qeth_core_probe_device(struct ccwgroup_device *gdev)
- 	}
- 
- 	qeth_setup_card(card);
--	qeth_update_from_chp_desc(card);
-+	rc = qeth_update_from_chp_desc(card);
-+	if (rc)
-+		goto err_chp_desc;
- 
- 	card->dev = qeth_alloc_netdev(card);
- 	if (!card->dev) {
-@@ -5676,6 +5681,7 @@ static int qeth_core_probe_device(struct ccwgroup_device *gdev)
- 	qeth_core_free_discipline(card);
- err_load:
- 	free_netdev(card->dev);
-+err_chp_desc:
- err_card:
- 	qeth_core_free_card(card);
- err_dev:
+ /* Start doing req 'idx' of thread 'thrd' */
 -- 
 2.20.1
 
