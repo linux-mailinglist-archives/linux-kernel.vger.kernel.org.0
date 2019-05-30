@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80D7A2EC6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:22:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65E2D2F60A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:53:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732326AbfE3DUr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:20:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40878 "EHLO mail.kernel.org"
+        id S2388967AbfE3EwZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:52:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730575AbfE3DQD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:16:03 -0400
+        id S1728244AbfE3DKt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:10:49 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E46A624585;
-        Thu, 30 May 2019 03:16:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E7BE244C4;
+        Thu, 30 May 2019 03:10:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186163;
-        bh=SAzFDsewiCPjzYSPONmROVQkzi0S0thIkqhQiidclBY=;
+        s=default; t=1559185849;
+        bh=586UX50h3Q4BsZQ0CM1cGiV0zVjXiFeWaTgd7/PqEQ8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NdE86ixMWWnnsYFBD+PrU56kziJSm0vPZhqpmL2cml/i3gNvXwYCjVQq10IhCBA0M
-         Hv2uZlUXFmB2oteWSzj0MvOMfeFcuwPsV2hOIqYGDfBJAmDjqnHVxc+b4mWm43rkrW
-         MpxSRPRdbWJCknwtPV8mUIFAU997mUO4jro07wrE=
+        b=1kabqHi/630s0UkgdAW0dTMn9f3eBpMTO5ognJKO874j/3Cwe5mYGqDUWiFRjHStb
+         N7Jos5cyGbUZxJod3VNreZPHPAQBjUIgRMWZEoz4YCFo4s/9I/fVabndojOxDz/kvx
+         QnvycZ50dD+O8dQnjcMVOhP1jjkzPlQ6D7WRzM54=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.19 012/276] kvm: svm/avic: fix off-by-one in checking host APIC ID
+        stable@vger.kernel.org, Jeykumar Sankaran <jsanka@codeaurora.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Rob Clark <robdclark@chromium.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 172/405] drm/msm/dpu: release resources on modeset failure
 Date:   Wed, 29 May 2019 20:02:50 -0700
-Message-Id: <20190530030524.513568972@linuxfoundation.org>
+Message-Id: <20190530030549.825412015@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suthikulpanit, Suravee <Suravee.Suthikulpanit@amd.com>
+[ Upstream commit a7fcc3237f31a4e206953bb73cf41bd429442f09 ]
 
-commit c9bcd3e3335d0a29d89fabd2c385e1b989e6f1b0 upstream.
+release resources allocated in mode_set if any of
+the hw check fails. Most of these checks are not
+necessary and they will be removed in the follow up
+patches with state based resource allocations.
 
-Current logic does not allow VCPU to be loaded onto CPU with
-APIC ID 255. This should be allowed since the host physical APIC ID
-field in the AVIC Physical APIC table entry is an 8-bit value,
-and APIC ID 255 is valid in system with x2APIC enabled.
-Instead, do not allow VCPU load if the host APIC ID cannot be
-represented by an 8-bit value.
-
-Also, use the more appropriate AVIC_PHYSICAL_ID_ENTRY_HOST_PHYSICAL_ID_MASK
-instead of AVIC_MAX_PHYSICAL_ID_COUNT.
-
-Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Jeykumar Sankaran <jsanka@codeaurora.org>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/1550107156-17625-4-git-send-email-jsanka@codeaurora.org
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/svm.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -2022,7 +2022,11 @@ static void avic_vcpu_load(struct kvm_vc
- 	if (!kvm_vcpu_apicv_active(vcpu))
- 		return;
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+index 5aa3307f3f0c5..f59c00191a2a2 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+@@ -1023,13 +1023,13 @@ static void dpu_encoder_virt_mode_set(struct drm_encoder *drm_enc,
+ 			if (!dpu_enc->hw_pp[i]) {
+ 				DPU_ERROR_ENC(dpu_enc, "no pp block assigned"
+ 					     "at idx: %d\n", i);
+-				return;
++				goto error;
+ 			}
  
--	if (WARN_ON(h_physical_id >= AVIC_MAX_PHYSICAL_ID_COUNT))
-+	/*
-+	 * Since the host physical APIC id is 8 bits,
-+	 * we can support host APIC ID upto 255.
-+	 */
-+	if (WARN_ON(h_physical_id > AVIC_PHYSICAL_ID_ENTRY_HOST_PHYSICAL_ID_MASK))
- 		return;
+ 			if (!hw_ctl[i]) {
+ 				DPU_ERROR_ENC(dpu_enc, "no ctl block assigned"
+ 					     "at idx: %d\n", i);
+-				return;
++				goto error;
+ 			}
  
- 	entry = READ_ONCE(*(svm->avic_physical_id_cache));
+ 			phys->hw_pp = dpu_enc->hw_pp[i];
+@@ -1042,6 +1042,9 @@ static void dpu_encoder_virt_mode_set(struct drm_encoder *drm_enc,
+ 	}
+ 
+ 	dpu_enc->mode_set_complete = true;
++
++error:
++	dpu_rm_release(&dpu_kms->rm, drm_enc);
+ }
+ 
+ static void _dpu_encoder_virt_enable_helper(struct drm_encoder *drm_enc)
+-- 
+2.20.1
+
 
 
