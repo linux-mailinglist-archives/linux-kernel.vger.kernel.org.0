@@ -2,43 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C1F52ED95
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:40:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC4F82F354
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:28:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732999AbfE3DXC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:23:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45414 "EHLO mail.kernel.org"
+        id S1729774AbfE3DOO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:14:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729596AbfE3DRM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:17:12 -0400
+        id S1728734AbfE3DLz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:11:55 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A98C24673;
-        Thu, 30 May 2019 03:17:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A33B1244B0;
+        Thu, 30 May 2019 03:11:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186231;
-        bh=3Gs0ydWZIhhouJbQGOpRTMF9JDNJuDunzz54fnbAY4Q=;
+        s=default; t=1559185914;
+        bh=DGwY8+PMszvfrhekxgnzEn85BTPXoR99XdKjRFYihnk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IpJ7TTuNPmer1DJwvMnTpjvu/QqVcadMSya4HIk30rovqwxQGn22FpfRO8JU2/HI/
-         k2SXcGXWHR/S/1KNgVWaPl0mp1yC2/FJ+HFuvqFwD6wSjOOQ1MVtMBaDzSf5ZFdrEn
-         mSGdPL3zfRLDBm/I0qXQ8G/herfINf4ZHwa0+298=
+        b=0rco3KMreUwsrjXjCnKv63gwh1m+86HnHjkb8HTS4kZ+0zVbiwb6y28u0b75EEVgR
+         mGFU+48stRBMtER6dXH8+ALr/8UdT03INXn73bxyAYrA2LzktUqle/8SV8baNzbWGI
+         veHRjpjW7+41b8s4hY5GLFwFkFl/dXjnqHj+jZaE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 136/276] sched/core: Check quota and period overflow at usec to nsec conversion
+        stable@vger.kernel.org, Artemy Kovalyov <artemyko@mellanox.com>,
+        Moni Shoua <monis@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 296/405] IB/mlx5: Compare only index part of a memory window rkey
 Date:   Wed, 29 May 2019 20:04:54 -0700
-Message-Id: <20190530030534.232304006@linuxfoundation.org>
+Message-Id: <20190530030555.810274417@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,58 +46,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1a8b4540db732ca16c9e43ac7c08b1b8f0b252d8 ]
+[ Upstream commit d623dfd2836114507d647c9793a80d213d8bffe8 ]
 
-Large values could overflow u64 and pass following sanity checks.
+The InfiniBand Architecture Specification section 10.6.7.2.4 TYPE 2 MEMORY
+WINDOWS says that if the CI supports the Base Memory Management Extensions
+defined in this specification, the R_Key format for a Type 2 Memory Window
+must consist of:
 
- # echo 18446744073750000 > cpu.cfs_period_us
- # cat cpu.cfs_period_us
- 40448
+* 24 bit index in the most significant bits of the R_Key, which is owned
+  by the CI, and
+* 8 bit key in the least significant bits of the R_Key, which is owned by
+  the Consumer.
 
- # echo 18446744073750000 > cpu.cfs_quota_us
- # cat cpu.cfs_quota_us
- 40448
+This means that the kernel should compare only the index part of a R_Key
+to determine equality with another R_Key.
 
-After this patch they will fail with -EINVAL.
-
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Acked-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/155125502079.293431.3947497929372138600.stgit@buzz
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: db570d7deafb ("IB/mlx5: Add ODP support to MW")
+Signed-off-by: Artemy Kovalyov <artemyko@mellanox.com>
+Signed-off-by: Moni Shoua <monis@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sched/core.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/infiniband/hw/mlx5/odp.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index d7f409866cdf5..bd5ae34c20c0b 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -6593,8 +6593,10 @@ int tg_set_cfs_quota(struct task_group *tg, long cfs_quota_us)
- 	period = ktime_to_ns(tg->cfs_bandwidth.period);
- 	if (cfs_quota_us < 0)
- 		quota = RUNTIME_INF;
--	else
-+	else if ((u64)cfs_quota_us <= U64_MAX / NSEC_PER_USEC)
- 		quota = (u64)cfs_quota_us * NSEC_PER_USEC;
-+	else
-+		return -EINVAL;
+diff --git a/drivers/infiniband/hw/mlx5/odp.c b/drivers/infiniband/hw/mlx5/odp.c
+index 0aa10ebda5d9a..91669e35c6ca8 100644
+--- a/drivers/infiniband/hw/mlx5/odp.c
++++ b/drivers/infiniband/hw/mlx5/odp.c
+@@ -711,6 +711,15 @@ struct pf_frame {
+ 	int depth;
+ };
  
- 	return tg_set_cfs_bandwidth(tg, period, quota);
- }
-@@ -6616,6 +6618,9 @@ int tg_set_cfs_period(struct task_group *tg, long cfs_period_us)
- {
- 	u64 quota, period;
- 
-+	if ((u64)cfs_period_us > U64_MAX / NSEC_PER_USEC)
-+		return -EINVAL;
++static bool mkey_is_eq(struct mlx5_core_mkey *mmkey, u32 key)
++{
++	if (!mmkey)
++		return false;
++	if (mmkey->type == MLX5_MKEY_MW)
++		return mlx5_base_mkey(mmkey->key) == mlx5_base_mkey(key);
++	return mmkey->key == key;
++}
 +
- 	period = (u64)cfs_period_us * NSEC_PER_USEC;
- 	quota = tg->cfs_bandwidth.quota;
+ static int get_indirect_num_descs(struct mlx5_core_mkey *mmkey)
+ {
+ 	struct mlx5_ib_mw *mw;
+@@ -760,7 +769,7 @@ static int pagefault_single_data_segment(struct mlx5_ib_dev *dev,
  
+ next_mr:
+ 	mmkey = __mlx5_mr_lookup(dev->mdev, mlx5_base_mkey(key));
+-	if (!mmkey || mmkey->key != key) {
++	if (!mkey_is_eq(mmkey, key)) {
+ 		mlx5_ib_dbg(dev, "failed to find mkey %x\n", key);
+ 		ret = -EFAULT;
+ 		goto srcu_unlock;
 -- 
 2.20.1
 
