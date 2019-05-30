@@ -2,69 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFFCA2F794
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 08:51:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C5D02F79B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 08:53:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727576AbfE3GvP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 02:51:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51150 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725961AbfE3GvP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 02:51:15 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 15D2EACF8;
-        Thu, 30 May 2019 06:51:14 +0000 (UTC)
-Date:   Thu, 30 May 2019 08:51:11 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Chris Down <chris@chrisdown.name>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>, Roman Gushchin <guro@fb.com>,
-        Dennis Zhou <dennis@kernel.org>, linux-kernel@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-mm@kvack.org, kernel-team@fb.com
-Subject: Re: [PATCH REBASED] mm, memcg: Make scan aggression always exclude
- protection
-Message-ID: <20190530065111.GC6703@dhcp22.suse.cz>
-References: <20190228213050.GA28211@chrisdown.name>
- <20190322160307.GA3316@chrisdown.name>
- <20190530061221.GA6703@dhcp22.suse.cz>
- <20190530064453.GA110128@chrisdown.name>
+        id S1727555AbfE3GxT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 02:53:19 -0400
+Received: from namei.org ([65.99.196.166]:35358 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727297AbfE3GxT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 02:53:19 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x4U6r5iu001646;
+        Thu, 30 May 2019 06:53:05 GMT
+Date:   Thu, 30 May 2019 16:53:05 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     David Howells <dhowells@redhat.com>
+cc:     keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] keys: Miscellany
+In-Reply-To: <18289.1559167295@warthog.procyon.org.uk>
+Message-ID: <alpine.LRH.2.21.1905301652150.793@namei.org>
+References: <18289.1559167295@warthog.procyon.org.uk>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190530064453.GA110128@chrisdown.name>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 29-05-19 23:44:53, Chris Down wrote:
-> Michal Hocko writes:
-> > Maybe I am missing something so correct me if I am wrong but the new
-> > calculation actually means that we always allow to scan even min
-> > protected memcgs right?
+On Wed, 29 May 2019, David Howells wrote:
+
+> Hi James,
 > 
-> We check if the memcg is min protected as a precondition for coming into
-> this function at all, so this generally isn't possible. See the
-> mem_cgroup_protected MEMCG_PROT_MIN check in shrink_node.
+> Here are some miscellaneous keyrings fixes and improvements intended for
+> the next merge window, if you could pull them please.
+> 
 
-OK, that is the part I was missing, I got confused by checking the min
-limit as well here. Thanks for the clarification. A comment would be
-handy or do we really need to consider min at all?
+Linus has asked for security subsystem PRs to go directly to him.
 
-> (Of course, it's possible we race with going within protection thresholds
-> again, but this patch doesn't make that any better or worse than the
-> previous situation.)
-
-Yeah.
-
-With the above clarified. The code the resulting code is much easier to
-follow and the overal logic makes sense to me.
-
-Acked-by: Michal Hocko <mhocko@suse.com>
 
 -- 
-Michal Hocko
-SUSE Labs
+James Morris
+<jmorris@namei.org>
+
