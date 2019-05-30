@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B34FC2F5D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:50:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CAC92F5D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:50:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388950AbfE3Eu1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:50:27 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:47058 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733192AbfE3EuZ (ORCPT
+        id S2388972AbfE3Eua (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:50:30 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38218 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388946AbfE3Eu1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 00:50:25 -0400
-Received: by mail-pf1-f195.google.com with SMTP id y11so3092787pfm.13
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 21:50:25 -0700 (PDT)
+        Thu, 30 May 2019 00:50:27 -0400
+Received: by mail-pg1-f195.google.com with SMTP id v11so1236163pgl.5
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 21:50:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ro0eZo0iqlYxkBqPnVWAwPHhTLd6Yb2usUf2C4gK6mE=;
-        b=QxUyMepPmuFlBPWIdyq+hDUvIJEUHMM8hSMqXOaU5d+qk1TA2YsVTjyuk0Nq3LDdod
-         JjwD0ZGD8M+YE/Y6QaRqXLENweWTFQfFepMCtYGmzHPzsVLJQ2RWsJ21V8QjF5O2Mqix
-         c+CfgfD3OKGNqSm1uCtBNhVSJThW/A2BIVKxQ=
+        bh=0d2DjLTtSzc/j4GazSC/oBA3i3Oos8BMeCC9qu8DWTQ=;
+        b=CUCf1ofeWouCM5OzBk/IBw9EmIyAjfi5VZFZ/WBrN8Vklom9TEX+memXlAOdgMfFti
+         ff8V2Y4FMs2V8ynl6NLjipV5OJsO3EvUHiIYYn7sDVlaFqUrrqojm8TL8uyFTCeFEY2l
+         yJbNftijtrl4QLGvYLNSt1A/1l0b8F0qQ0ud8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ro0eZo0iqlYxkBqPnVWAwPHhTLd6Yb2usUf2C4gK6mE=;
-        b=gfabUmLXDNXWR3qr2DYF+OOAcJ9KVE6jLXxf5L5BjhFs359aiLCwvtCA5+G5SpbTl5
-         umHA0wXxIfRnM/cwlnF7M3ho80s9RlFAWuaX05rlRhuyQPGhl4/SPKTtIDl3H5wM335K
-         lVXPdNAPAiE+7+1NJmRaE2zAPeznqHNvc0cLLtsd5DOfsj0v90AcKbxEzPdBdqv+yjco
-         CteHRpIBP2VElPc1VaRj/ZV2MTCYMMDdiRDe1IWN6VRQ948sTUx3kQCb+pmA4oXicu5c
-         e8ERJruxhqBNXKrLgFyMIGfV3WM/EvaRt4MaShJhTJtT9yNFFeBZygXlpXmaSLUz+ryM
-         Curw==
-X-Gm-Message-State: APjAAAVdvEZghpW5AHZOmh8t2OOpN4ohPVlNO9Wkdz9x+UmWNhYWFyyO
-        l8Sx5a8HUDHeuvPY6tYuZknbew==
-X-Google-Smtp-Source: APXvYqx6yhz7sBMRnROF3lrt43atOsL36IzpXQDT7eajC7OfATKiWWEfU232CwKhSVYrVQa1CAtd9Q==
-X-Received: by 2002:a63:3141:: with SMTP id x62mr2022883pgx.282.1559191825131;
-        Wed, 29 May 2019 21:50:25 -0700 (PDT)
+        bh=0d2DjLTtSzc/j4GazSC/oBA3i3Oos8BMeCC9qu8DWTQ=;
+        b=lBJrWMostncda5nTEQVHQTKh9WmHjb4o1WgTqu6aEI8zZZ0FVE0Msd+Hb91FQ7GWBx
+         ByQ2NnPqCiOOQ1u3mz0+uz6dHir19pVBRapZfFX3uC7uTX89NE8fArONqpqD0Sm8lYRK
+         gaRXe4WDGeKB6LixKj+Ta8b73w7NozWGXn8ptUk/B4HuAsTiBr2duo18aNXhNxLhUGLP
+         dGw9xZ97iG1Bqu/Di5ldcgp/Qw6CT6R84Phgtae0ZRn2UcdPggrMbajKPikL2UdeK5uR
+         Ec3o5Cu9SITchRLGLYqa4gtgkeDn3hL2Q9Zo1EVaJ8yUeVSWxCnnlNEuG8fq7hK8PNnn
+         Q99Q==
+X-Gm-Message-State: APjAAAWE5Yp0FZKMus/9YiKYU2zock2rjqMRmmua22GUE+YwsdHoVx0w
+        z3VBBUfM08eNhsb0h/l6lXHlKw==
+X-Google-Smtp-Source: APXvYqwDsRz4qk6MfIpcfvDtSrrTWKmVd2sbAjLdyUwrbya7Z0brqCXAdyW7W1bnwSiib5kYONjLMg==
+X-Received: by 2002:a63:cc4b:: with SMTP id q11mr1994193pgi.43.1559191826365;
+        Wed, 29 May 2019 21:50:26 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id l141sm1451014pfd.24.2019.05.29.21.50.23
+        by smtp.gmail.com with ESMTPSA id f28sm1339930pfk.104.2019.05.29.21.50.23
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Wed, 29 May 2019 21:50:24 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -52,9 +52,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         David Rientjes <rientjes@google.com>,
         Joonsoo Kim <iamjoonsoo.kim@lge.com>,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH 2/3] mm/slab: Sanity-check page type when looking up cache
-Date:   Wed, 29 May 2019 21:50:16 -0700
-Message-Id: <20190530045017.15252-3-keescook@chromium.org>
+Subject: [PATCH 3/3] lkdtm/heap: Add tests for freelist hardening
+Date:   Wed, 29 May 2019 21:50:17 -0700
+Message-Id: <20190530045017.15252-4-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190530045017.15252-1-keescook@chromium.org>
 References: <20190530045017.15252-1-keescook@chromium.org>
@@ -63,115 +63,154 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This avoids any possible type confusion when looking up an object. For
-example, if a non-slab were to be passed to kfree(), the invalid
-slab_cache pointer (i.e. overlapped with some other value from the struct
-page union) would be used for subsequent slab manipulations that could
-lead to further memory corruption.
-
-Since the page is already in cache, adding the PageSlab() check will
-have nearly zero cost, so add a check and WARN() to virt_to_cache().
-Additionally replaces an open-coded virt_to_cache(). To support the failure
-mode this also updates all callers of virt_to_cache() and cache_from_obj()
-to handle a NULL cache pointer return value (though note that several
-already handle this case gracefully).
+This adds tests for double free and cross-cache freeing, which should
+both be caught by CONFIG_SLAB_FREELIST_HARDENED.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- mm/slab.c | 14 +++++++-------
- mm/slab.h | 17 +++++++++++++----
- 2 files changed, 20 insertions(+), 11 deletions(-)
+ drivers/misc/lkdtm/core.c  |  5 +++
+ drivers/misc/lkdtm/heap.c  | 72 ++++++++++++++++++++++++++++++++++++++
+ drivers/misc/lkdtm/lkdtm.h |  5 +++
+ 3 files changed, 82 insertions(+)
 
-diff --git a/mm/slab.c b/mm/slab.c
-index f7117ad9b3a3..9e3eee5568b6 100644
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -371,12 +371,6 @@ static void **dbg_userword(struct kmem_cache *cachep, void *objp)
- static int slab_max_order = SLAB_MAX_ORDER_LO;
- static bool slab_max_order_set __initdata;
+diff --git a/drivers/misc/lkdtm/core.c b/drivers/misc/lkdtm/core.c
+index 4f3a6e1cd331..b78df5a09217 100644
+--- a/drivers/misc/lkdtm/core.c
++++ b/drivers/misc/lkdtm/core.c
+@@ -133,6 +133,9 @@ static const struct crashtype crashtypes[] = {
+ 	CRASHTYPE(READ_AFTER_FREE),
+ 	CRASHTYPE(WRITE_BUDDY_AFTER_FREE),
+ 	CRASHTYPE(READ_BUDDY_AFTER_FREE),
++	CRASHTYPE(SLAB_FREE_DOUBLE),
++	CRASHTYPE(SLAB_FREE_CROSS),
++	CRASHTYPE(SLAB_FREE_PAGE),
+ 	CRASHTYPE(SOFTLOCKUP),
+ 	CRASHTYPE(HARDLOCKUP),
+ 	CRASHTYPE(SPINLOCKUP),
+@@ -439,6 +442,7 @@ static int __init lkdtm_module_init(void)
+ 	lkdtm_bugs_init(&recur_count);
+ 	lkdtm_perms_init();
+ 	lkdtm_usercopy_init();
++	lkdtm_heap_init();
  
--static inline struct kmem_cache *virt_to_cache(const void *obj)
--{
--	struct page *page = virt_to_head_page(obj);
--	return page->slab_cache;
--}
--
- static inline void *index_to_obj(struct kmem_cache *cache, struct page *page,
- 				 unsigned int idx)
- {
-@@ -3715,6 +3709,8 @@ void kmem_cache_free_bulk(struct kmem_cache *orig_s, size_t size, void **p)
- 			s = virt_to_cache(objp);
- 		else
- 			s = cache_from_obj(orig_s, objp);
-+		if (!s)
-+			continue;
+ 	/* Register debugfs interface */
+ 	lkdtm_debugfs_root = debugfs_create_dir("provoke-crash", NULL);
+@@ -485,6 +489,7 @@ static void __exit lkdtm_module_exit(void)
+ 	debugfs_remove_recursive(lkdtm_debugfs_root);
  
- 		debug_check_no_locks_freed(objp, s->object_size);
- 		if (!(s->flags & SLAB_DEBUG_OBJECTS))
-@@ -3749,6 +3745,8 @@ void kfree(const void *objp)
- 	local_irq_save(flags);
- 	kfree_debugcheck(objp);
- 	c = virt_to_cache(objp);
-+	if (!c)
-+		return;
- 	debug_check_no_locks_freed(objp, c->object_size);
+ 	/* Handle test-specific clean-up. */
++	lkdtm_heap_exit();
+ 	lkdtm_usercopy_exit();
  
- 	debug_check_no_obj_freed(objp, c->object_size);
-@@ -4219,13 +4217,15 @@ void __check_heap_object(const void *ptr, unsigned long n, struct page *page,
-  */
- size_t ksize(const void *objp)
- {
-+	struct kmem_cache *c;
- 	size_t size;
+ 	if (lkdtm_kprobe != NULL)
+diff --git a/drivers/misc/lkdtm/heap.c b/drivers/misc/lkdtm/heap.c
+index 65026d7de130..3c5cec85edce 100644
+--- a/drivers/misc/lkdtm/heap.c
++++ b/drivers/misc/lkdtm/heap.c
+@@ -7,6 +7,10 @@
+ #include <linux/slab.h>
+ #include <linux/sched.h>
  
- 	BUG_ON(!objp);
- 	if (unlikely(objp == ZERO_SIZE_PTR))
- 		return 0;
- 
--	size = virt_to_cache(objp)->object_size;
-+	c = virt_to_cache(objp);
-+	size = c ? c->object_size : 0;
- 	/* We assume that ksize callers could use the whole allocated area,
- 	 * so we need to unpoison this area.
- 	 */
-diff --git a/mm/slab.h b/mm/slab.h
-index 4dafae2c8620..739099af6cbb 100644
---- a/mm/slab.h
-+++ b/mm/slab.h
-@@ -350,10 +350,20 @@ static inline void memcg_link_cache(struct kmem_cache *s)
- 
- #endif /* CONFIG_MEMCG_KMEM */
- 
-+static inline struct kmem_cache *virt_to_cache(const void *obj)
-+{
-+	struct page *page;
++static struct kmem_cache *double_free_cache;
++static struct kmem_cache *a_cache;
++static struct kmem_cache *b_cache;
 +
-+	page = virt_to_head_page(obj);
-+	if (WARN_ONCE(!PageSlab(page), "%s: Object is not a Slab page!\n",
-+					__func__))
-+		return NULL;
-+	return page->slab_cache;
+ /*
+  * This tries to stay within the next largest power-of-2 kmalloc cache
+  * to avoid actually overwriting anything important if it's not detected
+@@ -146,3 +150,71 @@ void lkdtm_READ_BUDDY_AFTER_FREE(void)
+ 
+ 	kfree(val);
+ }
++
++void lkdtm_SLAB_FREE_DOUBLE(void)
++{
++	int *val;
++
++	val = kmem_cache_alloc(double_free_cache, GFP_KERNEL);
++	if (!val) {
++		pr_info("Unable to allocate double_free_cache memory.\n");
++		return;
++	}
++
++	/* Just make sure we got real memory. */
++	*val = 0x12345678;
++	pr_info("Attempting double slab free ...\n");
++	kmem_cache_free(double_free_cache, val);
++	kmem_cache_free(double_free_cache, val);
 +}
 +
- static inline struct kmem_cache *cache_from_obj(struct kmem_cache *s, void *x)
- {
- 	struct kmem_cache *cachep;
--	struct page *page;
++void lkdtm_SLAB_FREE_CROSS(void)
++{
++	int *val;
++
++	val = kmem_cache_alloc(a_cache, GFP_KERNEL);
++	if (!val) {
++		pr_info("Unable to allocate a_cache memory.\n");
++		return;
++	}
++
++	/* Just make sure we got real memory. */
++	*val = 0x12345679;
++	pr_info("Attempting cross-cache slab free ...\n");
++	kmem_cache_free(b_cache, val);
++}
++
++void lkdtm_SLAB_FREE_PAGE(void)
++{
++	unsigned long p = __get_free_page(GFP_KERNEL);
++
++	pr_info("Attempting non-Slab slab free ...\n");
++	kmem_cache_free(NULL, (void *)p);
++	free_page(p);
++}
++
++/*
++ * We have constructors to keep the caches distinctly separated without
++ * needing to boot with "slab_nomerge".
++ */
++static void ctor_double_free(void *region)
++{ }
++static void ctor_a(void *region)
++{ }
++static void ctor_b(void *region)
++{ }
++
++void __init lkdtm_heap_init(void)
++{
++	double_free_cache = kmem_cache_create("lkdtm-heap-double_free",
++					      64, 0, 0, ctor_double_free);
++	a_cache = kmem_cache_create("lkdtm-heap-a", 64, 0, 0, ctor_a);
++	b_cache = kmem_cache_create("lkdtm-heap-b", 64, 0, 0, ctor_b);
++}
++
++void __exit lkdtm_heap_exit(void)
++{
++	kmem_cache_destroy(double_free_cache);
++	kmem_cache_destroy(a_cache);
++	kmem_cache_destroy(b_cache);
++}
+diff --git a/drivers/misc/lkdtm/lkdtm.h b/drivers/misc/lkdtm/lkdtm.h
+index 23dc565b4307..c5ae0b37587d 100644
+--- a/drivers/misc/lkdtm/lkdtm.h
++++ b/drivers/misc/lkdtm/lkdtm.h
+@@ -28,11 +28,16 @@ void lkdtm_STACK_GUARD_PAGE_LEADING(void);
+ void lkdtm_STACK_GUARD_PAGE_TRAILING(void);
  
- 	/*
- 	 * When kmemcg is not being used, both assignments should return the
-@@ -367,9 +377,8 @@ static inline struct kmem_cache *cache_from_obj(struct kmem_cache *s, void *x)
- 	    !unlikely(s->flags & SLAB_CONSISTENCY_CHECKS))
- 		return s;
+ /* lkdtm_heap.c */
++void __init lkdtm_heap_init(void);
++void __exit lkdtm_heap_exit(void);
+ void lkdtm_OVERWRITE_ALLOCATION(void);
+ void lkdtm_WRITE_AFTER_FREE(void);
+ void lkdtm_READ_AFTER_FREE(void);
+ void lkdtm_WRITE_BUDDY_AFTER_FREE(void);
+ void lkdtm_READ_BUDDY_AFTER_FREE(void);
++void lkdtm_SLAB_FREE_DOUBLE(void);
++void lkdtm_SLAB_FREE_CROSS(void);
++void lkdtm_SLAB_FREE_PAGE(void);
  
--	page = virt_to_head_page(x);
--	cachep = page->slab_cache;
--	WARN_ONCE(!slab_equal_or_root(cachep, s),
-+	cachep = virt_to_cache(x);
-+	WARN_ONCE(cachep && !slab_equal_or_root(cachep, s),
- 		  "%s: Wrong slab cache. %s but object is from %s\n",
- 		  __func__, s->name, cachep->name);
- 	return cachep;
+ /* lkdtm_perms.c */
+ void __init lkdtm_perms_init(void);
 -- 
 2.17.1
 
