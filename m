@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABACC2ECAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:24:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1B702EF3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:54:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733236AbfE3DYR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:24:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48978 "EHLO mail.kernel.org"
+        id S1733282AbfE3Dxy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:53:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731277AbfE3DRw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:17:52 -0400
+        id S1729421AbfE3DT2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:19:28 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB53024718;
-        Thu, 30 May 2019 03:17:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41B9024888;
+        Thu, 30 May 2019 03:19:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186271;
-        bh=FK2eOd6gHPjeb/9Nqb6dWLlgwBjcGSNJNwoAgFaYeMQ=;
+        s=default; t=1559186367;
+        bh=TIFyNDY9FzGlyx5lxUxH4rwVPK55GjuPa0XuZBHjypo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JdrWrCzcPblbCedEqY7kE6YGcDJGVQQva9P+072XIK9Qj8Y/iLFs/Drv/xapWlFuJ
-         5VgONGmKYmPNsrOhzayoWzwMFMuz4MoUHar4QYOYjdt6vXkdynYdaDfpQo/4qvwLJD
-         oBrkmDGThcq6z6Tav2SC3YEC38eWQsFDKiL57pJQ=
+        b=nVwhr0TG64Jq1cV1sgzV3iqZ6TWPB9sVcLolDvcTFJCGZDfcZXw5qZaxM5O454vSV
+         /VNY1hR/QBXE7sesLZQaFJDZK208VaT7O34U5SWxya1ZUHw+fY4YL0z5mvZaHGOBF3
+         mplA9OL384D03YcebSKEG6lpsyJq6TVfHIt9d2pY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        stable@vger.kernel.org, Andrea Merello <andrea.merello@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 212/276] sh: sh7786: Add explicit I/O cast to sh7786_mm_sel()
-Date:   Wed, 29 May 2019 20:06:10 -0700
-Message-Id: <20190530030538.397622651@linuxfoundation.org>
+Subject: [PATCH 4.14 117/193] mmc: core: make pwrseq_emmc (partially) support sleepy GPIO controllers
+Date:   Wed, 29 May 2019 20:06:11 -0700
+Message-Id: <20190530030504.992800247@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,56 +44,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8440bb9b944c02222c7a840d406141ed42e945cd ]
+[ Upstream commit 002ee28e8b322d4d4b7b83234b5d0f4ebd428eda ]
 
-When compile-testing on arm:
+pwrseq_emmc.c implements a HW reset procedure for eMMC chip by driving a
+GPIO line.
 
-    arch/sh/include/cpu-sh4/cpu/sh7786.h: In function ‘sh7786_mm_sel’:
-    arch/sh/include/cpu-sh4/cpu/sh7786.h:135:21: warning: passing argument 1 of ‘__raw_readl’ makes pointer from integer without a cast [-Wint-conversion]
-      return __raw_readl(0xFC400020) & 0x7;
-			 ^~~~~~~~~~
-    In file included from include/linux/io.h:25:0,
-		     from arch/sh/include/cpu-sh4/cpu/sh7786.h:14,
-		     from drivers/pinctrl/sh-pfc/pfc-sh7786.c:15:
-    arch/arm/include/asm/io.h:113:21: note: expected ‘const volatile void *’ but argument is of type ‘unsigned int’
-     #define __raw_readl __raw_readl
-			 ^
-    arch/arm/include/asm/io.h:114:19: note: in expansion of macro ‘__raw_readl’
-     static inline u32 __raw_readl(const volatile void __iomem *addr)
-		       ^~~~~~~~~~~
+It registers the .reset() cb on mmc_pwrseq_ops and it registers a system
+restart notification handler; both of them perform reset by unconditionally
+calling gpiod_set_value().
 
-__raw_readl() on SuperH is a macro that casts the passed I/O address to
-the correct type, while the implementations on most other architectures
-expect to be passed the correct pointer type.
+If the eMMC reset line is tied to a GPIO controller whose driver can sleep
+(i.e. I2C GPIO controller), then the kernel would spit warnings when trying
+to reset the eMMC chip by means of .reset() mmc_pwrseq_ops cb (that is
+exactly what I'm seeing during boot).
 
-Add an explicit cast to fix this.
+Furthermore, on system reset we would gets to the system restart
+notification handler with disabled interrupts - local_irq_disable() is
+called in machine_restart() at least on ARM/ARM64 - and we would be in
+trouble when the GPIO driver tries to sleep (which indeed doesn't happen
+here, likely because in my case the machine specific code doesn't call
+do_kernel_restart(), I guess..).
 
-Note that this also gets rid of a sparse warning on SuperH:
+This patch fixes the .reset() cb to make use of gpiod_set_value_cansleep(),
+so that the eMMC gets reset on boot without complaints, while, since there
+isn't that much we can do, we avoid register the restart handler if the
+GPIO controller has a sleepy driver (and we spit a dev_notice() message to
+let people know)..
 
-    arch/sh/include/cpu-sh4/cpu/sh7786.h:135:16: warning: incorrect type in argument 1 (different base types)
-    arch/sh/include/cpu-sh4/cpu/sh7786.h:135:16:    expected void const volatile [noderef] <asn:2>*<noident>
-    arch/sh/include/cpu-sh4/cpu/sh7786.h:135:16:    got unsigned int
+This had been tested on a downstream 4.9 kernel with backported
+commit 83f37ee7ba33 ("mmc: pwrseq: Add reset callback to the struct
+mmc_pwrseq_ops") and commit ae60fb031cf2 ("mmc: core: Don't do eMMC HW
+reset when resuming the eMMC card"), because I couldn't boot my board
+otherwise. Maybe worth to RFT.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/sh/include/cpu-sh4/cpu/sh7786.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/core/pwrseq_emmc.c | 38 ++++++++++++++++++----------------
+ 1 file changed, 20 insertions(+), 18 deletions(-)
 
-diff --git a/arch/sh/include/cpu-sh4/cpu/sh7786.h b/arch/sh/include/cpu-sh4/cpu/sh7786.h
-index 96b8cb1f754a9..029bbadaf7ab5 100644
---- a/arch/sh/include/cpu-sh4/cpu/sh7786.h
-+++ b/arch/sh/include/cpu-sh4/cpu/sh7786.h
-@@ -135,7 +135,7 @@ enum {
+diff --git a/drivers/mmc/core/pwrseq_emmc.c b/drivers/mmc/core/pwrseq_emmc.c
+index efb8a7965dd4a..154f4204d58cb 100644
+--- a/drivers/mmc/core/pwrseq_emmc.c
++++ b/drivers/mmc/core/pwrseq_emmc.c
+@@ -30,19 +30,14 @@ struct mmc_pwrseq_emmc {
  
- static inline u32 sh7786_mm_sel(void)
+ #define to_pwrseq_emmc(p) container_of(p, struct mmc_pwrseq_emmc, pwrseq)
+ 
+-static void __mmc_pwrseq_emmc_reset(struct mmc_pwrseq_emmc *pwrseq)
+-{
+-	gpiod_set_value(pwrseq->reset_gpio, 1);
+-	udelay(1);
+-	gpiod_set_value(pwrseq->reset_gpio, 0);
+-	udelay(200);
+-}
+-
+ static void mmc_pwrseq_emmc_reset(struct mmc_host *host)
  {
--	return __raw_readl(0xFC400020) & 0x7;
-+	return __raw_readl((const volatile void __iomem *)0xFC400020) & 0x7;
+ 	struct mmc_pwrseq_emmc *pwrseq =  to_pwrseq_emmc(host->pwrseq);
+ 
+-	__mmc_pwrseq_emmc_reset(pwrseq);
++	gpiod_set_value_cansleep(pwrseq->reset_gpio, 1);
++	udelay(1);
++	gpiod_set_value_cansleep(pwrseq->reset_gpio, 0);
++	udelay(200);
  }
  
- #endif /* __CPU_SH7786_H__ */
+ static int mmc_pwrseq_emmc_reset_nb(struct notifier_block *this,
+@@ -50,8 +45,11 @@ static int mmc_pwrseq_emmc_reset_nb(struct notifier_block *this,
+ {
+ 	struct mmc_pwrseq_emmc *pwrseq = container_of(this,
+ 					struct mmc_pwrseq_emmc, reset_nb);
++	gpiod_set_value(pwrseq->reset_gpio, 1);
++	udelay(1);
++	gpiod_set_value(pwrseq->reset_gpio, 0);
++	udelay(200);
+ 
+-	__mmc_pwrseq_emmc_reset(pwrseq);
+ 	return NOTIFY_DONE;
+ }
+ 
+@@ -72,14 +70,18 @@ static int mmc_pwrseq_emmc_probe(struct platform_device *pdev)
+ 	if (IS_ERR(pwrseq->reset_gpio))
+ 		return PTR_ERR(pwrseq->reset_gpio);
+ 
+-	/*
+-	 * register reset handler to ensure emmc reset also from
+-	 * emergency_reboot(), priority 255 is the highest priority
+-	 * so it will be executed before any system reboot handler.
+-	 */
+-	pwrseq->reset_nb.notifier_call = mmc_pwrseq_emmc_reset_nb;
+-	pwrseq->reset_nb.priority = 255;
+-	register_restart_handler(&pwrseq->reset_nb);
++	if (!gpiod_cansleep(pwrseq->reset_gpio)) {
++		/*
++		 * register reset handler to ensure emmc reset also from
++		 * emergency_reboot(), priority 255 is the highest priority
++		 * so it will be executed before any system reboot handler.
++		 */
++		pwrseq->reset_nb.notifier_call = mmc_pwrseq_emmc_reset_nb;
++		pwrseq->reset_nb.priority = 255;
++		register_restart_handler(&pwrseq->reset_nb);
++	} else {
++		dev_notice(dev, "EMMC reset pin tied to a sleepy GPIO driver; reset on emergency-reboot disabled\n");
++	}
+ 
+ 	pwrseq->pwrseq.ops = &mmc_pwrseq_emmc_ops;
+ 	pwrseq->pwrseq.dev = dev;
 -- 
 2.20.1
 
