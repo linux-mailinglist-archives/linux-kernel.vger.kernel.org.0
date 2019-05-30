@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6CDC2F609
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:53:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 231902EE37
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:45:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388875AbfE3EwX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:52:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48884 "EHLO mail.kernel.org"
+        id S1732341AbfE3DUs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:20:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728238AbfE3DKt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:10:49 -0400
+        id S1730572AbfE3DQD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:16:03 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D378124481;
-        Thu, 30 May 2019 03:10:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A94E2458A;
+        Thu, 30 May 2019 03:16:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185848;
-        bh=s0wBWtgYE318EaqqrCjsUgJ0uwxKN+S1DPkUv/m9A20=;
+        s=default; t=1559186162;
+        bh=08yPMXvX6Vggu36cK+hjFz+G6AYDSqGXrMEMxqNi2Ac=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fx5P+u5xWyrN7cVD5GmC1FEXFwmgEo0DeHxqtwabfLJWT7ttCYYIlXXCv+DL4ixKk
-         WaD1sXPRd/WFjKS+bRPGEIao8a3A0ZR1wF530dZfQYhPRlKFVeGqTer38LMRBmYfKD
-         1Z7X8x4y4tKpogRFvuVLQnsQL8tCh5BCL7zPKpqM=
+        b=jMKhxT/nntqrZw6YJ67VAzdRt2YSE691w+UPCpe54YyNLwBYcz2Ck7cjpqMrMBSiB
+         gcSn86Oqx9Eud42oBDDfyx08aCco1i/sllsoFnpF7Um8qTJXtoL1ACLHjzafRe+s2u
+         X1HygizBiXDvQa6X9JqwIil0ptITnUb7H9qxK+fg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
-        kbuild test robot <lkp@intel.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 171/405] staging: vc04_services: handle kzalloc failure
+        stable@vger.kernel.org, Trac Hoang <trac.hoang@broadcom.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.19 011/276] mmc: sdhci-iproc: Set NO_HISPD bit to fix HS50 data hold time problem
 Date:   Wed, 29 May 2019 20:02:49 -0700
-Message-Id: <20190530030549.777012849@linuxfoundation.org>
+Message-Id: <20190530030524.271602909@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,54 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a5112277872a56017b777770e2fd4324d4a6c866 ]
+From: Trac Hoang <trac.hoang@broadcom.com>
 
-The kzalloc here was being used without checking the return - if the
-kzalloc fails return VCHIQ_ERROR. The call-site of
-vchiq_platform_init_state() vchiq_init_state() was not responding
-to an allocation failure so checks for != VCHIQ_SUCCESS
-and pass VCHIQ_ERROR up to vchiq_platform_init() which then
-will fail with -EINVAL.
+commit ec0970e0a1b2c807c908d459641a9f9a1be3e130 upstream.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Reported-by: kbuild test robot <lkp@intel.com>
-Acked-By: Stefan Wahren <stefan.wahren@i2se.com>
+The iproc host eMMC/SD controller hold time does not meet the
+specification in the HS50 mode.  This problem can be mitigated
+by disabling the HISPD bit; thus forcing the controller output
+data to be driven on the falling clock edges rather than the
+rising clock edges.
+
+Stable tag (v4.12+) chosen to assist stable kernel maintainers so that
+the change does not produce merge conflicts backporting to older kernel
+versions. In reality, the timing bug existed since the driver was first
+introduced but there is no need for this driver to be supported in kernel
+versions that old.
+
+Cc: stable@vger.kernel.org # v4.12+
+Signed-off-by: Trac Hoang <trac.hoang@broadcom.com>
+Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+
 ---
- .../staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c | 3 +++
- drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c | 2 ++
- 2 files changed, 5 insertions(+)
+ drivers/mmc/host/sdhci-iproc.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
-index dd4898861b833..eb1e5dcb0d529 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
-@@ -209,6 +209,9 @@ vchiq_platform_init_state(struct vchiq_state *state)
- 	struct vchiq_2835_state *platform_state;
+--- a/drivers/mmc/host/sdhci-iproc.c
++++ b/drivers/mmc/host/sdhci-iproc.c
+@@ -209,7 +209,8 @@ static const struct sdhci_iproc_data ipr
  
- 	state->platform_state = kzalloc(sizeof(*platform_state), GFP_KERNEL);
-+	if (!state->platform_state)
-+		return VCHIQ_ERROR;
-+
- 	platform_state = (struct vchiq_2835_state *)state->platform_state;
- 
- 	platform_state->inited = 1;
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-index 53f5a1cb4636e..819813e742d8a 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-@@ -2239,6 +2239,8 @@ vchiq_init_state(struct vchiq_state *state, struct vchiq_slot_zero *slot_zero)
- 	local->debug[DEBUG_ENTRIES] = DEBUG_MAX;
- 
- 	status = vchiq_platform_init_state(state);
-+	if (status != VCHIQ_SUCCESS)
-+		return VCHIQ_ERROR;
- 
- 	/*
- 		bring up slot handler thread
--- 
-2.20.1
-
+ static const struct sdhci_pltfm_data sdhci_iproc_pltfm_data = {
+ 	.quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
+-		  SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12,
++		  SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12 |
++		  SDHCI_QUIRK_NO_HISPD_BIT,
+ 	.quirks2 = SDHCI_QUIRK2_ACMD23_BROKEN,
+ 	.ops = &sdhci_iproc_ops,
+ };
 
 
