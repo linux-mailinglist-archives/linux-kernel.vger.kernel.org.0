@@ -2,446 +2,235 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E4412E9AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 02:18:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D76B2E9B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 02:31:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727228AbfE3ASG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 20:18:06 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42111 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727178AbfE3ASF (ORCPT
+        id S1726773AbfE3AbA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 20:31:00 -0400
+Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:34159 "EHLO
+        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726408AbfE3AbA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 20:18:05 -0400
-Received: by mail-pg1-f194.google.com with SMTP id 33so853121pgv.9;
-        Wed, 29 May 2019 17:18:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RIiaBC/VcP02Q7tykBxXsHfExag5p6DFud+tOMCf6lY=;
-        b=Fs/Hy3GZwVHztsF6NTzDGMqwKgjK9njGk3JaNnxDBizPvPOEAdeSylP92vXum4MwEn
-         87m/PdHajZvAuVB19M/dia67icJbI7xe6sh8pcLC7S/zZ1yVhwImpaiwc0wPcsUeURie
-         WQzH1LOdeCLYysw0VepERkLOQQMQmA3uI2G7n5lJAxW9IAaa/twhuBivPLclJx0n2Yvo
-         QrxRWg5gaUg72/sa1TsUh6K1Fc4UmMaNWYxPDqIZu3bSwoENqW6RzgvkvdbI00KvjJnM
-         pxmw2LLwV1ClWSC4IuAB2zj8Y3/Bkg7hzCFNj0Aw51qlzAT2qo6/A+Xx4Uy4Tg/zDhU7
-         uq/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RIiaBC/VcP02Q7tykBxXsHfExag5p6DFud+tOMCf6lY=;
-        b=uc+Ws6RkLfzO1Ldxzz+o9kHfrAui/WqFnY/St/D3E4l3q/dSJWOmszgVVxvdpcQvdE
-         iETw6iQzlrAmiZIgFUl0b9zwI0XYpcIZ/jX4TIzYUIVzLzilmubH99EICs7lX0daR36V
-         TdMeVsejoFBgf64oboH3YT+psu5SscIogPs7XHb4Vp3eXHQGGW4kTbZNLRgOo3UXwNGl
-         4KQ/uABFr/5JL85MzqZ6XFHzRAmBGLfSUkL94DoGmTZ1vZXc/Y7X9kXSodrN9dUgWx4r
-         Ol4NepWvu1YpOuOWvNVLgAp2iEX40r5Rpha1rMnvIzCTMA1HG50e1L1hpuF8MRgs2B98
-         GO8A==
-X-Gm-Message-State: APjAAAUH9esTrONA05UmKUuLP++JW4hdTDjqqesBSTmjjPne71EVeJNF
-        YaeMbsrgvaovif6zuiSdOw==
-X-Google-Smtp-Source: APXvYqzUjiOxRmRSL58kqhlqIcG0bKjp15RH+BXZWeLf9fXfE2Dwimgj2LZagThG+0oNXiiyKP89Ow==
-X-Received: by 2002:a17:90a:2e87:: with SMTP id r7mr451572pjd.121.1559175484576;
-        Wed, 29 May 2019 17:18:04 -0700 (PDT)
-Received: from localhost (2.172.220.35.bc.googleusercontent.com. [35.220.172.2])
-        by smtp.gmail.com with ESMTPSA id s101sm640828pjb.10.2019.05.29.17.18.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 May 2019 17:18:03 -0700 (PDT)
-From:   Jacky Hu <hengqing.hu@gmail.com>
-To:     hengqing.hu@gmail.com
-Cc:     jacky.hu@walmart.com, jason.niesz@walmart.com,
-        Wensong Zhang <wensong@linux-vs.org>,
-        Simon Horman <horms@verge.net.au>,
-        Julian Anastasov <ja@ssi.bg>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>, netdev@vger.kernel.org,
-        lvs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org
-Subject: [PATCH v4] ipvs: add checksum support for gue encapsulation
-Date:   Thu, 30 May 2019 08:16:40 +0800
-Message-Id: <20190530001641.504-1-hengqing.hu@gmail.com>
-X-Mailer: git-send-email 2.21.0
+        Wed, 29 May 2019 20:31:00 -0400
+X-Greylist: delayed 508 seconds by postgrey-1.27 at vger.kernel.org; Wed, 29 May 2019 20:30:59 EDT
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.west.internal (Postfix) with ESMTP id C26A54E2;
+        Wed, 29 May 2019 20:22:29 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Wed, 29 May 2019 20:22:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:content-transfer-encoding:in-reply-to; s=fm3; bh=g
+        y2l4u4y9DJbSbz9jQ5pyBp5nfmgGalhkN7zbzls7JE=; b=BMvGs1HN2F95b5yCi
+        8mOT4MGkXyX2ES0QDtd/ZLFIgefoS80n4AqXpd8/tgYGYM27uW64aJz29yX/wiyl
+        UjRMH9n7ri2QBXEoQl4AhlfRXgcfnXHrzQ6GjnuOPSJE50/soL0u6LSGEwecFQla
+        7ejPo/+rBAiZTr/m/az1i2nSbBaCGhRidxaHa4u/T3G81tzXYQvEd9rfAQnRyv1K
+        rzDOAHnXQC7gcVRHkXXdXinuFDsQ4om55+6t2lojwqDP5S1THcIm449cwJfNEcdI
+        WBEPnW2hIRreTrIH0hWWgU4YIofLYekW2WQwybQFhipauIIpS1Dbv8bdriyChWUw
+        JnzPw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=gy2l4u4y9DJbSbz9jQ5pyBp5nfmgGalhkN7zbzls7
+        JE=; b=mFMO9Ul59waqxnXk5gu4UlayeoYbulXGojRZx7mEZs0uD08zNsYHIgFXA
+        eRcikUSAMuVFx8hOiXwtloNj1Pv5RwvE51LS/yBD0rvAqejcMOajfejY1krcRUBj
+        SZKsVgYolfxrsdOsvt+Z8UBGs5zrJcRY2Re/Lsc8bYoaV8vd7B7CX/THGMX8Vj48
+        B9BS8u+GKX1hSMK/jXIIPEkc4IZdQZ2WQlUYg8OsMZWW5hoB2GXQ1TwiPIdi79aG
+        XYjHIg5U0uu087WkG8s3JB4ifz4d3iIdeOMpU3oof3AqezALqTqB50/KHIzHcz4N
+        qRz/EvWllTB/XGbUWOI6tMyaWWqlA==
+X-ME-Sender: <xms:RCLvXPn_ccq6ixlSQJ69R4oqlGOOfycahEHBG7Mpo1oNrY7lPqPB7g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddruddvkedgfeefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtugfgjggfsehtkeertddtreejnecuhfhrohhmpefrvght
+    vghrucfjuhhtthgvrhgvrhcuoehpvghtvghrrdhhuhhtthgvrhgvrhesfihhohdqthdrnh
+    gvtheqnecukfhppeduudejrddvtddrieelrddugedvnecurfgrrhgrmhepmhgrihhlfhhr
+    ohhmpehpvghtvghrrdhhuhhtthgvrhgvrhesfihhohdqthdrnhgvthenucevlhhushhtvg
+    hrufhiiigvpedt
+X-ME-Proxy: <xmx:RCLvXPKfukd9UqH2Uh0YB8zO0h4EHz66qOxD1xdrk0qSz1H800MuIQ>
+    <xmx:RCLvXIaPQJR1F_xeRRm-vF6V7ApLFV25LW9IfMa1StWjs1JbvIAc_A>
+    <xmx:RCLvXJYfi3zYd86buIVHrK2rGGA3-Up-pVW_g5YmSmEgXGcOnj2-tw>
+    <xmx:RSLvXA0AqI6Kfvt7o2lMBhimA7GZ3n_we-pAb01wY9uJkf-TZCGIIERYWYw>
+Received: from jelly (117-20-69-142.751445.bne.nbn.aussiebb.net [117.20.69.142])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 7A5AB380083;
+        Wed, 29 May 2019 20:22:24 -0400 (EDT)
+Date:   Thu, 30 May 2019 10:22:19 +1000
+From:   Peter Hutterer <peter.hutterer@who-t.net>
+To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc:     Sean O'Brien <seobrien@chromium.org>,
+        Harry Cutts <hcutts@chromium.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        =?utf-8?B?5buW5bSH5qau?= <kt.liao@emc.com.tw>,
+        Rob Herring <robh+dt@kernel.org>,
+        Aaron Ma <aaron.ma@canonical.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 08/10] Input: elan_i2c - export true width/height
+Message-ID: <20190530002219.GA11985@jelly>
+References: <20190521132712.2818-1-benjamin.tissoires@redhat.com>
+ <20190521132712.2818-9-benjamin.tissoires@redhat.com>
+ <CAO-hwJJXGTZq7zRVhcFNwh-kOo0rUhZOsNtFX1yA93Km=L+ynA@mail.gmail.com>
+ <00f901d5143f$f5ea8420$e1bf8c60$@emc.com.tw>
+ <20190528012101.GA193221@dtor-ws>
+ <CA+jURcsWe=fZ-catnCaH=A85vAhrv1w1E5nSwpJvBAwgCTNYfw@mail.gmail.com>
+ <CAOOzhkq+vD034Q2FKB2ryR7Q9nY=iQjdrREuihkZTaVcg+E_Xg@mail.gmail.com>
+ <CAO-hwJ+9tnmvD-K3_Ksesdvag1aNbLB7eJxb9ZKb7kM24unqQQ@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAO-hwJ+9tnmvD-K3_Ksesdvag1aNbLB7eJxb9ZKb7kM24unqQQ@mail.gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add checksum support for gue encapsulation with the tun_flags parameter,
-which could be one of the values below:
-IP_VS_TUNNEL_ENCAP_FLAG_NOCSUM
-IP_VS_TUNNEL_ENCAP_FLAG_CSUM
-IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM
+On Wed, May 29, 2019 at 09:16:38AM +0200, Benjamin Tissoires wrote:
+> On Wed, May 29, 2019 at 2:12 AM Sean O'Brien <seobrien@chromium.org> wrote:
+> >
+> > We do still use a maxed out major axis as a signal for a palm in the touchscreen
+> > logic, but I'm not too concerned because if that axis is maxed out, the contact
+> > should probably be treated as a palm anyway...
+> >
+> > I'm more concerned with this affecting our gesture detection for
+> > touchpad. It looks
+> > like this change would cause all contacts to reported as some percentage bigger
+> > than they are currently. Can you give me an idea of how big that percentage is?
+> 
+> On the P52, I currently have:
+> [  +0.000009] max:    (3045,1731) drivers/input/mouse/elan_i2c_core.c:428
+> [  +0.000003] traces: (24,14) drivers/input/mouse/elan_i2c_core.c:429
+> 
+> -> with the computation done in the kernel:
+> width_ratio: 126
+> height_ratio: 123
+> 
+> For my average finger, the reported traces are between 4 and 6:
+> With the ETP_FWIDTH_REDUCE:
+> Major between 144 to 216
+> Minor between 132 to 198
+> 
+> Without:
+> Major between 504 to 756
+> Minor between 492 to 738
+> 
+> So a rough augmentation of 350%
+> 
+> For the Synaptics devices (over SMBus), they send the raw value of the
+> traces, so you will get a major/minor between 2 to 5. Max on these
+> axes is 15, so we should get the same percentage of value comparing to
+> the range.
+> Which is why libinput has a database of which device reports which
+> pressure/major/minor ranges as otherwise the values are just
+> impossible to understand.
 
-Signed-off-by: Jacky Hu <hengqing.hu@gmail.com>
----
-v4->v3:
-  1) defer pd assignment after data += GUE_LEN_PRIV
+yeah, I've given up on trying to guess finger/thumb/palm sizes.
+git grep for these quirk names in libinput for the ranges:
+    AttrTouchSizeRange
+    AttrThumbSizeThreshold
+    AttrPalmSizeThreshold
 
-v3->v2:
-  1) fixed CHECK: spaces preferred around that '<<' (ctx:VxV)
+There are also matching s/Size/Pressure/ entries for touchpads without
+major/minor. Looking at the database now, the palm size thresholds range
+entries are 5 (Wacom) and a set of 800-1600 for apple touchpads. So yeah,
+all this is really a bit random :) 
 
-v2->v1:
-  1) removed unnecessary changes to ip_vs_core.c
-  2) use correct nla_get/put function for tun_flags
-  3) use correct gue hdrlen for skb_push in ipvs_gue_encap
-  4) moved declaration of gue_hdrlen and gue_optlen
+Feel free to steal those entries though and/or add to them where applicable.
 
- include/net/ip_vs.h             |   2 +
- include/uapi/linux/ip_vs.h      |   7 ++
- net/netfilter/ipvs/ip_vs_ctl.c  |  11 ++-
- net/netfilter/ipvs/ip_vs_xmit.c | 143 ++++++++++++++++++++++++++++----
- 4 files changed, 146 insertions(+), 17 deletions(-)
-
-diff --git a/include/net/ip_vs.h b/include/net/ip_vs.h
-index b01a94ebfc0e..cb1ad0cc5c7b 100644
---- a/include/net/ip_vs.h
-+++ b/include/net/ip_vs.h
-@@ -603,6 +603,7 @@ struct ip_vs_dest_user_kern {
+Cheers,
+   Peter
  
- 	u16			tun_type;	/* tunnel type */
- 	__be16			tun_port;	/* tunnel port */
-+	u16			tun_flags;	/* tunnel flags */
- };
- 
- 
-@@ -665,6 +666,7 @@ struct ip_vs_dest {
- 	atomic_t		last_weight;	/* server latest weight */
- 	__u16			tun_type;	/* tunnel type */
- 	__be16			tun_port;	/* tunnel port */
-+	__u16			tun_flags;	/* tunnel flags */
- 
- 	refcount_t		refcnt;		/* reference counter */
- 	struct ip_vs_stats      stats;          /* statistics */
-diff --git a/include/uapi/linux/ip_vs.h b/include/uapi/linux/ip_vs.h
-index e34f436fc79d..e4f18061a4fd 100644
---- a/include/uapi/linux/ip_vs.h
-+++ b/include/uapi/linux/ip_vs.h
-@@ -131,6 +131,11 @@ enum {
- 	IP_VS_CONN_F_TUNNEL_TYPE_MAX,
- };
- 
-+/* Tunnel encapsulation flags */
-+#define IP_VS_TUNNEL_ENCAP_FLAG_NOCSUM		(0)
-+#define IP_VS_TUNNEL_ENCAP_FLAG_CSUM		(1 << 0)
-+#define IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM		(1 << 1)
-+
- /*
-  *	The struct ip_vs_service_user and struct ip_vs_dest_user are
-  *	used to set IPVS rules through setsockopt.
-@@ -403,6 +408,8 @@ enum {
- 
- 	IPVS_DEST_ATTR_TUN_PORT,	/* tunnel port */
- 
-+	IPVS_DEST_ATTR_TUN_FLAGS,	/* tunnel flags */
-+
- 	__IPVS_DEST_ATTR_MAX,
- };
- 
-diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
-index d5847e06350f..ad19ac08622f 100644
---- a/net/netfilter/ipvs/ip_vs_ctl.c
-+++ b/net/netfilter/ipvs/ip_vs_ctl.c
-@@ -893,6 +893,7 @@ __ip_vs_update_dest(struct ip_vs_service *svc, struct ip_vs_dest *dest,
- 	/* set the tunnel info */
- 	dest->tun_type = udest->tun_type;
- 	dest->tun_port = udest->tun_port;
-+	dest->tun_flags = udest->tun_flags;
- 
- 	/* set the IP_VS_CONN_F_NOOUTPUT flag if not masquerading/NAT */
- 	if ((conn_flags & IP_VS_CONN_F_FWD_MASK) != IP_VS_CONN_F_MASQ) {
-@@ -2967,6 +2968,7 @@ static const struct nla_policy ip_vs_dest_policy[IPVS_DEST_ATTR_MAX + 1] = {
- 	[IPVS_DEST_ATTR_ADDR_FAMILY]	= { .type = NLA_U16 },
- 	[IPVS_DEST_ATTR_TUN_TYPE]	= { .type = NLA_U8 },
- 	[IPVS_DEST_ATTR_TUN_PORT]	= { .type = NLA_U16 },
-+	[IPVS_DEST_ATTR_TUN_FLAGS]	= { .type = NLA_U16 },
- };
- 
- static int ip_vs_genl_fill_stats(struct sk_buff *skb, int container_type,
-@@ -3273,6 +3275,8 @@ static int ip_vs_genl_fill_dest(struct sk_buff *skb, struct ip_vs_dest *dest)
- 		       dest->tun_type) ||
- 	    nla_put_be16(skb, IPVS_DEST_ATTR_TUN_PORT,
- 			 dest->tun_port) ||
-+	    nla_put_u16(skb, IPVS_DEST_ATTR_TUN_FLAGS,
-+			dest->tun_flags) ||
- 	    nla_put_u32(skb, IPVS_DEST_ATTR_U_THRESH, dest->u_threshold) ||
- 	    nla_put_u32(skb, IPVS_DEST_ATTR_L_THRESH, dest->l_threshold) ||
- 	    nla_put_u32(skb, IPVS_DEST_ATTR_ACTIVE_CONNS,
-@@ -3393,7 +3397,8 @@ static int ip_vs_genl_parse_dest(struct ip_vs_dest_user_kern *udest,
- 	/* If a full entry was requested, check for the additional fields */
- 	if (full_entry) {
- 		struct nlattr *nla_fwd, *nla_weight, *nla_u_thresh,
--			      *nla_l_thresh, *nla_tun_type, *nla_tun_port;
-+			      *nla_l_thresh, *nla_tun_type, *nla_tun_port,
-+			      *nla_tun_flags;
- 
- 		nla_fwd		= attrs[IPVS_DEST_ATTR_FWD_METHOD];
- 		nla_weight	= attrs[IPVS_DEST_ATTR_WEIGHT];
-@@ -3401,6 +3406,7 @@ static int ip_vs_genl_parse_dest(struct ip_vs_dest_user_kern *udest,
- 		nla_l_thresh	= attrs[IPVS_DEST_ATTR_L_THRESH];
- 		nla_tun_type	= attrs[IPVS_DEST_ATTR_TUN_TYPE];
- 		nla_tun_port	= attrs[IPVS_DEST_ATTR_TUN_PORT];
-+		nla_tun_flags	= attrs[IPVS_DEST_ATTR_TUN_FLAGS];
- 
- 		if (!(nla_fwd && nla_weight && nla_u_thresh && nla_l_thresh))
- 			return -EINVAL;
-@@ -3416,6 +3422,9 @@ static int ip_vs_genl_parse_dest(struct ip_vs_dest_user_kern *udest,
- 
- 		if (nla_tun_port)
- 			udest->tun_port = nla_get_be16(nla_tun_port);
-+
-+		if (nla_tun_flags)
-+			udest->tun_flags = nla_get_u16(nla_tun_flags);
- 	}
- 
- 	return 0;
-diff --git a/net/netfilter/ipvs/ip_vs_xmit.c b/net/netfilter/ipvs/ip_vs_xmit.c
-index 8d6f94b67772..4b76557ab4ad 100644
---- a/net/netfilter/ipvs/ip_vs_xmit.c
-+++ b/net/netfilter/ipvs/ip_vs_xmit.c
-@@ -40,6 +40,7 @@
- #include <net/ipv6.h>
- #include <net/ip6_route.h>
- #include <net/ip_tunnels.h>
-+#include <net/ip6_checksum.h>
- #include <net/addrconf.h>
- #include <linux/icmpv6.h>
- #include <linux/netfilter.h>
-@@ -385,8 +386,13 @@ __ip_vs_get_out_rt(struct netns_ipvs *ipvs, int skb_af, struct sk_buff *skb,
- 		mtu = dst_mtu(&rt->dst) - sizeof(struct iphdr);
- 		if (!dest)
- 			goto err_put;
--		if (dest->tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE)
-+		if (dest->tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE) {
- 			mtu -= sizeof(struct udphdr) + sizeof(struct guehdr);
-+			if ((dest->tun_flags &
-+			     IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM) &&
-+			    skb->ip_summed == CHECKSUM_PARTIAL)
-+				mtu -= GUE_PLEN_REMCSUM + GUE_LEN_PRIV;
-+		}
- 		if (mtu < 68) {
- 			IP_VS_DBG_RL("%s(): mtu less than 68\n", __func__);
- 			goto err_put;
-@@ -540,8 +546,13 @@ __ip_vs_get_out_rt_v6(struct netns_ipvs *ipvs, int skb_af, struct sk_buff *skb,
- 		mtu = dst_mtu(&rt->dst) - sizeof(struct ipv6hdr);
- 		if (!dest)
- 			goto err_put;
--		if (dest->tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE)
-+		if (dest->tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE) {
- 			mtu -= sizeof(struct udphdr) + sizeof(struct guehdr);
-+			if ((dest->tun_flags &
-+			     IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM) &&
-+			    skb->ip_summed == CHECKSUM_PARTIAL)
-+				mtu -= GUE_PLEN_REMCSUM + GUE_LEN_PRIV;
-+		}
- 		if (mtu < IPV6_MIN_MTU) {
- 			IP_VS_DBG_RL("%s(): mtu less than %d\n", __func__,
- 				     IPV6_MIN_MTU);
-@@ -1006,17 +1017,56 @@ ipvs_gue_encap(struct net *net, struct sk_buff *skb,
- 	__be16 sport = udp_flow_src_port(net, skb, 0, 0, false);
- 	struct udphdr  *udph;	/* Our new UDP header */
- 	struct guehdr  *gueh;	/* Our new GUE header */
-+	size_t hdrlen, optlen = 0;
-+	void *data;
-+	bool need_priv = false;
-+
-+	if ((cp->dest->tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM) &&
-+	    skb->ip_summed == CHECKSUM_PARTIAL) {
-+		optlen += GUE_PLEN_REMCSUM + GUE_LEN_PRIV;
-+		need_priv = true;
-+	}
- 
--	skb_push(skb, sizeof(struct guehdr));
-+	hdrlen = sizeof(struct guehdr) + optlen;
-+
-+	skb_push(skb, hdrlen);
- 
- 	gueh = (struct guehdr *)skb->data;
- 
- 	gueh->control = 0;
- 	gueh->version = 0;
--	gueh->hlen = 0;
-+	gueh->hlen = optlen >> 2;
- 	gueh->flags = 0;
- 	gueh->proto_ctype = *next_protocol;
- 
-+	data = &gueh[1];
-+
-+	if (need_priv) {
-+		__be32 *flags = data;
-+		u16 csum_start = skb_checksum_start_offset(skb);
-+		__be16 *pd;
-+
-+		gueh->flags |= GUE_FLAG_PRIV;
-+		*flags = 0;
-+		data += GUE_LEN_PRIV;
-+
-+		if (csum_start < hdrlen)
-+			return -EINVAL;
-+
-+		csum_start -= hdrlen;
-+		pd = data;
-+		pd[0] = htons(csum_start);
-+		pd[1] = htons(csum_start + skb->csum_offset);
-+
-+		if (!skb_is_gso(skb)) {
-+			skb->ip_summed = CHECKSUM_NONE;
-+			skb->encapsulation = 0;
-+		}
-+
-+		*flags |= GUE_PFLAG_REMCSUM;
-+		data += GUE_PLEN_REMCSUM;
-+	}
-+
- 	skb_push(skb, sizeof(struct udphdr));
- 	skb_reset_transport_header(skb);
- 
-@@ -1070,6 +1120,7 @@ ip_vs_tunnel_xmit(struct sk_buff *skb, struct ip_vs_conn *cp,
- 	unsigned int max_headroom;		/* The extra header space needed */
- 	int ret, local;
- 	int tun_type, gso_type;
-+	int tun_flags;
- 
- 	EnterFunction(10);
- 
-@@ -1092,9 +1143,19 @@ ip_vs_tunnel_xmit(struct sk_buff *skb, struct ip_vs_conn *cp,
- 	max_headroom = LL_RESERVED_SPACE(tdev) + sizeof(struct iphdr);
- 
- 	tun_type = cp->dest->tun_type;
-+	tun_flags = cp->dest->tun_flags;
- 
--	if (tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE)
--		max_headroom += sizeof(struct udphdr) + sizeof(struct guehdr);
-+	if (tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE) {
-+		size_t gue_hdrlen, gue_optlen = 0;
-+
-+		if ((tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM) &&
-+		    skb->ip_summed == CHECKSUM_PARTIAL) {
-+			gue_optlen += GUE_PLEN_REMCSUM + GUE_LEN_PRIV;
-+		}
-+		gue_hdrlen = sizeof(struct guehdr) + gue_optlen;
-+
-+		max_headroom += sizeof(struct udphdr) + gue_hdrlen;
-+	}
- 
- 	/* We only care about the df field if sysctl_pmtu_disc(ipvs) is set */
- 	dfp = sysctl_pmtu_disc(ipvs) ? &df : NULL;
-@@ -1105,8 +1166,17 @@ ip_vs_tunnel_xmit(struct sk_buff *skb, struct ip_vs_conn *cp,
- 		goto tx_error;
- 
- 	gso_type = __tun_gso_type_mask(AF_INET, cp->af);
--	if (tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE)
--		gso_type |= SKB_GSO_UDP_TUNNEL;
-+	if (tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE) {
-+		if ((tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_CSUM) ||
-+		    (tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM))
-+			gso_type |= SKB_GSO_UDP_TUNNEL_CSUM;
-+		else
-+			gso_type |= SKB_GSO_UDP_TUNNEL;
-+		if ((tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM) &&
-+		    skb->ip_summed == CHECKSUM_PARTIAL) {
-+			gso_type |= SKB_GSO_TUNNEL_REMCSUM;
-+		}
-+	}
- 
- 	if (iptunnel_handle_offloads(skb, gso_type))
- 		goto tx_error;
-@@ -1115,8 +1185,19 @@ ip_vs_tunnel_xmit(struct sk_buff *skb, struct ip_vs_conn *cp,
- 
- 	skb_set_inner_ipproto(skb, next_protocol);
- 
--	if (tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE)
--		ipvs_gue_encap(net, skb, cp, &next_protocol);
-+	if (tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE) {
-+		bool check = false;
-+
-+		if (ipvs_gue_encap(net, skb, cp, &next_protocol))
-+			goto tx_error;
-+
-+		if ((tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_CSUM) ||
-+		    (tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM))
-+			check = true;
-+
-+		udp_set_csum(!check, skb, saddr, cp->daddr.ip, skb->len);
-+	}
-+
- 
- 	skb_push(skb, sizeof(struct iphdr));
- 	skb_reset_network_header(skb);
-@@ -1174,6 +1255,7 @@ ip_vs_tunnel_xmit_v6(struct sk_buff *skb, struct ip_vs_conn *cp,
- 	unsigned int max_headroom;	/* The extra header space needed */
- 	int ret, local;
- 	int tun_type, gso_type;
-+	int tun_flags;
- 
- 	EnterFunction(10);
- 
-@@ -1197,9 +1279,19 @@ ip_vs_tunnel_xmit_v6(struct sk_buff *skb, struct ip_vs_conn *cp,
- 	max_headroom = LL_RESERVED_SPACE(tdev) + sizeof(struct ipv6hdr);
- 
- 	tun_type = cp->dest->tun_type;
-+	tun_flags = cp->dest->tun_flags;
- 
--	if (tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE)
--		max_headroom += sizeof(struct udphdr) + sizeof(struct guehdr);
-+	if (tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE) {
-+		size_t gue_hdrlen, gue_optlen = 0;
-+
-+		if ((tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM) &&
-+		    skb->ip_summed == CHECKSUM_PARTIAL) {
-+			gue_optlen += GUE_PLEN_REMCSUM + GUE_LEN_PRIV;
-+		}
-+		gue_hdrlen = sizeof(struct guehdr) + gue_optlen;
-+
-+		max_headroom += sizeof(struct udphdr) + gue_hdrlen;
-+	}
- 
- 	skb = ip_vs_prepare_tunneled_skb(skb, cp->af, max_headroom,
- 					 &next_protocol, &payload_len,
-@@ -1208,8 +1300,17 @@ ip_vs_tunnel_xmit_v6(struct sk_buff *skb, struct ip_vs_conn *cp,
- 		goto tx_error;
- 
- 	gso_type = __tun_gso_type_mask(AF_INET6, cp->af);
--	if (tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE)
--		gso_type |= SKB_GSO_UDP_TUNNEL;
-+	if (tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE) {
-+		if ((tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_CSUM) ||
-+		    (tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM))
-+			gso_type |= SKB_GSO_UDP_TUNNEL_CSUM;
-+		else
-+			gso_type |= SKB_GSO_UDP_TUNNEL;
-+		if ((tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM) &&
-+		    skb->ip_summed == CHECKSUM_PARTIAL) {
-+			gso_type |= SKB_GSO_TUNNEL_REMCSUM;
-+		}
-+	}
- 
- 	if (iptunnel_handle_offloads(skb, gso_type))
- 		goto tx_error;
-@@ -1218,8 +1319,18 @@ ip_vs_tunnel_xmit_v6(struct sk_buff *skb, struct ip_vs_conn *cp,
- 
- 	skb_set_inner_ipproto(skb, next_protocol);
- 
--	if (tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE)
--		ipvs_gue_encap(net, skb, cp, &next_protocol);
-+	if (tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE) {
-+		bool check = false;
-+
-+		if (ipvs_gue_encap(net, skb, cp, &next_protocol))
-+			goto tx_error;
-+
-+		if ((tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_CSUM) ||
-+		    (tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM))
-+			check = true;
-+
-+		udp6_set_csum(!check, skb, &saddr, &cp->daddr.in6, skb->len);
-+	}
- 
- 	skb_push(skb, sizeof(struct ipv6hdr));
- 	skb_reset_network_header(skb);
--- 
-2.21.0
-
+> 
+> >
+> > On Tue, May 28, 2019 at 11:13 AM Harry Cutts <hcutts@chromium.org> wrote:
+> > >
+> > > On Mon, 27 May 2019 at 18:21, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+> > > >
+> > > > Hi Benjamin, KT,
+> > > >
+> > > > On Mon, May 27, 2019 at 11:55:01AM +0800, 廖崇榮 wrote:
+> > > > > Hi
+> > > > >
+> > > > > -----Original Message-----
+> > > > > From: Benjamin Tissoires [mailto:benjamin.tissoires@redhat.com]
+> > > > > Sent: Friday, May 24, 2019 5:37 PM
+> > > > > To: Dmitry Torokhov; KT Liao; Rob Herring; Aaron Ma; Hans de Goede
+> > > > > Cc: open list:HID CORE LAYER; lkml; devicetree@vger.kernel.org
+> > > > > Subject: Re: [PATCH v2 08/10] Input: elan_i2c - export true width/height
+> > > > >
+> > > > > On Tue, May 21, 2019 at 3:28 PM Benjamin Tissoires <benjamin.tissoires@redhat.com> wrote:
+> > > > > >
+> > > > > > The width/height is actually in the same unit than X and Y. So we
+> > > > > > should not tamper the data, but just set the proper resolution, so
+> > > > > > that userspace can correctly detect which touch is a palm or a finger.
+> > > > > >
+> > > > > > Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+> > > > > >
+> > > > > > --
+> > > > > >
+> > > > > > new in v2
+> > > > > > ---
+> > > > > >  drivers/input/mouse/elan_i2c_core.c | 11 ++++-------
+> > > > > >  1 file changed, 4 insertions(+), 7 deletions(-)
+> > > > > >
+> > > > > > diff --git a/drivers/input/mouse/elan_i2c_core.c
+> > > > > > b/drivers/input/mouse/elan_i2c_core.c
+> > > > > > index 7ff044c6cd11..6f4feedb7765 100644
+> > > > > > --- a/drivers/input/mouse/elan_i2c_core.c
+> > > > > > +++ b/drivers/input/mouse/elan_i2c_core.c
+> > > > > > @@ -45,7 +45,6 @@
+> > > > > >  #define DRIVER_NAME            "elan_i2c"
+> > > > > >  #define ELAN_VENDOR_ID         0x04f3
+> > > > > >  #define ETP_MAX_PRESSURE       255
+> > > > > > -#define ETP_FWIDTH_REDUCE      90
+> > > > > >  #define ETP_FINGER_WIDTH       15
+> > > > > >  #define ETP_RETRY_COUNT                3
+> > > > > >
+> > > > > > @@ -915,12 +914,8 @@ static void elan_report_contact(struct elan_tp_data *data,
+> > > > > >                         return;
+> > > > > >                 }
+> > > > > >
+> > > > > > -               /*
+> > > > > > -                * To avoid treating large finger as palm, let's reduce the
+> > > > > > -                * width x and y per trace.
+> > > > > > -                */
+> > > > > > -               area_x = mk_x * (data->width_x - ETP_FWIDTH_REDUCE);
+> > > > > > -               area_y = mk_y * (data->width_y - ETP_FWIDTH_REDUCE);
+> > > > > > +               area_x = mk_x * data->width_x;
+> > > > > > +               area_y = mk_y * data->width_y;
+> > > > > >
+> > > > > >                 major = max(area_x, area_y);
+> > > > > >                 minor = min(area_x, area_y); @@ -1123,8 +1118,10 @@
+> > > > > > static int elan_setup_input_device(struct elan_tp_data *data)
+> > > > > >                              ETP_MAX_PRESSURE, 0, 0);
+> > > > > >         input_set_abs_params(input, ABS_MT_TOUCH_MAJOR, 0,
+> > > > > >                              ETP_FINGER_WIDTH * max_width, 0, 0);
+> > > > > > +       input_abs_set_res(input, ABS_MT_TOUCH_MAJOR, data->x_res);
+> > > > > >         input_set_abs_params(input, ABS_MT_TOUCH_MINOR, 0,
+> > > > > >                              ETP_FINGER_WIDTH * min_width, 0, 0);
+> > > > > > +       input_abs_set_res(input, ABS_MT_TOUCH_MINOR, data->y_res);
+> > > > >
+> > > > > I had a chat with Peter on Wednesday, and he mentioned that this is dangerous as Major/Minor are max/min of the width and height. And given that we might have 2 different resolutions, we would need to do some computation in the kernel to ensure the data is correct with respect to the resolution.
+> > > > >
+> > > > > TL;DR: I don't think we should export the resolution there :(
+> > > > >
+> > > > > KT, should I drop the patch entirely, or is there a strong argument for keeping the ETP_FWIDTH_REDUCE around?
+> > > > > I suggest you apply the patch, I have no idea why ETP_FWIDTH_REDUCE existed.
+> > > > > Our FW team know nothing about ETP_FWIDTH_REDUCE ether.
+> > > > >
+> > > > > The only side effect will happen on Chromebook because such computation have stayed in ChromeOS' kernel for four years.
+> > > > > Chrome's finger/palm threshold may be different from other Linux distribution.
+> > > > > We will discuss it with Google once the patch picked by chrome and cause something wrong.
+> > > >
+> > > > Chrome has logic that contact with maximum major/minor is treated as a
+> > > > palm, so here the driver (which originally came from Chrome OS)
+> > > > artificially reduces the contact size to ensure that palm rejection
+> > > > logic does not trigger.
+> > > >
+> > > > I'm adding Harry to confirm whether we are still using this logic and to
+> > > > see if we can adjust it to be something else.
+> > >
+> > > I'm not very familiar with our touchpad code, so adding Sean O'Brien, who is.
