@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DD4C2F310
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:26:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 875212F12D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:11:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732283AbfE3E0Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:26:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35106 "EHLO mail.kernel.org"
+        id S1726828AbfE3EK4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:10:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44420 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729910AbfE3DOf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:14:35 -0400
+        id S1727612AbfE3DQ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:16:58 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E46AB24595;
-        Thu, 30 May 2019 03:14:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 50ACD24646;
+        Thu, 30 May 2019 03:16:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186075;
-        bh=xTl7DyP7IZ2wKvEoH3w3lHCjyDnJbp8ZoM3fWE65GKY=;
+        s=default; t=1559186217;
+        bh=3bXHZzvKXyytTWbUilpHdWW3mqkSwQgfLkel3gxWD6Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XUhb0vslaKE/ARWph1mku+kFuQCz8UfjxBnvzy6S4fRp1OkQiI7R2NVh2zu4DM7AJ
-         DhZnRLqdgnvTqcLo2Tv1Fb8PT/cME5/9ZrCgvkBXIYhJeHdWke2LC9NASrc5OJJaGU
-         frRbeqgiq6/vubQY295ZIiWTWe6tYMbUVyrLIla8=
+        b=QbU685Oj1HhxSXc+rymFdF2uDmOzv5x2P7JMrqGnTPaoS3XYfaX52XGs5op6gETqH
+         daKelX13273QdYv4mRTqS02b0SN07krlLqCl2eAK8pfQWcPZ8nEl3FYwUO8XIgaook
+         gNcXfcsLgfrfGgxRtT3Ufm85GMuaxpw4EYFBhNz4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peng Li <lipeng321@huawei.com>,
-        Huazhong Tan <tanhuazhong@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 191/346] net: hns3: free the pending skb when clean RX ring
+Subject: [PATCH 4.19 106/276] bcache: avoid clang -Wunintialized warning
 Date:   Wed, 29 May 2019 20:04:24 -0700
-Message-Id: <20190530030550.749358221@linuxfoundation.org>
+Message-Id: <20190530030532.661154521@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,41 +45,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit cc5ff6e90f808f9a4c8229bf2f1de0dfe5d7931c ]
+[ Upstream commit 78d4eb8ad9e1d413449d1b7a060f50b6efa81ebd ]
 
-If there is pending skb in RX flow when close the port, and the
-pending buffer is not cleaned, the new packet will be added to
-the pending skb when the port opens again, and the first new
-packet has error data.
+clang has identified a code path in which it thinks a
+variable may be unused:
 
-This patch cleans the pending skb when clean RX ring.
+drivers/md/bcache/alloc.c:333:4: error: variable 'bucket' is used uninitialized whenever 'if' condition is false
+      [-Werror,-Wsometimes-uninitialized]
+                        fifo_pop(&ca->free_inc, bucket);
+                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/md/bcache/util.h:219:27: note: expanded from macro 'fifo_pop'
+ #define fifo_pop(fifo, i)       fifo_pop_front(fifo, (i))
+                                ^~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/md/bcache/util.h:189:6: note: expanded from macro 'fifo_pop_front'
+        if (_r) {                                                       \
+            ^~
+drivers/md/bcache/alloc.c:343:46: note: uninitialized use occurs here
+                        allocator_wait(ca, bch_allocator_push(ca, bucket));
+                                                                  ^~~~~~
+drivers/md/bcache/alloc.c:287:7: note: expanded from macro 'allocator_wait'
+                if (cond)                                               \
+                    ^~~~
+drivers/md/bcache/alloc.c:333:4: note: remove the 'if' if its condition is always true
+                        fifo_pop(&ca->free_inc, bucket);
+                        ^
+drivers/md/bcache/util.h:219:27: note: expanded from macro 'fifo_pop'
+ #define fifo_pop(fifo, i)       fifo_pop_front(fifo, (i))
+                                ^
+drivers/md/bcache/util.h:189:2: note: expanded from macro 'fifo_pop_front'
+        if (_r) {                                                       \
+        ^
+drivers/md/bcache/alloc.c:331:15: note: initialize the variable 'bucket' to silence this warning
+                        long bucket;
+                                   ^
 
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This cannot happen in practice because we only enter the loop
+if there is at least one element in the list.
+
+Slightly rearranging the code makes this clearer to both the
+reader and the compiler, which avoids the warning.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Coly Li <colyli@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/md/bcache/alloc.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index ecadd280ab28d..fb5cb15aea9ec 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -3871,6 +3871,13 @@ static int hns3_clear_rx_ring(struct hns3_enet_ring *ring)
- 		ring_ptr_move_fw(ring, next_to_use);
- 	}
+diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
+index 7a28232d868bd..de85b3af3b39d 100644
+--- a/drivers/md/bcache/alloc.c
++++ b/drivers/md/bcache/alloc.c
+@@ -327,10 +327,11 @@ static int bch_allocator_thread(void *arg)
+ 		 * possibly issue discards to them, then we add the bucket to
+ 		 * the free list:
+ 		 */
+-		while (!fifo_empty(&ca->free_inc)) {
++		while (1) {
+ 			long bucket;
  
-+	/* Free the pending skb in rx ring */
-+	if (ring->skb) {
-+		dev_kfree_skb_any(ring->skb);
-+		ring->skb = NULL;
-+		ring->pending_buf = 0;
-+	}
-+
- 	return 0;
- }
+-			fifo_pop(&ca->free_inc, bucket);
++			if (!fifo_pop(&ca->free_inc, bucket))
++				break;
  
+ 			if (ca->discard) {
+ 				mutex_unlock(&ca->set->bucket_lock);
 -- 
 2.20.1
 
