@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80E5F2F4C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:42:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C9882ECF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:29:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388690AbfE3ElS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:41:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55166 "EHLO mail.kernel.org"
+        id S2388322AbfE3D3M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:29:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729027AbfE3DM1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:27 -0400
+        id S1731049AbfE3DUb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:20:31 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B01A023D14;
-        Thu, 30 May 2019 03:12:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44CCA2493A;
+        Thu, 30 May 2019 03:20:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185946;
-        bh=bDXiMGFvmldpxTxfhq4JdbAQvsgjlZNGG0/Vu9YG5q8=;
+        s=default; t=1559186430;
+        bh=WSxZ+l1zBLcw8xp+9tZaF07YU4YOYkgUrHg+LBoNN3A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZIoNFO3ryFs69HAOlbX04+bv2TLBfwHgPFCNuSwONJBh/QzNfkJI58fHq6HtB0v3C
-         BjuC5B8mTwcN+KYdl1Jdu+04GOM1RBNcg4xyvWEPmV+ZuhFSJKXOBinp86BSJyLhRA
-         v5iAJA/K2ZF5Tf5TPXOQaXooqeOl6svWO7LmhXJU=
+        b=pVmNO/UijO9E+3FXlabeEEndPck3SBpHT+2/fR5hWH8jgHAvWbYXxbpGGBGgtXP4t
+         Npu17+Dmu2ja58SVJ6u52yX/ZwzSiaGnC3hzkSTGiN9jenSHH2gRor3AfJRsatxPsv
+         mPa6u0qQUsqrk2l7LtPAgSPQBxqU25xFEznjZ7+w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 356/405] media: go7007: avoid clang frame overflow warning with KASAN
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.9 022/128] Revert "btrfs: Honour FITRIM range constraints during free space trim"
 Date:   Wed, 29 May 2019 20:05:54 -0700
-Message-Id: <20190530030558.645730883@linuxfoundation.org>
+Message-Id: <20190530030438.866703877@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +42,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ed713a4a1367aca5c0f2f329579465db00c17995 ]
+From: David Sterba <dsterba@suse.com>
 
-clang-8 warns about one function here when KASAN is enabled, even
-without the 'asan-stack' option:
+This reverts commit 038ec2c13e0d1f7b9d45a081786f18f75b65f11b.
 
-drivers/media/usb/go7007/go7007-fw.c:1551:5: warning: stack frame size of 2656 bytes in function
+There is currently no corresponding patch in master due to additional
+changes that would be significantly different from plain revert in the
+respective stable branch.
 
-I have reported this issue in the llvm bugzilla, but to make
-it work with the clang-8 release, a small annotation is still
-needed.
+The range argument was not handled correctly and could cause trim to
+overlap allocated areas or reach beyond the end of the device. The
+address space that fitrim normally operates on is in logical
+coordinates, while the discards are done on the physical device extents.
+This distinction cannot be made with the current ioctl interface and
+caused the confusion.
 
-Link: https://bugs.llvm.org/show_bug.cgi?id=38809
+The bug depends on the layout of block groups and does not always
+happen. The whole-fs trim (run by default by the fstrim tool) is not
+affected.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-[hverkuil-cisco@xs4all.nl: fix checkpatch warning]
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/usb/go7007/go7007-fw.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/btrfs/extent-tree.c |   25 ++++++-------------------
+ 1 file changed, 6 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/media/usb/go7007/go7007-fw.c b/drivers/media/usb/go7007/go7007-fw.c
-index 24f5b615dc7af..dfa9f899d0c25 100644
---- a/drivers/media/usb/go7007/go7007-fw.c
-+++ b/drivers/media/usb/go7007/go7007-fw.c
-@@ -1499,8 +1499,8 @@ static int modet_to_package(struct go7007 *go, __le16 *code, int space)
- 	return cnt;
- }
- 
--static int do_special(struct go7007 *go, u16 type, __le16 *code, int space,
--			int *framelen)
-+static noinline_for_stack int do_special(struct go7007 *go, u16 type,
-+					 __le16 *code, int space, int *framelen)
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -11150,9 +11150,9 @@ int btrfs_error_unpin_extent_range(struc
+  * transaction.
+  */
+ static int btrfs_trim_free_extents(struct btrfs_device *device,
+-				   struct fstrim_range *range, u64 *trimmed)
++				   u64 minlen, u64 *trimmed)
  {
- 	switch (type) {
- 	case SPECIAL_FRM_HEAD:
--- 
-2.20.1
-
+-	u64 start = range->start, len = 0;
++	u64 start = 0, len = 0;
+ 	int ret;
+ 
+ 	*trimmed = 0;
+@@ -11188,8 +11188,8 @@ static int btrfs_trim_free_extents(struc
+ 			atomic_inc(&trans->use_count);
+ 		spin_unlock(&fs_info->trans_lock);
+ 
+-		ret = find_free_dev_extent_start(trans, device, range->minlen,
+-						 start, &start, &len);
++		ret = find_free_dev_extent_start(trans, device, minlen, start,
++						 &start, &len);
+ 		if (trans)
+ 			btrfs_put_transaction(trans);
+ 
+@@ -11201,16 +11201,6 @@ static int btrfs_trim_free_extents(struc
+ 			break;
+ 		}
+ 
+-		/* If we are out of the passed range break */
+-		if (start > range->start + range->len - 1) {
+-			mutex_unlock(&fs_info->chunk_mutex);
+-			ret = 0;
+-			break;
+-		}
+-
+-		start = max(range->start, start);
+-		len = min(range->len, len);
+-
+ 		ret = btrfs_issue_discard(device->bdev, start, len, &bytes);
+ 		up_read(&fs_info->commit_root_sem);
+ 		mutex_unlock(&fs_info->chunk_mutex);
+@@ -11221,10 +11211,6 @@ static int btrfs_trim_free_extents(struc
+ 		start += len;
+ 		*trimmed += bytes;
+ 
+-		/* We've trimmed enough */
+-		if (*trimmed >= range->len)
+-			break;
+-
+ 		if (fatal_signal_pending(current)) {
+ 			ret = -ERESTARTSYS;
+ 			break;
+@@ -11309,7 +11295,8 @@ int btrfs_trim_fs(struct btrfs_root *roo
+ 	mutex_lock(&fs_info->fs_devices->device_list_mutex);
+ 	devices = &fs_info->fs_devices->devices;
+ 	list_for_each_entry(device, devices, dev_list) {
+-		ret = btrfs_trim_free_extents(device, range, &group_trimmed);
++		ret = btrfs_trim_free_extents(device, range->minlen,
++					      &group_trimmed);
+ 		if (ret) {
+ 			dev_failed++;
+ 			dev_ret = ret;
 
 
