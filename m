@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F06EB2F459
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:38:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDD952F022
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:01:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388665AbfE3EhX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:37:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56480 "EHLO mail.kernel.org"
+        id S1731904AbfE3EBI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:01:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728482AbfE3DMx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:53 -0400
+        id S1731463AbfE3DSM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:18:12 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3EF68244B0;
-        Thu, 30 May 2019 03:12:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 652FC2475A;
+        Thu, 30 May 2019 03:18:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185973;
-        bh=JgN37LjgXSRNCtPU8BWPOAtUz0V1fcZPJhyRBE7O2SQ=;
+        s=default; t=1559186292;
+        bh=40Dw/r2+ge0n1REOJJdhybpmlif7X0HbTBKF0F7o8gk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TkJ9GWfeHUoszPq1ID2UHLVhO7Rma9ogLWpJcDEzaph4/Bc1pbtjREQHRB2pnfZm5
-         sP3U3s3fS6VysWqYyjWscKtNZq0rl3TKm3xEB7eTnepjBlWlRqFPtJ7zCWY+wd4dxx
-         8wqE6Nl6XRKF43BDOODZQLL6CYqD9Tg4foTzvc4A=
+        b=hPA8k5a0+IkhRklimmDSYX4j4E9/TvGtYeEd2yxlf5yHz+yBJGjWYZQZi/Ora1LY0
+         TQSEWL2WgXIW1KzdQoqe6LqAURXmx2cSxz5Bj3VhO3wS+FlVzyDSUU4MyuG1Hb5c3r
+         Zxg5I9HN+dSX4xvIvDy3ccfazqBkDjeh7qKrMKD8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 384/405] regulator: da9211: Fix notifier mutex lock warning
+Subject: [PATCH 4.19 224/276] thunderbolt: property: Fix a missing check of kzalloc
 Date:   Wed, 29 May 2019 20:06:22 -0700
-Message-Id: <20190530030600.144343924@linuxfoundation.org>
+Message-Id: <20190530030539.120474383@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,52 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 65378de3359d30ebce44762d8b8027f372b5b1c4 ]
+[ Upstream commit 6183d5a51866f3acdeeb66b75e87d44025b01a55 ]
 
-The mutex for the regulator_dev must be controlled by the caller of
-the regulator_notifier_call_chain(), as described in the comment
-for that function.
+No check is enforced for the return value of kzalloc,
+which may lead to NULL-pointer dereference.
 
-Failure to mutex lock and unlock surrounding the notifier call results
-in a kernel WARN_ON_ONCE() which will dump a backtrace for the
-regulator_notifier_call_chain() when that function call is first made.
-The mutex can be controlled using the regulator_lock/unlock() API.
+The patch fixes this issue.
 
-Fixes: 1028a37daa14 ("regulator: da9211: new regulator driver")
-Suggested-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Signed-off-by: Steve Twiss <stwiss.opensource@diasemi.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/regulator/da9211-regulator.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/thunderbolt/property.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/da9211-regulator.c b/drivers/regulator/da9211-regulator.c
-index 109ee12d43626..4d7fe4819c1ce 100644
---- a/drivers/regulator/da9211-regulator.c
-+++ b/drivers/regulator/da9211-regulator.c
-@@ -322,8 +322,10 @@ static irqreturn_t da9211_irq_handler(int irq, void *data)
- 		goto error_i2c;
+diff --git a/drivers/thunderbolt/property.c b/drivers/thunderbolt/property.c
+index 8fe913a95b4ad..67fd0b5551ded 100644
+--- a/drivers/thunderbolt/property.c
++++ b/drivers/thunderbolt/property.c
+@@ -581,7 +581,12 @@ int tb_property_add_text(struct tb_property_dir *parent, const char *key,
+ 		return -ENOMEM;
  
- 	if (reg_val & DA9211_E_OV_CURR_A) {
-+	        regulator_lock(chip->rdev[0]);
- 		regulator_notifier_call_chain(chip->rdev[0],
- 			REGULATOR_EVENT_OVER_CURRENT, NULL);
-+	        regulator_unlock(chip->rdev[0]);
+ 	property->length = size / 4;
+-	property->value.data = kzalloc(size, GFP_KERNEL);
++	property->value.text = kzalloc(size, GFP_KERNEL);
++	if (!property->value.text) {
++		kfree(property);
++		return -ENOMEM;
++	}
++
+ 	strcpy(property->value.text, text);
  
- 		err = regmap_write(chip->regmap, DA9211_REG_EVENT_B,
- 			DA9211_E_OV_CURR_A);
-@@ -334,8 +336,10 @@ static irqreturn_t da9211_irq_handler(int irq, void *data)
- 	}
- 
- 	if (reg_val & DA9211_E_OV_CURR_B) {
-+	        regulator_lock(chip->rdev[1]);
- 		regulator_notifier_call_chain(chip->rdev[1],
- 			REGULATOR_EVENT_OVER_CURRENT, NULL);
-+	        regulator_unlock(chip->rdev[1]);
- 
- 		err = regmap_write(chip->regmap, DA9211_REG_EVENT_B,
- 			DA9211_E_OV_CURR_B);
+ 	list_add_tail(&property->list, &parent->properties);
 -- 
 2.20.1
 
