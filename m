@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 646592EC65
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:22:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3A1C2ECB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:25:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730538AbfE3DU2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:20:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40328 "EHLO mail.kernel.org"
+        id S2387420AbfE3DYj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:24:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730521AbfE3DPy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:15:54 -0400
+        id S1731474AbfE3DSP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:18:15 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B76B5245C1;
-        Thu, 30 May 2019 03:15:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5318624763;
+        Thu, 30 May 2019 03:18:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186153;
-        bh=ojEFXvjefIoyv3AvjbQfjXEc+C206xsOTm/uDxaKWLA=;
+        s=default; t=1559186294;
+        bh=RzkQDFObNYcIiIPGLQTQZaZDCTqXgUmZqo1AGSEvEqQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xG/KZe7dKpgztvIcJ6LbfneNdEt6FR7wJIzbYSlPA+sRUjfcPzr12xBhMXbzUlq67
-         FONYvmeIB2c/f/teRdlQARcG4IN+x6n3DafFQtM075XSQMkQ1/a17ykcuH8/BMZB9E
-         3kpoUxts5ZwaXmXsekqL3SkQ6Afe/YpIxCS7TaQU=
+        b=m8C1QCqV6sBXb5MKflp2HSQ6PetrV9DKLANQe3MCYpOK4JRll8t0APx74nC+HYJdB
+         ydF5RsYUWrmHcZClPuZUiTLjpyWk1JkaedLOHzKIRh/DNTJ6WEMIt6/E24f4AzEJyC
+         UuoMVOHQv43X6TtWwEPiAe8Dn0yayaxjPOOYfpFM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Anholt <eric@anholt.net>,
-        Dave Emett <david.emett@broadcom.com>,
+        stable@vger.kernel.org,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        Sun peng Li <Sunpeng.Li@amd.com>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 339/346] drm/v3d: Handle errors from IRQ setup.
+Subject: [PATCH 4.19 254/276] drm/amd/display: Set stream->mode_changed when connectors change
 Date:   Wed, 29 May 2019 20:06:52 -0700
-Message-Id: <20190530030557.905333311@linuxfoundation.org>
+Message-Id: <20190530030541.032695304@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,95 +47,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit fc22771547e7e8a63679f0218e943d72b107de65 ]
+[ Upstream commit b9952f93cd2cf5fca82b06a8179c0f5f7b769e83 ]
 
-Noted in review by Dave Emett for V3D 4.2 support.
+[Why]
+The kms_plane@plane-position-covered-pipe-*-planes subtests can produce
+a sequence of atomic commits such that neither active_changed nor
+mode_changed but connectors_changed.
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190308174336.7866-1-eric@anholt.net
-Reviewed-by: Dave Emett <david.emett@broadcom.com>
+When this happens we remove the old stream from the context and add
+a new stream but the new stream doesn't have mode_changed=true set.
+
+This incorrect programming sequence causes CRC mismatches to occur in
+the test.
+
+The stream->mode_changed value should be set whenever a new stream
+is created.
+
+[How]
+A new stream is created whenever drm_atomic_crtc_needs_modeset is true.
+We previously covered the active_changed and mode_changed conditions
+for the CRTC but connectors_changed is also checked within
+drm_atomic_crtc_needs_modeset.
+
+So just use drm_atomic_crtc_needs_modeset directly to determine the
+mode_changed flag.
+
+Signed-off-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+Reviewed-by: Sun peng Li <Sunpeng.Li@amd.com>
+Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/v3d/v3d_drv.c |  8 ++++++--
- drivers/gpu/drm/v3d/v3d_drv.h |  2 +-
- drivers/gpu/drm/v3d/v3d_irq.c | 13 +++++++++++--
- 3 files changed, 18 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/v3d/v3d_drv.c b/drivers/gpu/drm/v3d/v3d_drv.c
-index f0afcec72c348..30ae1c74edaa8 100644
---- a/drivers/gpu/drm/v3d/v3d_drv.c
-+++ b/drivers/gpu/drm/v3d/v3d_drv.c
-@@ -312,14 +312,18 @@ static int v3d_platform_drm_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto dev_destroy;
- 
--	v3d_irq_init(v3d);
-+	ret = v3d_irq_init(v3d);
-+	if (ret)
-+		goto gem_destroy;
- 
- 	ret = drm_dev_register(drm, 0);
- 	if (ret)
--		goto gem_destroy;
-+		goto irq_disable;
- 
- 	return 0;
- 
-+irq_disable:
-+	v3d_irq_disable(v3d);
- gem_destroy:
- 	v3d_gem_destroy(drm);
- dev_destroy:
-diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
-index dcb772a191919..f2937a1da5814 100644
---- a/drivers/gpu/drm/v3d/v3d_drv.h
-+++ b/drivers/gpu/drm/v3d/v3d_drv.h
-@@ -311,7 +311,7 @@ void v3d_invalidate_caches(struct v3d_dev *v3d);
- void v3d_flush_caches(struct v3d_dev *v3d);
- 
- /* v3d_irq.c */
--void v3d_irq_init(struct v3d_dev *v3d);
-+int v3d_irq_init(struct v3d_dev *v3d);
- void v3d_irq_enable(struct v3d_dev *v3d);
- void v3d_irq_disable(struct v3d_dev *v3d);
- void v3d_irq_reset(struct v3d_dev *v3d);
-diff --git a/drivers/gpu/drm/v3d/v3d_irq.c b/drivers/gpu/drm/v3d/v3d_irq.c
-index 69338da70ddce..29d746cfce572 100644
---- a/drivers/gpu/drm/v3d/v3d_irq.c
-+++ b/drivers/gpu/drm/v3d/v3d_irq.c
-@@ -156,7 +156,7 @@ v3d_hub_irq(int irq, void *arg)
- 	return status;
- }
- 
--void
-+int
- v3d_irq_init(struct v3d_dev *v3d)
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 76ee2de43ea66..dac7978f5ee1f 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -4369,8 +4369,7 @@ static void amdgpu_dm_commit_planes(struct drm_atomic_state *state,
+ static void amdgpu_dm_crtc_copy_transient_flags(struct drm_crtc_state *crtc_state,
+ 						struct dc_stream_state *stream_state)
  {
- 	int ret, core;
-@@ -173,13 +173,22 @@ v3d_irq_init(struct v3d_dev *v3d)
- 	ret = devm_request_irq(v3d->dev, platform_get_irq(v3d->pdev, 0),
- 			       v3d_hub_irq, IRQF_SHARED,
- 			       "v3d_hub", v3d);
-+	if (ret)
-+		goto fail;
-+
- 	ret = devm_request_irq(v3d->dev, platform_get_irq(v3d->pdev, 1),
- 			       v3d_irq, IRQF_SHARED,
- 			       "v3d_core0", v3d);
- 	if (ret)
--		dev_err(v3d->dev, "IRQ setup failed: %d\n", ret);
-+		goto fail;
- 
- 	v3d_irq_enable(v3d);
-+	return 0;
-+
-+fail:
-+	if (ret != -EPROBE_DEFER)
-+		dev_err(v3d->dev, "IRQ setup failed: %d\n", ret);
-+	return ret;
+-	stream_state->mode_changed =
+-		crtc_state->mode_changed || crtc_state->active_changed;
++	stream_state->mode_changed = drm_atomic_crtc_needs_modeset(crtc_state);
  }
  
- void
+ static int amdgpu_dm_atomic_commit(struct drm_device *dev,
 -- 
 2.20.1
 
