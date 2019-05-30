@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 088612F134
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:11:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 648B72EFFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:01:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729297AbfE3ELE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:11:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44304 "EHLO mail.kernel.org"
+        id S1731529AbfE3DSX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:18:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730860AbfE3DQ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:16:56 -0400
+        id S1729899AbfE3DOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:14:33 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77F0724627;
-        Thu, 30 May 2019 03:16:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82D0724502;
+        Thu, 30 May 2019 03:14:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186215;
-        bh=/5po97wS94LxbvL5IYE+3mvdM2mJsq4ckfhoYofjvhE=;
+        s=default; t=1559186072;
+        bh=ZxoC2ZaChE0LSaUH//IepsBvmghb26/EDzC/WkcZoNs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bAw4O97WogxRNjm3Eu/8/ir3S9NrLk8j81cjGjuUOFUMXaclI5GJwQkKtryveb9c1
-         P/F+12D/RCVMusd23jP0gTSWiFWs08LhIwgH9xqbYgVzOXOzxhuoJIrQGxhW6h9pFL
-         iQtwNqfnr/3cEZr6hhv8sBwaudLkA1g5V5TrE2FA=
+        b=E/FKJ7Ksp0cYUojTkdti/H+HRfd8O9XKfdcHEYj1YtXuUe6qwVznL5bnylXCtpt+Z
+         i6+PIhRJx7XjZN/k7lLpoZWOOANtfyJ1h2L+CZH2Et2IIKMFyleqpM2rRjXSl4tT73
+         AoZwvMUaaQOdYrxfQWFImcsmvKanC+FzTcr4EIcY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shenghui Wang <shhuiw@foxmail.com>,
-        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 102/276] bcache: avoid potential memleak of list of journal_replay(s) in the CACHE_SYNC branch of run_cache_set
+Subject: [PATCH 5.0 187/346] mmc_spi: add a status check for spi_sync_locked
 Date:   Wed, 29 May 2019 20:04:20 -0700
-Message-Id: <20190530030532.459829796@linuxfoundation.org>
+Message-Id: <20190530030550.560021646@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,58 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 95f18c9d1310730d075499a75aaf13bcd60405a7 ]
+[ Upstream commit 611025983b7976df0183390a63a2166411d177f1 ]
 
-In the CACHE_SYNC branch of run_cache_set(), LIST_HEAD(journal) is used
-to collect journal_replay(s) and filled by bch_journal_read().
+In case spi_sync_locked fails, the fix reports the error and
+returns the error code upstream.
 
-If all goes well, bch_journal_replay() will release the list of
-jounal_replay(s) at the end of the branch.
-
-If something goes wrong, code flow will jump to the label "err:" and leave
-the list unreleased.
-
-This patch will release the list of journal_replay(s) in the case of
-error detected.
-
-v1 -> v2:
-* Move the release code to the location after label 'err:' to
-  simply the change.
-
-Signed-off-by: Shenghui Wang <shhuiw@foxmail.com>
-Signed-off-by: Coly Li <colyli@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/bcache/super.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/mmc/host/mmc_spi.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 2c0d35c882ed8..d8190804aee9b 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1777,6 +1777,8 @@ static void run_cache_set(struct cache_set *c)
- 	struct cache *ca;
- 	struct closure cl;
- 	unsigned int i;
-+	LIST_HEAD(journal);
-+	struct journal_replay *l;
+diff --git a/drivers/mmc/host/mmc_spi.c b/drivers/mmc/host/mmc_spi.c
+index 8ade14fb2148d..3410e21515795 100644
+--- a/drivers/mmc/host/mmc_spi.c
++++ b/drivers/mmc/host/mmc_spi.c
+@@ -819,6 +819,10 @@ mmc_spi_readblock(struct mmc_spi_host *host, struct spi_transfer *t,
+ 	}
  
- 	closure_init_stack(&cl);
- 
-@@ -1934,6 +1936,12 @@ static void run_cache_set(struct cache_set *c)
- 	set_bit(CACHE_SET_RUNNING, &c->flags);
- 	return;
- err:
-+	while (!list_empty(&journal)) {
-+		l = list_first_entry(&journal, struct journal_replay, list);
-+		list_del(&l->list);
-+		kfree(l);
+ 	status = spi_sync_locked(spi, &host->m);
++	if (status < 0) {
++		dev_dbg(&spi->dev, "read error %d\n", status);
++		return status;
 +	}
-+
- 	closure_sync(&cl);
- 	/* XXX: test this, it's broken */
- 	bch_cache_set_error(c, "%s", err);
+ 
+ 	if (host->dma_dev) {
+ 		dma_sync_single_for_cpu(host->dma_dev,
 -- 
 2.20.1
 
