@@ -2,38 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD2D42F347
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:28:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD67E2EC79
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:22:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733151AbfE3E2C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:28:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33806 "EHLO mail.kernel.org"
+        id S1731800AbfE3DVM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:21:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41638 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729799AbfE3DOR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:14:17 -0400
+        id S1728034AbfE3DQQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:16:16 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1DEDE24561;
-        Thu, 30 May 2019 03:14:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4034E245D7;
+        Thu, 30 May 2019 03:16:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186057;
-        bh=4JtowR7rR6MkcUqA8TLKs76CuClBze5Yn3jNnZd+7hM=;
+        s=default; t=1559186176;
+        bh=SHD36+BY1QvaEGUkOypXBRfC8ohz3yaLFqEMSfO4UWU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JtRefm1uz2PXZCk6m/zlFmjNI9eezGUkoNPHjAtmQaUcRG/swCvfr34B4HdOr4/eN
-         1ATuwfJej1AVQ2wPR3sTIqUnBdtS0boYX84UTRrs5XTKWy/zvppxleAljn1HqgooFn
-         IOps+cy/oUf4OrXiPjwYMPbXGtGH8BPn+D73gIPo=
+        b=V37Zz8wa1tzTCiWI5RH2ugAdK96UGS0OUpU00x/v5NFt6PTB6oQJjcVu3qXRQc0RG
+         AIt82ZEW7wplkOQz9pU+tzTEL88PEV16hbShxBddro0tbpK7bq2Wk7l0MkPG+7ka2Z
+         DkDSKtUdCfvEZT1CW899BUFN7//x+1b7lPi+qbSI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>,
-        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 114/346] nvme-tcp: fix a NULL deref when an admin connect times out
+        stable@vger.kernel.org,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.19 029/276] brcmfmac: add subtype check for event handling in data path
 Date:   Wed, 29 May 2019 20:03:07 -0700
-Message-Id: <20190530030546.868214849@linuxfoundation.org>
+Message-Id: <20190530030525.996904578@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,49 +48,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7a42589654ae79e1177f0d74306a02d6cef7bddf ]
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
 
-If we timeout the admin startup sequence we might not yet have
-an I/O tagset allocated which causes the teardown sequence to crash.
-Make nvme_tcp_teardown_io_queues safe by not iterating inflight tags
-if the tagset wasn't allocated.
+commit a4176ec356c73a46c07c181c6d04039fafa34a9f upstream.
 
-Fixes: 39d57757467b ("nvme-tcp: fix timeout handler")
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+For USB there is no separate channel being used to pass events
+from firmware to the host driver and as such are passed over the
+data path. In order to detect mock event messages an additional
+check is needed on event subtype. This check is added conditionally
+using unlikely() keyword.
+
+Reviewed-by: Hante Meuleman <hante.meuleman@broadcom.com>
+Reviewed-by: Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>
+Reviewed-by: Franky Lin <franky.lin@broadcom.com>
+Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/nvme/host/tcp.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c   |    5 ++--
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/fweh.h   |   16 ++++++++++----
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c |    2 -
+ 3 files changed, 16 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
-index 5f0a004252422..e71b0058c57bd 100644
---- a/drivers/nvme/host/tcp.c
-+++ b/drivers/nvme/host/tcp.c
-@@ -1686,7 +1686,9 @@ static void nvme_tcp_teardown_admin_queue(struct nvme_ctrl *ctrl,
- {
- 	blk_mq_quiesce_queue(ctrl->admin_q);
- 	nvme_tcp_stop_queue(ctrl, 0);
--	blk_mq_tagset_busy_iter(ctrl->admin_tagset, nvme_cancel_request, ctrl);
-+	if (ctrl->admin_tagset)
-+		blk_mq_tagset_busy_iter(ctrl->admin_tagset,
-+			nvme_cancel_request, ctrl);
- 	blk_mq_unquiesce_queue(ctrl->admin_q);
- 	nvme_tcp_destroy_admin_queue(ctrl, remove);
- }
-@@ -1698,7 +1700,9 @@ static void nvme_tcp_teardown_io_queues(struct nvme_ctrl *ctrl,
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c
+@@ -464,7 +464,8 @@ void brcmf_rx_frame(struct device *dev,
+ 	} else {
+ 		/* Process special event packets */
+ 		if (handle_event)
+-			brcmf_fweh_process_skb(ifp->drvr, skb);
++			brcmf_fweh_process_skb(ifp->drvr, skb,
++					       BCMILCP_SUBTYPE_VENDOR_LONG);
+ 
+ 		brcmf_netif_rx(ifp, skb);
+ 	}
+@@ -481,7 +482,7 @@ void brcmf_rx_event(struct device *dev,
+ 	if (brcmf_rx_hdrpull(drvr, skb, &ifp))
  		return;
- 	nvme_stop_queues(ctrl);
- 	nvme_tcp_stop_io_queues(ctrl);
--	blk_mq_tagset_busy_iter(ctrl->tagset, nvme_cancel_request, ctrl);
-+	if (ctrl->tagset)
-+		blk_mq_tagset_busy_iter(ctrl->tagset,
-+			nvme_cancel_request, ctrl);
- 	if (remove)
- 		nvme_start_queues(ctrl);
- 	nvme_tcp_destroy_io_queues(ctrl, remove);
--- 
-2.20.1
-
+ 
+-	brcmf_fweh_process_skb(ifp->drvr, skb);
++	brcmf_fweh_process_skb(ifp->drvr, skb, 0);
+ 	brcmu_pkt_buf_free_skb(skb);
+ }
+ 
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fweh.h
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fweh.h
+@@ -211,7 +211,7 @@ enum brcmf_fweh_event_code {
+  */
+ #define BRCM_OUI				"\x00\x10\x18"
+ #define BCMILCP_BCM_SUBTYPE_EVENT		1
+-
++#define BCMILCP_SUBTYPE_VENDOR_LONG		32769
+ 
+ /**
+  * struct brcm_ethhdr - broadcom specific ether header.
+@@ -334,10 +334,10 @@ void brcmf_fweh_process_event(struct brc
+ void brcmf_fweh_p2pdev_setup(struct brcmf_if *ifp, bool ongoing);
+ 
+ static inline void brcmf_fweh_process_skb(struct brcmf_pub *drvr,
+-					  struct sk_buff *skb)
++					  struct sk_buff *skb, u16 stype)
+ {
+ 	struct brcmf_event *event_packet;
+-	u16 usr_stype;
++	u16 subtype, usr_stype;
+ 
+ 	/* only process events when protocol matches */
+ 	if (skb->protocol != cpu_to_be16(ETH_P_LINK_CTL))
+@@ -346,8 +346,16 @@ static inline void brcmf_fweh_process_sk
+ 	if ((skb->len + ETH_HLEN) < sizeof(*event_packet))
+ 		return;
+ 
+-	/* check for BRCM oui match */
+ 	event_packet = (struct brcmf_event *)skb_mac_header(skb);
++
++	/* check subtype if needed */
++	if (unlikely(stype)) {
++		subtype = get_unaligned_be16(&event_packet->hdr.subtype);
++		if (subtype != stype)
++			return;
++	}
++
++	/* check for BRCM oui match */
+ 	if (memcmp(BRCM_OUI, &event_packet->hdr.oui[0],
+ 		   sizeof(event_packet->hdr.oui)))
+ 		return;
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c
+@@ -1116,7 +1116,7 @@ static void brcmf_msgbuf_process_event(s
+ 
+ 	skb->protocol = eth_type_trans(skb, ifp->ndev);
+ 
+-	brcmf_fweh_process_skb(ifp->drvr, skb);
++	brcmf_fweh_process_skb(ifp->drvr, skb, 0);
+ 
+ exit:
+ 	brcmu_pkt_buf_free_skb(skb);
 
 
