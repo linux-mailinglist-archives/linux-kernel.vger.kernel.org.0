@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DAF32F01F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:01:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA8162ED4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:34:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731508AbfE3EA6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:00:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50450 "EHLO mail.kernel.org"
+        id S2388125AbfE3D2G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:28:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729107AbfE3DSO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:14 -0400
+        id S1732040AbfE3DTt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:19:49 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1423245AF;
-        Thu, 30 May 2019 03:18:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8611248CF;
+        Thu, 30 May 2019 03:19:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186294;
-        bh=20NGHh9hI3pUhV5NSLVTioijjfVOpQ0vS7J9QaqBhV4=;
+        s=default; t=1559186389;
+        bh=QHHJzmGmENwLd9+4/6BGh0e0DWoeRUnT3nr0VX28p8E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B237X1ljmYZ6TQmfDGchEi9vk9aIQutmdC3IHa8veRiVYgfYVKmxBtyymSdNx5xyk
-         K/6h5MPLJ4J4KIN81OiOp8iiy7E/oNPRfMLO5U9YpdYLplVrrQeVzRP5PFy7G1f3G2
-         tDjdgQD+WLuXVjuqzHCMovy2nPnUGisDNTj/Q5jA=
+        b=pvROQc4hPQcTFqy0ajb1SeIvavvwLnTLKy/K7foUKO9JflFeITnKN+zwSb6v4eeeS
+         yZ5C3unv0CjSZI1HY1aoSP7Y29FbwJeL6zb4l3GbzVJ9uJ0QvfQz767+BWlLFct1O+
+         +aMm1tFvQBlFDJVLFoh5wug7SVT+RLP7JnskoYLE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Murton Liu <murton.liu@amd.com>,
-        Aric Cyr <Aric.Cyr@amd.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Sivapiriyan Kumarasamy <Sivapiriyan.Kumarasamy@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 253/276] drm/amd/display: Fix Divide by 0 in memory calculations
-Date:   Wed, 29 May 2019 20:06:51 -0700
-Message-Id: <20190530030540.954741678@linuxfoundation.org>
+Subject: [PATCH 4.14 158/193] ASoC: eukrea-tlv320: fix a leaked reference by adding missing of_node_put
+Date:   Wed, 29 May 2019 20:06:52 -0700
+Message-Id: <20190530030510.126576297@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,55 +47,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 59979bf8be1784ebfc44215031c6c88ca22ae65d ]
+[ Upstream commit b820d52e7eed7b30b2dfef5f4213a2bc3cbea6f3 ]
 
-Check if we get any values equal to 0, and set to 1 if so.
+The call to of_parse_phandle returns a node pointer with refcount
+incremented thus it must be explicitly decremented after the last
+usage.
 
-Signed-off-by: Murton Liu <murton.liu@amd.com>
-Reviewed-by: Aric Cyr <Aric.Cyr@amd.com>
-Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-Acked-by: Sivapiriyan Kumarasamy <Sivapiriyan.Kumarasamy@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Detected by coccinelle with the following warnings:
+./sound/soc/fsl/eukrea-tlv320.c:121:3-9: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 102, but without a correspo    nding object release within this function.
+./sound/soc/fsl/eukrea-tlv320.c:127:3-9: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 102, but without a correspo    nding object release within this function.
+
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.com>
+Cc: alsa-devel@alsa-project.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../drm/amd/display/dc/dcn10/dcn10_dpp_dscl.c | 20 ++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ sound/soc/fsl/eukrea-tlv320.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_dpp_dscl.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_dpp_dscl.c
-index 4a863a5dab417..321af9af95e86 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_dpp_dscl.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_dpp_dscl.c
-@@ -406,15 +406,25 @@ void dpp1_dscl_calc_lb_num_partitions(
- 		int *num_part_y,
- 		int *num_part_c)
- {
-+	int lb_memory_size, lb_memory_size_c, lb_memory_size_a, num_partitions_a,
-+	lb_bpc, memory_line_size_y, memory_line_size_c, memory_line_size_a;
-+
- 	int line_size = scl_data->viewport.width < scl_data->recout.width ?
- 			scl_data->viewport.width : scl_data->recout.width;
- 	int line_size_c = scl_data->viewport_c.width < scl_data->recout.width ?
- 			scl_data->viewport_c.width : scl_data->recout.width;
--	int lb_bpc = dpp1_dscl_get_lb_depth_bpc(scl_data->lb_params.depth);
--	int memory_line_size_y = (line_size * lb_bpc + 71) / 72; /* +71 to ceil */
--	int memory_line_size_c = (line_size_c * lb_bpc + 71) / 72; /* +71 to ceil */
--	int memory_line_size_a = (line_size + 5) / 6; /* +5 to ceil */
--	int lb_memory_size, lb_memory_size_c, lb_memory_size_a, num_partitions_a;
-+
-+	if (line_size == 0)
-+		line_size = 1;
-+
-+	if (line_size_c == 0)
-+		line_size_c = 1;
-+
-+
-+	lb_bpc = dpp1_dscl_get_lb_depth_bpc(scl_data->lb_params.depth);
-+	memory_line_size_y = (line_size * lb_bpc + 71) / 72; /* +71 to ceil */
-+	memory_line_size_c = (line_size_c * lb_bpc + 71) / 72; /* +71 to ceil */
-+	memory_line_size_a = (line_size + 5) / 6; /* +5 to ceil */
+diff --git a/sound/soc/fsl/eukrea-tlv320.c b/sound/soc/fsl/eukrea-tlv320.c
+index 84ef6385736cd..4c6f19ef98b25 100644
+--- a/sound/soc/fsl/eukrea-tlv320.c
++++ b/sound/soc/fsl/eukrea-tlv320.c
+@@ -119,13 +119,13 @@ static int eukrea_tlv320_probe(struct platform_device *pdev)
+ 		if (ret) {
+ 			dev_err(&pdev->dev,
+ 				"fsl,mux-int-port node missing or invalid.\n");
+-			return ret;
++			goto err;
+ 		}
+ 		ret = of_property_read_u32(np, "fsl,mux-ext-port", &ext_port);
+ 		if (ret) {
+ 			dev_err(&pdev->dev,
+ 				"fsl,mux-ext-port node missing or invalid.\n");
+-			return ret;
++			goto err;
+ 		}
  
- 	if (lb_config == LB_MEMORY_CONFIG_1) {
- 		lb_memory_size = 816;
+ 		/*
 -- 
 2.20.1
 
