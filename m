@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B84F72F1F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:17:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 732062F235
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:20:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730652AbfE3ERF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:17:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39708 "EHLO mail.kernel.org"
+        id S1730261AbfE3DPX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:15:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728520AbfE3DPm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:15:42 -0400
+        id S1729210AbfE3DMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:12:46 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 015F42458A;
-        Thu, 30 May 2019 03:15:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AFD86244B0;
+        Thu, 30 May 2019 03:12:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186142;
-        bh=r4n9B0Nzlwy+WTd/3TjJMZizJyy4JvP92WwFbRE+sXY=;
+        s=default; t=1559185965;
+        bh=xEQL8cLkJontcf8UKMDxuTMBWccBYxd86576sMJ/CxU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o9kYfTmR+7Ss6PegwoWUUvKQAdf5+JqGMcCUOOQCUC+8dJ7ye7O6kPha7ehdWAeth
-         TUZ/So5GVNpMAoFETVww1limRAdi4PMPrWwxoqC5wMifYLV+5fkQjFyS5tpE48DI5/
-         CZIRDyJWy4WePC2gakVIRcsNoYrtTzP/cyw2UutM=
+        b=wdFH3qHpEIgMcJGyv4aSKSDeJ9guBnl9VKcMzA/g0GS+QnfH1/q85YG5RrK1wcD83
+         mPfy6Nt2H07fhwpsJZrugmylaecwoXOu5MwRvaoBsK96+hWYvvVfHTTSZjv6B/+NKF
+         6cT2q6AIf1kFZgngnS2Cr09GnlQjwUkDYXjGcuSk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Brian Starkey <brian.starkey@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 318/346] drm: writeback: Fix leak of writeback job
+Subject: [PATCH 5.1 393/405] ASoC: ti: fix davinci_mcasp_probe dependencies
 Date:   Wed, 29 May 2019 20:06:31 -0700
-Message-Id: <20190530030556.911351032@linuxfoundation.org>
+Message-Id: <20190530030600.490522223@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,88 +45,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e482ae9b5fdc01a343f22f52930e85a6cfdf85eb ]
+[ Upstream commit 7d7b25d05ef1c5a1a9320190e1eeb55534847558 ]
 
-Writeback jobs are allocated when the WRITEBACK_FB_ID is set, and
-deleted when the jobs complete. This results in both a memory leak of
-the job and a leak of the framebuffer if the atomic commit returns
-before the job is queued for processing, for instance if the atomic
-check fails or if the commit runs in test-only mode.
+The SND_SOC_DAVINCI_MCASP driver can use either edma or sdma as
+a back-end, and it takes the presence of the respective dma engine
+drivers in the configuration as an indication to which ones should be
+built. However, this is flawed in multiple ways:
 
-Fix this by implementing the drm_writeback_cleanup_job() function and
-calling it from __drm_atomic_helper_connector_destroy_state(). As
-writeback jobs are removed from the state when they're queued for
-processing, any job left in the state when the state gets destroyed
-needs to be cleaned up.
+- With CONFIG_TI_EDMA=m and CONFIG_SND_SOC_DAVINCI_MCASP=y,
+  is enabled as =m, and we get a link error:
+  sound/soc/ti/davinci-mcasp.o: In function `davinci_mcasp_probe':
+  davinci-mcasp.c:(.text+0x930): undefined reference to `edma_pcm_platform_register'
 
-The existing declaration of the drm_writeback_cleanup_job() function
-without an implementation hints that this problem was considered, but
-never addressed.
+- When CONFIG_SND_SOC_DAVINCI_MCASP=m has already been selected by
+  another driver, the same link error appears even if CONFIG_TI_EDMA
+  is disabled
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Brian Starkey <brian.starkey@arm.com>
-Acked-by: Liviu Dudau <liviu.dudau@arm.com>
+There are possibly other issues here, but it seems that the only reasonable
+solution is to always build both SND_SOC_TI_EDMA_PCM and
+SND_SOC_TI_SDMA_PCM as a dependency here. Both are fairly small and
+do not have any other compile-time dependencies, so the cost is
+very small, and makes the configuration stage much more consistent.
+
+Fixes: f2055e145f29 ("ASoC: ti: Merge davinci and omap directories")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_atomic_state_helper.c |  4 ++++
- drivers/gpu/drm/drm_writeback.c           | 14 +++++++++++---
- 2 files changed, 15 insertions(+), 3 deletions(-)
+ sound/soc/ti/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_atomic_state_helper.c b/drivers/gpu/drm/drm_atomic_state_helper.c
-index 4985384e51f6e..59ffb6b9c7453 100644
---- a/drivers/gpu/drm/drm_atomic_state_helper.c
-+++ b/drivers/gpu/drm/drm_atomic_state_helper.c
-@@ -30,6 +30,7 @@
- #include <drm/drm_connector.h>
- #include <drm/drm_atomic.h>
- #include <drm/drm_device.h>
-+#include <drm/drm_writeback.h>
+diff --git a/sound/soc/ti/Kconfig b/sound/soc/ti/Kconfig
+index 4bf3c15d4e514..ee7c202c69b77 100644
+--- a/sound/soc/ti/Kconfig
++++ b/sound/soc/ti/Kconfig
+@@ -21,8 +21,8 @@ config SND_SOC_DAVINCI_ASP
  
- #include <linux/slab.h>
- #include <linux/dma-fence.h>
-@@ -412,6 +413,9 @@ __drm_atomic_helper_connector_destroy_state(struct drm_connector_state *state)
- 
- 	if (state->commit)
- 		drm_crtc_commit_put(state->commit);
-+
-+	if (state->writeback_job)
-+		drm_writeback_cleanup_job(state->writeback_job);
- }
- EXPORT_SYMBOL(__drm_atomic_helper_connector_destroy_state);
- 
-diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
-index c20e6fe00cb38..2d75032f81591 100644
---- a/drivers/gpu/drm/drm_writeback.c
-+++ b/drivers/gpu/drm/drm_writeback.c
-@@ -268,6 +268,15 @@ void drm_writeback_queue_job(struct drm_writeback_connector *wb_connector,
- }
- EXPORT_SYMBOL(drm_writeback_queue_job);
- 
-+void drm_writeback_cleanup_job(struct drm_writeback_job *job)
-+{
-+	if (job->fb)
-+		drm_framebuffer_put(job->fb);
-+
-+	kfree(job);
-+}
-+EXPORT_SYMBOL(drm_writeback_cleanup_job);
-+
- /*
-  * @cleanup_work: deferred cleanup of a writeback job
-  *
-@@ -280,10 +289,9 @@ static void cleanup_work(struct work_struct *work)
- 	struct drm_writeback_job *job = container_of(work,
- 						     struct drm_writeback_job,
- 						     cleanup_work);
--	drm_framebuffer_put(job->fb);
--	kfree(job);
--}
- 
-+	drm_writeback_cleanup_job(job);
-+}
- 
- /**
-  * drm_writeback_signal_completion - Signal the completion of a writeback job
+ config SND_SOC_DAVINCI_MCASP
+ 	tristate "Multichannel Audio Serial Port (McASP) support"
+-	select SND_SOC_TI_EDMA_PCM if TI_EDMA
+-	select SND_SOC_TI_SDMA_PCM if DMA_OMAP
++	select SND_SOC_TI_EDMA_PCM
++	select SND_SOC_TI_SDMA_PCM
+ 	help
+ 	  Say Y or M here if you want to have support for McASP IP found in
+ 	  various Texas Instruments SoCs like:
 -- 
 2.20.1
 
