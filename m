@@ -2,235 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC5522F96A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 11:30:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E7502F97A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 11:33:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbfE3Jai (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 05:30:38 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:10840 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726382AbfE3Jah (ORCPT
+        id S1727369AbfE3Jda (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 05:33:30 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40003 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726952AbfE3Jd3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 05:30:37 -0400
-X-UUID: f1cf7280e337434f9ca02ea248127571-20190530
-X-UUID: f1cf7280e337434f9ca02ea248127571-20190530
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
-        (envelope-from <biao.huang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 970767287; Thu, 30 May 2019 17:30:32 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 30 May 2019 17:30:30 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 30 May 2019 17:30:29 +0800
-From:   Biao Huang <biao.huang@mediatek.com>
-To:     <davem@davemloft.net>, Jose Abreu <joabreu@synopsys.com>
-CC:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <netdev@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <yt.shen@mediatek.com>,
-        <biao.huang@mediatek.com>, <jianguo.zhang@mediatek.com>,
-        <boon.leong.ong@intel.com>, <andrew@lunn.ch>
-Subject: [v7, PATCH] net: stmmac: add support for hash table size 128/256 in dwmac4
-Date:   Thu, 30 May 2019 17:30:26 +0800
-Message-ID: <1559208626-3218-2-git-send-email-biao.huang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1559208626-3218-1-git-send-email-biao.huang@mediatek.com>
-References: <1559208626-3218-1-git-send-email-biao.huang@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 47B6FBA96DEA89C630160B09C4F2CB0E7B5753D26735B04BD834843CBE3368662000:8
-X-MTK:  N
+        Thu, 30 May 2019 05:33:29 -0400
+Received: by mail-wr1-f66.google.com with SMTP id t4so3713019wrx.7
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 02:33:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=6m1gjqr7LLo5czWaTNxbcS9O7G75X5W+OVxVsjgwdOk=;
+        b=dmyIRlMRlkjOTvPMU8h28OONRBSGMbu5OSkC56ceQtI82uyy9wZSUWnAAFvv4qeefD
+         1uH+WS2sxeXVRW2DNdtQA1dDIEw6uVypGKzciRZoT6bctV3lMYh+jNP1ZR36djmDCLjw
+         VKLc53Cg59P21NX3oLbIHnVwGGcPUG1neQP65J7MTFocgNYwh20lwAGvv3Ngi8M2C82+
+         0fvLmrK0jdeSOBNSEQdAbiJWsx3fUupQM0n/aD6hJWbVcLzf+l4XVtOED3rcZchEf3ut
+         bVwX3gW/aTaj4Dm6vSGvA5Jlw9ng9ZXieYne8XtFL5y7PF4Y3iBDODeM8v5OEF8Ttnc3
+         biHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=6m1gjqr7LLo5czWaTNxbcS9O7G75X5W+OVxVsjgwdOk=;
+        b=WA0S2xEjN8+W17Raq5xIssaDg+G6lOCQESlZ636DcO7cQkhpETTZmf9CjBhTyp1KI7
+         Ngcp4K/eY1760q9IGykRnNu+rZhVUL5UoS/r1EEs+Stn/FH0yY1x0CZQxg6K0+My9FNs
+         Yzl3czVMV7uqSpzxrrHtCDLeuN7E5ISwzWcMUoT3RLcFGrsu+Pj5vRQHDhiJDDGWhNzh
+         S+y9L60ScoXyQvdFw3ZlncNOc/WLZ+YdZDJZbNiSlABRRMAehExGcFEDlfJkCEnJV8Zp
+         0eZv9JP2yLPFl7EzI7fB4Yc9GhlaDzx3vhXvchaWzV+Kf6+CvlGXIeqFY7pLmnbP8afq
+         K9ww==
+X-Gm-Message-State: APjAAAUDMrsZvf3RL2LFY2m8zkObc/PhOPP14SdouBJSLHttcly8ogN6
+        wVwJ8U/0yQ/ZVPjfjw5XiQv4Lw==
+X-Google-Smtp-Source: APXvYqxEASlLnIkp5PQbSa4BfrTxFJ6g24r6qZiMp+C9TsnMS8uQxuD/y1DzZGzNDx7DhMVpHGITmg==
+X-Received: by 2002:adf:c982:: with SMTP id f2mr1940460wrh.235.1559208808019;
+        Thu, 30 May 2019 02:33:28 -0700 (PDT)
+Received: from localhost.localdomain ([37.157.136.206])
+        by smtp.gmail.com with ESMTPSA id a124sm2863900wmh.3.2019.05.30.02.33.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 May 2019 02:33:26 -0700 (PDT)
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+To:     linux-media@vger.kernel.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Subject: [PATCH v3] media/doc: Allow sizeimage to be set by v4l clients
+Date:   Thu, 30 May 2019 12:33:12 +0300
+Message-Id: <20190530093312.27562-1-stanimir.varbanov@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-1. get hash table size in hw feature reigster, and add support
-for taller hash table(128/256) in dwmac4.
-2. only clear GMAC_PACKET_FILTER bits used in this function,
-to avoid side effect to functions of other bits.
+This changes v4l2_pix_format and v4l2_plane_pix_format sizeimage
+field description to allow v4l clients to set bigger image size
+in case of variable length compressed data.
 
-stmmac selftests output log with flow control on:
-	ethtool -t eth0
-	The test result is PASS
-	The test extra info:
-	 1. MAC Loopback                 0
-	 2. PHY Loopback                 -95
-	 3. MMC Counters                 0
-	 4. EEE                          -95
-	 5. Hash Filter MC               0
-	 6. Perfect Filter UC            0
-	 7. MC Filter                    0
-	 8. UC Filter                    0
-	 9. Flow Control                 0
+Presently s5p-mfc and mtk-vcodec codec drivers use that. Lets
+make it obvious in the documentation.
 
-Signed-off-by: Biao Huang <biao.huang@mediatek.com>
+Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/common.h      |    7 +--
- drivers/net/ethernet/stmicro/stmmac/dwmac4.h      |    4 +-
- drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c |   49 ++++++++++++---------
- drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c  |    1 +
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    6 +++
- 5 files changed, 42 insertions(+), 25 deletions(-)
+Changes since v2:
+Addressed review comments from Mauro.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
-index 1961fe9..26bbcd8 100644
---- a/drivers/net/ethernet/stmicro/stmmac/common.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/common.h
-@@ -335,6 +335,7 @@ struct dma_features {
- 	/* 802.3az - Energy-Efficient Ethernet (EEE) */
- 	unsigned int eee;
- 	unsigned int av;
-+	unsigned int hash_tb_sz;
- 	unsigned int tsoen;
- 	/* TX and RX csum */
- 	unsigned int tx_coe;
-@@ -428,9 +429,9 @@ struct mac_device_info {
- 	struct mii_regs mii;	/* MII register Addresses */
- 	struct mac_link link;
- 	void __iomem *pcsr;     /* vpointer to device CSRs */
--	int multicast_filter_bins;
--	int unicast_filter_entries;
--	int mcast_bits_log2;
-+	unsigned int multicast_filter_bins;
-+	unsigned int unicast_filter_entries;
-+	unsigned int mcast_bits_log2;
- 	unsigned int rx_csum;
- 	unsigned int pcs;
- 	unsigned int pmt;
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4.h b/drivers/net/ethernet/stmicro/stmmac/dwmac4.h
-index 01c1089..b68785f7 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac4.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4.h
-@@ -18,8 +18,7 @@
- /*  MAC registers */
- #define GMAC_CONFIG			0x00000000
- #define GMAC_PACKET_FILTER		0x00000008
--#define GMAC_HASH_TAB_0_31		0x00000010
--#define GMAC_HASH_TAB_32_63		0x00000014
-+#define GMAC_HASH_TAB(x)		(0x10 + (x) * 4)
- #define GMAC_RX_FLOW_CTRL		0x00000090
- #define GMAC_QX_TX_FLOW_CTRL(x)		(0x70 + x * 4)
- #define GMAC_TXQ_PRTY_MAP0		0x98
-@@ -184,6 +183,7 @@ enum power_event {
- #define GMAC_HW_FEAT_MIISEL		BIT(0)
+ .../media/uapi/v4l/pixfmt-v4l2-mplane.rst         | 15 ++++++++++++++-
+ Documentation/media/uapi/v4l/pixfmt-v4l2.rst      | 13 ++++++++++++-
+ 2 files changed, 26 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/media/uapi/v4l/pixfmt-v4l2-mplane.rst b/Documentation/media/uapi/v4l/pixfmt-v4l2-mplane.rst
+index 5688c816e334..db43dda5aafb 100644
+--- a/Documentation/media/uapi/v4l/pixfmt-v4l2-mplane.rst
++++ b/Documentation/media/uapi/v4l/pixfmt-v4l2-mplane.rst
+@@ -31,7 +31,20 @@ describing all planes of that format.
  
- /* MAC HW features1 bitmap */
-+#define GMAC_HW_HASH_TB_SZ		GENMASK(25, 24)
- #define GMAC_HW_FEAT_AVSEL		BIT(20)
- #define GMAC_HW_TSOEN			BIT(18)
- #define GMAC_HW_TXFIFOSIZE		GENMASK(10, 6)
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-index 5e98da4..4183607 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-@@ -403,41 +403,50 @@ static void dwmac4_set_filter(struct mac_device_info *hw,
- 			      struct net_device *dev)
- {
- 	void __iomem *ioaddr = (void __iomem *)dev->base_addr;
--	unsigned int value = 0;
-+	int numhashregs = (hw->multicast_filter_bins >> 5);
-+	int mcbitslog2 = hw->mcast_bits_log2;
-+	unsigned int value;
-+	int i;
- 
-+	value = readl(ioaddr + GMAC_PACKET_FILTER);
-+	value &= ~GMAC_PACKET_FILTER_HMC;
-+	value &= ~GMAC_PACKET_FILTER_HPF;
-+	value &= ~GMAC_PACKET_FILTER_PCF;
-+	value &= ~GMAC_PACKET_FILTER_PM;
-+	value &= ~GMAC_PACKET_FILTER_PR;
- 	if (dev->flags & IFF_PROMISC) {
- 		value = GMAC_PACKET_FILTER_PR | GMAC_PACKET_FILTER_PCF;
- 	} else if ((dev->flags & IFF_ALLMULTI) ||
--			(netdev_mc_count(dev) > HASH_TABLE_SIZE)) {
-+		   (netdev_mc_count(dev) > hw->multicast_filter_bins)) {
- 		/* Pass all multi */
--		value = GMAC_PACKET_FILTER_PM;
--		/* Set the 64 bits of the HASH tab. To be updated if taller
--		 * hash table is used
--		 */
--		writel(0xffffffff, ioaddr + GMAC_HASH_TAB_0_31);
--		writel(0xffffffff, ioaddr + GMAC_HASH_TAB_32_63);
-+		value |= GMAC_PACKET_FILTER_PM;
-+		/* Set all the bits of the HASH tab */
-+		for (i = 0; i < numhashregs; i++)
-+			writel(0xffffffff, ioaddr + GMAC_HASH_TAB(i));
- 	} else if (!netdev_mc_empty(dev)) {
--		u32 mc_filter[2];
- 		struct netdev_hw_addr *ha;
-+		u32 mc_filter[8];
- 
- 		/* Hash filter for multicast */
--		value = GMAC_PACKET_FILTER_HMC;
-+		value |= GMAC_PACKET_FILTER_HMC;
- 
- 		memset(mc_filter, 0, sizeof(mc_filter));
- 		netdev_for_each_mc_addr(ha, dev) {
--			/* The upper 6 bits of the calculated CRC are used to
--			 * index the content of the Hash Table Reg 0 and 1.
-+			/* The upper n bits of the calculated CRC are used to
-+			 * index the contents of the hash table. The number of
-+			 * bits used depends on the hardware configuration
-+			 * selected at core configuration time.
- 			 */
--			int bit_nr =
--				(bitrev32(~crc32_le(~0, ha->addr, 6)) >> 26);
--			/* The most significant bit determines the register
--			 * to use while the other 5 bits determines the bit
--			 * within the selected register
-+			int bit_nr = bitrev32(~crc32_le(~0, ha->addr,
-+					ETH_ALEN)) >> (32 - mcbitslog2);
-+			/* The most significant bit determines the register to
-+			 * use (H/L) while the other 5 bits determine the bit
-+			 * within the register.
- 			 */
--			mc_filter[bit_nr >> 5] |= (1 << (bit_nr & 0x1F));
-+			mc_filter[bit_nr >> 5] |= (1 << (bit_nr & 0x1f));
- 		}
--		writel(mc_filter[0], ioaddr + GMAC_HASH_TAB_0_31);
--		writel(mc_filter[1], ioaddr + GMAC_HASH_TAB_32_63);
-+		for (i = 0; i < numhashregs; i++)
-+			writel(mc_filter[i], ioaddr + GMAC_HASH_TAB(i));
- 	}
- 
- 	value |= GMAC_PACKET_FILTER_HPF;
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
-index edb6053..59afb53 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
-@@ -354,6 +354,7 @@ static void dwmac4_get_hw_feature(void __iomem *ioaddr,
- 
- 	/* MAC HW feature1 */
- 	hw_cap = readl(ioaddr + GMAC_HW_FEATURE1);
-+	dma_cap->hash_tb_sz = (hw_cap & GMAC_HW_HASH_TB_SZ) >> 24;
- 	dma_cap->av = (hw_cap & GMAC_HW_FEAT_AVSEL) >> 20;
- 	dma_cap->tsoen = (hw_cap & GMAC_HW_TSOEN) >> 18;
- 	/* RX and TX FIFO sizes are encoded as log2(n / 128). Undo that by
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 8fcbf22..f7aac15 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -4166,6 +4166,12 @@ static int stmmac_hw_init(struct stmmac_priv *priv)
- 		priv->plat->enh_desc = priv->dma_cap.enh_desc;
- 		priv->plat->pmt = priv->dma_cap.pmt_remote_wake_up;
- 		priv->hw->pmt = priv->plat->pmt;
-+		if (priv->dma_cap.hash_tb_sz) {
-+			priv->hw->multicast_filter_bins =
-+					(BIT(priv->dma_cap.hash_tb_sz) << 5);
-+			priv->hw->mcast_bits_log2 =
-+					ilog2(priv->hw->multicast_filter_bins);
-+		}
- 
- 		/* TXCOE doesn't work in thresh DMA mode */
- 		if (priv->plat->force_thresh_dma_mode)
+     * - __u32
+       - ``sizeimage``
+-      - Maximum size in bytes required for image data in this plane.
++      - Maximum size in bytes required for image data in this plane,
++	set by the driver. When the image consists of variable length
++	compressed data this is the number of bytes required by the
++	codec to support the worst-case compression scenario.
++
++	The driver will set the value for uncompressed images.
++
++	Clients are allowed to set the sizeimage field for variable length
++	compressed data flagged with ``V4L2_FMT_FLAG_COMPRESSED`` at
++	:ref:`VIDIOC_ENUM_FMT`, but the driver may ignore it and set the
++	value itself, or it may modify the provided value based on
++	alignment requirements or minimum/maximum size requirements.
++	If the client wants to leave this to the driver, then it should
++	set sizeimage to 0.
+     * - __u32
+       - ``bytesperline``
+       - Distance in bytes between the leftmost pixels in two adjacent
+diff --git a/Documentation/media/uapi/v4l/pixfmt-v4l2.rst b/Documentation/media/uapi/v4l/pixfmt-v4l2.rst
+index 71eebfc6d853..da6da2ef139a 100644
+--- a/Documentation/media/uapi/v4l/pixfmt-v4l2.rst
++++ b/Documentation/media/uapi/v4l/pixfmt-v4l2.rst
+@@ -89,7 +89,18 @@ Single-planar format structure
+       - Size in bytes of the buffer to hold a complete image, set by the
+ 	driver. Usually this is ``bytesperline`` times ``height``. When
+ 	the image consists of variable length compressed data this is the
+-	maximum number of bytes required to hold an image.
++	number of bytes required by the codec to support the worst-case
++	compression scenario.
++
++	The driver will set the value for uncompressed images.
++
++	Clients are allowed to set the sizeimage field for variable length
++	compressed data flagged with ``V4L2_FMT_FLAG_COMPRESSED`` at
++	:ref:`VIDIOC_ENUM_FMT`, but the driver may ignore it and set the
++	value itself, or it may modify the provided value based on
++	alignment requirements or minimum/maximum size requirements.
++	If the client wants to leave this to the driver, then it should
++	set sizeimage to 0.
+     * - __u32
+       - ``colorspace``
+       - Image colorspace, from enum :c:type:`v4l2_colorspace`.
 -- 
-1.7.9.5
+2.17.1
 
