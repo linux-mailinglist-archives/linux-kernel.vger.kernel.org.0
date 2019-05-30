@@ -2,39 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49F812F3B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:33:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CF3E2F5FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:53:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730291AbfE3Eb3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:31:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60028 "EHLO mail.kernel.org"
+        id S2389030AbfE3Evw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:51:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729577AbfE3DNq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:13:46 -0400
+        id S1727543AbfE3DKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:10:53 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCA0F24526;
-        Thu, 30 May 2019 03:13:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82F3E244A0;
+        Thu, 30 May 2019 03:10:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186025;
-        bh=qu7Nuw99WhhNNh61X70RbCdJki8DXpYTAuJmUgurf+M=;
+        s=default; t=1559185851;
+        bh=lZqlFI5rRdNdBUUDFTiQ61znwPK0+JBPzKezX7TVJFQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CjSEY3Q1T+pgX2rLd5DMxMcb0E8WeBDvq5hVJIE2In3gqKA3CBLQWz4QwhiiWdYs8
-         ubz7o3MpxqJzn+6uskzZv/ISAohfYDvxWkt5MGfAVnhW2/n68+Gxw1kczFIx5cx+5U
-         KQF9UX9d9pkC7NxreS6bS4Icoq/BD96HoVkDHPXs=
+        b=B/2WqKnSGG296HFRptOTNu0bKo8GsZ9umt9fJfSmJYz9cWoGPLFLEKuVmU9/lCA7R
+         yii0rTFZjYC2tEJOx4xL6rb8NpDDPkyUPgAedMtCcz01WR4pbejulhFb37fc6Bl/1E
+         VIXoynDJ3GvPZo6t3UJue9s8Aw8ncgmvJzG6SdmY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 100/346] net: phy: improve genphy_soft_reset
-Date:   Wed, 29 May 2019 20:02:53 -0700
-Message-Id: <20190530030546.217955164@linuxfoundation.org>
+        stable@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Suraj Jitindar Singh <sjitindarsingh@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 176/405] irq_work: Do not raise an IPI when queueing work on the local CPU
+Date:   Wed, 29 May 2019 20:02:54 -0700
+Message-Id: <20190530030550.017947240@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,60 +52,142 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8c90b795e90f7753d23c18e8b95dd71b4a18c5d9 ]
+[ Upstream commit 471ba0e686cb13752bc1ff3216c54b69a2d250ea ]
 
-PHY's behave differently when being reset. Some reset registers to
-defaults, some don't. Some trigger an autoneg restart, some don't.
+The QEMU PowerPC/PSeries machine model was not expecting a self-IPI,
+and it may be a bit surprising thing to do, so have irq_work_queue_on
+do local queueing when target is the current CPU.
 
-So let's also set the autoneg restart bit when resetting. Then PHY
-behavior should be more consistent. Clearing BMCR_ISOLATE serves the
-same purpose and is borrowed from genphy_restart_aneg.
-
-BMCR holds the speed / duplex settings in fixed mode. Therefore
-we may have an issue if a soft reset resets BMCR to its default.
-So better call genphy_setup_forced() afterwards in fixed mode.
-We've seen no related complaint in the last >10 yrs, so let's
-treat it as an improvement.
-
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Suggested-by: Steven Rostedt <rostedt@goodmis.org>
+Reported-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Tested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Suraj Jitindar Singh <sjitindarsingh@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20190409093403.20994-1-npiggin@gmail.com
+[ Simplified the preprocessor comments.
+  Fixed unbalanced curly brackets pointed out by Thomas. ]
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/phy/phy_device.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ kernel/irq_work.c | 75 ++++++++++++++++++++++++++---------------------
+ 1 file changed, 42 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index ff2426e00682c..67a06fa7566bd 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -1830,13 +1830,25 @@ EXPORT_SYMBOL(genphy_read_status);
-  */
- int genphy_soft_reset(struct phy_device *phydev)
- {
-+	u16 res = BMCR_RESET;
- 	int ret;
- 
--	ret = phy_set_bits(phydev, MII_BMCR, BMCR_RESET);
-+	if (phydev->autoneg == AUTONEG_ENABLE)
-+		res |= BMCR_ANRESTART;
-+
-+	ret = phy_modify(phydev, MII_BMCR, BMCR_ISOLATE, res);
- 	if (ret < 0)
- 		return ret;
- 
--	return phy_poll_reset(phydev);
-+	ret = phy_poll_reset(phydev);
-+	if (ret)
-+		return ret;
-+
-+	/* BMCR may be reset to defaults */
-+	if (phydev->autoneg == AUTONEG_DISABLE)
-+		ret = genphy_setup_forced(phydev);
-+
-+	return ret;
+diff --git a/kernel/irq_work.c b/kernel/irq_work.c
+index 6b7cdf17ccf89..73288914ed5e7 100644
+--- a/kernel/irq_work.c
++++ b/kernel/irq_work.c
+@@ -56,61 +56,70 @@ void __weak arch_irq_work_raise(void)
+ 	 */
  }
- EXPORT_SYMBOL(genphy_soft_reset);
  
+-/*
+- * Enqueue the irq_work @work on @cpu unless it's already pending
+- * somewhere.
+- *
+- * Can be re-enqueued while the callback is still in progress.
+- */
+-bool irq_work_queue_on(struct irq_work *work, int cpu)
++/* Enqueue on current CPU, work must already be claimed and preempt disabled */
++static void __irq_work_queue_local(struct irq_work *work)
+ {
+-	/* All work should have been flushed before going offline */
+-	WARN_ON_ONCE(cpu_is_offline(cpu));
+-
+-#ifdef CONFIG_SMP
+-
+-	/* Arch remote IPI send/receive backend aren't NMI safe */
+-	WARN_ON_ONCE(in_nmi());
++	/* If the work is "lazy", handle it from next tick if any */
++	if (work->flags & IRQ_WORK_LAZY) {
++		if (llist_add(&work->llnode, this_cpu_ptr(&lazy_list)) &&
++		    tick_nohz_tick_stopped())
++			arch_irq_work_raise();
++	} else {
++		if (llist_add(&work->llnode, this_cpu_ptr(&raised_list)))
++			arch_irq_work_raise();
++	}
++}
+ 
++/* Enqueue the irq work @work on the current CPU */
++bool irq_work_queue(struct irq_work *work)
++{
+ 	/* Only queue if not already pending */
+ 	if (!irq_work_claim(work))
+ 		return false;
+ 
+-	if (llist_add(&work->llnode, &per_cpu(raised_list, cpu)))
+-		arch_send_call_function_single_ipi(cpu);
+-
+-#else /* #ifdef CONFIG_SMP */
+-	irq_work_queue(work);
+-#endif /* #else #ifdef CONFIG_SMP */
++	/* Queue the entry and raise the IPI if needed. */
++	preempt_disable();
++	__irq_work_queue_local(work);
++	preempt_enable();
+ 
+ 	return true;
+ }
++EXPORT_SYMBOL_GPL(irq_work_queue);
+ 
+-/* Enqueue the irq work @work on the current CPU */
+-bool irq_work_queue(struct irq_work *work)
++/*
++ * Enqueue the irq_work @work on @cpu unless it's already pending
++ * somewhere.
++ *
++ * Can be re-enqueued while the callback is still in progress.
++ */
++bool irq_work_queue_on(struct irq_work *work, int cpu)
+ {
++#ifndef CONFIG_SMP
++	return irq_work_queue(work);
++
++#else /* CONFIG_SMP: */
++	/* All work should have been flushed before going offline */
++	WARN_ON_ONCE(cpu_is_offline(cpu));
++
+ 	/* Only queue if not already pending */
+ 	if (!irq_work_claim(work))
+ 		return false;
+ 
+-	/* Queue the entry and raise the IPI if needed. */
+ 	preempt_disable();
+-
+-	/* If the work is "lazy", handle it from next tick if any */
+-	if (work->flags & IRQ_WORK_LAZY) {
+-		if (llist_add(&work->llnode, this_cpu_ptr(&lazy_list)) &&
+-		    tick_nohz_tick_stopped())
+-			arch_irq_work_raise();
++	if (cpu != smp_processor_id()) {
++		/* Arch remote IPI send/receive backend aren't NMI safe */
++		WARN_ON_ONCE(in_nmi());
++		if (llist_add(&work->llnode, &per_cpu(raised_list, cpu)))
++			arch_send_call_function_single_ipi(cpu);
+ 	} else {
+-		if (llist_add(&work->llnode, this_cpu_ptr(&raised_list)))
+-			arch_irq_work_raise();
++		__irq_work_queue_local(work);
+ 	}
+-
+ 	preempt_enable();
+ 
+ 	return true;
++#endif /* CONFIG_SMP */
+ }
+-EXPORT_SYMBOL_GPL(irq_work_queue);
++
+ 
+ bool irq_work_needs_cpu(void)
+ {
 -- 
 2.20.1
 
