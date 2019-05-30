@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68B272F35D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:28:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F19592EC88
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:22:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387571AbfE3E2o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:28:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33366 "EHLO mail.kernel.org"
+        id S1732650AbfE3DVx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:21:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42908 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729748AbfE3DOK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:14:10 -0400
+        id S1727970AbfE3DQb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:16:31 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5306624561;
-        Thu, 30 May 2019 03:14:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B1F624598;
+        Thu, 30 May 2019 03:16:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186050;
-        bh=ZG+gGJa5XSfWrsj1TIcoEimwk3uKazq99BvcQZRP5wY=;
+        s=default; t=1559186191;
+        bh=rGYkPEUNxSrzRwyQUAHdYE0cJaWGG91Py/JCKHHZwno=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gblkR/+ncUk55rj5IcL7aGXrkYNipe1t+2GRY3tedaixP0Asdp6rLsF03p4ubbqqV
-         iebeFrBtXOX3fQecTymIQgK+b/yx5/gWSRedCqqThImyuIORzRZNsYQETRMTZsCyRg
-         E6i52TZQeia3AJ6X4pTAX8q1TBM3fBlBTvAtwrU4=
+        b=RBwsG+2FAS8htd93IP7sdavXt/0NKfsbnxlc7FLKyutvDinAdenNsU02Zyr3fg0jB
+         ZpbbHRJ81EoR2pzv8v/WmkybN84Ww1U4m61EyL0DQ1f1KPwD1oa4afAN4LJ4Zex25u
+         o2/YtQVnTpZ2xvwqb5fgL/Y18Ouz5KbM7qn8NBWc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        stable@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 146/346] iio: adc: stm32-dfsdm: fix unmet direct dependencies detected
+Subject: [PATCH 4.19 061/276] ASoC: hdmi-codec: unlock the device on startup errors
 Date:   Wed, 29 May 2019 20:03:39 -0700
-Message-Id: <20190530030548.565604367@linuxfoundation.org>
+Message-Id: <20190530030529.529479407@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ba7ecfe43d6bf12e2aa76705c45f7d187ae3d7c0 ]
+[ Upstream commit 30180e8436046344b12813dc954b2e01dfdcd22d ]
 
-This fixes unmet direct dependencies seen when CONFIG_STM32_DFSDM_ADC
-is selected:
+If the hdmi codec startup fails, it should clear the current_substream
+pointer to free the device. This is properly done for the audio_startup()
+callback but for snd_pcm_hw_constraint_eld().
 
-WARNING: unmet direct dependencies detected for IIO_BUFFER_HW_CONSUMER
-  Depends on [n]: IIO [=y] && IIO_BUFFER [=n]
-  Selected by [y]:
-  - STM32_DFSDM_ADC [=y] && IIO [=y] && (ARCH_STM32 [=y] && OF [=y] ||
-    COMPILE_TEST [=n])
+Make sure the pointer cleared if an error is reported.
 
-Fixes: e2e6771c6462 ("IIO: ADC: add STM32 DFSDM sigma delta ADC support")
-
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/adc/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/codecs/hdmi-codec.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index 7a3ca4ec0cb78..0a11f6cbc91af 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -747,6 +747,7 @@ config STM32_DFSDM_ADC
- 	depends on (ARCH_STM32 && OF) || COMPILE_TEST
- 	select STM32_DFSDM_CORE
- 	select REGMAP_MMIO
-+	select IIO_BUFFER
- 	select IIO_BUFFER_HW_CONSUMER
- 	help
- 	  Select this option to support ADCSigma delta modulator for
+diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
+index d5f73c8372817..7994e8ddc7d21 100644
+--- a/sound/soc/codecs/hdmi-codec.c
++++ b/sound/soc/codecs/hdmi-codec.c
+@@ -439,8 +439,12 @@ static int hdmi_codec_startup(struct snd_pcm_substream *substream,
+ 		if (!ret) {
+ 			ret = snd_pcm_hw_constraint_eld(substream->runtime,
+ 							hcp->eld);
+-			if (ret)
++			if (ret) {
++				mutex_lock(&hcp->current_stream_lock);
++				hcp->current_stream = NULL;
++				mutex_unlock(&hcp->current_stream_lock);
+ 				return ret;
++			}
+ 		}
+ 		/* Select chmap supported */
+ 		hdmi_codec_eld_chmap(hcp);
 -- 
 2.20.1
 
