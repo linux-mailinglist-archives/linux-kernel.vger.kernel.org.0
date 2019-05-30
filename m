@@ -2,42 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BEF32EFD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:59:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F9212F357
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:28:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733230AbfE3D6N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:58:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52496 "EHLO mail.kernel.org"
+        id S1729760AbfE3DON (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:14:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731689AbfE3DSq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:46 -0400
+        id S1728728AbfE3DLz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:11:55 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 791FB2475F;
-        Thu, 30 May 2019 03:18:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3F46244D6;
+        Thu, 30 May 2019 03:11:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186325;
-        bh=mx5RlGk1idEIFRaio2toXNGCdHdh03sU1B+uGZcN3J4=;
+        s=default; t=1559185914;
+        bh=mRHgJ3UhnTRcFQL1xZISQ2F6rEeLpWGTtQaHVwdZ1n0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VzZ4u8P5d1rjmA29QKJyIbWKeZMupTzvvYOImZI1zBT7vBGaRcK/K886klogfh1UD
-         0leZQrcx3aVonqVTS551mtvj6cDno374gFNrYGDmJ6ZZANEkjS5uUet+BhsQxv27RA
-         yJKm1yAdMTazjaqcc7Ymy9OQd1xPP5dPkemYzjg0=
+        b=OoDXiCWRh2qii/FPKN5mRklWUAHlwjMS+2SyrMq4pSJ7v8S+TLiC9PC26kNvK2iyC
+         ercNP2Oq3syWIaV/9CIUpRFeKgOrqjliSbV3u6O1Rmg9e4xJzSOvd+utn8QfvDK2i5
+         mvohwvrNbYDEH4fvq+fdnaosMEGcGhSrifhiD5jM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Xiongfeng Wang <wangxiongfeng2@huawei.com>,
+        Hongbo Yao <yaohongbo@huawei.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Miroslav Lichvar <mlichvar@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 039/193] IB/hfi1: Fix WQ_MEM_RECLAIM warning
+Subject: [PATCH 5.1 295/405] timekeeping: Force upper bound for setting CLOCK_REALTIME
 Date:   Wed, 29 May 2019 20:04:53 -0700
-Message-Id: <20190530030454.826604753@linuxfoundation.org>
+Message-Id: <20190530030555.760390115@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,60 +51,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 4c4b1996b5db688e2dcb8242b0a3bf7b1e845e42 ]
+[ Upstream commit 7a8e61f8478639072d402a26789055a4a4de8f77 ]
 
-The work_item cancels that occur when a QP is destroyed can elicit the
-following trace:
+Several people reported testing failures after setting CLOCK_REALTIME close
+to the limits of the kernel internal representation in nanoseconds,
+i.e. year 2262.
 
- workqueue: WQ_MEM_RECLAIM ipoib_wq:ipoib_cm_tx_reap [ib_ipoib] is flushing !WQ_MEM_RECLAIM hfi0_0:_hfi1_do_send [hfi1]
- WARNING: CPU: 7 PID: 1403 at kernel/workqueue.c:2486 check_flush_dependency+0xb1/0x100
- Call Trace:
-  __flush_work.isra.29+0x8c/0x1a0
-  ? __switch_to_asm+0x40/0x70
-  __cancel_work_timer+0x103/0x190
-  ? schedule+0x32/0x80
-  iowait_cancel_work+0x15/0x30 [hfi1]
-  rvt_reset_qp+0x1f8/0x3e0 [rdmavt]
-  rvt_destroy_qp+0x65/0x1f0 [rdmavt]
-  ? _cond_resched+0x15/0x30
-  ib_destroy_qp+0xe9/0x230 [ib_core]
-  ipoib_cm_tx_reap+0x21c/0x560 [ib_ipoib]
-  process_one_work+0x171/0x370
-  worker_thread+0x49/0x3f0
-  kthread+0xf8/0x130
-  ? max_active_store+0x80/0x80
-  ? kthread_bind+0x10/0x10
-  ret_from_fork+0x35/0x40
+The failures are exposed in subsequent operations, i.e. when arming timers
+or when the advancing CLOCK_MONOTONIC makes the calculation of
+CLOCK_REALTIME overflow into negative space.
 
-Since QP destruction frees memory, hfi1_wq should have the WQ_MEM_RECLAIM.
+Now people start to paper over the underlying problem by clamping
+calculations to the valid range, but that's just wrong because such
+workarounds will prevent detection of real issues as well.
 
-The hfi1_wq does not allocate memory with GFP_KERNEL or otherwise become
-entangled with memory reclaim, so this flag is appropriate.
+It is reasonable to force an upper bound for the various methods of setting
+CLOCK_REALTIME. Year 2262 is the absolute upper bound. Assume a maximum
+uptime of 30 years which is plenty enough even for esoteric embedded
+systems. That results in an upper bound of year 2232 for setting the time.
 
-Fixes: 0a226edd203f ("staging/rdma/hfi1: Use parallel workqueue for SDMA engines")
-Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Once that limit is reached in reality this limit is only a small part of
+the problem space. But until then this stops people from trying to paper
+over the problem at the wrong places.
+
+Reported-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
+Reported-by: Hongbo Yao <yaohongbo@huawei.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Miroslav Lichvar <mlichvar@redhat.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Richard Cochran <richardcochran@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1903231125480.2157@nanos.tec.linutronix.de
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/hfi1/init.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/linux/time64.h    | 21 +++++++++++++++++++++
+ kernel/time/time.c        |  2 +-
+ kernel/time/timekeeping.c |  6 +++---
+ 3 files changed, 25 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/infiniband/hw/hfi1/init.c b/drivers/infiniband/hw/hfi1/init.c
-index b7481701542e9..27e7de4c4a34b 100644
---- a/drivers/infiniband/hw/hfi1/init.c
-+++ b/drivers/infiniband/hw/hfi1/init.c
-@@ -769,7 +769,8 @@ static int create_workqueues(struct hfi1_devdata *dd)
- 			ppd->hfi1_wq =
- 				alloc_workqueue(
- 				    "hfi%d_%d",
--				    WQ_SYSFS | WQ_HIGHPRI | WQ_CPU_INTENSIVE,
-+				    WQ_SYSFS | WQ_HIGHPRI | WQ_CPU_INTENSIVE |
-+				    WQ_MEM_RECLAIM,
- 				    HFI1_MAX_ACTIVE_WORKQUEUE_ENTRIES,
- 				    dd->unit, pidx);
- 			if (!ppd->hfi1_wq)
+diff --git a/include/linux/time64.h b/include/linux/time64.h
+index f38d382ffec13..a620ee610b9f3 100644
+--- a/include/linux/time64.h
++++ b/include/linux/time64.h
+@@ -33,6 +33,17 @@ struct itimerspec64 {
+ #define KTIME_MAX			((s64)~((u64)1 << 63))
+ #define KTIME_SEC_MAX			(KTIME_MAX / NSEC_PER_SEC)
+ 
++/*
++ * Limits for settimeofday():
++ *
++ * To prevent setting the time close to the wraparound point time setting
++ * is limited so a reasonable uptime can be accomodated. Uptime of 30 years
++ * should be really sufficient, which means the cutoff is 2232. At that
++ * point the cutoff is just a small part of the larger problem.
++ */
++#define TIME_UPTIME_SEC_MAX		(30LL * 365 * 24 *3600)
++#define TIME_SETTOD_SEC_MAX		(KTIME_SEC_MAX - TIME_UPTIME_SEC_MAX)
++
+ static inline int timespec64_equal(const struct timespec64 *a,
+ 				   const struct timespec64 *b)
+ {
+@@ -100,6 +111,16 @@ static inline bool timespec64_valid_strict(const struct timespec64 *ts)
+ 	return true;
+ }
+ 
++static inline bool timespec64_valid_settod(const struct timespec64 *ts)
++{
++	if (!timespec64_valid(ts))
++		return false;
++	/* Disallow values which cause overflow issues vs. CLOCK_REALTIME */
++	if ((unsigned long long)ts->tv_sec >= TIME_SETTOD_SEC_MAX)
++		return false;
++	return true;
++}
++
+ /**
+  * timespec64_to_ns - Convert timespec64 to nanoseconds
+  * @ts:		pointer to the timespec64 variable to be converted
+diff --git a/kernel/time/time.c b/kernel/time/time.c
+index c3f756f8534bb..86656bbac232e 100644
+--- a/kernel/time/time.c
++++ b/kernel/time/time.c
+@@ -171,7 +171,7 @@ int do_sys_settimeofday64(const struct timespec64 *tv, const struct timezone *tz
+ 	static int firsttime = 1;
+ 	int error = 0;
+ 
+-	if (tv && !timespec64_valid(tv))
++	if (tv && !timespec64_valid_settod(tv))
+ 		return -EINVAL;
+ 
+ 	error = security_settime64(tv, tz);
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index f986e1918d129..f136c56c28057 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -1221,7 +1221,7 @@ int do_settimeofday64(const struct timespec64 *ts)
+ 	unsigned long flags;
+ 	int ret = 0;
+ 
+-	if (!timespec64_valid_strict(ts))
++	if (!timespec64_valid_settod(ts))
+ 		return -EINVAL;
+ 
+ 	raw_spin_lock_irqsave(&timekeeper_lock, flags);
+@@ -1278,7 +1278,7 @@ static int timekeeping_inject_offset(const struct timespec64 *ts)
+ 	/* Make sure the proposed value is valid */
+ 	tmp = timespec64_add(tk_xtime(tk), *ts);
+ 	if (timespec64_compare(&tk->wall_to_monotonic, ts) > 0 ||
+-	    !timespec64_valid_strict(&tmp)) {
++	    !timespec64_valid_settod(&tmp)) {
+ 		ret = -EINVAL;
+ 		goto error;
+ 	}
+@@ -1527,7 +1527,7 @@ void __init timekeeping_init(void)
+ 	unsigned long flags;
+ 
+ 	read_persistent_wall_and_boot_offset(&wall_time, &boot_offset);
+-	if (timespec64_valid_strict(&wall_time) &&
++	if (timespec64_valid_settod(&wall_time) &&
+ 	    timespec64_to_ns(&wall_time) > 0) {
+ 		persistent_clock_exists = true;
+ 	} else if (timespec64_to_ns(&wall_time) != 0) {
 -- 
 2.20.1
 
