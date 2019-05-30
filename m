@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDE942F285
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:22:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBF822EF8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:56:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730299AbfE3EWy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:22:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36996 "EHLO mail.kernel.org"
+        id S1733198AbfE3D4c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:56:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730086AbfE3DPE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:15:04 -0400
+        id S1731768AbfE3DS7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:18:59 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FB9C2456F;
-        Thu, 30 May 2019 03:15:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 521A024725;
+        Thu, 30 May 2019 03:18:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186103;
-        bh=dCVDXips007izB5sZEkFSjcUty+mk+m6uZJDYn5+XbQ=;
+        s=default; t=1559186339;
+        bh=9PYpEDZLRhbi7YVmJolHM37nqF9o+1KmaP4pr3hYhsM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UPGifUcY5Wjymn70p98zbRy9hQ4f/O5ZjmteeuIyN114XU7Lhfczc/0zaiFz65IZ3
-         uJB+1Iav1Zb1Ykk606k49guyQrkads7hUcQw9akiMwT92LgxB4Gm9YBlVZ5Onv48nQ
-         CJUwtIojvFF99hBwsVMVFDWwjD3eyWXSYZ76NUqw=
+        b=J9fXjb8laeYzeskBEl2nUuGykaqdyLEnW8S+vFOdkAaMo+YgDfQawXWn/CmhQx0o6
+         Tzkr8F411kpDEITyd6cReds84OYFjvmRXZzUZgCSnM8zvVMyp50n/HAKq+Rmy94a97
+         kVn4qN/O32Ry3K7MUHjn8fkHi5VjYAl6/5oEOKmI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 243/346] x86/uaccess: Fix up the fixup
-Date:   Wed, 29 May 2019 20:05:16 -0700
-Message-Id: <20190530030553.322995002@linuxfoundation.org>
+        stable@vger.kernel.org, Sven Van Asbroeck <TheSven73@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 063/193] rtc: 88pm860x: prevent use-after-free on device remove
+Date:   Wed, 29 May 2019 20:05:17 -0700
+Message-Id: <20190530030458.251462875@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,51 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b69656fa7ea2f75e47d7bd5b9430359fa46488af ]
+[ Upstream commit f22b1ba15ee5785aa028384ebf77dd39e8e47b70 ]
 
-New tooling got confused about this:
+The device's remove() attempts to shut down the delayed_work scheduled
+on the kernel-global workqueue by calling flush_scheduled_work().
 
-  arch/x86/lib/memcpy_64.o: warning: objtool: .fixup+0x7: return with UACCESS enabled
+Unfortunately, flush_scheduled_work() does not prevent the delayed_work
+from re-scheduling itself. The delayed_work might run after the device
+has been removed, and touch the already de-allocated info structure.
+This is a potential use-after-free.
 
-While the code isn't wrong, it is tedious (if at all possible) to
-figure out what function a particular chunk of .fixup belongs to.
+Fix by calling cancel_delayed_work_sync() during remove(): this ensures
+that the delayed work is properly cancelled, is no longer running, and
+is not able to re-schedule itself.
 
-This then confuses the objtool uaccess validation. Instead of
-returning directly from the .fixup, jump back into the right function.
+This issue was detected with the help of Coccinelle.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/lib/memcpy_64.S | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/rtc/rtc-88pm860x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/lib/memcpy_64.S b/arch/x86/lib/memcpy_64.S
-index 3b24dc05251c7..9d05572370edc 100644
---- a/arch/x86/lib/memcpy_64.S
-+++ b/arch/x86/lib/memcpy_64.S
-@@ -257,6 +257,7 @@ ENTRY(__memcpy_mcsafe)
- 	/* Copy successful. Return zero */
- .L_done_memcpy_trap:
- 	xorl %eax, %eax
-+.L_done:
- 	ret
- ENDPROC(__memcpy_mcsafe)
- EXPORT_SYMBOL_GPL(__memcpy_mcsafe)
-@@ -273,7 +274,7 @@ EXPORT_SYMBOL_GPL(__memcpy_mcsafe)
- 	addl	%edx, %ecx
- .E_trailing_bytes:
- 	mov	%ecx, %eax
--	ret
-+	jmp	.L_done
+diff --git a/drivers/rtc/rtc-88pm860x.c b/drivers/rtc/rtc-88pm860x.c
+index 19e53b3b8e005..166faae3a59cd 100644
+--- a/drivers/rtc/rtc-88pm860x.c
++++ b/drivers/rtc/rtc-88pm860x.c
+@@ -414,7 +414,7 @@ static int pm860x_rtc_remove(struct platform_device *pdev)
+ 	struct pm860x_rtc_info *info = platform_get_drvdata(pdev);
  
- 	/*
- 	 * For write fault handling, given the destination is unaligned,
+ #ifdef VRTC_CALIBRATION
+-	flush_scheduled_work();
++	cancel_delayed_work_sync(&info->calib_work);
+ 	/* disable measurement */
+ 	pm860x_set_bits(info->i2c, PM8607_MEAS_EN2, MEAS2_VRTC, 0);
+ #endif	/* VRTC_CALIBRATION */
 -- 
 2.20.1
 
