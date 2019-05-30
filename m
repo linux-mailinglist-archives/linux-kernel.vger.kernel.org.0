@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C7A12F5A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:49:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEF942EB47
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:11:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728434AbfE3DLO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:11:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46738 "EHLO mail.kernel.org"
+        id S1728470AbfE3DLS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:11:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728058AbfE3DKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:10:23 -0400
+        id S1728069AbfE3DKY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:10:24 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61BF42448B;
-        Thu, 30 May 2019 03:10:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73BD52449D;
+        Thu, 30 May 2019 03:10:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185822;
-        bh=DGwI68EpuJ6zAp05syVes+pWzZQjOwsZ0B9Eg/W2hJw=;
+        s=default; t=1559185823;
+        bh=5RLysbjutLyy0H2j0S6gLUuxbUtDMbuWmcgwqXBZXwA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XyQ3UFAGru8po4+ghMFzrNtWmZ1Mg0H7YFoJWbYyY+eOanY3+GWF9PFvlWGd7nGw+
-         NRz4Jp9kqY/XqO+eb1jJSFJgKV3Xpxf0Luu+PZjOFLlvnCiDg3z7okWeey9LDPmImS
-         RJk6ag1xswmH0ESYPB2Y7vSslVYqygS5U1Bu16kc=
+        b=WeVyaBk7noXXXpkltzELKDpwqZqIWqHLtneyw5kaSEH2GdAZHsLMg3xwmqDLcDy1W
+         ngrUGdmneiJSFzaYpI0CQAzaimnVXEyQzw7XIrBlqGiSr1v9pqGLw0A9pea4xx/IA/
+         sh94pqRocIrtsHot6B7MLo9CRHqN7lkg0b4BO8YY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Baluta <daniel.baluta@nxp.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Xiaoli Feng <fengxiaoli0714@gmail.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 120/405] ASoC: fsl_sai: Update is_slave_mode with correct value
-Date:   Wed, 29 May 2019 20:01:58 -0700
-Message-Id: <20190530030547.072208511@linuxfoundation.org>
+Subject: [PATCH 5.1 121/405] Fix nfs4.2 return -EINVAL when do dedupe operation
+Date:   Wed, 29 May 2019 20:01:59 -0700
+Message-Id: <20190530030547.125038768@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
 References: <20190530030540.291644921@linuxfoundation.org>
@@ -45,45 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ddb351145a967ee791a0fb0156852ec2fcb746ba ]
+[ Upstream commit ce96e888fe48ecfa868c9a39adc03292c78a80ff ]
 
-is_slave_mode defaults to false because sai structure
-that contains it is kzalloc'ed.
+dedupe_file_range operations is combiled into remap_file_range.
+But in nfs42_remap_file_range, it's skiped for dedupe operations.
+Before this patch:
+  # dd if=/dev/zero of=nfs/file bs=1M count=1
+  # xfs_io -c "dedupe nfs/file 4k 64k 4k" nfs/file
+  XFS_IOC_FILE_EXTENT_SAME: Invalid argument
+After this patch:
+  # dd if=/dev/zero of=nfs/file bs=1M count=1
+  # xfs_io -c "dedupe nfs/file 4k 64k 4k" nfs/file
+  deduped 4096/4096 bytes at offset 65536
+  4 KiB, 1 ops; 0.0046 sec (865.988 KiB/sec and 216.4971 ops/sec)
 
-Anyhow, if we decide to set the following configuration
-SAI slave -> SAI master, is_slave_mode will remain set on true
-although SAI being master it should be set to false.
-
-Fix this by updating is_slave_mode for each call of
-fsl_sai_set_dai_fmt.
-
-Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
-Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Xiaoli Feng <fengxiaoli0714@gmail.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/fsl/fsl_sai.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/nfs/nfs4file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/fsl/fsl_sai.c b/sound/soc/fsl/fsl_sai.c
-index db9e0872f73db..7549b74e464e9 100644
---- a/sound/soc/fsl/fsl_sai.c
-+++ b/sound/soc/fsl/fsl_sai.c
-@@ -268,12 +268,14 @@ static int fsl_sai_set_dai_fmt_tr(struct snd_soc_dai *cpu_dai,
- 	case SND_SOC_DAIFMT_CBS_CFS:
- 		val_cr2 |= FSL_SAI_CR2_BCD_MSTR;
- 		val_cr4 |= FSL_SAI_CR4_FSD_MSTR;
-+		sai->is_slave_mode = false;
- 		break;
- 	case SND_SOC_DAIFMT_CBM_CFM:
- 		sai->is_slave_mode = true;
- 		break;
- 	case SND_SOC_DAIFMT_CBS_CFM:
- 		val_cr2 |= FSL_SAI_CR2_BCD_MSTR;
-+		sai->is_slave_mode = false;
- 		break;
- 	case SND_SOC_DAIFMT_CBM_CFS:
- 		val_cr4 |= FSL_SAI_CR4_FSD_MSTR;
+diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
+index 00d17198ee12a..f10b660805fc4 100644
+--- a/fs/nfs/nfs4file.c
++++ b/fs/nfs/nfs4file.c
+@@ -187,7 +187,7 @@ static loff_t nfs42_remap_file_range(struct file *src_file, loff_t src_off,
+ 	bool same_inode = false;
+ 	int ret;
+ 
+-	if (remap_flags & ~REMAP_FILE_ADVISORY)
++	if (remap_flags & ~(REMAP_FILE_DEDUP | REMAP_FILE_ADVISORY))
+ 		return -EINVAL;
+ 
+ 	/* check alignment w.r.t. clone_blksize */
 -- 
 2.20.1
 
