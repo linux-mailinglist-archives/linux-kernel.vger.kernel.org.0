@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F4472F58E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:48:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C97A2F43D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:36:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730723AbfE3EsT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:48:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50736 "EHLO mail.kernel.org"
+        id S1729313AbfE3DNA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:13:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728487AbfE3DLV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:11:21 -0400
+        id S1728077AbfE3DLW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:11:22 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 107832446F;
+        by mail.kernel.org (Postfix) with ESMTPSA id 97E4424476;
         Thu, 30 May 2019 03:11:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1559185881;
-        bh=1rPMMUnAEw/PbwAbQkw+rWsgCAavxUsZNbw2R/Ydn20=;
+        bh=rcP9e4BvTds2Ys2zrNhxdB54UkdmOwPiFX3hoKQP6NM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WTc3lsLrLm62iZY+gqwKc6fuTIQUTsXfzprQmSRlKjG5QZzB5cDtYSAak7Q8Mwxjl
-         7GklO4sjt2Xp1WgkpwyfJa8DRyRdfBRZIsuzDKh+6xR4i99exJC+i/C3AFgtuDYl3B
-         ixPIaYwLfKzD0x8hjtNM8d3cDnPx1giGl4ekacTg=
+        b=HfpUxWDNDvb/pW2hGcT2r4Aj0Gnn8IkSeCQ0hraosyDX6ONq8kWGYnt75FzrqrBXE
+         coP0n7/yGtInOQxPUYSfeN7gFfevpGbhoFlRCGYItgdOIkc51yutcPCakr4CDoj1CK
+         rveigtFYRuR2ZwkJpLSCWioh3F4kPjAs6PyU/xUg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jon Derrick <jonathan.derrick@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Scott Bauer <sbauer@plzdonthack.me>,
-        David Kozub <zub@linux.fjfi.cvut.cz>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 231/405] block: sed-opal: fix IOC_OPAL_ENABLE_DISABLE_MBR
-Date:   Wed, 29 May 2019 20:03:49 -0700
-Message-Id: <20190530030552.717932372@linuxfoundation.org>
+        stable@vger.kernel.org, Oded Gabbay <oded.gabbay@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 232/405] habanalabs: prevent device PTE read/write during hard-reset
+Date:   Wed, 29 May 2019 20:03:50 -0700
+Message-Id: <20190530030552.770697134@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
 References: <20190530030540.291644921@linuxfoundation.org>
@@ -46,63 +43,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 78bf47353b0041865564deeed257a54f047c2fdc ]
+[ Upstream commit 9f201aba56b92c3daa4b76efae056ddbb80d91e6 ]
 
-The implementation of IOC_OPAL_ENABLE_DISABLE_MBR handled the value
-opal_mbr_data.enable_disable incorrectly: enable_disable is expected
-to be one of OPAL_MBR_ENABLE(0) or OPAL_MBR_DISABLE(1). enable_disable
-was passed directly to set_mbr_done and set_mbr_enable_disable where
-is was interpreted as either OPAL_TRUE(1) or OPAL_FALSE(0). The end
-result was that calling IOC_OPAL_ENABLE_DISABLE_MBR with OPAL_MBR_ENABLE
-actually disabled the shadow MBR and vice versa.
+During hard-reset, contexts are closed as part of the tear-down process.
+After a context is closed, the driver cleans up the page tables of that
+context in the device's DRAM. This action is both dangerous and
+unnecessary.
 
-This patch adds correct conversion from OPAL_MBR_DISABLE/ENABLE to
-OPAL_FALSE/TRUE. The change affects existing programs using
-IOC_OPAL_ENABLE_DISABLE_MBR but this is typically used only once when
-setting up an Opal drive.
+It is unnecessary, because the device is going through a hard-reset, which
+means the device's DRAM contents are no longer valid and the device's MMU
+is being reset.
 
-Acked-by: Jon Derrick <jonathan.derrick@intel.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Scott Bauer <sbauer@plzdonthack.me>
-Signed-off-by: David Kozub <zub@linux.fjfi.cvut.cz>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+It is dangerous, because if the hard-reset came as a result of a PCI
+freeze, this action may cause the entire host machine to hang.
+
+Therefore, prevent all device PTE updates when a hard-reset operation is
+pending.
+
+Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/sed-opal.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/misc/habanalabs/goya/goya.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/block/sed-opal.c b/block/sed-opal.c
-index e0de4dd448b3c..1196408972937 100644
---- a/block/sed-opal.c
-+++ b/block/sed-opal.c
-@@ -2095,13 +2095,16 @@ static int opal_erase_locking_range(struct opal_dev *dev,
- static int opal_enable_disable_shadow_mbr(struct opal_dev *dev,
- 					  struct opal_mbr_data *opal_mbr)
+diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
+index 3c509e19d69dc..1533cb3205400 100644
+--- a/drivers/misc/habanalabs/goya/goya.c
++++ b/drivers/misc/habanalabs/goya/goya.c
+@@ -4407,6 +4407,9 @@ static u64 goya_read_pte(struct hl_device *hdev, u64 addr)
  {
-+	u8 enable_disable = opal_mbr->enable_disable == OPAL_MBR_ENABLE ?
-+		OPAL_TRUE : OPAL_FALSE;
-+
- 	const struct opal_step mbr_steps[] = {
- 		{ opal_discovery0, },
- 		{ start_admin1LSP_opal_session, &opal_mbr->key },
--		{ set_mbr_done, &opal_mbr->enable_disable },
-+		{ set_mbr_done, &enable_disable },
- 		{ end_opal_session, },
- 		{ start_admin1LSP_opal_session, &opal_mbr->key },
--		{ set_mbr_enable_disable, &opal_mbr->enable_disable },
-+		{ set_mbr_enable_disable, &enable_disable },
- 		{ end_opal_session, },
- 		{ NULL, }
- 	};
-@@ -2221,7 +2224,7 @@ static int __opal_lock_unlock(struct opal_dev *dev,
+ 	struct goya_device *goya = hdev->asic_specific;
  
- static int __opal_set_mbr_done(struct opal_dev *dev, struct opal_key *key)
++	if (hdev->hard_reset_pending)
++		return U64_MAX;
++
+ 	return readq(hdev->pcie_bar[DDR_BAR_ID] +
+ 			(addr - goya->ddr_bar_cur_addr));
+ }
+@@ -4415,6 +4418,9 @@ static void goya_write_pte(struct hl_device *hdev, u64 addr, u64 val)
  {
--	u8 mbr_done_tf = 1;
-+	u8 mbr_done_tf = OPAL_TRUE;
- 	const struct opal_step mbrdone_step [] = {
- 		{ opal_discovery0, },
- 		{ start_admin1LSP_opal_session, key },
+ 	struct goya_device *goya = hdev->asic_specific;
+ 
++	if (hdev->hard_reset_pending)
++		return;
++
+ 	writeq(val, hdev->pcie_bar[DDR_BAR_ID] +
+ 			(addr - goya->ddr_bar_cur_addr));
+ }
 -- 
 2.20.1
 
