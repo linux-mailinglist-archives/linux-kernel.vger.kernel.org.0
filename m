@@ -2,51 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40F832F843
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 10:07:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FBE02F846
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 10:08:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727875AbfE3IHu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 04:07:50 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:42325 "EHLO
+        id S1728062AbfE3IIA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 04:08:00 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:59267 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726945AbfE3IHu (ORCPT
+        with ESMTP id S1727448AbfE3IH7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 04:07:50 -0400
+        Thu, 30 May 2019 04:07:59 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4U86w2G2903560
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4U87fWN2903615
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 30 May 2019 01:06:58 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4U86w2G2903560
+        Thu, 30 May 2019 01:07:41 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4U87fWN2903615
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1559203618;
-        bh=ZvhgDNjsbWAuBYcQoOxO0xUG5Z6dvo09/2kLCYNbkYU=;
+        s=2019051801; t=1559203661;
+        bh=QWixjzdmohAYpdAUcNAkd2WSNsK3YJGf6dEXKDiw0T0=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=rKXipFQDaNPOjtRbagzwI4GMdO8aFnKX9xL7FEago1kc/1+T4A8+ljnWaM7mypRK3
-         9/yjTRfA0CkRBOFakeghWRTeIiKZKvlDD/jawBUb1tRFARGfpisschgO8hYFxW28nN
-         11MZe5hipotuDtlxWSb9H+lVCriSuDrLj71C9fpz90YPhCTUBiquHrEAt7lSFXrtQo
-         SFE8EFnxfn6C2WgDkQ/QVFpZetS2HaW1REKX0zo2GNSjrD5WwQ4uEK4MIXMpCR+a4y
-         Xc+oED1t4906VmPThPwLV6wo1klFkBK5cpIuGIh5gQ9uqLBpJL5KFGpJfJ1yejapef
-         ycmRY6tY3sDHA==
+        b=me7/1+DHTRwYHXcZfPHVSCB91Ng1+jUJZ3ShY867l1dqXxumlmlQeCYaoCRVlZfMH
+         XwxmkdjB2c8627Q2f3oWN9uYqiE98ngd9Rq4w7OhbDOUdLbSVbLohfJYzlzkhZFDw5
+         lnPzv4G/5BOZOsjaXWsjkytdaFTRoRvur+NS3x35OB/9i0VNRaFWxzsg6Hjnvf7TxM
+         lwdrKXLzfMSFLBU/e+IBtRNaFkRLzfQKSkwd9KHbxb5aNRKC/oNbwPkzJpWMNELrrR
+         G2kF9r9WJHHsZHsIOrsrpNPVwzG1K488Q5Id5/yxI8nedr/FccG5pQflmkkq0iv0TO
+         S5qj3T4Cloo+A==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4U86vWv2903557;
-        Thu, 30 May 2019 01:06:57 -0700
-Date:   Thu, 30 May 2019 01:06:57 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4U87eUt2903612;
+        Thu, 30 May 2019 01:07:40 -0700
+Date:   Thu, 30 May 2019 01:07:40 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Namhyung Kim <tipbot@zytor.com>
-Message-ID: <tip-a0c0a4ac021b017e385d0328541ccfebeef165fc@git.kernel.org>
-Cc:     hbathini@linux.vnet.ibm.com, kjlx@templeofstupid.com,
-        acme@redhat.com, mingo@kernel.org, namhyung@kernel.org,
-        jolsa@redhat.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        hpa@zytor.com
-Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com,
-          hbathini@linux.vnet.ibm.com, kjlx@templeofstupid.com,
-          acme@redhat.com, namhyung@kernel.org, mingo@kernel.org,
-          tglx@linutronix.de, jolsa@redhat.com
-In-Reply-To: <20190522053250.207156-4-namhyung@kernel.org>
-References: <20190522053250.207156-4-namhyung@kernel.org>
+Message-ID: <tip-7cb10a08df98e643b87d4bc8422e50e9c43b5c60@git.kernel.org>
+Cc:     mingo@kernel.org, hbathini@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org, namhyung@kernel.org, acme@redhat.com,
+        jolsa@redhat.com, kjlx@templeofstupid.com, hpa@zytor.com,
+        tglx@linutronix.de
+Reply-To: hpa@zytor.com, tglx@linutronix.de, kjlx@templeofstupid.com,
+          jolsa@redhat.com, acme@redhat.com, namhyung@kernel.org,
+          hbathini@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+          mingo@kernel.org
+In-Reply-To: <20190527061149.168640-1-namhyung@kernel.org>
+References: <20190527061149.168640-1-namhyung@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf top: Add --namespaces option
-Git-Commit-ID: a0c0a4ac021b017e385d0328541ccfebeef165fc
+Subject: [tip:perf/core] perf tools: Remove const from thread read accessors
+Git-Commit-ID: 7cb10a08df98e643b87d4bc8422e50e9c43b5c60
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -64,65 +64,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a0c0a4ac021b017e385d0328541ccfebeef165fc
-Gitweb:     https://git.kernel.org/tip/a0c0a4ac021b017e385d0328541ccfebeef165fc
+Commit-ID:  7cb10a08df98e643b87d4bc8422e50e9c43b5c60
+Gitweb:     https://git.kernel.org/tip/7cb10a08df98e643b87d4bc8422e50e9c43b5c60
 Author:     Namhyung Kim <namhyung@kernel.org>
-AuthorDate: Wed, 22 May 2019 14:32:50 +0900
+AuthorDate: Mon, 27 May 2019 15:11:49 +0900
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 28 May 2019 18:37:43 -0300
 
-perf top: Add --namespaces option
+perf tools: Remove const from thread read accessors
 
-Since 'perf record' already have this option, let's have it for 'perf top'
-as well.
+The namespaces and comm fields of a thread are protected by rwsem and
+require write access for it.  So it ended up using a cast to remove
+the const qualifier.  Let's get rid of the const then.
 
 Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+Suggested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Hari Bathini <hbathini@linux.vnet.ibm.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Krister Johansen <kjlx@templeofstupid.com>
-Link: http://lkml.kernel.org/r/20190522053250.207156-4-namhyung@kernel.org
+Link: http://lkml.kernel.org/r/20190527061149.168640-1-namhyung@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Documentation/perf-top.txt | 5 +++++
- tools/perf/builtin-top.c              | 5 +++++
- 2 files changed, 10 insertions(+)
+ tools/perf/util/hist.c   |  2 +-
+ tools/perf/util/thread.c | 12 ++++++------
+ tools/perf/util/thread.h |  4 ++--
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/tools/perf/Documentation/perf-top.txt b/tools/perf/Documentation/perf-top.txt
-index 44d89fb9c788..cfea87c6f38e 100644
---- a/tools/perf/Documentation/perf-top.txt
-+++ b/tools/perf/Documentation/perf-top.txt
-@@ -262,6 +262,11 @@ Default is to monitor all CPUS.
- 	The number of threads to run when synthesizing events for existing processes.
- 	By default, the number of threads equals to the number of online CPUs.
+diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
+index 7ace7a10054d..fb3271fd420c 100644
+--- a/tools/perf/util/hist.c
++++ b/tools/perf/util/hist.c
+@@ -2561,7 +2561,7 @@ int __hists__scnprintf_title(struct hists *hists, char *bf, size_t size, bool sh
+ 	char unit;
+ 	int printed;
+ 	const struct dso *dso = hists->dso_filter;
+-	const struct thread *thread = hists->thread_filter;
++	struct thread *thread = hists->thread_filter;
+ 	int socket_id = hists->socket_filter;
+ 	unsigned long nr_samples = hists->stats.nr_events[PERF_RECORD_SAMPLE];
+ 	u64 nr_events = hists->stats.total_period;
+diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
+index b413ba5b9835..aab7807d445f 100644
+--- a/tools/perf/util/thread.c
++++ b/tools/perf/util/thread.c
+@@ -141,13 +141,13 @@ static struct namespaces *__thread__namespaces(const struct thread *thread)
+ 	return list_first_entry(&thread->namespaces_list, struct namespaces, list);
+ }
  
-+--namespaces::
-+	Record events of type PERF_RECORD_NAMESPACES and display it with the
-+	'cgroup_id' sort key.
-+
-+
- INTERACTIVE PROMPTING KEYS
- --------------------------
+-struct namespaces *thread__namespaces(const struct thread *thread)
++struct namespaces *thread__namespaces(struct thread *thread)
+ {
+ 	struct namespaces *ns;
  
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index fbbb0da43abb..31d78d874fc7 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -1208,6 +1208,9 @@ static int __cmd_top(struct perf_top *top)
+-	down_read((struct rw_semaphore *)&thread->namespaces_lock);
++	down_read(&thread->namespaces_lock);
+ 	ns = __thread__namespaces(thread);
+-	up_read((struct rw_semaphore *)&thread->namespaces_lock);
++	up_read(&thread->namespaces_lock);
  
- 	init_process_thread(top);
+ 	return ns;
+ }
+@@ -271,13 +271,13 @@ static const char *__thread__comm_str(const struct thread *thread)
+ 	return comm__str(comm);
+ }
  
-+	if (opts->record_namespaces)
-+		top->tool.namespace_events = true;
-+
- 	ret = perf_event__synthesize_bpf_events(top->session, perf_event__process,
- 						&top->session->machines.host,
- 						&top->record_opts);
-@@ -1500,6 +1503,8 @@ int cmd_top(int argc, const char **argv)
- 	OPT_BOOLEAN(0, "force", &symbol_conf.force, "don't complain, do it"),
- 	OPT_UINTEGER(0, "num-thread-synthesize", &top.nr_threads_synthesize,
- 			"number of thread to run event synthesize"),
-+	OPT_BOOLEAN(0, "namespaces", &opts->record_namespaces,
-+		    "Record namespaces events"),
- 	OPT_END()
- 	};
- 	struct perf_evlist *sb_evlist = NULL;
+-const char *thread__comm_str(const struct thread *thread)
++const char *thread__comm_str(struct thread *thread)
+ {
+ 	const char *str;
+ 
+-	down_read((struct rw_semaphore *)&thread->comm_lock);
++	down_read(&thread->comm_lock);
+ 	str = __thread__comm_str(thread);
+-	up_read((struct rw_semaphore *)&thread->comm_lock);
++	up_read(&thread->comm_lock);
+ 
+ 	return str;
+ }
+diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
+index cf8375c017a0..e97ef6977eb9 100644
+--- a/tools/perf/util/thread.h
++++ b/tools/perf/util/thread.h
+@@ -76,7 +76,7 @@ static inline void thread__exited(struct thread *thread)
+ 	thread->dead = true;
+ }
+ 
+-struct namespaces *thread__namespaces(const struct thread *thread);
++struct namespaces *thread__namespaces(struct thread *thread);
+ int thread__set_namespaces(struct thread *thread, u64 timestamp,
+ 			   struct namespaces_event *event);
+ 
+@@ -93,7 +93,7 @@ int thread__set_comm_from_proc(struct thread *thread);
+ int thread__comm_len(struct thread *thread);
+ struct comm *thread__comm(const struct thread *thread);
+ struct comm *thread__exec_comm(const struct thread *thread);
+-const char *thread__comm_str(const struct thread *thread);
++const char *thread__comm_str(struct thread *thread);
+ int thread__insert_map(struct thread *thread, struct map *map);
+ int thread__fork(struct thread *thread, struct thread *parent, u64 timestamp, bool do_maps_clone);
+ size_t thread__fprintf(struct thread *thread, FILE *fp);
