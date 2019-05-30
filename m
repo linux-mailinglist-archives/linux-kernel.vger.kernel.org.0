@@ -2,117 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77BBF2FE09
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 16:41:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89F342FE1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 16:43:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727191AbfE3Ok6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 10:40:58 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38970 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725961AbfE3Ok6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 10:40:58 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AF0D5C04FFF6;
-        Thu, 30 May 2019 14:40:51 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 655AE611A1;
-        Thu, 30 May 2019 14:40:46 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Thu, 30 May 2019 16:40:51 +0200 (CEST)
-Date:   Thu, 30 May 2019 16:40:45 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, dbueso@suse.de,
-        Jens Axboe <axboe@kernel.dk>,
-        Davidlohr Bueso <dave@stgolabs.net>, e@80x24.org,
-        Jason Baron <jbaron@akamai.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>, omar.kilani@gmail.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "# 3.4.x" <stable@vger.kernel.org>
-Subject: Re: pselect/etc semantics (Was: [PATCH v2] signal: Adjust error
- codes according to restore_user_sigmask())
-Message-ID: <20190530144044.GG22536@redhat.com>
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190529161157.GA27659@redhat.com>
- <CAK8P3a1fsrz6kAB1z-mqcaNvXL4Hf3XMiN=Q5rzAJ3rLGPK_Yg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1fsrz6kAB1z-mqcaNvXL4Hf3XMiN=Q5rzAJ3rLGPK_Yg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 30 May 2019 14:40:57 +0000 (UTC)
+        id S1727345AbfE3Omf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 10:42:35 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33658 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726706AbfE3Omc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 10:42:32 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4UEew81066386
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 10:42:31 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2stf2172qa-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 10:42:31 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 30 May 2019 15:42:29 +0100
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 30 May 2019 15:42:25 +0100
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4UEgO1e36897214
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 30 May 2019 14:42:25 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D1853B205F;
+        Thu, 30 May 2019 14:42:24 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B33F7B2064;
+        Thu, 30 May 2019 14:42:24 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.216])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 30 May 2019 14:42:24 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 7B1DC16C09D5; Thu, 30 May 2019 07:42:26 -0700 (PDT)
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org
+Cc:     stern@rowland.harvard.edu, andrea.parri@amarulasolutions.com,
+        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
+        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, akiyks@gmail.com,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>
+Subject: [PATCH RFC memory-model 01/33] tools/memory-model: Prepare for data-race detection
+Date:   Thu, 30 May 2019 07:41:53 -0700
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190530144202.GA26201@linux.ibm.com>
+References: <20190530144202.GA26201@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 19053014-0060-0000-0000-00000349F4E8
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011185; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000286; SDB=6.01210779; UDB=6.00636154; IPR=6.00991814;
+ MB=3.00027120; MTD=3.00000008; XFM=3.00000015; UTC=2019-05-30 14:42:29
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19053014-0061-0000-0000-0000498DEF4D
+Message-Id: <20190530144225.27624-1-paulmck@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-30_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=777 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905300105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/30, Arnd Bergmann wrote:
->
-> I think this is a nice simplification, but it would help not to mix up the
-> minimal regression fix with the rewrite of those functions.
+From: Alan Stern <stern@rowland.harvard.edu>
 
-Yes, yes, agreed.
+This patch makes some slight alterations to linux-kernel.cat in
+preparation for adding support for data-race detection to the
+Linux-Kernel Memory Model.
 
-Plus every file touched by this patch asks for more cleanups. Say, do_poll()
-should return -ERESTARTNOHAND, not -EINTR, after that we can remove the ugly
-EINTR->ERESTARTNOHAND in its callers. And more.
+	The definitions of relations involved in Acquire, Release, and
+	unlock-lock ordering are moved up earlier in the source file.
 
-> For the stable
-> kernels, I think we want just the addition of the 'bool interrupted' argument
-> to restore_user_sigmask()
+	The rmb relation is factored through the new R4rmb class: the
+	class of reads to which rmb will apply.
 
-or simply revert this patch. I will check if this is possible today... At first
-glance 854a6ed56839a40f6 fixed another bug by accident, do_pselect() did
-"ret == -ERESTARTNOHAND" after "ret = poll_select_copy_remaining()" which can
-turn ERESTARTNOHAND into EINTR, but this is simple. I'll check tomorrow.
+	The definition of the fence relation is moved earlier, and it
+	is split up into read- and write-fences (rmb and wmb) and all
+	the others.
 
+This should not make any functional changes.
 
-> > -       ret = set_user_sigmask(ksig.sigmask, &ksigmask, &sigsaved, ksig.sigsetsize);
-> > +       ret = set_xxx(ksig.sigmask, ksig.sigsetsize);
-> >         if (ret)
-> >                 return ret;
-> >
-> >         ret = do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &ts : NULL);
-> > -       restore_user_sigmask(ksig.sigmask, &sigsaved);
-> > -       if (signal_pending(current) && !ret)
-> > +
-> > +       interrupted = signal_pending(current);
-> > +       update_xxx(interrupted);
->
-> Maybe name this
->
->            restore_saved_sigmask_if(!interrupted);
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Reviewed-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+---
+ tools/memory-model/linux-kernel.cat | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-Yes, I thought about restore_if(), but to me
-
-		restore_saved_sigmask_if(ret != -EINTR);
-
-doesn't look readable... May be
-
-		restore_saved_sigmask_unless(ret == -EINTR);
-
-? but actually I agree with any naming.
-
-> and make restore_saved_sigmask_if() an inline function
-> next to restore_saved_sigmask()?
-
-agreed,
-
-> With some of the recent discussions about compat syscall handling,
-> I now think that we want to just fold set_compat_user_sigmask()
-> into set_user_sigmask()
-
-agreed, and I thought about this too. But again, I'd prefer to do this
-and other cleanups later, on top of this patch.
-
-Oleg.
+diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
+index 8dcb37835b61..834107022c50 100644
+--- a/tools/memory-model/linux-kernel.cat
++++ b/tools/memory-model/linux-kernel.cat
+@@ -24,8 +24,14 @@ include "lock.cat"
+ (* Basic relations *)
+ (*******************)
+ 
++(* Release Acquire *)
++let acq-po = [Acquire] ; po ; [M]
++let po-rel = [M] ; po ; [Release]
++let po-unlock-rf-lock-po = po ; [UL] ; rf ; [LKR] ; po
++
+ (* Fences *)
+-let rmb = [R \ Noreturn] ; fencerel(Rmb) ; [R \ Noreturn]
++let R4rmb = R \ Noreturn	(* Reads for which rmb works *)
++let rmb = [R4rmb] ; fencerel(Rmb) ; [R4rmb]
+ let wmb = [W] ; fencerel(Wmb) ; [W]
+ let mb = ([M] ; fencerel(Mb) ; [M]) |
+ 	([M] ; fencerel(Before-atomic) ; [RMW] ; po? ; [M]) |
+@@ -34,13 +40,10 @@ let mb = ([M] ; fencerel(Mb) ; [M]) |
+ 	([M] ; po ; [UL] ; (co | po) ; [LKW] ;
+ 		fencerel(After-unlock-lock) ; [M])
+ let gp = po ; [Sync-rcu | Sync-srcu] ; po?
+-
+ let strong-fence = mb | gp
+ 
+-(* Release Acquire *)
+-let acq-po = [Acquire] ; po ; [M]
+-let po-rel = [M] ; po ; [Release]
+-let po-unlock-rf-lock-po = po ; [UL] ; rf ; [LKR] ; po
++let nonrw-fence = strong-fence | po-rel | acq-po
++let fence = nonrw-fence | wmb | rmb
+ 
+ (**********************************)
+ (* Fundamental coherence ordering *)
+@@ -63,7 +66,6 @@ let rwdep = (dep | ctrl) ; [W]
+ let overwrite = co | fr
+ let to-w = rwdep | (overwrite & int)
+ let to-r = addr | (dep ; rfi)
+-let fence = strong-fence | wmb | po-rel | rmb | acq-po
+ let ppo = to-r | to-w | fence | (po-unlock-rf-lock-po & int)
+ 
+ (* Propagation: Ordering from release operations and strong fences. *)
+-- 
+2.17.1
 
