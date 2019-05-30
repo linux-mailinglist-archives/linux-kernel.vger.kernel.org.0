@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 925AB2EF1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:53:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 951B72EE41
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:45:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387789AbfE3DxD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:53:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55652 "EHLO mail.kernel.org"
+        id S1732480AbfE3Dpm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:45:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731932AbfE3DTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:19:33 -0400
+        id S1732322AbfE3DUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:20:47 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A3C6E24820;
-        Thu, 30 May 2019 03:19:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA5032496D;
+        Thu, 30 May 2019 03:20:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186372;
-        bh=/9gO1owKbVSEM1J1l/p0XqI3NOncT/RkO+xEAx1EsGc=;
+        s=default; t=1559186445;
+        bh=qydilEWEQqasVCq9cYkBAWbqdN+AQcFoT0hQC5NMJ3g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jw+mLu1NQMYQ8LmX/NMQYBjb4hathAmsul7rNDgO2YzDUAmiB89fqjmsdsv1TItc4
-         YPzN/Hg+I3FQQqvTBgHqhziKYd9pcUGdq4Q971DdU6yDmTzqtL2uEvK1+TQyufTWiC
-         B/lK6kCK4h4MNmiWC4gAJqaabUhfvYN8emZ9hkeg=
+        b=POtrs3nm9ynx4f5GEUc6Y1cy1y6a1pUcxixIXTWKNzLklLRfXJQEj7b9xu5YQXubM
+         2rj+i3Q4LGeShFyXSeDBw8WkP46H880jR5JpEb2lxGwnoXINebYEKqG460tnAeAGnL
+         +Kqt40YWBTuOaqR4O7Y+50HmXepbltKnH0cr55dI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-pm@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 130/193] cpufreq: ppc_cbe: fix possible object reference leak
-Date:   Wed, 29 May 2019 20:06:24 -0700
-Message-Id: <20190530030506.541854823@linuxfoundation.org>
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, luto@kernel.org,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 053/128] mm/uaccess: Use unsigned long to placate UBSAN warnings on older GCC versions
+Date:   Wed, 29 May 2019 20:06:25 -0700
+Message-Id: <20190530030444.261281524@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,38 +46,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 233298032803f2802fe99892d0de4ab653bfece4 ]
+[ Upstream commit 29da93fea3ea39ab9b12270cc6be1b70ef201c9e ]
 
-The call to of_get_cpu_node returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
+Randy reported objtool triggered on his (GCC-7.4) build:
 
-Detected by coccinelle with the following warnings:
-./drivers/cpufreq/ppc_cbe_cpufreq.c:89:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 76, but without a corresponding object release within this function.
-./drivers/cpufreq/ppc_cbe_cpufreq.c:89:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 76, but without a corresponding object release within this function.
+  lib/strncpy_from_user.o: warning: objtool: strncpy_from_user()+0x315: call to __ubsan_handle_add_overflow() with UACCESS enabled
+  lib/strnlen_user.o: warning: objtool: strnlen_user()+0x337: call to __ubsan_handle_sub_overflow() with UACCESS enabled
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-pm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+This is due to UBSAN generating signed-overflow-UB warnings where it
+should not. Prior to GCC-8 UBSAN ignored -fwrapv (which the kernel
+uses through -fno-strict-overflow).
+
+Make the functions use 'unsigned long' throughout.
+
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: luto@kernel.org
+Link: http://lkml.kernel.org/r/20190424072208.754094071@infradead.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpufreq/ppc_cbe_cpufreq.c | 1 +
- 1 file changed, 1 insertion(+)
+ lib/strncpy_from_user.c | 5 +++--
+ lib/strnlen_user.c      | 4 ++--
+ 2 files changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/cpufreq/ppc_cbe_cpufreq.c b/drivers/cpufreq/ppc_cbe_cpufreq.c
-index 5a4c5a639f618..2eaeebcc93afe 100644
---- a/drivers/cpufreq/ppc_cbe_cpufreq.c
-+++ b/drivers/cpufreq/ppc_cbe_cpufreq.c
-@@ -86,6 +86,7 @@ static int cbe_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	if (!cbe_get_cpu_pmd_regs(policy->cpu) ||
- 	    !cbe_get_cpu_mic_tm_regs(policy->cpu)) {
- 		pr_info("invalid CBE regs pointers for cpufreq\n");
-+		of_node_put(cpu);
- 		return -EINVAL;
- 	}
+diff --git a/lib/strncpy_from_user.c b/lib/strncpy_from_user.c
+index 7e35fc450c5bb..5a07f19059c36 100644
+--- a/lib/strncpy_from_user.c
++++ b/lib/strncpy_from_user.c
+@@ -22,10 +22,11 @@
+  * hit it), 'max' is the address space maximum (and we return
+  * -EFAULT if we hit it).
+  */
+-static inline long do_strncpy_from_user(char *dst, const char __user *src, long count, unsigned long max)
++static inline long do_strncpy_from_user(char *dst, const char __user *src,
++					unsigned long count, unsigned long max)
+ {
+ 	const struct word_at_a_time constants = WORD_AT_A_TIME_CONSTANTS;
+-	long res = 0;
++	unsigned long res = 0;
+ 
+ 	/*
+ 	 * Truncate 'max' to the user-specified limit, so that
+diff --git a/lib/strnlen_user.c b/lib/strnlen_user.c
+index 8e105ed4df12b..9ff4f3bbb1aae 100644
+--- a/lib/strnlen_user.c
++++ b/lib/strnlen_user.c
+@@ -27,7 +27,7 @@
+ static inline long do_strnlen_user(const char __user *src, unsigned long count, unsigned long max)
+ {
+ 	const struct word_at_a_time constants = WORD_AT_A_TIME_CONSTANTS;
+-	long align, res = 0;
++	unsigned long align, res = 0;
+ 	unsigned long c;
+ 
+ 	/*
+@@ -41,7 +41,7 @@ static inline long do_strnlen_user(const char __user *src, unsigned long count,
+ 	 * Do everything aligned. But that means that we
+ 	 * need to also expand the maximum..
+ 	 */
+-	align = (sizeof(long) - 1) & (unsigned long)src;
++	align = (sizeof(unsigned long) - 1) & (unsigned long)src;
+ 	src -= align;
+ 	max += align;
  
 -- 
 2.20.1
