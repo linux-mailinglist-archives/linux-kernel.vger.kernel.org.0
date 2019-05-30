@@ -2,43 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D5332F05B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:03:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 983DF2F450
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:38:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731340AbfE3DRz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:17:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33692 "EHLO mail.kernel.org"
+        id S1729286AbfE3DMx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:12:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729788AbfE3DOQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:14:16 -0400
+        id S1728482AbfE3DLU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:11:20 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F5DA2455A;
-        Thu, 30 May 2019 03:14:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 20ED6244FA;
+        Thu, 30 May 2019 03:11:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186055;
-        bh=u1s5sbbe8SbdEzD6ad36pwC7gu2d/mbwywkYgxHnK8A=;
+        s=default; t=1559185880;
+        bh=xD8BCILq0qaxWL0pZybmxB4YVqjMc1p4hd14D/e0VZU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iOiRXo3GIyHgDNA8i6oa2IcOv5D3yelwW8Ex7Y6TOFdxAQsPMfwnsWV50Ui+lcptV
-         vXUDgFfe9jNva8qTQpqVflD0uFqWFPfiTnGFTXrOSNUbMFijv/Alb6I4H6E2P8EvDF
-         JrRm9PZTyGaFuJ1koUeAHkErF5RD5K2cGnOMrK9Q=
+        b=SzQjMJWCNZn8J8ShGCujh2tP2P79RrjOsrDe+HCt+EsAlSnHqDGR7LXPCyuFVDvem
+         xUg0lXBKAt7EDglS0mnBVq4mvkQTZ+hTGuuL+MV02FHpeRUUY2mrLArGiNEZAwUEaV
+         v2n2QEYdUaslN0rtYQvUJWT6QkoqYElIi7UlJJqg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 154/346] sched/rt: Check integer overflow at usec to nsec conversion
+        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 229/405] cpufreq: imx6q: fix possible object reference leak
 Date:   Wed, 29 May 2019 20:03:47 -0700
-Message-Id: <20190530030548.982293722@linuxfoundation.org>
+Message-Id: <20190530030552.617460274@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,55 +51,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1a010e29cfa00fee2888fd2fd4983f848cbafb58 ]
+[ Upstream commit ddb64c5db3cc8fb9c1242214d5798b2c2865681c ]
 
-Example of unhandled overflows:
+The call to of_node_get returns a node pointer with refcount
+incremented thus it must be explicitly decremented after the last
+usage.
 
- # echo 18446744073709651 > cpu.rt_runtime_us
- # cat cpu.rt_runtime_us
- 99
+Detected by coccinelle with the following warnings:
+./drivers/cpufreq/imx6q-cpufreq.c:391:4-10: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 348, but without a corresponding object release within this function.
+./drivers/cpufreq/imx6q-cpufreq.c:395:3-9: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 348, but without a corresponding object release within this function.
 
- # echo 18446744073709900 > cpu.rt_period_us
- # cat cpu.rt_period_us
- 348
-
-After this patch they will fail with -EINVAL.
-
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Acked-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/155125501739.293431.5252197504404771496.stgit@buzz
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: NXP Linux Team <linux-imx@nxp.com>
+Cc: linux-pm@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sched/rt.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/cpufreq/imx6q-cpufreq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index e4f398ad9e73b..aa7ee3a0bf906 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -2555,6 +2555,8 @@ int sched_group_set_rt_runtime(struct task_group *tg, long rt_runtime_us)
- 	rt_runtime = (u64)rt_runtime_us * NSEC_PER_USEC;
- 	if (rt_runtime_us < 0)
- 		rt_runtime = RUNTIME_INF;
-+	else if ((u64)rt_runtime_us > U64_MAX / NSEC_PER_USEC)
-+		return -EINVAL;
+diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
+index a4ff09f91c8f8..3e17560b1efe3 100644
+--- a/drivers/cpufreq/imx6q-cpufreq.c
++++ b/drivers/cpufreq/imx6q-cpufreq.c
+@@ -388,11 +388,11 @@ static int imx6q_cpufreq_probe(struct platform_device *pdev)
+ 		ret = imx6ul_opp_check_speed_grading(cpu_dev);
+ 		if (ret) {
+ 			if (ret == -EPROBE_DEFER)
+-				return ret;
++				goto put_node;
  
- 	return tg_set_rt_bandwidth(tg, rt_period, rt_runtime);
- }
-@@ -2575,6 +2577,9 @@ int sched_group_set_rt_period(struct task_group *tg, u64 rt_period_us)
- {
- 	u64 rt_runtime, rt_period;
- 
-+	if (rt_period_us > U64_MAX / NSEC_PER_USEC)
-+		return -EINVAL;
-+
- 	rt_period = rt_period_us * NSEC_PER_USEC;
- 	rt_runtime = tg->rt_bandwidth.rt_runtime;
- 
+ 			dev_err(cpu_dev, "failed to read ocotp: %d\n",
+ 				ret);
+-			return ret;
++			goto put_node;
+ 		}
+ 	} else {
+ 		imx6q_opp_check_speed_grading(cpu_dev);
 -- 
 2.20.1
 
