@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EDDA2F47C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:39:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 836432F247
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:21:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388553AbfE3Ei5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:38:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55990 "EHLO mail.kernel.org"
+        id S1730222AbfE3DPT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:15:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729165AbfE3DMl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:41 -0400
+        id S1729173AbfE3DMm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:12:42 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DCB323F4C;
+        by mail.kernel.org (Postfix) with ESMTPSA id D146E23DE3;
         Thu, 30 May 2019 03:12:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1559185961;
-        bh=GwjazmCCMDLs4UDj2hm2Q+Zgfm4SPh7LP4nDmQvjz5M=;
+        bh=XcJ67KVlbfws4QxK94sQYcVSTdHXWYoiAMcJLHgKWQE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jqlFhrNMi5TYTJWhShZ18XB35tqbrIt/RH6e5j5nr6Nii2ziPS+iYSu1hQQmWXY2r
-         I61ZfFVeD+zBvsc7j5S3ik3o1ioWEcmD+EYeTwMt+3Vgxm6zsRjuyDYZWVAUzw7Qal
-         1T1S2mN5nHX6dD+9EjSGM0Sh4u4WXHyZYYNaQcO0=
+        b=dXdYmy86gvrKCrmXDH4r2+x94xYrYvZ6Uo65qx3Os5vUGaZtefW2+E0YlQN8LaZGK
+         tqqqM9QN2B9zCgAz8IayPCAkD9y5atuWIx+u5CThKCwX9DDooYq7C0ledGZOBDqwzs
+         ls9U4U79f/nMbdwDUIydQyj4u2Sq7A7cb+FElVOQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 337/405] media: staging/intel-ipu3: mark PM function as __maybe_unused
-Date:   Wed, 29 May 2019 20:05:35 -0700
-Message-Id: <20190530030557.752739722@linuxfoundation.org>
+Subject: [PATCH 5.1 338/405] media: vicodec: reset last_src/dst_buf based on the IS_OUTPUT
+Date:   Wed, 29 May 2019 20:05:36 -0700
+Message-Id: <20190530030557.798675147@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
 References: <20190530030540.291644921@linuxfoundation.org>
@@ -45,40 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 948dff7cfa1d7653e7828e7b905863bd24ca5c02 ]
+[ Upstream commit 76eb24fc233b8c94b2156ead5811e08d2046ad58 ]
 
-The imgu_rpm_dummy_cb() looks like an API misuse that is explained
-in the comment above it. Aside from that, it also causes a warning
-when power management support is disabled:
+When start_streaming was called both last_src_buf and last_dst_buf
+pointers were set to NULL, but this depends on whether the capture
+or output queue starts streaming.
 
-drivers/staging/media/ipu3/ipu3.c:794:12: error: 'imgu_rpm_dummy_cb' defined but not used [-Werror=unused-function]
+When decoding with resolution changes in between the capture queue
+has to restart streaming whenever a resolution change occurs. And
+that would reset last_src_buf as well, which causes a problem if
+the decoder was stopped by the application. Since last_src_buf
+is now NULL, the LAST flag is never set for the last capture
+buffer.
 
-The warning is at least easy to fix by marking the function as
-__maybe_unused.
-
-Fixes: 7fc7af649ca7 ("media: staging/intel-ipu3: Add imgu top level pci device driver")
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/media/ipu3/ipu3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/vicodec/vicodec-core.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/media/ipu3/ipu3.c b/drivers/staging/media/ipu3/ipu3.c
-index d575ac78c8f0b..d00d26264c37d 100644
---- a/drivers/staging/media/ipu3/ipu3.c
-+++ b/drivers/staging/media/ipu3/ipu3.c
-@@ -791,7 +791,7 @@ static int __maybe_unused imgu_resume(struct device *dev)
-  * PCI rpm framework checks the existence of driver rpm callbacks.
-  * Place a dummy callback here to avoid rpm going into error state.
-  */
--static int imgu_rpm_dummy_cb(struct device *dev)
-+static __maybe_unused int imgu_rpm_dummy_cb(struct device *dev)
- {
- 	return 0;
- }
+diff --git a/drivers/media/platform/vicodec/vicodec-core.c b/drivers/media/platform/vicodec/vicodec-core.c
+index 6b618452700c4..8788369e59a0a 100644
+--- a/drivers/media/platform/vicodec/vicodec-core.c
++++ b/drivers/media/platform/vicodec/vicodec-core.c
+@@ -1339,8 +1339,11 @@ static int vicodec_start_streaming(struct vb2_queue *q,
+ 	chroma_div = info->width_div * info->height_div;
+ 	q_data->sequence = 0;
+ 
+-	ctx->last_src_buf = NULL;
+-	ctx->last_dst_buf = NULL;
++	if (V4L2_TYPE_IS_OUTPUT(q->type))
++		ctx->last_src_buf = NULL;
++	else
++		ctx->last_dst_buf = NULL;
++
+ 	state->gop_cnt = 0;
+ 
+ 	if ((V4L2_TYPE_IS_OUTPUT(q->type) && !ctx->is_enc) ||
 -- 
 2.20.1
 
