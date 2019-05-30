@@ -2,91 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C27A42F29C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:23:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 517B42F364
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:29:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731500AbfE3EXm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:23:42 -0400
-Received: from foss.arm.com ([217.140.101.70]:57936 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730049AbfE3EXh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 00:23:37 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 105F1374;
-        Wed, 29 May 2019 21:23:37 -0700 (PDT)
-Received: from [10.162.40.143] (p8cg001049571a15.blr.arm.com [10.162.40.143])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ED62B3F5AF;
-        Wed, 29 May 2019 21:23:30 -0700 (PDT)
-Subject: Re: [PATCH V5 0/3] arm64/mm: Enable memory hot remove
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, mark.rutland@arm.com, mhocko@suse.com,
-        ira.weiny@intel.com, david@redhat.com, cai@lca.pw,
-        logang@deltatee.com, james.morse@arm.com, cpandya@codeaurora.org,
-        arunks@codeaurora.org, dan.j.williams@intel.com,
-        mgorman@techsingularity.net, osalvador@suse.de,
-        ard.biesheuvel@arm.com
-References: <1559121387-674-1-git-send-email-anshuman.khandual@arm.com>
- <20190529150611.fc27dee202b4fd1646210361@linux-foundation.org>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <c6e3af6e-27f4-ec3e-5ced-af4f62a9cdff@arm.com>
-Date:   Thu, 30 May 2019 09:53:43 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20190529150611.fc27dee202b4fd1646210361@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        id S2388185AbfE3E3B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:29:01 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:46664 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730048AbfE3E24 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 00:28:56 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 6F6C0136E07E5;
+        Wed, 29 May 2019 21:28:55 -0700 (PDT)
+Date:   Wed, 29 May 2019 21:28:52 -0700 (PDT)
+Message-Id: <20190529.212852.1077585415381753122.davem@davemloft.net>
+To:     sgarzare@redhat.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        stefanha@redhat.com, mst@redhat.com
+Subject: Re: [PATCH 1/4] vsock/virtio: fix locking around 'the_virtio_vsock'
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190528105623.27983-2-sgarzare@redhat.com>
+References: <20190528105623.27983-1-sgarzare@redhat.com>
+        <20190528105623.27983-2-sgarzare@redhat.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 29 May 2019 21:28:55 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Stefano Garzarella <sgarzare@redhat.com>
+Date: Tue, 28 May 2019 12:56:20 +0200
 
+> @@ -68,7 +68,13 @@ struct virtio_vsock {
+>  
+>  static struct virtio_vsock *virtio_vsock_get(void)
+>  {
+> -	return the_virtio_vsock;
+> +	struct virtio_vsock *vsock;
+> +
+> +	mutex_lock(&the_virtio_vsock_mutex);
+> +	vsock = the_virtio_vsock;
+> +	mutex_unlock(&the_virtio_vsock_mutex);
+> +
+> +	return vsock;
 
-On 05/30/2019 03:36 AM, Andrew Morton wrote:
-> On Wed, 29 May 2019 14:46:24 +0530 Anshuman Khandual <anshuman.khandual@arm.com> wrote:
-> 
->> This series enables memory hot remove on arm64 after fixing a memblock
->> removal ordering problem in generic __remove_memory() and one possible
->> arm64 platform specific kernel page table race condition. This series
->> is based on latest v5.2-rc2 tag.
-> 
-> Unfortunately this series clashes syntactically and semantically with
-> David Hildenbrand's series "mm/memory_hotplug: Factor out memory block
-> devicehandling".  Could you and David please figure out what we should
-> do here?
-> 
+This doesn't do anything as far as I can tell.
 
-Hello Andrew,
+No matter what, you will either get the value before it's changed or
+after it's changed.
 
-I was able to apply the above mentioned V3 series [1] from David with some changes
-listed below which tests positively on arm64. These changes assume that the arm64
-hot-remove series (current V5) gets applied first.
+Since you should never publish the pointer by assigning it until the
+object is fully initialized, this can never be a problem even without
+the mutex being there.
 
-Changes to David's series
+Even if you sampled the the_virtio_sock value right before it's being
+set to NULL by the remove function, that still can happen with the
+mutex held too.
 
-A) Please drop (https://patchwork.kernel.org/patch/10962565/) [v3,04/11]
-
-	- arch_remove_memory() is already being added through hot-remove series
-
-B) Rebase (https://patchwork.kernel.org/patch/10962575/) [v3, 06/11]
-
-	- arm64 hot-remove series adds CONFIG_MEMORY_HOTREMOVE wrapper around
-	  arch_remove_memory() which can be dropped in the rebased patch
-
-C) Rebase (https://patchwork.kernel.org/patch/10962589/) [v3, 09/11]
-
-	- hot-remove series moves arch_remove_memory() before memblock_[free|remove]()
-	- So remove_memory_block_devices() should be moved before arch_remove_memory()
-	  in it's new position
-
-David,
-
-Please do let me know if the plan sounds good or you have some other suggestions.
-
-- Anshuman
-
-[1] https://patchwork.kernel.org/project/linux-mm/list/?series=123133 
+This function is also terribly named btw, it implies that a reference
+count is being taken.  But that's not what this function does, it
+just returns the pointer value as-is.
