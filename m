@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BBF02F20E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:18:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B5832EDF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:43:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731332AbfE3ESJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:18:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39024 "EHLO mail.kernel.org"
+        id S1732521AbfE3Dm7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:42:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60994 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729317AbfE3DPg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:15:36 -0400
+        id S1730621AbfE3DVE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:21:04 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ACF3024559;
-        Thu, 30 May 2019 03:15:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66CFA2496D;
+        Thu, 30 May 2019 03:21:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186135;
-        bh=VXQLeDfoSz4hky/VbJ78p/pF58lpzAFNQGeTBEj+as0=;
+        s=default; t=1559186464;
+        bh=5yfE+PIdwBJEYMQT2JIinYrvyYeU/jnxN8az01WPZ08=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dlJFrOpZCJ7cb3pnMSOMBsexeQs8n5xZ+mCu40YdHe/qlGRuR3yDtB4vEWr0Y550a
-         dpsyfHWPGB84cWUyX/SmkBs/Td64kqiG5jT44SMS9ywYG6qlfxTVjpTKU1kH5RAdbT
-         ipKw2XczCxVjDwni/Cyq0RScwLg1g1N7PMcXeCyE=
+        b=GqOkuGKgWcd9gZ6MR3H4Uo5/gzSwSF8H9i6383J2JpGJSBJq6naRjMj6Dsv7widCG
+         zxIiIlS97mMJZBZ+/g6ijsgdMIKwzNeqo+eOgOUluTvEuRyY3TeoebdBUmgjXIaBCA
+         YHqnPKMt3zPhsAw9QG1Nop+4NCIWAzyOp5f3hCm0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Daniel Baluta <daniel.baluta@nxp.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 301/346] media: staging: davinci_vpfe: disallow building with COMPILE_TEST
+Subject: [PATCH 4.9 042/128] ASoC: fsl_sai: Update is_slave_mode with correct value
 Date:   Wed, 29 May 2019 20:06:14 -0700
-Message-Id: <20190530030556.097103521@linuxfoundation.org>
+Message-Id: <20190530030441.786039033@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,61 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 49dc762cffd8305a861ca649e82dc5533b3e3344 ]
+[ Upstream commit ddb351145a967ee791a0fb0156852ec2fcb746ba ]
 
-The driver should really call dm365_isif_setup_pinmux() through a callback,
-but uses a hack to include a davinci specific machine header file when
-compile testing instead. This works almost everywhere, but not on the
-ARM omap1 platform, which has another header named mach/mux.h. This
-causes a build failure:
+is_slave_mode defaults to false because sai structure
+that contains it is kzalloc'ed.
 
-drivers/staging/media/davinci_vpfe/dm365_isif.c:2028:2: error: implicit declaration of function 'davinci_cfg_reg' [-Werror,-Wimplicit-function-declaration]
-        davinci_cfg_reg(DM365_VIN_CAM_WEN);
-        ^
-drivers/staging/media/davinci_vpfe/dm365_isif.c:2028:2: error: this function declaration is not a prototype [-Werror,-Wstrict-prototypes]
-drivers/staging/media/davinci_vpfe/dm365_isif.c:2028:18: error: use of undeclared identifier 'DM365_VIN_CAM_WEN'
-        davinci_cfg_reg(DM365_VIN_CAM_WEN);
-                        ^
-drivers/staging/media/davinci_vpfe/dm365_isif.c:2029:18: error: use of undeclared identifier 'DM365_VIN_CAM_VD'
-        davinci_cfg_reg(DM365_VIN_CAM_VD);
-                        ^
-drivers/staging/media/davinci_vpfe/dm365_isif.c:2030:18: error: use of undeclared identifier 'DM365_VIN_CAM_HD'
-        davinci_cfg_reg(DM365_VIN_CAM_HD);
-                        ^
-drivers/staging/media/davinci_vpfe/dm365_isif.c:2031:18: error: use of undeclared identifier 'DM365_VIN_YIN4_7_EN'
-        davinci_cfg_reg(DM365_VIN_YIN4_7_EN);
-                        ^
-drivers/staging/media/davinci_vpfe/dm365_isif.c:2032:18: error: use of undeclared identifier 'DM365_VIN_YIN0_3_EN'
-        davinci_cfg_reg(DM365_VIN_YIN0_3_EN);
-                        ^
-7 errors generated.
+Anyhow, if we decide to set the following configuration
+SAI slave -> SAI master, is_slave_mode will remain set on true
+although SAI being master it should be set to false.
 
-Exclude omap1 from compile-testing, under the assumption that all others
-still work.
+Fix this by updating is_slave_mode for each call of
+fsl_sai_set_dai_fmt.
 
-Fixes: 4907c73deefe ("media: staging: davinci_vpfe: allow building with COMPILE_TEST")
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/media/davinci_vpfe/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/fsl/fsl_sai.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/staging/media/davinci_vpfe/Kconfig b/drivers/staging/media/davinci_vpfe/Kconfig
-index aea449a8dbf8a..76818cc48ddcb 100644
---- a/drivers/staging/media/davinci_vpfe/Kconfig
-+++ b/drivers/staging/media/davinci_vpfe/Kconfig
-@@ -1,7 +1,7 @@
- config VIDEO_DM365_VPFE
- 	tristate "DM365 VPFE Media Controller Capture Driver"
- 	depends on VIDEO_V4L2
--	depends on (ARCH_DAVINCI_DM365 && !VIDEO_DM365_ISIF) || COMPILE_TEST
-+	depends on (ARCH_DAVINCI_DM365 && !VIDEO_DM365_ISIF) || (COMPILE_TEST && !ARCH_OMAP1)
- 	depends on VIDEO_V4L2_SUBDEV_API
- 	depends on VIDEO_DAVINCI_VPBE_DISPLAY
- 	select VIDEOBUF2_DMA_CONTIG
+diff --git a/sound/soc/fsl/fsl_sai.c b/sound/soc/fsl/fsl_sai.c
+index 9fadf7e31c5f8..cb43f57f978b1 100644
+--- a/sound/soc/fsl/fsl_sai.c
++++ b/sound/soc/fsl/fsl_sai.c
+@@ -274,12 +274,14 @@ static int fsl_sai_set_dai_fmt_tr(struct snd_soc_dai *cpu_dai,
+ 	case SND_SOC_DAIFMT_CBS_CFS:
+ 		val_cr2 |= FSL_SAI_CR2_BCD_MSTR;
+ 		val_cr4 |= FSL_SAI_CR4_FSD_MSTR;
++		sai->is_slave_mode = false;
+ 		break;
+ 	case SND_SOC_DAIFMT_CBM_CFM:
+ 		sai->is_slave_mode = true;
+ 		break;
+ 	case SND_SOC_DAIFMT_CBS_CFM:
+ 		val_cr2 |= FSL_SAI_CR2_BCD_MSTR;
++		sai->is_slave_mode = false;
+ 		break;
+ 	case SND_SOC_DAIFMT_CBM_CFS:
+ 		val_cr4 |= FSL_SAI_CR4_FSD_MSTR;
 -- 
 2.20.1
 
