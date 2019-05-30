@@ -2,227 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F25A9303FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 23:15:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4A303040F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 23:17:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726839AbfE3VPw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 17:15:52 -0400
-Received: from mailoutvs50.siol.net ([185.57.226.241]:55424 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726812AbfE3VPs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 17:15:48 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 8E450522867;
-        Thu, 30 May 2019 23:15:47 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id v59_8rc0df4p; Thu, 30 May 2019 23:15:47 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 1AFFE5227EC;
-        Thu, 30 May 2019 23:15:47 +0200 (CEST)
-Received: from localhost.localdomain (cpe-86-58-52-202.static.triera.net [86.58.52.202])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id C8CFD522867;
-        Thu, 30 May 2019 23:15:44 +0200 (CEST)
-From:   Jernej Skrabec <jernej.skrabec@siol.net>
-To:     paul.kocialkowski@bootlin.com, maxime.ripard@bootlin.com
-Cc:     wens@csie.org, mchehab@kernel.org, gregkh@linuxfoundation.org,
-        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 7/7] media: cedrus: Improve H264 memory efficiency
-Date:   Thu, 30 May 2019 23:15:16 +0200
-Message-Id: <20190530211516.1891-8-jernej.skrabec@siol.net>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530211516.1891-1-jernej.skrabec@siol.net>
-References: <20190530211516.1891-1-jernej.skrabec@siol.net>
+        id S1726873AbfE3VQs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 17:16:48 -0400
+Received: from mga06.intel.com ([134.134.136.31]:47617 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726308AbfE3VQr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 17:16:47 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 May 2019 14:16:46 -0700
+X-ExtLoop1: 1
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
+  by fmsmga006.fm.intel.com with ESMTP; 30 May 2019 14:16:45 -0700
+Date:   Thu, 30 May 2019 14:16:45 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        William Roberts <bill.c.roberts@gmail.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+Message-ID: <20190530211645.GB27551@linux.intel.com>
+References: <960B34DE67B9E140824F1DCDEC400C0F654E9824@ORSMSX116.amr.corp.intel.com>
+ <20190528202407.GB13158@linux.intel.com>
+ <285f279f-b500-27f0-ab42-fb1dbcc5ab18@tycho.nsa.gov>
+ <960B34DE67B9E140824F1DCDEC400C0F654EB487@ORSMSX116.amr.corp.intel.com>
+ <678a37af-797d-7bd5-a406-32548a270e3d@tycho.nsa.gov>
+ <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com>
+ <c1135352-0b5e-4694-b1a9-105876095877@tycho.nsa.gov>
+ <CALCETrWsEXzUC33eJpGCpdMCBO4aYVviZLRD-CLMNaG5Jv-TCA@mail.gmail.com>
+ <20190530180110.GB23930@linux.intel.com>
+ <CALCETrX2PgUc_jetXHqp85aaS0a0jHB8E7=T1rsW+5vyRgwnUA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrX2PgUc_jetXHqp85aaS0a0jHB8E7=T1rsW+5vyRgwnUA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-H264 decoder driver preallocated pretty big worst case mv col buffer
-pool. It turns out that pool is most of the time much bigger than it
-needs to be.
+On Thu, May 30, 2019 at 12:20:45PM -0700, Andy Lutomirski wrote:
+> On Thu, May 30, 2019 at 11:01 AM Sean Christopherson
+> <sean.j.christopherson@intel.com> wrote:
+> >
+> > On Thu, May 30, 2019 at 09:14:10AM -0700, Andy Lutomirski wrote:
+> > > Enclave file -- that is, the file backing the vma from which the data is loaded.
+> >
+> > It wasn't explicitly called out in Andy's proposal(s), but the idea is
+> > that the SGX driver would effectively inherit permissions from the source
+> > VMA (EADD needs a source for the initial value of the encave page).
+> 
+> I actually meant for it to *not* work like this.  I don't want the
+> source VMA to have to be VM_EXEC.  I think the LSM should just check
+> permissions on ->vm_file.
 
-Solution implemented here is to allocate memory only if capture buffer
-is actually used and only as much as it is really necessary.
+But if ->vm_file is NULL, i.e. the enclave is not backed by a file,
+then PROCESS__EXECMEM is required (or more likely, ENCLAVE__EXECMEM).
 
-This is also preparation for 4K video decoding support, which will be
-implemented later.
+In practice, it's the same net effect of using sigstruct as a proxy,
+i.e. *something* has to get to the file system to avoid EXECMEM.  But
+putting the entire enclave to the filesystem seems like a heaver lift
+than dumping the sigstruct.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/staging/media/sunxi/cedrus/cedrus.h   |  4 -
- .../staging/media/sunxi/cedrus/cedrus_h264.c  | 81 +++++++------------
- 2 files changed, 28 insertions(+), 57 deletions(-)
-
-diff --git a/drivers/staging/media/sunxi/cedrus/cedrus.h b/drivers/stagin=
-g/media/sunxi/cedrus/cedrus.h
-index 16c1bdfd243a..fcbbbef65494 100644
---- a/drivers/staging/media/sunxi/cedrus/cedrus.h
-+++ b/drivers/staging/media/sunxi/cedrus/cedrus.h
-@@ -106,10 +106,6 @@ struct cedrus_ctx {
-=20
- 	union {
- 		struct {
--			void		*mv_col_buf;
--			dma_addr_t	mv_col_buf_dma;
--			ssize_t		mv_col_buf_field_size;
--			ssize_t		mv_col_buf_size;
- 			void		*pic_info_buf;
- 			dma_addr_t	pic_info_buf_dma;
- 			void		*neighbor_info_buf;
-diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_h264.c b/drivers/s=
-taging/media/sunxi/cedrus/cedrus_h264.c
-index b2290f98d81a..758fd0049e8f 100644
---- a/drivers/staging/media/sunxi/cedrus/cedrus_h264.c
-+++ b/drivers/staging/media/sunxi/cedrus/cedrus_h264.c
-@@ -54,17 +54,14 @@ static void cedrus_h264_write_sram(struct cedrus_dev =
-*dev,
- 		cedrus_write(dev, VE_AVC_SRAM_PORT_DATA, *buffer++);
- }
-=20
--static dma_addr_t cedrus_h264_mv_col_buf_addr(struct cedrus_ctx *ctx,
--					      unsigned int position,
-+static dma_addr_t cedrus_h264_mv_col_buf_addr(struct cedrus_buffer *buf,
- 					      unsigned int field)
- {
--	dma_addr_t addr =3D ctx->codec.h264.mv_col_buf_dma;
--
--	/* Adjust for the position */
--	addr +=3D position * ctx->codec.h264.mv_col_buf_field_size * 2;
-+	dma_addr_t addr =3D buf->extra_buf_dma;
-=20
- 	/* Adjust for the field */
--	addr +=3D field * ctx->codec.h264.mv_col_buf_field_size;
-+	if (field)
-+		addr +=3D buf->extra_buf_size / 2;
-=20
- 	return addr;
- }
-@@ -76,7 +73,6 @@ static void cedrus_fill_ref_pic(struct cedrus_ctx *ctx,
- 				struct cedrus_h264_sram_ref_pic *pic)
- {
- 	struct vb2_buffer *vbuf =3D &buf->m2m_buf.vb.vb2_buf;
--	unsigned int position =3D buf->codec.h264.position;
-=20
- 	pic->top_field_order_cnt =3D cpu_to_le32(top_field_order_cnt);
- 	pic->bottom_field_order_cnt =3D cpu_to_le32(bottom_field_order_cnt);
-@@ -84,10 +80,8 @@ static void cedrus_fill_ref_pic(struct cedrus_ctx *ctx=
-,
-=20
- 	pic->luma_ptr =3D cpu_to_le32(cedrus_buf_addr(vbuf, &ctx->dst_fmt, 0));
- 	pic->chroma_ptr =3D cpu_to_le32(cedrus_buf_addr(vbuf, &ctx->dst_fmt, 1)=
-);
--	pic->mv_col_top_ptr =3D
--		cpu_to_le32(cedrus_h264_mv_col_buf_addr(ctx, position, 0));
--	pic->mv_col_bot_ptr =3D
--		cpu_to_le32(cedrus_h264_mv_col_buf_addr(ctx, position, 1));
-+	pic->mv_col_top_ptr =3D cpu_to_le32(cedrus_h264_mv_col_buf_addr(buf, 0)=
-);
-+	pic->mv_col_bot_ptr =3D cpu_to_le32(cedrus_h264_mv_col_buf_addr(buf, 1)=
-);
- }
-=20
- static void cedrus_write_frame_list(struct cedrus_ctx *ctx,
-@@ -142,6 +136,28 @@ static void cedrus_write_frame_list(struct cedrus_ct=
-x *ctx,
- 	output_buf =3D vb2_to_cedrus_buffer(&run->dst->vb2_buf);
- 	output_buf->codec.h264.position =3D position;
-=20
-+	if (!output_buf->extra_buf_size) {
-+		const struct v4l2_ctrl_h264_sps *sps =3D run->h264.sps;
-+		unsigned int field_size;
-+
-+		field_size =3D DIV_ROUND_UP(ctx->src_fmt.width, 16) *
-+			DIV_ROUND_UP(ctx->src_fmt.height, 16) * 16;
-+		if (!(sps->flags & V4L2_H264_SPS_FLAG_DIRECT_8X8_INFERENCE))
-+			field_size =3D field_size * 2;
-+		if (!(sps->flags & V4L2_H264_SPS_FLAG_FRAME_MBS_ONLY))
-+			field_size =3D field_size * 2;
-+
-+		output_buf->extra_buf_size =3D field_size * 2;
-+		output_buf->extra_buf =3D
-+			dma_alloc_coherent(dev->dev,
-+					   output_buf->extra_buf_size,
-+					   &output_buf->extra_buf_dma,
-+					   GFP_KERNEL);
-+
-+		if (!output_buf->extra_buf)
-+			output_buf->extra_buf_size =3D 0;
-+	}
-+
- 	if (slice->flags & V4L2_H264_SLICE_FLAG_FIELD_PIC)
- 		output_buf->codec.h264.pic_type =3D CEDRUS_H264_PIC_TYPE_FIELD;
- 	else if (sps->flags & V4L2_H264_SPS_FLAG_MB_ADAPTIVE_FRAME_FIELD)
-@@ -476,8 +492,6 @@ static void cedrus_h264_setup(struct cedrus_ctx *ctx,
- static int cedrus_h264_start(struct cedrus_ctx *ctx)
- {
- 	struct cedrus_dev *dev =3D ctx->dev;
--	unsigned int field_size;
--	unsigned int mv_col_size;
- 	int ret;
-=20
- 	/*
-@@ -509,44 +523,8 @@ static int cedrus_h264_start(struct cedrus_ctx *ctx)
- 		goto err_pic_buf;
- 	}
-=20
--	field_size =3D DIV_ROUND_UP(ctx->src_fmt.width, 16) *
--		DIV_ROUND_UP(ctx->src_fmt.height, 16) * 16;
--
--	/*
--	 * FIXME: This is actually conditional to
--	 * V4L2_H264_SPS_FLAG_DIRECT_8X8_INFERENCE not being set, we
--	 * might have to rework this if memory efficiency ever is
--	 * something we need to work on.
--	 */
--	field_size =3D field_size * 2;
--
--	/*
--	 * FIXME: This is actually conditional to
--	 * V4L2_H264_SPS_FLAG_FRAME_MBS_ONLY not being set, we might
--	 * have to rework this if memory efficiency ever is something
--	 * we need to work on.
--	 */
--	field_size =3D field_size * 2;
--	ctx->codec.h264.mv_col_buf_field_size =3D field_size;
--
--	mv_col_size =3D field_size * 2 * CEDRUS_H264_FRAME_NUM;
--	ctx->codec.h264.mv_col_buf_size =3D mv_col_size;
--	ctx->codec.h264.mv_col_buf =3D dma_alloc_coherent(dev->dev,
--							ctx->codec.h264.mv_col_buf_size,
--							&ctx->codec.h264.mv_col_buf_dma,
--							GFP_KERNEL);
--	if (!ctx->codec.h264.mv_col_buf) {
--		ret =3D -ENOMEM;
--		goto err_neighbor_buf;
--	}
--
- 	return 0;
-=20
--err_neighbor_buf:
--	dma_free_coherent(dev->dev, CEDRUS_NEIGHBOR_INFO_BUF_SIZE,
--			  ctx->codec.h264.neighbor_info_buf,
--			  ctx->codec.h264.neighbor_info_buf_dma);
--
- err_pic_buf:
- 	dma_free_coherent(dev->dev, CEDRUS_PIC_INFO_BUF_SIZE,
- 			  ctx->codec.h264.pic_info_buf,
-@@ -558,9 +536,6 @@ static void cedrus_h264_stop(struct cedrus_ctx *ctx)
- {
- 	struct cedrus_dev *dev =3D ctx->dev;
-=20
--	dma_free_coherent(dev->dev, ctx->codec.h264.mv_col_buf_size,
--			  ctx->codec.h264.mv_col_buf,
--			  ctx->codec.h264.mv_col_buf_dma);
- 	dma_free_coherent(dev->dev, CEDRUS_NEIGHBOR_INFO_BUF_SIZE,
- 			  ctx->codec.h264.neighbor_info_buf,
- 			  ctx->codec.h264.neighbor_info_buf_dma);
---=20
-2.21.0
-
+And if sigstruct needs to be in the file system for
+security_enclave_create/init()...
