@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D57492EF1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:52:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74BF82EEF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:51:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733023AbfE3Dws (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:52:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55780 "EHLO mail.kernel.org"
+        id S1730609AbfE3DTr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:19:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731090AbfE3DTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:19:35 -0400
+        id S1727468AbfE3DPk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:40 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5435E248A8;
-        Thu, 30 May 2019 03:19:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3348224569;
+        Thu, 30 May 2019 03:15:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186374;
-        bh=KFjWdcM0j1PIjGo1SD5vVsinYegNqV/OwabGD7l4Pfo=;
+        s=default; t=1559186140;
+        bh=FA5x3kuiue+iqQvjVPE4HnFvX+ce1cZiDIa80zsU3KI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XXAifGjZO0pl1hazm1o7GOOcvyiImdClKr28eowRJdrUViT4TBoJ+oopMuN6l3yJS
-         u1C7nhNbPO82dJ1sCkH2gngrisQRQuDIkxzHMsXS4X5ZAAQbZ1p953tYYrWFu+2s6o
-         sQa0BcYp+Y6flVNWIJNWMur0H6nc5OE5dzSh4SJQ=
+        b=MvLqM2yK1nHwIAVmD4BPf0NXsZbQ20chmmWmlrEMmgaCUVYhCrSvVUOAKRYMTjDvJ
+         DIiW7Z+Z6UXypKle/CM4DBOCxXizTsVk0PrFTZAC0SolLA4Raox5q9zsTw06NvFGlu
+         JirlPcBF3r/MFfOLDn4jc8HvZ1m+2hEX0YHmsA7o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-pm@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 133/193] cpufreq: kirkwood: fix possible object reference leak
+        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <jsmart2021@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 314/346] scsi: lpfc: Fix SLI3 commands being issued on SLI4 devices
 Date:   Wed, 29 May 2019 20:06:27 -0700
-Message-Id: <20190530030506.915815320@linuxfoundation.org>
+Message-Id: <20190530030556.739757080@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,83 +45,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7c468966f05ac9c17bb5948275283d34e6fe0660 ]
+[ Upstream commit c95a3b4b0fb8d351e2329a96f87c4fc96a149505 ]
 
-The call to of_get_child_by_name returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
+During debug, it was seen that the driver is issuing commands specific to
+SLI3 on SLI4 devices. Although the adapter correctly rejected the command,
+this should not be done.
 
-Detected by coccinelle with the following warnings:
-./drivers/cpufreq/kirkwood-cpufreq.c:127:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 118, but without a corresponding object release within this function.
-./drivers/cpufreq/kirkwood-cpufreq.c:133:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 118, but without a corresponding object release within this function.
+Revise the code to stop sending these commands on a SLI4 adapter.
 
-and also do some cleanup:
-- of_node_put(np);
-- np = NULL;
-...
-of_node_put(np);
-
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-pm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <jsmart2021@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpufreq/kirkwood-cpufreq.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+ drivers/scsi/lpfc/lpfc_hbadisc.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/cpufreq/kirkwood-cpufreq.c b/drivers/cpufreq/kirkwood-cpufreq.c
-index c2dd43f3f5d8a..8d63a6dc8383c 100644
---- a/drivers/cpufreq/kirkwood-cpufreq.c
-+++ b/drivers/cpufreq/kirkwood-cpufreq.c
-@@ -124,13 +124,14 @@ static int kirkwood_cpufreq_probe(struct platform_device *pdev)
- 	priv.cpu_clk = of_clk_get_by_name(np, "cpu_clk");
- 	if (IS_ERR(priv.cpu_clk)) {
- 		dev_err(priv.dev, "Unable to get cpuclk\n");
--		return PTR_ERR(priv.cpu_clk);
-+		err = PTR_ERR(priv.cpu_clk);
-+		goto out_node;
+diff --git a/drivers/scsi/lpfc/lpfc_hbadisc.c b/drivers/scsi/lpfc/lpfc_hbadisc.c
+index b183b882d5067..2f01e5397a11d 100644
+--- a/drivers/scsi/lpfc/lpfc_hbadisc.c
++++ b/drivers/scsi/lpfc/lpfc_hbadisc.c
+@@ -935,7 +935,11 @@ lpfc_linkdown(struct lpfc_hba *phba)
+ 		}
+ 	}
+ 	lpfc_destroy_vport_work_array(phba, vports);
+-	/* Clean up any firmware default rpi's */
++
++	/* Clean up any SLI3 firmware default rpi's */
++	if (phba->sli_rev > LPFC_SLI_REV3)
++		goto skip_unreg_did;
++
+ 	mb = mempool_alloc(phba->mbox_mem_pool, GFP_KERNEL);
+ 	if (mb) {
+ 		lpfc_unreg_did(phba, 0xffff, LPFC_UNREG_ALL_DFLT_RPIS, mb);
+@@ -947,6 +951,7 @@ lpfc_linkdown(struct lpfc_hba *phba)
+ 		}
  	}
  
- 	err = clk_prepare_enable(priv.cpu_clk);
- 	if (err) {
- 		dev_err(priv.dev, "Unable to prepare cpuclk\n");
--		return err;
-+		goto out_node;
- 	}
++ skip_unreg_did:
+ 	/* Setup myDID for link up if we are in pt2pt mode */
+ 	if (phba->pport->fc_flag & FC_PT2PT) {
+ 		mb = mempool_alloc(phba->mbox_mem_pool, GFP_KERNEL);
+@@ -4985,6 +4990,10 @@ lpfc_unreg_default_rpis(struct lpfc_vport *vport)
+ 	LPFC_MBOXQ_t     *mbox;
+ 	int rc;
  
- 	kirkwood_freq_table[0].frequency = clk_get_rate(priv.cpu_clk) / 1000;
-@@ -161,20 +162,22 @@ static int kirkwood_cpufreq_probe(struct platform_device *pdev)
- 		goto out_ddr;
- 	}
- 
--	of_node_put(np);
--	np = NULL;
--
- 	err = cpufreq_register_driver(&kirkwood_cpufreq_driver);
--	if (!err)
--		return 0;
-+	if (err) {
-+		dev_err(priv.dev, "Failed to register cpufreq driver\n");
-+		goto out_powersave;
-+	}
- 
--	dev_err(priv.dev, "Failed to register cpufreq driver\n");
-+	of_node_put(np);
-+	return 0;
- 
-+out_powersave:
- 	clk_disable_unprepare(priv.powersave_clk);
- out_ddr:
- 	clk_disable_unprepare(priv.ddr_clk);
- out_cpu:
- 	clk_disable_unprepare(priv.cpu_clk);
-+out_node:
- 	of_node_put(np);
- 
- 	return err;
++	/* Unreg DID is an SLI3 operation. */
++	if (phba->sli_rev > LPFC_SLI_REV3)
++		return;
++
+ 	mbox = mempool_alloc(phba->mbox_mem_pool, GFP_KERNEL);
+ 	if (mbox) {
+ 		lpfc_unreg_did(phba, vport->vpi, LPFC_UNREG_ALL_DFLT_RPIS,
 -- 
 2.20.1
 
