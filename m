@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 631C62F4B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:42:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AE542EE67
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:47:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729169AbfE3Ekd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:40:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55532 "EHLO mail.kernel.org"
+        id S1732819AbfE3Dq5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:46:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727571AbfE3DMd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:33 -0400
+        id S1732262AbfE3DUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:20:36 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7847823E29;
-        Thu, 30 May 2019 03:12:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E99C824953;
+        Thu, 30 May 2019 03:20:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185952;
-        bh=W73dIoJV3wsmQyuf+rovhCEIpZz+DHLcbBQufK7xTmU=;
+        s=default; t=1559186436;
+        bh=w3IVtbtJNkqRBo+VDM/Lw8cnn4ALV8HzJvwSy/aYl6k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wCo5RTr8mmwhEBy9Yyif02O2GW4swb4ofZn7EuFLQoMiv7tr2VXgrX500COrfbnGY
-         /yP4c+iQov5349kCwj64kc4SheSar42HY8KeNnL03B/wAaZ2UcRlONUpAWQiRm4iYw
-         uhYYGL3/5euqZaAZgywo6wgxwEmuVxmxoAzqACOs=
+        b=sVJ1MuIVH3BXkokFTkQULBmCfsJtWwFPhMBO16V5gVFWyr15ORdyTpibtu5eOf4VK
+         hPeogWZ3KHWk0g4dyHsOv93IGnou7OuYZpaLTbwBManfqigY3rio3kPhpw/XCfC7A1
+         ZZEj2ZEruhJr1/lCkXCKuWnZtTxSevbghGcfv6Nc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <jsmart2021@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 366/405] scsi: lpfc: Fix SLI3 commands being issued on SLI4 devices
+Subject: [PATCH 4.9 032/128] brcm80211: potential NULL dereference in brcmf_cfg80211_vndr_cmds_dcmd_handler()
 Date:   Wed, 29 May 2019 20:06:04 -0700
-Message-Id: <20190530030559.117313753@linuxfoundation.org>
+Message-Id: <20190530030440.322882087@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,58 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c95a3b4b0fb8d351e2329a96f87c4fc96a149505 ]
+[ Upstream commit e025da3d7aa4770bb1d1b3b0aa7cc4da1744852d ]
 
-During debug, it was seen that the driver is issuing commands specific to
-SLI3 on SLI4 devices. Although the adapter correctly rejected the command,
-this should not be done.
+If "ret_len" is negative then it could lead to a NULL dereference.
 
-Revise the code to stop sending these commands on a SLI4 adapter.
+The "ret_len" value comes from nl80211_vendor_cmd(), if it's negative
+then we don't allocate the "dcmd_buf" buffer.  Then we pass "ret_len" to
+brcmf_fil_cmd_data_set() where it is cast to a very high u32 value.
+Most of the functions in that call tree check whether the buffer we pass
+is NULL but there are at least a couple places which don't such as
+brcmf_dbg_hex_dump() and brcmf_msgbuf_query_dcmd().  We memcpy() to and
+from the buffer so it would result in a NULL dereference.
 
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <jsmart2021@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+The fix is to change the types so that "ret_len" can't be negative.  (If
+we memcpy() zero bytes to NULL, that's a no-op and doesn't cause an
+issue).
+
+Fixes: 1bacb0487d0e ("brcmfmac: replace cfg80211 testmode with vendor command")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/lpfc/lpfc_hbadisc.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/vendor.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_hbadisc.c b/drivers/scsi/lpfc/lpfc_hbadisc.c
-index aa4961a2caf81..676f4bf3f33a3 100644
---- a/drivers/scsi/lpfc/lpfc_hbadisc.c
-+++ b/drivers/scsi/lpfc/lpfc_hbadisc.c
-@@ -932,7 +932,11 @@ lpfc_linkdown(struct lpfc_hba *phba)
- 		}
- 	}
- 	lpfc_destroy_vport_work_array(phba, vports);
--	/* Clean up any firmware default rpi's */
-+
-+	/* Clean up any SLI3 firmware default rpi's */
-+	if (phba->sli_rev > LPFC_SLI_REV3)
-+		goto skip_unreg_did;
-+
- 	mb = mempool_alloc(phba->mbox_mem_pool, GFP_KERNEL);
- 	if (mb) {
- 		lpfc_unreg_did(phba, 0xffff, LPFC_UNREG_ALL_DFLT_RPIS, mb);
-@@ -944,6 +948,7 @@ lpfc_linkdown(struct lpfc_hba *phba)
- 		}
- 	}
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/vendor.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/vendor.c
+index 8eff2753abade..d493021f60318 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/vendor.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/vendor.c
+@@ -35,9 +35,10 @@ static int brcmf_cfg80211_vndr_cmds_dcmd_handler(struct wiphy *wiphy,
+ 	struct brcmf_if *ifp;
+ 	const struct brcmf_vndr_dcmd_hdr *cmdhdr = data;
+ 	struct sk_buff *reply;
+-	int ret, payload, ret_len;
++	unsigned int payload, ret_len;
+ 	void *dcmd_buf = NULL, *wr_pointer;
+ 	u16 msglen, maxmsglen = PAGE_SIZE - 0x100;
++	int ret;
  
-+ skip_unreg_did:
- 	/* Setup myDID for link up if we are in pt2pt mode */
- 	if (phba->pport->fc_flag & FC_PT2PT) {
- 		mb = mempool_alloc(phba->mbox_mem_pool, GFP_KERNEL);
-@@ -4979,6 +4984,10 @@ lpfc_unreg_default_rpis(struct lpfc_vport *vport)
- 	LPFC_MBOXQ_t     *mbox;
- 	int rc;
- 
-+	/* Unreg DID is an SLI3 operation. */
-+	if (phba->sli_rev > LPFC_SLI_REV3)
-+		return;
-+
- 	mbox = mempool_alloc(phba->mbox_mem_pool, GFP_KERNEL);
- 	if (mbox) {
- 		lpfc_unreg_did(phba, vport->vpi, LPFC_UNREG_ALL_DFLT_RPIS,
+ 	if (len < sizeof(*cmdhdr)) {
+ 		brcmf_err("vendor command too short: %d\n", len);
+@@ -65,7 +66,7 @@ static int brcmf_cfg80211_vndr_cmds_dcmd_handler(struct wiphy *wiphy,
+ 			brcmf_err("oversize return buffer %d\n", ret_len);
+ 			ret_len = BRCMF_DCMD_MAXLEN;
+ 		}
+-		payload = max(ret_len, len) + 1;
++		payload = max_t(unsigned int, ret_len, len) + 1;
+ 		dcmd_buf = vzalloc(payload);
+ 		if (NULL == dcmd_buf)
+ 			return -ENOMEM;
 -- 
 2.20.1
 
