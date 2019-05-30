@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C82812EB72
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:13:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5A222F345
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:28:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729352AbfE3DNK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:13:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50644 "EHLO mail.kernel.org"
+        id S1732118AbfE3E1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:27:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728513AbfE3DLY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:11:24 -0400
+        id S1729809AbfE3DOS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:14:18 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76ABF244CB;
-        Thu, 30 May 2019 03:11:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 886A124575;
+        Thu, 30 May 2019 03:14:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185883;
-        bh=i5fi8eeImd4CC6+5pIfflGo+RRsZPt9AiRTjEx8MsPo=;
+        s=default; t=1559186058;
+        bh=ViJJxfwoeOoIKdA6xR1sJeWRkJkUY+x4Dz0tnOwqoZ8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=giPeEqskh41+gTVYac5Rur+jz02r6VWf95eA19Q73dCMpjVsK1GAVhg2rrq5qj4qp
-         hHxqEa6J8CwKw1KXsdBTiYJrq65tqwrhOve/0S8quTHaYHt51RuGmKGKAR4WmPA1yh
-         6Bn3qFvrrPeyUZ64nkQT15VmfN2UpFQcEZwi+9yw=
+        b=HfUcD8923I8xM5Wz96kNlugKg57FuctTdbVR0p/LMKbcUbxCckH5+bl8q/YKo6uJx
+         2Kt0/4NbVh6b1gFjYXIrNs4ckTtQ8wNEU/tZIwSBeaKdf6e6GCiazZEmZWEqpZjbRW
+         LwdlYAHxVBwjbU7OnH/vm6+OUNkQ1HmTN/4D+Wu4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Theodore Tso <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 192/405] fscrypt: use READ_ONCE() to access ->i_crypt_info
+        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
+        Hannes Reinecke <hare@suse.com>, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 117/346] bcache: return error immediately in bch_journal_replay()
 Date:   Wed, 29 May 2019 20:03:10 -0700
-Message-Id: <20190530030550.721489349@linuxfoundation.org>
+Message-Id: <20190530030547.009338546@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,130 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e37a784d8b6a1e726de5ddc7b4809c086a08db09 ]
+[ Upstream commit 68d10e6979a3b59e3cd2e90bfcafed79c4cf180a ]
 
-->i_crypt_info starts out NULL and may later be locklessly set to a
-non-NULL value by the cmpxchg() in fscrypt_get_encryption_info().
+When failure happens inside bch_journal_replay(), calling
+cache_set_err_on() and handling the failure in async way is not a good
+idea. Because after bch_journal_replay() returns, registering code will
+continue to execute following steps, and unregistering code triggered
+by cache_set_err_on() is running in same time. First it is unnecessary
+to handle failure and unregister cache set in an async way, second there
+might be potential race condition to run register and unregister code
+for same cache set.
 
-But ->i_crypt_info is used directly, which technically is incorrect.
-It's a data race, and it doesn't include the data dependency barrier
-needed to safely dereference the pointer on at least one architecture.
+So in this patch, if failure happens in bch_journal_replay(), we don't
+call cache_set_err_on(), and just print out the same error message to
+kernel message buffer, then return -EIO immediately caller. Then caller
+can detect such failure and handle it in synchrnozied way.
 
-Fix this by using READ_ONCE() instead.  Note: we don't need to use
-smp_load_acquire(), since dereferencing the pointer only requires a data
-dependency barrier, which is already included in READ_ONCE().  We also
-don't need READ_ONCE() in places where ->i_crypt_info is unconditionally
-dereferenced, since it must have already been checked.
-
-Also downgrade the cmpxchg() to cmpxchg_release(), since RELEASE
-semantics are sufficient on the write side.
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Coly Li <colyli@suse.de>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/crypto/crypto.c      | 2 +-
- fs/crypto/fname.c       | 4 ++--
- fs/crypto/keyinfo.c     | 4 ++--
- fs/crypto/policy.c      | 6 +++---
- include/linux/fscrypt.h | 3 ++-
- 5 files changed, 10 insertions(+), 9 deletions(-)
+ drivers/md/bcache/journal.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
-index 4dc788e3bc96b..fe38b53060454 100644
---- a/fs/crypto/crypto.c
-+++ b/fs/crypto/crypto.c
-@@ -334,7 +334,7 @@ static int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
- 	spin_lock(&dentry->d_lock);
- 	cached_with_key = dentry->d_flags & DCACHE_ENCRYPTED_WITH_KEY;
- 	spin_unlock(&dentry->d_lock);
--	dir_has_key = (d_inode(dir)->i_crypt_info != NULL);
-+	dir_has_key = fscrypt_has_encryption_key(d_inode(dir));
- 	dput(dir);
+diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
+index d3725c17ce3a6..9e557164209c1 100644
+--- a/drivers/md/bcache/journal.c
++++ b/drivers/md/bcache/journal.c
+@@ -330,9 +330,12 @@ int bch_journal_replay(struct cache_set *s, struct list_head *list)
+ 	list_for_each_entry(i, list, list) {
+ 		BUG_ON(i->pin && atomic_read(i->pin) != 1);
  
- 	/*
-diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-index 7ff40a73dbece..050384c79f40e 100644
---- a/fs/crypto/fname.c
-+++ b/fs/crypto/fname.c
-@@ -269,7 +269,7 @@ int fscrypt_fname_disk_to_usr(struct inode *inode,
- 	if (iname->len < FS_CRYPTO_BLOCK_SIZE)
- 		return -EUCLEAN;
+-		cache_set_err_on(n != i->j.seq, s,
+-"bcache: journal entries %llu-%llu missing! (replaying %llu-%llu)",
+-				 n, i->j.seq - 1, start, end);
++		if (n != i->j.seq) {
++			pr_err("bcache: journal entries %llu-%llu missing! (replaying %llu-%llu)",
++			n, i->j.seq - 1, start, end);
++			ret = -EIO;
++			goto err;
++		}
  
--	if (inode->i_crypt_info)
-+	if (fscrypt_has_encryption_key(inode))
- 		return fname_decrypt(inode, iname, oname);
- 
- 	if (iname->len <= FSCRYPT_FNAME_MAX_UNDIGESTED_SIZE) {
-@@ -336,7 +336,7 @@ int fscrypt_setup_filename(struct inode *dir, const struct qstr *iname,
- 	if (ret)
- 		return ret;
- 
--	if (dir->i_crypt_info) {
-+	if (fscrypt_has_encryption_key(dir)) {
- 		if (!fscrypt_fname_encrypted_size(dir, iname->len,
- 						  dir->i_sb->s_cop->max_namelen,
- 						  &fname->crypto_buf.len))
-diff --git a/fs/crypto/keyinfo.c b/fs/crypto/keyinfo.c
-index 322ce9686bdba..bf291c10c682f 100644
---- a/fs/crypto/keyinfo.c
-+++ b/fs/crypto/keyinfo.c
-@@ -509,7 +509,7 @@ int fscrypt_get_encryption_info(struct inode *inode)
- 	u8 *raw_key = NULL;
- 	int res;
- 
--	if (inode->i_crypt_info)
-+	if (fscrypt_has_encryption_key(inode))
- 		return 0;
- 
- 	res = fscrypt_initialize(inode->i_sb->s_cop->flags);
-@@ -573,7 +573,7 @@ int fscrypt_get_encryption_info(struct inode *inode)
- 	if (res)
- 		goto out;
- 
--	if (cmpxchg(&inode->i_crypt_info, NULL, crypt_info) == NULL)
-+	if (cmpxchg_release(&inode->i_crypt_info, NULL, crypt_info) == NULL)
- 		crypt_info = NULL;
- out:
- 	if (res == -ENOKEY)
-diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
-index bd7eaf9b3f003..d536889ac31bf 100644
---- a/fs/crypto/policy.c
-+++ b/fs/crypto/policy.c
-@@ -194,8 +194,8 @@ int fscrypt_has_permitted_context(struct inode *parent, struct inode *child)
- 	res = fscrypt_get_encryption_info(child);
- 	if (res)
- 		return 0;
--	parent_ci = parent->i_crypt_info;
--	child_ci = child->i_crypt_info;
-+	parent_ci = READ_ONCE(parent->i_crypt_info);
-+	child_ci = READ_ONCE(child->i_crypt_info);
- 
- 	if (parent_ci && child_ci) {
- 		return memcmp(parent_ci->ci_master_key_descriptor,
-@@ -246,7 +246,7 @@ int fscrypt_inherit_context(struct inode *parent, struct inode *child,
- 	if (res < 0)
- 		return res;
- 
--	ci = parent->i_crypt_info;
-+	ci = READ_ONCE(parent->i_crypt_info);
- 	if (ci == NULL)
- 		return -ENOKEY;
- 
-diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index e5194fc3983e9..08246f068fd89 100644
---- a/include/linux/fscrypt.h
-+++ b/include/linux/fscrypt.h
-@@ -79,7 +79,8 @@ struct fscrypt_ctx {
- 
- static inline bool fscrypt_has_encryption_key(const struct inode *inode)
- {
--	return (inode->i_crypt_info != NULL);
-+	/* pairs with cmpxchg_release() in fscrypt_get_encryption_info() */
-+	return READ_ONCE(inode->i_crypt_info) != NULL;
- }
- 
- static inline bool fscrypt_dummy_context_enabled(struct inode *inode)
+ 		for (k = i->j.start;
+ 		     k < bset_bkey_last(&i->j);
 -- 
 2.20.1
 
