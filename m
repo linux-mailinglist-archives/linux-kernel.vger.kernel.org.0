@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 781C92F0B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:06:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C7DC2ECA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:24:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727007AbfE3EGW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:06:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47798 "EHLO mail.kernel.org"
+        id S1733162AbfE3DXv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:23:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731173AbfE3DRf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:17:35 -0400
+        id S1731209AbfE3DRl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:41 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0458D246EE;
-        Thu, 30 May 2019 03:17:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54A8124664;
+        Thu, 30 May 2019 03:17:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186255;
-        bh=xNydASI18Rj2zLvBaJytxcUwe6gFezTCWCARsuFWbys=;
+        s=default; t=1559186260;
+        bh=nQWv/pQ9TneryxCoIWHr+e55gDaqdyjRUi4cNskNqwQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rx43P8SqF9Czn9kYPEX5u0IrTVeMmLWayk1ETrTcFBma+YOQ3wUgPcQo4/PDGLR1c
-         zgJ9gE17jp/XeQbcukueJOnXIirTB2p1Ijkis5r3GthKYYQ7qnd5E0K/vITMKHEIXP
-         MYdkXj1ZEhTCFQ6nbw2AP1E0d2OP0FKrtitdBnBQ=
+        b=2FrPOntBsMfKh5H/glEiFN16/X4how600IJM2SYADsAI1HfEGiQfZJhHlrTkreKri
+         8UesgQ0w42oyC6xMhSGDA+w36NP5O/YZ9LanXinMXvszSJLbWexVUHQgpby6pRa+FH
+         xWOlec9Xx4lgYWWjocESZmDTtAGdhwCSmMyGI2ps=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jann Horn <jannh@google.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 174/276] x86/microcode: Fix the ancient deprecated microcode loading method
-Date:   Wed, 29 May 2019 20:05:32 -0700
-Message-Id: <20190530030536.226687991@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Huth <thuth@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 175/276] s390/mm: silence compiler warning when compiling without CONFIG_PGSTE
+Date:   Wed, 29 May 2019 20:05:33 -0700
+Message-Id: <20190530030536.278675697@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
 References: <20190530030523.133519668@linuxfoundation.org>
@@ -44,43 +46,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 24613a04ad1c0588c10f4b5403ca60a73d164051 ]
+[ Upstream commit 81a8f2beb32a5951ecf04385301f50879abc092b ]
 
-Commit
+If CONFIG_PGSTE is not set (e.g. when compiling without KVM), GCC complains:
 
-  2613f36ed965 ("x86/microcode: Attempt late loading only when new microcode is present")
+  CC      arch/s390/mm/pgtable.o
+arch/s390/mm/pgtable.c:413:15: warning: ‘pmd_alloc_map’ defined but not
+ used [-Wunused-function]
+ static pmd_t *pmd_alloc_map(struct mm_struct *mm, unsigned long addr)
+               ^~~~~~~~~~~~~
 
-added the new define UCODE_NEW to denote that an update should happen
-only when newer microcode (than installed on the system) has been found.
+Wrap the function with "#ifdef CONFIG_PGSTE" to silence the warning.
 
-But it missed adjusting that for the old /dev/cpu/microcode loading
-interface. Fix it.
-
-Fixes: 2613f36ed965 ("x86/microcode: Attempt late loading only when new microcode is present")
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jann Horn <jannh@google.com>
-Link: https://lkml.kernel.org/r/20190405133010.24249-3-bp@alien8.de
+Signed-off-by: Thomas Huth <thuth@redhat.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/microcode/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/s390/mm/pgtable.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
-index b9bc8a1a584e3..b43ddefd77f45 100644
---- a/arch/x86/kernel/cpu/microcode/core.c
-+++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -418,8 +418,9 @@ static int do_microcode_update(const void __user *buf, size_t size)
- 		if (ustate == UCODE_ERROR) {
- 			error = -1;
- 			break;
--		} else if (ustate == UCODE_OK)
-+		} else if (ustate == UCODE_NEW) {
- 			apply_microcode_on_target(cpu);
-+		}
- 	}
+diff --git a/arch/s390/mm/pgtable.c b/arch/s390/mm/pgtable.c
+index f2cc7da473e4e..ae894ac83fd61 100644
+--- a/arch/s390/mm/pgtable.c
++++ b/arch/s390/mm/pgtable.c
+@@ -410,6 +410,7 @@ static inline pmd_t pmdp_flush_lazy(struct mm_struct *mm,
+ 	return old;
+ }
  
- 	return error;
++#ifdef CONFIG_PGSTE
+ static pmd_t *pmd_alloc_map(struct mm_struct *mm, unsigned long addr)
+ {
+ 	pgd_t *pgd;
+@@ -427,6 +428,7 @@ static pmd_t *pmd_alloc_map(struct mm_struct *mm, unsigned long addr)
+ 	pmd = pmd_alloc(mm, pud, addr);
+ 	return pmd;
+ }
++#endif
+ 
+ pmd_t pmdp_xchg_direct(struct mm_struct *mm, unsigned long addr,
+ 		       pmd_t *pmdp, pmd_t new)
 -- 
 2.20.1
 
