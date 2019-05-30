@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBE6D2F5B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:49:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75A282F416
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:36:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728398AbfE3DLJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:11:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46738 "EHLO mail.kernel.org"
+        id S2388345AbfE3EfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:35:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728043AbfE3DKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:10:21 -0400
+        id S1729387AbfE3DNR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:13:17 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A224E2446F;
-        Thu, 30 May 2019 03:10:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2364724526;
+        Thu, 30 May 2019 03:13:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185820;
-        bh=7DV/oEmtjL0CMN/Y3tOWLsHH6mF/zdqT2RUmRQqsRUI=;
+        s=default; t=1559185996;
+        bh=G9IMG/JuiF+Fk4lt1CEMPsxyzaGlZr/oOBHdf0ERGLE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k91Qzx1B1txw0wG+z59XheCg2/YxP8v4xUFZtX8WcRzMthSEDbEDsUhVrp6ZOae4s
-         fP1Td8v78AKSYixK4B9coWkAJZux7OF90KY3PgYLAffK9q/Ut1PN6wGruk7eAXEQlx
-         pXAiZ8NoSN2B6ABzf4yA81Dq8eDdFMSo3BND6+PU=
+        b=MgqfHmRSCWGpENS24EXqmKzIcXemPgLwY7aqtQ0+DL5uj/EZ7sD7cDDlof6SV4S9c
+         F+bf6b8OT73yNnqPUFIeCmh9LrCpGGeiIgbDkAXgAx+R+CWw141Yax4hkGC1uD1ZIh
+         LwlRRkTdOzhK4S9110Rv7rXraSEz1Rhi7Gepn56o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Daniel T. Lee" <danieltimlee@gmail.com>,
-        Yonghong Song <yhs@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 117/405] libbpf: fix samples/bpf build failure due to undefined UINT32_MAX
-Date:   Wed, 29 May 2019 20:01:55 -0700
-Message-Id: <20190530030546.915608617@linuxfoundation.org>
+Subject: [PATCH 5.0 043/346] cxgb4: Fix error path in cxgb4_init_module
+Date:   Wed, 29 May 2019 20:01:56 -0700
+Message-Id: <20190530030543.047645172@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,61 +44,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 32e621e55496a0009f44fe4914cd4a23cade4984 ]
+[ Upstream commit a3147770bea76c8dbad73eca3a24c2118da5e719 ]
 
-Currently, building bpf samples will cause the following error.
+BUG: unable to handle kernel paging request at ffffffffa016a270
+PGD 3270067 P4D 3270067 PUD 3271063 PMD 230bbd067 PTE 0
+Oops: 0000 [#1
+CPU: 0 PID: 6134 Comm: modprobe Not tainted 5.1.0+ #33
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.9.3-0-ge2fc41e-prebuilt.qemu-project.org 04/01/2014
+RIP: 0010:atomic_notifier_chain_register+0x24/0x60
+Code: 1f 80 00 00 00 00 55 48 89 e5 41 54 49 89 f4 53 48 89 fb e8 ae b4 38 01 48 8b 53 38 48 8d 4b 38 48 85 d2 74 20 45 8b 44 24 10 <44> 3b 42 10 7e 08 eb 13 44 39 42 10 7c 0d 48 8d 4a 08 48 8b 52 08
+RSP: 0018:ffffc90000e2bc60 EFLAGS: 00010086
+RAX: 0000000000000292 RBX: ffffffff83467240 RCX: ffffffff83467278
+RDX: ffffffffa016a260 RSI: ffffffff83752140 RDI: ffffffff83467240
+RBP: ffffc90000e2bc70 R08: 0000000000000000 R09: 0000000000000001
+R10: 0000000000000000 R11: 00000000014fa61f R12: ffffffffa01c8260
+R13: ffff888231091e00 R14: 0000000000000000 R15: ffffc90000e2be78
+FS:  00007fbd8d7cd540(0000) GS:ffff888237a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffa016a270 CR3: 000000022c7e3000 CR4: 00000000000006f0
+Call Trace:
+ register_inet6addr_notifier+0x13/0x20
+ cxgb4_init_module+0x6c/0x1000 [cxgb4
+ ? 0xffffffffa01d7000
+ do_one_initcall+0x6c/0x3cc
+ ? do_init_module+0x22/0x1f1
+ ? rcu_read_lock_sched_held+0x97/0xb0
+ ? kmem_cache_alloc_trace+0x325/0x3b0
+ do_init_module+0x5b/0x1f1
+ load_module+0x1db1/0x2690
+ ? m_show+0x1d0/0x1d0
+ __do_sys_finit_module+0xc5/0xd0
+ __x64_sys_finit_module+0x15/0x20
+ do_syscall_64+0x6b/0x1d0
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-    ./tools/lib/bpf/bpf.h:132:27: error: 'UINT32_MAX' undeclared here (not in a function) ..
-     #define BPF_LOG_BUF_SIZE (UINT32_MAX >> 8) /* verifier maximum in kernels <= 5.1 */
-                               ^
-    ./samples/bpf/bpf_load.h:31:25: note: in expansion of macro 'BPF_LOG_BUF_SIZE'
-     extern char bpf_log_buf[BPF_LOG_BUF_SIZE];
-                             ^~~~~~~~~~~~~~~~
+If pci_register_driver fails, register inet6addr_notifier is
+pointless. This patch fix the error path in cxgb4_init_module.
 
-Due to commit 4519efa6f8ea ("libbpf: fix BPF_LOG_BUF_SIZE off-by-one error")
-hard-coded size of BPF_LOG_BUF_SIZE has been replaced with UINT32_MAX which is
-defined in <stdint.h> header.
-
-Even with this change, bpf selftests are running fine since these are built
-with clang and it includes header(-idirafter) from clang/6.0.0/include.
-(it has <stdint.h>)
-
-    clang -I. -I./include/uapi -I../../../include/uapi -idirafter /usr/local/include -idirafter /usr/include \
-    -idirafter /usr/lib/llvm-6.0/lib/clang/6.0.0/include -idirafter /usr/include/x86_64-linux-gnu \
-    -Wno-compare-distinct-pointer-types -O2 -target bpf -emit-llvm -c progs/test_sysctl_prog.c -o - | \
-    llc -march=bpf -mcpu=generic  -filetype=obj -o /linux/tools/testing/selftests/bpf/test_sysctl_prog.o
-
-But bpf samples are compiled with GCC, and it only searches and includes
-headers declared at the target file. As '#include <stdint.h>' hasn't been
-declared in tools/lib/bpf/bpf.h, it causes build failure of bpf samples.
-
-    gcc -Wp,-MD,./samples/bpf/.sockex3_user.o.d -Wall -Wmissing-prototypes -Wstrict-prototypes \
-    -O2 -fomit-frame-pointer -std=gnu89 -I./usr/include -I./tools/lib/ -I./tools/testing/selftests/bpf/ \
-    -I./tools/  lib/ -I./tools/include -I./tools/perf -c -o ./samples/bpf/sockex3_user.o ./samples/bpf/sockex3_user.c;
-
-This commit add declaration of '#include <stdint.h>' to tools/lib/bpf/bpf.h
-to fix this problem.
-
-Signed-off-by: Daniel T. Lee <danieltimlee@gmail.com>
-Acked-by: Yonghong Song <yhs@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Fixes: b5a02f503caa ("cxgb4 : Update ipv6 address handling api")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/lib/bpf/bpf.h | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/tools/lib/bpf/bpf.h b/tools/lib/bpf/bpf.h
-index 6ffdd79bea89d..6dc1f418034fb 100644
---- a/tools/lib/bpf/bpf.h
-+++ b/tools/lib/bpf/bpf.h
-@@ -26,6 +26,7 @@
- #include <linux/bpf.h>
- #include <stdbool.h>
- #include <stddef.h>
-+#include <stdint.h>
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
+index 6ba9099ca7fe4..8bc7a0738adbe 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
+@@ -6044,15 +6044,24 @@ static int __init cxgb4_init_module(void)
  
- #ifdef __cplusplus
- extern "C" {
+ 	ret = pci_register_driver(&cxgb4_driver);
+ 	if (ret < 0)
+-		debugfs_remove(cxgb4_debugfs_root);
++		goto err_pci;
+ 
+ #if IS_ENABLED(CONFIG_IPV6)
+ 	if (!inet6addr_registered) {
+-		register_inet6addr_notifier(&cxgb4_inet6addr_notifier);
+-		inet6addr_registered = true;
++		ret = register_inet6addr_notifier(&cxgb4_inet6addr_notifier);
++		if (ret)
++			pci_unregister_driver(&cxgb4_driver);
++		else
++			inet6addr_registered = true;
+ 	}
+ #endif
+ 
++	if (ret == 0)
++		return ret;
++
++err_pci:
++	debugfs_remove(cxgb4_debugfs_root);
++
+ 	return ret;
+ }
+ 
 -- 
 2.20.1
 
