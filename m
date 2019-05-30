@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCD862EDDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:42:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECCF12ECE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:28:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732568AbfE3DmA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:42:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33876 "EHLO mail.kernel.org"
+        id S2388213AbfE3D2m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:28:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732488AbfE3DVQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:21:16 -0400
+        id S1728455AbfE3DUC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:20:02 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F8B2249EE;
-        Thu, 30 May 2019 03:21:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 20A7B24818;
+        Thu, 30 May 2019 03:20:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186475;
-        bh=v8jViTz1Qm/qg5OtQF+8F/At7QLvjzJgBcP9xOl6joc=;
+        s=default; t=1559186402;
+        bh=5zpwOjDO1fpQzwqoXZLpNd3AB+Dz2aPEnFSCm18DBbw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yQSMHvTvphj6isTLrsPBJziEDIvcN0UUQZ7wJPr2AF+KFP9JnAUiBBa0mkWTMO6wx
-         bnBa13OVD0i9VJ9qiA1leuSawMgMjPvtNknLu1T48nZe06MVrDMlt1l/FApY5C5P0c
-         e7JBdAC2F+Mdv21BNHa3sKNnevwT02sZYTPmEH7Y=
+        b=r+ODpfgw2HsNsYdRjxceF1M+bECaodCU2DyspYVg3LLCFGZPsh7TPlT73JagECNY3
+         s5STgWKbkrtaJZmw1pEDC1TqkpZICYpQtCr+rUpTTQjvyq3PSY7dN3K2hlVVWP9x1c
+         5D+cKFbAH0I1S01yLuB9unYJB+c1Czy8blUq8qh8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 108/128] cxgb3/l2t: Fix undefined behaviour
+Subject: [PATCH 4.14 186/193] spi : spi-topcliff-pch: Fix to handle empty DMA buffers
 Date:   Wed, 29 May 2019 20:07:20 -0700
-Message-Id: <20190530030453.994763760@linuxfoundation.org>
+Message-Id: <20190530030513.027633848@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,47 +44,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 76497732932f15e7323dc805e8ea8dc11bb587cf ]
+[ Upstream commit f37d8e67f39e6d3eaf4cc5471e8a3d21209843c6 ]
 
-The use of zero-sized array causes undefined behaviour when it is not
-the last member in a structure. As it happens to be in this case.
+pch_alloc_dma_buf allocated tx, rx DMA buffers which can fail. Further,
+these buffers are used without a check. The patch checks for these
+failures and sends the error upstream.
 
-Also, the current code makes use of a language extension to the C90
-standard, but the preferred mechanism to declare variable-length
-types such as this one is a flexible array member, introduced in
-C99:
-
-struct foo {
-        int stuff;
-        struct boo array[];
-};
-
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last. Which is beneficial
-to cultivate a high-quality code.
-
-Fixes: e48f129c2f20 ("[SCSI] cxgb3i: convert cdev->l2opt to use rcu to prevent NULL dereference")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/chelsio/cxgb3/l2t.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi-topcliff-pch.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb3/l2t.h b/drivers/net/ethernet/chelsio/cxgb3/l2t.h
-index 8cffcdfd56782..38b5858c335a9 100644
---- a/drivers/net/ethernet/chelsio/cxgb3/l2t.h
-+++ b/drivers/net/ethernet/chelsio/cxgb3/l2t.h
-@@ -75,8 +75,8 @@ struct l2t_data {
- 	struct l2t_entry *rover;	/* starting point for next allocation */
- 	atomic_t nfree;		/* number of free entries */
- 	rwlock_t lock;
--	struct l2t_entry l2tab[0];
- 	struct rcu_head rcu_head;	/* to handle rcu cleanup */
-+	struct l2t_entry l2tab[];
- };
+diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
+index 97d137591b18d..4389ab80c23e6 100644
+--- a/drivers/spi/spi-topcliff-pch.c
++++ b/drivers/spi/spi-topcliff-pch.c
+@@ -1294,18 +1294,27 @@ static void pch_free_dma_buf(struct pch_spi_board_data *board_dat,
+ 				  dma->rx_buf_virt, dma->rx_buf_dma);
+ }
  
- typedef void (*arp_failure_handler_func)(struct t3cdev * dev,
+-static void pch_alloc_dma_buf(struct pch_spi_board_data *board_dat,
++static int pch_alloc_dma_buf(struct pch_spi_board_data *board_dat,
+ 			      struct pch_spi_data *data)
+ {
+ 	struct pch_spi_dma_ctrl *dma;
++	int ret;
+ 
+ 	dma = &data->dma;
++	ret = 0;
+ 	/* Get Consistent memory for Tx DMA */
+ 	dma->tx_buf_virt = dma_alloc_coherent(&board_dat->pdev->dev,
+ 				PCH_BUF_SIZE, &dma->tx_buf_dma, GFP_KERNEL);
++	if (!dma->tx_buf_virt)
++		ret = -ENOMEM;
++
+ 	/* Get Consistent memory for Rx DMA */
+ 	dma->rx_buf_virt = dma_alloc_coherent(&board_dat->pdev->dev,
+ 				PCH_BUF_SIZE, &dma->rx_buf_dma, GFP_KERNEL);
++	if (!dma->rx_buf_virt)
++		ret = -ENOMEM;
++
++	return ret;
+ }
+ 
+ static int pch_spi_pd_probe(struct platform_device *plat_dev)
+@@ -1382,7 +1391,9 @@ static int pch_spi_pd_probe(struct platform_device *plat_dev)
+ 
+ 	if (use_dma) {
+ 		dev_info(&plat_dev->dev, "Use DMA for data transfers\n");
+-		pch_alloc_dma_buf(board_dat, data);
++		ret = pch_alloc_dma_buf(board_dat, data);
++		if (ret)
++			goto err_spi_register_master;
+ 	}
+ 
+ 	ret = spi_register_master(master);
 -- 
 2.20.1
 
