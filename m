@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A90D2EE9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:49:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 521B32EDD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:42:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387559AbfE3Dss (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:48:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58046 "EHLO mail.kernel.org"
+        id S1732668AbfE3DlX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:41:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730508AbfE3DUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:20:18 -0400
+        id S1732526AbfE3DVV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:21:21 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CE8424820;
-        Thu, 30 May 2019 03:20:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28DEB248FC;
+        Thu, 30 May 2019 03:21:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186418;
-        bh=ZoOu+9eNxoWTL0myO+IfaODWr5QLt9Z4pCwwIUjUTMk=;
+        s=default; t=1559186480;
+        bh=eLnA3TCUZw3mt9N2WqAhU+mxgcnznVC7qAxRzjMRZv4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RIDNfw2AvMUP4H6Y7pc+i+CQEiB+r+I25sbctZ6LFSm2msitku/bA/xXD3te2gW23
-         U9uu0wxS8UXxIwqiH9i7TTz9XaP7c2Yok5tBBeI7JLQPHL/MuRaLC06IMBDqWLd2c2
-         hVVxhQw1aJ/SDD5+NXTnvGJLklP1STOZX2pmSvNs=
+        b=xWECkO40a9SGJb880MbdY39kIjo2QJRnVvWRvLBvw2tynECUTs2WHD0V6xMdOjW0U
+         Xxbl3u8R5UhvD7g7acHUgNmxdKNRsKwRlyEGbXMprOPVDaJsT4m9Xlew0iXeVPbhtM
+         xy3Aj5NigvlnZih0REUBIOiHtd6H2rKvLL8dMLrc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+228a82b263b5da91883d@syzkaller.appspotmail.com,
-        Benjamin Coddington <bcodding@redhat.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 193/193] NFS: Fix a double unlock from nfs_match,get_client
-Date:   Wed, 29 May 2019 20:07:27 -0700
-Message-Id: <20190530030513.442571341@linuxfoundation.org>
+Subject: [PATCH 4.9 116/128] usb: core: Add PM runtime calls to usb_hcd_platform_shutdown
+Date:   Wed, 29 May 2019 20:07:28 -0700
+Message-Id: <20190530030455.379251731@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,36 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c260121a97a3e4df6536edbc2f26e166eff370ce ]
+[ Upstream commit 8ead7e817224d7832fe51a19783cb8fcadc79467 ]
 
-Now that nfs_match_client drops the nfs_client_lock, we should be
-careful
-to always return it in the same condition: locked.
+If ohci-platform is runtime suspended, we can currently get an "imprecise
+external abort" on reboot with ohci-platform loaded when PM runtime
+is implemented for the SoC.
 
-Fixes: 950a578c6128 ("NFS: make nfs_match_client killable")
-Reported-by: syzbot+228a82b263b5da91883d@syzkaller.appspotmail.com
-Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Let's fix this by adding PM runtime support to usb_hcd_platform_shutdown.
+
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/client.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/core/hcd.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/nfs/client.c b/fs/nfs/client.c
-index 65da2c105f434..0c7008fb6d5ab 100644
---- a/fs/nfs/client.c
-+++ b/fs/nfs/client.c
-@@ -305,9 +305,9 @@ static struct nfs_client *nfs_match_client(const struct nfs_client_initdata *dat
- 			spin_unlock(&nn->nfs_client_lock);
- 			error = nfs_wait_client_init_complete(clp);
- 			nfs_put_client(clp);
-+			spin_lock(&nn->nfs_client_lock);
- 			if (error < 0)
- 				return ERR_PTR(error);
--			spin_lock(&nn->nfs_client_lock);
- 			goto again;
- 		}
+diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
+index bdb0d7a08ff9b..1dd4c65e9188a 100644
+--- a/drivers/usb/core/hcd.c
++++ b/drivers/usb/core/hcd.c
+@@ -3033,6 +3033,9 @@ usb_hcd_platform_shutdown(struct platform_device *dev)
+ {
+ 	struct usb_hcd *hcd = platform_get_drvdata(dev);
  
++	/* No need for pm_runtime_put(), we're shutting down */
++	pm_runtime_get_sync(&dev->dev);
++
+ 	if (hcd->driver->shutdown)
+ 		hcd->driver->shutdown(hcd);
+ }
 -- 
 2.20.1
 
