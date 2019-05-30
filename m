@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD2322ED46
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:34:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AB1A2ECFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:29:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387509AbfE3D10 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:27:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55158 "EHLO mail.kernel.org"
+        id S2388425AbfE3D3i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:29:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731891AbfE3DT0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:19:26 -0400
+        id S1730575AbfE3DUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:20:47 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B473524865;
-        Thu, 30 May 2019 03:19:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21D8F2496F;
+        Thu, 30 May 2019 03:20:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186365;
-        bh=s4kCazaRSWnzkH+QoFib8l1lxFponnhzdXNy2kqfGz0=;
+        s=default; t=1559186447;
+        bh=xHVzDq91aH0SJhrqyRTORQomLvIyxj+MOPYxDC+DYK4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BCJokbUUoD1gfdKic9AhpbsjfkppNqxjr3+2EAr5+ykzWS8DFkgAyX5FRVeBaMhLW
-         JZ7eHFnux+COv/Jm80hcMO0P+1rmPZruOBoI/YwL7hh4L5A/68qYNG9/4JcAxxSkKm
-         JESUWGm0CIMT850qyH5n+JdWC/so+DRWGUEs/76I=
+        b=aAX7HdddUkmF56IjZtnmHpDnyuJ5b5ie8gPmEXg10EWvtVWspm3uAKK0k8h/0o5Ra
+         O5otIA/3O3rD0uD1vpBlW3B86ekuE9AXuy/er17XB4PcpeETMXMHP5zGunKt91cIg0
+         9FfyRb1nFm5l+pHo3BIt3cu9Q7y6FLYznocwrWv0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kefeng Wang <wangkefeng.wang@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 114/193] hwmon: (pc87427) Use request_muxed_region for Super-IO accesses
-Date:   Wed, 29 May 2019 20:06:08 -0700
-Message-Id: <20190530030504.716177193@linuxfoundation.org>
+Subject: [PATCH 4.9 037/128] iwlwifi: pcie: dont crash on invalid RX interrupt
+Date:   Wed, 29 May 2019 20:06:09 -0700
+Message-Id: <20190530030440.829423723@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,67 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 755a9b0f8aaa5639ba5671ca50080852babb89ce ]
+[ Upstream commit 30f24eabab8cd801064c5c37589d803cb4341929 ]
 
-Super-IO accesses may fail on a system with no or unmapped LPC bus.
+If for some reason the device gives us an RX interrupt before we're
+ready for it, perhaps during device power-on with misconfigured IRQ
+causes mapping or so, we can crash trying to access the queues.
 
-Also, other drivers may attempt to access the LPC bus at the same time,
-resulting in undefined behavior.
+Prevent that by checking that we actually have RXQs and that they
+were properly allocated.
 
-Use request_muxed_region() to ensure that IO access on the requested
-address space is supported, and to ensure that access by multiple drivers
-is synchronized.
-
-Fixes: ba224e2c4f0a7 ("hwmon: New PC87427 hardware monitoring driver")
-Reported-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-Reported-by: John Garry <john.garry@huawei.com>
-Cc: John Garry <john.garry@huawei.com>
-Acked-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/pc87427.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/net/wireless/intel/iwlwifi/pcie/rx.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hwmon/pc87427.c b/drivers/hwmon/pc87427.c
-index dc5a9d5ada516..81a05cd1a5121 100644
---- a/drivers/hwmon/pc87427.c
-+++ b/drivers/hwmon/pc87427.c
-@@ -106,6 +106,13 @@ static const char *logdev_str[2] = { DRVNAME " FMC", DRVNAME " HMC" };
- #define LD_IN		1
- #define LD_TEMP		1
+diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
+index c21f8bd32d08f..25f2a0aceaa21 100644
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
+@@ -1225,10 +1225,15 @@ static void iwl_pcie_rx_handle_rb(struct iwl_trans *trans,
+ static void iwl_pcie_rx_handle(struct iwl_trans *trans, int queue)
+ {
+ 	struct iwl_trans_pcie *trans_pcie = IWL_TRANS_GET_PCIE_TRANS(trans);
+-	struct iwl_rxq *rxq = &trans_pcie->rxq[queue];
++	struct iwl_rxq *rxq;
+ 	u32 r, i, count = 0;
+ 	bool emergency = false;
  
-+static inline int superio_enter(int sioaddr)
-+{
-+	if (!request_muxed_region(sioaddr, 2, DRVNAME))
-+		return -EBUSY;
-+	return 0;
-+}
++	if (WARN_ON_ONCE(!trans_pcie->rxq || !trans_pcie->rxq[queue].bd))
++		return;
 +
- static inline void superio_outb(int sioaddr, int reg, int val)
- {
- 	outb(reg, sioaddr);
-@@ -122,6 +129,7 @@ static inline void superio_exit(int sioaddr)
- {
- 	outb(0x02, sioaddr);
- 	outb(0x02, sioaddr + 1);
-+	release_region(sioaddr, 2);
- }
- 
- /*
-@@ -1220,7 +1228,11 @@ static int __init pc87427_find(int sioaddr, struct pc87427_sio_data *sio_data)
- {
- 	u16 val;
- 	u8 cfg, cfg_b;
--	int i, err = 0;
-+	int i, err;
++	rxq = &trans_pcie->rxq[queue];
 +
-+	err = superio_enter(sioaddr);
-+	if (err)
-+		return err;
- 
- 	/* Identify device */
- 	val = force_id ? force_id : superio_inb(sioaddr, SIOREG_DEVID);
+ restart:
+ 	spin_lock(&rxq->lock);
+ 	/* uCode's read index (stored in shared DRAM) indicates the last Rx
 -- 
 2.20.1
 
