@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E2442F430
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:36:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B9DC2EB34
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:11:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388499AbfE3EgA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:36:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57360 "EHLO mail.kernel.org"
+        id S1728211AbfE3DKp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:10:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729332AbfE3DNF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:13:05 -0400
+        id S1727927AbfE3DKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:10:05 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B616C24526;
-        Thu, 30 May 2019 03:13:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 105CC24482;
+        Thu, 30 May 2019 03:10:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185983;
-        bh=t6bx2D04IYoytuycVZr10En/w9fgx4z/f8hlVwcsreI=;
+        s=default; t=1559185805;
+        bh=oDp3VEB09fC7B/D5QmrWyIiX/u6HdGaoyP3JsUBBgxw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YrVwQbiTJuExAkboIpErvFXEUBkQPDK+9X//V1DcA70cNr7wnUq/7wz8PpEDSmGWd
-         2MsVts3Vspnr3HRRlUq4Pr3UDxY3iTMfybMlZL1dXPETmtwHoZmKsAniLJT0jPn2cW
-         pDlDrS0zyhxx/+ts5MWnGx9U1aHqBKJY2bOWhPxE=
+        b=Obb/YXKwVHL8XO2WLOxqDz+VAHAhZGKFxpaJW0SfW8qxeXTXqeqrX55JzMXtrszG5
+         6cV0CGWGqKXiWapTn14MV38EkMOhyuUGx+1u6wiysUhsRWOsTqDwS7lQbpEXdf0I7o
+         YzDXXrZVEDEr8U7chlloj4nduw9fneJugp5gBKpY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Axtens <dja@axtens.net>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.0 009/346] crypto: vmx - CTR: always increment IV as quadword
-Date:   Wed, 29 May 2019 20:01:22 -0700
-Message-Id: <20190530030540.980132209@linuxfoundation.org>
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 085/405] ARM: vdso: Remove dependency with the arch_timer driver internals
+Date:   Wed, 29 May 2019 20:01:23 -0700
+Message-Id: <20190530030545.325255423@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,57 +45,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Axtens <dja@axtens.net>
+[ Upstream commit 1f5b62f09f6b314c8d70b9de5182dae4de1f94da ]
 
-commit 009b30ac7444c17fae34c4f435ebce8e8e2b3250 upstream.
+The VDSO code uses the kernel helper that was originally designed
+to abstract the access between 32 and 64bit systems. It worked so
+far because this function is declared as 'inline'.
 
-The kernel self-tests picked up an issue with CTR mode:
-alg: skcipher: p8_aes_ctr encryption test failed (wrong result) on test vector 3, cfg="uneven misaligned splits, may sleep"
+As we're about to revamp that part of the code, the VDSO would
+break. Let's fix it by doing what should have been done from
+the start, a proper system register access.
 
-Test vector 3 has an IV of FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD, so
-after 3 increments it should wrap around to 0.
-
-In the aesp8-ppc code from OpenSSL, there are two paths that
-increment IVs: the bulk (8 at a time) path, and the individual
-path which is used when there are fewer than 8 AES blocks to
-process.
-
-In the bulk path, the IV is incremented with vadduqm: "Vector
-Add Unsigned Quadword Modulo", which does 128-bit addition.
-
-In the individual path, however, the IV is incremented with
-vadduwm: "Vector Add Unsigned Word Modulo", which instead
-does 4 32-bit additions. Thus the IV would instead become
-FFFFFFFFFFFFFFFFFFFFFFFF00000000, throwing off the result.
-
-Use vadduqm.
-
-This was probably a typo originally, what with q and w being
-adjacent. It is a pretty narrow edge case: I am really
-impressed by the quality of the kernel self-tests!
-
-Fixes: 5c380d623ed3 ("crypto: vmx - Add support for VMS instructions by ASM")
-Cc: stable@vger.kernel.org
-Signed-off-by: Daniel Axtens <dja@axtens.net>
-Acked-by: Nayna Jain <nayna@linux.ibm.com>
-Tested-by: Nayna Jain <nayna@linux.ibm.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/vmx/aesp8-ppc.pl |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/include/asm/cp15.h   | 2 ++
+ arch/arm/vdso/vgettimeofday.c | 5 +++--
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/crypto/vmx/aesp8-ppc.pl
-+++ b/drivers/crypto/vmx/aesp8-ppc.pl
-@@ -1357,7 +1357,7 @@ Loop_ctr32_enc:
- 	addi		$idx,$idx,16
- 	bdnz		Loop_ctr32_enc
+diff --git a/arch/arm/include/asm/cp15.h b/arch/arm/include/asm/cp15.h
+index 07e27f212dc75..d2453e2d3f1f3 100644
+--- a/arch/arm/include/asm/cp15.h
++++ b/arch/arm/include/asm/cp15.h
+@@ -68,6 +68,8 @@
+ #define BPIALL				__ACCESS_CP15(c7, 0, c5, 6)
+ #define ICIALLU				__ACCESS_CP15(c7, 0, c5, 0)
  
--	vadduwm		$ivec,$ivec,$one
-+	vadduqm		$ivec,$ivec,$one
- 	 vmr		$dat,$inptail
- 	 lvx		$inptail,0,$inp
- 	 addi		$inp,$inp,16
++#define CNTVCT				__ACCESS_CP15_64(1, c14)
++
+ extern unsigned long cr_alignment;	/* defined in entry-armv.S */
+ 
+ static inline unsigned long get_cr(void)
+diff --git a/arch/arm/vdso/vgettimeofday.c b/arch/arm/vdso/vgettimeofday.c
+index a9dd619c6c290..7bdbf5d5c47d3 100644
+--- a/arch/arm/vdso/vgettimeofday.c
++++ b/arch/arm/vdso/vgettimeofday.c
+@@ -18,9 +18,9 @@
+ #include <linux/compiler.h>
+ #include <linux/hrtimer.h>
+ #include <linux/time.h>
+-#include <asm/arch_timer.h>
+ #include <asm/barrier.h>
+ #include <asm/bug.h>
++#include <asm/cp15.h>
+ #include <asm/page.h>
+ #include <asm/unistd.h>
+ #include <asm/vdso_datapage.h>
+@@ -123,7 +123,8 @@ static notrace u64 get_ns(struct vdso_data *vdata)
+ 	u64 cycle_now;
+ 	u64 nsec;
+ 
+-	cycle_now = arch_counter_get_cntvct();
++	isb();
++	cycle_now = read_sysreg(CNTVCT);
+ 
+ 	cycle_delta = (cycle_now - vdata->cs_cycle_last) & vdata->cs_mask;
+ 
+-- 
+2.20.1
+
 
 
