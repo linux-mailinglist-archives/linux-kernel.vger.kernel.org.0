@@ -2,165 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47984304C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 00:29:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29F0D304CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 00:33:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726668AbfE3W3g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 18:29:36 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45204 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726045AbfE3W3f (ORCPT
+        id S1726599AbfE3WdJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 18:33:09 -0400
+Received: from alpha.anastas.io ([104.248.188.109]:53149 "EHLO
+        alpha.anastas.io" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726045AbfE3WdJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 18:29:35 -0400
-Received: by mail-pf1-f195.google.com with SMTP id s11so4832048pfm.12;
-        Thu, 30 May 2019 15:29:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XFIS/ATJWf8i+rx5RZgt8pFQOptsz9ozO1zSHeC1TwM=;
-        b=jrtHBOj3ok1f/xowAmtE0Z0q/wl92RhCPkKm0zNzy3xyEh9KoBDXCQwtq+ffNwM/k0
-         xoJfQDV6ndJ/UBTJuyqMXa+z0K6MM5T3+N/+z1g+DGaU46uWvI1oiRcDvOEOMVgVc4KM
-         gg7XKnvGxbS9Gn8P9wYQeQnQ/t7kgrMlHgKyeFze4N91ZU5k8y2eLRCuvzHVSE5uqcqa
-         o/i2fe+DLMrj7Z7iCtjRRi/q3L9YCgPNXe+necSyZ3DHkoo7NXRPgzpzit3YBFbzPmxD
-         fB4WvBLELDFtrpCjuv08DBKQoJNaqjAYVwuH1DD0atxRgZlM1ze5Wq/3HKJ1blmcTpOx
-         H40w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XFIS/ATJWf8i+rx5RZgt8pFQOptsz9ozO1zSHeC1TwM=;
-        b=gxueC7ugHyyR6iE0FNeYpVz//IiFc16KdipP1Lb2uQd51RGUn1pdU74cjYMP4wUMYa
-         6Gv/AaQsDcI1/wtyfcH/gLd3Z3j43irI71ygyjjN14v3+Yt9+vS9nz/XSi1nyOFobqlF
-         17/UxCWcjAhFU1x/2fLrGhfNTSLaeaw/xOKHR5yg2cdJ1p1hQ8l6cXrSg6i+apdthU0Q
-         NIFA3lYb21WiMPTvCpVxgSTqyuEi53SvxAo5GiOqdzCcGMB98UhT278QCAmpEIdHMtsw
-         ZNMlVfObT6UWl6XrbbFKtUBd7/7WW4jHA07uofUu0zn9bNUI+cgcAItlQ4WBEzW+swpM
-         aXNQ==
-X-Gm-Message-State: APjAAAUcHbOkv5ZuLT7BJbbzNsH4oCo2y8ixcayDcyhto2hCElBCktcW
-        KDk/aPRvMMoRRcJEEwXvNJU=
-X-Google-Smtp-Source: APXvYqw2EYd2FcvKbUNMNOciWItMzYs8P3TF+IEhZUZ3ULjwC7KuQfnSofumg0Xp/zG+s8Wy4IAb2g==
-X-Received: by 2002:a62:7a8e:: with SMTP id v136mr5940404pfc.208.1559255375149;
-        Thu, 30 May 2019 15:29:35 -0700 (PDT)
-Received: from kaby.cs.washington.edu ([2607:4000:200:15:61cb:56f1:2c08:844e])
-        by smtp.gmail.com with ESMTPSA id a5sm2310568pjo.29.2019.05.30.15.29.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 May 2019 15:29:34 -0700 (PDT)
-From:   Luke Nelson <luke.r.nels@gmail.com>
-Cc:     Luke Nelson <luke.r.nels@gmail.com>, Xi Wang <xi.wang@gmail.com>,
-        =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@gmail.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        netdev@vger.kernel.org, linux-riscv@lists.infradead.org,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH bpf v2] bpf, riscv: clear high 32 bits for ALU32 add/sub/neg/lsh/rsh/arsh
-Date:   Thu, 30 May 2019 15:29:22 -0700
-Message-Id: <20190530222922.4269-1-luke.r.nels@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        Thu, 30 May 2019 18:33:09 -0400
+Received: from authenticated-user (alpha.anastas.io [104.248.188.109])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by alpha.anastas.io (Postfix) with ESMTPSA id 72F8B7F8BF;
+        Thu, 30 May 2019 17:33:07 -0500 (CDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=anastas.io; s=mail;
+        t=1559255588; bh=3ZOWYrFYbkF4GORGQ+Tfp7UoyviSixFiW9Lo/7bz6do=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=M+lxrRvMT6PV/3q7mqKTyEQq6Y/Bq0qvZpo8+0gEZ8xNqXCwiXB4vzvl6XfoXL0im
+         KtCT7SK67s8LIKoPP/0gbjLJE7dIj8tWfyhbVgiCsajhsMNxZtP20aDvHRz3RhTekW
+         uIeqYh6LZakkKsWQKGrO4YtmAZcKttqsVfePLHEo5G41dXiaVGkUf0Ng43ltcuY2tU
+         jr3JFJWd6xmJCJAyl5WYiPaJhVtnNo0ULrVVUxFxbOUm3u74KpqUrM9LT5bHQXpZAt
+         5+EKsu9zGSOViXVcgGKlsdkYpzlGprPWwmKJ2PyhRhtY9XvnI41EVATsr4Fi+N0E8i
+         RS29W2UNAkjBg==
+Subject: Re: [EXTERNAL] Re: [PATCH v3 1/3] PCI: Introduce
+ pcibios_ignore_alignment_request
+To:     Sam Bobroff <sbobroff@linux.ibm.com>, Oliver <oohall@gmail.com>
+Cc:     linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        rppt@linux.ibm.com, Paul Mackerras <paulus@samba.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, xyjxie@linux.vnet.ibm.com,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+References: <20190528040313.35582-1-shawn@anastas.io>
+ <20190528040313.35582-2-shawn@anastas.io>
+ <CAOSf1CEFfbmwfvmdqT1xdt8SFb=tYdYXLfXeyZ8=iRnhg4a3Pg@mail.gmail.com>
+ <20190530065556.GA29428@tungsten.ozlabs.ibm.com>
+From:   Shawn Anastasio <shawn@anastas.io>
+Message-ID: <8785226a-b2eb-8157-e724-d575c66b7bef@anastas.io>
+Date:   Thu, 30 May 2019 17:33:05 -0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+In-Reply-To: <20190530065556.GA29428@tungsten.ozlabs.ibm.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In BPF, 32-bit ALU operations should zero-extend their results into
-the 64-bit registers.
 
-The current BPF JIT on RISC-V emits incorrect instructions that perform
-sign extension only (e.g., addw, subw) on 32-bit add, sub, lsh, rsh,
-arsh, and neg. This behavior diverges from the interpreter and JITs
-for other architectures.
 
-This patch fixes the bugs by performing zero extension on the destination
-register of 32-bit ALU operations.
+On 5/30/19 1:55 AM, Sam Bobroff wrote:
+> On Tue, May 28, 2019 at 03:36:34PM +1000, Oliver wrote:
+>> On Tue, May 28, 2019 at 2:03 PM Shawn Anastasio <shawn@anastas.io> wrote:
+>>>
+>>> Introduce a new pcibios function pcibios_ignore_alignment_request
+>>> which allows the PCI core to defer to platform-specific code to
+>>> determine whether or not to ignore alignment requests for PCI resources.
+>>>
+>>> The existing behavior is to simply ignore alignment requests when
+>>> PCI_PROBE_ONLY is set. This is behavior is maintained by the
+>>> default implementation of pcibios_ignore_alignment_request.
+>>>
+>>> Signed-off-by: Shawn Anastasio <shawn@anastas.io>
+>>> ---
+>>>   drivers/pci/pci.c   | 9 +++++++--
+>>>   include/linux/pci.h | 1 +
+>>>   2 files changed, 8 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+>>> index 8abc843b1615..8207a09085d1 100644
+>>> --- a/drivers/pci/pci.c
+>>> +++ b/drivers/pci/pci.c
+>>> @@ -5882,6 +5882,11 @@ resource_size_t __weak pcibios_default_alignment(void)
+>>>          return 0;
+>>>   }
+>>>
+>>> +int __weak pcibios_ignore_alignment_request(void)
+>>> +{
+>>> +       return pci_has_flag(PCI_PROBE_ONLY);
+>>> +}
+>>> +
+>>>   #define RESOURCE_ALIGNMENT_PARAM_SIZE COMMAND_LINE_SIZE
+>>>   static char resource_alignment_param[RESOURCE_ALIGNMENT_PARAM_SIZE] = {0};
+>>>   static DEFINE_SPINLOCK(resource_alignment_lock);
+>>> @@ -5906,9 +5911,9 @@ static resource_size_t pci_specified_resource_alignment(struct pci_dev *dev,
+>>>          p = resource_alignment_param;
+>>>          if (!*p && !align)
+>>>                  goto out;
+>>> -       if (pci_has_flag(PCI_PROBE_ONLY)) {
+>>> +       if (pcibios_ignore_alignment_request()) {
+>>>                  align = 0;
+>>> -               pr_info_once("PCI: Ignoring requested alignments (PCI_PROBE_ONLY)\n");
+>>> +               pr_info_once("PCI: Ignoring requested alignments\n");
+>>>                  goto out;
+>>>          }
+>>
+>> I think the logic here is questionable to begin with. If the user has
+>> explicitly requested re-aligning a resource via the command line then
+>> we should probably do it even if PCI_PROBE_ONLY is set. When it breaks
+>> they get to keep the pieces.
+>>
+>> That said, the real issue here is that PCI_PROBE_ONLY probably
+>> shouldn't be set under qemu/kvm. Under the other hypervisor (PowerVM)
+>> hotplugged devices are configured by firmware before it's passed to
+>> the guest and we need to keep the FW assignments otherwise things
+>> break. QEMU however doesn't do any BAR assignments and relies on that
+>> being handled by the guest. At boot time this is done by SLOF, but
+>> Linux only keeps SLOF around until it's extracted the device-tree.
+>> Once that's done SLOF gets blown away and the kernel needs to do it's
+>> own BAR assignments. I'm guessing there's a hack in there to make it
+>> work today, but it's a little surprising that it works at all...
+>>
+>> IIRC Sam Bobroff was looking at hotplug under pseries recently so he
+>> might have something to add. He's sick at the moment, but I'll ask him
+>> to take a look at this once he's back among the living
+> 
+> There seems to be some code already in the kernel that will disable
+> PCI_PROBE_ONLY based on a device tree property, so I did a quick test
+> today and it seems to work. Only a trivial tweak is needed in QEMU to
+> do it (have spapr_dt_chosen() add a node called "linux,pci-probe-only"
+> with a value of 0), and that would allow us to set it only for QEMU (and
+> not PowerVM) if that's what we want to do. Is that useful?
+> 
+> (I haven't done any real testing yet but the guest booted up OK.)
 
-Fixes: 2353ecc6f91f ("bpf, riscv: add BPF JIT for RV64G")
-Cc: Xi Wang <xi.wang@gmail.com>
-Signed-off-by: Luke Nelson <luke.r.nels@gmail.com>
----
-The original patch is
-https://lkml.org/lkml/2019/5/30/1370
+It was my understanding that PCI_PROBE_ONLY should actually be set
+initially so that Linux uses SLOF's BAR assignments. The issue here
+is that PCI_PROBE_ONLY shouldn't be honored after initial bringup
+on KVM so that hotplugged PCI devices can have custom BAR alignments.
 
-This version is rebased against the bpf tree.
----
- arch/riscv/net/bpf_jit_comp.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Of course, if there's no need to honor SLOF's initial assignments,
+I assume disabling PCI_PROBE_ONLY would work fine. In fact, I'm
+not entirely sure why it's done in the first place. Does anybody
+know?
 
-diff --git a/arch/riscv/net/bpf_jit_comp.c b/arch/riscv/net/bpf_jit_comp.c
-index e5c8d675bd6e..426d5c33ea90 100644
---- a/arch/riscv/net/bpf_jit_comp.c
-+++ b/arch/riscv/net/bpf_jit_comp.c
-@@ -751,10 +751,14 @@ static int emit_insn(const struct bpf_insn *insn, struct rv_jit_context *ctx,
- 	case BPF_ALU | BPF_ADD | BPF_X:
- 	case BPF_ALU64 | BPF_ADD | BPF_X:
- 		emit(is64 ? rv_add(rd, rd, rs) : rv_addw(rd, rd, rs), ctx);
-+		if (!is64)
-+			emit_zext_32(rd, ctx);
- 		break;
- 	case BPF_ALU | BPF_SUB | BPF_X:
- 	case BPF_ALU64 | BPF_SUB | BPF_X:
- 		emit(is64 ? rv_sub(rd, rd, rs) : rv_subw(rd, rd, rs), ctx);
-+		if (!is64)
-+			emit_zext_32(rd, ctx);
- 		break;
- 	case BPF_ALU | BPF_AND | BPF_X:
- 	case BPF_ALU64 | BPF_AND | BPF_X:
-@@ -795,14 +799,20 @@ static int emit_insn(const struct bpf_insn *insn, struct rv_jit_context *ctx,
- 	case BPF_ALU | BPF_LSH | BPF_X:
- 	case BPF_ALU64 | BPF_LSH | BPF_X:
- 		emit(is64 ? rv_sll(rd, rd, rs) : rv_sllw(rd, rd, rs), ctx);
-+		if (!is64)
-+			emit_zext_32(rd, ctx);
- 		break;
- 	case BPF_ALU | BPF_RSH | BPF_X:
- 	case BPF_ALU64 | BPF_RSH | BPF_X:
- 		emit(is64 ? rv_srl(rd, rd, rs) : rv_srlw(rd, rd, rs), ctx);
-+		if (!is64)
-+			emit_zext_32(rd, ctx);
- 		break;
- 	case BPF_ALU | BPF_ARSH | BPF_X:
- 	case BPF_ALU64 | BPF_ARSH | BPF_X:
- 		emit(is64 ? rv_sra(rd, rd, rs) : rv_sraw(rd, rd, rs), ctx);
-+		if (!is64)
-+			emit_zext_32(rd, ctx);
- 		break;
- 
- 	/* dst = -dst */
-@@ -810,6 +820,8 @@ static int emit_insn(const struct bpf_insn *insn, struct rv_jit_context *ctx,
- 	case BPF_ALU64 | BPF_NEG:
- 		emit(is64 ? rv_sub(rd, RV_REG_ZERO, rd) :
- 		     rv_subw(rd, RV_REG_ZERO, rd), ctx);
-+		if (!is64)
-+			emit_zext_32(rd, ctx);
- 		break;
- 
- 	/* dst = BSWAP##imm(dst) */
-@@ -964,14 +976,20 @@ static int emit_insn(const struct bpf_insn *insn, struct rv_jit_context *ctx,
- 	case BPF_ALU | BPF_LSH | BPF_K:
- 	case BPF_ALU64 | BPF_LSH | BPF_K:
- 		emit(is64 ? rv_slli(rd, rd, imm) : rv_slliw(rd, rd, imm), ctx);
-+		if (!is64)
-+			emit_zext_32(rd, ctx);
- 		break;
- 	case BPF_ALU | BPF_RSH | BPF_K:
- 	case BPF_ALU64 | BPF_RSH | BPF_K:
- 		emit(is64 ? rv_srli(rd, rd, imm) : rv_srliw(rd, rd, imm), ctx);
-+		if (!is64)
-+			emit_zext_32(rd, ctx);
- 		break;
- 	case BPF_ALU | BPF_ARSH | BPF_K:
- 	case BPF_ALU64 | BPF_ARSH | BPF_K:
- 		emit(is64 ? rv_srai(rd, rd, imm) : rv_sraiw(rd, rd, imm), ctx);
-+		if (!is64)
-+			emit_zext_32(rd, ctx);
- 		break;
- 
- 	/* JUMP off */
--- 
-2.19.1
+If there is actually a valid reason for preserving SLOF's initial
+assignments, then it seems like the correct solution is to disable
+PCI_PROBE_ONLY after initial PCI bringup or ignore it in
+pci_specified_resource_alignment() like I do in this patch set.
 
+Bjorn Helgaas also suggested marking individual resources provided
+by SLOF/PHYP with IORESOURCE_PCI_FIXED which would remove the need
+to use PCI_PROBE_ONLY altogether.
+
+Any thoughts?
+
+- Shawn
