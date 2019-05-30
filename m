@@ -2,44 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D6BE2ECF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:29:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 148282EF29
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:53:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388409AbfE3D3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:29:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59786 "EHLO mail.kernel.org"
+        id S2387824AbfE3DxQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:53:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732316AbfE3DUp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:20:45 -0400
+        id S1730246AbfE3DTc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:19:32 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 847722492F;
-        Thu, 30 May 2019 03:20:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5899824872;
+        Thu, 30 May 2019 03:19:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186444;
-        bh=cljvCdreLiATqOX+yPWqpwvNf0F2rEkzn8uzKx7ndVo=;
+        s=default; t=1559186371;
+        bh=q69LJDTEivun6th6wybJQZt18d5jFsWdI9UWHbSf3Yg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VHFMTvJz5TBSyR4eGSG332svgfuj0dsjZVhGY0xeM59t9zQIX1g/yEPtyzc0qZF6y
-         oN7gzTbilh6dH8q+M8y+CfLd2QXIkQ6r47LuPI/oiY/SavEbKJWqBH9o9qOiRPqYV1
-         TtkotPQnxfY4QXVuTa3cNKiNN4A5r0bEdhn6CNvg=
+        b=jqYSvaUZqGkWsc0pi4A6n0OWlgZfosdO4omGNYgmKO0zS4KS7frMIaiR+ok+Gn+rZ
+         bi1XXvC/n2NWvn1Wv8+3bSDS5xx9O4RO9uD0WeOg75jm2bI5qH65oeiezxuKmsWpdz
+         TgAVi4a9UzT+1MjT3WoDn9kuqRV/wCHqvCizYh94=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Borislav Petkov <bp@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        Sami Tolvanen <samitolvanen@google.com>
-Subject: [PATCH 4.9 050/128] x86/build: Move _etext to actual end of .text
+        Jann Horn <jannh@google.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 128/193] x86/microcode: Fix the ancient deprecated microcode loading method
 Date:   Wed, 29 May 2019 20:06:22 -0700
-Message-Id: <20190530030443.771931522@linuxfoundation.org>
+Message-Id: <20190530030506.320367482@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,49 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 392bef709659abea614abfe53cf228e7a59876a4 ]
+[ Upstream commit 24613a04ad1c0588c10f4b5403ca60a73d164051 ]
 
-When building x86 with Clang LTO and CFI, CFI jump regions are
-automatically added to the end of the .text section late in linking. As a
-result, the _etext position was being labelled before the appended jump
-regions, causing confusion about where the boundaries of the executable
-region actually are in the running kernel, and broke at least the fault
-injection code. This moves the _etext mark to outside (and immediately
-after) the .text area, as it already the case on other architectures
-(e.g. arm64, arm).
+Commit
 
-Reported-and-tested-by: Sami Tolvanen <samitolvanen@google.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20190423183827.GA4012@beast
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+  2613f36ed965 ("x86/microcode: Attempt late loading only when new microcode is present")
+
+added the new define UCODE_NEW to denote that an update should happen
+only when newer microcode (than installed on the system) has been found.
+
+But it missed adjusting that for the old /dev/cpu/microcode loading
+interface. Fix it.
+
+Fixes: 2613f36ed965 ("x86/microcode: Attempt late loading only when new microcode is present")
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jann Horn <jannh@google.com>
+Link: https://lkml.kernel.org/r/20190405133010.24249-3-bp@alien8.de
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/vmlinux.lds.S | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/kernel/cpu/microcode/core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index 55f04875293fa..51b772f9d886a 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -111,11 +111,11 @@ SECTIONS
- 		*(.text.__x86.indirect_thunk)
- 		__indirect_thunk_end = .;
- #endif
--
--		/* End of text section */
--		_etext = .;
- 	} :text = 0x9090
+diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
+index 387a8f44fba1e..b6b44017cf164 100644
+--- a/arch/x86/kernel/cpu/microcode/core.c
++++ b/arch/x86/kernel/cpu/microcode/core.c
+@@ -418,8 +418,9 @@ static int do_microcode_update(const void __user *buf, size_t size)
+ 		if (ustate == UCODE_ERROR) {
+ 			error = -1;
+ 			break;
+-		} else if (ustate == UCODE_OK)
++		} else if (ustate == UCODE_NEW) {
+ 			apply_microcode_on_target(cpu);
++		}
+ 	}
  
-+	/* End of text section */
-+	_etext = .;
-+
- 	NOTES :text :note
- 
- 	EXCEPTION_TABLE(16) :text = 0x9090
+ 	return error;
 -- 
 2.20.1
 
