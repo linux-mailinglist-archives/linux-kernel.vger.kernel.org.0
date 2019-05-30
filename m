@@ -2,48 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 106C42ED42
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:34:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A09AA2F231
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:19:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387909AbfE3D1O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:27:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54702 "EHLO mail.kernel.org"
+        id S1730905AbfE3ET2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:19:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731861AbfE3DTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:19:19 -0400
+        id S1729241AbfE3DP0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:26 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED14F2485E;
-        Thu, 30 May 2019 03:19:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E628924559;
+        Thu, 30 May 2019 03:15:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186359;
-        bh=dBdt0Mj0rKev0+tWtSjsaimFMylCqUd3zYLueb9grdo=;
+        s=default; t=1559186126;
+        bh=vEOByxn9z6ZCUFQN8HmDmoIcUw5cBKWjZLs5n98wcSw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g91ZQEXMOyXMo/Hu+g8ezBFkatSC9J/HiHh/F9g8iLA6s2qhPoCoOZe3bd+rF3Ly2
-         oIsGgCBfIxautH/ZqFx/XNPNNNmcaaMzJJnDEKo1L0wdjyH/bLM13u8Qsb7qd/+wQD
-         sRzGurLO+7LXlXT2186Z1/cIjJ4AZimmFuDL7rhU=
+        b=1abXzmnqyTH4x+FQiDBmz2aah68LdNoEfxYrx1R45iG42/XWGh054bFRFqUZeJ0Ds
+         mUdTWZzN1Ety/+KzJ11TpfmPUehmJL3Szt20W0pfgq8jOGCpEILE6qjnk2em623I4b
+         eUf4kp+/tAhyBmhn0q+fbqOrivqia2/0/3Do29Mw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Mamta Shukla <mamtashukla555@gmail.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Sharat Masetty <smasetty@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org,
-        Rob Clark <robdclark@chromium.org>,
+        stable@vger.kernel.org,
+        George Hilliard <thirtythreeforty@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 103/193] drm/msm: a5xx: fix possible object reference leak
+Subject: [PATCH 5.0 284/346] staging: mt7621-mmc: Check for nonzero number of scatterlist entries
 Date:   Wed, 29 May 2019 20:05:57 -0700
-Message-Id: <20190530030503.211447709@linuxfoundation.org>
+Message-Id: <20190530030555.299268806@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -53,70 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 6cd5235c3135ea84b32469ea51b2aae384eda8af ]
+[ Upstream commit d4223e06b6aed581625f574ad8faa71b6c0fc903 ]
 
-The call to of_get_child_by_name returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
+The buffer descriptor setup loop is correct only if it is setting up at
+least one bd struct.  Besides, there is an error if dma_map_sg() returns
+0, which is possible and must be handled.
 
-Detected by coccinelle with the following warnings:
-drivers/gpu/drm/msm/adreno/a5xx_gpu.c:57:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 47, but without a corresponding object release within this function.
-drivers/gpu/drm/msm/adreno/a5xx_gpu.c:66:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 47, but without a corresponding object release within this function.
-drivers/gpu/drm/msm/adreno/a5xx_gpu.c:118:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 47, but without a corresponding object release within this function.
-drivers/gpu/drm/msm/adreno/a5xx_gpu.c:57:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 51, but without a corresponding object release within this function.
-drivers/gpu/drm/msm/adreno/a5xx_gpu.c:66:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 51, but without a corresponding object release within this function.
-drivers/gpu/drm/msm/adreno/a5xx_gpu.c:118:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 51, but without a corresponding object release within this function.
+Additionally, remove the BUG_ON() checking sglen, which is unnecessary
+because we configure DMA with that constraint during init.
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Rob Clark <robdclark@gmail.com>
-Cc: Sean Paul <sean@poorly.run>
-Cc: David Airlie <airlied@linux.ie>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: Jordan Crouse <jcrouse@codeaurora.org>
-Cc: Mamta Shukla <mamtashukla555@gmail.com>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Sharat Masetty <smasetty@codeaurora.org>
-Cc: linux-arm-msm@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
-Cc: freedreno@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org (open list)
-Reviewed-by: Jordan Crouse <jcrouse@codeaurora.org>
-Signed-off-by: Rob Clark <robdclark@gmail.com>
-Signed-off-by: Rob Clark <robdclark@chromium.org>
+Signed-off-by: George Hilliard <thirtythreeforty@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/msm/adreno/a5xx_gpu.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/staging/mt7621-mmc/sd.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-index 17c59d839e6fa..f1aaa76cc2e4e 100644
---- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-@@ -29,7 +29,7 @@ static void a5xx_dump(struct msm_gpu *gpu);
- static int zap_shader_load_mdt(struct device *dev, const char *fwname)
- {
- 	const struct firmware *fw;
--	struct device_node *np;
-+	struct device_node *np, *mem_np;
- 	struct resource r;
- 	phys_addr_t mem_phys;
- 	ssize_t mem_size;
-@@ -43,11 +43,13 @@ static int zap_shader_load_mdt(struct device *dev, const char *fwname)
- 	if (!np)
- 		return -ENODEV;
+diff --git a/drivers/staging/mt7621-mmc/sd.c b/drivers/staging/mt7621-mmc/sd.c
+index 74f0e57ad2f15..38f9ea02ee3a9 100644
+--- a/drivers/staging/mt7621-mmc/sd.c
++++ b/drivers/staging/mt7621-mmc/sd.c
+@@ -596,8 +596,6 @@ static void msdc_dma_setup(struct msdc_host *host, struct msdc_dma *dma,
+ 	struct bd *bd;
+ 	u32 j;
  
--	np = of_parse_phandle(np, "memory-region", 0);
--	if (!np)
-+	mem_np = of_parse_phandle(np, "memory-region", 0);
-+	of_node_put(np);
-+	if (!mem_np)
- 		return -EINVAL;
+-	BUG_ON(sglen > MAX_BD_NUM); /* not support currently */
+-
+ 	gpd = dma->gpd;
+ 	bd  = dma->bd;
  
--	ret = of_address_to_resource(np, 0, &r);
-+	ret = of_address_to_resource(mem_np, 0, &r);
-+	of_node_put(mem_np);
- 	if (ret)
- 		return ret;
+@@ -692,6 +690,13 @@ static int msdc_do_request(struct mmc_host *mmc, struct mmc_request *mrq)
+ 		data->sg_count = dma_map_sg(mmc_dev(mmc), data->sg,
+ 					    data->sg_len,
+ 					    mmc_get_dma_dir(data));
++
++		if (data->sg_count == 0) {
++			dev_err(mmc_dev(host->mmc), "failed to map DMA for transfer\n");
++			data->error = -ENOMEM;
++			goto done;
++		}
++
+ 		msdc_dma_setup(host, &host->dma, data->sg,
+ 			       data->sg_count);
  
 -- 
 2.20.1
