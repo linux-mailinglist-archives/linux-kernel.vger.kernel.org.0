@@ -2,93 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C56E82FDCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 16:31:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 395972FDD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 16:31:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726724AbfE3ObP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 10:31:15 -0400
-Received: from mta-01.yadro.com ([89.207.88.251]:38722 "EHLO mta-01.yadro.com"
+        id S1727029AbfE3Ob3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 10:31:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725440AbfE3ObO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 10:31:14 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mta-01.yadro.com (Postfix) with ESMTP id 5961841940;
-        Thu, 30 May 2019 14:31:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=yadro.com; h=
-        user-agent:in-reply-to:content-disposition:content-type
-        :content-type:mime-version:references:message-id:subject:subject
-        :from:from:date:date:received:received:received; s=mta-01; t=
-        1559226671; x=1561041072; bh=ll2giGFTqdDyHGvuSZXxwLYSy7dMxwuDVbi
-        8AS6xgSU=; b=h4FQU1TZ0qR2HRm11GdsDSjcxYXyDxtp/xyoeLUEsg+6l7Zxg5N
-        3hzcCv84UlhtjFD8Il3csewASMx3KPl4YIFt82l8GPnURaNH6B0pxpt3mp4465K/
-        6s4jDtpWP4TUL1vs227Bm4SGtFiafIE3w5nYKk05SQSsTq0IpJJynxp4=
-X-Virus-Scanned: amavisd-new at yadro.com
-Received: from mta-01.yadro.com ([127.0.0.1])
-        by localhost (mta-01.yadro.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id HUOE-xr00LJ2; Thu, 30 May 2019 17:31:11 +0300 (MSK)
-Received: from T-EXCH-02.corp.yadro.com (t-exch-02.corp.yadro.com [172.17.10.102])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        id S1726640AbfE3Ob2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 10:31:28 -0400
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mta-01.yadro.com (Postfix) with ESMTPS id E129B418F9;
-        Thu, 30 May 2019 17:31:10 +0300 (MSK)
-Received: from localhost (172.17.14.115) by T-EXCH-02.corp.yadro.com
- (172.17.10.102) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id 15.1.669.32; Thu, 30
- May 2019 17:31:10 +0300
-Date:   Thu, 30 May 2019 17:31:10 +0300
-From:   "Alexander A. Filippov" <a.filippov@yadro.com>
-To:     Joel Stanley <joel@jms.id.au>
-CC:     Alexander Filippov <a.filippov@yadro.com>,
-        <linux-aspeed@lists.ozlabs.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH] ARM: dts: aspeed: Add YADRO VESNIN BMC
-Message-ID: <20190530143110.GA24059@bbwork.lan>
-References: <20190530093948.12479-1-a.filippov@yadro.com>
- <CACPK8XfG7j4Z2bqX9CFxUeUrpx708Uqbh-5ts9W5SnDfDw-xYA@mail.gmail.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id F36F825AF8
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 14:31:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559226688;
+        bh=t9FNMyuHdKiRj7lNbCFjHjSQ+ossF6GJx2uNN/K/Nqk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=TanxQO2eHs1jPHFF+ujiL9pPGiOw95ZuR5Jw7GbGZDBmPGvKg79QrhOPYwjJpAmng
+         PtMth2Fx9PdPORT4hPl2E7d5uXJgqsrnQ7hrg1bYALSH368KM2xJ2LQojfMc+xL+DP
+         Wo16AAsUzlwoqhqdLm8zOLdmPi4jeJYk2N2rmrXs=
+Received: by mail-wm1-f42.google.com with SMTP id u78so4115685wmu.5
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 07:31:27 -0700 (PDT)
+X-Gm-Message-State: APjAAAWNrehOtFVTrPf0/r2c3LVyHmpBqnonzTXlfiyUt5HVoOwOVTu9
+        Qn0i8U0IrbM4M4SYz3AFau/rqId40zoQiBud+6WCGg==
+X-Google-Smtp-Source: APXvYqwORgGGojbciIM4fBZHz5YhRKo/2ULQ4NI80rS2FJvcS6cz6SrRTtIjmZI7sCvf88uhtvJhxWljXytA/bz2Lfc=
+X-Received: by 2002:a7b:c450:: with SMTP id l16mr2110219wmi.0.1559226686610;
+ Thu, 30 May 2019 07:31:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <CACPK8XfG7j4Z2bqX9CFxUeUrpx708Uqbh-5ts9W5SnDfDw-xYA@mail.gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Originating-IP: [172.17.14.115]
-X-ClientProxiedBy: T-EXCH-01.corp.yadro.com (172.17.10.101) To
- T-EXCH-02.corp.yadro.com (172.17.10.102)
+References: <20190524175458.GB365@linux.intel.com> <960B34DE67B9E140824F1DCDEC400C0F654E8E1D@ORSMSX116.amr.corp.intel.com>
+ <CALCETrUw5sEr-MHPMU4CzEzkrejDs-JOThHB9Buhoxo5-rdpRw@mail.gmail.com>
+ <20190524200333.GF365@linux.intel.com> <CALCETrUyAAhnQ+RUeN1L41TKj-vcD2CNt-FJ9siO=Zo6gvH1Aw@mail.gmail.com>
+ <20190524224107.GJ365@linux.intel.com> <683B5E3D-AFB6-4B45-8D39-B00847312209@amacapital.net>
+ <960B34DE67B9E140824F1DCDEC400C0F654E965F@ORSMSX116.amr.corp.intel.com>
+ <CALCETrXXVMutX8eZk6nnkOAeS+Tj0sQd0FkW+wk6Rx8hQxCe6w@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F654E9824@ORSMSX116.amr.corp.intel.com>
+ <20190528202407.GB13158@linux.intel.com> <285f279f-b500-27f0-ab42-fb1dbcc5ab18@tycho.nsa.gov>
+ <960B34DE67B9E140824F1DCDEC400C0F654EB487@ORSMSX116.amr.corp.intel.com> <678a37af-797d-7bd5-a406-32548a270e3d@tycho.nsa.gov>
+In-Reply-To: <678a37af-797d-7bd5-a406-32548a270e3d@tycho.nsa.gov>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 30 May 2019 07:31:14 -0700
+X-Gmail-Original-Message-ID: <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com>
+Message-ID: <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        William Roberts <bill.c.roberts@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 02:16:59PM +0000, Joel Stanley wrote:
-> On Thu, 30 May 2019 at 09:40, Alexander Filippov <a.filippov@yadro.com> wrote:
-> > @@ -0,0 +1,262 @@
-> 
-> Can we get a SDPX license string at the top of the file? Something like this:
-> 
-> // SPDX-License-Identifier: GPL-2.0+
-> // Copyright 2019 <copyright holder>
+Hi all-
 
-Sure, on my way.
+After an offline discussion with Sean yesterday, here are some updates
+to the user API parts of my proposal.
 
-> 
-> > +/dts-v1/;
-> > +
-> > +#include "aspeed-g4.dtsi"
-> > +#include <dt-bindings/gpio/aspeed-gpio.h>
-> > +
-> 
-> > +&i2c3 {
-> > +       status = "okay";
-> > +       cpr2021@59 {
-> > +               #address-cells = <1>;
-> > +               #size-cells = <0>;
-> > +               compatible = "general,cpr2021", "general,pmbus";
-> 
-> Do you have a driver for this one you plan on submitting?
+Unfortunately, Sean convinced me that MAXPERM doesn't work the way I
+described it because, for SGX2, the enclave loader won't know at load
+time whether a given EAUG-ed page will ever be executed.  So here's an
+update.
 
-Yes, we plan but not right now. I remove it now and it will be added when the
-driver will be ready.
+First, here are the requrements as I see them, where EXECUTE, EXECMOD,
+and EXECMEM could be substituted with other rules at the LSM's
+discretion:
+
+ - You can create a WX or RWX mapping if and only if you have EXECMEM.
+
+ - To create an X mapping of an enclave page that has ever been W, you
+need EXECMOD.
+
+ - To create an X mapping of an enclave page that came from EADD, you
+need EXECUTE on the source file.  Optionally, we could also permit
+this if you have EXECMOD.
+
+And I have two design proposals.  One is static and one is dynamic.
+To implement either one, we will probably need a new .may_mprotect vm
+operation, and that operation can call an LSM hook.  Or we can give
+LSMs a way to detect that a given vm_area_struct is an enclave.  As I
+see it, this is an implementation detail that is certainly solveable.
+
+
+Static proposal:
+
+
+EADD takes an execute_intent flag.  It calls a new hook:
+
+  int security_enclave_load(struct vm_area_struct *source, bool execute_intent);
+
+This hook will fail if execute_intent==true and the caller has neither
+EXECUTE, EXECMOD, nor EXECMEM.
+
+EAUG sets execute_intent = false.
+
+EINIT takes a sigstruct pointer.  SGX can (when initially upstreamed
+or later on once there's demand) call a new hook:
+
+  security_enclave_init(struct sigstruct *sigstruct, struct
+vm_area_struct *source);
+
+mmap() and mprotect() will require EXECMEM to create WX or RWX
+mappings.  They will require EXECMOD to create RX or X mappings of an
+execute_intent==false page.  They require no permissions in the other
+cases.
+
+
+Dynamic proposal:
+
+
+EADD does not take any special flags.  It does something like this internally:
+
+  bool execute_intent = true;
+  int security_enclave_load(struct vm_area_struct *source, bool
+*execute_intent);
+
+The implementation of security_enclave_load() may set *execute_intent to false.
+The driver records execute_intent after the LSM is done.
+
+mmap() and mprotect() will require EXECMEM to create WX or RWX
+mappings.  They will require EXECMOD to create RX or X mappings of an
+execute_intent==false page.  They require no permissions in the other
+cases.
+
+
+
+A benefit of the static proposal is that audit failures due to a lack
+of EXECUTE permission are easy to implement and to understand in the
+lods.  With the dynamic model, we can only really audit the lack of
+EXECMOD or EXECMEM.  A benefit of the dynamic model is that we hide
+what is arguably a decently large wart from the API.
