@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DFE12F3CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:33:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCA6E2EB5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:12:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388355AbfE3EcW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:32:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59570 "EHLO mail.kernel.org"
+        id S1728873AbfE3DMM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:12:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729540AbfE3DNj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:13:39 -0400
+        id S1727527AbfE3DKo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:10:44 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 409732455A;
-        Thu, 30 May 2019 03:13:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A1F72446F;
+        Thu, 30 May 2019 03:10:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186019;
-        bh=3Elnot2lwNaYAlunu3Em5A3sFbosURBUBeaxd2sUk6Y=;
+        s=default; t=1559185843;
+        bh=pSUQnucCOoSzDo30fSSjKP1yVxrjhTptEikjzOJhmRg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fXa7buRwQ6onAZ5nZfoL3+EP3M0Gt2G0I9XAkY1VW6DVXad9ugw+hqT7RsucULXDu
-         gPSaNOygHU8mKcmlcQa+cIne0dPy63bAuHJMkW8nn9qHeq3yv5nt3eKoMg4On9RHdg
-         tmTS/iM53a6RHXa/3U/iSZLsoDfq9EOclr8Il7Gc=
+        b=Q2kpuaCLZ+jCYdGR1Qdz5l60xKp+5Ge9iRgbuKzrqMrKzmynfXHP/UC6p6Z0Hr/wl
+         7tpzYw03L7I3Eh1V7Z8BP/wB+kN5X2k1VEtkFU+hWENrrVjQFu7xg8v0CQmSxVfrmk
+         6OBWCzJPc28sEsZtWjaeySYPgh+mwK/stNTwtOXw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        Robbie Ko <robbieko@synology.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Keith Busch <keith.busch@intel.com>, Jan Kara <jack@suse.cz>,
+        Yufen Yu <yuyufen@huawei.com>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 087/346] Btrfs: fix data bytes_may_use underflow with fallocate due to failed quota reserve
+Subject: [PATCH 5.1 162/405] block: fix use-after-free on gendisk
 Date:   Wed, 29 May 2019 20:02:40 -0700
-Message-Id: <20190530030545.573891276@linuxfoundation.org>
+Message-Id: <20190530030549.335154421@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,57 +46,131 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 39ad317315887c2cb9a4347a93a8859326ddf136 ]
+[ Upstream commit 2c88e3c7ec32d7a40cc7c9b4a487cf90e4671bdd ]
 
-When doing fallocate, we first add the range to the reserve_list and
-then reserve the quota.  If quota reservation fails, we'll release all
-reserved parts of reserve_list.
+commit 2da78092dda "block: Fix dev_t minor allocation lifetime"
+specifically moved blk_free_devt(dev->devt) call to part_release()
+to avoid reallocating device number before the device is fully
+shutdown.
 
-However, cur_offset is not updated to indicate that this range is
-already been inserted into the list.  Therefore, the same range is freed
-twice.  Once at list_for_each_entry loop, and once at the end of the
-function.  This will result in WARN_ON on bytes_may_use when we free the
-remaining space.
+However, it can cause use-after-free on gendisk in get_gendisk().
+We use md device as example to show the race scenes:
 
-At the end, under the 'out' label we have a call to:
+Process1		Worker			Process2
+md_free
+						blkdev_open
+del_gendisk
+  add delete_partition_work_fn() to wq
+  						__blkdev_get
+						get_gendisk
+put_disk
+  disk_release
+    kfree(disk)
+    						find part from ext_devt_idr
+						get_disk_and_module(disk)
+    					  	cause use after free
 
-   btrfs_free_reserved_data_space(inode, data_reserved, alloc_start, alloc_end - cur_offset);
+    			delete_partition_work_fn
+			put_device(part)
+    		  	part_release
+		    	remove part from ext_devt_idr
 
-The start offset, third argument, should be cur_offset.
+Before <devt, hd_struct pointer> is removed from ext_devt_idr by
+delete_partition_work_fn(), we can find the devt and then access
+gendisk by hd_struct pointer. But, if we access the gendisk after
+it have been freed, it can cause in use-after-freeon gendisk in
+get_gendisk().
 
-Everything from alloc_start to cur_offset was freed by the
-list_for_each_entry_safe_loop.
+We fix this by adding a new helper blk_invalidate_devt() in
+delete_partition() and del_gendisk(). It replaces hd_struct
+pointer in idr with value 'NULL', and deletes the entry from
+idr in part_release() as we do now.
 
-Fixes: 18513091af94 ("btrfs: update btrfs_space_info's bytes_may_use timely")
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Robbie Ko <robbieko@synology.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Thanks to Jan Kara for providing the solution and more clear comments
+for the code.
+
+Fixes: 2da78092dda1 ("block: Fix dev_t minor allocation lifetime")
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Reviewed-by: Keith Busch <keith.busch@intel.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Suggested-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Yufen Yu <yuyufen@huawei.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/file.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ block/genhd.c             | 19 +++++++++++++++++++
+ block/partition-generic.c |  7 +++++++
+ include/linux/genhd.h     |  1 +
+ 3 files changed, 27 insertions(+)
 
-diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-index 5681c667a098f..7f082b019766c 100644
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -3142,6 +3142,7 @@ static long btrfs_fallocate(struct file *file, int mode,
- 			ret = btrfs_qgroup_reserve_data(inode, &data_reserved,
- 					cur_offset, last_byte - cur_offset);
- 			if (ret < 0) {
-+				cur_offset = last_byte;
- 				free_extent_map(em);
- 				break;
- 			}
-@@ -3191,7 +3192,7 @@ static long btrfs_fallocate(struct file *file, int mode,
- 	/* Let go of our reservation. */
- 	if (ret != 0 && !(mode & FALLOC_FL_ZERO_RANGE))
- 		btrfs_free_reserved_data_space(inode, data_reserved,
--				alloc_start, alloc_end - cur_offset);
-+				cur_offset, alloc_end - cur_offset);
- 	extent_changeset_free(data_reserved);
- 	return ret;
+diff --git a/block/genhd.c b/block/genhd.c
+index 703267865f14d..d8dff0b21f7d1 100644
+--- a/block/genhd.c
++++ b/block/genhd.c
+@@ -531,6 +531,18 @@ void blk_free_devt(dev_t devt)
+ 	}
  }
+ 
++/**
++ *	We invalidate devt by assigning NULL pointer for devt in idr.
++ */
++void blk_invalidate_devt(dev_t devt)
++{
++	if (MAJOR(devt) == BLOCK_EXT_MAJOR) {
++		spin_lock_bh(&ext_devt_lock);
++		idr_replace(&ext_devt_idr, NULL, blk_mangle_minor(MINOR(devt)));
++		spin_unlock_bh(&ext_devt_lock);
++	}
++}
++
+ static char *bdevt_str(dev_t devt, char *buf)
+ {
+ 	if (MAJOR(devt) <= 0xff && MINOR(devt) <= 0xff) {
+@@ -793,6 +805,13 @@ void del_gendisk(struct gendisk *disk)
+ 
+ 	if (!(disk->flags & GENHD_FL_HIDDEN))
+ 		blk_unregister_region(disk_devt(disk), disk->minors);
++	/*
++	 * Remove gendisk pointer from idr so that it cannot be looked up
++	 * while RCU period before freeing gendisk is running to prevent
++	 * use-after-free issues. Note that the device number stays
++	 * "in-use" until we really free the gendisk.
++	 */
++	blk_invalidate_devt(disk_devt(disk));
+ 
+ 	kobject_put(disk->part0.holder_dir);
+ 	kobject_put(disk->slave_dir);
+diff --git a/block/partition-generic.c b/block/partition-generic.c
+index 8e596a8dff321..aee643ce13d15 100644
+--- a/block/partition-generic.c
++++ b/block/partition-generic.c
+@@ -285,6 +285,13 @@ void delete_partition(struct gendisk *disk, int partno)
+ 	kobject_put(part->holder_dir);
+ 	device_del(part_to_dev(part));
+ 
++	/*
++	 * Remove gendisk pointer from idr so that it cannot be looked up
++	 * while RCU period before freeing gendisk is running to prevent
++	 * use-after-free issues. Note that the device number stays
++	 * "in-use" until we really free the gendisk.
++	 */
++	blk_invalidate_devt(part_devt(part));
+ 	hd_struct_kill(part);
+ }
+ 
+diff --git a/include/linux/genhd.h b/include/linux/genhd.h
+index 06c0fd594097d..69db1affedb0b 100644
+--- a/include/linux/genhd.h
++++ b/include/linux/genhd.h
+@@ -610,6 +610,7 @@ struct unixware_disklabel {
+ 
+ extern int blk_alloc_devt(struct hd_struct *part, dev_t *devt);
+ extern void blk_free_devt(dev_t devt);
++extern void blk_invalidate_devt(dev_t devt);
+ extern dev_t blk_lookup_devt(const char *name, int partno);
+ extern char *disk_name (struct gendisk *hd, int partno, char *buf);
+ 
 -- 
 2.20.1
 
