@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDAB52F1F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:18:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A0082EB32
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:11:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729464AbfE3DPi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:15:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57286 "EHLO mail.kernel.org"
+        id S1728193AbfE3DKm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:10:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729327AbfE3DNE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:13:04 -0400
+        id S1727922AbfE3DKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:10:05 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2658C2452E;
-        Thu, 30 May 2019 03:13:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5DA1824485;
+        Thu, 30 May 2019 03:10:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185983;
-        bh=jRbH94i8EEbsYSk00/p/DOZAUYbkLLbNDdJOKu9f+1Y=;
+        s=default; t=1559185804;
+        bh=ttLh+ckpVc5RVPBST4JMsgoTePgU8TMjDpQTS1LxvbA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=an0VR1W3RnNzs24v/BkUGCwJT7g41lw2lqyeOD32zMa9QPKfXSjynwF/rMCaW1/6Z
-         R9kBeG2jXwzAJ2PXG4CULRdA+ELAsF3gZMYB2OtAx+21uIwnUvm1RnYaEPA1ONYMnu
-         KCM/WYt1gmJjRPE5Jph6juQSsyN978wYgpWpMNNM=
+        b=LumMgQ2lZi5l1S4UjJA7JT+PBGQ3fEg6k3JxY90Oy+3uonAZUOzcfaTlAx/EVfSv2
+         p31P3ud0n294rfvsuLGpJQrWL0g/pxbdWof33WZ/LCiwK564BQ1obO2fPm8Ca6PVvX
+         ZE8CtmuzrbcRKDOo5hWldStqq84DQ/o1iMw8h0i0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.0 008/346] crypto: hash - fix incorrect HASH_MAX_DESCSIZE
-Date:   Wed, 29 May 2019 20:01:21 -0700
-Message-Id: <20190530030540.906315583@linuxfoundation.org>
+        stable@vger.kernel.org, Fabien Dessenne <fabien.dessenne@st.com>,
+        Hugues Fruchet <hugues.fruchet@st.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 084/405] media: stm32-dcmi: return appropriate error codes during probe
+Date:   Wed, 29 May 2019 20:01:22 -0700
+Message-Id: <20190530030545.269740596@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,102 +46,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+[ Upstream commit b5b5a27bee5884860798ffd0f08e611a3942064b ]
 
-commit e1354400b25da645c4764ed6844d12f1582c3b66 upstream.
+During probe, return the provided errors value instead of -ENODEV.
+This allows the driver to be deferred probed if needed.
 
-The "hmac(sha3-224-generic)" algorithm has a descsize of 368 bytes,
-which is greater than HASH_MAX_DESCSIZE (360) which is only enough for
-sha3-224-generic.  The check in shash_prepare_alg() doesn't catch this
-because the HMAC template doesn't set descsize on the algorithms, but
-rather sets it on each individual HMAC transform.
-
-This causes a stack buffer overflow when SHASH_DESC_ON_STACK() is used
-with hmac(sha3-224-generic).
-
-Fix it by increasing HASH_MAX_DESCSIZE to the real maximum.  Also add a
-sanity check to hmac_init().
-
-This was detected by the improved crypto self-tests in v5.2, by loading
-the tcrypt module with CONFIG_CRYPTO_MANAGER_EXTRA_TESTS=y enabled.  I
-didn't notice this bug when I ran the self-tests by requesting the
-algorithms via AF_ALG (i.e., not using tcrypt), probably because the
-stack layout differs in the two cases and that made a difference here.
-
-KASAN report:
-
-    BUG: KASAN: stack-out-of-bounds in memcpy include/linux/string.h:359 [inline]
-    BUG: KASAN: stack-out-of-bounds in shash_default_import+0x52/0x80 crypto/shash.c:223
-    Write of size 360 at addr ffff8880651defc8 by task insmod/3689
-
-    CPU: 2 PID: 3689 Comm: insmod Tainted: G            E     5.1.0-10741-g35c99ffa20edd #11
-    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-    Call Trace:
-     __dump_stack lib/dump_stack.c:77 [inline]
-     dump_stack+0x86/0xc5 lib/dump_stack.c:113
-     print_address_description+0x7f/0x260 mm/kasan/report.c:188
-     __kasan_report+0x144/0x187 mm/kasan/report.c:317
-     kasan_report+0x12/0x20 mm/kasan/common.c:614
-     check_memory_region_inline mm/kasan/generic.c:185 [inline]
-     check_memory_region+0x137/0x190 mm/kasan/generic.c:191
-     memcpy+0x37/0x50 mm/kasan/common.c:125
-     memcpy include/linux/string.h:359 [inline]
-     shash_default_import+0x52/0x80 crypto/shash.c:223
-     crypto_shash_import include/crypto/hash.h:880 [inline]
-     hmac_import+0x184/0x240 crypto/hmac.c:102
-     hmac_init+0x96/0xc0 crypto/hmac.c:107
-     crypto_shash_init include/crypto/hash.h:902 [inline]
-     shash_digest_unaligned+0x9f/0xf0 crypto/shash.c:194
-     crypto_shash_digest+0xe9/0x1b0 crypto/shash.c:211
-     generate_random_hash_testvec.constprop.11+0x1ec/0x5b0 crypto/testmgr.c:1331
-     test_hash_vs_generic_impl+0x3f7/0x5c0 crypto/testmgr.c:1420
-     __alg_test_hash+0x26d/0x340 crypto/testmgr.c:1502
-     alg_test_hash+0x22e/0x330 crypto/testmgr.c:1552
-     alg_test.part.7+0x132/0x610 crypto/testmgr.c:4931
-     alg_test+0x1f/0x40 crypto/testmgr.c:4952
-
-Fixes: b68a7ec1e9a3 ("crypto: hash - Remove VLA usage")
-Reported-by: Corentin Labbe <clabbe.montjoie@gmail.com>
-Cc: <stable@vger.kernel.org> # v4.20+
-Cc: Kees Cook <keescook@chromium.org>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Tested-by: Corentin Labbe <clabbe.montjoie@gmail.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+Acked-by: Hugues Fruchet <hugues.fruchet@st.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/hmac.c         |    2 ++
- include/crypto/hash.h |    8 +++++++-
- 2 files changed, 9 insertions(+), 1 deletion(-)
+ drivers/media/platform/stm32/stm32-dcmi.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
---- a/crypto/hmac.c
-+++ b/crypto/hmac.c
-@@ -168,6 +168,8 @@ static int hmac_init_tfm(struct crypto_t
+diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
+index 5fe5b38fa901d..a1f0801081ba9 100644
+--- a/drivers/media/platform/stm32/stm32-dcmi.c
++++ b/drivers/media/platform/stm32/stm32-dcmi.c
+@@ -1645,7 +1645,7 @@ static int dcmi_probe(struct platform_device *pdev)
+ 	dcmi->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+ 	if (IS_ERR(dcmi->rstc)) {
+ 		dev_err(&pdev->dev, "Could not get reset control\n");
+-		return -ENODEV;
++		return PTR_ERR(dcmi->rstc);
+ 	}
  
- 	parent->descsize = sizeof(struct shash_desc) +
- 			   crypto_shash_descsize(hash);
-+	if (WARN_ON(parent->descsize > HASH_MAX_DESCSIZE))
-+		return -EINVAL;
+ 	/* Get bus characteristics from devicetree */
+@@ -1660,7 +1660,7 @@ static int dcmi_probe(struct platform_device *pdev)
+ 	of_node_put(np);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Could not parse the endpoint\n");
+-		return -ENODEV;
++		return ret;
+ 	}
  
- 	ctx->hash = hash;
- 	return 0;
---- a/include/crypto/hash.h
-+++ b/include/crypto/hash.h
-@@ -152,7 +152,13 @@ struct shash_desc {
- };
+ 	if (ep.bus_type == V4L2_MBUS_CSI2_DPHY) {
+@@ -1673,8 +1673,9 @@ static int dcmi_probe(struct platform_device *pdev)
  
- #define HASH_MAX_DIGESTSIZE	 64
--#define HASH_MAX_DESCSIZE	360
-+
-+/*
-+ * Worst case is hmac(sha3-224-generic).  Its context is a nested 'shash_desc'
-+ * containing a 'struct sha3_state'.
-+ */
-+#define HASH_MAX_DESCSIZE	(sizeof(struct shash_desc) + 360)
-+
- #define HASH_MAX_STATESIZE	512
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq <= 0) {
+-		dev_err(&pdev->dev, "Could not get irq\n");
+-		return -ENODEV;
++		if (irq != -EPROBE_DEFER)
++			dev_err(&pdev->dev, "Could not get irq\n");
++		return irq;
+ 	}
  
- #define SHASH_DESC_ON_STACK(shash, ctx)				  \
+ 	dcmi->res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -1694,12 +1695,13 @@ static int dcmi_probe(struct platform_device *pdev)
+ 					dev_name(&pdev->dev), dcmi);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Unable to request irq %d\n", irq);
+-		return -ENODEV;
++		return ret;
+ 	}
+ 
+ 	mclk = devm_clk_get(&pdev->dev, "mclk");
+ 	if (IS_ERR(mclk)) {
+-		dev_err(&pdev->dev, "Unable to get mclk\n");
++		if (PTR_ERR(mclk) != -EPROBE_DEFER)
++			dev_err(&pdev->dev, "Unable to get mclk\n");
+ 		return PTR_ERR(mclk);
+ 	}
+ 
+-- 
+2.20.1
+
 
 
