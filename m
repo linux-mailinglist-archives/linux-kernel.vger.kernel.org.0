@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAD1C2ECA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:24:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCD9F2EF4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:54:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731166AbfE3DYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:24:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48276 "EHLO mail.kernel.org"
+        id S2387856AbfE3DyX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:54:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731248AbfE3DRr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:17:47 -0400
+        id S1731867AbfE3DTV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:19:21 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B015246F4;
-        Thu, 30 May 2019 03:17:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D064424858;
+        Thu, 30 May 2019 03:19:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186267;
-        bh=uaRMoL5wlZ6kDLSuDyHVPV2xn/4AO4FX8g0HIPN9Oco=;
+        s=default; t=1559186360;
+        bh=UsriQawRmItfQgDQoCaAAj1BgkXuglOS8wvbCwk4fBY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Govy9GKyA8CXpPM+VZ6GKrZzgUWw4ZG86RwOG4xAO9Hf+AprTGxKXQMgJKz7/rn33
-         SYVYnoFnHZM4dCAHP06h8x1ol3IDYxpfZwp314ySWgJgGRiG9BRwRYJA+3BBreXoHR
-         HrubZO7VRqJM5SndFJb+DKag8o9YlkM9vvGgUoXI=
+        b=rhoZgpqWUu+ML35mNdqc8KGx3mxhbBPIHXTYzi4p3ROWi6do+EHrtWLq7vrk3jkyp
+         OvZrKAYdATb1HTUNk40KdoVYSF7RnD5eKbrv4N4bDIo/63OgidLJcILvek024pUUM8
+         SxjPGt7XMMfm9dM9zkLEGNRZNfF3Zb2fxDdSLXBA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        =?UTF-8?q?Yannick=20Fertr=C3=A9?= <yannick.fertre@st.com>,
-        Philippe Cornu <philippe.cornu@st.com>,
-        Thierry Reding <treding@nvidia.com>,
+        Adam Ludkiewicz <adam.ludkiewicz@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 203/276] drm/panel: otm8009a: Add delay at the end of initialization
+Subject: [PATCH 4.14 107/193] i40e: Able to add up to 16 MAC filters on an untrusted VF
 Date:   Wed, 29 May 2019 20:06:01 -0700
-Message-Id: <20190530030537.820652297@linuxfoundation.org>
+Message-Id: <20190530030503.706926174@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,36 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 0084c3c71126fc878c6dab8a6ab8ecc484c2be02 ]
+[ Upstream commit 06b6e2a2333eb3581567a7ac43ca465ef45f4daa ]
 
-At the end of initialization, a delay is required by the panel. Without
-this delay, the panel could received a frame early & generate a crash of
-panel (black screen).
+This patch fixes the problem with the driver being able to add only 7
+multicast MAC address filters instead of 16. The problem is fixed by
+changing the maximum number of MAC address filters to 16+1+1 (two extra
+are needed because the driver uses 1 for unicast MAC address and 1 for
+broadcast).
 
-Signed-off-by: Yannick Fertré <yannick.fertre@st.com>
-Reviewed-by: Philippe Cornu <philippe.cornu@st.com>
-Tested-by: Philippe Cornu <philippe.cornu@st.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1553155445-13407-1-git-send-email-yannick.fertre@st.com
+Signed-off-by: Adam Ludkiewicz <adam.ludkiewicz@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/panel/panel-orisetech-otm8009a.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c b/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
-index 87fa316e1d7b0..58ccf648b70fb 100644
---- a/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
-+++ b/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
-@@ -248,6 +248,9 @@ static int otm8009a_init_sequence(struct otm8009a *ctx)
- 	/* Send Command GRAM memory write (no parameters) */
- 	dcs_write_seq(ctx, MIPI_DCS_WRITE_MEMORY_START);
- 
-+	/* Wait a short while to let the panel be ready before the 1st frame */
-+	mdelay(10);
-+
- 	return 0;
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+index 4a85a24ced1c8..bdb7523216000 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+@@ -2029,8 +2029,10 @@ static int i40e_vc_get_stats_msg(struct i40e_vf *vf, u8 *msg, u16 msglen)
+ 				      (u8 *)&stats, sizeof(stats));
  }
  
+-/* If the VF is not trusted restrict the number of MAC/VLAN it can program */
+-#define I40E_VC_MAX_MAC_ADDR_PER_VF 12
++/* If the VF is not trusted restrict the number of MAC/VLAN it can program
++ * MAC filters: 16 for multicast, 1 for MAC, 1 for broadcast
++ */
++#define I40E_VC_MAX_MAC_ADDR_PER_VF (16 + 1 + 1)
+ #define I40E_VC_MAX_VLAN_PER_VF 8
+ 
+ /**
 -- 
 2.20.1
 
