@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8E7A2F32E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:27:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0A012ED87
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:40:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388028AbfE3E1E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:27:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34232 "EHLO mail.kernel.org"
+        id S1732800AbfE3DWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:22:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729042AbfE3DOZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:14:25 -0400
+        id S1730779AbfE3DQn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:16:43 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CABF32455C;
-        Thu, 30 May 2019 03:14:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 366AA24624;
+        Thu, 30 May 2019 03:16:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186063;
-        bh=eh6h31HQ7VhWfJe/YCSWiRRtJiJ7KBMSnVVSP8weWXQ=;
+        s=default; t=1559186203;
+        bh=PXyNiBVDngqp8kmfxOJ/7Q+LgxW2Mff6MtqJg3Du+ZU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nDRVdjeG0OW536CF1NFhSpJX0c4wS759DmYuW3ArzF3Pyun6JuQLO2W0cf28ocMq2
-         G+z+y3GY2Nnfq9tXOazlu85XBrLql5kvy1/UKz2eOFLt+QrypXXcV1zn9MCMa3S+HX
-         pu/S8JsQZcVk2m+xXMQ6uPaiXGgyjqU4ENGCXOiI=
+        b=LNCeYOX5UZfail6Wbsl0gw3dslm7PInh2+xnLckNoujoQ7OwaZiIu3Dgk1Nd8pqM1
+         mjRKfWH9OMk0CNyqX8keHYAhGZwzyDtM0TLmEHGaGpcYVhIlN/h4C0LPgGRmEJeLPO
+         Z1TMCpjynESecksrCXwcxCqUUqaktN+h6xyDBy+k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 173/346] ACPI/IORT: Reject platform device creation on NUMA node mapping failure
+        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 088/276] sched/nohz: Run NOHZ idle load balancer on HK_FLAG_MISC CPUs
 Date:   Wed, 29 May 2019 20:04:06 -0700
-Message-Id: <20190530030549.924571487@linuxfoundation.org>
+Message-Id: <20190530030531.755189018@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,122 +47,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 36a2ba07757df790b4a874efb1a105b9330a9ae7 ]
+[ Upstream commit 9b019acb72e4b5741d88e8936d6f200ed44b66b2 ]
 
-In a system where, through IORT firmware mappings, the SMMU device is
-mapped to a NUMA node that is not online, the kernel bootstrap results
-in the following crash:
+The NOHZ idle balancer runs on the lowest idle CPU. This can
+interfere with isolated CPUs, so confine it to HK_FLAG_MISC
+housekeeping CPUs.
 
-  Unable to handle kernel paging request at virtual address 0000000000001388
-  Mem abort info:
-    ESR = 0x96000004
-    Exception class = DABT (current EL), IL = 32 bits
-    SET = 0, FnV = 0
-    EA = 0, S1PTW = 0
-  Data abort info:
-    ISV = 0, ISS = 0x00000004
-    CM = 0, WnR = 0
-  [0000000000001388] user address but active_mm is swapper
-  Internal error: Oops: 96000004 [#1] SMP
-  Modules linked in:
-  CPU: 5 PID: 1 Comm: swapper/0 Not tainted 5.0.0 #15
-  pstate: 80c00009 (Nzcv daif +PAN +UAO)
-  pc : __alloc_pages_nodemask+0x13c/0x1068
-  lr : __alloc_pages_nodemask+0xdc/0x1068
-  ...
-  Process swapper/0 (pid: 1, stack limit = 0x(____ptrval____))
-  Call trace:
-   __alloc_pages_nodemask+0x13c/0x1068
-   new_slab+0xec/0x570
-   ___slab_alloc+0x3e0/0x4f8
-   __slab_alloc+0x60/0x80
-   __kmalloc_node_track_caller+0x10c/0x478
-   devm_kmalloc+0x44/0xb0
-   pinctrl_bind_pins+0x4c/0x188
-   really_probe+0x78/0x2b8
-   driver_probe_device+0x64/0x110
-   device_driver_attach+0x74/0x98
-   __driver_attach+0x9c/0xe8
-   bus_for_each_dev+0x84/0xd8
-   driver_attach+0x30/0x40
-   bus_add_driver+0x170/0x218
-   driver_register+0x64/0x118
-   __platform_driver_register+0x54/0x60
-   arm_smmu_driver_init+0x24/0x2c
-   do_one_initcall+0xbc/0x328
-   kernel_init_freeable+0x304/0x3ac
-   kernel_init+0x18/0x110
-   ret_from_fork+0x10/0x1c
-  Code: f90013b5 b9410fa1 1a9f0694 b50014c2 (b9400804)
-  ---[ end trace dfeaed4c373a32da ]--
+HK_FLAG_SCHED is not used for this because it is not set anywhere
+at the moment. This could be folded into HK_FLAG_SCHED once that
+option is fixed.
 
-Change the dev_set_proximity() hook prototype so that it returns a
-value and make it return failure if the PXM->NUMA-node mapping
-corresponds to an offline node, fixing the crash.
+The problem was observed with increased jitter on an application
+running on CPU0, caused by NOHZ idle load balancing being run on
+CPU1 (an SMT sibling).
 
-Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-Link: https://lore.kernel.org/linux-arm-kernel/20190315021940.86905-1-wangkefeng.wang@huawei.com/
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20190412042613.28930-1-npiggin@gmail.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/arm64/iort.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ kernel/sched/fair.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-index e48894e002ba8..a46c2c162c03e 100644
---- a/drivers/acpi/arm64/iort.c
-+++ b/drivers/acpi/arm64/iort.c
-@@ -1232,18 +1232,24 @@ static bool __init arm_smmu_v3_is_coherent(struct acpi_iort_node *node)
- /*
-  * set numa proximity domain for smmuv3 device
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index d31916366d39c..7a1e9db617f76 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -9083,22 +9083,26 @@ static inline int on_null_domain(struct rq *rq)
+  * - When one of the busy CPUs notice that there may be an idle rebalancing
+  *   needed, they will kick the idle load balancer, which then does idle
+  *   load balancing for all the idle CPUs.
++ * - HK_FLAG_MISC CPUs are used for this task, because HK_FLAG_SCHED not set
++ *   anywhere yet.
   */
--static void  __init arm_smmu_v3_set_proximity(struct device *dev,
-+static int  __init arm_smmu_v3_set_proximity(struct device *dev,
- 					      struct acpi_iort_node *node)
+ 
+ static inline int find_new_ilb(void)
  {
- 	struct acpi_iort_smmu_v3 *smmu;
+-	int ilb = cpumask_first(nohz.idle_cpus_mask);
++	int ilb;
  
- 	smmu = (struct acpi_iort_smmu_v3 *)node->node_data;
- 	if (smmu->flags & ACPI_IORT_SMMU_V3_PXM_VALID) {
--		set_dev_node(dev, acpi_map_pxm_to_node(smmu->pxm));
-+		int node = acpi_map_pxm_to_node(smmu->pxm);
-+
-+		if (node != NUMA_NO_NODE && !node_online(node))
-+			return -EINVAL;
-+
-+		set_dev_node(dev, node);
- 		pr_info("SMMU-v3[%llx] Mapped to Proximity domain %d\n",
- 			smmu->base_address,
- 			smmu->pxm);
- 	}
-+	return 0;
- }
- #else
- #define arm_smmu_v3_set_proximity NULL
-@@ -1318,7 +1324,7 @@ struct iort_dev_config {
- 	int (*dev_count_resources)(struct acpi_iort_node *node);
- 	void (*dev_init_resources)(struct resource *res,
- 				     struct acpi_iort_node *node);
--	void (*dev_set_proximity)(struct device *dev,
-+	int (*dev_set_proximity)(struct device *dev,
- 				    struct acpi_iort_node *node);
- };
- 
-@@ -1369,8 +1375,11 @@ static int __init iort_add_platform_device(struct acpi_iort_node *node,
- 	if (!pdev)
- 		return -ENOMEM;
- 
--	if (ops->dev_set_proximity)
--		ops->dev_set_proximity(&pdev->dev, node);
-+	if (ops->dev_set_proximity) {
-+		ret = ops->dev_set_proximity(&pdev->dev, node);
-+		if (ret)
-+			goto dev_put;
+-	if (ilb < nr_cpu_ids && idle_cpu(ilb))
+-		return ilb;
++	for_each_cpu_and(ilb, nohz.idle_cpus_mask,
++			      housekeeping_cpumask(HK_FLAG_MISC)) {
++		if (idle_cpu(ilb))
++			return ilb;
 +	}
  
- 	count = ops->dev_count_resources(node);
+ 	return nr_cpu_ids;
+ }
  
+ /*
+- * Kick a CPU to do the nohz balancing, if it is time for it. We pick the
+- * nohz_load_balancer CPU (if there is one) otherwise fallback to any idle
+- * CPU (if there is one).
++ * Kick a CPU to do the nohz balancing, if it is time for it. We pick any
++ * idle CPU in the HK_FLAG_MISC housekeeping set (if there is one).
+  */
+ static void kick_ilb(unsigned int flags)
+ {
 -- 
 2.20.1
 
