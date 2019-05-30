@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C01AC2F041
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:03:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D46FF2F57C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:48:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728052AbfE3DSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:18:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33692 "EHLO mail.kernel.org"
+        id S2388778AbfE3Erf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:47:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728765AbfE3DOX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:14:23 -0400
+        id S1728569AbfE3DL3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:11:29 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 343FA2455A;
-        Thu, 30 May 2019 03:14:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9EDD6244A6;
+        Thu, 30 May 2019 03:11:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186063;
-        bh=x52xSQcRLnHEtP7iS+OxBtvzLr/KCfJjhMr/CA3AdOg=;
+        s=default; t=1559185888;
+        bh=9XcAquDnq3A8qk+QB5ZE/rDQDS1uopKAjm8S9gv+JfU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HnXxYUFl6DSALuys9FnsLdkQaCIQ3xh/nzhbDGXaR/l97o5yYDJ/pvhCFNrnSHMC4
-         00v1rWVU2s+yDNwuqZHDn8hQgkAzXanBUsC+a7TvU7mcqxG0g+kdxlulEYizMSjLvb
-         uH9rmJFybv1Hb57EvtvxnU5IDusF9aICE216ty3Y=
+        b=FiGTy+PcV1/UHRDp1XoPSfxtRHTH9nVPg6GAceGuhWOZhW4NC7dynZk3B51FkJ84w
+         aF2d1w6FEO9sMClqaNQvufESS9nA/Dcwz1t9HXhEVoWyRNNosnTgcCwODp4nh1CCJp
+         9mjfkrdAzMXfabCoxuzWFXA2njldUOwsej1Ev8Ng=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nicholas Nunley <nicholas.d.nunley@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 172/346] i40e: dont allow changes to HW VLAN stripping on active port VLANs
-Date:   Wed, 29 May 2019 20:04:05 -0700
-Message-Id: <20190530030549.873841495@linuxfoundation.org>
+Subject: [PATCH 5.1 248/405] mwifiex: Fix mem leak in mwifiex_tm_cmd
+Date:   Wed, 29 May 2019 20:04:06 -0700
+Message-Id: <20190530030553.542230260@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit bfb0ebed53857cfc57f11c63fa3689940d71c1c8 ]
+[ Upstream commit 003b686ace820ce2d635a83f10f2d7f9c147dabc ]
 
-Modifying the VLAN stripping options when a port VLAN is configured
-will break traffic for the VSI, and conceptually doesn't make sense,
-so don't allow this.
+'hostcmd' is alloced by kzalloc, should be freed before
+leaving from the error handling cases, otherwise it will
+cause mem leak.
 
-Signed-off-by: Nicholas Nunley <nicholas.d.nunley@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Fixes: 3935ccc14d2c ("mwifiex: add cfg80211 testmode support")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/i40e/i40e_main.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/net/wireless/marvell/mwifiex/cfg80211.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
-index e4ff531db14a9..3a3382613263e 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_main.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
-@@ -2654,6 +2654,10 @@ void i40e_vlan_stripping_enable(struct i40e_vsi *vsi)
- 	struct i40e_vsi_context ctxt;
- 	i40e_status ret;
+diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+index c46f0a54a0c76..e582d9b3e50c2 100644
+--- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
++++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+@@ -4082,16 +4082,20 @@ static int mwifiex_tm_cmd(struct wiphy *wiphy, struct wireless_dev *wdev,
  
-+	/* Don't modify stripping options if a port VLAN is active */
-+	if (vsi->info.pvid)
-+		return;
-+
- 	if ((vsi->info.valid_sections &
- 	     cpu_to_le16(I40E_AQ_VSI_PROP_VLAN_VALID)) &&
- 	    ((vsi->info.port_vlan_flags & I40E_AQ_VSI_PVLAN_MODE_MASK) == 0))
-@@ -2684,6 +2688,10 @@ void i40e_vlan_stripping_disable(struct i40e_vsi *vsi)
- 	struct i40e_vsi_context ctxt;
- 	i40e_status ret;
+ 		if (mwifiex_send_cmd(priv, 0, 0, 0, hostcmd, true)) {
+ 			dev_err(priv->adapter->dev, "Failed to process hostcmd\n");
++			kfree(hostcmd);
+ 			return -EFAULT;
+ 		}
  
-+	/* Don't modify stripping options if a port VLAN is active */
-+	if (vsi->info.pvid)
-+		return;
-+
- 	if ((vsi->info.valid_sections &
- 	     cpu_to_le16(I40E_AQ_VSI_PROP_VLAN_VALID)) &&
- 	    ((vsi->info.port_vlan_flags & I40E_AQ_VSI_PVLAN_EMOD_MASK) ==
+ 		/* process hostcmd response*/
+ 		skb = cfg80211_testmode_alloc_reply_skb(wiphy, hostcmd->len);
+-		if (!skb)
++		if (!skb) {
++			kfree(hostcmd);
+ 			return -ENOMEM;
++		}
+ 		err = nla_put(skb, MWIFIEX_TM_ATTR_DATA,
+ 			      hostcmd->len, hostcmd->cmd);
+ 		if (err) {
++			kfree(hostcmd);
+ 			kfree_skb(skb);
+ 			return -EMSGSIZE;
+ 		}
 -- 
 2.20.1
 
