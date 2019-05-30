@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 568332F3BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:33:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B670B2EDF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:43:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387764AbfE3Ebo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:31:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59634 "EHLO mail.kernel.org"
+        id S1732473AbfE3DVI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:21:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729559AbfE3DNn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:13:43 -0400
+        id S1727592AbfE3DQP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:16:15 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 54FE02455E;
-        Thu, 30 May 2019 03:13:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0CE7245DF;
+        Thu, 30 May 2019 03:16:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186023;
-        bh=0CbJ8rpWm3HT9n56a02/4rzdQVexT5uxY+2zHGbKtZc=;
+        s=default; t=1559186175;
+        bh=t6bx2D04IYoytuycVZr10En/w9fgx4z/f8hlVwcsreI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N7oQ4nq/4xlGoP344ipSxGbGlgygWp4PvBz0/37W5nqcml8Y6PGGSUlDJFx2vPUjl
-         yoQ/qojvISQtBb328Nk3HEh5d5o0+zf6YBynMb178AYbR7Y+DKggiJA5ptVTDG8euU
-         AbZUdRhacilhzY9JRD+8GmoN6iQkJiOeAEaWSgfU=
+        b=BIew0IZ6ecBvv5VYs+x4tFbKGz2bfNuWDJpCxQgQbdWsmGd2YCPjqScWOJKZAoEnh
+         CAk6CoGwC6isrgBUhnIF0nt1M/r/4UtdyRp0Mk7ZLST+1ddlA+4yIK+YMzT+f+jEBK
+         QMBUXjVBIV0d2qC2Cgs12X5/E0Ht9Tn0B4JxDmGU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Philipp Rudo <prudo@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 094/346] s390/kexec_file: Fix detection of text segment in ELF loader
+        stable@vger.kernel.org, Daniel Axtens <dja@axtens.net>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.19 009/276] crypto: vmx - CTR: always increment IV as quadword
 Date:   Wed, 29 May 2019 20:02:47 -0700
-Message-Id: <20190530030545.927308458@linuxfoundation.org>
+Message-Id: <20190530030524.161880676@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,53 +44,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 729829d775c9a5217abc784b2f16087d79c4eec8 ]
+From: Daniel Axtens <dja@axtens.net>
 
-To register data for the next kernel (command line, oldmem_base, etc.) the
-current kernel needs to find the ELF segment that contains head.S. This is
-currently done by checking ifor 'phdr->p_paddr == 0'. This works fine for
-the current kernel build but in theory the first few pages could be
-skipped. Make the detection more robust by checking if the entry point lies
-within the segment.
+commit 009b30ac7444c17fae34c4f435ebce8e8e2b3250 upstream.
 
-Signed-off-by: Philipp Rudo <prudo@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The kernel self-tests picked up an issue with CTR mode:
+alg: skcipher: p8_aes_ctr encryption test failed (wrong result) on test vector 3, cfg="uneven misaligned splits, may sleep"
+
+Test vector 3 has an IV of FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD, so
+after 3 increments it should wrap around to 0.
+
+In the aesp8-ppc code from OpenSSL, there are two paths that
+increment IVs: the bulk (8 at a time) path, and the individual
+path which is used when there are fewer than 8 AES blocks to
+process.
+
+In the bulk path, the IV is incremented with vadduqm: "Vector
+Add Unsigned Quadword Modulo", which does 128-bit addition.
+
+In the individual path, however, the IV is incremented with
+vadduwm: "Vector Add Unsigned Word Modulo", which instead
+does 4 32-bit additions. Thus the IV would instead become
+FFFFFFFFFFFFFFFFFFFFFFFF00000000, throwing off the result.
+
+Use vadduqm.
+
+This was probably a typo originally, what with q and w being
+adjacent. It is a pretty narrow edge case: I am really
+impressed by the quality of the kernel self-tests!
+
+Fixes: 5c380d623ed3 ("crypto: vmx - Add support for VMS instructions by ASM")
+Cc: stable@vger.kernel.org
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Acked-by: Nayna Jain <nayna@linux.ibm.com>
+Tested-by: Nayna Jain <nayna@linux.ibm.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/s390/kernel/kexec_elf.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/crypto/vmx/aesp8-ppc.pl |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/s390/kernel/kexec_elf.c b/arch/s390/kernel/kexec_elf.c
-index 5a286b012043b..602e7cc26d118 100644
---- a/arch/s390/kernel/kexec_elf.c
-+++ b/arch/s390/kernel/kexec_elf.c
-@@ -19,10 +19,15 @@ static int kexec_file_add_elf_kernel(struct kimage *image,
- 	struct kexec_buf buf;
- 	const Elf_Ehdr *ehdr;
- 	const Elf_Phdr *phdr;
-+	Elf_Addr entry;
- 	int i, ret;
+--- a/drivers/crypto/vmx/aesp8-ppc.pl
++++ b/drivers/crypto/vmx/aesp8-ppc.pl
+@@ -1357,7 +1357,7 @@ Loop_ctr32_enc:
+ 	addi		$idx,$idx,16
+ 	bdnz		Loop_ctr32_enc
  
- 	ehdr = (Elf_Ehdr *)kernel;
- 	buf.image = image;
-+	if (image->type == KEXEC_TYPE_CRASH)
-+		entry = STARTUP_KDUMP_OFFSET;
-+	else
-+		entry = ehdr->e_entry;
- 
- 	phdr = (void *)ehdr + ehdr->e_phoff;
- 	for (i = 0; i < ehdr->e_phnum; i++, phdr++) {
-@@ -35,7 +40,7 @@ static int kexec_file_add_elf_kernel(struct kimage *image,
- 		buf.mem = ALIGN(phdr->p_paddr, phdr->p_align);
- 		buf.memsz = phdr->p_memsz;
- 
--		if (phdr->p_paddr == 0) {
-+		if (entry - phdr->p_paddr < phdr->p_memsz) {
- 			data->kernel_buf = buf.buffer;
- 			data->memsz += STARTUP_NORMAL_OFFSET;
- 
--- 
-2.20.1
-
+-	vadduwm		$ivec,$ivec,$one
++	vadduqm		$ivec,$ivec,$one
+ 	 vmr		$dat,$inptail
+ 	 lvx		$inptail,0,$inp
+ 	 addi		$inp,$inp,16
 
 
