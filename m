@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FE822EBDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:16:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C03232EB4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:11:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730707AbfE3DQc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:16:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58290 "EHLO mail.kernel.org"
+        id S1728573AbfE3DL3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:11:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729413AbfE3DNV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:13:21 -0400
+        id S1728101AbfE3DK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:10:28 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10716244E8;
-        Thu, 30 May 2019 03:13:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F588244A6;
+        Thu, 30 May 2019 03:10:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186001;
-        bh=jxFEU4hEZfRWH8xSa6TsEgftBEFtYHFMd2kCHP1i7X8=;
+        s=default; t=1559185827;
+        bh=MebKhiyvJ7riAHzHPq/RqDHrA7XgxeH37Lqj5HQRhYU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nWDhIUCw902KJZZl4U48T5t9Rp9VNo6tUD9LsdDVJpW8mQNjb9u2nNol8x/ciufGN
-         XW98bS1vtgm0SMYrlVStSiyRU1mXliw+rOupSNcCK0L+rNQ0R5Ffa1JyFlyi72xb10
-         DGgtuCE2Z72p0SsTF2X/MCWx0AO2JsxlJHCd6Bao=
+        b=FAhFXAVjR+lfQ2JI+yC1j1zSimmTrwGQvzdDqGc5k3mBxvLXPKue/lKsDwQJMxjqb
+         7/URvMkc6d4qxjwIVXoP/jGWcvl4YqZy20FKGXI1o5/p+3Gek1xBC1dcA5HQEWkNMg
+         kXHyhadh1HNGXmaFRN4UYsnSiUwNk6Z+W4J3TGDU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Alexei Starovoitov <ast@kernel.org>,
+        stable@vger.kernel.org, Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 052/346] bpftool: exclude bash-completion/bpftool from .gitignore pattern
-Date:   Wed, 29 May 2019 20:02:05 -0700
-Message-Id: <20190530030543.558284058@linuxfoundation.org>
+Subject: [PATCH 5.1 128/405] crypto: sun4i-ss - Fix invalid calculation of hash end
+Date:   Wed, 29 May 2019 20:02:06 -0700
+Message-Id: <20190530030547.530195937@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,55 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a7d006714724de4334c5e3548701b33f7b12ca96 ]
+[ Upstream commit f87391558acf816b48f325a493d81d45dec40da0 ]
 
-tools/bpf/bpftool/.gitignore has the "bpftool" pattern, which is
-intended to ignore the following build artifact:
+When nbytes < 4, end is wronlgy set to a negative value which, due to
+uint, is then interpreted to a large value leading to a deadlock in the
+following code.
 
-  tools/bpf/bpftool/bpftool
+This patch fix this problem.
 
-However, the .gitignore entry is effective not only for the current
-directory, but also for any sub-directories.
-
-So, from the point of .gitignore grammar, the following check-in file
-is also considered to be ignored:
-
-  tools/bpf/bpftool/bash-completion/bpftool
-
-As the manual gitignore(5) says "Files already tracked by Git are not
-affected", this is not a problem as far as Git is concerned.
-
-However, Git is not the only program that parses .gitignore because
-.gitignore is useful to distinguish build artifacts from source files.
-
-For example, tar(1) supports the --exclude-vcs-ignore option. As of
-writing, this option does not work perfectly, but it intends to create
-a tarball excluding files specified by .gitignore.
-
-So, I believe it is better to fix this issue.
-
-You can fix it by prefixing the pattern with a slash; the leading slash
-means the specified pattern is relative to the current directory.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Reviewed-by: Quentin Monnet <quentin.monnet@netronome.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Fixes: 6298e948215f ("crypto: sunxi-ss - Add Allwinner Security System crypto accelerator")
+Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/bpf/bpftool/.gitignore | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/crypto/sunxi-ss/sun4i-ss-hash.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/tools/bpf/bpftool/.gitignore b/tools/bpf/bpftool/.gitignore
-index 67167e44b7266..8248b8dd89d4b 100644
---- a/tools/bpf/bpftool/.gitignore
-+++ b/tools/bpf/bpftool/.gitignore
-@@ -1,5 +1,5 @@
- *.d
--bpftool
-+/bpftool
- bpftool*.8
- bpf-helpers.*
- FEATURE-DUMP.bpftool
+diff --git a/drivers/crypto/sunxi-ss/sun4i-ss-hash.c b/drivers/crypto/sunxi-ss/sun4i-ss-hash.c
+index a4b5ff2b72f87..f6936bb3b7be4 100644
+--- a/drivers/crypto/sunxi-ss/sun4i-ss-hash.c
++++ b/drivers/crypto/sunxi-ss/sun4i-ss-hash.c
+@@ -240,7 +240,10 @@ static int sun4i_hash(struct ahash_request *areq)
+ 		}
+ 	} else {
+ 		/* Since we have the flag final, we can go up to modulo 4 */
+-		end = ((areq->nbytes + op->len) / 4) * 4 - op->len;
++		if (areq->nbytes < 4)
++			end = 0;
++		else
++			end = ((areq->nbytes + op->len) / 4) * 4 - op->len;
+ 	}
+ 
+ 	/* TODO if SGlen % 4 and !op->len then DMA */
 -- 
 2.20.1
 
