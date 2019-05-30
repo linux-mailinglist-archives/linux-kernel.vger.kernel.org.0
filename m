@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE73A2EC13
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:18:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12D512F569
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:47:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731460AbfE3DSL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:18:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34646 "EHLO mail.kernel.org"
+        id S2388606AbfE3ErL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:47:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729122AbfE3DO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:14:29 -0400
+        id S1728597AbfE3DLe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:11:34 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C22142456F;
-        Thu, 30 May 2019 03:14:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 866F8244D1;
+        Thu, 30 May 2019 03:11:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186068;
-        bh=CLNvXd+bHDw5o9XKvwpl1iSa3ZtiTufxn3+Q/WLnUZE=;
+        s=default; t=1559185893;
+        bh=pCUgabiJxyEEir2AOb6uigqyGlGTVW+KEemkN6+uvnE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lsQ5VPRBXA0cDO8oRyoQE31utg15tSt1JRoHAdDkEnuDY9CA4VmZr20KRxKSWg9/K
-         ciCmr5XaoTuSydhmY14RS0AFlQasbIssL1rT9DPFOPrrqtq04/tNv536D2vlJKcSc/
-         2bBWZeUAk02VLPbNgW/f9HDZC2qRjPz2NKcJqN5E=
+        b=fMESX/aLQgFEXc0bJJHw2wgLLL2dLVlUXUJwA+4/ctzW4dXWi6tj4CnpSbteKJmKT
+         WUvzZ2q1MseGgOeKg9HfMbdpA1fZTGkQB91qz4aVcvL/+cmTIu0EKJMotRWGFcC1/v
+         TMw3IWy6r56/Xdb0I4RwBQXSZWHPA+2pYOp6F3e8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kefeng Wang <wangkefeng.wang@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 181/346] hwmon: (smsc47m1) Use request_muxed_region for Super-IO accesses
+Subject: [PATCH 5.1 256/405] spi: Add missing error handling for CS GPIOs
 Date:   Wed, 29 May 2019 20:04:14 -0700
-Message-Id: <20190530030550.292927231@linuxfoundation.org>
+Message-Id: <20190530030553.929604019@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,91 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d6410408ad2a798c4cc685252c1baa713be0ad69 ]
+[ Upstream commit 1723fdec5fcbc4de3d26bbb23a9e1704ee258955 ]
 
-Super-IO accesses may fail on a system with no or unmapped LPC bus.
+While devm_gpiod_get_index_optional() returns NULL if the GPIO is not
+present (i.e. -ENOENT), it may still return other error codes, like
+-EPROBE_DEFER.  Currently these are not handled, leading to
+unrecoverable failures later in case of probe deferral:
 
-Also, other drivers may attempt to access the LPC bus at the same time,
-resulting in undefined behavior.
+    gpiod_set_consumer_name: invalid GPIO (errorpointer)
+    gpiod_direction_output: invalid GPIO (errorpointer)
+    gpiod_set_value_cansleep: invalid GPIO (errorpointer)
+    gpiod_set_value_cansleep: invalid GPIO (errorpointer)
+    gpiod_set_value_cansleep: invalid GPIO (errorpointer)
 
-Use request_muxed_region() to ensure that IO access on the requested
-address space is supported, and to ensure that access by multiple drivers
-is synchronized.
+Detect and propagate errors to fix this.
 
-Fixes: 8d5d45fb1468 ("I2C: Move hwmon drivers (2/3)")
-Reported-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-Reported-by: John Garry <john.garry@huawei.com>
-Cc: John Garry <john.garry@huawei.com>
-Acked-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Fixes: f3186dd876697e69 ("spi: Optionally use GPIO descriptors for CS GPIOs")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/smsc47m1.c | 28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
+ drivers/spi/spi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/hwmon/smsc47m1.c b/drivers/hwmon/smsc47m1.c
-index c7b6a425e2c02..5eeac9853d0ae 100644
---- a/drivers/hwmon/smsc47m1.c
-+++ b/drivers/hwmon/smsc47m1.c
-@@ -73,16 +73,21 @@ superio_inb(int reg)
- /* logical device for fans is 0x0A */
- #define superio_select() superio_outb(0x07, 0x0A)
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index d17f68775a4bb..e3f2e15b75ad4 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -2195,6 +2195,8 @@ static int spi_get_gpio_descs(struct spi_controller *ctlr)
+ 		 */
+ 		cs[i] = devm_gpiod_get_index_optional(dev, "cs", i,
+ 						      GPIOD_OUT_LOW);
++		if (IS_ERR(cs[i]))
++			return PTR_ERR(cs[i]);
  
--static inline void
-+static inline int
- superio_enter(void)
- {
-+	if (!request_muxed_region(REG, 2, DRVNAME))
-+		return -EBUSY;
-+
- 	outb(0x55, REG);
-+	return 0;
- }
- 
- static inline void
- superio_exit(void)
- {
- 	outb(0xAA, REG);
-+	release_region(REG, 2);
- }
- 
- #define SUPERIO_REG_ACT		0x30
-@@ -531,8 +536,12 @@ static int __init smsc47m1_find(struct smsc47m1_sio_data *sio_data)
- {
- 	u8 val;
- 	unsigned short addr;
-+	int err;
-+
-+	err = superio_enter();
-+	if (err)
-+		return err;
- 
--	superio_enter();
- 	val = force_id ? force_id : superio_inb(SUPERIO_REG_DEVID);
- 
- 	/*
-@@ -608,13 +617,14 @@ static int __init smsc47m1_find(struct smsc47m1_sio_data *sio_data)
- static void smsc47m1_restore(const struct smsc47m1_sio_data *sio_data)
- {
- 	if ((sio_data->activate & 0x01) == 0) {
--		superio_enter();
--		superio_select();
--
--		pr_info("Disabling device\n");
--		superio_outb(SUPERIO_REG_ACT, sio_data->activate);
--
--		superio_exit();
-+		if (!superio_enter()) {
-+			superio_select();
-+			pr_info("Disabling device\n");
-+			superio_outb(SUPERIO_REG_ACT, sio_data->activate);
-+			superio_exit();
-+		} else {
-+			pr_warn("Failed to disable device\n");
-+		}
- 	}
- }
- 
+ 		if (cs[i]) {
+ 			/*
 -- 
 2.20.1
 
