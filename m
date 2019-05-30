@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCDA22ED71
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:37:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 377912EF56
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:54:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733185AbfE3DX5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:23:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48304 "EHLO mail.kernel.org"
+        id S2387887AbfE3Dyk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:54:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731224AbfE3DRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:17:43 -0400
+        id S1731854AbfE3DTR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:19:17 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57D7F246EE;
-        Thu, 30 May 2019 03:17:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13CDA24865;
+        Thu, 30 May 2019 03:19:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186262;
-        bh=kNhMMzXAe84h3vGa1fylrwuHVRkYskw/3R/d2L47mCg=;
+        s=default; t=1559186357;
+        bh=Udqoyn03xR71fL5XiDPWv5x+FeOrtCnyp8Wqxzu3yJY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Npkn3aq7iUmKQM0foKFy6kqh3fEAKu1KM60MdY9vWD8xrbVzE1qrpgXglCg5IssN0
-         iznuycRJ/7Un+pVx0kLG893QasbJSbke6CXEYrKdyP4nBYsSL2RCH/ZKYpzzbKvSsk
-         bXYDm4Bfmg5p7MVyHFpahH94RR+D680INyLG1WA0=
+        b=laV57B8xkRpdpN+aEPqrWv6FDNX9WMB8qDC671737xpFh6sAFFA2En9elnUcOmozt
+         dsWE5rdMjaUy79ER/FNfieLAPc6U6xouJgKrARff5nXn8YsTK7Dc7KAeGtPwuoHjKY
+         gvTj17cfaspcDePbRlo0NKkrIgHeRaQ7b0xEOQT8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Piotr Figiel <p.figiel@camlintechnologies.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 196/276] brcmfmac: fix WARNING during USB disconnect in case of unempty psq
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 100/193] sched/core: Check quota and period overflow at usec to nsec conversion
 Date:   Wed, 29 May 2019 20:05:54 -0700
-Message-Id: <20190530030537.375788322@linuxfoundation.org>
+Message-Id: <20190530030502.850842444@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,129 +48,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c80d26e81ef1802f30364b4ad1955c1443a592b9 ]
+[ Upstream commit 1a8b4540db732ca16c9e43ac7c08b1b8f0b252d8 ]
 
-brcmu_pkt_buf_free_skb emits WARNING when attempting to free a sk_buff
-which is part of any queue. After USB disconnect this may have happened
-when brcmf_fws_hanger_cleanup() is called as per-interface psq was never
-cleaned when removing the interface.
-Change brcmf_fws_macdesc_cleanup() in a way that it removes the
-corresponding packets from hanger table (to avoid double-free when
-brcmf_fws_hanger_cleanup() is called) and add a call to clean-up the
-interface specific packet queue.
+Large values could overflow u64 and pass following sanity checks.
 
-Below is a WARNING during USB disconnect with Raspberry Pi WiFi dongle
-running in AP mode. This was reproducible when the interface was
-transmitting during the disconnect and is fixed with this commit.
+ # echo 18446744073750000 > cpu.cfs_period_us
+ # cat cpu.cfs_period_us
+ 40448
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 1171 at drivers/net/wireless/broadcom/brcm80211/brcmutil/utils.c:49 brcmu_pkt_buf_free_skb+0x3c/0x40
-Modules linked in: nf_log_ipv4 nf_log_common xt_LOG xt_limit iptable_mangle xt_connmark xt_tcpudp xt_conntrack nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 iptable_filter ip_tables x_tables usb_f_mass_storage usb_f_rndis u_ether cdc_acm smsc95xx usbnet ci_hdrc_imx ci_hdrc ulpi usbmisc_imx 8250_exar 8250_pci 8250 8250_base libcomposite configfs udc_core
-CPU: 0 PID: 1171 Comm: kworker/0:0 Not tainted 4.19.23-00075-gde33ed8 #99
-Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
-Workqueue: usb_hub_wq hub_event
-[<8010ff84>] (unwind_backtrace) from [<8010bb64>] (show_stack+0x10/0x14)
-[<8010bb64>] (show_stack) from [<80840278>] (dump_stack+0x88/0x9c)
-[<80840278>] (dump_stack) from [<8011f5ec>] (__warn+0xfc/0x114)
-[<8011f5ec>] (__warn) from [<8011f71c>] (warn_slowpath_null+0x40/0x48)
-[<8011f71c>] (warn_slowpath_null) from [<805a476c>] (brcmu_pkt_buf_free_skb+0x3c/0x40)
-[<805a476c>] (brcmu_pkt_buf_free_skb) from [<805bb6c4>] (brcmf_fws_cleanup+0x1e4/0x22c)
-[<805bb6c4>] (brcmf_fws_cleanup) from [<805bc854>] (brcmf_fws_del_interface+0x58/0x68)
-[<805bc854>] (brcmf_fws_del_interface) from [<805b66ac>] (brcmf_remove_interface+0x40/0x150)
-[<805b66ac>] (brcmf_remove_interface) from [<805b6870>] (brcmf_detach+0x6c/0xb0)
-[<805b6870>] (brcmf_detach) from [<805bdbb8>] (brcmf_usb_disconnect+0x30/0x4c)
-[<805bdbb8>] (brcmf_usb_disconnect) from [<805e5d64>] (usb_unbind_interface+0x5c/0x1e0)
-[<805e5d64>] (usb_unbind_interface) from [<804aab10>] (device_release_driver_internal+0x154/0x1ec)
-[<804aab10>] (device_release_driver_internal) from [<804a97f4>] (bus_remove_device+0xcc/0xf8)
-[<804a97f4>] (bus_remove_device) from [<804a6fc0>] (device_del+0x118/0x308)
-[<804a6fc0>] (device_del) from [<805e488c>] (usb_disable_device+0xa0/0x1c8)
-[<805e488c>] (usb_disable_device) from [<805dcf98>] (usb_disconnect+0x70/0x1d8)
-[<805dcf98>] (usb_disconnect) from [<805ddd84>] (hub_event+0x464/0xf50)
-[<805ddd84>] (hub_event) from [<80135a70>] (process_one_work+0x138/0x3f8)
-[<80135a70>] (process_one_work) from [<80135d5c>] (worker_thread+0x2c/0x554)
-[<80135d5c>] (worker_thread) from [<8013b1a0>] (kthread+0x124/0x154)
-[<8013b1a0>] (kthread) from [<801010e8>] (ret_from_fork+0x14/0x2c)
-Exception stack(0xecf8dfb0 to 0xecf8dff8)
-dfa0:                                     00000000 00000000 00000000 00000000
-dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
----[ end trace 38d234018e9e2a90 ]---
-------------[ cut here ]------------
+ # echo 18446744073750000 > cpu.cfs_quota_us
+ # cat cpu.cfs_quota_us
+ 40448
 
-Signed-off-by: Piotr Figiel <p.figiel@camlintechnologies.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+After this patch they will fail with -EINVAL.
+
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Acked-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/155125502079.293431.3947497929372138600.stgit@buzz
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../broadcom/brcm80211/brcmfmac/fwsignal.c    | 42 +++++++++++--------
- 1 file changed, 24 insertions(+), 18 deletions(-)
+ kernel/sched/core.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
-index f3cbf78c8899c..5a0a29c4cdea3 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwsignal.c
-@@ -579,24 +579,6 @@ static bool brcmf_fws_ifidx_match(struct sk_buff *skb, void *arg)
- 	return ifidx == *(int *)arg;
- }
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 0552ddbb25e2a..2464a242d6c9d 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -6482,8 +6482,10 @@ int tg_set_cfs_quota(struct task_group *tg, long cfs_quota_us)
+ 	period = ktime_to_ns(tg->cfs_bandwidth.period);
+ 	if (cfs_quota_us < 0)
+ 		quota = RUNTIME_INF;
+-	else
++	else if ((u64)cfs_quota_us <= U64_MAX / NSEC_PER_USEC)
+ 		quota = (u64)cfs_quota_us * NSEC_PER_USEC;
++	else
++		return -EINVAL;
  
--static void brcmf_fws_psq_flush(struct brcmf_fws_info *fws, struct pktq *q,
--				int ifidx)
--{
--	bool (*matchfn)(struct sk_buff *, void *) = NULL;
--	struct sk_buff *skb;
--	int prec;
--
--	if (ifidx != -1)
--		matchfn = brcmf_fws_ifidx_match;
--	for (prec = 0; prec < q->num_prec; prec++) {
--		skb = brcmu_pktq_pdeq_match(q, prec, matchfn, &ifidx);
--		while (skb) {
--			brcmu_pkt_buf_free_skb(skb);
--			skb = brcmu_pktq_pdeq_match(q, prec, matchfn, &ifidx);
--		}
--	}
--}
--
- static void brcmf_fws_hanger_init(struct brcmf_fws_hanger *hanger)
- {
- 	int i;
-@@ -668,6 +650,28 @@ static inline int brcmf_fws_hanger_poppkt(struct brcmf_fws_hanger *h,
- 	return 0;
+ 	return tg_set_cfs_bandwidth(tg, period, quota);
  }
- 
-+static void brcmf_fws_psq_flush(struct brcmf_fws_info *fws, struct pktq *q,
-+				int ifidx)
-+{
-+	bool (*matchfn)(struct sk_buff *, void *) = NULL;
-+	struct sk_buff *skb;
-+	int prec;
-+	u32 hslot;
-+
-+	if (ifidx != -1)
-+		matchfn = brcmf_fws_ifidx_match;
-+	for (prec = 0; prec < q->num_prec; prec++) {
-+		skb = brcmu_pktq_pdeq_match(q, prec, matchfn, &ifidx);
-+		while (skb) {
-+			hslot = brcmf_skb_htod_tag_get_field(skb, HSLOT);
-+			brcmf_fws_hanger_poppkt(&fws->hanger, hslot, &skb,
-+						true);
-+			brcmu_pkt_buf_free_skb(skb);
-+			skb = brcmu_pktq_pdeq_match(q, prec, matchfn, &ifidx);
-+		}
-+	}
-+}
-+
- static int brcmf_fws_hanger_mark_suppressed(struct brcmf_fws_hanger *h,
- 					    u32 slot_id)
+@@ -6505,6 +6507,9 @@ int tg_set_cfs_period(struct task_group *tg, long cfs_period_us)
  {
-@@ -2168,6 +2172,8 @@ void brcmf_fws_del_interface(struct brcmf_if *ifp)
- 	brcmf_fws_lock(fws);
- 	ifp->fws_desc = NULL;
- 	brcmf_dbg(TRACE, "deleting %s\n", entry->name);
-+	brcmf_fws_macdesc_cleanup(fws, &fws->desc.iface[ifp->ifidx],
-+				  ifp->ifidx);
- 	brcmf_fws_macdesc_deinit(entry);
- 	brcmf_fws_cleanup(fws, ifp->ifidx);
- 	brcmf_fws_unlock(fws);
+ 	u64 quota, period;
+ 
++	if ((u64)cfs_period_us > U64_MAX / NSEC_PER_USEC)
++		return -EINVAL;
++
+ 	period = (u64)cfs_period_us * NSEC_PER_USEC;
+ 	quota = tg->cfs_bandwidth.quota;
+ 
 -- 
 2.20.1
 
