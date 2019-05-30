@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3A1C2ECB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:25:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10AA42EE09
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:43:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387420AbfE3DYj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:24:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50012 "EHLO mail.kernel.org"
+        id S1732414AbfE3Dnr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:43:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60994 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731474AbfE3DSP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:15 -0400
+        id S1732419AbfE3DVD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:21:03 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5318624763;
-        Thu, 30 May 2019 03:18:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 56E18249AC;
+        Thu, 30 May 2019 03:21:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186294;
-        bh=RzkQDFObNYcIiIPGLQTQZaZDCTqXgUmZqo1AGSEvEqQ=;
+        s=default; t=1559186462;
+        bh=63ari9mXWTQt9/+RydXPraSoSuatrLrfYVhzHAzn9/I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m8C1QCqV6sBXb5MKflp2HSQ6PetrV9DKLANQe3MCYpOK4JRll8t0APx74nC+HYJdB
-         ydF5RsYUWrmHcZClPuZUiTLjpyWk1JkaedLOHzKIRh/DNTJ6WEMIt6/E24f4AzEJyC
-         UuoMVOHQv43X6TtWwEPiAe8Dn0yayaxjPOOYfpFM=
+        b=v9l/lhsBylRANbd1ISzKEQd3vuZpEVHJkCErLv2ujzQvSxdgzCd2JgIi8PYpxTse2
+         bdMszYsfAWFFXXiNJrfzVGzQRpRjYsKgzMMpdhIGC0VaoNbkuD2FAl3JZZaxgUINcg
+         FpjQl6vjZ/QbrNlCT51GOGxyBP2EEJwXwYSUZcC4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
-        Sun peng Li <Sunpeng.Li@amd.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Yinbo Zhu <yinbo.zhu@nxp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 254/276] drm/amd/display: Set stream->mode_changed when connectors change
+Subject: [PATCH 4.9 080/128] mmc: sdhci-of-esdhc: add erratum eSDHC5 support
 Date:   Wed, 29 May 2019 20:06:52 -0700
-Message-Id: <20190530030541.032695304@linuxfoundation.org>
+Message-Id: <20190530030449.044258871@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,54 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b9952f93cd2cf5fca82b06a8179c0f5f7b769e83 ]
+[ Upstream commit a46e42712596b51874f04c73f1cdf1017f88df52 ]
 
-[Why]
-The kms_plane@plane-position-covered-pipe-*-planes subtests can produce
-a sequence of atomic commits such that neither active_changed nor
-mode_changed but connectors_changed.
+Software writing to the Transfer Type configuration register
+(system clock domain) can cause a setup/hold violation in the
+CRC flops (card clock domain), which can cause write accesses
+to be sent with corrupt CRC values. This issue occurs only for
+write preceded by read. this erratum is to fix this issue.
 
-When this happens we remove the old stream from the context and add
-a new stream but the new stream doesn't have mode_changed=true set.
-
-This incorrect programming sequence causes CRC mismatches to occur in
-the test.
-
-The stream->mode_changed value should be set whenever a new stream
-is created.
-
-[How]
-A new stream is created whenever drm_atomic_crtc_needs_modeset is true.
-We previously covered the active_changed and mode_changed conditions
-for the CRTC but connectors_changed is also checked within
-drm_atomic_crtc_needs_modeset.
-
-So just use drm_atomic_crtc_needs_modeset directly to determine the
-mode_changed flag.
-
-Signed-off-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
-Reviewed-by: Sun peng Li <Sunpeng.Li@amd.com>
-Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/mmc/host/sdhci-of-esdhc.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index 76ee2de43ea66..dac7978f5ee1f 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -4369,8 +4369,7 @@ static void amdgpu_dm_commit_planes(struct drm_atomic_state *state,
- static void amdgpu_dm_crtc_copy_transient_flags(struct drm_crtc_state *crtc_state,
- 						struct dc_stream_state *stream_state)
- {
--	stream_state->mode_changed =
--		crtc_state->mode_changed || crtc_state->active_changed;
-+	stream_state->mode_changed = drm_atomic_crtc_needs_modeset(crtc_state);
- }
+diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-esdhc.c
+index a51d636c23121..4db2769ea20c1 100644
+--- a/drivers/mmc/host/sdhci-of-esdhc.c
++++ b/drivers/mmc/host/sdhci-of-esdhc.c
+@@ -636,6 +636,9 @@ static int sdhci_esdhc_probe(struct platform_device *pdev)
+ 	if (esdhc->vendor_ver > VENDOR_V_22)
+ 		host->quirks &= ~SDHCI_QUIRK_NO_BUSY_IRQ;
  
- static int amdgpu_dm_atomic_commit(struct drm_device *dev,
++	if (of_find_compatible_node(NULL, NULL, "fsl,p2020-esdhc"))
++		host->quirks2 |= SDHCI_QUIRK_RESET_AFTER_REQUEST;
++
+ 	if (of_device_is_compatible(np, "fsl,p5040-esdhc") ||
+ 	    of_device_is_compatible(np, "fsl,p5020-esdhc") ||
+ 	    of_device_is_compatible(np, "fsl,p4080-esdhc") ||
 -- 
 2.20.1
 
