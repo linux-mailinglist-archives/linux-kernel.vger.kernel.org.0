@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0A002EC8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:23:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CA8C2F341
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:28:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732704AbfE3DWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:22:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43122 "EHLO mail.kernel.org"
+        id S1731563AbfE3E1l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:27:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729790AbfE3DQf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:16:35 -0400
+        id S1729814AbfE3DOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:14:20 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82D9924605;
-        Thu, 30 May 2019 03:16:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A6BB2456A;
+        Thu, 30 May 2019 03:14:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186194;
-        bh=nGAUJRbLvnG4RZXmH6VU4fSaW9467h2MfLvkpldJnBI=;
+        s=default; t=1559186059;
+        bh=jc8jg/4Suw9jHmZotilKT0dohU7tQI2Is86LcdciVw8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gc3UOaGbM6UXSTDYf8D8QXHRuybzTcwE6UviYsnXY2x4hlIsh2B83ex9jPq7nswqQ
-         VfbkMmFA0rOLw3hXk9lcEBPe1RY+8rY73APrihH8mc/5QFUhhz7e9Gq4XWLPmAHo36
-         9wYZC0dtKB41nRFPW/S/7bNdBurYFicGzXw8tc5o=
+        b=ywni5gzkaZVKvWwmZBLs6mquOPHCTxeMKxe9peohU8SKRHS1qzs9vPQx4Grw8KTo4
+         /w9Pz38nw1466mwx9T2YTm8aLOy+/n4lLHFcKrxshM5ak3YNT7la7FtveEk2vpNTBl
+         frbGJX5NA2c0930x/jrTZJX80ssv5iRQrYg0o0WE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+9c69c282adc4edd2b540@syzkaller.appspotmail.com,
-        Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.19 032/276] ovl: relax WARN_ON() for overlapping layers use case
-Date:   Wed, 29 May 2019 20:03:10 -0700
-Message-Id: <20190530030526.260586516@linuxfoundation.org>
+        stable@vger.kernel.org, Tang Junhui <tang.junhui.linux@gmail.com>,
+        Dennis Schridde <devurandom@gmx.net>, Coly Li <colyli@suse.de>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 118/346] bcache: fix failure in journal relplay
+Date:   Wed, 29 May 2019 20:03:11 -0700
+Message-Id: <20190530030547.056864323@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,85 +44,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amir Goldstein <amir73il@gmail.com>
+[ Upstream commit 631207314d88e9091be02fbdd1fdadb1ae2ed79a ]
 
-commit acf3062a7e1ccf67c6f7e7c28671a6708fde63b0 upstream.
+journal replay failed with messages:
+Sep 10 19:10:43 ceph kernel: bcache: error on
+bb379a64-e44e-4812-b91d-a5599871a3b1: bcache: journal entries
+2057493-2057567 missing! (replaying 2057493-2076601), disabling
+caching
 
-This nasty little syzbot repro:
-https://syzkaller.appspot.com/x/repro.syz?x=12c7a94f400000
+The reason is in journal_reclaim(), when discard is enabled, we send
+discard command and reclaim those journal buckets whose seq is old
+than the last_seq_now, but before we write a journal with last_seq_now,
+the machine is restarted, so the journal with the last_seq_now is not
+written to the journal bucket, and the last_seq_wrote in the newest
+journal is old than last_seq_now which we expect to be, so when we doing
+replay, journals from last_seq_wrote to last_seq_now are missing.
 
-Creates overlay mounts where the same directory is both in upper and lower
-layers. Simplified example:
+It's hard to write a journal immediately after journal_reclaim(),
+and it harmless if those missed journal are caused by discarding
+since those journals are already wrote to btree node. So, if miss
+seqs are started from the beginning journal, we treat it as normal,
+and only print a message to show the miss journal, and point out
+it maybe caused by discarding.
 
-  mkdir foo work
-  mount -t overlay none foo -o"lowerdir=.,upperdir=foo,workdir=work"
+Patch v2 add a judgement condition to ignore the missed journal
+only when discard enabled as Coly suggested.
 
-The repro runs several threads in parallel that attempt to chdir into foo
-and attempt to symlink/rename/exec/mkdir the file bar.
+(Coly Li: rebase the patch with other changes in bch_journal_replay())
 
-The repro hits a WARN_ON() I placed in ovl_instantiate(), which suggests
-that an overlay inode already exists in cache and is hashed by the pointer
-of the real upper dentry that ovl_create_real() has just created. At the
-point of the WARN_ON(), for overlay dir inode lock is held and upper dir
-inode lock, so at first, I did not see how this was possible.
-
-On a closer look, I see that after ovl_create_real(), because of the
-overlapping upper and lower layers, a lookup by another thread can find the
-file foo/bar that was just created in upper layer, at overlay path
-foo/foo/bar and hash the an overlay inode with the new real dentry as lower
-dentry. This is possible because the overlay directory foo/foo is not
-locked and the upper dentry foo/bar is in dcache, so ovl_lookup() can find
-it without taking upper dir inode shared lock.
-
-Overlapping layers is considered a wrong setup which would result in
-unexpected behavior, but it shouldn't crash the kernel and it shouldn't
-trigger WARN_ON() either, so relax this WARN_ON() and leave a pr_warn()
-instead to cover all cases of failure to get an overlay inode.
-
-The error returned from failure to insert new inode to cache with
-inode_insert5() was changed to -EEXIST, to distinguish from the error
--ENOMEM returned on failure to get/allocate inode with iget5_locked().
-
-Reported-by: syzbot+9c69c282adc4edd2b540@syzkaller.appspotmail.com
-Fixes: 01b39dcc9568 ("ovl: use inode_insert5() to hash a newly...")
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Tang Junhui <tang.junhui.linux@gmail.com>
+Tested-by: Dennis Schridde <devurandom@gmx.net>
+Signed-off-by: Coly Li <colyli@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/overlayfs/dir.c   |    2 +-
- fs/overlayfs/inode.c |    3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ drivers/md/bcache/journal.c | 25 +++++++++++++++++++++----
+ 1 file changed, 21 insertions(+), 4 deletions(-)
 
---- a/fs/overlayfs/dir.c
-+++ b/fs/overlayfs/dir.c
-@@ -260,7 +260,7 @@ static int ovl_instantiate(struct dentry
- 		 * hashed directory inode aliases.
- 		 */
- 		inode = ovl_get_inode(dentry->d_sb, &oip);
--		if (WARN_ON(IS_ERR(inode)))
-+		if (IS_ERR(inode))
- 			return PTR_ERR(inode);
- 	} else {
- 		WARN_ON(ovl_inode_real(inode) != d_inode(newdentry));
---- a/fs/overlayfs/inode.c
-+++ b/fs/overlayfs/inode.c
-@@ -832,7 +832,7 @@ struct inode *ovl_get_inode(struct super
- 	int fsid = bylower ? oip->lowerpath->layer->fsid : 0;
- 	bool is_dir, metacopy = false;
- 	unsigned long ino = 0;
--	int err = -ENOMEM;
-+	int err = oip->newinode ? -EEXIST : -ENOMEM;
- 
- 	if (!realinode)
- 		realinode = d_inode(lowerdentry);
-@@ -917,6 +917,7 @@ out:
- 	return inode;
- 
- out_err:
-+	pr_warn_ratelimited("overlayfs: failed to get inode (%i)\n", err);
- 	inode = ERR_PTR(err);
- 	goto out;
+diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
+index 9e557164209c1..6c94fa0077968 100644
+--- a/drivers/md/bcache/journal.c
++++ b/drivers/md/bcache/journal.c
+@@ -317,6 +317,18 @@ void bch_journal_mark(struct cache_set *c, struct list_head *list)
+ 	}
  }
+ 
++bool is_discard_enabled(struct cache_set *s)
++{
++	struct cache *ca;
++	unsigned int i;
++
++	for_each_cache(ca, s, i)
++		if (ca->discard)
++			return true;
++
++	return false;
++}
++
+ int bch_journal_replay(struct cache_set *s, struct list_head *list)
+ {
+ 	int ret = 0, keys = 0, entries = 0;
+@@ -331,10 +343,15 @@ int bch_journal_replay(struct cache_set *s, struct list_head *list)
+ 		BUG_ON(i->pin && atomic_read(i->pin) != 1);
+ 
+ 		if (n != i->j.seq) {
+-			pr_err("bcache: journal entries %llu-%llu missing! (replaying %llu-%llu)",
+-			n, i->j.seq - 1, start, end);
+-			ret = -EIO;
+-			goto err;
++			if (n == start && is_discard_enabled(s))
++				pr_info("bcache: journal entries %llu-%llu may be discarded! (replaying %llu-%llu)",
++					n, i->j.seq - 1, start, end);
++			else {
++				pr_err("bcache: journal entries %llu-%llu missing! (replaying %llu-%llu)",
++					n, i->j.seq - 1, start, end);
++				ret = -EIO;
++				goto err;
++			}
+ 		}
+ 
+ 		for (k = i->j.start;
+-- 
+2.20.1
+
 
 
