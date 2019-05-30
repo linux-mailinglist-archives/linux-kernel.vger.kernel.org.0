@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76DFF2EB68
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:12:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6551D2F346
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:28:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729230AbfE3DMr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:12:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49964 "EHLO mail.kernel.org"
+        id S2387821AbfE3E1z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:27:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728421AbfE3DLN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:11:13 -0400
+        id S1728932AbfE3DOS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:14:18 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC5A5244D8;
-        Thu, 30 May 2019 03:11:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFE2724569;
+        Thu, 30 May 2019 03:14:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185873;
-        bh=mcd2FS0t0z1bCwO4klx+xNkmovjnhdydm2bFSiWeul0=;
+        s=default; t=1559186058;
+        bh=Kk169pAbbcX7z6Btstk81E+FvhtTvb7zc2UpRbJBs74=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xdvcxNCXCDEM9Yyc43pcEkMLcomFkw/mKdUEDqYDWtlIusEN5GuX2HHHdbQSHe92/
-         YkduuaQzLjfg54B7MuLgJTGTVyj0vyzu+5xcIdw0Qq6q1yGbXA3OEbPto6uK8med7q
-         mhXU+whhEuRlxtP5GXnztHowRLUnpjy5b3GPi10A=
+        b=mg49cbPKrk5fN66IT79Sf7/Fzm8rWNcxpaTtfOVMSUk6eX/uI/4Sl9bNQnlDyZ1yh
+         5MwnkEb9gOE6ISVN+Xs0ibAhFyDEsjHE2G9IZnkemi+/tzzfwKOVCXNkiyXjc5dpV+
+         ChwuMtq9hDy3sfLaehLrYynQclXXOQ2ojcZqR4ik=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, Shenghui Wang <shhuiw@foxmail.com>,
+        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 190/405] arm64: vdso: Fix clock_getres() for CLOCK_REALTIME
-Date:   Wed, 29 May 2019 20:03:08 -0700
-Message-Id: <20190530030550.629262924@linuxfoundation.org>
+Subject: [PATCH 5.0 116/346] bcache: avoid potential memleak of list of journal_replay(s) in the CACHE_SYNC branch of run_cache_set
+Date:   Wed, 29 May 2019 20:03:09 -0700
+Message-Id: <20190530030546.959592924@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,104 +44,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 81fb8736dd81da3fe94f28968dac60f392ec6746 ]
+[ Upstream commit 95f18c9d1310730d075499a75aaf13bcd60405a7 ]
 
-clock_getres() in the vDSO library has to preserve the same behaviour
-of posix_get_hrtimer_res().
+In the CACHE_SYNC branch of run_cache_set(), LIST_HEAD(journal) is used
+to collect journal_replay(s) and filled by bch_journal_read().
 
-In particular, posix_get_hrtimer_res() does:
+If all goes well, bch_journal_replay() will release the list of
+jounal_replay(s) at the end of the branch.
 
-    sec = 0;
-    ns = hrtimer_resolution;
+If something goes wrong, code flow will jump to the label "err:" and leave
+the list unreleased.
 
-where 'hrtimer_resolution' depends on whether or not high resolution
-timers are enabled, which is a runtime decision.
+This patch will release the list of journal_replay(s) in the case of
+error detected.
 
-The vDSO incorrectly returns the constant CLOCK_REALTIME_RES. Fix this
-by exposing 'hrtimer_resolution' in the vDSO datapage and returning that
-instead.
+v1 -> v2:
+* Move the release code to the location after label 'err:' to
+  simply the change.
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-[will: Use WRITE_ONCE(), move adr off COARSE path, renumber labels, use 'w' reg]
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Shenghui Wang <shhuiw@foxmail.com>
+Signed-off-by: Coly Li <colyli@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/include/asm/vdso_datapage.h | 1 +
- arch/arm64/kernel/asm-offsets.c        | 2 +-
- arch/arm64/kernel/vdso.c               | 3 +++
- arch/arm64/kernel/vdso/gettimeofday.S  | 7 +++----
- 4 files changed, 8 insertions(+), 5 deletions(-)
+ drivers/md/bcache/super.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm64/include/asm/vdso_datapage.h b/arch/arm64/include/asm/vdso_datapage.h
-index 2b9a63771eda8..f89263c8e11af 100644
---- a/arch/arm64/include/asm/vdso_datapage.h
-+++ b/arch/arm64/include/asm/vdso_datapage.h
-@@ -38,6 +38,7 @@ struct vdso_data {
- 	__u32 tz_minuteswest;	/* Whacky timezone stuff */
- 	__u32 tz_dsttime;
- 	__u32 use_syscall;
-+	__u32 hrtimer_res;
- };
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index ee36e6b3bcad3..acf8e2e3890c7 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1782,6 +1782,8 @@ static void run_cache_set(struct cache_set *c)
+ 	struct cache *ca;
+ 	struct closure cl;
+ 	unsigned int i;
++	LIST_HEAD(journal);
++	struct journal_replay *l;
  
- #endif /* !__ASSEMBLY__ */
-diff --git a/arch/arm64/kernel/asm-offsets.c b/arch/arm64/kernel/asm-offsets.c
-index 7f40dcbdd51d0..e10e2a5d9ddcf 100644
---- a/arch/arm64/kernel/asm-offsets.c
-+++ b/arch/arm64/kernel/asm-offsets.c
-@@ -94,7 +94,7 @@ int main(void)
-   DEFINE(CLOCK_REALTIME,	CLOCK_REALTIME);
-   DEFINE(CLOCK_MONOTONIC,	CLOCK_MONOTONIC);
-   DEFINE(CLOCK_MONOTONIC_RAW,	CLOCK_MONOTONIC_RAW);
--  DEFINE(CLOCK_REALTIME_RES,	MONOTONIC_RES_NSEC);
-+  DEFINE(CLOCK_REALTIME_RES,	offsetof(struct vdso_data, hrtimer_res));
-   DEFINE(CLOCK_REALTIME_COARSE,	CLOCK_REALTIME_COARSE);
-   DEFINE(CLOCK_MONOTONIC_COARSE,CLOCK_MONOTONIC_COARSE);
-   DEFINE(CLOCK_COARSE_RES,	LOW_RES_NSEC);
-diff --git a/arch/arm64/kernel/vdso.c b/arch/arm64/kernel/vdso.c
-index 2d419006ad433..ec0bb588d7553 100644
---- a/arch/arm64/kernel/vdso.c
-+++ b/arch/arm64/kernel/vdso.c
-@@ -232,6 +232,9 @@ void update_vsyscall(struct timekeeper *tk)
- 	vdso_data->wtm_clock_sec		= tk->wall_to_monotonic.tv_sec;
- 	vdso_data->wtm_clock_nsec		= tk->wall_to_monotonic.tv_nsec;
+ 	closure_init_stack(&cl);
  
-+	/* Read without the seqlock held by clock_getres() */
-+	WRITE_ONCE(vdso_data->hrtimer_res, hrtimer_resolution);
+@@ -1939,6 +1941,12 @@ static void run_cache_set(struct cache_set *c)
+ 	set_bit(CACHE_SET_RUNNING, &c->flags);
+ 	return;
+ err:
++	while (!list_empty(&journal)) {
++		l = list_first_entry(&journal, struct journal_replay, list);
++		list_del(&l->list);
++		kfree(l);
++	}
 +
- 	if (!use_syscall) {
- 		/* tkr_mono.cycle_last == tkr_raw.cycle_last */
- 		vdso_data->cs_cycle_last	= tk->tkr_mono.cycle_last;
-diff --git a/arch/arm64/kernel/vdso/gettimeofday.S b/arch/arm64/kernel/vdso/gettimeofday.S
-index e8f60112818fc..856fee6d35129 100644
---- a/arch/arm64/kernel/vdso/gettimeofday.S
-+++ b/arch/arm64/kernel/vdso/gettimeofday.S
-@@ -308,13 +308,14 @@ ENTRY(__kernel_clock_getres)
- 	ccmp	w0, #CLOCK_MONOTONIC_RAW, #0x4, ne
- 	b.ne	1f
- 
--	ldr	x2, 5f
-+	adr	vdso_data, _vdso_data
-+	ldr	w2, [vdso_data, #CLOCK_REALTIME_RES]
- 	b	2f
- 1:
- 	cmp	w0, #CLOCK_REALTIME_COARSE
- 	ccmp	w0, #CLOCK_MONOTONIC_COARSE, #0x4, ne
- 	b.ne	4f
--	ldr	x2, 6f
-+	ldr	x2, 5f
- 2:
- 	cbz	x1, 3f
- 	stp	xzr, x2, [x1]
-@@ -328,8 +329,6 @@ ENTRY(__kernel_clock_getres)
- 	svc	#0
- 	ret
- 5:
--	.quad	CLOCK_REALTIME_RES
--6:
- 	.quad	CLOCK_COARSE_RES
- 	.cfi_endproc
- ENDPROC(__kernel_clock_getres)
+ 	closure_sync(&cl);
+ 	/* XXX: test this, it's broken */
+ 	bch_cache_set_error(c, "%s", err);
 -- 
 2.20.1
 
