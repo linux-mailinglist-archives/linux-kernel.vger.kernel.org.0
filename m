@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E70C2EBA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:14:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7D642F288
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:23:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729972AbfE3DOp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:14:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53554 "EHLO mail.kernel.org"
+        id S1731951AbfE3EW6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:22:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728831AbfE3DMH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:07 -0400
+        id S1730080AbfE3DPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:03 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F60C2452D;
-        Thu, 30 May 2019 03:12:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 08DE824555;
+        Thu, 30 May 2019 03:15:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185926;
-        bh=b2FfiIFLax+t5DBMjGWUhK/t6nTUndNyCzFPq8pAh8k=;
+        s=default; t=1559186103;
+        bh=rnCGcQRRiEsV+Wvp2kATdZa1Pv/LFRaa3WEypRNUCL0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kPDCBH0t5twEe4nZA0KPryhE/FKZOJifOpG1Z4npBhLjurXJGGDllcck/nUnljZ82
-         Tw7fW53KIiHrLPF6mFu833Z9jUcSxIFwrBIyKU+ditsxl2jplvirImaebLEbA4gGTO
-         fuS1COsIizC2G0+9S4/2ZqwJ9MXxvYeVeOC1sOAE=
+        b=z4XEILGjGs+KhCqSGqhv1WKYb8NLmTF7GepjwFY1VR2Wp4CaBoOUeDw/MGngvjOZ7
+         35VfjF88UcoT4c7M69b/RwKBZLl6iLIo/P6oDqgO4acwrT59+Tg8JD2oEx3k2jsKdG
+         8B6AojfZFR1w0VnBZNIONX6VIXGojII5l1/iX8XU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dafna Hirschfeld <dafna3@gmail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 317/405] media: vicodec: bugfix - call v4l2_m2m_buf_copy_metadata also if decoding fails
+        stable@vger.kernel.org,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 242/346] x86/ia32: Fix ia32_restore_sigcontext() AC leak
 Date:   Wed, 29 May 2019 20:05:15 -0700
-Message-Id: <20190530030556.815667530@linuxfoundation.org>
+Message-Id: <20190530030553.280642663@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,85 +48,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8eead25cbdf911e17cff321903bd3397bc6ea22c ]
+[ Upstream commit 67a0514afdbb8b2fc70b771b8c77661a9cb9d3a9 ]
 
-The function 'v4l2_m2m_buf_copy_metadata' should
-be called even if decoding/encoding ends with
-status VB2_BUF_STATE_ERROR, so that the metadata
-is copied from the source buffer to the dest buffer.
+Objtool spotted that we call native_load_gs_index() with AC set.
+Re-arrange the code to avoid that.
 
-Signed-off-by: Dafna Hirschfeld <dafna3@gmail.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/vicodec/vicodec-core.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ arch/x86/ia32/ia32_signal.c | 29 +++++++++++++++++------------
+ 1 file changed, 17 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/media/platform/vicodec/vicodec-core.c b/drivers/media/platform/vicodec/vicodec-core.c
-index d7636fe9e1749..6b618452700c4 100644
---- a/drivers/media/platform/vicodec/vicodec-core.c
-+++ b/drivers/media/platform/vicodec/vicodec-core.c
-@@ -159,12 +159,10 @@ static int device_process(struct vicodec_ctx *ctx,
- 			  struct vb2_v4l2_buffer *dst_vb)
- {
- 	struct vicodec_dev *dev = ctx->dev;
--	struct vicodec_q_data *q_dst;
- 	struct v4l2_fwht_state *state = &ctx->state;
- 	u8 *p_src, *p_dst;
- 	int ret;
+diff --git a/arch/x86/ia32/ia32_signal.c b/arch/x86/ia32/ia32_signal.c
+index 321fe5f5d0e96..4d5fcd47ab75a 100644
+--- a/arch/x86/ia32/ia32_signal.c
++++ b/arch/x86/ia32/ia32_signal.c
+@@ -61,9 +61,8 @@
+ } while (0)
  
--	q_dst = get_q_data(ctx, V4L2_BUF_TYPE_VIDEO_CAPTURE);
- 	if (ctx->is_enc)
- 		p_src = vb2_plane_vaddr(&src_vb->vb2_buf, 0);
- 	else
-@@ -186,8 +184,10 @@ static int device_process(struct vicodec_ctx *ctx,
- 			return ret;
- 		vb2_set_plane_payload(&dst_vb->vb2_buf, 0, ret);
- 	} else {
-+		struct vicodec_q_data *q_dst;
- 		unsigned int comp_frame_size = ntohl(ctx->state.header.size);
- 
-+		q_dst = get_q_data(ctx, V4L2_BUF_TYPE_VIDEO_CAPTURE);
- 		if (comp_frame_size > ctx->comp_max_size)
- 			return -EINVAL;
- 		state->info = q_dst->info;
-@@ -196,11 +196,6 @@ static int device_process(struct vicodec_ctx *ctx,
- 			return ret;
- 		vb2_set_plane_payload(&dst_vb->vb2_buf, 0, q_dst->sizeimage);
- 	}
--
--	dst_vb->sequence = q_dst->sequence++;
--	dst_vb->flags &= ~V4L2_BUF_FLAG_LAST;
--	v4l2_m2m_buf_copy_metadata(src_vb, dst_vb, !ctx->is_enc);
--
- 	return 0;
+ #define RELOAD_SEG(seg)		{		\
+-	unsigned int pre = GET_SEG(seg);	\
++	unsigned int pre = (seg) | 3;		\
+ 	unsigned int cur = get_user_seg(seg);	\
+-	pre |= 3;				\
+ 	if (pre != cur)				\
+ 		set_user_seg(seg, pre);		\
  }
+@@ -72,6 +71,7 @@ static int ia32_restore_sigcontext(struct pt_regs *regs,
+ 				   struct sigcontext_32 __user *sc)
+ {
+ 	unsigned int tmpflags, err = 0;
++	u16 gs, fs, es, ds;
+ 	void __user *buf;
+ 	u32 tmp;
  
-@@ -274,16 +269,22 @@ static void device_run(void *priv)
- 	struct vicodec_ctx *ctx = priv;
- 	struct vicodec_dev *dev = ctx->dev;
- 	struct vb2_v4l2_buffer *src_buf, *dst_buf;
--	struct vicodec_q_data *q_src;
-+	struct vicodec_q_data *q_src, *q_dst;
- 	u32 state;
+@@ -79,16 +79,10 @@ static int ia32_restore_sigcontext(struct pt_regs *regs,
+ 	current->restart_block.fn = do_no_restart_syscall;
  
- 	src_buf = v4l2_m2m_next_src_buf(ctx->fh.m2m_ctx);
- 	dst_buf = v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
- 	q_src = get_q_data(ctx, V4L2_BUF_TYPE_VIDEO_OUTPUT);
-+	q_dst = get_q_data(ctx, V4L2_BUF_TYPE_VIDEO_CAPTURE);
+ 	get_user_try {
+-		/*
+-		 * Reload fs and gs if they have changed in the signal
+-		 * handler.  This does not handle long fs/gs base changes in
+-		 * the handler, but does not clobber them at least in the
+-		 * normal case.
+-		 */
+-		RELOAD_SEG(gs);
+-		RELOAD_SEG(fs);
+-		RELOAD_SEG(ds);
+-		RELOAD_SEG(es);
++		gs = GET_SEG(gs);
++		fs = GET_SEG(fs);
++		ds = GET_SEG(ds);
++		es = GET_SEG(es);
  
- 	state = VB2_BUF_STATE_DONE;
- 	if (device_process(ctx, src_buf, dst_buf))
- 		state = VB2_BUF_STATE_ERROR;
-+	else
-+		dst_buf->sequence = q_dst->sequence++;
-+	dst_buf->flags &= ~V4L2_BUF_FLAG_LAST;
-+	v4l2_m2m_buf_copy_metadata(src_buf, dst_buf, !ctx->is_enc);
+ 		COPY(di); COPY(si); COPY(bp); COPY(sp); COPY(bx);
+ 		COPY(dx); COPY(cx); COPY(ip); COPY(ax);
+@@ -106,6 +100,17 @@ static int ia32_restore_sigcontext(struct pt_regs *regs,
+ 		buf = compat_ptr(tmp);
+ 	} get_user_catch(err);
+ 
++	/*
++	 * Reload fs and gs if they have changed in the signal
++	 * handler.  This does not handle long fs/gs base changes in
++	 * the handler, but does not clobber them at least in the
++	 * normal case.
++	 */
++	RELOAD_SEG(gs);
++	RELOAD_SEG(fs);
++	RELOAD_SEG(ds);
++	RELOAD_SEG(es);
 +
- 	ctx->last_dst_buf = dst_buf;
+ 	err |= fpu__restore_sig(buf, 1);
  
- 	spin_lock(ctx->lock);
+ 	force_iret();
 -- 
 2.20.1
 
