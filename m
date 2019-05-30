@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AA422ED04
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:30:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 347432ECB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:25:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387728AbfE3DaX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:30:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34358 "EHLO mail.kernel.org"
+        id S1732842AbfE3DY7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:24:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732546AbfE3DVY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:21:24 -0400
+        id S1731500AbfE3DSR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:18:17 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A45D224A0A;
-        Thu, 30 May 2019 03:21:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 518902478C;
+        Thu, 30 May 2019 03:18:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186483;
-        bh=sdK1Xn6v9YbWQEGAiClWqejKazMG/VXN5F69IhQH0JM=;
+        s=default; t=1559186297;
+        bh=CyXpFkhPtCpn5HBsylNRtK+07vkAfzZQlN9o58ObyZA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bv8ImWOx9MIMAzmur6E1+rIVM+SiAtwDL6ZJscR09QjJ/Vou9YhSaMbCPw8Ymz2QC
-         5db6DVVDtUNM1eaWVte8GQNnYAnjKVm9pc7FQJ/OYyOy+Z7dp8GNSA5nWRcSLq2hwN
-         QXDGUzB5SNAeNawsrkWEED7EcUI9q3AAv84DAbTM=
+        b=t5ExCscYvGwBYPGBKEr9hQ8MNqW2uh3bEFlmA3meB0E8TQZ15ybOuXObTIm1V9/ZK
+         DB6Pcxvw6QiaVRu0NcCwECF6JSPG1izFFnPQxBBgaA2wm3wH7xeV8dT2ca2ovYub8l
+         oTdNFOGD5YgLf5Hu8tuxGYsWJJN1mR/2XcdORt7Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-pm@vger.kernel.org,
+        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <jsmart2021@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 086/128] cpufreq/pasemi: fix possible object reference leak
+Subject: [PATCH 4.19 260/276] scsi: lpfc: Fix FDMI manufacturer attribute value
 Date:   Wed, 29 May 2019 20:06:58 -0700
-Message-Id: <20190530030450.275356015@linuxfoundation.org>
+Message-Id: <20190530030541.450330586@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,40 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a9acc26b75f652f697e02a9febe2ab0da648a571 ]
+[ Upstream commit d67f935b79a76ac9d86dde1a27bdd413feb5d987 ]
 
-The call to of_get_cpu_node returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
+The FDMI manufacturer value being reported on Linux is inconsistent with
+other OS's.
 
-Detected by coccinelle with the following warnings:
-./drivers/cpufreq/pasemi-cpufreq.c:212:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 147, but without a corresponding object release within this function.
-./drivers/cpufreq/pasemi-cpufreq.c:220:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 147, but without a corresponding object release within this function.
+Set the value to "Emulex Corporation" for consistency.
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: linux-pm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <jsmart2021@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpufreq/pasemi-cpufreq.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/lpfc/lpfc_ct.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/cpufreq/pasemi-cpufreq.c b/drivers/cpufreq/pasemi-cpufreq.c
-index 35dd4d7ffee08..58c933f483004 100644
---- a/drivers/cpufreq/pasemi-cpufreq.c
-+++ b/drivers/cpufreq/pasemi-cpufreq.c
-@@ -146,6 +146,7 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+diff --git a/drivers/scsi/lpfc/lpfc_ct.c b/drivers/scsi/lpfc/lpfc_ct.c
+index 1a964e71582f4..06621a438cade 100644
+--- a/drivers/scsi/lpfc/lpfc_ct.c
++++ b/drivers/scsi/lpfc/lpfc_ct.c
+@@ -1762,6 +1762,9 @@ lpfc_fdmi_hba_attr_manufacturer(struct lpfc_vport *vport,
+ 	ae = (struct lpfc_fdmi_attr_entry *)&ad->AttrValue;
+ 	memset(ae, 0, 256);
  
- 	cpu = of_get_cpu_node(policy->cpu, NULL);
- 
-+	of_node_put(cpu);
- 	if (!cpu)
- 		goto out;
- 
++	/* This string MUST be consistent with other FC platforms
++	 * supported by Broadcom.
++	 */
+ 	strncpy(ae->un.AttrString,
+ 		"Emulex Corporation",
+ 		       sizeof(ae->un.AttrString));
 -- 
 2.20.1
 
