@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B6932ECEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:29:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3AD52ECA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:24:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387783AbfE3D3C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:29:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58550 "EHLO mail.kernel.org"
+        id S1733135AbfE3DXr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:23:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732190AbfE3DUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:20:25 -0400
+        id S1731193AbfE3DRi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:38 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCE6C248C3;
-        Thu, 30 May 2019 03:20:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA0FF24590;
+        Thu, 30 May 2019 03:17:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186424;
-        bh=po6PrqAoVpGPWqDdgcC6f5pnQsj2Uf8VLIkfxgVObCw=;
+        s=default; t=1559186257;
+        bh=2wpiB4zzn6wBHIQlOWQviFupKUmKgjTIpgGgSQWBWKQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AGuG2fN7i0sG8Y1NLArLW6jxfBaVSEKFpJa+jh+padYEnNNVKRpRjLa6Uw1yqC93G
-         P1HIRgJPSAZhfCBWWCS4oCFJKvSf5Dx90lD7Bj2PNy5Jij7Yet/ldtHl2FnDbPDRi/
-         LugVvWyCmMpP5kByHdSa2PeJllBIY+cnD6v96j3Y=
+        b=J7VBSeLC2X3zccMD14rXdIPipFxOIiF0O4RIvl8V5bEoMkAU8RPdyJs3bZoHeIfhA
+         cMki4eVZuDHghg4bvaR7BEWZBT89svY/rkXHdnl/y1fhnr8FuxMSo7AcZj8qi1KZ4m
+         afkJFlUEgCAEV1oEG2E4wplS7Vw3tHiI9lAvCLI0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Shile Zhang <shile.zhang@linux.alibaba.com>,
-        Fredrik Noring <noring@nocrew.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 4.9 013/128] fbdev: fix divide error in fb_var_to_videomode
-Date:   Wed, 29 May 2019 20:05:45 -0700
-Message-Id: <20190530030436.853914496@linuxfoundation.org>
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 188/276] iio: common: ssp_sensors: Initialize calculated_time in ssp_common_process_data
+Date:   Wed, 29 May 2019 20:05:46 -0700
+Message-Id: <20190530030536.960912531@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,81 +46,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shile Zhang <shile.zhang@linux.alibaba.com>
+[ Upstream commit 6f9ca1d3eb74b81f811a87002de2d51640d135b1 ]
 
-commit cf84807f6dd0be5214378e66460cfc9187f532f9 upstream.
+When building with -Wsometimes-uninitialized, Clang warns:
 
-To fix following divide-by-zero error found by Syzkaller:
+drivers/iio/common/ssp_sensors/ssp_iio.c:95:6: warning: variable
+'calculated_time' is used uninitialized whenever 'if' condition is false
+[-Wsometimes-uninitialized]
 
-  divide error: 0000 [#1] SMP PTI
-  CPU: 7 PID: 8447 Comm: test Kdump: loaded Not tainted 4.19.24-8.al7.x86_64 #1
-  Hardware name: Alibaba Cloud Alibaba Cloud ECS, BIOS rel-1.12.0-0-ga698c8995f-prebuilt.qemu.org 04/01/2014
-  RIP: 0010:fb_var_to_videomode+0xae/0xc0
-  Code: 04 44 03 46 78 03 4e 7c 44 03 46 68 03 4e 70 89 ce d1 ee 69 c0 e8 03 00 00 f6 c2 01 0f 45 ce 83 e2 02 8d 34 09 0f 45 ce 31 d2 <41> f7 f0 31 d2 f7 f1 89 47 08 f3 c3 66 0f 1f 44 00 00 0f 1f 44 00
-  RSP: 0018:ffffb7e189347bf0 EFLAGS: 00010246
-  RAX: 00000000e1692410 RBX: ffffb7e189347d60 RCX: 0000000000000000
-  RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffb7e189347c10
-  RBP: ffff99972a091c00 R08: 0000000000000000 R09: 0000000000000000
-  R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000100
-  R13: 0000000000010000 R14: 00007ffd66baf6d0 R15: 0000000000000000
-  FS:  00007f2054d11740(0000) GS:ffff99972fbc0000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 00007f205481fd20 CR3: 00000004288a0001 CR4: 00000000001606a0
-  Call Trace:
-   fb_set_var+0x257/0x390
-   ? lookup_fast+0xbb/0x2b0
-   ? fb_open+0xc0/0x140
-   ? chrdev_open+0xa6/0x1a0
-   do_fb_ioctl+0x445/0x5a0
-   do_vfs_ioctl+0x92/0x5f0
-   ? __alloc_fd+0x3d/0x160
-   ksys_ioctl+0x60/0x90
-   __x64_sys_ioctl+0x16/0x20
-   do_syscall_64+0x5b/0x190
-   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-  RIP: 0033:0x7f20548258d7
-  Code: 44 00 00 48 8b 05 b9 15 2d 00 64 c7 00 26 00 00 00 48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 89 15 2d 00 f7 d8 64 89 01 48
+While it isn't wrong, this will never be a problem because
+iio_push_to_buffers_with_timestamp only uses calculated_time
+on the same condition that it is assigned (when scan_timestamp
+is not zero). While iio_push_to_buffers_with_timestamp is marked
+as inline, Clang does inlining in the optimization stage, which
+happens after the semantic analysis phase (plus inline is merely
+a hint to the compiler).
 
-It can be triggered easily with following test code:
+Fix this by just zero initializing calculated_time.
 
-  #include <linux/fb.h>
-  #include <fcntl.h>
-  #include <sys/ioctl.h>
-  int main(void)
-  {
-          struct fb_var_screeninfo var = {.activate = 0x100, .pixclock = 60};
-          int fd = open("/dev/fb0", O_RDWR);
-          if (fd < 0)
-                  return 1;
-
-          if (ioctl(fd, FBIOPUT_VSCREENINFO, &var))
-                  return 1;
-
-          return 0;
-  }
-
-Signed-off-by: Shile Zhang <shile.zhang@linux.alibaba.com>
-Cc: Fredrik Noring <noring@nocrew.org>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Link: https://github.com/ClangBuiltLinux/linux/issues/394
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/video/fbdev/core/modedb.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/iio/common/ssp_sensors/ssp_iio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/video/fbdev/core/modedb.c
-+++ b/drivers/video/fbdev/core/modedb.c
-@@ -933,6 +933,9 @@ void fb_var_to_videomode(struct fb_video
- 	if (var->vmode & FB_VMODE_DOUBLE)
- 		vtotal *= 2;
+diff --git a/drivers/iio/common/ssp_sensors/ssp_iio.c b/drivers/iio/common/ssp_sensors/ssp_iio.c
+index 645f2e3975db4..e38f704d88b7e 100644
+--- a/drivers/iio/common/ssp_sensors/ssp_iio.c
++++ b/drivers/iio/common/ssp_sensors/ssp_iio.c
+@@ -81,7 +81,7 @@ int ssp_common_process_data(struct iio_dev *indio_dev, void *buf,
+ 			    unsigned int len, int64_t timestamp)
+ {
+ 	__le32 time;
+-	int64_t calculated_time;
++	int64_t calculated_time = 0;
+ 	struct ssp_sensor_data *spd = iio_priv(indio_dev);
  
-+	if (!htotal || !vtotal)
-+		return;
-+
- 	hfreq = pixclock/htotal;
- 	mode->refresh = hfreq/vtotal;
- }
+ 	if (indio_dev->scan_bytes == 0)
+-- 
+2.20.1
+
 
 
