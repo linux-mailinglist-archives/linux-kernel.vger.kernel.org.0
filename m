@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3D322EE92
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:49:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95E172ED66
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:36:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732905AbfE3Ds0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:48:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58294 "EHLO mail.kernel.org"
+        id S2387556AbfE3DZb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:25:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732166AbfE3DUV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:20:21 -0400
+        id S1731566AbfE3DSa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:18:30 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7D46248C3;
-        Thu, 30 May 2019 03:20:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B72622472C;
+        Thu, 30 May 2019 03:18:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186420;
-        bh=nIogvrBNilFmJItUjp19blsKg1b9fJovWYXIMeADW7o=;
+        s=default; t=1559186309;
+        bh=8gRQZ733zbroR7nLj5wr3+V5DHtMrt2aYomVG95miOY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rX+mk7fuR5SNEiVPhQ6hsZZYKCxqE0suuMhXxoAXnjIB+O82Ln8O6BLEN//FqLsEX
-         VgnpKSoo+c9kYLt0pf0hSbOqQO1UfntGjIRhnOD6pcnK5AUrHZkFSB7imXSXOImkfk
-         5/kABEqRQLc/UGILiTMCz0HjXMIG6nCU5wlb+iNQ=
+        b=0hOrIda8REVcbtSlduRMmOzECRvumE/hIwduBdcXRnv30VaW0eORJKq21M95KQi5S
+         Iaouj0K3UpNZQLZInt2KMQ/ixzKXP4C78plfl5PvkQ88CdsCFBrogkEwEPp3uoKD4d
+         tTGXSCMy9MJuVk7ACofeeORaBSKrzp7gwfZeKEQQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>,
-        Antonio Quartulli <a@unstable.cc>,
-        Sven Eckelmann <sven@narfation.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
+        stable@vger.kernel.org, Eric Anholt <eric@anholt.net>,
+        Dave Emett <david.emett@broadcom.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 174/193] batman-adv: allow updating DAT entry timeouts on incoming ARP Replies
+Subject: [PATCH 4.19 270/276] drm/v3d: Handle errors from IRQ setup.
 Date:   Wed, 29 May 2019 20:07:08 -0700
-Message-Id: <20190530030512.070537709@linuxfoundation.org>
+Message-Id: <20190530030542.094351553@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,55 +44,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 099e6cc1582dc2903fecb898bbeae8f7cf4262c7 ]
+[ Upstream commit fc22771547e7e8a63679f0218e943d72b107de65 ]
 
-Currently incoming ARP Replies, for example via a DHT-PUT message, do
-not update the timeout for an already existing DAT entry. These ARP
-Replies are dropped instead.
+Noted in review by Dave Emett for V3D 4.2 support.
 
-This however defeats the purpose of the DHCPACK snooping, for instance.
-Right now, a DAT entry in the DHT will be purged every five minutes,
-likely leading to a mesh-wide ARP Request broadcast after this timeout.
-Which then recreates the entry. The idea of the DHCPACK snooping is to
-be able to update an entry before a timeout happens, to avoid ARP Request
-flooding.
-
-This patch fixes this issue by updating a DAT entry on incoming
-ARP Replies even if a matching DAT entry already exists. While still
-filtering the ARP Reply towards the soft-interface, to avoid duplicate
-messages on the client device side.
-
-Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
-Acked-by: Antonio Quartulli <a@unstable.cc>
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190308174336.7866-1-eric@anholt.net
+Reviewed-by: Dave Emett <david.emett@broadcom.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/batman-adv/distributed-arp-table.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/v3d/v3d_drv.c |  8 ++++++--
+ drivers/gpu/drm/v3d/v3d_drv.h |  2 +-
+ drivers/gpu/drm/v3d/v3d_irq.c | 13 +++++++++++--
+ 3 files changed, 18 insertions(+), 5 deletions(-)
 
-diff --git a/net/batman-adv/distributed-arp-table.c b/net/batman-adv/distributed-arp-table.c
-index 4f0111bc6621e..8d1d0fdb157e7 100644
---- a/net/batman-adv/distributed-arp-table.c
-+++ b/net/batman-adv/distributed-arp-table.c
-@@ -1240,7 +1240,6 @@ bool batadv_dat_snoop_incoming_arp_reply(struct batadv_priv *bat_priv,
- 			   hw_src, &ip_src, hw_dst, &ip_dst,
- 			   dat_entry->mac_addr,	&dat_entry->ip);
- 		dropped = true;
--		goto out;
- 	}
+diff --git a/drivers/gpu/drm/v3d/v3d_drv.c b/drivers/gpu/drm/v3d/v3d_drv.c
+index 2a85fa68ffea5..2a4c6187e675f 100644
+--- a/drivers/gpu/drm/v3d/v3d_drv.c
++++ b/drivers/gpu/drm/v3d/v3d_drv.c
+@@ -305,14 +305,18 @@ static int v3d_platform_drm_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto dev_destroy;
  
- 	/* Update our internal cache with both the IP addresses the node got
-@@ -1249,6 +1248,9 @@ bool batadv_dat_snoop_incoming_arp_reply(struct batadv_priv *bat_priv,
- 	batadv_dat_entry_add(bat_priv, ip_src, hw_src, vid);
- 	batadv_dat_entry_add(bat_priv, ip_dst, hw_dst, vid);
+-	v3d_irq_init(v3d);
++	ret = v3d_irq_init(v3d);
++	if (ret)
++		goto gem_destroy;
  
-+	if (dropped)
-+		goto out;
+ 	ret = drm_dev_register(drm, 0);
+ 	if (ret)
+-		goto gem_destroy;
++		goto irq_disable;
+ 
+ 	return 0;
+ 
++irq_disable:
++	v3d_irq_disable(v3d);
+ gem_destroy:
+ 	v3d_gem_destroy(drm);
+ dev_destroy:
+diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
+index e6fed696ad869..0ad73f4b7509a 100644
+--- a/drivers/gpu/drm/v3d/v3d_drv.h
++++ b/drivers/gpu/drm/v3d/v3d_drv.h
+@@ -284,7 +284,7 @@ void v3d_invalidate_caches(struct v3d_dev *v3d);
+ void v3d_flush_caches(struct v3d_dev *v3d);
+ 
+ /* v3d_irq.c */
+-void v3d_irq_init(struct v3d_dev *v3d);
++int v3d_irq_init(struct v3d_dev *v3d);
+ void v3d_irq_enable(struct v3d_dev *v3d);
+ void v3d_irq_disable(struct v3d_dev *v3d);
+ void v3d_irq_reset(struct v3d_dev *v3d);
+diff --git a/drivers/gpu/drm/v3d/v3d_irq.c b/drivers/gpu/drm/v3d/v3d_irq.c
+index e07514eb11b51..22be0f2dff99c 100644
+--- a/drivers/gpu/drm/v3d/v3d_irq.c
++++ b/drivers/gpu/drm/v3d/v3d_irq.c
+@@ -137,7 +137,7 @@ v3d_hub_irq(int irq, void *arg)
+ 	return status;
+ }
+ 
+-void
++int
+ v3d_irq_init(struct v3d_dev *v3d)
+ {
+ 	int ret, core;
+@@ -154,13 +154,22 @@ v3d_irq_init(struct v3d_dev *v3d)
+ 	ret = devm_request_irq(v3d->dev, platform_get_irq(v3d->pdev, 0),
+ 			       v3d_hub_irq, IRQF_SHARED,
+ 			       "v3d_hub", v3d);
++	if (ret)
++		goto fail;
 +
- 	/* If BLA is enabled, only forward ARP replies if we have claimed the
- 	 * source of the ARP reply or if no one else of the same backbone has
- 	 * already claimed that client. This prevents that different gateways
+ 	ret = devm_request_irq(v3d->dev, platform_get_irq(v3d->pdev, 1),
+ 			       v3d_irq, IRQF_SHARED,
+ 			       "v3d_core0", v3d);
+ 	if (ret)
+-		dev_err(v3d->dev, "IRQ setup failed: %d\n", ret);
++		goto fail;
+ 
+ 	v3d_irq_enable(v3d);
++	return 0;
++
++fail:
++	if (ret != -EPROBE_DEFER)
++		dev_err(v3d->dev, "IRQ setup failed: %d\n", ret);
++	return ret;
+ }
+ 
+ void
 -- 
 2.20.1
 
