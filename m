@@ -2,39 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1F0F2F1A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:14:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DC502F5F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:51:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730745AbfE3EO4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:14:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41138 "EHLO mail.kernel.org"
+        id S2389023AbfE3Evq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:51:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730591AbfE3DQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:16:07 -0400
+        id S1728276AbfE3DKz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:10:55 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DEB1245AF;
-        Thu, 30 May 2019 03:16:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15F3D24476;
+        Thu, 30 May 2019 03:10:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186166;
-        bh=irsuCSjqH9Xp7SJpFQA1MXvfKEAZZxM4R5/EeSWs8qo=;
+        s=default; t=1559185854;
+        bh=OxCAIHPoH18e4bJyXWJl8c54vD7RQRBMGt1OQmZG0A4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nC2VoI3qEqYlEc+UuQXEo8tDfvXH26UAAUgGrp0Wix6Zp3cqU9/61BKDCSQNdPi2a
-         8lLJKsFCzx9HJWugrPc39Z+yyGCUp8m2+OKmRQEpOpXumDBQjYQ7CHAbIw4ijVNcaU
-         hZxygSNwkztVvxdxBrO+Y0K3m+NqXN1Clhm74lkw=
+        b=B0aGR8TgqoXmINLQBJ9AMZaN+OJvSGD85mSm0aR5SyNXtO29mPZFE6ixkVfDdEdRn
+         PgSoR/szFU69skcu83rQW4HuPMBHt6/AKhPeElwKej2mryU7C28zMXSfjXwLAGTbz4
+         npZnxj7czbt9LjGWRNYsWCThKlp1l0sWT8uJfvFA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 019/276] Btrfs: avoid fallback to transaction commit during fsync of files with holes
-Date:   Wed, 29 May 2019 20:02:57 -0700
-Message-Id: <20190530030525.240003863@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@suse.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Mitsuo Hayasaka <mitsuo.hayasaka.hu@hitachi.com>,
+        Nicolai Stange <nstange@suse.de>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        x86-ml <x86@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 180/405] x86/irq/64: Limit IST stack overflow check to #DB stack
+Date:   Wed, 29 May 2019 20:02:58 -0700
+Message-Id: <20190530030550.194242069@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,84 +50,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filipe Manana <fdmanana@suse.com>
+[ Upstream commit 7dbcf2b0b770eeb803a416ee8dcbef78e6389d40 ]
 
-commit ebb929060aeb162417b4c1307e63daee47b208d9 upstream.
+Commit
 
-When we are doing a full fsync (bit BTRFS_INODE_NEEDS_FULL_SYNC set) of a
-file that has holes and has file extent items spanning two or more leafs,
-we can end up falling to back to a full transaction commit due to a logic
-bug that leads to failure to insert a duplicate file extent item that is
-meant to represent a hole between the last file extent item of a leaf and
-the first file extent item in the next leaf. The failure (EEXIST error)
-leads to a transaction commit (as most errors when logging an inode do).
+  37fe6a42b343 ("x86: Check stack overflow in detail")
 
-For example, we have the two following leafs:
+added a broad check for the full exception stack area, i.e. it considers
+the full exception stack area as valid.
 
-Leaf N:
+That's wrong in two aspects:
 
-  -----------------------------------------------
-  | ..., ..., ..., (257, FILE_EXTENT_ITEM, 64K) |
-  -----------------------------------------------
-  The file extent item at the end of leaf N has a length of 4Kb,
-  representing the file range from 64K to 68K - 1.
+ 1) It does not check the individual areas one by one
 
-Leaf N + 1:
+ 2) #DF, NMI and #MCE are not enabling interrupts which means that a
+    regular device interrupt cannot happen in their context. In fact if a
+    device interrupt hits one of those IST stacks that's a bug because some
+    code path enabled interrupts while handling the exception.
 
-  -----------------------------------------------
-  | (257, FILE_EXTENT_ITEM, 72K), ..., ..., ... |
-  -----------------------------------------------
-  The file extent item at the first slot of leaf N + 1 has a length of
-  4Kb too, representing the file range from 72K to 76K - 1.
+Limit the check to the #DB stack and consider all other IST stacks as
+'overflow' or invalid.
 
-During the full fsync path, when we are at tree-log.c:copy_items() with
-leaf N as a parameter, after processing the last file extent item, that
-represents the extent at offset 64K, we take a look at the first file
-extent item at the next leaf (leaf N + 1), and notice there's a 4K hole
-between the two extents, and therefore we insert a file extent item
-representing that hole, starting at file offset 68K and ending at offset
-72K - 1. However we don't update the value of *last_extent, which is used
-to represent the end offset (plus 1, non-inclusive end) of the last file
-extent item inserted in the log, so it stays with a value of 68K and not
-with a value of 72K.
-
-Then, when copy_items() is called for leaf N + 1, because the value of
-*last_extent is smaller then the offset of the first extent item in the
-leaf (68K < 72K), we look at the last file extent item in the previous
-leaf (leaf N) and see it there's a 4K gap between it and our first file
-extent item (again, 68K < 72K), so we decide to insert a file extent item
-representing the hole, starting at file offset 68K and ending at offset
-72K - 1, this insertion will fail with -EEXIST being returned from
-btrfs_insert_file_extent() because we already inserted a file extent item
-representing a hole for this offset (68K) in the previous call to
-copy_items(), when processing leaf N.
-
-The -EEXIST error gets propagated to the fsync callback, btrfs_sync_file(),
-which falls back to a full transaction commit.
-
-Fix this by adjusting *last_extent after inserting a hole when we had to
-look at the next leaf.
-
-Fixes: 4ee3fad34a9c ("Btrfs: fix fsync after hole punching when using no-holes feature")
-Cc: stable@vger.kernel.org # 4.14+
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Mitsuo Hayasaka <mitsuo.hayasaka.hu@hitachi.com>
+Cc: Nicolai Stange <nstange@suse.de>
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20190414160143.682135110@linutronix.de
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/tree-log.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kernel/irq_64.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -4121,6 +4121,7 @@ fill_holes:
- 							       *last_extent, 0,
- 							       0, len, 0, len,
- 							       0, 0, 0);
-+				*last_extent += len;
- 			}
- 		}
- 	}
+diff --git a/arch/x86/kernel/irq_64.c b/arch/x86/kernel/irq_64.c
+index 0469cd078db15..b50ac9c7397bb 100644
+--- a/arch/x86/kernel/irq_64.c
++++ b/arch/x86/kernel/irq_64.c
+@@ -26,9 +26,18 @@ int sysctl_panic_on_stackoverflow;
+ /*
+  * Probabilistic stack overflow check:
+  *
+- * Only check the stack in process context, because everything else
+- * runs on the big interrupt stacks. Checking reliably is too expensive,
+- * so we just check from interrupts.
++ * Regular device interrupts can enter on the following stacks:
++ *
++ * - User stack
++ *
++ * - Kernel task stack
++ *
++ * - Interrupt stack if a device driver reenables interrupts
++ *   which should only happen in really old drivers.
++ *
++ * - Debug IST stack
++ *
++ * All other contexts are invalid.
+  */
+ static inline void stack_overflow_check(struct pt_regs *regs)
+ {
+@@ -53,8 +62,8 @@ static inline void stack_overflow_check(struct pt_regs *regs)
+ 		return;
+ 
+ 	oist = this_cpu_ptr(&orig_ist);
+-	estack_top = (u64)oist->ist[0] - EXCEPTION_STKSZ + STACK_TOP_MARGIN;
+-	estack_bottom = (u64)oist->ist[N_EXCEPTION_STACKS - 1];
++	estack_bottom = (u64)oist->ist[DEBUG_STACK];
++	estack_top = estack_bottom - DEBUG_STKSZ + STACK_TOP_MARGIN;
+ 	if (regs->sp >= estack_top && regs->sp <= estack_bottom)
+ 		return;
+ 
+-- 
+2.20.1
+
 
 
