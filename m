@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43AF52F583
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:48:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 533492F5DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:51:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388830AbfE3Er6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:47:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51014 "EHLO mail.kernel.org"
+        id S1730202AbfE3Eux (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:50:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728550AbfE3DL0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:11:26 -0400
+        id S1727605AbfE3DLC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:11:02 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0439244EA;
-        Thu, 30 May 2019 03:11:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32282244EE;
+        Thu, 30 May 2019 03:11:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185886;
-        bh=txZnHUUZKA7lDIWQ6dBQTE9mALY24OiRElwexgm7qwA=;
+        s=default; t=1559185861;
+        bh=pIGIv1wMDp5xBsuqDHXtdtJ07HvAkgPfMtiuYo+B1rU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J+XXGj+00qDkXro586LQnKe06vhKTScF3yuT7jDj4eWwE0isQzPc9lH6vgjWd3pq7
-         eqQcbn8S1wnrtICMpCkW20+Pigiy9MuDSI6qL0sp/cG5yuxY3MJ0K80ZpVqff4BSq0
-         ndaAVmK1uBCkY5orNu5W/t3PjMC4+f+v5uhS1DXA=
+        b=KTV1KEh1LRExxmSVtod39mCrXXKon++JGXU5mGyjnyfSYGnp+H7libPR33igVOQbV
+         QYMxOr2mNgbwQVWopY9sWOe7JDPQGT3rFSDntm9jbbUwCqfxf75VtQ2yHkxzsRMSmR
+         Ql2BjMFolFN397OXopf/HHobtJ8PcOh0KmsAYjMw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Adam Ludkiewicz <adam.ludkiewicz@intel.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
+        Nicholas Nunley <nicholas.d.nunley@intel.com>,
         Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 187/405] i40e: Able to add up to 16 MAC filters on an untrusted VF
-Date:   Wed, 29 May 2019 20:03:05 -0700
-Message-Id: <20190530030550.501083174@linuxfoundation.org>
+Subject: [PATCH 5.1 188/405] i40e: dont allow changes to HW VLAN stripping on active port VLANs
+Date:   Wed, 29 May 2019 20:03:06 -0700
+Message-Id: <20190530030550.544677171@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
 References: <20190530030540.291644921@linuxfoundation.org>
@@ -46,39 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 06b6e2a2333eb3581567a7ac43ca465ef45f4daa ]
+[ Upstream commit bfb0ebed53857cfc57f11c63fa3689940d71c1c8 ]
 
-This patch fixes the problem with the driver being able to add only 7
-multicast MAC address filters instead of 16. The problem is fixed by
-changing the maximum number of MAC address filters to 16+1+1 (two extra
-are needed because the driver uses 1 for unicast MAC address and 1 for
-broadcast).
+Modifying the VLAN stripping options when a port VLAN is configured
+will break traffic for the VSI, and conceptually doesn't make sense,
+so don't allow this.
 
-Signed-off-by: Adam Ludkiewicz <adam.ludkiewicz@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Nicholas Nunley <nicholas.d.nunley@intel.com>
 Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/intel/i40e/i40e_main.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-index 0b5b867c9fbcb..2b0362c827e98 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
-@@ -2454,8 +2454,10 @@ static int i40e_vc_get_stats_msg(struct i40e_vf *vf, u8 *msg)
- 				      (u8 *)&stats, sizeof(stats));
- }
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
+index b1c265012c8ad..ac9fcb0976890 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_main.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
+@@ -2654,6 +2654,10 @@ void i40e_vlan_stripping_enable(struct i40e_vsi *vsi)
+ 	struct i40e_vsi_context ctxt;
+ 	i40e_status ret;
  
--/* If the VF is not trusted restrict the number of MAC/VLAN it can program */
--#define I40E_VC_MAX_MAC_ADDR_PER_VF 12
-+/* If the VF is not trusted restrict the number of MAC/VLAN it can program
-+ * MAC filters: 16 for multicast, 1 for MAC, 1 for broadcast
-+ */
-+#define I40E_VC_MAX_MAC_ADDR_PER_VF (16 + 1 + 1)
- #define I40E_VC_MAX_VLAN_PER_VF 8
++	/* Don't modify stripping options if a port VLAN is active */
++	if (vsi->info.pvid)
++		return;
++
+ 	if ((vsi->info.valid_sections &
+ 	     cpu_to_le16(I40E_AQ_VSI_PROP_VLAN_VALID)) &&
+ 	    ((vsi->info.port_vlan_flags & I40E_AQ_VSI_PVLAN_MODE_MASK) == 0))
+@@ -2684,6 +2688,10 @@ void i40e_vlan_stripping_disable(struct i40e_vsi *vsi)
+ 	struct i40e_vsi_context ctxt;
+ 	i40e_status ret;
  
- /**
++	/* Don't modify stripping options if a port VLAN is active */
++	if (vsi->info.pvid)
++		return;
++
+ 	if ((vsi->info.valid_sections &
+ 	     cpu_to_le16(I40E_AQ_VSI_PROP_VLAN_VALID)) &&
+ 	    ((vsi->info.port_vlan_flags & I40E_AQ_VSI_PVLAN_EMOD_MASK) ==
 -- 
 2.20.1
 
