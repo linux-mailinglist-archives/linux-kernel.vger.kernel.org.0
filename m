@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 729652F35B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:28:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 935BB2F5A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:49:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731270AbfE3E2i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:28:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33524 "EHLO mail.kernel.org"
+        id S2388817AbfE3Ess (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:48:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728844AbfE3DON (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:14:13 -0400
+        id S1728460AbfE3DLS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:11:18 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC83D24547;
-        Thu, 30 May 2019 03:14:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35B3A244B0;
+        Thu, 30 May 2019 03:11:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186052;
-        bh=aQJcM1cVq7gWa9y+IphsuHHAkoXxn9PEzhVxGMJBiBo=;
+        s=default; t=1559185877;
+        bh=T+vGrf3RvbzG7P4iTgiRGSVNNHZqkLdV/nNoR5UX7dg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sjHIaF3siB6ZcjBX0G3gj9L5Cs3OymV3/1r1BHJEK30jx/9eXUtXN6Z5IfA9iAene
-         5Dgc1oAb3PnNOV7tcWdyaMy7O4OqV+yyGSWaAiwd2rb7Shh/57QepuLWaTCAbL3pZb
-         sBP7SuphmvKhzmRgOAtdn8Gu5sDQ4t05L95nx/qo=
+        b=mfL+oOICgD9Q5f/SnShRqtZLdAnGB1OFNCUpoDb4zILoozI1DdGPVvjr7PhcZNbNh
+         f26E+WUIOR9AmskZjcPkkEFdzXDbty86DSVGiqI3kqiFMhHP5w9Ba5rJpaZRaOXX6X
+         lJR08jmCu5U5GNeI1l6eHJ9yWtK6PP9ucGl4gUSw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell Currey <ruscur@russell.cc>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Huazhong Tan <tanhuazhong@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 149/346] powerpc/64: Fix booting large kernels with STRICT_KERNEL_RWX
+Subject: [PATCH 5.1 224/405] net: hns3: add error handler for initializing command queue
 Date:   Wed, 29 May 2019 20:03:42 -0700
-Message-Id: <20190530030548.730027230@linuxfoundation.org>
+Message-Id: <20190530030552.386055830@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +45,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 56c46bba9bbfe229b4472a5be313c44c5b714a39 ]
+[ Upstream commit 4339ef396ab65a61f7f22f36d7ba94b6e9e0939b ]
 
-With STRICT_KERNEL_RWX enabled anything marked __init is placed at a 16M
-boundary.  This is necessary so that it can be repurposed later with
-different permissions.  However, in kernels with text larger than 16M,
-this pushes early_setup past 32M, incapable of being reached by the
-branch instruction.
+This patch adds error handler for the failure of command queue
+initialization both PF and VF.
 
-Fix this by setting the CTR and branching there instead.
-
-Fixes: 1e0fc9d1eb2b ("powerpc/Kconfig: Enable STRICT_KERNEL_RWX for some configs")
-Signed-off-by: Russell Currey <ruscur@russell.cc>
-[mpe: Fix it to work on BE by using DOTSYM()]
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/head_64.S | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c    | 11 ++++++++---
+ .../net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c  | 11 ++++++++---
+ 2 files changed, 16 insertions(+), 6 deletions(-)
 
-diff --git a/arch/powerpc/kernel/head_64.S b/arch/powerpc/kernel/head_64.S
-index 4898e9491a1cd..9168a247e24ff 100644
---- a/arch/powerpc/kernel/head_64.S
-+++ b/arch/powerpc/kernel/head_64.S
-@@ -970,7 +970,9 @@ start_here_multiplatform:
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
+index 3a093a92eac51..d92e4af11b1fe 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
+@@ -373,21 +373,26 @@ int hclge_cmd_init(struct hclge_dev *hdev)
+ 	 * reset may happen when lower level reset is being processed.
+ 	 */
+ 	if ((hclge_is_reset_pending(hdev))) {
+-		set_bit(HCLGE_STATE_CMD_DISABLE, &hdev->state);
+-		return -EBUSY;
++		ret = -EBUSY;
++		goto err_cmd_init;
+ 	}
  
- 	/* Restore parameters passed from prom_init/kexec */
- 	mr	r3,r31
--	bl	early_setup		/* also sets r13 and SPRG_PACA */
-+	LOAD_REG_ADDR(r12, DOTSYM(early_setup))
-+	mtctr	r12
-+	bctrl		/* also sets r13 and SPRG_PACA */
+ 	ret = hclge_cmd_query_firmware_version(&hdev->hw, &version);
+ 	if (ret) {
+ 		dev_err(&hdev->pdev->dev,
+ 			"firmware version query failed %d\n", ret);
+-		return ret;
++		goto err_cmd_init;
+ 	}
+ 	hdev->fw_version = version;
  
- 	LOAD_REG_ADDR(r3, start_here_common)
- 	ld	r4,PACAKMSR(r13)
+ 	dev_info(&hdev->pdev->dev, "The firmware version is %08x\n", version);
+ 
+ 	return 0;
++
++err_cmd_init:
++	set_bit(HCLGE_STATE_CMD_DISABLE, &hdev->state);
++
++	return ret;
+ }
+ 
+ static void hclge_cmd_uninit_regs(struct hclge_hw *hw)
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
+index 9a0a501908aec..382ecb15e7435 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
+@@ -344,8 +344,8 @@ int hclgevf_cmd_init(struct hclgevf_dev *hdev)
+ 	 * reset may happen when lower level reset is being processed.
+ 	 */
+ 	if (hclgevf_is_reset_pending(hdev)) {
+-		set_bit(HCLGEVF_STATE_CMD_DISABLE, &hdev->state);
+-		return -EBUSY;
++		ret = -EBUSY;
++		goto err_cmd_init;
+ 	}
+ 
+ 	/* get firmware version */
+@@ -353,13 +353,18 @@ int hclgevf_cmd_init(struct hclgevf_dev *hdev)
+ 	if (ret) {
+ 		dev_err(&hdev->pdev->dev,
+ 			"failed(%d) to query firmware version\n", ret);
+-		return ret;
++		goto err_cmd_init;
+ 	}
+ 	hdev->fw_version = version;
+ 
+ 	dev_info(&hdev->pdev->dev, "The firmware version is %08x\n", version);
+ 
+ 	return 0;
++
++err_cmd_init:
++	set_bit(HCLGEVF_STATE_CMD_DISABLE, &hdev->state);
++
++	return ret;
+ }
+ 
+ static void hclgevf_cmd_uninit_regs(struct hclgevf_hw *hw)
 -- 
 2.20.1
 
