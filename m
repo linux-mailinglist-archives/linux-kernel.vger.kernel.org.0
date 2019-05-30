@@ -2,62 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F6CF2EAE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:01:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2097C2F669
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:56:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbfE3DBm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:01:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40608 "EHLO mail.kernel.org"
+        id S2387578AbfE3E4D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:56:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725821AbfE3DBl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:01:41 -0400
-Received: from localhost (15.sub-174-234-174.myvzw.com [174.234.174.15])
+        id S1727979AbfE3DKM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:10:12 -0400
+Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 092AA24450;
-        Thu, 30 May 2019 03:01:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A33A72449D;
+        Thu, 30 May 2019 03:10:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185301;
-        bh=xlqT1K7enlVKZFkAxENutch544Oi7NgY9tj2XmaoiWw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=I5+SJ2uqpNOjnl2C+mRPUPxSGXxyfjQ7/UwswpuCqSZLJkQqw1TJuTJCSsYsAzN20
-         1gE6UZMcN4fgGmQfnZ/R5cK1l2+vedMmQ1+8YnuSNwbtpkRFh75+Fv8RILpzeivwmF
-         vVE+nFxRchNor7LwweEqGZRFd7QNrTgygN0AXoXY=
-Date:   Wed, 29 May 2019 22:01:39 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Changbin Du <changbin.du@gmail.com>, linux-pci@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mchehab+samsung@kernel.org
-Subject: Re: [PATCH v6 00/12] Include linux PCI docs into Sphinx TOC tree
-Message-ID: <20190530030139.GI28250@google.com>
-References: <20190514144734.19760-1-changbin.du@gmail.com>
- <20190520061014.qtq6tc366pnnqcio@mail.google.com>
- <20190529163510.3dd4dc2d@lwn.net>
+        s=default; t=1559185811;
+        bh=Yr1NWBa2ygGEK+iU7YFpXLjJuhvl7ZvsAVvfPbvqE5A=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=yoX+J0K5S7spT/ZIyAuc9xM2Yl2xsx1z0O84MyZOT0AYZJD/aT8bv+DCF6yHtrw6j
+         YrWx2WUELODgw7Z3p9fBThJ5rybvkiivcxkMlI14/D/Nb+Vow4Znd6q2e35x3FxUwj
+         ZXkS4/Xzj/UbsqaRBlS1TzKDE+Ar2tG+JWtOIIW4=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Fabien Dessenne <fabien.dessenne@st.com>,
+        Amelie Delaunay <amelie.delaunay@st.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 101/405] rtc: stm32: manage the get_irq probe defer case
+Date:   Wed, 29 May 2019 20:01:39 -0700
+Message-Id: <20190530030546.132040989@linuxfoundation.org>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190529163510.3dd4dc2d@lwn.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 04:35:10PM -0600, Jonathan Corbet wrote:
-> On Mon, 20 May 2019 06:10:15 +0000
-> Changbin Du <changbin.du@gmail.com> wrote:
-> 
-> > Bjorn and Jonathan,
-> > Could we consider to merge this serias now? Thanks.
-> 
-> Somewhat belatedly, but I think we could.  Bjorn, do you have a preference
-> for which tree this goes through?  I don't remember if we'd come to an
-> agreement on that or not, sorry...
+[ Upstream commit cf612c5949aca2bd81a1e28688957c8149ea2693 ]
 
-Actually, let me at least take a look at these.  I noticed that
-renames caused some of the ACPI docs to end up with lines >80 columns,
-and I'd prefer to avoid that.  So maybe I'll take these after all if
-that's OK.
+Manage the -EPROBE_DEFER error case for the wake IRQ.
 
-Bjorn
+Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+Acked-by: Amelie Delaunay <amelie.delaunay@st.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/rtc/rtc-stm32.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/rtc/rtc-stm32.c b/drivers/rtc/rtc-stm32.c
+index c5908cfea2340..8e6c9b3bcc29a 100644
+--- a/drivers/rtc/rtc-stm32.c
++++ b/drivers/rtc/rtc-stm32.c
+@@ -788,11 +788,14 @@ static int stm32_rtc_probe(struct platform_device *pdev)
+ 	ret = device_init_wakeup(&pdev->dev, true);
+ 	if (rtc->data->has_wakeirq) {
+ 		rtc->wakeirq_alarm = platform_get_irq(pdev, 1);
+-		if (rtc->wakeirq_alarm <= 0)
+-			ret = rtc->wakeirq_alarm;
+-		else
++		if (rtc->wakeirq_alarm > 0) {
+ 			ret = dev_pm_set_dedicated_wake_irq(&pdev->dev,
+ 							    rtc->wakeirq_alarm);
++		} else {
++			ret = rtc->wakeirq_alarm;
++			if (rtc->wakeirq_alarm == -EPROBE_DEFER)
++				goto err;
++		}
+ 	}
+ 	if (ret)
+ 		dev_warn(&pdev->dev, "alarm can't wake up the system: %d", ret);
+-- 
+2.20.1
+
+
+
