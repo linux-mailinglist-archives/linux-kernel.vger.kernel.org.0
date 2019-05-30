@@ -2,258 +2,215 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D91330148
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 19:54:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B45D30144
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 19:54:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726461AbfE3RyG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 13:54:06 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:51994 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726718AbfE3RyE (ORCPT
+        id S1726590AbfE3Rx6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 13:53:58 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44820 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725961AbfE3Rx6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 13:54:04 -0400
-Received: by mail-it1-f193.google.com with SMTP id m3so11394664itl.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 10:54:03 -0700 (PDT)
+        Thu, 30 May 2019 13:53:58 -0400
+Received: by mail-pf1-f194.google.com with SMTP id c9so1166695pfc.11
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 10:53:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=indeed.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GuxcT4bNE7Lanuh6HBPPFB8YOlbNRYRQt9yxyQj+Xf4=;
-        b=tIyoSAMNQKihKq0XyVCx7ExyCL+KbWQErT3Pr6vbWiL8Ve+1visWW3DAUyOry/zGpU
-         +HwNcVdCrXF9Kzgr8gsRW0AhZhoZ+n5q8ZGdQFKCrASp6D5KxtAUH0e6rQ9eXiG2Z7dv
-         TfHhAkrNfrt2LDcEqaD12uez5QTXOKfuFmB5s=
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=us/uLpXxX0XlW29JLOVcCBD/zOVj+gQgjXP5kfUDV14=;
+        b=A+dsQCNsCBu227ebNwXajuLaso+SeGxYLM8g0qcwl9rBNKiLYoVtvV84eYn0bwjCID
+         sACU/H0bVWagyUhJL0COAWQ4M1CUK4ewXrXXwCRJ9q0qTClg2voRDDwKSg2sUW9jBGqp
+         5kylgc4UqrN/WQ7kMMuwsJbag1UoP9SEWke16huo0lkaVi700eU4AWuroFwGbbfSx4y1
+         vCK3wrAd+czwEJtQfYdPFzY9W1E1tAnvJohBLbrExpvoZU7yc440E8ophHReQiHCy28m
+         jol1li44M6Yzo+CWbO7vPIxzqZfj3ZiAiEKv1gPiLqEo8SxNjOFzAZMLQYo8DNuNMBdp
+         /r+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GuxcT4bNE7Lanuh6HBPPFB8YOlbNRYRQt9yxyQj+Xf4=;
-        b=fecTZ6kjMtGdpVQ70Z2niSITK3Nv+Oig/1t45CVn4NaI6mGZ+FwWLPIiSFGBi6zScm
-         o1sO7BuUTP+GEiv+Kf14qLe11ApcXehgey94kpbuXVhBKf0Eb1LX75zjiIu6opHi5f2i
-         C7+cEeUi32302ob1ipCcKIfO0lLBW2JJtHKYQRbiEGw4C8LL3scfTIz61RuNZ1bhc5Ge
-         baHFS3n0fZzSxXIF37ZsW3ym7e2sOtzzfRP9pxpIyhY/xC7ift4gYxu65Fa+dtMTZPTO
-         hvJcTEk+5F9NVNsYeBKb2gzkK4ZOiV5SSoE0lZpY77qnpXklzCeYkCk4gmyAvPzJWdhh
-         3bdA==
-X-Gm-Message-State: APjAAAWJuihnXkPu3bzx8LbKnvymXfqUNBnPJXG2bW8A6tt7S9+riyNM
-        j3bQO1ZjCaHijGfbXNhECivr1d9Lb0lICVYYuFd2VQ==
-X-Google-Smtp-Source: APXvYqwF9Y3/c0yi205TGCahwX97qwEwu4iwRt88jl9FlE+jOQfq3E3QeOdk+UxhXaA4JUHng04qr3twtUBWIS40d0Q=
-X-Received: by 2002:a24:4453:: with SMTP id o80mr3845078ita.160.1559238843258;
- Thu, 30 May 2019 10:54:03 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=us/uLpXxX0XlW29JLOVcCBD/zOVj+gQgjXP5kfUDV14=;
+        b=mwy2qqsWmGqg+wGWoyDSo+dOyoutyRKZ+88kAF9TfV5UowFE3PZdsTnc0ewoqkkla4
+         VcZ7G87DljLjrwnZ6WFomlej5efHJmXUZQ+P2t3BtzAdwwCfpdsi1UsyR7CXPBjWoy1J
+         RrIWI6CZGJ7TsGJO8CmeDNT2oiaZ3SgcH6+it2E++KP2rJQUl08XrylvlGW9g2q1I6zN
+         0cR35hOPaHpjSLT5F0s7ilCtI8aisTOmJtfZFuEaCBlQOlxQnjDPLvPWsMU1QiBpf2u2
+         NpxSUF+5CTwIG265WsU9pCFclVH4VkSrtXTnn1jWUI+sZdJFiFd3CtOiY0nCfgBRV0yr
+         3kCA==
+X-Gm-Message-State: APjAAAXeGpPAozSnsE79opVQ+wj/nIGepkVxTN59SvKumBY0/0ngzty5
+        ToAVFwP2kYInl40lUw5Kf3nAQA==
+X-Google-Smtp-Source: APXvYqyqSqAx/bfaFV+24kpMx30pZuZcASKWxObI0kR/+ipX5lG1SbfBpJ/hnfKLQ8ohnQN1hEA9Ng==
+X-Received: by 2002:a17:90a:bf84:: with SMTP id d4mr4507082pjs.124.1559238836224;
+        Thu, 30 May 2019 10:53:56 -0700 (PDT)
+Received: from google.com ([2620:15c:202:201:bc61:d85d:eb16:9036])
+        by smtp.gmail.com with ESMTPSA id q193sm4108849pfc.52.2019.05.30.10.53.53
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 30 May 2019 10:53:54 -0700 (PDT)
+Date:   Thu, 30 May 2019 10:53:49 -0700
+From:   Benson Leung <bleung@google.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     bleung@chromium.org, enric.balletbo@collabora.com,
+        groeck@chromium.org, linux-kernel@vger.kernel.org,
+        bleung@google.com
+Subject: Re: [PATCH v2 -next] platform/chrome: cros_ec: Make some symbols
+ static
+Message-ID: <20190530175349.GA24982@google.com>
+References: <20190529150749.8032-1-yuehaibing@huawei.com>
+ <20190530084932.2576-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-References: <1558121424-2914-1-git-send-email-chiluk+linux@indeed.com>
- <1559156926-31336-1-git-send-email-chiluk+linux@indeed.com>
- <1559156926-31336-2-git-send-email-chiluk+linux@indeed.com> <xm264l5dynrg.fsf@bsegall-linux.svl.corp.google.com>
-In-Reply-To: <xm264l5dynrg.fsf@bsegall-linux.svl.corp.google.com>
-From:   Dave Chiluk <chiluk+linux@indeed.com>
-Date:   Thu, 30 May 2019 12:53:37 -0500
-Message-ID: <CAC=E7cU9GetuKVQE1HxXsSuOKgyxezXUmSH2ZDHOrLio_YZi1g@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] sched/fair: Fix low cpu usage with high throttling
- by removing expiration of cpu-local slices
-To:     bsegall@google.com
-Cc:     Phil Auld <pauld@redhat.com>, Peter Oskolkov <posk@posk.io>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Brendan Gregg <bgregg@netflix.com>,
-        Kyle Anderson <kwa@yelp.com>,
-        Gabriel Munos <gmunoz@netflix.com>,
-        John Hammond <jhammond@indeed.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        pjt@google.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ZPt4rx8FFjLCG7dd"
+Content-Disposition: inline
+In-Reply-To: <20190530084932.2576-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 02:05:55PM -0700, bsegall@google.com wrote:
-> Dave Chiluk <chiluk+linux@indeed.com> writes:
->
-> Yeah, having run the test, stranding only 1 ms per cpu rather than 5
-> doesn't help if you only have 10 ms of quota and even 10 threads/cpus.
-> The slack timer isn't important in this test, though I think it probably
-> should be changed.
-My min_cfs_rq_runtime was already set to 1ms.
 
-Additionally raising the amount of quota from 10ms to 50ms or even
-100ms, still results in throttling without full quota usage.
+--ZPt4rx8FFjLCG7dd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Decreasing min_cfs_rq_runtime helps, but would mean that we have to pull
-> quota more often / always. The worst case here I think is where you
-> run/sleep for ~1ns, so you wind up taking the lock twice every
-> min_cfs_rq_runtime: once for assign and once to return all but min,
-> which you then use up doing short run/sleep. I suppose that determines
-> how much we care about this overhead at all.
-I'm not so concerned about how inefficiently the user-space application
-runs, as that's up to the invidual developer.  The fibtest testcase, is
-purely my approximation of what a java application with lots of worker
-threads might do, as I didn't have a great deterministic java
-reproducer, and I feared posting java to LKML.  I'm more concerned with
-the fact that the user requested 10ms/period or 100ms/period and they
-hit throttling while simultaneously not seeing that amount of cpu usage.
-i.e. on an 8 core machine if I
-$ ./runfibtest 1
-Iterations Completed(M): 1886
-Throttled for: 51
-CPU Usage (msecs) = 507
-$ ./runfibtest 8
-Iterations Completed(M): 1274
-Throttled for: 52
-CPU Usage (msecs) = 380
+Hello YueHaibing,
 
-You see that in the 8 core case where we have 7 do nothing threads on
-cpu's 1-7, we see only 380 ms of usage, and 52 periods of throttling
-when we should have received ~500ms of cpu usage.
+On Thu, May 30, 2019 at 04:49:32PM +0800, YueHaibing wrote:
+> Fix sparse warning:
+>=20
+> drivers/platform/chrome/cros_ec_debugfs.c:256:30: warning: symbol 'cros_e=
+c_console_log_fops' was not declared. Should it be static?
+> drivers/platform/chrome/cros_ec_debugfs.c:265:30: warning: symbol 'cros_e=
+c_pdinfo_fops' was not declared. Should it be static?
+> drivers/platform/chrome/cros_ec_lightbar.c:550:24: warning: symbol 'cros_=
+ec_lightbar_attr_group' was not declared. Should it be static?
+> drivers/platform/chrome/cros_ec_sysfs.c:338:24: warning: symbol 'cros_ec_=
+attr_group' was not declared. Should it be static?
+> drivers/platform/chrome/cros_ec_vbc.c:104:24: warning: symbol 'cros_ec_vb=
+c_attr_group' was not declared. Should it be static?
+> drivers/platform/chrome/cros_ec_lpc.c:408:25: warning: symbol 'cros_ec_lp=
+c_pm_ops' was not declared. Should it be static?
+>=20
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Looking more closely at the __return_cfs_rq_runtime logic I noticed
-        if (cfs_b->quota != RUNTIME_INF &&
-            cfs_rq->runtime_expires == cfs_b->runtime_expires) {
+Reviewed-by: Benson Leung <bleung@chromium.org>
 
-Which is awfully similar to the logic that was fixed by 512ac999.  Is it
-possible that we are just not ever returning runtime back to the cfs_b
-because of the runtime_expires comparison here?
+> ---
+> v2: fix patch title
+> ---
+>  drivers/platform/chrome/cros_ec_debugfs.c  | 4 ++--
+>  drivers/platform/chrome/cros_ec_lightbar.c | 2 +-
+>  drivers/platform/chrome/cros_ec_lpc.c      | 2 +-
+>  drivers/platform/chrome/cros_ec_sysfs.c    | 2 +-
+>  drivers/platform/chrome/cros_ec_vbc.c      | 2 +-
+>  5 files changed, 6 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/platform/chrome/cros_ec_debugfs.c b/drivers/platform=
+/chrome/cros_ec_debugfs.c
+> index 4c2a27f6a6d0..4578eb3e0731 100644
+> --- a/drivers/platform/chrome/cros_ec_debugfs.c
+> +++ b/drivers/platform/chrome/cros_ec_debugfs.c
+> @@ -241,7 +241,7 @@ static ssize_t cros_ec_pdinfo_read(struct file *file,
+>  				       read_buf, p - read_buf);
+>  }
+> =20
+> -const struct file_operations cros_ec_console_log_fops =3D {
+> +static const struct file_operations cros_ec_console_log_fops =3D {
+>  	.owner =3D THIS_MODULE,
+>  	.open =3D cros_ec_console_log_open,
+>  	.read =3D cros_ec_console_log_read,
+> @@ -250,7 +250,7 @@ const struct file_operations cros_ec_console_log_fops=
+ =3D {
+>  	.release =3D cros_ec_console_log_release,
+>  };
+> =20
+> -const struct file_operations cros_ec_pdinfo_fops =3D {
+> +static const struct file_operations cros_ec_pdinfo_fops =3D {
+>  	.owner =3D THIS_MODULE,
+>  	.open =3D simple_open,
+>  	.read =3D cros_ec_pdinfo_read,
+> diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/platfor=
+m/chrome/cros_ec_lightbar.c
+> index d30a6650b0b5..23a82ee4c785 100644
+> --- a/drivers/platform/chrome/cros_ec_lightbar.c
+> +++ b/drivers/platform/chrome/cros_ec_lightbar.c
+> @@ -547,7 +547,7 @@ static struct attribute *__lb_cmds_attrs[] =3D {
+>  	NULL,
+>  };
+> =20
+> -struct attribute_group cros_ec_lightbar_attr_group =3D {
+> +static struct attribute_group cros_ec_lightbar_attr_group =3D {
+>  	.name =3D "lightbar",
+>  	.attrs =3D __lb_cmds_attrs,
+>  };
+> diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chr=
+ome/cros_ec_lpc.c
+> index c9c240fbe7c6..aaa21803633a 100644
+> --- a/drivers/platform/chrome/cros_ec_lpc.c
+> +++ b/drivers/platform/chrome/cros_ec_lpc.c
+> @@ -405,7 +405,7 @@ static int cros_ec_lpc_resume(struct device *dev)
+>  }
+>  #endif
+> =20
+> -const struct dev_pm_ops cros_ec_lpc_pm_ops =3D {
+> +static const struct dev_pm_ops cros_ec_lpc_pm_ops =3D {
+>  	SET_LATE_SYSTEM_SLEEP_PM_OPS(cros_ec_lpc_suspend, cros_ec_lpc_resume)
+>  };
+> =20
+> diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/c=
+hrome/cros_ec_sysfs.c
+> index fe0b7614ae1b..3edb237bf8ed 100644
+> --- a/drivers/platform/chrome/cros_ec_sysfs.c
+> +++ b/drivers/platform/chrome/cros_ec_sysfs.c
+> @@ -335,7 +335,7 @@ static umode_t cros_ec_ctrl_visible(struct kobject *k=
+obj,
+>  	return a->mode;
+>  }
+> =20
+> -struct attribute_group cros_ec_attr_group =3D {
+> +static struct attribute_group cros_ec_attr_group =3D {
+>  	.attrs =3D __ec_attrs,
+>  	.is_visible =3D cros_ec_ctrl_visible,
+>  };
+> diff --git a/drivers/platform/chrome/cros_ec_vbc.c b/drivers/platform/chr=
+ome/cros_ec_vbc.c
+> index 8392a1ec33a7..2aaefed87eb4 100644
+> --- a/drivers/platform/chrome/cros_ec_vbc.c
+> +++ b/drivers/platform/chrome/cros_ec_vbc.c
+> @@ -101,7 +101,7 @@ static struct bin_attribute *cros_ec_vbc_bin_attrs[] =
+=3D {
+>  	NULL
+>  };
+> =20
+> -struct attribute_group cros_ec_vbc_attr_group =3D {
+> +static struct attribute_group cros_ec_vbc_attr_group =3D {
+>  	.name =3D "vbc",
+>  	.bin_attrs =3D cros_ec_vbc_bin_attrs,
+>  };
+> --=20
+> 2.17.1
+>=20
+>=20
 
-Early on in my testing I created a patch that would report via sysfs the
-amount of quota that was expired at the end of a period in
-expire_cfs_rq_runtime, and it roughly equalled the difference in quota
-between the actual cpu usage and the alloted quota.  That leads me to
-believe that something is not going quite correct in the slack return
-logic __return_cfs_rq_runtime.  I'll attach that patch at the bottom of
-this e-mail in case you'd like to reproduce my tests.
+--=20
+Benson Leung
+Staff Software Engineer
+Chrome OS Kernel
+Google Inc.
+bleung@google.com
+Chromium OS Project
+bleung@chromium.org
 
-> Removing expiration means that in the worst case period and quota can be
-> effectively twice what the user specified, but only on very particular
-> workloads.
-I'm only removing expiration of slices that have already been assigned
-to individual cfs_rq.  My understanding is that there is at most one
-cfs_rq per cpu, and each of those can have at most one slice of
-available runtime.  So the worst case burst is slice_ms * cpus.  Please
-help me understand how you get to twice user specified quota and period
-as it's not obvious to me *(I've only been looking at this for a few
-months).
+--ZPt4rx8FFjLCG7dd
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> I think we should at least think about instead lowering
-> min_cfs_rq_runtime to some smaller value
-Do you mean lower than 1ms?
+-----BEGIN PGP SIGNATURE-----
 
-Thanks
-Dave.
+iHUEABYKAB0WIQQCtZK6p/AktxXfkOlzbaomhzOwwgUCXPAYqQAKCRBzbaomhzOw
+wtaPAP9KsM8qo6MLA6xp1KjTzg9OXO2/8q54Q9hpMycMSy7fBQD/ba98HzAnMz9U
+5EAdojpwqI5/P4YaQ/dppZ7gEmt1uQk=
+=Nqos
+-----END PGP SIGNATURE-----
 
-From: Dave Chiluk <chiluk+linux@indeed.com>
-Date: Thu, 30 May 2019 12:47:12 -0500
-Subject: [PATCH] Add expired_time sysfs entry
-
-Signed-off-by: Dave Chiluk <chiluk+linux@indeed.com>
----
- kernel/sched/core.c  | 41 +++++++++++++++++++++++++++++++++++++++++
- kernel/sched/fair.c  |  4 ++++
- kernel/sched/sched.h |  1 +
- 3 files changed, 46 insertions(+)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 874c427..3c06df9 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -6655,6 +6655,30 @@ static long tg_get_cfs_period(struct task_group *tg)
-        return cfs_period_us;
- }
-
-+static int tg_set_cfs_expired_runtime(struct task_group *tg, long
-slice_expiration)
-+{
-+       struct cfs_bandwidth *cfs_b = &tg->cfs_bandwidth;
-+
-+       if (slice_expiration == 0)
-+       {
-+               raw_spin_lock_irq(&cfs_b->lock);
-+               cfs_b->expired_runtime= 0;
-+               raw_spin_unlock_irq(&cfs_b->lock);
-+               return 0;
-+       }
-+       return 1;
-+}
-+
-+static u64 tg_get_cfs_expired_runtime(struct task_group *tg)
-+{
-+       u64 expired_runtime;
-+
-+       expired_runtime = tg->cfs_bandwidth.expired_runtime;
-+       do_div(expired_runtime, NSEC_PER_USEC);
-+
-+       return expired_runtime;
-+}
-+
- static s64 cpu_cfs_quota_read_s64(struct cgroup_subsys_state *css,
-                                  struct cftype *cft)
- {
-@@ -6679,6 +6703,18 @@ static int cpu_cfs_period_write_u64(struct
-cgroup_subsys_state *css,
-        return tg_set_cfs_period(css_tg(css), cfs_period_us);
- }
-
-+static u64 cpu_cfs_expired_runtime_read_u64(struct cgroup_subsys_state *css,
-+                                 struct cftype *cft)
-+{
-+       return tg_get_cfs_expired_runtime(css_tg(css));
-+}
-+
-+static int cpu_cfs_expired_runtime_write_s64(struct cgroup_subsys_state *css,
-+                                  struct cftype *cftype, s64
-cfs_slice_expiration_us)
-+{
-+       return tg_set_cfs_expired_runtime(css_tg(css), cfs_slice_expiration_us);
-+}
-+
- struct cfs_schedulable_data {
-        struct task_group *tg;
-        u64 period, quota;
-@@ -6832,6 +6868,11 @@ static u64 cpu_rt_period_read_uint(struct
-cgroup_subsys_state *css,
-                .write_u64 = cpu_cfs_period_write_u64,
-        },
-        {
-+               .name = "cfs_expired_runtime",
-+               .read_u64 = cpu_cfs_expired_runtime_read_u64,
-+               .write_s64 = cpu_cfs_expired_runtime_write_s64,
-+       },
-+       {
-                .name = "stat",
-                .seq_show = cpu_cfs_stat_show,
-        },
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index f35930f..bcbd4ef 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4382,6 +4382,9 @@ static void expire_cfs_rq_runtime(struct cfs_rq *cfs_rq)
-                cfs_rq->runtime_expires += TICK_NSEC;
-        } else {
-                /* global deadline is ahead, expiration has passed */
-+               raw_spin_lock_irq(&cfs_b->lock);
-+               cfs_b->expired_runtime += cfs_rq->runtime_remaining;
-+               raw_spin_unlock_irq(&cfs_b->lock);
-                cfs_rq->runtime_remaining = 0;
-        }
- }
-@@ -4943,6 +4946,7 @@ void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
-        cfs_b->runtime = 0;
-        cfs_b->quota = RUNTIME_INF;
-        cfs_b->period = ns_to_ktime(default_cfs_period());
-+       cfs_b->expired_runtime = 0;
-
-        INIT_LIST_HEAD(&cfs_b->throttled_cfs_rq);
-        hrtimer_init(&cfs_b->period_timer, CLOCK_MONOTONIC,
-HRTIMER_MODE_ABS_PINNED);
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index b52ed1a..499d2e2 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -343,6 +343,7 @@ struct cfs_bandwidth {
-        s64                     hierarchical_quota;
-        u64                     runtime_expires;
-        int                     expires_seq;
-+       u64                     expired_runtime;
-
-        short                   idle;
-        short                   period_active;
-
---
-1.8.3.1
+--ZPt4rx8FFjLCG7dd--
