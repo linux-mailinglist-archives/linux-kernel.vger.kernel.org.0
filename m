@@ -2,65 +2,271 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF804302FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 21:52:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D32130305
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 21:53:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726376AbfE3Tw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 15:52:28 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:59248 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725961AbfE3Tw2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 15:52:28 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 2211E14DA9761;
-        Thu, 30 May 2019 12:52:27 -0700 (PDT)
-Date:   Thu, 30 May 2019 12:52:26 -0700 (PDT)
-Message-Id: <20190530.125226.748439790590538564.davem@davemloft.net>
-To:     jakub.kicinski@netronome.com
-Cc:     horatiu.vultur@microchip.com, alexandre.belloni@bootlin.com,
-        UNGLinuxDriver@microchip.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, ralf@linux-mips.org, paul.burton@mips.com,
-        jhogan@kernel.org, linux-mips@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH net-next v2 2/2] net: mscc: ocelot: Hardware ofload for
- tc flower filter
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190529151802.19aa82a2@cakuba.netronome.com>
-References: <1559125580-6375-1-git-send-email-horatiu.vultur@microchip.com>
-        <1559125580-6375-3-git-send-email-horatiu.vultur@microchip.com>
-        <20190529151802.19aa82a2@cakuba.netronome.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 30 May 2019 12:52:27 -0700 (PDT)
+        id S1726658AbfE3TxU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 15:53:20 -0400
+Received: from ms.lwn.net ([45.79.88.28]:58122 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726574AbfE3TxT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 15:53:19 -0400
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 51852728;
+        Thu, 30 May 2019 19:53:18 +0000 (UTC)
+Date:   Thu, 30 May 2019 13:53:17 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org
+Subject: [PATCH RFC] Rough draft document on merging and rebasing
+Message-ID: <20190530135317.3c8d0d7b@lwn.net>
+Organization: LWN.net
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
-Date: Wed, 29 May 2019 15:18:44 -0700
+This is a first attempt at following through on last month's discussion
+about common merging and rebasing errors.  The hope here is to document
+existing best practices rather than trying to define new ones.  I've
+certainly failed somewhere along the way; please set me straight and I'll
+try to do better next time.
 
-> On Wed, 29 May 2019 12:26:20 +0200, Horatiu Vultur wrote:
->> +static int ocelot_flower_replace(struct tc_cls_flower_offload *f,
->> +				 struct ocelot_port_block *port_block)
->> +{
->> +	struct ocelot_ace_rule *rule;
->> +	int ret;
->> +
->> +	if (port_block->port->tc.block_shared)
->> +		return -EOPNOTSUPP;
-> 
-> FWIW since you only support TRAP and DROP actions here (AFAICT) you
-> should actually be okay with shared blocks.  The problems with shared
-> blocks start when the action is stateful (like act_police), because we
-> can't share that state between devices.  But for most actions which just
-> maintain statistics, it's fine to allow shared blocks.  HTH
+Thanks,
 
-Please update to remove this test Horatiu, thanks.
+jon
+
+-------------
+docs: Add a document on repository management
+
+Every merge window seems to involve at least one episode where subsystem
+maintainers don't manage their trees as Linus would like.  Document the
+expectations so that at least he has something to point people to.
+
+Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+---
+ Documentation/maintainer/index.rst        |   1 +
+ Documentation/maintainer/repo-hygiene.rst | 195 ++++++++++++++++++++++
+ 2 files changed, 196 insertions(+)
+ create mode 100644 Documentation/maintainer/repo-hygiene.rst
+
+diff --git a/Documentation/maintainer/index.rst b/Documentation/maintainer/index.rst
+index 2a14916930cb..48c1d56253d8 100644
+--- a/Documentation/maintainer/index.rst
++++ b/Documentation/maintainer/index.rst
+@@ -10,5 +10,6 @@ additions to this manual.
+    :maxdepth: 2
+ 
+    configure-git
++   repo-hygiene
+    pull-requests
+ 
+diff --git a/Documentation/maintainer/repo-hygiene.rst b/Documentation/maintainer/repo-hygiene.rst
+new file mode 100644
+index 000000000000..0a738ea51d65
+--- /dev/null
++++ b/Documentation/maintainer/repo-hygiene.rst
+@@ -0,0 +1,195 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++========================================
++Repository hygiene: rebasing and merging
++========================================
++
++Maintaining a subsystem, as a general rule, requires a familiarity with the
++Git source-code management system.  Git is a powerful tool with a lot of
++features; as is often the case with such tools, there are right and wrong
++ways to use those features.  This document looks in particular at the use
++of rebasing and merging.  Maintainers often get in trouble when they use
++those tools incorrectly, but avoiding problems is not actually all that
++hard.
++
++One thing to be aware of in general is that, unlike many other projects,
++the kernel community is not scared by seeing merge commits in its
++development history.  Indeed, given the scale of the project, avoiding
++merges would be nearly impossible.  Some problems encountered by
++maintainers results from a desire to avoid merges, while others come from
++merging a little too often.
++
++Rebasing
++========
++
++"Rebasing" is the process of changing the history of a series of commits
++within a repository.  At its simplest, a rebase could change the starting
++point of a patch series from one point to another.  Other uses include
++fixing (or deleting) broken commits, adding tags to commits, or changing
++the order in which commits are applied.  Used properly, rebasing can yield
++a cleaner and clearer development history; used improperly, it can obscure
++that history and introduce bugs.
++
++There are a few rules of thumb that can help developers to avoid the worst
++perils of rebasing:
++
++ - History that has been exposed to the world beyond your private system
++   should not be rebased.  Others may have pulled a copy of your tree and
++   built on it; rebasing your tree will create pain for them.  If work is
++   in need of rebasing, that is usually a sign that it is not yet ready to
++   be committed to a public repository.
++
++ - Do not rebase a branch that contains history created by others.  If you
++   have pulled changes from another developer's repository, you are now a
++   custodian of their history.  You should not change it.
++
++ - Do not rebase without a good reason to do so.  Just being on a newer
++   base or avoiding a merge with an upstream repository is not generally a
++   good reason.
++
++ - If you must rebase a repository, do not pick some random kernel commit
++   as the new base.  The kernel is often in a relatively unstable state
++   between release points; basing development on one of those points
++   increases the chances of running into surprising bugs.  When a patch
++   series must move to a new base, pick a stable point (such as one of
++   the -rc releases) to move to.
++
++ - Realize the rebasing a patch series changes the environment in which it
++   was developed and, likely, invalidates much of the testing that was
++   done.  A rebased patch series should, as a general rule, be treated like
++   new code and retested from the beginning.
++
++A frequent cause of merge-window trouble is when Linus is presented with a
++patch series that has clearly been rebased, often to a random commit,
++shortly before the pull request was sent.  The chances of such a series
++having been adequately tested are relatively low - as are the chances of
++the pull request being acted upon.
++
++If, instead, rebasing is limited to private trees, commits are based on a
++well-known starting point, and they are well tested, the potential for
++trouble is low.
++
++Merging
++=======
++
++Merging is a common operation in the kernel development process; the 5.1
++development cycle included 1,126 merge commits - nearly 9% of the total.
++Kernel work is accumulated in over 100 different subsystem trees, each of
++which may contain multiple topic branches; each branch is usually developed
++independently of the others.  So naturally, at least merge will be required
++before any given branch finds its way into an upstream repository.
++
++Many projects require that branches in pull requests be based on the
++current trunk so that no merge commits appear in the history.  The kernel
++is not such a project; any rebasing of branches to avoid merges will, as
++described above, lead to certain trouble.
++
++Subsystem maintainers find themselves having to do two types of merges:
++from lower-level subsystem trees and from others, either sibling trees or
++the mainline.  The best practices to follow differ in those two situations.
++
++Merging from lower-level trees
++------------------------------
++
++Larger subsystems tend to have multiple levels of maintainers, with the
++lower-level maintainers sending pull requests to the higher levels.  Acting
++on such a pull request will almost certainly generate a merge commit; that
++is as it should be.  In fact, subsystem maintainers may want to use
++the --no-ff flag to force the addition of a merge commit in the rare cases
++where one would not normally be created so that the reasons for the merge
++can be recorded.  The changelog for the merge should, for any kind of
++merge, say *why* the merge is being done.  For a lower-level tree, "why" is
++usually a summary of the changes that will come with that pull.
++
++Maintainers at all levels should be using signed tags on their pull
++requests, and upstream maintainers should verify the tags when pulling
++branches.  Failure to do so threatens the security of the development
++process as a whole.
++
++As per the rules outlined above, once you have merged somebody else's
++history into your tree, you cannot rebase that branch, even if you
++otherwise would be able to.
++
++Merging from sibling or upstream trees
++--------------------------------------
++
++While merges from downstream are common and unremarkable, merges from other
++trees tend to be a red flag when it comes time to push a branch upstream.
++Such merges need to be carefully thought about and well justified, or
++there's a good chance that a subsequent pull request will be rejected.
++
++It is natural to want to merge the master branch into a repository; it can
++help to make sure that there are no conflicts with parallel development and
++generally gives a warm, fuzzy feeling of being up-to-date.  But this
++temptation should be avoided almost all of the time.
++
++Why is that?  Merges with upstream will muddy the development history of
++your own branch.  They will significantly increase your chances of
++encountering bugs from elsewhere in the community and make it hard to
++ensure that the work you are managing is stable and ready for upstream.
++Frequent merges can also obscure problems with the development process in
++your tree; they can hide interactions with other trees that should not be
++happening (often) in a well-managed branch.
++
++One of the most frequent causes of merge-related trouble is when a
++maintainer merges with the upstream in order to resolve merge conflicts
++before sending a pull request.  Again, this temptation is easy enough to
++understand, but it should absolutely be avoided.  This is especially true
++for the final pull request: Linus is adamant that he would much rather see
++merge conflicts than unnecessary back merges.  Seeing the conflicts lets
++him know where potential problem areas are.  He does a lot of merges (382
++in the 5.1 development cycle) and has gotten quite good at conflict
++resolution - often better than the developers involved.
++
++So what should a maintainer do when there is a conflict between their
++subsystem branch and the mainline?  The most important step is to warn
++Linus in the pull request that the conflict will happen; if nothing else,
++that demonstrates an awareness of how your branch fits into the whole.  For
++especially difficult conflicts, create and push a *separate* branch to show
++how you would resolve things.  Mention that branch in your pull request,
++but the pull request itself should be for the unmerged branch.
++
++Even in the absence of known conflicts, doing a test merge before sending a
++pull request is a good idea.  It may alert you to problems that you somehow
++didn't see from linux-next and helps to understand exactly what you are
++asking upstream to do.
++
++Another reason for doing merges of upstream or another subsystem tree is to
++resolve dependencies.  These dependency issues do happen at times, and
++sometimes a cross-merge with another tree is the best way to resolve them;
++as always, in such situations, the merge commit should explain why the
++merge has been done.  Take a moment to do it right; people will read those
++changelogs.
++
++Often, though, dependency issues indicate that a change of approach is
++needed.  Merging another subsystem tree to resolve a dependency risks
++bringing in other bugs.  If that subsystem tree fails to be pulled
++upstream, whatever problems it had will block the merging of your tree as
++well.  Possible alternatives include agreeing with the maintainer to carry
++both sets of changes in one of the trees or creating a special branch
++dedicated to the dependent commits.  If the dependency is related to major
++infrastructural changes, the right solution might be to hold the dependent
++commits for one development cycle so that those changes have time to
++stabilize in the mainline.
++
++Finally
++=======
++
++It is relatively common to merge with the mainline toward the beginning of
++the development cycle in order to pick up changes and fixes done elsewhere
++in the tree.  As always, such a merge should pick a well-known release
++point rather than some random spot.  If your upstream-bound branch has
++emptied entirely into the mainline during the merge window, you can pull it
++forward with a command like::
++
++  git merge v5.2-rc1^0
++
++The "^0" will cause Git to do a fast-forward merge (which should be
++possible in this situation), thus avoiding the addition of a spurious merge
++commit.
++
++The guidelines laid out above are just that: guidelines.  There will always
++be situations that call out for a different solution, and these guidelines
++should not prevent developers from doing the right thing when the need
++arises.  But one should always think about whether the need has truly
++arisen and be prepared to explain why something abnormal needs to be done. 
+-- 
+2.21.0
+
