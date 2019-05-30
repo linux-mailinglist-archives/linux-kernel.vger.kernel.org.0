@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4086C2F01A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:01:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B90A2ECEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:29:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731656AbfE3EAj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:00:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50856 "EHLO mail.kernel.org"
+        id S2388244AbfE3D2v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:28:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58046 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730010AbfE3DSV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:21 -0400
+        id S1732153AbfE3DUT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:20:19 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5856D2479B;
-        Thu, 30 May 2019 03:18:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 943D924923;
+        Thu, 30 May 2019 03:20:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186301;
-        bh=BqQOaGoHrd8Qb5pIChnRMgyyNk5t7UY4NN7cO91/rhk=;
+        s=default; t=1559186418;
+        bh=8GZY8hA7gpfxtzPY/wVlWxHlSwvQJ7p5GwaUKnw8poI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SIwe5Ju7wicvRlKMHlQbJmVyX72lVW2PSgdsO0PEnuxLi7iXf2rWGPMyEC9W+U0s7
-         WgaQ4iaO69vLx8X2gwTslSHZwo4eng3dizR3ZUKD/txD/e5ZrmoEckmtIHh+E+eP6w
-         Q5v8J5fg5LX6VQP8VwJ8dK6H2CKoYL/0g9sRZjrI=
+        b=i8P2CGV8k9n/h0mVCU5iT/2usR343pkXJ9eJ3lkYlg4wpKaRrx+7qwwNWmWFim64R
+         dCzYafJcCpIgTs9YvVdn1cqoQz56cYvMolkLFRFnUQ52TyirWWGbb5eZv0LDVXyIhM
+         kW0mGdM215MbuzBBq+2RTkAZ55UXkXxrl5WMuJb4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, kernel test robot <rong.a.chen@intel.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 266/276] spi: rspi: Fix sequencer reset during initialization
+Subject: [PATCH 4.14 170/193] rcutorture: Fix cleanup path for invalid torture_type strings
 Date:   Wed, 29 May 2019 20:07:04 -0700
-Message-Id: <20190530030541.834613754@linuxfoundation.org>
+Message-Id: <20190530030511.660557598@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,57 +44,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 26843bb128590edd7eba1ad7ce22e4b9f1066ce3 ]
+[ Upstream commit b813afae7ab6a5e91b4e16cc567331d9c2ae1f04 ]
 
-While the sequencer is reset after each SPI message since commit
-880c6d114fd79a69 ("spi: rspi: Add support for Quad and Dual SPI
-Transfers on QSPI"), it was never reset for the first message, thus
-relying on reset state or bootloader settings.
+If the specified rcutorture.torture_type is not in the rcu_torture_init()
+function's torture_ops[] array, rcutorture prints some console messages
+and then invokes rcu_torture_cleanup() to set state so that a future
+torture test can run.  However, rcu_torture_cleanup() also attempts to
+end the test that didn't actually start, and in doing so relies on the
+value of cur_ops, a value that is not particularly relevant in this case.
+This can result in confusing output or even follow-on failures due to
+attempts to use facilities that have not been properly initialized.
 
-Fix this by initializing it explicitly during configuration.
+This commit therefore sets the value of cur_ops to NULL in this case
+and inserts a check near the beginning of rcu_torture_cleanup(),
+thus avoiding relying on an irrelevant cur_ops value.
 
-Fixes: 0b2182ddac4b8837 ("spi: add support for Renesas RSPI")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Reported-by: kernel test robot <rong.a.chen@intel.com>
+Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-rspi.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ kernel/rcu/rcutorture.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
-index b37de1d991d6a..d61120822f026 100644
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -279,7 +279,8 @@ static int rspi_set_config_register(struct rspi_data *rspi, int access_size)
- 	/* Sets parity, interrupt mask */
- 	rspi_write8(rspi, 0x00, RSPI_SPCR2);
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index 45f2ffbc1e78e..f0c599bf4058c 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -1599,6 +1599,10 @@ rcu_torture_cleanup(void)
+ 			cur_ops->cb_barrier();
+ 		return;
+ 	}
++	if (!cur_ops) {
++		torture_cleanup_end();
++		return;
++	}
  
--	/* Sets SPCMD */
-+	/* Resets sequencer */
-+	rspi_write8(rspi, 0, RSPI_SPSCR);
- 	rspi->spcmd |= SPCMD_SPB_8_TO_16(access_size);
- 	rspi_write16(rspi, rspi->spcmd, RSPI_SPCMD0);
- 
-@@ -323,7 +324,8 @@ static int rspi_rz_set_config_register(struct rspi_data *rspi, int access_size)
- 	rspi_write8(rspi, 0x00, RSPI_SSLND);
- 	rspi_write8(rspi, 0x00, RSPI_SPND);
- 
--	/* Sets SPCMD */
-+	/* Resets sequencer */
-+	rspi_write8(rspi, 0, RSPI_SPSCR);
- 	rspi->spcmd |= SPCMD_SPB_8_TO_16(access_size);
- 	rspi_write16(rspi, rspi->spcmd, RSPI_SPCMD0);
- 
-@@ -374,7 +376,8 @@ static int qspi_set_config_register(struct rspi_data *rspi, int access_size)
- 	/* Sets buffer to allow normal operation */
- 	rspi_write8(rspi, 0x00, QSPI_SPBFCR);
- 
--	/* Sets SPCMD */
-+	/* Resets sequencer */
-+	rspi_write8(rspi, 0, RSPI_SPSCR);
- 	rspi_write16(rspi, rspi->spcmd, RSPI_SPCMD0);
- 
- 	/* Sets RSPI mode */
+ 	rcu_torture_barrier_cleanup();
+ 	torture_stop_kthread(rcu_torture_stall, stall_task);
+@@ -1734,6 +1738,7 @@ rcu_torture_init(void)
+ 			pr_alert(" %s", torture_ops[i]->name);
+ 		pr_alert("\n");
+ 		firsterr = -EINVAL;
++		cur_ops = NULL;
+ 		goto unwind;
+ 	}
+ 	if (cur_ops->fqs == NULL && fqs_duration != 0) {
 -- 
 2.20.1
 
