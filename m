@@ -2,101 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C717F2F95A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 11:24:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 728A22F964
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 11:28:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727405AbfE3JYx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 05:24:53 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:33768 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726382AbfE3JYw (ORCPT
+        id S1727420AbfE3J2B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 05:28:01 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38462 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726382AbfE3J2B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 05:24:52 -0400
-Received: by mail-pl1-f194.google.com with SMTP id g21so2330876plq.0;
-        Thu, 30 May 2019 02:24:51 -0700 (PDT)
+        Thu, 30 May 2019 05:28:01 -0400
+Received: by mail-wr1-f66.google.com with SMTP id d18so3705997wrs.5;
+        Thu, 30 May 2019 02:28:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TSm5If1axkhBC10X4aY5pi8UcYtCt09qdX35aB2u9qg=;
-        b=li64GW8H/Ah9ummMZPe0UV7DeHLl81MSAqn6hmQWhVa7fZU6yQvi5/bq4u9Jn9wMpa
-         PEuA4XBpY7QV6+xUS+AJ1YX34wfX439gDnv+huhpnrXlUxutkpFolQnyS87ZAO1aGtBM
-         IbBW/8w8OKBoicfI0SryiJsGfBOtfVzW9E1dx56/uGN25l5Qv8S2iYeqJ6TPJToVawIY
-         0Z/8ELvdOBIiwfRlmTEnvf9y/2/nmLVQRYZOMsAkZCns0OVtaL/I/5Dk/PPq6Kz/g/Ay
-         /xNblYyz9ucpT0K9FZRcyHboUlJHN04oyHGU3qNMpcjwNErf9seS15pKohce/0ekSg5r
-         0+bw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=V9uS1keBW3VpEfdw8YbBt35z4e82IzpdzTkrruky1E8=;
+        b=QtLbf2HmeJA14Jf1AcY7WgDdWbr0B/C84z9/ERtg1Ea1H9PTS7kqNhnGKZY+dPDjPC
+         KbeOi8QpjT2t0+jlvl05Jq58LCsRl6NXwYmKRMqm8AAsQqi/VENdBGl0EZJ2mpl1nHRR
+         QibgPIATXT/RCX7UeeCr5m7mPYg+ih/oV9mwM1UXYkokeIoQCqhLRSlhCDQ87MxU4r6v
+         HtRYiITzXvN1mLjGpneqU5cAIEVRoxDLlvtFFHlIY0iDXjG3QP00tVAKZUf93GH+HQ5n
+         iOKumKG/s83Lb1HPwNeapI2hCHj1xk/HotATLvhC7rJbvJTD/ajL9rfERTfhO0OPqSsr
+         m8ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TSm5If1axkhBC10X4aY5pi8UcYtCt09qdX35aB2u9qg=;
-        b=qO/mQRosNZ3qBYQ0PVMeorYifpLjlG5kHqlISLXCI+9a8Iq2ElnXa+n6sZcWfGfb/g
-         YfbXZ1zS1B+svLTHlB6QUgaXMKzrJROhluLd5ZwbyqQJDAe4fTjYnrelGQVgmSatpKEN
-         CfbLT3dVTiBmcndAKBi2eLbwv0JgNEmdFT+rvlRAcmTIcDDl6+744sZjBAwBVcQyVivv
-         w7ot0dZzr2VY0tW3wvOyLROwT7f7hyw6RQPcBiFhYjb+oOwXQC9YMIv3fwSE26OZ68bS
-         vGCDv65BJc2GQY+2JOkL56s7MbmPAlJ1jptvD/4k+tnSP6VRkS6uEXmTsJoLt/pvEfNO
-         ZP/A==
-X-Gm-Message-State: APjAAAWlgLV5V0/tAiLDhNiJMgGva8ht5PQvHWi8yG/TJyTzSrf5ZEU6
-        x8H7Ld7AqImWPQ76hMBo/qw=
-X-Google-Smtp-Source: APXvYqwWpiD1XEzg5ZgrnUus/WfE9ll8IA/MMoH9m33b0L8Vx7WSs0yomD12CgzCoKsRLXkE7aQmYQ==
-X-Received: by 2002:a17:902:20e2:: with SMTP id v31mr2826387plg.138.1559208291700;
-        Thu, 30 May 2019 02:24:51 -0700 (PDT)
-Received: from zhanggen-UX430UQ ([66.42.35.75])
-        by smtp.gmail.com with ESMTPSA id n2sm1822040pgp.27.2019.05.30.02.24.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 May 2019 02:24:51 -0700 (PDT)
-Date:   Thu, 30 May 2019 17:24:26 +0800
-From:   Gen Zhang <blackgod016574@gmail.com>
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     paul@paul-moore.com, sds@tycho.nsa.gov, eparis@parisplace.org,
-        ccross@android.com, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH] hooks: fix a missing-check bug in selinux_add_mnt_opt()
-Message-ID: <20190530092426.GA3666@zhanggen-UX430UQ>
-References: <20190530080602.GA3600@zhanggen-UX430UQ>
- <e92b727a-bf5f-669a-18d8-7518a248c04c@cogentembedded.com>
- <20190530091848.GA3499@zhanggen-UX430UQ>
- <236195a3-b607-5cf6-ac60-8c5ea2e95b41@cogentembedded.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=V9uS1keBW3VpEfdw8YbBt35z4e82IzpdzTkrruky1E8=;
+        b=VAuPRknRfwLoPuavE7DF9XI97OhYOa0Ep41HUoOkO5NeddUyBVw/SQRZmps0lBzP7d
+         P/LdzhUE1+aXHyV1b1vpJJwiS6kuJ6VdqklsWmQ1/POxM/9u28NbzkuSMu6gBMev6jT0
+         M+b+LZVM6XJJuy648f/AWNKy5Xwg/Cd2Co4nLJJteXxK34Nth7IIee2H4OsLXuLYFiF/
+         srPEwA55/7xlJ3goDQtSSn6vwfxAMw8bbsjctNCzXlIX6aMGhFkxBuj3eIUlKVZ1WtfC
+         BYd81E7zKRdhgAI6SI35bR89aaA/Ke2kmyM0Oup69zL8BR6g2bpttXAa98cNNXVw61AW
+         yf7A==
+X-Gm-Message-State: APjAAAUipeuswXVT2C6y3XyKHNr0IjTO+P/4fVahDO7W0XoRkAH6Mp4g
+        oMat//FNHXi5LckzBQxNn24=
+X-Google-Smtp-Source: APXvYqwAYe7240hTlEiIsSSbTkHNnMmocCkj0k5gjshu065TwpUUnlDOU/rPhN+bZXP3GcvjnesCAQ==
+X-Received: by 2002:adf:fd09:: with SMTP id e9mr1920656wrr.292.1559208479457;
+        Thu, 30 May 2019 02:27:59 -0700 (PDT)
+Received: from localhost.localdomain ([109.126.142.5])
+        by smtp.gmail.com with ESMTPSA id u25sm147605wmc.3.2019.05.30.02.27.57
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 30 May 2019 02:27:58 -0700 (PDT)
+From:   "Pavel Begunkov (Silence)" <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     osandov@fb.com, ming.lei@redhat.com, Hou Tao <houtao1@huawei.com>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: [PATCH v2 1/1] blk-mq: Fix disabled hybrid polling
+Date:   Thu, 30 May 2019 12:27:08 +0300
+Message-Id: <71c31759a882e00f156a8434caed7064ec93d3da.1559208134.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <236195a3-b607-5cf6-ac60-8c5ea2e95b41@cogentembedded.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 12:22:15PM +0300, Sergei Shtylyov wrote:
-> On 30.05.2019 12:18, Gen Zhang wrote:
-> 
-> >>On 30.05.2019 11:06, Gen Zhang wrote:
-> >>
-> >>>In selinux_add_mnt_opt(), 'val' is allcoted by kmemdup_nul(). It returns
-> >>
-> >>    Allocated?
-> 
-> >Thanks for your reply, Sergei. I used 'allocated' because kmemdup_nul()
-> >does some allocation in its implementation. And its docs descrips:
-> 
->    Describes?
-> 
-> >"Return: newly allocated copy of @s with NUL-termination or %NULL in
-> >case of error". I think it is proper to use 'allocated' here. But it
-> >could be 'assigned', which is better, right?
-> 
->    I was only trying to point out the typos in this word. :-)
-> 
-> >Thanks
-> >Gen
-> >>
-> >>>NULL when fails. So 'val' should be checked.
-> >>>
-> >>>Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
-> >>[...]
-> 
-> MBR, Sergei
-Well, my mistake. Thanks for your comments, Sergei!
+From: Pavel Begunkov <asml.silence@gmail.com>
 
-Thanks
-Gen
+Commit 4bc6339a583cec650b05 ("block: move blk_stat_add() to
+__blk_mq_end_request()") moved blk_stat_add() to reuse ktime_get_ns(),
+so now it's called after blk_update_request(), which zeroes
+rq->__data_len. Without length, blk_stat_add() can't calculate stat
+bucket and returns error, effectively disabling hybrid polling.
+
+v2: Hybrid polling needs pure io time for precision, but according to
+the feedback from Omar Sandoval other components require end-to-end
+time. So, it can't be reused, and should be sampled twice insted.
+
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ block/blk-mq.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 32b8ad3d341b..907799282d57 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -537,11 +537,6 @@ inline void __blk_mq_end_request(struct request *rq, blk_status_t error)
+ 	if (blk_mq_need_time_stamp(rq))
+ 		now = ktime_get_ns();
+ 
+-	if (rq->rq_flags & RQF_STATS) {
+-		blk_mq_poll_stats_start(rq->q);
+-		blk_stat_add(rq, now);
+-	}
+-
+ 	if (rq->internal_tag != -1)
+ 		blk_mq_sched_completed_request(rq, now);
+ 
+@@ -580,6 +575,11 @@ static void __blk_mq_complete_request(struct request *rq)
+ 	int cpu;
+ 
+ 	WRITE_ONCE(rq->state, MQ_RQ_COMPLETE);
++
++	if (rq->rq_flags & RQF_STATS) {
++		blk_mq_poll_stats_start(rq->q);
++		blk_stat_add(rq, ktime_get_ns());
++	}
+ 	/*
+ 	 * Most of single queue controllers, there is only one irq vector
+ 	 * for handling IO completion, and the only irq's affinity is set
+-- 
+2.21.0
+
