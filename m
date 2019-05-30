@@ -2,102 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75E932F9E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 11:51:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2841F2FA54
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 12:33:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727857AbfE3Juw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 05:50:52 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:36712 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727671AbfE3Juw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 05:50:52 -0400
-Received: by mail-wm1-f66.google.com with SMTP id v22so3417896wml.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 02:50:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=iSdK26IrmOEc/B9VC/Q0XsQRMEkKcuvxsa2POFBAfWg=;
-        b=LCpbGaIPpV5r99H6iR6FLlmoZ3ctc0Wo0tAaXSBSHw6z4REiqnyT7PkFbOzd+UPe5l
-         sK0Z4FkJ1KPKDQ/Wssfmzm5JrLnfiFJaVvCUvp7coOL1SGorMfV3kiLVeRVzWKiJzycw
-         lGaUA5D/+pAfiiopfPIWvDalUZjZWblLTfOZg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iSdK26IrmOEc/B9VC/Q0XsQRMEkKcuvxsa2POFBAfWg=;
-        b=RgRX6yJIbyaBpjAw/SHfcZLdgEEJZtIlaibuM+2IL2VgVjuO9zX5zic9YrurzSrjti
-         RlYhdQ7te0nkwT4KWcOvtGZ4nD/BNCy07XBNqW9lYbTPWJ2m8/G9st4APKBRuKQIxvpk
-         srZMKkSY4Nk7F+yWeNsFo8rOOFqFvewquJWqg4275ocu13ZfjrWFRKDiXiAn0/KTEKau
-         iU4T/2gt2/w1sUsdASQfH9PyrVT5Objk9houRd1urY8GfGb68DttEf5dau44SwlRBREl
-         3P2TQP63COpSFftueoztju+SjiR3ITdomWnDONblFp5vAVoMDfTq2KFhTOz0KszMzn4/
-         l5tA==
-X-Gm-Message-State: APjAAAVXZ5N6CPd0qGvAUB5CFMoeV16PBQY7rRu+s48bx1HvEclPDmQb
-        ZQlAceQJHfIvc9UbSKKQUm8k+g==
-X-Google-Smtp-Source: APXvYqw3JemapasX1/My3YJlram8J8fq6dLm3PSfYNtI5KnSufTCDzzS1B4NA4dYJrfzNDS+QjZaeA==
-X-Received: by 2002:a1c:ca01:: with SMTP id a1mr1700893wmg.30.1559209849831;
-        Thu, 30 May 2019 02:50:49 -0700 (PDT)
-Received: from andrea (86.100.broadband17.iol.cz. [109.80.100.86])
-        by smtp.gmail.com with ESMTPSA id x68sm2239214wmf.13.2019.05.30.02.50.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 May 2019 02:50:48 -0700 (PDT)
-Date:   Thu, 30 May 2019 11:50:39 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk,
-        raven@themaw.net, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-block@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able
- ring buffer
-Message-ID: <20190530095039.GA5137@andrea>
-References: <20190528231218.GA28384@kroah.com>
- <20190528162603.GA24097@kroah.com>
- <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
- <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk>
- <4031.1559064620@warthog.procyon.org.uk>
- <31936.1559146000@warthog.procyon.org.uk>
- <20190529231112.GB3164@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190529231112.GB3164@kroah.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1726485AbfE3Kdu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 06:33:50 -0400
+Received: from ns317680.ip-94-23-251.eu ([94.23.251.149]:58613 "EHLO gcdb.top"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725870AbfE3Kdu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 06:33:50 -0400
+X-Greylist: delayed 11239 seconds by postgrey-1.27 at vger.kernel.org; Thu, 30 May 2019 06:33:49 EDT
+To:     linux-kernel@vger.kernel.org
+From:   info <info@gcdb.top>
+Subject: FW: AW: Kontakt.
+Date:   Thu, 30 May 2019 11:55:20 +0200
+Message-ID: <20190530_095520_070612.info@gcdb.top>
+X-Mailer: WEBMAIL
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > Looking at the perf ring buffer, there appears to be a missing barrier in
-> > perf_aux_output_end():
-> > 
-> > 	rb->user_page->aux_head = rb->aux_head;
-> > 
-> > should be:
-> > 
-> > 	smp_store_release(&rb->user_page->aux_head, rb->aux_head);
-> > 
-> > It should also be using smp_load_acquire().  See
-> > Documentation/core-api/circular-buffers.rst
-> > 
-> > And a (partial) patch has been proposed: https://lkml.org/lkml/2018/5/10/249
-> 
-> So, if that's all that needs to be fixed, can you use the same
-> buffer/code if that patch is merged?
+Sehr geehrte Damen und Herren,
 
-That's about one year old...: let me add the usual suspects in Cc:  ;-)
-since I'm not sure what the plan was (or if I'm missing something) ...
+ich wende mich an Sie, da ich der Meinung bin, dass sich die von Ihnen auf der Webseite angebotenen Produkte ausgezeichnet dazu eignen, im Internet gefördert zu werden.
+Deshalb möchte ich Ihnen die Tools anbieten, die es erlauben, den Verkauf von Ihren Produkten und Dienstleistungen beinahe mit sofortiger Wirkung und auch mehrfach zu erhöhen.
 
-Speaking of ring buffer implementations (and relatively "old" patches),
-here's another quite interesting:
+Die Firmenangaben beinhalten: Name der Firma, Ansprechpartner, E-mail Adresse, Tel. + Fax-Nr., PLZ, Ort, Straße etc. 
 
-  https://lkml.kernel.org/r/20181211034032.32338-1-yuleixzhang@tencent.com
+1. Gesamtpaket 2019 DE - 1,4 Mio. Firmenadressen ( 1 457 620 ) - 190 € ( bis zum 30.05.2019 ) 
+2. Gesamtpaket 2019 DE,AT,CH - 1,7 Mio. Firmenadressen ( 1 747 921 ) - 240 € ( bis zum 30.05.2019 )
+3. Schweiz 2019 ( 187 911 ) - 149 € ( bis zum 30.05.2019 )
+4. Österreich 2019 ( 104 000 ) - 149 € ( bis zum 30.05.2019 )
 
-Thanks,
-  Andrea
+Die Verwendungsmöglichkeiten der Datenbanken sind praktisch unbegrenzt und Sie können durch Verwendung der von uns entwickelten 
+Programme des personalisierten Versendens von Angeboten u.ä. mittels E-mailing bzw. Fax effektive und sichere Werbekampagnen damit durchführen. 
+
+Bitte informieren Sie sich über die weiteren Details einmal unverbindlich auf unseren Webseiten: 
+
+http://www.gmcmarketing.top/?page=catalog
+
+Mit freundlichen Grüßen
+GMTeam
+
