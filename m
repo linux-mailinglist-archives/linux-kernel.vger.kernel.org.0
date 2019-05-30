@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D10E2F424
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:36:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE2F42F1DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:16:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730121AbfE3Efd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:35:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57370 "EHLO mail.kernel.org"
+        id S1730493AbfE3DPs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:15:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727909AbfE3DNK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729351AbfE3DNK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 29 May 2019 23:13:10 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ACF3A2454D;
-        Thu, 30 May 2019 03:13:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 10D2B24550;
+        Thu, 30 May 2019 03:13:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185989;
-        bh=FG0jL5+rD8oinBF3d0IvCIWcpVZPSVgTH/kRbxm0j+w=;
+        s=default; t=1559185990;
+        bh=jAf09kYCxBdtDxzfX4t5668zUy+tPIyzBbRfMiDSB2o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2qXG02KsBNADXHVvvCDCzI+RDoBWzRGmeNMPVkBRBlExyaJsG4Z3yJPettgsMvWCO
-         /8gL8sH7j11kD7NMTAhlZwZBQKYq529csdxJPhkj5nAns6/LRysbmWKy4EMAjDMb/F
-         bgJSJqutLt1xDgrpt1knHYgy81cveAekHdMjWhI4=
+        b=Vft0Zh1jp5Q1osa8dxvK4NnSBL8l5nk19jVNOcoDrOXoqRTwnds9l1E0x1rKjAnXr
+         qXpY0Lt9HX+JV+P56hJRz7WcdItlScu0zLgQRZ1s0PbtEt+EO2NdmtWJJuzbExzdYA
+         kGpcZvsdKjDbXEkLmxJi6b4Nglq6+bU/Dc39NJ+U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        Syzbot <syzbot+4180ff9ca6810b06c1e9@syzkaller.appspotmail.com>,
-        Tomasz Figa <tfiga@chromium.org>,
+        stable@vger.kernel.org, Alexander Potapenko <glider@google.com>,
+        Syzbot <syzbot+6c0effb5877f6b0344e2@syzkaller.appspotmail.com>,
         Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 5.0 033/346] media: vb2: add waiting_in_dqbuf flag
-Date:   Wed, 29 May 2019 20:01:46 -0700
-Message-Id: <20190530030542.483709505@linuxfoundation.org>
+Subject: [PATCH 5.0 034/346] media: vivid: use vfree() instead of kfree() for dev->bitmap_cap
+Date:   Wed, 29 May 2019 20:01:47 -0700
+Message-Id: <20190530030542.542460182@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
 References: <20190530030540.363386121@linuxfoundation.org>
@@ -46,113 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hverkuil@xs4all.nl>
+From: Alexander Potapenko <glider@google.com>
 
-commit d65842f7126aa1a87fb44b7c9980c12630ed4f33 upstream.
+commit dad7e270ba712ba1c99cd2d91018af6044447a06 upstream.
 
-Calling VIDIOC_DQBUF can release the core serialization lock pointed to
-by vb2_queue->lock if it has to wait for a new buffer to arrive.
+syzkaller reported crashes on kfree() called from
+vivid_vid_cap_s_selection(). This looks like a simple typo, as
+dev->bitmap_cap is allocated with vzalloc() throughout the file.
 
-However, if userspace dup()ped the video device filehandle, then it is
-possible to read or call DQBUF from two filehandles at the same time.
+Fixes: ef834f7836ec0 ("[media] vivid: add the video capture and output
+parts")
 
-It is also possible to call REQBUFS from one filehandle while the other
-is waiting for a buffer. This will remove all the buffers and reallocate
-new ones. Removing all the buffers isn't the problem here (that's already
-handled correctly by DQBUF), but the reallocating part is: DQBUF isn't
-aware that the buffers have changed.
-
-This is fixed by setting a flag whenever the lock is released while waiting
-for a buffer to arrive. And checking the flag where needed so we can return
--EBUSY.
-
-Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
-Reported-by: Syzbot <syzbot+4180ff9ca6810b06c1e9@syzkaller.appspotmail.com>
-Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+Signed-off-by: Alexander Potapenko <glider@google.com>
+Reported-by: Syzbot <syzbot+6c0effb5877f6b0344e2@syzkaller.appspotmail.com>
 Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/common/videobuf2/videobuf2-core.c |   22 ++++++++++++++++++++++
- include/media/videobuf2-core.h                  |    1 +
- 2 files changed, 23 insertions(+)
+ drivers/media/platform/vivid/vivid-vid-cap.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/common/videobuf2/videobuf2-core.c
-+++ b/drivers/media/common/videobuf2/videobuf2-core.c
-@@ -672,6 +672,11 @@ int vb2_core_reqbufs(struct vb2_queue *q
- 		return -EBUSY;
- 	}
- 
-+	if (q->waiting_in_dqbuf && *count) {
-+		dprintk(1, "another dup()ped fd is waiting for a buffer\n");
-+		return -EBUSY;
-+	}
-+
- 	if (*count == 0 || q->num_buffers != 0 ||
- 	    (q->memory != VB2_MEMORY_UNKNOWN && q->memory != memory)) {
- 		/*
-@@ -807,6 +812,10 @@ int vb2_core_create_bufs(struct vb2_queu
- 	}
- 
- 	if (!q->num_buffers) {
-+		if (q->waiting_in_dqbuf && *count) {
-+			dprintk(1, "another dup()ped fd is waiting for a buffer\n");
-+			return -EBUSY;
-+		}
- 		memset(q->alloc_devs, 0, sizeof(q->alloc_devs));
- 		q->memory = memory;
- 		q->waiting_for_buffers = !q->is_output;
-@@ -1638,6 +1647,11 @@ static int __vb2_wait_for_done_vb(struct
- 	for (;;) {
- 		int ret;
- 
-+		if (q->waiting_in_dqbuf) {
-+			dprintk(1, "another dup()ped fd is waiting for a buffer\n");
-+			return -EBUSY;
-+		}
-+
- 		if (!q->streaming) {
- 			dprintk(1, "streaming off, will not wait for buffers\n");
- 			return -EINVAL;
-@@ -1665,6 +1679,7 @@ static int __vb2_wait_for_done_vb(struct
- 			return -EAGAIN;
+--- a/drivers/media/platform/vivid/vivid-vid-cap.c
++++ b/drivers/media/platform/vivid/vivid-vid-cap.c
+@@ -1003,7 +1003,7 @@ int vivid_vid_cap_s_selection(struct fil
+ 		v4l2_rect_map_inside(&s->r, &dev->fmt_cap_rect);
+ 		if (dev->bitmap_cap && (compose->width != s->r.width ||
+ 					compose->height != s->r.height)) {
+-			kfree(dev->bitmap_cap);
++			vfree(dev->bitmap_cap);
+ 			dev->bitmap_cap = NULL;
  		}
- 
-+		q->waiting_in_dqbuf = 1;
- 		/*
- 		 * We are streaming and blocking, wait for another buffer to
- 		 * become ready or for streamoff. Driver's lock is released to
-@@ -1685,6 +1700,7 @@ static int __vb2_wait_for_done_vb(struct
- 		 * the locks or return an error if one occurred.
- 		 */
- 		call_void_qop(q, wait_finish, q);
-+		q->waiting_in_dqbuf = 0;
- 		if (ret) {
- 			dprintk(1, "sleep was interrupted\n");
- 			return ret;
-@@ -2572,6 +2588,12 @@ static size_t __vb2_perform_fileio(struc
- 	if (!data)
- 		return -EINVAL;
- 
-+	if (q->waiting_in_dqbuf) {
-+		dprintk(3, "another dup()ped fd is %s\n",
-+			read ? "reading" : "writing");
-+		return -EBUSY;
-+	}
-+
- 	/*
- 	 * Initialize emulator on first call.
- 	 */
---- a/include/media/videobuf2-core.h
-+++ b/include/media/videobuf2-core.h
-@@ -586,6 +586,7 @@ struct vb2_queue {
- 	unsigned int			start_streaming_called:1;
- 	unsigned int			error:1;
- 	unsigned int			waiting_for_buffers:1;
-+	unsigned int			waiting_in_dqbuf:1;
- 	unsigned int			is_multiplanar:1;
- 	unsigned int			is_output:1;
- 	unsigned int			copy_timestamp:1;
+ 		*compose = s->r;
 
 
