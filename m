@@ -2,114 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDDEB2FDCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 16:31:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B97F02FDD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 16:31:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726819AbfE3ObA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 10:31:00 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:57960 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbfE3Oa7 (ORCPT
+        id S1726925AbfE3ObX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 10:31:23 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:45260 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726640AbfE3ObX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 10:30:59 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4UEUqEa063847;
-        Thu, 30 May 2019 09:30:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1559226652;
-        bh=Cg30MeZA99CqmwGHpSCXMESG3MfaMxR7+LwVQ+Gg4Uo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=vqlNLopfA8qkd2o5CEXM8oA8SZd2A64ck04yKT09X0fpUzrQ60JaBUuH7AKhWkXqI
-         lgtye+vVpoZ/o6EXhtL7TktSyIhnBJts9Xyt1vCIL6dDSBAMFV06Ge9clwdOXmr3y0
-         mVmjvKCNgz+8g58Qxs7HTTp+JjgKqgK4gDb730FQ=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4UEUqx7095739
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 30 May 2019 09:30:52 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 30
- May 2019 09:30:50 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 30 May 2019 09:30:49 -0500
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4UEUnRo039151;
-        Thu, 30 May 2019 09:30:49 -0500
-Subject: Re: [PATCH v3 1/9] leds: multicolor: Add sysfs interface definition
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
-        <robh+dt@kernel.org>
-CC:     <devicetree@vger.kernel.org>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190523190820.29375-1-dmurphy@ti.com>
- <20190523190820.29375-2-dmurphy@ti.com>
- <f01ac400-efda-80a8-4d63-1e2add5e054a@gmail.com>
- <185abdd6-100c-0a71-2da9-8f556d8ea701@ti.com>
- <333167d0-4615-2fbe-e933-cbca623998ef@gmail.com>
- <e54d9d29-5daa-fd3a-a5a9-ebd2450882ee@ti.com>
- <c947d07c-2a8d-b9a8-b2ac-6c249ac54bca@gmail.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <ee675df2-9097-8e1b-b9db-a42017ac06b6@ti.com>
-Date:   Thu, 30 May 2019 09:30:48 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 30 May 2019 10:31:23 -0400
+Received: by mail-io1-f66.google.com with SMTP id e3so5200522ioc.12
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 07:31:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=d9z/WdVRRf6vdfFIoG1dq2l7RwLG3vNFiWTkrU7D/nk=;
+        b=ZMmhaKbW4Cn70U73eCpnJ5yejbxfst26fJzumTLlslyElxjp9fcBkEGZMScFosMuxt
+         zMqAo9SQrjNXO8KxO2H+kxjnhJcY3+kkQYiVcuxufFL7Br8UIF0OwfjgyL3cnUKajLhO
+         kPVG1au5pp50+mX1/xRxiYbNt/wgI04qCbadJs17CI0/TW7wWEnxAZCuG0L5giUOMJ8O
+         kqzTB/SZRhWy1++ixHA48Ev+SNsjJCQIUT6oDhK8GjehQl04JmiS2VTiNwVJJjIM89jh
+         +YXHQgdHpTxC+L7J7BE7ir3kiMivB1cSlkY+dyxYxDJ9vq+uVwWEKU45lzb3RN6QqEaI
+         ug+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=d9z/WdVRRf6vdfFIoG1dq2l7RwLG3vNFiWTkrU7D/nk=;
+        b=pHHkSN3/v9ErvOn+Qf0Mc7NygOvMuGfWUbHxwzSJALPFyxPDsDZc3g7IAEeCX8aJCU
+         0AnAZ2DSCBQMW5kPLj4JxR6TX2IkKWIuoh93aO2cI6BsH6F3MFimwFoxCdczoaUxZvQq
+         2SeSIWmFtyi6NYFk5GVBNlOkg7jo+5tKSBbHcCZtQeT3DWAoDPGSlC8SzM1B3Jx+BeLx
+         4Zmp9kv/YsIjvGIJ2DKOl/8dQdSe+Q40LG7LccbKtomsmDOHEO66Y15yvn+T4ewWUDp5
+         ZRWyJahVPspDDWtW51CuuQT2/n+yLA/NLlecJ2g4DO3DmQpVJnxDiUpBbcHbBAJq6Oq5
+         OsuA==
+X-Gm-Message-State: APjAAAXbKY6N5b99n4HUp5Bh4F/H7RKiDgrTFrn1j2eolavIfanIEy87
+        dy6vkSORMhUrEW0mnDAaUHpQwWtKYdDFfCzCHlsDJg==
+X-Google-Smtp-Source: APXvYqw2ZOeAk7/M9AocUjdj8Q8DzEH6NvT4LDK/kImOQw6jI/g3st7gLmFsFKinsTrKkizGVdQsp1Aah7WCK7DFWdg=
+X-Received: by 2002:a5d:9402:: with SMTP id v2mr2780864ion.128.1559226682223;
+ Thu, 30 May 2019 07:31:22 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <c947d07c-2a8d-b9a8-b2ac-6c249ac54bca@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <1559149856-7938-1-git-send-email-iuliana.prodan@nxp.com>
+ <20190529202728.GA35103@gmail.com> <CAKv+Gu-4KqcY=WhwY98JigTzeXaL5ggYEcu7+kNzNtpO2FLQXg@mail.gmail.com>
+ <VI1PR04MB44459EEF7BCD3458BB3D143D8C180@VI1PR04MB4445.eurprd04.prod.outlook.com>
+ <20190530133427.qrwjzctac2x6nsby@gondor.apana.org.au> <VI1PR04MB444562A2352FE4BAD7F681258C180@VI1PR04MB4445.eurprd04.prod.outlook.com>
+ <CAKv+Gu-jTWQP0Zp=QpuzX41v8Eb5Bvd0O9ajwSnFkDO-ijBf_A@mail.gmail.com>
+ <CAKv+Gu9JoC+GKJ6mMAE25mr_k2gbznh-83jApT4=FZsAW=jd8w@mail.gmail.com>
+ <20190530142734.qlhgzeal22zxfhk5@gondor.apana.org.au> <CAKv+Gu8jJQCZwiHFORUJUzRaAizWzBQ95EAgYe36sFrcvzb6vg@mail.gmail.com>
+In-Reply-To: <CAKv+Gu8jJQCZwiHFORUJUzRaAizWzBQ95EAgYe36sFrcvzb6vg@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 30 May 2019 16:31:09 +0200
+Message-ID: <CAKv+Gu-KBgiyNY2Dypx6vqtmpTXNfOxxWxJf50BTiF2rCOFqnw@mail.gmail.com>
+Subject: Re: [PATCH] crypto: gcm - fix cacheline sharing
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Iuliana Prodan <iuliana.prodan@nxp.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jacek
-
-On 5/28/19 1:29 PM, Jacek Anaszewski wrote:
-> On 5/28/19 8:19 PM, Dan Murphy wrote:
->> Jacek
->>
->> On 5/28/19 12:44 PM, Jacek Anaszewski wrote:
->>> Dan,
->>>
->>> On 5/28/19 7:32 PM, Dan Murphy wrote:
->>>> Jacek
->>>>
->>>> On 5/27/19 3:00 PM, Jacek Anaszewski wrote:
->>>>> Hi Dan,
->>>>>
->>>>> Thank you for the update.
->>>>>
->>>>> One thing is missing here - we need to document how legacy brightness
->>>>> levels map to the sub-LED color levels, i.e. what you do in
->>>>> multicolor_set_brightness().
->>>>
->>>>
->>>> Ok so i will need to document the algorithm that is used to 
->>>> determine the color LED brightness.
->>>
->>> Right, and please send just an update of that single patch.
->>>
->>
->> So you are asking for v4 with only this patch updated.
+On Thu, 30 May 2019 at 16:28, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
 >
-> Not exactly - I am asking for v4 of this patch. We don't need
-> to spam the lists with the rest of unaltered patches from the series.
+> On Thu, 30 May 2019 at 16:27, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> >
+> > On Thu, May 30, 2019 at 03:55:07PM +0200, Ard Biesheuvel wrote:
+> > >
+> > > > Would this work?
+> >
+> > I see.  You need to preserve the original IV.
+> >
+> > > > diff --git a/drivers/crypto/caam/caamalg.c b/drivers/crypto/caam/caamalg.c
+> > > > index c0ece44f303b..2ef2f76a3cb8 100644
+> > > > --- a/drivers/crypto/caam/caamalg.c
+> > > > +++ b/drivers/crypto/caam/caamalg.c
+> > > > @@ -1832,22 +1832,25 @@ static int skcipher_decrypt(struct
+> > > > skcipher_request *req)
+> > > >         struct caam_ctx *ctx = crypto_skcipher_ctx(skcipher);
+> > > >         int ivsize = crypto_skcipher_ivsize(skcipher);
+> > > >         struct device *jrdev = ctx->jrdev;
+> > > > +       u8 out_iv[AES_BLOCK_SIZE];
+> > > >         u32 *desc;
+> > > >         int ret = 0;
+> > > >
+> > > > -       /* allocate extended descriptor */
+> > > > -       edesc = skcipher_edesc_alloc(req, DESC_JOB_IO_LEN * CAAM_CMD_SZ);
+> > > > -       if (IS_ERR(edesc))
+> > > > -               return PTR_ERR(edesc);
+> > > > -
+> > > >         /*
+> > > >          * The crypto API expects us to set the IV (req->iv) to the last
+> > > >          * ciphertext block.
+> > > >          */
+> > > >         if (ivsize)
+> > > > -               scatterwalk_map_and_copy(req->iv, req->src, req->cryptlen -
+> > > > +               scatterwalk_map_and_copy(out_iv, req->src, req->cryptlen -
+> > > >                                          ivsize, ivsize, 0);
+> > > >
+> > > > +       /* allocate extended descriptor */
+> > > > +       edesc = skcipher_edesc_alloc(req, DESC_JOB_IO_LEN * CAAM_CMD_SZ);
+> > > > +       if (IS_ERR(edesc))
+> > > > +               return PTR_ERR(edesc);
+> > > > +
+> > > > +       memcpy(req->iv, out_iv, ivsize);
+> > > > +
+> > > >         /* Create and submit job descriptor*/
+> > > >         init_skcipher_job(req, edesc, false);
+> > > >         desc = edesc->hw_desc;
+> > >
+> > > Umm never mind
+> > >
+> > > /me hides in shame
+> >
+> > So why doesn't this work?
+> >
 >
-> The interface seems to be the most vital part of this patch set,
-> and it is possible that it will undergo at least slight modifications.
->
-> We will move to discussing the code once we achieve a total consensus.
->
+> Because the memcpy() occurs while the buffer is mapped for DMA, so it
+> suffers from the exact same problem.
 
-Sorry for the late reply.  OK I have updated the sysfs documentation but 
-in doing so I am also going to send in v4 of the sysfs documentation as 
-it explains the interfaces in more detail. Also I will be adding more 
-technical information into that sysfs doc on what is done and what to 
-expect and it's usage.
+This might work:
 
+diff --git a/drivers/crypto/caam/caamalg.c b/drivers/crypto/caam/caamalg.c
+index c0ece44f303b..3d313d2a279a 100644
+--- a/drivers/crypto/caam/caamalg.c
++++ b/drivers/crypto/caam/caamalg.c
+@@ -1661,7 +1661,8 @@ static int aead_decrypt(struct aead_request *req)
+  * allocate and map the skcipher extended descriptor for skcipher
+  */
+ static struct skcipher_edesc *skcipher_edesc_alloc(struct
+skcipher_request *req,
+-                                                  int desc_bytes)
++                                                  int desc_bytes,
++                                                  u8 const *input_iv)
+ {
+        struct crypto_skcipher *skcipher = crypto_skcipher_reqtfm(req);
+        struct caam_ctx *ctx = crypto_skcipher_ctx(skcipher);
+@@ -1745,7 +1746,7 @@ static struct skcipher_edesc
+*skcipher_edesc_alloc(struct skcipher_request *req,
+        /* Make sure IV is located in a DMAable area */
+        if (ivsize) {
+                iv = (u8 *)edesc->hw_desc + desc_bytes + sec4_sg_bytes;
+-               memcpy(iv, req->iv, ivsize);
++               memcpy(iv, input_iv, ivsize);
 
-Dan
+                iv_dma = dma_map_single(jrdev, iv, ivsize, DMA_TO_DEVICE);
+                if (dma_mapping_error(jrdev, iv_dma)) {
+@@ -1801,7 +1802,8 @@ static int skcipher_encrypt(struct skcipher_request *req)
+        int ret = 0;
 
+        /* allocate extended descriptor */
+-       edesc = skcipher_edesc_alloc(req, DESC_JOB_IO_LEN * CAAM_CMD_SZ);
++       edesc = skcipher_edesc_alloc(req, DESC_JOB_IO_LEN * CAAM_CMD_SZ,
++                                    req->iv);
+        if (IS_ERR(edesc))
+                return PTR_ERR(edesc);
+
+@@ -1832,13 +1834,11 @@ static int skcipher_decrypt(struct
+skcipher_request *req)
+        struct caam_ctx *ctx = crypto_skcipher_ctx(skcipher);
+        int ivsize = crypto_skcipher_ivsize(skcipher);
+        struct device *jrdev = ctx->jrdev;
++       u8 in_iv[AES_BLOCK_SIZE];
+        u32 *desc;
+        int ret = 0;
+
+-       /* allocate extended descriptor */
+-       edesc = skcipher_edesc_alloc(req, DESC_JOB_IO_LEN * CAAM_CMD_SZ);
+-       if (IS_ERR(edesc))
+-               return PTR_ERR(edesc);
++       memcpy(in_iv, req->iv, ivsize);
+
+        /*
+         * The crypto API expects us to set the IV (req->iv) to the last
+@@ -1848,6 +1848,11 @@ static int skcipher_decrypt(struct skcipher_request *req)
+                scatterwalk_map_and_copy(req->iv, req->src, req->cryptlen -
+                                         ivsize, ivsize, 0);
+
++       /* allocate extended descriptor */
++       edesc = skcipher_edesc_alloc(req, DESC_JOB_IO_LEN * CAAM_CMD_SZ, in_iv);
++       if (IS_ERR(edesc))
++               return PTR_ERR(edesc);
++
+        /* Create and submit job descriptor*/
+        init_skcipher_job(req, edesc, false);
+        desc = edesc->hw_desc;
