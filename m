@@ -2,39 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E73D2EC67
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:22:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C17312EDC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:42:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732276AbfE3DUj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:20:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40694 "EHLO mail.kernel.org"
+        id S1730745AbfE3Dkh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:40:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730545AbfE3DP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:15:57 -0400
+        id S1731428AbfE3DV1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:21:27 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 66DCB2458C;
-        Thu, 30 May 2019 03:15:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2707B249FC;
+        Thu, 30 May 2019 03:21:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186157;
-        bh=j5IrkmXoqipm6SS+hShpCMelEn2qPU/FEDpbZVsmWNM=;
+        s=default; t=1559186487;
+        bh=VJkP1uPKZV04dqxxoe5F7J+u19z62vXuWKURf8fiC+Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f7npststurNcj6Mkm6U+Ln2UIa0GYpUZ7j6/0ktmoNl1CiHT/8Jhurbh8RittzTR2
-         AgoGHgRZ15qlSgTr0c570wVq3TteEpZSA6bpqruo5cagwUl+hMriWIz0PqWx0M7m6j
-         fO15k3F/DyV5G5WyPVTvy26W6R1QtKkqBKhVh7HA=
+        b=jCf721i2BKK+2IUcSdSjPwhIe2kC1l/iX7HtkbeqyI6JazOCH66GgZydEFNG3zUiF
+         Jf4yyDh1AFEUjA08jaJRraJViyyBd6gkGlaH5Kh6VVTQh+feMs8oNR4OomoCD4fUDh
+         GZX86/neXbBipiV0MT/Rq2N/Ln3QVBEuZ2Ehca34=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 345/346] drm/sun4i: dsi: Enforce boundaries on the start delay
-Date:   Wed, 29 May 2019 20:06:58 -0700
-Message-Id: <20190530030558.196706692@linuxfoundation.org>
+Subject: [PATCH 4.9 087/128] cpufreq: pmac32: fix possible object reference leak
+Date:   Wed, 29 May 2019 20:06:59 -0700
+Message-Id: <20190530030450.494881621@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +49,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit efa31801203ac2f5c6a82a28cb991c7163ee0f1d ]
+[ Upstream commit 8d10dc28a9ea6e8c02e825dab28699f3c72b02d9 ]
 
-The Allwinner BSP makes sure that we don't end up with a null start delay
-or with a delay larger than vtotal.
+The call to of_find_node_by_name returns a node pointer with refcount
+incremented thus it must be explicitly decremented after the last
+usage.
 
-The former condition is likely to happen now with the reworked start delay,
-so make sure we enforce the same boundaries.
+Detected by coccinelle with the following warnings:
+./drivers/cpufreq/pmac32-cpufreq.c:557:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 552, but without a corresponding object release within this function.
+./drivers/cpufreq/pmac32-cpufreq.c:569:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 552, but without a corresponding object release within this function.
+./drivers/cpufreq/pmac32-cpufreq.c:598:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 587, but without a corresponding object release within this function.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Reviewed-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/c9889cf5f7a3d101ef380905900b45a182596f56.1549896081.git-series.maxime.ripard@bootlin.com
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-pm@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/cpufreq/pmac32-cpufreq.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index 3de41de43127b..97a0573cc5145 100644
---- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-+++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -358,8 +358,12 @@ static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
- 					   struct drm_display_mode *mode)
- {
- 	u16 start = clamp(mode->vtotal - mode->vdisplay - 10, 8, 100);
-+	u16 delay = mode->vtotal - (mode->vsync_end - mode->vdisplay) + start;
+diff --git a/drivers/cpufreq/pmac32-cpufreq.c b/drivers/cpufreq/pmac32-cpufreq.c
+index ff44016ea0312..641f8021855a7 100644
+--- a/drivers/cpufreq/pmac32-cpufreq.c
++++ b/drivers/cpufreq/pmac32-cpufreq.c
+@@ -551,6 +551,7 @@ static int pmac_cpufreq_init_7447A(struct device_node *cpunode)
+ 	volt_gpio_np = of_find_node_by_name(NULL, "cpu-vcore-select");
+ 	if (volt_gpio_np)
+ 		voltage_gpio = read_gpio(volt_gpio_np);
++	of_node_put(volt_gpio_np);
+ 	if (!voltage_gpio){
+ 		pr_err("missing cpu-vcore-select gpio\n");
+ 		return 1;
+@@ -587,6 +588,7 @@ static int pmac_cpufreq_init_750FX(struct device_node *cpunode)
+ 	if (volt_gpio_np)
+ 		voltage_gpio = read_gpio(volt_gpio_np);
  
--	return mode->vtotal - (mode->vsync_end - mode->vdisplay) + start;
-+	if (delay > mode->vtotal)
-+		delay = delay % mode->vtotal;
-+
-+	return max_t(u16, delay, 1);
- }
++	of_node_put(volt_gpio_np);
+ 	pvr = mfspr(SPRN_PVR);
+ 	has_cpu_l2lve = !((pvr & 0xf00) == 0x100);
  
- static void sun6i_dsi_setup_burst(struct sun6i_dsi *dsi,
 -- 
 2.20.1
 
