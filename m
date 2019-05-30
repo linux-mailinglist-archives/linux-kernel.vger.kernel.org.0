@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 248DA2ECD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:27:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82DD32EE29
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:44:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388016AbfE3D12 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:27:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55246 "EHLO mail.kernel.org"
+        id S1732886AbfE3Doy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:44:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731900AbfE3DT1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:19:27 -0400
+        id S1731213AbfE3DUx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:20:53 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD2DF24881;
-        Thu, 30 May 2019 03:19:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15BD92497F;
+        Thu, 30 May 2019 03:20:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186366;
-        bh=h97OPWBF9XxIPNtl9ralEyhxEfrSQ5x9/KsPwIKj3qA=;
+        s=default; t=1559186453;
+        bh=9PYpEDZLRhbi7YVmJolHM37nqF9o+1KmaP4pr3hYhsM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xk/RyBxv6+BNJjQsUC7sJspD3Seb+2RxIh5JIcHKSmBBLRbaB1Q7Un6NExSNok61t
-         CoeQu8OpawkCoxDTtcgsWL5dJ03BuBHyBLbfxz1JiyJvVhDw6tK6eNCBoRhemhBB66
-         4cChmDHbrBUvTT4AS/Nqw1cDcd2/wWTfTpplspnA=
+        b=TxrpropmjZ3IpslVElra0Rh2dinwmxTPHMt4DgOWE3Q2mRc+r7GLb+/jcyJIa4frh
+         CYnCRjOdsI/TutErxKvY9QnCgG0S8D1u2AAEVfzRnN2LDJ2BRRww3mVNIbEJSpCzR2
+         WLcXv/8NWARYofha8VKAnrmIXlTfsxkMI7w/m8LY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Garry <john.garry@huawei.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Sven Van Asbroeck <TheSven73@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 116/193] scsi: libsas: Do discovery on empty PHY to update PHY info
+Subject: [PATCH 4.9 038/128] rtc: 88pm860x: prevent use-after-free on device remove
 Date:   Wed, 29 May 2019 20:06:10 -0700
-Message-Id: <20190530030504.949052152@linuxfoundation.org>
+Message-Id: <20190530030441.114078667@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,53 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d8649fc1c5e40e691d589ed825998c36a947491c ]
+[ Upstream commit f22b1ba15ee5785aa028384ebf77dd39e8e47b70 ]
 
-When we discover the PHY is empty in sas_rediscover_dev(), the PHY
-information (like negotiated linkrate) is not updated.
+The device's remove() attempts to shut down the delayed_work scheduled
+on the kernel-global workqueue by calling flush_scheduled_work().
 
-As such, for a user examining sysfs for that PHY, they would see
-incorrect values:
+Unfortunately, flush_scheduled_work() does not prevent the delayed_work
+from re-scheduling itself. The delayed_work might run after the device
+has been removed, and touch the already de-allocated info structure.
+This is a potential use-after-free.
 
-root@(none)$ cd /sys/class/sas_phy/phy-0:0:20
-root@(none)$ more negotiated_linkrate
-3.0 Gbit
-root@(none)$ echo 0 > enable
-root@(none)$ more negotiated_linkrate
-3.0 Gbit
+Fix by calling cancel_delayed_work_sync() during remove(): this ensures
+that the delayed work is properly cancelled, is no longer running, and
+is not able to re-schedule itself.
 
-So fix this, simply discover the PHY again, even though we know it's empty;
-in the above example, this gives us:
+This issue was detected with the help of Coccinelle.
 
-root@(none)$ more negotiated_linkrate
-Phy disabled
-
-We must do this after unregistering the device associated with the PHY
-(in sas_unregister_devs_sas_addr()).
-
-Signed-off-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/libsas/sas_expander.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/rtc/rtc-88pm860x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
-index 1c0d2784574aa..ffea620a147d4 100644
---- a/drivers/scsi/libsas/sas_expander.c
-+++ b/drivers/scsi/libsas/sas_expander.c
-@@ -2038,6 +2038,11 @@ static int sas_rediscover_dev(struct domain_device *dev, int phy_id, bool last)
- 	if ((SAS_ADDR(sas_addr) == 0) || (res == -ECOMM)) {
- 		phy->phy_state = PHY_EMPTY;
- 		sas_unregister_devs_sas_addr(dev, phy_id, last);
-+		/*
-+		 * Even though the PHY is empty, for convenience we discover
-+		 * the PHY to update the PHY info, like negotiated linkrate.
-+		 */
-+		sas_ex_phy_discover(dev, phy_id);
- 		return res;
- 	} else if (SAS_ADDR(sas_addr) == SAS_ADDR(phy->attached_sas_addr) &&
- 		   dev_type_flutter(type, phy->attached_dev_type)) {
+diff --git a/drivers/rtc/rtc-88pm860x.c b/drivers/rtc/rtc-88pm860x.c
+index 19e53b3b8e005..166faae3a59cd 100644
+--- a/drivers/rtc/rtc-88pm860x.c
++++ b/drivers/rtc/rtc-88pm860x.c
+@@ -414,7 +414,7 @@ static int pm860x_rtc_remove(struct platform_device *pdev)
+ 	struct pm860x_rtc_info *info = platform_get_drvdata(pdev);
+ 
+ #ifdef VRTC_CALIBRATION
+-	flush_scheduled_work();
++	cancel_delayed_work_sync(&info->calib_work);
+ 	/* disable measurement */
+ 	pm860x_set_bits(info->i2c, PM8607_MEAS_EN2, MEAS2_VRTC, 0);
+ #endif	/* VRTC_CALIBRATION */
 -- 
 2.20.1
 
