@@ -2,413 +2,270 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B28F02FA1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 12:16:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66AD02FA10
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 12:15:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728127AbfE3KQK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 06:16:10 -0400
-Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:55872 "EHLO
-        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728040AbfE3KQK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 06:16:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1559211369; x=1590747369;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=zE0rdgbrpn1eR+Et05y8JTYfDTo5QX77POVHs+Yb6L0=;
-  b=ueCZNiqQt8QpagcebTxRk92zlEScR7BsmAsoFAuRnqap+HEEq+iS/tYV
-   lsnZ8EY9SpKw4DZl8RI+BcGsM/pHaV2V9Fxf2T/RuoNARRSGJsslNiTZq
-   13mq3h1qZZ0zn9jf4+Rz1JqiqqWcoUEPkXUMPyL1PcypHXjHQwX3gnS7M
-   8=;
-X-IronPort-AV: E=Sophos;i="5.60,530,1549929600"; 
-   d="scan'208";a="768245376"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1e-a70de69e.us-east-1.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP; 30 May 2019 10:16:08 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
-        by email-inbound-relay-1e-a70de69e.us-east-1.amazon.com (Postfix) with ESMTPS id 027FDA20F3;
-        Thu, 30 May 2019 10:16:07 +0000 (UTC)
-Received: from EX13D19EUB003.ant.amazon.com (10.43.166.69) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 30 May 2019 10:16:07 +0000
-Received: from ub6d44c9ce3e25c.ant.amazon.com (10.43.160.237) by
- EX13D19EUB003.ant.amazon.com (10.43.166.69) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 30 May 2019 10:15:58 +0000
-From:   Hanna Hawa <hhhawa@amazon.com>
-To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>, <bp@alien8.de>,
-        <mchehab@kernel.org>, <james.morse@arm.com>, <davem@davemloft.net>,
-        <gregkh@linuxfoundation.org>, <nicolas.ferre@microchip.com>,
-        <paulmck@linux.ibm.com>, <dwmw@amazon.co.uk>, <benh@amazon.com>
-CC:     <ronenk@amazon.com>, <talel@amazon.com>, <jonnyc@amazon.com>,
-        <hanochu@amazon.com>, <hhhawa@amazon.com>,
-        <linux-edac@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] edac: add support for Amazon's Annapurna Labs EDAC
-Date:   Thu, 30 May 2019 13:15:29 +0300
-Message-ID: <1559211329-13098-3-git-send-email-hhhawa@amazon.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1559211329-13098-1-git-send-email-hhhawa@amazon.com>
-References: <1559211329-13098-1-git-send-email-hhhawa@amazon.com>
+        id S1728032AbfE3KPx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 06:15:53 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33778 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725440AbfE3KPw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 06:15:52 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C25D9374;
+        Thu, 30 May 2019 03:15:51 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8E2533F5AF;
+        Thu, 30 May 2019 03:15:50 -0700 (PDT)
+Date:   Thu, 30 May 2019 11:15:45 +0100
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-api@vger.kernel.org
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH v9 00/16] Add utilization clamping support
+Message-ID: <20190530101545.gdznufqxeddl3rjp@e110439-lin>
+References: <20190515094459.10317-1-patrick.bellasi@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.43.160.237]
-X-ClientProxiedBy: EX13D23UWC001.ant.amazon.com (10.43.162.196) To
- EX13D19EUB003.ant.amazon.com (10.43.166.69)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190515094459.10317-1-patrick.bellasi@arm.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for error detection and correction for Amazon's Annapurna
-Labs SoCs for L1/L2 caches.
+Hi Tejun,
+this is just a gentle ping.
 
-Amazon's Annapurna Labs SoCs based on ARM CA57 and CA72, the driver
-support both cortex based on compatible string.
+I had a chance to speak with Peter and Rafael at the last OSPM and
+they both seems to be reasonably happy with the current status of the
+core bits.
 
-Signed-off-by: Hanna Hawa <hhhawa@amazon.com>
----
- MAINTAINERS                        |   7 +
- drivers/edac/Kconfig               |   9 ++
- drivers/edac/Makefile              |   1 +
- drivers/edac/amazon_al_ca57_edac.c | 283 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 300 insertions(+)
- create mode 100644 drivers/edac/amazon_al_ca57_edac.c
+Thus, it would be very useful if you can jump into the discussion and
+start the review of the cgroups integration bits.
+You can find them in the last 5 patches of this series.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5cfbea4..87fab6a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5645,6 +5645,13 @@ S:	Supported
- F:	Documentation/filesystems/ecryptfs.txt
- F:	fs/ecryptfs/
- 
-+EDAC-AMAZON-AL
-+M:	Hanna Hawa <hhhawa@amazon.com>
-+L:	linux-edac@vger.kernel.org
-+S:	Supported
-+F:	drivers/edac/amazon_al_ca57_edac.c
-+F:	Documentation/devicetree/bindings/edac/amazon-al-edac.txt
-+
- EDAC-AMD64
- M:	Borislav Petkov <bp@alien8.de>
- L:	linux-edac@vger.kernel.org
-diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
-index 5e2e034..1a982f8 100644
---- a/drivers/edac/Kconfig
-+++ b/drivers/edac/Kconfig
-@@ -504,4 +504,13 @@ config EDAC_ASPEED
- 	  First, ECC must be configured in the bootloader. Then, this driver
- 	  will expose error counters via the EDAC kernel framework.
- 
-+config EDAC_AMAZON_AL
-+	tristate "Amazon AL EDAC"
-+	depends on ARCH_ALPINE
-+	help
-+	  Support for error detection and correction for
-+	  Amazon's Annapurna Labs SoCs.
-+
-+	  This driver detect errors on L1/L2 caches.
-+
- endif # EDAC
-diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
-index 89ad4a84..7e08974 100644
---- a/drivers/edac/Makefile
-+++ b/drivers/edac/Makefile
-@@ -84,3 +84,4 @@ obj-$(CONFIG_EDAC_XGENE)		+= xgene_edac.o
- obj-$(CONFIG_EDAC_TI)			+= ti_edac.o
- obj-$(CONFIG_EDAC_QCOM)			+= qcom_edac.o
- obj-$(CONFIG_EDAC_ASPEED)		+= aspeed_edac.o
-+obj-$(CONFIG_EDAC_AMAZON_AL)		+= amazon_al_ca57_edac.o
-diff --git a/drivers/edac/amazon_al_ca57_edac.c b/drivers/edac/amazon_al_ca57_edac.c
-new file mode 100644
-index 0000000..08237c0
---- /dev/null
-+++ b/drivers/edac/amazon_al_ca57_edac.c
-@@ -0,0 +1,283 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-+ */
-+
-+#include <linux/atomic.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+
-+#include "edac_device.h"
-+#include "edac_module.h"
-+
-+#define DRV_NAME				"al_cache_edac"
-+
-+/* Same bit assignments of CPUMERRSR_EL1 and L2MERRSR_EL1 in ARM CA57/CA72 */
-+#define ARM_CA57_CPUMERRSR_INDEX_OFF		(0)
-+#define ARM_CA57_CPUMERRSR_INDEX_MASK		(0x3FFFF)
-+#define ARM_CA57_CPUMERRSR_BANK_WAY_OFF		(18)
-+#define ARM_CA57_CPUMERRSR_BANK_WAY_MASK	(0x1F)
-+#define ARM_CA57_CPUMERRSR_RAM_ID_OFF		(24)
-+#define ARM_CA57_CPUMERRSR_RAM_ID_MASK		(0x7F)
-+#define  ARM_CA57_L1_I_TAG_RAM			0x00
-+#define  ARM_CA57_L1_I_DATA_RAM			0x01
-+#define  ARM_CA57_L1_D_TAG_RAM			0x08
-+#define  ARM_CA57_L1_D_DATA_RAM			0x09
-+#define  ARM_CA57_TLB_RAM			0x18
-+#define ARM_CA57_CPUMERRSR_VALID_OFF		(31)
-+#define ARM_CA57_CPUMERRSR_VALID_MASK		(0x1)
-+#define ARM_CA57_CPUMERRSR_REPEAT_OFF		(32)
-+#define ARM_CA57_CPUMERRSR_REPEAT_MASK		(0xFF)
-+#define ARM_CA57_CPUMERRSR_OTHER_OFF		(40)
-+#define ARM_CA57_CPUMERRSR_OTHER_MASK		(0xFF)
-+#define ARM_CA57_CPUMERRSR_FATAL_OFF		(63)
-+#define ARM_CA57_CPUMERRSR_FATAL_MASK		(0x1)
-+
-+#define ARM_CA57_L2MERRSR_INDEX_OFF		(0)
-+#define ARM_CA57_L2MERRSR_INDEX_MASK		(0x3FFFF)
-+#define ARM_CA57_L2MERRSR_CPUID_WAY_OFF		(18)
-+#define ARM_CA57_L2MERRSR_CPUID_WAY_MASK	(0xF)
-+#define ARM_CA57_L2MERRSR_RAMID_OFF		(24)
-+#define ARM_CA57_L2MERRSR_RAMID_MASK		(0x7F)
-+#define  ARM_CA57_L2_TAG_RAM			0x10
-+#define  ARM_CA57_L2_DATA_RAM			0x11
-+#define  ARM_CA57_L2_SNOOP_RAM			0x12
-+#define  ARM_CA57_L2_DIRTY_RAM			0x14
-+#define  ARM_CA57_L2_INC_PLRU_RAM		0x18
-+#define ARM_CA57_L2MERRSR_VALID_OFF		(31)
-+#define ARM_CA57_L2MERRSR_VALID_MASK		(0x1)
-+#define ARM_CA57_L2MERRSR_REPEAT_OFF		(32)
-+#define ARM_CA57_L2MERRSR_REPEAT_MASK		(0xFF)
-+#define ARM_CA57_L2MERRSR_OTHER_OFF		(40)
-+#define ARM_CA57_L2MERRSR_OTHER_MASK		(0xFF)
-+#define ARM_CA57_L2MERRSR_FATAL_OFF		(63)
-+#define ARM_CA57_L2MERRSR_FATAL_MASK		(0x1)
-+
-+static inline u64 read_cpumerrsr_el1(void)
-+{
-+	u64 val;
-+
-+	asm volatile("mrs %0, s3_1_c15_c2_2" : "=r" (val));
-+
-+	return val;
-+}
-+
-+static inline void write_cpumerrsr_el1(u64 val)
-+{
-+	asm volatile("msr s3_1_c15_c2_2, %0" :: "r" (val));
-+}
-+
-+static inline u64 read_l2merrsr_el1(void)
-+{
-+	u64 val;
-+
-+	asm volatile("mrs %0, s3_1_c15_c2_3" : "=r" (val));
-+
-+	return val;
-+}
-+
-+static inline void write_l2merrsr_el1(u64 val)
-+{
-+	asm volatile("msr s3_1_c15_c2_3, %0" :: "r" (val));
-+}
-+
-+static void al_a57_edac_cpumerrsr(void *arg)
-+{
-+	struct edac_device_ctl_info *edac_dev =
-+		(struct edac_device_ctl_info *)arg;
-+	int cpu;
-+	u32 index, way, ramid, repeat, other, fatal;
-+	u64 val = read_cpumerrsr_el1();
-+
-+	/* Return if no valid error */
-+	if (!((val >> ARM_CA57_CPUMERRSR_VALID_OFF) &
-+	      ARM_CA57_CPUMERRSR_VALID_MASK))
-+		return;
-+
-+	cpu = smp_processor_id();
-+	index = (val >> ARM_CA57_CPUMERRSR_INDEX_OFF) &
-+		ARM_CA57_CPUMERRSR_INDEX_MASK;
-+	way = (val >> ARM_CA57_CPUMERRSR_BANK_WAY_OFF) &
-+		ARM_CA57_CPUMERRSR_BANK_WAY_MASK;
-+	ramid = (val >> ARM_CA57_CPUMERRSR_RAM_ID_OFF) &
-+		ARM_CA57_CPUMERRSR_RAM_ID_MASK;
-+	repeat = (val >> ARM_CA57_CPUMERRSR_REPEAT_OFF) &
-+		ARM_CA57_CPUMERRSR_REPEAT_MASK;
-+	other = (val >> ARM_CA57_CPUMERRSR_OTHER_OFF) &
-+		ARM_CA57_CPUMERRSR_OTHER_MASK;
-+	fatal = (val >> ARM_CA57_CPUMERRSR_FATAL_OFF) &
-+		ARM_CA57_CPUMERRSR_FATAL_MASK;
-+
-+	edac_device_handle_ce(edac_dev, 0, 0, "L2 Error");
-+	edac_printk(KERN_CRIT, DRV_NAME, "CPU%d L1 %serror detected\n",
-+		    cpu, (fatal) ? "Fatal " : "");
-+	edac_printk(KERN_CRIT, DRV_NAME, "RAMID=");
-+
-+	switch (ramid) {
-+	case ARM_CA57_L1_I_TAG_RAM:
-+		pr_cont("'L1-I Tag RAM' index=%d way=%d", index, way);
-+		break;
-+	case ARM_CA57_L1_I_DATA_RAM:
-+		pr_cont("'L1-I Data RAM' index=%d bank= %d", index, way);
-+		break;
-+	case ARM_CA57_L1_D_TAG_RAM:
-+		pr_cont("'L1-D Tag RAM' index=%d way=%d", index, way);
-+		break;
-+	case ARM_CA57_L1_D_DATA_RAM:
-+		pr_cont("'L1-D Data RAM' index=%d bank=%d", index, way);
-+		break;
-+	case ARM_CA57_TLB_RAM:
-+		pr_cont("'TLB RAM' index=%d", index);
-+		break;
-+	default:
-+		pr_cont("'unknown'");
-+		break;
-+	}
-+
-+	pr_cont(", repeat=%d, other=%d (CPUMERRSR_EL1=0x%llx)\n", repeat, other,
-+		val);
-+
-+	write_cpumerrsr_el1(0);
-+}
-+
-+static void al_a57_edac_l2merrsr(void *arg)
-+{
-+	struct edac_device_ctl_info *edac_dev =
-+		(struct edac_device_ctl_info *)arg;
-+	int cpu;
-+	u32 index, way, ramid, repeat, other, fatal;
-+	u64 val = read_l2merrsr_el1();
-+
-+	/* Return if no valid error */
-+	if (!((val >> ARM_CA57_L2MERRSR_VALID_OFF) &
-+	      ARM_CA57_L2MERRSR_VALID_MASK))
-+		return;
-+
-+	cpu = smp_processor_id();
-+	index = (val >> ARM_CA57_L2MERRSR_INDEX_OFF) &
-+		ARM_CA57_L2MERRSR_INDEX_MASK;
-+	way = (val >> ARM_CA57_L2MERRSR_CPUID_WAY_OFF) &
-+		ARM_CA57_L2MERRSR_CPUID_WAY_MASK;
-+	ramid = (val >> ARM_CA57_L2MERRSR_RAMID_OFF) &
-+		ARM_CA57_L2MERRSR_RAMID_MASK;
-+	repeat = (val >> ARM_CA57_L2MERRSR_REPEAT_OFF) &
-+		ARM_CA57_L2MERRSR_REPEAT_MASK;
-+	other = (val >> ARM_CA57_L2MERRSR_OTHER_OFF) &
-+		ARM_CA57_L2MERRSR_OTHER_MASK;
-+	fatal = (val >> ARM_CA57_L2MERRSR_FATAL_OFF) &
-+		ARM_CA57_L2MERRSR_FATAL_MASK;
-+
-+	edac_device_handle_ce(edac_dev, 0, 0, "L2 Error");
-+	edac_printk(KERN_CRIT, DRV_NAME, "CPU%d L2 %serror detected\n",
-+		    cpu, (fatal) ? "Fatal " : "");
-+	edac_printk(KERN_CRIT, DRV_NAME, "RAMID=");
-+
-+	switch (ramid) {
-+	case ARM_CA57_L2_TAG_RAM:
-+		pr_cont("'L2 Tag RAM'");
-+		break;
-+	case ARM_CA57_L2_DATA_RAM:
-+		pr_cont("'L2 Data RAM'");
-+		break;
-+	case ARM_CA57_L2_SNOOP_RAM:
-+		pr_cont("'L2 Snoop RAM'");
-+		break;
-+	case ARM_CA57_L2_DIRTY_RAM:
-+		pr_cont("'L2 Dirty RAM'");
-+		break;
-+	case ARM_CA57_L2_INC_PLRU_RAM:
-+		pr_cont("'L2 Inclusion PLRU RAM'");
-+		break;
-+	default:
-+		pr_cont("'unknown'");
-+		break;
-+	}
-+
-+	pr_cont(", cpuid/way=%d, repeat=%d, other=%d (L2MERRSR_EL1=0x%llx)\n",
-+		way, repeat, other, val);
-+
-+	write_l2merrsr_el1(0);
-+}
-+
-+static void al_a57_edac_check(struct edac_device_ctl_info *edac_dev)
-+{
-+	int cpu, cluster, last_cluster = -1;
-+
-+	/*
-+	 * Use get_online_cpus/put_online_cpus to prevent the online CPU map
-+	 * changing while reads the L1/L2 error status
-+	 */
-+	get_online_cpus();
-+	for_each_online_cpu(cpu) {
-+		/* Check L1 errors */
-+		smp_call_function_single(cpu, al_a57_edac_cpumerrsr, edac_dev,
-+					 0);
-+		cluster = topology_physical_package_id(cpu);
-+		/* Only single CPU will read the L2 error status */
-+		if (cluster != last_cluster) {
-+			smp_call_function_single(cpu, al_a57_edac_l2merrsr,
-+						 edac_dev, 0);
-+			last_cluster = cluster;
-+		}
-+	}
-+	put_online_cpus();
-+}
-+
-+static int al_a57_edac_probe(struct platform_device *pdev)
-+{
-+	struct edac_device_ctl_info *edac_dev;
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	/* Polling mode is supported */
-+	edac_op_state = EDAC_OPSTATE_POLL;
-+
-+	edac_dev = edac_device_alloc_ctl_info(0, DRV_NAME, 1, "L", 2, 1, NULL,
-+					      0, edac_device_alloc_index());
-+	if (IS_ERR(edac_dev))
-+		return -ENOMEM;
-+
-+	edac_dev->edac_check = al_a57_edac_check;
-+	edac_dev->dev = dev;
-+	edac_dev->mod_name = dev_name(dev);
-+	edac_dev->dev_name = dev_name(dev);
-+	edac_dev->ctl_name = dev_name(dev);
-+	platform_set_drvdata(pdev, edac_dev);
-+
-+	ret = edac_device_add_device(edac_dev);
-+	if (ret)
-+		edac_device_free_ctl_info(edac_dev);
-+
-+	return ret;
-+}
-+
-+static int al_a57_edac_remove(struct platform_device *pdev)
-+{
-+	struct edac_device_ctl_info *edac_dev = platform_get_drvdata(pdev);
-+
-+	edac_device_del_device(edac_dev->dev);
-+	edac_device_free_ctl_info(edac_dev);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id al_a57_edac_of_match[] = {
-+	{ .compatible = "amazon,al-cortex-a57-edac" },
-+	{ .compatible = "amazon,al-cortex-a72-edac" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, al_a57_edac_of_match);
-+
-+static struct platform_driver al_a57_edac_driver = {
-+	.probe = al_a57_edac_probe,
-+	.remove = al_a57_edac_remove,
-+	.driver = {
-+		.name = DRV_NAME,
-+		.of_match_table = al_a57_edac_of_match,
-+	},
-+};
-+module_platform_driver(al_a57_edac_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Hanna Hawa <hhhawa@amazon.com>");
+Luckily on the CGroup side, we don't start from ground zero.
+Many aspects and pain points have been already discussed in the past
+and have been addressed by the current version.
+
+For you benefit, here is a list of previously discussed items:
+
+ - A child can never obtain more than its ancestors
+   https://lore.kernel.org/lkml/20180426185845.GO1911913@devbig577.frc2.facebook.com/
+
+ - Enforcing consistency rules among parent-child groups
+   https://lore.kernel.org/lkml/20180410200514.GA793541@devbig577.frc2.facebook.com/
+
+ - Use "effective" attributes to enforce restrictions:
+   https://lore.kernel.org/lkml/20180409222417.GK3126663@devbig577.frc2.facebook.com
+   https://lore.kernel.org/lkml/20180410200514.GA793541@devbig577.frc2.facebook.com
+
+ - Tasks on a subgroup can only be more boosted and/or capped,
+   i.e. parent always set an upper bound on both max and min clamps
+   https://lore.kernel.org/lkml/20180409222417.GK3126663@devbig577.frc2.facebook.com
+   https://lore.kernel.org/lkml/20180410200514.GA793541@devbig577.frc2.facebook.com
+
+ - Put everything at system level outside of the cgroup interface,
+   i.e. no root group tunable attributes
+   https://lore.kernel.org/lkml/20180409222417.GK3126663@devbig577.frc2.facebook.com/
+
+ - CGroups don't need any hierarchical behaviors on their own
+   https://lore.kernel.org/lkml/20180723153040.GG1934745@devbig577.frc2.facebook.com/
+
+Looking forward to get some more feedbacks from you.
+
+Cheers,
+Patrick
+
+On 15-May 10:44, Patrick Bellasi wrote:
+> Hi all, this is a respin of:
+> 
+>   https://lore.kernel.org/lkml/20190402104153.25404-1-patrick.bellasi@arm.com/
+> 
+> which includes the following main changes:
+> 
+>  - fix "max local update" by moving into uclamp_rq_inc_id()
+>  - use for_each_clamp_id() and uclamp_se_set() to make code less fragile
+>  - rename sysfs node: s/sched_uclamp_util_{min,max}/sched_util_clamp_{min,max}/
+>  - removed not used uclamp_eff_bucket_id()
+>  - move uclamp_bucket_base_value() definition into patch using it
+>  - get rid of not necessary SCHED_POLICY_MAX define
+>  - update sched_setattr() syscall to just force the current policy on
+>    SCHED_FLAG_KEEP_POLICY
+>  - return EOPNOTSUPP from uclamp_validate() on !CONFIG_UCLAMP_TASK
+>  - make alloc_uclamp_sched_group() a void function
+>  - simplify bits_per() definition
+>  - add rq's lockdep assert to uclamp_rq_{inc,dec}_id()
+> 
+> With the above, I think we captured all the major inputs from Peter [1].
+> Thus, this v9 is likely the right version to unlock Tejun's review [2] on the
+> remaining cgroup related bits, i.e. patches [12-16].
+> 
+> Cheers Patrick
+> 
+> 
+> Series Organization
+> ===================
+> 
+> The series is organized into these main sections:
+> 
+>  - Patches [01-07]: Per task (primary) API
+>  - Patches [08-09]: Schedutil integration for FAIR and RT tasks
+>  - Patches [10-11]: Integration with EAS's energy_compute()
+>  - Patches [12-16]: Per task group (secondary) API
+> 
+> It is based on today's tip/sched/core and the full tree is available here:
+> 
+>    git://linux-arm.org/linux-pb.git   lkml/utilclamp_v9
+>    http://www.linux-arm.org/git?p=linux-pb.git;a=shortlog;h=refs/heads/lkml/utilclamp_v9
+> 
+> 
+> Newcomer's Short Abstract
+> =========================
+> 
+> The Linux scheduler tracks a "utilization" signal for each scheduling entity
+> (SE), e.g. tasks, to know how much CPU time they use. This signal allows the
+> scheduler to know how "big" a task is and, in principle, it can support
+> advanced task placement strategies by selecting the best CPU to run a task.
+> Some of these strategies are represented by the Energy Aware Scheduler [3].
+> 
+> When the schedutil cpufreq governor is in use, the utilization signal allows
+> the Linux scheduler to also drive frequency selection. The CPU utilization
+> signal, which represents the aggregated utilization of tasks scheduled on that
+> CPU, is used to select the frequency which best fits the workload generated by
+> the tasks.
+> 
+> The current translation of utilization values into a frequency selection is
+> simple: we go to max for RT tasks or to the minimum frequency which can
+> accommodate the utilization of DL+FAIR tasks.
+> However, utilization values by themselves cannot convey the desired
+> power/performance behaviors of each task as intended by user-space.
+> As such they are not ideally suited for task placement decisions.
+> 
+> Task placement and frequency selection policies in the kernel can be improved
+> by taking into consideration hints coming from authorized user-space elements,
+> like for example the Android middleware or more generally any "System
+> Management Software" (SMS) framework.
+> 
+> Utilization clamping is a mechanism which allows to "clamp" (i.e. filter) the
+> utilization generated by RT and FAIR tasks within a range defined by user-space.
+> The clamped utilization value can then be used, for example, to enforce a
+> minimum and/or maximum frequency depending on which tasks are active on a CPU.
+> 
+> The main use-cases for utilization clamping are:
+> 
+>  - boosting: better interactive response for small tasks which
+>    are affecting the user experience.
+> 
+>    Consider for example the case of a small control thread for an external
+>    accelerator (e.g. GPU, DSP, other devices). Here, from the task utilization
+>    the scheduler does not have a complete view of what the task's requirements
+>    are and, if it's a small utilization task, it keeps selecting a more energy
+>    efficient CPU, with smaller capacity and lower frequency, thus negatively
+>    impacting the overall time required to complete task activations.
+> 
+>  - capping: increase energy efficiency for background tasks not affecting the
+>    user experience.
+> 
+>    Since running on a lower capacity CPU at a lower frequency is more energy
+>    efficient, when the completion time is not a main goal, then capping the
+>    utilization considered for certain (maybe big) tasks can have positive
+>    effects, both on energy consumption and thermal headroom.
+>    This feature allows also to make RT tasks more energy friendly on mobile
+>    systems where running them on high capacity CPUs and at the maximum
+>    frequency is not required.
+> 
+> From these two use-cases, it's worth noticing that frequency selection
+> biasing, introduced by patches 9 and 10 of this series, is just one possible
+> usage of utilization clamping. Another compelling extension of utilization
+> clamping is in helping the scheduler in making tasks placement decisions.
+> 
+> Utilization is (also) a task specific property the scheduler uses to know
+> how much CPU bandwidth a task requires, at least as long as there is idle time.
+> Thus, the utilization clamp values, defined either per-task or per-task_group,
+> can represent tasks to the scheduler as being bigger (or smaller) than what
+> they actually are.
+> 
+> Utilization clamping thus enables interesting additional optimizations, for
+> example on asymmetric capacity systems like Arm big.LITTLE and DynamIQ CPUs,
+> where:
+> 
+>  - boosting: try to run small/foreground tasks on higher-capacity CPUs to
+>    complete them faster despite being less energy efficient.
+> 
+>  - capping: try to run big/background tasks on low-capacity CPUs to save power
+>    and thermal headroom for more important tasks
+> 
+> This series does not present this additional usage of utilization clamping but
+> it's an integral part of the EAS feature set, where [4] is one of its main
+> components.
+> 
+> Android kernels use SchedTune, a solution similar to utilization clamping, to
+> bias both 'frequency selection' and 'task placement'. This series provides the
+> foundation to add similar features to mainline while focusing, for the
+> time being, just on schedutil integration.
+> 
+> 
+> References
+> ==========
+> 
+> [1] Message-ID: <20190509130215.GV2623@hirez.programming.kicks-ass.net>
+>     https://lore.kernel.org/lkml/20190509130215.GV2623@hirez.programming.kicks-ass.net/
+> 
+> [2] Message-ID: <20180911162827.GJ1100574@devbig004.ftw2.facebook.com>
+>     https://lore.kernel.org/lkml/20180911162827.GJ1100574@devbig004.ftw2.facebook.com/
+> 
+> [3] Energy Aware Scheduling
+>     https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/scheduler/sched-energy.txt?h=v5.1
+> 
+> [4] Expressing per-task/per-cgroup performance hints
+>     Linux Plumbers Conference 2018
+>     https://linuxplumbersconf.org/event/2/contributions/128/
+> 
+> 
+> Patrick Bellasi (16):
+>   sched/core: uclamp: Add CPU's clamp buckets refcounting
+>   sched/core: uclamp: Add bucket local max tracking
+>   sched/core: uclamp: Enforce last task's UCLAMP_MAX
+>   sched/core: uclamp: Add system default clamps
+>   sched/core: Allow sched_setattr() to use the current policy
+>   sched/core: uclamp: Extend sched_setattr() to support utilization
+>     clamping
+>   sched/core: uclamp: Reset uclamp values on RESET_ON_FORK
+>   sched/core: uclamp: Set default clamps for RT tasks
+>   sched/cpufreq: uclamp: Add clamps for FAIR and RT tasks
+>   sched/core: uclamp: Add uclamp_util_with()
+>   sched/fair: uclamp: Add uclamp support to energy_compute()
+>   sched/core: uclamp: Extend CPU's cgroup controller
+>   sched/core: uclamp: Propagate parent clamps
+>   sched/core: uclamp: Propagate system defaults to root group
+>   sched/core: uclamp: Use TG's clamps to restrict TASK's clamps
+>   sched/core: uclamp: Update CPU's refcount on TG's clamp changes
+> 
+>  Documentation/admin-guide/cgroup-v2.rst |  46 ++
+>  include/linux/log2.h                    |  34 ++
+>  include/linux/sched.h                   |  58 ++
+>  include/linux/sched/sysctl.h            |  11 +
+>  include/linux/sched/topology.h          |   6 -
+>  include/uapi/linux/sched.h              |  14 +-
+>  include/uapi/linux/sched/types.h        |  66 ++-
+>  init/Kconfig                            |  75 +++
+>  kernel/sched/core.c                     | 754 +++++++++++++++++++++++-
+>  kernel/sched/cpufreq_schedutil.c        |  22 +-
+>  kernel/sched/fair.c                     |  44 +-
+>  kernel/sched/rt.c                       |   4 +
+>  kernel/sched/sched.h                    | 123 +++-
+>  kernel/sysctl.c                         |  16 +
+>  14 files changed, 1229 insertions(+), 44 deletions(-)
+> 
+> -- 
+> 2.21.0
+> 
+
 -- 
-2.7.4
+#include <best/regards.h>
 
+Patrick Bellasi
