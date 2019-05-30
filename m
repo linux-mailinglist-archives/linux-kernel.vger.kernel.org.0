@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCA5C2F0F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:09:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F257D2EBFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:17:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731040AbfE3DRO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:17:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60432 "EHLO mail.kernel.org"
+        id S1728786AbfE3DRP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:17:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728245AbfE3DNw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:13:52 -0400
+        id S1728697AbfE3DNx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:13:53 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34B7824534;
+        by mail.kernel.org (Postfix) with ESMTPSA id AFA2E24547;
         Thu, 30 May 2019 03:13:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1559186032;
-        bh=/DIIACrdSAI23wlqAuKh/YSRVxYGNSySwjOPobRpCtM=;
+        bh=NP9GJwS7GdR8uLfmWhGAHZP3f6D5LrFqhmkGBFMjYQ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MupMW9nfCIGOYGDIOQjREDWSyH47Di2v8+CXYkThMuC+JIiE0Jc/v4XubQuRplVVV
-         XIrI4pNuMwx+YHosj/fy+unvwY+bgZvogq5SBJD7mkf4cCoVd00+TdHI+QVPZtRoK2
-         FBvw1N+Cb+xXXSfhjOZgLUoYKQJr47f8ZHpl2sTA=
+        b=10zfsgnnuk3vStWlMwiypVZcsKMid6nlYIAF57WLcWrFT/2E1s3tkA1XmbmLmI3gI
+         neaWpS0VGqwpWg80Gcd0ZDz2sEeDtWiv/kzNWy/J1MniYAAbQ/rDl0C/PoSlHI7vNI
+         0HvfS1QR0lzTo/6nlgHAZiwBx0I+PBWqAcbr1SIw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 069/346] powerpc/perf: Fix loop exit condition in nest_imc_event_init
-Date:   Wed, 29 May 2019 20:02:22 -0700
-Message-Id: <20190530030544.554500619@linuxfoundation.org>
+Subject: [PATCH 5.0 070/346] spi: atmel-quadspi: fix crash while suspending
+Date:   Wed, 29 May 2019 20:02:23 -0700
+Message-Id: <20190530030544.608765568@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
 References: <20190530030540.363386121@linuxfoundation.org>
@@ -46,58 +46,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 860b7d2286236170a36f94946d03ca9888d32571 ]
+[ Upstream commit e5c27498a0403b270620b1a8a0a66e3efc222fb6 ]
 
-The data structure (i.e struct imc_mem_info) to hold the memory address
-information for nest imc units is allocated based on the number of nodes
-in the system.
+atmel_qspi objects are kept in spi_controller objects, so, first get
+pointer to spi_controller object and then get atmel_qspi object from
+spi_controller object.
 
-nest_imc_event_init() traverse this struct array to calculate the memory
-base address for the event-cpu. If we fail to find a match for the event
-cpu's chip-id in imc_mem_info struct array, then the do-while loop will
-iterate until we crash.
-
-Fix this by changing the loop exit condition based on the number of
-non zero vbase elements in the array, since the allocation is done for
-nr_chips + 1.
-
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Fixes: 885dcd709ba91 ("powerpc/perf: Add nest IMC PMU support")
-Signed-off-by: Anju T Sudhakar <anju@linux.vnet.ibm.com>
-Reviewed-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: 2d30ac5ed633 ("mtd: spi-nor: atmel-quadspi: Use spi-mem interface for atmel-quadspi driver")
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Reviewed-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/perf/imc-pmu.c               | 2 +-
- arch/powerpc/platforms/powernv/opal-imc.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/spi/atmel-quadspi.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/perf/imc-pmu.c b/arch/powerpc/perf/imc-pmu.c
-index 4f34c7557bdb7..d1009fe3130b1 100644
---- a/arch/powerpc/perf/imc-pmu.c
-+++ b/arch/powerpc/perf/imc-pmu.c
-@@ -508,7 +508,7 @@ static int nest_imc_event_init(struct perf_event *event)
- 			break;
- 		}
- 		pcni++;
--	} while (pcni);
-+	} while (pcni->vbase != 0);
+diff --git a/drivers/spi/atmel-quadspi.c b/drivers/spi/atmel-quadspi.c
+index ddc7124108125..ec6e9970d7750 100644
+--- a/drivers/spi/atmel-quadspi.c
++++ b/drivers/spi/atmel-quadspi.c
+@@ -506,7 +506,8 @@ static int atmel_qspi_remove(struct platform_device *pdev)
  
- 	if (!flag)
- 		return -ENODEV;
-diff --git a/arch/powerpc/platforms/powernv/opal-imc.c b/arch/powerpc/platforms/powernv/opal-imc.c
-index 58a07948c76e7..3d27f02695e41 100644
---- a/arch/powerpc/platforms/powernv/opal-imc.c
-+++ b/arch/powerpc/platforms/powernv/opal-imc.c
-@@ -127,7 +127,7 @@ static int imc_get_mem_addr_nest(struct device_node *node,
- 								nr_chips))
- 		goto error;
+ static int __maybe_unused atmel_qspi_suspend(struct device *dev)
+ {
+-	struct atmel_qspi *aq = dev_get_drvdata(dev);
++	struct spi_controller *ctrl = dev_get_drvdata(dev);
++	struct atmel_qspi *aq = spi_controller_get_devdata(ctrl);
  
--	pmu_ptr->mem_info = kcalloc(nr_chips, sizeof(*pmu_ptr->mem_info),
-+	pmu_ptr->mem_info = kcalloc(nr_chips + 1, sizeof(*pmu_ptr->mem_info),
- 				    GFP_KERNEL);
- 	if (!pmu_ptr->mem_info)
- 		goto error;
+ 	clk_disable_unprepare(aq->clk);
+ 
+@@ -515,7 +516,8 @@ static int __maybe_unused atmel_qspi_suspend(struct device *dev)
+ 
+ static int __maybe_unused atmel_qspi_resume(struct device *dev)
+ {
+-	struct atmel_qspi *aq = dev_get_drvdata(dev);
++	struct spi_controller *ctrl = dev_get_drvdata(dev);
++	struct atmel_qspi *aq = spi_controller_get_devdata(ctrl);
+ 
+ 	clk_prepare_enable(aq->clk);
+ 
 -- 
 2.20.1
 
