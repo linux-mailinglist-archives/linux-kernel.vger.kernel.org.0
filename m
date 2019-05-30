@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBF822EF8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:56:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50DC02EC9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:24:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733198AbfE3D4c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:56:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53330 "EHLO mail.kernel.org"
+        id S1732135AbfE3DX2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:23:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731768AbfE3DS7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:59 -0400
+        id S1731100AbfE3DRZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:25 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 521A024725;
-        Thu, 30 May 2019 03:18:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4B1824479;
+        Thu, 30 May 2019 03:17:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186339;
-        bh=9PYpEDZLRhbi7YVmJolHM37nqF9o+1KmaP4pr3hYhsM=;
+        s=default; t=1559186244;
+        bh=zabL5YfqfgkOhrTRcXafw5T08OQA8mRkWoJ70DYQGDc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J9fXjb8laeYzeskBEl2nUuGykaqdyLEnW8S+vFOdkAaMo+YgDfQawXWn/CmhQx0o6
-         Tzkr8F411kpDEITyd6cReds84OYFjvmRXZzUZgCSnM8zvVMyp50n/HAKq+Rmy94a97
-         kVn4qN/O32Ry3K7MUHjn8fkHi5VjYAl6/5oEOKmI=
+        b=2kYaiLQ/8h7V4PaO4FrXzoknc7RjRjyPWajsU90Ye0tn/+AMqEhHoEz0vC60GEhOn
+         mjrMf+Ro6x+irTkrdk87GnJlrwEB0ASHSS3G7RPls23YtEIBlYXGRQJ4nn/KIj2aHl
+         gIIIOuu+go9PbpleR/xQ5WlIqpKhBTpIS+Cy+Tws=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sven Van Asbroeck <TheSven73@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        stable@vger.kernel.org, Kefeng Wang <wangkefeng.wang@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 063/193] rtc: 88pm860x: prevent use-after-free on device remove
+Subject: [PATCH 4.19 159/276] hwmon: (smsc47b397) Use request_muxed_region for Super-IO accesses
 Date:   Wed, 29 May 2019 20:05:17 -0700
-Message-Id: <20190530030458.251462875@linuxfoundation.org>
+Message-Id: <20190530030535.446686774@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +45,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f22b1ba15ee5785aa028384ebf77dd39e8e47b70 ]
+[ Upstream commit 8c0826756744c0ac1df600a5e4cca1a341b13101 ]
 
-The device's remove() attempts to shut down the delayed_work scheduled
-on the kernel-global workqueue by calling flush_scheduled_work().
+Super-IO accesses may fail on a system with no or unmapped LPC bus.
 
-Unfortunately, flush_scheduled_work() does not prevent the delayed_work
-from re-scheduling itself. The delayed_work might run after the device
-has been removed, and touch the already de-allocated info structure.
-This is a potential use-after-free.
+Also, other drivers may attempt to access the LPC bus at the same time,
+resulting in undefined behavior.
 
-Fix by calling cancel_delayed_work_sync() during remove(): this ensures
-that the delayed work is properly cancelled, is no longer running, and
-is not able to re-schedule itself.
+Use request_muxed_region() to ensure that IO access on the requested
+address space is supported, and to ensure that access by multiple drivers
+is synchronized.
 
-This issue was detected with the help of Coccinelle.
-
-Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Fixes: 8d5d45fb1468 ("I2C: Move hwmon drivers (2/3)")
+Reported-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+Reported-by: John Garry <john.garry@huawei.com>
+Cc: John Garry <john.garry@huawei.com>
+Acked-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/rtc/rtc-88pm860x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hwmon/smsc47b397.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/rtc/rtc-88pm860x.c b/drivers/rtc/rtc-88pm860x.c
-index 19e53b3b8e005..166faae3a59cd 100644
---- a/drivers/rtc/rtc-88pm860x.c
-+++ b/drivers/rtc/rtc-88pm860x.c
-@@ -414,7 +414,7 @@ static int pm860x_rtc_remove(struct platform_device *pdev)
- 	struct pm860x_rtc_info *info = platform_get_drvdata(pdev);
+diff --git a/drivers/hwmon/smsc47b397.c b/drivers/hwmon/smsc47b397.c
+index 6bd2007565603..cbdb5c4991ae3 100644
+--- a/drivers/hwmon/smsc47b397.c
++++ b/drivers/hwmon/smsc47b397.c
+@@ -72,14 +72,19 @@ static inline void superio_select(int ld)
+ 	superio_outb(0x07, ld);
+ }
  
- #ifdef VRTC_CALIBRATION
--	flush_scheduled_work();
-+	cancel_delayed_work_sync(&info->calib_work);
- 	/* disable measurement */
- 	pm860x_set_bits(info->i2c, PM8607_MEAS_EN2, MEAS2_VRTC, 0);
- #endif	/* VRTC_CALIBRATION */
+-static inline void superio_enter(void)
++static inline int superio_enter(void)
+ {
++	if (!request_muxed_region(REG, 2, DRVNAME))
++		return -EBUSY;
++
+ 	outb(0x55, REG);
++	return 0;
+ }
+ 
+ static inline void superio_exit(void)
+ {
+ 	outb(0xAA, REG);
++	release_region(REG, 2);
+ }
+ 
+ #define SUPERIO_REG_DEVID	0x20
+@@ -300,8 +305,12 @@ static int __init smsc47b397_find(void)
+ 	u8 id, rev;
+ 	char *name;
+ 	unsigned short addr;
++	int err;
++
++	err = superio_enter();
++	if (err)
++		return err;
+ 
+-	superio_enter();
+ 	id = force_id ? force_id : superio_inb(SUPERIO_REG_DEVID);
+ 
+ 	switch (id) {
 -- 
 2.20.1
 
