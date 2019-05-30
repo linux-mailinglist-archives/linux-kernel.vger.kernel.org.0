@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D9B82ECE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:28:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3E632F1C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:15:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388170AbfE3D21 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:28:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57126 "EHLO mail.kernel.org"
+        id S1730699AbfE3EPj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:15:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731332AbfE3DT4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:19:56 -0400
+        id S1730554AbfE3DP7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:59 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F1EB248ED;
-        Thu, 30 May 2019 03:19:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1378C245A9;
+        Thu, 30 May 2019 03:15:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186395;
-        bh=4qFf+ReEGAlxmB+u/dhYnW1b0I/eQL6fC26LheLmXMg=;
+        s=default; t=1559186159;
+        bh=C1aHfw0Q7zVSrkpSO8pPer+mYBC/MxfNZLuffaxO7RU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=quch1U7DmT5Le3JIkUPV6steBia4OQNSlWwCZN2nEDaB5mZTAxLbG3cojcwRSseBz
-         Ge+9iGVkpAOenmIliE2R+ZDu3YaDOANNvKFf28S+UYrTJIuOBesRxpk5m8QrkFBVkF
-         XUG9PHMbVM4oDnQIS1l0/4alnUBp12Nj+eGWeRDQ=
+        b=VRjAo5HJFjSHcYPQ+fnVffBaEr5Jm+csQl7qeW+hyIfDkhOKChXJbuuxgyt+O4vjJ
+         raz9JTB6+0OtpcdHk3STyaa/uo9OyfpYBsVYg8EbPkUsD4bgwOex5Zj326J608Y3O9
+         POpIvscMV4U6XiG7cntYVEpXEPBYNRJkSQkQe1YM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>,
+        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 126/193] clk: rockchip: Make rkpwm a critical clock on rk3288
-Date:   Wed, 29 May 2019 20:06:20 -0700
-Message-Id: <20190530030506.055879300@linuxfoundation.org>
+Subject: [PATCH 5.0 308/346] media: vimc: zero the media_device on probe
+Date:   Wed, 29 May 2019 20:06:21 -0700
+Message-Id: <20190530030556.437436593@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit dfe7fb21cd9e730230d55a79bc72cf2ece67cdd5 ]
+[ Upstream commit f74267b51cb36321f777807b2e04ca02167ecc08 ]
 
-Most rk3288-based boards are derived from the EVB and thus use a PWM
-regulator for the logic rail.  However, most rk3288-based boards don't
-specify the PWM regulator in their device tree.  We'll deal with that
-by making it critical.
+The media_device is part of a static global vimc_device struct.
+The media framework expects this to be zeroed before it is
+used, however, since this is a global this is not the case if
+vimc is unbound and then bound again.
 
-NOTE: it's important to make it critical and not just IGNORE_UNUSED
-because all PWMs in the system share the same clock.  We don't want
-another PWM user to turn the clock on and off and kill the logic rail.
+So call memset to ensure any left-over values are cleared.
 
-This change is in preparation for actually having the PWMs in the
-rk3288 device tree actually point to the proper PWM clock.  Up until
-now they've all pointed to the clock for the old IP block and they've
-all worked due to the fact that rkpwm was IGNORE_UNUSED and that the
-clock rates for both clocks were the same.
-
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/rockchip/clk-rk3288.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/media/platform/vimc/vimc-core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index c6cd6d28af56f..64191694ff6e9 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -676,7 +676,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
- 	GATE(PCLK_TZPC, "pclk_tzpc", "pclk_cpu", 0, RK3288_CLKGATE_CON(11), 3, GFLAGS),
- 	GATE(PCLK_UART2, "pclk_uart2", "pclk_cpu", 0, RK3288_CLKGATE_CON(11), 9, GFLAGS),
- 	GATE(PCLK_EFUSE256, "pclk_efuse_256", "pclk_cpu", 0, RK3288_CLKGATE_CON(11), 10, GFLAGS),
--	GATE(PCLK_RKPWM, "pclk_rkpwm", "pclk_cpu", CLK_IGNORE_UNUSED, RK3288_CLKGATE_CON(11), 11, GFLAGS),
-+	GATE(PCLK_RKPWM, "pclk_rkpwm", "pclk_cpu", 0, RK3288_CLKGATE_CON(11), 11, GFLAGS),
+diff --git a/drivers/media/platform/vimc/vimc-core.c b/drivers/media/platform/vimc/vimc-core.c
+index ce809d2e3d537..64eb424c15ab9 100644
+--- a/drivers/media/platform/vimc/vimc-core.c
++++ b/drivers/media/platform/vimc/vimc-core.c
+@@ -303,6 +303,8 @@ static int vimc_probe(struct platform_device *pdev)
  
- 	/* ddrctrl [DDR Controller PHY clock] gates */
- 	GATE(0, "nclk_ddrupctl0", "ddrphy", CLK_IGNORE_UNUSED, RK3288_CLKGATE_CON(11), 4, GFLAGS),
-@@ -817,6 +817,8 @@ static const char *const rk3288_critical_clocks[] __initconst = {
- 	"pclk_pd_pmu",
- 	"pclk_pmu_niu",
- 	"pmu_hclk_otg0",
-+	/* pwm-regulators on some boards, so handoff-critical later */
-+	"pclk_rkpwm",
- };
+ 	dev_dbg(&pdev->dev, "probe");
  
- static void __iomem *rk3288_cru_base;
++	memset(&vimc->mdev, 0, sizeof(vimc->mdev));
++
+ 	/* Create platform_device for each entity in the topology*/
+ 	vimc->subdevs = devm_kcalloc(&vimc->pdev.dev, vimc->pipe_cfg->num_ents,
+ 				     sizeof(*vimc->subdevs), GFP_KERNEL);
 -- 
 2.20.1
 
