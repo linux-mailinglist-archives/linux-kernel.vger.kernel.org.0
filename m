@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9620D2EDF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:43:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83F922F1BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:15:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731903AbfE3Dmw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:42:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60964 "EHLO mail.kernel.org"
+        id S1728155AbfE3EPR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:15:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732439AbfE3DVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:21:05 -0400
+        id S1730563AbfE3DQB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:16:01 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF330249AC;
-        Thu, 30 May 2019 03:21:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 17E5D245C1;
+        Thu, 30 May 2019 03:16:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186464;
-        bh=EMYS1qhUe763nuCW1K+nwIWiN/wiyn9Qh5hzGuOl2mE=;
+        s=default; t=1559186161;
+        bh=20NGHh9hI3pUhV5NSLVTioijjfVOpQ0vS7J9QaqBhV4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ciVQfx5u6NN/mbuWekVGhLs1KOkDBr8TOa6AFiJfd9yatiz9vcpDnWsrI5mIX7/9S
-         y4KBQb4lKQ2/H3qd5NmMcSeKCY3P20N+QW/LizsYNR1dTLq/ligbiNYgLZSZ1HbSlq
-         cAQBcTbmjqYZtu0hvCVr9FwrtXBtgZiewdQbrZAg=
+        b=UywvA7QHTbDSYpMbZIjBUHIv664sXm6AMkFu8ONfBTAmgIiz7Dh1CFtvrBq7VUTmG
+         e+4z+JGDZqgitqpWeo88YjUGghtDQLW2mYy52TfBR42P+LEhUypSG/JOHvkUQuuOqb
+         ji2SaB5zFl5AC2ogB4w42XNzq2PTC08nkrmDal58=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Murton Liu <murton.liu@amd.com>,
+        Aric Cyr <Aric.Cyr@amd.com>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Sivapiriyan Kumarasamy <Sivapiriyan.Kumarasamy@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 043/128] mwifiex: prevent an array overflow
+Subject: [PATCH 5.0 302/346] drm/amd/display: Fix Divide by 0 in memory calculations
 Date:   Wed, 29 May 2019 20:06:15 -0700
-Message-Id: <20190530030442.254322473@linuxfoundation.org>
+Message-Id: <20190530030556.144657707@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +47,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b4c35c17227fe437ded17ce683a6927845f8c4a4 ]
+[ Upstream commit 59979bf8be1784ebfc44215031c6c88ca22ae65d ]
 
-The "rate_index" is only used as an index into the phist_data->rx_rate[]
-array in the mwifiex_hist_data_set() function.  That array has
-MWIFIEX_MAX_AC_RX_RATES (74) elements and it's used to generate some
-debugfs information.  The "rate_index" variable comes from the network
-skb->data[] and it is a u8 so it's in the 0-255 range.  We need to cap
-it to prevent an array overflow.
+Check if we get any values equal to 0, and set to 1 if so.
 
-Fixes: cbf6e05527a7 ("mwifiex: add rx histogram statistics support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Murton Liu <murton.liu@amd.com>
+Reviewed-by: Aric Cyr <Aric.Cyr@amd.com>
+Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
+Acked-by: Sivapiriyan Kumarasamy <Sivapiriyan.Kumarasamy@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/marvell/mwifiex/cfp.c | 3 +++
- 1 file changed, 3 insertions(+)
+ .../drm/amd/display/dc/dcn10/dcn10_dpp_dscl.c | 20 ++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/cfp.c b/drivers/net/wireless/marvell/mwifiex/cfp.c
-index 1ff22055e54f8..9ddaa767ea747 100644
---- a/drivers/net/wireless/marvell/mwifiex/cfp.c
-+++ b/drivers/net/wireless/marvell/mwifiex/cfp.c
-@@ -533,5 +533,8 @@ u8 mwifiex_adjust_data_rate(struct mwifiex_private *priv,
- 		rate_index = (rx_rate > MWIFIEX_RATE_INDEX_OFDM0) ?
- 			      rx_rate - 1 : rx_rate;
- 
-+	if (rate_index >= MWIFIEX_MAX_AC_RX_RATES)
-+		rate_index = MWIFIEX_MAX_AC_RX_RATES - 1;
+diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_dpp_dscl.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_dpp_dscl.c
+index 4a863a5dab417..321af9af95e86 100644
+--- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_dpp_dscl.c
++++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_dpp_dscl.c
+@@ -406,15 +406,25 @@ void dpp1_dscl_calc_lb_num_partitions(
+ 		int *num_part_y,
+ 		int *num_part_c)
+ {
++	int lb_memory_size, lb_memory_size_c, lb_memory_size_a, num_partitions_a,
++	lb_bpc, memory_line_size_y, memory_line_size_c, memory_line_size_a;
 +
- 	return rate_index;
- }
+ 	int line_size = scl_data->viewport.width < scl_data->recout.width ?
+ 			scl_data->viewport.width : scl_data->recout.width;
+ 	int line_size_c = scl_data->viewport_c.width < scl_data->recout.width ?
+ 			scl_data->viewport_c.width : scl_data->recout.width;
+-	int lb_bpc = dpp1_dscl_get_lb_depth_bpc(scl_data->lb_params.depth);
+-	int memory_line_size_y = (line_size * lb_bpc + 71) / 72; /* +71 to ceil */
+-	int memory_line_size_c = (line_size_c * lb_bpc + 71) / 72; /* +71 to ceil */
+-	int memory_line_size_a = (line_size + 5) / 6; /* +5 to ceil */
+-	int lb_memory_size, lb_memory_size_c, lb_memory_size_a, num_partitions_a;
++
++	if (line_size == 0)
++		line_size = 1;
++
++	if (line_size_c == 0)
++		line_size_c = 1;
++
++
++	lb_bpc = dpp1_dscl_get_lb_depth_bpc(scl_data->lb_params.depth);
++	memory_line_size_y = (line_size * lb_bpc + 71) / 72; /* +71 to ceil */
++	memory_line_size_c = (line_size_c * lb_bpc + 71) / 72; /* +71 to ceil */
++	memory_line_size_a = (line_size + 5) / 6; /* +5 to ceil */
+ 
+ 	if (lb_config == LB_MEMORY_CONFIG_1) {
+ 		lb_memory_size = 816;
 -- 
 2.20.1
 
