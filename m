@@ -2,80 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F4E6304A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 00:15:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A685304BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 00:24:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726601AbfE3WPG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 18:15:06 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:39480 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726045AbfE3WPF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 18:15:05 -0400
-Received: by mail-ot1-f68.google.com with SMTP id k24so2097914otn.6;
-        Thu, 30 May 2019 15:15:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=esfrFMZGksDh8a9cO+oFEVkOyToxeVgjGVajp0t5uMA=;
-        b=Y23YeQnfD1/sKRcMRK7dwclwxqaFymC4hspELPhsRKcDnjEBoo3VN2yKMrvMOKOX1k
-         WaaQj6/lWw1aLzecTdVt2kNAGd2dIGkQwLA4E0jl7LSixaXpbhL2VEoES4L99QbiaE8P
-         zKrVAuUc3rOQ2RJSRm40SKE8iSkqzHqdByAmROMzI+bmc7o3Xoc1E2Ltig6zUeFvpIfD
-         I5oSMzn1A3xOp/qTPfYu6IhXVZaIQXaP7UYcJ3+5Viw/IEJF63lZudMzybSYNp5zmHM0
-         7npv9vMs8q+gj6kL4yye7oHTKwTSgmGrkaStr7WL2cCB+aqc3JvlPAMZ41zQPnLsIJnQ
-         IJsA==
-X-Gm-Message-State: APjAAAXrG0WwjQEzqDCUN8nwnQNfvGc1ihwQ5LeFcSyNIyqC3ATj30Q+
-        MwIvpJxBRrA6gAVUATTChDHUMXkOjmw=
-X-Google-Smtp-Source: APXvYqxcssZ2P726W5gBRmhRvrYfu4C+5mgIylIxWUkzEgFEHV/bxNfuEDDuDgdEKlYEqEYy0qG5WQ==
-X-Received: by 2002:a05:6830:1d5:: with SMTP id r21mr4580794ota.155.1559254504513;
-        Thu, 30 May 2019 15:15:04 -0700 (PDT)
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com. [209.85.167.171])
-        by smtp.gmail.com with ESMTPSA id u70sm1414875oif.16.2019.05.30.15.15.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 May 2019 15:15:03 -0700 (PDT)
-Received: by mail-oi1-f171.google.com with SMTP id v25so5656745oic.9;
-        Thu, 30 May 2019 15:15:03 -0700 (PDT)
-X-Received: by 2002:aca:ea05:: with SMTP id i5mr3971031oih.51.1559254503293;
- Thu, 30 May 2019 15:15:03 -0700 (PDT)
+        id S1726708AbfE3WYZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 18:24:25 -0400
+Received: from mga05.intel.com ([192.55.52.43]:23038 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726045AbfE3WYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 18:24:25 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 May 2019 15:24:24 -0700
+X-ExtLoop1: 1
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
+  by FMSMGA003.fm.intel.com with ESMTP; 30 May 2019 15:24:23 -0700
+Date:   Thu, 30 May 2019 15:24:23 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     "Xing, Cedric" <cedric.xing@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        William Roberts <bill.c.roberts@gmail.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+Message-ID: <20190530222423.GD27551@linux.intel.com>
+References: <20190528202407.GB13158@linux.intel.com>
+ <285f279f-b500-27f0-ab42-fb1dbcc5ab18@tycho.nsa.gov>
+ <960B34DE67B9E140824F1DCDEC400C0F654EB487@ORSMSX116.amr.corp.intel.com>
+ <678a37af-797d-7bd5-a406-32548a270e3d@tycho.nsa.gov>
+ <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com>
+ <c1135352-0b5e-4694-b1a9-105876095877@tycho.nsa.gov>
+ <CALCETrWsEXzUC33eJpGCpdMCBO4aYVviZLRD-CLMNaG5Jv-TCA@mail.gmail.com>
+ <20190530180110.GB23930@linux.intel.com>
+ <CALCETrX2PgUc_jetXHqp85aaS0a0jHB8E7=T1rsW+5vyRgwnUA@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F654EB8BA@ORSMSX116.amr.corp.intel.com>
 MIME-Version: 1.0
-References: <20190530141951.6704-1-laurentiu.tudor@nxp.com> <20190530.150844.1826796344374758568.davem@davemloft.net>
-In-Reply-To: <20190530.150844.1826796344374758568.davem@davemloft.net>
-From:   Li Yang <leoyang.li@nxp.com>
-Date:   Thu, 30 May 2019 17:14:51 -0500
-X-Gmail-Original-Message-ID: <CADRPPNTn7onrpyicx_ytdaDG4q3v4t494zYetkHrT808RsOByA@mail.gmail.com>
-Message-ID: <CADRPPNTn7onrpyicx_ytdaDG4q3v4t494zYetkHrT808RsOByA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/6] Prerequisites for NXP LS104xA SMMU enablement
-To:     David Miller <davem@davemloft.net>, arm@kernel.org
-Cc:     Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Netdev <netdev@vger.kernel.org>, madalin.bucur@nxp.com,
-        Roy Pledge <roy.pledge@nxp.com>, camelia.groza@nxp.com,
-        Joakim Tjernlund <Joakim.Tjernlund@infinera.com>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <960B34DE67B9E140824F1DCDEC400C0F654EB8BA@ORSMSX116.amr.corp.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 5:09 PM David Miller <davem@davemloft.net> wrote:
->
-> From: laurentiu.tudor@nxp.com
-> Date: Thu, 30 May 2019 17:19:45 +0300
->
-> > Depends on this pull request:
-> >
-> >  http://lists.infradead.org/pipermail/linux-arm-kernel/2019-May/653554.html
->
-> I'm not sure how you want me to handle this.
+On Thu, May 30, 2019 at 02:48:43PM -0700, Xing, Cedric wrote:
+> So I think the same rationale applies to enclaves. Your original idea of
+> MAXPERM is the policy set forth by system admin and shall *never* change at
+> runtime. If an enclave is dynamically linked and needs to bring in code pages
+> at runtime, the admin needs to enable it by setting, say ENCLAVE__EXECMOD, in
+> the sigstruct file. Then all EAUG'ed pages will receive RWX as MAXPERM. The
+> process would then mprotect() selective pages to be RX but which exact set of
+> pages doesn't concern LSM usually.
 
-One suggestion from the arm-soc maintainers is that after this pull
-request is merged by arm-soc tree.  You can also merge this pull
-request and then apply the patches.
+Because passing RWX means the enclave "requires" EXECMOD even if it never
+actually does a RW->RX transition.  It's not broken per se, but at the
+very least it's decidedly odd.
 
-Regards,
-Leo
+Dynamically detecting the EXECMOD case is not difficult and has the
+advantage of simplifying userspace loaders, e.g. all EAUG pages are tagged
+ALLOW_WRITE and the kernel takes care of the rest.
+
+I *think* auditing/learning is also messed up with a MAXPERMS approach, as
+mprotect() would fail (due to MAXPERMS clearing MAY_{READ,WRITE,EXEC})
+before it calls security_file_mprotect().  Hooking mprotect() is the
+obvious workaround, but then it's looking a lot like the new proposals.
+
+In other words, the new proposals are rooted in the MAXPERMS concept, e.g.
+MAXPERM is effectively "I want EXECMOD", which gets distilled down to
+ALLOW_WRITE (or ALLOW_EXEC in Andy's proposal).
