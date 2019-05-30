@@ -2,41 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 018BC2F00E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:01:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB38D2EDE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:42:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726128AbfE3EAD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:00:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51474 "EHLO mail.kernel.org"
+        id S1732616AbfE3DmZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:42:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727838AbfE3DS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:29 -0400
+        id S1732490AbfE3DVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:21:13 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48D272474D;
-        Thu, 30 May 2019 03:18:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47E31249D8;
+        Thu, 30 May 2019 03:21:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186309;
-        bh=q4GEWxI8zFJV+i2pxijjdsUKmJrEI9Khc/QMjifhyWg=;
+        s=default; t=1559186473;
+        bh=EkBCv1heqGKzTiAmeF4zZ0mO7WABHV4kA/21WAkBZRM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nexOqOp1JoiymgRlfP8mtw+7Kibcaa7XhNr76WG+PYY1LqGW5aoJ3OP9uiKtTfoMg
-         FDPWCCtzAsUcn0ZUpE1jnYDTlIpsVZ0GZm993CtrDpQSLMjHdH48jiD4W4AWkf2Jjq
-         laUCtc6E5+FGM/iG4UM7jQYIYOwHLHD4Sj+21Vh0=
+        b=1toQv7zJrbGTIqPRYDkUSU4jyLBU/gMJXUAXXu8x72qAQEhBPl93gQwoDa+W1sbTH
+         E1XWBNnO6baqZSVoC2Bt6yCQJBAA0unyBAQ3AI9rsNzYIdr9O4Wf/E+6u0Nua1tsEo
+         aQd2BXqxscRLeMM1g6OKDSTVc2R99XWQepeZszP0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+228a82b263b5da91883d@syzkaller.appspotmail.com,
-        Benjamin Coddington <bcodding@redhat.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 276/276] NFS: Fix a double unlock from nfs_match,get_client
-Date:   Wed, 29 May 2019 20:07:14 -0700
-Message-Id: <20190530030542.445869259@linuxfoundation.org>
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 103/128] x86/ia32: Fix ia32_restore_sigcontext() AC leak
+Date:   Wed, 29 May 2019 20:07:15 -0700
+Message-Id: <20190530030453.278831048@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,36 +48,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c260121a97a3e4df6536edbc2f26e166eff370ce ]
+[ Upstream commit 67a0514afdbb8b2fc70b771b8c77661a9cb9d3a9 ]
 
-Now that nfs_match_client drops the nfs_client_lock, we should be
-careful
-to always return it in the same condition: locked.
+Objtool spotted that we call native_load_gs_index() with AC set.
+Re-arrange the code to avoid that.
 
-Fixes: 950a578c6128 ("NFS: make nfs_match_client killable")
-Reported-by: syzbot+228a82b263b5da91883d@syzkaller.appspotmail.com
-Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/client.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/ia32/ia32_signal.c | 29 +++++++++++++++++------------
+ 1 file changed, 17 insertions(+), 12 deletions(-)
 
-diff --git a/fs/nfs/client.c b/fs/nfs/client.c
-index 846d45cb1a3c8..c092661147b30 100644
---- a/fs/nfs/client.c
-+++ b/fs/nfs/client.c
-@@ -305,9 +305,9 @@ static struct nfs_client *nfs_match_client(const struct nfs_client_initdata *dat
- 			spin_unlock(&nn->nfs_client_lock);
- 			error = nfs_wait_client_init_complete(clp);
- 			nfs_put_client(clp);
-+			spin_lock(&nn->nfs_client_lock);
- 			if (error < 0)
- 				return ERR_PTR(error);
--			spin_lock(&nn->nfs_client_lock);
- 			goto again;
- 		}
+diff --git a/arch/x86/ia32/ia32_signal.c b/arch/x86/ia32/ia32_signal.c
+index cb13c0564ea7b..9978ea4382bf6 100644
+--- a/arch/x86/ia32/ia32_signal.c
++++ b/arch/x86/ia32/ia32_signal.c
+@@ -60,9 +60,8 @@
+ } while (0)
  
+ #define RELOAD_SEG(seg)		{		\
+-	unsigned int pre = GET_SEG(seg);	\
++	unsigned int pre = (seg) | 3;		\
+ 	unsigned int cur = get_user_seg(seg);	\
+-	pre |= 3;				\
+ 	if (pre != cur)				\
+ 		set_user_seg(seg, pre);		\
+ }
+@@ -71,6 +70,7 @@ static int ia32_restore_sigcontext(struct pt_regs *regs,
+ 				   struct sigcontext_32 __user *sc)
+ {
+ 	unsigned int tmpflags, err = 0;
++	u16 gs, fs, es, ds;
+ 	void __user *buf;
+ 	u32 tmp;
+ 
+@@ -78,16 +78,10 @@ static int ia32_restore_sigcontext(struct pt_regs *regs,
+ 	current->restart_block.fn = do_no_restart_syscall;
+ 
+ 	get_user_try {
+-		/*
+-		 * Reload fs and gs if they have changed in the signal
+-		 * handler.  This does not handle long fs/gs base changes in
+-		 * the handler, but does not clobber them at least in the
+-		 * normal case.
+-		 */
+-		RELOAD_SEG(gs);
+-		RELOAD_SEG(fs);
+-		RELOAD_SEG(ds);
+-		RELOAD_SEG(es);
++		gs = GET_SEG(gs);
++		fs = GET_SEG(fs);
++		ds = GET_SEG(ds);
++		es = GET_SEG(es);
+ 
+ 		COPY(di); COPY(si); COPY(bp); COPY(sp); COPY(bx);
+ 		COPY(dx); COPY(cx); COPY(ip); COPY(ax);
+@@ -105,6 +99,17 @@ static int ia32_restore_sigcontext(struct pt_regs *regs,
+ 		buf = compat_ptr(tmp);
+ 	} get_user_catch(err);
+ 
++	/*
++	 * Reload fs and gs if they have changed in the signal
++	 * handler.  This does not handle long fs/gs base changes in
++	 * the handler, but does not clobber them at least in the
++	 * normal case.
++	 */
++	RELOAD_SEG(gs);
++	RELOAD_SEG(fs);
++	RELOAD_SEG(ds);
++	RELOAD_SEG(es);
++
+ 	err |= fpu__restore_sig(buf, 1);
+ 
+ 	force_iret();
 -- 
 2.20.1
 
