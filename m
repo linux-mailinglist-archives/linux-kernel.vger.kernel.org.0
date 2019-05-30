@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE6C62F30A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:26:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AC9D2F11F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:10:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733194AbfE3EZ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:25:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35412 "EHLO mail.kernel.org"
+        id S1727225AbfE3EKO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:10:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729932AbfE3DOk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:14:40 -0400
+        id S1730895AbfE3DRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:02 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A93124502;
-        Thu, 30 May 2019 03:14:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4951245EB;
+        Thu, 30 May 2019 03:17:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186079;
-        bh=P7R1x1pGi94AC5SEkeFz6aQimoGWCT8T1THq+81y3mw=;
+        s=default; t=1559186221;
+        bh=mSKlZux6lezkQaiVAF7+TsAapDtrd6W5CepR/4mSkWc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KFXtL2GvJ+FRdmjDE8JlP1dNO5Bva3kP2kv0CWYO3ahq/oTp2PRyY8M5v2vBuu18h
-         GWRLf/HJM/1ijeJ6+dQtlj+suz7KgiyV/kJD8NkiMtTuHhCdTZQAZ1EtQ9Dcp162qE
-         QFLK5EEqat4XVsQ3fZTNsg6Is4wp1L0Go61aAZKc=
+        b=yOSPnBHonlfAf0MlKGC+cqdaRmaHTc7MeOQiD4bDcaLOS4tsBw5rGc4qOljmMNBFw
+         t7ec6BH22ePlTmY4uxdrq8qpkFeiaQaXHmhov0N+KuVmLhUFi5ZN3ClWh0ZD3jPu+9
+         bUM9lkxdXknOgM5fIDXiCjbQOY+i5f/RCYLvXHQE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
+        Rocky Liao <rjliao@codeaurora.org>,
+        Claire Chang <tientzu@chromium.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 198/346] s390: zcrypt: initialize variables before_use
-Date:   Wed, 29 May 2019 20:04:31 -0700
-Message-Id: <20190530030551.273654785@linuxfoundation.org>
+Subject: [PATCH 4.19 114/276] Bluetooth: hci_qca: Give enough time to ROME controller to bootup.
+Date:   Wed, 29 May 2019 20:04:32 -0700
+Message-Id: <20190530030533.070327189@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,72 +47,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 913140e221567b3ecd21b4242257a7e3fa279026 ]
+[ Upstream commit 7f09d5a6c33be66a5ca19bf9dd1c2d90c5dfcf0d ]
 
-The 'func_code' variable gets printed in debug statements without
-a prior initialization in multiple functions, as reported when building
-with clang:
+This patch enables enough time to ROME controller to bootup
+after we bring the enable pin out of reset.
 
-drivers/s390/crypto/zcrypt_api.c:659:6: warning: variable 'func_code' is used uninitialized whenever 'if' condition is true
-      [-Wsometimes-uninitialized]
-        if (mex->outputdatalength < mex->inputdatalength) {
-            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/s390/crypto/zcrypt_api.c:725:29: note: uninitialized use occurs here
-        trace_s390_zcrypt_rep(mex, func_code, rc,
-                                   ^~~~~~~~~
-drivers/s390/crypto/zcrypt_api.c:659:2: note: remove the 'if' if its condition is always false
-        if (mex->outputdatalength < mex->inputdatalength) {
-        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/s390/crypto/zcrypt_api.c:654:24: note: initialize the variable 'func_code' to silence this warning
-        unsigned int func_code;
-                              ^
-
-Add initializations to all affected code paths to shut up the warning
-and make the warning output consistent.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fixes: 05ba533c5c11 ("Bluetooth: hci_qca: Add serdev support").
+Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Reviewed-by: Rocky Liao <rjliao@codeaurora.org>
+Tested-by: Rocky Liao <rjliao@codeaurora.org>
+Tested-by: Claire Chang <tientzu@chromium.org>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/s390/crypto/zcrypt_api.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/bluetooth/hci_qca.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/s390/crypto/zcrypt_api.c b/drivers/s390/crypto/zcrypt_api.c
-index eb93c2d27d0ad..df1e847dd36e7 100644
---- a/drivers/s390/crypto/zcrypt_api.c
-+++ b/drivers/s390/crypto/zcrypt_api.c
-@@ -657,6 +657,7 @@ static long zcrypt_rsa_modexpo(struct ap_perms *perms,
- 	trace_s390_zcrypt_req(mex, TP_ICARSAMODEXPO);
- 
- 	if (mex->outputdatalength < mex->inputdatalength) {
-+		func_code = 0;
- 		rc = -EINVAL;
- 		goto out;
- 	}
-@@ -739,6 +740,7 @@ static long zcrypt_rsa_crt(struct ap_perms *perms,
- 	trace_s390_zcrypt_req(crt, TP_ICARSACRT);
- 
- 	if (crt->outputdatalength < crt->inputdatalength) {
-+		func_code = 0;
- 		rc = -EINVAL;
- 		goto out;
- 	}
-@@ -946,6 +948,7 @@ static long zcrypt_send_ep11_cprb(struct ap_perms *perms,
- 
- 		targets = kcalloc(target_num, sizeof(*targets), GFP_KERNEL);
- 		if (!targets) {
-+			func_code = 0;
- 			rc = -ENOMEM;
- 			goto out;
- 		}
-@@ -953,6 +956,7 @@ static long zcrypt_send_ep11_cprb(struct ap_perms *perms,
- 		uptr = (struct ep11_target_dev __force __user *) xcrb->targets;
- 		if (copy_from_user(targets, uptr,
- 				   target_num * sizeof(*targets))) {
-+			func_code = 0;
- 			rc = -EFAULT;
- 			goto out_free;
- 		}
+diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+index f0d593c3fa728..77004c29da089 100644
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -504,6 +504,8 @@ static int qca_open(struct hci_uart *hu)
+ 		qcadev = serdev_device_get_drvdata(hu->serdev);
+ 		if (qcadev->btsoc_type != QCA_WCN3990) {
+ 			gpiod_set_value_cansleep(qcadev->bt_en, 1);
++			/* Controller needs time to bootup. */
++			msleep(150);
+ 		} else {
+ 			hu->init_speed = qcadev->init_speed;
+ 			hu->oper_speed = qcadev->oper_speed;
 -- 
 2.20.1
 
