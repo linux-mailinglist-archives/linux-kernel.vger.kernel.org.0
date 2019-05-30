@@ -2,201 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E20B83037A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 22:46:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C84373036F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 22:45:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbfE3Upj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 16:45:39 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:44454 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726225AbfE3Upi (ORCPT
+        id S1726547AbfE3UpA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 16:45:00 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36117 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726489AbfE3Uo7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 16:45:38 -0400
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4UKhZYC023782;
-        Thu, 30 May 2019 13:44:46 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=M4DTDdc5EtSB4MWLN5A8sLi/yej7GFaj8nbWz7b/auM=;
- b=GRpnYPs/1g+PYzzbk1vQDseihimBmXEU53A74arUFf+IVzUCF+ALMj/TbBjgkhRWIBGY
- DelsJDuIyTk7b0fmPboxXP3hoiInuV3muhcdW2R/jbb6LZseIDvD3E89DwNvuWPi7z27
- GApr6CfdnbY+zo/a5W+RfXMuZsNGjMOFz2E= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2stj9w8xyp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 30 May 2019 13:44:43 -0700
-Received: from ash-exhub103.TheFacebook.com (2620:10d:c0a8:82::c) by
- ash-exhub103.TheFacebook.com (2620:10d:c0a8:82::c) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 30 May 2019 13:44:42 -0700
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.35.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
- via Frontend Transport; Thu, 30 May 2019 13:44:42 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=M4DTDdc5EtSB4MWLN5A8sLi/yej7GFaj8nbWz7b/auM=;
- b=Z6ZAVcsntHrkW61uhP/qykrLZEk8bKMAQGYQqccKQjmTiBue4oC+DXEPjmHOiFkBD70AHInFKN3p4UWXl1Ym55vcesbsMijSVrboBx2bZqb6gKtQcd7SYlFT8VwH6j081Faj3P9RC0+z3a3q/CvYNwoOktZoJ+LVaSKYVNpxGbA=
-Received: from CY4PR15MB1269.namprd15.prod.outlook.com (10.172.177.11) by
- CY4PR15MB1829.namprd15.prod.outlook.com (10.172.76.14) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1922.18; Thu, 30 May 2019 20:44:41 +0000
-Received: from CY4PR15MB1269.namprd15.prod.outlook.com
- ([fe80::c026:bca5:3f4e:9b1f]) by CY4PR15MB1269.namprd15.prod.outlook.com
- ([fe80::c026:bca5:3f4e:9b1f%3]) with mapi id 15.20.1922.021; Thu, 30 May 2019
- 20:44:41 +0000
-From:   Vijay Khemka <vijaykhemka@fb.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-CC:     Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "joel@jms.id.au" <joel@jms.id.au>,
-        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-        Sai Dasari <sdasari@fb.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 2/2] Docs: hwmon: pmbus: Add PXE1610 driver
-Thread-Topic: [PATCH 2/2] Docs: hwmon: pmbus: Add PXE1610 driver
-Thread-Index: AQHVFm7e3AOrc7hTMUGa4T8fWo+OPKaC2pWAgAC0sQCAAIQbgP//m2kA
-Date:   Thu, 30 May 2019 20:44:40 +0000
-Message-ID: <5E506871-5361-47CD-9BE7-A0A9708F12A7@fb.com>
-References: <20190529223511.4059120-1-vijaykhemka@fb.com>
- <20190529223511.4059120-2-vijaykhemka@fb.com>
- <0a94e784-41a0-4f2d-f9f8-6b365a1e755e@roeck-us.net>
- <27E78CF3-FAE7-4B6F-ABD7-77F4AE1CD633@fb.com>
- <20190530194441.GA12310@roeck-us.net>
-In-Reply-To: <20190530194441.GA12310@roeck-us.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [2620:10d:c090:200::2:3b87]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 23c31084-fcb5-47c8-f44d-08d6e53fa3b1
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:CY4PR15MB1829;
-x-ms-traffictypediagnostic: CY4PR15MB1829:
-x-microsoft-antispam-prvs: <CY4PR15MB1829D1C39D3D1BD53E75B3F8DD180@CY4PR15MB1829.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 00531FAC2C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(136003)(396003)(39860400002)(376002)(199004)(189003)(6436002)(68736007)(4326008)(14454004)(478600001)(53936002)(66476007)(6116002)(76116006)(91956017)(66556008)(64756008)(66446008)(36756003)(6246003)(6512007)(71200400001)(25786009)(256004)(33656002)(83716004)(71190400001)(66946007)(229853002)(73956011)(82746002)(54906003)(2616005)(2906002)(102836004)(486006)(446003)(316002)(99286004)(53546011)(6506007)(6486002)(186003)(6916009)(86362001)(7736002)(46003)(8936002)(8676002)(81156014)(81166006)(5660300002)(11346002)(476003)(305945005)(76176011);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR15MB1829;H:CY4PR15MB1269.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: iVxs0LPqMQiTM8MSEl5DXPwWZpawhGa6C4Vj0xTr++JzQM0DTKGdkDPz+x20jFHaGrfWGBeg3i8kuH0vUoEcArGTfI19SWmQW/7VF9nY4gIJdOLr7zCNzdfpu9wPj97ZbseDxQwEsjl2gzGuPti9OR5zstbZMw74oOH77E6Zr6pQq84E2xMzNTLPXPumEqKE9iWMEkYVWXQawJq9nkXWxB51LC8q4oqhdXBm7Nj01JvVUXV4MKJZQ1JaPj875J9/Cotkql4FqQOm4XpzbC0iH92UI+rfBYZkgtJlG07ZdYK9Dj7/5oTC82xmZdmG0UVbSA4SdgdonK0egrDepb5ZqEd6DxemczJruNUYp5clzjuA8KIpqBu4X5PCqH9Cpv/rgtAOVIQfW4xISn7qlxgitViGHzMwDd8ejFOMwS5rYUs=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <2C3731AD91F76A41B1E20FA5303C1E34@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Thu, 30 May 2019 16:44:59 -0400
+Received: by mail-pf1-f194.google.com with SMTP id u22so4701098pfm.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 13:44:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:references:date:in-reply-to:message-id
+         :user-agent:mime-version;
+        bh=q6AUBPvqyat2bLNM++F9NloXkkCwBt3/tItx63cMlpE=;
+        b=C2e/JzbpUueBW6GWiWsrwQbKeGbHeV+0umj6fYHo//SnFeP6ktUlkhrM4ciCTH1r01
+         GiqRMuwhQC4PFGeU4JtJ0cJmEDB1GcL+fEV+5ReV0/OX84vu6QQipYF9IhWRIseSCwye
+         Yd6Ny28KV9jXxKId1cKev/qx2qjNT0bNlIcUcOqT0gSzZOqgBx5CcDyj9XKs/HG3tl2u
+         A+9dmAt0jbXOjWnMgRSXENvJAGGJ+s8n42XCpdvtVEegDqVRT4irnQKFTlL8YP4C6XFA
+         m7/G009ugSO8iFwOfoNeeFB2/YjQO5yA7UBg1McHFypCDaz91MGXSxTYKuZtMWd09wdF
+         2lsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:references:date:in-reply-to
+         :message-id:user-agent:mime-version;
+        bh=q6AUBPvqyat2bLNM++F9NloXkkCwBt3/tItx63cMlpE=;
+        b=CT2hjKs7ZimHCKdAyq8mcZYCP032vQYVuW/+WmWV3IwJI34GEwk/bwG2Avqo4oR84v
+         qSBT8qCojuoo+yTe1w/2bSKaGWITyRbToft0JZHYqjmfI3lWXdJpS7oWSo8DH/XxVKGj
+         PHF53ta2qtD+0z5naEF7xXIKrNfNXAsV1AGlp5bSwp3biST5X5lzk/s/w3j9yuFmk1jE
+         hcl8L7P+K2UH0LaQ9T1xu10HIYEnN8NVe3jWcUZvpd1Sc69LOqH0CMtvlUfRYOtjMzXk
+         7BoequhP5KmMoPxBnaf6aL8LmKKUEIMnQIPv39fnehN+PrY16mFaOicyCLlzxW2ei2k5
+         V9DQ==
+X-Gm-Message-State: APjAAAXDw4N0rD+eI+Q+g/M8VUYoyGfPPdwM4BnnhOmW0ljSC69awyLB
+        24HX85VKT31qaTKl5BnWLOqMGQ==
+X-Google-Smtp-Source: APXvYqwupWORAT9iyn5M2LRuwVXU+wPnlXfdJiuevQ15iB/9Mq30VTKY+wUMHcd1Nm1Mx7YzW8V9nQ==
+X-Received: by 2002:a17:90a:2a09:: with SMTP id i9mr5287388pjd.103.1559249097503;
+        Thu, 30 May 2019 13:44:57 -0700 (PDT)
+Received: from bsegall-linux.svl.corp.google.com.localhost ([2620:15c:2cd:202:39d7:98b3:2536:e93f])
+        by smtp.gmail.com with ESMTPSA id k22sm4021024pfk.54.2019.05.30.13.44.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 30 May 2019 13:44:56 -0700 (PDT)
+From:   bsegall@google.com
+To:     Dave Chiluk <chiluk+linux@indeed.com>
+Cc:     Phil Auld <pauld@redhat.com>, Peter Oskolkov <posk@posk.io>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Brendan Gregg <bgregg@netflix.com>,
+        Kyle Anderson <kwa@yelp.com>,
+        Gabriel Munos <gmunoz@netflix.com>,
+        John Hammond <jhammond@indeed.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        pjt@google.com
+Subject: Re: [PATCH v3 1/1] sched/fair: Fix low cpu usage with high throttling by removing expiration of cpu-local slices
+References: <1558121424-2914-1-git-send-email-chiluk+linux@indeed.com>
+        <1559156926-31336-1-git-send-email-chiluk+linux@indeed.com>
+        <1559156926-31336-2-git-send-email-chiluk+linux@indeed.com>
+        <xm264l5dynrg.fsf@bsegall-linux.svl.corp.google.com>
+        <CAC=E7cU9GetuKVQE1HxXsSuOKgyxezXUmSH2ZDHOrLio_YZi1g@mail.gmail.com>
+Date:   Thu, 30 May 2019 13:44:55 -0700
+In-Reply-To: <CAC=E7cU9GetuKVQE1HxXsSuOKgyxezXUmSH2ZDHOrLio_YZi1g@mail.gmail.com>
+        (Dave Chiluk's message of "Thu, 30 May 2019 12:53:37 -0500")
+Message-ID: <xm26zhn3y8mw.fsf@bsegall-linux.svl.corp.google.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 23c31084-fcb5-47c8-f44d-08d6e53fa3b1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 May 2019 20:44:40.9641
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: vijaykhemka@fb.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR15MB1829
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-30_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905300147
-X-FB-Internal: deliver
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCu+7v09uIDUvMzAvMTksIDEyOjQ1IFBNLCAiR3VlbnRlciBSb2VjayIgPGdyb2VjazdAZ21h
-aWwuY29tIG9uIGJlaGFsZiBvZiBsaW51eEByb2Vjay11cy5uZXQ+IHdyb3RlOg0KDQogICAgT24g
-VGh1LCBNYXkgMzAsIDIwMTkgYXQgMDY6NTE6NTJQTSArMDAwMCwgVmlqYXkgS2hlbWthIHdyb3Rl
-Og0KICAgID4gDQogICAgPiANCiAgICA+IE9uIDUvMjkvMTksIDY6MDUgUE0sICJHdWVudGVyIFJv
-ZWNrIiA8Z3JvZWNrN0BnbWFpbC5jb20gb24gYmVoYWxmIG9mIGxpbnV4QHJvZWNrLXVzLm5ldD4g
-d3JvdGU6DQogICAgPiANCiAgICA+ICAgICBPbiA1LzI5LzE5IDM6MzUgUE0sIFZpamF5IEtoZW1r
-YSB3cm90ZToNCiAgICA+ICAgICA+IEFkZGVkIHN1cHBvcnQgZm9yIEluZmVuaW9uIFBYRTE2MTAg
-ZHJpdmVyDQogICAgPiAgICAgPiANCiAgICA+ICAgICA+IFNpZ25lZC1vZmYtYnk6IFZpamF5IEto
-ZW1rYSA8dmlqYXlraGVta2FAZmIuY29tPg0KICAgID4gICAgID4gLS0tDQogICAgPiAgICAgPiAg
-IERvY3VtZW50YXRpb24vaHdtb24vcHhlMTYxMCB8IDg0ICsrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysNCiAgICA+ICAgICA+ICAgMSBmaWxlIGNoYW5nZWQsIDg0IGluc2VydGlv
-bnMoKykNCiAgICA+ICAgICA+ICAgY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vaHdt
-b24vcHhlMTYxMA0KICAgID4gICAgID4gDQogICAgPiAgICAgPiBkaWZmIC0tZ2l0IGEvRG9jdW1l
-bnRhdGlvbi9od21vbi9weGUxNjEwIGIvRG9jdW1lbnRhdGlvbi9od21vbi9weGUxNjEwDQogICAg
-PiAgICAgPiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KICAgID4gICAgID4gaW5kZXggMDAwMDAwMDAw
-MDAwLi5iNWM4M2VkZjAyN2ENCiAgICA+ICAgICA+IC0tLSAvZGV2L251bGwNCiAgICA+ICAgICA+
-ICsrKyBiL0RvY3VtZW50YXRpb24vaHdtb24vcHhlMTYxMA0KICAgID4gICAgID4gQEAgLTAsMCAr
-MSw4NCBAQA0KICAgID4gICAgID4gK0tlcm5lbCBkcml2ZXIgcHhlMTYxMA0KICAgID4gICAgID4g
-Kz09PT09PT09PT09PT09PT09PT09PQ0KICAgID4gICAgID4gKw0KICAgID4gICAgID4gK1N1cHBv
-cnRlZCBjaGlwczoNCiAgICA+ICAgICA+ICsgICogSW5maW5pb24gUFhFMTYxMA0KICAgID4gICAg
-ID4gKyAgICBQcmVmaXg6ICdweGUxNjEwJw0KICAgID4gICAgID4gKyAgICBBZGRyZXNzZXMgc2Nh
-bm5lZDogLQ0KICAgID4gICAgID4gKyAgICBEYXRhc2hlZXQ6IERhdGFzaGVldCBpcyBub3QgcHVi
-bGljbHkgYXZhaWxhYmxlLg0KICAgID4gICAgID4gKw0KICAgID4gICAgID4gKyAgKiBJbmZpbmlv
-biBQWEUxMTEwDQogICAgPiAgICAgPiArICAgIFByZWZpeDogJ3B4ZTExMTAnDQogICAgPiAgICAg
-PiArICAgIEFkZHJlc3NlcyBzY2FubmVkOiAtDQogICAgPiAgICAgPiArICAgIERhdGFzaGVldDog
-RGF0YXNoZWV0IGlzIG5vdCBwdWJsaWNseSBhdmFpbGFibGUuDQogICAgPiAgICAgPiArDQogICAg
-PiAgICAgPiArICAqIEluZmluaW9uIFBYTTEzMTANCiAgICA+ICAgICA+ICsgICAgUHJlZml4OiAn
-cHhtMTMxMCcNCiAgICA+ICAgICA+ICsgICAgQWRkcmVzc2VzIHNjYW5uZWQ6IC0NCiAgICA+ICAg
-ICA+ICsgICAgRGF0YXNoZWV0OiBEYXRhc2hlZXQgaXMgbm90IHB1YmxpY2x5IGF2YWlsYWJsZS4N
-CiAgICA+ICAgICA+ICsNCiAgICA+ICAgICA+ICtBdXRob3I6IFZpamF5IEtoZW1rYSA8dmlqYXlr
-aGVta2FAZmIuY29tPg0KICAgID4gICAgID4gKw0KICAgID4gICAgID4gKw0KICAgID4gICAgID4g
-K0Rlc2NyaXB0aW9uDQogICAgPiAgICAgPiArLS0tLS0tLS0tLS0NCiAgICA+ICAgICA+ICsNCiAg
-ICA+ICAgICA+ICtQWEUxNjEwIGlzIGEgTXVsdGktcmFpbC9NdWx0aXBoYXNlIERpZ2l0YWwgQ29u
-dHJvbGxlcnMgYW5kDQogICAgPiAgICAgPiAraXQgaXMgY29tcGxpYW50IHRvIEludGVsIFZSMTMg
-REMtREMgY29udmVydGVyIHNwZWNpZmljYXRpb25zLg0KICAgID4gICAgID4gKw0KICAgID4gICAg
-IA0KICAgID4gICAgIEFuZCB0aGUgb3RoZXJzID8NCiAgICA+IFRoaXMgc3VwcG9ydHMgVlIxMiBh
-cyB3ZWxsIGFuZCBJIGRvbid0IHNlZSB0aGlzIGNvbnRyb2xsZXIgc3VwcG9ydHMgYW55IG90aGVy
-IFZSIHZlcnNpb25zLg0KICAgID4gICAgIA0KICAgIFRoZSBwb2ludCBoZXJlIGlzIHRoYXQgdGhl
-cmUgaXMgbm8gZGVzY3JpcHRpb24gb2YgdGhlIG90aGVyIGNvbnRyb2xsZXJzLg0KT2ssIEkgZ2V0
-IGl0LCBtYWlubHkgYWxsIDMgY29udHJvbGxlcnMgYXJlIGZyb20gc2FtZSBmYW1pbHkgb2YgSW5m
-aW5lb24gY29udHJvbGxlciBidXQgSSB3aWxsIGFkZCBkZXRhaWxzIGhlcmUuDQogICAgDQogICAg
-PiAgICAgPiArDQogICAgPiAgICAgPiArVXNhZ2UgTm90ZXMNCiAgICA+ICAgICA+ICstLS0tLS0t
-LS0tLQ0KICAgID4gICAgID4gKw0KICAgID4gICAgID4gK1RoaXMgZHJpdmVyIGNhbiBiZSBlbmFi
-bGVkIHdpdGgga2VybmVsIGNvbmZpZyBDT05GSUdfU0VOU09SU19QWEUxNjEwDQogICAgPiAgICAg
-PiArc2V0IHRvICd5JyBvciAnbScoZm9yIG1vZHVsZSkuDQogICAgPiAgICAgPiArDQogICAgPiAg
-ICAgVGhlIGFib3ZlIGRvZXMgbm90IHJlYWxseSBhZGQgdmFsdWUuDQogICAgPiBPaywgSSB3aWxs
-IHJlbW92ZSBpdC4NCiAgICA+ICAgICANCiAgICA+ICAgICA+ICtUaGlzIGRyaXZlciBkb2VzIG5v
-dCBwcm9iZSBmb3IgUE1CdXMgZGV2aWNlcy4gWW91IHdpbGwgaGF2ZQ0KICAgID4gICAgID4gK3Rv
-IGluc3RhbnRpYXRlIGRldmljZXMgZXhwbGljaXRseS4NCiAgICA+ICAgICA+ICsNCiAgICA+ICAg
-ICA+ICtFeGFtcGxlOiB0aGUgZm9sbG93aW5nIGNvbW1hbmRzIHdpbGwgbG9hZCB0aGUgZHJpdmVy
-IGZvciBhbiBQWEUxNjEwDQogICAgPiAgICAgPiArYXQgYWRkcmVzcyAweDcwIG9uIEkyQyBidXMg
-IzQ6DQogICAgPiAgICAgPiArDQogICAgPiAgICAgPiArIyBtb2Rwcm9iZSBweGUxNjEwDQogICAg
-PiAgICAgPiArIyBlY2hvIHB4ZTE2MTAgMHg3MCA+IC9zeXMvYnVzL2kyYy9kZXZpY2VzL2kyYy00
-L25ld19kZXZpY2UNCiAgICA+ICAgICA+ICsNCiAgICA+ICAgICA+ICtJdCBjYW4gYWxzbyBiZSBp
-bnN0YW50aWF0ZWQgYnkgZGVjbGFyaW5nIGluIGRldmljZSB0cmVlIGlmIGl0IGlzDQogICAgPiAg
-ICAgPiArYnVpbHQgYXMgYSBrZXJuZWwgbm90IGFzIGEgbW9kdWxlLg0KICAgID4gICAgID4gKw0K
-ICAgID4gICAgIA0KICAgID4gICAgIEkgYXNzdW1lIHlvdSBtZWFuICJidWlsdCBpbnRvIHRoZSBr
-ZXJuZWwiLg0KICAgID4gICAgIFdoeSB3b3VsZCBkZXZpY2V0cmVlIGJhc2VkIGluc3RhbnRpYXRp
-b24gbm90IHdvcmsgaWYgdGhlIGRyaXZlciBpcyBidWlsdA0KICAgID4gICAgIGFzIG1vZHVsZSA/
-DQogICAgPiBXaWxsIGNvcnJlY3Qgc3RhdGVtZW50IGhlcmUuDQogICAgPiAgICAgDQogICAgPiAg
-ICAgPiArDQogICAgPiAgICAgPiArU3lzZnMgYXR0cmlidXRlcw0KICAgID4gICAgID4gKy0tLS0t
-LS0tLS0tLS0tLS0NCiAgICA+ICAgICA+ICsNCiAgICA+ICAgICA+ICtjdXJyMV9sYWJlbAkJImlp
-biINCiAgICA+ICAgICA+ICtjdXJyMV9pbnB1dAkJTWVhc3VyZWQgaW5wdXQgY3VycmVudA0KICAg
-ID4gICAgID4gK2N1cnIxX2FsYXJtCQlDdXJyZW50IGhpZ2ggYWxhcm0NCiAgICA+ICAgICA+ICsN
-CiAgICA+ICAgICA+ICtjdXJyWzItNF1fbGFiZWwJCSJpb3V0WzEtM10iDQogICAgPiAgICAgPiAr
-Y3VyclsyLTRdX2lucHV0CQlNZWFzdXJlZCBvdXRwdXQgY3VycmVudA0KICAgID4gICAgID4gK2N1
-cnJbMi00XV9jcml0CQlDcml0aWNhbCBtYXhpbXVtIGN1cnJlbnQNCiAgICA+ICAgICA+ICtjdXJy
-WzItNF1fY3JpdF9hbGFybQlDdXJyZW50IGNyaXRpY2FsIGhpZ2ggYWxhcm0NCiAgICA+ICAgICA+
-ICsNCiAgICA+ICAgICA+ICtpbjFfbGFiZWwJCSJ2aW4iDQogICAgPiAgICAgPiAraW4xX2lucHV0
-CQlNZWFzdXJlZCBpbnB1dCB2b2x0YWdlDQogICAgPiAgICAgPiAraW4xX2NyaXQJCUNyaXRpY2Fs
-IG1heGltdW0gaW5wdXQgdm9sdGFnZQ0KICAgID4gICAgID4gK2luMV9jcml0X2FsYXJtCQlJbnB1
-dCB2b2x0YWdlIGNyaXRpY2FsIGhpZ2ggYWxhcm0NCiAgICA+ICAgICA+ICsNCiAgICA+ICAgICA+
-ICtpblsyLTRdX2xhYmVsCQkidm91dFsxLTNdIg0KICAgID4gICAgID4gK2luWzItNF1faW5wdXQJ
-CU1lYXN1cmVkIG91dHB1dCB2b2x0YWdlDQogICAgPiAgICAgPiAraW5bMi00XV9sY3JpdAkJQ3Jp
-dGljYWwgbWluaW11bSBvdXRwdXQgdm9sdGFnZQ0KICAgID4gICAgID4gK2luWzItNF1fbGNyaXRf
-YWxhcm0JT3V0cHV0IHZvbHRhZ2UgY3JpdGljYWwgbG93IGFsYXJtDQogICAgPiAgICAgPiAraW5b
-Mi00XV9jcml0CQlDcml0aWNhbCBtYXhpbXVtIG91dHB1dCB2b2x0YWdlDQogICAgPiAgICAgPiAr
-aW5bMi00XV9jcml0X2FsYXJtCU91dHB1dCB2b2x0YWdlIGNyaXRpY2FsIGhpZ2ggYWxhcm0NCiAg
-ICA+ICAgICA+ICsNCiAgICA+ICAgICA+ICtwb3dlcjFfbGFiZWwJCSJwaW4iDQogICAgPiAgICAg
-PiArcG93ZXIxX2lucHV0CQlNZWFzdXJlZCBpbnB1dCBwb3dlcg0KICAgID4gICAgID4gK3Bvd2Vy
-MV9hbGFybQkJSW5wdXQgcG93ZXIgaGlnaCBhbGFybQ0KICAgID4gICAgID4gKw0KICAgID4gICAg
-ID4gK3Bvd2VyWzItNF1fbGFiZWwJInBvdXRbMS0zXSINCiAgICA+ICAgICA+ICtwb3dlclsyLTRd
-X2lucHV0CU1lYXN1cmVkIG91dHB1dCBwb3dlcg0KICAgID4gICAgID4gKw0KICAgID4gICAgID4g
-K3RlbXBbMS0zXV9pbnB1dAkJTWVhc3VyZWQgdGVtcGVyYXR1cmUNCiAgICA+ICAgICA+ICt0ZW1w
-WzEtM11fY3JpdAkJQ3JpdGljYWwgaGlnaCB0ZW1wZXJhdHVyZQ0KICAgID4gICAgID4gK3RlbXBb
-MS0zXV9jcml0X2FsYXJtCUNoaXAgdGVtcGVyYXR1cmUgY3JpdGljYWwgaGlnaCBhbGFybQ0KICAg
-ID4gICAgID4gK3RlbXBbMS0zXV9tYXgJCU1heGltdW0gdGVtcGVyYXR1cmUNCiAgICA+ICAgICA+
-ICt0ZW1wWzEtM11fbWF4X2FsYXJtCUNoaXAgdGVtcGVyYXR1cmUgaGlnaCBhbGFybQ0KICAgID4g
-ICAgID4gDQogICAgPiAgICAgDQogICAgPiAgICAgDQogICAgPiANCiAgICANCg0K
+Dave Chiluk <chiluk+linux@indeed.com> writes:
+
+> On Wed, May 29, 2019 at 02:05:55PM -0700, bsegall@google.com wrote:
+>> Dave Chiluk <chiluk+linux@indeed.com> writes:
+>>
+>> Yeah, having run the test, stranding only 1 ms per cpu rather than 5
+>> doesn't help if you only have 10 ms of quota and even 10 threads/cpus.
+>> The slack timer isn't important in this test, though I think it probably
+>> should be changed.
+> My min_cfs_rq_runtime was already set to 1ms.
+
+Yeah, I meant min_cfs_rq_runtime vs the 5ms if the slack stuff was
+broken.
+
+>
+> Additionally raising the amount of quota from 10ms to 50ms or even
+> 100ms, still results in throttling without full quota usage.
+>
+>> Decreasing min_cfs_rq_runtime helps, but would mean that we have to pull
+>> quota more often / always. The worst case here I think is where you
+>> run/sleep for ~1ns, so you wind up taking the lock twice every
+>> min_cfs_rq_runtime: once for assign and once to return all but min,
+>> which you then use up doing short run/sleep. I suppose that determines
+>> how much we care about this overhead at all.
+> I'm not so concerned about how inefficiently the user-space application
+> runs, as that's up to the invidual developer.
+
+Increasing scheduler overhead is something we generally try to prevent
+is what I was worried about.
+
+> The fibtest testcase, is
+> purely my approximation of what a java application with lots of worker
+> threads might do, as I didn't have a great deterministic java
+> reproducer, and I feared posting java to LKML.  I'm more concerned with
+> the fact that the user requested 10ms/period or 100ms/period and they
+> hit throttling while simultaneously not seeing that amount of cpu usage.
+> i.e. on an 8 core machine if I
+> $ ./runfibtest 1
+> Iterations Completed(M): 1886
+> Throttled for: 51
+> CPU Usage (msecs) = 507
+> $ ./runfibtest 8
+> Iterations Completed(M): 1274
+> Throttled for: 52
+> CPU Usage (msecs) = 380
+>
+> You see that in the 8 core case where we have 7 do nothing threads on
+> cpu's 1-7, we see only 380 ms of usage, and 52 periods of throttling
+> when we should have received ~500ms of cpu usage.
+>
+> Looking more closely at the __return_cfs_rq_runtime logic I noticed
+>         if (cfs_b->quota != RUNTIME_INF &&
+>             cfs_rq->runtime_expires == cfs_b->runtime_expires) {
+>
+> Which is awfully similar to the logic that was fixed by 512ac999.  Is it
+> possible that we are just not ever returning runtime back to the cfs_b
+> because of the runtime_expires comparison here?
+
+The relevant issue that patch fixes is that the old conditional was
+backwards. Also lowering min_cfs_rq_runtime to 0 fixes your testcase, so
+it's working.
+
+>
+>> Removing expiration means that in the worst case period and quota can be
+>> effectively twice what the user specified, but only on very particular
+>> workloads.
+> I'm only removing expiration of slices that have already been assigned
+> to individual cfs_rq.  My understanding is that there is at most one
+> cfs_rq per cpu, and each of those can have at most one slice of
+> available runtime.  So the worst case burst is slice_ms * cpus.  Please
+> help me understand how you get to twice user specified quota and period
+> as it's not obvious to me *(I've only been looking at this for a few
+> months).
+
+The reason that this effect is so significant is because slice_ms * cpus
+is roughly 100% of the quota. So yes, it's roughly the same thing.
+Unfortunately if there are more spare cpus on the system just doubling
+quota and period (keeping the same ratio) would not fix your issue,
+while removing expiration does while also potentially having that effect.
+
+>
+>> I think we should at least think about instead lowering
+>> min_cfs_rq_runtime to some smaller value
+> Do you mean lower than 1ms?
+
+Yes
