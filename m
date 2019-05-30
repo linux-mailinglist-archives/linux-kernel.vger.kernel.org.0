@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9732A2F305
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:26:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F05262EFE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:59:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732203AbfE3EZp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:25:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35484 "EHLO mail.kernel.org"
+        id S2387871AbfE3D7W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:59:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729939AbfE3DOl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:14:41 -0400
+        id S1731593AbfE3DSe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:18:34 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99E9824555;
-        Thu, 30 May 2019 03:14:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 978872474A;
+        Thu, 30 May 2019 03:18:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186080;
-        bh=nQWv/pQ9TneryxCoIWHr+e55gDaqdyjRUi4cNskNqwQ=;
+        s=default; t=1559186314;
+        bh=BOuD20Cs+xpQNiqRVIO2ShzOeYbhYTuuYaW53N0unTg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rr0RTrNPm6K8AlJgBwTXtN0XoMr4//G0NPfdFu+PZPmXpoR+o6Gk3N7A+X5pNNrto
-         7FADjluY1fRxYFnsSmIfv2yZYRETLYoHBPnILSWykmHsBoHL37qwRXHu46YNdt3uGp
-         yddkKyQY9arp5laC1IR03yIP+1qazaCN3bbcU/dc=
+        b=UplGC7PgQHds43LEzo4e82aEC5L7KTKGOD7NF3K1BkvNIt+4owgrw/Ah2xQW7d9u3
+         9Dy3Nk6gXD5xR5CufVLatVhBfS8vX/Do9rgbML2zbCYiL2+f3wiGMpTTbeBdHs9yaO
+         aqqjzBwhdKSmyxFxp5jrFhpPinRrKmP03QpaZJF4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Huth <thuth@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 200/346] s390/mm: silence compiler warning when compiling without CONFIG_PGSTE
+        stable@vger.kernel.org, "Tobin C. Harding" <tobin@kernel.org>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.14 019/193] btrfs: sysfs: Fix error path kobject memory leak
 Date:   Wed, 29 May 2019 20:04:33 -0700
-Message-Id: <20190530030551.350818430@linuxfoundation.org>
+Message-Id: <20190530030451.201347550@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,49 +43,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 81a8f2beb32a5951ecf04385301f50879abc092b ]
+From: Tobin C. Harding <tobin@kernel.org>
 
-If CONFIG_PGSTE is not set (e.g. when compiling without KVM), GCC complains:
+commit 450ff8348808a89cc27436771aa05c2b90c0eef1 upstream.
 
-  CC      arch/s390/mm/pgtable.o
-arch/s390/mm/pgtable.c:413:15: warning: ‘pmd_alloc_map’ defined but not
- used [-Wunused-function]
- static pmd_t *pmd_alloc_map(struct mm_struct *mm, unsigned long addr)
-               ^~~~~~~~~~~~~
+If a call to kobject_init_and_add() fails we must call kobject_put()
+otherwise we leak memory.
 
-Wrap the function with "#ifdef CONFIG_PGSTE" to silence the warning.
+Calling kobject_put() when kobject_init_and_add() fails drops the
+refcount back to 0 and calls the ktype release method (which in turn
+calls the percpu destroy and kfree).
 
-Signed-off-by: Thomas Huth <thuth@redhat.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Add call to kobject_put() in the error path of call to
+kobject_init_and_add().
+
+Cc: stable@vger.kernel.org # v4.4+
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Tobin C. Harding <tobin@kernel.org>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/s390/mm/pgtable.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/btrfs/extent-tree.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/s390/mm/pgtable.c b/arch/s390/mm/pgtable.c
-index f2cc7da473e4e..ae894ac83fd61 100644
---- a/arch/s390/mm/pgtable.c
-+++ b/arch/s390/mm/pgtable.c
-@@ -410,6 +410,7 @@ static inline pmd_t pmdp_flush_lazy(struct mm_struct *mm,
- 	return old;
- }
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -4087,8 +4087,7 @@ static int create_space_info(struct btrf
+ 				    info->space_info_kobj, "%s",
+ 				    alloc_name(space_info->flags));
+ 	if (ret) {
+-		percpu_counter_destroy(&space_info->total_bytes_pinned);
+-		kfree(space_info);
++		kobject_put(&space_info->kobj);
+ 		return ret;
+ 	}
  
-+#ifdef CONFIG_PGSTE
- static pmd_t *pmd_alloc_map(struct mm_struct *mm, unsigned long addr)
- {
- 	pgd_t *pgd;
-@@ -427,6 +428,7 @@ static pmd_t *pmd_alloc_map(struct mm_struct *mm, unsigned long addr)
- 	pmd = pmd_alloc(mm, pud, addr);
- 	return pmd;
- }
-+#endif
- 
- pmd_t pmdp_xchg_direct(struct mm_struct *mm, unsigned long addr,
- 		       pmd_t *pmdp, pmd_t new)
--- 
-2.20.1
-
 
 
