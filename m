@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 556D22EBAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:16:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 565452ECA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:24:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729195AbfE3DOw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:14:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53798 "EHLO mail.kernel.org"
+        id S1733108AbfE3DXn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:23:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728910AbfE3DMQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:16 -0400
+        id S1731160AbfE3DRd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:33 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C80642446F;
-        Thu, 30 May 2019 03:12:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 17A3E24664;
+        Thu, 30 May 2019 03:17:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185935;
-        bh=nee2vrOmQ4okfHpD3mzELlBwcqL/4NjdOs0zA3n8Yhc=;
+        s=default; t=1559186253;
+        bh=aQJcM1cVq7gWa9y+IphsuHHAkoXxn9PEzhVxGMJBiBo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ogDvhqfQnLanwno68Ca4rmQ0McjeyHz3nAY/d68QtOaDBpYjHqP069w8QbcwpHXLj
-         mRPdN9QHGR4IASL81ekXIQs78T/CaNLFLs+Y75S1XBH+uOOwxGnP43Ah1PoFMw8B8J
-         VCkRiEAC9Zx5RanuPhJCerYicvHHPIU+gIwBN47Y=
+        b=HTf1jHAW3ZyWKRPJ3q5gae0i1X6g5Ps3e7ZikhTvuC3BUV0QLlGZ4a2zvwghlHHtt
+         +JKqgieJywMSb2kZ6/H2EeaDPGjITAnlujY7hunk1RgJczj6qPUyd02FsLNjZQGQT6
+         RjTJ2KDJZPK3Qiy611l/4eU3I1nNzuyEuPaWTN7Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        stable@vger.kernel.org, Russell Currey <ruscur@russell.cc>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 291/405] thunderbolt: property: Fix a missing check of kzalloc
-Date:   Wed, 29 May 2019 20:04:49 -0700
-Message-Id: <20190530030555.577875115@linuxfoundation.org>
+Subject: [PATCH 4.19 132/276] powerpc/64: Fix booting large kernels with STRICT_KERNEL_RWX
+Date:   Wed, 29 May 2019 20:04:50 -0700
+Message-Id: <20190530030534.020918776@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,39 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 6183d5a51866f3acdeeb66b75e87d44025b01a55 ]
+[ Upstream commit 56c46bba9bbfe229b4472a5be313c44c5b714a39 ]
 
-No check is enforced for the return value of kzalloc,
-which may lead to NULL-pointer dereference.
+With STRICT_KERNEL_RWX enabled anything marked __init is placed at a 16M
+boundary.  This is necessary so that it can be repurposed later with
+different permissions.  However, in kernels with text larger than 16M,
+this pushes early_setup past 32M, incapable of being reached by the
+branch instruction.
 
-The patch fixes this issue.
+Fix this by setting the CTR and branching there instead.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Fixes: 1e0fc9d1eb2b ("powerpc/Kconfig: Enable STRICT_KERNEL_RWX for some configs")
+Signed-off-by: Russell Currey <ruscur@russell.cc>
+[mpe: Fix it to work on BE by using DOTSYM()]
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thunderbolt/property.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/powerpc/kernel/head_64.S | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/thunderbolt/property.c b/drivers/thunderbolt/property.c
-index b2f0d6386ceea..ead18c532b53d 100644
---- a/drivers/thunderbolt/property.c
-+++ b/drivers/thunderbolt/property.c
-@@ -578,7 +578,12 @@ int tb_property_add_text(struct tb_property_dir *parent, const char *key,
- 		return -ENOMEM;
+diff --git a/arch/powerpc/kernel/head_64.S b/arch/powerpc/kernel/head_64.S
+index 4898e9491a1cd..9168a247e24ff 100644
+--- a/arch/powerpc/kernel/head_64.S
++++ b/arch/powerpc/kernel/head_64.S
+@@ -970,7 +970,9 @@ start_here_multiplatform:
  
- 	property->length = size / 4;
--	property->value.data = kzalloc(size, GFP_KERNEL);
-+	property->value.text = kzalloc(size, GFP_KERNEL);
-+	if (!property->value.text) {
-+		kfree(property);
-+		return -ENOMEM;
-+	}
-+
- 	strcpy(property->value.text, text);
+ 	/* Restore parameters passed from prom_init/kexec */
+ 	mr	r3,r31
+-	bl	early_setup		/* also sets r13 and SPRG_PACA */
++	LOAD_REG_ADDR(r12, DOTSYM(early_setup))
++	mtctr	r12
++	bctrl		/* also sets r13 and SPRG_PACA */
  
- 	list_add_tail(&property->list, &parent->properties);
+ 	LOAD_REG_ADDR(r3, start_here_common)
+ 	ld	r4,PACAKMSR(r13)
 -- 
 2.20.1
 
