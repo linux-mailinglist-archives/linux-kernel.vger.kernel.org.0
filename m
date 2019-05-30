@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 475F12F068
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:03:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65EB52F066
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:03:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731777AbfE3EDr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:03:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49154 "EHLO mail.kernel.org"
+        id S1732788AbfE3EDi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:03:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731336AbfE3DRz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731342AbfE3DRz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 29 May 2019 23:17:55 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95FE62465C;
-        Thu, 30 May 2019 03:17:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 42A25246F8;
+        Thu, 30 May 2019 03:17:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186274;
-        bh=DVF2BsjhTgYxFfpTkGy6e03bpwNSrsgVjaDEudMpCwE=;
+        s=default; t=1559186275;
+        bh=+PorWUz6CDXhB4e4HZl+SYRrjgo07gaT0uiZuYhzznw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZkoTca978pLaI8GT1F0W7SKSVRSjnDQbPRAa/sB39m4gwLcFx9noPoQKxEzyY/Lfb
-         zf8bwl76pivwY2fh6N4TIqa5EKe+4fUdPmLa+/HN4PZsgDLO+xiqcSGScfaVh68cQd
-         +mHJUrPXV1typGibKUBf43OhAWvzc6Oqw64npQJY=
+        b=QQJG4Fh+iFDoyEUuLG0LMD6N8IOZEVckhUX7Cj0Qrf/s12fPy1JW5EqM3bxnW7pRN
+         QktszfUnuTMoTHtaTk1Z+25nW0OAUkkA8/pcDSYUtomm+JdHphQjr/tKL2f0OWnqFN
+         IsEaVPQn4A+N5tdOQ5j6gfQ+bo8GhQ/N9jGE8ub4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 216/276] cxgb3/l2t: Fix undefined behaviour
-Date:   Wed, 29 May 2019 20:06:14 -0700
-Message-Id: <20190530030538.634682418@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 217/276] HID: logitech-hidpp: change low battery level threshold from 31 to 30 percent
+Date:   Wed, 29 May 2019 20:06:15 -0700
+Message-Id: <20190530030538.701024774@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
 References: <20190530030523.133519668@linuxfoundation.org>
@@ -45,47 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 76497732932f15e7323dc805e8ea8dc11bb587cf ]
+[ Upstream commit 1f87b0cd32b3456d7efdfb017fcf74d0bfe3ec29 ]
 
-The use of zero-sized array causes undefined behaviour when it is not
-the last member in a structure. As it happens to be in this case.
+According to hidpp20_batterylevel_get_battery_info my Logitech K270
+keyboard reports only 2 battery levels. This matches with what I've seen
+after testing with batteries at varying level of fullness, it always
+reports either 5% or 30%.
 
-Also, the current code makes use of a language extension to the C90
-standard, but the preferred mechanism to declare variable-length
-types such as this one is a flexible array member, introduced in
-C99:
+Windows reports "battery good" for the 30% level. I've captured an USB
+trace of Windows reading the battery and it is getting the same info
+as the Linux hidpp code gets.
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
+Now that Linux handles these devices as hidpp devices, it reports the
+battery as being low as it treats anything under 31% as low, this leads
+to the user constantly getting a "Keyboard battery is low" warning from
+GNOME3, which is very annoying.
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last. Which is beneficial
-to cultivate a high-quality code.
+This commit fixes this by changing the low threshold to anything under
+30%, which I assume is what Windows does.
 
-Fixes: e48f129c2f20 ("[SCSI] cxgb3i: convert cdev->l2opt to use rcu to prevent NULL dereference")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/chelsio/cxgb3/l2t.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hid/hid-logitech-hidpp.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb3/l2t.h b/drivers/net/ethernet/chelsio/cxgb3/l2t.h
-index c2fd323c40782..ea75f275023ff 100644
---- a/drivers/net/ethernet/chelsio/cxgb3/l2t.h
-+++ b/drivers/net/ethernet/chelsio/cxgb3/l2t.h
-@@ -75,8 +75,8 @@ struct l2t_data {
- 	struct l2t_entry *rover;	/* starting point for next allocation */
- 	atomic_t nfree;		/* number of free entries */
- 	rwlock_t lock;
--	struct l2t_entry l2tab[0];
- 	struct rcu_head rcu_head;	/* to handle rcu cleanup */
-+	struct l2t_entry l2tab[];
- };
- 
- typedef void (*arp_failure_handler_func)(struct t3cdev * dev,
+diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
+index edf224ad13369..e642cfaf303b4 100644
+--- a/drivers/hid/hid-logitech-hidpp.c
++++ b/drivers/hid/hid-logitech-hidpp.c
+@@ -910,7 +910,11 @@ static int hidpp_map_battery_level(int capacity)
+ {
+ 	if (capacity < 11)
+ 		return POWER_SUPPLY_CAPACITY_LEVEL_CRITICAL;
+-	else if (capacity < 31)
++	/*
++	 * The spec says this should be < 31 but some devices report 30
++	 * with brand new batteries and Windows reports 30 as "Good".
++	 */
++	else if (capacity < 30)
+ 		return POWER_SUPPLY_CAPACITY_LEVEL_LOW;
+ 	else if (capacity < 81)
+ 		return POWER_SUPPLY_CAPACITY_LEVEL_NORMAL;
 -- 
 2.20.1
 
