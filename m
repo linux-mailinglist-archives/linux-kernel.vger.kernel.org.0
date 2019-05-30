@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A14FC2F245
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:21:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 475F12F068
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:03:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730197AbfE3DPQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:15:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55856 "EHLO mail.kernel.org"
+        id S1731777AbfE3EDr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:03:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49154 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729133AbfE3DMj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:39 -0400
+        id S1731336AbfE3DRz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:55 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A046F23F4C;
-        Thu, 30 May 2019 03:12:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 95FE62465C;
+        Thu, 30 May 2019 03:17:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185958;
-        bh=D8NeDsDCGki/plG0B/KUBbUnl5h68jP1rmdpkkXmm5g=;
+        s=default; t=1559186274;
+        bh=DVF2BsjhTgYxFfpTkGy6e03bpwNSrsgVjaDEudMpCwE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lvLnpvC0xCd5y0deFZKhujKNRWkoj/0rchpejeMFH8LYPnKbE41KAtL1puLjL0f4P
-         iOcXcZv5FMwGU9xwFAR/FmtAeWFT11FaSMcIKHFbtbdEcSVgcAWaKUgB2l3nGJD5GY
-         vNIp/GYVtRbDFWcOJ3pexDM9Fc50rr/OL1l8P8QQ=
+        b=ZkoTca978pLaI8GT1F0W7SKSVRSjnDQbPRAa/sB39m4gwLcFx9noPoQKxEzyY/Lfb
+         zf8bwl76pivwY2fh6N4TIqa5EKe+4fUdPmLa+/HN4PZsgDLO+xiqcSGScfaVh68cQd
+         +mHJUrPXV1typGibKUBf43OhAWvzc6Oqw64npQJY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Brown <broonie@kernel.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 376/405] spi: rspi: Fix sequencer reset during initialization
+Subject: [PATCH 4.19 216/276] cxgb3/l2t: Fix undefined behaviour
 Date:   Wed, 29 May 2019 20:06:14 -0700
-Message-Id: <20190530030559.758566924@linuxfoundation.org>
+Message-Id: <20190530030538.634682418@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,57 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 26843bb128590edd7eba1ad7ce22e4b9f1066ce3 ]
+[ Upstream commit 76497732932f15e7323dc805e8ea8dc11bb587cf ]
 
-While the sequencer is reset after each SPI message since commit
-880c6d114fd79a69 ("spi: rspi: Add support for Quad and Dual SPI
-Transfers on QSPI"), it was never reset for the first message, thus
-relying on reset state or bootloader settings.
+The use of zero-sized array causes undefined behaviour when it is not
+the last member in a structure. As it happens to be in this case.
 
-Fix this by initializing it explicitly during configuration.
+Also, the current code makes use of a language extension to the C90
+standard, but the preferred mechanism to declare variable-length
+types such as this one is a flexible array member, introduced in
+C99:
 
-Fixes: 0b2182ddac4b8837 ("spi: add support for Renesas RSPI")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+struct foo {
+        int stuff;
+        struct boo array[];
+};
+
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last. Which is beneficial
+to cultivate a high-quality code.
+
+Fixes: e48f129c2f20 ("[SCSI] cxgb3i: convert cdev->l2opt to use rcu to prevent NULL dereference")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-rspi.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/chelsio/cxgb3/l2t.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
-index 556870dcdf799..5d35a82945cd1 100644
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -271,7 +271,8 @@ static int rspi_set_config_register(struct rspi_data *rspi, int access_size)
- 	/* Sets parity, interrupt mask */
- 	rspi_write8(rspi, 0x00, RSPI_SPCR2);
+diff --git a/drivers/net/ethernet/chelsio/cxgb3/l2t.h b/drivers/net/ethernet/chelsio/cxgb3/l2t.h
+index c2fd323c40782..ea75f275023ff 100644
+--- a/drivers/net/ethernet/chelsio/cxgb3/l2t.h
++++ b/drivers/net/ethernet/chelsio/cxgb3/l2t.h
+@@ -75,8 +75,8 @@ struct l2t_data {
+ 	struct l2t_entry *rover;	/* starting point for next allocation */
+ 	atomic_t nfree;		/* number of free entries */
+ 	rwlock_t lock;
+-	struct l2t_entry l2tab[0];
+ 	struct rcu_head rcu_head;	/* to handle rcu cleanup */
++	struct l2t_entry l2tab[];
+ };
  
--	/* Sets SPCMD */
-+	/* Resets sequencer */
-+	rspi_write8(rspi, 0, RSPI_SPSCR);
- 	rspi->spcmd |= SPCMD_SPB_8_TO_16(access_size);
- 	rspi_write16(rspi, rspi->spcmd, RSPI_SPCMD0);
- 
-@@ -315,7 +316,8 @@ static int rspi_rz_set_config_register(struct rspi_data *rspi, int access_size)
- 	rspi_write8(rspi, 0x00, RSPI_SSLND);
- 	rspi_write8(rspi, 0x00, RSPI_SPND);
- 
--	/* Sets SPCMD */
-+	/* Resets sequencer */
-+	rspi_write8(rspi, 0, RSPI_SPSCR);
- 	rspi->spcmd |= SPCMD_SPB_8_TO_16(access_size);
- 	rspi_write16(rspi, rspi->spcmd, RSPI_SPCMD0);
- 
-@@ -366,7 +368,8 @@ static int qspi_set_config_register(struct rspi_data *rspi, int access_size)
- 	/* Sets buffer to allow normal operation */
- 	rspi_write8(rspi, 0x00, QSPI_SPBFCR);
- 
--	/* Sets SPCMD */
-+	/* Resets sequencer */
-+	rspi_write8(rspi, 0, RSPI_SPSCR);
- 	rspi_write16(rspi, rspi->spcmd, RSPI_SPCMD0);
- 
- 	/* Sets RSPI mode */
+ typedef void (*arp_failure_handler_func)(struct t3cdev * dev,
 -- 
 2.20.1
 
