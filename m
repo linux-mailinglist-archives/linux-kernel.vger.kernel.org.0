@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEA3D2F286
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:23:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1374E2ED9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:40:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730073AbfE3DPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:15:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54256 "EHLO mail.kernel.org"
+        id S1733124AbfE3DXq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:23:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728945AbfE3DMT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:19 -0400
+        id S1731179AbfE3DRg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:36 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BFE0244F1;
-        Thu, 30 May 2019 03:12:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A293246F3;
+        Thu, 30 May 2019 03:17:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185938;
-        bh=nJrK3IwcmUuml2VnBzBzfEVYgjEkYxYSoUHjbBVQfMw=;
+        s=default; t=1559186255;
+        bh=1rPMMUnAEw/PbwAbQkw+rWsgCAavxUsZNbw2R/Ydn20=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uecJWuKRS77fIVbGuyGXtBoy7ZTnNQEhXrjfRpkDGzdCvyoG5PPhzLzX/mDtG68YK
-         csCDUi3CAaaMKBv1aR83JEi1XC+m71+obMf0Kjzh/QXUvNt80ZtFAyghpoG/cVZVCl
-         fdSCvenqQgwb5UyTX6pI643yNu+qCyzDKMy9JfdY=
+        b=BSqxhwakXTWiZqIXYaEpqM5CTOjelr14ujZkT/qxgOFgLA75NuLJ8VFS50lDptaJw
+         i0Flq0pz0dPaIIjIyy+fJQ6uGWoXbvlQu+mIJxtQhGw9bvR3/xuIIOTiQAmWc6CKxv
+         hG95xKyj3PmIEs2lyvif+vSyLWjwPxzADzdIsEYE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 342/405] igb: Exclude device from suspend direct complete optimization
-Date:   Wed, 29 May 2019 20:05:40 -0700
-Message-Id: <20190530030557.996823260@linuxfoundation.org>
+        stable@vger.kernel.org, Jon Derrick <jonathan.derrick@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Scott Bauer <sbauer@plzdonthack.me>,
+        David Kozub <zub@linux.fjfi.cvut.cz>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 183/276] block: sed-opal: fix IOC_OPAL_ENABLE_DISABLE_MBR
+Date:   Wed, 29 May 2019 20:05:41 -0700
+Message-Id: <20190530030536.703908741@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,40 +46,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5b6e13216be29ced7350d9c354a1af8fe0ad9a3e ]
+[ Upstream commit 78bf47353b0041865564deeed257a54f047c2fdc ]
 
-igb sets different WoL settings in system suspend callback and runtime
-suspend callback.
+The implementation of IOC_OPAL_ENABLE_DISABLE_MBR handled the value
+opal_mbr_data.enable_disable incorrectly: enable_disable is expected
+to be one of OPAL_MBR_ENABLE(0) or OPAL_MBR_DISABLE(1). enable_disable
+was passed directly to set_mbr_done and set_mbr_enable_disable where
+is was interpreted as either OPAL_TRUE(1) or OPAL_FALSE(0). The end
+result was that calling IOC_OPAL_ENABLE_DISABLE_MBR with OPAL_MBR_ENABLE
+actually disabled the shadow MBR and vice versa.
 
-The suspend direct complete optimization leaves igb in runtime suspended
-state with wrong WoL setting during system suspend.
+This patch adds correct conversion from OPAL_MBR_DISABLE/ENABLE to
+OPAL_FALSE/TRUE. The change affects existing programs using
+IOC_OPAL_ENABLE_DISABLE_MBR but this is typically used only once when
+setting up an Opal drive.
 
-To fix this, we need to disable suspend direct complete optimization to
-let igb always use suspend callback to set correct WoL during system
-suspend.
-
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Acked-by: Jon Derrick <jonathan.derrick@intel.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Scott Bauer <sbauer@plzdonthack.me>
+Signed-off-by: David Kozub <zub@linux.fjfi.cvut.cz>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/igb/igb_main.c | 3 +++
- 1 file changed, 3 insertions(+)
+ block/sed-opal.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index 3269d8e94744f..580d14b49fda1 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -3452,6 +3452,9 @@ static int igb_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 			break;
- 		}
- 	}
+diff --git a/block/sed-opal.c b/block/sed-opal.c
+index e0de4dd448b3c..1196408972937 100644
+--- a/block/sed-opal.c
++++ b/block/sed-opal.c
+@@ -2095,13 +2095,16 @@ static int opal_erase_locking_range(struct opal_dev *dev,
+ static int opal_enable_disable_shadow_mbr(struct opal_dev *dev,
+ 					  struct opal_mbr_data *opal_mbr)
+ {
++	u8 enable_disable = opal_mbr->enable_disable == OPAL_MBR_ENABLE ?
++		OPAL_TRUE : OPAL_FALSE;
 +
-+	dev_pm_set_driver_flags(&pdev->dev, DPM_FLAG_NEVER_SKIP);
-+
- 	pm_runtime_put_noidle(&pdev->dev);
- 	return 0;
+ 	const struct opal_step mbr_steps[] = {
+ 		{ opal_discovery0, },
+ 		{ start_admin1LSP_opal_session, &opal_mbr->key },
+-		{ set_mbr_done, &opal_mbr->enable_disable },
++		{ set_mbr_done, &enable_disable },
+ 		{ end_opal_session, },
+ 		{ start_admin1LSP_opal_session, &opal_mbr->key },
+-		{ set_mbr_enable_disable, &opal_mbr->enable_disable },
++		{ set_mbr_enable_disable, &enable_disable },
+ 		{ end_opal_session, },
+ 		{ NULL, }
+ 	};
+@@ -2221,7 +2224,7 @@ static int __opal_lock_unlock(struct opal_dev *dev,
  
+ static int __opal_set_mbr_done(struct opal_dev *dev, struct opal_key *key)
+ {
+-	u8 mbr_done_tf = 1;
++	u8 mbr_done_tf = OPAL_TRUE;
+ 	const struct opal_step mbrdone_step [] = {
+ 		{ opal_discovery0, },
+ 		{ start_admin1LSP_opal_session, key },
 -- 
 2.20.1
 
