@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB2262F1F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:17:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D8A82ECDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:28:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730624AbfE3EQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:16:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39808 "EHLO mail.kernel.org"
+        id S1732729AbfE3D1j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:27:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56022 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730455AbfE3DPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:15:43 -0400
+        id S1731969AbfE3DTi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:19:38 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F8E9245A7;
-        Thu, 30 May 2019 03:15:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C61ED248B9;
+        Thu, 30 May 2019 03:19:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186143;
-        bh=CV2FYDZFlYCSHZvxts4hl/IhgpK9JziH36pg8vtydAk=;
+        s=default; t=1559186377;
+        bh=WCQ0qdII5u/nvb+83Q3aJnzkfoHfMFOFeGzr5nrotuc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IRavbDQrez9+Yf32WPdcmA6ynuHUuHL3dify6R5Tg1fUPcv8p1o8CXbqe3tTZMoth
-         MT+FhK2aTkTIq61Oq5HW8RyTl97dEdRE10vHdbbUjpn1uzwVda409mh0GcW//tzODt
-         RDKOgJCC8DKnrMeitYRqjjMGKmwnSt6ZfzW0Adok=
+        b=rA+mjaj/1JRmp/ILHqpZkwpZUNYH7vUPCrVXXq8S3pGVHjrOIeIHGYLpX78N1GE9D
+         u3laJFibEYDGB8ZM6WS1WE6J3ZrVuL2iNsee8j0dHvRbKTl1V4OgYSILOOawxNKM3+
+         kKAHHQWwTeVrlH/63COxM9eeCJKyCc37/Zucmirw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 320/346] drm/omap: Notify all devices in the pipeline of output disconnection
+Subject: [PATCH 4.14 139/193] rtlwifi: fix a potential NULL pointer dereference
 Date:   Wed, 29 May 2019 20:06:33 -0700
-Message-Id: <20190530030556.999978965@linuxfoundation.org>
+Message-Id: <20190530030507.777553829@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,77 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 27a7e3e18419869cdcc414a404f3fe66f1b4e644 ]
+[ Upstream commit 765976285a8c8db3f0eb7f033829a899d0c2786e ]
 
-For HDMI pipelines, when the output gets disconnected the device
-handling CEC needs to be notified. Instead of guessing which device that
-would be (and sometimes getting it wrong), notify all devices in the
-pipeline.
+In case alloc_workqueue fails, the fix reports the error and
+returns to avoid NULL pointer dereference.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-Tested-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/omapdrm/omap_connector.c | 28 ++++++++++++++----------
- 1 file changed, 16 insertions(+), 12 deletions(-)
+ drivers/net/wireless/realtek/rtlwifi/base.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/gpu/drm/omapdrm/omap_connector.c b/drivers/gpu/drm/omapdrm/omap_connector.c
-index b81302c4bf9e6..a45f925cb19a9 100644
---- a/drivers/gpu/drm/omapdrm/omap_connector.c
-+++ b/drivers/gpu/drm/omapdrm/omap_connector.c
-@@ -36,18 +36,22 @@ struct omap_connector {
- };
- 
- static void omap_connector_hpd_notify(struct drm_connector *connector,
--				      struct omap_dss_device *src,
- 				      enum drm_connector_status status)
- {
--	if (status == connector_status_disconnected) {
--		/*
--		 * If the source is an HDMI encoder, notify it of disconnection.
--		 * This is required to let the HDMI encoder reset any internal
--		 * state related to connection status, such as the CEC address.
--		 */
--		if (src && src->type == OMAP_DISPLAY_TYPE_HDMI &&
--		    src->ops->hdmi.lost_hotplug)
--			src->ops->hdmi.lost_hotplug(src);
-+	struct omap_connector *omap_connector = to_omap_connector(connector);
-+	struct omap_dss_device *dssdev;
-+
-+	if (status != connector_status_disconnected)
+diff --git a/drivers/net/wireless/realtek/rtlwifi/base.c b/drivers/net/wireless/realtek/rtlwifi/base.c
+index ec82c1c3f12e4..4a3c713ad3247 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/base.c
++++ b/drivers/net/wireless/realtek/rtlwifi/base.c
+@@ -468,6 +468,11 @@ static void _rtl_init_deferred_work(struct ieee80211_hw *hw)
+ 	/* <2> work queue */
+ 	rtlpriv->works.hw = hw;
+ 	rtlpriv->works.rtl_wq = alloc_workqueue("%s", 0, 0, rtlpriv->cfg->name);
++	if (unlikely(!rtlpriv->works.rtl_wq)) {
++		pr_err("Failed to allocate work queue\n");
 +		return;
++	}
 +
-+	/*
-+	 * Notify all devics in the pipeline of disconnection. This is required
-+	 * to let the HDMI encoders reset their internal state related to
-+	 * connection status, such as the CEC address.
-+	 */
-+	for (dssdev = omap_connector->output; dssdev; dssdev = dssdev->next) {
-+		if (dssdev->ops && dssdev->ops->hdmi.lost_hotplug)
-+			dssdev->ops->hdmi.lost_hotplug(dssdev);
- 	}
- }
- 
-@@ -67,7 +71,7 @@ static void omap_connector_hpd_cb(void *cb_data,
- 	if (old_status == status)
- 		return;
- 
--	omap_connector_hpd_notify(connector, omap_connector->hpd, status);
-+	omap_connector_hpd_notify(connector, status);
- 
- 	drm_kms_helper_hotplug_event(dev);
- }
-@@ -128,7 +132,7 @@ static enum drm_connector_status omap_connector_detect(
- 		       ? connector_status_connected
- 		       : connector_status_disconnected;
- 
--		omap_connector_hpd_notify(connector, dssdev->src, status);
-+		omap_connector_hpd_notify(connector, status);
- 	} else {
- 		switch (omap_connector->display->type) {
- 		case OMAP_DISPLAY_TYPE_DPI:
+ 	INIT_DELAYED_WORK(&rtlpriv->works.watchdog_wq,
+ 			  (void *)rtl_watchdog_wq_callback);
+ 	INIT_DELAYED_WORK(&rtlpriv->works.ips_nic_off_wq,
 -- 
 2.20.1
 
