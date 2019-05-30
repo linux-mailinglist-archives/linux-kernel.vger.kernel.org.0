@@ -2,90 +2,206 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9F052FA06
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 12:13:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 595482F916
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 11:16:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728005AbfE3KNK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 06:13:10 -0400
-Received: from ZXSHCAS1.zhaoxin.com ([203.148.12.81]:15394 "EHLO
-        ZXSHCAS1.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726515AbfE3KNJ (ORCPT
+        id S1727133AbfE3JQZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 05:16:25 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33772 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726720AbfE3JQZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 06:13:09 -0400
-Received: from ZXBJCAS.zhaoxin.com (10.29.252.3) by ZXSHCAS1.zhaoxin.com
- (10.28.252.161) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Thu, 30 May
- 2019 18:10:27 +0800
-Received: from zxbjmbx1.zhaoxin.com (10.29.252.163) by ZXBJCAS.zhaoxin.com
- (10.29.252.3) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Thu, 30 May
- 2019 17:13:39 +0800
-Received: from zxbjmbx1.zhaoxin.com (10.29.252.163) by zxbjmbx1.zhaoxin.com
- (10.29.252.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Thu, 30 May
- 2019 17:13:39 +0800
-Received: from zxbjmbx1.zhaoxin.com ([fe80::b41a:737:a784:b70d]) by
- zxbjmbx1.zhaoxin.com ([fe80::b41a:737:a784:b70d%16]) with mapi id
- 15.01.1261.035; Thu, 30 May 2019 17:13:39 +0800
-From:   Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
-To:     "tipbot@zytor.com" <tipbot@zytor.com>,
-        "ashok.raj@intel.com" <ashok.raj@intel.com>
-CC:     "bp@suse.de" <bp@suse.de>, "hpa@zytor.com" <hpa@zytor.com>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tip-commits@vger.kernel.org" 
-        <linux-tip-commits@vger.kernel.org>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        David Wang <DavidWang@zhaoxin.com>
-Subject: =?gb2312?B?tPC4tDogUmU6IFt0aXA6eDg2L3VyZ2VudF0geDg2L21jZTogRW5zdXJlIG9m?=
- =?gb2312?B?ZmxpbmUgQ1BVcyBkb24nIHQgcGFydGljaXBhdGUgaW4gcmVuZGV6dm91cyBw?=
- =?gb2312?Q?rocess?=
-Thread-Topic: Re: [tip:x86/urgent] x86/mce: Ensure offline CPUs don' t
- participate in rendezvous process
-Thread-Index: AdUWlGl+Ivql5y3zT0ybuVHbqcI6gAAJtEFg
-Date:   Thu, 30 May 2019 09:13:39 +0000
-Message-ID: <985acf114ab245fbab52caabf03bd280@zhaoxin.com>
-Accept-Language: en-US, zh-CN
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.32.64.23]
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        Thu, 30 May 2019 05:16:25 -0400
+Received: by mail-wr1-f68.google.com with SMTP id d9so3708510wrx.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 02:16:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from:cc;
+        bh=I1S45cdBL20CvsZSK3Vkt5vNQs2upcXyMnAlHyCghAk=;
+        b=T/zpFN2mPAF3SQ6lAYgD6tKWR5rWJJKb+Vg78eR5EnH6kVWssEFzfrz7I2myTpjEdB
+         uRkmZO+NoVexKFmHUeXkljCY5nm83dRV0RLjjrLfznDqneZnA9sWlGMJamwGwHCigzkE
+         7+Alug2hguo3mnDp+AwCxnHvvkK15NWLUoixFH0SSYGC8rYghtuVOVtqfqCk5Hm1E9GU
+         eBJ8gUfitrYtKDyJA0iUIUvWm3+Ea31uPaBLHH44p/Eta5cZ1lA7r3dUIkKybPRU5Ka3
+         BAoMB1z/wGTYzDScpSzI43QCMknpV1PmB5x7nxwTrfXAa6sGKd7kJzpjfOBor6+SWLUV
+         7X9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from:cc;
+        bh=I1S45cdBL20CvsZSK3Vkt5vNQs2upcXyMnAlHyCghAk=;
+        b=rOC1x3blQ7ehvckfQqnyNq0X4OBRR9wKPnUJPAwvr0WGKTQCLXXXWswbUYTqfgdqhY
+         2Dq6zJPtKrdjDaSiHWCWG1DVdbcke1Y3NJpxGEB3Wnc5UHMey1tybpoKIGXKTk0nALe9
+         fmzgetSRNlP1nHo10Uu5OGaAEUMbpTG5oc6/4iE2RSfZtwKtZbiYxChrKrJWA2koCZP2
+         L93KKCauDB6/ZzBX40zr20BMZTX8eTwvE+GZJ+yKnktUkYgWp8IpqMcJTLAUSs207hOL
+         qZyZJZR3yTqIISsWyWhevHGmiP7tW7TX3sfP37CHQUkDqG832EBqdJ51cpVGS3J8vtt9
+         7mCQ==
+X-Gm-Message-State: APjAAAWm+iw8hBuExUUaFsK9+tq4Lm1Y0Zq6Au8HUqJZQtPgdlPB2Caj
+        i2ZLtu0rFYRnq2AdiPwBcw6EIQ==
+X-Google-Smtp-Source: APXvYqxPO+aU4NLmBYmMxBYv7zcWu35kkFoFjlVAjNqdxL18t/kYSZuTrJJ9GNOUC02j/lF4ntsIyw==
+X-Received: by 2002:adf:cf0c:: with SMTP id o12mr1865157wrj.182.1559207783309;
+        Thu, 30 May 2019 02:16:23 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id y132sm3504881wmd.35.2019.05.30.02.16.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 May 2019 02:16:22 -0700 (PDT)
+Message-ID: <5cef9f66.1c69fb81.39f30.21e8@mx.google.com>
+Date:   Thu, 30 May 2019 02:16:22 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: bisect
+X-Kernelci-Tree: next
+X-Kernelci-Lab-Name: lab-baylibre
+X-Kernelci-Branch: master
+X-Kernelci-Kernel: next-20190528
+Subject: next/master boot bisection: next-20190528 on
+ sun8i-h3-libretech-all-h3-cc
+To:     Mark Brown <broonie@kernel.org>, tomeu.vizoso@collabora.com,
+        guillaume.tucker@collabora.com, mgalka@collabora.com,
+        broonie@kernel.org,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        matthew.hart@linaro.org, khilman@baylibre.com,
+        enric.balletbo@collabora.com
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVGh1LCBNYXkgMzAsIDIwMTksIFRvbnkgVyBXYW5nLW9jIHdyb3RlOg0KPiBIaSBBc2hvaywN
-Cj4gSSBoYXZlIHR3byBxdWVzdGlvbnMgYWJvdXQgdGhpcyBwYXRjaCwgY291bGQgeW91IGhlbHAg
-dG8gY2hlY2s6DQo+IA0KPiAxLCBmb3IgYnJvYWRjYXN0ICNNQyBleGNlcHRpb25zLCB0aGlzIHBh
-dGNoIHNlZW1zIHJlcXVpcmUgI01DIGV4Y2VwdGlvbg0KPiBlcnJvcnMNCj4gc2V0IE1DR19TVEFU
-VVNfUklQViA9IDEuDQo+IEJ1dCBmb3IgSW50ZWwgQ1BVLCBzb21lICNNQyBleGNlcHRpb24gZXJy
-b3JzIHNldCBNQ0dfU1RBVFVTX1JJUFYgPSAwDQo+IChsaWtlICJSZWNvdmVyYWJsZS1ub3QtY29u
-dGludWFibGUgU1JBUiBUeXBlIiBFcnJvcnMpLCBmb3IgdGhlc2UgZXJyb3JzDQo+IHRoZSBwYXRj
-aCBkb2Vzbid0IHNlZW0gdG8gd29yaywgaXMgdGhhdCBva2F5Pw0KPiANCj4gMiwgZm9yIExNQ0Ug
-ZXhjZXB0aW9ucywgdGhpcyBwYXRjaCBzZWVtcyByZXF1aXJlICNNQyBleGNlcHRpb24gZXJyb3Jz
-DQo+IHNldCBNQ0dfU1RBVFVTX1JJUFYgPSAwIHRvIG1ha2Ugc3VyZSBMTUNFIGJlIGhhbmRsZWQg
-bm9ybWFsbHkgZXZlbg0KPiBvbiBvZmZsaW5lIENQVS4NCj4gRm9yIExNQ0UgZXJyb3JzIHNldCBN
-Q0dfU1RBVVNfUklQViA9IDEsIHRoZSBwYXRjaCBwcmV2ZW50cyBvZmZsaW5lIENQVQ0KPiBoYW5k
-bGUgdGhlc2UgTE1DRSBlcnJvcnMsIGlzIHRoYXQgb2theT8NCj4gDQoNCk1vcmUgc3BlY2lmaWNh
-bGx5LCB0aGlzIHBhdGNoIHNlZW1zIHJlcXVpcmUgI01DIGV4Y2VwdGlvbnMgbWVldCB0aGUgY29u
-ZGl0aW9uDQoiTUNHX1NUQVRVU19SSVBWIF4gTUNHX1NUQVRVU19MTUNFUyA9PSAxIjsgQnV0IG9u
-IGEgWGVvbiBYNTY1MCBtYWNoaW5lIChTTVApLCANCiJEYXRhIENBQ0hFIExldmVsLTIgR2VuZXJp
-YyBFcnJvciIgZG9lcyBub3QgbWVldCB0aGlzIGNvbmRpdGlvbi4NCg0KSSBnb3QgYmVsb3cgbWVz
-c2FnZSBmcm9tOiBodHRwczovL3d3dy5jZW50b3Mub3JnL2ZvcnVtcy92aWV3dG9waWMucGhwP3A9
-MjkyNzQyDQoNCkhhcmR3YXJlIGV2ZW50LiBUaGlzIGlzIG5vdCBhIHNvZnR3YXJlIGVycm9yLg0K
-TUNFIDANCkNQVSA0IEJBTksgNiBUU0MgYjcwNjVlZWFhMThiMCANClRJTUUgMTU0NTY0MzYwMyBN
-b24gRGVjIDI0IDEwOjI2OjQzIDIwMTgNCk1DRyBzdGF0dXM6TUNJUCANCk1DaSBzdGF0dXM6DQpV
-bmNvcnJlY3RlZCBlcnJvcg0KRXJyb3IgZW5hYmxlZA0KUHJvY2Vzc29yIGNvbnRleHQgY29ycnVw
-dA0KTUNBOiBEYXRhIENBQ0hFIExldmVsLTIgR2VuZXJpYyBFcnJvcg0KU1RBVFVTIGIyMDAwMDAw
-ODAwMDAxMDYgTUNHU1RBVFVTIDQNCk1DR0NBUCAxYzA5IEFQSUNJRCA0IFNPQ0tFVElEIDAgDQpD
-UFVJRCBWZW5kb3IgSW50ZWwgRmFtaWx5IDYgTW9kZWwgNDQNCg0KPiBUaGFua3MNCj4gVG9ueSBX
-IFdhbmctb2MNCg==
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* This automated bisection report was sent to you on the basis  *
+* that you may be involved with the breaking commit it has      *
+* found.  No manual investigation has been done to verify it,   *
+* and the root cause of the problem may be somewhere else.      *
+* Hope this helps!                                              *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+next/master boot bisection: next-20190528 on sun8i-h3-libretech-all-h3-cc
+
+Summary:
+  Start:      531b0a360899 Add linux-next specific files for 20190528
+  Details:    https://kernelci.org/boot/id/5cece0fd59b5144bc47a362b
+  Plain log:  https://storage.kernelci.org//next/master/next-20190528/arm/s=
+unxi_defconfig/gcc-8/lab-baylibre/boot-sun8i-h3-libretech-all-h3-cc.txt
+  HTML log:   https://storage.kernelci.org//next/master/next-20190528/arm/s=
+unxi_defconfig/gcc-8/lab-baylibre/boot-sun8i-h3-libretech-all-h3-cc.html
+  Result:     34ac3c3eb8f0 ASoC: core: lock client_mutex while removing lin=
+k components
+
+Checks:
+  revert:     PASS
+  verify:     PASS
+
+Parameters:
+  Tree:       next
+  URL:        git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next=
+.git
+  Branch:     master
+  Target:     sun8i-h3-libretech-all-h3-cc
+  CPU arch:   arm
+  Lab:        lab-baylibre
+  Compiler:   gcc-8
+  Config:     sunxi_defconfig
+  Test suite: boot
+
+Breaking commit found:
+
+---------------------------------------------------------------------------=
+----
+commit 34ac3c3eb8f0c07252ceddf0a22dd240e5c91ccb
+Author: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+Date:   Thu May 23 10:12:01 2019 -0700
+
+    ASoC: core: lock client_mutex while removing link components
+    =
+
+    Removing link components results in topology unloading. So,
+    acquire the client_mutex before removing components in
+    soc_remove_link_components. This will prevent the lockdep warning
+    seen when dai links are removed during topology removal.
+    =
+
+    Signed-off-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+    Signed-off-by: Mark Brown <broonie@kernel.org>
+
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 2403bec2fccf..7c9415987ac7 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -1005,12 +1005,14 @@ static void soc_remove_link_components(struct snd_s=
+oc_card *card,
+ 	struct snd_soc_component *component;
+ 	struct snd_soc_rtdcom_list *rtdcom;
+ =
+
++	mutex_lock(&client_mutex);
+ 	for_each_rtdcom(rtd, rtdcom) {
+ 		component =3D rtdcom->component;
+ =
+
+ 		if (component->driver->remove_order =3D=3D order)
+ 			soc_remove_component(component);
+ 	}
++	mutex_unlock(&client_mutex);
+ }
+ =
+
+ static void soc_remove_dai_links(struct snd_soc_card *card)
+---------------------------------------------------------------------------=
+----
+
+
+Git bisection log:
+
+---------------------------------------------------------------------------=
+----
+git bisect start
+# good: [cd6c84d8f0cdc911df435bb075ba22ce3c605b07] Linux 5.2-rc2
+git bisect good cd6c84d8f0cdc911df435bb075ba22ce3c605b07
+# bad: [531b0a360899269bd99a38ba9852a8ba46852bcd] Add linux-next specific f=
+iles for 20190528
+git bisect bad 531b0a360899269bd99a38ba9852a8ba46852bcd
+# bad: [0b61d4c3b7d7938ef0014778c328e3f65c0d6d57] Merge remote-tracking bra=
+nch 'crypto/master'
+git bisect bad 0b61d4c3b7d7938ef0014778c328e3f65c0d6d57
+# bad: [6179e21b065dc0f592cd3d9d3676bd64d4278025] Merge remote-tracking bra=
+nch 'xtensa/xtensa-for-next'
+git bisect bad 6179e21b065dc0f592cd3d9d3676bd64d4278025
+# bad: [3e085f66fe7e93575f2a583a3d434415cef2d860] Merge remote-tracking bra=
+nch 'amlogic/for-next'
+git bisect bad 3e085f66fe7e93575f2a583a3d434415cef2d860
+# bad: [b9afa223a3420432bc483d2b43429c88c6a5d0e0] Merge remote-tracking bra=
+nch 'staging.current/staging-linus'
+git bisect bad b9afa223a3420432bc483d2b43429c88c6a5d0e0
+# good: [fc6557648e19dbd207dc815c6e09fc6452f01e63] Merge remote-tracking br=
+anch 'bpf/master'
+git bisect good fc6557648e19dbd207dc815c6e09fc6452f01e63
+# bad: [6c3f2a0e0f236f31b47d63ab7d3f4ec889821d0d] Merge remote-tracking bra=
+nch 'spi-fixes/for-linus'
+git bisect bad 6c3f2a0e0f236f31b47d63ab7d3f4ec889821d0d
+# bad: [20a5f9c8649d74407aa657ce5b76cf8b0bbb17e3] Merge branch 'asoc-5.2' i=
+nto asoc-linus
+git bisect bad 20a5f9c8649d74407aa657ce5b76cf8b0bbb17e3
+# good: [ad6eecbfc01c987e0253371f274c3872042e4350] ASoC: cs42xx8: Add regca=
+che mask dirty
+git bisect good ad6eecbfc01c987e0253371f274c3872042e4350
+# good: [069d037aea98ffa64c26d4b1dc958fb8f39f5c2b] ASoC: simple-card: Fix c=
+onfiguration of DAI format
+git bisect good 069d037aea98ffa64c26d4b1dc958fb8f39f5c2b
+# good: [df9366131a452296d040a7a496d93108f1fc240c] ASoC: Intel: sof-rt5682:=
+ fix AMP quirk support
+git bisect good df9366131a452296d040a7a496d93108f1fc240c
+# bad: [34ac3c3eb8f0c07252ceddf0a22dd240e5c91ccb] ASoC: core: lock client_m=
+utex while removing link components
+git bisect bad 34ac3c3eb8f0c07252ceddf0a22dd240e5c91ccb
+# good: [4819d06292c9b57eabdd6d1603e49a27baf183be] ASoC: simple-card: Resto=
+re original configuration of DAI format
+git bisect good 4819d06292c9b57eabdd6d1603e49a27baf183be
+# first bad commit: [34ac3c3eb8f0c07252ceddf0a22dd240e5c91ccb] ASoC: core: =
+lock client_mutex while removing link components
+---------------------------------------------------------------------------=
+----
