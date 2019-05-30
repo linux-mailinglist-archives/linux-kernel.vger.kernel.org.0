@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2C342EDA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:40:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D20BA2F096
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:05:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732606AbfE3DVg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:21:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42598 "EHLO mail.kernel.org"
+        id S1731220AbfE3DRm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:17:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729751AbfE3DQ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:16:26 -0400
+        id S1729720AbfE3DOH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:14:07 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F048245C4;
-        Thu, 30 May 2019 03:16:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7515C24547;
+        Thu, 30 May 2019 03:14:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186186;
-        bh=q+KNvMBWqHGJYd5F8Q04+GqU0pdLw8t+lNz1bm5hdgM=;
+        s=default; t=1559186046;
+        bh=8LbZlu4aAZcQS7+yzBAlGBKmeC07lrdmWYrukn3OSSY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vH7bPHF2MW2S3351h9gNGfg87Ust5fFx1nD6/xSIeUfZnrnckbPCC39qomX6TI9yW
-         kEeWtRmwOgH25Nco21CHEC5bwtWDdHQotCN8WFgASbJYAxXZO5hHzb1QyLFVAr/uau
-         s/U1M/nvOEidjXCitG4xR+gFTP6IDIxhckh1Vsy8=
+        b=bOlAoHXIAnc3f3l0gVUGfc4+4MAVhhWzkhSo/dB/quVP14swIjgc7xfbtVeYofNzH
+         0vy5g0kMa3Oq2H631omr1y1Q3IpMYDr86gcYN2J7Qc+Qs5WckfjFcvqmL39y8Ol2Of
+         sj6/B1sLq1m6jxrBzDH7S7dvPzDOx/Eyr1+OJ/7E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sameeh Jubran <sameehj@amazon.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 054/276] net: ena: gcc 8: fix compilation warning
+Subject: [PATCH 5.0 139/346] media: ov6650: Move v4l2_clk_get() to ov6650_video_probe() helper
 Date:   Wed, 29 May 2019 20:03:32 -0700
-Message-Id: <20190530030528.639643512@linuxfoundation.org>
+Message-Id: <20190530030548.177486458@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,45 +45,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f913308879bc6ae437ce64d878c7b05643ddea44 ]
+[ Upstream commit ccdd85d518d8b9320ace1d87271f0ba2175f21fa ]
 
-GCC 8 contains a number of new warnings as well as enhancements to existing
-checkers. The warning - Wstringop-truncation - warns for calls to bounded
-string manipulation functions such as strncat, strncpy, and stpncpy that
-may either truncate the copied string or leave the destination unchanged.
+In preparation for adding asynchronous subdevice support to the driver,
+don't acquire v4l2_clk from the driver .probe() callback as that may
+fail if the clock is provided by a bridge driver which may be not yet
+initialized.  Move the v4l2_clk_get() to ov6650_video_probe() helper
+which is going to be converted to v4l2_subdev_internal_ops.registered()
+callback, executed only when the bridge driver is ready.
 
-In our case the destination string length (32 bytes) is much shorter than
-the source string (64 bytes) which causes this warning to show up. In
-general the destination has to be at least a byte larger than the length
-of the source string with strncpy for this warning not to showup.
-
-This can be easily fixed by using strlcpy instead which already does the
-truncation to the string. Documentation for this function can be
-found here:
-
-https://elixir.bootlin.com/linux/latest/source/lib/string.c#L141
-
-Fixes: 1738cd3ed342 ("net: ena: Add a driver for Amazon Elastic Network Adapters (ENA)")
-Signed-off-by: Sameeh Jubran <sameehj@amazon.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/amazon/ena/ena_netdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/i2c/ov6650.c | 25 ++++++++++++++-----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.c b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-index 1b5f591cf0a23..b5d72815776cb 100644
---- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-@@ -2223,7 +2223,7 @@ static void ena_config_host_info(struct ena_com_dev *ena_dev)
+diff --git a/drivers/media/i2c/ov6650.c b/drivers/media/i2c/ov6650.c
+index 2d3f7e00b129c..ba54ceb0b7266 100644
+--- a/drivers/media/i2c/ov6650.c
++++ b/drivers/media/i2c/ov6650.c
+@@ -810,9 +810,16 @@ static int ov6650_video_probe(struct i2c_client *client)
+ 	u8		pidh, pidl, midh, midl;
+ 	int		ret;
  
- 	host_info->os_type = ENA_ADMIN_OS_LINUX;
- 	host_info->kernel_ver = LINUX_VERSION_CODE;
--	strncpy(host_info->kernel_ver_str, utsname()->version,
-+	strlcpy(host_info->kernel_ver_str, utsname()->version,
- 		sizeof(host_info->kernel_ver_str) - 1);
- 	host_info->os_dist = 0;
- 	strncpy(host_info->os_dist_str, utsname()->release,
++	priv->clk = v4l2_clk_get(&client->dev, NULL);
++	if (IS_ERR(priv->clk)) {
++		ret = PTR_ERR(priv->clk);
++		dev_err(&client->dev, "v4l2_clk request err: %d\n", ret);
++		return ret;
++	}
++
+ 	ret = ov6650_s_power(&priv->subdev, 1);
+ 	if (ret < 0)
+-		return ret;
++		goto eclkput;
+ 
+ 	msleep(20);
+ 
+@@ -849,6 +856,11 @@ static int ov6650_video_probe(struct i2c_client *client)
+ 
+ done:
+ 	ov6650_s_power(&priv->subdev, 0);
++	if (!ret)
++		return 0;
++eclkput:
++	v4l2_clk_put(priv->clk);
++
+ 	return ret;
+ }
+ 
+@@ -991,18 +1003,9 @@ static int ov6650_probe(struct i2c_client *client,
+ 	priv->code	  = MEDIA_BUS_FMT_YUYV8_2X8;
+ 	priv->colorspace  = V4L2_COLORSPACE_JPEG;
+ 
+-	priv->clk = v4l2_clk_get(&client->dev, NULL);
+-	if (IS_ERR(priv->clk)) {
+-		ret = PTR_ERR(priv->clk);
+-		goto eclkget;
+-	}
+-
+ 	ret = ov6650_video_probe(client);
+-	if (ret) {
+-		v4l2_clk_put(priv->clk);
+-eclkget:
++	if (ret)
+ 		v4l2_ctrl_handler_free(&priv->hdl);
+-	}
+ 
+ 	return ret;
+ }
 -- 
 2.20.1
 
