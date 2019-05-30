@@ -2,43 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BC7F2F503
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:44:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9719B2F27E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:22:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388705AbfE3Enh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:43:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53754 "EHLO mail.kernel.org"
+        id S1731324AbfE3EWc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:22:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37184 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728847AbfE3DMK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:10 -0400
+        id S1730113AbfE3DPH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:07 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60C4624526;
-        Thu, 30 May 2019 03:12:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E12924502;
+        Thu, 30 May 2019 03:15:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185929;
-        bh=qWwad4BUKaij/skN+7yXHYUmBvbU4q5h/cwNL4vySvs=;
+        s=default; t=1559186106;
+        bh=0nkLdu9uf9xRYIRUglcYtarLubKkn17vhOoynGRZVsk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UuMcWRGKixnBWflMx3cnj7R/2G5ZhCdEZMeuZYcZHE1jU0jdZptOIdS0qR1uYCond
-         XKWhrO3QtAKbuu85dE3XLWezEb3m0pDBe+Ztf2G+YY82oadX73pPA4vg94S6kD7AO1
-         Hi79MTQ+wJmNWxC9tXXOV36kJxMxtY1VqGelf3nY=
+        b=s+uCE7jfpDxVuCP4ZJdikoUhkQoIQCqTO7JdTmPzc2plKXC/DQm7M1Fw2HLN6ytUh
+         qUmsjIuKLnuVjnJiYV4K3Hr1oOHzJs83y0fRtJRYi/nI83lQpipfBBOrj+WQ/xKczh
+         YIykf/YZVuAwCJWsWQpnqzsjtT/MP9V01A0hfGMk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pu Wen <puwen@hygon.cn>,
-        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        Yazen Ghannam <yazen.ghannam@amd.com>, x86-ml <x86@kernel.org>,
+        stable@vger.kernel.org,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Terry Junge <terry.junge@poly.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 322/405] x86/CPU/hygon: Fix phys_proc_id calculation logic for multi-die processors
+Subject: [PATCH 5.0 247/346] HID: core: move Usage Page concatenation to Main item
 Date:   Wed, 29 May 2019 20:05:20 -0700
-Message-Id: <20190530030557.042188802@linuxfoundation.org>
+Message-Id: <20190530030553.543327250@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,122 +46,146 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e0ceeae708cebf22c990c3d703a4ca187dc837f5 ]
+[ Upstream commit 58e75155009cc800005629955d3482f36a1e0eec ]
 
-The Hygon family 18h multi-die processor platform supports 1, 2 or
-4-Dies per socket. The topology looks like this:
+As seen on some USB wireless keyboards manufactured by Primax, the HID
+parser was using some assumptions that are not always true. In this case
+it's s the fact that, inside the scope of a main item, an Usage Page
+will always precede an Usage.
 
-  System View (with 1-Die 2-Socket):
-             |------------|
-           ------       -----
-   SOCKET0 | D0 |       | D1 |  SOCKET1
-           ------       -----
+The spec is not pretty clear as 6.2.2.7 states "Any usage that follows
+is interpreted as a Usage ID and concatenated with the Usage Page".
+While 6.2.2.8 states "When the parser encounters a main item it
+concatenates the last declared Usage Page with a Usage to form a
+complete usage value." Being somewhat contradictory it was decided to
+match Window's implementation, which follows 6.2.2.8.
 
-  System View (with 2-Die 2-socket):
-             --------------------
-             |     -------------|------
-             |     |            |     |
-           ------------       ------------
-   SOCKET0 | D1 -- D0 |       | D3 -- D2 | SOCKET1
-           ------------       ------------
+In summary, the patch moves the Usage Page concatenation from the local
+item parsing function to the main item parsing function.
 
-  System View (with 4-Die 2-Socket) :
-             --------------------
-             |     -------------|------
-             |     |            |     |
-           ------------       ------------
-           | D1 -- D0 |       | D7 -- D6 |
-           | |  \/ |  |       | |  \/ |  |
-   SOCKET0 | |  /\ |  |       | |  /\ |  | SOCKET1
-           | D2 -- D3 |       | D4 -- D5 |
-           ------------       ------------
-             |     |            |     |
-             ------|------------|     |
-                   --------------------
-
-Currently
-
-  phys_proc_id = initial_apicid >> bits
-
-calculates the physical processor ID from the initial_apicid by shifting
-*bits*.
-
-However, this does not work for 1-Die and 2-Die 2-socket systems.
-
-According to document [1] section 2.1.11.1, the bits is the value of
-CPUID_Fn80000008_ECX[12:15]. The possible values are 4, 5 or 6 which
-mean:
-
-  4 - 1 die
-  5 - 2 dies
-  6 - 3/4 dies.
-
-Hygon programs the initial ApicId the same way as AMD. The ApicId is
-read from CPUID_Fn00000001_EBX (see section 2.1.11.1 of referrence [1])
-and the definition is as below (see section 2.1.10.2.1.3 of [1]):
-
-      -------------------------------------------------
-  Bit |     6     |   5  4  |    3   |    2   1   0   |
-      |-----------|---------|--------|----------------|
-  IDs | Socket ID | Node ID | CCX ID | Core/Thread ID |
-      -------------------------------------------------
-
-So for 3/4-Die configurations, the bits variable is 6, which is the same
-as the ApicID definition field.
-
-For 1-Die and 2-Die configurations, bits is 4 or 5, which will cause the
-right shifted result to not be exactly the value of socket ID.
-
-However, the socket ID should be obtained from ApicId[6]. To fix the
-problem and match the ApicID field definition, set the shift bits to 6
-for all Hygon family 18h multi-die CPUs.
-
-Because AMD doesn't have 2-Socket systems with 1-Die/2-Die processors
-(see reference [2]), this doesn't need to be changed on the AMD side but
-only for Hygon.
-
-[1] https://www.amd.com/system/files/TechDocs/54945_PPR_Family_17h_Models_00h-0Fh.pdf
-[2] https://www.amd.com/en/products/specifications/processors
-
- [bp: heavily massage commit message. ]
-
-Signed-off-by: Pu Wen <puwen@hygon.cn>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Thomas Lendacky <Thomas.Lendacky@amd.com>
-Cc: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/1553355740-19999-1-git-send-email-puwen@hygon.cn
+Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Reviewed-by: Terry Junge <terry.junge@poly.com>
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/hygon.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/hid/hid-core.c | 36 ++++++++++++++++++++++++------------
+ include/linux/hid.h    |  1 +
+ 2 files changed, 25 insertions(+), 12 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/hygon.c b/arch/x86/kernel/cpu/hygon.c
-index cf25405444ab3..415621ddb8a23 100644
---- a/arch/x86/kernel/cpu/hygon.c
-+++ b/arch/x86/kernel/cpu/hygon.c
-@@ -19,6 +19,8 @@
+diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+index 860e21ec6a492..63a43726cce0f 100644
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -218,13 +218,14 @@ static unsigned hid_lookup_collection(struct hid_parser *parser, unsigned type)
+  * Add a usage to the temporary parser table.
+  */
  
- #include "cpu.h"
+-static int hid_add_usage(struct hid_parser *parser, unsigned usage)
++static int hid_add_usage(struct hid_parser *parser, unsigned usage, u8 size)
+ {
+ 	if (parser->local.usage_index >= HID_MAX_USAGES) {
+ 		hid_err(parser->device, "usage index exceeded\n");
+ 		return -1;
+ 	}
+ 	parser->local.usage[parser->local.usage_index] = usage;
++	parser->local.usage_size[parser->local.usage_index] = size;
+ 	parser->local.collection_index[parser->local.usage_index] =
+ 		parser->collection_stack_ptr ?
+ 		parser->collection_stack[parser->collection_stack_ptr - 1] : 0;
+@@ -486,10 +487,7 @@ static int hid_parser_local(struct hid_parser *parser, struct hid_item *item)
+ 			return 0;
+ 		}
  
-+#define APICID_SOCKET_ID_BIT 6
+-		if (item->size <= 2)
+-			data = (parser->global.usage_page << 16) + data;
+-
+-		return hid_add_usage(parser, data);
++		return hid_add_usage(parser, data, item->size);
+ 
+ 	case HID_LOCAL_ITEM_TAG_USAGE_MINIMUM:
+ 
+@@ -498,9 +496,6 @@ static int hid_parser_local(struct hid_parser *parser, struct hid_item *item)
+ 			return 0;
+ 		}
+ 
+-		if (item->size <= 2)
+-			data = (parser->global.usage_page << 16) + data;
+-
+ 		parser->local.usage_minimum = data;
+ 		return 0;
+ 
+@@ -511,9 +506,6 @@ static int hid_parser_local(struct hid_parser *parser, struct hid_item *item)
+ 			return 0;
+ 		}
+ 
+-		if (item->size <= 2)
+-			data = (parser->global.usage_page << 16) + data;
+-
+ 		count = data - parser->local.usage_minimum;
+ 		if (count + parser->local.usage_index >= HID_MAX_USAGES) {
+ 			/*
+@@ -533,7 +525,7 @@ static int hid_parser_local(struct hid_parser *parser, struct hid_item *item)
+ 		}
+ 
+ 		for (n = parser->local.usage_minimum; n <= data; n++)
+-			if (hid_add_usage(parser, n)) {
++			if (hid_add_usage(parser, n, item->size)) {
+ 				dbg_hid("hid_add_usage failed\n");
+ 				return -1;
+ 			}
+@@ -547,6 +539,22 @@ static int hid_parser_local(struct hid_parser *parser, struct hid_item *item)
+ 	return 0;
+ }
+ 
++/*
++ * Concatenate Usage Pages into Usages where relevant:
++ * As per specification, 6.2.2.8: "When the parser encounters a main item it
++ * concatenates the last declared Usage Page with a Usage to form a complete
++ * usage value."
++ */
++
++static void hid_concatenate_usage_page(struct hid_parser *parser)
++{
++	int i;
++
++	for (i = 0; i < parser->local.usage_index; i++)
++		if (parser->local.usage_size[i] <= 2)
++			parser->local.usage[i] += parser->global.usage_page << 16;
++}
 +
  /*
-  * nodes_per_socket: Stores the number of nodes per socket.
-  * Refer to CPUID Fn8000_001E_ECX Node Identifiers[10:8]
-@@ -87,6 +89,9 @@ static void hygon_get_topology(struct cpuinfo_x86 *c)
- 		if (!err)
- 			c->x86_coreid_bits = get_count_order(c->x86_max_cores);
+  * Process a main item.
+  */
+@@ -556,6 +564,8 @@ static int hid_parser_main(struct hid_parser *parser, struct hid_item *item)
+ 	__u32 data;
+ 	int ret;
  
-+		/* Socket ID is ApicId[6] for these processors. */
-+		c->phys_proc_id = c->apicid >> APICID_SOCKET_ID_BIT;
++	hid_concatenate_usage_page(parser);
 +
- 		cacheinfo_hygon_init_llc_id(c, cpu, node_id);
- 	} else if (cpu_has(c, X86_FEATURE_NODEID_MSR)) {
- 		u64 value;
+ 	data = item_udata(item);
+ 
+ 	switch (item->tag) {
+@@ -765,6 +775,8 @@ static int hid_scan_main(struct hid_parser *parser, struct hid_item *item)
+ 	__u32 data;
+ 	int i;
+ 
++	hid_concatenate_usage_page(parser);
++
+ 	data = item_udata(item);
+ 
+ 	switch (item->tag) {
+diff --git a/include/linux/hid.h b/include/linux/hid.h
+index f9707d1dcb584..ac0c70b4ce10a 100644
+--- a/include/linux/hid.h
++++ b/include/linux/hid.h
+@@ -417,6 +417,7 @@ struct hid_global {
+ 
+ struct hid_local {
+ 	unsigned usage[HID_MAX_USAGES]; /* usage array */
++	u8 usage_size[HID_MAX_USAGES]; /* usage size array */
+ 	unsigned collection_index[HID_MAX_USAGES]; /* collection index array */
+ 	unsigned usage_index;
+ 	unsigned usage_minimum;
 -- 
 2.20.1
 
