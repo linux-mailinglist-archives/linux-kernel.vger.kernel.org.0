@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD6772F27C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:22:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DAD72ED35
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:33:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729325AbfE3DPF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:15:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54704 "EHLO mail.kernel.org"
+        id S2388291AbfE3D3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:29:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728988AbfE3DMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:23 -0400
+        id S1732199AbfE3DU1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:20:27 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA44421BE2;
-        Thu, 30 May 2019 03:12:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B290A24937;
+        Thu, 30 May 2019 03:20:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185942;
-        bh=jbUgxzC1P1dcl4lQYxJurSTa42eGwoXCqACb1Nmkxjs=;
+        s=default; t=1559186426;
+        bh=VPQvvo3SHXkAvfMTpOO34xbhbXNiy6XSCXnSvFBY4f4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H0AhUGo7/xAojQxjSS3Q3xeAp89DZj0vzJ3D9IS5a8Sa5CfeyxkTIVWRu3JzIhpSm
-         eTBJ+06L6VIxM6x9K3h7HJsBF2Bwi6utH8ftlNnAaJjC2Ynaa8NjlN1EHSo+24huVO
-         O6yq0mnkMEbczywwnlRKCOS9JbWC8sLpU6DjIBAs=
+        b=hT60qDdmq+bsePlh16gfK2aB58oHV3LcgOrIAedBmtgzCgFqpcu+dN0cAi9hNsmVg
+         YVfDcf1oafHL6Qgr3eRyIpSnVLfc/8L0S8FgbUEjfYTp+bxzJgbg6vhhhV51Jaj5Er
+         n+RggXBpUss9cPMF5xnGLyddQH010lwnihhWScPc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Leung <martin.leung@amd.com>,
-        Wenjing Liu <Wenjing.Liu@amd.com>,
-        Aidan Wood <Aidan.Wood@amd.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 350/405] drm/amd/display: half bandwidth for YCbCr420 during validation
-Date:   Wed, 29 May 2019 20:05:48 -0700
-Message-Id: <20190530030558.378476809@linuxfoundation.org>
+        stable@vger.kernel.org, Alexander Potapenko <glider@google.com>,
+        Syzbot <syzbot+6c0effb5877f6b0344e2@syzkaller.appspotmail.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.9 017/128] media: vivid: use vfree() instead of kfree() for dev->bitmap_cap
+Date:   Wed, 29 May 2019 20:05:49 -0700
+Message-Id: <20190530030437.846627438@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,110 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 162f807858d15bde60cf373a3ad46e03200ad9d8 ]
+From: Alexander Potapenko <glider@google.com>
 
-[Why]
-used to be unable to run 4:2:0 if using a dongle because 4k60 bandwidth
-exceeded dongle caps
+commit dad7e270ba712ba1c99cd2d91018af6044447a06 upstream.
 
-[How]
-half pixel clock during comparison to dongle cap. *Could get stuck on black
-screen on monitor that don't support 420 but will be selecting 420 as
-preferred mode*
+syzkaller reported crashes on kfree() called from
+vivid_vid_cap_s_selection(). This looks like a simple typo, as
+dev->bitmap_cap is allocated with vzalloc() throughout the file.
 
-Signed-off-by: Martin Leung <martin.leung@amd.com>
-Reviewed-by: Wenjing Liu <Wenjing.Liu@amd.com>
-Acked-by: Aidan Wood <Aidan.Wood@amd.com>
-Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: ef834f7836ec0 ("[media] vivid: add the video capture and output
+parts")
+
+Signed-off-by: Alexander Potapenko <glider@google.com>
+Reported-by: Syzbot <syzbot+6c0effb5877f6b0344e2@syzkaller.appspotmail.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/gpu/drm/amd/display/dc/core/dc_link.c | 33 +++++++++++--------
- 1 file changed, 20 insertions(+), 13 deletions(-)
+ drivers/media/platform/vivid/vivid-vid-cap.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link.c b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-index ea2f271e234bd..419e8de8c0f48 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-@@ -2074,11 +2074,28 @@ static void disable_link(struct dc_link *link, enum signal_type signal)
- 	}
- }
- 
-+static uint32_t get_timing_pixel_clock_100hz(const struct dc_crtc_timing *timing)
-+{
-+
-+	uint32_t pxl_clk = timing->pix_clk_100hz;
-+
-+	if (timing->pixel_encoding == PIXEL_ENCODING_YCBCR420)
-+		pxl_clk /= 2;
-+	else if (timing->pixel_encoding == PIXEL_ENCODING_YCBCR422)
-+		pxl_clk = pxl_clk * 2 / 3;
-+
-+	if (timing->display_color_depth == COLOR_DEPTH_101010)
-+		pxl_clk = pxl_clk * 10 / 8;
-+	else if (timing->display_color_depth == COLOR_DEPTH_121212)
-+		pxl_clk = pxl_clk * 12 / 8;
-+
-+	return pxl_clk;
-+}
-+
- static bool dp_active_dongle_validate_timing(
- 		const struct dc_crtc_timing *timing,
- 		const struct dpcd_caps *dpcd_caps)
- {
--	unsigned int required_pix_clk_100hz = timing->pix_clk_100hz;
- 	const struct dc_dongle_caps *dongle_caps = &dpcd_caps->dongle_caps;
- 
- 	switch (dpcd_caps->dongle_type) {
-@@ -2115,13 +2132,6 @@ static bool dp_active_dongle_validate_timing(
- 		return false;
- 	}
- 
--
--	/* Check Color Depth and Pixel Clock */
--	if (timing->pixel_encoding == PIXEL_ENCODING_YCBCR420)
--		required_pix_clk_100hz /= 2;
--	else if (timing->pixel_encoding == PIXEL_ENCODING_YCBCR422)
--		required_pix_clk_100hz = required_pix_clk_100hz * 2 / 3;
--
- 	switch (timing->display_color_depth) {
- 	case COLOR_DEPTH_666:
- 	case COLOR_DEPTH_888:
-@@ -2130,14 +2140,11 @@ static bool dp_active_dongle_validate_timing(
- 	case COLOR_DEPTH_101010:
- 		if (dongle_caps->dp_hdmi_max_bpc < 10)
- 			return false;
--		required_pix_clk_100hz = required_pix_clk_100hz * 10 / 8;
- 		break;
- 	case COLOR_DEPTH_121212:
- 		if (dongle_caps->dp_hdmi_max_bpc < 12)
- 			return false;
--		required_pix_clk_100hz = required_pix_clk_100hz * 12 / 8;
- 		break;
--
- 	case COLOR_DEPTH_141414:
- 	case COLOR_DEPTH_161616:
- 	default:
-@@ -2145,7 +2152,7 @@ static bool dp_active_dongle_validate_timing(
- 		return false;
- 	}
- 
--	if (required_pix_clk_100hz > (dongle_caps->dp_hdmi_max_pixel_clk * 10))
-+	if (get_timing_pixel_clock_100hz(timing) > (dongle_caps->dp_hdmi_max_pixel_clk * 10))
- 		return false;
- 
- 	return true;
-@@ -2166,7 +2173,7 @@ enum dc_status dc_link_validate_mode_timing(
- 		return DC_OK;
- 
- 	/* Passive Dongle */
--	if (0 != max_pix_clk && timing->pix_clk_100hz > max_pix_clk)
-+	if (max_pix_clk != 0 && get_timing_pixel_clock_100hz(timing) > max_pix_clk)
- 		return DC_EXCEED_DONGLE_CAP;
- 
- 	/* Active Dongle*/
--- 
-2.20.1
-
+--- a/drivers/media/platform/vivid/vivid-vid-cap.c
++++ b/drivers/media/platform/vivid/vivid-vid-cap.c
+@@ -984,7 +984,7 @@ int vivid_vid_cap_s_selection(struct fil
+ 		v4l2_rect_map_inside(&s->r, &dev->fmt_cap_rect);
+ 		if (dev->bitmap_cap && (compose->width != s->r.width ||
+ 					compose->height != s->r.height)) {
+-			kfree(dev->bitmap_cap);
++			vfree(dev->bitmap_cap);
+ 			dev->bitmap_cap = NULL;
+ 		}
+ 		*compose = s->r;
 
 
