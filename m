@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D35922E9C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 02:39:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A1032E9CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 02:45:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbfE3Ai4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 20:38:56 -0400
-Received: from mail-pg1-f173.google.com ([209.85.215.173]:37690 "EHLO
-        mail-pg1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726527AbfE3Aiz (ORCPT
+        id S1727178AbfE3ApP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 20:45:15 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:44384 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726527AbfE3ApP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 20:38:55 -0400
-Received: by mail-pg1-f173.google.com with SMTP id 20so898656pgr.4
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 17:38:55 -0700 (PDT)
+        Wed, 29 May 2019 20:45:15 -0400
+Received: by mail-pg1-f195.google.com with SMTP id n2so886093pgp.11
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 17:45:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=PmTxsZkl/AZl4brRAQiwifi011qlZsWSQ/8ZgN8xMbA=;
-        b=Pc5nQ4KY0u/WJH6JmIuktS4PiaBLd3d+GzXGFZ+KrPViWEtma9wJOSCNqwN5t/mqOg
-         +cP8gofnO/oGiMt4Yso0+ueXxLmNQAo+3DI8bBHgdRmB6cWzFfYn/estnRkmIEgL34Iu
-         vNsVg3gLlFRiNRUHEGUwGHOJ+MgM02/Bgiom8sULebTAcK4gYgHCQQEZWnietnZ8rEbx
-         uKBZt7DgnbgcUMa2UhhYq8B4HUXrPVfMvY12OW5jDZ6RbviAqEK/3BnvbIhjeshVsKIE
-         SQp8nN2CO8XBSeZT7eT0GEetoyJOK4SA9UVyF0KE/m8i2OH4eD1GRSAwAeD0KXg07acD
-         TqfA==
+        bh=3pQf3oE9pe7ut38GOYF86CTbPhCE2HZHC16fikq5yN4=;
+        b=b0rhC0GnaksDvk0NWeuH1qv7fPieZq9dXKXYRobup/o0JNscbNlpDJOYzfHN03PATj
+         OHKJ0xZuwZZH2F+3URlVPUKBZOH+aTinvwRWog8zP7uTflJ6QdFQVbpKZHqJfi1IFeu8
+         khW1oqaMCyj+NK+HU/0/smU4pi1IZ9amJI+fxmBOHfWKxlazKHZ5PHpryv2cISCV2/V+
+         zyO0l1aRDazryxC70o7JgzWp7qZksuVAyeUdewD0qiRIoEziuBzQVolw7TXKpLD6KXOs
+         ORsa6C3gaQ3krpOaXj9O7Hra3MD77Z6IQCs/0/7PLPI6MquEgy5BPIGmI658rVdhHTv1
+         Pplw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PmTxsZkl/AZl4brRAQiwifi011qlZsWSQ/8ZgN8xMbA=;
-        b=U+jTbfro9jDMOIX2liRbvUMEX84ShwL5JpA7Oi+tGq8tZC85h0AlwqEFlezg4Ga4jt
-         iaK/HtMTMfrEQcx3gifYpqAdTW6VCCI1jlHBSvGFjbtWNE9AN9ataemF1NHeU6/cyMMB
-         l/hgAbBavWV223XfBOeZLfoPcBVeCdZ/XV6N2bM42mxqxU4rPFvIDEOpAEyRoruOlpFf
-         GfhGkaOsl6JkJjc5IV1IV1G1E/kM5K984LsqlPl/3fgijnRjA6TwNAa013lmJjUUy8iH
-         sWkDse+GDptf/mOpn7S+pAIc0sAi0PuLn9944LiiY83LuABIck3X7iD6M3MQtJdyIxtR
-         xMlQ==
-X-Gm-Message-State: APjAAAVhDp+N3lGt1/k28VTqxCA/7FSS69isa7/f+vF7CDFjW0p7YayE
-        rU2Cn1m9ThNCvNUt0OAJGh4vr+Jj
-X-Google-Smtp-Source: APXvYqzw5AlJSHjj40ImNWg/oZ+XB0d+TgUm/he7O0X2LAPW67NhA2ViCotOlWQo5ntazwv6Ff5Zgw==
-X-Received: by 2002:a17:90a:6348:: with SMTP id v8mr826412pjs.34.1559176734933;
-        Wed, 29 May 2019 17:38:54 -0700 (PDT)
+        bh=3pQf3oE9pe7ut38GOYF86CTbPhCE2HZHC16fikq5yN4=;
+        b=o+vlRQFxfKep5aAVP5i613TbCfDJWrtcnALvpzGymCVoLryLZYlRUIYrX2KQY5iZ7S
+         6ci+AhIzBSBw2WV3S29vGDkPF1P25IU9j63CSiMT7XWJw33WeX6DE5a4lkJxqZuuSXfJ
+         BDDMNKMrrm2GBtM4+wJDgPxRYn/XuYx8m5c7/+Ue9cIcE6JOn8lcdEla8BxwI9SnaZf7
+         vX4syM+Rl1Un84v/N9FdrEFZzHpymaeR4Wi/4ffMccKlcgh8E5ROYZQvEFa1kv83rHSN
+         INtG3ocK9YQbHGu7idmnOtdn085yzeyjgRfOVO2E8+Gv698OifIhercloLSmQOlORxO7
+         xrxQ==
+X-Gm-Message-State: APjAAAWAYBnodi7WgMZN5tX4eeM/t9/4kLV0jEbNpZyF/IWq7Ibv/ZZG
+        0f9Tp0WT+acmrkQubmHJQ54=
+X-Google-Smtp-Source: APXvYqwt7gk7vehNu9cqSQXx8VB/7JE6vGRiMLtFRxLfQ3oXlqzDjKH+/HuhFg127Ccfn86BHVjTDw==
+X-Received: by 2002:a63:f509:: with SMTP id w9mr978848pgh.134.1559177114886;
+        Wed, 29 May 2019 17:45:14 -0700 (PDT)
 Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
-        by smtp.gmail.com with ESMTPSA id 4sm867780pfj.111.2019.05.29.17.38.50
+        by smtp.gmail.com with ESMTPSA id t5sm476354pgh.46.2019.05.29.17.45.10
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 29 May 2019 17:38:53 -0700 (PDT)
-Date:   Thu, 30 May 2019 09:38:48 +0900
+        Wed, 29 May 2019 17:45:13 -0700 (PDT)
+Date:   Thu, 30 May 2019 09:45:07 +0900
 From:   Minchan Kim <minchan@kernel.org>
 To:     Hillf Danton <hdanton@sina.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -59,51 +59,81 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Shakeel Butt <shakeelb@google.com>,
         Sonny Rao <sonnyrao@google.com>,
         Brian Geffon <bgeffon@google.com>
-Subject: Re: [RFC 5/7] mm: introduce external memory hinting API
-Message-ID: <20190530003848.GB229459@google.com>
+Subject: Re: [RFC 3/7] mm: introduce MADV_COLD
+Message-ID: <20190530004507.GC229459@google.com>
 References: <20190520035254.57579-1-minchan@kernel.org>
- <20190520035254.57579-6-minchan@kernel.org>
+ <20190520035254.57579-4-minchan@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190520035254.57579-6-minchan@kernel.org>
+In-Reply-To: <20190520035254.57579-4-minchan@kernel.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 11:41:23AM +0800, Hillf Danton wrote:
+On Tue, May 28, 2019 at 10:54:32PM +0800, Hillf Danton wrote:
 > 
-> On Mon, 20 May 2019 12:52:52 +0900 Minchan Kim wrote:
-> > --- a/arch/x86/entry/syscalls/syscall_64.tbl
-> > +++ b/arch/x86/entry/syscalls/syscall_64.tbl
-> > @@ -355,6 +355,7 @@
-> >  425	common	io_uring_setup		__x64_sys_io_uring_setup
-> >  426	common	io_uring_enter		__x64_sys_io_uring_enter
-> >  427	common	io_uring_register	__x64_sys_io_uring_register
-> > +428	common	process_madvise		__x64_sys_process_madvise
-> >  
-> Much better if something similar is added for arm64.
-
-I will port every architecture once we figure out RFC and reaches the
-conclusion for right interface.
-
+> On Mon, 20 May 2019 12:52:50 +0900 Minchan Kim wrote:
+> > +unsigned long reclaim_pages(struct list_head *page_list)
+> > +{
+> > +	int nid = -1;
+> > +	unsigned long nr_isolated[2] = {0, };
+> > +	unsigned long nr_reclaimed = 0;
+> > +	LIST_HEAD(node_page_list);
+> > +	struct reclaim_stat dummy_stat;
+> > +	struct scan_control sc = {
+> > +		.gfp_mask = GFP_KERNEL,
+> > +		.priority = DEF_PRIORITY,
+> > +		.may_writepage = 1,
+> > +		.may_unmap = 1,
+> > +		.may_swap = 1,
+> > +	};
+> > +
+> > +	while (!list_empty(page_list)) {
+> > +		struct page *page;
+> > +
+> > +		page = lru_to_page(page_list);
+> > +		list_del(&page->lru);
+> > +
+> > +		if (nid == -1) {
+> > +			nid = page_to_nid(page);
+> > +			INIT_LIST_HEAD(&node_page_list);
+> > +			nr_isolated[0] = nr_isolated[1] = 0;
+> > +		}
+> > +
+> > +		if (nid == page_to_nid(page)) {
+> > +			list_add(&page->lru, &node_page_list);
+> > +			nr_isolated[!!page_is_file_cache(page)] +=
+> > +						hpage_nr_pages(page);
+> > +			continue;
+> > +		}
+> > +
+> Now, page's node != nid and any page on the node_page_list has
+> node == nid. 
+> > +		nid = page_to_nid(page);
 > 
-> >  #
-> >  # x32-specific system call numbers start at 512 to avoid cache impact
-> > --- a/include/uapi/asm-generic/unistd.h
-> > +++ b/include/uapi/asm-generic/unistd.h
-> > @@ -832,6 +832,8 @@ __SYSCALL(__NR_io_uring_setup, sys_io_uring_setup)
-> >  __SYSCALL(__NR_io_uring_enter, sys_io_uring_enter)
-> >  #define __NR_io_uring_register 427
-> >  __SYSCALL(__NR_io_uring_register, sys_io_uring_register)
-> > +#define __NR_process_madvise 428
-> > +__SYSCALL(__NR_process_madvise, sys_process_madvise)
-> >  
-> >  #undef __NR_syscalls
-> >  #define __NR_syscalls 428
+> After updating nid, we get the node id of the isolated pages lost.
 > 
-> Seems __NR_syscalls needs to increment by one.
+> > +
+> > +		mod_node_page_state(NODE_DATA(nid), NR_ISOLATED_ANON,
+> > +					nr_isolated[0]);
+> > +		mod_node_page_state(NODE_DATA(nid), NR_ISOLATED_FILE,
+> > +					nr_isolated[1]);
+> > +		nr_reclaimed += shrink_page_list(&node_page_list,
+> > +				NODE_DATA(nid), &sc, TTU_IGNORE_ACCESS,
+> 
+> And nid no longer matches the node of the pages to be shrunk.
+> 
+> > +				&dummy_stat, true);
+> > +		while (!list_empty(&node_page_list)) {
+> > +			struct page *page = lru_to_page(page_list);
+> 
+> Non-empty node_page_list will never become empty if pages are deleted
+> only from the page_list.
 
-Thanks. I will fix it.
+Sure.
+They were last minute change. I will fix it.
+
+Thanks for the review!
