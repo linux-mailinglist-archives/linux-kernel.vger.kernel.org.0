@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1F0A2ED6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:36:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 062BF2F457
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:38:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387475AbfE3DZB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:25:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50684 "EHLO mail.kernel.org"
+        id S2388450AbfE3EhO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:37:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56518 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731504AbfE3DSS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:18 -0400
+        id S1729290AbfE3DMy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:12:54 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D233624787;
-        Thu, 30 May 2019 03:18:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F90221BE2;
+        Thu, 30 May 2019 03:12:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186297;
-        bh=PXskwP5my7LYhHMGycl5qGICLGQxqOlvynyoXfbl5bE=;
+        s=default; t=1559185973;
+        bh=WOOrXOO/ZZElyoOFfQnb966ikiq3jXd6AlTIvyUJrzo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Rzr90JcXHuJ/wFM992llLdJ93L5Vr9B9FNi0s3tLsH/7S5F2wp59v42m15xx+AIys
-         L4TWyrX4vXt96QAh2DC7rDIK/rGWNZ1oS4SMBsXfr9QQGDJeHeq7DllbS6EZUyeCQs
-         QabcSW97Cge4AYvzEsLtHsN4McCfrPs3O+sd1XtE=
+        b=HOkTjFrobELqSifYOK/IqQzaKFMYHiB2f3JfW7X4bCJWV9xYMhDWlwBstdHXd/knQ
+         ZJShaPP7EQoyi7t1wMaSUOBBskWZQvZaruPOTBg+96hDD8VKo+kNHm2vIB2+azACMR
+         gIXfqJgvXhArafn3bV+iheAzLW64iTqvuck4XHng=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        stable@vger.kernel.org,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 225/276] thunderbolt: Fix to check the return value of kmemdup
+Subject: [PATCH 5.1 385/405] regulator: da9063: Fix notifier mutex lock warning
 Date:   Wed, 29 May 2019 20:06:23 -0700
-Message-Id: <20190530030539.178954010@linuxfoundation.org>
+Message-Id: <20190530030600.182478900@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,35 +46,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit fd21b79e541e4666c938a344f3ad2df74b4f5120 ]
+[ Upstream commit 29d40b4a5776ec4727c9f0e00a884423dd5e3366 ]
 
-uuid in add_switch is allocted via kmemdup which can fail. The patch
-logs the error and cleans up the allocated memory for switch.
+The mutex for the regulator_dev must be controlled by the caller of
+the regulator_notifier_call_chain(), as described in the comment
+for that function.
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Failure to mutex lock and unlock surrounding the notifier call results
+in a kernel WARN_ON_ONCE() which will dump a backtrace for the
+regulator_notifier_call_chain() when that function call is first made.
+The mutex can be controlled using the regulator_lock/unlock() API.
+
+Fixes: 69ca3e58d178 ("regulator: da9063: Add Dialog DA9063 voltage regulators support.")
+Suggested-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Signed-off-by: Steve Twiss <stwiss.opensource@diasemi.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thunderbolt/icm.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/regulator/da9063-regulator.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
-index 28fc4ce75edb4..8490a1b6b6156 100644
---- a/drivers/thunderbolt/icm.c
-+++ b/drivers/thunderbolt/icm.c
-@@ -476,6 +476,11 @@ static void add_switch(struct tb_switch *parent_sw, u64 route,
- 		goto out;
+diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-regulator.c
+index 2b0c7a85306ab..d7bdb95b7602e 100644
+--- a/drivers/regulator/da9063-regulator.c
++++ b/drivers/regulator/da9063-regulator.c
+@@ -615,9 +615,12 @@ static irqreturn_t da9063_ldo_lim_event(int irq, void *data)
+ 		if (regl->info->oc_event.reg != DA9063_REG_STATUS_D)
+ 			continue;
  
- 	sw->uuid = kmemdup(uuid, sizeof(*uuid), GFP_KERNEL);
-+	if (!sw->uuid) {
-+		tb_sw_warn(sw, "cannot allocate memory for switch\n");
-+		tb_switch_put(sw);
-+		goto out;
-+	}
- 	sw->connection_id = connection_id;
- 	sw->connection_key = connection_key;
- 	sw->link = link;
+-		if (BIT(regl->info->oc_event.lsb) & bits)
++		if (BIT(regl->info->oc_event.lsb) & bits) {
++		        regulator_lock(regl->rdev);
+ 			regulator_notifier_call_chain(regl->rdev,
+ 					REGULATOR_EVENT_OVER_CURRENT, NULL);
++		        regulator_unlock(regl->rdev);
++		}
+ 	}
+ 
+ 	return IRQ_HANDLED;
 -- 
 2.20.1
 
