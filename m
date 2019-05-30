@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0A012ED87
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:40:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B06072EB7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:13:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732800AbfE3DWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:22:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43698 "EHLO mail.kernel.org"
+        id S1729451AbfE3DN0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:13:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730779AbfE3DQn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:16:43 -0400
+        id S1728571AbfE3DL3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:11:29 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 366AA24624;
-        Thu, 30 May 2019 03:16:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BAA224482;
+        Thu, 30 May 2019 03:11:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186203;
-        bh=PXyNiBVDngqp8kmfxOJ/7Q+LgxW2Mff6MtqJg3Du+ZU=;
+        s=default; t=1559185889;
+        bh=0EkAdPCGdyqIBSDXQo7mk0iCaNKd2VP0axqRZUpJS/A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LNCeYOX5UZfail6Wbsl0gw3dslm7PInh2+xnLckNoujoQ7OwaZiIu3Dgk1Nd8pqM1
-         mjRKfWH9OMk0CNyqX8keHYAhGZwzyDtM0TLmEHGaGpcYVhIlN/h4C0LPgGRmEJeLPO
-         Z1TMCpjynESecksrCXwcxCqUUqaktN+h6xyDBy+k=
+        b=znIErsJ2QmaU0r/5Tm/jGdylpgkkLNP+syX5p34SyCDaUsdgmgcUhPkQuJjysZ5mj
+         Nj6CHK2Kzj0ELwaOf+/C5HpWCSJPOJdsLOq2PRtWHZPMTNehZu0oWizmiGtTy18r3m
+         AhryfIHJcCcmi8tO6Df8y9mN6RATwuslcj4LKnF8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 088/276] sched/nohz: Run NOHZ idle load balancer on HK_FLAG_MISC CPUs
-Date:   Wed, 29 May 2019 20:04:06 -0700
-Message-Id: <20190530030531.755189018@linuxfoundation.org>
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 249/405] brcmfmac: fix missing checks for kmemdup
+Date:   Wed, 29 May 2019 20:04:07 -0700
+Message-Id: <20190530030553.592183810@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,70 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9b019acb72e4b5741d88e8936d6f200ed44b66b2 ]
+[ Upstream commit 46953f97224d56a12ccbe9c6acaa84ca0dab2780 ]
 
-The NOHZ idle balancer runs on the lowest idle CPU. This can
-interfere with isolated CPUs, so confine it to HK_FLAG_MISC
-housekeeping CPUs.
+In case kmemdup fails, the fix sets conn_info->req_ie_len and
+conn_info->resp_ie_len to zero to avoid buffer overflows.
 
-HK_FLAG_SCHED is not used for this because it is not set anywhere
-at the moment. This could be folded into HK_FLAG_SCHED once that
-option is fixed.
-
-The problem was observed with increased jitter on an application
-running on CPU0, caused by NOHZ idle load balancing being run on
-CPU1 (an SMT sibling).
-
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190412042613.28930-1-npiggin@gmail.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sched/fair.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index d31916366d39c..7a1e9db617f76 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -9083,22 +9083,26 @@ static inline int on_null_domain(struct rq *rq)
-  * - When one of the busy CPUs notice that there may be an idle rebalancing
-  *   needed, they will kick the idle load balancer, which then does idle
-  *   load balancing for all the idle CPUs.
-+ * - HK_FLAG_MISC CPUs are used for this task, because HK_FLAG_SCHED not set
-+ *   anywhere yet.
-  */
- 
- static inline int find_new_ilb(void)
- {
--	int ilb = cpumask_first(nohz.idle_cpus_mask);
-+	int ilb;
- 
--	if (ilb < nr_cpu_ids && idle_cpu(ilb))
--		return ilb;
-+	for_each_cpu_and(ilb, nohz.idle_cpus_mask,
-+			      housekeeping_cpumask(HK_FLAG_MISC)) {
-+		if (idle_cpu(ilb))
-+			return ilb;
-+	}
- 
- 	return nr_cpu_ids;
- }
- 
- /*
-- * Kick a CPU to do the nohz balancing, if it is time for it. We pick the
-- * nohz_load_balancer CPU (if there is one) otherwise fallback to any idle
-- * CPU (if there is one).
-+ * Kick a CPU to do the nohz balancing, if it is time for it. We pick any
-+ * idle CPU in the HK_FLAG_MISC housekeeping set (if there is one).
-  */
- static void kick_ilb(unsigned int flags)
- {
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+index e92f6351bd224..8ee8af4e7ec4f 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -5464,6 +5464,8 @@ static s32 brcmf_get_assoc_ies(struct brcmf_cfg80211_info *cfg,
+ 		conn_info->req_ie =
+ 		    kmemdup(cfg->extra_buf, conn_info->req_ie_len,
+ 			    GFP_KERNEL);
++		if (!conn_info->req_ie)
++			conn_info->req_ie_len = 0;
+ 	} else {
+ 		conn_info->req_ie_len = 0;
+ 		conn_info->req_ie = NULL;
+@@ -5480,6 +5482,8 @@ static s32 brcmf_get_assoc_ies(struct brcmf_cfg80211_info *cfg,
+ 		conn_info->resp_ie =
+ 		    kmemdup(cfg->extra_buf, conn_info->resp_ie_len,
+ 			    GFP_KERNEL);
++		if (!conn_info->resp_ie)
++			conn_info->resp_ie_len = 0;
+ 	} else {
+ 		conn_info->resp_ie_len = 0;
+ 		conn_info->resp_ie = NULL;
 -- 
 2.20.1
 
