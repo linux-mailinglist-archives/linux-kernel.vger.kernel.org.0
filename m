@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23F672ED26
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:32:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D8AE2ED31
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:33:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387821AbfE3DaQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:30:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33432 "EHLO mail.kernel.org"
+        id S1732693AbfE3D2u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:28:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732506AbfE3DVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:21:17 -0400
+        id S1730532AbfE3DUQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:20:16 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC2D3249DA;
-        Thu, 30 May 2019 03:21:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 205DD24918;
+        Thu, 30 May 2019 03:20:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186476;
-        bh=hqO8khmazp4lM1KFVi1BgHAUrnclTL+xalaZPhEo3hE=;
+        s=default; t=1559186416;
+        bh=+AqCDIM5UC3xb9nQVemPcQpfm/wHfY8NsDn9rFRZ2h0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sJZB6USRY6akt0L/eQxxtQieUapVRk+ihKYWvePGeYTu/gN1arVyDKTzQBqoGX4aH
-         pRc/zhtWOK5GVwFWdSVGc2OsDzPx8zuFEaMrBAkshuYc2rq5xp1MUmqeSk3rRzgeYY
-         Ad/jJ9uZQ/CvCkXxSA7V+rSTYTbeGMaNC+vNL2E0=
+        b=Uu/LPoSu0p6tUpZBm4+cVXEMnOwRcaYYA2ZHn28a9w2RPUTJDxDlsf5Yopr6ZqBDG
+         ZS/IDKdluHxjh/GS2EbizHPebxb7xa6bCRyskyY36hYCGE0LcZIUSgckGEYhmmXllD
+         sVW5DG8mitWd3E83QtfAgYImGI7uO3L+2jlwo3sE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 110/128] media: wl128x: prevent two potential buffer overflows
-Date:   Wed, 29 May 2019 20:07:22 -0700
-Message-Id: <20190530030454.354971883@linuxfoundation.org>
+Subject: [PATCH 4.14 189/193] ASoC: davinci-mcasp: Fix clang warning without CONFIG_PM
+Date:   Wed, 29 May 2019 20:07:23 -0700
+Message-Id: <20190530030513.204147560@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,60 +46,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9c2ccc324b3a6cbc865ab8b3e1a09e93d3c8ade9 ]
+[ Upstream commit 8ca5104715cfd14254ea5aecc390ae583b707607 ]
 
-Smatch marks skb->data as untrusted so it warns that "evt_hdr->dlen"
-can copy up to 255 bytes and we only have room for two bytes.  Even
-if this comes from the firmware and we trust it, the new policy
-generally is just to fix it as kernel hardenning.
+Building with clang shows a variable that is only used by the
+suspend/resume functions but defined outside of their #ifdef block:
 
-I can't test this code so I tried to be very conservative.  I considered
-not allowing "evt_hdr->dlen == 1" because it doesn't initialize the
-whole variable but in the end I decided to allow it and manually
-initialized "asic_id" and "asic_ver" to zero.
+sound/soc/ti/davinci-mcasp.c:48:12: error: variable 'context_regs' is not needed and will not be emitted
 
-Fixes: e8454ff7b9a4 ("[media] drivers:media:radio: wl128x: FM Driver Common sources")
+We commonly fix these by marking the PM functions as __maybe_unused,
+but here that would grow the davinci_mcasp structure, so instead
+add another #ifdef here.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: 1cc0c054f380 ("ASoC: davinci-mcasp: Convert the context save/restore to use array")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/radio/wl128x/fmdrv_common.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ sound/soc/davinci/davinci-mcasp.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/media/radio/wl128x/fmdrv_common.c b/drivers/media/radio/wl128x/fmdrv_common.c
-index 642b89c66bcb9..c1457cf466981 100644
---- a/drivers/media/radio/wl128x/fmdrv_common.c
-+++ b/drivers/media/radio/wl128x/fmdrv_common.c
-@@ -494,7 +494,8 @@ int fmc_send_cmd(struct fmdev *fmdev, u8 fm_op, u16 type, void *payload,
- 		return -EIO;
- 	}
- 	/* Send response data to caller */
--	if (response != NULL && response_len != NULL && evt_hdr->dlen) {
-+	if (response != NULL && response_len != NULL && evt_hdr->dlen &&
-+	    evt_hdr->dlen <= payload_len) {
- 		/* Skip header info and copy only response data */
- 		skb_pull(skb, sizeof(struct fm_event_msg_hdr));
- 		memcpy(response, skb->data, evt_hdr->dlen);
-@@ -590,6 +591,8 @@ static void fm_irq_handle_flag_getcmd_resp(struct fmdev *fmdev)
- 		return;
+diff --git a/sound/soc/davinci/davinci-mcasp.c b/sound/soc/davinci/davinci-mcasp.c
+index f395bbc7c3545..9aa741d272798 100644
+--- a/sound/soc/davinci/davinci-mcasp.c
++++ b/sound/soc/davinci/davinci-mcasp.c
+@@ -43,6 +43,7 @@
  
- 	fm_evt_hdr = (void *)skb->data;
-+	if (fm_evt_hdr->dlen > sizeof(fmdev->irq_info.flag))
-+		return;
+ #define MCASP_MAX_AFIFO_DEPTH	64
  
- 	/* Skip header info and copy only response data */
- 	skb_pull(skb, sizeof(struct fm_event_msg_hdr));
-@@ -1315,7 +1318,7 @@ static int load_default_rx_configuration(struct fmdev *fmdev)
- static int fm_power_up(struct fmdev *fmdev, u8 mode)
- {
- 	u16 payload;
--	__be16 asic_id, asic_ver;
-+	__be16 asic_id = 0, asic_ver = 0;
- 	int resp_len, ret;
- 	u8 fw_name[50];
++#ifdef CONFIG_PM
+ static u32 context_regs[] = {
+ 	DAVINCI_MCASP_TXFMCTL_REG,
+ 	DAVINCI_MCASP_RXFMCTL_REG,
+@@ -65,6 +66,7 @@ struct davinci_mcasp_context {
+ 	u32	*xrsr_regs; /* for serializer configuration */
+ 	bool	pm_state;
+ };
++#endif
  
+ struct davinci_mcasp_ruledata {
+ 	struct davinci_mcasp *mcasp;
 -- 
 2.20.1
 
