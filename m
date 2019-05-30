@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 070342F471
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:38:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60AB52EE58
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:47:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388456AbfE3Eib (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:38:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56136 "EHLO mail.kernel.org"
+        id S1732248AbfE3DUd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:20:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729192AbfE3DMo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:44 -0400
+        id S1730526AbfE3DPz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:55 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 026F023D14;
-        Thu, 30 May 2019 03:12:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F7CA24595;
+        Thu, 30 May 2019 03:15:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185964;
-        bh=3J/n2st4d0hAJO8pcuzz+mcSFPyLHPTw3OKbxpL8evk=;
+        s=default; t=1559186155;
+        bh=xKdvYiTrysXl8tAQY5xmYsYmJtshszSnb1+V0B/wqFY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qRgSIvFiSMvFp/+1SHR9nQlfU/riaPioyhNG6Gz54FiXpOPaPo26PpR4gD8nqymKJ
-         1IFzACQvr+i5J/fqgO5Hb/45Y/HCA/hMSrXX4KyXxCW0lM0LJqO7EEGH8RIoQicwZ5
-         7WD1uNJFjAsWKEyT1FCzsFeWerslrWwbAkJ21U1w=
+        b=dDc0gcDMuhkCf9mhEZL7b3B5dntyVvtGiT5V1mr6n1prwlVHh79HMn2BfgJtk9CAf
+         BPT++tFukthArCmhSDsIr7UgnLTIac7JKJSRIMswvjcbU+3l6CeUuS2zksEMgojD72
+         iNSGmajThSkD9yN2LOuBDSKNBOs6s44WaUhPbSss=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 381/405] regulator: pv88060: Fix notifier mutex lock warning
+Subject: [PATCH 5.0 306/346] media: gspca: do not resubmit URBs when streaming has stopped
 Date:   Wed, 29 May 2019 20:06:19 -0700
-Message-Id: <20190530030600.002461339@linuxfoundation.org>
+Message-Id: <20190530030556.342442279@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,54 +44,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f58213637206e190453e3bd91f98f535566290a3 ]
+[ Upstream commit e6f8bd59c28f758feea403a70d6c3ef28c50959f ]
 
-The mutex for the regulator_dev must be controlled by the caller of
-the regulator_notifier_call_chain(), as described in the comment
-for that function.
+When streaming is stopped all URBs are killed, but in fill_frame and in
+bulk_irq this results in an attempt to resubmit the killed URB. That is
+not what you want and causes spurious kernel messages.
 
-Failure to mutex lock and unlock surrounding the notifier call results
-in a kernel WARN_ON_ONCE() which will dump a backtrace for the
-regulator_notifier_call_chain() when that function call is first made.
-The mutex can be controlled using the regulator_lock/unlock() API.
+So check if streaming has stopped before resubmitting.
 
-Fixes: f307a7e9b7af ("regulator: pv88060: new regulator driver")
-Suggested-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Signed-off-by: Steve Twiss <stwiss.opensource@diasemi.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Also check against gspca_dev->streaming rather than vb2_start_streaming_called()
+since vb2_start_streaming_called() will return true when in stop_streaming,
+but gspca_dev->streaming is set to false when stop_streaming is called.
+
+Fixes: 6992effe5344 ("gspca: Kill all URBs before releasing any of them")
+
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/regulator/pv88060-regulator.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/media/usb/gspca/gspca.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/regulator/pv88060-regulator.c b/drivers/regulator/pv88060-regulator.c
-index 1600f98218912..810816e9df5d5 100644
---- a/drivers/regulator/pv88060-regulator.c
-+++ b/drivers/regulator/pv88060-regulator.c
-@@ -244,9 +244,11 @@ static irqreturn_t pv88060_irq_handler(int irq, void *data)
- 	if (reg_val & PV88060_E_VDD_FLT) {
- 		for (i = 0; i < PV88060_MAX_REGULATORS; i++) {
- 			if (chip->rdev[i] != NULL) {
-+				regulator_lock(chip->rdev[i]);
- 				regulator_notifier_call_chain(chip->rdev[i],
- 					REGULATOR_EVENT_UNDER_VOLTAGE,
- 					NULL);
-+				regulator_unlock(chip->rdev[i]);
- 			}
- 		}
+diff --git a/drivers/media/usb/gspca/gspca.c b/drivers/media/usb/gspca/gspca.c
+index cac8e5f0543be..bdb81e93b74dd 100644
+--- a/drivers/media/usb/gspca/gspca.c
++++ b/drivers/media/usb/gspca/gspca.c
+@@ -314,6 +314,8 @@ static void fill_frame(struct gspca_dev *gspca_dev,
+ 	}
  
-@@ -261,9 +263,11 @@ static irqreturn_t pv88060_irq_handler(int irq, void *data)
- 	if (reg_val & PV88060_E_OVER_TEMP) {
- 		for (i = 0; i < PV88060_MAX_REGULATORS; i++) {
- 			if (chip->rdev[i] != NULL) {
-+				regulator_lock(chip->rdev[i]);
- 				regulator_notifier_call_chain(chip->rdev[i],
- 					REGULATOR_EVENT_OVER_TEMP,
- 					NULL);
-+				regulator_unlock(chip->rdev[i]);
- 			}
- 		}
+ resubmit:
++	if (!gspca_dev->streaming)
++		return;
+ 	/* resubmit the URB */
+ 	st = usb_submit_urb(urb, GFP_ATOMIC);
+ 	if (st < 0)
+@@ -330,7 +332,7 @@ static void isoc_irq(struct urb *urb)
+ 	struct gspca_dev *gspca_dev = (struct gspca_dev *) urb->context;
  
+ 	gspca_dbg(gspca_dev, D_PACK, "isoc irq\n");
+-	if (!vb2_start_streaming_called(&gspca_dev->queue))
++	if (!gspca_dev->streaming)
+ 		return;
+ 	fill_frame(gspca_dev, urb);
+ }
+@@ -344,7 +346,7 @@ static void bulk_irq(struct urb *urb)
+ 	int st;
+ 
+ 	gspca_dbg(gspca_dev, D_PACK, "bulk irq\n");
+-	if (!vb2_start_streaming_called(&gspca_dev->queue))
++	if (!gspca_dev->streaming)
+ 		return;
+ 	switch (urb->status) {
+ 	case 0:
+@@ -367,6 +369,8 @@ static void bulk_irq(struct urb *urb)
+ 				urb->actual_length);
+ 
+ resubmit:
++	if (!gspca_dev->streaming)
++		return;
+ 	/* resubmit the URB */
+ 	if (gspca_dev->cam.bulk_nurbs != 0) {
+ 		st = usb_submit_urb(urb, GFP_ATOMIC);
 -- 
 2.20.1
 
