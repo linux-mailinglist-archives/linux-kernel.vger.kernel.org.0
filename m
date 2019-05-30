@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5E492EF78
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:55:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B88782ECF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:29:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732094AbfE3Dzl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:55:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53900 "EHLO mail.kernel.org"
+        id S2388374AbfE3D3X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:29:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731811AbfE3DTK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:19:10 -0400
+        id S1732279AbfE3DUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:20:41 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA007247E9;
-        Thu, 30 May 2019 03:19:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5978224934;
+        Thu, 30 May 2019 03:20:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186349;
-        bh=h4rRgPtEKLxZdUtpQREGEX9ktlgSjKxE8SifMds7t+M=;
+        s=default; t=1559186440;
+        bh=IjFoK8ZdpvU3DOtmGug9aWyvX1orNxR6b+IkPJBg1OU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=06LH/rVds2bOgCjlpUTFs63tT6nwEcQCAX9MD2EHetQU4Pt5E4XVAADXWvARpXA60
-         VvXoPK5v8+HWRWWoO4mmGXrdKjthunP51qNJdW9PPkYS8UmdQzmCsg5iQxH0nYsQEn
-         6gFQmdLpJMIi3iue0Kci/v5ixL8EUllnJ0XDLlbo=
+        b=AtB4UXwjkqoQdd3vZyAxkQ2t2dW/+mOOI9zaua7Dcg3EcLH44WZTgj+NO0+rDUHKy
+         T8vJUFYazLp2TYHY6oTBhrBTKptzxDCEhDeQWiaM+U6QsbGFXwOjVRqcRJ1bHmHOdx
+         qTLNmGvzaxQRrSLoLtvvo0T8E1NUJq6n8FPzLi3w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 087/193] dmaengine: at_xdmac: remove BUG_ON macro in tasklet
+        stable@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>
+Subject: [PATCH 4.9 009/128] gfs2: Fix sign extension bug in gfs2_update_stats
 Date:   Wed, 29 May 2019 20:05:41 -0700
-Message-Id: <20190530030501.110950077@linuxfoundation.org>
+Message-Id: <20190530030435.201038082@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,40 +42,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e2c114c06da2d9ffad5b16690abf008d6696f689 ]
+From: Andreas Gruenbacher <agruenba@redhat.com>
 
-Even if this case shouldn't happen when controller is properly programmed,
-it's still better to avoid dumping a kernel Oops for this.
-As the sequence may happen only for debugging purposes, log the error and
-just finish the tasklet call.
+commit 5a5ec83d6ac974b12085cd99b196795f14079037 upstream.
 
-Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Commit 4d207133e9c3 changed the types of the statistic values in struct
+gfs2_lkstats from s64 to u64.  Because of that, what should be a signed
+value in gfs2_update_stats turned into an unsigned value.  When shifted
+right, we end up with a large positive value instead of a small negative
+value, which results in an incorrect variance estimate.
+
+Fixes: 4d207133e9c3 ("gfs2: Make statistics unsigned, suitable for use with do_div()")
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Cc: stable@vger.kernel.org # v4.4+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/dma/at_xdmac.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/gfs2/lock_dlm.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/dma/at_xdmac.c b/drivers/dma/at_xdmac.c
-index 4db2cd1c611de..22764cd30cc39 100644
---- a/drivers/dma/at_xdmac.c
-+++ b/drivers/dma/at_xdmac.c
-@@ -1606,7 +1606,11 @@ static void at_xdmac_tasklet(unsigned long data)
- 					struct at_xdmac_desc,
- 					xfer_node);
- 		dev_vdbg(chan2dev(&atchan->chan), "%s: desc 0x%p\n", __func__, desc);
--		BUG_ON(!desc->active_xfer);
-+		if (!desc->active_xfer) {
-+			dev_err(chan2dev(&atchan->chan), "Xfer not active: exiting");
-+			spin_unlock_bh(&atchan->lock);
-+			return;
-+		}
+--- a/fs/gfs2/lock_dlm.c
++++ b/fs/gfs2/lock_dlm.c
+@@ -32,9 +32,10 @@ extern struct workqueue_struct *gfs2_con
+  * @delta is the difference between the current rtt sample and the
+  * running average srtt. We add 1/8 of that to the srtt in order to
+  * update the current srtt estimate. The variance estimate is a bit
+- * more complicated. We subtract the abs value of the @delta from
+- * the current variance estimate and add 1/4 of that to the running
+- * total.
++ * more complicated. We subtract the current variance estimate from
++ * the abs value of the @delta and add 1/4 of that to the running
++ * total.  That's equivalent to 3/4 of the current variance
++ * estimate plus 1/4 of the abs of @delta.
+  *
+  * Note that the index points at the array entry containing the smoothed
+  * mean value, and the variance is always in the following entry
+@@ -50,7 +51,7 @@ static inline void gfs2_update_stats(str
+ 	s64 delta = sample - s->stats[index];
+ 	s->stats[index] += (delta >> 3);
+ 	index++;
+-	s->stats[index] += ((abs(delta) - s->stats[index]) >> 2);
++	s->stats[index] += (s64)(abs(delta) - s->stats[index]) >> 2;
+ }
  
- 		txd = &desc->tx_dma_desc;
- 
--- 
-2.20.1
-
+ /**
 
 
