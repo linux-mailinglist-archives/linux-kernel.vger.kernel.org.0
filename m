@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3F1B2ECF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:29:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31A032F061
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:03:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387631AbfE3D3a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:29:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59608 "EHLO mail.kernel.org"
+        id S1732818AbfE3EDV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:03:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732302AbfE3DUn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:20:43 -0400
+        id S1731350AbfE3DR5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:57 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 68DBC2492F;
-        Thu, 30 May 2019 03:20:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C272E24747;
+        Thu, 30 May 2019 03:17:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186442;
-        bh=U4u82knWy9GTzBmOLurMhlPwYmPP1crbMlWFFDbH9Kw=;
+        s=default; t=1559186276;
+        bh=yrcTPUnbn2kN1pX3seegK0EaYW5Bd5gzW9TAm7gkSCA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zdRKTCwsFRwxisTr+nO3i1Kx8LMAeTOfMaHiG7sAZ+Kkxsowf2jH/oOFl5xDWWTvX
-         wlv9JjQCvnFVxIlf9hj2jbMfxxWoayRtXMfO5l0tJRn66vyyrneebh4ShzfkV8lapV
-         GyAtlMU5j5+e6OnyFaL2pmaYvFAujy+xcbwtRaZk=
+        b=x/J6J0+MnunfmxA7H/woN05Ik4oRkgosb/gKfcxuWFVbrNYtE9ttrIiOkzg4PNCEV
+         zvixV2eUK/OsBal52t8WfaaVLoEzOUYJah+bd+jh0t/qI/WTOTh6lkx6WqvYMozIPh
+         dF45V9clacucJvUCtMiDTsAKimR+iO0V5Eza/54Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
-        Hannes Reinecke <hare@suse.com>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 046/128] bcache: return error immediately in bch_journal_replay()
+Subject: [PATCH 4.19 220/276] media: video-mux: fix null pointer dereferences
 Date:   Wed, 29 May 2019 20:06:18 -0700
-Message-Id: <20190530030442.983554516@linuxfoundation.org>
+Message-Id: <20190530030538.876996420@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,50 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 68d10e6979a3b59e3cd2e90bfcafed79c4cf180a ]
+[ Upstream commit aeb0d0f581e2079868e64a2e5ee346d340376eae ]
 
-When failure happens inside bch_journal_replay(), calling
-cache_set_err_on() and handling the failure in async way is not a good
-idea. Because after bch_journal_replay() returns, registering code will
-continue to execute following steps, and unregistering code triggered
-by cache_set_err_on() is running in same time. First it is unnecessary
-to handle failure and unregister cache set in an async way, second there
-might be potential race condition to run register and unregister code
-for same cache set.
+devm_kcalloc may fail and return a null pointer. The fix returns
+-ENOMEM upon failures to avoid null pointer dereferences.
 
-So in this patch, if failure happens in bch_journal_replay(), we don't
-call cache_set_err_on(), and just print out the same error message to
-kernel message buffer, then return -EIO immediately caller. Then caller
-can detect such failure and handle it in synchrnozied way.
-
-Signed-off-by: Coly Li <colyli@suse.de>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/bcache/journal.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/media/platform/video-mux.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
-index c76a0176b5c68..f8ae7ce29809d 100644
---- a/drivers/md/bcache/journal.c
-+++ b/drivers/md/bcache/journal.c
-@@ -322,9 +322,12 @@ int bch_journal_replay(struct cache_set *s, struct list_head *list)
- 	list_for_each_entry(i, list, list) {
- 		BUG_ON(i->pin && atomic_read(i->pin) != 1);
+diff --git a/drivers/media/platform/video-mux.c b/drivers/media/platform/video-mux.c
+index c01e1592ad0a8..c8ffe7bff77f1 100644
+--- a/drivers/media/platform/video-mux.c
++++ b/drivers/media/platform/video-mux.c
+@@ -365,9 +365,14 @@ static int video_mux_probe(struct platform_device *pdev)
+ 	vmux->active = -1;
+ 	vmux->pads = devm_kcalloc(dev, num_pads, sizeof(*vmux->pads),
+ 				  GFP_KERNEL);
++	if (!vmux->pads)
++		return -ENOMEM;
++
+ 	vmux->format_mbus = devm_kcalloc(dev, num_pads,
+ 					 sizeof(*vmux->format_mbus),
+ 					 GFP_KERNEL);
++	if (!vmux->format_mbus)
++		return -ENOMEM;
  
--		cache_set_err_on(n != i->j.seq, s,
--"bcache: journal entries %llu-%llu missing! (replaying %llu-%llu)",
--				 n, i->j.seq - 1, start, end);
-+		if (n != i->j.seq) {
-+			pr_err("bcache: journal entries %llu-%llu missing! (replaying %llu-%llu)",
-+			n, i->j.seq - 1, start, end);
-+			ret = -EIO;
-+			goto err;
-+		}
- 
- 		for (k = i->j.start;
- 		     k < bset_bkey_last(&i->j);
+ 	for (i = 0; i < num_pads; i++) {
+ 		vmux->pads[i].flags = (i < num_pads - 1) ? MEDIA_PAD_FL_SINK
 -- 
 2.20.1
 
