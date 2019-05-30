@@ -2,44 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BA242EC2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:20:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C19752ED12
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:30:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731740AbfE3DSx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:18:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36672 "EHLO mail.kernel.org"
+        id S2388651AbfE3Dat (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:30:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49084 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728321AbfE3DPA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:15:00 -0400
+        id S1733053AbfE3Dal (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:30:41 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5693E24579;
-        Thu, 30 May 2019 03:14:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C379424AF6;
+        Thu, 30 May 2019 03:30:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186099;
-        bh=cYj6tGVRkcCfyzn1WMPn2V4eRoSHbAJSj6gDIu0hjcw=;
+        s=default; t=1559187040;
+        bh=kMmh6iBL9NQyeey8nZVsGYVS5PhyCz7yCWD11jJUAMI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EVXqANYtI6cG03JA8u8S0PI/qxZ2fWsE+xsh8JaEnitfZ7NYjgQy+ehT1h6wYk+sM
-         b5Yjv78X9AnBJ0IQIxw53hR/rE/KMNuKJN02HkVnT7prlgJmUpKtHOan31D3sTpVBR
-         5bemLGJWEPkP+nQliBZDhqXpmvxbEB5YmhJv/4sg=
+        b=Y9C3LZOeoVLsOZnMZzKJ/Te6TlmlFd9kRUtqIr6QdkEWULuyX2yBF/PNpM+Z0jkAn
+         sqB0NeW7wHZNeTlucd7eOXov2pFrDd4d38aHACn5aiwxCQN+0JeCkJ4v5QoxRC4KBR
+         9ninUbr9W1yTc6PaWuxExo1W/2gZDJh3ia1dkeTs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        stable@vger.kernel.org,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 208/346] cpufreq: pmac32: fix possible object reference leak
-Date:   Wed, 29 May 2019 20:04:41 -0700
-Message-Id: <20190530030551.670288965@linuxfoundation.org>
+Subject: [PATCH 4.19 124/276] media: ov2659: make S_FMT succeed even if requested format doesnt match
+Date:   Wed, 29 May 2019 20:04:42 -0700
+Message-Id: <20190530030533.584869940@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,52 +47,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8d10dc28a9ea6e8c02e825dab28699f3c72b02d9 ]
+[ Upstream commit bccb89cf9cd07a0690d519696a00c00a973b3fe4 ]
 
-The call to of_find_node_by_name returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
+This driver returns an error if unsupported media bus pixel code is
+requested by VIDIOC_SUBDEV_S_FMT.
 
-Detected by coccinelle with the following warnings:
-./drivers/cpufreq/pmac32-cpufreq.c:557:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 552, but without a corresponding object release within this function.
-./drivers/cpufreq/pmac32-cpufreq.c:569:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 552, but without a corresponding object release within this function.
-./drivers/cpufreq/pmac32-cpufreq.c:598:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 587, but without a corresponding object release within this function.
+But according to Documentation/media/uapi/v4l/vidioc-subdev-g-fmt.rst,
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-pm@vger.kernel.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Drivers must not return an error solely because the requested format
+doesn't match the device capabilities. They must instead modify the
+format to match what the hardware can provide.
+
+So select default format code and return success in that case.
+
+This is detected by v4l2-compliance.
+
+Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+Acked-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpufreq/pmac32-cpufreq.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/i2c/ov2659.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/cpufreq/pmac32-cpufreq.c b/drivers/cpufreq/pmac32-cpufreq.c
-index 52f0d91d30c17..9b4ce2eb8222c 100644
---- a/drivers/cpufreq/pmac32-cpufreq.c
-+++ b/drivers/cpufreq/pmac32-cpufreq.c
-@@ -552,6 +552,7 @@ static int pmac_cpufreq_init_7447A(struct device_node *cpunode)
- 	volt_gpio_np = of_find_node_by_name(NULL, "cpu-vcore-select");
- 	if (volt_gpio_np)
- 		voltage_gpio = read_gpio(volt_gpio_np);
-+	of_node_put(volt_gpio_np);
- 	if (!voltage_gpio){
- 		pr_err("missing cpu-vcore-select gpio\n");
- 		return 1;
-@@ -588,6 +589,7 @@ static int pmac_cpufreq_init_750FX(struct device_node *cpunode)
- 	if (volt_gpio_np)
- 		voltage_gpio = read_gpio(volt_gpio_np);
+diff --git a/drivers/media/i2c/ov2659.c b/drivers/media/i2c/ov2659.c
+index 4715edc8ca33e..e6a8b5669b9cc 100644
+--- a/drivers/media/i2c/ov2659.c
++++ b/drivers/media/i2c/ov2659.c
+@@ -1117,8 +1117,10 @@ static int ov2659_set_fmt(struct v4l2_subdev *sd,
+ 		if (ov2659_formats[index].code == mf->code)
+ 			break;
  
-+	of_node_put(volt_gpio_np);
- 	pvr = mfspr(SPRN_PVR);
- 	has_cpu_l2lve = !((pvr & 0xf00) == 0x100);
+-	if (index < 0)
+-		return -EINVAL;
++	if (index < 0) {
++		index = 0;
++		mf->code = ov2659_formats[index].code;
++	}
  
+ 	mf->colorspace = V4L2_COLORSPACE_SRGB;
+ 	mf->field = V4L2_FIELD_NONE;
 -- 
 2.20.1
 
