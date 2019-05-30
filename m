@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 681D12F647
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:54:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2348D2F1B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:15:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389115AbfE3Eyf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:54:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47276 "EHLO mail.kernel.org"
+        id S1730583AbfE3DQF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:16:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728055AbfE3DKW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:10:22 -0400
+        id S1728440AbfE3DNS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:13:18 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5AF524481;
-        Thu, 30 May 2019 03:10:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 890AD2449A;
+        Thu, 30 May 2019 03:13:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185822;
-        bh=ot9FM3WGabb+tXREUKJBTyJMdSCYuDcHcMZmKOAYjwc=;
+        s=default; t=1559185997;
+        bh=X5au7f96IOi/d7xdbcCMJXSy7yjvbMLDW17izV5+LAw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FlP7QGpGBQ+eVzAw8xyzVw8I2zNJIPxm0NbniROXN2+63iVTF5Gg3ybtyZj1u18Cl
-         57HWtVbK0XcO6oDdLrIQSYEonwF+iXwThnXmDZii5XfhvPeBafdZK6cWo3FO5/hNxw
-         D8WwfRg50fYwW1F+oJv389nVziJxiVHa+xChtyJg=
+        b=hj8/CWFPslY6l9GahmJbZURo9em/P4ey+SXhXnQVP4wwa18H/YgYwMOtGm/Yx9hRQ
+         3uGnGLtGLvVt9LetqsDrGZt+KSd8oW1urdZjKamOmJ0RGHnfbHWN/XpV/q3fdWalWE
+         a9kFvdSgLmEh3yTmHLJ5BQP77LXkiYaJhwIVvMPQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org,
+        Roberto Bergantinos Corpas <rbergant@redhat.com>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 119/405] regulator: core: Actually put the gpiod after use
-Date:   Wed, 29 May 2019 20:01:57 -0700
-Message-Id: <20190530030547.022035842@linuxfoundation.org>
+Subject: [PATCH 5.0 045/346] NFS: make nfs_match_client killable
+Date:   Wed, 29 May 2019 20:01:58 -0700
+Message-Id: <20190530030543.160262551@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +46,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 78927aa40bc82f32de07323ddc1c9de07ac68180 ]
+[ Upstream commit 950a578c6128c2886e295b9c7ecb0b6b22fcc92b ]
 
-I went to great lengths to hand over the management of the GPIO
-descriptors to the regulator core, and some stray rebased
-oneliner in the old patch must have been assuming the devices
-were still doing devres management of it.
+    Actually we don't do anything with return value from
+    nfs_wait_client_init_complete in nfs_match_client, as a
+    consequence if we get a fatal signal and client is not
+    fully initialised, we'll loop to "again" label
 
-We handed the management over to the regulator core, so of
-course the regulator core shall issue gpiod_put() when done.
+    This has been proven to cause soft lockups on some scenarios
+    (no-carrier but configured network interfaces)
 
-Sorry for the descriptor leak.
-
-Fixes: 541d052d7215 ("regulator: core: Only support passing enable GPIO descriptors")
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Roberto Bergantinos Corpas <rbergant@redhat.com>
+Reviewed-by: Benjamin Coddington <bcodding@redhat.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/regulator/core.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/nfs/client.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 968dcd9d7a070..6da41207e479a 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -2256,6 +2256,7 @@ static void regulator_ena_gpio_free(struct regulator_dev *rdev)
- 		if (pin->gpiod == rdev->ena_pin->gpiod) {
- 			if (pin->request_count <= 1) {
- 				pin->request_count = 0;
-+				gpiod_put(pin->gpiod);
- 				list_del(&pin->list);
- 				kfree(pin);
- 				rdev->ena_pin = NULL;
+diff --git a/fs/nfs/client.c b/fs/nfs/client.c
+index 90d71fda65cec..350cfa561e0e8 100644
+--- a/fs/nfs/client.c
++++ b/fs/nfs/client.c
+@@ -284,6 +284,7 @@ static struct nfs_client *nfs_match_client(const struct nfs_client_initdata *dat
+ 	struct nfs_client *clp;
+ 	const struct sockaddr *sap = data->addr;
+ 	struct nfs_net *nn = net_generic(data->net, nfs_net_id);
++	int error;
+ 
+ again:
+ 	list_for_each_entry(clp, &nn->nfs_client_list, cl_share_link) {
+@@ -296,8 +297,10 @@ static struct nfs_client *nfs_match_client(const struct nfs_client_initdata *dat
+ 		if (clp->cl_cons_state > NFS_CS_READY) {
+ 			refcount_inc(&clp->cl_count);
+ 			spin_unlock(&nn->nfs_client_lock);
+-			nfs_wait_client_init_complete(clp);
++			error = nfs_wait_client_init_complete(clp);
+ 			nfs_put_client(clp);
++			if (error < 0)
++				return ERR_PTR(error);
+ 			spin_lock(&nn->nfs_client_lock);
+ 			goto again;
+ 		}
+@@ -407,6 +410,8 @@ struct nfs_client *nfs_get_client(const struct nfs_client_initdata *cl_init)
+ 		clp = nfs_match_client(cl_init);
+ 		if (clp) {
+ 			spin_unlock(&nn->nfs_client_lock);
++			if (IS_ERR(clp))
++				return clp;
+ 			if (new)
+ 				new->rpc_ops->free_client(new);
+ 			return nfs_found_client(cl_init, clp);
 -- 
 2.20.1
 
