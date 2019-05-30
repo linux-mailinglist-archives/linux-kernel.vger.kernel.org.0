@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6454F2F0DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:08:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 586602EBA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:14:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbfE3EH6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:07:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46480 "EHLO mail.kernel.org"
+        id S1729953AbfE3DOm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:14:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731094AbfE3DRY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:17:24 -0400
+        id S1728835AbfE3DMH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:12:07 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46C4624469;
-        Thu, 30 May 2019 03:17:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D13124481;
+        Thu, 30 May 2019 03:12:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186244;
-        bh=CLNvXd+bHDw5o9XKvwpl1iSa3ZtiTufxn3+Q/WLnUZE=;
+        s=default; t=1559185927;
+        bh=KcYU3017Pfj0zJ3/1ozBROPqeL6TleTPQN8FGt/U3Lg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F7whppBHKKiY7S0mOt61/cK3ODGQbxTud6ntwq0EbEUb0BtHTaAJdUZ8SQruvEsYa
-         50FMCuwvclDtTBGh/sIliBazkKZoFRwINTjWS0LH9Mm061FmMS8a4k9WNGn4x7f0Hd
-         53Wjiej4ufLIpFpj9STZLsy9S0deJAfdCMUrVZ4U=
+        b=tsVRsgXZH+j+yn2XEcnyoZPGSEQK3u8xLJF5lBqWvJ4Gk0icNu+RZwBwO4ayIp19d
+         1XmIkyJ7QkKDA7vGA3SnUNAUBaMGl1HRq7bwEdk0ylg7GykSKV36YgS6k2dlvzStX5
+         hxxsY5erfIrnz7iDjrG1fiuWJhQc9wRZp51FnJdw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kefeng Wang <wangkefeng.wang@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org, Dave Ertman <david.m.ertman@intel.com>,
+        Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 158/276] hwmon: (smsc47m1) Use request_muxed_region for Super-IO accesses
+Subject: [PATCH 5.1 318/405] ice: Prevent unintended multiple chain resets
 Date:   Wed, 29 May 2019 20:05:16 -0700
-Message-Id: <20190530030535.394945616@linuxfoundation.org>
+Message-Id: <20190530030556.862559289@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,90 +46,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d6410408ad2a798c4cc685252c1baa713be0ad69 ]
+[ Upstream commit 2ebd4428d93a2f6ce0c813b10a1a43b6a8241fe5 ]
 
-Super-IO accesses may fail on a system with no or unmapped LPC bus.
+In the current implementation of ice_reset_subtask, if multiple reset
+types are set in the pf->state, the most intrusive one is meant to be
+performed only, but the bits requesting the other types are not being
+cleared. This would lead to another reset being performed the next time
+the service task is scheduled.
 
-Also, other drivers may attempt to access the LPC bus at the same time,
-resulting in undefined behavior.
+Change the flow of ice_reset_subtask so that all reset request bits in
+pf->state are cleared, and we still perform the most intrusive of the
+resets requested.
 
-Use request_muxed_region() to ensure that IO access on the requested
-address space is supported, and to ensure that access by multiple drivers
-is synchronized.
-
-Fixes: 8d5d45fb1468 ("I2C: Move hwmon drivers (2/3)")
-Reported-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-Reported-by: John Garry <john.garry@huawei.com>
-Cc: John Garry <john.garry@huawei.com>
-Acked-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Dave Ertman <david.m.ertman@intel.com>
+Signed-off-by: Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/smsc47m1.c | 28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
+ drivers/net/ethernet/intel/ice/ice_main.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hwmon/smsc47m1.c b/drivers/hwmon/smsc47m1.c
-index c7b6a425e2c02..5eeac9853d0ae 100644
---- a/drivers/hwmon/smsc47m1.c
-+++ b/drivers/hwmon/smsc47m1.c
-@@ -73,16 +73,21 @@ superio_inb(int reg)
- /* logical device for fans is 0x0A */
- #define superio_select() superio_outb(0x07, 0x0A)
- 
--static inline void
-+static inline int
- superio_enter(void)
- {
-+	if (!request_muxed_region(REG, 2, DRVNAME))
-+		return -EBUSY;
-+
- 	outb(0x55, REG);
-+	return 0;
- }
- 
- static inline void
- superio_exit(void)
- {
- 	outb(0xAA, REG);
-+	release_region(REG, 2);
- }
- 
- #define SUPERIO_REG_ACT		0x30
-@@ -531,8 +536,12 @@ static int __init smsc47m1_find(struct smsc47m1_sio_data *sio_data)
- {
- 	u8 val;
- 	unsigned short addr;
-+	int err;
-+
-+	err = superio_enter();
-+	if (err)
-+		return err;
- 
--	superio_enter();
- 	val = force_id ? force_id : superio_inb(SUPERIO_REG_DEVID);
- 
- 	/*
-@@ -608,13 +617,14 @@ static int __init smsc47m1_find(struct smsc47m1_sio_data *sio_data)
- static void smsc47m1_restore(const struct smsc47m1_sio_data *sio_data)
- {
- 	if ((sio_data->activate & 0x01) == 0) {
--		superio_enter();
--		superio_select();
--
--		pr_info("Disabling device\n");
--		superio_outb(SUPERIO_REG_ACT, sio_data->activate);
--
--		superio_exit();
-+		if (!superio_enter()) {
-+			superio_select();
-+			pr_info("Disabling device\n");
-+			superio_outb(SUPERIO_REG_ACT, sio_data->activate);
-+			superio_exit();
-+		} else {
-+			pr_warn("Failed to disable device\n");
-+		}
- 	}
- }
+diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
+index ac30288720f71..ba9f88cd138de 100644
+--- a/drivers/net/ethernet/intel/ice/ice_main.c
++++ b/drivers/net/ethernet/intel/ice/ice_main.c
+@@ -416,8 +416,14 @@ static void ice_reset_subtask(struct ice_pf *pf)
+ 	 * for the reset now), poll for reset done, rebuild and return.
+ 	 */
+ 	if (test_bit(__ICE_RESET_OICR_RECV, pf->state)) {
+-		clear_bit(__ICE_GLOBR_RECV, pf->state);
+-		clear_bit(__ICE_CORER_RECV, pf->state);
++		/* Perform the largest reset requested */
++		if (test_and_clear_bit(__ICE_CORER_RECV, pf->state))
++			reset_type = ICE_RESET_CORER;
++		if (test_and_clear_bit(__ICE_GLOBR_RECV, pf->state))
++			reset_type = ICE_RESET_GLOBR;
++		/* return if no valid reset type requested */
++		if (reset_type == ICE_RESET_INVAL)
++			return;
+ 		if (!test_bit(__ICE_PREPARED_FOR_RESET, pf->state))
+ 			ice_prepare_for_reset(pf);
  
 -- 
 2.20.1
