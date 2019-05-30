@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 850822F38A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:33:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF3332EFFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:01:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729578AbfE3DNq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:13:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51714 "EHLO mail.kernel.org"
+        id S1731543AbfE3DSZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:18:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728626AbfE3DLi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:11:38 -0400
+        id S1729141AbfE3DOf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:14:35 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD05C24481;
-        Thu, 30 May 2019 03:11:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5708B2456A;
+        Thu, 30 May 2019 03:14:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185898;
-        bh=xSpoQjODxqZdFGO2ced1WiqABYFP4VZxw/aswlJFmcA=;
+        s=default; t=1559186074;
+        bh=8keJriZsw9Y8ar9fdjBf2O42zokZWeaUYjGcDFk/UWA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sl1aIRNtdEPwwkJXyTdmakpWvIu73eC2FD5C1amfImy4sRIM5nAxemWSotXSDmAQD
-         q61dLleG1FjQv/AgNWy1//hAMR7mVMiMLxs/NyeUlHfhqnZe/GOSay99U3bm5eLs9C
-         nmiyTZSLCoPlIZJ+G0N1HQkhbprDPaDIvJrtKtBE=
+        b=onM2LSGPu6wWQfWecngReE80HmclV2I4If9hUsENltBlJ+5I8rooAVa4Jr0MfXmxC
+         hbZ8pxIy0f1s3d524mYoZx4lRQ7U53GCht5adi/Y8b79LrE76lJce3y1J+YIvlhDx9
+         0igup57uUeGW6KuCypIWu1oyS32RJd9ltVEtVnNc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lior David <liord@codeaurora.org>,
-        Maya Erez <merez@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Yinbo Zhu <yinbo.zhu@nxp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 264/405] wil6210: fix return code of wmi_mgmt_tx and wmi_mgmt_tx_ext
-Date:   Wed, 29 May 2019 20:04:22 -0700
-Message-Id: <20190530030554.299325891@linuxfoundation.org>
+Subject: [PATCH 5.0 190/346] mmc: sdhci-of-esdhc: add erratum eSDHC-A001 and A-008358 support
+Date:   Wed, 29 May 2019 20:04:23 -0700
+Message-Id: <20190530030550.700038526@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,69 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 49122ec42634f73babb1dc96f170023e5228d080 ]
+[ Upstream commit 05cb6b2a66fa7837211a060878e91be5eb10cb07 ]
 
-The functions that send management TX frame have 3 possible
-results: success and other side acknowledged receive (ACK=1),
-success and other side did not acknowledge receive(ACK=0) and
-failure to send the frame. The current implementation
-incorrectly reports the ACK=0 case as failure.
+eSDHC-A001: The data timeout counter (SYSCTL[DTOCV]) is not
+reliable for DTOCV values 0x4(2^17 SD clock), 0x8(2^21 SD clock),
+and 0xC(2^25 SD clock). The data timeout counter can count from
+2^13–2^27, but for values 2^17, 2^21, and 2^25, the timeout
+counter counts for only 2^13 SD clocks.
+A-008358: The data timeout counter value loaded into the timeout
+counter is less than expected and can result into early timeout
+error in case of eSDHC data transactions. The table below shows
+the expected vs actual timeout period for different values of
+SYSCTL[DTOCV]:
+these two erratum has the same quirk to control it, and set
+SDHCI_QUIRK_RESET_AFTER_REQUEST to fix above issue.
 
-Signed-off-by: Lior David <liord@codeaurora.org>
-Signed-off-by: Maya Erez <merez@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/wil6210/cfg80211.c |  5 +++++
- drivers/net/wireless/ath/wil6210/wmi.c      | 11 ++++++-----
- 2 files changed, 11 insertions(+), 5 deletions(-)
+ drivers/mmc/host/sdhci-of-esdhc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/ath/wil6210/cfg80211.c b/drivers/net/wireless/ath/wil6210/cfg80211.c
-index a1e226652b4ab..692730415d781 100644
---- a/drivers/net/wireless/ath/wil6210/cfg80211.c
-+++ b/drivers/net/wireless/ath/wil6210/cfg80211.c
-@@ -1274,7 +1274,12 @@ int wil_cfg80211_mgmt_tx(struct wiphy *wiphy, struct wireless_dev *wdev,
- 			     params->wait);
+diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-esdhc.c
+index 4fc4d2c7643c5..7e0eae8dafae0 100644
+--- a/drivers/mmc/host/sdhci-of-esdhc.c
++++ b/drivers/mmc/host/sdhci-of-esdhc.c
+@@ -1077,8 +1077,10 @@ static int sdhci_esdhc_probe(struct platform_device *pdev)
+ 	if (esdhc->vendor_ver > VENDOR_V_22)
+ 		host->quirks &= ~SDHCI_QUIRK_NO_BUSY_IRQ;
  
- out:
-+	/* when the sent packet was not acked by receiver(ACK=0), rc will
-+	 * be -EAGAIN. In this case this function needs to return success,
-+	 * the ACK=0 will be reflected in tx_status.
-+	 */
- 	tx_status = (rc == 0);
-+	rc = (rc == -EAGAIN) ? 0 : rc;
- 	cfg80211_mgmt_tx_status(wdev, cookie ? *cookie : 0, buf, len,
- 				tx_status, GFP_KERNEL);
+-	if (of_find_compatible_node(NULL, NULL, "fsl,p2020-esdhc"))
++	if (of_find_compatible_node(NULL, NULL, "fsl,p2020-esdhc")) {
+ 		host->quirks2 |= SDHCI_QUIRK_RESET_AFTER_REQUEST;
++		host->quirks2 |= SDHCI_QUIRK_BROKEN_TIMEOUT_VAL;
++	}
  
-diff --git a/drivers/net/wireless/ath/wil6210/wmi.c b/drivers/net/wireless/ath/wil6210/wmi.c
-index bda4a9712f91f..63116f4b62c7f 100644
---- a/drivers/net/wireless/ath/wil6210/wmi.c
-+++ b/drivers/net/wireless/ath/wil6210/wmi.c
-@@ -3502,8 +3502,9 @@ int wmi_mgmt_tx(struct wil6210_vif *vif, const u8 *buf, size_t len)
- 	rc = wmi_call(wil, WMI_SW_TX_REQ_CMDID, vif->mid, cmd, total,
- 		      WMI_SW_TX_COMPLETE_EVENTID, &evt, sizeof(evt), 2000);
- 	if (!rc && evt.evt.status != WMI_FW_STATUS_SUCCESS) {
--		wil_err(wil, "mgmt_tx failed with status %d\n", evt.evt.status);
--		rc = -EINVAL;
-+		wil_dbg_wmi(wil, "mgmt_tx failed with status %d\n",
-+			    evt.evt.status);
-+		rc = -EAGAIN;
- 	}
- 
- 	kfree(cmd);
-@@ -3555,9 +3556,9 @@ int wmi_mgmt_tx_ext(struct wil6210_vif *vif, const u8 *buf, size_t len,
- 	rc = wmi_call(wil, WMI_SW_TX_REQ_EXT_CMDID, vif->mid, cmd, total,
- 		      WMI_SW_TX_COMPLETE_EVENTID, &evt, sizeof(evt), 2000);
- 	if (!rc && evt.evt.status != WMI_FW_STATUS_SUCCESS) {
--		wil_err(wil, "mgmt_tx_ext failed with status %d\n",
--			evt.evt.status);
--		rc = -EINVAL;
-+		wil_dbg_wmi(wil, "mgmt_tx_ext failed with status %d\n",
-+			    evt.evt.status);
-+		rc = -EAGAIN;
- 	}
- 
- 	kfree(cmd);
+ 	if (of_device_is_compatible(np, "fsl,p5040-esdhc") ||
+ 	    of_device_is_compatible(np, "fsl,p5020-esdhc") ||
 -- 
 2.20.1
 
