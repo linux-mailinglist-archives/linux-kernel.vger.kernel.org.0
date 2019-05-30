@@ -2,90 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABD9E2F7DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 09:23:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0EEC2F7D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 09:17:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727710AbfE3HXl convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 30 May 2019 03:23:41 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:58606 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726169AbfE3HXk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 03:23:40 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 4B4156074CC1;
-        Thu, 30 May 2019 09:23:38 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 7gYQFNzHwAQ9; Thu, 30 May 2019 09:23:36 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 7DEF36074CC0;
-        Thu, 30 May 2019 09:23:36 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id SYWKd5C5gmcb; Thu, 30 May 2019 09:23:36 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 397BB6074CC1;
-        Thu, 30 May 2019 09:23:36 +0200 (CEST)
-Date:   Thu, 30 May 2019 09:23:36 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-kernel <linux-kernel@vger.kernel.org>, linux-imx@nxp.com,
-        festevam@gmail.com, kernel <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>, shawnguo@kernel.org,
-        davem@davemloft.net, david <david@sigma-star.at>
-Message-ID: <2084969721.73871.1559201016164.JavaMail.zimbra@nod.at>
-In-Reply-To: <20190530023357.2mrjtslnka4i6dbl@gondor.apana.org.au>
-References: <20190529224844.25203-1-richard@nod.at> <20190530023357.2mrjtslnka4i6dbl@gondor.apana.org.au>
-Subject: Re: [RFC PATCH 1/2] crypto: Allow working with key references
+        id S1727648AbfE3HRo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 03:17:44 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:40770 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726949AbfE3HRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 03:17:43 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 46407A0CC356BA3EDF68;
+        Thu, 30 May 2019 15:17:41 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 30 May 2019 15:17:33 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH] media: wl128x: Fix some error handling in fm_v4l2_init_video_device()
+Date:   Thu, 30 May 2019 15:25:49 +0800
+Message-ID: <20190530072549.112280-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [195.201.40.130]
-X-Mailer: Zimbra 8.8.8_GA_3025 (ZimbraWebClient - FF60 (Linux)/8.8.8_GA_1703)
-Thread-Topic: crypto: Allow working with key references
-Thread-Index: 6TFlo+ksej+abko/FbMI4LB7xy79pA==
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ Ursprüngliche Mail -----
-> Von: "Herbert Xu" <herbert@gondor.apana.org.au>
-> An: "richard" <richard@nod.at>
-> CC: "Linux Crypto Mailing List" <linux-crypto@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, "linux-kernel"
-> <linux-kernel@vger.kernel.org>, linux-imx@nxp.com, festevam@gmail.com, "kernel" <kernel@pengutronix.de>, "Sascha Hauer"
-> <s.hauer@pengutronix.de>, shawnguo@kernel.org, davem@davemloft.net, "david" <david@sigma-star.at>
-> Gesendet: Donnerstag, 30. Mai 2019 04:33:57
-> Betreff: Re: [RFC PATCH 1/2] crypto: Allow working with key references
+The fm_v4l2_init_video_device() forget to unregister v4l2/video device
+in the error path, it could lead to UAF issue, eg,
 
-> On Thu, May 30, 2019 at 12:48:43AM +0200, Richard Weinberger wrote:
->> Some crypto accelerators allow working with secure or hidden keys.
->> This keys are not exposed to Linux nor main memory. To use them
->> for a crypto operation they are referenced with a device specific id.
->> 
->> This patch adds a new flag, CRYPTO_TFM_REQ_REF_KEY.
->> If this flag is set, crypto drivers should tread the key as
->> specified via setkey as reference and not as regular key.
->> Since we reuse the key data structure such a reference is limited
->> by the key size of the chiper and is chip specific.
->> 
->> TODO: If the cipher implementation or the driver does not
->> support reference keys, we need a way to detect this an fail
->> upon setkey.
->> How should the driver indicate that it supports this feature?
->> 
->> Signed-off-by: Richard Weinberger <richard@nod.at>
-> 
-> We already have existing drivers doing this.  Please have a look
-> at how they're doing it and use the same paradigm.  You can grep
-> for paes under drivers/crypto.
+  BUG: KASAN: use-after-free in atomic64_read include/asm-generic/atomic-instrumented.h:836 [inline]
+  BUG: KASAN: use-after-free in atomic_long_read include/asm-generic/atomic-long.h:28 [inline]
+  BUG: KASAN: use-after-free in __mutex_unlock_slowpath+0x92/0x690 kernel/locking/mutex.c:1206
+  Read of size 8 at addr ffff8881e84a7c70 by task v4l_id/3659
 
-Thanks for the pointer.
-So the preferred way is defining a new crypto algorithm prefixed with
-"p" and reusing setkey to provide the key reference.
+  CPU: 1 PID: 3659 Comm: v4l_id Not tainted 5.1.0 #8
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+  Call Trace:
+   __dump_stack lib/dump_stack.c:77 [inline]
+   dump_stack+0xa9/0x10e lib/dump_stack.c:113
+   print_address_description+0x65/0x270 mm/kasan/report.c:187
+   kasan_report+0x149/0x18d mm/kasan/report.c:317
+   atomic64_read include/asm-generic/atomic-instrumented.h:836 [inline]
+   atomic_long_read include/asm-generic/atomic-long.h:28 [inline]
+   __mutex_unlock_slowpath+0x92/0x690 kernel/locking/mutex.c:1206
+   fm_v4l2_fops_open+0xac/0x120 [fm_drv]
+   v4l2_open+0x191/0x390 [videodev]
+   chrdev_open+0x20d/0x570 fs/char_dev.c:417
+   do_dentry_open+0x700/0xf30 fs/open.c:777
+   do_last fs/namei.c:3416 [inline]
+   path_openat+0x7c4/0x2a90 fs/namei.c:3532
+   do_filp_open+0x1a5/0x2b0 fs/namei.c:3563
+   do_sys_open+0x302/0x490 fs/open.c:1069
+   do_syscall_64+0x9f/0x450 arch/x86/entry/common.c:290
+   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+  RIP: 0033:0x7f8180c17c8e
+  ...
+  Allocated by task 3642:
+   set_track mm/kasan/common.c:87 [inline]
+   __kasan_kmalloc.constprop.3+0xa0/0xd0 mm/kasan/common.c:497
+   fm_drv_init+0x13/0x1000 [fm_drv]
+   do_one_initcall+0xbc/0x47d init/main.c:901
+   do_init_module+0x1b5/0x547 kernel/module.c:3456
+   load_module+0x6405/0x8c10 kernel/module.c:3804
+   __do_sys_finit_module+0x162/0x190 kernel/module.c:3898
+   do_syscall_64+0x9f/0x450 arch/x86/entry/common.c:290
+   entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Thanks,
-//richard
+  Freed by task 3642:
+   set_track mm/kasan/common.c:87 [inline]
+   __kasan_slab_free+0x130/0x180 mm/kasan/common.c:459
+   slab_free_hook mm/slub.c:1429 [inline]
+   slab_free_freelist_hook mm/slub.c:1456 [inline]
+   slab_free mm/slub.c:3003 [inline]
+   kfree+0xe1/0x270 mm/slub.c:3958
+   fm_drv_init+0x1e6/0x1000 [fm_drv]
+   do_one_initcall+0xbc/0x47d init/main.c:901
+   do_init_module+0x1b5/0x547 kernel/module.c:3456
+   load_module+0x6405/0x8c10 kernel/module.c:3804
+   __do_sys_finit_module+0x162/0x190 kernel/module.c:3898
+   do_syscall_64+0x9f/0x450 arch/x86/entry/common.c:290
+   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Add relevant unregister functions to fix it.
+
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Hans Verkuil <hans.verkuil@cisco.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+---
+ drivers/media/radio/wl128x/fmdrv_v4l2.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/media/radio/wl128x/fmdrv_v4l2.c b/drivers/media/radio/wl128x/fmdrv_v4l2.c
+index e25fd4d4d280..a1eaea19a81c 100644
+--- a/drivers/media/radio/wl128x/fmdrv_v4l2.c
++++ b/drivers/media/radio/wl128x/fmdrv_v4l2.c
+@@ -550,6 +550,7 @@ int fm_v4l2_init_video_device(struct fmdev *fmdev, int radio_nr)
+ 
+ 	/* Register with V4L2 subsystem as RADIO device */
+ 	if (video_register_device(&gradio_dev, VFL_TYPE_RADIO, radio_nr)) {
++		v4l2_device_unregister(&fmdev->v4l2_dev);
+ 		fmerr("Could not register video device\n");
+ 		return -ENOMEM;
+ 	}
+@@ -563,6 +564,8 @@ int fm_v4l2_init_video_device(struct fmdev *fmdev, int radio_nr)
+ 	if (ret < 0) {
+ 		fmerr("(fmdev): Can't init ctrl handler\n");
+ 		v4l2_ctrl_handler_free(&fmdev->ctrl_handler);
++		video_unregister_device(fmdev->radio_dev);
++		v4l2_device_unregister(&fmdev->v4l2_dev);
+ 		return -EBUSY;
+ 	}
+ 
+-- 
+2.20.1
+
