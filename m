@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A2012ED5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:35:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 257312F500
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:44:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387432AbfE3D0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:26:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53532 "EHLO mail.kernel.org"
+        id S2388742AbfE3En0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:43:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730383AbfE3DTC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:19:02 -0400
+        id S1728856AbfE3DML (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:12:11 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D46B024725;
-        Thu, 30 May 2019 03:19:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB23A244A0;
+        Thu, 30 May 2019 03:12:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186341;
-        bh=Nmf83k/tJU31KQN/PoLuiZHPJEcaxrZfzZ6Fw9uzICY=;
+        s=default; t=1559185930;
+        bh=vEOByxn9z6ZCUFQN8HmDmoIcUw5cBKWjZLs5n98wcSw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rqZldkN1xDSTt7kBBl4gei4A4VUwXG7wD6ZaDCnvC3mN3QCTgUWAIsscbyjpM51y9
-         B0lHKRUFp5TvYb2WmogdR1+L24oTPky2278q0BJ91+QmQe6NKJdEkVTDWsAlmPpVzj
-         sRnwYrrsXdshIy0qBVp7vffC1C67p7BArH4MRi+0=
+        b=tRkUZZrg0LpRTtkVawNBcul8fKiFMSjpVLYadZwRMcvtD6XN6F0rawqxobkQGczz9
+         aIrhhw3sMw7SMhmaYp8S0rrt2spl4S+yjOQTl6YXMQ7kTCyMpnSBVBjBtmBAUK4iwc
+         Qdawqy1aGxlFpA3q1rm5GWJ26KP5r/Dp37rSKF30=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Daniel T. Lee" <danieltimlee@gmail.com>,
-        Yonghong Song <yhs@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org,
+        George Hilliard <thirtythreeforty@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 068/193] libbpf: fix samples/bpf build failure due to undefined UINT32_MAX
+Subject: [PATCH 5.1 324/405] staging: mt7621-mmc: Check for nonzero number of scatterlist entries
 Date:   Wed, 29 May 2019 20:05:22 -0700
-Message-Id: <20190530030458.820580739@linuxfoundation.org>
+Message-Id: <20190530030557.140337596@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,61 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 32e621e55496a0009f44fe4914cd4a23cade4984 ]
+[ Upstream commit d4223e06b6aed581625f574ad8faa71b6c0fc903 ]
 
-Currently, building bpf samples will cause the following error.
+The buffer descriptor setup loop is correct only if it is setting up at
+least one bd struct.  Besides, there is an error if dma_map_sg() returns
+0, which is possible and must be handled.
 
-    ./tools/lib/bpf/bpf.h:132:27: error: 'UINT32_MAX' undeclared here (not in a function) ..
-     #define BPF_LOG_BUF_SIZE (UINT32_MAX >> 8) /* verifier maximum in kernels <= 5.1 */
-                               ^
-    ./samples/bpf/bpf_load.h:31:25: note: in expansion of macro 'BPF_LOG_BUF_SIZE'
-     extern char bpf_log_buf[BPF_LOG_BUF_SIZE];
-                             ^~~~~~~~~~~~~~~~
+Additionally, remove the BUG_ON() checking sglen, which is unnecessary
+because we configure DMA with that constraint during init.
 
-Due to commit 4519efa6f8ea ("libbpf: fix BPF_LOG_BUF_SIZE off-by-one error")
-hard-coded size of BPF_LOG_BUF_SIZE has been replaced with UINT32_MAX which is
-defined in <stdint.h> header.
-
-Even with this change, bpf selftests are running fine since these are built
-with clang and it includes header(-idirafter) from clang/6.0.0/include.
-(it has <stdint.h>)
-
-    clang -I. -I./include/uapi -I../../../include/uapi -idirafter /usr/local/include -idirafter /usr/include \
-    -idirafter /usr/lib/llvm-6.0/lib/clang/6.0.0/include -idirafter /usr/include/x86_64-linux-gnu \
-    -Wno-compare-distinct-pointer-types -O2 -target bpf -emit-llvm -c progs/test_sysctl_prog.c -o - | \
-    llc -march=bpf -mcpu=generic  -filetype=obj -o /linux/tools/testing/selftests/bpf/test_sysctl_prog.o
-
-But bpf samples are compiled with GCC, and it only searches and includes
-headers declared at the target file. As '#include <stdint.h>' hasn't been
-declared in tools/lib/bpf/bpf.h, it causes build failure of bpf samples.
-
-    gcc -Wp,-MD,./samples/bpf/.sockex3_user.o.d -Wall -Wmissing-prototypes -Wstrict-prototypes \
-    -O2 -fomit-frame-pointer -std=gnu89 -I./usr/include -I./tools/lib/ -I./tools/testing/selftests/bpf/ \
-    -I./tools/  lib/ -I./tools/include -I./tools/perf -c -o ./samples/bpf/sockex3_user.o ./samples/bpf/sockex3_user.c;
-
-This commit add declaration of '#include <stdint.h>' to tools/lib/bpf/bpf.h
-to fix this problem.
-
-Signed-off-by: Daniel T. Lee <danieltimlee@gmail.com>
-Acked-by: Yonghong Song <yhs@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: George Hilliard <thirtythreeforty@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/lib/bpf/bpf.h | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/staging/mt7621-mmc/sd.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/tools/lib/bpf/bpf.h b/tools/lib/bpf/bpf.h
-index b8ea5843c39ee..e9423d6af9332 100644
---- a/tools/lib/bpf/bpf.h
-+++ b/tools/lib/bpf/bpf.h
-@@ -23,6 +23,7 @@
+diff --git a/drivers/staging/mt7621-mmc/sd.c b/drivers/staging/mt7621-mmc/sd.c
+index 74f0e57ad2f15..38f9ea02ee3a9 100644
+--- a/drivers/staging/mt7621-mmc/sd.c
++++ b/drivers/staging/mt7621-mmc/sd.c
+@@ -596,8 +596,6 @@ static void msdc_dma_setup(struct msdc_host *host, struct msdc_dma *dma,
+ 	struct bd *bd;
+ 	u32 j;
  
- #include <linux/bpf.h>
- #include <stddef.h>
-+#include <stdint.h>
+-	BUG_ON(sglen > MAX_BD_NUM); /* not support currently */
+-
+ 	gpd = dma->gpd;
+ 	bd  = dma->bd;
  
- int bpf_create_map_node(enum bpf_map_type map_type, int key_size,
- 			int value_size, int max_entries, __u32 map_flags,
+@@ -692,6 +690,13 @@ static int msdc_do_request(struct mmc_host *mmc, struct mmc_request *mrq)
+ 		data->sg_count = dma_map_sg(mmc_dev(mmc), data->sg,
+ 					    data->sg_len,
+ 					    mmc_get_dma_dir(data));
++
++		if (data->sg_count == 0) {
++			dev_err(mmc_dev(host->mmc), "failed to map DMA for transfer\n");
++			data->error = -ENOMEM;
++			goto done;
++		}
++
+ 		msdc_dma_setup(host, &host->dma, data->sg,
+ 			       data->sg_count);
+ 
 -- 
 2.20.1
 
