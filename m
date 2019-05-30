@@ -2,39 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B73402F54D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:47:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2EB52F16A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:13:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728595AbfE3DLd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:11:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47594 "EHLO mail.kernel.org"
+        id S1729771AbfE3DQj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:16:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727394AbfE3DK3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:10:29 -0400
+        id S1729426AbfE3DNY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:13:24 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25E04244B0;
-        Thu, 30 May 2019 03:10:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 306E623D14;
+        Thu, 30 May 2019 03:13:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185828;
-        bh=rvfR1R9LhqYoocQOPnB7UbHAO0dewm2JT9fMJSFrmb4=;
+        s=default; t=1559186003;
+        bh=/27MC/24vy0pzlQ1bxrg2WEVvYdYFBSyYBq0wfcmfUc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gofkOhRbsoaUXZCN1JkMx3XiQ/j7vZjT8ykZMz2uNer+VKcDTVczjSlNr2OwcWt77
-         lgTwjcx9k1EzxdweyjqJGnPUDVrUyG2x1wqB/l1QIalFxcbpvo8wXXabr3rf9B+R6H
-         waYOvUni6lkHvZB69Y1iQWIz/5oo7VRgC2JM7xms=
+        b=dy2mbto3EfvGjw8SNcvX6OkaAf3S63Q4DKdbzKEJVIBq88Ykz1uGJpuFmNLhNXQIE
+         VL/OBed8ujaSBxiFIOMF7oERee+GAT9ckERP0T6AeD3k+NQBwzkMsLPnXBGLMY5p7n
+         YUtEFD5w8xSflD47fpAlvtK4lDSrEIPOOkz0VjFg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shenghui Wang <shhuiw@foxmail.com>,
-        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 129/405] bcache: avoid potential memleak of list of journal_replay(s) in the CACHE_SYNC branch of run_cache_set
-Date:   Wed, 29 May 2019 20:02:07 -0700
-Message-Id: <20190530030547.587748800@linuxfoundation.org>
+        stable@vger.kernel.org, Dongli Zhang <dongli.zhang@oracle.com>,
+        James Smart <james.smart@broadcom.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>
+Subject: [PATCH 5.0 055/346] blk-mq: grab .q_usage_counter when queuing request from plug code path
+Date:   Wed, 29 May 2019 20:02:08 -0700
+Message-Id: <20190530030543.736817542@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,58 +49,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 95f18c9d1310730d075499a75aaf13bcd60405a7 ]
+[ Upstream commit e87eb301bee183d82bb3d04bd71b6660889a2588 ]
 
-In the CACHE_SYNC branch of run_cache_set(), LIST_HEAD(journal) is used
-to collect journal_replay(s) and filled by bch_journal_read().
+Just like aio/io_uring, we need to grab 2 refcount for queuing one
+request, one is for submission, another is for completion.
 
-If all goes well, bch_journal_replay() will release the list of
-jounal_replay(s) at the end of the branch.
+If the request isn't queued from plug code path, the refcount grabbed
+in generic_make_request() serves for submission. In theroy, this
+refcount should have been released after the sumission(async run queue)
+is done. blk_freeze_queue() works with blk_sync_queue() together
+for avoiding race between cleanup queue and IO submission, given async
+run queue activities are canceled because hctx->run_work is scheduled with
+the refcount held, so it is fine to not hold the refcount when
+running the run queue work function for dispatch IO.
 
-If something goes wrong, code flow will jump to the label "err:" and leave
-the list unreleased.
+However, if request is staggered into plug list, and finally queued
+from plug code path, the refcount in submission side is actually missed.
+And we may start to run queue after queue is removed because the queue's
+kobject refcount isn't guaranteed to be grabbed in flushing plug list
+context, then kernel oops is triggered, see the following race:
 
-This patch will release the list of journal_replay(s) in the case of
-error detected.
+blk_mq_flush_plug_list():
+        blk_mq_sched_insert_requests()
+                insert requests to sw queue or scheduler queue
+                blk_mq_run_hw_queue
 
-v1 -> v2:
-* Move the release code to the location after label 'err:' to
-  simply the change.
+Because of concurrent run queue, all requests inserted above may be
+completed before calling the above blk_mq_run_hw_queue. Then queue can
+be freed during the above blk_mq_run_hw_queue().
 
-Signed-off-by: Shenghui Wang <shhuiw@foxmail.com>
-Signed-off-by: Coly Li <colyli@suse.de>
+Fixes the issue by grab .q_usage_counter before calling
+blk_mq_sched_insert_requests() in blk_mq_flush_plug_list(). This way is
+safe because the queue is absolutely alive before inserting request.
+
+Cc: Dongli Zhang <dongli.zhang@oracle.com>
+Cc: James Smart <james.smart@broadcom.com>
+Cc: linux-scsi@vger.kernel.org,
+Cc: Martin K . Petersen <martin.petersen@oracle.com>,
+Cc: Christoph Hellwig <hch@lst.de>,
+Cc: James E . J . Bottomley <jejb@linux.vnet.ibm.com>,
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Tested-by: James Smart <james.smart@broadcom.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/bcache/super.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ block/blk-mq-sched.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 171d5e0f698ba..5c9751e9a76a4 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1782,6 +1782,8 @@ static void run_cache_set(struct cache_set *c)
- 	struct cache *ca;
- 	struct closure cl;
- 	unsigned int i;
-+	LIST_HEAD(journal);
-+	struct journal_replay *l;
- 
- 	closure_init_stack(&cl);
- 
-@@ -1939,6 +1941,12 @@ static void run_cache_set(struct cache_set *c)
- 	set_bit(CACHE_SET_RUNNING, &c->flags);
- 	return;
- err:
-+	while (!list_empty(&journal)) {
-+		l = list_first_entry(&journal, struct journal_replay, list);
-+		list_del(&l->list);
-+		kfree(l);
-+	}
+diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
+index 0c98b6c1ca49c..1213556a20dad 100644
+--- a/block/blk-mq-sched.c
++++ b/block/blk-mq-sched.c
+@@ -413,6 +413,14 @@ void blk_mq_sched_insert_requests(struct blk_mq_hw_ctx *hctx,
+ 				  struct list_head *list, bool run_queue_async)
+ {
+ 	struct elevator_queue *e;
++	struct request_queue *q = hctx->queue;
 +
- 	closure_sync(&cl);
- 	/* XXX: test this, it's broken */
- 	bch_cache_set_error(c, "%s", err);
++	/*
++	 * blk_mq_sched_insert_requests() is called from flush plug
++	 * context only, and hold one usage counter to prevent queue
++	 * from being released.
++	 */
++	percpu_ref_get(&q->q_usage_counter);
+ 
+ 	e = hctx->queue->elevator;
+ 	if (e && e->type->ops.insert_requests)
+@@ -426,12 +434,14 @@ void blk_mq_sched_insert_requests(struct blk_mq_hw_ctx *hctx,
+ 		if (!hctx->dispatch_busy && !e && !run_queue_async) {
+ 			blk_mq_try_issue_list_directly(hctx, list);
+ 			if (list_empty(list))
+-				return;
++				goto out;
+ 		}
+ 		blk_mq_insert_requests(hctx, ctx, list);
+ 	}
+ 
+ 	blk_mq_run_hw_queue(hctx, run_queue_async);
++ out:
++	percpu_ref_put(&q->q_usage_counter);
+ }
+ 
+ static void blk_mq_sched_free_tags(struct blk_mq_tag_set *set,
 -- 
 2.20.1
 
