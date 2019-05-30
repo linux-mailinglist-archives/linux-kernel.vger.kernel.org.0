@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAB9C2ED6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:36:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D19FC2ED32
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:33:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733025AbfE3DZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:25:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51042 "EHLO mail.kernel.org"
+        id S2388249AbfE3D2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:28:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731524AbfE3DSX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:23 -0400
+        id S1730512AbfE3DUU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:20:20 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 965EF247B7;
-        Thu, 30 May 2019 03:18:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E2E324820;
+        Thu, 30 May 2019 03:20:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186302;
-        bh=SUtdxd2XvZEpCCTWuOGbP1NoKjrxUrq5fr2HHhTeWUs=;
+        s=default; t=1559186420;
+        bh=S0RtJDyOdJxOcZGkcElDQaz2DuMFWae4Nk8Vcu5JZk4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tZsl1iWwBYoSpIOK4RHGnJWa8W1ufHgqQHz9CQ+Otp3MRg49ANApwtJAgmmXmrm0F
-         vnP8Xr3gwX1lLDxiWuUrK28yQsIuW4T5gFB/HBuN1H8gmKgnqIZpJ3mYOg7UOXxe7g
-         BG92zig1+DnOA1wCDJJIiqY50ivuUOZdkFzLbVtw=
+        b=prI+XrSRDOO0gS4bk1FVYWBFfYPidAo9YkHdkGtIL19x+Sr3k0Y9cQNE3oJpgfufB
+         zofsjJZIcWJ593e9S/G2U92Z6ypMGXhLzMEz2eA/H7DGHMlyennVyRWL5lS/EMQMV9
+         82xTV/NWBHUxEvytLCu++z/AXhCsTlW3yjFglWmI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
         Nathan Chancellor <natechancellor@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 269/276] ASoC: davinci-mcasp: Fix clang warning without CONFIG_PM
+Subject: [PATCH 4.14 173/193] scsi: qla4xxx: avoid freeing unallocated dma memory
 Date:   Wed, 29 May 2019 20:07:07 -0700
-Message-Id: <20190530030542.030155180@linuxfoundation.org>
+Message-Id: <20190530030512.001954376@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,47 +45,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8ca5104715cfd14254ea5aecc390ae583b707607 ]
+[ Upstream commit 608f729c31d4caf52216ea00d20092a80959256d ]
 
-Building with clang shows a variable that is only used by the
-suspend/resume functions but defined outside of their #ifdef block:
+Clang -Wuninitialized notices that on is_qla40XX we never allocate any DMA
+memory in get_fw_boot_info() but attempt to free it anyway:
 
-sound/soc/ti/davinci-mcasp.c:48:12: error: variable 'context_regs' is not needed and will not be emitted
+drivers/scsi/qla4xxx/ql4_os.c:5915:7: error: variable 'buf_dma' is used uninitialized whenever 'if' condition is false
+      [-Werror,-Wsometimes-uninitialized]
+                if (!(val & 0x07)) {
+                    ^~~~~~~~~~~~~
+drivers/scsi/qla4xxx/ql4_os.c:5985:47: note: uninitialized use occurs here
+        dma_free_coherent(&ha->pdev->dev, size, buf, buf_dma);
+                                                     ^~~~~~~
+drivers/scsi/qla4xxx/ql4_os.c:5915:3: note: remove the 'if' if its condition is always true
+                if (!(val & 0x07)) {
+                ^~~~~~~~~~~~~~~~~~~
+drivers/scsi/qla4xxx/ql4_os.c:5885:20: note: initialize the variable 'buf_dma' to silence this warning
+        dma_addr_t buf_dma;
+                          ^
+                           = 0
 
-We commonly fix these by marking the PM functions as __maybe_unused,
-but here that would grow the davinci_mcasp structure, so instead
-add another #ifdef here.
+Skip the call to dma_free_coherent() here.
 
-Fixes: 1cc0c054f380 ("ASoC: davinci-mcasp: Convert the context save/restore to use array")
+Fixes: 2a991c215978 ("[SCSI] qla4xxx: Boot from SAN support for open-iscsi")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/davinci/davinci-mcasp.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/scsi/qla4xxx/ql4_os.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/davinci/davinci-mcasp.c b/sound/soc/davinci/davinci-mcasp.c
-index f70db8412c7cc..160b2764b2ad8 100644
---- a/sound/soc/davinci/davinci-mcasp.c
-+++ b/sound/soc/davinci/davinci-mcasp.c
-@@ -43,6 +43,7 @@
- 
- #define MCASP_MAX_AFIFO_DEPTH	64
- 
-+#ifdef CONFIG_PM
- static u32 context_regs[] = {
- 	DAVINCI_MCASP_TXFMCTL_REG,
- 	DAVINCI_MCASP_RXFMCTL_REG,
-@@ -65,6 +66,7 @@ struct davinci_mcasp_context {
- 	u32	*xrsr_regs; /* for serializer configuration */
- 	bool	pm_state;
- };
-+#endif
- 
- struct davinci_mcasp_ruledata {
- 	struct davinci_mcasp *mcasp;
+diff --git a/drivers/scsi/qla4xxx/ql4_os.c b/drivers/scsi/qla4xxx/ql4_os.c
+index 630b7404843d0..4421f9bdfcf77 100644
+--- a/drivers/scsi/qla4xxx/ql4_os.c
++++ b/drivers/scsi/qla4xxx/ql4_os.c
+@@ -5939,7 +5939,7 @@ static int get_fw_boot_info(struct scsi_qla_host *ha, uint16_t ddb_index[])
+ 		val = rd_nvram_byte(ha, sec_addr);
+ 		if (val & BIT_7)
+ 			ddb_index[1] = (val & 0x7f);
+-
++		goto exit_boot_info;
+ 	} else if (is_qla80XX(ha)) {
+ 		buf = dma_alloc_coherent(&ha->pdev->dev, size,
+ 					 &buf_dma, GFP_KERNEL);
 -- 
 2.20.1
 
