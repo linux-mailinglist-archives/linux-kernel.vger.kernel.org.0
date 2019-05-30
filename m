@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 690042EF39
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:54:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AF9C2F4F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:44:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731884AbfE3DTY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:19:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38176 "EHLO mail.kernel.org"
+        id S1728893AbfE3Em6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:42:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730214AbfE3DPU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:15:20 -0400
+        id S1728890AbfE3DMO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:12:14 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A0DA2457F;
-        Thu, 30 May 2019 03:15:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81399244D4;
+        Thu, 30 May 2019 03:12:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186118;
-        bh=LzKJXOeiQ17vHM3+ckSUF66amKUIRGoN2NeYO7IoEGU=;
+        s=default; t=1559185933;
+        bh=KUAQ4pPIJBzQNDsZKpTMqipZiufG+ViwToA0BemVxNA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1QGnyzd2mAdtdtvkVMHyxhxQLZswQ62PWT3bqCN348zSBJzPyLUFZ8Xsfu4XM5+FW
-         66RxRTkLnxDRQz4k4yLC9ndaYtg5gVO0Mkx1cuywYZT/0WCdmSprxBtGdVTSoDHPJg
-         e3j7CPzsZxGf7zT8Y0XQ5Mlfzc1KscCuuyr/Z9m0=
+        b=sb0GvuZCjIgr2Lz/TfwY0tgdZcEG9UbApH7xc8NfYDOQUTHzIhBB9FTJ1zsP4wyJ3
+         YbT0HWif3fwMwawLcY8FQJfjN39p8yX7EjZQ1WkZYXvCpuO/yKWulfbNjms0Tlv0Gj
+         N+m/iUbDE4ng6vH0lHbT+HHcaXOS53/BHi9287q8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Mark Brown <broonie@kernel.org>,
+        Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>,
+        Tony Cheng <Tony.Cheng@amd.com>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 255/346] spi: tegra114: reset controller on probe
+Subject: [PATCH 5.1 330/405] drm/amd/display: fix releasing planes when exiting odm
 Date:   Wed, 29 May 2019 20:05:28 -0700
-Message-Id: <20190530030553.921625409@linuxfoundation.org>
+Message-Id: <20190530030557.434745429@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,104 +47,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 019194933339b3e9b486639c8cb3692020844d65 ]
+[ Upstream commit bc2193992b00488f5734613ac95b78ef2d2803ab ]
 
-Fixes: SPI driver can be built as module so perform SPI controller reset
-on probe to make sure it is in valid state before initiating transfer.
+Releasing planes should not release the 2nd odm pipe right away,
+this change leaves us with 2 pipes with null planes and same stream
+when planes are released during odm.
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>
+Reviewed-by: Tony Cheng <Tony.Cheng@amd.com>
+Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-tegra114.c | 32 ++++++++++++++++++--------------
- 1 file changed, 18 insertions(+), 14 deletions(-)
+ drivers/gpu/drm/amd/display/dc/core/dc_resource.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index a76acedd7e2f4..a1888dc6a938a 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -1067,27 +1067,19 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 
- 	spi_irq = platform_get_irq(pdev, 0);
- 	tspi->irq = spi_irq;
--	ret = request_threaded_irq(tspi->irq, tegra_spi_isr,
--			tegra_spi_isr_thread, IRQF_ONESHOT,
--			dev_name(&pdev->dev), tspi);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "Failed to register ISR for IRQ %d\n",
--					tspi->irq);
--		goto exit_free_master;
--	}
- 
- 	tspi->clk = devm_clk_get(&pdev->dev, "spi");
- 	if (IS_ERR(tspi->clk)) {
- 		dev_err(&pdev->dev, "can not get clock\n");
- 		ret = PTR_ERR(tspi->clk);
--		goto exit_free_irq;
-+		goto exit_free_master;
- 	}
- 
- 	tspi->rst = devm_reset_control_get_exclusive(&pdev->dev, "spi");
- 	if (IS_ERR(tspi->rst)) {
- 		dev_err(&pdev->dev, "can not get reset\n");
- 		ret = PTR_ERR(tspi->rst);
--		goto exit_free_irq;
-+		goto exit_free_master;
- 	}
- 
- 	tspi->max_buf_size = SPI_FIFO_DEPTH << 2;
-@@ -1095,7 +1087,7 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 
- 	ret = tegra_spi_init_dma_param(tspi, true);
- 	if (ret < 0)
--		goto exit_free_irq;
-+		goto exit_free_master;
- 	ret = tegra_spi_init_dma_param(tspi, false);
- 	if (ret < 0)
- 		goto exit_rx_dma_free;
-@@ -1117,18 +1109,32 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "pm runtime get failed, e = %d\n", ret);
- 		goto exit_pm_disable;
- 	}
-+
-+	reset_control_assert(tspi->rst);
-+	udelay(2);
-+	reset_control_deassert(tspi->rst);
- 	tspi->def_command1_reg  = SPI_M_S;
- 	tegra_spi_writel(tspi, tspi->def_command1_reg, SPI_COMMAND1);
- 	pm_runtime_put(&pdev->dev);
-+	ret = request_threaded_irq(tspi->irq, tegra_spi_isr,
-+				   tegra_spi_isr_thread, IRQF_ONESHOT,
-+				   dev_name(&pdev->dev), tspi);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to register ISR for IRQ %d\n",
-+			tspi->irq);
-+		goto exit_pm_disable;
-+	}
- 
- 	master->dev.of_node = pdev->dev.of_node;
- 	ret = devm_spi_register_master(&pdev->dev, master);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "can not register to master err %d\n", ret);
--		goto exit_pm_disable;
-+		goto exit_free_irq;
- 	}
- 	return ret;
- 
-+exit_free_irq:
-+	free_irq(spi_irq, tspi);
- exit_pm_disable:
- 	pm_runtime_disable(&pdev->dev);
- 	if (!pm_runtime_status_suspended(&pdev->dev))
-@@ -1136,8 +1142,6 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 	tegra_spi_deinit_dma_param(tspi, false);
- exit_rx_dma_free:
- 	tegra_spi_deinit_dma_param(tspi, true);
--exit_free_irq:
--	free_irq(spi_irq, tspi);
- exit_free_master:
- 	spi_master_put(master);
- 	return ret;
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
+index 349ab80177761..4c06eb52ab734 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
+@@ -1266,10 +1266,12 @@ bool dc_remove_plane_from_context(
+ 			 * For head pipe detach surfaces from pipe for tail
+ 			 * pipe just zero it out
+ 			 */
+-			if (!pipe_ctx->top_pipe) {
++			if (!pipe_ctx->top_pipe ||
++				(!pipe_ctx->top_pipe->top_pipe &&
++					pipe_ctx->top_pipe->stream_res.opp != pipe_ctx->stream_res.opp)) {
+ 				pipe_ctx->plane_state = NULL;
+ 				pipe_ctx->bottom_pipe = NULL;
+-			} else  {
++			} else {
+ 				memset(pipe_ctx, 0, sizeof(*pipe_ctx));
+ 			}
+ 		}
 -- 
 2.20.1
 
