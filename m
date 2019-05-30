@@ -2,369 +2,1238 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8A4630253
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 20:53:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FBBE3025B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 20:54:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726635AbfE3Sxa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 14:53:30 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:45456 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725961AbfE3Sxa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 14:53:30 -0400
-Received: by mail-qt1-f194.google.com with SMTP id t1so8261300qtc.12;
-        Thu, 30 May 2019 11:53:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3lpSw4A7vcWTO2q/bCUo06/BZoiQqjvQo8KcCK27ZDs=;
-        b=qdnNnPklN2i3zKFxEo31/RBLkG/+vgtcOA9xKNijRar0ngQ/T427e+EiE1HdbFbPZU
-         k0Nc6vdy3MqSoEeeISRzSQUmhQo+/E1jjkcwQ8imCzvaC4UNMm2PUPq6aY9DPcytCec1
-         lP1N6dJBn3TWcBJ5Z1fsg463SYsl1JWnT08l7v5NJXnGvi14MTZ4CZPWYXVNjPA1Zrha
-         RBOEpSthwmHt+sDkYCF7GTEhhr47vHKbBYapfuX4A9S2QgYRJ5XmeKqUq5JbZxCyvO7n
-         2B44S6Ff/FV+je4LZtbvpfqqH5DliQghRVTC4DLuMS+k+YTvXKPxVlO3dHxHK74IJD1X
-         dMQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3lpSw4A7vcWTO2q/bCUo06/BZoiQqjvQo8KcCK27ZDs=;
-        b=dHidc0TC+tNGidERHcjz30fVeb3EL3JIsTkt+6B/I0WhMrC3aM4CYI5+b99riS0DU0
-         d/pbjdEFvrwwUIV8lp7d8sbPpoPEhh6mqL5GMPM5kGDqPMgCN3U1941tptDsW17GMW/X
-         Uk/cG+oEBclfXs7KqX3crAVf43suH2/GXKl5sjQuReYhNsFvQBk1Ti2x+f8my9yhaA8o
-         XT7GhEef7Vey8r09YivVhBxD5FuaR4wtX8b6A5P52g6muM9JIk3FASGFfcWr4Oi+oKVp
-         UcAiwizp6eOkwAKcVbwzSp/bxKbA9BlniEtiCUJ2u2suMHE/JLq3ktui3XAwrEfSuW6H
-         ZjHg==
-X-Gm-Message-State: APjAAAWtllngq+VvbJ4MTd/M8Cgreh8UhvvfjDVbypXn+juVhVvdKsFx
-        R9omU9QtENLhHUgPZRAjp/ul3nwcAFPHD6EwF3E=
-X-Google-Smtp-Source: APXvYqzaEJXI1/iTC2G5t10lrf8RsLSrP72esy17LggkwvpNYBc9rQk5WmNqmjHEkPaQoVR4zrmX4tEa0qNv4Nhp3dU=
-X-Received: by 2002:ac8:4107:: with SMTP id q7mr2274328qtl.139.1559242408748;
- Thu, 30 May 2019 11:53:28 -0700 (PDT)
+        id S1726708AbfE3SyE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 14:54:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39416 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725961AbfE3SyE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 14:54:04 -0400
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51CA826035;
+        Thu, 30 May 2019 18:54:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559242441;
+        bh=JTw9BEVSn6VtdsKg8eo4RW0zBKPufQ5U4ebzCI7Nn5E=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=TJKFuOIOgm5B2A5zEoK0zCQCeZLLG6MLt5toIJoW/Wl/PQWiloYHShn22PEOYYbkM
+         hKL5VzdXD1BkEwGgCbvoFr+3KQriWYjVJQbDT/De2zIR+2F/xNLnaiSv8pEruebKU0
+         tVBpr+4NOFX1y2sNvWWiwE7UOiszybewTQE+ATcE=
+Received: by mail-ed1-f43.google.com with SMTP id b8so10507018edm.11;
+        Thu, 30 May 2019 11:54:01 -0700 (PDT)
+X-Gm-Message-State: APjAAAU9taOX5mMhv6IK1PFhpTKicIpyGctDvPYthf3l0c6z3ffZr5jY
+        7JUFy2MKEJBn0awLEON1HHC9JcoxjcYnAdwX0kw=
+X-Google-Smtp-Source: APXvYqzJAUrZtkIBrOOaL6IcnIFOHd+8z5BxO2xXKHU2q9lCQVCA3FvNUatGFL1cg96wjegZDWmqX8MfNBzLTuwdQRQ=
+X-Received: by 2002:a17:906:5ad4:: with SMTP id x20mr4968196ejs.225.1559242439643;
+ Thu, 30 May 2019 11:53:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190530010359.2499670-1-guro@fb.com> <20190530010359.2499670-4-guro@fb.com>
-In-Reply-To: <20190530010359.2499670-4-guro@fb.com>
-From:   Song Liu <liu.song.a23@gmail.com>
-Date:   Thu, 30 May 2019 11:53:17 -0700
-Message-ID: <CAPhsuW4V++8+=VBBTifHDMOeHx1CBu60K2ZAgZ02YS2RpTJyoQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 3/5] bpf: group memory related fields in struct bpf_map_memory
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        bpf <bpf@vger.kernel.org>, Kernel Team <kernel-team@fb.com>,
-        open list <linux-kernel@vger.kernel.org>
+References: <1558934546-12171-1-git-send-email-hao.wu@intel.com> <1558934546-12171-17-git-send-email-hao.wu@intel.com>
+In-Reply-To: <1558934546-12171-17-git-send-email-hao.wu@intel.com>
+From:   Alan Tull <atull@kernel.org>
+Date:   Thu, 30 May 2019 13:53:23 -0500
+X-Gmail-Original-Message-ID: <CANk1AXTNzzq6LM+iC05nBkh3zydtYmD6REWN2sJ1BBLjoe8zyA@mail.gmail.com>
+Message-ID: <CANk1AXTNzzq6LM+iC05nBkh3zydtYmD6REWN2sJ1BBLjoe8zyA@mail.gmail.com>
+Subject: Re: [PATCH v3 16/16] fpga: dfl: fme: add performance reporting support
+To:     Wu Hao <hao.wu@intel.com>
+Cc:     Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api@vger.kernel.org, Luwei Kang <luwei.kang@intel.com>,
+        Xu Yilun <yilun.xu@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 6:04 PM Roman Gushchin <guro@fb.com> wrote:
->
-> Group "user" and "pages" fields of bpf_map into the bpf_map_memory
-> structure. Later it can be extended with "memcg" and other related
-> information.
->
-> The main reason for a such change (beside cosmetics) is to pass
-> bpf_map_memory structure to charging functions before the actual
-> allocation of bpf_map.
->
-> Signed-off-by: Roman Gushchin <guro@fb.com>
+On Mon, May 27, 2019 at 12:39 AM Wu Hao <hao.wu@intel.com> wrote:
 
-Acked-by: Song Liu <songliubraving@fb.com>
+Hi Hao,
+
+Just one correction that I saw below, sorry I didn't catch it last time.
+
+>
+> This patch adds support for performance reporting private feature
+> for FPGA Management Engine (FME). Actually it supports 4 categories
+> performance counters, 'clock', 'cache', 'iommu' and 'fabric', user
+> could read the performance counter via exposed sysfs interfaces.
+> Please refer to sysfs doc for more details.
+>
+> Signed-off-by: Luwei Kang <luwei.kang@intel.com>
+> Signed-off-by: Xu Yilun <yilun.xu@intel.com>
+> Signed-off-by: Wu Hao <hao.wu@intel.com>
+
+Acked-by: Alan Tull <atull@kernel.org>
 
 > ---
->  include/linux/bpf.h           | 10 +++++++---
->  kernel/bpf/arraymap.c         |  2 +-
->  kernel/bpf/cpumap.c           |  4 ++--
->  kernel/bpf/devmap.c           |  4 ++--
->  kernel/bpf/hashtab.c          |  4 ++--
->  kernel/bpf/local_storage.c    |  2 +-
->  kernel/bpf/lpm_trie.c         |  4 ++--
->  kernel/bpf/queue_stack_maps.c |  2 +-
->  kernel/bpf/reuseport_array.c  |  2 +-
->  kernel/bpf/stackmap.c         |  4 ++--
->  kernel/bpf/syscall.c          | 19 ++++++++++---------
->  kernel/bpf/xskmap.c           |  4 ++--
->  net/core/bpf_sk_storage.c     |  2 +-
->  net/core/sock_map.c           |  4 ++--
->  14 files changed, 36 insertions(+), 31 deletions(-)
+> v3: replace scnprintf with sprintf in sysfs interfaces.
+>     update sysfs doc kernel version and date.
+>     fix sysfs doc issue for fabric counter.
+>     refine PERF_OBJ_ATTR_* macro, doesn't count on __ATTR anymore.
+>     introduce PERF_OBJ_ATTR_F_* macro, as it needs to use different
+>     filenames for some of the sysfs attributes.
+>     remove kobject_del when destroy kobject, kobject_put is enough.
+>     do sysfs_remove_groups first when destroying perf_obj.
+>     WARN_ON_ONCE in case internal parms are wrong in read_*_count().
+> ---
+>  Documentation/ABI/testing/sysfs-platform-dfl-fme |  93 +++
+>  drivers/fpga/Makefile                            |   1 +
+>  drivers/fpga/dfl-fme-main.c                      |   4 +
+>  drivers/fpga/dfl-fme-perf.c                      | 962 +++++++++++++++++++++++
+>  drivers/fpga/dfl-fme.h                           |   2 +
+>  drivers/fpga/dfl.c                               |   1 +
+>  drivers/fpga/dfl.h                               |   2 +
+>  7 files changed, 1065 insertions(+)
+>  create mode 100644 drivers/fpga/dfl-fme-perf.c
 >
-> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-> index ff3e00ff84d2..980b7a9bdd21 100644
-> --- a/include/linux/bpf.h
-> +++ b/include/linux/bpf.h
-> @@ -66,6 +66,11 @@ struct bpf_map_ops {
->                                      u64 imm, u32 *off);
+> diff --git a/Documentation/ABI/testing/sysfs-platform-dfl-fme b/Documentation/ABI/testing/sysfs-platform-dfl-fme
+> index 5a8938f..63a02cb 100644
+> --- a/Documentation/ABI/testing/sysfs-platform-dfl-fme
+> +++ b/Documentation/ABI/testing/sysfs-platform-dfl-fme
+> @@ -119,3 +119,96 @@ Description:       Write-only. Write error code to this file to clear all errors
+>                 logged in errors, first_error and next_error. Write fails with
+>                 -EINVAL if input parsing fails or input error code doesn't
+>                 match.
+> +
+> +What:          /sys/bus/platform/devices/dfl-fme.0/perf/clock
+> +Date:          May 2019
+> +KernelVersion:  5.3
+> +Contact:       Wu Hao <hao.wu@intel.com>
+> +Description:   Read-Only. Read for Accelerator Function Unit (AFU) clock
+> +               counter.
+> +
+> +What:          /sys/bus/platform/devices/dfl-fme.0/perf/cache/freeze
+> +Date:          May 2019
+> +KernelVersion:  5.3
+> +Contact:       Wu Hao <hao.wu@intel.com>
+> +Description:   Read-Write. Read this file for the current status of 'cache'
+> +               category performance counters, and Write '1' or '0' to freeze
+> +               or unfreeze 'cache' performance counters.
+> +
+> +What:          /sys/bus/platform/devices/dfl-fme.0/perf/cache/<counter>
+> +Date:          May 2019
+> +KernelVersion:  5.3
+> +Contact:       Wu Hao <hao.wu@intel.com>
+> +Description:   Read-Only. Read 'cache' category performance counters:
+> +               read_hit, read_miss, write_hit, write_miss, hold_request,
+> +               data_write_port_contention, tag_write_port_contention,
+> +               tx_req_stall, rx_req_stall and rx_eviction.
+> +
+> +What:          /sys/bus/platform/devices/dfl-fme.0/perf/iommu/freeze
+> +Date:          May 2019
+> +KernelVersion:  5.3
+> +Contact:       Wu Hao <hao.wu@intel.com>
+> +Description:   Read-Write. Read this file for the current status of 'iommu'
+> +               category performance counters, and Write '1' or '0' to freeze
+> +               or unfreeze 'iommu' performance counters.
+> +
+> +What:          /sys/bus/platform/devices/dfl-fme.0/perf/iommu/<sip_counter>
+> +Date:          May 2019
+> +KernelVersion:  5.3
+> +Contact:       Wu Hao <hao.wu@intel.com>
+> +Description:   Read-Only. Read 'iommu' category 'sip' sub category
+> +               performance counters: iotlb_4k_hit, iotlb_2m_hit,
+> +               iotlb_1g_hit, slpwc_l3_hit, slpwc_l4_hit, rcc_hit,
+> +               rcc_miss, iotlb_4k_miss, iotlb_2m_miss, iotlb_1g_miss,
+> +               slpwc_l3_miss and slpwc_l4_miss.
+> +
+> +What:          /sys/bus/platform/devices/dfl-fme.0/perf/iommu/afu0/<counter>
+> +Date:          May 2019
+> +KernelVersion:  5.3
+> +Contact:       Wu Hao <hao.wu@intel.com>
+> +Description:   Read-Only. Read 'iommu' category 'afuX' sub category
+> +               performance counters: read_transaction, write_transaction,
+> +               devtlb_read_hit, devtlb_write_hit, devtlb_4k_fill,
+> +               devtlb_2m_fill and devtlb_1g_fill.
+> +
+> +What:          /sys/bus/platform/devices/dfl-fme.0/perf/fabric/freeze
+> +Date:          May 2019
+> +KernelVersion:  5.3
+> +Contact:       Wu Hao <hao.wu@intel.com>
+> +Description:   Read-Write. Read this file for the current status of 'fabric'
+> +               category performance counters, and Write '1' or '0' to freeze
+> +               or unfreeze 'fabric' performance counters.
+> +
+> +What:          /sys/bus/platform/devices/dfl-fme.0/perf/fabric/<counter>
+> +Date:          May 2019
+> +KernelVersion:  5.3
+> +Contact:       Wu Hao <hao.wu@intel.com>
+> +Description:   Read-Only. Read 'fabric' category performance counters:
+> +               pcie0_read, pcie0_write, pcie1_read, pcie1_write,
+> +               upi_read, upi_write, mmio_read and mmio_write.
+> +
+> +What:          /sys/bus/platform/devices/dfl-fme.0/perf/fabric/enable
+> +Date:          May 2019
+> +KernelVersion:  5.3
+> +Contact:       Wu Hao <hao.wu@intel.com>
+> +Description:   Read-Write. Read this file for current status of device level
+> +               fabric counters. Write "1" to enable device level fabric
+> +               counters. Once device level fabric counters are enabled, port
+> +               level fabric counters will be disabled automatically.
+> +
+> +What:          /sys/bus/platform/devices/dfl-fme.0/perf/fabric/port0/<counter>
+> +Date:          May 2019
+> +KernelVersion:  5.3
+> +Contact:       Wu Hao <hao.wu@intel.com>
+> +Description:   Read-Only. Read 'fabric' category "portX" sub category
+> +               performance counters: pcie0_read, pcie0_write, pcie1_read,
+> +               pcie1_write, upi_read, upi_write and mmio_read.
+> +
+> +What:          /sys/bus/platform/devices/dfl-fme.0/perf/fabric/port0/enable
+> +Date:          May 2019
+> +KernelVersion:  5.3
+> +Contact:       Wu Hao <hao.wu@intel.com>
+> +Description:   Read-Write. Read this file for current status of port level
+> +               fabric counters. Write "1" to enable port level fabric counters.
+> +               Once port level fabric counters are enabled, device level fabric
+> +               counters will be disabled automatically.
+> diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
+> index 4865b74..d8e21df 100644
+> --- a/drivers/fpga/Makefile
+> +++ b/drivers/fpga/Makefile
+> @@ -40,6 +40,7 @@ obj-$(CONFIG_FPGA_DFL_FME_REGION)     += dfl-fme-region.o
+>  obj-$(CONFIG_FPGA_DFL_AFU)             += dfl-afu.o
+>
+>  dfl-fme-objs := dfl-fme-main.o dfl-fme-pr.o dfl-fme-error.o
+> +dfl-fme-objs += dfl-fme-perf.o
+>  dfl-afu-objs := dfl-afu-main.o dfl-afu-region.o dfl-afu-dma-region.o
+>  dfl-afu-objs += dfl-afu-error.o
+>
+> diff --git a/drivers/fpga/dfl-fme-main.c b/drivers/fpga/dfl-fme-main.c
+> index 4490cf4..4a5b25d 100644
+> --- a/drivers/fpga/dfl-fme-main.c
+> +++ b/drivers/fpga/dfl-fme-main.c
+> @@ -231,6 +231,10 @@ static long fme_hdr_ioctl(struct platform_device *pdev,
+>                 .ops = &fme_global_err_ops,
+>         },
+>         {
+> +               .id_table = fme_perf_id_table,
+> +               .ops = &fme_perf_ops,
+> +       },
+> +       {
+>                 .ops = NULL,
+>         },
 >  };
->
-> +struct bpf_map_memory {
-> +       u32 pages;
-> +       struct user_struct *user;
+> diff --git a/drivers/fpga/dfl-fme-perf.c b/drivers/fpga/dfl-fme-perf.c
+> new file mode 100644
+> index 0000000..6eb6c89
+> --- /dev/null
+> +++ b/drivers/fpga/dfl-fme-perf.c
+> @@ -0,0 +1,962 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Driver for FPGA Management Engine (FME) Global Performance Reporting
+> + *
+> + * Copyright 2019 Intel Corporation, Inc.
+> + *
+> + * Authors:
+> + *   Kang Luwei <luwei.kang@intel.com>
+> + *   Xiao Guangrong <guangrong.xiao@linux.intel.com>
+> + *   Wu Hao <hao.wu@intel.com>
+> + *   Joseph Grecco <joe.grecco@intel.com>
+> + *   Enno Luebbers <enno.luebbers@intel.com>
+> + *   Tim Whisonant <tim.whisonant@intel.com>
+> + *   Ananda Ravuri <ananda.ravuri@intel.com>
+> + *   Mitchel, Henry <henry.mitchel@intel.com>
+> + */
+> +
+> +#include "dfl.h"
+> +#include "dfl-fme.h"
+> +
+> +/*
+> + * Performance Counter Registers for Cache.
+> + *
+> + * Cache Events are listed below as CACHE_EVNT_*.
+> + */
+> +#define CACHE_CTRL                     0x8
+> +#define CACHE_RESET_CNTR               BIT_ULL(0)
+> +#define CACHE_FREEZE_CNTR              BIT_ULL(8)
+> +#define CACHE_CTRL_EVNT                        GENMASK_ULL(19, 16)
+> +#define CACHE_EVNT_RD_HIT              0x0
+> +#define CACHE_EVNT_WR_HIT              0x1
+> +#define CACHE_EVNT_RD_MISS             0x2
+> +#define CACHE_EVNT_WR_MISS             0x3
+> +#define CACHE_EVNT_RSVD                        0x4
+> +#define CACHE_EVNT_HOLD_REQ            0x5
+> +#define CACHE_EVNT_DATA_WR_PORT_CONTEN 0x6
+> +#define CACHE_EVNT_TAG_WR_PORT_CONTEN  0x7
+> +#define CACHE_EVNT_TX_REQ_STALL                0x8
+> +#define CACHE_EVNT_RX_REQ_STALL                0x9
+> +#define CACHE_EVNT_EVICTIONS           0xa
+> +#define CACHE_EVNT_MAX                 CACHE_EVNT_EVICTIONS
+> +#define CACHE_CHANNEL_SEL              BIT_ULL(20)
+> +#define CACHE_CHANNEL_RD               0
+> +#define CACHE_CHANNEL_WR               1
+> +#define CACHE_CHANNEL_MAX              2
+> +#define CACHE_CNTR0                    0x10
+> +#define CACHE_CNTR1                    0x18
+> +#define CACHE_CNTR_EVNT_CNTR           GENMASK_ULL(47, 0)
+> +#define CACHE_CNTR_EVNT                        GENMASK_ULL(63, 60)
+> +
+> +/*
+> + * Performance Counter Registers for Fabric.
+> + *
+> + * Fabric Events are listed below as FAB_EVNT_*
+> + */
+> +#define FAB_CTRL                       0x20
+> +#define FAB_RESET_CNTR                 BIT_ULL(0)
+> +#define FAB_FREEZE_CNTR                        BIT_ULL(8)
+> +#define FAB_CTRL_EVNT                  GENMASK_ULL(19, 16)
+> +#define FAB_EVNT_PCIE0_RD              0x0
+> +#define FAB_EVNT_PCIE0_WR              0x1
+> +#define FAB_EVNT_PCIE1_RD              0x2
+> +#define FAB_EVNT_PCIE1_WR              0x3
+> +#define FAB_EVNT_UPI_RD                        0x4
+> +#define FAB_EVNT_UPI_WR                        0x5
+> +#define FAB_EVNT_MMIO_RD               0x6
+> +#define FAB_EVNT_MMIO_WR               0x7
+> +#define FAB_EVNT_MAX                   FAB_EVNT_MMIO_WR
+> +#define FAB_PORT_ID                    GENMASK_ULL(21, 20)
+> +#define FAB_PORT_FILTER                        BIT_ULL(23)
+> +#define FAB_PORT_FILTER_DISABLE                0
+> +#define FAB_PORT_FILTER_ENABLE         1
+> +#define FAB_CNTR                       0x28
+> +#define FAB_CNTR_EVNT_CNTR             GENMASK_ULL(59, 0)
+> +#define FAB_CNTR_EVNT                  GENMASK_ULL(63, 60)
+> +
+> +/*
+> + * Performance Counter Registers for Clock.
+> + *
+> + * Clock Counter can't be reset or frozen by SW.
+> + */
+> +#define CLK_CNTR                       0x30
+> +
+> +/*
+> + * Performance Counter Registers for IOMMU / VT-D.
+> + *
+> + * VT-D Events are listed below as VTD_EVNT_* and VTD_SIP_EVNT_*
+> + */
+> +#define VTD_CTRL                       0x38
+> +#define VTD_RESET_CNTR                 BIT_ULL(0)
+> +#define VTD_FREEZE_CNTR                        BIT_ULL(8)
+> +#define VTD_CTRL_EVNT                  GENMASK_ULL(19, 16)
+> +#define VTD_EVNT_AFU_MEM_RD_TRANS      0x0
+> +#define VTD_EVNT_AFU_MEM_WR_TRANS      0x1
+> +#define VTD_EVNT_AFU_DEVTLB_RD_HIT     0x2
+> +#define VTD_EVNT_AFU_DEVTLB_WR_HIT     0x3
+> +#define VTD_EVNT_DEVTLB_4K_FILL                0x4
+> +#define VTD_EVNT_DEVTLB_2M_FILL                0x5
+> +#define VTD_EVNT_DEVTLB_1G_FILL                0x6
+> +#define VTD_EVNT_MAX                   VTD_EVNT_DEVTLB_1G_FILL
+> +#define VTD_CNTR                       0x40
+> +#define VTD_CNTR_EVNT                  GENMASK_ULL(63, 60)
+> +#define VTD_CNTR_EVNT_CNTR             GENMASK_ULL(47, 0)
+> +#define VTD_SIP_CTRL                   0x48
+> +#define VTD_SIP_RESET_CNTR             BIT_ULL(0)
+> +#define VTD_SIP_FREEZE_CNTR            BIT_ULL(8)
+> +#define VTD_SIP_CTRL_EVNT              GENMASK_ULL(19, 16)
+> +#define VTD_SIP_EVNT_IOTLB_4K_HIT      0x0
+> +#define VTD_SIP_EVNT_IOTLB_2M_HIT      0x1
+> +#define VTD_SIP_EVNT_IOTLB_1G_HIT      0x2
+> +#define VTD_SIP_EVNT_SLPWC_L3_HIT      0x3
+> +#define VTD_SIP_EVNT_SLPWC_L4_HIT      0x4
+> +#define VTD_SIP_EVNT_RCC_HIT           0x5
+> +#define VTD_SIP_EVNT_IOTLB_4K_MISS     0x6
+> +#define VTD_SIP_EVNT_IOTLB_2M_MISS     0x7
+> +#define VTD_SIP_EVNT_IOTLB_1G_MISS     0x8
+> +#define VTD_SIP_EVNT_SLPWC_L3_MISS     0x9
+> +#define VTD_SIP_EVNT_SLPWC_L4_MISS     0xa
+> +#define VTD_SIP_EVNT_RCC_MISS          0xb
+> +#define VTD_SIP_EVNT_MAX               VTD_SIP_EVNT_RCC_MISS
+> +#define VTD_SIP_CNTR                   0X50
+> +#define VTD_SIP_CNTR_EVNT              GENMASK_ULL(63, 60)
+> +#define VTD_SIP_CNTR_EVNT_CNTR         GENMASK_ULL(47, 0)
+> +
+> +#define PERF_OBJ_ROOT_ID               (~0)
+> +
+> +#define PERF_TIMEOUT                   30
+> +
+> +/**
+> + * struct perf_object - object of performance counter
+> + *
+> + * @id: instance id. PERF_OBJ_ROOT_ID indicates it is a parent object which
+> + *      counts performance counters for all instances.
+> + * @attr_groups: the sysfs files are associated with this object.
+> + * @feature: pointer to related private feature.
+> + * @node: used to link itself to parent's children list.
+> + * @children: used to link its children objects together.
+> + * @kobj: generic kobject interface.
+> + *
+> + * 'node' and 'children' are used to construct parent-children hierarchy.
+> + */
+> +struct perf_object {
+> +       int id;
+> +       const struct attribute_group **attr_groups;
+> +       struct dfl_feature *feature;
+> +
+> +       struct list_head node;
+> +       struct list_head children;
+> +       struct kobject kobj;
 > +};
 > +
->  struct bpf_map {
->         /* The first two cachelines with read-mostly members of which some
->          * are also accessed in fast-path (e.g. ops, max_entries).
-> @@ -86,7 +91,7 @@ struct bpf_map {
->         u32 btf_key_type_id;
->         u32 btf_value_type_id;
->         struct btf *btf;
-> -       u32 pages;
-> +       struct bpf_map_memory memory;
->         bool unpriv_array;
->         bool frozen; /* write-once */
->         /* 48 bytes hole */
-> @@ -94,8 +99,7 @@ struct bpf_map {
->         /* The 3rd and 4th cacheline with misc members to avoid false sharing
->          * particularly with refcounting.
->          */
-> -       struct user_struct *user ____cacheline_aligned;
-> -       atomic_t refcnt;
-> +       atomic_t refcnt ____cacheline_aligned;
->         atomic_t usercnt;
->         struct work_struct work;
->         char name[BPF_OBJ_NAME_LEN];
-> diff --git a/kernel/bpf/arraymap.c b/kernel/bpf/arraymap.c
-> index 584636c9e2eb..8fda24e78193 100644
-> --- a/kernel/bpf/arraymap.c
-> +++ b/kernel/bpf/arraymap.c
-> @@ -138,7 +138,7 @@ static struct bpf_map *array_map_alloc(union bpf_attr *attr)
->
->         /* copy mandatory map attributes */
->         bpf_map_init_from_attr(&array->map, attr);
-> -       array->map.pages = cost;
-> +       array->map.memory.pages = cost;
->         array->elem_size = elem_size;
->
->         if (percpu && bpf_array_alloc_percpu(array)) {
-> diff --git a/kernel/bpf/cpumap.c b/kernel/bpf/cpumap.c
-> index cf727d77c6c6..035268add724 100644
-> --- a/kernel/bpf/cpumap.c
-> +++ b/kernel/bpf/cpumap.c
-> @@ -108,10 +108,10 @@ static struct bpf_map *cpu_map_alloc(union bpf_attr *attr)
->         cost += cpu_map_bitmap_size(attr) * num_possible_cpus();
->         if (cost >= U32_MAX - PAGE_SIZE)
->                 goto free_cmap;
-> -       cmap->map.pages = round_up(cost, PAGE_SIZE) >> PAGE_SHIFT;
-> +       cmap->map.memory.pages = round_up(cost, PAGE_SIZE) >> PAGE_SHIFT;
->
->         /* Notice returns -EPERM on if map size is larger than memlock limit */
-> -       ret = bpf_map_precharge_memlock(cmap->map.pages);
-> +       ret = bpf_map_precharge_memlock(cmap->map.memory.pages);
->         if (ret) {
->                 err = ret;
->                 goto free_cmap;
-> diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
-> index 1e525d70f833..f6c57efb1d0d 100644
-> --- a/kernel/bpf/devmap.c
-> +++ b/kernel/bpf/devmap.c
-> @@ -111,10 +111,10 @@ static struct bpf_map *dev_map_alloc(union bpf_attr *attr)
->         if (cost >= U32_MAX - PAGE_SIZE)
->                 goto free_dtab;
->
-> -       dtab->map.pages = round_up(cost, PAGE_SIZE) >> PAGE_SHIFT;
-> +       dtab->map.memory.pages = round_up(cost, PAGE_SIZE) >> PAGE_SHIFT;
->
->         /* if map size is larger than memlock limit, reject it early */
-> -       err = bpf_map_precharge_memlock(dtab->map.pages);
-> +       err = bpf_map_precharge_memlock(dtab->map.memory.pages);
->         if (err)
->                 goto free_dtab;
->
-> diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
-> index 0f2708fde5f7..15bf228d2e98 100644
-> --- a/kernel/bpf/hashtab.c
-> +++ b/kernel/bpf/hashtab.c
-> @@ -364,10 +364,10 @@ static struct bpf_map *htab_map_alloc(union bpf_attr *attr)
->                 /* make sure page count doesn't overflow */
->                 goto free_htab;
->
-> -       htab->map.pages = round_up(cost, PAGE_SIZE) >> PAGE_SHIFT;
-> +       htab->map.memory.pages = round_up(cost, PAGE_SIZE) >> PAGE_SHIFT;
->
->         /* if map size is larger than memlock limit, reject it early */
-> -       err = bpf_map_precharge_memlock(htab->map.pages);
-> +       err = bpf_map_precharge_memlock(htab->map.memory.pages);
->         if (err)
->                 goto free_htab;
->
-> diff --git a/kernel/bpf/local_storage.c b/kernel/bpf/local_storage.c
-> index e48302ecb389..574325276650 100644
-> --- a/kernel/bpf/local_storage.c
-> +++ b/kernel/bpf/local_storage.c
-> @@ -303,7 +303,7 @@ static struct bpf_map *cgroup_storage_map_alloc(union bpf_attr *attr)
->         if (!map)
->                 return ERR_PTR(-ENOMEM);
->
-> -       map->map.pages = pages;
-> +       map->map.memory.pages = pages;
->
->         /* copy mandatory map attributes */
->         bpf_map_init_from_attr(&map->map, attr);
-> diff --git a/kernel/bpf/lpm_trie.c b/kernel/bpf/lpm_trie.c
-> index e61630c2e50b..8e423a582760 100644
-> --- a/kernel/bpf/lpm_trie.c
-> +++ b/kernel/bpf/lpm_trie.c
-> @@ -578,9 +578,9 @@ static struct bpf_map *trie_alloc(union bpf_attr *attr)
->                 goto out_err;
->         }
->
-> -       trie->map.pages = round_up(cost, PAGE_SIZE) >> PAGE_SHIFT;
-> +       trie->map.memory.pages = round_up(cost, PAGE_SIZE) >> PAGE_SHIFT;
->
-> -       ret = bpf_map_precharge_memlock(trie->map.pages);
-> +       ret = bpf_map_precharge_memlock(trie->map.memory.pages);
->         if (ret)
->                 goto out_err;
->
-> diff --git a/kernel/bpf/queue_stack_maps.c b/kernel/bpf/queue_stack_maps.c
-> index 0b140d236889..8a510e71d486 100644
-> --- a/kernel/bpf/queue_stack_maps.c
-> +++ b/kernel/bpf/queue_stack_maps.c
-> @@ -89,7 +89,7 @@ static struct bpf_map *queue_stack_map_alloc(union bpf_attr *attr)
->
->         bpf_map_init_from_attr(&qs->map, attr);
->
-> -       qs->map.pages = cost;
-> +       qs->map.memory.pages = cost;
->         qs->size = size;
->
->         raw_spin_lock_init(&qs->lock);
-> diff --git a/kernel/bpf/reuseport_array.c b/kernel/bpf/reuseport_array.c
-> index 18e225de80ff..819515242739 100644
-> --- a/kernel/bpf/reuseport_array.c
-> +++ b/kernel/bpf/reuseport_array.c
-> @@ -176,7 +176,7 @@ static struct bpf_map *reuseport_array_alloc(union bpf_attr *attr)
->
->         /* copy mandatory map attributes */
->         bpf_map_init_from_attr(&array->map, attr);
-> -       array->map.pages = cost;
-> +       array->map.memory.pages = cost;
->
->         return &array->map;
->  }
-> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-> index 950ab2f28922..08d4efff73ac 100644
-> --- a/kernel/bpf/stackmap.c
-> +++ b/kernel/bpf/stackmap.c
-> @@ -131,9 +131,9 @@ static struct bpf_map *stack_map_alloc(union bpf_attr *attr)
->         bpf_map_init_from_attr(&smap->map, attr);
->         smap->map.value_size = value_size;
->         smap->n_buckets = n_buckets;
-> -       smap->map.pages = round_up(cost, PAGE_SIZE) >> PAGE_SHIFT;
-> +       smap->map.memory.pages = round_up(cost, PAGE_SIZE) >> PAGE_SHIFT;
->
-> -       err = bpf_map_precharge_memlock(smap->map.pages);
-> +       err = bpf_map_precharge_memlock(smap->map.memory.pages);
->         if (err)
->                 goto free_smap;
->
-> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-> index 3d546b6f4646..df14e63806c8 100644
-> --- a/kernel/bpf/syscall.c
-> +++ b/kernel/bpf/syscall.c
-> @@ -222,19 +222,20 @@ static int bpf_map_init_memlock(struct bpf_map *map)
->         struct user_struct *user = get_current_user();
->         int ret;
->
-> -       ret = bpf_charge_memlock(user, map->pages);
-> +       ret = bpf_charge_memlock(user, map->memory.pages);
->         if (ret) {
->                 free_uid(user);
->                 return ret;
->         }
-> -       map->user = user;
-> +       map->memory.user = user;
->         return ret;
->  }
->
->  static void bpf_map_release_memlock(struct bpf_map *map)
->  {
-> -       struct user_struct *user = map->user;
-> -       bpf_uncharge_memlock(user, map->pages);
-> +       struct user_struct *user = map->memory.user;
+> +/**
+> + * struct perf_obj_attribute - attribute of perf object
+> + *
+> + * @attr: attribute of this perf object.
+> + * @show: show callback for sysfs attribute.
+> + * @store: store callback for sysfs attribute.
+> + */
+> +struct perf_obj_attribute {
+> +       struct attribute attr;
+> +       ssize_t (*show)(struct perf_object *pobj, char *buf);
+> +       ssize_t (*store)(struct perf_object *pobj,
+> +                        const char *buf, size_t n);
+> +};
 > +
-> +       bpf_uncharge_memlock(user, map->memory.pages);
->         free_uid(user);
->  }
+> +#define to_perf_obj_attr(_attr)                                        \
+> +               container_of(_attr, struct perf_obj_attribute, attr)
+> +#define to_perf_obj(_kobj)                                     \
+> +               container_of(_kobj, struct perf_object, kobj)
+> +
+> +#define __POBJ_ATTR(_name, _mode, _show, _store) {                     \
+> +       .attr = {.name = __stringify(_name),                            \
+> +                .mode = VERIFY_OCTAL_PERMISSIONS(_mode) },             \
+> +       .show   = _show,                                                \
+> +       .store  = _store,                                               \
+> +}
+> +
+> +#define PERF_OBJ_ATTR_F_RO(_name, _filename)                           \
+> +struct perf_obj_attribute perf_obj_attr_##_name =                      \
+> +       __POBJ_ATTR(_filename, 0444, _name##_show, NULL)
+> +
+> +#define PERF_OBJ_ATTR_F_WO(_name, _filename)                           \
+> +struct perf_obj_attribute perf_obj_attr_##_name =                      \
+> +       __POBJ_ATTR(_filename, 0200, NULL, _name##_store)
+
+Please remove the macros that aren't actually used.  I think that
+includes PERF_OBJ_ATTR_F_RO, PERF_OBJ_ATTR_F_WO, PERF_OBJ_ATTR_WO, and
+PERF_OBJ_ATTR_RW.
+
+> +
+> +#define PERF_OBJ_ATTR_F_RW(_name, _filename)                           \
+> +struct perf_obj_attribute perf_obj_attr_##_name =                      \
+> +       __POBJ_ATTR(_filename, 0644, _name##_show, _name##_store)
+> +
+> +#define PERF_OBJ_ATTR_RO(_name)                                                \
+> +struct perf_obj_attribute perf_obj_attr_##_name =                      \
+> +       __POBJ_ATTR(_name, 0444, _name##_show, NULL)
+> +
+> +#define PERF_OBJ_ATTR_WO(_name)                                                \
+> +struct perf_obj_attribute perf_obj_attr_##_name =                      \
+> +       __POBJ_ATTR(_name, 0200, NULL, _name##_store)
+> +
+> +#define PERF_OBJ_ATTR_RW(_name)                                                \
+> +struct perf_obj_attribute perf_obj_attr_##_name =                      \
+> +       __POBJ_ATTR(_name, 0644, _name##_show, _name##_store)
+> +
+> +static ssize_t perf_obj_attr_show(struct kobject *kobj,
+> +                                 struct attribute *__attr, char *buf)
+> +{
+> +       struct perf_obj_attribute *attr = to_perf_obj_attr(__attr);
+> +       struct perf_object *pobj = to_perf_obj(kobj);
+> +       ssize_t ret = -EIO;
+> +
+> +       if (attr->show)
+> +               ret = attr->show(pobj, buf);
+> +       return ret;
+> +}
+> +
+> +static ssize_t perf_obj_attr_store(struct kobject *kobj,
+> +                                  struct attribute *__attr,
+> +                                  const char *buf, size_t n)
+> +{
+> +       struct perf_obj_attribute *attr = to_perf_obj_attr(__attr);
+> +       struct perf_object *pobj = to_perf_obj(kobj);
+> +       ssize_t ret = -EIO;
+> +
+> +       if (attr->store)
+> +               ret = attr->store(pobj, buf, n);
+> +       return ret;
+> +}
+> +
+> +static const struct sysfs_ops perf_obj_sysfs_ops = {
+> +       .show = perf_obj_attr_show,
+> +       .store = perf_obj_attr_store,
+> +};
+> +
+> +static void perf_obj_release(struct kobject *kobj)
+> +{
+> +       kfree(to_perf_obj(kobj));
+> +}
+> +
+> +static struct kobj_type perf_obj_ktype = {
+> +       .sysfs_ops = &perf_obj_sysfs_ops,
+> +       .release = perf_obj_release,
+> +};
+> +
+> +static struct perf_object *
+> +create_perf_obj(struct dfl_feature *feature, struct kobject *parent, int id,
+> +               const struct attribute_group **groups, const char *name)
+> +{
+> +       struct perf_object *pobj;
+> +       int ret;
+> +
+> +       pobj = kzalloc(sizeof(*pobj), GFP_KERNEL);
+> +       if (!pobj)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       pobj->id = id;
+> +       pobj->feature = feature;
+> +       pobj->attr_groups = groups;
+> +       INIT_LIST_HEAD(&pobj->node);
+> +       INIT_LIST_HEAD(&pobj->children);
+> +
+> +       if (id != PERF_OBJ_ROOT_ID)
+> +               ret = kobject_init_and_add(&pobj->kobj, &perf_obj_ktype,
+> +                                          parent, "%s%d", name, id);
+> +       else
+> +               ret = kobject_init_and_add(&pobj->kobj, &perf_obj_ktype,
+> +                                          parent, "%s", name);
+> +       if (ret)
+> +               goto put_exit;
+> +
+> +       if (pobj->attr_groups) {
+> +               ret = sysfs_create_groups(&pobj->kobj, pobj->attr_groups);
+> +               if (ret)
+> +                       goto put_exit;
+> +       }
+> +
+> +       return pobj;
+> +
+> +put_exit:
+> +       kobject_put(&pobj->kobj);
+> +       return ERR_PTR(ret);
+> +}
+> +
+> +/*
+> + * Counter Sysfs Interface for Clock.
+> + */
+> +static ssize_t clock_show(struct perf_object *pobj, char *buf)
+> +{
+> +       void __iomem *base = pobj->feature->ioaddr;
+> +
+> +       return sprintf(buf, "0x%llx\n",
+> +                      (unsigned long long)readq(base + CLK_CNTR));
+> +}
+> +static PERF_OBJ_ATTR_RO(clock);
+> +
+> +static struct attribute *clock_attrs[] = {
+> +       &perf_obj_attr_clock.attr,
+> +       NULL,
+> +};
+> +
+> +static struct attribute_group clock_attr_group = {
+> +       .attrs = clock_attrs,
+> +};
+> +
+> +static const struct attribute_group *perf_dev_attr_groups[] = {
+> +       &clock_attr_group,
+> +       NULL,
+> +};
+> +
+> +static void destroy_perf_obj(struct perf_object *pobj)
+> +{
+> +       struct perf_object *obj, *obj_tmp;
+> +
+> +       if (pobj->attr_groups)
+> +               sysfs_remove_groups(&pobj->kobj, pobj->attr_groups);
+> +
+> +       list_for_each_entry_safe(obj, obj_tmp, &pobj->children, node)
+> +               destroy_perf_obj(obj);
+> +
+> +       list_del(&pobj->node);
+> +       kobject_put(&pobj->kobj);
+> +}
+> +
+> +static struct perf_object *create_perf_dev(struct dfl_feature *feature)
+> +{
+> +       struct platform_device *pdev = feature->pdev;
+> +
+> +       return create_perf_obj(feature, &pdev->dev.kobj, PERF_OBJ_ROOT_ID,
+> +                              perf_dev_attr_groups, "perf");
+> +}
+> +
+> +/*
+> + * Counter Sysfs Interfaces for Cache.
+> + */
+> +static ssize_t cache_freeze_show(struct perf_object *pobj, char *buf)
+> +{
+> +       void __iomem *base = pobj->feature->ioaddr;
+> +       u64 v;
+> +
+> +       v = readq(base + CACHE_CTRL);
+> +
+> +       return sprintf(buf, "%u\n",
+> +                      (unsigned int)FIELD_GET(CACHE_FREEZE_CNTR, v));
+> +}
+> +
+> +static ssize_t cache_freeze_store(struct perf_object *pobj,
+> +                                 const char *buf, size_t n)
+> +{
+> +       struct dfl_feature *feature = pobj->feature;
+> +       struct dfl_feature_platform_data *pdata;
+> +       void __iomem *base = feature->ioaddr;
+> +       bool state;
+> +       u64 v;
+> +
+> +       if (strtobool(buf, &state))
+> +               return -EINVAL;
+> +
+> +       pdata = dev_get_platdata(&feature->pdev->dev);
+> +
+> +       mutex_lock(&pdata->lock);
+> +       v = readq(base + CACHE_CTRL);
+> +       v &= ~CACHE_FREEZE_CNTR;
+> +       v |= FIELD_PREP(CACHE_FREEZE_CNTR, state ? 1 : 0);
+> +       writeq(v, base + CACHE_CTRL);
+> +       mutex_unlock(&pdata->lock);
+> +
+> +       return n;
+> +}
+> +static PERF_OBJ_ATTR_F_RW(cache_freeze, freeze);
+> +
+> +static ssize_t read_cache_counter(struct perf_object *pobj, char *buf,
+> +                                 u8 channel, u8 event)
+> +{
+> +       struct dfl_feature *feature = pobj->feature;
+> +       struct dfl_feature_platform_data *pdata;
+> +       void __iomem *base = feature->ioaddr;
+> +       u64 v, count;
+> +
+> +       WARN_ON_ONCE(event > CACHE_EVNT_MAX || channel > CACHE_CHANNEL_MAX);
+> +
+> +       pdata = dev_get_platdata(&feature->pdev->dev);
+> +
+> +       mutex_lock(&pdata->lock);
+> +       /* set channel access type and cache event code. */
+> +       v = readq(base + CACHE_CTRL);
+> +       v &= ~(CACHE_CHANNEL_SEL | CACHE_CTRL_EVNT);
+> +       v |= FIELD_PREP(CACHE_CHANNEL_SEL, channel);
+> +       v |= FIELD_PREP(CACHE_CTRL_EVNT, event);
+> +       writeq(v, base + CACHE_CTRL);
+> +
+> +       if (readq_poll_timeout(base + CACHE_CNTR0, v,
+> +                              FIELD_GET(CACHE_CNTR_EVNT, v) == event,
+> +                              1, PERF_TIMEOUT)) {
+> +               dev_err(&feature->pdev->dev, "timeout, unmatched cache event type in counter registers.\n");
+> +               mutex_unlock(&pdata->lock);
+> +               return -ETIMEDOUT;
+> +       }
+> +
+> +       v = readq(base + CACHE_CNTR0);
+> +       count = FIELD_GET(CACHE_CNTR_EVNT_CNTR, v);
+> +       v = readq(base + CACHE_CNTR1);
+> +       count += FIELD_GET(CACHE_CNTR_EVNT_CNTR, v);
+> +       mutex_unlock(&pdata->lock);
+> +
+> +       return sprintf(buf, "0x%llx\n", (unsigned long long)count);
+> +}
+> +
+> +#define CACHE_SHOW(name, channel, event)                               \
+> +static ssize_t name##_show(struct perf_object *pobj, char *buf)                \
+> +{                                                                      \
+> +       return read_cache_counter(pobj, buf, channel, event);           \
+> +}                                                                      \
+> +static PERF_OBJ_ATTR_RO(name)
+> +
+> +CACHE_SHOW(read_hit, CACHE_CHANNEL_RD, CACHE_EVNT_RD_HIT);
+> +CACHE_SHOW(read_miss, CACHE_CHANNEL_RD, CACHE_EVNT_RD_MISS);
+> +CACHE_SHOW(write_hit, CACHE_CHANNEL_WR, CACHE_EVNT_WR_HIT);
+> +CACHE_SHOW(write_miss, CACHE_CHANNEL_WR, CACHE_EVNT_WR_MISS);
+> +CACHE_SHOW(hold_request, CACHE_CHANNEL_RD, CACHE_EVNT_HOLD_REQ);
+> +CACHE_SHOW(tx_req_stall, CACHE_CHANNEL_RD, CACHE_EVNT_TX_REQ_STALL);
+> +CACHE_SHOW(rx_req_stall, CACHE_CHANNEL_RD, CACHE_EVNT_RX_REQ_STALL);
+> +CACHE_SHOW(rx_eviction, CACHE_CHANNEL_RD, CACHE_EVNT_EVICTIONS);
+> +CACHE_SHOW(data_write_port_contention, CACHE_CHANNEL_WR,
+> +          CACHE_EVNT_DATA_WR_PORT_CONTEN);
+> +CACHE_SHOW(tag_write_port_contention, CACHE_CHANNEL_WR,
+> +          CACHE_EVNT_TAG_WR_PORT_CONTEN);
+> +
+> +static struct attribute *cache_attrs[] = {
+> +       &perf_obj_attr_read_hit.attr,
+> +       &perf_obj_attr_read_miss.attr,
+> +       &perf_obj_attr_write_hit.attr,
+> +       &perf_obj_attr_write_miss.attr,
+> +       &perf_obj_attr_hold_request.attr,
+> +       &perf_obj_attr_data_write_port_contention.attr,
+> +       &perf_obj_attr_tag_write_port_contention.attr,
+> +       &perf_obj_attr_tx_req_stall.attr,
+> +       &perf_obj_attr_rx_req_stall.attr,
+> +       &perf_obj_attr_rx_eviction.attr,
+> +       &perf_obj_attr_cache_freeze.attr,
+> +       NULL,
+> +};
+> +
+> +static struct attribute_group cache_attr_group = {
+> +       .attrs = cache_attrs,
+> +};
+> +
+> +static const struct attribute_group *cache_attr_groups[] = {
+> +       &cache_attr_group,
+> +       NULL,
+> +};
+> +
+> +static int create_perf_cache_obj(struct perf_object *perf_dev)
+> +{
+> +       struct perf_object *pobj;
+> +
+> +       pobj = create_perf_obj(perf_dev->feature, &perf_dev->kobj,
+> +                              PERF_OBJ_ROOT_ID, cache_attr_groups, "cache");
+> +       if (IS_ERR(pobj))
+> +               return PTR_ERR(pobj);
+> +
+> +       list_add(&pobj->node, &perf_dev->children);
+> +
+> +       return 0;
+> +}
+> +
+> +/*
+> + * Counter Sysfs Interfaces for VT-D / IOMMU.
+> + */
+> +static ssize_t vtd_freeze_show(struct perf_object *pobj, char *buf)
+> +{
+> +       void __iomem *base = pobj->feature->ioaddr;
+> +       u64 v;
+> +
+> +       v = readq(base + VTD_CTRL);
+> +
+> +       return sprintf(buf, "%u\n",
+> +                      (unsigned int)FIELD_GET(VTD_FREEZE_CNTR, v));
+> +}
+> +
+> +static ssize_t vtd_freeze_store(struct perf_object *pobj,
+> +                               const char *buf, size_t n)
+> +{
+> +       struct dfl_feature *feature = pobj->feature;
+> +       struct dfl_feature_platform_data *pdata;
+> +       void __iomem *base = feature->ioaddr;
+> +       bool state;
+> +       u64 v;
+> +
+> +       if (strtobool(buf, &state))
+> +               return -EINVAL;
+> +
+> +       pdata = dev_get_platdata(&feature->pdev->dev);
+> +
+> +       mutex_lock(&pdata->lock);
+> +       v = readq(base + VTD_CTRL);
+> +       v &= ~VTD_FREEZE_CNTR;
+> +       v |= FIELD_PREP(VTD_FREEZE_CNTR, state ? 1 : 0);
+> +       writeq(v, base + VTD_CTRL);
+> +       mutex_unlock(&pdata->lock);
+> +
+> +       return n;
+> +}
+> +static PERF_OBJ_ATTR_F_RW(vtd_freeze, freeze);
+> +
+> +static struct attribute *iommu_top_attrs[] = {
+> +       &perf_obj_attr_vtd_freeze.attr,
+> +       NULL,
+> +};
+> +
+> +static struct attribute_group iommu_top_attr_group = {
+> +       .attrs = iommu_top_attrs,
+> +};
+> +
+> +static ssize_t read_iommu_sip_counter(struct perf_object *pobj,
+> +                                     u8 event, char *buf)
+> +{
+> +       struct dfl_feature *feature = pobj->feature;
+> +       struct dfl_feature_platform_data *pdata;
+> +       void __iomem *base = feature->ioaddr;
+> +       u64 v, count;
+> +
+> +       WARN_ON_ONCE(event > VTD_SIP_EVNT_MAX);
+> +
+> +       pdata = dev_get_platdata(&feature->pdev->dev);
+> +
+> +       mutex_lock(&pdata->lock);
+> +       v = readq(base + VTD_SIP_CTRL);
+> +       v &= ~VTD_SIP_CTRL_EVNT;
+> +       v |= FIELD_PREP(VTD_SIP_CTRL_EVNT, event);
+> +       writeq(v, base + VTD_SIP_CTRL);
+> +
+> +       if (readq_poll_timeout(base + VTD_SIP_CNTR, v,
+> +                              FIELD_GET(VTD_SIP_CNTR_EVNT, v) == event,
+> +                              1, PERF_TIMEOUT)) {
+> +               dev_err(&feature->pdev->dev, "timeout, unmatched VTd SIP event type in counter registers\n");
+> +               mutex_unlock(&pdata->lock);
+> +               return -ETIMEDOUT;
+> +       }
+> +
+> +       v = readq(base + VTD_SIP_CNTR);
+> +       count = FIELD_GET(VTD_SIP_CNTR_EVNT_CNTR, v);
+> +       mutex_unlock(&pdata->lock);
+> +
+> +       return sprintf(buf, "0x%llx\n", (unsigned long long)count);
+> +}
+> +
+> +#define VTD_SIP_SHOW(name, event)                                      \
+> +static ssize_t name##_show(struct perf_object *pobj, char *buf)                \
+> +{                                                                      \
+> +       return read_iommu_sip_counter(pobj, event, buf);                \
+> +}                                                                      \
+> +static PERF_OBJ_ATTR_RO(name)
+> +
+> +VTD_SIP_SHOW(iotlb_4k_hit, VTD_SIP_EVNT_IOTLB_4K_HIT);
+> +VTD_SIP_SHOW(iotlb_2m_hit, VTD_SIP_EVNT_IOTLB_2M_HIT);
+> +VTD_SIP_SHOW(iotlb_1g_hit, VTD_SIP_EVNT_IOTLB_1G_HIT);
+> +VTD_SIP_SHOW(slpwc_l3_hit, VTD_SIP_EVNT_SLPWC_L3_HIT);
+> +VTD_SIP_SHOW(slpwc_l4_hit, VTD_SIP_EVNT_SLPWC_L4_HIT);
+> +VTD_SIP_SHOW(rcc_hit, VTD_SIP_EVNT_RCC_HIT);
+> +VTD_SIP_SHOW(iotlb_4k_miss, VTD_SIP_EVNT_IOTLB_4K_MISS);
+> +VTD_SIP_SHOW(iotlb_2m_miss, VTD_SIP_EVNT_IOTLB_2M_MISS);
+> +VTD_SIP_SHOW(iotlb_1g_miss, VTD_SIP_EVNT_IOTLB_1G_MISS);
+> +VTD_SIP_SHOW(slpwc_l3_miss, VTD_SIP_EVNT_SLPWC_L3_MISS);
+> +VTD_SIP_SHOW(slpwc_l4_miss, VTD_SIP_EVNT_SLPWC_L4_MISS);
+> +VTD_SIP_SHOW(rcc_miss, VTD_SIP_EVNT_RCC_MISS);
+> +
+> +static struct attribute *iommu_sip_attrs[] = {
+> +       &perf_obj_attr_iotlb_4k_hit.attr,
+> +       &perf_obj_attr_iotlb_2m_hit.attr,
+> +       &perf_obj_attr_iotlb_1g_hit.attr,
+> +       &perf_obj_attr_slpwc_l3_hit.attr,
+> +       &perf_obj_attr_slpwc_l4_hit.attr,
+> +       &perf_obj_attr_rcc_hit.attr,
+> +       &perf_obj_attr_iotlb_4k_miss.attr,
+> +       &perf_obj_attr_iotlb_2m_miss.attr,
+> +       &perf_obj_attr_iotlb_1g_miss.attr,
+> +       &perf_obj_attr_slpwc_l3_miss.attr,
+> +       &perf_obj_attr_slpwc_l4_miss.attr,
+> +       &perf_obj_attr_rcc_miss.attr,
+> +       NULL,
+> +};
+> +
+> +static struct attribute_group iommu_sip_attr_group = {
+> +       .attrs = iommu_sip_attrs,
+> +};
+> +
+> +static const struct attribute_group *iommu_top_attr_groups[] = {
+> +       &iommu_top_attr_group,
+> +       &iommu_sip_attr_group,
+> +       NULL,
+> +};
+> +
+> +static ssize_t read_iommu_counter(struct perf_object *pobj, u8 event, char *buf)
+> +{
+> +       struct dfl_feature *feature = pobj->feature;
+> +       struct dfl_feature_platform_data *pdata;
+> +       void __iomem *base = feature->ioaddr;
+> +       u64 v, count;
+> +
+> +       WARN_ON_ONCE(event > VTD_EVNT_MAX);
+> +
+> +       event += pobj->id;
+> +       pdata = dev_get_platdata(&feature->pdev->dev);
+> +
+> +       mutex_lock(&pdata->lock);
+> +       v = readq(base + VTD_CTRL);
+> +       v &= ~VTD_CTRL_EVNT;
+> +       v |= FIELD_PREP(VTD_CTRL_EVNT, event);
+> +       writeq(v, base + VTD_CTRL);
+> +
+> +       if (readq_poll_timeout(base + VTD_CNTR, v,
+> +                              FIELD_GET(VTD_CNTR_EVNT, v) == event, 1,
+> +                              PERF_TIMEOUT)) {
+> +               dev_err(&feature->pdev->dev, "timeout, unmatched VTd event type in counter registers\n");
+> +               mutex_unlock(&pdata->lock);
+> +               return -ETIMEDOUT;
+> +       }
+> +
+> +       v = readq(base + VTD_CNTR);
+> +       count = FIELD_GET(VTD_CNTR_EVNT_CNTR, v);
+> +       mutex_unlock(&pdata->lock);
+> +
+> +       return sprintf(buf, "0x%llx\n", (unsigned long long)count);
+> +}
+> +
+> +#define VTD_SHOW(name, base_event)                                     \
+> +static ssize_t name##_show(struct perf_object *pobj, char *buf)                \
+> +{                                                                      \
+> +       return read_iommu_counter(pobj, base_event, buf);               \
+> +}                                                                      \
+> +static PERF_OBJ_ATTR_RO(name)
+> +
+> +VTD_SHOW(read_transaction, VTD_EVNT_AFU_MEM_RD_TRANS);
+> +VTD_SHOW(write_transaction, VTD_EVNT_AFU_MEM_WR_TRANS);
+> +VTD_SHOW(devtlb_read_hit, VTD_EVNT_AFU_DEVTLB_RD_HIT);
+> +VTD_SHOW(devtlb_write_hit, VTD_EVNT_AFU_DEVTLB_WR_HIT);
+> +VTD_SHOW(devtlb_4k_fill, VTD_EVNT_DEVTLB_4K_FILL);
+> +VTD_SHOW(devtlb_2m_fill, VTD_EVNT_DEVTLB_2M_FILL);
+> +VTD_SHOW(devtlb_1g_fill, VTD_EVNT_DEVTLB_1G_FILL);
+> +
+> +static struct attribute *iommu_attrs[] = {
+> +       &perf_obj_attr_read_transaction.attr,
+> +       &perf_obj_attr_write_transaction.attr,
+> +       &perf_obj_attr_devtlb_read_hit.attr,
+> +       &perf_obj_attr_devtlb_write_hit.attr,
+> +       &perf_obj_attr_devtlb_4k_fill.attr,
+> +       &perf_obj_attr_devtlb_2m_fill.attr,
+> +       &perf_obj_attr_devtlb_1g_fill.attr,
+> +       NULL,
+> +};
+> +
+> +static struct attribute_group iommu_attr_group = {
+> +       .attrs = iommu_attrs,
+> +};
+> +
+> +static const struct attribute_group *iommu_attr_groups[] = {
+> +       &iommu_attr_group,
+> +       NULL,
+> +};
+> +
+> +#define PERF_MAX_PORT_NUM      1
+> +
+> +static int create_perf_iommu_obj(struct perf_object *perf_dev)
+> +{
+> +       struct dfl_feature *feature = perf_dev->feature;
+> +       struct device *dev = &feature->pdev->dev;
+> +       struct perf_object *pobj, *obj;
+> +       void __iomem *base;
+> +       u64 v;
+> +       int i;
+> +
+> +       /* check if iommu is not supported on this device. */
+> +       base = dfl_get_feature_ioaddr_by_id(dev, FME_FEATURE_ID_HEADER);
+> +       v = readq(base + FME_HDR_CAP);
+> +       if (!FIELD_GET(FME_CAP_IOMMU_AVL, v))
+> +               return 0;
+> +
+> +       pobj = create_perf_obj(feature, &perf_dev->kobj, PERF_OBJ_ROOT_ID,
+> +                              iommu_top_attr_groups, "iommu");
+> +       if (IS_ERR(pobj))
+> +               return PTR_ERR(pobj);
+> +
+> +       list_add(&pobj->node, &perf_dev->children);
+> +
+> +       for (i = 0; i < PERF_MAX_PORT_NUM; i++) {
+> +               obj = create_perf_obj(feature, &pobj->kobj, i,
+> +                                     iommu_attr_groups, "afu");
+> +               if (IS_ERR(obj))
+> +                       return PTR_ERR(obj);
+> +
+> +               list_add(&obj->node, &pobj->children);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +/*
+> + * Counter Sysfs Interfaces for Fabric
+> + */
+> +static bool fabric_pobj_is_enabled(struct perf_object *pobj)
+> +{
+> +       struct dfl_feature *feature = pobj->feature;
+> +       void __iomem *base = feature->ioaddr;
+> +       u64 v;
+> +
+> +       v = readq(base + FAB_CTRL);
+> +
+> +       if (FIELD_GET(FAB_PORT_FILTER, v) == FAB_PORT_FILTER_DISABLE)
+> +               return pobj->id == PERF_OBJ_ROOT_ID;
+> +
+> +       return pobj->id == FIELD_GET(FAB_PORT_ID, v);
+> +}
+> +
+> +static ssize_t read_fabric_counter(struct perf_object *pobj,
+> +                                  u8 event, char *buf)
+> +{
+> +       struct dfl_feature *feature = pobj->feature;
+> +       struct dfl_feature_platform_data *pdata;
+> +       void __iomem *base = feature->ioaddr;
+> +       u64 v, count = 0;
+> +
+> +       WARN_ON_ONCE(event > FAB_EVNT_MAX);
+> +
+> +       pdata = dev_get_platdata(&feature->pdev->dev);
+> +
+> +       mutex_lock(&pdata->lock);
+> +       /* if it is disabled, force the counter to return zero. */
+> +       if (!fabric_pobj_is_enabled(pobj))
+> +               goto exit;
+> +
+> +       v = readq(base + FAB_CTRL);
+> +       v &= ~FAB_CTRL_EVNT;
+> +       v |= FIELD_PREP(FAB_CTRL_EVNT, event);
+> +       writeq(v, base + FAB_CTRL);
+> +
+> +       if (readq_poll_timeout(base + FAB_CNTR, v,
+> +                              FIELD_GET(FAB_CNTR_EVNT, v) == event,
+> +                              1, PERF_TIMEOUT)) {
+> +               dev_err(&feature->pdev->dev, "timeout, unmatched fab event type in counter registers.\n");
+> +               mutex_unlock(&pdata->lock);
+> +               return -ETIMEDOUT;
+> +       }
+> +
+> +       v = readq(base + FAB_CNTR);
+> +       count = FIELD_GET(FAB_CNTR_EVNT_CNTR, v);
+> +exit:
+> +       mutex_unlock(&pdata->lock);
+> +
+> +       return sprintf(buf, "0x%llx\n", (unsigned long long)count);
+> +}
+> +
+> +#define FAB_SHOW(name, event)                                          \
+> +static ssize_t name##_show(struct perf_object *pobj, char *buf)                \
+> +{                                                                      \
+> +       return read_fabric_counter(pobj, event, buf);                   \
+> +}                                                                      \
+> +static PERF_OBJ_ATTR_RO(name)
+> +
+> +FAB_SHOW(pcie0_read, FAB_EVNT_PCIE0_RD);
+> +FAB_SHOW(pcie0_write, FAB_EVNT_PCIE0_WR);
+> +FAB_SHOW(pcie1_read, FAB_EVNT_PCIE1_RD);
+> +FAB_SHOW(pcie1_write, FAB_EVNT_PCIE1_WR);
+> +FAB_SHOW(upi_read, FAB_EVNT_UPI_RD);
+> +FAB_SHOW(upi_write, FAB_EVNT_UPI_WR);
+> +FAB_SHOW(mmio_read, FAB_EVNT_MMIO_RD);
+> +FAB_SHOW(mmio_write, FAB_EVNT_MMIO_WR);
+> +
+> +static ssize_t fab_enable_show(struct perf_object *pobj, char *buf)
+> +{
+> +       return sprintf(buf, "%u\n",
+> +                      (unsigned int)!!fabric_pobj_is_enabled(pobj));
+> +}
+> +
+> +/*
+> + * If enable one port or all port event counter in fabric, other
+> + * fabric event counter originally enabled will be disable automatically.
+> + */
+> +static ssize_t fab_enable_store(struct perf_object *pobj,
+> +                               const char *buf, size_t n)
+> +{
+> +       struct dfl_feature *feature = pobj->feature;
+> +       struct dfl_feature_platform_data *pdata;
+> +       void __iomem *base = feature->ioaddr;
+> +       bool state;
+> +       u64 v;
+> +
+> +       if (strtobool(buf, &state) || !state)
+> +               return -EINVAL;
+> +
+> +       pdata = dev_get_platdata(&feature->pdev->dev);
+> +
+> +       /* if it is already enabled. */
+> +       if (fabric_pobj_is_enabled(pobj))
+> +               return n;
+> +
+> +       mutex_lock(&pdata->lock);
+> +       v = readq(base + FAB_CTRL);
+> +       v &= ~(FAB_PORT_FILTER | FAB_PORT_ID);
+> +
+> +       if (pobj->id == PERF_OBJ_ROOT_ID) {
+> +               v |= FIELD_PREP(FAB_PORT_FILTER, FAB_PORT_FILTER_DISABLE);
+> +       } else {
+> +               v |= FIELD_PREP(FAB_PORT_FILTER, FAB_PORT_FILTER_ENABLE);
+> +               v |= FIELD_PREP(FAB_PORT_ID, pobj->id);
+> +       }
+> +       writeq(v, base + FAB_CTRL);
+> +       mutex_unlock(&pdata->lock);
+> +
+> +       return n;
+> +}
+> +static PERF_OBJ_ATTR_F_RW(fab_enable, enable);
+> +
+> +static struct attribute *fabric_attrs[] = {
+> +       &perf_obj_attr_pcie0_read.attr,
+> +       &perf_obj_attr_pcie0_write.attr,
+> +       &perf_obj_attr_pcie1_read.attr,
+> +       &perf_obj_attr_pcie1_write.attr,
+> +       &perf_obj_attr_upi_read.attr,
+> +       &perf_obj_attr_upi_write.attr,
+> +       &perf_obj_attr_mmio_read.attr,
+> +       &perf_obj_attr_mmio_write.attr,
+> +       &perf_obj_attr_fab_enable.attr,
+> +       NULL,
+> +};
+> +
+> +static struct attribute_group fabric_attr_group = {
+> +       .attrs = fabric_attrs,
+> +};
+> +
+> +static const struct attribute_group *fabric_attr_groups[] = {
+> +       &fabric_attr_group,
+> +       NULL,
+> +};
+> +
+> +static ssize_t fab_freeze_show(struct perf_object *pobj, char *buf)
+> +{
+> +       void __iomem *base = pobj->feature->ioaddr;
+> +       u64 v;
+> +
+> +       v = readq(base + FAB_CTRL);
+> +
+> +       return sprintf(buf, "%u\n",
+> +                      (unsigned int)FIELD_GET(FAB_FREEZE_CNTR, v));
+> +}
+> +
+> +static ssize_t fab_freeze_store(struct perf_object *pobj,
+> +                               const char *buf, size_t n)
+> +{
+> +       struct dfl_feature *feature = pobj->feature;
+> +       struct dfl_feature_platform_data *pdata;
+> +       void __iomem *base = feature->ioaddr;
+> +       bool state;
+> +       u64 v;
+> +
+> +       if (strtobool(buf, &state))
+> +               return -EINVAL;
+> +
+> +       pdata = dev_get_platdata(&feature->pdev->dev);
+> +
+> +       mutex_lock(&pdata->lock);
+> +       v = readq(base + FAB_CTRL);
+> +       v &= ~FAB_FREEZE_CNTR;
+> +       v |= FIELD_PREP(FAB_FREEZE_CNTR, state ? 1 : 0);
+> +       writeq(v, base + FAB_CTRL);
+> +       mutex_unlock(&pdata->lock);
+> +
+> +       return n;
+> +}
+> +static PERF_OBJ_ATTR_F_RW(fab_freeze, freeze);
+> +
+> +static struct attribute *fabric_top_attrs[] = {
+> +       &perf_obj_attr_fab_freeze.attr,
+> +       NULL,
+> +};
+> +
+> +static struct attribute_group fabric_top_attr_group = {
+> +       .attrs = fabric_top_attrs,
+> +};
+> +
+> +static const struct attribute_group *fabric_top_attr_groups[] = {
+> +       &fabric_attr_group,
+> +       &fabric_top_attr_group,
+> +       NULL,
+> +};
+> +
+> +static int create_perf_fabric_obj(struct perf_object *perf_dev)
+> +{
+> +       struct perf_object *pobj, *obj;
+> +       int i;
+> +
+> +       pobj = create_perf_obj(perf_dev->feature, &perf_dev->kobj,
+> +                              PERF_OBJ_ROOT_ID, fabric_top_attr_groups,
+> +                              "fabric");
+> +       if (IS_ERR(pobj))
+> +               return PTR_ERR(pobj);
+> +
+> +       list_add(&pobj->node, &perf_dev->children);
+> +
+> +       for (i = 0; i < PERF_MAX_PORT_NUM; i++) {
+> +               obj = create_perf_obj(perf_dev->feature, &pobj->kobj, i,
+> +                                     fabric_attr_groups, "port");
+> +               if (IS_ERR(obj))
+> +                       return PTR_ERR(obj);
+> +
+> +               list_add(&obj->node, &pobj->children);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int fme_perf_init(struct platform_device *pdev,
+> +                        struct dfl_feature *feature)
+> +{
+> +       struct perf_object *perf_dev;
+> +       int ret;
+> +
+> +       perf_dev = create_perf_dev(feature);
+> +       if (IS_ERR(perf_dev))
+> +               return PTR_ERR(perf_dev);
+> +
+> +       ret = create_perf_fabric_obj(perf_dev);
+> +       if (ret)
+> +               goto done;
+> +
+> +       if (feature->id == FME_FEATURE_ID_GLOBAL_IPERF) {
+> +               /*
+> +                * Cache and IOMMU(VT-D) performance counters are not supported
+> +                * on discreted solutions e.g. Intel Programmable Acceleration
+> +                * Card based on PCIe.
+> +                */
+> +               ret = create_perf_cache_obj(perf_dev);
+> +               if (ret)
+> +                       goto done;
+> +
+> +               ret = create_perf_iommu_obj(perf_dev);
+> +               if (ret)
+> +                       goto done;
+> +       }
+> +
+> +       feature->priv = perf_dev;
+> +       return 0;
+> +
+> +done:
+> +       destroy_perf_obj(perf_dev);
+> +       return ret;
+> +}
+> +
+> +static void fme_perf_uinit(struct platform_device *pdev,
+> +                          struct dfl_feature *feature)
+> +{
+> +       struct perf_object *perf_dev = feature->priv;
+> +
+> +       destroy_perf_obj(perf_dev);
+> +}
+> +
+> +const struct dfl_feature_id fme_perf_id_table[] = {
+> +       {.id = FME_FEATURE_ID_GLOBAL_IPERF,},
+> +       {.id = FME_FEATURE_ID_GLOBAL_DPERF,},
+> +       {0,}
+> +};
+> +
+> +const struct dfl_feature_ops fme_perf_ops = {
+> +       .init = fme_perf_init,
+> +       .uinit = fme_perf_uinit,
+> +};
+> diff --git a/drivers/fpga/dfl-fme.h b/drivers/fpga/dfl-fme.h
+> index 5fbe3f5..dc71048 100644
+> --- a/drivers/fpga/dfl-fme.h
+> +++ b/drivers/fpga/dfl-fme.h
+> @@ -39,5 +39,7 @@ struct dfl_fme {
+>  extern const struct dfl_feature_id fme_pr_mgmt_id_table[];
+>  extern const struct dfl_feature_ops fme_global_err_ops;
+>  extern const struct dfl_feature_id fme_global_err_id_table[];
+> +extern const struct dfl_feature_ops fme_perf_ops;
+> +extern const struct dfl_feature_id fme_perf_id_table[];
 >
-> @@ -242,17 +243,17 @@ int bpf_map_charge_memlock(struct bpf_map *map, u32 pages)
->  {
->         int ret;
+>  #endif /* __DFL_FME_H */
+> diff --git a/drivers/fpga/dfl.c b/drivers/fpga/dfl.c
+> index 1bb2b58..050b18b 100644
+> --- a/drivers/fpga/dfl.c
+> +++ b/drivers/fpga/dfl.c
+> @@ -521,6 +521,7 @@ static int build_info_commit_dev(struct build_feature_devs_info *binfo)
+>                 struct dfl_feature *feature = &pdata->features[index];
 >
-> -       ret = bpf_charge_memlock(map->user, pages);
-> +       ret = bpf_charge_memlock(map->memory.user, pages);
->         if (ret)
->                 return ret;
-> -       map->pages += pages;
-> +       map->memory.pages += pages;
->         return ret;
->  }
->
->  void bpf_map_uncharge_memlock(struct bpf_map *map, u32 pages)
->  {
-> -       bpf_uncharge_memlock(map->user, pages);
-> -       map->pages -= pages;
-> +       bpf_uncharge_memlock(map->memory.user, pages);
-> +       map->memory.pages -= pages;
->  }
->
->  static int bpf_map_alloc_id(struct bpf_map *map)
-> @@ -395,7 +396,7 @@ static void bpf_map_show_fdinfo(struct seq_file *m, struct file *filp)
->                    map->value_size,
->                    map->max_entries,
->                    map->map_flags,
-> -                  map->pages * 1ULL << PAGE_SHIFT,
-> +                  map->memory.pages * 1ULL << PAGE_SHIFT,
->                    map->id,
->                    READ_ONCE(map->frozen));
->
-> diff --git a/kernel/bpf/xskmap.c b/kernel/bpf/xskmap.c
-> index 686d244e798d..f816ee1a0fa0 100644
-> --- a/kernel/bpf/xskmap.c
-> +++ b/kernel/bpf/xskmap.c
-> @@ -40,10 +40,10 @@ static struct bpf_map *xsk_map_alloc(union bpf_attr *attr)
->         if (cost >= U32_MAX - PAGE_SIZE)
->                 goto free_m;
->
-> -       m->map.pages = round_up(cost, PAGE_SIZE) >> PAGE_SHIFT;
-> +       m->map.memory.pages = round_up(cost, PAGE_SIZE) >> PAGE_SHIFT;
->
->         /* Notice returns -EPERM on if map size is larger than memlock limit */
-> -       err = bpf_map_precharge_memlock(m->map.pages);
-> +       err = bpf_map_precharge_memlock(m->map.memory.pages);
->         if (err)
->                 goto free_m;
->
-> diff --git a/net/core/bpf_sk_storage.c b/net/core/bpf_sk_storage.c
-> index 9a8aaf8e235d..92581c3ff220 100644
-> --- a/net/core/bpf_sk_storage.c
-> +++ b/net/core/bpf_sk_storage.c
-> @@ -659,7 +659,7 @@ static struct bpf_map *bpf_sk_storage_map_alloc(union bpf_attr *attr)
->         smap->elem_size = sizeof(struct bpf_sk_storage_elem) + attr->value_size;
->         smap->cache_idx = (unsigned int)atomic_inc_return(&cache_idx) %
->                 BPF_SK_STORAGE_CACHE_SIZE;
-> -       smap->map.pages = pages;
-> +       smap->map.memory.pages = pages;
->
->         return &smap->map;
->  }
-> diff --git a/net/core/sock_map.c b/net/core/sock_map.c
-> index be6092ac69f8..4eb5b6a1b29f 100644
-> --- a/net/core/sock_map.c
-> +++ b/net/core/sock_map.c
-> @@ -49,8 +49,8 @@ static struct bpf_map *sock_map_alloc(union bpf_attr *attr)
->                 goto free_stab;
->         }
->
-> -       stab->map.pages = round_up(cost, PAGE_SIZE) >> PAGE_SHIFT;
-> -       err = bpf_map_precharge_memlock(stab->map.pages);
-> +       stab->map.memory.pages = round_up(cost, PAGE_SIZE) >> PAGE_SHIFT;
-> +       err = bpf_map_precharge_memlock(stab->map.memory.pages);
->         if (err)
->                 goto free_stab;
->
+>                 /* save resource information for each feature */
+> +               feature->pdev = fdev;
+>                 feature->id = finfo->fid;
+>                 feature->resource_index = index;
+>                 feature->ioaddr = finfo->ioaddr;
+> diff --git a/drivers/fpga/dfl.h b/drivers/fpga/dfl.h
+> index 6c32080..bf23436 100644
+> --- a/drivers/fpga/dfl.h
+> +++ b/drivers/fpga/dfl.h
+> @@ -191,6 +191,7 @@ struct dfl_feature_driver {
+>  /**
+>   * struct dfl_feature - sub feature of the feature devices
+>   *
+> + * @pdev: parent platform device.
+>   * @id: sub feature id.
+>   * @resource_index: each sub feature has one mmio resource for its registers.
+>   *                 this index is used to find its mmio resource from the
+> @@ -200,6 +201,7 @@ struct dfl_feature_driver {
+>   * @priv: priv data of this feature.
+>   */
+>  struct dfl_feature {
+> +       struct platform_device *pdev;
+>         u64 id;
+>         int resource_index;
+>         void __iomem *ioaddr;
 > --
-> 2.20.1
+> 1.8.3.1
 >
