@@ -2,86 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CD522EECB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:50:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFB9C2EEDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:50:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733239AbfE3Dtk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:49:40 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:53280 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387710AbfE3Dta (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:49:30 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id BC38EA36FC591233E71A;
-        Thu, 30 May 2019 11:49:27 +0800 (CST)
-Received: from HGHY4L002753561.china.huawei.com (10.133.215.186) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 30 May 2019 11:49:20 +0800
-From:   Zhen Lei <thunder.leizhen@huawei.com>
-To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        John Garry <john.garry@huawei.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        linux-doc <linux-doc@vger.kernel.org>,
-        Sebastian Ott <sebott@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        "Martin Schwidefsky" <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        "Michael Ellerman" <mpe@ellerman.id.au>,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        x86 <x86@kernel.org>, linux-ia64 <linux-ia64@vger.kernel.org>
-CC:     Zhen Lei <thunder.leizhen@huawei.com>,
-        Hanjun Guo <guohanjun@huawei.com>
-Subject: [PATCH v8 7/7] ia64: hide build option IOMMU_DEFAULT_PASSTHROUGH
-Date:   Thu, 30 May 2019 11:48:31 +0800
-Message-ID: <20190530034831.4184-8-thunder.leizhen@huawei.com>
-X-Mailer: git-send-email 2.21.0.windows.1
-In-Reply-To: <20190530034831.4184-1-thunder.leizhen@huawei.com>
-References: <20190530034831.4184-1-thunder.leizhen@huawei.com>
+        id S1732211AbfE3Dui convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 29 May 2019 23:50:38 -0400
+Received: from mga17.intel.com ([192.55.52.151]:44611 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729795AbfE3Duf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:50:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 May 2019 20:50:34 -0700
+X-ExtLoop1: 1
+Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
+  by fmsmga005.fm.intel.com with ESMTP; 29 May 2019 20:50:34 -0700
+Received: from fmsmsx113.amr.corp.intel.com (10.18.116.7) by
+ FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 29 May 2019 20:50:34 -0700
+Received: from shsmsx104.ccr.corp.intel.com (10.239.4.70) by
+ FMSMSX113.amr.corp.intel.com (10.18.116.7) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 29 May 2019 20:50:34 -0700
+Received: from shsmsx107.ccr.corp.intel.com ([169.254.9.98]) by
+ SHSMSX104.ccr.corp.intel.com ([169.254.5.137]) with mapi id 14.03.0415.000;
+ Thu, 30 May 2019 11:50:32 +0800
+From:   "Chang, Junxiao" <junxiao.chang@intel.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "Li, Lili" <lili.li@intel.com>
+Subject: RE: [PATCH] platform: release resource itself instead of resource
+ tree
+Thread-Topic: [PATCH] platform: release resource itself instead of resource
+ tree
+Thread-Index: AQHU+y/55Via5j+fREqcQbqrpZ0MZqaDO8ow
+Date:   Thu, 30 May 2019 03:50:32 +0000
+Message-ID: <840F6BCBBBA89F46BAD0D7D6EF39E6E350F220C7@SHSMSX107.ccr.corp.intel.com>
+References: <1556173458-9318-1-git-send-email-junxiao.chang@intel.com>
+In-Reply-To: <1556173458-9318-1-git-send-email-junxiao.chang@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiM2Y1N2M5YTUtZGZlNS00NWM4LWFiOWUtYTgyNzczNmNlZTdhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoibVhXU1lZSkoyQ2lqaWRZdDZPS210MlgwZlcxOUtOU1czNDMxVHpkK2NFZWhBVkpiWUk1Q3dvNzdmZTY1U0pxRSJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.600.7
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.133.215.186]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DMA mode PASSTHROUGH is not used on ia64.
+Any update?
 
-Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
----
- drivers/iommu/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This issue could be reproduced in one intel platform. To simulate the issue, adding following code could reproduce the issue.
+Without the fix, device 2's resource will be released but the device is still registered.
+With the fix, by cat /proc/iomem, device 2's resource is still there after device 1 is unregistered, this is expected.
 
-diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-index f6c030433d38048..f7400e35628dce4 100644
---- a/drivers/iommu/Kconfig
-+++ b/drivers/iommu/Kconfig
-@@ -89,7 +89,7 @@ choice
+Any comment is welcome, thanks,
+Junxiao
+
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 4d17298..6832833 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -1500,3 +1500,63 @@ void __init early_platform_cleanup(void)
+ 	}
+ }
  
- config IOMMU_DEFAULT_PASSTHROUGH
- 	bool "passthrough"
--	depends on !S390_IOMMU
-+	depends on (!S390_IOMMU && !IA64)
- 	help
- 	  In this mode, the DMA access through IOMMU without any addresses
- 	  translation. That means, the wrong or illegal DMA access can not
--- 
-1.8.3
++static struct resource resource1[] = {
++	{
++		.start = 0xfed1a000,
++		.end = 0xfed1afff,
++		.flags = IORESOURCE_MEM,
++	}
++};
++
++static struct resource resource2[] = {
++	{
++		.start = 0xfed1a200,
++		.end = 0xfed1a2ff,
++		.flags = IORESOURCE_MEM,
++	}
++};
++
++static int __init simulate_insmod_rmmod(void)
++{
++	struct platform_device *pdev1, *pdev2;
++
++	const struct platform_device_info pdevinfo1 = {
++		.parent = NULL,
++		.name = "device1",
++		.id = -1,
++		.res = resource1,
++		.num_res = 1,
++		};
++
++	const struct platform_device_info pdevinfo2 = {
++		.parent = NULL,
++		.name = "device2",
++		.id = -1,
++		.res = resource2,
++		.num_res = 1,
++	};
++
++	// Register platform test device 1, resource 0xfed1a000 ~ 0xfed1afff
++	pdev1 = platform_device_register_full(&pdevinfo1);
++	if (IS_ERR(pdev1)) {
++		printk("Unable to register device 1\n");
++		return -1;
++	}
++
++	// Register platform test device 2, resource 0xfed1a200 ~ 0xfed1a2ff
++	pdev2 = platform_device_register_full(&pdevinfo2);
++	if (IS_ERR(pdev2)) {
++		printk("Unable to register device 2\n");
++		platform_device_unregister(pdev1);
++		return -1;
++	}
++
++
++	// Now platform device 2 resource should be device 1 resource's child
++
++	// Unregister device 1 only
++	platform_device_unregister(pdev1);
++
++	return 0;
++}
++fs_initcall(simulate_insmod_rmmod);
 
+-----Original Message-----
+From: Chang, Junxiao 
+Sent: Thursday, April 25, 2019 2:24 PM
+To: linux-kernel@vger.kernel.org
+Cc: gregkh@linuxfoundation.org; rafael@kernel.org; Chang, Junxiao <junxiao.chang@intel.com>; Li, Lili <lili.li@intel.com>
+Subject: [PATCH] platform: release resource itself instead of resource tree
+
+From: Junxiao Chang <junxiao.chang@intel.com>
+
+When platform device is deleted or there is error in adding device, platform device resources should be released. Currently API release_resource is used to release platform device resources.
+However, this API releases not only platform resource itself but also its child resources. It might release resources which are still in use. Calling remove_resource only releases current resource itself, not resource tree, it moves its child resources to up level.
+
+For example, platform device 1 and device 2 are registered, then only device 1 is unregistered in below code:
+
+  ...
+  // Register platform test device 1, resource 0xfed1a000 ~ 0xfed1afff
+  pdev1 = platform_device_register_full(&pdevinfo1);
+
+  // Register platform test device 2, resource 0xfed1a200 ~ 0xfed1a2ff
+  pdev2 = platform_device_register_full(&pdevinfo2);
+
+  // Now platform device 2 resource should be device 1 resource's child
+
+  // Unregister device 1 only
+  platform_device_unregister(pdev1);
+  ...
+
+Platform device 2 resource will be released as well because its parent resource(device 1's resource) is released, this is not expected.
+If using API remove_resource, device 2 resource will not be released.
+
+This change fixed an intel pmc platform device resource issue when intel pmc ipc kernel module is inserted/removed for twice.
+
+Signed-off-by: Junxiao Chang <junxiao.chang@intel.com>
+---
+ drivers/base/platform.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c index dab0a5a..5fd1a41 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -461,7 +461,7 @@ int platform_device_add(struct platform_device *pdev)
+ 	while (--i >= 0) {
+ 		struct resource *r = &pdev->resource[i];
+ 		if (r->parent)
+-			release_resource(r);
++			remove_resource(r);
+ 	}
+ 
+  err_out:
+@@ -492,7 +492,7 @@ void platform_device_del(struct platform_device *pdev)
+ 		for (i = 0; i < pdev->num_resources; i++) {
+ 			struct resource *r = &pdev->resource[i];
+ 			if (r->parent)
+-				release_resource(r);
++				remove_resource(r);
+ 		}
+ 	}
+ }
+--
+2.7.4
 
