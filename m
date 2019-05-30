@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C71D82EC4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:20:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E8C32EE34
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:45:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732043AbfE3DTt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:19:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39062 "EHLO mail.kernel.org"
+        id S1732436AbfE3DpS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:45:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730430AbfE3DPl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:15:41 -0400
+        id S1732356AbfE3DUt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:20:49 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06AA524595;
-        Thu, 30 May 2019 03:15:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CAAD2497E;
+        Thu, 30 May 2019 03:20:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186141;
-        bh=PjcI6j3JVgIlgjdTsXLDxlehs3jes36s+UDL4rG7FDM=;
+        s=default; t=1559186449;
+        bh=S1j6bad579v5fusLnPckpJ2t/x9ds1L+5EFoRA5iTbk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GAlyNgeLuzNUTn3JiynS+VHmPYCMXjZeK18i/Sh+LqfXAK2R5tqWlinCLmZZJS7DJ
-         M9IYpIqmLxcxg0vkM/ph1DgC9+3H8QtYb19MbOgDXGxPzXqQtZAMI20AjP0WDRhM/o
-         UIoIbqyWDM+HKxJnUwLAPw6w/qnZsVNr8I5Ahwvg=
+        b=2c0MPi5nlbN1h2ka+PHpgQm+b2BgdKbeL7n1804Bv97KXIodBLT1/8RFjfS2ek5hT
+         FtOhPeS4KNhO8ApNcOKr9FZcHWYzvEI+pBsfNfFJaS6OJ2UnTm9Wce+u273S6plG7+
+         0x9kiDw+SPuOhrbSkBupi8x0XIVIMjqJa53eq3FU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhang Yu <zhangyu31@baidu.com>,
-        Li RongQing <lirongqing@baidu.com>,
-        Paul Moore <paul@paul-moore.com>,
+        stable@vger.kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 316/346] audit: fix a memleak caused by auditing load module
-Date:   Wed, 29 May 2019 20:06:29 -0700
-Message-Id: <20190530030556.823676683@linuxfoundation.org>
+Subject: [PATCH 4.9 058/128] media: ov6650: Move v4l2_clk_get() to ov6650_video_probe() helper
+Date:   Wed, 29 May 2019 20:06:30 -0700
+Message-Id: <20190530030445.289771897@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,78 +45,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 95e0b46fcebd7dbf6850dee96046e4c4ddc7f69c ]
+[ Upstream commit ccdd85d518d8b9320ace1d87271f0ba2175f21fa ]
 
-module.name will be allocated unconditionally when auditing load
-module, and audit_log_start() can fail with other reasons, or
-audit_log_exit maybe not called, caused module.name is not freed
+In preparation for adding asynchronous subdevice support to the driver,
+don't acquire v4l2_clk from the driver .probe() callback as that may
+fail if the clock is provided by a bridge driver which may be not yet
+initialized.  Move the v4l2_clk_get() to ov6650_video_probe() helper
+which is going to be converted to v4l2_subdev_internal_ops.registered()
+callback, executed only when the bridge driver is ready.
 
-so free module.name in audit_free_context and __audit_syscall_exit
-
-unreferenced object 0xffff88af90837d20 (size 8):
-  comm "modprobe", pid 1036, jiffies 4294704867 (age 3069.138s)
-  hex dump (first 8 bytes):
-    69 78 67 62 65 00 ff ff                          ixgbe...
-  backtrace:
-    [<0000000008da28fe>] __audit_log_kern_module+0x33/0x80
-    [<00000000c1491e61>] load_module+0x64f/0x3850
-    [<000000007fc9ae3f>] __do_sys_init_module+0x218/0x250
-    [<0000000000d4a478>] do_syscall_64+0x117/0x400
-    [<000000004924ded8>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
-    [<000000007dc331dd>] 0xffffffffffffffff
-
-Fixes: ca86cad7380e3 ("audit: log module name on init_module")
-Signed-off-by: Zhang Yu <zhangyu31@baidu.com>
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
-[PM: manual merge fixup in __audit_syscall_exit()]
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/auditsc.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/media/i2c/soc_camera/ov6650.c | 25 ++++++++++++++-----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
 
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index b585ceb2f7a2c..71e7377746110 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -837,6 +837,13 @@ static inline void audit_proctitle_free(struct audit_context *context)
- 	context->proctitle.len = 0;
+diff --git a/drivers/media/i2c/soc_camera/ov6650.c b/drivers/media/i2c/soc_camera/ov6650.c
+index e21b7e1c2ee15..fc187c5aeb1e9 100644
+--- a/drivers/media/i2c/soc_camera/ov6650.c
++++ b/drivers/media/i2c/soc_camera/ov6650.c
+@@ -840,9 +840,16 @@ static int ov6650_video_probe(struct i2c_client *client)
+ 	u8		pidh, pidl, midh, midl;
+ 	int		ret;
+ 
++	priv->clk = v4l2_clk_get(&client->dev, NULL);
++	if (IS_ERR(priv->clk)) {
++		ret = PTR_ERR(priv->clk);
++		dev_err(&client->dev, "v4l2_clk request err: %d\n", ret);
++		return ret;
++	}
++
+ 	ret = ov6650_s_power(&priv->subdev, 1);
+ 	if (ret < 0)
+-		return ret;
++		goto eclkput;
+ 
+ 	msleep(20);
+ 
+@@ -879,6 +886,11 @@ static int ov6650_video_probe(struct i2c_client *client)
+ 
+ done:
+ 	ov6650_s_power(&priv->subdev, 0);
++	if (!ret)
++		return 0;
++eclkput:
++	v4l2_clk_put(priv->clk);
++
+ 	return ret;
  }
  
-+static inline void audit_free_module(struct audit_context *context)
-+{
-+	if (context->type == AUDIT_KERN_MODULE) {
-+		kfree(context->module.name);
-+		context->module.name = NULL;
-+	}
-+}
- static inline void audit_free_names(struct audit_context *context)
- {
- 	struct audit_names *n, *next;
-@@ -920,6 +927,7 @@ int audit_alloc(struct task_struct *tsk)
+@@ -1035,18 +1047,9 @@ static int ov6650_probe(struct i2c_client *client,
+ 	priv->code	  = MEDIA_BUS_FMT_YUYV8_2X8;
+ 	priv->colorspace  = V4L2_COLORSPACE_JPEG;
  
- static inline void audit_free_context(struct audit_context *context)
- {
-+	audit_free_module(context);
- 	audit_free_names(context);
- 	unroll_tree_refs(context, NULL, 0);
- 	free_tree_refs(context);
-@@ -1237,7 +1245,6 @@ static void show_special(struct audit_context *context, int *call_panic)
- 		audit_log_format(ab, "name=");
- 		if (context->module.name) {
- 			audit_log_untrustedstring(ab, context->module.name);
--			kfree(context->module.name);
- 		} else
- 			audit_log_format(ab, "(null)");
+-	priv->clk = v4l2_clk_get(&client->dev, NULL);
+-	if (IS_ERR(priv->clk)) {
+-		ret = PTR_ERR(priv->clk);
+-		goto eclkget;
+-	}
+-
+ 	ret = ov6650_video_probe(client);
+-	if (ret) {
+-		v4l2_clk_put(priv->clk);
+-eclkget:
++	if (ret)
+ 		v4l2_ctrl_handler_free(&priv->hdl);
+-	}
  
-@@ -1574,6 +1581,7 @@ void __audit_syscall_exit(int success, long return_code)
- 	context->in_syscall = 0;
- 	context->prio = context->state == AUDIT_RECORD_CONTEXT ? ~0ULL : 0;
- 
-+	audit_free_module(context);
- 	audit_free_names(context);
- 	unroll_tree_refs(context, NULL, 0);
- 	audit_free_aux(context);
+ 	return ret;
+ }
 -- 
 2.20.1
 
