@@ -2,83 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 959642E9B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 02:23:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40B6B2E9B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 02:34:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726887AbfE3AXo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 20:23:44 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45386 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726408AbfE3AXn (ORCPT
+        id S1726857AbfE3AeU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 20:34:20 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:33696 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726395AbfE3AeU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 20:23:43 -0400
-Received: by mail-pg1-f193.google.com with SMTP id w34so853031pga.12
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 17:23:43 -0700 (PDT)
+        Wed, 29 May 2019 20:34:20 -0400
+Received: by mail-qk1-f195.google.com with SMTP id p18so2795819qkk.0;
+        Wed, 29 May 2019 17:34:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-transfer-encoding:content-language;
-        bh=dpN4wiii1TvSZMayJZekGyxBaLr+eeeO3Ruou2wN6wk=;
-        b=Wm4oED+RlotHfcviCowYRWH7jw0M8K4gnkX4OOx30A/3cC7nN95j3QJ7f+r9ZfTpXw
-         kAMMNMiHvTNlnDkGgIzqV2xzK2+MU8cGoVB+wibhXtWmVAFOG32U2AsRjEZZ+ao5hTSS
-         Dfnb5mlnq1dVaAm037orKao9kDirTMAYVztlM=
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KHD+sHVUPLQmygDU5dgl8aDe2PTeVVrxe8ejiYsJbzA=;
+        b=nW0+RjTgr112JeSC0qx2gUZmFr6cGCDqdl+BpCHWqJuE+d78Bs5iJJebC6syz05H1g
+         APITCHaqFOtnhiPTw51uDWFk0zRdcaug6U0SqwHUL+FX62RpIXyMwquSehD4D9wCa9Nz
+         DjkgdB2ypi/hj1qa/QKZLnb8qvc1wkMBkifao=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=dpN4wiii1TvSZMayJZekGyxBaLr+eeeO3Ruou2wN6wk=;
-        b=fdz0X8BqVgi5PvWPiU5AVJX5yozbW5LH+n88CUSCc7Z29/SFB11EG0QUH5PPLnb24w
-         t/oJwDWUvZ+H3OtqKUg7WN7RYPUn7qJpVOFsNk3CBFxbVw/ftTy+T7Cs6ILBNLdfs6AS
-         wGjx52cABncxUF5wUYu4GOYXXtdQ3IrmkRWLW6JFI7eL3OKsq3v4BnzTDxi//QHENvXd
-         7BQU66J/RuNW8UpClmuuLX2sHLFM8Nj57gSxgkR1L9R1LPHe/xs4EmaPeaJDbfKSVyIy
-         2ND4nOYHEzGOP2GKkJp/4dUlXUeYgvsA7+DQ1g+Xw/F3AXtvK+I9lKfAjubvnyQuSg70
-         r62Q==
-X-Gm-Message-State: APjAAAVzGY3W78IH0Z16yYFA4UwCpAHLkiHzq8AQ7dmwZzpO6gC4oFor
-        AgaEjn92IKeF6AZ/ea0N74GKT7Y19+gRR8rj/P92ukDP3l6VzHTl/P8qnQKdlMpVMv0Ns+i/BCX
-        5IrogHdJlYpe2TdaRL7Y/FcXRJmjcec5ELyt0vA4ipj5SwlLCSO8vyj8cXuDdzeqCkyjGrqGSRM
-        RwSXw=
-X-Google-Smtp-Source: APXvYqxb78UBEIoNeOotRBjD6CKuJJD04hvvXvpNzIsDfEycRQp9UICYuvcNF1lZu+YtPu0dCCG3uw==
-X-Received: by 2002:a17:90a:be0b:: with SMTP id a11mr762957pjs.88.1559175822636;
-        Wed, 29 May 2019 17:23:42 -0700 (PDT)
-Received: from [10.69.37.149] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id s28sm446391pgl.88.2019.05.29.17.23.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 May 2019 17:23:42 -0700 (PDT)
-Subject: Re: [PATCH] scsi: lpfc: Use *_pool_zalloc rather than *_pool_alloc
-To:     Thomas Meyer <thomas@m3y3r.de>, dick.kennedy@broadcom.com,
-        jejb@linux.ibm.com, martin.petersen@oracle.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1559161113889-196429735-0-diffsplit-thomas@m3y3r.de>
- <1559161113901-1017843021-1-diffsplit-thomas@m3y3r.de>
-From:   James Smart <james.smart@broadcom.com>
-Message-ID: <8e9198f2-1247-f7bc-7856-721664b64316@broadcom.com>
-Date:   Wed, 29 May 2019 17:23:40 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KHD+sHVUPLQmygDU5dgl8aDe2PTeVVrxe8ejiYsJbzA=;
+        b=PSozzJ5MylixD74xAziq2vnYErIjyjlFPOeJRj+qEWtVcGEkWDo+JKoN8WZThX5Dw7
+         xb/Vc6oY3DjOT5hvQBIbeNXLsnTNfr78w1lYDWKTy3yHYbFW/n25Lx+ABuQXx5hTPUZ6
+         bMHK7+skthwO/JKcLRD6Jov8iJKc6L9EZFM6llifQZixo5W6A4B6kBtp0m0mxtO9TTiU
+         q95eH9PfyMR8DSP9U3ahoRG/7IKyyNtud7ILDGSXYHqD61LT2tpZLuLkdmLeBj9E66Aj
+         TnXoyALnWsgam0NCTsmfWGGclrbnvfQqwBvD0Ww/+7Pdo2/CPNAofJTzA6Eovb1+w9r5
+         RxMg==
+X-Gm-Message-State: APjAAAUPR9RH5raicE9cF1iie/t13w24IdRjHdQ97DIGrxjVVkPDAepr
+        l8WKP+ibJHltRQ4JMtasuanUUlAfIYRw6VxQ4Og=
+X-Google-Smtp-Source: APXvYqxYyCeKyYUztJa3DHENKeZigts1pQtuupR+90lPSZNjZI5bKFuOpg4mU0O5bqKNHFmvb0879Dook4z1MhjB/qo=
+X-Received: by 2002:a37:a10b:: with SMTP id k11mr713236qke.76.1559176459320;
+ Wed, 29 May 2019 17:34:19 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1559161113901-1017843021-1-diffsplit-thomas@m3y3r.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20190527112753.1681-1-a.filippov@yadro.com>
+In-Reply-To: <20190527112753.1681-1-a.filippov@yadro.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Thu, 30 May 2019 00:34:04 +0000
+Message-ID: <CACPK8XeXh8uiQ6f5LWJRBJ=VwMAvdPHOo34uHhWZyMFBG2HVqw@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: aspeed: g4: add video engine support
+To:     Alexander Filippov <a.filippov@yadro.com>
+Cc:     linux-aspeed@lists.ozlabs.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Alexander,
 
-
-On 5/29/2019 1:21 PM, Thomas Meyer wrote:
-> Use *_pool_zalloc rather than *_pool_alloc followed by memset with 0.
+On Mon, 27 May 2019 at 11:28, Alexander Filippov <a.filippov@yadro.com> wrote:
 >
-> Signed-off-by: Thomas Meyer <thomas@m3y3r.de>
+> Add a node to describe the video engine and VGA scratch registers on
+> AST2400.
+
+The scratch registers are unrelated to the video engine. As Andrew
+pointed out, the bindings are not upstream either.
+
+Can you re-spin this patch wit just the video engine changes?
+
+We also need a platform to enable and test this on. Can you submit the
+device tree for your system?
+
+>
+> These changes were copied from aspeed-g5.dtsi
+>
+> Signed-off-by: Alexander Filippov <a.filippov@yadro.com>
 > ---
+>  arch/arm/boot/dts/aspeed-g4.dtsi | 62 ++++++++++++++++++++++++++++++++
+>  1 file changed, 62 insertions(+)
 >
+> diff --git a/arch/arm/boot/dts/aspeed-g4.dtsi b/arch/arm/boot/dts/aspeed-g4.dtsi
+> index 6011692df15a..adc1804918df 100644
+> --- a/arch/arm/boot/dts/aspeed-g4.dtsi
+> +++ b/arch/arm/boot/dts/aspeed-g4.dtsi
+> @@ -168,6 +168,10 @@
+>                                         compatible = "aspeed,g4-pinctrl";
+>                                 };
 >
-
-looks good
-
-Reviewed-by: James Smart <james.smart@broadcom.com>
-
--- james
-
+> +                               vga_scratch: scratch {
+> +                                       compatible = "aspeed,bmc-misc";
+> +                               };
+> +
+>                                 p2a: p2a-control {
+>                                         compatible = "aspeed,ast2400-p2a-ctrl";
+>                                         status = "disabled";
+> @@ -195,6 +199,16 @@
+>                                 reg = <0x1e720000 0x8000>;      // 32K
+>                         };
+>
+> +                       video: video@1e700000 {
+> +                               compatible = "aspeed,ast2400-video-engine";
+> +                               reg = <0x1e700000 0x1000>;
+> +                               clocks = <&syscon ASPEED_CLK_GATE_VCLK>,
+> +                                        <&syscon ASPEED_CLK_GATE_ECLK>;
+> +                               clock-names = "vclk", "eclk";
+> +                               interrupts = <7>;
+> +                               status = "disabled";
+> +                       };
+> +
+>                         gpio: gpio@1e780000 {
+>                                 #gpio-cells = <2>;
+>                                 gpio-controller;
+> @@ -1408,6 +1422,54 @@
+>         };
+>  };
+>
+> +&vga_scratch {
+> +       dac_mux {
+> +               offset = <0x2c>;
+> +               bit-mask = <0x3>;
+> +               bit-shift = <16>;
+> +       };
+> +       vga0 {
+> +               offset = <0x50>;
+> +               bit-mask = <0xffffffff>;
+> +               bit-shift = <0>;
+> +       };
+> +       vga1 {
+> +               offset = <0x54>;
+> +               bit-mask = <0xffffffff>;
+> +               bit-shift = <0>;
+> +       };
+> +       vga2 {
+> +               offset = <0x58>;
+> +               bit-mask = <0xffffffff>;
+> +               bit-shift = <0>;
+> +       };
+> +       vga3 {
+> +               offset = <0x5c>;
+> +               bit-mask = <0xffffffff>;
+> +               bit-shift = <0>;
+> +       };
+> +       vga4 {
+> +               offset = <0x60>;
+> +               bit-mask = <0xffffffff>;
+> +               bit-shift = <0>;
+> +       };
+> +       vga5 {
+> +               offset = <0x64>;
+> +               bit-mask = <0xffffffff>;
+> +               bit-shift = <0>;
+> +       };
+> +       vga6 {
+> +               offset = <0x68>;
+> +               bit-mask = <0xffffffff>;
+> +               bit-shift = <0>;
+> +       };
+> +       vga7 {
+> +               offset = <0x6c>;
+> +               bit-mask = <0xffffffff>;
+> +               bit-shift = <0>;
+> +       };
+> +};
+> +
+>  &sio_regs {
+>         sio_2b {
+>                 offset = <0xf0>;
+> --
+> 2.20.1
+>
