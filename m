@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 350C12F464
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:38:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1EAC2ED75
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:37:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729584AbfE3EiG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:38:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56188 "EHLO mail.kernel.org"
+        id S1733280AbfE3DYZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:24:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729219AbfE3DMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:46 -0400
+        id S1731404AbfE3DSD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:18:03 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7675A23E29;
-        Thu, 30 May 2019 03:12:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A96624768;
+        Thu, 30 May 2019 03:18:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185966;
-        bh=ZeohyddH6FkTCMAWCFJ5ZMUegBhCJh5LZK63ycK1bl0=;
+        s=default; t=1559186283;
+        bh=s4sEmka+JMBB/kOX95PYJO5kakMzJ8aZR65LG0JRT30=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t64I0aytXrtW+6o10G7iKf12VY/ftyaJvGsieZYFyE27WYe6JlYPMd3r7Ff4kF8hV
-         M4Tb57pHXsHDfN6Fh+zF21n4UMrz45ubB8U27DDsQkWIPpZRywmKwAAALgirP4poVm
-         RYKFGlpEn6HQy2mDg4Qg6Y3urIjvmyiWrRJzwUJE=
+        b=lm3rjavcxdVd0SqzWneQN/AiXJ7QHU5/SEqPtKAcZsrP3aunovvsj/iYfrXExRkOm
+         Q6tgdCej6wF+30NYTZJUH3SYP/LY87pbPBK1FnH4C4pIwMkvP13BTxHO++WtEAd0Ri
+         A0Slvy5RuqcyHVs/Dhpw1MQ+TpdwobDuSxWTr6qM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anthony Koo <Anthony.Koo@amd.com>,
-        Aric Cyr <Aric.Cyr@amd.com>, Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 395/405] drm/amd/display: Fix exception from AUX acquire failure
-Date:   Wed, 29 May 2019 20:06:33 -0700
-Message-Id: <20190530030600.578945165@linuxfoundation.org>
+Subject: [PATCH 4.19 236/276] scsi: qla4xxx: avoid freeing unallocated dma memory
+Date:   Wed, 29 May 2019 20:06:34 -0700
+Message-Id: <20190530030539.881955962@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,51 +45,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit dcf1a988678e2e39ce2b4115b8ce14d208c8c481 ]
+[ Upstream commit 608f729c31d4caf52216ea00d20092a80959256d ]
 
-[Why]
-AUX arbitration occurs between SW and FW components.
-When AUX acquire fails, it causes engine->ddc to be NULL,
-which leads to an exception when we try to release the AUX
-engine.
+Clang -Wuninitialized notices that on is_qla40XX we never allocate any DMA
+memory in get_fw_boot_info() but attempt to free it anyway:
 
-[How]
-When AUX engine acquire fails, it should return from the
-function without trying to continue the operation.
-The upper level will determine if it wants to retry.
-i.e. dce_aux_transfer_with_retries will be used and retry.
+drivers/scsi/qla4xxx/ql4_os.c:5915:7: error: variable 'buf_dma' is used uninitialized whenever 'if' condition is false
+      [-Werror,-Wsometimes-uninitialized]
+                if (!(val & 0x07)) {
+                    ^~~~~~~~~~~~~
+drivers/scsi/qla4xxx/ql4_os.c:5985:47: note: uninitialized use occurs here
+        dma_free_coherent(&ha->pdev->dev, size, buf, buf_dma);
+                                                     ^~~~~~~
+drivers/scsi/qla4xxx/ql4_os.c:5915:3: note: remove the 'if' if its condition is always true
+                if (!(val & 0x07)) {
+                ^~~~~~~~~~~~~~~~~~~
+drivers/scsi/qla4xxx/ql4_os.c:5885:20: note: initialize the variable 'buf_dma' to silence this warning
+        dma_addr_t buf_dma;
+                          ^
+                           = 0
 
-Signed-off-by: Anthony Koo <Anthony.Koo@amd.com>
-Reviewed-by: Aric Cyr <Aric.Cyr@amd.com>
-Acked-by: Leo Li <sunpeng.li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Skip the call to dma_free_coherent() here.
+
+Fixes: 2a991c215978 ("[SCSI] qla4xxx: Boot from SAN support for open-iscsi")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/dce/dce_aux.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/qla4xxx/ql4_os.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c b/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c
-index 4fe3664fb4950..5ecfcb9ee8a0c 100644
---- a/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce/dce_aux.c
-@@ -377,7 +377,6 @@ static bool acquire(
- 	struct dce_aux *engine,
- 	struct ddc *ddc)
- {
+diff --git a/drivers/scsi/qla4xxx/ql4_os.c b/drivers/scsi/qla4xxx/ql4_os.c
+index 5dd3e4e01b109..25c8ce54a976d 100644
+--- a/drivers/scsi/qla4xxx/ql4_os.c
++++ b/drivers/scsi/qla4xxx/ql4_os.c
+@@ -5935,7 +5935,7 @@ static int get_fw_boot_info(struct scsi_qla_host *ha, uint16_t ddb_index[])
+ 		val = rd_nvram_byte(ha, sec_addr);
+ 		if (val & BIT_7)
+ 			ddb_index[1] = (val & 0x7f);
 -
- 	enum gpio_result result;
- 
- 	if (!is_engine_available(engine))
-@@ -458,7 +457,8 @@ int dce_aux_transfer(struct ddc_service *ddc,
- 	memset(&aux_rep, 0, sizeof(aux_rep));
- 
- 	aux_engine = ddc->ctx->dc->res_pool->engines[ddc_pin->pin_data->en];
--	acquire(aux_engine, ddc_pin);
-+	if (!acquire(aux_engine, ddc_pin))
-+		return -1;
- 
- 	if (payload->i2c_over_aux)
- 		aux_req.type = AUX_TRANSACTION_TYPE_I2C;
++		goto exit_boot_info;
+ 	} else if (is_qla80XX(ha)) {
+ 		buf = dma_alloc_coherent(&ha->pdev->dev, size,
+ 					 &buf_dma, GFP_KERNEL);
 -- 
 2.20.1
 
