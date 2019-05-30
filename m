@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0622A2ED2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:33:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 305CD2EE07
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:43:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732030AbfE3D2b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:28:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57440 "EHLO mail.kernel.org"
+        id S1728043AbfE3Dne (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:43:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728696AbfE3DT6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:19:58 -0400
+        id S1729849AbfE3DVL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:21:11 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0E6E248F9;
-        Thu, 30 May 2019 03:19:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24705249D2;
+        Thu, 30 May 2019 03:21:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186398;
-        bh=kDay58/x01apOMo6Iefun5Hh8aXIldRq8oagKmf/Tj8=;
+        s=default; t=1559186471;
+        bh=ySYL4sbIizg+Ief6OvDuTlZg0OnJU4Uya54J22FAqHw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aF36lg9C53Sh/9j4VsuV5v4z+8JVTO3cJPWFu0ArolXO2EmNn4QJb4Vnjv9sijy+7
-         oduNsQFBtHLUnQubXC3uFQYvzhGDRz3q6q4TUA16ot1hiui6fjmFfLnnRChnn0qyWs
-         UmMsqFRgtf/GkLFm3vu1Z3bEwCOmPWJA/59C/Wzo=
+        b=ewytRsRkUJKKZHd5Y+5B3pOhmlF69i0SU7lgG7U9gGvD4AcuX41ZjHUcE6BKaskxE
+         1b7BF6wdExOAV1avXxhCOipqy1jiE/g6jqB0cDbDoOuAs8RKHmJrEpYSX5FKTdzcgE
+         CNEbuDKeAoKbZKDGhgqQNjv56HlJTtGIrVAFFEvE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        James Hutchinson <jahutchinson99@googlemail.com>,
-        Antti Palosaari <crope@iki.fi>, Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Stanley Chu <stanley.chu@mediatek.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 178/193] media: m88ds3103: serialize reset messages in m88ds3103_set_frontend
+Subject: [PATCH 4.9 100/128] scsi: ufs: Avoid configuring regulator with undefined voltage range
 Date:   Wed, 29 May 2019 20:07:12 -0700
-Message-Id: <20190530030512.425712303@linuxfoundation.org>
+Message-Id: <20190530030452.519233138@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,100 +46,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 981fbe3da20a6f35f17977453bce7dfc1664d74f ]
+[ Upstream commit 3b141e8cfd54ba3e5c610717295b2a02aab26a05 ]
 
-Ref: https://bugzilla.kernel.org/show_bug.cgi?id=199323
+For regulators used by UFS, vcc, vccq and vccq2 will have voltage range
+initialized by ufshcd_populate_vreg(), however other regulators may have
+undefined voltage range if dt-bindings have no such definition.
 
-Users are experiencing problems with the DVBSky S960/S960C USB devices
-since the following commit:
+In above undefined case, both "min_uV" and "max_uV" fields in ufs_vreg
+struct will be zero values and these values will be configured on
+regulators in different power modes.
 
-9d659ae: ("locking/mutex: Add lock handoff to avoid starvation")
+Currently this may have no harm if both "min_uV" and "max_uV" always keep
+"zero values" because regulator_set_voltage() will always bypass such
+invalid values and return "good" results.
 
-The device malfunctions after running for an indeterminable period of
-time, and the problem can only be cleared by rebooting the machine.
+However improper values shall be fixed to avoid potential bugs.  Simply
+bypass voltage configuration if voltage range is not defined.
 
-It is possible to encourage the problem to surface by blocking the
-signal to the LNB.
-
-Further debugging revealed the cause of the problem.
-
-In the following capture:
-- thread #1325 is running m88ds3103_set_frontend
-- thread #42 is running ts2020_stat_work
-
-a> [1325] usb 1-1: dvb_usb_v2_generic_io: >>> 08 68 02 07 80
-   [1325] usb 1-1: dvb_usb_v2_generic_io: <<< 08
-   [42] usb 1-1: dvb_usb_v2_generic_io: >>> 09 01 01 68 3f
-   [42] usb 1-1: dvb_usb_v2_generic_io: <<< 08 ff
-   [42] usb 1-1: dvb_usb_v2_generic_io: >>> 08 68 02 03 11
-   [42] usb 1-1: dvb_usb_v2_generic_io: <<< 07
-   [42] usb 1-1: dvb_usb_v2_generic_io: >>> 09 01 01 60 3d
-   [42] usb 1-1: dvb_usb_v2_generic_io: <<< 07 ff
-b> [1325] usb 1-1: dvb_usb_v2_generic_io: >>> 08 68 02 07 00
-   [1325] usb 1-1: dvb_usb_v2_generic_io: <<< 07
-   [42] usb 1-1: dvb_usb_v2_generic_io: >>> 08 68 02 03 11
-   [42] usb 1-1: dvb_usb_v2_generic_io: <<< 07
-   [42] usb 1-1: dvb_usb_v2_generic_io: >>> 09 01 01 60 21
-   [42] usb 1-1: dvb_usb_v2_generic_io: <<< 07 ff
-   [42] usb 1-1: dvb_usb_v2_generic_io: >>> 08 68 02 03 11
-   [42] usb 1-1: dvb_usb_v2_generic_io: <<< 07
-   [42] usb 1-1: dvb_usb_v2_generic_io: >>> 09 01 01 60 66
-   [42] usb 1-1: dvb_usb_v2_generic_io: <<< 07 ff
-   [1325] usb 1-1: dvb_usb_v2_generic_io: >>> 08 68 02 03 11
-   [1325] usb 1-1: dvb_usb_v2_generic_io: <<< 07
-   [1325] usb 1-1: dvb_usb_v2_generic_io: >>> 08 60 02 10 0b
-   [1325] usb 1-1: dvb_usb_v2_generic_io: <<< 07
-
-Two i2c messages are sent to perform a reset in m88ds3103_set_frontend:
-
-  a. 0x07, 0x80
-  b. 0x07, 0x00
-
-However, as shown in the capture, the regmap mutex is being handed over
-to another thread (ts2020_stat_work) in between these two messages.
-
->From here, the device responds to every i2c message with an 07 message,
-and will only return to normal operation following a power cycle.
-
-Use regmap_multi_reg_write to group the two reset messages, ensuring
-both are processed before the regmap mutex is unlocked.
-
-Signed-off-by: James Hutchinson <jahutchinson99@googlemail.com>
-Reviewed-by: Antti Palosaari <crope@iki.fi>
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
+Reviewed-by: Avri Altman <avri.altman@wdc.com>
+Acked-by: Alim Akhtar <alim.akhtar@samsung.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/dvb-frontends/m88ds3103.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/scsi/ufs/ufshcd.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/m88ds3103.c b/drivers/media/dvb-frontends/m88ds3103.c
-index 65d157fe76d19..b4bd1af34745d 100644
---- a/drivers/media/dvb-frontends/m88ds3103.c
-+++ b/drivers/media/dvb-frontends/m88ds3103.c
-@@ -309,6 +309,9 @@ static int m88ds3103_set_frontend(struct dvb_frontend *fe)
- 	u16 u16tmp;
- 	u32 tuner_frequency_khz, target_mclk;
- 	s32 s32tmp;
-+	static const struct reg_sequence reset_buf[] = {
-+		{0x07, 0x80}, {0x07, 0x00}
-+	};
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 8869c666d458c..0fe4f8e8c8c91 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -5504,12 +5504,15 @@ static int ufshcd_config_vreg(struct device *dev,
+ 	name = vreg->name;
  
- 	dev_dbg(&client->dev,
- 		"delivery_system=%d modulation=%d frequency=%u symbol_rate=%d inversion=%d pilot=%d rolloff=%d\n",
-@@ -321,11 +324,7 @@ static int m88ds3103_set_frontend(struct dvb_frontend *fe)
- 	}
+ 	if (regulator_count_voltages(reg) > 0) {
+-		min_uV = on ? vreg->min_uV : 0;
+-		ret = regulator_set_voltage(reg, min_uV, vreg->max_uV);
+-		if (ret) {
+-			dev_err(dev, "%s: %s set voltage failed, err=%d\n",
++		if (vreg->min_uV && vreg->max_uV) {
++			min_uV = on ? vreg->min_uV : 0;
++			ret = regulator_set_voltage(reg, min_uV, vreg->max_uV);
++			if (ret) {
++				dev_err(dev,
++					"%s: %s set voltage failed, err=%d\n",
+ 					__func__, name, ret);
+-			goto out;
++				goto out;
++			}
+ 		}
  
- 	/* reset */
--	ret = regmap_write(dev->regmap, 0x07, 0x80);
--	if (ret)
--		goto err;
--
--	ret = regmap_write(dev->regmap, 0x07, 0x00);
-+	ret = regmap_multi_reg_write(dev->regmap, reset_buf, 2);
- 	if (ret)
- 		goto err;
- 
+ 		uA_load = on ? vreg->max_uA : 0;
 -- 
 2.20.1
 
