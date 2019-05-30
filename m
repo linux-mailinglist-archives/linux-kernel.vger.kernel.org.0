@@ -2,308 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24C6030375
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 22:45:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C795730380
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 22:46:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726601AbfE3Upf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 16:45:35 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:46030 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726225AbfE3Upf (ORCPT
+        id S1726720AbfE3Upp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 16:45:45 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34348 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726670AbfE3Upn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 16:45:35 -0400
-Received: by mail-qt1-f193.google.com with SMTP id t1so8702710qtc.12
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 13:45:34 -0700 (PDT)
+        Thu, 30 May 2019 16:45:43 -0400
+Received: by mail-lf1-f66.google.com with SMTP id v18so6115111lfi.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 13:45:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=gWieCtH2yIUBG5LWs9OEX59nD7DlvSQy6nQ6THrqLpQ=;
-        b=MVfYyapCMJ3LatqnyKDs+2vpLg9MtdQ6eIUIapTUApTID2TcLQ0zGLd1PRJdlGCyX1
-         bNDECPJiTcFJ6RgaNyW5qC1fFq+gd310kusmYNxUucmmRT1PxF0j1vQLmo33XvWLYl9/
-         k21lyFySdRC9fu5ciEyARhp5fKwuXC0/YaC/M=
+        bh=EhDqOLrNL+Ls6g+jJlH1kHSTN+6mKWoVpwhK7g7g/0o=;
+        b=xlyV3ThJjdhKcZhreP5PbaxjF4yCg2iuc+K7UzQP6tLJWwrREj0I5yVvPo3B3jh7iK
+         jh1rsg4jyI3plqbkkIs9e7MgP53igOczr5L4MydDQ87MWflfgTeiR7tPUVxTFoKpmcm4
+         6sepnRi8IUd5YcXQYTYWT9BEkanR1k/eUovXIZ4CYEx4LttHAIlePcabZEyckUcOfwA+
+         ld4cKn0kM4Vfx29ADhSIicvea8BSndd/KrqWITOd8GFDTydQiWEJoSMQKugjZoDNrglv
+         RFE65J9Z1q+k0M/9D9082A8PAYYyDpKeO4/3eIRTiQyhsN5cVxluVIS5g72M/cFmB4vp
+         uEtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=gWieCtH2yIUBG5LWs9OEX59nD7DlvSQy6nQ6THrqLpQ=;
-        b=YTC7GO5YkCM1a8qGQFV3J4/6JX191mz+4wWuC/AKzqKjj8+LMseu6kLzcbS1gMxEPo
-         IkShbiZwjcxOJgBsc0NPjptFpt9nq2t6UAzAch+Qqyhijg+8qSm9FLMHIpzz71MwNQIm
-         RB3SEMJIx7B43y/o6pXunMQNLMPRJ+00AWuZkkxwWNxMIVxewPs3BQ/2VhLO08egFsgX
-         JGbj+yjQq7ALr3mNJIgoQ8A9wSi2yCT6d4IwATS8xa0+JfYRtOoFZ1tgIbpgs7unmUa9
-         BOLS1nw1uckoF3lV8KyeKkFlhXJW612duTszzqGj4Cd70u3hfFnfNUqaXxOj511UAWyK
-         bN6A==
-X-Gm-Message-State: APjAAAUnk5uNEgSQ3huorXtWld4dSNTQ+7jk8fmPxePkCVoD1rkZ60zJ
-        95a3T3cPb8PFBzSAoU5kJ3B9HkqG1RMc5+on+6t81g==
-X-Google-Smtp-Source: APXvYqwNLwP00A8U2czycL+eEwL5OUMXo5jNJuA8YWPXcRQvTPdJRTYAmeu3ErcrzQbw0KQSEmCrt5YH4A64vrPlTC8=
-X-Received: by 2002:ac8:2fce:: with SMTP id m14mr5717317qta.22.1559249133671;
- Thu, 30 May 2019 13:45:33 -0700 (PDT)
+        bh=EhDqOLrNL+Ls6g+jJlH1kHSTN+6mKWoVpwhK7g7g/0o=;
+        b=jvE1DxnaUE/aRjL3bhKtXfY4eEt2CQSYhWi9MbsF2zSsXZKAGUwVUmG3n0cygMiS2Z
+         bmVrstddO+tG2W132BqF7NuT/XJw/9eBSRcBnOp6U0KDFBbVfcjFS6T9vz/dXx9HhOj9
+         QGsV1dEA3mJQpkaetnrsYPC3v4Db0qRRALN4qwyX0xznh0vP+Te3Y0b/zprCt/CUEc9A
+         xNFKq5xA6273/fF/kjZrGAi4xiiQ4QFFRPh455YVBZIL4G/wCHddv9sQUshE9fLyrNGH
+         Xs3KQa9ION1aC+6QOoqKRm6J5sL7QtDhtuDReBSmPSEElLQxAuCTpVIDYoIbI9d9rfuL
+         JSgw==
+X-Gm-Message-State: APjAAAU8Wab+FklV9ifi52CKYOkFrHwPUfXzlc5hDnaJkas+rJS5A4ym
+        aC7qRR75VTWCjMX9JsuSIXzdJCWxpSDcHQSMUvzQ
+X-Google-Smtp-Source: APXvYqxCLcpJGQ9X7hllnM/E88Y7wiOxHiqGV+F77SwcvQq/KmkEMFzXAp+UwedDTn7SR4CSxAW2AxSMb9dduBaWcmQ=
+X-Received: by 2002:ac2:410a:: with SMTP id b10mr3157662lfi.175.1559249140261;
+ Thu, 30 May 2019 13:45:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190519092537.69053-1-jitao.shi@mediatek.com> <20190519092537.69053-7-jitao.shi@mediatek.com>
-In-Reply-To: <20190519092537.69053-7-jitao.shi@mediatek.com>
-From:   Ryan Case <ryandcase@chromium.org>
-Date:   Thu, 30 May 2019 13:45:23 -0700
-Message-ID: <CACjz--m7X13XShZ4ST+54jF_K6=Cfzj1DNBduyVdVsVd2dpULw@mail.gmail.com>
-Subject: Re: [v3 6/7] drm/mediatek: change the dsi phytiming calculate method
-To:     Jitao Shi <jitao.shi@mediatek.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>, linux-pwm@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>, stonea168@163.com,
-        dri-devel@lists.freedesktop.org,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Ajay Kumar <ajaykumar.rs@samsung.com>,
-        Vincent Palatin <vpalatin@chromium.org>,
-        cawa.cheng@mediatek.com, bibby.hsieh@mediatek.com,
-        ck.hu@mediatek.com, Russell King <rmk+kernel@arm.linux.org.uk>,
-        Thierry Reding <treding@nvidia.com>,
-        devicetree@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
-        Inki Dae <inki.dae@samsung.com>,
-        linux-mediatek@lists.infradead.org, yingjoe.chen@mediatek.com,
-        eddie.huang@mediatek.com, linux-arm-kernel@lists.infradead.org,
-        Rahul Sharma <rahul.sharma@samsung.com>,
-        srv_heupstream@mediatek.com, linux-kernel@vger.kernel.org,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Sean Paul <seanpaul@chromium.org>
+References: <cover.1554732921.git.rgb@redhat.com> <0785ee2644804f3ec6af1243cc0dcf89709c1fd4.1554732921.git.rgb@redhat.com>
+ <CAHC9VhRV-0LSEcRvPO1uXtKdpEQsaLZnBV3T=zcMTZPN5ugz5w@mail.gmail.com>
+ <20190530141951.iofimovrndap4npq@madcap2.tricolour.ca> <CAHC9VhQhkzCtVOXhPL7BzaqvF0y+8gBQwhOo1EQDS2OUyZbV5g@mail.gmail.com>
+ <20190530203702.fibsrazabbiifjvf@madcap2.tricolour.ca>
+In-Reply-To: <20190530203702.fibsrazabbiifjvf@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 30 May 2019 16:45:28 -0400
+Message-ID: <CAHC9VhR6oqKer_p6Xsu6oO2j3bMZGPXWHnGchZOqUoMx9yJFwQ@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V6 08/10] audit: add containerid filtering
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        nhorman@tuxdriver.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jitao,
+On Thu, May 30, 2019 at 4:37 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2019-05-30 10:34, Paul Moore wrote:
+> > On Thu, May 30, 2019 at 10:20 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > >
+> > > On 2019-05-29 18:16, Paul Moore wrote:
+> > > > On Mon, Apr 8, 2019 at 11:41 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > >
+> > > > > Implement audit container identifier filtering using the AUDIT_CONTID
+> > > > > field name to send an 8-character string representing a u64 since the
+> > > > > value field is only u32.
+> > > > >
+> > > > > Sending it as two u32 was considered, but gathering and comparing two
+> > > > > fields was more complex.
+> > > > >
+> > > > > The feature indicator is AUDIT_FEATURE_BITMAP_CONTAINERID.
+> > > > >
+> > > > > Please see the github audit kernel issue for the contid filter feature:
+> > > > >   https://github.com/linux-audit/audit-kernel/issues/91
+> > > > > Please see the github audit userspace issue for filter additions:
+> > > > >   https://github.com/linux-audit/audit-userspace/issues/40
+> > > > > Please see the github audit testsuiite issue for the test case:
+> > > > >   https://github.com/linux-audit/audit-testsuite/issues/64
+> > > > > Please see the github audit wiki for the feature overview:
+> > > > >   https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
+> > > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > > > Acked-by: Serge Hallyn <serge@hallyn.com>
+> > > > > Acked-by: Neil Horman <nhorman@tuxdriver.com>
+> > > > > Reviewed-by: Ondrej Mosnacek <omosnace@redhat.com>
+> > > > > ---
+> > > > >  include/linux/audit.h      |  1 +
+> > > > >  include/uapi/linux/audit.h |  5 ++++-
+> > > > >  kernel/audit.h             |  1 +
+> > > > >  kernel/auditfilter.c       | 47 ++++++++++++++++++++++++++++++++++++++++++++++
+> > > > >  kernel/auditsc.c           |  4 ++++
+> > > > >  5 files changed, 57 insertions(+), 1 deletion(-)
+> > > >
+> > > > ...
+> > > >
+> > > > > diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
+> > > > > index 63f8b3f26fab..407b5bb3b4c6 100644
+> > > > > --- a/kernel/auditfilter.c
+> > > > > +++ b/kernel/auditfilter.c
+> > > > > @@ -1206,6 +1224,31 @@ int audit_comparator(u32 left, u32 op, u32 right)
+> > > > >         }
+> > > > >  }
+> > > > >
+> > > > > +int audit_comparator64(u64 left, u32 op, u64 right)
+> > > > > +{
+> > > > > +       switch (op) {
+> > > > > +       case Audit_equal:
+> > > > > +               return (left == right);
+> > > > > +       case Audit_not_equal:
+> > > > > +               return (left != right);
+> > > > > +       case Audit_lt:
+> > > > > +               return (left < right);
+> > > > > +       case Audit_le:
+> > > > > +               return (left <= right);
+> > > > > +       case Audit_gt:
+> > > > > +               return (left > right);
+> > > > > +       case Audit_ge:
+> > > > > +               return (left >= right);
+> > > > > +       case Audit_bitmask:
+> > > > > +               return (left & right);
+> > > > > +       case Audit_bittest:
+> > > > > +               return ((left & right) == right);
+> > > > > +       default:
+> > > > > +               BUG();
+> > > >
+> > > > A little birdy mentioned the BUG() here as a potential issue and while
+> > > > I had ignored it in earlier patches because this is likely a
+> > > > cut-n-paste from another audit comparator function, I took a closer
+> > > > look this time.  It appears as though we will never have an invalid op
+> > > > value as audit_data_to_entry()/audit_to_op() ensure that the op value
+> > > > is a a known good value.  Removing the BUG() from all the audit
+> > > > comparators is a separate issue, but I think it would be good to
+> > > > remove it from this newly added comparator; keeping it so that we
+> > > > return "0" in the default case seems reasoanble.
+> > >
+> > > Fair enough.  That BUG(); can be removed.
+> >
+> > Please send a fixup patch for this.
+>
+> The fixup patch is trivial.
 
-On Sun, May 19, 2019 at 2:27 AM Jitao Shi <jitao.shi@mediatek.com> wrote:
->
-> Change the method of frame rate calc which can get more accurate
-> frame rate.
->
-> data rate = pixel_clock * bit_per_pixel / lanes
-> Adjust hfp_wc to adapt the additional phy_data
->
-> if MIPI_DSI_MODE_VIDEO_BURST
->         hfp_wc = hfp * bpp - data_phy_cycles * lanes - 12 - 6;
-> else
->         hfp_wc = hfp * bpp - data_phy_cycles * lanes - 12;
->
-> Note:
-> //(2: 1 for sync, 1 for phy idle)
-> data_phy_cycles = T_hs_exit + T_lpx + T_hs_prepare + T_hs_zero + 2;
->
-> bpp: bit per pixel
->
-> Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_dsi.c | 119 +++++++++++++++++++++--------
->  1 file changed, 86 insertions(+), 33 deletions(-)
->
-> diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> index 1165ff944889..3f51b2000c68 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> @@ -158,6 +158,25 @@
->         (type == MIPI_DSI_GENERIC_READ_REQUEST_2_PARAM) || \
->         (type == MIPI_DSI_DCS_READ))
->
-> +struct mtk_phy_timing {
-> +       u32 lpx;
-> +       u32 da_hs_prepare;
-> +       u32 da_hs_zero;
-> +       u32 da_hs_trail;
-> +
-> +       u32 ta_go;
-> +       u32 ta_sure;
-> +       u32 ta_get;
-> +       u32 da_hs_exit;
-> +
-> +       u32 clk_hs_zero;
-> +       u32 clk_hs_trail;
-> +
-> +       u32 clk_hs_prepare;
-> +       u32 clk_hs_post;
-> +       u32 clk_hs_exit;
-> +};
-> +
->  struct phy;
->
->  struct mtk_dsi_driver_data {
-> @@ -182,12 +201,13 @@ struct mtk_dsi {
->         struct clk *digital_clk;
->         struct clk *hs_clk;
->
-> -       u32 data_rate;
-> +       u64 data_rate;
->
->         unsigned long mode_flags;
->         enum mipi_dsi_pixel_format format;
->         unsigned int lanes;
->         struct videomode vm;
-> +       struct mtk_phy_timing phy_timing;
->         int refcount;
->         bool enabled;
->         u32 irq_data;
-> @@ -221,17 +241,39 @@ static void mtk_dsi_phy_timconfig(struct mtk_dsi *dsi)
->  {
->         u32 timcon0, timcon1, timcon2, timcon3;
->         u32 ui, cycle_time;
-> +       struct mtk_phy_timing *timing = &dsi->phy_timing;
-> +
-> +       ui = 1000000000 / dsi->data_rate;
-> +       cycle_time = 8000000000 / dsi->data_rate;
-> +
-> +       timing->lpx = NS_TO_CYCLE(60, cycle_time);
-> +       timing->da_hs_prepare = NS_TO_CYCLE((40 + 5 * ui), cycle_time);
-> +       timing->da_hs_zero = NS_TO_CYCLE((110 + 6 * ui), cycle_time);
-> +       timing->da_hs_trail = NS_TO_CYCLE(((0x4 * ui) + 80), cycle_time);
-> +
-> +       if (timing->da_hs_zero > timing->da_hs_prepare)
-> +               timing->da_hs_zero -= timing->da_hs_prepare;
+Yes, I know.
 
-I don't follow why the above comparison and subtraction is necessary
-when the values are being explicitly set immediately prior and it
-seems to introduce a bug. Leftover from an early revision?
+> The rebase to v5.2-rc1 audit/next had merge
+> conflicts with four recent patchsets.  It may be simpler to submit a new
+> patchset and look at a diff of the two sets.  I'm testing the rebase
+> now.
 
-It looks like you've tuned the values such that hs_prepare+hs_zero are
-just above the minimum requirements for that sum, however due to this
-comparison and subtraction we wind up with a value of
-hs_prepare+hs_zero-hs_prepare and fall below spec. Either boosting the
-initial value set for hs_zero or removing the comparison makes display
-happy again. Since I don't see any reason for the compare and subtract
-I'd just drop that.
+Great thanks.  Although you might want to hold off a bit on posting
+the next revision until we sort out the discussion which is happening
+in patch 02/10; unfortunately I fear we may need to change some of the
+logic.
 
-> +
-> +       timing->ta_go = 4 * timing->lpx;
-> +       timing->ta_sure = 3 * timing->lpx / 2;
-> +       timing->ta_get = 5 * timing->lpx;
-> +       timing->da_hs_exit = 2 * timing->lpx;
-> +
-> +       timing->clk_hs_zero = NS_TO_CYCLE(0x150, cycle_time);
-> +       timing->clk_hs_trail = NS_TO_CYCLE(0x64, cycle_time) + 0xa;
->
-> -       ui = 1000 / dsi->data_rate + 0x01;
-> -       cycle_time = 8000 / dsi->data_rate + 0x01;
-> +       timing->clk_hs_prepare = NS_TO_CYCLE(0x40, cycle_time);
-> +       timing->clk_hs_post = NS_TO_CYCLE(80 + 52 * ui, cycle_time);
-> +       timing->clk_hs_exit = 2 * timing->lpx;
-
-There is a lot of alternating between hex and decimal values in this
-function which makes it a little hard to follow. Would be nice to
-stick to one or the other.
-
->
-> -       timcon0 = T_LPX | T_HS_PREP << 8 | T_HS_ZERO << 16 | T_HS_TRAIL << 24;
-> -       timcon1 = 4 * T_LPX | (3 * T_LPX / 2) << 8 | 5 * T_LPX << 16 |
-> -                 T_HS_EXIT << 24;
-> -       timcon2 = ((NS_TO_CYCLE(0x64, cycle_time) + 0xa) << 24) |
-> -                 (NS_TO_CYCLE(0x150, cycle_time) << 16);
-> -       timcon3 = NS_TO_CYCLE(0x40, cycle_time) | (2 * T_LPX) << 16 |
-> -                 NS_TO_CYCLE(80 + 52 * ui, cycle_time) << 8;
-> +       timcon0 = timing->lpx | timing->da_hs_prepare << 8 |
-> +                 timing->da_hs_zero << 16 | timing->da_hs_trail << 24;
-> +       timcon1 = timing->ta_go | timing->ta_sure << 8 |
-> +                 timing->ta_get << 16 | timing->da_hs_exit << 24;
-> +       timcon2 = 1 << 8 | timing->clk_hs_zero << 16 |
-> +                 timing->clk_hs_trail << 24;
-> +       timcon3 = timing->clk_hs_prepare | timing->clk_hs_post << 8 |
-> +                 timing->clk_hs_exit << 16;
->
->         writel(timcon0, dsi->regs + DSI_PHY_TIMECON0);
->         writel(timcon1, dsi->regs + DSI_PHY_TIMECON1);
-> @@ -418,7 +460,8 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
->         u32 horizontal_sync_active_byte;
->         u32 horizontal_backporch_byte;
->         u32 horizontal_frontporch_byte;
-> -       u32 dsi_tmp_buf_bpp;
-> +       u32 dsi_tmp_buf_bpp, data_phy_cycles;
-> +       struct mtk_phy_timing *timing = &dsi->phy_timing;
->
->         struct videomode *vm = &dsi->vm;
->
-> @@ -433,7 +476,8 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
->         writel(vm->vactive, dsi->regs + DSI_VACT_NL);
->
->         if (dsi->driver_data->has_size_ctl)
-> -               writel(vm->vactive << 16 | vm->hactive, dsi->regs + DSI_SIZE_CON);
-> +               writel(vm->vactive << 16 | vm->hactive,
-> +                      dsi->regs + DSI_SIZE_CON);
->
->         horizontal_sync_active_byte = (vm->hsync_len * dsi_tmp_buf_bpp - 10);
->
-> @@ -444,7 +488,34 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
->                 horizontal_backporch_byte = ((vm->hback_porch + vm->hsync_len) *
->                         dsi_tmp_buf_bpp - 10);
->
-> -       horizontal_frontporch_byte = (vm->hfront_porch * dsi_tmp_buf_bpp - 12);
-> +       data_phy_cycles = timing->lpx + timing->da_hs_prepare +
-> +                                 timing->da_hs_zero + timing->da_hs_exit + 2;
-> +
-> +       if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_BURST) {
-> +               if (vm->hfront_porch * dsi_tmp_buf_bpp >
-> +                   data_phy_cycles * dsi->lanes + 18) {
-> +                       horizontal_frontporch_byte = vm->hfront_porch *
-> +                                                    dsi_tmp_buf_bpp -
-> +                                                    data_phy_cycles *
-> +                                                    dsi->lanes - 18;
-> +               } else {
-> +                       DRM_WARN("HFP less than d-phy, FPS will under 60Hz\n");
-> +                       horizontal_frontporch_byte = vm->hfront_porch *
-> +                                                    dsi_tmp_buf_bpp;
-> +               }
-> +       } else {
-> +               if (vm->hfront_porch * dsi_tmp_buf_bpp >
-> +                   data_phy_cycles * dsi->lanes + 12) {
-> +                       horizontal_frontporch_byte = vm->hfront_porch *
-> +                                                    dsi_tmp_buf_bpp -
-> +                                                    data_phy_cycles *
-> +                                                    dsi->lanes - 12;
-> +               } else {
-> +                       DRM_WARN("HFP less than d-phy, FPS will under 60Hz\n");
-> +                       horizontal_frontporch_byte = vm->hfront_porch *
-> +                                                    dsi_tmp_buf_bpp;
-> +               }
-> +       }
->
->         writel(horizontal_sync_active_byte, dsi->regs + DSI_HSA_WC);
->         writel(horizontal_backporch_byte, dsi->regs + DSI_HBP_WC);
-> @@ -544,8 +615,7 @@ static int mtk_dsi_poweron(struct mtk_dsi *dsi)
->  {
->         struct device *dev = dsi->dev;
->         int ret;
-> -       u64 pixel_clock, total_bits;
-> -       u32 htotal, htotal_bits, bit_per_pixel, overhead_cycles, overhead_bits;
-> +       u32 bit_per_pixel;
->
->         if (++dsi->refcount != 1)
->                 return 0;
-> @@ -564,24 +634,7 @@ static int mtk_dsi_poweron(struct mtk_dsi *dsi)
->                 break;
->         }
->
-> -       /**
-> -        * htotal_time = htotal * byte_per_pixel / num_lanes
-> -        * overhead_time = lpx + hs_prepare + hs_zero + hs_trail + hs_exit
-> -        * mipi_ratio = (htotal_time + overhead_time) / htotal_time
-> -        * data_rate = pixel_clock * bit_per_pixel * mipi_ratio / num_lanes;
-> -        */
-> -       pixel_clock = dsi->vm.pixelclock;
-> -       htotal = dsi->vm.hactive + dsi->vm.hback_porch + dsi->vm.hfront_porch +
-> -                       dsi->vm.hsync_len;
-> -       htotal_bits = htotal * bit_per_pixel;
-> -
-> -       overhead_cycles = T_LPX + T_HS_PREP + T_HS_ZERO + T_HS_TRAIL +
-> -                       T_HS_EXIT;
-> -       overhead_bits = overhead_cycles * dsi->lanes * 8;
-> -       total_bits = htotal_bits + overhead_bits;
-> -
-> -       dsi->data_rate = DIV_ROUND_UP_ULL(pixel_clock * total_bits,
-> -                                         htotal * dsi->lanes);
-> +       dsi->data_rate = dsi->vm.pixelclock * bit_per_pixel / dsi->lanes;
->
->         ret = clk_set_rate(dsi->hs_clk, dsi->data_rate);
->         if (ret < 0) {
-
-
-With the earlier fix feel free to add to the next revision
-Tested-by: Ryan Case <ryandcase@chromium.org>
+--
+paul moore
+www.paul-moore.com
