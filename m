@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E72C2F051
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:03:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9A5B2F20A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:18:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730597AbfE3ECy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:02:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49208 "EHLO mail.kernel.org"
+        id S1731265AbfE3ESA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:18:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731370AbfE3DSA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:00 -0400
+        id S1729081AbfE3DPh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:37 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93D6624733;
-        Thu, 30 May 2019 03:17:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9083424547;
+        Thu, 30 May 2019 03:15:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186279;
-        bh=58uaOlYXwMEaMgbFjjNeG3nzjjuStrWihyeEJBWhiTc=;
+        s=default; t=1559186136;
+        bh=9hq0++QxrdKZauVmyZY7B4QP8K+XhmxC67cf+KjhLRo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wlhM3oJGLP3lh9J3zEgG9ZURhCnP7ftjZ7TiPUzpLSnQc/q3jBkvOiOLq1qJLHIo/
-         DuCMwjRYl+5RxqnNCTdb98j3CpzfTiF4N3jhoJsa/W7fkSOtSYwAewnH7P68zKuRo0
-         P/LFcPdnfKOjvg/6a9uvfa3UjAnhQ8wI8UmXiEso=
+        b=Ij9x3NJcwU3+i904QxMpbkLcinBhaVvtcSJKf9sz24cIZZU5PVFOF+Dl86JxkaUi+
+         6admwtyY8URBXOFGqmCwt32vprd0SD6Ixom2oQ1L13Bg/lrTnIlg/gvxM2WtoT11Fi
+         Duyr5udO6km8wyOp1AwXCM1WSDKzMHhuXpHk5ONE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org, Ezequiel Garcia <ezequiel@collabora.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 173/276] s390: zcrypt: initialize variables before_use
-Date:   Wed, 29 May 2019 20:05:31 -0700
-Message-Id: <20190530030536.174871379@linuxfoundation.org>
+Subject: [PATCH 5.0 259/346] media: gspca: Kill URBs on USB device disconnect
+Date:   Wed, 29 May 2019 20:05:32 -0700
+Message-Id: <20190530030554.101934368@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,72 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 913140e221567b3ecd21b4242257a7e3fa279026 ]
+[ Upstream commit 9b9ea7c2b57a0c9c3341fc6db039d1f7971a432e ]
 
-The 'func_code' variable gets printed in debug statements without
-a prior initialization in multiple functions, as reported when building
-with clang:
+In order to prevent ISOC URBs from being infinitely resubmitted,
+the driver's USB disconnect handler must kill all the in-flight URBs.
 
-drivers/s390/crypto/zcrypt_api.c:659:6: warning: variable 'func_code' is used uninitialized whenever 'if' condition is true
-      [-Wsometimes-uninitialized]
-        if (mex->outputdatalength < mex->inputdatalength) {
-            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/s390/crypto/zcrypt_api.c:725:29: note: uninitialized use occurs here
-        trace_s390_zcrypt_rep(mex, func_code, rc,
-                                   ^~~~~~~~~
-drivers/s390/crypto/zcrypt_api.c:659:2: note: remove the 'if' if its condition is always false
-        if (mex->outputdatalength < mex->inputdatalength) {
-        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/s390/crypto/zcrypt_api.c:654:24: note: initialize the variable 'func_code' to silence this warning
-        unsigned int func_code;
-                              ^
+While here, change the URB packet status message to a debug level,
+to avoid spamming the console too much.
 
-Add initializations to all affected code paths to shut up the warning
-and make the warning output consistent.
+This commit fixes a lockup caused by an interrupt storm coming
+from the URB completion handler.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/s390/crypto/zcrypt_api.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/media/usb/gspca/gspca.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/s390/crypto/zcrypt_api.c b/drivers/s390/crypto/zcrypt_api.c
-index e6854127b4343..b2737bfeb8bb6 100644
---- a/drivers/s390/crypto/zcrypt_api.c
-+++ b/drivers/s390/crypto/zcrypt_api.c
-@@ -224,6 +224,7 @@ static long zcrypt_rsa_modexpo(struct ica_rsa_modexpo *mex)
- 	trace_s390_zcrypt_req(mex, TP_ICARSAMODEXPO);
+diff --git a/drivers/media/usb/gspca/gspca.c b/drivers/media/usb/gspca/gspca.c
+index 3137f5d89d803..cac8e5f0543be 100644
+--- a/drivers/media/usb/gspca/gspca.c
++++ b/drivers/media/usb/gspca/gspca.c
+@@ -294,7 +294,7 @@ static void fill_frame(struct gspca_dev *gspca_dev,
+ 		/* check the packet status and length */
+ 		st = urb->iso_frame_desc[i].status;
+ 		if (st) {
+-			pr_err("ISOC data error: [%d] len=%d, status=%d\n",
++			gspca_dbg(gspca_dev, D_PACK, "ISOC data error: [%d] len=%d, status=%d\n",
+ 			       i, len, st);
+ 			gspca_dev->last_packet_type = DISCARD_PACKET;
+ 			continue;
+@@ -1630,6 +1630,8 @@ void gspca_disconnect(struct usb_interface *intf)
  
- 	if (mex->outputdatalength < mex->inputdatalength) {
-+		func_code = 0;
- 		rc = -EINVAL;
- 		goto out;
- 	}
-@@ -298,6 +299,7 @@ static long zcrypt_rsa_crt(struct ica_rsa_modexpo_crt *crt)
- 	trace_s390_zcrypt_req(crt, TP_ICARSACRT);
+ 	mutex_lock(&gspca_dev->usb_lock);
+ 	gspca_dev->present = false;
++	destroy_urbs(gspca_dev);
++	gspca_input_destroy_urb(gspca_dev);
  
- 	if (crt->outputdatalength < crt->inputdatalength) {
-+		func_code = 0;
- 		rc = -EINVAL;
- 		goto out;
- 	}
-@@ -483,6 +485,7 @@ static long zcrypt_send_ep11_cprb(struct ep11_urb *xcrb)
+ 	vb2_queue_error(&gspca_dev->queue);
  
- 		targets = kcalloc(target_num, sizeof(*targets), GFP_KERNEL);
- 		if (!targets) {
-+			func_code = 0;
- 			rc = -ENOMEM;
- 			goto out;
- 		}
-@@ -490,6 +493,7 @@ static long zcrypt_send_ep11_cprb(struct ep11_urb *xcrb)
- 		uptr = (struct ep11_target_dev __force __user *) xcrb->targets;
- 		if (copy_from_user(targets, uptr,
- 				   target_num * sizeof(*targets))) {
-+			func_code = 0;
- 			rc = -EFAULT;
- 			goto out_free;
- 		}
 -- 
 2.20.1
 
