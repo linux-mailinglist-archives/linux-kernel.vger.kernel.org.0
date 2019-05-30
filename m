@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E5032EC84
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:22:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9F492F08A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:05:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731933AbfE3DVi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:21:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42704 "EHLO mail.kernel.org"
+        id S1730450AbfE3DRr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:17:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730687AbfE3DQ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:16:28 -0400
+        id S1729739AbfE3DOJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:14:09 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3803E245D7;
-        Thu, 30 May 2019 03:16:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2CEA24547;
+        Thu, 30 May 2019 03:14:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186188;
-        bh=aFulq45jcbmOE+rmTiPFUcS+ut7sv6MMNvhjK8ujpNg=;
+        s=default; t=1559186048;
+        bh=CSdObxmxmp8l1cFga4GAwgnZxIW80MVnHARyIn9Jhp8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2wFLXxhWjNKURg5vNpCJKTrdkYO43yb5AeVZhEY5HHlOO+bMgLTj8tUkB0fg6n5Pn
-         KSg2fRIr9YNkhi3RIzZAGa/r6IpmjpHWWyP21Olq0JHeDASjtMW/q0hZ/tqauSCdyB
-         Mf+bj1mVwHTFwOXC/D6KyetHFXqGHNM2HrEaGhLM=
+        b=cvFO6CLIXYVZHd2Jf7Gs8ssgETFoZTst5ZBTclLK1lPB9dNADNp6lST7VB6/fv+Ev
+         FZ3dgwh0agSFnKuW0GJKb7XuO0d7DBSl27oM+63SJNKTZwaNYVFA+tA84+yf7MbaHT
+         ilZrSOuZO3d974rmr+IKeDHSkip0mFDl5n9lm1Wc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jun Nie <jun.nie@linaro.org>, linux-gpio@vger.kernel.org,
-        Shawn Guo <shawnguo@kernel.org>,
+        stable@vger.kernel.org, Hugues Fruchet <hugues.fruchet@st.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 057/276] pinctrl: zte: fix leaked of_node references
-Date:   Wed, 29 May 2019 20:03:35 -0700
-Message-Id: <20190530030528.999185982@linuxfoundation.org>
+Subject: [PATCH 5.0 143/346] media: stm32-dcmi: fix crash when subdev do not expose any formats
+Date:   Wed, 29 May 2019 20:03:36 -0700
+Message-Id: <20190530030548.380053259@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,44 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 02d15f0d80720545f1f4922a1550ea4aaad4e152 ]
+[ Upstream commit 33dfeb62e23c31619d2197850f7e8b50e8cc5466 ]
 
-The call to of_parse_phandle returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
+Do not access sd_formats[] if num_of_sd_formats is zero, ie
+subdev sensor didn't expose any formats.
 
-Detected by coccinelle with the following warnings:
-./drivers/pinctrl/zte/pinctrl-zx.c:415:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 407, but without a corresponding object release within this function.
-./drivers/pinctrl/zte/pinctrl-zx.c:422:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 407, but without a corresponding object release within this function.
-./drivers/pinctrl/zte/pinctrl-zx.c:436:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 407, but without a corresponding object release within this function.
-./drivers/pinctrl/zte/pinctrl-zx.c:444:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 407, but without a corresponding object release within this function.
-./drivers/pinctrl/zte/pinctrl-zx.c:448:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 407, but without a corresponding object release within this function.
-
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jun Nie <jun.nie@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Acked-by: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/zte/pinctrl-zx.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/platform/stm32/stm32-dcmi.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/pinctrl/zte/pinctrl-zx.c b/drivers/pinctrl/zte/pinctrl-zx.c
-index caa44dd2880a8..3cb69309912ba 100644
---- a/drivers/pinctrl/zte/pinctrl-zx.c
-+++ b/drivers/pinctrl/zte/pinctrl-zx.c
-@@ -411,6 +411,7 @@ int zx_pinctrl_init(struct platform_device *pdev,
+diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
+index 918e49f27c7ed..a33d497bd5b71 100644
+--- a/drivers/media/platform/stm32/stm32-dcmi.c
++++ b/drivers/media/platform/stm32/stm32-dcmi.c
+@@ -811,6 +811,9 @@ static int dcmi_try_fmt(struct stm32_dcmi *dcmi, struct v4l2_format *f,
+ 
+ 	sd_fmt = find_format_by_fourcc(dcmi, pix->pixelformat);
+ 	if (!sd_fmt) {
++		if (!dcmi->num_of_sd_formats)
++			return -ENODATA;
++
+ 		sd_fmt = dcmi->sd_formats[dcmi->num_of_sd_formats - 1];
+ 		pix->pixelformat = sd_fmt->fourcc;
  	}
+@@ -989,6 +992,9 @@ static int dcmi_set_sensor_format(struct stm32_dcmi *dcmi,
  
- 	zpctl->aux_base = of_iomap(np, 0);
-+	of_node_put(np);
- 	if (!zpctl->aux_base)
- 		return -ENOMEM;
- 
+ 	sd_fmt = find_format_by_fourcc(dcmi, pix->pixelformat);
+ 	if (!sd_fmt) {
++		if (!dcmi->num_of_sd_formats)
++			return -ENODATA;
++
+ 		sd_fmt = dcmi->sd_formats[dcmi->num_of_sd_formats - 1];
+ 		pix->pixelformat = sd_fmt->fourcc;
+ 	}
 -- 
 2.20.1
 
