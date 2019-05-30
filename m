@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6E942F5E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:51:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE7C32F5E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:51:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387478AbfE3EvN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:51:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49534 "EHLO mail.kernel.org"
+        id S1728508AbfE3EvE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:51:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49558 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728307AbfE3DK7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:10:59 -0400
+        id S1728308AbfE3DLA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:11:00 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3B60244E5;
-        Thu, 30 May 2019 03:10:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40531244E6;
+        Thu, 30 May 2019 03:10:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185858;
-        bh=6dIRTKo7ssCP3K7R1QhywNBy8AjmoCkBO+6/RAJolpM=;
+        s=default; t=1559185859;
+        bh=nkRGmyUwdjOOZEN1bV2aoAyTIqai0OB2YKorjIp4+Y4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nrl90rneYNy4ZDBmb/xcTRvRAn0r1MYeOwc2NdYCzMYKYqsvtXeIfKfRCgUhOLBnk
-         t7ZDrzTQZXnnaOVGl3j17OTRTGWvOfrmQVnzZo/3fN5MUZ1bkNxOzw3OoAWMlN7sX6
-         CPMyiH3JMxntGZsLbhyfMdIJ1xx2SKVowY3vrV9g=
+        b=NSrytK6mhDpFGXPxO9FPlc1lK8ir0It5ZcdcdtjKa7P+ae1HXv/lWT2E6PhgubJL6
+         huxxl9bWyaYTqvk/5AkzR9zCabQZDZMUP7NofMQg7Xswr5/Xulr3/ggLIHDMmE63Di
+         hooe4//UiIIbZm1Ywq59SH6g52+NOiYt+p0f5OXY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kernel test robot <lkp@intel.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 145/405] Bluetooth: mediatek: Fixed incorrect type in assignment
-Date:   Wed, 29 May 2019 20:02:23 -0700
-Message-Id: <20190530030548.463626535@linuxfoundation.org>
+Subject: [PATCH 5.1 146/405] HID: logitech-hidpp: use RAP instead of FAP to get the protocol version
+Date:   Wed, 29 May 2019 20:02:24 -0700
+Message-Id: <20190530030548.514088806@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
 References: <20190530030540.291644921@linuxfoundation.org>
@@ -45,66 +44,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit cac63f9b163700fb70a609ad220697c61b797d6b ]
+[ Upstream commit 096377525cdb8251e4656085efc988bdf733fb4c ]
 
-Fixed warning: incorrect type in assignment reported by kbuild test robot.
-The detailed warning is shown as below.
+According to the logitech_hidpp_2.0_specification_draft_2012-06-04.pdf doc:
+https://lekensteyn.nl/files/logitech/logitech_hidpp_2.0_specification_draft_2012-06-04.pdf
 
-make ARCH=x86_64 allmodconfig
-make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+We should use a register-access-protocol request using the short input /
+output report ids. This is necessary because 27MHz HID++ receivers have
+a max-packetsize on their HIP++ endpoint of 8, so they cannot support
+long reports. Using a feature-access-protocol request (which is always
+long or very-long) with these will cause a timeout error, followed by
+the hidpp driver treating the device as not being HID++ capable.
 
-All warnings (new ones prefixed by >>):
+This commit fixes this by switching to using a rap request to get the
+protocol version.
 
-btmtkuart.c:671:18: sparse:    warning: incorrect type in assignment
-			       (different base types)
-btmtkuart.c:671:18: sparse:    expected unsigned int [usertype] baudrate
-btmtkuart.c:671:18: sparse:    got restricted __le32 [usertype]
+Besides being tested with a (046d:c517) 27MHz receiver with various
+27MHz keyboards and mice, this has also been tested to not cause
+regressions on a non-unifying dual-HID++ nano receiver (046d:c534) with
+k270 and m185 HID++-2.0 devices connected and on a unifying/dj receiver
+(046d:c52b) with a HID++-2.0 Logitech Rechargeable Touchpad T650.
 
-sparse warnings: (new ones prefixed by >>)
-btmtkuart.c:671:18: sparse: warning: incorrect type in assignment
-			       (different base types)
-btmtkuart.c:671:18: sparse:    expected unsigned int [usertype] baudrate
-btmtkuart.c:671:18: sparse:    got restricted __le32 [usertype]
-
-vim +671 drivers/bluetooth/btmtkuart.c
-
-   659
-   660	static int btmtkuart_change_baudrate(struct hci_dev *hdev)
-   661	{
-   662		struct btmtkuart_dev *bdev = hci_get_drvdata(hdev);
-   663		struct btmtk_hci_wmt_params wmt_params;
-   664		u32 baudrate;
-   665		u8 param;
-   666		int err;
-   667
-   668		/* Indicate the device to enter the probe state the host is
-   669		 * ready to change a new baudrate.
-   670		 */
- > 671		baudrate = cpu_to_le32(bdev->desired_speed);
-   672		wmt_params.op = MTK_WMT_HIF;
-
-Fixes: 22eaf6c9946a ("Bluetooth: mediatek: add support for MediaTek MT7663U and MT7668U UART devices")
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/bluetooth/btmtkuart.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hid/hid-logitech-hidpp.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/bluetooth/btmtkuart.c b/drivers/bluetooth/btmtkuart.c
-index b0b680dd69f49..f5dbeec8e2748 100644
---- a/drivers/bluetooth/btmtkuart.c
-+++ b/drivers/bluetooth/btmtkuart.c
-@@ -661,7 +661,7 @@ static int btmtkuart_change_baudrate(struct hci_dev *hdev)
- {
- 	struct btmtkuart_dev *bdev = hci_get_drvdata(hdev);
- 	struct btmtk_hci_wmt_params wmt_params;
--	u32 baudrate;
-+	__le32 baudrate;
- 	u8 param;
- 	int err;
+diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
+index 199cc256e9d9d..ffd30c7492df8 100644
+--- a/drivers/hid/hid-logitech-hidpp.c
++++ b/drivers/hid/hid-logitech-hidpp.c
+@@ -836,13 +836,16 @@ static int hidpp_root_get_feature(struct hidpp_device *hidpp, u16 feature,
  
+ static int hidpp_root_get_protocol_version(struct hidpp_device *hidpp)
+ {
++	const u8 ping_byte = 0x5a;
++	u8 ping_data[3] = { 0, 0, ping_byte };
+ 	struct hidpp_report response;
+ 	int ret;
+ 
+-	ret = hidpp_send_fap_command_sync(hidpp,
++	ret = hidpp_send_rap_command_sync(hidpp,
++			REPORT_ID_HIDPP_SHORT,
+ 			HIDPP_PAGE_ROOT_IDX,
+ 			CMD_ROOT_GET_PROTOCOL_VERSION,
+-			NULL, 0, &response);
++			ping_data, sizeof(ping_data), &response);
+ 
+ 	if (ret == HIDPP_ERROR_INVALID_SUBID) {
+ 		hidpp->protocol_major = 1;
+@@ -862,8 +865,14 @@ static int hidpp_root_get_protocol_version(struct hidpp_device *hidpp)
+ 	if (ret)
+ 		return ret;
+ 
+-	hidpp->protocol_major = response.fap.params[0];
+-	hidpp->protocol_minor = response.fap.params[1];
++	if (response.rap.params[2] != ping_byte) {
++		hid_err(hidpp->hid_dev, "%s: ping mismatch 0x%02x != 0x%02x\n",
++			__func__, response.rap.params[2], ping_byte);
++		return -EPROTO;
++	}
++
++	hidpp->protocol_major = response.rap.params[0];
++	hidpp->protocol_minor = response.rap.params[1];
+ 
+ 	return ret;
+ }
 -- 
 2.20.1
 
