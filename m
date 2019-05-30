@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47A382ED33
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:33:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2C012ECB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:25:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387570AbfE3D24 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:28:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58408 "EHLO mail.kernel.org"
+        id S1732023AbfE3DZJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:25:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730515AbfE3DUX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:20:23 -0400
+        id S1731515AbfE3DSU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:18:20 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BCC72492F;
-        Thu, 30 May 2019 03:20:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 243122479B;
+        Thu, 30 May 2019 03:18:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186422;
-        bh=8XoDysI2f0WUOlj/hFzAx5CvzR45OQf8+Eh7gXw94jQ=;
+        s=default; t=1559186300;
+        bh=5zpwOjDO1fpQzwqoXZLpNd3AB+Dz2aPEnFSCm18DBbw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OcWrA1ifDfYyCkF4otPbRU3EOaJUZw4qjEEHTG4Zb4w43oR427igp5EIGdAXpRaDk
-         ivK3dT78wuk0H6I/wVEwDsbNJnIzuWYQHddxdpcvMBfWPIgY3IM3jlrTBU9+HpUyVg
-         2UX2fA48y6m73dy//sMhjrhxULS0TRWsP+1Yntro=
+        b=RNwYs/RnQxrjbM8N/K+Zh8Kl+V1A3OKK+2AdB4sn5eE4S+iIpJvgJfCwhjcKTuZvY
+         8ESnx6Snzhog2uaBcTtfz+KtrAb1ewa1fITjxadj3XScMctQV31ZKrxNn0AII8x2A8
+         qoiQHdPXeFWJ0Q2Qo3pmrJarmH+BbbrPqnoVMWwc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, siliu@redhat.com,
-        Pankaj Gupta <pagupta@redhat.com>,
+        stable@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 167/193] virtio_console: initialize vtermno value for ports
-Date:   Wed, 29 May 2019 20:07:01 -0700
-Message-Id: <20190530030511.311708044@linuxfoundation.org>
+Subject: [PATCH 4.19 264/276] spi : spi-topcliff-pch: Fix to handle empty DMA buffers
+Date:   Wed, 29 May 2019 20:07:02 -0700
+Message-Id: <20190530030541.712268215@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,46 +44,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 4b0a2c5ff7215206ea6135a405f17c5f6fca7d00 ]
+[ Upstream commit f37d8e67f39e6d3eaf4cc5471e8a3d21209843c6 ]
 
-For regular serial ports we do not initialize value of vtermno
-variable. A garbage value is assigned for non console ports.
-The value can be observed as a random integer with [1].
+pch_alloc_dma_buf allocated tx, rx DMA buffers which can fail. Further,
+these buffers are used without a check. The patch checks for these
+failures and sends the error upstream.
 
-[1] vim /sys/kernel/debug/virtio-ports/vport*p*
-
-This patch initialize the value of vtermno for console serial
-ports to '1' and regular serial ports are initiaized to '0'.
-
-Reported-by: siliu@redhat.com
-Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/char/virtio_console.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/spi/spi-topcliff-pch.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
-index a089474cb046a..65454acd4b974 100644
---- a/drivers/char/virtio_console.c
-+++ b/drivers/char/virtio_console.c
-@@ -75,7 +75,7 @@ struct ports_driver_data {
- 	/* All the console devices handled by this driver */
- 	struct list_head consoles;
- };
--static struct ports_driver_data pdrvdata;
-+static struct ports_driver_data pdrvdata = { .next_vtermno = 1};
+diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
+index 97d137591b18d..4389ab80c23e6 100644
+--- a/drivers/spi/spi-topcliff-pch.c
++++ b/drivers/spi/spi-topcliff-pch.c
+@@ -1294,18 +1294,27 @@ static void pch_free_dma_buf(struct pch_spi_board_data *board_dat,
+ 				  dma->rx_buf_virt, dma->rx_buf_dma);
+ }
  
- static DEFINE_SPINLOCK(pdrvdata_lock);
- static DECLARE_COMPLETION(early_console_added);
-@@ -1422,6 +1422,7 @@ static int add_port(struct ports_device *portdev, u32 id)
- 	port->async_queue = NULL;
+-static void pch_alloc_dma_buf(struct pch_spi_board_data *board_dat,
++static int pch_alloc_dma_buf(struct pch_spi_board_data *board_dat,
+ 			      struct pch_spi_data *data)
+ {
+ 	struct pch_spi_dma_ctrl *dma;
++	int ret;
  
- 	port->cons.ws.ws_row = port->cons.ws.ws_col = 0;
-+	port->cons.vtermno = 0;
+ 	dma = &data->dma;
++	ret = 0;
+ 	/* Get Consistent memory for Tx DMA */
+ 	dma->tx_buf_virt = dma_alloc_coherent(&board_dat->pdev->dev,
+ 				PCH_BUF_SIZE, &dma->tx_buf_dma, GFP_KERNEL);
++	if (!dma->tx_buf_virt)
++		ret = -ENOMEM;
++
+ 	/* Get Consistent memory for Rx DMA */
+ 	dma->rx_buf_virt = dma_alloc_coherent(&board_dat->pdev->dev,
+ 				PCH_BUF_SIZE, &dma->rx_buf_dma, GFP_KERNEL);
++	if (!dma->rx_buf_virt)
++		ret = -ENOMEM;
++
++	return ret;
+ }
  
- 	port->host_connected = port->guest_connected = false;
- 	port->stats = (struct port_stats) { 0 };
+ static int pch_spi_pd_probe(struct platform_device *plat_dev)
+@@ -1382,7 +1391,9 @@ static int pch_spi_pd_probe(struct platform_device *plat_dev)
+ 
+ 	if (use_dma) {
+ 		dev_info(&plat_dev->dev, "Use DMA for data transfers\n");
+-		pch_alloc_dma_buf(board_dat, data);
++		ret = pch_alloc_dma_buf(board_dat, data);
++		if (ret)
++			goto err_spi_register_master;
+ 	}
+ 
+ 	ret = spi_register_master(master);
 -- 
 2.20.1
 
