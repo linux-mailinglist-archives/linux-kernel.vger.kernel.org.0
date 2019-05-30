@@ -2,93 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91C202EDA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:40:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BCCB2EE4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:46:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729897AbfE3DkI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:40:08 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41469 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729531AbfE3DkE (ORCPT
+        id S1732410AbfE3DqD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:46:03 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46736 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732997AbfE3Dp7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:40:04 -0400
-Received: by mail-pf1-f195.google.com with SMTP id q17so3017399pfq.8
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 20:40:03 -0700 (PDT)
+        Wed, 29 May 2019 23:45:59 -0400
+Received: by mail-pl1-f194.google.com with SMTP id e5so215375pls.13;
+        Wed, 29 May 2019 20:45:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=On4X9gP05IE6u39GfyTMWmnrBCSblT4ly+1lTynpuxM=;
-        b=WFE4DqoYhBaDtI9vw3yEq3Sxu3mrMEHM4SNbqfZDx7gvEkRpIDcYfZQiHrSXQ1Bc7B
-         FK+LpSF8yaLmLfFN5JYb7uj1zjEQektzjXwoPdv3ZQaKBCm/ElkH+ni23Al/lwx2KgQG
-         AfhookdRR5uoVsK8/zss+h1bMt9jBNPhTzG4Eu+a25QFFV5nu4WB7B5plmiZ4sM8rbZL
-         pgvBSDmABvSSWZbepyvbrSth84KbKOm07FT4plShm+qxtdFkO5tu5ztV326tDGiLQ2rt
-         YKnj2Yn+0yF+fzra8DM4HhFuSscDR9floBREUQ12DB/kazlg2m+CadyTZmQZP6i7qqZA
-         1PNQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ww+Lpg5UBLlG+2AfGQMM+hVR/fYWxYyw0/ehc0lD/3c=;
+        b=M5X6aNH3nvYZQCJNaixfla2mxM4pqJ10Zre/QPd49XnXoLpGQcSXbIm8Zm5cdhVozs
+         6bCa44Z0R6i2GxkBKxk+4W+OHC3N0+Tqv8OfKGzaRqfvPcgT1Z+am1qFNPKpAzzANvjp
+         sAYzJVkuWL36sdkfJ+jUQnLpXcfNpLduVugBIBPkhbE+1+MTKCPHB+uWkxYZVa9yINFr
+         37Wc1cY+b67xwuXJLEeLkQbIAMg7icUW+bcqAwO0h0Fz+ENu4/3oyVfWq/bkeV9dvAr3
+         UkjJgcvZq5m+djMoEWA66G4LMONofE72UyVA3zto/okuq3vXvqzlCldV2Ms41zdZf6kl
+         iQtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=On4X9gP05IE6u39GfyTMWmnrBCSblT4ly+1lTynpuxM=;
-        b=qceonGsqykFoKCiorq+OC80Sw+ccvuEgmWmu3FMKH8ADvUqpVqVqycCqFSD505jRNC
-         1NWtogBNbGZMJtwLoquuBCYcJGpkMU49/3G3mN1lMgcS4vZIlfc+BqYjcTT7hLamzaGD
-         EGHr4xpwM4crmhul0AtyI+2rN/IIgVbFhUCfVhuyMcb5jxqHMlBfuF8ttTrBQleOFX+q
-         1ZmeXousGRRy0Wx8LtdrHeO9kMHjJw8kgXsA1bs0hPos81azVXMqceGcHNuqSQO2SQBH
-         DaP17K1tGHaNC5iCPgzjcjr+32o0H3otRTUyfyTmDMptRoI8RMWnaWR2YZrNB8UcQFT9
-         hkgQ==
-X-Gm-Message-State: APjAAAXpCt3XpwFNzQZgw9PNpES4mstIvQdMdII+BDj00IshcD4+oirW
-        S4/3WbjbfO+bWwBvS7AEVpU=
-X-Google-Smtp-Source: APXvYqxuFSdogN4yad6fsZaedYCCU8dUKIXjf4voXj6fUVc2vKA9MzYgvckHtvbeiGEpL+lIZvhLKA==
-X-Received: by 2002:a17:90a:b393:: with SMTP id e19mr1414944pjr.91.1559187603609;
-        Wed, 29 May 2019 20:40:03 -0700 (PDT)
-Received: from zhanggen-UX430UQ ([66.42.35.75])
-        by smtp.gmail.com with ESMTPSA id r4sm1155654pfq.134.2019.05.29.20.39.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 May 2019 20:40:03 -0700 (PDT)
-Date:   Thu, 30 May 2019 11:39:49 +0800
-From:   Gen Zhang <blackgod016574@gmail.com>
-To:     ssantosh@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] knav_qmss_queue: fix a missing-check bug in
- knav_pool_create()
-Message-ID: <20190530033949.GA8895@zhanggen-UX430UQ>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ww+Lpg5UBLlG+2AfGQMM+hVR/fYWxYyw0/ehc0lD/3c=;
+        b=ofi5yxhVir1cq9WHi0KIsshtRNxg5EJUb4uQGr/nKReraDNU8TLgtwWr4uf5CCDDfV
+         j39lXSqJ4JSpxpieqiKwd26PChHd/dV0FFxQas0J3fg5OeZpGenwQAshIRZR1CdVMCqW
+         LyG0+41I1F3jseupaH4CpYIyqrAnbFcF7PklvOHJdlgXT8dylfosM8KPgvdR8C2RtUIz
+         FRlM3ssyfHS0PQf3aPzj/7G1Xccus5mg9Qb6Jn4+FnCqXjmP/DtOAl4BFOGVJoTGuCF/
+         ZYBCSy+N7wYh4yzi46mbIrrkzL/wsvIlkZoYYY6+FyL7ZrjOprDgQ69Y0EniDFnoKbIH
+         pL0A==
+X-Gm-Message-State: APjAAAXL+VIA1xYvBUS6dzxT41P8Hk0j1MnzRgOIdvhJU6KmoE/V/9EK
+        DeL7FqG+RqnM7eqq6mTCnqk=
+X-Google-Smtp-Source: APXvYqyIIykUxao2/xaCmvr45UsU0Y6d/pyZUzuokuqlxonCjFt/gsxsV7y4QtmvbTvtUjoquFCu7Q==
+X-Received: by 2002:a17:902:758b:: with SMTP id j11mr1710553pll.191.1559187958599;
+        Wed, 29 May 2019 20:45:58 -0700 (PDT)
+Received: from localhost (c-73-222-71-142.hsd1.ca.comcast.net. [73.222.71.142])
+        by smtp.gmail.com with ESMTPSA id w6sm754892pge.30.2019.05.29.20.45.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 29 May 2019 20:45:57 -0700 (PDT)
+Date:   Wed, 29 May 2019 20:45:55 -0700
+From:   Richard Cochran <richardcochran@gmail.com>
+To:     Vladimir Oltean <olteanv@gmail.com>
+Cc:     f.fainelli@gmail.com, vivien.didelot@gmail.com, andrew@lunn.ch,
+        davem@davemloft.net, john.stultz@linaro.org, tglx@linutronix.de,
+        sboyd@kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH net-next 0/5] PTP support for the SJA1105 DSA driver
+Message-ID: <20190530034555.wv35efen3igwwzjq@localhost>
+References: <20190528235627.1315-1-olteanv@gmail.com>
+ <20190529045207.fzvhuu6d6jf5p65t@localhost>
+ <dbe0a38f-8b48-06dd-cc2c-676e92ba0e74@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <dbe0a38f-8b48-06dd-cc2c-676e92ba0e74@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In knav_pool_create(), 'pool->name' is allocated by kstrndup(). It
-returns NULL when fails. So 'pool->name' should be checked. And free
-'pool' when error.
+On Wed, May 29, 2019 at 11:41:22PM +0300, Vladimir Oltean wrote:
+> I'm sorry, then what does this code from raw.c do?
 
-Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
----
-diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
-index 8b41837..0f8cb28 100644
---- a/drivers/soc/ti/knav_qmss_queue.c
-+++ b/drivers/soc/ti/knav_qmss_queue.c
-@@ -814,6 +814,12 @@ void *knav_pool_create(const char *name,
- 	}
- 
- 	pool->name = kstrndup(name, KNAV_NAME_SIZE - 1, GFP_KERNEL);
-+	if (!pool->name) {
-+		dev_err(kdev->dev, "failed to duplicate for pool(%s)\n",
-+			name);
-+		ret = -ENOMEM;
-+		goto err_name;
-+	}
- 	pool->kdev = kdev;
- 	pool->dev = kdev->dev;
- 
-@@ -864,6 +870,7 @@ void *knav_pool_create(const char *name,
- 	mutex_unlock(&knav_dev_lock);
- err:
- 	kfree(pool->name);
-+err_name:
- 	devm_kfree(kdev->dev, pool);
- 	return ERR_PTR(ret);
- }
+It is a fallback for HW that doesn't support multicast filtering.
+
+Care to look a few lines above?  If you did, you would have seen this:
+
+	memset(&mreq, 0, sizeof(mreq));
+	mreq.mr_ifindex = index;
+	mreq.mr_type = PACKET_MR_MULTICAST;
+	mreq.mr_alen = MAC_LEN;
+	memcpy(mreq.mr_address, addr1, MAC_LEN);
+
+	err1 = setsockopt(fd, SOL_PACKET, option, &mreq, sizeof(mreq));
+
+> > No.  The root cause is the time stamps delivered by the hardware or
+> > your driver.  That needs to be addressed before going forward.
+> > 
+> 
+> How can I check that the timestamps are valid?
+
+Well, you can see that there is something wrong.  Perhaps you are not
+matching the meta frames to the received packets.  That is one
+possible explanation, but you'll have to figure out what is happening.
+
+Thanks,
+Richard
