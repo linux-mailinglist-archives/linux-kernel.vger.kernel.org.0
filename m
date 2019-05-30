@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DB102F33D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:28:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCA7F2F53F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:46:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730203AbfE3E13 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:27:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34058 "EHLO mail.kernel.org"
+        id S2388762AbfE3Epk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:45:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729826AbfE3DOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:14:21 -0400
+        id S1728701AbfE3DLu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:11:50 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCEB724565;
-        Thu, 30 May 2019 03:14:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2E4124481;
+        Thu, 30 May 2019 03:11:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186061;
-        bh=7TaJ9LYxlB+gyH9pSRfmw/ln/c6YPZijTqXWCPUUQBA=;
+        s=default; t=1559185910;
+        bh=2wpiB4zzn6wBHIQlOWQviFupKUmKgjTIpgGgSQWBWKQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eIYwKuKGkD0G23GMcW4l23Q7RVA4zO/r2eFaQVmWI12W0m1zyfteAqXwxqoa/hwks
-         d7XFYDJb1pDfONRNuV0BVlAgMTC5aHEWj9JutooTKhNgEb1Tu+D9HEIPLf5lNKR1tU
-         rdjCVUrqSge6GhHy35Q66fIrSQjLDzz3L6HMx2gY=
+        b=e2+tXUignM1mdJtBDv/D+ssyRysBwWGhdzDQp5M0iwByBX5Hk1HevJmbm1duchem+
+         qTq5XbbkjEN2k3/t/6Pk5lgnsHrownNugTQVacrvBHh4HUKu4E4uILJJrOETaxVBUH
+         U8ddWjr/CIUVPJZfvCmmRPfzBIDbm3XIJaGlKTLI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Evan Green <evgreen@chromium.org>,
-        Rob Herring <robh@kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 167/346] dt-bindings: phy-qcom-qmp: Add UFS PHY reset
+Subject: [PATCH 5.1 242/405] iio: common: ssp_sensors: Initialize calculated_time in ssp_common_process_data
 Date:   Wed, 29 May 2019 20:04:00 -0700
-Message-Id: <20190530030549.618392895@linuxfoundation.org>
+Message-Id: <20190530030553.234582311@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,58 +46,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 95cee0b4e30a09a411a17e9a3bc6b72ed92063da ]
+[ Upstream commit 6f9ca1d3eb74b81f811a87002de2d51640d135b1 ]
 
-Add a required reset to the SDM845 UFS phy to express the PHY reset
-bit inside the UFS controller register space. Before this change, this
-reset was not expressed in the DT, and the driver utilized two different
-callbacks (phy_init and phy_poweron) to implement a two-phase
-initialization procedure that involved deasserting this reset between
-init and poweron. This abused the two callbacks and diluted their
-purpose.
+When building with -Wsometimes-uninitialized, Clang warns:
 
-That scheme does not work as regulators cannot be turned off in
-phy_poweroff because they were turned on in init, rather than poweron.
-The net result is that regulators are left on in suspend that shouldn't
-be.
+drivers/iio/common/ssp_sensors/ssp_iio.c:95:6: warning: variable
+'calculated_time' is used uninitialized whenever 'if' condition is false
+[-Wsometimes-uninitialized]
 
-This new scheme gives the UFS reset to the PHY, so that it can fully
-initialize itself in a single callback. We can then turn regulators on
-during poweron and off during poweroff.
+While it isn't wrong, this will never be a problem because
+iio_push_to_buffers_with_timestamp only uses calculated_time
+on the same condition that it is assigned (when scan_timestamp
+is not zero). While iio_push_to_buffers_with_timestamp is marked
+as inline, Clang does inlining in the optimization stage, which
+happens after the semantic analysis phase (plus inline is merely
+a hint to the compiler).
 
-Signed-off-by: Evan Green <evgreen@chromium.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Fix this by just zero initializing calculated_time.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/394
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/iio/common/ssp_sensors/ssp_iio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-index 41a1074228ba7..6b6ca4456dc7c 100644
---- a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-@@ -53,7 +53,8 @@ Required properties:
- 	   one for each entry in reset-names.
-  - reset-names: "phy" for reset of phy block,
- 		"common" for phy common block reset,
--		"cfg" for phy's ahb cfg block reset.
-+		"cfg" for phy's ahb cfg block reset,
-+		"ufsphy" for the PHY reset in the UFS controller.
+diff --git a/drivers/iio/common/ssp_sensors/ssp_iio.c b/drivers/iio/common/ssp_sensors/ssp_iio.c
+index 645f2e3975db4..e38f704d88b7e 100644
+--- a/drivers/iio/common/ssp_sensors/ssp_iio.c
++++ b/drivers/iio/common/ssp_sensors/ssp_iio.c
+@@ -81,7 +81,7 @@ int ssp_common_process_data(struct iio_dev *indio_dev, void *buf,
+ 			    unsigned int len, int64_t timestamp)
+ {
+ 	__le32 time;
+-	int64_t calculated_time;
++	int64_t calculated_time = 0;
+ 	struct ssp_sensor_data *spd = iio_priv(indio_dev);
  
- 		For "qcom,ipq8074-qmp-pcie-phy" must contain:
- 			"phy", "common".
-@@ -65,7 +66,8 @@ Required properties:
- 			"phy", "common".
- 		For "qcom,sdm845-qmp-usb3-uni-phy" must contain:
- 			"phy", "common".
--		For "qcom,sdm845-qmp-ufs-phy": no resets are listed.
-+		For "qcom,sdm845-qmp-ufs-phy": must contain:
-+			"ufsphy".
- 
-  - vdda-phy-supply: Phandle to a regulator supply to PHY core block.
-  - vdda-pll-supply: Phandle to 1.8V regulator supply to PHY refclk pll block.
+ 	if (indio_dev->scan_bytes == 0)
 -- 
 2.20.1
 
