@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CB242F32B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:27:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B386A2F02D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:02:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387727AbfE3E0w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:26:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33692 "EHLO mail.kernel.org"
+        id S1731431AbfE3DSI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:18:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729029AbfE3DO1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728819AbfE3DO1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 29 May 2019 23:14:27 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C3AB224547;
-        Thu, 30 May 2019 03:14:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6763A2455A;
+        Thu, 30 May 2019 03:14:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186066;
-        bh=0tLTZClcKKFgPoH9shh1EIWhEETmj6LdTSvdImpzG/Y=;
+        s=default; t=1559186067;
+        bh=mHW7ZCmT9QHkUxcJYvWmclZSQBMqlDKvHzeICj7BZSU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U3j464NqV94C+ocHgGp0gvuasvLq/Elxk4hbvBqXurugKrYN9Tl9v2/qtbAmMoMSX
-         kKHjnlwwro+t26+QPpt+drWDYU84MFI3N/V58G+c2js1gM1MznBtMtiS791yaYK7Wr
-         l62YrohzRiR5XD32JA2gaDWyavOoBHyt5cfVODL0=
+        b=Pj2ld8FL6TeWIhNrNa71m0eDv1vmquLsinykhtMcR4LOCKlmW3YFbG6hI8Hi/x2hq
+         7g8uHgXcuoXYVpkb4gZgEA12HLusvJSI6EqE6Gn3PQiDiBaaLcUfM7E9v62FFHjKA3
+         zBQUPQIwCDTsnbi6dTCOmB5D/lElstaP9j1pZZ0o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -37,9 +37,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Vince Weaver <vincent.weaver@maine.edu>, acme@kernel.org,
         jolsa@kernel.org, Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 177/346] perf/x86/intel/rapl: Add Icelake support
-Date:   Wed, 29 May 2019 20:04:10 -0700
-Message-Id: <20190530030550.101261928@linuxfoundation.org>
+Subject: [PATCH 5.0 178/346] perf/x86/intel/cstate: Add Icelake support
+Date:   Wed, 29 May 2019 20:04:11 -0700
+Message-Id: <20190530030550.153293463@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
 References: <20190530030540.363386121@linuxfoundation.org>
@@ -52,9 +52,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b3377c3acb9e54cf86efcfe25f2e792bca599ed4 ]
+[ Upstream commit f08c47d1f86c6dc666c7e659d94bf6d4492aa9d7 ]
 
-Icelake support the same RAPL counters as Skylake.
+Icelake uses the same C-state residency events as Sandy Bridge.
 
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
@@ -68,26 +68,26 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Vince Weaver <vincent.weaver@maine.edu>
 Cc: acme@kernel.org
 Cc: jolsa@kernel.org
-Link: https://lkml.kernel.org/r/20190402194509.2832-11-kan.liang@linux.intel.com
+Link: https://lkml.kernel.org/r/20190402194509.2832-10-kan.liang@linux.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/events/intel/rapl.c | 2 ++
+ arch/x86/events/intel/cstate.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/events/intel/rapl.c b/arch/x86/events/intel/rapl.c
-index 91039ffed6333..2413169ce3627 100644
---- a/arch/x86/events/intel/rapl.c
-+++ b/arch/x86/events/intel/rapl.c
-@@ -780,6 +780,8 @@ static const struct x86_cpu_id rapl_cpu_match[] __initconst = {
- 	X86_RAPL_MODEL_MATCH(INTEL_FAM6_ATOM_GOLDMONT_X, hsw_rapl_init),
+diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
+index 56194c571299f..4a650eb3d94a3 100644
+--- a/arch/x86/events/intel/cstate.c
++++ b/arch/x86/events/intel/cstate.c
+@@ -584,6 +584,8 @@ static const struct x86_cpu_id intel_cstates_match[] __initconst = {
+ 	X86_CSTATES_MODEL(INTEL_FAM6_ATOM_GOLDMONT_X, glm_cstates),
  
- 	X86_RAPL_MODEL_MATCH(INTEL_FAM6_ATOM_GOLDMONT_PLUS, hsw_rapl_init),
+ 	X86_CSTATES_MODEL(INTEL_FAM6_ATOM_GOLDMONT_PLUS, glm_cstates),
 +
-+	X86_RAPL_MODEL_MATCH(INTEL_FAM6_ICELAKE_MOBILE,  skl_rapl_init),
- 	{},
++	X86_CSTATES_MODEL(INTEL_FAM6_ICELAKE_MOBILE, snb_cstates),
+ 	{ },
  };
- 
+ MODULE_DEVICE_TABLE(x86cpu, intel_cstates_match);
 -- 
 2.20.1
 
