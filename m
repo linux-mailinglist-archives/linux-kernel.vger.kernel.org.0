@@ -2,67 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A81292F06E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:04:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8074A2F106
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:09:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725897AbfE3ED7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:03:59 -0400
-Received: from mga12.intel.com ([192.55.52.136]:6382 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726031AbfE3EDz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 00:03:55 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 May 2019 21:03:54 -0700
-X-ExtLoop1: 1
-Received: from hyungwoo-ubuntu.sc.intel.com ([10.3.62.78])
-  by FMSMGA003.fm.intel.com with ESMTP; 29 May 2019 21:03:54 -0700
-From:   Hyungwoo Yang <hyungwoo.yang@intel.com>
-To:     enric.balletbo@collabora.com
-Cc:     linux-kernel@vger.kernel.org, rushikesh.s.kadam@intel.com,
-        jettrink@chromium.org
-Subject: [PATCH] platform/chrome: fix crash during suspend
-Date:   Wed, 29 May 2019 21:03:54 -0700
-Message-Id: <1559189034-11268-1-git-send-email-hyungwoo.yang@intel.com>
-X-Mailer: git-send-email 1.9.1
+        id S1728806AbfE3EJW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:09:22 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42476 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727036AbfE3EJT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 00:09:19 -0400
+Received: by mail-pf1-f193.google.com with SMTP id r22so3047870pfh.9
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 21:09:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=RgBvtow3SG/L3onZEkvF3GT1l11iLnZpHBpHe6+yVVA=;
+        b=SigOXi6vok01p/DElvycZ2DP261VnH9DpaGGk5REMSbPepOBj/LeSAdm9gG4pxFx9V
+         jC1u4EERcEcCnkpuvcglK9mFxhW6N0rJBt35bk+IBoMxBOF6GKLVdveevIupSnPDiu+I
+         m8rphBeXiDsi9Cy5ZwyzT0Tr3XyS5Zl+7N2xolgvLEQvNFpT3mY0wvVt1eGJjZkXcAq+
+         mZT/hCC/DsBWWOxUqEEL5bWmhDgtqabJ1opGzpnVaiOJXcRLyBr2Juo/2xnj6oIKg00b
+         E4icAxQrF/eKxBMmU2TjJhcWCslBqk/eLNqc1444ZkEFgxB6zlNEkPtYGPpBdy+F/5VD
+         Gnkg==
+X-Gm-Message-State: APjAAAXLnYzE9bUdjLVYFrUX16m+UV4bJ15McXmj2VjpBMSuc83F1Oag
+        qyjxtqV7x0wpt2ch9vQLdIqHLA==
+X-Google-Smtp-Source: APXvYqxL7nHH1tWDIGiRjh1quoIV4ZyKReZOGaf2heGTQIPnVWf6k8qKr5CbyLKzE+36RS6bp4/Rng==
+X-Received: by 2002:aa7:8e46:: with SMTP id d6mr1664198pfr.91.1559189358490;
+        Wed, 29 May 2019 21:09:18 -0700 (PDT)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id v93sm1035350pjb.6.2019.05.29.21.09.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 29 May 2019 21:09:17 -0700 (PDT)
+Date:   Wed, 29 May 2019 21:09:17 -0700 (PDT)
+X-Google-Original-Date: Wed, 29 May 2019 20:42:12 PDT (-0700)
+Subject:     Re: [PATCH] riscv: Fix udelay in RV32.
+In-Reply-To: <381ee6950c84b868ca6a3c676eb981a1980889a3.1559035050.git.nickhu@andestech.com>
+CC:     greentime@andestech.com, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, nickhu@andestech.com,
+        green.hu@gmail.com
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     nickhu@andestech.com
+Message-ID: <mhng-681a0d18-f477-4e76-ae16-b64fe7265ec4@palmer-si-x1e>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kernel crashes during suspend due to wrong conversion in
-suspend and resume functions.
+On Tue, 28 May 2019 02:26:49 PDT (-0700), nickhu@andestech.com wrote:
+> In RV32, udelay would delay the wrong cycle.
+> When it shifts right "UDELAY_SHITFT" bits, it
+> either delays 0 cycle or 1 cycle. It only works
+> correctly in RV64. Because the 'ucycles' always
+> needs to be 64 bits variable.
+>
+> Signed-off-by: Nick Hu <nickhu@andestech.com>
+> ---
+>  arch/riscv/lib/delay.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/riscv/lib/delay.c b/arch/riscv/lib/delay.c
+> index dce8ae24c6d3..da847f49fb74 100644
+> --- a/arch/riscv/lib/delay.c
+> +++ b/arch/riscv/lib/delay.c
+> @@ -88,7 +88,7 @@ EXPORT_SYMBOL(__delay);
+>
+>  void udelay(unsigned long usecs)
+>  {
+> -	unsigned long ucycles = usecs * lpj_fine * UDELAY_MULT;
+> +	unsigned long long ucycles = (unsigned long long)usecs * lpj_fine * UDELAY_MULT;
+>
+>  	if (unlikely(usecs > MAX_UDELAY_US)) {
+>  		__delay((u64)usecs * riscv_timebase / 1000000ULL);
 
-Use the proper helper to get ishtp_cl_device instance.
-
-Signed-off-by: Hyungwoo Yang <hyungwoo.yang@intel.com>
----
- drivers/platform/chrome/cros_ec_ishtp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/platform/chrome/cros_ec_ishtp.c b/drivers/platform/chrome/cros_ec_ishtp.c
-index e504d25..430731c 100644
---- a/drivers/platform/chrome/cros_ec_ishtp.c
-+++ b/drivers/platform/chrome/cros_ec_ishtp.c
-@@ -707,7 +707,7 @@ static int cros_ec_ishtp_reset(struct ishtp_cl_device *cl_device)
-  */
- static int __maybe_unused cros_ec_ishtp_suspend(struct device *device)
- {
--	struct ishtp_cl_device *cl_device = dev_get_drvdata(device);
-+	struct ishtp_cl_device *cl_device = ishtp_dev_to_cl_device(device);
- 	struct ishtp_cl	*cros_ish_cl = ishtp_get_drvdata(cl_device);
- 	struct ishtp_cl_data *client_data = ishtp_get_client_data(cros_ish_cl);
- 
-@@ -722,7 +722,7 @@ static int __maybe_unused cros_ec_ishtp_suspend(struct device *device)
-  */
- static int __maybe_unused cros_ec_ishtp_resume(struct device *device)
- {
--	struct ishtp_cl_device *cl_device = dev_get_drvdata(device);
-+	struct ishtp_cl_device *cl_device = ishtp_dev_to_cl_device(device);
- 	struct ishtp_cl	*cros_ish_cl = ishtp_get_drvdata(cl_device);
- 	struct ishtp_cl_data *client_data = ishtp_get_client_data(cros_ish_cl);
- 
--- 
-1.9.1
-
+Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
