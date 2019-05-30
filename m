@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 257312F500
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:44:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D2462ECCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:26:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388742AbfE3En0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:43:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53798 "EHLO mail.kernel.org"
+        id S2387439AbfE3D0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:26:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728856AbfE3DML (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:11 -0400
+        id S1731782AbfE3DTD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:19:03 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB23A244A0;
-        Thu, 30 May 2019 03:12:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75940247F0;
+        Thu, 30 May 2019 03:19:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185930;
-        bh=vEOByxn9z6ZCUFQN8HmDmoIcUw5cBKWjZLs5n98wcSw=;
+        s=default; t=1559186342;
+        bh=nPvomvPQq5adWu3ARBRN8eWC1pZmBx/+VxfUKkmkx04=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tRkUZZrg0LpRTtkVawNBcul8fKiFMSjpVLYadZwRMcvtD6XN6F0rawqxobkQGczz9
-         aIrhhw3sMw7SMhmaYp8S0rrt2spl4S+yjOQTl6YXMQ7kTCyMpnSBVBjBtmBAUK4iwc
-         Qdawqy1aGxlFpA3q1rm5GWJ26KP5r/Dp37rSKF30=
+        b=L+Ve/SOUYpWXSMan6j9ocsNuMHLK4ngHa3iI5x9CaT96ygAasWiLFpL/0DFHPpvUv
+         J9IPmFwMijfzSjDCM1J8ud7Dx6kc+l3/W1jUm6iJ7w5/RBxeN6AuN/ubL8IpwpP31/
+         N+SeAXB5ZNBr8z54nb6sWVJ4slquhsvwO/psXpZU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        George Hilliard <thirtythreeforty@gmail.com>,
+        stable@vger.kernel.org, Daniel Baluta <daniel.baluta@nxp.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 324/405] staging: mt7621-mmc: Check for nonzero number of scatterlist entries
-Date:   Wed, 29 May 2019 20:05:22 -0700
-Message-Id: <20190530030557.140337596@linuxfoundation.org>
+Subject: [PATCH 4.14 069/193] ASoC: fsl_sai: Update is_slave_mode with correct value
+Date:   Wed, 29 May 2019 20:05:23 -0700
+Message-Id: <20190530030458.901771595@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,49 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d4223e06b6aed581625f574ad8faa71b6c0fc903 ]
+[ Upstream commit ddb351145a967ee791a0fb0156852ec2fcb746ba ]
 
-The buffer descriptor setup loop is correct only if it is setting up at
-least one bd struct.  Besides, there is an error if dma_map_sg() returns
-0, which is possible and must be handled.
+is_slave_mode defaults to false because sai structure
+that contains it is kzalloc'ed.
 
-Additionally, remove the BUG_ON() checking sglen, which is unnecessary
-because we configure DMA with that constraint during init.
+Anyhow, if we decide to set the following configuration
+SAI slave -> SAI master, is_slave_mode will remain set on true
+although SAI being master it should be set to false.
 
-Signed-off-by: George Hilliard <thirtythreeforty@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fix this by updating is_slave_mode for each call of
+fsl_sai_set_dai_fmt.
+
+Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/mt7621-mmc/sd.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ sound/soc/fsl/fsl_sai.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/staging/mt7621-mmc/sd.c b/drivers/staging/mt7621-mmc/sd.c
-index 74f0e57ad2f15..38f9ea02ee3a9 100644
---- a/drivers/staging/mt7621-mmc/sd.c
-+++ b/drivers/staging/mt7621-mmc/sd.c
-@@ -596,8 +596,6 @@ static void msdc_dma_setup(struct msdc_host *host, struct msdc_dma *dma,
- 	struct bd *bd;
- 	u32 j;
- 
--	BUG_ON(sglen > MAX_BD_NUM); /* not support currently */
--
- 	gpd = dma->gpd;
- 	bd  = dma->bd;
- 
-@@ -692,6 +690,13 @@ static int msdc_do_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 		data->sg_count = dma_map_sg(mmc_dev(mmc), data->sg,
- 					    data->sg_len,
- 					    mmc_get_dma_dir(data));
-+
-+		if (data->sg_count == 0) {
-+			dev_err(mmc_dev(host->mmc), "failed to map DMA for transfer\n");
-+			data->error = -ENOMEM;
-+			goto done;
-+		}
-+
- 		msdc_dma_setup(host, &host->dma, data->sg,
- 			       data->sg_count);
- 
+diff --git a/sound/soc/fsl/fsl_sai.c b/sound/soc/fsl/fsl_sai.c
+index 18e5ce81527d2..c1c733b573a7f 100644
+--- a/sound/soc/fsl/fsl_sai.c
++++ b/sound/soc/fsl/fsl_sai.c
+@@ -274,12 +274,14 @@ static int fsl_sai_set_dai_fmt_tr(struct snd_soc_dai *cpu_dai,
+ 	case SND_SOC_DAIFMT_CBS_CFS:
+ 		val_cr2 |= FSL_SAI_CR2_BCD_MSTR;
+ 		val_cr4 |= FSL_SAI_CR4_FSD_MSTR;
++		sai->is_slave_mode = false;
+ 		break;
+ 	case SND_SOC_DAIFMT_CBM_CFM:
+ 		sai->is_slave_mode = true;
+ 		break;
+ 	case SND_SOC_DAIFMT_CBS_CFM:
+ 		val_cr2 |= FSL_SAI_CR2_BCD_MSTR;
++		sai->is_slave_mode = false;
+ 		break;
+ 	case SND_SOC_DAIFMT_CBM_CFS:
+ 		val_cr4 |= FSL_SAI_CR4_FSD_MSTR;
 -- 
 2.20.1
 
