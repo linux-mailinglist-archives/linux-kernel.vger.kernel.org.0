@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A09AA2F231
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:19:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06D852F4B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:42:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730905AbfE3ET2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:19:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38554 "EHLO mail.kernel.org"
+        id S2387474AbfE3Ek4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:40:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729241AbfE3DP0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:15:26 -0400
+        id S1729040AbfE3DM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:12:28 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E628924559;
-        Thu, 30 May 2019 03:15:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59A3521BE2;
+        Thu, 30 May 2019 03:12:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186126;
-        bh=vEOByxn9z6ZCUFQN8HmDmoIcUw5cBKWjZLs5n98wcSw=;
+        s=default; t=1559185948;
+        bh=bYZ7HeSZb8851DyKUc2Ht8f0mLDiJa48lCbIpn2UIEQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1abXzmnqyTH4x+FQiDBmz2aah68LdNoEfxYrx1R45iG42/XWGh054bFRFqUZeJ0Ds
-         mUdTWZzN1Ety/+KzJ11TpfmPUehmJL3Szt20W0pfgq8jOGCpEILE6qjnk2em623I4b
-         eUf4kp+/tAhyBmhn0q+fbqOrivqia2/0/3Do29Mw=
+        b=VhgIMBn3dGBBx5tKms8ZXh4habFhD+GOcvCrbBacuILSO+54Wb8oqOjN0NfIVLQ/H
+         aUa3joIn/2VqtCgy7cxPBHhI/nSKi5bFbv+WlKYuXSob50V3JwBC6swBPOuqAFdPmM
+         P+BzpDfl40Ei+5F4C2migNgB4R1RMGUc42w3VD4w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        George Hilliard <thirtythreeforty@gmail.com>,
+        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 284/346] staging: mt7621-mmc: Check for nonzero number of scatterlist entries
+Subject: [PATCH 5.1 359/405] media: vimc: zero the media_device on probe
 Date:   Wed, 29 May 2019 20:05:57 -0700
-Message-Id: <20190530030555.299268806@linuxfoundation.org>
+Message-Id: <20190530030558.782590967@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,49 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d4223e06b6aed581625f574ad8faa71b6c0fc903 ]
+[ Upstream commit f74267b51cb36321f777807b2e04ca02167ecc08 ]
 
-The buffer descriptor setup loop is correct only if it is setting up at
-least one bd struct.  Besides, there is an error if dma_map_sg() returns
-0, which is possible and must be handled.
+The media_device is part of a static global vimc_device struct.
+The media framework expects this to be zeroed before it is
+used, however, since this is a global this is not the case if
+vimc is unbound and then bound again.
 
-Additionally, remove the BUG_ON() checking sglen, which is unnecessary
-because we configure DMA with that constraint during init.
+So call memset to ensure any left-over values are cleared.
 
-Signed-off-by: George Hilliard <thirtythreeforty@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/mt7621-mmc/sd.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/media/platform/vimc/vimc-core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/staging/mt7621-mmc/sd.c b/drivers/staging/mt7621-mmc/sd.c
-index 74f0e57ad2f15..38f9ea02ee3a9 100644
---- a/drivers/staging/mt7621-mmc/sd.c
-+++ b/drivers/staging/mt7621-mmc/sd.c
-@@ -596,8 +596,6 @@ static void msdc_dma_setup(struct msdc_host *host, struct msdc_dma *dma,
- 	struct bd *bd;
- 	u32 j;
+diff --git a/drivers/media/platform/vimc/vimc-core.c b/drivers/media/platform/vimc/vimc-core.c
+index 0fbb7914098f6..3aa62d7e3d0e0 100644
+--- a/drivers/media/platform/vimc/vimc-core.c
++++ b/drivers/media/platform/vimc/vimc-core.c
+@@ -304,6 +304,8 @@ static int vimc_probe(struct platform_device *pdev)
  
--	BUG_ON(sglen > MAX_BD_NUM); /* not support currently */
--
- 	gpd = dma->gpd;
- 	bd  = dma->bd;
+ 	dev_dbg(&pdev->dev, "probe");
  
-@@ -692,6 +690,13 @@ static int msdc_do_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 		data->sg_count = dma_map_sg(mmc_dev(mmc), data->sg,
- 					    data->sg_len,
- 					    mmc_get_dma_dir(data));
++	memset(&vimc->mdev, 0, sizeof(vimc->mdev));
 +
-+		if (data->sg_count == 0) {
-+			dev_err(mmc_dev(host->mmc), "failed to map DMA for transfer\n");
-+			data->error = -ENOMEM;
-+			goto done;
-+		}
-+
- 		msdc_dma_setup(host, &host->dma, data->sg,
- 			       data->sg_count);
- 
+ 	/* Create platform_device for each entity in the topology*/
+ 	vimc->subdevs = devm_kcalloc(&vimc->pdev.dev, vimc->pipe_cfg->num_ents,
+ 				     sizeof(*vimc->subdevs), GFP_KERNEL);
 -- 
 2.20.1
 
