@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7FD52ED51
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:35:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC9E12ED34
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:33:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387850AbfE3D1J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:27:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54174 "EHLO mail.kernel.org"
+        id S2388270AbfE3D3A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:29:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58518 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731831AbfE3DTM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:19:12 -0400
+        id S1727760AbfE3DUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:20:25 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7CD792484B;
-        Thu, 30 May 2019 03:19:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6FF4B2490A;
+        Thu, 30 May 2019 03:20:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186351;
-        bh=+Gt3yha4H/+lKvAWpUCj6MTamW/nP7rXy47C+174hdU=;
+        s=default; t=1559186424;
+        bh=qFkxutTbj0TRkageDbkkvxXWLLYOJQBF3JpcacOw0hY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nEhb9IixDPGc1t7i0ubZN6p7rBcCO/d4M+Ok22u9V7HiUEtk7muHnLPsHCSD0s/nW
-         PuqjOTq4j/RoqYqjRkNhoai8wWw2poH7J3Aup8ufgfvPp/wtZe4S3Nm41U8mDBD/pf
-         fUz6bNYjz4K3Z18q/b9hKJRaKf1fAGkR7eaS6RsY=
+        b=UKs1QtIpmTTwvdmUOGm9NKrfcRegxg+2mR0sLyRodU9vdFsmFKLVShfQ0Cud4I/o3
+         MLgeJ0k1zRR4IjuOexKXb86352IIJg0Gi1JKZh36IyXThlhmCDaSZk5cFQR1LhecGG
+         ZPDMUn38D2q8WYfI+DJVfZQQkuhc05yUjDhDPNFs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Shuah Khan <shuah@kernel.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 090/193] media: au0828: stop video streaming only when last user stops
+        stable@vger.kernel.org, "Tobin C. Harding" <tobin@kernel.org>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.9 012/128] btrfs: sysfs: dont leak memory when failing add fsid
 Date:   Wed, 29 May 2019 20:05:44 -0700
-Message-Id: <20190530030501.529087638@linuxfoundation.org>
+Message-Id: <20190530030436.622023744@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,69 +43,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f604f0f5afb88045944567f604409951b5eb6af8 ]
+From: Tobin C. Harding <tobin@kernel.org>
 
-If the application was streaming from both videoX and vbiX, and streaming
-from videoX was stopped, then the vbi streaming also stopped.
+commit e32773357d5cc271b1d23550b3ed026eb5c2a468 upstream.
 
-The cause being that stop_streaming for video stopped the subdevs as well,
-instead of only doing that if dev->streaming_users reached 0.
+A failed call to kobject_init_and_add() must be followed by a call to
+kobject_put().  Currently in the error path when adding fs_devices we
+are missing this call.  This could be fixed by calling
+btrfs_sysfs_remove_fsid() if btrfs_sysfs_add_fsid() returns an error or
+by adding a call to kobject_put() directly in btrfs_sysfs_add_fsid().
+Here we choose the second option because it prevents the slightly
+unusual error path handling requirements of kobject from leaking out
+into btrfs functions.
 
-au0828_stop_vbi_streaming was also wrong since it didn't stop the subdevs
-at all when dev->streaming_users reached 0.
+Add a call to kobject_put() in the error path of kobject_add_and_init().
+This causes the release method to be called if kobject_init_and_add()
+fails.  open_tree() is the function that calls btrfs_sysfs_add_fsid()
+and the error code in this function is already written with the
+assumption that the release method is called during the error path of
+open_tree() (as seen by the call to btrfs_sysfs_remove_fsid() under the
+fail_fsdev_sysfs label).
 
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Tested-by: Shuah Khan <shuah@kernel.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: stable@vger.kernel.org # v4.4+
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Tobin C. Harding <tobin@kernel.org>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/media/usb/au0828/au0828-video.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ fs/btrfs/sysfs.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/au0828/au0828-video.c b/drivers/media/usb/au0828/au0828-video.c
-index 9342402b92f76..7cd2daf869895 100644
---- a/drivers/media/usb/au0828/au0828-video.c
-+++ b/drivers/media/usb/au0828/au0828-video.c
-@@ -839,9 +839,9 @@ int au0828_start_analog_streaming(struct vb2_queue *vq, unsigned int count)
- 			return rc;
- 		}
- 
-+		v4l2_device_call_all(&dev->v4l2_dev, 0, video, s_stream, 1);
+--- a/fs/btrfs/sysfs.c
++++ b/fs/btrfs/sysfs.c
+@@ -751,7 +751,12 @@ int btrfs_sysfs_add_fsid(struct btrfs_fs
+ 	fs_devs->fsid_kobj.kset = btrfs_kset;
+ 	error = kobject_init_and_add(&fs_devs->fsid_kobj,
+ 				&btrfs_ktype, parent, "%pU", fs_devs->fsid);
+-	return error;
++	if (error) {
++		kobject_put(&fs_devs->fsid_kobj);
++		return error;
++	}
 +
- 		if (vq->type == V4L2_BUF_TYPE_VIDEO_CAPTURE) {
--			v4l2_device_call_all(&dev->v4l2_dev, 0, video,
--						s_stream, 1);
- 			dev->vid_timeout_running = 1;
- 			mod_timer(&dev->vid_timeout, jiffies + (HZ / 10));
- 		} else if (vq->type == V4L2_BUF_TYPE_VBI_CAPTURE) {
-@@ -861,10 +861,11 @@ static void au0828_stop_streaming(struct vb2_queue *vq)
++	return 0;
+ }
  
- 	dprintk(1, "au0828_stop_streaming called %d\n", dev->streaming_users);
- 
--	if (dev->streaming_users-- == 1)
-+	if (dev->streaming_users-- == 1) {
- 		au0828_uninit_isoc(dev);
-+		v4l2_device_call_all(&dev->v4l2_dev, 0, video, s_stream, 0);
-+	}
- 
--	v4l2_device_call_all(&dev->v4l2_dev, 0, video, s_stream, 0);
- 	dev->vid_timeout_running = 0;
- 	del_timer_sync(&dev->vid_timeout);
- 
-@@ -893,8 +894,10 @@ void au0828_stop_vbi_streaming(struct vb2_queue *vq)
- 	dprintk(1, "au0828_stop_vbi_streaming called %d\n",
- 		dev->streaming_users);
- 
--	if (dev->streaming_users-- == 1)
-+	if (dev->streaming_users-- == 1) {
- 		au0828_uninit_isoc(dev);
-+		v4l2_device_call_all(&dev->v4l2_dev, 0, video, s_stream, 0);
-+	}
- 
- 	spin_lock_irqsave(&dev->slock, flags);
- 	if (dev->isoc_ctl.vbi_buf != NULL) {
--- 
-2.20.1
-
+ int btrfs_sysfs_add_mounted(struct btrfs_fs_info *fs_info)
 
 
