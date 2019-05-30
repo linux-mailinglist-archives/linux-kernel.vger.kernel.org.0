@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28D8D2ED3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:33:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF83E2F446
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:36:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388167AbfE3D2Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:28:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57160 "EHLO mail.kernel.org"
+        id S1732378AbfE3Egy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:36:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732071AbfE3DTz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:19:55 -0400
+        id S1729299AbfE3DM5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:12:57 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8484A248DE;
-        Thu, 30 May 2019 03:19:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69EB923E29;
+        Thu, 30 May 2019 03:12:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186394;
-        bh=TLQ6wRuSyYf00wfdWZw3VLwozrQHQv4iyOZqob7MM3A=;
+        s=default; t=1559185976;
+        bh=nQZYqrwWCpdbUbQ16wM+a+UtsLY3q9D6MPb3TEL2vLM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0yJK/LEuoKb0IvPng75YYtKUtduD2bpBQs09b4ToKEARlfeTo539pbMjmDBVj7xf0
-         nqrXB9UnbT3v9LyW4NZKm1DVUqdeKHbb0fYr97rF0JIKiH+EicUdMe0TgypZ1i9tzx
-         i2S6TXR2/lnE7otdH1Quvg15Vlvx9RG/xvCmakXg=
+        b=Kh2u8wnXNLRhp7GKHulHo4K4xXPptJJpKDJtgoHJwXo6NOol3zqiPRkNYD+VZXlT4
+         mDrJWa1oPfpvbzuuhrhmqUOOVO6wpzICesSDK10/ILhZVU7CtiCS1og6UsWbs76zMB
+         cTacyAcGxmD+zV/qpIxpEAfAwafgC9QyoCWAxdNc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jonas Karlman <jonas@kwiboo.se>,
-        Randy Li <ayaka@soulik.info>,
-        Douglas Anderson <dianders@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>,
+        stable@vger.kernel.org,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 124/193] clk: rockchip: Fix video codec clocks on rk3288
+Subject: [PATCH 5.1 380/405] regulator: ltc3589: Fix notifier mutex lock warning
 Date:   Wed, 29 May 2019 20:06:18 -0700
-Message-Id: <20190530030505.787225686@linuxfoundation.org>
+Message-Id: <20190530030559.955927562@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,81 +46,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 00c0cd9e59d265b393553e9afa54fee8b10e8158 ]
+[ Upstream commit f132da2534ec6599c78c4adcef15340cff2e9dd9 ]
 
-It appears that there is a typo in the rk3288 TRM.  For
-GRF_SOC_CON0[7] it says that 0 means "vepu" and 1 means "vdpu".  It's
-the other way around.
+The mutex for the regulator_dev must be controlled by the caller of
+the regulator_notifier_call_chain(), as described in the comment
+for that function.
 
-How do I know?  Here's my evidence:
+Failure to mutex lock and unlock surrounding the notifier call results
+in a kernel WARN_ON_ONCE() which will dump a backtrace for the
+regulator_notifier_call_chain() when that function call is first made.
+The mutex can be controlled using the regulator_lock/unlock() API.
 
-1. Prior to commit 4d3e84f99628 ("clk: rockchip: describe aclk_vcodec
-   using the new muxgrf type on rk3288") we always pretended that we
-   were using "aclk_vdpu" and the comment in the code said that this
-   matched the default setting in the system.  In fact the default
-   setting is 0 according to the TRM and according to reading memory
-   at bootup.  In addition rk3288-based Chromebooks ran like this and
-   the video codecs worked.
-2. With the existing clock code if you boot up and try to enable the
-   new VIDEO_ROCKCHIP_VPU as a module (and without "clk_ignore_unused"
-   on the command line), you get errors like "failed to get ack on
-   domain 'pd_video', val=0x80208".  After flipping vepu/vdpu things
-   init OK.
-3. If I export and add both the vepu and vdpu to the list of clocks
-   for RK3288_PD_VIDEO I can get past the power domain errors, but now
-   I freeze when the vpu_mmu gets initted.
-4. If I just mark the "vdpu" as IGNORE_UNUSED then everything boots up
-   and probes OK showing that somehow the "vdpu" was important to keep
-   enabled.  This is because we were actually using it as a parent.
-5. After this change I can hack "aclk_vcodec_pre" to parent from
-   "aclk_vepu" using assigned-clocks and the video codec still probes
-   OK.
-6. Rockchip has said so on the mailing list [1].
-
-...so let's fix it.
-
-Let's also add CLK_SET_RATE_PARENT to "aclk_vcodec_pre" as suggested
-by Jonas Karlman.  Prior to the same commit you could do
-clk_set_rate() on "aclk_vcodec" and it would change "aclk_vdpu".
-That's because "aclk_vcodec" was a simple gate clock (always gets
-CLK_SET_RATE_PARENT) and its direct parent was "aclk_vdpu".  After
-that commit "aclk_vcodec_pre" gets in the way so we need to add
-CLK_SET_RATE_PARENT to it too.
-
-[1] https://lkml.kernel.org/r/1d17b015-9e17-34b9-baf8-c285dc1957aa@rock-chips.com
-
-Fixes: 4d3e84f99628 ("clk: rockchip: describe aclk_vcodec using the new muxgrf type on rk3288")
-Suggested-by: Jonas Karlman <jonas@kwiboo.se>
-Suggested-by: Randy Li <ayaka@soulik.info>
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Fixes: 3eb2c7ecb7ea ("regulator: Add LTC3589 support")
+Suggested-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Signed-off-by: Steve Twiss <stwiss.opensource@diasemi.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/rockchip/clk-rk3288.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/regulator/ltc3589.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index 45cd2897e586b..c6cd6d28af56f 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -198,7 +198,7 @@ PNAME(mux_hsadcout_p)	= { "hsadc_src", "ext_hsadc" };
- PNAME(mux_edp_24m_p)	= { "ext_edp_24m", "xin24m" };
- PNAME(mux_tspout_p)	= { "cpll", "gpll", "npll", "xin27m" };
+diff --git a/drivers/regulator/ltc3589.c b/drivers/regulator/ltc3589.c
+index 63f724f260ef7..75089b037b723 100644
+--- a/drivers/regulator/ltc3589.c
++++ b/drivers/regulator/ltc3589.c
+@@ -419,16 +419,22 @@ static irqreturn_t ltc3589_isr(int irq, void *dev_id)
  
--PNAME(mux_aclk_vcodec_pre_p)	= { "aclk_vepu", "aclk_vdpu" };
-+PNAME(mux_aclk_vcodec_pre_p)	= { "aclk_vdpu", "aclk_vepu" };
- PNAME(mux_usbphy480m_p)		= { "sclk_otgphy1_480m", "sclk_otgphy2_480m",
- 				    "sclk_otgphy0_480m" };
- PNAME(mux_hsicphy480m_p)	= { "cpll", "gpll", "usbphy480m_src" };
-@@ -399,7 +399,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
- 	COMPOSITE(0, "aclk_vdpu", mux_pll_src_cpll_gpll_usb480m_p, 0,
- 			RK3288_CLKSEL_CON(32), 14, 2, MFLAGS, 8, 5, DFLAGS,
- 			RK3288_CLKGATE_CON(3), 11, GFLAGS),
--	MUXGRF(0, "aclk_vcodec_pre", mux_aclk_vcodec_pre_p, 0,
-+	MUXGRF(0, "aclk_vcodec_pre", mux_aclk_vcodec_pre_p, CLK_SET_RATE_PARENT,
- 			RK3288_GRF_SOC_CON(0), 7, 1, MFLAGS),
- 	GATE(ACLK_VCODEC, "aclk_vcodec", "aclk_vcodec_pre", 0,
- 		RK3288_CLKGATE_CON(9), 0, GFLAGS),
+ 	if (irqstat & LTC3589_IRQSTAT_THERMAL_WARN) {
+ 		event = REGULATOR_EVENT_OVER_TEMP;
+-		for (i = 0; i < LTC3589_NUM_REGULATORS; i++)
++		for (i = 0; i < LTC3589_NUM_REGULATORS; i++) {
++		        regulator_lock(ltc3589->regulators[i]);
+ 			regulator_notifier_call_chain(ltc3589->regulators[i],
+ 						      event, NULL);
++		        regulator_unlock(ltc3589->regulators[i]);
++		}
+ 	}
+ 
+ 	if (irqstat & LTC3589_IRQSTAT_UNDERVOLT_WARN) {
+ 		event = REGULATOR_EVENT_UNDER_VOLTAGE;
+-		for (i = 0; i < LTC3589_NUM_REGULATORS; i++)
++		for (i = 0; i < LTC3589_NUM_REGULATORS; i++) {
++		        regulator_lock(ltc3589->regulators[i]);
+ 			regulator_notifier_call_chain(ltc3589->regulators[i],
+ 						      event, NULL);
++		        regulator_unlock(ltc3589->regulators[i]);
++		}
+ 	}
+ 
+ 	/* Clear warning condition */
 -- 
 2.20.1
 
