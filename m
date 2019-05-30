@@ -2,46 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC3362F38D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:33:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0496A2ED8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:40:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727724AbfE3DNu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:13:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52180 "EHLO mail.kernel.org"
+        id S1732921AbfE3DWs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:22:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728661AbfE3DLp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:11:45 -0400
+        id S1729570AbfE3DRD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:03 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 742332449A;
-        Thu, 30 May 2019 03:11:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C9DB24659;
+        Thu, 30 May 2019 03:17:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185904;
-        bh=dI6k68iBI9a6EZae/YyfhT5m9Df2yEszOFsOyZfW4Ow=;
+        s=default; t=1559186222;
+        bh=Jreunv7bFqYQlkJmwWSbG9zeX9kycS4RnC4UXcnC4Qc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gYJLN38BcTwjpG+T79mNaV/INQ4uNJjYuo1X2GedKLeJcvOZvVdfx5T/aahpKwXed
-         Cbqjt/sIPZehyYzgGu9OuiMbY9hEyAuM8LLnySySjLYmwXtOwt+rPdCRZ/sdfrw+nv
-         q0N+BoZfopwo/qp4uyBVakmj0ACkU6nlfgKvRn6I=
+        b=yWvQf0uGxHadgqTeYyhLR8lyvRXbd2n+ma0fnQAZ1wm2yAO17OPS0iorRdVjXyGkP
+         x/XgZmzhSqNBBkS9SPlYzAslIVbSeVYxHhctL0XqEJNDS2bj6WbtaFGnhrDoBpYh4g
+         UB2iKpFyjW1Coxwl1vObGB6Se1QkljnpxRX+3rr4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        Timur Tabi <timur@kernel.org>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linuxppc-dev@lists.ozlabs.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 275/405] ASoC: fsl_utils: fix a leaked reference by adding missing of_node_put
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 115/276] HID: logitech-hidpp: use RAP instead of FAP to get the protocol version
 Date:   Wed, 29 May 2019 20:04:33 -0700
-Message-Id: <20190530030554.808270059@linuxfoundation.org>
+Message-Id: <20190530030533.121068301@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,45 +44,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c705247136a523488eac806bd357c3e5d79a7acd ]
+[ Upstream commit 096377525cdb8251e4656085efc988bdf733fb4c ]
 
-The call to of_parse_phandle returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
+According to the logitech_hidpp_2.0_specification_draft_2012-06-04.pdf doc:
+https://lekensteyn.nl/files/logitech/logitech_hidpp_2.0_specification_draft_2012-06-04.pdf
 
-Detected by coccinelle with the following warnings:
-./sound/soc/fsl/fsl_utils.c:74:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 38, but without a corresponding     object release within this function.
+We should use a register-access-protocol request using the short input /
+output report ids. This is necessary because 27MHz HID++ receivers have
+a max-packetsize on their HIP++ endpoint of 8, so they cannot support
+long reports. Using a feature-access-protocol request (which is always
+long or very-long) with these will cause a timeout error, followed by
+the hidpp driver treating the device as not being HID++ capable.
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Timur Tabi <timur@kernel.org>
-Cc: Nicolin Chen <nicoleotsuka@gmail.com>
-Cc: Xiubo Li <Xiubo.Lee@gmail.com>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.com>
-Cc: alsa-devel@alsa-project.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Mark Brown <broonie@kernel.org>
+This commit fixes this by switching to using a rap request to get the
+protocol version.
+
+Besides being tested with a (046d:c517) 27MHz receiver with various
+27MHz keyboards and mice, this has also been tested to not cause
+regressions on a non-unifying dual-HID++ nano receiver (046d:c534) with
+k270 and m185 HID++-2.0 devices connected and on a unifying/dj receiver
+(046d:c52b) with a HID++-2.0 Logitech Rechargeable Touchpad T650.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/fsl/fsl_utils.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/hid/hid-logitech-hidpp.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/fsl/fsl_utils.c b/sound/soc/fsl/fsl_utils.c
-index 9981668ab5909..040d06b89f00a 100644
---- a/sound/soc/fsl/fsl_utils.c
-+++ b/sound/soc/fsl/fsl_utils.c
-@@ -71,6 +71,7 @@ int fsl_asoc_get_dma_channel(struct device_node *ssi_np,
- 	iprop = of_get_property(dma_np, "cell-index", NULL);
- 	if (!iprop) {
- 		of_node_put(dma_np);
-+		of_node_put(dma_channel_np);
- 		return -EINVAL;
- 	}
- 	*dma_id = be32_to_cpup(iprop);
+diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
+index 8425d3548a414..edf224ad13369 100644
+--- a/drivers/hid/hid-logitech-hidpp.c
++++ b/drivers/hid/hid-logitech-hidpp.c
+@@ -725,13 +725,16 @@ static int hidpp_root_get_feature(struct hidpp_device *hidpp, u16 feature,
+ 
+ static int hidpp_root_get_protocol_version(struct hidpp_device *hidpp)
+ {
++	const u8 ping_byte = 0x5a;
++	u8 ping_data[3] = { 0, 0, ping_byte };
+ 	struct hidpp_report response;
+ 	int ret;
+ 
+-	ret = hidpp_send_fap_command_sync(hidpp,
++	ret = hidpp_send_rap_command_sync(hidpp,
++			REPORT_ID_HIDPP_SHORT,
+ 			HIDPP_PAGE_ROOT_IDX,
+ 			CMD_ROOT_GET_PROTOCOL_VERSION,
+-			NULL, 0, &response);
++			ping_data, sizeof(ping_data), &response);
+ 
+ 	if (ret == HIDPP_ERROR_INVALID_SUBID) {
+ 		hidpp->protocol_major = 1;
+@@ -751,8 +754,14 @@ static int hidpp_root_get_protocol_version(struct hidpp_device *hidpp)
+ 	if (ret)
+ 		return ret;
+ 
+-	hidpp->protocol_major = response.fap.params[0];
+-	hidpp->protocol_minor = response.fap.params[1];
++	if (response.rap.params[2] != ping_byte) {
++		hid_err(hidpp->hid_dev, "%s: ping mismatch 0x%02x != 0x%02x\n",
++			__func__, response.rap.params[2], ping_byte);
++		return -EPROTO;
++	}
++
++	hidpp->protocol_major = response.rap.params[0];
++	hidpp->protocol_minor = response.rap.params[1];
+ 
+ 	return ret;
+ }
 -- 
 2.20.1
 
