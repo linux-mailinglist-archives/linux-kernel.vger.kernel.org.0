@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E9B02F651
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:55:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBF752F41E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:36:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389060AbfE3Ey5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:54:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47092 "EHLO mail.kernel.org"
+        id S2388441AbfE3EfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:35:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728031AbfE3DKT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:10:19 -0400
+        id S1729379AbfE3DNO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:13:14 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9D6E244BF;
-        Thu, 30 May 2019 03:10:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7F74244E8;
+        Thu, 30 May 2019 03:13:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185818;
-        bh=WDK5eOGnzlU+rY7LHnbKwB3mxhm5pC32ymVzPXusi+8=;
+        s=default; t=1559185994;
+        bh=DDAiTRqEGOZMR5wKbJ4tM+vT0aH2qQvHbBxCDs12tLQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eN4xqeZeJpofABdgjmKUA+nHvY9WJAxXkotEelUNL/zVuvETZ5qEd1XBFT/+YKJ7g
-         BixykcjFCV3bD2BQGSHPXIP0fUPqLP9kzrCBTM1+YumUWQMP+PDmUnqX5NELvtLfFE
-         pEhrA4Zl0e3S+HtP1vjM2zH1mB/rQGllE22VjEXQ=
+        b=uooP3PbyAucODx5jvWTb1KeIQPWZ2l6rLs+kACC5uIMih7mXc6gX9ug5B30tF8yKm
+         5qHnFEX4LTv4t6IRRJ0Hhx4yfs1KbGM06Wt+InxuyIkL26+dM/06OF4MlU/K1U7F/A
+         fVeNmYrcwXzAmT6E/ff5RS48u+ijE9dGeKCdoH1Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Huazhong Tan <tanhuazhong@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 113/405] net: hns3: use atomic_t replace u32 for arqs count
-Date:   Wed, 29 May 2019 20:01:51 -0700
-Message-Id: <20190530030546.721646057@linuxfoundation.org>
+        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        syzbot+2a73a6ea9507b7112141@syzkaller.appspotmail.com,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 5.0 039/346] acct_on(): dont mess with freeze protection
+Date:   Wed, 29 May 2019 20:01:52 -0700
+Message-Id: <20190530030542.825843152@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,83 +44,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 30780a8b1677e7409b32ae52a9a84f7d41ae6b43 ]
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-Since irq handler and mailbox task will both update arq's count,
-so arq's count should use atomic_t instead of u32, otherwise
-its value may go wrong finally.
+commit 9419a3191dcb27f24478d288abaab697228d28e6 upstream.
 
-Fixes: 07a0556a3a73 ("net: hns3: Changes to support ARQ(Asynchronous Receive Queue)")
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+What happens there is that we are replacing file->path.mnt of
+a file we'd just opened with a clone and we need the write
+count contribution to be transferred from original mount to
+new one.  That's it.  We do *NOT* want any kind of freeze
+protection for the duration of switchover.
+
+IOW, we should just use __mnt_{want,drop}_write() for that
+switchover; no need to bother with mnt_{want,drop}_write()
+there.
+
+Tested-by: Amir Goldstein <amir73il@gmail.com>
+Reported-by: syzbot+2a73a6ea9507b7112141@syzkaller.appspotmail.com
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/hisilicon/hns3/hclge_mbx.h          | 2 +-
- drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c | 2 +-
- drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_mbx.c | 7 ++++---
- 3 files changed, 6 insertions(+), 5 deletions(-)
+ fs/internal.h         |    2 --
+ include/linux/mount.h |    2 ++
+ kernel/acct.c         |    4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hclge_mbx.h b/drivers/net/ethernet/hisilicon/hns3/hclge_mbx.h
-index 299b277bc7ae9..589b7ee32bff8 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hclge_mbx.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hclge_mbx.h
-@@ -107,7 +107,7 @@ struct hclgevf_mbx_arq_ring {
- 	struct hclgevf_dev *hdev;
- 	u32 head;
- 	u32 tail;
--	u32 count;
-+	atomic_t count;
- 	u16 msg_q[HCLGE_MBX_MAX_ARQ_MSG_NUM][HCLGE_MBX_MAX_ARQ_MSG_SIZE];
- };
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -80,9 +80,7 @@ extern int sb_prepare_remount_readonly(s
  
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
-index 9441b453d38df..9a0a501908aec 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
-@@ -327,7 +327,7 @@ int hclgevf_cmd_init(struct hclgevf_dev *hdev)
- 	hdev->arq.hdev = hdev;
- 	hdev->arq.head = 0;
- 	hdev->arq.tail = 0;
--	hdev->arq.count = 0;
-+	atomic_set(&hdev->arq.count, 0);
- 	hdev->hw.cmq.csq.next_to_clean = 0;
- 	hdev->hw.cmq.csq.next_to_use = 0;
- 	hdev->hw.cmq.crq.next_to_clean = 0;
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_mbx.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_mbx.c
-index 7dc3c9f79169f..4f2c77283cb43 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_mbx.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_mbx.c
-@@ -208,7 +208,8 @@ void hclgevf_mbx_handler(struct hclgevf_dev *hdev)
- 			/* we will drop the async msg if we find ARQ as full
- 			 * and continue with next message
- 			 */
--			if (hdev->arq.count >= HCLGE_MBX_MAX_ARQ_MSG_NUM) {
-+			if (atomic_read(&hdev->arq.count) >=
-+			    HCLGE_MBX_MAX_ARQ_MSG_NUM) {
- 				dev_warn(&hdev->pdev->dev,
- 					 "Async Q full, dropping msg(%d)\n",
- 					 req->msg[1]);
-@@ -220,7 +221,7 @@ void hclgevf_mbx_handler(struct hclgevf_dev *hdev)
- 			memcpy(&msg_q[0], req->msg,
- 			       HCLGE_MBX_MAX_ARQ_MSG_SIZE * sizeof(u16));
- 			hclge_mbx_tail_ptr_move_arq(hdev->arq);
--			hdev->arq.count++;
-+			atomic_inc(&hdev->arq.count);
+ extern void __init mnt_init(void);
  
- 			hclgevf_mbx_task_schedule(hdev);
+-extern int __mnt_want_write(struct vfsmount *);
+ extern int __mnt_want_write_file(struct file *);
+-extern void __mnt_drop_write(struct vfsmount *);
+ extern void __mnt_drop_write_file(struct file *);
  
-@@ -308,7 +309,7 @@ void hclgevf_mbx_async_handler(struct hclgevf_dev *hdev)
- 		}
+ /*
+--- a/include/linux/mount.h
++++ b/include/linux/mount.h
+@@ -86,6 +86,8 @@ extern bool mnt_may_suid(struct vfsmount
  
- 		hclge_mbx_head_ptr_move_arq(hdev->arq);
--		hdev->arq.count--;
-+		atomic_dec(&hdev->arq.count);
- 		msg_q = hdev->arq.msg_q[hdev->arq.head];
+ struct path;
+ extern struct vfsmount *clone_private_mount(const struct path *path);
++extern int __mnt_want_write(struct vfsmount *);
++extern void __mnt_drop_write(struct vfsmount *);
+ 
+ struct file_system_type;
+ extern struct vfsmount *vfs_kern_mount(struct file_system_type *type,
+--- a/kernel/acct.c
++++ b/kernel/acct.c
+@@ -227,7 +227,7 @@ static int acct_on(struct filename *path
+ 		filp_close(file, NULL);
+ 		return PTR_ERR(internal);
  	}
+-	err = mnt_want_write(internal);
++	err = __mnt_want_write(internal);
+ 	if (err) {
+ 		mntput(internal);
+ 		kfree(acct);
+@@ -252,7 +252,7 @@ static int acct_on(struct filename *path
+ 	old = xchg(&ns->bacct, &acct->pin);
+ 	mutex_unlock(&acct->lock);
+ 	pin_kill(old);
+-	mnt_drop_write(mnt);
++	__mnt_drop_write(mnt);
+ 	mntput(mnt);
+ 	return 0;
  }
--- 
-2.20.1
-
 
 
