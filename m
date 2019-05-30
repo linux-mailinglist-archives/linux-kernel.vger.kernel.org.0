@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0772C2F469
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:38:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AA732ED08
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:30:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729215AbfE3DMq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:12:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50232 "EHLO mail.kernel.org"
+        id S2388630AbfE3Dad (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:30:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728420AbfE3DLN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:11:13 -0400
+        id S2388433AbfE3Dac (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:30:32 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94A1C24476;
-        Thu, 30 May 2019 03:11:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA9AD24AE5;
+        Thu, 30 May 2019 03:30:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185872;
-        bh=1/jtWjLwtQUBaIeNDr26UgU8Xxb0ANdHzNd+W3F8NtE=;
+        s=default; t=1559187031;
+        bh=isVdUuJxKtBQUgI9I1O0cRqwWtG/45uK+TmIrw2pIXQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q9qYCRpTbQziYRCVA+bpiMplT8SG7taDQgA5wPJri3HzOnh1TQVFHOFAwwwQ9MsT1
-         mF/PBCRZHUIdRWMq2Fj05U58pIyFsYMBrzwXsZkJsylIXnwllH0DgkfpP3YW/QyQDT
-         r/Lrd3UxnmliXWLAJg57SqC348TSxBmYbMiBUbRY=
+        b=Yza782x1LlE/LI1HJ5jB1IEG5KYek5WRWTyCEwO+7OIQbBzPc1YY+J8Qqz4GFb38Z
+         XMJnn266OfeONJBVV/TSrgA12YHiHTEAchKiHq2Fb8HWfvtYZEe+M9UoLeDVk2u3uK
+         4gxKUjR19dJ8DcvS9CS9T1fhMk8Q1acikChCbav0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jann Horn <jannh@google.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 216/405] x86/microcode: Fix the ancient deprecated microcode loading method
+        stable@vger.kernel.org,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 141/346] media: ov2659: make S_FMT succeed even if requested format doesnt match
 Date:   Wed, 29 May 2019 20:03:34 -0700
-Message-Id: <20190530030552.020366038@linuxfoundation.org>
+Message-Id: <20190530030548.271476272@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +47,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 24613a04ad1c0588c10f4b5403ca60a73d164051 ]
+[ Upstream commit bccb89cf9cd07a0690d519696a00c00a973b3fe4 ]
 
-Commit
+This driver returns an error if unsupported media bus pixel code is
+requested by VIDIOC_SUBDEV_S_FMT.
 
-  2613f36ed965 ("x86/microcode: Attempt late loading only when new microcode is present")
+But according to Documentation/media/uapi/v4l/vidioc-subdev-g-fmt.rst,
 
-added the new define UCODE_NEW to denote that an update should happen
-only when newer microcode (than installed on the system) has been found.
+Drivers must not return an error solely because the requested format
+doesn't match the device capabilities. They must instead modify the
+format to match what the hardware can provide.
 
-But it missed adjusting that for the old /dev/cpu/microcode loading
-interface. Fix it.
+So select default format code and return success in that case.
 
-Fixes: 2613f36ed965 ("x86/microcode: Attempt late loading only when new microcode is present")
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jann Horn <jannh@google.com>
-Link: https://lkml.kernel.org/r/20190405133010.24249-3-bp@alien8.de
+This is detected by v4l2-compliance.
+
+Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+Acked-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/microcode/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/media/i2c/ov2659.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
-index 5260185cbf7ba..8a4a7823451ac 100644
---- a/arch/x86/kernel/cpu/microcode/core.c
-+++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -418,8 +418,9 @@ static int do_microcode_update(const void __user *buf, size_t size)
- 		if (ustate == UCODE_ERROR) {
- 			error = -1;
+diff --git a/drivers/media/i2c/ov2659.c b/drivers/media/i2c/ov2659.c
+index 799acce803fe5..a1e9a980a4459 100644
+--- a/drivers/media/i2c/ov2659.c
++++ b/drivers/media/i2c/ov2659.c
+@@ -1117,8 +1117,10 @@ static int ov2659_set_fmt(struct v4l2_subdev *sd,
+ 		if (ov2659_formats[index].code == mf->code)
  			break;
--		} else if (ustate == UCODE_OK)
-+		} else if (ustate == UCODE_NEW) {
- 			apply_microcode_on_target(cpu);
-+		}
- 	}
  
- 	return error;
+-	if (index < 0)
+-		return -EINVAL;
++	if (index < 0) {
++		index = 0;
++		mf->code = ov2659_formats[index].code;
++	}
+ 
+ 	mf->colorspace = V4L2_COLORSPACE_SRGB;
+ 	mf->field = V4L2_FIELD_NONE;
 -- 
 2.20.1
 
