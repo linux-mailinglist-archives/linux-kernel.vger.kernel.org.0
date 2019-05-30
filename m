@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44D802F4C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:42:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F6272ED79
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:37:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387701AbfE3Eld (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:41:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55052 "EHLO mail.kernel.org"
+        id S1732319AbfE3DXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:23:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728999AbfE3DMZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:25 -0400
+        id S1731212AbfE3DRl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:41 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6F3A24526;
-        Thu, 30 May 2019 03:12:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA5D224703;
+        Thu, 30 May 2019 03:17:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185944;
-        bh=Wa7TcyT+ufSchs5dR12KCtbsY23wB+eK/kdXfxO7PYM=;
+        s=default; t=1559186261;
+        bh=CORdcStFkjX1oyFVU9FuSam+RRAFqpTQpB8ocBBwANI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mQyGkdbSrOtLj8wdzfMifK06uuQhv/kiojTU81fHRwyB6rgrQkDfRTFouprC8VtFs
-         TVA1CBl1NkjB13A0pkGx2cu5LLUEvR5W31VH6btVQOsHL9G4kNxu8xFgk7D1OVZmFZ
-         1WLEQlO5GarxF6GTgdLPyS2IFUjKsC99efg9KaGE=
+        b=EDKq5owO6rBPNErEG+ZhhdRS1ed1eSvrgBbAVgqJnjopFFBS4+bpraD46GNqBUda3
+         vK054az5s/MbCkwiLkOx4a6OTyP4Isu42BQhSd9GmkQfmvAZIAtdwxEkG93waRiPAH
+         LXyGpye0hTDR/gzDWLduC1ndOFB8NX48nmbaqpwU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        Helen Koike <helen.koike@collabora.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 353/405] media: vimc: stream: fix thread state before sleep
+Subject: [PATCH 4.19 193/276] brcmfmac: fix missing checks for kmemdup
 Date:   Wed, 29 May 2019 20:05:51 -0700
-Message-Id: <20190530030558.513663402@linuxfoundation.org>
+Message-Id: <20190530030537.215775382@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,47 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2978a505aaa981b279ef359f74ba93d25098e0a0 ]
+[ Upstream commit 46953f97224d56a12ccbe9c6acaa84ca0dab2780 ]
 
-The state TASK_UNINTERRUPTIBLE should be set just before
-schedule_timeout() call, so it knows the sleep mode it should enter.
-There is no point in setting TASK_UNINTERRUPTIBLE at the initialization
-of the thread as schedule_timeout() will set the state back to
-TASK_RUNNING.
+In case kmemdup fails, the fix sets conn_info->req_ie_len and
+conn_info->resp_ie_len to zero to avoid buffer overflows.
 
-This fixes a warning in __might_sleep() call, as it's expecting the
-task to be in TASK_RUNNING state just before changing the state to
-a sleeping state.
-
-Reported-by: Hans Verkuil <hverkuil@xs4all.nl>
-Signed-off-by: Helen Koike <helen.koike@collabora.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/vimc/vimc-streamer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/media/platform/vimc/vimc-streamer.c b/drivers/media/platform/vimc/vimc-streamer.c
-index fcc897fb247bc..392754c18046c 100644
---- a/drivers/media/platform/vimc/vimc-streamer.c
-+++ b/drivers/media/platform/vimc/vimc-streamer.c
-@@ -120,7 +120,6 @@ static int vimc_streamer_thread(void *data)
- 	int i;
- 
- 	set_freezable();
--	set_current_state(TASK_UNINTERRUPTIBLE);
- 
- 	for (;;) {
- 		try_to_freeze();
-@@ -137,6 +136,7 @@ static int vimc_streamer_thread(void *data)
- 				break;
- 		}
- 		//wait for 60hz
-+		set_current_state(TASK_UNINTERRUPTIBLE);
- 		schedule_timeout(HZ / 60);
- 	}
- 
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+index fa1a2e5ab03fb..c7c520f327f2b 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -5368,6 +5368,8 @@ static s32 brcmf_get_assoc_ies(struct brcmf_cfg80211_info *cfg,
+ 		conn_info->req_ie =
+ 		    kmemdup(cfg->extra_buf, conn_info->req_ie_len,
+ 			    GFP_KERNEL);
++		if (!conn_info->req_ie)
++			conn_info->req_ie_len = 0;
+ 	} else {
+ 		conn_info->req_ie_len = 0;
+ 		conn_info->req_ie = NULL;
+@@ -5384,6 +5386,8 @@ static s32 brcmf_get_assoc_ies(struct brcmf_cfg80211_info *cfg,
+ 		conn_info->resp_ie =
+ 		    kmemdup(cfg->extra_buf, conn_info->resp_ie_len,
+ 			    GFP_KERNEL);
++		if (!conn_info->resp_ie)
++			conn_info->resp_ie_len = 0;
+ 	} else {
+ 		conn_info->resp_ie_len = 0;
+ 		conn_info->resp_ie = NULL;
 -- 
 2.20.1
 
