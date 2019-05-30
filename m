@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13C9B2ED39
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:33:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FA5A2F225
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:19:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388345AbfE3D3U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:29:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58956 "EHLO mail.kernel.org"
+        id S1730455AbfE3ES7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:18:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732252AbfE3DUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:20:34 -0400
+        id S1730306AbfE3DP3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:29 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2256D248F2;
-        Thu, 30 May 2019 03:20:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C06224547;
+        Thu, 30 May 2019 03:15:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186434;
-        bh=UT5ptIzvBWmArzRHvLDDWZswCaWyxEW9/R4B4KcsSDk=;
+        s=default; t=1559186128;
+        bh=SnqwmFzw03K1gcPmMYOzxHxxvJbpotaVF5rgolxW8i4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KsKmS/tXs2Ix+U77Uchr61h0bFWKmf3s5aJmvVn1qVMOY14/qAB7x21QwE+n+qjs6
-         HZ6WnQPqGooQX/0CB5LstXA4qXOdv9DYGmWaVwsAKd9Y0jBZP8XgI7oXW7ZJeuvvXP
-         Conm6Rt+4O9FzRhPCPIbqbwhL0QAPXyQpIAuM4Gs=
+        b=nspBsodjbrLd/8/s9iJpVKZg+LJz0J/qZFSauCBNZl/oIYei4WQhXfgBwJ94j2Abw
+         1wz7EXb9M3rMDRn5AAC05iLogzpsS1/A+fUMnbUn2MskbpErLZWTro/g0bPr4bvh4i
+         AdHSJe2ZABGg54JEOhlBGoFeCu57ubIYRyGNIpBg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bo YU <tsu.yubo@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Samson Tam <Samson.Tam@amd.com>,
+        Aric Cyr <Aric.Cyr@amd.com>, Anthony Koo <Anthony.Koo@amd.com>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 029/128] powerpc/boot: Fix missing check of lseek() return value
-Date:   Wed, 29 May 2019 20:06:01 -0700
-Message-Id: <20190530030439.845592911@linuxfoundation.org>
+Subject: [PATCH 5.0 289/346] drm/amd/display: Link train only when link is DP and backend is enabled
+Date:   Wed, 29 May 2019 20:06:02 -0700
+Message-Id: <20190530030555.524480172@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +46,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5d085ec04a000fefb5182d3b03ee46ca96d8389b ]
+[ Upstream commit 66acd4418d7de131ef3831e52a8af3d2480e5b15 ]
 
-This is detected by Coverity scan: CID: 1440481
+[Why]
+In certain cases we do link training when we don't have a backend.
 
-Signed-off-by: Bo YU <tsu.yubo@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+[How]
+In dc_link_set_preferred_link_settings(), store preferred link settings
+first and then verify that the link is DP and the link stream's backend is
+enabled.  If either is false, then we will not do any link retraining.
+
+Signed-off-by: Samson Tam <Samson.Tam@amd.com>
+Reviewed-by: Aric Cyr <Aric.Cyr@amd.com>
+Acked-by: Anthony Koo <Anthony.Koo@amd.com>
+Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/boot/addnote.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/display/dc/core/dc.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/boot/addnote.c b/arch/powerpc/boot/addnote.c
-index 9d9f6f334d3cc..3da3e2b1b51bc 100644
---- a/arch/powerpc/boot/addnote.c
-+++ b/arch/powerpc/boot/addnote.c
-@@ -223,7 +223,11 @@ main(int ac, char **av)
- 	PUT_16(E_PHNUM, np + 2);
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc.c b/drivers/gpu/drm/amd/display/dc/core/dc.c
+index 5af2ea1f201d3..68529acba015f 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc.c
+@@ -524,6 +524,14 @@ void dc_link_set_preferred_link_settings(struct dc *dc,
+ 	struct dc_stream_state *link_stream;
+ 	struct dc_link_settings store_settings = *link_setting;
  
- 	/* write back */
--	lseek(fd, (long) 0, SEEK_SET);
-+	i = lseek(fd, (long) 0, SEEK_SET);
-+	if (i < 0) {
-+		perror("lseek");
-+		exit(1);
-+	}
- 	i = write(fd, buf, n);
- 	if (i < 0) {
- 		perror("write");
++	link->preferred_link_setting = store_settings;
++
++	/* Retrain with preferred link settings only relevant for
++	 * DP signal type
++	 */
++	if (!dc_is_dp_signal(link->connector_signal))
++		return;
++
+ 	for (i = 0; i < MAX_PIPES; i++) {
+ 		pipe = &dc->current_state->res_ctx.pipe_ctx[i];
+ 		if (pipe->stream && pipe->stream->sink
+@@ -539,7 +547,10 @@ void dc_link_set_preferred_link_settings(struct dc *dc,
+ 
+ 	link_stream = link->dc->current_state->res_ctx.pipe_ctx[i].stream;
+ 
+-	link->preferred_link_setting = store_settings;
++	/* Cannot retrain link if backend is off */
++	if (link_stream->dpms_off)
++		return;
++
+ 	if (link_stream)
+ 		decide_link_settings(link_stream, &store_settings);
+ 
 -- 
 2.20.1
 
