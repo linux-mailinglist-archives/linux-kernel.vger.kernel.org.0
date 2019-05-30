@@ -2,46 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFA642F294
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:23:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D41A2EC9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:24:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731715AbfE3EXY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:23:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36290 "EHLO mail.kernel.org"
+        id S1733033AbfE3DXP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:23:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728935AbfE3DPC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:15:02 -0400
+        id S1731048AbfE3DRV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:21 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33608244EF;
-        Thu, 30 May 2019 03:15:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB8E024667;
+        Thu, 30 May 2019 03:17:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186101;
-        bh=P3JTk7xVOJNuPEoVcNeajWlhbZPMJjIyXv67yz0Vxn8=;
+        s=default; t=1559186241;
+        bh=92NwOkLdCNElYHc/apYpiDEjEst7XO5x6J6XMfxCnZg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PKnfivbfpdYz8zLlG2jMVyqJn+GeFRoCP+Cg5h2ThZvXub3F2nG0Uihz2CfEe801f
-         i88N8cGdCay/58mFAWuvC3QwMTq3+LCrsRVcKQBsLsMLzsPFtGQl/rv7uozt4I+TUO
-         w+s6l7ddrCq8gi9wsURtnQ5DBUOZA42Pu/0/Af2o=
+        b=SQ4xv4kft3g3Qveatj7fByUQuUWT9pEgavUoBIjrjGcVb20GK1+U9QZdHig5KQ6V8
+         F1SsfIWwES4kAMf1b1xfbELBb6dDYMhFIp2NjpacyUSz1+ajYMsiV/pXOGLfySHjhv
+         Rsbn/hQDOt2jeYrl4xK0edujNNv4bogVeTQr6prU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>, ard.biesheuvel@linaro.org,
-        oss-drivers@netronome.com, pbonzini@redhat.com,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 238/346] locking/static_key: Fix false positive warnings on concurrent dec/inc
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Potnuri Bharat Teja <bharat@chelsio.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 153/276] RDMA/cxgb4: Fix null pointer dereference on alloc_skb failure
 Date:   Wed, 29 May 2019 20:05:11 -0700
-Message-Id: <20190530030553.094255091@linuxfoundation.org>
+Message-Id: <20190530030535.131550653@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,89 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a1247d06d01045d7ab2882a9c074fbf21137c690 ]
+[ Upstream commit a6d2a5a92e67d151c98886babdc86d530d27111c ]
 
-Even though the atomic_dec_and_mutex_lock() in
-__static_key_slow_dec_cpuslocked() can never see a negative value in
-key->enabled the subsequent sanity check is re-reading key->enabled, which may
-have been set to -1 in the meantime by static_key_slow_inc_cpuslocked().
+Currently if alloc_skb fails to allocate the skb a null skb is passed to
+t4_set_arp_err_handler and this ends up dereferencing the null skb.  Avoid
+the NULL pointer dereference by checking for a NULL skb and returning
+early.
 
-                CPU  A                               CPU B
-
- __static_key_slow_dec_cpuslocked():          static_key_slow_inc_cpuslocked():
-                               # enabled = 1
-   atomic_dec_and_mutex_lock()
-                               # enabled = 0
-                                              atomic_read() == 0
-                                              atomic_set(-1)
-                               # enabled = -1
-   val = atomic_read()
-   # Oops - val == -1!
-
-The test case is TCP's clean_acked_data_enable() / clean_acked_data_disable()
-as tickled by KTLS (net/ktls).
-
-Suggested-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Reported-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Tested-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: ard.biesheuvel@linaro.org
-Cc: oss-drivers@netronome.com
-Cc: pbonzini@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Addresses-Coverity: ("Dereference null return")
+Fixes: b38a0ad8ec11 ("RDMA/cxgb4: Set arp error handler for PASS_ACCEPT_RPL messages")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Acked-by: Potnuri Bharat Teja <bharat@chelsio.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/jump_label.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+ drivers/infiniband/hw/cxgb4/cm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/jump_label.c b/kernel/jump_label.c
-index bad96b476eb6e..a799b1ac6b2fe 100644
---- a/kernel/jump_label.c
-+++ b/kernel/jump_label.c
-@@ -206,6 +206,8 @@ static void __static_key_slow_dec_cpuslocked(struct static_key *key,
- 					   unsigned long rate_limit,
- 					   struct delayed_work *work)
- {
-+	int val;
-+
- 	lockdep_assert_cpus_held();
- 
- 	/*
-@@ -215,17 +217,20 @@ static void __static_key_slow_dec_cpuslocked(struct static_key *key,
- 	 * returns is unbalanced, because all other static_key_slow_inc()
- 	 * instances block while the update is in progress.
- 	 */
--	if (!atomic_dec_and_mutex_lock(&key->enabled, &jump_label_mutex)) {
--		WARN(atomic_read(&key->enabled) < 0,
--		     "jump label: negative count!\n");
-+	val = atomic_fetch_add_unless(&key->enabled, -1, 1);
-+	if (val != 1) {
-+		WARN(val < 0, "jump label: negative count!\n");
- 		return;
+diff --git a/drivers/infiniband/hw/cxgb4/cm.c b/drivers/infiniband/hw/cxgb4/cm.c
+index a68569ec86bf9..3be6405d9855e 100644
+--- a/drivers/infiniband/hw/cxgb4/cm.c
++++ b/drivers/infiniband/hw/cxgb4/cm.c
+@@ -458,6 +458,8 @@ static struct sk_buff *get_skb(struct sk_buff *skb, int len, gfp_t gfp)
+ 		skb_reset_transport_header(skb);
+ 	} else {
+ 		skb = alloc_skb(len, gfp);
++		if (!skb)
++			return NULL;
  	}
- 
--	if (rate_limit) {
--		atomic_inc(&key->enabled);
--		schedule_delayed_work(work, rate_limit);
--	} else {
--		jump_label_update(key);
-+	jump_label_lock();
-+	if (atomic_dec_and_test(&key->enabled)) {
-+		if (rate_limit) {
-+			atomic_inc(&key->enabled);
-+			schedule_delayed_work(work, rate_limit);
-+		} else {
-+			jump_label_update(key);
-+		}
- 	}
- 	jump_label_unlock();
- }
+ 	t4_set_arp_err_handler(skb, NULL, NULL);
+ 	return skb;
 -- 
 2.20.1
 
