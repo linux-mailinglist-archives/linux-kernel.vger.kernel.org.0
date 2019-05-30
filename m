@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F08642ECE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:28:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7176F2ED2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:33:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388183AbfE3D2d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:28:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57474 "EHLO mail.kernel.org"
+        id S2388188AbfE3D2g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:28:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57508 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728112AbfE3DT7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1732095AbfE3DT7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 29 May 2019 23:19:59 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B39024818;
+        by mail.kernel.org (Postfix) with ESMTPSA id F2E3924900;
         Thu, 30 May 2019 03:19:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186398;
-        bh=Wa7TcyT+ufSchs5dR12KCtbsY23wB+eK/kdXfxO7PYM=;
+        s=default; t=1559186399;
+        bh=+kIEXJMeTP1KdmW/tnGqQswG8llJuLBkzgOSww3SMcs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nl4WkIo3jpJBfxfHYt5fPWWc9TRxlOuYKRg0nsXvq1SjWTtHUkcg72UX/rEpmcNqw
-         9Gr3RCc+GO3aYmooB4TXcr+Kv7FM4vYfGo3dOxd/ssdTUh4qZLCOkc39QThqRXYjTL
-         5rc5FQLT3lICxG92sNk6RFGvM/ZK/B3FRM+3MrMA=
+        b=vWhaRV1h4DeVi7zCwD1NAMT3S58GX/GDQvdagMeDdBM1nO/uNErgtgus4dJj6fQxg
+         Dxr20SZcWL+YEsBjCupF4MPKcma71MGP5jd0mDh1hXB+GAql/LZxhIJ7T29ufyaKQv
+         pwONplGnqaWWynQgBk5MW7kpz4d1lN2InucpVFl4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        Helen Koike <helen.koike@collabora.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 179/193] media: vimc: stream: fix thread state before sleep
-Date:   Wed, 29 May 2019 20:07:13 -0700
-Message-Id: <20190530030512.532737234@linuxfoundation.org>
+Subject: [PATCH 4.14 180/193] media: go7007: avoid clang frame overflow warning with KASAN
+Date:   Wed, 29 May 2019 20:07:14 -0700
+Message-Id: <20190530030512.653715620@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
 References: <20190530030446.953835040@linuxfoundation.org>
@@ -46,47 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2978a505aaa981b279ef359f74ba93d25098e0a0 ]
+[ Upstream commit ed713a4a1367aca5c0f2f329579465db00c17995 ]
 
-The state TASK_UNINTERRUPTIBLE should be set just before
-schedule_timeout() call, so it knows the sleep mode it should enter.
-There is no point in setting TASK_UNINTERRUPTIBLE at the initialization
-of the thread as schedule_timeout() will set the state back to
-TASK_RUNNING.
+clang-8 warns about one function here when KASAN is enabled, even
+without the 'asan-stack' option:
 
-This fixes a warning in __might_sleep() call, as it's expecting the
-task to be in TASK_RUNNING state just before changing the state to
-a sleeping state.
+drivers/media/usb/go7007/go7007-fw.c:1551:5: warning: stack frame size of 2656 bytes in function
 
-Reported-by: Hans Verkuil <hverkuil@xs4all.nl>
-Signed-off-by: Helen Koike <helen.koike@collabora.com>
+I have reported this issue in the llvm bugzilla, but to make
+it work with the clang-8 release, a small annotation is still
+needed.
+
+Link: https://bugs.llvm.org/show_bug.cgi?id=38809
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+[hverkuil-cisco@xs4all.nl: fix checkpatch warning]
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/vimc/vimc-streamer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/usb/go7007/go7007-fw.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/vimc/vimc-streamer.c b/drivers/media/platform/vimc/vimc-streamer.c
-index fcc897fb247bc..392754c18046c 100644
---- a/drivers/media/platform/vimc/vimc-streamer.c
-+++ b/drivers/media/platform/vimc/vimc-streamer.c
-@@ -120,7 +120,6 @@ static int vimc_streamer_thread(void *data)
- 	int i;
+diff --git a/drivers/media/usb/go7007/go7007-fw.c b/drivers/media/usb/go7007/go7007-fw.c
+index 60bf5f0644d11..a5efcd4f7b4f5 100644
+--- a/drivers/media/usb/go7007/go7007-fw.c
++++ b/drivers/media/usb/go7007/go7007-fw.c
+@@ -1499,8 +1499,8 @@ static int modet_to_package(struct go7007 *go, __le16 *code, int space)
+ 	return cnt;
+ }
  
- 	set_freezable();
--	set_current_state(TASK_UNINTERRUPTIBLE);
- 
- 	for (;;) {
- 		try_to_freeze();
-@@ -137,6 +136,7 @@ static int vimc_streamer_thread(void *data)
- 				break;
- 		}
- 		//wait for 60hz
-+		set_current_state(TASK_UNINTERRUPTIBLE);
- 		schedule_timeout(HZ / 60);
- 	}
- 
+-static int do_special(struct go7007 *go, u16 type, __le16 *code, int space,
+-			int *framelen)
++static noinline_for_stack int do_special(struct go7007 *go, u16 type,
++					 __le16 *code, int space, int *framelen)
+ {
+ 	switch (type) {
+ 	case SPECIAL_FRM_HEAD:
 -- 
 2.20.1
 
