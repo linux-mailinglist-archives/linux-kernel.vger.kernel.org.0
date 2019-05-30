@@ -2,46 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D83C2FEBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 17:01:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B2362FEBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 17:01:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727221AbfE3PA2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 11:00:28 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55906 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727001AbfE3PA0 (ORCPT
+        id S1727529AbfE3PBD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 11:01:03 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58624 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725897AbfE3PBD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 11:00:26 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4UEr9nY125913
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 11:00:24 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2stg3buve3-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 11:00:22 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 30 May 2019 16:00:21 +0100
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 30 May 2019 16:00:17 +0100
+        Thu, 30 May 2019 11:01:03 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4UEq9RJ130827;
+        Thu, 30 May 2019 11:00:21 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2stgm12gcn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 30 May 2019 11:00:21 -0400
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x4UEqAYi130995;
+        Thu, 30 May 2019 11:00:21 -0400
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2stgm12ga8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 30 May 2019 11:00:20 -0400
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x4UCshYn014763;
+        Thu, 30 May 2019 13:02:11 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma01dal.us.ibm.com with ESMTP id 2spwb96q65-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 30 May 2019 13:02:11 +0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4UF0Gnr31850944
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4UF0Glx27525566
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Thu, 30 May 2019 15:00:16 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 80718B2072;
+        by IMSVA (Postfix) with ESMTP id 81FFAB2076;
         Thu, 30 May 2019 15:00:15 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6B201B2078;
+        by IMSVA (Postfix) with ESMTP id 6F3F3B2084;
         Thu, 30 May 2019 15:00:15 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.216])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Thu, 30 May 2019 15:00:15 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id EE5AA16C5D9C; Thu, 30 May 2019 08:00:16 -0700 (PDT)
+        id 0030D16C5D9D; Thu, 30 May 2019 08:00:16 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
@@ -50,21 +56,15 @@ Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 7/9] rcu: Fix irritating whitespace error in rcu_assign_pointer()
-Date:   Thu, 30 May 2019 08:00:13 -0700
+        Waiman Long <longman@redhat.com>,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>
+Subject: [PATCH tip/core/rcu 8/9] rcu: Force inlining of rcu_read_lock()
+Date:   Thu, 30 May 2019 08:00:14 -0700
+Message-Id: <20190530150015.30995-8-paulmck@linux.ibm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190530145942.GA30318@linux.ibm.com>
 References: <20190530145942.GA30318@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19053015-0052-0000-0000-000003C91386
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011185; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01210785; UDB=6.00636158; IPR=6.00991820;
- MB=3.00027120; MTD=3.00000008; XFM=3.00000015; UTC=2019-05-30 15:00:21
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19053015-0053-0000-0000-0000611A1472
-Message-Id: <20190530150015.30995-7-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-30_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -77,24 +77,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Waiman Long <longman@redhat.com>
+
+When debugging options are turned on, the rcu_read_lock() function
+might not be inlined. This results in lockdep's print_lock() function
+printing "rcu_read_lock+0x0/0x70" instead of rcu_read_lock()'s caller.
+For example:
+
+[   10.579995] =============================
+[   10.584033] WARNING: suspicious RCU usage
+[   10.588074] 4.18.0.memcg_v2+ #1 Not tainted
+[   10.593162] -----------------------------
+[   10.597203] include/linux/rcupdate.h:281 Illegal context switch in
+RCU read-side critical section!
+[   10.606220]
+[   10.606220] other info that might help us debug this:
+[   10.606220]
+[   10.614280]
+[   10.614280] rcu_scheduler_active = 2, debug_locks = 1
+[   10.620853] 3 locks held by systemd/1:
+[   10.624632]  #0: (____ptrval____) (&type->i_mutex_dir_key#5){.+.+}, at: lookup_slow+0x42/0x70
+[   10.633232]  #1: (____ptrval____) (rcu_read_lock){....}, at: rcu_read_lock+0x0/0x70
+[   10.640954]  #2: (____ptrval____) (rcu_read_lock){....}, at: rcu_read_lock+0x0/0x70
+
+These "rcu_read_lock+0x0/0x70" strings are not providing any useful
+information.  This commit therefore forces inlining of the rcu_read_lock()
+function so that rcu_read_lock()'s caller is instead shown.
+
+Signed-off-by: Waiman Long <longman@redhat.com>
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 ---
  include/linux/rcupdate.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index 915460ec0872..534c05d529b5 100644
+index 534c05d529b5..a8ed624da555 100644
 --- a/include/linux/rcupdate.h
 +++ b/include/linux/rcupdate.h
-@@ -369,7 +369,7 @@ static inline void rcu_preempt_sleep_check(void) { }
- #define rcu_assign_pointer(p, v)					      \
- ({									      \
- 	uintptr_t _r_a_p__v = (uintptr_t)(v);				      \
--	rcu_check_sparse(p, __rcu);				      \
-+	rcu_check_sparse(p, __rcu);					      \
- 									      \
- 	if (__builtin_constant_p(v) && (_r_a_p__v) == (uintptr_t)NULL)	      \
- 		WRITE_ONCE((p), (typeof(p))(_r_a_p__v));		      \
+@@ -588,7 +588,7 @@ static inline void rcu_preempt_sleep_check(void) { }
+  * read-side critical sections may be preempted and they may also block, but
+  * only when acquiring spinlocks that are subject to priority inheritance.
+  */
+-static inline void rcu_read_lock(void)
++static __always_inline void rcu_read_lock(void)
+ {
+ 	__rcu_read_lock();
+ 	__acquire(RCU);
 -- 
 2.17.1
 
