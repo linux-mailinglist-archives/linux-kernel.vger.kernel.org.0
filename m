@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF97C2F334
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:27:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EE672F111
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:09:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730316AbfE3E1N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:27:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34142 "EHLO mail.kernel.org"
+        id S1727143AbfE3EJq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:09:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45256 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729846AbfE3DOW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:14:22 -0400
+        id S1730112AbfE3DRJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:09 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 540FB24555;
-        Thu, 30 May 2019 03:14:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4767324667;
+        Thu, 30 May 2019 03:17:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186062;
-        bh=BPAmBvRdrM0+9Hrl/sZmbLqwysejDtJbo/57DQcGMrU=;
+        s=default; t=1559186229;
+        bh=Yr1NWBa2ygGEK+iU7YFpXLjJuhvl7ZvsAVvfPbvqE5A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u2MhViauFmjMeBOMPxM32wiadDHHNvXuLo20f0F9T9KCPzD85S2HHT/YuaRSFicvt
-         U4ZMt/FMrrbmAHdU2s0C6AHlBDeXToPvlrduXp9NN3g6CIWR5xuW+gA5mNcmK3rIH4
-         mCD5mTPeKr9C4bPJEM7aERznm8lXnLaJ8zpHvu3M=
+        b=dr8uvFunzE59QWXJHthjh6W9cy50Dtqxt47jE/AMt8HQYbwrguRo5m8Tct1AbRdEh
+         E0PnLjgUP+Scr6tqcHiqMBWvB/o/vGXlWZTazgo/1U2NmaiTjRlr1Szbg11Z3W2vjg
+         FQ0GC+oo+J3hxz4Uj1OpaVB8+x8KZ9tQb3kJeZqE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ioana Radulescu <ruxandra.radulescu@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Fabien Dessenne <fabien.dessenne@st.com>,
+        Amelie Delaunay <amelie.delaunay@st.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 170/346] dpaa2-eth: Fix Rx classification status
+Subject: [PATCH 4.19 085/276] rtc: stm32: manage the get_irq probe defer case
 Date:   Wed, 29 May 2019 20:04:03 -0700
-Message-Id: <20190530030549.769816752@linuxfoundation.org>
+Message-Id: <20190530030531.603323909@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,47 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit df8e249be866e2f762be11b14a9e7a94752614d4 ]
+[ Upstream commit cf612c5949aca2bd81a1e28688957c8149ea2693 ]
 
-Set the Rx flow classification enable flag only if key config
-operation is successful.
+Manage the -EPROBE_DEFER error case for the wake IRQ.
 
-Fixes 3f9b5c9 ("dpaa2-eth: Configure Rx flow classification key")
-
-Signed-off-by: Ioana Radulescu <ruxandra.radulescu@nxp.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+Acked-by: Amelie Delaunay <amelie.delaunay@st.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/rtc/rtc-stm32.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-index 1ca9a18139ec5..0982fb4f131db 100644
---- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-@@ -2604,6 +2604,7 @@ int dpaa2_eth_set_hash(struct net_device *net_dev, u64 flags)
- static int dpaa2_eth_set_cls(struct dpaa2_eth_priv *priv)
- {
- 	struct device *dev = priv->net_dev->dev.parent;
-+	int err;
- 
- 	/* Check if we actually support Rx flow classification */
- 	if (dpaa2_eth_has_legacy_dist(priv)) {
-@@ -2622,9 +2623,13 @@ static int dpaa2_eth_set_cls(struct dpaa2_eth_priv *priv)
- 		return -EOPNOTSUPP;
+diff --git a/drivers/rtc/rtc-stm32.c b/drivers/rtc/rtc-stm32.c
+index c5908cfea2340..8e6c9b3bcc29a 100644
+--- a/drivers/rtc/rtc-stm32.c
++++ b/drivers/rtc/rtc-stm32.c
+@@ -788,11 +788,14 @@ static int stm32_rtc_probe(struct platform_device *pdev)
+ 	ret = device_init_wakeup(&pdev->dev, true);
+ 	if (rtc->data->has_wakeirq) {
+ 		rtc->wakeirq_alarm = platform_get_irq(pdev, 1);
+-		if (rtc->wakeirq_alarm <= 0)
+-			ret = rtc->wakeirq_alarm;
+-		else
++		if (rtc->wakeirq_alarm > 0) {
+ 			ret = dev_pm_set_dedicated_wake_irq(&pdev->dev,
+ 							    rtc->wakeirq_alarm);
++		} else {
++			ret = rtc->wakeirq_alarm;
++			if (rtc->wakeirq_alarm == -EPROBE_DEFER)
++				goto err;
++		}
  	}
- 
-+	err = dpaa2_eth_set_dist_key(priv->net_dev, DPAA2_ETH_RX_DIST_CLS, 0);
-+	if (err)
-+		return err;
-+
- 	priv->rx_cls_enabled = 1;
- 
--	return dpaa2_eth_set_dist_key(priv->net_dev, DPAA2_ETH_RX_DIST_CLS, 0);
-+	return 0;
- }
- 
- /* Bind the DPNI to its needed objects and resources: buffer pool, DPIOs,
+ 	if (ret)
+ 		dev_warn(&pdev->dev, "alarm can't wake up the system: %d", ret);
 -- 
 2.20.1
 
