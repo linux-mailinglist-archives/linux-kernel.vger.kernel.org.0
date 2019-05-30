@@ -2,85 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C1EE2EA51
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 03:42:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C93112EA53
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 03:42:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727355AbfE3BmC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 21:42:02 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:52162 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726867AbfE3BmC (ORCPT
+        id S1727389AbfE3BmE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 21:42:04 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:59238 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727247AbfE3BmC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 29 May 2019 21:42:02 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4U1d0Ba163161;
-        Thu, 30 May 2019 01:41:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=Pjb0boqwhTohB5CBxIww2RHM4T6rpUs5ByWOgMxA14A=;
- b=i1pyhqTEk9+RgzRoTyJW05yH7bUu4ol9s1bBaotXN1OuiwDlLSCfrzkniJYP6QqEbq5h
- QjhsrfsUkRQDwXmUUyveLNXAKrehEVKwYsS52wEzXx6I+QFYJ0Nv3TBw+A5Yd5t3OP+x
- 9De6NirKMjseFgN88SoBd5H6BHGdFLWipTeksf3mVkS09zkbdIZ+HID12aeu8XpzmyKy
- h6SHA9RwbYvMccGwmelptsyaY/vEpDq7GIbj0KoHFOknOSOkTCNGJ2Kx/xA9GewMiJRF
- tBiqB6Jl5jrD7qIdR2phJlKdRPAcOPlpYNq38Ln7HpW4za/kbPofRWr/4kpGxgxyytk3 8A== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2spw4tn9d6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 30 May 2019 01:41:56 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4U1fNeo085043;
-        Thu, 30 May 2019 01:41:56 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2ss1fnss91-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 30 May 2019 01:41:56 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x4U1ft5l008704;
-        Thu, 30 May 2019 01:41:55 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 29 May 2019 18:41:54 -0700
-To:     Hariprasad Kelam <hariprasad.kelam@gmail.com>
-Cc:     ddiss@suse.de, "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [Patch v2] target/iscsi: fix possible condition with no effect (if == else)
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20190528012151.GA4845@hari-Inspiron-1545>
-Date:   Wed, 29 May 2019 21:41:52 -0400
-In-Reply-To: <20190528012151.GA4845@hari-Inspiron-1545> (Hariprasad Kelam's
-        message of "Tue, 28 May 2019 06:51:52 +0530")
-Message-ID: <yq1pno0zpjz.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1hWA4v-0007nJ-B8; Wed, 29 May 2019 19:42:01 -0600
+Received: from ip72-206-97-68.om.om.cox.net ([72.206.97.68] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1hWA4u-0002xz-TG; Wed, 29 May 2019 19:42:01 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Jann Horn <jannh@google.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        David Howells <dhowells@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>
+References: <20190529113157.227380-1-jannh@google.com>
+        <20190529162120.GB27659@redhat.com>
+        <CAG48ez3S1c_cd8RNSb9TrF66d+1AMAxD4zh-kixQ6uSEnmS-tg@mail.gmail.com>
+Date:   Wed, 29 May 2019 20:41:55 -0500
+In-Reply-To: <CAG48ez3S1c_cd8RNSb9TrF66d+1AMAxD4zh-kixQ6uSEnmS-tg@mail.gmail.com>
+        (Jann Horn's message of "Wed, 29 May 2019 19:38:46 +0200")
+Message-ID: <87ef4gzpjw.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9272 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=841
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905300011
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9272 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=895 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905300011
+X-XM-SPF: eid=1hWA4u-0002xz-TG;;;mid=<87ef4gzpjw.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=72.206.97.68;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18wE3UcoodFH/eDBPD7tiynOAUoebLOnZ4=
+X-SA-Exim-Connect-IP: 72.206.97.68
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa03.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.3 required=8.0 tests=ALL_TRUSTED,BAYES_40,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        T_TooManySym_02,XMSubLong autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        * -0.0 BAYES_40 BODY: Bayes spam probability is 20 to 40%
+        *      [score: 0.3336]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa03 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa03 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Jann Horn <jannh@google.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 152 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 2.3 (1.5%), b_tie_ro: 1.62 (1.1%), parse: 0.57
+        (0.4%), extract_message_metadata: 1.84 (1.2%), get_uri_detail_list:
+        0.55 (0.4%), tests_pri_-1000: 2.9 (1.9%), tests_pri_-950: 1.07 (0.7%),
+        tests_pri_-900: 0.89 (0.6%), tests_pri_-90: 14 (9.1%), check_bayes: 13
+        (8.3%), b_tokenize: 3.4 (2.3%), b_tok_get_all: 4.3 (2.8%),
+        b_comp_prob: 1.12 (0.7%), b_tok_touch_all: 2.2 (1.4%), b_finish: 0.51
+        (0.3%), tests_pri_0: 116 (76.5%), check_dkim_signature: 0.34 (0.2%),
+        check_dkim_adsp: 2.1 (1.4%), poll_dns_idle: 0.84 (0.6%), tests_pri_10:
+        1.76 (1.2%), tests_pri_500: 4.9 (3.2%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] ptrace: restore smp_rmb() in __ptrace_may_access()
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Jann Horn <jannh@google.com> writes:
 
-Hariprasad,
+> I'm actually trying to get rid of the ->mm access in
+> __ptrace_may_access() entirely by moving the dumpability and the
+> user_ns into the signal_struct, but I don't have patches for that
+> ready (yet).
 
-> fix below warning reported by coccicheck
->
-> drivers/target/iscsi/iscsi_target_nego.c:175:6-8: WARNING: possible
-> condition with no effect (if == else)
+Do you have a plan for dealing with old linux-threads style threads
+where you have two processes that share the same mm, but have different
+signal_structs.
 
-Applied to 5.3/scsi-queue, thanks!
+I don't think it is required to share any other structures except
+mm_struct when you share mm_struct.  Maybe sighand_struct.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Not to derail your idea.  Only needing to look at signal_struct sounds
+very nice.  I just know we have some other somewhat bizarre cases the
+kernel still supports.
+
+Eric
+
+
+
