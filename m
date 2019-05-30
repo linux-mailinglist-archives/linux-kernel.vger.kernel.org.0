@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 649A62EB99
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:14:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37AA42EC31
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:20:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729873AbfE3DO2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:14:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53248 "EHLO mail.kernel.org"
+        id S1731765AbfE3DS7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:18:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36712 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728799AbfE3DMC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:02 -0400
+        id S1728681AbfE3DPA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:00 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8EDCF24481;
-        Thu, 30 May 2019 03:12:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD6AE24580;
+        Thu, 30 May 2019 03:14:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185921;
-        bh=IhqzS5kn9D2++obbCuqop4TPzQXIpOqdjVY8mQvNTfo=;
+        s=default; t=1559186099;
+        bh=uaRMoL5wlZ6kDLSuDyHVPV2xn/4AO4FX8g0HIPN9Oco=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IG/VHiQ9+rXZmTveYnsP6kuGQMe8e812fQ5NEGJ25Y9EHLrQRTeUVtRvtCFXH7b22
-         EK9uMGWV1NGebv19Dhj9A4dpYWTuNSgyw44Y9+n2qfQR84aPUyUlU3c9Bp3r7wvkhp
-         xg55KOV/bcWhSV1b1N6Hulyu2m2G9cpXRNc0cJvo=
+        b=QpeiJlQzzIZgGkB5nIyOp0TtA17nHYno1e1JnUDF1kLYhXukfHKcersntNt3pXtQD
+         Gnt5Jtb9ZXCY8YfOXZtVePOgOlJ4EhJeDG1Lm9aanQgeKSr3DUuSaDNHgDaKL7M5V1
+         ijupE9mf6zCOaTvHXJDXDWN+sWAR89LWH8wg3u1E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Neeraj Upadhyay <neeraju@codeaurora.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Yannick=20Fertr=C3=A9?= <yannick.fertre@st.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        Thierry Reding <treding@nvidia.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 309/405] rcu: Do a single rhp->func read in rcu_head_after_call_rcu()
-Date:   Wed, 29 May 2019 20:05:07 -0700
-Message-Id: <20190530030556.439992073@linuxfoundation.org>
+Subject: [PATCH 5.0 235/346] drm/panel: otm8009a: Add delay at the end of initialization
+Date:   Wed, 29 May 2019 20:05:08 -0700
+Message-Id: <20190530030552.945728871@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,45 +46,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b699cce1604e828f19c39845252626eb78cdf38a ]
+[ Upstream commit 0084c3c71126fc878c6dab8a6ab8ecc484c2be02 ]
 
-The rcu_head_after_call_rcu() function reads the rhp->func pointer twice,
-which can result in a false-positive WARN_ON_ONCE() if the callback
-were passed to call_rcu() between the two reads.  Although racing
-rcu_head_after_call_rcu() with call_rcu() is to be a dubious use case
-(the return value is not reliable in that case), intermittent and
-irreproducible warnings are also quite dubious.  This commit therefore
-uses a single READ_ONCE() to pick up the value of rhp->func once, then
-tests that value twice, thus guaranteeing consistent processing within
-rcu_head_after_call_rcu()().
+At the end of initialization, a delay is required by the panel. Without
+this delay, the panel could received a frame early & generate a crash of
+panel (black screen).
 
-Neverthless, racing rcu_head_after_call_rcu() with call_rcu() is still
-a dubious use case.
-
-Signed-off-by: Neeraj Upadhyay <neeraju@codeaurora.org>
-[ paulmck: Add blank line after declaration per checkpatch.pl. ]
-Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+Signed-off-by: Yannick Fertré <yannick.fertre@st.com>
+Reviewed-by: Philippe Cornu <philippe.cornu@st.com>
+Tested-by: Philippe Cornu <philippe.cornu@st.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/1553155445-13407-1-git-send-email-yannick.fertre@st.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/rcupdate.h | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/panel/panel-orisetech-otm8009a.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index 6cdb1db776cf9..922bb68488133 100644
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -878,9 +878,11 @@ static inline void rcu_head_init(struct rcu_head *rhp)
- static inline bool
- rcu_head_after_call_rcu(struct rcu_head *rhp, rcu_callback_t f)
- {
--	if (READ_ONCE(rhp->func) == f)
-+	rcu_callback_t func = READ_ONCE(rhp->func);
+diff --git a/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c b/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
+index 87fa316e1d7b0..58ccf648b70fb 100644
+--- a/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
++++ b/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
+@@ -248,6 +248,9 @@ static int otm8009a_init_sequence(struct otm8009a *ctx)
+ 	/* Send Command GRAM memory write (no parameters) */
+ 	dcs_write_seq(ctx, MIPI_DCS_WRITE_MEMORY_START);
+ 
++	/* Wait a short while to let the panel be ready before the 1st frame */
++	mdelay(10);
 +
-+	if (func == f)
- 		return true;
--	WARN_ON_ONCE(READ_ONCE(rhp->func) != (rcu_callback_t)~0L);
-+	WARN_ON_ONCE(func != (rcu_callback_t)~0L);
- 	return false;
+ 	return 0;
  }
  
 -- 
