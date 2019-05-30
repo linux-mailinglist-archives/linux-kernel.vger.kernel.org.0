@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85E8C2F2EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:25:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA0642EBAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:16:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732681AbfE3EY4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:24:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35954 "EHLO mail.kernel.org"
+        id S1730045AbfE3DO4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:14:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730003AbfE3DOt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:14:49 -0400
+        id S1728924AbfE3DMQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:12:16 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9599F2456F;
-        Thu, 30 May 2019 03:14:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73C89244D4;
+        Thu, 30 May 2019 03:12:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186088;
-        bh=G7/EF0+sycBI1xObFRMuUqqyLtCEWKWSYGWiHh9zcnk=;
+        s=default; t=1559185936;
+        bh=bp0ei9CW8GOV5s+gfcafVPBBEVYM5qxBTDtOvGL7eX4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g6S9ltkkNjR9rNuY3tcQTdfl2o6ivqDXbBPxJKtyGWqvneXbwuoMzBDZEt66ZNQX4
-         1Sw4+JdCacirc9Ulg81WP3gj1hMQ8gjwiAYz7M5kV5kvJhUmAyPWDdnOKW2nGrN602
-         U05YHWN7KddBuyBOeu7sRL2DjU8olcxGdXQhHAXw=
+        b=gXldf4WlfGOxBI6WJqVMtbq7hwGjUhUrlaFjQh4SCF+8R5Zu8tcBzrLuV0yafMroS
+         OevDDg332PJf1xnKR5pzkZGuLByaeHvDo0qYcveX7nBbmlrXkJA0UCCpwyFbDTbGXH
+         LRczojIIGUmUrIZs/ooS+Ush6MF4Kq3dT1AF4FLw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        stable@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 217/346] iio: hmc5843: fix potential NULL pointer dereferences
+Subject: [PATCH 5.1 292/405] thunderbolt: Fix to check the return value of kmemdup
 Date:   Wed, 29 May 2019 20:04:50 -0700
-Message-Id: <20190530030552.089778323@linuxfoundation.org>
+Message-Id: <20190530030555.624507762@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,64 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 536cc27deade8f1ec3c1beefa60d5fbe0f6fcb28 ]
+[ Upstream commit fd21b79e541e4666c938a344f3ad2df74b4f5120 ]
 
-devm_regmap_init_i2c may fail and return NULL. The fix returns
-the error when it fails.
+uuid in add_switch is allocted via kmemdup which can fail. The patch
+logs the error and cleans up the allocated memory for switch.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/magnetometer/hmc5843_i2c.c | 7 ++++++-
- drivers/iio/magnetometer/hmc5843_spi.c | 7 ++++++-
- 2 files changed, 12 insertions(+), 2 deletions(-)
+ drivers/thunderbolt/icm.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/iio/magnetometer/hmc5843_i2c.c b/drivers/iio/magnetometer/hmc5843_i2c.c
-index 3de7f4426ac40..86abba5827a25 100644
---- a/drivers/iio/magnetometer/hmc5843_i2c.c
-+++ b/drivers/iio/magnetometer/hmc5843_i2c.c
-@@ -58,8 +58,13 @@ static const struct regmap_config hmc5843_i2c_regmap_config = {
- static int hmc5843_i2c_probe(struct i2c_client *cli,
- 			     const struct i2c_device_id *id)
- {
-+	struct regmap *regmap = devm_regmap_init_i2c(cli,
-+			&hmc5843_i2c_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
- 	return hmc5843_common_probe(&cli->dev,
--			devm_regmap_init_i2c(cli, &hmc5843_i2c_regmap_config),
-+			regmap,
- 			id->driver_data, id->name);
- }
+diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
+index e3fc920af6825..8b7f9131e9d12 100644
+--- a/drivers/thunderbolt/icm.c
++++ b/drivers/thunderbolt/icm.c
+@@ -473,6 +473,11 @@ static void add_switch(struct tb_switch *parent_sw, u64 route,
+ 		goto out;
  
-diff --git a/drivers/iio/magnetometer/hmc5843_spi.c b/drivers/iio/magnetometer/hmc5843_spi.c
-index 535f03a70d630..79b2b707f90e7 100644
---- a/drivers/iio/magnetometer/hmc5843_spi.c
-+++ b/drivers/iio/magnetometer/hmc5843_spi.c
-@@ -58,6 +58,7 @@ static const struct regmap_config hmc5843_spi_regmap_config = {
- static int hmc5843_spi_probe(struct spi_device *spi)
- {
- 	int ret;
-+	struct regmap *regmap;
- 	const struct spi_device_id *id = spi_get_device_id(spi);
- 
- 	spi->mode = SPI_MODE_3;
-@@ -67,8 +68,12 @@ static int hmc5843_spi_probe(struct spi_device *spi)
- 	if (ret)
- 		return ret;
- 
-+	regmap = devm_regmap_init_spi(spi, &hmc5843_spi_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
- 	return hmc5843_common_probe(&spi->dev,
--			devm_regmap_init_spi(spi, &hmc5843_spi_regmap_config),
-+			regmap,
- 			id->driver_data, id->name);
- }
- 
+ 	sw->uuid = kmemdup(uuid, sizeof(*uuid), GFP_KERNEL);
++	if (!sw->uuid) {
++		tb_sw_warn(sw, "cannot allocate memory for switch\n");
++		tb_switch_put(sw);
++		goto out;
++	}
+ 	sw->connection_id = connection_id;
+ 	sw->connection_key = connection_key;
+ 	sw->link = link;
 -- 
 2.20.1
 
