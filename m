@@ -2,158 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 278F02F844
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 10:08:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEB532F84F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 10:08:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728035AbfE3IHz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 04:07:55 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:17341 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726945AbfE3IHz (ORCPT
+        id S1728078AbfE3IIh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 04:08:37 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:38255 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727403AbfE3IIh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 04:07:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1559203685; x=1590739685;
-  h=from:to:cc:subject:date:message-id:
-   content-transfer-encoding:mime-version;
-  bh=q5OkX1rLq2OezVbl5sTn+krp06pLKiK4tOQ2smfyLLE=;
-  b=lV/7r0kij0lbAtR0JMbm1OoPLxumOn5nZJEHUstEFWDt+PUfVgR/rScV
-   eqge68/DnFU1W80bJM5SRYUDzv8bw27Jo4IhTlaO5DvsTh6Qe9Mow0Q5K
-   X80ptkaxH3sbmI8hpQU37Id3MXk8ZOiZcinX3kBFXhw9o1ZVxa7+nRp6x
-   +stJclImZZgPaQ81Jikw1md3knEN6HhNtnYW4jP/JLhrDDqNDcHKQM4aU
-   kKip0XFnbF1OTHayqAcQtgzOMIPjNvmLSYnwoPxwsbeH4+ed1UqtYzHfo
-   nj3G36eL2c5Ok+y8PVgQ+1zoYYFAiAcISkwd2ca/zrfxYuMO/nDDaOZko
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.60,530,1549900800"; 
-   d="scan'208";a="208946033"
-Received: from mail-dm3nam05lp2052.outbound.protection.outlook.com (HELO NAM05-DM3-obe.outbound.protection.outlook.com) ([104.47.49.52])
-  by ob1.hgst.iphmx.com with ESMTP; 30 May 2019 16:08:02 +0800
+        Thu, 30 May 2019 04:08:37 -0400
+Received: by mail-it1-f196.google.com with SMTP id i63so3706776ita.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 01:08:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=q5OkX1rLq2OezVbl5sTn+krp06pLKiK4tOQ2smfyLLE=;
- b=p8AI4i4R3tkcBrmFkgQjuR1xyU9ttk0sHW0j3q073VJ/zlD/xPE4DleRB/lx6R/Z+A1YMa1eeypaZQd5Jf0ikCgFoPPJjfKQl6vflh/+GJQlvo/w/WLDduKLg1jgQqO8eG1ApEKQL1keOIrO+iCBGO4ITXiasPJyiZ++xhrDB8A=
-Received: from MN2PR04MB6061.namprd04.prod.outlook.com (20.178.246.15) by
- MN2PR04MB5903.namprd04.prod.outlook.com (20.179.23.10) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1922.15; Thu, 30 May 2019 08:07:50 +0000
-Received: from MN2PR04MB6061.namprd04.prod.outlook.com
- ([fe80::98ab:5e60:9c5c:4e0e]) by MN2PR04MB6061.namprd04.prod.outlook.com
- ([fe80::98ab:5e60:9c5c:4e0e%7]) with mapi id 15.20.1922.021; Thu, 30 May 2019
- 08:07:50 +0000
-From:   Anup Patel <Anup.Patel@wdc.com>
-To:     "xvisor-devel@googlegroups.com" <xvisor-devel@googlegroups.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "opensbi@lists.infradead.org" <opensbi@lists.infradead.org>
-CC:     Ted Marena <Ted.Marena@wdc.com>,
-        Zvonimir Bandic <zvonimir.bandic@wdc.com>,
-        "waterman@eecs.berkeley.edu" <waterman@eecs.berkeley.edu>,
-        "krste@berkeley.edu" <krste@berkeley.edu>,
-        "palmer@sifive.com" <palmer@sifive.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        Alistair Francis <Alistair.Francis@wdc.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>
-Subject: RISC-V Hypervisors
-Thread-Topic: RISC-V Hypervisors
-Thread-Index: AdUWvgbyyaU5prZHR4mrJ6KOrYge6A==
-Date:   Thu, 30 May 2019 08:07:50 +0000
-Message-ID: <MN2PR04MB6061C0E703D66476EEEA2C4D8D180@MN2PR04MB6061.namprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Anup.Patel@wdc.com; 
-x-originating-ip: [103.20.29.89]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 3d2cc224-e414-460c-559a-08d6e4d5e909
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:MN2PR04MB5903;
-x-ms-traffictypediagnostic: MN2PR04MB5903:
-x-ms-exchange-purlcount: 10
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <MN2PR04MB59035186E4EECA8A283D6EA58D180@MN2PR04MB5903.namprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-forefront-prvs: 00531FAC2C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(136003)(396003)(39860400002)(376002)(53754006)(199004)(189003)(99286004)(66066001)(486006)(53376002)(476003)(55016002)(54906003)(102836004)(8936002)(6506007)(256004)(33656002)(6116002)(25786009)(4326008)(7696005)(9686003)(110136005)(53936002)(6306002)(3846002)(26005)(2501003)(16799955002)(15188155005)(71190400001)(7736002)(68736007)(316002)(8676002)(966005)(73956011)(71200400001)(81166006)(66446008)(66476007)(76116006)(186003)(66946007)(64756008)(81156014)(305945005)(6436002)(478600001)(86362001)(14454004)(2201001)(72206003)(3480700005)(347745004)(52536014)(2906002)(74316002)(5660300002)(66556008)(19623215001);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR04MB5903;H:MN2PR04MB6061.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 0gZMuQoX7NmGHGssoo4W3urBLmIunf2Y+6S4U4rDXxgJBW6mZ5sKec3haqvBZdaZgBpjZowfMa1NTOL8PmEb0Pbp6u2bOeRoMrYU0/Tct9Yu52ORm8L2LASI4MAVDfis8Yr9i0m6hopcCeljjioLJwUfdK/Fr5t0PzuLJZ8rXlEK/5K86z/ABJb8i4WGjA+OkM2Xc/T3eo9n6Si6y+gZa1lte8/46rQ/gJaJqN6uaqkNH0A+gPh8ee1NODLjyyQV1luXMNkSMMGiuNGO0lAmpe0UcDGaZzHuaP+05pdHer+zl1Vv4RlVkyJNb8AdoSqZQ44gJb0paqSeYGyC7ckmQYVsYk4V1IYd/tUEVi1QXJtrujZMHUjvNa2eOmBdl3O1n/a4CQDFR6FA5LBMzEP1ZWVIxmFdZBda/NTRnCGyWEc=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uhATQPJSNTCMowVFk8RS0eyAucGgi+lBjsF7DlqvU5Y=;
+        b=FJU2ZnF7rvCzqS2ruJWUcu1tibbF9MfXHIVsy5ZkhxzKE2PduyDwe0nqDS886Ruo4Q
+         0Xf348dXwhUflq4MaHxWgLJbNeov2ZUxnfBaB2N6IgR+kjGOUA5+T/8Ne3LvwtSK4xO9
+         gcj+OQl5IYSKWxU/m0dzEsLX2I3HolzCkGoibrn0qRmBub9NR1nC0B3NiJ+eMTwjMm2c
+         n8dhAWfVS9vKjnSbhKC+0U35ZpHpl+Js046GLpyRBQcxBOwQR15FgYgx6bxUbTCRNs7k
+         YTVUgWunpGYv445IvEgxE0QFpXA9N2x92xuARuDMWjNxwhP2dQCw6Bz03FRUskJDSfSo
+         ge6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uhATQPJSNTCMowVFk8RS0eyAucGgi+lBjsF7DlqvU5Y=;
+        b=trxBkQzpQQP2mUSzTz7Nw+2MT38Qlc8VOcZrsyI8U/TpdZUo5PW67gDOpDCOtOq0hX
+         hFVK/+Pqb6JAM5fP2osaEe+lQvrHZGnx1q3ug+IqrgDF6u38Ilbu6a11SfzlNBreXVwJ
+         uQwJta3TeCB2B4qeBEUv+VoJyT2AcqrPRMOppzw0XVd/jMPfs2vL9uxFaqR6UtuYmGm4
+         zk0B0uM7MomCTrufKl8olFFaHr7PQtBJd2JFLY1x0DGGAV/v89bSM5wUzCAK2QTenR9u
+         Ntlhyx/FoRrK+o4VFx/GlPo/XY67syZ3VMVnDSIj4ALcLFC6ZtQFv12pCJAIAFKa6ol5
+         ljYQ==
+X-Gm-Message-State: APjAAAWRRAWpG6dRRCC5prrKPLaE666P8lCXz+mJfuRvLr+Yh1zQn2hc
+        J+Rn+VQ9ERK9MV4m+ao2WgFrvMQNmDOGwnomlynLNA==
+X-Google-Smtp-Source: APXvYqy4+Xt68oesIIciXkhTP1lixxkoR9l+Brf6z52pkjk12vcRFS7olRf0M3doNsE9oTywISw01h9vnhNupOD11nQ=
+X-Received: by 2002:a24:910b:: with SMTP id i11mr2065671ite.76.1559203715644;
+ Thu, 30 May 2019 01:08:35 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3d2cc224-e414-460c-559a-08d6e4d5e909
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 May 2019 08:07:50.6225
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Anup.Patel@wdc.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB5903
+References: <1559149856-7938-1-git-send-email-iuliana.prodan@nxp.com>
+ <20190529202728.GA35103@gmail.com> <20190530053421.keesqb54yu5w7hgk@gondor.apana.org.au>
+ <VI1PR0402MB3485ADA3C4410D61191582A498180@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+In-Reply-To: <VI1PR0402MB3485ADA3C4410D61191582A498180@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 30 May 2019 10:08:22 +0200
+Message-ID: <CAKv+Gu84HndAnkn7DU=ykjCokw_+bAHEcF0Rm12-hnXhVy2u_Q@mail.gmail.com>
+Subject: Re: [PATCH] crypto: gcm - fix cacheline sharing
+To:     Horia Geanta <horia.geanta@nxp.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+On Thu, 30 May 2019 at 09:46, Horia Geanta <horia.geanta@nxp.com> wrote:
+>
+> On 5/30/2019 8:34 AM, Herbert Xu wrote:
+> > On Wed, May 29, 2019 at 01:27:28PM -0700, Eric Biggers wrote:
+> >>
+> >> So what about the other places that also pass an IV located next to the data,
+> >> like crypto/ccm.c and crypto/adiantum.c?  If we're actually going to make this a
+> Fix for ccm is WIP.
+> We were not aware of adiantum since our crypto engine does not accelerate it.
+>
+> >> new API requirement, then we need to add a debugging option that makes the API
+> >> detect this violation so that the other places can be fixed too.
+> >>
+> IMO this is not a new crypto API requirement.
+> crypto API and its users must follow DMA API rules, besides crypto-specific ones.
+>
+> In this particular case, crypto/gcm.c is both an implementation and a crypto API
+> user, since it uses underneath ctr(aes) (and ghash).
+> Currently generic gcm implementation is breaking DMA API, since part of the dst
+> buffer (auth_tag) provided to ctr(aes) is sharing a cache line with some other
+> data structure (iv).
+>
+> The DMA API rule is mentioned in Documentation/DMA-API.txt
+>
+> .. warning::
+>
+>         Memory coherency operates at a granularity called the cache
+>         line width.  In order for memory mapped by this API to operate
+>         correctly, the mapped region must begin exactly on a cache line
+>         boundary and end exactly on one (to prevent two separately mapped
+>         regions from sharing a single cache line).
+>
+>
 
-It's a great pleasure to inform everyone that we have RISC-V
-hypervisor extension available for QEMU and along with it we
-also have Xvisor (a baremetal type-1 hypervisor) working on
-QEMU with RISC-V hypervisor extension. Currently, we are able
-to boot two Linux RV64 Guests on Xvisor RV64.
+This is overly restrictive, and not in line with reality. The whole
+networking stack operates on buffers shifted by 2 bytes if
+NET_IP_ALIGN is left at its default value of 2. There are numerous
+examples in other places as well.
 
-This will be very useful to RISC-V CPU designers in validating
-their implementation of RISC-V hypervisor extensions.
+Given that kmalloc() will take the cacheline granularity into account
+if necessary, the only way this issue can hit is when a single kmalloc
+buffer is written to by two different masters.
 
-The QEMU RISC-V hypervisor emulation is done by Alistair and is
-available in riscv-hyp-work.next branch at:
-https://github.com/alistair23/qemu.git.
+> >> Also, doing a kmalloc() per requset is inefficient and very error-prone.  In
+> >> fact there are at least 3 bugs here: (1) not checking the return value, (2)
+> >> incorrectly using GFP_KERNEL when it may be atomic context, and (3) not always
+> For (2) I assume this means checking for CRYPTO_TFM_REQ_MAY_SLEEP flag.
+>
+> >> freeing the memory.  Why not use cacheline-aligned memory within the request
+> >> context, so that a separate kmalloc() isn't needed?
+> >>
+> If you check previous discussion referenced in the commit message:
+> Link:
+> https://lore.kernel.org/linux-crypto/20190208114459.5nixe76xmmkhur75@gondor.apana.org.au/
+>
+> or (probably easier) look at the full thread:
+> https://patchwork.kernel.org/patch/10789697/
+>
+> you'll see that at some point I proposed changing crypto_gcm_req_priv_ctx struct
+> as follows:
+> -       u8 auth_tag[16];
+> +       u8 auth_tag[16] ____cacheline_aligned;
+>
+> Ard suggested it would be better to kmalloc the auth_tag.
+>
+> I am open to changing the fix, however I don't think the problem is in the
+> implementation (caam driver).
+>
 
-At the moment, QEMU RISC-V hypervisor emulation patches are
-on QEMU mailing list for review.
-(Refer, https://lists.gnu.org/archive/html/qemu-devel/2019-05/msg06064.html=
-)
+I remember that. But in the discussion that followed, I did ask about
+accessing the memory while the buffer is mapped for DMA, and I
+misunderstood the response. The scatterwalk_map_and_copy writes to the
+request while it is mapped for DMA.
 
-The Xvisor RISC-V port is done by myself (Anup) and Atish. It
-can be found in master branch of Xvisor staging repo at:
-https://github.com/avpatel/xvisor-next.git.
+> >> Also, did you consider whether there's any way to make the crypto API handle
+> >> this automatically, so that all the individual users don't have to?
+> That would probably work, but I guess it would come up with a big overhead.
+>
+> I am thinking crypto API would have to check each buffer used by src, dst
+> scatterlists is correctly aligned - starting and ending on cache line boundaries.
+>
+> >
+> > You're absolutely right Eric.
+> >
+> > What I suggested in the old thread is non-sense.  While you can
+> > force GCM to provide the right pointers you cannot force all the
+> > other crypto API users to do this.
+> >
+> Whose problem is that crypto API users don't follow the DMA API requirements?
+>
+> > It would appear that Ard's latest suggestion should fix the problem
+> > and is the correct approach.
+> >
+> I disagree.
+> We shouldn't force crypto implementations to be aware of such inconsistencies in
+> the I/O data buffers (pointed to by src/dst scatterlists) that are supposed to
+> be safely DMA mapped.
+>
 
-For more details on Xvisor, refer
-http://xhypervisor.org/
-http://xhypervisor.org/index.php?page=3Dnews/20150427
+I'm on the fence here. On the one hand, it is slightly dodgy for the
+GCM driver to pass a scatterlist referencing a buffer that shares a
+cacheline with another buffer passed by an ordinary pointer, and for
+which an explicit requirement exists that the callee should update it
+before returning.
 
-The SBI runtime needs to support RISC-V hypervisor extensions.
-Particularly, we need to handle trap redirection, misaligned
-load/store emulation, and missing CSR emulation differently for
-HS-mode and VS-mode. We have extended OpenSBI to support RISC-V
-hypervisor extension and it is available in hyp_ext_changes_v1
-branch at:
-https://github.com/riscv/opensbi.git
-
-We have made great progress in KVM RISC-V (type-2 hypervisor) as
-well. Currently, we are debugging KVM RISC-V and KVMTOOL RISC-V
-port on QEMU. You can expect RFC patches soon in June/July 2019.
-
-The KVM RISC-V can be found in riscv_kvm_v1 branch at:
-https://github.com/avpatel/linux.git
-
-The KVMTOOL RISC-V port can be found in riscv_v1 branch at:
-https://github.com/avpatel/kvmtool.git
-
-There is an early work on Xen RISC-V port which is avaliable
-in alistair/riscv-port branch at:
-https://github.com/alistair23/xen.git
-
-We will be showing a demo of QEMU+OpenSBI+Xvisor+Linux at
-up-coming RISC-V Zurich Workshop.
-(Refer, https://tmt.knect365.com/risc-v-workshop-zurich/)
-
-Stay tuned for more exciting updates on RISC-V hypervisors.
-
-Regards,
-Anup
+On the other hand, I think it is reasonable to require drivers not to
+perform such updates while the scatterlist is mapped for DMA, since
+fixing it in the callers puts a disproportionate burden on them, given
+that non-coherent DMA only represents a small minority of use cases.
