@@ -2,73 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CECDA302E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 21:39:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCFF4302E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 21:40:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726635AbfE3TjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 15:39:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40722 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726045AbfE3TjV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 15:39:21 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27192260FB;
-        Thu, 30 May 2019 19:39:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559245160;
-        bh=HAeeeyIuKJlselAZMCf8MCqGbbGxod0OcJMX5igAlNw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=rmks5ni16WOqtF/AY18TEJktC7/0uGmxKKCgtK9Mrm7N7GNdJVVY+FXpIY4pw+G61
-         lFWgyWVvGvf84OHHQe5Z47PgPpQg9S6EA5UEFTvI0n/jKvudquK53ilx8yx2fewT+t
-         3HAhl9FW93DfwyvgjWzig4S8K9iarj70BQdI1w7M=
-Subject: Re: [PATCH 5.0 000/346] 5.0.20-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        id S1726446AbfE3TkK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 15:40:10 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:33113 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725897AbfE3TkK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 15:40:10 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 314F780337; Thu, 30 May 2019 21:39:57 +0200 (CEST)
+Date:   Thu, 30 May 2019 21:40:06 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     jacek.anaszewski@gmail.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20190530030540.363386121@linuxfoundation.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <f9aff09d-f6dc-7d0f-e6ed-2445d3a4a45c@kernel.org>
-Date:   Thu, 30 May 2019 13:39:19 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+Subject: Re: [PATCH v3 1/9] leds: multicolor: Add sysfs interface definition
+Message-ID: <20190530194006.GA22367@amd>
+References: <20190523190820.29375-1-dmurphy@ti.com>
+ <20190523190820.29375-2-dmurphy@ti.com>
+ <20190527103355.GA5287@amd>
+ <522728b0-147b-3708-fea1-88a895491e05@ti.com>
+ <34dbfab0-0dd4-cf9a-ed86-a74363981077@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
+Content-Disposition: inline
+In-Reply-To: <34dbfab0-0dd4-cf9a-ed86-a74363981077@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/29/19 9:01 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.0.20 release.
-> There are 346 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat 01 Jun 2019 03:02:10 AM UTC.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.0.20-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.0.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
 
-Compiled and booted on my test system. No dmesg regressions.
+--a8Wt8u1KmwUX3Y2C
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-thanks,
--- Shuah
+On Tue 2019-05-28 06:34:47, Dan Murphy wrote:
+> Pavel
+>=20
+> On 5/27/19 7:45 PM, Dan Murphy wrote:
+> >Pavel
+> >
+> >On 5/27/19 5:33 AM, Pavel Machek wrote:
+> >>On Thu 2019-05-23 14:08:12, Dan Murphy wrote:
+> >>>Add a documentation of LED Multicolor LED class specific
+> >>>sysfs attributes.
+> >>>
+> >>>Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> >>>---
+> >>>=A0 .../ABI/testing/sysfs-class-led-multicolor=A0=A0=A0 | 57
+> >>>+++++++++++++++++++
+> >>>=A0 1 file changed, 57 insertions(+)
+> >>>=A0 create mode 100644
+> >>>Documentation/ABI/testing/sysfs-class-led-multicolor
+> >>>
+> >>>diff --git a/Documentation/ABI/testing/sysfs-class-led-multicolor
+> >>>b/Documentation/ABI/testing/sysfs-class-led-multicolor
+> >>>new file mode 100644
+> >>>index 000000000000..2f102ede258b
+> >>>--- /dev/null
+> >>>+++ b/Documentation/ABI/testing/sysfs-class-led-multicolor
+> >>>@@ -0,0 +1,57 @@
+> >>>+What:=A0=A0=A0=A0=A0=A0=A0 /sys/class/leds/<led>/colors/sync_enable
+> >>>+Date:=A0=A0=A0=A0=A0=A0=A0 April 2019
+> >>I believe I suggested more reasonable interface. Why not use that?
+> >>
+> >
+> >Can you please provide the reference to your interface?
+> >
+> I think I found the suggestion [0].=A0 Assuming that was the suggestion it
+> violates the kernel 1 value/file and there was agreement that this interf=
+ace
+> had value. In testing the interface, it made sense to be able to
 
+1 value/file is actually slightly more complex rule:
 
+Attributes should be ASCII text files, preferably with only one value
+per file. It is noted that it may not be efficient to contain only one
+value per file, so it is socially acceptable to express an array of
+values of the same type.
+
+See sysfs.txt. Proposed "sync_enable" is ugly enough, and the values
+really are array of values of same type, so we should be ok with nicer
+interface.
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--a8Wt8u1KmwUX3Y2C
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlzwMZYACgkQMOfwapXb+vI8kACeI37r0eiFv/mgu7wPB7ylJwT3
+vpwAn3CQPq9ECn9UTVYgiTl947hx0+zO
+=nQ/Y
+-----END PGP SIGNATURE-----
+
+--a8Wt8u1KmwUX3Y2C--
