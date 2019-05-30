@@ -2,125 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D2E92F827
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 09:58:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF7942F824
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 09:58:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727861AbfE3H6l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 03:58:41 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:52337 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726638AbfE3H6j (ORCPT
+        id S1727776AbfE3H6G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 03:58:06 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:34381 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726741AbfE3H6F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 03:58:39 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4U7vsaP2900417
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 30 May 2019 00:57:54 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4U7vsaP2900417
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1559203075;
-        bh=I3DixRfdsSIhpNy4s51n3QWmR/N6SKwRCf4bIQcTc4U=;
-        h=Date:From:Cc:Reply-To:To:Subject:From;
-        b=qApFANtxRKCGyLb6sAinEqAxriiAY4Ha1Bgxb3dQwDoc/tFBRXpZuiiqBwhUJdbDK
-         GRhHWyxylVvTv5bbZ4ohb/B+v4clB5p09dsGMPX6nK+4we5LF6Lz5NGP32j+gyuVeI
-         p5g9SfZDKCTfdSCIWsE7SrXbQ722VydxUIaUediluDX2b7u3/uRXDDY6FX37DaLglq
-         6P/5EGtwAa8IgQIfPOK8iDL7d+n+BkR9Xl8w/9IatL+hZ9SK90iQFDZdRro2WAYTWo
-         Rr8F3IpPbLjKsub6t2ur7hPxW/0ZWjoKHgs/xHofPRWHZLb2WKKoKWb78MFY1t7HEt
-         pcY1nvvZ+pEhQ==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4U7vsjc2900414;
-        Thu, 30 May 2019 00:57:54 -0700
-Date:   Thu, 30 May 2019 00:57:54 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-px7v33suw1k2ehst52l7bwa3@git.kernel.org>
-Cc:     adrian.hunter@intel.com, brendan.d.gregg@gmail.com,
-        acme@redhat.com, namhyung@kernel.org, dhowells@redhat.com,
-        tglx@linutronix.de, jolsa@kernel.org, hpa@zytor.com,
-        lclaudio@redhat.com, mingo@kernel.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org
-Reply-To: adrian.hunter@intel.com, acme@redhat.com,
-          brendan.d.gregg@gmail.com, namhyung@kernel.org,
-          dhowells@redhat.com, tglx@linutronix.de, hpa@zytor.com,
-          jolsa@kernel.org, lclaudio@redhat.com, mingo@kernel.org,
-          viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf beauty: Add generator for 'move_mount' flags
- argument
-Git-Commit-ID: eefa09b499d12883f2fad46f93379101c8da6fec
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 30 May 2019 03:58:05 -0400
+Received: by mail-lf1-f67.google.com with SMTP id v18so4271076lfi.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 00:58:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bPRq+E2M4k4dnnJqaH6HZOTnuL1bcV5ql1EtUHn1F7c=;
+        b=GbrEx/lj/tDGSeKBw7jDjiLis2BVHIGcW6qr1MHD62CyU0PWV+NYSxqfD4VoPaIO0q
+         a66gvf/i7IzTVZlCJjXio7STBZ1YyAqLM0WoBtO+TwcWxiS3VSKThlcKnVgNGoqBiukN
+         RiJvQ7jJ+yFLZ8l57FQWW+kFP4Nw1lFyoMAq8Bizf8/AMy2bF2h8ZdY5d1GCfxmEYXrN
+         sY2sU4QRQbWshpSXRFZfK4zBWrh3+6Aws2nE4JRvSJDJHooStJ1nUJdOOMAncs07Pt/q
+         2IlDYChz8p7KROUlM5m2PnG5mS/QQA9w5f9ZMifk8l76Xl6TGOjyptTaT9vusb1Cu9XL
+         sjVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bPRq+E2M4k4dnnJqaH6HZOTnuL1bcV5ql1EtUHn1F7c=;
+        b=qfzxBWr98IqpwSsSdfrv1ENKwaNqtdfqJZsGm/4iUTPfLVbHf7SME3kHkuDQTOMXci
+         UEgjxY/AdUpvMDzi3JC+Hu0rfzGSiTrXnLkFvahf8ZqR8HC1EEI7FhvsC/nW+8s6njkV
+         RZYcvEt2ycDdQS0eeLm7OKNAkY4h9Bgizs1KO1ksXlKMhTB08DoPXExUGAtsSW2WAwCG
+         28iXLTrAO4UF+RypdUdvpO+H2cDJ5+WtTyvAcAueo26HbK9/annhq27t9E9ZMC4cVyEB
+         iDzKaskNCtEqGZCqCv3ahKhhBzmyY0ga+N3cfPSGeKamg5gbdfmPtKPoKnOFlKNPQU06
+         S67g==
+X-Gm-Message-State: APjAAAWQY+HRs8jZd0esgEPJjlIT+CicWacWLtucNb2hcWCXsYZS5Hev
+        VmPeI1Y2foks5hycb12gB9E=
+X-Google-Smtp-Source: APXvYqyc9i3ZYnrQp2KnqOu0K+AzfZb4LKFfGO1IQXISkfsMxRFTr8AaNX3JTxmvX9YXkBJJgNyYbA==
+X-Received: by 2002:a19:fc1d:: with SMTP id a29mr1395727lfi.35.1559203083598;
+        Thu, 30 May 2019 00:58:03 -0700 (PDT)
+Received: from uranus.localdomain ([5.18.102.224])
+        by smtp.gmail.com with ESMTPSA id r2sm349338lfi.51.2019.05.30.00.58.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 30 May 2019 00:58:02 -0700 (PDT)
+Received: by uranus.localdomain (Postfix, from userid 1000)
+        id 0A7324606B3; Thu, 30 May 2019 10:58:02 +0300 (MSK)
+Date:   Thu, 30 May 2019 10:58:02 +0300
+From:   Cyrill Gorcunov <gorcunov@gmail.com>
+To:     Dianzhang Chen <dianzhangchen0@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] kernel/sys.c: fix possible spectre-v1 in do_prlimit()
+Message-ID: <20190530075801.GV11013@uranus>
+References: <CAFbcbMATqCCpCR596FTaSdUV50nQSxDgXMd1ASgXu1CE+DJqTw@mail.gmail.com>
+ <20190528071053.GL11013@uranus>
+ <CAFbcbMAi_QhoT=JyU6NjNiJJwFbXF4Z1eV8TtfLv9UWJT-K_CQ@mail.gmail.com>
+ <20190529121831.GU11013@uranus>
+ <CAFbcbMCLwoBB8syLCSU8i0Hc7OMnHT4A+AzWdmF5g9BzbY7CXQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Spam-Status: No, score=1.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Level: *
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+In-Reply-To: <CAFbcbMCLwoBB8syLCSU8i0Hc7OMnHT4A+AzWdmF5g9BzbY7CXQ@mail.gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  eefa09b499d12883f2fad46f93379101c8da6fec
-Gitweb:     https://git.kernel.org/tip/eefa09b499d12883f2fad46f93379101c8da6fec
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Mon, 20 May 2019 14:16:49 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 28 May 2019 18:37:42 -0300
+On Thu, May 30, 2019 at 01:45:16PM +0800, Dianzhang Chen wrote:
+>
+> Though syscall `getrlimit` , it seems not works after check_prlimit_permission.
+> 
+> And the speculation windows are large, as said[1]:
+> >> Can the speculation proceed past the task_lock()?  Or is the policy to
+> >> ignore such happy happenstances even if they are available?
+> >
+> > Locks are not in the way of speculation. Speculation has almost no limits
+> > except serializing instructions. At least they respect the magic AND
+> > limitation in array_index_nospec().
+> 
+> [1] https://do-db2.lkml.org/lkml/2018/5/15/1056
 
-perf beauty: Add generator for 'move_mount' flags argument
+Please, stop top-posting, it trashes conversation context. You miss the point:
+before bpu hits misprediction we've a number of branches, second in case of
+misprediction the kernel's stack value is cached, so I'm not convinced at all
+that teaching bpu and read the cache is easy here (or possible at all). Thus,
+the final solution is up to maintainers. Another reason why I complaining about
+the patch -- it is not the patch body, as I said I'm fine with it, but the patch
+title: it implies the fix should go in stable kernels, that's what I dont agree
+with. But again, I'm not a maintainer and might be wrong.
 
-  $ tools/perf/trace/beauty/move_mount_flags.sh
-  static const char *move_mount_flags[] = {
-	  [ilog2(0x00000001) + 1] = "F_SYMLINKS",
-	  [ilog2(0x00000002) + 1] = "F_AUTOMOUNTS",
-	  [ilog2(0x00000004) + 1] = "F_EMPTY_PATH",
-	  [ilog2(0x00000010) + 1] = "T_SYMLINKS",
-	  [ilog2(0x00000020) + 1] = "T_AUTOMOUNTS",
-	  [ilog2(0x00000040) + 1] = "T_EMPTY_PATH",
-  };
-  $
+> 
+> On Wed, May 29, 2019 at 8:18 PM Cyrill Gorcunov <gorcunov@gmail.com> wrote:
+> >
+> > On Wed, May 29, 2019 at 10:39:52AM +0800, Dianzhang Chen wrote:
+> > > Hi,
+> > >
+> > > Although when detect it is misprediction and drop the execution, but
+> > > it can not drop all the effects of speculative execution, like the
+> > > cache state. During the speculative execution, the:
+> > >
+> > >
+> > > rlim = tsk->signal->rlim + resource;    // use resource as index
+> > >
+> > > ...
+> > >
+> > >             *old_rlim = *rlim;
+> > >
+> > >
+> > > may read some secret data into cache.
+> > >
+> > > and then the attacker can use side-channel attack to find out what the
+> > > secret data is.
+> >
+> > This code works after check_prlimit_permission call, which means you already
+> > should have a permission granted. And you implies that misprediction gonna
+> > be that deep which involves a number of calls/read/writes/jumps/locks-rb-wb-flushes
+> > and a bunch or other instructions, moreover all conditions are "mispredicted".
+> > This is very bold and actually unproved claim!
+> >
+> > Note that I pointed the patch is fine in cleanup context but seriously I
+> > don't see how this all can be exploitable in sense of spectre.
+> 
 
-Will be wired up to the 'perf trace' arg in a followup patch.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Brendan Gregg <brendan.d.gregg@gmail.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-px7v33suw1k2ehst52l7bwa3@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/trace/beauty/move_mount_flags.sh | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/tools/perf/trace/beauty/move_mount_flags.sh b/tools/perf/trace/beauty/move_mount_flags.sh
-new file mode 100755
-index 000000000000..55e59241daa4
---- /dev/null
-+++ b/tools/perf/trace/beauty/move_mount_flags.sh
-@@ -0,0 +1,17 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: LGPL-2.1
-+
-+if [ $# -ne 1 ] ; then
-+	linux_header_dir=tools/include/uapi/linux
-+else
-+	linux_header_dir=$1
-+fi
-+
-+linux_mount=${linux_header_dir}/mount.h
-+
-+printf "static const char *move_mount_flags[] = {\n"
-+regex='^[[:space:]]*#[[:space:]]*define[[:space:]]+MOVE_MOUNT_([FT]_[[:alnum:]_]+)[[:space:]]+(0x[[:xdigit:]]+)[[:space:]]*.*'
-+egrep $regex ${linux_mount} | \
-+	sed -r "s/$regex/\2 \1/g"	| \
-+	xargs printf "\t[ilog2(%s) + 1] = \"%s\",\n"
-+printf "};\n"
+	Cyrill
