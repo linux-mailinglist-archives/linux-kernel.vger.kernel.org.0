@@ -2,89 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 430042F7C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 09:11:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1DE42F7D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 09:20:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727461AbfE3HKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 03:10:34 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:9799 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726100AbfE3HKd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 03:10:33 -0400
-X-UUID: 4e95dbfb47c6469ab5ffd272f063cf7b-20190530
-X-UUID: 4e95dbfb47c6469ab5ffd272f063cf7b-20190530
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1579835748; Thu, 30 May 2019 15:10:29 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 30 May 2019 15:10:26 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 30 May 2019 15:10:26 +0800
-Message-ID: <1559200226.23119.4.camel@mtksdaap41>
-Subject: Re: [PATCH v3] gpu/drm: mediatek: call mtk_dsi_stop() after
- mtk_drm_crtc_atomic_disable()
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Hsin-Yi Wang <hsinyi@chromium.org>
-CC:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        lkml <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        <linux-mediatek@lists.infradead.org>,
-        Daniel Vetter <daniel@ffwll.ch>
-Date:   Thu, 30 May 2019 15:10:26 +0800
-In-Reply-To: <CAJMQK-ir9J-JN9DDZPBA1nVkJUZ_6A+fY4fA6jx6zOh_9q5a-w@mail.gmail.com>
-References: <20190528073908.633-1-hsinyi@chromium.org>
-         <1559033586.5141.3.camel@mtksdaap41>
-         <CAJMQK-ir9J-JN9DDZPBA1nVkJUZ_6A+fY4fA6jx6zOh_9q5a-w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1727688AbfE3HUc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 03:20:32 -0400
+Received: from mga06.intel.com ([134.134.136.31]:38341 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726027AbfE3HUb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 03:20:31 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 May 2019 00:20:30 -0700
+X-ExtLoop1: 1
+Received: from xingzhen-mobl1.ccr.corp.intel.com (HELO [10.239.196.133]) ([10.239.196.133])
+  by orsmga006.jf.intel.com with ESMTP; 30 May 2019 00:20:28 -0700
+Subject: Re: [LKP] [SUNRPC] 0472e47660: fsmark.app_overhead 16.0% regression
+To:     Trond Myklebust <trondmy@hammerspace.com>,
+        "rong.a.chen@intel.com" <rong.a.chen@intel.com>
+Cc:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "lkp@01.org" <lkp@01.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190520055434.GZ31424@shao2-debian>
+ <f1abba58-5fd2-5f26-74cc-f72724cfa13f@linux.intel.com>
+ <9a07c589f955e5af5acc0fa09a16a3256089e764.camel@hammerspace.com>
+From:   Xing Zhengjun <zhengjun.xing@linux.intel.com>
+Message-ID: <d796ac23-d5d6-cdfa-89c8-536e9496b551@linux.intel.com>
+Date:   Thu, 30 May 2019 15:20:28 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: 21091E5AA1B68CD54EA112FEDEABEE38DDE2401439AE716AE08C1FA05B4F42452000:8
-X-MTK:  N
+In-Reply-To: <9a07c589f955e5af5acc0fa09a16a3256089e764.camel@hammerspace.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Hsin-Yi:
 
-On Thu, 2019-05-30 at 10:55 +0800, Hsin-Yi Wang wrote:
-> On Tue, May 28, 2019 at 4:53 PM CK Hu <ck.hu@mediatek.com> wrote:
+
+On 5/30/2019 10:00 AM, Trond Myklebust wrote:
+> Hi Xing,
 > 
-> > I think we've already discussed in [1]. I need a reason to understand
-> > this is hardware behavior or software bug. If this is a software bug, we
-> > need to fix the bug and code could be symmetric.
-> >
-> > [1]
-> > http://lists.infradead.org/pipermail/linux-mediatek/2019-March/018423.html
-> >
-> Hi CK,
+> On Thu, 2019-05-30 at 09:35 +0800, Xing Zhengjun wrote:
+>> Hi Trond,
+>>
+>> On 5/20/2019 1:54 PM, kernel test robot wrote:
+>>> Greeting,
+>>>
+>>> FYI, we noticed a 16.0% improvement of fsmark.app_overhead due to
+>>> commit:
+>>>
+>>>
+>>> commit: 0472e476604998c127f3c80d291113e77c5676ac ("SUNRPC: Convert
+>>> socket page send code to use iov_iter()")
+>>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git
+>>> master
+>>>
+>>> in testcase: fsmark
+>>> on test machine: 40 threads Intel(R) Xeon(R) CPU E5-2690 v2 @
+>>> 3.00GHz with 384G memory
+>>> with following parameters:
+>>>
+>>> 	iterations: 1x
+>>> 	nr_threads: 64t
+>>> 	disk: 1BRD_48G
+>>> 	fs: xfs
+>>> 	fs2: nfsv4
+>>> 	filesize: 4M
+>>> 	test_size: 40G
+>>> 	sync_method: fsyncBeforeClose
+>>> 	cpufreq_governor: performance
+>>>
+>>> test-description: The fsmark is a file system benchmark to test
+>>> synchronous write workloads, for example, mail servers workload.
+>>> test-url: https://sourceforge.net/projects/fsmark/
+>>>
+>>>
+>>>
+>>> Details are as below:
+>>> -----------------------------------------------------------------
+>>> --------------------------------->
+>>>
+>>>
+>>> To reproduce:
+>>>
+>>>           git clone https://github.com/intel/lkp-tests.git
+>>>           cd lkp-tests
+>>>           bin/lkp install job.yaml  # job file is attached in this
+>>> email
+>>>           bin/lkp run     job.yaml
+>>>
+>>> ===================================================================
+>>> ======================
+>>> compiler/cpufreq_governor/disk/filesize/fs2/fs/iterations/kconfig/n
+>>> r_threads/rootfs/sync_method/tbox_group/test_size/testcase:
+>>>     gcc-7/performance/1BRD_48G/4M/nfsv4/xfs/1x/x86_64-rhel-
+>>> 7.6/64t/debian-x86_64-2018-04-03.cgz/fsyncBeforeClose/lkp-ivb-
+>>> ep01/40G/fsmark
+>>>
+>>> commit:
+>>>     e791f8e938 ("SUNRPC: Convert xs_send_kvec() to use
+>>> iov_iter_kvec()")
+>>>     0472e47660 ("SUNRPC: Convert socket page send code to use
+>>> iov_iter()")
+>>>
+>>> e791f8e9380d945e 0472e476604998c127f3c80d291
+>>> ---------------- ---------------------------
+>>>          fail:runs  %reproduction    fail:runs
+>>>              |             |             |
+>>>              :4           50%           2:4     dmesg.WARNING:at#for
+>>> _ip_interrupt_entry/0x
+>>>            %stddev     %change         %stddev
+>>>                \          |                \
+>>>     15118573 ±  2%     +16.0%   17538083        fsmark.app_overhead
+>>>       510.93           -22.7%     395.12        fsmark.files_per_sec
+>>>        24.90           +22.8%      30.57        fsmark.time.elapsed_
+>>> time
+>>>        24.90           +22.8%      30.57        fsmark.time.elapsed_
+>>> time.max
+>>>       288.00 ±  2%     -
+>>> 27.8%     208.00        fsmark.time.percent_of_cpu_this_job_got
+>>>        70.03 ±  2%     -
+>>> 11.3%      62.14        fsmark.time.system_time
+>>>
+>>
+>> Do you have time to take a look at this regression?
 > 
-> Jitao has replied in v2[1]
-> "
-> mtk_dsi_start must after dsi full setting.
-> If you put it in mtk_dsi_ddp_start, mtk_dsi_set_mode won't work. DSI
-> will keep cmd mode. So you see no irq.
-> ...
-> "
+>  From your stats, it looks to me as if the problem is increased NUMA
+> overhead. Pretty much everything else appears to be the same or
+> actually performing better than previously. Am I interpreting that
+> correctly?
+The real regression is the throughput(fsmark.files_per_sec) is decreased 
+by 22.7%.
 > 
-> [1] https://lore.kernel.org/patchwork/patch/1052505/#1276270
+> If my interpretation above is correct, then I'm not seeing where this
+> patch would be introducing new NUMA regressions. It is just converting
+> from using one method of doing socket I/O to another. Could it perhaps
+> be a memory artefact due to your running the NFS client and server on
+> the same machine?
 > 
+> Apologies for pushing back a little, but I just don't have the
+> hardware available to test NUMA configurations, so I'm relying on
+> external testing for the above kind of scenario.
+> 
+Thanks for looking at this.  If you need more information, please let me
+know.
 > Thanks
+>    Trond
+> 
 
-OK, this looks the hardware behavior, so I would like you to add comment
-in the code to describe why we need this asymmetric behavior. The
-description should be clear so that we could know how to modify the code
-flow in future.
-
-Regards,
-CK
-
+-- 
+Zhengjun Xing
