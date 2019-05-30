@@ -2,174 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D6F530059
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 18:48:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DF0C3007D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 18:59:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727190AbfE3Qsv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 12:48:51 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:52348 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726015AbfE3Qsv (ORCPT
+        id S1727775AbfE3Q7T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 12:59:19 -0400
+Received: from esa5.hc3370-68.iphmx.com ([216.71.155.168]:26719 "EHLO
+        esa5.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727153AbfE3Q7T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 12:48:51 -0400
-Received: from mailhost.synopsys.com (dc2-mailhost1.synopsys.com [10.12.135.161])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 29CB7C020D;
-        Thu, 30 May 2019 16:48:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1559234913; bh=I8CpabKTC7cp43uKpZMBEkLYPK9H8pVEcumQE4+A1Qc=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=H1BMlWCiJxnPxLIJnT6Jh7jP57g/Bd7u0qmejFHOkpRaQItvYF0AYq8zmXRSB+mml
-         URMrWa9frLRVwCD7RTpVgDtolVRNWP8CVqly9Nf9u5fw+z9cQd/85gkWNvBVjzok4t
-         Ry7zQ3/zawnLwMC4LVMGcXTCAq/b+kvXFPqhK6mZ5o99iubcVXPOtWRUQ2FPGYOgDy
-         9Xgc79Nbz5hukcDPWh/HF1QfAagj9HwuVMoxpoWzSs1h4f08AXF5tFnwtH76yASplZ
-         XeOZ062RH9YQdBOtpFv5N9DX3ZC+YALIhlSFbgdRgfrfCoborax/Nkg2aQ/PhvRzMI
-         fYlycXtGilphA==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id A3CF5A00BA;
-        Thu, 30 May 2019 16:48:49 +0000 (UTC)
-Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.106) by
- us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 30 May 2019 09:48:45 -0700
-Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.103) by
- IN01WEHTCB.internal.synopsys.com (10.144.199.105) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 30 May 2019 22:18:42 +0530
-Received: from [10.10.161.35] (10.10.161.35) by
- IN01WEHTCA.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 30 May 2019 22:18:54 +0530
-Subject: Re: [PATCH 9/9] ARC: mm: do_page_fault refactor #8: release mmap_sem
- sooner
-To:     <linux-snps-arc@lists.infradead.org>
-CC:     Peter Zijlstra <peterz@infradead.org>, <paltsev@snyopsys.com>,
-        <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Newsgroups: gmane.linux.kernel.arc,gmane.linux.kernel
-References: <1557880176-24964-1-git-send-email-vgupta@synopsys.com>
- <1557880176-24964-10-git-send-email-vgupta@synopsys.com>
-From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vgupta@synopsys.com; keydata=
- mQINBFEffBMBEADIXSn0fEQcM8GPYFZyvBrY8456hGplRnLLFimPi/BBGFA24IR+B/Vh/EFk
- B5LAyKuPEEbR3WSVB1x7TovwEErPWKmhHFbyugdCKDv7qWVj7pOB+vqycTG3i16eixB69row
- lDkZ2RQyy1i/wOtHt8Kr69V9aMOIVIlBNjx5vNOjxfOLux3C0SRl1veA8sdkoSACY3McOqJ8
- zR8q1mZDRHCfz+aNxgmVIVFN2JY29zBNOeCzNL1b6ndjU73whH/1hd9YMx2Sp149T8MBpkuQ
- cFYUPYm8Mn0dQ5PHAide+D3iKCHMupX0ux1Y6g7Ym9jhVtxq3OdUI5I5vsED7NgV9c8++baM
- 7j7ext5v0l8UeulHfj4LglTaJIvwbUrCGgtyS9haKlUHbmey/af1j0sTrGxZs1ky1cTX7yeF
- nSYs12GRiVZkh/Pf3nRLkjV+kH++ZtR1GZLqwamiYZhAHjo1Vzyl50JT9EuX07/XTyq/Bx6E
- dcJWr79ZphJ+mR2HrMdvZo3VSpXEgjROpYlD4GKUApFxW6RrZkvMzuR2bqi48FThXKhFXJBd
- JiTfiO8tpXaHg/yh/V9vNQqdu7KmZIuZ0EdeZHoXe+8lxoNyQPcPSj7LcmE6gONJR8ZqAzyk
- F5voeRIy005ZmJJ3VOH3Gw6Gz49LVy7Kz72yo1IPHZJNpSV5xwARAQABtCpWaW5lZXQgR3Vw
- dGEgKGFsaWFzKSA8dmd1cHRhQHN5bm9wc3lzLmNvbT6JAj4EEwECACgCGwMGCwkIBwMCBhUI
- AgkKCwQWAgMBAh4BAheABQJbBYpwBQkLx0HcAAoJEGnX8d3iisJeChAQAMR2UVbJyydOv3aV
- jmqP47gVFq4Qml1weP5z6czl1I8n37bIhdW0/lV2Zll+yU1YGpMgdDTHiDqnGWi4pJeu4+c5
- xsI/VqkH6WWXpfruhDsbJ3IJQ46//jb79ogjm6VVeGlOOYxx/G/RUUXZ12+CMPQo7Bv+Jb+t
- NJnYXYMND2Dlr2TiRahFeeQo8uFbeEdJGDsSIbkOV0jzrYUAPeBwdN8N0eOB19KUgPqPAC4W
- HCg2LJ/o6/BImN7bhEFDFu7gTT0nqFVZNXlOw4UcGGpM3dq/qu8ZgRE0turY9SsjKsJYKvg4
- djAaOh7H9NJK72JOjUhXY/sMBwW5vnNwFyXCB5t4ZcNxStoxrMtyf35synJVinFy6wCzH3eJ
- XYNfFsv4gjF3l9VYmGEJeI8JG/ljYQVjsQxcrU1lf8lfARuNkleUL8Y3rtxn6eZVtAlJE8q2
- hBgu/RUj79BKnWEPFmxfKsaj8of+5wubTkP0I5tXh0akKZlVwQ3lbDdHxznejcVCwyjXBSny
- d0+qKIXX1eMh0/5sDYM06/B34rQyq9HZVVPRHdvsfwCU0s3G+5Fai02mK68okr8TECOzqZtG
- cuQmkAeegdY70Bpzfbwxo45WWQq8dSRURA7KDeY5LutMphQPIP2syqgIaiEatHgwetyVCOt6
- tf3ClCidHNaGky9KcNSQ
-Message-ID: <d7284369-52a6-71e5-65ae-75ec389eb92b@synopsys.com>
-Date:   Thu, 30 May 2019 09:48:34 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Thu, 30 May 2019 12:59:19 -0400
+X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Thu, 30 May 2019 12:59:18 EDT
+Authentication-Results: esa5.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=ian.jackson@eu.citrix.com; spf=Pass smtp.mailfrom=Ian.Jackson@citrix.com; spf=None smtp.helo=postmaster@MIAPEX02MSOL01.citrite.net
+Received-SPF: None (esa5.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  ian.jackson@eu.citrix.com) identity=pra;
+  client-ip=23.29.105.83; receiver=esa5.hc3370-68.iphmx.com;
+  envelope-from="Ian.Jackson@citrix.com";
+  x-sender="ian.jackson@eu.citrix.com";
+  x-conformance=sidf_compatible
+Received-SPF: Pass (esa5.hc3370-68.iphmx.com: domain of
+  Ian.Jackson@citrix.com designates 23.29.105.83 as permitted
+  sender) identity=mailfrom; client-ip=23.29.105.83;
+  receiver=esa5.hc3370-68.iphmx.com;
+  envelope-from="Ian.Jackson@citrix.com";
+  x-sender="Ian.Jackson@citrix.com";
+  x-conformance=sidf_compatible; x-record-type="v=spf1";
+  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
+  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
+  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
+  ip4:216.52.6.188 ip4:23.29.105.83 ip4:162.221.156.50 ~all"
+Received-SPF: None (esa5.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@MIAPEX02MSOL01.citrite.net) identity=helo;
+  client-ip=23.29.105.83; receiver=esa5.hc3370-68.iphmx.com;
+  envelope-from="Ian.Jackson@citrix.com";
+  x-sender="postmaster@MIAPEX02MSOL01.citrite.net";
+  x-conformance=sidf_compatible
+IronPort-SDR: j6Jla5bEjOysbWY33LQgBsckjzCSiUp/Xf80ERNKwuOaABxlNxI+FRTakiLW97oJOwguOEb3FY
+ Jsl8qgbIv/ozrbZ7fOVFrNTUaJtHliMomnFkbKdCSbhSWR33Rag3S1RIA1rhLVw6B2pzJiEy0r
+ ZHaXA2byisdFFypizTBrmsu0SmkRPjzGiCXiYUOrT+z2urjMQX5MHCsyMHVaf5PKkGA79LJZ9U
+ KdQyqKksZgusjCHkBMn622oo8tSbmeRngv04mVrJaCXwgrfnm/rZIMviUVqIMbiR5uzigWR6mD
+ XWg=
+X-SBRS: 2.7
+X-MesageID: 1092333
+X-Ironport-Server: esa5.hc3370-68.iphmx.com
+X-Remote-IP: 23.29.105.83
+X-Policy: $RELAYED
+X-IronPort-AV: E=Sophos;i="5.60,531,1549947600"; 
+   d="scan'208";a="1092333"
+From:   Ian Jackson <ian.jackson@eu.citrix.com>
+To:     <xen-devel@lists.xenproject.org>
+CC:     Ian Jackson <ian.jackson@eu.citrix.com>,
+        Julien Grall <julien.grall@arm.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Subject: [OSSTEST PATCH] ts-kernel-build: Disable CONFIG_ARCH_QCOM in Xen Project CI
+Date:   Thu, 30 May 2019 17:51:23 +0100
+Message-ID: <20190530165123.22593-1-ian.jackson@eu.citrix.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <c78c372a-4cf4-9721-38f2-d173eecee27e@arm.com>
+References: <c78c372a-4cf4-9721-38f2-d173eecee27e@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <1557880176-24964-10-git-send-email-vgupta@synopsys.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.10.161.35]
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/14/19 5:29 PM, Vineet Gupta wrote:
-> In case of successful page fault handling, this patch releases mmap_sem
-> before updating the perf stat event for major/minor faults. So even
-> though the contention reduction is NOT supe rhigh, it is still an
-> improvement.
+  drivers/firmware/qcom_scm.c:469:47: error: passing argument 3 of `dma_alloc_coherent' from incompatible pointer type [-Werror=incompatible-pointer-types]
 
-This patch causes regression: LMBench lat_sig triggers a bogus oom.
+This is fixed by
 
-The issue is not due to code movement of up_read() but as artifact of @fault
-initialized to VM_FAULT_ERROR. The lat_sig invalid access doesn't take
-handle_mm_fault() instead it hits !VM_WRITE case for write access leading to use
-of "initialized" value of @fault VM_FAULT_ERROR which includes VM_FAULT_OOM hence
-the bogus oom handling.
+  firmware: qcom_scm: Use proper types for dma mappings
 
+but this is not present in all relevant stable branches.
 
-> There's an additional code size improvement as we only have 2 up_read()
-> calls now.
-> 
-> Note to myself:
-> --------------
-> 
-> 1. Given the way it is done, we are forced to move @bad_area label earlier
->    causing the various "goto bad_area" cases to hit perf stat code.
-> 
->  - PERF_COUNT_SW_PAGE_FAULTS is NOW updated for access errors which is what
->    arm/arm64 seem to be doing as well (with slightly different code)
->  - PERF_COUNT_SW_PAGE_FAULTS_{MAJ,MIN} must NOT be updated for the
->    error case which is guarded by now setting @fault initial value
->    to VM_FAULT_ERROR which serves both cases when handle_mm_fault()
->    returns error or is not called at all.
-> 
-> 2. arm/arm64 use two homebrew fault flags VM_FAULT_BAD{MAP,MAPACCESS}
->    which I was inclined to add too but seems not needed for ARC
-> 
->  - given that we have everything is 1 function we cabn stil use goto
->  - we setup si_code at the right place (arm* do that in the end)
->  - we init fault already to error value which guards entry into perf
->    stats event update
-> 
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
-> ---
->  arch/arc/mm/fault.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/arc/mm/fault.c b/arch/arc/mm/fault.c
-> index 20402217d9da..e93ea06c214c 100644
-> --- a/arch/arc/mm/fault.c
-> +++ b/arch/arc/mm/fault.c
-> @@ -68,7 +68,7 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
->  	struct mm_struct *mm = tsk->mm;
->  	int sig, si_code = SEGV_MAPERR;
->  	unsigned int write = 0, exec = 0, mask;
-> -	vm_fault_t fault;			/* handle_mm_fault() output */
-> +	vm_fault_t fault = VM_FAULT_ERROR;	/* handle_mm_fault() output */
->  	unsigned int flags;			/* handle_mm_fault() input */
->  
->  	/*
-> @@ -155,6 +155,9 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
->  		}
->  	}
->  
-> +bad_area:
-> +	up_read(&mm->mmap_sem);
-> +
->  	/*
->  	 * Major/minor page fault accounting
->  	 * (in case of retry we only land here once)
-> @@ -173,13 +176,9 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
->  		}
->  
->  		/* Normal return path: fault Handled Gracefully */
-> -		up_read(&mm->mmap_sem);
->  		return;
->  	}
->  
-> -bad_area:
-> -	up_read(&mm->mmap_sem);
-> -
->  	if (!user_mode(regs))
->  		goto no_context;
->  
-> 
+We currently have no Qualcomm hardware in the Xen Project test lab so
+we do not need this enabled.
+
+CC: Julien Grall <julien.grall@arm.com
+CC: Stefano Stabellini <sstabellini@kernel.org>
+CC: linux-arm-msm@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+CC: Stephen Boyd <swboyd@chromium.org>
+CC: Andy Gross <agross@kernel.org>
+CC: Bjorn Andersson <bjorn.andersson@linaro.org>
+CC: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Signed-off-by: Ian Jackson <ian.jackson@eu.citrix.com>
+---
+ ts-kernel-build | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/ts-kernel-build b/ts-kernel-build
+index f7d059b0..5536586f 100755
+--- a/ts-kernel-build
++++ b/ts-kernel-build
+@@ -274,6 +274,10 @@ setopt CONFIG_MDIO_THUNDER=m
+ setopt CONFIG_I2C_THUNDERX=m
+ setopt CONFIG_SPI_THUNDERX=m
+ 
++# Some Linux branches we care about, including 4.19, still lack
++# firmware: qcom_scm: Use proper types for dma mappings
++CONFIG_ARCH_QCOM=n
++
+ ####
+ 
+ END
+-- 
+2.11.0
 
