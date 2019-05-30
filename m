@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E497A2F26A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:22:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D45452F4F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:44:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731775AbfE3EVi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:21:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37724 "EHLO mail.kernel.org"
+        id S2388232AbfE3EnG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:43:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730162AbfE3DPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:15:13 -0400
+        id S1727527AbfE3DMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:12:13 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98703245AD;
-        Thu, 30 May 2019 03:15:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA59E2446F;
+        Thu, 30 May 2019 03:12:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186112;
-        bh=xBU2hhLJSBFB5kZNSkrZObsIKiSrJiUa1t5WuCZg3jo=;
+        s=default; t=1559185933;
+        bh=ZeRxG86R+FVc7/S6lyEeqTu71EyFgNs7/FMQs5SVgZI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1lfa3IwC2CxxuYEF3FeEVmN/MYJZUk5AXcZ+KLc48i9jXkDOcXSNTfFlSxiIZ9w7F
-         a5Y7UgBlSz/H6kJziA8VWFsYG0p/7v8pCGAQWHqsO63SHmdx7Oeu0ghxv9D4Y7shOL
-         uLnAQNcED8igXiuJKX6XAiy8XVnk6TDa/srfvERk=
+        b=sqPUmvdpPeslw+ROWE7+wy0At+kdn4LjA5FOEZX4oXSwpEj1jL6UySPFcZV48l+E6
+         x1zpmTytGQNn6q3H9rblByy/EbaxaenTL19zgfBZFUmdfu0pUFcqSmollgFjtYH72M
+         hbM5TmvIk6PbzIPlOZaK0GwUItl08W+x9KAkE+60=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 254/346] HID: logitech-hidpp: change low battery level threshold from 31 to 30 percent
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 329/405] regulator: add regulator_get_linear_step() stub helper
 Date:   Wed, 29 May 2019 20:05:27 -0700
-Message-Id: <20190530030553.872780633@linuxfoundation.org>
+Message-Id: <20190530030557.387558374@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,49 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1f87b0cd32b3456d7efdfb017fcf74d0bfe3ec29 ]
+[ Upstream commit 7287275b4301e230be9e4569431c7dacb67ebc13 ]
 
-According to hidpp20_batterylevel_get_battery_info my Logitech K270
-keyboard reports only 2 battery levels. This matches with what I've seen
-after testing with batteries at varying level of fullness, it always
-reports either 5% or 30%.
+The regulator header has empty inline functions for most interfaces,
+but not regulator_get_linear_step(), which has just grown a user
+that does not depend on regulators otherwise:
 
-Windows reports "battery good" for the 30% level. I've captured an USB
-trace of Windows reading the battery and it is getting the same info
-as the Linux hidpp code gets.
+drivers/clk/tegra/clk-tegra124-dfll-fcpu.c: In function 'get_alignment_from_regulator':
+drivers/clk/tegra/clk-tegra124-dfll-fcpu.c:555:19: error: implicit declaration of function 'regulator_get_linear_step'; did you mean 'regulator_get_drvdata'? [-Werror=implicit-function-declaration]
+  align->step_uv = regulator_get_linear_step(reg);
+                   ^~~~~~~~~~~~~~~~~~~~~~~~~
+                   regulator_get_drvdata
+cc1: all warnings being treated as errors
+scripts/Makefile.build:278: recipe for target 'drivers/clk/tegra/clk-tegra124-dfll-fcpu.o' failed
 
-Now that Linux handles these devices as hidpp devices, it reports the
-battery as being low as it treats anything under 31% as low, this leads
-to the user constantly getting a "Keyboard battery is low" warning from
-GNOME3, which is very annoying.
+Add the missing stub along the others.
 
-This commit fixes this by changing the low threshold to anything under
-30%, which I assume is what Windows does.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Fixes: b3cf8d069505 ("clk: tegra: dfll: CVB calculation alignment with the regulator")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-logitech-hidpp.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ include/linux/regulator/consumer.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
-index ffd30c7492df8..e74fa990ba133 100644
---- a/drivers/hid/hid-logitech-hidpp.c
-+++ b/drivers/hid/hid-logitech-hidpp.c
-@@ -1021,7 +1021,11 @@ static int hidpp_map_battery_level(int capacity)
+diff --git a/include/linux/regulator/consumer.h b/include/linux/regulator/consumer.h
+index f3f76051e8b00..aaf3cee704397 100644
+--- a/include/linux/regulator/consumer.h
++++ b/include/linux/regulator/consumer.h
+@@ -478,6 +478,11 @@ static inline int regulator_is_supported_voltage(struct regulator *regulator,
+ 	return 0;
+ }
+ 
++static inline unsigned int regulator_get_linear_step(struct regulator *regulator)
++{
++	return 0;
++}
++
+ static inline int regulator_set_current_limit(struct regulator *regulator,
+ 					     int min_uA, int max_uA)
  {
- 	if (capacity < 11)
- 		return POWER_SUPPLY_CAPACITY_LEVEL_CRITICAL;
--	else if (capacity < 31)
-+	/*
-+	 * The spec says this should be < 31 but some devices report 30
-+	 * with brand new batteries and Windows reports 30 as "Good".
-+	 */
-+	else if (capacity < 30)
- 		return POWER_SUPPLY_CAPACITY_LEVEL_LOW;
- 	else if (capacity < 81)
- 		return POWER_SUPPLY_CAPACITY_LEVEL_NORMAL;
 -- 
 2.20.1
 
