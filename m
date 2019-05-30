@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27ED62F481
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:39:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BB5B2F177
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:13:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729162AbfE3DMl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:12:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49964 "EHLO mail.kernel.org"
+        id S1730973AbfE3ENO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:13:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728374AbfE3DLI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:11:08 -0400
+        id S1729472AbfE3DQX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:16:23 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0523124476;
-        Thu, 30 May 2019 03:11:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6FF6E2449A;
+        Thu, 30 May 2019 03:16:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185867;
-        bh=eh6h31HQ7VhWfJe/YCSWiRRtJiJ7KBMSnVVSP8weWXQ=;
+        s=default; t=1559186182;
+        bh=j0dlAoLur82D1+YxWJZQYbmS/2yzEpnrSLMWWUIoKIQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0yigU2cyWm8G/da5ZtkJNlYHXMmtqQuRt7BoW8bAGPMzXGiSJgEZfOMAgmFoeV0rW
-         YP4AJRg9rXXb5ixgA9h2HHhm3dyVX8u/apCyyGOKYsxrvP1/T/96OeXPptDvtdzlmg
-         QbHdVvRdTKKTpzgX8dQvBtfsrjuZ0j6/e0W/6s8g=
+        b=wACgOgQev+iAhBCuWxoPhkJZ559wvNHsED2MmNweSW0YpwmWbL9xOAWky2fHJRYvf
+         GN2FnEejAbbfZOKCNEQbBjzMUGy5ugJcx7KqSwQ9mdPxQBCwjdRMl0qjGWW4NX1Fh4
+         oL3sAl43NZgux2lf/Tx8R0mVYXRtkva3183Rfj6w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 189/405] ACPI/IORT: Reject platform device creation on NUMA node mapping failure
-Date:   Wed, 29 May 2019 20:03:07 -0700
-Message-Id: <20190530030550.586483052@linuxfoundation.org>
+        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.19 030/276] arm64: errata: Add workaround for Cortex-A76 erratum #1463225
+Date:   Wed, 29 May 2019 20:03:08 -0700
+Message-Id: <20190530030526.033339430@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,124 +44,245 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 36a2ba07757df790b4a874efb1a105b9330a9ae7 ]
+From: Will Deacon <will.deacon@arm.com>
 
-In a system where, through IORT firmware mappings, the SMMU device is
-mapped to a NUMA node that is not online, the kernel bootstrap results
-in the following crash:
+commit 969f5ea627570e91c9d54403287ee3ed657f58fe upstream.
 
-  Unable to handle kernel paging request at virtual address 0000000000001388
-  Mem abort info:
-    ESR = 0x96000004
-    Exception class = DABT (current EL), IL = 32 bits
-    SET = 0, FnV = 0
-    EA = 0, S1PTW = 0
-  Data abort info:
-    ISV = 0, ISS = 0x00000004
-    CM = 0, WnR = 0
-  [0000000000001388] user address but active_mm is swapper
-  Internal error: Oops: 96000004 [#1] SMP
-  Modules linked in:
-  CPU: 5 PID: 1 Comm: swapper/0 Not tainted 5.0.0 #15
-  pstate: 80c00009 (Nzcv daif +PAN +UAO)
-  pc : __alloc_pages_nodemask+0x13c/0x1068
-  lr : __alloc_pages_nodemask+0xdc/0x1068
-  ...
-  Process swapper/0 (pid: 1, stack limit = 0x(____ptrval____))
-  Call trace:
-   __alloc_pages_nodemask+0x13c/0x1068
-   new_slab+0xec/0x570
-   ___slab_alloc+0x3e0/0x4f8
-   __slab_alloc+0x60/0x80
-   __kmalloc_node_track_caller+0x10c/0x478
-   devm_kmalloc+0x44/0xb0
-   pinctrl_bind_pins+0x4c/0x188
-   really_probe+0x78/0x2b8
-   driver_probe_device+0x64/0x110
-   device_driver_attach+0x74/0x98
-   __driver_attach+0x9c/0xe8
-   bus_for_each_dev+0x84/0xd8
-   driver_attach+0x30/0x40
-   bus_add_driver+0x170/0x218
-   driver_register+0x64/0x118
-   __platform_driver_register+0x54/0x60
-   arm_smmu_driver_init+0x24/0x2c
-   do_one_initcall+0xbc/0x328
-   kernel_init_freeable+0x304/0x3ac
-   kernel_init+0x18/0x110
-   ret_from_fork+0x10/0x1c
-  Code: f90013b5 b9410fa1 1a9f0694 b50014c2 (b9400804)
-  ---[ end trace dfeaed4c373a32da ]--
+Revisions of the Cortex-A76 CPU prior to r4p0 are affected by an erratum
+that can prevent interrupts from being taken when single-stepping.
 
-Change the dev_set_proximity() hook prototype so that it returns a
-value and make it return failure if the PXM->NUMA-node mapping
-corresponds to an offline node, fixing the crash.
+This patch implements a software workaround to prevent userspace from
+effectively being able to disable interrupts.
 
-Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-Link: https://lore.kernel.org/linux-arm-kernel/20190315021940.86905-1-wangkefeng.wang@huawei.com/
+Cc: <stable@vger.kernel.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+
 ---
- drivers/acpi/arm64/iort.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ Documentation/arm64/silicon-errata.txt |    1 
+ arch/arm64/Kconfig                     |   18 ++++++++++++++++
+ arch/arm64/include/asm/cpucaps.h       |    3 +-
+ arch/arm64/include/asm/cputype.h       |    2 +
+ arch/arm64/kernel/cpu_errata.c         |   24 +++++++++++++++++++++
+ arch/arm64/kernel/syscall.c            |   31 +++++++++++++++++++++++++++
+ arch/arm64/mm/fault.c                  |   37 +++++++++++++++++++++++++++++++--
+ 7 files changed, 113 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-index e48894e002ba8..a46c2c162c03e 100644
---- a/drivers/acpi/arm64/iort.c
-+++ b/drivers/acpi/arm64/iort.c
-@@ -1232,18 +1232,24 @@ static bool __init arm_smmu_v3_is_coherent(struct acpi_iort_node *node)
- /*
-  * set numa proximity domain for smmuv3 device
-  */
--static void  __init arm_smmu_v3_set_proximity(struct device *dev,
-+static int  __init arm_smmu_v3_set_proximity(struct device *dev,
- 					      struct acpi_iort_node *node)
- {
- 	struct acpi_iort_smmu_v3 *smmu;
+--- a/Documentation/arm64/silicon-errata.txt
++++ b/Documentation/arm64/silicon-errata.txt
+@@ -58,6 +58,7 @@ stable kernels.
+ | ARM            | Cortex-A72      | #853709         | N/A                         |
+ | ARM            | Cortex-A73      | #858921         | ARM64_ERRATUM_858921        |
+ | ARM            | Cortex-A55      | #1024718        | ARM64_ERRATUM_1024718       |
++| ARM            | Cortex-A76      | #1463225        | ARM64_ERRATUM_1463225       |
+ | ARM            | MMU-500         | #841119,#826419 | N/A                         |
+ |                |                 |                 |                             |
+ | Cavium         | ThunderX ITS    | #22375, #24313  | CAVIUM_ERRATUM_22375        |
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -479,6 +479,24 @@ config ARM64_ERRATUM_1024718
  
- 	smmu = (struct acpi_iort_smmu_v3 *)node->node_data;
- 	if (smmu->flags & ACPI_IORT_SMMU_V3_PXM_VALID) {
--		set_dev_node(dev, acpi_map_pxm_to_node(smmu->pxm));
-+		int node = acpi_map_pxm_to_node(smmu->pxm);
+ 	  If unsure, say Y.
+ 
++config ARM64_ERRATUM_1463225
++	bool "Cortex-A76: Software Step might prevent interrupt recognition"
++	default y
++	help
++	  This option adds a workaround for Arm Cortex-A76 erratum 1463225.
 +
-+		if (node != NUMA_NO_NODE && !node_online(node))
-+			return -EINVAL;
++	  On the affected Cortex-A76 cores (r0p0 to r3p1), software stepping
++	  of a system call instruction (SVC) can prevent recognition of
++	  subsequent interrupts when software stepping is disabled in the
++	  exception handler of the system call and either kernel debugging
++	  is enabled or VHE is in use.
 +
-+		set_dev_node(dev, node);
- 		pr_info("SMMU-v3[%llx] Mapped to Proximity domain %d\n",
- 			smmu->base_address,
- 			smmu->pxm);
- 	}
-+	return 0;
++	  Work around the erratum by triggering a dummy step exception
++	  when handling a system call from a task that is being stepped
++	  in a VHE configuration of the kernel.
++
++	  If unsure, say Y.
++
+ config CAVIUM_ERRATUM_22375
+ 	bool "Cavium erratum 22375, 24313"
+ 	default y
+--- a/arch/arm64/include/asm/cpucaps.h
++++ b/arch/arm64/include/asm/cpucaps.h
+@@ -51,7 +51,8 @@
+ #define ARM64_SSBD				30
+ #define ARM64_MISMATCHED_CACHE_TYPE		31
+ #define ARM64_HAS_STAGE2_FWB			32
++#define ARM64_WORKAROUND_1463225		33
+ 
+-#define ARM64_NCAPS				33
++#define ARM64_NCAPS				34
+ 
+ #endif /* __ASM_CPUCAPS_H */
+--- a/arch/arm64/include/asm/cputype.h
++++ b/arch/arm64/include/asm/cputype.h
+@@ -86,6 +86,7 @@
+ #define ARM_CPU_PART_CORTEX_A75		0xD0A
+ #define ARM_CPU_PART_CORTEX_A35		0xD04
+ #define ARM_CPU_PART_CORTEX_A55		0xD05
++#define ARM_CPU_PART_CORTEX_A76		0xD0B
+ 
+ #define APM_CPU_PART_POTENZA		0x000
+ 
+@@ -110,6 +111,7 @@
+ #define MIDR_CORTEX_A75 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A75)
+ #define MIDR_CORTEX_A35 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A35)
+ #define MIDR_CORTEX_A55 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A55)
++#define MIDR_CORTEX_A76 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A76)
+ #define MIDR_THUNDERX	MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX)
+ #define MIDR_THUNDERX_81XX MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX_81XX)
+ #define MIDR_THUNDERX_83XX MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX_83XX)
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -411,6 +411,22 @@ static bool has_ssbd_mitigation(const st
  }
- #else
- #define arm_smmu_v3_set_proximity NULL
-@@ -1318,7 +1324,7 @@ struct iort_dev_config {
- 	int (*dev_count_resources)(struct acpi_iort_node *node);
- 	void (*dev_init_resources)(struct resource *res,
- 				     struct acpi_iort_node *node);
--	void (*dev_set_proximity)(struct device *dev,
-+	int (*dev_set_proximity)(struct device *dev,
- 				    struct acpi_iort_node *node);
+ #endif	/* CONFIG_ARM64_SSBD */
+ 
++#ifdef CONFIG_ARM64_ERRATUM_1463225
++DEFINE_PER_CPU(int, __in_cortex_a76_erratum_1463225_wa);
++
++static bool
++has_cortex_a76_erratum_1463225(const struct arm64_cpu_capabilities *entry,
++			       int scope)
++{
++	u32 midr = read_cpuid_id();
++	/* Cortex-A76 r0p0 - r3p1 */
++	struct midr_range range = MIDR_RANGE(MIDR_CORTEX_A76, 0, 0, 3, 1);
++
++	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
++	return is_midr_in_range(midr, &range) && is_kernel_in_hyp_mode();
++}
++#endif
++
+ #define CAP_MIDR_RANGE(model, v_min, r_min, v_max, r_max)	\
+ 	.matches = is_affected_midr_range,			\
+ 	.midr_range = MIDR_RANGE(model, v_min, r_min, v_max, r_max)
+@@ -680,6 +696,14 @@ const struct arm64_cpu_capabilities arm6
+ 		.matches = has_ssbd_mitigation,
+ 	},
+ #endif
++#ifdef CONFIG_ARM64_ERRATUM_1463225
++	{
++		.desc = "ARM erratum 1463225",
++		.capability = ARM64_WORKAROUND_1463225,
++		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
++		.matches = has_cortex_a76_erratum_1463225,
++	},
++#endif
+ 	{
+ 	}
  };
+--- a/arch/arm64/kernel/syscall.c
++++ b/arch/arm64/kernel/syscall.c
+@@ -8,6 +8,7 @@
+ #include <linux/syscalls.h>
  
-@@ -1369,8 +1375,11 @@ static int __init iort_add_platform_device(struct acpi_iort_node *node,
- 	if (!pdev)
- 		return -ENOMEM;
+ #include <asm/daifflags.h>
++#include <asm/debug-monitors.h>
+ #include <asm/fpsimd.h>
+ #include <asm/syscall.h>
+ #include <asm/thread_info.h>
+@@ -60,6 +61,35 @@ static inline bool has_syscall_work(unsi
+ int syscall_trace_enter(struct pt_regs *regs);
+ void syscall_trace_exit(struct pt_regs *regs);
  
--	if (ops->dev_set_proximity)
--		ops->dev_set_proximity(&pdev->dev, node);
-+	if (ops->dev_set_proximity) {
-+		ret = ops->dev_set_proximity(&pdev->dev, node);
-+		if (ret)
-+			goto dev_put;
-+	}
++#ifdef CONFIG_ARM64_ERRATUM_1463225
++DECLARE_PER_CPU(int, __in_cortex_a76_erratum_1463225_wa);
++
++static void cortex_a76_erratum_1463225_svc_handler(void)
++{
++	u32 reg, val;
++
++	if (!unlikely(test_thread_flag(TIF_SINGLESTEP)))
++		return;
++
++	if (!unlikely(this_cpu_has_cap(ARM64_WORKAROUND_1463225)))
++		return;
++
++	__this_cpu_write(__in_cortex_a76_erratum_1463225_wa, 1);
++	reg = read_sysreg(mdscr_el1);
++	val = reg | DBG_MDSCR_SS | DBG_MDSCR_KDE;
++	write_sysreg(val, mdscr_el1);
++	asm volatile("msr daifclr, #8");
++	isb();
++
++	/* We will have taken a single-step exception by this point */
++
++	write_sysreg(reg, mdscr_el1);
++	__this_cpu_write(__in_cortex_a76_erratum_1463225_wa, 0);
++}
++#else
++static void cortex_a76_erratum_1463225_svc_handler(void) { }
++#endif /* CONFIG_ARM64_ERRATUM_1463225 */
++
+ static void el0_svc_common(struct pt_regs *regs, int scno, int sc_nr,
+ 			   const syscall_fn_t syscall_table[])
+ {
+@@ -68,6 +98,7 @@ static void el0_svc_common(struct pt_reg
+ 	regs->orig_x0 = regs->regs[0];
+ 	regs->syscallno = scno;
  
- 	count = ops->dev_count_resources(node);
++	cortex_a76_erratum_1463225_svc_handler();
+ 	local_daif_restore(DAIF_PROCCTX);
+ 	user_exit();
  
--- 
-2.20.1
-
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -827,14 +827,47 @@ void __init hook_debug_fault_code(int nr
+ 	debug_fault_info[nr].name	= name;
+ }
+ 
++#ifdef CONFIG_ARM64_ERRATUM_1463225
++DECLARE_PER_CPU(int, __in_cortex_a76_erratum_1463225_wa);
++
++static int __exception
++cortex_a76_erratum_1463225_debug_handler(struct pt_regs *regs)
++{
++	if (user_mode(regs))
++		return 0;
++
++	if (!__this_cpu_read(__in_cortex_a76_erratum_1463225_wa))
++		return 0;
++
++	/*
++	 * We've taken a dummy step exception from the kernel to ensure
++	 * that interrupts are re-enabled on the syscall path. Return back
++	 * to cortex_a76_erratum_1463225_svc_handler() with debug exceptions
++	 * masked so that we can safely restore the mdscr and get on with
++	 * handling the syscall.
++	 */
++	regs->pstate |= PSR_D_BIT;
++	return 1;
++}
++#else
++static int __exception
++cortex_a76_erratum_1463225_debug_handler(struct pt_regs *regs)
++{
++	return 0;
++}
++#endif /* CONFIG_ARM64_ERRATUM_1463225 */
++
+ asmlinkage int __exception do_debug_exception(unsigned long addr_if_watchpoint,
+-					      unsigned int esr,
+-					      struct pt_regs *regs)
++					       unsigned int esr,
++					       struct pt_regs *regs)
+ {
+ 	const struct fault_info *inf = debug_fault_info + DBG_ESR_EVT(esr);
+ 	unsigned long pc = instruction_pointer(regs);
+ 	int rv;
+ 
++	if (cortex_a76_erratum_1463225_debug_handler(regs))
++		return 0;
++
+ 	/*
+ 	 * Tell lockdep we disabled irqs in entry.S. Do nothing if they were
+ 	 * already disabled to preserve the last enabled/disabled addresses.
 
 
