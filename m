@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A047F2F4BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:42:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D4132ECF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:29:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388689AbfE3ElL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:41:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55126 "EHLO mail.kernel.org"
+        id S2388315AbfE3D3K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:29:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58858 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729024AbfE3DM1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:27 -0400
+        id S1732214AbfE3DUa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:20:30 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 129FA23CCB;
-        Thu, 30 May 2019 03:12:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D7DE824935;
+        Thu, 30 May 2019 03:20:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185946;
-        bh=R+1SEPBkQ9tLiLcev28eLtWcpov6GKMZtJNoicwTjOo=;
+        s=default; t=1559186429;
+        bh=xRLPPDSOe5R0WdoMpGbvWI9zCEHuQCC+K78pPPWM44k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0Y4mU5bvmXpYV9OOhF/flQhwNUojUgPvZ7FC3I7tg6VPdPK0iOIbnFW7AOv6rDkn1
-         NrtxCEsB+vjoLDFDRuVmTWjaY8PexGBQcmA5TNX7/c6lvf0+jyva/496lz4LdAAHWF
-         LBrbe9elui9EOcdgdTNfF+WJN3BsSuFTTaMpEV+Y=
+        b=JrSQJo5skfXDWl+gB/xPl2Bm5YIVLWpvpJWBCT4eaFJSxdhW6hlPc89EtvtAhmjno
+         JrZHfmzy/2LZuVQ/hgFkQkSvAs7dqOsmr3tnNu29b0kTFy0FMEQLj7PX5Mm36jFwKV
+         L4kBm8gt79l941pvGfMUQPQq3OWideEijf5DUcaY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 355/405] media: vicodec: avoid clang frame size warning
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Wang Nan <wangnan0@huawei.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ben Hutchings <ben@decadent.org.uk>
+Subject: [PATCH 4.9 021/128] tools include: Adopt linux/bits.h
 Date:   Wed, 29 May 2019 20:05:53 -0700
-Message-Id: <20190530030558.602845501@linuxfoundation.org>
+Message-Id: <20190530030438.742658224@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,105 +48,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e855165f3dae6f71da859a5f00b85d5368641d61 ]
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Clang-9 makes some different inlining decisions compared to gcc, which
-leads to a warning about a possible stack overflow problem when building
-with CONFIG_KASAN, including when setting asan-stack=0, which avoids
-most other frame overflow warnings:
+commit ba4aa02b417f08a0bee5e7b8ed70cac788a7c854 upstream.
 
-drivers/media/platform/vicodec/codec-fwht.c:673:12: error: stack frame size of 2224 bytes in function 'encode_plane'
+So that we reduce the difference of tools/include/linux/bitops.h to the
+original kernel file, include/linux/bitops.h, trying to remove the need
+to define BITS_PER_LONG, to avoid clashes with asm/bitsperlong.h.
 
-Manually adding noinline_for_stack annotations in those functions
-called by encode_plane() or decode_plane() that require a significant
-amount of kernel stack makes this impossible to happen with any
-compiler.
+And the things removed from tools/include/linux/bitops.h are really in
+linux/bits.h, so that we can have a copy and then
+tools/perf/check_headers.sh will tell us when new stuff gets added to
+linux/bits.h so that we can check if it is useful and if any adjustment
+needs to be done to the tools/{include,arch}/ copies.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-y1sqyydvfzo0bjjoj4zsl562@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+[bwh: Backported to 4.9 as dependency of "x86/msr-index: Cleanup bit defines";
+ adjusted context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/platform/vicodec/codec-fwht.c | 29 +++++++++++++--------
- 1 file changed, 18 insertions(+), 11 deletions(-)
+ tools/include/linux/bitops.h |    7 ++-----
+ tools/include/linux/bits.h   |   26 ++++++++++++++++++++++++++
+ tools/perf/check-headers.sh  |    1 +
+ 3 files changed, 29 insertions(+), 5 deletions(-)
+ create mode 100644 tools/include/linux/bits.h
 
-diff --git a/drivers/media/platform/vicodec/codec-fwht.c b/drivers/media/platform/vicodec/codec-fwht.c
-index d1d6085da9f1d..cf469a1191aa7 100644
---- a/drivers/media/platform/vicodec/codec-fwht.c
-+++ b/drivers/media/platform/vicodec/codec-fwht.c
-@@ -46,8 +46,12 @@ static const uint8_t zigzag[64] = {
- 	63,
- };
+--- a/tools/include/linux/bitops.h
++++ b/tools/include/linux/bitops.h
+@@ -3,8 +3,6 @@
  
+ #include <asm/types.h>
+ #include <linux/kernel.h>
+-#include <linux/compiler.h>
 -
--static int rlc(const s16 *in, __be16 *output, int blocktype)
+ #ifndef __WORDSIZE
+ #define __WORDSIZE (__SIZEOF_LONG__ * 8)
+ #endif
+@@ -12,10 +10,9 @@
+ #ifndef BITS_PER_LONG
+ # define BITS_PER_LONG __WORDSIZE
+ #endif
++#include <linux/bits.h>
++#include <linux/compiler.h>
+ 
+-#define BIT_MASK(nr)		(1UL << ((nr) % BITS_PER_LONG))
+-#define BIT_WORD(nr)		((nr) / BITS_PER_LONG)
+-#define BITS_PER_BYTE		8
+ #define BITS_TO_LONGS(nr)	DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(long))
+ #define BITS_TO_U64(nr)		DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(u64))
+ #define BITS_TO_U32(nr)		DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(u32))
+--- /dev/null
++++ b/tools/include/linux/bits.h
+@@ -0,0 +1,26 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __LINUX_BITS_H
++#define __LINUX_BITS_H
++#include <asm/bitsperlong.h>
++
++#define BIT(nr)			(1UL << (nr))
++#define BIT_ULL(nr)		(1ULL << (nr))
++#define BIT_MASK(nr)		(1UL << ((nr) % BITS_PER_LONG))
++#define BIT_WORD(nr)		((nr) / BITS_PER_LONG)
++#define BIT_ULL_MASK(nr)	(1ULL << ((nr) % BITS_PER_LONG_LONG))
++#define BIT_ULL_WORD(nr)	((nr) / BITS_PER_LONG_LONG)
++#define BITS_PER_BYTE		8
++
 +/*
-+ * noinline_for_stack to work around
-+ * https://bugs.llvm.org/show_bug.cgi?id=38809
++ * Create a contiguous bitmask starting at bit position @l and ending at
++ * position @h. For example
++ * GENMASK_ULL(39, 21) gives us the 64bit vector 0x000000ffffe00000.
 + */
-+static int noinline_for_stack
-+rlc(const s16 *in, __be16 *output, int blocktype)
- {
- 	s16 block[8 * 8];
- 	s16 *wp = block;
-@@ -106,8 +110,8 @@ static int rlc(const s16 *in, __be16 *output, int blocktype)
-  * This function will worst-case increase rlc_in by 65*2 bytes:
-  * one s16 value for the header and 8 * 8 coefficients of type s16.
-  */
--static u16 derlc(const __be16 **rlc_in, s16 *dwht_out,
--		 const __be16 *end_of_input)
-+static noinline_for_stack u16
-+derlc(const __be16 **rlc_in, s16 *dwht_out, const __be16 *end_of_input)
- {
- 	/* header */
- 	const __be16 *input = *rlc_in;
-@@ -240,8 +244,9 @@ static void dequantize_inter(s16 *coeff)
- 			*coeff <<= *quant;
- }
- 
--static void fwht(const u8 *block, s16 *output_block, unsigned int stride,
--		 unsigned int input_step, bool intra)
-+static void noinline_for_stack fwht(const u8 *block, s16 *output_block,
-+				    unsigned int stride,
-+				    unsigned int input_step, bool intra)
- {
- 	/* we'll need more than 8 bits for the transformed coefficients */
- 	s32 workspace1[8], workspace2[8];
-@@ -373,7 +378,8 @@ static void fwht(const u8 *block, s16 *output_block, unsigned int stride,
-  * Furthermore values can be negative... This is just a version that
-  * works with 16 signed data
-  */
--static void fwht16(const s16 *block, s16 *output_block, int stride, int intra)
-+static void noinline_for_stack
-+fwht16(const s16 *block, s16 *output_block, int stride, int intra)
- {
- 	/* we'll need more than 8 bits for the transformed coefficients */
- 	s32 workspace1[8], workspace2[8];
-@@ -456,7 +462,8 @@ static void fwht16(const s16 *block, s16 *output_block, int stride, int intra)
- 	}
- }
- 
--static void ifwht(const s16 *block, s16 *output_block, int intra)
-+static noinline_for_stack void
-+ifwht(const s16 *block, s16 *output_block, int intra)
- {
- 	/*
- 	 * we'll need more than 8 bits for the transformed coefficients
-@@ -604,9 +611,9 @@ static int var_inter(const s16 *old, const s16 *new)
- 	return ret;
- }
- 
--static int decide_blocktype(const u8 *cur, const u8 *reference,
--			    s16 *deltablock, unsigned int stride,
--			    unsigned int input_step)
-+static noinline_for_stack int
-+decide_blocktype(const u8 *cur, const u8 *reference, s16 *deltablock,
-+		 unsigned int stride, unsigned int input_step)
- {
- 	s16 tmp[64];
- 	s16 old[64];
--- 
-2.20.1
-
++#define GENMASK(h, l) \
++	(((~0UL) - (1UL << (l)) + 1) & (~0UL >> (BITS_PER_LONG - 1 - (h))))
++
++#define GENMASK_ULL(h, l) \
++	(((~0ULL) - (1ULL << (l)) + 1) & \
++	 (~0ULL >> (BITS_PER_LONG_LONG - 1 - (h))))
++
++#endif	/* __LINUX_BITS_H */
+--- a/tools/perf/check-headers.sh
++++ b/tools/perf/check-headers.sh
+@@ -4,6 +4,7 @@ HEADERS='
+ include/uapi/linux/fcntl.h
+ include/uapi/linux/perf_event.h
+ include/uapi/linux/stat.h
++include/linux/bits.h
+ include/linux/hash.h
+ include/uapi/linux/hw_breakpoint.h
+ arch/x86/include/asm/disabled-features.h
 
 
