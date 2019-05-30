@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 875212F12D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:11:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 208F62F00C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:01:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726828AbfE3EK4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:10:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44420 "EHLO mail.kernel.org"
+        id S2388013AbfE3D7v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:59:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727612AbfE3DQ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:16:58 -0400
+        id S1731574AbfE3DSb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:18:31 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50ACD24646;
-        Thu, 30 May 2019 03:16:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3BC9247D4;
+        Thu, 30 May 2019 03:18:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186217;
-        bh=3bXHZzvKXyytTWbUilpHdWW3mqkSwQgfLkel3gxWD6Q=;
+        s=default; t=1559186311;
+        bh=jg3i/Q1qNmu17a97+l+Rkl3xirT3wgwiD63RXH7z14E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QbU685Oj1HhxSXc+rymFdF2uDmOzv5x2P7JMrqGnTPaoS3XYfaX52XGs5op6gETqH
-         daKelX13273QdYv4mRTqS02b0SN07krlLqCl2eAK8pfQWcPZ8nEl3FYwUO8XIgaook
-         gNcXfcsLgfrfGgxRtT3Ufm85GMuaxpw4EYFBhNz4=
+        b=ez41Vvghh8IS5HMgP3fa9eRdTgRv5C38L+JIP93dlwyWln37W1AnA9TJSn+pqg+M4
+         aUExhNDkd+Ex1gqF9KehdLlK2vaRctkMVnOIPHuLwPyj1CWlfAKAOz7dWfLHflhykJ
+         OAZ1BspzB8shLomEQXinoUOL68PSFgKs173wtT1M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 106/276] bcache: avoid clang -Wunintialized warning
-Date:   Wed, 29 May 2019 20:04:24 -0700
-Message-Id: <20190530030532.661154521@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.14 011/193] kvm: svm/avic: fix off-by-one in checking host APIC ID
+Date:   Wed, 29 May 2019 20:04:25 -0700
+Message-Id: <20190530030449.164544652@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,75 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 78d4eb8ad9e1d413449d1b7a060f50b6efa81ebd ]
+From: Suthikulpanit, Suravee <Suravee.Suthikulpanit@amd.com>
 
-clang has identified a code path in which it thinks a
-variable may be unused:
+commit c9bcd3e3335d0a29d89fabd2c385e1b989e6f1b0 upstream.
 
-drivers/md/bcache/alloc.c:333:4: error: variable 'bucket' is used uninitialized whenever 'if' condition is false
-      [-Werror,-Wsometimes-uninitialized]
-                        fifo_pop(&ca->free_inc, bucket);
-                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/md/bcache/util.h:219:27: note: expanded from macro 'fifo_pop'
- #define fifo_pop(fifo, i)       fifo_pop_front(fifo, (i))
-                                ^~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/md/bcache/util.h:189:6: note: expanded from macro 'fifo_pop_front'
-        if (_r) {                                                       \
-            ^~
-drivers/md/bcache/alloc.c:343:46: note: uninitialized use occurs here
-                        allocator_wait(ca, bch_allocator_push(ca, bucket));
-                                                                  ^~~~~~
-drivers/md/bcache/alloc.c:287:7: note: expanded from macro 'allocator_wait'
-                if (cond)                                               \
-                    ^~~~
-drivers/md/bcache/alloc.c:333:4: note: remove the 'if' if its condition is always true
-                        fifo_pop(&ca->free_inc, bucket);
-                        ^
-drivers/md/bcache/util.h:219:27: note: expanded from macro 'fifo_pop'
- #define fifo_pop(fifo, i)       fifo_pop_front(fifo, (i))
-                                ^
-drivers/md/bcache/util.h:189:2: note: expanded from macro 'fifo_pop_front'
-        if (_r) {                                                       \
-        ^
-drivers/md/bcache/alloc.c:331:15: note: initialize the variable 'bucket' to silence this warning
-                        long bucket;
-                                   ^
+Current logic does not allow VCPU to be loaded onto CPU with
+APIC ID 255. This should be allowed since the host physical APIC ID
+field in the AVIC Physical APIC table entry is an 8-bit value,
+and APIC ID 255 is valid in system with x2APIC enabled.
+Instead, do not allow VCPU load if the host APIC ID cannot be
+represented by an 8-bit value.
 
-This cannot happen in practice because we only enter the loop
-if there is at least one element in the list.
+Also, use the more appropriate AVIC_PHYSICAL_ID_ENTRY_HOST_PHYSICAL_ID_MASK
+instead of AVIC_MAX_PHYSICAL_ID_COUNT.
 
-Slightly rearranging the code makes this clearer to both the
-reader and the compiler, which avoids the warning.
+Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Coly Li <colyli@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/bcache/alloc.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/x86/kvm/svm.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
-index 7a28232d868bd..de85b3af3b39d 100644
---- a/drivers/md/bcache/alloc.c
-+++ b/drivers/md/bcache/alloc.c
-@@ -327,10 +327,11 @@ static int bch_allocator_thread(void *arg)
- 		 * possibly issue discards to them, then we add the bucket to
- 		 * the free list:
- 		 */
--		while (!fifo_empty(&ca->free_inc)) {
-+		while (1) {
- 			long bucket;
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -1567,7 +1567,11 @@ static void avic_vcpu_load(struct kvm_vc
+ 	if (!kvm_vcpu_apicv_active(vcpu))
+ 		return;
  
--			fifo_pop(&ca->free_inc, bucket);
-+			if (!fifo_pop(&ca->free_inc, bucket))
-+				break;
+-	if (WARN_ON(h_physical_id >= AVIC_MAX_PHYSICAL_ID_COUNT))
++	/*
++	 * Since the host physical APIC id is 8 bits,
++	 * we can support host APIC ID upto 255.
++	 */
++	if (WARN_ON(h_physical_id > AVIC_PHYSICAL_ID_ENTRY_HOST_PHYSICAL_ID_MASK))
+ 		return;
  
- 			if (ca->discard) {
- 				mutex_unlock(&ca->set->bucket_lock);
--- 
-2.20.1
-
+ 	entry = READ_ONCE(*(svm->avic_physical_id_cache));
 
 
