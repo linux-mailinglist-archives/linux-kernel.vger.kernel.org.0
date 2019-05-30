@@ -2,93 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 537672EF4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:54:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43F9E2EAED
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:05:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730487AbfE3DTT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:19:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38048 "EHLO mail.kernel.org"
+        id S1727233AbfE3DEp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:04:45 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:53496 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730220AbfE3DPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:15:19 -0400
-Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C339244EF;
-        Thu, 30 May 2019 03:15:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186119;
-        bh=bmIDE/+Xkt7XGk6yuVmAAmrVXMMsgGwQY8tQHKItI5Q=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YQuK9lolGGdshfgdds0Qw/u6GEg4tC5xE/bn0Wcj5x8tP62LVmslzWiuOoli2ZhsL
-         V3ZOho3b0d+sRXwm/Ipxh6re5kRYGoT52Tj40MibC1d/X7I+Z8VDKUsG8B6EpERwXu
-         tDP10nZodyiEd+cL1SsgAIdfqo2a1KiletCzIJ/U=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 273/346] rcuperf: Fix cleanup path for invalid perf_type strings
-Date:   Wed, 29 May 2019 20:05:46 -0700
-Message-Id: <20190530030554.792114392@linuxfoundation.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
-User-Agent: quilt/0.66
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1726450AbfE3DEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:04:45 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7EA461A11ED;
+        Thu, 30 May 2019 05:04:43 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 57A021A0164;
+        Thu, 30 May 2019 05:04:33 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 01381402FA;
+        Thu, 30 May 2019 11:04:20 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
+        stefan@agner.ch, kernel@pengutronix.de, linus.walleij@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        maxime.ripard@bootlin.com, olof@lixom.net,
+        horms+renesas@verge.net.au, jagan@amarulasolutions.com,
+        leonard.crestez@nxp.com, bjorn.andersson@linaro.org,
+        dinguyen@kernel.org, enric.balletbo@collabora.com,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH 3/3] arm64: defconfig: Select CONFIG_PINCTRL_IMX8MN by default
+Date:   Thu, 30 May 2019 11:05:46 +0800
+Message-Id: <20190530030546.9224-3-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190530030546.9224-1-Anson.Huang@nxp.com>
+References: <20190530030546.9224-1-Anson.Huang@nxp.com>
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ad092c027713a68a34168942a5ef422e42e039f4 ]
+From: Anson Huang <Anson.Huang@nxp.com>
 
-If the specified rcuperf.perf_type is not in the rcu_perf_init()
-function's perf_ops[] array, rcuperf prints some console messages and
-then invokes rcu_perf_cleanup() to set state so that a future torture
-test can run.  However, rcu_perf_cleanup() also attempts to end the
-test that didn't actually start, and in doing so relies on the value
-of cur_ops, a value that is not particularly relevant in this case.
-This can result in confusing output or even follow-on failures due to
-attempts to use facilities that have not been properly initialized.
+Enable CONFIG_PINCTRL_IMX8MN by default to support i.MX8MN
+pinctrl driver.
 
-This commit therefore sets the value of cur_ops to NULL in this case and
-inserts a check near the beginning of rcu_perf_cleanup(), thus avoiding
-relying on an irrelevant cur_ops value.
-
-Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- kernel/rcu/rcuperf.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
-index b459da70b4fc3..5444a78314512 100644
---- a/kernel/rcu/rcuperf.c
-+++ b/kernel/rcu/rcuperf.c
-@@ -501,6 +501,10 @@ rcu_perf_cleanup(void)
- 
- 	if (torture_cleanup_begin())
- 		return;
-+	if (!cur_ops) {
-+		torture_cleanup_end();
-+		return;
-+	}
- 
- 	if (reader_tasks) {
- 		for (i = 0; i < nrealreaders; i++)
-@@ -621,6 +625,7 @@ rcu_perf_init(void)
- 		pr_cont("\n");
- 		WARN_ON(!IS_MODULE(CONFIG_RCU_PERF_TEST));
- 		firsterr = -EINVAL;
-+		cur_ops = NULL;
- 		goto unwind;
- 	}
- 	if (cur_ops->init)
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 7c7b6b5..8d4f25c 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -373,6 +373,7 @@ CONFIG_SPI_SUN6I=y
+ CONFIG_SPMI=y
+ CONFIG_PINCTRL_SINGLE=y
+ CONFIG_PINCTRL_MAX77620=y
++CONFIG_PINCTRL_IMX8MN=y
+ CONFIG_PINCTRL_IMX8MM=y
+ CONFIG_PINCTRL_IMX8MQ=y
+ CONFIG_PINCTRL_IMX8QXP=y
 -- 
-2.20.1
-
-
+2.7.4
 
