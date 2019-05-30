@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99E272F014
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:01:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 983532EE3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:45:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727101AbfE3EAT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:00:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51202 "EHLO mail.kernel.org"
+        id S1732978AbfE3Dpd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:45:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731542AbfE3DSZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:25 -0400
+        id S1732331AbfE3DUs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:20:48 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18958247B4;
-        Thu, 30 May 2019 03:18:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CF8224905;
+        Thu, 30 May 2019 03:20:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186305;
-        bh=jP6U941xMJ/pMv0W8Qfpa6TpUNeBvAA7kHsdYd6KMp0=;
+        s=default; t=1559186447;
+        bh=n0EU5+leGe+lJAsvMkP5CTo0DLy0+7c5xiTlKmyNsX0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EfASfxLfgsJQ6sktYX5S/1KqUTJ25GfACTOTcM8rXQmGyslJNx1ggCRBCKyR0n/uQ
-         UC1wSLH/ikwCuTDGblrIz57im6b7UrSr3swRUIMzINGBTA9poYE/IfoHsa9r4urhvQ
-         6Rb9ya4NA5oytJyiik6oTXcwtyeDjIqjlz8zalSY=
+        b=bAPmCv5mbuieZYXuKzcxp2Bkm6xk2hidovMwlHRiltrwY6hspciOXZfHn/CjyMPx2
+         EKe3uq1293ebDFpZhkMkgOZhc1U4KJam9MYhH6HDskP7suU933PZPUo4HbVI1KJVWs
+         EmhHCP1KuE9qNry8cVByF4X7EjjxvEqoEs4DYK5A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        David Sterba <dsterba@suse.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 229/276] tty: ipwireless: fix missing checks for ioremap
+        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 055/128] pinctrl: pistachio: fix leaked of_node references
 Date:   Wed, 29 May 2019 20:06:27 -0700
-Message-Id: <20190530030539.436725256@linuxfoundation.org>
+Message-Id: <20190530030444.827117887@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,47 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1bbb1c318cd8a3a39e8c3e2e83d5e90542d6c3e3 ]
+[ Upstream commit 44a4455ac2c6b0981eace683a2b6eccf47689022 ]
 
-ipw->attr_memory and ipw->common_memory are assigned with the
-return value of ioremap. ioremap may fail, but no checks
-are enforced. The fix inserts the checks to avoid potential
-NULL pointer dereferences.
+The call to of_get_child_by_name returns a node pointer with refcount
+incremented thus it must be explicitly decremented after the last
+usage.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Detected by coccinelle with the following warnings:
+./drivers/pinctrl/pinctrl-pistachio.c:1422:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 1360, but without a corresponding object release within this function.
+
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/ipwireless/main.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/pinctrl/pinctrl-pistachio.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/tty/ipwireless/main.c b/drivers/tty/ipwireless/main.c
-index 3475e841ef5c1..4c18bbfe1a92e 100644
---- a/drivers/tty/ipwireless/main.c
-+++ b/drivers/tty/ipwireless/main.c
-@@ -114,6 +114,10 @@ static int ipwireless_probe(struct pcmcia_device *p_dev, void *priv_data)
- 
- 	ipw->common_memory = ioremap(p_dev->resource[2]->start,
- 				resource_size(p_dev->resource[2]));
-+	if (!ipw->common_memory) {
-+		ret = -ENOMEM;
-+		goto exit1;
-+	}
- 	if (!request_mem_region(p_dev->resource[2]->start,
- 				resource_size(p_dev->resource[2]),
- 				IPWIRELESS_PCCARD_NAME)) {
-@@ -134,6 +138,10 @@ static int ipwireless_probe(struct pcmcia_device *p_dev, void *priv_data)
- 
- 	ipw->attr_memory = ioremap(p_dev->resource[3]->start,
- 				resource_size(p_dev->resource[3]));
-+	if (!ipw->attr_memory) {
-+		ret = -ENOMEM;
-+		goto exit3;
-+	}
- 	if (!request_mem_region(p_dev->resource[3]->start,
- 				resource_size(p_dev->resource[3]),
- 				IPWIRELESS_PCCARD_NAME)) {
+diff --git a/drivers/pinctrl/pinctrl-pistachio.c b/drivers/pinctrl/pinctrl-pistachio.c
+index 55375b1b3cc81..b2b7e238bda97 100644
+--- a/drivers/pinctrl/pinctrl-pistachio.c
++++ b/drivers/pinctrl/pinctrl-pistachio.c
+@@ -1368,6 +1368,7 @@ static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
+ 		if (!of_find_property(child, "gpio-controller", NULL)) {
+ 			dev_err(pctl->dev,
+ 				"No gpio-controller property for bank %u\n", i);
++			of_node_put(child);
+ 			ret = -ENODEV;
+ 			goto err;
+ 		}
+@@ -1375,6 +1376,7 @@ static int pistachio_gpio_register(struct pistachio_pinctrl *pctl)
+ 		irq = irq_of_parse_and_map(child, 0);
+ 		if (irq < 0) {
+ 			dev_err(pctl->dev, "No IRQ for bank %u: %d\n", i, irq);
++			of_node_put(child);
+ 			ret = irq;
+ 			goto err;
+ 		}
 -- 
 2.20.1
 
