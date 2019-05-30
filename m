@@ -2,139 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 715322F0DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:08:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 697CC2EDA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:40:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbfE3EHx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:07:53 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:43845 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731084AbfE3DRZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:17:25 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Dt6n5N36z9sQr;
-        Thu, 30 May 2019 13:17:21 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1559186242;
-        bh=9+KNxKl040dLwGXZ8/yu2FEkk+iG0IsjYZFOHUKcuRA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=vGCwgvCrGbi8kUfybY6qOeaGw3gfTGVIT8rEt4UPomauQWv181+NLL04TfzN5TXqq
-         merrCo6EvDiX5DmvvtMzfXI4Q2rROxjGD45w+ksoTO/b51ssEyIJz+z098d+BdqqVB
-         wirJnpyma6zcPOyVSqzeUFHEamKtIFqhKpNkXgK0VWRWJQ751i1zMGYvHvktzmOC2v
-         I0klK38eCkHCwMlCFqe+u4w008uXBAxztBXSAxvqvraIPv6RNo/0M1LnVWzpq80CE+
-         zXDqaaC/1/myHKROvLerZjC980raeT1rbjAMz/Jow7+EkY68YwEJtkGDMQClzj2rev
-         q1y7g8uok0yRQ==
-Date:   Thu, 30 May 2019 13:17:21 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: linux-next: manual merge of the userns tree with the arc-current
- tree
-Message-ID: <20190530131721.0af603a4@canb.auug.org.au>
+        id S1728110AbfE3DjB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:39:01 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:49725 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732844AbfE3DWb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:22:31 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R451e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0TT-SMAB_1559186545;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TT-SMAB_1559186545)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 30 May 2019 11:22:26 +0800
+Subject: Re: [RFC PATCH 0/3] Make deferred split shrinker memcg aware
+To:     David Rientjes <rientjes@google.com>
+Cc:     ktkhai@virtuozzo.com, hannes@cmpxchg.org, mhocko@suse.com,
+        kirill.shutemov@linux.intel.com, hughd@google.com,
+        shakeelb@google.com, Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1559047464-59838-1-git-send-email-yang.shi@linux.alibaba.com>
+ <alpine.DEB.2.21.1905281817090.86034@chino.kir.corp.google.com>
+ <2e23bd8c-6120-5a86-9e9e-ab43b02ce150@linux.alibaba.com>
+ <alpine.DEB.2.21.1905291402360.242480@chino.kir.corp.google.com>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <9af25d50-576a-3cc3-20a3-c0c61cf3e494@linux.alibaba.com>
+Date:   Thu, 30 May 2019 11:22:21 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/w7Q+15IzRn7eThtdIF/Em2R"; protocol="application/pgp-signature"
+In-Reply-To: <alpine.DEB.2.21.1905291402360.242480@chino.kir.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/w7Q+15IzRn7eThtdIF/Em2R
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-Today's linux-next merge of the userns tree got a conflict in:
+On 5/30/19 5:07 AM, David Rientjes wrote:
+> On Wed, 29 May 2019, Yang Shi wrote:
+>
+>>> Right, we've also encountered this.  I talked to Kirill about it a week or
+>>> so ago where the suggestion was to split all compound pages on the
+>>> deferred split queues under the presence of even memory pressure.
+>>>
+>>> That breaks cgroup isolation and perhaps unfairly penalizes workloads that
+>>> are running attached to other memcg hierarchies that are not under
+>>> pressure because their compound pages are now split as a side effect.
+>>> There is a benefit to keeping these compound pages around while not under
+>>> memory pressure if all pages are subsequently mapped again.
+>> Yes, I do agree. I tried other approaches too, it sounds making deferred split
+>> queue per memcg is the optimal one.
+>>
+> The approach we went with were to track the actual counts of compound
+> pages on the deferred split queue for each pgdat for each memcg and then
+> invoke the shrinker for memcg reclaim and iterate those not charged to the
+> hierarchy under reclaim.  That's suboptimal and was a stop gap measure
+> under time pressure: it's refreshing to see the optimal method being
+> pursued, thanks!
 
-  arch/arc/mm/fault.c
+We did the exactly same thing for a temporary hotfix.
 
-between commits:
+>
+>>> I'm curious if your internal applications team is also asking for
+>>> statistics on how much memory can be freed if the deferred split queues
+>>> can be shrunk?  We have applications that monitor their own memory usage
+>> No, but this reminds me. The THPs on deferred split queue should be accounted
+>> into available memory too.
+>>
+> Right, and we have also seen this for users of MADV_FREE that have both an
+> increased rss and memcg usage that don't realize that the memory is freed
+> under pressure.  I'm thinking that we need some kind of MemAvailable for
+> memcg hierarchies to be the authoritative source of what can be reclaimed
+> under pressure.
 
-  a8c715b4dd73 ("ARC: mm: SIGSEGV userspace trying to access kernel virtual=
- memory")
-  ea3885229b0f ("ARC: mm: do_page_fault refactor #5: scoot no_context to en=
-d")
-  acc639eca380 ("ARC: mm: do_page_fault refactor #6: error handlers to use =
-same pattern")
-  0c85612550a4 ("ARC: mm: do_page_fault refactor #7: fold the various error=
- handling")
-  c5d7f7610d88 ("ARC: mm: do_page_fault refactor #8: release mmap_sem soone=
-r")
+It sounds useful. We also need know the available memory in memcg scope 
+in our containers.
 
-from the arc-current tree and commits:
+>
+>>> through memcg stats or usage and proactively try to reduce that usage when
+>>> it is growing too large.  The deferred split queues have significantly
+>>> increased both memcg usage and rss when they've upgraded kernels.
+>>>
+>>> How are your applications monitoring how much memory from deferred split
+>>> queues can be freed on memory pressure?  Any thoughts on providing it as a
+>>> memcg stat?
+>> I don't think they have such monitor. I saw rss_huge is abormal in memcg stat
+>> even after the application is killed by oom, so I realized the deferred split
+>> queue may play a role here.
+>>
+> Exactly the same in my case :)  We were likely looking at the exact same
+> issue at the same time.
 
-  351b6825b3a9 ("signal: Explicitly call force_sig_fault on current")
-  2e1661d26736 ("signal: Remove the task parameter from force_sig_fault")
+Yes, it seems so. :-)
 
-from the userns tree.
+>> The memcg stat doesn't have counters for available memory as global vmstat. It
+>> may be better to have such statistics, or extending reclaimable "slab" to
+>> shrinkable/reclaimable "memory".
+>>
+> Have you considered following how NR_ANON_MAPPED is tracked for each pgdat
+> and using that as an indicator of when the modify a memcg stat to track
+> the amount of memory on a compound page?  I think this would be necessary
+> for userspace to know what their true memory usage is.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+No, I haven't. Do you mean minus MADV_FREE and deferred split THP from 
+NR_ANON_MAPPED? It looks they have been decreased from NR_ANON_MAPPED 
+when removing rmap.
 
---=20
-Cheers,
-Stephen Rothwell
 
-diff --cc arch/arc/mm/fault.c
-index e93ea06c214c,5001f6418e92..000000000000
---- a/arch/arc/mm/fault.c
-+++ b/arch/arc/mm/fault.c
-@@@ -187,21 -228,14 +187,21 @@@ bad_area
-  		return;
-  	}
- =20
- -	goto no_context;
- +	if (fault & VM_FAULT_SIGBUS) {
- +		sig =3D SIGBUS;
- +		si_code =3D BUS_ADRERR;
- +	}
- +	else {
- +		sig =3D SIGSEGV;
- +	}
- =20
- -do_sigbus:
- -	up_read(&mm->mmap_sem);
- +	tsk->thread.fault_address =3D address;
-- 	force_sig_fault(sig, si_code, (void __user *)address, tsk);
-++	force_sig_fault(sig, si_code, (void __user *)address);
- +	return;
- =20
- -	if (!user_mode(regs))
- -		goto no_context;
- +no_context:
- +	if (fixup_exception(regs))
- +		return;
- =20
- -	tsk->thread.fault_address =3D address;
- -	force_sig_fault(SIGBUS, BUS_ADRERR, (void __user *)address);
- +	die("Oops", regs, address);
-  }
-
---Sig_/w7Q+15IzRn7eThtdIF/Em2R
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzvS0EACgkQAVBC80lX
-0GxwLgf/Yb+XKEDiDHSEM4zEm0mSb5MepeW7+pG1D15FoMHOPIiG92B4sRcKtXSL
-P7MMxkKxKNOM95FcHmu26wn6E4LsHGxSPx8L9R3mNfcWxfeLxysNY6EHWuFpAzHe
-yqJhRimVsms/kNkj5+TJYYBz4dYMcapMfA7jvpZOaHOW2aaM9Ptkptm8CAW7C0jh
-NyE1tCTrGCoudV1rFrOz2W7JiW5qLe4+MgLuUZev+M+feyBgWZZCxWDGNx3HSFOr
-l9a5Pg9B9+PFbct3RV7HEH3k+7rFnqlYgmD41dB1CkKmZ/iEUuSpTYdSoNoCAWB/
-IcWjfJmSMRS40RUndj2UAYT9sqViGw==
-=zGZo
------END PGP SIGNATURE-----
-
---Sig_/w7Q+15IzRn7eThtdIF/Em2R--
