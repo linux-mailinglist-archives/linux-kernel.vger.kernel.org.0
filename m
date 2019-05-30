@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D317F2F2F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:25:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 791622F4F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:44:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729987AbfE3DOr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:14:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53798 "EHLO mail.kernel.org"
+        id S2388673AbfE3Emt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:42:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728094AbfE3DMK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:10 -0400
+        id S1728893AbfE3DMO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:12:14 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5C86244F1;
-        Thu, 30 May 2019 03:12:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF804244E8;
+        Thu, 30 May 2019 03:12:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185929;
-        bh=o3Ygkgj+RVPapNwx8da6R0BOzSHKC8ADFuftMiEDxZU=;
+        s=default; t=1559185934;
+        bh=n+u/WguqQF8MlrFw+6RnxXfno7gUgXsBE8I1I+UCr8o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sw42Ufqb3NkX91KO2wE2K4LtvPJCxzehRl9IM+DIWpgRGSasng3govbJpxF8d1geC
-         y/cxbinlK8iJDyMBTIAtn9H1KftOxsceLTXWwFdNdmSA3RAZNBhhh5L8h5MVYgQ2x0
-         N7vZ/+Vf5H7tcwqZh5c7XvVw48S2jOxpTiM4mr2w=
+        b=EI6n4uFyNXvq542M58bmYcAZOyzV9fVDq2GvxtyG34qU+n+PUrBv+TUuqHU9JvWni
+         dG1J1akWxgNqAsIvS/eMcsBmKQ5l1kt2CYJYwb7md73FHIANqLW/K0lMnYqiwkqige
+         +PQRovN2SRYdWS5G61N9bih0QwIygrxU5H4y/9xk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        stable@vger.kernel.org, Ezequiel Garcia <ezequiel@collabora.com>,
         Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 287/405] media: wl128x: prevent two potential buffer overflows
-Date:   Wed, 29 May 2019 20:04:45 -0700
-Message-Id: <20190530030555.395369139@linuxfoundation.org>
+Subject: [PATCH 5.1 288/405] media: gspca: Kill URBs on USB device disconnect
+Date:   Wed, 29 May 2019 20:04:46 -0700
+Message-Id: <20190530030555.440542283@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
 References: <20190530030540.291644921@linuxfoundation.org>
@@ -45,59 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9c2ccc324b3a6cbc865ab8b3e1a09e93d3c8ade9 ]
+[ Upstream commit 9b9ea7c2b57a0c9c3341fc6db039d1f7971a432e ]
 
-Smatch marks skb->data as untrusted so it warns that "evt_hdr->dlen"
-can copy up to 255 bytes and we only have room for two bytes.  Even
-if this comes from the firmware and we trust it, the new policy
-generally is just to fix it as kernel hardenning.
+In order to prevent ISOC URBs from being infinitely resubmitted,
+the driver's USB disconnect handler must kill all the in-flight URBs.
 
-I can't test this code so I tried to be very conservative.  I considered
-not allowing "evt_hdr->dlen == 1" because it doesn't initialize the
-whole variable but in the end I decided to allow it and manually
-initialized "asic_id" and "asic_ver" to zero.
+While here, change the URB packet status message to a debug level,
+to avoid spamming the console too much.
 
-Fixes: e8454ff7b9a4 ("[media] drivers:media:radio: wl128x: FM Driver Common sources")
+This commit fixes a lockup caused by an interrupt storm coming
+from the URB completion handler.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
 Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/radio/wl128x/fmdrv_common.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/media/usb/gspca/gspca.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/radio/wl128x/fmdrv_common.c b/drivers/media/radio/wl128x/fmdrv_common.c
-index 3c8987af37725..ac5706b4cab84 100644
---- a/drivers/media/radio/wl128x/fmdrv_common.c
-+++ b/drivers/media/radio/wl128x/fmdrv_common.c
-@@ -489,7 +489,8 @@ int fmc_send_cmd(struct fmdev *fmdev, u8 fm_op, u16 type, void *payload,
- 		return -EIO;
- 	}
- 	/* Send response data to caller */
--	if (response != NULL && response_len != NULL && evt_hdr->dlen) {
-+	if (response != NULL && response_len != NULL && evt_hdr->dlen &&
-+	    evt_hdr->dlen <= payload_len) {
- 		/* Skip header info and copy only response data */
- 		skb_pull(skb, sizeof(struct fm_event_msg_hdr));
- 		memcpy(response, skb->data, evt_hdr->dlen);
-@@ -583,6 +584,8 @@ static void fm_irq_handle_flag_getcmd_resp(struct fmdev *fmdev)
- 		return;
+diff --git a/drivers/media/usb/gspca/gspca.c b/drivers/media/usb/gspca/gspca.c
+index ac70b36d67b7b..128935f2a217e 100644
+--- a/drivers/media/usb/gspca/gspca.c
++++ b/drivers/media/usb/gspca/gspca.c
+@@ -294,7 +294,7 @@ static void fill_frame(struct gspca_dev *gspca_dev,
+ 		/* check the packet status and length */
+ 		st = urb->iso_frame_desc[i].status;
+ 		if (st) {
+-			pr_err("ISOC data error: [%d] len=%d, status=%d\n",
++			gspca_dbg(gspca_dev, D_PACK, "ISOC data error: [%d] len=%d, status=%d\n",
+ 			       i, len, st);
+ 			gspca_dev->last_packet_type = DISCARD_PACKET;
+ 			continue;
+@@ -1638,6 +1638,8 @@ void gspca_disconnect(struct usb_interface *intf)
  
- 	fm_evt_hdr = (void *)skb->data;
-+	if (fm_evt_hdr->dlen > sizeof(fmdev->irq_info.flag))
-+		return;
+ 	mutex_lock(&gspca_dev->usb_lock);
+ 	gspca_dev->present = false;
++	destroy_urbs(gspca_dev);
++	gspca_input_destroy_urb(gspca_dev);
  
- 	/* Skip header info and copy only response data */
- 	skb_pull(skb, sizeof(struct fm_event_msg_hdr));
-@@ -1308,7 +1311,7 @@ static int load_default_rx_configuration(struct fmdev *fmdev)
- static int fm_power_up(struct fmdev *fmdev, u8 mode)
- {
- 	u16 payload;
--	__be16 asic_id, asic_ver;
-+	__be16 asic_id = 0, asic_ver = 0;
- 	int resp_len, ret;
- 	u8 fw_name[50];
+ 	vb2_queue_error(&gspca_dev->queue);
  
 -- 
 2.20.1
