@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 535612EF48
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:54:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33BF12ED9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:40:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732566AbfE3DyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:54:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54472 "EHLO mail.kernel.org"
+        id S1733098AbfE3DXm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:23:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730882AbfE3DTX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:19:23 -0400
+        id S1730278AbfE3DRc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:32 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1A8D24876;
-        Thu, 30 May 2019 03:19:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47E682469D;
+        Thu, 30 May 2019 03:17:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186362;
-        bh=Ek8jV78o2UrBifrhLN1u2LqlQotys4OvP9xjyIWRPr0=;
+        s=default; t=1559186251;
+        bh=W6hhyP4Sz0xsqJqXoWMUMQRgHBcyX134EWeoywxxvPQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pc8+9L5biqUXTOCTwbdERLHQjy/Pc9vuIldksZvobfhemoqndAA49iXr34Dt3Ml+A
-         vrHbbCCPiUvWfM1yW5hVxwPZsCb7l8v32zxakQM8tZyB92Z5pu4gFiMbuuSCIyLScf
-         0RcJQXd+fGRK5pW4cKcwJdavb6rOFCXB4OBlj7Dk=
+        b=zhNaxbB9pP/nVyNmA7ZxbjhqUcKgFS/ciAe2cU2Tr7E3apO3MM2SuGZeEv6mGcgMf
+         rILnS13bMizxi7yuvu2CTSpKl1nkcCeHEx3eGBmSJ1yhsNINVi8I4rfyVbIGF/M6Hd
+         508wuh/nAoj5peOPy51iuY00cWzU3EvcwouUSYSY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tang Junhui <tang.junhui.linux@gmail.com>,
-        Dennis Schridde <devurandom@gmx.net>, Coly Li <colyli@suse.de>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 074/193] bcache: fix failure in journal relplay
-Date:   Wed, 29 May 2019 20:05:28 -0700
-Message-Id: <20190530030459.553817921@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 171/276] extcon: arizona: Disable mic detect if running when driver is removed
+Date:   Wed, 29 May 2019 20:05:29 -0700
+Message-Id: <20190530030536.069725414@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,86 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 631207314d88e9091be02fbdd1fdadb1ae2ed79a ]
+[ Upstream commit 00053de52231117ddc154042549f2256183ffb86 ]
 
-journal replay failed with messages:
-Sep 10 19:10:43 ceph kernel: bcache: error on
-bb379a64-e44e-4812-b91d-a5599871a3b1: bcache: journal entries
-2057493-2057567 missing! (replaying 2057493-2076601), disabling
-caching
+Microphone detection provides the button detection features on the
+Arizona CODECs as such it will be running if the jack is currently
+inserted. If the driver is unbound whilst the jack is still inserted
+this will cause warnings from the regulator framework as the MICVDD
+regulator is put but was never disabled.
 
-The reason is in journal_reclaim(), when discard is enabled, we send
-discard command and reclaim those journal buckets whose seq is old
-than the last_seq_now, but before we write a journal with last_seq_now,
-the machine is restarted, so the journal with the last_seq_now is not
-written to the journal bucket, and the last_seq_wrote in the newest
-journal is old than last_seq_now which we expect to be, so when we doing
-replay, journals from last_seq_wrote to last_seq_now are missing.
+Correct this by disabling microphone detection on driver removal and if
+the microphone detection was running disable the regulator and put the
+runtime reference that was currently held.
 
-It's hard to write a journal immediately after journal_reclaim(),
-and it harmless if those missed journal are caused by discarding
-since those journals are already wrote to btree node. So, if miss
-seqs are started from the beginning journal, we treat it as normal,
-and only print a message to show the miss journal, and point out
-it maybe caused by discarding.
-
-Patch v2 add a judgement condition to ignore the missed journal
-only when discard enabled as Coly suggested.
-
-(Coly Li: rebase the patch with other changes in bch_journal_replay())
-
-Signed-off-by: Tang Junhui <tang.junhui.linux@gmail.com>
-Tested-by: Dennis Schridde <devurandom@gmx.net>
-Signed-off-by: Coly Li <colyli@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/bcache/journal.c | 25 +++++++++++++++++++++----
- 1 file changed, 21 insertions(+), 4 deletions(-)
+ drivers/extcon/extcon-arizona.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
-index cd8a82655e647..6394be5ee9a8f 100644
---- a/drivers/md/bcache/journal.c
-+++ b/drivers/md/bcache/journal.c
-@@ -310,6 +310,18 @@ void bch_journal_mark(struct cache_set *c, struct list_head *list)
- 	}
- }
- 
-+bool is_discard_enabled(struct cache_set *s)
-+{
-+	struct cache *ca;
-+	unsigned int i;
+diff --git a/drivers/extcon/extcon-arizona.c b/drivers/extcon/extcon-arizona.c
+index da0e9bc4262fa..9327479c719c2 100644
+--- a/drivers/extcon/extcon-arizona.c
++++ b/drivers/extcon/extcon-arizona.c
+@@ -1726,6 +1726,16 @@ static int arizona_extcon_remove(struct platform_device *pdev)
+ 	struct arizona_extcon_info *info = platform_get_drvdata(pdev);
+ 	struct arizona *arizona = info->arizona;
+ 	int jack_irq_rise, jack_irq_fall;
++	bool change;
 +
-+	for_each_cache(ca, s, i)
-+		if (ca->discard)
-+			return true;
++	regmap_update_bits_check(arizona->regmap, ARIZONA_MIC_DETECT_1,
++				 ARIZONA_MICD_ENA, 0,
++				 &change);
 +
-+	return false;
-+}
-+
- int bch_journal_replay(struct cache_set *s, struct list_head *list)
- {
- 	int ret = 0, keys = 0, entries = 0;
-@@ -324,10 +336,15 @@ int bch_journal_replay(struct cache_set *s, struct list_head *list)
- 		BUG_ON(i->pin && atomic_read(i->pin) != 1);
++	if (change) {
++		regulator_disable(info->micvdd);
++		pm_runtime_put(info->dev);
++	}
  
- 		if (n != i->j.seq) {
--			pr_err("bcache: journal entries %llu-%llu missing! (replaying %llu-%llu)",
--			n, i->j.seq - 1, start, end);
--			ret = -EIO;
--			goto err;
-+			if (n == start && is_discard_enabled(s))
-+				pr_info("bcache: journal entries %llu-%llu may be discarded! (replaying %llu-%llu)",
-+					n, i->j.seq - 1, start, end);
-+			else {
-+				pr_err("bcache: journal entries %llu-%llu missing! (replaying %llu-%llu)",
-+					n, i->j.seq - 1, start, end);
-+				ret = -EIO;
-+				goto err;
-+			}
- 		}
+ 	gpiod_put(info->micd_pol_gpio);
  
- 		for (k = i->j.start;
 -- 
 2.20.1
 
