@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C19752ED12
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:30:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 495042EF81
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:56:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388651AbfE3Dat (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:30:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49084 "EHLO mail.kernel.org"
+        id S2387941AbfE3D4L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:56:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733053AbfE3Dal (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:30:41 -0400
+        id S1731789AbfE3DTE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:19:04 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C379424AF6;
-        Thu, 30 May 2019 03:30:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9E562482D;
+        Thu, 30 May 2019 03:19:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559187040;
-        bh=kMmh6iBL9NQyeey8nZVsGYVS5PhyCz7yCWD11jJUAMI=;
+        s=default; t=1559186344;
+        bh=BCB1gKyFBCxZOzWt4F6nU9APsJkem9tiJGG7YipQI0s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y9C3LZOeoVLsOZnMZzKJ/Te6TlmlFd9kRUtqIr6QdkEWULuyX2yBF/PNpM+Z0jkAn
-         sqB0NeW7wHZNeTlucd7eOXov2pFrDd4d38aHACn5aiwxCQN+0JeCkJ4v5QoxRC4KBR
-         9ninUbr9W1yTc6PaWuxExo1W/2gZDJh3ia1dkeTs=
+        b=Nb95ES2XPJMK76ZdZ94Tcycz0sQ1gNYUNJ3J1fEoXYCa5eKLLTy1rCaZzoohA4df3
+         zIN2DGwblnbwqgIOj2yhh/CkknqMci3w+fXhw//0jz4tKl2l5BbgjJyuTB8tgr/+X0
+         r7OgEc704r/UwihkoVh/ouPqvD83VG3XsQteghgg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 124/276] media: ov2659: make S_FMT succeed even if requested format doesnt match
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        YueHaibing <yuehaibing@huawei.com>, Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.14 028/193] media: serial_ir: Fix use-after-free in serial_ir_init_module
 Date:   Wed, 29 May 2019 20:04:42 -0700
-Message-Id: <20190530030533.584869940@linuxfoundation.org>
+Message-Id: <20190530030453.252415625@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,50 +44,140 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit bccb89cf9cd07a0690d519696a00c00a973b3fe4 ]
+From: YueHaibing <yuehaibing@huawei.com>
 
-This driver returns an error if unsupported media bus pixel code is
-requested by VIDIOC_SUBDEV_S_FMT.
+commit 56cd26b618855c9af48c8301aa6754ced8dd0beb upstream.
 
-But according to Documentation/media/uapi/v4l/vidioc-subdev-g-fmt.rst,
+Syzkaller report this:
 
-Drivers must not return an error solely because the requested format
-doesn't match the device capabilities. They must instead modify the
-format to match what the hardware can provide.
+BUG: KASAN: use-after-free in sysfs_remove_file_ns+0x5f/0x70 fs/sysfs/file.c:468
+Read of size 8 at addr ffff8881dc7ae030 by task syz-executor.0/6249
 
-So select default format code and return success in that case.
+CPU: 1 PID: 6249 Comm: syz-executor.0 Not tainted 5.0.0-rc8+ #3
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xfa/0x1ce lib/dump_stack.c:113
+ print_address_description+0x65/0x270 mm/kasan/report.c:187
+ kasan_report+0x149/0x18d mm/kasan/report.c:317
+ ? 0xffffffffc1728000
+ sysfs_remove_file_ns+0x5f/0x70 fs/sysfs/file.c:468
+ sysfs_remove_file include/linux/sysfs.h:519 [inline]
+ driver_remove_file+0x40/0x50 drivers/base/driver.c:122
+ remove_bind_files drivers/base/bus.c:585 [inline]
+ bus_remove_driver+0x186/0x220 drivers/base/bus.c:725
+ driver_unregister+0x6c/0xa0 drivers/base/driver.c:197
+ serial_ir_init_module+0x169/0x1000 [serial_ir]
+ do_one_initcall+0xfa/0x5ca init/main.c:887
+ do_init_module+0x204/0x5f6 kernel/module.c:3460
+ load_module+0x66b2/0x8570 kernel/module.c:3808
+ __do_sys_finit_module+0x238/0x2a0 kernel/module.c:3902
+ do_syscall_64+0x147/0x600 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x462e99
+Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f9450132c58 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+RAX: ffffffffffffffda RBX: 000000000073bf00 RCX: 0000000000462e99
+RDX: 0000000000000000 RSI: 0000000020000100 RDI: 0000000000000003
+RBP: 00007f9450132c70 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f94501336bc
+R13: 00000000004bcefa R14: 00000000006f6fb0 R15: 0000000000000004
 
-This is detected by v4l2-compliance.
+Allocated by task 6249:
+ set_track mm/kasan/common.c:85 [inline]
+ __kasan_kmalloc.constprop.3+0xa0/0xd0 mm/kasan/common.c:495
+ kmalloc include/linux/slab.h:545 [inline]
+ kzalloc include/linux/slab.h:740 [inline]
+ bus_add_driver+0xc0/0x610 drivers/base/bus.c:651
+ driver_register+0x1bb/0x3f0 drivers/base/driver.c:170
+ serial_ir_init_module+0xe8/0x1000 [serial_ir]
+ do_one_initcall+0xfa/0x5ca init/main.c:887
+ do_init_module+0x204/0x5f6 kernel/module.c:3460
+ load_module+0x66b2/0x8570 kernel/module.c:3808
+ __do_sys_finit_module+0x238/0x2a0 kernel/module.c:3902
+ do_syscall_64+0x147/0x600 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
-Acked-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Freed by task 6249:
+ set_track mm/kasan/common.c:85 [inline]
+ __kasan_slab_free+0x130/0x180 mm/kasan/common.c:457
+ slab_free_hook mm/slub.c:1430 [inline]
+ slab_free_freelist_hook mm/slub.c:1457 [inline]
+ slab_free mm/slub.c:3005 [inline]
+ kfree+0xe1/0x270 mm/slub.c:3957
+ kobject_cleanup lib/kobject.c:662 [inline]
+ kobject_release lib/kobject.c:691 [inline]
+ kref_put include/linux/kref.h:67 [inline]
+ kobject_put+0x146/0x240 lib/kobject.c:708
+ bus_remove_driver+0x10e/0x220 drivers/base/bus.c:732
+ driver_unregister+0x6c/0xa0 drivers/base/driver.c:197
+ serial_ir_init_module+0x14c/0x1000 [serial_ir]
+ do_one_initcall+0xfa/0x5ca init/main.c:887
+ do_init_module+0x204/0x5f6 kernel/module.c:3460
+ load_module+0x66b2/0x8570 kernel/module.c:3808
+ __do_sys_finit_module+0x238/0x2a0 kernel/module.c:3902
+ do_syscall_64+0x147/0x600 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8881dc7ae000
+ which belongs to the cache kmalloc-256 of size 256
+The buggy address is located 48 bytes inside of
+ 256-byte region [ffff8881dc7ae000, ffff8881dc7ae100)
+The buggy address belongs to the page:
+page:ffffea000771eb80 count:1 mapcount:0 mapping:ffff8881f6c02e00 index:0x0
+flags: 0x2fffc0000000200(slab)
+raw: 02fffc0000000200 ffffea0007d14800 0000000400000002 ffff8881f6c02e00
+raw: 0000000000000000 00000000800c000c 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff8881dc7adf00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff8881dc7adf80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff8881dc7ae000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                     ^
+ ffff8881dc7ae080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8881dc7ae100: fc fc fc fc fc fc fc fc 00 00 00 00 00 00 00 00
+
+There are already cleanup handlings in serial_ir_init error path,
+no need to call serial_ir_exit do it again in serial_ir_init_module,
+otherwise will trigger a use-after-free issue.
+
+Fixes: fa5dc29c1fcc ("[media] lirc_serial: move out of staging and rename to serial_ir")
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Sean Young <sean@mess.org>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/media/i2c/ov2659.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/media/rc/serial_ir.c |    9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/drivers/media/i2c/ov2659.c b/drivers/media/i2c/ov2659.c
-index 4715edc8ca33e..e6a8b5669b9cc 100644
---- a/drivers/media/i2c/ov2659.c
-+++ b/drivers/media/i2c/ov2659.c
-@@ -1117,8 +1117,10 @@ static int ov2659_set_fmt(struct v4l2_subdev *sd,
- 		if (ov2659_formats[index].code == mf->code)
- 			break;
+--- a/drivers/media/rc/serial_ir.c
++++ b/drivers/media/rc/serial_ir.c
+@@ -774,8 +774,6 @@ static void serial_ir_exit(void)
  
--	if (index < 0)
--		return -EINVAL;
-+	if (index < 0) {
-+		index = 0;
-+		mf->code = ov2659_formats[index].code;
-+	}
+ static int __init serial_ir_init_module(void)
+ {
+-	int result;
+-
+ 	switch (type) {
+ 	case IR_HOMEBREW:
+ 	case IR_IRDEO:
+@@ -803,12 +801,7 @@ static int __init serial_ir_init_module(
+ 	if (sense != -1)
+ 		sense = !!sense;
  
- 	mf->colorspace = V4L2_COLORSPACE_SRGB;
- 	mf->field = V4L2_FIELD_NONE;
--- 
-2.20.1
-
+-	result = serial_ir_init();
+-	if (!result)
+-		return 0;
+-
+-	serial_ir_exit();
+-	return result;
++	return serial_ir_init();
+ }
+ 
+ static void __exit serial_ir_exit_module(void)
 
 
