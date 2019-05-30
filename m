@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65EB52F066
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:03:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 837962ED4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:34:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732788AbfE3EDi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:03:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49208 "EHLO mail.kernel.org"
+        id S2388092AbfE3D1z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:27:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731342AbfE3DRz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:17:55 -0400
+        id S1732005AbfE3DTn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:19:43 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42A25246F8;
-        Thu, 30 May 2019 03:17:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70F75248BA;
+        Thu, 30 May 2019 03:19:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186275;
-        bh=+PorWUz6CDXhB4e4HZl+SYRrjgo07gaT0uiZuYhzznw=;
+        s=default; t=1559186382;
+        bh=l1tumsDRNm7UVNJ/XotrqQKMbese+OjzkoRQoyKmQoQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QQJG4Fh+iFDoyEUuLG0LMD6N8IOZEVckhUX7Cj0Qrf/s12fPy1JW5EqM3bxnW7pRN
-         QktszfUnuTMoTHtaTk1Z+25nW0OAUkkA8/pcDSYUtomm+JdHphQjr/tKL2f0OWnqFN
-         IsEaVPQn4A+N5tdOQ5j6gfQ+bo8GhQ/N9jGE8ub4=
+        b=PE3uFsFxaEyN4QVMdHJiecls8XK0SbbwAw5Rs/0HHQDfdQ5Oz0VQfeK/uMLcL2sPt
+         BYrvkn5sg5IPPzKPxuzMV8ZyjkGe2BZiC8jmjseyRJlteWX0KBZe7/bRVopjJQr+Xs
+         r2lT7cY1LXTNwvqL7Nl19rsX2PTgBW7rKxKALt2c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 217/276] HID: logitech-hidpp: change low battery level threshold from 31 to 30 percent
+        stable@vger.kernel.org, Yinbo Zhu <yinbo.zhu@nxp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 121/193] mmc: sdhci-of-esdhc: add erratum eSDHC-A001 and A-008358 support
 Date:   Wed, 29 May 2019 20:06:15 -0700
-Message-Id: <20190530030538.701024774@linuxfoundation.org>
+Message-Id: <20190530030505.530000201@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,49 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1f87b0cd32b3456d7efdfb017fcf74d0bfe3ec29 ]
+[ Upstream commit 05cb6b2a66fa7837211a060878e91be5eb10cb07 ]
 
-According to hidpp20_batterylevel_get_battery_info my Logitech K270
-keyboard reports only 2 battery levels. This matches with what I've seen
-after testing with batteries at varying level of fullness, it always
-reports either 5% or 30%.
+eSDHC-A001: The data timeout counter (SYSCTL[DTOCV]) is not
+reliable for DTOCV values 0x4(2^17 SD clock), 0x8(2^21 SD clock),
+and 0xC(2^25 SD clock). The data timeout counter can count from
+2^13–2^27, but for values 2^17, 2^21, and 2^25, the timeout
+counter counts for only 2^13 SD clocks.
+A-008358: The data timeout counter value loaded into the timeout
+counter is less than expected and can result into early timeout
+error in case of eSDHC data transactions. The table below shows
+the expected vs actual timeout period for different values of
+SYSCTL[DTOCV]:
+these two erratum has the same quirk to control it, and set
+SDHCI_QUIRK_RESET_AFTER_REQUEST to fix above issue.
 
-Windows reports "battery good" for the 30% level. I've captured an USB
-trace of Windows reading the battery and it is getting the same info
-as the Linux hidpp code gets.
-
-Now that Linux handles these devices as hidpp devices, it reports the
-battery as being low as it treats anything under 31% as low, this leads
-to the user constantly getting a "Keyboard battery is low" warning from
-GNOME3, which is very annoying.
-
-This commit fixes this by changing the low threshold to anything under
-30%, which I assume is what Windows does.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-logitech-hidpp.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/mmc/host/sdhci-of-esdhc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
-index edf224ad13369..e642cfaf303b4 100644
---- a/drivers/hid/hid-logitech-hidpp.c
-+++ b/drivers/hid/hid-logitech-hidpp.c
-@@ -910,7 +910,11 @@ static int hidpp_map_battery_level(int capacity)
- {
- 	if (capacity < 11)
- 		return POWER_SUPPLY_CAPACITY_LEVEL_CRITICAL;
--	else if (capacity < 31)
-+	/*
-+	 * The spec says this should be < 31 but some devices report 30
-+	 * with brand new batteries and Windows reports 30 as "Good".
-+	 */
-+	else if (capacity < 30)
- 		return POWER_SUPPLY_CAPACITY_LEVEL_LOW;
- 	else if (capacity < 81)
- 		return POWER_SUPPLY_CAPACITY_LEVEL_NORMAL;
+diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-esdhc.c
+index e26efda46b995..bcfa84aa2113a 100644
+--- a/drivers/mmc/host/sdhci-of-esdhc.c
++++ b/drivers/mmc/host/sdhci-of-esdhc.c
+@@ -883,8 +883,10 @@ static int sdhci_esdhc_probe(struct platform_device *pdev)
+ 	if (esdhc->vendor_ver > VENDOR_V_22)
+ 		host->quirks &= ~SDHCI_QUIRK_NO_BUSY_IRQ;
+ 
+-	if (of_find_compatible_node(NULL, NULL, "fsl,p2020-esdhc"))
++	if (of_find_compatible_node(NULL, NULL, "fsl,p2020-esdhc")) {
+ 		host->quirks2 |= SDHCI_QUIRK_RESET_AFTER_REQUEST;
++		host->quirks2 |= SDHCI_QUIRK_BROKEN_TIMEOUT_VAL;
++	}
+ 
+ 	if (of_device_is_compatible(np, "fsl,p5040-esdhc") ||
+ 	    of_device_is_compatible(np, "fsl,p5020-esdhc") ||
 -- 
 2.20.1
 
