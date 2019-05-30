@@ -2,68 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5DDE2FB68
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 14:05:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E50E2FB6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 14:07:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727160AbfE3MFn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 08:05:43 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:44007 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726806AbfE3MFn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 08:05:43 -0400
-Received: by mail-io1-f67.google.com with SMTP id k20so4791111ios.10
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 05:05:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=JGL+lkg28J6Vn3aABnz1r6WATNg33h5d7dUEk09cTGA=;
-        b=mLqw9W0MLE+iykO4742HvedMWmPs7s8w+BFdkJA3sYCDdq4jVuDtLcar1nQcn795Em
-         gkWyUey/oxlQg+AZoOUygIW2XZ8ToSlNFvbutLERjjZi+sndgA5Xi2F8q4Rom1/zYPUT
-         zkE8gyl2j/R7NYFr4zPQYeW1zY65U2RDXvHnKtM84Fx4TSAOzPW2dYx+RJaFr+kRLLOF
-         fpTbDphsg7hElGzzAt61btOf3M5+PQzfEGW9zOHlemhjc5ZeGibz09bi/MOPNRDdWxzk
-         SaDbVSLOeoDTf9PWgpUy/52lBx1JUb4cKBgz3CBlRJKWmDn4hQ1cQPFc9Eg/ZaOaB+Yo
-         zg/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=JGL+lkg28J6Vn3aABnz1r6WATNg33h5d7dUEk09cTGA=;
-        b=Q/wF2Yecjebe3hgC3VuskfDwoxUHPzqlk/KG8RtoXIwNp93hUrw3fSAdr67ZJeFJHW
-         tqNE0W6mdh2TkkP0RUzFOH1maniA15J+mE1/sa0uuR+/VEYVahJ9nEXp04O5FGlTbduR
-         7pS9Tzl6wm9ejJmJXlHOx8e1vMhGDmg1NHF440umsg9wLd2GaX/AVStis4U9sYHDRJ3i
-         72WMpOYm2oVpG1snF4bRqqh7EDiIfeuHQ9m3vfG5Y8NeOF5aGplmw11CcNYIviutzBFt
-         za7KXvmV9vrXzCrSIqx3gydKmb0zopNm99SiKd//58w5FQzNLb+AAQAdbrUKEFP4EMU1
-         1GnQ==
-X-Gm-Message-State: APjAAAWU9W50UaroMDJmZyNawFOYlTjKkiLBV567sryiJTY+BC2c3Vsu
-        DSG4nuKgU8ixxNEkLFpavJIGC2edhiUNIKNlM/E=
-X-Google-Smtp-Source: APXvYqytfkBW4qTUikyFG2+kg6++61MGZdxhfpfps855YFaGczXSajtBcQWjHm+zgf+k9gy+drtFCVdefQD3OQKpJgs=
-X-Received: by 2002:a6b:c886:: with SMTP id y128mr2490208iof.100.1559217942245;
- Thu, 30 May 2019 05:05:42 -0700 (PDT)
+        id S1727291AbfE3MHZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 08:07:25 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45148 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726935AbfE3MHW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 08:07:22 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4A62730C1AFE;
+        Thu, 30 May 2019 12:07:16 +0000 (UTC)
+Received: from krava (unknown [10.43.17.136])
+        by smtp.corp.redhat.com (Postfix) with SMTP id B6CC064026;
+        Thu, 30 May 2019 12:07:10 +0000 (UTC)
+Date:   Thu, 30 May 2019 14:07:10 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Leo Yan <leo.yan@linaro.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Stanislav Fomichev <sdf@fomichev.me>,
+        Song Liu <songliubraving@fb.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCHv3 00/12] perf tools: Display eBPF code in intel_pt trace
+Message-ID: <20190530120709.GA3669@krava>
+References: <20190508132010.14512-1-jolsa@kernel.org>
+ <20190530105439.GA5927@leoy-ThinkPad-X240s>
 MIME-Version: 1.0
-Received: by 2002:a4f:95c3:0:0:0:0:0 with HTTP; Thu, 30 May 2019 05:05:41
- -0700 (PDT)
-From:   Mr Hamza Kabore <mr.hamzak252@gmail.com>
-Date:   Thu, 30 May 2019 05:05:41 -0700
-X-Google-Sender-Auth: Cs3DUwiHhCqC1wHc-6-Wz6lzGTA
-Message-ID: <CAOnm=ud6=zkRJgFWfKKFJwP=KeuBv+9AMmXUKpuVL5D=da4Z+w@mail.gmail.com>
-Subject: HELLO
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190530105439.GA5927@leoy-ThinkPad-X240s>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 30 May 2019 12:07:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
--- 
-Good day,
+On Thu, May 30, 2019 at 06:54:39PM +0800, Leo Yan wrote:
+> Hi Jiri,
+> 
+> On Wed, May 08, 2019 at 03:19:58PM +0200, Jiri Olsa wrote:
+> > hi,
+> > this patchset adds dso support to read and display
+> > bpf code in intel_pt trace output. I had to change
+> > some of the kernel maps processing code, so hopefully
+> > I did not break too many things ;-)
+> > 
+> > It's now possible to see bpf code flow via:
+> > 
+> >   # perf-with-kcore record pt -e intel_pt//ku -- sleep 1
+> >   # perf-with-kcore script pt --insn-trace --xed
+> 
+> This is very interesting work for me!
+> 
+> I want to verify this feature with Arm CoreSight trace, I have one
+> question so that I have more direction for the tesing:
+> 
+> What's the bpf program you are suing for the testing?  e.g. some
+> testing program under the kernel's folder $kernel/samples/bpf?
+> Or you uses perf command to launch bpf program?
 
-Hello, my name is Hamza Kabore, I am a staff in the EcoBank
-International Burkina Faso, working as Bill & Exchange Manager. I
-discovered an abandoned sum of 12.8 million usd in my department and i
-want the the fund to be transferred to your account.
+for this I was using tools/testing/selftests/bpf/test_verifier
 
-We shall share it 50% - 50%. No risk involved. Contact me for more
-details. Kindly reply me back to my alternative email address
-(mr.hamzak252@gmail.com)
-Mr. Hamza Kabore
+I isolated some tests and ran the perf on top of them, like:
+
+  # perf-with-kcore record pt -e intel_pt//ku -- ./test_verifier ...
+
+I had to add some small sleep before the test_verifier exit,
+so the perf bpf thread could catch up and download the program
+details before test_verifier exited.
+
+jirka
+
+> 
+> [...]
+> 
+> Thanks
+> Leo Yan
