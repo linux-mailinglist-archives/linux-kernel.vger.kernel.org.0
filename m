@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9699B2ED94
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:40:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C52B2F274
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:22:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732987AbfE3DW6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:22:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45256 "EHLO mail.kernel.org"
+        id S1728267AbfE3EWG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:22:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730945AbfE3DRL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:17:11 -0400
+        id S1730142AbfE3DPK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:10 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB5CD24675;
-        Thu, 30 May 2019 03:17:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D974E24597;
+        Thu, 30 May 2019 03:15:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186230;
-        bh=fbaCxHUnRLz4AuJFa+gdAKEqN7yf3n1DQ2EtkJEuU4c=;
+        s=default; t=1559186110;
+        bh=1rPMMUnAEw/PbwAbQkw+rWsgCAavxUsZNbw2R/Ydn20=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qNPkUt4mbT6OG5QmfjaKakF8FTqBg33gkglX9cVIVNMQumUMkUeo19iwyGu8X6D4u
-         g9z+wdR/OMcAt5YGhpAl356day+nSspHTdDdP81R9i6zVgFKAyl01hxJE8u+qkUBva
-         4q3ENvcSkvTcUMVGreSQgc4N1giGAx43+BqxaPdw=
+        b=0TttKYMYSeVoXw5BuWQs1JvM0kr1nZDWAfR0od0FxviJ/D6SHc2KHzPEnPylafDhV
+         XVrFVyMHR7LcnGczlO5q7kOb4Z2oAbDlXR46dnqa/D5iQD3lZJpB7+YjSJIekvKlpi
+         6Wmw+yVRv0NudipMfe3FrWm0npKVUy3BJBFUHK54=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hugues Fruchet <hugues.fruchet@st.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 126/276] media: stm32-dcmi: fix crash when subdev do not expose any formats
+        stable@vger.kernel.org, Jon Derrick <jonathan.derrick@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Scott Bauer <sbauer@plzdonthack.me>,
+        David Kozub <zub@linux.fjfi.cvut.cz>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 211/346] block: sed-opal: fix IOC_OPAL_ENABLE_DISABLE_MBR
 Date:   Wed, 29 May 2019 20:04:44 -0700
-Message-Id: <20190530030533.698018133@linuxfoundation.org>
+Message-Id: <20190530030551.814037894@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,43 +46,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 33dfeb62e23c31619d2197850f7e8b50e8cc5466 ]
+[ Upstream commit 78bf47353b0041865564deeed257a54f047c2fdc ]
 
-Do not access sd_formats[] if num_of_sd_formats is zero, ie
-subdev sensor didn't expose any formats.
+The implementation of IOC_OPAL_ENABLE_DISABLE_MBR handled the value
+opal_mbr_data.enable_disable incorrectly: enable_disable is expected
+to be one of OPAL_MBR_ENABLE(0) or OPAL_MBR_DISABLE(1). enable_disable
+was passed directly to set_mbr_done and set_mbr_enable_disable where
+is was interpreted as either OPAL_TRUE(1) or OPAL_FALSE(0). The end
+result was that calling IOC_OPAL_ENABLE_DISABLE_MBR with OPAL_MBR_ENABLE
+actually disabled the shadow MBR and vice versa.
 
-Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+This patch adds correct conversion from OPAL_MBR_DISABLE/ENABLE to
+OPAL_FALSE/TRUE. The change affects existing programs using
+IOC_OPAL_ENABLE_DISABLE_MBR but this is typically used only once when
+setting up an Opal drive.
+
+Acked-by: Jon Derrick <jonathan.derrick@intel.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Scott Bauer <sbauer@plzdonthack.me>
+Signed-off-by: David Kozub <zub@linux.fjfi.cvut.cz>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/stm32/stm32-dcmi.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ block/sed-opal.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
-index 100a5922d75fd..d386822658922 100644
---- a/drivers/media/platform/stm32/stm32-dcmi.c
-+++ b/drivers/media/platform/stm32/stm32-dcmi.c
-@@ -808,6 +808,9 @@ static int dcmi_try_fmt(struct stm32_dcmi *dcmi, struct v4l2_format *f,
- 
- 	sd_fmt = find_format_by_fourcc(dcmi, pix->pixelformat);
- 	if (!sd_fmt) {
-+		if (!dcmi->num_of_sd_formats)
-+			return -ENODATA;
+diff --git a/block/sed-opal.c b/block/sed-opal.c
+index e0de4dd448b3c..1196408972937 100644
+--- a/block/sed-opal.c
++++ b/block/sed-opal.c
+@@ -2095,13 +2095,16 @@ static int opal_erase_locking_range(struct opal_dev *dev,
+ static int opal_enable_disable_shadow_mbr(struct opal_dev *dev,
+ 					  struct opal_mbr_data *opal_mbr)
+ {
++	u8 enable_disable = opal_mbr->enable_disable == OPAL_MBR_ENABLE ?
++		OPAL_TRUE : OPAL_FALSE;
 +
- 		sd_fmt = dcmi->sd_formats[dcmi->num_of_sd_formats - 1];
- 		pix->pixelformat = sd_fmt->fourcc;
- 	}
-@@ -986,6 +989,9 @@ static int dcmi_set_sensor_format(struct stm32_dcmi *dcmi,
+ 	const struct opal_step mbr_steps[] = {
+ 		{ opal_discovery0, },
+ 		{ start_admin1LSP_opal_session, &opal_mbr->key },
+-		{ set_mbr_done, &opal_mbr->enable_disable },
++		{ set_mbr_done, &enable_disable },
+ 		{ end_opal_session, },
+ 		{ start_admin1LSP_opal_session, &opal_mbr->key },
+-		{ set_mbr_enable_disable, &opal_mbr->enable_disable },
++		{ set_mbr_enable_disable, &enable_disable },
+ 		{ end_opal_session, },
+ 		{ NULL, }
+ 	};
+@@ -2221,7 +2224,7 @@ static int __opal_lock_unlock(struct opal_dev *dev,
  
- 	sd_fmt = find_format_by_fourcc(dcmi, pix->pixelformat);
- 	if (!sd_fmt) {
-+		if (!dcmi->num_of_sd_formats)
-+			return -ENODATA;
-+
- 		sd_fmt = dcmi->sd_formats[dcmi->num_of_sd_formats - 1];
- 		pix->pixelformat = sd_fmt->fourcc;
- 	}
+ static int __opal_set_mbr_done(struct opal_dev *dev, struct opal_key *key)
+ {
+-	u8 mbr_done_tf = 1;
++	u8 mbr_done_tf = OPAL_TRUE;
+ 	const struct opal_step mbrdone_step [] = {
+ 		{ opal_discovery0, },
+ 		{ start_admin1LSP_opal_session, key },
 -- 
 2.20.1
 
