@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFD312ED8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:40:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE6C62F30A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:26:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732891AbfE3DWo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:22:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44738 "EHLO mail.kernel.org"
+        id S1733194AbfE3EZ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:25:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730892AbfE3DRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:17:02 -0400
+        id S1729932AbfE3DOk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:14:40 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D35924657;
-        Thu, 30 May 2019 03:17:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A93124502;
+        Thu, 30 May 2019 03:14:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186221;
-        bh=ktULjbtGiu6USQiIsLXH9WoJV2uliWLQyEHGbCjaLcs=;
+        s=default; t=1559186079;
+        bh=P7R1x1pGi94AC5SEkeFz6aQimoGWCT8T1THq+81y3mw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TAK52jHNiuWS/jsEdnKXTuEnlvvzAZEDAOP4XYY07j4OFyEB3udHbwexK04pCzdlN
-         SG98bPJEOEDnzZ20URSQEAxcLbImnq9emfkAHA46tV8Rzh4Y6uko10D7jBWlCgt6IO
-         DkvpTT92xTs5z/2nBYrlgxvyqTlEuNiQXJZP5cIs=
+        b=KFXtL2GvJ+FRdmjDE8JlP1dNO5Bva3kP2kv0CWYO3ahq/oTp2PRyY8M5v2vBuu18h
+         GWRLf/HJM/1ijeJ6+dQtlj+suz7KgiyV/kJD8NkiMtTuHhCdTZQAZ1EtQ9Dcp162qE
+         QFLK5EEqat4XVsQ3fZTNsg6Is4wp1L0Go61aAZKc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, luto@kernel.org,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 113/276] mm/uaccess: Use unsigned long to placate UBSAN warnings on older GCC versions
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 198/346] s390: zcrypt: initialize variables before_use
 Date:   Wed, 29 May 2019 20:04:31 -0700
-Message-Id: <20190530030533.017771519@linuxfoundation.org>
+Message-Id: <20190530030551.273654785@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,74 +44,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 29da93fea3ea39ab9b12270cc6be1b70ef201c9e ]
+[ Upstream commit 913140e221567b3ecd21b4242257a7e3fa279026 ]
 
-Randy reported objtool triggered on his (GCC-7.4) build:
+The 'func_code' variable gets printed in debug statements without
+a prior initialization in multiple functions, as reported when building
+with clang:
 
-  lib/strncpy_from_user.o: warning: objtool: strncpy_from_user()+0x315: call to __ubsan_handle_add_overflow() with UACCESS enabled
-  lib/strnlen_user.o: warning: objtool: strnlen_user()+0x337: call to __ubsan_handle_sub_overflow() with UACCESS enabled
+drivers/s390/crypto/zcrypt_api.c:659:6: warning: variable 'func_code' is used uninitialized whenever 'if' condition is true
+      [-Wsometimes-uninitialized]
+        if (mex->outputdatalength < mex->inputdatalength) {
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/s390/crypto/zcrypt_api.c:725:29: note: uninitialized use occurs here
+        trace_s390_zcrypt_rep(mex, func_code, rc,
+                                   ^~~~~~~~~
+drivers/s390/crypto/zcrypt_api.c:659:2: note: remove the 'if' if its condition is always false
+        if (mex->outputdatalength < mex->inputdatalength) {
+        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/s390/crypto/zcrypt_api.c:654:24: note: initialize the variable 'func_code' to silence this warning
+        unsigned int func_code;
+                              ^
 
-This is due to UBSAN generating signed-overflow-UB warnings where it
-should not. Prior to GCC-8 UBSAN ignored -fwrapv (which the kernel
-uses through -fno-strict-overflow).
+Add initializations to all affected code paths to shut up the warning
+and make the warning output consistent.
 
-Make the functions use 'unsigned long' throughout.
-
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: luto@kernel.org
-Link: http://lkml.kernel.org/r/20190424072208.754094071@infradead.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/strncpy_from_user.c | 5 +++--
- lib/strnlen_user.c      | 4 ++--
- 2 files changed, 5 insertions(+), 4 deletions(-)
+ drivers/s390/crypto/zcrypt_api.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/lib/strncpy_from_user.c b/lib/strncpy_from_user.c
-index b53e1b5d80f42..e304b54c9c7dd 100644
---- a/lib/strncpy_from_user.c
-+++ b/lib/strncpy_from_user.c
-@@ -23,10 +23,11 @@
-  * hit it), 'max' is the address space maximum (and we return
-  * -EFAULT if we hit it).
-  */
--static inline long do_strncpy_from_user(char *dst, const char __user *src, long count, unsigned long max)
-+static inline long do_strncpy_from_user(char *dst, const char __user *src,
-+					unsigned long count, unsigned long max)
- {
- 	const struct word_at_a_time constants = WORD_AT_A_TIME_CONSTANTS;
--	long res = 0;
-+	unsigned long res = 0;
+diff --git a/drivers/s390/crypto/zcrypt_api.c b/drivers/s390/crypto/zcrypt_api.c
+index eb93c2d27d0ad..df1e847dd36e7 100644
+--- a/drivers/s390/crypto/zcrypt_api.c
++++ b/drivers/s390/crypto/zcrypt_api.c
+@@ -657,6 +657,7 @@ static long zcrypt_rsa_modexpo(struct ap_perms *perms,
+ 	trace_s390_zcrypt_req(mex, TP_ICARSAMODEXPO);
  
- 	/*
- 	 * Truncate 'max' to the user-specified limit, so that
-diff --git a/lib/strnlen_user.c b/lib/strnlen_user.c
-index 60d0bbda8f5e5..184f80f7bacfa 100644
---- a/lib/strnlen_user.c
-+++ b/lib/strnlen_user.c
-@@ -28,7 +28,7 @@
- static inline long do_strnlen_user(const char __user *src, unsigned long count, unsigned long max)
- {
- 	const struct word_at_a_time constants = WORD_AT_A_TIME_CONSTANTS;
--	long align, res = 0;
-+	unsigned long align, res = 0;
- 	unsigned long c;
+ 	if (mex->outputdatalength < mex->inputdatalength) {
++		func_code = 0;
+ 		rc = -EINVAL;
+ 		goto out;
+ 	}
+@@ -739,6 +740,7 @@ static long zcrypt_rsa_crt(struct ap_perms *perms,
+ 	trace_s390_zcrypt_req(crt, TP_ICARSACRT);
  
- 	/*
-@@ -42,7 +42,7 @@ static inline long do_strnlen_user(const char __user *src, unsigned long count,
- 	 * Do everything aligned. But that means that we
- 	 * need to also expand the maximum..
- 	 */
--	align = (sizeof(long) - 1) & (unsigned long)src;
-+	align = (sizeof(unsigned long) - 1) & (unsigned long)src;
- 	src -= align;
- 	max += align;
+ 	if (crt->outputdatalength < crt->inputdatalength) {
++		func_code = 0;
+ 		rc = -EINVAL;
+ 		goto out;
+ 	}
+@@ -946,6 +948,7 @@ static long zcrypt_send_ep11_cprb(struct ap_perms *perms,
  
+ 		targets = kcalloc(target_num, sizeof(*targets), GFP_KERNEL);
+ 		if (!targets) {
++			func_code = 0;
+ 			rc = -ENOMEM;
+ 			goto out;
+ 		}
+@@ -953,6 +956,7 @@ static long zcrypt_send_ep11_cprb(struct ap_perms *perms,
+ 		uptr = (struct ep11_target_dev __force __user *) xcrb->targets;
+ 		if (copy_from_user(targets, uptr,
+ 				   target_num * sizeof(*targets))) {
++			func_code = 0;
+ 			rc = -EFAULT;
+ 			goto out_free;
+ 		}
 -- 
 2.20.1
 
