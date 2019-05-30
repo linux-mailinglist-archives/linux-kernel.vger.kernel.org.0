@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91BB32F5AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:49:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14A702F368
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:29:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388868AbfE3EtS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:49:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50232 "EHLO mail.kernel.org"
+        id S2388197AbfE3E3H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:29:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728425AbfE3DLO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:11:14 -0400
+        id S1728720AbfE3DOI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:14:08 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81CE4244E6;
-        Thu, 30 May 2019 03:11:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0954244EF;
+        Thu, 30 May 2019 03:14:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185873;
-        bh=jYzDwC7GtsN77ay9dC5WCV3Ym8aKwuHHWzw2Lx0m6vE=;
+        s=default; t=1559186048;
+        bh=NVvAzGOIg97qKyAva+g4y1yXfLiTQHg1ERmm+Zug250=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l/8Erduz98v7x7b2Tkz5o95UJarGsIBbGIiGsHRst0rP+kizmTK04GQO1B/lK3EXh
-         HGuwqfItHB9VpGGKthXK7RMmKxuyXddXVXKuIMq10Tl28AsNsYNxuVfsi5YtqWtE90
-         EK9AmgDgGQX1X2GpeMl0v/Zf4IaVcCk/lCjwPP6k=
+        b=FhjQ+kpaHsQxjsPJT5i7Ha47baePM3eXR4orZOxYellFRM3YDkAvuw1AnZuw4uNBA
+         otEPLSV+13C6pydiqUcEuNo2X9mfaBYXBBKo3svpo3FUQGxLfV88aX1gcp+fTR5V4J
+         X5vOuS9mzWacFBSmEwma5xqxlsmGAb3jRnc/7C6g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sun peng Li <Sunpeng.Li@amd.com>,
-        Harry Wentland <Harry.Wentland@amd.com>,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 217/405] drm/amd/display: Initialize stream_update with memset
+Subject: [PATCH 5.0 142/346] audit: fix a memory leak bug
 Date:   Wed, 29 May 2019 20:03:35 -0700
-Message-Id: <20190530030552.064780213@linuxfoundation.org>
+Message-Id: <20190530030548.329894864@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,45 +45,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2aa632c5ffbedb2ee0e68857683466ea788f17eb ]
+[ Upstream commit 70c4cf17e445264453bc5323db3e50aa0ac9e81f ]
 
-The brace initialization used here generates warnings on some
-compilers. For example, on GCC 4.9:
+In audit_rule_change(), audit_data_to_entry() is firstly invoked to
+translate the payload data to the kernel's rule representation. In
+audit_data_to_entry(), depending on the audit field type, an audit tree may
+be created in audit_make_tree(), which eventually invokes kmalloc() to
+allocate the tree.  Since this tree is a temporary tree, it will be then
+freed in the following execution, e.g., audit_add_rule() if the message
+type is AUDIT_ADD_RULE or audit_del_rule() if the message type is
+AUDIT_DEL_RULE. However, if the message type is neither AUDIT_ADD_RULE nor
+AUDIT_DEL_RULE, i.e., the default case of the switch statement, this
+temporary tree is not freed.
 
-[...] In function ‘dm_determine_update_type_for_commit’:
-[...] error: missing braces around initializer [-Werror=missing-braces]
-   struct dc_stream_update stream_update = { 0 };
-          ^
+To fix this issue, only allocate the tree when the type is AUDIT_ADD_RULE
+or AUDIT_DEL_RULE.
 
-Use memset to make this more portable.
-
-v2: Specify the compiler / diagnostic in the commit message (Paul)
-
-Cc: Sun peng Li <Sunpeng.Li@amd.com>
-Cc: Harry Wentland <Harry.Wentland@amd.com>
-Signed-off-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
-Reviewed-by: Leo Li <sunpeng.li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Reviewed-by: Richard Guy Briggs <rgb@redhat.com>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ kernel/auditfilter.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index 3082b55b1e774..66f19d1864b17 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -5858,7 +5858,9 @@ dm_determine_update_type_for_commit(struct dc *dc,
+diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
+index bf309f2592c46..425c67e4f5681 100644
+--- a/kernel/auditfilter.c
++++ b/kernel/auditfilter.c
+@@ -1114,22 +1114,24 @@ int audit_rule_change(int type, int seq, void *data, size_t datasz)
+ 	int err = 0;
+ 	struct audit_entry *entry;
+ 
+-	entry = audit_data_to_entry(data, datasz);
+-	if (IS_ERR(entry))
+-		return PTR_ERR(entry);
+-
+ 	switch (type) {
+ 	case AUDIT_ADD_RULE:
++		entry = audit_data_to_entry(data, datasz);
++		if (IS_ERR(entry))
++			return PTR_ERR(entry);
+ 		err = audit_add_rule(entry);
+ 		audit_log_rule_change("add_rule", &entry->rule, !err);
+ 		break;
+ 	case AUDIT_DEL_RULE:
++		entry = audit_data_to_entry(data, datasz);
++		if (IS_ERR(entry))
++			return PTR_ERR(entry);
+ 		err = audit_del_rule(entry);
+ 		audit_log_rule_change("remove_rule", &entry->rule, !err);
+ 		break;
+ 	default:
+-		err = -EINVAL;
+ 		WARN_ON(1);
++		return -EINVAL;
  	}
  
- 	for_each_oldnew_crtc_in_state(state, crtc, old_crtc_state, new_crtc_state, i) {
--		struct dc_stream_update stream_update = { 0 };
-+		struct dc_stream_update stream_update;
-+
-+		memset(&stream_update, 0, sizeof(stream_update));
- 
- 		new_dm_crtc_state = to_dm_crtc_state(new_crtc_state);
- 		old_dm_crtc_state = to_dm_crtc_state(old_crtc_state);
+ 	if (err || type == AUDIT_DEL_RULE) {
 -- 
 2.20.1
 
