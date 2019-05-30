@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 424942F1E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:17:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 561E22F665
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:56:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730434AbfE3DPl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:15:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57370 "EHLO mail.kernel.org"
+        id S2389181AbfE3Ezt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:55:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46796 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727563AbfE3DNI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:13:08 -0400
+        id S1728001AbfE3DKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:10:14 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B83E4244EA;
-        Thu, 30 May 2019 03:13:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26A7D244BC;
+        Thu, 30 May 2019 03:10:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185987;
-        bh=nGAUJRbLvnG4RZXmH6VU4fSaW9467h2MfLvkpldJnBI=;
+        s=default; t=1559185814;
+        bh=B4k9Ns39y91ECWxO73rdluGX0H8+6lrDfIsjeMYIB8k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u3KPifvDIPdZCSgoBOL8zuUqBHtHhmz5w4fP53T7XAZw7KH/YqVLHEBB8OiNVEG0+
-         onnF0u2UIDYDH5hWyqM2jQm4F7whcfszu9YhQFo8sx0gpQgQko2Xui9DGCll1gcG8V
-         ntXgk7tJnY0LcDLVHhuuBWVZBf3O/XBDzkA61AuI=
+        b=vOX32ZzL1gOSnVuABNaeywWavPf+ZqyheaelKiNaq1KH4QzAO0nh44Y3DT16k3X3G
+         7JUbInx0+CvWkGFn9rSTXw5uZH97SZej5umhAQmroCeD/5mxb10PBqOsgs0JPiCQpA
+         leh0A5eWVyONghNKaSuTQAJEyAWKjMrj4K7f/Bu4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+9c69c282adc4edd2b540@syzkaller.appspotmail.com,
-        Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 5.0 029/346] ovl: relax WARN_ON() for overlapping layers use case
-Date:   Wed, 29 May 2019 20:01:42 -0700
-Message-Id: <20190530030542.244955863@linuxfoundation.org>
+        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 105/405] sched/nohz: Run NOHZ idle load balancer on HK_FLAG_MISC CPUs
+Date:   Wed, 29 May 2019 20:01:43 -0700
+Message-Id: <20190530030546.320446374@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,85 +47,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amir Goldstein <amir73il@gmail.com>
+[ Upstream commit 9b019acb72e4b5741d88e8936d6f200ed44b66b2 ]
 
-commit acf3062a7e1ccf67c6f7e7c28671a6708fde63b0 upstream.
+The NOHZ idle balancer runs on the lowest idle CPU. This can
+interfere with isolated CPUs, so confine it to HK_FLAG_MISC
+housekeeping CPUs.
 
-This nasty little syzbot repro:
-https://syzkaller.appspot.com/x/repro.syz?x=12c7a94f400000
+HK_FLAG_SCHED is not used for this because it is not set anywhere
+at the moment. This could be folded into HK_FLAG_SCHED once that
+option is fixed.
 
-Creates overlay mounts where the same directory is both in upper and lower
-layers. Simplified example:
+The problem was observed with increased jitter on an application
+running on CPU0, caused by NOHZ idle load balancing being run on
+CPU1 (an SMT sibling).
 
-  mkdir foo work
-  mount -t overlay none foo -o"lowerdir=.,upperdir=foo,workdir=work"
-
-The repro runs several threads in parallel that attempt to chdir into foo
-and attempt to symlink/rename/exec/mkdir the file bar.
-
-The repro hits a WARN_ON() I placed in ovl_instantiate(), which suggests
-that an overlay inode already exists in cache and is hashed by the pointer
-of the real upper dentry that ovl_create_real() has just created. At the
-point of the WARN_ON(), for overlay dir inode lock is held and upper dir
-inode lock, so at first, I did not see how this was possible.
-
-On a closer look, I see that after ovl_create_real(), because of the
-overlapping upper and lower layers, a lookup by another thread can find the
-file foo/bar that was just created in upper layer, at overlay path
-foo/foo/bar and hash the an overlay inode with the new real dentry as lower
-dentry. This is possible because the overlay directory foo/foo is not
-locked and the upper dentry foo/bar is in dcache, so ovl_lookup() can find
-it without taking upper dir inode shared lock.
-
-Overlapping layers is considered a wrong setup which would result in
-unexpected behavior, but it shouldn't crash the kernel and it shouldn't
-trigger WARN_ON() either, so relax this WARN_ON() and leave a pr_warn()
-instead to cover all cases of failure to get an overlay inode.
-
-The error returned from failure to insert new inode to cache with
-inode_insert5() was changed to -EEXIST, to distinguish from the error
--ENOMEM returned on failure to get/allocate inode with iget5_locked().
-
-Reported-by: syzbot+9c69c282adc4edd2b540@syzkaller.appspotmail.com
-Fixes: 01b39dcc9568 ("ovl: use inode_insert5() to hash a newly...")
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20190412042613.28930-1-npiggin@gmail.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/overlayfs/dir.c   |    2 +-
- fs/overlayfs/inode.c |    3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ kernel/sched/fair.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
---- a/fs/overlayfs/dir.c
-+++ b/fs/overlayfs/dir.c
-@@ -260,7 +260,7 @@ static int ovl_instantiate(struct dentry
- 		 * hashed directory inode aliases.
- 		 */
- 		inode = ovl_get_inode(dentry->d_sb, &oip);
--		if (WARN_ON(IS_ERR(inode)))
-+		if (IS_ERR(inode))
- 			return PTR_ERR(inode);
- 	} else {
- 		WARN_ON(ovl_inode_real(inode) != d_inode(newdentry));
---- a/fs/overlayfs/inode.c
-+++ b/fs/overlayfs/inode.c
-@@ -832,7 +832,7 @@ struct inode *ovl_get_inode(struct super
- 	int fsid = bylower ? oip->lowerpath->layer->fsid : 0;
- 	bool is_dir, metacopy = false;
- 	unsigned long ino = 0;
--	int err = -ENOMEM;
-+	int err = oip->newinode ? -EEXIST : -ENOMEM;
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 35f3ea3750844..232491e3ed0db 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -9551,22 +9551,26 @@ static inline int on_null_domain(struct rq *rq)
+  * - When one of the busy CPUs notice that there may be an idle rebalancing
+  *   needed, they will kick the idle load balancer, which then does idle
+  *   load balancing for all the idle CPUs.
++ * - HK_FLAG_MISC CPUs are used for this task, because HK_FLAG_SCHED not set
++ *   anywhere yet.
+  */
  
- 	if (!realinode)
- 		realinode = d_inode(lowerdentry);
-@@ -917,6 +917,7 @@ out:
- 	return inode;
+ static inline int find_new_ilb(void)
+ {
+-	int ilb = cpumask_first(nohz.idle_cpus_mask);
++	int ilb;
  
- out_err:
-+	pr_warn_ratelimited("overlayfs: failed to get inode (%i)\n", err);
- 	inode = ERR_PTR(err);
- 	goto out;
+-	if (ilb < nr_cpu_ids && idle_cpu(ilb))
+-		return ilb;
++	for_each_cpu_and(ilb, nohz.idle_cpus_mask,
++			      housekeeping_cpumask(HK_FLAG_MISC)) {
++		if (idle_cpu(ilb))
++			return ilb;
++	}
+ 
+ 	return nr_cpu_ids;
  }
+ 
+ /*
+- * Kick a CPU to do the nohz balancing, if it is time for it. We pick the
+- * nohz_load_balancer CPU (if there is one) otherwise fallback to any idle
+- * CPU (if there is one).
++ * Kick a CPU to do the nohz balancing, if it is time for it. We pick any
++ * idle CPU in the HK_FLAG_MISC housekeeping set (if there is one).
+  */
+ static void kick_ilb(unsigned int flags)
+ {
+-- 
+2.20.1
+
 
 
