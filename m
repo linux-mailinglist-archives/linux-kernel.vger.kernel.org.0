@@ -2,85 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC58B30196
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 20:13:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B98A3019B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 20:15:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbfE3SNd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 14:13:33 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:36849 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726328AbfE3SNc (ORCPT
+        id S1726636AbfE3SPB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 14:15:01 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:54163 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726328AbfE3SPB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 14:13:32 -0400
-Received: by mail-qt1-f193.google.com with SMTP id u12so8141839qth.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 11:13:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=swUKp54FsABaRx/HQxckmg32aK739BKT6ewItuokNDk=;
-        b=mCnm3c9V+AUiXWu72CRiDG1lDftKWC0WYItdzS+nEAZ/TTkdtF9aaczm5EVhyDFBUz
-         QVQ3UtueqzGuyPvF99YP9tEfiG9SSBt94wDCI85CSmsyoLUW6ecJc+CmzpXl43xcH+8L
-         65FUXzWZFFsfB30dF0m7JYOsqi8PVL+DJNiuxjdbcNqx+SsHJ3GKRYW/mFXFWwZy4PC0
-         HWnG3wfAAHH13wx2jZNw6mRcAEKq6TEF0ACehlWLbic8FJzyuY1VFgv7wnbGYK1Yj4Jm
-         IEVNA0s4Fme90AUirhQWO0TKerIAhTx7c+KvygP0esafrZA1LHY8CrAkG/DICBfmKUzd
-         AslA==
-X-Gm-Message-State: APjAAAVWQrDZoKDyTVWBa2Pb9pUXkjyrDJL8GfZI/K183PBef99ZUMF9
-        LbrhyL0p49k9NPMTCIj+vJJr6A==
-X-Google-Smtp-Source: APXvYqyndgU/JBNxGTz081BydLXYPXGN+1/yzyTBopwAP5jF6DEPVUhyIlMc188XrJEeCGJfnA2k0g==
-X-Received: by 2002:aed:2494:: with SMTP id t20mr4813376qtc.135.1559240011968;
-        Thu, 30 May 2019 11:13:31 -0700 (PDT)
-Received: from redhat.com (pool-100-0-197-103.bstnma.fios.verizon.net. [100.0.197.103])
-        by smtp.gmail.com with ESMTPSA id k9sm1894099qki.20.2019.05.30.11.13.30
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 30 May 2019 11:13:31 -0700 (PDT)
-Date:   Thu, 30 May 2019 14:13:28 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     David Miller <davem@davemloft.net>
-Cc:     jasowang@redhat.com, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peterx@redhat.com,
-        James.Bottomley@hansenpartnership.com, hch@infradead.org,
-        jglisse@redhat.com, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org,
-        christophe.de.dinechin@gmail.com, jrdr.linux@gmail.com
-Subject: Re: [PATCH net-next 0/6] vhost: accelerate metadata access
-Message-ID: <20190530141243-mutt-send-email-mst@kernel.org>
-References: <20190524081218.2502-1-jasowang@redhat.com>
- <20190530.110730.2064393163616673523.davem@davemloft.net>
+        Thu, 30 May 2019 14:15:01 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hWPZq-0001NL-Td; Thu, 30 May 2019 18:14:59 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: gadget: net2272: remove redundant assignments to pointer 's'
+Date:   Thu, 30 May 2019 19:14:58 +0100
+Message-Id: <20190530181458.7488-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190530.110730.2064393163616673523.davem@davemloft.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 11:07:30AM -0700, David Miller wrote:
-> From: Jason Wang <jasowang@redhat.com>
-> Date: Fri, 24 May 2019 04:12:12 -0400
-> 
-> > This series tries to access virtqueue metadata through kernel virtual
-> > address instead of copy_user() friends since they had too much
-> > overheads like checks, spec barriers or even hardware feature
-> > toggling like SMAP. This is done through setup kernel address through
-> > direct mapping and co-opreate VM management with MMU notifiers.
-> > 
-> > Test shows about 23% improvement on TX PPS. TCP_STREAM doesn't see
-> > obvious improvement.
-> 
-> I'm still waiting for some review from mst.
-> 
-> If I don't see any review soon I will just wipe these changes from
-> patchwork as it serves no purpose to just let them rot there.
-> 
-> Thank you.
+From: Colin Ian King <colin.king@canonical.com>
 
-I thought we agreed I'm merging this through my tree, not net-next.
-So you can safely wipe it.
+The pointer 's' is being assigned however the pointer is
+never used with either of these values before it it reassigned much
+later on.  I suspect it was going to be used in the output of the
+main control registers scnprintf but was omitted.  The assignments
+of 's' to the driver name or the literal string are redundant and
+can be removed.
 
-Thanks!
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/usb/gadget/udc/net2272.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
+diff --git a/drivers/usb/gadget/udc/net2272.c b/drivers/usb/gadget/udc/net2272.c
+index 564aeee1a1fe..247de0faaeb7 100644
+--- a/drivers/usb/gadget/udc/net2272.c
++++ b/drivers/usb/gadget/udc/net2272.c
+@@ -1178,11 +1178,6 @@ registers_show(struct device *_dev, struct device_attribute *attr, char *buf)
+ 	size = PAGE_SIZE;
+ 	spin_lock_irqsave(&dev->lock, flags);
+ 
+-	if (dev->driver)
+-		s = dev->driver->driver.name;
+-	else
+-		s = "(none)";
+-
+ 	/* Main Control Registers */
+ 	t = scnprintf(next, size, "%s version %s,"
+ 		"chiprev %02x, locctl %02x\n"
 -- 
-MST
+2.20.1
+
