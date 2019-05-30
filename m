@@ -2,67 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 513D1300CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 19:17:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA704300DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 19:21:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726724AbfE3RRI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 13:17:08 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42874 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726430AbfE3RRH (ORCPT
+        id S1726711AbfE3RVI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 13:21:08 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:58610 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725961AbfE3RVH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 13:17:07 -0400
-Received: by mail-pg1-f196.google.com with SMTP id e6so1130575pgd.9;
-        Thu, 30 May 2019 10:17:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=bNE39eRqZdSpT9RvxiKlg9hyxVS+PZXMDoR6uxMzz78=;
-        b=GPwDOuY6sotWaA5gMqPD2xoe9iaW5HBDmhFsFqf+W6weVeLDOPJxjF1/6HHDz8Hoo/
-         QMQDo2h5X/Y2jpS574nR2DtnBkji+LiwsrYrrF9fZY+2R0n8MURf8CCEeQerwhMnEQqN
-         bqdVblu4bg1T4GIlT3F+DHbrKv3P5zIk4QT/GJ7RYMQg451VwI5VeBBFUjry/wejtNl4
-         z7gAqcTtK2D63TQR45atYV2Pzd+KhQSZ5LTPGO1mZgwg5Xx2O5W0hG6sAGkjnJigFvdR
-         97FiI8jXM/qLRcLHNvJ0QKtc13Hw63H7XUsF6tFbOAN/dztUHtl3ECmwcbtQVAP+UJGx
-         x5+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bNE39eRqZdSpT9RvxiKlg9hyxVS+PZXMDoR6uxMzz78=;
-        b=tRXg9moId0z1Ite1yKO/wu8CXeLbdAB8huTUoQ1pzX/6IE4W6HZK9EcBAaOX0reez+
-         RfsIpaOkNVow/6nLurNC3dhUxn2b7NBBWGl3G5LYMqJ/kLHHCLMs4+bfsfpSC35VFYsu
-         WBomNKcRPMnYgoJOmyXBVBRvSew8KSWS9OxCThtJvvIsJ7PjFcfbxfrT9WO/zH/nvOfE
-         fARBnuWWSK8sGMcWCWQCuMVnAnYP4r/RNrafdp8LgOWQRYMMxxRJjaZ7tCS9l+3vGoG2
-         3yGRpukpZBi7+FPG83ciqlRfKXsiekbS55oGFNsJa+83PqdBoY9Z27+NEKn2j29IFPv5
-         LTHQ==
-X-Gm-Message-State: APjAAAVDiMcXiOVONQJ3+azSR+F0+wI4aiA1c0IMiEV8uHIeKBsSZar0
-        11Nz7f3WVRWaYH8NigZKYs4=
-X-Google-Smtp-Source: APXvYqxEXP+Kspht6JQWbLrrmS0S6zI44Bror6FHffDv+mgQvfVogDcCVZY4nUtvjc0dh/o2xVy9MA==
-X-Received: by 2002:aa7:8296:: with SMTP id s22mr4797826pfm.52.1559236626867;
-        Thu, 30 May 2019 10:17:06 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2c1:200:55c7:81e6:c7d8:94b? ([2620:15c:2c1:200:55c7:81e6:c7d8:94b])
-        by smtp.gmail.com with ESMTPSA id p21sm3459080pfn.129.2019.05.30.10.17.05
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 May 2019 10:17:05 -0700 (PDT)
-Subject: Re: [PATCH] ipv6: Prevent overrun when parsing v6 header options
-To:     Young Xiao <92siuyang@gmail.com>, davem@davemloft.net,
-        kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-References: <1559230098-1543-1-git-send-email-92siuyang@gmail.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <c83f8777-f6be-029b-980d-9f974b4e28ce@gmail.com>
-Date:   Thu, 30 May 2019 10:17:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <1559230098-1543-1-git-send-email-92siuyang@gmail.com>
-Content-Type: text/plain; charset=utf-8
+        Thu, 30 May 2019 13:21:07 -0400
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.16.0.27/8.16.0.27) with SMTP id x4UH97i7016413;
+        Thu, 30 May 2019 10:18:47 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=3T6nroDY3DinVVOxA+4sYA7U+RaGiCglnLDagGHPffg=;
+ b=dPPRkci17U3M4aLXAZfBtx+bzM0plzsNtVF/gEvKoyZJT0Wivyj2r2c3uTDTz0ZTN5FT
+ q1F3Qc/Pe0WKCmakZzEQaXNjlYTVaGdrAm6haVtkZac6I4AX6Wjsd9WOMqLXZ3Dx5stY
+ yn04aw1srzoiIwTMQCfAwyvhykmgNRY7sIo= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by m0089730.ppops.net with ESMTP id 2stftprtsw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Thu, 30 May 2019 10:18:47 -0700
+Received: from ash-exhub104.TheFacebook.com (2620:10d:c0a8:82::d) by
+ ash-exhub104.TheFacebook.com (2620:10d:c0a8:82::d) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 30 May 2019 10:18:45 -0700
+Received: from NAM03-BY2-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.35.175) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
+ via Frontend Transport; Thu, 30 May 2019 10:18:45 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3T6nroDY3DinVVOxA+4sYA7U+RaGiCglnLDagGHPffg=;
+ b=Qupa5ciZYj3rSUffCPX4e5i8sAHT5I+Q4pGZQvCmvnkkBgEFtf9WdM6H11FUBaPFG9uBPToFMjdiUOR/LPLPhbRKrXBjWbk3qVXi+1SdFlfr7zaAusATn0eWz6M7QyYhS6vDxRlTVNu5/VSkEt7w0egiucvtbURA69JYq1kEZ4s=
+Received: from BN6PR15MB1154.namprd15.prod.outlook.com (10.172.208.137) by
+ BN6PR15MB1793.namprd15.prod.outlook.com (10.174.115.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1943.16; Thu, 30 May 2019 17:18:44 +0000
+Received: from BN6PR15MB1154.namprd15.prod.outlook.com
+ ([fe80::adc0:9bbf:9292:27bd]) by BN6PR15MB1154.namprd15.prod.outlook.com
+ ([fe80::adc0:9bbf:9292:27bd%2]) with mapi id 15.20.1922.021; Thu, 30 May 2019
+ 17:18:44 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+CC:     linux-kernel <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "namit@vmware.com" <namit@vmware.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "oleg@redhat.com" <oleg@redhat.com>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "mhiramat@kernel.org" <mhiramat@kernel.org>,
+        "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        Kernel Team <Kernel-team@fb.com>,
+        "william.kucharski@oracle.com" <william.kucharski@oracle.com>,
+        "chad.mynhier@oracle.com" <chad.mynhier@oracle.com>,
+        "mike.kravetz@oracle.com" <mike.kravetz@oracle.com>
+Subject: Re: [PATCH uprobe, thp 2/4] uprobe: use original page when all
+ uprobes are removed
+Thread-Topic: [PATCH uprobe, thp 2/4] uprobe: use original page when all
+ uprobes are removed
+Thread-Index: AQHVFmapFXZ5K+77uUK6eWDD22eshaaDhceAgABk4oA=
+Date:   Thu, 30 May 2019 17:18:43 +0000
+Message-ID: <F97FB4EB-3416-4BE7-9539-E58A3AD86874@fb.com>
+References: <20190529212049.2413886-1-songliubraving@fb.com>
+ <20190529212049.2413886-3-songliubraving@fb.com>
+ <20190530111739.r6b2hpzjadep4xr5@box>
+In-Reply-To: <20190530111739.r6b2hpzjadep4xr5@box>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.104.11)
+x-originating-ip: [2620:10d:c090:200::3:bc80]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e4ef1874-a86e-4f28-2153-08d6e522de56
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:BN6PR15MB1793;
+x-ms-traffictypediagnostic: BN6PR15MB1793:
+x-microsoft-antispam-prvs: <BN6PR15MB17939E8756F938742D54EFEAB3180@BN6PR15MB1793.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:989;
+x-forefront-prvs: 00531FAC2C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(366004)(136003)(346002)(376002)(199004)(189003)(33656002)(6246003)(7416002)(2906002)(36756003)(99286004)(5660300002)(229853002)(57306001)(6506007)(53936002)(446003)(82746002)(54906003)(486006)(316002)(76176011)(102836004)(81166006)(11346002)(256004)(68736007)(53546011)(7736002)(476003)(2616005)(305945005)(6916009)(25786009)(186003)(14454004)(71190400001)(71200400001)(83716004)(8676002)(46003)(478600001)(4744005)(66556008)(8936002)(50226002)(6436002)(4326008)(6116002)(64756008)(66946007)(66446008)(6512007)(6486002)(66476007)(86362001)(91956017)(81156014)(73956011)(76116006);DIR:OUT;SFP:1102;SCL:1;SRVR:BN6PR15MB1793;H:BN6PR15MB1154.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: YhyDiPd3FP7X/qv3flvqEQjFex8nNdD9A3heognhhMiFB2SV1afcTFgbkI4PYbvv9kckOE5GXLKVSkGAj2CW6XpuJTdg7QKb3ldHj8ctUBBPRDU1sPU/trj3R/xkwJLKsblVFNXNDx+IEBfXSa9fuVPkuezUq5MV5UV5HPQbOw5e56lh5vWHo3yWaE8C6ruG/QRIg0JUxPzbH8Qw3SBIkKdlnyaNieIokXi0+WTrj56HdsAM04gNilwY5aD66BCqliYmWcvgOxKlsjsw7JaRt/WICYfI8DufghQpG8DwBQ3Eqbiu+A7TtwM+Xp5krq1A+spN2ahlxyjCx/TdMRK6YjuL/PAOpfIg7xxQxTCgfT5+EYpyWrfCwamQxI77BtHP3dtH354VGPBd6Cv9hQZ35Hm9rV14tLEwTAbqBRtuW1Q=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <A65156D150C53842A08DD92CCC6D94A7@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4ef1874-a86e-4f28-2153-08d6e522de56
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 May 2019 17:18:43.9607
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: songliubraving@fb.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR15MB1793
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-30_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=960 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905300121
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -70,68 +119,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 5/30/19 8:28 AM, Young Xiao wrote:
-> The fragmentation code tries to parse the header options in order
-> to figure out where to insert the fragment option.  Since nexthdr points
-> to an invalid option, the calculation of the size of the network header
-> can made to be much larger than the linear section of the skb and data
-> is read outside of it.
-> 
-> This vulnerability is similar to CVE-2017-9074.
-> 
-> Signed-off-by: Young Xiao <92siuyang@gmail.com>
-> ---
->  net/ipv6/mip6.c | 24 ++++++++++++++----------
->  1 file changed, 14 insertions(+), 10 deletions(-)
-> 
-> diff --git a/net/ipv6/mip6.c b/net/ipv6/mip6.c
-> index 64f0f7b..30ed1c5 100644
-> --- a/net/ipv6/mip6.c
-> +++ b/net/ipv6/mip6.c
-> @@ -263,8 +263,6 @@ static int mip6_destopt_offset(struct xfrm_state *x, struct sk_buff *skb,
->  			       u8 **nexthdr)
->  {
->  	u16 offset = sizeof(struct ipv6hdr);
-> -	struct ipv6_opt_hdr *exthdr =
-> -				   (struct ipv6_opt_hdr *)(ipv6_hdr(skb) + 1);
->  	const unsigned char *nh = skb_network_header(skb);
->  	unsigned int packet_len = skb_tail_pointer(skb) -
->  		skb_network_header(skb);
-> @@ -272,7 +270,8 @@ static int mip6_destopt_offset(struct xfrm_state *x, struct sk_buff *skb,
->  
->  	*nexthdr = &ipv6_hdr(skb)->nexthdr;
->  
-> -	while (offset + 1 <= packet_len) {
-> +	while (offset <= packet_len) {
-> +		struct ipv6_opt_hdr *exthdr;
->  
->  		switch (**nexthdr) {
->  		case NEXTHDR_HOP:
-> @@ -299,12 +298,15 @@ static int mip6_destopt_offset(struct xfrm_state *x, struct sk_buff *skb,
->  			return offset;
->  		}
->  
-> +		if (offset + sizeof(struct ipv6_opt_hdr) > packet_len)
-> +			return -EINVAL;
-> +
-> +		exthdr = (struct ipv6_opt_hdr *)(nh + offset);
->  		offset += ipv6_optlen(exthdr);
->  		*nexthdr = &exthdr->nexthdr;
-> -		exthdr = (struct ipv6_opt_hdr *)(nh + offset);
->  	}
->  
-> -	return offset;
-> +	return -EINVAL;
->  }
->
+> On May 30, 2019, at 4:17 AM, Kirill A. Shutemov <kirill@shutemov.name> wr=
+ote:
+>=20
+> On Wed, May 29, 2019 at 02:20:47PM -0700, Song Liu wrote:
+>> @@ -501,6 +512,20 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe=
+, struct mm_struct *mm,
+>> 	copy_highpage(new_page, old_page);
+>> 	copy_to_page(new_page, vaddr, &opcode, UPROBE_SWBP_INSN_SIZE);
+>>=20
+>> +	index =3D vaddr_to_offset(vma, vaddr & PAGE_MASK) >> PAGE_SHIFT;
+>> +	orig_page =3D find_get_page(vma->vm_file->f_inode->i_mapping, index);
+>> +	if (orig_page) {
+>> +		if (memcmp(page_address(orig_page),
+>> +			   page_address(new_page), PAGE_SIZE) =3D=3D 0) {
+>=20
+> Does it work for highmem?
 
+Good catch! I will fix it in v2.=20
 
-Ok, but have you checked that callers have been fixed ?
+Thanks!
+Song
 
-xfrm6_transport_output() seems buggy as well,
-unless the skbs are linearized before entering these functions ?
-
-Thanks.
-
-
+>=20
+>=20
+> --=20
+> Kirill A. Shutemov
 
