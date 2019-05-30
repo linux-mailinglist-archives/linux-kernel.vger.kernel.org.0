@@ -2,106 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93D4F2FA80
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 12:47:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1C212FA8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 12:51:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726840AbfE3Krp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 06:47:45 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:48105 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726198AbfE3Krp (ORCPT
+        id S1726813AbfE3KvY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 06:51:24 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:57319 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726198AbfE3KvY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 06:47:45 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 7E3A7802E3; Thu, 30 May 2019 12:47:32 +0200 (CEST)
-Date:   Thu, 30 May 2019 12:47:42 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] x86/power: Fix 'nosmt' vs. hibernation triple fault
- during resume
-Message-ID: <20190530104741.GA12800@amd>
-References: <nycvar.YFH.7.76.1905282326360.1962@cbobk.fhfr.pm>
- <nycvar.YFH.7.76.1905300007470.1962@cbobk.fhfr.pm>
+        Thu, 30 May 2019 06:51:24 -0400
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id x4UApGno018683;
+        Thu, 30 May 2019 19:51:17 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x4UApGno018683
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1559213477;
+        bh=j5xMXtzlfJmtrDOpctpofJ+GhwQ4JC0Tahjh8T6hfJo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=wDt2SGJoCbR8lZkqChfL+ohh3godb14CBnYHfsR842blEZ9HJtzhaG5JRuXHzPW0H
+         HuS/tqXXZRS0f6xuTiICGO4Jgu4+fjAcUYFpphsCf/aWsTLfQn/kelbj03rwpcFsow
+         E4zKd4JCdjdskMOMLi2GN+OY/XvYc5moE5pVZe6MlZVSE0mv/nxvdP/rGZ3ig05Ugx
+         tbgq7G/aziCXuWhXMDa+2IUFGlmEHdxS7nuGTmJf89G/ulL4KYhkSCSfExuJ/aDJeZ
+         3+Zp4a9GIm/MgIzg6BXdXxy7bRqJEDZRVn+Ov5re91eDUeQnJDBw2kprTbkkFaG75W
+         Ii/kpd8Xj+fgw==
+X-Nifty-SrcIP: [209.85.217.54]
+Received: by mail-vs1-f54.google.com with SMTP id q64so4094769vsd.1;
+        Thu, 30 May 2019 03:51:17 -0700 (PDT)
+X-Gm-Message-State: APjAAAWisKc3pbbkYoBUSlPMxQ6oX2uEbGJun76NCmSvcWhTWxj+TW8N
+        cFAryo/YUtJkEa6D1aW+qjzKpaT3w82eeJJvRTU=
+X-Google-Smtp-Source: APXvYqz1eQpgy1klSJRUBat0BPbDkemKQMZQlg44UME+WzfyPZ3ATsQu01dDSjF1W1pCCB66UyAzAWUE0x86MfG9NnE=
+X-Received: by 2002:a67:1783:: with SMTP id 125mr1567738vsx.54.1559213476461;
+ Thu, 30 May 2019 03:51:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="rwEMma7ioTxnRzrJ"
-Content-Disposition: inline
-In-Reply-To: <nycvar.YFH.7.76.1905300007470.1962@cbobk.fhfr.pm>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <1556887064-12882-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1556887064-12882-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 30 May 2019 19:50:40 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATKCRqcDWg4X_e2N3TuxTmfr34ZYJOJU=SbubE-+S4eTQ@mail.gmail.com>
+Message-ID: <CAK7LNATKCRqcDWg4X_e2N3TuxTmfr34ZYJOJU=SbubE-+S4eTQ@mail.gmail.com>
+Subject: Re: [PATCH] x86,sh: use __builtin_constant_p() directly instead of IS_IMMEDIATE()
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     X86 ML <x86@kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Andrew,
 
---rwEMma7ioTxnRzrJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, May 3, 2019 at 9:48 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> __builtin_constant_p(nr) is used everywhere now. It does not make
+> much sense to define IS_IMMEDIATE() as its alias.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-On Thu 2019-05-30 00:09:39, Jiri Kosina wrote:
-> From: Jiri Kosina <jkosina@suse.cz>
->=20
-> As explained in
->=20
-> 	0cc3cd21657b ("cpu/hotplug: Boot HT siblings at least once")
->=20
-> we always, no matter what, have to bring up x86 HT siblings during boot at
-> least once in order to avoid first MCE bringing the system to its knees.
->=20
-> That means that whenever 'nosmt' is supplied on the kernel command-line,
-> all the HT siblings are as a result sitting in mwait or cpudile after
-> going through the online-offline cycle at least once.
->=20
-> This causes a serious issue though when a kernel, which saw 'nosmt' on its
-> commandline, is going to perform resume from hibernation: if the resume
-> from the hibernated image is successful, cr3 is flipped in order to point
-> to the address space of the kernel that is being resumed, which in turn
-> means that all the HT siblings are all of a sudden mwaiting on address
-> which is no longer valid.
->=20
-> That results in triple fault shortly after cr3 is switched, and machine
-> reboots.
->=20
-> Fix this by always waking up all the SMT siblings before initiating the
-> 'restore from hibernation' process; this guarantees that all the HT
-> siblings will be properly carried over to the resumed kernel waiting in
-> resume_play_dead(), and acted upon accordingly afterwards, based on the
-> target kernel configuration.
-> Symmetricaly, the resumed kernel has to push the SMT siblings to mwait
-> again in case it has SMT disabled; this means it has to online all
-> the siblings when resuming (so that they come out of hlt) and offline
-> them again to let them reach mwait.
->=20
-> Cc: stable@vger.kernel.org # v4.19+
-> Debugged-by: Thomas Gleixner <tglx@linutronix.de>
-> Fixes: 0cc3cd21657b ("cpu/hotplug: Boot HT siblings at least once")
-> Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Ping. Is this a good clean-up?
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+Thanks.
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+> ---
+>
+>  arch/sh/include/asm/bitops-op32.h | 8 +++-----
+>  arch/x86/include/asm/bitops.h     | 7 +++----
+>  2 files changed, 6 insertions(+), 9 deletions(-)
+>
+> diff --git a/arch/sh/include/asm/bitops-op32.h b/arch/sh/include/asm/bitops-op32.h
+> index 4668803..cfe5465 100644
+> --- a/arch/sh/include/asm/bitops-op32.h
+> +++ b/arch/sh/include/asm/bitops-op32.h
+> @@ -16,11 +16,9 @@
+>  #define BYTE_OFFSET(nr)                ((nr) % BITS_PER_BYTE)
+>  #endif
+>
+> -#define IS_IMMEDIATE(nr)       (__builtin_constant_p(nr))
+> -
+>  static inline void __set_bit(int nr, volatile unsigned long *addr)
+>  {
+> -       if (IS_IMMEDIATE(nr)) {
+> +       if (__builtin_constant_p(nr)) {
+>                 __asm__ __volatile__ (
+>                         "bset.b %1, @(%O2,%0)           ! __set_bit\n\t"
+>                         : "+r" (addr)
+> @@ -37,7 +35,7 @@ static inline void __set_bit(int nr, volatile unsigned long *addr)
+>
+>  static inline void __clear_bit(int nr, volatile unsigned long *addr)
+>  {
+> -       if (IS_IMMEDIATE(nr)) {
+> +       if (__builtin_constant_p(nr)) {
+>                 __asm__ __volatile__ (
+>                         "bclr.b %1, @(%O2,%0)           ! __clear_bit\n\t"
+>                         : "+r" (addr)
+> @@ -64,7 +62,7 @@ static inline void __clear_bit(int nr, volatile unsigned long *addr)
+>   */
+>  static inline void __change_bit(int nr, volatile unsigned long *addr)
+>  {
+> -       if (IS_IMMEDIATE(nr)) {
+> +       if (__builtin_constant_p(nr)) {
+>                 __asm__ __volatile__ (
+>                         "bxor.b %1, @(%O2,%0)           ! __change_bit\n\t"
+>                         : "+r" (addr)
+> diff --git a/arch/x86/include/asm/bitops.h b/arch/x86/include/asm/bitops.h
+> index 8e790ec..2621438 100644
+> --- a/arch/x86/include/asm/bitops.h
+> +++ b/arch/x86/include/asm/bitops.h
+> @@ -45,7 +45,6 @@
+>   * We do the locked ops that don't return the old value as
+>   * a mask operation on a byte.
+>   */
+> -#define IS_IMMEDIATE(nr)               (__builtin_constant_p(nr))
+>  #define CONST_MASK_ADDR(nr, addr)      WBYTE_ADDR((void *)(addr) + ((nr)>>3))
+>  #define CONST_MASK(nr)                 (1 << ((nr) & 7))
+>
+> @@ -67,7 +66,7 @@
+>  static __always_inline void
+>  set_bit(long nr, volatile unsigned long *addr)
+>  {
+> -       if (IS_IMMEDIATE(nr)) {
+> +       if (__builtin_constant_p(nr)) {
+>                 asm volatile(LOCK_PREFIX "orb %1,%0"
+>                         : CONST_MASK_ADDR(nr, addr)
+>                         : "iq" ((u8)CONST_MASK(nr))
+> @@ -105,7 +104,7 @@ static __always_inline void __set_bit(long nr, volatile unsigned long *addr)
+>  static __always_inline void
+>  clear_bit(long nr, volatile unsigned long *addr)
+>  {
+> -       if (IS_IMMEDIATE(nr)) {
+> +       if (__builtin_constant_p(nr)) {
+>                 asm volatile(LOCK_PREFIX "andb %1,%0"
+>                         : CONST_MASK_ADDR(nr, addr)
+>                         : "iq" ((u8)~CONST_MASK(nr)));
+> @@ -186,7 +185,7 @@ static __always_inline void __change_bit(long nr, volatile unsigned long *addr)
+>   */
+>  static __always_inline void change_bit(long nr, volatile unsigned long *addr)
+>  {
+> -       if (IS_IMMEDIATE(nr)) {
+> +       if (__builtin_constant_p(nr)) {
+>                 asm volatile(LOCK_PREFIX "xorb %1,%0"
+>                         : CONST_MASK_ADDR(nr, addr)
+>                         : "iq" ((u8)CONST_MASK(nr)));
+> --
+> 2.7.4
+>
 
---rwEMma7ioTxnRzrJ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlzvtM0ACgkQMOfwapXb+vK9VQCeMCaAPxQHm2kR8tQhJTkYBmOm
-ZAcAoJtFwZcYrRfwjRiTD09ViNtMcVd2
-=LKEq
------END PGP SIGNATURE-----
-
---rwEMma7ioTxnRzrJ--
+-- 
+Best Regards
+Masahiro Yamada
