@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AB1A2ECFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:29:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 461B62F077
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:04:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388425AbfE3D3i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:29:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60008 "EHLO mail.kernel.org"
+        id S1731829AbfE3EEV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:04:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48858 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730575AbfE3DUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:20:47 -0400
+        id S1731273AbfE3DRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:51 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21D8F2496F;
-        Thu, 30 May 2019 03:20:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 162BB24730;
+        Thu, 30 May 2019 03:17:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186447;
-        bh=xHVzDq91aH0SJhrqyRTORQomLvIyxj+MOPYxDC+DYK4=;
+        s=default; t=1559186271;
+        bh=Ezwo7I/e4xNoxN3x0aAUXhD15xS/XKBoojy9aRG5H1Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aAX7HdddUkmF56IjZtnmHpDnyuJ5b5ie8gPmEXg10EWvtVWspm3uAKK0k8h/0o5Ra
-         O5otIA/3O3rD0uD1vpBlW3B86ekuE9AXuy/er17XB4PcpeETMXMHP5zGunKt91cIg0
-         9FfyRb1nFm5l+pHo3BIt3cu9Q7y6FLYznocwrWv0=
+        b=FKhptSmCArvBKDqcTozCtRfOR18Q3ZuPqiaQPOm8whaRqRaOxG1aXvTaOKh9eq0T2
+         zIVACv1RC1olYdfAmIJgP36yXjr+CWRAywz2bHCn/xn8j8KDDJ1uZHc63EdIO6oPwB
+         7ujFW2qkvv0UYpgwjhkk7u7AOwsd+5CJvuT5vhts=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+        stable@vger.kernel.org, Leon Romanovsky <leonro@mellanox.com>,
+        Gal Pressman <galpress@amazon.com>,
+        Lijun Ou <ouliun@huawei.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 037/128] iwlwifi: pcie: dont crash on invalid RX interrupt
+Subject: [PATCH 4.19 211/276] RDMA/hns: Fix bad endianess of port_pd variable
 Date:   Wed, 29 May 2019 20:06:09 -0700
-Message-Id: <20190530030440.829423723@linuxfoundation.org>
+Message-Id: <20190530030538.338691030@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 30f24eabab8cd801064c5c37589d803cb4341929 ]
+[ Upstream commit 6734b2973565e36659e97e12ab0d0faf1d9f3fbe ]
 
-If for some reason the device gives us an RX interrupt before we're
-ready for it, perhaps during device power-on with misconfigured IRQ
-causes mapping or so, we can crash trying to access the queues.
+port_pd is treated as le32 in declaration and read, fix assignment to be
+in le32 too. This change fixes the following compilation warnings.
 
-Prevent that by checking that we actually have RXQs and that they
-were properly allocated.
+drivers/infiniband/hw/hns/hns_roce_ah.c:67:24: warning: incorrect type
+in assignment (different base types)
+drivers/infiniband/hw/hns/hns_roce_ah.c:67:24: expected restricted __le32 [usertype] port_pd
+drivers/infiniband/hw/hns/hns_roce_ah.c:67:24: got restricted __be32 [usertype]
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Fixes: 9a4435375cd1 ("IB/hns: Add driver files for hns RoCE driver")
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Reviewed-by: Gal Pressman <galpress@amazon.com>
+Reviewed-by: Lijun Ou <ouliun@huawei.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/pcie/rx.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/infiniband/hw/hns/hns_roce_ah.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-index c21f8bd32d08f..25f2a0aceaa21 100644
---- a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-@@ -1225,10 +1225,15 @@ static void iwl_pcie_rx_handle_rb(struct iwl_trans *trans,
- static void iwl_pcie_rx_handle(struct iwl_trans *trans, int queue)
- {
- 	struct iwl_trans_pcie *trans_pcie = IWL_TRANS_GET_PCIE_TRANS(trans);
--	struct iwl_rxq *rxq = &trans_pcie->rxq[queue];
-+	struct iwl_rxq *rxq;
- 	u32 r, i, count = 0;
- 	bool emergency = false;
+diff --git a/drivers/infiniband/hw/hns/hns_roce_ah.c b/drivers/infiniband/hw/hns/hns_roce_ah.c
+index 0d96c5bb38cdf..d2d4ab9ab071c 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_ah.c
++++ b/drivers/infiniband/hw/hns/hns_roce_ah.c
+@@ -66,7 +66,7 @@ struct ib_ah *hns_roce_create_ah(struct ib_pd *ibpd,
+ 			     HNS_ROCE_VLAN_SL_BIT_MASK) <<
+ 			     HNS_ROCE_VLAN_SL_SHIFT;
  
-+	if (WARN_ON_ONCE(!trans_pcie->rxq || !trans_pcie->rxq[queue].bd))
-+		return;
-+
-+	rxq = &trans_pcie->rxq[queue];
-+
- restart:
- 	spin_lock(&rxq->lock);
- 	/* uCode's read index (stored in shared DRAM) indicates the last Rx
+-	ah->av.port_pd = cpu_to_be32(to_hr_pd(ibpd)->pdn |
++	ah->av.port_pd = cpu_to_le32(to_hr_pd(ibpd)->pdn |
+ 				     (rdma_ah_get_port_num(ah_attr) <<
+ 				     HNS_ROCE_PORT_NUM_SHIFT));
+ 	ah->av.gid_index = grh->sgid_index;
 -- 
 2.20.1
 
