@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98CF62ECFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:29:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D8232F03C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:02:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388059AbfE3D3m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:29:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60252 "EHLO mail.kernel.org"
+        id S1731659AbfE3ECH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:02:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729807AbfE3DUv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:20:51 -0400
+        id S1731398AbfE3DSD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:18:03 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 085662497E;
-        Thu, 30 May 2019 03:20:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD15E2475D;
+        Thu, 30 May 2019 03:18:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186451;
-        bh=uhWnmlcoF64u9MNy02zFBaoTIoSFXPkx4megjZ25jHc=;
+        s=default; t=1559186282;
+        bh=yIgeGhkdPB5M6GuadWfHBcGZhxxwD9M3hoixq8qO45I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kh1WaY8zfph02blH5dlBkPc7aZn2WPu4ORw/CyfT2z98dHShUgv2iJUFcC+kCwq9D
-         r77j/Gfpz3lSCCiH3+PdANw6S8lI+M3gEpHALl8prnBgEul//8jXdIlImhAdHeGQlT
-         fbZacUVrAae8SK2YOA25z89WsYyreLjoTvT6hTtA=
+        b=ztT2CE1lt5mrvtfjGS8oMZcj1kCK7JMAXajH0qFegEg3mbyrYqxmgDCAxBAxL6T4Z
+         w7k+kvzRYNZjcx4t+ejvBmLQVHaY4mGdbzJIY6GgV89y5YZ7yzEGk2fhjBiqk0OoN1
+         FmzFYsWT/yTPk668C7BXzwbzSjxS2rMrMEUpE+hM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
-        Richard Guy Briggs <rgb@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
+        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 061/128] audit: fix a memory leak bug
+Subject: [PATCH 4.19 235/276] usb: core: Add PM runtime calls to usb_hcd_platform_shutdown
 Date:   Wed, 29 May 2019 20:06:33 -0700
-Message-Id: <20190530030445.709897200@linuxfoundation.org>
+Message-Id: <20190530030539.824340594@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,64 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 70c4cf17e445264453bc5323db3e50aa0ac9e81f ]
+[ Upstream commit 8ead7e817224d7832fe51a19783cb8fcadc79467 ]
 
-In audit_rule_change(), audit_data_to_entry() is firstly invoked to
-translate the payload data to the kernel's rule representation. In
-audit_data_to_entry(), depending on the audit field type, an audit tree may
-be created in audit_make_tree(), which eventually invokes kmalloc() to
-allocate the tree.  Since this tree is a temporary tree, it will be then
-freed in the following execution, e.g., audit_add_rule() if the message
-type is AUDIT_ADD_RULE or audit_del_rule() if the message type is
-AUDIT_DEL_RULE. However, if the message type is neither AUDIT_ADD_RULE nor
-AUDIT_DEL_RULE, i.e., the default case of the switch statement, this
-temporary tree is not freed.
+If ohci-platform is runtime suspended, we can currently get an "imprecise
+external abort" on reboot with ohci-platform loaded when PM runtime
+is implemented for the SoC.
 
-To fix this issue, only allocate the tree when the type is AUDIT_ADD_RULE
-or AUDIT_DEL_RULE.
+Let's fix this by adding PM runtime support to usb_hcd_platform_shutdown.
 
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-Reviewed-by: Richard Guy Briggs <rgb@redhat.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/auditfilter.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/usb/core/hcd.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-index cd4f41397c7e8..42b7251c597fb 100644
---- a/kernel/auditfilter.c
-+++ b/kernel/auditfilter.c
-@@ -1095,22 +1095,24 @@ int audit_rule_change(int type, __u32 portid, int seq, void *data,
- 	int err = 0;
- 	struct audit_entry *entry;
+diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
+index 1c21955fe7c00..b82a7d787add8 100644
+--- a/drivers/usb/core/hcd.c
++++ b/drivers/usb/core/hcd.c
+@@ -3017,6 +3017,9 @@ usb_hcd_platform_shutdown(struct platform_device *dev)
+ {
+ 	struct usb_hcd *hcd = platform_get_drvdata(dev);
  
--	entry = audit_data_to_entry(data, datasz);
--	if (IS_ERR(entry))
--		return PTR_ERR(entry);
--
- 	switch (type) {
- 	case AUDIT_ADD_RULE:
-+		entry = audit_data_to_entry(data, datasz);
-+		if (IS_ERR(entry))
-+			return PTR_ERR(entry);
- 		err = audit_add_rule(entry);
- 		audit_log_rule_change("add_rule", &entry->rule, !err);
- 		break;
- 	case AUDIT_DEL_RULE:
-+		entry = audit_data_to_entry(data, datasz);
-+		if (IS_ERR(entry))
-+			return PTR_ERR(entry);
- 		err = audit_del_rule(entry);
- 		audit_log_rule_change("remove_rule", &entry->rule, !err);
- 		break;
- 	default:
--		err = -EINVAL;
- 		WARN_ON(1);
-+		return -EINVAL;
- 	}
- 
- 	if (err || type == AUDIT_DEL_RULE) {
++	/* No need for pm_runtime_put(), we're shutting down */
++	pm_runtime_get_sync(&dev->dev);
++
+ 	if (hcd->driver->shutdown)
+ 		hcd->driver->shutdown(hcd);
+ }
 -- 
 2.20.1
 
