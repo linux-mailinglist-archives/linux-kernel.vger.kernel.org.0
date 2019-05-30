@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A54CE2F1D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:16:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04C1A2ECE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:28:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731228AbfE3EQT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:16:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40212 "EHLO mail.kernel.org"
+        id S2388100AbfE3D17 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:27:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730500AbfE3DPt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:15:49 -0400
+        id S1731078AbfE3DTp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:19:45 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B10AA24559;
-        Thu, 30 May 2019 03:15:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A427248AE;
+        Thu, 30 May 2019 03:19:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186148;
-        bh=3lTbXb22p+OCIJA6LaKVWBJs3MVAlbaFisWWFyG4ZiM=;
+        s=default; t=1559186384;
+        bh=/yWJP0rcANcNhtnq/8KxUj2EE2aniIXHmsQP1TEQToo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BGhjhMJYyXRB/oas9vTV3X3M/L9otjAfmZDSdX3eEB93atnPQstEErhbklV8qi41w
-         3STMfOiWreoxXTWXmqhhkrQccs0j3idnmsv9jjbfRk6gswyJVcgYtPYxSerOsQ2Eea
-         OVq/MWPA/9UIqzOrtU5SFNcLow/7P7sQ4lB0s7Bc=
+        b=tp99IVbYddypPJQ4nA9XirYJd6uoiTbrmaS4cJAw4e4e0zYvGFJvPx+tW37m9XQvf
+         g3x/GydJe/BLhWu/Nx0Syf0t2rtVdP5VATyuNbA+JAYqFYb7m0zX7zoG0nwd/YUq06
+         XHCoUeHE8G8CsFTh5QIQR4yVpctwUnj8/HosQmM8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Stanley Chu <stanley.chu@mediatek.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 331/346] regulator: pv88080: Fix notifier mutex lock warning
+Subject: [PATCH 4.14 150/193] scsi: ufs: Avoid configuring regulator with undefined voltage range
 Date:   Wed, 29 May 2019 20:06:44 -0700
-Message-Id: <20190530030557.530006944@linuxfoundation.org>
+Message-Id: <20190530030509.112113839@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,54 +46,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1867af94cfdf37fc70fe67b3d522e78352800196 ]
+[ Upstream commit 3b141e8cfd54ba3e5c610717295b2a02aab26a05 ]
 
-The mutex for the regulator_dev must be controlled by the caller of
-the regulator_notifier_call_chain(), as described in the comment
-for that function.
+For regulators used by UFS, vcc, vccq and vccq2 will have voltage range
+initialized by ufshcd_populate_vreg(), however other regulators may have
+undefined voltage range if dt-bindings have no such definition.
 
-Failure to mutex lock and unlock surrounding the notifier call results
-in a kernel WARN_ON_ONCE() which will dump a backtrace for the
-regulator_notifier_call_chain() when that function call is first made.
-The mutex can be controlled using the regulator_lock/unlock() API.
+In above undefined case, both "min_uV" and "max_uV" fields in ufs_vreg
+struct will be zero values and these values will be configured on
+regulators in different power modes.
 
-Fixes: 99cf3af5e2d5 ("regulator: pv88080: new regulator driver")
-Suggested-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Signed-off-by: Steve Twiss <stwiss.opensource@diasemi.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Currently this may have no harm if both "min_uV" and "max_uV" always keep
+"zero values" because regulator_set_voltage() will always bypass such
+invalid values and return "good" results.
+
+However improper values shall be fixed to avoid potential bugs.  Simply
+bypass voltage configuration if voltage range is not defined.
+
+Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
+Reviewed-by: Avri Altman <avri.altman@wdc.com>
+Acked-by: Alim Akhtar <alim.akhtar@samsung.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/regulator/pv88080-regulator.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/scsi/ufs/ufshcd.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/regulator/pv88080-regulator.c b/drivers/regulator/pv88080-regulator.c
-index 9a08cb2de501e..d99f1b9fa0756 100644
---- a/drivers/regulator/pv88080-regulator.c
-+++ b/drivers/regulator/pv88080-regulator.c
-@@ -384,9 +384,11 @@ static irqreturn_t pv88080_irq_handler(int irq, void *data)
- 	if (reg_val & PV88080_E_VDD_FLT) {
- 		for (i = 0; i < PV88080_MAX_REGULATORS; i++) {
- 			if (chip->rdev[i] != NULL) {
-+			        regulator_lock(chip->rdev[i]);
- 				regulator_notifier_call_chain(chip->rdev[i],
- 					REGULATOR_EVENT_UNDER_VOLTAGE,
- 					NULL);
-+			        regulator_unlock(chip->rdev[i]);
- 			}
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index c2395b8e72894..d8f0a1ccd9b19 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -6580,12 +6580,15 @@ static int ufshcd_config_vreg(struct device *dev,
+ 	name = vreg->name;
+ 
+ 	if (regulator_count_voltages(reg) > 0) {
+-		min_uV = on ? vreg->min_uV : 0;
+-		ret = regulator_set_voltage(reg, min_uV, vreg->max_uV);
+-		if (ret) {
+-			dev_err(dev, "%s: %s set voltage failed, err=%d\n",
++		if (vreg->min_uV && vreg->max_uV) {
++			min_uV = on ? vreg->min_uV : 0;
++			ret = regulator_set_voltage(reg, min_uV, vreg->max_uV);
++			if (ret) {
++				dev_err(dev,
++					"%s: %s set voltage failed, err=%d\n",
+ 					__func__, name, ret);
+-			goto out;
++				goto out;
++			}
  		}
  
-@@ -401,9 +403,11 @@ static irqreturn_t pv88080_irq_handler(int irq, void *data)
- 	if (reg_val & PV88080_E_OVER_TEMP) {
- 		for (i = 0; i < PV88080_MAX_REGULATORS; i++) {
- 			if (chip->rdev[i] != NULL) {
-+			        regulator_lock(chip->rdev[i]);
- 				regulator_notifier_call_chain(chip->rdev[i],
- 					REGULATOR_EVENT_OVER_TEMP,
- 					NULL);
-+			        regulator_unlock(chip->rdev[i]);
- 			}
- 		}
- 
+ 		uA_load = on ? vreg->max_uA : 0;
 -- 
 2.20.1
 
