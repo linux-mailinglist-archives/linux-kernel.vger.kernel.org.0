@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EFB42EE03
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:43:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C4272ED69
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:36:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732790AbfE3DnX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:43:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33492 "EHLO mail.kernel.org"
+        id S1732691AbfE3DZa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:25:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727489AbfE3DVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:21:12 -0400
+        id S1731563AbfE3DS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:18:29 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BEB0E249D4;
-        Thu, 30 May 2019 03:21:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B17B5247C2;
+        Thu, 30 May 2019 03:18:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186471;
-        bh=XGmnVclwZXZkmuOEHu1RgQWExfuWhKj/ZVh8jChX7aw=;
+        s=default; t=1559186308;
+        bh=j5IrkmXoqipm6SS+hShpCMelEn2qPU/FEDpbZVsmWNM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F9oTs/8JJ2T4AjweCIEEZ1CDADZWgZ9t0WoImMysg5p70AJOxo/u65ywyrpuN8xp3
-         y51zDVO1JKhzvv5XPW7npwBhQN7yGwsg/jcfguD9wwahfNjQGodl3+H6NmrJ7eokgG
-         y6vdU1NArdEgQCdEwxcq0YNCJ1Z7/I7LUtnaUm3M=
+        b=H1q/y9UscHsksiRgcXiGnGVYABFNhjtslU4z0Mrqn/gjRm2pi48EPojA9WcYT/DIM
+         0E9tKI6GaW+Upf+YucljD7aXzxmP5n/rmsiNe+sHOeMarZQDtCtvVli5dAavETbQdV
+         wKTjxGHcaLrMHosqv0vJgW0D+53oUnZ5AD+cqC44=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
+        stable@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 101/128] arm64: cpu_ops: fix a leaked reference by adding missing of_node_put
+Subject: [PATCH 4.19 275/276] drm/sun4i: dsi: Enforce boundaries on the start delay
 Date:   Wed, 29 May 2019 20:07:13 -0700
-Message-Id: <20190530030452.805037561@linuxfoundation.org>
+Message-Id: <20190530030542.392185247@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,41 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 92606ec9285fb84cd9b5943df23f07d741384bfc ]
+[ Upstream commit efa31801203ac2f5c6a82a28cb991c7163ee0f1d ]
 
-The call to of_get_next_child returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
+The Allwinner BSP makes sure that we don't end up with a null start delay
+or with a delay larger than vtotal.
 
-Detected by coccinelle with the following warnings:
-  ./arch/arm64/kernel/cpu_ops.c:102:1-7: ERROR: missing of_node_put;
-  acquired a node pointer with refcount incremented on line 69, but
-  without a corresponding object release within this function.
+The former condition is likely to happen now with the reworked start delay,
+so make sure we enforce the same boundaries.
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Reviewed-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/c9889cf5f7a3d101ef380905900b45a182596f56.1549896081.git-series.maxime.ripard@bootlin.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kernel/cpu_ops.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/kernel/cpu_ops.c b/arch/arm64/kernel/cpu_ops.c
-index e137ceaf5016b..82b465207ed0a 100644
---- a/arch/arm64/kernel/cpu_ops.c
-+++ b/arch/arm64/kernel/cpu_ops.c
-@@ -85,6 +85,7 @@ static const char *__init cpu_read_enable_method(int cpu)
- 				pr_err("%s: missing enable-method property\n",
- 					dn->full_name);
- 		}
-+		of_node_put(dn);
- 	} else {
- 		enable_method = acpi_get_enable_method(cpu);
- 		if (!enable_method) {
+diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+index 3de41de43127b..97a0573cc5145 100644
+--- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
++++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+@@ -358,8 +358,12 @@ static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
+ 					   struct drm_display_mode *mode)
+ {
+ 	u16 start = clamp(mode->vtotal - mode->vdisplay - 10, 8, 100);
++	u16 delay = mode->vtotal - (mode->vsync_end - mode->vdisplay) + start;
+ 
+-	return mode->vtotal - (mode->vsync_end - mode->vdisplay) + start;
++	if (delay > mode->vtotal)
++		delay = delay % mode->vtotal;
++
++	return max_t(u16, delay, 1);
+ }
+ 
+ static void sun6i_dsi_setup_burst(struct sun6i_dsi *dsi,
 -- 
 2.20.1
 
