@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 192D42EFF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:01:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAD682F13A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:11:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731492AbfE3DSQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:18:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34646 "EHLO mail.kernel.org"
+        id S1729822AbfE3EL1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:11:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729879AbfE3DOa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:14:30 -0400
+        id S1730823AbfE3DQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:16:49 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4DB52458C;
-        Thu, 30 May 2019 03:14:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9964B24632;
+        Thu, 30 May 2019 03:16:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186069;
-        bh=s4kCazaRSWnzkH+QoFib8l1lxFponnhzdXNy2kqfGz0=;
+        s=default; t=1559186208;
+        bh=2CHFQ1yD2ZdQPUiiceM3lTdpPGv4jFPq8lmnLRRah/I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mEzNRciYizLMJGi1GLqLMVoo0IITwjUQ5qUZ8FqrokrdJg01UAflLqetrnH0nRXw4
-         DvxzDSQxyDsrt4OE4BdDKx0RvkvbjgOL7OW0iF8HkG9uNTfaR+M5lNRh/jGrhzQRxx
-         524kL1tZaPfdQiq6/+5dtDZsuXr4J8AQJYSrwvMA=
+        b=euEQbqjS5ioxOnG2hf9K2YZMFQnJrmgzXu3noAZdSyqfDsapXeJz7vDUm9ShNBEbp
+         7UueDW2fLav3nj5LS4ryoA8e/a0W01E47aVNltnDDf+smchzC32XYsP2Yv606m80W5
+         WXevp7JGvbCkme/CO6nIIz0EADcHNmgIr3mwz3sk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kefeng Wang <wangkefeng.wang@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 183/346] hwmon: (pc87427) Use request_muxed_region for Super-IO accesses
+Subject: [PATCH 4.19 098/276] net: cw1200: fix a NULL pointer dereference
 Date:   Wed, 29 May 2019 20:04:16 -0700
-Message-Id: <20190530030550.384713553@linuxfoundation.org>
+Message-Id: <20190530030532.253977176@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,67 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 755a9b0f8aaa5639ba5671ca50080852babb89ce ]
+[ Upstream commit 0ed2a005347400500a39ea7c7318f1fea57fb3ca ]
 
-Super-IO accesses may fail on a system with no or unmapped LPC bus.
+In case create_singlethread_workqueue fails, the fix free the
+hardware and returns NULL to avoid NULL pointer dereference.
 
-Also, other drivers may attempt to access the LPC bus at the same time,
-resulting in undefined behavior.
-
-Use request_muxed_region() to ensure that IO access on the requested
-address space is supported, and to ensure that access by multiple drivers
-is synchronized.
-
-Fixes: ba224e2c4f0a7 ("hwmon: New PC87427 hardware monitoring driver")
-Reported-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-Reported-by: John Garry <john.garry@huawei.com>
-Cc: John Garry <john.garry@huawei.com>
-Acked-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/pc87427.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/net/wireless/st/cw1200/main.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/hwmon/pc87427.c b/drivers/hwmon/pc87427.c
-index dc5a9d5ada516..81a05cd1a5121 100644
---- a/drivers/hwmon/pc87427.c
-+++ b/drivers/hwmon/pc87427.c
-@@ -106,6 +106,13 @@ static const char *logdev_str[2] = { DRVNAME " FMC", DRVNAME " HMC" };
- #define LD_IN		1
- #define LD_TEMP		1
- 
-+static inline int superio_enter(int sioaddr)
-+{
-+	if (!request_muxed_region(sioaddr, 2, DRVNAME))
-+		return -EBUSY;
-+	return 0;
-+}
+diff --git a/drivers/net/wireless/st/cw1200/main.c b/drivers/net/wireless/st/cw1200/main.c
+index 90dc979f260b6..c1608f0bf6d01 100644
+--- a/drivers/net/wireless/st/cw1200/main.c
++++ b/drivers/net/wireless/st/cw1200/main.c
+@@ -345,6 +345,11 @@ static struct ieee80211_hw *cw1200_init_common(const u8 *macaddr,
+ 	mutex_init(&priv->wsm_cmd_mux);
+ 	mutex_init(&priv->conf_mutex);
+ 	priv->workqueue = create_singlethread_workqueue("cw1200_wq");
++	if (!priv->workqueue) {
++		ieee80211_free_hw(hw);
++		return NULL;
++	}
 +
- static inline void superio_outb(int sioaddr, int reg, int val)
- {
- 	outb(reg, sioaddr);
-@@ -122,6 +129,7 @@ static inline void superio_exit(int sioaddr)
- {
- 	outb(0x02, sioaddr);
- 	outb(0x02, sioaddr + 1);
-+	release_region(sioaddr, 2);
- }
- 
- /*
-@@ -1220,7 +1228,11 @@ static int __init pc87427_find(int sioaddr, struct pc87427_sio_data *sio_data)
- {
- 	u16 val;
- 	u8 cfg, cfg_b;
--	int i, err = 0;
-+	int i, err;
-+
-+	err = superio_enter(sioaddr);
-+	if (err)
-+		return err;
- 
- 	/* Identify device */
- 	val = force_id ? force_id : superio_inb(sioaddr, SIOREG_DEVID);
+ 	sema_init(&priv->scan.lock, 1);
+ 	INIT_WORK(&priv->scan.work, cw1200_scan_work);
+ 	INIT_DELAYED_WORK(&priv->scan.probe_work, cw1200_probe_work);
 -- 
 2.20.1
 
