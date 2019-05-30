@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30FC02EC94
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:23:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D973B2F2AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:24:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731200AbfE3DWu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:22:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45058 "EHLO mail.kernel.org"
+        id S1732955AbfE3EYQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:24:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730916AbfE3DRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:17:06 -0400
+        id S1730032AbfE3DOx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:14:53 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26DCC24645;
-        Thu, 30 May 2019 03:17:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0DBB2455E;
+        Thu, 30 May 2019 03:14:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186226;
-        bh=nS35q5ZtSkjydaFaSZdC+7DVr5rLGA87nEzC1ozr+zY=;
+        s=default; t=1559186092;
+        bh=vbT6JzcrqgZfDANvgbazIhs61L2kvqOjhh2SjOsVIHQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ysNAgWw5YNudvx5l+VNelUmXzV0tjK9IRKRtIPLSFOuJHXdoVblambZdV42BKKXPu
-         pTb9yYhwCDYByF6NA68wO1P9yN8mKx58ZrT7oTj9TYVmEH4dIM1nF6CwDv5UyDPlEF
-         gwNW9NkqKm8aPALlc0xQsAhuA6deXMZWo70EpEIQ=
+        b=qZntrzre6f1GpkTrmmPDnichXqQXODvA4CN0rXxIlOvcOlfbKOc0nwwvB92CBJNg2
+         NH5GSGFiykOfeUluG7+Vd2YpzTbEE4mn6ca/pXCFFrlgPINpbPckkQlnjtCAo9Kujj
+         5t6iv6YA37hrLXNLl2GGq0d7iu+wJ7uqNgRlgJz4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-pm@vger.kernel.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 122/276] media: ov6650: Move v4l2_clk_get() to ov6650_video_probe() helper
+Subject: [PATCH 5.0 207/346] cpufreq/pasemi: fix possible object reference leak
 Date:   Wed, 29 May 2019 20:04:40 -0700
-Message-Id: <20190530030533.485905476@linuxfoundation.org>
+Message-Id: <20190530030551.623981607@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,77 +46,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ccdd85d518d8b9320ace1d87271f0ba2175f21fa ]
+[ Upstream commit a9acc26b75f652f697e02a9febe2ab0da648a571 ]
 
-In preparation for adding asynchronous subdevice support to the driver,
-don't acquire v4l2_clk from the driver .probe() callback as that may
-fail if the clock is provided by a bridge driver which may be not yet
-initialized.  Move the v4l2_clk_get() to ov6650_video_probe() helper
-which is going to be converted to v4l2_subdev_internal_ops.registered()
-callback, executed only when the bridge driver is ready.
+The call to of_get_cpu_node returns a node pointer with refcount
+incremented thus it must be explicitly decremented after the last
+usage.
 
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Detected by coccinelle with the following warnings:
+./drivers/cpufreq/pasemi-cpufreq.c:212:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 147, but without a corresponding object release within this function.
+./drivers/cpufreq/pasemi-cpufreq.c:220:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 147, but without a corresponding object release within this function.
+
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-pm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/ov6650.c | 25 ++++++++++++++-----------
- 1 file changed, 14 insertions(+), 11 deletions(-)
+ drivers/cpufreq/pasemi-cpufreq.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/i2c/ov6650.c b/drivers/media/i2c/ov6650.c
-index a9264d515e546..edded869d7920 100644
---- a/drivers/media/i2c/ov6650.c
-+++ b/drivers/media/i2c/ov6650.c
-@@ -811,9 +811,16 @@ static int ov6650_video_probe(struct i2c_client *client)
- 	u8		pidh, pidl, midh, midl;
- 	int		ret;
+diff --git a/drivers/cpufreq/pasemi-cpufreq.c b/drivers/cpufreq/pasemi-cpufreq.c
+index 75dfbd2a58ea6..c7710c149de85 100644
+--- a/drivers/cpufreq/pasemi-cpufreq.c
++++ b/drivers/cpufreq/pasemi-cpufreq.c
+@@ -146,6 +146,7 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
  
-+	priv->clk = v4l2_clk_get(&client->dev, NULL);
-+	if (IS_ERR(priv->clk)) {
-+		ret = PTR_ERR(priv->clk);
-+		dev_err(&client->dev, "v4l2_clk request err: %d\n", ret);
-+		return ret;
-+	}
-+
- 	ret = ov6650_s_power(&priv->subdev, 1);
- 	if (ret < 0)
--		return ret;
-+		goto eclkput;
+ 	cpu = of_get_cpu_node(policy->cpu, NULL);
  
- 	msleep(20);
++	of_node_put(cpu);
+ 	if (!cpu)
+ 		goto out;
  
-@@ -850,6 +857,11 @@ static int ov6650_video_probe(struct i2c_client *client)
- 
- done:
- 	ov6650_s_power(&priv->subdev, 0);
-+	if (!ret)
-+		return 0;
-+eclkput:
-+	v4l2_clk_put(priv->clk);
-+
- 	return ret;
- }
- 
-@@ -992,18 +1004,9 @@ static int ov6650_probe(struct i2c_client *client,
- 	priv->code	  = MEDIA_BUS_FMT_YUYV8_2X8;
- 	priv->colorspace  = V4L2_COLORSPACE_JPEG;
- 
--	priv->clk = v4l2_clk_get(&client->dev, NULL);
--	if (IS_ERR(priv->clk)) {
--		ret = PTR_ERR(priv->clk);
--		goto eclkget;
--	}
--
- 	ret = ov6650_video_probe(client);
--	if (ret) {
--		v4l2_clk_put(priv->clk);
--eclkget:
-+	if (ret)
- 		v4l2_ctrl_handler_free(&priv->hdl);
--	}
- 
- 	return ret;
- }
 -- 
 2.20.1
 
