@@ -2,39 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50A862F510
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:44:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFA642F294
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:23:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728916AbfE3EoS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:44:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52812 "EHLO mail.kernel.org"
+        id S1731715AbfE3EXY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:23:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728818AbfE3DME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:04 -0400
+        id S1728935AbfE3DPC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:02 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5500824527;
-        Thu, 30 May 2019 03:12:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33608244EF;
+        Thu, 30 May 2019 03:15:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185924;
-        bh=yYGoknExD25rv43GhJWukBjgwkkj0hKIngRtHHtfmE8=;
+        s=default; t=1559186101;
+        bh=P3JTk7xVOJNuPEoVcNeajWlhbZPMJjIyXv67yz0Vxn8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ugRcnlSP6LV6XViW8pCimVx4+le96zDHWSUW1CIzjeL8SXXOVFoQ2SIc2POTqGsux
-         Z2VdwFrMGJJGI8/yakiw2O1L1Gv3dAcVpYz2zVvTxbkS4AzftpVgtTj7DpxgubOO1z
-         peJZtr3y1tjmUUo9EwvGz5tKAZ3Vona+k5WZd+2Q=
+        b=PKnfivbfpdYz8zLlG2jMVyqJn+GeFRoCP+Cg5h2ThZvXub3F2nG0Uihz2CfEe801f
+         i88N8cGdCay/58mFAWuvC3QwMTq3+LCrsRVcKQBsLsMLzsPFtGQl/rv7uozt4I+TUO
+         w+s6l7ddrCq8gi9wsURtnQ5DBUOZA42Pu/0/Af2o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 313/405] usb: core: Add PM runtime calls to usb_hcd_platform_shutdown
+        stable@vger.kernel.org,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>, ard.biesheuvel@linaro.org,
+        oss-drivers@netronome.com, pbonzini@redhat.com,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 238/346] locking/static_key: Fix false positive warnings on concurrent dec/inc
 Date:   Wed, 29 May 2019 20:05:11 -0700
-Message-Id: <20190530030556.636318479@linuxfoundation.org>
+Message-Id: <20190530030553.094255091@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +51,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8ead7e817224d7832fe51a19783cb8fcadc79467 ]
+[ Upstream commit a1247d06d01045d7ab2882a9c074fbf21137c690 ]
 
-If ohci-platform is runtime suspended, we can currently get an "imprecise
-external abort" on reboot with ohci-platform loaded when PM runtime
-is implemented for the SoC.
+Even though the atomic_dec_and_mutex_lock() in
+__static_key_slow_dec_cpuslocked() can never see a negative value in
+key->enabled the subsequent sanity check is re-reading key->enabled, which may
+have been set to -1 in the meantime by static_key_slow_inc_cpuslocked().
 
-Let's fix this by adding PM runtime support to usb_hcd_platform_shutdown.
+                CPU  A                               CPU B
 
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+ __static_key_slow_dec_cpuslocked():          static_key_slow_inc_cpuslocked():
+                               # enabled = 1
+   atomic_dec_and_mutex_lock()
+                               # enabled = 0
+                                              atomic_read() == 0
+                                              atomic_set(-1)
+                               # enabled = -1
+   val = atomic_read()
+   # Oops - val == -1!
+
+The test case is TCP's clean_acked_data_enable() / clean_acked_data_disable()
+as tickled by KTLS (net/ktls).
+
+Suggested-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Reported-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Tested-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: ard.biesheuvel@linaro.org
+Cc: oss-drivers@netronome.com
+Cc: pbonzini@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/core/hcd.c | 3 +++
- 1 file changed, 3 insertions(+)
+ kernel/jump_label.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-index 975d7c1288e36..e9f740484001f 100644
---- a/drivers/usb/core/hcd.c
-+++ b/drivers/usb/core/hcd.c
-@@ -3020,6 +3020,9 @@ usb_hcd_platform_shutdown(struct platform_device *dev)
+diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+index bad96b476eb6e..a799b1ac6b2fe 100644
+--- a/kernel/jump_label.c
++++ b/kernel/jump_label.c
+@@ -206,6 +206,8 @@ static void __static_key_slow_dec_cpuslocked(struct static_key *key,
+ 					   unsigned long rate_limit,
+ 					   struct delayed_work *work)
  {
- 	struct usb_hcd *hcd = platform_get_drvdata(dev);
- 
-+	/* No need for pm_runtime_put(), we're shutting down */
-+	pm_runtime_get_sync(&dev->dev);
++	int val;
 +
- 	if (hcd->driver->shutdown)
- 		hcd->driver->shutdown(hcd);
+ 	lockdep_assert_cpus_held();
+ 
+ 	/*
+@@ -215,17 +217,20 @@ static void __static_key_slow_dec_cpuslocked(struct static_key *key,
+ 	 * returns is unbalanced, because all other static_key_slow_inc()
+ 	 * instances block while the update is in progress.
+ 	 */
+-	if (!atomic_dec_and_mutex_lock(&key->enabled, &jump_label_mutex)) {
+-		WARN(atomic_read(&key->enabled) < 0,
+-		     "jump label: negative count!\n");
++	val = atomic_fetch_add_unless(&key->enabled, -1, 1);
++	if (val != 1) {
++		WARN(val < 0, "jump label: negative count!\n");
+ 		return;
+ 	}
+ 
+-	if (rate_limit) {
+-		atomic_inc(&key->enabled);
+-		schedule_delayed_work(work, rate_limit);
+-	} else {
+-		jump_label_update(key);
++	jump_label_lock();
++	if (atomic_dec_and_test(&key->enabled)) {
++		if (rate_limit) {
++			atomic_inc(&key->enabled);
++			schedule_delayed_work(work, rate_limit);
++		} else {
++			jump_label_update(key);
++		}
+ 	}
+ 	jump_label_unlock();
  }
 -- 
 2.20.1
