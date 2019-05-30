@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 206602F1A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:14:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2F252F3AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:33:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731028AbfE3EOs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:14:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41472 "EHLO mail.kernel.org"
+        id S1730216AbfE3Ea5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:30:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60312 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730603AbfE3DQJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:16:09 -0400
+        id S1729606AbfE3DNv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:13:51 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E95342458C;
-        Thu, 30 May 2019 03:16:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BE2723D14;
+        Thu, 30 May 2019 03:13:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186169;
-        bh=g7xRx7wbkWXxzsmEexPdZrCdeFMYV6Mspchdbw0hIvI=;
+        s=default; t=1559186030;
+        bh=5RLysbjutLyy0H2j0S6gLUuxbUtDMbuWmcgwqXBZXwA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YYvTiJiT8+Ees7CUAwnaeq5i+sfWybzfrzMFkb4B8lB4fgcW8icuxy35zPzjiw364
-         vhVFkZV5Ej+PQ4yX+t+iNwKVpqQCUIXeK2CNuVVSaxa+y916OKaS38nXt15JvbcGVB
-         Q0hmSKiMPu3/Vm/yu1nfZiM8/8yWSsOOs1cAS4nY=
+        b=P+9+dZFgrQDaGsQK4nX9Lu9VSfWUZsO/D+mT/Vip/kHYnh6ub1MdJzUWf7FyuZ4pl
+         ikEGHzSMjZnIoUsuv46530wmrlSRs+fSE2OUYtu9KB62bO0RNaSU94yO1lQs2UHvyG
+         sNdmGOoGggtrTRi/TvjTLo29gR85twxcsiJWAaPY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Tobin C. Harding" <tobin@kernel.org>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 022/276] btrfs: sysfs: dont leak memory when failing add fsid
-Date:   Wed, 29 May 2019 20:03:00 -0700
-Message-Id: <20190530030525.532621039@linuxfoundation.org>
+        stable@vger.kernel.org, Xiaoli Feng <fengxiaoli0714@gmail.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 108/346] Fix nfs4.2 return -EINVAL when do dedupe operation
+Date:   Wed, 29 May 2019 20:03:01 -0700
+Message-Id: <20190530030546.576648554@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,53 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tobin C. Harding <tobin@kernel.org>
+[ Upstream commit ce96e888fe48ecfa868c9a39adc03292c78a80ff ]
 
-commit e32773357d5cc271b1d23550b3ed026eb5c2a468 upstream.
+dedupe_file_range operations is combiled into remap_file_range.
+But in nfs42_remap_file_range, it's skiped for dedupe operations.
+Before this patch:
+  # dd if=/dev/zero of=nfs/file bs=1M count=1
+  # xfs_io -c "dedupe nfs/file 4k 64k 4k" nfs/file
+  XFS_IOC_FILE_EXTENT_SAME: Invalid argument
+After this patch:
+  # dd if=/dev/zero of=nfs/file bs=1M count=1
+  # xfs_io -c "dedupe nfs/file 4k 64k 4k" nfs/file
+  deduped 4096/4096 bytes at offset 65536
+  4 KiB, 1 ops; 0.0046 sec (865.988 KiB/sec and 216.4971 ops/sec)
 
-A failed call to kobject_init_and_add() must be followed by a call to
-kobject_put().  Currently in the error path when adding fs_devices we
-are missing this call.  This could be fixed by calling
-btrfs_sysfs_remove_fsid() if btrfs_sysfs_add_fsid() returns an error or
-by adding a call to kobject_put() directly in btrfs_sysfs_add_fsid().
-Here we choose the second option because it prevents the slightly
-unusual error path handling requirements of kobject from leaking out
-into btrfs functions.
-
-Add a call to kobject_put() in the error path of kobject_add_and_init().
-This causes the release method to be called if kobject_init_and_add()
-fails.  open_tree() is the function that calls btrfs_sysfs_add_fsid()
-and the error code in this function is already written with the
-assumption that the release method is called during the error path of
-open_tree() (as seen by the call to btrfs_sysfs_remove_fsid() under the
-fail_fsdev_sysfs label).
-
-Cc: stable@vger.kernel.org # v4.4+
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Tobin C. Harding <tobin@kernel.org>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Xiaoli Feng <fengxiaoli0714@gmail.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/sysfs.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ fs/nfs/nfs4file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/sysfs.c
-+++ b/fs/btrfs/sysfs.c
-@@ -811,7 +811,12 @@ int btrfs_sysfs_add_fsid(struct btrfs_fs
- 	fs_devs->fsid_kobj.kset = btrfs_kset;
- 	error = kobject_init_and_add(&fs_devs->fsid_kobj,
- 				&btrfs_ktype, parent, "%pU", fs_devs->fsid);
--	return error;
-+	if (error) {
-+		kobject_put(&fs_devs->fsid_kobj);
-+		return error;
-+	}
-+
-+	return 0;
- }
+diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
+index 00d17198ee12a..f10b660805fc4 100644
+--- a/fs/nfs/nfs4file.c
++++ b/fs/nfs/nfs4file.c
+@@ -187,7 +187,7 @@ static loff_t nfs42_remap_file_range(struct file *src_file, loff_t src_off,
+ 	bool same_inode = false;
+ 	int ret;
  
- int btrfs_sysfs_add_mounted(struct btrfs_fs_info *fs_info)
+-	if (remap_flags & ~REMAP_FILE_ADVISORY)
++	if (remap_flags & ~(REMAP_FILE_DEDUP | REMAP_FILE_ADVISORY))
+ 		return -EINVAL;
+ 
+ 	/* check alignment w.r.t. clone_blksize */
+-- 
+2.20.1
+
 
 
