@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 560992F192
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:14:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B2552F58C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:48:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730619AbfE3DQM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:16:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58110 "EHLO mail.kernel.org"
+        id S1728492AbfE3DLV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:11:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729404AbfE3DNT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:13:19 -0400
+        id S1728077AbfE3DKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:10:25 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9AB6823D14;
-        Thu, 30 May 2019 03:13:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DD75244BD;
+        Thu, 30 May 2019 03:10:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185998;
-        bh=1VJOtr87Vun5xMUDRl6bzPW2emiHi4SIL5gJjMq/Zsw=;
+        s=default; t=1559185824;
+        bh=mfllDUMsq+yuqN+5N22JLfSp+OhfrZxQyoUsMP8DS9Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tI42Aga1eI/UIoNTHWhhpFa246glUwzln7o+eJXUyu9V1vxom6zvzcs9DBiSCT/HK
-         OBlsfoHg7SYDV4gQ4IucDIpiSXaHs4VZmWrwdp7xMvNzb8yrgG23BDYbep/zbMktIJ
-         XGC3PhXa6qHAwOBOWD3p0H1YFnxp+QFMZEajieXI=
+        b=DGUbVmQg0kSCp/n9tcv22EceSkrDNud5lgDFvkhU1QADt2kZ4Zw3Yc/hvMjWGfb9J
+         48/TaR95ef/EVovhhYTkgEZyMVphvCMqq6gAdDkm97By2lSOOoFm83Gm1rOsxYri2j
+         xOrpyC4SvztB+JRpRdrH+J4ZOPIBPDdJNmbRTErI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 047/346] IB/hfi1: Fix WQ_MEM_RECLAIM warning
-Date:   Wed, 29 May 2019 20:02:00 -0700
-Message-Id: <20190530030543.273964726@linuxfoundation.org>
+Subject: [PATCH 5.1 123/405] rsi: Fix NULL pointer dereference in kmalloc
+Date:   Wed, 29 May 2019 20:02:01 -0700
+Message-Id: <20190530030547.242662894@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,60 +44,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 4c4b1996b5db688e2dcb8242b0a3bf7b1e845e42 ]
+[ Upstream commit d5414c2355b20ea8201156d2e874265f1cb0d775 ]
 
-The work_item cancels that occur when a QP is destroyed can elicit the
-following trace:
+kmalloc can fail in rsi_register_rates_channels but memcpy still attempts
+to write to channels. The patch replaces these calls with kmemdup and
+passes the error upstream.
 
- workqueue: WQ_MEM_RECLAIM ipoib_wq:ipoib_cm_tx_reap [ib_ipoib] is flushing !WQ_MEM_RECLAIM hfi0_0:_hfi1_do_send [hfi1]
- WARNING: CPU: 7 PID: 1403 at kernel/workqueue.c:2486 check_flush_dependency+0xb1/0x100
- Call Trace:
-  __flush_work.isra.29+0x8c/0x1a0
-  ? __switch_to_asm+0x40/0x70
-  __cancel_work_timer+0x103/0x190
-  ? schedule+0x32/0x80
-  iowait_cancel_work+0x15/0x30 [hfi1]
-  rvt_reset_qp+0x1f8/0x3e0 [rdmavt]
-  rvt_destroy_qp+0x65/0x1f0 [rdmavt]
-  ? _cond_resched+0x15/0x30
-  ib_destroy_qp+0xe9/0x230 [ib_core]
-  ipoib_cm_tx_reap+0x21c/0x560 [ib_ipoib]
-  process_one_work+0x171/0x370
-  worker_thread+0x49/0x3f0
-  kthread+0xf8/0x130
-  ? max_active_store+0x80/0x80
-  ? kthread_bind+0x10/0x10
-  ret_from_fork+0x35/0x40
-
-Since QP destruction frees memory, hfi1_wq should have the WQ_MEM_RECLAIM.
-
-The hfi1_wq does not allocate memory with GFP_KERNEL or otherwise become
-entangled with memory reclaim, so this flag is appropriate.
-
-Fixes: 0a226edd203f ("staging/rdma/hfi1: Use parallel workqueue for SDMA engines")
-Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/hfi1/init.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/rsi/rsi_91x_mac80211.c | 30 ++++++++++++---------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/infiniband/hw/hfi1/init.c b/drivers/infiniband/hw/hfi1/init.c
-index c532ceb0bb9af..b66c4fe8151a1 100644
---- a/drivers/infiniband/hw/hfi1/init.c
-+++ b/drivers/infiniband/hw/hfi1/init.c
-@@ -797,7 +797,8 @@ static int create_workqueues(struct hfi1_devdata *dd)
- 			ppd->hfi1_wq =
- 				alloc_workqueue(
- 				    "hfi%d_%d",
--				    WQ_SYSFS | WQ_HIGHPRI | WQ_CPU_INTENSIVE,
-+				    WQ_SYSFS | WQ_HIGHPRI | WQ_CPU_INTENSIVE |
-+				    WQ_MEM_RECLAIM,
- 				    HFI1_MAX_ACTIVE_WORKQUEUE_ENTRIES,
- 				    dd->unit, pidx);
- 			if (!ppd->hfi1_wq)
+diff --git a/drivers/net/wireless/rsi/rsi_91x_mac80211.c b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
+index 831046e760f8a..49df3bb08d41f 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_mac80211.c
++++ b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
+@@ -188,27 +188,27 @@ bool rsi_is_cipher_wep(struct rsi_common *common)
+  * @adapter: Pointer to the adapter structure.
+  * @band: Operating band to be set.
+  *
+- * Return: None.
++ * Return: int - 0 on success, negative error on failure.
+  */
+-static void rsi_register_rates_channels(struct rsi_hw *adapter, int band)
++static int rsi_register_rates_channels(struct rsi_hw *adapter, int band)
+ {
+ 	struct ieee80211_supported_band *sbands = &adapter->sbands[band];
+ 	void *channels = NULL;
+ 
+ 	if (band == NL80211_BAND_2GHZ) {
+-		channels = kmalloc(sizeof(rsi_2ghz_channels), GFP_KERNEL);
+-		memcpy(channels,
+-		       rsi_2ghz_channels,
+-		       sizeof(rsi_2ghz_channels));
++		channels = kmemdup(rsi_2ghz_channels, sizeof(rsi_2ghz_channels),
++				   GFP_KERNEL);
++		if (!channels)
++			return -ENOMEM;
+ 		sbands->band = NL80211_BAND_2GHZ;
+ 		sbands->n_channels = ARRAY_SIZE(rsi_2ghz_channels);
+ 		sbands->bitrates = rsi_rates;
+ 		sbands->n_bitrates = ARRAY_SIZE(rsi_rates);
+ 	} else {
+-		channels = kmalloc(sizeof(rsi_5ghz_channels), GFP_KERNEL);
+-		memcpy(channels,
+-		       rsi_5ghz_channels,
+-		       sizeof(rsi_5ghz_channels));
++		channels = kmemdup(rsi_5ghz_channels, sizeof(rsi_5ghz_channels),
++				   GFP_KERNEL);
++		if (!channels)
++			return -ENOMEM;
+ 		sbands->band = NL80211_BAND_5GHZ;
+ 		sbands->n_channels = ARRAY_SIZE(rsi_5ghz_channels);
+ 		sbands->bitrates = &rsi_rates[4];
+@@ -227,6 +227,7 @@ static void rsi_register_rates_channels(struct rsi_hw *adapter, int band)
+ 	sbands->ht_cap.mcs.rx_mask[0] = 0xff;
+ 	sbands->ht_cap.mcs.tx_params = IEEE80211_HT_MCS_TX_DEFINED;
+ 	/* sbands->ht_cap.mcs.rx_highest = 0x82; */
++	return 0;
+ }
+ 
+ static int rsi_mac80211_hw_scan_start(struct ieee80211_hw *hw,
+@@ -2064,11 +2065,16 @@ int rsi_mac80211_attach(struct rsi_common *common)
+ 	wiphy->available_antennas_rx = 1;
+ 	wiphy->available_antennas_tx = 1;
+ 
+-	rsi_register_rates_channels(adapter, NL80211_BAND_2GHZ);
++	status = rsi_register_rates_channels(adapter, NL80211_BAND_2GHZ);
++	if (status)
++		return status;
+ 	wiphy->bands[NL80211_BAND_2GHZ] =
+ 		&adapter->sbands[NL80211_BAND_2GHZ];
+ 	if (common->num_supp_bands > 1) {
+-		rsi_register_rates_channels(adapter, NL80211_BAND_5GHZ);
++		status = rsi_register_rates_channels(adapter,
++						     NL80211_BAND_5GHZ);
++		if (status)
++			return status;
+ 		wiphy->bands[NL80211_BAND_5GHZ] =
+ 			&adapter->sbands[NL80211_BAND_5GHZ];
+ 	}
 -- 
 2.20.1
 
