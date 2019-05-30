@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C4272ED69
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:36:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F08642ECE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:28:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732691AbfE3DZa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:25:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51424 "EHLO mail.kernel.org"
+        id S2388183AbfE3D2d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:28:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731563AbfE3DS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:29 -0400
+        id S1728112AbfE3DT7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:19:59 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B17B5247C2;
-        Thu, 30 May 2019 03:18:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B39024818;
+        Thu, 30 May 2019 03:19:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186308;
-        bh=j5IrkmXoqipm6SS+hShpCMelEn2qPU/FEDpbZVsmWNM=;
+        s=default; t=1559186398;
+        bh=Wa7TcyT+ufSchs5dR12KCtbsY23wB+eK/kdXfxO7PYM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H1q/y9UscHsksiRgcXiGnGVYABFNhjtslU4z0Mrqn/gjRm2pi48EPojA9WcYT/DIM
-         0E9tKI6GaW+Upf+YucljD7aXzxmP5n/rmsiNe+sHOeMarZQDtCtvVli5dAavETbQdV
-         wKTjxGHcaLrMHosqv0vJgW0D+53oUnZ5AD+cqC44=
+        b=nl4WkIo3jpJBfxfHYt5fPWWc9TRxlOuYKRg0nsXvq1SjWTtHUkcg72UX/rEpmcNqw
+         9Gr3RCc+GO3aYmooB4TXcr+Kv7FM4vYfGo3dOxd/ssdTUh4qZLCOkc39QThqRXYjTL
+         5rc5FQLT3lICxG92sNk6RFGvM/ZK/B3FRM+3MrMA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        stable@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
+        Helen Koike <helen.koike@collabora.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 275/276] drm/sun4i: dsi: Enforce boundaries on the start delay
+Subject: [PATCH 4.14 179/193] media: vimc: stream: fix thread state before sleep
 Date:   Wed, 29 May 2019 20:07:13 -0700
-Message-Id: <20190530030542.392185247@linuxfoundation.org>
+Message-Id: <20190530030512.532737234@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +46,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit efa31801203ac2f5c6a82a28cb991c7163ee0f1d ]
+[ Upstream commit 2978a505aaa981b279ef359f74ba93d25098e0a0 ]
 
-The Allwinner BSP makes sure that we don't end up with a null start delay
-or with a delay larger than vtotal.
+The state TASK_UNINTERRUPTIBLE should be set just before
+schedule_timeout() call, so it knows the sleep mode it should enter.
+There is no point in setting TASK_UNINTERRUPTIBLE at the initialization
+of the thread as schedule_timeout() will set the state back to
+TASK_RUNNING.
 
-The former condition is likely to happen now with the reworked start delay,
-so make sure we enforce the same boundaries.
+This fixes a warning in __might_sleep() call, as it's expecting the
+task to be in TASK_RUNNING state just before changing the state to
+a sleeping state.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Reviewed-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/c9889cf5f7a3d101ef380905900b45a182596f56.1549896081.git-series.maxime.ripard@bootlin.com
+Reported-by: Hans Verkuil <hverkuil@xs4all.nl>
+Signed-off-by: Helen Koike <helen.koike@collabora.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/media/platform/vimc/vimc-streamer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index 3de41de43127b..97a0573cc5145 100644
---- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-+++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -358,8 +358,12 @@ static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
- 					   struct drm_display_mode *mode)
- {
- 	u16 start = clamp(mode->vtotal - mode->vdisplay - 10, 8, 100);
-+	u16 delay = mode->vtotal - (mode->vsync_end - mode->vdisplay) + start;
+diff --git a/drivers/media/platform/vimc/vimc-streamer.c b/drivers/media/platform/vimc/vimc-streamer.c
+index fcc897fb247bc..392754c18046c 100644
+--- a/drivers/media/platform/vimc/vimc-streamer.c
++++ b/drivers/media/platform/vimc/vimc-streamer.c
+@@ -120,7 +120,6 @@ static int vimc_streamer_thread(void *data)
+ 	int i;
  
--	return mode->vtotal - (mode->vsync_end - mode->vdisplay) + start;
-+	if (delay > mode->vtotal)
-+		delay = delay % mode->vtotal;
-+
-+	return max_t(u16, delay, 1);
- }
+ 	set_freezable();
+-	set_current_state(TASK_UNINTERRUPTIBLE);
  
- static void sun6i_dsi_setup_burst(struct sun6i_dsi *dsi,
+ 	for (;;) {
+ 		try_to_freeze();
+@@ -137,6 +136,7 @@ static int vimc_streamer_thread(void *data)
+ 				break;
+ 		}
+ 		//wait for 60hz
++		set_current_state(TASK_UNINTERRUPTIBLE);
+ 		schedule_timeout(HZ / 60);
+ 	}
+ 
 -- 
 2.20.1
 
