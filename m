@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D0AC2FE7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 16:52:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4171B2FE82
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 16:52:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbfE3Owh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 10:52:37 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52698 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725961AbfE3Owh (ORCPT
+        id S1727389AbfE3Owp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 10:52:45 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55278 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727289AbfE3Owm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 10:52:37 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4UEprrX041013
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 10:52:36 -0400
+        Thu, 30 May 2019 10:52:42 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4UEps2A128958
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 10:52:41 -0400
 Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2stfeved6y-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2stfb3peue-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 10:52:36 -0400
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 10:52:37 -0400
 Received: from localhost
         by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 30 May 2019 15:52:35 +0100
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        Thu, 30 May 2019 15:52:36 +0100
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
         by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 30 May 2019 15:52:30 +0100
+        Thu, 30 May 2019 15:52:31 +0100
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4UEqTiV39256224
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4UEqUxK37224898
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 30 May 2019 14:52:29 GMT
+        Thu, 30 May 2019 14:52:30 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A78EDB2067;
+        by IMSVA (Postfix) with ESMTP id E7D7BB2073;
         Thu, 30 May 2019 14:52:29 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7806EB206B;
+        by IMSVA (Postfix) with ESMTP id CBB14B205F;
         Thu, 30 May 2019 14:52:29 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.216])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Thu, 30 May 2019 14:52:29 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 4251616C5D8A; Thu, 30 May 2019 07:52:31 -0700 (PDT)
+        id 4703816C5D97; Thu, 30 May 2019 07:52:31 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
@@ -51,20 +51,20 @@ Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 05/12] rcu: Use irq_work to get scheduler's attention in clean context
-Date:   Thu, 30 May 2019 07:52:22 -0700
+Subject: [PATCH tip/core/rcu 06/12] rcu: Inline invoke_rcu_callbacks() into its sole remaining caller
+Date:   Thu, 30 May 2019 07:52:23 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190530145204.GA28526@linux.ibm.com>
 References: <20190530145204.GA28526@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19053014-0040-0000-0000-000004F681DD
+x-cbid: 19053014-0040-0000-0000-000004F681DB
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00011185; HX=3.00000242; KW=3.00000007;
  PH=3.00000004; SC=3.00000286; SDB=6.01210783; UDB=6.00636156; IPR=6.00991817;
  MB=3.00027120; MTD=3.00000008; XFM=3.00000015; UTC=2019-05-30 14:52:35
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19053014-0041-0000-0000-000009029C2A
-Message-Id: <20190530145229.29565-5-paulmck@linux.ibm.com>
+x-cbparentid: 19053014-0041-0000-0000-000009029C2D
+Message-Id: <20190530145229.29565-6-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-30_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -77,86 +77,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When rcu_read_unlock_special() is invoked with interrupts disabled, is
-either not in an interrupt handler or is not using RCU_SOFTIRQ, is not
-the first RCU read-side critical section in the chain, and either there
-is an expedited grace period in flight or this is a NO_HZ_FULL kernel,
-the end of the grace period can be unduly delayed.  The reason for this
-is that it is not safe to do wakeups in this situation.
+This commit saves a few lines of code by inlining invoke_rcu_callbacks()
+into its sole remaining caller.
 
-This commit fixes this problem by using the irq_work subsystem to
-force a later interrupt handler in a clean environment.  Because
-set_tsk_need_resched(current) and set_preempt_need_resched() are
-invoked prior to this, the scheduler will force a context switch
-upon return from this interrupt (though perhaps at the end of any
-interrupted preempt-disable or BH-disable region of code), which will
-invoke rcu_note_context_switch() (again in a clean environment), which
-will in turn give RCU the chance to report the deferred quiescent state.
-
-Of course, by then this task might be within another RCU read-side
-critical section.  But that will be detected at that time and reporting
-will be further deferred to the outermost rcu_read_unlock().  See
-rcu_preempt_need_deferred_qs() and rcu_preempt_deferred_qs() for more
-details on the checking.
-
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 ---
- kernel/rcu/tree.h        |  2 ++
- kernel/rcu/tree_plugin.h | 20 ++++++++++++++++++++
- 2 files changed, 22 insertions(+)
+ kernel/rcu/tree.c | 20 +++-----------------
+ 1 file changed, 3 insertions(+), 17 deletions(-)
 
-diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-index a1a72a1ecb02..21d740f0b8dc 100644
---- a/kernel/rcu/tree.h
-+++ b/kernel/rcu/tree.h
-@@ -161,6 +161,8 @@ struct rcu_data {
- 					/*  ticks this CPU has handled */
- 					/*  during and after the last grace */
- 					/* period it is aware of. */
-+	struct irq_work defer_qs_iw;	/* Obtain later scheduler attention. */
-+	bool defer_qs_iw_pending;	/* Scheduler attention pending? */
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 8e290163505a..7822a2e1370d 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -147,7 +147,6 @@ static void rcu_init_new_rnp(struct rcu_node *rnp_leaf);
+ static void rcu_cleanup_dead_rnp(struct rcu_node *rnp_leaf);
+ static void rcu_boost_kthread_setaffinity(struct rcu_node *rnp, int outgoingcpu);
+ static void invoke_rcu_core(void);
+-static void invoke_rcu_callbacks(struct rcu_data *rdp);
+ static void rcu_report_exp_rdp(struct rcu_data *rdp);
+ static void sync_sched_exp_online_cleanup(int cpu);
  
- 	/* 2) batch handling */
- 	struct rcu_segcblist cblist;	/* Segmented callback list, with */
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index e1005f5e8094..58c7853f19e7 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -587,6 +587,17 @@ static void rcu_preempt_deferred_qs(struct task_struct *t)
- 		t->rcu_read_lock_nesting += RCU_NEST_BIAS;
+@@ -2296,8 +2295,9 @@ static __latent_entropy void rcu_core(void)
+ 	rcu_check_gp_start_stall(rnp, rdp, rcu_jiffies_till_stall_check());
+ 
+ 	/* If there are callbacks ready, invoke them. */
+-	if (rcu_segcblist_ready_cbs(&rdp->cblist))
+-		invoke_rcu_callbacks(rdp);
++	if (rcu_segcblist_ready_cbs(&rdp->cblist) &&
++	    likely(READ_ONCE(rcu_scheduler_fully_active)))
++		rcu_do_batch(rdp);
+ 
+ 	/* Do any needed deferred wakeups of rcuo kthreads. */
+ 	do_nocb_deferred_wakeup(rdp);
+@@ -2332,20 +2332,6 @@ static void invoke_rcu_core_kthread(void)
+ 	local_irq_restore(flags);
  }
  
-+/*
-+ * Minimal handler to give the scheduler a chance to re-evaluate.
-+ */
-+static void rcu_preempt_deferred_qs_handler(struct irq_work *iwp)
-+{
-+	struct rcu_data *rdp;
-+
-+	rdp = container_of(iwp, struct rcu_data, defer_qs_iw);
-+	rdp->defer_qs_iw_pending = false;
-+}
-+
+-/*
+- * Do RCU callback invocation.  Not that if we are running !use_softirq,
+- * we are already in the rcuc kthread.  If callbacks are offloaded, then
+- * ->cblist is always empty, so we don't get here.  Therefore, we only
+- * ever need to check for the scheduler being operational (some callbacks
+- * do wakeups, so we do need the scheduler).
+- */
+-static void invoke_rcu_callbacks(struct rcu_data *rdp)
+-{
+-	if (unlikely(!READ_ONCE(rcu_scheduler_fully_active)))
+-		return;
+-	rcu_do_batch(rdp);
+-}
+-
  /*
-  * Handle special cases during rcu_read_unlock(), such as needing to
-  * notify RCU core processing or task having blocked during the RCU
-@@ -630,6 +641,15 @@ static void rcu_read_unlock_special(struct task_struct *t)
- 			// Also if no expediting or NO_HZ_FULL, slow is OK.
- 			set_tsk_need_resched(current);
- 			set_preempt_need_resched();
-+			if (IS_ENABLED(CONFIG_IRQ_WORK) &&
-+			    !rdp->defer_qs_iw_pending && exp) {
-+				// Get scheduler to re-evaluate and call hooks.
-+				// If !IRQ_WORK, FQS scan will eventually IPI.
-+				init_irq_work(&rdp->defer_qs_iw,
-+					      rcu_preempt_deferred_qs_handler);
-+				rdp->defer_qs_iw_pending = true;
-+				irq_work_queue_on(&rdp->defer_qs_iw, rdp->cpu);
-+			}
- 		}
- 		t->rcu_read_unlock_special.b.deferred_qs = true;
- 		local_irq_restore(flags);
+  * Wake up this CPU's rcuc kthread to do RCU core processing.
+  */
 -- 
 2.17.1
 
