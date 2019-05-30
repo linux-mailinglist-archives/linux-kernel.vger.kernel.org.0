@@ -2,325 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43C172FE04
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 16:40:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0507B2FDFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 16:40:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbfE3OkO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 10:40:14 -0400
-Received: from mta-01.yadro.com ([89.207.88.251]:39102 "EHLO mta-01.yadro.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726106AbfE3OkM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 10:40:12 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mta-01.yadro.com (Postfix) with ESMTP id 1155741940;
-        Thu, 30 May 2019 14:40:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=yadro.com; h=
-        content-type:content-type:content-transfer-encoding:mime-version
-        :x-mailer:message-id:date:date:subject:subject:from:from
-        :received:received:received; s=mta-01; t=1559227207; x=
-        1561041608; bh=OyeSkkF7vh1keHnBi2+5GfZBoCXBuVr5OjdSuFdJzwI=; b=M
-        3FThrQ4iBEIjDW3ITlAXPdn7GZvPpTCrSG/u/jHqjxZWhBJovcY4H1QGOWAlrR1T
-        d0KG+pgxdSiG6oW9xzt25QgNZMaKHRJKqbmHiN28oGzqtim9x+wsOCV5Hvw5cA+K
-        m/BQ76xJb/5WSFG99wvm/B314e0LVAGV+072dTTVzE=
-X-Virus-Scanned: amavisd-new at yadro.com
-Received: from mta-01.yadro.com ([127.0.0.1])
-        by localhost (mta-01.yadro.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id lXPc8gRPmnaL; Thu, 30 May 2019 17:40:07 +0300 (MSK)
-Received: from T-EXCH-02.corp.yadro.com (t-exch-02.corp.yadro.com [172.17.10.102])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mta-01.yadro.com (Postfix) with ESMTPS id 6ACEA41907;
-        Thu, 30 May 2019 17:40:07 +0300 (MSK)
-Received: from bbwork.com (172.17.14.115) by T-EXCH-02.corp.yadro.com
- (172.17.10.102) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id 15.1.669.32; Thu, 30
- May 2019 17:40:07 +0300
-From:   Alexander Filippov <a.filippov@yadro.com>
-To:     <linux-aspeed@lists.ozlabs.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Joel Stanley <joel@jms.id.au>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Alexander Filippov <a.filippov@yadro.com>
-Subject: [PATCH v2] ARM: dts: aspeed: Add YADRO VESNIN BMC
-Date:   Thu, 30 May 2019 17:39:33 +0300
-Message-ID: <20190530143933.25414-1-a.filippov@yadro.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726636AbfE3OkC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 10:40:02 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:38622 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726065AbfE3OkB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 10:40:01 -0400
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4UEJ8l1025656;
+        Thu, 30 May 2019 09:39:55 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2sq24q6ak4-1;
+        Thu, 30 May 2019 09:39:55 -0500
+Received: from EDIEX02.ad.cirrus.com (unknown [198.61.84.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id 482BB611E122;
+        Thu, 30 May 2019 09:39:55 -0500 (CDT)
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Thu, 30 May
+ 2019 15:39:54 +0100
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Thu, 30 May 2019 15:39:54 +0100
+Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id DD14745;
+        Thu, 30 May 2019 15:39:53 +0100 (BST)
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     <lee.jones@linaro.org>
+CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+Subject: [PATCH 1/3] mfd: madera: Update DT bindings to add additional CODECs
+Date:   Thu, 30 May 2019 15:39:51 +0100
+Message-ID: <20190530143953.25799-1-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Originating-IP: [172.17.14.115]
-X-ClientProxiedBy: T-EXCH-01.corp.yadro.com (172.17.10.101) To
- T-EXCH-02.corp.yadro.com (172.17.10.102)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=885 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905300105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VESNIN is an OpenPower machine with an Aspeed 2400 BMC SoC manufactured
-by YADRO.
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
 
-Signed-off-by: Alexander Filippov <a.filippov@yadro.com>
+This adds the cs47l15, cs42l92, cs47l92 and cs47l93 to the list of
+compatible strings and updates some properties that need to note
+the new CODECs.
+
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 ---
- arch/arm/boot/dts/Makefile                  |   1 +
- arch/arm/boot/dts/aspeed-bmc-opp-vesnin.dts | 234 ++++++++++++++++++++
- 2 files changed, 235 insertions(+)
- create mode 100644 arch/arm/boot/dts/aspeed-bmc-opp-vesnin.dts
+ Documentation/devicetree/bindings/mfd/madera.txt | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 834cce80d1b8..811e9312cf22 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -1259,6 +1259,7 @@ dtb-$(CONFIG_ARCH_ASPEED) += \
- 	aspeed-bmc-microsoft-olympus.dtb \
- 	aspeed-bmc-opp-lanyang.dtb \
- 	aspeed-bmc-opp-palmetto.dtb \
-+	aspeed-bmc-opp-vesnin.dtb \
- 	aspeed-bmc-opp-romulus.dtb \
- 	aspeed-bmc-opp-swift.dtb \
- 	aspeed-bmc-opp-witherspoon.dtb \
-diff --git a/arch/arm/boot/dts/aspeed-bmc-opp-vesnin.dts b/arch/arm/boot/dts/aspeed-bmc-opp-vesnin.dts
-new file mode 100644
-index 000000000000..20f07f5bb4f4
---- /dev/null
-+++ b/arch/arm/boot/dts/aspeed-bmc-opp-vesnin.dts
-@@ -0,0 +1,234 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+// Copyright 2019 YADRO
-+/dts-v1/;
-+
-+#include "aspeed-g4.dtsi"
-+#include <dt-bindings/gpio/aspeed-gpio.h>
-+
-+/ {
-+	model = "Vesnin BMC";
-+	compatible = "yadro,vesnin-bmc", "aspeed,ast2400";
-+
-+	chosen {
-+		stdout-path = &uart5;
-+		bootargs = "console=ttyS4,115200 earlyprintk";
-+	};
-+
-+	memory {
-+		reg = <0x40000000 0x20000000>;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		vga_memory: framebuffer@5f000000 {
-+			no-map;
-+			reg = <0x5f000000 0x01000000>; /* 16MB */
-+		};
-+		flash_memory: region@5c000000 {
-+			no-map;
-+			reg = <0x5c000000 0x02000000>; /* 32M */
-+		};
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		heartbeat {
-+			gpios = <&gpio ASPEED_GPIO(R, 4) GPIO_ACTIVE_LOW>;
-+		};
-+		power_red {
-+			gpios = <&gpio ASPEED_GPIO(N, 1) GPIO_ACTIVE_LOW>;
-+		};
-+
-+		id_blue {
-+			gpios = <&gpio ASPEED_GPIO(O, 0) GPIO_ACTIVE_LOW>;
-+		};
-+
-+		alarm_red {
-+			gpios = <&gpio ASPEED_GPIO(N, 6) GPIO_ACTIVE_LOW>;
-+		};
-+
-+		alarm_yel {
-+			gpios = <&gpio ASPEED_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		button_checkstop {
-+			label = "checkstop";
-+			linux,code = <74>;
-+			gpios = <&gpio ASPEED_GPIO(P, 5) GPIO_ACTIVE_LOW>;
-+		};
-+
-+		button_identify {
-+			label = "identify";
-+			linux,code = <152>;
-+			gpios = <&gpio ASPEED_GPIO(O, 7) GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+};
-+
-+&fmc {
-+	status = "okay";
-+	flash@0 {
-+		status = "okay";
-+		m25p,fast-read;
-+        label = "bmc";
-+#include "openbmc-flash-layout.dtsi"
-+	};
-+};
-+
-+&spi {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_spi1debug_default>;
-+
-+	flash@0 {
-+		status = "okay";
-+		label = "pnor";
-+		m25p,fast-read;
-+	};
-+};
-+
-+&mac0 {
-+	status = "okay";
-+
-+	use-ncsi;
-+	no-hw-checksum;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_rmii1_default>;
-+};
-+
-+
-+&uart5 {
-+	status = "okay";
-+};
-+
-+&lpc_ctrl {
-+	status = "okay";
-+	memory-region = <&flash_memory>;
-+	flash = <&spi>;
-+};
-+
-+&ibt {
-+	status = "okay";
-+};
-+
-+&lpc_host {
-+    sio_regs: regs {
-+        compatible = "aspeed,bmc-misc";
-+    };
-+};
-+
-+&mbox {
-+	status = "okay";
-+};
-+
-+&uart3 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_txd2_default &pinctrl_rxd2_default>;
-+};
-+
-+&i2c0 {
-+	status = "okay";
-+
-+	eeprom@50 {
-+		compatible = "atmel,24c256";
-+		reg = <0x50>;
-+		pagesize = <64>;
-+	};
-+};
-+
-+&i2c1 {
-+	status = "okay";
-+
-+	tmp75@49 {
-+		compatible = "ti,tmp75";
-+		reg = <0x49>;
-+	};
-+};
-+
-+&i2c2 {
-+	status = "okay";
-+};
-+
-+&i2c3 {
-+	status = "okay";
-+};
-+
-+&i2c4 {
-+	status = "okay";
-+
-+	occ-hwmon@50 {
-+		compatible = "ibm,p8-occ-hwmon";
-+		reg = <0x50>;
-+	};
-+};
-+
-+&i2c5 {
-+	status = "okay";
-+
-+	occ-hwmon@51 {
-+		compatible = "ibm,p8-occ-hwmon";
-+		reg = <0x51>;
-+	};
-+};
-+
-+&i2c6 {
-+	status = "okay";
-+
-+	w83795g@2f {
-+		compatible = "nuvoton,w83795g";
-+		reg = <0x2f>;
-+	};
-+};
-+
-+&i2c7 {
-+	status = "okay";
-+
-+	occ-hwmon@56 {
-+		compatible = "ibm,p8-occ-hwmon";
-+		reg = <0x56>;
-+	};
-+};
-+
-+&i2c9 {
-+	status = "okay";
-+};
-+
-+&i2c10 {
-+	status = "okay";
-+};
-+
-+&i2c11 {
-+	status = "okay";
-+
-+	occ-hwmon@57 {
-+		compatible = "ibm,p8-occ-hwmon";
-+		reg = <0x57>;
-+	};
-+};
-+
-+&i2c12 {
-+	status = "okay";
-+
-+	rtc@68 {
-+		compatible = "maxim,ds3231";
-+		reg = <0x68>;
-+	};
-+};
-+
-+&i2c13 {
-+	status = "okay";
-+};
-+
-+&vuart {
-+	status = "okay";
-+};
+diff --git a/Documentation/devicetree/bindings/mfd/madera.txt b/Documentation/devicetree/bindings/mfd/madera.txt
+index db3266088386a..cad0f28005027 100644
+--- a/Documentation/devicetree/bindings/mfd/madera.txt
++++ b/Documentation/devicetree/bindings/mfd/madera.txt
+@@ -11,10 +11,14 @@ bindings/sound/madera.txt
+ Required properties:
+ 
+   - compatible : One of the following chip-specific strings:
++        "cirrus,cs47l15"
+         "cirrus,cs47l35"
+         "cirrus,cs47l85"
+         "cirrus,cs47l90"
+         "cirrus,cs47l91"
++        "cirrus,cs42l92"
++        "cirrus,cs47l92"
++        "cirrus,cs47l93"
+         "cirrus,wm1840"
+ 
+   - reg : I2C slave address when connected using I2C, chip select number when
+@@ -22,7 +26,7 @@ Required properties:
+ 
+   - DCVDD-supply : Power supply for the device as defined in
+     bindings/regulator/regulator.txt
+-    Mandatory on CS47L35, CS47L90, CS47L91
++    Mandatory on CS47L15, CS47L35, CS47L90, CS47L91, CS42L92, CS47L92, CS47L93
+     Optional on CS47L85, WM1840
+ 
+   - AVDD-supply, DBVDD1-supply, DBVDD2-supply, CPVDD1-supply, CPVDD2-supply :
+@@ -35,7 +39,7 @@ Required properties:
+     (CS47L85, WM1840)
+ 
+   - SPKVDD-supply : Power supply for the device
+-    (CS47L35)
++    (CS47L15, CS47L35)
+ 
+   - interrupt-controller : Indicates that this device is an interrupt controller
+ 
 -- 
-2.20.1
+2.11.0
 
