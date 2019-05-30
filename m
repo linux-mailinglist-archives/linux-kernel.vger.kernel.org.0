@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 555102F4F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:44:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A81492EF69
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:55:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388720AbfE3EnL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:43:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53754 "EHLO mail.kernel.org"
+        id S2387924AbfE3Dz0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:55:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728876AbfE3DMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:13 -0400
+        id S1731826AbfE3DTL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:19:11 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 849A6244A0;
-        Thu, 30 May 2019 03:12:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1885F24849;
+        Thu, 30 May 2019 03:19:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185932;
-        bh=6ZasBnQkNWDrauYS3P0AR+Bx7T/GvEgr4cuwvTY9LWw=;
+        s=default; t=1559186351;
+        bh=MebKhiyvJ7riAHzHPq/RqDHrA7XgxeH37Lqj5HQRhYU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x0M1KdQ5xh1mChOa96AwYK4QiiNqUozf9HNku9MRSw5FwYfxybqZS5C2Wo4d4wvjo
-         5OLkWTLSGf04i+0mljyozbaw8pXMs2eXcb/n8+GZK3JQvvRVE8Al1sJcfX+MHONDwL
-         GYqti1iOY8wo8t/rV+YtNKeQ+MoC903JA1f5gBR0=
+        b=lpJ4kekkMUZyEbo9rVxt2DgB7hS3EWQDaYJUGDZYI4uONQcXiiqottBcP9OfmZAX2
+         tdAtnSIIoCjj9W4pPT1Fk90QhxZ1xGXQFm78+inSyHdcxLCoK5oqRBzQtzfZeMiuQ8
+         tM2tmRPa4dpdIv1/AaNBse9fYx7C4F1kXaPdJRCc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 328/405] spi: export tracepoint symbols to modules
+Subject: [PATCH 4.14 072/193] crypto: sun4i-ss - Fix invalid calculation of hash end
 Date:   Wed, 29 May 2019 20:05:26 -0700
-Message-Id: <20190530030557.335473736@linuxfoundation.org>
+Message-Id: <20190530030459.261512234@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ca1438dcb34c7fcad63b6ce14ea63a870b92a69b ]
+[ Upstream commit f87391558acf816b48f325a493d81d45dec40da0 ]
 
-The newly added tracepoints in the spi-mxs driver cause a link
-error when the driver is a loadable module:
+When nbytes < 4, end is wronlgy set to a negative value which, due to
+uint, is then interpreted to a large value leading to a deadlock in the
+following code.
 
-ERROR: "__tracepoint_spi_transfer_stop" [drivers/spi/spi-mxs.ko] undefined!
-ERROR: "__tracepoint_spi_transfer_start" [drivers/spi/spi-mxs.ko] undefined!
+This patch fix this problem.
 
-I'm not quite sure where to put the export statements, but
-directly after the inclusion of the header seems as good as
-any other place.
-
-Fixes: f3fdea3af405 ("spi: mxs: add tracing to custom .transfer_one_message callback")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 6298e948215f ("crypto: sunxi-ss - Add Allwinner Security System crypto accelerator")
+Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/crypto/sunxi-ss/sun4i-ss-hash.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index e3f2e15b75ad4..6cb72287eac82 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -36,6 +36,8 @@
+diff --git a/drivers/crypto/sunxi-ss/sun4i-ss-hash.c b/drivers/crypto/sunxi-ss/sun4i-ss-hash.c
+index a4b5ff2b72f87..f6936bb3b7be4 100644
+--- a/drivers/crypto/sunxi-ss/sun4i-ss-hash.c
++++ b/drivers/crypto/sunxi-ss/sun4i-ss-hash.c
+@@ -240,7 +240,10 @@ static int sun4i_hash(struct ahash_request *areq)
+ 		}
+ 	} else {
+ 		/* Since we have the flag final, we can go up to modulo 4 */
+-		end = ((areq->nbytes + op->len) / 4) * 4 - op->len;
++		if (areq->nbytes < 4)
++			end = 0;
++		else
++			end = ((areq->nbytes + op->len) / 4) * 4 - op->len;
+ 	}
  
- #define CREATE_TRACE_POINTS
- #include <trace/events/spi.h>
-+EXPORT_TRACEPOINT_SYMBOL(spi_transfer_start);
-+EXPORT_TRACEPOINT_SYMBOL(spi_transfer_stop);
- 
- #include "internals.h"
- 
+ 	/* TODO if SGlen % 4 and !op->len then DMA */
 -- 
 2.20.1
 
