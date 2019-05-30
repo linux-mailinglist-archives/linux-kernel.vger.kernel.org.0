@@ -2,90 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59AB62F92B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 11:19:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EF362F951
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 11:22:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727433AbfE3JTd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 05:19:33 -0400
-Received: from mx.socionext.com ([202.248.49.38]:34654 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727253AbfE3JTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 05:19:33 -0400
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 30 May 2019 18:19:31 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 27D56180D46;
-        Thu, 30 May 2019 18:19:31 +0900 (JST)
-Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Thu, 30 May 2019 18:19:31 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by kinkan.css.socionext.com (Postfix) with ESMTP id 61F5C1A14E3;
-        Thu, 30 May 2019 18:19:30 +0900 (JST)
-Received: from user-VB.e01.socionext.com (unknown [10.213.119.151])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 40F06120C10;
-        Thu, 30 May 2019 18:19:30 +0900 (JST)
-From:   Takao Orito <orito.takao@socionext.com>
-To:     ulf.hansson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, masami.hiramatsu@linaro.org,
-        jaswinder.singh@linaro.org, sugaya.taichi@socionext.com,
-        kasai.kazuhiro@socionext.com, kanematsu.shinji@socionext.com,
-        orito.takao@socionext.com
-Subject: [PATCH v2 1/2] dt-bindings: mmc: add DT bindings for Milbeaut SD controller
-Date:   Thu, 30 May 2019 18:22:11 +0900
-Message-Id: <1559208131-426-1-git-send-email-orito.takao@socionext.com>
-X-Mailer: git-send-email 1.9.1
+        id S1727400AbfE3JWo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 05:22:44 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34702 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727068AbfE3JWn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 05:22:43 -0400
+Received: by mail-lj1-f195.google.com with SMTP id j24so5391349ljg.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 02:22:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=MZLYGTyIcU65t5L2uyp6Otqtskjo+juH9YbDeDOrWoQ=;
+        b=z9gMudh7d9JcCGlrp8eWDNV2yJxcWLzjkU8oQz0Dg0eByjAW1m0O38+oMguoLKRC/T
+         s9zVhaIawSMhlsxObZ/J08tyjEfJWbD+Hmj9VWnbCGr7t23kteJSTuqJZNSFeG1DRkQ+
+         c5wM4s2VYLG7vMSnohAP/Bqy6NkCGL3cbrNe+ggkBCOUxa7zIHpELT96fmR3MZP9wDLJ
+         r3QkGtnNIgZFOjgqWVTVaG8fJUXQ/HIeqbXgyY4ZiimZZ+4CkuWcQ14Xj7JBTcEoneOd
+         SwGXPfjZuCeec5/tQYe9wj2ccqIB1uAmG9eTS7SgVmrBGF8p6nNh2LOYTZiKFwmSRU/k
+         30lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=MZLYGTyIcU65t5L2uyp6Otqtskjo+juH9YbDeDOrWoQ=;
+        b=MbBGSbuo3TTn2lWM7DNOVDdGfIUQDDU7zxHNMOxEi9Q7CwN0b4OlYQIzpLBCPHWG9w
+         Ohp2/MvbyatcEhex15xUl8W45EpMWm+Hf9vcjRYDsiFf+YuvYiuutKn4nro3FiVlGpxT
+         bPtXtczGtE4hCbMdnVHgITI+f1Et+eWXSbSRncbloTURUPLMGloQVfvKaWHcxvqoU6ey
+         pirkeRTjNxq3gLl+s7sRAxVazbnVzsFw48KvtKXYUHWEKRgMicCw0DaNc/dxvYu3dYKh
+         W9MqHcUDPPlglQnjlN3BiucnoeVaPSYi/nk8r17WnZPI45GKEFYdyl05WVcNec2sjbTp
+         G+OA==
+X-Gm-Message-State: APjAAAXCWmu2ZEvEoYVVIqk8sCOSwZUT2PpFYbedT5cxE90JUKo5UOi5
+        yksV1SnpBNPA5VSgJpF8r2a6zQ==
+X-Google-Smtp-Source: APXvYqyHeVE+PGHkoaUgjK/ZO4PctnMSdwN6Cw2za6u3NMAMmvxeQ7DeKjPAN0omhfrQEbdTmJs9BQ==
+X-Received: by 2002:a2e:b0d0:: with SMTP id g16mr1460905ljl.132.1559208161804;
+        Thu, 30 May 2019 02:22:41 -0700 (PDT)
+Received: from [192.168.0.199] ([31.173.85.229])
+        by smtp.gmail.com with ESMTPSA id j5sm367557ljc.67.2019.05.30.02.22.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 May 2019 02:22:41 -0700 (PDT)
+Subject: Re: [PATCH] hooks: fix a missing-check bug in selinux_add_mnt_opt()
+To:     Gen Zhang <blackgod016574@gmail.com>
+Cc:     paul@paul-moore.com, sds@tycho.nsa.gov, eparis@parisplace.org,
+        ccross@android.com, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+References: <20190530080602.GA3600@zhanggen-UX430UQ>
+ <e92b727a-bf5f-669a-18d8-7518a248c04c@cogentembedded.com>
+ <20190530091848.GA3499@zhanggen-UX430UQ>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <236195a3-b607-5cf6-ac60-8c5ea2e95b41@cogentembedded.com>
+Date:   Thu, 30 May 2019 12:22:15 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <20190530091848.GA3499@zhanggen-UX430UQ>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the device-tree binding documentation for Milbeaut SDHCI driver.
+On 30.05.2019 12:18, Gen Zhang wrote:
 
-Signed-off-by: Takao Orito <orito.takao@socionext.com>
----
- .../devicetree/bindings/mmc/sdhci-milbeaut.txt     | 32 ++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mmc/sdhci-milbeaut.txt
+>> On 30.05.2019 11:06, Gen Zhang wrote:
+>>
+>>> In selinux_add_mnt_opt(), 'val' is allcoted by kmemdup_nul(). It returns
+>>
+>>     Allocated?
 
-diff --git a/Documentation/devicetree/bindings/mmc/sdhci-milbeaut.txt b/Documentation/devicetree/bindings/mmc/sdhci-milbeaut.txt
-new file mode 100644
-index 0000000..6063116
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/sdhci-milbeaut.txt
-@@ -0,0 +1,32 @@
-+* SOCIONEXT Milbeaut SDHCI controller
-+
-+This file documents differences between the core properties in mmc.txt
-+and the properties used by the sdhci_milbeaut driver.
-+
-+Required properties:
-+- compatible: "socionext,milbeaut-m10v-sdhci-3.0"
-+- clocks: Must contain an entry for each entry in clock-names. It is a
-+  list of phandles and clock-specifier pairs.
-+  See ../clocks/clock-bindings.txt for details.
-+- clock-names: Should contain the following two entries:
-+	"iface" - clock used for sdhci interface
-+	"core"  - core clock for sdhci controller
-+- vmmc-supply: a phandle of a fixed GPIO regulator
-+
-+Optional properties:
-+- fujitsu,cmd-dat-delay-select: boolean property indicating that this host
-+  requires the CMD_DAT_DELAY control to be enabled.
-+
-+Example:
-+	sdhci3: mmc@1b010000 {
-+		compatible = "socionext,milbeaut-m10v-sdhci-3.0";
-+		reg = <0x1b010000 0x10000>;
-+		interrupts = <0 265 0x4>;
-+		voltage-ranges = <3300 3300>;
-+		bus-width = <4>;
-+		clocks = <&clk 7>, <&ahb_clk>;
-+		clock-names = "core", "iface";
-+		cap-sdio-irq;
-+		vmmc-supply = <&vcc_sdhci3>;
-+		fujitsu,cmd-dat-delay-select;
-+	};
--- 
-1.9.1
+> Thanks for your reply, Sergei. I used 'allocated' because kmemdup_nul()
+> does some allocation in its implementation. And its docs descrips:
 
+    Describes?
 
+> "Return: newly allocated copy of @s with NUL-termination or %NULL in
+> case of error". I think it is proper to use 'allocated' here. But it
+> could be 'assigned', which is better, right?
+
+    I was only trying to point out the typos in this word. :-)
+
+> Thanks
+> Gen
+>>
+>>> NULL when fails. So 'val' should be checked.
+>>>
+>>> Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+>> [...]
+
+MBR, Sergei
