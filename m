@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 974F52F869
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 10:17:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4AC32F86B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 10:18:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbfE3IRq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 04:17:46 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:48863 "EHLO
+        id S1727107AbfE3ISi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 04:18:38 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:59173 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbfE3IRq (ORCPT
+        with ESMTP id S1725440AbfE3ISh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 04:17:46 -0400
+        Thu, 30 May 2019 04:18:37 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4U8Hdiu2905251
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4U8INFL2905561
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 30 May 2019 01:17:39 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4U8Hdiu2905251
+        Thu, 30 May 2019 01:18:23 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4U8INFL2905561
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1559204259;
-        bh=D5O7Tj1ZXryZWm+Uax95RpAl9rvoKuOhBxw4xwdpOyY=;
+        s=2019051801; t=1559204304;
+        bh=WtzjA5iVaeZS5aQwYmIMBU/54L7b0eoy5kspVaS4WcE=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=GC9KdN6kdcABtFVvnXyjNlSoODVYbCoKsgYpeuNwvRB5vQteJWypQB4d4t740F19b
-         WbR5tvSeR2lcb7FyhYzYfZQZ8oegqjxGeV+G5sB2fJn+hLXfq+Xk/7PFOKnwFrFyrL
-         GBE24JiGTiKEoKBZhfhyxW285U6VpXIB6ctSlDmMaaCkML4tFcXmuoLyX26mzLHLq5
-         3Gkc6g1feuwwPZdq+s/RalJKI5mQSK4+tGEsLklcyAi3YDyWQYuWzoa20yaG5tSM68
-         Q8gXOXVZjaqgYtM3KCXfQ0vgEmJ4e0q3GgmTlUCXEnL9SLnVfHobqxyTEEJl5G9OfI
-         KkuuJQ+SlFl/g==
+        b=TsSJuzS9Ysv8vkatXFC/jl/DVwgZULbp/bdqxtVMLGfzrYgy4/iuTuwwelIPRtRFw
+         dVsCxzw/oTRaX/nKrdCoRBueeU1rOrROT4Fb9byKEhekvumJ1K7TUuj0C55ATACGw4
+         RKBAODlk36/0Z1wX0lM1/97xy0VassemuK23rZqgl6M9xDrxzXiKiZdXj+Mou9R+bu
+         QXuhj7abvuWOGn9BfP3rlIOGcxX07jrN6WKH07vwrMcqxTb1YL+DNQC2uFkSBAvGC2
+         Fg1Zn8WpoyGFAnQjyZ4Fbxib4NFp1k41/6Hjrs4QPp9/9AqztHw0mDCOQEp8gnF3LJ
+         rIb0QzBKLFG7A==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4U8HcoT2905244;
-        Thu, 30 May 2019 01:17:38 -0700
-Date:   Thu, 30 May 2019 01:17:38 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4U8INCd2905558;
+        Thu, 30 May 2019 01:18:23 -0700
+Date:   Thu, 30 May 2019 01:18:23 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-c6aba1bf258ff1ce201f112dafe1bdde601573dd@git.kernel.org>
-Cc:     hpa@zytor.com, jolsa@redhat.com, adrian.hunter@intel.com,
-        acme@redhat.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
+Message-ID: <tip-1ed7f47fd3af3c09d2cd64d1aff1c5b96d238111@git.kernel.org>
+Cc:     jolsa@redhat.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        adrian.hunter@intel.com, acme@redhat.com, mingo@kernel.org,
         tglx@linutronix.de
-Reply-To: adrian.hunter@intel.com, tglx@linutronix.de, acme@redhat.com,
-          hpa@zytor.com, jolsa@redhat.com, mingo@kernel.org,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <20190412113830.4126-2-adrian.hunter@intel.com>
-References: <20190412113830.4126-2-adrian.hunter@intel.com>
+Reply-To: tglx@linutronix.de, jolsa@redhat.com, acme@redhat.com,
+          mingo@kernel.org, linux-kernel@vger.kernel.org,
+          adrian.hunter@intel.com, hpa@zytor.com
+In-Reply-To: <20190412113830.4126-3-adrian.hunter@intel.com>
+References: <20190412113830.4126-3-adrian.hunter@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf scripts python: exported-sql-viewer.py: Change
- python2 to python
-Git-Commit-ID: c6aba1bf258ff1ce201f112dafe1bdde601573dd
+Subject: [tip:perf/core] perf scripts python: exported-sql-viewer.py: Use
+ argparse module for argument parsing
+Git-Commit-ID: 1ed7f47fd3af3c09d2cd64d1aff1c5b96d238111
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -63,33 +63,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c6aba1bf258ff1ce201f112dafe1bdde601573dd
-Gitweb:     https://git.kernel.org/tip/c6aba1bf258ff1ce201f112dafe1bdde601573dd
+Commit-ID:  1ed7f47fd3af3c09d2cd64d1aff1c5b96d238111
+Gitweb:     https://git.kernel.org/tip/1ed7f47fd3af3c09d2cd64d1aff1c5b96d238111
 Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Fri, 12 Apr 2019 14:38:23 +0300
+AuthorDate: Fri, 12 Apr 2019 14:38:24 +0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 28 May 2019 18:37:45 -0300
 
-perf scripts python: exported-sql-viewer.py: Change python2 to python
+perf scripts python: exported-sql-viewer.py: Use argparse module for argument parsing
 
-Now that there is also support for python3, there is no need to specify
-python2 explicitly.
+The argparse module makes it easier to add new arguments.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/20190412113830.4126-2-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/20190412113830.4126-3-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/scripts/python/exported-sql-viewer.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/scripts/python/exported-sql-viewer.py | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
 diff --git a/tools/perf/scripts/python/exported-sql-viewer.py b/tools/perf/scripts/python/exported-sql-viewer.py
-index affed7d149be..9ff92a130655 100755
+index 9ff92a130655..498b79454012 100755
 --- a/tools/perf/scripts/python/exported-sql-viewer.py
 +++ b/tools/perf/scripts/python/exported-sql-viewer.py
-@@ -1,4 +1,4 @@
--#!/usr/bin/env python2
-+#!/usr/bin/env python
- # SPDX-License-Identifier: GPL-2.0
- # exported-sql-viewer.py: view data from sql database
- # Copyright (c) 2014-2018, Intel Corporation.
+@@ -91,6 +91,7 @@
+ from __future__ import print_function
+ 
+ import sys
++import argparse
+ import weakref
+ import threading
+ import string
+@@ -3361,18 +3362,26 @@ class DBRef():
+ # Main
+ 
+ def Main():
+-	if (len(sys.argv) < 2):
+-		printerr("Usage is: exported-sql-viewer.py {<database name> | --help-only}");
+-		raise Exception("Too few arguments")
+-
+-	dbname = sys.argv[1]
+-	if dbname == "--help-only":
++	usage_str =	"exported-sql-viewer.py [--pyside-version-1] <database name>\n" \
++			"   or: exported-sql-viewer.py --help-only"
++	ap = argparse.ArgumentParser(usage = usage_str, add_help = False)
++	ap.add_argument("dbname", nargs="?")
++	ap.add_argument("--help-only", action='store_true')
++	args = ap.parse_args()
++
++	if args.help_only:
+ 		app = QApplication(sys.argv)
+ 		mainwindow = HelpOnlyWindow()
+ 		mainwindow.show()
+ 		err = app.exec_()
+ 		sys.exit(err)
+ 
++	dbname = args.dbname
++	if dbname is None:
++		ap.print_usage()
++		print("Too few arguments")
++		sys.exit(1)
++
+ 	is_sqlite3 = False
+ 	try:
+ 		f = open(dbname, "rb")
