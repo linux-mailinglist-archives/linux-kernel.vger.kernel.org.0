@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D3232F4CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:42:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 083062EE88
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:49:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388702AbfE3Elu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:41:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54638 "EHLO mail.kernel.org"
+        id S1732317AbfE3Dr5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:47:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728982AbfE3DMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:23 -0400
+        id S1731575AbfE3DU0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:20:26 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71C61218B6;
-        Thu, 30 May 2019 03:12:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0B092486B;
+        Thu, 30 May 2019 03:20:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185942;
-        bh=MU83gl83aJRinqmOR9ybTmHXWOWHcYU5xKkUMbZTKus=;
+        s=default; t=1559186425;
+        bh=zgiv+qFIzyKL+BVY8zd+kxmbe99pwOeqQq748lSnyHU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JrFGBKmtKzrFyGMWoUlwGqyFmPQjE/+5tZjTtmLC76WLsxYHHInzFLxwuFRQVzlVc
-         rpFfbK8SzTmZyPEkdxiSl4nmvC9cSgtlAfL7qnMiHRjpK5Gqj40iAjp0+VXnNcJlTQ
-         833Jc7jmIgvujDH+SESc9ko/XK1+LhwU47PO379Y=
+        b=oFFK8RtaTWim0eKqxwzgta4ceD3nqbXUe7gjdiNlmL7AFWNUSLk0xLzmS2a4rDnIa
+         q+CpItsE6rQzWbnu+KVKnsE2dNxuXTpU624EFrVe9iaADSr19z/RsQuM2F+XyOjIYO
+         GJL25C2vEl30wSMz6nNZjQzFHUUpE8lKs3vwQBfk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Francis <David.Francis@amd.com>,
-        Krunoslav Kovac <Krunoslav.Kovac@amd.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 349/405] drm/amd/display: Re-add custom degamma support
+        stable@vger.kernel.org, Jiufei Xue <jiufei.xue@linux.alibaba.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 4.9 015/128] fbdev: fix WARNING in __alloc_pages_nodemask bug
 Date:   Wed, 29 May 2019 20:05:47 -0700
-Message-Id: <20190530030558.330911326@linuxfoundation.org>
+Message-Id: <20190530030437.478216971@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,42 +43,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f91813992c343272813e707343b50f8d06383659 ]
+From: Jiufei Xue <jiufei.xue@linux.alibaba.com>
 
-[Why]
-The dc_gamma_type CUSTOM_GAMMA is used to represent degamma
-mappings passed in by drm. This type of gamma must be interpolated
-into a transfer function by apply_1d_lut.  The line in
-mod_color_calculate_degamma_params that handled this case
-was erroneously removed.
+commit 8c40292be9169a9cbe19aadd1a6fc60cbd1af82f upstream.
 
-[How]
-For CUSTOM_GAMMA degamma, calculate the lut as before.
+Syzkaller hit 'WARNING in __alloc_pages_nodemask' bug.
 
-Signed-off-by: David Francis <David.Francis@amd.com>
-Reviewed-by: Krunoslav Kovac <Krunoslav.Kovac@amd.com>
-Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+WARNING: CPU: 1 PID: 1473 at mm/page_alloc.c:4377
+__alloc_pages_nodemask+0x4da/0x2130
+Kernel panic - not syncing: panic_on_warn set ...
+
+Call Trace:
+ alloc_pages_current+0xb1/0x1e0
+ kmalloc_order+0x1f/0x60
+ kmalloc_order_trace+0x1d/0x120
+ fb_alloc_cmap_gfp+0x85/0x2b0
+ fb_set_user_cmap+0xff/0x370
+ do_fb_ioctl+0x949/0xa20
+ fb_ioctl+0xdd/0x120
+ do_vfs_ioctl+0x186/0x1070
+ ksys_ioctl+0x89/0xa0
+ __x64_sys_ioctl+0x74/0xb0
+ do_syscall_64+0xc8/0x550
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+This is a warning about order >= MAX_ORDER and the order is from
+userspace ioctl. Add flag __NOWARN to silence this warning.
+
+Signed-off-by: Jiufei Xue <jiufei.xue@linux.alibaba.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/gpu/drm/amd/display/modules/color/color_gamma.c | 2 ++
+ drivers/video/fbdev/core/fbcmap.c |    2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/display/modules/color/color_gamma.c b/drivers/gpu/drm/amd/display/modules/color/color_gamma.c
-index 0fbc8fbc35416..a1055413bade6 100644
---- a/drivers/gpu/drm/amd/display/modules/color/color_gamma.c
-+++ b/drivers/gpu/drm/amd/display/modules/color/color_gamma.c
-@@ -1854,6 +1854,8 @@ bool mod_color_calculate_degamma_params(struct dc_transfer_func *input_tf,
- 			coordinates_x, axis_x, curve,
- 			MAX_HW_POINTS, tf_pts,
- 			mapUserRamp && ramp && ramp->type == GAMMA_RGB_256);
-+	if (ramp->type == GAMMA_CUSTOM)
-+		apply_lut_1d(ramp, MAX_HW_POINTS, tf_pts);
+--- a/drivers/video/fbdev/core/fbcmap.c
++++ b/drivers/video/fbdev/core/fbcmap.c
+@@ -94,6 +94,8 @@ int fb_alloc_cmap_gfp(struct fb_cmap *cm
+ 	int size = len * sizeof(u16);
+ 	int ret = -ENOMEM;
  
- 	ret = true;
- 
--- 
-2.20.1
-
++	flags |= __GFP_NOWARN;
++
+ 	if (cmap->len != len) {
+ 		fb_dealloc_cmap(cmap);
+ 		if (!len)
 
 
