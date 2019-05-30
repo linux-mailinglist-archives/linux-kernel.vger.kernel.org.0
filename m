@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 804012F026
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:01:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D3F92EE16
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:44:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732003AbfE3EBN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:01:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50268 "EHLO mail.kernel.org"
+        id S1732571AbfE3DoE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:44:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731458AbfE3DSL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:11 -0400
+        id S1732401AbfE3DVA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:21:00 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3853024782;
-        Thu, 30 May 2019 03:18:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B493248FC;
+        Thu, 30 May 2019 03:20:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186291;
-        bh=wNIIGNdY+3Ff5ByT6wZINYkqc6SV4Xy+MelFjAUT/GE=;
+        s=default; t=1559186459;
+        bh=wo7KJCLYN64lUMeRiuI5l/Ol11RFSGVvd64QwJiY/4o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0N0DwvY51vqTd+5tnDQc4qHGXfxMmtqFJ66UCygrXpyEQjSyleYpotaD725f0Mp71
-         mmzjVp5kAP2gqwNfXdoyRF5lvsMeRiTFyhq7vIqIbxFKrWN/mUvQ9BV+qGxK6M3jPc
-         dIOLnczAZyTNlKpk962OKCug8a6469jdeVoADIis=
+        b=I817d4i0ti8EEro01hUbKhCpONkYU91h2Eseeyuidfo1Dq0STA1YZuYHL+L7izoLP
+         0iT9NXPV47ybR7ttSpl+W1ePvRYDnWMNA2nB5rnYc3eJr5umrlDQbKAGgcr8LCMPNy
+         E9C0EpolMRUCkoQxjskSDEOFTqE5DeMEfv6Y3dZg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Matthias Schwarzott <zzam@gentoo.org>,
-        Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Kefeng Wang <wangkefeng.wang@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 249/276] media: si2165: fix a missing check of return value
+Subject: [PATCH 4.9 075/128] hwmon: (pc87427) Use request_muxed_region for Super-IO accesses
 Date:   Wed, 29 May 2019 20:06:47 -0700
-Message-Id: <20190530030540.713606171@linuxfoundation.org>
+Message-Id: <20190530030448.157699409@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,53 +45,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 0ab34a08812a3334350dbaf69a018ee0ab3d2ddd ]
+[ Upstream commit 755a9b0f8aaa5639ba5671ca50080852babb89ce ]
 
-si2165_readreg8() may fail. Looking into si2165_readreg8(), we will find
-that "val_tmp" will be an uninitialized value when regmap_read() fails.
-"val_tmp" is then assigned to "val". So if si2165_readreg8() fails,
-"val" will be a random value. Further use will lead to undefined
-behaviors. The fix checks if si2165_readreg8() fails, and if so, returns
-its error code upstream.
+Super-IO accesses may fail on a system with no or unmapped LPC bus.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Reviewed-by: Matthias Schwarzott <zzam@gentoo.org>
-Tested-by: Matthias Schwarzott <zzam@gentoo.org>
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Also, other drivers may attempt to access the LPC bus at the same time,
+resulting in undefined behavior.
+
+Use request_muxed_region() to ensure that IO access on the requested
+address space is supported, and to ensure that access by multiple drivers
+is synchronized.
+
+Fixes: ba224e2c4f0a7 ("hwmon: New PC87427 hardware monitoring driver")
+Reported-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+Reported-by: John Garry <john.garry@huawei.com>
+Cc: John Garry <john.garry@huawei.com>
+Acked-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/dvb-frontends/si2165.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/hwmon/pc87427.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/dvb-frontends/si2165.c b/drivers/media/dvb-frontends/si2165.c
-index feacd8da421da..d55d8f169dca6 100644
---- a/drivers/media/dvb-frontends/si2165.c
-+++ b/drivers/media/dvb-frontends/si2165.c
-@@ -275,18 +275,20 @@ static u32 si2165_get_fe_clk(struct si2165_state *state)
+diff --git a/drivers/hwmon/pc87427.c b/drivers/hwmon/pc87427.c
+index cb9fdd37bd0d9..2b5b8c3de8fce 100644
+--- a/drivers/hwmon/pc87427.c
++++ b/drivers/hwmon/pc87427.c
+@@ -106,6 +106,13 @@ static const char *logdev_str[2] = { DRVNAME " FMC", DRVNAME " HMC" };
+ #define LD_IN		1
+ #define LD_TEMP		1
  
- static int si2165_wait_init_done(struct si2165_state *state)
++static inline int superio_enter(int sioaddr)
++{
++	if (!request_muxed_region(sioaddr, 2, DRVNAME))
++		return -EBUSY;
++	return 0;
++}
++
+ static inline void superio_outb(int sioaddr, int reg, int val)
  {
--	int ret = -EINVAL;
-+	int ret;
- 	u8 val = 0;
- 	int i;
- 
- 	for (i = 0; i < 3; ++i) {
--		si2165_readreg8(state, REG_INIT_DONE, &val);
-+		ret = si2165_readreg8(state, REG_INIT_DONE, &val);
-+		if (ret < 0)
-+			return ret;
- 		if (val == 0x01)
- 			return 0;
- 		usleep_range(1000, 50000);
- 	}
- 	dev_err(&state->client->dev, "init_done was not set\n");
--	return ret;
-+	return -EINVAL;
+ 	outb(reg, sioaddr);
+@@ -122,6 +129,7 @@ static inline void superio_exit(int sioaddr)
+ {
+ 	outb(0x02, sioaddr);
+ 	outb(0x02, sioaddr + 1);
++	release_region(sioaddr, 2);
  }
  
- static int si2165_upload_firmware_block(struct si2165_state *state,
+ /*
+@@ -1220,7 +1228,11 @@ static int __init pc87427_find(int sioaddr, struct pc87427_sio_data *sio_data)
+ {
+ 	u16 val;
+ 	u8 cfg, cfg_b;
+-	int i, err = 0;
++	int i, err;
++
++	err = superio_enter(sioaddr);
++	if (err)
++		return err;
+ 
+ 	/* Identify device */
+ 	val = force_id ? force_id : superio_inb(sioaddr, SIOREG_DEVID);
 -- 
 2.20.1
 
