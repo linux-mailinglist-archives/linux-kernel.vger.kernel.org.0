@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C05F2EF62
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:55:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BA342F24B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:21:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387798AbfE3DzK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:55:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54276 "EHLO mail.kernel.org"
+        id S1731375AbfE3EU0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:20:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731837AbfE3DTN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:19:13 -0400
+        id S1730228AbfE3DPU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:20 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0A9024851;
-        Thu, 30 May 2019 03:19:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C9B2324580;
+        Thu, 30 May 2019 03:15:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186353;
-        bh=Aejag5TLKIl5447kOyGIu/8gjDxU6nlebDlgGC34zcE=;
+        s=default; t=1559186119;
+        bh=NuMQBpqVXNdaQqVW/JGiNtTugJE81l8CNlrtaF5OaI0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JCPHzKHa6y9KLzV9mJaD6aB+Yeqge+8BzXVtvCgH+Yd0YrjThFUuEbKzHUbv7dqFD
-         VwnoSPpJGA64TDaTsOs/vhjDrNxqu4OqM2/RjB/k89nL/LiEbca3/s6V6DptvcbR6P
-         qxmwGrZ6PUzpbNyotuY8uWL391aLukntkVM4UT/0=
+        b=qwm0Q6ntXV7wGnHxondDh150nu9N2+qIssbEYRM6X5oYiCZ8TRjIOmTDnUYVjlPtB
+         iEW8V8I7YTS6qS+133raMtI8jAqb2fDHGxpZpJ7YD2z6D7GpeNwFzst2m9Ja8/j11N
+         KcuTCC53FDptsJQc9lfScW28e/D37sTsj3pzrmKA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hugues Fruchet <hugues.fruchet@st.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Neeraj Upadhyay <neeraju@codeaurora.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 093/193] media: stm32-dcmi: fix crash when subdev do not expose any formats
+Subject: [PATCH 5.0 274/346] rcu: Do a single rhp->func read in rcu_head_after_call_rcu()
 Date:   Wed, 29 May 2019 20:05:47 -0700
-Message-Id: <20190530030501.998357216@linuxfoundation.org>
+Message-Id: <20190530030554.834052845@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,43 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 33dfeb62e23c31619d2197850f7e8b50e8cc5466 ]
+[ Upstream commit b699cce1604e828f19c39845252626eb78cdf38a ]
 
-Do not access sd_formats[] if num_of_sd_formats is zero, ie
-subdev sensor didn't expose any formats.
+The rcu_head_after_call_rcu() function reads the rhp->func pointer twice,
+which can result in a false-positive WARN_ON_ONCE() if the callback
+were passed to call_rcu() between the two reads.  Although racing
+rcu_head_after_call_rcu() with call_rcu() is to be a dubious use case
+(the return value is not reliable in that case), intermittent and
+irreproducible warnings are also quite dubious.  This commit therefore
+uses a single READ_ONCE() to pick up the value of rhp->func once, then
+tests that value twice, thus guaranteeing consistent processing within
+rcu_head_after_call_rcu()().
 
-Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Neverthless, racing rcu_head_after_call_rcu() with call_rcu() is still
+a dubious use case.
+
+Signed-off-by: Neeraj Upadhyay <neeraju@codeaurora.org>
+[ paulmck: Add blank line after declaration per checkpatch.pl. ]
+Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/stm32/stm32-dcmi.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ include/linux/rcupdate.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
-index 35ba6f211b790..4281f3f76ab15 100644
---- a/drivers/media/platform/stm32/stm32-dcmi.c
-+++ b/drivers/media/platform/stm32/stm32-dcmi.c
-@@ -775,6 +775,9 @@ static int dcmi_try_fmt(struct stm32_dcmi *dcmi, struct v4l2_format *f,
- 
- 	sd_fmt = find_format_by_fourcc(dcmi, pix->pixelformat);
- 	if (!sd_fmt) {
-+		if (!dcmi->num_of_sd_formats)
-+			return -ENODATA;
+diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+index 4db8bcacc51ae..991d97cf395a7 100644
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -890,9 +890,11 @@ static inline void rcu_head_init(struct rcu_head *rhp)
+ static inline bool
+ rcu_head_after_call_rcu(struct rcu_head *rhp, rcu_callback_t f)
+ {
+-	if (READ_ONCE(rhp->func) == f)
++	rcu_callback_t func = READ_ONCE(rhp->func);
 +
- 		sd_fmt = dcmi->sd_formats[dcmi->num_of_sd_formats - 1];
- 		pix->pixelformat = sd_fmt->fourcc;
- 	}
-@@ -946,6 +949,9 @@ static int dcmi_set_sensor_format(struct stm32_dcmi *dcmi,
++	if (func == f)
+ 		return true;
+-	WARN_ON_ONCE(READ_ONCE(rhp->func) != (rcu_callback_t)~0L);
++	WARN_ON_ONCE(func != (rcu_callback_t)~0L);
+ 	return false;
+ }
  
- 	sd_fmt = find_format_by_fourcc(dcmi, pix->pixelformat);
- 	if (!sd_fmt) {
-+		if (!dcmi->num_of_sd_formats)
-+			return -ENODATA;
-+
- 		sd_fmt = dcmi->sd_formats[dcmi->num_of_sd_formats - 1];
- 		pix->pixelformat = sd_fmt->fourcc;
- 	}
 -- 
 2.20.1
 
