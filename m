@@ -2,64 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0192301AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 20:19:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82770301B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 20:20:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726547AbfE3STe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 14:19:34 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:35080 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725961AbfE3STe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 14:19:34 -0400
-Received: from [172.20.8.77] (unknown [207.225.69.115])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id F1E911EC033F;
-        Thu, 30 May 2019 20:19:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1559240372;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=+FySjQvkw3gub2985lSwYfwdxjK48qhJJdaawn7bwWw=;
-        b=cOO6KmApd03PNn2XMw3Tn6baTYU4r7UAS1R913nuS0nHijjQ6j8BDkFWp6voJjGQEy3tgO
-        3fs7DJOfmS6pj8ZteGTAFM2et+0JKArhtHQvmGZi3eS3W4vzKN4WQoBTZmnac5oF95KgHh
-        IiUG2E6k9av3XSOGh2eYfXobE1A7Tr4=
-Date:   Thu, 30 May 2019 11:19:27 -0700
-User-Agent: K-9 Mail for Android
-In-Reply-To: <1559211329-13098-3-git-send-email-hhhawa@amazon.com>
-References: <1559211329-13098-1-git-send-email-hhhawa@amazon.com> <1559211329-13098-3-git-send-email-hhhawa@amazon.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 2/2] edac: add support for Amazon's Annapurna Labs EDAC
-To:     Hanna Hawa <hhhawa@amazon.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, mchehab@kernel.org, james.morse@arm.com,
-        davem@davemloft.net, gregkh@linuxfoundation.org,
-        nicolas.ferre@microchip.com, paulmck@linux.ibm.com,
-        dwmw@amazon.co.uk, benh@amazon.com
-CC:     ronenk@amazon.com, talel@amazon.com, jonnyc@amazon.com,
-        hanochu@amazon.com, hhhawa@amazon.com, linux-edac@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Boris Petkov <bp@alien8.de>
-Message-ID: <DB09EE2A-7397-4063-B925-66658D0105A5@alien8.de>
+        id S1726664AbfE3SUw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 14:20:52 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:38478 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726442AbfE3SUv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 14:20:51 -0400
+Received: by mail-lf1-f68.google.com with SMTP id b11so5794384lfa.5
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 11:20:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=8x97jd39TwyBk8v0q4IVmayr713NLQSBbX6u/ZPdPME=;
+        b=qUINiA4ttbzBtbe1hlkF3Nw+walwKPKkCWoqKpBx5LsOqYa9O8VkD3su5CoY7cmEpv
+         sgoUuAMAqL7oUQ3pq0y/mNdHF0vxBxthSplDF5bOmjYiTbcfaiyDm8+FCeCgCD89vMFs
+         o5bCIcAltuCh7c/TMagy62EwPDHKdf6NP4tU/AhF73C7sSCTKXiF6Q0XmE7DmrkjVaql
+         6Ts21LwqV/nGuAiyDjT6jtRHz4x+vB/83M6hUPrIvD0djrh4cya/WOQG+zb1YvjXmhtc
+         DKM4aJZJhuxlWhYQ41SmVt5mxZSowZxZwn35scDT3sVdR5H7FJtheqvfkmJ2xLUaXJXZ
+         6aVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8x97jd39TwyBk8v0q4IVmayr713NLQSBbX6u/ZPdPME=;
+        b=AZtctgWctdGsBeZPkdtZ/gtpDNkItm3ZCrqEoqlmeaVD2aTR/m7nZOHH+mFs7OT+mr
+         ut6MptdqFBUY8dXOLCiPzn3czHinFabMdxtl+WZRkAkaqDz+kmcI9z6Hjrb0LYaUr10e
+         wZCblhK/uCISTkt0ud4SEgCOviS2pXhvaMnyV6ajfEX/rNLlIJrY6FGB65eiUYR0eI2o
+         FWP+EDi6bHyLpHz72BXe6i7iXhCsg7JeJhh7lst3butXKEDjITH1gGYP9gLpWgDlttRW
+         1B3LsBdm7LVLY0s5rohc66l9+nMfQ3CNjpG0x18+FetqIco/pDaVuxVj3lk2IR5Q7OsL
+         jE8w==
+X-Gm-Message-State: APjAAAVS8/152jLwnh5/JcnD8jm8yeINzwi4XJGv8bYYsZoUTuo0fsri
+        VRBlzh3sJwwimJBZLgnFNiYKzg==
+X-Google-Smtp-Source: APXvYqwkzz3vxranwYdEP7uuv1JNKx8JMvIdv7IdoppufWr3JFhZFcY716iTa5IT+G6Bn2TcmtwUTw==
+X-Received: by 2002:ac2:5922:: with SMTP id v2mr2926685lfi.180.1559240449769;
+        Thu, 30 May 2019 11:20:49 -0700 (PDT)
+Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
+        by smtp.gmail.com with ESMTPSA id v7sm388946lfe.11.2019.05.30.11.20.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 May 2019 11:20:49 -0700 (PDT)
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     grygorii.strashko@ti.com, hawk@kernel.org, davem@davemloft.net
+Cc:     ast@kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, xdp-newbies@vger.kernel.org,
+        ilias.apalodimas@linaro.org, netdev@vger.kernel.org,
+        daniel@iogearbox.net, jakub.kicinski@netronome.com,
+        john.fastabend@gmail.com,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Subject: [PATCH v2 net-next 0/7] net: ethernet: ti: cpsw: Add XDP support
+Date:   Thu, 30 May 2019 21:20:32 +0300
+Message-Id: <20190530182039.4945-1-ivan.khoronzhuk@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On May 30, 2019 3:15:29 AM PDT, Hanna Hawa <hhhawa@amazon=2Ecom> wrote:
->Add support for error detection and correction for Amazon's Annapurna
->Labs SoCs for L1/L2 caches=2E
+This patchset adds XDP support for TI cpsw driver and base it on
+page_pool allocator. It was verified on af_xdp socket drop,
+af_xdp l2f, ebpf XDP_DROP, XDP_REDIRECT, XDP_PASS, XDP_TX.
+
+It was verified with following configs enabled:
+CONFIG_JIT=y
+CONFIG_BPFILTER=y
+CONFIG_BPF_SYSCALL=y
+CONFIG_XDP_SOCKETS=y
+CONFIG_BPF_EVENTS=y
+CONFIG_HAVE_EBPF_JIT=y
+CONFIG_BPF_JIT=y
+CONFIG_CGROUP_BPF=y
+
+Link on previous v1:
+https://lkml.org/lkml/2019/5/23/795
+
+Also regular tests with iperf2 were done in order to verify impact on
+regular netstack performance, compared with base commit:
+https://pastebin.com/JSMT0iZ4
+
+v1..v2:
+- combined xdp_xmit functions
+- used page allocation w/o refcnt juggle
+- unmapped page for skb netstack
+- moved rxq/page pool allocation to open/close pair
+- added several preliminary patches:
+  net: page_pool: add helper function to retrieve dma addresses
+  net: page_pool: add helper function to unmap dma addresses
+  net: ethernet: ti: cpsw: use cpsw as drv data
+  net: ethernet: ti: cpsw_ethtool: simplify slave loops
 
 
-So this should be a driver for the whole annapurna platform and not only a=
-bout the RAS functionality in an IP like the caches=2E See other ARM EDAC d=
-rivers in drivers/edac/ for an example=2E
+Based on net-next/master
 
-Thx=2E
+Ilias Apalodimas (2):
+  net: page_pool: add helper function to retrieve dma addresses
+  net: page_pool: add helper function to unmap dma addresses
 
---=20
-Sent from a small device: formatting sux and brevity is inevitable=2E 
+Ivan Khoronzhuk (5):
+  net: ethernet: ti: cpsw: use cpsw as drv data
+  net: ethernet: ti: cpsw_ethtool: simplify slave loops
+  net: ethernet: ti: davinci_cpdma: add dma mapped submit
+  net: ethernet: ti: davinci_cpdma: return handler status
+  net: ethernet: ti: cpsw: add XDP support
+
+ drivers/net/ethernet/ti/Kconfig         |   1 +
+ drivers/net/ethernet/ti/cpsw.c          | 537 ++++++++++++++++++++----
+ drivers/net/ethernet/ti/cpsw_ethtool.c  | 136 +++++-
+ drivers/net/ethernet/ti/cpsw_priv.h     |  12 +-
+ drivers/net/ethernet/ti/davinci_cpdma.c | 122 ++++--
+ drivers/net/ethernet/ti/davinci_cpdma.h |   6 +-
+ drivers/net/ethernet/ti/davinci_emac.c  |  18 +-
+ include/net/page_pool.h                 |   6 +
+ net/core/page_pool.c                    |   7 +
+ 9 files changed, 710 insertions(+), 135 deletions(-)
+
+-- 
+2.17.1
+
