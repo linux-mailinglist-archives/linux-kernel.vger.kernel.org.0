@@ -2,43 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C22D92F197
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:14:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43AF52F583
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:48:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730889AbfE3EOX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:14:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41638 "EHLO mail.kernel.org"
+        id S2388830AbfE3Er6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:47:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730612AbfE3DQM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:16:12 -0400
+        id S1728550AbfE3DL0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:11:26 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71AC4245C8;
-        Thu, 30 May 2019 03:16:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0439244EA;
+        Thu, 30 May 2019 03:11:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186171;
-        bh=+f2SCRJSm/16yIXGAoePEv2Yv9oc3u4Du3hE8BYVi/8=;
+        s=default; t=1559185886;
+        bh=txZnHUUZKA7lDIWQ6dBQTE9mALY24OiRElwexgm7qwA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n0MnNhTtXDnYAZz0Epgla/j5PN+YUZEb1qBG3HKtOIECms9ND3IyguIZZsTrM8k8Q
-         5V3h+hTPBt56+NZZuwn4f7+KpJhZ22AyDAy4gzbF8O4aOUZ9zzGno5Vr4ICWCQF2rE
-         GDQkECNm0LJvsd3fZ/IACZIxew3ZSROHRgOrcgnE=
+        b=J+XXGj+00qDkXro586LQnKe06vhKTScF3yuT7jDj4eWwE0isQzPc9lH6vgjWd3pq7
+         eqQcbn8S1wnrtICMpCkW20+Pigiy9MuDSI6qL0sp/cG5yuxY3MJ0K80ZpVqff4BSq0
+         ndaAVmK1uBCkY5orNu5W/t3PjMC4+f+v5uhS1DXA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH 4.19 027/276] bpf: add bpf_jit_limit knob to restrict unpriv allocations
+        stable@vger.kernel.org,
+        Adam Ludkiewicz <adam.ludkiewicz@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 187/405] i40e: Able to add up to 16 MAC filters on an untrusted VF
 Date:   Wed, 29 May 2019 20:03:05 -0700
-Message-Id: <20190530030525.908009953@linuxfoundation.org>
+Message-Id: <20190530030550.501083174@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,200 +46,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+[ Upstream commit 06b6e2a2333eb3581567a7ac43ca465ef45f4daa ]
 
-commit ede95a63b5e84ddeea6b0c473b36ab8bfd8c6ce3 upstream.
+This patch fixes the problem with the driver being able to add only 7
+multicast MAC address filters instead of 16. The problem is fixed by
+changing the maximum number of MAC address filters to 16+1+1 (two extra
+are needed because the driver uses 1 for unicast MAC address and 1 for
+broadcast).
 
-Rick reported that the BPF JIT could potentially fill the entire module
-space with BPF programs from unprivileged users which would prevent later
-attempts to load normal kernel modules or privileged BPF programs, for
-example. If JIT was enabled but unsuccessful to generate the image, then
-before commit 290af86629b2 ("bpf: introduce BPF_JIT_ALWAYS_ON config")
-we would always fall back to the BPF interpreter. Nowadays in the case
-where the CONFIG_BPF_JIT_ALWAYS_ON could be set, then the load will abort
-with a failure since the BPF interpreter was compiled out.
-
-Add a global limit and enforce it for unprivileged users such that in case
-of BPF interpreter compiled out we fail once the limit has been reached
-or we fall back to BPF interpreter earlier w/o using module mem if latter
-was compiled in. In a next step, fair share among unprivileged users can
-be resolved in particular for the case where we would fail hard once limit
-is reached.
-
-Fixes: 290af86629b2 ("bpf: introduce BPF_JIT_ALWAYS_ON config")
-Fixes: 0a14842f5a3c ("net: filter: Just In Time compiler for x86-64")
-Co-Developed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Alexei Starovoitov <ast@kernel.org>
-Cc: Eric Dumazet <eric.dumazet@gmail.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Adam Ludkiewicz <adam.ludkiewicz@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/sysctl/net.txt |    8 +++++++
- include/linux/filter.h       |    1 
- kernel/bpf/core.c            |   49 ++++++++++++++++++++++++++++++++++++++++---
- net/core/sysctl_net_core.c   |   10 +++++++-
- 4 files changed, 63 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/Documentation/sysctl/net.txt
-+++ b/Documentation/sysctl/net.txt
-@@ -92,6 +92,14 @@ Values :
- 	0 - disable JIT kallsyms export (default value)
- 	1 - enable JIT kallsyms export for privileged users only
- 
-+bpf_jit_limit
-+-------------
-+
-+This enforces a global limit for memory allocations to the BPF JIT
-+compiler in order to reject unprivileged JIT requests once it has
-+been surpassed. bpf_jit_limit contains the value of the global limit
-+in bytes.
-+
- dev_weight
- --------------
- 
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -836,6 +836,7 @@ bpf_run_sk_reuseport(struct sock_reusepo
- extern int bpf_jit_enable;
- extern int bpf_jit_harden;
- extern int bpf_jit_kallsyms;
-+extern int bpf_jit_limit;
- 
- typedef void (*bpf_jit_fill_hole_t)(void *area, unsigned int size);
- 
---- a/kernel/bpf/core.c
-+++ b/kernel/bpf/core.c
-@@ -366,10 +366,13 @@ void bpf_prog_kallsyms_del_all(struct bp
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+index 0b5b867c9fbcb..2b0362c827e98 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c
+@@ -2454,8 +2454,10 @@ static int i40e_vc_get_stats_msg(struct i40e_vf *vf, u8 *msg)
+ 				      (u8 *)&stats, sizeof(stats));
  }
  
- #ifdef CONFIG_BPF_JIT
-+# define BPF_JIT_LIMIT_DEFAULT	(PAGE_SIZE * 40000)
-+
- /* All BPF JIT sysctl knobs here. */
- int bpf_jit_enable   __read_mostly = IS_BUILTIN(CONFIG_BPF_JIT_ALWAYS_ON);
- int bpf_jit_harden   __read_mostly;
- int bpf_jit_kallsyms __read_mostly;
-+int bpf_jit_limit    __read_mostly = BPF_JIT_LIMIT_DEFAULT;
+-/* If the VF is not trusted restrict the number of MAC/VLAN it can program */
+-#define I40E_VC_MAX_MAC_ADDR_PER_VF 12
++/* If the VF is not trusted restrict the number of MAC/VLAN it can program
++ * MAC filters: 16 for multicast, 1 for MAC, 1 for broadcast
++ */
++#define I40E_VC_MAX_MAC_ADDR_PER_VF (16 + 1 + 1)
+ #define I40E_VC_MAX_VLAN_PER_VF 8
  
- static __always_inline void
- bpf_get_prog_addr_region(const struct bpf_prog *prog,
-@@ -578,27 +581,64 @@ int bpf_get_kallsym(unsigned int symnum,
- 	return ret;
- }
- 
-+static atomic_long_t bpf_jit_current;
-+
-+#if defined(MODULES_VADDR)
-+static int __init bpf_jit_charge_init(void)
-+{
-+	/* Only used as heuristic here to derive limit. */
-+	bpf_jit_limit = min_t(u64, round_up((MODULES_END - MODULES_VADDR) >> 2,
-+					    PAGE_SIZE), INT_MAX);
-+	return 0;
-+}
-+pure_initcall(bpf_jit_charge_init);
-+#endif
-+
-+static int bpf_jit_charge_modmem(u32 pages)
-+{
-+	if (atomic_long_add_return(pages, &bpf_jit_current) >
-+	    (bpf_jit_limit >> PAGE_SHIFT)) {
-+		if (!capable(CAP_SYS_ADMIN)) {
-+			atomic_long_sub(pages, &bpf_jit_current);
-+			return -EPERM;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static void bpf_jit_uncharge_modmem(u32 pages)
-+{
-+	atomic_long_sub(pages, &bpf_jit_current);
-+}
-+
- struct bpf_binary_header *
- bpf_jit_binary_alloc(unsigned int proglen, u8 **image_ptr,
- 		     unsigned int alignment,
- 		     bpf_jit_fill_hole_t bpf_fill_ill_insns)
- {
- 	struct bpf_binary_header *hdr;
--	unsigned int size, hole, start;
-+	u32 size, hole, start, pages;
- 
- 	/* Most of BPF filters are really small, but if some of them
- 	 * fill a page, allow at least 128 extra bytes to insert a
- 	 * random section of illegal instructions.
- 	 */
- 	size = round_up(proglen + sizeof(*hdr) + 128, PAGE_SIZE);
-+	pages = size / PAGE_SIZE;
-+
-+	if (bpf_jit_charge_modmem(pages))
-+		return NULL;
- 	hdr = module_alloc(size);
--	if (hdr == NULL)
-+	if (!hdr) {
-+		bpf_jit_uncharge_modmem(pages);
- 		return NULL;
-+	}
- 
- 	/* Fill space with illegal/arch-dep instructions. */
- 	bpf_fill_ill_insns(hdr, size);
- 
--	hdr->pages = size / PAGE_SIZE;
-+	hdr->pages = pages;
- 	hole = min_t(unsigned int, size - (proglen + sizeof(*hdr)),
- 		     PAGE_SIZE - sizeof(*hdr));
- 	start = (get_random_int() % hole) & ~(alignment - 1);
-@@ -611,7 +651,10 @@ bpf_jit_binary_alloc(unsigned int progle
- 
- void bpf_jit_binary_free(struct bpf_binary_header *hdr)
- {
-+	u32 pages = hdr->pages;
-+
- 	module_memfree(hdr);
-+	bpf_jit_uncharge_modmem(pages);
- }
- 
- /* This symbol is only overridden by archs that have different
---- a/net/core/sysctl_net_core.c
-+++ b/net/core/sysctl_net_core.c
-@@ -279,7 +279,6 @@ static int proc_dointvec_minmax_bpf_enab
- 	return ret;
- }
- 
--# ifdef CONFIG_HAVE_EBPF_JIT
- static int
- proc_dointvec_minmax_bpf_restricted(struct ctl_table *table, int write,
- 				    void __user *buffer, size_t *lenp,
-@@ -290,7 +289,6 @@ proc_dointvec_minmax_bpf_restricted(stru
- 
- 	return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
- }
--# endif
- #endif
- 
- static struct ctl_table net_core_table[] = {
-@@ -397,6 +395,14 @@ static struct ctl_table net_core_table[]
- 		.extra2		= &one,
- 	},
- # endif
-+	{
-+		.procname	= "bpf_jit_limit",
-+		.data		= &bpf_jit_limit,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0600,
-+		.proc_handler	= proc_dointvec_minmax_bpf_restricted,
-+		.extra1		= &one,
-+	},
- #endif
- 	{
- 		.procname	= "netdev_tstamp_prequeue",
+ /**
+-- 
+2.20.1
+
 
 
