@@ -2,44 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1366B2ECC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:26:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 532B92EC9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:24:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387642AbfE3D0A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:26:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52284 "EHLO mail.kernel.org"
+        id S1733048AbfE3DXU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:23:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731640AbfE3DSm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:42 -0400
+        id S1731079AbfE3DRW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:22 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75F142474D;
-        Thu, 30 May 2019 03:18:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D7F702463F;
+        Thu, 30 May 2019 03:17:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186321;
-        bh=xntRxPlWYdQfPjD7QGj11AmNCrP8tvlr+4AU/4fmfpo=;
+        s=default; t=1559186242;
+        bh=B3DhlEJ4ntR8egRJP5RlZfeyVV2zTNXwZoWVRbGKFCE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WYEc+WFeYJGvoqTVJkU8A7dDB1LtHuGr4IIbyRvukPdfuk60QyXA/qOoEWUj4Xq7p
-         CzY8F92KqRvNXfKUkYXvLwE6HC6iOkED+j8kGDT1KLdAmeRW+6LIWQvuVqRG7pR+vf
-         2TggcAj2u55oIZ47oxo5R9AURFgMWpB2oNLjpTb0=
+        b=yvvINWwa7TkoOxfxqMbQDJoQYKY+wx0nwIwBK8HaIG6MjOBct5meD37BIbvIOlkOr
+         +ud3nDxZHVmj4tCoFyBUMCCKi7Ka91OGZKXUjPNOFhVrmBLVWsqdxaaKQxIGKSez/a
+         2/Z9+K7u1KGfuz87vRnvAHA8VXqs/IHehDIpwORo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+83f2d54ec6b7e417e13f@syzkaller.appspotmail.com,
-        syzbot+050927a651272b145a5d@syzkaller.appspotmail.com,
-        syzbot+979ffc89b87309b1b94b@syzkaller.appspotmail.com,
-        syzbot+f9f3f388440283da2965@syzkaller.appspotmail.com,
-        =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>,
-        Sven Eckelmann <sven@narfation.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>
-Subject: [PATCH 4.14 032/193] batman-adv: mcast: fix multicast tt/tvlv worker locking
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 128/276] media: pvrusb2: Prevent a buffer overflow
 Date:   Wed, 29 May 2019 20:04:46 -0700
-Message-Id: <20190530030453.779235840@linuxfoundation.org>
+Message-Id: <20190530030533.803120908@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,112 +45,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Lüssing <linus.luessing@c0d3.blue>
+[ Upstream commit c1ced46c7b49ad7bc064e68d966e0ad303f917fb ]
 
-commit a3c7cd0cdf1107f891aff847ad481e34df727055 upstream.
+The ctrl_check_input() function is called from pvr2_ctrl_range_check().
+It's supposed to validate user supplied input and return true or false
+depending on whether the input is valid or not.  The problem is that
+negative shifts or shifts greater than 31 are undefined in C.  In
+practice with GCC they result in shift wrapping so this function returns
+true for some inputs which are not valid and this could result in a
+buffer overflow:
 
-Syzbot has reported some issues with the locking assumptions made for
-the multicast tt/tvlv worker: It was able to trigger the WARN_ON() in
-batadv_mcast_mla_tt_retract() and batadv_mcast_mla_tt_add().
-While hard/not reproduceable for us so far it seems that the
-delayed_work_pending() we use might not be quite safe from reordering.
+    drivers/media/usb/pvrusb2/pvrusb2-ctrl.c:205 pvr2_ctrl_get_valname()
+    warn: uncapped user index 'names[val]'
 
-Therefore this patch adds an explicit, new spinlock to protect the
-update of the mla_list and flags in bat_priv and then removes the
-WARN_ON(delayed_work_pending()).
+The cptr->hdw->input_allowed_mask mask is configured in pvr2_hdw_create()
+and the highest valid bit is BIT(4).
 
-Reported-by: syzbot+83f2d54ec6b7e417e13f@syzkaller.appspotmail.com
-Reported-by: syzbot+050927a651272b145a5d@syzkaller.appspotmail.com
-Reported-by: syzbot+979ffc89b87309b1b94b@syzkaller.appspotmail.com
-Reported-by: syzbot+f9f3f388440283da2965@syzkaller.appspotmail.com
-Fixes: cbebd363b2e9 ("batman-adv: Use own timer for multicast TT and TVLV updates")
-Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 7fb20fa38caa ("V4L/DVB (7299): pvrusb2: Improve logic which handles input choice availability")
 
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/batman-adv/main.c      |    1 +
- net/batman-adv/multicast.c |   11 +++--------
- net/batman-adv/types.h     |    2 ++
- 3 files changed, 6 insertions(+), 8 deletions(-)
+ drivers/media/usb/pvrusb2/pvrusb2-hdw.c | 2 ++
+ drivers/media/usb/pvrusb2/pvrusb2-hdw.h | 1 +
+ 2 files changed, 3 insertions(+)
 
---- a/net/batman-adv/main.c
-+++ b/net/batman-adv/main.c
-@@ -153,6 +153,7 @@ int batadv_mesh_init(struct net_device *
- 	spin_lock_init(&bat_priv->tt.commit_lock);
- 	spin_lock_init(&bat_priv->gw.list_lock);
- #ifdef CONFIG_BATMAN_ADV_MCAST
-+	spin_lock_init(&bat_priv->mcast.mla_lock);
- 	spin_lock_init(&bat_priv->mcast.want_lists_lock);
- #endif
- 	spin_lock_init(&bat_priv->tvlv.container_list_lock);
---- a/net/batman-adv/multicast.c
-+++ b/net/batman-adv/multicast.c
-@@ -269,8 +269,6 @@ static void batadv_mcast_mla_list_free(s
-  * translation table except the ones listed in the given mcast_list.
-  *
-  * If mcast_list is NULL then all are retracted.
-- *
-- * Do not call outside of the mcast worker! (or cancel mcast worker first)
-  */
- static void batadv_mcast_mla_tt_retract(struct batadv_priv *bat_priv,
- 					struct hlist_head *mcast_list)
-@@ -278,8 +276,6 @@ static void batadv_mcast_mla_tt_retract(
- 	struct batadv_hw_addr *mcast_entry;
- 	struct hlist_node *tmp;
+diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
+index a8519da0020bf..673fdca8d2dac 100644
+--- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
++++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
+@@ -666,6 +666,8 @@ static int ctrl_get_input(struct pvr2_ctrl *cptr,int *vp)
  
--	WARN_ON(delayed_work_pending(&bat_priv->mcast.work));
--
- 	hlist_for_each_entry_safe(mcast_entry, tmp, &bat_priv->mcast.mla_list,
- 				  list) {
- 		if (mcast_list &&
-@@ -303,8 +299,6 @@ static void batadv_mcast_mla_tt_retract(
-  *
-  * Adds multicast listener announcements from the given mcast_list to the
-  * translation table if they have not been added yet.
-- *
-- * Do not call outside of the mcast worker! (or cancel mcast worker first)
-  */
- static void batadv_mcast_mla_tt_add(struct batadv_priv *bat_priv,
- 				    struct hlist_head *mcast_list)
-@@ -312,8 +306,6 @@ static void batadv_mcast_mla_tt_add(stru
- 	struct batadv_hw_addr *mcast_entry;
- 	struct hlist_node *tmp;
- 
--	WARN_ON(delayed_work_pending(&bat_priv->mcast.work));
--
- 	if (!mcast_list)
- 		return;
- 
-@@ -600,7 +592,10 @@ static void batadv_mcast_mla_update(stru
- 	priv_mcast = container_of(delayed_work, struct batadv_priv_mcast, work);
- 	bat_priv = container_of(priv_mcast, struct batadv_priv, mcast);
- 
-+	spin_lock(&bat_priv->mcast.mla_lock);
- 	__batadv_mcast_mla_update(bat_priv);
-+	spin_unlock(&bat_priv->mcast.mla_lock);
-+
- 	batadv_mcast_start_timer(bat_priv);
+ static int ctrl_check_input(struct pvr2_ctrl *cptr,int v)
+ {
++	if (v < 0 || v > PVR2_CVAL_INPUT_MAX)
++		return 0;
+ 	return ((1 << v) & cptr->hdw->input_allowed_mask) != 0;
  }
  
---- a/net/batman-adv/types.h
-+++ b/net/batman-adv/types.h
-@@ -798,6 +798,7 @@ struct batadv_mcast_querier_state {
-  * @flags: the flags we have last sent in our mcast tvlv
-  * @enabled: whether the multicast tvlv is currently enabled
-  * @bridged: whether the soft interface has a bridge on top
-+ * @mla_lock: a lock protecting mla_list and mla_flags
-  * @num_disabled: number of nodes that have no mcast tvlv
-  * @num_want_all_unsnoopables: number of nodes wanting unsnoopable IP traffic
-  * @num_want_all_ipv4: counter for items in want_all_ipv4_list
-@@ -816,6 +817,7 @@ struct batadv_priv_mcast {
- 	u8 flags;
- 	bool enabled;
- 	bool bridged;
-+	spinlock_t mla_lock;
- 	atomic_t num_disabled;
- 	atomic_t num_want_all_unsnoopables;
- 	atomic_t num_want_all_ipv4;
+diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.h b/drivers/media/usb/pvrusb2/pvrusb2-hdw.h
+index 25648add77e58..bd2b7a67b7322 100644
+--- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.h
++++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.h
+@@ -50,6 +50,7 @@
+ #define PVR2_CVAL_INPUT_COMPOSITE 2
+ #define PVR2_CVAL_INPUT_SVIDEO 3
+ #define PVR2_CVAL_INPUT_RADIO 4
++#define PVR2_CVAL_INPUT_MAX PVR2_CVAL_INPUT_RADIO
+ 
+ enum pvr2_config {
+ 	pvr2_config_empty,    /* No configuration */
+-- 
+2.20.1
+
 
 
