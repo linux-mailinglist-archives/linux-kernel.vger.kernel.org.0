@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E58E02EE62
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:47:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52A9E2EF21
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:53:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733119AbfE3Dqr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:46:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59258 "EHLO mail.kernel.org"
+        id S1731927AbfE3DTc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:19:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732265AbfE3DUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:20:37 -0400
+        id S1730324AbfE3DPa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:30 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 85A6D2492F;
-        Thu, 30 May 2019 03:20:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 174E524547;
+        Thu, 30 May 2019 03:15:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186436;
-        bh=cIGnD4yXtI3MMHtih8BtRCO6noHVs0fjrkprujW0B5Q=;
+        s=default; t=1559186130;
+        bh=Zj5rtlTKEDo9wx0Ppc+i/QuIy0p67H/+gPJBTzb4wzY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UUqcZjnlZvsb2PCucUWsG/JKE54tdoKGFWaoeQ0w3S00ORk+4lDHyY+tuiMfHujT2
-         TUMDlKMjZ0trsTrXlhfSQYdXRbQWcCuv9sIDHfrD65+ESltEwYr3b37Wgl2EYekTON
-         oKcQBCPgi4WlrJiSVDiozeyYNgaiaE8aAb7QNBv0=
+        b=A7xsk0rCFsQDX4Q0ySi54wmxgLMlVv5PMaHmTw67CTuBgrVbTkekGosgmEYjwh9NB
+         jhd/qqED9aHFMh+942+SpFpjGuJHb5LNkYZ8RNbgPpD9TvY4RMCxemVk7+kyZTMEw1
+         PfdjVDBX3E5BZDi7HsVqlr8+6jNreD6+Et9s+Xow=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 033/128] ARM: vdso: Remove dependency with the arch_timer driver internals
+Subject: [PATCH 5.0 292/346] media: v4l2-fwnode: The first default data lane is 0 on C-PHY
 Date:   Wed, 29 May 2019 20:06:05 -0700
-Message-Id: <20190530030440.414195214@linuxfoundation.org>
+Message-Id: <20190530030555.663573280@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,63 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1f5b62f09f6b314c8d70b9de5182dae4de1f94da ]
+[ Upstream commit fff35d45e16fae125c6000cb87e254cb634ac7fb ]
 
-The VDSO code uses the kernel helper that was originally designed
-to abstract the access between 32 and 64bit systems. It worked so
-far because this function is declared as 'inline'.
+C-PHY has no clock lanes. Therefore the first data lane is 0 by default.
 
-As we're about to revamp that part of the code, the VDSO would
-break. Let's fix it by doing what should have been done from
-the start, a proper system register access.
+Fixes: edc6d56c2e7e ("media: v4l: fwnode: Support parsing of CSI-2 C-PHY endpoints")
 
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/include/asm/cp15.h   | 2 ++
- arch/arm/vdso/vgettimeofday.c | 5 +++--
- 2 files changed, 5 insertions(+), 2 deletions(-)
+ drivers/media/v4l2-core/v4l2-fwnode.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/include/asm/cp15.h b/arch/arm/include/asm/cp15.h
-index b74b174ac9fcd..b458e41227943 100644
---- a/arch/arm/include/asm/cp15.h
-+++ b/arch/arm/include/asm/cp15.h
-@@ -67,6 +67,8 @@
- #define BPIALL				__ACCESS_CP15(c7, 0, c5, 6)
- #define ICIALLU				__ACCESS_CP15(c7, 0, c5, 0)
- 
-+#define CNTVCT				__ACCESS_CP15_64(1, c14)
+diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
+index 9bfedd7596a1a..a398b7885399c 100644
+--- a/drivers/media/v4l2-core/v4l2-fwnode.c
++++ b/drivers/media/v4l2-core/v4l2-fwnode.c
+@@ -225,6 +225,10 @@ static int v4l2_fwnode_endpoint_parse_csi2_bus(struct fwnode_handle *fwnode,
+ 	if (bus_type == V4L2_MBUS_CSI2_DPHY ||
+ 	    bus_type == V4L2_MBUS_CSI2_CPHY || lanes_used ||
+ 	    have_clk_lane || (flags & ~V4L2_MBUS_CSI2_CONTINUOUS_CLOCK)) {
++		/* Only D-PHY has a clock lane. */
++		unsigned int dfl_data_lane_index =
++			bus_type == V4L2_MBUS_CSI2_DPHY;
 +
- extern unsigned long cr_alignment;	/* defined in entry-armv.S */
- 
- static inline unsigned long get_cr(void)
-diff --git a/arch/arm/vdso/vgettimeofday.c b/arch/arm/vdso/vgettimeofday.c
-index 79214d5ff0970..3af02d2a0b7f2 100644
---- a/arch/arm/vdso/vgettimeofday.c
-+++ b/arch/arm/vdso/vgettimeofday.c
-@@ -18,9 +18,9 @@
- #include <linux/compiler.h>
- #include <linux/hrtimer.h>
- #include <linux/time.h>
--#include <asm/arch_timer.h>
- #include <asm/barrier.h>
- #include <asm/bug.h>
-+#include <asm/cp15.h>
- #include <asm/page.h>
- #include <asm/unistd.h>
- #include <asm/vdso_datapage.h>
-@@ -123,7 +123,8 @@ static notrace u64 get_ns(struct vdso_data *vdata)
- 	u64 cycle_now;
- 	u64 nsec;
- 
--	cycle_now = arch_counter_get_cntvct();
-+	isb();
-+	cycle_now = read_sysreg(CNTVCT);
- 
- 	cycle_delta = (cycle_now - vdata->cs_cycle_last) & vdata->cs_mask;
- 
+ 		bus->flags = flags;
+ 		if (bus_type == V4L2_MBUS_UNKNOWN)
+ 			vep->bus_type = V4L2_MBUS_CSI2_DPHY;
+@@ -233,7 +237,7 @@ static int v4l2_fwnode_endpoint_parse_csi2_bus(struct fwnode_handle *fwnode,
+ 		if (use_default_lane_mapping) {
+ 			bus->clock_lane = 0;
+ 			for (i = 0; i < num_data_lanes; i++)
+-				bus->data_lanes[i] = 1 + i;
++				bus->data_lanes[i] = dfl_data_lane_index + i;
+ 		} else {
+ 			bus->clock_lane = clock_lane;
+ 			for (i = 0; i < num_data_lanes; i++)
 -- 
 2.20.1
 
