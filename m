@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 278E02F634
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:54:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A05972F633
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:54:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389096AbfE3EyA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:54:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47618 "EHLO mail.kernel.org"
+        id S2389035AbfE3Ex7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:53:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728121AbfE3DKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728126AbfE3DKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 29 May 2019 23:10:31 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72ED3244BE;
+        by mail.kernel.org (Postfix) with ESMTPSA id DA62B244C8;
         Thu, 30 May 2019 03:10:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1559185830;
-        bh=B71QUzXxuY/5P12+ReZl2k2PlJJ2/W9n9mOxrKU+LfA=;
+        bh=Tc8OrLISn/6K0CKtw3ADXYDLTGuQZovzyj8UNyrDsK0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wplino6MiugmBislBpPoYPYwR5TJYSm/FcbQ0xv8DLZ1qScUyekwRBCKZFW1yTbV+
-         nEHZaqY08cnS3XDSEVT0pwoRbDwDGwunkPM5+lZu3c60l1jyprcmmrWuodB9f5yibI
-         Ijh++kvdudlfTTffLsQEcuEdGFshGVezCPcWsOFQ=
+        b=Era6vT4Xs50LNYFIVFL9Xkf7dB8pwfar6ujYFUVpm4MNywmYe5NwTWD08JWdZCNwg
+         lzewSE4DxPwbHGmYKNmNqM6MA4yDxyIzQdUpVjnd6k/Nj5chOi/zjt3/du/Bgi+aVV
+         HwC+vkLYArVj1VCRbPwKcX0LoKPz1vXnmRLIeoi8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
+        Daniel Jurgens <danielj@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 133/405] bcache: avoid clang -Wunintialized warning
-Date:   Wed, 29 May 2019 20:02:11 -0700
-Message-Id: <20190530030547.815389736@linuxfoundation.org>
+Subject: [PATCH 5.1 134/405] RDMA/cma: Consider scope_id while binding to ipv6 ll address
+Date:   Wed, 29 May 2019 20:02:12 -0700
+Message-Id: <20190530030547.872189825@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
 References: <20190530030540.291644921@linuxfoundation.org>
@@ -45,73 +46,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 78d4eb8ad9e1d413449d1b7a060f50b6efa81ebd ]
+[ Upstream commit 5d7ed2f27bbd482fd29e6b2e204b1a1ee8a0b268 ]
 
-clang has identified a code path in which it thinks a
-variable may be unused:
+When two netdev have same link local addresses (such as vlan and non
+vlan), two rdma cm listen id should be able to bind to following different
+addresses.
 
-drivers/md/bcache/alloc.c:333:4: error: variable 'bucket' is used uninitialized whenever 'if' condition is false
-      [-Werror,-Wsometimes-uninitialized]
-                        fifo_pop(&ca->free_inc, bucket);
-                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/md/bcache/util.h:219:27: note: expanded from macro 'fifo_pop'
- #define fifo_pop(fifo, i)       fifo_pop_front(fifo, (i))
-                                ^~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/md/bcache/util.h:189:6: note: expanded from macro 'fifo_pop_front'
-        if (_r) {                                                       \
-            ^~
-drivers/md/bcache/alloc.c:343:46: note: uninitialized use occurs here
-                        allocator_wait(ca, bch_allocator_push(ca, bucket));
-                                                                  ^~~~~~
-drivers/md/bcache/alloc.c:287:7: note: expanded from macro 'allocator_wait'
-                if (cond)                                               \
-                    ^~~~
-drivers/md/bcache/alloc.c:333:4: note: remove the 'if' if its condition is always true
-                        fifo_pop(&ca->free_inc, bucket);
-                        ^
-drivers/md/bcache/util.h:219:27: note: expanded from macro 'fifo_pop'
- #define fifo_pop(fifo, i)       fifo_pop_front(fifo, (i))
-                                ^
-drivers/md/bcache/util.h:189:2: note: expanded from macro 'fifo_pop_front'
-        if (_r) {                                                       \
-        ^
-drivers/md/bcache/alloc.c:331:15: note: initialize the variable 'bucket' to silence this warning
-                        long bucket;
-                                   ^
+listener-1: addr=lla, scope_id=A, port=X
+listener-2: addr=lla, scope_id=B, port=X
 
-This cannot happen in practice because we only enter the loop
-if there is at least one element in the list.
+However while comparing the addresses only addr and port are considered,
+due to which 2nd listener fails to listen.
 
-Slightly rearranging the code makes this clearer to both the
-reader and the compiler, which avoids the warning.
+In below example of two listeners, 2nd listener is failing with address in
+use error.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Coly Li <colyli@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+$ rping -sv -a fe80::268a:7ff:feb3:d113%ens2f1 -p 4545&
+
+$ rping -sv -a fe80::268a:7ff:feb3:d113%ens2f1.200 -p 4545
+rdma_bind_addr: Address already in use
+
+To overcome this, consider the scope_ids as well which forms the accurate
+IPv6 link local address.
+
+Signed-off-by: Parav Pandit <parav@mellanox.com>
+Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/bcache/alloc.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/infiniband/core/cma.c | 25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
-index 5002838ea4760..f8986effcb501 100644
---- a/drivers/md/bcache/alloc.c
-+++ b/drivers/md/bcache/alloc.c
-@@ -327,10 +327,11 @@ static int bch_allocator_thread(void *arg)
- 		 * possibly issue discards to them, then we add the bucket to
- 		 * the free list:
- 		 */
--		while (!fifo_empty(&ca->free_inc)) {
-+		while (1) {
- 			long bucket;
+diff --git a/drivers/infiniband/core/cma.c b/drivers/infiniband/core/cma.c
+index 68c997be24293..c54da16df0beb 100644
+--- a/drivers/infiniband/core/cma.c
++++ b/drivers/infiniband/core/cma.c
+@@ -1173,18 +1173,31 @@ static inline bool cma_any_addr(const struct sockaddr *addr)
+ 	return cma_zero_addr(addr) || cma_loopback_addr(addr);
+ }
  
--			fifo_pop(&ca->free_inc, bucket);
-+			if (!fifo_pop(&ca->free_inc, bucket))
-+				break;
+-static int cma_addr_cmp(struct sockaddr *src, struct sockaddr *dst)
++static int cma_addr_cmp(const struct sockaddr *src, const struct sockaddr *dst)
+ {
+ 	if (src->sa_family != dst->sa_family)
+ 		return -1;
  
- 			if (ca->discard) {
- 				mutex_unlock(&ca->set->bucket_lock);
+ 	switch (src->sa_family) {
+ 	case AF_INET:
+-		return ((struct sockaddr_in *) src)->sin_addr.s_addr !=
+-		       ((struct sockaddr_in *) dst)->sin_addr.s_addr;
+-	case AF_INET6:
+-		return ipv6_addr_cmp(&((struct sockaddr_in6 *) src)->sin6_addr,
+-				     &((struct sockaddr_in6 *) dst)->sin6_addr);
++		return ((struct sockaddr_in *)src)->sin_addr.s_addr !=
++		       ((struct sockaddr_in *)dst)->sin_addr.s_addr;
++	case AF_INET6: {
++		struct sockaddr_in6 *src_addr6 = (struct sockaddr_in6 *)src;
++		struct sockaddr_in6 *dst_addr6 = (struct sockaddr_in6 *)dst;
++		bool link_local;
++
++		if (ipv6_addr_cmp(&src_addr6->sin6_addr,
++					  &dst_addr6->sin6_addr))
++			return 1;
++		link_local = ipv6_addr_type(&dst_addr6->sin6_addr) &
++			     IPV6_ADDR_LINKLOCAL;
++		/* Link local must match their scope_ids */
++		return link_local ? (src_addr6->sin6_scope_id !=
++				     dst_addr6->sin6_scope_id) :
++				    0;
++	}
++
+ 	default:
+ 		return ib_addr_cmp(&((struct sockaddr_ib *) src)->sib_addr,
+ 				   &((struct sockaddr_ib *) dst)->sib_addr);
 -- 
 2.20.1
 
