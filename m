@@ -2,40 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40A542F302
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:26:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A53D2F0E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:08:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729176AbfE3DOk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:14:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53500 "EHLO mail.kernel.org"
+        id S1727318AbfE3EIK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:08:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728195AbfE3DMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:06 -0400
+        id S1731082AbfE3DRX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:23 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B91E24519;
-        Thu, 30 May 2019 03:12:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A0D8223CB;
+        Thu, 30 May 2019 03:17:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185925;
-        bh=Jan7DD9Uh0cQPM9Trrlwh8Yfj1EXn5QYmANOkL08xFg=;
+        s=default; t=1559186242;
+        bh=0tLTZClcKKFgPoH9shh1EIWhEETmj6LdTSvdImpzG/Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bf/hFyIT5hXGqwGLCIb4SvwBdhPzfBQSH1z04YvT+Qon+PTWE59MRHHf1+WXmzsJf
-         u/a7kLdH9JqRFco1s4/rDiG/9PGExy/ZORcy49BPWw734qE4odyadhcwZqUY+L8khE
-         nnpsIJdqA59i5b4TFnkzj3Z1v/ANp76k3zoH8RnU=
+        b=kiz7XKNEAtP8E+2KwIF+lH7v3c1T1RJiDbO5PY36fLeVratQYCJ5x8iffqHhGjmCo
+         NtlN/ocXB+F2Egqi2EWYlo2VrFUedzBOlzJsCefc3lPAW+pKl5p/XTtjfsMesEUM7f
+         nDy8tBiUkzsUWTd7egoFwIZq9nYi38XqaWmj2i7Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Kan Liang <kan.liang@linux.intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>, acme@kernel.org,
+        jolsa@kernel.org, Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 315/405] scsi: qla4xxx: avoid freeing unallocated dma memory
+Subject: [PATCH 4.19 155/276] perf/x86/intel/rapl: Add Icelake support
 Date:   Wed, 29 May 2019 20:05:13 -0700
-Message-Id: <20190530030556.725255091@linuxfoundation.org>
+Message-Id: <20190530030535.236183817@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,50 +52,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 608f729c31d4caf52216ea00d20092a80959256d ]
+[ Upstream commit b3377c3acb9e54cf86efcfe25f2e792bca599ed4 ]
 
-Clang -Wuninitialized notices that on is_qla40XX we never allocate any DMA
-memory in get_fw_boot_info() but attempt to free it anyway:
+Icelake support the same RAPL counters as Skylake.
 
-drivers/scsi/qla4xxx/ql4_os.c:5915:7: error: variable 'buf_dma' is used uninitialized whenever 'if' condition is false
-      [-Werror,-Wsometimes-uninitialized]
-                if (!(val & 0x07)) {
-                    ^~~~~~~~~~~~~
-drivers/scsi/qla4xxx/ql4_os.c:5985:47: note: uninitialized use occurs here
-        dma_free_coherent(&ha->pdev->dev, size, buf, buf_dma);
-                                                     ^~~~~~~
-drivers/scsi/qla4xxx/ql4_os.c:5915:3: note: remove the 'if' if its condition is always true
-                if (!(val & 0x07)) {
-                ^~~~~~~~~~~~~~~~~~~
-drivers/scsi/qla4xxx/ql4_os.c:5885:20: note: initialize the variable 'buf_dma' to silence this warning
-        dma_addr_t buf_dma;
-                          ^
-                           = 0
-
-Skip the call to dma_free_coherent() here.
-
-Fixes: 2a991c215978 ("[SCSI] qla4xxx: Boot from SAN support for open-iscsi")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: acme@kernel.org
+Cc: jolsa@kernel.org
+Link: https://lkml.kernel.org/r/20190402194509.2832-11-kan.liang@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/qla4xxx/ql4_os.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/events/intel/rapl.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/scsi/qla4xxx/ql4_os.c b/drivers/scsi/qla4xxx/ql4_os.c
-index 6e4f4931ae175..8c674eca09f13 100644
---- a/drivers/scsi/qla4xxx/ql4_os.c
-+++ b/drivers/scsi/qla4xxx/ql4_os.c
-@@ -5930,7 +5930,7 @@ static int get_fw_boot_info(struct scsi_qla_host *ha, uint16_t ddb_index[])
- 		val = rd_nvram_byte(ha, sec_addr);
- 		if (val & BIT_7)
- 			ddb_index[1] = (val & 0x7f);
--
-+		goto exit_boot_info;
- 	} else if (is_qla80XX(ha)) {
- 		buf = dma_alloc_coherent(&ha->pdev->dev, size,
- 					 &buf_dma, GFP_KERNEL);
+diff --git a/arch/x86/events/intel/rapl.c b/arch/x86/events/intel/rapl.c
+index 91039ffed6333..2413169ce3627 100644
+--- a/arch/x86/events/intel/rapl.c
++++ b/arch/x86/events/intel/rapl.c
+@@ -780,6 +780,8 @@ static const struct x86_cpu_id rapl_cpu_match[] __initconst = {
+ 	X86_RAPL_MODEL_MATCH(INTEL_FAM6_ATOM_GOLDMONT_X, hsw_rapl_init),
+ 
+ 	X86_RAPL_MODEL_MATCH(INTEL_FAM6_ATOM_GOLDMONT_PLUS, hsw_rapl_init),
++
++	X86_RAPL_MODEL_MATCH(INTEL_FAM6_ICELAKE_MOBILE,  skl_rapl_init),
+ 	{},
+ };
+ 
 -- 
 2.20.1
 
