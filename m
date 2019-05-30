@@ -2,128 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0EEC2F7D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 09:17:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5D722F7E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 09:26:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727648AbfE3HRo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 03:17:44 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:40770 "EHLO huawei.com"
+        id S1726628AbfE3H0j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 03:26:39 -0400
+Received: from mail-eopbgr150078.outbound.protection.outlook.com ([40.107.15.78]:19843
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726949AbfE3HRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 03:17:43 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 46407A0CC356BA3EDF68;
-        Thu, 30 May 2019 15:17:41 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 30 May 2019 15:17:33 +0800
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-To:     <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH] media: wl128x: Fix some error handling in fm_v4l2_init_video_device()
-Date:   Thu, 30 May 2019 15:25:49 +0800
-Message-ID: <20190530072549.112280-1-wangkefeng.wang@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726027AbfE3H0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 03:26:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=01gwSFAYA3Uk4IeDNbVDz4hKTeRat6clKeRgvLpNlk8=;
+ b=nOggFycEOQ4lxv/jIjiJjA+OgMu+qrclk2HNd0DgJGuepj5Zc8HW9f5Gut6xF8El9S3c0TqDtRaxG2fznnXZFzfXGyqW1mng+/hvLgaAz3C209a2bsHhMm5RA4qjzp9TQEiehyaCB/5Y/5Yf+Aj4SIwFohSCiuG67yOqm1Or3dc=
+Received: from VI1PR08MB5488.eurprd08.prod.outlook.com (52.133.246.150) by
+ VI1PR08MB4285.eurprd08.prod.outlook.com (20.179.25.143) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1922.16; Thu, 30 May 2019 07:26:32 +0000
+Received: from VI1PR08MB5488.eurprd08.prod.outlook.com
+ ([fe80::ada6:12ed:65d0:4629]) by VI1PR08MB5488.eurprd08.prod.outlook.com
+ ([fe80::ada6:12ed:65d0:4629%4]) with mapi id 15.20.1922.021; Thu, 30 May 2019
+ 07:26:32 +0000
+From:   "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>
+To:     Liviu Dudau <Liviu.Dudau@arm.com>,
+        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "seanpaul@chromium.org" <seanpaul@chromium.org>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        Brian Starkey <Brian.Starkey@arm.com>
+CC:     "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        Ayan Halder <Ayan.Halder@arm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        nd <nd@arm.com>
+Subject: [PATCH] drm/komeda: Adds gamma and color-transform support for
+ DOU-IPS
+Thread-Topic: [PATCH] drm/komeda: Adds gamma and color-transform support for
+ DOU-IPS
+Thread-Index: AQHVFrkBpv04RIOEP0OWo9CBhVRsvQ==
+Date:   Thu, 30 May 2019 07:26:32 +0000
+Message-ID: <1559201154-6587-1-git-send-email-lowry.li@arm.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [113.29.88.7]
+x-clientproxiedby: HK2PR02CA0186.apcprd02.prod.outlook.com
+ (2603:1096:201:21::22) To VI1PR08MB5488.eurprd08.prod.outlook.com
+ (2603:10a6:803:137::22)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Lowry.Li@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 1.9.1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 0bb258d3-4649-4ce2-3f04-08d6e4d02343
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR08MB4285;
+x-ms-traffictypediagnostic: VI1PR08MB4285:
+x-ms-exchange-purlcount: 9
+nodisclaimer: True
+x-microsoft-antispam-prvs: <VI1PR08MB42854A42CA45B2DBAD11DDA79F180@VI1PR08MB4285.eurprd08.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3044;
+x-forefront-prvs: 00531FAC2C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(136003)(396003)(39860400002)(346002)(189003)(199004)(4326008)(53936002)(486006)(86362001)(305945005)(7736002)(26005)(6486002)(186003)(68736007)(66066001)(476003)(73956011)(316002)(6306002)(2501003)(2616005)(66946007)(2906002)(25786009)(6436002)(6512007)(99286004)(36756003)(6636002)(110136005)(3846002)(6116002)(54906003)(14444005)(256004)(71200400001)(71190400001)(72206003)(55236004)(386003)(5660300002)(52116002)(64756008)(66446008)(66476007)(50226002)(81166006)(14454004)(8676002)(102836004)(966005)(8936002)(81156014)(66556008)(6506007)(478600001)(2201001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB4285;H:VI1PR08MB5488.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: XhtSuxRtBVG2jdboUyDesUrqwipkchP4WUdhnCASh+kcxz5phSEpHlY7vH1ceBvgO7DUY/pna2ixI55zkwFnAY2esXyxt9MNefla6pO+CdKl4WCJf280RkXROQY/Tb7LKY0ibubeu19kKttCS5RndiYr8z/JDpZMZF1Af/cWwvzpfUuXfqqJIVDYW0eTEsOU3XjmBrQxN+61T1PO3jagHXn9yL1vg7bz3wfb3VYI+kB47Ciw87U0Pz80yQh3+5gbwz+dw1PLfQCiSLutDcvEZQSiV9HDuJ3EnJjmsBwBogHXcDIJrG3p9N05l/CgIwz/RetW6ckguS6MvzcK51KxRQDs04NSWeJG8Ib2pymIop97Mue2Lf/Fb53iSmbKWZPvvBiKEcagXwj5N4S4Ho4BKic41herOHt8zrrj8BtJXMQ=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0bb258d3-4649-4ce2-3f04-08d6e4d02343
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 May 2019 07:26:32.6522
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Lowry.Li@arm.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB4285
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The fm_v4l2_init_video_device() forget to unregister v4l2/video device
-in the error path, it could lead to UAF issue, eg,
-
-  BUG: KASAN: use-after-free in atomic64_read include/asm-generic/atomic-instrumented.h:836 [inline]
-  BUG: KASAN: use-after-free in atomic_long_read include/asm-generic/atomic-long.h:28 [inline]
-  BUG: KASAN: use-after-free in __mutex_unlock_slowpath+0x92/0x690 kernel/locking/mutex.c:1206
-  Read of size 8 at addr ffff8881e84a7c70 by task v4l_id/3659
-
-  CPU: 1 PID: 3659 Comm: v4l_id Not tainted 5.1.0 #8
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
-  Call Trace:
-   __dump_stack lib/dump_stack.c:77 [inline]
-   dump_stack+0xa9/0x10e lib/dump_stack.c:113
-   print_address_description+0x65/0x270 mm/kasan/report.c:187
-   kasan_report+0x149/0x18d mm/kasan/report.c:317
-   atomic64_read include/asm-generic/atomic-instrumented.h:836 [inline]
-   atomic_long_read include/asm-generic/atomic-long.h:28 [inline]
-   __mutex_unlock_slowpath+0x92/0x690 kernel/locking/mutex.c:1206
-   fm_v4l2_fops_open+0xac/0x120 [fm_drv]
-   v4l2_open+0x191/0x390 [videodev]
-   chrdev_open+0x20d/0x570 fs/char_dev.c:417
-   do_dentry_open+0x700/0xf30 fs/open.c:777
-   do_last fs/namei.c:3416 [inline]
-   path_openat+0x7c4/0x2a90 fs/namei.c:3532
-   do_filp_open+0x1a5/0x2b0 fs/namei.c:3563
-   do_sys_open+0x302/0x490 fs/open.c:1069
-   do_syscall_64+0x9f/0x450 arch/x86/entry/common.c:290
-   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-  RIP: 0033:0x7f8180c17c8e
-  ...
-  Allocated by task 3642:
-   set_track mm/kasan/common.c:87 [inline]
-   __kasan_kmalloc.constprop.3+0xa0/0xd0 mm/kasan/common.c:497
-   fm_drv_init+0x13/0x1000 [fm_drv]
-   do_one_initcall+0xbc/0x47d init/main.c:901
-   do_init_module+0x1b5/0x547 kernel/module.c:3456
-   load_module+0x6405/0x8c10 kernel/module.c:3804
-   __do_sys_finit_module+0x162/0x190 kernel/module.c:3898
-   do_syscall_64+0x9f/0x450 arch/x86/entry/common.c:290
-   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-  Freed by task 3642:
-   set_track mm/kasan/common.c:87 [inline]
-   __kasan_slab_free+0x130/0x180 mm/kasan/common.c:459
-   slab_free_hook mm/slub.c:1429 [inline]
-   slab_free_freelist_hook mm/slub.c:1456 [inline]
-   slab_free mm/slub.c:3003 [inline]
-   kfree+0xe1/0x270 mm/slub.c:3958
-   fm_drv_init+0x1e6/0x1000 [fm_drv]
-   do_one_initcall+0xbc/0x47d init/main.c:901
-   do_init_module+0x1b5/0x547 kernel/module.c:3456
-   load_module+0x6405/0x8c10 kernel/module.c:3804
-   __do_sys_finit_module+0x162/0x190 kernel/module.c:3898
-   do_syscall_64+0x9f/0x450 arch/x86/entry/common.c:290
-   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Add relevant unregister functions to fix it.
-
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Hans Verkuil <hans.verkuil@cisco.com>
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
----
- drivers/media/radio/wl128x/fmdrv_v4l2.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/media/radio/wl128x/fmdrv_v4l2.c b/drivers/media/radio/wl128x/fmdrv_v4l2.c
-index e25fd4d4d280..a1eaea19a81c 100644
---- a/drivers/media/radio/wl128x/fmdrv_v4l2.c
-+++ b/drivers/media/radio/wl128x/fmdrv_v4l2.c
-@@ -550,6 +550,7 @@ int fm_v4l2_init_video_device(struct fmdev *fmdev, int radio_nr)
- 
- 	/* Register with V4L2 subsystem as RADIO device */
- 	if (video_register_device(&gradio_dev, VFL_TYPE_RADIO, radio_nr)) {
-+		v4l2_device_unregister(&fmdev->v4l2_dev);
- 		fmerr("Could not register video device\n");
- 		return -ENOMEM;
- 	}
-@@ -563,6 +564,8 @@ int fm_v4l2_init_video_device(struct fmdev *fmdev, int radio_nr)
- 	if (ret < 0) {
- 		fmerr("(fmdev): Can't init ctrl handler\n");
- 		v4l2_ctrl_handler_free(&fmdev->ctrl_handler);
-+		video_unregister_device(fmdev->radio_dev);
-+		v4l2_device_unregister(&fmdev->v4l2_dev);
- 		return -EBUSY;
- 	}
- 
--- 
-2.20.1
-
+QWRkcyBnYW1tYSBhbmQgY29sb3ItdHJhbnNmb3JtIHN1cHBvcnQgZm9yIERPVS1JUFMuDQpBZGRz
+IHR3byBjYXBzIG1lbWJlcnMgZmdhbW1hX2NvZWZmcyBhbmQgY3RtX2NvZWZmcyB0byBrb21lZGFf
+aW1wcm9jX3N0YXRlLg0KSWYgY29sb3IgbWFuYWdlbWVudCBjaGFuZ2VkLCBzZXQgZ2FtbWEgYW5k
+IGNvbG9yLXRyYW5zZm9ybSBhY2NvcmRpbmdseS4NCg0KVGhpcyBwYXRjaCBzZXJpZXMgZGVwZW5k
+cyBvbjoNCi0gaHR0cHM6Ly9wYXRjaHdvcmsuZnJlZWRlc2t0b3Aub3JnL3Nlcmllcy81ODcxMC8N
+Ci0gaHR0cHM6Ly9wYXRjaHdvcmsuZnJlZWRlc2t0b3Aub3JnL3Nlcmllcy81OTAwMC8NCi0gaHR0
+cHM6Ly9wYXRjaHdvcmsuZnJlZWRlc2t0b3Aub3JnL3Nlcmllcy81OTAwMi8NCi0gaHR0cHM6Ly9w
+YXRjaHdvcmsuZnJlZWRlc2t0b3Aub3JnL3Nlcmllcy81OTc0Ny8NCi0gaHR0cHM6Ly9wYXRjaHdv
+cmsuZnJlZWRlc2t0b3Aub3JnL3Nlcmllcy81OTkxNS8NCi0gaHR0cHM6Ly9wYXRjaHdvcmsuZnJl
+ZWRlc2t0b3Aub3JnL3Nlcmllcy82MDA4My8NCi0gaHR0cHM6Ly9wYXRjaHdvcmsuZnJlZWRlc2t0
+b3Aub3JnL3Nlcmllcy82MDY5OC8NCi0gaHR0cHM6Ly9wYXRjaHdvcmsuZnJlZWRlc2t0b3Aub3Jn
+L3Nlcmllcy82MDg1Ni8NCi0gaHR0cHM6Ly9wYXRjaHdvcmsuZnJlZWRlc2t0b3Aub3JnL3Nlcmll
+cy82MDg5My8NCg0KU2lnbmVkLW9mZi1ieTogTG93cnkgTGkgKEFybSBUZWNobm9sb2d5IENoaW5h
+KSA8bG93cnkubGlAYXJtLmNvbT4NCi0tLQ0KIC4uLi9ncHUvZHJtL2FybS9kaXNwbGF5L2tvbWVk
+YS9kNzEvZDcxX2NvbXBvbmVudC5jIHwgMjQgKysrKysrKysrKysrKysrKysrKysrKw0KIGRyaXZl
+cnMvZ3B1L2RybS9hcm0vZGlzcGxheS9rb21lZGEva29tZWRhX2NydGMuYyAgIHwgIDIgKysNCiAu
+Li4vZ3B1L2RybS9hcm0vZGlzcGxheS9rb21lZGEva29tZWRhX3BpcGVsaW5lLmggICB8ICAzICsr
+Kw0KIC4uLi9kcm0vYXJtL2Rpc3BsYXkva29tZWRhL2tvbWVkYV9waXBlbGluZV9zdGF0ZS5jIHwg
+IDYgKysrKysrDQogNCBmaWxlcyBjaGFuZ2VkLCAzNSBpbnNlcnRpb25zKCspDQoNCmRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2dwdS9kcm0vYXJtL2Rpc3BsYXkva29tZWRhL2Q3MS9kNzFfY29tcG9uZW50
+LmMgYi9kcml2ZXJzL2dwdS9kcm0vYXJtL2Rpc3BsYXkva29tZWRhL2Q3MS9kNzFfY29tcG9uZW50
+LmMNCmluZGV4IDk2NjgwNjMuLjI0MGY4MmMgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2dwdS9kcm0v
+YXJtL2Rpc3BsYXkva29tZWRhL2Q3MS9kNzFfY29tcG9uZW50LmMNCisrKyBiL2RyaXZlcnMvZ3B1
+L2RybS9hcm0vZGlzcGxheS9rb21lZGEvZDcxL2Q3MV9jb21wb25lbnQuYw0KQEAgLTg4MiwxNSAr
+ODgyLDM5IEBAIHN0YXRpYyBpbnQgZDcxX2Rvd25zY2FsaW5nX2Nsa19jaGVjayhzdHJ1Y3Qga29t
+ZWRhX3BpcGVsaW5lICpwaXBlLA0KIHN0YXRpYyB2b2lkIGQ3MV9pbXByb2NfdXBkYXRlKHN0cnVj
+dCBrb21lZGFfY29tcG9uZW50ICpjLA0KIAkJCSAgICAgIHN0cnVjdCBrb21lZGFfY29tcG9uZW50
+X3N0YXRlICpzdGF0ZSkNCiB7DQorCXN0cnVjdCBkcm1fY3J0Y19zdGF0ZSAqY3J0Y19zdCA9IHN0
+YXRlLT5jcnRjLT5zdGF0ZTsNCiAJc3RydWN0IGtvbWVkYV9pbXByb2Nfc3RhdGUgKnN0ID0gdG9f
+aW1wcm9jX3N0KHN0YXRlKTsNCisJc3RydWN0IGQ3MV9waXBlbGluZSAqcGlwZSA9IHRvX2Q3MV9w
+aXBlbGluZShjLT5waXBlbGluZSk7DQogCXUzMiBfX2lvbWVtICpyZWcgPSBjLT5yZWc7DQogCXUz
+MiBpbmRleDsNCisJdTMyIG1hc2sgPSAwLCBjdHJsID0gMDsNCiANCiAJZm9yX2VhY2hfY2hhbmdl
+ZF9pbnB1dChzdGF0ZSwgaW5kZXgpDQogCQltYWxpZHBfd3JpdGUzMihyZWcsIEJMS19JTlBVVF9J
+RDAgKyBpbmRleCAqIDQsDQogCQkJICAgICAgIHRvX2Q3MV9pbnB1dF9pZChzdGF0ZSwgaW5kZXgp
+KTsNCiANCiAJbWFsaWRwX3dyaXRlMzIocmVnLCBCTEtfU0laRSwgSFZfU0laRShzdC0+aHNpemUs
+IHN0LT52c2l6ZSkpOw0KKw0KKwlpZiAoY3J0Y19zdC0+Y29sb3JfbWdtdF9jaGFuZ2VkKSB7DQor
+CQltYXNrIHw9IElQU19DVFJMX0ZUIHwgSVBTX0NUUkxfUkdCOw0KKw0KKwkJaWYgKGNydGNfc3Qt
+PmdhbW1hX2x1dCkgew0KKwkJCW1hbGlkcF93cml0ZV9ncm91cChwaXBlLT5kb3VfZnRfY29lZmZf
+YWRkciwgRlRfQ09FRkYwLA0KKwkJCQkJICAgS09NRURBX05fR0FNTUFfQ09FRkZTLA0KKwkJCQkJ
+ICAgc3QtPmZnYW1tYV9jb2VmZnMpOw0KKwkJCWN0cmwgfD0gSVBTX0NUUkxfRlQ7IC8qIGVuYWJs
+ZSBnYW1tYSAqLw0KKwkJfQ0KKw0KKwkJaWYgKGNydGNfc3QtPmN0bSkgew0KKwkJCW1hbGlkcF93
+cml0ZV9ncm91cChyZWcsIElQU19SR0JfUkdCX0NPRUZGMCwNCisJCQkJCSAgIEtPTUVEQV9OX0NU
+TV9DT0VGRlMsDQorCQkJCQkgICBzdC0+Y3RtX2NvZWZmcyk7DQorCQkJY3RybCB8PSBJUFNfQ1RS
+TF9SR0I7IC8qIGVuYWJsZSBnYW11dCAqLw0KKwkJfQ0KKwl9DQorDQorCWlmIChtYXNrKQ0KKwkJ
+bWFsaWRwX3dyaXRlMzJfbWFzayhyZWcsIEJMS19DT05UUk9MLCBtYXNrLCBjdHJsKTsNCiB9DQog
+DQogc3RhdGljIHZvaWQgZDcxX2ltcHJvY19kdW1wKHN0cnVjdCBrb21lZGFfY29tcG9uZW50ICpj
+LCBzdHJ1Y3Qgc2VxX2ZpbGUgKnNmKQ0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9hcm0v
+ZGlzcGxheS9rb21lZGEva29tZWRhX2NydGMuYyBiL2RyaXZlcnMvZ3B1L2RybS9hcm0vZGlzcGxh
+eS9rb21lZGEva29tZWRhX2NydGMuYw0KaW5kZXggMjRhOTYxMy4uMThjMjNmOCAxMDA2NDQNCi0t
+LSBhL2RyaXZlcnMvZ3B1L2RybS9hcm0vZGlzcGxheS9rb21lZGEva29tZWRhX2NydGMuYw0KKysr
+IGIvZHJpdmVycy9ncHUvZHJtL2FybS9kaXNwbGF5L2tvbWVkYS9rb21lZGFfY3J0Yy5jDQpAQCAt
+NTczLDYgKzU3Myw4IEBAIHN0YXRpYyBpbnQga29tZWRhX2NydGNfYWRkKHN0cnVjdCBrb21lZGFf
+a21zX2RldiAqa21zLA0KIAlpZiAoZXJyKQ0KIAkJcmV0dXJuIGVycjsNCiANCisJZHJtX2NydGNf
+ZW5hYmxlX2NvbG9yX21nbXQoY3J0YywgMCwgdHJ1ZSwgS09NRURBX0NPTE9SX0xVVF9TSVpFKTsN
+CisNCiAJcmV0dXJuIDA7DQogfQ0KIA0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9hcm0v
+ZGlzcGxheS9rb21lZGEva29tZWRhX3BpcGVsaW5lLmggYi9kcml2ZXJzL2dwdS9kcm0vYXJtL2Rp
+c3BsYXkva29tZWRhL2tvbWVkYV9waXBlbGluZS5oDQppbmRleCA0OWJiMDU4Li45ODk0MDhiIDEw
+MDY0NA0KLS0tIGEvZHJpdmVycy9ncHUvZHJtL2FybS9kaXNwbGF5L2tvbWVkYS9rb21lZGFfcGlw
+ZWxpbmUuaA0KKysrIGIvZHJpdmVycy9ncHUvZHJtL2FybS9kaXNwbGF5L2tvbWVkYS9rb21lZGFf
+cGlwZWxpbmUuaA0KQEAgLTExLDYgKzExLDcgQEANCiAjaW5jbHVkZSA8ZHJtL2RybV9hdG9taWMu
+aD4NCiAjaW5jbHVkZSA8ZHJtL2RybV9hdG9taWNfaGVscGVyLmg+DQogI2luY2x1ZGUgIm1hbGlk
+cF91dGlscy5oIg0KKyNpbmNsdWRlICJrb21lZGFfY29sb3JfbWdtdC5oIg0KIA0KICNkZWZpbmUg
+S09NRURBX01BWF9QSVBFTElORVMJCTINCiAjZGVmaW5lIEtPTUVEQV9QSVBFTElORV9NQVhfTEFZ
+RVJTCTQNCkBAIC0zMTMsNiArMzE0LDggQEAgc3RydWN0IGtvbWVkYV9pbXByb2Mgew0KIHN0cnVj
+dCBrb21lZGFfaW1wcm9jX3N0YXRlIHsNCiAJc3RydWN0IGtvbWVkYV9jb21wb25lbnRfc3RhdGUg
+YmFzZTsNCiAJdTE2IGhzaXplLCB2c2l6ZTsNCisJdTMyIGZnYW1tYV9jb2VmZnNbS09NRURBX05f
+R0FNTUFfQ09FRkZTXTsNCisJdTMyIGN0bV9jb2VmZnNbS09NRURBX05fQ1RNX0NPRUZGU107DQog
+fTsNCiANCiAvKiBkaXNwbGF5IHRpbWluZyBjb250cm9sbGVyICovDQpkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9ncHUvZHJtL2FybS9kaXNwbGF5L2tvbWVkYS9rb21lZGFfcGlwZWxpbmVfc3RhdGUuYyBi
+L2RyaXZlcnMvZ3B1L2RybS9hcm0vZGlzcGxheS9rb21lZGEva29tZWRhX3BpcGVsaW5lX3N0YXRl
+LmMNCmluZGV4IGFmYjIzMDEuLjgyZWE2Y2YgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2dwdS9kcm0v
+YXJtL2Rpc3BsYXkva29tZWRhL2tvbWVkYV9waXBlbGluZV9zdGF0ZS5jDQorKysgYi9kcml2ZXJz
+L2dwdS9kcm0vYXJtL2Rpc3BsYXkva29tZWRhL2tvbWVkYV9waXBlbGluZV9zdGF0ZS5jDQpAQCAt
+NzAwLDYgKzcwMCwxMiBAQCB2b2lkIHBpcGVsaW5lX2NvbXBvc2l0aW9uX3NpemUoc3RydWN0IGtv
+bWVkYV9jcnRjX3N0YXRlICprY3J0Y19zdCwNCiAJc3QtPmhzaXplID0gZGZsb3ctPmluX3c7DQog
+CXN0LT52c2l6ZSA9IGRmbG93LT5pbl9oOw0KIA0KKwlpZiAoa2NydGNfc3QtPmJhc2UuY29sb3Jf
+bWdtdF9jaGFuZ2VkKSB7DQorCQlkcm1fbHV0X3RvX2ZnYW1tYV9jb2VmZnMoa2NydGNfc3QtPmJh
+c2UuZ2FtbWFfbHV0LA0KKwkJCQkJIHN0LT5mZ2FtbWFfY29lZmZzKTsNCisJCWRybV9jdG1fdG9f
+Y29lZmZzKGtjcnRjX3N0LT5iYXNlLmN0bSwgc3QtPmN0bV9jb2VmZnMpOw0KKwl9DQorDQogCWtv
+bWVkYV9jb21wb25lbnRfYWRkX2lucHV0KCZzdC0+YmFzZSwgJmRmbG93LT5pbnB1dCwgMCk7DQog
+CWtvbWVkYV9jb21wb25lbnRfc2V0X291dHB1dCgmZGZsb3ctPmlucHV0LCAmaW1wcm9jLT5iYXNl
+LCAwKTsNCiANCi0tIA0KMS45LjENCg0K
