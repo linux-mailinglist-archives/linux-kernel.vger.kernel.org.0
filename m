@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C22692EBB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:16:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CA012EBB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:16:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730281AbfE3DP0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:15:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56414 "EHLO mail.kernel.org"
+        id S1727617AbfE3DP1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:15:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56442 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729241AbfE3DMs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:48 -0400
+        id S1729246AbfE3DMt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:12:49 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4070B23E29;
+        by mail.kernel.org (Postfix) with ESMTPSA id C99FD21BE2;
         Thu, 30 May 2019 03:12:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1559185968;
-        bh=fns1pVq9d67hj/hkIfcf2UGwYJ5F0hzaw5B4zZq6Ao0=;
+        bh=D1WUO/bKEhiRZhw3889DuMCeutgmEahz8bEKLcuAOAU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qmKFloeomPlUzF+OlmCUVeJeQsEZxiJG5Tqwq7qQllIOvfxUOUYUumtZfoRaO+tny
-         NFVLsIR9yRSlUhjpcynWE+UNjivh5qeapgyENHzuQTTUqcl+QI03UYx8LEJKtL0huF
-         RVfEhuWJoB0Y7RXM65Td1uyDin2Xp3vhnepc12JU=
+        b=B/5imLcBE9vbxcMwFj1MjrvuUcWAeDXTPhY4CKK1LA1xqob0Bdk6ewcOEPFSHAH1Y
+         /FMQ/VgM7o7tD3O8du3DCWtdSaroNphf3MXZkvLsqu7fqAIpZsSKIjkvck2DdQd4y1
+         rOIAr0/xnJlJzfOb4gieHOtQQYkK9J/5lr2dBqPY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 398/405] drm: Wake up next in drm_read() chain if we are forced to putback the event
-Date:   Wed, 29 May 2019 20:06:36 -0700
-Message-Id: <20190530030600.705718843@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 399/405] drm/sun4i: dsi: Change the start delay calculation
+Date:   Wed, 29 May 2019 20:06:37 -0700
+Message-Id: <20190530030600.752387180@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
 References: <20190530030540.291644921@linuxfoundation.org>
@@ -45,37 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 60b801999c48b6c1dd04e653a38e2e613664264e ]
+[ Upstream commit da676c6aa6413d59ab0a80c97bbc273025e640b2 ]
 
-After an event is sent, we try to copy it into the user buffer of the
-first waiter in drm_read() and if the user buffer doesn't have enough
-room we put it back onto the list. However, we didn't wake up any
-subsequent waiter, so that event may sit on the list until either a new
-vblank event is sent or a new waiter appears. Rare, but in the worst
-case may lead to a stuck process.
+The current calculation for the video start delay in the current DSI driver
+is that it is the total vertical size, minus the front porch and sync length,
+plus 1. This equals to the active vertical size plus the back porch plus 1.
 
-Testcase: igt/drm_read/short-buffer-wakeup
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20170804082328.17173-1-chris@chris-wilson.co.uk
+That 1 is coming in the Allwinner BSP from an variable that is set to 1.
+However, if we look at the Allwinner BSP more closely, and especially in
+the "legacy" code for the display (in drivers/video/sunxi/legacy/), we can
+see that this variable is actually computed from the porches and the sync
+minus 10, clamped between 8 and 100.
+
+This fixes the start delay symptom we've seen on some panels (vblank
+timeouts with vertical white stripes at the bottom of the panel).
+
+Reviewed-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/6e5f72e68f47ca0223877464bf12f0c3f3978de8.1549896081.git-series.maxime.ripard@bootlin.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_file.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_file.c b/drivers/gpu/drm/drm_file.c
-index 7caa3c7ed9789..9701469a6e933 100644
---- a/drivers/gpu/drm/drm_file.c
-+++ b/drivers/gpu/drm/drm_file.c
-@@ -577,6 +577,7 @@ ssize_t drm_read(struct file *filp, char __user *buffer,
- 				file_priv->event_space -= length;
- 				list_add(&e->link, &file_priv->event_list);
- 				spin_unlock_irq(&dev->event_lock);
-+				wake_up_interruptible(&file_priv->event_wait);
- 				break;
- 			}
+diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+index 318994cd1b851..25d8cb9f92661 100644
+--- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
++++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+@@ -358,7 +358,9 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *dsi,
+ static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
+ 					   struct drm_display_mode *mode)
+ {
+-	return mode->vtotal - (mode->vsync_end - mode->vdisplay) + 1;
++	u16 start = clamp(mode->vtotal - mode->vdisplay - 10, 8, 100);
++
++	return mode->vtotal - (mode->vsync_end - mode->vdisplay) + start;
+ }
  
+ static void sun6i_dsi_setup_burst(struct sun6i_dsi *dsi,
 -- 
 2.20.1
 
