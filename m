@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 612DE2EDFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:43:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 358592F48F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:39:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732694AbfE3DnM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:43:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32860 "EHLO mail.kernel.org"
+        id S1733101AbfE3Ejg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:39:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55808 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732428AbfE3DVE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:21:04 -0400
+        id S1729126AbfE3DMi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:12:38 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C8EE249A9;
-        Thu, 30 May 2019 03:21:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 58B7C23E29;
+        Thu, 30 May 2019 03:12:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186463;
-        bh=v9XJ29b5tKnUk9rdvKeSBT6JEfjRVGu9UHGCP8FJ8vY=;
+        s=default; t=1559185957;
+        bh=PYS5Datf5pZZIG36tQdTDk0Mop6H0RA4WAcw/qUerck=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HakpDD68HMPx3N6bt2afpdNnchPhoSzE9DhFqUN8SrsDgTjc49fl2wpD2Ko49xUm2
-         mrJxru7Usnsp/uX4C9Dz4ZC+k/nlC5b1jA6bPFVdoAJyEHlk5dtnCISmfs7u83ZGlx
-         aQrNqmhpKM4XYi7mCDszmfqEIpe4TuefnzcWzTHI=
+        b=AYSFVCwfXlzpGlEVtOaurLignNk9B51tcsR2EK3g5QqLBUwrRQVosRb7vcfH9m7Bp
+         DQc1BTJSUTsyR7yb5yGrVViEtiLNnAqv1G1mIiGT1CGeCEci9rN4NXMLp9gFnTKj/c
+         Jd0bTlA4BQGk7dlujsHpElMpARk13G3g9FnDYkBw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sugar Zhang <sugar.zhang@rock-chips.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 040/128] dmaengine: pl330: _stop: clear interrupt status
+        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 374/405] drm/omap: dsi: Fix PM for display blank with paired dss_pll calls
 Date:   Wed, 29 May 2019 20:06:12 -0700
-Message-Id: <20190530030441.263421795@linuxfoundation.org>
+Message-Id: <20190530030559.655544763@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,90 +44,165 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2da254cc7908105a60a6bb219d18e8dced03dcb9 ]
+[ Upstream commit fe4ed1b457943113ee1138c939fbdeede4af6cf3 ]
 
-This patch kill instructs the DMAC to immediately terminate
-execution of a thread. and then clear the interrupt status,
-at last, stop generating interrupts for DMA_SEV. to guarantee
-the next dma start is clean. otherwise, one interrupt maybe leave
-to next start and make some mistake.
+Currently dsi_display_init_dsi() calls dss_pll_enable() but it is not
+paired with dss_pll_disable() in dsi_display_uninit_dsi(). This leaves
+the DSS clocks enabled when the display is blanked wasting about extra
+5mW of power while idle.
 
-we can reporduce the problem as follows:
+The clock that is left on by not calling dss_pll_disable() is
+DSS_CLKCTRL bit 10 OPTFCLKEN_SYS_CLK that is the source clock for
+DSI PLL.
 
-DMASEV: modify the event-interrupt resource, and if the INTEN sets
-function as interrupt, the DMAC will set irq<event_num> HIGH to
-generate interrupt. write INTCLR to clear interrupt.
+We can fix this issue by by making the current dsi_pll_uninit() into
+dsi_pll_disable(). This way we can just call dss_pll_disable() from
+dsi_display_uninit_dsi() and the code becomes a bit easier to follow.
 
-	DMA EXECUTING INSTRUCTS		DMA TERMINATE
-		|				|
-		|				|
-	       ...			      _stop
-		|				|
-		|			spin_lock_irqsave
-	     DMASEV				|
-		|				|
-		|			    mask INTEN
-		|				|
-		|			     DMAKILL
-		|				|
-		|			spin_unlock_irqrestore
+However, we need to also consider that DSI PLL can be muxed for DVI too
+as pointed out by Tomi Valkeinen <tomi.valkeinen@ti.com>. In the DVI
+case, we want to unconditionally disable the clocks. To get around this
+issue, we separate out the DSI lane handling from dsi_pll_enable() and
+dsi_pll_disable() as suggested by Tomi in an earlier experimental patch.
 
-in above case, a interrupt was left, and if we unmask INTEN, the DMAC
-will set irq<event_num> HIGH to generate interrupt.
+So we must only toggle the DSI regulator based on the vdds_dsi_enabled
+flag from dsi_display_init_dsi() and dsi_display_uninit_dsi().
 
-to fix this, do as follows:
+We need to make these two changes together to avoid breaking things
+for DVI when fixing the DSI clock handling. And this all causes a
+slight renumbering of the error path for dsi_display_init_dsi().
 
-	DMA EXECUTING INSTRUCTS		DMA TERMINATE
-		|				|
-		|				|
-	       ...			      _stop
-		|				|
-		|			spin_lock_irqsave
-	     DMASEV				|
-		|				|
-		|			     DMAKILL
-		|				|
-		|			   clear INTCLR
-		|			    mask INTEN
-		|				|
-		|			spin_unlock_irqrestore
-
-Signed-off-by: Sugar Zhang <sugar.zhang@rock-chips.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Suggested-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/pl330.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/omapdrm/dss/dsi.c | 60 ++++++++++++++++---------------
+ 1 file changed, 31 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-index 6d7e3cd4aba4c..57b375d0de292 100644
---- a/drivers/dma/pl330.c
-+++ b/drivers/dma/pl330.c
-@@ -1020,6 +1020,7 @@ static void _stop(struct pl330_thread *thrd)
- {
- 	void __iomem *regs = thrd->dmac->base;
- 	u8 insn[6] = {0, 0, 0, 0, 0, 0};
-+	u32 inten = readl(regs + INTEN);
+diff --git a/drivers/gpu/drm/omapdrm/dss/dsi.c b/drivers/gpu/drm/omapdrm/dss/dsi.c
+index 64fb788b66474..f0fe975ed46c7 100644
+--- a/drivers/gpu/drm/omapdrm/dss/dsi.c
++++ b/drivers/gpu/drm/omapdrm/dss/dsi.c
+@@ -1342,12 +1342,9 @@ static int dsi_pll_enable(struct dss_pll *pll)
+ 	 */
+ 	dsi_enable_scp_clk(dsi);
  
- 	if (_state(thrd) == PL330_STATE_FAULT_COMPLETING)
- 		UNTIL(thrd, PL330_STATE_FAULTING | PL330_STATE_KILLING);
-@@ -1032,10 +1033,13 @@ static void _stop(struct pl330_thread *thrd)
+-	if (!dsi->vdds_dsi_enabled) {
+-		r = regulator_enable(dsi->vdds_dsi_reg);
+-		if (r)
+-			goto err0;
+-		dsi->vdds_dsi_enabled = true;
+-	}
++	r = regulator_enable(dsi->vdds_dsi_reg);
++	if (r)
++		goto err0;
  
- 	_emit_KILL(0, insn);
+ 	/* XXX PLL does not come out of reset without this... */
+ 	dispc_pck_free_enable(dsi->dss->dispc, 1);
+@@ -1372,36 +1369,25 @@ static int dsi_pll_enable(struct dss_pll *pll)
  
--	/* Stop generating interrupts for SEV */
--	writel(readl(regs + INTEN) & ~(1 << thrd->ev), regs + INTEN);
--
- 	_execute_DBGINSN(thrd, insn, is_manager(thrd));
-+
-+	/* clear the event */
-+	if (inten & (1 << thrd->ev))
-+		writel(1 << thrd->ev, regs + INTCLR);
-+	/* Stop generating interrupts for SEV */
-+	writel(inten & ~(1 << thrd->ev), regs + INTEN);
+ 	return 0;
+ err1:
+-	if (dsi->vdds_dsi_enabled) {
+-		regulator_disable(dsi->vdds_dsi_reg);
+-		dsi->vdds_dsi_enabled = false;
+-	}
++	regulator_disable(dsi->vdds_dsi_reg);
+ err0:
+ 	dsi_disable_scp_clk(dsi);
+ 	dsi_runtime_put(dsi);
+ 	return r;
  }
  
- /* Start doing req 'idx' of thread 'thrd' */
+-static void dsi_pll_uninit(struct dsi_data *dsi, bool disconnect_lanes)
++static void dsi_pll_disable(struct dss_pll *pll)
+ {
++	struct dsi_data *dsi = container_of(pll, struct dsi_data, pll);
++
+ 	dsi_pll_power(dsi, DSI_PLL_POWER_OFF);
+-	if (disconnect_lanes) {
+-		WARN_ON(!dsi->vdds_dsi_enabled);
+-		regulator_disable(dsi->vdds_dsi_reg);
+-		dsi->vdds_dsi_enabled = false;
+-	}
++
++	regulator_disable(dsi->vdds_dsi_reg);
+ 
+ 	dsi_disable_scp_clk(dsi);
+ 	dsi_runtime_put(dsi);
+ 
+-	DSSDBG("PLL uninit done\n");
+-}
+-
+-static void dsi_pll_disable(struct dss_pll *pll)
+-{
+-	struct dsi_data *dsi = container_of(pll, struct dsi_data, pll);
+-
+-	dsi_pll_uninit(dsi, true);
++	DSSDBG("PLL disable done\n");
+ }
+ 
+ static int dsi_dump_dsi_clocks(struct seq_file *s, void *p)
+@@ -4096,11 +4082,11 @@ static int dsi_display_init_dsi(struct dsi_data *dsi)
+ 
+ 	r = dss_pll_enable(&dsi->pll);
+ 	if (r)
+-		goto err0;
++		return r;
+ 
+ 	r = dsi_configure_dsi_clocks(dsi);
+ 	if (r)
+-		goto err1;
++		goto err0;
+ 
+ 	dss_select_dsi_clk_source(dsi->dss, dsi->module_id,
+ 				  dsi->module_id == 0 ?
+@@ -4108,6 +4094,14 @@ static int dsi_display_init_dsi(struct dsi_data *dsi)
+ 
+ 	DSSDBG("PLL OK\n");
+ 
++	if (!dsi->vdds_dsi_enabled) {
++		r = regulator_enable(dsi->vdds_dsi_reg);
++		if (r)
++			goto err1;
++
++		dsi->vdds_dsi_enabled = true;
++	}
++
+ 	r = dsi_cio_init(dsi);
+ 	if (r)
+ 		goto err2;
+@@ -4136,10 +4130,13 @@ static int dsi_display_init_dsi(struct dsi_data *dsi)
+ err3:
+ 	dsi_cio_uninit(dsi);
+ err2:
+-	dss_select_dsi_clk_source(dsi->dss, dsi->module_id, DSS_CLK_SRC_FCK);
++	regulator_disable(dsi->vdds_dsi_reg);
++	dsi->vdds_dsi_enabled = false;
+ err1:
+-	dss_pll_disable(&dsi->pll);
++	dss_select_dsi_clk_source(dsi->dss, dsi->module_id, DSS_CLK_SRC_FCK);
+ err0:
++	dss_pll_disable(&dsi->pll);
++
+ 	return r;
+ }
+ 
+@@ -4158,7 +4155,12 @@ static void dsi_display_uninit_dsi(struct dsi_data *dsi, bool disconnect_lanes,
+ 
+ 	dss_select_dsi_clk_source(dsi->dss, dsi->module_id, DSS_CLK_SRC_FCK);
+ 	dsi_cio_uninit(dsi);
+-	dsi_pll_uninit(dsi, disconnect_lanes);
++	dss_pll_disable(&dsi->pll);
++
++	if (disconnect_lanes) {
++		regulator_disable(dsi->vdds_dsi_reg);
++		dsi->vdds_dsi_enabled = false;
++	}
+ }
+ 
+ static int dsi_display_enable(struct omap_dss_device *dssdev)
 -- 
 2.20.1
 
