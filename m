@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94C202ECAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:24:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECD2A2ED4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:34:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733301AbfE3DYb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:24:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50146 "EHLO mail.kernel.org"
+        id S2388107AbfE3D2B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:28:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731441AbfE3DSJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:09 -0400
+        id S1732012AbfE3DTo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:19:44 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C022246E9;
-        Thu, 30 May 2019 03:18:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D8E024839;
+        Thu, 30 May 2019 03:19:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186289;
-        bh=9U1o0HPIE8VRUfQyXoUQXWF8IyiPgBYDs61bEhVBOoo=;
+        s=default; t=1559186383;
+        bh=CyIcZPQHOgjIo3Ni7LFoeAxlzrAmKxGH3TFcgoGOEgc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iABnq2Z8PT/NK3injLNVNMsPu/+U0C+z8eqwZAqPWuzE3i4CME8fu5eGpNWrL1cky
-         6n9MTdikZzkn6RToTS3bsT3WPK5QYx5nB1qGFKZp0ADmtGqmBE7f3g/BCV4sjG0l+V
-         gWdfv/X8VV9Y5G4UdIH5bmE2HHyVIgquvln5G3Qo=
+        b=CvgTTwSrQUeWsMt1ebopiCaNNepI86TeiXZVfvvccp0bZ1XeAvyZ1w9fTA1Lk3//B
+         F2+Qdoo2xo+JIODWV9K/Gjxm2V4Qw15TazdM7DtRjQ575gDBtJtnD3XXhAL+Tmrxkl
+         BXGKG7Md5f48pnyEmEDXcbehnwJ1/yYNJTM7+V7A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        stable@vger.kernel.org, Stanley Chu <stanley.chu@mediatek.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 245/276] thunderbolt: property: Fix a NULL pointer dereference
+Subject: [PATCH 4.14 149/193] scsi: ufs: Fix regulator load and icc-level configuration
 Date:   Wed, 29 May 2019 20:06:43 -0700
-Message-Id: <20190530030540.469639595@linuxfoundation.org>
+Message-Id: <20190530030508.999171624@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +46,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 106204b56f60abf1bead7dceb88f2be3e34433da ]
+[ Upstream commit 0487fff76632ec023d394a05b82e87a971db8c03 ]
 
-In case kzalloc fails, the fix releases resources and returns
--ENOMEM to avoid the NULL pointer dereference.
+Currently if a regulator has "<name>-fixed-regulator" property in device
+tree, it will skip current limit initialization.  This lead to a zero
+"max_uA" value in struct ufs_vreg.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+However, "regulator_set_load" operation shall be required on regulators
+which have valid current limits, otherwise a zero "max_uA" set by
+"regulator_set_load" may cause unexpected behavior when this regulator is
+enabled or set as high power mode.
+
+Similarly, in device's icc_level configuration flow, the target icc_level
+shall be updated if regulator also has valid current limit, otherwise a
+wrong icc_level will be calculated by zero "max_uA" and thus causes
+unexpected results after it is written to device.
+
+Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
+Reviewed-by: Avri Altman <avri.altman@wdc.com>
+Acked-by: Alim Akhtar <alim.akhtar@samsung.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thunderbolt/property.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/scsi/ufs/ufshcd.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/thunderbolt/property.c b/drivers/thunderbolt/property.c
-index 67fd0b5551ded..be3f8b592b05b 100644
---- a/drivers/thunderbolt/property.c
-+++ b/drivers/thunderbolt/property.c
-@@ -551,6 +551,11 @@ int tb_property_add_data(struct tb_property_dir *parent, const char *key,
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 581571de24614..c2395b8e72894 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -5911,19 +5911,19 @@ static u32 ufshcd_find_max_sup_active_icc_level(struct ufs_hba *hba,
+ 		goto out;
+ 	}
  
- 	property->length = size / 4;
- 	property->value.data = kzalloc(size, GFP_KERNEL);
-+	if (!property->value.data) {
-+		kfree(property);
-+		return -ENOMEM;
-+	}
+-	if (hba->vreg_info.vcc)
++	if (hba->vreg_info.vcc && hba->vreg_info.vcc->max_uA)
+ 		icc_level = ufshcd_get_max_icc_level(
+ 				hba->vreg_info.vcc->max_uA,
+ 				POWER_DESC_MAX_ACTV_ICC_LVLS - 1,
+ 				&desc_buf[PWR_DESC_ACTIVE_LVLS_VCC_0]);
+ 
+-	if (hba->vreg_info.vccq)
++	if (hba->vreg_info.vccq && hba->vreg_info.vccq->max_uA)
+ 		icc_level = ufshcd_get_max_icc_level(
+ 				hba->vreg_info.vccq->max_uA,
+ 				icc_level,
+ 				&desc_buf[PWR_DESC_ACTIVE_LVLS_VCCQ_0]);
+ 
+-	if (hba->vreg_info.vccq2)
++	if (hba->vreg_info.vccq2 && hba->vreg_info.vccq2->max_uA)
+ 		icc_level = ufshcd_get_max_icc_level(
+ 				hba->vreg_info.vccq2->max_uA,
+ 				icc_level,
+@@ -6525,6 +6525,15 @@ static int ufshcd_config_vreg_load(struct device *dev, struct ufs_vreg *vreg,
+ 	if (!vreg)
+ 		return 0;
+ 
++	/*
++	 * "set_load" operation shall be required on those regulators
++	 * which specifically configured current limitation. Otherwise
++	 * zero max_uA may cause unexpected behavior when regulator is
++	 * enabled or set as high power mode.
++	 */
++	if (!vreg->max_uA)
++		return 0;
 +
- 	memcpy(property->value.data, buf, buflen);
- 
- 	list_add_tail(&property->list, &parent->properties);
+ 	ret = regulator_set_load(vreg->reg, ua);
+ 	if (ret < 0) {
+ 		dev_err(dev, "%s: %s set load (ua=%d) failed, err=%d\n",
 -- 
 2.20.1
 
