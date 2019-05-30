@@ -2,102 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD59830183
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 20:08:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A63F30191
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 20:13:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726774AbfE3SIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 14:08:22 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:36736 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726461AbfE3SIV (ORCPT
+        id S1726652AbfE3SM4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 14:12:56 -0400
+Received: from mail-pl1-f176.google.com ([209.85.214.176]:36586 "EHLO
+        mail-pl1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725961AbfE3SMz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 14:08:21 -0400
-Received: by mail-qt1-f194.google.com with SMTP id u12so8120120qth.3;
-        Thu, 30 May 2019 11:08:21 -0700 (PDT)
+        Thu, 30 May 2019 14:12:55 -0400
+Received: by mail-pl1-f176.google.com with SMTP id d21so2893354plr.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 11:12:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uBh8frPBklj3PAGNxGo58zhsB+Wp0GYqDmO+TlNLHb4=;
-        b=PSCQw9shmXX7hlCnO9U9xGXJV2sYFdQGNyCBdUuUa/l3mnlJFLBbC/R9dO8coJ7KQK
-         uSkhT/QZjbHUNLMGnSrhfIS5EB7TBjkd3EKTwIQoL2jx4Y1HRJy+x2P0XyuKfJkLFiWr
-         kOOH6Zgm9RaJolfR7n+wpeCNprzuof6A5pDd8vZaRIbHfcb3wplUb077cAEldMm0aKi4
-         4y59CAYA05IALYlBFqgBO66SO9I00jxiXM9pJquIHViY1jPKULRBte6nn6Xdc1KGem17
-         3b/gLWwXQhUzCOLE05Hs9c1smxrC65+il0n6WzjIYLvKjDacuYo0ZLBVMTh6UAzsnASS
-         nzQw==
+        d=fortuneproleads-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:references:in-reply-to:subject:date:message-id:mime-version
+         :content-transfer-encoding:thread-index:content-language;
+        bh=FtcZFLtCFY9iWybUxhzgJqd7gGygMM22zI+PAShbE9g=;
+        b=KaTcjzr7LpxuGDxbmfugGTdNQUwN/yztLHJ7gPdnb7jd6AwlgmabqHlpGAavt8ESyJ
+         wGOuWVxRfJqUFYjwTILiLORhH4qLIAM6F6/4GpsEYi9fiB9FAeJHWtMg8YjlPdzDeUvX
+         pbcZkh0OD5B8kpMBhGwkoNPX4eiG2WlIy8JnGF9Udfa0GmB57puczYLBlB9biNoHHzUY
+         hLv99/YuuvMF168k9CLT1ZiXcbiHEUvmpLcvASeW6bo4Fcgvt3fDxtKeRBlH/BW2wiOw
+         0QeukD0l7WxtS/jM8zMA0WjKx6k7nYprSZvq45wuQZEyxhMAaF8KhUH1hStGyaAX/uWc
+         E19A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uBh8frPBklj3PAGNxGo58zhsB+Wp0GYqDmO+TlNLHb4=;
-        b=trXg6ySMivBEqrxYjBdy8d2Y7UlizJryArPhLpPHjIO71PKEbORvg3S9rGrHGkPq+C
-         QqFaDxtX3gP7Awtf6tCiLSDKIvAApoRsx/Z5lDCMzZhb0wxfVW9sZYaiKB941ttYFhnZ
-         991gz3f3U32S+sqGmFvKvC8AbNd7B3/YLgEfTTgBa8y4duxmHugPAOJdKvsD58vj9e5s
-         VtTPsqIk1BAwEdbgzaK+HB+6KvzQHJyE0h5ySKRRSevF37Ckm49hrByFPE44y5JnJxFT
-         4eHloxEsXLWmG5HMb+4SIuscRWkwtfwwDjjKCRtxtS0AvSJaT5UdA8ht+YIsMJmVRxGG
-         q20w==
-X-Gm-Message-State: APjAAAW/Yl+wmHnNcuwmpAmpDgUzIIfBNu2/GXACPXijSR85k9ekN0eF
-        zEqCFMTBCNrk608uI9ZSsn2NJ4amgBNlRGP2Am0=
-X-Google-Smtp-Source: APXvYqztZ5XPqFPZILkHDxcksjVQdRXGu0rSKUzB3EbR+JMHWyoaPnoI/6/aw1RV2DhRDXRoLNXbUn6tY50Hei/EO5g=
-X-Received: by 2002:ac8:2af4:: with SMTP id c49mr4598934qta.83.1559239700683;
- Thu, 30 May 2019 11:08:20 -0700 (PDT)
+        h=x-gm-message-state:from:to:references:in-reply-to:subject:date
+         :message-id:mime-version:content-transfer-encoding:thread-index
+         :content-language;
+        bh=FtcZFLtCFY9iWybUxhzgJqd7gGygMM22zI+PAShbE9g=;
+        b=JtC4uL2XnNBdR5i3A13RrxW0nNb7+yP0MqL7mBa/EKafagiY8SB5XfHKI0SEXKmM86
+         RFyr0Eu59N1f05nO7+RpyWwd5uqqdv3CoWg1W2JDprVKlRm8b0SHE24W/Icoih6qKk/1
+         YvjWDwrgmPBCR6q80Og1UYYYUWkouA3F1GOSAg8ngseyB4IQDlgZBtMEn9hnourHiejD
+         Y2TMv6RUamp7olN1knIGGH1ulRfIDotTmlbs+dRpEEkhB5Hj09njH9NVQ9yLSzwTyYmQ
+         ngmq6QqBp9qNjyD6UVwkOxkMDaj5FYIyjx0pVVP4+RGnZZQ7SSG1jqXIFfXaiAPz4LMs
+         4C6w==
+X-Gm-Message-State: APjAAAXf63twkF0q39lOf+hCZfajBkJETJfgUJoe4C+5GxjIlmpftifW
+        VUKneZKbJrzE7LhfHzlx2jsOS6PH9ow=
+X-Google-Smtp-Source: APXvYqz/m/hT1DBXSL07TGxLGVUCeN8B0kAJzvdzlJkaG2NHwbcJ+hS/VHnhk3sUO46ymfu8PHmxgw==
+X-Received: by 2002:a17:902:20eb:: with SMTP id v40mr4867576plg.239.1559239974085;
+        Thu, 30 May 2019 11:12:54 -0700 (PDT)
+Received: from adminPC ([27.7.15.150])
+        by smtp.gmail.com with ESMTPSA id r185sm3757373pfc.167.2019.05.30.11.12.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 30 May 2019 11:12:53 -0700 (PDT)
+From:   Cynthia Higgins <cynthia.higgins@fortuneproleads.com>
+X-Google-Original-From: "Cynthia Higgins" <Cynthia.Higgins@fortuneproleads.com>
+To:     <linux-kernel@vger.kernel.org>
+References: 
+In-Reply-To: 
+Subject: Attendees Data Base of DAC 2019
+Date:   Thu, 30 May 2019 13:12:29 -0500
+Message-ID: <0e1c01d51713$4c08a4b0$e419ee10$@fortuneproleads.com>
 MIME-Version: 1.0
-References: <cover.1559171394.git.mchehab+samsung@kernel.org> <f2f40f306acbd3d834746fe9acb607052e82a1ee.1559171394.git.mchehab+samsung@kernel.org>
-In-Reply-To: <f2f40f306acbd3d834746fe9acb607052e82a1ee.1559171394.git.mchehab+samsung@kernel.org>
-From:   Song Liu <liu.song.a23@gmail.com>
-Date:   Thu, 30 May 2019 11:08:08 -0700
-Message-ID: <CAPhsuW7J-KWsWhODKLJu3H8VvZ7nZ+O0Prni4M-tCt_inko9zA@mail.gmail.com>
-Subject: Re: [PATCH 08/22] docs: bpf: get rid of two warnings
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 14.0
+Thread-Index: AdUXCKSdpnJXd4gNRVCNq5WNxqSy1AACn3LAAAAAFfAAAAADUAAAAASAAAAAA7AAAAAF4AAAAANAAAAABIAAAAADsAAAAAQQAAAABEAAAAAEoAAAAATgAAAABEAAAAADcAAAAAXQAAAAAwAAAAAEcAAAAATQAAAABAAAAAAEYAAAAATQAAAABTAAAAAEkAAAAATwAAAABGA=
+Content-Language: en-us
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 4:25 PM Mauro Carvalho Chehab
-<mchehab+samsung@kernel.org> wrote:
->
-> Documentation/bpf/btf.rst:154: WARNING: Unexpected indentation.
-> Documentation/bpf/btf.rst:163: WARNING: Unexpected indentation.
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Hi,
+I am following up to check if you are interested in acquiring Design
+Automation Conference & Exhibition 2019	
+Let me know if you would like to acquire Attendees Data Base?
 
-Acked-by: Song Liu <songliubraving@fb.com>
+Attendees List:  Designers, Researchers, Tool developers, Vendors And Many
+More ...
+Each record in the data base contains: - Contact Name, Job Title,
+Company/Business Name, Email, Tel Number, Website/URL etc.
+If you are interested, please let me know your thoughts, so that I can send
+you the no of contacts available and the pricing for it.
+Awaiting Your Reply
+Thanks & Regards,
+Cynthia Higgins
+Marketing Executive
 
-> ---
->  Documentation/bpf/btf.rst | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/Documentation/bpf/btf.rst b/Documentation/bpf/btf.rst
-> index 8820360d00da..4ae022d274ab 100644
-> --- a/Documentation/bpf/btf.rst
-> +++ b/Documentation/bpf/btf.rst
-> @@ -151,6 +151,7 @@ for the type. The maximum value of ``BTF_INT_BITS()`` is 128.
->
->  The ``BTF_INT_OFFSET()`` specifies the starting bit offset to calculate values
->  for this int. For example, a bitfield struct member has:
-> +
->   * btf member bit offset 100 from the start of the structure,
->   * btf member pointing to an int type,
->   * the int type has ``BTF_INT_OFFSET() = 2`` and ``BTF_INT_BITS() = 4``
-> @@ -160,6 +161,7 @@ from bits ``100 + 2 = 102``.
->
->  Alternatively, the bitfield struct member can be the following to access the
->  same bits as the above:
-> +
->   * btf member bit offset 102,
->   * btf member pointing to an int type,
->   * the int type has ``BTF_INT_OFFSET() = 0`` and ``BTF_INT_BITS() = 4``
-> --
-> 2.21.0
->
+
