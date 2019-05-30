@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39C2B2F295
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:23:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB4BA2F0E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:08:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733123AbfE3EX2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:23:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36748 "EHLO mail.kernel.org"
+        id S1727343AbfE3EIS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:08:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728641AbfE3DPB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:15:01 -0400
+        id S1729621AbfE3DRU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:20 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50B2424586;
-        Thu, 30 May 2019 03:15:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF3412469E;
+        Thu, 30 May 2019 03:17:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186100;
-        bh=T4dd8ApveJOaVaQZYHfqP1ICixbz55uiW5XkeUbLFtM=;
+        s=default; t=1559186239;
+        bh=UFh/zJ1gijS7gMSPqAyLNEYVNc/ARSAND5iI9zLBZgw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KId+aGUTkdoeUgcjNBjXwev5F3/ZH92mhLldOLmvVzoUlQn6Zr/KRUavooKqCnq9W
-         D9zrtZpfDXxi6m+uQZjh5xFpjbkyGpu7EwySRuHnYJEyBknCiLpC5jphSxSR4EeFy6
-         rrueFF39NNwhXVUzhv0ppbiwe3QsgPQF0hhcCH5Y=
+        b=scksEpJys201TQbs9qjEokUF8Qmaui57+AwZNnCIafcLNqBxbXq4oldrESc1azD28
+         P6J+3VkFFf3ef6kK6hrP2AU1531zgo0YV0acmiD3sA42tLoTIbBk9yKUitbzzy33Ey
+         rDBCp9OXOg9rJy903Af/hjuLkyvYRsHQkAp5ZwVI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
-        Sun peng Li <Sunpeng.Li@amd.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 236/346] drm/amd/display: Prevent cursor hotspot overflow for RV overlay planes
+Subject: [PATCH 4.19 151/276] ACPI/IORT: Reject platform device creation on NUMA node mapping failure
 Date:   Wed, 29 May 2019 20:05:09 -0700
-Message-Id: <20190530030552.998746142@linuxfoundation.org>
+Message-Id: <20190530030535.028955066@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,78 +46,122 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 6752bea8b03e77c98be7d8d25b0a9d86a00b3cf7 ]
+[ Upstream commit 36a2ba07757df790b4a874efb1a105b9330a9ae7 ]
 
-[Why]
-The actual position for the cursor on the screen is essentially:
+In a system where, through IORT firmware mappings, the SMMU device is
+mapped to a NUMA node that is not online, the kernel bootstrap results
+in the following crash:
 
-x_out = x - x_plane - x_hotspot
-y_out = y - y_plane - y_hotspot
+  Unable to handle kernel paging request at virtual address 0000000000001388
+  Mem abort info:
+    ESR = 0x96000004
+    Exception class = DABT (current EL), IL = 32 bits
+    SET = 0, FnV = 0
+    EA = 0, S1PTW = 0
+  Data abort info:
+    ISV = 0, ISS = 0x00000004
+    CM = 0, WnR = 0
+  [0000000000001388] user address but active_mm is swapper
+  Internal error: Oops: 96000004 [#1] SMP
+  Modules linked in:
+  CPU: 5 PID: 1 Comm: swapper/0 Not tainted 5.0.0 #15
+  pstate: 80c00009 (Nzcv daif +PAN +UAO)
+  pc : __alloc_pages_nodemask+0x13c/0x1068
+  lr : __alloc_pages_nodemask+0xdc/0x1068
+  ...
+  Process swapper/0 (pid: 1, stack limit = 0x(____ptrval____))
+  Call trace:
+   __alloc_pages_nodemask+0x13c/0x1068
+   new_slab+0xec/0x570
+   ___slab_alloc+0x3e0/0x4f8
+   __slab_alloc+0x60/0x80
+   __kmalloc_node_track_caller+0x10c/0x478
+   devm_kmalloc+0x44/0xb0
+   pinctrl_bind_pins+0x4c/0x188
+   really_probe+0x78/0x2b8
+   driver_probe_device+0x64/0x110
+   device_driver_attach+0x74/0x98
+   __driver_attach+0x9c/0xe8
+   bus_for_each_dev+0x84/0xd8
+   driver_attach+0x30/0x40
+   bus_add_driver+0x170/0x218
+   driver_register+0x64/0x118
+   __platform_driver_register+0x54/0x60
+   arm_smmu_driver_init+0x24/0x2c
+   do_one_initcall+0xbc/0x328
+   kernel_init_freeable+0x304/0x3ac
+   kernel_init+0x18/0x110
+   ret_from_fork+0x10/0x1c
+  Code: f90013b5 b9410fa1 1a9f0694 b50014c2 (b9400804)
+  ---[ end trace dfeaed4c373a32da ]--
 
-The register values for cursor position and cursor hotspot need to be
-greater than zero when programmed, but we also need to subtract off
-the plane position to display the cursor at the correct position.
+Change the dev_set_proximity() hook prototype so that it returns a
+value and make it return failure if the PXM->NUMA-node mapping
+corresponds to an offline node, fixing the crash.
 
-Since we don't want x or y to be less than zero, we add the plane
-position as a positive value to x_hotspot or y_hotspot. However, what
-this doesn't take into account is that the hotspot registers are limited
-by the maximum cursor size.
-
-On DCN10 the cursor hotspot regitsers are masked to 0xFF, so they have
-a maximum value of 0-255. Values greater this will wrap, causing the
-cursor to display in the wrong position.
-
-In practice this means that for sufficiently large plane positions, the
-cursor will be drawn twice on the screen, and can cause screen flashes
-or p-state WARNS depending on what the wrapped value is.
-
-So we need a way to remove the value from x_plane and y_plane without
-exceeding the maximum cursor size.
-
-[How]
-Subtract as much as x_plane/y_plane as possible from x and y and place
-the remainder in the cursor hotspot register.
-
-The value for x_hotspot and y_hotspot can still wrap around but it
-won't happen in a case where the cursor is actually enabled.
-
-The cursor plane needs to intersect at least one pixel of the plane's
-rectangle to be enabled, so the cursor position + hotspot provided by
-userspace must always be strictly less than the maximum cursor size for
-the cursor to actually be enabled.
-
-Signed-off-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
-Reviewed-by: Sun peng Li <Sunpeng.Li@amd.com>
-Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+Link: https://lore.kernel.org/linux-arm-kernel/20190315021940.86905-1-wangkefeng.wang@huawei.com/
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c    | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/acpi/arm64/iort.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-index a684b38332ac3..2ab05a4e8ed4a 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-@@ -2658,9 +2658,15 @@ static void dcn10_set_cursor_position(struct pipe_ctx *pipe_ctx)
- 		.rotation = pipe_ctx->plane_state->rotation,
- 		.mirror = pipe_ctx->plane_state->horizontal_mirror
- 	};
--
--	pos_cpy.x_hotspot += pipe_ctx->plane_state->dst_rect.x;
--	pos_cpy.y_hotspot += pipe_ctx->plane_state->dst_rect.y;
-+	uint32_t x_plane = pipe_ctx->plane_state->dst_rect.x;
-+	uint32_t y_plane = pipe_ctx->plane_state->dst_rect.y;
-+	uint32_t x_offset = min(x_plane, pos_cpy.x);
-+	uint32_t y_offset = min(y_plane, pos_cpy.y);
-+
-+	pos_cpy.x -= x_offset;
-+	pos_cpy.y -= y_offset;
-+	pos_cpy.x_hotspot += (x_plane - x_offset);
-+	pos_cpy.y_hotspot += (y_plane - y_offset);
+diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
+index e48eebc27b81b..43c2615434b48 100644
+--- a/drivers/acpi/arm64/iort.c
++++ b/drivers/acpi/arm64/iort.c
+@@ -1231,18 +1231,24 @@ static bool __init arm_smmu_v3_is_coherent(struct acpi_iort_node *node)
+ /*
+  * set numa proximity domain for smmuv3 device
+  */
+-static void  __init arm_smmu_v3_set_proximity(struct device *dev,
++static int  __init arm_smmu_v3_set_proximity(struct device *dev,
+ 					      struct acpi_iort_node *node)
+ {
+ 	struct acpi_iort_smmu_v3 *smmu;
  
- 	if (pipe_ctx->plane_state->address.type
- 			== PLN_ADDR_TYPE_VIDEO_PROGRESSIVE)
+ 	smmu = (struct acpi_iort_smmu_v3 *)node->node_data;
+ 	if (smmu->flags & ACPI_IORT_SMMU_V3_PXM_VALID) {
+-		set_dev_node(dev, acpi_map_pxm_to_node(smmu->pxm));
++		int node = acpi_map_pxm_to_node(smmu->pxm);
++
++		if (node != NUMA_NO_NODE && !node_online(node))
++			return -EINVAL;
++
++		set_dev_node(dev, node);
+ 		pr_info("SMMU-v3[%llx] Mapped to Proximity domain %d\n",
+ 			smmu->base_address,
+ 			smmu->pxm);
+ 	}
++	return 0;
+ }
+ #else
+ #define arm_smmu_v3_set_proximity NULL
+@@ -1317,7 +1323,7 @@ struct iort_dev_config {
+ 	int (*dev_count_resources)(struct acpi_iort_node *node);
+ 	void (*dev_init_resources)(struct resource *res,
+ 				     struct acpi_iort_node *node);
+-	void (*dev_set_proximity)(struct device *dev,
++	int (*dev_set_proximity)(struct device *dev,
+ 				    struct acpi_iort_node *node);
+ };
+ 
+@@ -1368,8 +1374,11 @@ static int __init iort_add_platform_device(struct acpi_iort_node *node,
+ 	if (!pdev)
+ 		return -ENOMEM;
+ 
+-	if (ops->dev_set_proximity)
+-		ops->dev_set_proximity(&pdev->dev, node);
++	if (ops->dev_set_proximity) {
++		ret = ops->dev_set_proximity(&pdev->dev, node);
++		if (ret)
++			goto dev_put;
++	}
+ 
+ 	count = ops->dev_count_resources(node);
+ 
 -- 
 2.20.1
 
