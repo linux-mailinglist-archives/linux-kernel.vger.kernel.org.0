@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF6242F45F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:38:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5ABD2F1EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:17:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388455AbfE3Ehp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:37:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56518 "EHLO mail.kernel.org"
+        id S1731152AbfE3EQm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:16:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729248AbfE3DMu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:50 -0400
+        id S1730480AbfE3DPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:46 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCC982449A;
-        Thu, 30 May 2019 03:12:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D84DE245A7;
+        Thu, 30 May 2019 03:15:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185969;
-        bh=R0qs3whX4ECIj9uSpugfnFNFmdy6ANl8+OnbmX9xhpk=;
+        s=default; t=1559186145;
+        bh=nQZYqrwWCpdbUbQ16wM+a+UtsLY3q9D6MPb3TEL2vLM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hhyXqhMOY85EEqaXlzJGujIqJZwaj3fjinG3ZtqYpE9gpJRrYSkvZP6hv8Ja05AkZ
-         iZUiK2EtxvLoBpEXKts8kTlA4icHTIGpGrUOItX3buKd1UnFR4frxxbiUIgpHIcEEI
-         OMsULWnsik0N9Fu5AUBx9Pk06ewsHWMuFHkqceoA=
+        b=qHv4iU1KNsGGqS3GaDRJIAWD2iALfOVXTXmt6vD8xQqnffde4sWZWbdzGNgfTcjCy
+         Y+Z95BQnA9aQxpmi3gagR0hYmhg3v70bC5TaOe3xoxBCjEVXvH62MlocEt1w8kEOzR
+         JYyOVUlNrAjUqR9WyfB5N1JHoFtO01k8QZMAYvfo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 400/405] drm/sun4i: dsi: Restrict DSI tcon clock divider
+Subject: [PATCH 5.0 325/346] regulator: ltc3589: Fix notifier mutex lock warning
 Date:   Wed, 29 May 2019 20:06:38 -0700
-Message-Id: <20190530030600.797307841@linuxfoundation.org>
+Message-Id: <20190530030557.244463807@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,55 +46,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 85fb352666732a9e5caf6027b9c253b3d7881d8f ]
+[ Upstream commit f132da2534ec6599c78c4adcef15340cff2e9dd9 ]
 
-The current code allows the TCON clock divider to have a range between 4
-and 127 when feeding the DSI controller.
+The mutex for the regulator_dev must be controlled by the caller of
+the regulator_notifier_call_chain(), as described in the comment
+for that function.
 
-The only display supported so far had a display clock rate that ended up
-using a divider of 4, but testing with other displays show that only 4
-seems to be functional.
+Failure to mutex lock and unlock surrounding the notifier call results
+in a kernel WARN_ON_ONCE() which will dump a backtrace for the
+regulator_notifier_call_chain() when that function call is first made.
+The mutex can be controlled using the regulator_lock/unlock() API.
 
-This also aligns with what Allwinner is doing in their BSP, so let's just
-hardcode that we want a divider of 4 when using the DSI output.
-
-Reviewed-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/074e88ae472f5e0492e26939c74b44fb4125ffbd.1549896081.git-series.maxime.ripard@bootlin.com
+Fixes: 3eb2c7ecb7ea ("regulator: Add LTC3589 support")
+Suggested-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Signed-off-by: Steve Twiss <stwiss.opensource@diasemi.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/sun4i/sun4i_tcon.c     | 4 ++--
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h | 2 ++
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/regulator/ltc3589.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 7136fc91c6036..e75f77ff8e0fc 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -341,8 +341,8 @@ static void sun4i_tcon0_mode_set_cpu(struct sun4i_tcon *tcon,
- 	u32 block_space, start_delay;
- 	u32 tcon_div;
+diff --git a/drivers/regulator/ltc3589.c b/drivers/regulator/ltc3589.c
+index 63f724f260ef7..75089b037b723 100644
+--- a/drivers/regulator/ltc3589.c
++++ b/drivers/regulator/ltc3589.c
+@@ -419,16 +419,22 @@ static irqreturn_t ltc3589_isr(int irq, void *dev_id)
  
--	tcon->dclk_min_div = 4;
--	tcon->dclk_max_div = 127;
-+	tcon->dclk_min_div = SUN6I_DSI_TCON_DIV;
-+	tcon->dclk_max_div = SUN6I_DSI_TCON_DIV;
+ 	if (irqstat & LTC3589_IRQSTAT_THERMAL_WARN) {
+ 		event = REGULATOR_EVENT_OVER_TEMP;
+-		for (i = 0; i < LTC3589_NUM_REGULATORS; i++)
++		for (i = 0; i < LTC3589_NUM_REGULATORS; i++) {
++		        regulator_lock(ltc3589->regulators[i]);
+ 			regulator_notifier_call_chain(ltc3589->regulators[i],
+ 						      event, NULL);
++		        regulator_unlock(ltc3589->regulators[i]);
++		}
+ 	}
  
- 	sun4i_tcon0_mode_set_common(tcon, mode);
+ 	if (irqstat & LTC3589_IRQSTAT_UNDERVOLT_WARN) {
+ 		event = REGULATOR_EVENT_UNDER_VOLTAGE;
+-		for (i = 0; i < LTC3589_NUM_REGULATORS; i++)
++		for (i = 0; i < LTC3589_NUM_REGULATORS; i++) {
++		        regulator_lock(ltc3589->regulators[i]);
+ 			regulator_notifier_call_chain(ltc3589->regulators[i],
+ 						      event, NULL);
++		        regulator_unlock(ltc3589->regulators[i]);
++		}
+ 	}
  
-diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
-index a07090579f84b..5c3ad5be06901 100644
---- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
-+++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
-@@ -13,6 +13,8 @@
- #include <drm/drm_encoder.h>
- #include <drm/drm_mipi_dsi.h>
- 
-+#define SUN6I_DSI_TCON_DIV	4
-+
- struct sun6i_dsi {
- 	struct drm_connector	connector;
- 	struct drm_encoder	encoder;
+ 	/* Clear warning condition */
 -- 
 2.20.1
 
