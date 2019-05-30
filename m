@@ -2,95 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 413E630586
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 01:51:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6A9F30588
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 01:52:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726531AbfE3XvG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 19:51:06 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55635 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726029AbfE3XvG (ORCPT
+        id S1726666AbfE3XwW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 19:52:22 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:34378 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726029AbfE3XwV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 19:51:06 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 16so506684wmg.5
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 16:51:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AxB645BL9Uf5L1O2WobtkCzSZ6Mw86JaZeB1N37NGqY=;
-        b=aI+FjeVcjpkGos3A04RMZt70u9ahb2b5Mrv9r1jd0XH1ItCwqfTUYBsqO4uuoROoJH
-         zWOHZhIASJYGv29qmsr3o8XZhRcHP8867LEKGa38OLZFU2da339cIDAvT0Eju/caqbmF
-         rbiqvp6gdyGDTRAwNA1wUQ2kWuJK8C3nZEw79dx4uOTU+EVHnr2WnyzR0bFLR8F4Ns72
-         5VnV/GodJIog1jMBWN6mqCVII3Nd3GSPf/dFuTcsHSNs4dTfZRrNLAHU/S2pzHEq+scX
-         hvPxJb7zvDQnupdw2w+g7HdumUZdbgYVB2uvCBni/4podSt9kqqCmSX8kFZHiwJ7YF4K
-         2wRQ==
-X-Gm-Message-State: APjAAAU73ZvPE84UhKQKWE+QV5nF/zeQWGUUXzgWQ3rchOnZdd2XEVRw
-        kIozDKE5/PyzM+q5FnHR447kqAXm1nU=
-X-Google-Smtp-Source: APXvYqyBL2gh5onIaVyclfx7wZWUXNn+7ukUzkSyEzWGaWurZGZpQDJtL9QBC/exOaA0DSJbNXZkog==
-X-Received: by 2002:a7b:c549:: with SMTP id j9mr3734355wmk.114.1559260263894;
-        Thu, 30 May 2019 16:51:03 -0700 (PDT)
-Received: from raver.teknoraver.net (net-93-144-152-91.cust.vodafonedsl.it. [93.144.152.91])
-        by smtp.gmail.com with ESMTPSA id 65sm7812591wro.85.2019.05.30.16.51.02
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 30 May 2019 16:51:03 -0700 (PDT)
-From:   Matteo Croce <mcroce@redhat.com>
-To:     linux-kernel@vger.kernel.org, Andy Whitcroft <apw@canonical.com>,
-        Joe Perches <joe@perches.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Aaron Tomlin <atomlin@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH] checkpatch.pl: Warn on duplicate sysctl local variable
-Date:   Fri, 31 May 2019 01:51:01 +0200
-Message-Id: <20190530235101.3248-1-mcroce@redhat.com>
-X-Mailer: git-send-email 2.21.0
+        Thu, 30 May 2019 19:52:21 -0400
+Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Thu, 30 May 2019 16:52:01 -0700
+Received: from localhost (unknown [10.129.221.179])
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 4B4FA4154D;
+        Thu, 30 May 2019 16:52:20 -0700 (PDT)
+Date:   Thu, 30 May 2019 16:52:19 -0700
+From:   Matt Helsley <mhelsley@vmware.com>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+CC:     Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [RFC][PATCH 00/13] Cleanup recordmcount and begin objtool
+ conversion
+Message-ID: <20190530235219.GB63275@rlwimi.vmware.com>
+Mail-Followup-To: Matt Helsley <mhelsley@vmware.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+References: <cover.1558569448.git.mhelsley@vmware.com>
+ <20190528144328.6wygc2ofk5oaggaf@treble>
+ <20190529134152.GX2623@hirez.programming.kicks-ass.net>
+ <20190529141145.4tycu25a3os3fpgr@treble>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190529141145.4tycu25a3os3fpgr@treble>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: mhelsley@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 6a33853c5773 ("proc/sysctl: add shared variables for range check")
-adds some shared const variables to be used instead of a local copy in
-each source file.
-Warn when a chunk duplicates one of these values in a ctl_table struct:
+On Wed, May 29, 2019 at 09:11:45AM -0500, Josh Poimboeuf wrote:
+> On Wed, May 29, 2019 at 03:41:52PM +0200, Peter Zijlstra wrote:
+> > On Tue, May 28, 2019 at 09:43:28AM -0500, Josh Poimboeuf wrote:
+> > > Would it be feasible to eventually combine subcommands so that objtool
+> > > could do both ORC and mcount generation in a single invocation?  I
+> > > wonder what what the interface would look like.
 
-    $ scripts/checkpatch.pl 0001-test-commit.patch
-    WARNING: duplicated sysctl range checking value 'zero', consider using the shared one in include/linux/sysctl.h
-    #27: FILE: arch/arm/kernel/isa.c:48:
-    +               .extra1         = &zero,
+I think it'll be feasible. I've done a bit of investigation but don't
+have patches for it yet.
 
-    WARNING: duplicated sysctl range checking value 'int_max', consider using the shared one in include/linux/sysctl.h
-    #28: FILE: arch/arm/kernel/isa.c:49:
-    +               .extra2         = &int_max,
+> > 
+> > objtool orc+mcount ?
+> > 
+> > That is, have '+' be a separator for cmd thingies. That would of course
+> > require all other arguments to be shared between all commands, which is
+> > currently already so, but I've not checked the mcount patches.
+> 
+> The problem is that you have to combine "orc generate" with "mcount
+> record".  Because even the subcommands have subcommands ;-)
+> 
+> And also sharing arguments between all subcommands isn't ideal.
+> 
+> Maybe could do:
+> 
+>   objtool orc generate [orc options] + mcount record [mcount options]
 
-    total: 0 errors, 2 warnings, 14 lines checked
+I think that makes more sense; it'll be easier to construct
+Make recipes this way. I was thinking '+' would be something like the
+getopt handling of the '--' argument where it stops argument parsing so
+someting else can consume the remainder.
 
-Signed-off-by: Matteo Croce <mcroce@redhat.com>
----
- scripts/checkpatch.pl | 7 +++++++
- 1 file changed, 7 insertions(+)
+The really interesting part is deciding which file to operate on is
+specified by the arguments to the first subcommand and subsequent subcmds
+would then operate on the same object file. For example:
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 342c7c781ba5..b986bab32af7 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -6639,6 +6639,13 @@ sub process {
- 				     "unknown module license " . $extracted_string . "\n" . $herecurr);
- 			}
- 		}
-+
-+# check for sysctl duplicate constants
-+		if ($line =~ /\.extra[12]\s*=\s*&(zero|one|int_max|max_int)\b/) {
-+			my $extracted_string = get_quoted_string($line, $rawline);
-+			WARN("DUPLICATED_SYSCTL_CONST",
-+				"duplicated sysctl range checking value '$1', consider using the shared one in include/linux/sysctl.h" . $extracted_string . "\n" . $herecurr);
-+		}
- 	}
- 
- 	# If we have no input at all, then there is nothing to report on
--- 
-2.21.0
+objtool orc generate [orc opts] foo.o + mcount record [mcount opts]
 
+Would it be clearer what's going on if the object file(s) were specified
+first and then the passes to run and their arguments came afterwards?
+I'm thinking it'd go somewhat like this:
+
+objtool foo.o [bar.o] -- check [check opts] + \
+			 orc generate [orc opts] + \
+			 mcount record [mcount opts]
+
+Then objtool would iterate over the object file(s) to open,
+hand off the ELF data structures into each successive pass, and
+finally write any accumulated changes back.
+
+Cheers,
+    -Matt
