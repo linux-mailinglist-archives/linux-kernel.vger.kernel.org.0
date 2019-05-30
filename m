@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB7F82EE30
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:45:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 184362ECFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:30:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732933AbfE3DpA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:45:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60312 "EHLO mail.kernel.org"
+        id S2388428AbfE3D3p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:29:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732367AbfE3DUw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:20:52 -0400
+        id S1732371AbfE3DUx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:20:53 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6D722492F;
-        Thu, 30 May 2019 03:20:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F38A24966;
+        Thu, 30 May 2019 03:20:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186451;
-        bh=3TA2AzyxQEl+G5zh5dnkbqdGmZr3VF6U1/rc6Iz8bqU=;
+        s=default; t=1559186452;
+        bh=gy2c3jagldGVCBf1KyNMROKxUi6Nyeqv3QrEWPH9vOM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ApvSibe03Y8gIqUaggIXgymjULeZpmraAJSWe8q4T2u6UkyPMhKC2W2zgpNwUMcbW
-         qQAusZYe2eE2TODDQqfaKkaYjzjq6NSCjyGD0HMwMj588j4gwK+KWjeDNiit6KOSnV
-         wi3+QaiHQKE/Utfey7OgI3N2qvze3M9LySDInFyU=
+        b=QZ8zPbZkncoIH7nPpWE0E0JZymtWMtItiMLgGsioaS97g9ampK2bgntjnL0QL9iqD
+         r3vzUhsuig9rTmsXvMU16MWY7Emdm4WaxIMZYj9cgYSYaLX7SDJpIGbrPYltBqVooS
+         lB4iap818Oj/K4wCODqd/93sgrw38X7Az7ZMKtgI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Nathan Lynch <nathanl@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 063/128] media: pvrusb2: Prevent a buffer overflow
-Date:   Wed, 29 May 2019 20:06:35 -0700
-Message-Id: <20190530030446.046747137@linuxfoundation.org>
+Subject: [PATCH 4.9 064/128] powerpc/numa: improve control of topology updates
+Date:   Wed, 29 May 2019 20:06:36 -0700
+Message-Id: <20190530030446.206548998@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
 References: <20190530030432.977908967@linuxfoundation.org>
@@ -45,58 +44,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c1ced46c7b49ad7bc064e68d966e0ad303f917fb ]
+[ Upstream commit 2d4d9b308f8f8dec68f6dbbff18c68ec7c6bd26f ]
 
-The ctrl_check_input() function is called from pvr2_ctrl_range_check().
-It's supposed to validate user supplied input and return true or false
-depending on whether the input is valid or not.  The problem is that
-negative shifts or shifts greater than 31 are undefined in C.  In
-practice with GCC they result in shift wrapping so this function returns
-true for some inputs which are not valid and this could result in a
-buffer overflow:
+When booted with "topology_updates=no", or when "off" is written to
+/proc/powerpc/topology_updates, NUMA reassignments are inhibited for
+PRRN and VPHN events. However, migration and suspend unconditionally
+re-enable reassignments via start_topology_update(). This is
+incoherent.
 
-    drivers/media/usb/pvrusb2/pvrusb2-ctrl.c:205 pvr2_ctrl_get_valname()
-    warn: uncapped user index 'names[val]'
+Check the topology_updates_enabled flag in
+start/stop_topology_update() so that callers of those APIs need not be
+aware of whether reassignments are enabled. This allows the
+administrative decision on reassignments to remain in force across
+migrations and suspensions.
 
-The cptr->hdw->input_allowed_mask mask is configured in pvr2_hdw_create()
-and the highest valid bit is BIT(4).
-
-Fixes: 7fb20fa38caa ("V4L/DVB (7299): pvrusb2: Improve logic which handles input choice availability")
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/usb/pvrusb2/pvrusb2-hdw.c | 2 ++
- drivers/media/usb/pvrusb2/pvrusb2-hdw.h | 1 +
- 2 files changed, 3 insertions(+)
+ arch/powerpc/mm/numa.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-index 1eb4f7ba2967d..ff489645e0701 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-@@ -670,6 +670,8 @@ static int ctrl_get_input(struct pvr2_ctrl *cptr,int *vp)
- 
- static int ctrl_check_input(struct pvr2_ctrl *cptr,int v)
+diff --git a/arch/powerpc/mm/numa.c b/arch/powerpc/mm/numa.c
+index 9cad2ed812ab7..31e9064ba6281 100644
+--- a/arch/powerpc/mm/numa.c
++++ b/arch/powerpc/mm/numa.c
+@@ -1574,6 +1574,9 @@ int start_topology_update(void)
  {
-+	if (v < 0 || v > PVR2_CVAL_INPUT_MAX)
+ 	int rc = 0;
+ 
++	if (!topology_updates_enabled)
 +		return 0;
- 	return ((1 << v) & cptr->hdw->input_allowed_mask) != 0;
- }
++
+ 	if (firmware_has_feature(FW_FEATURE_PRRN)) {
+ 		if (!prrn_enabled) {
+ 			prrn_enabled = 1;
+@@ -1603,6 +1606,9 @@ int stop_topology_update(void)
+ {
+ 	int rc = 0;
  
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.h b/drivers/media/usb/pvrusb2/pvrusb2-hdw.h
-index a82a00dd73293..80869990ffbbb 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.h
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.h
-@@ -54,6 +54,7 @@
- #define PVR2_CVAL_INPUT_COMPOSITE 2
- #define PVR2_CVAL_INPUT_SVIDEO 3
- #define PVR2_CVAL_INPUT_RADIO 4
-+#define PVR2_CVAL_INPUT_MAX PVR2_CVAL_INPUT_RADIO
++	if (!topology_updates_enabled)
++		return 0;
++
+ 	if (prrn_enabled) {
+ 		prrn_enabled = 0;
+ #ifdef CONFIG_SMP
+@@ -1648,11 +1654,13 @@ static ssize_t topology_write(struct file *file, const char __user *buf,
  
- enum pvr2_config {
- 	pvr2_config_empty,    /* No configuration */
+ 	kbuf[read_len] = '\0';
+ 
+-	if (!strncmp(kbuf, "on", 2))
++	if (!strncmp(kbuf, "on", 2)) {
++		topology_updates_enabled = true;
+ 		start_topology_update();
+-	else if (!strncmp(kbuf, "off", 3))
++	} else if (!strncmp(kbuf, "off", 3)) {
+ 		stop_topology_update();
+-	else
++		topology_updates_enabled = false;
++	} else
+ 		return -EINVAL;
+ 
+ 	return count;
+@@ -1667,9 +1675,7 @@ static const struct file_operations topology_ops = {
+ 
+ static int topology_update_init(void)
+ {
+-	/* Do not poll for changes if disabled at boot */
+-	if (topology_updates_enabled)
+-		start_topology_update();
++	start_topology_update();
+ 
+ 	if (!proc_create("powerpc/topology_updates", 0644, NULL, &topology_ops))
+ 		return -ENOMEM;
 -- 
 2.20.1
 
