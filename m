@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B5252EFB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:57:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 871F22F10A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:09:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731945AbfE3D5s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:57:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52574 "EHLO mail.kernel.org"
+        id S1727053AbfE3EJi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:09:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45256 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731711AbfE3DSr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:47 -0400
+        id S1730951AbfE3DRM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:12 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E90982479B;
-        Thu, 30 May 2019 03:18:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE08D2466D;
+        Thu, 30 May 2019 03:17:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186327;
-        bh=u8zNnoG6PqrkyKn4qilzjyDWIEhdw3ItXift4UJ8oBo=;
+        s=default; t=1559186232;
+        bh=yx0iJw45NNvcDXF2idGcnvs+znekSWFaMfqbWO0lQO8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IcS9lol5zSryfCvupHkLcLkv6yGxbJtj8aeydd2CVo2BcWg0wfUr9fblLSwL9HMBf
-         Y3FugSh7ieOmJGqqya0fd9MYgxFg0+IAWrr9foNnHPPEhd2PQkTKnpAoHrRxnEM+3m
-         2qPGE79RvMg/jKOVdo3JpiD3TuF6VojM61XscRKc=
+        b=mQX4APzxWb+ja9CiDI3lROLGZyjIHPN2P4p0ACzmSlUfoLQB1TBn0zean0DD0xrVG
+         ART6+pfm5TwDJzfckKInz4ut6e1/U5A7A/aKpvjSfMiWVwc3tTRixLAXjWGo2W5eGi
+         JrhXSAEjivmhXT+ZHmn4i15RbJMWpVCGPgBKMSLQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Avri Altman <avri.altman@wdc.com>,
-        Raul E Rangel <rrangel@chromium.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 041/193] mmc: core: Verify SD bus width
+        stable@vger.kernel.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 137/276] sched/rt: Check integer overflow at usec to nsec conversion
 Date:   Wed, 29 May 2019 20:04:55 -0700
-Message-Id: <20190530030455.247316698@linuxfoundation.org>
+Message-Id: <20190530030534.285509068@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,52 +48,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9e4be8d03f50d1b25c38e2b59e73b194c130df7d ]
+[ Upstream commit 1a010e29cfa00fee2888fd2fd4983f848cbafb58 ]
 
-The SD Physical Layer Spec says the following: Since the SD Memory Card
-shall support at least the two bus modes 1-bit or 4-bit width, then any SD
-Card shall set at least bits 0 and 2 (SD_BUS_WIDTH="0101").
+Example of unhandled overflows:
 
-This change verifies the card has specified a bus width.
+ # echo 18446744073709651 > cpu.rt_runtime_us
+ # cat cpu.rt_runtime_us
+ 99
 
-AMD SDHC Device 7806 can get into a bad state after a card disconnect
-where anything transferred via the DATA lines will always result in a
-zero filled buffer. Currently the driver will continue without error if
-the HC is in this condition. A block device will be created, but reading
-from it will result in a zero buffer. This makes it seem like the SD
-device has been erased, when in actuality the data is never getting
-copied from the DATA lines to the data buffer.
+ # echo 18446744073709900 > cpu.rt_period_us
+ # cat cpu.rt_period_us
+ 348
 
-SCR is the first command in the SD initialization sequence that uses the
-DATA lines. By checking that the response was invalid, we can abort
-mounting the card.
+After this patch they will fail with -EINVAL.
 
-Reviewed-by: Avri Altman <avri.altman@wdc.com>
-Signed-off-by: Raul E Rangel <rrangel@chromium.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Acked-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/155125501739.293431.5252197504404771496.stgit@buzz
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/core/sd.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ kernel/sched/rt.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
-index eb9de21349679..fe2ef52135b6b 100644
---- a/drivers/mmc/core/sd.c
-+++ b/drivers/mmc/core/sd.c
-@@ -216,6 +216,14 @@ static int mmc_decode_scr(struct mmc_card *card)
- 
- 	if (scr->sda_spec3)
- 		scr->cmds = UNSTUFF_BITS(resp, 32, 2);
-+
-+	/* SD Spec says: any SD Card shall set at least bits 0 and 2 */
-+	if (!(scr->bus_widths & SD_SCR_BUS_WIDTH_1) ||
-+	    !(scr->bus_widths & SD_SCR_BUS_WIDTH_4)) {
-+		pr_err("%s: invalid bus width\n", mmc_hostname(card->host));
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index 2e2955a8cf8fe..b980cc96604fa 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -2559,6 +2559,8 @@ int sched_group_set_rt_runtime(struct task_group *tg, long rt_runtime_us)
+ 	rt_runtime = (u64)rt_runtime_us * NSEC_PER_USEC;
+ 	if (rt_runtime_us < 0)
+ 		rt_runtime = RUNTIME_INF;
++	else if ((u64)rt_runtime_us > U64_MAX / NSEC_PER_USEC)
 +		return -EINVAL;
-+	}
-+
- 	return 0;
+ 
+ 	return tg_set_rt_bandwidth(tg, rt_period, rt_runtime);
  }
+@@ -2579,6 +2581,9 @@ int sched_group_set_rt_period(struct task_group *tg, u64 rt_period_us)
+ {
+ 	u64 rt_runtime, rt_period;
+ 
++	if (rt_period_us > U64_MAX / NSEC_PER_USEC)
++		return -EINVAL;
++
+ 	rt_period = rt_period_us * NSEC_PER_USEC;
+ 	rt_runtime = tg->rt_bandwidth.rt_runtime;
  
 -- 
 2.20.1
