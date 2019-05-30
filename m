@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAC5E2EE50
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:46:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5CBA2EC52
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:20:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732869AbfE3DqT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:46:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59298 "EHLO mail.kernel.org"
+        id S1732108AbfE3DUA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:20:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732295AbfE3DUm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:20:42 -0400
+        id S1730463AbfE3DPo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:44 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCB5024949;
-        Thu, 30 May 2019 03:20:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0AA462459C;
+        Thu, 30 May 2019 03:15:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186441;
-        bh=5PplgaAws3iXqb6sbpckHoEGhKhqIT2kiGkYsYt5o04=;
+        s=default; t=1559186144;
+        bh=sQSWaWrbGBLv9muTNQfRr4rpK+DViyENGQjtd2P1mug=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EcIGmiEvIsxWG/oyt+pNK4MaVrssJ40bKpDAdkI7k23Qa3CnUBAn0Z+7jCOWKnY6C
-         MSMVC3o/2jaaNJSNe7F0W9c/SIbs95wxFpSE/P2C/Wn8Kq6pJtCGld4p1BkRi/Zqir
-         ZRW0enx7bFdYgMpbzysxQv3wDjxEAugECBG2omSg=
+        b=2vhUFAZgZ5O1QrHAeW3+ZnqVTDzqsclcqGWOK+7mvtT1o0NRUUUHsk0EkINaBEChr
+         Kp9dk/7ki5XH/v7pnx+L0L6y+p3g5jYcpqzlv3uvfdRcyF64Nn8qzV70nl8Xp9/wMH
+         oABAGWpLPJBEFn7mt9CCtulDa+Bm4RcYCfnmeC/Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Avri Altman <avri.altman@wdc.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 045/128] crypto: sun4i-ss - Fix invalid calculation of hash end
+Subject: [PATCH 5.0 304/346] scsi: ufs: fix a missing check of devm_reset_control_get
 Date:   Wed, 29 May 2019 20:06:17 -0700
-Message-Id: <20190530030442.779255122@linuxfoundation.org>
+Message-Id: <20190530030556.240149492@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f87391558acf816b48f325a493d81d45dec40da0 ]
+[ Upstream commit 63a06181d7ce169d09843645c50fea1901bc9f0a ]
 
-When nbytes < 4, end is wronlgy set to a negative value which, due to
-uint, is then interpreted to a large value leading to a deadlock in the
-following code.
+devm_reset_control_get could fail, so the fix checks its return value and
+passes the error code upstream in case it fails.
 
-This patch fix this problem.
-
-Fixes: 6298e948215f ("crypto: sunxi-ss - Add Allwinner Security System crypto accelerator")
-Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Acked-by: Avri Altman <avri.altman@wdc.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/sunxi-ss/sun4i-ss-hash.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/scsi/ufs/ufs-hisi.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/crypto/sunxi-ss/sun4i-ss-hash.c b/drivers/crypto/sunxi-ss/sun4i-ss-hash.c
-index 0de2f62d51ff7..ec16ec2e284d0 100644
---- a/drivers/crypto/sunxi-ss/sun4i-ss-hash.c
-+++ b/drivers/crypto/sunxi-ss/sun4i-ss-hash.c
-@@ -250,7 +250,10 @@ static int sun4i_hash(struct ahash_request *areq)
- 		}
- 	} else {
- 		/* Since we have the flag final, we can go up to modulo 4 */
--		end = ((areq->nbytes + op->len) / 4) * 4 - op->len;
-+		if (areq->nbytes < 4)
-+			end = 0;
-+		else
-+			end = ((areq->nbytes + op->len) / 4) * 4 - op->len;
- 	}
+diff --git a/drivers/scsi/ufs/ufs-hisi.c b/drivers/scsi/ufs/ufs-hisi.c
+index 452e19f8fb470..c2cee73a8560d 100644
+--- a/drivers/scsi/ufs/ufs-hisi.c
++++ b/drivers/scsi/ufs/ufs-hisi.c
+@@ -544,6 +544,10 @@ static int ufs_hisi_init_common(struct ufs_hba *hba)
+ 	ufshcd_set_variant(hba, host);
  
- 	/* TODO if SGlen % 4 and op->len == 0 then DMA */
+ 	host->rst  = devm_reset_control_get(dev, "rst");
++	if (IS_ERR(host->rst)) {
++		dev_err(dev, "%s: failed to get reset control\n", __func__);
++		return PTR_ERR(host->rst);
++	}
+ 
+ 	ufs_hisi_set_pm_lvl(hba);
+ 
 -- 
 2.20.1
 
