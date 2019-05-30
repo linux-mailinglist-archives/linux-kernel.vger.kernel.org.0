@@ -2,137 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 237E7300DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 19:21:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96F38300DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 19:21:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726658AbfE3RU5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 13:20:57 -0400
-Received: from mga18.intel.com ([134.134.136.126]:48336 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725961AbfE3RU4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 13:20:56 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 May 2019 10:20:56 -0700
-X-ExtLoop1: 1
-Received: from araj-mobl1.jf.intel.com ([10.251.6.93])
-  by orsmga002.jf.intel.com with ESMTP; 30 May 2019 10:20:55 -0700
-Date:   Thu, 30 May 2019 10:20:55 -0700
-From:   "Raj, Ashok" <ashok.raj@intel.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     sathyanarayanan.kuppuswamy@linux.intel.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keith.busch@intel.com, Ashok Raj <ashok.raj@intel.com>
-Subject: Re: [PATCH v2 1/5] PCI/ATS: Add PRI support for PCIe VF devices
-Message-ID: <20190530172055.GB18559@araj-mobl1.jf.intel.com>
-References: <cover.1557162861.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <f773440c0eee2a8d4e5d6e2856717404ac836458.1557162861.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <20190529225714.GE28250@google.com>
- <20190529230426.GB5108@araj-mobl1.jf.intel.com>
- <20190530131738.GK28250@google.com>
+        id S1726786AbfE3RVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 13:21:24 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46358 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725961AbfE3RVY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 13:21:24 -0400
+Received: by mail-pf1-f194.google.com with SMTP id y11so4347809pfm.13;
+        Thu, 30 May 2019 10:21:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=ImDPwL3I+w8BoRqnd5eRM3+R8I/eXEMLrLJdrRnJGP8=;
+        b=rvyah85PBMMF6fSehi9wvZfJvOlEiwurKCDdHwrZ2f5fh8OIO5nuTy4ApgBznEv7xq
+         ZVJbTGAiTAc4HnxcdFtHuUUrYjIlVKkiDnPsXqxtLTowv9VDw6l8yufrilq9B+S0XuMA
+         +WDbzrxSaCSzRb3AJJF1Bjc4VSvEL+U6TaYnPIen5MLG2H6wsyuBzTHu73TJ9HG4/34v
+         dPX14My1cnc8XywDE3mC64bL4U1xivYIip1qqG0Y93iuuzcme4oyH/a8hnSvcNdYfClw
+         3khKWCCfS6qdwK/wCe4IdIQFkb476hULgTr1d3MwwnsAlJloHVOMubOJeR8DbEMaq+Kj
+         OhNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=ImDPwL3I+w8BoRqnd5eRM3+R8I/eXEMLrLJdrRnJGP8=;
+        b=FPODyWB5pOcAG6M4ZVOLJcmvPagk7/VV2+QcmKkzMk0QuuUjtJdtx7eoC5hhN4unFd
+         /9RbAYc+WBLBAwjJ14DAg8H9ccC6UpKBjvpkV96++WAZZJqki9OiInGjquEPUgSlsp1A
+         Ct8Fc5aDd0uPNgC+2RXdu8dJm3noqKKpVvychz2ek/x2rgv+vG4Xr5jJ/IlyjGrGjx+D
+         5ym7wlxN8vltM9m3Rb9wS3bEUBkDYKUrhuAkcY9K2umlQLeH06ptoJVuyBkEZlSscMyu
+         yfW711LnD2qlDXiQVSEx3U1sfz+FrgV+WCQR8xGVBQjGWtDdE4e7AnKiGEGBorbNFSwd
+         m8gA==
+X-Gm-Message-State: APjAAAXS4cznpEj3tISBZZLfbSxyI3iitGtD4fUPboYbePH1GxBWPMi2
+        U5JGWTsaLOT9TXoZzNIzyAo=
+X-Google-Smtp-Source: APXvYqwu621Z9vd819IPtN8DotvELno2ZdptP5eZ+k/WpG5kRtSvkQG3qtAcf1ovJ4KF97KqXwEm+A==
+X-Received: by 2002:a63:cb:: with SMTP id 194mr4561175pga.395.1559236883517;
+        Thu, 30 May 2019 10:21:23 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id i7sm3660624pfo.19.2019.05.30.10.21.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 May 2019 10:21:22 -0700 (PDT)
+Date:   Thu, 30 May 2019 10:21:20 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     "Adamski, Krzysztof (Nokia - PL/Wroclaw)" 
+        <krzysztof.adamski@nokia.com>
+Cc:     Jean Delvare <jdelvare@suse.com>,
+        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] hwmon: pmbus: protect read-modify-write with lock
+Message-ID: <20190530172120.GA22145@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190530131738.GK28250@google.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 08:17:38AM -0500, Bjorn Helgaas wrote:
-> On Wed, May 29, 2019 at 04:04:27PM -0700, Raj, Ashok wrote:
-> > On Wed, May 29, 2019 at 05:57:14PM -0500, Bjorn Helgaas wrote:
-> > > On Mon, May 06, 2019 at 10:20:03AM -0700, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
-> > > > From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> > > > 
-> > > > When IOMMU tries to enable PRI for VF device in
-> > > > iommu_enable_dev_iotlb(), it always fails because PRI support for PCIe
-> > > > VF device is currently broken in PCIE driver. Current implementation
-> > > > expects the given PCIe device (PF & VF) to implement PRI capability
-> > > > before enabling the PRI support. But this assumption is incorrect. As
-> > > > per PCIe spec r4.0, sec 9.3.7.11, all VFs associated with PF can only
-> > > > use the Page Request Interface (PRI) of the PF and not implement it.
-> > > > Hence we need to create exception for handling the PRI support for PCIe
-> > > > VF device.
-> > > > 
-> > > > Since PRI is shared between PF/VF devices, following rules should apply.
-> > > > 
-> > > > 1. Enable PRI in VF only if its already enabled in PF.
-> > > > 2. When enabling/disabling PRI for VF, instead of configuring the
-> > > > registers just increase/decrease the usage count (pri_ref_cnt) of PF.
-> > > > 3. Disable PRI in PF only if pr_ref_cnt is zero.
-> > > 
-> > > s/pr_ref_cnt/pri_ref_cnt/
-> > > 
-> > > > Cc: Ashok Raj <ashok.raj@intel.com>
-> > > > Cc: Keith Busch <keith.busch@intel.com>
-> > > > Suggested-by: Ashok Raj <ashok.raj@intel.com>
-> > > > Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> > > > ---
-> > > >  drivers/pci/ats.c   | 53 +++++++++++++++++++++++++++++++++++++++++++--
-> > > >  include/linux/pci.h |  1 +
-> > > >  2 files changed, 52 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/pci/ats.c b/drivers/pci/ats.c
-> > > > index 97c08146534a..5582e5d83a3f 100644
-> > > > --- a/drivers/pci/ats.c
-> > > > +++ b/drivers/pci/ats.c
-> > > > @@ -181,12 +181,39 @@ int pci_enable_pri(struct pci_dev *pdev, u32 reqs)
-> > > >  	u16 control, status;
-> > > >  	u32 max_requests;
-> > > >  	int pos;
-> > > > +	struct pci_dev *pf;
-> > > >  
-> > > >  	if (WARN_ON(pdev->pri_enabled))
-> > > >  		return -EBUSY;
-> > > >  
-> > > >  	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PRI);
-> > > > -	if (!pos)
-> > > > +
-> > > > +	if (pdev->is_virtfn) {
-> > > > +		/*
-> > > > +		 * Per PCIe r4.0, sec 9.3.7.11, VF must not implement PRI
-> > > > +		 * Capability.
-> > > > +		 */
-> > > > +		if (pos) {
-> > > > +			dev_err(&pdev->dev, "VF must not implement PRI");
-> > > > +			return -EINVAL;
-> > > > +		}
-> > > 
-> > > This seems gratuitous.  It finds implementation errors, but since we
-> > > correctly use the PF here anyway, it doesn't *need* to prevent PRI on
-> > > the VF from working.
-> > > 
-> > > I think you should just have:
-> > > 
-> > >   if (pdev->is_virtfn) {
-> > >     pf = pci_physfn(pdev);
-> > >     if (!pf->pri_enabled)
-> > >       return -EINVAL;
-> > 
-> > This would be incorrect. Since if we never did any bind_mm to the PF
-> > PRI would not have been enabled. Currently this is done in the IOMMU 
-> > driver, and not in the device driver. 
-> 
-> This is functionally the same as the original patch, only omitting the
-> "VF must not implement PRI" check.
-> 
-> > I suppose we should enable PF capability if its not enabled. Same
-> > comment would be applicable for PASID as well.
-> 
-> Operating on a device other than the one the driver owns opens the
-> issue of mutual exclusion and races, so would require careful
-> scrutiny.  Are PRI/PASID things that could be *always* enabled for the
-> PF at enumeration-time, or do we have to wait until a driver claims
-> the VF?  If the latter, are there coordination issues between drivers
-> of different VFs?
+Hi,
 
-I suppose that's a reasonably good alternative. You mean we could 
-do this when VF's are being created? Otherwise we can do this as its
-done today, on demand for all normal PF's. 
+On Thu, May 30, 2019 at 06:45:48AM +0000, Adamski, Krzysztof (Nokia - PL/Wroclaw) wrote:
+> The operation done in the pmbus_update_fan() function is a
+> read-modify-write operation but it lacks any kind of lock protection
+> which may cause problems if run more than once simultaneously. This
+> patch uses an existing update_lock mutex to fix this problem.
+> 
+> Signed-off-by: Krzysztof Adamski <krzysztof.adamski@nokia.com>
+> ---
+> 
+> I'm resending this patch to proper recipients this time. Sorry if the
+> previous submission confused anybody.
+> 
+>  drivers/hwmon/pmbus/pmbus_core.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/hwmon/pmbus/pmbus_core.c b/drivers/hwmon/pmbus/pmbus_core.c
+> index ef7ee90ee785..94adbede7912 100644
+> --- a/drivers/hwmon/pmbus/pmbus_core.c
+> +++ b/drivers/hwmon/pmbus/pmbus_core.c
+> @@ -268,6 +268,7 @@ int pmbus_update_fan(struct i2c_client *client, int page, int id,
+>  	int rv;
+>  	u8 to;
+>  
+> +	mutex_lock(&data->update_lock);
+>  	from = pmbus_read_byte_data(client, page,
+>  				    pmbus_fan_config_registers[id]);
+>  	if (from < 0)
+> @@ -278,11 +279,15 @@ int pmbus_update_fan(struct i2c_client *client, int page, int id,
+>  		rv = pmbus_write_byte_data(client, page,
+>  					   pmbus_fan_config_registers[id], to);
+>  		if (rv < 0)
+> -			return rv;
+> +			goto out;
+>  	}
+>  
+> -	return _pmbus_write_word_data(client, page,
+> -				      pmbus_fan_command_registers[id], command);
+> +	rv = _pmbus_write_word_data(client, page,
+> +				    pmbus_fan_command_registers[id], command);
+> +
+> +out:
+> +	mutex_lock(&data->update_lock);
 
+Should be mutex_unlock(), meaning you have not tested this ;-).
 
-Cheers,
-Ashok
+Either case, I think this is unnecessary. The function is (or should be)
+always called with the lock already taken (ie with pmbus_set_sensor()
+in the call path). If not, we would need a locked and an unlocked version
+of this function to avoid lock recursion.
+
+Thanks,
+Guenter
+
+> +	return rv;
+>  }
+>  EXPORT_SYMBOL_GPL(pmbus_update_fan);
+>  
+> -- 
+> 2.20.1
+> 
