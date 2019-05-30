@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAEAB2EC93
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:23:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D7B22F2F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:25:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732931AbfE3DWt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:22:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45024 "EHLO mail.kernel.org"
+        id S1730248AbfE3EZG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:25:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730915AbfE3DRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:17:06 -0400
+        id S1729984AbfE3DOr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:14:47 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83BB424667;
-        Thu, 30 May 2019 03:17:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A31F024559;
+        Thu, 30 May 2019 03:14:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186225;
-        bh=IszB0OOQeLjmgoIzz1bL/59sa6EgoYvgOFPYwjoubSg=;
+        s=default; t=1559186086;
+        bh=wu2UiETOHpDMk85zi6HmzdGCjZjRP7IcwSTkCaWKgdI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Iq95Njrullp0gRFwafxRL+cuQRoK8jlytBpueQiw9cn4Ijn2+kLTlLOsQbqo+l8th
-         Jc+ouKU/MMsJvrjAkPxBeiHMiHcLow8qDhLNxnvaOZuzWBUlomxb2WN9XUIEskH6Yp
-         sCEQr9bNJ/S5GYucPzUkCuUL0/tjkdzH57sXpAzY=
+        b=lNrA6+RjuseYm6PubStO10htadKioNOWqR3sC76NkCXLBM2uDhnwdPnvGjGRqkOUF
+         k67Pb3wLTvuMlyMadwmlORocNNjJPDBhQgRkBm2bmLYRpL36ZDmSELcQU65Qf9eYxZ
+         utzAqfHCrnpbd+6qwJAdqb6y5Kmj8D9P9eWYlQf8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 121/276] media: coda: clear error return value before picture run
+        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-pm@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 206/346] cpufreq: ppc_cbe: fix possible object reference leak
 Date:   Wed, 29 May 2019 20:04:39 -0700
-Message-Id: <20190530030533.435208596@linuxfoundation.org>
+Message-Id: <20190530030551.578361464@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,35 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit bbeefa7357a648afe70e7183914c87c3878d528d ]
+[ Upstream commit 233298032803f2802fe99892d0de4ab653bfece4 ]
 
-The error return value is not written by some firmware codecs, such as
-MPEG-2 decode on CodaHx4. Clear the error return value before starting
-the picture run to avoid misinterpreting unrelated values returned by
-sequence initialization as error return value.
+The call to of_get_cpu_node returns a node pointer with refcount
+incremented thus it must be explicitly decremented after the last
+usage.
 
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Detected by coccinelle with the following warnings:
+./drivers/cpufreq/ppc_cbe_cpufreq.c:89:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 76, but without a corresponding object release within this function.
+./drivers/cpufreq/ppc_cbe_cpufreq.c:89:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 76, but without a corresponding object release within this function.
+
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-pm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/coda/coda-bit.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/cpufreq/ppc_cbe_cpufreq.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/platform/coda/coda-bit.c b/drivers/media/platform/coda/coda-bit.c
-index d20d3df5778bc..a3cfefdbee127 100644
---- a/drivers/media/platform/coda/coda-bit.c
-+++ b/drivers/media/platform/coda/coda-bit.c
-@@ -1999,6 +1999,9 @@ static int coda_prepare_decode(struct coda_ctx *ctx)
- 	/* Clear decode success flag */
- 	coda_write(dev, 0, CODA_RET_DEC_PIC_SUCCESS);
+diff --git a/drivers/cpufreq/ppc_cbe_cpufreq.c b/drivers/cpufreq/ppc_cbe_cpufreq.c
+index 41a0f0be3f9ff..8414c3a4ea08c 100644
+--- a/drivers/cpufreq/ppc_cbe_cpufreq.c
++++ b/drivers/cpufreq/ppc_cbe_cpufreq.c
+@@ -86,6 +86,7 @@ static int cbe_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 	if (!cbe_get_cpu_pmd_regs(policy->cpu) ||
+ 	    !cbe_get_cpu_mic_tm_regs(policy->cpu)) {
+ 		pr_info("invalid CBE regs pointers for cpufreq\n");
++		of_node_put(cpu);
+ 		return -EINVAL;
+ 	}
  
-+	/* Clear error return value */
-+	coda_write(dev, 0, CODA_RET_DEC_PIC_ERR_MB);
-+
- 	trace_coda_dec_pic_run(ctx, meta);
- 
- 	coda_command_async(ctx, CODA_COMMAND_PIC_RUN);
 -- 
 2.20.1
 
