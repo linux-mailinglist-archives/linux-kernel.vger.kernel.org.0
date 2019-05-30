@@ -2,81 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D25A72F7AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 09:02:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C362F2F7B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 09:02:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbfE3HBk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 03:01:40 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:40063 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725862AbfE3HBj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 03:01:39 -0400
-Received: by mail-vs1-f66.google.com with SMTP id c24so3723084vsp.7
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 00:01:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Q1AVZODHTXqoipQTcM+k2pyJLkPC3ogLcgg1avCL8ws=;
-        b=uBMZGMO+qZsoCeRw3kwv3k0YCQqz0heCVI7dQyQhnaQFQ5ZilokWnv7NVtCi1n3603
-         KCttYxV550rM84xbifejh3+nH1PU5HGaKhHDfo3cCBBpAgZFQ2z9OjbrTQlZ10kBqCVx
-         O3tSin/t98cyBT9WfRD0LS94HiP9OmZtTWp96r2PF7NSi/6sPt7aIH8LifQyHh2w31xY
-         r3BGguEr91cNp35qZY4p3JjNPrz/ikziz3UjVG1t+YOTJvoTb4jE9WuAewN8N3mzn5du
-         ViEJY/Xke/XpBKvX9oFQN+iNAZtiUawVNxC14cY8LzqVWhbOPpV233Liw+XKTdMG8Wvk
-         GHIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Q1AVZODHTXqoipQTcM+k2pyJLkPC3ogLcgg1avCL8ws=;
-        b=PfybBJHCFGMfXmRVu8trN/5UZwW3sBlCpFM45PQP755mfYlFwlaT5yjA2yQXf6CGPH
-         BLQockDTHeqIKNlJ+5rsz2Pbs0XPVdZ2n4OyFyVHPaYDyKV4Ju0nBRgrKEquaZxCLOug
-         LVgrG4ATn4ovjHI7pJwCQ6HcjE12yP9ZWFpjPoh3l9Yn15vCXMphPobOvB2vns//w+4x
-         rg1v5KMmz+28jhjMC7cUFljLiSlKKc1a6Ms/iMMZ/PAg03eWs6MPlTz2Y3i/MJXRrOod
-         oObAsFYDrUUCT7TjvvTVCavSefxL9svWFc3g4BVZ1gt1oXvQMCbdClGyk8zoZ+POwXlL
-         4BxQ==
-X-Gm-Message-State: APjAAAXCAhL4Xe1xxY7tqXvfvgLzVkT8oe//C5qkzbiTC9Gq3WfKUcNP
-        gsE5/MGtTtffl9x/sz9gr8EahKiqt80lA0WxTo4=
-X-Google-Smtp-Source: APXvYqyDrKD/2h1wpy+U/GzxKvdJhWnVi3tIS5/8fKwMsqErxVDkOlmuINTDW+gtqY3qjgGWsBUMQTbVNCXJLkZZejs=
-X-Received: by 2002:a67:f34d:: with SMTP id p13mr1054255vsm.95.1559199698948;
- Thu, 30 May 2019 00:01:38 -0700 (PDT)
+        id S1727720AbfE3HCf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 03:02:35 -0400
+Received: from muru.com ([72.249.23.125]:51880 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725862AbfE3HCe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 03:02:34 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 7128D803A;
+        Thu, 30 May 2019 07:02:53 +0000 (UTC)
+Date:   Thu, 30 May 2019 00:02:30 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc:     Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        dri-devel@lists.freedesktop.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com,
+        Keerthy <j-keerthy@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>
+Subject: Re: [PATCHv6 0/4] omapdrm: DSI command mode panel support
+Message-ID: <20190530070230.GR5447@atomide.com>
+References: <20190523200756.25314-1-sebastian.reichel@collabora.com>
+ <60c45d23-de2f-d94a-c3d7-146a2bee538f@ti.com>
+ <20190527112122.GJ5447@atomide.com>
+ <e507c415-38de-86fe-9265-4b0aed0d7224@ti.com>
+ <20190528093952.GM5447@atomide.com>
+ <14c6c702-844b-756d-2d97-44e8f5a169df@ti.com>
+ <20190528101847.GN5447@atomide.com>
+ <ac487765-01a3-2c82-d86e-db00451563a9@ti.com>
+ <20190529081038.GP5447@atomide.com>
+ <20190530054640.GQ5447@atomide.com>
 MIME-Version: 1.0
-References: <1559133448-31779-1-git-send-email-dianzhangchen0@gmail.com>
- <20190529162532.GG18589@dhcp22.suse.cz> <CAFbcbMDJB0uNjTa9xwT9npmTdqMJ1Hez3CyeOCjjrLF2W0Wprw@mail.gmail.com>
- <20190529174931.GH18589@dhcp22.suse.cz> <CAFbcbMA6XjZqrgHmG70Vm_a34Rn4tKqoMgQkRBXES2r3+ymYwg@mail.gmail.com>
- <20190530062418.GB6703@dhcp22.suse.cz>
-In-Reply-To: <20190530062418.GB6703@dhcp22.suse.cz>
-From:   Dianzhang Chen <dianzhangchen0@gmail.com>
-Date:   Thu, 30 May 2019 15:01:26 +0800
-Message-ID: <CAFbcbMA4UKErsTDp97QgYkqBXLiL_YbfSE4JM80NVDqpHQgTkQ@mail.gmail.com>
-Subject: Re: [PATCH] mm/slab_common.c: fix possible spectre-v1 in kmalloc_slab()
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     cl@linux.com, penberg@kernel.org, rientjes@google.com,
-        iamjoonsoo.kim@lge.com, akpm@linux-foundation.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190530054640.GQ5447@atomide.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 2:24 PM Michal Hocko <mhocko@kernel.org> wrote:
-> I understand the general mechanism of spectre v1. What I was asking for
-> is an example of where userspace directly controls the allocation size
-> as this is usually bounded to an in kernel object size. I can see how
-> and N * sizeof(object) where N is controlled by the userspace could be
-> the target. But calling that out explicitly would be appreciated.
+* Tony Lindgren <tony@atomide.com> [190530 05:47]:
+> * Tony Lindgren <tony@atomide.com> [190529 08:11]:
+> > * Tomi Valkeinen <tomi.valkeinen@ti.com> [190529 07:06]:
+> > > On 28/05/2019 13:18, Tony Lindgren wrote:
+> > > 
+> > > > > My board is x15 rev A3, attached to AM5 EVM. I've also attached my kernel
+> > > > > config.
+> > > > 
+> > > > Strange that this is not affecting other x15? I think timer12 would
+> > > > be blocked on HS devices though?
+> > > 
+> > > Seems that the kernel config affects. omap2plus_defconfig boots ok.
+> > 
+> > OK, this line in your oops:
+> > 
+> > Unable to handle kernel paging request at virtual address 5a5a5a5a
+> > 
+> > Probably means we hit some slab poison with DEBUG_SLAB set.
+> > Looks like your config boots fine with DEBUG_SLAB disabled
+> > for me.
+> > 
+> > As this only happens for timer12, I wonder if we're again
+> > hitting some uncompress issue with corrupted dtb. Changing
+> > u-boot ftdaddr higher up might possibly make it go away.
+> > Or else there's a bug elsewhere :)
+> 
+> Oh but CM_WKUPAON_TIMER12_CLKCTRL has no CLKSEL option unlike
+> CM_WKUPAON_TIMER1_CLKCTRL. Below is one part of the fix, but
+> it seems like we're missing handling somewhere as trying to
+> get a non-existing clock should just produce -ENODEV type error.
+> 
+> And the clksel should be just handled with assigned-clocks
+> in general, but I think we still need it there until we
+> have drivers/clocksource/ timer drivers updated to boot
+> using early_platform_device.
 
-In the syscall call poll, the user can control the `nfds`,
-when call the function `do_sys_poll` it can pass the nfds to function
-`do_sys_poll`, and pass to variable `len`,
-although there exit compare instruction llike `len = min_t(unsigned
-int, nfds, N_STACK_PPS)`, `len = min(todo, POLLFD_PER_PAGE);`,
-but it can also bypass by speculation, as the speculation windows are large,
-and in the next `size = sizeof(struct poll_list) + sizeof(struct pollfd) * len`,
-which can indirect control the size.
+OK found it, we have the clkctrl clock potentially return
+uninitialized data. I posted two fixes for the issue:
 
+[PATCH] clk: ti: clkctrl: Fix returning uninitialized data
+[PATCH] ARM: dts: Drop bogus CLKSEL for timer12 on dra7
 
-> Please mention that in the changelog as well.
-ok, thanks for suggestion.
+Regards,
+
+Tony
