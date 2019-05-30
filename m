@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 048702EF41
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:54:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B48A2F219
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:18:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387833AbfE3DyM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:54:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55080 "EHLO mail.kernel.org"
+        id S1730695AbfE3ESc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:18:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731883AbfE3DTY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:19:24 -0400
+        id S1730336AbfE3DPc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:32 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65B9B247F7;
-        Thu, 30 May 2019 03:19:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35E7E24547;
+        Thu, 30 May 2019 03:15:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186364;
-        bh=CLNvXd+bHDw5o9XKvwpl1iSa3ZtiTufxn3+Q/WLnUZE=;
+        s=default; t=1559186131;
+        bh=Y3eZz0Mm8BdAAV6CkfQUlxz2nBO3lsDVEhIClk1Z1yc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H0WCMu3YJguVXsP+oJyGEWHuMsUvLbXbJxT0pAhPsiznS87sRiiJNFjoEtRzpRSKd
-         81gv44otu+uBltMAzRiCr4ayRcB6dgSzFsZQfhqBfsgLBaKCnp66YUS0LUErcFtZSD
-         93+VfPfG5k5FLS7Vkm6hOjmWQF6JEV3dwqBSTsYw=
+        b=PyK+ExBvsFclWbqKNJ8cuss/IeqCGJGN5YgCZ6RStL9CSbjHlxTmGmu7TII9ZxT7y
+         +0Fap8ikzBIL5e5OxX1iFQZVfmZXo8lo3RBmy2v1qgxh63UXF7TiXu6+0FAyzxLftA
+         znRiLBOlgGjG1tzI83bccC20UwigYeOR4KiG5UOo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kefeng Wang <wangkefeng.wang@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 112/193] hwmon: (smsc47m1) Use request_muxed_region for Super-IO accesses
+Subject: [PATCH 5.0 293/346] media: staging/intel-ipu3: mark PM function as __maybe_unused
 Date:   Wed, 29 May 2019 20:06:06 -0700
-Message-Id: <20190530030504.389851432@linuxfoundation.org>
+Message-Id: <20190530030555.706499889@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,91 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d6410408ad2a798c4cc685252c1baa713be0ad69 ]
+[ Upstream commit 948dff7cfa1d7653e7828e7b905863bd24ca5c02 ]
 
-Super-IO accesses may fail on a system with no or unmapped LPC bus.
+The imgu_rpm_dummy_cb() looks like an API misuse that is explained
+in the comment above it. Aside from that, it also causes a warning
+when power management support is disabled:
 
-Also, other drivers may attempt to access the LPC bus at the same time,
-resulting in undefined behavior.
+drivers/staging/media/ipu3/ipu3.c:794:12: error: 'imgu_rpm_dummy_cb' defined but not used [-Werror=unused-function]
 
-Use request_muxed_region() to ensure that IO access on the requested
-address space is supported, and to ensure that access by multiple drivers
-is synchronized.
+The warning is at least easy to fix by marking the function as
+__maybe_unused.
 
-Fixes: 8d5d45fb1468 ("I2C: Move hwmon drivers (2/3)")
-Reported-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-Reported-by: John Garry <john.garry@huawei.com>
-Cc: John Garry <john.garry@huawei.com>
-Acked-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Fixes: 7fc7af649ca7 ("media: staging/intel-ipu3: Add imgu top level pci device driver")
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/smsc47m1.c | 28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
+ drivers/staging/media/ipu3/ipu3.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hwmon/smsc47m1.c b/drivers/hwmon/smsc47m1.c
-index c7b6a425e2c02..5eeac9853d0ae 100644
---- a/drivers/hwmon/smsc47m1.c
-+++ b/drivers/hwmon/smsc47m1.c
-@@ -73,16 +73,21 @@ superio_inb(int reg)
- /* logical device for fans is 0x0A */
- #define superio_select() superio_outb(0x07, 0x0A)
- 
--static inline void
-+static inline int
- superio_enter(void)
+diff --git a/drivers/staging/media/ipu3/ipu3.c b/drivers/staging/media/ipu3/ipu3.c
+index d521b3afb8b1a..0b161888ec282 100644
+--- a/drivers/staging/media/ipu3/ipu3.c
++++ b/drivers/staging/media/ipu3/ipu3.c
+@@ -792,7 +792,7 @@ static int __maybe_unused imgu_resume(struct device *dev)
+  * PCI rpm framework checks the existence of driver rpm callbacks.
+  * Place a dummy callback here to avoid rpm going into error state.
+  */
+-static int imgu_rpm_dummy_cb(struct device *dev)
++static __maybe_unused int imgu_rpm_dummy_cb(struct device *dev)
  {
-+	if (!request_muxed_region(REG, 2, DRVNAME))
-+		return -EBUSY;
-+
- 	outb(0x55, REG);
-+	return 0;
+ 	return 0;
  }
- 
- static inline void
- superio_exit(void)
- {
- 	outb(0xAA, REG);
-+	release_region(REG, 2);
- }
- 
- #define SUPERIO_REG_ACT		0x30
-@@ -531,8 +536,12 @@ static int __init smsc47m1_find(struct smsc47m1_sio_data *sio_data)
- {
- 	u8 val;
- 	unsigned short addr;
-+	int err;
-+
-+	err = superio_enter();
-+	if (err)
-+		return err;
- 
--	superio_enter();
- 	val = force_id ? force_id : superio_inb(SUPERIO_REG_DEVID);
- 
- 	/*
-@@ -608,13 +617,14 @@ static int __init smsc47m1_find(struct smsc47m1_sio_data *sio_data)
- static void smsc47m1_restore(const struct smsc47m1_sio_data *sio_data)
- {
- 	if ((sio_data->activate & 0x01) == 0) {
--		superio_enter();
--		superio_select();
--
--		pr_info("Disabling device\n");
--		superio_outb(SUPERIO_REG_ACT, sio_data->activate);
--
--		superio_exit();
-+		if (!superio_enter()) {
-+			superio_select();
-+			pr_info("Disabling device\n");
-+			superio_outb(SUPERIO_REG_ACT, sio_data->activate);
-+			superio_exit();
-+		} else {
-+			pr_warn("Failed to disable device\n");
-+		}
- 	}
- }
- 
 -- 
 2.20.1
 
