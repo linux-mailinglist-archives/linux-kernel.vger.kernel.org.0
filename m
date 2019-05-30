@@ -2,87 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 666CD3047F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 00:02:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ED5830491
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 00:04:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726842AbfE3WCR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 18:02:17 -0400
-Received: from ozlabs.org ([203.11.71.1]:47639 "EHLO ozlabs.org"
+        id S1727083AbfE3WD4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 18:03:56 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43080 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726576AbfE3WCR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 18:02:17 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1726386AbfE3WDz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 18:03:55 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45FM4l06hHz9s3l;
-        Fri, 31 May 2019 08:02:14 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1559253735;
-        bh=kJLoTCjBs/nwP+hdiL4Z0EGzrpWOykBaAOwDzaoToEs=;
-        h=Date:From:To:Cc:Subject:From;
-        b=XabQyxjyYhU4FPhHRp526ehMPht8l4ZwJGXrsUAGlvjAp+KmYHLvQEG9+iuMYhkas
-         3lpd2flEOLEW6A5i4E3JLAn7fTi1GKzTS6crd6vv0QKZg5P1vEl7dRcRvZ/w0npjOj
-         2T31FS2Q2y/v6Lg5rNuphnJpyCtwk0WhQLBnMcQOQLDE72aERL0oyWBvM/JitwEqbw
-         vRaEfLV3OqTdYhFD5VhAZCRleQFLfuH8yIa+dU7eUQlRDh3uqUqZhOSIu/lC7m9R39
-         C0B3wtIMVXES6e8hQQqk4I006wdktiasUkUPGN5ozsI8cvvy2KX77/DSVbtsJMCK5H
-         zqm9tFWAS8KWQ==
-Date:   Fri, 31 May 2019 08:02:12 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Zhu Yingjiang <yingjiang.zhu@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: linux-next: Fixes tag needs some work in the sound-asoc tree
-Message-ID: <20190531080212.234f5149@canb.auug.org.au>
+        by mx1.redhat.com (Postfix) with ESMTPS id 5DFC9307D910;
+        Thu, 30 May 2019 22:03:50 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 21C7960C5F;
+        Thu, 30 May 2019 22:03:48 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20190530181248.GC70051@gmail.com>
+References: <20190530181248.GC70051@gmail.com> <155923711088.949.14909672457214372214.stgit@warthog.procyon.org.uk>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     dhowells@redhat.com, keyrings@vger.kernel.org,
+        Mat Martineau <mathew.j.martineau@linux.intel.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/10] keys: Miscellany [ver #2]
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/xwFiduZFtHNxIq6+IWrFOX8"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <24107.1559253828.1@warthog.procyon.org.uk>
+Date:   Thu, 30 May 2019 23:03:48 +0100
+Message-ID: <24108.1559253828@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Thu, 30 May 2019 22:03:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/xwFiduZFtHNxIq6+IWrFOX8
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Eric Biggers <ebiggers@kernel.org> wrote:
 
-Hi all,
+> syzkaller still manages to crash something in the keys subsystem really
+> quickly when I run it on that branch (commit 35036b7e765b6):
 
-In commit
+I've pushed a new version that should fix that, thanks.
 
-  970c43d17835 ("ASoC: SOF: Intel: hda: use the defined ppcap functions")
-
-Fixes tag
-
-  Fixes: 8a300c8fb17 ("ASoC: SOF: Intel: Add HDA controller for Intel DSP")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/xwFiduZFtHNxIq6+IWrFOX8
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzwUuQACgkQAVBC80lX
-0GzVRwgAmyt/mf9wP3UCFmKzhD6E1U3i67ofU3ZBR/QMjdZhjrbwy7cA5uaiSIjZ
-u4eQj0C0uzwYfHk7wBhksk4u1Z5Lr4Gvg9lWxd1Q7KR4GUJd5aQoZEeID9lLQ6vI
-Xv20PUr7KhpiCfT5oWfdxx/zQfGUPBcXjJv93ZCq/UifX3TNuK0ALXcT9HwsXr1N
-bRYz85g03PTDtT9hfUQXzQW6To8lZavwvhO3lLPlcYkVereeVEYz40VU6ojlV7zo
-Mp6zs6p/EmTWtNQv0mspARQwY6Td0ehZgam1lxJOOhM4YAqqb25vb3ovcI/deK2O
-fiQKx9Y+snzykRoGCUAzvzxVkfMhFw==
-=hKvK
------END PGP SIGNATURE-----
-
---Sig_/xwFiduZFtHNxIq6+IWrFOX8--
+David
