@@ -2,147 +2,293 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95F23304FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 00:52:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0FBD30509
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 00:56:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726587AbfE3Wwu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 18:52:50 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:37693 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726328AbfE3Wwu (ORCPT
+        id S1726566AbfE3W4v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 18:56:51 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:42812 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726100AbfE3W4v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 18:52:50 -0400
-Received: by mail-qt1-f195.google.com with SMTP id y57so9151060qtk.4
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 15:52:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=t67ZC4MNc2SNAttzYwTDhyatXWg3h6kEvUy6EU0k9QU=;
-        b=nzdvPg9oLVcGDMgHAJSgtonZWBv7efleZ8z+KHHmeRNxZ3vNlXj3Ww8xOLZfT1kHon
-         P1WVwCRf+/78B3f5ZIaC/AxWdDxnO6na0rJVm7rL3m+yIUIziY+v947zvDBVt1LYtB1U
-         a02fzKtkJ3dspglfbSG5e22Jod7psn+/W6qBiyt1tG+KlVVSty3jHzsNtCG1kd5eFgQu
-         VuyPRsmw8aC09Fokhj020v2CRXwyMybSxi2A4v0QOCo67ZccZmfal8zs3RMJvKajBUlg
-         zCkuQgaZwJhN0zBaJV4u8I7rntcgyhMkddjsVSloahkAlB+b5AxaD+SkgvQUct3uloFh
-         fURA==
-X-Gm-Message-State: APjAAAUu2T4UAwvCYmnX4jyuRjwdlPqKR13F2VRnZnhsSGBwE0m1W5ts
-        l2IGw27QXLF7G7iPARc6sLfouQ==
-X-Google-Smtp-Source: APXvYqwTE8uNShrRUaGGlmcc2h+GxOEcZ6AH8JazaRG/qhRpJu7znm1zUJrRhfEE9Idohkf2/B2tSw==
-X-Received: by 2002:ad4:5146:: with SMTP id g6mr5719624qvq.136.1559256769266;
-        Thu, 30 May 2019 15:52:49 -0700 (PDT)
-Received: from redhat.com (pool-100-0-197-103.bstnma.fios.verizon.net. [100.0.197.103])
-        by smtp.gmail.com with ESMTPSA id j33sm2606122qtc.10.2019.05.30.15.52.47
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 30 May 2019 15:52:48 -0700 (PDT)
-Date:   Thu, 30 May 2019 18:52:45 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     nitesh@redhat.com, kvm@vger.kernel.org, david@redhat.com,
-        dave.hansen@intel.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, yang.zhang.wz@gmail.com, pagupta@redhat.com,
-        riel@surriel.com, konrad.wilk@oracle.com, lcapitulino@redhat.com,
-        wei.w.wang@intel.com, aarcange@redhat.com, pbonzini@redhat.com,
-        dan.j.williams@intel.com, alexander.h.duyck@linux.intel.com
-Subject: Re: [RFC PATCH 00/11] mm / virtio: Provide support for paravirtual
- waste page treatment
-Message-ID: <20190530185143-mutt-send-email-mst@kernel.org>
-References: <20190530215223.13974.22445.stgit@localhost.localdomain>
+        Thu, 30 May 2019 18:56:51 -0400
+Received: from pps.filterd (m0001255.ppops.net [127.0.0.1])
+        by mx0b-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4UMqEc3026649;
+        Thu, 30 May 2019 15:56:00 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=g2VAEJYlSGFykMmStR3pOLvCKwNbg8GPznfQ02stqXI=;
+ b=e1FmwpqFEKUbZGleBjg3rpucU6bJZp7407u6WAwobyAGqBtQIKBPy4YOrAsLJ4cF5AfH
+ AC70gvM79xSFl9gneUO+oAbTfOpVF/Gk4jIfb7osGm4OxzTOM/eD56t2bFHrfr2+JzPW
+ XcTMbx7pkLQRvzwJKqNoK2K+UGza/WU0mlE= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0b-00082601.pphosted.com with ESMTP id 2stj9yhbcf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Thu, 30 May 2019 15:56:00 -0700
+Received: from mmullins-1.thefacebook.com (2620:10d:c081:10::13) by
+ mail.thefacebook.com (2620:10d:c081:35::130) with Microsoft SMTP Server id
+ 15.1.1713.5; Thu, 30 May 2019 15:55:58 -0700
+From:   Matt Mullins <mmullins@fb.com>
+To:     <hall@fb.com>, <mmullins@fb.com>, <ast@kernel.org>,
+        <bpf@vger.kernel.org>, <netdev@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, "Yonghong Song" <yhs@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: [PATCH bpf] bpf: preallocate a perf_sample_data per event fd
+Date:   Thu, 30 May 2019 15:55:48 -0700
+Message-ID: <20190530225549.23014-1-mmullins@fb.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190530215223.13974.22445.stgit@localhost.localdomain>
+Content-Type: text/plain
+X-Originating-IP: [2620:10d:c081:10::13]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-30_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905300160
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 02:53:34PM -0700, Alexander Duyck wrote:
-> This series provides an asynchronous means of hinting to a hypervisor
-> that a guest page is no longer in use and can have the data associated
-> with it dropped. To do this I have implemented functionality that allows
-> for what I am referring to as "waste page treatment".
-> 
-> I have based many of the terms and functionality off of waste water
-> treatment, the idea for the similarity occured to me after I had reached
-> the point of referring to the hints as "bubbles", as the hints used the
-> same approach as the balloon functionality but would disappear if they
-> were touched, as a result I started to think of the virtio device as an
-> aerator. The general idea with all of this is that the guest should be
-> treating the unused pages so that when they end up heading "downstream"
-> to either another guest, or back at the host they will not need to be
-> written to swap.
+It is possible that a BPF program can be called while another BPF
+program is executing bpf_perf_event_output.  This has been observed with
+I/O completion occurring as a result of an interrupt:
 
-A lovely analogy.
+	bpf_prog_247fd1341cddaea4_trace_req_end+0x8d7/0x1000
+	? trace_call_bpf+0x82/0x100
+	? sch_direct_xmit+0xe2/0x230
+	? blk_mq_end_request+0x1/0x100
+	? blk_mq_end_request+0x5/0x100
+	? kprobe_perf_func+0x19b/0x240
+	? __qdisc_run+0x86/0x520
+	? blk_mq_end_request+0x1/0x100
+	? blk_mq_end_request+0x5/0x100
+	? kprobe_ftrace_handler+0x90/0xf0
+	? ftrace_ops_assist_func+0x6e/0xe0
+	? ip6_input_finish+0xbf/0x460
+	? 0xffffffffa01e80bf
+	? nbd_dbg_flags_show+0xc0/0xc0 [nbd]
+	? blkdev_issue_zeroout+0x200/0x200
+	? blk_mq_end_request+0x1/0x100
+	? blk_mq_end_request+0x5/0x100
+	? flush_smp_call_function_queue+0x6c/0xe0
+	? smp_call_function_single_interrupt+0x32/0xc0
+	? call_function_single_interrupt+0xf/0x20
+	? call_function_single_interrupt+0xa/0x20
+	? swiotlb_map_page+0x140/0x140
+	? refcount_sub_and_test+0x1a/0x50
+	? tcp_wfree+0x20/0xf0
+	? skb_release_head_state+0x62/0xc0
+	? skb_release_all+0xe/0x30
+	? napi_consume_skb+0xb5/0x100
+	? mlx5e_poll_tx_cq+0x1df/0x4e0
+	? mlx5e_poll_tx_cq+0x38c/0x4e0
+	? mlx5e_napi_poll+0x58/0xc30
+	? mlx5e_napi_poll+0x232/0xc30
+	? net_rx_action+0x128/0x340
+	? __do_softirq+0xd4/0x2ad
+	? irq_exit+0xa5/0xb0
+	? do_IRQ+0x7d/0xc0
+	? common_interrupt+0xf/0xf
+	</IRQ>
+	? __rb_free_aux+0xf0/0xf0
+	? perf_output_sample+0x28/0x7b0
+	? perf_prepare_sample+0x54/0x4a0
+	? perf_event_output+0x43/0x60
+	? bpf_perf_event_output_raw_tp+0x15f/0x180
+	? blk_mq_start_request+0x1/0x120
+	? bpf_prog_411a64a706fc6044_should_trace+0xad4/0x1000
+	? bpf_trace_run3+0x2c/0x80
+	? nbd_send_cmd+0x4c2/0x690 [nbd]
 
-> So for a bit of background for the treatment process, it is based on a
-> sequencing batch reactor (SBR)[1]. The treatment process itself has five
-> stages. The first stage is the fill, with this we take the raw pages and
-> add them to the reactor. The second stage is react, in this stage we hand
-> the pages off to the Virtio Balloon driver to have hints attached to them
-> and for those hints to be sent to the hypervisor. The third stage is
-> settle, in this stage we are waiting for the hypervisor to process the
-> pages, and we should receive an interrupt when it is completed. The fourth
-> stage is to decant, or drain the reactor of pages. Finally we have the
-> idle stage which we will go into if the reference count for the reactor
-> gets down to 0 after a drain, or if a fill operation fails to obtain any
-> pages and the reference count has hit 0. Otherwise we return to the first
-> state and start the cycle over again.
+This also cannot be alleviated by further splitting the per-cpu
+perf_sample_data structs (as in commit 283ca526a9bd ("bpf: fix
+corruption on concurrent perf_event_output calls")), as a raw_tp could
+be attached to the block:block_rq_complete tracepoint and execute during
+another raw_tp.  Instead, keep a pre-allocated perf_sample_data
+structure per perf_event_array element and fail a bpf_perf_event_output
+if that element is concurrently being used.
 
-will review the patchset closely shortly.
+Fixes: 20b9d7ac4852 ("bpf: avoid excessive stack usage for perf_sample_data")
+Signed-off-by: Matt Mullins <mmullins@fb.com>
+---
+It felt a bit overkill, but I had to split bpf_event_entry into its own
+header file to break an include cycle from perf_event.h -> cgroup.h ->
+cgroup-defs.h -> bpf-cgroup.h -> bpf.h -> (potentially) perf_event.h.
 
-> This patch set is still far more intrusive then I would really like for
-> what it has to do. Currently I am splitting the nr_free_pages into two
-> values and having to add a pointer and an index to track where we area in
-> the treatment process for a given free_area. I'm also not sure I have
-> covered all possible corner cases where pages can get into the free_area
-> or move from one migratetype to another.
-> 
-> Also I am still leaving a number of things hard-coded such as limiting the
-> lowest order processed to PAGEBLOCK_ORDER, and have left it up to the
-> guest to determine what size of reactor it wants to allocate to process
-> the hints.
-> 
-> Another consideration I am still debating is if I really want to process
-> the aerator_cycle() function in interrupt context or if I should have it
-> running in a thread somewhere else.
-> 
-> [1]: https://en.wikipedia.org/wiki/Sequencing_batch_reactor
-> 
-> ---
-> 
-> Alexander Duyck (11):
->       mm: Move MAX_ORDER definition closer to pageblock_order
->       mm: Adjust shuffle code to allow for future coalescing
->       mm: Add support for Treated Buddy pages
->       mm: Split nr_free into nr_free_raw and nr_free_treated
->       mm: Propogate Treated bit when splitting
->       mm: Add membrane to free area to use as divider between treated and raw pages
->       mm: Add support for acquiring first free "raw" or "untreated" page in zone
->       mm: Add support for creating memory aeration
->       mm: Count isolated pages as "treated"
->       virtio-balloon: Add support for aerating memory via bubble hinting
->       mm: Add free page notification hook
-> 
-> 
->  arch/x86/include/asm/page.h         |   11 +
->  drivers/virtio/Kconfig              |    1 
->  drivers/virtio/virtio_balloon.c     |   89 ++++++++++
->  include/linux/gfp.h                 |   10 +
->  include/linux/memory_aeration.h     |   54 ++++++
->  include/linux/mmzone.h              |  100 +++++++++--
->  include/linux/page-flags.h          |   32 +++
->  include/linux/pageblock-flags.h     |    8 +
->  include/uapi/linux/virtio_balloon.h |    1 
->  mm/Kconfig                          |    5 +
->  mm/Makefile                         |    1 
->  mm/aeration.c                       |  324 +++++++++++++++++++++++++++++++++++
->  mm/compaction.c                     |    4 
->  mm/page_alloc.c                     |  220 ++++++++++++++++++++----
->  mm/shuffle.c                        |   24 ---
->  mm/shuffle.h                        |   35 ++++
->  mm/vmstat.c                         |    5 -
->  17 files changed, 838 insertions(+), 86 deletions(-)
->  create mode 100644 include/linux/memory_aeration.h
->  create mode 100644 mm/aeration.c
-> 
-> --
+ include/linux/bpf.h       |  7 -------
+ include/linux/bpf_event.h | 20 ++++++++++++++++++++
+ kernel/bpf/arraymap.c     |  2 ++
+ kernel/trace/bpf_trace.c  | 30 +++++++++++++++++-------------
+ 4 files changed, 39 insertions(+), 20 deletions(-)
+ create mode 100644 include/linux/bpf_event.h
+
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index 4fb3aa2dc975..13b253a36402 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -467,13 +467,6 @@ static inline bool bpf_map_flags_access_ok(u32 access_flags)
+ 	       (BPF_F_RDONLY_PROG | BPF_F_WRONLY_PROG);
+ }
+ 
+-struct bpf_event_entry {
+-	struct perf_event *event;
+-	struct file *perf_file;
+-	struct file *map_file;
+-	struct rcu_head rcu;
+-};
+-
+ bool bpf_prog_array_compatible(struct bpf_array *array, const struct bpf_prog *fp);
+ int bpf_prog_calc_tag(struct bpf_prog *fp);
+ 
+diff --git a/include/linux/bpf_event.h b/include/linux/bpf_event.h
+new file mode 100644
+index 000000000000..9f415990f921
+--- /dev/null
++++ b/include/linux/bpf_event.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef _LINUX_BPF_EVENT_H
++#define _LINUX_BPF_EVENT_H
++
++#include <linux/perf_event.h>
++#include <linux/types.h>
++
++struct file;
++
++struct bpf_event_entry {
++	struct perf_event *event;
++	struct file *perf_file;
++	struct file *map_file;
++	struct rcu_head rcu;
++	struct perf_sample_data sd;
++	atomic_t in_use;
++};
++
++#endif /* _LINUX_BPF_EVENT_H */
+diff --git a/kernel/bpf/arraymap.c b/kernel/bpf/arraymap.c
+index 584636c9e2eb..08e5e486d563 100644
+--- a/kernel/bpf/arraymap.c
++++ b/kernel/bpf/arraymap.c
+@@ -11,6 +11,7 @@
+  * General Public License for more details.
+  */
+ #include <linux/bpf.h>
++#include <linux/bpf_event.h>
+ #include <linux/btf.h>
+ #include <linux/err.h>
+ #include <linux/slab.h>
+@@ -659,6 +660,7 @@ static struct bpf_event_entry *bpf_event_entry_gen(struct file *perf_file,
+ 		ee->event = perf_file->private_data;
+ 		ee->perf_file = perf_file;
+ 		ee->map_file = map_file;
++		atomic_set(&ee->in_use, 0);
+ 	}
+ 
+ 	return ee;
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index f92d6ad5e080..a03e29957698 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -6,6 +6,7 @@
+ #include <linux/types.h>
+ #include <linux/slab.h>
+ #include <linux/bpf.h>
++#include <linux/bpf_event.h>
+ #include <linux/bpf_perf_event.h>
+ #include <linux/filter.h>
+ #include <linux/uaccess.h>
+@@ -410,17 +411,17 @@ static const struct bpf_func_proto bpf_perf_event_read_value_proto = {
+ 	.arg4_type	= ARG_CONST_SIZE,
+ };
+ 
+-static DEFINE_PER_CPU(struct perf_sample_data, bpf_trace_sd);
+-
+ static __always_inline u64
+ __bpf_perf_event_output(struct pt_regs *regs, struct bpf_map *map,
+-			u64 flags, struct perf_sample_data *sd)
++			u64 flags, struct perf_raw_record *raw)
+ {
+ 	struct bpf_array *array = container_of(map, struct bpf_array, map);
+ 	unsigned int cpu = smp_processor_id();
+ 	u64 index = flags & BPF_F_INDEX_MASK;
+ 	struct bpf_event_entry *ee;
+ 	struct perf_event *event;
++	struct perf_sample_data *sd;
++	u64 ret;
+ 
+ 	if (index == BPF_F_CURRENT_CPU)
+ 		index = cpu;
+@@ -439,13 +440,22 @@ __bpf_perf_event_output(struct pt_regs *regs, struct bpf_map *map,
+ 	if (unlikely(event->oncpu != cpu))
+ 		return -EOPNOTSUPP;
+ 
+-	return perf_event_output(event, sd, regs);
++	if (atomic_cmpxchg(&ee->in_use, 0, 1) != 0)
++		return -EBUSY;
++
++	sd = &ee->sd;
++	perf_sample_data_init(sd, 0, 0);
++	sd->raw = raw;
++
++	ret = perf_event_output(event, sd, regs);
++
++	atomic_set(&ee->in_use, 0);
++	return ret;
+ }
+ 
+ BPF_CALL_5(bpf_perf_event_output, struct pt_regs *, regs, struct bpf_map *, map,
+ 	   u64, flags, void *, data, u64, size)
+ {
+-	struct perf_sample_data *sd = this_cpu_ptr(&bpf_trace_sd);
+ 	struct perf_raw_record raw = {
+ 		.frag = {
+ 			.size = size,
+@@ -456,10 +466,8 @@ BPF_CALL_5(bpf_perf_event_output, struct pt_regs *, regs, struct bpf_map *, map,
+ 	if (unlikely(flags & ~(BPF_F_INDEX_MASK)))
+ 		return -EINVAL;
+ 
+-	perf_sample_data_init(sd, 0, 0);
+-	sd->raw = &raw;
+ 
+-	return __bpf_perf_event_output(regs, map, flags, sd);
++	return __bpf_perf_event_output(regs, map, flags, &raw);
+ }
+ 
+ static const struct bpf_func_proto bpf_perf_event_output_proto = {
+@@ -474,12 +482,10 @@ static const struct bpf_func_proto bpf_perf_event_output_proto = {
+ };
+ 
+ static DEFINE_PER_CPU(struct pt_regs, bpf_pt_regs);
+-static DEFINE_PER_CPU(struct perf_sample_data, bpf_misc_sd);
+ 
+ u64 bpf_event_output(struct bpf_map *map, u64 flags, void *meta, u64 meta_size,
+ 		     void *ctx, u64 ctx_size, bpf_ctx_copy_t ctx_copy)
+ {
+-	struct perf_sample_data *sd = this_cpu_ptr(&bpf_misc_sd);
+ 	struct pt_regs *regs = this_cpu_ptr(&bpf_pt_regs);
+ 	struct perf_raw_frag frag = {
+ 		.copy		= ctx_copy,
+@@ -497,10 +503,8 @@ u64 bpf_event_output(struct bpf_map *map, u64 flags, void *meta, u64 meta_size,
+ 	};
+ 
+ 	perf_fetch_caller_regs(regs);
+-	perf_sample_data_init(sd, 0, 0);
+-	sd->raw = &raw;
+ 
+-	return __bpf_perf_event_output(regs, map, flags, sd);
++	return __bpf_perf_event_output(regs, map, flags, &raw);
+ }
+ 
+ BPF_CALL_0(bpf_get_current_task)
+-- 
+2.17.1
+
