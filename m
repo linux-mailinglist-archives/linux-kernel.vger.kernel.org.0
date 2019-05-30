@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D4132ECF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:29:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C2262EF59
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:54:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388315AbfE3D3K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:29:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58858 "EHLO mail.kernel.org"
+        id S1732994AbfE3Dyt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:54:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732214AbfE3DUa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:20:30 -0400
+        id S1730507AbfE3DTR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:19:17 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7DE824935;
-        Thu, 30 May 2019 03:20:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DC2624858;
+        Thu, 30 May 2019 03:19:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186429;
-        bh=xRLPPDSOe5R0WdoMpGbvWI9zCEHuQCC+K78pPPWM44k=;
+        s=default; t=1559186356;
+        bh=rA9Hj3TBXRwB8sHqTiFbh7EgIX0uttYicRL5gPqMXVA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JrSQJo5skfXDWl+gB/xPl2Bm5YIVLWpvpJWBCT4eaFJSxdhW6hlPc89EtvtAhmjno
-         JrZHfmzy/2LZuVQ/hgFkQkSvAs7dqOsmr3tnNu29b0kTFy0FMEQLj7PX5Mm36jFwKV
-         L4kBm8gt79l941pvGfMUQPQq3OWideEijf5DUcaY=
+        b=UigX2tISzjOUG/4SW8gpfQLRpJ+mfbIaEmdJoyfc9qwB43IU5qwcEDjZL6X31TK0F
+         kwN+v9slj1JXe1pH1hnur6/wVWH43nHY6+0NkAwruD/DDUgy38mPZMCpZuVA/yf7Sa
+         YgCN6v1XXx3xRDGK7zHMMb8HOy0soSbzMlkUvYSM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Wang Nan <wangnan0@huawei.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.9 021/128] tools include: Adopt linux/bits.h
+        stable@vger.kernel.org, Roman Gushchin <guro@fb.com>,
+        Tejun Heo <tj@kernel.org>, kernel-team@fb.com,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 099/193] cgroup: protect cgroup->nr_(dying_)descendants by css_set_lock
 Date:   Wed, 29 May 2019 20:05:53 -0700
-Message-Id: <20190530030438.742658224@linuxfoundation.org>
+Message-Id: <20190530030502.750499610@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,101 +44,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+[ Upstream commit 4dcabece4c3a9f9522127be12cc12cc120399b2f ]
 
-commit ba4aa02b417f08a0bee5e7b8ed70cac788a7c854 upstream.
+The number of descendant cgroups and the number of dying
+descendant cgroups are currently synchronized using the cgroup_mutex.
 
-So that we reduce the difference of tools/include/linux/bitops.h to the
-original kernel file, include/linux/bitops.h, trying to remove the need
-to define BITS_PER_LONG, to avoid clashes with asm/bitsperlong.h.
+The number of descendant cgroups will be required by the cgroup v2
+freezer, which will use it to determine if a cgroup is frozen
+(depending on total number of descendants and number of frozen
+descendants). It's not always acceptable to grab the cgroup_mutex,
+especially from quite hot paths (e.g. exit()).
 
-And the things removed from tools/include/linux/bitops.h are really in
-linux/bits.h, so that we can have a copy and then
-tools/perf/check_headers.sh will tell us when new stuff gets added to
-linux/bits.h so that we can check if it is useful and if any adjustment
-needs to be done to the tools/{include,arch}/ copies.
+To avoid this, let's additionally synchronize these counters using
+the css_set_lock.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Sverdlin <alexander.sverdlin@nokia.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-y1sqyydvfzo0bjjoj4zsl562@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-[bwh: Backported to 4.9 as dependency of "x86/msr-index: Cleanup bit defines";
- adjusted context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+So, it's safe to read these counters with either cgroup_mutex or
+css_set_lock locked, and for changing both locks should be acquired.
+
+Signed-off-by: Roman Gushchin <guro@fb.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: kernel-team@fb.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/include/linux/bitops.h |    7 ++-----
- tools/include/linux/bits.h   |   26 ++++++++++++++++++++++++++
- tools/perf/check-headers.sh  |    1 +
- 3 files changed, 29 insertions(+), 5 deletions(-)
- create mode 100644 tools/include/linux/bits.h
+ include/linux/cgroup-defs.h | 5 +++++
+ kernel/cgroup/cgroup.c      | 6 ++++++
+ 2 files changed, 11 insertions(+)
 
---- a/tools/include/linux/bitops.h
-+++ b/tools/include/linux/bitops.h
-@@ -3,8 +3,6 @@
+diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+index 93a2469a9130c..eb396f71285f7 100644
+--- a/include/linux/cgroup-defs.h
++++ b/include/linux/cgroup-defs.h
+@@ -287,6 +287,11 @@ struct cgroup {
+ 	 * Dying cgroups are cgroups which were deleted by a user,
+ 	 * but are still existing because someone else is holding a reference.
+ 	 * max_descendants is a maximum allowed number of descent cgroups.
++	 *
++	 * nr_descendants and nr_dying_descendants are protected
++	 * by cgroup_mutex and css_set_lock. It's fine to read them holding
++	 * any of cgroup_mutex and css_set_lock; for writing both locks
++	 * should be held.
+ 	 */
+ 	int nr_descendants;
+ 	int nr_dying_descendants;
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index 694b1cc8d144e..d30a51da94e2f 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -4546,9 +4546,11 @@ static void css_release_work_fn(struct work_struct *work)
+ 		/* cgroup release path */
+ 		trace_cgroup_release(cgrp);
  
- #include <asm/types.h>
- #include <linux/kernel.h>
--#include <linux/compiler.h>
--
- #ifndef __WORDSIZE
- #define __WORDSIZE (__SIZEOF_LONG__ * 8)
- #endif
-@@ -12,10 +10,9 @@
- #ifndef BITS_PER_LONG
- # define BITS_PER_LONG __WORDSIZE
- #endif
-+#include <linux/bits.h>
-+#include <linux/compiler.h>
++		spin_lock_irq(&css_set_lock);
+ 		for (tcgrp = cgroup_parent(cgrp); tcgrp;
+ 		     tcgrp = cgroup_parent(tcgrp))
+ 			tcgrp->nr_dying_descendants--;
++		spin_unlock_irq(&css_set_lock);
  
--#define BIT_MASK(nr)		(1UL << ((nr) % BITS_PER_LONG))
--#define BIT_WORD(nr)		((nr) / BITS_PER_LONG)
--#define BITS_PER_BYTE		8
- #define BITS_TO_LONGS(nr)	DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(long))
- #define BITS_TO_U64(nr)		DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(u64))
- #define BITS_TO_U32(nr)		DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(u32))
---- /dev/null
-+++ b/tools/include/linux/bits.h
-@@ -0,0 +1,26 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __LINUX_BITS_H
-+#define __LINUX_BITS_H
-+#include <asm/bitsperlong.h>
-+
-+#define BIT(nr)			(1UL << (nr))
-+#define BIT_ULL(nr)		(1ULL << (nr))
-+#define BIT_MASK(nr)		(1UL << ((nr) % BITS_PER_LONG))
-+#define BIT_WORD(nr)		((nr) / BITS_PER_LONG)
-+#define BIT_ULL_MASK(nr)	(1ULL << ((nr) % BITS_PER_LONG_LONG))
-+#define BIT_ULL_WORD(nr)	((nr) / BITS_PER_LONG_LONG)
-+#define BITS_PER_BYTE		8
-+
-+/*
-+ * Create a contiguous bitmask starting at bit position @l and ending at
-+ * position @h. For example
-+ * GENMASK_ULL(39, 21) gives us the 64bit vector 0x000000ffffe00000.
-+ */
-+#define GENMASK(h, l) \
-+	(((~0UL) - (1UL << (l)) + 1) & (~0UL >> (BITS_PER_LONG - 1 - (h))))
-+
-+#define GENMASK_ULL(h, l) \
-+	(((~0ULL) - (1ULL << (l)) + 1) & \
-+	 (~0ULL >> (BITS_PER_LONG_LONG - 1 - (h))))
-+
-+#endif	/* __LINUX_BITS_H */
---- a/tools/perf/check-headers.sh
-+++ b/tools/perf/check-headers.sh
-@@ -4,6 +4,7 @@ HEADERS='
- include/uapi/linux/fcntl.h
- include/uapi/linux/perf_event.h
- include/uapi/linux/stat.h
-+include/linux/bits.h
- include/linux/hash.h
- include/uapi/linux/hw_breakpoint.h
- arch/x86/include/asm/disabled-features.h
+ 		cgroup_idr_remove(&cgrp->root->cgroup_idr, cgrp->id);
+ 		cgrp->id = -1;
+@@ -4745,12 +4747,14 @@ static struct cgroup *cgroup_create(struct cgroup *parent)
+ 	cgrp->root = root;
+ 	cgrp->level = level;
+ 
++	spin_lock_irq(&css_set_lock);
+ 	for (tcgrp = cgrp; tcgrp; tcgrp = cgroup_parent(tcgrp)) {
+ 		cgrp->ancestor_ids[tcgrp->level] = tcgrp->id;
+ 
+ 		if (tcgrp != cgrp)
+ 			tcgrp->nr_descendants++;
+ 	}
++	spin_unlock_irq(&css_set_lock);
+ 
+ 	if (notify_on_release(parent))
+ 		set_bit(CGRP_NOTIFY_ON_RELEASE, &cgrp->flags);
+@@ -5033,10 +5037,12 @@ static int cgroup_destroy_locked(struct cgroup *cgrp)
+ 	if (parent && cgroup_is_threaded(cgrp))
+ 		parent->nr_threaded_children--;
+ 
++	spin_lock_irq(&css_set_lock);
+ 	for (tcgrp = cgroup_parent(cgrp); tcgrp; tcgrp = cgroup_parent(tcgrp)) {
+ 		tcgrp->nr_descendants--;
+ 		tcgrp->nr_dying_descendants++;
+ 	}
++	spin_unlock_irq(&css_set_lock);
+ 
+ 	cgroup1_check_for_release(parent);
+ 
+-- 
+2.20.1
+
 
 
