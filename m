@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDB942EE2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:44:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FF262EBEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:17:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731603AbfE3DUv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:20:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40878 "EHLO mail.kernel.org"
+        id S1728598AbfE3DRE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:17:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730578AbfE3DQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:16:04 -0400
+        id S1728651AbfE3DNq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:13:46 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E52C92449A;
-        Thu, 30 May 2019 03:16:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B284244EF;
+        Thu, 30 May 2019 03:13:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186164;
-        bh=SbTFFUuSRSP005lrWiHb6QE2jPtSQRfWODw8nUneGEI=;
+        s=default; t=1559186025;
+        bh=3uMj+D0XcaHqhNjcBGc39/zrvuS/hjzi5oRXqURL7zc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eGpWbNzRtnfT45scFv6PGYHO2SSFv4wtMLji3lLfFWxnpdzYUERcAOW7EbKzJdEqT
-         kAkr87GkkKSW7Ryoxjz0YrFxjUDU9uCoQ7mohdx6Rr7yYEG4KlPaFV4MEQv9FojYfR
-         PaDlOhfHsVdY/rbw8b5PQ92GjBzQM/ARPDsJKaao=
+        b=EriFqvLoXB+6SNrm971yHdYacy3ZpBxxW3V7HmwzUap/fTSxvYDwGSX72AUzOWtL5
+         aCkLQDsXFP58HqdO1aIuk1eNDBIespuNjlcIbPTlUe7HpJ01tYuY3uERoKWjjYsi5n
+         xJgvK4cIWSPMBuJ5nVS6sTp65jmg/UJJ0JDafUNo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.19 014/276] arm64/kernel: kaslr: reduce module randomization range to 2 GB
+        stable@vger.kernel.org, Yunsheng Lin <linyunsheng@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        Huazhong Tan <tanhuazhong@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 099/346] net: hns3: fix for TX clean num when cleaning TX BD
 Date:   Wed, 29 May 2019 20:02:52 -0700
-Message-Id: <20190530030524.710522625@linuxfoundation.org>
+Message-Id: <20190530030546.171533760@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,85 +46,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ard.biesheuvel@arm.com>
+[ Upstream commit 63380a1ae4ced8aef67659ff9547c69ef8b9613a ]
 
-commit b2eed9b58811283d00fa861944cb75797d4e52a7 upstream.
+hns3_desc_unused() returns how many BD have been cleaned, but new
+buffer has not been attached to them. The register of
+HNS3_RING_RX_RING_FBDNUM_REG returns how many BD need allocating new
+buffer to or need to cleaned. So the remaining BD need to be clean
+is HNS3_RING_RX_RING_FBDNUM_REG - hns3_desc_unused().
 
-The following commit
+Also, new buffer can not attach to the pending BD when the last BD is
+not handled, because memcpy has not been done on the first pending BD.
 
-  7290d5809571 ("module: use relative references for __ksymtab entries")
+This patch fixes by subtracting the pending BD num from unused_count
+after 'HNS3_RING_RX_RING_FBDNUM_REG - unused_count' is used to calculate
+the BD bum need to be clean.
 
-updated the ksymtab handling of some KASLR capable architectures
-so that ksymtab entries are emitted as pairs of 32-bit relative
-references. This reduces the size of the entries, but more
-importantly, it gets rid of statically assigned absolute
-addresses, which require fixing up at boot time if the kernel
-is self relocating (which takes a 24 byte RELA entry for each
-member of the ksymtab struct).
-
-Since ksymtab entries are always part of the same module as the
-symbol they export, it was assumed at the time that a 32-bit
-relative reference is always sufficient to capture the offset
-between a ksymtab entry and its target symbol.
-
-Unfortunately, this is not always true: in the case of per-CPU
-variables, a per-CPU variable's base address (which usually differs
-from the actual address of any of its per-CPU copies) is allocated
-in the vicinity of the ..data.percpu section in the core kernel
-(i.e., in the per-CPU reserved region which follows the section
-containing the core kernel's statically allocated per-CPU variables).
-
-Since we randomize the module space over a 4 GB window covering
-the core kernel (based on the -/+ 4 GB range of an ADRP/ADD pair),
-we may end up putting the core kernel out of the -/+ 2 GB range of
-32-bit relative references of module ksymtab entries that refer to
-per-CPU variables.
-
-So reduce the module randomization range a bit further. We lose
-1 bit of randomization this way, but this is something we can
-tolerate.
-
-Cc: <stable@vger.kernel.org> # v4.19+
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: e55970950556 ("net: hns3: Add handling of GRO Pkts not fully RX'ed in NAPI poll")
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kernel/kaslr.c  |    6 +++---
- arch/arm64/kernel/module.c |    2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/arm64/kernel/kaslr.c
-+++ b/arch/arm64/kernel/kaslr.c
-@@ -145,15 +145,15 @@ u64 __init kaslr_early_init(u64 dt_phys)
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index 40b69eaf2cb3f..ecadd280ab28d 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -2708,7 +2708,7 @@ int hns3_clean_rx_ring(
+ #define RCB_NOF_ALLOC_RX_BUFF_ONCE 16
+ 	struct net_device *netdev = ring->tqp->handle->kinfo.netdev;
+ 	int recv_pkts, recv_bds, clean_count, err;
+-	int unused_count = hns3_desc_unused(ring) - ring->pending_buf;
++	int unused_count = hns3_desc_unused(ring);
+ 	struct sk_buff *skb = ring->skb;
+ 	int num;
  
- 	if (IS_ENABLED(CONFIG_RANDOMIZE_MODULE_REGION_FULL)) {
- 		/*
--		 * Randomize the module region over a 4 GB window covering the
-+		 * Randomize the module region over a 2 GB window covering the
- 		 * kernel. This reduces the risk of modules leaking information
- 		 * about the address of the kernel itself, but results in
- 		 * branches between modules and the core kernel that are
- 		 * resolved via PLTs. (Branches between modules will be
- 		 * resolved normally.)
- 		 */
--		module_range = SZ_4G - (u64)(_end - _stext);
--		module_alloc_base = max((u64)_end + offset - SZ_4G,
-+		module_range = SZ_2G - (u64)(_end - _stext);
-+		module_alloc_base = max((u64)_end + offset - SZ_2G,
- 					(u64)MODULES_VADDR);
- 	} else {
- 		/*
---- a/arch/arm64/kernel/module.c
-+++ b/arch/arm64/kernel/module.c
-@@ -56,7 +56,7 @@ void *module_alloc(unsigned long size)
- 		 * can simply omit this fallback in that case.
- 		 */
- 		p = __vmalloc_node_range(size, MODULE_ALIGN, module_alloc_base,
--				module_alloc_base + SZ_4G, GFP_KERNEL,
-+				module_alloc_base + SZ_2G, GFP_KERNEL,
- 				PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
- 				__builtin_return_address(0));
+@@ -2717,6 +2717,7 @@ int hns3_clean_rx_ring(
  
+ 	recv_pkts = 0, recv_bds = 0, clean_count = 0;
+ 	num -= unused_count;
++	unused_count -= ring->pending_buf;
+ 
+ 	while (recv_pkts < budget && recv_bds < num) {
+ 		/* Reuse or realloc buffers */
+-- 
+2.20.1
+
 
 
