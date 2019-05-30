@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C035E2F4AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:42:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6450A2F217
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:18:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388612AbfE3EkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:40:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55620 "EHLO mail.kernel.org"
+        id S1730524AbfE3ESW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:18:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729103AbfE3DMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:34 -0400
+        id S1730339AbfE3DPc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:32 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E75F623C5A;
-        Thu, 30 May 2019 03:12:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B7A624569;
+        Thu, 30 May 2019 03:15:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185954;
-        bh=R18vmRkvyvPiwMmVicyJXTYdoTg+OwqAuU6dOmOc0yI=;
+        s=default; t=1559186131;
+        bh=pQK9U6rZP+L8wvsXni62ESRUUwgsKaFdxKJqAymMupU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JoJZlfGDDyrZigDUZNyNHwLGpyFVM/88oV4W1VFGCz6YBTJYfVUKfWXGZjO43bv+L
-         9dEU5L4zXoN32cEvP1RAIcWqAiOrtLwnqUKJkUQpP5ShT5m+6T8gKzYF7wVEOlaex6
-         P1kVj8hTI6KwfJchUMxjnw8WxCPj7dnzHEHM2lKU=
+        b=qRzG+MHyRoa8NyXQ+Kg4EtbkMpAmjZx5ruyTfWHIM63zYjjsu51avSKwDlQ+/QyPX
+         M9+xzENW5jimJxxk38HrSzc7jn4CWqhxnk1NigKeIs5hOt0N6Rhi13ydqLaL0jbu9d
+         qH93+WwOHRgJVT2iRmfEhvQtgAhtv+wIyqVYAKU0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <jsmart2021@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 369/405] scsi: lpfc: Resolve irq-unsafe lockdep heirarchy warning in lpfc_io_free
+Subject: [PATCH 5.0 294/346] e1000e: Disable runtime PM on CNP+
 Date:   Wed, 29 May 2019 20:06:07 -0700
-Message-Id: <20190530030559.391747686@linuxfoundation.org>
+Message-Id: <20190530030555.754421107@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,68 +46,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 50e3f871fb20a9bb644743e2986e8f50f98a25bc ]
+[ Upstream commit 459d69c407f9ba122f12216555c3012284dc9fd7 ]
 
-A patch in the 12.2.0.0 set caused a new lockdep warning:
+There are some new e1000e devices can only be woken up from D3 one time,
+by plugging Ethernet cable. Subsequent cable plugging does set PME bit
+correctly, but it still doesn't get woken up.
 
-  WARNING: SOFTIRQ-safe -> SOFTIRQ-unsafe lock order detected
-  5.0.0-rc8-next-20190301-dbg+ #1 Not tainted
+Since e1000e connects to the root complex directly, we rely on ACPI to
+wake it up. In this case, the GPE from _PRW only works once and stops
+working after that. Though it appears to be a platform bug, e1000e
+maintainers confirmed that I219 does not support D3.
 
-  Possible interrupt unsafe locking scenario:
-       CPU0                    CPU1
-       ----                    ----
-  lock(&(&qp->io_buf_list_put_lock)->rlock);
-                               local_irq_disable();
-                               lock(&(&phba->hbalock)->rlock);
-                               lock(&(&qp->io_buf_list_put_lock)->rlock);
-  <Interrupt>
-    lock(&(&phba->hbalock)->rlock);
+So disable runtime PM on CNP+ chips. We may need to disable earlier
+generations if this bug also hit older platforms.
 
-see: https://www.spinics.net/lists/linux-scsi/msg128389.html
-
-In summary, the new patch added taking the io_buf_list_put_lock while under
-an irq-disabled hbalock. This created a lock heirarchy dependent upon irq
-being disabled, and there are paths that take the io_buf_list_put_lock
-without disabling irq.
-
-Looking at the lpfc_io_free routine, which is where the new heirarchy was
-introduced, there is no reason to be taking out the hbalock and raising
-irq, as the functionality is replaced by the io_buf_list_xxx locks.
-
-Resolve by removing the hbalock/irq calls in lpfc_io_free.
-
-Fixes: 5e5b511d8bfa ("scsi: lpfc: Partition XRI buffer list across Hardware Queues")
-Reported-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <jsmart2021@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Bugzilla: https://bugzilla.kernel.org/attachment.cgi?id=280819
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/lpfc/lpfc_init.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/net/ethernet/intel/e1000e/netdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
-index 89a0c2bdb6a15..46e155d1fa155 100644
---- a/drivers/scsi/lpfc/lpfc_init.c
-+++ b/drivers/scsi/lpfc/lpfc_init.c
-@@ -3618,8 +3618,6 @@ lpfc_io_free(struct lpfc_hba *phba)
- 	struct lpfc_sli4_hdw_queue *qp;
- 	int idx;
+diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
+index 7acc61e4f6456..c10c9d7eadaac 100644
+--- a/drivers/net/ethernet/intel/e1000e/netdev.c
++++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+@@ -7350,7 +7350,7 @@ static int e1000_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
  
--	spin_lock_irq(&phba->hbalock);
--
- 	for (idx = 0; idx < phba->cfg_hdw_queue; idx++) {
- 		qp = &phba->sli4_hba.hdwq[idx];
- 		/* Release all the lpfc_nvme_bufs maintained by this host. */
-@@ -3649,8 +3647,6 @@ lpfc_io_free(struct lpfc_hba *phba)
- 		}
- 		spin_unlock(&qp->io_buf_list_get_lock);
- 	}
--
--	spin_unlock_irq(&phba->hbalock);
- }
+ 	dev_pm_set_driver_flags(&pdev->dev, DPM_FLAG_NEVER_SKIP);
  
- /**
+-	if (pci_dev_run_wake(pdev))
++	if (pci_dev_run_wake(pdev) && hw->mac.type < e1000_pch_cnp)
+ 		pm_runtime_put_noidle(&pdev->dev);
+ 
+ 	return 0;
 -- 
 2.20.1
 
