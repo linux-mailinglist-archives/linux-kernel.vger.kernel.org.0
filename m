@@ -2,154 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D23E72EAC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 04:41:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 273A52EAC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 04:42:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726350AbfE3ClN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 22:41:13 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:45538 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725821AbfE3ClN (ORCPT
+        id S1727296AbfE3Cmg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 22:42:36 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45945 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726065AbfE3Cmf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 22:41:13 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7A667604D4; Thu, 30 May 2019 02:41:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1559184072;
-        bh=KZzN8mKGdKvkpGucs4JphPlo8n4hbN/Gg9urLIAqbEc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=e7IC8g7jbEZyR+Oy5Cm7ksMUi1pUaG272SUfx/BrYxsoB8zBP32jJTpGY+o1dHHwU
-         uzF7hy0dmzcIdUNf23Qvv9LZLKvVTXzdTaYdMFJUwm9TF7j9KxIa+h2rOUUMY9BHv5
-         2NBkurXSfWtu9LjP6f2HytphCOQxLOvd/VaKdkKI=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 973AD604D4;
-        Thu, 30 May 2019 02:41:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1559184071;
-        bh=KZzN8mKGdKvkpGucs4JphPlo8n4hbN/Gg9urLIAqbEc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=UIhRzLqN0mLLoPvzy2/rp0Vg6yv0YHzt4vL33AmZl1rDVmProV9LOCUm21CUs2Xp8
-         otrP0LuFQLkcNW/hqQwsDT5WH152PerZEaXcNYrBeTHyulj0zamuhooukp10Q/+Dz0
-         2inymFXuNAeNo49NrIZz0B1JyyeSCvC4vJZjN+FQ=
+        Wed, 29 May 2019 22:42:35 -0400
+Received: by mail-pf1-f196.google.com with SMTP id s11so2916249pfm.12
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 19:42:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=cAqqipIPGzpGmQv8QEqqienVSy4sBtVzv6/oGKxRvNw=;
+        b=B6mihvkll3Cv/asD+7MCKFcDmWqt5uSxKQQ3LSzu1iASiaf06/7zkpIngAFvLAv0bl
+         B+aYF5ytYSaFHBbIGadVj2ljU+kQ0s5yUrKycApUHcYdY4X5BTsiGFUhrjugH4FhzscK
+         zpb6NywD0+vPRFEeKhapl0tQVhw0TQv1oLH0sDr1ARE2mlIHBZF/3j88OZ9yt6L9WunP
+         s4yjNO8ZH4K1xHVn0CbW7cc6T5p8SkxLfV68bdo+tUZ4B/R8v1OZbhjUKhIXHQF5EsJu
+         aO9lB+uNI2MhMvFqE7MGcBlSgy6WEK+DFAhmKdCOtVw8y6jo3RmOeh4wYCGzIwbXduDl
+         I+dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cAqqipIPGzpGmQv8QEqqienVSy4sBtVzv6/oGKxRvNw=;
+        b=GmsK9W4v6a37CE0OC3AgS20SoAuqnFFNcbpwQQtmt5/cvMd+Qrnrdo5jQdq1oJsjUo
+         ideNA+jNOm/rd5Yr+azH/VIJnkPsM7lkUDsmRxVPlqm/4G+fU7fvwXujOLGsdv3SEwp1
+         4I3BYJqAQHlWGQLiI8tNqrWja+BrlK46tw4x1Vih8xLTxDqslHtmNfkzKSyQZP4xncPm
+         4/PAXikLKd/sZtOHz6o/6ec8rqtLSgk30k3IUecLbsaL1iDAnbl0karbTosJBfQ/Htkh
+         0Vsa6Cr+HeAMAHAu7ASAGrG54wNfXYQsXHukYxWC27UUMWwWd+Yyw4o37YX0dNAAD5vJ
+         v1Zg==
+X-Gm-Message-State: APjAAAXGLdkJTRLH6D4wPKLYWGdLi6nbjCrPDV46569bPydWaz6onNPa
+        0vqtt1Myz8kcqALPlFIMJMNhpK4c
+X-Google-Smtp-Source: APXvYqzpiodDhC19KrjAAAfJJz5B5HC6YSFCqpiu06yRKe4Odk+Fo+ObevDVElvTks6QKFvGWW236A==
+X-Received: by 2002:aa7:8598:: with SMTP id w24mr1198933pfn.160.1559184154693;
+        Wed, 29 May 2019 19:42:34 -0700 (PDT)
+Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
+        by smtp.gmail.com with ESMTPSA id j23sm352061pff.90.2019.05.29.19.42.31
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 29 May 2019 19:42:33 -0700 (PDT)
+Date:   Thu, 30 May 2019 11:42:29 +0900
+From:   Minchan Kim <minchan@kernel.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, stable@kernel.org,
+        Wu Fangsuo <fangsuowu@asrmicro.com>,
+        Pankaj Suryawanshi <pankaj.suryawanshi@einfochips.com>
+Subject: Re: [PATCH] mm: fix trying to reclaim unevicable LRU page
+Message-ID: <20190530024229.GF229459@google.com>
+References: <20190524071114.74202-1-minchan@kernel.org>
+ <20190528151407.GE1658@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 30 May 2019 10:41:11 +0800
-From:   tengfeif@codeaurora.org
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com, marc.zyngier@arm.com,
-        anshuman.khandual@arm.com, andreyknvl@google.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        tengfei@codeaurora.org
-Subject: Re: [PATCH] arm64: break while loop if task had been rescheduled
-In-Reply-To: <20190524104148.GB12796@lakrids.cambridge.arm.com>
-References: <1558430404-4840-1-git-send-email-tengfeif@codeaurora.org>
- <20190524104148.GB12796@lakrids.cambridge.arm.com>
-Message-ID: <665641d42e21da3466693ac49ac5d40e@codeaurora.org>
-X-Sender: tengfeif@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190528151407.GE1658@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-05-24 18:41, Mark Rutland wrote:
-> On Tue, May 21, 2019 at 05:20:04PM +0800, Tengfei Fan wrote:
->> While printing a task's backtrace and this task isn't
->> current task, it is possible that task's fp and fp+8
->> have the same value, so cannot break the while loop.
->> This can break while loop if this task had been
->> rescheduled during print this task's backtrace.
+On Tue, May 28, 2019 at 05:14:07PM +0200, Michal Hocko wrote:
+> [Cc Pankaj Suryawanshi who has reported a similar problem
+> http://lkml.kernel.org/r/SG2PR02MB309806967AE91179CAFEC34BE84B0@SG2PR02MB3098.apcprd02.prod.outlook.com]
 > 
-> There are a few cases where backtracing can get stuck in an infinite
-> loop. I'd attempted to address that more generally in my
-> arm64/robust-stacktrace branch [1].
+> On Fri 24-05-19 16:11:14, Minchan Kim wrote:
+> > There was below bugreport from Wu Fangsuo.
+> > 
+> > 7200 [  680.491097] c4 7125 (syz-executor) page:ffffffbf02f33b40 count:86 mapcount:84 mapping:ffffffc08fa7a810 index:0x24
+> > 7201 [  680.531186] c4 7125 (syz-executor) flags: 0x19040c(referenced|uptodate|arch_1|mappedtodisk|unevictable|mlocked)
+> > 7202 [  680.544987] c0 7125 (syz-executor) raw: 000000000019040c ffffffc08fa7a810 0000000000000024 0000005600000053
+> > 7203 [  680.556162] c0 7125 (syz-executor) raw: ffffffc009b05b20 ffffffc009b05b20 0000000000000000 ffffffc09bf3ee80
+> > 7204 [  680.566860] c0 7125 (syz-executor) page dumped because: VM_BUG_ON_PAGE(PageLRU(page) || PageUnevictable(page))
+> > 7205 [  680.578038] c0 7125 (syz-executor) page->mem_cgroup:ffffffc09bf3ee80
+> > 7206 [  680.585467] c0 7125 (syz-executor) ------------[ cut here ]------------
+> > 7207 [  680.592466] c0 7125 (syz-executor) kernel BUG at /home/build/farmland/adroid9.0/kernel/linux/mm/vmscan.c:1350!
+> > 7223 [  680.603663] c0 7125 (syz-executor) Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
+> > 7224 [  680.611436] c0 7125 (syz-executor) Modules linked in:
+> > 7225 [  680.616769] c0 7125 (syz-executor) CPU: 0 PID: 7125 Comm: syz-executor Tainted: G S              4.14.81 #3
+> > 7226 [  680.626826] c0 7125 (syz-executor) Hardware name: ASR AQUILAC EVB (DT)
+> > 7227 [  680.633623] c0 7125 (syz-executor) task: ffffffc00a54cd00 task.stack: ffffffc009b00000
+> > 7228 [  680.641917] c0 7125 (syz-executor) PC is at shrink_page_list+0x1998/0x3240
+> > 7229 [  680.649144] c0 7125 (syz-executor) LR is at shrink_page_list+0x1998/0x3240
+> > 7230 [  680.656303] c0 7125 (syz-executor) pc : [<ffffff90083a2158>] lr : [<ffffff90083a2158>] pstate: 60400045
+> > 7231 [  680.666086] c0 7125 (syz-executor) sp : ffffffc009b05940
+> > ..
+> > 7342 [  681.671308] c0 7125 (syz-executor) [<ffffff90083a2158>] shrink_page_list+0x1998/0x3240
+> > 7343 [  681.679567] c0 7125 (syz-executor) [<ffffff90083a3dc0>] reclaim_clean_pages_from_list+0x3c0/0x4f0
+> > 7344 [  681.688793] c0 7125 (syz-executor) [<ffffff900837ed64>] alloc_contig_range+0x3bc/0x650
+> > 7347 [  681.717421] c0 7125 (syz-executor) [<ffffff90084925cc>] cma_alloc+0x214/0x668
+> > 7348 [  681.724892] c0 7125 (syz-executor) [<ffffff90091e4d78>] ion_cma_allocate+0x98/0x1d8
+> > 7349 [  681.732872] c0 7125 (syz-executor) [<ffffff90091e0b20>] ion_alloc+0x200/0x7e0
+> > 7350 [  681.740302] c0 7125 (syz-executor) [<ffffff90091e154c>] ion_ioctl+0x18c/0x378
+> > 7351 [  681.747738] c0 7125 (syz-executor) [<ffffff90084c6824>] do_vfs_ioctl+0x17c/0x1780
+> > 7352 [  681.755514] c0 7125 (syz-executor) [<ffffff90084c7ed4>] SyS_ioctl+0xac/0xc0
+> > 
+> > Wu found it's due to [1]. Before that, unevictable page goes to cull_mlocked
+> > routine so that it couldn't reach the VM_BUG_ON_PAGE line.
+> > 
+> > To fix the issue, this patch filter out unevictable LRU pages
+> > from the reclaim_clean_pages_from_list in CMA.
 > 
-> Looking at tsk->state here is inherently racy, and doesn't solve the
-> general case, so I'd prefer to avoid that.
-> 
-> Do my patches help you here? If so, I'm happy to rebase those to
-> v5.2-rc1 and repost.
+> The changelog is rather modest on details and I have to confess I have
+> little bit hard time to understand it. E.g. why do not we need to handle
+> the regular reclaim path?
 
-I think your arm64/robust-stacktrace branch [1] can cover my issue, 
-please
-rebase and reposet
-
-Thanks,
-Tengfei Fan
+No need to pass unevictable pages into regular reclaim patch if we are
+able to know in advance.
 
 > 
-> Thanks,
-> Mark.
+> > [1] ad6b67041a45, mm: remove SWAP_MLOCK in ttu
+> > 
+> > Cc: <stable@kernel.org>	[4.12+]
+> > Reported-debugged-by: Wu Fangsuo <fangsuowu@asrmicro.com>
+> > Signed-off-by: Minchan Kim <minchan@kernel.org>
+> > ---
+> >  mm/vmscan.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > index d9c3e873eca6..7350afae5c3c 100644
+> > --- a/mm/vmscan.c
+> > +++ b/mm/vmscan.c
+> > @@ -1505,7 +1505,7 @@ unsigned long reclaim_clean_pages_from_list(struct zone *zone,
+> >  
+> >  	list_for_each_entry_safe(page, next, page_list, lru) {
+> >  		if (page_is_file_cache(page) && !PageDirty(page) &&
+> > -		    !__PageMovable(page)) {
+> > +		    !__PageMovable(page) && !PageUnevictable(page)) {
+> >  			ClearPageActive(page);
+> >  			list_move(&page->lru, &clean_pages);
+> >  		}
+> > -- 
+> > 2.22.0.rc1.257.g3120a18244-goog
+> > 
 > 
-> [1]
-> https://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git/log/?h=arm64/robust-stacktrace
-> 
->> 
->> Signed-off-by: Tengfei Fan <tengfeif@codeaurora.org>
->> ---
->>  arch/arm64/kernel/traps.c | 23 +++++++++++++++++++++++
->>  1 file changed, 23 insertions(+)
->> 
->> diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
->> index 2975598..9df6e02 100644
->> --- a/arch/arm64/kernel/traps.c
->> +++ b/arch/arm64/kernel/traps.c
->> @@ -103,6 +103,9 @@ void dump_backtrace(struct pt_regs *regs, struct 
->> task_struct *tsk)
->>  {
->>  	struct stackframe frame;
->>  	int skip = 0;
->> +	long cur_state = 0;
->> +	unsigned long cur_sp = 0;
->> +	unsigned long cur_fp = 0;
->> 
->>  	pr_debug("%s(regs = %p tsk = %p)\n", __func__, regs, tsk);
->> 
->> @@ -127,6 +130,9 @@ void dump_backtrace(struct pt_regs *regs, struct 
->> task_struct *tsk)
->>  		 */
->>  		frame.fp = thread_saved_fp(tsk);
->>  		frame.pc = thread_saved_pc(tsk);
->> +		cur_state = tsk->state;
->> +		cur_sp = thread_saved_sp(tsk);
->> +		cur_fp = frame.fp;
->>  	}
->>  #ifdef CONFIG_FUNCTION_GRAPH_TRACER
->>  	frame.graph = 0;
->> @@ -134,6 +140,23 @@ void dump_backtrace(struct pt_regs *regs, struct 
->> task_struct *tsk)
->> 
->>  	printk("Call trace:\n");
->>  	do {
->> +		if (tsk != current && (cur_state != tsk->state
->> +			/*
->> +			 * We would not be printing backtrace for the task
->> +			 * that has changed state from uninterruptible to
->> +			 * running before hitting the do-while loop but after
->> +			 * saving the current state. If task is in running
->> +			 * state before saving the state, then we may print
->> +			 * wrong call trace or end up in infinite while loop
->> +			 * if *(fp) and *(fp+8) are same. While the situation
->> +			 * will stop print when that task schedule out.
->> +			 */
->> +			|| cur_sp != thread_saved_sp(tsk)
->> +			|| cur_fp != thread_saved_fp(tsk))) {
->> +			printk("The task:%s had been rescheduled!\n",
->> +				tsk->comm);
->> +			break;
->> +		}
->>  		/* skip until specified stack frame */
->>  		if (!skip) {
->>  			dump_backtrace_entry(frame.pc);
->> --
->> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
->> Forum,
->> a Linux Foundation Collaborative Project
->> 
+> -- 
+> Michal Hocko
+> SUSE Labs
