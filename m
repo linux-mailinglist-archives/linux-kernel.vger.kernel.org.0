@@ -2,275 +2,266 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 740CF2FED0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 17:04:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 565722FEE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 17:06:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727363AbfE3PEd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 11:04:33 -0400
-Received: from usfb19pa16.eemsg.mail.mil ([214.24.26.87]:17970 "EHLO
-        usfb19pa16.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726045AbfE3PEd (ORCPT
+        id S1727617AbfE3PGM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 11:06:12 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52050 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725440AbfE3PGL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 11:04:33 -0400
-X-EEMSG-check-017: 199864528|USFB19PA16_EEMSG_MP12.csd.disa.mil
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by usfb19pa16.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 30 May 2019 15:04:30 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1559228671; x=1590764671;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=Gx/Na3NMPNgR6X0ozLsN6rip3MeDz+5aRP/AalAyVLs=;
-  b=qXS+JXcJhypwvQl8jqmPWuZGkpax6bjF9ZnTHHLwQNY3i5sY95e1NmhQ
-   Yt6QJnPuNEcROTrMd/3aLzArXIhWc2q46KFWJ3I9J9muL+mj3whH9DT2a
-   B4pVL6mNbxoSQOxXO4Fs4nNIjSl7rlDkSHGtWin0TCrPz5R9Xt07yJnv2
-   yJxzCl0zOouc500mNIJHBOimtSfLMm0kpoyNK2FVB50WJQ7pRQq/gH3NG
-   r6agZm9D/LVuo4duVG58HDeZH1viVOOmXGq8ZX/JJUri//bjQSBHVQW6E
-   UezS3cGFIHurVqsKVU9N7jmR4X0bFCrKB6ssJna14kbYjpX0j4hCW50Da
-   g==;
-X-IronPort-AV: E=Sophos;i="5.60,531,1549929600"; 
-   d="scan'208";a="24226989"
-IronPort-PHdr: =?us-ascii?q?9a23=3AOn0ODR0hIG1YJyqQsmDT+DRfVm0co7zxezQtwd?=
- =?us-ascii?q?8ZsegQKv7xwZ3uMQTl6Ol3ixeRBMOHsqsC0rCH+PC4EUU7or+5+EgYd5JNUx?=
- =?us-ascii?q?JXwe43pCcHRPC/NEvgMfTxZDY7FskRHHVs/nW8LFQHUJ2mPw6arXK99yMdFQ?=
- =?us-ascii?q?viPgRpOOv1BpTSj8Oq3Oyu5pHfeQpFiCegbb9oMRm6swHcusYVjId+N6081g?=
- =?us-ascii?q?bHrnxUdupM2GhmP0iTnxHy5sex+J5s7SFdsO8/+sBDTKv3Yb02QaRXAzo6PW?=
- =?us-ascii?q?814tbrtQTYQguU+nQcSGQWnQFWDAXD8Rr3Q43+sir+tup6xSmaIcj7Rq06VD?=
- =?us-ascii?q?i+86tmTgLjhTwZPDAl7m7Yls1wjLpaoB2/oRx/35XUa5yROPZnY6/RYc8WSW?=
- =?us-ascii?q?9HU8lfTSxBBp63YZUJAeQPIO1Uq5DxqlsKoBe7AwSnGeHhxSJShnLuwKM0ze?=
- =?us-ascii?q?ohHwHF0gIuEd0Bv3bbo8n6OqoJTeC4zrPFwSnfY/5Y2zrw7pXDfBA7ofGLWL?=
- =?us-ascii?q?J9adffyVUxGAPdjlWft4rlNC6I2OQIqWeb6+5gWvyvimU6rAxxuSWgxtw3h4?=
- =?us-ascii?q?nVhoMa1lDE9SJjzIYzPt23UlR3YdGjEJtOriyXMZZ9TMA6Q2xwpSo3xbILtY?=
- =?us-ascii?q?S7cSQX0pgr2RHSZ+Kdf4SV5B/oSfyfLi1ihH1/fbKynxOy8U+9xeLiTsS0y1?=
- =?us-ascii?q?NKrjZdktnLq3ANywTf6siZRft5+UeswSqP2BrJ6uFFPEA0jrDXK4Ihw7Eslp?=
- =?us-ascii?q?oTtl7PHinql0XtkKCabEAk+ums6+j/Y7XmoIGTN5Nshw3jPakjldazDOQlPg?=
- =?us-ascii?q?QUQWSW9vqw2Kf+8UHhRbVFlPw2kq3XsJDAIsQbo7a0AxRI3YY48Bu/Ezen38?=
- =?us-ascii?q?gYnXkANl5FfgmHgJLzN1HBJ/D4E++zg06wnzdz2/DGIrrhD43JLnjejLfheq?=
- =?us-ascii?q?1w601Cxwopy9BQ+ZZUBqsGIPLpVU/7rMbYAQMhMwyo3+bnD81w2Z8AVm2SGK?=
- =?us-ascii?q?+ZMb/dvUWH5+IuJemMa5QYuDf7K/g5+fHuiWU1lkMafamsxZEXcmy3Hux6I0?=
- =?us-ascii?q?WFZnrhmswBHnkQsQo4VuDqikeOXiJTZ3aoXqI8/S07CIW+DYfDWI+tmqeB3C?=
- =?us-ascii?q?C9HpBNZ2BGDEyMHmnsd4meR/gMbyeSKNd7kjMYTbihV5Mh1Ra2uQDhyrpnKu?=
- =?us-ascii?q?7U9jcEup75zth14Pbcmg8o9TxoFMSQyG6NT2RukWMJQz86xrxwoUt4yl2by6?=
- =?us-ascii?q?h3n+RYFcBP5/NOSgo6N4TTz/Z5C9DxXQLNZMyJR0ylQtWlADExSMw+w9kVbk?=
- =?us-ascii?q?Z5GtWiiA3D3iWwD78UkbyLGII78qbG03ftIMZ9zm7M1LM9gFk+XstPKWqmi7?=
- =?us-ascii?q?Z99wjWAI7JiV+Zl6exdakH2i7C7mKDwnSPvE1CVw5wS6rFV2gFZkTKtdT5+l?=
- =?us-ascii?q?/CT7i2BLQ8LARB08GCJbVRZ93pl1pGQPPjOdTYY26rh2iwAhOIzKuWbIX2Y2?=
- =?us-ascii?q?UdwDndCE8cngAX/HaGMxU+Byi4r2LFEjNhCU/vY1nt8eliqHK3V0o0zwaXYE?=
- =?us-ascii?q?1807q65AUYheKTS/wNxLIIoiQhpCtuHFa7wd3WD8CMpw17fKVTedk9+ktI1X?=
- =?us-ascii?q?rFtwxhOZytN7hiiUQDcwRzpE7uzw94CphEkcQzqXMqyw1yKbiG319bazyY2p?=
- =?us-ascii?q?XwMKXNKmbu5BCvd7LW2lbG3dmI4qcA8u44q1T4vAyyDkot6W9n09hO03uE4p?=
- =?us-ascii?q?XFFhYdXozrXkYw7Rh6qKnQYjMh6IPMyX1sLa60vyfZ2903AOslyxCgf8pQMa?=
- =?us-ascii?q?6fCg/yHNMVB9K0JOwphVepdBQEM/5W9KIuOMOmbfSG0raxPOl8hDKmkXhH4I?=
- =?us-ascii?q?dl30KO6SV8Vu7I34wCw/yD0AuHUC38jEu7vcDxmIBFaiseEXa4ySjhHIRRfL?=
- =?us-ascii?q?F9fZ4XCWeyJM263shxiITzW3FG7lKjB0kJ2MmyeRWMaVzwxgxQ1UILoXO5nS?=
- =?us-ascii?q?u01SB7kzYsrqCHxizB3/zidAYbOm5MXGRikVjsIYy7jt0BWEiobg4plAa55U?=
- =?us-ascii?q?bgwKhboqV/LmbJTUhVYSf8N3tiXbeotrqef85P74slsSpNUOuiblCXUaDyox?=
- =?us-ascii?q?0Y0yz9G2tewDE7eC2wtprlmBx6jXqXLGxvo3rBZcFw2RDf6cTARf5WxDoGWj?=
- =?us-ascii?q?N3iT3KCVinJNSp+dSUl5HesuGxTm6hWJpTcTTtzYydriS7+WxqARq5n/ypnd?=
- =?us-ascii?q?3nCwc62zfh19Z2TSXIsAr8Yo7z2qS+MOJneFRoBVDl58p5BI5+iI0wi48U2X?=
- =?us-ascii?q?UBmJWV8mQIkX3pPdVYx63+dnwNSiAPw9LP5wjlwkJjJGqTx43lTnWd3tdhZ9?=
- =?us-ascii?q?6ib2IZ2S8w7ttHCKSK47xemyt6vF64oRjWYfhnkTcX0eEu52ICg+EVpAotyT?=
- =?us-ascii?q?2QArQTHUleICztmA2E78uxrKRYf2uvb7ew21Rkndy7D7GNvBtcWHDndZcmBy?=
- =?us-ascii?q?Nw6d9/MF3U2n3p9o7kYMXQbc4UthCMiRjAjPBVKJcqm/oOhCpnP3/9vHI8x+?=
- =?us-ascii?q?41ihxuwJe6s5WdJGVx/aK5BRhYOifyZ8MJ9THnlbxekdqO34CzApVhHS0GXJ?=
- =?us-ascii?q?3oTfKvCjISsO7oNwCVHT0mtHiUBLrfEhWD6Et8s33PFJWrPWmNJHYF1dViWA?=
- =?us-ascii?q?WdJEtHjQASRDU6m4I2GRywy8zldEd5+zUR60XiqhRS1+1oNwPwUnvFqAi0bT?=
- =?us-ascii?q?c0TYCVLABK4QFa+0fVLcue4/poHy5G5J2hoxKCJnaBaAVICmEJR0qECkviPr?=
- =?us-ascii?q?mo+dnP7eyYCvCiIPvJZLWEsfZeWOuQxZKzzotm+C6BNt6PPnZ4D/w3wElDUm?=
- =?us-ascii?q?plG8XYgjkOSjYYlyfMb86Bvxq8+yt3rtyh//TvQg7g+YyPC75KO9V15x+2mb?=
- =?us-ascii?q?uDN/KXhCthKTZXzJIMxWPSx7gYxlISizxueCOrEbQPriPNTaTQmrNJAB4fcS?=
- =?us-ascii?q?98KMxI76ck1AlXJcHbks/11qJ/jvMtEVhFU0HumtuoZc0KOW29L1PHC1iVNL?=
- =?us-ascii?q?uaJT3E3cf3YaC7SbBLiOVUthuwuSuUEkP5PzSDkSXpWA6rMe1WkC6bOxlesp?=
- =?us-ascii?q?mnchlxEWjjUM7mahqjPd90lzI2wKc4hmjUNWEGMTh8dVhArryW7SNEnPp/H3?=
- =?us-ascii?q?ZN4WZiLemBgyyZ9fXXKo4Ksft3BSR5j/lV4GwhxrRP6CFEReJ6mC3Ro9J0vl?=
- =?us-ascii?q?6pjPGFyiB7XxpWtjZLmIWLsF1gOaXe7ZlAWW3J/BAK7WWLCxQKu8FlCtz3u6?=
- =?us-ascii?q?BU1NfPiL7zJC1F89LO8ssWH9LUJ96fMHo9LRrpHybZDAgfQj6qL23fh1Fdn+?=
- =?us-ascii?q?uU9n2atZU6q57smIYQRb9fTlA6CvQaCkF9FtwYPJh3Ri8kkaKcjMMQ/3q+rQ?=
- =?us-ascii?q?feRMNGvpDFSP2SGu7iKDmejblDaBsIxa33IZ4POY383kwxImV9ya3MF1uYec?=
- =?us-ascii?q?1RpShgdBQ3oQ0Z9GViSUUw1ljjZwfr52UcQ62ahBkz3zBibPwt+TGk2FI+Il?=
- =?us-ascii?q?7HtWNki0Uqscn0ijCWNjjqJeG/Wp8AWHm8jFQ4Lp6uG1U9Vga1h0ExcW6ZFr?=
- =?us-ascii?q?8=3D?=
-X-IPAS-Result: =?us-ascii?q?A2DoAQCg8O9c/wHyM5BlHAEBAQQBAQcEAQGBVAQBAQsBg?=
- =?us-ascii?q?WYqgW2EPJMCTwEBAQaBECV+iFKRBwkBAQEBAQEBAQE0AQIBAYRAAoJ9IzcGD?=
- =?us-ascii?q?gEDAQEBBAEBAQEDAQFsKII6KQGCZgEBAQECASMEEUEFCwsOCgICJgICVwYNC?=
- =?us-ascii?q?AEBgl8/gXcFD6oyfDOFR4MpgUaBDCgBi1UXeIEHgREnDIIqNT6HToJYBI1jh?=
- =?us-ascii?q?giVAQmCD4IWkQcGG4IhlDeOIJZtIoFYKwgCGAghD4MokG0jA4E2AQGNfQEB?=
-Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 30 May 2019 15:04:28 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x4UF4O2M030622;
-        Thu, 30 May 2019 11:04:24 -0400
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        William Roberts <bill.c.roberts@gmail.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-References: <20190524175458.GB365@linux.intel.com>
- <960B34DE67B9E140824F1DCDEC400C0F654E8E1D@ORSMSX116.amr.corp.intel.com>
- <CALCETrUw5sEr-MHPMU4CzEzkrejDs-JOThHB9Buhoxo5-rdpRw@mail.gmail.com>
- <20190524200333.GF365@linux.intel.com>
- <CALCETrUyAAhnQ+RUeN1L41TKj-vcD2CNt-FJ9siO=Zo6gvH1Aw@mail.gmail.com>
- <20190524224107.GJ365@linux.intel.com>
- <683B5E3D-AFB6-4B45-8D39-B00847312209@amacapital.net>
- <960B34DE67B9E140824F1DCDEC400C0F654E965F@ORSMSX116.amr.corp.intel.com>
- <CALCETrXXVMutX8eZk6nnkOAeS+Tj0sQd0FkW+wk6Rx8hQxCe6w@mail.gmail.com>
- <960B34DE67B9E140824F1DCDEC400C0F654E9824@ORSMSX116.amr.corp.intel.com>
- <20190528202407.GB13158@linux.intel.com>
- <285f279f-b500-27f0-ab42-fb1dbcc5ab18@tycho.nsa.gov>
- <960B34DE67B9E140824F1DCDEC400C0F654EB487@ORSMSX116.amr.corp.intel.com>
- <678a37af-797d-7bd5-a406-32548a270e3d@tycho.nsa.gov>
- <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <c1135352-0b5e-4694-b1a9-105876095877@tycho.nsa.gov>
-Date:   Thu, 30 May 2019 11:04:24 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 30 May 2019 11:06:11 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4UF2srg126642
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 11:06:11 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2stfacewxq-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 11:06:10 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 30 May 2019 16:06:09 +0100
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 30 May 2019 16:06:05 +0100
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4UF4nFJ36569226
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 30 May 2019 15:04:49 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8C882B2071;
+        Thu, 30 May 2019 15:04:49 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5DD28B205F;
+        Thu, 30 May 2019 15:04:49 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.216])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 30 May 2019 15:04:49 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 2D8C716C5D7E; Thu, 30 May 2019 08:04:51 -0700 (PDT)
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     rcu@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>
+Subject: [PATCH tip/core/rcu 1/4] srcu: Allocate per-CPU data for DEFINE_SRCU() in modules
+Date:   Thu, 30 May 2019 08:04:46 -0700
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190530150347.GA31311@linux.ibm.com>
+References: <20190530150347.GA31311@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 19053015-0060-0000-0000-00000349F738
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011185; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000286; SDB=6.01210787; UDB=6.00636159; IPR=6.00991822;
+ MB=3.00027120; MTD=3.00000008; XFM=3.00000015; UTC=2019-05-30 15:06:09
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19053015-0061-0000-0000-0000498DFDC2
+Message-Id: <20190530150449.31885-1-paulmck@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-30_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=15 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905300107
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/30/19 10:31 AM, Andy Lutomirski wrote:
-> Hi all-
-> 
-> After an offline discussion with Sean yesterday, here are some updates
-> to the user API parts of my proposal.
-> 
-> Unfortunately, Sean convinced me that MAXPERM doesn't work the way I
-> described it because, for SGX2, the enclave loader won't know at load
-> time whether a given EAUG-ed page will ever be executed.  So here's an
-> update.
-> 
-> First, here are the requrements as I see them, where EXECUTE, EXECMOD,
-> and EXECMEM could be substituted with other rules at the LSM's
-> discretion:
-> 
->   - You can create a WX or RWX mapping if and only if you have EXECMEM.
-> 
->   - To create an X mapping of an enclave page that has ever been W, you
-> need EXECMOD.
+Adding DEFINE_SRCU() or DEFINE_STATIC_SRCU() to a loadable module requires
+that the size of the reserved region be increased, which is not something
+we want to be doing all that often.  One approach would be to require
+that loadable modules define an srcu_struct and invoke init_srcu_struct()
+from their module_init function and cleanup_srcu_struct() from their
+module_exit function.  However, this is more than a bit user unfriendly.
 
-EXECMOD to what file? The enclave file from which the page's content 
-originated, the sigstruct file, or /dev/sgx/enclave?
+This commit therefore creates an ___srcu_struct_ptrs linker section,
+and pointers to srcu_struct structures created by DEFINE_SRCU() and
+DEFINE_STATIC_SRCU() within a module are placed into that module's
+___srcu_struct_ptrs section.  The required init_srcu_struct() and
+cleanup_srcu_struct() functions are then automatically invoked as needed
+when that module is loaded and unloaded, thus allowing modules to continue
+to use DEFINE_SRCU() and DEFINE_STATIC_SRCU() while avoiding the need
+to increase the size of the reserved region.
 
->   - To create an X mapping of an enclave page that came from EADD, you
-> need EXECUTE on the source file.  Optionally, we could also permit
-> this if you have EXECMOD.
+Many of the algorithms and some of the code was cheerfully cherry-picked
+from other code making use of linker sections, perhaps most notably from
+tracepoints.  All bugs are nevertheless the sole property of the author.
 
-What is the "source file" i.e. the target of the check?  Enclave file, 
-sigstruct file, or /dev/sgx/enclave?
+Suggested-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+[ paulmck: Use __section() and use "default" in srcu_module_notify()'s
+  "switch" statement as suggested by Joel Fernandes. ]
+Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+Tested-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+ include/asm-generic/vmlinux.lds.h |  4 ++
+ include/linux/module.h            |  5 +++
+ include/linux/srcutree.h          | 14 +++++--
+ kernel/module.c                   |  5 +++
+ kernel/rcu/srcutree.c             | 65 +++++++++++++++++++++++++++++++
+ 5 files changed, 90 insertions(+), 3 deletions(-)
 
-> 
-> And I have two design proposals.  One is static and one is dynamic.
-> To implement either one, we will probably need a new .may_mprotect vm
-> operation, and that operation can call an LSM hook.  Or we can give
-> LSMs a way to detect that a given vm_area_struct is an enclave.  As I
-> see it, this is an implementation detail that is certainly solveable.
-> 
-> 
-> Static proposal:
-> 
-> 
-> EADD takes an execute_intent flag.  It calls a new hook:
-> 
->    int security_enclave_load(struct vm_area_struct *source, bool execute_intent);
-> 
-> This hook will fail if execute_intent==true and the caller has neither
-> EXECUTE, EXECMOD, nor EXECMEM.
-
-EADD execute_intent flag is originally provided by whom (userspace or 
-driver) on what basis? Which file is referenced by source->vm_file? Why 
-trigger all three checks up front versus only checking if needed?  Won't 
-this trigger a lot of unnecessary EXECMOD and EXECMEM denials that will 
-need to be dontaudit'd? What if there is a mismatch between 
-execute_intent and the initial permissions?
-
-> 
-> EAUG sets execute_intent = false.
-> 
-> EINIT takes a sigstruct pointer.  SGX can (when initially upstreamed
-> or later on once there's demand) call a new hook:
-> 
->    security_enclave_init(struct sigstruct *sigstruct, struct
-> vm_area_struct *source);
-
-Is struct sigstruct the same as struct sgx_sigstruct in the current 
-patches (i.e. just the sigstruct data, no file)?  What file is 
-referenced by source->vm_file (the sigstruct or the enclave or 
-/dev/sgx/enclave)?  Is this hook only for enforcing a whitelist on what 
-enclaves can be loaded?  What is the target of the check?
-
-> mmap() and mprotect() will require EXECMEM to create WX or RWX
-> mappings.  They will require EXECMOD to create RX or X mappings of an
-> execute_intent==false page.  They require no permissions in the other
-> cases.
-
-Does this occur for both setting initial permissions and runtime 
-permissions or just runtime? Both userspace- and driver-initiated 
-mmap/mprotect operations or just userspace-initiated ones?  Does the 
-driver use interfaces that call the mmap/mprotect hooks or lower level 
-functions?
-
-> 
-> 
-> Dynamic proposal:
-> 
-> 
-> EADD does not take any special flags.  It does something like this internally:
-> 
->    bool execute_intent = true;
->    int security_enclave_load(struct vm_area_struct *source, bool
-> *execute_intent);
-> 
-> The implementation of security_enclave_load() may set *execute_intent to false.
-> The driver records execute_intent after the LSM is done.
-
-On what basis does LSM decide whether to set *execute_intent?  If the 
-process lacks all three permissions? What if there is a mismatch with 
-the initial permissions?
-
-> 
-> mmap() and mprotect() will require EXECMEM to create WX or RWX
-> mappings.  They will require EXECMOD to create RX or X mappings of an
-> execute_intent==false page.  They require no permissions in the other
-> cases.
-> 
-> 
-> 
-> A benefit of the static proposal is that audit failures due to a lack
-> of EXECUTE permission are easy to implement and to understand in the
-> lods.  With the dynamic model, we can only really audit the lack of
-> EXECMOD or EXECMEM.  A benefit of the dynamic model is that we hide
-> what is arguably a decently large wart from the API.
-> 
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 088987e9a3ea..ba1ad39468fc 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -337,6 +337,10 @@
+ 		KEEP(*(__tracepoints_ptrs)) /* Tracepoints: pointer array */ \
+ 		__stop___tracepoints_ptrs = .;				\
+ 		*(__tracepoints_strings)/* Tracepoints: strings */	\
++		. = ALIGN(8);						\
++		__start___srcu_struct = .;				\
++		*(___srcu_struct_ptrs)					\
++		__end___srcu_struct = .;				\
+ 	}								\
+ 									\
+ 	.rodata1          : AT(ADDR(.rodata1) - LOAD_OFFSET) {		\
+diff --git a/include/linux/module.h b/include/linux/module.h
+index 188998d3dca9..1455812dd325 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -21,6 +21,7 @@
+ #include <linux/rbtree_latch.h>
+ #include <linux/error-injection.h>
+ #include <linux/tracepoint-defs.h>
++#include <linux/srcu.h>
+ 
+ #include <linux/percpu.h>
+ #include <asm/module.h>
+@@ -450,6 +451,10 @@ struct module {
+ 	unsigned int num_tracepoints;
+ 	tracepoint_ptr_t *tracepoints_ptrs;
+ #endif
++#ifdef CONFIG_TREE_SRCU
++	unsigned int num_srcu_structs;
++	struct srcu_struct **srcu_struct_ptrs;
++#endif
+ #ifdef CONFIG_BPF_EVENTS
+ 	unsigned int num_bpf_raw_events;
+ 	struct bpf_raw_event_map *bpf_raw_events;
+diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
+index 7f7c8c050f63..8af1824c46a8 100644
+--- a/include/linux/srcutree.h
++++ b/include/linux/srcutree.h
+@@ -120,9 +120,17 @@ struct srcu_struct {
+  *
+  * See include/linux/percpu-defs.h for the rules on per-CPU variables.
+  */
+-#define __DEFINE_SRCU(name, is_static)					\
+-	static DEFINE_PER_CPU(struct srcu_data, name##_srcu_data);\
+-	is_static struct srcu_struct name = __SRCU_STRUCT_INIT(name, name##_srcu_data)
++#ifdef MODULE
++# define __DEFINE_SRCU(name, is_static)					\
++	is_static struct srcu_struct name;				\
++	struct srcu_struct *__srcu_struct_##name			\
++		__section("___srcu_struct_ptrs") = &name
++#else
++# define __DEFINE_SRCU(name, is_static)					\
++	static DEFINE_PER_CPU(struct srcu_data, name##_srcu_data);	\
++	is_static struct srcu_struct name =				\
++		__SRCU_STRUCT_INIT(name, name##_srcu_data)
++#endif
+ #define DEFINE_SRCU(name)		__DEFINE_SRCU(name, /* not static */)
+ #define DEFINE_STATIC_SRCU(name)	__DEFINE_SRCU(name, static)
+ 
+diff --git a/kernel/module.c b/kernel/module.c
+index 6e6712b3aaf5..c79a53b629b6 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -3095,6 +3095,11 @@ static int find_module_sections(struct module *mod, struct load_info *info)
+ 					     sizeof(*mod->tracepoints_ptrs),
+ 					     &mod->num_tracepoints);
+ #endif
++#ifdef CONFIG_TREE_SRCU
++	mod->srcu_struct_ptrs = section_objs(info, "___srcu_struct_ptrs",
++					     sizeof(*mod->srcu_struct_ptrs),
++					     &mod->num_srcu_structs);
++#endif
+ #ifdef CONFIG_BPF_EVENTS
+ 	mod->bpf_raw_events = section_objs(info, "__bpf_raw_tp_map",
+ 					   sizeof(*mod->bpf_raw_events),
+diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+index 9b761e546de8..2ded2614a2f4 100644
+--- a/kernel/rcu/srcutree.c
++++ b/kernel/rcu/srcutree.c
+@@ -1310,3 +1310,68 @@ void __init srcu_init(void)
+ 		queue_work(rcu_gp_wq, &ssp->work.work);
+ 	}
+ }
++
++#ifdef CONFIG_MODULES
++
++/* Initialize any global-scope srcu_struct structures used by this module. */
++static int srcu_module_coming(struct module *mod)
++{
++	int i;
++	struct srcu_struct **sspp = mod->srcu_struct_ptrs;
++	int ret;
++
++	for (i = 0; i < mod->num_srcu_structs; i++) {
++		ret = init_srcu_struct(*(sspp++));
++		if (WARN_ON_ONCE(ret))
++			return ret;
++	}
++	return 0;
++}
++
++/* Clean up any global-scope srcu_struct structures used by this module. */
++static void srcu_module_going(struct module *mod)
++{
++	int i;
++	struct srcu_struct **sspp = mod->srcu_struct_ptrs;
++
++	for (i = 0; i < mod->num_srcu_structs; i++)
++		cleanup_srcu_struct(*(sspp++));
++}
++
++/* Handle one module, either coming or going. */
++static int srcu_module_notify(struct notifier_block *self,
++			      unsigned long val, void *data)
++{
++	struct module *mod = data;
++	int ret = 0;
++
++	switch (val) {
++	case MODULE_STATE_COMING:
++		ret = srcu_module_coming(mod);
++		break;
++	case MODULE_STATE_GOING:
++		srcu_module_going(mod);
++		break;
++	default:
++		break;
++	}
++	return ret;
++}
++
++static struct notifier_block srcu_module_nb = {
++	.notifier_call = srcu_module_notify,
++	.priority = 0,
++};
++
++static __init int init_srcu_module_notifier(void)
++{
++	int ret;
++
++	ret = register_module_notifier(&srcu_module_nb);
++	if (ret)
++		pr_warn("Failed to register srcu module notifier\n");
++	return ret;
++}
++late_initcall(init_srcu_module_notifier);
++
++#endif /* #ifdef CONFIG_MODULES */
+-- 
+2.17.1
 
