@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C7DC2ECA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:24:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B14BD2F4A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:42:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733162AbfE3DXv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:23:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48178 "EHLO mail.kernel.org"
+        id S1731328AbfE3EkD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:40:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731209AbfE3DRl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:17:41 -0400
+        id S1729110AbfE3DMf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:12:35 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 54A8124664;
-        Thu, 30 May 2019 03:17:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E9D5A23DE3;
+        Thu, 30 May 2019 03:12:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186260;
-        bh=nQWv/pQ9TneryxCoIWHr+e55gDaqdyjRUi4cNskNqwQ=;
+        s=default; t=1559185955;
+        bh=BozWObVCFZUojhexPYO13Npvr6qSsLfQWmqS7IskZjU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2FrPOntBsMfKh5H/glEiFN16/X4how600IJM2SYADsAI1HfEGiQfZJhHlrTkreKri
-         8UesgQ0w42oyC6xMhSGDA+w36NP5O/YZ9LanXinMXvszSJLbWexVUHQgpby6pRa+FH
-         xWOlec9Xx4lgYWWjocESZmDTtAGdhwCSmMyGI2ps=
+        b=TeqMRbeeV2gO2v6vv9sRSUyy5iq/g+aAJFWmUL4saQoVdWWPoMcZ3rAKn1duYoR9t
+         lhAyXo4IlUaoXVNJt0Cx+JM0pRDlVrnoH6v48L8egAzg37HwHXM8jEThtZ4Ozv98Wj
+         TI/sFfpNO5RU5GN0fz5J874a5OQlFMnrbgRbgnFE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Huth <thuth@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 175/276] s390/mm: silence compiler warning when compiling without CONFIG_PGSTE
+Subject: [PATCH 5.1 335/405] media: v4l2-fwnode: The first default data lane is 0 on C-PHY
 Date:   Wed, 29 May 2019 20:05:33 -0700
-Message-Id: <20190530030536.278675697@linuxfoundation.org>
+Message-Id: <20190530030557.660144630@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,47 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 81a8f2beb32a5951ecf04385301f50879abc092b ]
+[ Upstream commit fff35d45e16fae125c6000cb87e254cb634ac7fb ]
 
-If CONFIG_PGSTE is not set (e.g. when compiling without KVM), GCC complains:
+C-PHY has no clock lanes. Therefore the first data lane is 0 by default.
 
-  CC      arch/s390/mm/pgtable.o
-arch/s390/mm/pgtable.c:413:15: warning: ‘pmd_alloc_map’ defined but not
- used [-Wunused-function]
- static pmd_t *pmd_alloc_map(struct mm_struct *mm, unsigned long addr)
-               ^~~~~~~~~~~~~
+Fixes: edc6d56c2e7e ("media: v4l: fwnode: Support parsing of CSI-2 C-PHY endpoints")
 
-Wrap the function with "#ifdef CONFIG_PGSTE" to silence the warning.
-
-Signed-off-by: Thomas Huth <thuth@redhat.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/mm/pgtable.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/v4l2-core/v4l2-fwnode.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/s390/mm/pgtable.c b/arch/s390/mm/pgtable.c
-index f2cc7da473e4e..ae894ac83fd61 100644
---- a/arch/s390/mm/pgtable.c
-+++ b/arch/s390/mm/pgtable.c
-@@ -410,6 +410,7 @@ static inline pmd_t pmdp_flush_lazy(struct mm_struct *mm,
- 	return old;
- }
- 
-+#ifdef CONFIG_PGSTE
- static pmd_t *pmd_alloc_map(struct mm_struct *mm, unsigned long addr)
- {
- 	pgd_t *pgd;
-@@ -427,6 +428,7 @@ static pmd_t *pmd_alloc_map(struct mm_struct *mm, unsigned long addr)
- 	pmd = pmd_alloc(mm, pud, addr);
- 	return pmd;
- }
-+#endif
- 
- pmd_t pmdp_xchg_direct(struct mm_struct *mm, unsigned long addr,
- 		       pmd_t *pmdp, pmd_t new)
+diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
+index 20571846e6367..7495f83231479 100644
+--- a/drivers/media/v4l2-core/v4l2-fwnode.c
++++ b/drivers/media/v4l2-core/v4l2-fwnode.c
+@@ -225,6 +225,10 @@ static int v4l2_fwnode_endpoint_parse_csi2_bus(struct fwnode_handle *fwnode,
+ 	if (bus_type == V4L2_MBUS_CSI2_DPHY ||
+ 	    bus_type == V4L2_MBUS_CSI2_CPHY || lanes_used ||
+ 	    have_clk_lane || (flags & ~V4L2_MBUS_CSI2_CONTINUOUS_CLOCK)) {
++		/* Only D-PHY has a clock lane. */
++		unsigned int dfl_data_lane_index =
++			bus_type == V4L2_MBUS_CSI2_DPHY;
++
+ 		bus->flags = flags;
+ 		if (bus_type == V4L2_MBUS_UNKNOWN)
+ 			vep->bus_type = V4L2_MBUS_CSI2_DPHY;
+@@ -233,7 +237,7 @@ static int v4l2_fwnode_endpoint_parse_csi2_bus(struct fwnode_handle *fwnode,
+ 		if (use_default_lane_mapping) {
+ 			bus->clock_lane = 0;
+ 			for (i = 0; i < num_data_lanes; i++)
+-				bus->data_lanes[i] = 1 + i;
++				bus->data_lanes[i] = dfl_data_lane_index + i;
+ 		} else {
+ 			bus->clock_lane = clock_lane;
+ 			for (i = 0; i < num_data_lanes; i++)
 -- 
 2.20.1
 
