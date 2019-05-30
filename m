@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C28E82F461
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:38:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52F372F1C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:15:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388380AbfE3Ehx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:37:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56480 "EHLO mail.kernel.org"
+        id S1731174AbfE3EPm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:15:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40694 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727459AbfE3DMu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:50 -0400
+        id S1730551AbfE3DP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:58 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B16C24532;
-        Thu, 30 May 2019 03:12:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7AF8123D83;
+        Thu, 30 May 2019 03:15:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185969;
-        bh=BJ39WeU6Gz7O+UFcSfdaXtCV0vuqbjEefStskKc/mqo=;
+        s=default; t=1559186158;
+        bh=bDXiMGFvmldpxTxfhq4JdbAQvsgjlZNGG0/Vu9YG5q8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GEHJfF5FttDMxuPAIUEOZGv8nHpQAvUCpU4rnwTzQBA5fg17T0KdT5Sohl21muIXM
-         v3k3LLEbwyaigDiK0yB/2BYhv36IeeEs9gIlXNysHrtTNEA2PDngUSQ4lMRu6s5Oc9
-         dtItXFyglqOegmFPK8tRLr9twR2ymiMfFZXexbiA=
+        b=mFjfQryXEpRivxSIweygtTA9VeeAlGXit18/iLdWo9eCXz21iu7EcQi6ztAHPXHNm
+         BXMdWYllxAoCQmBSFYy3Fj4YG4fYxlrNowOifpuMWx9WlfCFra6rKhcrmjhgW95kLy
+         j+3+fWgWxwd5mV04TtJjIuEv66qrkWeHmfAfzYDw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiada Wang <jiada_wang@mentor.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Trent Piepho <tpiepho@impinj.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 382/405] spi: imx: stop buffer overflow in RX FIFO flush
+Subject: [PATCH 5.0 307/346] media: go7007: avoid clang frame overflow warning with KASAN
 Date:   Wed, 29 May 2019 20:06:20 -0700
-Message-Id: <20190530030600.062448385@linuxfoundation.org>
+Message-Id: <20190530030556.388152878@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,55 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c842749ea1d32513f9e603c074d60d7aa07cb2ef ]
+[ Upstream commit ed713a4a1367aca5c0f2f329579465db00c17995 ]
 
-Commit 71abd29057cb ("spi: imx: Add support for SPI Slave mode") added
-an RX FIFO flush before start of a transfer.  In slave mode, the master
-may have sent more data than expected and this data will still be in the
-RX FIFO at the start of the next transfer, and so needs to be flushed.
+clang-8 warns about one function here when KASAN is enabled, even
+without the 'asan-stack' option:
 
-However, the code to do the flush was accidentally saving this data into
-the previous transfer's RX buffer, clobbering the contents of whatever
-followed that buffer.
+drivers/media/usb/go7007/go7007-fw.c:1551:5: warning: stack frame size of 2656 bytes in function
 
-Change it to empty the FIFO and throw away the data.  Every one of the
-RX functions for the different eCSPI versions and modes reads the RX
-FIFO data using the same readl() call, so just use that, rather than
-using the spi_imx->rx function pointer and making sure all the different
-rx functions have a working "throw away" mode.
+I have reported this issue in the llvm bugzilla, but to make
+it work with the clang-8 release, a small annotation is still
+needed.
 
-There is another issue, which affects master mode when switching from
-DMA to PIO.  There can be extra data in the RX FIFO which triggers this
-flush code, causing memory corruption in the same manner.  I don't know
-why this data is unexpectedly in the FIFO.  It's likely there is a
-different bug or erratum responsible for that.  But regardless of that,
-I think this is proper fix the for bug at hand here.
+Link: https://bugs.llvm.org/show_bug.cgi?id=38809
 
-Fixes: 71abd29057cb ("spi: imx: Add support for SPI Slave mode")
-Cc: Jiada Wang <jiada_wang@mentor.com>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: Stefan Agner <stefan@agner.ch>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Trent Piepho <tpiepho@impinj.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+[hverkuil-cisco@xs4all.nl: fix checkpatch warning]
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-imx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/usb/go7007/go7007-fw.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spi-imx.c b/drivers/spi/spi-imx.c
-index 6ec647bbba772..a81ae29aa68a9 100644
---- a/drivers/spi/spi-imx.c
-+++ b/drivers/spi/spi-imx.c
-@@ -1494,7 +1494,7 @@ static int spi_imx_transfer(struct spi_device *spi,
+diff --git a/drivers/media/usb/go7007/go7007-fw.c b/drivers/media/usb/go7007/go7007-fw.c
+index 24f5b615dc7af..dfa9f899d0c25 100644
+--- a/drivers/media/usb/go7007/go7007-fw.c
++++ b/drivers/media/usb/go7007/go7007-fw.c
+@@ -1499,8 +1499,8 @@ static int modet_to_package(struct go7007 *go, __le16 *code, int space)
+ 	return cnt;
+ }
  
- 	/* flush rxfifo before transfer */
- 	while (spi_imx->devtype_data->rx_available(spi_imx))
--		spi_imx->rx(spi_imx);
-+		readl(spi_imx->base + MXC_CSPIRXDATA);
- 
- 	if (spi_imx->slave_mode)
- 		return spi_imx_pio_transfer_slave(spi, transfer);
+-static int do_special(struct go7007 *go, u16 type, __le16 *code, int space,
+-			int *framelen)
++static noinline_for_stack int do_special(struct go7007 *go, u16 type,
++					 __le16 *code, int space, int *framelen)
+ {
+ 	switch (type) {
+ 	case SPECIAL_FRM_HEAD:
 -- 
 2.20.1
 
