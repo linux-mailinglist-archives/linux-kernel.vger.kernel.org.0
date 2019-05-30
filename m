@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D30792EBAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:16:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36BBE2ECD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:27:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730088AbfE3DPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:15:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54374 "EHLO mail.kernel.org"
+        id S2387845AbfE3D1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:27:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728959AbfE3DMU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:20 -0400
+        id S1728966AbfE3DTL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:19:11 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BD72244D6;
-        Thu, 30 May 2019 03:12:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A352524846;
+        Thu, 30 May 2019 03:19:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185939;
-        bh=2YrukC3cEquubOCbw1IuRKiQl5aoHpT/7i1Fh9AHkO8=;
+        s=default; t=1559186350;
+        bh=qfICDiLunXHQGiuMdU6soxJavQnlBqyhnJcDoK1k6EU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oZBvQf5hjqfkqP1FWXzwYWjE0gqybFpTr+RSLRX/04wXmBNyd1cvEldj0+AgLlqfr
-         YbQ/zPm4DNkL+Slg84ui226RvMLWimvBs0ELP02jz+sD86H6AOsb8OxYqpWDZbxv8T
-         gm4UP8Y2aWNWTqxqpPFnUeDd4/CkYATTy1jCJnJQ=
+        b=R0o24WOqWopK4nuqRp4KndC7wJk6oSynU7O7LJFA8nCEo77SHQEbanOn0aek6yWFK
+         hC5J1mGbtRW8o8CED+HiLDXDJUIehtT2spu+qytFUJHuRTumHKFqXgUgpvR/h/OU7p
+         6Xe9I7/2ip/a0R5jnSnw6LeOM16ogUr28T6vqZt8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Stefan=20Br=C3=BCns?= <stefan.bruens@rwth-aachen.de>,
-        Sean Young <sean@mess.org>,
+        stable@vger.kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 344/405] media: dvbsky: Avoid leaking dvb frontend
-Date:   Wed, 29 May 2019 20:05:42 -0700
-Message-Id: <20190530030558.098320408@linuxfoundation.org>
+Subject: [PATCH 4.14 089/193] media: ov6650: Move v4l2_clk_get() to ov6650_video_probe() helper
+Date:   Wed, 29 May 2019 20:05:43 -0700
+Message-Id: <20190530030501.370244529@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,140 +45,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit fdfa59cd63b184e1e96d51ff170fcac739bc6f6f ]
+[ Upstream commit ccdd85d518d8b9320ace1d87271f0ba2175f21fa ]
 
-Commit 14f4eaeddabc ("media: dvbsky: fix driver unregister logic") fixed
-a use-after-free by removing the reference to the frontend after deleting
-the backing i2c device.
+In preparation for adding asynchronous subdevice support to the driver,
+don't acquire v4l2_clk from the driver .probe() callback as that may
+fail if the clock is provided by a bridge driver which may be not yet
+initialized.  Move the v4l2_clk_get() to ov6650_video_probe() helper
+which is going to be converted to v4l2_subdev_internal_ops.registered()
+callback, executed only when the bridge driver is ready.
 
-This has the unfortunate side effect the frontend device is never freed
-in the dvb core leaving a dangling device, leading to errors when the
-dvb core tries to register the frontend after e.g. a replug as reported
-here: https://www.spinics.net/lists/linux-media/msg138181.html
-
-media: dvbsky: issues with DVBSky T680CI
-
-===
-[  561.119145] sp2 8-0040: CIMaX SP2 successfully attached
-[  561.119161] usb 2-3: DVB: registering adapter 0 frontend 0 (Silicon Labs
-Si2168)...
-[  561.119174] sysfs: cannot create duplicate filename '/class/dvb/
-dvb0.frontend0'
-===
-
-The use after free happened as dvb_usbv2_disconnect calls in this order:
-- dvb_usb_device::props->exit(...)
-- dvb_usbv2_adapter_frontend_exit(...)
-  + if (fe) dvb_unregister_frontend(fe)
-  + dvb_usb_device::props->frontend_detach(...)
-
-Moving the release of the i2c device from exit() to frontend_detach()
-avoids the dangling pointer access and allows the core to unregister
-the frontend.
-
-This was originally reported for a DVBSky T680CI, but it also affects
-the MyGica T230C. As all supported devices structure the registration/
-unregistration identically, apply the change for all device types.
-
-Signed-off-by: Stefan Brüns <stefan.bruens@rwth-aachen.de>
-Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/usb/dvb-usb-v2/dvbsky.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ drivers/media/i2c/ov6650.c | 25 ++++++++++++++-----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/media/usb/dvb-usb-v2/dvbsky.c b/drivers/media/usb/dvb-usb-v2/dvbsky.c
-index e28bd8836751e..ae0814dd202a6 100644
---- a/drivers/media/usb/dvb-usb-v2/dvbsky.c
-+++ b/drivers/media/usb/dvb-usb-v2/dvbsky.c
-@@ -615,16 +615,18 @@ static int dvbsky_init(struct dvb_usb_device *d)
- 	return 0;
- }
+diff --git a/drivers/media/i2c/ov6650.c b/drivers/media/i2c/ov6650.c
+index 07bc819f5819d..025869eec2ac9 100644
+--- a/drivers/media/i2c/ov6650.c
++++ b/drivers/media/i2c/ov6650.c
+@@ -822,9 +822,16 @@ static int ov6650_video_probe(struct i2c_client *client)
+ 	u8		pidh, pidl, midh, midl;
+ 	int		ret;
  
--static void dvbsky_exit(struct dvb_usb_device *d)
-+static int dvbsky_frontend_detach(struct dvb_usb_adapter *adap)
- {
-+	struct dvb_usb_device *d = adap_to_d(adap);
- 	struct dvbsky_state *state = d_to_priv(d);
--	struct dvb_usb_adapter *adap = &d->adapter[0];
++	priv->clk = v4l2_clk_get(&client->dev, NULL);
++	if (IS_ERR(priv->clk)) {
++		ret = PTR_ERR(priv->clk);
++		dev_err(&client->dev, "v4l2_clk request err: %d\n", ret);
++		return ret;
++	}
 +
-+	dev_dbg(&d->udev->dev, "%s: adap=%d\n", __func__, adap->id);
+ 	ret = ov6650_s_power(&priv->subdev, 1);
+ 	if (ret < 0)
+-		return ret;
++		goto eclkput;
  
- 	dvb_module_release(state->i2c_client_tuner);
- 	dvb_module_release(state->i2c_client_demod);
- 	dvb_module_release(state->i2c_client_ci);
+ 	msleep(20);
  
--	adap->fe[0] = NULL;
-+	return 0;
+@@ -861,6 +868,11 @@ static int ov6650_video_probe(struct i2c_client *client)
+ 
+ done:
+ 	ov6650_s_power(&priv->subdev, 0);
++	if (!ret)
++		return 0;
++eclkput:
++	v4l2_clk_put(priv->clk);
++
+ 	return ret;
  }
  
- /* DVB USB Driver stuff */
-@@ -640,11 +642,11 @@ static struct dvb_usb_device_properties dvbsky_s960_props = {
+@@ -1006,18 +1018,9 @@ static int ov6650_probe(struct i2c_client *client,
+ 	priv->code	  = MEDIA_BUS_FMT_YUYV8_2X8;
+ 	priv->colorspace  = V4L2_COLORSPACE_JPEG;
  
- 	.i2c_algo         = &dvbsky_i2c_algo,
- 	.frontend_attach  = dvbsky_s960_attach,
-+	.frontend_detach  = dvbsky_frontend_detach,
- 	.init             = dvbsky_init,
- 	.get_rc_config    = dvbsky_get_rc_config,
- 	.streaming_ctrl   = dvbsky_streaming_ctrl,
- 	.identify_state	  = dvbsky_identify_state,
--	.exit             = dvbsky_exit,
- 	.read_mac_address = dvbsky_read_mac_addr,
+-	priv->clk = v4l2_clk_get(&client->dev, NULL);
+-	if (IS_ERR(priv->clk)) {
+-		ret = PTR_ERR(priv->clk);
+-		goto eclkget;
+-	}
+-
+ 	ret = ov6650_video_probe(client);
+-	if (ret) {
+-		v4l2_clk_put(priv->clk);
+-eclkget:
++	if (ret)
+ 		v4l2_ctrl_handler_free(&priv->hdl);
+-	}
  
- 	.num_adapters = 1,
-@@ -667,11 +669,11 @@ static struct dvb_usb_device_properties dvbsky_s960c_props = {
- 
- 	.i2c_algo         = &dvbsky_i2c_algo,
- 	.frontend_attach  = dvbsky_s960c_attach,
-+	.frontend_detach  = dvbsky_frontend_detach,
- 	.init             = dvbsky_init,
- 	.get_rc_config    = dvbsky_get_rc_config,
- 	.streaming_ctrl   = dvbsky_streaming_ctrl,
- 	.identify_state	  = dvbsky_identify_state,
--	.exit             = dvbsky_exit,
- 	.read_mac_address = dvbsky_read_mac_addr,
- 
- 	.num_adapters = 1,
-@@ -694,11 +696,11 @@ static struct dvb_usb_device_properties dvbsky_t680c_props = {
- 
- 	.i2c_algo         = &dvbsky_i2c_algo,
- 	.frontend_attach  = dvbsky_t680c_attach,
-+	.frontend_detach  = dvbsky_frontend_detach,
- 	.init             = dvbsky_init,
- 	.get_rc_config    = dvbsky_get_rc_config,
- 	.streaming_ctrl   = dvbsky_streaming_ctrl,
- 	.identify_state	  = dvbsky_identify_state,
--	.exit             = dvbsky_exit,
- 	.read_mac_address = dvbsky_read_mac_addr,
- 
- 	.num_adapters = 1,
-@@ -721,11 +723,11 @@ static struct dvb_usb_device_properties dvbsky_t330_props = {
- 
- 	.i2c_algo         = &dvbsky_i2c_algo,
- 	.frontend_attach  = dvbsky_t330_attach,
-+	.frontend_detach  = dvbsky_frontend_detach,
- 	.init             = dvbsky_init,
- 	.get_rc_config    = dvbsky_get_rc_config,
- 	.streaming_ctrl   = dvbsky_streaming_ctrl,
- 	.identify_state	  = dvbsky_identify_state,
--	.exit             = dvbsky_exit,
- 	.read_mac_address = dvbsky_read_mac_addr,
- 
- 	.num_adapters = 1,
-@@ -748,11 +750,11 @@ static struct dvb_usb_device_properties mygica_t230c_props = {
- 
- 	.i2c_algo         = &dvbsky_i2c_algo,
- 	.frontend_attach  = dvbsky_mygica_t230c_attach,
-+	.frontend_detach  = dvbsky_frontend_detach,
- 	.init             = dvbsky_init,
- 	.get_rc_config    = dvbsky_get_rc_config,
- 	.streaming_ctrl   = dvbsky_streaming_ctrl,
- 	.identify_state	  = dvbsky_identify_state,
--	.exit             = dvbsky_exit,
- 
- 	.num_adapters = 1,
- 	.adapter = {
+ 	return ret;
+ }
 -- 
 2.20.1
 
