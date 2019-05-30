@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 772662F0CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:07:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AAA62EF5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:55:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726483AbfE3EHP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:07:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47300 "EHLO mail.kernel.org"
+        id S2387894AbfE3Dyv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:54:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731136AbfE3DRa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:17:30 -0400
+        id S1730956AbfE3DTR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:19:17 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCFD323B5C;
-        Thu, 30 May 2019 03:17:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADE7124863;
+        Thu, 30 May 2019 03:19:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186249;
-        bh=A61OVX+qhxljkiOkU0eMW39eESdk+BXN3QoFqUVRpco=;
+        s=default; t=1559186356;
+        bh=wCQprKQ6UlTQ2cMR+4SA6hv03cc2sg5r/xo00vPGyiQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gO3EX1Q1N7deQkUi1JSq5EED1ulNKwp7N5vOi32i3+gC7z3k+pOGOz9DE3iQ4QxSV
-         JCFmvGCrFkSGHHehkQBTaVppv6DbJl7OKBryvxzOfbNyF03L/Og/d4HRwD9j7lxYwq
-         mc3LWpzc9LRwjf6dGwdvj4f5zqv4qQCJ28xIM2Xk=
+        b=v9mrd4F91lUCCZlApRqZ87fB7xNHtvhIBWxGUCPeV0gHDoySK1q+GYpVB/iKGoyk9
+         bh/2KJEAjVndc5bmllLUHG4rnn1uAc8jH3AxcJtQ1+4MK7zC8l+th4KwSfFuoI1OkM
+         80QfzltEPNo8ak0mo7fz6bt9TFzJLZr6P2K52xEQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Chunming Zhou <david1.zhou@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
+        Hannes Reinecke <hare@suse.com>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 168/276] drm/amdgpu: fix old fence check in amdgpu_fence_emit
-Date:   Wed, 29 May 2019 20:05:26 -0700
-Message-Id: <20190530030535.911897710@linuxfoundation.org>
+Subject: [PATCH 4.14 073/193] bcache: return error immediately in bch_journal_replay()
+Date:   Wed, 29 May 2019 20:05:27 -0700
+Message-Id: <20190530030459.393007741@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,65 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 3d2aca8c8620346abdba96c6300d2c0b90a1d0cc ]
+[ Upstream commit 68d10e6979a3b59e3cd2e90bfcafed79c4cf180a ]
 
-We don't hold a reference to the old fence, so it can go away
-any time we are waiting for it to signal.
+When failure happens inside bch_journal_replay(), calling
+cache_set_err_on() and handling the failure in async way is not a good
+idea. Because after bch_journal_replay() returns, registering code will
+continue to execute following steps, and unregistering code triggered
+by cache_set_err_on() is running in same time. First it is unnecessary
+to handle failure and unregister cache set in an async way, second there
+might be potential race condition to run register and unregister code
+for same cache set.
 
-Signed-off-by: Christian König <christian.koenig@amd.com>
-Reviewed-by: Chunming Zhou <david1.zhou@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+So in this patch, if failure happens in bch_journal_replay(), we don't
+call cache_set_err_on(), and just print out the same error message to
+kernel message buffer, then return -EIO immediately caller. Then caller
+can detect such failure and handle it in synchrnozied way.
+
+Signed-off-by: Coly Li <colyli@suse.de>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c | 24 ++++++++++++++++-------
- 1 file changed, 17 insertions(+), 7 deletions(-)
+ drivers/md/bcache/journal.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c
-index 7056925eb3860..869ff624b108c 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c
-@@ -136,8 +136,9 @@ int amdgpu_fence_emit(struct amdgpu_ring *ring, struct dma_fence **f,
- {
- 	struct amdgpu_device *adev = ring->adev;
- 	struct amdgpu_fence *fence;
--	struct dma_fence *old, **ptr;
-+	struct dma_fence __rcu **ptr;
- 	uint32_t seq;
-+	int r;
+diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
+index c02394c3181f7..cd8a82655e647 100644
+--- a/drivers/md/bcache/journal.c
++++ b/drivers/md/bcache/journal.c
+@@ -323,9 +323,12 @@ int bch_journal_replay(struct cache_set *s, struct list_head *list)
+ 	list_for_each_entry(i, list, list) {
+ 		BUG_ON(i->pin && atomic_read(i->pin) != 1);
  
- 	fence = kmem_cache_alloc(amdgpu_fence_slab, GFP_KERNEL);
- 	if (fence == NULL)
-@@ -153,15 +154,24 @@ int amdgpu_fence_emit(struct amdgpu_ring *ring, struct dma_fence **f,
- 			       seq, flags | AMDGPU_FENCE_FLAG_INT);
- 
- 	ptr = &ring->fence_drv.fences[seq & ring->fence_drv.num_fences_mask];
-+	if (unlikely(rcu_dereference_protected(*ptr, 1))) {
-+		struct dma_fence *old;
-+
-+		rcu_read_lock();
-+		old = dma_fence_get_rcu_safe(ptr);
-+		rcu_read_unlock();
-+
-+		if (old) {
-+			r = dma_fence_wait(old, false);
-+			dma_fence_put(old);
-+			if (r)
-+				return r;
+-		cache_set_err_on(n != i->j.seq, s,
+-"bcache: journal entries %llu-%llu missing! (replaying %llu-%llu)",
+-				 n, i->j.seq - 1, start, end);
++		if (n != i->j.seq) {
++			pr_err("bcache: journal entries %llu-%llu missing! (replaying %llu-%llu)",
++			n, i->j.seq - 1, start, end);
++			ret = -EIO;
++			goto err;
 +		}
-+	}
-+
- 	/* This function can't be called concurrently anyway, otherwise
- 	 * emitting the fence would mess up the hardware ring buffer.
- 	 */
--	old = rcu_dereference_protected(*ptr, 1);
--	if (old && !dma_fence_is_signaled(old)) {
--		DRM_INFO("rcu slot is busy\n");
--		dma_fence_wait(old, false);
--	}
--
- 	rcu_assign_pointer(*ptr, dma_fence_get(&fence->base));
  
- 	*f = &fence->base;
+ 		for (k = i->j.start;
+ 		     k < bset_bkey_last(&i->j);
 -- 
 2.20.1
 
