@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FE9B2F5B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:49:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CFB42EC82
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:22:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388885AbfE3Etm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:49:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50092 "EHLO mail.kernel.org"
+        id S1732590AbfE3DVc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:21:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42540 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728401AbfE3DLK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:11:10 -0400
+        id S1730669AbfE3DQ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:16:26 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F310C24476;
-        Thu, 30 May 2019 03:11:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E3E824598;
+        Thu, 30 May 2019 03:16:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185870;
-        bh=PDSOmHvRNjoz1b2d9autjhaMFPH4WSNsyzQs/WTlYD4=;
+        s=default; t=1559186185;
+        bh=jxFEU4hEZfRWH8xSa6TsEgftBEFtYHFMd2kCHP1i7X8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=swokf1enbCHakbjFZjrBDtCGzBScMu7YX4CY7fp9P7vJ/Bcld6M9WK8SMTMxjRzFj
-         7sCTRIyew2cVuz6pJ5siy1/bUONziM8Of7ZV4iIWUumVSHBjTTCoPRqW0yRnBseIHm
-         9NLBa9jZZGqXM6uL05s5iVHeuWSoxNVGGPthHnQs=
+        b=kQdE251QhUQcGPYzLahh3SO2USTdtnMxeIhyMqyeZFFtNvcFXwyl7+SWN8yKgTX2q
+         C5EwGuU/kxA0lFKKpRAluawyAZhLKc+RWGujUdiJ509ZXUC4zuRLFXfkm1PV77uvDF
+         +481WXRosXEER2+/iUNl6c8PKrLfEzmVuiBB39aM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jonas Karlman <jonas@kwiboo.se>,
-        Randy Li <ayaka@soulik.info>,
-        Douglas Anderson <dianders@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>,
+        stable@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 211/405] clk: rockchip: Fix video codec clocks on rk3288
-Date:   Wed, 29 May 2019 20:03:29 -0700
-Message-Id: <20190530030551.780911131@linuxfoundation.org>
+Subject: [PATCH 4.19 052/276] bpftool: exclude bash-completion/bpftool from .gitignore pattern
+Date:   Wed, 29 May 2019 20:03:30 -0700
+Message-Id: <20190530030528.333890209@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,81 +46,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 00c0cd9e59d265b393553e9afa54fee8b10e8158 ]
+[ Upstream commit a7d006714724de4334c5e3548701b33f7b12ca96 ]
 
-It appears that there is a typo in the rk3288 TRM.  For
-GRF_SOC_CON0[7] it says that 0 means "vepu" and 1 means "vdpu".  It's
-the other way around.
+tools/bpf/bpftool/.gitignore has the "bpftool" pattern, which is
+intended to ignore the following build artifact:
 
-How do I know?  Here's my evidence:
+  tools/bpf/bpftool/bpftool
 
-1. Prior to commit 4d3e84f99628 ("clk: rockchip: describe aclk_vcodec
-   using the new muxgrf type on rk3288") we always pretended that we
-   were using "aclk_vdpu" and the comment in the code said that this
-   matched the default setting in the system.  In fact the default
-   setting is 0 according to the TRM and according to reading memory
-   at bootup.  In addition rk3288-based Chromebooks ran like this and
-   the video codecs worked.
-2. With the existing clock code if you boot up and try to enable the
-   new VIDEO_ROCKCHIP_VPU as a module (and without "clk_ignore_unused"
-   on the command line), you get errors like "failed to get ack on
-   domain 'pd_video', val=0x80208".  After flipping vepu/vdpu things
-   init OK.
-3. If I export and add both the vepu and vdpu to the list of clocks
-   for RK3288_PD_VIDEO I can get past the power domain errors, but now
-   I freeze when the vpu_mmu gets initted.
-4. If I just mark the "vdpu" as IGNORE_UNUSED then everything boots up
-   and probes OK showing that somehow the "vdpu" was important to keep
-   enabled.  This is because we were actually using it as a parent.
-5. After this change I can hack "aclk_vcodec_pre" to parent from
-   "aclk_vepu" using assigned-clocks and the video codec still probes
-   OK.
-6. Rockchip has said so on the mailing list [1].
+However, the .gitignore entry is effective not only for the current
+directory, but also for any sub-directories.
 
-...so let's fix it.
+So, from the point of .gitignore grammar, the following check-in file
+is also considered to be ignored:
 
-Let's also add CLK_SET_RATE_PARENT to "aclk_vcodec_pre" as suggested
-by Jonas Karlman.  Prior to the same commit you could do
-clk_set_rate() on "aclk_vcodec" and it would change "aclk_vdpu".
-That's because "aclk_vcodec" was a simple gate clock (always gets
-CLK_SET_RATE_PARENT) and its direct parent was "aclk_vdpu".  After
-that commit "aclk_vcodec_pre" gets in the way so we need to add
-CLK_SET_RATE_PARENT to it too.
+  tools/bpf/bpftool/bash-completion/bpftool
 
-[1] https://lkml.kernel.org/r/1d17b015-9e17-34b9-baf8-c285dc1957aa@rock-chips.com
+As the manual gitignore(5) says "Files already tracked by Git are not
+affected", this is not a problem as far as Git is concerned.
 
-Fixes: 4d3e84f99628 ("clk: rockchip: describe aclk_vcodec using the new muxgrf type on rk3288")
-Suggested-by: Jonas Karlman <jonas@kwiboo.se>
-Suggested-by: Randy Li <ayaka@soulik.info>
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+However, Git is not the only program that parses .gitignore because
+.gitignore is useful to distinguish build artifacts from source files.
+
+For example, tar(1) supports the --exclude-vcs-ignore option. As of
+writing, this option does not work perfectly, but it intends to create
+a tarball excluding files specified by .gitignore.
+
+So, I believe it is better to fix this issue.
+
+You can fix it by prefixing the pattern with a slash; the leading slash
+means the specified pattern is relative to the current directory.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Quentin Monnet <quentin.monnet@netronome.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/rockchip/clk-rk3288.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/bpf/bpftool/.gitignore | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index f3bbcdfa88ead..623c5f684987c 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -219,7 +219,7 @@ PNAME(mux_hsadcout_p)	= { "hsadc_src", "ext_hsadc" };
- PNAME(mux_edp_24m_p)	= { "ext_edp_24m", "xin24m" };
- PNAME(mux_tspout_p)	= { "cpll", "gpll", "npll", "xin27m" };
- 
--PNAME(mux_aclk_vcodec_pre_p)	= { "aclk_vepu", "aclk_vdpu" };
-+PNAME(mux_aclk_vcodec_pre_p)	= { "aclk_vdpu", "aclk_vepu" };
- PNAME(mux_usbphy480m_p)		= { "sclk_otgphy1_480m", "sclk_otgphy2_480m",
- 				    "sclk_otgphy0_480m" };
- PNAME(mux_hsicphy480m_p)	= { "cpll", "gpll", "usbphy480m_src" };
-@@ -420,7 +420,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
- 	COMPOSITE(0, "aclk_vdpu", mux_pll_src_cpll_gpll_usb480m_p, 0,
- 			RK3288_CLKSEL_CON(32), 14, 2, MFLAGS, 8, 5, DFLAGS,
- 			RK3288_CLKGATE_CON(3), 11, GFLAGS),
--	MUXGRF(0, "aclk_vcodec_pre", mux_aclk_vcodec_pre_p, 0,
-+	MUXGRF(0, "aclk_vcodec_pre", mux_aclk_vcodec_pre_p, CLK_SET_RATE_PARENT,
- 			RK3288_GRF_SOC_CON(0), 7, 1, MFLAGS),
- 	GATE(ACLK_VCODEC, "aclk_vcodec", "aclk_vcodec_pre", 0,
- 		RK3288_CLKGATE_CON(9), 0, GFLAGS),
+diff --git a/tools/bpf/bpftool/.gitignore b/tools/bpf/bpftool/.gitignore
+index 67167e44b7266..8248b8dd89d4b 100644
+--- a/tools/bpf/bpftool/.gitignore
++++ b/tools/bpf/bpftool/.gitignore
+@@ -1,5 +1,5 @@
+ *.d
+-bpftool
++/bpftool
+ bpftool*.8
+ bpf-helpers.*
+ FEATURE-DUMP.bpftool
 -- 
 2.20.1
 
