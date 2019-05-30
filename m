@@ -2,89 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B37C2F107
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:09:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB0802F255
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:21:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729131AbfE3EJY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:09:24 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38809 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727179AbfE3EJU (ORCPT
+        id S1731595AbfE3EUs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:20:48 -0400
+Received: from smtprelay0033.hostedemail.com ([216.40.44.33]:37168 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731287AbfE3EUl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 00:09:20 -0400
-Received: by mail-pl1-f196.google.com with SMTP id f97so1979322plb.5
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 21:09:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=pgMA0Wfc76ibrLZDaqEAp0iESFpifKaHVOBOP4rz25s=;
-        b=GZXUQS6xnZMeSgYPU7yTlk08Z4KF1uhmo/2RKiQPBb2Fz7KiuPt1XmN/71KsZqygdr
-         7fOiTjrOOz9A2eN462PpqW55OX12N3UsLiZDKBWuU4lFjuinbzlBlVz87QrROT8EKvQO
-         NzlC3WnnlmR/FAWbCUvyqgeyQpk7Vx4yvMNb50Jduber6Mrc27YEhHJyz/3+cuUjhUpQ
-         y6WFe7RWuEa65bA4ywcvCd+SSAJR3WORR8UFWkb3mv8F6RNsCGaCAYIvfy+HznkRIdQE
-         ck86PSwm/comkAqjPua6vmyCj9dXEIVsFqdhJcfXLbE28hqM5XAowlcuBHK7yGiZsV+8
-         QNEg==
-X-Gm-Message-State: APjAAAVShlRHlAzJ5vNwPNKdxXi/HtL9bPh5+9YuMatqOYAUeHSPWwQ2
-        mady2IXSNrch74Hu6/XEcgqtyjbg6IV6jw==
-X-Google-Smtp-Source: APXvYqynAVNJiWMosj39mGO5m4j4CaYHyiDZKp97BOYFMAtBAQuLZMgN27bxN/yqwZ4YwNPWI+pRWQ==
-X-Received: by 2002:a17:902:a405:: with SMTP id p5mr1741551plq.51.1559189359758;
-        Wed, 29 May 2019 21:09:19 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id s80sm1464910pfs.117.2019.05.29.21.09.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 May 2019 21:09:19 -0700 (PDT)
-Date:   Wed, 29 May 2019 21:09:19 -0700 (PDT)
-X-Google-Original-Date: Wed, 29 May 2019 20:53:09 PDT (-0700)
-Subject:     Re: [PATCH RESEND 5/7] RISC-V: entry: Remove unneeded need_resched() loop
-In-Reply-To: <20190528104848.13160-6-valentin.schneider@arm.com>
-CC:     linux-kernel@vger.kernel.org, aou@eecs.berkeley.edu,
-        linux-riscv@lists.infradead.org
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     valentin.schneider@arm.com
-Message-ID: <mhng-066fe6a6-4d0a-4286-bc01-faaf21ff2698@palmer-si-x1e>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Thu, 30 May 2019 00:20:41 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id C3C53182251B2;
+        Thu, 30 May 2019 04:20:39 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:421:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1381:1437:1515:1516:1518:1534:1538:1567:1593:1594:1711:1714:1730:1747:1777:1792:1963:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3867:3868:3871:3872:3873:3874:4321:5007:9040:10004:10400:10848:11658:11914:12048:12740:12760:12895:13069:13160:13229:13311:13357:13439:14659:21080:21627:21789:30012:30054:30070:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:31,LUA_SUMMARY:none
+X-HE-Tag: nose55_5a26eccd8617
+X-Filterd-Recvd-Size: 1484
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf13.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 30 May 2019 04:20:38 +0000 (UTC)
+Message-ID: <a47d7093b10d671ae89fa6f6962d69d6913a30f7.camel@perches.com>
+Subject: Re: [PATCH v2] drivers/media/dvb-frontends: Implement probe/remove
+ for stv6110x
+From:   Joe Perches <joe@perches.com>
+To:     Tobias Klausmann <tobias.johannes.klausmann@mni.thm.de>,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        mchehab@kernel.org, sean@mess.org
+Date:   Wed, 29 May 2019 21:20:37 -0700
+In-Reply-To: <d1afd4d3-0dc5-718d-f7b4-f763f367ca1e@mni.thm.de>
+References: <20190509195118.23027-1-tobias.johannes.klausmann@mni.thm.de>
+         <20190529165633.8779-1-tobias.johannes.klausmann@mni.thm.de>
+         <bcd12350374533ef090ae911be444e702e85134b.camel@perches.com>
+         <d1afd4d3-0dc5-718d-f7b4-f763f367ca1e@mni.thm.de>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 28 May 2019 03:48:46 PDT (-0700), valentin.schneider@arm.com wrote:
-> Since the enabling and disabling of IRQs within preempt_schedule_irq()
-> is contained in a need_resched() loop, we don't need the outer arch
-> code loop.
->
-> Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
-> Cc: Palmer Dabbelt <palmer@sifive.com>
-> Cc: Albert Ou <aou@eecs.berkeley.edu>
-> Cc: linux-riscv@lists.infradead.org
-> ---
->  arch/riscv/kernel/entry.S | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-> index 1c1ecc238cfa..d0b1b9660283 100644
-> --- a/arch/riscv/kernel/entry.S
-> +++ b/arch/riscv/kernel/entry.S
-> @@ -258,12 +258,11 @@ restore_all:
->  resume_kernel:
->  	REG_L s0, TASK_TI_PREEMPT_COUNT(tp)
->  	bnez s0, restore_all
-> -need_resched:
->  	REG_L s0, TASK_TI_FLAGS(tp)
->  	andi s0, s0, _TIF_NEED_RESCHED
->  	beqz s0, restore_all
->  	call preempt_schedule_irq
-> -	j need_resched
-> +	j restore_all
->  #endif
->
->  work_pending:
+On Wed, 2019-05-29 at 21:03 +0200, Tobias Klausmann wrote:
+> thanks for the comments! If really desired i can change the code 
+> further, adapting to your comments, but note that the code was 
+> essentially just moved around to cater to both _probe() and attach(), 
+> intentionally leaving it as it was before the patch!
 
-Sorry I missed this the first time around.
+Up to you.
+My general preference is for human intelligible and simple code.
 
-Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
-
-Do you want this through the RISC-V tree, or are you going to take it?
