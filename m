@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29FBA2EC75
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:22:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41EA32F3C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:33:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732444AbfE3DVF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:21:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41562 "EHLO mail.kernel.org"
+        id S1733218AbfE3EcI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:32:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730622AbfE3DQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:16:13 -0400
+        id S1729547AbfE3DNl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:13:41 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA3E1245AB;
-        Thu, 30 May 2019 03:16:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4D452456A;
+        Thu, 30 May 2019 03:13:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186172;
-        bh=56vgd8SDkEUz3UFrrp79KWlabZkIwvwexkR8pA6e3O8=;
+        s=default; t=1559186021;
+        bh=VGzhhKbe+lFSOO+k1naK0jo0kuQdMPAcQZFTCeTS41U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pgQgAc94r1kaZGI8HiUMA+3fTiqH0Ve2N561khZkvTrRixvtlgD6/wP1YhqeFo3K/
-         +ips+2p8BmlKpGnILyAn2zbi5qh9vsm+mbnQ7s7gC9ebtHOeMF3D3dmqHoJglCRMAu
-         PWvnW+flSiTIHeKX2pIvcIh+GiO1kqmAx8Qtzucg=
+        b=hZBZOs9I0wX/cj5acvpHcYB6uo+qUwkoOxFc6qWZ9UoWevOXDQKXgqMvdOzuEk2e6
+         a46baoDRVKAEW0OvfclZdhXKEf+jEVYSjsguDmwyuiL2vwrLbkhRVQQ8sYrLYeQN53
+         zrwZgS6m239cLU3YXvrnixfF6WPIAPi5aXFz4TyQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Machek <pavel@denx.de>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.19 005/276] KVM: x86: fix return value for reserved EFER
+        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 090/346] iwlwifi: pcie: dont crash on invalid RX interrupt
 Date:   Wed, 29 May 2019 20:02:43 -0700
-Message-Id: <20190530030523.731037078@linuxfoundation.org>
+Message-Id: <20190530030545.725366167@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+[ Upstream commit 30f24eabab8cd801064c5c37589d803cb4341929 ]
 
-commit 66f61c92889ff3ca365161fb29dd36d6354682ba upstream.
+If for some reason the device gives us an RX interrupt before we're
+ready for it, perhaps during device power-on with misconfigured IRQ
+causes mapping or so, we can crash trying to access the queues.
 
-Commit 11988499e62b ("KVM: x86: Skip EFER vs. guest CPUID checks for
-host-initiated writes", 2019-04-02) introduced a "return false" in a
-function returning int, and anyway set_efer has a "nonzero on error"
-conventon so it should be returning 1.
+Prevent that by checking that we actually have RXQs and that they
+were properly allocated.
 
-Reported-by: Pavel Machek <pavel@denx.de>
-Fixes: 11988499e62b ("KVM: x86: Skip EFER vs. guest CPUID checks for host-initiated writes")
-Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/x86.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/intel/iwlwifi/pcie/rx.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1188,7 +1188,7 @@ static int set_efer(struct kvm_vcpu *vcp
- 	u64 efer = msr_info->data;
+diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
+index c596c7b13504d..4354c0fedda78 100644
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
+@@ -1384,10 +1384,15 @@ static struct iwl_rx_mem_buffer *iwl_pcie_get_rxb(struct iwl_trans *trans,
+ static void iwl_pcie_rx_handle(struct iwl_trans *trans, int queue)
+ {
+ 	struct iwl_trans_pcie *trans_pcie = IWL_TRANS_GET_PCIE_TRANS(trans);
+-	struct iwl_rxq *rxq = &trans_pcie->rxq[queue];
++	struct iwl_rxq *rxq;
+ 	u32 r, i, count = 0;
+ 	bool emergency = false;
  
- 	if (efer & efer_reserved_bits)
--		return false;
-+		return 1;
- 
- 	if (!msr_info->host_initiated) {
- 		if (!__kvm_valid_efer(vcpu, efer))
++	if (WARN_ON_ONCE(!trans_pcie->rxq || !trans_pcie->rxq[queue].bd))
++		return;
++
++	rxq = &trans_pcie->rxq[queue];
++
+ restart:
+ 	spin_lock(&rxq->lock);
+ 	/* uCode's read index (stored in shared DRAM) indicates the last Rx
+-- 
+2.20.1
+
 
 
