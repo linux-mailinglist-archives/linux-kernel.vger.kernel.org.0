@@ -2,104 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D37402FF70
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 17:28:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D16D02FF65
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 17:27:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727680AbfE3P2I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 11:28:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58202 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727536AbfE3P2F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 11:28:05 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D19224422;
-        Thu, 30 May 2019 15:28:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559230084;
-        bh=2SeuYcgtjv8C1XOomtfxNINKkXjgtPt1eZWnSUpjXP0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ezz2PrC0nPT+sN4uG9SM5ee7Oe4C1+FTh40Oq9Bw7vcBGx1xLHBHttq8zF5r9Ta0V
-         pkzE6KlDUpLEOtZRNy4NPGmAvgBNVTSnCkhCmmggnnBr0yzsB2Mvq+JuuM4+58fI06
-         L07z/t7jV3RfjPoGcfxfFRCoxzDFgfrjkqQukyrY=
-From:   Sasha Levin <sashal@kernel.org>
-To:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca
-Cc:     corbet@lwn.net, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@microsoft.com, thiruan@microsoft.com,
-        bryankel@microsoft.com, tee-dev@lists.linaro.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH v4 2/2] fTPM: add documentation for ftpm driver
-Date:   Thu, 30 May 2019 11:27:58 -0400
-Message-Id: <20190530152758.16628-3-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190530152758.16628-1-sashal@kernel.org>
-References: <20190530152758.16628-1-sashal@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1727450AbfE3P10 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 11:27:26 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46598 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726015AbfE3P1Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 11:27:25 -0400
+Received: by mail-pg1-f195.google.com with SMTP id v9so2202834pgr.13;
+        Thu, 30 May 2019 08:27:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=/Pn5l7Gl3fvih/5a8ecI7LW5krUKtJRfsuSUzHjs23s=;
+        b=gpP2jFgtCJLEB0MnQDyz47dV/7gnyYt1BYPZpOKP9dg6hZigrNid6HaEfleX8rBhDT
+         2CMbnqRfJSPZU49ILILmeW18onoEXeSLtwwUgj14BpokFfGihmaEgN1O84ORiKN5g7AU
+         rSjVJZGa1KyvV5SoV6BMW7GQJwfsfw+f9xGQZPws4NCbe7OyU5qm2lhndbFGJAASQCJd
+         GONqeXBIkUhBF8bXKRP5HQVoPTcHAXr/Xa7pGfKov1ZrDlzKxpwMOMuNMXNOxvsebNFm
+         WXgy3x4rlvFU//rUsD8CoYwPyg0aLzvgBb5aFcfFgu6FeSFEk/6yr5SzRtXeyZgLbcVs
+         0Mpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=/Pn5l7Gl3fvih/5a8ecI7LW5krUKtJRfsuSUzHjs23s=;
+        b=o41NbF4V6onCplPqdHA7MHanCVath9pVyugj2xCZyj9lW2OoFwyx8j714KBPznrE1S
+         1BDmF71mx8ewWdlqaKsmdPWYdoslUlvTkERixluO0bIiweQ6RxfZP0Mk0yCtUJg4UByG
+         NNskUjua2tuNutKKS68xw0BcMHkldoFNLVM0ac6B7WjuwcifWp88mbz0xomfrPfgroSi
+         kmI0TGR0gvR+VUtrBsp6DjKv/CRrQZp30qhE39XlUe+NUNCQud2skX9dRk28F0yl9SQa
+         jlChXxoIhV1Y+qDL1jio6CkssLoWk06a1wFm6UPOw4YLokUs2Z9hlskyQ61sRDZmuY03
+         qWww==
+X-Gm-Message-State: APjAAAW+Ezj3RJNT5ZL2eJx155F0VZGciCORxlw0WNGJ5EdH4ntomAXX
+        fWzR2cNXb9rJzGa3L7+bSdU=
+X-Google-Smtp-Source: APXvYqwJ7xSLFQLOkGndSn8SMMOb04mrm4o41TpHVluzE92VccrJo04wRYcNI3pBU0fXADZ0SYcZAw==
+X-Received: by 2002:a17:90a:6505:: with SMTP id i5mr2443651pjj.13.1559230045287;
+        Thu, 30 May 2019 08:27:25 -0700 (PDT)
+Received: from xy-data.openstacklocal (ecs-159-138-22-150.compute.hwclouds-dns.com. [159.138.22.150])
+        by smtp.gmail.com with ESMTPSA id s28sm2750518pgl.88.2019.05.30.08.27.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 30 May 2019 08:27:24 -0700 (PDT)
+From:   Young Xiao <92siuyang@gmail.com>
+To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Young Xiao <92siuyang@gmail.com>
+Subject: [PATCH] ipv6: Prevent overrun when parsing v6 header options
+Date:   Thu, 30 May 2019 23:28:18 +0800
+Message-Id: <1559230098-1543-1-git-send-email-92siuyang@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds basic documentation to describe the new fTPM driver.
+The fragmentation code tries to parse the header options in order
+to figure out where to insert the fragment option.  Since nexthdr points
+to an invalid option, the calculation of the size of the network header
+can made to be much larger than the linear section of the skb and data
+is read outside of it.
 
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
+This vulnerability is similar to CVE-2017-9074.
+
+Signed-off-by: Young Xiao <92siuyang@gmail.com>
 ---
- Documentation/security/tpm/index.rst        |  1 +
- Documentation/security/tpm/tpm_ftpm_tee.rst | 31 +++++++++++++++++++++
- 2 files changed, 32 insertions(+)
- create mode 100644 Documentation/security/tpm/tpm_ftpm_tee.rst
+ net/ipv6/mip6.c | 24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/security/tpm/index.rst b/Documentation/security/tpm/index.rst
-index af77a7bbb0700..15783668644f2 100644
---- a/Documentation/security/tpm/index.rst
-+++ b/Documentation/security/tpm/index.rst
-@@ -4,4 +4,5 @@ Trusted Platform Module documentation
+diff --git a/net/ipv6/mip6.c b/net/ipv6/mip6.c
+index 64f0f7b..30ed1c5 100644
+--- a/net/ipv6/mip6.c
++++ b/net/ipv6/mip6.c
+@@ -263,8 +263,6 @@ static int mip6_destopt_offset(struct xfrm_state *x, struct sk_buff *skb,
+ 			       u8 **nexthdr)
+ {
+ 	u16 offset = sizeof(struct ipv6hdr);
+-	struct ipv6_opt_hdr *exthdr =
+-				   (struct ipv6_opt_hdr *)(ipv6_hdr(skb) + 1);
+ 	const unsigned char *nh = skb_network_header(skb);
+ 	unsigned int packet_len = skb_tail_pointer(skb) -
+ 		skb_network_header(skb);
+@@ -272,7 +270,8 @@ static int mip6_destopt_offset(struct xfrm_state *x, struct sk_buff *skb,
  
- .. toctree::
+ 	*nexthdr = &ipv6_hdr(skb)->nexthdr;
  
-+   tpm_ftpm_tee
-    tpm_vtpm_proxy
-diff --git a/Documentation/security/tpm/tpm_ftpm_tee.rst b/Documentation/security/tpm/tpm_ftpm_tee.rst
-new file mode 100644
-index 0000000000000..29c2f8b5ed100
---- /dev/null
-+++ b/Documentation/security/tpm/tpm_ftpm_tee.rst
-@@ -0,0 +1,31 @@
-+=============================================
-+Firmware TPM Driver
-+=============================================
+-	while (offset + 1 <= packet_len) {
++	while (offset <= packet_len) {
++		struct ipv6_opt_hdr *exthdr;
+ 
+ 		switch (**nexthdr) {
+ 		case NEXTHDR_HOP:
+@@ -299,12 +298,15 @@ static int mip6_destopt_offset(struct xfrm_state *x, struct sk_buff *skb,
+ 			return offset;
+ 		}
+ 
++		if (offset + sizeof(struct ipv6_opt_hdr) > packet_len)
++			return -EINVAL;
 +
-+| Authors:
-+| Thirupathaiah Annapureddy <thiruan@microsoft.com>
-+| Sasha Levin <sashal@kernel.org>
++		exthdr = (struct ipv6_opt_hdr *)(nh + offset);
+ 		offset += ipv6_optlen(exthdr);
+ 		*nexthdr = &exthdr->nexthdr;
+-		exthdr = (struct ipv6_opt_hdr *)(nh + offset);
+ 	}
+ 
+-	return offset;
++	return -EINVAL;
+ }
+ 
+ static int mip6_destopt_init_state(struct xfrm_state *x)
+@@ -399,8 +401,6 @@ static int mip6_rthdr_offset(struct xfrm_state *x, struct sk_buff *skb,
+ 			     u8 **nexthdr)
+ {
+ 	u16 offset = sizeof(struct ipv6hdr);
+-	struct ipv6_opt_hdr *exthdr =
+-				   (struct ipv6_opt_hdr *)(ipv6_hdr(skb) + 1);
+ 	const unsigned char *nh = skb_network_header(skb);
+ 	unsigned int packet_len = skb_tail_pointer(skb) -
+ 		skb_network_header(skb);
+@@ -408,7 +408,8 @@ static int mip6_rthdr_offset(struct xfrm_state *x, struct sk_buff *skb,
+ 
+ 	*nexthdr = &ipv6_hdr(skb)->nexthdr;
+ 
+-	while (offset + 1 <= packet_len) {
++	while (offset <= packet_len) {
++		struct ipv6_opt_hdr *exthdr;
+ 
+ 		switch (**nexthdr) {
+ 		case NEXTHDR_HOP:
+@@ -434,12 +435,15 @@ static int mip6_rthdr_offset(struct xfrm_state *x, struct sk_buff *skb,
+ 			return offset;
+ 		}
+ 
++		if (offset + sizeof(struct ipv6_opt_hdr) > packet_len)
++			return -EINVAL;
 +
-+This document describes the firmware Trusted Platform Module (fTPM)
-+device driver.
-+
-+Introduction
-+============
-+
-+This driver is a shim for a firmware implemented in ARM's TrustZone
-+environment. The driver allows programs to interact with the TPM in the same
-+way the would interact with a hardware TPM.
-+
-+Design
-+======
-+
-+The driver acts as a thin layer that passes commands to and from a TPM
-+implemented in firmware. The driver itself doesn't contain much logic and is
-+used more like a dumb pipe between firmware and kernel/userspace.
-+
-+The firmware itself is based on the following paper:
-+https://www.microsoft.com/en-us/research/wp-content/uploads/2017/06/ftpm1.pdf
-+
-+When the driver is loaded it will expose ``/dev/tpmX`` character devices to
-+userspace which will enable userspace to communicate with the firmware tpm
-+through this device.
++		exthdr = (struct ipv6_opt_hdr *)(nh + offset);
+ 		offset += ipv6_optlen(exthdr);
+ 		*nexthdr = &exthdr->nexthdr;
+-		exthdr = (struct ipv6_opt_hdr *)(nh + offset);
+ 	}
+ 
+-	return offset;
++	return -EINVAL;
+ }
+ 
+ static int mip6_rthdr_init_state(struct xfrm_state *x)
 -- 
-2.20.1
+2.7.4
 
