@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD6EA2ECA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:24:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A62CB2F4FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:44:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733078AbfE3DXi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:23:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47328 "EHLO mail.kernel.org"
+        id S2388672AbfE3EnY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:43:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731125AbfE3DR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:17:29 -0400
+        id S1728199AbfE3DML (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:12:11 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 404742464B;
-        Thu, 30 May 2019 03:17:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A1E8244EF;
+        Thu, 30 May 2019 03:12:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186248;
-        bh=MFuOwopmUXbAwpiLYlO/N3fbmfGOTPXUDbJEuT5tAu0=;
+        s=default; t=1559185931;
+        bh=0s+FdrxQyBQqyT7+UtTeo2sVNyCRXt20aXWkTRMk/MI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MUvAHyXTvDabfwcA6sw0d5JEWnN4rhhmBqCtAULLrnYvTb7//zjvf6HxZHfqGgaJ5
-         YfgIk0b7VkoaezTey5ADYkHq+dH9qUDXyOp6VZ6MiKztRZ/XtjqAAmz0QbIpcPEwcO
-         iiLFFLe3mWjaHTqrMAHiwOrAG2HgrKCs/b5OQ1cY=
+        b=iA9/bT7Loi20LXhPBkOsfcPstjtboNPlXTS2ioB5gpLthzT7vKgOrr8k5iHATwsbF
+         6bZhDWh+0ZkVOdCdF2n4Livkn+x9J04L9b4inl/2jt6MtnVRFpF+sG0HRYUcaBeHGf
+         3chupx3rqi7o9QiO/l0Djj9Lix859WBN/JrxRQTU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yinbo Zhu <yinbo.zhu@nxp.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        stable@vger.kernel.org,
+        Rouven Czerwinski <r.czerwinski@pengutronix.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 165/276] mmc: sdhci-of-esdhc: add erratum eSDHC5 support
+Subject: [PATCH 5.1 325/405] hwrng: omap - Set default quality
 Date:   Wed, 29 May 2019 20:05:23 -0700
-Message-Id: <20190530030535.753114499@linuxfoundation.org>
+Message-Id: <20190530030557.190127753@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a46e42712596b51874f04c73f1cdf1017f88df52 ]
+[ Upstream commit 62f95ae805fa9e1e84d47d3219adddd97b2654b7 ]
 
-Software writing to the Transfer Type configuration register
-(system clock domain) can cause a setup/hold violation in the
-CRC flops (card clock domain), which can cause write accesses
-to be sent with corrupt CRC values. This issue occurs only for
-write preceded by read. this erratum is to fix this issue.
+Newer combinations of the glibc, kernel and openssh can result in long initial
+startup times on OMAP devices:
 
-Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+[    6.671425] systemd-rc-once[102]: Creating ED25519 key; this may take some time ...
+[  142.652491] systemd-rc-once[102]: Creating ED25519 key; done.
+
+due to the blocking getrandom(2) system call:
+
+[  142.610335] random: crng init done
+
+Set the quality level for the omap hwrng driver allowing the kernel to use the
+hwrng as an entropy source at boot.
+
+Signed-off-by: Rouven Czerwinski <r.czerwinski@pengutronix.de>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/sdhci-of-esdhc.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/char/hw_random/omap-rng.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-esdhc.c
-index a7bf8515116fd..b2199d621b8c5 100644
---- a/drivers/mmc/host/sdhci-of-esdhc.c
-+++ b/drivers/mmc/host/sdhci-of-esdhc.c
-@@ -917,6 +917,9 @@ static int sdhci_esdhc_probe(struct platform_device *pdev)
- 	if (esdhc->vendor_ver > VENDOR_V_22)
- 		host->quirks &= ~SDHCI_QUIRK_NO_BUSY_IRQ;
+diff --git a/drivers/char/hw_random/omap-rng.c b/drivers/char/hw_random/omap-rng.c
+index b65ff69628995..e9b6ac61fb7f6 100644
+--- a/drivers/char/hw_random/omap-rng.c
++++ b/drivers/char/hw_random/omap-rng.c
+@@ -443,6 +443,7 @@ static int omap_rng_probe(struct platform_device *pdev)
+ 	priv->rng.read = omap_rng_do_read;
+ 	priv->rng.init = omap_rng_init;
+ 	priv->rng.cleanup = omap_rng_cleanup;
++	priv->rng.quality = 900;
  
-+	if (of_find_compatible_node(NULL, NULL, "fsl,p2020-esdhc"))
-+		host->quirks2 |= SDHCI_QUIRK_RESET_AFTER_REQUEST;
-+
- 	if (of_device_is_compatible(np, "fsl,p5040-esdhc") ||
- 	    of_device_is_compatible(np, "fsl,p5020-esdhc") ||
- 	    of_device_is_compatible(np, "fsl,p4080-esdhc") ||
+ 	priv->rng.priv = (unsigned long)priv;
+ 	platform_set_drvdata(pdev, priv);
 -- 
 2.20.1
 
