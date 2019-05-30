@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E97072F28F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:23:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A32F2F0CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:07:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733045AbfE3EXP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:23:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37386 "EHLO mail.kernel.org"
+        id S1727026AbfE3EHJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:07:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729345AbfE3DPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:15:09 -0400
+        id S1731133AbfE3DRa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:30 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A465245A6;
-        Thu, 30 May 2019 03:15:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F8FE24027;
+        Thu, 30 May 2019 03:17:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186108;
-        bh=URk/Z5WthB030trRMhOTnxrT+1vudptnqpjgPCOjSps=;
+        s=default; t=1559186249;
+        bh=8dupTE69iXTuiR/Dve+SGnSpw1wvW4cREdHwZWJ7Xcw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W50wyMRI/UIIthmCXZ7xMVD5QrzzGbdBTQxEd2AyK/CwU4jZts5zxYR8XU01zz2Mu
-         y4Om/oU93V1QCXtgGd/XxEvfEROiyZi7pO6K+b6Bjb3l3+uptlhmb3r8bRRhVrpu8+
-         AH4B0HtU1OOJfKgl5XKfwEaltn1xiFD96hzh1ovY=
+        b=qsIFZmH5gBinGxMhqrr0Dao2EuIre1BE45KBnsOFXjMBWWpCwEp8mlsUopSJsLnE6
+         dqTqWB/1OJGx73gmdGiGXHE6yJqg4Mlmnq9LzxjeK6lMEGlXlaK8IuY/kTGTt99r0u
+         l34PrvQ5p5+pyk9xSA3wQIjgQs1Yh+2zb5OUtjzU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        stable@vger.kernel.org, Yinbo Zhu <yinbo.zhu@nxp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 251/346] clk: renesas: rcar-gen3: Correct parent clock of SYS-DMAC
-Date:   Wed, 29 May 2019 20:05:24 -0700
-Message-Id: <20190530030553.727443475@linuxfoundation.org>
+Subject: [PATCH 4.19 167/276] mmc: sdhci-of-esdhc: add erratum eSDHC-A001 and A-008358 support
+Date:   Wed, 29 May 2019 20:05:25 -0700
+Message-Id: <20190530030535.858249716@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,95 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 3c772f71a552d343a96868ed9a809f9047be94f5 ]
+[ Upstream commit 05cb6b2a66fa7837211a060878e91be5eb10cb07 ]
 
-The clock sources of the AXI BUS clock (266.66 MHz) used for SYS-DMAC
-DMA transfers are:
+eSDHC-A001: The data timeout counter (SYSCTL[DTOCV]) is not
+reliable for DTOCV values 0x4(2^17 SD clock), 0x8(2^21 SD clock),
+and 0xC(2^25 SD clock). The data timeout counter can count from
+2^13–2^27, but for values 2^17, 2^21, and 2^25, the timeout
+counter counts for only 2^13 SD clocks.
+A-008358: The data timeout counter value loaded into the timeout
+counter is less than expected and can result into early timeout
+error in case of eSDHC data transactions. The table below shows
+the expected vs actual timeout period for different values of
+SYSCTL[DTOCV]:
+these two erratum has the same quirk to control it, and set
+SDHCI_QUIRK_RESET_AFTER_REQUEST to fix above issue.
 
-    Channel      R-Car H3    R-Car M3-W    R-Car M3-N
-    -------------------------------------------------
-    SYS-DMAC0    S0D3        S0D3          S0D3
-    SYS-DMAC1    S3D1        S3D1          S3D1
-    SYS-DMAC2    S3D1        S3D1          S3D1
-
-As a result, change the parent clocks of the SYS-DMAC{1,2} module clocks
-on R-Car H3, R-Car M3-W, and R-Car M3-N to S3D1.
-
-NOTE: This information will be reflected in a future revision of the
-      R-Car Gen3 Hardware Manual.
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[geert: Update RZ/G2M]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/renesas/r8a774a1-cpg-mssr.c | 4 ++--
- drivers/clk/renesas/r8a7795-cpg-mssr.c  | 4 ++--
- drivers/clk/renesas/r8a7796-cpg-mssr.c  | 4 ++--
- drivers/clk/renesas/r8a77965-cpg-mssr.c | 4 ++--
- 4 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/mmc/host/sdhci-of-esdhc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/r8a774a1-cpg-mssr.c b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
-index 10e852518870c..ddde2a7a24273 100644
---- a/drivers/clk/renesas/r8a774a1-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
-@@ -122,8 +122,8 @@ static const struct mssr_mod_clk r8a774a1_mod_clks[] __initconst = {
- 	DEF_MOD("msiof2",		 209,	R8A774A1_CLK_MSO),
- 	DEF_MOD("msiof1",		 210,	R8A774A1_CLK_MSO),
- 	DEF_MOD("msiof0",		 211,	R8A774A1_CLK_MSO),
--	DEF_MOD("sys-dmac2",		 217,	R8A774A1_CLK_S0D3),
--	DEF_MOD("sys-dmac1",		 218,	R8A774A1_CLK_S0D3),
-+	DEF_MOD("sys-dmac2",		 217,	R8A774A1_CLK_S3D1),
-+	DEF_MOD("sys-dmac1",		 218,	R8A774A1_CLK_S3D1),
- 	DEF_MOD("sys-dmac0",		 219,	R8A774A1_CLK_S0D3),
- 	DEF_MOD("cmt3",			 300,	R8A774A1_CLK_R),
- 	DEF_MOD("cmt2",			 301,	R8A774A1_CLK_R),
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index 86842c9fd314e..eade38e9ed36b 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -129,8 +129,8 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
- 	DEF_MOD("msiof2",		 209,	R8A7795_CLK_MSO),
- 	DEF_MOD("msiof1",		 210,	R8A7795_CLK_MSO),
- 	DEF_MOD("msiof0",		 211,	R8A7795_CLK_MSO),
--	DEF_MOD("sys-dmac2",		 217,	R8A7795_CLK_S0D3),
--	DEF_MOD("sys-dmac1",		 218,	R8A7795_CLK_S0D3),
-+	DEF_MOD("sys-dmac2",		 217,	R8A7795_CLK_S3D1),
-+	DEF_MOD("sys-dmac1",		 218,	R8A7795_CLK_S3D1),
- 	DEF_MOD("sys-dmac0",		 219,	R8A7795_CLK_S0D3),
- 	DEF_MOD("sceg-pub",		 229,	R8A7795_CLK_CR),
- 	DEF_MOD("cmt3",			 300,	R8A7795_CLK_R),
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 12c455859f2c2..654f3ea88f335 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -126,8 +126,8 @@ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
- 	DEF_MOD("msiof2",		 209,	R8A7796_CLK_MSO),
- 	DEF_MOD("msiof1",		 210,	R8A7796_CLK_MSO),
- 	DEF_MOD("msiof0",		 211,	R8A7796_CLK_MSO),
--	DEF_MOD("sys-dmac2",		 217,	R8A7796_CLK_S0D3),
--	DEF_MOD("sys-dmac1",		 218,	R8A7796_CLK_S0D3),
-+	DEF_MOD("sys-dmac2",		 217,	R8A7796_CLK_S3D1),
-+	DEF_MOD("sys-dmac1",		 218,	R8A7796_CLK_S3D1),
- 	DEF_MOD("sys-dmac0",		 219,	R8A7796_CLK_S0D3),
- 	DEF_MOD("cmt3",			 300,	R8A7796_CLK_R),
- 	DEF_MOD("cmt2",			 301,	R8A7796_CLK_R),
-diff --git a/drivers/clk/renesas/r8a77965-cpg-mssr.c b/drivers/clk/renesas/r8a77965-cpg-mssr.c
-index eb1cca58a1e1f..13d1f88be04a5 100644
---- a/drivers/clk/renesas/r8a77965-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77965-cpg-mssr.c
-@@ -123,8 +123,8 @@ static const struct mssr_mod_clk r8a77965_mod_clks[] __initconst = {
- 	DEF_MOD("msiof2",		209,	R8A77965_CLK_MSO),
- 	DEF_MOD("msiof1",		210,	R8A77965_CLK_MSO),
- 	DEF_MOD("msiof0",		211,	R8A77965_CLK_MSO),
--	DEF_MOD("sys-dmac2",		217,	R8A77965_CLK_S0D3),
--	DEF_MOD("sys-dmac1",		218,	R8A77965_CLK_S0D3),
-+	DEF_MOD("sys-dmac2",		217,	R8A77965_CLK_S3D1),
-+	DEF_MOD("sys-dmac1",		218,	R8A77965_CLK_S3D1),
- 	DEF_MOD("sys-dmac0",		219,	R8A77965_CLK_S0D3),
+diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-esdhc.c
+index e63d22fb99edf..e5c598ae5f244 100644
+--- a/drivers/mmc/host/sdhci-of-esdhc.c
++++ b/drivers/mmc/host/sdhci-of-esdhc.c
+@@ -920,8 +920,10 @@ static int sdhci_esdhc_probe(struct platform_device *pdev)
+ 	if (esdhc->vendor_ver > VENDOR_V_22)
+ 		host->quirks &= ~SDHCI_QUIRK_NO_BUSY_IRQ;
  
- 	DEF_MOD("cmt3",			300,	R8A77965_CLK_R),
+-	if (of_find_compatible_node(NULL, NULL, "fsl,p2020-esdhc"))
++	if (of_find_compatible_node(NULL, NULL, "fsl,p2020-esdhc")) {
+ 		host->quirks2 |= SDHCI_QUIRK_RESET_AFTER_REQUEST;
++		host->quirks2 |= SDHCI_QUIRK_BROKEN_TIMEOUT_VAL;
++	}
+ 
+ 	if (of_device_is_compatible(np, "fsl,p5040-esdhc") ||
+ 	    of_device_is_compatible(np, "fsl,p5020-esdhc") ||
 -- 
 2.20.1
 
