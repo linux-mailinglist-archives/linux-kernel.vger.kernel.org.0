@@ -2,44 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 861262F51B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:44:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5C682F2A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:24:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388791AbfE3Eok (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:44:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52788 "EHLO mail.kernel.org"
+        id S1731672AbfE3EXr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:23:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728789AbfE3DMA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:00 -0400
+        id S1730047AbfE3DO7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:14:59 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 51D49244A0;
-        Thu, 30 May 2019 03:12:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF9B22449A;
+        Thu, 30 May 2019 03:14:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185920;
-        bh=KwBmMHrM/VNDCNY/EsuobreJQZHWTBGnu8KWY9DU1KQ=;
+        s=default; t=1559186097;
+        bh=6QpzbCYWRPZJFeldcE3ktARIpqyvLNnqWXqDwDhS1JI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=An7QInajRCioUWrWGvrCYQQxr9h3XJmbUxKIeuHVMBhm+nFg0ukBOF4ugRWJJMrmH
-         m7uLW921tdc8XF3UCclkjfn4VM6zr8Asn12egvAiTahHVk/I9PgGQDSoN/Pr6GddkA
-         hD+obSqVJ8JjhJK5KqY4V+/j8FiBFcvwxptJXqt4=
+        b=JcWf582VgSDNzBwBPu3BJaPdJGHGLMtf9iMdEBuW2GInR+R9Ee3JaZlJXSW7D+oaH
+         YfEMS5/jpBDCWGOgArwsyWJuXB28eWwurc/o78hY14nq8clhFMtCB61m29AZsrudXs
+         3gySdPwdI1ywlUOz4V88a3EcnWxaX/tHYnDhHKaY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yazen Ghannam <yazen.ghannam@amd.com>,
-        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        linux-edac <linux-edac@vger.kernel.org>, Pu Wen <puwen@hygon.cn>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        x86-ml <x86@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 307/405] x86/mce: Handle varying MCA bank counts
+        stable@vger.kernel.org, Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 232/346] rtlwifi: fix potential NULL pointer dereference
 Date:   Wed, 29 May 2019 20:05:05 -0700
-Message-Id: <20190530030556.346288117@linuxfoundation.org>
+Message-Id: <20190530030552.801978939@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,170 +44,110 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 006c077041dc73b9490fffc4c6af5befe0687110 ]
+[ Upstream commit 60209d482b97743915883d293c8b85226d230c19 ]
 
-Linux reads MCG_CAP[Count] to find the number of MCA banks visible to a
-CPU. Currently, this number is the same for all CPUs and a warning is
-shown if there is a difference. The number of banks is overwritten with
-the MCG_CAP[Count] value of each following CPU that boots.
+In case dev_alloc_skb fails, the fix safely returns to avoid
+potential NULL pointer dereference.
 
-According to the Intel SDM and AMD APM, the MCG_CAP[Count] value gives
-the number of banks that are available to a "processor implementation".
-The AMD BKDGs/PPRs further clarify that this value is per core. This
-value has historically been the same for every core in the system, but
-that is not an architectural requirement.
-
-Future AMD systems may have different MCG_CAP[Count] values per core,
-so the assumption that all CPUs will have the same MCG_CAP[Count] value
-will no longer be valid.
-
-Also, the first CPU to boot will allocate the struct mce_banks[] array
-using the number of banks based on its MCG_CAP[Count] value. The machine
-check handler and other functions use the global number of banks to
-iterate and index into the mce_banks[] array. So it's possible to use an
-out-of-bounds index on an asymmetric system where a following CPU sees a
-MCG_CAP[Count] value greater than its predecessors.
-
-Thus, allocate the mce_banks[] array to the maximum number of banks.
-This will avoid the potential out-of-bounds index since the value of
-mca_cfg.banks is capped to MAX_NR_BANKS.
-
-Set the value of mca_cfg.banks equal to the max of the previous value
-and the value for the current CPU. This way mca_cfg.banks will always
-represent the max number of banks detected on any CPU in the system.
-
-This will ensure that all CPUs will access all the banks that are
-visible to them. A CPU that can access fewer than the max number of
-banks will find the registers of the extra banks to be read-as-zero.
-
-Furthermore, print the resulting number of MCA banks in use. Do this in
-mcheck_late_init() so that the final value is printed after all CPUs
-have been initialized.
-
-Finally, get bank count from target CPU when doing injection with mce-inject
-module.
-
- [ bp: Remove out-of-bounds example, passify and cleanup commit message. ]
-
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: Pu Wen <puwen@hygon.cn>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Vishal Verma <vishal.l.verma@intel.com>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20180727214009.78289-1-Yazen.Ghannam@amd.com
+Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/mce/core.c   | 22 +++++++---------------
- arch/x86/kernel/cpu/mce/inject.c | 14 +++++++-------
- 2 files changed, 14 insertions(+), 22 deletions(-)
+ drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c       | 2 ++
+ drivers/net/wireless/realtek/rtlwifi/rtl8192c/fw_common.c | 2 ++
+ drivers/net/wireless/realtek/rtlwifi/rtl8192ee/fw.c       | 2 ++
+ drivers/net/wireless/realtek/rtlwifi/rtl8723ae/fw.c       | 2 ++
+ drivers/net/wireless/realtek/rtlwifi/rtl8723be/fw.c       | 2 ++
+ drivers/net/wireless/realtek/rtlwifi/rtl8821ae/fw.c       | 4 ++++
+ 6 files changed, 14 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index 0d47306cec7ae..9e6a94c208e01 100644
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -1481,13 +1481,12 @@ EXPORT_SYMBOL_GPL(mce_notify_irq);
- static int __mcheck_cpu_mce_banks_init(void)
- {
- 	int i;
--	u8 num_banks = mca_cfg.banks;
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c
+index 63874512598bb..b5f91c994c798 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c
+@@ -622,6 +622,8 @@ void rtl88e_set_fw_rsvdpagepkt(struct ieee80211_hw *hw, bool b_dl_finished)
+ 		      u1rsvdpageloc, 3);
  
--	mce_banks = kcalloc(num_banks, sizeof(struct mce_bank), GFP_KERNEL);
-+	mce_banks = kcalloc(MAX_NR_BANKS, sizeof(struct mce_bank), GFP_KERNEL);
- 	if (!mce_banks)
- 		return -ENOMEM;
+ 	skb = dev_alloc_skb(totalpacketlen);
++	if (!skb)
++		return;
+ 	skb_put_data(skb, &reserved_page_packet, totalpacketlen);
  
--	for (i = 0; i < num_banks; i++) {
-+	for (i = 0; i < MAX_NR_BANKS; i++) {
- 		struct mce_bank *b = &mce_banks[i];
+ 	rtstatus = rtl_cmd_send_packet(hw, skb);
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192c/fw_common.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192c/fw_common.c
+index f3bff66e85d0c..81ec0e6e07c1f 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192c/fw_common.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192c/fw_common.c
+@@ -646,6 +646,8 @@ void rtl92c_set_fw_rsvdpagepkt(struct ieee80211_hw *hw,
  
- 		b->ctl = -1ULL;
-@@ -1501,28 +1500,19 @@ static int __mcheck_cpu_mce_banks_init(void)
-  */
- static int __mcheck_cpu_cap_init(void)
- {
--	unsigned b;
- 	u64 cap;
-+	u8 b;
  
- 	rdmsrl(MSR_IA32_MCG_CAP, cap);
+ 	skb = dev_alloc_skb(totalpacketlen);
++	if (!skb)
++		return;
+ 	skb_put_data(skb, &reserved_page_packet, totalpacketlen);
  
- 	b = cap & MCG_BANKCNT_MASK;
--	if (!mca_cfg.banks)
--		pr_info("CPU supports %d MCE banks\n", b);
--
--	if (b > MAX_NR_BANKS) {
--		pr_warn("Using only %u machine check banks out of %u\n",
--			MAX_NR_BANKS, b);
-+	if (WARN_ON_ONCE(b > MAX_NR_BANKS))
- 		b = MAX_NR_BANKS;
--	}
+ 	if (cmd_send_packet)
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/fw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/fw.c
+index 84a0d0eb72e1e..a933490928ba9 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/fw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/fw.c
+@@ -766,6 +766,8 @@ void rtl92ee_set_fw_rsvdpagepkt(struct ieee80211_hw *hw, bool b_dl_finished)
+ 		      u1rsvdpageloc, 3);
  
--	/* Don't support asymmetric configurations today */
--	WARN_ON(mca_cfg.banks != 0 && b != mca_cfg.banks);
--	mca_cfg.banks = b;
-+	mca_cfg.banks = max(mca_cfg.banks, b);
+ 	skb = dev_alloc_skb(totalpacketlen);
++	if (!skb)
++		return;
+ 	skb_put_data(skb, &reserved_page_packet, totalpacketlen);
  
- 	if (!mce_banks) {
- 		int err = __mcheck_cpu_mce_banks_init();
--
- 		if (err)
- 			return err;
- 	}
-@@ -2489,6 +2479,8 @@ EXPORT_SYMBOL_GPL(mcsafe_key);
+ 	rtstatus = rtl_cmd_send_packet(hw, skb);
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/fw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/fw.c
+index bf9859f74b6f5..52f108744e969 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/fw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/fw.c
+@@ -470,6 +470,8 @@ void rtl8723e_set_fw_rsvdpagepkt(struct ieee80211_hw *hw, bool b_dl_finished)
+ 		      u1rsvdpageloc, 3);
  
- static int __init mcheck_late_init(void)
- {
-+	pr_info("Using %d MCE banks\n", mca_cfg.banks);
-+
- 	if (mca_cfg.recovery)
- 		static_branch_inc(&mcsafe_key);
+ 	skb = dev_alloc_skb(totalpacketlen);
++	if (!skb)
++		return;
+ 	skb_put_data(skb, &reserved_page_packet, totalpacketlen);
  
-diff --git a/arch/x86/kernel/cpu/mce/inject.c b/arch/x86/kernel/cpu/mce/inject.c
-index 8492ef7d90150..3f82afd0f46f2 100644
---- a/arch/x86/kernel/cpu/mce/inject.c
-+++ b/arch/x86/kernel/cpu/mce/inject.c
-@@ -46,8 +46,6 @@
- static struct mce i_mce;
- static struct dentry *dfs_inj;
+ 	rtstatus = rtl_cmd_send_packet(hw, skb);
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8723be/fw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723be/fw.c
+index f2441fbb92f1e..307c2bd77f060 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8723be/fw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723be/fw.c
+@@ -584,6 +584,8 @@ void rtl8723be_set_fw_rsvdpagepkt(struct ieee80211_hw *hw,
+ 		      u1rsvdpageloc, sizeof(u1rsvdpageloc));
  
--static u8 n_banks;
--
- #define MAX_FLAG_OPT_SIZE	4
- #define NBCFG			0x44
+ 	skb = dev_alloc_skb(totalpacketlen);
++	if (!skb)
++		return;
+ 	skb_put_data(skb, &reserved_page_packet, totalpacketlen);
  
-@@ -570,9 +568,15 @@ static void do_inject(void)
- static int inj_bank_set(void *data, u64 val)
- {
- 	struct mce *m = (struct mce *)data;
-+	u8 n_banks;
-+	u64 cap;
-+
-+	/* Get bank count on target CPU so we can handle non-uniform values. */
-+	rdmsrl_on_cpu(m->extcpu, MSR_IA32_MCG_CAP, &cap);
-+	n_banks = cap & MCG_BANKCNT_MASK;
+ 	rtstatus = rtl_cmd_send_packet(hw, skb);
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/fw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/fw.c
+index d868a034659fb..d7235f6165fdf 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/fw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/fw.c
+@@ -1645,6 +1645,8 @@ void rtl8812ae_set_fw_rsvdpagepkt(struct ieee80211_hw *hw,
+ 		      &reserved_page_packet_8812[0], totalpacketlen);
  
- 	if (val >= n_banks) {
--		pr_err("Non-existent MCE bank: %llu\n", val);
-+		pr_err("MCA bank %llu non-existent on CPU%d\n", val, m->extcpu);
- 		return -EINVAL;
- 	}
+ 	skb = dev_alloc_skb(totalpacketlen);
++	if (!skb)
++		return;
+ 	skb_put_data(skb, &reserved_page_packet_8812, totalpacketlen);
  
-@@ -665,10 +669,6 @@ static struct dfs_node {
- static int __init debugfs_init(void)
- {
- 	unsigned int i;
--	u64 cap;
--
--	rdmsrl(MSR_IA32_MCG_CAP, cap);
--	n_banks = cap & MCG_BANKCNT_MASK;
+ 	rtstatus = rtl_cmd_send_packet(hw, skb);
+@@ -1781,6 +1783,8 @@ void rtl8821ae_set_fw_rsvdpagepkt(struct ieee80211_hw *hw,
+ 		      &reserved_page_packet_8821[0], totalpacketlen);
  
- 	dfs_inj = debugfs_create_dir("mce-inject", NULL);
- 	if (!dfs_inj)
+ 	skb = dev_alloc_skb(totalpacketlen);
++	if (!skb)
++		return;
+ 	skb_put_data(skb, &reserved_page_packet_8821, totalpacketlen);
+ 
+ 	rtstatus = rtl_cmd_send_packet(hw, skb);
 -- 
 2.20.1
 
