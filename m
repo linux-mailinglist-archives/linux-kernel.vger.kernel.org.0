@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 172A32F4ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:44:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C5FC2EB60
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:12:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728929AbfE3DMR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:12:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48608 "EHLO mail.kernel.org"
+        id S1728949AbfE3DMS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:12:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48586 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728214AbfE3DKr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:10:47 -0400
+        id S1728222AbfE3DKq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:10:46 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7FFD244BB;
-        Thu, 30 May 2019 03:10:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43E2A24482;
+        Thu, 30 May 2019 03:10:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185845;
-        bh=oH0YCFAp+soncbqg6ny+iS5tZ+uDyJS+4jsJAbEtK2w=;
+        s=default; t=1559185846;
+        bh=YIEHj8k+muqmfN/iqJwk9JaVvzGTOFJmiRm/Ea1hqKw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I1wFQjeMsaAK74/oJvbbQa8MTjrbn+8tMkXxWtKNbvB2hYlgAEXoMbhk4ydeYVfw+
-         FnCmLSbJNV1Li6+HCvSxsthAP8qry2Y6eq32lMpdE9MVCcg1FP0KIfwf+NF4FnTO09
-         q7X1Lpr2KjnH1eAWpaF688MRiu9dtFlnxfdtQbxM=
+        b=wJ32upuNhs0bTKfpel/AJQM/0OzrysORqQ53iBQIcVTDjW6Mvr4Mv421XPSKwB78R
+         epifKuy2+7eFeBuOKr+H4JBFkJ+Vq3ezrO8IC2wNuEjD6Q8vJQMURM8c01c6pcD6QW
+         JPnBdUdJ+oziqgzx55J6+MQJKi5UGbeaOalGOQ/o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Theodore Tso <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 166/405] random: add a spinlock_t to struct batched_entropy
-Date:   Wed, 29 May 2019 20:02:44 -0700
-Message-Id: <20190530030549.530838478@linuxfoundation.org>
+        stable@vger.kernel.org, Roman Gushchin <guro@fb.com>,
+        Tejun Heo <tj@kernel.org>, kernel-team@fb.com,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 167/405] cgroup: protect cgroup->nr_(dying_)descendants by css_set_lock
+Date:   Wed, 29 May 2019 20:02:45 -0700
+Message-Id: <20190530030549.576219681@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
 References: <20190530030540.291644921@linuxfoundation.org>
@@ -44,186 +44,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b7d5dc21072cda7124d13eae2aefb7343ef94197 ]
+[ Upstream commit 4dcabece4c3a9f9522127be12cc12cc120399b2f ]
 
-The per-CPU variable batched_entropy_uXX is protected by get_cpu_var().
-This is just a preempt_disable() which ensures that the variable is only
-from the local CPU. It does not protect against users on the same CPU
-from another context. It is possible that a preemptible context reads
-slot 0 and then an interrupt occurs and the same value is read again.
+The number of descendant cgroups and the number of dying
+descendant cgroups are currently synchronized using the cgroup_mutex.
 
-The above scenario is confirmed by lockdep if we add a spinlock:
-| ================================
-| WARNING: inconsistent lock state
-| 5.1.0-rc3+ #42 Not tainted
-| --------------------------------
-| inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
-| ksoftirqd/9/56 [HC0[0]:SC1[1]:HE0:SE0] takes:
-| (____ptrval____) (batched_entropy_u32.lock){+.?.}, at: get_random_u32+0x3e/0xe0
-| {SOFTIRQ-ON-W} state was registered at:
-|   _raw_spin_lock+0x2a/0x40
-|   get_random_u32+0x3e/0xe0
-|   new_slab+0x15c/0x7b0
-|   ___slab_alloc+0x492/0x620
-|   __slab_alloc.isra.73+0x53/0xa0
-|   kmem_cache_alloc_node+0xaf/0x2a0
-|   copy_process.part.41+0x1e1/0x2370
-|   _do_fork+0xdb/0x6d0
-|   kernel_thread+0x20/0x30
-|   kthreadd+0x1ba/0x220
-|   ret_from_fork+0x3a/0x50
-…
-| other info that might help us debug this:
-|  Possible unsafe locking scenario:
-|
-|        CPU0
-|        ----
-|   lock(batched_entropy_u32.lock);
-|   <Interrupt>
-|     lock(batched_entropy_u32.lock);
-|
-|  *** DEADLOCK ***
-|
-| stack backtrace:
-| Call Trace:
-…
-|  kmem_cache_alloc_trace+0x20e/0x270
-|  ipmi_alloc_recv_msg+0x16/0x40
-…
-|  __do_softirq+0xec/0x48d
-|  run_ksoftirqd+0x37/0x60
-|  smpboot_thread_fn+0x191/0x290
-|  kthread+0xfe/0x130
-|  ret_from_fork+0x3a/0x50
+The number of descendant cgroups will be required by the cgroup v2
+freezer, which will use it to determine if a cgroup is frozen
+(depending on total number of descendants and number of frozen
+descendants). It's not always acceptable to grab the cgroup_mutex,
+especially from quite hot paths (e.g. exit()).
 
-Add a spinlock_t to the batched_entropy data structure and acquire the
-lock while accessing it. Acquire the lock with disabled interrupts
-because this function may be used from interrupt context.
+To avoid this, let's additionally synchronize these counters using
+the css_set_lock.
 
-Remove the batched_entropy_reset_lock lock. Now that we have a lock for
-the data scructure, we can access it from a remote CPU.
+So, it's safe to read these counters with either cgroup_mutex or
+css_set_lock locked, and for changing both locks should be acquired.
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Roman Gushchin <guro@fb.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: kernel-team@fb.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/char/random.c | 52 ++++++++++++++++++++++---------------------
- 1 file changed, 27 insertions(+), 25 deletions(-)
+ include/linux/cgroup-defs.h | 5 +++++
+ kernel/cgroup/cgroup.c      | 6 ++++++
+ 2 files changed, 11 insertions(+)
 
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index d4d45ccfeefc0..af6e240f98ff4 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -2214,8 +2214,8 @@ struct batched_entropy {
- 		u32 entropy_u32[CHACHA_BLOCK_SIZE / sizeof(u32)];
- 	};
- 	unsigned int position;
-+	spinlock_t batch_lock;
- };
--static rwlock_t batched_entropy_reset_lock = __RW_LOCK_UNLOCKED(batched_entropy_reset_lock);
+diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+index 1c70803e9f770..7d57890cec671 100644
+--- a/include/linux/cgroup-defs.h
++++ b/include/linux/cgroup-defs.h
+@@ -349,6 +349,11 @@ struct cgroup {
+ 	 * Dying cgroups are cgroups which were deleted by a user,
+ 	 * but are still existing because someone else is holding a reference.
+ 	 * max_descendants is a maximum allowed number of descent cgroups.
++	 *
++	 * nr_descendants and nr_dying_descendants are protected
++	 * by cgroup_mutex and css_set_lock. It's fine to read them holding
++	 * any of cgroup_mutex and css_set_lock; for writing both locks
++	 * should be held.
+ 	 */
+ 	int nr_descendants;
+ 	int nr_dying_descendants;
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index 3f2b4bde0f9c3..9fcf6338ea5f9 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -4781,9 +4781,11 @@ static void css_release_work_fn(struct work_struct *work)
+ 		if (cgroup_on_dfl(cgrp))
+ 			cgroup_rstat_flush(cgrp);
  
- /*
-  * Get a random word for internal kernel use only. The quality of the random
-@@ -2225,12 +2225,14 @@ static rwlock_t batched_entropy_reset_lock = __RW_LOCK_UNLOCKED(batched_entropy_
-  * wait_for_random_bytes() should be called and return 0 at least once
-  * at any point prior.
-  */
--static DEFINE_PER_CPU(struct batched_entropy, batched_entropy_u64);
-+static DEFINE_PER_CPU(struct batched_entropy, batched_entropy_u64) = {
-+	.batch_lock	= __SPIN_LOCK_UNLOCKED(batched_entropy_u64.lock),
-+};
-+
- u64 get_random_u64(void)
- {
- 	u64 ret;
--	bool use_lock;
--	unsigned long flags = 0;
-+	unsigned long flags;
- 	struct batched_entropy *batch;
- 	static void *previous;
++		spin_lock_irq(&css_set_lock);
+ 		for (tcgrp = cgroup_parent(cgrp); tcgrp;
+ 		     tcgrp = cgroup_parent(tcgrp))
+ 			tcgrp->nr_dying_descendants--;
++		spin_unlock_irq(&css_set_lock);
  
-@@ -2245,28 +2247,25 @@ u64 get_random_u64(void)
+ 		cgroup_idr_remove(&cgrp->root->cgroup_idr, cgrp->id);
+ 		cgrp->id = -1;
+@@ -5001,12 +5003,14 @@ static struct cgroup *cgroup_create(struct cgroup *parent)
+ 	if (ret)
+ 		goto out_psi_free;
  
- 	warn_unseeded_randomness(&previous);
++	spin_lock_irq(&css_set_lock);
+ 	for (tcgrp = cgrp; tcgrp; tcgrp = cgroup_parent(tcgrp)) {
+ 		cgrp->ancestor_ids[tcgrp->level] = tcgrp->id;
  
--	use_lock = READ_ONCE(crng_init) < 2;
--	batch = &get_cpu_var(batched_entropy_u64);
--	if (use_lock)
--		read_lock_irqsave(&batched_entropy_reset_lock, flags);
-+	batch = raw_cpu_ptr(&batched_entropy_u64);
-+	spin_lock_irqsave(&batch->batch_lock, flags);
- 	if (batch->position % ARRAY_SIZE(batch->entropy_u64) == 0) {
- 		extract_crng((u8 *)batch->entropy_u64);
- 		batch->position = 0;
+ 		if (tcgrp != cgrp)
+ 			tcgrp->nr_descendants++;
  	}
- 	ret = batch->entropy_u64[batch->position++];
--	if (use_lock)
--		read_unlock_irqrestore(&batched_entropy_reset_lock, flags);
--	put_cpu_var(batched_entropy_u64);
-+	spin_unlock_irqrestore(&batch->batch_lock, flags);
- 	return ret;
- }
- EXPORT_SYMBOL(get_random_u64);
++	spin_unlock_irq(&css_set_lock);
  
--static DEFINE_PER_CPU(struct batched_entropy, batched_entropy_u32);
-+static DEFINE_PER_CPU(struct batched_entropy, batched_entropy_u32) = {
-+	.batch_lock	= __SPIN_LOCK_UNLOCKED(batched_entropy_u32.lock),
-+};
- u32 get_random_u32(void)
- {
- 	u32 ret;
--	bool use_lock;
--	unsigned long flags = 0;
-+	unsigned long flags;
- 	struct batched_entropy *batch;
- 	static void *previous;
+ 	if (notify_on_release(parent))
+ 		set_bit(CGRP_NOTIFY_ON_RELEASE, &cgrp->flags);
+@@ -5291,10 +5295,12 @@ static int cgroup_destroy_locked(struct cgroup *cgrp)
+ 	if (parent && cgroup_is_threaded(cgrp))
+ 		parent->nr_threaded_children--;
  
-@@ -2275,18 +2274,14 @@ u32 get_random_u32(void)
- 
- 	warn_unseeded_randomness(&previous);
- 
--	use_lock = READ_ONCE(crng_init) < 2;
--	batch = &get_cpu_var(batched_entropy_u32);
--	if (use_lock)
--		read_lock_irqsave(&batched_entropy_reset_lock, flags);
-+	batch = raw_cpu_ptr(&batched_entropy_u32);
-+	spin_lock_irqsave(&batch->batch_lock, flags);
- 	if (batch->position % ARRAY_SIZE(batch->entropy_u32) == 0) {
- 		extract_crng((u8 *)batch->entropy_u32);
- 		batch->position = 0;
++	spin_lock_irq(&css_set_lock);
+ 	for (tcgrp = cgroup_parent(cgrp); tcgrp; tcgrp = cgroup_parent(tcgrp)) {
+ 		tcgrp->nr_descendants--;
+ 		tcgrp->nr_dying_descendants++;
  	}
- 	ret = batch->entropy_u32[batch->position++];
--	if (use_lock)
--		read_unlock_irqrestore(&batched_entropy_reset_lock, flags);
--	put_cpu_var(batched_entropy_u32);
-+	spin_unlock_irqrestore(&batch->batch_lock, flags);
- 	return ret;
- }
- EXPORT_SYMBOL(get_random_u32);
-@@ -2300,12 +2295,19 @@ static void invalidate_batched_entropy(void)
- 	int cpu;
- 	unsigned long flags;
++	spin_unlock_irq(&css_set_lock);
  
--	write_lock_irqsave(&batched_entropy_reset_lock, flags);
- 	for_each_possible_cpu (cpu) {
--		per_cpu_ptr(&batched_entropy_u32, cpu)->position = 0;
--		per_cpu_ptr(&batched_entropy_u64, cpu)->position = 0;
-+		struct batched_entropy *batched_entropy;
-+
-+		batched_entropy = per_cpu_ptr(&batched_entropy_u32, cpu);
-+		spin_lock_irqsave(&batched_entropy->batch_lock, flags);
-+		batched_entropy->position = 0;
-+		spin_unlock(&batched_entropy->batch_lock);
-+
-+		batched_entropy = per_cpu_ptr(&batched_entropy_u64, cpu);
-+		spin_lock(&batched_entropy->batch_lock);
-+		batched_entropy->position = 0;
-+		spin_unlock_irqrestore(&batched_entropy->batch_lock, flags);
- 	}
--	write_unlock_irqrestore(&batched_entropy_reset_lock, flags);
- }
+ 	cgroup1_check_for_release(parent);
  
- /**
 -- 
 2.20.1
 
