@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29A142F188
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:14:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF3712F4A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:42:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730743AbfE3ENz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:13:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41614 "EHLO mail.kernel.org"
+        id S1729118AbfE3DMg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:12:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730651AbfE3DQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:16:19 -0400
+        id S1727977AbfE3DLG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:11:06 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 550D2245E4;
-        Thu, 30 May 2019 03:16:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 17641244EE;
+        Thu, 30 May 2019 03:11:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186179;
-        bh=DDAiTRqEGOZMR5wKbJ4tM+vT0aH2qQvHbBxCDs12tLQ=;
+        s=default; t=1559185865;
+        bh=TIFyNDY9FzGlyx5lxUxH4rwVPK55GjuPa0XuZBHjypo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QeYT+3GXKPX8yDQjxW/657gWtYqckr2gxEJVbKq/DQN/52LqS5zuOtNk957L8Yu6Z
-         GVYWULsdwR0Mi2TBgwRU46XxDkN1BW3vhGmqcz89FpUYPmgzgg90UqNdh8BAfeFSb5
-         1ReOgx4zy/d1lSsQnOXGxHIz2PEt1WM+z85UcK5g=
+        b=JchXSAsdQfdl8OArrVSFMELjKYLOZql/j4EPrutzLkT9MyPJGbfbrSvFbWUW2dCXB
+         chqgeaD19Rlu4s5lNfJIaKcfqdkGYHWyAqFRZz0a/wgDOzCVQYo+jEwg9LQ/pORKhl
+         ecJOYUAfRVI0tR/9NCUka+uw0QBkEyG8g/oucOSc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-        syzbot+2a73a6ea9507b7112141@syzkaller.appspotmail.com,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.19 042/276] acct_on(): dont mess with freeze protection
-Date:   Wed, 29 May 2019 20:03:20 -0700
-Message-Id: <20190530030527.049164563@linuxfoundation.org>
+        stable@vger.kernel.org, Andrea Merello <andrea.merello@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 203/405] mmc: core: make pwrseq_emmc (partially) support sleepy GPIO controllers
+Date:   Wed, 29 May 2019 20:03:21 -0700
+Message-Id: <20190530030551.432064473@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,73 +44,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+[ Upstream commit 002ee28e8b322d4d4b7b83234b5d0f4ebd428eda ]
 
-commit 9419a3191dcb27f24478d288abaab697228d28e6 upstream.
+pwrseq_emmc.c implements a HW reset procedure for eMMC chip by driving a
+GPIO line.
 
-What happens there is that we are replacing file->path.mnt of
-a file we'd just opened with a clone and we need the write
-count contribution to be transferred from original mount to
-new one.  That's it.  We do *NOT* want any kind of freeze
-protection for the duration of switchover.
+It registers the .reset() cb on mmc_pwrseq_ops and it registers a system
+restart notification handler; both of them perform reset by unconditionally
+calling gpiod_set_value().
 
-IOW, we should just use __mnt_{want,drop}_write() for that
-switchover; no need to bother with mnt_{want,drop}_write()
-there.
+If the eMMC reset line is tied to a GPIO controller whose driver can sleep
+(i.e. I2C GPIO controller), then the kernel would spit warnings when trying
+to reset the eMMC chip by means of .reset() mmc_pwrseq_ops cb (that is
+exactly what I'm seeing during boot).
 
-Tested-by: Amir Goldstein <amir73il@gmail.com>
-Reported-by: syzbot+2a73a6ea9507b7112141@syzkaller.appspotmail.com
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Furthermore, on system reset we would gets to the system restart
+notification handler with disabled interrupts - local_irq_disable() is
+called in machine_restart() at least on ARM/ARM64 - and we would be in
+trouble when the GPIO driver tries to sleep (which indeed doesn't happen
+here, likely because in my case the machine specific code doesn't call
+do_kernel_restart(), I guess..).
 
+This patch fixes the .reset() cb to make use of gpiod_set_value_cansleep(),
+so that the eMMC gets reset on boot without complaints, while, since there
+isn't that much we can do, we avoid register the restart handler if the
+GPIO controller has a sleepy driver (and we spit a dev_notice() message to
+let people know)..
+
+This had been tested on a downstream 4.9 kernel with backported
+commit 83f37ee7ba33 ("mmc: pwrseq: Add reset callback to the struct
+mmc_pwrseq_ops") and commit ae60fb031cf2 ("mmc: core: Don't do eMMC HW
+reset when resuming the eMMC card"), because I couldn't boot my board
+otherwise. Maybe worth to RFT.
+
+Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/internal.h         |    2 --
- include/linux/mount.h |    2 ++
- kernel/acct.c         |    4 ++--
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/mmc/core/pwrseq_emmc.c | 38 ++++++++++++++++++----------------
+ 1 file changed, 20 insertions(+), 18 deletions(-)
 
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -80,9 +80,7 @@ extern int sb_prepare_remount_readonly(s
+diff --git a/drivers/mmc/core/pwrseq_emmc.c b/drivers/mmc/core/pwrseq_emmc.c
+index efb8a7965dd4a..154f4204d58cb 100644
+--- a/drivers/mmc/core/pwrseq_emmc.c
++++ b/drivers/mmc/core/pwrseq_emmc.c
+@@ -30,19 +30,14 @@ struct mmc_pwrseq_emmc {
  
- extern void __init mnt_init(void);
+ #define to_pwrseq_emmc(p) container_of(p, struct mmc_pwrseq_emmc, pwrseq)
  
--extern int __mnt_want_write(struct vfsmount *);
- extern int __mnt_want_write_file(struct file *);
--extern void __mnt_drop_write(struct vfsmount *);
- extern void __mnt_drop_write_file(struct file *);
+-static void __mmc_pwrseq_emmc_reset(struct mmc_pwrseq_emmc *pwrseq)
+-{
+-	gpiod_set_value(pwrseq->reset_gpio, 1);
+-	udelay(1);
+-	gpiod_set_value(pwrseq->reset_gpio, 0);
+-	udelay(200);
+-}
+-
+ static void mmc_pwrseq_emmc_reset(struct mmc_host *host)
+ {
+ 	struct mmc_pwrseq_emmc *pwrseq =  to_pwrseq_emmc(host->pwrseq);
  
- /*
---- a/include/linux/mount.h
-+++ b/include/linux/mount.h
-@@ -86,6 +86,8 @@ extern bool mnt_may_suid(struct vfsmount
- 
- struct path;
- extern struct vfsmount *clone_private_mount(const struct path *path);
-+extern int __mnt_want_write(struct vfsmount *);
-+extern void __mnt_drop_write(struct vfsmount *);
- 
- struct file_system_type;
- extern struct vfsmount *vfs_kern_mount(struct file_system_type *type,
---- a/kernel/acct.c
-+++ b/kernel/acct.c
-@@ -227,7 +227,7 @@ static int acct_on(struct filename *path
- 		filp_close(file, NULL);
- 		return PTR_ERR(internal);
- 	}
--	err = mnt_want_write(internal);
-+	err = __mnt_want_write(internal);
- 	if (err) {
- 		mntput(internal);
- 		kfree(acct);
-@@ -252,7 +252,7 @@ static int acct_on(struct filename *path
- 	old = xchg(&ns->bacct, &acct->pin);
- 	mutex_unlock(&acct->lock);
- 	pin_kill(old);
--	mnt_drop_write(mnt);
-+	__mnt_drop_write(mnt);
- 	mntput(mnt);
- 	return 0;
+-	__mmc_pwrseq_emmc_reset(pwrseq);
++	gpiod_set_value_cansleep(pwrseq->reset_gpio, 1);
++	udelay(1);
++	gpiod_set_value_cansleep(pwrseq->reset_gpio, 0);
++	udelay(200);
  }
+ 
+ static int mmc_pwrseq_emmc_reset_nb(struct notifier_block *this,
+@@ -50,8 +45,11 @@ static int mmc_pwrseq_emmc_reset_nb(struct notifier_block *this,
+ {
+ 	struct mmc_pwrseq_emmc *pwrseq = container_of(this,
+ 					struct mmc_pwrseq_emmc, reset_nb);
++	gpiod_set_value(pwrseq->reset_gpio, 1);
++	udelay(1);
++	gpiod_set_value(pwrseq->reset_gpio, 0);
++	udelay(200);
+ 
+-	__mmc_pwrseq_emmc_reset(pwrseq);
+ 	return NOTIFY_DONE;
+ }
+ 
+@@ -72,14 +70,18 @@ static int mmc_pwrseq_emmc_probe(struct platform_device *pdev)
+ 	if (IS_ERR(pwrseq->reset_gpio))
+ 		return PTR_ERR(pwrseq->reset_gpio);
+ 
+-	/*
+-	 * register reset handler to ensure emmc reset also from
+-	 * emergency_reboot(), priority 255 is the highest priority
+-	 * so it will be executed before any system reboot handler.
+-	 */
+-	pwrseq->reset_nb.notifier_call = mmc_pwrseq_emmc_reset_nb;
+-	pwrseq->reset_nb.priority = 255;
+-	register_restart_handler(&pwrseq->reset_nb);
++	if (!gpiod_cansleep(pwrseq->reset_gpio)) {
++		/*
++		 * register reset handler to ensure emmc reset also from
++		 * emergency_reboot(), priority 255 is the highest priority
++		 * so it will be executed before any system reboot handler.
++		 */
++		pwrseq->reset_nb.notifier_call = mmc_pwrseq_emmc_reset_nb;
++		pwrseq->reset_nb.priority = 255;
++		register_restart_handler(&pwrseq->reset_nb);
++	} else {
++		dev_notice(dev, "EMMC reset pin tied to a sleepy GPIO driver; reset on emergency-reboot disabled\n");
++	}
+ 
+ 	pwrseq->pwrseq.ops = &mmc_pwrseq_emmc_ops;
+ 	pwrseq->pwrseq.dev = dev;
+-- 
+2.20.1
+
 
 
