@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E78322F164
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:13:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9D992F576
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:48:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730683AbfE3DQ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:16:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58260 "EHLO mail.kernel.org"
+        id S1727757AbfE3DL1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:11:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47550 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728463AbfE3DNV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:13:21 -0400
+        id S1728099AbfE3DK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:10:27 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7452721BE2;
-        Thu, 30 May 2019 03:13:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 004AE24490;
+        Thu, 30 May 2019 03:10:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186000;
-        bh=7uK9JClRjBpcmWQyTcy+7AOYcOvd9/bhbDUILfDQj0s=;
+        s=default; t=1559185827;
+        bh=dI0F82b5i+4o3HJUm9vdDFZnNx3jp5jYr9/1WIuPzj4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gBjR1k1OUdRfEXMVgpMkFmzFLI9wvGraujExZPXuz5BqX3PGKZkUhsBHplcp6AoR4
-         Mi3Kj7VrlAgVP1XC1kII8oc77ZW4PZAsDwv0uz4fq9PIH8kw2A1ophKmT96PtHzCHS
-         WAIvnsbeHiVL4OR/6Qxtc0ms9e98vhmoLvN83+Us=
+        b=aE0ENn1MmWRZheQnzqbXqXBmem/RVoOJsxHrAqcnlfvNmZYRr2qCubORLsC+t82dW
+         nyxVAG8yCayoTGdwT4BcD/0cQa/YTwEa2YO2lzxY606zVuNvhIQA8A89/MyLPGTHjV
+         Y7K/tKyhNqD/v00UXgxu3tonQAr0bCN2Vs1U2ci4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yonghong Song <yhs@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 051/346] selftests/bpf: set RLIMIT_MEMLOCK properly for test_libbpf_open.c
-Date:   Wed, 29 May 2019 20:02:04 -0700
-Message-Id: <20190530030543.506246977@linuxfoundation.org>
+        stable@vger.kernel.org, Sagi Grimberg <sagi@grimberg.me>,
+        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 127/405] nvme-tcp: fix a NULL deref when an admin connect times out
+Date:   Wed, 29 May 2019 20:02:05 -0700
+Message-Id: <20190530030547.467230220@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 6cea33701eb024bc6c920ab83940ee22afd29139 ]
+[ Upstream commit 7a42589654ae79e1177f0d74306a02d6cef7bddf ]
 
-Test test_libbpf.sh failed on my development server with failure
-  -bash-4.4$ sudo ./test_libbpf.sh
-  [0] libbpf: Error in bpf_object__probe_name():Operation not permitted(1).
-      Couldn't load basic 'r0 = 0' BPF program.
-  test_libbpf: failed at file test_l4lb.o
-  selftests: test_libbpf [FAILED]
-  -bash-4.4$
+If we timeout the admin startup sequence we might not yet have
+an I/O tagset allocated which causes the teardown sequence to crash.
+Make nvme_tcp_teardown_io_queues safe by not iterating inflight tags
+if the tagset wasn't allocated.
 
-The reason is because my machine has 64KB locked memory by default which
-is not enough for this program to get locked memory.
-Similar to other bpf selftests, let us increase RLIMIT_MEMLOCK
-to infinity, which fixed the issue.
-
-Signed-off-by: Yonghong Song <yhs@fb.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Fixes: 39d57757467b ("nvme-tcp: fix timeout handler")
+Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/bpf/test_libbpf_open.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/nvme/host/tcp.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/test_libbpf_open.c b/tools/testing/selftests/bpf/test_libbpf_open.c
-index 8fcd1c076add0..cbd55f5f8d598 100644
---- a/tools/testing/selftests/bpf/test_libbpf_open.c
-+++ b/tools/testing/selftests/bpf/test_libbpf_open.c
-@@ -11,6 +11,8 @@ static const char *__doc__ =
- #include <bpf/libbpf.h>
- #include <getopt.h>
- 
-+#include "bpf_rlimit.h"
-+
- static const struct option long_options[] = {
- 	{"help",	no_argument,		NULL, 'h' },
- 	{"debug",	no_argument,		NULL, 'D' },
+diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
+index 68c49dd672104..aae5374d2b93f 100644
+--- a/drivers/nvme/host/tcp.c
++++ b/drivers/nvme/host/tcp.c
+@@ -1710,7 +1710,9 @@ static void nvme_tcp_teardown_admin_queue(struct nvme_ctrl *ctrl,
+ {
+ 	blk_mq_quiesce_queue(ctrl->admin_q);
+ 	nvme_tcp_stop_queue(ctrl, 0);
+-	blk_mq_tagset_busy_iter(ctrl->admin_tagset, nvme_cancel_request, ctrl);
++	if (ctrl->admin_tagset)
++		blk_mq_tagset_busy_iter(ctrl->admin_tagset,
++			nvme_cancel_request, ctrl);
+ 	blk_mq_unquiesce_queue(ctrl->admin_q);
+ 	nvme_tcp_destroy_admin_queue(ctrl, remove);
+ }
+@@ -1722,7 +1724,9 @@ static void nvme_tcp_teardown_io_queues(struct nvme_ctrl *ctrl,
+ 		return;
+ 	nvme_stop_queues(ctrl);
+ 	nvme_tcp_stop_io_queues(ctrl);
+-	blk_mq_tagset_busy_iter(ctrl->tagset, nvme_cancel_request, ctrl);
++	if (ctrl->tagset)
++		blk_mq_tagset_busy_iter(ctrl->tagset,
++			nvme_cancel_request, ctrl);
+ 	if (remove)
+ 		nvme_start_queues(ctrl);
+ 	nvme_tcp_destroy_io_queues(ctrl, remove);
 -- 
 2.20.1
 
