@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C61012EF4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:54:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9DF32ECA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:24:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732143AbfE3Dyd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:54:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54748 "EHLO mail.kernel.org"
+        id S1733204AbfE3DYB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:24:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731863AbfE3DTU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:19:20 -0400
+        id S1731241AbfE3DRp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:45 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A3FC2486D;
-        Thu, 30 May 2019 03:19:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ABFBE246F4;
+        Thu, 30 May 2019 03:17:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186359;
-        bh=T62nimrfho7/Zd63oRzR74QHvwGRUWxmwpd5aJPNKnQ=;
+        s=default; t=1559186264;
+        bh=6QpzbCYWRPZJFeldcE3ktARIpqyvLNnqWXqDwDhS1JI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=19d8Jc1nnZ7FKahioDwGql7stJlqhwcy9k3bxHaClRunQCsFtvJD5ewxLU+qebn4W
-         hlzY9htAgpbTck1hbvbAGWZS9zHALsSafEQgn9n2smPxBfxjZSVs+Vx8ncI/nB98Mn
-         3TV23kwVxINrE8Z30ShwYy+hp85SBqExruK9NNNM=
+        b=q9Dp81mRDaLUJkpxtA+r3Egoc7el598+cxsDVtwnVbyl2HJBVhxOaCBA1G+ZcFanH
+         uHILY6kbzuDS9BNGpQMf8Rdve2JfHvgB/JVwZ5sdwC9mCTdXSVrJA29sOiI7AYYGAC
+         CF09jbvt5N9S+pgvSZOHEQNpnndV1cl0b+uGvbAs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Kento Kobayashi <Kento.A.Kobayashi@sony.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Jacky Cao <Jacky.Cao@sony.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 104/193] USB: core: Dont unbind interfaces following device reset failure
+        stable@vger.kernel.org, Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 200/276] rtlwifi: fix potential NULL pointer dereference
 Date:   Wed, 29 May 2019 20:05:58 -0700
-Message-Id: <20190530030503.307630282@linuxfoundation.org>
+Message-Id: <20190530030537.617010332@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,69 +44,110 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 381419fa720060ba48b7bbc483be787d5b1dca6f ]
+[ Upstream commit 60209d482b97743915883d293c8b85226d230c19 ]
 
-The SCSI core does not like to have devices or hosts unregistered
-while error recovery is in progress.  Trying to do so can lead to
-self-deadlock: Part of the removal code tries to obtain a lock already
-held by the error handler.
+In case dev_alloc_skb fails, the fix safely returns to avoid
+potential NULL pointer dereference.
 
-This can cause problems for the usb-storage and uas drivers, because
-their error handler routines perform a USB reset, and if the reset
-fails then the USB core automatically goes on to unbind all drivers
-from the device's interfaces -- all while still in the context of the
-SCSI error handler.
-
-As it turns out, practically all the scenarios leading to a USB reset
-failure end up causing a device disconnect (the main error pathway in
-usb_reset_and_verify_device(), at the end of the routine, calls
-hub_port_logical_disconnect() before returning).  As a result, the
-hub_wq thread will soon become aware of the problem and will unbind
-all the device's drivers in its own context, not in the
-error-handler's context.
-
-This means that usb_reset_device() does not need to call
-usb_unbind_and_rebind_marked_interfaces() in cases where
-usb_reset_and_verify_device() has returned an error, because hub_wq
-will take care of everything anyway.
-
-This particular problem was observed in somewhat artificial
-circumstances, by using usbfs to tell a hub to power-down a port
-connected to a USB-3 mass storage device using the UAS protocol.  With
-the port turned off, the currently executing command timed out and the
-error handler started running.  The USB reset naturally failed,
-because the hub port was off, and the error handler deadlocked as
-described above.  Not carrying out the call to
-usb_unbind_and_rebind_marked_interfaces() fixes this issue.
-
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Reported-by: Kento Kobayashi <Kento.A.Kobayashi@sony.com>
-Tested-by: Kento Kobayashi <Kento.A.Kobayashi@sony.com>
-CC: Bart Van Assche <bvanassche@acm.org>
-CC: Martin K. Petersen <martin.petersen@oracle.com>
-CC: Jacky Cao <Jacky.Cao@sony.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/core/hub.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c       | 2 ++
+ drivers/net/wireless/realtek/rtlwifi/rtl8192c/fw_common.c | 2 ++
+ drivers/net/wireless/realtek/rtlwifi/rtl8192ee/fw.c       | 2 ++
+ drivers/net/wireless/realtek/rtlwifi/rtl8723ae/fw.c       | 2 ++
+ drivers/net/wireless/realtek/rtlwifi/rtl8723be/fw.c       | 2 ++
+ drivers/net/wireless/realtek/rtlwifi/rtl8821ae/fw.c       | 4 ++++
+ 6 files changed, 14 insertions(+)
 
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index a9541525ea4f0..eddecaf1f0b20 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -5713,7 +5713,10 @@ int usb_reset_device(struct usb_device *udev)
- 					cintf->needs_binding = 1;
- 			}
- 		}
--		usb_unbind_and_rebind_marked_interfaces(udev);
-+
-+		/* If the reset failed, hub_wq will unbind drivers later */
-+		if (ret == 0)
-+			usb_unbind_and_rebind_marked_interfaces(udev);
- 	}
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c
+index 63874512598bb..b5f91c994c798 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c
+@@ -622,6 +622,8 @@ void rtl88e_set_fw_rsvdpagepkt(struct ieee80211_hw *hw, bool b_dl_finished)
+ 		      u1rsvdpageloc, 3);
  
- 	usb_autosuspend_device(udev);
+ 	skb = dev_alloc_skb(totalpacketlen);
++	if (!skb)
++		return;
+ 	skb_put_data(skb, &reserved_page_packet, totalpacketlen);
+ 
+ 	rtstatus = rtl_cmd_send_packet(hw, skb);
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192c/fw_common.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192c/fw_common.c
+index f3bff66e85d0c..81ec0e6e07c1f 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192c/fw_common.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192c/fw_common.c
+@@ -646,6 +646,8 @@ void rtl92c_set_fw_rsvdpagepkt(struct ieee80211_hw *hw,
+ 
+ 
+ 	skb = dev_alloc_skb(totalpacketlen);
++	if (!skb)
++		return;
+ 	skb_put_data(skb, &reserved_page_packet, totalpacketlen);
+ 
+ 	if (cmd_send_packet)
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/fw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/fw.c
+index 84a0d0eb72e1e..a933490928ba9 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/fw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192ee/fw.c
+@@ -766,6 +766,8 @@ void rtl92ee_set_fw_rsvdpagepkt(struct ieee80211_hw *hw, bool b_dl_finished)
+ 		      u1rsvdpageloc, 3);
+ 
+ 	skb = dev_alloc_skb(totalpacketlen);
++	if (!skb)
++		return;
+ 	skb_put_data(skb, &reserved_page_packet, totalpacketlen);
+ 
+ 	rtstatus = rtl_cmd_send_packet(hw, skb);
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/fw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/fw.c
+index bf9859f74b6f5..52f108744e969 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/fw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/fw.c
+@@ -470,6 +470,8 @@ void rtl8723e_set_fw_rsvdpagepkt(struct ieee80211_hw *hw, bool b_dl_finished)
+ 		      u1rsvdpageloc, 3);
+ 
+ 	skb = dev_alloc_skb(totalpacketlen);
++	if (!skb)
++		return;
+ 	skb_put_data(skb, &reserved_page_packet, totalpacketlen);
+ 
+ 	rtstatus = rtl_cmd_send_packet(hw, skb);
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8723be/fw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723be/fw.c
+index f2441fbb92f1e..307c2bd77f060 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8723be/fw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723be/fw.c
+@@ -584,6 +584,8 @@ void rtl8723be_set_fw_rsvdpagepkt(struct ieee80211_hw *hw,
+ 		      u1rsvdpageloc, sizeof(u1rsvdpageloc));
+ 
+ 	skb = dev_alloc_skb(totalpacketlen);
++	if (!skb)
++		return;
+ 	skb_put_data(skb, &reserved_page_packet, totalpacketlen);
+ 
+ 	rtstatus = rtl_cmd_send_packet(hw, skb);
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/fw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/fw.c
+index d868a034659fb..d7235f6165fdf 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/fw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8821ae/fw.c
+@@ -1645,6 +1645,8 @@ void rtl8812ae_set_fw_rsvdpagepkt(struct ieee80211_hw *hw,
+ 		      &reserved_page_packet_8812[0], totalpacketlen);
+ 
+ 	skb = dev_alloc_skb(totalpacketlen);
++	if (!skb)
++		return;
+ 	skb_put_data(skb, &reserved_page_packet_8812, totalpacketlen);
+ 
+ 	rtstatus = rtl_cmd_send_packet(hw, skb);
+@@ -1781,6 +1783,8 @@ void rtl8821ae_set_fw_rsvdpagepkt(struct ieee80211_hw *hw,
+ 		      &reserved_page_packet_8821[0], totalpacketlen);
+ 
+ 	skb = dev_alloc_skb(totalpacketlen);
++	if (!skb)
++		return;
+ 	skb_put_data(skb, &reserved_page_packet_8821, totalpacketlen);
+ 
+ 	rtstatus = rtl_cmd_send_packet(hw, skb);
 -- 
 2.20.1
 
