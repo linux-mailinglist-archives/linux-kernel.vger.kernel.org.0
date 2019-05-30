@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3E192FF3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 17:18:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EAAA2FF4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 17:20:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbfE3PSC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 11:18:02 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52268 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727718AbfE3PR7 (ORCPT
+        id S1727848AbfE3PTI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 11:19:08 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47578 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726469AbfE3PTH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 11:17:59 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4UFHgHp030542
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 11:17:57 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2stfacfd6j-1
+        Thu, 30 May 2019 11:19:07 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4UFIfhv006683
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 11:19:05 -0400
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2stfk76wq4-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 11:17:52 -0400
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 11:18:50 -0400
 Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 30 May 2019 16:17:17 +0100
+        Thu, 30 May 2019 16:17:19 +0100
 Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Thu, 30 May 2019 16:17:13 +0100
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4UFHCCr30736454
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4UFHClc32309440
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Thu, 30 May 2019 15:17:12 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9E0B9B2070;
+        by IMSVA (Postfix) with ESMTP id A80D4B2068;
         Thu, 30 May 2019 15:17:12 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 87DE8B207B;
+        by IMSVA (Postfix) with ESMTP id 87998B2074;
         Thu, 30 May 2019 15:17:12 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.216])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Thu, 30 May 2019 15:17:12 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 0141716C6B95; Thu, 30 May 2019 08:17:13 -0700 (PDT)
+        id 06C4F16C5D84; Thu, 30 May 2019 08:17:14 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
@@ -51,20 +51,20 @@ Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 20/21] torture: Suppress propagating trace_printk() warning
-Date:   Thu, 30 May 2019 08:17:11 -0700
+Subject: [PATCH tip/core/rcu 21/21] rcutorture: Upper case solves the case of the vanishing NULL pointer
+Date:   Thu, 30 May 2019 08:17:12 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190530151650.GA422@linux.ibm.com>
 References: <20190530151650.GA422@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19053015-0040-0000-0000-000004F68405
+x-cbid: 19053015-0072-0000-0000-000004354F49
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00011185; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01210791; UDB=6.00636161; IPR=6.00991826;
+ PH=3.00000004; SC=3.00000286; SDB=6.01210791; UDB=6.00636161; IPR=6.00991825;
  MB=3.00027120; MTD=3.00000008; XFM=3.00000015; UTC=2019-05-30 15:17:17
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19053015-0041-0000-0000-000009029E59
-Message-Id: <20190530151712.1612-20-paulmck@linux.ibm.com>
+x-cbparentid: 19053015-0073-0000-0000-00004C6B6B5D
+Message-Id: <20190530151712.1612-21-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-30_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -77,29 +77,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When trace_printk() is used, a message including "BUG" is printed to
-the console, which fools the rcutorture scripting into believing that
-the corresponding test scenario failed.  This commit therefore filters
-out this particular instance of "BUG", thus avoiding the false-positive
-test-failure report.
+Various security techniques can obfuscate pointer printouts on the
+console.  Unfortunately, rcutorture relies on either "null" or all zeroes
+to identify the last few statistics printouts at the end of the test.
+These need to be identified because failing to do so will results in
+false-positive complaints about grace-period hangs.
+
+This commit therefore prints the "ver:" in capitals ("VER:") when
+the RCU-protected pointer has been set to NULL, which causes rcutorture's
+parse-console.sh script to correctly ignore these lines.
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 ---
- tools/testing/selftests/rcutorture/bin/parse-console.sh | 1 +
- 1 file changed, 1 insertion(+)
+ kernel/rcu/rcutorture.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/rcutorture/bin/parse-console.sh b/tools/testing/selftests/rcutorture/bin/parse-console.sh
-index 4508373a922f..4bf62d7b1cbc 100755
---- a/tools/testing/selftests/rcutorture/bin/parse-console.sh
-+++ b/tools/testing/selftests/rcutorture/bin/parse-console.sh
-@@ -106,6 +106,7 @@ fi | tee -a $file.diags
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index 89be0f492f78..fce4e7e6f502 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -1408,8 +1408,9 @@ rcu_torture_stats_print(void)
+ 	}
  
- egrep 'Badness|WARNING:|Warn|BUG|===========|Call Trace:|Oops:|detected stalls on CPUs/tasks:|self-detected stall on CPU|Stall ended before state dump start|\?\?\? Writer stall state|rcu_.*kthread starved for' < $file |
- grep -v 'ODEBUG: ' |
-+grep -v 'This means that this is a DEBUG kernel and it is' |
- grep -v 'Warning: unable to open an initial console' > $T.diags
- if test -s $T.diags
- then
+ 	pr_alert("%s%s ", torture_type, TORTURE_FLAG);
+-	pr_cont("rtc: %p ver: %lu tfle: %d rta: %d rtaf: %d rtf: %d ",
++	pr_cont("rtc: %p %s: %lu tfle: %d rta: %d rtaf: %d rtf: %d ",
+ 		rcu_torture_current,
++		rcu_torture_current ? "ver" : "VER",
+ 		rcu_torture_current_version,
+ 		list_empty(&rcu_torture_freelist),
+ 		atomic_read(&n_rcu_torture_alloc),
 -- 
 2.17.1
 
