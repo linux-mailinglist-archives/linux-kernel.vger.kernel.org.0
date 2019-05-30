@@ -2,198 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A646D2FC5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 15:30:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B9122FC5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 15:31:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbfE3N3u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 09:29:50 -0400
-Received: from mail-eopbgr70041.outbound.protection.outlook.com ([40.107.7.41]:23170
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726825AbfE3N3s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 09:29:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6+Q9LdKVyud2zOKYVwhv4HC8UOhhStGkt8AiQWexonM=;
- b=fYORt5X7qRD5M/E4C2ORqxF0q7xJe1N8cWrpBolI3AO9O8nF+luzx35Xib3jaWU6v+YmjolNfo3ND3lYbbyN1WBnANPPKc36DY0Slwx5tKz4NvAYAMwwNxgzzMLFKiERzdvzUvPvc12nX+02oQwzv19Exu1ems9bhmpYg7aq+aQ=
-Received: from VI1PR04MB4445.eurprd04.prod.outlook.com (20.177.55.161) by
- VI1PR04MB4815.eurprd04.prod.outlook.com (20.177.48.224) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1922.18; Thu, 30 May 2019 13:29:41 +0000
-Received: from VI1PR04MB4445.eurprd04.prod.outlook.com
- ([fe80::39fd:f3c3:46fc:f872]) by VI1PR04MB4445.eurprd04.prod.outlook.com
- ([fe80::39fd:f3c3:46fc:f872%7]) with mapi id 15.20.1922.021; Thu, 30 May 2019
- 13:29:41 +0000
-From:   Iuliana Prodan <iuliana.prodan@nxp.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Eric Biggers <ebiggers@kernel.org>
-CC:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Horia Geanta <horia.geanta@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH] crypto: gcm - fix cacheline sharing
-Thread-Topic: [PATCH] crypto: gcm - fix cacheline sharing
-Thread-Index: AQHVFkF/PjPULMOhfkiEXDJZ6fiBzQ==
-Date:   Thu, 30 May 2019 13:29:41 +0000
-Message-ID: <VI1PR04MB44459EEF7BCD3458BB3D143D8C180@VI1PR04MB4445.eurprd04.prod.outlook.com>
-References: <1559149856-7938-1-git-send-email-iuliana.prodan@nxp.com>
- <20190529202728.GA35103@gmail.com>
- <CAKv+Gu-4KqcY=WhwY98JigTzeXaL5ggYEcu7+kNzNtpO2FLQXg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=iuliana.prodan@nxp.com; 
-x-originating-ip: [212.146.100.6]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b1320404-74f1-498a-d8a4-08d6e502df39
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB4815;
-x-ms-traffictypediagnostic: VI1PR04MB4815:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <VI1PR04MB48156393F0F253F26C9155118C180@VI1PR04MB4815.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 00531FAC2C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(136003)(396003)(346002)(366004)(189003)(199004)(44832011)(7696005)(81166006)(99286004)(6306002)(2906002)(76176011)(33656002)(6506007)(66946007)(486006)(6246003)(76116006)(25786009)(66446008)(110136005)(7736002)(4326008)(476003)(305945005)(66476007)(8676002)(64756008)(53546011)(73956011)(81156014)(66556008)(446003)(54906003)(229853002)(45080400002)(74316002)(8936002)(6436002)(966005)(5660300002)(14454004)(71190400001)(86362001)(26005)(9686003)(256004)(66066001)(14444005)(102836004)(6116002)(52536014)(186003)(53936002)(71200400001)(55016002)(68736007)(478600001)(3846002)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4815;H:VI1PR04MB4445.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: nDS9QpVa+AAMrpPvAC3o+dgyHdjZJ6EUpdSzU1rkgxXe/Ybnsf8UfDdHGMH7aQ+pbASDCvQmJVIjBiitT7Xi5EYUODykroGPq7ft4qVss9P2jpDA42o94H7e3Yds4vlXXbuQ7HwqNqKieGij/XdSZXM8PxI++c2eF5jKWA1k27q5i/ndbKG/BIDaMOkkA86nQw7qqw0T1SnvzAzDgt6d6NJuG0TGbAPKVXjI8CEdEsw7XydmAVOn2NO8UoBgC5X0xLsZhPBCDUZL2fMTja1uuddXwUiHo5rqcn+AvB0WFsfwhVddgo8xLkakMl0LOoN+XGZ5ToQQtbJHl2vU1ngNBXBeO3uAM+2k8mxyqNUmd+mDXoA92PVDJrbybuX+FaqtiEuVLaQVssxTjo/3bHKX9A2SsZ6Jq25KzZ9yUuYceII=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1727146AbfE3NbQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 09:31:16 -0400
+Received: from mga03.intel.com ([134.134.136.65]:51815 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726835AbfE3NbQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 09:31:16 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 May 2019 06:31:15 -0700
+Received: from jkrzyszt-desk.igk.intel.com ([172.22.244.18])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 May 2019 06:31:12 -0700
+From:   Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
+To:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc:     Chris Wilson <chris@chris-wilson.co.uk>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Michal Wajdeczko <michal.wajdeczko@intel.com>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
+Subject: [PATCH v2] drm/i915: Split off pci_driver.remove() tail to drm_driver.release()
+Date:   Thu, 30 May 2019 15:31:05 +0200
+Message-Id: <20190530133105.30467-1-janusz.krzysztofik@linux.intel.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b1320404-74f1-498a-d8a4-08d6e502df39
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 May 2019 13:29:41.6339
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: iuliana.prodan@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4815
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/30/2019 1:16 AM, Ard Biesheuvel wrote:=0A=
-> On Wed, 29 May 2019 at 22:27, Eric Biggers <ebiggers@kernel.org> wrote:=
-=0A=
->>=0A=
->> On Wed, May 29, 2019 at 08:10:56PM +0300, Iuliana Prodan wrote:=0A=
->>> The generic GCM driver should ensure that whatever it passes into=0A=
->>> scatterlists is safe for non-cache coherent DMA.=0A=
->>> The issue was seen while running GCM on CAAM driver. But, since CAAM=0A=
->>> does not support GHASH on i.MX6, only CTR skcipher part of the GCM is=
-=0A=
->>> offloaded.=0A=
->>> The skcipher request received by CAAM has req->src pointing to=0A=
->>> auth_tag[16] and req->iv pointing to iv[16]. Problem is that when=0A=
->>> the iv is updated (crypto API requires skcipher implementations to=0A=
->>> update the IV with the last ciphertext block) is written in iv[16],=0A=
->>> which is on the same cacheline as auth_tag[16] that was previously=0A=
->>> DMA mapped.=0A=
->>> Solution is to use a pointer, aligned to cache line, instead of auth_ta=
-g=0A=
->>> buffer, for encryption/decryption and then free it on completion.=0A=
->>>=0A=
->>> Link: https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F=
-%2Flore.kernel.org%2Flinux-crypto%2F20190208114459.5nixe76xmmkhur75%40gondo=
-r.apana.org.au%2F&amp;data=3D02%7C01%7Ciuliana.prodan%40nxp.com%7C8426e8db8=
-5774c4e829308d6e4834cf6%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C636947=
-649914200400&amp;sdata=3DFq%2F83lofKoEnz7HnzY1jjU1jUi0b2QmVZPfZrzWXtrk%3D&a=
-mp;reserved=3D0=0A=
->>> Cc: <stable@vger.kernel.org> # v4.19+=0A=
->>> Fixes: adcbc688fe2f ("crypto: gcm - Convert to new AEAD interface")=0A=
->>> Suggested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>=0A=
->>> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>=0A=
->>>=0A=
-> ...=0A=
->> So what about the other places that also pass an IV located next to the =
-data,=0A=
->> like crypto/ccm.c and crypto/adiantum.c?  If we're actually going to mak=
-e this a=0A=
->> new API requirement, then we need to add a debugging option that makes t=
-he API=0A=
->> detect this violation so that the other places can be fixed too.=0A=
->>=0A=
->> Also, doing a kmalloc() per requset is inefficient and very error-prone.=
-  In=0A=
->> fact there are at least 3 bugs here: (1) not checking the return value, =
-(2)=0A=
->> incorrectly using GFP_KERNEL when it may be atomic context, and (3) not =
-always=0A=
->> freeing the memory.  Why not use cacheline-aligned memory within the req=
-uest=0A=
->> context, so that a separate kmalloc() isn't needed?=0A=
->>=0A=
->> Also, did you consider whether there's any way to make the crypto API ha=
-ndle=0A=
->> this automatically, so that all the individual users don't have to?=0A=
->>=0A=
-> =0A=
-> Reading back that old thread, it appears that the core issue is that=0A=
-> the IV is copied when the scatterlist is already mapped for DMA. This=0A=
-> means the cacheline covering the IV and the auth tag is dirty while=0A=
-> the non-coherent DMA transaction takes place, and given that we clean=0A=
-> rather than invalidate the start and end of DMA mappings if they are=0A=
-> not aligned to the cache writeback granule size, whatever sits in the=0A=
-> cacheline overwrites whatever the device wrote in there.=0A=
-> =0A=
-> Iuliana, did you try pulling the IV copy forward? I.e.,=0A=
-=0A=
-I've tried coping the IV before the extended descriptor allocation, but =0A=
-is not working and to make it work will need to make more changes in =0A=
-CAAM. We need the original iv, and if we move it before =0A=
-skcipher_edesc_alloc we lose it.=0A=
-The fix exclusively in CAAM drv, to copy iv before DMA map, is more complex=
-.=0A=
-=0A=
-> =0A=
-> diff --git a/drivers/crypto/caam/caamalg.c b/drivers/crypto/caam/caamalg.=
-c=0A=
-> index c0ece44f303b..11e91c0c9a96 100644=0A=
-> --- a/drivers/crypto/caam/caamalg.c=0A=
-> +++ b/drivers/crypto/caam/caamalg.c=0A=
-> @@ -1835,11 +1835,6 @@ static int skcipher_decrypt(struct skcipher_reques=
-t *req)=0A=
->          u32 *desc;=0A=
->          int ret =3D 0;=0A=
-> =0A=
-> -       /* allocate extended descriptor */=0A=
-> -       edesc =3D skcipher_edesc_alloc(req, DESC_JOB_IO_LEN * CAAM_CMD_SZ=
-);=0A=
-> -       if (IS_ERR(edesc))=0A=
-> -               return PTR_ERR(edesc);=0A=
-> -=0A=
->          /*=0A=
->           * The crypto API expects us to set the IV (req->iv) to the last=
-=0A=
->           * ciphertext block.=0A=
-> @@ -1848,6 +1843,11 @@ static int skcipher_decrypt(struct skcipher_reques=
-t *req)=0A=
->                  scatterwalk_map_and_copy(req->iv, req->src, req->cryptle=
-n -=0A=
->                                           ivsize, ivsize, 0);=0A=
-> =0A=
-> +       /* allocate extended descriptor */=0A=
-> +       edesc =3D skcipher_edesc_alloc(req, DESC_JOB_IO_LEN * CAAM_CMD_SZ=
-);=0A=
-> +       if (IS_ERR(edesc))=0A=
-> +               return PTR_ERR(edesc);=0A=
-> +=0A=
->          /* Create and submit job descriptor*/=0A=
->          init_skcipher_job(req, edesc, false);=0A=
->          desc =3D edesc->hw_desc;=0A=
-> =0A=
-> This should ensure that the cacheline is cleaned when the DMA mapping=0A=
-> is created.=0A=
-> =0A=
-=0A=
-Thanks,=0A=
-Iulia=0A=
+In order to support driver hot unbind, some cleanup operations, now
+performed on PCI driver remove, must be called later, after all device
+file descriptors are closed.
+
+Split out those operations from the tail of pci_driver.remove()
+callback and put them into drm_driver.release() which is called as soon
+as all references to the driver are put.  As a result, those cleanups
+will be now run on last drm_dev_put(), either still called from
+pci_driver.remove() if all device file descriptors are already closed,
+or on last drm_release() file operation.
+
+Signed-off-by: Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
+Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+---
+Changelog:
+v1 -> v2:
+- defer intel_engines_cleanup() as well. (Chris)
+
+ drivers/gpu/drm/i915/i915_drv.c | 17 +++++++++++++----
+ drivers/gpu/drm/i915/i915_drv.h |  1 +
+ drivers/gpu/drm/i915/i915_gem.c | 10 +++++++++-
+ 3 files changed, 23 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/i915_drv.c b/drivers/gpu/drm/i915/i915_drv.c
+index 83d2eb9e74cb..8be69f84eb6d 100644
+--- a/drivers/gpu/drm/i915/i915_drv.c
++++ b/drivers/gpu/drm/i915/i915_drv.c
+@@ -738,6 +738,7 @@ static int i915_load_modeset_init(struct drm_device *dev)
+ 
+ cleanup_gem:
+ 	i915_gem_suspend(dev_priv);
++	i915_gem_fini_hw(dev_priv);
+ 	i915_gem_fini(dev_priv);
+ cleanup_modeset:
+ 	intel_modeset_cleanup(dev);
+@@ -1685,7 +1686,6 @@ static void i915_driver_cleanup_hw(struct drm_i915_private *dev_priv)
+ 		pci_disable_msi(pdev);
+ 
+ 	pm_qos_remove_request(&dev_priv->pm_qos);
+-	i915_ggtt_cleanup_hw(dev_priv);
+ }
+ 
+ /**
+@@ -1909,6 +1909,7 @@ int i915_driver_load(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 
+ out_cleanup_hw:
+ 	i915_driver_cleanup_hw(dev_priv);
++	i915_ggtt_cleanup_hw(dev_priv);
+ out_cleanup_mmio:
+ 	i915_driver_cleanup_mmio(dev_priv);
+ out_runtime_pm_put:
+@@ -1960,21 +1961,29 @@ void i915_driver_unload(struct drm_device *dev)
+ 	cancel_delayed_work_sync(&dev_priv->gpu_error.hangcheck_work);
+ 	i915_reset_error_state(dev_priv);
+ 
+-	i915_gem_fini(dev_priv);
++	i915_gem_fini_hw(dev_priv);
+ 
+ 	intel_power_domains_fini_hw(dev_priv);
+ 
+ 	i915_driver_cleanup_hw(dev_priv);
+-	i915_driver_cleanup_mmio(dev_priv);
+ 
+ 	enable_rpm_wakeref_asserts(dev_priv);
+-	intel_runtime_pm_cleanup(dev_priv);
+ }
+ 
+ static void i915_driver_release(struct drm_device *dev)
+ {
+ 	struct drm_i915_private *dev_priv = to_i915(dev);
+ 
++	disable_rpm_wakeref_asserts(dev_priv);
++
++	i915_gem_fini(dev_priv);
++
++	i915_ggtt_cleanup_hw(dev_priv);
++	i915_driver_cleanup_mmio(dev_priv);
++
++	enable_rpm_wakeref_asserts(dev_priv);
++	intel_runtime_pm_cleanup(dev_priv);
++
+ 	i915_driver_cleanup_early(dev_priv);
+ 	i915_driver_destroy(dev_priv);
+ }
+diff --git a/drivers/gpu/drm/i915/i915_drv.h b/drivers/gpu/drm/i915/i915_drv.h
+index a2664ea1395b..d08e7bd83544 100644
+--- a/drivers/gpu/drm/i915/i915_drv.h
++++ b/drivers/gpu/drm/i915/i915_drv.h
+@@ -3047,6 +3047,7 @@ void i915_gem_init_mmio(struct drm_i915_private *i915);
+ int __must_check i915_gem_init(struct drm_i915_private *dev_priv);
+ int __must_check i915_gem_init_hw(struct drm_i915_private *dev_priv);
+ void i915_gem_init_swizzling(struct drm_i915_private *dev_priv);
++void i915_gem_fini_hw(struct drm_i915_private *dev_priv);
+ void i915_gem_fini(struct drm_i915_private *dev_priv);
+ int i915_gem_wait_for_idle(struct drm_i915_private *dev_priv,
+ 			   unsigned int flags, long timeout);
+diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
+index 7cafd5612f71..20d3f7532cef 100644
+--- a/drivers/gpu/drm/i915/i915_gem.c
++++ b/drivers/gpu/drm/i915/i915_gem.c
+@@ -4667,7 +4667,7 @@ int i915_gem_init(struct drm_i915_private *dev_priv)
+ 	return ret;
+ }
+ 
+-void i915_gem_fini(struct drm_i915_private *dev_priv)
++void i915_gem_fini_hw(struct drm_i915_private *dev_priv)
+ {
+ 	GEM_BUG_ON(dev_priv->gt.awake);
+ 
+@@ -4680,6 +4680,14 @@ void i915_gem_fini(struct drm_i915_private *dev_priv)
+ 	mutex_lock(&dev_priv->drm.struct_mutex);
+ 	intel_uc_fini_hw(dev_priv);
+ 	intel_uc_fini(dev_priv);
++	mutex_unlock(&dev_priv->drm.struct_mutex);
++
++	i915_gem_drain_freed_objects(dev_priv);
++}
++
++void i915_gem_fini(struct drm_i915_private *dev_priv)
++{
++	mutex_lock(&dev_priv->drm.struct_mutex);
+ 	intel_engines_cleanup(dev_priv);
+ 	i915_gem_contexts_fini(dev_priv);
+ 	i915_gem_fini_scratch(dev_priv);
+-- 
+2.21.0
+
