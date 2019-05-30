@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 826E02EEC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:50:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AFF42EEAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:49:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387751AbfE3Dtc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:49:32 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:18051 "EHLO huawei.com"
+        id S2387715AbfE3Dt3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:49:29 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:18048 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387654AbfE3DtZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2387647AbfE3DtZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 29 May 2019 23:49:25 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id DB4C41F0F32B9FF7AF5D;
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id A67C82750DE3F619EF3C;
         Thu, 30 May 2019 11:49:22 +0800 (CST)
 Received: from HGHY4L002753561.china.huawei.com (10.133.215.186) by
  DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 30 May 2019 11:49:12 +0800
+ 14.3.439.0; Thu, 30 May 2019 11:49:13 +0800
 From:   Zhen Lei <thunder.leizhen@huawei.com>
 To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
         John Garry <john.garry@huawei.com>,
@@ -45,9 +45,9 @@ To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
         x86 <x86@kernel.org>, linux-ia64 <linux-ia64@vger.kernel.org>
 CC:     Zhen Lei <thunder.leizhen@huawei.com>,
         Hanjun Guo <guohanjun@huawei.com>
-Subject: [PATCH v8 1/7] iommu: enhance IOMMU default DMA mode build options
-Date:   Thu, 30 May 2019 11:48:25 +0800
-Message-ID: <20190530034831.4184-2-thunder.leizhen@huawei.com>
+Subject: [PATCH v8 2/7] x86/dma: use IS_ENABLED() to simplify the code
+Date:   Thu, 30 May 2019 11:48:26 +0800
+Message-ID: <20190530034831.4184-3-thunder.leizhen@huawei.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20190530034831.4184-1-thunder.leizhen@huawei.com>
 References: <20190530034831.4184-1-thunder.leizhen@huawei.com>
@@ -61,88 +61,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-First, add build option IOMMU_DEFAULT_{LAZY|STRICT}, so that we have the
-opportunity to set {lazy|strict} mode as default at build time. Then put
-the three config options in an choice, make people can only choose one of
-the three at a time.
+This patch removes the ifdefs around CONFIG_IOMMU_DEFAULT_PASSTHROUGH to
+improve readablity.
 
 Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
 ---
- drivers/iommu/Kconfig | 42 +++++++++++++++++++++++++++++++++++-------
- drivers/iommu/iommu.c |  3 ++-
- 2 files changed, 37 insertions(+), 8 deletions(-)
+ arch/x86/kernel/pci-dma.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-index 83664db5221df02..d6a1a45f80ffbf5 100644
---- a/drivers/iommu/Kconfig
-+++ b/drivers/iommu/Kconfig
-@@ -75,17 +75,45 @@ config IOMMU_DEBUGFS
- 	  debug/iommu directory, and then populate a subdirectory with
- 	  entries as required.
+diff --git a/arch/x86/kernel/pci-dma.c b/arch/x86/kernel/pci-dma.c
+index dcd272dbd0a9330..9f2b19c35a060df 100644
+--- a/arch/x86/kernel/pci-dma.c
++++ b/arch/x86/kernel/pci-dma.c
+@@ -43,11 +43,8 @@
+  * It is also possible to disable by default in kernel config, and enable with
+  * iommu=nopt at boot time.
+  */
+-#ifdef CONFIG_IOMMU_DEFAULT_PASSTHROUGH
+-int iommu_pass_through __read_mostly = 1;
+-#else
+-int iommu_pass_through __read_mostly;
+-#endif
++int iommu_pass_through __read_mostly =
++			IS_ENABLED(CONFIG_IOMMU_DEFAULT_PASSTHROUGH);
  
--config IOMMU_DEFAULT_PASSTHROUGH
--	bool "IOMMU passthrough by default"
-+choice
-+	prompt "IOMMU default DMA mode"
- 	depends on IOMMU_API
--        help
--	  Enable passthrough by default, removing the need to pass in
--	  iommu.passthrough=on or iommu=pt through command line. If this
--	  is enabled, you can still disable with iommu.passthrough=off
--	  or iommu=nopt depending on the architecture.
-+	default IOMMU_DEFAULT_STRICT
-+	help
-+	  This option allows IOMMU DMA mode to be chose at build time, to
-+	  override the default DMA mode of each ARCHs, removing the need to
-+	  pass in kernel parameters through command line. You can still use
-+	  ARCHs specific boot options to override this option again.
-+
-+config IOMMU_DEFAULT_PASSTHROUGH
-+	bool "passthrough"
-+	help
-+	  In this mode, the DMA access through IOMMU without any addresses
-+	  translation. That means, the wrong or illegal DMA access can not
-+	  be caught, no error information will be reported.
+ extern struct iommu_table_entry __iommu_table[], __iommu_table_end[];
  
- 	  If unsure, say N here.
- 
-+config IOMMU_DEFAULT_LAZY
-+	bool "lazy"
-+	help
-+	  Support lazy mode, where for every IOMMU DMA unmap operation, the
-+	  flush operation of IOTLB and the free operation of IOVA are deferred.
-+	  They are only guaranteed to be done before the related IOVA will be
-+	  reused.
-+
-+config IOMMU_DEFAULT_STRICT
-+	bool "strict"
-+	help
-+	  For every IOMMU DMA unmap operation, the flush operation of IOTLB and
-+	  the free operation of IOVA are guaranteed to be done in the unmap
-+	  function.
-+
-+	  This mode is safer than the two above, but it maybe slower in some
-+	  high performace scenarios.
-+
-+endchoice
-+
- config OF_IOMMU
-        def_bool y
-        depends on OF && IOMMU_API
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 67ee6623f9b2a4d..56bce221285b15f 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -43,7 +43,8 @@
- #else
- static unsigned int iommu_def_domain_type = IOMMU_DOMAIN_DMA;
- #endif
--static bool iommu_dma_strict __read_mostly = true;
-+static bool iommu_dma_strict __read_mostly =
-+			IS_ENABLED(CONFIG_IOMMU_DEFAULT_STRICT);
- 
- struct iommu_group {
- 	struct kobject kobj;
 -- 
 1.8.3
 
