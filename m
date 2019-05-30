@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66BB62F2ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:25:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 090AA2F0BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:07:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733006AbfE3EZC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:25:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35142 "EHLO mail.kernel.org"
+        id S1727042AbfE3EGt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:06:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729993AbfE3DOs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:14:48 -0400
+        id S1731156AbfE3DRd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:33 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D05424557;
-        Thu, 30 May 2019 03:14:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B89DF24688;
+        Thu, 30 May 2019 03:17:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186087;
-        bh=GZUqsTk4DRyMhsW1KtZI2tC5X5LSHWq2AHH1vJ4K+oM=;
+        s=default; t=1559186252;
+        bh=NOkrN0lKYEPfSj/JDM6nhXqGNqiCL8qB7RMWBbBhFIw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LnbXVTSaKnOD1zJn5CSxnOZD4LdwVB2rZQNk6hWfGUQH29NVPO4r3Nb3tSHEDLmP4
-         cpEbOCNLjF8jgZlJBGe9JqxnP82JEVq99B/GIHTdwrsz518ALBxIY7FQLQJhrbu681
-         BOo/x2T9tXrbvr+0dAnBatwUvg9zY8vMfbUyWGWA=
+        b=YaYxx+dYf1d9wnTFa82JKGG/XtxYWP/aSBDakP1gDHaNPwxAiT/L3OG1NesdjlGhB
+         FG0by7Q4au/TM4bcDzXael/wsuVhFZOkd9PctoiJO/JziW4ZfpF5dLFqACm6wwNL30
+         Mq1bBsv1B1iZqhUFUoRFLuqici3/lJH6PJ3AePVQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        dri-devel@lists.freedesktop.org ("open list:DRM DRIVERS"),
-        Eric Anholt <eric@anholt.net>, Sasha Levin <sashal@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: [PATCH 5.0 215/346] drm/pl111: fix possible object reference leak
-Date:   Wed, 29 May 2019 20:04:48 -0700
-Message-Id: <20190530030551.988267471@linuxfoundation.org>
+        stable@vger.kernel.org, Nathan Lynch <nathanl@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 131/276] powerpc/numa: improve control of topology updates
+Date:   Wed, 29 May 2019 20:04:49 -0700
+Message-Id: <20190530030533.967434621@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,66 +44,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit bc29d3a69d4c1bd1a103e8b3c1ed81b807c1870b ]
+[ Upstream commit 2d4d9b308f8f8dec68f6dbbff18c68ec7c6bd26f ]
 
-The call to of_find_matching_node_and_match returns a node pointer with
-refcount incremented thus it must be explicitly decremented after the
-last usage.
+When booted with "topology_updates=no", or when "off" is written to
+/proc/powerpc/topology_updates, NUMA reassignments are inhibited for
+PRRN and VPHN events. However, migration and suspend unconditionally
+re-enable reassignments via start_topology_update(). This is
+incoherent.
 
-Detected by coccinelle with the following warnings:
-drivers/gpu/drm/pl111/pl111_versatile.c:333:3-9: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 317, but without a corresponding object release within this function.
-drivers/gpu/drm/pl111/pl111_versatile.c:340:3-9: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 317, but without a corresponding object release within this function.
-drivers/gpu/drm/pl111/pl111_versatile.c:346:3-9: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 317, but without a corresponding object release within this function.
-drivers/gpu/drm/pl111/pl111_versatile.c:354:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 317, but without a corresponding object release within this function.
-drivers/gpu/drm/pl111/pl111_versatile.c:395:3-9: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 317, but without a corresponding object release within this function.
-drivers/gpu/drm/pl111/pl111_versatile.c:402:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 317, but without a corresponding object release within this function.
+Check the topology_updates_enabled flag in
+start/stop_topology_update() so that callers of those APIs need not be
+aware of whether reassignments are enabled. This allows the
+administrative decision on reassignments to remain in force across
+migrations and suspensions.
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Eric Anholt <eric@anholt.net> (supporter:DRM DRIVER FOR ARM PL111 CLCD)
-Cc: David Airlie <airlied@linux.ie> (maintainer:DRM DRIVERS)
-Cc: Daniel Vetter <daniel@ffwll.ch> (maintainer:DRM DRIVERS)
-Cc: dri-devel@lists.freedesktop.org (open list:DRM DRIVERS)
-Cc: linux-kernel@vger.kernel.org (open list)
-Signed-off-by: Eric Anholt <eric@anholt.net>
-Link: https://patchwork.freedesktop.org/patch/msgid/1554307455-40361-6-git-send-email-wen.yang99@zte.com.cn
+Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/pl111/pl111_versatile.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/powerpc/mm/numa.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/pl111/pl111_versatile.c b/drivers/gpu/drm/pl111/pl111_versatile.c
-index b9baefdba38a1..1c318ad32a8cd 100644
---- a/drivers/gpu/drm/pl111/pl111_versatile.c
-+++ b/drivers/gpu/drm/pl111/pl111_versatile.c
-@@ -330,6 +330,7 @@ int pl111_versatile_init(struct device *dev, struct pl111_drm_dev_private *priv)
- 		ret = vexpress_muxfpga_init();
- 		if (ret) {
- 			dev_err(dev, "unable to initialize muxfpga driver\n");
-+			of_node_put(np);
- 			return ret;
- 		}
+diff --git a/arch/powerpc/mm/numa.c b/arch/powerpc/mm/numa.c
+index 10fb43efef508..f473c05e96497 100644
+--- a/arch/powerpc/mm/numa.c
++++ b/arch/powerpc/mm/numa.c
+@@ -1495,6 +1495,9 @@ int start_topology_update(void)
+ {
+ 	int rc = 0;
  
-@@ -337,17 +338,20 @@ int pl111_versatile_init(struct device *dev, struct pl111_drm_dev_private *priv)
- 		pdev = of_find_device_by_node(np);
- 		if (!pdev) {
- 			dev_err(dev, "can't find the sysreg device, deferring\n");
-+			of_node_put(np);
- 			return -EPROBE_DEFER;
- 		}
- 		map = dev_get_drvdata(&pdev->dev);
- 		if (!map) {
- 			dev_err(dev, "sysreg has not yet probed\n");
- 			platform_device_put(pdev);
-+			of_node_put(np);
- 			return -EPROBE_DEFER;
- 		}
- 	} else {
- 		map = syscon_node_to_regmap(np);
- 	}
-+	of_node_put(np);
++	if (!topology_updates_enabled)
++		return 0;
++
+ 	if (firmware_has_feature(FW_FEATURE_PRRN)) {
+ 		if (!prrn_enabled) {
+ 			prrn_enabled = 1;
+@@ -1524,6 +1527,9 @@ int stop_topology_update(void)
+ {
+ 	int rc = 0;
  
- 	if (IS_ERR(map)) {
- 		dev_err(dev, "no Versatile syscon regmap\n");
++	if (!topology_updates_enabled)
++		return 0;
++
+ 	if (prrn_enabled) {
+ 		prrn_enabled = 0;
+ #ifdef CONFIG_SMP
+@@ -1579,11 +1585,13 @@ static ssize_t topology_write(struct file *file, const char __user *buf,
+ 
+ 	kbuf[read_len] = '\0';
+ 
+-	if (!strncmp(kbuf, "on", 2))
++	if (!strncmp(kbuf, "on", 2)) {
++		topology_updates_enabled = true;
+ 		start_topology_update();
+-	else if (!strncmp(kbuf, "off", 3))
++	} else if (!strncmp(kbuf, "off", 3)) {
+ 		stop_topology_update();
+-	else
++		topology_updates_enabled = false;
++	} else
+ 		return -EINVAL;
+ 
+ 	return count;
+@@ -1598,9 +1606,7 @@ static const struct file_operations topology_ops = {
+ 
+ static int topology_update_init(void)
+ {
+-	/* Do not poll for changes if disabled at boot */
+-	if (topology_updates_enabled)
+-		start_topology_update();
++	start_topology_update();
+ 
+ 	if (vphn_enabled)
+ 		topology_schedule_update();
 -- 
 2.20.1
 
