@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C3562F483
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:39:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C7412ED9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:40:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730525AbfE3EjF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:39:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55958 "EHLO mail.kernel.org"
+        id S1733245AbfE3DYS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:24:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729154AbfE3DMl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:41 -0400
+        id S1731307AbfE3DRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:53 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92DA121BE2;
-        Thu, 30 May 2019 03:12:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BDDA24733;
+        Thu, 30 May 2019 03:17:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185960;
-        bh=DSfh4Z3jAfAWQeCZK9hL19SXw1Ifa5HJzz56/y1/7K4=;
+        s=default; t=1559186272;
+        bh=iGxECOeYoMheEdkjkj36hyuYRAMoQSKnz47vNcgJL9g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AwL7R1jYqdFPtIowEHeWeO6TJXS4aMc+//edvcE9G869kJsNX0W19y6gZFgbHgBd6
-         y3m8nEA+WSewJzzEULh+5P5yrdE+LPfUBf4xPu4UcvHzp3LKujsuK+DO+trRd6jG1g
-         trdopTKwlQ8sWE0gZYhWlxoApJIm7hiIsLoQ0w+I=
+        b=YQAw5qDiUa0a0FPmJI6xh9XQ2ppv7FB97YPwQXFYiAOdc6uDsNDzSEqSK8OvNGvJl
+         cFYWbyKUZd4wsN3i3HRIY77HF2CvpNRonQNMNIPSEcFg9H8YSDNTfeHRc06uGCo8L8
+         +6qFkWhkeLbPxy4LZjxb/OFWXaUWp0HaEnfsUUn8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Roman Gushchin <guro@fb.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 336/405] media: ov7670: restore default settings after power-up
-Date:   Wed, 29 May 2019 20:05:34 -0700
-Message-Id: <20190530030557.709730400@linuxfoundation.org>
+Subject: [PATCH 4.19 177/276] selftests: cgroup: fix cleanup path in test_memcg_subtree_control()
+Date:   Wed, 29 May 2019 20:05:35 -0700
+Message-Id: <20190530030536.382969778@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,39 +46,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 32ab688b280301f7cee9e547564cb74e33e06322 ]
+[ Upstream commit e14d314c7a489f060d6d691866fef5f131281718 ]
 
-Since commit 3d6a8fe25605 ("media: ov7670: hook s_power onto v4l2 core"),
-the device is actually powered off while the video stream is stopped.
+Dan reported, that cleanup path in test_memcg_subtree_control()
+triggers a static checker warning:
+  ./tools/testing/selftests/cgroup/test_memcontrol.c:76 \
+  test_memcg_subtree_control()
+  error: uninitialized symbol 'child2'.
 
-The frame format and framerate are restored right after power-up, but
-restoring the default register settings is forgotten.
+Fix this by initializing child2 and parent2 variables and
+split the cleanup path into few stages.
 
-Fixes: 3d6a8fe25605 ("media: ov7670: hook s_power onto v4l2 core")
-
-Cc: Jonathan Corbet <corbet@lwn.net>
-Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
-Reviewed-by: Lubomir Rintel <lkundrak@v3.sk>
-Tested-by: Lubomir Rintel <lkundrak@v3.sk>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Roman Gushchin <guro@fb.com>
+Fixes: 84092dbcf901 ("selftests: cgroup: add memory controller self-tests")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Signed-off-by: Shuah Khan <shuah@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/ov7670.c | 1 +
- 1 file changed, 1 insertion(+)
+ .../selftests/cgroup/test_memcontrol.c        | 38 ++++++++++---------
+ 1 file changed, 21 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
-index a7d26b294eb58..e65693c2aad5f 100644
---- a/drivers/media/i2c/ov7670.c
-+++ b/drivers/media/i2c/ov7670.c
-@@ -1664,6 +1664,7 @@ static int ov7670_s_power(struct v4l2_subdev *sd, int on)
+diff --git a/tools/testing/selftests/cgroup/test_memcontrol.c b/tools/testing/selftests/cgroup/test_memcontrol.c
+index 28d321ba311b4..6f339882a6ca1 100644
+--- a/tools/testing/selftests/cgroup/test_memcontrol.c
++++ b/tools/testing/selftests/cgroup/test_memcontrol.c
+@@ -26,7 +26,7 @@
+  */
+ static int test_memcg_subtree_control(const char *root)
+ {
+-	char *parent, *child, *parent2, *child2;
++	char *parent, *child, *parent2 = NULL, *child2 = NULL;
+ 	int ret = KSFT_FAIL;
+ 	char buf[PAGE_SIZE];
  
- 	if (on) {
- 		ov7670_power_on (sd);
-+		ov7670_init(sd, 0);
- 		ov7670_apply_fmt(sd);
- 		ov7675_apply_framerate(sd);
- 		v4l2_ctrl_handler_setup(&info->hdl);
+@@ -34,50 +34,54 @@ static int test_memcg_subtree_control(const char *root)
+ 	parent = cg_name(root, "memcg_test_0");
+ 	child = cg_name(root, "memcg_test_0/memcg_test_1");
+ 	if (!parent || !child)
+-		goto cleanup;
++		goto cleanup_free;
+ 
+ 	if (cg_create(parent))
+-		goto cleanup;
++		goto cleanup_free;
+ 
+ 	if (cg_write(parent, "cgroup.subtree_control", "+memory"))
+-		goto cleanup;
++		goto cleanup_parent;
+ 
+ 	if (cg_create(child))
+-		goto cleanup;
++		goto cleanup_parent;
+ 
+ 	if (cg_read_strstr(child, "cgroup.controllers", "memory"))
+-		goto cleanup;
++		goto cleanup_child;
+ 
+ 	/* Create two nested cgroups without enabling memory controller */
+ 	parent2 = cg_name(root, "memcg_test_1");
+ 	child2 = cg_name(root, "memcg_test_1/memcg_test_1");
+ 	if (!parent2 || !child2)
+-		goto cleanup;
++		goto cleanup_free2;
+ 
+ 	if (cg_create(parent2))
+-		goto cleanup;
++		goto cleanup_free2;
+ 
+ 	if (cg_create(child2))
+-		goto cleanup;
++		goto cleanup_parent2;
+ 
+ 	if (cg_read(child2, "cgroup.controllers", buf, sizeof(buf)))
+-		goto cleanup;
++		goto cleanup_all;
+ 
+ 	if (!cg_read_strstr(child2, "cgroup.controllers", "memory"))
+-		goto cleanup;
++		goto cleanup_all;
+ 
+ 	ret = KSFT_PASS;
+ 
+-cleanup:
+-	cg_destroy(child);
+-	cg_destroy(parent);
+-	free(parent);
+-	free(child);
+-
++cleanup_all:
+ 	cg_destroy(child2);
++cleanup_parent2:
+ 	cg_destroy(parent2);
++cleanup_free2:
+ 	free(parent2);
+ 	free(child2);
++cleanup_child:
++	cg_destroy(child);
++cleanup_parent:
++	cg_destroy(parent);
++cleanup_free:
++	free(parent);
++	free(child);
+ 
+ 	return ret;
+ }
 -- 
 2.20.1
 
