@@ -2,97 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4A303040F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 23:17:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 483FC3045A
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 23:57:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726873AbfE3VQs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 17:16:48 -0400
-Received: from mga06.intel.com ([134.134.136.31]:47617 "EHLO mga06.intel.com"
+        id S1726874AbfE3V5X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 17:57:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726308AbfE3VQr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 17:16:47 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 May 2019 14:16:46 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by fmsmga006.fm.intel.com with ESMTP; 30 May 2019 14:16:45 -0700
-Date:   Thu, 30 May 2019 14:16:45 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        William Roberts <bill.c.roberts@gmail.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-Message-ID: <20190530211645.GB27551@linux.intel.com>
-References: <960B34DE67B9E140824F1DCDEC400C0F654E9824@ORSMSX116.amr.corp.intel.com>
- <20190528202407.GB13158@linux.intel.com>
- <285f279f-b500-27f0-ab42-fb1dbcc5ab18@tycho.nsa.gov>
- <960B34DE67B9E140824F1DCDEC400C0F654EB487@ORSMSX116.amr.corp.intel.com>
- <678a37af-797d-7bd5-a406-32548a270e3d@tycho.nsa.gov>
- <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com>
- <c1135352-0b5e-4694-b1a9-105876095877@tycho.nsa.gov>
- <CALCETrWsEXzUC33eJpGCpdMCBO4aYVviZLRD-CLMNaG5Jv-TCA@mail.gmail.com>
- <20190530180110.GB23930@linux.intel.com>
- <CALCETrX2PgUc_jetXHqp85aaS0a0jHB8E7=T1rsW+5vyRgwnUA@mail.gmail.com>
+        id S1726307AbfE3V5W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 17:57:22 -0400
+Received: from localhost (unknown [207.225.69.115])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F2FA261B4;
+        Thu, 30 May 2019 21:19:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559251190;
+        bh=KPLvi7aKrEe9JKGxQxgytaIYXMiDco5OH8C4sQ4Vb9E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=R65oNxcK4J9aIWqT2wTj2zbnoMZaRELxeBGWkFrsU0iypHtacW3ti88aMrtNBVxGO
+         hy8BYGtkTTvW3DLjhP98FfllwefSPAVHzcuvYfF0P1JAshmqk749cpUWw9vfud2IxL
+         hjLCn9gIYRXLk8dFWVZS2Hcx3FbKGj5NDFdoWE3A=
+Date:   Thu, 30 May 2019 14:19:50 -0700
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: kpc2000: Fix build failure caused by wrong
+ include file
+Message-ID: <20190530211950.GA17581@kroah.com>
+References: <1559216022-644-1-git-send-email-linux@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrX2PgUc_jetXHqp85aaS0a0jHB8E7=T1rsW+5vyRgwnUA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1559216022-644-1-git-send-email-linux@roeck-us.net>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 12:20:45PM -0700, Andy Lutomirski wrote:
-> On Thu, May 30, 2019 at 11:01 AM Sean Christopherson
-> <sean.j.christopherson@intel.com> wrote:
-> >
-> > On Thu, May 30, 2019 at 09:14:10AM -0700, Andy Lutomirski wrote:
-> > > Enclave file -- that is, the file backing the vma from which the data is loaded.
-> >
-> > It wasn't explicitly called out in Andy's proposal(s), but the idea is
-> > that the SGX driver would effectively inherit permissions from the source
-> > VMA (EADD needs a source for the initial value of the encave page).
+On Thu, May 30, 2019 at 04:33:42AM -0700, Guenter Roeck wrote:
+> xtensa:allmodconfig fails to build.
 > 
-> I actually meant for it to *not* work like this.  I don't want the
-> source VMA to have to be VM_EXEC.  I think the LSM should just check
-> permissions on ->vm_file.
+> arch/xtensa/include/asm/uaccess.h: In function 'clear_user':
+> arch/xtensa/include/asm/uaccess.h:40:22: error:
+> 	implicit declaration of function 'uaccess_kernel'
+> 
+> uaccess_kernel() is declared in linux/uaccess.h, not asm/uaccess.h.
+> 
+> Fixes: 7df95299b94a ("staging: kpc2000: Add DMA driver")
+> Cc: Matt Sickler <Matt.Sickler@daktronics.com>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+>  drivers/staging/kpc2000/kpc_dma/fileops.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/kpc2000/kpc_dma/fileops.c b/drivers/staging/kpc2000/kpc_dma/fileops.c
+> index 5741d2b49a7d..e741fa753ca1 100644
+> --- a/drivers/staging/kpc2000/kpc_dma/fileops.c
+> +++ b/drivers/staging/kpc2000/kpc_dma/fileops.c
+> @@ -8,7 +8,7 @@
+>  #include <linux/errno.h>    /* error codes */
+>  #include <linux/types.h>    /* size_t */
+>  #include <linux/cdev.h>
+> -#include <asm/uaccess.h>    /* copy_*_user */
+> +#include <linux/uaccess.h>    /* copy_*_user */
+>  #include <linux/aio.h>      /* aio stuff */
+>  #include <linux/highmem.h>
+>  #include <linux/pagemap.h>
 
-But if ->vm_file is NULL, i.e. the enclave is not backed by a file,
-then PROCESS__EXECMEM is required (or more likely, ENCLAVE__EXECMEM).
+Already fixed by e00839f38823 ("staging: kpc2000: fix build error on
+xtensa") in my staging-linus branch.
 
-In practice, it's the same net effect of using sigstruct as a proxy,
-i.e. *something* has to get to the file system to avoid EXECMEM.  But
-putting the entire enclave to the filesystem seems like a heaver lift
-than dumping the sigstruct.
+thanks,
 
-And if sigstruct needs to be in the file system for
-security_enclave_create/init()...
+greg k-h
