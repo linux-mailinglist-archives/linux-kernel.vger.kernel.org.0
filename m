@@ -2,70 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58B6A30488
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 00:03:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4809530461
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 23:59:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727006AbfE3WDV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 18:03:21 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:58742 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726308AbfE3WDV (ORCPT
+        id S1726869AbfE3V6R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 17:58:17 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:41465 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726307AbfE3V6R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 18:03:21 -0400
-Received: from [207.225.69.115] (helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hWSaW-0005GO-4E; Thu, 30 May 2019 23:27:52 +0200
-Date:   Thu, 30 May 2019 14:27:46 -0700 (PDT)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-cc:     Jiri Kosina <jikos@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4] x86/power: Fix 'nosmt' vs. hibernation triple fault
- during resume
-In-Reply-To: <CAJZ5v0ja5sQ73zMvUtV+w79LC_d+g6UdomL36rV-EpVDxEzbhA@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1905301425330.2265@nanos.tec.linutronix.de>
-References: <nycvar.YFH.7.76.1905282326360.1962@cbobk.fhfr.pm> <nycvar.YFH.7.76.1905300007470.1962@cbobk.fhfr.pm> <CAJZ5v0ja5sQ73zMvUtV+w79LC_d+g6UdomL36rV-EpVDxEzbhA@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 30 May 2019 17:58:17 -0400
+Received: by mail-qt1-f196.google.com with SMTP id s57so8974315qte.8
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 14:58:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xUrEWzZQfNW3Ko2ZWNLxImFggBKxzmBgkihSD1gWgW0=;
+        b=Is1zd4SDvd6ZWvtvAYJ67dlcwr8V/61dT3N1tlUOkcZwnsfMcEtreN/4wMWHgkijuJ
+         fehIbSV7QgKzRoi8VwUd0W3WoXvOqExCo54m3DUWvZUS4I4JGGA9nNtGyMoFCaqPHUhd
+         VxlWr6suY3YYkFaNBvaCCLAgcx4fsNiUjFNkmboSgvURicz+xVee3x2fjbJ/RZaI0fXc
+         di/c6A8CiJ9tE3erznkf1k+x25DEYKFnKRAqv7OCt9cZkE4Yo9/znC9IX8mfIklKs7yd
+         Gkn4IjHNQ5rZvpyrDAC5jDFha3I65uww7VBZkCmusfLq9q94+NHvcaB9Kal9s6v3VSuv
+         Rtdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xUrEWzZQfNW3Ko2ZWNLxImFggBKxzmBgkihSD1gWgW0=;
+        b=ZMGD8B51fF7iqrb04/y3f/B0DpUaxP3c+38RiocmGjLB1l7J3No/e390XG0+iVkIqY
+         y8JGUFNg6iH+q2nw9EzDvOrLhnqumyerDO6ywDXYB1Jb37er57sPjATwcgGxbAnNMgmS
+         CHfqSNYLQRapyTugVHDR2QGji0oMYUYoTbEsBHnNqtwESiB25XXny73PLMemtXeQUI5k
+         +gOqnhKqxgwmvz2rsVbWHn0G9dMeWtCR+F7olaNdgapaNW8LOkkdZQYPddSCULZi6O0G
+         Z18PNBUg2Ck0kjOt4Nc9A3mQIByelBnZd5stSecjxa7D8cA4VhnAzXyvwaokSHuOAZk7
+         jvSw==
+X-Gm-Message-State: APjAAAUzIdUCl4Ia5zCxO5o0NrJfOxCffHUToSrmHgQtXOwSBnAmA6xr
+        tvipQdfWGYbjVNDskfs/dzPl3g==
+X-Google-Smtp-Source: APXvYqw3Gbiesdzd/yRAh8ImxVsYAztosD/Dz/fx+HhBvOt45z0S/5LhH2Nn++H9E2AwV5xsyZZVcQ==
+X-Received: by 2002:aed:39e5:: with SMTP id m92mr5818400qte.106.1559251744607;
+        Thu, 30 May 2019 14:29:04 -0700 (PDT)
+Received: from cisco ([2601:280:6:ca14:840:fa90:7243:7032])
+        by smtp.gmail.com with ESMTPSA id d5sm1904111qtj.3.2019.05.30.14.29.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 30 May 2019 14:29:03 -0700 (PDT)
+Date:   Thu, 30 May 2019 15:29:00 -0600
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        ebiederm@xmission.com, nhorman@tuxdriver.com
+Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
+Message-ID: <20190530212900.GC5739@cisco>
+References: <cover.1554732921.git.rgb@redhat.com>
+ <9edad39c40671fb53f28d76862304cc2647029c6.1554732921.git.rgb@redhat.com>
+ <20190529145742.GA8959@cisco>
+ <CAHC9VhR4fudQanvZGYWMvCf7k2CU3q7e7n1Pi7hzC3v_zpVEdw@mail.gmail.com>
+ <20190529153427.GB8959@cisco>
+ <CAHC9VhSF3AjErX37+eeusJ7+XRw8yuPsmqBTRwc9EVoRBh_3Tw@mail.gmail.com>
+ <20190529222835.GD8959@cisco>
+ <CAHC9VhRS66VGtug3fq3RTGHDvfGmBJG6yRJ+iMxm3cxnNF-zJw@mail.gmail.com>
+ <20190530170913.GA16722@mail.hallyn.com>
+ <CAHC9VhThLiQzGYRUWmSuVfOC6QCDmA75BDB7Eg7V8HX4x7ymQg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhThLiQzGYRUWmSuVfOC6QCDmA75BDB7Eg7V8HX4x7ymQg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 30 May 2019, Rafael J. Wysocki wrote:
-> >
-> > Cc: stable@vger.kernel.org # v4.19+
-> > Debugged-by: Thomas Gleixner <tglx@linutronix.de>
-> > Fixes: 0cc3cd21657b ("cpu/hotplug: Boot HT siblings at least once")
-> > Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+On Thu, May 30, 2019 at 03:29:32PM -0400, Paul Moore wrote:
 > 
-> LGTM
+> [REMINDER: It is an "*audit* container ID" and not a general
+> "container ID" ;)  Smiley aside, I'm not kidding about that part.]
+
+This sort of seems like a distinction without a difference; presumably
+audit is going to want to differentiate between everything that people
+in userspace call a container. So you'll have to support all this
+insanity anyway, even if it's "not a container ID".
+
+> I'm not interested in supporting/merging something that isn't useful;
+> if this doesn't work for your use case then we need to figure out what
+> would work.  It sounds like nested containers are much more common in
+> the lxc world, can you elaborate a bit more on this?
 > 
-> And I would prefer this one to go in through the PM tree due to the
-> hibernate core changes,
+> As far as the possible solutions you mention above, I'm not sure I
+> like the per-userns audit container IDs, I'd much rather just emit the
+> necessary tracking information via the audit record stream and let the
+> log analysis tools figure it out.  However, the bigger question is how
+> to limit (re)setting the audit container ID when you are in a non-init
+> userns.  For reasons already mentioned, using capable() is a non
+> starter for everything but the initial userns, and using ns_capable()
+> is equally poor as it essentially allows any userns the ability to
+> munge it's audit container ID (obviously not good).  It appears we
+> need a different method for controlling access to the audit container
+> ID.
 
-Ok.
+One option would be to make it a string, and have it be append only.
+That should be safe with no checks.
 
-> so can I get an ACK from the x86 arch side here, please?
+I know there was a long thread about what type to make this thing. I
+think you could accomplish the append-only-ness with a u64 if you had
+some rule about only allowing setting lower order bits than those that
+are already set. With 4 bits for simplicity:
 
-No. Is the following good enough?
+1100         # initial container id
+1100 -> 1011 # not allowed
+1100 -> 1101 # allowed, but now 1101 is set in stone since there are
+             # no lower order bits left
 
-    Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+There are probably fancier ways to do it if you actually understand
+math :)
 
-Thanks,
+Since userns nesting is limited to 32 levels (right now, IIRC), and
+you have 64 bits, this might be reasonable. You could just teach
+container engines to use the first say N bits for themselves, with a 1
+bit for the barrier at the end.
 
-	tglx
+Tycho
