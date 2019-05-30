@@ -2,44 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C90A62EF1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:52:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99E272F014
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:01:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732405AbfE3Dwz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:52:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55742 "EHLO mail.kernel.org"
+        id S1727101AbfE3EAT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:00:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730594AbfE3DTe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:19:34 -0400
+        id S1731542AbfE3DSZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:18:25 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB19124879;
-        Thu, 30 May 2019 03:19:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18958247B4;
+        Thu, 30 May 2019 03:18:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186373;
-        bh=k8XCWb3nVGyoshzNZpVRJe/i8quHXBLiNB8Xg/6kpDo=;
+        s=default; t=1559186305;
+        bh=jP6U941xMJ/pMv0W8Qfpa6TpUNeBvAA7kHsdYd6KMp0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uH82h4yPgMpMkBurhOMiV6jh6o5A8eXUa2VxSTu9ZuugLZg2uwuckXqXlWEPbPd/6
-         vPuf44+UZ95nTBVSl55BLfR3xHqe/cRwB22wPtkHbWedp+J8Y6Pb9fzIfE0M6/zy0Q
-         +2+GtyCmyqISjYLoZWN6LUD+nnf2j7z0psqlXMiA=
+        b=EfASfxLfgsJQ6sktYX5S/1KqUTJ25GfACTOTcM8rXQmGyslJNx1ggCRBCKyR0n/uQ
+         UC1wSLH/ikwCuTDGblrIz57im6b7UrSr3swRUIMzINGBTA9poYE/IfoHsa9r4urhvQ
+         6Rb9ya4NA5oytJyiik6oTXcwtyeDjIqjlz8zalSY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 132/193] cpufreq: pmac32: fix possible object reference leak
-Date:   Wed, 29 May 2019 20:06:26 -0700
-Message-Id: <20190530030506.796645818@linuxfoundation.org>
+Subject: [PATCH 4.19 229/276] tty: ipwireless: fix missing checks for ioremap
+Date:   Wed, 29 May 2019 20:06:27 -0700
+Message-Id: <20190530030539.436725256@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,52 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8d10dc28a9ea6e8c02e825dab28699f3c72b02d9 ]
+[ Upstream commit 1bbb1c318cd8a3a39e8c3e2e83d5e90542d6c3e3 ]
 
-The call to of_find_node_by_name returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
+ipw->attr_memory and ipw->common_memory are assigned with the
+return value of ioremap. ioremap may fail, but no checks
+are enforced. The fix inserts the checks to avoid potential
+NULL pointer dereferences.
 
-Detected by coccinelle with the following warnings:
-./drivers/cpufreq/pmac32-cpufreq.c:557:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 552, but without a corresponding object release within this function.
-./drivers/cpufreq/pmac32-cpufreq.c:569:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 552, but without a corresponding object release within this function.
-./drivers/cpufreq/pmac32-cpufreq.c:598:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 587, but without a corresponding object release within this function.
-
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-pm@vger.kernel.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpufreq/pmac32-cpufreq.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/tty/ipwireless/main.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/cpufreq/pmac32-cpufreq.c b/drivers/cpufreq/pmac32-cpufreq.c
-index 61ae06ca008e7..e225edb5c3593 100644
---- a/drivers/cpufreq/pmac32-cpufreq.c
-+++ b/drivers/cpufreq/pmac32-cpufreq.c
-@@ -552,6 +552,7 @@ static int pmac_cpufreq_init_7447A(struct device_node *cpunode)
- 	volt_gpio_np = of_find_node_by_name(NULL, "cpu-vcore-select");
- 	if (volt_gpio_np)
- 		voltage_gpio = read_gpio(volt_gpio_np);
-+	of_node_put(volt_gpio_np);
- 	if (!voltage_gpio){
- 		pr_err("missing cpu-vcore-select gpio\n");
- 		return 1;
-@@ -588,6 +589,7 @@ static int pmac_cpufreq_init_750FX(struct device_node *cpunode)
- 	if (volt_gpio_np)
- 		voltage_gpio = read_gpio(volt_gpio_np);
+diff --git a/drivers/tty/ipwireless/main.c b/drivers/tty/ipwireless/main.c
+index 3475e841ef5c1..4c18bbfe1a92e 100644
+--- a/drivers/tty/ipwireless/main.c
++++ b/drivers/tty/ipwireless/main.c
+@@ -114,6 +114,10 @@ static int ipwireless_probe(struct pcmcia_device *p_dev, void *priv_data)
  
-+	of_node_put(volt_gpio_np);
- 	pvr = mfspr(SPRN_PVR);
- 	has_cpu_l2lve = !((pvr & 0xf00) == 0x100);
+ 	ipw->common_memory = ioremap(p_dev->resource[2]->start,
+ 				resource_size(p_dev->resource[2]));
++	if (!ipw->common_memory) {
++		ret = -ENOMEM;
++		goto exit1;
++	}
+ 	if (!request_mem_region(p_dev->resource[2]->start,
+ 				resource_size(p_dev->resource[2]),
+ 				IPWIRELESS_PCCARD_NAME)) {
+@@ -134,6 +138,10 @@ static int ipwireless_probe(struct pcmcia_device *p_dev, void *priv_data)
  
+ 	ipw->attr_memory = ioremap(p_dev->resource[3]->start,
+ 				resource_size(p_dev->resource[3]));
++	if (!ipw->attr_memory) {
++		ret = -ENOMEM;
++		goto exit3;
++	}
+ 	if (!request_mem_region(p_dev->resource[3]->start,
+ 				resource_size(p_dev->resource[3]),
+ 				IPWIRELESS_PCCARD_NAME)) {
 -- 
 2.20.1
 
