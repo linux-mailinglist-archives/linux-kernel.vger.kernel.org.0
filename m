@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FC532ED76
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:37:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 883DB2EE17
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:44:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387403AbfE3DYf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:24:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50012 "EHLO mail.kernel.org"
+        id S1731210AbfE3DoI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:44:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60756 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728513AbfE3DSM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:12 -0400
+        id S1732403AbfE3DVA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:21:00 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFC8524787;
-        Thu, 30 May 2019 03:18:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0321A249A6;
+        Thu, 30 May 2019 03:21:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186291;
-        bh=2YrukC3cEquubOCbw1IuRKiQl5aoHpT/7i1Fh9AHkO8=;
+        s=default; t=1559186460;
+        bh=DjLObwZZ+RDNqaf2WeRU/ZKKUnJDXzMdktihC5/aKoI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0VYm0W5o+6gLXUQ6JojJmsEFsDtGLStJHFwGQw9mRKtArZhiBNyubMm6kWzTYYaq8
-         D+3R4qsb+jnyETv/9/GWP0znanyG1NNNzRn5Daoo69c8fCQ4gUS/hNBWR+IwsAqSgA
-         BKkmA2uTT3UCAuH6hKDT0xouJk+mHP/0wORvXfVw=
+        b=Eqt77iyIb0Z458qo1BHDxxRfJsjqDlNW4+IDt/1jZeEAvouM/z9HL0HVt/cSkvC4B
+         UjZ7qf2WmHBHjHiG5G8hwvl6tYkPKJuIUg0MfUf7TaUvMQxBksYLkHHE3ft/luM8+W
+         fYan79ZJ/Pal55D5ZHTGevkVPGlv1VNsK01vd9Bo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Stefan=20Br=C3=BCns?= <stefan.bruens@rwth-aachen.de>,
-        Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Kefeng Wang <wangkefeng.wang@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 250/276] media: dvbsky: Avoid leaking dvb frontend
+Subject: [PATCH 4.9 076/128] hwmon: (f71805f) Use request_muxed_region for Super-IO accesses
 Date:   Wed, 29 May 2019 20:06:48 -0700
-Message-Id: <20190530030540.774952700@linuxfoundation.org>
+Message-Id: <20190530030448.301170316@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,140 +45,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit fdfa59cd63b184e1e96d51ff170fcac739bc6f6f ]
+[ Upstream commit 73e6ff71a7ea924fb7121d576a2d41e3be3fc6b5 ]
 
-Commit 14f4eaeddabc ("media: dvbsky: fix driver unregister logic") fixed
-a use-after-free by removing the reference to the frontend after deleting
-the backing i2c device.
+Super-IO accesses may fail on a system with no or unmapped LPC bus.
 
-This has the unfortunate side effect the frontend device is never freed
-in the dvb core leaving a dangling device, leading to errors when the
-dvb core tries to register the frontend after e.g. a replug as reported
-here: https://www.spinics.net/lists/linux-media/msg138181.html
+Unable to handle kernel paging request at virtual address ffffffbffee0002e
+pgd = ffffffc1d68d4000
+[ffffffbffee0002e] *pgd=0000000000000000, *pud=0000000000000000
+Internal error: Oops: 94000046 [#1] PREEMPT SMP
+Modules linked in: f71805f(+) hwmon
+CPU: 3 PID: 1659 Comm: insmod Not tainted 4.5.0+ #88
+Hardware name: linux,dummy-virt (DT)
+task: ffffffc1f6665400 ti: ffffffc1d6418000 task.ti: ffffffc1d6418000
+PC is at f71805f_find+0x6c/0x358 [f71805f]
 
-media: dvbsky: issues with DVBSky T680CI
+Also, other drivers may attempt to access the LPC bus at the same time,
+resulting in undefined behavior.
 
-===
-[  561.119145] sp2 8-0040: CIMaX SP2 successfully attached
-[  561.119161] usb 2-3: DVB: registering adapter 0 frontend 0 (Silicon Labs
-Si2168)...
-[  561.119174] sysfs: cannot create duplicate filename '/class/dvb/
-dvb0.frontend0'
-===
+Use request_muxed_region() to ensure that IO access on the requested
+address space is supported, and to ensure that access by multiple
+drivers is synchronized.
 
-The use after free happened as dvb_usbv2_disconnect calls in this order:
-- dvb_usb_device::props->exit(...)
-- dvb_usbv2_adapter_frontend_exit(...)
-  + if (fe) dvb_unregister_frontend(fe)
-  + dvb_usb_device::props->frontend_detach(...)
-
-Moving the release of the i2c device from exit() to frontend_detach()
-avoids the dangling pointer access and allows the core to unregister
-the frontend.
-
-This was originally reported for a DVBSky T680CI, but it also affects
-the MyGica T230C. As all supported devices structure the registration/
-unregistration identically, apply the change for all device types.
-
-Signed-off-by: Stefan Brüns <stefan.bruens@rwth-aachen.de>
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: e53004e20a58e ("hwmon: New f71805f driver")
+Reported-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+Reported-by: John Garry <john.garry@huawei.com>
+Cc: John Garry <john.garry@huawei.com>
+Acked-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/usb/dvb-usb-v2/dvbsky.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ drivers/hwmon/f71805f.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/usb/dvb-usb-v2/dvbsky.c b/drivers/media/usb/dvb-usb-v2/dvbsky.c
-index e28bd8836751e..ae0814dd202a6 100644
---- a/drivers/media/usb/dvb-usb-v2/dvbsky.c
-+++ b/drivers/media/usb/dvb-usb-v2/dvbsky.c
-@@ -615,16 +615,18 @@ static int dvbsky_init(struct dvb_usb_device *d)
- 	return 0;
+diff --git a/drivers/hwmon/f71805f.c b/drivers/hwmon/f71805f.c
+index facd05cda26da..e8c0898864277 100644
+--- a/drivers/hwmon/f71805f.c
++++ b/drivers/hwmon/f71805f.c
+@@ -96,17 +96,23 @@ superio_select(int base, int ld)
+ 	outb(ld, base + 1);
  }
  
--static void dvbsky_exit(struct dvb_usb_device *d)
-+static int dvbsky_frontend_detach(struct dvb_usb_adapter *adap)
+-static inline void
++static inline int
+ superio_enter(int base)
  {
-+	struct dvb_usb_device *d = adap_to_d(adap);
- 	struct dvbsky_state *state = d_to_priv(d);
--	struct dvb_usb_adapter *adap = &d->adapter[0];
++	if (!request_muxed_region(base, 2, DRVNAME))
++		return -EBUSY;
 +
-+	dev_dbg(&d->udev->dev, "%s: adap=%d\n", __func__, adap->id);
- 
- 	dvb_module_release(state->i2c_client_tuner);
- 	dvb_module_release(state->i2c_client_demod);
- 	dvb_module_release(state->i2c_client_ci);
- 
--	adap->fe[0] = NULL;
+ 	outb(0x87, base);
+ 	outb(0x87, base);
++
 +	return 0;
  }
  
- /* DVB USB Driver stuff */
-@@ -640,11 +642,11 @@ static struct dvb_usb_device_properties dvbsky_s960_props = {
+ static inline void
+ superio_exit(int base)
+ {
+ 	outb(0xaa, base);
++	release_region(base, 2);
+ }
  
- 	.i2c_algo         = &dvbsky_i2c_algo,
- 	.frontend_attach  = dvbsky_s960_attach,
-+	.frontend_detach  = dvbsky_frontend_detach,
- 	.init             = dvbsky_init,
- 	.get_rc_config    = dvbsky_get_rc_config,
- 	.streaming_ctrl   = dvbsky_streaming_ctrl,
- 	.identify_state	  = dvbsky_identify_state,
--	.exit             = dvbsky_exit,
- 	.read_mac_address = dvbsky_read_mac_addr,
+ /*
+@@ -1561,7 +1567,7 @@ static int __init f71805f_device_add(unsigned short address,
+ static int __init f71805f_find(int sioaddr, unsigned short *address,
+ 			       struct f71805f_sio_data *sio_data)
+ {
+-	int err = -ENODEV;
++	int err;
+ 	u16 devid;
  
- 	.num_adapters = 1,
-@@ -667,11 +669,11 @@ static struct dvb_usb_device_properties dvbsky_s960c_props = {
+ 	static const char * const names[] = {
+@@ -1569,8 +1575,11 @@ static int __init f71805f_find(int sioaddr, unsigned short *address,
+ 		"F71872F/FG or F71806F/FG",
+ 	};
  
- 	.i2c_algo         = &dvbsky_i2c_algo,
- 	.frontend_attach  = dvbsky_s960c_attach,
-+	.frontend_detach  = dvbsky_frontend_detach,
- 	.init             = dvbsky_init,
- 	.get_rc_config    = dvbsky_get_rc_config,
- 	.streaming_ctrl   = dvbsky_streaming_ctrl,
- 	.identify_state	  = dvbsky_identify_state,
--	.exit             = dvbsky_exit,
- 	.read_mac_address = dvbsky_read_mac_addr,
+-	superio_enter(sioaddr);
++	err = superio_enter(sioaddr);
++	if (err)
++		return err;
  
- 	.num_adapters = 1,
-@@ -694,11 +696,11 @@ static struct dvb_usb_device_properties dvbsky_t680c_props = {
- 
- 	.i2c_algo         = &dvbsky_i2c_algo,
- 	.frontend_attach  = dvbsky_t680c_attach,
-+	.frontend_detach  = dvbsky_frontend_detach,
- 	.init             = dvbsky_init,
- 	.get_rc_config    = dvbsky_get_rc_config,
- 	.streaming_ctrl   = dvbsky_streaming_ctrl,
- 	.identify_state	  = dvbsky_identify_state,
--	.exit             = dvbsky_exit,
- 	.read_mac_address = dvbsky_read_mac_addr,
- 
- 	.num_adapters = 1,
-@@ -721,11 +723,11 @@ static struct dvb_usb_device_properties dvbsky_t330_props = {
- 
- 	.i2c_algo         = &dvbsky_i2c_algo,
- 	.frontend_attach  = dvbsky_t330_attach,
-+	.frontend_detach  = dvbsky_frontend_detach,
- 	.init             = dvbsky_init,
- 	.get_rc_config    = dvbsky_get_rc_config,
- 	.streaming_ctrl   = dvbsky_streaming_ctrl,
- 	.identify_state	  = dvbsky_identify_state,
--	.exit             = dvbsky_exit,
- 	.read_mac_address = dvbsky_read_mac_addr,
- 
- 	.num_adapters = 1,
-@@ -748,11 +750,11 @@ static struct dvb_usb_device_properties mygica_t230c_props = {
- 
- 	.i2c_algo         = &dvbsky_i2c_algo,
- 	.frontend_attach  = dvbsky_mygica_t230c_attach,
-+	.frontend_detach  = dvbsky_frontend_detach,
- 	.init             = dvbsky_init,
- 	.get_rc_config    = dvbsky_get_rc_config,
- 	.streaming_ctrl   = dvbsky_streaming_ctrl,
- 	.identify_state	  = dvbsky_identify_state,
--	.exit             = dvbsky_exit,
- 
- 	.num_adapters = 1,
- 	.adapter = {
++	err = -ENODEV;
+ 	devid = superio_inw(sioaddr, SIO_REG_MANID);
+ 	if (devid != SIO_FINTEK_ID)
+ 		goto exit;
 -- 
 2.20.1
 
