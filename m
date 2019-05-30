@@ -2,45 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59E80302D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 21:34:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0DEF302DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 21:34:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726512AbfE3Te1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 15:34:27 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:58906 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbfE3Te0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 15:34:26 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 21A1714DA8199;
-        Thu, 30 May 2019 12:34:26 -0700 (PDT)
-Date:   Thu, 30 May 2019 12:34:25 -0700 (PDT)
-Message-Id: <20190530.123425.1339903611009203943.davem@davemloft.net>
-To:     Jose.Abreu@synopsys.com
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        Joao.Pinto@synopsys.com, peppe.cavallaro@st.com,
-        alexandre.torgue@st.com
-Subject: Re: [PATCH net-next 0/2] net: stmmac: selftests: Two fixes
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <cover.1559118521.git.joabreu@synopsys.com>
-References: <cover.1559118521.git.joabreu@synopsys.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        id S1726593AbfE3Ter (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 15:34:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37786 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726029AbfE3Ter (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 15:34:47 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30D3A260D2;
+        Thu, 30 May 2019 19:34:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559244886;
+        bh=x24r8845bRjKpZV54L0ElvQQ6RAiqlbuijYxZRaqz80=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=jPnss6aUxgR1B1VZSUR+3ldHJAwvlaJMAp+ryUXfKBKc+awBMTmALsqcY4qkm/2uS
+         vi+0xTXPh/sXHWnhNqszmT2ihpCoo4vTkWkk64tXeSVkIP4DNJ3NHhupNqs0ZGJ12k
+         NyQh2iGtT576DAGey3esFS8y2ptyJ+GCXoTjuKv4=
+Subject: Re: [PATCH 4.19 000/276] 4.19.47-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20190530030523.133519668@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <bc4681e2-4a48-62e8-4acb-fc811201e5b4@kernel.org>
+Date:   Thu, 30 May 2019 13:34:45 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 30 May 2019 12:34:26 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jose Abreu <Jose.Abreu@synopsys.com>
-Date: Wed, 29 May 2019 10:30:24 +0200
+On 5/29/19 9:02 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.47 release.
+> There are 276 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat 01 Jun 2019 03:02:08 AM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.47-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-> Two fixes reported by kbuild.
+Compiled and booted on my test system. No dmesg regressions.
 
-Series applied.
+thanks,
+-- Shuah
