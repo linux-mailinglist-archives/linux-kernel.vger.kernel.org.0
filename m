@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B03732ECB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:25:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76A952ECE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:28:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387437AbfE3DYq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:24:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50450 "EHLO mail.kernel.org"
+        id S2388135AbfE3D2L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:28:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729911AbfE3DSQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:16 -0400
+        id S1732046AbfE3DTu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:19:50 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53A2F2478F;
-        Thu, 30 May 2019 03:18:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E91FC248E0;
+        Thu, 30 May 2019 03:19:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186295;
-        bh=Wa7TcyT+ufSchs5dR12KCtbsY23wB+eK/kdXfxO7PYM=;
+        s=default; t=1559186390;
+        bh=DVF2BsjhTgYxFfpTkGy6e03bpwNSrsgVjaDEudMpCwE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ic3IR/fvvcHLoDvU3OztIDqTr3HS4ctJ2efk3XokqMKDzfRo9jl6wsogu6m8WS2rT
-         8+ZbBh2ud2CVmImL8SEhQLUM54GO1/707KZ9imTaHN7Pg4Fu8+GKuBFouSZpVzvGaN
-         glGAELZI7YTnpKMQDVvPBTe6dBHEVD92AcnT8/uc=
+        b=nVm4ZFYKf3v0AHXbFiS6QIt+wJrXsLRfIv7nM2Py2q5di2ooNvR7z5hGnD9uoYXd5
+         1fIsoUvIE9XeIkkDRBFI/zRM25ytotk4p5gjQGwCIBcJiaq4Wwexemuis173bn3cx1
+         kcoyHXmlC/XNOLFGr8yqSBR68/x+CCaZUKIRVvQQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        Helen Koike <helen.koike@collabora.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 256/276] media: vimc: stream: fix thread state before sleep
+Subject: [PATCH 4.14 160/193] cxgb3/l2t: Fix undefined behaviour
 Date:   Wed, 29 May 2019 20:06:54 -0700
-Message-Id: <20190530030541.173404684@linuxfoundation.org>
+Message-Id: <20190530030510.392048626@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,47 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2978a505aaa981b279ef359f74ba93d25098e0a0 ]
+[ Upstream commit 76497732932f15e7323dc805e8ea8dc11bb587cf ]
 
-The state TASK_UNINTERRUPTIBLE should be set just before
-schedule_timeout() call, so it knows the sleep mode it should enter.
-There is no point in setting TASK_UNINTERRUPTIBLE at the initialization
-of the thread as schedule_timeout() will set the state back to
-TASK_RUNNING.
+The use of zero-sized array causes undefined behaviour when it is not
+the last member in a structure. As it happens to be in this case.
 
-This fixes a warning in __might_sleep() call, as it's expecting the
-task to be in TASK_RUNNING state just before changing the state to
-a sleeping state.
+Also, the current code makes use of a language extension to the C90
+standard, but the preferred mechanism to declare variable-length
+types such as this one is a flexible array member, introduced in
+C99:
 
-Reported-by: Hans Verkuil <hverkuil@xs4all.nl>
-Signed-off-by: Helen Koike <helen.koike@collabora.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+struct foo {
+        int stuff;
+        struct boo array[];
+};
+
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last. Which is beneficial
+to cultivate a high-quality code.
+
+Fixes: e48f129c2f20 ("[SCSI] cxgb3i: convert cdev->l2opt to use rcu to prevent NULL dereference")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/vimc/vimc-streamer.c | 2 +-
+ drivers/net/ethernet/chelsio/cxgb3/l2t.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/vimc/vimc-streamer.c b/drivers/media/platform/vimc/vimc-streamer.c
-index fcc897fb247bc..392754c18046c 100644
---- a/drivers/media/platform/vimc/vimc-streamer.c
-+++ b/drivers/media/platform/vimc/vimc-streamer.c
-@@ -120,7 +120,6 @@ static int vimc_streamer_thread(void *data)
- 	int i;
+diff --git a/drivers/net/ethernet/chelsio/cxgb3/l2t.h b/drivers/net/ethernet/chelsio/cxgb3/l2t.h
+index c2fd323c40782..ea75f275023ff 100644
+--- a/drivers/net/ethernet/chelsio/cxgb3/l2t.h
++++ b/drivers/net/ethernet/chelsio/cxgb3/l2t.h
+@@ -75,8 +75,8 @@ struct l2t_data {
+ 	struct l2t_entry *rover;	/* starting point for next allocation */
+ 	atomic_t nfree;		/* number of free entries */
+ 	rwlock_t lock;
+-	struct l2t_entry l2tab[0];
+ 	struct rcu_head rcu_head;	/* to handle rcu cleanup */
++	struct l2t_entry l2tab[];
+ };
  
- 	set_freezable();
--	set_current_state(TASK_UNINTERRUPTIBLE);
- 
- 	for (;;) {
- 		try_to_freeze();
-@@ -137,6 +136,7 @@ static int vimc_streamer_thread(void *data)
- 				break;
- 		}
- 		//wait for 60hz
-+		set_current_state(TASK_UNINTERRUPTIBLE);
- 		schedule_timeout(HZ / 60);
- 	}
- 
+ typedef void (*arp_failure_handler_func)(struct t3cdev * dev,
 -- 
 2.20.1
 
