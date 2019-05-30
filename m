@@ -2,70 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2877E2F739
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 07:48:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8786C2F748
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 07:53:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727369AbfE3Fsh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 01:48:37 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:38034 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726308AbfE3Fsg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 01:48:36 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8E7061A0156;
-        Thu, 30 May 2019 07:48:34 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 407721A0630;
-        Thu, 30 May 2019 07:48:23 +0200 (CEST)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 7BEA8402B5;
-        Thu, 30 May 2019 13:48:09 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com,
-        will.deacon@arm.com, maxime.ripard@bootlin.com, olof@lixom.net,
-        horms+renesas@verge.net.au, jagan@amarulasolutions.com,
-        bjorn.andersson@linaro.org, leonard.crestez@nxp.com,
-        dinguyen@kernel.org, enric.balletbo@collabora.com,
-        aisheng.dong@nxp.com, ping.bai@nxp.com, abel.vesa@nxp.com,
-        l.stach@pengutronix.de, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 3/3] arm64: defconfig: Select CONFIG_CLK_IMX8MN by default
-Date:   Thu, 30 May 2019 13:49:58 +0800
-Message-Id: <20190530054958.33299-3-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190530054958.33299-1-Anson.Huang@nxp.com>
-References: <20190530054958.33299-1-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726883AbfE3FxA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 01:53:00 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37416 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725961AbfE3Fw7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 01:52:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=oHqVEIhqCwMex8GKlVQDi4KtDcsBFBMe3TYDNP4SewE=; b=ViocBpNvOg+Novr+owM9IAtqL
+        mxbnKycuk76UKiKY6BtJbNuFG50XpOQ1P37OqQgdiTBUMuiMEHvHRfYRyfGrj3aGD6js3FV6dFkUl
+        f6N9V1KXtGVAHiydLyhDrKNf5C0qB6cyHE0Q19ozUBT1lHYD9xSdq0JUszRtyynjiGEFYgeWdEUqX
+        gdkPRik7oOTm+LbhV2kXM/2bF7nNRjHcTomKMX6TJIZzHnFWRKgOPOLCWJ5BFOciGFBpx5H/OVwNB
+        EEumZRHqRHxurSmaxBNu3VEedlPsCDfV/dzoGjABVbmKtBPW0qZCqXFtdR50umTuzzd2TAz6t3cEX
+        SAcNGPQxg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hWDzm-0003GK-GA; Thu, 30 May 2019 05:52:58 +0000
+Date:   Wed, 29 May 2019 22:52:58 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Nick Hu <nickhu@andestech.com>
+Cc:     greentime@andestech.com, palmer@sifive.com,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        green.hu@gmail.com
+Subject: Re: [PATCH] riscv: Fix udelay in RV32.
+Message-ID: <20190530055258.GA7170@infradead.org>
+References: <381ee6950c84b868ca6a3c676eb981a1980889a3.1559035050.git.nickhu@andestech.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <381ee6950c84b868ca6a3c676eb981a1980889a3.1559035050.git.nickhu@andestech.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+On Tue, May 28, 2019 at 05:26:49PM +0800, Nick Hu wrote:
+> In RV32, udelay would delay the wrong cycle.
+> When it shifts right "UDELAY_SHITFT" bits, it
+> either delays 0 cycle or 1 cycle. It only works
+> correctly in RV64. Because the 'ucycles' always
+> needs to be 64 bits variable.
 
-Enable CONFIG_CLK_IMX8MN to support i.MX8MN clock driver.
+Please use up all your ~72 chars per line in the commit log.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+> diff --git a/arch/riscv/lib/delay.c b/arch/riscv/lib/delay.c
+> index dce8ae24c6d3..da847f49fb74 100644
+> --- a/arch/riscv/lib/delay.c
+> +++ b/arch/riscv/lib/delay.c
+> @@ -88,7 +88,7 @@ EXPORT_SYMBOL(__delay);
+>  
+>  void udelay(unsigned long usecs)
+>  {
+> -	unsigned long ucycles = usecs * lpj_fine * UDELAY_MULT;
+> +	unsigned long long ucycles = (unsigned long long)usecs * lpj_fine * UDELAY_MULT;
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 8d4f25c..aef797c 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -654,6 +654,7 @@ CONFIG_COMMON_CLK_CS2000_CP=y
- CONFIG_COMMON_CLK_S2MPS11=y
- CONFIG_CLK_QORIQ=y
- CONFIG_COMMON_CLK_PWM=y
-+CONFIG_CLK_IMX8MN=y
- CONFIG_CLK_IMX8MM=y
- CONFIG_CLK_IMX8MQ=y
- CONFIG_CLK_IMX8QXP=y
--- 
-2.7.4
-
+And this creates a way too long line.  Pleaase use u64 instead of
+unsigned long long to clarify the intention while also fixing the long
+lines.
