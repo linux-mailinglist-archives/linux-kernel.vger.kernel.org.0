@@ -2,88 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 999E52F956
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 11:24:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F5392F95D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 11:25:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727273AbfE3JYa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 05:24:30 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:17627 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726382AbfE3JYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 05:24:30 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 9FE9EAEEAA03EE4475B0;
-        Thu, 30 May 2019 17:24:27 +0800 (CST)
-Received: from [127.0.0.1] (10.133.213.239) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Thu, 30 May 2019
- 17:24:23 +0800
-Subject: Re: [PATCH] kernel/module: Fix mem leak in module_add_modinfo_attrs
-To:     <jeyu@kernel.org>, <gregkh@linuxfoundation.org>
-References: <20190515161212.28040-1-yuehaibing@huawei.com>
-CC:     <linux-kernel@vger.kernel.org>, <paulmck@linux.ibm.com>
-From:   Yuehaibing <yuehaibing@huawei.com>
-Message-ID: <60ececa2-2741-c4e5-c028-35d95cbeb731@huawei.com>
-Date:   Thu, 30 May 2019 17:24:22 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        id S1727438AbfE3JZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 05:25:05 -0400
+Received: from mga07.intel.com ([134.134.136.100]:12824 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726382AbfE3JZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 05:25:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 May 2019 02:25:03 -0700
+Received: from jkrzyszt-desk.igk.intel.com ([172.22.244.18])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 May 2019 02:25:01 -0700
+From:   Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
+To:     intel-gfx@lists.freedesktop.org
+Cc:     Chris Wilson <chris@chris-wilson.co.uk>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Michal Wajdeczko <michal.wajdeczko@intel.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
+Subject: [RFC PATCH 0/1] drm/i915: Split off pci_driver.remove() tail to drm_driver.release()
+Date:   Thu, 30 May 2019 11:24:25 +0200
+Message-Id: <20190530092426.23880-1-janusz.krzysztofik@linux.intel.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <20190515161212.28040-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Friendly ping...
+Hi,
 
-On 2019/5/16 0:12, YueHaibing wrote:
-> In module_add_modinfo_attrs if sysfs_create_file
-> fails, we forget to free allocated modinfo_attrs
-> and roll back the sysfs files.
-> 
-> Fixes: 03e88ae1b13d ("[PATCH] fix module sysfs files reference counting")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  kernel/module.c | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/module.c b/kernel/module.c
-> index 0b9aa8a..7da73c4 100644
-> --- a/kernel/module.c
-> +++ b/kernel/module.c
-> @@ -1714,15 +1714,29 @@ static int module_add_modinfo_attrs(struct module *mod)
->  		return -ENOMEM;
->  
->  	temp_attr = mod->modinfo_attrs;
-> -	for (i = 0; (attr = modinfo_attrs[i]) && !error; i++) {
-> +	for (i = 0; (attr = modinfo_attrs[i]); i++) {
->  		if (!attr->test || attr->test(mod)) {
->  			memcpy(temp_attr, attr, sizeof(*temp_attr));
->  			sysfs_attr_init(&temp_attr->attr);
->  			error = sysfs_create_file(&mod->mkobj.kobj,
->  					&temp_attr->attr);
-> +			if (error)
-> +				goto error_out;
->  			++temp_attr;
->  		}
->  	}
-> +
-> +	return 0;
-> +
-> +error_out:
-> +	for (; (attr = &mod->modinfo_attrs[i]) && i >= 0; i--) {
-> +		if (!attr->attr.name)
-> +			break;
-> +		sysfs_remove_file(&mod->mkobj.kobj, &attr->attr);
-> +		if (attr->free)
-> +			attr->free(mod);
-> +	}
-> +	kfree(mod->modinfo_attrs);
->  	return error;
->  }
->  
-> 
+I do realize more work needs to be done to get a clean hotunplug
+solution, however I need your comments to make sure that I'm going in
+the right direction.
+
+So far I have no good idea how to resolve pm_runtime_get_sync()
+failures on outstanding device file close after successfull driver
+unbind.
+
+Thanks,
+Janusz
+
+
+Janusz Krzysztofik (1):
+  drm/i915: Split off pci_driver.remove() tail to drm_driver.release()
+
+ drivers/gpu/drm/i915/i915_drv.c | 17 +++++++++++++----
+ drivers/gpu/drm/i915/i915_drv.h |  1 +
+ drivers/gpu/drm/i915/i915_gem.c | 10 +++++++++-
+ 3 files changed, 23 insertions(+), 5 deletions(-)
+
+-- 
+2.21.0
 
