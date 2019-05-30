@@ -2,249 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBABA30009
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 18:15:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DE0230013
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 18:19:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727387AbfE3QPw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 12:15:52 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39543 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726253AbfE3QPw (ORCPT
+        id S1727723AbfE3QTC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 12:19:02 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:44463 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726520AbfE3QTB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 12:15:52 -0400
-Received: by mail-pf1-f193.google.com with SMTP id j2so4268823pfe.6
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 09:15:51 -0700 (PDT)
+        Thu, 30 May 2019 12:19:01 -0400
+Received: by mail-qk1-f194.google.com with SMTP id w187so4196651qkb.11
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 09:19:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QdCnbVnvU3JKpvLwtQ0RZP1XXmjXKTawTWYBTDGInu4=;
-        b=iLQl/tzlA9IoLss9iCFQI/uNGICbYiY4oejGcOmvASeKUe1o9NBlHzZdiKIU2xU58Y
-         3pKqXYhhLPDvcUMN7eyQqGRC4IryxuvQMWpUXEv8jnvIzDG7kZZg9PxBjkDzEFxg+RQf
-         IVDhR19utfM7z+cRwAL4kdXgETyC+JmOUaA4KHKVd+GagQ+bXc+lAzNsMdpe3bzXPDPx
-         KDOv/heXOJc5v7KdT7sv1ibco32xt7Ynm8VHLcvCtns9QqQ/Lj7JCkgVMV9pp/OkoWPD
-         Zcc+T3tyl96dUAbeOBndyhsXipIkP4D9akQIpA985eo1aayznx92rFD0B7fd/9tZaa6C
-         VapA==
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/BOF1PS9ef/1e7lF8f7QGaLzvKEh7xsX3IUCbdi38sI=;
+        b=E34x/JZltMmJpxLwbPQ3upRY0aW6h4YRZvuNYNeY24YqQEVr0xGxbd94fNVxyYEkd6
+         L1QZc/Kub9/DPa/7/Iw+5FCGQAQPlwMuSybDLCnGJwTZJkXOHuI66sZHlV/4zWgW3IX9
+         ER8WHijNf6yvvLP9UaU0MK0/5SpJ1gKgBC1+LPxTH2XTtCsxrCkz4MRu9WUbjT2pSax+
+         4i6/QpqUNsQe5JuW4QCAdrAlMoL/yvmUBlbyW+gUnJ/LOZATfYSgvTldftMNsC2y3blY
+         kNRWQipzSHFAfUWu918mwJDL6F++OKoJA49EXGi8A/5veoy93/gdfkH5+MaH8ipOcvQL
+         2NGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QdCnbVnvU3JKpvLwtQ0RZP1XXmjXKTawTWYBTDGInu4=;
-        b=QTTjYXMwuwXfm4zE4i8bo+1wsrrVOWsgPJzR71MXMqrX2IV2KbQFJ5fgsX5mfQKxbR
-         oxPjkPoPe8pm0qDHDCVynO1a5fpDeFvrfI6Li32h9AKHVrNxz/XximrsKlpGe848v5Xh
-         uMWx1FQ2a6Ip0u0HaLf2xMB3Pl0/7pnKHgfzR+QCOeKSj4fXQd/nudqxa00yv+vAMB0I
-         abypmwwP5g9m/U57a0pLnOH8txlXapx9Ft0uFguILWpB0q7vO5fVpnh8OJ+aQaS5NKN3
-         BkVqqMTUXvQHe+DBhq0CsXVZc0npNVFkqMxNm5QUZe008J//gm6yslJ/12966KIafVBD
-         nnJQ==
-X-Gm-Message-State: APjAAAWsjQ3ZQ3X2WSBe438O+QWeWCW0z6Xuh0VbP95wBYnvsaIHVARJ
-        Ib1HOOrpkFfCRzIlkp8/SkQmWg==
-X-Google-Smtp-Source: APXvYqzdneacRJ3jMe8/a4aYeOWI8YILi6WoYZXJpCLl8ovLvQkhojhfLpNV90VPB11YoHs72pAphw==
-X-Received: by 2002:a17:90a:240c:: with SMTP id h12mr4366079pje.12.1559232951269;
-        Thu, 30 May 2019 09:15:51 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::7ef9])
-        by smtp.gmail.com with ESMTPSA id s42sm7645186pjc.5.2019.05.30.09.15.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 30 May 2019 09:15:50 -0700 (PDT)
-Date:   Thu, 30 May 2019 12:15:48 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH] mm: fix page cache convergence regression
-Message-ID: <20190530161548.GA8415@cmpxchg.org>
-References: <20190524153148.18481-1-hannes@cmpxchg.org>
- <20190524160417.GB1075@bombadil.infradead.org>
- <20190524173900.GA11702@cmpxchg.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/BOF1PS9ef/1e7lF8f7QGaLzvKEh7xsX3IUCbdi38sI=;
+        b=I0LCTnh+7MMpdTc6No5zSxwSfubVIK/R5qYf2HvO0wUHUZfmD8KwboNC4/t9cyMB/k
+         4gfNjYO7zkplBLgD3pzCCyYGdarCV6LvGSyS2dCAzz9TGXc+hYsavWOdeqwmd0b7fYiP
+         AJl7qLMHYx5RzeWjKMIV7M/XS+luDvG/hJeig4UijISXcWIZGaTXPyFnDOw1jGgnuSdy
+         rq5wUcQp19hWGB0gTzYp5oSTCevnBywt0VqQ4AYemuAaUCA2GjXhC+Py4sIdzVuiS7io
+         k91t2qvBS5YSLmokZCrj2zsWbV8DYngShUFnx9aHCPYu+WSSMuThnm5d/Mo43s2FZcEU
+         dDOg==
+X-Gm-Message-State: APjAAAX55M/mCvNSqV48cXaH+RnZ7ijI/Dwz+2m2QA5FvyuMgsCwkw9K
+        Bt4wDfT9rGlk092loi5jJb/ImR2eGFMu2FiMH9R3xg==
+X-Google-Smtp-Source: APXvYqyThEOTsDPymddn81aSSL0LysAZFw4QN4ZJW+unu55HDESyR2d6fYY+dP4ysFM/iFLBd3G9l+xGe+xmzPDyhmM=
+X-Received: by 2002:a37:6312:: with SMTP id x18mr4113595qkb.300.1559233140556;
+ Thu, 30 May 2019 09:19:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190524173900.GA11702@cmpxchg.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+References: <20190529050335.72061-1-chiu@endlessm.com> <CAD8Lp46on32VgWtCe7WsGHXp3Jk16qTh6saf0Vj0Y4Ry5z1n7g@mail.gmail.com>
+ <CAB4CAwfVDfphWNAN5L1f9BCT9Oo3AQwL19BOUTNJNFM=QR7rjQ@mail.gmail.com>
+In-Reply-To: <CAB4CAwfVDfphWNAN5L1f9BCT9Oo3AQwL19BOUTNJNFM=QR7rjQ@mail.gmail.com>
+From:   Daniel Drake <drake@endlessm.com>
+Date:   Thu, 30 May 2019 10:18:49 -0600
+Message-ID: <CAD8Lp465rwNHt0TSmCKfFzpSagbZBd2iBHx5JrLo7Qp8YvTSgw@mail.gmail.com>
+Subject: Re: [RFC PATCH v3] rtl8xxxu: Improve TX performance of RTL8723BU on
+ rtl8xxxu driver
+To:     Chris Chiu <chiu@endlessm.com>
+Cc:     Jes Sorensen <jes.sorensen@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        David Miller <davem@davemloft.net>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Are there any objections or feedback on the proposed fix below? This
-is kind of a serious regression.
+On Wed, May 29, 2019 at 10:52 PM Chris Chiu <chiu@endlessm.com> wrote:
+> You mean moving the ratr_index to be the 4th function parameter of
+> update_rate_mask which has 2 candidates rtl8xxxu_update_rate_mask
+> and rtl8xxxu_gen2_update_rate_mask? I was planning to keep the
+> rtl8xxxu_update_rate_mask the same because old chips seems don't
+> need the rate index when invoking H2C command to change rate mask.
+> And rate index is not a common phrase/term for rate adaptive. Theoretically
+> we just need packet error rate, sgi and other factors to determine the rate
+> mask. This rate index seems to be only specific to newer Realtek drivers
+> or firmware for rate adaptive algorithm.  I'd like to keep this for gen2 but
+> I admit it's ugly to put it in the priv structure. Any suggestion is
+> appreciated.
 
-On Fri, May 24, 2019 at 01:39:00PM -0400, Johannes Weiner wrote:
-> From 63a0dbc571ff38f7c072c62d6bc28192debe37ac Mon Sep 17 00:00:00 2001
-> From: Johannes Weiner <hannes@cmpxchg.org>
-> Date: Fri, 24 May 2019 10:12:46 -0400
-> Subject: [PATCH] mm: fix page cache convergence regression
-> 
-> Since a28334862993 ("page cache: Finish XArray conversion"), on most
-> major Linux distributions, the page cache doesn't correctly transition
-> when the hot data set is changing, and leaves the new pages thrashing
-> indefinitely instead of kicking out the cold ones.
-> 
-> On a freshly booted, freshly ssh'd into virtual machine with 1G RAM
-> running stock Arch Linux:
-> 
-> [root@ham ~]# ./reclaimtest.sh
-> + dd of=workingset-a bs=1M count=0 seek=600
-> + cat workingset-a
-> + cat workingset-a
-> + cat workingset-a
-> + cat workingset-a
-> + cat workingset-a
-> + cat workingset-a
-> + cat workingset-a
-> + cat workingset-a
-> + ./mincore workingset-a
-> 153600/153600 workingset-a
-> + dd of=workingset-b bs=1M count=0 seek=600
-> + cat workingset-b
-> + cat workingset-b
-> + cat workingset-b
-> + cat workingset-b
-> + ./mincore workingset-a workingset-b
-> 104029/153600 workingset-a
-> 120086/153600 workingset-b
-> + cat workingset-b
-> + cat workingset-b
-> + cat workingset-b
-> + cat workingset-b
-> + ./mincore workingset-a workingset-b
-> 104029/153600 workingset-a
-> 120268/153600 workingset-b
-> 
-> workingset-b is a 600M file on a 1G host that is otherwise entirely
-> idle. No matter how often it's being accessed, it won't get cached.
-> 
-> While investigating, I noticed that the non-resident information gets
-> aggressively reclaimed - /proc/vmstat::workingset_nodereclaim. This is
-> a problem because a workingset transition like this relies on the
-> non-resident information tracked in the page cache tree of evicted
-> file ranges: when the cache faults are refaults of recently evicted
-> cache, we challenge the existing active set, and that allows a new
-> workingset to establish itself.
-> 
-> Tracing the shrinker that maintains this memory revealed that all page
-> cache tree nodes were allocated to the root cgroup. This is a problem,
-> because 1) the shrinker sizes the amount of non-resident information
-> it keeps to the size of the cgroup's other memory and 2) on most major
-> Linux distributions, only kernel threads live in the root cgroup and
-> everything else gets put into services or session groups:
-> 
-> [root@ham ~]# cat /proc/self/cgroup
-> 0::/user.slice/user-0.slice/session-c1.scope
-> 
-> As a result, we basically maintain no non-resident information for the
-> workloads running on the system, thus breaking the caching algorithm.
-> 
-> Looking through the code, I found the culprit in the above-mentioned
-> patch: when switching from the radix tree to xarray, it dropped the
-> __GFP_ACCOUNT flag from the tree node allocations - the flag that
-> makes sure the allocated memory gets charged to and tracked by the
-> cgroup of the calling process - in this case, the one doing the fault.
-> 
-> To fix this, allow xarray users to specify per-tree flag that makes
-> xarray allocate nodes using __GFP_ACCOUNT. Then restore the page cache
-> tree annotation to request such cgroup tracking for the cache nodes.
-> 
-> With this patch applied, the page cache correctly converges on new
-> workingsets again after just a few iterations:
-> 
-> [root@ham ~]# ./reclaimtest.sh
-> + dd of=workingset-a bs=1M count=0 seek=600
-> + cat workingset-a
-> + cat workingset-a
-> + cat workingset-a
-> + cat workingset-a
-> + cat workingset-a
-> + cat workingset-a
-> + cat workingset-a
-> + cat workingset-a
-> + ./mincore workingset-a
-> 153600/153600 workingset-a
-> + dd of=workingset-b bs=1M count=0 seek=600
-> + cat workingset-b
-> + ./mincore workingset-a workingset-b
-> 124607/153600 workingset-a
-> 87876/153600 workingset-b
-> + cat workingset-b
-> + ./mincore workingset-a workingset-b
-> 81313/153600 workingset-a
-> 133321/153600 workingset-b
-> + cat workingset-b
-> + ./mincore workingset-a workingset-b
-> 63036/153600 workingset-a
-> 153600/153600 workingset-b
-> 
-> Cc: stable@vger.kernel.org # 4.20+
-> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-> ---
->  fs/inode.c             |  2 +-
->  include/linux/xarray.h |  1 +
->  lib/xarray.c           | 12 ++++++++++--
->  3 files changed, 12 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index e9d18b2c3f91..cd67859dbaf1 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -361,7 +361,7 @@ EXPORT_SYMBOL(inc_nlink);
->  
->  static void __address_space_init_once(struct address_space *mapping)
->  {
-> -	xa_init_flags(&mapping->i_pages, XA_FLAGS_LOCK_IRQ);
-> +	xa_init_flags(&mapping->i_pages, XA_FLAGS_LOCK_IRQ | XA_FLAGS_ACCOUNT);
->  	init_rwsem(&mapping->i_mmap_rwsem);
->  	INIT_LIST_HEAD(&mapping->private_list);
->  	spin_lock_init(&mapping->private_lock);
-> diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-> index 0e01e6129145..5921599b6dc4 100644
-> --- a/include/linux/xarray.h
-> +++ b/include/linux/xarray.h
-> @@ -265,6 +265,7 @@ enum xa_lock_type {
->  #define XA_FLAGS_TRACK_FREE	((__force gfp_t)4U)
->  #define XA_FLAGS_ZERO_BUSY	((__force gfp_t)8U)
->  #define XA_FLAGS_ALLOC_WRAPPED	((__force gfp_t)16U)
-> +#define XA_FLAGS_ACCOUNT	((__force gfp_t)32U)
->  #define XA_FLAGS_MARK(mark)	((__force gfp_t)((1U << __GFP_BITS_SHIFT) << \
->  						(__force unsigned)(mark)))
->  
-> diff --git a/lib/xarray.c b/lib/xarray.c
-> index 6be3acbb861f..446b956c9188 100644
-> --- a/lib/xarray.c
-> +++ b/lib/xarray.c
-> @@ -298,6 +298,8 @@ bool xas_nomem(struct xa_state *xas, gfp_t gfp)
->  		xas_destroy(xas);
->  		return false;
->  	}
-> +	if (xas->xa->xa_flags & XA_FLAGS_ACCOUNT)
-> +		gfp |= __GFP_ACCOUNT;
->  	xas->xa_alloc = kmem_cache_alloc(radix_tree_node_cachep, gfp);
->  	if (!xas->xa_alloc)
->  		return false;
-> @@ -325,6 +327,8 @@ static bool __xas_nomem(struct xa_state *xas, gfp_t gfp)
->  		xas_destroy(xas);
->  		return false;
->  	}
-> +	if (xas->xa->xa_flags & XA_FLAGS_ACCOUNT)
-> +		gfp |= __GFP_ACCOUNT;
->  	if (gfpflags_allow_blocking(gfp)) {
->  		xas_unlock_type(xas, lock_type);
->  		xas->xa_alloc = kmem_cache_alloc(radix_tree_node_cachep, gfp);
-> @@ -358,8 +362,12 @@ static void *xas_alloc(struct xa_state *xas, unsigned int shift)
->  	if (node) {
->  		xas->xa_alloc = NULL;
->  	} else {
-> -		node = kmem_cache_alloc(radix_tree_node_cachep,
-> -					GFP_NOWAIT | __GFP_NOWARN);
-> +		gfp_t gfp = GFP_NOWAIT | __GFP_NOWARN;
-> +
-> +		if (xas->xa->xa_flags & XA_FLAGS_ACCOUNT)
-> +			gfp |= __GFP_ACCOUNT;
-> +
-> +		node = kmem_cache_alloc(radix_tree_node_cachep, gfp);
->  		if (!node) {
->  			xas_set_err(xas, -ENOMEM);
->  			return NULL;
-> -- 
-> 2.21.0
-> 
+I think it's cleaner to have it as a function parameter, even if the
+old chips don't use it.
+The rest of the implementation is in the core, so we aren't exactly
+dealing with chip-specific code here, at least the way it's currently
+done.
+The vendor driver also has it as a function parameter from what I can see.
+
+Daniel
