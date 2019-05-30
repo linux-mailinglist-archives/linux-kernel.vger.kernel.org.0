@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 509DB2EB79
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:13:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26CF62F153
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:12:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729432AbfE3DNY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:13:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51096 "EHLO mail.kernel.org"
+        id S1729996AbfE3EMB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:12:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728576AbfE3DLa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:11:30 -0400
+        id S1730787AbfE3DQo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:16:44 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE4312449A;
-        Thu, 30 May 2019 03:11:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F62C245AB;
+        Thu, 30 May 2019 03:16:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185889;
-        bh=vq22rXZqlw3COyC5bAhdrh2vwqu7xpSo7qpFonMpdps=;
+        s=default; t=1559186204;
+        bh=Q7httw4GMtbhRVDmW0NF83OeHyB4FnlwhHmUY1vI1OM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iVau8oH8pALq57WYNgrzTnn58jhhBTvf/FDirIzZuZtManiNR3X8flo/N+vBi6Yvk
-         56NMmj3jO5Dabddu+tpZd9di3HaZEyTp0UWFxDTWnvU4LIRjMqeDZKtvtEFE6V2MiZ
-         riGybfBEr5nqHv93i9hc37WU7uyZi4qvmhUzgSTw=
+        b=yuV1NHY6a8iOogoFm2Mn2CTnUqJKAgdkY9Ep/01WaUyAWanL6lC4/7XsFlWpf1UKS
+         sKan8BY1VMIhG+5wzXII18gFVydl1rZaUrktHGbJn/6hPpVmEkDbV2QnzGwsKhDuig
+         Jm2TfFTdmqMm39B3npW+WfX4Etu9ZroiWaQUEoIA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
+        stable@vger.kernel.org,
         Nathan Chancellor <natechancellor@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Julian Wiedmann <jwi@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 250/405] b43: shut up clang -Wuninitialized variable warning
+Subject: [PATCH 4.19 090/276] s390: qeth: address type mismatch warning
 Date:   Wed, 29 May 2019 20:04:08 -0700
-Message-Id: <20190530030553.640308983@linuxfoundation.org>
+Message-Id: <20190530030531.850004089@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,67 +47,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d825db346270dbceef83b7b750dbc29f1d7dcc0e ]
+[ Upstream commit 46b83629dede262315aa82179d105581f11763b6 ]
 
-Clang warns about what is clearly a case of passing an uninitalized
-variable into a static function:
+clang produces a harmless warning for each use for the qeth_adp_supported
+macro:
 
-drivers/net/wireless/broadcom/b43/phy_lp.c:1852:23: error: variable 'gains' is uninitialized when used here
-      [-Werror,-Wuninitialized]
-                lpphy_papd_cal(dev, gains, 0, 1, 30);
-                                    ^~~~~
-drivers/net/wireless/broadcom/b43/phy_lp.c:1838:2: note: variable 'gains' is declared here
-        struct lpphy_tx_gains gains, oldgains;
-        ^
-1 error generated.
+drivers/s390/net/qeth_l2_main.c:559:31: warning: implicit conversion from enumeration type 'enum qeth_ipa_setadp_cmd' to
+      different enumeration type 'enum qeth_ipa_funcs' [-Wenum-conversion]
+        if (qeth_adp_supported(card, IPA_SETADP_SET_PROMISC_MODE))
+            ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/s390/net/qeth_core.h:179:41: note: expanded from macro 'qeth_adp_supported'
+        qeth_is_ipa_supported(&c->options.adp, f)
+        ~~~~~~~~~~~~~~~~~~~~~                  ^
 
-However, this function is empty, and its arguments are never evaluated,
-so gcc in contrast does not warn here. Both compilers behave in a
-reasonable way as far as I can tell, so we should change the code
-to avoid the warning everywhere.
+Add a version of this macro that uses the correct types, and
+remove the unused qeth_adp_enabled() macro that has the same
+problem.
 
-We could just eliminate the lpphy_papd_cal() function entirely,
-given that it has had the TODO comment in it for 10 years now
-and is rather unlikely to ever get done. I'm doing a simpler
-change here, and just pass the 'oldgains' variable in that has
-been initialized, based on the guess that this is what was
-originally meant.
-
-Fixes: 2c0d6100da3e ("b43: LP-PHY: Begin implementing calibration & software RFKILL support")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
 Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/broadcom/b43/phy_lp.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/s390/net/qeth_core.h | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/broadcom/b43/phy_lp.c b/drivers/net/wireless/broadcom/b43/phy_lp.c
-index 46408a560814c..aedee026c5e24 100644
---- a/drivers/net/wireless/broadcom/b43/phy_lp.c
-+++ b/drivers/net/wireless/broadcom/b43/phy_lp.c
-@@ -1835,7 +1835,7 @@ static void lpphy_papd_cal(struct b43_wldev *dev, struct lpphy_tx_gains gains,
- static void lpphy_papd_cal_txpwr(struct b43_wldev *dev)
+diff --git a/drivers/s390/net/qeth_core.h b/drivers/s390/net/qeth_core.h
+index 2d1f6a583641b..b2657582cfcfd 100644
+--- a/drivers/s390/net/qeth_core.h
++++ b/drivers/s390/net/qeth_core.h
+@@ -201,6 +201,12 @@ struct qeth_vnicc_info {
+ 	bool rx_bcast_enabled;
+ };
+ 
++static inline int qeth_is_adp_supported(struct qeth_ipa_info *ipa,
++		enum qeth_ipa_setadp_cmd func)
++{
++	return (ipa->supported_funcs & func);
++}
++
+ static inline int qeth_is_ipa_supported(struct qeth_ipa_info *ipa,
+ 		enum qeth_ipa_funcs func)
  {
- 	struct b43_phy_lp *lpphy = dev->phy.lp;
--	struct lpphy_tx_gains gains, oldgains;
-+	struct lpphy_tx_gains oldgains;
- 	int old_txpctl, old_afe_ovr, old_rf, old_bbmult;
+@@ -214,9 +220,7 @@ static inline int qeth_is_ipa_enabled(struct qeth_ipa_info *ipa,
+ }
  
- 	lpphy_read_tx_pctl_mode_from_hardware(dev);
-@@ -1849,9 +1849,9 @@ static void lpphy_papd_cal_txpwr(struct b43_wldev *dev)
- 	lpphy_set_tx_power_control(dev, B43_LPPHY_TXPCTL_OFF);
- 
- 	if (dev->dev->chip_id == 0x4325 && dev->dev->chip_rev == 0)
--		lpphy_papd_cal(dev, gains, 0, 1, 30);
-+		lpphy_papd_cal(dev, oldgains, 0, 1, 30);
- 	else
--		lpphy_papd_cal(dev, gains, 0, 1, 65);
-+		lpphy_papd_cal(dev, oldgains, 0, 1, 65);
- 
- 	if (old_afe_ovr)
- 		lpphy_set_tx_gains(dev, oldgains);
+ #define qeth_adp_supported(c, f) \
+-	qeth_is_ipa_supported(&c->options.adp, f)
+-#define qeth_adp_enabled(c, f) \
+-	qeth_is_ipa_enabled(&c->options.adp, f)
++	qeth_is_adp_supported(&c->options.adp, f)
+ #define qeth_is_supported(c, f) \
+ 	qeth_is_ipa_supported(&c->options.ipa4, f)
+ #define qeth_is_enabled(c, f) \
 -- 
 2.20.1
 
