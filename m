@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 150542ECAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:24:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B44222EE1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:44:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733309AbfE3DYc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:24:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50012 "EHLO mail.kernel.org"
+        id S1732764AbfE3Doc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:44:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731445AbfE3DSK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:10 -0400
+        id S1730758AbfE3DU6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:20:58 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 804BD24778;
-        Thu, 30 May 2019 03:18:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 838042499B;
+        Thu, 30 May 2019 03:20:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186289;
-        bh=70s3YOyXPI3ofGOKPOZfbV7HhpNjL5lq8q5a97hEo7k=;
+        s=default; t=1559186457;
+        bh=J4uwusvLtrICANSHTWdP5KgOtyuG4ox8q63z/IbzCHk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rjDgGtpTuFy2hyiy26XD8rmYrE9F4ny39Z9u32PFnUXevmv7bThX3LRgvC3S3k5Cl
-         GUAHOMZek1/TtaDxut7SZa89DeYU6y0bXYwKUNqy2vWQaBNFCNJ7d399l6JaZgR2bd
-         xXp4WLrkiOn9bXnVpjqdquntIlquW3KbYPHbz3cc=
+        b=tGennvvxGFBzagrk2FPdwK6hqR+/grPIQ22Wf3t9q1zIGKh37mtHyLc1Fm3kTG2Al
+         /jXBdbgY/A1Kc2XqnTO7J97C2fk6TYLIFHtqZH7Zw7ALdQpHCiSPVTTKvnU/wM88o8
+         YuiWOBaJk8QBx+vAdzduYPf9MZQfIyLF6cCTEijg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 246/276] e1000e: Disable runtime PM on CNP+
+Subject: [PATCH 4.9 072/128] hwmon: (vt1211) Use request_muxed_region for Super-IO accesses
 Date:   Wed, 29 May 2019 20:06:44 -0700
-Message-Id: <20190530030540.530777016@linuxfoundation.org>
+Message-Id: <20190530030447.663914726@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,42 +43,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 459d69c407f9ba122f12216555c3012284dc9fd7 ]
+[ Upstream commit 14b97ba5c20056102b3dd22696bf17b057e60976 ]
 
-There are some new e1000e devices can only be woken up from D3 one time,
-by plugging Ethernet cable. Subsequent cable plugging does set PME bit
-correctly, but it still doesn't get woken up.
+Super-IO accesses may fail on a system with no or unmapped LPC bus.
 
-Since e1000e connects to the root complex directly, we rely on ACPI to
-wake it up. In this case, the GPE from _PRW only works once and stops
-working after that. Though it appears to be a platform bug, e1000e
-maintainers confirmed that I219 does not support D3.
+Also, other drivers may attempt to access the LPC bus at the same time,
+resulting in undefined behavior.
 
-So disable runtime PM on CNP+ chips. We may need to disable earlier
-generations if this bug also hit older platforms.
+Use request_muxed_region() to ensure that IO access on the requested
+address space is supported, and to ensure that access by multiple drivers
+is synchronized.
 
-Bugzilla: https://bugzilla.kernel.org/attachment.cgi?id=280819
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Fixes: 2219cd81a6cd ("hwmon/vt1211: Add probing of alternate config index port")
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/e1000e/netdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hwmon/vt1211.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
-index 8b11682ebba22..8cd339c92c1af 100644
---- a/drivers/net/ethernet/intel/e1000e/netdev.c
-+++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-@@ -7329,7 +7329,7 @@ static int e1000_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+diff --git a/drivers/hwmon/vt1211.c b/drivers/hwmon/vt1211.c
+index 3a6bfa51cb94f..95d5e8ec8b7fc 100644
+--- a/drivers/hwmon/vt1211.c
++++ b/drivers/hwmon/vt1211.c
+@@ -226,15 +226,21 @@ static inline void superio_select(int sio_cip, int ldn)
+ 	outb(ldn, sio_cip + 1);
+ }
  
- 	dev_pm_set_driver_flags(&pdev->dev, DPM_FLAG_NEVER_SKIP);
+-static inline void superio_enter(int sio_cip)
++static inline int superio_enter(int sio_cip)
+ {
++	if (!request_muxed_region(sio_cip, 2, DRVNAME))
++		return -EBUSY;
++
+ 	outb(0x87, sio_cip);
+ 	outb(0x87, sio_cip);
++
++	return 0;
+ }
  
--	if (pci_dev_run_wake(pdev))
-+	if (pci_dev_run_wake(pdev) && hw->mac.type < e1000_pch_cnp)
- 		pm_runtime_put_noidle(&pdev->dev);
+ static inline void superio_exit(int sio_cip)
+ {
+ 	outb(0xaa, sio_cip);
++	release_region(sio_cip, 2);
+ }
  
- 	return 0;
+ /* ---------------------------------------------------------------------
+@@ -1282,11 +1288,14 @@ static int __init vt1211_device_add(unsigned short address)
+ 
+ static int __init vt1211_find(int sio_cip, unsigned short *address)
+ {
+-	int err = -ENODEV;
++	int err;
+ 	int devid;
+ 
+-	superio_enter(sio_cip);
++	err = superio_enter(sio_cip);
++	if (err)
++		return err;
+ 
++	err = -ENODEV;
+ 	devid = force_id ? force_id : superio_inb(sio_cip, SIO_VT1211_DEVID);
+ 	if (devid != SIO_VT1211_ID)
+ 		goto EXIT;
 -- 
 2.20.1
 
