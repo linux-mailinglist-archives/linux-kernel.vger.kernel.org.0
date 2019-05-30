@@ -2,150 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF64B30330
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 22:15:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 658CA3032D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 22:15:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726697AbfE3UPv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 16:15:51 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58576 "EHLO mx1.redhat.com"
+        id S1726548AbfE3UPi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 16:15:38 -0400
+Received: from mx.kolabnow.com ([95.128.36.42]:49032 "EHLO mx.kolabnow.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726080AbfE3UPt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 16:15:49 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CBCFA30833AF;
-        Thu, 30 May 2019 20:15:48 +0000 (UTC)
-Received: from amt.cnet (ovpn-112-13.gru2.redhat.com [10.97.112.13])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CE4DE611A1;
-        Thu, 30 May 2019 20:15:42 +0000 (UTC)
-Received: from amt.cnet (localhost [127.0.0.1])
-        by amt.cnet (Postfix) with ESMTP id 199B210519C;
-        Thu, 30 May 2019 17:15:03 -0300 (BRT)
-Received: (from marcelo@localhost)
-        by amt.cnet (8.14.7/8.14.7/Submit) id x4UKF0jJ028233;
-        Thu, 30 May 2019 17:15:00 -0300
-Date:   Thu, 30 May 2019 17:14:58 -0300
-From:   Marcelo Tosatti <mtosatti@redhat.com>
-To:     Anna-Maria Gleixner <anna-maria@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Luiz Capitulino <lcapitulino@redhat.com>,
-        Haris Okanovic <haris.okanovic@ni.com>
-Subject: Re: [patch 2/3] timers: do not raise softirq unconditionally
- (spinlockless version)
-Message-ID: <20190530201455.GC23199@amt.cnet>
-References: <20190415201213.600254019@amt.cnet>
- <20190415201429.427759476@amt.cnet>
- <alpine.DEB.2.21.1905291653120.1395@somnus>
+        id S1726079AbfE3UPh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 16:15:37 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by ext-mx-out001.mykolab.com (Postfix) with ESMTP id 6AC22115;
+        Thu, 30 May 2019 22:15:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kolabnow.com; h=
+        content-type:content-type:content-transfer-encoding:mime-version
+        :references:in-reply-to:message-id:date:date:subject:subject
+        :from:from:received:received:received; s=dkim20160331; t=
+        1559247336; x=1561061737; bh=/1Bzoci3zr3geDjPVfIzzdq7YP8QSh/pZWF
+        AI555y5M=; b=D8isbIjouobMFUizV9cdTIEPAN1DIQ7XL5AHjKR6YvRJerFhTrY
+        vX5hUOvVSk/DKZbb7DNabHp0WdPyXB9Vsh+7IA7A2ZZlVbHisu1oXX7EUw0dwais
+        zctFNidjZi24oSg7n4cr1qWuAivofMM09s6rKeod0IYLJeLKQZuCG9ftsD5CtCI5
+        DPQzg6SH1TaP4twrNkzxmsbrtOfolIcDVRszfNNG9RFlKMfrRvznZwK20Gad6IaY
+        0fSxoe0gsgtxw9ea7KDgVXqmofJv+iAKey4jPB2hnLtsCTjnBiiRfPWJ3A5OvNDE
+        QyxzXZAcyoBjLefAN8nxR+qyBs6n6DAWRgfzDV/tJu8u6p1kL78VgoQV0PAXuub1
+        eWSU9CX5z+01Uyd8awKavL92qwyEUY4GZA4+suk4sVAjH9LJsxdZ72rlLrSepNiO
+        WxJZKttnEBnyp6l4FiTwoA6tCvee2m2S0PlmW8kbfus5JufhGictzYvcBDAabREG
+        wlrKKxl1jhmymw/O8bqVJeATfw2hIUaE3EWPbd1Y2yz43amD2DY1oxcRiYAxbFTF
+        4hMGr/1tACSYpoxiAljrZRiMMENlyGwpuEeTB+DFTOnSMs/XHH0JQb38G6zwEuQv
+        wMI3VwrUOItwcpSo2V0wp+GgTYJhON85MPg5puLUrfCeaqf7iNe9mKuk=
+X-Virus-Scanned: amavisd-new at mykolab.com
+X-Spam-Flag: NO
+X-Spam-Score: -1.899
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.899 tagged_above=-10 required=5
+        tests=[BAYES_00=-1.9, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Received: from mx.kolabnow.com ([127.0.0.1])
+        by localhost (ext-mx-out001.mykolab.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id ZOAcdX_iOcnK; Thu, 30 May 2019 22:15:36 +0200 (CEST)
+Received: from int-mx003.mykolab.com (unknown [10.9.13.3])
+        by ext-mx-out001.mykolab.com (Postfix) with ESMTPS id F006EC8;
+        Thu, 30 May 2019 22:15:35 +0200 (CEST)
+Received: from ext-subm001.mykolab.com (unknown [10.9.6.1])
+        by int-mx003.mykolab.com (Postfix) with ESMTPS id 80BCC2B3C;
+        Thu, 30 May 2019 22:15:35 +0200 (CEST)
+From:   Federico Vaga <federico.vaga@vaga.pv.it>
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Alessia Mantegazza <amantegazza@vaga.pv.it>
+Subject: Re: [PATCH 06/22] doc: it_IT: fix reference to magic-number.rst
+Date:   Thu, 30 May 2019 22:15:34 +0200
+Message-ID: <1738585.bzCz3vHTFA@harkonnen>
+In-Reply-To: <76713fe801e082e54e4412331d14495f2620ee59.1559171394.git.mchehab+samsung@kernel.org>
+References: <cover.1559171394.git.mchehab+samsung@kernel.org> <76713fe801e082e54e4412331d14495f2620ee59.1559171394.git.mchehab+samsung@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1905291653120.1395@somnus>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 30 May 2019 20:15:48 +0000 (UTC)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 04:53:26PM +0200, Anna-Maria Gleixner wrote:
-> On Mon, 15 Apr 2019, Marcelo Tosatti wrote:
+On Thursday, May 30, 2019 1:23:37 AM CEST Mauro Carvalho Chehab wrote:
+> There's a typo at the referred file.
+
+I am about to send a patch that fixes all issues found by
+documentation-file-ref-check in Documentation/translations/it_IT.
+
+Of course I fixed this as well.
+
 > 
-> > Check base->pending_map locklessly and skip raising timer softirq 
-> > if empty.
-> > 
-> > What allows the lockless (and potentially racy against mod_timer) 
-> > check is that mod_timer will raise another timer softirq after
-> > modifying base->pending_map.
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> ---
+>  Documentation/translations/it_IT/process/magic-number.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> The raise of the timer softirq after adding the timer is done
-> unconditionally - so there are timer softirqs raised which are not required
-> at all, as mentioned before.
-
-Yes. However i can't see a way to avoid that: its not possible to know
-if the race described earlier happened or not. 
-
-Do you have a suggestion on how to avoid this or a way to avoid
-the IPI+raise softirq ?
-
-> This check is for !CONFIG_PREEMPT_RT_FULL only implemented. The commit
-> message totally igonres that you are implementing something
-> CONFIG_PREEMPT_RT_FULL dependent as well.
+> diff --git a/Documentation/translations/it_IT/process/magic-number.rst
+> b/Documentation/translations/it_IT/process/magic-number.rst index
+> 5281d53e57ee..ed1121d0ba84 100644
+> --- a/Documentation/translations/it_IT/process/magic-number.rst
+> +++ b/Documentation/translations/it_IT/process/magic-number.rst
+> @@ -1,6 +1,6 @@
+>  .. include:: ../disclaimer-ita.rst
 > 
-> > Signed-off-by: Marcelo Tosatti <mtosatti@redhat.com>
-> > 
-> > ---
-> >  kernel/time/timer.c |   18 ++++++++++++++++++
-> >  1 file changed, 18 insertions(+)
-> > 
-> > Index: linux-rt-devel/kernel/time/timer.c
-> > ===================================================================
-> > --- linux-rt-devel.orig/kernel/time/timer.c	2019-04-15 14:21:02.788704354 -0300
-> > +++ linux-rt-devel/kernel/time/timer.c	2019-04-15 14:22:56.755047354 -0300
-> > @@ -1776,6 +1776,24 @@
-> >  		if (time_before(jiffies, base->clk))
-> >  			return;
-> >  	}
-> > +
-> > +#ifdef CONFIG_PREEMPT_RT_FULL
-> > +/* On RT, irq work runs from softirq */
-> > +	if (irq_work_needs_cpu())
-> > +		goto raise;
+> -:Original: :ref:`Documentation/process/magic-numbers.rst <magicnumbers>`
+> +:Original: :ref:`Documentation/process/magic-number.rst <magicnumbers>`
 > 
-> So with this patch and the change you made in the patch before, timers on
-> RT are expired only when there is pending irq work or after modifying a
-> timer on a non housekeeping cpu?
-
-Well, run_timer_softirq execute only if pending_map contains a bit set.
-
-> With your patches I could create the following problematic situation on RT
-> (if I understood everything properly): I add a timer which should expire in
-> 50 jiffies to the wheel of a non housekeeping cpu. So it ends up 50 buckets
-> away form now in the first wheel. This timer is the only timer in the wheel
-> and the next timer softirq raise is required in 50 jiffies. After adding
-> the timer, the timer interrupt is raised, and no timer has to be expired,
-> because there is no timer pending.
-
-But the softirq will be raised, because pending_map will be set:
-
-+               if (!bitmap_empty(base->pending_map, WHEEL_SIZE))
-+                       goto raise;
-
-No?
-
->  If there is no irq work required during
-> the next 51 jiffies and also no timer changed, the timer I added, will not
-> expire in time. The timer_base will come out of idle but will not forward
-> the base clk. 
-
-> This makes it even worse: When then adding a timer, the timer
-> base is forwarded - but without checking for the next pending timer, so the
-> first added timer will be delayed even more.
+>  :Translator: Federico Vaga <federico.vaga@vaga.pv.it>
 > 
-> So your implementation lacks forwarding the timer_base->clk when timer_base
-> comes out of idle with respect to the next pending timer.
+>  .. _it_magicnumbers:
 
-> > +#endif
-> > +	base = this_cpu_ptr(&timer_bases[BASE_STD]);
-> > +	if (!housekeeping_cpu(base->cpu, HK_FLAG_TIMER)) {
-> > +		if (!bitmap_empty(base->pending_map, WHEEL_SIZE))
-> > +			goto raise;
-> > +		base++;
-> > +		if (!bitmap_empty(base->pending_map, WHEEL_SIZE))
-> > +			goto raise;
-> > +
-> > +		return;
-> > +	}
-> > +
-> > +raise:
-> >  	raise_softirq(TIMER_SOFTIRQ);
-> >  }
-> >  
-> >
-> 
-> Thanks,
-> 
-> 	Anna-Maria
+
+
+
