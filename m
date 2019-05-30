@@ -2,39 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C05A52EBB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:16:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA04C2F5FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:53:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730358AbfE3DPd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:15:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57002 "EHLO mail.kernel.org"
+        id S1728250AbfE3DKu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:10:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729305AbfE3DM7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:59 -0400
+        id S1727938AbfE3DKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:10:07 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8643B244EF;
-        Thu, 30 May 2019 03:12:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67B862448B;
+        Thu, 30 May 2019 03:10:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185978;
-        bh=6aA0dcQe6ENMis/t6ev19rZT7jupXUdGLAVw8eog9i0=;
+        s=default; t=1559185806;
+        bh=c7mEp2bWb7xo/WCjfGs/ZqOnDbMz3eb9yp1e7zhHQMs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jf+f8I4eKGtfPqw2d71T/T2SRoCnUFA2949s7oy3TKFOse2eJhfG06rUdYOowFlmf
-         r+7hr1VuwzAsb6iehOZpgYQeZ6sPNwu1AcNex+pIwW72y8WdqtBLidWtWSmsaouENc
-         1KtHjQYDZu5T8LPeUsZ0kVQgb5k5Su/asRgiMTz0=
+        b=2a3w+8cvn5CX3FfIaLdAWUevswoxPScOvzzFM+hCPq7IpynKqhQSUDokwL/fXrWOO
+         Pe3bVESme86AHyOPA9PgZXZ6S7GNwUF8T6AZvcb2QN2FmPOurp2bgFvKC5hPmYETMR
+         sJyadSjrj0/m7phJLeXHI1cs7Kaj/E329JqXRtuo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.0 012/346] kvm: svm/avic: fix off-by-one in checking host APIC ID
-Date:   Wed, 29 May 2019 20:01:25 -0700
-Message-Id: <20190530030541.176854355@linuxfoundation.org>
+        stable@vger.kernel.org, Nadav Amit <namit@vmware.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        akpm@linux-foundation.org, ard.biesheuvel@linaro.org,
+        deneen.t.dock@intel.com, kernel-hardening@lists.openwall.com,
+        kristen@linux.intel.com, linux_dti@icloud.com, will.deacon@arm.com,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rik van Riel <riel@surriel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 088/405] x86/ftrace: Set trampoline pages as executable
+Date:   Wed, 29 May 2019 20:01:26 -0700
+Message-Id: <20190530030545.478406255@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +56,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suthikulpanit, Suravee <Suravee.Suthikulpanit@amd.com>
+[ Upstream commit 3c0dab44e22782359a0a706cbce72de99a22aa75 ]
 
-commit c9bcd3e3335d0a29d89fabd2c385e1b989e6f1b0 upstream.
+Since alloc_module() will not set the pages as executable soon, set
+ftrace trampoline pages as executable after they are allocated.
 
-Current logic does not allow VCPU to be loaded onto CPU with
-APIC ID 255. This should be allowed since the host physical APIC ID
-field in the AVIC Physical APIC table entry is an 8-bit value,
-and APIC ID 255 is valid in system with x2APIC enabled.
-Instead, do not allow VCPU load if the host APIC ID cannot be
-represented by an 8-bit value.
+For the time being, do not change ftrace to use the text_poke()
+interface. As a result, ftrace still breaks W^X.
 
-Also, use the more appropriate AVIC_PHYSICAL_ID_ENTRY_HOST_PHYSICAL_ID_MASK
-instead of AVIC_MAX_PHYSICAL_ID_COUNT.
-
-Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Nadav Amit <namit@vmware.com>
+Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: <akpm@linux-foundation.org>
+Cc: <ard.biesheuvel@linaro.org>
+Cc: <deneen.t.dock@intel.com>
+Cc: <kernel-hardening@lists.openwall.com>
+Cc: <kristen@linux.intel.com>
+Cc: <linux_dti@icloud.com>
+Cc: <will.deacon@arm.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20190426001143.4983-10-namit@vmware.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/svm.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/x86/kernel/ftrace.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -2020,7 +2020,11 @@ static void avic_vcpu_load(struct kvm_vc
- 	if (!kvm_vcpu_apicv_active(vcpu))
- 		return;
+diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+index bd553b3af22e9..6e0c0ed8e4bf4 100644
+--- a/arch/x86/kernel/ftrace.c
++++ b/arch/x86/kernel/ftrace.c
+@@ -749,6 +749,7 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
+ 	unsigned long end_offset;
+ 	unsigned long op_offset;
+ 	unsigned long offset;
++	unsigned long npages;
+ 	unsigned long size;
+ 	unsigned long retq;
+ 	unsigned long *ptr;
+@@ -781,6 +782,7 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
+ 		return 0;
  
--	if (WARN_ON(h_physical_id >= AVIC_MAX_PHYSICAL_ID_COUNT))
+ 	*tramp_size = size + RET_SIZE + sizeof(void *);
++	npages = DIV_ROUND_UP(*tramp_size, PAGE_SIZE);
+ 
+ 	/* Copy ftrace_caller onto the trampoline memory */
+ 	ret = probe_kernel_read(trampoline, (void *)start_offset, size);
+@@ -825,6 +827,12 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
+ 	/* ALLOC_TRAMP flags lets us know we created it */
+ 	ops->flags |= FTRACE_OPS_FL_ALLOC_TRAMP;
+ 
 +	/*
-+	 * Since the host physical APIC id is 8 bits,
-+	 * we can support host APIC ID upto 255.
++	 * Module allocation needs to be completed by making the page
++	 * executable. The page is still writable, which is a security hazard,
++	 * but anyhow ftrace breaks W^X completely.
 +	 */
-+	if (WARN_ON(h_physical_id > AVIC_PHYSICAL_ID_ENTRY_HOST_PHYSICAL_ID_MASK))
- 		return;
- 
- 	entry = READ_ONCE(*(svm->avic_physical_id_cache));
++	set_memory_x((unsigned long)trampoline, npages);
+ 	return (unsigned long)trampoline;
+ fail:
+ 	tramp_free(trampoline, *tramp_size);
+-- 
+2.20.1
+
 
 
