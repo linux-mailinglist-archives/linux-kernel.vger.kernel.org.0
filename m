@@ -2,106 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91A102FDB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 16:24:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 594B52FDB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 16:27:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726708AbfE3OYB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 10:24:01 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:37095 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725870AbfE3OYA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 10:24:00 -0400
-Received: by mail-pf1-f195.google.com with SMTP id a23so4085318pff.4;
-        Thu, 30 May 2019 07:24:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Aqu62B/DKxla8ndIhEipp1qRgwp9oqBg86uO64aK/fw=;
-        b=HMJxlnxJErTsQDLyfwoNeDIG5q3g/Bp40rZMlMSl5GtwYdNtW65QBIryuUiLa/QDjs
-         /Y8iQbJgneYRKpyKqwdtQ6BhKIk3w75Zxxa+A0BxAvJ/C+Sa6H24WYxVFC1yrW2lp1lL
-         cEvOq1oOC31YPsDULTabzzkHAVybxcthpyygqUAsL2lE0rF2stjkAxlGeZrNLVb96F6K
-         EZySuoon5/6ueCgnOHQLs8AymOCmjDP7FntlEQ/G8WjL5RoKuVwzAu+2UDkFhuEhwbsv
-         8v5vfURhH9LbX1rs11Hr00fLYV84DUyTqsjUHpY3kWLAGHS4lHPzJzloTLLx6tFfl/GX
-         26zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Aqu62B/DKxla8ndIhEipp1qRgwp9oqBg86uO64aK/fw=;
-        b=GLI6DQt1pW5H7R3FFsnthJZdSF2voSoFDrg2CebMgprbqywEKRoYQ8bXAZPF0/8gyK
-         SnuIj3+UY3FQVemY1+giYyJqOb5I3wkUfEc9SYpQ9PpalTLPE/Cti0HpfbTb81BlpU6d
-         fV9txorQRF3dRObHwA2ds7fRhvkMo938+BoBrGg7L/r6QZFa8M38s11rgqSkLcPNOhT3
-         9XAwwsLPxglSs5Yuvqtzm1lG5XhWA2J4WZ2OXoWnV/hnWr3m+LViXZZs66gnZehXFagk
-         AKLZjKHtmGf2c8BK5aKhOJlq1FWpoFb4V16Tb3RWYGEtKGSzVE7wgrJ9DZw161B17yqu
-         VAKQ==
-X-Gm-Message-State: APjAAAWegkvPTg4EMgaXq1GGzH2MmfwevqV/EDQGaYL6eq1zWPnXwEWr
-        2y9y8wmDFW+Que5JmdIuEk5sOC2a
-X-Google-Smtp-Source: APXvYqwDm5nkekcJ7+8rVNtAGhVaUqWNPjush0pCuR+bMv37uZqwFXmvRk76eH94CEIO6fShKXbAXQ==
-X-Received: by 2002:a65:514a:: with SMTP id g10mr3930486pgq.328.1559226240381;
-        Thu, 30 May 2019 07:24:00 -0700 (PDT)
-Received: from localhost (c-73-222-71-142.hsd1.ca.comcast.net. [73.222.71.142])
-        by smtp.gmail.com with ESMTPSA id 194sm3466122pfb.125.2019.05.30.07.23.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 30 May 2019 07:23:59 -0700 (PDT)
-Date:   Thu, 30 May 2019 07:23:56 -0700
-From:   Richard Cochran <richardcochran@gmail.com>
-To:     Vladimir Oltean <olteanv@gmail.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
+        id S1726725AbfE3O1r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 10:27:47 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:38382 "EHLO deadmen.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726079AbfE3O1r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 10:27:47 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1hWM1u-0006i2-9X; Thu, 30 May 2019 22:27:42 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1hWM1m-000474-6D; Thu, 30 May 2019 22:27:34 +0800
+Date:   Thu, 30 May 2019 22:27:34 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Iuliana Prodan <iuliana.prodan@nxp.com>,
+        Eric Biggers <ebiggers@kernel.org>,
         "David S. Miller" <davem@davemloft.net>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>
-Subject: Re: [PATCH net-next 3/5] net: dsa: mv88e6xxx: Let taggers specify a
- can_timestamp function
-Message-ID: <20190530142356.vxkhsjalxfytvx2c@localhost>
-References: <20190528235627.1315-1-olteanv@gmail.com>
- <20190528235627.1315-4-olteanv@gmail.com>
- <20190529044912.cyg44rqvdo73oeiu@localhost>
- <CA+h21hoNrhcpAONTvJra5Ekk+yJ6xP0VAaPSygaLOw31qsGPTg@mail.gmail.com>
- <20190530035112.qbn3nnoxrgum7anz@localhost>
- <CA+h21hqko57LB0BB2TSGSr4p9_czPM-g9krO+wnU7PgvaMdSDA@mail.gmail.com>
+        Horia Geanta <horia.geanta@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH] crypto: gcm - fix cacheline sharing
+Message-ID: <20190530142734.qlhgzeal22zxfhk5@gondor.apana.org.au>
+References: <1559149856-7938-1-git-send-email-iuliana.prodan@nxp.com>
+ <20190529202728.GA35103@gmail.com>
+ <CAKv+Gu-4KqcY=WhwY98JigTzeXaL5ggYEcu7+kNzNtpO2FLQXg@mail.gmail.com>
+ <VI1PR04MB44459EEF7BCD3458BB3D143D8C180@VI1PR04MB4445.eurprd04.prod.outlook.com>
+ <20190530133427.qrwjzctac2x6nsby@gondor.apana.org.au>
+ <VI1PR04MB444562A2352FE4BAD7F681258C180@VI1PR04MB4445.eurprd04.prod.outlook.com>
+ <CAKv+Gu-jTWQP0Zp=QpuzX41v8Eb5Bvd0O9ajwSnFkDO-ijBf_A@mail.gmail.com>
+ <CAKv+Gu9JoC+GKJ6mMAE25mr_k2gbznh-83jApT4=FZsAW=jd8w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+h21hqko57LB0BB2TSGSr4p9_czPM-g9krO+wnU7PgvaMdSDA@mail.gmail.com>
+In-Reply-To: <CAKv+Gu9JoC+GKJ6mMAE25mr_k2gbznh-83jApT4=FZsAW=jd8w@mail.gmail.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 10:42:41AM +0300, Vladimir Oltean wrote:
-> The meta frames generated by the SJA1105 do not contain any seqid.
+On Thu, May 30, 2019 at 03:55:07PM +0200, Ard Biesheuvel wrote:
+>
+> > Would this work?
 
-So this cannot ever work...
+I see.  You need to preserve the original IV.
 
-> They contain:
-> * A globally programmable DMAC
-> * A globally programmable SMAC
+> > diff --git a/drivers/crypto/caam/caamalg.c b/drivers/crypto/caam/caamalg.c
+> > index c0ece44f303b..2ef2f76a3cb8 100644
+> > --- a/drivers/crypto/caam/caamalg.c
+> > +++ b/drivers/crypto/caam/caamalg.c
+> > @@ -1832,22 +1832,25 @@ static int skcipher_decrypt(struct
+> > skcipher_request *req)
+> >         struct caam_ctx *ctx = crypto_skcipher_ctx(skcipher);
+> >         int ivsize = crypto_skcipher_ivsize(skcipher);
+> >         struct device *jrdev = ctx->jrdev;
+> > +       u8 out_iv[AES_BLOCK_SIZE];
+> >         u32 *desc;
+> >         int ret = 0;
+> >
+> > -       /* allocate extended descriptor */
+> > -       edesc = skcipher_edesc_alloc(req, DESC_JOB_IO_LEN * CAAM_CMD_SZ);
+> > -       if (IS_ERR(edesc))
+> > -               return PTR_ERR(edesc);
+> > -
+> >         /*
+> >          * The crypto API expects us to set the IV (req->iv) to the last
+> >          * ciphertext block.
+> >          */
+> >         if (ivsize)
+> > -               scatterwalk_map_and_copy(req->iv, req->src, req->cryptlen -
+> > +               scatterwalk_map_and_copy(out_iv, req->src, req->cryptlen -
+> >                                          ivsize, ivsize, 0);
+> >
+> > +       /* allocate extended descriptor */
+> > +       edesc = skcipher_edesc_alloc(req, DESC_JOB_IO_LEN * CAAM_CMD_SZ);
+> > +       if (IS_ERR(edesc))
+> > +               return PTR_ERR(edesc);
+> > +
+> > +       memcpy(req->iv, out_iv, ivsize);
+> > +
+> >         /* Create and submit job descriptor*/
+> >         init_skcipher_job(req, edesc, false);
+> >         desc = edesc->hw_desc;
+> 
+> Umm never mind
+> 
+> /me hides in shame
 
-Don't know what these are, but doesn't sound like they uniquely
-identify the original frame.
+So why doesn't this work?
 
-> * The 0x8 EtherType
-> * A partial (24-bit or 32-bit) RX timestamp
-> * Two bytes from the initial (pre follow-up) frame's DMAC, before the
-> switch mangled those with the source port and switch id. The driver is
-> supposed to patch these bytes from the follow-up back into the initial
-> frame before passing them up the stack.
-> * The source port that generated the meta frame
-> * The switch id that generated the meta frame
-
-None of these match to the original frame uniquely.  Looks like this
-is a dead end.
-
-I recommend forgetting about these meta frames.  Instead, read out the
-time stamps over MDIO.
-
-Thanks,
-Richard
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
