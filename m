@@ -2,44 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0ABB2F189
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:14:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D8542F5C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:50:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730767AbfE3EOA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:14:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42094 "EHLO mail.kernel.org"
+        id S2388818AbfE3EuK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:50:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729680AbfE3DQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:16:19 -0400
+        id S1728345AbfE3DLE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:11:04 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 15FD9245AC;
-        Thu, 30 May 2019 03:16:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE87D244DF;
+        Thu, 30 May 2019 03:11:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186178;
-        bh=RT0tYOBGtFPrk7BvjGfyTCjylJQwaV7fJV6WSo/yeko=;
+        s=default; t=1559185864;
+        bh=KP7lvIFijuAn26mjaA5TFZqQkhkHwDao4ZgML5cbYZg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WkWEuPW49B1MEFzgBCf1RqT2AFSHMpZz+S+XlWS28E1PK+bhDUWVtNnDZCpvk/VtU
-         89F9wzD+RHBdS9XCQhM7dlywZz3g5KF35rsfRPSxIWwJzDGawyVeaYhVbDRYTFLIyo
-         +dtfFcCR9yRAgQGDNb3VgYBBV6c0admx3IO3x3oo=
+        b=2DbQYhxtCcKgQQjBjN2RWfmzUGwP6PJPe4XXXlsewtDVKDUJK7v83DwCmorWtCPQ6
+         IS7rwI5i6wwqPUMyHVppFCMekKhZ/AcxXaPXIN9+hEFR2ahN8PCo2oZkA1sBBfp0lM
+         KrcbYKeZziWyU+6AD+Io3ZAT3WxrAgaFE/T17SM4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+83f2d54ec6b7e417e13f@syzkaller.appspotmail.com,
-        syzbot+050927a651272b145a5d@syzkaller.appspotmail.com,
-        syzbot+979ffc89b87309b1b94b@syzkaller.appspotmail.com,
-        syzbot+f9f3f388440283da2965@syzkaller.appspotmail.com,
-        =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>,
-        Sven Eckelmann <sven@narfation.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>
-Subject: [PATCH 4.19 040/276] batman-adv: mcast: fix multicast tt/tvlv worker locking
-Date:   Wed, 29 May 2019 20:03:18 -0700
-Message-Id: <20190530030526.868517114@linuxfoundation.org>
+        stable@vger.kernel.org, Kefeng Wang <wangkefeng.wang@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 201/405] hwmon: (f71805f) Use request_muxed_region for Super-IO accesses
+Date:   Wed, 29 May 2019 20:03:19 -0700
+Message-Id: <20190530030551.351933096@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,108 +45,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Lüssing <linus.luessing@c0d3.blue>
+[ Upstream commit 73e6ff71a7ea924fb7121d576a2d41e3be3fc6b5 ]
 
-commit a3c7cd0cdf1107f891aff847ad481e34df727055 upstream.
+Super-IO accesses may fail on a system with no or unmapped LPC bus.
 
-Syzbot has reported some issues with the locking assumptions made for
-the multicast tt/tvlv worker: It was able to trigger the WARN_ON() in
-batadv_mcast_mla_tt_retract() and batadv_mcast_mla_tt_add().
-While hard/not reproduceable for us so far it seems that the
-delayed_work_pending() we use might not be quite safe from reordering.
+Unable to handle kernel paging request at virtual address ffffffbffee0002e
+pgd = ffffffc1d68d4000
+[ffffffbffee0002e] *pgd=0000000000000000, *pud=0000000000000000
+Internal error: Oops: 94000046 [#1] PREEMPT SMP
+Modules linked in: f71805f(+) hwmon
+CPU: 3 PID: 1659 Comm: insmod Not tainted 4.5.0+ #88
+Hardware name: linux,dummy-virt (DT)
+task: ffffffc1f6665400 ti: ffffffc1d6418000 task.ti: ffffffc1d6418000
+PC is at f71805f_find+0x6c/0x358 [f71805f]
 
-Therefore this patch adds an explicit, new spinlock to protect the
-update of the mla_list and flags in bat_priv and then removes the
-WARN_ON(delayed_work_pending()).
+Also, other drivers may attempt to access the LPC bus at the same time,
+resulting in undefined behavior.
 
-Reported-by: syzbot+83f2d54ec6b7e417e13f@syzkaller.appspotmail.com
-Reported-by: syzbot+050927a651272b145a5d@syzkaller.appspotmail.com
-Reported-by: syzbot+979ffc89b87309b1b94b@syzkaller.appspotmail.com
-Reported-by: syzbot+f9f3f388440283da2965@syzkaller.appspotmail.com
-Fixes: cbebd363b2e9 ("batman-adv: Use own timer for multicast TT and TVLV updates")
-Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Use request_muxed_region() to ensure that IO access on the requested
+address space is supported, and to ensure that access by multiple
+drivers is synchronized.
 
+Fixes: e53004e20a58e ("hwmon: New f71805f driver")
+Reported-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+Reported-by: John Garry <john.garry@huawei.com>
+Cc: John Garry <john.garry@huawei.com>
+Acked-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/batman-adv/main.c      |    1 +
- net/batman-adv/multicast.c |   11 +++--------
- net/batman-adv/types.h     |    5 +++++
- 3 files changed, 9 insertions(+), 8 deletions(-)
+ drivers/hwmon/f71805f.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
---- a/net/batman-adv/main.c
-+++ b/net/batman-adv/main.c
-@@ -160,6 +160,7 @@ int batadv_mesh_init(struct net_device *
- 	spin_lock_init(&bat_priv->tt.commit_lock);
- 	spin_lock_init(&bat_priv->gw.list_lock);
- #ifdef CONFIG_BATMAN_ADV_MCAST
-+	spin_lock_init(&bat_priv->mcast.mla_lock);
- 	spin_lock_init(&bat_priv->mcast.want_lists_lock);
- #endif
- 	spin_lock_init(&bat_priv->tvlv.container_list_lock);
---- a/net/batman-adv/multicast.c
-+++ b/net/batman-adv/multicast.c
-@@ -325,8 +325,6 @@ static void batadv_mcast_mla_list_free(s
-  * translation table except the ones listed in the given mcast_list.
-  *
-  * If mcast_list is NULL then all are retracted.
-- *
-- * Do not call outside of the mcast worker! (or cancel mcast worker first)
-  */
- static void batadv_mcast_mla_tt_retract(struct batadv_priv *bat_priv,
- 					struct hlist_head *mcast_list)
-@@ -334,8 +332,6 @@ static void batadv_mcast_mla_tt_retract(
- 	struct batadv_hw_addr *mcast_entry;
- 	struct hlist_node *tmp;
- 
--	WARN_ON(delayed_work_pending(&bat_priv->mcast.work));
--
- 	hlist_for_each_entry_safe(mcast_entry, tmp, &bat_priv->mcast.mla_list,
- 				  list) {
- 		if (mcast_list &&
-@@ -359,8 +355,6 @@ static void batadv_mcast_mla_tt_retract(
-  *
-  * Adds multicast listener announcements from the given mcast_list to the
-  * translation table if they have not been added yet.
-- *
-- * Do not call outside of the mcast worker! (or cancel mcast worker first)
-  */
- static void batadv_mcast_mla_tt_add(struct batadv_priv *bat_priv,
- 				    struct hlist_head *mcast_list)
-@@ -368,8 +362,6 @@ static void batadv_mcast_mla_tt_add(stru
- 	struct batadv_hw_addr *mcast_entry;
- 	struct hlist_node *tmp;
- 
--	WARN_ON(delayed_work_pending(&bat_priv->mcast.work));
--
- 	if (!mcast_list)
- 		return;
- 
-@@ -658,7 +650,10 @@ static void batadv_mcast_mla_update(stru
- 	priv_mcast = container_of(delayed_work, struct batadv_priv_mcast, work);
- 	bat_priv = container_of(priv_mcast, struct batadv_priv, mcast);
- 
-+	spin_lock(&bat_priv->mcast.mla_lock);
- 	__batadv_mcast_mla_update(bat_priv);
-+	spin_unlock(&bat_priv->mcast.mla_lock);
-+
- 	batadv_mcast_start_timer(bat_priv);
+diff --git a/drivers/hwmon/f71805f.c b/drivers/hwmon/f71805f.c
+index 73c681162653b..623736d2a7c1d 100644
+--- a/drivers/hwmon/f71805f.c
++++ b/drivers/hwmon/f71805f.c
+@@ -96,17 +96,23 @@ superio_select(int base, int ld)
+ 	outb(ld, base + 1);
  }
  
---- a/net/batman-adv/types.h
-+++ b/net/batman-adv/types.h
-@@ -1216,6 +1216,11 @@ struct batadv_priv_mcast {
- 	unsigned char bridged:1;
- 
- 	/**
-+	 * @mla_lock: a lock protecting mla_list and mla_flags
-+	 */
-+	spinlock_t mla_lock;
+-static inline void
++static inline int
+ superio_enter(int base)
+ {
++	if (!request_muxed_region(base, 2, DRVNAME))
++		return -EBUSY;
 +
-+	/**
- 	 * @num_want_all_unsnoopables: number of nodes wanting unsnoopable IP
- 	 *  traffic
- 	 */
+ 	outb(0x87, base);
+ 	outb(0x87, base);
++
++	return 0;
+ }
+ 
+ static inline void
+ superio_exit(int base)
+ {
+ 	outb(0xaa, base);
++	release_region(base, 2);
+ }
+ 
+ /*
+@@ -1561,7 +1567,7 @@ static int __init f71805f_device_add(unsigned short address,
+ static int __init f71805f_find(int sioaddr, unsigned short *address,
+ 			       struct f71805f_sio_data *sio_data)
+ {
+-	int err = -ENODEV;
++	int err;
+ 	u16 devid;
+ 
+ 	static const char * const names[] = {
+@@ -1569,8 +1575,11 @@ static int __init f71805f_find(int sioaddr, unsigned short *address,
+ 		"F71872F/FG or F71806F/FG",
+ 	};
+ 
+-	superio_enter(sioaddr);
++	err = superio_enter(sioaddr);
++	if (err)
++		return err;
+ 
++	err = -ENODEV;
+ 	devid = superio_inw(sioaddr, SIO_REG_MANID);
+ 	if (devid != SIO_FINTEK_ID)
+ 		goto exit;
+-- 
+2.20.1
+
 
 
