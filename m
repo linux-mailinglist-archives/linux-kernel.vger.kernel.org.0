@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C669D2F26C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:22:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54B822ED5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:35:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731070AbfE3EVq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:21:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37666 "EHLO mail.kernel.org"
+        id S2387697AbfE3D0V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:26:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727382AbfE3DPM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:15:12 -0400
+        id S1730302AbfE3DSw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:18:52 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0ACA624590;
-        Thu, 30 May 2019 03:15:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2C3B24808;
+        Thu, 30 May 2019 03:18:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186112;
-        bh=MW5D2uh7zRmh+cMkEfpL0WmmlnseGbkq8Ewuoau7USw=;
+        s=default; t=1559186331;
+        bh=gRs00eQpVYDeAi3+ItvjowrW/Vj6ZVdnC36d39vqAsQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yUXK9bCrv96zu2lV8sOOZ78P8C1K90qPxDnJv5MOoKwNe28Plf5S3FxO2OQFNzTm0
-         d/x8s70P+eYHj6Ulq+hl/p8AcuCNcuRmaitLaxoAOHb6fkPq2Zw4qxvXDzYHh0NKSE
-         DMOvuMWJ2CzwkyNvFEg8kQt09IzIVyhrEvkFj9GE=
+        b=Y3Ha0DcNS1Cf09IxeZtVWA0RxSqIxM9rZ50TNDjpBZNzEAWLva0N7KWyk91697ljU
+         vUzayo+gCjuEWuo160aVQLZKypq3Lk7+hriNMwM3dW+HhpBWhKatDlqgl9THl4L0MR
+         8e6bmNbUavXkt9WZeU1HfnWgXO43/kRlC7os0TF0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Huazhong Tan <tanhuazhong@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 205/346] net: hns3: add error handler for initializing command queue
+        stable@vger.kernel.org,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.14 024/193] brcmfmac: add subtype check for event handling in data path
 Date:   Wed, 29 May 2019 20:04:38 -0700
-Message-Id: <20190530030551.539697911@linuxfoundation.org>
+Message-Id: <20190530030452.226472235@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,91 +48,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 4339ef396ab65a61f7f22f36d7ba94b6e9e0939b ]
+From: Arend van Spriel <arend.vanspriel@broadcom.com>
 
-This patch adds error handler for the failure of command queue
-initialization both PF and VF.
+commit a4176ec356c73a46c07c181c6d04039fafa34a9f upstream.
 
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+For USB there is no separate channel being used to pass events
+from firmware to the host driver and as such are passed over the
+data path. In order to detect mock event messages an additional
+check is needed on event subtype. This check is added conditionally
+using unlikely() keyword.
+
+Reviewed-by: Hante Meuleman <hante.meuleman@broadcom.com>
+Reviewed-by: Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>
+Reviewed-by: Franky Lin <franky.lin@broadcom.com>
+Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c    | 11 ++++++++---
- .../net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c  | 11 ++++++++---
- 2 files changed, 16 insertions(+), 6 deletions(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c   |    5 ++--
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/fweh.h   |   16 ++++++++++----
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c |    2 -
+ 3 files changed, 16 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
-index e483a6e730e64..87fa4787bb761 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
-@@ -359,21 +359,26 @@ int hclge_cmd_init(struct hclge_dev *hdev)
- 	 * reset may happen when lower level reset is being processed.
- 	 */
- 	if ((hclge_is_reset_pending(hdev))) {
--		set_bit(HCLGE_STATE_CMD_DISABLE, &hdev->state);
--		return -EBUSY;
-+		ret = -EBUSY;
-+		goto err_cmd_init;
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c
+@@ -344,7 +344,8 @@ void brcmf_rx_frame(struct device *dev,
+ 	} else {
+ 		/* Process special event packets */
+ 		if (handle_event)
+-			brcmf_fweh_process_skb(ifp->drvr, skb);
++			brcmf_fweh_process_skb(ifp->drvr, skb,
++					       BCMILCP_SUBTYPE_VENDOR_LONG);
+ 
+ 		brcmf_netif_rx(ifp, skb);
  	}
+@@ -361,7 +362,7 @@ void brcmf_rx_event(struct device *dev,
+ 	if (brcmf_rx_hdrpull(drvr, skb, &ifp))
+ 		return;
  
- 	ret = hclge_cmd_query_firmware_version(&hdev->hw, &version);
- 	if (ret) {
- 		dev_err(&hdev->pdev->dev,
- 			"firmware version query failed %d\n", ret);
--		return ret;
-+		goto err_cmd_init;
- 	}
- 	hdev->fw_version = version;
- 
- 	dev_info(&hdev->pdev->dev, "The firmware version is %08x\n", version);
- 
- 	return 0;
-+
-+err_cmd_init:
-+	set_bit(HCLGE_STATE_CMD_DISABLE, &hdev->state);
-+
-+	return ret;
+-	brcmf_fweh_process_skb(ifp->drvr, skb);
++	brcmf_fweh_process_skb(ifp->drvr, skb, 0);
+ 	brcmu_pkt_buf_free_skb(skb);
  }
  
- static void hclge_destroy_queue(struct hclge_cmq_ring *ring)
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
-index b39ff5555a30e..1e7df81c95ade 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
-@@ -344,8 +344,8 @@ int hclgevf_cmd_init(struct hclgevf_dev *hdev)
- 	 * reset may happen when lower level reset is being processed.
- 	 */
- 	if (hclgevf_is_reset_pending(hdev)) {
--		set_bit(HCLGEVF_STATE_CMD_DISABLE, &hdev->state);
--		return -EBUSY;
-+		ret = -EBUSY;
-+		goto err_cmd_init;
- 	}
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fweh.h
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fweh.h
+@@ -211,7 +211,7 @@ enum brcmf_fweh_event_code {
+  */
+ #define BRCM_OUI				"\x00\x10\x18"
+ #define BCMILCP_BCM_SUBTYPE_EVENT		1
+-
++#define BCMILCP_SUBTYPE_VENDOR_LONG		32769
  
- 	/* get firmware version */
-@@ -353,13 +353,18 @@ int hclgevf_cmd_init(struct hclgevf_dev *hdev)
- 	if (ret) {
- 		dev_err(&hdev->pdev->dev,
- 			"failed(%d) to query firmware version\n", ret);
--		return ret;
-+		goto err_cmd_init;
- 	}
- 	hdev->fw_version = version;
+ /**
+  * struct brcm_ethhdr - broadcom specific ether header.
+@@ -334,10 +334,10 @@ void brcmf_fweh_process_event(struct brc
+ void brcmf_fweh_p2pdev_setup(struct brcmf_if *ifp, bool ongoing);
  
- 	dev_info(&hdev->pdev->dev, "The firmware version is %08x\n", version);
+ static inline void brcmf_fweh_process_skb(struct brcmf_pub *drvr,
+-					  struct sk_buff *skb)
++					  struct sk_buff *skb, u16 stype)
+ {
+ 	struct brcmf_event *event_packet;
+-	u16 usr_stype;
++	u16 subtype, usr_stype;
  
- 	return 0;
+ 	/* only process events when protocol matches */
+ 	if (skb->protocol != cpu_to_be16(ETH_P_LINK_CTL))
+@@ -346,8 +346,16 @@ static inline void brcmf_fweh_process_sk
+ 	if ((skb->len + ETH_HLEN) < sizeof(*event_packet))
+ 		return;
+ 
+-	/* check for BRCM oui match */
+ 	event_packet = (struct brcmf_event *)skb_mac_header(skb);
 +
-+err_cmd_init:
-+	set_bit(HCLGEVF_STATE_CMD_DISABLE, &hdev->state);
++	/* check subtype if needed */
++	if (unlikely(stype)) {
++		subtype = get_unaligned_be16(&event_packet->hdr.subtype);
++		if (subtype != stype)
++			return;
++	}
 +
-+	return ret;
- }
++	/* check for BRCM oui match */
+ 	if (memcmp(BRCM_OUI, &event_packet->hdr.oui[0],
+ 		   sizeof(event_packet->hdr.oui)))
+ 		return;
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/msgbuf.c
+@@ -1112,7 +1112,7 @@ static void brcmf_msgbuf_process_event(s
  
- void hclgevf_cmd_uninit(struct hclgevf_dev *hdev)
--- 
-2.20.1
-
+ 	skb->protocol = eth_type_trans(skb, ifp->ndev);
+ 
+-	brcmf_fweh_process_skb(ifp->drvr, skb);
++	brcmf_fweh_process_skb(ifp->drvr, skb, 0);
+ 
+ exit:
+ 	brcmu_pkt_buf_free_skb(skb);
 
 
