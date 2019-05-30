@@ -2,133 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FF2A3044B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 23:55:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAFDD30480
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 00:02:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727099AbfE3VzA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 17:55:00 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:39903 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727075AbfE3Vy6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 17:54:58 -0400
-Received: by mail-oi1-f194.google.com with SMTP id v2so6183695oie.6;
-        Thu, 30 May 2019 14:54:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:date:message-id:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=tFR5eWyyHKLzv/rG+/k1EP28VfnvmUHd1en3f8cuet4=;
-        b=QntIfn3QP7w8OAf3KeLsA35GzvqasynhBr/LPKQ9UMSeS7sqkj18UbNYx/lJnWUJpx
-         f9XhduhHSqYQrgukNTzCY6WtbcIgGHsNYgnGj2IhxiM0AVHY2+kyTEyxdSCPnZMVDLIx
-         9F25FqTBOpb+X9YuJjyHH3ZeN/n7u048oiFLngFfpUu8oI0RouCxcc88D1IA4PwTWbV6
-         YeeIFLwG3GLDmk1UTKsyorsyB8oh3Cc+b4Ql1DRnh02Uyw3Mddx82RmNGlqoHGX8YCHx
-         neY4bedgWaliCWNuwj2x5E4P1f3BsPX6mffX4wlZD7UVun/2Shv7YNn8yRoAMtSRlhmk
-         Enrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:date:message-id:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=tFR5eWyyHKLzv/rG+/k1EP28VfnvmUHd1en3f8cuet4=;
-        b=LMMseEKlSNSmzCYwqqFLuqEcinAe8xbhNXntLvVE1bcZw6U2of7TlkYCnU80eG7S3l
-         FhljUUYYK2GR2j7jIuE1JdVLVVlzHzWPgBcIbuHM4dg3K8nVkbynopNkH1hYk+kCFEd9
-         ynBNl1iDwHhCyBGGcuZt/Pc/DAcvtqCR76lrv4XxSvxdPzTP9tWnvQ6YV/g4+L5SsL1f
-         w28avHQp/r7XSAOtZ5cwpyl4LmHfw++DTp07JcZWIhAY3BSD9O4TLz+Zg3hUYZwrAucx
-         1DFGgVZA4vwMeCkhWIBbRoupjgDVYfc7HSaninW/vNGMvT4Wtm8J2MFINgBKkRtIrVb2
-         W5kg==
-X-Gm-Message-State: APjAAAVhdTCNcylZwvyZT2wzf2fkcADyEJozArmb3Q3d9cX0sr7G5fac
-        lpt2SPBSXHV5r2Awy1n0Ysk=
-X-Google-Smtp-Source: APXvYqxfGBCA97YkaWM4wjgbjBJNwlQrAjyiLnkd5V2gUCN0ncNK3/MIrN/Ma+crH/dforiEy7/ROg==
-X-Received: by 2002:aca:4e42:: with SMTP id c63mr4187588oib.170.1559253298022;
-        Thu, 30 May 2019 14:54:58 -0700 (PDT)
-Received: from localhost.localdomain (50-126-100-225.drr01.csby.or.frontiernet.net. [50.126.100.225])
-        by smtp.gmail.com with ESMTPSA id 33sm1412918otb.56.2019.05.30.14.54.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 May 2019 14:54:57 -0700 (PDT)
-Subject: [RFC PATCH 11/11] mm: Add free page notification hook
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-To:     nitesh@redhat.com, kvm@vger.kernel.org, david@redhat.com,
-        mst@redhat.com, dave.hansen@intel.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Cc:     yang.zhang.wz@gmail.com, pagupta@redhat.com, riel@surriel.com,
-        konrad.wilk@oracle.com, lcapitulino@redhat.com,
-        wei.w.wang@intel.com, aarcange@redhat.com, pbonzini@redhat.com,
-        dan.j.williams@intel.com, alexander.h.duyck@linux.intel.com
-Date:   Thu, 30 May 2019 14:54:55 -0700
-Message-ID: <20190530215455.13974.87717.stgit@localhost.localdomain>
-In-Reply-To: <20190530215223.13974.22445.stgit@localhost.localdomain>
-References: <20190530215223.13974.22445.stgit@localhost.localdomain>
-User-Agent: StGit/0.17.1-dirty
+        id S1726880AbfE3WCX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 18:02:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48530 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726576AbfE3WCW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 18:02:22 -0400
+Received: from localhost (unknown [207.225.69.115])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 915B626223;
+        Thu, 30 May 2019 21:57:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559253428;
+        bh=ADpd0+yMsDnrTF8OERno5hORW9BHTgfmkRfkI2dhT/8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=y9JYJUX9zDkf7Iux+V5B28VTlCSlD5JulFyl06pRUNKxbPaXIKo7eQbUKLehoynbx
+         D2NfiKiB4KBfwACPlcQ3iSaDvdOA0tYZFgW0el44S9dyImNj5PXahXkEmEDKNJgxWf
+         T1wR0WcBiSn7Gp7o8+MOAGFQBRE49Cdh+br0Pub0=
+Date:   Thu, 30 May 2019 14:57:08 -0700
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Benjamin Sherman <benjamin@bensherman.io>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: mt7621-dma: sizeof via pointer dereference
+Message-ID: <20190530215708.GA20810@kroah.com>
+References: <20190530214142.cna6mgdhqgxgaczw@valkyrie-prime.rpi>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190530214142.cna6mgdhqgxgaczw@valkyrie-prime.rpi>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+On Thu, May 30, 2019 at 09:41:43PM +0000, Benjamin Sherman wrote:
+> Pass the size of a struct into kzalloc by pointer dereference.  This
+> complies with the Linux kernel coding style and removes the possibility
+> for a bug when the pointer's type is changed.
+> 
+> Signed-off-by: Benjamin Sherman <benjamin@bensherman.io>
+> ---
+> This is my first patch, so please forgive any seemingly obvious
+> mistakes.  I apologize if this is the incorrect mailing list.
+> ---
+>  drivers/staging/mt7621-dma/mtk-hsdma.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Add a hook so that we are notified when a new page is available. We will
-use this hook to notify the virtio aeration system when we have achieved
-enough free higher-order pages to justify the process of pulling some pages
-and hinting on them.
+Can you resend and properly cc: the needed developers and mailing list
+that scripts/get_maintainer.pl says to cc:?
 
-Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
----
- arch/x86/include/asm/page.h |   11 +++++++++++
- include/linux/gfp.h         |    4 ++++
- mm/page_alloc.c             |    2 ++
- 3 files changed, 17 insertions(+)
+thanks,
 
-diff --git a/arch/x86/include/asm/page.h b/arch/x86/include/asm/page.h
-index 7555b48803a8..dfd546230120 100644
---- a/arch/x86/include/asm/page.h
-+++ b/arch/x86/include/asm/page.h
-@@ -18,6 +18,17 @@
- 
- struct page;
- 
-+#ifdef CONFIG_AERATION
-+#include <linux/memory_aeration.h>
-+
-+#define HAVE_ARCH_FREE_PAGE_NOTIFY
-+static inline void
-+arch_free_page_notify(struct page *page, struct zone *zone, int order)
-+{
-+	aerator_notify_free(page, zone, order);
-+}
-+
-+#endif
- #include <linux/range.h>
- extern struct range pfn_mapped[];
- extern int nr_pfn_mapped;
-diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-index 407a089d861f..d975e7eabbf8 100644
---- a/include/linux/gfp.h
-+++ b/include/linux/gfp.h
-@@ -459,6 +459,10 @@ static inline struct zonelist *node_zonelist(int nid, gfp_t flags)
- #ifndef HAVE_ARCH_FREE_PAGE
- static inline void arch_free_page(struct page *page, int order) { }
- #endif
-+#ifndef HAVE_ARCH_FREE_PAGE_NOTIFY
-+static inline void
-+arch_free_page_notify(struct page *page, struct zone *zone, int order) { }
-+#endif
- #ifndef HAVE_ARCH_ALLOC_PAGE
- static inline void arch_alloc_page(struct page *page, int order) { }
- #endif
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index e3800221414b..104763034ce3 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -999,6 +999,8 @@ static inline void __free_one_page(struct page *page,
- 		add_to_free_area_tail(page, area, migratetype);
- 	else
- 		add_to_free_area(page, area, migratetype);
-+
-+	arch_free_page_notify(page, zone, order);
- }
- 
- /*
-
+greg k-h
