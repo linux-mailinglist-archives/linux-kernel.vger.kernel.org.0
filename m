@@ -2,121 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FB5D31019
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 16:25:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 281D231021
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 16:26:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbfEaOZL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 10:25:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46218 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726682AbfEaOZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 10:25:11 -0400
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E41F26A95
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 14:25:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559312709;
-        bh=xuMjoe5EkMqnrBnt5MUNgIfNL6mvB94WhsCDAFAE2Qk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Vk5d/bOTWDIPFtmxhazofl2WKQckD1fwGoMDgkgb80Wde1p7rC9R61yxj9vBs76J7
-         2RAa22GazhJvDyceEyZa0CQGamgmphP1BeSM5A5BlYNCUywni5lYUMJ0FXVZU2fq+R
-         dx3vO40hdrDv/JN7QD5Iej6oz4aMg8rVZLnme7EE=
-Received: by mail-wr1-f41.google.com with SMTP id d9so6699482wrx.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 07:25:09 -0700 (PDT)
-X-Gm-Message-State: APjAAAVtCNL5DFN411HWUiim1RKZV3TYYccLA7gW8uQdMZF9ZWBMAXLc
-        3IErq82fKxgd8XdM27gnZPW5lguh6DXhsIzc1elQaQ==
-X-Google-Smtp-Source: APXvYqwFkqnsZ0FYt+7FEq+HOK5hJc0qmxlJZ5QPh+aCNExJkn5+yXhY+PXnZYbs4sZVZk1ZAqqffkdbreWf7yuO4HI=
-X-Received: by 2002:a5d:6207:: with SMTP id y7mr6479585wru.265.1559312707738;
- Fri, 31 May 2019 07:25:07 -0700 (PDT)
+        id S1726818AbfEaO0I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 10:26:08 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:39308 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726563AbfEaO0I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 10:26:08 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 7962C4FA4D3972CA4A7C;
+        Fri, 31 May 2019 22:25:57 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Fri, 31 May 2019
+ 22:25:47 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <pierre-louis.bossart@linux.intel.com>,
+        <yingjiang.zhu@linux.intel.com>
+CC:     <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] ASoC: SOF: Intel: hda: Fix COMPILE_TEST build error
+Date:   Fri, 31 May 2019 22:25:26 +0800
+Message-ID: <20190531142526.12712-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-References: <nycvar.YFH.7.76.1905282326360.1962@cbobk.fhfr.pm>
- <20190531051456.fzkvn62qlkf6wqra@treble> <nycvar.YFH.7.76.1905311045240.1962@cbobk.fhfr.pm>
- <5564116.e9OFvgDRbB@kreacher>
-In-Reply-To: <5564116.e9OFvgDRbB@kreacher>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 31 May 2019 07:24:56 -0700
-X-Gmail-Original-Message-ID: <CALCETrUpseta+NrhVwzzVFTe-BkBHtDUJBO22ci3mAsVR+XOog@mail.gmail.com>
-Message-ID: <CALCETrUpseta+NrhVwzzVFTe-BkBHtDUJBO22ci3mAsVR+XOog@mail.gmail.com>
-Subject: Re: [PATCH v4] x86/power: Fix 'nosmt' vs. hibernation triple fault
- during resume
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 31, 2019 at 1:57 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->
-> On Friday, May 31, 2019 10:47:21 AM CEST Jiri Kosina wrote:
-> > On Fri, 31 May 2019, Josh Poimboeuf wrote:
-> >
-> > > > I disagree with that from the backwards compatibility point of view.
-> > > >
-> > > > I personally am quite frequently using differnet combinations of
-> > > > resumer/resumee kernels, and I've never been biten by it so far. I'd guess
-> > > > I am not the only one.
-> > > > Fixmap sort of breaks that invariant.
-> > >
-> > > Right now there is no backwards compatibility because nosmt resume is
-> > > already broken.
-> >
-> > Yeah, well, but that's "only" for nosmt kernels at least.
-> >
-> > > For "future" backwards compatibility we could just define a hard-coded
-> > > reserved fixmap page address, adjacent to the vsyscall reserved address.
-> > >
-> > > Something like this (not yet tested)?  Maybe we could also remove the
-> > > resume_play_dead() hack?
-> >
-> > Does it also solve cpuidle case? I have no overview what all the cpuidle
-> > drivers might be potentially doing in their ->enter_dead() callbacks.
-> > Rafael?
->
-> There are just two of them, ACPI cpuidle and intel_idle, and they both should
-> be covered.
->
-> In any case, I think that this is the way to go here even though it may be somewhat
-> problematic to start with.
->
+while building without PCI:
 
-Given that there seems to be a genuine compatibility issue right now,
-can we design an actual sane way to hand off control of all CPUs
-rather than adding duct tape to an extremely fragile mechanism?  I can
-think of at least two sensible solutions:
+sound/soc/sof/intel/hda.o: In function `hda_dsp_probe':
+hda.c:(.text+0x79c): undefined reference to `pci_ioremap_bar'
+hda.c:(.text+0x79c): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `pci_ioremap_bar'
+hda.c:(.text+0x7c4): undefined reference to `pci_ioremap_bar'
+hda.c:(.text+0x7c4): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `pci_ioremap_bar'
 
-1. Have a self-contained "play dead for kexec/resume" function that
-touches only few well-defined physical pages: a set of page tables and
-a page of code.  Load CR3 to point to those page tables, fill in the
-code with some form of infinite loop, and run it.  Or just turn off
-paging entirely and run the infinite loop.  Have the kernel doing the
-resuming inform the kernel being resumed of which pages these are, and
-have the kernel being resumed take over all CPUs before reusing the
-pages.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: e13ef82a9ab8 ("ASoC: SOF: add COMPILE_TEST for PCI options")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ sound/soc/sof/intel/hda.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-2. Put the CPU all the way to sleep by sending it an INIT IPI.
+diff --git a/sound/soc/sof/intel/hda.c b/sound/soc/sof/intel/hda.c
+index 68db2ac..c1703c4 100644
+--- a/sound/soc/sof/intel/hda.c
++++ b/sound/soc/sof/intel/hda.c
+@@ -231,7 +231,9 @@ static int hda_init(struct snd_sof_dev *sdev)
+ 
+ 	/* initialise hdac bus */
+ 	bus->addr = pci_resource_start(pci, 0);
++#if IS_ENABLED(CONFIG_PCI)
+ 	bus->remap_addr = pci_ioremap_bar(pci, 0);
++#endif
+ 	if (!bus->remap_addr) {
+ 		dev_err(bus->dev, "error: ioremap error\n");
+ 		return -ENXIO;
+@@ -458,7 +460,9 @@ int hda_dsp_probe(struct snd_sof_dev *sdev)
+ 		goto hdac_bus_unmap;
+ 
+ 	/* DSP base */
++#if IS_ENABLED(CONFIG_PCI)
+ 	sdev->bar[HDA_DSP_BAR] = pci_ioremap_bar(pci, HDA_DSP_BAR);
++#endif
+ 	if (!sdev->bar[HDA_DSP_BAR]) {
+ 		dev_err(sdev->dev, "error: ioremap error\n");
+ 		ret = -ENXIO;
+-- 
+2.7.4
 
-Version 2 seems very simple and robust.  Is there a reason we can't do
-it?  We obviously don't want to do it for normal offline because it
-might be a high-power state, but a cpu in the wait-for-SIPI state is
-not going to exit that state all by itself.
 
-The patch to implement #2 should be short and sweet as long as we are
-careful to only put genuine APs to sleep like this.  The only downside
-I can see is that an new kernel resuming and old kernel that was
-booted with nosmt is going to waste power, but I don't think that's a
-showstopper.
