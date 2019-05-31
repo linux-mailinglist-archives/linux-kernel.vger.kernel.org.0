@@ -2,107 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12DEB31077
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 16:46:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D65F3107B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 16:46:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbfEaOqe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 10:46:34 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45467 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbfEaOqe (ORCPT
+        id S1726840AbfEaOqw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 10:46:52 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40853 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726515AbfEaOqv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 10:46:34 -0400
-Received: by mail-wr1-f67.google.com with SMTP id b18so6679666wrq.12
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 07:46:33 -0700 (PDT)
+        Fri, 31 May 2019 10:46:51 -0400
+Received: by mail-wm1-f67.google.com with SMTP id u16so877461wmc.5
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 07:46:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rZQYx0sfOVBJiI82TzgbbG1aRSIvbp+SnVQCCJZ93hw=;
-        b=QYGMBdN818EmjHtrdbUl0XCnQUYiP0fByvbx1zL9Y1SQtNn6v20CYW3ULe9PxnaWHW
-         pIKwtkBxoGZOyBBjymUaQZIbV3sMpohGadFozqFsq1z4J5kkyMaVJe15IKej0tN5lfCi
-         74zjjmlT1ywTLDy+0PksZp77KtFdLNUlru05b8Sw2Bivk0Q3dZovt6qqIq3d0RfFKShy
-         ZUoVLisIQ6T7B0qja4i58lXlIPKk7alsZOsz7Li+QkPDhvyH8Mi7sBoie+Dz1zYOTyL9
-         xcHxIXKGvbmIriEwtqnKnbMsqk0VfWUGQuSKwUnsknqkMIEIs1aml3jtSmIc+/l+oX/U
-         teRw==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HIhSvs2DPNa6pwhyPdTAckU0464fTVxVs7zCZ8vky70=;
+        b=NqsDcGgPdxWylte/nrdudw12e2+Lm9TK+16YOs/Xt7XNSRBfKmr1cSde/9z6YrLsqW
+         qvy5SdwAE1oNTb2/Aw5EI9qwCXSrgrYHBXY2H3cNvfYX+azTYlDkSH5oOZXLUb7y9vwb
+         MLLKoaxvYUsZEtDR5kA4DyRdw64SrVjDBfI23SaBLa+RK9OodhW6geypt3wpvkkq8liW
+         VerDWaNO1aoyDCoeChV3PoAsQIg/rFZpZ1Qh7bgRHhz/EyrwIEH6tEG84umRDECnY+b4
+         1nAoqj01kBPcL8cHQkfgg0+VF1zGFrnY2yJS5BBi4APh0k0tWijNZyavtlrohOIE9HeB
+         0Y9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=rZQYx0sfOVBJiI82TzgbbG1aRSIvbp+SnVQCCJZ93hw=;
-        b=k+8aF73zUtBxlWuY1AMNBEYelFuF/xYq8m7vd4WaQcV0vgAUSn0BekdV8HF2568swm
-         UYRCXQdeMlNc4sKbcLMFwR1YP1rsyYYsOnCDSqU6ns0/YcB+ga0rAm+2lEQZk213Aupw
-         Q+DrhHhebag+RLFelT536usviRZXRgI4TVvo7TwIHxut9AVLiO2edbXDY6dyjhgroU48
-         Vc+HUYKIQ2FPSjIX4rZ4s7k6FSh4jZf0QYpKSzvJ2GJPRhBx8c4v/xutKIyOKPD+GwpP
-         pxGdNAHLG/xEuEYl5NxXremO+DoW2GdoFqTNd5r8pdKRT49maJmgi5VUVuXVIUnznkv6
-         Lwog==
-X-Gm-Message-State: APjAAAWXHLNzOIQiOUrI+tbCUGH5f2NeZHelRMLuP2e7oP0oCri2eEjs
-        O4I3rOpI5cpS8Ip3e7O/achyxg==
-X-Google-Smtp-Source: APXvYqyscR5zODXGlLGwvT+mCTgGS4EvmpPkRdYWrdiJnzEhPlaSI775Dh9vceu9TUIV8sutdX8+Bg==
-X-Received: by 2002:adf:eb45:: with SMTP id u5mr4332044wrn.38.1559313992677;
-        Fri, 31 May 2019 07:46:32 -0700 (PDT)
-Received: from [192.168.112.17] (nikaet.starlink.ru. [94.141.168.29])
-        by smtp.gmail.com with ESMTPSA id c2sm3206840wrf.75.2019.05.31.07.46.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 May 2019 07:46:31 -0700 (PDT)
-Subject: Re: [PATCH] net: dsa: mv88e6xxx: avoid error message on remove from
- VLAN 0
-To:     Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        =?UTF-8?Q?Marek_Beh=c3=ban?= <marek.behun@nic.cz>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chris Healy <cphealy@gmail.com>
-References: <20190531073514.2171-1-nikita.yoush@cogentembedded.com>
- <20190531103105.GE23464@t480s.localdomain> <20190531143758.GB23821@lunn.ch>
-From:   Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Message-ID: <422482dc-8887-0f92-c8c9-f9d639882c77@cogentembedded.com>
-Date:   Fri, 31 May 2019 17:46:29 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        bh=HIhSvs2DPNa6pwhyPdTAckU0464fTVxVs7zCZ8vky70=;
+        b=RgCv0XzgXuADV0rSSOUAm43zLC1nNuUhY75JkIaxr1awnZN+/yDw53sjUa69Yducnm
+         KTDcvV6c0SzO075/bEXDxdu9xwKatHD11sNvVST698anbBucs9a1wJuAPCmGefWOq4RK
+         6QIIN//wehDFR+dQLru9eZB8tM0c/gJtdqBzJ8Fg/Sa9/nBos+vKUE3/N1tKefE1FzZx
+         baCnzfk0ajR7e+0XIrAJSnhOh0onsQK7auQApPo41tqvFxbE+5AKJJrgqoyuFKPtCbjU
+         UoTd9OyMhUSdtP+kGBZdpmTUxCiXJ5G2mj9NQq72Fin3S7wDNK7M1acBkPjCFZk9ocWX
+         n2XQ==
+X-Gm-Message-State: APjAAAU1wqvjzfYDWinNf5bD6LsY5qhpefCsx5MfKZVdCS8WUhrgW1SJ
+        T4knxZ7sFcmcDYU2eOpeAwPPeOEVY6w=
+X-Google-Smtp-Source: APXvYqwI8n2+PwrOnHJByfCo543Na2TAdtFA/adEgwqWRwyrJZLjkqUNX2TJsQI7YW8gPuN6N0EwFw==
+X-Received: by 2002:a1c:a387:: with SMTP id m129mr2075250wme.15.1559314009130;
+        Fri, 31 May 2019 07:46:49 -0700 (PDT)
+Received: from localhost.localdomain (233.red-79-146-84.dynamicip.rima-tde.net. [79.146.84.233])
+        by smtp.gmail.com with ESMTPSA id k185sm12752374wma.3.2019.05.31.07.46.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 31 May 2019 07:46:48 -0700 (PDT)
+From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+To:     jorge.ramirez-ortiz@linaro.org, agross@kernel.org,
+        david.brown@linaro.org, broonie@kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] spi: qup: remove unnecessary goto
+Date:   Fri, 31 May 2019 16:46:36 +0200
+Message-Id: <20190531144636.27843-1-jorge.ramirez-ortiz@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <20190531143758.GB23821@lunn.ch>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Remove unnecessary condition check and associated goto.
 
+Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+---
+ drivers/spi/spi-qup.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-31.05.2019 17:37, Andrew Lunn wrote:
->> I'm not sure that I like the semantic of it, because the driver can actually
->> support VID 0 per-se, only the kernel does not use VLAN 0. Thus I would avoid
->> calling the port_vlan_del() ops for VID 0, directly into the upper DSA layer.
->>
->> Florian, Andrew, wouldn't the following patch be more adequate?
->>
->>     diff --git a/net/dsa/slave.c b/net/dsa/slave.c
->>     index 1e2ae9d59b88..80f228258a92 100644
->>     --- a/net/dsa/slave.c
->>     +++ b/net/dsa/slave.c
->>     @@ -1063,6 +1063,10 @@ static int dsa_slave_vlan_rx_kill_vid(struct net_device *dev, __be16 proto,
->>             struct bridge_vlan_info info;
->>             int ret;
->>      
->>     +       /* VID 0 has a special meaning and is never programmed in hardware */
->>     +       if (!vid)
->>     +               return 0;
->>     +
->>             /* Check for a possible bridge VLAN entry now since there is no
->>              * need to emulate the switchdev prepare + commit phase.
->>              */
->  
-> Hi Vivien
-> 
-> If we put this in rx_kill_vid, we should probably have something
-> similar in rx_add_vid, just in case the kernel does start using VID 0.
+diff --git a/drivers/spi/spi-qup.c b/drivers/spi/spi-qup.c
+index 974a8ce58b68..314d91b95a16 100644
+--- a/drivers/spi/spi-qup.c
++++ b/drivers/spi/spi-qup.c
+@@ -842,10 +842,6 @@ static int spi_qup_transfer_one(struct spi_master *master,
+ 	else
+ 		ret = spi_qup_do_pio(spi, xfer, timeout);
+ 
+-	if (ret)
+-		goto exit;
+-
+-exit:
+ 	spi_qup_set_state(controller, QUP_STATE_RESET);
+ 	spin_lock_irqsave(&controller->lock, flags);
+ 	if (!ret)
+-- 
+2.21.0
 
-Kernel currently does, but it is caught in
-mv88e6xxx_port_check_hw_vlan() and returns -ENOTSUPP from there.
