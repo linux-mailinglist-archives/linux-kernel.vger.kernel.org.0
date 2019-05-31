@@ -2,62 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4A7530ED8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 15:27:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0925530EE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 15:29:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726694AbfEaN1o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 09:27:44 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:47264 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726386AbfEaN1n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 09:27:43 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hWhZL-0006nj-74; Fri, 31 May 2019 13:27:39 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Ariel Elior <aelior@marvell.com>, GR-everest-linux-l2@marvell.com,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] qed: remove redundant assignment to rc
-Date:   Fri, 31 May 2019 14:27:38 +0100
-Message-Id: <20190531132738.17221-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726682AbfEaN3o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 09:29:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48508 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726418AbfEaN3o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 09:29:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id F3D19AE4E;
+        Fri, 31 May 2019 13:29:42 +0000 (UTC)
+Date:   Fri, 31 May 2019 15:29:42 +0200 (CEST)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Petr Mladek <pmladek@suse.com>
+cc:     Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] livepatch: Remove duplicate warning about missing
+ reliable stacktrace support
+In-Reply-To: <20190531131906.lkhrfgpze57pqrcg@pathway.suse.cz>
+Message-ID: <alpine.LSU.2.21.1905311528000.742@pobox.suse.cz>
+References: <20190531074147.27616-1-pmladek@suse.com> <20190531074147.27616-3-pmladek@suse.com> <alpine.LSU.2.21.1905311425450.742@pobox.suse.cz> <20190531131906.lkhrfgpze57pqrcg@pathway.suse.cz>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, 31 May 2019, Petr Mladek wrote:
 
-The variable rc is assigned with a value that is never read and
-it is re-assigned a new value later on.  The assignment is redundant
-and can be removed.
+> On Fri 2019-05-31 14:32:34, Miroslav Benes wrote:
+> > On Fri, 31 May 2019, Petr Mladek wrote:
+> > 
+> > > WARN_ON_ONCE() could not be called safely under rq lock because
+> > > of console deadlock issues.
+> > > 
+> > > It can be simply removed. A better descriptive message is written
+> > > in klp_enable_patch() when klp_have_reliable_stack() fails.
+> > > The remaining debug message is good enough.
+> > > 
+> > > Signed-off-by: Petr Mladek <pmladek@suse.com>
+> > > ---
+> > >  kernel/livepatch/transition.c | 1 -
+> > >  1 file changed, 1 deletion(-)
+> > > 
+> > > diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
+> > > index abb2a4a2cbb2..1bf362df76e1 100644
+> > > --- a/kernel/livepatch/transition.c
+> > > +++ b/kernel/livepatch/transition.c
+> > > @@ -247,7 +247,6 @@ static int klp_check_stack(struct task_struct *task, char *err_buf)
+> > >  	int ret, nr_entries;
+> > >  
+> > >  	ret = stack_trace_save_tsk_reliable(task, entries, ARRAY_SIZE(entries));
+> > > -	WARN_ON_ONCE(ret == -ENOSYS);
+> > >  	if (ret < 0) {
+> > >  		snprintf(err_buf, STACK_ERR_BUF_SIZE,
+> > >  			 "%s: %s:%d has an unreliable stack\n",
+> > 
+> > The current situation is not the best, but I think the patch improves it 
+> > only slightly. I see two possible solutions.
+> > 
+> > 1. we either revert commit 1d98a69e5cef ("livepatch: Remove reliable 
+> > stacktrace check in klp_try_switch_task()"), so that klp_check_stack() 
+> > returns right away.
+> > 
+> > 2. or we test ret from stack_trace_save_tsk_reliable() for ENOSYS and 
+> > return.
+> > 
+> > In my opinion either of them is better than what we have now (and what we 
+> > would have with the patch), because klp_check_stack() returns, but it 
+> > prints out that a task has an unreliable stack. Yes, it is pr_debug() only 
+> > in the end, but still.
+> 
+> IMHO, any extra check will not improve the situation much. Quiet
+> return is as useless as the misleading pr_debug() that will
+> not normally get printed anyway.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/qlogic/qed/qed_sp_commands.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I disagree here. I think the silent return would be perfectly fine. The 
+user was warned in klp_enable_patch() already.
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c b/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
-index 5a495fda9e9d..7e0b795230b2 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
-@@ -588,7 +588,7 @@ int qed_sp_pf_update_stag(struct qed_hwfn *p_hwfn)
- {
- 	struct qed_spq_entry *p_ent = NULL;
- 	struct qed_sp_init_data init_data;
--	int rc = -EINVAL;
-+	int rc;
- 
- 	/* Get SPQ entry */
- 	memset(&init_data, 0, sizeof(init_data));
--- 
-2.20.1
-
+Miroslav
