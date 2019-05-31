@@ -2,59 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CE8C31636
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 22:38:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E194A31639
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 22:39:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727609AbfEaUi3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 16:38:29 -0400
-Received: from smtprelay0203.hostedemail.com ([216.40.44.203]:58745 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727576AbfEaUi0 (ORCPT
+        id S1727633AbfEaUix (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 16:38:53 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:41630 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726711AbfEaUix (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 16:38:26 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 764EC3D05;
-        Fri, 31 May 2019 20:38:24 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:421:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3873:3874:4321:5007:10004:10400:10848:11232:11473:11658:11914:12048:12114:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:14915:21080:21627:30012:30054:30064:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:28,LUA_SUMMARY:none
-X-HE-Tag: price00_f062e7ab5c2e
-X-Filterd-Recvd-Size: 1735
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf01.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 31 May 2019 20:38:23 +0000 (UTC)
-Message-ID: <c7dd57c50690048c16722005bba1c47bcb3af750.camel@perches.com>
-Subject: Re: [PATCH] btrfs: Fix -Wunused-but-set-variable warnings
-From:   Joe Perches <joe@perches.com>
-To:     Andrey Abramov <st5pub@yandex.ru>, "clm@fb.com" <clm@fb.com>,
-        "josef@toxicpanda.com" <josef@toxicpanda.com>,
-        "dsterba@suse.com" <dsterba@suse.com>
-Cc:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Fri, 31 May 2019 13:38:22 -0700
-In-Reply-To: <14843931559334698@myt6-add70abb4f02.qloud-c.yandex.net>
-References: <20190531195349.31129-1-st5pub@yandex.ru>
-         <a7a2a7c70c2dcef122ddbe86eb84820fc4384c7e.camel@perches.com>
-         <14843931559334698@myt6-add70abb4f02.qloud-c.yandex.net>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 31 May 2019 16:38:53 -0400
+Received: by mail-qt1-f193.google.com with SMTP id s57so2517093qte.8
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 13:38:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=tnvn0j3jQuNVnh4maksP0eUXsR5Rv7Q1R8NyX+YF/3g=;
+        b=kmx0j1Xo6ZpFg7gOpbZ4hsgkkFHeGEe5pWViZ23rcfuFYHArqroB22XYicw/D3C5LJ
+         dK4Y0qJ3hyuhXSuRlqoFV5YuWy1G00UBDyTXuioGIGFv6WnqT25b30lCXrdVcTfRKIiP
+         Wz264x7/hiIua3MDBJkygTmZsCHEEiuxn0ZuN5IMSjfiQp+2CyvzipE1R/Z+zsT/+4U4
+         hdq7QfTEG4LU0HXvZHaRd+wEamjJlvYnUu6DXO6xM171BClLbv+lngtfF8MsfSjgy7iC
+         QyaVVm+4+HWRBOECzNQSc0A3AGevbXE2QY7hsiAWegBYC4XGj7/cxfZ7SeeD+N3KIy3/
+         gZTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=tnvn0j3jQuNVnh4maksP0eUXsR5Rv7Q1R8NyX+YF/3g=;
+        b=b+DYFfgLEttJQJZDxIAqwWTAVEMMZMyOZrLBMqWt/Ny4XPaz4RU3ZkHL+dGKBpfvao
+         rnh2UGuka4lyNK0V6C02NVYdX+qZZQFwAKG+xOKIJcg4bgoVgCFmzyocmBFdrDTGHHeH
+         Oqzfa2JUkPz8z2+OMvRN4NAVG9uLIYedt+PUs197DWGIqj12wk1mzh9I09DlfR8vksLr
+         Frgsf0BCduB3WLYhbMpI6KcncGsISCHv5LeH/LvTunPvXRJK6kVloC4WO8hveVOYeebB
+         ziWw8uWM+vn8CQQ7PQp4TI5aeNeu44rcH8ESxgIXAG788sLdWqecijY2np/dKwBg937X
+         MQRA==
+X-Gm-Message-State: APjAAAX+CAQnCy/VfNsW6Q44bVcXBJEO+G0HiyEiglM0vKg8ea2xSZbF
+        mWIQWwU8i4HQCHnTEelfBQ/wAA==
+X-Google-Smtp-Source: APXvYqzD7lCntch+s1p2mwX8rLQxK69CDgBxwPQoO6P73eBQEDqKoiQsAPXwEueDgKjJkKKAioAPOw==
+X-Received: by 2002:ac8:18b2:: with SMTP id s47mr11035556qtj.75.1559335131952;
+        Fri, 31 May 2019 13:38:51 -0700 (PDT)
+Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id i123sm3924286qkd.32.2019.05.31.13.38.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 31 May 2019 13:38:51 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     mingo@redhat.com, tglx@linutronix.de, bp@alien8.de
+Cc:     dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        hpa@zytor.com, x86@kernel.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH] x86/mm: fix an unused variable "tsk" warning
+Date:   Fri, 31 May 2019 16:38:26 -0400
+Message-Id: <1559335106-3239-1-git-send-email-cai@lca.pw>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-05-31 at 23:31 +0300, Andrey Abramov wrote:
-> 31.05.2019, 23:05, "Joe Perches" <joe@perches.com>:
-> > On Fri, 2019-05-31 at 22:53 +0300, Andrey Abramov wrote:
-> > >  Fix -Wunused-but-set-variable warnings in raid56.c and sysfs.c files
-> > These uses seem boolean, so perhaps just use bool?
-> I used int because you use ints (as bools) everywhere (for example
-> there is only one bool (as a function argument) in the entire raid56.c
-> file with 3000 lines of code), so with int code looks more consistent.
-> Are you sure that I should use bool?
+"tsk" is only used when MEMORY_FAILURE=y.
 
-That's up to you and the btrfs maintainers.
+arch/x86/mm/fault.c: In function 'do_sigbus':
+arch/x86/mm/fault.c:1017:22: warning: unused variable 'tsk'
+[-Wunused-variable]
 
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ arch/x86/mm/fault.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 46df4c6aae46..a10e518dcdf8 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -1015,7 +1015,9 @@ static inline bool bad_area_access_from_pkeys(unsigned long error_code,
+ do_sigbus(struct pt_regs *regs, unsigned long error_code, unsigned long address,
+ 	  vm_fault_t fault)
+ {
++#ifdef CONFIG_MEMORY_FAILURE
+ 	struct task_struct *tsk = current;
++#endif
+ 
+ 	/* Kernel mode? Handle exceptions or die: */
+ 	if (!(error_code & X86_PF_USER)) {
+-- 
+1.8.3.1
 
