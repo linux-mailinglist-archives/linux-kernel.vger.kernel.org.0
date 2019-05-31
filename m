@@ -2,165 +2,315 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7081030B1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 11:10:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D688030B1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 11:10:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbfEaJJ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 05:09:58 -0400
-Received: from mail-ot1-f44.google.com ([209.85.210.44]:38915 "EHLO
-        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbfEaJJ5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 05:09:57 -0400
-Received: by mail-ot1-f44.google.com with SMTP id k24so3358538otn.6
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 02:09:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=eOoyuE6GZ0/N5LfXMgRy4lFPmyiN4GqePwZ9hhxKx7c=;
-        b=YC7v+rg1saI7e5IllQqsAPxsWgrNv2T/HquEKBQtpLdsRkixDv/kZVpskTBdkyXlOC
-         RYo1G9JYsxa8EGUbp9eBd3+m+OOzVLIAzUETNgcMoiQuVjl9VeCtpLRxmGjLaw+LMd5m
-         G/tfpCYiriKJIRJ+KFp01GDriRMlIqH5WjvJuMSmyX17sI5pNSh3ApIh3L/LfJXduayZ
-         88WEK6B8NB3gWs7j8TpLoEEu3WCjURrwTyPHLLLhCbm4+etZXcRLYarNoEo503Oz5S9t
-         rpkT6yHrLoiNkv2+7fz/oYpFeL6iZvKFYkPOvLNtcAN+8V3ot7h5qhjbud6a2yWvcN6w
-         qQKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eOoyuE6GZ0/N5LfXMgRy4lFPmyiN4GqePwZ9hhxKx7c=;
-        b=Dv04TXHWL1FEv8Y1iggKF4kA47QBHibaglrlPdMgXrF9iFq5R+jnnj2Ae3/YEvrJ8O
-         3rpSWYYOMHxGxZyM7w6mRqqO55B63xsK11nxMkXzbR3GPsmoqhu6XilmwjpSB+YZNHU+
-         qZwVu+Xfp4S25fpCqcMWdZqOvMDRioqWR4is4zuhE2UPGvWSOxUMaz+VqUs/JwQWUoSd
-         i9rqn/EZKpigz7lolx+u2iVcqi8nKlrumiEXXRS4rUkCAbmSqchJ73pC0tD7vQXEi+TC
-         amd090fvKQ9ozI0lDWGP+7PVi4c6xo5/dcv6nUhOeRuzMw6pucYA8zB5fOxJr4N5DrrI
-         G1+g==
-X-Gm-Message-State: APjAAAW9HXTyL9j1pWhuRkfA6ZNAbIjK1V0c3ccPIGhuAfimFO3zSfsJ
-        lH98G0J6XFm6mrCf8zTc6bEWow==
-X-Google-Smtp-Source: APXvYqwIKQZ/SptkBhQGTE75KY3E0ymdrnY1VCnZIW2PHsWdDzVviZjkbrPDCMhHoJ9w1OIIuXZOPg==
-X-Received: by 2002:a9d:481a:: with SMTP id c26mr989834otf.267.1559293796647;
-        Fri, 31 May 2019 02:09:56 -0700 (PDT)
-Received: from leoy-ThinkPad-X240s (li808-42.members.linode.com. [104.237.132.42])
-        by smtp.gmail.com with ESMTPSA id o203sm1966255oia.15.2019.05.31.02.09.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 31 May 2019 02:09:50 -0700 (PDT)
-Date:   Fri, 31 May 2019 17:09:41 +0800
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Stanislav Fomichev <sdf@fomichev.me>,
-        Song Liu <songliubraving@fb.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCHv3 00/12] perf tools: Display eBPF code in intel_pt trace
-Message-ID: <20190531090940.GA9580@leoy-ThinkPad-X240s>
-References: <20190508132010.14512-1-jolsa@kernel.org>
- <20190530105439.GA5927@leoy-ThinkPad-X240s>
- <20190530120709.GA3669@krava>
- <20190530125709.GB5927@leoy-ThinkPad-X240s>
- <20190530133645.GC21962@kernel.org>
+        id S1726973AbfEaJKJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 05:10:09 -0400
+Received: from mta-01.yadro.com ([89.207.88.251]:46506 "EHLO mta-01.yadro.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726002AbfEaJKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 05:10:08 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mta-01.yadro.com (Postfix) with ESMTP id 742CE41908;
+        Fri, 31 May 2019 09:10:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=yadro.com; h=
+        content-type:content-type:content-transfer-encoding:mime-version
+        :x-mailer:message-id:date:date:subject:subject:from:from
+        :received:received:received; s=mta-01; t=1559293805; x=
+        1561108206; bh=XdggJuNI87v3norq47XBx2lNXy+o2Et1QZHyTn+TLOE=; b=M
+        tgyKXpn4aZ21VFsCF1YEWjRswBh1RxApo6mOV9N1lkTj9JQKygGqzSJvFMI69Ii9
+        ZiWbQ6EgRTWddP3PzrptQBC2+EUr6cTK6gwyxT3pNF0GRjEziSIy3uTxqbzsoZxN
+        k+2dZo7KODYNwLjUWyTRs5LCsKcQ0g8J0HaPAj6Qyo=
+X-Virus-Scanned: amavisd-new at yadro.com
+Received: from mta-01.yadro.com ([127.0.0.1])
+        by localhost (mta-01.yadro.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Etf4PeSS29vb; Fri, 31 May 2019 12:10:05 +0300 (MSK)
+Received: from T-EXCH-02.corp.yadro.com (t-exch-02.corp.yadro.com [172.17.10.102])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mta-01.yadro.com (Postfix) with ESMTPS id D390241860;
+        Fri, 31 May 2019 12:10:03 +0300 (MSK)
+Received: from bbwork.com (172.17.14.115) by T-EXCH-02.corp.yadro.com
+ (172.17.10.102) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id 15.1.669.32; Fri, 31
+ May 2019 12:10:03 +0300
+From:   Alexander Filippov <a.filippov@yadro.com>
+To:     <linux-aspeed@lists.ozlabs.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, Andrew Jeffery <andrew@aj.id.au>,
+        Joel Stanley <joel@jms.id.au>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Alexander Filippov <a.filippov@yadro.com>
+Subject: [PATCH v4] ARM: dts: aspeed: Add YADRO VESNIN BMC
+Date:   Fri, 31 May 2019 12:09:50 +0300
+Message-ID: <20190531090950.13466-1-a.filippov@yadro.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190530133645.GC21962@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [172.17.14.115]
+X-ClientProxiedBy: T-EXCH-01.corp.yadro.com (172.17.10.101) To
+ T-EXCH-02.corp.yadro.com (172.17.10.102)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnaldo,
+VESNIN is an OpenPower machine with an Aspeed 2400 BMC SoC manufactured
+by YADRO.
 
-On Thu, May 30, 2019 at 10:36:45AM -0300, Arnaldo Carvalho de Melo wrote:
+Signed-off-by: Alexander Filippov <a.filippov@yadro.com>
+---
+ arch/arm/boot/dts/Makefile                  |   1 +
+ arch/arm/boot/dts/aspeed-bmc-opp-vesnin.dts | 224 ++++++++++++++++++++
+ 2 files changed, 225 insertions(+)
+ create mode 100644 arch/arm/boot/dts/aspeed-bmc-opp-vesnin.dts
 
-[...]
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index dab2914fa293..64a956372fe1 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -1272,6 +1272,7 @@ dtb-$(CONFIG_ARCH_ASPEED) += \
+ 	aspeed-bmc-opp-lanyang.dtb \
+ 	aspeed-bmc-opp-palmetto.dtb \
+ 	aspeed-bmc-opp-romulus.dtb \
++	aspeed-bmc-opp-vesnin.dtb \
+ 	aspeed-bmc-opp-witherspoon.dtb \
+ 	aspeed-bmc-opp-zaius.dtb \
+ 	aspeed-bmc-portwell-neptune.dtb \
+diff --git a/arch/arm/boot/dts/aspeed-bmc-opp-vesnin.dts b/arch/arm/boot/dts/aspeed-bmc-opp-vesnin.dts
+new file mode 100644
+index 000000000000..0b9e29c3212e
+--- /dev/null
++++ b/arch/arm/boot/dts/aspeed-bmc-opp-vesnin.dts
+@@ -0,0 +1,224 @@
++// SPDX-License-Identifier: GPL-2.0+
++// Copyright 2019 YADRO
++/dts-v1/;
++
++#include "aspeed-g4.dtsi"
++#include <dt-bindings/gpio/aspeed-gpio.h>
++
++/ {
++	model = "Vesnin BMC";
++	compatible = "yadro,vesnin-bmc", "aspeed,ast2400";
++
++	chosen {
++		stdout-path = &uart5;
++		bootargs = "console=ttyS4,115200 earlyprintk";
++	};
++
++	memory {
++		reg = <0x40000000 0x20000000>;
++	};
++
++	reserved-memory {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		vga_memory: framebuffer@5f000000 {
++			no-map;
++			reg = <0x5f000000 0x01000000>; /* 16MB */
++		};
++		flash_memory: region@5c000000 {
++			no-map;
++			reg = <0x5c000000 0x02000000>; /* 32M */
++		};
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		heartbeat {
++			gpios = <&gpio ASPEED_GPIO(R, 4) GPIO_ACTIVE_LOW>;
++		};
++		power_red {
++			gpios = <&gpio ASPEED_GPIO(N, 1) GPIO_ACTIVE_LOW>;
++		};
++
++		id_blue {
++			gpios = <&gpio ASPEED_GPIO(O, 0) GPIO_ACTIVE_LOW>;
++		};
++
++		alarm_red {
++			gpios = <&gpio ASPEED_GPIO(N, 6) GPIO_ACTIVE_LOW>;
++		};
++
++		alarm_yel {
++			gpios = <&gpio ASPEED_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
++		};
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		button_checkstop {
++			label = "checkstop";
++			linux,code = <74>;
++			gpios = <&gpio ASPEED_GPIO(P, 5) GPIO_ACTIVE_LOW>;
++		};
++
++		button_identify {
++			label = "identify";
++			linux,code = <152>;
++			gpios = <&gpio ASPEED_GPIO(O, 7) GPIO_ACTIVE_LOW>;
++		};
++	};
++};
++
++&fmc {
++	status = "okay";
++	flash@0 {
++		status = "okay";
++		m25p,fast-read;
++        label = "bmc";
++#include "openbmc-flash-layout.dtsi"
++	};
++};
++
++&spi {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_spi1debug_default>;
++
++	flash@0 {
++		status = "okay";
++		label = "pnor";
++		m25p,fast-read;
++	};
++};
++
++&mac0 {
++	status = "okay";
++
++	use-ncsi;
++	no-hw-checksum;
++
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_rmii1_default>;
++};
++
++
++&uart5 {
++	status = "okay";
++};
++
++&lpc_ctrl {
++	status = "okay";
++	memory-region = <&flash_memory>;
++	flash = <&spi>;
++};
++
++&ibt {
++	status = "okay";
++};
++
++&uart3 {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_txd2_default &pinctrl_rxd2_default>;
++};
++
++&i2c0 {
++	status = "okay";
++
++	eeprom@50 {
++		compatible = "atmel,24c256";
++		reg = <0x50>;
++		pagesize = <64>;
++	};
++};
++
++&i2c1 {
++	status = "okay";
++
++	tmp75@49 {
++		compatible = "ti,tmp75";
++		reg = <0x49>;
++	};
++};
++
++&i2c2 {
++	status = "okay";
++};
++
++&i2c3 {
++	status = "okay";
++};
++
++&i2c4 {
++	status = "okay";
++
++	occ-hwmon@50 {
++		compatible = "ibm,p8-occ-hwmon";
++		reg = <0x50>;
++	};
++};
++
++&i2c5 {
++	status = "okay";
++
++	occ-hwmon@51 {
++		compatible = "ibm,p8-occ-hwmon";
++		reg = <0x51>;
++	};
++};
++
++&i2c6 {
++	status = "okay";
++
++	w83795g@2f {
++		compatible = "nuvoton,w83795g";
++		reg = <0x2f>;
++	};
++};
++
++&i2c7 {
++	status = "okay";
++
++	occ-hwmon@56 {
++		compatible = "ibm,p8-occ-hwmon";
++		reg = <0x56>;
++	};
++};
++
++&i2c9 {
++	status = "okay";
++};
++
++&i2c10 {
++	status = "okay";
++};
++
++&i2c11 {
++	status = "okay";
++
++	occ-hwmon@57 {
++		compatible = "ibm,p8-occ-hwmon";
++		reg = <0x57>;
++	};
++};
++
++&i2c12 {
++	status = "okay";
++
++	rtc@68 {
++		compatible = "maxim,ds3231";
++		reg = <0x68>;
++	};
++};
++
++&i2c13 {
++	status = "okay";
++};
++
++&vuart {
++	status = "okay";
++};
+-- 
+2.20.1
 
-> One other way of testing this:
-> 
-> I used perf trace's use of BPF, using:
-> 
-> [root@quaco ~]# cat ~/.perfconfig
-> [llvm]
-> 	dump-obj = true
-> 	clang-opt = -g
-> [trace]
-> 	add_events = /home/acme/git/perf/tools/perf/examples/bpf/augmented_raw_syscalls.c
-> 	show_zeros = yes
-> 	show_duration = no
-> 	no_inherit = yes
-> 	show_timestamp = no
-> 	show_arg_names = no
-> 	args_alignment = 40
-> 	show_prefix = yes
-> 
-> For arm64 this needs fixing, tools/perf/examples/bpf/augmented_raw_syscalls.c
-> (its in the kernel sources) is still hard coded for x86_64 syscall numbers :-\
-
-I changed the system call numbers for arm64 respectively in
-augmented_raw_syscalls.s; so this if fine.
-
-> Use some other BPF workload, one that has its programs being hit so that
-> we get samples in it, in my case running:
-> 
->     # perf trace
-
-After I run 'perf trace' command it reports the building failure when
-generate eBPF object file, as shown in below log.  I saw the eBPF code
-includes the header files unistd.h and pid_filter.h which cannot be
-found when clang compiled it.
-
-These two header files are stored in the folder
-$linux/tools/perf/include/bpf so I tried to use below command to
-specify header path, but still failed:
-
-# clang-7 -target bpf -O2 -I./include/bpf -I./include \
-  -I../../usr/include -I../../include \
-  -I../../tools/testing/selftests/bpf/ \
-  -I../../tools/lib/ \
-  -c examples/bpf/augmented_raw_syscalls.c
-
-So now I am stuck for eBPF program building.  Do I miss some
-configurations for headers pathes for llvm/clang?
-
-BTW, I notice another potential issue is even the eBPF bytecode
-building failed, 'perf trace' command still can continue its work;
-after read the code [1], the flow is:
-  trace__config();
-    `-> parse_events_option();
-
-When building eBPF object failure, parse_events_option() returns 1; for
-this case trace__config() needs to detect the erro and return -1 rather
-than directly return 1 to caller function.
-
-
----8<---
-
-# perf trace
-/mnt/linux-kernel/linux-cs-dev/tools/perf/examples/bpf/augmented_raw_syscalls.c:17:10: fatal error: 'unistd.h' file not found
-#include <unistd.h>
-         ^~~~~~~~~~
-1 error generated.
-ERROR:  unable to compile /mnt/linux-kernel/linux-cs-dev/tools/perf/examples/bpf/augmented_raw_syscalls.c
-Hint:   Check error message shown above.
-Hint:   You can also pre-compile it into .o using:
-                clang -target bpf -O2 -c /mnt/linux-kernel/linux-cs-dev/tools/perf/examples/bpf/augmented_raw_syscalls.c
-        with proper -I and -D options.
-event syntax error: '/mnt/linux-kernel/linux-cs-dev/tools/perf/examples/bpf/augmented_raw_syscalls.c'
-                     \___ Failed to load /mnt/linux-kernel/linux-cs-dev/tools/perf/examples/bpf/augmented_raw_syscalls.c from source: Error when compiling BPF scriptlet
-
-(add -v to see detail)
-Run 'perf list' for a list of valid events
-
-Thanks a lot for help!
-
-Leo.
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/perf/builtin-trace.c?h=v5.2-rc2#n3631
