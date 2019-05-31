@@ -2,79 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DFAD30C06
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 11:49:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA17630C0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 11:51:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbfEaJtd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 05:49:33 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:52996 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726240AbfEaJtc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 05:49:32 -0400
-Received: from 79.184.255.225.ipv4.supernova.orange.pl (79.184.255.225) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.213)
- id 812f32bff0215906; Fri, 31 May 2019 11:49:30 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PCI <linux-pci@vger.kernel.org>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH] PCI: PM: Avoid resuming devices in D3hot during system suspend
-Date:   Fri, 31 May 2019 11:49:30 +0200
-Message-ID: <4561083.VtDMOnK5Me@kreacher>
+        id S1726520AbfEaJvB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 05:51:01 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34120 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726233AbfEaJvB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 05:51:01 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5305230C0DCA;
+        Fri, 31 May 2019 09:51:01 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 349C57AB62;
+        Fri, 31 May 2019 09:50:58 +0000 (UTC)
+Date:   Fri, 31 May 2019 11:50:55 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>
+Subject: Re: [PATCH v1] s390/pkey: Use -ENODEV instead of -EOPNOTSUPP
+Message-ID: <20190531115055.7f5cf64e.cohuck@redhat.com>
+In-Reply-To: <20190531093628.14766-1-david@redhat.com>
+References: <20190531093628.14766-1-david@redhat.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Fri, 31 May 2019 09:51:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Fri, 31 May 2019 11:36:28 +0200
+David Hildenbrand <david@redhat.com> wrote:
 
-The current code resumes devices in D3hot during system suspend if
-the target power state for them is D3cold, but that is not necessary
-in general.  It only is necessary to do that if the platform firmware
-requires the device to be resumed, but that should be covered by
-the platform_pci_need_resume() check anyway, so rework
-pci_dev_keep_suspended() to avoid returning 'false' for devices
-in D3hot which need not be resumed due to platform firmware
-requirements.
+> systemd-modules-load.service automatically tries to load the pkey module
+> on systems that have MSA.
+> 
+> Pkey also requires the MSA3 facility and a bunch of subfunctions.
+> Failing with -EOPNOTSUPP makes "systemd-modules-load.service" fail on
+> any system that does not have all needed subfunctions. For example,
+> when running under QEMU TCG (but also on systems where protected keys
+> are disabled via the HMC).
+> 
+> Let's use -ENODEV, so systemd-modules-load.service properly ignores
+> failing to load the pkey module because of missing HW functionality.
+> 
+> Cc: Harald Freudenberger <freude@linux.ibm.com>
+> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+> Cc: Cornelia Huck <cohuck@redhat.com>
+> Cc: Christian Borntraeger <borntraeger@de.ibm.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  drivers/s390/crypto/pkey_api.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/pci/pci.c |   15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+Looking at what other modules return when needed features are missing,
+this looks like the right thing to do.
 
-Index: linux-pm/drivers/pci/pci.c
-===================================================================
---- linux-pm.orig/drivers/pci/pci.c
-+++ linux-pm/drivers/pci/pci.c
-@@ -2474,10 +2474,19 @@ bool pci_dev_keep_suspended(struct pci_d
- {
- 	struct device *dev = &pci_dev->dev;
- 	bool wakeup = device_may_wakeup(dev);
-+	pci_power_t target_state;
- 
--	if (!pm_runtime_suspended(dev)
--	    || pci_target_state(pci_dev, wakeup) != pci_dev->current_state
--	    || platform_pci_need_resume(pci_dev))
-+	if (!pm_runtime_suspended(dev) || platform_pci_need_resume(pci_dev))
-+		return false;
-+
-+	target_state = pci_target_state(pci_dev, wakeup);
-+	/*
-+	 * If the earlier platform check has not triggered, D3cold is just power
-+	 * removal on top of D3hot, so no need to resume the device in that
-+	 * case.
-+	 */
-+	if (target_state != pci_dev->current_state &&
-+	    target_state != PCI_D3cold && pci_dev->current_state != PCI_D3hot)
- 		return false;
- 
- 	/*
-
-
-
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
