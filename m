@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D92031806
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 01:32:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B37531836
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 01:33:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbfEaXcc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 19:32:32 -0400
+        id S1727106AbfEaXd0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 19:33:26 -0400
 Received: from mga07.intel.com ([134.134.136.100]:59345 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726550AbfEaXcb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726635AbfEaXcb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 31 May 2019 19:32:31 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -46,9 +46,9 @@ Cc:     Andy Lutomirski <luto@kernel.org>,
         David Rientjes <rientjes@google.com>,
         William Roberts <william.c.roberts@intel.com>,
         Philip Tricca <philip.b.tricca@intel.com>
-Subject: [RFC PATCH 1/9] x86/sgx: Remove unused local variable in sgx_encl_release()
-Date:   Fri, 31 May 2019 16:31:51 -0700
-Message-Id: <20190531233159.30992-2-sean.j.christopherson@intel.com>
+Subject: [RFC PATCH 2/9] x86/sgx: Do not naturally align MAP_FIXED address
+Date:   Fri, 31 May 2019 16:31:52 -0700
+Message-Id: <20190531233159.30992-3-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190531233159.30992-1-sean.j.christopherson@intel.com>
 References: <20190531233159.30992-1-sean.j.christopherson@intel.com>
@@ -59,23 +59,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+SGX enclaves have an associated Enclave Linear Range (ELRANGE) that is
+tracked and enforced by the CPU using a base+mask approach, similar to
+how hardware range registers such as the variable MTRRs.  As a result,
+the ELRANGE must be naturally sized and aligned.
+
+To reduce boilerplate code that would be needed in every userspace
+enclave loader, the SGX driver naturally aligns the mmap() address and
+also requires the range to be naturally sized.  Unfortunately, SGX fails
+to grant a waiver to the MAP_FIXED case, e.g. incorrectly rejects mmap()
+if userspace is attempting to map a small slice of an existing enclave.
+
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/kernel/cpu/sgx/encl.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/x86/kernel/cpu/sgx/driver/main.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index 7216bdf07bd0..f23ea0fbaa47 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -463,7 +463,6 @@ EXPORT_SYMBOL_GPL(sgx_encl_destroy);
- void sgx_encl_release(struct kref *ref)
+diff --git a/arch/x86/kernel/cpu/sgx/driver/main.c b/arch/x86/kernel/cpu/sgx/driver/main.c
+index afe844aa81d6..129d356aff30 100644
+--- a/arch/x86/kernel/cpu/sgx/driver/main.c
++++ b/arch/x86/kernel/cpu/sgx/driver/main.c
+@@ -79,7 +79,13 @@ static unsigned long sgx_get_unmapped_area(struct file *file,
+ 					   unsigned long pgoff,
+ 					   unsigned long flags)
  {
- 	struct sgx_encl *encl = container_of(ref, struct sgx_encl, refcount);
--	struct sgx_encl_mm *encl_mm;
+-	if (len < 2 * PAGE_SIZE || len & (len - 1) || flags & MAP_PRIVATE)
++	if (flags & MAP_PRIVATE)
++		return -EINVAL;
++
++	if (flags & MAP_FIXED)
++		return addr;
++
++	if (len < 2 * PAGE_SIZE || len & (len - 1))
+ 		return -EINVAL;
  
- 	if (encl->pm_notifier.notifier_call)
- 		unregister_pm_notifier(&encl->pm_notifier);
+ 	addr = current->mm->get_unmapped_area(file, addr, 2 * len, pgoff,
 -- 
 2.21.0
 
