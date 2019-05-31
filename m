@@ -2,85 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E991B30A3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 10:25:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D584830A41
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 10:26:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726828AbfEaIZh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 04:25:37 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:58522 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726275AbfEaIZh (ORCPT
+        id S1726973AbfEaI0p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 04:26:45 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:43234 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726867AbfEaI0l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 04:25:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=LnyF2LiZJO/YFVndv0fY0DHSYQjvYUj7yzeqlwI/hZM=; b=SBouILP5p618snw6vbevL7rJP
-        C0snIepbF1Kj2DLmCjDkr6qZC7kcT34RTDx3ZZth1zEc8Hcf2phdU2qt7TC5qevd0jE7an8ZhiUoC
-        X3DoXlcbf5EDwSrJzgb1DH422y/m7Tv+tPseUPQ2DLHU4UnixqrsiWFEiftZKevWqdOsca6MIamTd
-        4ZHq+feZuztfhqd8ifQC6SjY4N3lDc0KgOWKX0GDcOhKyn7RLoFa31J/Ykgs0WI7i5EB+hWdUXWAu
-        5Pr7r5VrEfP2p2k2e8eO/IEHSIWU0jXfUa1syUqifJrLt34hE8+m/bCnk81VIigz3EVhoTMi/XlT6
-        Iqg7sK63g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hWcqw-0002TO-5U; Fri, 31 May 2019 08:25:30 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A75DD201B8CFE; Fri, 31 May 2019 10:25:28 +0200 (CEST)
-Date:   Fri, 31 May 2019 10:25:28 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        arcml <linux-snps-arc@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-Subject: Re: single copy atomicity for double load/stores on 32-bit systems
-Message-ID: <20190531082528.GJ2623@hirez.programming.kicks-ass.net>
-References: <2fd3a455-6267-5d21-c530-41964a4f6ce9@synopsys.com>
- <20190530185358.GG28207@linux.ibm.com>
+        Fri, 31 May 2019 04:26:41 -0400
+Received: by mail-lf1-f67.google.com with SMTP id d7so63988lfb.10
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 01:26:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vfC0vBfj3dl+S4JICqcjDoSBUZJGnS+ckX0H0B+UWP8=;
+        b=uuf3ZngwL3h2t7t4f1mqw1SA7AcmRSii9KiV/Qip2UqqQwkIcD+M5Ncpooxlpjetn+
+         EVwVYGzH/O3ILxbusPiGYoniriBwnLhhb9LcJn2zu+IwE0ZHWaQWjUbup4SXE3tY5shP
+         xuTqV3C0Zoq549IsRmGbXJObFgBs0iytW1nh1YMl6A6rtjQPau14oxFWF4rgbO8NbWSY
+         1yaAOQn9MbjCB0D927ZUIW8CEG4A+c+ephFuvW9vkTkn5TFYfEoCooAx86i8z8PVrjqt
+         djIcCisQKhSypwUNeJd5TzQY131nMP+BgI2vdnOcbQNJbUFWBzECg3+/mriPZrMcUQbK
+         rGCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vfC0vBfj3dl+S4JICqcjDoSBUZJGnS+ckX0H0B+UWP8=;
+        b=LMCZenm0k1UDAWP6LcdmKuxkVYVuggl580G9Jpp/WkAhdpefNjkep5lUG1nOMsrL9y
+         q5TJ4PdDUhtOJ59amJYn2WmbIS2/rAexh6yY4pZvOYOYX/kPJKU2RbEx2CawKMecQD1t
+         ncOLSX8i7/0M1Oi1X1HAN1OGRvs8vXkWO2N8BZXVpxkVXXkkuVBQOHxC5RfbeKlhs1Bs
+         69rGdDWzTME2b6YbdxEH9hD3NrwjinOceNs2sEEZWQ0oo8mofoLhYUiR6X4RxTaBMF9y
+         QFddxn6oXJUTeRzPafPSIwX80oLv8BTd0Lp5L/ME5kMGuRNpGURS1ZIv5osd0fG4Zs9S
+         1aHA==
+X-Gm-Message-State: APjAAAUAWHus+ICkovItbbPfP4ASvlRQtxAZPZ3UDk+E1LIz3tw1WkrU
+        WJj5q9HCaH7Mipc/b9RU5JC+AZILvpLFRcZC1z0=
+X-Google-Smtp-Source: APXvYqyVGfgWVvPGwpdGW2Ln9ZHaOlnCtQ2X4hkv3pLRyIZp7jHZPehfHqxUm45SXgm2E9GU6chipkFtt/uXwtMnQOU=
+X-Received: by 2002:a19:a5ca:: with SMTP id o193mr4826260lfe.89.1559291198938;
+ Fri, 31 May 2019 01:26:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190530185358.GG28207@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cover.1559129225.git.vpillai@digitalocean.com>
+ <CAERHkruDE-7R5K=2yRqCJRCpV87HkHzDYbQA2WQkruVYpG7t7Q@mail.gmail.com>
+ <e8872bd9-1c6b-fb12-b535-3d37740a0306@linux.alibaba.com> <CAERHkruVthrTgGqiH=yhCspZWpMDAu0G4rNcrDTKQzgPq9eqQQ@mail.gmail.com>
+ <21fda627-1d3c-12cc-6389-8c226218e2ce@linux.alibaba.com> <CAERHkrsjTNUssmECksdJnLdDjVJ_9UpvYiHyBDJ3S1toURCbrw@mail.gmail.com>
+ <20190531074456.GA314@aaronlu>
+In-Reply-To: <20190531074456.GA314@aaronlu>
+From:   Aubrey Li <aubrey.intel@gmail.com>
+Date:   Fri, 31 May 2019 16:26:26 +0800
+Message-ID: <CAERHkru+tx+b_FMoyZYD+F7cWaFZRA7+6UeJEG_aoFJN+DEKkA@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 00/16] Core scheduling v3
+To:     Aaron Lu <aaron.lu@linux.alibaba.com>
+Cc:     Vineeth Remanan Pillai <vpillai@digitalocean.com>,
+        Nishanth Aravamudan <naravamudan@digitalocean.com>,
+        Julien Desfossez <jdesfossez@digitalocean.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Turner <pjt@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
+        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 11:53:58AM -0700, Paul E. McKenney wrote:
-> On Thu, May 30, 2019 at 11:22:42AM -0700, Vineet Gupta wrote:
-> > Hi Peter,
-> > 
-> > Had an interesting lunch time discussion with our hardware architects pertinent to
-> > "minimal guarantees expected of a CPU" section of memory-barriers.txt
-> > 
-> > 
-> > |  (*) These guarantees apply only to properly aligned and sized scalar
-> > |     variables.  "Properly sized" currently means variables that are
-> > |     the same size as "char", "short", "int" and "long".  "Properly
-> > |     aligned" means the natural alignment, thus no constraints for
-> > |     "char", two-byte alignment for "short", four-byte alignment for
-> > |     "int", and either four-byte or eight-byte alignment for "long",
-> > |     on 32-bit and 64-bit systems, respectively.
-> > 
-> > 
-> > I'm not sure how to interpret "natural alignment" for the case of double
-> > load/stores on 32-bit systems where the hardware and ABI allow for 4 byte
-> > alignment (ARCv2 LDD/STD, ARM LDRD/STRD ....)
-> > 
-> > I presume (and the question) that lkmm doesn't expect such 8 byte load/stores to
-> > be atomic unless 8-byte aligned
-> 
-> I would not expect 8-byte accesses to be atomic on 32-bit systems unless
-> some special instruction was in use.  But that usually means special
-> intrinsics or assembly code.
+On Fri, May 31, 2019 at 3:45 PM Aaron Lu <aaron.lu@linux.alibaba.com> wrote:
+>
+> On Fri, May 31, 2019 at 02:53:21PM +0800, Aubrey Li wrote:
+> > On Fri, May 31, 2019 at 2:09 PM Aaron Lu <aaron.lu@linux.alibaba.com> wrote:
+> > >
+> > > On 2019/5/31 13:12, Aubrey Li wrote:
+> > > > On Fri, May 31, 2019 at 11:01 AM Aaron Lu <aaron.lu@linux.alibaba.com> wrote:
+> > > >>
+> > > >> This feels like "date" failed to schedule on some CPU
+> > > >> on time.
+> > > >>
+> > > >> My first reaction is: when shell wakes up from sleep, it will
+> > > >> fork date. If the script is untagged and those workloads are
+> > > >> tagged and all available cores are already running workload
+> > > >> threads, the forked date can lose to the running workload
+> > > >> threads due to __prio_less() can't properly do vruntime comparison
+> > > >> for tasks on different CPUs. So those idle siblings can't run
+> > > >> date and are idled instead. See my previous post on this:
+> > > >> https://lore.kernel.org/lkml/20190429033620.GA128241@aaronlu/
+> > > >> (Now that I re-read my post, I see that I didn't make it clear
+> > > >> that se_bash and se_hog are assigned different tags(e.g. hog is
+> > > >> tagged and bash is untagged).
+> > > >
+> > > > Yes, script is untagged. This looks like exactly the problem in you
+> > > > previous post. I didn't follow that, does that discussion lead to a solution?
+> > >
+> > > No immediate solution yet.
+> > >
+> > > >>
+> > > >> Siblings being forced idle is expected due to the nature of core
+> > > >> scheduling, but when two tasks belonging to two siblings are
+> > > >> fighting for schedule, we should let the higher priority one win.
+> > > >>
+> > > >> It used to work on v2 is probably due to we mistakenly
+> > > >> allow different tagged tasks to schedule on the same core at
+> > > >> the same time, but that is fixed in v3.
+> > > >
+> > > > I have 64 threads running on a 104-CPU server, that is, when the
+> > >
+> > > 104-CPU means 52 cores I guess.
+> > > 64 threads may(should?) spread on all the 52 cores and that is enough
+> > > to make 'date' suffer.
+> >
+> > 64 threads should spread onto all the 52 cores, but why they can get
+> > scheduled while untagged "date" can not? Is it because in the current
+>
+> If 'date' didn't get scheduled, there will be no output at all unless
+> all those workload threads finished :-)
 
-If the GCC of said platform defaults to the double-word instructions for
-long long, then I would very much expect natural alignment on it too.
+Certainly I meant untagged "date" can not be scheduled on time, :)
 
-If the feature is only available through inline asm or intrinsics, then
-we can be a little more lenient perhaps.
+>
+> I guess the workload you used is not entirely CPU intensive, or 'date'
+> can be totally blocked due to START_DEBIT. But note that START_DEBIT
+> isn't the problem here, cross CPU vruntime comparison is.
+>
+> > implementation the task with cookie always has higher priority than the
+> > task without a cookie?
+>
+> No.
+
+I checked the benchmark log manually, it looks like the data of two benchmarks
+with cookies are acceptable, but ones without cookies are really bad.
