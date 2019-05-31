@@ -2,204 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CC4330DAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 13:58:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D611A315C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 21:59:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727432AbfEaL6I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 07:58:08 -0400
-Received: from mga04.intel.com ([192.55.52.120]:9963 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727405AbfEaL6F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 07:58:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 May 2019 04:58:05 -0700
-X-ExtLoop1: 1
-Received: from wvoon-ilbpg2.png.intel.com ([10.88.227.88])
-  by orsmga003.jf.intel.com with ESMTP; 31 May 2019 04:58:01 -0700
-From:   Voon Weifeng <weifeng.voon@intel.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jose Abreu <joabreu@synopsys.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        biao huang <biao.huang@mediatek.com>,
-        Ong Boon Leong <boon.leong.ong@intel.com>,
-        Kweh Hock Leong <hock.leong.kweh@intel.com>,
-        Voon Weifeng <weifeng.voon@intel.com>
-Subject: [PATCH net-next v5 5/5] net: stmmac: add EHL SGMII 1Gbps PCI info and PCI ID
-Date:   Sat,  1 Jun 2019 03:58:14 +0800
-Message-Id: <1559332694-6354-6-git-send-email-weifeng.voon@intel.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1559332694-6354-1-git-send-email-weifeng.voon@intel.com>
-References: <1559332694-6354-1-git-send-email-weifeng.voon@intel.com>
+        id S1727425AbfEaT7i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 15:59:38 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:41531 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727282AbfEaT7i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 15:59:38 -0400
+Received: by mail-ed1-f65.google.com with SMTP id x25so4018783eds.8
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 12:59:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3SkRaYCGnq1C8VvlqaJ8i8zblsitHZj5v7WamNGN6H8=;
+        b=u+WzyLtECMcbvjVI27nPUY/f1sNnnGQ4v95OEd2FRD+2RIN3aj6jzGAF/2PTtZkWbl
+         IsTT3rCeorqDEpWXIuiNbgTjlGHWnHUr/D/sOZSUHeY0xjsMN9HKVI7kH6G0gclx6jkl
+         B82MHaosoGQikbSAqSxEEk2TDrSJO/hPcw3taZ9jfyFUJ4ANImCDvahXr9qfh8f2T5BE
+         FHCu+ECupVFYxp5GFBf5w0hdhwEUn3OgrWM+Py/pRkyzEODGAZgWcZ81VdDKzxCOPVfN
+         6nLxbxuIKeaZTg+ce2C7SPKFLQaUE7po1agK96jvrVl4UCS91D4hCsJWwk8pQ0eJ7d9+
+         0WLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3SkRaYCGnq1C8VvlqaJ8i8zblsitHZj5v7WamNGN6H8=;
+        b=JBiQX/fKL0ClC49lS+LC3VteK6fc9+adXDKk5+M3zQU0hDe/O3qYDBziq8Yosx7oR5
+         bL9nc8iRgjmSQPAg9e3cJYc7NBNvGKZcTZx3hxQ1iRdPAc6TVa96H1B9syvwQCc42Wrs
+         G+lh3FseWZt7KckS9GDERMBzsFTJdteTNftLDhIpwz2qleAzRi7UiCUXf1hTNB/cARY+
+         tEIL0LOHEEh+EvIv4klKf6fyTuENyEsu50V723gVs/YRohUNOTm9OteZJ51wA5TRR7lV
+         lLz0WiEai7e5Gz2unpnsKZaWElLncp+XrQ3hS8ITP9g2neeDUu17ma6awMMrVl0XyJ7L
+         OJ2g==
+X-Gm-Message-State: APjAAAWY+JcrMXslh394iUPxzej1MpWQsST4+awyRaFvPaJIbVZ7ONw2
+        Ab36ra7G1VmNnOkeUqoBQz1DyiRS/tsoqhRJzFYb6Q==
+X-Google-Smtp-Source: APXvYqwCViODZUf7+K8dCeviTHiMP+R9s9zcehJqctp1p3kVpVxvg6odZUTsjoHWEEexh9KnE9DVXLpFwc9HMKyIdjU=
+X-Received: by 2002:a17:906:2922:: with SMTP id v2mr10871610ejd.115.1559332775551;
+ Fri, 31 May 2019 12:59:35 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAOyeoRWfPNmaWY6Lifdkdj3KPPM654vzDO+s3oduEMCJP+Asow@mail.gmail.com>
+ <5CEC9667.30100@intel.com> <CAOyeoRWhfyuuYdguE6Wrzd7GOdow9qRE4MZ4OKkMc5cdhDT53g@mail.gmail.com>
+ <5CEE3AC4.3020904@intel.com> <CAOyeoRW85jV=TW_xwSj0ZYwPj_L+G9wu+QPGEF3nBmPbWGX4_g@mail.gmail.com>
+ <5CF07D37.9090805@intel.com>
+In-Reply-To: <5CF07D37.9090805@intel.com>
+From:   Eric Hankland <ehankland@google.com>
+Date:   Fri, 31 May 2019 12:59:24 -0700
+Message-ID: <CAOyeoRXWQaVYZSVL_LTTdAwJOEr+eCzhp1=_JcOX3i6_CJiD_g@mail.gmail.com>
+Subject: Re: [PATCH v1] KVM: x86: PMU Whitelist
+To:     Wei Wang <wei.w.wang@intel.com>
+Cc:     pbonzini@redhat.com, rkrcmar@redhat.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added EHL SGMII 1Gbps PCI ID. Different MII and speed will have
-different PCI ID.
+On Thu, May 30, 2019 at 5:57 PM Wei Wang <wei.w.wang@intel.com> wrote:
+>
+> On 05/30/2019 01:11 AM, Eric Hankland wrote:
+> > On Wed, May 29, 2019 at 12:49 AM Wei Wang <wei.w.wang@intel.com> wrote:
+> >> On 05/29/2019 02:14 AM, Eric Hankland wrote:
+> >>> On Mon, May 27, 2019 at 6:56 PM Wei Wang <wei.w.wang@intel.com> wrote:
+> >>>> On 05/23/2019 06:23 AM, Eric Hankland wrote:
+> >>>>> - Add a VCPU ioctl that can control which events the guest can monitor.
+> >>>>>
+> >>>>> Signed-off-by: ehankland <ehankland@google.com>
+> >>>>> ---
+> >>>>> Some events can provide a guest with information about other guests or the
+> >>>>> host (e.g. L3 cache stats); providing the capability to restrict access
+> >>>>> to a "safe" set of events would limit the potential for the PMU to be used
+> >>>>> in any side channel attacks. This change introduces a new vcpu ioctl that
+> >>>>> sets an event whitelist. If the guest attempts to program a counter for
+> >>>>> any unwhitelisted event, the kernel counter won't be created, so any
+> >>>>> RDPMC/RDMSR will show 0 instances of that event.
+> >>>> The general idea sounds good to me :)
+> >>>>
+> >>>> For the implementation, I would have the following suggestions:
+> >>>>
+> >>>> 1) Instead of using a whitelist, it would be better to use a blacklist to
+> >>>> forbid the guest from counting any core level information. So by default,
+> >>>> kvm maintains a list of those core level events, which are not supported to
+> >>>> the guest.
+> >>>>
+> >>>> The userspace ioctl removes the related events from the blacklist to
+> >>>> make them usable by the guest.
+> >>>>
+> >>>> 2) Use vm ioctl, instead of vcpu ioctl. The blacklist-ed events can be
+> >>>> VM wide
+> >>>> (unnecessary to make each CPU to maintain the same copy).
+> >>>> Accordingly, put the pmu event blacklist into kvm->arch.
+> >>>>
+> >>>> 3) Returning 1 when the guest tries to set the evetlsel msr to count an
+> >>>> event which is on the blacklist.
+> >>>>
+> >>>> Best,
+> >>>> Wei
+> >>> Thanks for the feedback. I have a couple concerns with a KVM
+> >>> maintained blacklist. First, I'm worried it will be difficult to keep
+> >>> such a list up to date and accurate (both coming up with the initial
+> >>> list since there are so many events, and updating it whenever any new
+> >>> events are published or vulnerabilities are discovered).
+> >> Not sure about "so many" above. I think there should be much
+> >> fewer events that may need to be blacklisted.
+> >>
+> >> For example the event table 19-3 from SDM 19.2 shows hundreds of
+> >> events, how many of them would you think that need to be blacklisted?
+> >>
+> >>> Second, users
+> >>> may want to differentiate between whole-socket and sub-socket VMs
+> >>> (some events may be fine for the whole-socket case) - keeping a single
+> >>> blacklist wouldn't allow for this.
+> >> Why wouldn't?
+> >> In any case (e.g. the whole socket dedicated to the single VM) we
+> >> want to unlock the blacklisted events, we can have the userspace
+> >> (e.g. qemu command line options "+event1, +event2") do ioctl to
+> >> have KVM do that.
+> >>
+> >> Btw, for the L3 cache stats event example, I'm not sure if that could
+> >> be an issue if we have "AnyThread=0". I'll double confirm with
+> >> someone.
+> >>
+> >> Best,
+> >> Wei
+> >> Not sure about "so many" above. I think there should be much
+> >> fewer events that may need to be blacklisted.
+> > I think you're right that there are not as many events that seem like
+> > they could leak info as events that seem like they won't, but I think
+> > the work to validate that they definitely don't could be expensive;
+> > with a whitelist it's easy to start with a smaller set and
+> > incrementally add to it without having to evaluate all the events
+> > right away.
+>
+> Before going that whitelist/blacklist direction, do you have an event
+> example that couldn't be solved by setting "AnyThread=0"?
+>
+> If no, I think we could simply gate guest's setting of "AnyThread=0".
+>
+> Best,
+> Wei
 
-Signed-off-by: Voon Weifeng <weifeng.voon@intel.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c | 111 +++++++++++++++++++++++
- 1 file changed, 111 insertions(+)
+With anythread=0, I'm not aware of any events that directly give info
+about other VMs, but monitoring events related to shared resources
+(e.g. LLC References and LLC Misses) could indirectly give you info
+about how heavily other users are using that resource.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-index 7cbc01f316fa..1bdf716bfcbb 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-@@ -23,6 +23,7 @@
- #include <linux/dmi.h>
- 
- #include "stmmac.h"
-+#include "dwxpcs.h"
- 
- /*
-  * This struct is used to associate PCI Function of MAC controller on a board,
-@@ -118,6 +119,113 @@ static int stmmac_default_data(struct pci_dev *pdev,
- 	.setup = stmmac_default_data,
- };
- 
-+static int ehl_common_data(struct pci_dev *pdev,
-+			   struct plat_stmmacenet_data *plat)
-+{
-+	int i;
-+
-+	plat->bus_id = 1;
-+	plat->phy_addr = 0;
-+	plat->clk_csr = 5;
-+	plat->has_gmac = 0;
-+	plat->has_gmac4 = 1;
-+	plat->xpcs_phy_addr = 0x16;
-+	plat->pcs_mode = AN_CTRL_PCS_MD_C37_SGMII;
-+	plat->force_sf_dma_mode = 0;
-+	plat->tso_en = 1;
-+
-+	plat->rx_queues_to_use = 8;
-+	plat->tx_queues_to_use = 8;
-+	plat->rx_sched_algorithm = MTL_RX_ALGORITHM_SP;
-+
-+	for (i = 0; i < plat->rx_queues_to_use; i++) {
-+		plat->rx_queues_cfg[i].mode_to_use = MTL_QUEUE_DCB;
-+		plat->rx_queues_cfg[i].chan = i;
-+
-+		/* Disable Priority config by default */
-+		plat->rx_queues_cfg[i].use_prio = false;
-+
-+		/* Disable RX queues routing by default */
-+		plat->rx_queues_cfg[i].pkt_route = 0x0;
-+	}
-+
-+	for (i = 0; i < plat->tx_queues_to_use; i++) {
-+		plat->tx_queues_cfg[i].mode_to_use = MTL_QUEUE_DCB;
-+
-+		/* Disable Priority config by default */
-+		plat->tx_queues_cfg[i].use_prio = false;
-+	}
-+
-+	plat->tx_sched_algorithm = MTL_TX_ALGORITHM_WRR;
-+	plat->tx_queues_cfg[0].weight = 0x09;
-+	plat->tx_queues_cfg[1].weight = 0x0A;
-+	plat->tx_queues_cfg[2].weight = 0x0B;
-+	plat->tx_queues_cfg[3].weight = 0x0C;
-+	plat->tx_queues_cfg[4].weight = 0x0D;
-+	plat->tx_queues_cfg[5].weight = 0x0E;
-+	plat->tx_queues_cfg[6].weight = 0x0F;
-+	plat->tx_queues_cfg[7].weight = 0x10;
-+
-+	plat->mdio_bus_data->phy_reset = NULL;
-+	plat->mdio_bus_data->phy_mask = 0;
-+
-+	plat->dma_cfg->pbl = 32;
-+	plat->dma_cfg->pblx8 = true;
-+	plat->dma_cfg->fixed_burst = 0;
-+	plat->dma_cfg->mixed_burst = 0;
-+	plat->dma_cfg->aal = 0;
-+
-+	plat->axi = devm_kzalloc(&pdev->dev, sizeof(*plat->axi),
-+				 GFP_KERNEL);
-+	if (!plat->axi)
-+		return -ENOMEM;
-+
-+	plat->axi->axi_lpi_en = 0;
-+	plat->axi->axi_xit_frm = 0;
-+	plat->axi->axi_wr_osr_lmt = 1;
-+	plat->axi->axi_rd_osr_lmt = 1;
-+	plat->axi->axi_blen[0] = 4;
-+	plat->axi->axi_blen[1] = 8;
-+	plat->axi->axi_blen[2] = 16;
-+
-+	/* Set default value for multicast hash bins */
-+	plat->multicast_filter_bins = HASH_TABLE_SIZE;
-+
-+	/* Set default value for unicast filter entries */
-+	plat->unicast_filter_entries = 1;
-+
-+	/* Set the maxmtu to a default of JUMBO_LEN */
-+	plat->maxmtu = JUMBO_LEN;
-+
-+	/* Set 32KB fifo size as the advertised fifo size in
-+	 * the HW features is not the same as the HW implementation
-+	 */
-+	plat->tx_fifo_size = 32768;
-+	plat->rx_fifo_size = 32768;
-+
-+	return 0;
-+}
-+
-+static int ehl_sgmii1g_data(struct pci_dev *pdev,
-+			    struct plat_stmmacenet_data *plat)
-+{
-+	int ret;
-+
-+	/* Set common default data first */
-+	ret = ehl_common_data(pdev, plat);
-+	if (ret)
-+		return ret;
-+
-+	plat->interface = PHY_INTERFACE_MODE_SGMII;
-+	plat->has_xpcs = 1;
-+
-+	return 0;
-+}
-+
-+static struct stmmac_pci_info ehl_sgmii1g_pci_info = {
-+	.setup = ehl_sgmii1g_data,
-+};
-+
- static const struct stmmac_pci_func_data galileo_stmmac_func_data[] = {
- 	{
- 		.func = 6,
-@@ -290,6 +398,7 @@ static int stmmac_pci_probe(struct pci_dev *pdev,
- 	res.addr = pcim_iomap_table(pdev)[i];
- 	res.wol_irq = pdev->irq;
- 	res.irq = pdev->irq;
-+	res.xpcs_irq = 0;
- 
- 	return stmmac_dvr_probe(&pdev->dev, plat, &res);
- }
-@@ -359,6 +468,7 @@ static int __maybe_unused stmmac_pci_resume(struct device *dev)
- 
- #define STMMAC_QUARK_ID  0x0937
- #define STMMAC_DEVICE_ID 0x1108
-+#define STMMAC_EHL_SGMII1G_ID   0x4b31
- 
- #define STMMAC_DEVICE(vendor_id, dev_id, info)	{	\
- 	PCI_VDEVICE(vendor_id, dev_id),			\
-@@ -369,6 +479,7 @@ static int __maybe_unused stmmac_pci_resume(struct device *dev)
- 	STMMAC_DEVICE(STMMAC, STMMAC_DEVICE_ID, stmmac_pci_info),
- 	STMMAC_DEVICE(STMICRO, PCI_DEVICE_ID_STMICRO_MAC, stmmac_pci_info),
- 	STMMAC_DEVICE(INTEL, STMMAC_QUARK_ID, quark_pci_info),
-+	STMMAC_DEVICE(INTEL, STMMAC_EHL_SGMII1G_ID, ehl_sgmii1g_pci_info),
- 	{}
- };
- 
--- 
-1.9.1
+I tried returning 1 when the guest tries to write the eventsel msr for
+a disallowed event - the behavior on modern guest kernels looks
+reasonable (warns once about an unchecked MSR access error), but it
+looks like guests using older kernels (older than 2016) might panic
+due to the gpfault (not to mention I'm not sure about the behavior on
+non-linux kernels). So I'm hesitant to return 1 - what do you think?
 
+I also looked into moving from a vcpu ioctl to a vm ioctl - I can send
+out a version of the patch with this change once we settle on the
+other issues. It will involve some extra locking every time the
+counters are programmed to ensure the whitelist or blacklist isn't
+removed during access.
+
+Eric
