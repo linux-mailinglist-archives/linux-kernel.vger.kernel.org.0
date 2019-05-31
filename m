@@ -2,137 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8DA430B5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 11:22:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8AA530B71
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 11:26:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727138AbfEaJWj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 05:22:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60254 "EHLO mx1.suse.de"
+        id S1726826AbfEaJ0r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 05:26:47 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:45052 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726158AbfEaJWj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 05:22:39 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 23EC6AFD2;
-        Fri, 31 May 2019 09:22:37 +0000 (UTC)
-Date:   Fri, 31 May 2019 11:22:36 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Rientjes <rientjes@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@suse.de>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] Revert "mm, thp: restore node-local hugepage
- allocations"
-Message-ID: <20190531092236.GM6896@dhcp22.suse.cz>
-References: <20190503223146.2312-1-aarcange@redhat.com>
- <20190503223146.2312-3-aarcange@redhat.com>
- <alpine.DEB.2.21.1905151304190.203145@chino.kir.corp.google.com>
- <20190520153621.GL18914@techsingularity.net>
- <alpine.DEB.2.21.1905201018480.96074@chino.kir.corp.google.com>
- <20190523175737.2fb5b997df85b5d117092b5b@linux-foundation.org>
- <alpine.DEB.2.21.1905281907060.86034@chino.kir.corp.google.com>
+        id S1726240AbfEaJ0r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 05:26:47 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 6C9C2CF031826829C3CD;
+        Fri, 31 May 2019 17:26:43 +0800 (CST)
+Received: from [127.0.0.1] (10.177.19.180) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Fri, 31 May 2019
+ 17:26:37 +0800
+Subject: Re: [PATCH] crypto: pcrypt: Fix possible deadlock in
+ padata_sysfs_release
+To:     Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+CC:     <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Hulk Robot <hulkci@huawei.com>
+References: <20190531092923.4874-1-wangkefeng.wang@huawei.com>
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+Message-ID: <1b71b136-3501-db1c-834b-ba7ed1431f4d@huawei.com>
+Date:   Fri, 31 May 2019 17:23:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1905281907060.86034@chino.kir.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190531092923.4874-1-wangkefeng.wang@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.177.19.180]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 29-05-19 14:24:33, David Rientjes wrote:
-> On Thu, 23 May 2019, Andrew Morton wrote:
-> 
-> > > We are going in circles, *yes* there is a problem for potential swap 
-> > > storms today because of the poor interaction between memory compaction and 
-> > > directed reclaim but this is a result of a poor API that does not allow 
-> > > userspace to specify that its workload really will span multiple sockets 
-> > > so faulting remotely is the best course of action.  The fix is not to 
-> > > cause regressions for others who have implemented a userspace stack that 
-> > > is based on the past 3+ years of long standing behavior or for specialized 
-> > > workloads where it is known that it spans multiple sockets so we want some 
-> > > kind of different behavior.  We need to provide a clear and stable API to 
-> > > define these terms for the page allocator that is independent of any 
-> > > global setting of thp enabled, defrag, zone_reclaim_mode, etc.  It's 
-> > > workload dependent.
-> > 
-> > um, who is going to do this work?
-> > 
-> > Implementing a new API doesn't help existing userspace which is hurting
-> > from the problem which this patch addresses.
-> > 
-> 
-> The problem which this patch addresses has apparently gone unreported for 
-> 4+ years since
 
-Can we finaly stop considering the time and focus on the what is the
-most reasonable behavior in general case please? Conserving mistakes
-based on an argument that we have them for many years is just not
-productive. It is very well possible that workloads that suffer from
-this simply run on older distribution kernels which are moving towards
-newer kernels very slowly.
+On 2019/5/31 17:29, Kefeng Wang wrote:
+> There is a deadlock issue in pcrypt_init_padata(),
+>
+> pcrypt_init_padata()
+>     cpus_read_lock()
+>       padata_free()
+>         padata_sysfs_release()
+>           cpus_read_lock()
+>
+> Narrow rcu_read_lock/unlock() and move put_online_cpus()
+> before padata_free() to fix it.
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+> ---
+>  crypto/pcrypt.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/crypto/pcrypt.c b/crypto/pcrypt.c
+> index 0e9ce329fd47..662228b48b70 100644
+> --- a/crypto/pcrypt.c
+> +++ b/crypto/pcrypt.c
+> @@ -407,13 +407,14 @@ static int pcrypt_init_padata(struct padata_pcrypt *pcrypt,
+>  	int ret = -ENOMEM;
+>  	struct pcrypt_cpumask *mask;
+>  
+> -	get_online_cpus();
+>  
+>  	pcrypt->wq = alloc_workqueue("%s", WQ_MEM_RECLAIM | WQ_CPU_INTENSIVE,
+>  				     1, name);
+>  	if (!pcrypt->wq)
+>  		goto err;
+>  
+> +	get_online_cpus();
+> +
+>  	pcrypt->pinst = padata_alloc_possible(pcrypt->wq);
+>  	if (!pcrypt->pinst) 
 
-> commit 077fcf116c8c2bd7ee9487b645aa3b50368db7e1
-> Author: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
-> Date:   Wed Feb 11 15:27:12 2015 -0800
-> 
->     mm/thp: allocate transparent hugepages on local node
+Oh, forget to add put_online_cpus in this error path, will resend v2 if there is no comment.
 
-Let me quote the commit message to the full lenght
-"
-    This make sure that we try to allocate hugepages from local node if
-    allowed by mempolicy.  If we can't, we fallback to small page allocation
-    based on mempolicy.  This is based on the observation that allocating
-    pages on local node is more beneficial than allocating hugepages on remote
-    node.
 
-    With this patch applied we may find transparent huge page allocation
-    failures if the current node doesn't have enough freee hugepages.  Before
-    this patch such failures result in us retrying the allocation on other
-    nodes in the numa node mask.
-"
+>  		goto err_destroy_workqueue;
+> @@ -448,12 +449,11 @@ static int pcrypt_init_padata(struct padata_pcrypt *pcrypt,
+>  	free_cpumask_var(mask->mask);
+>  	kfree(mask);
+>  err_free_padata:
+> +	put_online_cpus();
+>  	padata_free(pcrypt->pinst);
+>  err_destroy_workqueue:
+>  	destroy_workqueue(pcrypt->wq);
+>  err:
+> -	put_online_cpus();
+> -
+>  	return ret;
+>  }
+>  
 
-I do not see any single numbers backing those claims or any mention of a
-workload that would benefit from the change. Besides that, we have seen
-that THP on a remote (but close) node might be performing better per
-Andrea's numbers. So those claims do not apply in general.
-
-This is a general problem when making decisions on heuristics which are
-not a clear cut. AFAICS there have been pretty good argments given that
-_real_ workloads suffer from this change while a demonstration of a _real_
-workload that is benefiting is still missing.
-
-> My goal is to reach a solution that does not cause anybody to incur 
-> performance penalties as a result of it.
-
-That is certainly appreciated and I can offer my help there as well. But
-I believe we should start with a code base that cannot generate a
-swapping storm by a trivial code as demonstrated by Mel. A general idea
-on how to approve the situation has been already outlined for a default
-case and a new memory policy has been mentioned as well but we need
-something to start with and neither of the two is compatible with the
-__GFP_THISNODE behavior.
-
-[...]
-
-> The easiest solution would be to define the MADV_HUGEPAGE behavior 
-> explicitly in sysfs: local or remote.  Defaut to local as the behavior 
-> from the past four years and allow users to specify remote if their 
-> workloads will span multiple sockets.  This is somewhat coarse but no more 
-> than the thp defrag setting in sysfs today that defines defrag behavior 
-> for everybody on the system.
-
-This just makes the THP tunning even muddier. Really, can we start with
-a code that doesn't blow up trivially and build on top? In other words
-start with a less specialized usecase being covered and help more
-specialized usecases to get what they need.
-
--- 
-Michal Hocko
-SUSE Labs
