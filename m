@@ -2,253 +2,241 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27A383150C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 21:04:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D39EE3153A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 21:23:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbfEaTET (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 15:04:19 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:50295 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726579AbfEaTES (ORCPT
+        id S1727256AbfEaTXv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 15:23:51 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45990 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727137AbfEaTXu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 15:04:18 -0400
-Received: by mail-it1-f196.google.com with SMTP id a186so17565795itg.0;
-        Fri, 31 May 2019 12:04:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jii0B1SHiBfsyisYt0tjpTfpkyGH53lgOLJFv4P8AwE=;
-        b=iuCYLYmDOhQ9p8JLVl/C0+c+Ld3GC+bFYACfyafdHxSbhnh+0QqJKPbE763fesZle2
-         zI84+KPISI7qwEliFT9USl6LsFCNKr2yU2Fd0EambT/PztdMkUmbto28suxyDlm/5j3W
-         dO/DR9hsyXaIdamyLwgTQuhHhFdZdmoXswkluBpKYYfYaXC/81D3YlmeXlSEefLZQQwZ
-         75PpNdtP+lDS2l63AMLuQ/gfe2hrPhwETogRiKrpkvUqz2SQggbiHIwy420WZHk8EZB+
-         J+PtKB0wY1DiZY5yWROXVbNhF/8aSWU6OsDFO6hWzQz0X6TtAChf8GboM4UgVDE8UGMS
-         135w==
+        Fri, 31 May 2019 15:23:50 -0400
+Received: by mail-pl1-f196.google.com with SMTP id x7so3394566plr.12
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 12:23:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jii0B1SHiBfsyisYt0tjpTfpkyGH53lgOLJFv4P8AwE=;
-        b=PnCADanpHFQqajS4m3sRwQGsOnE47LlreWO21Ecp/OBKxE7J6bn0zjkA7pUUbXChFO
-         tb4Ko5WtacU1zCKGqQ5mNK7HjVp4kPxZQrpwi/6+dn8PZN71uZHE6YKae8zEOyrNDlOu
-         dcF+LAh9/KuzIt7O6KW0HMs8A2IrahKvW0bCi7JC4ucRwffG2zvjCSX+1XQEoogeSQyg
-         6oWCNiomMg+3gd8JbYv9yuLm53lM2cU0vUhfX/Qa5EZg04eQxoAIn1faQ3VnvwjLz9Tt
-         2Gr3FWeUzijWIC1LQ20nwPbxZ9Abgn6WFENSuTs2hFl5Ooae/JZcrxybPXvyASkJV35V
-         ugDg==
-X-Gm-Message-State: APjAAAX2ADtxbRmOn+M8moFx0flZ0flf27pUE+mg9sKXBA2ZeTMp8SMk
-        PIVIBP9OGlC+hEqgtt6uA+jkWQ+k6T908HKpy14=
-X-Google-Smtp-Source: APXvYqwapy1+PtDtUVrQRkp40Z48kFBN7dxwhXYy+KhKWw8zc87Kq8HPXqmR6nBSk2z2xbUgQdaKwXi9T9lS1g6+EIw=
-X-Received: by 2002:a24:97d2:: with SMTP id k201mr8019261ite.151.1559329457355;
- Fri, 31 May 2019 12:04:17 -0700 (PDT)
+        h=x-gm-message-state:subject:date:message-id:mime-version
+         :content-transfer-encoding:cc:from:to;
+        bh=VG+Xtpxl4luXcLoXYHzOczLmqwJ/KICZpqExcJIYQWo=;
+        b=lP+P2MqNx8YTlUeVdZ0ckOqoUYk+QkeWIrCAHO5s8rKHVlTUzMy3Yr1oGXEiVCRahK
+         ex4b6wIfG6aF+yKPmaIi0zS7ahL+sSLKBnxfoY2FYE6HHkG5jnmSuLK1EzsZAeuMumV6
+         vkiomFH5eKo3F9TXs1uLNjeCZ1Ob8cL1s/7m8bpvYFmaof4yyyp5Ffpr1TF7j+Ye5Z1C
+         p7geJZYKxDLI9oOgD0xAdPKAPYqAypTPqAZfgeAHYBrukSWJvNhPnX7u8jmZfJBnoXvc
+         g8XRSF39WabAQf88WDf3kvtoMrTwQC2MRSKen48MeUcx5wdJ2OGdAeW1xN9djNVXy3E4
+         qfkQ==
+X-Gm-Message-State: APjAAAVaQW0WNhzrXdqIzw/oQHwEVyyVUKtqpSS3QaU+x3A+OY9oPMNb
+        YwL6y4QFunBfNo/8CrDaoGtHmA==
+X-Google-Smtp-Source: APXvYqwodoAgavzj2P4i1gNyR2leUPdA0IKjvBtDOQwiUdYmgggspbkKhk4fbaMsdd3hKYvFlqbwlg==
+X-Received: by 2002:a17:902:1003:: with SMTP id b3mr11774895pla.172.1559330629047;
+        Fri, 31 May 2019 12:23:49 -0700 (PDT)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id r4sm11493078pfq.134.2019.05.31.12.23.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 31 May 2019 12:23:48 -0700 (PDT)
+Subject: Add a new fchmodat4() syscall
+Date:   Fri, 31 May 2019 12:11:59 -0700
+Message-Id: <20190531191204.4044-1-palmer@sifive.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20190530094706.865-1-Anson.Huang@nxp.com> <20190530094706.865-2-Anson.Huang@nxp.com>
-In-Reply-To: <20190530094706.865-2-Anson.Huang@nxp.com>
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-Date:   Fri, 31 May 2019 12:04:06 -0700
-Message-ID: <CAHQ1cqE2UPL6mM0GdS3aLinM46puE1r+80qGUEX2yA9CDMz=EQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] arm64: dts: freescale: Add i.MX8MN dtsi support
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        manivannan.sadhasivam@linaro.org, bruno.thomsen@gmail.com,
-        Dong Aisheng <aisheng.dong@nxp.com>, ping.bai@nxp.com,
-        leoyang.li@nxp.com, Lucas Stach <l.stach@pengutronix.de>,
-        pankaj.bansal@nxp.com, bhaskar.upadhaya@nxp.com,
-        pramod.kumar_1@nxp.com, vabhav.sharma@nxp.com,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <Linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Cc:     linux-arch@vger.kernel.org, x86@kernel.org, luto@kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        Arnd Bergmann <arnd@arndb.de>
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 2:45 AM <Anson.Huang@nxp.com> wrote:
->
-> From: Anson Huang <Anson.Huang@nxp.com>
->
-> The i.MX8M Nano Media Applications Processor is a new SoC of the i.MX8M
-> family, it is a 14nm FinFET product of the growing mScale family targeting
-> the consumer market. It is built in Samsung 14LPP to achieve both high
-> performance and low power consumption and relies on a powerful fully
-> coherent core complex based on a quad core ARM Cortex-A53 cluster,
-> Cortex-M7 low-power coprocessor and graphics accelerator.
->
-> This patch adds the basic dtsi support for i.MX8MN.
->
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> This patch should be based on below patches for clock and pinctrl head files:
-> https://patchwork.kernel.org/patch/10968059/
-> https://patchwork.kernel.org/patch/10968267/
-> ---
->  arch/arm64/boot/dts/freescale/imx8mn.dtsi | 701 ++++++++++++++++++++++++++++++
->  1 file changed, 701 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mn.dtsi
->
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mn.dtsi b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-> new file mode 100644
-> index 0000000..c318ee6
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
-> @@ -0,0 +1,701 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright 2019 NXP
-> + */
-> +
-> +#include <dt-bindings/clock/imx8mn-clock.h>
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +#include "imx8mn-pinfunc.h"
-> +
-> +/ {
-> +       compatible = "fsl,imx8mn";
-> +       interrupt-parent = <&gic>;
-> +       #address-cells = <2>;
-> +       #size-cells = <2>;
-> +
-> +       aliases {
-> +               ethernet0 = &fec1;
-> +               gpio0 = &gpio1;
-> +               gpio1 = &gpio2;
-> +               gpio2 = &gpio3;
-> +               gpio3 = &gpio4;
-> +               gpio4 = &gpio5;
-> +               i2c0 = &i2c1;
-> +               i2c1 = &i2c2;
-> +               i2c2 = &i2c3;
-> +               i2c3 = &i2c4;
-> +               mmc0 = &usdhc1;
-> +               mmc1 = &usdhc2;
-> +               mmc2 = &usdhc3;
-> +               serial0 = &uart1;
-> +               serial1 = &uart2;
-> +               serial2 = &uart3;
-> +               serial3 = &uart4;
-> +               spi0 = &ecspi1;
-> +               spi1 = &ecspi2;
-> +               spi2 = &ecspi3;
-> +       };
-> +
-> +       cpus {
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +
-> +               A53_0: cpu@0 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a53";
-> +                       reg = <0x0>;
-> +                       clock-latency = <61036>;
-> +                       clocks = <&clk IMX8MN_CLK_ARM>;
-> +                       enable-method = "psci";
-> +                       next-level-cache = <&A53_L2>;
-> +               };
-> +
-> +               A53_1: cpu@1 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a53";
-> +                       reg = <0x1>;
-> +                       clock-latency = <61036>;
-> +                       clocks = <&clk IMX8MN_CLK_ARM>;
-> +                       enable-method = "psci";
-> +                       next-level-cache = <&A53_L2>;
-> +               };
-> +
-> +               A53_2: cpu@2 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a53";
-> +                       reg = <0x2>;
-> +                       clock-latency = <61036>;
-> +                       clocks = <&clk IMX8MN_CLK_ARM>;
-> +                       enable-method = "psci";
-> +                       next-level-cache = <&A53_L2>;
-> +               };
-> +
-> +               A53_3: cpu@3 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a53";
-> +                       reg = <0x3>;
-> +                       clock-latency = <61036>;
-> +                       clocks = <&clk IMX8MN_CLK_ARM>;
-> +                       enable-method = "psci";
-> +                       next-level-cache = <&A53_L2>;
-> +               };
-> +
-> +               A53_L2: l2-cache0 {
-> +                       compatible = "cache";
-> +               };
-> +       };
-> +
-> +       memory@40000000 {
-> +               device_type = "memory";
-> +               reg = <0x0 0x40000000 0 0x80000000>;
-> +       };
-> +
-> +       osc_32k: clock-osc-32k {
-> +               compatible = "fixed-clock";
-> +               #clock-cells = <0>;
-> +               clock-frequency = <32768>;
-> +               clock-output-names = "osc_32k";
-> +       };
-> +
-> +       osc_24m: clock-osc-24m {
-> +               compatible = "fixed-clock";
-> +               #clock-cells = <0>;
-> +               clock-frequency = <24000000>;
-> +               clock-output-names = "osc_24m";
-> +       };
-> +
-> +       clk_ext1: clock-ext1 {
-> +               compatible = "fixed-clock";
-> +               #clock-cells = <0>;
-> +               clock-frequency = <133000000>;
-> +               clock-output-names = "clk_ext1";
-> +       };
-> +
-> +       clk_ext2: clock-ext2 {
-> +               compatible = "fixed-clock";
-> +               #clock-cells = <0>;
-> +               clock-frequency = <133000000>;
-> +               clock-output-names = "clk_ext2";
-> +       };
-> +
-> +       clk_ext3: clock-ext3 {
-> +               compatible = "fixed-clock";
-> +               #clock-cells = <0>;
-> +               clock-frequency = <133000000>;
-> +               clock-output-names = "clk_ext3";
-> +       };
-> +
-> +       clk_ext4: clock-ext4 {
-> +               compatible = "fixed-clock";
-> +               #clock-cells = <0>;
-> +               clock-frequency= <133000000>;
-> +               clock-output-names = "clk_ext4";
-> +       };
-> +
-> +       gic: interrupt-controller@38800000 {
-> +               compatible = "arm,gic-v3";
-> +               reg = <0x0 0x38800000 0 0x10000>,
-> +                     <0x0 0x38880000 0 0xC0000>;
-> +               #interrupt-cells = <3>;
-> +               interrupt-controller;
-> +               interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
+I spent half of dinner last night being complained to by one of our
+hardware engineers about Linux's lack of support for the flags argument
+to fchmodat().  This all came about because of a FUSE filesystem
+implementation, and while there are some application-specific
+workarounds for the issue it seemed to me like the cleanest bet was to
+just go add another fchmodat() that supports flags to the kernel.
 
-GIC should probably go into soc {} node. At least that's how we have
-it in i.MX8MQ AFAICT.
+The actual implementation is super simple: essentially it's just
+the same as fchmodat(), but LOOKUP_FOLLOW is conditionally set based on
+the flags.  I've attempted to make this match "man 2 fchmodat" as
+closely as possible, which says EINVAL is returned for invalid flags (as
+opposed to ENOTSUPP, which is currently returned by glibc for
+AT_SYMLINK_NOFOLLOW).  I have a sketch of a glibc patch that I haven't
+even compiled yet, but seems fairly straight-forward:
 
-Thanks,
-Andrey Smirnov
+    diff --git a/sysdeps/unix/sysv/linux/fchmodat.c b/sysdeps/unix/sysv/linux/fchmodat.c
+    index 6d9cbc1ce9e0..b1beab76d56c 100644
+    --- a/sysdeps/unix/sysv/linux/fchmodat.c
+    +++ b/sysdeps/unix/sysv/linux/fchmodat.c
+    @@ -29,12 +29,36 @@
+     int
+     fchmodat (int fd, const char *file, mode_t mode, int flag)
+     {
+    -  if (flag & ~AT_SYMLINK_NOFOLLOW)
+    -    return INLINE_SYSCALL_ERROR_RETURN_VALUE (EINVAL);
+    -#ifndef __NR_lchmod		/* Linux so far has no lchmod syscall.  */
+    +  /* There are four paths through this code:
+    +      - The flags are zero.  In this case it's fine to call fchmodat.
+    +      - The flags are non-zero and glibc doesn't have access to
+    +	__NR_fchmodat4.  In this case all we can do is emulate the error codes
+    +	defined by the glibc interface from userspace.
+    +      - The flags are non-zero, glibc has __NR_fchmodat4, and the kernel has
+    +	fchmodat4.  This is the simplest case, as the fchmodat4 syscall exactly
+    +	matches glibc's library interface so it can be called directly.
+    +      - The flags are non-zero, glibc has __NR_fchmodat4, but the kernel does
+    +	not.  In this case we must respect the error codes defined by the glibc
+    +	interface instead of returning ENOSYS.
+    +    The intent here is to ensure that the kernel is called at most once per
+    +    library call, and that the error types defined by glibc are always
+    +    respected.  */
+    +
+    +#ifdef __NR_fchmodat4
+    +  long result;
+    +#endif
+    +
+    +  if (flag == 0)
+    +    return INLINE_SYSCALL (fchmodat, 3, fd, file, mode);
+    +
+    +#ifdef __NR_fchmodat4
+    +  result = INLINE_SYSCALL (fchmodat4, 4, fd, file, mode, flag);
+    +  if (result == 0 || errno != ENOSYS)
+    +    return result;
+    +#endif
+    +
+       if (flag & AT_SYMLINK_NOFOLLOW)
+         return INLINE_SYSCALL_ERROR_RETURN_VALUE (ENOTSUP);
+    -#endif
+     
+    -  return INLINE_SYSCALL (fchmodat, 3, fd, file, mode);
+    +  return INLINE_SYSCALL_ERROR_RETURN_VALUE (EINVAL);
+     }
+
+I've never added a new syscall before so I'm not really sure what the
+proper procedure to follow is.  I'm assuming any new syscall will
+involve fairly significant discussion, so I've just done the minimum of
+an implementation for this patch set.  Specifically, I've:
+
+* Defined a new syscall that looks like fchmodat but includes a flag
+  argument, which I'm calling fchmodat4 because it has 4 arguments.  I
+  don't know if that's the correct naming convention, and don't really
+  have any skin in that game.
+* Implemented that syscall by extending the fchmod code to handle flags,
+  which is pretty straight-forward.  I think it's sane, but given that
+  it's so simple I'm not sure if I'm missing something -- specifically,
+  I didn't go check to make sure the semantics of AT_SYMLINK_NOFOLLOW
+  match !LOOKUP_FOLLOW.  I'm assuming the do, but sometimes when I look
+  at something and say "that's so simple, how is it broken" I'm actually
+  just missing something entirely.
+* Added an asm-generic syscall number for this, which I assume I'm
+  supposed to do this first as it looks like we're trying to keep the
+  numbers in sync everywhere.
+* Added x86 syscalls for this so I could test it.
+
+I also cleaned up a checkpatch issue in fchmodat().  I only found this
+because I copied the fchmodat() interface for fchmodat4() and it threw
+the warning, I don't personally care either way as to whether or not the
+space is in there.
+
+I've given this fairly minimal testing.  Essentially all I've done is
+booted up 5.1.6 with this patch set on my local development box and run
+
+    $ touch test-file
+    $ ln -s test-file test-link
+    $ cat > test.c
+    #include <fcntl.h>
+    #include <stdio.h>
+    #include <unistd.h>
+    
+    int main(int argc, char **argv)
+    {
+            long out;
+    
+            out = syscall(428, AT_FDCWD, "test-file", 0x888, AT_SYMLINK_NOFOLLOW);
+            printf("fchmodat4(AT_FDCWD, \"test-file\", 0x888, AT_SYMLINK_NOFOLLOW): %ld\n", out);
+    
+            out = syscall(428, AT_FDCWD, "test-file", 0x888, 0);
+            printf("fchmodat4(AT_FDCWD, \"test-file\", 0x888, 0): %ld\n", out);
+    
+            out = syscall(268, AT_FDCWD, "test-file", 0x888);
+            printf("fchmodat(AT_FDCWD, \"test-file\", 0x888): %ld\n", out);
+    
+            out = syscall(428, AT_FDCWD, "test-link", 0x888, AT_SYMLINK_NOFOLLOW);
+            printf("fchmodat4(AT_FDCWD, \"test-link\", 0x888, AT_SYMLINK_NOFOLLOW): %ld\n", out);
+    
+            out = syscall(428, AT_FDCWD, "test-link", 0x888, 0);
+            printf("fchmodat4(AT_FDCWD, \"test-link\", 0x888, 0): %ld\n", out);
+    
+            out = syscall(268, AT_FDCWD, "test-link", 0x888);
+            printf("fchmodat(AT_FDCWD, \"test-link\", 0x888): %ld\n", out);
+    
+            return 0;
+    }
+    $ gcc test.c -o test
+    $ ./test
+    fchmodat4(AT_FDCWD, "test-file", 0x888, AT_SYMLINK_NOFOLLOW): 0
+    fchmodat4(AT_FDCWD, "test-file", 0x888, 0): 0
+    fchmodat(AT_FDCWD, "test-file", 0x888): 0
+    fchmodat4(AT_FDCWD, "test-link", 0x888, AT_SYMLINK_NOFOLLOW): -1
+    fchmodat4(AT_FDCWD, "test-link", 0x888, 0): 0
+    fchmodat(AT_FDCWD, "test-link", 0x888): 0
+
+While I don't think there's any reason what's there is unacceptable, I
+don't really consider this finished.  I couldn't find a cookbook for
+"here's how you add a system call", but all I really did was "git grep
+add | grep syscall" so if there's something out there then please let me
+know and I'll follow it.  Specifically, I haven't:
+
+* Added any sort of documentation.  I don't find anything with a "git
+  grep fchmodat", so I'm assuming it's just the man pages that are
+  relevant here.
+* Fixed any of the other architectures.  I'm assuming this is just the
+  mechanical process of fixing all these in the same way I did for x86.
+
+      arch/alpha/kernel/syscalls/syscall.tbl:461      common  fchmodat                        sys_fchmodat
+      arch/arm/tools/syscall.tbl:333  common  fchmodat                sys_fchmodat
+      arch/arm64/include/asm/unistd32.h:#define __NR_fchmodat 333
+      arch/arm64/include/asm/unistd32.h:__SYSCALL(__NR_fchmodat, sys_fchmodat)
+      arch/ia64/kernel/fsys.S:        data8 0                         // fchmodat
+      arch/ia64/kernel/syscalls/syscall.tbl:268       common  fchmodat                        sys_fchmodat
+      arch/m68k/kernel/syscalls/syscall.tbl:299       common  fchmodat                        sys_fchmodat
+      arch/microblaze/kernel/syscalls/syscall.tbl:306 common  fchmodat                        sys_fchmodat
+      arch/mips/kernel/syscalls/syscall_n32.tbl:262   n32     fchmodat                        sys_fchmodat
+      arch/mips/kernel/syscalls/syscall_n64.tbl:258   n64     fchmodat                        sys_fchmodat
+      arch/mips/kernel/syscalls/syscall_o32.tbl:299   o32     fchmodat                        sys_fchmodat
+      arch/parisc/kernel/syscalls/syscall.tbl:286     common  fchmodat                sys_fchmodat
+      arch/powerpc/kernel/syscalls/syscall.tbl:297    common  fchmodat                        sys_fchmodat
+      arch/s390/kernel/syscalls/syscall.tbl:299  common       fchmodat                sys_fchmodat                    sys_fchmodat
+      arch/sh/include/uapi/asm/unistd_64.h:#define __NR_fchmodat              334
+      arch/sh/kernel/syscalls/syscall.tbl:306 common  fchmodat                        sys_fchmodat
+      arch/sh/kernel/syscalls_64.S:   .long sys_fchmodat
+      arch/sparc/kernel/syscalls/syscall.tbl:295      common  fchmodat                sys_fchmodat
+      arch/xtensa/kernel/syscalls/syscall.tbl:300     common  fchmodat                        sys_fchmodat
+* Looked at anything in tools.  Again, I'm assuming it's just a
+  mechanical process of looking at all of these and adding fchmodat4.
+
+      tools/include/nolibc/nolibc.h:#ifdef __NR_fchmodat
+      tools/include/nolibc/nolibc.h:  return my_syscall4(__NR_fchmodat, AT_FDCWD, path, mode, 0);
+      tools/include/uapi/asm-generic/unistd.h:#define __NR_fchmodat 53
+      tools/include/uapi/asm-generic/unistd.h:__SYSCALL(__NR_fchmodat, sys_fchmodat)
+      tools/perf/arch/powerpc/entry/syscalls/syscall.tbl:297  common  fchmodat                        sys_fchmodat
+      tools/perf/arch/s390/entry/syscalls/syscall.tbl:299  common     fchmodat                sys_fchmodat                    compat_sys_fchmodat
+      tools/perf/arch/x86/entry/syscalls/syscall_64.tbl:268   common  fchmodat                __x64_sys_fchmodat
+      tools/perf/builtin-trace.c:     { .name     = "fchmodat",
+
+* Done anything with userspace, aside from thinking about the glibc code
+  above.  I'd assume that I'm meant to bring in libc-alpha to the
+  discussion, but I didn't want to do so this early in case this was
+  just a non-starter.
+
+I'm happy dealing with all of that, but given that I'm assuming there's
+going to be some discussion I wanted to send out the proof-of-concept
+first to see if this has any legs.  Aside from the glibc side the
+remaining work smells pretty mechanical, so I figured I'd wait on that
+until I knew it wasn't going to be a waste of time -- partially because
+I'm lazy, but mostly because I just realized I blew my whole morning
+working on this when all I really wanted to do was avoid discussing
+fchmodat in the first place :)
+    
+
