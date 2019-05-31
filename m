@@ -2,102 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A1BF30963
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 09:35:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBD2F3096E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 09:39:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726830AbfEaHfX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 03:35:23 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37228 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbfEaHfW (ORCPT
+        id S1726860AbfEaHi6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 03:38:58 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34521 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726158AbfEaHi6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 03:35:22 -0400
-Received: by mail-wr1-f66.google.com with SMTP id h1so5786116wro.4
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 00:35:21 -0700 (PDT)
+        Fri, 31 May 2019 03:38:58 -0400
+Received: by mail-pg1-f195.google.com with SMTP id h2so325703pgg.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 00:38:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=s1a3ffK83MdLiV09gJmbZprosRcZAkmT+m5DPcFIxLc=;
-        b=2AtMxCgTOMoBq7V9O7ebISL00QYFiROr5UX+WTKR05o5v0dVhtwpjUbP0ywuufRSCM
-         wDJrYJeUH9R+b+Jdvioau1ENioD6Qribz6U8CFcxipGne2CTrxV7FayE/+IjMGzbs7SX
-         hat2IjnZnc9/hU12Tz3ql2SJJ4CmSrTRqwc2Ywi1FDgNePgDQuCg/1TpHAB8T9FW1XkQ
-         BZ74F01wprRlXAXSZRb926n11MZcEKM3+M7QFr1h61RYzqu4crdrThXgG8xILJTnynpq
-         nlTSIfG/d7CdNzdl43AjcOOQJId5ugbuwo9Z/vckY4v1NUuqJxSv9gbzAaB5JEEJxXBV
-         pypw==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=g8DOkQs3tJJMTiP3KpsnfFyLKFLOLt0qtvZcNKVpUCg=;
+        b=TjB+ZxUhUm9GBCDVwfx4e/cuXlJwh7kaM6nf9OLRcp6qOX/H8RxjWlYekkcJ93ftDp
+         cFsdU/itNxI04wVELPsulpenyXzmZkmk4BE0w9JDz2/6hOoEr4yanKFBmiogY1Um3EWI
+         iIRm6hyyW7zUhRf0FNanzmwdP6tw7YfeQRQrM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=s1a3ffK83MdLiV09gJmbZprosRcZAkmT+m5DPcFIxLc=;
-        b=NBpc2ur7wlWXEmBd17TMo55c450k8ftlrVZ8bU67XJ8f4u5w+gQV9zwQZ725Hdnin/
-         CxneHXCPCOMFSmVBmnTkW4SS8yYdClT7QWkx42SoEL5uvpgHe5ayMFHZBCXXxX8Vyijr
-         hTx/yphTGtB4gy0VYO0Ew/kEqsmFozuOjLly9M+mxEKxpXxcMdBzkDdkFl0w0/2ZPF+4
-         2o7fSq3ZwLmsvQ5OhRbmAgdGChfFnKcVx4kIAETEBnm+76crHTcU6PGZF62+JHeYeYmh
-         42vig32ZPIL0ylWs6TI+UA2lbpfnnnZFXgkUal0Mg+ECfvE44/9bSErxC78MEmD67w/i
-         5JdA==
-X-Gm-Message-State: APjAAAVbZTOcd0Vkk78Th6/KXu3B0/+mxuWY9XB9IdUh/jkOFKMZZyaP
-        dCcsD45jqTSpTxwCHGH3oTKLNnDbBsc=
-X-Google-Smtp-Source: APXvYqzW5W/cGqo1lduxfmk0mQcqRPMhScqJjyMum6NFeXqwzHHcOB9UUS6QS5cuQrryl5bXKzjy7Q==
-X-Received: by 2002:adf:dc04:: with SMTP id t4mr5714889wri.126.1559288121099;
-        Fri, 31 May 2019 00:35:21 -0700 (PDT)
-Received: from cobook.home (nikaet.starlink.ru. [94.141.168.29])
-        by smtp.gmail.com with ESMTPSA id g5sm6021418wrp.29.2019.05.31.00.35.19
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=g8DOkQs3tJJMTiP3KpsnfFyLKFLOLt0qtvZcNKVpUCg=;
+        b=jVSTObKUf1lfDAYVYY5/gCDsdAq3NpYn0c2mfEdwlzSz1Y0V2BEHD9mvc1dWwx0zZX
+         liZaUP+tf/BKhq9mG295vs4nprc1WKPAoIBZ3baRVfQPN6DDSVlWQr6XGAyzh1n4K0AS
+         gPRp3xtqPrhGnp/Sy++3Gh0LYv/h2y1Y24KPG93w9maJSvAXYpI99RjomF5VIpWHI+A4
+         hRlNitGHVpUWZU6uqWBfKXFrMj971FEMP8OCLncPtt8KZ1o9AFgrkLQoojG6nrzGC67F
+         DZaRSu1vopkgpGsWwwLmmXGZ6MXZrgue8uFxhIvsJSWpzo7floUJmRBWZZoWi8VsYK1P
+         7Bcw==
+X-Gm-Message-State: APjAAAXTS93AnOTFuyU/080SYxng1vMDVldAsdZfJwc5kvoYvYgqZQxc
+        /Gmd29RzFcUu55ZUwLJWJjNF/w==
+X-Google-Smtp-Source: APXvYqyh9Gx4WMpB1o5c4zInzMILlvq5fF1RbNXMaUCPTCYPs4s+1ahQf9BJqP4MNuiuhHpkwzReBA==
+X-Received: by 2002:a62:5306:: with SMTP id h6mr8141814pfb.29.1559288337403;
+        Fri, 31 May 2019 00:38:57 -0700 (PDT)
+Received: from pihsun-z840.tpe.corp.google.com ([2401:fa00:1:10:7889:7a43:f899:134c])
+        by smtp.googlemail.com with ESMTPSA id r71sm17051741pjb.2.2019.05.31.00.38.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 May 2019 00:35:20 -0700 (PDT)
-From:   Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-To:     Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        =?UTF-8?q?Marek=20Beh=C3=BAn?= <marek.behun@nic.cz>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chris Healy <cphealy@gmail.com>,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: [PATCH] net: dsa: mv88e6xxx: avoid error message on remove from VLAN 0
-Date:   Fri, 31 May 2019 10:35:14 +0300
-Message-Id: <20190531073514.2171-1-nikita.yoush@cogentembedded.com>
-X-Mailer: git-send-email 2.11.0
+        Fri, 31 May 2019 00:38:56 -0700 (PDT)
+From:   Pi-Hsun Shih <pihsun@chromium.org>
+Cc:     Pi-Hsun Shih <pihsun@chromium.org>, Erin Lo <erin.lo@mediatek.com>,
+        Rob Herring <robh@kernel.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-remoteproc@vger.kernel.org (open list:REMOTE PROCESSOR
+        (REMOTEPROC) SUBSYSTEM),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC
+        support),
+        linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC
+        support), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v9 1/7] dt-bindings: Add a binding for Mediatek SCP
+Date:   Fri, 31 May 2019 15:38:42 +0800
+Message-Id: <20190531073848.155444-2-pihsun@chromium.org>
+X-Mailer: git-send-email 2.22.0.rc1.257.g3120a18244-goog
+In-Reply-To: <20190531073848.155444-1-pihsun@chromium.org>
+References: <20190531073848.155444-1-pihsun@chromium.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When non-bridged, non-vlan'ed mv88e6xxx port is moving down, error
-message is logged:
+From: Erin Lo <erin.lo@mediatek.com>
 
-failed to kill vid 0081/0 for device eth_cu_1000_4
+Add a DT binding documentation of SCP for the
+MT8183 SoC from Mediatek.
 
-This is caused by call from __vlan_vid_del() with vin set to zero, over
-call chain this results into _mv88e6xxx_port_vlan_del() called with
-vid=0, and mv88e6xxx_vtu_get() called from there returns -EINVAL.
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-On symmetric path moving port up, call goes through
-mv88e6xxx_port_vlan_prepare() that calls mv88e6xxx_port_check_hw_vlan()
-that returns -EOPNOTSUPP for zero vid.
-
-This patch changes mv88e6xxx_vtu_get() to also return -EOPNOTSUPP for
-zero vid, then this error code is explicitly cleared in
-dsa_slave_vlan_rx_kill_vid() and error message is no longer logged.
-
-Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 ---
- drivers/net/dsa/mv88e6xxx/chip.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes from v8, v7, v6:
+ - No change.
 
-diff --git a/drivers/net/dsa/mv88e6xxx/chip.c b/drivers/net/dsa/mv88e6xxx/chip.c
-index 28414db979b0..6b77fde5f0e4 100644
---- a/drivers/net/dsa/mv88e6xxx/chip.c
-+++ b/drivers/net/dsa/mv88e6xxx/chip.c
-@@ -1392,7 +1392,7 @@ static int mv88e6xxx_vtu_get(struct mv88e6xxx_chip *chip, u16 vid,
- 	int err;
- 
- 	if (!vid)
--		return -EINVAL;
-+		return -EOPNOTSUPP;
- 
- 	entry->vid = vid - 1;
- 	entry->valid = false;
+Changes from v5:
+ - Remove dependency on CONFIG_RPMSG_MTK_SCP.
+
+Changes from v4:
+ - Add detail of more properties.
+ - Document the usage of mtk,rpmsg-name in subnode from the new design.
+
+Changes from v3:
+ - No change.
+
+Changes from v2:
+ - No change. I realized that for this patch series, there's no need to
+   add anything under the mt8183-scp node (neither the mt8183-rpmsg or
+   the cros-ec-rpmsg) for them to work, since mt8183-rpmsg is added
+   directly as a rproc_subdev by code, and cros-ec-rpmsg is dynamically
+   created by SCP name service.
+
+Changes from v1:
+ - No change.
+---
+ .../bindings/remoteproc/mtk,scp.txt           | 36 +++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+
+diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+new file mode 100644
+index 000000000000..3ba668bab14b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+@@ -0,0 +1,36 @@
++Mediatek SCP Bindings
++----------------------------------------
++
++This binding provides support for ARM Cortex M4 Co-processor found on some
++Mediatek SoCs.
++
++Required properties:
++- compatible		Should be "mediatek,mt8183-scp"
++- reg			Should contain the address ranges for the two memory
++			regions, SRAM and CFG.
++- reg-names		Contains the corresponding names for the two memory
++			regions. These should be named "sram" & "cfg".
++- clocks		Clock for co-processor (See: ../clock/clock-bindings.txt)
++- clock-names		Contains the corresponding name for the clock. This
++			should be named "main".
++
++Subnodes
++--------
++
++Subnodes of the SCP represent rpmsg devices. The names of the devices are not
++important. The properties of these nodes are defined by the individual bindings
++for the rpmsg devices - but must contain the following property:
++
++- mtk,rpmsg-name	Contains the name for the rpmsg device. Used to match
++			the subnode to rpmsg device announced by SCP.
++
++Example:
++
++	scp: scp@10500000 {
++		compatible = "mediatek,mt8183-scp";
++		reg = <0 0x10500000 0 0x80000>,
++		      <0 0x105c0000 0 0x5000>;
++		reg-names = "sram", "cfg";
++		clocks = <&infracfg CLK_INFRA_SCPSYS>;
++		clock-names = "main";
++	};
 -- 
-2.11.0
+2.22.0.rc1.257.g3120a18244-goog
 
