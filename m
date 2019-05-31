@@ -2,83 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0450730D94
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 13:55:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F01C430DA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 13:56:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727287AbfEaLzO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 07:55:14 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:35767 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726415AbfEaLzL (ORCPT
+        id S1727336AbfEaL4J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 07:56:09 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:59575 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727269AbfEaL4J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 07:55:11 -0400
-Received: from orion.localdomain ([77.7.63.28]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1McY4R-1h0eIJ3kSb-00czVP; Fri, 31 May 2019 13:54:59 +0200
-From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     axboe@kernel.dk, herbert@gondor.apana.org.au, davem@davemloft.net,
-        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org
-Subject: [PATCH 3/3] drivers: crypto: picoxcell_crypto: use MODULE_OF_TABLE()
-Date:   Fri, 31 May 2019 13:54:50 +0200
-Message-Id: <1559303690-8108-4-git-send-email-info@metux.net>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1559303690-8108-1-git-send-email-info@metux.net>
-References: <1559303690-8108-1-git-send-email-info@metux.net>
-X-Provags-ID: V03:K1:Z6c1otDiTNvUfwOuHqha8BpkR4bhVZXrx+Nd5UJ+38AdPk5i7a6
- Uf8PqxlaEioT72Dzl8OTgXnweMyPE/u+7DiXRbdc1EiAG81trgGasXM6LB7+GxmjkObJ7eC
- xSdAnLMrH0YzzrpBUhLAu57HOb+byTpj5GJPis7uw3Xm/RGAUmL47VwLag3XKWEWYBRt9m1
- /K/RJ1AY48ySg7Zt1k0aQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:4QTsQ4K3Qs4=:KyD82KBShjukXcY7/uboSK
- HnSHzsiycu0FBTOlte7XmZVIU+Rb3Q3ROWHSnBUUjijhPTxeo6brqaowNwQ4up2syGXbMkvdF
- H7HKhNBPtZ/5/GGTpOQ/sVxUlWP8wdtWp3hsmoqajioL/c/cw9tXq+Waq4hk1wQC/cvtxAal8
- cojlrcfWG+z0dUL5vJozsXi+cwTdrYGkp5OvzRtoaLyPLRP4Ni05Gp8Mf/ZXIHoKt/1aet/by
- 16+F7SSpUFK3tB+fqqYjIMW5JSHulOwhVxfflU09daSkczy3F1fcy8lhkmX2kMPP1XS/ZNE4H
- huFttf4kYuoiIh2nPHjH2ZjuvGA+cKYrfP3ryt5NGM8O4RGpj1ZEW876A09QlRK+/bopYfFtV
- q65i0S1bxAYMhwyeX1tn8PgJB68yJ+7W+ftE2NOdHjTyJfLx1ctLFPI+jsT/DOL8gAXclVBN2
- xeCh2bHjqAv67QYdlbTMm1Yk6wPMg36BLVyxUC7iFxZnZNyULjt1JkqorIORNT4I1j0kgwF3w
- 6xIosKoEfxGgPXkAYzTpVS4TH8UcqGW2q68wMTLsFOKkDAqP0NkDtkjKsxAJDqfQl/BLrcVk7
- 1WuJSXMjE9xosBd8YedmyZZ2Foby84DrKZqxUYY5kTIrBJ55fSmnRz+9DKm5M4RCQwec6Alde
- lv4M2S3HXQiPSNOdJmCmw+K0006Vk0GbhiQfB+44V/RtRG4jf5L/ExxR1WtqgtgOKoY9EjUzD
- 2GZXXVr0BnFR0/0cD8JaexS7f87TCPIZUYFTfw==
+        Fri, 31 May 2019 07:56:09 -0400
+Received: from [5.158.153.53] (helo=[10.100.31.75])
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <anna-maria@linutronix.de>)
+        id 1hWg8j-0005oq-9O; Fri, 31 May 2019 13:56:05 +0200
+Date:   Fri, 31 May 2019 13:55:59 +0200 (CEST)
+From:   Anna-Maria Gleixner <anna-maria@linutronix.de>
+To:     Marcelo Tosatti <mtosatti@redhat.com>
+cc:     linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Luiz Capitulino <lcapitulino@redhat.com>,
+        Haris Okanovic <haris.okanovic@ni.com>
+Subject: Re: [patch 2/3] timers: do not raise softirq unconditionally
+ (spinlockless version)
+In-Reply-To: <20190530201455.GC23199@amt.cnet>
+Message-ID: <alpine.DEB.2.21.1905311355180.4899@somnus>
+References: <20190415201213.600254019@amt.cnet> <20190415201429.427759476@amt.cnet> <alpine.DEB.2.21.1905291653120.1395@somnus> <20190530201455.GC23199@amt.cnet>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using MODULE_OF_TABLE() macro to get rid of some #ifdef
-CONFIG_OF and thus make the code a bit slimmer.
+On Thu, 30 May 2019, Marcelo Tosatti wrote:
 
-These macros already check whether CONFIG_OF is set and if it's
-not, just no-op. The compiler then should be able to optimize-
-away unreferenced structs.
+> On Wed, May 29, 2019 at 04:53:26PM +0200, Anna-Maria Gleixner wrote:
+> > On Mon, 15 Apr 2019, Marcelo Tosatti wrote:
+> > 
+> > > --- linux-rt-devel.orig/kernel/time/timer.c	2019-04-15 14:21:02.788704354 -0300
+> > > +++ linux-rt-devel/kernel/time/timer.c	2019-04-15 14:22:56.755047354 -0300
+> > > @@ -1776,6 +1776,24 @@
+> > >  		if (time_before(jiffies, base->clk))
+> > >  			return;
+> > >  	}
+> > > +
+> > > +#ifdef CONFIG_PREEMPT_RT_FULL
+> > > +/* On RT, irq work runs from softirq */
+> > > +	if (irq_work_needs_cpu())
+> > > +		goto raise;
+> > 
+> > So with this patch and the change you made in the patch before, timers on
+> > RT are expired only when there is pending irq work or after modifying a
+> > timer on a non housekeeping cpu?
+> 
+> Well, run_timer_softirq execute only if pending_map contains a bit set.
+> 
+> > With your patches I could create the following problematic situation on RT
+> > (if I understood everything properly): I add a timer which should expire in
+> > 50 jiffies to the wheel of a non housekeeping cpu. So it ends up 50 buckets
+> > away form now in the first wheel. This timer is the only timer in the wheel
+> > and the next timer softirq raise is required in 50 jiffies. After adding
+> > the timer, the timer interrupt is raised, and no timer has to be expired,
+> > because there is no timer pending.
+> 
+> But the softirq will be raised, because pending_map will be set:
+> 
+> +               if (!bitmap_empty(base->pending_map, WHEEL_SIZE))
+> +                       goto raise;
+> 
+> No?
 
-Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
----
- drivers/crypto/picoxcell_crypto.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+I'm sorry! I read the #endif of the CONFIG_PREEMPT_RT_FULL section as an
+#else... This is where my confusion comes from. I will think about the
+problem and your solution a little bit more and give you feedback hopefully
+on monday.
 
-diff --git a/drivers/crypto/picoxcell_crypto.c b/drivers/crypto/picoxcell_crypto.c
-index 05b89e7..e637f6f 100644
---- a/drivers/crypto/picoxcell_crypto.c
-+++ b/drivers/crypto/picoxcell_crypto.c
-@@ -1625,14 +1625,12 @@ static DEVICE_ATTR(stat_irq_thresh, 0644, spacc_stat_irq_thresh_show,
- 	},
- };
- 
--#ifdef CONFIG_OF
- static const struct of_device_id spacc_of_id_table[] = {
- 	{ .compatible = "picochip,spacc-ipsec" },
- 	{ .compatible = "picochip,spacc-l2" },
- 	{}
- };
--MODULE_DEVICE_TABLE(of, spacc_of_id_table);
--#endif /* CONFIG_OF */
-+MODULE_OF_TABLE(spacc_of_id_table);
- 
- static int spacc_probe(struct platform_device *pdev)
- {
--- 
-1.9.1
+Thanks,
+	Anna-Maria
 
