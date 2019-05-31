@@ -2,71 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F30273146C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 20:11:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F05C931731
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 00:27:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726965AbfEaSLA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 14:11:00 -0400
-Received: from mail.efficios.com ([167.114.142.138]:37580 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726701AbfEaSLA (ORCPT
+        id S1726720AbfEaW1w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 18:27:52 -0400
+Received: from blnx3.securehostdns.com ([202.66.174.165]:45083 "EHLO
+        blnx3.securehostdns.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725913AbfEaW1w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 14:11:00 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 2AD3922F45C;
-        Fri, 31 May 2019 14:10:58 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id CVbXiAMBTh8l; Fri, 31 May 2019 14:10:57 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 6F47022F452;
-        Fri, 31 May 2019 14:10:57 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 6F47022F452
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1559326257;
-        bh=5pWd1qkBb3teYvKpgXTm+KiNou/eDaH+jFixlM1uv00=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=k5VLoki8BdROQLM1uUaHJqdewCx2tHy6R5ucG0eHqDTt3UWAv1n9iK2SuWXSWBFUQ
-         vlulMZ9s32lcR5UkF7OzzNks0Vn7Qmks0QyoxoGO4Xut/3s8omXKqVY9RVZMKGHJEI
-         TNqhwXToZDkqim9Wpy910sYbH4lsLnAPsrijTPNGLKiLLYsDQW/h96scaq1Uz6nVj8
-         BZnP7fvRhAFDklGPfoCS5E3wkvGtefxr4UxK/oVrXr8d2brN7j9RIel3zHh5puZV8Q
-         /NZCvbAJaWDLBdFEiZFzMBJ91j6l7XEUzfYmXUaLL2hqS7cAoqdjCR7GuqfT8uQGFc
-         Ahvecd3l/caGw==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id kld0ZKmMzhFe; Fri, 31 May 2019 14:10:57 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 516D322F446;
-        Fri, 31 May 2019 14:10:57 -0400 (EDT)
-Date:   Fri, 31 May 2019 14:10:57 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     carlos <carlos@redhat.com>, Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Rich Felker <dalias@libc.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Message-ID: <1528929896.22217.1559326257155.JavaMail.zimbra@efficios.com>
-In-Reply-To: <87muj2k4ov.fsf@oldenburg2.str.redhat.com>
-References: <20190503184219.19266-1-mathieu.desnoyers@efficios.com> <87h89gjgaf.fsf@oldenburg2.str.redhat.com> <1239705947.14878.1558985272873.JavaMail.zimbra@efficios.com> <140718133.18261.1559144710554.JavaMail.zimbra@efficios.com> <2022553041.20966.1559249801435.JavaMail.zimbra@efficios.com> <875zprm4jo.fsf@oldenburg2.str.redhat.com> <732661684.21584.1559314109886.JavaMail.zimbra@efficios.com> <87muj2k4ov.fsf@oldenburg2.str.redhat.com>
-Subject: Re: [PATCH 1/5] glibc: Perform rseq(2) registration at C startup
- and thread creation (v10)
+        Fri, 31 May 2019 18:27:52 -0400
+X-Greylist: delayed 12665 seconds by postgrey-1.27 at vger.kernel.org; Fri, 31 May 2019 18:27:51 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=famedrugs.in; s=default; h=Message-ID:Reply-To:Subject:To:From:Date:
+        Content-Transfer-Encoding:Content-Type:MIME-Version:Sender:Cc:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=I8DDC26cq1K7AoXIwYGQqK120qAwgQDTIE1kJNHJe+c=; b=NNz+N91yxf04vk1XWEUIvZFjGR
+        47ZIOSGvFajbj1x8CLNB+ZfImJjtyJ7RrYCu3l6OZfOGZGVaLwu9ZGmPUKBUnsN9397002GpTJatm
+        fwtt6jLCcpcPCD7TBgkf+iXlxdgGXVKtnrMtb7PSt74GNtwVvM/iKM3l39cnXS0eEIfOtQLl1q6S6
+        FVo/9Fo7UQWsCHFQEN/HkzNTaeuBS0GbHAXh/nvSM1UqfftKl71ZeZPBvtgwgT24gPBhjFl2jE/YM
+        BgX/39V2D3sB8+kKWWpNBmTvtl24m8z1pb12goXUYf9XWxDOsWEnp0pYQ7ftlH7p1vmgsKvRJkZom
+        /5YsGMKQ==;
+Received: from [::1] (port=38225 helo=blnx3.securehostdns.com)
+        by blnx3.securehostdns.com with esmtpa (Exim 4.91)
+        (envelope-from <chang.jeffery2017@yandex.ru>)
+        id 1hWm03-000C7j-3x; Fri, 31 May 2019 23:41:31 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.12_GA_3803 (ZimbraWebClient - FF67 (Linux)/8.8.12_GA_3794)
-Thread-Topic: glibc: Perform rseq(2) registration at C startup and thread creation (v10)
-Thread-Index: 86crk3o97x34dTvOXYVp+G+7ug75ug==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 31 May 2019 23:41:29 +0530
+From:   Chang Jeffery <chang.jeffery2017@yandex.ru>
+To:     undisclosed-recipients:;
+Subject: re: I have a business deal of mutual funds benefits for you.
+Reply-To: chang.jeffery2017@gmail.com
+Mail-Reply-To: chang.jeffery2017@gmail.com
+Message-ID: <f1e3086a73e27ede8d9195ccbaf617ec@yandex.ru>
+X-Sender: chang.jeffery2017@yandex.ru
+User-Agent: Roundcube Webmail/1.3.7
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - blnx3.securehostdns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - yandex.ru
+X-Get-Message-Sender-Via: blnx3.securehostdns.com: authenticated_id: famedrugs/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: blnx3.securehostdns.com: famedrugs
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -74,122 +59,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
------ On May 31, 2019, at 11:46 AM, Florian Weimer fweimer@redhat.com wrote=
-:
+-- 
+Dear sir,
 
-> * Mathieu Desnoyers:
->=20
->> Let's break this down into the various sub-issues involved:
->>
->> 1) How early do we need to setup rseq ? Should it be setup before:
->>    - LD_PRELOAD .so constructors ?
->>      - Without circular dependency,
->>      - With circular dependency,
->>    - audit libraries initialization ?
->>    - IFUNC resolvers ?
->>    - other callbacks ?
->>    - memory allocator calls ?
->>
->> We may end up in a situation where we need memory allocation to be setup
->> in order to initialize TLS before rseq can be registered for the main
->> thread. I suspect we will end up needing a fallbacks which always work
->> for the few cases that would try to use rseq too early in dl/libc startu=
-p.
->=20
-> I think the answer to that depends on whether it's okay to have an
-> observable transition from =E2=80=9Cno rseq kernel support=E2=80=9D to =
-=E2=80=9Ckernel supports
-> rseq=E2=80=9D.
+I have a client who is an oil business man and he made a fixed deposit 
+of $24million USD in my bank, where I am the director of the branch, My 
+client died with his entire family in Jordanian intervention in the 
+Syrian Civil War 2014 leaving behind no next of kin. I Propose to 
+present you as next of kin to claim the funds, if interested reply me 
+for full details and how we are to proceed to close this deal.
 
-As far as my own use-cases are concerned, I only care that rseq is initiali=
-zed
-before LD_PRELOAD .so constructors are executed.
-
-There appears to be some amount of documented limitations for what can be
-done by the IFUNC resolvers. It might be acceptable to document that rseq
-might not be initialized yet when those are executed.
-
-I'd like to hear what others think about whether we should care about IFUNC
-resolvers and audit libraries using restartable sequences TLS ?
-
-[...]
-
->=20
->> 4) Inability to touch a TLS variable (__rseq_abi) from ld-linux-*.so.2
->>    - Should we extend the dynamic linker to allow such TLS variable to b=
-e
->>      accessed ? If so, how much effort is required ?
->>    - Can we find an alternative way to initialize rseq early during
->>      dl init stages while still performing the TLS access from a functio=
-n
->>      implemented within libc.so ?
->=20
-> This is again related to the answer for (1).  There are various hacks we
-> could implement to make the initialization invisible (e.g., computing
-> the address of the variable using the equivalent of dlsym, after loading
-> all the initial objects and before starting relocation).  If it's not
-> too hard to add TLS support to ld.so, we can consider that as well.
-> (The allocation side should be pretty easy, relocation support it could
-> be more tricky.)
->=20
->> So far, I got rseq to be initialized before LD_PRELOADed library
->> constructors by doing the initialization in a constructor within
->> libc.so. I don't particularly like this approach, because the
->> constructor order is not guaranteed.
->=20
-> Right.
-
-One question related to use of constructors: AFAIU, if a library depends
-on glibc, ELF guarantees that the glibc constructor will be executed first,
-before the other library.
-
-Which leaves us with the execution order of constructors within libc.so,
-which is not guaranteed if we just use __attribute__ ((constructor)).
-However, all gcc versions that are required to build recent glibc
-seem to support a constructor with a "priority" value (lower gets
-executed first, and those are executed before constructors without
-priority).
-
-Could we do e.g.:
-
---- a/include/libc-internal.h
-+++ b/include/libc-internal.h
-@@ -21,6 +21,12 @@
-=20
- #include <hp-timing.h>
-=20
-+/* Libc constructor priority order. Lower is executed first.  */
-+enum libc_constructor_prio {
-+       /* Priorities between 0 and 100 are reserved.  */
-+       LIBC_CONSTRUCTOR_PRIO_RSEQ_INIT =3D 1000,
-+};
-+
- /* Initialize the `__libc_enable_secure' flag.  */
- extern void __libc_init_secure (void);
-=20
-and
-
-csu/libc-start.c:
-
-static
-__attribute__ ((constructor (LIBC_CONSTRUCTOR_PRIO_RSEQ_INIT)))
-void __rseq_libc_init (void)
-{
-  rseq_init ();
-  /* Register rseq ABI to the kernel.   */
-  (void) rseq_register_current_thread ();
-}
-
-[...]
-
-Thanks,
-
-Mathieu
-
-
-
-
---=20
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+Thanks
+ismet
