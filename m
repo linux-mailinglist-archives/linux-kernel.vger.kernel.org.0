@@ -2,86 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6114D30D8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 13:51:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBA4A30D95
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 13:55:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727282AbfEaLvn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 07:51:43 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:40074 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726555AbfEaLvm (ORCPT
+        id S1727211AbfEaLzL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 07:55:11 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:36409 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726275AbfEaLzL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 07:51:42 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4VBpR1j106746;
-        Fri, 31 May 2019 06:51:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1559303487;
-        bh=HRLvIjx+R4FfsPnV+OErB6fuDJVknwRmHtgkR9AUk2Q=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=zONJqRnW4wi8VaPRVM3nZZ25un490NHdlLvlne0czcJ1DgLsRqNXya2rpY55jGxbP
-         hsxTq3fWTgKUWKuB5RO6+7/JDmSqtTkyQchcg4OZo9DP1wbB0lCrIzcP0E2wVPvY4q
-         t8p7wFdnrw4hUC5qhyBwjUKNiM068nOrPYiI8B/8=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4VBpRAO004529
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 31 May 2019 06:51:27 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 31
- May 2019 06:51:26 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 31 May 2019 06:51:26 -0500
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4VBpQmH122805;
-        Fri, 31 May 2019 06:51:26 -0500
-Subject: Re: [PATCH v12 1/5] can: m_can: Create a m_can platform framework
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <wg@grandegger.com>, <mkl@pengutronix.de>, <davem@davemloft.net>
-CC:     <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190509161109.10499-1-dmurphy@ti.com>
- <dbb7bdef-820d-5dcc-d7b5-a82bc1b076fb@ti.com>
-Message-ID: <a8e3f2d3-18c3-3bdb-1318-8964afc7e032@ti.com>
-Date:   Fri, 31 May 2019 06:51:25 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <dbb7bdef-820d-5dcc-d7b5-a82bc1b076fb@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Fri, 31 May 2019 07:55:11 -0400
+Received: from orion.localdomain ([77.7.63.28]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MJEEf-1hHdBC3Svb-00KdNB; Fri, 31 May 2019 13:54:57 +0200
+From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     axboe@kernel.dk, herbert@gondor.apana.org.au, davem@davemloft.net,
+        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org
+Subject: RFC: get rid of #ifdef CONFIG_OF's around of match tables
+Date:   Fri, 31 May 2019 13:54:47 +0200
+Message-Id: <1559303690-8108-1-git-send-email-info@metux.net>
+X-Mailer: git-send-email 1.9.1
+X-Provags-ID: V03:K1:QyqpId/hEpcNLV2ZmI8NnMhtibn16SPodMQLXzILvjCTZujtrV0
+ id2OuI9H+tP5hKxwdD5l4T12+FnVanAIAl+m6iiUrmT/gzMpFqZKiE5HWDI0pd9uXvJpQHX
+ oGcrYHA2AD6dSGNqCdlkj1Or791Oiwv3BT2RNCEQRSxk7o5alVueZY65h2aMIYXC6BnhRl2
+ zGIEtkognRBOEJZFCDh7A==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:ru0tQEc/O7Y=:bqCnkg6fdTl1zAPWwfv2qw
+ n+nRlkRnaiteuVAWA8xPgxfk0iCvdXr8CJKsNkhBbVv5JpIPxSZIzoHX73C9olkyLieKvhQhH
+ kANXkHRrq5DVKPPVfrQ4C0ZBEL3JMoi/Zl8ij313RVCN7aoOTCHTJzSp+bu3Vjn8XRCeIKD0t
+ 6qLitUM3grDnC9S/zRWmFQf9BDG7ULvy+Zf9wcbRgeY5ix72TKDArTUyYx73/u498TZcbYz+g
+ dcBu+MUn9WbTVNDra9txBbdPMIgstR0QR+Ujc33O8zVAIOOvXSk9HO+Yra/JmMsfFnYz9m0g9
+ aJ8q6Gen4Qiw7dBRrZXdiXtEtHz6yQa5udCJqLxCJkW2OMjRzC0XB/Iys+CzSILg2rAe1h9xb
+ VHT27GsOmhKoCjx6vCLkdFlqldl7knCdRs3YYi2v4Qwrj3KQDh30nrjfW9n0lwZfdMUBNNzRU
+ BBH1tLpFnopr/lxS74F7Ukoa1TrF0cd5DiVz5YaBl+4dsO1PC47gR1KCVDhDu4B1jbfKRtnPX
+ nQV6ZnwZljLhzZZd1lSdeCvAWQ0TLpdM3SlMCP6FZ8a3VjoYbem4HnqwxTCT+UuCb6h36ih0W
+ lnrWlvcZ3DzgKg5kOBBnaLzDRYh1/AxAUWh6inICO/2wBuKEa6Nt2+GB6Afl04109edub0V0J
+ ASjBavaB7nnHyx7NSMQa0BbMk9/wGVR0W2cp/JaMzMWBdugMMtjM4Q3ZuoHTWKjvww1jLZb+8
+ JPT8svgsrcUydbrkqPsR2V3MJd8xdXIQN2JwSQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Marc
-
-On 5/15/19 3:54 PM, Dan Murphy wrote:
-> Marc
->
-> On 5/9/19 11:11 AM, Dan Murphy wrote:
->> Create a m_can platform framework that peripheral
->> devices can register to and use common code and register sets.
->> The peripheral devices may provide read/write and configuration
->> support of the IP.
->>
->> Acked-by: Wolfgang Grandegger <wg@grandegger.com>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->> ---
->>
->> v12 - Update the m_can_read/write functions to create a backtrace if the callback
->> pointer is NULL. - https://lore.kernel.org/patchwork/patch/1052302/
->>
-> Is this able to be merged now?
-
-ping
+Hi folks,
 
 
-> Dan
->
-> <snip>
+we've got many places where code declaring oftree match tables is
+enclodes by #ifdef CONFIG_OF, so it can also be built w/o oftree
+support.
+
+To make this easier to read, I'm proposing a new helper macro
+MODULE_OF_TABLE(foo) which just calls MODULE_DEVICE_TABLE(of, foo)
+when CONFIG_OF enabled, otherwise just noop. Along w/ of_match_ptr(),
+we can get rid most of these #ifdef CONFIG_OF cases. I believe, the
+compiler can automatically optimize-away the unused tables.
+(correct me if I'm wrong)
+
+This queue just introduces the macro and converts two random examples.
+I'll post more patches for the rest of the tree, if you folks aggree
+to this approach. And also I'd like to do the same w/ ACPI, PCI, etc.
+
+Another idea I'm currently thinking about is moving the whole table
+definition into a macro call, so the tables won't even get defined
+when CONFIG_OF isn't defined, and we've got even less to type. It
+then would look like this:
+
+    MODULE_DECLARE_OF_MATCH(foo_of_match,
+        { .compatible = "acme,foo" },
+        { .compatible = "acme,bar" })
+
+(note that the macro also defines the sentinel on its own).
+
+
+What do you think about this idea ?
+
+
+--mtx
+
+
