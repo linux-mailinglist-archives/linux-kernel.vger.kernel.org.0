@@ -2,98 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31AC7307C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 06:34:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23A90307D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 06:37:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726599AbfEaEeV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 00:34:21 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41318 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbfEaEeV (ORCPT
+        id S1726706AbfEaEh1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 00:37:27 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:39350 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725955AbfEaEh1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 00:34:21 -0400
-Received: by mail-pg1-f193.google.com with SMTP id z3so3283420pgp.8;
-        Thu, 30 May 2019 21:34:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=k1lABvVv11G/1BGI9nFcE5F+PdE4XUoO5D323rtAKn8=;
-        b=VRx9M24f5WLDV7pO7VbGq3NnECZWZo49yn53ZDxxXzB6Ysaw+lGCHsM+IR+9GTI5JJ
-         qwRgmUyQy+w2hD3Nj+aonhpWWRn2Vz9kzXkg3LvI4orh0feiMftuokFoi1KQzvmyuMp1
-         eq0LY8z0BriZEDzd0DLsx/NXj4UA19KmY8pXoxTI4zttCh+4cknuUKTfl/I3yYo0o4C1
-         b0fxTiBGF8Dd0VOAOTxPay9cRjP13dUah6rI6sU9DYoyCpxsVyh7GDU3oJni+t+ukzWU
-         FyBRJBN+k0ZUXgMIgEJspxQOYkIjQ+EvPdSe+GNHXy4Iz5nBpoALaKvC5EFahSd4uezi
-         o80A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=k1lABvVv11G/1BGI9nFcE5F+PdE4XUoO5D323rtAKn8=;
-        b=rfFExN90A5cEGzuc4aH8VS0cztzrkXVHTCsXZ16HVAK98FvLLVO1oLtM6mbJzfwC9E
-         2K6EU13opjPFjiNXrxTjv+SUwz7eS2eK40kJVos37VQVNIP40HJm9x+Y0NFcSXOmARYa
-         SBKI/5TeifDq72a5Ne+K0ln7qyRqIGjsDlU6WS7LpgGLKAm3/LzR7+4a15FuWNxzw7dW
-         MJoXyoj4azfqp/eDd3e9LxS/Mr3YUH1yyDSAabG67BnntR0QN85LJOEckhfQhkxa3e+i
-         R55OdC7CLYdpJr6+UG+6+vftJ/ISTl4k0AQ41RKrb2ig0TdcCQC2eK18qrhiuV7XdDmS
-         FLuw==
-X-Gm-Message-State: APjAAAUSm0M+H4glDrTlYa55oG2sUn20NrdA2M2nlUw5CDbhotd3OZUX
-        6vQsVBW+irFA0SCOEEHHXK4=
-X-Google-Smtp-Source: APXvYqyvXcJpTbvqOxUrPR7uenuJD7LBPIw1igpdciEBKs6jKLMDddZZXtXSa7h14V7eU7WormWGzA==
-X-Received: by 2002:a63:eb55:: with SMTP id b21mr6749426pgk.67.1559277260515;
-        Thu, 30 May 2019 21:34:20 -0700 (PDT)
-Received: from localhost (c-73-222-71-142.hsd1.ca.comcast.net. [73.222.71.142])
-        by smtp.gmail.com with ESMTPSA id u11sm4303610pfh.130.2019.05.30.21.34.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 30 May 2019 21:34:19 -0700 (PDT)
-Date:   Thu, 30 May 2019 21:34:17 -0700
-From:   Richard Cochran <richardcochran@gmail.com>
-To:     Vladimir Oltean <olteanv@gmail.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>
-Subject: Re: [PATCH net-next 0/5] PTP support for the SJA1105 DSA driver
-Message-ID: <20190531043417.6phscbpmo6krvxam@localhost>
-References: <20190528235627.1315-1-olteanv@gmail.com>
- <20190529045207.fzvhuu6d6jf5p65t@localhost>
- <dbe0a38f-8b48-06dd-cc2c-676e92ba0e74@gmail.com>
- <20190530034555.wv35efen3igwwzjq@localhost>
- <CA+h21hpjsC=ie5G7Gx3EcPpazyxze6X_k+8eC+vw7JBvEO2zNg@mail.gmail.com>
- <20190530143037.iky5kk3h4ssmec3f@localhost>
- <CA+h21hpp68AEEykxr8bJB=uJ+b0tg881Z7Ao_OfbTAXNxS8WgQ@mail.gmail.com>
- <20190530150557.iur7fruhyf5bs3qw@localhost>
- <CA+h21hrBwR4Sow7q0_rS1u2md1M4bSAJt8FO5+VLFiu9UGnvjA@mail.gmail.com>
+        Fri, 31 May 2019 00:37:27 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4V4b9V1008149;
+        Thu, 30 May 2019 23:37:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1559277429;
+        bh=WmWlIV0MNd4gzmwUDi38bv+85fSO0B2C0fC2Y7XqFgQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=VZQtV7CVk40P+SqfrjetVBWMBXU6OixEQsfU3qmxzTwLFEfnjJXVl3K7F9KUyetYy
+         4khN71oykyO2SuPwRhDNeTTtQbtuI/l//WYiQ+Mc2ZVetGdPd8ehUQmegEEL6GqeXk
+         tzGn2V0573j25PmVruYlQHiByUK3kC7S7E5KazOI=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4V4b9Ja019839
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 30 May 2019 23:37:09 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 30
+ May 2019 23:37:09 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Thu, 30 May 2019 23:37:09 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4V4b4So084582;
+        Thu, 30 May 2019 23:37:06 -0500
+Subject: Re: [PATCH v2] PCI: endpoint: Skip odd BAR when skipping 64bit BAR
+To:     Alan Mikhak <alan.mikhak@sifive.com>
+CC:     <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <lorenzo.pieralisi@arm.com>, <linux-riscv@lists.infradead.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        <gustavo.pimentel@synopsys.com>, <wen.yang99@zte.com.cn>,
+        <kjlu@umn.edu>
+References: <1558648540-14239-1-git-send-email-alan.mikhak@sifive.com>
+ <CABEDWGzHkt4p_byEihOAs9g97t450h9-Z0Qu2b2-O1pxCNPX+A@mail.gmail.com>
+ <baa68439-f703-a453-34a2-24387bb9112d@ti.com>
+ <CABEDWGyJpfX=DzBgXAGwu29rEwmY3s_P9QPC0eJOJ3KBysRWtA@mail.gmail.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <96365941-512b-dfb2-05b7-0780e8961f6c@ti.com>
+Date:   Fri, 31 May 2019 10:05:45 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+h21hrBwR4Sow7q0_rS1u2md1M4bSAJt8FO5+VLFiu9UGnvjA@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CABEDWGyJpfX=DzBgXAGwu29rEwmY3s_P9QPC0eJOJ3KBysRWtA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 06:23:09PM +0300, Vladimir Oltean wrote:
-> On Thu, 30 May 2019 at 18:06, Richard Cochran <richardcochran@gmail.com> wrote:
-> >
-> > But are the frames received in the same order?  What happens your MAC
-> > drops a frame?
-> >
+Hi Alan,
+
+On 25/05/19 12:20 AM, Alan Mikhak wrote:
+> Hi Kishon,
 > 
-> If it drops a normal frame, it carries on.
-> If it drops a meta frame, it prints "Expected meta frame", resets the
-> state machine and carries on.
-> If it drops a timestampable frame, it prints "Unexpected meta frame",
-> resets the state machine and carries on.
+> Yes. This change is still applicable even when the platform specifies
+> that it only supports 64-bit BARs by setting the bar_fixed_64bit
+> member of epc_features.
+> 
+> The issue being fixed is this: If the 'continue' statement is executed
+> within the loop, the loop index 'bar' needs to advanced by two, not
+> one, when the BAR is 64-bit. Otherwise the next loop iteration will be
+> on an odd BAR which doesn't exist.
 
-What I meant was, consider how dropped frames in the MAC will spoil
-any chance that the driver has to correctly match time stamps with
-frames.
+IIUC you are fixing the case where the BAR is "reserved" (specified in
+epc_features) and is also a 64-bit BAR?
 
-Thanks,
-Richard
+If 2 consecutive BARs are marked as reserved in reserved_bar of epc_features,
+the result should be the same right?
+
+Thanks
+Kishon
+
+> 
+> The PCI_BASE_ADDRESS_MEM_TYPE_64 flag in epf_bar->flag reflects the
+> value set by the platform in the bar_fixed_64bit member of
+> epc_features.
+> 
+> This patch moves the checking of  PCI_BASE_ADDRESS_MEM_TYPE_64 in
+> epf_bar->flags to before the 'continue' statement to advance the 'bar'
+> loop index accordingly. The comment you see about 'pci_epc_set_bar()'
+> preceding the moved code is the original comment and was also moved
+> along with the code.
+> 
+> Regards,
+> Alan Mikhak
+> 
+> On Fri, May 24, 2019 at 1:51 AM Kishon Vijay Abraham I <kishon@ti.com> wrote:
+>>
+>> Hi,
+>>
+>> On 24/05/19 5:25 AM, Alan Mikhak wrote:
+>>> +Bjorn Helgaas, +Gustavo Pimentel, +Wen Yang, +Kangjie Lu
+>>>
+>>> On Thu, May 23, 2019 at 2:55 PM Alan Mikhak <alan.mikhak@sifive.com> wrote:
+>>>>
+>>>> Always skip odd bar when skipping 64bit BARs in pci_epf_test_set_bar()
+>>>> and pci_epf_test_alloc_space().
+>>>>
+>>>> Otherwise, pci_epf_test_set_bar() will call pci_epc_set_bar() on odd loop
+>>>> index when skipping reserved 64bit BAR. Moreover, pci_epf_test_alloc_space()
+>>>> will call pci_epf_alloc_space() on bind for odd loop index when BAR is 64bit
+>>>> but leaks on subsequent unbind by not calling pci_epf_free_space().
+>>>>
+>>>> Signed-off-by: Alan Mikhak <alan.mikhak@sifive.com>
+>>>> Reviewed-by: Paul Walmsley <paul.walmsley@sifive.com>
+>>>> ---
+>>>>  drivers/pci/endpoint/functions/pci-epf-test.c | 25 ++++++++++++-------------
+>>>>  1 file changed, 12 insertions(+), 13 deletions(-)
+>>>>
+>>>> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+>>>> index 27806987e93b..96156a537922 100644
+>>>> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+>>>> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+>>>> @@ -389,7 +389,7 @@ static void pci_epf_test_unbind(struct pci_epf *epf)
+>>>>
+>>>>  static int pci_epf_test_set_bar(struct pci_epf *epf)
+>>>>  {
+>>>> -       int bar;
+>>>> +       int bar, add;
+>>>>         int ret;
+>>>>         struct pci_epf_bar *epf_bar;
+>>>>         struct pci_epc *epc = epf->epc;
+>>>> @@ -400,8 +400,14 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
+>>>>
+>>>>         epc_features = epf_test->epc_features;
+>>>>
+>>>> -       for (bar = BAR_0; bar <= BAR_5; bar++) {
+>>>> +       for (bar = BAR_0; bar <= BAR_5; bar += add) {
+>>>>                 epf_bar = &epf->bar[bar];
+>>>> +               /*
+>>>> +                * pci_epc_set_bar() sets PCI_BASE_ADDRESS_MEM_TYPE_64
+>>>> +                * if the specific implementation required a 64-bit BAR,
+>>>> +                * even if we only requested a 32-bit BAR.
+>>>> +                */
+>>
+>> set_bar shouldn't set PCI_BASE_ADDRESS_MEM_TYPE_64. If a platform supports only
+>> 64-bit BAR, that should be specified in epc_features bar_fixed_64bit member.
+>>
+>> Thanks
+>> Kishon
