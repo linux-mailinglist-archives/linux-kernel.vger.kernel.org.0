@@ -2,192 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C8073180F
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 01:32:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68B1B3182C
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 01:33:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726991AbfEaXcp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 19:32:45 -0400
-Received: from mga07.intel.com ([134.134.136.100]:59345 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726881AbfEaXci (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 19:32:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 May 2019 16:32:31 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.36])
-  by orsmga008.jf.intel.com with ESMTP; 31 May 2019 16:32:31 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Cedric Xing <cedric.xing@intel.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-sgx@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, Serge Ayoun <serge.ayoun@intel.com>,
-        Shay Katz-zamir <shay.katz-zamir@intel.com>,
-        Haitao Huang <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kai Svahn <kai.svahn@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Kai Huang <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        William Roberts <william.c.roberts@intel.com>,
-        Philip Tricca <philip.b.tricca@intel.com>
-Subject: [RFC PATCH 9/9] security/selinux: Add enclave_load() implementation
-Date:   Fri, 31 May 2019 16:31:59 -0700
-Message-Id: <20190531233159.30992-10-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190531233159.30992-1-sean.j.christopherson@intel.com>
-References: <20190531233159.30992-1-sean.j.christopherson@intel.com>
+        id S1727072AbfEaXdN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 19:33:13 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43996 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727034AbfEaXdK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 19:33:10 -0400
+Received: by mail-pg1-f193.google.com with SMTP id f25so4845989pgv.10
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 16:33:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zzddG9Gjm8AXO9IHzYUM1VDR0CHwahQe8D71s9hFu/c=;
+        b=sUFNLE70qFuM1j32iqPxE2N82dVJJzFJaig1Wc2IOUGvkXLZBJWeWXEnUpoER7ZDH5
+         lmPoYejl4nkgIgnY4RVJpWC4DbOXHt4cuJn3rNDITsEMmuHlooOoGM8q0p6UsN22WV3r
+         nsI1V8f9K77o0rjLcWUEgQj2DtJF5B2CAgykzgCf4yXUgSsJNINJozSXCUelfZYikR0t
+         vY2DgytSi3PGwSkp748aqkLh23FuFSagcBfJmDMaSw1brMGuZAZXdz+2y75ZfA+d4Aqj
+         UPpnZFpNufpYERlc5isr4RxlVC7tXskMUL9Rc1IH1UTus0aA98hA1TKSQvlLnNB7znCx
+         3pIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zzddG9Gjm8AXO9IHzYUM1VDR0CHwahQe8D71s9hFu/c=;
+        b=lqABF520suDnh1Vm93zbtBTFglW98Dw43nCxlbAidJCoIasf6XvVLcUYLQFaORJ6rm
+         xTWkN3ibQq6hA60IuCdTy3SgbjLRYkWZb7HclP2vE3vdkAhzSqjpSBKuF0isfAOZC6EB
+         kjVJkyMONniarSSMCFpeTDuix+jryUU7JymGNScrix+QqrUKN89qz3Pb5a+7iTXsnMJb
+         OUPLgxpkU8dtkXqJMNIAjZ0RJlx/pFhtSWNndAdZkZbHmWl/mPQxv4X5lAanugGI2IbM
+         OYFhZ3QEjJczZei2sMKI79ntW0sRcIwV+oUrjXkKXiskDVubMGEnoVSRKKPxwe0OYd6T
+         Fujw==
+X-Gm-Message-State: APjAAAU3OPgcU2v6B8vez8xOLcPK9KTFiGfiWmoh1GIlUI1Wlb0J64LC
+        pKFgvpy4yZrH9ieS7a7jWGneIg==
+X-Google-Smtp-Source: APXvYqyJ7gQmtzmeiKPbNeIHflsw1vNpFtYMs7bzVo3F+1S7RJ+MFhz+r8ETLxFyxFKwyQDGRT1VaQ==
+X-Received: by 2002:aa7:8b12:: with SMTP id f18mr13286126pfd.178.1559345589344;
+        Fri, 31 May 2019 16:33:09 -0700 (PDT)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id c17sm7733229pfo.114.2019.05.31.16.33.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 31 May 2019 16:33:08 -0700 (PDT)
+Date:   Fri, 31 May 2019 16:33:06 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Alex Elder <elder@linaro.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Dan Williams <dcbw@redhat.com>,
+        David Miller <davem@davemloft.net>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        evgreen@chromium.org, Ben Chan <benchan@google.com>,
+        Eric Caruso <ejcaruso@google.com>, cpratapa@codeaurora.org,
+        syadagir@codeaurora.org,
+        Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>,
+        abhishek.esse@gmail.com, Networking <netdev@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-soc@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 00/17] net: introduce Qualcomm IPA driver
+Message-ID: <20190531233306.GB25597@minitux>
+References: <20190531035348.7194-1-elder@linaro.org>
+ <e75cd1c111233fdc05f47017046a6b0f0c97673a.camel@redhat.com>
+ <065c95a8-7b17-495d-f225-36c46faccdd7@linaro.org>
+ <CAK8P3a05CevRBV3ym+pnKmxv+A0_T+AtURW2L4doPAFzu3QcJw@mail.gmail.com>
+ <a28c5e13-59bc-144d-4153-9d104cfa9188@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a28c5e13-59bc-144d-4153-9d104cfa9188@linaro.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The goal of selinux_enclave_load() is to provide a facsimile of the
-existing selinux_file_mprotect() and file_map_prot_check() policies,
-but tailored to the unique properties of SGX.
+On Fri 31 May 13:47 PDT 2019, Alex Elder wrote:
 
-For example, an enclave page is technically backed by a MAP_SHARED file,
-but the "file" is essentially shared memory that is never persisted
-anywhere and also requires execute permissions (for some pages).
+> On 5/31/19 2:19 PM, Arnd Bergmann wrote:
+> > On Fri, May 31, 2019 at 6:36 PM Alex Elder <elder@linaro.org> wrote:
+> >> On 5/31/19 9:58 AM, Dan Williams wrote:
+> >>> On Thu, 2019-05-30 at 22:53 -0500, Alex Elder wrote:
+> >>>
+> >>> My question from the Nov 2018 IPA rmnet driver still stands; how does
+> >>> this relate to net/ethernet/qualcomm/rmnet/ if at all? And if this is
+> >>> really just a netdev talking to the IPA itself and unrelated to
+> >>> net/ethernet/qualcomm/rmnet, let's call it "ipa%d" and stop cargo-
+> >>> culting rmnet around just because it happens to be a net driver for a
+> >>> QC SoC.
+> >>
+> >> First, the relationship between the IPA driver and the rmnet driver
+> >> is that the IPA driver is assumed to sit between the rmnet driver
+> >> and the hardware.
+> > 
+> > Does this mean that IPA can only be used to back rmnet, and rmnet
+> > can only be used on top of IPA, or can or both of them be combined
+> > with another driver to talk to instead?
+> 
+> No it does not mean that.
+> 
+> As I understand it, one reason for the rmnet layer was to abstract
+> the back end, which would allow using a modem, or using something
+> else (a LAN?), without exposing certain details of the hardware.
+> (Perhaps to support multiplexing, etc. without duplicating that
+> logic in two "back-end" drivers?)
+> 
+> To be perfectly honest, at first I thought having IPA use rmnet
+> was a cargo cult thing like Dan suggested, because I didn't see
+> the benefit.  I now see why one would use that pass-through layer
+> to handle the QMAP features.
+> 
+> But back to your question.  The other thing is that I see no
+> reason the IPA couldn't present a "normal" (non QMAP) interface
+> for a modem.  It's something I'd really like to be able to do,
+> but I can't do it without having the modem firmware change its
+> configuration for these endpoints.  My access to the people who
+> implement the modem firmware has been very limited (something
+> I hope to improve), and unless and until I can get corresponding
+> changes on the modem side to implement connections that don't
+> use QMAP, I can't implement such a thing.
+> 
 
-The basic concept is to require appropriate execute permissions on the
-source of the enclave for pages that are requesting PROT_EXEC, e.g. if
-an enclave page is being loaded from a regular file, require
-FILE__EXECUTE and/or FILE__EXECMOND, and if it's coming from an
-anonymous/private mapping, require PROCESS__EXECMEM since the process
-is essentially executing from the mapping, albeit in a roundabout way.
+But any such changes would either be years into the future or for
+specific devices and as such not applicable to any/most of devices on
+the market now or in the coming years.
 
-Note, FILE__READ and FILE__WRITE are intentionally not required even if
-the source page is backed by a regular file.  Writes to the enclave page
-are contained to the EPC, i.e. never hit the original file, and read
-permissions have already been vetted (or the VMA doesn't have PROT_READ,
-in which case loading the page into the enclave will fail).
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- security/selinux/hooks.c | 85 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 85 insertions(+)
+But as Arnd points out, if the software split between IPA and rmnet is
+suboptimal your are encouraged to fix that.
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 3ec702cf46ca..f436a055dda7 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -6726,6 +6726,87 @@ static void selinux_bpf_prog_free(struct bpf_prog_aux *aux)
- }
- #endif
- 
-+#ifdef CONFIG_INTEL_SGX
-+int selinux_enclave_load(struct vm_area_struct *vma, unsigned long prot,
-+			 unsigned long *allowed_prot)
-+{
-+	const struct cred *cred = current_cred();
-+	u32 sid = cred_sid(cred);
-+	int rc;
-+
-+	/* SGX is supported only in 64-bit kernels. */
-+	WARN_ON_ONCE(!default_noexec);
-+
-+	/*
-+	 * SGX is responsible for checking @prot vs @allowed_prot, and SELinux
-+	 * only cares about execute related permissions for enclaves.
-+	 */
-+	if (!(*allowed_prot & PROT_EXEC))
-+		return 0;
-+
-+	/*
-+	 * Loading an executable enclave page from a VMA that is not executable
-+	 * itself requires EXECUTE permissions on the source file, or if there
-+	 * is no regular source file, EXECMEM since the page is being loaded
-+	 * from a non-executable anonymous mapping.
-+	 */
-+	if (!(vma->vm_flags & VM_EXEC)) {
-+		if (vma->vm_file && !IS_PRIVATE(file_inode(vma->vm_file)))
-+			rc = file_has_perm(cred, vma->vm_file, FILE__EXECUTE);
-+		else
-+			rc = avc_has_perm(&selinux_state,
-+					  sid, sid, SECCLASS_PROCESS,
-+					  PROCESS__EXECMEM, NULL);
-+
-+		/*
-+		 * Reject the load if the enclave *needs* the page to be
-+		 * executable, otherwise prevent it from becoming executable.
-+		 */
-+		if (rc) {
-+			if (prot & PROT_EXEC)
-+				return rc;
-+
-+			*allowed_prot &= ~PROT_EXEC;
-+		}
-+	}
-+
-+	/*
-+	 * An enclave page that may do RW->RX or W+X requires EXECMOD (backed
-+	 * by a regular file) or EXECMEM (loaded from an anonymous mapping).
-+	 * Note, this hybrid EXECMOD and EXECMEM behavior is intentional and
-+	 * reflects the nature of enclaves and the EPC, e.g. EPC is effectively
-+	 * a non-persistent shared file, but each enclave is a private domain
-+	 * within that shared file, so delegate to the source of the enclave.
-+	 */
-+	if ((*allowed_prot & PROT_EXEC) && (*allowed_prot & PROT_WRITE)) {
-+		if (vma->vm_file && !IS_PRIVATE(file_inode(vma->vm_file)))
-+			rc = file_has_perm(cred, vma->vm_file, FILE__EXECMOD);
-+		else
-+			rc = avc_has_perm(&selinux_state,
-+					  sid, sid, SECCLASS_PROCESS,
-+					  PROCESS__EXECMEM, NULL);
-+		/*
-+		 * Clear ALLOW_EXEC instead of ALLOWED_WRITE if permissions are
-+		 * lacking and @prot has neither PROT_WRITE or PROT_EXEC.  If
-+		 * userspace wanted RX they would have requested RX, and due to
-+		 * lack of permissions they can never get RW->RX, i.e. the only
-+		 * useful transition is R->RW.
-+		 */
-+		if (rc) {
-+			if ((prot & PROT_EXEC) && (prot & PROT_WRITE))
-+				return rc;
-+
-+			if (prot & PROT_EXEC)
-+				*allowed_prot &= ~PROT_WRITE;
-+			else
-+				*allowed_prot &= ~PROT_EXEC;
-+		}
-+	}
-+
-+	return 0;
-+}
-+#endif
-+
- struct lsm_blob_sizes selinux_blob_sizes __lsm_ro_after_init = {
- 	.lbs_cred = sizeof(struct task_security_struct),
- 	.lbs_file = sizeof(struct file_security_struct),
-@@ -6968,6 +7049,10 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(bpf_map_free_security, selinux_bpf_map_free),
- 	LSM_HOOK_INIT(bpf_prog_free_security, selinux_bpf_prog_free),
- #endif
-+
-+#ifdef CONFIG_INTEL_SGX
-+	LSM_HOOK_INIT(enclave_load, selinux_enclave_load),
-+#endif
- };
- 
- static __init int selinux_init(void)
--- 
-2.21.0
-
+Regards,
+Bjorn
