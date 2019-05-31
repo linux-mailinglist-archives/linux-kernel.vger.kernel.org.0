@@ -2,81 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E49B310E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 17:10:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC5F4310DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 17:10:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726856AbfEaPKN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 11:10:13 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:44159 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbfEaPKM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 11:10:12 -0400
-Received: from orion.localdomain ([77.7.63.28]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MatZt-1h099n0hvH-00cSMW; Fri, 31 May 2019 17:09:12 +0200
-From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     rjw@rjwysocki.net, viresh.kumar@linaro.org, jdelvare@suse.com,
-        linux@roeck-us.net, khalid@gonehiking.org, jejb@linux.ibm.com,
-        martin.petersen@oracle.com, aacraid@microsemi.com,
-        linux-pm@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-scsi@vger.kernel.org
-Subject: [PATCH 3/3] drivers: hwmon: i5k_amb: remove unnecessary #ifdef MODULE
-Date:   Fri, 31 May 2019 17:09:04 +0200
-Message-Id: <1559315344-10384-4-git-send-email-info@metux.net>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1559315344-10384-1-git-send-email-info@metux.net>
-References: <1559315344-10384-1-git-send-email-info@metux.net>
-X-Provags-ID: V03:K1:UFXCTI+KzrMW9xbCJ12euR95G6kfoQ3hucMGBBHRk8vAmA8h++y
- atYci0mi+NPhgAE1qhS6aZ9fGOnaGrLanWLtyFr96kZuMR4dOIvcznbAJDB9G2EeSOK6AS0
- lGVHgmvWbj42YrhlmZlOZLH2a2664ODGUNdeTJS1NeKevgeQCC8/7SMQUfNUrn0boYWSrA+
- 1Hs6drrmGWuHAgOwRG04g==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:2bZ6GxbGq4A=:ulLt4MudFSLl1iwUUZQWW6
- 1HlUAPB291wGvY/suiq7ef/3DgpQB7zw1CELV8v9xLGZI5pZ7hNnJFnZxt/uhZtL8yz9gM6AF
- pEUD4OWbgd8aN/lqcrOSltvBpVBIFFzaDEzp9lej83UkigEap+16tP/HQKZPRm2YXY7fS4GdZ
- sxALxl0IIIfwiCV6qV6e/WcwRHdYzZX/E1MmELfLhLmiU4YN9ofSR62E0GF7WGhyRSy44y9HV
- nGyCMsp2SjgeEUMtPzgBLiDrhlPiGTJlEgTmR29AsC0nij/mlaIKehcjHIrFBcHzcELKqFJoR
- ZDEATb8yRVuyWDbLcNExBx1w1+N1gDVXN0UAIrU7oI/BepyLZHKao0LoTIzHhtJWl9EKd22HD
- 0tu0/Je45iqqaLMw3Ie9zymLbMLX59VfsrbKtLMRc2gkMfVzTNtOLNtwd17cdsP4qmOICkF8a
- YdyPbs6FmGuJNICL4rA308o80o8J24AQk6sJtcyIuQBivSHzSVrB1MaByuBLl/4k0gQ4uAtpz
- GFXsQtt7Gr4v+EnfMAuBsigtybzCe/dutPGZjXedmrPk29OrGGCKgDD8K5vbl/pGp9IdSK0vm
- Hr8Js3sXUE83hR2V59JQqfcl9nyYj5juyuA9y8fUAPibfZLpAcxf5sBwMXziqjwwhzs9yEth+
- brLvA60uevkbOKmlEQ35cayuxpHD9RlW5uxAWm+VynpY6HAoZDlVz2EoVZ2Cdso6xsJFcs94S
- 3Y2FVSOy6m2lFLYFvY+0lZoE0Ki+BSZKeWCcYw==
+        id S1726701AbfEaPJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 11:09:54 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:46362 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726037AbfEaPJx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 11:09:53 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 8575913112EC03796CDD;
+        Fri, 31 May 2019 23:09:48 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Fri, 31 May 2019
+ 23:09:39 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <bhelgaas@google.com>, <sthemmin@microsoft.com>,
+        <sashal@kernel.org>, <decui@microsoft.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] PCI: hv: Fix build error without CONFIG_SYSFS
+Date:   Fri, 31 May 2019 23:09:23 +0800
+Message-ID: <20190531150923.12376-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The MODULE_DEVICE_TABLE() macro already checks for MODULE defined,
-so the extra check here is not necessary.
+while building without CONFIG_SYSFS, fails as below:
 
-Signed-off-by: Enrico Weigelt <info@metux.net>
+drivers/pci/controller/pci-hyperv.o: In function 'hv_pci_assign_slots':
+pci-hyperv.c:(.text+0x40a): undefined reference to 'pci_create_slot'
+drivers/pci/controller/pci-hyperv.o: In function 'pci_devices_present_work':
+pci-hyperv.c:(.text+0xc02): undefined reference to 'pci_destroy_slot'
+drivers/pci/controller/pci-hyperv.o: In function 'hv_pci_remove':
+pci-hyperv.c:(.text+0xe50): undefined reference to 'pci_destroy_slot'
+drivers/pci/controller/pci-hyperv.o: In function 'hv_eject_device_work':
+pci-hyperv.c:(.text+0x11f9): undefined reference to 'pci_destroy_slot'
+
+Select SYSFS while PCI_HYPERV is set to fix this.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: a15f2c08c708 ("PCI: hv: support reporting serial number as slot information")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/hwmon/i5k_amb.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/pci/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/hwmon/i5k_amb.c b/drivers/hwmon/i5k_amb.c
-index 2cf73d8..622405b 100644
---- a/drivers/hwmon/i5k_amb.c
-+++ b/drivers/hwmon/i5k_amb.c
-@@ -495,14 +495,12 @@ static int i5k_channel_probe(u16 *amb_present, unsigned long dev_id)
- 	{ 0, 0 }
- };
- 
--#ifdef MODULE
- static const struct pci_device_id i5k_amb_ids[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_5000_ERR) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_5400_ERR) },
- 	{ 0, }
- };
- MODULE_DEVICE_TABLE(pci, i5k_amb_ids);
--#endif
- 
- static int i5k_amb_probe(struct platform_device *pdev)
- {
+diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
+index 2ab9240..6722952 100644
+--- a/drivers/pci/Kconfig
++++ b/drivers/pci/Kconfig
+@@ -182,6 +182,7 @@ config PCI_LABEL
+ config PCI_HYPERV
+         tristate "Hyper-V PCI Frontend"
+         depends on X86 && HYPERV && PCI_MSI && PCI_MSI_IRQ_DOMAIN && X86_64
++	select SYSFS
+         help
+           The PCI device frontend driver allows the kernel to import arbitrary
+           PCI devices from a PCI backend to support PCI driver domains.
 -- 
-1.9.1
+2.7.4
+
 
