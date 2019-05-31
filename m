@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA0AD3089F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 08:37:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5712F3089C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 08:37:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726963AbfEaGh1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 02:37:27 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39996 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726894AbfEaGhO (ORCPT
+        id S1726945AbfEaGhR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 02:37:17 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35175 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726918AbfEaGhQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 02:37:14 -0400
-Received: by mail-pf1-f193.google.com with SMTP id u17so5557918pfn.7
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 23:37:14 -0700 (PDT)
+        Fri, 31 May 2019 02:37:16 -0400
+Received: by mail-pg1-f194.google.com with SMTP id t1so3481925pgc.2
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 23:37:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=2cHAe+Cc9EZywy9mFCxxE1VGk9R752a9j3rJ2WfFTzM=;
-        b=dUEsLdakEW8GKvl+684eBngzjL/fcYx8/tceyhSdS98a+Z9P/14dG8Suo+BAeKyUez
-         hyPyEIIivL2Oq0ngN8218VigEdUeZXJiNwm3XG26qGmUu7ICrwJfW3+3O3XNBUAx3ftt
-         rvcjrPtfroNglk/qjkiIgjwckdG+tY2/QM+UGpeZz9v2agruynN6g5VJVGY09bS5U+Xu
-         h5d8vzZedbYxJyoGfwUVEuKsjzByq4O681SnoIlKMk6G6V9DTWN8T5PICQuXV4D9W6g7
-         MjaCnMtUK3WV5OvD0gjEDBv9Nu6exK5vioE7Hq3+2s3qRzhOHV2U5+Gl9D5UvsqicMpO
-         qG5A==
-X-Gm-Message-State: APjAAAUBZY8U3R7mVxcQWjjXjpeZPdgaI/VohYh5Rc7mm/5GLQ9peuBB
-        64dSAF9H5220uv2qJ+5hhw8=
-X-Google-Smtp-Source: APXvYqxaKyl0Ta7HqpqIWxa9M/iNdzEjv6ZNCN7bb+4zw1uAiMN1AUzNXDOYyeaa05+U4jqYDJiDEA==
-X-Received: by 2002:a63:cc43:: with SMTP id q3mr7277360pgi.438.1559284633776;
-        Thu, 30 May 2019 23:37:13 -0700 (PDT)
+        bh=N0WRW/Kt/AIwleAaIBXC73QurXubTlVRqc1nj0oe3EQ=;
+        b=doLWHHI5xVG30JCu21WTbDvOht6qJU/8enCZjahuiwL/Gdw4gQyMFeWaBlEodp6kbG
+         G0Xzv2zHj2es6PEvXnjG3igYZLY6vV9CMC0+P5yk/vNqUNDhOaww1r3b8HMZpMIurqTX
+         39plxAJDE02y3FpaMz5woHsyitdWCKSfyA6Szku6qVQX+AnEuP3Zx7iMHkIeXovpQPat
+         CK7IuXojSCOAu/uTCMmxOQkH/tPUAoaQH+4ITiCxI9nEzBiScU1GzsjAuWlA81LdGrOz
+         Yx+GxhCVEOXmJkxjnfPIRGjoiVlJL3vhvDzR7fCd68rIsbwLsWfqDPOSsV5L1tB4UQIS
+         GJbQ==
+X-Gm-Message-State: APjAAAVGuEZKzVWFE+T1yMFiXxaP2MqeFbPQkV1dd+QPdqv8EU1NcwzP
+        7nD3KunIkX4U/JLjczXi48k=
+X-Google-Smtp-Source: APXvYqyBh27ZMnEcB/90TQtV+HJjubiQugyfIf1HeG0YgujFcOJAydhA87adZ1olre4n9PgjfbYHHg==
+X-Received: by 2002:a17:90a:cb10:: with SMTP id z16mr7031982pjt.81.1559284635358;
+        Thu, 30 May 2019 23:37:15 -0700 (PDT)
 Received: from htb-2n-eng-dhcp405.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id g17sm9256429pfk.55.2019.05.30.23.37.12
+        by smtp.gmail.com with ESMTPSA id g17sm9256429pfk.55.2019.05.30.23.37.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 May 2019 23:37:13 -0700 (PDT)
+        Thu, 30 May 2019 23:37:14 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Andy Lutomirski <luto@kernel.org>
@@ -42,10 +42,11 @@ Cc:     Borislav Petkov <bp@alien8.de>,
         Ingo Molnar <mingo@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
         linux-kernel@vger.kernel.org, Nadav Amit <namit@vmware.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: [RFC PATCH v2 11/12] x86/mm/tlb: Use async and inline messages for flushing
-Date:   Thu, 30 May 2019 23:36:44 -0700
-Message-Id: <20190531063645.4697-12-namit@vmware.com>
+        Brian Gerst <brgerst@gmail.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Rik van Riel <riel@surriel.com>
+Subject: [RFC PATCH v2 12/12] x86/mm/tlb: Reverting the removal of flush_tlb_info from stack
+Date:   Thu, 30 May 2019 23:36:45 -0700
+Message-Id: <20190531063645.4697-13-namit@vmware.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190531063645.4697-1-namit@vmware.com>
 References: <20190531063645.4697-1-namit@vmware.com>
@@ -56,120 +57,139 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we flush userspace mappings, we can defer the TLB flushes, as long
-the following conditions are met:
+Partially revert 3db6d5a5eca ("x86/mm/tlb: Remove 'struct
+flush_tlb_info' from the stack").
 
-1. No tables are freed, since otherwise speculative page walks might
-   cause machine-checks.
+Now that we copy flush_tlb_info and inline it with the IPI information,
+we can put it back onto the stack. This simplifies the code and should be
+slightly more robust. The stack is also a bit more likely to be cached
+than a global variable.
 
-2. No one would access userspace before flush takes place. Specifically,
-   NMI handlers and kprobes would avoid accessing userspace.
-
-Use the new SMP support to execute remote function calls with inlined
-data for the matter. The function remote TLB flushing function would be
-executed asynchronously and the local CPU would continue execution as
-soon as the IPI was delivered, before the function was actually
-executed. Since tlb_flush_info is copied, there is no risk it would
-change before the TLB flush is actually executed.
-
-Change nmi_uaccess_okay() to check whether a remote TLB flush is
-currently in progress on this CPU by checking whether the asynchronously
-called function is the remote TLB flushing function. The current
-implementation disallows access in such cases, but it is also possible
-to flush the entire TLB in such case and allow access.
-
-When page-tables are freed or when kernel PTEs are removed, perform
-synchronous TLB flushes. But still inline the data with the IPI data,
-although the performance gains in this case are likely to be much
-smaller.
-
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/include/asm/tlbflush.h | 12 ++++++++++++
- arch/x86/mm/tlb.c               | 15 +++++++++++----
- 2 files changed, 23 insertions(+), 4 deletions(-)
+ arch/x86/mm/tlb.c | 46 +++++++++++++++++++++++++---------------------
+ 1 file changed, 25 insertions(+), 21 deletions(-)
 
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index a1fea36d5292..75e4c4263af6 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -245,6 +245,10 @@ struct tlb_state_shared {
- };
- DECLARE_PER_CPU_SHARED_ALIGNED(struct tlb_state_shared, cpu_tlbstate_shared);
- 
-+DECLARE_PER_CPU(smp_call_func_t, async_func_in_progress);
-+
-+extern void flush_tlb_func_remote(void *info);
-+
- /*
-  * Blindly accessing user memory from NMI context can be dangerous
-  * if we're in the middle of switching the current user task or
-@@ -259,6 +263,14 @@ static inline bool nmi_uaccess_okay(void)
- 
- 	VM_WARN_ON_ONCE(!loaded_mm);
- 
-+	/*
-+	 * If we are in the middle of a TLB flush, access is not allowed. We
-+	 * could have just flushed the entire TLB and allow access, but it is
-+	 * easier and safer just to disallow access.
-+	 */
-+	if (this_cpu_read(async_func_in_progress) == flush_tlb_func_remote)
-+		return false;
-+
- 	/*
- 	 * The condition we want to check is
- 	 * current_mm->pgd == __va(read_cr3_pa()).  This may be slow, though,
 diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 755b2bb3e5b6..fd7e90adbe43 100644
+index fd7e90adbe43..81170fd6b1dd 100644
 --- a/arch/x86/mm/tlb.c
 +++ b/arch/x86/mm/tlb.c
-@@ -644,7 +644,7 @@ static void flush_tlb_func_local(void *info)
- 	flush_tlb_func_common(f, true, reason);
- }
- 
--static void flush_tlb_func_remote(void *info)
-+void flush_tlb_func_remote(void *info)
+@@ -827,15 +827,17 @@ static inline void put_flush_tlb_info(void)
+ static void flush_tlb_on_cpus(const cpumask_t *cpumask,
+ 			      const struct flush_tlb_info *info)
  {
- 	const struct flush_tlb_info *f = info;
- 
-@@ -730,7 +730,7 @@ void native_flush_tlb_multi(const struct cpumask *cpumask,
- 	 */
- 	if (info->freed_tables)
- 		__smp_call_function_many(cpumask, flush_tlb_func_remote,
--					 flush_tlb_func_local, (void *)info, 1);
-+				flush_tlb_func_local, (void *)info, sizeof(*info), 1);
- 	else {
- 		/*
- 		 * Although we could have used on_each_cpu_cond_mask(),
-@@ -753,8 +753,10 @@ void native_flush_tlb_multi(const struct cpumask *cpumask,
- 			if (tlb_is_not_lazy(cpu))
- 				__cpumask_set_cpu(cpu, cond_cpumask);
- 		}
+-	int this_cpu = smp_processor_id();
+ 	bool flush_others = false;
++	int this_cpu;
 +
- 		__smp_call_function_many(cond_cpumask, flush_tlb_func_remote,
--					 flush_tlb_func_local, (void *)info, 1);
-+					 flush_tlb_func_local, (void *)info,
-+					 sizeof(*info), 0);
++	this_cpu = get_cpu();
+ 
+ 	if (cpumask_any_but(cpumask, this_cpu) < nr_cpu_ids)
+ 		flush_others = true;
+ 
+ 	if (static_branch_likely(&flush_tlb_multi_enabled) && flush_others) {
+ 		flush_tlb_multi(cpumask, info);
+-		return;
++		goto out;
+ 	}
+ 
+ 	if (cpumask_test_cpu(this_cpu, cpumask)) {
+@@ -847,27 +849,33 @@ static void flush_tlb_on_cpus(const cpumask_t *cpumask,
+ 
+ 	if (flush_others)
+ 		flush_tlb_others(cpumask, info);
++
++out:
++	put_cpu();
+ }
+ 
+ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
+ 				unsigned long end, unsigned int stride_shift,
+ 				bool freed_tables)
+ {
+-	struct flush_tlb_info *info;
+-	u64 new_tlb_gen;
++	struct flush_tlb_info info = {
++		.mm		= mm,
++		.stride_shift	= stride_shift,
++		.freed_tables	= freed_tables,
++	};
+ 
+ 	/* Should we flush just the requested range? */
+ 	if ((end == TLB_FLUSH_ALL) ||
+ 	    ((end - start) >> stride_shift) > tlb_single_page_flush_ceiling) {
+-		start = 0;
+-		end = TLB_FLUSH_ALL;
++		info.start = 0;
++		info.end = TLB_FLUSH_ALL;
++	} else {
++		info.start = start;
++		info.end = end;
+ 	}
+ 
+ 	/* This is also a barrier that synchronizes with switch_mm(). */
+-	new_tlb_gen = inc_mm_tlb_gen(mm);
+-
+-	info = get_flush_tlb_info(mm, start, end, stride_shift, freed_tables,
+-				  new_tlb_gen);
++	info.new_tlb_gen = inc_mm_tlb_gen(mm);
+ 
+ 	/*
+ 	 * Assert that mm_cpumask() corresponds with the loaded mm. We got one
+@@ -878,9 +886,7 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
+ 			(mm == this_cpu_read(cpu_tlbstate.loaded_mm)) ||
+ 			mm == &init_mm);
+ 
+-	flush_tlb_on_cpus(mm_cpumask(mm), info);
+-
+-	put_flush_tlb_info();
++	flush_tlb_on_cpus(mm_cpumask(mm), &info);
+ }
+ 
+ 
+@@ -913,18 +919,18 @@ void flush_tlb_kernel_range(unsigned long start, unsigned long end)
+ 	    (end - start) > tlb_single_page_flush_ceiling << PAGE_SHIFT) {
+ 		on_each_cpu(do_flush_tlb_all, NULL, 1);
+ 	} else {
+-		struct flush_tlb_info *info;
+-
+-		info = get_flush_tlb_info(NULL, start, end, 0, false, 0);
++		struct flush_tlb_info info = {
++			.mm		= NULL,
++			.start		= start,
++			.end		= end,
++		};
+ 
+ 		/*
+ 		 * We have to wait for the remote shootdown to be done since it
+ 		 * is kernel space.
+ 		 */
+ 		__on_each_cpu_mask(cpu_online_mask, do_kernel_range_flush,
+-				   info, sizeof(*info), 1);
+-
+-		put_flush_tlb_info();
++				   &info, sizeof(info), 1);
  	}
  }
  
-@@ -915,7 +917,12 @@ void flush_tlb_kernel_range(unsigned long start, unsigned long end)
+@@ -942,9 +948,7 @@ static const struct flush_tlb_info full_flush_tlb_info = {
  
- 		info = get_flush_tlb_info(NULL, start, end, 0, false, 0);
+ void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
+ {
+-	preempt_disable();
+ 	flush_tlb_on_cpus(&batch->cpumask, &full_flush_tlb_info);
+-	preempt_enable();
  
--		on_each_cpu(do_kernel_range_flush, info, 1);
-+		/*
-+		 * We have to wait for the remote shootdown to be done since it
-+		 * is kernel space.
-+		 */
-+		__on_each_cpu_mask(cpu_online_mask, do_kernel_range_flush,
-+				   info, sizeof(*info), 1);
- 
- 		put_flush_tlb_info();
- 	}
+ 	cpumask_clear(&batch->cpumask);
+ }
 -- 
 2.20.1
 
