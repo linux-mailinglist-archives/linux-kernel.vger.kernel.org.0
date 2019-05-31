@@ -2,162 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 358C030B72
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 11:27:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00AF330B79
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 11:28:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbfEaJ07 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 05:26:59 -0400
-Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:10121 "EHLO
-        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726240AbfEaJ06 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 05:26:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1559294817; x=1590830817;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=MKgsQte0z/+s2YR2gzMjXo/CzMEGKlYzKLUQS4Ze4mM=;
-  b=tmud6NOfLbZCYwLDFvOFtZWFnMy7GXG4fHgTquLvpMn4PDThmFfR5240
-   ErcfdCnN59NMZhwPnkAG9fzPvB01FB1nI2GMEgcw75GNLR5hEVlUQVza3
-   Z9qSkUb6UgrbZVs09GLmr6wk50HBLanajcZ8tVBnwEbHelQajXyVKx3d0
-   Y=;
-X-IronPort-AV: E=Sophos;i="5.60,534,1549929600"; 
-   d="scan'208";a="807789661"
-Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2c-397e131e.us-west-2.amazon.com) ([10.47.22.38])
-  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP; 31 May 2019 09:26:56 +0000
-Received: from EX13MTAUWC001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan2.pdx.amazon.com [10.236.137.194])
-        by email-inbound-relay-2c-397e131e.us-west-2.amazon.com (Postfix) with ESMTPS id 2FC14A25F0;
-        Fri, 31 May 2019 09:26:55 +0000 (UTC)
-Received: from EX13D20UWC001.ant.amazon.com (10.43.162.244) by
- EX13MTAUWC001.ant.amazon.com (10.43.162.135) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 31 May 2019 09:26:54 +0000
-Received: from 38f9d3867b82.ant.amazon.com (10.43.161.89) by
- EX13D20UWC001.ant.amazon.com (10.43.162.244) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 31 May 2019 09:26:51 +0000
-Subject: Re: [PATCH v2 1/2] KVM: Start populating /sys/hypervisor with KVM
- entries
-To:     "Raslan, KarimAllah" <karahmed@amazon.de>,
-        "Sironi, Filippo" <sironi@amazon.de>
-CC:     "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "cohuck@redhat.com" <cohuck@redhat.com>,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
-        "borntraeger@de.ibm.com" <borntraeger@de.ibm.com>,
-        "christoffer.dall@linaro.org" <christoffer.dall@linaro.org>,
-        "Marc.Zyngier@arm.com" <Marc.Zyngier@arm.com>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
-References: <1539078879-4372-1-git-send-email-sironi@amazon.de>
- <1557847002-23519-1-git-send-email-sironi@amazon.de>
- <1557847002-23519-2-git-send-email-sironi@amazon.de>
- <e976f31b-2ccd-29ba-6a32-2edde49f867f@amazon.com>
- <3D2C4EE3-1C2E-4032-9964-31A066E542AA@amazon.de>
- <6b3dadf9-6240-6440-b784-50bec605bf2c@amazon.com>
- <1559293922.14762.2.camel@amazon.de>
-From:   Alexander Graf <graf@amazon.com>
-Message-ID: <2d056a1c-1763-127d-b957-0e519a8e56cd@amazon.com>
-Date:   Fri, 31 May 2019 11:26:49 +0200
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.7.0
+        id S1727090AbfEaJ14 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 05:27:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35148 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726240AbfEaJ14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 05:27:56 -0400
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 487E6266D4;
+        Fri, 31 May 2019 09:27:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559294875;
+        bh=8ioYcrS5zNqXZCoF0MDDoNs+KB/u0y2k7wiOQtbqdwU=;
+        h=From:Date:Subject:To:Cc:From;
+        b=rRXvqsqSkMv+5uNcjorixP9OQ/A9sXvcIolEmFXXDeJ0CIPy1MWNSPlgFkijG/xDd
+         JLwudD1WDqmIng8QTmERVwdvFX1+RZboJZoyqYg26krjFNoXZCPXrLfUr9vJmOeYBH
+         jSzTqQJwf6ZuGH1Uu7nuHnO6o35ipNSPEYWqjxow=
+Received: by mail-lf1-f51.google.com with SMTP id y13so7330007lfh.9;
+        Fri, 31 May 2019 02:27:55 -0700 (PDT)
+X-Gm-Message-State: APjAAAUPKOt7Prp5M9llPrgw6JEfVNjMsnrX4cqY+ocuXmECW1F/toHx
+        3gz+u+RniTMCBVlxB74hWWGgi11W6xgaG42E77Q=
+X-Google-Smtp-Source: APXvYqzVa4BrT5sCgmPbiMdySvHjx9aAPSDvSfLEhbdMMAjEp6CKvWokGkyQ8IL4e6xxsMN20X6ZVSeWNFb5fs7EwqM=
+X-Received: by 2002:a19:4f50:: with SMTP id a16mr4880904lfk.24.1559294873357;
+ Fri, 31 May 2019 02:27:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1559293922.14762.2.camel@amazon.de>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [10.43.161.89]
-X-ClientProxiedBy: EX13D22UWC002.ant.amazon.com (10.43.162.29) To
- EX13D20UWC001.ant.amazon.com (10.43.162.244)
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Fri, 31 May 2019 11:27:42 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPfREyt3P2H8bL9=6+EQ1S3Ja7Urkhy1x7sCHaaubMqV1Q@mail.gmail.com>
+Message-ID: <CAJKOXPfREyt3P2H8bL9=6+EQ1S3Ja7Urkhy1x7sCHaaubMqV1Q@mail.gmail.com>
+Subject: [BISECT] No audio after "ASoC: core: use component driver name as
+ component name"
+To:     Mark Brown <broonie@kernel.org>, Tzung-Bi Shih <tzungbi@google.com>
+Cc:     Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-On 31.05.19 11:12, Raslan, KarimAllah wrote:
-> On Fri, 2019-05-31 at 11:06 +0200, Alexander Graf wrote:
->> On 17.05.19 17:41, Sironi, Filippo wrote:
->>>> On 16. May 2019, at 15:50, Graf, Alexander <graf@amazon.com> wrote:
->>>>
->>>> On 14.05.19 08:16, Filippo Sironi wrote:
->>>>> Start populating /sys/hypervisor with KVM entries when we're running on
->>>>> KVM. This is to replicate functionality that's available when we're
->>>>> running on Xen.
->>>>>
->>>>> Start with /sys/hypervisor/uuid, which users prefer over
->>>>> /sys/devices/virtual/dmi/id/product_uuid as a way to recognize a virtual
->>>>> machine, since it's also available when running on Xen HVM and on Xen PV
->>>>> and, on top of that doesn't require root privileges by default.
->>>>> Let's create arch-specific hooks so that different architectures can
->>>>> provide different implementations.
->>>>>
->>>>> Signed-off-by: Filippo Sironi <sironi@amazon.de>
->>>> I think this needs something akin to
->>>>
->>>>    https://www.kernel.org/doc/Documentation/ABI/stable/sysfs-hypervisor-xen
->>>>
->>>> to document which files are available.
->>>>
->>>>> ---
->>>>> v2:
->>>>> * move the retrieval of the VM UUID out of uuid_show and into
->>>>>    kvm_para_get_uuid, which is a weak function that can be overwritten
->>>>>
->>>>> drivers/Kconfig              |  2 ++
->>>>> drivers/Makefile             |  2 ++
->>>>> drivers/kvm/Kconfig          | 14 ++++++++++++++
->>>>> drivers/kvm/Makefile         |  1 +
->>>>> drivers/kvm/sys-hypervisor.c | 30 ++++++++++++++++++++++++++++++
->>>>> 5 files changed, 49 insertions(+)
->>>>> create mode 100644 drivers/kvm/Kconfig
->>>>> create mode 100644 drivers/kvm/Makefile
->>>>> create mode 100644 drivers/kvm/sys-hypervisor.c
->>>>>
->>>> [...]
->>>>
->>>>> +
->>>>> +__weak const char *kvm_para_get_uuid(void)
->>>>> +{
->>>>> +	return NULL;
->>>>> +}
->>>>> +
->>>>> +static ssize_t uuid_show(struct kobject *obj,
->>>>> +			 struct kobj_attribute *attr,
->>>>> +			 char *buf)
->>>>> +{
->>>>> +	const char *uuid = kvm_para_get_uuid();
->>>>> +	return sprintf(buf, "%s\n", uuid);
->>>> The usual return value for the Xen /sys/hypervisor interface is
->>>> "<denied>". Wouldn't it make sense to follow that pattern for the KVM
->>>> one too? Currently, if we can not determine the UUID this will just
->>>> return (null).
->>>>
->>>> Otherwise, looks good to me. Are you aware of any other files we should
->>>> provide? Also, is there any reason not to implement ARM as well while at it?
->>>>
->>>> Alex
->>> This originated from a customer request that was using /sys/hypervisor/uuid.
->>> My guess is that we would want to expose "type" and "version" moving
->>> forward and that's when we hypervisor hooks will be useful on top
->>> of arch hooks.
->>>
->>> On a different note, any idea how to check whether the OS is running
->>> virtualized on KVM on ARM and ARM64?  kvm_para_available() isn't an
->>
->> Yeah, ARM doesn't have any KVM PV FWIW. I also can't find any explicit
->> hint passed into guests that we are indeed running in KVM. The closest
->> thing I can see is the SMBIOS product identifier in QEMU which gets
->> patched to "KVM Virtual Machine". Maybe we'll have to do with that for
->> the sake of backwards compatibility ...
-> How about "psci_ops.conduit" (PSCI_CONDUIT_HVC vs PSCI_CONDUIT_SMC)?
+Bisect points to commit b19671d6caf1ac393681864d5d85dda9fa99a448
+Author: Tzung-Bi Shih <tzungbi@google.com>
+Date:   Wed May 29 14:22:14 2019 +0800
+    ASoC: core: use component driver name as component name
 
+as a reason of failure of missing Audio card on Odroid XU3 board
+(ARMv7, Exynos5422,
+max98090 codec). Full kernel log:
+https://krzk.eu/#/builders/1/builds/3349/steps/14/logs/serial0
 
-This won't work for 2 reasons:
+The problem might be in component name. The driver->name and
+fmt_single_name(dev, &component->id) are:
+snd_dmaengine_pcm != 3830000.i2s
+snd_dmaengine_pcm != 3830000.i2s-sec
+samsung-i2s != 3830000.i2s
 
-   a) You don't know it's KVM. You only know you might be running in EL1.
-   b) KVM may choose to just use SMC for PSCI going forward and trap on it.
+This commit should not go in without fixing the users of old
+behavior... I could adjust the platform names for primary and
+secondary links... but now it looks like two components will have the
+same name.
 
-
-Alex
-
-
+Best regards,
+Krzysztof
