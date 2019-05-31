@@ -2,95 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFDC530A2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 10:23:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB0CE30A32
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 10:24:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbfEaIX1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 04:23:27 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45138 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725963AbfEaIX1 (ORCPT
+        id S1726901AbfEaIYQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 04:24:16 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:47259 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725963AbfEaIYQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 04:23:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=fdnlo9ztd5dJncnArgtMmEkp4hYI9oo/LawGnWmTfnY=; b=bttYdLG7ehBKlEgRpdcZXZcX9
-        wgIMA+lbL3IUV0x+adFyIFnTALbEB2N47V0Lv/RBkw+BfeC51Ofsr8t2FDFSIO1UjLRzkTAG8dtf1
-        NtVZMhBJr7W9XzVE1ko2ZYZRSdwhnylESKlpjhF6qLYntSSewu93jCQrTarfZJCv9PhsL2rDnDV/h
-        tSq4mo7XocQr3dvAGv/Im9E5PJwyWVl36gw61QQC9KB11+LcahflJN23PnCTE1DW0tieof7dBnEsI
-        n2c3099mPsvEcPT9vGkM8ZmI6pj1BRQ6prajI9T4WTzptLhCLnCKTzBLY8nfwn4/RhlNo/lMRGIzk
-        rDurHpGVw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hWcou-00070v-B1; Fri, 31 May 2019 08:23:24 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id C9BA6201B8CFE; Fri, 31 May 2019 10:23:22 +0200 (CEST)
-Date:   Fri, 31 May 2019 10:23:22 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc:     "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        arcml <linux-snps-arc@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-Subject: Re: single copy atomicity for double load/stores on 32-bit systems
-Message-ID: <20190531082322.GI2623@hirez.programming.kicks-ass.net>
-References: <2fd3a455-6267-5d21-c530-41964a4f6ce9@synopsys.com>
- <20190530185358.GG28207@linux.ibm.com>
- <C2D7FE5348E1B147BCA15975FBA2307501A2520D9C@us01wembx1.internal.synopsys.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <C2D7FE5348E1B147BCA15975FBA2307501A2520D9C@us01wembx1.internal.synopsys.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 31 May 2019 04:24:16 -0400
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190531082413epoutp033532fad3b74d884369534436552f3414~jtvOJXPEu3231732317epoutp03h
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 08:24:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190531082413epoutp033532fad3b74d884369534436552f3414~jtvOJXPEu3231732317epoutp03h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1559291053;
+        bh=4tYbzE7Ki9DPqfpIW+vy46QOWGXK8VI9QeBr4xi3Kdc=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=NeSFVLFtWmrHuqVvzUedgY+lq35XKIiohnKXlpYm0jkD1BdDBXDqOMzyTh+lBGmVV
+         fh8T10IiZ+bcPcllVQaBgDTNmBeYls2RQsV1P35PUqIg0DIaVgOomnyhqRhJqyO7BU
+         7KIFOb188tBnhRsyB2q99U6q4oQlgf4/+xy8d+Hg=
+Received: from epsmges5p1new.samsung.com (unknown [182.195.40.194]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20190531082411epcas5p456a7664a7686cdfdd5019b999357bc1b~jtvMRq4lr1577915779epcas5p4H;
+        Fri, 31 May 2019 08:24:11 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        11.39.04071.BA4E0FC5; Fri, 31 May 2019 17:24:11 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20190531082344epcas5p394e519d5940ca1642007f7e594e2917c~jtuzIatyX1734317343epcas5p3P;
+        Fri, 31 May 2019 08:23:44 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190531082344epsmtrp12741d4f14b627a83abaa2fbd0d7c9516~jtuzFDA8Q1141211412epsmtrp13;
+        Fri, 31 May 2019 08:23:44 +0000 (GMT)
+X-AuditID: b6c32a49-5b7ff70000000fe7-c1-5cf0e4abd260
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        DF.A4.03662.F84E0FC5; Fri, 31 May 2019 17:23:43 +0900 (KST)
+Received: from localhost.localdomain (unknown [107.109.224.135]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190531082342epsmtip185b96dd89f745f4817e51d9b63b4c7ea~jtuxxsLku1923719237epsmtip1o;
+        Fri, 31 May 2019 08:23:42 +0000 (GMT)
+From:   Maninder Singh <maninder1.s@samsung.com>
+To:     viro@zeniv.linux.org.uk, jens.axboe@oracle.com
+Cc:     v.narang@samsung.com, a.sahrawat@samsung.com, pankaj.m@samsung.com,
+        linux-kernel@vger.kernel.org,
+        Maninder Singh <maninder1.s@samsung.com>
+Subject: [PATCH 1/1] splice: Reduce stack usage by reducing structure
+ partial_page
+Date:   Fri, 31 May 2019 13:53:32 +0530
+Message-Id: <1559291012-19269-1-git-send-email-maninder1.s@samsung.com>
+X-Mailer: git-send-email 2.7.4
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLKsWRmVeSWpSXmKPExsWy7bCmlu7qJx9iDJY3s1hc3J1qsa95A6vF
+        5V1z2CwOz29jsbj3ZiuTxaGTcxktzv89zurA7vHx6S0Wj74tqxg9Pm+S89j05C1TAEtUjk1G
+        amJKapFCal5yfkpmXrqtkndwvHO8qZmBoa6hpYW5kkJeYm6qrZKLT4CuW2YO0AFKCmWJOaVA
+        oYDE4mIlfTubovzSklSFjPziElul1IKUnAJDowK94sTc4tK8dL3k/FwrQwMDI1OgyoScjH1z
+        J7IWtPBU/F/6l7mBcSVHFyMnh4SAiUTrj3esXYxcHEICuxkl5mx9xgzhfGKUeLN1DzuE841R
+        YuuLG8wwLUsO72ODSOxllNj54hWU85VRYurpbWBVbAJ6Eqt27WHpYuTgEBEwkng1mQekhllg
+        AqPE/t3zwGqEBUIkPr78BlbDIqAqcW+TFkiYV8Bd4tnn31DL5CRunusEO0lC4CerxNzuvSwQ
+        CReJBef/QtnCEq+Ob2GHsKUkXva3sUM0tDNKXJ95jQXCmcIo0fl+JVSVvcSDG0fZQTYzC2hK
+        rN+lDxGWlZh6ah0TiM0swCfR+/sJE0ScV2LHPBhbVaLl5gZWCFta4vPHj1BHeEjMbm0Hu1pI
+        IFZi45xWtgmMsrMQNixgZFzFKJlaUJybnlpsWmCYl1qOHFWbGMFJS8tzB+Oscz6HGAU4GJV4
+        eAUOvo8RYk0sK67MPcQowcGsJMLrfQEoxJuSWFmVWpQfX1Sak1p8iNEUGIITmaVEk/OBCTWv
+        JN7Q1MjMzMDSwNTYwsxQSZx3EuvVGCGB9MSS1OzU1ILUIpg+Jg5OqQZGE2t9Vz+LA6/21X7X
+        mJYw57T+Bul9nzYdObY+bZOq6N3zP5R8S7PeKK4MOxD/4S9LA9dOrXRNfaZXCrlsB9bt8FXM
+        OxYc97PGa3pN9C2DvdveR5qW6rVmqFX8m3Rf7WTQ7dZNK57MW/wlTmr7dIdiExW2p5pyHsu3
+        F9y5eW4P8+6OYys332ytVmIpzkg01GIuKk4EAP/E2VlwAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjluLIzCtJLcpLzFFi42LZdlhJTrf/yYcYg78PLC0u7k612Ne8gdXi
+        8q45bBaH57exWNx7s5XJ4tDJuYwW5/8eZ3Vg9/j49BaLR9+WVYwenzfJeWx68pYpgCWKyyYl
+        NSezLLVI3y6BK2Pf3ImsBS08Ff+X/mVuYFzJ0cXIySEhYCKx5PA+ti5GLg4hgd2MEjPvTmSB
+        SEhL/Pz3HsoWllj57zk7RNFnRombR+aCJdgE9CRW7doDZosATfqzeysTSBGzwDRGiT0LDjCB
+        JIQFgiTetX5j7GLk4GARUJW4t0kLJMwr4C7x7PNvZogFchI3z3UyT2DkWcDIsIpRMrWgODc9
+        t9iwwCgvtVyvODG3uDQvXS85P3cTIzh0tLR2MJ44EX+IUYCDUYmHV+Dg+xgh1sSy4srcQ4wS
+        HMxKIrzeF4BCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeeXzj0UKCaQnlqRmp6YWpBbBZJk4OKUa
+        GBVn2hhnH7bprD0us2m5vPalyl2fqnXepm7SYXe+u3yJyU3VI6mGiju8Vj1oeFfnf6gzhuvB
+        1tRTSZIJu4XbnJ6wTnzirXV52g/ZqU8X7Lp8VVye2/AfZ/rXlGliChtLDgj0ZRu8NdsucOL5
+        NrkNUc38cr5JvaHh+kuUtjDN3mjltsr64fG2eCWW4oxEQy3mouJEAORBwrkZAgAA
+X-CMS-MailID: 20190531082344epcas5p394e519d5940ca1642007f7e594e2917c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190531082344epcas5p394e519d5940ca1642007f7e594e2917c
+References: <CGME20190531082344epcas5p394e519d5940ca1642007f7e594e2917c@epcas5p3.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 07:16:36PM +0000, Vineet Gupta wrote:
-> On 5/30/19 11:55 AM, Paul E. McKenney wrote:
-> >
-> >> I'm not sure how to interpret "natural alignment" for the case of double
-> >> load/stores on 32-bit systems where the hardware and ABI allow for 4 byte
-> >> alignment (ARCv2 LDD/STD, ARM LDRD/STRD ....)
-> >>
-> >> I presume (and the question) that lkmm doesn't expect such 8 byte load/stores to
-> >> be atomic unless 8-byte aligned
-> > I would not expect 8-byte accesses to be atomic on 32-bit systems unless
-> > some special instruction was in use.  But that usually means special
-> > intrinsics or assembly code.
-> 
-> Thx for confirming.
-> 
-> In cases where we *do* expect the atomicity, it seems there's some existing type
-> checking but isn't water tight.
-> e.g.
-> 
-> #define __smp_load_acquire(p)                        \
-> ({                                    \
->     typeof(*p) ___p1 = READ_ONCE(*p);                \
->     compiletime_assert_atomic_type(*p);                \
->     __smp_mb();                            \
->     ___p1;                                \
-> })
-> 
-> #define compiletime_assert_atomic_type(t)                \
->     compiletime_assert(__native_word(t),                \
->         "Need native word sized stores/loads for atomicity.")
-> 
-> #define __native_word(t) \
->     (sizeof(t) == sizeof(char) || sizeof(t) == sizeof(short) || \
->      sizeof(t) == sizeof(int) || sizeof(t) == sizeof(long))
-> 
-> 
-> So it won't catch the usage of 4 byte aligned long long which gcc targets to
-> single double load instruction.
+u16 can be used to store Page offset and page len for partial page
+for page size upto 65K. page size is fixed at compilation time so
+size of partial page can be reduced to reduce stack usage of functions
+using partial_page structure on stack.
 
-Yes, we didn't do those because that would result in runtime overhead.
+<subbuf_splice_actor>:
+       e16d42f4        strd    r4, [sp, #-36]! ; 0xffffffdc
+...
+       e24ddf4d        sub     sp, sp, #308    ; 0x134
 
-We assume natural alignment for any type the hardware can do.
+<tracing_splice_read_pipe>:
+       e16d42f4        strd    r4, [sp, #-36]! ; 0xffffffdc
+...
+       e24ddf53        sub     sp, sp, #332    ; 0x14c
+
+After:
+======
+<subbuf_splice_actor>:                                           
+       e16d42f4        strd    r4, [sp, #-36]! ; 0xffffffdc      
+...            
+       e24dd0f4        sub     sp, sp, #244    ; 0xf4  
+
+<tracing_splice_read_pipe>:
+       e16d42f4        strd    r4, [sp, #-36]! ; 0xffffffdc
+...
+       e24ddf45        sub     sp, sp, #276    ; 0x114
+
+Tested on ARM.
+
+Signed-off-by: Vaneet Narang <v.narang@samsung.com>
+Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
+---
+ include/linux/splice.h | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/include/linux/splice.h b/include/linux/splice.h
+index 74b4911..d2b1814 100644
+--- a/include/linux/splice.h
++++ b/include/linux/splice.h
+@@ -45,8 +45,13 @@ struct splice_desc {
+ };
+ 
+ struct partial_page {
++#if PAGE_SHIFT < 16
++	unsigned short offset;
++	unsigned short len;
++#else
+ 	unsigned int offset;
+ 	unsigned int len;
++#endif
+ 	unsigned long private;
+ };
+ 
+-- 
+2.7.4
+
