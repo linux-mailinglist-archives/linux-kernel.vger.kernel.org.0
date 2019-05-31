@@ -2,105 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5EFF30952
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 09:27:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 500C230944
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 09:21:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726849AbfEaH1P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 03:27:15 -0400
-Received: from esa4.hc3370-68.iphmx.com ([216.71.155.144]:40963 "EHLO
-        esa4.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbfEaH1P (ORCPT
+        id S1726784AbfEaHVg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 03:21:36 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:36823 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726330AbfEaHVf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 03:27:15 -0400
-X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Fri, 31 May 2019 03:27:14 EDT
-Authentication-Results: esa4.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=wei.liu2@citrix.com; spf=Pass smtp.mailfrom=wei.liu2@citrix.com; spf=None smtp.helo=postmaster@MIAPEX02MSOL02.citrite.net
-Received-SPF: None (esa4.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  wei.liu2@citrix.com) identity=pra; client-ip=23.29.105.83;
-  receiver=esa4.hc3370-68.iphmx.com;
-  envelope-from="wei.liu2@citrix.com";
-  x-sender="wei.liu2@citrix.com"; x-conformance=sidf_compatible
-Received-SPF: Pass (esa4.hc3370-68.iphmx.com: domain of
-  wei.liu2@citrix.com designates 23.29.105.83 as permitted
-  sender) identity=mailfrom; client-ip=23.29.105.83;
-  receiver=esa4.hc3370-68.iphmx.com;
-  envelope-from="wei.liu2@citrix.com";
-  x-sender="wei.liu2@citrix.com";
-  x-conformance=sidf_compatible; x-record-type="v=spf1";
-  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
-  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
-  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
-  ip4:216.52.6.188 ip4:23.29.105.83 ip4:162.221.156.50 ~all"
-Received-SPF: None (esa4.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@MIAPEX02MSOL02.citrite.net) identity=helo;
-  client-ip=23.29.105.83; receiver=esa4.hc3370-68.iphmx.com;
-  envelope-from="wei.liu2@citrix.com";
-  x-sender="postmaster@MIAPEX02MSOL02.citrite.net";
-  x-conformance=sidf_compatible
-IronPort-SDR: vZ/vfl2aWL/s2CrBoteUwRYksEByaVfCVcKUAHL+r/L7L0C9LKwCME3Jfwyqimk5UyqNI9Uekg
- QyY+0MYrqMjTsS+HXDmX8Ig34gUCd/4+8YpKfoxWA9ZZLIeLbZEKqavso5sj5z/7yfTo3/U3nq
- f8EDO5tH1IOUpds654nQ3M9asmbrkTU9/32zOEidozr3I67zQ/Pg3ESHZ95IoEUq8PCp/wEqWb
- 22RcvvBK22nkB8FFw2j9Y3r9cgDfsq8dI/5VnfrwHVC2+LLZ4uKyXQN3hJcA6M1FCzW3hk2A91
- ZG8=
-X-SBRS: 2.7
-X-MesageID: 1142044
-X-Ironport-Server: esa4.hc3370-68.iphmx.com
-X-Remote-IP: 23.29.105.83
-X-Policy: $RELAYED
-X-IronPort-AV: E=Sophos;i="5.60,534,1549947600"; 
-   d="scan'208";a="1142044"
-Date:   Fri, 31 May 2019 08:20:05 +0100
-From:   Wei Liu <wei.liu2@citrix.com>
-To:     Colin King <colin.king@canonical.com>
-CC:     Wei Liu <wei.liu2@citrix.com>,
-        Paul Durrant <paul.durrant@citrix.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        <xen-devel@lists.xenproject.org>, <netdev@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] xen-netback: remove redundant assignment to err
-Message-ID: <20190531072005.GC25537@zion.uk.xensource.com>
-References: <20190530190438.9571-1-colin.king@canonical.com>
+        Fri, 31 May 2019 03:21:35 -0400
+Received: by mail-it1-f194.google.com with SMTP id e184so13683526ite.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 00:21:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QBBKhSbZP7EAiicuPXkBfvJuEZTNKNpMjn27c5MZ3Dc=;
+        b=AGwQrFiOCXgty4N4Ai5lLfQQ6Xg6MpVZHZRCHn9hb3ZDqRg/wR45SafGZhZKmmDC8y
+         rHi8kv3AK9Dyf1clZUArh8rLaWgNT8PRSYqvMkcfx4hMo41rbMKlE53+ta/onOJtH6oo
+         dfsWtjfgGEsFvdUTkgJxMtxVJftBAPsCWuVaQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QBBKhSbZP7EAiicuPXkBfvJuEZTNKNpMjn27c5MZ3Dc=;
+        b=U0iJGnk59tKxYIpy4MsyGCiYP2+2Ua/2bIzXQIZomm2dfiSQgpH6qiSQhv0ivYcRwR
+         HluiZb3GxToWoxTl4U7Mni2ZDiuwKk59hZx7uawmExBD13lBXRL4rIbp9U5lhwXI9SvC
+         gJoM2oIpkkICzx2uwZrHpY5scC0VyTfZM9KicC1xGbxbh6/bdk9Bb0c5sU0+m67esWC3
+         j40SEheFd0CrDSQxABZJy8Zx9QzB9QcVTC12PUBzRpqci8ZngieWXGqfALwvq6mgUOVD
+         ppJQ1mqyTphKXULIq2E5gNWp7/EMeW8SquIuZpZYZVsNJToFOQeZ7t7OMDiZdpzT7c2L
+         PrIg==
+X-Gm-Message-State: APjAAAX0MB+UFmKb63x9dfCqYNsmZwBSODNrDx4GGt/DQl4NmN2Yle/A
+        F1VBPKC8f52zpNAosVhd7/aFvsxgmvSVU3EMMxNvHw==
+X-Google-Smtp-Source: APXvYqz2PDD+zioaMHLifADW+9kK68f43tOq4Amc0xMgAm0W/t6TnadR93Ukk5QMxHkQCpAl7zFjHTl9o7dS+amRmzU=
+X-Received: by 2002:a24:2846:: with SMTP id h67mr6274629ith.94.1559287294453;
+ Fri, 31 May 2019 00:21:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190530190438.9571-1-colin.king@canonical.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190529105615.14027-1-jagan@amarulasolutions.com>
+ <20190529105615.14027-2-jagan@amarulasolutions.com> <20190531065928.4wfr3kjngefy4q2b@flea>
+In-Reply-To: <20190531065928.4wfr3kjngefy4q2b@flea>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Fri, 31 May 2019 12:51:23 +0530
+Message-ID: <CAMty3ZBTu5DqcL+u6KTUC=Ofe9Gwdcu8VT-kSwWb2O3n9gnrWQ@mail.gmail.com>
+Subject: Re: [PATCH v9 1/9] dt-bindings: sun6i-dsi: Add A64 MIPI-DSI compatible
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Chen-Yu Tsai <wens@csie.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        Sergey Suloev <ssuloev@orpaltech.com>,
+        Ryan Pannell <ryan@osukl.com>, Bhushan Shah <bshah@mykolab.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 08:04:38PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable err is assigned with the value -ENOMEM that is never
-> read and it is re-assigned a new value later on.  The assignment is
-> redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On Fri, May 31, 2019 at 12:29 PM Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
+>
+> On Wed, May 29, 2019 at 04:26:07PM +0530, Jagan Teki wrote:
+> > The MIPI DSI controller in Allwinner A64 is similar to A33.
+> >
+> > But unlike A33, A64 doesn't have DSI_SCLK gating so it is valid
+> > to with separate compatible for A64 on the same driver.
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > Tested-by: Merlijn Wajer <merlijn@wizzup.org>
+> > ---
+> >  Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+> > index 1cc40663b7a2..9877398be69a 100644
+> > --- a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+> > +++ b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+> > @@ -12,6 +12,7 @@ The DSI Encoder generates the DSI signal from the TCON's.
+> >  Required properties:
+> >    - compatible: value must be one of:
+> >      * allwinner,sun6i-a31-mipi-dsi
+> > +    * allwinner,sun50i-a64-mipi-dsi
+> >    - reg: base address and size of memory-mapped region
+> >    - interrupts: interrupt associated to this IP
+> >    - clocks: phandles to the clocks feeding the DSI encoder
+>
+> We've switch to YAML now, and the compatible should be expressed that
+> way now:
 
-Acked-by: Wei Liu <wei.liu2@citrix.com>
-
-
-> ---
->  drivers/net/xen-netback/interface.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/xen-netback/interface.c b/drivers/net/xen-netback/interface.c
-> index 783198844dd7..240f762b3749 100644
-> --- a/drivers/net/xen-netback/interface.c
-> +++ b/drivers/net/xen-netback/interface.c
-> @@ -633,7 +633,7 @@ int xenvif_connect_data(struct xenvif_queue *queue,
->  			unsigned int rx_evtchn)
->  {
->  	struct task_struct *task;
-> -	int err = -ENOMEM;
-> +	int err;
->  
->  	BUG_ON(queue->tx_irq);
->  	BUG_ON(queue->task);
-> -- 
-> 2.20.1
-> 
+Yes, I have seen it few days back will update on top of that, thanks!
