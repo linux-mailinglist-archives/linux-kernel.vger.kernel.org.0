@@ -2,101 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34BFC312E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 18:47:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55EE631307
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 18:51:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726840AbfEaQra (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 12:47:30 -0400
-Received: from mail-eopbgr80059.outbound.protection.outlook.com ([40.107.8.59]:56017
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727105AbfEaQr2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 12:47:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0PNB+iX0JXfIC0kbo7QRgW+BBwqfUl6yy2PWjiq0550=;
- b=WE8aLIMgkT6+mj+1pimOxRgKud4Nsu+0perqEnBGYI6mvtLqm64hBvV7ImBQuq8aQwGi0w9IRa+qpiAGhIyPHwKvl0z1+g6NBZIDK0dIPrry9vM1A+6ppJ+5evvfe4Kzd2CgMDsou5zv41/n9BwXro7z5ZMHzrO1KcH0kxz/DpE=
-Received: from AM0PR04MB3971.eurprd04.prod.outlook.com (52.134.90.16) by
- AM0PR04MB4212.eurprd04.prod.outlook.com (52.134.95.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1922.18; Fri, 31 May 2019 16:47:24 +0000
-Received: from AM0PR04MB3971.eurprd04.prod.outlook.com
- ([fe80::3df6:6e48:cc6d:71c6]) by AM0PR04MB3971.eurprd04.prod.outlook.com
- ([fe80::3df6:6e48:cc6d:71c6%5]) with mapi id 15.20.1922.021; Fri, 31 May 2019
- 16:47:24 +0000
-From:   York Sun <york.sun@nxp.com>
-To:     Radu Nicolae Pirea <radu_nicolae.pirea@upb.ro>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-CC:     Mike Turquette <mturquette@baylibre.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Andrey Filippov <andrey@elphel.com>,
-        Paul Bolle <pebolle@tiscali.nl>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [EXT] Re: [Patch v9] driver/clk/clk-si5338: Add common clock
- framework driver for si5338
-Thread-Topic: [EXT] Re: [Patch v9] driver/clk/clk-si5338: Add common clock
- framework driver for si5338
-Thread-Index: AQHVF7oG6C1le8DQ9Euu7t2xmZzbwg==
-Date:   Fri, 31 May 2019 16:47:24 +0000
-Message-ID: <AM0PR04MB3971799F379795FE812D6D529A190@AM0PR04MB3971.eurprd04.prod.outlook.com>
-References: <1472247978-29312-1-git-send-email-york.sun@nxp.com>
- <96cb1e730ea5afd651d4c79f20f365df5fe8a29b.camel@upb.ro>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=york.sun@nxp.com; 
-x-originating-ip: [66.235.24.83]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: cd73a39a-1f28-46d9-5be2-08d6e5e7a84f
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB4212;
-x-ms-traffictypediagnostic: AM0PR04MB4212:
-x-microsoft-antispam-prvs: <AM0PR04MB421265AE67A1B5B3CF01E64D9A190@AM0PR04MB4212.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:862;
-x-forefront-prvs: 00540983E2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(346002)(376002)(396003)(366004)(199004)(189003)(3846002)(7736002)(52536014)(76116006)(54906003)(4744005)(2906002)(64756008)(6116002)(7696005)(6436002)(26005)(73956011)(86362001)(229853002)(33656002)(478600001)(91956017)(110136005)(66476007)(66446008)(74316002)(25786009)(316002)(66556008)(66946007)(5660300002)(305945005)(2501003)(186003)(7416002)(44832011)(446003)(8936002)(68736007)(55016002)(486006)(76176011)(6506007)(9686003)(71190400001)(99286004)(81156014)(102836004)(8676002)(53936002)(53546011)(71200400001)(66066001)(4326008)(14454004)(6246003)(81166006)(256004)(476003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4212;H:AM0PR04MB3971.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: GRCqxB4sHejEnDciYNjolrqYJCNdiN/+9H5QD6Eyh1dY/VJuOiw+IYHg+jJbH2KGaaz+INqmQ9CmmuJGP70PLaHtmaqDcIYGFl6Ap4cSI8hDj2DIol1ocasPu9LhC4VCd5GLMZ3MnLOooAhGiwiVqpQUMIqweThVFaeNn6YxLzKUjGi60Ku5NFCBmxt3J5ymcK1Ur40XodzoPP8nM62zk4s43d/+H5p+7J4HLomqqlec0VawHQXbYanYXfcBisC/2aF8Jnlo/zlpZkjj2Pc1jXsX1WpjaiGQrC7IrzS7uze9JCtyWThVvnCKxTDv0KtE3pQuJekEBL6gQdP4947nOf0jUBYxnCzTnnS0kzMQ16C4DwBY5sLFdbT0fylnyU7w/qC1q1TSptdbUyH86cgobvgqf+JDuUVbuAFPIMWlhFQ=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726918AbfEaQvY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 12:51:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58112 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726518AbfEaQvX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 12:51:23 -0400
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A8B426C81
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 16:51:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559321482;
+        bh=BT2rWzXi62oKFaPqb3HSutdmVFL9XTsT6SBXBhkv8gc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=I7BdUEm+hjcpnDjsG+GYN2Nyfi5D2eKdobP3NLAABX8nTHcVTqbROJ7qTy2JlcW0b
+         a/4FU28Bqnc4m+Hwh5KsHASekzIpOXCMVvjAEktbDhdu+JZ9+BqiLn83ZvfdN7CHGt
+         qW6RoJ4XwgUebKMsJRS2taUtvR2t/2ivlFG+EviU=
+Received: by mail-wm1-f51.google.com with SMTP id v22so6357068wml.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 09:51:21 -0700 (PDT)
+X-Gm-Message-State: APjAAAXZas6zpVktEZGLldM1ncBIgVwMBNtQ/xSyv0pzdaAe0w0+9/Z+
+        EPSRxmp4kHaxG8QltK9Se4p808YRSbqhnI9v3xA0hQ==
+X-Google-Smtp-Source: APXvYqy22t6wXQHhuEqBn7zcdo5FpsE02deJ5D6fjJSyAfwJ3fAdojmAWRIl5f+9jtSYJ9ZYsOHYNdCgHHP/OK0g244=
+X-Received: by 2002:a1c:6242:: with SMTP id w63mr1856759wmb.161.1559321480595;
+ Fri, 31 May 2019 09:51:20 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cd73a39a-1f28-46d9-5be2-08d6e5e7a84f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 May 2019 16:47:24.2653
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: york.sun@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4212
+References: <nycvar.YFH.7.76.1905282326360.1962@cbobk.fhfr.pm>
+ <20190531051456.fzkvn62qlkf6wqra@treble> <nycvar.YFH.7.76.1905311045240.1962@cbobk.fhfr.pm>
+ <5564116.e9OFvgDRbB@kreacher> <CALCETrUpseta+NrhVwzzVFTe-BkBHtDUJBO22ci3mAsVR+XOog@mail.gmail.com>
+ <nycvar.YFH.7.76.1905311628330.1962@cbobk.fhfr.pm> <B7AC83ED-3F11-42B9-8506-C842A5937B50@amacapital.net>
+ <nycvar.YFH.7.76.1905311651450.1962@cbobk.fhfr.pm> <20190531152626.4nmyc7lj6mjwuo2v@treble>
+ <nycvar.YFH.7.76.1905311739510.1962@cbobk.fhfr.pm> <20190531161952.dps3grwg4ytrpuqw@treble>
+In-Reply-To: <20190531161952.dps3grwg4ytrpuqw@treble>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 31 May 2019 09:51:09 -0700
+X-Gmail-Original-Message-ID: <CALCETrXFx4eV5ajMxOeM2UN=Ss9h3sGRLpd_4t33VAMXyPODiw@mail.gmail.com>
+Message-ID: <CALCETrXFx4eV5ajMxOeM2UN=Ss9h3sGRLpd_4t33VAMXyPODiw@mail.gmail.com>
+Subject: Re: [PATCH v4] x86/power: Fix 'nosmt' vs. hibernation triple fault
+ during resume
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Jiri Kosina <jikos@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/31/19 7:06 AM, Radu Nicolae Pirea wrote:=0A=
-> Caution: EXT Email=0A=
-> =0A=
-> Hi,=0A=
-> =0A=
-> @York I want to continue the work on this driver and I want to upstream=
-=0A=
-> it. Are you OK with this?=0A=
-> =0A=
-> I saw later improvement suggestions related to the bindings and I will=0A=
-> make the changes.=0A=
-=0A=
-Radu,=0A=
-=0A=
-You are welcome to improve this driver.=0A=
-=0A=
-York=0A=
+On Fri, May 31, 2019 at 9:19 AM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+>
+> On Fri, May 31, 2019 at 05:41:18PM +0200, Jiri Kosina wrote:
+> > On Fri, 31 May 2019, Josh Poimboeuf wrote:
+> >
+> > > The only question I'd have is if we have data on the power savings
+> > > difference between hlt and mwait.  mwait seems to wake up on a lot of
+> > > different conditions which might negate its deeper sleep state.
+> >
+> > hlt wakes up on basically the same set of events, but has the
+> > auto-restarting semantics on some of them (especially SMM). So the wakeup
+> > frequency itself shouldn't really contribute to power consumption
+> > difference; it's the C-state that mwait allows CPU to enter.
+>
+> Ok.  I reluctantly surrender :-)  For your v4:
+>
+>   Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+>
+> It works as a short term fix, but it's fragile, and it does feel like
+> we're just adding more duct tape, as Andy said.
+>
+
+Just to clarify what I was thinking, it seems like soft-offlining a
+CPU and resuming a kernel have fundamentally different requirements.
+To soft-offline a CPU, we want to get power consumption as low as
+possible and make sure that MCE won't kill the system.  It's okay for
+the CPU to occasionally execute some code.  For resume, what we're
+really doing is trying to hand control of all CPUs from kernel A to
+kernel B.  There are two basic ways to hand off control of a given
+CPU: we can jump (with JMP, RET, horrible self-modifying code, etc)
+from one kernel to the other, or we can attempt to make a given CPU
+stop executing code from either kernel at all and then forcibly wrench
+control of it in kernel B.  Either approach seems okay, but the latter
+approach depends on getting the CPU to reliably stop executing code.
+We don't care about power consumption for resume, and I'm not even
+convinced that we need to be able to survive an MCE that happens while
+we're resuming, although surviving MCE would be nice.
+
+So if we don't want to depend on nasty system details at all, we could
+have the first kernel explicitly wake up all CPUs and hand them all
+off to the new kernel, more or less the same way that we hand over
+control of the BSP right now.  Or we can look for a way to tell all
+the APs to stop executing kernel code, and the only architectural way
+I know of to do that is to sent an INIT IPI (and then presumably
+deassert INIT -- the SDM is a bit vague).
+
+Or we could allocate a page, stick a GDT, a TSS, and a 1: hlt; jmp 1b
+in it, turn off paging, and run that code.  And then somehow convince
+the kernel we load not to touch that page until it finishes waking up
+all CPUs.  This seems conceptually simple and very robust, but I'm not
+sure it fits in with the way hibernation works right now at all.
