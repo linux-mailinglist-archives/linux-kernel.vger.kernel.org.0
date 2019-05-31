@@ -2,69 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 042C730B2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 11:13:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F21530B3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 11:18:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727145AbfEaJMw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 05:12:52 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:59030 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbfEaJMw (ORCPT
+        id S1726683AbfEaJSr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 05:18:47 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:46958 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726002AbfEaJSr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 05:12:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=1zywXp4XVtGKirLjahUxV+mvxxARlKH6na7zNEvRC/c=; b=QGXqZNaaODNHqXNHqcWSnYqrQ
-        CDiLuz1ZjVY7p9nkDYfiEmUFGtdVloKFAfRuJeFFf48bImuHqC/sxp6fkA3TCPKFGHRGymXvcs8Qz
-        le4S9bFaNxRQzDqfMv4mdchODYuFYoP8abeI959yyNJjdiIupeQ0X/KcCfxuk+D942w+U63/aX0g7
-        gYEFf74sweAS6xpi9qa+rXHlkTXdhA9YUGeXb5m6Mgg8uZ6eyqYiAUpSn06dNPSVQJJZwhsT6RJow
-        F9DXgltFOoZN5Oag5n4ofZjrvEZAipqsQsl66wUbKUHmiHzbQWDuzIirzhuVE1YDsXXEM7DFCA51F
-        P91GS1R+Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hWdah-0003F0-7P; Fri, 31 May 2019 09:12:47 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 00C50201B8CFE; Fri, 31 May 2019 11:12:45 +0200 (CEST)
-Date:   Fri, 31 May 2019 11:12:45 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Jann Horn <jannh@google.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        David Howells <dhowells@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ptrace: restore smp_rmb() in __ptrace_may_access()
-Message-ID: <20190531091245.GN2677@hirez.programming.kicks-ass.net>
-References: <20190529113157.227380-1-jannh@google.com>
- <20190529162120.GB27659@redhat.com>
- <CAG48ez3S1c_cd8RNSb9TrF66d+1AMAxD4zh-kixQ6uSEnmS-tg@mail.gmail.com>
- <20190530120531.GE22536@redhat.com>
+        Fri, 31 May 2019 05:18:47 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4V97nqd018680;
+        Fri, 31 May 2019 11:18:31 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=rz5GP3p1X72UWRAxSNm3DrASQ+E4MaPT9C6RQHCpmq0=;
+ b=rvbek+Dq2ug8amgrE3UQvq+FhSycEB2bRCB8U9vs4DAkatMPUGr6eKLpSgp9rDmrw/v2
+ ZXOf+CtoinI3KWqDKUQ+hpqVdz2b5sjivjjN50b+hboktcNsV8bg8uT9j786apCqsC5K
+ 2wMmOra0jHuYTEBGK2XNUFDUSvqLZUrxNcqyyXQGWG3mRac7D0Fpq8+m+66m8+UHMr9P
+ SQvviH4fe/eIEjxCN9/myCtgtQ7JFMBRW3kDogi8oXZz+yeZRLBOcI+Sbdxu3mcOR73Z
+ shBWFBRB/yXCf2Oe9s991wLAH5hM8FSrmb/OgCKBu+QwwX96q5GWWJCh8PmhmvN4pDk3 vA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2spvkhk772-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 31 May 2019 11:18:31 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D1D5C31;
+        Fri, 31 May 2019 09:18:28 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A14272476;
+        Fri, 31 May 2019 09:18:28 +0000 (GMT)
+Received: from SAFEX1HUBCAS21.st.com (10.75.90.45) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 31 May
+ 2019 11:18:28 +0200
+Received: from localhost (10.201.23.25) by Webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 31 May 2019 11:18:28
+ +0200
+From:   Fabien Dessenne <fabien.dessenne@st.com>
+To:     Hugues Fruchet <hugues.fruchet@st.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "Alexandre Torgue" <alexandre.torgue@st.com>,
+        Pavel Machek <pavel@denx.de>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        <linux-media@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Fabien Dessenne <fabien.dessenne@st.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH] media: stm32-dcmi: fix irq = 0 case
+Date:   Fri, 31 May 2019 11:18:15 +0200
+Message-ID: <1559294295-20573-1-git-send-email-fabien.dessenne@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190530120531.GE22536@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.25]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-31_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 02:05:31PM +0200, Oleg Nesterov wrote:
-> > Anyway, looking at it, I think smp_acquire__after_ctrl_dep() doesn't
-> > make sense here;
-> 
-> Well I still _think_ it should work, it provides the LOAD-LOAD ordering
-> and this is what we need.
+Manage the irq = 0 case, where we shall return an error.
 
-So it hard relies on being part of a control dependency, note how the
-comment says that architectures that do not do load speculation can
-override the smp_rmb() default with barrier() (and we used have an
-architecture that made use of that, although it's been since removed).
+Fixes: b5b5a27bee58 ("media: stm32-dcmi: return appropriate error codes during probe")
+Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+---
+ drivers/media/platform/stm32/stm32-dcmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-IOW, it is an error to use smp_acquire__after_ctrl_dep() without an
-(immediate) preceding branch.
+diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
+index b9dad0a..d855e9c 100644
+--- a/drivers/media/platform/stm32/stm32-dcmi.c
++++ b/drivers/media/platform/stm32/stm32-dcmi.c
+@@ -1702,7 +1702,7 @@ static int dcmi_probe(struct platform_device *pdev)
+ 	if (irq <= 0) {
+ 		if (irq != -EPROBE_DEFER)
+ 			dev_err(&pdev->dev, "Could not get irq\n");
+-		return irq;
++		return irq ? irq : -ENXIO;
+ 	}
+ 
+ 	dcmi->res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-- 
+2.7.4
+
