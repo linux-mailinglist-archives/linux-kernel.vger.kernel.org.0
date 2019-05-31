@@ -2,157 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 010EE315AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 21:53:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A7F4315C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 22:00:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbfEaTww (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 15:52:52 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:15015 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727343AbfEaTwv (ORCPT
+        id S1727456AbfEaUAh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 16:00:37 -0400
+Received: from forward104j.mail.yandex.net ([5.45.198.247]:55548 "EHLO
+        forward104j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727282AbfEaUAg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 15:52:51 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cf186100002>; Fri, 31 May 2019 12:52:48 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 31 May 2019 12:52:49 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 31 May 2019 12:52:49 -0700
-Received: from [10.2.175.94] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 31 May
- 2019 19:52:45 +0000
-Subject: Re: [PATCH V2 03/12] clk: tegra: save and restore PLLs state for
- system
-To:     Stephen Boyd <sboyd@kernel.org>, <jason@lakedaemon.net>,
-        <jonathanh@nvidia.com>, <linus.walleij@linaro.org>,
-        <marc.zyngier@arm.com>, <mark.rutland@arm.com>, <stefan@agner.ch>,
-        <tglx@linutronix.de>, <thierry.reding@gmail.com>
-CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <jckuo@nvidia.com>, <josephl@nvidia.com>, <talho@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
- <1559084936-4610-4-git-send-email-skomatineni@nvidia.com>
- <20190529232810.14A5224366@mail.kernel.org>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <f5fd9068-134a-3343-9cca-94db67cd748f@nvidia.com>
-Date:   Fri, 31 May 2019 12:52:44 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Fri, 31 May 2019 16:00:36 -0400
+X-Greylist: delayed 401 seconds by postgrey-1.27 at vger.kernel.org; Fri, 31 May 2019 16:00:35 EDT
+Received: from mxback16j.mail.yandex.net (mxback16j.mail.yandex.net [IPv6:2a02:6b8:0:1619::92])
+        by forward104j.mail.yandex.net (Yandex) with ESMTP id 005A34A0413;
+        Fri, 31 May 2019 22:53:53 +0300 (MSK)
+Received: from smtp3o.mail.yandex.net (smtp3o.mail.yandex.net [2a02:6b8:0:1a2d::27])
+        by mxback16j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id d5NH6O2W6Q-rq10wlFj;
+        Fri, 31 May 2019 22:53:52 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1559332432;
+        bh=5LPGI2g/Pppy4VTLsIsroNZrvadc1PssQ7CE756xPVY=;
+        h=Subject:To:From:Message-Id:Cc:Date;
+        b=C1B4JLYGly9KmpERhIjPTdLL2l+F3MVcts0MaZ0pYdvA3YA/OCYtYtO9phRCcIBv6
+         dGuWCd5QtEWAQN/P4lAfKV5SLLDgDxtSGWHE1+jCPRWWnE7/JnRRJ14EwOkoX8AJ8u
+         nWtqmJ4p6YnhbbDQzVsTihsr3BTxpRYvzoqwYJLI=
+Authentication-Results: mxback16j.mail.yandex.net; dkim=pass header.i=@yandex.ru
+Received: by smtp3o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id aBebW1wM4V-rphi5q2w;
+        Fri, 31 May 2019 22:53:51 +0300
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client certificate not present)
+From:   Andrey Abramov <st5pub@yandex.ru>
+To:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com
+Cc:     linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        st5pub@yandex.ru
+Subject: [PATCH] btrfs: Fix -Wunused-but-set-variable warnings
+Date:   Fri, 31 May 2019 22:53:49 +0300
+Message-Id: <20190531195349.31129-1-st5pub@yandex.ru>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190529232810.14A5224366@mail.kernel.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1559332368; bh=+OtNzRTspnNq7fTZGHYQmYRka68TmYn5YO1oiUAfnMI=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=nG/K91HTv7KRVGECV5Ru4ruZvcwq0LKATCDUqMuTwTthN2VzO0OZZHdhzaOcN9E/I
-         Hp9JT+hRqnCIAcLCmaSBSX7bMtQxRt22SfNClRCnIBhwLMaSj5ho1n0h7xeLBw2Gjx
-         mQqfh0UOsXgFoKWcNK5TQ1PsBV47GvzC5vYODB8TmMPi1hR0nc5QUTvfjXR+VLyd4t
-         9jyZo7wFIs7pjwY1sTt2u2w4wtqKBayyBkZpLvq0hY6YFBxrNplg5iKNOV02AGPz5v
-         EpCllyU1QX1gRWeJXxvP+1FUHXXzOndRzQm4BCCPAgTIsDRC53dIVF6Pxxthg53WCt
-         lLv1eFbNAOePA==
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fix -Wunused-but-set-variable warnings in raid56.c and sysfs.c files
 
-On 5/29/19 4:28 PM, Stephen Boyd wrote:
-> Quoting Sowjanya Komatineni (2019-05-28 16:08:47)
->> This patch has implementation of saving and restoring PLL's state to
->> support system suspend and resume operations.
-> Can you provide some more background on _why_ this patch should exist?
-> That's typically what gets written in the commit text.
-Will add more in next version of this series.
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>   drivers/clk/tegra/clk-divider.c | 19 ++++++++
->>   drivers/clk/tegra/clk-pll-out.c | 25 +++++++++++
->>   drivers/clk/tegra/clk-pll.c     | 99 ++++++++++++++++++++++++++++++++---------
->>   drivers/clk/tegra/clk.h         |  9 ++++
->>   4 files changed, 132 insertions(+), 20 deletions(-)
->>
->> diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
->> index 2a1822a22740..718694727042 100644
->> --- a/drivers/clk/tegra/clk-divider.c
->> +++ b/drivers/clk/tegra/clk-divider.c
->> @@ -14,6 +14,7 @@
->>    * along with this program.  If not, see <http://www.gnu.org/licenses/>.
->>    */
->>   
->> +#include <linux/clk.h>
->>   #include <linux/kernel.h>
->>   #include <linux/io.h>
->>   #include <linux/err.h>
->> @@ -179,3 +180,21 @@ struct clk *tegra_clk_register_mc(const char *name, const char *parent_name,
->>                                            reg, 16, 1, CLK_DIVIDER_READ_ONLY,
->>                                            mc_div_table, lock);
->>   }
->> +
->> +#if defined(CONFIG_PM_SLEEP)
->> +void tegra_clk_divider_resume(struct clk_hw *hw, unsigned long rate)
->> +{
->> +       struct clk_hw *parent = clk_hw_get_parent(hw);
->> +       unsigned long parent_rate;
->> +
->> +       if (IS_ERR(parent)) {
-> Will this ever happen? Collapse the WARN_ON into the if please:
->
-> 	if (WARN_ON(IS_ERR(parent)))
->
-Will fix in next version of this series.
->> +               WARN_ON(1);
->> +               return;
->> +       }
->> +
->> +       parent_rate = clk_hw_get_rate(parent);
->> +
->> +       if (clk_frac_div_set_rate(hw, rate, parent_rate) < 0)
->> +               WARN_ON(1);
->> +}
->> +#endif
->> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
->> index 09bccbb9640c..e4d124cc5657 100644
->> --- a/drivers/clk/tegra/clk.h
->> +++ b/drivers/clk/tegra/clk.h
->> @@ -841,6 +841,15 @@ int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
->>   int div_frac_get(unsigned long rate, unsigned parent_rate, u8 width,
->>                   u8 frac_width, u8 flags);
->>   
->> +#ifdef CONFIG_PM_SLEEP
-> Can you remove this ifdef? It just complicates compilation testing.
-OK, Will fix in next version
->> +void tegra_clk_pll_resume(struct clk *c, unsigned long rate);
->> +void tegra_clk_divider_resume(struct clk_hw *hw, unsigned long rate);
->> +void tegra_clk_pll_out_resume(struct clk *clk, unsigned long rate);
->> +void tegra_clk_plle_tegra210_resume(struct clk *c);
->> +void tegra_clk_sync_state_pll(struct clk *c);
->> +void tegra_clk_sync_state_pll_out(struct clk *clk);
-> Do these APIs need to operate on struct clk? Why can't they operate on
-> clk_hw or why can't we drive the suspend/resume sequence from the clk
-> provider driver itself?
->
-Yes can change to use clk_hw.
+Signed-off-by: Andrey Abramov <st5pub@yandex.ru>
+---
+ fs/btrfs/raid56.c | 32 +++++++++++---------------------
+ fs/btrfs/sysfs.c  |  5 +----
+ 2 files changed, 12 insertions(+), 25 deletions(-)
 
-By clk provider driver, are you referring to clk-tegra210?
-
-clk-terga210 driver has suspend/resume implementation. These API's are 
-for corresponding clock specific implementations (clk-pll, clk-pll-out, 
-clk-divider) for enabling and restoring to proper rate and are invoked 
-during clk-tegra210 driver resume.
-
-thanks
-
-Sowjanya
+diff --git a/fs/btrfs/raid56.c b/fs/btrfs/raid56.c
+index f3d0576dd327..4ab29eacfdf3 100644
+--- a/fs/btrfs/raid56.c
++++ b/fs/btrfs/raid56.c
+@@ -1182,22 +1182,17 @@ static noinline void finish_rmw(struct btrfs_raid_bio *rbio)
+ 	int nr_data = rbio->nr_data;
+ 	int stripe;
+ 	int pagenr;
+-	int p_stripe = -1;
+-	int q_stripe = -1;
++	int is_q_stripe = 0;
+ 	struct bio_list bio_list;
+ 	struct bio *bio;
+ 	int ret;
+ 
+ 	bio_list_init(&bio_list);
+ 
+-	if (rbio->real_stripes - rbio->nr_data == 1) {
+-		p_stripe = rbio->real_stripes - 1;
+-	} else if (rbio->real_stripes - rbio->nr_data == 2) {
+-		p_stripe = rbio->real_stripes - 2;
+-		q_stripe = rbio->real_stripes - 1;
+-	} else {
++	if (rbio->real_stripes - rbio->nr_data == 2)
++		is_q_stripe = 1;
++	else if (rbio->real_stripes - rbio->nr_data != 1)
+ 		BUG();
+-	}
+ 
+ 	/* at this point we either have a full stripe,
+ 	 * or we've read the full stripe from the drive.
+@@ -1241,7 +1236,7 @@ static noinline void finish_rmw(struct btrfs_raid_bio *rbio)
+ 		SetPageUptodate(p);
+ 		pointers[stripe++] = kmap(p);
+ 
+-		if (q_stripe != -1) {
++		if (is_q_stripe) {
+ 
+ 			/*
+ 			 * raid6, add the qstripe and call the
+@@ -2340,8 +2335,7 @@ static noinline void finish_parity_scrub(struct btrfs_raid_bio *rbio,
+ 	int nr_data = rbio->nr_data;
+ 	int stripe;
+ 	int pagenr;
+-	int p_stripe = -1;
+-	int q_stripe = -1;
++	int is_q_stripe = 0;
+ 	struct page *p_page = NULL;
+ 	struct page *q_page = NULL;
+ 	struct bio_list bio_list;
+@@ -2351,14 +2345,10 @@ static noinline void finish_parity_scrub(struct btrfs_raid_bio *rbio,
+ 
+ 	bio_list_init(&bio_list);
+ 
+-	if (rbio->real_stripes - rbio->nr_data == 1) {
+-		p_stripe = rbio->real_stripes - 1;
+-	} else if (rbio->real_stripes - rbio->nr_data == 2) {
+-		p_stripe = rbio->real_stripes - 2;
+-		q_stripe = rbio->real_stripes - 1;
+-	} else {
++	if (rbio->real_stripes - rbio->nr_data == 2)
++		is_q_stripe = 1;
++	else if (rbio->real_stripes - rbio->nr_data != 1)
+ 		BUG();
+-	}
+ 
+ 	if (bbio->num_tgtdevs && bbio->tgtdev_map[rbio->scrubp]) {
+ 		is_replace = 1;
+@@ -2380,7 +2370,7 @@ static noinline void finish_parity_scrub(struct btrfs_raid_bio *rbio,
+ 		goto cleanup;
+ 	SetPageUptodate(p_page);
+ 
+-	if (q_stripe != -1) {
++	if (is_q_stripe) {
+ 		q_page = alloc_page(GFP_NOFS | __GFP_HIGHMEM);
+ 		if (!q_page) {
+ 			__free_page(p_page);
+@@ -2403,7 +2393,7 @@ static noinline void finish_parity_scrub(struct btrfs_raid_bio *rbio,
+ 		/* then add the parity stripe */
+ 		pointers[stripe++] = kmap(p_page);
+ 
+-		if (q_stripe != -1) {
++		if (is_q_stripe) {
+ 
+ 			/*
+ 			 * raid6, add the qstripe and call the
+diff --git a/fs/btrfs/sysfs.c b/fs/btrfs/sysfs.c
+index 2f078b77fe14..514b75dec4a9 100644
+--- a/fs/btrfs/sysfs.c
++++ b/fs/btrfs/sysfs.c
+@@ -887,13 +887,10 @@ void btrfs_sysfs_feature_update(struct btrfs_fs_info *fs_info,
+ {
+ 	struct btrfs_fs_devices *fs_devs;
+ 	struct kobject *fsid_kobj;
+-	u64 features;
+-	int ret;
+ 
+ 	if (!fs_info)
+ 		return;
+ 
+-	features = get_features(fs_info, set);
+ 	ASSERT(bit & supported_feature_masks[set]);
+ 
+ 	fs_devs = fs_info->fs_devices;
+@@ -907,7 +904,7 @@ void btrfs_sysfs_feature_update(struct btrfs_fs_info *fs_info,
+ 	 * to use sysfs_update_group but some refactoring is needed first.
+ 	 */
+ 	sysfs_remove_group(fsid_kobj, &btrfs_feature_attr_group);
+-	ret = sysfs_create_group(fsid_kobj, &btrfs_feature_attr_group);
++	sysfs_create_group(fsid_kobj, &btrfs_feature_attr_group);
+ }
+ 
+ static int btrfs_init_debugfs(void)
+-- 
+2.20.1
 
