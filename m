@@ -2,98 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB24230B0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 11:05:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C938E30B08
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 11:05:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbfEaJFU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 05:05:20 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:44386 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726520AbfEaJFU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 05:05:20 -0400
-Received: by mail-lj1-f196.google.com with SMTP id e13so8815437ljl.11
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 02:05:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=S0K5vF1TmvPR6y9n0+EfBalb63nXpcEz1r5n0JeJ+og=;
-        b=DG9YHhvk4ayYVsQmjKNwO/NhJ5gfFhdnvVUS8e+5EuiDdzWidbe2+ABHLKD7KU8AZ7
-         Fpwbqb5zi8isgWhOEHEkaRzyjRim6feyjz/BNZS8c2AaAJ1dbK65ArST7oWktH6poWHQ
-         aErfqAWxFpHi17h8JoyA1tTZnes431sEFBb+C3aG0IoNPym4fDJdbfLrmiKJm16EaE3m
-         A0LXAQZHUu1k5a7+AFWGORMyyHVRt5gtLWbkt7BvL5kkkXlQIcGBTMAbpJi0cX5NMLRo
-         xTHTbkwF+DaT24XK+EE0xrng/AYcurruXmD9r1TTt4aXqK76WH5m3yoGEor59bLHTR9P
-         nAGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=S0K5vF1TmvPR6y9n0+EfBalb63nXpcEz1r5n0JeJ+og=;
-        b=K2jPi//ZkVaq/I6I7IJ/oiuMMzc/ilSax5Od2Ktt+c0deJzFhVdR9x3D37FosAlLGB
-         JhrOgMOIibzXNxVH8apwCGoS/8SOAiQcbg1IX/7Q3eGEeHX060Ga9Avr0OD5loscQme0
-         GQF2APfBaZ5Qm+cetHrx6qDHeobS6vwJQQFz8g3ak4yu/MtXP+WcJQAaU6hwsPrZRhH1
-         idSVdPrqqjrl1OkdCw5FxA+4vzUFR7oTOx+zdN30V5JGqD2T3Aj7tAC9awMNjCBZiI3u
-         lg3PIZoLEnJDf9dFWVVWs4i0nbqlpn+N+JhJzLeL69gJwjhbd8zE1wJJymntnBeRlGTO
-         UCyQ==
-X-Gm-Message-State: APjAAAXw3jO9LYN4wX7he0sotQvS1rBUC8dp1PAtnuikxk5K6wtwjmPt
-        RXGIJyY6ttu1w4xy1fP9q6pmfcDvY/XhvjTmJYQ=
-X-Google-Smtp-Source: APXvYqz3PkghfV4huXNmZcH4pYmCgDbj4sNR+TUR6vG/tzK5YQkMU4c85OgTBPQIbW1GaAe9pI5WWNQpLekscQy2SfE=
-X-Received: by 2002:a2e:9ad1:: with SMTP id p17mr5178840ljj.147.1559293517891;
- Fri, 31 May 2019 02:05:17 -0700 (PDT)
+        id S1727041AbfEaJFM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 05:05:12 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48266 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726240AbfEaJFM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 05:05:12 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 93933341;
+        Fri, 31 May 2019 02:05:11 -0700 (PDT)
+Received: from [10.162.42.223] (p8cg001049571a15.blr.arm.com [10.162.42.223])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 143BB3F59C;
+        Fri, 31 May 2019 02:05:08 -0700 (PDT)
+Subject: Re: [PATCH 4/4] arm64/mm: Drop vm_fault_t argument from
+ __do_page_fault()
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Andrey Konovalov <andreyknvl@google.com>
+References: <1559133285-27986-1-git-send-email-anshuman.khandual@arm.com>
+ <1559133285-27986-5-git-send-email-anshuman.khandual@arm.com>
+ <20190529151134.GH31777@lakrids.cambridge.arm.com>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <5e565fd3-0d2b-31a5-8644-c91ccc5fb05e@arm.com>
+Date:   Fri, 31 May 2019 14:35:23 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Reply-To: evelynmarryedward@gmail.com
-Received: by 2002:ab3:7dc3:0:0:0:0:0 with HTTP; Fri, 31 May 2019 02:05:17
- -0700 (PDT)
-From:   Evelyn Mary Edward <evelymaryedward@gmail.com>
-Date:   Fri, 31 May 2019 09:05:17 +0000
-X-Google-Sender-Auth: UaD4lWMG7k-yu7OoOSwwKuqYrUM
-Message-ID: <CAHidhB5HJ4L1a_vwqpCGj-Yk6QodBkakHbcOA7C+4RPWH36pAg@mail.gmail.com>
-Subject: URGENT REPLY ASAP !!!
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190529151134.GH31777@lakrids.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=20
-Greetings
 
-Please forgive me for stressing you with my predicaments as I know
-that this letter may come to you as big surprise. Actually, I came
-across your E-mail from my personal search afterward I decided to
-email you directly believing that you will be honest to fulfill my
-final wish before I die.
 
-Meanwhile, I am Madam Evelyn Mary Edward, 73 years, from USA,
-childless and I am suffering from a long-time cancer and from all
-indication my condition is really   eriorating as my doctors have
-confirmed and courageously advised me that I may not live beyond two
-months from now for the reason that my tumor has reached a critical
-stage which has defiled all forms of medical treatment.
+On 05/29/2019 08:41 PM, Mark Rutland wrote:
+> On Wed, May 29, 2019 at 06:04:45PM +0530, Anshuman Khandual wrote:
+>> __do_page_fault() is over complicated with multiple goto statements. This
+>> cleans up code flow and while there drops the vm_fault_t argument.
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will.deacon@arm.com>
+>> Cc: Mark Rutland <mark.rutland@arm.com>
+>> Cc: James Morse <james.morse@arm.com> 
+>> Cc: Andrey Konovalov <andreyknvl@google.com>
+>> ---
+>>  arch/arm64/mm/fault.c | 38 ++++++++++++++++----------------------
+>>  1 file changed, 16 insertions(+), 22 deletions(-)
+>>
+>> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+>> index 170c71f..a53a30e 100644
+>> --- a/arch/arm64/mm/fault.c
+>> +++ b/arch/arm64/mm/fault.c
+>> @@ -397,37 +397,31 @@ static void do_bad_area(unsigned long addr, unsigned int esr, struct pt_regs *re
+>>  static vm_fault_t __do_page_fault(struct mm_struct *mm, unsigned long addr,
+>>  			   unsigned int mm_flags, unsigned long vm_flags)
+>>  {
+>> -	struct vm_area_struct *vma;
+>> -	vm_fault_t fault;
+>> +	struct vm_area_struct *vma = find_vma(mm, addr);
+>>  
+>> -	vma = find_vma(mm, addr);
+>> -	fault = VM_FAULT_BADMAP;
+>>  	if (unlikely(!vma))
+>> -		goto out;
+>> -	if (unlikely(vma->vm_start > addr))
+>> -		goto check_stack;
+>> +		return VM_FAULT_BADMAP;
+>>  
+>>  	/*
+>> -	 * Ok, we have a good vm_area for this memory access, so we can handle
+>> -	 * it.
+>> +	 * Check if the VMA has got the required permssion with respect
+>> +	 * to the access fault here.
+>>  	 */
+> 
+> We already had a perfectly good comment for this check:
+> 
+> 	/*
+> 	 * Check that the permissions on the VMA allow for the fault which
+> 	 * occurred.
+> 	 */
+> 
+> ... so please keep that and minimize the diff.
 
-Since my days are numbered, I=E2=80=99ve decided willingly to fulfill my lo=
-ng-
-time promise to donate the sum of Ten million six hundred and twenty-
-five thousand dollars $10.625000 remaining in my foreign bank account
-over 9 years due to my health problem. This fund was obtained by me
-when I was dealing on Gold.
+Sure, will keep all the existing comments here.
 
-My promise is to help the widows, handicapped, orphans,
-underprivileged, to build technical school and hospital for their
-well-being. If you will be obedient to assist me fulfill my promise as
-I said here kindly show me your first obedience by providing me your
-personal details to enable me introduce you to my bank management as
-the sole eneficiary and to enable them check whether it will be
-possible to transfer or deliver my fund to you.
+> 
+>> -good_area:
+>> +	if (!(vma->vm_flags & vm_flags))
+>> +		return VM_FAULT_BADACCESS;
+>> +
+>>  	/*
+>> -	 * Check that the permissions on the VMA allow for the fault which
+>> -	 * occurred.
+>> +	 * There is a valid VMA for this access. But before proceeding
+>> +	 * make sure that it has required flags if there is an attempt
+>> +	 * to expand the stack downwards.
+>>  	 */
+> 
+> I think we can drop this comment, given we didn't have it previously.
 
-I have been trying to handle this project for the past 4 years by
-myself when I will get better, but I have seen that it won=E2=80=99t be
-possible anymore. Please get back to me if you can handle the project
-for more details. All details shall be sent to you once I hear from
-you
+Okay.
 
-God bless you
-Madam Evelyn Mary Edward.
+> 
+>> -	if (!(vma->vm_flags & vm_flags)) {
+>> -		fault = VM_FAULT_BADACCESS;
+>> -		goto out;
+>> -	}
+>> +	if (unlikely(vma->vm_start > addr)) {
+>> +		if (!(vma->vm_flags & VM_GROWSDOWN))
+>> +			return VM_FAULT_BADMAP;
+>>  
+>> +		if (expand_stack(vma, addr))
+>> +			return VM_FAULT_BADMAP;
+> 
+> You can drop the line space between these two if statements.
+
+Will do.
+
+> 
+>> +	}
+>>  	return handle_mm_fault(vma, addr & PAGE_MASK, mm_flags);
+>> -
+>> -check_stack:
+>> -	if (vma->vm_flags & VM_GROWSDOWN && !expand_stack(vma, addr))
+>> -		goto good_area;
+>> -out:
+>> -	return fault;
+> 
+> We used to check the stack before the checknig the rest of the vm_flags,
+> so this changes the precedence of the VM_FAULT_BADMAP and
+> VM_FAULT_BADACCESS return codes.
+> 
+> Please check the stack before checking the other vm_flags.
+
+Though it makes some sense to move VMA permission check earlier in the function as it
+is the quicker one but I understand need to maintain the existing code flow in a clean
+up patch like this. Will retain the existing flow.
