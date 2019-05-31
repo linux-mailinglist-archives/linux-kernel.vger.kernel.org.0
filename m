@@ -2,134 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D100730F85
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 16:02:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4423930F90
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 16:02:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726587AbfEaOCL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 10:02:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51316 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726386AbfEaOCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 10:02:11 -0400
-Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7089D269FA;
-        Fri, 31 May 2019 14:02:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559311330;
-        bh=NptAQSoYZ0ZukxhMPl0joJiHkOXX17JrRbk2OMhVDJw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OFMnpQo5ZxTODG2qsquFLQhi8ijp99qOG5Q/tUN/fiYVOdVzY4wRyhtyzj5Bzj8Wm
-         9isdiZ3HCo92E5ugIOal1p3BsP78l7n/IFHu3/4SUGXhTThKf2BAUs5gJdlTX5oA9d
-         f42eOMTy5nkCpRGSibq2yY4Olt8I6IAeo1Ittb88=
-Date:   Fri, 31 May 2019 07:02:09 -0700
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spdx@vger.kernel.org
-Subject: Re: [GIT PULL] SPDX update for 5.2-rc3 - round 1
-Message-ID: <20190531140209.GA31961@kroah.com>
-References: <20190531014808.GA30932@kroah.com>
- <CAMuHMdV=95sKB+h_pf45DiYeiJzrk1L=014Tj8Y04_hPyRMBNQ@mail.gmail.com>
- <20190531132400.GA5518@kroah.com>
- <CAMuHMdX3vQN5tF4-_vGjRQGdbxpPC+u4g-QU45=qykNZgwSj_w@mail.gmail.com>
+        id S1726716AbfEaOC1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 10:02:27 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:47972 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbfEaOC1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 10:02:27 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4VE2Nk6016233;
+        Fri, 31 May 2019 09:02:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1559311343;
+        bh=X4G8CTwe6H4BU9Q2AlV5IeTINpOr1gEaiB74pbXls5I=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=Ny+J7PBHlP59ZfM0ndebblQFBAe15C9shS8AyesYsL2YT7EiO7L3TkoCJpftkzW2q
+         0AGSBkO9PV0f0nSQGwMeGBJILYm5ES1pxlB6UNRps3uZyXG6VwsOggj2KmjuSAewkt
+         bx6f78kXoglW7D7GrqwYH0EU2Gmuukzt/L2n17NA=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4VE2N4q072318
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 31 May 2019 09:02:23 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 31
+ May 2019 09:02:23 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 31 May 2019 09:02:23 -0500
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4VE2N25033657;
+        Fri, 31 May 2019 09:02:23 -0500
+Subject: Re: [PATCH v2] hwspinlock: ignore disabled device
+To:     Fabien Dessenne <fabien.dessenne@st.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     Benjamin Gaignard <benjamin.gaignard@st.com>
+References: <1552064026-11415-1-git-send-email-fabien.dessenne@st.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <b9059d73-9849-7105-6080-5d3d994335f3@ti.com>
+Date:   Fri, 31 May 2019 09:02:23 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdX3vQN5tF4-_vGjRQGdbxpPC+u4g-QU45=qykNZgwSj_w@mail.gmail.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <1552064026-11415-1-git-send-email-fabien.dessenne@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 31, 2019 at 03:51:18PM +0200, Geert Uytterhoeven wrote:
-> Hi Greg,
+On 3/8/19 10:53 AM, Fabien Dessenne wrote:
+> Do not wait for hwspinlock device registration if it is not available
+> for use.
 > 
-> On Fri, May 31, 2019 at 3:24 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > On Fri, May 31, 2019 at 09:17:06AM +0200, Geert Uytterhoeven wrote:
-> > > On Fri, May 31, 2019 at 3:49 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > > The following changes since commit cd6c84d8f0cdc911df435bb075ba22ce3c605b07:
-> > > >
-> > > >   Linux 5.2-rc2 (2019-05-26 16:49:19 -0700)
-> > > >
-> > > > are available in the Git repository at:
-> > > >
-> > > >   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git tags/spdx-5.2-rc3-1
-> > > >
-> > > > for you to fetch changes up to 96ac6d435100450f0565708d9b885ea2a7400e0a:
-> > > >
-> > > >   treewide: Add SPDX license identifier - Kbuild (2019-05-30 11:32:33 -0700)
-> > > >
-> > > > ----------------------------------------------------------------
-> > > > SPDX update for 5.2-rc3, round 1
-> > > >
-> > > > Here is another set of reviewed patches that adds SPDX tags to different
-> > > > kernel files, based on a set of rules that are being used to parse the
-> > > > comments to try to determine that the license of the file is
-> > > > "GPL-2.0-or-later" or "GPL-2.0-only".  Only the "obvious" versions of
-> > > > these matches are included here, a number of "non-obvious" variants of
-> > > > text have been found but those have been postponed for later review and
-> > > > analysis.
-> > > >
-> > > > There is also a patch in here to add the proper SPDX header to a bunch
-> > > > of Kbuild files that we have missed in the past due to new files being
-> > > > added and forgetting that Kbuild uses two different file names for
-> > > > Makefiles.  This issue was reported by the Kbuild maintainer.
-> > > >
-> > > > These patches have been out for review on the linux-spdx@vger mailing
-> > > > list, and while they were created by automatic tools, they were
-> > > > hand-verified by a bunch of different people, all whom names are on the
-> > > > patches are reviewers.
-> > > >
-> > > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > >
-> > > I'm sorry, but as long[*] as this does not conform to
-> > > Documentation/process/license-rules.rst, I have to provide my:
-> > > NAked-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> > >
-> > > [*] The obvious solution is to update Documentation/process/license-rules.rst,
-> > >     as people have asked before.
-> >
-> > I don't understand, what does not conform?  We are trying _to_ conform
-> > to that file, what did we do wrong?
+> Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+
+Acked-by: Suman Anna <s-anna@ti.com>
+
+> ---
+> V2: use 'goto out' instead of 'return'
 > 
-> The new "-or-later" and "-only" variants are not (yet) documented in that file.
+>  drivers/hwspinlock/hwspinlock_core.c | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
->    File format examples::
+> diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
+> index 2bad40d..d806307 100644
+> --- a/drivers/hwspinlock/hwspinlock_core.c
+> +++ b/drivers/hwspinlock/hwspinlock_core.c
+> @@ -333,6 +333,11 @@ int of_hwspin_lock_get_id(struct device_node *np, int index)
+>  	if (ret)
+>  		return ret;
+>  
+> +	if (!of_device_is_available(args.np)) {
+> +		ret = -ENOENT;
+> +		goto out;
+> +	}
+> +
+>  	/* Find the hwspinlock device: we need its base_id */
+>  	ret = -EPROBE_DEFER;
+>  	rcu_read_lock();
 > 
->       Valid-License-Identifier: GPL-2.0
->       Valid-License-Identifier: GPL-2.0+
->       SPDX-URL: https://spdx.org/licenses/GPL-2.0.html
->       Usage-Guide:
->         To use this license in source code, put one of the following SPDX
->         tag/value pairs into a comment according to the placement
->         guidelines in the licensing rules documentation.
->         For 'GNU General Public License (GPL) version 2 only' use:
->           SPDX-License-Identifier: GPL-2.0
->         For 'GNU General Public License (GPL) version 2 or any later
-> version' use:
->           SPDX-License-Identifier: GPL-2.0+
 
-
-They do not have to be documented in that file.  As what you quoted
-said, "File format examples::"
-
-Please look in the files in the LICENSES directory for what all of the
-documented identifiers should look like:
-	$ head -n 4 LICENSES/preferred/GPL-2.0
-	Valid-License-Identifier: GPL-2.0
-	Valid-License-Identifier: GPL-2.0-only
-	Valid-License-Identifier: GPL-2.0+
-	Valid-License-Identifier: GPL-2.0-or-later
-
-If you want, please send a patch to fix up the documentation example,
-but it is not incorrect :)
-
-thanks,
-
-greg k-h
