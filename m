@@ -2,86 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4F2130D4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 13:24:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CE8430D6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 13:38:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727222AbfEaLYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 07:24:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51782 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726158AbfEaLYJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 07:24:09 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EC738ACF5;
-        Fri, 31 May 2019 11:24:07 +0000 (UTC)
+        id S1727219AbfEaLii convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 31 May 2019 07:38:38 -0400
+Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:38958
+        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1726158AbfEaLii (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 07:38:38 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 38CA1B475CF;
+        Fri, 31 May 2019 11:28:22 +0000 (UTC)
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id FHX-FKIuuED8; Fri, 31 May 2019 11:28:21 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 99B21B4782F;
+        Fri, 31 May 2019 11:28:21 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id dJJJx81edEGX; Fri, 31 May 2019 11:28:21 +0000 (UTC)
+Received: from [100.91.32.52] (unknown [106.197.219.163])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 4C431B47B3D;
+        Fri, 31 May 2019 11:28:13 +0000 (UTC)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 31 May 2019 13:24:07 +0200
-From:   Roman Penyaev <rpenyaev@suse.de>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     azat@libevent.org, akpm@linux-foundation.org,
-        viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 06/13] epoll: introduce helpers for adding/removing
- events to uring
-In-Reply-To: <20190531095549.GB17637@hirez.programming.kicks-ass.net>
-References: <20190516085810.31077-1-rpenyaev@suse.de>
- <20190516085810.31077-7-rpenyaev@suse.de>
- <20190531095549.GB17637@hirez.programming.kicks-ass.net>
-Message-ID: <7187263bcee61b9abbe687f3a7478bd1@suse.de>
-X-Sender: rpenyaev@suse.de
-User-Agent: Roundcube Webmail
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Alerta de correo
+To:     Recipients <alrodriguez@menpet.gob.ve>
+From:   =?utf-8?q?Administraci=C3=B3n_=3Calrodriguez=40menpet=2Egob=2Eve=3E?=@smspyt.cancun.gob.mx
+Date:   Fri, 31 May 2019 16:58:09 +0530
+Message-Id: <20190531112814.4C431B47B3D@smspyt.cancun.gob.mx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-05-31 11:55, Peter Zijlstra wrote:
-> On Thu, May 16, 2019 at 10:58:03AM +0200, Roman Penyaev wrote:
->> +#define atomic_set_unless_zero(ptr, flags)			\
->> +({								\
->> +	typeof(ptr) _ptr = (ptr);				\
->> +	typeof(flags) _flags = (flags);				\
->> +	typeof(*_ptr) _old, _val = READ_ONCE(*_ptr);		\
->> +								\
->> +	for (;;) {						\
->> +		if (!_val)					\
->> +			break;					\
->> +		_old = cmpxchg(_ptr, _val, _flags);		\
->> +		if (_old == _val)				\
->> +			break;					\
->> +		_val = _old;					\
->> +	}							\
->> +	_val;							\
->> +})
-> 
->> +#define atomic_or_with_mask(ptr, flags, mask)			\
->> +({								\
->> +	typeof(ptr) _ptr = (ptr);				\
->> +	typeof(flags) _flags = (flags);				\
->> +	typeof(flags) _mask = (mask);				\
->> +	typeof(*_ptr) _old, _new, _val = READ_ONCE(*_ptr);	\
->> +								\
->> +	for (;;) {						\
->> +		_new = (_val & ~_mask) | _flags;		\
->> +		_old = cmpxchg(_ptr, _val, _new);		\
->> +		if (_old == _val)				\
->> +			break;					\
->> +		_val = _old;					\
->> +	}							\
->> +	_val;							\
->> +})
-> 
-> Don't call them atomic_*() if they're not part of the atomic_t
-> interface.
+Estimado usuario de correo electrónico,
 
-Can we add those two?  Or keep it local is better?
+Este mensaje es de nuestro centro de mensajes de administración para todos los usuarios de nuestra cuenta de correo electrónico. Estamos eliminando el acceso a todos nuestros clientes de correo web. Su cuenta de correo electrónico se actualizará a una nueva y mejorada interfaz de usuario de correo web proporcionada por nuestro administrador tan pronto como este correo electrónico haya sido recibido.
 
---
-Roman
+Descontinuaremos el uso de nuestras interfaces webmail Lite, para asegurarnos de que su libreta de direcciones de correo electrónico esté almacenada en nuestra base de datos, haga clic o copie y pegue el siguiente enlace en su navegador e ingrese su nombre de usuario y contraseña para actualizar su cuenta.
 
+Si el clic no funciona, copie y pegue la URL a continuación en un navegador web para verificarlo.
 
+Haga clic en el enlace http://accountupdatebrodcaster.xtgem.com/ si el clic no funciona, copie y pegue en su navegador web y actualice su cuenta para que podamos transferir sus contactos a nuestra nueva base de datos de clientes de correo web.
 
+¡Todos los correos electrónicos estarán seguros en esta transición! Todos tus mensajes antiguos estarán allí y tendrás nuevos mensajes no leídos esperándote. Fueron
+Seguro que te gustará la nueva y mejorada interfaz de correo web.
+
+Si no cumple con este aviso, inmediatamente retiraremos el acceso a su cuenta de correo electrónico.
+
+Gracias por usar nuestro webmail.
+
+=============================================
+Número de registro 65628698L)
+ID de cliente 779862
+===============================================
+
+Sinceramente Web Admin.
+Correo electrónico Servicio al cliente 46569 Copyright c 2019 E! Inc. (Co
+Reg.No. 65628698L) Todos los derechos reservados.
