@@ -2,72 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22D7C310A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 16:54:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A71C5310A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 16:54:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbfEaOyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 10:54:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45414 "EHLO mail.kernel.org"
+        id S1726749AbfEaOyi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 10:54:38 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:49322 "EHLO deadmen.hmeau.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726418AbfEaOyZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 10:54:25 -0400
-Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78D9326B11;
-        Fri, 31 May 2019 14:54:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559314464;
-        bh=ut6HGUXoVdKpKxWkBmLKfiQdl1KWbFSfImiaNPxTLes=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=dtMoYgEbe/Pum8dAabX3qtFT9mAjn3HZSFuHy0mwILYh9Ui1Y+W/JhgzAE4Nfq2ku
-         YOvaYRm/5M9b6O9Is8whzrh2+SS0zwG6yLEfcalSeD/TRsG11SNpvMlN8vsuoAVFPZ
-         g4pOv/CJ07M/7HJItd7xbthrqoy0BCAmv7KHlC7Q=
-Date:   Fri, 31 May 2019 16:54:20 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-cc:     Andy Lutomirski <luto@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4] x86/power: Fix 'nosmt' vs. hibernation triple fault
- during resume
-In-Reply-To: <B7AC83ED-3F11-42B9-8506-C842A5937B50@amacapital.net>
-Message-ID: <nycvar.YFH.7.76.1905311651450.1962@cbobk.fhfr.pm>
-References: <nycvar.YFH.7.76.1905282326360.1962@cbobk.fhfr.pm> <20190531051456.fzkvn62qlkf6wqra@treble> <nycvar.YFH.7.76.1905311045240.1962@cbobk.fhfr.pm> <5564116.e9OFvgDRbB@kreacher> <CALCETrUpseta+NrhVwzzVFTe-BkBHtDUJBO22ci3mAsVR+XOog@mail.gmail.com>
- <nycvar.YFH.7.76.1905311628330.1962@cbobk.fhfr.pm> <B7AC83ED-3F11-42B9-8506-C842A5937B50@amacapital.net>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1726531AbfEaOyi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 10:54:38 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1hWivQ-0007Jr-Fx; Fri, 31 May 2019 22:54:32 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1hWivM-0007Cx-9H; Fri, 31 May 2019 22:54:28 +0800
+Date:   Fri, 31 May 2019 22:54:28 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     Young Xiao <92siuyang@gmail.com>, davem@davemloft.net,
+        kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Steffen Klassert <steffen.klassert@secunet.com>
+Subject: Re: [PATCH] ipv6: Prevent overrun when parsing v6 header options
+Message-ID: <20190531145428.ngwrgbnk2a7us5cy@gondor.apana.org.au>
+References: <1559230098-1543-1-git-send-email-92siuyang@gmail.com>
+ <c83f8777-f6be-029b-980d-9f974b4e28ce@gmail.com>
+ <20190531062911.c6jusfbzgozqk2cu@gondor.apana.org.au>
+ <727c4b18-0d7b-b3c6-e0bb-41b3fe5902d3@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <727c4b18-0d7b-b3c6-e0bb-41b3fe5902d3@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 31 May 2019, Andy Lutomirski wrote:
+On Fri, May 31, 2019 at 07:50:06AM -0700, Eric Dumazet wrote:
+>
+> What do you mean by should ?
+> 
+> Are they currently already linearized before the function is called,
+> or is it missing and a bug needs to be fixed ?
 
-> For that matter, what actually happens if we get an SMI while halted?  
-> Does RSM go directly to sleep or does it re-fetch the HLT?
+AFAICS this is the code-path for locally generated outbound packets.
+Under what circumstances can the IPv6 header be not in the head?
 
-Our mails just crossed, I replied to Josh's mwait() proposal patch a 
-minute ago.
-
-HLT is guaranteed to be re-entered if SMM interrupted it, while MWAIT is 
-not.
-
-So as a short-term fix for 5.2, I still believe in v4 of my patch that 
-does the mwait->hlt->mwait transition across hibernate/resume, and for 5.3 
-I can look into forcing it to wait-for-SIPI proper.
-
+Cheers,
 -- 
-Jiri Kosina
-SUSE Labs
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
