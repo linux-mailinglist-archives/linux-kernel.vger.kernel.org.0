@@ -2,82 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92BA130A94
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 10:47:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F056930A97
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 10:47:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbfEaIr2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 04:47:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57312 "EHLO mail.kernel.org"
+        id S1727053AbfEaIri (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 04:47:38 -0400
+Received: from foss.arm.com ([217.140.101.70]:47918 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726002AbfEaIr1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 04:47:27 -0400
-Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 253B3206C1;
-        Fri, 31 May 2019 08:47:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559292446;
-        bh=IIaVN1Sed6YeNQgaJd2OLBZP8P14wg5t9mFGKrpWqq8=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=LsBosZBqtOKJ1OYqUUke6mXwXRYOqUy+Ul4wPQoIxfeBsqxdbhJSrGVlsiZCug0Pn
-         g/6ripfj3sQG/05kWEYiCt9ROMJn5gBz3IF8W8DVi8nHHRlDZlyyQyAej+4eD4ERvw
-         gHXuqLhP+2PG+VWeAkvawjMIhmw+59QfGqQq7lF8=
-Date:   Fri, 31 May 2019 10:47:21 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v4] x86/power: Fix 'nosmt' vs. hibernation triple fault
- during resume
-In-Reply-To: <20190531051456.fzkvn62qlkf6wqra@treble>
-Message-ID: <nycvar.YFH.7.76.1905311045240.1962@cbobk.fhfr.pm>
-References: <nycvar.YFH.7.76.1905282326360.1962@cbobk.fhfr.pm> <nycvar.YFH.7.76.1905300007470.1962@cbobk.fhfr.pm> <CAJZ5v0ja5sQ73zMvUtV+w79LC_d+g6UdomL36rV-EpVDxEzbhA@mail.gmail.com> <alpine.DEB.2.21.1905301425330.2265@nanos.tec.linutronix.de>
- <CAJZ5v0go1g9KhE=mc19VCFrBuEERzFZCoRD4xt=tF=EnMjfH=A@mail.gmail.com> <20190530233804.syv4brpe3ndslyvo@treble> <nycvar.YFH.7.76.1905310139380.1962@cbobk.fhfr.pm> <20190531051456.fzkvn62qlkf6wqra@treble>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1726002AbfEaIri (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 04:47:38 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7619E341;
+        Fri, 31 May 2019 01:47:37 -0700 (PDT)
+Received: from [10.162.42.223] (unknown [10.162.42.223])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 20D713F59C;
+        Fri, 31 May 2019 01:47:28 -0700 (PDT)
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Subject: Re: [RFC] mm: Generalize notify_page_fault()
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        "David S. Miller" <davem@davemloft.net>
+References: <1559195713-6956-1-git-send-email-anshuman.khandual@arm.com>
+ <20190530110639.GC23461@bombadil.infradead.org>
+ <4f9a610d-e856-60f6-4467-09e9c3836771@arm.com>
+ <20190530133954.GA2024@bombadil.infradead.org>
+Message-ID: <f1995445-d5ab-f292-d26c-809581002184@arm.com>
+Date:   Fri, 31 May 2019 14:17:43 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190530133954.GA2024@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 31 May 2019, Josh Poimboeuf wrote:
 
-> > I disagree with that from the backwards compatibility point of view.
-> > 
-> > I personally am quite frequently using differnet combinations of 
-> > resumer/resumee kernels, and I've never been biten by it so far. I'd guess 
-> > I am not the only one.
-> > Fixmap sort of breaks that invariant.
+
+On 05/30/2019 07:09 PM, Matthew Wilcox wrote:
+> On Thu, May 30, 2019 at 05:31:15PM +0530, Anshuman Khandual wrote:
+>> On 05/30/2019 04:36 PM, Matthew Wilcox wrote:
+>>> The two handle preemption differently.  Why is x86 wrong and this one
+>>> correct?
+>>
+>> Here it expects context to be already non-preemptible where as the proposed
+>> generic function makes it non-preemptible with a preempt_[disable|enable]()
+>> pair for the required code section, irrespective of it's present state. Is
+>> not this better ?
 > 
-> Right now there is no backwards compatibility because nosmt resume is
-> already broken.
-
-Yeah, well, but that's "only" for nosmt kernels at least.
-
-> For "future" backwards compatibility we could just define a hard-coded 
-> reserved fixmap page address, adjacent to the vsyscall reserved address.
+> git log -p arch/x86/mm/fault.c
 > 
-> Something like this (not yet tested)?  Maybe we could also remove the
-> resume_play_dead() hack?
+> search for 'kprobes'.
+> 
+> tell me what you think.
+> 
 
-Does it also solve cpuidle case? I have no overview what all the cpuidle 
-drivers might be potentially doing in their ->enter_dead() callbacks. 
-Rafael?
+Are you referring to these following commits
 
-Thanks,
+a980c0ef9f6d ("x86/kprobes: Refactor kprobes_fault() like kprobe_exceptions_notify()")
+b506a9d08bae ("x86: code clarification patch to Kprobes arch code")
 
--- 
-Jiri Kosina
-SUSE Labs
-
+In particular the later one (b506a9d08bae). It explains how the invoking context
+in itself should be non-preemptible for the kprobes processing context irrespective
+of whether kprobe_running() or perhaps smp_processor_id() is safe or not. Hence it
+does not make much sense to continue when original invoking context is preemptible.
+Instead just bail out earlier. This seems to be making more sense than preempt
+disable-enable pair. If there are no concerns about this change from other platforms,
+I will change the preemption behavior in proposed generic function next time around.
