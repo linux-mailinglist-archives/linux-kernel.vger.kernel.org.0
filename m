@@ -2,59 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F2BB30EF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 15:36:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F65730EE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 15:29:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726599AbfEaNgu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 09:36:50 -0400
-Received: from fieldses.org ([173.255.197.46]:42040 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726037AbfEaNgu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 09:36:50 -0400
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 9BA5E1C1B; Fri, 31 May 2019 09:36:49 -0400 (EDT)
-Date:   Fri, 31 May 2019 09:36:49 -0400
-From:   "J . Bruce Fields" <bfields@fieldses.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Jeff Layton <jlayton@kernel.org>, Jiri Kosina <trivial@kernel.org>,
-        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [trivial] nfsd: Spelling s/EACCESS/EACCES/
-Message-ID: <20190531133649.GA1251@fieldses.org>
-References: <20190527122132.5617-1-geert+renesas@glider.be>
+        id S1726593AbfEaN3a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 09:29:30 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:17637 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726485AbfEaN3a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 09:29:30 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 6EEA1810B1C503DC496B;
+        Fri, 31 May 2019 21:29:27 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 31 May 2019 21:29:19 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Baruch Siach <baruch@tkos.co.il>,
+        <linux-serial@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH] tty/serial: digicolor: Fix digicolor-usart already registered warning
+Date:   Fri, 31 May 2019 21:37:33 +0800
+Message-ID: <20190531133733.16243-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190527122132.5617-1-geert+renesas@glider.be>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks, applying for 5.3.--b.
+When modprobe/rmmod/modprobe module, if platform_driver_register() fails,
+the kernel complained,
 
-On Mon, May 27, 2019 at 02:21:32PM +0200, Geert Uytterhoeven wrote:
-> The correct spelling is EACCES:
-> 
-> include/uapi/asm-generic/errno-base.h:#define EACCES 13 /* Permission denied */
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  fs/nfsd/vfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-> index fc24ee47eab51ad4..c85783e536d595de 100644
-> --- a/fs/nfsd/vfs.c
-> +++ b/fs/nfsd/vfs.c
-> @@ -404,7 +404,7 @@ nfsd_setattr(struct svc_rqst *rqstp, struct svc_fh *fhp, struct iattr *iap,
->  	/*
->  	 * If utimes(2) and friends are called with times not NULL, we should
->  	 * not set NFSD_MAY_WRITE bit. Otherwise fh_verify->nfsd_permission
-> -	 * will return EACCESS, when the caller's effective UID does not match
-> +	 * will return EACCES, when the caller's effective UID does not match
->  	 * the owner of the file, and the caller is not privileged. In this
->  	 * situation, we should return EPERM(notify_change will return this).
->  	 */
-> -- 
-> 2.17.1
+  proc_dir_entry 'driver/digicolor-usart' already registered
+  WARNING: CPU: 1 PID: 5636 at fs/proc/generic.c:360 proc_register+0x19d/0x270
+
+Fix this by adding uart_unregister_driver() when platform_driver_register() fails.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+---
+ drivers/tty/serial/digicolor-usart.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/digicolor-usart.c b/drivers/tty/serial/digicolor-usart.c
+index f460cca139e2..13ac36e2da4f 100644
+--- a/drivers/tty/serial/digicolor-usart.c
++++ b/drivers/tty/serial/digicolor-usart.c
+@@ -541,7 +541,11 @@ static int __init digicolor_uart_init(void)
+ 	if (ret)
+ 		return ret;
+ 
+-	return platform_driver_register(&digicolor_uart_platform);
++	ret = platform_driver_register(&digicolor_uart_platform);
++	if (ret)
++		uart_unregister_driver(&digicolor_uart);
++
++	return ret;
+ }
+ module_init(digicolor_uart_init);
+ 
+-- 
+2.20.1
+
