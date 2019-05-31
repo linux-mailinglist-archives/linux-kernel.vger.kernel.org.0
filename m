@@ -2,100 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3CEA30791
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 06:19:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04659307BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 06:25:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726559AbfEaERV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 00:17:21 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:34744 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726132AbfEaERV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 00:17:21 -0400
-Received: by mail-oi1-f196.google.com with SMTP id u64so6762795oib.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 21:17:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/b7zMtPyyoD7Z9H0ZcAMOMDecBLUC3B4wOXIPVDeoac=;
-        b=CS6BO+r0JW9ceL73927ELSkUvJTEKgXX5d2GEA9im/bil/5XILFxf2n+JoVpDxAOQg
-         p56uLAxZzgOfT0XX0L20Vm5uXC0SUX5RuImjl8jA820vIjcXM8U+KaCcdTSJ2YzayXm5
-         ZUgMZ9kBllyvxZiqB6VnZORFA0fvmvRsC5pPOpXZ/w9W6WVqD55gBeW2Hz6ohgTEyc4w
-         Dq2w3csJ0lnkSAzAvNlNOyD4zHirgUaJ1ds2y/C0e4G9GrZEDD88y1aN5TaFgceavrGg
-         vpL/4OC1IOPY4HHqpSusL5qd2VVww8l+sTRupWy8p8rLplToV7VLd9ZoGdQGLY0xyhev
-         VEWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/b7zMtPyyoD7Z9H0ZcAMOMDecBLUC3B4wOXIPVDeoac=;
-        b=Uzqvj6YCpCGovJAQO9ytPQKO6tY3dziEjDBsEAG0LyT6K9wOlfIeb7lNCAAjOi1ENP
-         GYhT0+LB3Ql+48MyboCYhTxtfBkKpQAZ12OiQgQEv74BUDZ4sG6P5y7scMpMHUz9ydl5
-         ADS15OCl5HS681flpItB6eRwYcMtdgNdW39RlF9Vgh1MGrLAY39a/N98IxfTIuf7m4Kw
-         bT/Jk/tvHcKJ1VJ3wmhlol9wOLqitI0vo1Vwd1mGA2jh/KsBVa8SnUhERN/oZHnIxoQC
-         Ihqm2n6aYODvSfKA6OIY/9CFjCgtbSZOl2D5JuG9+Ourus7F7OjG3CqlpEsOkzDSXD5h
-         nlrA==
-X-Gm-Message-State: APjAAAUAkjyGWPLDAEwi8S93Vdf0y3aDG3czZxMFUhlhNUqFsWI7b3y3
-        0+gpgiqE0+sIkMy4dRb5D+pRMWTdk2JT78qQ64q4xw==
-X-Google-Smtp-Source: APXvYqwzamlHcYCuE3bgAAH931eEoiZhZTHrMpm39gRZfwR3xH7d4NpA97rBUXSRJY8nTk5JwxAjuIV9SwroNgxQ3Wk=
-X-Received: by 2002:aca:6087:: with SMTP id u129mr4677154oib.70.1559276240560;
- Thu, 30 May 2019 21:17:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <155727335978.292046.12068191395005445711.stgit@dwillia2-desk3.amr.corp.intel.com>
- <059859ca-3cc8-e3ff-f797-1b386931c41e@deltatee.com> <17ada515-f488-d153-90ef-7a5cc5fefb0f@deltatee.com>
-In-Reply-To: <17ada515-f488-d153-90ef-7a5cc5fefb0f@deltatee.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 30 May 2019 21:17:09 -0700
-Message-ID: <CAPcyv4jJjCwbWJH648x04Cms1kXY2Cd36bxpgmDGRh+5Van1fQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] mm/devm_memremap_pages: Fix page release race
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christoph Hellwig <hch@lst.de>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726878AbfEaEZN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 00:25:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52604 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726413AbfEaEZN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 00:25:13 -0400
+Subject: Re: [GIT PULL] arm64: fixes for -rc3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559276712;
+        bh=t9/y1ITY40z/T8C2kwC1Ud11fTEficOcI/zNCGUtbD0=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=J6itRnKC2xdXDl4JQ2LxKhXsA3J3asTIfTtKuksfi7eOeJuss7a6pYXILLTU1WMG+
+         rF15D5ZkMTk/R6noZAkpVh+ayyFTUvy2Y5EObNUW8BQYWHxukeGSXSsTaLmE8JD0GV
+         XFPFjL64eZ9zzQ4ozZW69KuUgOnDOcHsOnFyhP3Q=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190530161126.GB16230@fuggles.cambridge.arm.com>
+References: <20190530161126.GB16230@fuggles.cambridge.arm.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190530161126.GB16230@fuggles.cambridge.arm.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+ tags/arm64-fixes
+X-PR-Tracked-Commit-Id: 1e29ab3186e33c77dbb2d7566172a205b59fa390
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: adc3f554fa1e0f1c7b76007150814e1d8a5fcd2b
+Message-Id: <155927671265.23225.14504311744693326939.pr-tracker-bot@kernel.org>
+Date:   Fri, 31 May 2019 04:25:12 +0000
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+        ebiederm@xmission.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 13, 2019 at 12:22 PM Logan Gunthorpe <logang@deltatee.com> wrote:
->
->
->
-> On 2019-05-08 11:05 a.m., Logan Gunthorpe wrote:
-> >
-> >
-> > On 2019-05-07 5:55 p.m., Dan Williams wrote:
-> >> Changes since v1 [1]:
-> >> - Fix a NULL-pointer deref crash in pci_p2pdma_release() (Logan)
-> >>
-> >> - Refresh the p2pdma patch headers to match the format of other p2pdma
-> >>    patches (Bjorn)
-> >>
-> >> - Collect Ira's reviewed-by
-> >>
-> >> [1]: https://lore.kernel.org/lkml/155387324370.2443841.574715745262628837.stgit@dwillia2-desk3.amr.corp.intel.com/
-> >
-> > This series looks good to me:
-> >
-> > Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-> >
-> > However, I haven't tested it yet but I intend to later this week.
->
-> I've tested libnvdimm-pending which includes this series on my setup and
-> everything works great.
+The pull request you sent on Thu, 30 May 2019 17:11:26 +0100:
 
-Hi Andrew,
+> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
 
-With this tested-by can we move forward on this fix set? I'm not aware
-of any other remaining comments. Greg had a question about
-"drivers/base/devres: Introduce devm_release_action()" that I
-answered, but otherwise the feedback has gone silent.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/adc3f554fa1e0f1c7b76007150814e1d8a5fcd2b
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
