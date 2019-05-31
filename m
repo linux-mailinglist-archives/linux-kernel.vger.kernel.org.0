@@ -2,109 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65FAB309B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 09:50:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17EDA309B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 09:50:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726807AbfEaHuL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 03:50:11 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:43751 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbfEaHuL (ORCPT
+        id S1726924AbfEaHuh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 03:50:37 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:38289 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725955AbfEaHuh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 03:50:11 -0400
-Received: by mail-qt1-f196.google.com with SMTP id z24so10238728qtj.10;
-        Fri, 31 May 2019 00:50:10 -0700 (PDT)
+        Fri, 31 May 2019 03:50:37 -0400
+Received: by mail-it1-f195.google.com with SMTP id i63so9488518ita.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 00:50:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=mfTjOdTNHmZNOUxCbovLX9Rzxh4f0O6jP+RrzkPFuGA=;
+        b=tDpX8+2O6uapXBQhBjzU1Xj/AW4v5bzESAIkQ7Qs72QQHSsa13mhttqw+wOls/knJv
+         lrci+NUs8pjjaGqAn8q/es6T/Y5p9xyu5fm+Nx9yNVBe4E2UjRuh4ZmPe2jFsZGj0bQe
+         lFHYW9SQczYWTCgcDRY1XvJmaSvWKYPoodNfySfWjkqYiwRTLdmRCuBPkgMBaCC8UR0e
+         1eSGgyTOwj3Xwwgjomjzc2Pc5fW8+3CTGBMNRHSMmY+knA+V3vf4tw1oDK6EjlYjWPPO
+         e0SY5RsxJWKhnLDAEdDudYqpdZWpzeQDGhbtt+gHm1lVh+RmwGZl155wypD7zMxQXogv
+         QwlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GwaITjmEuTof6u7MeG3GyILN9L8qj0XaOeE2YibaLeg=;
-        b=iPV7jVvzfu9YBzUX9T7bjvZwCOcxrN0Hd8HIWSZd5Uz2NGNBB5fhx0B2M35RsSUvBk
-         6kDrnKeZ1nBvYxjBZB2uZDW6P/fLPFtRlEkT3tmPWZXCCqo5IzZIZt6nQj9V/zCi7QDX
-         WO675+pXDp8uArx7zCW2LivpTvq1Flg3Kqs/DgS/pCrSKMfqlp+3IVWMSRpdnKI1BX8D
-         G4UCNOEHXna9mGYk8Mn+VsXqnRrjr180ps8a2VHXypqqZqxQY7kvcp1Gk72uGrafZTFs
-         3YotdQjKlqfm7yORpLJRKXEBne0LlO3KeF0NjdFcqGEYbXPRcd29PvNMWCWzYdYAijLy
-         FEww==
-X-Gm-Message-State: APjAAAX14/AWRBYMgE5giXl5h22Q2myejED9QTJTTSIO0wYpQKQrxtnw
-        dmGZ18UPkAi4/838w+qKTAx1hENxPR2UGCodlTQ=
-X-Google-Smtp-Source: APXvYqwQB/JhCGjqlpNaldYQoGI4yfCEZhY1gzjbw3cSbTwub4t7W4H0B3NZ9jqg8ZYIlsA2SYsCySbJzJJdaOlmM1Y=
-X-Received: by 2002:aed:2bc1:: with SMTP id e59mr6984448qtd.7.1559289010013;
- Fri, 31 May 2019 00:50:10 -0700 (PDT)
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=mfTjOdTNHmZNOUxCbovLX9Rzxh4f0O6jP+RrzkPFuGA=;
+        b=EYYsppNsqprKvK9aB+a7G3qgrel98WjVsnoH3P2GsuxDbmJG8d8Tcqayju+0/Uwhoa
+         qQZgrzNzVBczVNF72YjC5+pfliI8kSSMDaD5Dqm6cmgClR40GXU3h4ZccaienJtyYOTB
+         /UcD2+r/tDUHOD/UDZumL+5/efIGnJbYx/YYTM/VjIh2EMLhS6X8MvLIojPwLxfADSBJ
+         v6RxUWDbJCHBwFVwplblsHbDJHpZF/DnM6L26rJqtLQdGdnOnz55uVNaqNzV6WjmY6EZ
+         RNxD2T/QuO+tYuPbWoB9hhY1D1/H0CQgcs+cOfYqB0UyQ5U+RA5esQ2bMPfasIM+wI8D
+         k9cw==
+X-Gm-Message-State: APjAAAV9tVYN3ZqKh0KtpkhJTqQc2bsZWXOGZ8lbtbonVJIZUA3KL2eh
+        Gkll38Tb+pBlMCv67ym1exbJzYVuH+67rk8JphE=
+X-Google-Smtp-Source: APXvYqw7mal97lYPF8vilzNM8qt/SzNqukyG1A0Gy0jWYZpUhxhtLcXJ8PExXN4lj60wyWX3U+F0YopdlGXbeByeMHg=
+X-Received: by 2002:a24:3256:: with SMTP id j83mr528434ita.17.1559289036303;
+ Fri, 31 May 2019 00:50:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <1558650258-15050-1-git-send-email-alan.mikhak@sifive.com>
- <305100E33629484CBB767107E4246BBB0A6FAFFD@DE02WEMBXB.internal.synopsys.com>
- <CABEDWGxsQ9NXrN7W_8HVrXQBb9HiBd+d1dNfv+cXmoBpXQnLwA@mail.gmail.com>
- <305100E33629484CBB767107E4246BBB0A6FC308@DE02WEMBXB.internal.synopsys.com>
- <CABEDWGxL-WYz1BY7yXJ6eKULgVtKeo67XhgHZjvtm5Ka5foKiA@mail.gmail.com>
- <192e3a19-8b69-dfaf-aa5c-45c7087548cc@ti.com> <20190531050727.GO15118@vkoul-mobl>
- <d2d8a904-d796-f9f2-8f4a-61e857355a4f@ti.com> <20190531063247.GP15118@vkoul-mobl>
-In-Reply-To: <20190531063247.GP15118@vkoul-mobl>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 31 May 2019 09:49:53 +0200
-Message-ID: <CAK8P3a2jePe7Qfjciq4fdfngAudzCb-cai4fr3_BG_evnbjhvw@mail.gmail.com>
-Subject: Re: [PATCH] PCI: endpoint: Add DMA to Linux PCI EP Framework
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Alan Mikhak <alan.mikhak@sifive.com>,
-        Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "wen.yang99@zte.com.cn" <wen.yang99@zte.com.cn>,
-        "kjlu@umn.edu" <kjlu@umn.edu>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "palmer@sifive.com" <palmer@sifive.com>,
-        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>
+Reply-To: mrahmedowain@gmail.com
+Received: by 2002:a92:7501:0:0:0:0:0 with HTTP; Fri, 31 May 2019 00:50:34
+ -0700 (PDT)
+From:   "Mr.Ahmed Owain" <mrahmedowaini@gmail.com>
+Date:   Thu, 30 May 2019 19:50:34 -1200
+X-Google-Sender-Auth: zu0GOGjJDe9CZf15tCfmZVVrPwk
+Message-ID: <CAHbvj4_XWpnJanKTDCXn28kZpmvE2Eo_t1abPnEGtbbs-1wi_Q@mail.gmail.com>
+Subject: From: Mr.Ahmed Owain
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 31, 2019 at 8:32 AM Vinod Koul <vkoul@kernel.org> wrote:
-> On 31-05-19, 10:50, Kishon Vijay Abraham I wrote:
-> > On 31/05/19 10:37 AM, Vinod Koul wrote:
-> > > On 30-05-19, 11:16, Kishon Vijay Abraham I wrote:
-> > >>
-> > >> right, my initial thought process was to use only dmaengine APIs in
-> > >> pci-epf-test so that the system DMA or DMA within the PCIe controller can be
-> > >> used transparently. But can we register DMA within the PCIe controller to the
-> > >> DMA subsystem? AFAIK only system DMA should register with the DMA subsystem.
-> > >> (ADMA in SDHCI doesn't use dmaengine). Vinod Koul can confirm.
-> > >
-> > > So would this DMA be dedicated for PCI and all PCI devices on the bus?
-> >
-> > Yes, this DMA will be used only by PCI ($patch is w.r.t PCIe device mode. So
-> > all endpoint functions both physical and virtual functions will use the DMA in
-> > the controller).
-> > > If so I do not see a reason why this cannot be using dmaengine. The use
-> >
-> > Thanks for clarifying. I was under the impression any DMA within a peripheral
-> > controller shouldn't use DMAengine.
->
-> That is indeed a correct assumption. The dmaengine helps in cases where
-> we have a dma controller with multiple users, for a single user case it
-> might be overhead to setup dma driver and then use it thru framework.
->
-> Someone needs to see the benefit and cost of using the framework and
-> decide.
+ Good Day,
 
-I think the main question is about how generalized we want this to be.
-There are lots of difference PCIe endpoint implementations, and in
-case of some licensable IP cores like the designware PCIe there are
-many variants, as each SoC will do the implementation in a slightly
-different way.
+Please accept my apologies for writing you a surprise letter.I am
+Mr.Ahmed Owain, account Manager with an investment bank here in
+Burkina Faso.I have a very important business I want to discuss with
+you.There is a draft account opened in my firm by a long-time client
+of our bank.I have the opportunity of transferring the left over fund
+(15.8 Million UsDollars)Fiftheen Million Eight Hundred Thousand United
+States of American Dollars of one of my Bank clients who died at the
+collapsing of the world trade center at the United States on September
+11th 2001.
 
-If we can have a single endpoint driver than can either have an
-integrated DMA engine or use an external one, then abstracting that
-DMA engine helps make the driver work more readily either way.
+I want to invest this funds and introduce you to our bank for this
+deal.All I require is your honest co-operation and I guarantee you
+that this will be executed under a legitimate arrangement that will
+protect us from any breach of the law.I agree that 40% of this money
+will be for you as my foreign partner,50% for me while 10% is for
+establishing of foundation for the less privilleges in your country.If
+you are really interested in my proposal further details of the
+Transfer will be forwarded unto you as soon as I receive your
+willingness mail for a successful transfer.
 
-Similarly, there may be PCIe endpoint implementations that have
-a dedicated DMA engine in them that is not usable for anything else,
-but that is closely related to an IP core we already have a dmaengine
-driver for. In this case, we can avoid duplication.
-
-      Arnd
+Yours Sincerely,
+Mr.Ahmed Owain,
