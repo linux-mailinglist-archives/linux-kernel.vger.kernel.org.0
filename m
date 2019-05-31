@@ -2,164 +2,303 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D611A315C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 21:59:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A482E315CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 22:04:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727425AbfEaT7i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 15:59:38 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:41531 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727282AbfEaT7i (ORCPT
+        id S1727450AbfEaUEv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 16:04:51 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41977 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727287AbfEaUEv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 15:59:38 -0400
-Received: by mail-ed1-f65.google.com with SMTP id x25so4018783eds.8
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 12:59:36 -0700 (PDT)
+        Fri, 31 May 2019 16:04:51 -0400
+Received: by mail-pf1-f193.google.com with SMTP id q17so6831434pfq.8
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 13:04:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3SkRaYCGnq1C8VvlqaJ8i8zblsitHZj5v7WamNGN6H8=;
-        b=u+WzyLtECMcbvjVI27nPUY/f1sNnnGQ4v95OEd2FRD+2RIN3aj6jzGAF/2PTtZkWbl
-         IsTT3rCeorqDEpWXIuiNbgTjlGHWnHUr/D/sOZSUHeY0xjsMN9HKVI7kH6G0gclx6jkl
-         B82MHaosoGQikbSAqSxEEk2TDrSJO/hPcw3taZ9jfyFUJ4ANImCDvahXr9qfh8f2T5BE
-         FHCu+ECupVFYxp5GFBf5w0hdhwEUn3OgrWM+Py/pRkyzEODGAZgWcZ81VdDKzxCOPVfN
-         6nLxbxuIKeaZTg+ce2C7SPKFLQaUE7po1agK96jvrVl4UCS91D4hCsJWwk8pQ0eJ7d9+
-         0WLg==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=112Zovjtx8ZJr1t4s7LUgNI3HCAGsmSvfOjQRnyMJCU=;
+        b=XxlXQ2LA/Fd9NkSesPvODwD6A3tksGsqrm9lVeOG5pHiO8te7bj9+Wr9ALiY1LHYhc
+         kfp/43WLVOLMo+N8RMOwetkmI60RcS4TH5h1vGced56vFH3ZHuCo9C0hTL920OCrQE8Z
+         gKTi52cWIJxbFcnl6g8BP21BCKYbdUciAUYB0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3SkRaYCGnq1C8VvlqaJ8i8zblsitHZj5v7WamNGN6H8=;
-        b=JBiQX/fKL0ClC49lS+LC3VteK6fc9+adXDKk5+M3zQU0hDe/O3qYDBziq8Yosx7oR5
-         bL9nc8iRgjmSQPAg9e3cJYc7NBNvGKZcTZx3hxQ1iRdPAc6TVa96H1B9syvwQCc42Wrs
-         G+lh3FseWZt7KckS9GDERMBzsFTJdteTNftLDhIpwz2qleAzRi7UiCUXf1hTNB/cARY+
-         tEIL0LOHEEh+EvIv4klKf6fyTuENyEsu50V723gVs/YRohUNOTm9OteZJ51wA5TRR7lV
-         lLz0WiEai7e5Gz2unpnsKZaWElLncp+XrQ3hS8ITP9g2neeDUu17ma6awMMrVl0XyJ7L
-         OJ2g==
-X-Gm-Message-State: APjAAAWY+JcrMXslh394iUPxzej1MpWQsST4+awyRaFvPaJIbVZ7ONw2
-        Ab36ra7G1VmNnOkeUqoBQz1DyiRS/tsoqhRJzFYb6Q==
-X-Google-Smtp-Source: APXvYqwCViODZUf7+K8dCeviTHiMP+R9s9zcehJqctp1p3kVpVxvg6odZUTsjoHWEEexh9KnE9DVXLpFwc9HMKyIdjU=
-X-Received: by 2002:a17:906:2922:: with SMTP id v2mr10871610ejd.115.1559332775551;
- Fri, 31 May 2019 12:59:35 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=112Zovjtx8ZJr1t4s7LUgNI3HCAGsmSvfOjQRnyMJCU=;
+        b=smB7WzT1NPskoCMFF/pzQ5RAb1LsDxlFbCkzvJ5JAAubWIa899+5gykT4wGJCjTGEh
+         UMJQoLF5o5weTxZr9z0FhStug7weUzn4wuxIPc8BIYtuHPdbTKN90UlhztuVBYKS6UpD
+         H1sKS3OTlY8YlC+wXzvUvQYeJNLbiYB1KqKgNgPbgac9djd/dIeOBDHGEsi/bNCPHASf
+         MeHAZ0mJLM5LloN1qdHNG3TF8C16rjcOPgvMkn7w8Fzg4iJTo4k0ZSbDW4seXGiROXXe
+         Es/vt/B6Gvhfxd2bbIt0XRah7Pb5mmvKpQPNA7Z4j7HWwWwwQiv7Y2CvhA6+5WtsFICz
+         iUjQ==
+X-Gm-Message-State: APjAAAUSiA7HUm2fX85g+C8+GW+kA9jXTS9UKPHvHQBpBiDI/LHuDACL
+        ZKcB15b01Jq0sM/uokchBzEOYg==
+X-Google-Smtp-Source: APXvYqxeTGnGGkTjihI9uH7d87T5xK7nlJC61qOLzE4WGy41v83odHoZijRIrqBW0NIFX0gqq5wJVw==
+X-Received: by 2002:a62:3287:: with SMTP id y129mr7161023pfy.101.1559333089720;
+        Fri, 31 May 2019 13:04:49 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
+        by smtp.gmail.com with ESMTPSA id z4sm6856910pfa.142.2019.05.31.13.04.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 31 May 2019 13:04:49 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Minas Harutyunyan <hminas@synopsys.com>
+Cc:     linux-rockchip@lists.infradead.org,
+        Stefan Wahren <stefan.wahren@i2se.com>, tfiga@chromium.org,
+        mka@chromium.org, groeck@chromium.org,
+        Martin Schiller <ms@dev.tdt.de>,
+        Douglas Anderson <dianders@chromium.org>,
+        stable@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: dwc2: host: Fix wMaxPacketSize handling (fix webcam regression)
+Date:   Fri, 31 May 2019 13:04:12 -0700
+Message-Id: <20190531200412.129429-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.22.0.rc1.311.g5d7573a151-goog
 MIME-Version: 1.0
-References: <CAOyeoRWfPNmaWY6Lifdkdj3KPPM654vzDO+s3oduEMCJP+Asow@mail.gmail.com>
- <5CEC9667.30100@intel.com> <CAOyeoRWhfyuuYdguE6Wrzd7GOdow9qRE4MZ4OKkMc5cdhDT53g@mail.gmail.com>
- <5CEE3AC4.3020904@intel.com> <CAOyeoRW85jV=TW_xwSj0ZYwPj_L+G9wu+QPGEF3nBmPbWGX4_g@mail.gmail.com>
- <5CF07D37.9090805@intel.com>
-In-Reply-To: <5CF07D37.9090805@intel.com>
-From:   Eric Hankland <ehankland@google.com>
-Date:   Fri, 31 May 2019 12:59:24 -0700
-Message-ID: <CAOyeoRXWQaVYZSVL_LTTdAwJOEr+eCzhp1=_JcOX3i6_CJiD_g@mail.gmail.com>
-Subject: Re: [PATCH v1] KVM: x86: PMU Whitelist
-To:     Wei Wang <wei.w.wang@intel.com>
-Cc:     pbonzini@redhat.com, rkrcmar@redhat.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 5:57 PM Wei Wang <wei.w.wang@intel.com> wrote:
->
-> On 05/30/2019 01:11 AM, Eric Hankland wrote:
-> > On Wed, May 29, 2019 at 12:49 AM Wei Wang <wei.w.wang@intel.com> wrote:
-> >> On 05/29/2019 02:14 AM, Eric Hankland wrote:
-> >>> On Mon, May 27, 2019 at 6:56 PM Wei Wang <wei.w.wang@intel.com> wrote:
-> >>>> On 05/23/2019 06:23 AM, Eric Hankland wrote:
-> >>>>> - Add a VCPU ioctl that can control which events the guest can monitor.
-> >>>>>
-> >>>>> Signed-off-by: ehankland <ehankland@google.com>
-> >>>>> ---
-> >>>>> Some events can provide a guest with information about other guests or the
-> >>>>> host (e.g. L3 cache stats); providing the capability to restrict access
-> >>>>> to a "safe" set of events would limit the potential for the PMU to be used
-> >>>>> in any side channel attacks. This change introduces a new vcpu ioctl that
-> >>>>> sets an event whitelist. If the guest attempts to program a counter for
-> >>>>> any unwhitelisted event, the kernel counter won't be created, so any
-> >>>>> RDPMC/RDMSR will show 0 instances of that event.
-> >>>> The general idea sounds good to me :)
-> >>>>
-> >>>> For the implementation, I would have the following suggestions:
-> >>>>
-> >>>> 1) Instead of using a whitelist, it would be better to use a blacklist to
-> >>>> forbid the guest from counting any core level information. So by default,
-> >>>> kvm maintains a list of those core level events, which are not supported to
-> >>>> the guest.
-> >>>>
-> >>>> The userspace ioctl removes the related events from the blacklist to
-> >>>> make them usable by the guest.
-> >>>>
-> >>>> 2) Use vm ioctl, instead of vcpu ioctl. The blacklist-ed events can be
-> >>>> VM wide
-> >>>> (unnecessary to make each CPU to maintain the same copy).
-> >>>> Accordingly, put the pmu event blacklist into kvm->arch.
-> >>>>
-> >>>> 3) Returning 1 when the guest tries to set the evetlsel msr to count an
-> >>>> event which is on the blacklist.
-> >>>>
-> >>>> Best,
-> >>>> Wei
-> >>> Thanks for the feedback. I have a couple concerns with a KVM
-> >>> maintained blacklist. First, I'm worried it will be difficult to keep
-> >>> such a list up to date and accurate (both coming up with the initial
-> >>> list since there are so many events, and updating it whenever any new
-> >>> events are published or vulnerabilities are discovered).
-> >> Not sure about "so many" above. I think there should be much
-> >> fewer events that may need to be blacklisted.
-> >>
-> >> For example the event table 19-3 from SDM 19.2 shows hundreds of
-> >> events, how many of them would you think that need to be blacklisted?
-> >>
-> >>> Second, users
-> >>> may want to differentiate between whole-socket and sub-socket VMs
-> >>> (some events may be fine for the whole-socket case) - keeping a single
-> >>> blacklist wouldn't allow for this.
-> >> Why wouldn't?
-> >> In any case (e.g. the whole socket dedicated to the single VM) we
-> >> want to unlock the blacklisted events, we can have the userspace
-> >> (e.g. qemu command line options "+event1, +event2") do ioctl to
-> >> have KVM do that.
-> >>
-> >> Btw, for the L3 cache stats event example, I'm not sure if that could
-> >> be an issue if we have "AnyThread=0". I'll double confirm with
-> >> someone.
-> >>
-> >> Best,
-> >> Wei
-> >> Not sure about "so many" above. I think there should be much
-> >> fewer events that may need to be blacklisted.
-> > I think you're right that there are not as many events that seem like
-> > they could leak info as events that seem like they won't, but I think
-> > the work to validate that they definitely don't could be expensive;
-> > with a whitelist it's easy to start with a smaller set and
-> > incrementally add to it without having to evaluate all the events
-> > right away.
->
-> Before going that whitelist/blacklist direction, do you have an event
-> example that couldn't be solved by setting "AnyThread=0"?
->
-> If no, I think we could simply gate guest's setting of "AnyThread=0".
->
-> Best,
-> Wei
+In commit abb621844f6a ("usb: ch9: make usb_endpoint_maxp() return
+only packet size") the API to usb_endpoint_maxp() changed.  It used to
+just return wMaxPacketSize but after that commit it returned
+wMaxPacketSize with the high bits (the multiplier) masked off.  If you
+wanted to get the multiplier it was now up to your code to call the
+new usb_endpoint_maxp_mult() which was introduced in
+commit 541b6fe63023 ("usb: add helper to extract bits 12:11 of
+wMaxPacketSize").
 
-With anythread=0, I'm not aware of any events that directly give info
-about other VMs, but monitoring events related to shared resources
-(e.g. LLC References and LLC Misses) could indirectly give you info
-about how heavily other users are using that resource.
+Prior to the API change most host drivers were updated, but no update
+was made to dwc2.  Presumably it was assumed that dwc2 was too
+simplistic to use the multiplier and thus just didn't support a
+certain class of USB devices.  However, it turns out that dwc2 did use
+the multiplier and many devices using it were working quite nicely.
+That means that many USB devices have been broken since the API
+change.  One such device is a Logitech HD Pro Webcam C920.
 
-I tried returning 1 when the guest tries to write the eventsel msr for
-a disallowed event - the behavior on modern guest kernels looks
-reasonable (warns once about an unchecked MSR access error), but it
-looks like guests using older kernels (older than 2016) might panic
-due to the gpfault (not to mention I'm not sure about the behavior on
-non-linux kernels). So I'm hesitant to return 1 - what do you think?
+Specifically, though dwc2 didn't directly call usb_endpoint_maxp(), it
+did call usb_maxpacket() which in turn called usb_endpoint_maxp().
 
-I also looked into moving from a vcpu ioctl to a vm ioctl - I can send
-out a version of the patch with this change once we settle on the
-other issues. It will involve some extra locking every time the
-counters are programmed to ensure the whitelist or blacklist isn't
-removed during access.
+Let's update dwc2 to work properly with the new API.
 
-Eric
+Fixes: abb621844f6a ("usb: ch9: make usb_endpoint_maxp() return only packet size")
+Cc: stable@vger.kernel.org
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
+
+ drivers/usb/dwc2/hcd.c       | 29 +++++++++++++++++------------
+ drivers/usb/dwc2/hcd.h       | 20 +++++++++++---------
+ drivers/usb/dwc2/hcd_intr.c  |  5 +++--
+ drivers/usb/dwc2/hcd_queue.c | 10 ++++++----
+ 4 files changed, 37 insertions(+), 27 deletions(-)
+
+diff --git a/drivers/usb/dwc2/hcd.c b/drivers/usb/dwc2/hcd.c
+index b50ec3714fd8..5c51bf5506d1 100644
+--- a/drivers/usb/dwc2/hcd.c
++++ b/drivers/usb/dwc2/hcd.c
+@@ -2608,7 +2608,7 @@ static int dwc2_assign_and_init_hc(struct dwc2_hsotg *hsotg, struct dwc2_qh *qh)
+ 	chan->dev_addr = dwc2_hcd_get_dev_addr(&urb->pipe_info);
+ 	chan->ep_num = dwc2_hcd_get_ep_num(&urb->pipe_info);
+ 	chan->speed = qh->dev_speed;
+-	chan->max_packet = dwc2_max_packet(qh->maxp);
++	chan->max_packet = qh->maxp;
+ 
+ 	chan->xfer_started = 0;
+ 	chan->halt_status = DWC2_HC_XFER_NO_HALT_STATUS;
+@@ -2686,7 +2686,7 @@ static int dwc2_assign_and_init_hc(struct dwc2_hsotg *hsotg, struct dwc2_qh *qh)
+ 		 * This value may be modified when the transfer is started
+ 		 * to reflect the actual transfer length
+ 		 */
+-		chan->multi_count = dwc2_hb_mult(qh->maxp);
++		chan->multi_count = qh->maxp_mult;
+ 
+ 	if (hsotg->params.dma_desc_enable) {
+ 		chan->desc_list_addr = qh->desc_list_dma;
+@@ -3806,19 +3806,21 @@ static struct dwc2_hcd_urb *dwc2_hcd_urb_alloc(struct dwc2_hsotg *hsotg,
+ 
+ static void dwc2_hcd_urb_set_pipeinfo(struct dwc2_hsotg *hsotg,
+ 				      struct dwc2_hcd_urb *urb, u8 dev_addr,
+-				      u8 ep_num, u8 ep_type, u8 ep_dir, u16 mps)
++				      u8 ep_num, u8 ep_type, u8 ep_dir,
++				      u16 maxp, u16 maxp_mult)
+ {
+ 	if (dbg_perio() ||
+ 	    ep_type == USB_ENDPOINT_XFER_BULK ||
+ 	    ep_type == USB_ENDPOINT_XFER_CONTROL)
+ 		dev_vdbg(hsotg->dev,
+-			 "addr=%d, ep_num=%d, ep_dir=%1x, ep_type=%1x, mps=%d\n",
+-			 dev_addr, ep_num, ep_dir, ep_type, mps);
++			 "addr=%d, ep_num=%d, ep_dir=%1x, ep_type=%1x, maxp=%d (%d mult)\n",
++			 dev_addr, ep_num, ep_dir, ep_type, maxp, maxp_mult);
+ 	urb->pipe_info.dev_addr = dev_addr;
+ 	urb->pipe_info.ep_num = ep_num;
+ 	urb->pipe_info.pipe_type = ep_type;
+ 	urb->pipe_info.pipe_dir = ep_dir;
+-	urb->pipe_info.mps = mps;
++	urb->pipe_info.maxp = maxp;
++	urb->pipe_info.maxp_mult = maxp_mult;
+ }
+ 
+ /*
+@@ -3909,8 +3911,9 @@ void dwc2_hcd_dump_state(struct dwc2_hsotg *hsotg)
+ 					dwc2_hcd_is_pipe_in(&urb->pipe_info) ?
+ 					"IN" : "OUT");
+ 				dev_dbg(hsotg->dev,
+-					"      Max packet size: %d\n",
+-					dwc2_hcd_get_mps(&urb->pipe_info));
++					"      Max packet size: %d (%d mult)\n",
++					dwc2_hcd_get_maxp(&urb->pipe_info),
++					dwc2_hcd_get_maxp_mult(&urb->pipe_info));
+ 				dev_dbg(hsotg->dev,
+ 					"      transfer_buffer: %p\n",
+ 					urb->buf);
+@@ -4510,8 +4513,10 @@ static void dwc2_dump_urb_info(struct usb_hcd *hcd, struct urb *urb,
+ 	}
+ 
+ 	dev_vdbg(hsotg->dev, "  Speed: %s\n", speed);
+-	dev_vdbg(hsotg->dev, "  Max packet size: %d\n",
+-		 usb_maxpacket(urb->dev, urb->pipe, usb_pipeout(urb->pipe)));
++	dev_vdbg(hsotg->dev, "  Max packet size: %d (%d mult)\n",
++		 usb_endpoint_maxp(&urb->ep->desc),
++		 usb_endpoint_maxp_mult(&urb->ep->desc));
++
+ 	dev_vdbg(hsotg->dev, "  Data buffer length: %d\n",
+ 		 urb->transfer_buffer_length);
+ 	dev_vdbg(hsotg->dev, "  Transfer buffer: %p, Transfer DMA: %08lx\n",
+@@ -4594,8 +4599,8 @@ static int _dwc2_hcd_urb_enqueue(struct usb_hcd *hcd, struct urb *urb,
+ 	dwc2_hcd_urb_set_pipeinfo(hsotg, dwc2_urb, usb_pipedevice(urb->pipe),
+ 				  usb_pipeendpoint(urb->pipe), ep_type,
+ 				  usb_pipein(urb->pipe),
+-				  usb_maxpacket(urb->dev, urb->pipe,
+-						!(usb_pipein(urb->pipe))));
++				  usb_endpoint_maxp(&ep->desc),
++				  usb_endpoint_maxp_mult(&ep->desc));
+ 
+ 	buf = urb->transfer_buffer;
+ 
+diff --git a/drivers/usb/dwc2/hcd.h b/drivers/usb/dwc2/hcd.h
+index c089ffa1f0a8..ce6445a06588 100644
+--- a/drivers/usb/dwc2/hcd.h
++++ b/drivers/usb/dwc2/hcd.h
+@@ -171,7 +171,8 @@ struct dwc2_hcd_pipe_info {
+ 	u8 ep_num;
+ 	u8 pipe_type;
+ 	u8 pipe_dir;
+-	u16 mps;
++	u16 maxp;
++	u16 maxp_mult;
+ };
+ 
+ struct dwc2_hcd_iso_packet_desc {
+@@ -264,6 +265,7 @@ struct dwc2_hs_transfer_time {
+  *                       - USB_ENDPOINT_XFER_ISOC
+  * @ep_is_in:           Endpoint direction
+  * @maxp:               Value from wMaxPacketSize field of Endpoint Descriptor
++ * @maxp_mult:          Multiplier for maxp
+  * @dev_speed:          Device speed. One of the following values:
+  *                       - USB_SPEED_LOW
+  *                       - USB_SPEED_FULL
+@@ -340,6 +342,7 @@ struct dwc2_qh {
+ 	u8 ep_type;
+ 	u8 ep_is_in;
+ 	u16 maxp;
++	u16 maxp_mult;
+ 	u8 dev_speed;
+ 	u8 data_toggle;
+ 	u8 ping_state;
+@@ -503,9 +506,14 @@ static inline u8 dwc2_hcd_get_pipe_type(struct dwc2_hcd_pipe_info *pipe)
+ 	return pipe->pipe_type;
+ }
+ 
+-static inline u16 dwc2_hcd_get_mps(struct dwc2_hcd_pipe_info *pipe)
++static inline u16 dwc2_hcd_get_maxp(struct dwc2_hcd_pipe_info *pipe)
++{
++	return pipe->maxp;
++}
++
++static inline u16 dwc2_hcd_get_maxp_mult(struct dwc2_hcd_pipe_info *pipe)
+ {
+-	return pipe->mps;
++	return pipe->maxp_mult;
+ }
+ 
+ static inline u8 dwc2_hcd_get_dev_addr(struct dwc2_hcd_pipe_info *pipe)
+@@ -620,12 +628,6 @@ static inline bool dbg_urb(struct urb *urb)
+ static inline bool dbg_perio(void) { return false; }
+ #endif
+ 
+-/* High bandwidth multiplier as encoded in highspeed endpoint descriptors */
+-#define dwc2_hb_mult(wmaxpacketsize) (1 + (((wmaxpacketsize) >> 11) & 0x03))
+-
+-/* Packet size for any kind of endpoint descriptor */
+-#define dwc2_max_packet(wmaxpacketsize) ((wmaxpacketsize) & 0x07ff)
+-
+ /*
+  * Returns true if frame1 index is greater than frame2 index. The comparison
+  * is done modulo FRLISTEN_64_SIZE. This accounts for the rollover of the
+diff --git a/drivers/usb/dwc2/hcd_intr.c b/drivers/usb/dwc2/hcd_intr.c
+index 88b5dcf3aefc..a052d39b4375 100644
+--- a/drivers/usb/dwc2/hcd_intr.c
++++ b/drivers/usb/dwc2/hcd_intr.c
+@@ -1617,8 +1617,9 @@ static void dwc2_hc_ahberr_intr(struct dwc2_hsotg *hsotg,
+ 
+ 	dev_err(hsotg->dev, "  Speed: %s\n", speed);
+ 
+-	dev_err(hsotg->dev, "  Max packet size: %d\n",
+-		dwc2_hcd_get_mps(&urb->pipe_info));
++	dev_err(hsotg->dev, "  Max packet size: %d (mult %d)\n",
++		dwc2_hcd_get_maxp(&urb->pipe_info),
++		dwc2_hcd_get_maxp_mult(&urb->pipe_info));
+ 	dev_err(hsotg->dev, "  Data buffer length: %d\n", urb->length);
+ 	dev_err(hsotg->dev, "  Transfer buffer: %p, Transfer DMA: %08lx\n",
+ 		urb->buf, (unsigned long)urb->dma);
+diff --git a/drivers/usb/dwc2/hcd_queue.c b/drivers/usb/dwc2/hcd_queue.c
+index ea3aa640c15c..68bbac64b753 100644
+--- a/drivers/usb/dwc2/hcd_queue.c
++++ b/drivers/usb/dwc2/hcd_queue.c
+@@ -708,7 +708,7 @@ static void dwc2_hs_pmap_unschedule(struct dwc2_hsotg *hsotg,
+ static int dwc2_uframe_schedule_split(struct dwc2_hsotg *hsotg,
+ 				      struct dwc2_qh *qh)
+ {
+-	int bytecount = dwc2_hb_mult(qh->maxp) * dwc2_max_packet(qh->maxp);
++	int bytecount = qh->maxp_mult * qh->maxp;
+ 	int ls_search_slice;
+ 	int err = 0;
+ 	int host_interval_in_sched;
+@@ -1332,7 +1332,7 @@ static int dwc2_check_max_xfer_size(struct dwc2_hsotg *hsotg,
+ 	u32 max_channel_xfer_size;
+ 	int status = 0;
+ 
+-	max_xfer_size = dwc2_max_packet(qh->maxp) * dwc2_hb_mult(qh->maxp);
++	max_xfer_size = qh->maxp * qh->maxp_mult;
+ 	max_channel_xfer_size = hsotg->params.max_transfer_size;
+ 
+ 	if (max_xfer_size > max_channel_xfer_size) {
+@@ -1517,8 +1517,9 @@ static void dwc2_qh_init(struct dwc2_hsotg *hsotg, struct dwc2_qh *qh,
+ 	u32 prtspd = (hprt & HPRT0_SPD_MASK) >> HPRT0_SPD_SHIFT;
+ 	bool do_split = (prtspd == HPRT0_SPD_HIGH_SPEED &&
+ 			 dev_speed != USB_SPEED_HIGH);
+-	int maxp = dwc2_hcd_get_mps(&urb->pipe_info);
+-	int bytecount = dwc2_hb_mult(maxp) * dwc2_max_packet(maxp);
++	int maxp = dwc2_hcd_get_maxp(&urb->pipe_info);
++	int maxp_mult = dwc2_hcd_get_maxp_mult(&urb->pipe_info);
++	int bytecount = maxp_mult * maxp;
+ 	char *speed, *type;
+ 
+ 	/* Initialize QH */
+@@ -1531,6 +1532,7 @@ static void dwc2_qh_init(struct dwc2_hsotg *hsotg, struct dwc2_qh *qh,
+ 
+ 	qh->data_toggle = DWC2_HC_PID_DATA0;
+ 	qh->maxp = maxp;
++	qh->maxp_mult = maxp_mult;
+ 	INIT_LIST_HEAD(&qh->qtd_list);
+ 	INIT_LIST_HEAD(&qh->qh_list_entry);
+ 
+-- 
+2.22.0.rc1.311.g5d7573a151-goog
+
