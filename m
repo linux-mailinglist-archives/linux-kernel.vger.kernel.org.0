@@ -2,100 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE76031637
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 22:39:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDAB73163B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 22:39:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727618AbfEaUiu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 16:38:50 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34963 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726711AbfEaUiu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 16:38:50 -0400
-Received: by mail-lj1-f193.google.com with SMTP id h11so10878850ljb.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 13:38:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CJg5QUCA0uPT2F+o9Dh7JaPgMKMdBBZHboAZ09rcF54=;
-        b=HfKC+uYBIngRJFypqrkOc0/UKsvYuqY5793NSQ4XY5ZlXJ+nUBECGXpPw/5aGC59wy
-         JFNPgtG+Ghy8dk7PmRHD9Jb6iiamQbvnEB3o/mJLZs5MdHJjv1mMjI0sDXPSMAIL9FZE
-         M+O9r4iy3Y5UUwrhzyC/sNO6wPFFFmD2vNTz8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CJg5QUCA0uPT2F+o9Dh7JaPgMKMdBBZHboAZ09rcF54=;
-        b=q5Z5WbOcLcJX66O5LKWJGV7WeGtiA5ZeiGpi4rZkaFILem2qTjudtr8io/xx+uQXUV
-         22NFV5sP+gDOAkUMH6VWKv1gBGiBObYuhn5U+tbxgs1zopIWv5Htk2CS2qIIcdZKDGGM
-         OA4kAuvBthm1rw+xeoazMqtoWpG+eZxO8n+aA1bP1wExnnedHiWMEiMaJdb/y/HZyOC9
-         lef1K3L30pNzNXnMxRBWBN00NQxjKiHfXa3PgfUTDUrT/s4cQ40iQY/z2LRGTU9rRlib
-         D0DjW/1WcNiguvkcSgYH9MoDhsqo02qm7gPqHPi/KfQ0BfqROzp8d+sJQKHfdv6XBZDY
-         RrwQ==
-X-Gm-Message-State: APjAAAXEIC4BEzZhwuUf2/iRq6IbnIpl0PcQ/I9+jylWOuZfc1lH/Bhm
-        SIu1QjF2qbM+CwcW31WZsijbwsPRDjA=
-X-Google-Smtp-Source: APXvYqyiTEJ0dYYzeDcFlT3KTCgOKV62W1Ca0CxRgcOYzMM6t7LbUEgcK8faNKckJajCEWR3pIaupA==
-X-Received: by 2002:a2e:7001:: with SMTP id l1mr7074142ljc.11.1559335127642;
-        Fri, 31 May 2019 13:38:47 -0700 (PDT)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id s20sm973471lfb.95.2019.05.31.13.38.45
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 May 2019 13:38:46 -0700 (PDT)
-Received: by mail-lj1-f176.google.com with SMTP id a10so7611820ljf.6
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 13:38:45 -0700 (PDT)
-X-Received: by 2002:a2e:97d8:: with SMTP id m24mr6980173ljj.52.1559335125640;
- Fri, 31 May 2019 13:38:45 -0700 (PDT)
+        id S1727653AbfEaUjL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 16:39:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55234 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726711AbfEaUjL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 16:39:11 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EDFE626EAA;
+        Fri, 31 May 2019 20:39:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559335150;
+        bh=0HQst+0fKJNxhhK6HyvWrG2LQu7CnOIDA2z+zG4RBrI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nXGB11sOFweqgSBdu+PiCNu+F9xDoJOdlrcoFTVwdlNywa/wrg6nmiwz+TCdKLZMj
+         L6e/0EURXi5SEDep9yncxz7Mx9aQc0/VHR4px9GmiLWYnPAPUPt4/12AGVG1Be+0Qz
+         mNBd7sW3ycKdBcLIkxwpafcUBnPKzUvW47xQqHGY=
+Date:   Fri, 31 May 2019 15:39:08 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Abhishek Sahu <abhsahu@nvidia.com>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH 2/2] PCI: Create device link for NVIDIA GPU
+Message-ID: <20190531203908.GA58810@google.com>
+References: <20190531050109.16211-1-abhsahu@nvidia.com>
+ <20190531050109.16211-3-abhsahu@nvidia.com>
 MIME-Version: 1.0
-References: <20190529152237.10719-1-christian@brauner.io> <20190529222414.GA6492@gmail.com>
-In-Reply-To: <20190529222414.GA6492@gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 31 May 2019 13:38:29 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whQP-Ykxi=zSYaV9iXsHsENa+2fdj-zYKwyeyed63Lsfw@mail.gmail.com>
-Message-ID: <CAHk-=whQP-Ykxi=zSYaV9iXsHsENa+2fdj-zYKwyeyed63Lsfw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] fork: add clone3
-To:     Andrei Vagin <avagin@gmail.com>
-Cc:     Christian Brauner <christian@brauner.io>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Jann Horn <jannh@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Adrian Reber <adrian@lisas.de>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190531050109.16211-3-abhsahu@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 3:24 PM Andrei Vagin <avagin@gmail.com> wrote:
->
-> Thank you for thinking about time namespaces. I looked at this patch
-> quickly and I would suggest to move a termination signal out of flags. I
-> think we can add a separate field (exit_signal) into clone_args. Does it
-> make sense? For me, exit_signal in flags always looked weird...
+[+cc Lukas, author of 07f4f97d7b4b ("vga_switcheroo: Use device link
+for HDA controller")]
 
-I agree - the child signal in flags was always just a "it fits" kind
-of thing, and that was obviously true back then, but is not true now.
+On Fri, May 31, 2019 at 10:31:09AM +0530, Abhishek Sahu wrote:
+> NVIDIA Turing GPUs include hardware support for USB Type-C and
+> VirtualLink. It helps in delivering the power, display, and data
+> required to power VR headsets through a single USB Type-C connector.
+> The Turing GPU is a multi-function PCI device has the following
+> four functions:
+> 
+> 	- VGA display controller (Function 0)
+> 	- Audio controller (Function 1)
+> 	- USB xHCI Host controller (Function 2)
+> 	- USB Type-C USCI controller (Function 3)
+> 
+> The function 0 is tightly coupled with other functions in the
+> hardware. When function 0 goes in runtime suspended state,
 
-In fact, if we move it out of flags, we'd open up new flag values for
-the new interface, in that now the low 8 bits are freed up for more
-useful things.
+"Runtime suspended" is a Linux concept, not a PCI concept.  Please
+replace this with the appropriate PCI term, e.g., "D3hot" or whatever
+it is.
 
-In fact, even for the old ones, we might just say that instead of the
-full 8-bit CSIGNAL field, nobody ever *used* more than 6 bits, because
-_NSIG is 64, and we've never actually had named signals > 31.
+> then it will do power gating for most of the hardware blocks.
+> Some of these hardware blocks are used by other functions which
+> leads to functional failure. So if any of these functions (1/2/3)
+> are active, then function 0 should also be in active state.
 
-(Yeah, yeah, somebody could use signal 64, and yes, mips has _NSIG
-128, but realistically we could get two new clone signals in the old
-interface and I think nobody would even notice).
+Instead of "active" and "active state", please use the specific states
+required in terms of PCI.
 
-In fact, all of the CSIGNAL bits are ignored if CLONE_THREAD or
-CLONE_PARENT is set.
+> 'commit 07f4f97d7b4b ("vga_switcheroo: Use device link for
+> HDA controller")' creates the device link from function 1 to
+> function 0. A similar kind of device link needs to be created
+> between function 0 and functions 2 and 3 for NVIDIA Turing GPU.
 
-                   Linus
+I can't point to language that addresses this, but this sounds like a
+case of the GPU not conforming to the PCI spec.  The general
+assumption is that the OS should be able to discover everything it
+needs to do power management directly from the architected PCI config
+space.
+
+It is definitely not ideal to have to add quirks like this for devices
+designed this way.  Such quirks force us to do otherwise unnecessary
+OS updates as new devices are released.
+
+If all the devices in a multi-function device were connected
+intimately enough that they all had to be managed by the same driver,
+I could imagine putting these non-discoverable dependencies in the
+driver.  But these devices don't seem to be related in that way.
+
+If there *is* spec language that allows dependencies like this, please
+include the citation in your commit log.
+
+> This patch does the same and create the required device links. It
+> will make function 0 to be runtime PM active if other functions
+> are still active.
+> 
+> Signed-off-by: Abhishek Sahu <abhsahu@nvidia.com>
+> ---
+>  drivers/pci/quirks.c | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
+> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> index a20f7771a323..afdbc199efc5 100644
+> --- a/drivers/pci/quirks.c
+> +++ b/drivers/pci/quirks.c
+> @@ -4967,6 +4967,29 @@ DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_AMD, PCI_ANY_ID,
+>  DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_NVIDIA, PCI_ANY_ID,
+>  			      PCI_CLASS_MULTIMEDIA_HD_AUDIO, 8, quirk_gpu_hda);
+>  
+> +/* Create device link for NVIDIA GPU with integrated USB controller to VGA. */
+> +static void quirk_gpu_usb(struct pci_dev *usb)
+> +{
+> +	pci_create_device_link_with_vga(usb, 2);
+> +}
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_NVIDIA, PCI_ANY_ID,
+> +			      PCI_CLASS_SERIAL_USB, 8, quirk_gpu_usb);
+> +
+> +/*
+> + * Create device link for NVIDIA GPU with integrated Type-C UCSI controller
+> + * to VGA. Currently there is no class code defined for UCSI device over PCI
+> + * so using UNKNOWN class for now and it will be updated when UCSI
+> + * over PCI gets a class code.
+
+Ugh.  Here's a good example of having to do yet another OS update.
+
+> + */
+> +#define PCI_CLASS_SERIAL_UNKNOWN	0x0c80
+> +static void quirk_gpu_usb_typec_ucsi(struct pci_dev *ucsi)
+> +{
+> +	pci_create_device_link_with_vga(ucsi, 3);
+> +}
+> +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_NVIDIA, PCI_ANY_ID,
+> +			      PCI_CLASS_SERIAL_UNKNOWN, 8,
+> +			      quirk_gpu_usb_typec_ucsi);
+> +
+>  /*
+>   * Some IDT switches incorrectly flag an ACS Source Validation error on
+>   * completions for config read requests even though PCIe r4.0, sec
+> -- 
+> 2.17.1
+> 
