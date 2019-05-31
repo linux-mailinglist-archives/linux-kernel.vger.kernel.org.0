@@ -2,85 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F38831060
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 16:38:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2859131069
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 16:41:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbfEaOiC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 10:38:02 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:35262 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbfEaOiC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 10:38:02 -0400
-Received: by mail-qt1-f193.google.com with SMTP id d23so1141912qto.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 07:38:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=649G8fX5KsyxKNGqC8JgOTPtl/EUKZLecJRl6sV4WuE=;
-        b=gcp92TBDfc0rnUPM9YcSJPS63vLFPmXlbELISOregSWXFow0wkuMKoNUTCwWuPETjn
-         58EjhTjW0OS5FGcgpplBpmIsKAOKOj5yz/RM0/7byNNAcT83+i2IcZsyAxLeRThi8iBD
-         u/ot7JwaMWPkMOswd8p5V6fcx1AJBQj6oUxJAE5RR0Tljh4eGxulZ9VkS0R88KQxf1yf
-         JMUjXaFl5Rle0cxtVYfNp08eqHZW6Gw8Z9WvlWbFaiyaCQ2i9xdlsZ6WM3u1pkc46Jyz
-         Nx3amfFonmYF8TqE1rNIL3DAei2V1sqrXokli290xrfi41tdLCckSjNVEAmNr1IvZiIA
-         BZaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=649G8fX5KsyxKNGqC8JgOTPtl/EUKZLecJRl6sV4WuE=;
-        b=B5Zg1xaCTnP1sy1AbaGaORjdKPxEJvMPf6Kd6n6crAckyxJdE2Qy/RSUVelvoVsdbb
-         erenSVT90yRzypjgEMhPOuo20lBhU8Ea4gf/CxDItdtsWRJWO1qAMesKgmY9wiLiuuR8
-         2IrYT5RmzWBNXPkKKAd6/p/aDFE4MZPl3bu3cV6dZEMFG0DFnnNBiLVwr0l3pEq+zUYE
-         PJ+6H/1OtSQOMVCZNINcx/G9utlIL6CQOM0f2d+Xnxk9sLCC6BRFM7uh1GI+z+Z/PFjJ
-         /WT9NpcTHMrvxgzBHcFoEf6/3SXshwmqCfVMZn+TVAVfzWV2/LFD3duXu7nTC1W49xie
-         D6bw==
-X-Gm-Message-State: APjAAAUkqseMAk5GBhfOGoUAaCQQFJawBeP8YUtop0V3m9va/b8y7USV
-        pa4Elr7ivwkXcekArvnqFHo=
-X-Google-Smtp-Source: APXvYqygj+noRfQ7ZarPTbIglLApJBmc4ARIM2HfmB8bcs4XGAPQh8P9oPNnFyjrBYBZ687Y1rT0Pw==
-X-Received: by 2002:a0c:878e:: with SMTP id 14mr9262652qvj.103.1559313481179;
-        Fri, 31 May 2019 07:38:01 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:480::39c9])
-        by smtp.gmail.com with ESMTPSA id v195sm3201216qka.28.2019.05.31.07.38.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 May 2019 07:38:00 -0700 (PDT)
-Date:   Fri, 31 May 2019 07:37:59 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Gao Xiang <gaoxiang25@huawei.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH] sched/core: add __sched tag for io_schedule()
-Message-ID: <20190531143759.GD374014@devbig004.ftw2.facebook.com>
-References: <20190531082912.80724-1-gaoxiang25@huawei.com>
+        id S1726613AbfEaOlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 10:41:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34074 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726485AbfEaOlS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 10:41:18 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 55689AF08;
+        Fri, 31 May 2019 14:41:17 +0000 (UTC)
+Subject: Re: [Xen-devel] [PATCH] xen-blkfront: switch kcalloc to kvcalloc for
+ large array allocation
+To:     Roger Pau Monne <roger.pau@citrix.com>,
+        linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Cc:     Stefano Stabellini <sstabellini@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        stable@vger.kernel.org, linux-block@vger.kernel.org,
+        xen-devel@lists.xenproject.org,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+References: <20190503150401.15904-1-roger.pau@citrix.com>
+ <f4b944e8-6678-a921-e2b2-aaeb00c0d5e1@suse.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <ba37b50c-c0ac-5af4-441b-a2d4eda81255@suse.com>
+Date:   Fri, 31 May 2019 16:41:16 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190531082912.80724-1-gaoxiang25@huawei.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <f4b944e8-6678-a921-e2b2-aaeb00c0d5e1@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 31, 2019 at 04:29:12PM +0800, Gao Xiang wrote:
-> non-inline io_schedule() was introduced in
-> commit 10ab56434f2f ("sched/core: Separate out io_schedule_prepare() and io_schedule_finish()")
-> Keep in line with io_schedule_timeout, Otherwise
-> "/proc/<pid>/wchan" will report io_schedule()
-> rather than its callers when waiting io.
+On 06/05/2019 10:11, Juergen Gross wrote:
+> On 03/05/2019 17:04, Roger Pau Monne wrote:
+>> There's no reason to request physically contiguous memory for those
+>> allocations.
+>>
+>> Reported-by: Ian Jackson <ian.jackson@citrix.com>
+>> Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
 > 
-> Reported-by: Jilong Kou <koujilong@huawei.com>
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+> Reviewed-by: Juergen Gross <jgross@suse.com>
 
-Acked-by: Tejun Heo <tj@kernel.org>
+Jens, are you going to tkae this patch or should I carry it through the
+Xen tree?
 
-Thanks.
 
--- 
-tejun
+Juergen
