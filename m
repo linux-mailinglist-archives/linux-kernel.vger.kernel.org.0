@@ -2,194 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5712F3089C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 08:37:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 731F4308BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 08:39:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726945AbfEaGhR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 02:37:17 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35175 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726918AbfEaGhQ (ORCPT
+        id S1726792AbfEaGjO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 02:39:14 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34710 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726275AbfEaGjO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 02:37:16 -0400
-Received: by mail-pg1-f194.google.com with SMTP id t1so3481925pgc.2
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 23:37:15 -0700 (PDT)
+        Fri, 31 May 2019 02:39:14 -0400
+Received: by mail-pg1-f195.google.com with SMTP id h2so233308pgg.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 23:39:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SXBhhNmLSZ7SfSIDocpcP+tG+VZK/npThfwPX+RXL68=;
+        b=DPebLeDbFNVD5P67tqP0E6NbXfo0GqBg57A5cpk0ASEU2EHf6awCPba6G4D+1PwlRj
+         YhsRX/gA0mlYVXED8lkdcJV8bWS2fB9I4CqPcbawD/e2P+1RPta6Kb/8y4DQXjWw9gm0
+         +H3zmCDCa3KW537AnnuScG0NEae48ULqRfGYODDp2u4Pv7GdHb+4t17s+Dqj77brlAs5
+         JDJRlvf4tsykSLgQU84EyPwqQ6OgsG4flhnrJVBbMlBoDARGLJqIHwj5DbmUPcpAYjKg
+         AVCnE0ukyuWLUZelupQ7fL261pnfoDdFWrj6/KLqGfTT8PkZjxmKb5c9viU0i+Qn/TMl
+         O4ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=N0WRW/Kt/AIwleAaIBXC73QurXubTlVRqc1nj0oe3EQ=;
-        b=doLWHHI5xVG30JCu21WTbDvOht6qJU/8enCZjahuiwL/Gdw4gQyMFeWaBlEodp6kbG
-         G0Xzv2zHj2es6PEvXnjG3igYZLY6vV9CMC0+P5yk/vNqUNDhOaww1r3b8HMZpMIurqTX
-         39plxAJDE02y3FpaMz5woHsyitdWCKSfyA6Szku6qVQX+AnEuP3Zx7iMHkIeXovpQPat
-         CK7IuXojSCOAu/uTCMmxOQkH/tPUAoaQH+4ITiCxI9nEzBiScU1GzsjAuWlA81LdGrOz
-         Yx+GxhCVEOXmJkxjnfPIRGjoiVlJL3vhvDzR7fCd68rIsbwLsWfqDPOSsV5L1tB4UQIS
-         GJbQ==
-X-Gm-Message-State: APjAAAVGuEZKzVWFE+T1yMFiXxaP2MqeFbPQkV1dd+QPdqv8EU1NcwzP
-        7nD3KunIkX4U/JLjczXi48k=
-X-Google-Smtp-Source: APXvYqyBh27ZMnEcB/90TQtV+HJjubiQugyfIf1HeG0YgujFcOJAydhA87adZ1olre4n9PgjfbYHHg==
-X-Received: by 2002:a17:90a:cb10:: with SMTP id z16mr7031982pjt.81.1559284635358;
-        Thu, 30 May 2019 23:37:15 -0700 (PDT)
-Received: from htb-2n-eng-dhcp405.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id g17sm9256429pfk.55.2019.05.30.23.37.13
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SXBhhNmLSZ7SfSIDocpcP+tG+VZK/npThfwPX+RXL68=;
+        b=oNYM23xNaiWDMTwBNeK9YEcJYjwid8IP10Y6cl0QQupKHDzDY7jeR2ICoFYSsXv2wQ
+         ecW4hChC5iJZnDW6B8uT4XLF30DvKJrnEtAG0EZ+W2ZIF+fXFP2onTboee9n+Fw289bB
+         axq4wrwtI/eZk+gsWKpt7eSxfUukQKgwcDrodU3P/2puZjKjXGJGuvMu5dUqCOhq4zy1
+         ZcB7kNfqig5jypcMQTviR6Ikz0wgdnIOVQ6DuXqquttahfsp8jtjH6YKPORdc2acO1ru
+         Yge/ZO/nBGf9eIl1kDdI1ZjdTpPPCD34NuBMJL1GjUQH8eSmBdE2Esg9hMIDIykI+hYw
+         vlrQ==
+X-Gm-Message-State: APjAAAXlIiFM2pWbin2bTrUpSsCSmhdEpuEJmsuWTGZRSu5XklGUoI6s
+        aEFWqmJBVrVPSKxOZXopFcDP
+X-Google-Smtp-Source: APXvYqxSXSKcfJHZzFiDp9JVK/XspKz74WHAtcBbnHiEhOKXCoHZ3JHNNC2pEpI0Wj0IJGDLpMcR/g==
+X-Received: by 2002:a63:ff52:: with SMTP id s18mr3535804pgk.187.1559284753339;
+        Thu, 30 May 2019 23:39:13 -0700 (PDT)
+Received: from localhost.localdomain ([2405:204:72cb:ebf2:a51d:3877:feab:5634])
+        by smtp.gmail.com with ESMTPSA id y12sm4644158pgp.63.2019.05.30.23.39.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 May 2019 23:37:14 -0700 (PDT)
-From:   Nadav Amit <namit@vmware.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Nadav Amit <namit@vmware.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Rik van Riel <riel@surriel.com>
-Subject: [RFC PATCH v2 12/12] x86/mm/tlb: Reverting the removal of flush_tlb_info from stack
-Date:   Thu, 30 May 2019 23:36:45 -0700
-Message-Id: <20190531063645.4697-13-namit@vmware.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190531063645.4697-1-namit@vmware.com>
-References: <20190531063645.4697-1-namit@vmware.com>
+        Thu, 30 May 2019 23:39:12 -0700 (PDT)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
+        robh+dt@kernel.org
+Cc:     linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, loic.pallardy@st.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 0/4] Add Avenger96 board support
+Date:   Fri, 31 May 2019 12:08:45 +0530
+Message-Id: <20190531063849.26142-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Partially revert 3db6d5a5eca ("x86/mm/tlb: Remove 'struct
-flush_tlb_info' from the stack").
+Hello,
 
-Now that we copy flush_tlb_info and inline it with the IPI information,
-we can put it back onto the stack. This simplifies the code and should be
-slightly more robust. The stack is also a bit more likely to be cached
-than a global variable.
+This patchset adds Avenger96 board support. This board is one of the
+Consumer Edition boards of the 96Boards family from Arrow Electronics
+featuring STM32MP157A MPU and has the following features:
 
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Nadav Amit <namit@vmware.com>
----
- arch/x86/mm/tlb.c | 46 +++++++++++++++++++++++++---------------------
- 1 file changed, 25 insertions(+), 21 deletions(-)
+SoC: STM32MP157AAC
+PMIC: STPMIC1A
+RAM: 1024 Mbyte @ 533MHz
+Storage: eMMC v4.51: 8 Gbyte
+         microSD Socket: UHS-1 v3.01
+Ethernet Port: 10/100/1000 Mbit/s, IEEE 802.3 Compliant
+Wireless: WiFi 5 GHz & 2.4GHz IEEE 802.11a/b/g/n/ac
+          Bluetooth®v4.2 (BR/EDR/BLE)
+USB: 2x Type A (USB 2.0) Host and 1x Micro B (USB 2.0) OTG
+Display: HDMI: WXGA (1366x768)@ 60 fps, HDMI 1.4
+LED: 4x User LED, 1x WiFi LED, 1x BT LED
 
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index fd7e90adbe43..81170fd6b1dd 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -827,15 +827,17 @@ static inline void put_flush_tlb_info(void)
- static void flush_tlb_on_cpus(const cpumask_t *cpumask,
- 			      const struct flush_tlb_info *info)
- {
--	int this_cpu = smp_processor_id();
- 	bool flush_others = false;
-+	int this_cpu;
-+
-+	this_cpu = get_cpu();
- 
- 	if (cpumask_any_but(cpumask, this_cpu) < nr_cpu_ids)
- 		flush_others = true;
- 
- 	if (static_branch_likely(&flush_tlb_multi_enabled) && flush_others) {
- 		flush_tlb_multi(cpumask, info);
--		return;
-+		goto out;
- 	}
- 
- 	if (cpumask_test_cpu(this_cpu, cpumask)) {
-@@ -847,27 +849,33 @@ static void flush_tlb_on_cpus(const cpumask_t *cpumask,
- 
- 	if (flush_others)
- 		flush_tlb_others(cpumask, info);
-+
-+out:
-+	put_cpu();
- }
- 
- void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
- 				unsigned long end, unsigned int stride_shift,
- 				bool freed_tables)
- {
--	struct flush_tlb_info *info;
--	u64 new_tlb_gen;
-+	struct flush_tlb_info info = {
-+		.mm		= mm,
-+		.stride_shift	= stride_shift,
-+		.freed_tables	= freed_tables,
-+	};
- 
- 	/* Should we flush just the requested range? */
- 	if ((end == TLB_FLUSH_ALL) ||
- 	    ((end - start) >> stride_shift) > tlb_single_page_flush_ceiling) {
--		start = 0;
--		end = TLB_FLUSH_ALL;
-+		info.start = 0;
-+		info.end = TLB_FLUSH_ALL;
-+	} else {
-+		info.start = start;
-+		info.end = end;
- 	}
- 
- 	/* This is also a barrier that synchronizes with switch_mm(). */
--	new_tlb_gen = inc_mm_tlb_gen(mm);
--
--	info = get_flush_tlb_info(mm, start, end, stride_shift, freed_tables,
--				  new_tlb_gen);
-+	info.new_tlb_gen = inc_mm_tlb_gen(mm);
- 
- 	/*
- 	 * Assert that mm_cpumask() corresponds with the loaded mm. We got one
-@@ -878,9 +886,7 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
- 			(mm == this_cpu_read(cpu_tlbstate.loaded_mm)) ||
- 			mm == &init_mm);
- 
--	flush_tlb_on_cpus(mm_cpumask(mm), info);
--
--	put_flush_tlb_info();
-+	flush_tlb_on_cpus(mm_cpumask(mm), &info);
- }
- 
- 
-@@ -913,18 +919,18 @@ void flush_tlb_kernel_range(unsigned long start, unsigned long end)
- 	    (end - start) > tlb_single_page_flush_ceiling << PAGE_SHIFT) {
- 		on_each_cpu(do_flush_tlb_all, NULL, 1);
- 	} else {
--		struct flush_tlb_info *info;
--
--		info = get_flush_tlb_info(NULL, start, end, 0, false, 0);
-+		struct flush_tlb_info info = {
-+			.mm		= NULL,
-+			.start		= start,
-+			.end		= end,
-+		};
- 
- 		/*
- 		 * We have to wait for the remote shootdown to be done since it
- 		 * is kernel space.
- 		 */
- 		__on_each_cpu_mask(cpu_online_mask, do_kernel_range_flush,
--				   info, sizeof(*info), 1);
--
--		put_flush_tlb_info();
-+				   &info, sizeof(info), 1);
- 	}
- }
- 
-@@ -942,9 +948,7 @@ static const struct flush_tlb_info full_flush_tlb_info = {
- 
- void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
- {
--	preempt_disable();
- 	flush_tlb_on_cpus(&batch->cpumask, &full_flush_tlb_info);
--	preempt_enable();
- 
- 	cpumask_clear(&batch->cpumask);
- }
+More information about this board can be found in 96Boards website:
+https://www.96boards.org/product/avenger96/
+
+Thanks,
+Mani
+
+Changes in v3:
+
+* Converted STM32 platform bindings to DT schema
+
+Changes in v2:
+
+As per Alex's review:
+
+* Fixed I2C2 pinctrl node
+* Sorted the avenger96 dtb in alphabetical order
+* Added device-type property to memory node
+
+Manivannan Sadhasivam (4):
+  ARM: dts: stm32mp157: Add missing pinctrl definitions
+  dt-bindings: arm: stm32: Convert STM32 SoC bindings to DT schema
+  dt-bindings: arm: stm32: Document Avenger96 devicetree binding
+  ARM: dts: Add Avenger96 devicetree support based on STM32MP157A
+
+ .../devicetree/bindings/arm/stm32/stm32.yaml  |  31 ++
+ arch/arm/boot/dts/Makefile                    |   1 +
+ arch/arm/boot/dts/stm32mp157-pinctrl.dtsi     |  75 ++++
+ arch/arm/boot/dts/stm32mp157a-avenger96.dts   | 321 ++++++++++++++++++
+ 4 files changed, 428 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/stm32/stm32.yaml
+ create mode 100644 arch/arm/boot/dts/stm32mp157a-avenger96.dts
+
 -- 
-2.20.1
+2.17.1
 
