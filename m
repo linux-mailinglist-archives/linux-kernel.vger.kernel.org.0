@@ -2,107 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27ECC30926
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 09:10:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B78FA30931
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 09:18:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726807AbfEaHKh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 03:10:37 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:42675 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbfEaHKh (ORCPT
+        id S1726824AbfEaHS2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 03:18:28 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:41341 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725963AbfEaHS2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 03:10:37 -0400
-Received: by mail-oi1-f194.google.com with SMTP id v25so6405200oic.9
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 00:10:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=1I0X96D3v1HYQYxv798SWRpkNTAm3dJbfOYoFu1vcjc=;
-        b=mSXDop0s5jN9NAe1GtBRtMt2K1Xz8vR4sOEqaJjRU0qsqm+fGGNcJY4sW6OFh3g4+M
-         z+Ka+XE9L9QeSAnO8qPi0FRJV7b5YoM6dbLCIOBz2UluV16H1LVVUx9EPHd7mvpxzsLE
-         iyR0itn1OLelG55R8FoUg4ETdeaZxCjcPemNEeTCXpyUnTk9w6j9s11T+TufKbFFcmO8
-         owyBKDuikuu13vU2pfMpR5dxvsixreNuXplAG5v18FwnUzDGkYHtZmkBSG8v3WCEctm9
-         rs0rBYchC4Y28raKI51OL/9Q67GE4tObzU87TzN8Qpq14dapwtjDUOkvhvWqniB985/W
-         GDOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=1I0X96D3v1HYQYxv798SWRpkNTAm3dJbfOYoFu1vcjc=;
-        b=li/fd577AIDOmePwVAygjMB00wTUpiC/5tfxYz9W1YOe/0/1aIW0uLMxOGNTJ8onFg
-         gjEKf/CzSIhISB5DgwBMMCn/5sEVtw+/FQvIWhiXllUzreaDUAr7K/TII1MTOFM6a8PU
-         7DJx7dDYD9CUGNgypb25xKtD2DHAUUDfAmBGkJKM507GDYaCX+KGwmrpH1eW6DmjBs+c
-         gLYMyzwUkXzr+XaOqctuQFpgbYxM9x2AGP3GiFBzyAnr2RDYf+sr3T9YqsZ8/7TNZ084
-         O/t5uc413Kvjk41FBTfMbrZx/HQoq4JHyF2tzM/McVr+6lUQfOvKo7WZqIf6+N5t7F4V
-         Lr2Q==
-X-Gm-Message-State: APjAAAXQPl4zj02kfOvu6odSihPg2RgONeu+NqM8nABhIzKOQ/yjYQob
-        riJkggtXRjH6t8VPoK3bdGf28oKOyV2oDq/WQ1xlyQ==
-X-Google-Smtp-Source: APXvYqx7dnoXyXJ7rtNWycS5fX8T7GoEYq1ka5JDOo1LDAyBzDixHD27yR05izUVitFa1RBQW0H6BNO3Z7yPSCqiUio=
-X-Received: by 2002:aca:6cc1:: with SMTP id h184mr370801oic.170.1559286636457;
- Fri, 31 May 2019 00:10:36 -0700 (PDT)
+        Fri, 31 May 2019 03:18:28 -0400
+Received-SPF: Pass (esa6.microchip.iphmx.com: domain of
+  Horatiu.Vultur@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
+  envelope-from="Horatiu.Vultur@microchip.com";
+  x-sender="Horatiu.Vultur@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa6.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
+  envelope-from="Horatiu.Vultur@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa6.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Horatiu.Vultur@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+X-IronPort-AV: E=Sophos;i="5.60,534,1549954800"; 
+   d="scan'208";a="32575660"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 31 May 2019 00:18:27 -0700
+Received: from soft-dev3.microsemi.net (10.10.85.251) by mx.microchip.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.1713.5; Fri, 31 May 2019
+ 00:18:23 -0700
+From:   Horatiu Vultur <horatiu.vultur@microchip.com>
+CC:     Horatiu Vultur <horatiu.vultur@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        "Paul Burton" <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
+Subject: [PATCH net-next v3 0/2] Add hw offload of TC flower on MSCC Ocelot
+Date:   Fri, 31 May 2019 09:16:55 +0200
+Message-ID: <1559287017-32397-1-git-send-email-horatiu.vultur@microchip.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <20190529145954.14500-1-yuehaibing@huawei.com>
-In-Reply-To: <20190529145954.14500-1-yuehaibing@huawei.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Fri, 31 May 2019 09:10:25 +0200
-Message-ID: <CAMpxmJVDk1whp+YJXJO7QZKOR0e_EkU4TakJqRei0xF5Ay_Log@mail.gmail.com>
-Subject: Re: [PATCH -next] eeprom: at24: Remove set but not used variable 'addr'
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-i2c <linux-i2c@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=C5=9Br., 29 maj 2019 o 17:00 YueHaibing <yuehaibing@huawei.com> napisa=C5=
-=82(a):
->
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/misc/eeprom/at24.c: In function at24_make_dummy_client:
-> drivers/misc/eeprom/at24.c:514:21: warning: variable addr set but not use=
-d [-Wunused-but-set-variable]
->
-> It's not used since commit e7308628d0ae ("eeprom:
-> at24: use devm_i2c_new_dummy_device()")
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/misc/eeprom/at24.c | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
-> index ba8e73812644..fa730bb342e8 100644
-> --- a/drivers/misc/eeprom/at24.c
-> +++ b/drivers/misc/eeprom/at24.c
-> @@ -511,13 +511,11 @@ static int at24_make_dummy_client(struct at24_data =
-*at24, unsigned int index,
->                                   struct regmap_config *regmap_config)
->  {
->         struct i2c_client *base_client, *dummy_client;
-> -       unsigned short int addr;
->         struct regmap *regmap;
->         struct device *dev;
->
->         base_client =3D at24->client[0].client;
->         dev =3D &base_client->dev;
-> -       addr =3D base_client->addr + index;
->
->         dummy_client =3D devm_i2c_new_dummy_device(dev, base_client->adap=
-ter,
->                                                  base_client->addr + inde=
-x);
-> --
-> 2.17.1
->
->
+This patch series enables hardware offload for flower filter used in
+traffic controller on MSCC Ocelot board.
 
-Applied, thanks!
+v2->v3 changes:
+ - remove the check for shared blocks
 
-Bart
+v1->v2 changes:
+ - when declaring variables use reverse christmas tree
+
+CC: Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC: Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>
+CC: Rob Herring <robh+dt@kernel.org>
+CC: Mark Rutland <mark.rutland@arm.com>
+CC: Ralf Baechle <ralf@linux-mips.org>
+CC: Paul Burton <paul.burton@mips.com>
+CC: James Hogan <jhogan@kernel.org>
+CC: "David S. Miller" <davem@davemloft.net>
+CC: linux-mips@vger.kernel.org
+CC: devicetree@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+CC: netdev@vger.kernel.org
+
+Horatiu Vultur (2):
+  net: mscc: ocelot: Add support for tcam
+  net: mscc: ocelot: Hardware ofload for tc flower filter
+
+ arch/mips/boot/dts/mscc/ocelot.dtsi       |   5 +-
+ drivers/net/ethernet/mscc/Makefile        |   2 +-
+ drivers/net/ethernet/mscc/ocelot.c        |  13 +
+ drivers/net/ethernet/mscc/ocelot.h        |   8 +
+ drivers/net/ethernet/mscc/ocelot_ace.c    | 777 ++++++++++++++++++++++++++++++
+ drivers/net/ethernet/mscc/ocelot_ace.h    | 232 +++++++++
+ drivers/net/ethernet/mscc/ocelot_board.c  |   1 +
+ drivers/net/ethernet/mscc/ocelot_flower.c | 357 ++++++++++++++
+ drivers/net/ethernet/mscc/ocelot_regs.c   |  11 +
+ drivers/net/ethernet/mscc/ocelot_s2.h     |  64 +++
+ drivers/net/ethernet/mscc/ocelot_tc.c     |  16 +-
+ drivers/net/ethernet/mscc/ocelot_vcap.h   | 403 ++++++++++++++++
+ 12 files changed, 1880 insertions(+), 9 deletions(-)
+ create mode 100644 drivers/net/ethernet/mscc/ocelot_ace.c
+ create mode 100644 drivers/net/ethernet/mscc/ocelot_ace.h
+ create mode 100644 drivers/net/ethernet/mscc/ocelot_flower.c
+ create mode 100644 drivers/net/ethernet/mscc/ocelot_s2.h
+ create mode 100644 drivers/net/ethernet/mscc/ocelot_vcap.h
+
+-- 
+2.7.4
+
