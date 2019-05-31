@@ -2,104 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20A0E31425
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 19:49:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 733673142C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 19:50:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726723AbfEaRs6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 13:48:58 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40476 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbfEaRs6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 13:48:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ox5SYttOkOuRXfS7cs3JsHQ+R0GLTw4N6BHjQRoaW9E=; b=EAUDatB5hW46G9M1Ux5rKjKdO
-        2gatVjjYZRPlz/Y8yieBJl+NTOqpgatgBKBU0KD4TsTPRHuOAOdASb97lecou22eiM2OapeLCzPgp
-        B0i0qPk66SspAy6OJFa1NIO4ol3ItewiiFaxYuuw7LLCg6ihQcITsomL18HAh28KsH655hSpvEaXK
-        xELWZ9GoG8dKe0FlwT+BYKfNw7vVZDolyKXu+JXuRall/zajJ1hcm3jvaxeoZ0nnxHMg7OjxSwtOg
-        5Emd9DEvLQB4DtO5nEcmw84mXxgWLl2OJrNXW+ggkep9wq+uTLg1JfxZNt1MTnoW7sdnu4+jS5Uxt
-        sHxXOWYlg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hWleA-0002Ni-V0; Fri, 31 May 2019 17:48:54 +0000
-Date:   Fri, 31 May 2019 10:48:54 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [RFC] mm: Generalize notify_page_fault()
-Message-ID: <20190531174854.GA31852@bombadil.infradead.org>
-References: <1559195713-6956-1-git-send-email-anshuman.khandual@arm.com>
- <20190530110639.GC23461@bombadil.infradead.org>
- <4f9a610d-e856-60f6-4467-09e9c3836771@arm.com>
- <20190530133954.GA2024@bombadil.infradead.org>
- <f1995445-d5ab-f292-d26c-809581002184@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f1995445-d5ab-f292-d26c-809581002184@arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1726960AbfEaRuQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 13:50:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53612 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726559AbfEaRuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 13:50:15 -0400
+Subject: Re: [GIT PULL] Power management fixes for v5.2-rc3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559325014;
+        bh=1uNn4UV8s8gJqIbrHZ2bjVDwyLQo8Ul7KEirUnLw2H8=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=YYyPrUzpoXk1ovcrAaM0FczXF8G1paH2rGUNujfLMPHNXK7evfI9u/8VCK0OOrTbC
+         rKczvo3WAWU8eH9U7m2eQXxHd/j7Lz5TYBM2b38pQ5Y5Pag+seeetOar5RkbBKm2yz
+         +iLwYk9J+8ZRBzfwQsyCvYxvjZAODUFdZ4ecyQKY=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CAJZ5v0j_uQxWZRjJ_=S1b=NRpLfyf_0KHfyPwSj30SRWr9RzHg@mail.gmail.com>
+References: <CAJZ5v0j_uQxWZRjJ_=S1b=NRpLfyf_0KHfyPwSj30SRWr9RzHg@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAJZ5v0j_uQxWZRjJ_=S1b=NRpLfyf_0KHfyPwSj30SRWr9RzHg@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.2-rc3
+X-PR-Tracked-Commit-Id: d491f2b75237ef37d8867830ab7fad8d9659e853
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 702c31e8564c386dd5e304e46cf22fcaa40b1a66
+Message-Id: <155932501464.32255.6800544085473144174.pr-tracker-bot@kernel.org>
+Date:   Fri, 31 May 2019 17:50:14 +0000
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 31, 2019 at 02:17:43PM +0530, Anshuman Khandual wrote:
-> On 05/30/2019 07:09 PM, Matthew Wilcox wrote:
-> > On Thu, May 30, 2019 at 05:31:15PM +0530, Anshuman Khandual wrote:
-> >> On 05/30/2019 04:36 PM, Matthew Wilcox wrote:
-> >>> The two handle preemption differently.  Why is x86 wrong and this one
-> >>> correct?
-> >>
-> >> Here it expects context to be already non-preemptible where as the proposed
-> >> generic function makes it non-preemptible with a preempt_[disable|enable]()
-> >> pair for the required code section, irrespective of it's present state. Is
-> >> not this better ?
-> > 
-> > git log -p arch/x86/mm/fault.c
-> > 
-> > search for 'kprobes'.
-> > 
-> > tell me what you think.
-> 
-> Are you referring to these following commits
-> 
-> a980c0ef9f6d ("x86/kprobes: Refactor kprobes_fault() like kprobe_exceptions_notify()")
-> b506a9d08bae ("x86: code clarification patch to Kprobes arch code")
-> 
-> In particular the later one (b506a9d08bae). It explains how the invoking context
-> in itself should be non-preemptible for the kprobes processing context irrespective
-> of whether kprobe_running() or perhaps smp_processor_id() is safe or not. Hence it
-> does not make much sense to continue when original invoking context is preemptible.
-> Instead just bail out earlier. This seems to be making more sense than preempt
-> disable-enable pair. If there are no concerns about this change from other platforms,
-> I will change the preemption behavior in proposed generic function next time around.
+The pull request you sent on Fri, 31 May 2019 11:21:57 +0200:
 
-Exactly.
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.2-rc3
 
-So, any of the arch maintainers know of a reason they behave differently
-from x86 in this regard?  Or can Anshuman use the x86 implementation
-for all the architectures supporting kprobes?
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/702c31e8564c386dd5e304e46cf22fcaa40b1a66
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
