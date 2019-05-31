@@ -2,62 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8685730C72
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 12:16:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A411E30C74
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 12:17:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726515AbfEaKQl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 06:16:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40544 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726002AbfEaKQl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 06:16:41 -0400
-Received: from localhost.localdomain (unknown [223.93.147.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65E5C24B7D;
-        Fri, 31 May 2019 10:16:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559297800;
-        bh=7WcP7geRnCdillAQ5KdZSxTQZjeTSwXA+zJ2pR9Vmew=;
-        h=From:To:Cc:Subject:Date:From;
-        b=A7a7vIvf/+gzll8Xx18yAaIBbUUAgYxWuegrvHa7Zgs22w00QHcMmLSIK8FfCxCjc
-         UmJgWKGHmQQZlprtrRYoPeAIWgV2sdRvabvd8CVmHSJE3NBuLzJdfyR53REErd/u6v
-         nBDjNmVLEmUiQ4CfZO+9cRPkbLgIBhW6PgiuMnR8=
-From:   guoren@kernel.org
-To:     arnd@arndb.de, torvalds@linux-foundation.org
-Cc:     linux-csky@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH] MAINTAINERS: Add mailing list for csky architecture
-Date:   Fri, 31 May 2019 18:16:10 +0800
-Message-Id: <1559297770-11633-1-git-send-email-guoren@kernel.org>
-X-Mailer: git-send-email 2.7.4
+        id S1726960AbfEaKRe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 06:17:34 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47112 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726002AbfEaKRe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 06:17:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=w4vrqrDF7W9RqTb6Rqgru/EiLTE4cPWG6ak1MZifZa4=; b=iEkFNxgonBs4Y+I/ZiKzU3r56
+        4VPv/zTUAGze8uO37S7CRrVORy8JOYfYoI5RhMJzK7zP5lYtRPbMaOQxKOj+PgvMgjhF2Ji5YwrhP
+        HGDOLNFsd6XjlpOX35/ZzudxsLH1sQh+oHSi2whe57rDiJkkBkT6C/VibUcLuQTb3VdqlQMzyjL+c
+        zlrfuL4LaI2P7cSAPSUSB4Avlv85AVBt8yTjUbwKB7FXTJtvVXQfmW+lIscKnTnDNzVM2W+NUmHtA
+        X5JxiLs47yuWsczojYz6OhMDWfdCyTGuI+1STkai+fnr7fL87FeQ/BZd+Ew3lABs37x+6fp4dA4Dk
+        /HCQlDjZA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hWeb7-0000UV-SJ; Fri, 31 May 2019 10:17:18 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2E94E201CF1CB; Fri, 31 May 2019 12:17:16 +0200 (CEST)
+Date:   Fri, 31 May 2019 12:17:16 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Rik van Riel <riel@surriel.com>
+Subject: Re: [RFC PATCH v2 07/12] smp: Do not mark call_function_data as
+ shared
+Message-ID: <20190531101716.GN2623@hirez.programming.kicks-ass.net>
+References: <20190531063645.4697-1-namit@vmware.com>
+ <20190531063645.4697-8-namit@vmware.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190531063645.4697-8-namit@vmware.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guo Ren <ren_guo@c-sky.com>
+On Thu, May 30, 2019 at 11:36:40PM -0700, Nadav Amit wrote:
+> cfd_data is marked as shared, but although it hold pointers to shared
+> data structures, it is private per core.
+> 
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Rik van Riel <riel@surriel.com>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Signed-off-by: Nadav Amit <namit@vmware.com>
+> ---
+>  kernel/smp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/smp.c b/kernel/smp.c
+> index 6b411ee86ef6..f1a358f9c34c 100644
+> --- a/kernel/smp.c
+> +++ b/kernel/smp.c
+> @@ -33,7 +33,7 @@ struct call_function_data {
+>  	cpumask_var_t		cpumask_ipi;
+>  };
+>  
+> -static DEFINE_PER_CPU_SHARED_ALIGNED(struct call_function_data, cfd_data);
+> +static DEFINE_PER_CPU(struct call_function_data, cfd_data);
 
-Add the newly created linux-csky@vger.kernel.org mailing list for patch
-reviews and discussions.
+Should that not be DEFINE_PER_CPU_ALIGNED() then?
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5cfbea4..b5fadcc 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3474,6 +3474,7 @@ F:	sound/pci/oxygen/
- 
- C-SKY ARCHITECTURE
- M:	Guo Ren <guoren@kernel.org>
-+L:	linux-csky@vger.kernel.org
- T:	git https://github.com/c-sky/csky-linux.git
- S:	Supported
- F:	arch/csky/
--- 
-2.7.4
-
+>  static DEFINE_PER_CPU_SHARED_ALIGNED(struct llist_head, call_single_queue);
+>  
+> -- 
+> 2.20.1
+> 
