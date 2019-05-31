@@ -2,170 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12EA130EB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 15:15:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4C3730EBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 15:19:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727363AbfEaNP3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 09:15:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35400 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726518AbfEaNP3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 09:15:29 -0400
-Received: from localhost (173-25-83-245.client.mchsi.com [173.25.83.245])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0225326704;
-        Fri, 31 May 2019 13:15:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559308528;
-        bh=OgKPGc7+OoH/SRPexPayA7UcwAFIbJVMYZmUK8QT29g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KQ31J/hCD3WC34+MU8p7o36eHsB1D5g9x9i3CzYhhs58si5g2aerIrm4c4jkF6Z2a
-         EFNN3OkF8vc+5OSgiDI87lKIA5e/yNUFoa7XXJUxdrKMikKQH1SpQZ6TiCQNKG+QOc
-         yJdamv86rRYQLb0RBWHwYLhM465t0eBoDWFD/hAM=
-Date:   Fri, 31 May 2019 08:15:26 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     sathyanarayanan.kuppuswamy@linux.intel.com
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com, keith.busch@intel.com
-Subject: Re: [PATCH v3 2/5] PCI/DPC: Allow dpc_probe() even if DPC is handled
- in firmware
-Message-ID: <20190531131526.GP28250@google.com>
-References: <cover.1557870869.git.sathyanarayanan.kuppuswamy@linux.intel.com>
- <0713d993b40bed6deac3968c2bba5a5ab3d80a7e.1557870869.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+        id S1727323AbfEaNTM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 09:19:12 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38854 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726330AbfEaNTL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 09:19:11 -0400
+Received: by mail-pf1-f196.google.com with SMTP id a186so5509979pfa.5;
+        Fri, 31 May 2019 06:19:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NGbXt3/IQA1b49aRJS6BBAi0DW9ybOJRqUfZBPY09dA=;
+        b=A3WPnRqnTUdG3crEHGBb/NpBr+tWmhd8IyhewWKj1R4bjxJzKPyXLzw5G3U9Lnteyl
+         S36wH0W0+2k1njFZy2Ds2f/9kFql5X0DZRwamUx250rLJpRwx19xr3wuHqAOJBBYxLq9
+         D5yvDqjjRPT9mniegqhTMI69xTfamzNzmqGuYDQC27qaWbbK2U1nrf6NWOVP/AQgAVed
+         27HAfAIiBEc/pMFVtc2MGWrATM8vpC7OKdA/xorvzdMTJRgsu4MAyOAQ07qRReLzaC1m
+         vS3W5pSSEa4XJdth4E3PvyqmD9aT/s5qNUBsNMohsGUqNgFntqIxkqkXVq7VroDVR9nb
+         xcZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NGbXt3/IQA1b49aRJS6BBAi0DW9ybOJRqUfZBPY09dA=;
+        b=Bf794g/fKtpcOFKaBaI/yDB3dac5tTlWFL3ZHSFogPoiv8uwpOEEY03gu7hIToEd9e
+         WjxKA1QlEzavJoiZ8Wy6V/LBpvru82RbwVVl5i3jj+NaoAs2embXRTRdc09MgLpD/K+8
+         FYCzXpFuMQie9CpNi3fn+d/s5KBRvHKHhkt4yaIaGYzcRKknQhCyG0/SrMfRUz8bLcIG
+         Kh3zY94gPdaLsP+zmPEH4NYLqWuSC9qE3L4Qlq9Mtedw7zOvunO9xuAPhau2wjpOjhSx
+         J0zeNp+8idW3IWdUN9JQyLLwR8j9EJ4Vlmw/ygM8kyLOpDTUkIZNruTSxqiY24GI0/ZK
+         Mpbg==
+X-Gm-Message-State: APjAAAUtqyDWQyAwfE+yw551v7ULeQM0KV2GulZJ7MytN/pKNCBZaCn6
+        jZYNyps3Ory4xxJtvFDPYq8=
+X-Google-Smtp-Source: APXvYqwfmPTYrU4YNg70+w+fekZWbolWXYkyOovH8OK5qnvs6Xh/v3zPDoIKALH3CJn/NV3nmmscEA==
+X-Received: by 2002:a63:6884:: with SMTP id d126mr9237347pgc.154.1559308750486;
+        Fri, 31 May 2019 06:19:10 -0700 (PDT)
+Received: from google.com ([122.38.223.241])
+        by smtp.gmail.com with ESMTPSA id d186sm5485008pgc.58.2019.05.31.06.19.02
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 31 May 2019 06:19:09 -0700 (PDT)
+Date:   Fri, 31 May 2019 22:19:00 +0900
+From:   Minchan Kim <minchan@kernel.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>, jannh@google.com,
+        oleg@redhat.com, christian@brauner.io, oleksandr@redhat.com,
+        hdanton@sina.com
+Subject: Re: [RFCv2 5/6] mm: introduce external memory hinting API
+Message-ID: <20190531131859.GB195463@google.com>
+References: <20190531064313.193437-1-minchan@kernel.org>
+ <20190531064313.193437-6-minchan@kernel.org>
+ <20190531083757.GH6896@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0713d993b40bed6deac3968c2bba5a5ab3d80a7e.1557870869.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+In-Reply-To: <20190531083757.GH6896@dhcp22.suse.cz>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 14, 2019 at 03:18:14PM -0700, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
-> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+On Fri, May 31, 2019 at 10:37:57AM +0200, Michal Hocko wrote:
+> On Fri 31-05-19 15:43:12, Minchan Kim wrote:
+> > There is some usecase that centralized userspace daemon want to give
+> > a memory hint like MADV_[COLD|PAGEEOUT] to other process. Android's
+> > ActivityManagerService is one of them.
+> > 
+> > It's similar in spirit to madvise(MADV_WONTNEED), but the information
+> > required to make the reclaim decision is not known to the app. Instead,
+> > it is known to the centralized userspace daemon(ActivityManagerService),
+> > and that daemon must be able to initiate reclaim on its own without
+> > any app involvement.
+> > 
+> > To solve the issue, this patch introduces new syscall process_madvise(2).
+> > It could give a hint to the exeternal process of pidfd.
+> > 
+> >  int process_madvise(int pidfd, void *addr, size_t length, int advise,
+> > 			unsigned long cookie, unsigned long flag);
+> > 
+> > Since it could affect other process's address range, only privileged
+> > process(CAP_SYS_PTRACE) or something else(e.g., being the same UID)
+> > gives it the right to ptrace the process could use it successfully.
+> > 
+> > The syscall has a cookie argument to privode atomicity(i.e., detect
+> > target process's address space change since monitor process has parsed
+> > the address range of target process so the operaion could fail in case
+> > of happening race). Although there is no interface to get a cookie
+> > at this moment, it could be useful to consider it as argument to avoid
+> > introducing another new syscall in future. It could support *atomicity*
+> > for disruptive hint(e.g., MADV_DONTNEED|FREE).
+> > flag argument is reserved for future use if we need to extend the API.
 > 
-> Error Disconnect Recover (EDR) support allows OS to handle the error
-> recovery even when DPC configuration is handled by firmware. So allow
-> dpc_probe() to continue even if firmware first mode is enabed. This is
-> a prepratory patch for adding EDR support.
+> Providing an API that is incomplete will not fly. Really. As this really
+> begs for much more discussion and it would be good to move on with the
+> core idea of the pro active memory memory management from userspace
+> usecase. Could you split out the core change so that we can move on and
+> leave the external for a later discussion. I believe this would lead to
+> a smoother integration.
 
-I assume this code is based on some language in the spec, and it needs
-to be tied back to it.  The only mention of EDR I'm aware of is in
-ACPI v6.3, sec 5.6.6 and 6.3.5.2, so it needs at least a citation.
+No problem but I need to understand what you want a little bit more because
+I thought this patchset is already step by step so if we reach the agreement
+of part of them like [1-5/6], it could be merged first.
 
-I don't see any specific reference to firmware-first there, so please
-also connect the dots about how we conclude that we need DPC even when
-firmware-first is enabled.
+Could you say how you want to split the patchset for forward progress?
 
-> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> ---
->  drivers/pci/pcie/dpc.c | 49 +++++++++++++++++++++++++++++++-----------
->  1 file changed, 36 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
-> index 7b77754a82de..0c9ce876e450 100644
-> --- a/drivers/pci/pcie/dpc.c
-> +++ b/drivers/pci/pcie/dpc.c
-> @@ -20,6 +20,8 @@ struct dpc_dev {
->  	u16			cap_pos;
->  	bool			rp_extensions;
->  	u8			rp_log_size;
-> +	/* Set True if DPC is handled in firmware */
-> +	bool			firmware_dpc;
->  };
->  
->  static const char * const rp_pio_error_string[] = {
-> @@ -67,6 +69,9 @@ void pci_save_dpc_state(struct pci_dev *dev)
->  	if (!dpc)
->  		return;
->  
-> +	if (dpc->firmware_dpc)
-> +		return;
-> +
->  	save_state = pci_find_saved_ext_cap(dev, PCI_EXT_CAP_ID_DPC);
->  	if (!save_state)
->  		return;
-> @@ -88,6 +93,9 @@ void pci_restore_dpc_state(struct pci_dev *dev)
->  	if (!dpc)
->  		return;
->  
-> +	if (dpc->firmware_dpc)
-> +		return;
-> +
->  	save_state = pci_find_saved_ext_cap(dev, PCI_EXT_CAP_ID_DPC);
->  	if (!save_state)
->  		return;
-> @@ -292,9 +300,6 @@ static int dpc_probe(struct pcie_device *dev)
->  	int status;
->  	u16 ctl, cap;
->  
-> -	if (pcie_aer_get_firmware_first(pdev))
-> -		return -ENOTSUPP;
-> -
->  	dpc = devm_kzalloc(device, sizeof(*dpc), GFP_KERNEL);
->  	if (!dpc)
->  		return -ENOMEM;
-> @@ -303,13 +308,25 @@ static int dpc_probe(struct pcie_device *dev)
->  	dpc->dev = dev;
->  	set_service_data(dev, dpc);
->  
-> -	status = devm_request_threaded_irq(device, dev->irq, dpc_irq,
-> -					   dpc_handler, IRQF_SHARED,
-> -					   "pcie-dpc", dpc);
-> -	if (status) {
-> -		dev_warn(device, "request IRQ%d failed: %d\n", dev->irq,
-> -			 status);
-> -		return status;
-> +	if (pcie_aer_get_firmware_first(pdev))
-> +		dpc->firmware_dpc = 1;
-> +
-> +	/*
-> +	 * If DPC is handled in firmware and ACPI support is not enabled in OS,
-> +	 * then its not useful to proceed with probe. So, return error.
-> +	 */
-> +	if (dpc->firmware_dpc && !IS_ENABLED(CONFIG_ACPI))
-> +		return -ENODEV;
-> +
-> +	if (!dpc->firmware_dpc) {
-> +		status = devm_request_threaded_irq(device, dev->irq, dpc_irq,
-> +						   dpc_handler, IRQF_SHARED,
-> +						   "pcie-dpc", dpc);
-> +		if (status) {
-> +			dev_warn(device, "request IRQ%d failed: %d\n", dev->irq,
-> +				 status);
-> +			return status;
-> +		}
->  	}
->  
->  	pci_read_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CAP, &cap);
-> @@ -324,9 +341,12 @@ static int dpc_probe(struct pcie_device *dev)
->  			dpc->rp_log_size = 0;
->  		}
->  	}
-> -
-> -	ctl = (ctl & 0xfff4) | PCI_EXP_DPC_CTL_EN_FATAL | PCI_EXP_DPC_CTL_INT_EN;
-> -	pci_write_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, ctl);
-> +	if (!dpc->firmware_dpc) {
-> +		ctl = (ctl & 0xfff4) |
-> +			(PCI_EXP_DPC_CTL_EN_FATAL | PCI_EXP_DPC_CTL_INT_EN);
-> +		pci_write_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL,
-> +				      ctl);
-> +	}
->  
->  	dev_info(device, "DPC error containment capabilities: Int Msg #%d, RPExt%c PoisonedTLP%c SwTrigger%c RP PIO Log %d, DL_ActiveErr%c\n",
->  		cap & PCI_EXP_DPC_IRQ, FLAG(cap, PCI_EXP_DPC_CAP_RP_EXT),
-> @@ -344,6 +364,9 @@ static void dpc_remove(struct pcie_device *dev)
->  	struct pci_dev *pdev = dev->port;
->  	u16 ctl;
->  
-> +	if (dpc->firmware_dpc)
-> +		return;
-> +
->  	pci_read_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, &ctl);
->  	ctl &= ~(PCI_EXP_DPC_CTL_EN_FATAL | PCI_EXP_DPC_CTL_INT_EN);
->  	pci_write_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, ctl);
-> -- 
-> 2.20.1
-> 
+Thanks.
