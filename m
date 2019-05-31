@@ -2,79 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 189FA315CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 22:05:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6D74315CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 22:06:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727467AbfEaUFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 16:05:46 -0400
-Received: from smtprelay0171.hostedemail.com ([216.40.44.171]:55333 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727287AbfEaUFq (ORCPT
+        id S1727471AbfEaUG0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 16:06:26 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42362 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727316AbfEaUG0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 16:05:46 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 94FE640D7;
-        Fri, 31 May 2019 20:05:44 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3868:3870:4321:5007:7875:10004:10400:10848:11026:11232:11658:11914:12048:12114:12296:12555:12740:12760:12895:13069:13161:13229:13311:13357:13439:14659:14721:14915:21080:21627:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
-X-HE-Tag: milk45_14de4368b0321
-X-Filterd-Recvd-Size: 2042
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf17.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 31 May 2019 20:05:43 +0000 (UTC)
-Message-ID: <a7a2a7c70c2dcef122ddbe86eb84820fc4384c7e.camel@perches.com>
-Subject: Re: [PATCH] btrfs: Fix -Wunused-but-set-variable warnings
-From:   Joe Perches <joe@perches.com>
-To:     Andrey Abramov <st5pub@yandex.ru>, clm@fb.com,
-        josef@toxicpanda.com, dsterba@suse.com
-Cc:     linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 31 May 2019 13:05:41 -0700
-In-Reply-To: <20190531195349.31129-1-st5pub@yandex.ru>
-References: <20190531195349.31129-1-st5pub@yandex.ru>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 31 May 2019 16:06:26 -0400
+Received: by mail-pf1-f196.google.com with SMTP id r22so6820896pfh.9
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 13:06:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9TL9DcOEKgadixiKIuv445aeR9WBFQdFXZrUAgDcDlE=;
+        b=kV49vqq86GuJyq1B2ExOHqAEHCBbLYAxLrlwX9YHW790oTpaKgrElCoYJHUXWkgOJV
+         TyS26P7yQV73R8/GWkjjhukLJb66Q7zUUUJ7a2B93/pJZO6Shv5cFVuO06NhX0qS4a8f
+         ckE9aHhSd9lIxLohPE/+lCMBZ2E8LEVATqVLm7wOqPKHieY8trNRGEwdnTfcrdqsN1Fz
+         yu0mhBAzkmIxIgd+iih/pD0/QURI9+rxP04X2IHVXV+35kUITHS70Eb+sKRt40HBMm7w
+         s6s3jP7zdEP+vz/WybVa2KYlVXm/9BI/SzyLBAfs7+4YVEhu/Sm8BI/uV6UgsPEc/XKh
+         zXXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9TL9DcOEKgadixiKIuv445aeR9WBFQdFXZrUAgDcDlE=;
+        b=a+FkKSYEKntZT0lwjABmXi5ZRPu/phRMy5Wfb380xirVtiGdB908pUVjALcCw5SauF
+         THEPXTog8e/Hj23+Ivi6RWS3DtKdFEosokkxn5c1oVoY8rhN9W46AggmH9KAYv/hthBM
+         eOU62l3uUyLjZn/PYh1dAEI4QluKqJNKQg3nf8Yk2+EETtVetMneRMHJGl2E8CQsS2fb
+         oRpXLjfbai/IJWubMJCQKLtL4iQNBdzfB+PjM9FBYR+G4dQHyvyhqoS6FOFO36nPsgEC
+         ruOD4qHK52lgyo9egVcHDY4Plp2mUIgDM5hs/s+OFR71cWjbJcxws7PmVidN+wh3ZIf4
+         8jWA==
+X-Gm-Message-State: APjAAAWYO+5t/NnFvK4mAtyGhssdjfa8q+Z/Ib/nQDLGwK6trrcJXxeN
+        3/59ltfX/LrOAkRxpx729NF+loqHDT54KE0Vu2VzCA==
+X-Google-Smtp-Source: APXvYqyEK1gsqxDA0Or/CK+vKBpJnggOs9awLB6ySElXj4BB/3+n9Gqj3w6GYh+I5qrhLxZWF88p5xir5ByMCP3e/lU=
+X-Received: by 2002:a17:90a:ac11:: with SMTP id o17mr3043266pjq.134.1559333185173;
+ Fri, 31 May 2019 13:06:25 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190528235742.105510-1-natechancellor@gmail.com>
+ <CAK8P3a0a0hMsZDkqKsfsyCWpdvDni72tjAxCz2VeAaU56zqrXg@mail.gmail.com>
+ <20190531183227.GA34102@archlinux-epyc> <CAK8P3a1-_KRvoeK4w0b8775izox8fRm=NGJC=yicDRn7J5UW2Q@mail.gmail.com>
+In-Reply-To: <CAK8P3a1-_KRvoeK4w0b8775izox8fRm=NGJC=yicDRn7J5UW2Q@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Fri, 31 May 2019 13:06:13 -0700
+Message-ID: <CAKwvOdkyk3qLMPquSZqXCFauTADJU5X9qJi_fhJqbUuCYBH-6Q@mail.gmail.com>
+Subject: Re: [PATCH] ARM: xor-neon: Replace __GNUC__ checks with CONFIG_CC_IS_GCC
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        Stefan Agner <stefan@agner.ch>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-05-31 at 22:53 +0300, Andrey Abramov wrote:
-> Fix -Wunused-but-set-variable warnings in raid56.c and sysfs.c files
+On Fri, May 31, 2019 at 12:21 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> clang, I would suggest dropping your patch then, and instead adding
 
-trivia:
+I disagree.  The minimum version of gcc required to build the kernel
+is 4.6, so the comment about older versions of gcc is irrelevant and
+should be removed.
 
-> diff --git a/fs/btrfs/raid56.c b/fs/btrfs/raid56.c
-> index f3d0576dd327..4ab29eacfdf3 100644
-> --- a/fs/btrfs/raid56.c
-> +++ b/fs/btrfs/raid56.c
-> @@ -1182,22 +1182,17 @@ static noinline void finish_rmw(struct btrfs_raid_bio *rbio)
->  	int nr_data = rbio->nr_data;
->  	int stripe;
->  	int pagenr;
-> -	int p_stripe = -1;
-> -	int q_stripe = -1;
-> +	int is_q_stripe = 0;
+Nathan's -Rpass warnings are warning that vectorization was not
+calculated to be profitable **for 1 of the 4 functions** by LLVM.
+Surely we wouldn't disable NEON opts for XOR because 1 of 4 was not
+vectorized?
 
-These uses seem boolean, so perhaps just use bool?
-
-> +	if (rbio->real_stripes - rbio->nr_data == 2)
-> +		is_q_stripe = 1;
-[]
-> @@ -1241,7 +1236,7 @@ static noinline void finish_rmw(struct btrfs_raid_bio *rbio)
-[]
-> +		if (is_q_stripe) {
-> @@ -2340,8 +2335,7 @@ static noinline void finish_parity_scrub(struct btrfs_raid_bio *rbio,
-[]
-> +	int is_q_stripe = 0;
-> @@ -2351,14 +2345,10 @@ static noinline void finish_parity_scrub(struct btrfs_raid_bio *rbio,
-> +	if (rbio->real_stripes - rbio->nr_data == 2)
-> +		is_q_stripe = 1;
-[]
-> @@ -2380,7 +2370,7 @@ static noinline void finish_parity_scrub(struct btrfs_raid_bio *rbio,
-[]
-> +	if (is_q_stripe) {
-
-
+-- 
+Thanks,
+~Nick Desaulniers
