@@ -2,208 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A49F330ADD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 10:57:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E61230AB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 10:55:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727255AbfEaI5I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 04:57:08 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:39622 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727137AbfEaI4l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 04:56:41 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 4C4FD9F9D2F233FEB8F4;
-        Fri, 31 May 2019 16:56:37 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.132) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 31 May 2019 16:56:29 +0800
-From:   Huazhong Tan <tanhuazhong@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <linuxarm@huawei.com>, Weihang Li <liweihang@hisilicon.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Huazhong tan <tanhuazhong@huawei.com>
-Subject: [PATCH net-next 12/12] net: hns3: delay and separate enabling of NIC and ROCE HW errors
-Date:   Fri, 31 May 2019 16:54:58 +0800
-Message-ID: <1559292898-64090-13-git-send-email-tanhuazhong@huawei.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1559292898-64090-1-git-send-email-tanhuazhong@huawei.com>
-References: <1559292898-64090-1-git-send-email-tanhuazhong@huawei.com>
+        id S1727056AbfEaIzH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 04:55:07 -0400
+Received: from foss.arm.com ([217.140.101.70]:48068 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726002AbfEaIzH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 04:55:07 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DB4D0341;
+        Fri, 31 May 2019 01:55:06 -0700 (PDT)
+Received: from [10.162.42.223] (p8cg001049571a15.blr.arm.com [10.162.42.223])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 18C9D3F59C;
+        Fri, 31 May 2019 01:55:03 -0700 (PDT)
+Subject: Re: [PATCH 4/4] arm64/mm: Drop vm_fault_t argument from
+ __do_page_fault()
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Andrey Konovalov <andreyknvl@google.com>
+References: <1559133285-27986-1-git-send-email-anshuman.khandual@arm.com>
+ <1559133285-27986-5-git-send-email-anshuman.khandual@arm.com>
+ <20190530063459.GA2181@infradead.org>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <985b0d8f-2141-019b-8555-272eafc58ea3@arm.com>
+Date:   Fri, 31 May 2019 14:25:18 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.132]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190530063459.GA2181@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Weihang Li <liweihang@hisilicon.com>
 
-All RAS and MSI-X should be enabled just in the final stage of HNS3
-initialization. It means that they should be enabled in
-hclge_init_xxx_client_instance instead of hclge_ae_dev(). Especially
-MSI-X, if it is enabled before opening vector0 IRQ, there are some
-chances that a MSI-X error will cause failure on initialization of
- NIC client instane. So this patch delays enabling of HW errors.
-Otherwise, we also separate enabling of ROCE RAS from NIC, because
-it's not reasonable to enable ROCE RAS if we even don't have a ROCE
-driver.
 
-Signed-off-by: Weihang Li <liweihang@hisilicon.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Huazhong tan <tanhuazhong@huawei.com>
----
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c |  9 +----
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h |  3 +-
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 45 +++++++++++++++-------
- 3 files changed, 36 insertions(+), 21 deletions(-)
+On 05/30/2019 12:04 PM, Christoph Hellwig wrote:
+> On Wed, May 29, 2019 at 06:04:45PM +0530, Anshuman Khandual wrote:
+>> __do_page_fault() is over complicated with multiple goto statements. This
+>> cleans up code flow and while there drops the vm_fault_t argument.
+> 
+> There is no argument dropped anywhere, just a local variable.
+> 
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
-index e9c6038..a0a29a6 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
-@@ -1433,7 +1433,7 @@ hclge_log_and_clear_rocee_ras_error(struct hclge_dev *hdev)
- 	return reset_type;
- }
- 
--static int hclge_config_rocee_ras_interrupt(struct hclge_dev *hdev, bool en)
-+int hclge_config_rocee_ras_interrupt(struct hclge_dev *hdev, bool en)
- {
- 	struct device *dev = &hdev->pdev->dev;
- 	struct hclge_desc desc;
-@@ -1506,10 +1506,9 @@ static const struct hclge_hw_blk hw_blk[] = {
- 	{ /* sentinel */ }
- };
- 
--int hclge_hw_error_set_state(struct hclge_dev *hdev, bool state)
-+int hclge_config_nic_hw_error(struct hclge_dev *hdev, bool state)
- {
- 	const struct hclge_hw_blk *module = hw_blk;
--	struct device *dev = &hdev->pdev->dev;
- 	int ret = 0;
- 
- 	while (module->name) {
-@@ -1521,10 +1520,6 @@ int hclge_hw_error_set_state(struct hclge_dev *hdev, bool state)
- 		module++;
- 	}
- 
--	ret = hclge_config_rocee_ras_interrupt(hdev, state);
--	if (ret)
--		dev_err(dev, "fail(%d) to configure ROCEE err int\n", ret);
--
- 	return ret;
- }
- 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h
-index c56b11e..81d115a 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h
-@@ -119,7 +119,8 @@ struct hclge_hw_error {
- };
- 
- int hclge_config_mac_tnl_int(struct hclge_dev *hdev, bool en);
--int hclge_hw_error_set_state(struct hclge_dev *hdev, bool state);
-+int hclge_config_nic_hw_error(struct hclge_dev *hdev, bool state);
-+int hclge_config_rocee_ras_interrupt(struct hclge_dev *hdev, bool en);
- pci_ers_result_t hclge_handle_hw_ras_error(struct hnae3_ae_dev *ae_dev);
- int hclge_handle_hw_msix_error(struct hclge_dev *hdev,
- 			       unsigned long *reset_requests);
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 7976660..ee5ef00 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -8210,10 +8210,16 @@ static int hclge_init_nic_client_instance(struct hnae3_ae_dev *ae_dev,
- 	set_bit(HCLGE_STATE_NIC_REGISTERED, &hdev->state);
- 	hnae3_set_client_init_flag(client, ae_dev, 1);
- 
-+	/* Enable nic hw error interrupts */
-+	ret = hclge_config_nic_hw_error(hdev, true);
-+	if (ret)
-+		dev_err(&ae_dev->pdev->dev,
-+			"fail(%d) to enable hw error interrupts\n", ret);
-+
- 	if (netif_msg_drv(&hdev->vport->nic))
- 		hclge_info_show(hdev);
- 
--	return 0;
-+	return ret;
- }
- 
- static int hclge_init_roce_client_instance(struct hnae3_ae_dev *ae_dev,
-@@ -8293,7 +8299,13 @@ static int hclge_init_client_instance(struct hnae3_client *client,
- 		}
- 	}
- 
--	return 0;
-+	/* Enable roce ras interrupts */
-+	ret = hclge_config_rocee_ras_interrupt(hdev, true);
-+	if (ret)
-+		dev_err(&ae_dev->pdev->dev,
-+			"fail(%d) to enable roce ras interrupts\n", ret);
-+
-+	return ret;
- 
- clear_nic:
- 	hdev->nic_client = NULL;
-@@ -8597,13 +8609,6 @@ static int hclge_init_ae_dev(struct hnae3_ae_dev *ae_dev)
- 		goto err_mdiobus_unreg;
- 	}
- 
--	ret = hclge_hw_error_set_state(hdev, true);
--	if (ret) {
--		dev_err(&pdev->dev,
--			"fail(%d) to enable hw error interrupts\n", ret);
--		goto err_mdiobus_unreg;
--	}
--
- 	INIT_KFIFO(hdev->mac_tnl_log);
- 
- 	hclge_dcb_ops_set(hdev);
-@@ -8727,15 +8732,26 @@ static int hclge_reset_ae_dev(struct hnae3_ae_dev *ae_dev)
- 	}
- 
- 	/* Re-enable the hw error interrupts because
--	 * the interrupts get disabled on core/global reset.
-+	 * the interrupts get disabled on global reset.
- 	 */
--	ret = hclge_hw_error_set_state(hdev, true);
-+	ret = hclge_config_nic_hw_error(hdev, true);
- 	if (ret) {
- 		dev_err(&pdev->dev,
--			"fail(%d) to re-enable HNS hw error interrupts\n", ret);
-+			"fail(%d) to re-enable NIC hw error interrupts\n",
-+			ret);
- 		return ret;
- 	}
- 
-+	if (hdev->roce_client) {
-+		ret = hclge_config_rocee_ras_interrupt(hdev, true);
-+		if (ret) {
-+			dev_err(&pdev->dev,
-+				"fail(%d) to re-enable roce ras interrupts\n",
-+				ret);
-+			return ret;
-+		}
-+	}
-+
- 	hclge_reset_vport_state(hdev);
- 
- 	dev_info(&pdev->dev, "Reset done, %s driver initialization finished.\n",
-@@ -8760,8 +8776,11 @@ static void hclge_uninit_ae_dev(struct hnae3_ae_dev *ae_dev)
- 	hclge_enable_vector(&hdev->misc_vector, false);
- 	synchronize_irq(hdev->misc_vector.vector_irq);
- 
-+	/* Disable all hw interrupts */
- 	hclge_config_mac_tnl_int(hdev, false);
--	hclge_hw_error_set_state(hdev, false);
-+	hclge_config_nic_hw_error(hdev, false);
-+	hclge_config_rocee_ras_interrupt(hdev, false);
-+
- 	hclge_cmd_uninit(hdev);
- 	hclge_misc_irq_uninit(hdev);
- 	hclge_pci_uninit(hdev);
--- 
-2.7.4
-
+You are right. Will fix both subject line and the commit message.
