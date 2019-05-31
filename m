@@ -2,68 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8FB631195
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 17:49:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8685A3117B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 17:41:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726670AbfEaPtx convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 31 May 2019 11:49:53 -0400
-Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:53703
-        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1726037AbfEaPtx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 11:49:53 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 56BDAB488A9;
-        Fri, 31 May 2019 15:38:10 +0000 (UTC)
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id khDNii9hVZ7e; Fri, 31 May 2019 15:38:09 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id BE008B48951;
-        Fri, 31 May 2019 15:38:09 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id Vb1bnIY4jl1Y; Fri, 31 May 2019 15:38:09 +0000 (UTC)
-Received: from [100.71.203.62] (unknown [223.237.233.238])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 4A665B48B26;
-        Fri, 31 May 2019 15:38:00 +0000 (UTC)
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1726689AbfEaPlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 11:41:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56526 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726518AbfEaPlX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 11:41:23 -0400
+Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88326218D1;
+        Fri, 31 May 2019 15:41:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559317283;
+        bh=BxGnRRyjsJ2ho3R155gccJhBEQUfHmioJfLv8ziidDU=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=MQ71Jgjq0+N+7J+4gRi7i6TKqN9b2w1EPDyf8QSzCgcpqDVvqe3Tsm+BSszQGMPPn
+         /ftq/7Jo0p/gIRQTHJ3DS4pK5LmXCLzMJcphtO12dKq/Nin7SsZKYoOTNVD/JL1oMs
+         YU64CS6nEtiunbTg0imU8NUzfcqrVHB0ixPAjsOE=
+Date:   Fri, 31 May 2019 17:41:18 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+cc:     Andy Lutomirski <luto@amacapital.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4] x86/power: Fix 'nosmt' vs. hibernation triple fault
+ during resume
+In-Reply-To: <20190531152626.4nmyc7lj6mjwuo2v@treble>
+Message-ID: <nycvar.YFH.7.76.1905311739510.1962@cbobk.fhfr.pm>
+References: <nycvar.YFH.7.76.1905282326360.1962@cbobk.fhfr.pm> <20190531051456.fzkvn62qlkf6wqra@treble> <nycvar.YFH.7.76.1905311045240.1962@cbobk.fhfr.pm> <5564116.e9OFvgDRbB@kreacher> <CALCETrUpseta+NrhVwzzVFTe-BkBHtDUJBO22ci3mAsVR+XOog@mail.gmail.com>
+ <nycvar.YFH.7.76.1905311628330.1962@cbobk.fhfr.pm> <B7AC83ED-3F11-42B9-8506-C842A5937B50@amacapital.net> <nycvar.YFH.7.76.1905311651450.1962@cbobk.fhfr.pm> <20190531152626.4nmyc7lj6mjwuo2v@treble>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: Alerta de correo
-To:     Recipients <alrodriguez@menpet.gob.ve>
-From:   =?utf-8?q?Administraci=C3=B3n_=3Calrodriguez=40menpet=2Egob=2Eve=3E?=@smspyt.cancun.gob.mx
-Date:   Fri, 31 May 2019 21:07:54 +0530
-Message-Id: <20190531153801.4A665B48B26@smspyt.cancun.gob.mx>
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Estimado usuario de correo electrónico,
+On Fri, 31 May 2019, Josh Poimboeuf wrote:
 
-Este mensaje es de nuestro centro de mensajes de administración para todos los usuarios de nuestra cuenta de correo electrónico. Estamos eliminando el acceso a todos nuestros clientes de correo web. Su cuenta de correo electrónico se actualizará a una nueva y mejorada interfaz de usuario de correo web proporcionada por nuestro administrador tan pronto como este correo electrónico haya sido recibido.
+> The only question I'd have is if we have data on the power savings 
+> difference between hlt and mwait.  mwait seems to wake up on a lot of 
+> different conditions which might negate its deeper sleep state.
 
-Descontinuaremos el uso de nuestras interfaces webmail Lite, para asegurarnos de que su libreta de direcciones de correo electrónico esté almacenada en nuestra base de datos, haga clic o copie y pegue el siguiente enlace en su navegador e ingrese su nombre de usuario y contraseña para actualizar su cuenta.
+hlt wakes up on basically the same set of events, but has the 
+auto-restarting semantics on some of them (especially SMM). So the wakeup 
+frequency itself shouldn't really contribute to power consumption 
+difference; it's the C-state that mwait allows CPU to enter.
 
-Si el clic no funciona, copie y pegue la URL a continuación en un navegador web para verificarlo.
+Thanks,
 
-Haga clic en el enlace http://accountupdatebrodcaster.xtgem.com/ si el clic no funciona, copie y pegue en su navegador web y actualice su cuenta para que podamos transferir sus contactos a nuestra nueva base de datos de clientes de correo web.
+-- 
+Jiri Kosina
+SUSE Labs
 
-¡Todos los correos electrónicos estarán seguros en esta transición! Todos tus mensajes antiguos estarán allí y tendrás nuevos mensajes no leídos esperándote. Fueron
-Seguro que te gustará la nueva y mejorada interfaz de correo web.
-
-Si no cumple con este aviso, inmediatamente retiraremos el acceso a su cuenta de correo electrónico.
-
-Gracias por usar nuestro webmail.
-
-=============================================
-Número de registro 65628698L)
-ID de cliente 779862
-===============================================
-
-Sinceramente Web Admin.
-Correo electrónico Servicio al cliente 46569 Copyright c 2019 E! Inc. (Co
-Reg.No. 65628698L) Todos los derechos reservados.
