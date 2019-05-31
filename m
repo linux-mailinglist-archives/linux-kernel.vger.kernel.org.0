@@ -2,91 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 414D0305E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 02:51:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9988305DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 02:44:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbfEaAvP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 20:51:15 -0400
-Received: from mail1.windriver.com ([147.11.146.13]:52631 "EHLO
-        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726131AbfEaAvO (ORCPT
+        id S1726583AbfEaAoT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 20:44:19 -0400
+Received: from mail-pl1-f169.google.com ([209.85.214.169]:33246 "EHLO
+        mail-pl1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726029AbfEaAoS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 20:51:14 -0400
-Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
-        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id x4V0owUw022099
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Thu, 30 May 2019 17:50:58 -0700 (PDT)
-Received: from [128.224.155.90] (128.224.155.90) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 30 May
- 2019 17:50:58 -0700
-Subject: Re: Userspace woes with 5.1.5 due to TIPC
-To:     Mihai Moldovan <ionic@ionic.de>,
-        Jon Maloy <jon.maloy@ericsson.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <4ad776cb-c597-da1d-7d5e-af39ded17c40@ionic.de>
- <CH2PR15MB3575BD29C90539022364B8719A180@CH2PR15MB3575.namprd15.prod.outlook.com>
- <1780dd6a-9546-0df5-7fb2-44b78643b079@ionic.de>
-From:   Ying Xue <ying.xue@windriver.com>
-Message-ID: <3cc60b11-2b63-3bfc-2be8-569f2b0ce7cf@windriver.com>
-Date:   Fri, 31 May 2019 08:41:06 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 30 May 2019 20:44:18 -0400
+Received: by mail-pl1-f169.google.com with SMTP id g21so3259305plq.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 17:44:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=pjwii2Brt6xBSvnEhlUw9zNfgBaud+bUpP81y7elYvE=;
+        b=gTxizZXBja6W+65pLwkqK5NdinqbCGNOQ2cqLq+phnhxipCCbStvCBzm8gTVxhMJl4
+         gb4hdeabjxPG35YWiwUM8KCuwL7WlXGBWiRVHCJ7K+/0fgiiUniJ50zU2aJwkwkN2WxZ
+         Yh2kRldOVf7uxz+T3PVPsw9rD+3QidYAQX6/xdgelQyq5i7vpLJXY78Pp0ND8zvwZLo+
+         QlrERKMK8lhlHnP638GJ3XiCA1vJ8EElrYSlalAu38L5p/IoNa8rdcexn7OfUT3ePz89
+         HUWCtH+aCYAY11LGYjnumt/4mvovZzrzqxMXSloKiMAteN0C/4I9WgxFaiPMSYhklrNJ
+         /Bgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pjwii2Brt6xBSvnEhlUw9zNfgBaud+bUpP81y7elYvE=;
+        b=OpD16mLurFO806gfGbv/YQwWOa+oxfJI/6FzkwE9It5CCnhWgcFwY/ilYJ0tBhaeZ1
+         v8JiUdJDzhs+pdOUxyh+urBh4t069c5L20mmjfEUSJqL+r7ssuXugO4JifDpKXn5dNUz
+         EhNia9Dg+nAqZn192hWNEk28ZopX/9wh6dLIYQO6uBY/IHOfRMbm5yJmGtxSPu8mYbNP
+         c8Eirmas5IX9q+UO8gpbhgfOvWoZhf6h7rVIkkPSbUqOa9NNzk9AQnK8nQPCoVIsQNq3
+         2HMFJRdZls+xEjHfQXNAJG92GUwwqJDMhQmFHcA0+CvxFeMmVnpHEnhdv9yRvB7+6k7I
+         eV1Q==
+X-Gm-Message-State: APjAAAUFy+BMpycaEJqES5WmuEXKf9rfz5+hwp/I6PlicLKfc22vmLwI
+        FzR2K7ItbasOMEE1RVkJXgM=
+X-Google-Smtp-Source: APXvYqylgEoZaxBsuYfrywx4mBS5rVGmwnIH23UDrqpIkPpDOhikd9YwQuznSYdzCo5BNwB7tyz9FQ==
+X-Received: by 2002:a17:902:2d:: with SMTP id 42mr6330841pla.34.1559263458100;
+        Thu, 30 May 2019 17:44:18 -0700 (PDT)
+Received: from zhanggen-UX430UQ ([66.42.35.75])
+        by smtp.gmail.com with ESMTPSA id d9sm3460684pgj.34.2019.05.30.17.44.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 May 2019 17:44:17 -0700 (PDT)
+Date:   Fri, 31 May 2019 08:44:05 +0800
+From:   Gen Zhang <blackgod016574@gmail.com>
+To:     Mike Snitzer <snitzer@redhat.com>
+Cc:     Bart Van Assche <bvanassche@acm.org>, dm-devel@redhat.com,
+        agk@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: dm-init: fix 2 incorrect use of kstrndup()
+Message-ID: <20190531004405.GA3090@zhanggen-UX430UQ>
+References: <20190529013320.GA3307@zhanggen-UX430UQ>
+ <fcf2c3c0-e479-9e74-59d5-79cd2a0bade6@acm.org>
+ <20190529152443.GA4076@zhanggen-UX430UQ>
+ <20190530161103.GA30026@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <1780dd6a-9546-0df5-7fb2-44b78643b079@ionic.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [128.224.155.90]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190530161103.GA30026@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/31/19 4:47 AM, Mihai Moldovan wrote:
-> * On 5/30/19 9:51 PM, Jon Maloy wrote:
->> Make sure the following three commits are present in TIPC *after* the offending commit:
->>
->> commit 532b0f7ece4c "tipc: fix modprobe tipc failed after switch order of device registration"
+> Yes, it should have the tags Bart suggested.
 > 
-> This *is* the offending commit, as far as I understand. Merely rebased in
-> linux-stable, and hence having a different SHA, but mentioning the original SHA
-> (i.e., 532b0f7ece4c) in its commit message.
+> I'll take care it.
 > 
-> 
->> Since that patch one was flawed it had to be reverted:
->> commit 5593530e5694  ""Revert tipc: fix modprobe tipc failed after switch order of device registration"
->>
->> It was then replaced with this one: 
->> commit 526f5b851a96 "tipc: fix modprobe tipc failed after switch order of device registration"
-> 
-> Okay, these two are not part of 5.1.5. I've backported them (and only these two)
-> to 5.1.5 and the issue(s) seem to be gone. Definitely something that should be
-> backported to/included in 5.1.6.
-> 
-> 
-> Thanks for pointing all that out! Unfortunately I didn't add anything useful but
-> noise, since you obviously already knew, that this commit was broken. I'd urge
-> Greg to release a new stable version including the fixes soon, if possible,
-> though, for not being able to start/use userspace browsers sounds like a pretty
-> bad regression to me.
-> 
+> Thanks,
+> Mike
+Thanks for your reply, and please keep me informed if it is applied.
 
-Not only commit 526f5b851a96 )("tipc: fix modprobe tipc failed after
-switch order of device registration") has to be reverted, but also I
-found commit 7e27e8d6130c ("tipc: switch order of device registration to
-fix a crash") introduced a serious regression which makes tipc internal
-topology service server failed to be created.
-
-Today I will fix it with the following approaches:
-1. Revert commit 7e27e8d6130c ("tipc: switch order of device
-registration to fix a crash")
-2. Use another method to solve the problem that commit 7e27e8d6130c
-tries to fix.
-
-Thanks,
-Ying
-
-> 
-> 
-> Mihai
-> 
+Thanks
+Gen
