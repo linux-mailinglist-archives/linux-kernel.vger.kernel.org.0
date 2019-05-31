@@ -2,147 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B27330B42
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 11:20:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3881C30B74
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 11:27:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbfEaJT6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 05:19:58 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38100 "EHLO mx1.redhat.com"
+        id S1727064AbfEaJ13 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 05:27:29 -0400
+Received: from mail.tastiess.eu ([194.182.86.235]:57640 "EHLO mail.tastiess.eu"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726002AbfEaJT5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 05:19:57 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D1000308339E;
-        Fri, 31 May 2019 09:19:56 +0000 (UTC)
-Received: from krava (unknown [10.43.17.136])
-        by smtp.corp.redhat.com (Postfix) with SMTP id A3D115C559;
-        Fri, 31 May 2019 09:19:45 +0000 (UTC)
-Date:   Fri, 31 May 2019 11:19:44 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Leo Yan <leo.yan@linaro.org>
-Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Stanislav Fomichev <sdf@fomichev.me>,
-        Song Liu <songliubraving@fb.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCHv3 00/12] perf tools: Display eBPF code in intel_pt trace
-Message-ID: <20190531091944.GA24672@krava>
-References: <20190508132010.14512-1-jolsa@kernel.org>
- <20190530105439.GA5927@leoy-ThinkPad-X240s>
- <20190530120709.GA3669@krava>
- <20190530125709.GB5927@leoy-ThinkPad-X240s>
- <20190530133645.GC21962@kernel.org>
- <20190530140510.GD5927@leoy-ThinkPad-X240s>
+        id S1726240AbfEaJ12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 05:27:28 -0400
+X-Greylist: delayed 389 seconds by postgrey-1.27 at vger.kernel.org; Fri, 31 May 2019 05:27:27 EDT
+Received: by mail.tastiess.eu (Postfix, from userid 1001)
+        id 0A6798AED4; Fri, 31 May 2019 11:20:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tastiess.eu; s=mail;
+        t=1559294457; bh=Pq3JAJM5iF8ICERSPFAm/P648K1IfJ1sBmhj3v1LJ9Q=;
+        h=Date:From:To:Subject:From;
+        b=b0YEbaCvEOObmRQpeVtGUrq6tLZweIMK8jVe/zGvOvK/isOsrZ86XB5GliPEYY9Z6
+         Bgnd7lrbKl2zMdRzoFJiY36tzaT1nwVmh3uQMILrC+NWEIKedIMrMQoBtwNlFuIFD/
+         xhRFPTenWTsNZmDECUicN5sMrHzxG9eOU/qDe8yI=
+Received: by mail.tastiess.eu for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 09:20:35 GMT
+Message-ID: <20190531100930-0.1.1e.h1z.0.kgoedk0362@tastiess.eu>
+Date:   Fri, 31 May 2019 09:20:35 GMT
+From:   =?UTF-8?Q? "Kapolcs_M=C3=A1ty=C3=A1s" ?= <matyas@tastiess.eu>
+To:     <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?Q?Dolgoz=C3=B3i_juttat=C3=A1sok?=
+X-Mailer: mail.tastiess.eu
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190530140510.GD5927@leoy-ThinkPad-X240s>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Fri, 31 May 2019 09:19:57 +0000 (UTC)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 10:05:10PM +0800, Leo Yan wrote:
-> Hi Arnaldo,
-> 
-> On Thu, May 30, 2019 at 10:36:45AM -0300, Arnaldo Carvalho de Melo wrote:
-> 
-> [...]
-> 
-> > One other way of testing this:
-> > 
-> > I used perf trace's use of BPF, using:
-> > 
-> > [root@quaco ~]# cat ~/.perfconfig
-> > [llvm]
-> > 	dump-obj = true
-> > 	clang-opt = -g
-> > [trace]
-> > 	add_events = /home/acme/git/perf/tools/perf/examples/bpf/augmented_raw_syscalls.c
-> > 	show_zeros = yes
-> > 	show_duration = no
-> > 	no_inherit = yes
-> > 	show_timestamp = no
-> > 	show_arg_names = no
-> > 	args_alignment = 40
-> > 	show_prefix = yes
-> > 
-> > For arm64 this needs fixing, tools/perf/examples/bpf/augmented_raw_syscalls.c
-> > (its in the kernel sources) is still hard coded for x86_64 syscall numbers :-\
-> 
-> Thanks a lot for sharing this, I will test with this method and let you
-> and Jiri know the result in tomorrow.
+=C3=9Cdv=C3=B6zl=C3=B6m!
 
-it's always battle of having too much data but caturing everything,
-versus having reasonable data size and being lucky to hit the trace ;-)
+2019 janu=C3=A1rj=C3=A1t=C3=B3l jelent=C5=91sen =C3=A1talakult mind a jut=
+tat=C3=A1sok ad=C3=B3z=C3=A1sa, mind a piacon el=C3=A9rhet=C5=91 juttat=C3=
+=A1si term=C3=A9kek k=C3=B6re. =20
 
-with sampling on high freq and 1 second trace in another terminal
-I got the trace below:
+Amennyiben =C3=96nnek is fejt=C3=B6r=C3=A9st okoz, mivel p=C3=B3tolja a k=
+or=C3=A1bban haszn=C3=A1lt Erzs=C3=A9bet utalv=C3=A1nyt, ismerje meg k=C3=
+=A1rty=C3=A1inkat =C3=A9s utalv=C3=A1nyainkat, melyek az =C3=96n c=C3=A9g=
+=C3=A9nek is k=C3=ADv=C3=A1l=C3=B3 alternat=C3=ADv=C3=A1t ny=C3=BAjthatna=
+k.
 
-jirka
+A SZ=C3=89P k=C3=A1rty=C3=A1hoz k=C3=A9pest juttat=C3=A1si k=C3=A1rty=C3=A1=
+inkat j=C3=B3val sz=C3=A9lesebb k=C3=B6rben haszn=C3=A1lhatj=C3=A1k k=C3=A1=
+rtyabirtokosaink t=C3=B6bbek k=C3=B6z=C3=B6tt =C3=A9lelmiszer v=C3=A1s=C3=
+=A1rl=C3=A1sra, eg=C3=A9szs=C3=A9g=C3=BCgyi szolg=C3=A1ltat=C3=A1sokra, e=
+lektronikai term=C3=A9kekre, =C3=BCd=C3=BCl=C3=A9sre, tankol=C3=A1sra =E2=
+=80=93 ak=C3=A1r k=C3=A9szp=C3=A9nzfelv=C3=A9teli lehet=C5=91s=C3=A9ggel =
+is.
+
+Szeretn=C3=A9 megismerni, milyen lehet=C5=91s=C3=A9geket k=C3=ADn=C3=A1lu=
+nk juttat=C3=A1si term=C3=A9keinkkel? =20
 
 
----
-terminal 1:
-  # sampleip -F 1000 20
-
-terminal2:
-  # perf-with-kcore record pt -e intel_pt//k -m100M,100M -C 1 -- sleep 1
-  # perf-with-kcore script pt --call-trace
-  ...
-         swapper     0 [001] 85820.051207146: ([kernel.kallsyms]                                 )                                                  __perf_event_overflow                               
-         swapper     0 [001] 85820.051207146: ([kernel.kallsyms]                                 )                                                      __perf_event_account_interrupt                  
-         swapper     0 [001] 85820.051207146: ([kernel.kallsyms]                                 )                                                      __x86_indirect_thunk_rax                        
-         swapper     0 [001] 85820.051207146: ([kernel.kallsyms]                                 )                                                          __x86_indirect_thunk_rax                    
-         swapper     0 [001] 85820.051207146: ([kernel.kallsyms]                                 )                                                              __x86_indirect_thunk_rax                
-         swapper     0 [001] 85820.051207146: ([kernel.kallsyms]                                 )                                                                  __x86_indirect_thunk_rax            
-         swapper     0 [001] 85820.051207467: (bpf_prog_19578a12836c4115                         )                                                                      __htab_map_lookup_elem          
-         swapper     0 [001] 85820.051207788: ([kernel.kallsyms]                                 )                                                                          memcmp                      
-  ...
-  # perf-with-kcore script pt --insn-trace --xed
-  ...
-         swapper     0 [001] 85820.051207467:  ffffffff90c00c40 __x86_indirect_thunk_rax+0x10 ([kernel.kallsyms])               retq  
-         swapper     0 [001] 85820.051207467:  ffffffffc0557710 bpf_prog_19578a12836c4115+0x0 (bpf_prog_19578a12836c4115)               pushq  %rbp
-         swapper     0 [001] 85820.051207467:  ffffffffc0557711 bpf_prog_19578a12836c4115+0x1 (bpf_prog_19578a12836c4115)               mov %rsp, %rbp
-         swapper     0 [001] 85820.051207467:  ffffffffc0557714 bpf_prog_19578a12836c4115+0x4 (bpf_prog_19578a12836c4115)               sub $0x38, %rsp
-         swapper     0 [001] 85820.051207467:  ffffffffc055771b bpf_prog_19578a12836c4115+0xb (bpf_prog_19578a12836c4115)               sub $0x28, %rbp
-         swapper     0 [001] 85820.051207467:  ffffffffc055771f bpf_prog_19578a12836c4115+0xf (bpf_prog_19578a12836c4115)               movq  %rbx, (%rbp)
-         swapper     0 [001] 85820.051207467:  ffffffffc0557723 bpf_prog_19578a12836c4115+0x13 (bpf_prog_19578a12836c4115)              movq  %r13, 0x8(%rbp)
-         swapper     0 [001] 85820.051207467:  ffffffffc0557727 bpf_prog_19578a12836c4115+0x17 (bpf_prog_19578a12836c4115)              movq  %r14, 0x10(%rbp)
-         swapper     0 [001] 85820.051207467:  ffffffffc055772b bpf_prog_19578a12836c4115+0x1b (bpf_prog_19578a12836c4115)              movq  %r15, 0x18(%rbp)
-         swapper     0 [001] 85820.051207467:  ffffffffc055772f bpf_prog_19578a12836c4115+0x1f (bpf_prog_19578a12836c4115)              xor %eax, %eax
-         swapper     0 [001] 85820.051207467:  ffffffffc0557731 bpf_prog_19578a12836c4115+0x21 (bpf_prog_19578a12836c4115)              movq  %rax, 0x20(%rbp)
-         swapper     0 [001] 85820.051207467:  ffffffffc0557735 bpf_prog_19578a12836c4115+0x25 (bpf_prog_19578a12836c4115)              mov $0x1, %esi
-         swapper     0 [001] 85820.051207467:  ffffffffc055773a bpf_prog_19578a12836c4115+0x2a (bpf_prog_19578a12836c4115)              movl  %esi, -0xc(%rbp)
-         swapper     0 [001] 85820.051207467:  ffffffffc055773d bpf_prog_19578a12836c4115+0x2d (bpf_prog_19578a12836c4115)              movq  (%rdi), %rdi
-         swapper     0 [001] 85820.051207467:  ffffffffc0557741 bpf_prog_19578a12836c4115+0x31 (bpf_prog_19578a12836c4115)              movq  0x80(%rdi), %rdi
-         swapper     0 [001] 85820.051207467:  ffffffffc0557748 bpf_prog_19578a12836c4115+0x38 (bpf_prog_19578a12836c4115)              movq  %rdi, -0x8(%rbp)
-         swapper     0 [001] 85820.051207467:  ffffffffc055774c bpf_prog_19578a12836c4115+0x3c (bpf_prog_19578a12836c4115)              mov %rbp, %rsi
-         swapper     0 [001] 85820.051207467:  ffffffffc055774f bpf_prog_19578a12836c4115+0x3f (bpf_prog_19578a12836c4115)              add $0xfffffffffffffff8, %rsi
-         swapper     0 [001] 85820.051207467:  ffffffffc0557753 bpf_prog_19578a12836c4115+0x43 (bpf_prog_19578a12836c4115)              mov $0xffff9ac0b2926000, %rdi
-         swapper     0 [001] 85820.051207467:  ffffffffc055775d bpf_prog_19578a12836c4115+0x4d (bpf_prog_19578a12836c4115)              callq  0xffffffff901fde70
-         swapper     0 [001] 85820.051207467:  ffffffff901fde70 __htab_map_lookup_elem+0x0 ([kernel.kallsyms])          nopl  %eax, (%rax,%rax,1)
-         swapper     0 [001] 85820.051207467:  ffffffff901fde75 __htab_map_lookup_elem+0x5 ([kernel.kallsyms])          pushq  %rbx
-         swapper     0 [001] 85820.051207467:  ffffffff901fde76 __htab_map_lookup_elem+0x6 ([kernel.kallsyms])          movl  0x1c(%rdi), %r9d
-         swapper     0 [001] 85820.051207467:  ffffffff901fde7a __htab_map_lookup_elem+0xa ([kernel.kallsyms])          mov %rsi, %rdx
-         swapper     0 [001] 85820.051207467:  ffffffff901fde7d __htab_map_lookup_elem+0xd ([kernel.kallsyms])          movl  0x214(%rdi), %ecx
-         swapper     0 [001] 85820.051207467:  ffffffff901fde83 __htab_map_lookup_elem+0x13 ([kernel.kallsyms])                 mov %rdx, %r10
-         swapper     0 [001] 85820.051207467:  ffffffff901fde86 __htab_map_lookup_elem+0x16 ([kernel.kallsyms])                 mov %r9d, %r8d
-         swapper     0 [001] 85820.051207467:  ffffffff901fde89 __htab_map_lookup_elem+0x19 ([kernel.kallsyms])                 add %r9d, %ecx
-         swapper     0 [001] 85820.051207467:  ffffffff901fde8c __htab_map_lookup_elem+0x1c ([kernel.kallsyms])                 leal  -0x21524111(%rcx), %ebx
-         swapper     0 [001] 85820.051207467:  ffffffff901fde92 __htab_map_lookup_elem+0x22 ([kernel.kallsyms])                 mov %ebx, %esi
-  ...
+Kapolcs M=C3=A1ty=C3=A1s
+Hungary Team Leader =20
