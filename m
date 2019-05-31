@@ -2,141 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D584830A41
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 10:26:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 227C030A3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 10:26:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726973AbfEaI0p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 04:26:45 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:43234 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726867AbfEaI0l (ORCPT
+        id S1726845AbfEaI0i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 04:26:38 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:7322 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726240AbfEaI0h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 04:26:41 -0400
-Received: by mail-lf1-f67.google.com with SMTP id d7so63988lfb.10
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 01:26:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vfC0vBfj3dl+S4JICqcjDoSBUZJGnS+ckX0H0B+UWP8=;
-        b=uuf3ZngwL3h2t7t4f1mqw1SA7AcmRSii9KiV/Qip2UqqQwkIcD+M5Ncpooxlpjetn+
-         EVwVYGzH/O3ILxbusPiGYoniriBwnLhhb9LcJn2zu+IwE0ZHWaQWjUbup4SXE3tY5shP
-         xuTqV3C0Zoq549IsRmGbXJObFgBs0iytW1nh1YMl6A6rtjQPau14oxFWF4rgbO8NbWSY
-         1yaAOQn9MbjCB0D927ZUIW8CEG4A+c+ephFuvW9vkTkn5TFYfEoCooAx86i8z8PVrjqt
-         djIcCisQKhSypwUNeJd5TzQY131nMP+BgI2vdnOcbQNJbUFWBzECg3+/mriPZrMcUQbK
-         rGCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vfC0vBfj3dl+S4JICqcjDoSBUZJGnS+ckX0H0B+UWP8=;
-        b=LMCZenm0k1UDAWP6LcdmKuxkVYVuggl580G9Jpp/WkAhdpefNjkep5lUG1nOMsrL9y
-         q5TJ4PdDUhtOJ59amJYn2WmbIS2/rAexh6yY4pZvOYOYX/kPJKU2RbEx2CawKMecQD1t
-         ncOLSX8i7/0M1Oi1X1HAN1OGRvs8vXkWO2N8BZXVpxkVXXkkuVBQOHxC5RfbeKlhs1Bs
-         69rGdDWzTME2b6YbdxEH9hD3NrwjinOceNs2sEEZWQ0oo8mofoLhYUiR6X4RxTaBMF9y
-         QFddxn6oXJUTeRzPafPSIwX80oLv8BTd0Lp5L/ME5kMGuRNpGURS1ZIv5osd0fG4Zs9S
-         1aHA==
-X-Gm-Message-State: APjAAAUAWHus+ICkovItbbPfP4ASvlRQtxAZPZ3UDk+E1LIz3tw1WkrU
-        WJj5q9HCaH7Mipc/b9RU5JC+AZILvpLFRcZC1z0=
-X-Google-Smtp-Source: APXvYqyVGfgWVvPGwpdGW2Ln9ZHaOlnCtQ2X4hkv3pLRyIZp7jHZPehfHqxUm45SXgm2E9GU6chipkFtt/uXwtMnQOU=
-X-Received: by 2002:a19:a5ca:: with SMTP id o193mr4826260lfe.89.1559291198938;
- Fri, 31 May 2019 01:26:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1559129225.git.vpillai@digitalocean.com>
- <CAERHkruDE-7R5K=2yRqCJRCpV87HkHzDYbQA2WQkruVYpG7t7Q@mail.gmail.com>
- <e8872bd9-1c6b-fb12-b535-3d37740a0306@linux.alibaba.com> <CAERHkruVthrTgGqiH=yhCspZWpMDAu0G4rNcrDTKQzgPq9eqQQ@mail.gmail.com>
- <21fda627-1d3c-12cc-6389-8c226218e2ce@linux.alibaba.com> <CAERHkrsjTNUssmECksdJnLdDjVJ_9UpvYiHyBDJ3S1toURCbrw@mail.gmail.com>
- <20190531074456.GA314@aaronlu>
-In-Reply-To: <20190531074456.GA314@aaronlu>
-From:   Aubrey Li <aubrey.intel@gmail.com>
-Date:   Fri, 31 May 2019 16:26:26 +0800
-Message-ID: <CAERHkru+tx+b_FMoyZYD+F7cWaFZRA7+6UeJEG_aoFJN+DEKkA@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 00/16] Core scheduling v3
-To:     Aaron Lu <aaron.lu@linux.alibaba.com>
-Cc:     Vineeth Remanan Pillai <vpillai@digitalocean.com>,
-        Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Julien Desfossez <jdesfossez@digitalocean.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
+        Fri, 31 May 2019 04:26:37 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cf0e5320001>; Fri, 31 May 2019 01:26:26 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 31 May 2019 01:26:37 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 31 May 2019 01:26:37 -0700
+Received: from tbergstrom-lnx.Nvidia.com (172.20.13.39) by
+ HQMAIL107.nvidia.com (172.20.187.13) with Microsoft SMTP Server (TLS) id
+ 15.0.1473.3; Fri, 31 May 2019 08:26:36 +0000
+Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
+        id 67E4740BFF; Fri, 31 May 2019 11:26:34 +0300 (EEST)
+Date:   Fri, 31 May 2019 11:26:34 +0300
+From:   Peter De Schrijver <pdeschrijver@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+CC:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Paul Turner <pjt@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
-        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Joseph Lo <josephl@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Nicolas Chauvet <kwizart@gmail.com>
+Subject: Re: [PATCH v3 0/8] NVIDIA Tegra clocksource driver improvements
+Message-ID: <20190531082634.GA6070@pdeschrijver-desktop.Nvidia.com>
+References: <20190524153253.28564-1-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190524153253.28564-1-digetx@gmail.com>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1559291187; bh=VcZEf7tgMNIXUUg2aicGt0agDtisPyMFpAo7p5giBdA=;
+        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
+         MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+         X-NVConfidentiality:User-Agent:X-Originating-IP:X-ClientProxiedBy;
+        b=dglyHjYnmWAOWHzKaqceaJx0Ys6DQXlaf3TFxqQb8JHYiYzozq4oJdsSPGPD235Ar
+         X/bjWk9y8g0q6EGDe6DUucL96LJFyzgIzQvNxZpl7Sy7rgqksECiBBRq/4cRQtqGUT
+         S4Jbd2MfLwoOzAGCVr7GozHU8QPlZ31oAWoh65XEYpnDhCkgSuBDRzqbPg6MkoaYV2
+         0t1Lifc1N+UATaavXZ+VzSS4eh3ogSzAud448T0d9Jq8XYtEe0ez4lHyAgDgPZohNh
+         +e7gyJZZA0INC8ZO9BIdyWgMn7bGjnI9C3DP2dOT0aIdyaq70LXUiC4sq3/VTUIBnf
+         Lie7wCUBnA9ww==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 31, 2019 at 3:45 PM Aaron Lu <aaron.lu@linux.alibaba.com> wrote:
->
-> On Fri, May 31, 2019 at 02:53:21PM +0800, Aubrey Li wrote:
-> > On Fri, May 31, 2019 at 2:09 PM Aaron Lu <aaron.lu@linux.alibaba.com> wrote:
-> > >
-> > > On 2019/5/31 13:12, Aubrey Li wrote:
-> > > > On Fri, May 31, 2019 at 11:01 AM Aaron Lu <aaron.lu@linux.alibaba.com> wrote:
-> > > >>
-> > > >> This feels like "date" failed to schedule on some CPU
-> > > >> on time.
-> > > >>
-> > > >> My first reaction is: when shell wakes up from sleep, it will
-> > > >> fork date. If the script is untagged and those workloads are
-> > > >> tagged and all available cores are already running workload
-> > > >> threads, the forked date can lose to the running workload
-> > > >> threads due to __prio_less() can't properly do vruntime comparison
-> > > >> for tasks on different CPUs. So those idle siblings can't run
-> > > >> date and are idled instead. See my previous post on this:
-> > > >> https://lore.kernel.org/lkml/20190429033620.GA128241@aaronlu/
-> > > >> (Now that I re-read my post, I see that I didn't make it clear
-> > > >> that se_bash and se_hog are assigned different tags(e.g. hog is
-> > > >> tagged and bash is untagged).
-> > > >
-> > > > Yes, script is untagged. This looks like exactly the problem in you
-> > > > previous post. I didn't follow that, does that discussion lead to a solution?
-> > >
-> > > No immediate solution yet.
-> > >
-> > > >>
-> > > >> Siblings being forced idle is expected due to the nature of core
-> > > >> scheduling, but when two tasks belonging to two siblings are
-> > > >> fighting for schedule, we should let the higher priority one win.
-> > > >>
-> > > >> It used to work on v2 is probably due to we mistakenly
-> > > >> allow different tagged tasks to schedule on the same core at
-> > > >> the same time, but that is fixed in v3.
-> > > >
-> > > > I have 64 threads running on a 104-CPU server, that is, when the
-> > >
-> > > 104-CPU means 52 cores I guess.
-> > > 64 threads may(should?) spread on all the 52 cores and that is enough
-> > > to make 'date' suffer.
-> >
-> > 64 threads should spread onto all the 52 cores, but why they can get
-> > scheduled while untagged "date" can not? Is it because in the current
->
-> If 'date' didn't get scheduled, there will be no output at all unless
-> all those workload threads finished :-)
+On Fri, May 24, 2019 at 06:32:45PM +0300, Dmitry Osipenko wrote:
+> Hello,
+> 
+> This series primarily unifies the driver code across all Tegra SoC
+> generations. In a result the clocksources are allocated per-CPU on
+> older Tegra's and have a higher rating than the arch-timer, the newer
+> Tegra210 is getting support for microsecond clocksource and the driver's
+> code is getting much cleaner. Note that arch-timer usage is discouraged on
+> all Tegra's due to the time jitter caused by the CPU frequency scaling.
 
-Certainly I meant untagged "date" can not be scheduled on time, :)
+I think the limitations are more as follows:
 
->
-> I guess the workload you used is not entirely CPU intensive, or 'date'
-> can be totally blocked due to START_DEBIT. But note that START_DEBIT
-> isn't the problem here, cross CPU vruntime comparison is.
->
-> > implementation the task with cookie always has higher priority than the
-> > task without a cookie?
->
-> No.
+Chip	timer		suffers cpu dvfs jitter		can wakeup from cc7
+T20	us-timer	No				Yes
+T20	twd timer	Yes				No?
+T30	us-timer	No				Yes
+T30	twd timer	Yes				No?
+T114	us-timer	No				Yes
+T114	arch timer	No				Yes
+T124	us-timer	No				Yes
+T124	arch timer	No				Yes
+T210	us-timer	No				Yes
+T210	arch timer	No				No
+T210	clk_m timer	No				Yes
 
-I checked the benchmark log manually, it looks like the data of two benchmarks
-with cookies are acceptable, but ones without cookies are really bad.
+right?
+
+Peter.
