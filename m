@@ -2,169 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BCCC31761
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 01:00:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72D3B31767
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 01:03:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbfEaXAQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 19:00:16 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:37637 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726520AbfEaXAQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 19:00:16 -0400
-Received: by mail-lj1-f193.google.com with SMTP id h19so11083817ljj.4
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 16:00:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=R6AakFEfT07RKGQjtU57G+Mi06fjxrW46LtUHEWscX4=;
-        b=UdqZ6v0xW/ZPZI7rfZNyoQWpFuu/Dvj8IN2xtnDAPTX97Ifm9GE29ZZGLxyqa/iYZ4
-         rcW2doIiMnJjEYD8YHPZeBmeYw+/pF+7ufxy43Ajo6/T1K3jr+2pVZMH3vAfYHucEpi5
-         8KaToYGMYAnolAxiqpavrhqxAujTLEgOy5wYLdGxZU6GLfatAVHJQ2Tg01q8q0X6qGNd
-         cvMdOyIrYD4kp5dHSVPpHRvmnPayZKvtxCSI1aZfKMsjl1X/eLrDLMuyr0pSD8N/+0W1
-         /DJb6GKmvK2DjPvRgAoWeRBJylaxDlUW6HBWawCb3DzMx8wad8MxyX9f6zHog+XwZFvd
-         oQtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=R6AakFEfT07RKGQjtU57G+Mi06fjxrW46LtUHEWscX4=;
-        b=A/JxJEG1Oxb96oKUrrYybYYWNyaPEQPoXnzDd/akwS+GTGzQQQUbfxW0/X3JIDEmWJ
-         fseMqP+3pnWNrUy0KRoL84R0NOUUtM3OA4rIQnXbHKE6TX8+PdUOEsWjMezPma3uYh/w
-         bmBpVGlhs8O7t2d/Q6kNJ9P/wftoCOKaObHB564d2PDYjOBdQ3I08PiGtIUXKEXrsOVH
-         xyVxvsrh0sB/3zWa5qEv+23v3hLNGU7MuWgBzbLZYRG7IQ0W988VZwcLQ5Ocip5ydK1l
-         tbbTdrsHevk+sSLr2Q8t07xoHXnuh6ipLF02W48vYEJSlseHL4OQX2UHVKpvGPEBPkQR
-         wBgA==
-X-Gm-Message-State: APjAAAUdbR465ZW3eeJA7dGlesmXi3rjqsuUzoxnwlT4VuIcRYTw3X1H
-        sbGoBPuj0tOYw1YqhG7iXfCc2w==
-X-Google-Smtp-Source: APXvYqwADy+ePnz+6LSmTnDgiozSJUl6IJ2AdwyOS/QcPm0Gp1mY0/Eivedv8uAM3H8DjK98nJn7WQ==
-X-Received: by 2002:a2e:2b8d:: with SMTP id r13mr7429874ljr.162.1559343613223;
-        Fri, 31 May 2019 16:00:13 -0700 (PDT)
-Received: from khorivan (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
-        by smtp.gmail.com with ESMTPSA id r14sm1468168lff.44.2019.05.31.16.00.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 31 May 2019 16:00:12 -0700 (PDT)
-Date:   Sat, 1 Jun 2019 02:00:10 +0300
-From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To:     Saeed Mahameed <saeedm@mellanox.com>
-Cc:     "brouer@redhat.com" <brouer@redhat.com>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "xdp-newbies@vger.kernel.org" <xdp-newbies@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "john.fastabend@gmail.com" <john.fastabend@gmail.com>,
-        "ilias.apalodimas@linaro.org" <ilias.apalodimas@linaro.org>,
-        "grygorii.strashko@ti.com" <grygorii.strashko@ti.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "hawk@kernel.org" <hawk@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "jakub.kicinski@netronome.com" <jakub.kicinski@netronome.com>
-Subject: Re: [PATCH v2 net-next 7/7] net: ethernet: ti: cpsw: add XDP support
-Message-ID: <20190531230008.GA15675@khorivan>
-Mail-Followup-To: Saeed Mahameed <saeedm@mellanox.com>,
-        "brouer@redhat.com" <brouer@redhat.com>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "xdp-newbies@vger.kernel.org" <xdp-newbies@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "john.fastabend@gmail.com" <john.fastabend@gmail.com>,
-        "ilias.apalodimas@linaro.org" <ilias.apalodimas@linaro.org>,
-        "grygorii.strashko@ti.com" <grygorii.strashko@ti.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "hawk@kernel.org" <hawk@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "jakub.kicinski@netronome.com" <jakub.kicinski@netronome.com>
-References: <20190530182039.4945-1-ivan.khoronzhuk@linaro.org>
- <20190530182039.4945-8-ivan.khoronzhuk@linaro.org>
- <20190531174643.4be8b27f@carbon>
- <20190531162523.GA3694@khorivan>
- <20190531183241.255293bc@carbon>
- <20190531170332.GB3694@khorivan>
- <a65de3a257ab5ebec83e817c092f074b58b9ae47.camel@mellanox.com>
+        id S1726807AbfEaXDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 19:03:52 -0400
+Received: from mout.web.de ([212.227.15.3]:44625 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726450AbfEaXDv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 19:03:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1559343822;
+        bh=rW5cSCO/48qpJ0EI9RXtwgzx0kIenC43po9wrzrIpX0=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=fWgZF8CW35w9kGU3SlNHEk8Zr/bGJWlifVkZDRNcTff4w1cPqJq3R/az0mOFpkoaa
+         YJoHwsnXyzw3jTBOdDR9ZrG1H0JGbCcPYjrvB2Orjap+VLAwFxR+vh4TclUbRkm8l4
+         2IQ9pUWoQLpASFFAYcCFWPU/6+V57S0tlndzljCU=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.43.108] ([89.15.238.249]) by smtp.web.de (mrweb001
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0LjJaZ-1h166k40Zr-00dTHz; Sat, 01
+ Jun 2019 01:03:42 +0200
+Subject: Re: [PATCH] Revert "usb: core: remove local_irq_save() around
+ ->complete() handler"
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <20190531215340.24539-1-smoch@web.de>
+ <20190531220535.GA16603@kroah.com>
+From:   Soeren Moch <smoch@web.de>
+Message-ID: <6c03445c-3607-9f33-afee-94613f8d6978@web.de>
+Date:   Sat, 1 Jun 2019 01:02:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <a65de3a257ab5ebec83e817c092f074b58b9ae47.camel@mellanox.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190531220535.GA16603@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-GB
+X-Provags-ID: V03:K1:Ic3+BDCPO+aCwP4xgWm/m1rofgV+DLFjQnm+DtiI7ck6/unR63b
+ T8R+2OxuPIUTGr1rp06Qv5f8+59HAHjknKRMVT1QG+Gqi15uHt3g6mVBO+TQilJClGwRdIg
+ qFPIuTqfdK09xkaQEhNpzROrzl/FoAotj1pS63Zf+qOkRxPYJsW7GZPf+JWqJe3/urAavw6
+ gEdiY5wPrc9FX8cJ4TlOg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:oEz2LEv2h6U=:gWNWOuxyuL4SYyrdke7Hyu
+ ctdKJLK/kYoRXK1BhWOnasJyRXGRh8slxtpr+Hnx3Ej1/aDRVSbRQkENAGozScEw3Xm9y/FK+
+ JvFE0j/aYYPgwx82yl+dQkfOVTwwY7GjOu5qySu6NeWjhlafFzsFPSiuX6yJwXaQI6r+wRGr+
+ mzlOeBJPOsZmtsCBUpaYmuSWDHYQ9bdw8P8r4TKT1rrajhEYz0ksPUtyokYhGTSbpeWvGQnTI
+ k+Fq/Kc36T6zkgtRMiXNI5SU5c2A9DBlIbb/7lJ9T2TtokC4AJDH+780GSprJhKgzVLLW82Vj
+ Iik4cdBtW3w0D74/Nv1QJ//KQd2XGjh/4O6hIDBPIfT3rVSgTHl6IZYi7aBZTulbnNopprJ4T
+ GQYyqLpiOuH5+7tZDSm7CirOGd7q3z3U153KT3IahNdt2QAWaw3CRZV+ZKvu08Oyr627SHY3r
+ P4NG7xorbLYPN4Ukd2qGzgqcTJX3wYHbQiQazfm3i2hpp5Q5EGgGMk47jCuqM4ksL0qLDC9Zg
+ DllXyNjC7CtDLptWn/BS9imiP0aaukB66jVvx0E4GbeTwWuosPCcSo1TLwiKqwaE2coyJL6jJ
+ 9Hb3O1XkbXZ2TCXWtp/dElxcq/hg9tUleUpQUXEWCOiyppB2FMprgvjtmHuCNQf/dfTbydRw9
+ RCeUvCts8RxATPA7f1iNLekMEfeyIbLVK8Q8DfMjQT22xFSk67FrovJqqEcSI8gtHKu4lapZc
+ 59S5LSOgz1GTJdbRxBJWgOqqWlcfLg7nKKyq5lNeRIIRFrk2mGcr7mThP+TbfQ4GYWQLzJIi7
+ d+VddnRyAxFVvVr7QUrQOD6PQs2NnP2odTAnn7rQuasIlwW4QMuK25GcJqyQjTRgVBKCnSoje
+ qBPal3LlBpcScsOI4st5WuwAoTcsYcaYw6zkxN443Y1uP32FbGREGX+JYjGBRs5tUdbpkbgG2
+ No7i9kGz+qSRY0KDNa9CkLIHZU9ltyQc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 31, 2019 at 10:08:03PM +0000, Saeed Mahameed wrote:
->On Fri, 2019-05-31 at 20:03 +0300, Ivan Khoronzhuk wrote:
->> On Fri, May 31, 2019 at 06:32:41PM +0200, Jesper Dangaard Brouer
->> wrote:
->> > On Fri, 31 May 2019 19:25:24 +0300 Ivan Khoronzhuk <
->> > ivan.khoronzhuk@linaro.org> wrote:
->> >
->> > > On Fri, May 31, 2019 at 05:46:43PM +0200, Jesper Dangaard Brouer
->> > > wrote:
->> > > > From below code snippets, it looks like you only allocated 1
->> > > > page_pool
->> > > > and sharing it with several RX-queues, as I don't have the full
->> > > > context
->> > > > and don't know this driver, I might be wrong?
->> > > >
->> > > > To be clear, a page_pool object is needed per RX-queue, as it
->> > > > is
->> > > > accessing a small RX page cache (which protected by
->> > > > NAPI/softirq).
->> > >
->> > > There is one RX interrupt and one RX NAPI for all rx channels.
->> >
->> > So, what are you saying?
->> >
->> > You _are_ sharing the page_pool between several RX-channels, but it
->> > is
->> > safe because this hardware only have one RX interrupt + NAPI
->> > instance??
->>
->> I can miss smth but in case of cpsw technically it means:
->> 1) RX interrupts are disabled while NAPI is scheduled,
->>    not for particular CPU or channel, but at all, for whole cpsw
->> module.
->> 2) RX channels are handled one by one by priority.
->
->Hi Ivan, I got a silly question..
->
->What is the reason behind having multiple RX rings and one CPU/NAPI
->handling all of them ? priority ? how do you priorities ?
-Several.
-One of the reason, from what I know, it can handle for several cpus/napi but
-because of errata on some SoCs or for all of them it was discarded, but idea was
-it can. Second it uses same davinci_cpdma API as tx channels that can be rate
-limited, and it's used not only by cpsw but also by other driver, so can't be
-modified easily and no reason. And third one, h/w has ability to steer some
-filtered traffic to rx queues and can be potentially configured with ethtool
-ntuples or so, but it's not implemented....yet.
 
->
->> 3) After all of them handled and no more in budget - interrupts are
->> enabled.
->> 4) If page is returned to the pool, and it's within NAPI, no races as
->> it's
->>    returned protected by softirq. If it's returned not in softirq
->> it's protected
->>    by producer lock of the ring.
->>
->> Probably it's not good example for others how it should be used, not
->> a big
->> problem to move it to separate pools.., even don't remember why I
->> decided to
->> use shared pool, there was some more reasons... need search in
->> history.
->>
->> > --
->> > Best regards,
->> >  Jesper Dangaard Brouer
->> >  MSc.CS, Principal Kernel Engineer at Red Hat
->> >  LinkedIn: http://www.linkedin.com/in/brouer
 
--- 
-Regards,
-Ivan Khoronzhuk
+On 01.06.19 00:05, Greg Kroah-Hartman wrote:
+> On Fri, May 31, 2019 at 11:53:40PM +0200, Soeren Moch wrote:
+>> This reverts commit ed194d1367698a0872a2b75bbe06b3932ce9df3a.
+>>
+>> In contrast to the original patch description, apparently not all handl=
+ers
+>> were audited properly. E.g. my RT5370 based USB WIFI adapter (driver in
+>> drivers/net/wireless/ralink/rt2x00) hangs after a while under heavy loa=
+d.
+>> This revert fixes this.
+> Why not just fix that driver?  Wouldn't that be easier?
+>
+I suspect there are more drivers to fix. I only tested WIFI sticks so
+far, RTL8188 drivers also seem to suffer from this. I'm not sure how to
+fix all this properly, maybe Sebastian as original patch author can help
+here.
+This patch is mostly for -stable, to get an acceptable solution quickly.
+It was really annoying to get such unstable WIFI connection over the
+last three kernel releases to my development board.=C2=A0 Since my interne=
+t
+service provider forcefully updated my router box 3 weeks ago, I
+unfortunately see the same symptoms on my primary internet access.
+That's even worse, I need to reset this router box every few days. I'm
+not sure, however, that this is caused by the same problem, but it feels
+like this.
+So can we please fix this regression quickly and workout a proper fix
+later? In the original patch there is no reason given, why this patch is
+necessary. With this revert I at least see a stable connection.
+
+Thanks,
+Soeren
+
