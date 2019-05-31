@@ -2,114 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21C2430AEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 10:59:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90F1630B03
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 11:03:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbfEaI7J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 04:59:09 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:50388 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726330AbfEaI7I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 04:59:08 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id B8D5F802CE; Fri, 31 May 2019 10:58:56 +0200 (CEST)
-Date:   Fri, 31 May 2019 10:59:06 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     pavel@ucw.cz
-Cc:     linux-kernel@vger.kernel.org,
-        Himanshu Madhani <hmadhani@marvell.com>,
-        Giridhar Malavali <gmalavali@marvell.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 075/276] scsi: qla2xxx: Fix a qla24xx_enable_msix()
- error path
-Message-ID: <20190531085905.GB19447@amd>
-References: <20190530030523.133519668@linuxfoundation.org>
- <20190530030531.119463640@linuxfoundation.org>
+        id S1727168AbfEaJDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 05:03:52 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:17633 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726649AbfEaJDw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 05:03:52 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id D00F7D2FB07C5677240E;
+        Fri, 31 May 2019 17:03:49 +0800 (CST)
+Received: from localhost.localdomain (10.67.165.24) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 31 May 2019 17:03:40 +0800
+From:   Yonglong Liu <liuyonglong@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
+        <yisen.zhuang@huawei.com>, <shiju.jose@huawei.com>
+Subject: [PATCH net] net: hns: Fix loopback test failed at copper ports
+Date:   Fri, 31 May 2019 16:59:50 +0800
+Message-ID: <1559293190-24600-1-git-send-email-liuyonglong@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="kORqDWCi7qDJ0mEj"
-Content-Disposition: inline
-In-Reply-To: <20190530030531.119463640@linuxfoundation.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
+X-Originating-IP: [10.67.165.24]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When doing a loopback test at copper ports, the serdes loopback
+and the phy loopback will fail, because of the adjust link had
+not finished, and phy not ready.
 
---kORqDWCi7qDJ0mEj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Adds sleep between adjust link and test process to fix it.
 
+Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
+---
+ drivers/net/ethernet/hisilicon/hns/hns_ethtool.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-On Wed 2019-05-29 20:03:53, Greg Kroah-Hartman wrote:
-> [ Upstream commit 24afabdbd0b3553963a2bbf465895492b14d1107 ]
->=20
-> Make sure that the allocated interrupts are freed if allocating memory for
-> the msix_entries array fails.
->=20
-> Cc: Himanshu Madhani <hmadhani@marvell.com>
-> Cc: Giridhar Malavali <gmalavali@marvell.com>
-> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-> Acked-by: Himanshu Madhani <hmadhani@marvell.com>
-> Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
+index ce15d23..188c3f6 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
+@@ -339,6 +339,7 @@ static int __lb_setup(struct net_device *ndev,
+ static int __lb_up(struct net_device *ndev,
+ 		   enum hnae_loop loop_mode)
+ {
++#define NIC_LB_TEST_WAIT_PHY_LINK_TIME 300
+ 	struct hns_nic_priv *priv = netdev_priv(ndev);
+ 	struct hnae_handle *h = priv->ae_handle;
+ 	int speed, duplex;
+@@ -365,6 +366,9 @@ static int __lb_up(struct net_device *ndev,
+ 
+ 	h->dev->ops->adjust_link(h, speed, duplex);
+ 
++	/* wait adjust link done and phy ready */
++	msleep(NIC_LB_TEST_WAIT_PHY_LINK_TIME);
++
+ 	return 0;
+ }
+ 
+-- 
+2.8.1
 
-> --- a/drivers/scsi/qla2xxx/qla_isr.c
-> +++ b/drivers/scsi/qla2xxx/qla_isr.c
-> @@ -3449,7 +3449,7 @@ qla24xx_enable_msix(struct qla_hw_data *ha, struct =
-rsp_que *rsp)
->  		ql_log(ql_log_fatal, vha, 0x00c8,
->  		    "Failed to allocate memory for ha->msix_entries.\n");
->  		ret =3D -ENOMEM;
-> -		goto msix_out;
-> +		goto free_irqs;
-
-Could we just do > +     pci_free_irq_vectors(ha->pdev); return
--ENOMEM; here? Going through two gotos just does not feel right.
-
-And yes, I'd replace msix_out with direct returns, too. gotos have
-value when there's cleanup to be done, but we are not doing any here.
-
-Thanks,
-								Pavel
-
->  	}
->  	ha->flags.msix_enabled =3D 1;
-> =20
-> @@ -3532,6 +3532,10 @@ qla24xx_enable_msix(struct qla_hw_data *ha, struct=
- rsp_que *rsp)
-> =20
->  msix_out:
->  	return ret;
-> +
-> +free_irqs:
-> +	pci_free_irq_vectors(ha->pdev);
-> +	goto msix_out;
->  }
-> =20
-
-Come on, that is nasty.=20
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---kORqDWCi7qDJ0mEj
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlzw7NkACgkQMOfwapXb+vI/GACgqIzAthEf6Dm5q/Fh/RYPwRU2
-ERkAoJeD7mh2WCy8aMSwO5QXuXj+upaf
-=dTH+
------END PGP SIGNATURE-----
-
---kORqDWCi7qDJ0mEj--
