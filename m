@@ -2,95 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 208973112A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 17:21:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE5AA31109
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 17:15:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726937AbfEaPVM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 11:21:12 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43935 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbfEaPVL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 11:21:11 -0400
-Received: by mail-pg1-f193.google.com with SMTP id f25so4220009pgv.10;
-        Fri, 31 May 2019 08:21:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+0Tr9vEtpNIU9gu0fEyXMYZNnfuGPbfVny8e35K7Kv0=;
-        b=qa2Has4hjqsc9E22UmpYbTt4OdiyMl8szg8dXRLUHkfhZsEAtiaTBRBsWMUpjvqqdQ
-         kJ0oj3H8MkAcWTEf5mXKFnGnPFlP6/mjyavNLJBLvwAnXccTiOmY05+EUnW3+o4cla3I
-         GfBcVDycUWmmb6RmWZjDbSk5uF96LLc7RXBv3QRRKiVV9dRTigdw0u6MOwPv1cKQKIKR
-         dcTBwCrLH/L9SeZ4kM5cwqKXFoA44SoEoB1/TcaJIDbWSnzUNamXH1IEqQYKHIDX4/Og
-         QTOQnX75e4Pzpz6/NbfmC3Vgs8SYDA0+g1M22HGdW/cXS+BBOg+oQtM7yqVAV5tlSmH5
-         aM7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+0Tr9vEtpNIU9gu0fEyXMYZNnfuGPbfVny8e35K7Kv0=;
-        b=Wfw1anoiFr6TiEyMlxK4cvW0YRl10rXHa6CNeRDYzN+z7/W49Cn0hnjaOmrz+QN5xD
-         Ku3NxZBGg8ervAMVaxj/P4Wi0cCGiMTXkCwfq0OhVjt4ZSFhCBkUrOmQbZ+t2JKgA7B8
-         kABH1+OVQZz2mY8fMj2A5rB51OlVKOHbEFp3SGih5EQ/oGEsN4fqeJWVCLkVn39/7DjZ
-         X5ILSMNbsl99FFYCWopI5D0JkQ0Y9j019PcOsVOplVHmMsWINtwN7qA4K+SVtmKG7JXR
-         25QZ+1ONplH0CnFPSCEg6y7md3rUUJSPe5byQc1lyyegFOubD2Ejj10ydUoIWtO9uy5V
-         wk8g==
-X-Gm-Message-State: APjAAAVu3xv0ufUPeeIha2A1c5ISjMTCtL3V5AoIQeUeWdD9cF5H847h
-        zkpsRy+OlTBLaA7N/IWbVC4=
-X-Google-Smtp-Source: APXvYqyAPFnlaHrqF/GZwnXik6QwrjBv7CSby7C0zENM6QriBeQFnaUvjKpMk1wBgbOVPKf+OKzpIQ==
-X-Received: by 2002:a63:1f04:: with SMTP id f4mr10131740pgf.423.1559316071156;
-        Fri, 31 May 2019 08:21:11 -0700 (PDT)
-Received: from localhost (c-73-222-71-142.hsd1.ca.comcast.net. [73.222.71.142])
-        by smtp.gmail.com with ESMTPSA id j97sm5832998pje.5.2019.05.31.08.21.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 31 May 2019 08:21:10 -0700 (PDT)
-Date:   Fri, 31 May 2019 08:21:07 -0700
-From:   Richard Cochran <richardcochran@gmail.com>
-To:     Vladimir Oltean <olteanv@gmail.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>
-Subject: Re: [PATCH net-next 0/5] PTP support for the SJA1105 DSA driver
-Message-ID: <20190531152107.24zux6grua3s6x22@localhost>
-References: <CA+h21hpjsC=ie5G7Gx3EcPpazyxze6X_k+8eC+vw7JBvEO2zNg@mail.gmail.com>
- <20190530143037.iky5kk3h4ssmec3f@localhost>
- <CA+h21hpp68AEEykxr8bJB=uJ+b0tg881Z7Ao_OfbTAXNxS8WgQ@mail.gmail.com>
- <20190530150557.iur7fruhyf5bs3qw@localhost>
- <CA+h21hrBwR4Sow7q0_rS1u2md1M4bSAJt8FO5+VLFiu9UGnvjA@mail.gmail.com>
- <20190531043417.6phscbpmo6krvxam@localhost>
- <CA+h21hp9DfW3wFy4YbHMU31rBHyrnUTdF4kKwX36h9vHOW2COw@mail.gmail.com>
- <20190531140841.j4f72rlojmaayqr5@localhost>
- <CA+h21hroywaij3gyO0u6v+GFVO2Fv_dP_a+L3oMGpQH8mQgJ5g@mail.gmail.com>
- <20190531151151.k3a2wdf5f334qmqh@localhost>
+        id S1726676AbfEaPPd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 11:15:33 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:51828 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726418AbfEaPPd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 11:15:33 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id D5854712A6994FC3F9D2;
+        Fri, 31 May 2019 23:15:26 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 31 May 2019 23:15:16 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     <linux-kernel@vger.kernel.org>
+CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Sudeep Dutt <sudeep.dutt@intel.com>,
+        Ashutosh Dixit <ashutosh.dixit@intel.com>,
+        "Arnd Bergmann" <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH] misc: mic: scif: fix double free of scif_dev
+Date:   Fri, 31 May 2019 23:23:24 +0800
+Message-ID: <20190531152324.20534-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190531151151.k3a2wdf5f334qmqh@localhost>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 31, 2019 at 08:11:51AM -0700, Richard Cochran wrote:
-> 
-> 1. When the driver receives a deferred PTP frame, save it into a
->    per-switch,port slot at the driver (not port) level.
-> 
-> 2. When the driver receives a META frame, match it to the
->    per-switch,port slot.  If there is a PTP frame in that slot, then
->    deliver it with the time stamp from the META frame.
+_scif_init() free scif_dev in the free_sdev erro path,
+but _scif_exit will free it again when module exit, it
+cause BUG_ON issue,
 
-Actually, since the switch guarantees strict ordering, you don't need
-multiple slots.  You only need to save one Rx'd PTP frame with its
-switch-id and port-id.
+  kernel BUG at mm/slub.c:3944!
+  invalid opcode: 0000 [#1] SMP KASAN PTI
 
-Thanks,
-Richard
+Set scif_dev to NULL in scif_destroy_scifdev() to fix it.
+
+Cc: Sudeep Dutt <sudeep.dutt@intel.com>
+Cc: Ashutosh Dixit <ashutosh.dixit@intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+---
+ drivers/misc/mic/scif/scif_main.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/misc/mic/scif/scif_main.c b/drivers/misc/mic/scif/scif_main.c
+index 36d847af1209..7f9ce0fe1e24 100644
+--- a/drivers/misc/mic/scif/scif_main.c
++++ b/drivers/misc/mic/scif/scif_main.c
+@@ -142,6 +142,7 @@ static int scif_setup_scifdev(void)
+ static void scif_destroy_scifdev(void)
+ {
+ 	kfree(scif_dev);
++	scif_dev = NULL;
+ }
+ 
+ static int scif_probe(struct scif_hw_dev *sdev)
+-- 
+2.20.1
+
