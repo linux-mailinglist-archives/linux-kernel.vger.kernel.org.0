@@ -2,94 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6073830C8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 12:30:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E607A30C94
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 12:31:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbfEaKaB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 06:30:01 -0400
-Received: from retiisi.org.uk ([95.216.213.190]:47934 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726233AbfEaKaB (ORCPT
+        id S1727112AbfEaKbh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 06:31:37 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:50287 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726233AbfEaKbh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 06:30:01 -0400
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 3143F634C7B;
-        Fri, 31 May 2019 13:29:56 +0300 (EEST)
-Received: from sailus by valkosipuli.localdomain with local (Exim 4.89)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1hWenM-0000JZ-90; Fri, 31 May 2019 13:29:56 +0300
-Date:   Fri, 31 May 2019 13:29:56 +0300
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Shuah Khan <shuah@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: avoid skipping MEDIA_PAD_FL_MUST_CONNECT logic
-Message-ID: <20190531102956.rd5q72yobbdwyut5@valkosipuli.retiisi.org.uk>
-References: <20190531080637.4341-1-nikita.yoush@cogentembedded.com>
+        Fri, 31 May 2019 06:31:37 -0400
+X-UUID: ad0d1c2b08554872854e3b038420a56c-20190531
+X-UUID: ad0d1c2b08554872854e3b038420a56c-20190531
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <ryder.lee@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 661529757; Fri, 31 May 2019 18:31:28 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 31 May 2019 18:31:27 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 31 May 2019 18:31:21 +0800
+Message-ID: <1559298681.3296.3.camel@mtkswgap22>
+Subject: Re: [PATCH 1/2] mt76: mt7615: enable support for mesh
+From:   Ryder Lee <ryder.lee@mediatek.com>
+To:     Lorenzo Bianconi <lorenzo@kernel.org>
+CC:     Felix Fietkau <nbd@nbd.name>,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        Roy Luo <royluo@google.com>, YF Luo <yf.luo@mediatek.com>,
+        Yiwei Chung <yiwei.chung@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Chih-Min Chen <chih-min.Chen@mediatek.com>,
+        <linux-wireless@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Date:   Fri, 31 May 2019 18:31:21 +0800
+In-Reply-To: <20190531100201.GA3527@localhost.localdomain>
+References: <7f167d09736652f81383991c971506630bbedacc.1559287432.git.ryder.lee@mediatek.com>
+         <20190531100201.GA3527@localhost.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190531080637.4341-1-nikita.yoush@cogentembedded.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nikita,
-
-On Fri, May 31, 2019 at 11:06:37AM +0300, Nikita Yushchenko wrote:
-> In the current code, __media_pipeline_start() skips check of
-> MEDIA_PAD_FL_MUST_CONNECT logic for entity not providing link_validate()
-> op.
+On Fri, 2019-05-31 at 12:02 +0200, Lorenzo Bianconi wrote:
+> > Enable NL80211_IFTYPE_MESH_POINT and add its path.
+> > 
+> > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> > ---
+> >  drivers/net/wireless/mediatek/mt76/mt7615/init.c | 6 ++++++
+> >  drivers/net/wireless/mediatek/mt76/mt7615/main.c | 1 +
+> >  drivers/net/wireless/mediatek/mt76/mt7615/mcu.c  | 5 ++++-
+> >  3 files changed, 11 insertions(+), 1 deletion(-)
+> > 
 > 
-> Fix that by checking for existence of link_validate() at different code
-> location.
+> [...]
 > 
-> Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-> ---
->  drivers/media/mc/mc-entity.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> > diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/main.c b/drivers/net/wireless/mediatek/mt76/mt7615/main.c
+> > index b0bb7cc12385..585e67fa2728 100644
+> > --- a/drivers/net/wireless/mediatek/mt76/mt7615/main.c
+> > +++ b/drivers/net/wireless/mediatek/mt76/mt7615/main.c
+> > @@ -37,6 +37,7 @@ static int get_omac_idx(enum nl80211_iftype type, u32 mask)
+> >  
+> >  	switch (type) {
+> >  	case NL80211_IFTYPE_AP:
+> > +	case NL80211_IFTYPE_MESH_POINT:
+> >  		/* ap use hw bssid 0 and ext bssid */
+> >  		if (~mask & BIT(HW_BSSID_0))
+> >  			return HW_BSSID_0;
+> > diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
+> > index 43f70195244c..8b8db526cb16 100644
+> > --- a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
+> > +++ b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
+> > @@ -754,6 +754,7 @@ int mt7615_mcu_set_bss_info(struct mt7615_dev *dev,
+> >  
+> >  	switch (vif->type) {
+> >  	case NL80211_IFTYPE_AP:
+> > +	case NL80211_IFTYPE_MESH_POINT:
+> >  		tx_wlan_idx = mvif->sta.wcid.idx;
+> >  		conn_type = CONNECTION_INFRA_AP;
 > 
-> diff --git a/drivers/media/mc/mc-entity.c b/drivers/media/mc/mc-entity.c
-> index a998a2e0ea1d..8b4912be30d1 100644
-> --- a/drivers/media/mc/mc-entity.c
-> +++ b/drivers/media/mc/mc-entity.c
-> @@ -449,9 +449,6 @@ __must_check int __media_pipeline_start(struct media_entity *entity,
->  		if (entity->stream_count > 1)
->  			continue;
->  
-> -		if (!entity->ops || !entity->ops->link_validate)
-> -			continue;
-> -
->  		bitmap_zero(active, entity->num_pads);
->  		bitmap_fill(has_no_links, entity->num_pads);
->  
-> @@ -479,6 +476,9 @@ __must_check int __media_pipeline_start(struct media_entity *entity,
->  			    !(link->flags & MEDIA_LNK_FL_ENABLED))
->  				continue;
->  
-> +			if (!entity->ops || !entity->ops->link_validate)
-> +				continue;
-> +
->  			ret = entity->ops->link_validate(link);
->  			if (ret < 0 && ret != -ENOIOCTLCMD) {
->  				dev_dbg(entity->graph_obj.mdev->dev,
+> Just out of curiosity, why not using CONNECTION_MESH_{AP,STA} here?
+> why not NETWORK_MESH?
 
-Thanks for the patch. This generally hasn't been an issue as drivers do
-implement link_validate function. But it still is a bug in the code.
+Actually the CONNECTION_MESH_{AP,STA} are useless and I will send v2 to
+remove them.
 
-The link validation function does not change during the loop. How about
-caching it locally and implementing a static nop variant you call in case
-there's nothing to theck, so there's no need to check for entity->ops and
-the entity->ops->link_validate separately on every iteration?
+> >  		break;
+> > @@ -968,7 +969,8 @@ int mt7615_mcu_add_wtbl(struct mt7615_dev *dev, struct ieee80211_vif *vif,
+> >  		.rx_wtbl = {
+> >  			.tag = cpu_to_le16(WTBL_RX),
+> >  			.len = cpu_to_le16(sizeof(struct wtbl_rx)),
+> > -			.rca1 = vif->type != NL80211_IFTYPE_AP,
+> > +			.rca1 = vif->type != (NL80211_IFTYPE_AP ||
+> > +					      NL80211_IFTYPE_MESH_POINT),
+> >  			.rca2 = 1,
+> >  			.rv = 1,
+> >  		},
+> > @@ -1042,6 +1044,7 @@ static void sta_rec_convert_vif_type(enum nl80211_iftype type, u32 *conn_type)
+> >  {
+> >  	switch (type) {
+> >  	case NL80211_IFTYPE_AP:
+> > +	case NL80211_IFTYPE_MESH_POINT:
+> >  		if (conn_type)
+> >  			*conn_type = CONNECTION_INFRA_STA;
+> >  		break;
+> 
+> same here.
+> 
+> Regards,
+> Lorenzo
+> 
+> > -- 
+> > 2.18.0
+> > 
 
--- 
-Kind regards,
 
-Sakari Ailus
