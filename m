@@ -2,56 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E61230AB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 10:55:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A988330AE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 10:57:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727056AbfEaIzH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 04:55:07 -0400
-Received: from foss.arm.com ([217.140.101.70]:48068 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726002AbfEaIzH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 04:55:07 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DB4D0341;
-        Fri, 31 May 2019 01:55:06 -0700 (PDT)
-Received: from [10.162.42.223] (p8cg001049571a15.blr.arm.com [10.162.42.223])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 18C9D3F59C;
-        Fri, 31 May 2019 01:55:03 -0700 (PDT)
-Subject: Re: [PATCH 4/4] arm64/mm: Drop vm_fault_t argument from
- __do_page_fault()
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>
-References: <1559133285-27986-1-git-send-email-anshuman.khandual@arm.com>
- <1559133285-27986-5-git-send-email-anshuman.khandual@arm.com>
- <20190530063459.GA2181@infradead.org>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <985b0d8f-2141-019b-8555-272eafc58ea3@arm.com>
-Date:   Fri, 31 May 2019 14:25:18 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727298AbfEaI5W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 04:57:22 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:55615 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726934AbfEaI5T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 04:57:19 -0400
+Received: from 79.184.255.225.ipv4.supernova.orange.pl (79.184.255.225) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.213)
+ id 4045aae7eaa9fce0; Fri, 31 May 2019 10:57:17 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v4] x86/power: Fix 'nosmt' vs. hibernation triple fault during resume
+Date:   Fri, 31 May 2019 10:57:17 +0200
+Message-ID: <5564116.e9OFvgDRbB@kreacher>
+In-Reply-To: <nycvar.YFH.7.76.1905311045240.1962@cbobk.fhfr.pm>
+References: <nycvar.YFH.7.76.1905282326360.1962@cbobk.fhfr.pm> <20190531051456.fzkvn62qlkf6wqra@treble> <nycvar.YFH.7.76.1905311045240.1962@cbobk.fhfr.pm>
 MIME-Version: 1.0
-In-Reply-To: <20190530063459.GA2181@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 05/30/2019 12:04 PM, Christoph Hellwig wrote:
-> On Wed, May 29, 2019 at 06:04:45PM +0530, Anshuman Khandual wrote:
->> __do_page_fault() is over complicated with multiple goto statements. This
->> cleans up code flow and while there drops the vm_fault_t argument.
+On Friday, May 31, 2019 10:47:21 AM CEST Jiri Kosina wrote:
+> On Fri, 31 May 2019, Josh Poimboeuf wrote:
 > 
-> There is no argument dropped anywhere, just a local variable.
+> > > I disagree with that from the backwards compatibility point of view.
+> > > 
+> > > I personally am quite frequently using differnet combinations of 
+> > > resumer/resumee kernels, and I've never been biten by it so far. I'd guess 
+> > > I am not the only one.
+> > > Fixmap sort of breaks that invariant.
+> > 
+> > Right now there is no backwards compatibility because nosmt resume is
+> > already broken.
 > 
+> Yeah, well, but that's "only" for nosmt kernels at least.
+> 
+> > For "future" backwards compatibility we could just define a hard-coded 
+> > reserved fixmap page address, adjacent to the vsyscall reserved address.
+> > 
+> > Something like this (not yet tested)?  Maybe we could also remove the
+> > resume_play_dead() hack?
+> 
+> Does it also solve cpuidle case? I have no overview what all the cpuidle 
+> drivers might be potentially doing in their ->enter_dead() callbacks. 
+> Rafael?
 
-You are right. Will fix both subject line and the commit message.
+There are just two of them, ACPI cpuidle and intel_idle, and they both should
+be covered.
+
+In any case, I think that this is the way to go here even though it may be somewhat
+problematic to start with.
+
+Cheers,
+Rafael
+
+
+
