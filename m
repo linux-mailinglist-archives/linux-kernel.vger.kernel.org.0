@@ -2,68 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE9ED30D45
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 13:21:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 800E930D46
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 13:23:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727172AbfEaLV2 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 31 May 2019 07:21:28 -0400
-Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:53626
-        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1726240AbfEaLV2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 07:21:28 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 449C4B46823;
-        Fri, 31 May 2019 11:19:35 +0000 (UTC)
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id zY76F5c8yqzG; Fri, 31 May 2019 11:19:34 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id A29C2B46DAB;
-        Fri, 31 May 2019 11:19:34 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id f11RYCZmCYqS; Fri, 31 May 2019 11:19:34 +0000 (UTC)
-Received: from [100.91.32.52] (unknown [106.197.219.163])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 1C410B46DD6;
-        Fri, 31 May 2019 11:19:26 +0000 (UTC)
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1726798AbfEaLW4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 07:22:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51444 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726002AbfEaLW4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 07:22:56 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 09B2EAD05;
+        Fri, 31 May 2019 11:22:55 +0000 (UTC)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: Alerta de correo
-To:     Recipients <alrodriguez@menpet.gob.ve>
-From:   =?utf-8?q?Administraci=C3=B3n_=3Calrodriguez=40menpet=2Egob=2Eve=3E?=@smspyt.cancun.gob.mx
-Date:   Fri, 31 May 2019 16:49:21 +0530
-Message-Id: <20190531111927.1C410B46DD6@smspyt.cancun.gob.mx>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 31 May 2019 13:22:54 +0200
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     azat@libevent.org, akpm@linux-foundation.org,
+        viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 07/13] epoll: call ep_add_event_to_uring() from
+ ep_poll_callback()
+In-Reply-To: <20190531095616.GD17637@hirez.programming.kicks-ass.net>
+References: <20190516085810.31077-1-rpenyaev@suse.de>
+ <20190516085810.31077-8-rpenyaev@suse.de>
+ <20190531095616.GD17637@hirez.programming.kicks-ass.net>
+Message-ID: <98971429dc36e8a2e3417af1744de2b2@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Estimado usuario de correo electrónico,
+On 2019-05-31 11:56, Peter Zijlstra wrote:
+> On Thu, May 16, 2019 at 10:58:04AM +0200, Roman Penyaev wrote:
+>> Each ep_poll_callback() is called when fd calls wakeup() on epfd.
+>> So account new event in user ring.
+>> 
+>> The tricky part here is EPOLLONESHOT.  Since we are lockless we
+>> have to be deal with ep_poll_callbacks() called in paralle, thus
+>> use cmpxchg to clear public event bits and filter out concurrent
+>> call from another cpu.
+>> 
+>> Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: Al Viro <viro@zeniv.linux.org.uk>
+>> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+>> Cc: linux-fsdevel@vger.kernel.org
+>> Cc: linux-kernel@vger.kernel.org
+>> 
+>> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+>> index 2f551c005640..55612da9651e 100644
+>> --- a/fs/eventpoll.c
+>> +++ b/fs/eventpoll.c
+>> @@ -1407,6 +1407,29 @@ struct file *get_epoll_tfile_raw_ptr(struct 
+>> file *file, int tfd,
+>>  }
+>>  #endif /* CONFIG_CHECKPOINT_RESTORE */
+>> 
+>> +/**
+>> + * Atomically clear public event bits and return %true if the old 
+>> value has
+>> + * public event bits set.
+>> + */
+>> +static inline bool ep_clear_public_event_bits(struct epitem *epi)
+>> +{
+>> +	__poll_t old, flags;
+>> +
+>> +	/*
+>> +	 * Here we race with ourselves and with ep_modify(), which can
+>> +	 * change the event bits.  In order not to override events updated
+>> +	 * by ep_modify() we have to do cmpxchg.
+>> +	 */
+>> +
+>> +	old = epi->event.events;
+>> +	do {
+>> +		flags = old;
+>> +	} while ((old = cmpxchg(&epi->event.events, flags,
+>> +				flags & EP_PRIVATE_BITS)) != flags);
+>> +
+>> +	return flags & ~EP_PRIVATE_BITS;
+>> +}
+> 
+> AFAICT epi->event.events also has normal writes to it, eg. in
+> ep_modify(). A number of architectures cannot handle concurrent normal
+> writes and cmpxchg() to the same variable.
 
-Este mensaje es de nuestro centro de mensajes de administración para todos los usuarios de nuestra cuenta de correo electrónico. Estamos eliminando el acceso a todos nuestros clientes de correo web. Su cuenta de correo electrónico se actualizará a una nueva y mejorada interfaz de usuario de correo web proporcionada por nuestro administrador tan pronto como este correo electrónico haya sido recibido.
+Yes, we race with the current function and with ep_modify().  Then, 
+ep_modify()
+should do something as the following:
 
-Descontinuaremos el uso de nuestras interfaces webmail Lite, para asegurarnos de que su libreta de direcciones de correo electrónico esté almacenada en nuestra base de datos, haga clic o copie y pegue el siguiente enlace en su navegador e ingrese su nombre de usuario y contraseña para actualizar su cuenta.
+-	epi->event.events = event->events
++	xchg(&epi->event.events, event->events);
 
-Si el clic no funciona, copie y pegue la URL a continuación en un navegador web para verificarlo.
+Is that ok?
 
-Haga clic en el enlace http://accountupdatebrodcaster.xtgem.com/ si el clic no funciona, copie y pegue en su navegador web y actualice su cuenta para que podamos transferir sus contactos a nuestra nueva base de datos de clientes de correo web.
+Just curious: what are these archs?
 
-¡Todos los correos electrónicos estarán seguros en esta transición! Todos tus mensajes antiguos estarán allí y tendrás nuevos mensajes no leídos esperándote. Fueron
-Seguro que te gustará la nueva y mejorada interfaz de correo web.
+Thanks.
 
-Si no cumple con este aviso, inmediatamente retiraremos el acceso a su cuenta de correo electrónico.
+--
+Roman
 
-Gracias por usar nuestro webmail.
 
-=============================================
-Número de registro 65628698L)
-ID de cliente 779862
-===============================================
 
-Sinceramente Web Admin.
-Correo electrónico Servicio al cliente 46569 Copyright c 2019 E! Inc. (Co
-Reg.No. 65628698L) Todos los derechos reservados.
