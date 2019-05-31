@@ -2,122 +2,212 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D1DB3107A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 16:46:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88CE731083
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 16:47:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbfEaOqs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 10:46:48 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36799 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726515AbfEaOqr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 10:46:47 -0400
-Received: by mail-pl1-f195.google.com with SMTP id d21so4119635plr.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 07:46:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=+oLbiZHvRS3KJUUhvyJO8fvkgdbxNQmutC3j5WyUYO0=;
-        b=ow1qafi/yDoy8hGQWMfwkPT9Czm8xE8VCHegc942/JfVLkxWoeAZTJ/r/KQszB4j79
-         lRAOGX/CGV0r7ulIhOSHWJ6PcOYCv+8EwodLCDnazKRw87eZoPFce7ssEr2Pohve5f1p
-         IiDGn6AWl6hxoL2jnoCm4qWaGJHEdkqnwZ0yZ+bjWFwxXZJbpkhJv+qDssNFzcEvkTzB
-         Bx8VVtmQhhuzpVLbCh4YGFTCq16QL2z+bfqzP4QzbkOPXDDLyrfMEb6s6tDf1nl7Td6c
-         Ou1To2DqffD5NV1BPsd1JpPLWaa70yEf/j1Uy+nQe7SqxZ9mklc5axPnkhAsewU4h9MT
-         Rkvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=+oLbiZHvRS3KJUUhvyJO8fvkgdbxNQmutC3j5WyUYO0=;
-        b=LovITmzhGfl8rOw8thcLgs739gqwyc2IuKlMo/dwRyZmwxlmZaHjlzJ/zIoLFgJPaK
-         bQbylkIf1Je6HDsQ53IkwEf7ynt28gQ6PRi5vWU6UIborxVPGzW6D4yGNeZyUxyeTWQh
-         /fsILJOuFRJbjUeR4k1PuymXStQoEKoMgNXCj0sjbUhgxBHJzKoWMxCDJbJ5/QV8t+RC
-         D7KL890H+scpA67P2TE0qd+H/hjQpffiIU4LK4joOsorHS8/xAJbuLVFZd0KRKku3ren
-         U95oPJJTbQG7eRJpNRejd1mAGHdgK9ONAHHinvzjt2PdqY0YDAHq6aIz1ORPruHBLl36
-         nmkg==
-X-Gm-Message-State: APjAAAWldpHExd8xOB26nj5EuW3JxAS/3QR0s1psvN+TwzG9Jbv224cD
-        wHPM4bNPbihrbnS2jkFau4OH7w==
-X-Google-Smtp-Source: APXvYqzgoVSATQWDxNKRHe+afQfSmp5S9GRT8jp3eK9h/gSeWzk5chGnKqzOJHwgZoZ+tfKJObuDEA==
-X-Received: by 2002:a17:902:7c15:: with SMTP id x21mr9799142pll.311.1559314006938;
-        Fri, 31 May 2019 07:46:46 -0700 (PDT)
-Received: from ?IPv6:2601:646:c200:1ef2:40a6:bfd8:6bf:bfbe? ([2601:646:c200:1ef2:40a6:bfd8:6bf:bfbe])
-        by smtp.gmail.com with ESMTPSA id l141sm13355299pfd.24.2019.05.31.07.46.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 May 2019 07:46:45 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v4] x86/power: Fix 'nosmt' vs. hibernation triple fault during resume
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16E227)
-In-Reply-To: <nycvar.YFH.7.76.1905311628330.1962@cbobk.fhfr.pm>
-Date:   Fri, 31 May 2019 07:46:44 -0700
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <B7AC83ED-3F11-42B9-8506-C842A5937B50@amacapital.net>
-References: <nycvar.YFH.7.76.1905282326360.1962@cbobk.fhfr.pm> <20190531051456.fzkvn62qlkf6wqra@treble> <nycvar.YFH.7.76.1905311045240.1962@cbobk.fhfr.pm> <5564116.e9OFvgDRbB@kreacher> <CALCETrUpseta+NrhVwzzVFTe-BkBHtDUJBO22ci3mAsVR+XOog@mail.gmail.com> <nycvar.YFH.7.76.1905311628330.1962@cbobk.fhfr.pm>
-To:     Jiri Kosina <jikos@kernel.org>
+        id S1726857AbfEaOrd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 10:47:33 -0400
+Received: from foss.arm.com ([217.140.101.70]:52792 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726421AbfEaOrc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 10:47:32 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BE3AC341;
+        Fri, 31 May 2019 07:47:31 -0700 (PDT)
+Received: from redmoon (unknown [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5DA8D3F5AF;
+        Fri, 31 May 2019 07:47:28 -0700 (PDT)
+Date:   Fri, 31 May 2019 15:47:18 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Hariprasad Kelam <hariprasad.kelam@gmail.com>,
+        ingoo Han <jingoohan1@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Yue Wang <yue.wang@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] drivers/pci/controller: fix warning PTR_ERR_OR_ZERO can
+ be used
+Message-ID: <20190531144710.GA9356@redmoon>
+References: <20190525085748.GA10926@hari-Inspiron-1545>
+ <20190527140952.GB7202@ulmo>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190527140952.GB7202@ulmo>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, May 27, 2019 at 04:09:52PM +0200, Thierry Reding wrote:
+> On Sat, May 25, 2019 at 02:27:48PM +0530, Hariprasad Kelam wrote:
+> > fix below warnings reported by coccichek
+> > 
+> > /drivers/pci/controller/pci-tegra.c:1132:1-3: WARNING: PTR_ERR_OR_ZERO
+> > can be used
+> 
+> This has been discussed many times before, but PTR_ERR_OR_ZERO is not
+> liked by everybody. Most of these are actually in place on purpose. One
+> of the reasons I hear most frequently cited in opposition to this macro
+> is that it complicates things when you need to add some new code in, so
+> PTR_ERR_OR_ZERO() becomes wrong and has to be changed. The original,
+> with the "return 0;" being explicit doesn't have that problem and you
+> can easily add things in between.
+> 
+> It's obviously up to Bjorn to decide whether he wants this, but I
+> vaguely remember discussing this particular instance with him before and
+> we both agreed that we didn't think this was worth it.
+
++1, patch dropped, thanks Hariprasad for reporting it anyway.
+
+Lorenzo
+
+> Perhaps it's time to make checkpatch not complain about this anymore? Or
+> at least make this not a WARNING.
+> 
+> Thierry
+> 
+> > ./drivers/pci/controller/dwc/pcie-qcom.c:703:1-3: WARNING:
+> > PTR_ERR_OR_ZERO can be used
+> > ./drivers/pci/controller/dwc/pci-meson.c:185:1-3: WARNING:
+> > PTR_ERR_OR_ZERO can be used
+> > ./drivers/pci/controller/dwc/pci-meson.c:262:1-3: WARNING:
+> > PTR_ERR_OR_ZERO can be used
+> > ./drivers/pci/controller/dwc/pcie-kirin.c:141:1-3: WARNING:
+> > PTR_ERR_OR_ZERO can be used
+> > ./drivers/pci/controller/dwc/pcie-kirin.c:177:1-3: WARNING:
+> > PTR_ERR_OR_ZERO can be used
+> > ./drivers/pci/controller/dwc/pci-exynos.c:95:1-3: WARNING:
+> > PTR_ERR_OR_ZERO can be used
+> > 
+> > Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+> > ---
+> >  drivers/pci/controller/dwc/pci-exynos.c | 4 +---
+> >  drivers/pci/controller/dwc/pci-meson.c  | 8 ++------
+> >  drivers/pci/controller/dwc/pcie-kirin.c | 8 ++------
+> >  drivers/pci/controller/dwc/pcie-qcom.c  | 4 +---
+> >  drivers/pci/controller/pci-tegra.c      | 4 +---
+> >  5 files changed, 7 insertions(+), 21 deletions(-)
+> > 
+> > diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
+> > index cee5f2f..b0b4849 100644
+> > --- a/drivers/pci/controller/dwc/pci-exynos.c
+> > +++ b/drivers/pci/controller/dwc/pci-exynos.c
+> > @@ -92,10 +92,8 @@ static int exynos5440_pcie_get_mem_resources(struct platform_device *pdev,
+> >  
+> >  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> >  	ep->mem_res->elbi_base = devm_ioremap_resource(dev, res);
+> > -	if (IS_ERR(ep->mem_res->elbi_base))
+> > -		return PTR_ERR(ep->mem_res->elbi_base);
+> >  
+> > -	return 0;
+> > +	return PTR_ERR_OR_ZERO(ep->mem_res->elbi_base);
+> >  }
+> >  
+> >  static int exynos5440_pcie_get_clk_resources(struct exynos_pcie *ep)
+> > diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
+> > index e35e9ea..1ca78c2 100644
+> > --- a/drivers/pci/controller/dwc/pci-meson.c
+> > +++ b/drivers/pci/controller/dwc/pci-meson.c
+> > @@ -182,10 +182,8 @@ static int meson_pcie_get_mems(struct platform_device *pdev,
+> >  
+> >  	/* Meson SoC has two PCI controllers use same phy register*/
+> >  	mp->mem_res.phy_base = meson_pcie_get_mem_shared(pdev, mp, "phy");
+> > -	if (IS_ERR(mp->mem_res.phy_base))
+> > -		return PTR_ERR(mp->mem_res.phy_base);
+> >  
+> > -	return 0;
+> > +	return PTR_ERR_OR_ZERO(mp->mem_res.phy_base);
+> >  }
+> >  
+> >  static void meson_pcie_power_on(struct meson_pcie *mp)
+> > @@ -259,10 +257,8 @@ static int meson_pcie_probe_clocks(struct meson_pcie *mp)
+> >  		return PTR_ERR(res->general_clk);
+> >  
+> >  	res->clk = meson_pcie_probe_clock(dev, "pcie", 0);
+> > -	if (IS_ERR(res->clk))
+> > -		return PTR_ERR(res->clk);
+> >  
+> > -	return 0;
+> > +	return PTR_ERR_OR_ZERO(res->clk);
+> >  }
+> >  
+> >  static inline void meson_elb_writel(struct meson_pcie *mp, u32 val, u32 reg)
+> > diff --git a/drivers/pci/controller/dwc/pcie-kirin.c b/drivers/pci/controller/dwc/pcie-kirin.c
+> > index 9b59929..87cfdb4 100644
+> > --- a/drivers/pci/controller/dwc/pcie-kirin.c
+> > +++ b/drivers/pci/controller/dwc/pcie-kirin.c
+> > @@ -138,10 +138,8 @@ static long kirin_pcie_get_clk(struct kirin_pcie *kirin_pcie,
+> >  		return PTR_ERR(kirin_pcie->apb_sys_clk);
+> >  
+> >  	kirin_pcie->pcie_aclk = devm_clk_get(dev, "pcie_aclk");
+> > -	if (IS_ERR(kirin_pcie->pcie_aclk))
+> > -		return PTR_ERR(kirin_pcie->pcie_aclk);
+> >  
+> > -	return 0;
+> > +	return PTR_ERR_OR_ZERO(kirin_pcie->pcie_aclk);
+> >  }
+> >  
+> >  static long kirin_pcie_get_resource(struct kirin_pcie *kirin_pcie,
+> > @@ -174,10 +172,8 @@ static long kirin_pcie_get_resource(struct kirin_pcie *kirin_pcie,
+> >  
+> >  	kirin_pcie->sysctrl =
+> >  		syscon_regmap_lookup_by_compatible("hisilicon,hi3660-sctrl");
+> > -	if (IS_ERR(kirin_pcie->sysctrl))
+> > -		return PTR_ERR(kirin_pcie->sysctrl);
+> >  
+> > -	return 0;
+> > +	return PTR_ERR_OR_ZERO(kirin_pcie->sysctrl);
+> >  }
+> >  
+> >  static int kirin_pcie_phy_init(struct kirin_pcie *kirin_pcie)
+> > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> > index 0ed235d..6c421e6 100644
+> > --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> > @@ -700,10 +700,8 @@ static int qcom_pcie_get_resources_2_4_0(struct qcom_pcie *pcie)
+> >  		return PTR_ERR(res->ahb_reset);
+> >  
+> >  	res->phy_ahb_reset = devm_reset_control_get_exclusive(dev, "phy_ahb");
+> > -	if (IS_ERR(res->phy_ahb_reset))
+> > -		return PTR_ERR(res->phy_ahb_reset);
+> >  
+> > -	return 0;
+> > +	return PTR_ERR_OR_ZERO(res->phy_ahb_reset);
+> >  }
+> >  
+> >  static void qcom_pcie_deinit_2_4_0(struct qcom_pcie *pcie)
+> > diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
+> > index 464ba25..3cd5069 100644
+> > --- a/drivers/pci/controller/pci-tegra.c
+> > +++ b/drivers/pci/controller/pci-tegra.c
+> > @@ -1129,10 +1129,8 @@ static int tegra_pcie_resets_get(struct tegra_pcie *pcie)
+> >  		return PTR_ERR(pcie->afi_rst);
+> >  
+> >  	pcie->pcie_xrst = devm_reset_control_get_exclusive(dev, "pcie_x");
+> > -	if (IS_ERR(pcie->pcie_xrst))
+> > -		return PTR_ERR(pcie->pcie_xrst);
+> >  
+> > -	return 0;
+> > +	return PTR_ERR_OR_ZERO(pcie->pcie_xrst);
+> >  }
+> >  
+> >  static int tegra_pcie_phys_get_legacy(struct tegra_pcie *pcie)
+> > -- 
+> > 2.7.4
+> > 
 
 
-> On May 31, 2019, at 7:31 AM, Jiri Kosina <jikos@kernel.org> wrote:
->=20
->> On Fri, 31 May 2019, Andy Lutomirski wrote:
->>=20
->> 2. Put the CPU all the way to sleep by sending it an INIT IPI.
->>=20
->> Version 2 seems very simple and robust.  Is there a reason we can't do
->> it?  We obviously don't want to do it for normal offline because it
->> might be a high-power state, but a cpu in the wait-for-SIPI state is
->> not going to exit that state all by itself.
->>=20
->> The patch to implement #2 should be short and sweet as long as we are
->> careful to only put genuine APs to sleep like this.  The only downside
->> I can see is that an new kernel resuming and old kernel that was
->> booted with nosmt is going to waste power, but I don't think that's a
->> showstopper.
->=20
-> Well, if *that* is not an issue, than the original 3-liner that just=20
-> forces them to 'hlt' [1] would be good enough as well.
->=20
->=20
-
-Seems okay to me as long as we=E2=80=99re confident we won=E2=80=99t get a s=
-purious interrupt.
-
-In general, I don=E2=80=99t think we=E2=80=99re ever suppose to rely on mwai=
-t *staying* asleep.  As I understand it, mwait can wake up whenever it wants=
-, and the only real guarantee we have is that the CPU makes some effort to s=
-tay asleep until an interrupt is received or the monitor address is poked.
-
-As a trivial example, if we are in a VM and we get scheduled out at any poin=
-t between MONITOR and the eventual intentional wakeup, we=E2=80=99re toast. S=
-ame if we get an SMI due to bad luck or due to a thermal event happening sho=
-rtly after pushing the power button to resume from hibernate.
-
-For that matter, what actually happens if we get an SMI while halted?  Does R=
-SM go directly to sleep or does it re-fetch the HLT?
-
-It seems to me that we should just avoid the scenario where we have IP point=
-ed to a bogus address and we just cross our fingers and hope the CPU doesn=E2=
-=80=99t do anything.
-
-I think that, as a short term fix, we should use HLT and, as a long term fix=
-, we should either keep the CPU state fully valid or we should hard-offline t=
-he CPU using documented mechanisms, e.g. the WAIT-for-SIPI state.=
