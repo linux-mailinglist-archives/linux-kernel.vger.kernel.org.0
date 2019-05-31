@@ -2,83 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91A30306DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 05:07:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFE3A30703
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 05:32:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726768AbfEaDHd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 23:07:33 -0400
-Received: from smtprelay0092.hostedemail.com ([216.40.44.92]:37136 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726418AbfEaDHd (ORCPT
+        id S1726676AbfEaDcU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 23:32:20 -0400
+Received: from ZXSHCAS1.zhaoxin.com ([203.148.12.81]:38650 "EHLO
+        ZXSHCAS1.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726487AbfEaDcU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 23:07:33 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 721EB18029DB3;
-        Fri, 31 May 2019 03:07:31 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 30,2,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3870:3872:4321:4605:5007:6119:10004:10400:10848:11232:11233:11658:11914:12043:12296:12555:12740:12760:12895:12986:13069:13311:13357:13439:14181:14659:14721:21080:21451:21505:21627:30054:30070:30079:30091,0,RBL:172.58.75.234:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
-X-HE-Tag: knot32_72f49817301f
-X-Filterd-Recvd-Size: 2415
-Received: from XPS-9350 (unknown [172.58.75.234])
-        (Authenticated sender: joe@perches.com)
-        by omf11.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 31 May 2019 03:07:29 +0000 (UTC)
-Message-ID: <e41c7ff9ae38363fe8c32346fea0f7efe551d162.camel@perches.com>
-Subject: Re: [PATCH v2] checkpatch.pl: Warn on duplicate sysctl local
- variable
-From:   Joe Perches <joe@perches.com>
-To:     Matteo Croce <mcroce@redhat.com>, linux-kernel@vger.kernel.org,
-        Andy Whitcroft <apw@canonical.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Aaron Tomlin <atomlin@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Date:   Thu, 30 May 2019 20:06:58 -0700
-In-Reply-To: <20190531011227.21181-1-mcroce@redhat.com>
-References: <20190531011227.21181-1-mcroce@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 30 May 2019 23:32:20 -0400
+X-Greylist: delayed 904 seconds by postgrey-1.27 at vger.kernel.org; Thu, 30 May 2019 23:32:18 EDT
+Received: from zxbjmbx3.zhaoxin.com (10.29.252.165) by ZXSHCAS1.zhaoxin.com
+ (10.28.252.161) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Fri, 31 May
+ 2019 11:17:09 +0800
+Received: from zxbjmbx3.zhaoxin.com (10.29.252.165) by zxbjmbx3.zhaoxin.com
+ (10.29.252.165) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Fri, 31 May
+ 2019 11:17:08 +0800
+Received: from zxbjmbx3.zhaoxin.com ([fe80::57b:6f00:3193:d8a6]) by
+ zxbjmbx3.zhaoxin.com ([fe80::57b:6f00:3193:d8a6%8]) with mapi id
+ 15.01.1261.035; Fri, 31 May 2019 11:17:08 +0800
+From:   David Wang <DavidWang@zhaoxin.com>
+To:     "Raj, Ashok" <ashok.raj@intel.com>,
+        Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
+CC:     "tipbot@zytor.com" <tipbot@zytor.com>, "bp@suse.de" <bp@suse.de>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tip-commits@vger.kernel.org" 
+        <linux-tip-commits@vger.kernel.org>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
+Subject: =?gb2312?B?tPC4tDogtPC4tDogUmU6IFt0aXA6eDg2L3VyZ2VudF0geDg2L21jZTogRW5z?=
+ =?gb2312?B?dXJlIG9mZmxpbmUgQ1BVcyBkb24nIHQgcGFydGljaXBhdGUgaW4gcmVuZGV6?=
+ =?gb2312?Q?vous_process?=
+Thread-Topic: =?gb2312?B?tPC4tDogUmU6IFt0aXA6eDg2L3VyZ2VudF0geDg2L21jZTogRW5zdXJlIG9m?=
+ =?gb2312?B?ZmxpbmUgQ1BVcyBkb24nIHQgcGFydGljaXBhdGUgaW4gcmVuZGV6dm91cyBw?=
+ =?gb2312?Q?rocess?=
+Thread-Index: AdUWlGl+Ivql5y3zT0ybuVHbqcI6gAAJtEFgAAMVQgAAJY7k0A==
+Date:   Fri, 31 May 2019 03:17:07 +0000
+Message-ID: <9907ff256ff74f65aff89255bae3b92f@zhaoxin.com>
+References: <985acf114ab245fbab52caabf03bd280@zhaoxin.com>
+ <20190530171044.GA18559@araj-mobl1.jf.intel.com>
+In-Reply-To: <20190530171044.GA18559@araj-mobl1.jf.intel.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.29.24.48]
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-05-31 at 03:12 +0200, Matteo Croce wrote:
-> Commit 6a33853c5773 ("proc/sysctl: add shared variables for range check")
-> adds some shared const variables to be used instead of a local copy in
-> each source file.
-> Warn when a chunk duplicates one of these values in a ctl_table struct:
-> 
->     $ scripts/checkpatch.pl 0001-test-commit.patch
->     WARNING: duplicated sysctl range checking value 'zero', consider using the shared one in include/linux/sysctl.h
->     #27: FILE: arch/arm/kernel/isa.c:48:
->     +               .extra1         = &zero,
-> 
->     WARNING: duplicated sysctl range checking value 'int_max', consider using the shared one in include/linux/sysctl.h
->     #28: FILE: arch/arm/kernel/isa.c:49:
->     +               .extra2         = &int_max,
-> 
->     total: 0 errors, 2 warnings, 14 lines checked
-> 
-> Signed-off-by: Matteo Croce <mcroce@redhat.com>
-> ---
->  scripts/checkpatch.pl | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index 342c7c781ba5..629c31435487 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -6639,6 +6639,12 @@ sub process {
->  				     "unknown module license " . $extracted_string . "\n" . $herecurr);
->  			}
->  		}
-> +
-> +# check for sysctl duplicate constants
-> +		if ($line =~ /\.extra[12]\s*=\s*&(zero|one|int_max|max_int)\b/) {
-
-why max_int, there isn't a single use of it in the kernel ?
-
-
+PiAtLS0tLU9yaWdpbmFsIE1haWwtLS0tLQ0KPiBTZW5kZXI6IFJhaiwgQXNob2sgPGFzaG9rLnJh
+akBpbnRlbC5jb20+DQo+IFRpbWU6IDIwMTkuMDUuMzEgMToxMQ0KPiBUbyA6IFRvbnkgVyBXYW5n
+LW9jIDxUb255V1dhbmctb2NAemhhb3hpbi5jb20+DQo+IENDOiB0aXBib3RAenl0b3IuY29tOyBi
+cEBzdXNlLmRlOyBocGFAenl0b3IuY29tOw0KPiBsaW51eC1lZGFjQHZnZXIua2VybmVsLm9yZzsg
+bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsNCj4gbGludXgtdGlwLWNvbW1pdHNAdmdlci5r
+ZXJuZWwub3JnOyBtaW5nb0BrZXJuZWwub3JnOyBwZXRlcnpAaW5mcmFkZWFkLm9yZzsNCj4gc3Rh
+YmxlQHZnZXIua2VybmVsLm9yZzsgdGdseEBsaW51dHJvbml4LmRlOyB0b255Lmx1Y2tAaW50ZWwu
+Y29tOw0KPiB0b3J2YWxkc0BsaW51eC1mb3VuZGF0aW9uLm9yZzsgRGF2aWQgV2FuZyA8RGF2aWRX
+YW5nQHpoYW94aW4uY29tPjsgQXNob2sNCj4gUmFqIDxhc2hvay5yYWpAaW50ZWwuY29tPg0KPiBU
+b3BpYzogUmU6IFJlOiBSZTogW3RpcDp4ODYvdXJnZW50XSB4ODYvbWNlOiBFbnN1cmUgb2ZmbGlu
+ZSBDUFVzIGRvbicgdA0KPiBwYXJ0aWNpcGF0ZSBpbiByZW5kZXp2b3VzIHByb2Nlc3MNCj4gDQo+
+IE9uIFRodSwgTWF5IDMwLCAyMDE5IGF0IDA5OjEzOjM5QU0gKzAwMDAsIFRvbnkgVyBXYW5nLW9j
+IHdyb3RlOg0KPiA+IE9uIFRodSwgTWF5IDMwLCAyMDE5LCBUb255IFcgV2FuZy1vYyB3cm90ZToN
+Cj4gPiA+IEhpIEFzaG9rLA0KPiA+ID4gSSBoYXZlIHR3byBxdWVzdGlvbnMgYWJvdXQgdGhpcyBw
+YXRjaCwgY291bGQgeW91IGhlbHAgdG8gY2hlY2s6DQo+ID4gPg0KPiA+ID4gMSwgZm9yIGJyb2Fk
+Y2FzdCAjTUMgZXhjZXB0aW9ucywgdGhpcyBwYXRjaCBzZWVtcyByZXF1aXJlICNNQw0KPiA+ID4g
+ZXhjZXB0aW9uIGVycm9ycyBzZXQgTUNHX1NUQVRVU19SSVBWID0gMS4NCj4gPiA+IEJ1dCBmb3Ig
+SW50ZWwgQ1BVLCBzb21lICNNQyBleGNlcHRpb24gZXJyb3JzIHNldCBNQ0dfU1RBVFVTX1JJUFYg
+PSAwDQo+ID4gPiAobGlrZSAiUmVjb3ZlcmFibGUtbm90LWNvbnRpbnVhYmxlIFNSQVIgVHlwZSIg
+RXJyb3JzKSwgZm9yIHRoZXNlDQo+ID4gPiBlcnJvcnMgdGhlIHBhdGNoIGRvZXNuJ3Qgc2VlbSB0
+byB3b3JrLCBpcyB0aGF0IG9rYXk/DQo+ID4gPg0KPiA+ID4gMiwgZm9yIExNQ0UgZXhjZXB0aW9u
+cywgdGhpcyBwYXRjaCBzZWVtcyByZXF1aXJlICNNQyBleGNlcHRpb24NCj4gPiA+IGVycm9ycyBz
+ZXQgTUNHX1NUQVRVU19SSVBWID0gMCB0byBtYWtlIHN1cmUgTE1DRSBiZSBoYW5kbGVkIG5vcm1h
+bGx5DQo+ID4gPiBldmVuIG9uIG9mZmxpbmUgQ1BVLg0KPiA+ID4gRm9yIExNQ0UgZXJyb3JzIHNl
+dCBNQ0dfU1RBVVNfUklQViA9IDEsIHRoZSBwYXRjaCBwcmV2ZW50cyBvZmZsaW5lDQo+ID4gPiBD
+UFUgaGFuZGxlIHRoZXNlIExNQ0UgZXJyb3JzLCBpcyB0aGF0IG9rYXk/DQo+ID4gPg0KPiA+DQo+
+ID4gTW9yZSBzcGVjaWZpY2FsbHksIHRoaXMgcGF0Y2ggc2VlbXMgcmVxdWlyZSAjTUMgZXhjZXB0
+aW9ucyBtZWV0IHRoZQ0KPiA+IGNvbmRpdGlvbiAiTUNHX1NUQVRVU19SSVBWIF4gTUNHX1NUQVRV
+U19MTUNFUyA9PSAxIjsgQnV0IG9uIGEgWGVvbg0KPiA+IFg1NjUwIG1hY2hpbmUgKFNNUCksDQo+
+IA0KPiBUaGUgb2ZmbGluZSBDUFUgd2lsbCBuZXZlciBnZXQgYSBMTUNFPTEsIHNpbmNlIHRob3Nl
+IG9ubHkgaGFwcGVuIG9uIHRoZSBDUFUNCj4gdGhhdCdzIGRvaW5nIGFjdGl2ZSB3b3JrLiBPZmZs
+aW5lIENQVXMganVzdCBzaXR0aW5nIGluIGlkbGUuDQpTbywgZm9yIGludGVsIENQVSwgTE1DRSBp
+cyBvbmx5IGZvciBUaHJlYWQgbGV2ZWwob3IgY29yZSBsZXZlbCkgZXJyb3I/IElmIG5vdCwgc3Vw
+cG9zZSAyIHRocmVhZHMNCnNoYXJlIGxldmVsLTIgY2FjaGUuIEFuZCB0aHJlYWQgMCBpcyBhY3Rp
+dmUsIHRocmVhZCAxIHdhcyBvZmZsaW5lZCBieSBTVy4gV2hlbiBNQ0UgZm9yIHRoaXMgbGV2ZWwt
+Mg0KY2FjaGUgb2NjdXJyZWQsIHRocmVhZCAxIHdpbGwgYmUgYWN0aXZlLiBXaGVuIHRocmVhZCAx
+IHJlYWQgbWNnc3RhdHVzLmxtY2UsIHRoZSByZXN1bHQgd2lsbCBiZSBhbHdheXMgMD8NCg0KVGhh
+bmtzLg0KPiANCj4gVGhlIHNwZWNpZmljIGVycm9yIGhlcmUgaXMgYSBQQ0M9MSwgc28gaXJyZXNw
+ZWN0aXZlIG9mIHdoYXQgaGFwcGVucyBXZSBkbyBjYXB0dXJlDQo+IHRoZSBlcnJvcnMgaW4gdGhl
+IHBlci1jcHUgbG9nLCBhbmQga2VybmVsIHdvdWxkIHBhbmljLg0KPiANCj4gV2hhdCBzcGVjaWZp
+Y2FsbHkgdGhpcyBwYXRjaCB0cmllcyB0byBhY2hpZXZlIGlzIHRvIGxlYXZlIGFuIGVycm9yIHNp
+dHRpbmcgd2l0aA0KPiBNQ0ctU1RBVFVTLk1DSVA9MSBhbmQgYW5vdGhlciByZWNvdmVyYWJsZSBl
+cnJvciB3b3VsZCBzaHV0IHRoZSBzeXN0ZW0NCj4gZG93bS4NCj4gDQo+IEkgZG9uJ3Qgc2VlIGFu
+eXRoaW5nIHdyb25nIHdpdGggd2hhdCB0aGlzIHBhdGNoIGRvZXMuLg0KPiANCj4gPiAiRGF0YSBD
+QUNIRSBMZXZlbC0yIEdlbmVyaWMgRXJyb3IiIGRvZXMgbm90IG1lZXQgdGhpcyBjb25kaXRpb24u
+DQo+ID4NCj4gPiBJIGdvdCBiZWxvdyBtZXNzYWdlIGZyb206DQo+ID4gaHR0cHM6Ly93d3cuY2Vu
+dG9zLm9yZy9mb3J1bXMvdmlld3RvcGljLnBocD9wPTI5Mjc0Mg0KPiA+DQo+ID4gSGFyZHdhcmUg
+ZXZlbnQuIFRoaXMgaXMgbm90IGEgc29mdHdhcmUgZXJyb3IuDQo+ID4gTUNFIDANCj4gPiBDUFUg
+NCBCQU5LIDYgVFNDIGI3MDY1ZWVhYTE4YjANCj4gPiBUSU1FIDE1NDU2NDM2MDMgTW9uIERlYyAy
+NCAxMDoyNjo0MyAyMDE4IE1DRyBzdGF0dXM6TUNJUCBNQ2kgc3RhdHVzOg0KPiA+IFVuY29ycmVj
+dGVkIGVycm9yDQo+ID4gRXJyb3IgZW5hYmxlZA0KPiA+IFByb2Nlc3NvciBjb250ZXh0IGNvcnJ1
+cHQNCj4gPiBNQ0E6IERhdGEgQ0FDSEUgTGV2ZWwtMiBHZW5lcmljIEVycm9yDQo+ID4gU1RBVFVT
+IGIyMDAwMDAwODAwMDAxMDYgTUNHU1RBVFVTIDQNCj4gPiBNQ0dDQVAgMWMwOSBBUElDSUQgNCBT
+T0NLRVRJRCAwDQo+ID4gQ1BVSUQgVmVuZG9yIEludGVsIEZhbWlseSA2IE1vZGVsIDQ0DQo+ID4N
+Cj4gPiA+IFRoYW5rcw0KPiA+ID4gVG9ueSBXIFdhbmctb2MNCg==
