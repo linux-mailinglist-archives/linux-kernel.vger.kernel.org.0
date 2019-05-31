@@ -2,77 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9988305DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 02:44:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DCAF305E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 02:50:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726583AbfEaAoT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 20:44:19 -0400
-Received: from mail-pl1-f169.google.com ([209.85.214.169]:33246 "EHLO
-        mail-pl1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726029AbfEaAoS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 20:44:18 -0400
-Received: by mail-pl1-f169.google.com with SMTP id g21so3259305plq.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 17:44:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=pjwii2Brt6xBSvnEhlUw9zNfgBaud+bUpP81y7elYvE=;
-        b=gTxizZXBja6W+65pLwkqK5NdinqbCGNOQ2cqLq+phnhxipCCbStvCBzm8gTVxhMJl4
-         gb4hdeabjxPG35YWiwUM8KCuwL7WlXGBWiRVHCJ7K+/0fgiiUniJ50zU2aJwkwkN2WxZ
-         Yh2kRldOVf7uxz+T3PVPsw9rD+3QidYAQX6/xdgelQyq5i7vpLJXY78Pp0ND8zvwZLo+
-         QlrERKMK8lhlHnP638GJ3XiCA1vJ8EElrYSlalAu38L5p/IoNa8rdcexn7OfUT3ePz89
-         HUWCtH+aCYAY11LGYjnumt/4mvovZzrzqxMXSloKiMAteN0C/4I9WgxFaiPMSYhklrNJ
-         /Bgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pjwii2Brt6xBSvnEhlUw9zNfgBaud+bUpP81y7elYvE=;
-        b=OpD16mLurFO806gfGbv/YQwWOa+oxfJI/6FzkwE9It5CCnhWgcFwY/ilYJ0tBhaeZ1
-         v8JiUdJDzhs+pdOUxyh+urBh4t069c5L20mmjfEUSJqL+r7ssuXugO4JifDpKXn5dNUz
-         EhNia9Dg+nAqZn192hWNEk28ZopX/9wh6dLIYQO6uBY/IHOfRMbm5yJmGtxSPu8mYbNP
-         c8Eirmas5IX9q+UO8gpbhgfOvWoZhf6h7rVIkkPSbUqOa9NNzk9AQnK8nQPCoVIsQNq3
-         2HMFJRdZls+xEjHfQXNAJG92GUwwqJDMhQmFHcA0+CvxFeMmVnpHEnhdv9yRvB7+6k7I
-         eV1Q==
-X-Gm-Message-State: APjAAAUFy+BMpycaEJqES5WmuEXKf9rfz5+hwp/I6PlicLKfc22vmLwI
-        FzR2K7ItbasOMEE1RVkJXgM=
-X-Google-Smtp-Source: APXvYqylgEoZaxBsuYfrywx4mBS5rVGmwnIH23UDrqpIkPpDOhikd9YwQuznSYdzCo5BNwB7tyz9FQ==
-X-Received: by 2002:a17:902:2d:: with SMTP id 42mr6330841pla.34.1559263458100;
-        Thu, 30 May 2019 17:44:18 -0700 (PDT)
-Received: from zhanggen-UX430UQ ([66.42.35.75])
-        by smtp.gmail.com with ESMTPSA id d9sm3460684pgj.34.2019.05.30.17.44.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 May 2019 17:44:17 -0700 (PDT)
-Date:   Fri, 31 May 2019 08:44:05 +0800
-From:   Gen Zhang <blackgod016574@gmail.com>
-To:     Mike Snitzer <snitzer@redhat.com>
-Cc:     Bart Van Assche <bvanassche@acm.org>, dm-devel@redhat.com,
-        agk@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: dm-init: fix 2 incorrect use of kstrndup()
-Message-ID: <20190531004405.GA3090@zhanggen-UX430UQ>
-References: <20190529013320.GA3307@zhanggen-UX430UQ>
- <fcf2c3c0-e479-9e74-59d5-79cd2a0bade6@acm.org>
- <20190529152443.GA4076@zhanggen-UX430UQ>
- <20190530161103.GA30026@redhat.com>
+        id S1726643AbfEaAur (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 20:50:47 -0400
+Received: from mga12.intel.com ([192.55.52.136]:42235 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726131AbfEaAur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 20:50:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 May 2019 17:50:46 -0700
+X-ExtLoop1: 1
+Received: from joy-optiplex-7040.sh.intel.com ([10.239.13.9])
+  by orsmga001.jf.intel.com with ESMTP; 30 May 2019 17:50:40 -0700
+From:   Yan Zhao <yan.y.zhao@intel.com>
+To:     intel-gvt-dev@lists.freedesktop.org
+Cc:     aik@ozlabs.ru, Zhengxiao.zx@alibaba-inc.com,
+        shuangtai.tst@alibaba-inc.com, qemu-devel@nongnu.org,
+        eauger@redhat.com, yi.l.liu@intel.com, ziye.yang@intel.com,
+        mlevitsk@redhat.com, pasic@linux.ibm.com, felipe@nutanix.com,
+        changpeng.liu@intel.com, Ken.Xue@amd.com,
+        jonathan.davies@nutanix.com, shaopeng.he@intel.com,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        libvir-list@redhat.com, alex.williamson@redhat.com,
+        eskultet@redhat.com, dgilbert@redhat.com, cohuck@redhat.com,
+        kevin.tian@intel.com, zhenyuw@linux.intel.com,
+        zhi.a.wang@intel.com, cjia@nvidia.com, kwankhede@nvidia.com,
+        berrange@redhat.com, dinechin@redhat.com,
+        Yan Zhao <yan.y.zhao@intel.com>
+Subject: [PATCH v4 0/2] introduction of migration_version attribute for VFIO live migration
+Date:   Thu, 30 May 2019 20:44:38 -0400
+Message-Id: <20190531004438.24528-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190530161103.GA30026@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Yes, it should have the tags Bart suggested.
-> 
-> I'll take care it.
-> 
-> Thanks,
-> Mike
-Thanks for your reply, and please keep me informed if it is applied.
+This patchset introduces a migration_version attribute under sysfs of VFIO
+Mediated devices.
 
-Thanks
-Gen
+This migration_version attribute is used to check migration compatibility
+between two mdev devices of the same mdev type.
+
+Patch 1 defines migration_version attribute in
+Documentation/vfio-mediated-device.txt
+
+Patch 2 uses GVT as an example to show how to expose migration_version
+attribute and check migration compatibility in vendor driver.
+
+v4:
+1. fixed indentation/spell errors, reworded several error messages
+2. added a missing memory free for error handling in patch 2
+
+v3:
+1. renamed version to migration_version
+2. let errno to be freely defined by vendor driver
+3. let checking mdev_type be prerequisite of migration compatibility check
+4. reworded most part of patch 1
+5. print detailed error log in patch 2 and generate migration_version
+string at init time
+
+v2:
+1. renamed patched 1
+2. made definition of device version string completely private to vendor
+driver
+3. reverted changes to sample mdev drivers
+4. described intent and usage of version attribute more clearly.
+
+
+Yan Zhao (2):
+  vfio/mdev: add migration_version attribute for mdev device
+  drm/i915/gvt: export migration_version to mdev sysfs for Intel vGPU
+
+ Documentation/vfio-mediated-device.txt       | 113 +++++++++++++
+ drivers/gpu/drm/i915/gvt/Makefile            |   2 +-
+ drivers/gpu/drm/i915/gvt/gvt.c               |  39 +++++
+ drivers/gpu/drm/i915/gvt/gvt.h               |   5 +
+ drivers/gpu/drm/i915/gvt/migration_version.c | 168 +++++++++++++++++++
+ drivers/gpu/drm/i915/gvt/vgpu.c              |  13 +-
+ 6 files changed, 337 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/gpu/drm/i915/gvt/migration_version.c
+
+-- 
+2.17.1
+
