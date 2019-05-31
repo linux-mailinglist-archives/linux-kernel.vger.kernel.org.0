@@ -2,197 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E361D30DDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 14:10:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F172630DE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 14:11:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbfEaMKl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 08:10:41 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41280 "EHLO mx1.redhat.com"
+        id S1727451AbfEaMKs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 08:10:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727400AbfEaMKj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 08:10:39 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727327AbfEaMK0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 08:10:26 -0400
+Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E23D4307D9D0;
-        Fri, 31 May 2019 12:10:33 +0000 (UTC)
-Received: from krava.brq.redhat.com (unknown [10.43.17.136])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 192572F2A9;
-        Fri, 31 May 2019 12:10:29 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        "Liang, Kan" <kan.liang@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Andy Lutomirski <luto@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Vince Weaver <vincent.weaver@maine.edu>,
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D4BB2685F;
+        Fri, 31 May 2019 12:10:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559304625;
+        bh=clAIEBmajpiQKktOEKSBKpbFw41J7aLzihGd1Cq4U9g=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=LJUT1u8nmKrWqTtqdGX7cDrBNk1X4cVcD5sgVhwJBPzSXBLNYDyOVx4lk82YnTS4B
+         gFRwuZPOQwBm61NZd47QschHiuMnsQ2SatbFHoeGGLkwD1Z7+DXQI7HDiQmSl3PKjJ
+         bchq8b9ilYkT2a+lkmhzedx7jr//JvmCaF+eAbkY=
+Date:   Fri, 31 May 2019 14:09:57 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 7/8] perf/x86/rapl: Get attributes from new probe framework
-Date:   Fri, 31 May 2019 14:09:57 +0200
-Message-Id: <20190531120958.29601-8-jolsa@kernel.org>
-In-Reply-To: <20190531120958.29601-1-jolsa@kernel.org>
-References: <20190531120958.29601-1-jolsa@kernel.org>
+        the arch/x86 maintainers <x86@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v4] x86/power: Fix 'nosmt' vs. hibernation triple fault
+ during resume
+In-Reply-To: <20190531051456.fzkvn62qlkf6wqra@treble>
+Message-ID: <nycvar.YFH.7.76.1905311401050.1962@cbobk.fhfr.pm>
+References: <nycvar.YFH.7.76.1905282326360.1962@cbobk.fhfr.pm> <nycvar.YFH.7.76.1905300007470.1962@cbobk.fhfr.pm> <CAJZ5v0ja5sQ73zMvUtV+w79LC_d+g6UdomL36rV-EpVDxEzbhA@mail.gmail.com> <alpine.DEB.2.21.1905301425330.2265@nanos.tec.linutronix.de>
+ <CAJZ5v0go1g9KhE=mc19VCFrBuEERzFZCoRD4xt=tF=EnMjfH=A@mail.gmail.com> <20190530233804.syv4brpe3ndslyvo@treble> <nycvar.YFH.7.76.1905310139380.1962@cbobk.fhfr.pm> <20190531051456.fzkvn62qlkf6wqra@treble>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 31 May 2019 12:10:38 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We no longer need model specific attribute arrays,
-because we get all this detected in rapl_events_attrs.
+On Fri, 31 May 2019, Josh Poimboeuf wrote:
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- arch/x86/events/intel/rapl.c | 89 ------------------------------------
- 1 file changed, 89 deletions(-)
+> Something like this (not yet tested)?  Maybe we could also remove the
+> resume_play_dead() hack?
 
-diff --git a/arch/x86/events/intel/rapl.c b/arch/x86/events/intel/rapl.c
-index 253c5786a073..d281eae56bb8 100644
---- a/arch/x86/events/intel/rapl.c
-+++ b/arch/x86/events/intel/rapl.c
-@@ -415,87 +415,6 @@ RAPL_EVENT_ATTR_STR(energy-ram.scale,     rapl_ram_scale, "2.3283064365386962890
- RAPL_EVENT_ATTR_STR(energy-gpu.scale,     rapl_gpu_scale, "2.3283064365386962890625e-10");
- RAPL_EVENT_ATTR_STR(energy-psys.scale,   rapl_psys_scale, "2.3283064365386962890625e-10");
- 
--static struct attribute *rapl_events_srv_attr[] = {
--	EVENT_PTR(rapl_cores),
--	EVENT_PTR(rapl_pkg),
--	EVENT_PTR(rapl_ram),
--
--	EVENT_PTR(rapl_cores_unit),
--	EVENT_PTR(rapl_pkg_unit),
--	EVENT_PTR(rapl_ram_unit),
--
--	EVENT_PTR(rapl_cores_scale),
--	EVENT_PTR(rapl_pkg_scale),
--	EVENT_PTR(rapl_ram_scale),
--	NULL,
--};
--
--static struct attribute *rapl_events_cln_attr[] = {
--	EVENT_PTR(rapl_cores),
--	EVENT_PTR(rapl_pkg),
--	EVENT_PTR(rapl_gpu),
--
--	EVENT_PTR(rapl_cores_unit),
--	EVENT_PTR(rapl_pkg_unit),
--	EVENT_PTR(rapl_gpu_unit),
--
--	EVENT_PTR(rapl_cores_scale),
--	EVENT_PTR(rapl_pkg_scale),
--	EVENT_PTR(rapl_gpu_scale),
--	NULL,
--};
--
--static struct attribute *rapl_events_hsw_attr[] = {
--	EVENT_PTR(rapl_cores),
--	EVENT_PTR(rapl_pkg),
--	EVENT_PTR(rapl_gpu),
--	EVENT_PTR(rapl_ram),
--
--	EVENT_PTR(rapl_cores_unit),
--	EVENT_PTR(rapl_pkg_unit),
--	EVENT_PTR(rapl_gpu_unit),
--	EVENT_PTR(rapl_ram_unit),
--
--	EVENT_PTR(rapl_cores_scale),
--	EVENT_PTR(rapl_pkg_scale),
--	EVENT_PTR(rapl_gpu_scale),
--	EVENT_PTR(rapl_ram_scale),
--	NULL,
--};
--
--static struct attribute *rapl_events_skl_attr[] = {
--	EVENT_PTR(rapl_cores),
--	EVENT_PTR(rapl_pkg),
--	EVENT_PTR(rapl_gpu),
--	EVENT_PTR(rapl_ram),
--	EVENT_PTR(rapl_psys),
--
--	EVENT_PTR(rapl_cores_unit),
--	EVENT_PTR(rapl_pkg_unit),
--	EVENT_PTR(rapl_gpu_unit),
--	EVENT_PTR(rapl_ram_unit),
--	EVENT_PTR(rapl_psys_unit),
--
--	EVENT_PTR(rapl_cores_scale),
--	EVENT_PTR(rapl_pkg_scale),
--	EVENT_PTR(rapl_gpu_scale),
--	EVENT_PTR(rapl_ram_scale),
--	EVENT_PTR(rapl_psys_scale),
--	NULL,
--};
--
--static struct attribute *rapl_events_knl_attr[] = {
--	EVENT_PTR(rapl_pkg),
--	EVENT_PTR(rapl_ram),
--
--	EVENT_PTR(rapl_pkg_unit),
--	EVENT_PTR(rapl_ram_unit),
--
--	EVENT_PTR(rapl_pkg_scale),
--	EVENT_PTR(rapl_ram_scale),
--	NULL,
--};
--
- /*
-  * There are no default events, but we need to create
-  * "events" group (with empty attrs) before updating
-@@ -753,37 +672,30 @@ static int __init init_rapl_pmus(void)
- 
- struct intel_rapl_init_fun {
- 	bool apply_quirk;
--	struct attribute **attrs;
- };
- 
- static const struct intel_rapl_init_fun snb_rapl_init __initconst = {
- 	.apply_quirk = false,
--	.attrs = rapl_events_cln_attr,
- };
- 
- static const struct intel_rapl_init_fun hsx_rapl_init __initconst = {
- 	.apply_quirk = true,
--	.attrs = rapl_events_srv_attr,
- };
- 
- static const struct intel_rapl_init_fun hsw_rapl_init __initconst = {
- 	.apply_quirk = false,
--	.attrs = rapl_events_hsw_attr,
- };
- 
- static const struct intel_rapl_init_fun snbep_rapl_init __initconst = {
- 	.apply_quirk = false,
--	.attrs = rapl_events_srv_attr,
- };
- 
- static const struct intel_rapl_init_fun knl_rapl_init __initconst = {
- 	.apply_quirk = true,
--	.attrs = rapl_events_knl_attr,
- };
- 
- static const struct intel_rapl_init_fun skl_rapl_init __initconst = {
- 	.apply_quirk = false,
--	.attrs = rapl_events_skl_attr,
- };
- 
- static const struct x86_cpu_id rapl_cpu_match[] __initconst = {
-@@ -920,7 +832,6 @@ static int __init rapl_pmu_init(void)
- 
- 	rapl_init = (struct intel_rapl_init_fun *)id->driver_data;
- 	apply_quirk = rapl_init->apply_quirk;
--	rapl_pmu_events_group.attrs = rapl_init->attrs;
- 
- 	ret = rapl_check_hw_unit(apply_quirk);
- 	if (ret)
+I tried to test this, but the resumed kernel doesn't seem to be healthy 
+for reason I don't understand yet. 
+Symptoms I've seen so far -- 'dazed and confused NMI', spontaneous reboot, 
+userspace segfault.
+
+> diff --git a/arch/x86/include/asm/fixmap.h b/arch/x86/include/asm/fixmap.h
+> index 9da8cccdf3fb..1c328624162c 100644
+> --- a/arch/x86/include/asm/fixmap.h
+> +++ b/arch/x86/include/asm/fixmap.h
+> @@ -80,6 +80,7 @@ enum fixed_addresses {
+>  #ifdef CONFIG_X86_VSYSCALL_EMULATION
+>  	VSYSCALL_PAGE = (FIXADDR_TOP - VSYSCALL_ADDR) >> PAGE_SHIFT,
+>  #endif
+> +	FIX_MWAIT = (FIXADDR_TOP - VSYSCALL_ADDR - 1) >> PAGE_SHIFT,
+
+Two things to this:
+
+- you don't seem to fix x86_32
+- shouldn't it rather be FIXADDR_TOP - VSYSCALL_ADDR + 1 instead?
+
+Thanks,
+
 -- 
-2.21.0
+Jiri Kosina
+SUSE Labs
 
