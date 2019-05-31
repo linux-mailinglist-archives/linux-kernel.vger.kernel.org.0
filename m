@@ -2,53 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0112D307BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 06:25:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38A2D307C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 06:34:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbfEaEZO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 00:25:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52620 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726505AbfEaEZN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 00:25:13 -0400
-Subject: Re: [GIT] Networking
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559276712;
-        bh=Jhr3Z+JGuyGl2UI6nWM84k3C42JQVsxh0nHDWMDj7VU=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=ixfHISe3kCOgH/D41xKmpqW8MoW0/ZzzXSG/pb40BU2MxIyadqxbCUpDjkJRAZPft
-         6t/I8CyC6COt9XtJPTGV9FtYpZ3gZpTVgbEh1oDyPV+3bgO1OCdjJfxZds9mZL4Tcz
-         MP/x++3rmm0jJnRMFg3/TfmAYjvrfn9we0sLlQ+Q=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190530.160506.886914005164704233.davem@davemloft.net>
-References: <20190530.160506.886914005164704233.davem@davemloft.net>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190530.160506.886914005164704233.davem@davemloft.net>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/davem/net
- refs/heads/master
-X-PR-Tracked-Commit-Id: 100f6d8e09905c59be45b6316f8f369c0be1b2d8
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 036e34310931e64ce4f1edead435708cd517db10
-Message-Id: <155927671287.23225.3722089018670088061.pr-tracker-bot@kernel.org>
-Date:   Fri, 31 May 2019 04:25:12 +0000
-To:     David Miller <davem@davemloft.net>
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S1726693AbfEaEef (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 00:34:35 -0400
+Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:41121 "EHLO
+        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725955AbfEaEef (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 00:34:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1559277274; x=1590813274;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=rWZylmxt/NNWlYGvQ7wVH1y8Psn+3RZud7pA+S3VO8U=;
+  b=cUnuTd7rjQ7+xzB9DK40kIj0Z/x9mfXliZFC2Zjov/uFqkhcMIgK2+2f
+   lXRN4dpt8k4F8ahBI4VGvOIjzLWJpQFBKRu9glWEthWpAAGvxRr1lqUWi
+   jU+7q2wXEgxF9FjmZAJg5Kzf2gsX6xhX+c9IvA7YbA7y3I/DCJUKT2AbU
+   Y=;
+X-IronPort-AV: E=Sophos;i="5.60,533,1549929600"; 
+   d="scan'208";a="802758359"
+Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-1e-a70de69e.us-east-1.amazon.com) ([10.47.22.34])
+  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP; 31 May 2019 04:34:32 +0000
+Received: from EX13MTAUWB001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1e-a70de69e.us-east-1.amazon.com (Postfix) with ESMTPS id BC12DA22FB;
+        Fri, 31 May 2019 04:34:28 +0000 (UTC)
+Received: from EX13D05UWB002.ant.amazon.com (10.43.161.50) by
+ EX13MTAUWB001.ant.amazon.com (10.43.161.249) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 31 May 2019 04:34:28 +0000
+Received: from EX13MTAUWA001.ant.amazon.com (10.43.160.58) by
+ EX13D05UWB002.ant.amazon.com (10.43.161.50) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 31 May 2019 04:34:27 +0000
+Received: from localhost (10.85.16.145) by mail-relay.amazon.com
+ (10.43.160.118) with Microsoft SMTP Server id 15.0.1367.3 via Frontend
+ Transport; Fri, 31 May 2019 04:34:27 +0000
+From:   Eduardo Valentin <eduval@amazon.com>
+To:     Wolfram Sang <wsa@the-dreams.de>
+CC:     Haiyue Wang <haiyue.wang@linux.intel.com>,
+        <jarkko.nikula@linux.intel.com>, <andriy.shevchenko@intel.com>,
+        <brendanhiggins@google.com>, Eduardo Valentin <eduval@amazon.com>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/3] introduce i2c-slave-mqueue
+Date:   Thu, 30 May 2019 21:33:44 -0700
+Message-ID: <20190531043347.4196-1-eduval@amazon.com>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 30 May 2019 16:05:06 -0700 (PDT):
+Wolfram,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net refs/heads/master
+I am sending you the i2c-slave-mqueue driver.
+Apparently Haiyue had to move on to another project and
+does not have cycles to continue with the comments on this
+driver after some time waiting for feedback,
+that is essentially why I took over.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/036e34310931e64ce4f1edead435708cd517db10
+Here is a small changelog from V5 to V6:
+- Added DT support for probing via Device Tree
+- Docummented DT bindings
+- Documented sysfs ABI
+- Small fixes on wording and Kconfig entries.
 
-Thank you!
+Haiyue's V5: https://lkml.org/lkml/2018/4/23/835
+
+BR,
+
+Eduardo Valentin (2):
+  dt-bindings: i2c: document bindings for i2c-slave-mqueue
+  Documentation: ABI: Add i2c-slave-mqueue sysfs documentation
+
+Haiyue Wang (1):
+  i2c: slave-mqueue: add a slave backend to receive and queue messages
+
+ .../sysfs-bus-i2c-devices-slave-mqueue        |  10 +
+ .../bindings/i2c/i2c-slave-mqueue.txt         |  34 +++
+ Documentation/i2c/slave-mqueue-backend.rst    | 124 ++++++++++
+ MAINTAINERS                                   |   8 +
+ drivers/i2c/Kconfig                           |  25 +++
+ drivers/i2c/Makefile                          |   1 +
+ drivers/i2c/i2c-slave-mqueue.c                | 211 ++++++++++++++++++
+ 7 files changed, 413 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-i2c-devices-slave-mqueue
+ create mode 100644 Documentation/devicetree/bindings/i2c/i2c-slave-mqueue.txt
+ create mode 100644 Documentation/i2c/slave-mqueue-backend.rst
+ create mode 100644 drivers/i2c/i2c-slave-mqueue.c
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.21.0
+
