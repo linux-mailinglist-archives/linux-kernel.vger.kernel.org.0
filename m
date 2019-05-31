@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D7D13089E
+	by mail.lfdr.de (Postfix) with ESMTP id DA0AD3089F
 	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 08:37:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726924AbfEaGhQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 02:37:16 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38245 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726884AbfEaGhO (ORCPT
+        id S1726963AbfEaGh1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 02:37:27 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39996 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726894AbfEaGhO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 31 May 2019 02:37:14 -0400
-Received: by mail-pl1-f196.google.com with SMTP id f97so3596230plb.5
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 23:37:13 -0700 (PDT)
+Received: by mail-pf1-f193.google.com with SMTP id u17so5557918pfn.7
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 23:37:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=sy96JwOodM2uyeI9a2kYXQQ+c8Bq3Qx8sWnCw6sUcCw=;
-        b=jE19gyvUohfmi14lrX+F8d1HeFDrMANYWPBJxynEF3wMjAz7En9CoBqRDXY14LHqEv
-         XhxQKqcUYwO9s89nEGgVZ2vuxsddQ2NiIqV3TlgrdetTubniHIEU8YhxUjB7la+POB08
-         S6gyvjNoTtJyRvti2LLi7Bo9FtFCC0ybYPHhLgAzxD1O7vYhAmx6O22zqZLUum3laiy+
-         wQr9kffxd7JCuTgKXbkNcqca3Xks4nIO8jYjhNSVYQIp2T00uya0oBpLonlcpqSu1G2R
-         DGmFp34hFwPrfYGYLZNyyML1vyFZd5o+nwzlKdLdOFS1zXb3m4PfaFCT07+SXmVuoQpw
-         ayMQ==
-X-Gm-Message-State: APjAAAVGUcuRzVM0hmOvI+eWSn+oUnZ3C3E41FAgyGXLlgpwBPBzFIud
-        DPhD4K7p8fyBpVvc/NiK/Fo=
-X-Google-Smtp-Source: APXvYqy2fFdv2B1srQtuU7eGqHssmNaFpqrJgS3MHPKxmjso4ohMWCFkNkFG2hGMyynmAegfdC/x6g==
-X-Received: by 2002:a17:902:8204:: with SMTP id x4mr7269563pln.226.1559284632461;
-        Thu, 30 May 2019 23:37:12 -0700 (PDT)
+        bh=2cHAe+Cc9EZywy9mFCxxE1VGk9R752a9j3rJ2WfFTzM=;
+        b=dUEsLdakEW8GKvl+684eBngzjL/fcYx8/tceyhSdS98a+Z9P/14dG8Suo+BAeKyUez
+         hyPyEIIivL2Oq0ngN8218VigEdUeZXJiNwm3XG26qGmUu7ICrwJfW3+3O3XNBUAx3ftt
+         rvcjrPtfroNglk/qjkiIgjwckdG+tY2/QM+UGpeZz9v2agruynN6g5VJVGY09bS5U+Xu
+         h5d8vzZedbYxJyoGfwUVEuKsjzByq4O681SnoIlKMk6G6V9DTWN8T5PICQuXV4D9W6g7
+         MjaCnMtUK3WV5OvD0gjEDBv9Nu6exK5vioE7Hq3+2s3qRzhOHV2U5+Gl9D5UvsqicMpO
+         qG5A==
+X-Gm-Message-State: APjAAAUBZY8U3R7mVxcQWjjXjpeZPdgaI/VohYh5Rc7mm/5GLQ9peuBB
+        64dSAF9H5220uv2qJ+5hhw8=
+X-Google-Smtp-Source: APXvYqxaKyl0Ta7HqpqIWxa9M/iNdzEjv6ZNCN7bb+4zw1uAiMN1AUzNXDOYyeaa05+U4jqYDJiDEA==
+X-Received: by 2002:a63:cc43:: with SMTP id q3mr7277360pgi.438.1559284633776;
+        Thu, 30 May 2019 23:37:13 -0700 (PDT)
 Received: from htb-2n-eng-dhcp405.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id g17sm9256429pfk.55.2019.05.30.23.37.11
+        by smtp.gmail.com with ESMTPSA id g17sm9256429pfk.55.2019.05.30.23.37.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 May 2019 23:37:11 -0700 (PDT)
+        Thu, 30 May 2019 23:37:13 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Andy Lutomirski <luto@kernel.org>
@@ -43,9 +43,9 @@ Cc:     Borislav Petkov <bp@alien8.de>,
         Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
         linux-kernel@vger.kernel.org, Nadav Amit <namit@vmware.com>,
         Dave Hansen <dave.hansen@linux.intel.com>
-Subject: [RFC PATCH v2 10/12] smp: Enable data inlining for inter-processor function call
-Date:   Thu, 30 May 2019 23:36:43 -0700
-Message-Id: <20190531063645.4697-11-namit@vmware.com>
+Subject: [RFC PATCH v2 11/12] x86/mm/tlb: Use async and inline messages for flushing
+Date:   Thu, 30 May 2019 23:36:44 -0700
+Message-Id: <20190531063645.4697-12-namit@vmware.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190531063645.4697-1-namit@vmware.com>
 References: <20190531063645.4697-1-namit@vmware.com>
@@ -56,281 +56,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are some opportunities to improve the performance of
-inter-processor function calls.
+When we flush userspace mappings, we can defer the TLB flushes, as long
+the following conditions are met:
 
-First, currently call_single_data, which is used for communicating the
-data that is consumed by the function call is not cacheline aligned.
-This might lead to false sharing, since different structures are used
-for communication between two different CPUs.
+1. No tables are freed, since otherwise speculative page walks might
+   cause machine-checks.
 
-Second, the data that is used as an argument for the remotely executed
-function resides in a different address (and cacheline), so it also
-needs to traverse between caches (in addition to call_single_data).
+2. No one would access userspace before flush takes place. Specifically,
+   NMI handlers and kprobes would avoid accessing userspace.
 
-Third, some functions can be executed asynchronously, but their data
-(i.e., info, which is used as an argument to the function) must stay
-untouched until they are done. Such functions might be executed
-synchronously right now due to lack of infrastructure.
+Use the new SMP support to execute remote function calls with inlined
+data for the matter. The function remote TLB flushing function would be
+executed asynchronously and the local CPU would continue execution as
+soon as the IPI was delivered, before the function was actually
+executed. Since tlb_flush_info is copied, there is no risk it would
+change before the TLB flush is actually executed.
 
-Allow callers of __smp_call_function_many() and __on_each_cpu_mask() to
-request function data to be inlined with the interprocessor message on
-the same cache-line. Once the IPI is received, info is first copied to
-the receiver stack to both avoid false sharing and support asynchronous
-mode, in which the initiator of the remote-call does not wait for the
-receiver.
+Change nmi_uaccess_okay() to check whether a remote TLB flush is
+currently in progress on this CPU by checking whether the asynchronously
+called function is the remote TLB flushing function. The current
+implementation disallows access in such cases, but it is also possible
+to flush the entire TLB in such case and allow access.
 
-While a remote function is executed, save in externally visible variable
-the function that is currently executed. This information will be needed
-soon for asynchronous remote TLB flushing.
+When page-tables are freed or when kernel PTEs are removed, perform
+synchronous TLB flushes. But still inline the data with the IPI data,
+although the performance gains in this case are likely to be much
+smaller.
 
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- include/linux/smp.h | 21 ++++++++----
- kernel/smp.c        | 83 +++++++++++++++++++++++++++++++++++++++------
- 2 files changed, 87 insertions(+), 17 deletions(-)
+ arch/x86/include/asm/tlbflush.h | 12 ++++++++++++
+ arch/x86/mm/tlb.c               | 15 +++++++++++----
+ 2 files changed, 23 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/smp.h b/include/linux/smp.h
-index b69abc88259d..eb449086feb3 100644
---- a/include/linux/smp.h
-+++ b/include/linux/smp.h
-@@ -18,8 +18,11 @@ typedef void (*smp_call_func_t)(void *info);
- struct __call_single_data {
- 	struct llist_node llist;
- 	smp_call_func_t func;
--	void *info;
- 	unsigned int flags;
-+	union {
-+		void *info;
-+		u8 inlined_info[0];
-+	};
+diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
+index a1fea36d5292..75e4c4263af6 100644
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -245,6 +245,10 @@ struct tlb_state_shared {
  };
+ DECLARE_PER_CPU_SHARED_ALIGNED(struct tlb_state_shared, cpu_tlbstate_shared);
  
- /* Use __aligned() to avoid to use 2 cache lines for 1 csd */
-@@ -32,12 +35,18 @@ extern unsigned int total_cpus;
- int smp_call_function_single(int cpuid, smp_call_func_t func, void *info,
- 			     int wait);
- 
-+void __on_each_cpu_mask(const struct cpumask *mask, smp_call_func_t func,
-+		void *info, size_t info_size, bool wait);
-+
- /*
-  * Call a function on processors specified by mask, which might include
-  * the local one.
-  */
--void on_each_cpu_mask(const struct cpumask *mask, smp_call_func_t func,
--		void *info, bool wait);
-+static inline void on_each_cpu_mask(const struct cpumask *mask,
-+				smp_call_func_t func, void *info, bool wait)
-+{
-+	__on_each_cpu_mask(mask, func, info, 0, wait);
-+}
- 
- /*
-  * Call a function on all processors.  May be used during early boot while
-@@ -109,13 +118,13 @@ void smp_call_function(smp_call_func_t func, void *info, int wait);
- 
- void __smp_call_function_many(const struct cpumask *mask,
- 			      smp_call_func_t remote_func,
--			      smp_call_func_t local_func,
--			      void *info, bool wait);
-+			      smp_call_func_t local_func, void *info,
-+			      size_t info_size, bool wait);
- 
- static inline void smp_call_function_many(const struct cpumask *mask,
- 				smp_call_func_t func, void *info, bool wait)
- {
--	__smp_call_function_many(mask, func, NULL, info, wait);
-+	__smp_call_function_many(mask, func, NULL, info, 0, wait);
- }
- 
- int smp_call_function_any(const struct cpumask *mask,
-diff --git a/kernel/smp.c b/kernel/smp.c
-index f1a358f9c34c..46cbf611a38d 100644
---- a/kernel/smp.c
-+++ b/kernel/smp.c
-@@ -25,6 +25,7 @@
- enum {
- 	CSD_FLAG_LOCK		= 0x01,
- 	CSD_FLAG_SYNCHRONOUS	= 0x02,
-+	CSD_FLAG_INLINED	= 0x04,
- };
- 
- struct call_function_data {
-@@ -35,8 +36,16 @@ struct call_function_data {
- 
- static DEFINE_PER_CPU(struct call_function_data, cfd_data);
- 
-+/* Function which is currently executed asynchronously. */
 +DECLARE_PER_CPU(smp_call_func_t, async_func_in_progress);
-+DEFINE_PER_CPU(smp_call_func_t, async_func_in_progress);
-+EXPORT_PER_CPU_SYMBOL(async_func_in_progress);
 +
- static DEFINE_PER_CPU_SHARED_ALIGNED(struct llist_head, call_single_queue);
- 
-+#define MAX_FUNC_INFO_SIZE						\
-+	(SMP_CACHE_BYTES - offsetof(struct __call_single_data, inlined_info[0]))
++extern void flush_tlb_func_remote(void *info);
 +
- static void flush_smp_call_function_queue(bool warn_cpu_offline);
- 
- int smpcfd_prepare_cpu(unsigned int cpu)
-@@ -51,7 +60,15 @@ int smpcfd_prepare_cpu(unsigned int cpu)
- 		free_cpumask_var(cfd->cpumask);
- 		return -ENOMEM;
- 	}
--	cfd->csd = alloc_percpu(call_single_data_t);
-+
-+	/*
-+	 * Allocating a whole cache line to leave space for inlined data
-+	 * adjacent to call_single_data_t. Ensure first that indeed the struct
-+	 * is smaller than a cache line.
-+	 */
-+	BUILD_BUG_ON(sizeof(call_single_data_t) > SMP_CACHE_BYTES);
-+
-+	cfd->csd = __alloc_percpu(SMP_CACHE_BYTES, SMP_CACHE_BYTES);
- 	if (!cfd->csd) {
- 		free_cpumask_var(cfd->cpumask);
- 		free_cpumask_var(cfd->cpumask_ipi);
-@@ -235,16 +252,36 @@ static void flush_smp_call_function_queue(bool warn_cpu_offline)
- 	}
- 
- 	llist_for_each_entry_safe(csd, csd_next, entry, llist) {
-+		u8 inlined_info[MAX_FUNC_INFO_SIZE] __aligned(sizeof(long));
- 		smp_call_func_t func = csd->func;
--		void *info = csd->info;
-+		void *info;
-+
-+		/*
-+		 * Check if we are requested to copy the info to the local storage
-+		 * and use it.
-+		 */
-+		if (csd->flags & CSD_FLAG_INLINED) {
-+			memcpy(inlined_info, csd->inlined_info, MAX_FUNC_INFO_SIZE);
-+			info = &inlined_info;
-+		} else {
-+			info = csd->info;
-+		}
- 
- 		/* Do we wait until *after* callback? */
- 		if (csd->flags & CSD_FLAG_SYNCHRONOUS) {
- 			func(info);
- 			csd_unlock(csd);
- 		} else {
-+			this_cpu_write(async_func_in_progress, csd->func);
- 			csd_unlock(csd);
- 			func(info);
-+
-+			/*
-+			 * Ensure the write that indicates the func is completed
-+			 * is only performed after the function is called.
-+			 */
-+			barrier();
-+			this_cpu_write(async_func_in_progress, NULL);
- 		}
- 	}
- 
-@@ -395,10 +432,15 @@ EXPORT_SYMBOL_GPL(smp_call_function_any);
-  *		fast and non-blocking. If NULL is provided, no function will
-  *		be executed on this CPU.
-  * @info: An arbitrary pointer to pass to the function.
-+ * @info_size: Size of @info to copy into the inlined message that is sent to
-+ *	       the target CPUs. If zero, @info will not be copied, but can be
-+ *	       accessed. Must be smaller than %MAX_FUNC_INFO_SIZE.
-  * @wait: If true, wait (atomically) until function has completed
-  *        on other CPUs.
-  *
-- * If @wait is true, then returns once @func has returned.
-+ * If @wait is true, then returns once @func has returned. Otherwise, returns
-+ * after the IPI is delivered. If @info_size > 0, the funciton returns only
-+ * after the @info was copied by the remote CPU to local storage.
-  *
-  * You must not call this function with disabled interrupts or from a
-  * hardware interrupt handler or from a bottom half handler. Preemption
-@@ -406,11 +448,12 @@ EXPORT_SYMBOL_GPL(smp_call_function_any);
-  */
- void __smp_call_function_many(const struct cpumask *mask,
- 			      smp_call_func_t remote_func,
--			      smp_call_func_t local_func,
--			      void *info, bool wait)
-+			      smp_call_func_t local_func, void *info,
-+			      size_t info_size, bool wait)
- {
- 	int cpu, last_cpu, this_cpu = smp_processor_id();
- 	struct call_function_data *cfd;
-+	bool copy = (info_size != 0);
- 	bool run_remote = false;
- 	bool run_local = false;
- 	int nr_cpus = 0;
-@@ -424,6 +467,16 @@ void __smp_call_function_many(const struct cpumask *mask,
- 	if (cpu_online(this_cpu) && !oops_in_progress && !early_boot_irqs_disabled)
- 		lockdep_assert_irqs_enabled();
- 
-+	/*
-+	 * If size is too big, issue a warning. To be safe, we have to wait for
-+	 * the function to be done.
-+	 */
-+	if (unlikely(info_size > MAX_FUNC_INFO_SIZE && copy)) {
-+		WARN_ONCE(1, "Inlined IPI info size exceeds maximum\n");
-+		copy = false;
-+		wait = 1;
-+	}
-+
- 	/* Check if we need local execution. */
- 	if (local_func && cpumask_test_cpu(this_cpu, mask))
- 		run_local = true;
-@@ -449,10 +502,18 @@ void __smp_call_function_many(const struct cpumask *mask,
- 			last_cpu = cpu;
- 
- 			csd_lock(csd);
-+
-+			if (copy) {
-+				csd->flags |= CSD_FLAG_INLINED;
-+				memcpy(csd->inlined_info, info, info_size);
-+			} else {
-+				csd->info = info;
-+			}
-+
- 			if (wait)
- 				csd->flags |= CSD_FLAG_SYNCHRONOUS;
- 			csd->func = remote_func;
--			csd->info = info;
-+
- 			if (llist_add(&csd->llist, &per_cpu(call_single_queue, cpu)))
- 				__cpumask_set_cpu(cpu, cfd->cpumask_ipi);
- 		}
-@@ -603,7 +664,7 @@ void __init smp_init(void)
- }
- 
- /**
-- * on_each_cpu_mask(): Run a function on processors specified by
-+ * __on_each_cpu_mask(): Run a function on processors specified by
-  * cpumask, which may include the local processor.
-  * @mask: The set of cpus to run on (only runs on online subset).
-  * @func: The function to run. This must be fast and non-blocking.
-@@ -618,16 +679,16 @@ void __init smp_init(void)
-  * exception is that it may be used during early boot while
-  * early_boot_irqs_disabled is set.
-  */
--void on_each_cpu_mask(const struct cpumask *mask, smp_call_func_t func,
--			void *info, bool wait)
-+void __on_each_cpu_mask(const struct cpumask *mask, smp_call_func_t func,
-+			void *info, size_t info_size, bool wait)
- {
- 	preempt_disable();
- 
--	__smp_call_function_many(mask, func, func, info, wait);
-+	__smp_call_function_many(mask, func, func, info, info_size, wait);
- 
- 	preempt_enable();
- }
--EXPORT_SYMBOL(on_each_cpu_mask);
-+EXPORT_SYMBOL(__on_each_cpu_mask);
- 
  /*
-  * on_each_cpu_cond(): Call a function on each processor for which
+  * Blindly accessing user memory from NMI context can be dangerous
+  * if we're in the middle of switching the current user task or
+@@ -259,6 +263,14 @@ static inline bool nmi_uaccess_okay(void)
+ 
+ 	VM_WARN_ON_ONCE(!loaded_mm);
+ 
++	/*
++	 * If we are in the middle of a TLB flush, access is not allowed. We
++	 * could have just flushed the entire TLB and allow access, but it is
++	 * easier and safer just to disallow access.
++	 */
++	if (this_cpu_read(async_func_in_progress) == flush_tlb_func_remote)
++		return false;
++
+ 	/*
+ 	 * The condition we want to check is
+ 	 * current_mm->pgd == __va(read_cr3_pa()).  This may be slow, though,
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 755b2bb3e5b6..fd7e90adbe43 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -644,7 +644,7 @@ static void flush_tlb_func_local(void *info)
+ 	flush_tlb_func_common(f, true, reason);
+ }
+ 
+-static void flush_tlb_func_remote(void *info)
++void flush_tlb_func_remote(void *info)
+ {
+ 	const struct flush_tlb_info *f = info;
+ 
+@@ -730,7 +730,7 @@ void native_flush_tlb_multi(const struct cpumask *cpumask,
+ 	 */
+ 	if (info->freed_tables)
+ 		__smp_call_function_many(cpumask, flush_tlb_func_remote,
+-					 flush_tlb_func_local, (void *)info, 1);
++				flush_tlb_func_local, (void *)info, sizeof(*info), 1);
+ 	else {
+ 		/*
+ 		 * Although we could have used on_each_cpu_cond_mask(),
+@@ -753,8 +753,10 @@ void native_flush_tlb_multi(const struct cpumask *cpumask,
+ 			if (tlb_is_not_lazy(cpu))
+ 				__cpumask_set_cpu(cpu, cond_cpumask);
+ 		}
++
+ 		__smp_call_function_many(cond_cpumask, flush_tlb_func_remote,
+-					 flush_tlb_func_local, (void *)info, 1);
++					 flush_tlb_func_local, (void *)info,
++					 sizeof(*info), 0);
+ 	}
+ }
+ 
+@@ -915,7 +917,12 @@ void flush_tlb_kernel_range(unsigned long start, unsigned long end)
+ 
+ 		info = get_flush_tlb_info(NULL, start, end, 0, false, 0);
+ 
+-		on_each_cpu(do_kernel_range_flush, info, 1);
++		/*
++		 * We have to wait for the remote shootdown to be done since it
++		 * is kernel space.
++		 */
++		__on_each_cpu_mask(cpu_online_mask, do_kernel_range_flush,
++				   info, sizeof(*info), 1);
+ 
+ 		put_flush_tlb_info();
+ 	}
 -- 
 2.20.1
 
