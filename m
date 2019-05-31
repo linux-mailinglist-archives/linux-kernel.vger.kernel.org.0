@@ -2,108 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03D0630D14
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 13:09:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C6A430D4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 13:23:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbfEaLJZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 07:09:25 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:59738 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726240AbfEaLJY (ORCPT
+        id S1727186AbfEaLXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 07:23:50 -0400
+Received: from mail1.windriver.com ([147.11.146.13]:64077 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726158AbfEaLXu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 07:09:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=8FodIdoRggqYpcfQ8IzxUymg8eKDtRxFytfKCu5DB9o=; b=xu2eMCvpPsW5sOGQjGrgPouad
-        Sj/Oj86A4dMjx7iMebMebAizyuYOW3QMwVmGxrADtL2Ca/k+dY2rlO9NreoOLfg95LpG0bYGsIxI8
-        CtEthcD7L40SrBvDIPy7L86mY3aoR31mettwPQ3wtTwTXKcv0bRlxbsGMeh8miik97qACtRR7PDEy
-        JIeEw+wg4hhqM0nHEFK0LBcbUIivq8qfkg7Z3grUK4IzYHufz8NpSJNEtj3gsFV/H4HFfVZDwTorf
-        G55cTnOMWKf0rF5VrbJ7s88OpckRH77nPbe3Wx7IvuxaJZrSPM8M8RXvIsGXtWMzabjrGmcCvUQo1
-        ITJRfMwvA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hWfOZ-0004hP-FW; Fri, 31 May 2019 11:08:24 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A7B55201B8CFE; Fri, 31 May 2019 13:08:20 +0200 (CEST)
-Date:   Fri, 31 May 2019 13:08:20 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Vineeth Remanan Pillai <vpillai@digitalocean.com>
-Cc:     Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Julien Desfossez <jdesfossez@digitalocean.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>, mingo@kernel.org,
-        tglx@linutronix.de, pjt@google.com, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, subhra.mazumdar@oracle.com,
-        fweisbec@gmail.com, keescook@chromium.org, kerrnel@google.com,
-        Phil Auld <pauld@redhat.com>, Aaron Lu <aaron.lwe@gmail.com>,
-        Aubrey Li <aubrey.intel@gmail.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [RFC PATCH v3 10/16] sched: Core-wide rq->lock
-Message-ID: <20190531110820.GP2623@hirez.programming.kicks-ass.net>
-References: <cover.1559129225.git.vpillai@digitalocean.com>
- <a03795e66ed45469ac5b3c1b1d01c8ed33be299f.1559129225.git.vpillai@digitalocean.com>
+        Fri, 31 May 2019 07:23:50 -0400
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id x4VBNZNC029641
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Fri, 31 May 2019 04:23:35 -0700 (PDT)
+Received: from [128.224.155.90] (128.224.155.90) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 31 May
+ 2019 04:23:34 -0700
+Subject: Re: Userspace woes with 5.1.5 due to TIPC
+To:     Jon Maloy <jon.maloy@ericsson.com>,
+        Mihai Moldovan <ionic@ionic.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <4ad776cb-c597-da1d-7d5e-af39ded17c40@ionic.de>
+ <CH2PR15MB3575BD29C90539022364B8719A180@CH2PR15MB3575.namprd15.prod.outlook.com>
+ <1780dd6a-9546-0df5-7fb2-44b78643b079@ionic.de>
+ <3cc60b11-2b63-3bfc-2be8-569f2b0ce7cf@windriver.com>
+ <CH2PR15MB3575E1402F1FF4418C8C67139A190@CH2PR15MB3575.namprd15.prod.outlook.com>
+From:   Ying Xue <ying.xue@windriver.com>
+Message-ID: <5498070b-c6e4-30e5-dea4-5767fe50f617@windriver.com>
+Date:   Fri, 31 May 2019 19:13:43 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a03795e66ed45469ac5b3c1b1d01c8ed33be299f.1559129225.git.vpillai@digitalocean.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CH2PR15MB3575E1402F1FF4418C8C67139A190@CH2PR15MB3575.namprd15.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [128.224.155.90]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 08:36:46PM +0000, Vineeth Remanan Pillai wrote:
+On 5/31/19 7:02 PM, Jon Maloy wrote:
+> This was the very reason the broken patch was introduced. AFAIK there is no problem after the corrected version of that patch was applied.
 
-> + * The static-key + stop-machine variable are needed such that:
-> + *
-> + *	spin_lock(rq_lockp(rq));
-> + *	...
-> + *	spin_unlock(rq_lockp(rq));
-> + *
-> + * ends up locking and unlocking the _same_ lock, and all CPUs
-> + * always agree on what rq has what lock.
+I have prepared for our patches on net-next tree. But when I checked my
+patches on net tree, it's found that the issue has been fixed with
+commit 526f5b851a96566803ee4bee60d0a34df56c77f8 ("tipc: fix modprobe
+tipc failed after switch order of device registration"). There are four
+commits which were introduced recently, and their names are quite
+similar, and the fix is not merged into net-next tree, which makes me
+misunderstood the issue status.
 
-> @@ -5790,8 +5854,15 @@ int sched_cpu_activate(unsigned int cpu)
->  	/*
->  	 * When going up, increment the number of cores with SMT present.
->  	 */
-> -	if (cpumask_weight(cpu_smt_mask(cpu)) == 2)
-> +	if (cpumask_weight(cpu_smt_mask(cpu)) == 2) {
->  		static_branch_inc_cpuslocked(&sched_smt_present);
-> +#ifdef CONFIG_SCHED_CORE
-> +		if (static_branch_unlikely(&__sched_core_enabled)) {
-> +			rq->core_enabled = true;
-> +		}
-> +#endif
-> +	}
-> +
->  #endif
->  	set_cpu_active(cpu, true);
->  
-> @@ -5839,8 +5910,16 @@ int sched_cpu_deactivate(unsigned int cpu)
->  	/*
->  	 * When going down, decrement the number of cores with SMT present.
->  	 */
-> -	if (cpumask_weight(cpu_smt_mask(cpu)) == 2)
-> +	if (cpumask_weight(cpu_smt_mask(cpu)) == 2) {
-> +#ifdef CONFIG_SCHED_CORE
-> +		struct rq *rq = cpu_rq(cpu);
-> +		if (static_branch_unlikely(&__sched_core_enabled)) {
-> +			rq->core_enabled = false;
-> +		}
-> +#endif
->  		static_branch_dec_cpuslocked(&sched_smt_present);
-> +
-> +	}
->  #endif
+Anyway, it looks like failing to insert TIPC module has been resolved.
+But I have not validated the fix by create multiple TIPC namespace, so I
+am not sure whether it works normally.
 
-I'm confused, how doesn't this break the invariant above?
-
-That is, all CPUs must at all times agree on the value of rq_lockp(),
-and I'm not seeing how that is true with the above changes.
+Thanks,
+Ying
