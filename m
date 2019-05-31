@@ -2,73 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F65730EE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 15:29:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DE2C30EF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 15:38:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726593AbfEaN3a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 09:29:30 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:17637 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726485AbfEaN3a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 09:29:30 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 6EEA1810B1C503DC496B;
-        Fri, 31 May 2019 21:29:27 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 31 May 2019 21:29:19 +0800
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Baruch Siach <baruch@tkos.co.il>,
-        <linux-serial@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH] tty/serial: digicolor: Fix digicolor-usart already registered warning
-Date:   Fri, 31 May 2019 21:37:33 +0800
-Message-ID: <20190531133733.16243-1-wangkefeng.wang@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726667AbfEaNiZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 09:38:25 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51676 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726037AbfEaNiY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 09:38:24 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 73F8DA78;
+        Fri, 31 May 2019 06:38:23 -0700 (PDT)
+Received: from [10.1.196.129] (ostrya.cambridge.arm.com [10.1.196.129])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 36DC23F5AF;
+        Fri, 31 May 2019 06:38:22 -0700 (PDT)
+Subject: Re: [PATCH 3/4] iommu: Introduce device fault report API
+To:     Robin Murphy <robin.murphy@arm.com>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>
+Cc:     "yi.l.liu@linux.intel.com" <yi.l.liu@linux.intel.com>,
+        "ashok.raj@intel.com" <ashok.raj@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+References: <20190523180613.55049-1-jean-philippe.brucker@arm.com>
+ <20190523180613.55049-4-jean-philippe.brucker@arm.com>
+ <e56244fd-86fd-1fc9-17f7-d00179d586ac@arm.com>
+From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Message-ID: <023acfae-5c93-9e20-8355-5cd7410c15e7@arm.com>
+Date:   Fri, 31 May 2019 14:37:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+In-Reply-To: <e56244fd-86fd-1fc9-17f7-d00179d586ac@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When modprobe/rmmod/modprobe module, if platform_driver_register() fails,
-the kernel complained,
+On 23/05/2019 19:56, Robin Murphy wrote:
+> On 23/05/2019 19:06, Jean-Philippe Brucker wrote:
+>> From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>>
+>> Traditionally, device specific faults are detected and handled within
+>> their own device drivers. When IOMMU is enabled, faults such as DMA
+>> related transactions are detected by IOMMU. There is no generic
+>> reporting mechanism to report faults back to the in-kernel device
+>> driver or the guest OS in case of assigned devices.
+>>
+>> This patch introduces a registration API for device specific fault
+>> handlers. This differs from the existing iommu_set_fault_handler/
+>> report_iommu_fault infrastructures in several ways:
+>> - it allows to report more sophisticated fault events (both
+>>    unrecoverable faults and page request faults) due to the nature
+>>    of the iommu_fault struct
+>> - it is device specific and not domain specific.
+>>
+>> The current iommu_report_device_fault() implementation only handles
+>> the "shoot and forget" unrecoverable fault case. Handling of page
+>> request faults or stalled faults will come later.
+>>
+>> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+>> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>> ---
+>>   drivers/iommu/iommu.c | 127 ++++++++++++++++++++++++++++++++++++++++++
+>>   include/linux/iommu.h |  29 ++++++++++
+>>   2 files changed, 156 insertions(+)
+>>
+>> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+>> index 67ee6623f9b2..d546f7baa0d4 100644
+>> --- a/drivers/iommu/iommu.c
+>> +++ b/drivers/iommu/iommu.c
+>> @@ -644,6 +644,13 @@ int iommu_group_add_device(struct iommu_group *group, struct device *dev)
+>>   		goto err_free_name;
+>>   	}
+>>   
+>> +	dev->iommu_param = kzalloc(sizeof(*dev->iommu_param), GFP_KERNEL);
+>> +	if (!dev->iommu_param) {
+>> +		ret = -ENOMEM;
+>> +		goto err_free_name;
+>> +	}
+>> +	mutex_init(&dev->iommu_param->lock);
+>> +
+> 
+> Note that this gets a bit tricky when we come to move to move the 
+> fwspec/ops/etc. into iommu_param, since that data can have a longer 
+> lifespan than the group association. I'd suggest moving this management 
+> out to the iommu_{probe,release}_device() level from the start, but 
+> maybe we're happy to come back and change things later as necessary.
 
-  proc_dir_entry 'driver/digicolor-usart' already registered
-  WARNING: CPU: 1 PID: 5636 at fs/proc/generic.c:360 proc_register+0x19d/0x270
+I'll do that, but iommu_probe_device() might still be too late.
+According to of_iommu_configure() there might be cases where
+iommu_probe_device() is called after iommu_fwspec_init(). So when moving
+everything to iommu_param, we might need to introduce something like
+iommu_get_dev_param() which allocates the param if it doesn't exist.
 
-Fix this by adding uart_unregister_driver() when platform_driver_register() fails.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
----
- drivers/tty/serial/digicolor-usart.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/tty/serial/digicolor-usart.c b/drivers/tty/serial/digicolor-usart.c
-index f460cca139e2..13ac36e2da4f 100644
---- a/drivers/tty/serial/digicolor-usart.c
-+++ b/drivers/tty/serial/digicolor-usart.c
-@@ -541,7 +541,11 @@ static int __init digicolor_uart_init(void)
- 	if (ret)
- 		return ret;
- 
--	return platform_driver_register(&digicolor_uart_platform);
-+	ret = platform_driver_register(&digicolor_uart_platform);
-+	if (ret)
-+		uart_unregister_driver(&digicolor_uart);
-+
-+	return ret;
- }
- module_init(digicolor_uart_init);
- 
--- 
-2.20.1
-
+Thanks,
+Jean
