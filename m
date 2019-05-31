@@ -2,567 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 843FF30A79
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 10:39:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E78E30A7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 10:41:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727034AbfEaIjQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 04:39:16 -0400
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:19142 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbfEaIjQ (ORCPT
+        id S1726973AbfEaIlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 04:41:24 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:42188 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726275AbfEaIlY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 04:39:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1559291951; x=1590827951;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=a8Hr1MI4T406cVBZ1FRt8MIi4EfYNxnFMlU/8iz12Kc=;
-  b=sq0YhNOBWcPcu/TqR5OS8l7KVlg9s8qpaPTxCg8itvS9VdNPX/nBTbn7
-   OoHREbEqvYwGaRzDpTRUu4qvwJrqkIaCDwvZjO7EftBPB7c/vkwZZzn5l
-   czx8tKfAgbBv4aveIxZFnlgkvXAPwa/vPpoBpQ6/S2S1qzovI96Qk9YMB
-   I=;
-X-IronPort-AV: E=Sophos;i="5.60,534,1549929600"; 
-   d="scan'208";a="404468470"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1d-5dd976cd.us-east-1.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP; 31 May 2019 08:39:10 +0000
-Received: from EX13MTAUWC001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1d-5dd976cd.us-east-1.amazon.com (Postfix) with ESMTPS id 8E6A9A23B5;
-        Fri, 31 May 2019 08:39:06 +0000 (UTC)
-Received: from EX13D20UWC001.ant.amazon.com (10.43.162.244) by
- EX13MTAUWC001.ant.amazon.com (10.43.162.135) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 31 May 2019 08:39:05 +0000
-Received: from 38f9d3867b82.ant.amazon.com (10.43.160.69) by
- EX13D20UWC001.ant.amazon.com (10.43.162.244) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 31 May 2019 08:39:00 +0000
-Subject: Re: [PATCH 2/3] Emulate simple x86 instructions in userspace
-To:     Sam Caccavale <samcacc@amazon.de>
-CC:     <samcaccavale@gmail.com>, <nmanthey@amazon.de>,
-        <wipawel@amazon.de>, <dwmw@amazon.co.uk>, <mpohlack@amazon.de>,
-        <graf@amazon.de>, <karahmed@amazon.de>,
-        <andrew.cooper3@citrix.com>, <JBeulich@suse.com>,
-        <pbonzini@redhat.com>, <rkrcmar@redhat.com>, <tglx@linutronix.de>,
-        <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
-        <paullangton4@gmail.com>, <anirudhkaushik@google.com>,
-        <x86@kernel.org>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190521153924.15110-1-samcacc@amazon.de>
- <20190521153924.15110-3-samcacc@amazon.de>
-From:   Alexander Graf <graf@amazon.com>
-Message-ID: <6a18a464-a621-da22-dd48-fd5d8a2fc859@amazon.com>
-Date:   Fri, 31 May 2019 10:38:58 +0200
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <20190521153924.15110-3-samcacc@amazon.de>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+        Fri, 31 May 2019 04:41:24 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4V8efOA032616;
+        Fri, 31 May 2019 10:41:17 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=TL7GoPObRQHZoQw+6HnAh8fO5ps044p9LItA6uibSU4=;
+ b=v1rGuOCu7slmDHdiFgf66D5CP25JcT8WzhD/jJsIgHhJn3RCGU6CGS9DU2xtPnPS/DIc
+ rOBlMP52YGP5p7CBftaJZ7wWcof2bMb5x2MDNXhuEAWoE6zHyZBVWPjGJ6g/xAaG+FDY
+ glk65eNvS5O0iDFAAvjhXohnxqwUqFIqyIuH9T2iF1DvNO6/JNxx84bew55C/yerS17d
+ TDEvEYirLMJTH+q5lLaHZ6dwVJ8fIxcnRLH3M+2xbj2Qk2cho/lbv7bzr/aXl29j9CiX
+ bS8MKxoHJ7EhfTSUaYdxGY06jV+sc0FQhFEWDNy/ubY4eQHrH2Mj7kCEFbdlOpdkQIVb pg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2spu60u285-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 31 May 2019 10:41:17 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D13A710B;
+        Fri, 31 May 2019 08:39:19 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D48371863;
+        Fri, 31 May 2019 08:39:18 +0000 (GMT)
+Received: from SFHDAG5NODE3.st.com (10.75.127.15) by SFHDAG5NODE3.st.com
+ (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 31 May
+ 2019 10:39:18 +0200
+Received: from SFHDAG5NODE3.st.com ([fe80::7c09:5d6b:d2c7:5f47]) by
+ SFHDAG5NODE3.st.com ([fe80::7c09:5d6b:d2c7:5f47%20]) with mapi id
+ 15.00.1347.000; Fri, 31 May 2019 10:39:18 +0200
+From:   Fabien DESSENNE <fabien.dessenne@st.com>
+To:     Pavel Machek <pavel@denx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Hugues FRUCHET <hugues.fruchet@st.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.19 070/276] media: stm32-dcmi: return appropriate error
+ codes during probe
+Thread-Topic: [PATCH 4.19 070/276] media: stm32-dcmi: return appropriate error
+ codes during probe
+Thread-Index: AQHVFpYZYgpvcJwbS0WT+YmI1l46AKaExGkAgAAFjoA=
+Date:   Fri, 31 May 2019 08:39:18 +0000
+Message-ID: <180d29ba-74cc-08ae-35f6-cb58c1d79297@st.com>
+References: <20190530030523.133519668@linuxfoundation.org>
+ <20190530030530.607146114@linuxfoundation.org> <20190531081924.GA19447@amd>
+In-Reply-To: <20190531081924.GA19447@amd>
+Accept-Language: fr-FR, en-US
 Content-Language: en-US
-X-Originating-IP: [10.43.160.69]
-X-ClientProxiedBy: EX13D25UWC004.ant.amazon.com (10.43.162.201) To
- EX13D20UWC001.ant.amazon.com (10.43.162.244)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.45]
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <BE3CF23C01D54B46B16CCA9520F56C74@st.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-31_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Pavel
 
-On 21.05.19 17:39, Sam Caccavale wrote:
-> Added the minimal subset of code to run afl-harness with a binary file
-> as input.  These bytes are used to populate the vcpu structure and then
-> as an instruction stream for the emulator.  It does not attempt to handle
-> exceptions an only supports very simple ops.
+
+On 31/05/2019 10:19 AM, Pavel Machek wrote:
+> Hi!
 >
-> ---
->   .../x86_instruction_emulation/emulator_ops.c  | 324 +++++++++++++++++-
->   .../scripts/afl-many                          |  28 ++
->   .../scripts/bin_fuzz                          |  23 ++
->   3 files changed, 374 insertions(+), 1 deletion(-)
->   create mode 100755 tools/fuzz/x86_instruction_emulation/scripts/afl-many
->   create mode 100755 tools/fuzz/x86_instruction_emulation/scripts/bin_fuzz
+>> [ Upstream commit b5b5a27bee5884860798ffd0f08e611a3942064b ]
+>>
+>> During probe, return the provided errors value instead of -ENODEV.
+>> This allows the driver to be deferred probed if needed.
+> This is not correct AFAICT.
+
+
+The driver gets defer probed *if needed*. *if needed* is for the case=20
+where platform_get_irq returns -EPROBE_DEFER, which happens if the irq=20
+controller is not ready yet.
+
+Of course, for the other cases, the probe would just fail.
+
+
 >
-> diff --git a/tools/fuzz/x86_instruction_emulation/emulator_ops.c b/tools/fuzz/x86_instruction_emulation/emulator_ops.c
-> index 55ae4e8fbd96..38bba4c97e2f 100644
-> --- a/tools/fuzz/x86_instruction_emulation/emulator_ops.c
-> +++ b/tools/fuzz/x86_instruction_emulation/emulator_ops.c
-> @@ -29,17 +29,331 @@
->   #include <asm/user_64.h>
->   #include <asm/kvm.h>
->   
-> +/*
-> + * Due to some quirk of building, the way printing to an unbuffered stream
-> + * is implemented smashes the stack.  For now, we'll just buffer stderr but
-> + * a fix is needed.
+>
+>> --- a/drivers/media/platform/stm32/stm32-dcmi.c
+>> +++ b/drivers/media/platform/stm32/stm32-dcmi.c
+>> @@ -1673,8 +1673,9 @@ static int dcmi_probe(struct platform_device *pdev=
+)
+>>  =20
+>>   	irq =3D platform_get_irq(pdev, 0);
+>>   	if (irq <=3D 0) {
+>> -		dev_err(&pdev->dev, "Could not get irq\n");
+>> -		return -ENODEV;
+>> +		if (irq !=3D -EPROBE_DEFER)
+>> +			dev_err(&pdev->dev, "Could not get irq\n");
+>> +		return irq;
+>>   	}
+>>  =20
+>>   	dcmi->res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> irq =3D=3D 0 is clearly means error here, but will be interpretted as
+> success when returned to the caller.
 
 
-I'm not sure I fully understand this comment. If printing smashes the 
-stack, wouldn't that always break things?
+Thank you for pointing this.
+
+It shall be 'return irq ? irq : -ENXIO;'=A0 I will send a fix for this.
 
 
-> + */
-> +char buff[BUFSIZ];
-> +void buffer_stderr(void)
-> +{
-> +	setvbuf(stderr, buff, _IOLBF, BUFSIZ);
-> +}
-> +
-> +#define number_of_registers(c) (c->mode == X86EMUL_MODE_PROT64 ? 16 : 8)
-
-
-This can go into a header, no? Also, just say "gprs" instead of 
-registers - it's shorter. In addition, you want bits like this also be 
-static inline functions rather than macros to preserve type checking.
-
-
-> +
-> +ulong emul_read_gpr(struct x86_emulate_ctxt *ctxt, unsigned int reg)
-> +{
-> +	assert(reg < number_of_registers(ctxt));
-> +	return get_state(ctxt)->vcpu.regs[reg];
-> +}
-> +
-> +void emul_write_gpr(struct x86_emulate_ctxt *ctxt, unsigned int reg, ulong val)
-> +{
-> +	assert(reg < number_of_registers(ctxt));
-> +	get_state(ctxt)->vcpu.regs[reg] = val;
-> +}
-> +
-> +#undef number_of_registers /* (ctxt->mode == X86EMUL_MODE_PROT64 ? 16 : 8) */
-> +
-> +/* All read ops: */
-> +
-> +#define emul_offset (state->ctxt.eip + state->other_bytes_consumed)
-> +#define decode_offset (state->ctxt._eip + state->other_bytes_consumed)
-
-
-Same here, better make this static inline functions and pass state as 
-parameter in. At least for me, it's otherwise really hard to remember 
-what really happens when a variable appears out of the blue.
-
-
-> +/*
-> + * There is a very loose abstraction around ctxt.eip, ctxt._eip, and
-> + * state.other_bytes_consumed.
-> + *
-> + * eip is incremented when an instruction is emulated by x86_emulate_insn
-> + * _eip is incremeneted when an instruction is decoded by x86_decode_insn
-> + *
-> + * state.other_bytes_consumed is incremented when bytes are consumed by
-> + *  get_bytes_and_increment for any use besides an x86 instruction.
-> + *
-> + * The bytes between emul_offset and decode_offset are instructions yet
-> + * to be executed.
-> + */
-> +
-> +#define _data_available(bytes) (decode_offset + bytes < state->data_available)
-
-
-Please make this a static function too.
-
-
-> +
-> +static int _get_bytes(void *dst, struct state *state, unsigned int bytes,
-> +		      char *callee)
-> +{
-> +	if (!_data_available(bytes)) {
-> +		fprintf(stderr, "Tried retrieving %d bytes\n", bytes);
-> +		fprintf(stderr, "%s failed to retrieve bytes for %s.\n",
-> +			__func__, callee);
-> +		return X86EMUL_UNHANDLEABLE;
-> +	}
-> +
-> +	memcpy(dst, &state->data[decode_offset], bytes);
-> +	return X86EMUL_CONTINUE;
-> +}
-> +
-> +/*
-> + * The only function that any x86_emulate_ops should call to retrieve bytes.
-> + * See comments in struct state definition for more information.
-> + */
-> +static int get_bytes_and_increment(void *dst, struct state *state,
-> +				   unsigned int bytes, char *callee)
-> +{
-> +	int rc = _get_bytes(dst, state, bytes, callee);
-> +
-> +	if (rc == X86EMUL_CONTINUE)
-> +		state->other_bytes_consumed += bytes;
-> +
-> +	return rc;
-> +}
-> +
-> +/*
-> + * This is called by x86_decode_insn to fetch bytes and is the only function
-> + * that gets bytes from state.data without incrementing .other_byes_consumed
-> + * since the emulator will increment ._eip during x86_decode_insn and ._eip
-> + * is used as an index into state.data.
-> + */
-> +int emul_fetch(struct x86_emulate_ctxt *ctxt, unsigned long addr, void *val,
-> +	       unsigned int bytes, struct x86_exception *fault)
-> +{
-> +	if (_get_bytes(val, get_state(ctxt), bytes, "emul_fetch") !=
-> +	    X86EMUL_CONTINUE) {
-> +		return X86EMUL_UNHANDLEABLE;
-> +	}
-> +
-> +	return X86EMUL_CONTINUE;
-> +}
-> +
-> +ulong emul_get_cr(struct x86_emulate_ctxt *ctxt, int cr)
-> +{
-> +	return get_state(ctxt)->vcpu.cr[cr];
-> +}
-> +
-> +int emul_set_cr(struct x86_emulate_ctxt *ctxt, int cr, ulong val)
-> +{
-> +	get_state(ctxt)->vcpu.cr[cr] = val;
-> +	return 0;
-> +}
-> +
-> +unsigned int emul_get_hflags(struct x86_emulate_ctxt *ctxt)
-> +{
-> +	return get_state(ctxt)->vcpu.rflags;
-> +}
-> +
-> +void emul_set_hflags(struct x86_emulate_ctxt *ctxt, unsigned int hflags)
-> +{
-> +	get_state(ctxt)->vcpu.rflags = hflags;
-> +}
-> +
-> +/* End of emulator ops */
-> +
-> +#define SET(h) .h = emul_##h
-> +const struct x86_emulate_ops all_emulator_ops = {
-> +	SET(read_gpr),
-> +	SET(write_gpr),
-> +	SET(fetch),
-> +	SET(get_cr),
-> +	SET(set_cr),
-> +	SET(get_hflags),
-> +	SET(set_hflags),
-> +};
-> +#undef SET
-> +
-> +enum {
-> +	HOOK_read_gpr,
-> +	HOOK_write_gpr,
-> +	HOOK_fetch,
-> +	HOOK_get_cr,
-> +	HOOK_set_cr,
-> +	HOOK_get_hflags,
-> +	HOOK_set_hflags
-> +};
-> +
-> +/* Put reg_x into a definitely valid state. */
-> +#define CANONICALIZE(reg_x)						\
-> +	do {								\
-> +		uint64_t _y = (reg_x);					\
-> +		if (_y & (1ULL << 47))					\
-> +			_y |= (~0ULL) << 48;				\
-> +		else							\
-> +			_y &= (1ULL << 48) - 1;				\
-> +		debug("Canonicalized %" PRIx64 " to %" PRIx64 "\n",	\
-> +			reg_x, y);					\
-> +		(reg_x) = _y;						\
-> +	} while (0)
-
-
-We support >48 bits VA/PA these days. Also, why is this a macro and not 
-a static function?
-
-
-> +
-> +/*
-> + * Canonicalizes reg if options << CANONICALIZE_##reg is set.
-> + * This weighs the emulator to use canonical values for important registers.
-> + *
-> + * Expects options and regs to be defined.
-> + */
-> +#define CANONICALIZE_MAYBE(reg)						\
-> +	do {								\
-> +		if (!(options & (1 << CANONICALIZE_##reg)))		\
-> +			CANONICALIZE(regs->reg);			\
-> +	} while (0)
-> +
-> +/*
-> + * Disable an x86_emulate_op if options << HOOK_op is set.
-> + *
-> + * Expects options to be defined.
-> + */
-> +#define MAYBE_DISABLE_HOOK(h)						\
-> +	do {								\
-> +		if (options & (1 << HOOK_##h)) {			\
-> +			vcpu->ctxt.ops.h = NULL;			\
-> +			debug("Disabling hook " #h "\n");		\
-> +		}							\
-> +	} while (0)
-> +
-> +/*
-> + * FROM XEN:
-> + *
-> + * Constrain input to architecturally-possible states where
-> + * the emulator relies on these
-> + *
-> + * In general we want the emulator to be as absolutely robust as
-> + * possible; which means that we want to minimize the number of things
-> + * it assumes about the input state.  Tesing this means minimizing and
-> + * removing as much of the input constraints as possible.
-> + *
-> + * So we only add constraints that (in general) have been proven to
-> + * cause crashes in the emulator.
-> + *
-> + * For future reference: other constraints which might be necessary at
-> + * some point:
-> + *
-> + * - EFER.LMA => !EFLAGS.NT
-> + * - In VM86 mode, force segment...
-> + *  - ...access rights to 0xf3
-> + *  - ...limits to 0xffff
-> + *  - ...bases to below 1Mb, 16-byte aligned
-> + *  - ...selectors to (base >> 4)
-> + */
-> +static void sanitize_input(struct state *s)
-> +{
-> +	/* Some hooks can't be disabled. */
-> +	// options &= ~((1<<HOOK_read)|(1<<HOOK_insn_fetch));
-> +
-> +	/* Zero 'private' entries */
-> +	// regs->error_code = 0;
-> +	// regs->entry_vector = 0;
-> +
-> +	// CANONICALIZE_MAYBE(rip);
-> +	// CANONICALIZE_MAYBE(rsp);
-> +	// CANONICALIZE_MAYBE(rbp);
-> +
-> +	/*
-> +	 * CR0.PG can't be set if CR0.PE isn't set.  Set is more interesting, so
-> +	 * set PE if PG is set.
-> +	 */
-> +	if (s->vcpu.cr[0] & X86_CR0_PG)
-> +		s->vcpu.cr[0] |= X86_CR0_PE;
-> +
-> +	/* EFLAGS.VM not available in long mode */
-> +	if (s->ctxt.mode == X86EMUL_MODE_PROT64)
-> +		s->vcpu.rflags &= ~X86_EFLAGS_VM;
-> +
-> +	/* EFLAGS.VM implies 16-bit mode */
-> +	if (s->vcpu.rflags & X86_EFLAGS_VM) {
-> +		s->vcpu.segments[x86_seg_cs].db = 0;
-> +		s->vcpu.segments[x86_seg_ss].db = 0;
-> +	}
-> +}
-> +
-> +static void init_x86_emulate_ctxt(struct x86_emulate_ctxt *ctxt)
-> +{
-> +	ctxt->ops = &all_emulator_ops;
-> +	ctxt->eflags = 0;
-> +	ctxt->tf = (ctxt->eflags & X86_EFLAGS_TF) != 0;
-> +	ctxt->eip = 0;
-> +
-> +	ctxt->mode = X86EMUL_MODE_PROT64; // TODO: eventually vary this?
-> +
-> +	init_decode_cache(ctxt);
-> +}
-> +
->   void initialize_emulator(struct state *state)
->   {
-> +	state->ctxt.ops = &all_emulator_ops;
-> +
-> +	/* See also sanitize_input, some hooks can't be disabled. */
-> +	// MAYBE_DISABLE_HOOK(read_gpr);
-> +
-> +	sanitize_input(state);
-> +	init_x86_emulate_ctxt(&state->ctxt);
-> +}
-> +
-> +static const char *const x86emul_mode_string[] = {
-> +	[X86EMUL_MODE_REAL] = "X86EMUL_MODE_REAL",
-> +	[X86EMUL_MODE_VM86] = "X86EMUL_MODE_VM86",
-> +	[X86EMUL_MODE_PROT16] = "X86EMUL_MODE_PROT16",
-> +	[X86EMUL_MODE_PROT32] = "X86EMUL_MODE_PROT32",
-> +	[X86EMUL_MODE_PROT64] = "X86EMUL_MODE_PROT64",
-> +};
-> +
-> +static void dump_state_after(const char *desc, struct state *state)
-> +{
-> +	debug(" -- State after %s --\n", desc);
-> +	debug("mode: %s\n", x86emul_mode_string[state->ctxt.mode]);
-> +	debug(" cr0: %lx\n", state->vcpu.cr[0]);
-> +	debug(" cr3: %lx\n", state->vcpu.cr[3]);
-> +	debug(" cr4: %lx\n", state->vcpu.cr[4]);
-> +
-> +	debug("Decode _eip: %lu\n", state->ctxt._eip);
-> +	debug("Emulate eip: %lu\n", state->ctxt.eip);
-> +
-> +	debug("\n");
->   }
->   
->   int step_emulator(struct state *state)
->   {
-> -	return 0;
-> +	int rc, prev_eip = state->ctxt.eip;
-> +	int decode_size = state->data_available - decode_offset;
-> +
-> +	if (decode_size < 15) {
-> +		rc = x86_decode_insn(&state->ctxt, &state->data[decode_offset],
-> +				     decode_size);
-> +	} else {
-> +		rc = x86_decode_insn(&state->ctxt, NULL, 0);
-
-
-Isn't this going to fetch instructions from data as well? Why do we need 
-the < 15 special case at all?
-
-
-> +	}
-> +	debug("Decode result: %d\n", rc);
-> +	if (rc != X86EMUL_CONTINUE)
-> +		return rc;
-> +
-> +	debug("Instruction: ");
-> +	print_n_bytes(&state->data[emul_offset],
-> +		      state->ctxt._eip - state->ctxt.eip);
-> +
-> +	rc = x86_emulate_insn(&state->ctxt);
-> +	debug("Emulation result: %d\n", rc);
-> +	dump_state_after("emulating", state);
-> +
-> +	if (state->ctxt.have_exception) {
-> +		fprintf(stderr, "Emulator propagated exception: { ");
-> +		fprintf(stderr, "vector: %d, ", state->ctxt.exception.vector);
-> +		fprintf(stderr, "error code: %d }\n",
-> +			state->ctxt.exception.error_code);
-> +		rc = X86EMUL_UNHANDLEABLE;
-> +	} else if (prev_eip == state->ctxt.eip) {
-> +		fprintf(stderr, "ctxt.eip not advanced.\n");
-
-
-During fuzzing, do I really care about all that debug output? I mean, 
-both cases above are perfectly legal. What we're trying to catch are 
-cases where we're overwriting memory we shouldn't have, no?
-
-
-In fact, how do we detect that? Would it make sense to have canaries in 
-the vcpu struct that we can check before/after instruction execution to 
-see if there was an out of bounds memory access somewhere?
-
-
-> +		rc = X86EMUL_UNHANDLEABLE;
-> +	}
-> +
-> +	if (decode_offset == state->data_available)
-> +		debug("emulator is done\n");
-> +
-> +	return rc;
->   }
->   
->   int emulate_until_complete(struct state *state)
->   {
-> +	int count = 0;
-> +
-> +	do {
-> +		count++;
-> +	} while (step_emulator(state) == X86EMUL_CONTINUE);
-> +
-> +	debug("Emulated %d instructions\n", count);
->   	return 0;
->   }
->   
-> @@ -51,8 +365,16 @@ struct state *create_emulator(void)
->   
->   void reset_emulator(struct state *state)
->   {
-> +	unsigned char *data = state->data;
-> +	size_t data_available = state->data_available;
-> +
-> +	memset(state, 0, sizeof(struct state));
-> +
-> +	state->data = data;
-> +	state->data_available = data_available;
->   }
->   
->   void free_emulator(struct state *state)
->   {
-> +	free(state);
->   }
-> diff --git a/tools/fuzz/x86_instruction_emulation/scripts/afl-many b/tools/fuzz/x86_instruction_emulation/scripts/afl-many
-> new file mode 100755
-> index 000000000000..ab15258573a2
-> --- /dev/null
-> +++ b/tools/fuzz/x86_instruction_emulation/scripts/afl-many
-> @@ -0,0 +1,28 @@
-> +#!/bin/bash
-> +# SPDX-License-Identifier: GPL-2.0+
-> +# This is for running AFL over NPROC or `nproc` cores with normal AFL options.
-> +
-> +export AFL_NO_AFFINITY=1
-> +
-> +while [ -z "$sync_dir" ]; do
-> +  while getopts ":o:" opt; do
-> +    case "${opt}" in
-> +      o)
-> +        sync_dir="${OPTARG}"
-> +        ;;
-> +      *)
-> +        ;;
-> +    esac
-> +  done
-> +  ((OPTIND++))
-> +  [ $OPTIND -gt $# ] && break
-> +done
-> +
-> +for i in $(seq 1 $(( ${NPROC:-$(nproc)} - 1)) ); do
-> +    taskset -c "$i" ./afl-fuzz -S "slave$i" $@ >/dev/null 2>&1 &
-> +done
-> +taskset -c 0 ./afl-fuzz -M master $@ >/dev/null 2>&1 &
-
-
-Why the CPU pinning?
-
-
-> +
-> +sleep 5
-
-
-Why sleep? Shouldn't this rather wait for some async notification to see 
-whether all slaves were successfully started?
-
-
-> +watch -n1 "echo \"Executing './afl-fuzz $@' on ${NPROC:-$(nproc)} cores.\" && ./afl-whatsup -s ${sync_dir}"
-> +pkill afl-fuzz
-> diff --git a/tools/fuzz/x86_instruction_emulation/scripts/bin_fuzz b/tools/fuzz/x86_instruction_emulation/scripts/bin_fuzz
-> new file mode 100755
-> index 000000000000..e570b17f9404
-> --- /dev/null
-> +++ b/tools/fuzz/x86_instruction_emulation/scripts/bin_fuzz
-> @@ -0,0 +1,23 @@
-> +#!/bin/bash
-> +# SPDX-License-Identifier: GPL-2.0+
-> +# This runs the afl-harness at $1, $2 times (or 100)
-> +# It runs uniq and sorts the output to give an idea of what is causing the
-> +# most crashes.  Useful for deciding what to implement next.
-> +
-> +if [ "$#" -lt 1 ]; then
-> +  echo "Usage: './bin_fuzz path_to_afl-harness [number of times to run]"
-> +  exit
-> +fi
-> +
-> +mkdir -p fuzz
-> +rm -f fuzz/*.in fuzz/*.out
-> +
-> +for i in $(seq 1 1 ${2:-100})
-> +do
-> +  {
-> +  head -c 500 /dev/urandom | tee fuzz/$i.in | ./$1
-> +  } > fuzz/$i.out 2>&1
-> +
-> +done
-> +
-> +find ./fuzz -name '*.out' -exec tail -1 {} \; | sed 's/.* Segmen/Segman/' | sed -r 's/^(\s[0-9a-f]{2})+$/misc instruction output/' | sort | uniq -c | sort -rn
-
-
-What is that Segman thing about?
-
-
-Alex
-
-
+>
+> As device is not initialized at that point, I'd expect some kind of
+> crash later.
+> 									Pavel=
