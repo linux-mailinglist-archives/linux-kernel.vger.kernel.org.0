@@ -2,73 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52CA430E76
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 14:57:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B058630E80
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 15:03:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727329AbfEaM5z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 08:57:55 -0400
-Received: from sauhun.de ([88.99.104.3]:41376 "EHLO pokefinder.org"
+        id S1727320AbfEaNDj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 09:03:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727112AbfEaM5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 08:57:54 -0400
-Received: from localhost (unknown [91.64.182.124])
-        by pokefinder.org (Postfix) with ESMTPSA id 4E89C2C2761;
-        Fri, 31 May 2019 14:57:52 +0200 (CEST)
-Date:   Fri, 31 May 2019 14:57:52 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     David Miller <davem@davemloft.net>
-Cc:     ruslan@babayev.com, mika.westerberg@linux.intel.com,
-        linux@armlinux.org.uk, andrew@lunn.ch, f.fainelli@gmail.com,
-        hkallweit1@gmail.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-acpi@vger.kernel.org
-Subject: Re: [net-next,v4 0/2] Enable SFP on ACPI based systems
-Message-ID: <20190531125751.GB951@kunai>
-References: <20190528230233.26772-1-ruslan@babayev.com>
- <20190530.112759.2023290429676344968.davem@davemloft.net>
+        id S1726330AbfEaNDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 09:03:39 -0400
+Received: from localhost (173-25-83-245.client.mchsi.com [173.25.83.245])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7AFA226928;
+        Fri, 31 May 2019 13:03:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559307818;
+        bh=EAcHXloLVvWOmeaCQKGt2kykF6vQUgK3h5YLYFZKb5Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=0xA4neoblMrz9g0w77d8Ik0pV5W3wOMiLGHIt48Qv6JWGepPT7uMm7mCu3c0A6O0M
+         u6TYIV3M0BPYWe/tU+/R5Y8z+iayyr2RshD+zlN9jkJmqa5h4/BKw9+0FfYpsiwhy3
+         CC763w4f6Em3BN69cmomHPMD/zy8RSSze4aDNass=
+Date:   Fri, 31 May 2019 08:03:36 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     sathyanarayanan.kuppuswamy@linux.intel.com
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, keith.busch@intel.com
+Subject: Re: [PATCH v3 1/5] PCI/ACPI: Add _OSC based negotiation support for
+ DPC
+Message-ID: <20190531130336.GO28250@google.com>
+References: <cover.1557870869.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <1d7b8966972edcad8ac9f219e9d83b47beb85f6f.1557870869.git.sathyanarayanan.kuppuswamy@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="5I6of5zJg18YgZEa"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190530.112759.2023290429676344968.davem@davemloft.net>
+In-Reply-To: <1d7b8966972edcad8ac9f219e9d83b47beb85f6f.1557870869.git.sathyanarayanan.kuppuswamy@linux.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, May 14, 2019 at 03:18:13PM -0700, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> 
+> As per PCI Firmware Specification, r3.2 ECN
+> (https://members.pcisig.com/wg/PCI-SIG/document/12614), OS can use
+> bit 7 of _OSC Control Field to negotiate control over Downstream Port
+> Containment (DPC) configuration of PCIe port.
 
---5I6of5zJg18YgZEa
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I think this citation should reference the "Downstream Port
+Containment Related Enhancements ECN", i.e., it should include the
+title of the ECN.  I first thought you were citing the PCI Firmware
+Spec, r3.2, but of course it's not in there.
 
-Hi David,
-
-> Series applied.
-
-Could you make a small immutable branch for me to pull into my I2C tree?
-I have some changes for i2c.h pending and want to minimize merge
-conflicts.
-
-
---5I6of5zJg18YgZEa
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlzxJM8ACgkQFA3kzBSg
-Kbb1wA//fn1qdw/P/G4yYAQFHakA9HK+3BNgDFHQN/ZdkCgDS26rlttDdYLIadRl
-IphKCvNM3KLp38dlIOPUbtXGMHbNGNLTARUe13eQGSnI2EPhAjMot9CRWlRzAzFO
-NzFG7OgtL1t8zv/ttDiJl4RD4+N4TR9s3s2mqNdDRIyWXj3ltSU6wy4AgYEbiAWP
-39Hp+Tk+xCfvo4ZSOEGQWijMpMjc6LNFtCvd5M7Dv8kBeSAA6bNdVlvLZcw/+fc4
-MyWfbf3ROERN4m8hlYEBskJDNQPapnQeOGwsX0L1qD+uUaisz2UHW6YK7RE49/oO
-cee9ITU7Nq+ru1QfSLRvJa0THZ3YRT1Zha3XU5yPVELLf237yJ0htfrDj49L8UKU
-p9pQmBpRCM9ZtrHfcYNykimrgA+xHStwLL0qCFbiyKjLbN1M8ru7+331BalYIYZ2
-U5ZcjDW5niA5IEDOtDkcDfup77yYlQTiuS1j8KHPzBnFOz0nPezSeJkIuIK5aPoH
-nqUKtfIk6sSJ7xrQW5HPEq7pRnjHvjToz1wpL0n5d6W5JnppcPwdIiK1PJaYBZd9
-6V+EXMlPuqwaxLTFxT/eyXhWtGolXN6HQwaITaLSCTIfGq9UOAebK6d1AvdLLq77
-LTk8JZusICbWyGl+6j8fprxQNBfGUonOQNgy8QpzZI3QqRnbgCA=
-=89Ll
------END PGP SIGNATURE-----
-
---5I6of5zJg18YgZEa--
+Bjorn
