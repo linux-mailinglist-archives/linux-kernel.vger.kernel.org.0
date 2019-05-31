@@ -2,151 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF66C31020
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 16:26:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7F2A31023
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 16:27:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726794AbfEaOZ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 10:25:59 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:34853 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726501AbfEaOZ7 (ORCPT
+        id S1726718AbfEaO12 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 10:27:28 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:33301 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbfEaO12 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 10:25:59 -0400
-Received: by mail-wm1-f66.google.com with SMTP id c6so3157319wml.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 07:25:57 -0700 (PDT)
+        Fri, 31 May 2019 10:27:28 -0400
+Received: by mail-ed1-f66.google.com with SMTP id n17so14871973edb.0;
+        Fri, 31 May 2019 07:27:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UWNfP9Xw+fLcAm6Bh5fenXPnEuIAm/afLuGtsu9K8hQ=;
-        b=yzCLZH0+6cksQWFzZ4kw4/ASrfWqxl+WiPumszPKGuwlFLSDzN66ZdA3qwGv0bbPMc
-         kQ1Au5YsZyiX+39zL8SVrfSTHnc0Q0x80xU4c5uobmSOmOpBCDYkaXcG5GnYbf3nJM3N
-         bKoY+D9XN8+hRSEcqmtfBdeafZ10G1iDHousce1j85JeRVO3nPP2GfwhlibeBYJXZ2RA
-         i5uvEkJy9SUNsHd2AY+lBtIe7hDD9PJTcJes0ghyPxaPZPB5M4OP/0NGyNbXGI+vFOgj
-         ExsFswxb6ymV2S/QmqEf5gcwDRIubgFBQ4+omdh9EOnxOORkPcjexB7sTFm/l0vHGvBd
-         yQlQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6UNAHPK4lxioobAoRT0BGcdwVsps1KJ7DZZuOajW11o=;
+        b=mfpiwchZ+bgLDbE1e8JO0/GVcJgomLJqDptBY16xc1eBCHIV2EQybuV+y2mZiTKbBR
+         HcnLEt8skfwuwZs9OlT3gAAj718u57nEtViwwgbVLNv/ohiiV+0EVEnecjgQbEof6AOl
+         y2stmiNGs85OeqsLZ+DBrgPsqvA6G2SxBzSKRUzMjx9/8GdSkbZW2F66tpQc36H+PgAL
+         CxLwnklncY4eUmZ6AkXZe8EmZV4TnWaDgerELea+KgqNadNDOD5wxS1THgnA62cuNLGr
+         oA2hGXNjqkTJbswnxf8xxLkR2huiBxf5Aq5gzcejVBLzw5oCT26pT/TX++NVuLff/k84
+         aDqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=UWNfP9Xw+fLcAm6Bh5fenXPnEuIAm/afLuGtsu9K8hQ=;
-        b=DskVG/V4nqRioFoBTdIaKchCNH+DwXE0KJ4prtfmNEFRbsRfrU9pH5qXkalNQzMvfI
-         ZiOdoziPj1mwF81yB/BFdZ1UgMC7wCCKlEE8AXfu6jfqyGjTsEM07GxWPyelT/D+tGUX
-         N84lHHRk5XKEiTEXBXqV73r+oVX84SK7EP3tj+RxSkkOW8asV1tU/Z1tWGdjuExH7OOD
-         nGNIXEoxmrxBtKJrm0Lz1LCzlWegt10/qdMmjHs7JjwPYjo9tEzqr5FM1s5iQlc8tj/J
-         48ucal5pgR/dIKJAfb2U9gm5hS1uODehppv+Lal8QjPdmf4HfbsFHATDXqrfMJrfc7cL
-         y9nw==
-X-Gm-Message-State: APjAAAX2ji+2cTf7S/5zcRf+dfW/ndL1ZTEGvYyybVmtDYVKxdSSwtyd
-        HzYvnLcLZENlPtf6JbaomSXVCw==
-X-Google-Smtp-Source: APXvYqwqVsfbYp/LkEsKWoZs6qYuCRsMDFdSRZzuYVWbmJ94nqLlw1GRK9vKHczxD/3Nm4oSVJGNpQ==
-X-Received: by 2002:a1c:44d7:: with SMTP id r206mr6165993wma.164.1559312756918;
-        Fri, 31 May 2019 07:25:56 -0700 (PDT)
-Received: from [192.168.43.165] ([37.173.17.188])
-        by smtp.googlemail.com with ESMTPSA id r8sm12533363wrr.63.2019.05.31.07.25.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 May 2019 07:25:56 -0700 (PDT)
-Subject: Re: [PATCH] clocksource: arc_timer: use BIT() instead of _BITUL()
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Cc:     Vineet Gupta <vgupta@synopsys.com>,
-        linux-snps-arc@lists.infradead.org
-References: <20190524054010.19323-1-yamada.masahiro@socionext.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <464f954c-cdd4-aeba-2071-406aab57830c@linaro.org>
-Date:   Fri, 31 May 2019 16:25:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6UNAHPK4lxioobAoRT0BGcdwVsps1KJ7DZZuOajW11o=;
+        b=gFQKR0+I59sDStQMrhPMWKdE21g6zhNC5AfAkp1Kkx0pJPWrHERb9GCvtSiv7QDMak
+         60kTbrd/wcdoRQm5zoqDzsYoZ5XrT2gnn/YYiXOCeu6Av7XyeA8DiIOy9BRUB8jjVGnb
+         tZIYCXJcgQN3es6IqB/grBA1q2L5/Q+LK/wfxBTGrU3T/MM7NHDzfCegk1jF1wjz+mVt
+         uvnAr/xmYrh/2Jg01oz6EC0Mi1ZuvsmH0RscPf+PX5UMF3JjDEKTi7edqGnp6dn4e971
+         IFARSs71Y4z2TtHlGmVcs+HcvvdHHAXebGC0t88qBLjlidEe12ZR/qsWdA9AqI6WZ5vg
+         BBVQ==
+X-Gm-Message-State: APjAAAUhXv6GmF2byk5N3ePjVedkBBnheVWc84c2DIAxqoi0+Cok1GPP
+        EM8HVBJ2TIrdry8sbLZV43RAnzU3dWbN25Q9zCw=
+X-Google-Smtp-Source: APXvYqzyD3X2JQXbWFIbYGfT0jLlLQh/OrIvjzKfXY8ufWrGQhEKlq8kd1Da5N/85EUdu19P7iNRb34Lo6wLYSf0668=
+X-Received: by 2002:a17:906:4b12:: with SMTP id y18mr9397146eju.32.1559312846324;
+ Fri, 31 May 2019 07:27:26 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190524054010.19323-1-yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190529045207.fzvhuu6d6jf5p65t@localhost> <dbe0a38f-8b48-06dd-cc2c-676e92ba0e74@gmail.com>
+ <20190530034555.wv35efen3igwwzjq@localhost> <CA+h21hpjsC=ie5G7Gx3EcPpazyxze6X_k+8eC+vw7JBvEO2zNg@mail.gmail.com>
+ <20190530143037.iky5kk3h4ssmec3f@localhost> <CA+h21hpp68AEEykxr8bJB=uJ+b0tg881Z7Ao_OfbTAXNxS8WgQ@mail.gmail.com>
+ <20190530150557.iur7fruhyf5bs3qw@localhost> <CA+h21hrBwR4Sow7q0_rS1u2md1M4bSAJt8FO5+VLFiu9UGnvjA@mail.gmail.com>
+ <20190531043417.6phscbpmo6krvxam@localhost> <CA+h21hp9DfW3wFy4YbHMU31rBHyrnUTdF4kKwX36h9vHOW2COw@mail.gmail.com>
+ <20190531140841.j4f72rlojmaayqr5@localhost>
+In-Reply-To: <20190531140841.j4f72rlojmaayqr5@localhost>
+From:   Vladimir Oltean <olteanv@gmail.com>
+Date:   Fri, 31 May 2019 17:27:15 +0300
+Message-ID: <CA+h21hroywaij3gyO0u6v+GFVO2Fv_dP_a+L3oMGpQH8mQgJ5g@mail.gmail.com>
+Subject: Re: [PATCH net-next 0/5] PTP support for the SJA1105 DSA driver
+To:     Richard Cochran <richardcochran@gmail.com>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/05/2019 07:40, Masahiro Yamada wrote:
-> This is in-kernel C code, so there is no reason to use _BITUL().
-> Replace it with equivalent BIT().
-> 
-> I added #include <linux/bits.h> explicitly although it has been included
-> by other headers eventually.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+On Fri, 31 May 2019 at 17:08, Richard Cochran <richardcochran@gmail.com> wrote:
+>
+> On Fri, May 31, 2019 at 04:23:24PM +0300, Vladimir Oltean wrote:
+> > The switch has internal logic to not send any other frame to the CPU
+> > between a link-local and a meta frame.
+>
+> So this is guarantied by the switch?  What happens when multiple PTP
+> frames arrive at the same time on different ports?  Does the switch
+> buffer them and ensure strict ordering at the CPU port?
+>
+> In any case, the switch's guarantee is an important fact to state
+> clearly in your series!
+>
 
-Applied, thanks!
+Yes, ports with lower index take priority.
 
+> > Hence, if the MAC of the DSA master drops some of these frames, it
+> > does not "spoil any chance" except if, out of the sequence LL n ->
+> > META n -> LL n+1 -> META n+1, it persistently drops only META n and LL
+> > n+1.
+>
+> LL = link layer?
+>
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Yes, link-local in this case means trapped frames in the
+01-80-C2-xx-xx-xx or 01:1B:C9:xx:xx:xx space.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+> > So I'd like to re-state the problem towards what should be done to
+> > prevent LL and META frames getting reordered in the DSA master driver
+> > on multi-queue/multi-core systems.
+>
+> Ok.
+>
+> > At the most basic level, there
+> > should exist a rule that makes only a single core process these
+> > frames.
+>
+> This can be done simply using a data structure in the driver with an
+> appropriate locking mechanism.  Then you don't have to worry which
+> core the driver code runs on.
+>
 
+Actually you do. DSA is special because it is not the first net device
+in the RX path that processes the frames. Something needs to be done
+on the master port.
+
+> Thanks,
+> Richard
