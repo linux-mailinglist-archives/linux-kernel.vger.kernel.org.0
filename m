@@ -2,73 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1658030B7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 11:28:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E843630B85
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 11:29:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbfEaJ25 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 05:28:57 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:51252 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726442AbfEaJ25 (ORCPT
+        id S1727106AbfEaJ3d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 05:29:33 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:42066 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726386AbfEaJ3c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 05:28:57 -0400
-Received: from 79.184.255.225.ipv4.supernova.orange.pl (79.184.255.225) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.213)
- id 7f6a3cd91278b429; Fri, 31 May 2019 11:28:54 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc:     Len Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH v2] drivers: base: power: Use of_clk_get_parent_count()
-Date:   Fri, 31 May 2019 11:28:54 +0200
-Message-ID: <11314269.jSQc6MYxeX@kreacher>
-In-Reply-To: <20190527120535.176015-1-wangkefeng.wang@huawei.com>
-References: <CAMuHMdX=o+gT6fbpZcj8jQbHi9LJci9CX72DG5j+DKYxuSkYvQ@mail.gmail.com> <20190527120535.176015-1-wangkefeng.wang@huawei.com>
+        Fri, 31 May 2019 05:29:32 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4V9TCGJ055040;
+        Fri, 31 May 2019 09:29:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=B/80Jbbdq5j+mezsLHBpZfOYUfPS/DTx5wYd1REElw0=;
+ b=x+5Mxo/iFOaYGB6PxeQ6fjKAm1DRHRb7a9ce3Xv0K1GDid5835vLUk3loMPnkP2BiNRm
+ enz0u4jZXswJZEha/tG7V0+6y/WWbiBuQb1qZSC0zMppyFvtxV/jtsX1qJlRMprwi64y
+ Mi7G80UHqschyFu30a9ybAu2/udZjlM9hQifYpIo/RHXpjOa1eEj5vrGNwZnPN9VL5Y/
+ 3iC1uZzt5cPjZpyEn5vfXFGZF2z/rQcfQ+Q4uoVbdzYktm6HPst+pjsOIV0wrAQHaNEM
+ u+sx0xnEPfZTlu6JPInnyM9VBaMaA4f+134BLaBsWZDBX/8s2Nvvf/CmupV3sa+B3XiN dw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2spw4tw6d3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 31 May 2019 09:29:20 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4V9RkNj122297;
+        Fri, 31 May 2019 09:29:19 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2ss1fphk0h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 31 May 2019 09:29:19 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4V9TG0F027392;
+        Fri, 31 May 2019 09:29:17 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 31 May 2019 02:29:15 -0700
+Date:   Fri, 31 May 2019 12:29:07 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Nishka Dasgupta <nishkadg.linux@gmail.com>
+Cc:     larry.finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
+        gregkh@linuxfoundation.org, himadri18.07@gmail.com,
+        colin.king@canonical.com, straube.linux@gmail.com,
+        yangx92@hotmail.com, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: rtl8712: Replace function r8712_init_mlme_priv
+Message-ID: <20190531092907.GC31203@kadam>
+References: <20190530205531.30016-1-nishkadg.linux@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190530205531.30016-1-nishkadg.linux@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9273 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905310062
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9273 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905310062
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, May 27, 2019 2:05:35 PM CEST Kefeng Wang wrote:
-> Use of_clk_get_parent_count() instead of open coding.
+On Fri, May 31, 2019 at 02:25:31AM +0530, Nishka Dasgupta wrote:
+> Delete r8712_init_mlme_priv as it does nothing except call
+> _init_mlme_priv, and rename _init_mlme_priv to
+> r8712_init_mlme_priv.
+> Change the type of the new r8712_init_mlme_priv (formerly _init_mlme_priv)
+> to (non-static) int, from static sint.
 > 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+> Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
 > ---
->  drivers/base/power/clock_ops.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/base/power/clock_ops.c b/drivers/base/power/clock_ops.c
-> index 59d19dd64928..3e84e3085d43 100644
-> --- a/drivers/base/power/clock_ops.c
-> +++ b/drivers/base/power/clock_ops.c
-> @@ -12,6 +12,7 @@
->  #include <linux/pm_clock.h>
->  #include <linux/clk.h>
->  #include <linux/clkdev.h>
-> +#include <linux/of_clk.h>
->  #include <linux/slab.h>
->  #include <linux/err.h>
->  #include <linux/pm_domain.h>
-> @@ -195,8 +196,7 @@ int of_pm_clk_add_clks(struct device *dev)
->  	if (!dev || !dev->of_node)
->  		return -EINVAL;
->  
-> -	count = of_count_phandle_with_args(dev->of_node, "clocks",
-> -					   "#clock-cells");
-> +	count = of_clk_get_parent_count(dev->of_node);
->  	if (count <= 0)
->  		return -ENODEV;
->  
-> 
 
-Applied, thanks!
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
 
+Looks good, thanks.
 
-
+regards,
+dan carpenter
 
