@@ -2,132 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7776C309F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 10:16:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 350FA30A03
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 10:16:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727083AbfEaIQD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 04:16:03 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:18895 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726158AbfEaIQC (ORCPT
+        id S1726997AbfEaIQu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 04:16:50 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:40675 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726002AbfEaIQt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 04:16:02 -0400
-X-UUID: 9ad1d9bef1af45659057c62165ebfa50-20190531
-X-UUID: 9ad1d9bef1af45659057c62165ebfa50-20190531
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
-        (envelope-from <ryder.lee@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1983522807; Fri, 31 May 2019 16:15:58 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs06n2.mediatek.inc (172.21.101.130) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 31 May 2019 16:15:56 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 31 May 2019 16:15:56 +0800
-From:   Ryder Lee <ryder.lee@mediatek.com>
-To:     Felix Fietkau <nbd@nbd.name>,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-CC:     Roy Luo <royluo@google.com>, YF Luo <yf.luo@mediatek.com>,
-        Yiwei Chung <yiwei.chung@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Chih-Min Chen <chih-min.Chen@mediatek.com>,
-        <linux-wireless@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH 2/2] mt76: mt7615: fix slow performance when enable encryption
-Date:   Fri, 31 May 2019 16:15:52 +0800
-Message-ID: <ec57059abc83d7a73bcb4e6cd7f8eccca8d8517e.1559287432.git.ryder.lee@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <7f167d09736652f81383991c971506630bbedacc.1559287432.git.ryder.lee@mediatek.com>
-References: <7f167d09736652f81383991c971506630bbedacc.1559287432.git.ryder.lee@mediatek.com>
+        Fri, 31 May 2019 04:16:49 -0400
+Received: by mail-qk1-f194.google.com with SMTP id c70so5673745qkg.7;
+        Fri, 31 May 2019 01:16:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=30RVgFLbkHlG89EQk6x8p2INAuD+G0BGcR1Z9jL2rCQ=;
+        b=hlSO5RJqIRpe1PZ7TpsmMQo44ovugU1khiJZzOhJJaLKDuWfCwGbJ85DVqTKJvE0Gy
+         sLg/RT/wxWni08tLKY6EbIL4nLZGgoIt4Y+Ymv4FBYFJRtXw90vZxo91yaSs7gqyk+lT
+         fY00OXuIPojXT4axXV4Ok6QbjWwDM3+z4bzQ0t1qG49kEM6jW0otSE+LN6HG0puanyCu
+         dmoskc6YtZrVhVfqRhVVtlGh2L9ieXPudQxe5sI/2bBDk2/jQaYAqohNJIZsBo0Zn13N
+         vd69a7dHLZplmMoblzrtfHbe5dnT4+6feWRXqVeO2pJQfECYihdPNo8lS1KRtMSA3rlN
+         LSbw==
+X-Gm-Message-State: APjAAAW3owH4bZGfsEtkBaE1u6gjAzMGFLPzhCW/J1UMcsUnAx5h93nj
+        H3pLiMkGLKXHN03u2cFOFEEPdQQZCLR0UKsIgwU=
+X-Google-Smtp-Source: APXvYqygpXWKDUKmI3iwxPslA26zY8qzu12QphPXeLnYQv/mQEzWW3Ndpgpw/HREzaYL1eIfi/Csyx1vKJTBNYEnwFg=
+X-Received: by 2002:a05:620a:1085:: with SMTP id g5mr7427087qkk.182.1559290608936;
+ Fri, 31 May 2019 01:16:48 -0700 (PDT)
 MIME-Version: 1.0
+References: <20190530141531.43462-1-vincenzo.frascino@arm.com> <20190530141531.43462-2-vincenzo.frascino@arm.com>
+In-Reply-To: <20190530141531.43462-2-vincenzo.frascino@arm.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 31 May 2019 10:16:32 +0200
+Message-ID: <CAK8P3a3EnvkLND2RJdZtEY64PhK5g0sbbuytQro=f0cPur2g9g@mail.gmail.com>
+Subject: Re: [PATCH v6 01/19] kernel: Standardize vdso_datapage
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mips@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Peter Collingbourne <pcc@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Huw Davies <huw@codeweavers.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-TM-SNTS-SMTP: BB14C576678B5C5AE4F32363CE403502738AE4B0DBB9114DD60A2EB84725A24E2000:8
-X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix wrong WCID assignment and add RKV (RX Key of this entry is valid)
-flag to check if peer uses the same configuration with previous
-handshaking.
+On Thu, May 30, 2019 at 4:15 PM Vincenzo Frascino
+<vincenzo.frascino@arm.com> wrote:
 
-If the configuration is mismatch, WTBL indicates a “cipher mismatch”
-to stop SEC decryption to prevent the packet from damage.
+> + * vdso_data will be accessed by 64 bit and compat code at the same time
+> + * so we should be careful before modifying this structure.
+> + */
+> +struct vdso_data {
+> +       u32                     seq;
+> +
+> +       s32                     clock_mode;
+> +       u64                     cycle_last;
+> +       u64                     mask;
+> +       u32                     mult;
+> +       u32                     shift;
+> +
+> +       struct vdso_timestamp   basetime[VDSO_BASES];
+> +
+> +       s32                     tz_minuteswest;
+> +       s32                     tz_dsttime;
+> +       u32                     hrtimer_res;
+> +};
 
-Suggested-by: YF Luo <yf.luo@mediatek.com>
-Suggested-by: Yiwei Chung <yiwei.chung@mediatek.com>
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
----
- drivers/net/wireless/mediatek/mt76/mt7615/init.c | 15 +++++++++------
- drivers/net/wireless/mediatek/mt76/mt7615/main.c |  2 +-
- drivers/net/wireless/mediatek/mt76/mt7615/mcu.c  |  1 +
- 3 files changed, 11 insertions(+), 7 deletions(-)
+The structure contains four padding bytes at the end, which is
+something we try to avoid, at least if this ends up being used as
+an ABI. Maybe add "u32 __unused" at the end?
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/init.c b/drivers/net/wireless/mediatek/mt76/mt7615/init.c
-index f860af6a42da..b96c753b7532 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7615/init.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7615/init.c
-@@ -62,16 +62,11 @@ static void mt7615_mac_init(struct mt7615_dev *dev)
- 		 MT_AGG_ARCR_RATE_DOWN_RATIO_EN |
- 		 FIELD_PREP(MT_AGG_ARCR_RATE_DOWN_RATIO, 1) |
- 		 FIELD_PREP(MT_AGG_ARCR_RATE_UP_EXTRA_TH, 4)));
--
--	dev->mt76.global_wcid.idx = MT7615_WTBL_RESERVED;
--	dev->mt76.global_wcid.hw_key_idx = -1;
--	rcu_assign_pointer(dev->mt76.wcid[MT7615_WTBL_RESERVED],
--			   &dev->mt76.global_wcid);
- }
- 
- static int mt7615_init_hardware(struct mt7615_dev *dev)
- {
--	int ret;
-+	int ret, idx;
- 
- 	mt76_wr(dev, MT_INT_SOURCE_CSR, ~0);
- 
-@@ -98,6 +93,14 @@ static int mt7615_init_hardware(struct mt7615_dev *dev)
- 	mt7615_mcu_ctrl_pm_state(dev, 0);
- 	mt7615_mcu_del_wtbl_all(dev);
- 
-+	/* Beacon and mgmt frames should occupy wcid 0 */
-+	idx = mt76_wcid_alloc(dev->mt76.wcid_mask, MT7615_WTBL_STA - 1);
-+	if (idx)
-+		return -ENOSPC;
-+
-+	dev->mt76.global_wcid.idx = idx;
-+	dev->mt76.global_wcid.hw_key_idx = -1;
-+	rcu_assign_pointer(dev->mt76.wcid[idx], &dev->mt76.global_wcid);
- 	return 0;
- }
- 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/main.c b/drivers/net/wireless/mediatek/mt76/mt7615/main.c
-index 585e67fa2728..2cdd339453c8 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7615/main.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7615/main.c
-@@ -95,7 +95,7 @@ static int mt7615_add_interface(struct ieee80211_hw *hw,
- 
- 	dev->vif_mask |= BIT(mvif->idx);
- 	dev->omac_mask |= BIT(mvif->omac_idx);
--	idx = MT7615_WTBL_RESERVED - 1 - mvif->idx;
-+	idx = MT7615_WTBL_RESERVED - mvif->idx;
- 	mvif->sta.wcid.idx = idx;
- 	mvif->sta.wcid.hw_key_idx = -1;
- 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
-index 8b8db526cb16..5f38741e7366 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
-@@ -882,6 +882,7 @@ int mt7615_mcu_set_wtbl_key(struct mt7615_dev *dev, int wcid,
- 		if (cipher == MT_CIPHER_NONE && key)
- 			return -EOPNOTSUPP;
- 
-+		req.key.rkv = 1;
- 		req.key.cipher_id = cipher;
- 		req.key.key_id = key->keyidx;
- 		req.key.key_len = key->keylen;
--- 
-2.18.0
-
+     Arnd
