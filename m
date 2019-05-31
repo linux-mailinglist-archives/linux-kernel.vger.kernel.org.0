@@ -2,82 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0A2A3152F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 21:21:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E069331551
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 21:25:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbfEaTVb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 15:21:31 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:36449 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726808AbfEaTVa (ORCPT
+        id S1727394AbfEaTZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 15:25:05 -0400
+Received: from gateway32.websitewelcome.com ([192.185.145.171]:24589 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727085AbfEaTZF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 15:21:30 -0400
-Received: by mail-qt1-f195.google.com with SMTP id u12so2288081qth.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 12:21:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=M/Axm/7nwcI4RwJavi+sPMZhETGsmjoJsyzXG1wGn6A=;
-        b=Oa769bV0E57o/mFwm4rFI6VesZYTPFlBeqxErtPkLpIKz2lD4B4olOfEECo9pwj5oe
-         bfaPfP2QcMn7dBXg1aFjqM8KqsJ4mDBA5HWTItjp2kjmSq7YHdrIRNLgGd3isihYMbnR
-         snIvyUjthS41VCeIp19Hdio0Mhcn23fhJEz9JNE1d1o5d9TE7BqDrdMCUTTGRDqorhEY
-         8PyowO3EUEkiB9LQpF54ZccGwgvHZYBfvjiG9GqF4nz5vmX4fQmyuDogGD09pT5Bysk6
-         jJzLIiZwj49uvkf/SQhI9hO0yhTtOufs8UqpTYVHpsaU8kLVihQjUrRiBxBTVZhTxMr7
-         t9sw==
-X-Gm-Message-State: APjAAAX+msaovHPKy/VGbrlk+YAZBKE2H5/PG7jN/OtQDO/uUC6XTlro
-        5XYI6rD1aj+yvciO2egBS4tmjGYyzxGm5VsWI/A=
-X-Google-Smtp-Source: APXvYqyS23Wu08rwAwTAr7AC8VlLnPp9u0Vb33101ni/Pz03jgR03uZyOBHxcpJpF5Jqjr3IrXxtdoc2pUBXgXv8QRI=
-X-Received: by 2002:ac8:2433:: with SMTP id c48mr10515168qtc.18.1559330489729;
- Fri, 31 May 2019 12:21:29 -0700 (PDT)
+        Fri, 31 May 2019 15:25:05 -0400
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway32.websitewelcome.com (Postfix) with ESMTP id 0F23410293A5
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 14:25:04 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id Wn9Eh49quYTGMWn9Eh3BQY; Fri, 31 May 2019 14:25:04 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.123.250] (port=52648 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hWn93-003OqT-R2; Fri, 31 May 2019 14:25:02 -0500
+Date:   Fri, 31 May 2019 14:24:53 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] KVM: irqchip: Use struct_size() in kzalloc()
+Message-ID: <20190531192453.GA13536@embeddedor>
 MIME-Version: 1.0
-References: <20190528235742.105510-1-natechancellor@gmail.com>
- <CAK8P3a0a0hMsZDkqKsfsyCWpdvDni72tjAxCz2VeAaU56zqrXg@mail.gmail.com> <20190531183227.GA34102@archlinux-epyc>
-In-Reply-To: <20190531183227.GA34102@archlinux-epyc>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 31 May 2019 21:21:13 +0200
-Message-ID: <CAK8P3a1-_KRvoeK4w0b8775izox8fRm=NGJC=yicDRn7J5UW2Q@mail.gmail.com>
-Subject: Re: [PATCH] ARM: xor-neon: Replace __GNUC__ checks with CONFIG_CC_IS_GCC
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Nicolas Pitre <nico@fluxnic.net>,
-        Stefan Agner <stefan@agner.ch>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.123.250
+X-Source-L: No
+X-Exim-ID: 1hWn93-003OqT-R2
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.123.250]:52648
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 31, 2019 at 8:32 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> On Fri, May 31, 2019 at 10:05:22AM +0200, Arnd Bergmann wrote:
-> > If I remember correctly, we also had the same issue with older versions
-> > of clang, possibly even newer ones. Shouldn't we check for a minimum
-> > compiler version when building with clang to ensure that the code is
-> > really vectorized?
-> >
-> >        Arnd
->
-> Even on tip of tree, it doesn't look like vectorization happens
-> properly. With -S -Rpass-missed='.*' added to the xor-neon.c command:
->
-> /home/nathan/cbl/linux-next/include/asm-generic/xor.h:15:2: remark: the cost-model indicates that interleaving is not beneficial [-Rpass-missed=loop-vectorize]
-> /home/nathan/cbl/linux-next/include/asm-generic/xor.h:11:1: remark: List vectorization was possible but not beneficial with cost 0 >= 0 [-Rpass-missed=slp-vectorizer]
-> xor_8regs_2(unsigned long bytes, unsigned long *p1, unsigned long *p2)
-> ^
->
-> So right now, it doesn't look like there is a minimum version for clang
-> and I don't think adding a warning for clang is productive (what is a
-> user supposed to do?)
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-I see. If we don't have a vectorized version of the xor module with
-clang, I would suggest dropping your patch then, and instead adding
-a Kconfig dependency on CC_IS_GCC, until clang is able to do it right.
+struct foo {
+   int stuff;
+   struct boo entry[];
+};
 
-       Arnd
+instance = kzalloc(sizeof(struct foo) + count * sizeof(struct boo), GFP_KERNEL);
+
+Instead of leaving these open-coded and prone to type mistakes, we can
+now use the new struct_size() helper:
+
+instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+
+This code was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ virt/kvm/irqchip.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/virt/kvm/irqchip.c b/virt/kvm/irqchip.c
+index 79e59e4fa3dc..f8be6a3d1aa6 100644
+--- a/virt/kvm/irqchip.c
++++ b/virt/kvm/irqchip.c
+@@ -196,9 +196,7 @@ int kvm_set_irq_routing(struct kvm *kvm,
+ 
+ 	nr_rt_entries += 1;
+ 
+-	new = kzalloc(sizeof(*new) + (nr_rt_entries * sizeof(struct hlist_head)),
+-		      GFP_KERNEL_ACCOUNT);
+-
++	new = kzalloc(struct_size(new, map, nr_rt_entries), GFP_KERNEL_ACCOUNT);
+ 	if (!new)
+ 		return -ENOMEM;
+ 
+-- 
+2.21.0
+
