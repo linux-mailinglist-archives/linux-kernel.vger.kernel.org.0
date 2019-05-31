@@ -2,99 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E069331551
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 21:25:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 715AE31554
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 21:27:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727394AbfEaTZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 15:25:05 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.171]:24589 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727085AbfEaTZF (ORCPT
+        id S1727223AbfEaT1n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 15:27:43 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33350 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727147AbfEaT1n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 15:25:05 -0400
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id 0F23410293A5
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 14:25:04 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id Wn9Eh49quYTGMWn9Eh3BQY; Fri, 31 May 2019 14:25:04 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.123.250] (port=52648 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hWn93-003OqT-R2; Fri, 31 May 2019 14:25:02 -0500
-Date:   Fri, 31 May 2019 14:24:53 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] KVM: irqchip: Use struct_size() in kzalloc()
-Message-ID: <20190531192453.GA13536@embeddedor>
+        Fri, 31 May 2019 15:27:43 -0400
+Received: by mail-pf1-f193.google.com with SMTP id x10so1663896pfi.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 12:27:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chrisdown.name; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3oPC7MpGNkmIv4lC37rTS0RoLjGGQjB5vfa5jgin/Xo=;
+        b=SbI05ChMOHpTulNwmjhSR5ZbY9idO2IxEcT87P8CRpkS49RpLitZ6wSoqJeEdL1yVK
+         cww6Si5nneZ2edimkGsX9/iIsmxdqDJDY5OVjkYb730pjSBbLnqr5fWiePVGdfkZ6x8p
+         K2nnnRVs/YngzaK04SXScheJ4pWXrpnvyJLow=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3oPC7MpGNkmIv4lC37rTS0RoLjGGQjB5vfa5jgin/Xo=;
+        b=nu9XnA03J7Gg7o2CzeXHZAweQD1IL6d4drJvsumyIEXml9N9n+rGhgLgDyvu5UyuD1
+         EkorY/cq2XpuRO29zXkMKwiXgD+8bQYSssN9EJFKjfDm0CY5/wOq3ez6RJozYADhz9Ms
+         0NhfaC4dk1MqbUw4beqPy8v9J1u3sjPL1q0hxl31SmfMMbpQcB3G7J/czo+O0kunKC/o
+         Yo15wVGRGVUBngE0zzLPFzKARs48/uYvYh0kCurZaWz0MpYSA8gNPlJmLppajM/MqllK
+         0IlgwIaTHipFJkqoD9NSy5/EvTEg53stlBiMGPtSClYSBYNHygfVexkxLtMlKphCaqk7
+         dwEw==
+X-Gm-Message-State: APjAAAWTD/2av9m2pJBiziKjCJiS3LseSIL/+g1ToNVZaA/jGkKl4qt0
+        9ZteNRk9m2NB/s5orME8e3lOaQ==
+X-Google-Smtp-Source: APXvYqx8hFRJFZmWhsZTcS5jPsQcgCdx6RY9Azo2rv/4QAY3o3jE3z984dUqq8bjDr4wU09ByZJlcQ==
+X-Received: by 2002:a62:1885:: with SMTP id 127mr12522926pfy.48.1559330862439;
+        Fri, 31 May 2019 12:27:42 -0700 (PDT)
+Received: from localhost ([2620:10d:c090:200::3:3d82])
+        by smtp.gmail.com with ESMTPSA id f2sm5497516pgs.83.2019.05.31.12.27.41
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 31 May 2019 12:27:41 -0700 (PDT)
+Date:   Fri, 31 May 2019 12:27:40 -0700
+From:   Chris Down <chris@chrisdown.name>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>, Roman Gushchin <guro@fb.com>,
+        Dennis Zhou <dennis@kernel.org>, linux-kernel@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-mm@kvack.org, kernel-team@fb.com
+Subject: Re: [PATCH REBASED] mm, memcg: Make scan aggression always exclude
+ protection
+Message-ID: <20190531192740.GA286159@chrisdown.name>
+References: <20190228213050.GA28211@chrisdown.name>
+ <20190322160307.GA3316@chrisdown.name>
+ <20190530061221.GA6703@dhcp22.suse.cz>
+ <20190530064453.GA110128@chrisdown.name>
+ <20190530065111.GC6703@dhcp22.suse.cz>
+ <20190530205210.GA165912@chrisdown.name>
+ <20190531062854.GG6896@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.123.250
-X-Source-L: No
-X-Exim-ID: 1hWn93-003OqT-R2
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.123.250]:52648
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20190531062854.GG6896@dhcp22.suse.cz>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+Michal Hocko writes:
+>On Thu 30-05-19 13:52:10, Chris Down wrote:
+>> Michal Hocko writes:
+>> > On Wed 29-05-19 23:44:53, Chris Down wrote:
+>> > > Michal Hocko writes:
+>> > > > Maybe I am missing something so correct me if I am wrong but the new
+>> > > > calculation actually means that we always allow to scan even min
+>> > > > protected memcgs right?
+>> > >
+>> > > We check if the memcg is min protected as a precondition for coming into
+>> > > this function at all, so this generally isn't possible. See the
+>> > > mem_cgroup_protected MEMCG_PROT_MIN check in shrink_node.
+>> >
+>> > OK, that is the part I was missing, I got confused by checking the min
+>> > limit as well here. Thanks for the clarification. A comment would be
+>> > handy or do we really need to consider min at all?
+>>
+>> You mean as part of the reclaim pressure calculation? Yeah, we still need
+>> it, because we might only set memory.min, but not set memory.low.
+>
+>But then the memcg will get excluded as well right?
 
-struct foo {
-   int stuff;
-   struct boo entry[];
-};
+I'm not sure what you mean, could you clarify? :-)
 
-instance = kzalloc(sizeof(struct foo) + count * sizeof(struct boo), GFP_KERNEL);
-
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
-
-instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
-
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- virt/kvm/irqchip.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/virt/kvm/irqchip.c b/virt/kvm/irqchip.c
-index 79e59e4fa3dc..f8be6a3d1aa6 100644
---- a/virt/kvm/irqchip.c
-+++ b/virt/kvm/irqchip.c
-@@ -196,9 +196,7 @@ int kvm_set_irq_routing(struct kvm *kvm,
- 
- 	nr_rt_entries += 1;
- 
--	new = kzalloc(sizeof(*new) + (nr_rt_entries * sizeof(struct hlist_head)),
--		      GFP_KERNEL_ACCOUNT);
--
-+	new = kzalloc(struct_size(new, map, nr_rt_entries), GFP_KERNEL_ACCOUNT);
- 	if (!new)
- 		return -ENOMEM;
- 
--- 
-2.21.0
-
+The only thing we use memory.min for in this patch is potentially as the 
+protection size, which we then use to determine reclaim pressure. We don't use 
+this information if the cgroup is below memory.min, because you'll never come 
+in here. This is for if you *do* have memory.min or memory.low set and you are 
+*exceeding* it (or we are in low reclaim), in which case we want it (or 
+memory.low if higher) considered as the protection size.
