@@ -2,78 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 127DA3104F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 16:34:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 009C931051
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 16:34:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726941AbfEaOd5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 10:33:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53692 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726559AbfEaOd4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 10:33:56 -0400
-Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 730B326AB4;
-        Fri, 31 May 2019 14:33:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559313235;
-        bh=1nBozZjo2hDOp1xXAXOBbApH4GiAlFWbKx6C42s2Cks=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=PkxOkx58565Eq22i/BEn1YC29YYECsCDhoKy3ADpy8tiE60wXcfiYgCIIk+9ihLx4
-         ydGw3fjzOieA1GAArshst6SzTAx5aoVVnxWdnrY0j/UDwm0unnfcJou5l/HbMpGtR1
-         mwgDJ/P6xMrt84IqVzvkzUfweKpX6JaZniDThWJ8=
-Date:   Fri, 31 May 2019 16:33:51 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Andy Lutomirski <luto@kernel.org>
-cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4] x86/power: Fix 'nosmt' vs. hibernation triple fault
- during resume
-In-Reply-To: <nycvar.YFH.7.76.1905311628330.1962@cbobk.fhfr.pm>
-Message-ID: <nycvar.YFH.7.76.1905311633310.1962@cbobk.fhfr.pm>
-References: <nycvar.YFH.7.76.1905282326360.1962@cbobk.fhfr.pm> <20190531051456.fzkvn62qlkf6wqra@treble> <nycvar.YFH.7.76.1905311045240.1962@cbobk.fhfr.pm> <5564116.e9OFvgDRbB@kreacher> <CALCETrUpseta+NrhVwzzVFTe-BkBHtDUJBO22ci3mAsVR+XOog@mail.gmail.com>
- <nycvar.YFH.7.76.1905311628330.1962@cbobk.fhfr.pm>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1726949AbfEaOeS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 10:34:18 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41682 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbfEaOeR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 10:34:17 -0400
+Received: by mail-pf1-f194.google.com with SMTP id q17so6329709pfq.8;
+        Fri, 31 May 2019 07:34:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=fnQfpcEhfSu6CHorowQTdVmGhlubjd1jGBr2l9heqP4=;
+        b=lCqxT1nQv45YhWQ9KXKemph5c4rCv/ebDZpjkcx6xxcIlgEtfDMFylJdCSQkmFke7b
+         uvwf7RFjH+S3DgvKn4eGTafMQDGTc5Qh+gUejQNKWPTnYSfqpbgwGh4kv56H50rgU5m0
+         qx1lieKFngqRumYZ7hYMC8t/r7sSLpgDaLNtXc/av3+VD+nUauAlrnx2prk5/hgWZVcB
+         P82RT453NjDQ2l11e1R0z8XJdFNJcRyemYzclTjSBXx7KsiUaXbYkEMDHvNdqBs5nmHS
+         J3J7GUy3KSA0IQLZ6eEE93RrkIEIuGNWOUb6TzrHlWmVUgqfnePWEFpPinRwUB6qPMoY
+         DwHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fnQfpcEhfSu6CHorowQTdVmGhlubjd1jGBr2l9heqP4=;
+        b=Cx1+hNPMYvowV1H5xPAjQIP4rSIkvMKmSAVKPnvKIrjgP/AWJMRbyvY71iADVXM0hQ
+         QONDSbTH7NAU7fiFWwOwxqpQRveE+4zFsDhNl1jnX5P9eYSyi3jQ31ZPyGRdAkKozt9F
+         Em0509flBTBRSxSNKkKDWjBJ2xPF4ZdqtGViBpUni1sCFDXYqkczn6REyz9xhlk+kkKF
+         LmMgqIrfqGYlr7jRzfhQ0fYllweAEQkWW00FP2SVyneYvyBSJ9Ev4dRDauEBu61CISLb
+         r74xm3Y0uCfBBwAPZHqaQMMBHCi59yFaVEsPTER+pyhOF13tiILSSnPnZmD5jNveAser
+         bD8Q==
+X-Gm-Message-State: APjAAAWnB/5UCEm/ifInRo3r/j+5m6n5UzFkcRj7pBHImPyXkapm9Rnc
+        r/UWRz8i1VAFmt+Z+T6eb90=
+X-Google-Smtp-Source: APXvYqwGdiXZSvss9JzvQ5dpbsxeEWxevql+5o1ejuQAC7HEJARkX5+94Biv/e2q0kxkXzSgk+J1Og==
+X-Received: by 2002:aa7:8296:: with SMTP id s22mr10426129pfm.52.1559313256809;
+        Fri, 31 May 2019 07:34:16 -0700 (PDT)
+Received: from google.com ([122.38.223.241])
+        by smtp.gmail.com with ESMTPSA id c6sm10458746pfm.163.2019.05.31.07.34.10
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 31 May 2019 07:34:15 -0700 (PDT)
+Date:   Fri, 31 May 2019 23:34:07 +0900
+From:   Minchan Kim <minchan@kernel.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>, jannh@google.com,
+        oleg@redhat.com, christian@brauner.io, oleksandr@redhat.com,
+        hdanton@sina.com
+Subject: Re: [RFCv2 1/6] mm: introduce MADV_COLD
+Message-ID: <20190531143407.GB216592@google.com>
+References: <20190531064313.193437-1-minchan@kernel.org>
+ <20190531064313.193437-2-minchan@kernel.org>
+ <20190531084752.GI6896@dhcp22.suse.cz>
+ <20190531133904.GC195463@google.com>
+ <20190531140332.GT6896@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190531140332.GT6896@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 31 May 2019, Jiri Kosina wrote:
-
-> On Fri, 31 May 2019, Andy Lutomirski wrote:
-> 
-> > 2. Put the CPU all the way to sleep by sending it an INIT IPI.
+On Fri, May 31, 2019 at 04:03:32PM +0200, Michal Hocko wrote:
+> On Fri 31-05-19 22:39:04, Minchan Kim wrote:
+> > On Fri, May 31, 2019 at 10:47:52AM +0200, Michal Hocko wrote:
+> > > On Fri 31-05-19 15:43:08, Minchan Kim wrote:
+> > > > When a process expects no accesses to a certain memory range, it could
+> > > > give a hint to kernel that the pages can be reclaimed when memory pressure
+> > > > happens but data should be preserved for future use.  This could reduce
+> > > > workingset eviction so it ends up increasing performance.
+> > > > 
+> > > > This patch introduces the new MADV_COLD hint to madvise(2) syscall.
+> > > > MADV_COLD can be used by a process to mark a memory range as not expected
+> > > > to be used in the near future. The hint can help kernel in deciding which
+> > > > pages to evict early during memory pressure.
+> > > > 
+> > > > Internally, it works via deactivating pages from active list to inactive's
+> > > > head if the page is private because inactive list could be full of
+> > > > used-once pages which are first candidate for the reclaiming and that's a
+> > > > reason why MADV_FREE move pages to head of inactive LRU list. Therefore,
+> > > > if the memory pressure happens, they will be reclaimed earlier than other
+> > > > active pages unless there is no access until the time.
+> > > 
+> > > [I am intentionally not looking at the implementation because below
+> > > points should be clear from the changelog - sorry about nagging ;)]
+> > > 
+> > > What kind of pages can be deactivated? Anonymous/File backed.
+> > > Private/shared? If shared, are there any restrictions?
 > > 
-> > Version 2 seems very simple and robust.  Is there a reason we can't do
-> > it?  We obviously don't want to do it for normal offline because it
-> > might be a high-power state, but a cpu in the wait-for-SIPI state is
-> > not going to exit that state all by itself.
+> > Both file and private pages could be deactived from each active LRU
+> > to each inactive LRU if the page has one map_count. In other words,
 > > 
-> > The patch to implement #2 should be short and sweet as long as we are
-> > careful to only put genuine APs to sleep like this.  The only downside
-> > I can see is that an new kernel resuming and old kernel that was
-> > booted with nosmt is going to waste power, but I don't think that's a
-> > showstopper.
+> >     if (page_mapcount(page) <= 1)
+> >         deactivate_page(page);
 > 
-> Well, if *that* is not an issue, than the original 3-liner that just 
-> forces them to 'hlt' [1] would be good enough as well.
+> Why do we restrict to pages that are single mapped?
 
-Actually no, scratch that, I misunderstood your proposal, sorry.
+Because page table in one of process shared the page would have access bit
+so finally we couldn't reclaim the page. The more process it is shared,
+the more fail to reclaim.
 
--- 
-Jiri Kosina
-SUSE Labs
+> 
+> > > Are there any restrictions on mappings? E.g. what would be an effect of
+> > > this operation on hugetlbfs mapping?
+> > 
+> > VM_LOCKED|VM_HUGETLB|VM_PFNMAP vma will be skipped like MADV_FREE|DONTNEED
+> 
+> OK documenting that this is restricted to the same vmas as MADV_FREE|DONTNEED
+> is really useful to mention.
 
+Sure.
+
+> 
+> > 
+> > > 
+> > > Also you are talking about inactive LRU but what kind of LRU is that? Is
+> > > it the anonymous LRU? If yes, don't we have the same problem as with the
+> > 
+> > active file page -> inactive file LRU
+> > active anon page -> inacdtive anon LRU
+> > 
+> > > early MADV_FREE implementation when enough page cache causes that
+> > > deactivated anonymous memory doesn't get reclaimed anytime soon. Or
+> > > worse never when there is no swap available?
+> > 
+> > I think MADV_COLD is a little bit different symantic with MAVD_FREE.
+> > MADV_FREE means it's okay to discard when the memory pressure because
+> > the content of the page is *garbage*. Furthemore, freeing such pages is
+> > almost zero overhead since we don't need to swap out and access
+> > afterward causes minor fault. Thus, it would make sense to put those
+> > freeable pages in inactive file LRU to compete other used-once pages.
+> > 
+> > However, MADV_COLD doesn't means it's a garbage and freeing requires
+> > swap out/swap in afterward. So, it would be better to move inactive
+> > anon's LRU list, not file LRU. Furthermore, it would avoid unnecessary
+> > scanning of those cold anonymous if system doesn't have a swap device.
+> 
+> Please document this, if this is really a desirable semantic because
+> then you have the same set of problems as we've had with the early
+> MADV_FREE implementation mentioned above.
+
+IIRC, the problem of MADV_FREE was that we couldn't discard freeable
+pages because VM never scan anonymous LRU with swapless system.
+However, it's not the our case because we should reclaim them, not
+discarding.
+
+I will include it in the description.
+
+Thanks.
