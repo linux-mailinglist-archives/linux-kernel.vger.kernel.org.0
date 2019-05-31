@@ -2,72 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F4E031544
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 21:24:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D0DD3151C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 21:13:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727356AbfEaTYC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 15:24:02 -0400
-Received: from mail-pf1-f172.google.com ([209.85.210.172]:38197 "EHLO
-        mail-pf1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727242AbfEaTX4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 15:23:56 -0400
-Received: by mail-pf1-f172.google.com with SMTP id a186so6070525pfa.5
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 12:23:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding:cc:from:to;
-        bh=iIsIHJ/E9sb9iivYOWYTrHBdX9wvV0BVSK9WYc+2hhY=;
-        b=IkaEDUkiL01v96cvpqrh5aLEZuqIVBoVsW6kjbVj4JgpN0FAnbo7SaaFHrdWzRnG9B
-         GyEygz/JVsIfaween1jmzqdvhADsvk6cSO5wQkDlfkPcQDfSOyPNq3ma6wk7I00wXXS3
-         qyvZytb9CvZDvzFgf/ryYZo5T2+JMyAuGF3EV6naw3UejWl//fkEqjx3D5Ybs2xrbSrR
-         fINhqBzSRCpbeFwSibG17+zmHKTTn8wUY1oBAVSIf6d1i8SFg+w/HkJ+CftxfZ0zNTdp
-         x3hqpcM2e2GpMebFoCGMUkjw813oRteLRor6ctSvudX97i4TUgFhF35QX7t+ACoqRriD
-         yHcA==
-X-Gm-Message-State: APjAAAUpMYsk/n2qdDJL6oFT2aJkHyrqwgAbCNyKlkdy52PnVcEsFMxL
-        1geN0gSZboBpCLqLpfSxGodpdQ==
-X-Google-Smtp-Source: APXvYqwqjBeSRHkNhprVnlAw/2N8AmL71UGiONuyr+S2FzywQVEi5ye6pcOigbDzCrp3j+bmycDwJw==
-X-Received: by 2002:a62:d410:: with SMTP id a16mr4454667pfh.167.1559330635344;
-        Fri, 31 May 2019 12:23:55 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id m1sm6059048pjv.22.2019.05.31.12.23.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 31 May 2019 12:23:54 -0700 (PDT)
-Subject: [PATCH 5/5] x86: Add fchmod4 to syscall_32.tbl
-Date:   Fri, 31 May 2019 12:12:04 -0700
-Message-Id: <20190531191204.4044-6-palmer@sifive.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190531191204.4044-1-palmer@sifive.com>
-References: <20190531191204.4044-1-palmer@sifive.com>
+        id S1727159AbfEaTNE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 15:13:04 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51434 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726807AbfEaTNE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 15:13:04 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8016430821BF;
+        Fri, 31 May 2019 19:13:03 +0000 (UTC)
+Received: from treble (ovpn-124-142.rdu2.redhat.com [10.10.124.142])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 85C615DAAF;
+        Fri, 31 May 2019 19:12:58 +0000 (UTC)
+Date:   Fri, 31 May 2019 14:12:56 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>, Jessica Yu <jeyu@kernel.org>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
+        Johannes Erdfelt <johannes@erdfelt.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH] livepatch: Fix ftrace module text permissions race
+Message-ID: <20190531191256.z5fm4itxewagd5xc@treble>
+References: <bb69d4ac34111bbd9cb16180a6fafe471a88d80b.1559156299.git.jpoimboe@redhat.com>
+ <20190530135414.taftuprranwtowry@pathway.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Cc:     linux-arch@vger.kernel.org, x86@kernel.org, luto@kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        Arnd Bergmann <arnd@arndb.de>,
-        Palmer Dabbelt <palmer@sifive.com>
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190530135414.taftuprranwtowry@pathway.suse.cz>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 31 May 2019 19:13:03 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
----
- arch/x86/entry/syscalls/syscall_32.tbl | 1 +
- 1 file changed, 1 insertion(+)
+On Thu, May 30, 2019 at 03:54:14PM +0200, Petr Mladek wrote:
+> On Wed 2019-05-29 14:02:24, Josh Poimboeuf wrote:
+> > The above panic occurs when loading two modules at the same time with
+> > ftrace enabled, where at least one of the modules is a livepatch module:
+> > 
+> > CPU0					CPU1
+> > klp_enable_patch()
+> >   klp_init_object_loaded()
+> >     module_disable_ro()
+> >     					ftrace_module_enable()
+> > 					  ftrace_arch_code_modify_post_process()
+> > 				    	    set_all_modules_text_ro()
+> >       klp_write_object_relocations()
+> >         apply_relocate_add()
+> > 	  *patches read-only code* - BOOM
+> 
+> This patch looks fine and fixes the race:
+> 
+> Reviewed-by: Petr Mladek <pmladek@suse.com>
+> 
+> 
+> That said, the semantic of text_mutex is a bit unclear:
+> 
+>    + It serializes RO/RW setting but not NX
 
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 1f9607ed087c..319c7a6d3f02 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -433,3 +433,4 @@
- 425	i386	io_uring_setup		sys_io_uring_setup		__ia32_sys_io_uring_setup
- 426	i386	io_uring_enter		sys_io_uring_enter		__ia32_sys_io_uring_enter
- 427	i386	io_uring_register	sys_io_uring_register		__ia32_sys_io_uring_register
-+428	i386	fchmodat4		sys_fchmodat4			__ia32_sys_fchmodat4
+True.  module_enable_nx() is a static function which is only called
+internally.  I should probably rename it to __module_enable_nx() so the
+locking semantics match the others.
+
+>    + Nothing prevents manipulation of the access rights
+>      by external code before the module is ready-enough.
+>      I mean before the sections are set RO by the module
+>      loader itself.
+> 
+>      Most sections are ready in MODULE_STATE_COMMING state.
+>      Only ro_after_init sections need to stay RW longer,
+>      see my question below.
+> 
+> 
+> > diff --git a/kernel/module.c b/kernel/module.c
+> > index 6e6712b3aaf5..3c056b56aefa 100644
+> > --- a/kernel/module.c
+> > +++ b/kernel/module.c
+> > @@ -3519,7 +3534,7 @@ static noinline int do_init_module(struct module *mod)
+> >  	/* Switch to core kallsyms now init is done: kallsyms may be walking! */
+> >  	rcu_assign_pointer(mod->kallsyms, &mod->core_kallsyms);
+> >  #endif
+> > -	module_enable_ro(mod, true);
+> > +	__module_enable_ro(mod, true);
+> 
+> The "true" parameter causes that also ro_after_init section is
+> set read only. What is the purpose of this section, please?
+> 
+> I ask because module_enable_ro(mod, true) can be called
+> earlier from klp_init_object_loaded() from do_one_initcall().
+> 
+> For example, it could some MODULE_STATE_LIVE notifier
+> when it requires write access to ro_after_init section.
+
+Hm, I think you're right.  klp_init_object_loaded() should change the
+module_enable_ro() argument to false when it's called from a patch
+module's initcall.
+
+Maybe we can instead remove __module_enable_ro()'s after_init argument
+and just make it smarter?  It should only do ro_after_init frobbing if
+the module state is MODULE_STATE_LIVE.
+
+> Anyway, the above is a separate problem. This patch looks
+> fine for the original problem.
+
+Thanks for the review.  I'll post another version, with the above
+changes and with the patches split up like Miroslav suggested.
+
 -- 
-2.21.0
-
+Josh
