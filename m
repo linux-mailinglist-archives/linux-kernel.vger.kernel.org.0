@@ -2,113 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29D9731631
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 22:38:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CE8C31636
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 22:38:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727494AbfEaUiU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 16:38:20 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:38243 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726548AbfEaUiT (ORCPT
+        id S1727609AbfEaUi3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 16:38:29 -0400
+Received: from smtprelay0203.hostedemail.com ([216.40.44.203]:58745 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727576AbfEaUi0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 16:38:19 -0400
-Received: by mail-oi1-f196.google.com with SMTP id 18so7933110oij.5
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 13:38:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=0cnPFzcn5QCXw5XUHbmYf8vbNrDRlFteoa91Du2Yekc=;
-        b=pfx+9Sw5vtKckYQD1JLLmFYKgMjdOiE1GLfBnUxWZEpmur1iDTu4DP9DWuUAipq217
-         Q3LeAPoajNvNIs5iTA+XK2O8+Zdk6myuHApD73+jMWVBarxreQidfdiVjJ0A64R7wo/J
-         ichDQGx+ov4YWojqcLnhDA3L6TCmxGLrQmKwF41td/px9EAzYAWgOG+1We7LvoiS5T8a
-         RiMzpXicxhbJg2AqlN05QzzHocm9C73o9iXs7GxqMx/Chgc/KrTvi5y5hKlgIoJQ6ALl
-         n0BohlHKgpBeuUn5lAYB/KlAAFuWpYRlOdyBznykrSHDV2bjMn5JeNjrK0apRgURmXSu
-         nR5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=0cnPFzcn5QCXw5XUHbmYf8vbNrDRlFteoa91Du2Yekc=;
-        b=U3SAiayWjhz8jDlAcJEkWL/4bto9C5hLXnZ6pxpCupfowjjoO3g4ZdS7KccLtmTCyt
-         i3931UCjOyhai0VkcJpPP3/oFE+z5hEGVjttllf+ZQY3Is2FNF6uRKgyzXEN4KyFgeCW
-         jUJ4mJ6OYTfPxslF1Q9OFn5Kt05OwTvbxl1jpM21f0uiB7Mai9WZgMDKcF8LK/4dRCBw
-         CJjwwfiTrbYGrhgH2ZGTx+KnYNEiuwTr91Mdyy5C6cI16XjPoAPmG8uz43LO8j1xMYbD
-         Yatx9NZNhIBtph/XNGDigY5w5+zopdoSStTyJKu83BTZHFx9G2TkzEYxrpyi+NsvUQTZ
-         qluA==
-X-Gm-Message-State: APjAAAW4iECsaxXhMVQ46gZYm/6HVBa6RJM4IAxtWfQ5xVDmXeZ/A7jJ
-        ynPR8bnJEjhUISn61v1Y8WLi5iUISDQUIWbb69KCsQ==
-X-Google-Smtp-Source: APXvYqwLYNgPUHjHWRZ4nVrkwF25wQhKf65UEb5amUMC19vKmqRZwX5OZs7swgotUuD+8rKrLjpbw8D5YUVZgxIb/XI=
-X-Received: by 2002:aca:f308:: with SMTP id r8mr437812oih.39.1559335098973;
- Fri, 31 May 2019 13:38:18 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190531063645.4697-1-namit@vmware.com> <20190531063645.4697-12-namit@vmware.com>
- <20190531105758.GO2623@hirez.programming.kicks-ass.net> <82791CFA-3748-4881-9F01-53F677108FC3@vmware.com>
- <CAG48ez1LxU_swf30Ndj=vjZLeSKg83Oi4f2Kd+wSUygPXA0cGg@mail.gmail.com> <6331796E-8925-4426-A0A6-5CB342178202@vmware.com>
-In-Reply-To: <6331796E-8925-4426-A0A6-5CB342178202@vmware.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Fri, 31 May 2019 22:37:52 +0200
-Message-ID: <CAG48ez0pEHOskDK53LMQa=gbUSoztWR3SuAeux-aVeh_896w5Q@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 11/12] x86/mm/tlb: Use async and inline messages
- for flushing
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 31 May 2019 16:38:26 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 764EC3D05;
+        Fri, 31 May 2019 20:38:24 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:421:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3873:3874:4321:5007:10004:10400:10848:11232:11473:11658:11914:12048:12114:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:14915:21080:21627:30012:30054:30064:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:28,LUA_SUMMARY:none
+X-HE-Tag: price00_f062e7ab5c2e
+X-Filterd-Recvd-Size: 1735
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf01.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 31 May 2019 20:38:23 +0000 (UTC)
+Message-ID: <c7dd57c50690048c16722005bba1c47bcb3af750.camel@perches.com>
+Subject: Re: [PATCH] btrfs: Fix -Wunused-but-set-variable warnings
+From:   Joe Perches <joe@perches.com>
+To:     Andrey Abramov <st5pub@yandex.ru>, "clm@fb.com" <clm@fb.com>,
+        "josef@toxicpanda.com" <josef@toxicpanda.com>,
+        "dsterba@suse.com" <dsterba@suse.com>
+Cc:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Fri, 31 May 2019 13:38:22 -0700
+In-Reply-To: <14843931559334698@myt6-add70abb4f02.qloud-c.yandex.net>
+References: <20190531195349.31129-1-st5pub@yandex.ru>
+         <a7a2a7c70c2dcef122ddbe86eb84820fc4384c7e.camel@perches.com>
+         <14843931559334698@myt6-add70abb4f02.qloud-c.yandex.net>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 31, 2019 at 10:04 PM Nadav Amit <namit@vmware.com> wrote:
-> > On May 31, 2019, at 12:20 PM, Jann Horn <jannh@google.com> wrote:
-> > On Fri, May 31, 2019 at 8:29 PM Nadav Amit <namit@vmware.com> wrote:
-> >> [ +Jann Horn ]
-> >>
-> >>> On May 31, 2019, at 3:57 AM, Peter Zijlstra <peterz@infradead.org> wr=
-ote:
-> >>>
-> >>> On Thu, May 30, 2019 at 11:36:44PM -0700, Nadav Amit wrote:
-> >>>> When we flush userspace mappings, we can defer the TLB flushes, as l=
-ong
-> >>>> the following conditions are met:
-> >>>>
-> >>>> 1. No tables are freed, since otherwise speculative page walks might
-> >>>>  cause machine-checks.
-> >>>>
-> >>>> 2. No one would access userspace before flush takes place. Specifica=
-lly,
-> >>>>  NMI handlers and kprobes would avoid accessing userspace.
-> > [...]
-> >> A #MC might be caused. I tried to avoid it by not allowing freeing of
-> >> page-tables in such way. Did I miss something else? Some interaction w=
-ith
-> >> MTRR changes? I=E2=80=99ll think about it some more, but I don=E2=80=
-=99t see how.
-> >
-> > I don't really know much about this topic, but here's a random comment
-> > since you cc'ed me: If the physical memory range was freed and
-> > reallocated, could you end up with speculatively executed cached
-> > memory reads from I/O memory? (And if so, would that be bad?)
->
-> Thanks. I thought that your experience with TLB page-freeing bugs may
-> be valuable, and you frequently find my mistakes. ;-)
->
-> Yes, speculatively executed cached reads from the I/O memory are a concer=
-n.
-> IIRC they caused #MC on AMD. If page-tables are not changes, but only PTE=
-s
-> are changed, I don=E2=80=99t see how it can be a problem. I also looked a=
-t the MTRR
-> setting code, but I don=E2=80=99t see a concrete problem.
+On Fri, 2019-05-31 at 23:31 +0300, Andrey Abramov wrote:
+> 31.05.2019, 23:05, "Joe Perches" <joe@perches.com>:
+> > On Fri, 2019-05-31 at 22:53 +0300, Andrey Abramov wrote:
+> > >  Fix -Wunused-but-set-variable warnings in raid56.c and sysfs.c files
+> > These uses seem boolean, so perhaps just use bool?
+> I used int because you use ints (as bools) everywhere (for example
+> there is only one bool (as a function argument) in the entire raid56.c
+> file with 3000 lines of code), so with int code looks more consistent.
+> Are you sure that I should use bool?
 
-Can the *physical memory range* not be freed and assigned to another
-device? Like, when you mess around with memory hotplug and PCI hotplug?
+That's up to you and the btrfs maintainers.
+
+
