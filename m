@@ -2,153 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2388A306CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 05:01:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49E11306D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 05:02:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726857AbfEaDBJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 23:01:09 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46649 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726816AbfEaDBH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 23:01:07 -0400
-Received: by mail-pf1-f193.google.com with SMTP id y11so5195306pfm.13
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 20:01:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=9oOs0PxskGic5/b7RTQxcSk0/t3lEcqZGj07P5otHq8=;
-        b=qsAugKex9pTeXPylDLyCfPWEn5qgXavR8GgzLC8UoUgRLxKALJvN8kOs8Eo26U4cz8
-         EEGILf5qHnDVR9odU6omKYCjSGE5tW9LNJgaoSc1JxAglOLlDqq3s/BLtEjYgdQBi1Yc
-         DIBVezOpjlK5Lgi6k8FC7L0WQrNFsIRpkD8GSuopMc7njgTpXuRcmGSeri1S1ADXhdHJ
-         87YALectKjjH+Sp/Zxpms6dMYCf8VJ0WmIy39GwgQipD9m/66jiPu+QdMBZQGWSMqzgc
-         UgcoH2gfLsTo2ZQACZkHnP5b5S5WR4tlXGKBZ5rkGGzRFq5D3spsK+FSryHtXhXHGsGj
-         Dm6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=9oOs0PxskGic5/b7RTQxcSk0/t3lEcqZGj07P5otHq8=;
-        b=kxFOWjeqJq6pjc59qaLAGsfEjmiFgZNGNBSmDWiU8G62IYGZfMqTgxS178lWIn64g+
-         PtWqbxMWuqoYLIMH1H6NZu6ZqYej3f66qkUhZ6th6HYiCVAx3gbEKU5xIWROGKoG5NMS
-         k7NCEArfQUGuPGcSlanS7Rvqu8jCC8W7Zp9mQ1EYHmhf5OJvSgapmx3UcVnrw9oodtme
-         D6fRn/qFMOFsHpDJdzNK/dr5QG7c8VFO8OH6OrfKthCNaYxB4GeODuWeEVSemHfKVMcO
-         9R+KQ0L0SedMjrlswLu2hcfeAykrYBJhwrAVVSMYfOCt7f/FbfHfIVlOdo+hYKG/SlEz
-         r/xg==
-X-Gm-Message-State: APjAAAUESCy1X7HxzTfoWzJmo49JQxa+8r9kr2MLwa9C7zN1IUvP5luo
-        RAIZ43Oal8yWpdOgxs1SUFis9A==
-X-Google-Smtp-Source: APXvYqyCJHRGfPuE7i7mQ60SXgUVFTvJNFmajEQIQuHvG/1GR5NKyMsxFJSfrXyyjMhagJamkQOUCA==
-X-Received: by 2002:a63:2d0:: with SMTP id 199mr6615078pgc.188.1559271666672;
-        Thu, 30 May 2019 20:01:06 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id m8sm6991549pff.137.2019.05.30.20.01.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 May 2019 20:01:05 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <agross@kernel.org>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Doug Anderson <dianders@chromium.org>,
-        Arun Kumar Neelakantam <aneela@codeaurora.org>,
-        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v8 4/4] arm64: dts: qcom: sdm845: Add Q6V5 MSS node
-Date:   Thu, 30 May 2019 20:00:57 -0700
-Message-Id: <20190531030057.18328-5-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20190531030057.18328-1-bjorn.andersson@linaro.org>
-References: <20190531030057.18328-1-bjorn.andersson@linaro.org>
+        id S1726887AbfEaDCW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 23:02:22 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:17631 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726566AbfEaDCW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 23:02:22 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B09E3763727074F9058B;
+        Fri, 31 May 2019 11:02:18 +0800 (CST)
+Received: from huawei.com (10.67.188.14) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Fri, 31 May 2019
+ 11:02:11 +0800
+From:   xiaoqian <xiaoqian9@huawei.com>
+To:     <linux@armlinux.org.uk>, <rafael.j.wysocki@intel.com>,
+        <ebiederm@xmission.com>, <rppt@linux.ibm.com>, <pmladek@suse.com>,
+        <bhelgaas@google.com>, <sakari.ailus@linux.intel.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+        <xiaoqian9@huawei.com>
+Subject: [PATCH] Subject:alignment:fetch pc-instr before irq_enable
+Date:   Fri, 31 May 2019 11:01:20 +0800
+Message-ID: <1559271680-7486-1-git-send-email-xiaoqian9@huawei.com>
+X-Mailer: git-send-email 1.8.5.6
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.67.188.14]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sibi Sankar <sibis@codeaurora.org>
+When the instruction code under PC address is read through
+_probe_kernel_read in do_alignment,if the pte page corresponding
+to the code segment of PC address is reclaimed exactly at this time,
+the address mapping cannot be reconstructed because page fault_disable()
+is executed in _probe_kernel_read function,and the failure to obtain
+the instruction code of PC finally results in the unsuccessful repair
+operation.
+Thus we can modify the implementation of reading user-mode PC instruction
+before local_irq_enable to avoid the above risk.
+At the same time, adjust the sequence of code processing and optimize the
+process.
 
-This patch adds Q6V5 MSS remoteproc node for SDM845 SoCs.
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: xiaoqian <xiaoqian9@huawei.com>
+Cc: stable@vger.kernel.org
 ---
+ arch/arm/mm/alignment.c | 81 +++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 55 insertions(+), 26 deletions(-)
 
-Changes since v7:
-- None
-
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 58 ++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index b25c251b6503..978ceaec78cb 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -1671,6 +1671,64 @@
- 			};
- 		};
+diff --git a/arch/arm/mm/alignment.c b/arch/arm/mm/alignment.c
+index e376883ab35b..4124b9ce3c70 100644
+--- a/arch/arm/mm/alignment.c
++++ b/arch/arm/mm/alignment.c
+@@ -76,6 +76,11 @@
+ #define IS_T32(hi16) \
+ 	(((hi16) & 0xe000) == 0xe000 && ((hi16) & 0x1800))
  
-+		mss_pil: remoteproc@4080000 {
-+			compatible = "qcom,sdm845-mss-pil";
-+			reg = <0 0x04080000 0 0x408>, <0 0x04180000 0 0x48>;
-+			reg-names = "qdsp6", "rmb";
++#define INVALID_INSTR_MODE     0
++#define ARM_INSTR_MODE         1
++#define THUMB_INSTR_MODE       2
++#define THUMB2_INSTR_MODE      3
 +
-+			interrupts-extended =
-+				<&intc GIC_SPI 266 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "wdog", "fatal", "ready",
-+					  "handover", "stop-ack",
-+					  "shutdown-ack";
+ static unsigned long ai_user;
+ static unsigned long ai_sys;
+ static void *ai_sys_last_pc;
+@@ -705,6 +710,48 @@ thumb2arm(u16 tinstr)
+ 	}
+ }
+ 
++static unsigned int
++fetch_usr_pc_instr(struct pt_regs *regs, unsigned long *pc_instrptr)
++{
++	unsigned int fault;
++	unsigned long instrptr;
++	unsigned long instr_mode = INVALID_INSTR_MODE;
 +
-+			clocks = <&gcc GCC_MSS_CFG_AHB_CLK>,
-+				 <&gcc GCC_MSS_Q6_MEMNOC_AXI_CLK>,
-+				 <&gcc GCC_BOOT_ROM_AHB_CLK>,
-+				 <&gcc GCC_MSS_GPLL0_DIV_CLK_SRC>,
-+				 <&gcc GCC_MSS_SNOC_AXI_CLK>,
-+				 <&gcc GCC_MSS_MFAB_AXIS_CLK>,
-+				 <&gcc GCC_PRNG_AHB_CLK>,
-+				 <&rpmhcc RPMH_CXO_CLK>;
-+			clock-names = "iface", "bus", "mem", "gpll0_mss",
-+				      "snoc_axi", "mnoc_axi", "prng", "xo";
++	instrptr = instruction_pointer(regs);
 +
-+			qcom,smem-states = <&modem_smp2p_out 0>;
-+			qcom,smem-state-names = "stop";
++	if (thumb_mode(regs)) {
++		u16 tinstr = 0;
++		u16 *ptr = (u16 *)(instrptr & ~1);
 +
-+			resets = <&aoss_reset AOSS_CC_MSS_RESTART>,
-+				 <&pdc_reset PDC_MODEM_SYNC_RESET>;
-+			reset-names = "mss_restart", "pdc_reset";
++		fault = probe_kernel_address(ptr, tinstr);
++		if (!fault) {
++			tinstr = __mem_to_opcode_thumb16(tinstr);
++			if (cpu_architecture() >= CPU_ARCH_ARMv7 &&
++			    IS_T32(tinstr)) {
++				/* Thumb-2 32-bit */
++				u16 tinstr2 = 0;
 +
-+			qcom,halt-regs = <&tcsr_mutex_regs 0x23000 0x25000 0x24000>;
++				fault = probe_kernel_address(ptr + 1, tinstr2);
++				if (!fault) {
++					tinstr2 = __mem_to_opcode_thumb16(tinstr2);
++					*pc_instrptr = __opcode_thumb32_compose(tinstr, tinstr2);
++					instr_mode = THUMB2_INSTR_MODE;
++				}
++			} else {
++				*pc_instrptr = thumb2arm(tinstr);
++				instr_mode = THUMB_INSTR_MODE;
++			}
++		}
++	} else {
++		fault = probe_kernel_address((void *)instrptr, *pc_instrptr);
++		if (!fault) {
++			*pc_instrptr = __mem_to_opcode_arm(*pc_instrptr);
++			instr_mode = ARM_INSTR_MODE;
++		}
++	}
++	return instr_mode;
++}
 +
-+			power-domains = <&aoss_qmp 2>,
-+					<&rpmhpd SDM845_CX>,
-+					<&rpmhpd SDM845_MX>,
-+					<&rpmhpd SDM845_MSS>;
-+			power-domain-names = "load_state", "cx", "mx", "mss";
+ /*
+  * Convert Thumb-2 32 bit LDM, STM, LDRD, STRD to equivalent instruction
+  * handlable by ARM alignment handler, also find the corresponding handler,
+@@ -775,42 +822,24 @@ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 	unsigned long instr = 0, instrptr;
+ 	int (*handler)(unsigned long addr, unsigned long instr, struct pt_regs *regs);
+ 	unsigned int type;
+-	unsigned int fault;
+ 	u16 tinstr = 0;
+ 	int isize = 4;
+ 	int thumb2_32b = 0;
++	unsigned long pc_instr_mode;
 +
-+			mba {
-+				memory-region = <&mba_region>;
-+			};
-+
-+			mpss {
-+				memory-region = <&mpss_region>;
-+			};
-+
-+			glink-edge {
-+				interrupts = <GIC_SPI 449 IRQ_TYPE_EDGE_RISING>;
-+				label = "modem";
-+				qcom,remote-pid = <1>;
-+				mboxes = <&apss_shared 12>;
-+			};
-+		};
-+
- 		gpucc: clock-controller@5090000 {
- 			compatible = "qcom,sdm845-gpucc";
- 			reg = <0 0x05090000 0 0x9000>;
++	pc_instr_mode = fetch_usr_pc_instr(regs, &instr);
+ 
+ 	if (interrupts_enabled(regs))
+ 		local_irq_enable();
+ 
+ 	instrptr = instruction_pointer(regs);
+-
+-	if (thumb_mode(regs)) {
+-		u16 *ptr = (u16 *)(instrptr & ~1);
+-		fault = probe_kernel_address(ptr, tinstr);
+-		tinstr = __mem_to_opcode_thumb16(tinstr);
+-		if (!fault) {
+-			if (cpu_architecture() >= CPU_ARCH_ARMv7 &&
+-			    IS_T32(tinstr)) {
+-				/* Thumb-2 32-bit */
+-				u16 tinst2 = 0;
+-				fault = probe_kernel_address(ptr + 1, tinst2);
+-				tinst2 = __mem_to_opcode_thumb16(tinst2);
+-				instr = __opcode_thumb32_compose(tinstr, tinst2);
+-				thumb2_32b = 1;
+-			} else {
+-				isize = 2;
+-				instr = thumb2arm(tinstr);
+-			}
+-		}
+-	} else {
+-		fault = probe_kernel_address((void *)instrptr, instr);
+-		instr = __mem_to_opcode_arm(instr);
+-	}
+-
+-	if (fault) {
++	if (pc_instr_mode == INVALID_INSTR_MODE) {
+ 		type = TYPE_FAULT;
+ 		goto bad_or_fault;
++	} else if (pc_instr_mode == THUMB_INSTR_MODE) {
++		isize = 2;
++	} else if (pc_instr_mode == THUMB2_INSTR_MODE) {
++		thumb2_32b = 1;
+ 	}
+ 
+ 	if (user_mode(regs))
 -- 
-2.18.0
+2.12.3
 
