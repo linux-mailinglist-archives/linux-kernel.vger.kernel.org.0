@@ -2,90 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9A1730737
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 05:54:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAE6030768
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 05:56:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727058AbfEaDy0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 23:54:26 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:56116 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726977AbfEaDyS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 23:54:18 -0400
-Received: by mail-it1-f193.google.com with SMTP id g24so429494iti.5
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 20:54:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=0MRFaUSMAfw/XRQQZHzE3aa0KzqIA2a6f7/ADiTDy48=;
-        b=uwklmqHcoHhu1WLCfPLSWItOjPdTvghEYLBU6xALfWtsnd113VuUy3W4OCt7Gf7QPo
-         41T0Kb96J3ZSXspViH4KCr3Z1SxedNQJeBOUBfoI6mWPpGqYqYDdnTOvkIRtYFl7he/C
-         tuHhPYcxS4Bk+X35n/t9s33SCJGdhQWJcvM0GMVAvgKp0JhTyaf6a7pcaeMTEIKcmgXZ
-         3tE7+sKkPwBES53s3TxVG2diUKbi6dwVeJNQMPdqSZXPSI3AAgq14TRNOQlsumqidDGX
-         FlY+vsFjKBKkr8fzT6M0XgLfkjQO6tSythQDO4ptBHatoj3PqdEFPTk4RzUy6/qfC7sW
-         yRBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=0MRFaUSMAfw/XRQQZHzE3aa0KzqIA2a6f7/ADiTDy48=;
-        b=Qvy9W9iYvC7rsYVxGlO2dZgrX5T8BfIudMMuxBVQolVbMZ8X1uQ+z77u8hyXpQGtkU
-         T9gAsEhvaAZLYw0Fg8dMWJ4rSbzLePTghoav/8P4q2/bGzZMkiuQN+0yOB2Vw5c40SQ3
-         ShrMDY0OM1/nt5uReaxZSLVYtRGeghYnYOm/2PpNkij1QpXNt/0y79qKjAI4k9rHBNK4
-         3eB1ZPuzYpU4OIl+ADOSrse8jUfFhqxHCbqi93JoVXH6v7fAWktFUwxdVHzXNcaIqo8R
-         K+SicitLduY4keKiqPAr44AmmP0LaiMeVgo6GM2p8vGNM6SU0lg/FdR6tPqri9EhSM/A
-         OILQ==
-X-Gm-Message-State: APjAAAXDftGfk89VzNflUWt4cXVxivlnh+gLspnTkdvfXoq3vEtb90Kk
-        o1DyjKS+5fXo93xqO3kf8c+nLA==
-X-Google-Smtp-Source: APXvYqzAp7WqDtF2svw6m32RESqRJSWfwXgOZsWCJl/PO7gAfHjI0bpJKwO94bXVpo532sRxJONkgg==
-X-Received: by 2002:a24:6583:: with SMTP id u125mr5701155itb.168.1559274858043;
-        Thu, 30 May 2019 20:54:18 -0700 (PDT)
-Received: from localhost.localdomain (c-71-195-29-92.hsd1.mn.comcast.net. [71.195.29.92])
-        by smtp.gmail.com with ESMTPSA id q15sm1626947ioi.15.2019.05.30.20.54.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 May 2019 20:54:17 -0700 (PDT)
-From:   Alex Elder <elder@linaro.org>
-To:     davem@davemloft.net, arnd@arndb.de, bjorn.andersson@linaro.org,
-        ilias.apalodimas@linaro.org
-Cc:     evgreen@chromium.org, benchan@google.com, ejcaruso@google.com,
-        cpratapa@codeaurora.org, syadagir@codeaurora.org,
-        subashab@codeaurora.org, abhishek.esse@gmail.com,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
-Subject: [PATCH v2 17/17] arm64: defconfig: enable build of IPA code
-Date:   Thu, 30 May 2019 22:53:48 -0500
-Message-Id: <20190531035348.7194-18-elder@linaro.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190531035348.7194-1-elder@linaro.org>
-References: <20190531035348.7194-1-elder@linaro.org>
+        id S1726944AbfEaDzo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 23:55:44 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:59293 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726793AbfEaDzj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 23:55:39 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45FVwR5Q9hz9sMM;
+        Fri, 31 May 2019 13:55:35 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1559274936;
+        bh=WnJUe+4OzIfxQ+ASOkfghdjn8sCpv3/mIHffHIDJsQU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=O4q6coGNwvuJX5mCdM6xpXznZhr089KKtaYqvROaO7VNhAejR8PvT1VjYOYRO0kPq
+         2Nl+6Ykywh8zN1j/nLRYI6EwPMGeEpMJFPwUzZulGzWbA3bZ13XsleXoJrvRcg53KQ
+         z0ZGJKKEYHahTxxofdIKEKisgEkl+6F1p51smHN8aWUE0rSS5wNVAzYOFkI/wsja3e
+         ky5DVqhxMkMdzwGxZ1AqhwVHeiQTCT7to4jPRofmtZcYq+C3+8ZAj6TmApvVpd9bYS
+         xQPFU7Bub6JiAizc9YtxZQqGTIXBAWeRECiFUjtuLKPTvXaZQ2F38pNZO7c3VwOhqw
+         nQJjIwKBaVMSw==
+Date:   Fri, 31 May 2019 13:55:34 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: Re: linux-next: manual merge of the userns tree with the
+ arc-current tree
+Message-ID: <20190531135534.350dbf57@canb.auug.org.au>
+In-Reply-To: <C2D7FE5348E1B147BCA15975FBA2307501A2520902@us01wembx1.internal.synopsys.com>
+References: <20190530131721.0af603a4@canb.auug.org.au>
+        <C2D7FE5348E1B147BCA15975FBA2307501A2520902@us01wembx1.internal.synopsys.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Iel2uKWbKzZVD/3RL+cnIU/"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add CONFIG_IPA to the 64-bit Arm defconfig.
+--Sig_/Iel2uKWbKzZVD/3RL+cnIU/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Alex Elder <elder@linaro.org>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Hi Vineet,
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 4d583514258c..6ed86cb6b597 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -261,6 +261,7 @@ CONFIG_SMSC911X=y
- CONFIG_SNI_AVE=y
- CONFIG_SNI_NETSEC=y
- CONFIG_STMMAC_ETH=m
-+CONFIG_IPA=m
- CONFIG_MDIO_BUS_MUX_MMIOREG=y
- CONFIG_AT803X_PHY=m
- CONFIG_MARVELL_PHY=m
--- 
-2.20.1
+On Thu, 30 May 2019 17:11:33 +0000 Vineet Gupta <Vineet.Gupta1@synopsys.com=
+> wrote:
+>
+> Thx for this. Unfortunately I had to force push my for-next due to broken=
+ #7 and
+> #8 above. So you may have to do this once again.
 
+Thanks for the heads up, but "git rerere" seems to have still coped, so
+its all good.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Iel2uKWbKzZVD/3RL+cnIU/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzwpbYACgkQAVBC80lX
+0GzYwwf+K7OLwYYZVhBTOJsBx7ulEkvkKcyEg/2GlTiYix6EC+dLiy7gXUbOH9UN
+zWX2sWWGjgNCnRmXMWhEU72M0b8joL6Md5YNnDN2aSg7qK3Go5m1xIUQRQMPgM2M
+BHEeDHDUrYQ3CUF3ILKZvC7pL7xt657ouKy+WyF0ynlT32EQHMPSR+bwvdsIQX/m
+fWJRe3OnyD00buchCeNwo4kyL6vEt8aH08+t+p3nUkGwZ323lyWeUo9pwmCq683e
+K4KDYVlWd7mg3N7bvkBhU0bgGSH+rpzePYvk1+QHEoCSAnvDw9sovFl714yMjanV
+/8f+dMBd/3iGGrjsrqc3KQwUjYqfWw==
+=fIvj
+-----END PGP SIGNATURE-----
+
+--Sig_/Iel2uKWbKzZVD/3RL+cnIU/--
