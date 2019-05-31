@@ -2,92 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 849CE30DA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 13:57:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7278B30DB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 14:02:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727271AbfEaL5P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 07:57:15 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:42947 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726515AbfEaL5O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 07:57:14 -0400
-Received: by mail-ot1-f66.google.com with SMTP id i2so7906620otr.9
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 04:57:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tpFjn7QsmPn7gjQCM9ineIkv1noxcgSAUiCpDRJVGls=;
-        b=ggoMtVkvlG2qeUN8pOMIN1TvDP/+0BIR4qcfVhviE9WDfOjfXeGyjpI+W8QnoUmxcJ
-         x2nwoKGdoSv0EozQ2yVJeh0oozpuqn0bm3oClCut0g9YfWOoGy4k8OKi5Woc1Tr6wdsR
-         saCjBiOMkI52qqNRHrMW6N4gvn65yFptrOZx31LXYdPgIvxnfwm0ddyiHDQYy5ngOdR8
-         hB8y+5KTxRhiZEFuBdfQrU8TZ0MoRATlpTDWocL+1LY6KoAd6/KsWfNsYAWqXBWGn16I
-         TGqOF89dydO5AY4Ooobb/y61+zEwGES1n/6oWV/AQYIDdJtcTSGt+nwd3u+HZRfK2riV
-         etIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tpFjn7QsmPn7gjQCM9ineIkv1noxcgSAUiCpDRJVGls=;
-        b=SWriMihw4gWKZZTF3ugufXeHyGbAWeODVdORyJgzMw8rzntbcrEvfC7OhQe9kjDFjw
-         wNPucfQSwnwbNv+dBJ6UJ5ULNfR4rLWdl/Yoweu/mJyzC1YsJjaVO12kKFYjCKe70iJO
-         50YoTJaFx7Wa8N3T5ECIRtO+rMwNuddbVuQp/8kxJhAKGVQOR/Fm01Np3a0cXNaKDO/9
-         XuXPAhT4/bgVxbqaqkL0/MaqIY4/KnUWgzBMq2AlLflhiyTej04eiV3nBMcN/NakgVZl
-         YwoMYzroE0Je4KDg8F7VKT4ixyaNbrEtmR9Z5TLJYRAiuxEEsJ0ADyzmxKMSovdfuk2s
-         6M1w==
-X-Gm-Message-State: APjAAAW2xJBQ5wit0+4pOx6cZlsgb6/E+OzmHXhpnr6m9v0Mj3/8XHwn
-        z/FMTuhBnPYHIWxU6NYJB3CD4v2XZJ3ZkY5uUvWTpQ==
-X-Google-Smtp-Source: APXvYqzPMHqTSDmVvn+uwCrjm0kig8jLmBdto0sGBqXKrrdWB4kGfXZ/dGE1UTqnPsAhq0M8Y3sS7ZDD/TN+H4jp40s=
-X-Received: by 2002:a9d:2f26:: with SMTP id h35mr1498224otb.183.1559303833714;
- Fri, 31 May 2019 04:57:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190529113157.227380-1-jannh@google.com> <20190530123452.GF22536@redhat.com>
-In-Reply-To: <20190530123452.GF22536@redhat.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Fri, 31 May 2019 13:56:47 +0200
-Message-ID: <CAG48ez0ivQ+gfwKMife-3ZwBuqAuc1BhDGW3dtYTHMq0sByuNw@mail.gmail.com>
-Subject: Re: [PATCH] ptrace: restore smp_rmb() in __ptrace_may_access()
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     "Eric W . Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        id S1727158AbfEaMCb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 08:02:31 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34542 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726330AbfEaMCa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 08:02:30 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AD5363001789;
+        Fri, 31 May 2019 12:02:29 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1F522176B4;
+        Fri, 31 May 2019 12:02:17 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20190531111445.GO2677@hirez.programming.kicks-ass.net>
+References: <20190531111445.GO2677@hirez.programming.kicks-ass.net> <CAG48ez0R-R3Xs+3Xg9T9qcV3Xv6r4pnx1Z2y=Ltx7RGOayte_w@mail.gmail.com> <20190528162603.GA24097@kroah.com> <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk> <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk> <4031.1559064620@warthog.procyon.org.uk> <20190528231218.GA28384@kroah.com> <31936.1559146000@warthog.procyon.org.uk> <16193.1559163763@warthog.procyon.org.uk>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     dhowells@redhat.com, Jann Horn <jannh@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
         Kees Cook <keescook@chromium.org>,
-        David Howells <dhowells@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
+Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able ring buffer
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <21941.1559304135.1@warthog.procyon.org.uk>
+Date:   Fri, 31 May 2019 13:02:15 +0100
+Message-ID: <21942.1559304135@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Fri, 31 May 2019 12:02:30 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 2:35 PM Oleg Nesterov <oleg@redhat.com> wrote:
-> On 05/29, Jann Horn wrote:
-> > --- a/kernel/cred.c
-> > +++ b/kernel/cred.c
-> > @@ -450,6 +450,15 @@ int commit_creds(struct cred *new)
-> >               if (task->mm)
-> >                       set_dumpable(task->mm, suid_dumpable);
-> >               task->pdeath_signal = 0;
-> > +             /*
-> > +              * If a task drops privileges and becomes nondumpable,
-> > +              * the dumpability change must become visible before
-> > +              * the credential change; otherwise, a __ptrace_may_access()
-> > +              * racing with this change may be able to attach to a task it
-> > +              * shouldn't be able to attach to (as if the task had dropped
-> > +              * privileges without becoming nondumpable).
-> > +              * Pairs with a read barrier in __ptrace_may_access().
-> > +              */
-> >               smp_wmb();
->
-> Hmm. Now that I tried to actually read this patch I do not understand this wmb().
->
-> commit_creds() does rcu_assign_pointer(real_cred) which implies smp_store_release(),
-> the dumpability change must be visible before ->real_cred is updated without any
-> additional barriers?
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-Oh, yes, I think you're right.
+> Can you re-iterate the exact problem? I konw we talked about this in the
+> past, but I seem to have misplaced those memories :/
 
-So I guess I should make a v2 that still adds the smp_rmb() in
-__ptrace_may_access(), but gets rid of the smp_wmb() in
-commit_creds()? (With a comment above the rcu_assign_pointer() that
-explains the ordering?)
+Take this for example:
+
+	void afs_put_call(struct afs_call *call)
+	{
+		struct afs_net *net = call->net;
+		int n = atomic_dec_return(&call->usage);
+		int o = atomic_read(&net->nr_outstanding_calls);
+
+		trace_afs_call(call, afs_call_trace_put, n + 1, o,
+			       __builtin_return_address(0));
+
+		ASSERTCMP(n, >=, 0);
+		if (n == 0) {
+			...
+		}
+	}
+
+I am printing the usage count in the afs_call tracepoint so that I can use it
+to debug refcount bugs.  If I do it like this:
+
+	void afs_put_call(struct afs_call *call)
+	{
+		int n = refcount_read(&call->usage);
+		int o = atomic_read(&net->nr_outstanding_calls);
+
+		trace_afs_call(call, afs_call_trace_put, n, o,
+			       __builtin_return_address(0));
+
+		if (refcount_dec_and_test(&call->usage)) {
+			...
+		}
+	}
+
+then there's a temporal gap between the usage count being read and the actual
+atomic decrement in which another CPU can alter the count.  This can be
+exacerbated by an interrupt occurring, a softirq occurring or someone enabling
+the tracepoint.
+
+I can't do the tracepoint after the decrement if refcount_dec_and_test()
+returns false unless I save all the values from the object that I might need
+as the object could be destroyed any time from that point on.  In this
+particular case, that's just call->debug_id, but it could be other things in
+other cases.
+
+Note that I also can't touch the afs_net object in that situation either, and
+the outstanding calls count that I record will potentially be out of date -
+but there's not a lot I can do about that.
+
+David
