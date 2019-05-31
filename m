@@ -2,49 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 495B730CED
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 12:56:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CD2830CF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 12:57:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727051AbfEaK4q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 06:56:46 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53814 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726002AbfEaK4p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 06:56:45 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9AD5030C0DE1;
-        Fri, 31 May 2019 10:56:45 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id ACDBF63C31;
-        Fri, 31 May 2019 10:56:43 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <155930001303.17253.2447519598157285098.stgit@warthog.procyon.org.uk>
-References: <155930001303.17253.2447519598157285098.stgit@warthog.procyon.org.uk>
-To:     viro@zeniv.linux.org.uk
-Cc:     dhowells@redhat.com, stable@vger.kernel.org,
-        Jose Bollo <jose.bollo@iot.bzh>,
-        Casey Schaufler <casey@schaufler-ca.com>, jmorris@namei.org,
-        torvalds@linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Smack: Restore the smackfsdef mount option and add missing prefixes
+        id S1727151AbfEaK5O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 06:57:14 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:44782 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726002AbfEaK5O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 06:57:14 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hWfDg-0004Th-GR; Fri, 31 May 2019 10:57:08 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drivers: thermal: tsens: remove redundant u32 comparison with less than zero
+Date:   Fri, 31 May 2019 11:57:08 +0100
+Message-Id: <20190531105708.15312-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <17466.1559300202.1@warthog.procyon.org.uk>
-Date:   Fri, 31 May 2019 11:56:42 +0100
-Message-ID: <17467.1559300202@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Fri, 31 May 2019 10:56:45 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Should this go via Al's tree, James's tree, Casey's tree or directly to Linus?
+From: Colin Ian King <colin.king@canonical.com>
 
-David
+The u32 variable hw_id is unsigned and cannot be less than zero so
+the comparison with less than zero is always false and hence is redundant
+and can be removed.
+
+Addresses-Coverity: ("Unsigned compared against 0")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/thermal/qcom/tsens-common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
+index 928e8e81ba69..f4419f45025d 100644
+--- a/drivers/thermal/qcom/tsens-common.c
++++ b/drivers/thermal/qcom/tsens-common.c
+@@ -69,7 +69,7 @@ bool is_sensor_enabled(struct tsens_priv *priv, u32 hw_id)
+ 	u32 val;
+ 	int ret;
+ 
+-	if ((hw_id > (priv->num_sensors - 1)) || (hw_id < 0))
++	if (hw_id > (priv->num_sensors - 1))
+ 		return -EINVAL;
+ 	ret = regmap_field_read(priv->rf[SENSOR_EN], &val);
+ 	if (ret)
+-- 
+2.20.1
+
