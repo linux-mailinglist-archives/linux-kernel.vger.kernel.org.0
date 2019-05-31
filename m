@@ -2,127 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED3CA30A7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 10:40:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 032A830A84
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 10:44:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727042AbfEaIj6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 04:39:58 -0400
-Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:21919 "EHLO
-        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbfEaIj5 (ORCPT
+        id S1726768AbfEaIoo convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 31 May 2019 04:44:44 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36552 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726158AbfEaIoo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 04:39:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1559291996; x=1590827996;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=JRSONXEOsKHxpdgDwwuGcZffixzQM8sVhSzD8ajirKc=;
-  b=bDXn8O2TqdmZuhLTYvn33EPBtjNpoDy4i3rJhS6hldfH7l9KLoq933rO
-   AvRiZXE8ePqRjx7IIqVt66tna4vGTzW46cW7EWs0VRyjMHaE7UGg5zffK
-   NJSpqXrNKSKQ2OEonNOVP/6khFfoBCotlEJRMu3YxR9RpoL54lqzsqbbE
-   U=;
-X-IronPort-AV: E=Sophos;i="5.60,534,1549929600"; 
-   d="scan'208";a="398795852"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1d-37fd6b3d.us-east-1.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP; 31 May 2019 08:39:55 +0000
-Received: from EX13MTAUWC001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
-        by email-inbound-relay-1d-37fd6b3d.us-east-1.amazon.com (Postfix) with ESMTPS id 1201528262D;
-        Fri, 31 May 2019 08:39:51 +0000 (UTC)
-Received: from EX13D20UWC001.ant.amazon.com (10.43.162.244) by
- EX13MTAUWC001.ant.amazon.com (10.43.162.135) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 31 May 2019 08:39:49 +0000
-Received: from 38f9d3867b82.ant.amazon.com (10.43.160.69) by
- EX13D20UWC001.ant.amazon.com (10.43.162.244) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 31 May 2019 08:39:45 +0000
-Subject: Re: x86 instruction emulator fuzzing
-To:     Sam Caccavale <samcacc@amazon.de>
-CC:     <samcaccavale@gmail.com>, <nmanthey@amazon.de>,
-        <wipawel@amazon.de>, <dwmw@amazon.co.uk>, <mpohlack@amazon.de>,
-        <graf@amazon.de>, <karahmed@amazon.de>,
-        <andrew.cooper3@citrix.com>, <JBeulich@suse.com>,
-        <pbonzini@redhat.com>, <rkrcmar@redhat.com>, <tglx@linutronix.de>,
-        <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
-        <paullangton4@gmail.com>, <anirudhkaushik@google.com>,
-        <x86@kernel.org>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190521153924.15110-1-samcacc@amazon.de>
-From:   Alexander Graf <graf@amazon.com>
-Message-ID: <6f9f4746-7850-0de0-b531-0ea0e6d7ca82@amazon.com>
-Date:   Fri, 31 May 2019 10:39:43 +0200
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.7.0
+        Fri, 31 May 2019 04:44:44 -0400
+Received: by mail-wr1-f68.google.com with SMTP id n4so2873745wrs.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 01:44:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=6M6dXVXKFghnFsr3QMCnxQXaLInVC+XDKbFfMFVfErM=;
+        b=YvoIAImPBz0rQRMAM5LcQdoRFP+1rkFksOvebiH1IMX6SOJARWBT5J5aCVKj/sGqBn
+         o0yViOkmfKa4zJVkXxphAtkycN7wbIodIF1IeDCFd5MX/FzXYirqspc11ZKS0w8JpUSL
+         IB9MHYx6zAdNeTH9ZqHjGTpCCSMjzJgdnarTINGBO79vZbIUYkfyO57BuQPxa/wuoPv4
+         27FNRQNDCvbxf5Q39wrGmbIVMBckHWt9gSDgYZFUg6t1T01sYQtUcFqTCCUZLxE8jBv+
+         DVEmqWFkYLvX8JdJrW6ZWfqesFDlPB+arp82garAqAdlEpO2iIc3HMzZXFezD8Ujg8H7
+         +9Kg==
+X-Gm-Message-State: APjAAAVRwokME4VLCoavfe97ViPqYNt2Oeue/Zr6xYeknIJynIemtngm
+        aJsTwcm0mKp8ArxJMESvl4Ko4A==
+X-Google-Smtp-Source: APXvYqyBDlZc0ihTdyXXtXUzobJit8CcEnV5IuLzcBn/aPtJl6Wu0TXjzTbNGwDi0Lqxqg/0bCezIg==
+X-Received: by 2002:adf:f483:: with SMTP id l3mr159106wro.256.1559292282362;
+        Fri, 31 May 2019 01:44:42 -0700 (PDT)
+Received: from [10.82.105.87] (mob-5-90-59-71.net.vodafone.it. [5.90.59.71])
+        by smtp.gmail.com with ESMTPSA id f197sm5459428wme.39.2019.05.31.01.44.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 31 May 2019 01:44:41 -0700 (PDT)
+Date:   Fri, 31 May 2019 10:44:38 +0200
+User-Agent: K-9 Mail for Android
+In-Reply-To: <e41c7ff9ae38363fe8c32346fea0f7efe551d162.camel@perches.com>
+References: <20190531011227.21181-1-mcroce@redhat.com> <e41c7ff9ae38363fe8c32346fea0f7efe551d162.camel@perches.com>
 MIME-Version: 1.0
-In-Reply-To: <20190521153924.15110-1-samcacc@amazon.de>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [10.43.160.69]
-X-ClientProxiedBy: EX13D23UWC001.ant.amazon.com (10.43.162.196) To
- EX13D20UWC001.ant.amazon.com (10.43.162.244)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH v2] checkpatch.pl: Warn on duplicate sysctl local variable
+To:     Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
+        Andy Whitcroft <apw@canonical.com>
+CC:     Kees Cook <keescook@chromium.org>,
+        Aaron Tomlin <atomlin@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+From:   Matteo Croce <mcroce@redhat.com>
+Message-ID: <B6174D2A-C9E8-438D-A042-C39CAAA35728@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On May 31, 2019 5:06:58 AM GMT+02:00, Joe Perches <joe@perches.com> wrote:
+> On Fri, 2019-05-31 at 03:12 +0200, Matteo Croce wrote:
+> > Commit 6a33853c5773 ("proc/sysctl: add shared variables for range
+> check")
+> > adds some shared const variables to be used instead of a local copy
+> in
+> > each source file.
+> > Warn when a chunk duplicates one of these values in a ctl_table
+> struct:
+> > 
+> >     $ scripts/checkpatch.pl 0001-test-commit.patch
+> >     WARNING: duplicated sysctl range checking value 'zero', consider
+> using the shared one in include/linux/sysctl.h
+> >     #27: FILE: arch/arm/kernel/isa.c:48:
+> >     +               .extra1         = &zero,
+> > 
+> >     WARNING: duplicated sysctl range checking value 'int_max',
+> consider using the shared one in include/linux/sysctl.h
+> >     #28: FILE: arch/arm/kernel/isa.c:49:
+> >     +               .extra2         = &int_max,
+> > 
+> >     total: 0 errors, 2 warnings, 14 lines checked
+> > 
+> > Signed-off-by: Matteo Croce <mcroce@redhat.com>
+> > ---
+> >  scripts/checkpatch.pl | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> > 
+> > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> > index 342c7c781ba5..629c31435487 100755
+> > --- a/scripts/checkpatch.pl
+> > +++ b/scripts/checkpatch.pl
+> > @@ -6639,6 +6639,12 @@ sub process {
+> >  				     "unknown module license " . $extracted_string . "\n" .
+> $herecurr);
+> >  			}
+> >  		}
+> > +
+> > +# check for sysctl duplicate constants
+> > +		if ($line =~ /\.extra[12]\s*=\s*&(zero|one|int_max|max_int)\b/) {
+> 
+> why max_int, there isn't a single use of it in the kernel ?
 
-On 21.05.19 17:39, Sam Caccavale wrote:
-> Dear all,
->
-> This series aims to provide an entrypoint for, and fuzz KVM's x86 instruction
-> emulator from userspace.  It mirrors Xen's application of the AFL fuzzer to
-> it's instruction emulator in the hopes of discovering vulnerabilities.
-> Since this entrypoint also allows arbitrary execution of the emulators code
-> from userspace, it may also be useful for testing.
->
-> The current 3 patches build the emulator and 2 harnesses: simple-harness is
-> an example of unit testing; afl-harness is a frontend for the AFL fuzzer.
-> They are early POC and include some issues outlined under "Issues."
->
-> Patches
-> =======
->
-> - 01: Builds and links afl-harness with the required kernel objects.
-> - 02: Introduces the minimal set of emulator operations and supporting code
-> to emulate simple instructions.
-> - 03: Demonstrates simple-harness as a unit test.
->
-> Issues
-> =======
->
-> 1. Currently, building requires manually running the `make_deps` script
-> since I was unable to make the kernel objects a dependency of the tool.
-> 2. The code will segfault if `CONFIG_STACKPROTECTOR=y` in config.
-> 3. The code requires stderr to be buffered or it otherwise segfaults.
->
-> The latter two issues seem related and all of them are likely fixable by
-> someone more familiar with the linux than me.
->
-> Concerns
-> =======
->
-> I was able to carve the `arch/x86/kvm/emulate.c` code, but the emulator is
-> constructed in such a way that a lot of the code which enforces expected
-> behavior lives in the x86_emulate_ops supplied in `arch/x86/kvm/x86.c`.
-> Testing the emulator is still valuable, but a reproducible way to use the kvm
-> ops would be useful.
->
-> Any comments/suggestions are greatly appreciated.
+Because you can never know how a local variabile will be called.
+I wanted to add intmax and maxint too, bit it seemed too much.
 
-
-First off, thanks a lot for this :). The x86 emulator has been a sore 
-(bug prone) point in KVM for a long time and I'm surprised it's not 
-covered by fuzzing yet. It's great to see that finally happening.
-
-A few nits:
-
-   1) Cover letter should be [PATCH 0/3]. Just generate it with git 
-format-patch --cover-letter.
-   2) The directory name "x86_instruction_emulation" is a bit long, no?
-   3) I think the cover letter should also detail how this relates to 
-other fuzzing efforts and why we need another, separate one.
-
-
-Alex
-
-
+Bye,
+-- 
+Matteo Croce
+per aspera ad upstream
