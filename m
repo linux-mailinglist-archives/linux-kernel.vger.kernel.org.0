@@ -2,92 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BBD330EF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 15:39:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D815730EFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 15:39:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726693AbfEaNjB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 09:39:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59484 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726518AbfEaNjA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 09:39:00 -0400
-Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF37C2133D;
-        Fri, 31 May 2019 13:38:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559309940;
-        bh=QejsJpJ1Xnpne98lLX4jJknIWWCbhoxePOTvB7gNbik=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=2DpJfcg9pfYTbU/2GXZr+pVR6QrKcy/SxJT9K74RqSRcrUqiy0DouKcIURLcqTko1
-         7fuV4O9/u3a7R+tuQ+pocFsSHlNfHxWXThM8iAh6BxQ33YmqzQu0W7z0WcxZ1LPIB+
-         LG8OeYRqgUIOEDZwYU5HWB/R53uXTa0o3tq7Z++U=
-Date:   Fri, 31 May 2019 06:38:59 -0700
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Chester Lin <clin@suse.com>
-Cc:     rjw@rjwysocki.net, lenb@kernel.org, jlee@suse.com, mhocko@suse.com,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] ACPI / device_sysfs: Add eject show attr to monitor
- eject status
-Message-ID: <20190531133859.GA18231@kroah.com>
-References: <20190531065642.13254-1-clin@suse.com>
- <20190531065642.13254-4-clin@suse.com>
+        id S1726719AbfEaNjP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 09:39:15 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44066 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726501AbfEaNjP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 09:39:15 -0400
+Received: by mail-pg1-f194.google.com with SMTP id n2so4069398pgp.11;
+        Fri, 31 May 2019 06:39:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=p2xs/JXfPoxuMW8YWnH2CaGd+XoTegPAh3+JTTCbB5s=;
+        b=IDKwcaOHGadMB1TmLSObOSA0W/aGdtHDC0stKAbwq4TtKsZB6mhzcklZYmOzKQnzhq
+         hxywSfajmRY5mDRpAvWBh1M3KgJKwf/zl9jOd1WGYj6UXQ2fSX3E1nhZkkIegcSHln1Z
+         dOs3dg8Pt1GBE3ik7m7RbCDl9neE8lReHVYFYme1QyB0wwO829iUToFVHsE9Dm4FXoHq
+         gzk7kwcDaPtxSBv+Lo75tbXdD+lu0qJyhYndZkyHayIjT+3oQ3oUFEBtO971zCVy2KXw
+         du35CsPT0zBzdgBTKHgTqnxMc3iatZyQXdovcqC1wmgrge9T/uteTBvSpZeWOVZdU+7Z
+         upLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=p2xs/JXfPoxuMW8YWnH2CaGd+XoTegPAh3+JTTCbB5s=;
+        b=A9syRLRh6/b0QHoPs1pd/fKZqNHlIQI3iLJeSz8OQA24f98qhgZ8kJNVq5ZzfpYNxz
+         N3ClOS5B39H4/JIxzHKSMdL2b4tLYEokpfM8Ezx0Gd420cy0SoQaRfso3znaAVB3alfB
+         V3ZI6LYkKMy4+m7YixWBe3Nge4/nwM1xeIHO2QISEt+BzDWdVUwxlPc3INEXMOnrAj/o
+         g+3Uxmq8iG/Hb3RKYFhZn6eVVRTEfEQ2Y+lYQMU+saqa1mZzY12shz4tW1Azw2ygLPFZ
+         VTt9ctRLAhAVGbX2bNRRIP3oHJYrq61Cho50ipoo6OPGoPxutzBSFl7E5eTl9y1Pg3Iq
+         faAg==
+X-Gm-Message-State: APjAAAXge+bHX1AbQNe1whYTcE0zviCbQfn2D5YrXSlZTt5EVRDPQj8r
+        MGRvaZxa9/YCRxHTQSv/k6M=
+X-Google-Smtp-Source: APXvYqwpn6INIam9Hj1iduhR8iI5bXQQTo7X1hltxvTWMZbD5dIKnXsGM8MX89DjI7uadV0NebmWCw==
+X-Received: by 2002:a63:4714:: with SMTP id u20mr9412205pga.347.1559309954195;
+        Fri, 31 May 2019 06:39:14 -0700 (PDT)
+Received: from google.com ([122.38.223.241])
+        by smtp.gmail.com with ESMTPSA id 128sm7105292pff.16.2019.05.31.06.39.07
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 31 May 2019 06:39:12 -0700 (PDT)
+Date:   Fri, 31 May 2019 22:39:04 +0900
+From:   Minchan Kim <minchan@kernel.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>, jannh@google.com,
+        oleg@redhat.com, christian@brauner.io, oleksandr@redhat.com,
+        hdanton@sina.com
+Subject: Re: [RFCv2 1/6] mm: introduce MADV_COLD
+Message-ID: <20190531133904.GC195463@google.com>
+References: <20190531064313.193437-1-minchan@kernel.org>
+ <20190531064313.193437-2-minchan@kernel.org>
+ <20190531084752.GI6896@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190531065642.13254-4-clin@suse.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <20190531084752.GI6896@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 31, 2019 at 02:56:42PM +0800, Chester Lin wrote:
-> An acpi_eject_show attribute for users to monitor current status because
-> sometimes it might take time to finish an ejection so we need to know
-> whether it is still in progress or not.
+On Fri, May 31, 2019 at 10:47:52AM +0200, Michal Hocko wrote:
+> On Fri 31-05-19 15:43:08, Minchan Kim wrote:
+> > When a process expects no accesses to a certain memory range, it could
+> > give a hint to kernel that the pages can be reclaimed when memory pressure
+> > happens but data should be preserved for future use.  This could reduce
+> > workingset eviction so it ends up increasing performance.
+> > 
+> > This patch introduces the new MADV_COLD hint to madvise(2) syscall.
+> > MADV_COLD can be used by a process to mark a memory range as not expected
+> > to be used in the near future. The hint can help kernel in deciding which
+> > pages to evict early during memory pressure.
+> > 
+> > Internally, it works via deactivating pages from active list to inactive's
+> > head if the page is private because inactive list could be full of
+> > used-once pages which are first candidate for the reclaiming and that's a
+> > reason why MADV_FREE move pages to head of inactive LRU list. Therefore,
+> > if the memory pressure happens, they will be reclaimed earlier than other
+> > active pages unless there is no access until the time.
 > 
-> Signed-off-by: Chester Lin <clin@suse.com>
-> ---
->  drivers/acpi/device_sysfs.c | 20 +++++++++++++++++++-
->  drivers/acpi/internal.h     |  1 +
->  drivers/acpi/scan.c         | 27 +++++++++++++++++++++++++++
->  3 files changed, 47 insertions(+), 1 deletion(-)
+> [I am intentionally not looking at the implementation because below
+> points should be clear from the changelog - sorry about nagging ;)]
 > 
-> diff --git a/drivers/acpi/device_sysfs.c b/drivers/acpi/device_sysfs.c
-> index 78c2653bf020..70b22eec6bbc 100644
-> --- a/drivers/acpi/device_sysfs.c
-> +++ b/drivers/acpi/device_sysfs.c
-> @@ -403,7 +403,25 @@ acpi_eject_store(struct device *d, struct device_attribute *attr,
->  	return status == AE_NO_MEMORY ? -ENOMEM : -EAGAIN;
->  }
->  
-> -static DEVICE_ATTR(eject, 0200, NULL, acpi_eject_store);
-> +static ssize_t acpi_eject_show(struct device *d,
-> +				struct device_attribute *attr, char *buf)
-> +{
-> +	struct acpi_device *acpi_device = to_acpi_device(d);
-> +	acpi_object_type not_used;
-> +	acpi_status status;
-> +
-> +	if ((!acpi_device->handler || !acpi_device->handler->hotplug.enabled)
-> +	    && !acpi_device->driver)
-> +		return -ENODEV;
-> +
-> +	status = acpi_get_type(acpi_device->handle, &not_used);
-> +	if (ACPI_FAILURE(status) || !acpi_device->flags.ejectable)
-> +		return -ENODEV;
-> +
-> +	return sprintf(buf, "%s\n", acpi_eject_status_string(acpi_device));
-> +}
-> +
-> +static DEVICE_ATTR(eject, 0644, acpi_eject_show, acpi_eject_store);
+> What kind of pages can be deactivated? Anonymous/File backed.
+> Private/shared? If shared, are there any restrictions?
 
-DEVICE_ATTR_RW()?
+Both file and private pages could be deactived from each active LRU
+to each inactive LRU if the page has one map_count. In other words,
 
-And you need to document the new sysfs file in Documentation/ABI/
+    if (page_mapcount(page) <= 1)
+        deactivate_page(page);
 
-thanks,
+> 
+> Are there any restrictions on mappings? E.g. what would be an effect of
+> this operation on hugetlbfs mapping?
 
-greg k-h
+VM_LOCKED|VM_HUGETLB|VM_PFNMAP vma will be skipped like MADV_FREE|DONTNEED
+
+> 
+> Also you are talking about inactive LRU but what kind of LRU is that? Is
+> it the anonymous LRU? If yes, don't we have the same problem as with the
+
+active file page -> inactive file LRU
+active anon page -> inacdtive anon LRU
+
+> early MADV_FREE implementation when enough page cache causes that
+> deactivated anonymous memory doesn't get reclaimed anytime soon. Or
+> worse never when there is no swap available?
+
+I think MADV_COLD is a little bit different symantic with MAVD_FREE.
+MADV_FREE means it's okay to discard when the memory pressure because
+the content of the page is *garbage*. Furthemore, freeing such pages is
+almost zero overhead since we don't need to swap out and access
+afterward causes minor fault. Thus, it would make sense to put those
+freeable pages in inactive file LRU to compete other used-once pages.
+
+However, MADV_COLD doesn't means it's a garbage and freeing requires
+swap out/swap in afterward. So, it would be better to move inactive
+anon's LRU list, not file LRU. Furthermore, it would avoid unnecessary
+scanning of those cold anonymous if system doesn't have a swap device.
+
