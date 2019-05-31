@@ -2,54 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F114B31652
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 22:55:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBDD431654
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 22:59:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727615AbfEaUzP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 16:55:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41934 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726676AbfEaUzO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 16:55:14 -0400
-Subject: Re: [GIT PULL] SMB3 Fixes
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559336114;
-        bh=W0Pdxvg7LRWYomnlBfhyOP7Wa9SKZbTdwsLyl/SmF6Q=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=avyRfxWmqQO/GeiJmaYJThRAq+a6FM9mnZjw3LX/eERQt00zEuSFV576y/x9HY0JN
-         e3VXaxkG7w7YzG+wcLk4+8UEFAO7QSXqJmcO0T7F+F6fexbUj8zdZxC5HA9NqRYqc3
-         V9S00Emw43Ksohkbb8wmtAhfEbGEFLHssmDqzOzI=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAH2r5ms=pUiZQPmX_-AoUceAWgr4Y5RwrkLC0o8dyfcMSKpuCQ@mail.gmail.com>
-References: <CAH2r5ms=pUiZQPmX_-AoUceAWgr4Y5RwrkLC0o8dyfcMSKpuCQ@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAH2r5ms=pUiZQPmX_-AoUceAWgr4Y5RwrkLC0o8dyfcMSKpuCQ@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.samba.org/sfrench/cifs-2.6.git
- tags/v5.2-rc2-smb3-fixes
-X-PR-Tracked-Commit-Id: 31fad7d41e73731f05b8053d17078638cf850fa6
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 41e7231fab9d76e906b6d8abe09c44c7b9656d33
-Message-Id: <155933611418.3628.18268123204511844583.pr-tracker-bot@kernel.org>
-Date:   Fri, 31 May 2019 20:55:14 +0000
-To:     Steve French <smfrench@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        id S1727501AbfEaU7r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 16:59:47 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44473 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726558AbfEaU7r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 16:59:47 -0400
+Received: by mail-pg1-f194.google.com with SMTP id n2so4668559pgp.11
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 13:59:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QZEWi+cNmZoBJktKiK90g7AJjwpQOSlexmUkUs+5YK4=;
+        b=T7PmfnQOdzZe4eG2SOYeA+vx44JZE7ChhJBCQ085DDcWwyGifAYn3jFdX+L9YrDl6y
+         jmh2kIzr/Kz1emx5OthNvsIHCIkhQEFWcPc13uUUY3w2wlHxNftaxbGqr3EIrbwxiGpk
+         kBEjKQFQxtg7PyIl8di8FHNSTE5HXcwPSOsWM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QZEWi+cNmZoBJktKiK90g7AJjwpQOSlexmUkUs+5YK4=;
+        b=KSAxFbqH9pbbZsXiys7eBVYyeaHDRe9tNN6yG6SyrwKBodEYLFBNmSf+UJSxTI8zRZ
+         ToxxIiaAHhcjLVeWI9tf0NXi39//Rcunt5VZr+RzLqJcHvgYwN5mPJVeSahfkzaTS3ZF
+         IPRQkT3dQvEuXDINcMUz8RsO+6Ap7qN9dUhns5C0ARckZwCHuKaq+Hj65g5cYY0dqg0x
+         2waL2JSM9YZpk4rOuIRRVpW9oduu9pu1nL61XSYF0aR3KWV0TLKkg9XT08NxVYLC+GMc
+         fK4OdOXsbCx7uK5rN8tTWwzaku56aXw3UDvdCG/LNbrt2aPxxt6f8sgAQzxq3ndNsqc0
+         ebSg==
+X-Gm-Message-State: APjAAAU45HeGiKwNrhP97d5++ZeHbUBukYUQugSu02AhX8Dj5A5vhJfw
+        Qvq6X+S1ckEhuFCV0vf8UwWvLA==
+X-Google-Smtp-Source: APXvYqzoeoQr05eou6DmgFLLVQEvE0PMdvqHgdLu948suYen4axY1LnMKEbIINACNGPV3mQUeoahAQ==
+X-Received: by 2002:aa7:82d7:: with SMTP id f23mr12440323pfn.138.1559336386955;
+        Fri, 31 May 2019 13:59:46 -0700 (PDT)
+Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:ffda:7716:9afc:1301])
+        by smtp.gmail.com with ESMTPSA id cm13sm1864887pjb.2.2019.05.31.13.59.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 31 May 2019 13:59:46 -0700 (PDT)
+From:   Evan Green <evgreen@chromium.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        Evan Green <evgreen@chromium.org>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        linux-kernel@vger.kernel.org,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Manuel Traut <manut@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH] scripts/decode_stacktrace: Accept dash/underscore in modules
+Date:   Fri, 31 May 2019 13:59:26 -0700
+Message-Id: <20190531205926.42474-1-evgreen@chromium.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 31 May 2019 12:55:21 -0500:
+The manpage for modprobe mentions that dashes and underscores are
+treated interchangeably in module names. The stack trace dumps seem
+to print module names with underscores. Use bash to replace _ with
+the pattern [-_] so that file names with dashes or underscores can be
+found.
 
-> git://git.samba.org/sfrench/cifs-2.6.git tags/v5.2-rc2-smb3-fixes
+For example, this line:
+[   27.919759]  hda_widget_sysfs_init+0x2b8/0x3a5 [snd_hda_core]
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/41e7231fab9d76e906b6d8abe09c44c7b9656d33
+should find a module named snd-hda-core.ko.
 
-Thank you!
+Signed-off-by: Evan Green <evgreen@chromium.org>
+---
 
+Note: This should apply atop linux-next.
+
+Thanks to Doug for showing me the bash string substitution magic.
+
+---
+ scripts/decode_stacktrace.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
+index fa704f17275e..13e5fbafdf2f 100755
+--- a/scripts/decode_stacktrace.sh
++++ b/scripts/decode_stacktrace.sh
+@@ -28,7 +28,7 @@ parse_symbol() {
+ 		local objfile=${modcache[$module]}
+ 	else
+ 		[[ $modpath == "" ]] && return
+-		local objfile=$(find "$modpath" -name "$module.ko*" -print -quit)
++		local objfile=$(find "$modpath" -name "${module//_/[-_]}.ko*" -print -quit)
+ 		[[ $objfile == "" ]] && return
+ 		modcache[$module]=$objfile
+ 	fi
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.20.1
+
