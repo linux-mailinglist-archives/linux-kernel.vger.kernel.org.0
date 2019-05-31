@@ -2,96 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36FE1307CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 06:34:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31AC7307C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 06:34:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726809AbfEaEez (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 00:34:55 -0400
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:12072 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbfEaEey (ORCPT
+        id S1726599AbfEaEeV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 00:34:21 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41318 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725955AbfEaEeV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 00:34:54 -0400
+        Fri, 31 May 2019 00:34:21 -0400
+Received: by mail-pg1-f193.google.com with SMTP id z3so3283420pgp.8;
+        Thu, 30 May 2019 21:34:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1559277294; x=1590813294;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=4KissP6CMHlJHUEfDn3Ulh/jhmUATHtnEKo07Th9Pjo=;
-  b=Y9MvmrlRQyLDz4ISkyFk/TbXAq1vFY19M4KWuBT7gyIHhwAaKhaS4X6Y
-   NENcge8QmjOmkvg8zxdAyPrd/TjaW625fnwja9rLnUrZn82fteivSrLcM
-   H1GQ+m7957nr1O9202n1kWeH43KIciDQh8czwf7lIVvlpbcFGoyBTuGgu
-   s=;
-X-IronPort-AV: E=Sophos;i="5.60,533,1549929600"; 
-   d="scan'208";a="404446461"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1d-9ec21598.us-east-1.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP; 31 May 2019 04:34:53 +0000
-Received: from EX13MTAUWB001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1d-9ec21598.us-east-1.amazon.com (Postfix) with ESMTPS id 01A85A247F;
-        Fri, 31 May 2019 04:34:49 +0000 (UTC)
-Received: from EX13D05UWB001.ant.amazon.com (10.43.161.181) by
- EX13MTAUWB001.ant.amazon.com (10.43.161.249) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 31 May 2019 04:34:29 +0000
-Received: from EX13MTAUWA001.ant.amazon.com (10.43.160.58) by
- EX13D05UWB001.ant.amazon.com (10.43.161.181) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 31 May 2019 04:34:29 +0000
-Received: from localhost (10.85.16.145) by mail-relay.amazon.com
- (10.43.160.118) with Microsoft SMTP Server id 15.0.1367.3 via Frontend
- Transport; Fri, 31 May 2019 04:34:29 +0000
-From:   Eduardo Valentin <eduval@amazon.com>
-To:     Wolfram Sang <wsa@the-dreams.de>
-CC:     Haiyue Wang <haiyue.wang@linux.intel.com>,
-        <jarkko.nikula@linux.intel.com>, <andriy.shevchenko@intel.com>,
-        <brendanhiggins@google.com>, Eduardo Valentin <eduval@amazon.com>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 3/3] Documentation: ABI: Add i2c-slave-mqueue sysfs documentation
-Date:   Thu, 30 May 2019 21:33:47 -0700
-Message-ID: <20190531043347.4196-4-eduval@amazon.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190531043347.4196-1-eduval@amazon.com>
-References: <20190531043347.4196-1-eduval@amazon.com>
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=k1lABvVv11G/1BGI9nFcE5F+PdE4XUoO5D323rtAKn8=;
+        b=VRx9M24f5WLDV7pO7VbGq3NnECZWZo49yn53ZDxxXzB6Ysaw+lGCHsM+IR+9GTI5JJ
+         qwRgmUyQy+w2hD3Nj+aonhpWWRn2Vz9kzXkg3LvI4orh0feiMftuokFoi1KQzvmyuMp1
+         eq0LY8z0BriZEDzd0DLsx/NXj4UA19KmY8pXoxTI4zttCh+4cknuUKTfl/I3yYo0o4C1
+         b0fxTiBGF8Dd0VOAOTxPay9cRjP13dUah6rI6sU9DYoyCpxsVyh7GDU3oJni+t+ukzWU
+         FyBRJBN+k0ZUXgMIgEJspxQOYkIjQ+EvPdSe+GNHXy4Iz5nBpoALaKvC5EFahSd4uezi
+         o80A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=k1lABvVv11G/1BGI9nFcE5F+PdE4XUoO5D323rtAKn8=;
+        b=rfFExN90A5cEGzuc4aH8VS0cztzrkXVHTCsXZ16HVAK98FvLLVO1oLtM6mbJzfwC9E
+         2K6EU13opjPFjiNXrxTjv+SUwz7eS2eK40kJVos37VQVNIP40HJm9x+Y0NFcSXOmARYa
+         SBKI/5TeifDq72a5Ne+K0ln7qyRqIGjsDlU6WS7LpgGLKAm3/LzR7+4a15FuWNxzw7dW
+         MJoXyoj4azfqp/eDd3e9LxS/Mr3YUH1yyDSAabG67BnntR0QN85LJOEckhfQhkxa3e+i
+         R55OdC7CLYdpJr6+UG+6+vftJ/ISTl4k0AQ41RKrb2ig0TdcCQC2eK18qrhiuV7XdDmS
+         FLuw==
+X-Gm-Message-State: APjAAAUSm0M+H4glDrTlYa55oG2sUn20NrdA2M2nlUw5CDbhotd3OZUX
+        6vQsVBW+irFA0SCOEEHHXK4=
+X-Google-Smtp-Source: APXvYqyvXcJpTbvqOxUrPR7uenuJD7LBPIw1igpdciEBKs6jKLMDddZZXtXSa7h14V7eU7WormWGzA==
+X-Received: by 2002:a63:eb55:: with SMTP id b21mr6749426pgk.67.1559277260515;
+        Thu, 30 May 2019 21:34:20 -0700 (PDT)
+Received: from localhost (c-73-222-71-142.hsd1.ca.comcast.net. [73.222.71.142])
+        by smtp.gmail.com with ESMTPSA id u11sm4303610pfh.130.2019.05.30.21.34.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 30 May 2019 21:34:19 -0700 (PDT)
+Date:   Thu, 30 May 2019 21:34:17 -0700
+From:   Richard Cochran <richardcochran@gmail.com>
+To:     Vladimir Oltean <olteanv@gmail.com>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+Subject: Re: [PATCH net-next 0/5] PTP support for the SJA1105 DSA driver
+Message-ID: <20190531043417.6phscbpmo6krvxam@localhost>
+References: <20190528235627.1315-1-olteanv@gmail.com>
+ <20190529045207.fzvhuu6d6jf5p65t@localhost>
+ <dbe0a38f-8b48-06dd-cc2c-676e92ba0e74@gmail.com>
+ <20190530034555.wv35efen3igwwzjq@localhost>
+ <CA+h21hpjsC=ie5G7Gx3EcPpazyxze6X_k+8eC+vw7JBvEO2zNg@mail.gmail.com>
+ <20190530143037.iky5kk3h4ssmec3f@localhost>
+ <CA+h21hpp68AEEykxr8bJB=uJ+b0tg881Z7Ao_OfbTAXNxS8WgQ@mail.gmail.com>
+ <20190530150557.iur7fruhyf5bs3qw@localhost>
+ <CA+h21hrBwR4Sow7q0_rS1u2md1M4bSAJt8FO5+VLFiu9UGnvjA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+h21hrBwR4Sow7q0_rS1u2md1M4bSAJt8FO5+VLFiu9UGnvjA@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the slave-mqueue sysfs attribute used by
-the i2c-slave-mqueue driver.
+On Thu, May 30, 2019 at 06:23:09PM +0300, Vladimir Oltean wrote:
+> On Thu, 30 May 2019 at 18:06, Richard Cochran <richardcochran@gmail.com> wrote:
+> >
+> > But are the frames received in the same order?  What happens your MAC
+> > drops a frame?
+> >
+> 
+> If it drops a normal frame, it carries on.
+> If it drops a meta frame, it prints "Expected meta frame", resets the
+> state machine and carries on.
+> If it drops a timestampable frame, it prints "Unexpected meta frame",
+> resets the state machine and carries on.
 
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Eduardo Valentin <eduval@amazon.com>
----
- .../ABI/testing/sysfs-bus-i2c-devices-slave-mqueue     | 10 ++++++++++
- 1 file changed, 10 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-i2c-devices-slave-mqueue
+What I meant was, consider how dropped frames in the MAC will spoil
+any chance that the driver has to correctly match time stamps with
+frames.
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-i2c-devices-slave-mqueue b/Documentation/ABI/testing/sysfs-bus-i2c-devices-slave-mqueue
-new file mode 100644
-index 000000000000..28318108ce85
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-bus-i2c-devices-slave-mqueue
-@@ -0,0 +1,10 @@
-+What:		/sys/bus/i2c/devices/*/slave-mqueue
-+Date:		May 2019
-+KernelVersion:	5.2
-+Contact:	Eduardo Valentin <eduval@amazon.com>
-+Description:
-+		Reading to this file will return exactly one message,
-+		when available, of the i2c-slave-mqueue device attached
-+		to that bus. Userspace can also poll on this file to
-+		get notified when new messages are available.
-+Users:		i2c-slave-mqueue driver
--- 
-2.21.0
-
+Thanks,
+Richard
