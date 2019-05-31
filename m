@@ -2,188 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2534D30E44
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 14:45:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AEF030E4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 14:46:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727333AbfEaMpB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 08:45:01 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36886 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726555AbfEaMpA (ORCPT
+        id S1727320AbfEaMqQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 08:46:16 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:39339 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726403AbfEaMqQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 08:45:00 -0400
-Received: by mail-lj1-f196.google.com with SMTP id h19so9483273ljj.4
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 05:44:57 -0700 (PDT)
+        Fri, 31 May 2019 08:46:16 -0400
+Received: by mail-lj1-f193.google.com with SMTP id a10so6264954ljf.6;
+        Fri, 31 May 2019 05:46:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZXDOKwkAEMBmiYSeMHCXxPtDvLwnxyJqoeUB0a+jAg8=;
-        b=Oh5evWeBS0FQ5+SDSVIYDoDosmFdUraAVQSeP13wAG0FfkUCyvKQpzKYfoQx/Fc9jG
-         lSaXqIOqwzoUzI3o8vBwZqtrK4OfHuaXvwJgEezHSUYUzDIRs8JkI5NH1zlR4cxWyQme
-         Jfit8Diw2UqqiuTc+FH74c11TZCrrrdmpj/o5+9/QDcaiVnDEyYq21nnWSIA465u/MU4
-         +qSUnOUm6rmASeEsGsXm0RP0/aMO/Wsm45X36MGxa7H5G8PkA5ZCJKY5x4qvxmWuxnO8
-         Qn1PWZvVAf7u20A+XXfB5qKWG2QcdBuOAtm661NoEzPCdGshFZqYQtHFr/60ieylKxGT
-         GHFA==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7U/vllzeRGoDUSqNH2O6vtCvwbIbsyISBbyc9R5lGXI=;
+        b=Zv/Zj9UWstKjDWB/X3qKfz4kr5pyDkK9IzR5eo/kkqqHuoFoTMGTBsrnQoI5gB7mXm
+         X83RIBzfPQFr2ygu5IDJIHg9l7t9+ankLHbczoJ16RHB/J5HBrdrihDkicBX+o/q4ReQ
+         BDULxbzzaiu1Q1Vvo24NfWZqlA/pi4eMjJ2cC2TiyeL0+eQWM4CE1UXdAvFDr6NRBF+Q
+         kxE8XYrkqtbhGrOMmBx3X6Jg1C4MWo90pL1Zw3gkJ0VAVd8kUASyOhIci+DeueSZOnNe
+         5KchYf3uo5Ms8BFRUI2/6IMtDCSkK5ZQapRQhMoUuEyqUvnv543DA33owZ39+zXcayj6
+         UNRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZXDOKwkAEMBmiYSeMHCXxPtDvLwnxyJqoeUB0a+jAg8=;
-        b=DSrhNdPHxEoJtlvJGEhBmRRLEU9zBLausXxCcjI9Sy7VvMKOyA29/xh4YW8tu+4YyN
-         rVHCrSWJGis0emQn18GmEBv9qJpYT5p7mJrxFvaDETG6s0zTt+J4MldtkNCwW1tTuVmu
-         53AGoM22VzJy1zXWVXjmC9gvrZkyst5lqj+fGrSScpPhCH/3gG1iAVdT59McX9Q88T41
-         Z/dpMMd6tAkBrMKf8URwkERsGMUkRpLUBY80xc5p0mhwWcmIueZI8WugjYSLNBy2rgeT
-         Rvon2fHLtE6WS7Nmylc79hLGf8ff2145SxUQDbjvRJ9QMklfnG4jGcitX4TCwgasKeCX
-         LHsg==
-X-Gm-Message-State: APjAAAVF6WBuswH93MqM1EXujYD7fd+49D3P04TVBntuj0ASlkgFghS1
-        cW6343Bqo1Oi09inntgstFYUuLvLBsIog0UkO4BQ
-X-Google-Smtp-Source: APXvYqwRVVnGpDVdSGCj6R4r22cAjZvnCnlNYusSiD/sCSGkEdAyXXFr+krFA2m6K8I0tlJghON4fRG9yXZG4071sxQ=
-X-Received: by 2002:a2e:3e14:: with SMTP id l20mr5891599lja.40.1559306696964;
- Fri, 31 May 2019 05:44:56 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7U/vllzeRGoDUSqNH2O6vtCvwbIbsyISBbyc9R5lGXI=;
+        b=RWwUn7gx4txZZH/RnPNMs+L2TbNq+4LpnuO/BwPbvXkuaMM49ah3zv53oxpT8fx/d4
+         Jpti90x6mjcijcdLr5xtCHYZ43uq19kIKqCnOwZTcLv3rS5VGj+40Wf2MyYeAARljl0E
+         TurYVdt4tnr5Ue/0c/xsB9okAMR45KCr0DUijGbde8C/kaDQqqfEryaPS1FoymYJUook
+         LLxDeEqPLGQho5r2IB47AZp/B9NdIfWwUd1jfpu7C+YM2tjGNFlZrcq0ma4GwhVSnoJH
+         OzBwhVH+RIElI9qMyzoMqqSVm3yLQ3530unOA+JneBVkOKgUtqo4xukPq53sPCVKyAzV
+         E7CA==
+X-Gm-Message-State: APjAAAUU8tGzTYd/2Wg5Az6iNfXSKrC1ZjZSBNCown+nSenjxOu8Twxa
+        uDAQP2LtcwHqcZU2tJEgwrMGnCmo
+X-Google-Smtp-Source: APXvYqz1JzGq7x9Q+0+jYp9r4eBCRmz5OsVKb9/7kw292QmWKtEySx3VGA7zk5mW/9KqkICOIKZUng==
+X-Received: by 2002:a2e:249:: with SMTP id 70mr5320344ljc.178.1559306774051;
+        Fri, 31 May 2019 05:46:14 -0700 (PDT)
+Received: from [192.168.2.145] ([94.29.35.141])
+        by smtp.googlemail.com with ESMTPSA id i21sm407469ljh.12.2019.05.31.05.46.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 31 May 2019 05:46:13 -0700 (PDT)
+Subject: Re: [PATCH V2] drivers: i2c: tegra: fix checkpatch defects
+To:     Bitan Biswas <bbiswas@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Shardar Mohammed <smohammed@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>
+References: <1559196850-7007-1-git-send-email-bbiswas@nvidia.com>
+ <e9e3d8b0-a76a-81a9-1110-2d07ba1c787f@gmail.com>
+ <911e52ed-8f3c-583a-7610-e38723219eca@gmail.com>
+ <b86b9104-1754-531f-70b9-3c1a5d347b9b@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <2d83ad21-b012-1b3e-fc9a-741972ee3ba9@gmail.com>
+Date:   Fri, 31 May 2019 15:45:06 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190529145742.GA8959@cisco> <CAHC9VhR4fudQanvZGYWMvCf7k2CU3q7e7n1Pi7hzC3v_zpVEdw@mail.gmail.com>
- <20190529153427.GB8959@cisco> <CAHC9VhSF3AjErX37+eeusJ7+XRw8yuPsmqBTRwc9EVoRBh_3Tw@mail.gmail.com>
- <20190529222835.GD8959@cisco> <CAHC9VhRS66VGtug3fq3RTGHDvfGmBJG6yRJ+iMxm3cxnNF-zJw@mail.gmail.com>
- <20190530170913.GA16722@mail.hallyn.com> <CAHC9VhThLiQzGYRUWmSuVfOC6QCDmA75BDB7Eg7V8HX4x7ymQg@mail.gmail.com>
- <20190530212900.GC5739@cisco> <CAHC9VhT5HPt9rCJoDutdvA3r1Y1GOHfpXe2eJ54atNC1=Vd8LA@mail.gmail.com>
- <20190531002058.tsddah4edcazkuzs@madcap2.tricolour.ca>
-In-Reply-To: <20190531002058.tsddah4edcazkuzs@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 31 May 2019 08:44:45 -0400
-Message-ID: <CAHC9VhTrM1op_EH=YAn9pU8dMOr=jB-Ph4SxFeqGFskwLmFnCA@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Tycho Andersen <tycho@tycho.ws>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        ebiederm@xmission.com, nhorman@tuxdriver.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <b86b9104-1754-531f-70b9-3c1a5d347b9b@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 8:21 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2019-05-30 19:26, Paul Moore wrote:
-> > On Thu, May 30, 2019 at 5:29 PM Tycho Andersen <tycho@tycho.ws> wrote:
-> > > On Thu, May 30, 2019 at 03:29:32PM -0400, Paul Moore wrote:
-> > > >
-> > > > [REMINDER: It is an "*audit* container ID" and not a general
-> > > > "container ID" ;)  Smiley aside, I'm not kidding about that part.]
-> > >
-> > > This sort of seems like a distinction without a difference; presumably
-> > > audit is going to want to differentiate between everything that people
-> > > in userspace call a container. So you'll have to support all this
-> > > insanity anyway, even if it's "not a container ID".
-> >
-> > That's not quite right.  Audit doesn't care about what a container is,
-> > or is not, it also doesn't care if the "audit container ID" actually
-> > matches the ID used by the container engine in userspace and I think
-> > that is a very important line to draw.  Audit is simply given a value
-> > which it calls the "audit container ID", it ensures that the value is
-> > inherited appropriately (e.g. children inherit their parent's audit
-> > container ID), and it uses the value in audit records to provide some
-> > additional context for log analysis.  The distinction isn't limited to
-> > the value itself, but also to how it is used; it is an "audit
-> > container ID" and not a "container ID" because this value is
-> > exclusively for use by the audit subsystem.  We are very intentionally
-> > not adding a generic container ID to the kernel.  If the kernel does
-> > ever grow a general purpose container ID we will be one of the first
-> > ones in line to make use of it, but we are not going to be the ones to
-> > generically add containers to the kernel.  Enough people already hate
-> > audit ;)
-> >
-> > > > I'm not interested in supporting/merging something that isn't useful;
-> > > > if this doesn't work for your use case then we need to figure out what
-> > > > would work.  It sounds like nested containers are much more common in
-> > > > the lxc world, can you elaborate a bit more on this?
-> > > >
-> > > > As far as the possible solutions you mention above, I'm not sure I
-> > > > like the per-userns audit container IDs, I'd much rather just emit the
-> > > > necessary tracking information via the audit record stream and let the
-> > > > log analysis tools figure it out.  However, the bigger question is how
-> > > > to limit (re)setting the audit container ID when you are in a non-init
-> > > > userns.  For reasons already mentioned, using capable() is a non
-> > > > starter for everything but the initial userns, and using ns_capable()
-> > > > is equally poor as it essentially allows any userns the ability to
-> > > > munge it's audit container ID (obviously not good).  It appears we
-> > > > need a different method for controlling access to the audit container
-> > > > ID.
-> > >
-> > > One option would be to make it a string, and have it be append only.
-> > > That should be safe with no checks.
-> > >
-> > > I know there was a long thread about what type to make this thing. I
-> > > think you could accomplish the append-only-ness with a u64 if you had
-> > > some rule about only allowing setting lower order bits than those that
-> > > are already set. With 4 bits for simplicity:
-> > >
-> > > 1100         # initial container id
-> > > 1100 -> 1011 # not allowed
-> > > 1100 -> 1101 # allowed, but now 1101 is set in stone since there are
-> > >              # no lower order bits left
-> > >
-> > > There are probably fancier ways to do it if you actually understand
-> > > math :)
-> >
-> >  ;)
-> >
-> > > Since userns nesting is limited to 32 levels (right now, IIRC), and
-> > > you have 64 bits, this might be reasonable. You could just teach
-> > > container engines to use the first say N bits for themselves, with a 1
-> > > bit for the barrier at the end.
-> >
-> > I like the creativity, but I worry that at some point these
-> > limitations are going to be raised (limits have a funny way of doing
-> > that over time) and we will be in trouble.  I say "trouble" because I
-> > want to be able to quickly do an audit container ID comparison and
-> > we're going to pay a penalty for these larger values (we'll need this
-> > when we add multiple auditd support and the requisite record routing).
-> >
-> > Thinking about this makes me also realize we probably need to think a
-> > bit longer about audit container ID conflicts between orchestrators.
-> > Right now we just take the value that is given to us by the
-> > orchestrator, but if we want to allow multiple container orchestrators
-> > to work without some form of cooperation in userspace (I think we have
-> > to assume the orchestrators will not talk to each other) we likely
-> > need to have some way to block reuse of an audit container ID.  We
-> > would either need to prevent the orchestrator from explicitly setting
-> > an audit container ID to a currently in use value, or instead generate
-> > the audit container ID in the kernel upon an event triggered by the
-> > orchestrator (e.g. a write to a /proc file).  I suspect we should
-> > start looking at the idr code, I think we will need to make use of it.
->
-> My first reaction to using the IDR code is that once an idr is given up,
-> it can be reused.  I suppose we request IDRs and then never give them up
-> to avoid reuse...
+31.05.2019 12:04, Bitan Biswas пишет:
+> 
+> 
+> On 5/30/19 4:43 AM, Dmitry Osipenko wrote:
+>> 30.05.2019 14:36, Dmitry Osipenko пишет:
+>>> 30.05.2019 9:14, Bitan Biswas пишет:
+>>>> Fix checkpatch.pl warning(s)/error(s)/check(s) in i2c-tegra.c
+>>>> except for BUG/BUG_ON checks
+>>>
+>>> Please turn the BUG_ON's into WARN_ON's. The machine won't go on fire,
+>>> hence there is absolutely no good reason in making system unusable on a
+>>> software bug. BUG_ON may be more useful for development, but not for a
+>>> casual daily usage.
+> I shall update the patch to remove the BUG/BUG_ON calls.
 
-I'm not sure we ever what to guarantee that an audit container ID
-won't be reused during the lifetime of the system, it is a discrete
-integer after all.  What I think we do want to guarantee is that we
-won't allow an unintentional audit container ID collision between
-different orchestrators; if a single orchestrator wants to reuse an
-audit container ID then that is its choice.
-
-> I already had some ideas of preventing an existing ID from being reused,
-
-Cool.  I only made the idr suggestion since it is used for PIDs and
-solves a very similar problem.
-
-> but that makes the practice of some container engines injecting
-> processes into existing containers difficult if not impossible.
-
-Yes, we'll need some provision to indicate which orchestrator
-"controls" that particular audit container ID, and allow that
-orchestrator to reuse that particular audit container ID (until all
-those containers disappear and the audit container ID is given back to
-the pool).
-
--- 
-paul moore
-www.paul-moore.com
+Please replace them with WARN_ON_ONCE.
