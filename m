@@ -2,102 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41AEB309E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 10:14:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBEC9309FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 10:16:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726855AbfEaIO6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 04:14:58 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:39751 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726386AbfEaIO6 (ORCPT
+        id S1727090AbfEaIQN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 04:16:13 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:46328 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726158AbfEaIQM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 04:14:58 -0400
-Received: by mail-qt1-f193.google.com with SMTP id i34so10347514qta.6;
-        Fri, 31 May 2019 01:14:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qz9y4gFluxzPwJy3KPISqVXROmvinNnPW5jrOuJybTo=;
-        b=Tm5ewF/wi6xIdUKsIkZdEGqPXXKlR882rY6T5MTG1DHJVvlwP0o9cTJDqcudqGhlFR
-         fKEhX4v13F7muxAOKwHJKK9rrnB+4+jOyD/RXIU5YIiJ3XobZdyvS0xV+3+H/Mz6lSr5
-         ZEaQ3i9oBK3LkpMPoFdWKmLffTKbEkw3C2QMl830DwWBw+OXg/x8GemOkZOZlRFU8UVK
-         SVFeBG9fKp86GgLhwcdBOUuy5mAo1yIt1X5rwxOE4Ml7eL0xnR19fKNv8Xz7I7bDaZZ5
-         4ALrZJCEN/QuwPzm+wMySnzAOZcjyVECdT0fb8vnfluWr4h7DFB4u6wqt769i+QQXMeO
-         1xdA==
-X-Gm-Message-State: APjAAAW+gdazBPq7iQyBbQXa4/1xblRqpHKbCZvUgga3ZaSUnWTT9S8O
-        EntfxlkNp/gu7n5VOP6yhgXgm/0T55o1W9Fx814=
-X-Google-Smtp-Source: APXvYqw6R6nQclsyVadJZQRr3GlWli/1GXaaSeZb7dxTTe/GAXqX/9X+vcmpy0O5aG8/euC5SLkSQaGiK9/5s8DtIcc=
-X-Received: by 2002:aed:3e7c:: with SMTP id m57mr2760555qtf.204.1559290496946;
- Fri, 31 May 2019 01:14:56 -0700 (PDT)
+        Fri, 31 May 2019 04:16:12 -0400
+X-UUID: 1ee2aadd23b54dffb22980b8cc4e9552-20190531
+X-UUID: 1ee2aadd23b54dffb22980b8cc4e9552-20190531
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <ryder.lee@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 2132127949; Fri, 31 May 2019 16:15:57 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 31 May 2019 16:15:55 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 31 May 2019 16:15:55 +0800
+From:   Ryder Lee <ryder.lee@mediatek.com>
+To:     Felix Fietkau <nbd@nbd.name>,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+CC:     Roy Luo <royluo@google.com>, YF Luo <yf.luo@mediatek.com>,
+        Yiwei Chung <yiwei.chung@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Chih-Min Chen <chih-min.Chen@mediatek.com>,
+        <linux-wireless@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH 1/2] mt76: mt7615: enable support for mesh
+Date:   Fri, 31 May 2019 16:15:51 +0800
+Message-ID: <7f167d09736652f81383991c971506630bbedacc.1559287432.git.ryder.lee@mediatek.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-References: <20190529152237.10719-1-christian@brauner.io> <20190530132012.GS16415@port70.net>
-In-Reply-To: <20190530132012.GS16415@port70.net>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 31 May 2019 10:14:40 +0200
-Message-ID: <CAK8P3a1zAk1qAkpmevO-AS6zxKdJneDe0ADouhZLW5SEUqoTuw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] fork: add clone3
-To:     Szabolcs Nagy <nsz@port70.net>
-Cc:     Christian Brauner <christian@brauner.io>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jann Horn <jannh@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Adrian Reber <adrian@lisas.de>,
-        Andrei Vagin <avagin@gmail.com>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 3:20 PM Szabolcs Nagy <nsz@port70.net> wrote:
-> * Christian Brauner <christian@brauner.io> [2019-05-29 17:22:36 +0200]:
+Enable NL80211_IFTYPE_MESH_POINT and add its path.
 
-> > /* uapi */
-> > struct clone_args {
-> >         __aligned_u64 flags;
-> >         __aligned_u64 pidfd;
-> >         __aligned_u64 parent_tidptr;
-> >         __aligned_u64 child_tidptr;
-> >         __aligned_u64 stack;
-> >         __aligned_u64 stack_size;
-> >         __aligned_u64 tls;
-> > };
->
-> is this new linux syscall api style to pass pointers as u64?
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+---
+ drivers/net/wireless/mediatek/mt76/mt7615/init.c | 6 ++++++
+ drivers/net/wireless/mediatek/mt76/mt7615/main.c | 1 +
+ drivers/net/wireless/mediatek/mt76/mt7615/mcu.c  | 5 ++++-
+ 3 files changed, 11 insertions(+), 1 deletion(-)
 
-This is common for ioctls passing structures now. I don't think
-we've had many system calls with structures containing pointers,
-but the idea is the same, i.e. we want structures to be identical
-on 32-bit and 64-bit architectures.
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/init.c b/drivers/net/wireless/mediatek/mt76/mt7615/init.c
+index 59f604f3161f..f860af6a42da 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7615/init.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7615/init.c
+@@ -133,6 +133,9 @@ static const struct ieee80211_iface_limit if_limits[] = {
+ 	{
+ 		.max = MT7615_MAX_INTERFACES,
+ 		.types = BIT(NL80211_IFTYPE_AP) |
++#ifdef CONFIG_MAC80211_MESH
++			 BIT(NL80211_IFTYPE_MESH_POINT) |
++#endif
+ 			 BIT(NL80211_IFTYPE_STATION)
+ 	}
+ };
+@@ -195,6 +198,9 @@ int mt7615_register_device(struct mt7615_dev *dev)
+ 	dev->mt76.antenna_mask = 0xf;
+ 
+ 	wiphy->interface_modes = BIT(NL80211_IFTYPE_STATION) |
++#ifdef CONFIG_MAC80211_MESH
++				 BIT(NL80211_IFTYPE_MESH_POINT) |
++#endif
+ 				 BIT(NL80211_IFTYPE_AP);
+ 
+ 	ret = mt76_register_device(&dev->mt76, true, mt7615_rates,
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/main.c b/drivers/net/wireless/mediatek/mt76/mt7615/main.c
+index b0bb7cc12385..585e67fa2728 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7615/main.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7615/main.c
+@@ -37,6 +37,7 @@ static int get_omac_idx(enum nl80211_iftype type, u32 mask)
+ 
+ 	switch (type) {
+ 	case NL80211_IFTYPE_AP:
++	case NL80211_IFTYPE_MESH_POINT:
+ 		/* ap use hw bssid 0 and ext bssid */
+ 		if (~mask & BIT(HW_BSSID_0))
+ 			return HW_BSSID_0;
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
+index 43f70195244c..8b8db526cb16 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
+@@ -754,6 +754,7 @@ int mt7615_mcu_set_bss_info(struct mt7615_dev *dev,
+ 
+ 	switch (vif->type) {
+ 	case NL80211_IFTYPE_AP:
++	case NL80211_IFTYPE_MESH_POINT:
+ 		tx_wlan_idx = mvif->sta.wcid.idx;
+ 		conn_type = CONNECTION_INFRA_AP;
+ 		break;
+@@ -968,7 +969,8 @@ int mt7615_mcu_add_wtbl(struct mt7615_dev *dev, struct ieee80211_vif *vif,
+ 		.rx_wtbl = {
+ 			.tag = cpu_to_le16(WTBL_RX),
+ 			.len = cpu_to_le16(sizeof(struct wtbl_rx)),
+-			.rca1 = vif->type != NL80211_IFTYPE_AP,
++			.rca1 = vif->type != (NL80211_IFTYPE_AP ||
++					      NL80211_IFTYPE_MESH_POINT),
+ 			.rca2 = 1,
+ 			.rv = 1,
+ 		},
+@@ -1042,6 +1044,7 @@ static void sta_rec_convert_vif_type(enum nl80211_iftype type, u32 *conn_type)
+ {
+ 	switch (type) {
+ 	case NL80211_IFTYPE_AP:
++	case NL80211_IFTYPE_MESH_POINT:
+ 		if (conn_type)
+ 			*conn_type = CONNECTION_INFRA_STA;
+ 		break;
+-- 
+2.18.0
 
-> i think it will look a bit ugly in userspace where cast
-> to u64 would signextend pointers on most 32bit targets, so
-> user code would have to do something like
->
-> arg.ptr = (uint64_t)(uintptr_t)ptr;
->
-> such ugliness can be hidden by the libc with a different
-> struct definition, but it will require bigendian and alignment
-> hackery (or translation in libc, but that does not really work
-> when user calls raw syscall).
-
-Right. Note also that user space should do zero-extension
-of the variables in order for the kernel to not care about
-what called it. Just leaving padding fields in the structure
-is not enough here.
-
-User space that calls the raw syscall certainly has to
-go through the uintptr_t cast, but I would also expect that
-applications don't normally do that, and instead call a
-library function that has regular C calling conventions
-with individual arguments instead of a structure.
-
-      Arnd
