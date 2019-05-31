@@ -2,134 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B0A430AB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 10:54:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7B7C30AE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 10:57:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727029AbfEaIyu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 04:54:50 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:38170 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbfEaIyt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 04:54:49 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id B24FC261179
-Subject: Re: [PATCH v9 6/7] mfd: cros_ec: differentiate SCP from EC by feature
- bit.
-To:     Pi-Hsun Shih <pihsun@chromium.org>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Gwendal Grignou <gwendal@chromium.org>
-References: <20190531073848.155444-1-pihsun@chromium.org>
- <20190531073848.155444-7-pihsun@chromium.org>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <6a6819ab-f6f6-616c-7d07-a94dddbe1262@collabora.com>
-Date:   Fri, 31 May 2019 10:54:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1727087AbfEaI4f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 04:56:35 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:37042 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726515AbfEaI4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 04:56:34 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 25606FF226291FBFBF71;
+        Fri, 31 May 2019 16:56:32 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.132) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 31 May 2019 16:56:25 +0800
+From:   Huazhong Tan <tanhuazhong@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <linuxarm@huawei.com>, Huazhong Tan <tanhuazhong@huawei.com>
+Subject: [PATCH net-next 00/12] code optimizations & bugfixes for HNS3 driver
+Date:   Fri, 31 May 2019 16:54:46 +0800
+Message-ID: <1559292898-64090-1-git-send-email-tanhuazhong@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20190531073848.155444-7-pihsun@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.132]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This patch-set includes code optimizations and bugfixes for the HNS3
+ethernet controller driver.
 
-On 31/5/19 9:38, Pi-Hsun Shih wrote:
-> System Companion Processor (SCP) is Cortex M4 co-processor on some
-> MediaTek platform that can run EC-style firmware. Since a SCP and EC
-> would both exist on a system, and use the cros_ec_dev driver, we need to
-> differentiate between them for the userspace, or they would both be
-> registered at /dev/cros_ec, causing a conflict.
-> 
-> Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
+[patch 1/12] removes the redundant core reset type
 
-I think I already did, but anyway,
+[patch 2/12 - 3/12] fixes two VLAN related issues
 
-Acked-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+[patch 4/12] fixes a TM issue
 
+[patch 5/12 - 12/12] includes some patches related to RAS & MSI-X error
 
-> 
-> ---
-> Changes from v8:
->  - No change.
-> 
-> Changes from v7:
->  - Address comments in v7.
->  - Rebase the series onto https://lore.kernel.org/patchwork/patch/1059196/.
-> 
-> Changes from v6, v5, v4, v3, v2:
->  - No change.
-> 
-> Changes from v1:
->  - New patch extracted from Patch 5.
-> ---
->  drivers/mfd/cros_ec_dev.c            | 10 ++++++++++
->  include/linux/mfd/cros_ec.h          |  1 +
->  include/linux/mfd/cros_ec_commands.h |  2 +-
->  3 files changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> index a5391f96eafd..66107de3dbce 100644
-> --- a/drivers/mfd/cros_ec_dev.c
-> +++ b/drivers/mfd/cros_ec_dev.c
-> @@ -440,6 +440,16 @@ static int ec_device_probe(struct platform_device *pdev)
->  		ec_platform->ec_name = CROS_EC_DEV_TP_NAME;
->  	}
->  
-> +	/* Check whether this is actually a SCP rather than an EC. */
-> +	if (cros_ec_check_features(ec, EC_FEATURE_SCP)) {
-> +		dev_info(dev, "CrOS SCP MCU detected.\n");
-> +		/*
-> +		 * Help userspace differentiating ECs from SCP,
-> +		 * regardless of the probing order.
-> +		 */
-> +		ec_platform->ec_name = CROS_EC_DEV_SCP_NAME;
-> +	}
-> +
->  	/*
->  	 * Add the class device
->  	 * Link to the character device for creating the /dev entry
-> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
-> index cfa78bb4990f..751cb3756d49 100644
-> --- a/include/linux/mfd/cros_ec.h
-> +++ b/include/linux/mfd/cros_ec.h
-> @@ -27,6 +27,7 @@
->  #define CROS_EC_DEV_PD_NAME "cros_pd"
->  #define CROS_EC_DEV_TP_NAME "cros_tp"
->  #define CROS_EC_DEV_ISH_NAME "cros_ish"
-> +#define CROS_EC_DEV_SCP_NAME "cros_scp"
->  
->  /*
->   * The EC is unresponsive for a time after a reboot command.  Add a
-> diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
-> index dcec96f01879..8b578b4c1ec7 100644
-> --- a/include/linux/mfd/cros_ec_commands.h
-> +++ b/include/linux/mfd/cros_ec_commands.h
-> @@ -884,7 +884,7 @@ enum ec_feature_code {
->  	EC_FEATURE_REFINED_TABLET_MODE_HYSTERESIS = 37,
->  	/* EC supports audio codec. */
->  	EC_FEATURE_AUDIO_CODEC = 38,
-> -	/* EC Supports SCP. */
-> +	/* The MCU is a System Companion Processor (SCP). */
+Huazhong Tan (1):
+  net: hns3: remove redundant core reset
 
-This change is already done on the Gwendal's efforts to sync the commands file,
-to avoid more mess here, please remove that change and resend the patchset
-without touching the cros_ec_commands.h file.
+Jian Shen (2):
+  net: hns3: don't configure new VLAN ID into VF VLAN table when it's
+    full
+  net: hns3: fix VLAN filter restore issue after reset
 
-[1] https://lore.kernel.org/lkml/20190518063949.GY4319@dell/T/
+Shiju Jose (2):
+  net: hns3: delay setting of reset level for HW errors until slot_reset
+    is called
+  net: hns3: fix avoid unnecessary resetting for the H/W errors which do
+    not require reset
 
-Thanks,
- Enric
+Weihang Li (6):
+  net: hns3: add a check to pointer in error_detected and slot_reset
+  net: hns3: set ops to null when unregister ad_dev
+  net: hns3: add handling of two bits in MAC tunnel interrupts
+  net: hns3: remove setting bit of reset_requests when handling mac
+    tunnel interrupts
+  net: hns3: add opcode about query and clear RAS & MSI-X to special
+    opcode
+  net: hns3: delay and separate enabling of NIC and ROCE HW errors
 
->  	EC_FEATURE_SCP = 39,
->  	/* The MCU is an Integrated Sensor Hub */
->  	EC_FEATURE_ISH = 40,
-> 
+Yunsheng Lin (1):
+  net: hns3: set the port shaper according to MAC speed
+
+ drivers/net/ethernet/hisilicon/hns3/hnae3.c        |   2 +
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h        |  10 +-
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    |  55 +---
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.h    |   1 -
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c |   6 +-
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c |   2 +-
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c | 351 ++++++++-------------
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h |   9 +-
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 137 +++++---
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |   1 +
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c  |   2 +-
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  |  12 +-
+ 12 files changed, 268 insertions(+), 320 deletions(-)
+
+-- 
+2.7.4
+
