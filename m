@@ -2,60 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27EF531765
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 01:03:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB5F23176B
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 01:06:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726749AbfEaXC7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 19:02:59 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39433 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726518AbfEaXC6 (ORCPT
+        id S1726700AbfEaXGP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 19:06:15 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54413 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726450AbfEaXGP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 19:02:58 -0400
-Received: by mail-wm1-f67.google.com with SMTP id z23so6830919wma.4
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 16:02:57 -0700 (PDT)
+        Fri, 31 May 2019 19:06:15 -0400
+Received: by mail-wm1-f68.google.com with SMTP id g135so3762060wme.4
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 16:06:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=2E2Yu1Q0tfoRnZK+jcFx+IKOzLmnmqLF029Lgzpcc/k=;
-        b=kAPSjOHJOqE94uShWuypL9ii/931wZa3nfEZy6jHi7f5ffa88I6XCTYhi+IO4lubpd
-         v6DfIVeKTBjr5AfnnnoacjBrvMFN0uS6Nmic6Y+Ls9f6KHrNbVoXv7SHUZu2lmiBXm6a
-         bdgTzHuVoUOSAW5tVTZFBMohcrSgniG+us56LJ7t/cgGRQ2LlIaUEFLpFMGirkNlfro+
-         SshBV1M2Qxf82C69STRYtJ30Yvou7sn9ZP3V11OHG+O8rfVIVoGCOTQWHcOPIk04rhNp
-         ymMzKBCfYM22Pv60exOlifHdS1Xx8etrviMB8KrG3o3MFTCbAVGMzB2eFTRneN4ZUwez
-         CmCg==
+        bh=LHs7Q+7eiRr6o5cvQUXVsgOMCj96Y7GEyw0Jj7X/LGs=;
+        b=fFTrUeYZRUfZjCLTHVcQcD/0XAbpRg0e7v94LUS+1qu059vhysSucEYr5PiZov2YrH
+         etBOitUjh+MlI0e4gl7v2CDuS4lKadnh5FF34dfVzYQMdWqQ2t+/s+QFK6Qngi9lVRSQ
+         bQMu5+rgGUv8mVZyWQ0yVQmZ8gpHk4SGAZB1Z6Frm5JjfYuJFNfLMwxqYR5FtSLnhcoD
+         e/POn/rM2g+PbedUEJnps7Et9V09E4KQGQKKbdJsXhQE0bb3n9KkReRi7dMX8aNLGDud
+         wuGLBoI7wG5njz92P03FB6ySqdFQhHNjgUvCZk7bn4s8uVZVArVlfyPsBVuVvFz2S4gR
+         HjCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=2E2Yu1Q0tfoRnZK+jcFx+IKOzLmnmqLF029Lgzpcc/k=;
-        b=DI9PCAeFgrjzHvPCSm9Ta0yws2zm6tu7lQ6fBAICXpRderVpDNRm0fXHxTPfERiDWV
-         WecpHkGsgDyspqRi2VOM+g95AOcWFhXZe37Z9SFdHQog7yNhz/UqywyfLwKJyv8GXyIn
-         nyOPO6OyB6O+QWQzgYTauUxttW56/id36WjaO3fsOd+nyupQjDPvCsjB0YGB+xwYlCYS
-         7ncJJ8HDUujnDMt4y0WrPy55VJQjUFXSKMMqtQBw3oYZsX70Y3D1Ls3+GQtiBcGdIViW
-         Guq9HImCXglVIvGAgPBuA2XtFsR7JlH+hrkBSJwFBb09buUWOgHph////Fxq0Hif3Ms9
-         iH2w==
-X-Gm-Message-State: APjAAAXw3ICzP6RJDejbpjyy4h3vWwG3bQlma4dkBCvjYtP7Esi+tfHm
-        nsdWv38VsNru2OrAsYgvED6YMmdAyhs=
-X-Google-Smtp-Source: APXvYqx6wjVK/tcFeX/rhtUgPB7srsqPsdYUURWilKTfPF/hjR0oX5M5C1cVumW9Af59AWzIevHkUw==
-X-Received: by 2002:a1c:7ec8:: with SMTP id z191mr1666867wmc.66.1559343776646;
-        Fri, 31 May 2019 16:02:56 -0700 (PDT)
+        bh=LHs7Q+7eiRr6o5cvQUXVsgOMCj96Y7GEyw0Jj7X/LGs=;
+        b=SyIT1YEjjqb3bePOoxlrardkPN0gJNmln9tnAoJNmCz1icz5C1wc51eTf5IYqQexGD
+         p5tDg9HKpd/aoEx8X/5xfPR2Fuq2WBwQBLmQUYOjT74XiNSK2IOY0FwSfSJIS4N09rbT
+         goA4jOZMOTDYFnnuk/wDiFXperp5Sk6mPjrFgob/45eZK+7PMEzKlTvQYBKyxqsxeIwN
+         JDQfDlR2xbrWWqRgGHAcUPiGprs+CQzJa/q9yujjEo565Rh5sAo1lEyelc6FTmTQo7FF
+         nXOmO6SwF3RrBMJN4Iq1pjZ5ObA4g5iqPLvGWpJtBr6qE2gmkzVD5TyrTz09YPGTwaqC
+         QZdA==
+X-Gm-Message-State: APjAAAUbI5gbhE2CDosUQotaTeSwIuXjuInJ+hThHtd0DxrkxvwlTHqd
+        ktbFGM8WNexYAbMzeKR4Mq8ctTgqegc=
+X-Google-Smtp-Source: APXvYqzbpBMMLWIpzfEucehHl2OxSZQZUHvdkP/nYc0r47mDZwALeHhtbNQXa+eEpldpt3CLOKec8A==
+X-Received: by 2002:a7b:cd84:: with SMTP id y4mr7287814wmj.41.1559343973033;
+        Fri, 31 May 2019 16:06:13 -0700 (PDT)
 Received: from localhost.localdomain (catv-89-135-96-219.catv.broadband.hu. [89.135.96.219])
-        by smtp.gmail.com with ESMTPSA id w10sm11439526wrr.67.2019.05.31.16.02.55
+        by smtp.gmail.com with ESMTPSA id f8sm413384wrx.11.2019.05.31.16.06.11
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 31 May 2019 16:02:55 -0700 (PDT)
+        Fri, 31 May 2019 16:06:11 -0700 (PDT)
 From:   Linus Walleij <linus.walleij@linaro.org>
 To:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>
 Cc:     linux-kernel@vger.kernel.org,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] regulator: arizona-micsupp: Delete unused include
-Date:   Sat,  1 Jun 2019 01:02:52 +0200
-Message-Id: <20190531230252.6541-1-linus.walleij@linaro.org>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Subject: [PATCH] regulator: bd70528: Drop unused include
+Date:   Sat,  1 Jun 2019 01:06:08 +0200
+Message-Id: <20190531230608.7361-1-linus.walleij@linaro.org>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -64,26 +62,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver uses no symbols from <linux/gpio.h> so just drop
-this include.
+This driver does not use any symbols from <linux/gpio.h>
+so just drop the include.
 
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/regulator/arizona-micsupp.c | 1 -
+ drivers/regulator/bd70528-regulator.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/regulator/arizona-micsupp.c b/drivers/regulator/arizona-micsupp.c
-index be0d46da51a1..4876b1ceef23 100644
---- a/drivers/regulator/arizona-micsupp.c
-+++ b/drivers/regulator/arizona-micsupp.c
-@@ -16,7 +16,6 @@
- #include <linux/regulator/driver.h>
- #include <linux/regulator/machine.h>
- #include <linux/regulator/of_regulator.h>
+diff --git a/drivers/regulator/bd70528-regulator.c b/drivers/regulator/bd70528-regulator.c
+index 30e3ed430a8a..0248a61f1006 100644
+--- a/drivers/regulator/bd70528-regulator.c
++++ b/drivers/regulator/bd70528-regulator.c
+@@ -4,7 +4,6 @@
+ 
+ #include <linux/delay.h>
+ #include <linux/err.h>
 -#include <linux/gpio.h>
- #include <linux/slab.h>
- #include <linux/workqueue.h>
- #include <sound/soc.h>
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
+ #include <linux/mfd/rohm-bd70528.h>
 -- 
 2.20.1
 
