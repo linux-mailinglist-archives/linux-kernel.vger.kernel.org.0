@@ -2,90 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28766305FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 02:52:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FD8E30600
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 02:55:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbfEaAwh convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 30 May 2019 20:52:37 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41534 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726131AbfEaAwh (ORCPT
+        id S1726678AbfEaAzb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 20:55:31 -0400
+Received: from smtprelay0034.hostedemail.com ([216.40.44.34]:53010 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726131AbfEaAza (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 20:52:37 -0400
-Received: by mail-wr1-f68.google.com with SMTP id c2so5329480wrm.8
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 17:52:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=I8M9lvtm1d9zCggAPZv8v5211uKjHgAxomcu7+qVxH4=;
-        b=sDO3uuoENA4k2kLagWojoy4xYoKNp78JuPVYgWV7H8Ne+nIevOitEK5TZwsXECqBxF
-         1d8mn/00AGkCOBDOYWAsgVohjr1+eUgAbomnUe220YFD07og6hPT2i2UUifihNG+Woqj
-         ycwrQ9dhn37yKQ1/Yy96JwUw40vCTTYNAeFGiALfIM0gRZKv4xOcmSSow2H4p36xgKj9
-         bCjKQvM1JHjYVMiZRzzDG4M6dif6+POvm9oDyPOWgBwELuMR0zYkxGrsNjYVBKPK+kAt
-         Q91EDiyBKleENBpDaHZxDwkPT8UderjUqCvq1azyiLCWSC41P8KHFwGjHBUGY/fhmCf3
-         HjrA==
-X-Gm-Message-State: APjAAAWriH1ha3BPsK/ZHxgOMU9pyQ/EoQd66XSSB4WfvKTAuzicVGTO
-        w2FeVjr650zMhMC64F/BEW5qRQ==
-X-Google-Smtp-Source: APXvYqwgzZnBOvYClN6m+tUmJT6X/IFmZujM/95ucohLVOSrujuZHxV1tShS+mXJaqldvgg6SXNAUQ==
-X-Received: by 2002:adf:e344:: with SMTP id n4mr4332512wrj.192.1559263956073;
-        Thu, 30 May 2019 17:52:36 -0700 (PDT)
-Received: from mi5s.teknoraver.net (net-93-144-152-91.cust.vodafonedsl.it. [93.144.152.91])
-        by smtp.gmail.com with ESMTPSA id z25sm2966242wmi.5.2019.05.30.17.52.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 May 2019 17:52:35 -0700 (PDT)
-Date:   Fri, 31 May 2019 02:52:32 +0200
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20190531100646.212b065f@canb.auug.org.au>
-References: <20190530162132.6081d246@canb.auug.org.au> <28716a14-772d-bc82-5111-34cd38cfda54@infradead.org> <20190531100646.212b065f@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: linux-next: Tree for May 30 (firmware_loader)
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-CC:     Randy Dunlap <rdunlap@infradead.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
+        Thu, 30 May 2019 20:55:30 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 5ADDA837F252;
+        Fri, 31 May 2019 00:55:29 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 30,2,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2197:2199:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3653:3865:3866:3867:3870:3871:4321:5007:6119:10004:10400:10848:11026:11232:11473:11658:11914:12043:12296:12438:12555:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21080:21221:21505:21627:30054:30070:30079:30091,0,RBL:172.58.27.55:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:34,LUA_SUMMARY:none
+X-HE-Tag: watch56_12886697fdd3c
+X-Filterd-Recvd-Size: 1865
+Received: from XPS-9350 (unknown [172.58.27.55])
+        (Authenticated sender: joe@perches.com)
+        by omf20.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 31 May 2019 00:55:27 +0000 (UTC)
+Message-ID: <685e8554eed17eebc731d62336ef30eb44bd14f7.camel@perches.com>
+Subject: Re: [PATCH] checkpatch.pl: Warn on duplicate sysctl local variable
+From:   Joe Perches <joe@perches.com>
+To:     Matteo Croce <mcroce@redhat.com>, linux-kernel@vger.kernel.org,
+        Andy Whitcroft <apw@canonical.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Aaron Tomlin <atomlin@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>
-From:   Matteo Croce <mcroce@redhat.com>
-Message-ID: <1D63F878-8B7D-4BE4-9FB7-F523C7F473BE@redhat.com>
+Date:   Thu, 30 May 2019 17:54:57 -0700
+In-Reply-To: <20190530235101.3248-1-mcroce@redhat.com>
+References: <20190530235101.3248-1-mcroce@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On May 31, 2019 2:06:46 AM GMT+02:00, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
-> 
-> On Thu, 30 May 2019 09:10:13 -0700 Randy Dunlap
-> <rdunlap@infradead.org> wrote:
-> >
-> > on i386 or x86_64:
-> > when CONFIG_PROC_SYSCTL is not set/enabled:
-> > 
-> > ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x1c):
-> undefined reference to `sysctl_vals'
-> > ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x20):
-> undefined reference to `sysctl_vals'
-> > ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x40):
-> undefined reference to `sysctl_vals'
-> > ld: drivers/base/firmware_loader/fallback_table.o:(.data+0x44):
-> undefined reference to `sysctl_vals'
-> 
-> Caused by commit
-> 
->   6a33853c5773 ("proc/sysctl: add shared variables for range check")
-> 
-> Added some more cc's
+On Fri, 2019-05-31 at 01:51 +0200, Matteo Croce wrote:
+> Commit 6a33853c5773 ("proc/sysctl: add shared variables for range check")
+> adds some shared const variables to be used instead of a local copy in
+> each source file.
+> Warn when a chunk duplicates one of these values in a ctl_table struct:
+[]
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+[]
+> @@ -6639,6 +6639,13 @@ sub process {
+>  				     "unknown module license " . $extracted_string . "\n" . $herecurr);
+>  			}
+>  		}
+> +
+> +# check for sysctl duplicate constants
+> +		if ($line =~ /\.extra[12]\s*=\s*&(zero|one|int_max|max_int)\b/) {
+> +			my $extracted_string = get_quoted_string($line, $rawline);
+> +			WARN("DUPLICATED_SYSCTL_CONST",
+> +				"duplicated sysctl range checking value '$1', consider using the shared one in include/linux/sysctl.h" . $extracted_string . "\n" . $herecurr);
+> +		}
 
-Hi,
+why is $extracted_string used here?
 
-Probably the whole firmware_config_table declaration should be under #ifdef CONFIG_PROC_SYSCTL?
 
-I'll look into it, thanks.
--- 
-Matteo Croce
-per aspera ad upstream
