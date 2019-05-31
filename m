@@ -2,255 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 243FE3104D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 16:34:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A5D83103F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 16:33:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbfEaOdx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 10:33:53 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52514 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726884AbfEaOdt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 10:33:49 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B12E6341;
-        Fri, 31 May 2019 07:33:48 -0700 (PDT)
-Received: from usa.arm.com (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E467B3F5AF;
-        Fri, 31 May 2019 07:33:46 -0700 (PDT)
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-Subject: [PATCH 6/6] mailbox: arm_mhu: add full support for the doorbells
-Date:   Fri, 31 May 2019 15:33:20 +0100
-Message-Id: <20190531143320.8895-7-sudeep.holla@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190531143320.8895-1-sudeep.holla@arm.com>
-References: <20190531143320.8895-1-sudeep.holla@arm.com>
+        id S1726640AbfEaOdf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 10:33:35 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39001 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbfEaOde (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 10:33:34 -0400
+Received: by mail-wm1-f65.google.com with SMTP id z23so6083519wma.4
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 07:33:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Y0PhGWzEOpLTuh3fSVoCKa9CV5/Z7teK0k6YX21tkGI=;
+        b=L4E7fpXfJO57aV/TUJ4V7Ke2sF02tmoNE/hBfk9PuUMXg2SYsny47cz4QeCqNHdLAP
+         78S0rDW7W2YR3zBP/ZrkJRUF3YHc0WiabRRuMBX4GvjsIlGg8TdClw22EMmx/c5B+gNN
+         d0ys4lB4ZrT5Eb8fANx4bHtywhP9MCMYk7BY7gXFGwiR6vpYyESoVQFCLBB/+MKMEHFF
+         LoT9I0MDgFj800hKZItRSRFp5dFfefvFtSmXflJrUEgo29tw5ih31VtjGjCQ5uykcjUg
+         /F3ATeRzCwHTlDsXNVzNNojVlcKJtxwcR5cU4QV187hLSSEy++tO8Qv9F38a/9Vbd4Fs
+         5HUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=Y0PhGWzEOpLTuh3fSVoCKa9CV5/Z7teK0k6YX21tkGI=;
+        b=RJrVfVasj32NAdepOT4rPPUWiTxOPhf7nHnlzBupbYRA8mXzMRId9sC4tm/9In/k2t
+         5ezBZwW/fQBZMXMSr8ieiZ4hgXlTdE963qhxzLzDxPiqJdCrmoJzC5hIlQgiH298GU8K
+         37B3St93+cUDDBwrW4HDqZy2OdMiVN5gjYcW0uqOdcYekglS/9++zB2j1BYnbjjrvK4U
+         4vCEqDD4Ol5mgfXuwlO0z0cWnpTj7oL730ZlcxaIVf+Y6zeaNBgXUlDpyZKYWDLKT+qw
+         WigKMSFFO4dNJ5bAGiIHI8ska1KSozSoh1yYgnFXzcJb8Ak4BOU4WHY4dPIFsv5x3I5A
+         XYyQ==
+X-Gm-Message-State: APjAAAXoKBrT/kJd80yks0jSybTxEm+CNaqMiknjv8F2H3+IC76+SxhK
+        G3RCzbYMrhhUzWy7ByR017ZNlg==
+X-Google-Smtp-Source: APXvYqwBA99XvSrYhl+Hzc2w/wzwK3svgHV1q46p8y6BPwCdE4S9Q8JDNtvOTVXkno8IT9nsJL6FiQ==
+X-Received: by 2002:a7b:c043:: with SMTP id u3mr5383834wmc.56.1559313211338;
+        Fri, 31 May 2019 07:33:31 -0700 (PDT)
+Received: from [192.168.43.165] ([37.173.17.188])
+        by smtp.googlemail.com with ESMTPSA id l18sm13057466wrh.54.2019.05.31.07.33.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 31 May 2019 07:33:30 -0700 (PDT)
+Subject: Re: [PATCH v3] clocksource: exynos_mct: Increase priority over ARM
+ arch timer
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+References: <CGME20190530105059eucas1p1d9c911a5ba2ae412166cd8866deb725e@eucas1p1.samsung.com>
+ <20190530105043.29965-1-m.szyprowski@samsung.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <7969e8c1-8fb2-4f47-9770-c6d1be48bb69@linaro.org>
+Date:   Fri, 31 May 2019 16:33:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190530105043.29965-1-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We now have the basic infrastructure and binding to support doorbells
-on ARM MHU controller.
+On 30/05/2019 12:50, Marek Szyprowski wrote:
+> Exynos SoCs based on CA7/CA15 have 2 timer interfaces: custom Exynos MCT
+> (Multi Core Timer) and standard ARM Architected Timers.
+> 
+> There are use cases, where both timer interfaces are used simultanously.
+> One of such examples is using Exynos MCT for the main system timer and
+> ARM Architected Timers for the KVM and virtualized guests (KVM requires
+> arch timers).
+> 
+> Exynos Multi-Core Timer driver (exynos_mct) must be however started
+> before ARM Architected Timers (arch_timer), because they both share some
+> common hardware blocks (global system counter) and turning on MCT is
+> needed to get ARM Architected Timer working properly.
+> 
+> To ensure selecting Exynos MCT as the main system timer, increase MCT
+> timer rating. To ensure proper starting order of both timers during
+> suspend/resume cycle, increase MCT hotplug priority over ARM Archictected
+> Timers.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-This patch adds all the necessary mailbox operations to add support for
-the doorbells. Maximum of 32 doorbells are supported on each physical
-channel, however the total number of doorbells is restricted to 20
-in order to save memory. It can increased if required in future.
+Applied, thanks
 
-Cc: Jassi Brar <jaswinder.singh@linaro.org>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/mailbox/arm_mhu.c | 129 ++++++++++++++++++++++++++++++++++++--
- 1 file changed, 125 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mailbox/arm_mhu.c b/drivers/mailbox/arm_mhu.c
-index c944ca121e9e..ba48d2281dca 100644
---- a/drivers/mailbox/arm_mhu.c
-+++ b/drivers/mailbox/arm_mhu.c
-@@ -18,6 +18,7 @@
- #include <linux/err.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
-+#include <linux/kernel.h>
- #include <linux/mailbox_controller.h>
- #include <linux/module.h>
- #include <linux/of.h>
-@@ -94,6 +95,14 @@ mhu_mbox_to_channel(struct mbox_controller *mbox,
- 	return NULL;
- }
- 
-+static void mhu_mbox_clear_irq(struct mbox_chan *chan)
-+{
-+	struct mhu_channel *chan_info = chan->con_priv;
-+	void __iomem *base = chan_info->mhu->mlink[chan_info->pchan].rx_reg;
-+
-+	writel_relaxed(BIT(chan_info->doorbell), base + INTR_CLR_OFS);
-+}
-+
- static unsigned int mhu_mbox_irq_to_pchan_num(struct arm_mhu *mhu, int irq)
- {
- 	unsigned int pchan;
-@@ -105,6 +114,95 @@ static unsigned int mhu_mbox_irq_to_pchan_num(struct arm_mhu *mhu, int irq)
- 	return pchan;
- }
- 
-+static struct mbox_chan *mhu_mbox_irq_to_channel(struct arm_mhu *mhu,
-+						 unsigned int pchan)
-+{
-+	unsigned long bits;
-+	unsigned int doorbell;
-+	struct mbox_chan *chan = NULL;
-+	struct mbox_controller *mbox = &mhu->mbox;
-+	void __iomem *base = mhu->mlink[pchan].rx_reg;
-+
-+	bits = readl_relaxed(base + INTR_STAT_OFS);
-+	if (!bits)
-+		/* No IRQs fired in specified physical channel */
-+		return NULL;
-+
-+	/* An IRQ has fired, find the associated channel */
-+	for (doorbell = 0; bits; doorbell++) {
-+		if (!test_and_clear_bit(doorbell, &bits))
-+			continue;
-+
-+		chan = mhu_mbox_to_channel(mbox, pchan, doorbell);
-+		if (chan)
-+			break;
-+	}
-+
-+	return chan;
-+}
-+
-+static irqreturn_t mhu_mbox_thread_handler(int irq, void *data)
-+{
-+	struct mbox_chan *chan;
-+	struct arm_mhu *mhu = data;
-+	unsigned int pchan = mhu_mbox_irq_to_pchan_num(mhu, irq);
-+
-+	while (NULL != (chan = mhu_mbox_irq_to_channel(mhu, pchan))) {
-+		mbox_chan_received_data(chan, NULL);
-+		mhu_mbox_clear_irq(chan);
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static bool mhu_doorbell_last_tx_done(struct mbox_chan *chan)
-+{
-+	struct mhu_channel *chan_info = chan->con_priv;
-+	void __iomem *base = chan_info->mhu->mlink[chan_info->pchan].tx_reg;
-+
-+	if (readl_relaxed(base + INTR_STAT_OFS) & BIT(chan_info->doorbell))
-+		return false;
-+
-+	return true;
-+}
-+
-+static int mhu_doorbell_send_signal(struct mbox_chan *chan)
-+{
-+	struct mhu_channel *chan_info = chan->con_priv;
-+	void __iomem *base = chan_info->mhu->mlink[chan_info->pchan].tx_reg;
-+
-+	/* Send event to co-processor */
-+	writel_relaxed(BIT(chan_info->doorbell), base + INTR_SET_OFS);
-+
-+	return 0;
-+}
-+
-+static int mhu_doorbell_startup(struct mbox_chan *chan)
-+{
-+	mhu_mbox_clear_irq(chan);
-+	return 0;
-+}
-+
-+static void mhu_doorbell_shutdown(struct mbox_chan *chan)
-+{
-+	struct mhu_channel *chan_info = chan->con_priv;
-+	struct mbox_controller *mbox = &chan_info->mhu->mbox;
-+	int i;
-+
-+	for (i = 0; i < mbox->num_chans; i++)
-+		if (chan == &mbox->chans[i])
-+			break;
-+
-+	if (mbox->num_chans == i) {
-+		dev_warn(mbox->dev, "Request to free non-existent channel\n");
-+		return;
-+	}
-+
-+	/* Reset channel */
-+	mhu_mbox_clear_irq(chan);
-+	chan->con_priv = NULL;
-+}
-+
- static struct mbox_chan *mhu_mbox_xlate(struct mbox_controller *mbox,
- 					const struct of_phandle_args *spec)
- {
-@@ -222,16 +320,30 @@ static const struct mbox_chan_ops mhu_ops = {
- 	.last_tx_done = mhu_last_tx_done,
- };
- 
-+static const struct mbox_chan_ops mhu_doorbell_ops = {
-+	.send_signal = mhu_doorbell_send_signal,
-+	.startup = mhu_doorbell_startup,
-+	.shutdown = mhu_doorbell_shutdown,
-+	.last_tx_done = mhu_doorbell_last_tx_done,
-+};
-+
- static const struct mhu_mbox_pdata arm_mhu_pdata = {
- 	.num_pchans = 3,
- 	.num_doorbells = 1,
- 	.support_doorbells = false,
- };
- 
-+static const struct mhu_mbox_pdata arm_mhu_doorbell_pdata = {
-+	.num_pchans = 2,	/* Secure can't be used */
-+	.num_doorbells = 32,
-+	.support_doorbells = true,
-+};
-+
- static int mhu_probe(struct amba_device *adev, const struct amba_id *id)
- {
- 	u32 cell_count;
- 	int i, err, max_chans;
-+	irq_handler_t handler;
- 	struct arm_mhu *mhu;
- 	struct mbox_chan *chans;
- 	struct mhu_mbox_pdata *pdata;
-@@ -251,6 +363,9 @@ static int mhu_probe(struct amba_device *adev, const struct amba_id *id)
- 	if (cell_count == 1) {
- 		max_chans = MHU_NUM_PCHANS;
- 		pdata = (struct mhu_mbox_pdata *)&arm_mhu_pdata;
-+	} else if (cell_count == 2) {
-+		max_chans = MHU_CHAN_MAX;
-+		pdata = (struct mhu_mbox_pdata *)&arm_mhu_doorbell_pdata;
- 	} else {
- 		dev_err(dev, "incorrect value of #mbox-cells in %s\n",
- 			np->full_name);
-@@ -283,7 +398,6 @@ static int mhu_probe(struct amba_device *adev, const struct amba_id *id)
- 	mhu->mbox.dev = dev;
- 	mhu->mbox.chans = chans;
- 	mhu->mbox.num_chans = max_chans;
--	mhu->mbox.ops = &mhu_ops;
- 	mhu->mbox.txdone_irq = false;
- 	mhu->mbox.txdone_poll = true;
- 	mhu->mbox.txpoll_period = 1;
-@@ -291,6 +405,14 @@ static int mhu_probe(struct amba_device *adev, const struct amba_id *id)
- 	mhu->mbox.of_xlate = mhu_mbox_xlate;
- 	amba_set_drvdata(adev, mhu);
- 
-+	if (pdata->support_doorbells) {
-+		mhu->mbox.ops = &mhu_doorbell_ops;
-+		handler = mhu_mbox_thread_handler;
-+	} else {
-+		mhu->mbox.ops = &mhu_ops;
-+		handler = mhu_rx_interrupt;
-+	}
-+
- 	err = devm_mbox_controller_register(dev, &mhu->mbox);
- 	if (err) {
- 		dev_err(dev, "Failed to register mailboxes %d\n", err);
-@@ -308,9 +430,8 @@ static int mhu_probe(struct amba_device *adev, const struct amba_id *id)
- 		mhu->mlink[i].rx_reg = mhu->base + mhu_reg[i];
- 		mhu->mlink[i].tx_reg = mhu->mlink[i].rx_reg + TX_REG_OFFSET;
- 
--		err = devm_request_threaded_irq(dev, irq, NULL,
--						mhu_rx_interrupt, IRQF_ONESHOT,
--						"mhu_link", mhu);
-+		err = devm_request_threaded_irq(dev, irq, NULL, handler,
-+						IRQF_ONESHOT, "mhu_link", mhu);
- 		if (err) {
- 			dev_err(dev, "Can't claim IRQ %d\n", irq);
- 			mbox_controller_unregister(&mhu->mbox);
+
 -- 
-2.17.1
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
