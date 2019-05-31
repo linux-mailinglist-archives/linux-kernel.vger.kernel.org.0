@@ -2,67 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40932310B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 16:58:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7079F310BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 16:58:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbfEaO6H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 10:58:07 -0400
-Received: from mail-it1-f197.google.com ([209.85.166.197]:52110 "EHLO
-        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726531AbfEaO6G (ORCPT
+        id S1726812AbfEaO6h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 10:58:37 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:38922 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726515AbfEaO6g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 10:58:06 -0400
-Received: by mail-it1-f197.google.com with SMTP id g1so8418604itd.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 07:58:06 -0700 (PDT)
+        Fri, 31 May 2019 10:58:36 -0400
+Received: by mail-oi1-f196.google.com with SMTP id v2so7924856oie.6;
+        Fri, 31 May 2019 07:58:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to
-         :content-transfer-encoding;
-        bh=K/ofCxOPUpmE2L+U1S33uS/mcJVaDnKhwP6YIHRjApE=;
-        b=nr03mtLc3hpoLPfqethc9LIY/91K/n5tm7juk7jwhKmm46SzkfRMouwVyrXOg3a5R6
-         9gFAc67+RDy/lb1ZXTWqEJP9g2DOElUOXps33+9kZSzLTY8lAU9YujnXpAiGIGecEtB6
-         Eqsb09oR4/WiSnmSTNa/FbnxYxPOxnTXvYgyzFkvttduVPLwrzrR0XFhyvuqXFA6rA3k
-         3H0ysHBdG1xD3G7zPUcox8aRvc8vsnDbokn1u2FnOQBaTRf2k046ZPZHm/25HcHiwAPb
-         1dNnTPW7zlFA7ysIdjyaLKqaQB97K9a3ciivyrFZhuUUrDBIPO41k9Udz6XBKggnWMCP
-         i9yg==
-X-Gm-Message-State: APjAAAXmR/4QqlrsBylm87NbsGCiP7kC6JhqECwj9J718kdAOPcpjmO9
-        j3bPOKjc0L81Qe0WhZWRFyZHmw9b7CgE1nRYnc5zeb67ZhyF
-X-Google-Smtp-Source: APXvYqyyhZl/P7lwZyrsmvKiEyyw0lKV2CmGfhAT3WZKG9HXBfayf7Yq5uk1y2kIusKXTh0GcO1yRKM0PshEKmRswLB5yQHXAwtj
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=m/iSMyUL9SEWCc7wCGYyJ//UVZgPKdoeEpVnczdvNmU=;
+        b=W9HwAwtvY100ISNn0PkFcr+IGKqqVMjTPzUR4nStUn16q0a4EHCaeSGN8ZFPOhmBa+
+         Fd6MPYMm1g7kRtDo9GXgFBP9ZIVD0N1eCzoVk5YJc6BxkOHzR0ulEPbY+MIQlQ/w/eOX
+         JaN0MeKA+8yrCmWvuOk0RHw0NOHyw2Bab7xO668ndAGNAw7LbAG8BRx68Z76J9s/JJaR
+         7FIAjIv6ooEuLoEWq+Clwv7LRyY7A2QXGdE1pHZ8rfUqSOgXxl8r72SmOt3/bANrrTYS
+         oRncZ7xyO+/lbFo4mbKNCmBu+8C48yReHWZ9WP9ndfzZ2IV4eT9Oaqg+is4PbEb91Jjk
+         TkHg==
+X-Gm-Message-State: APjAAAWIG3sQGl1f56d78OqofakkUUcwqlksj49FMDfiCL0+Z3XpMWI5
+        V7TPD7nLpTawjbZx1DEuNOx4x/dP/WzZkQNCf3o=
+X-Google-Smtp-Source: APXvYqyylVFIBBoiDTwyq6KIWTkz8i/otAPKvGPy+gU590207yj550TEgKwx+0JL1pKqEcybwJxIrw1BX+8V2ddH/+Q=
+X-Received: by 2002:aca:330b:: with SMTP id z11mr6124109oiz.148.1559314715666;
+ Fri, 31 May 2019 07:58:35 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a05:660c:143:: with SMTP id r3mr7459566itk.84.1559314686097;
- Fri, 31 May 2019 07:58:06 -0700 (PDT)
-Date:   Fri, 31 May 2019 07:58:06 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f53c90058a303d80@google.com>
-Subject: net-next build error (2)
-From:   syzbot <syzbot+21456e3ef58cde16e0fa@syzkaller.appspotmail.com>
-To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
-Content-Transfer-Encoding: base64
+References: <20190531014808.GA30932@kroah.com> <CAMuHMdV=95sKB+h_pf45DiYeiJzrk1L=014Tj8Y04_hPyRMBNQ@mail.gmail.com>
+ <20190531132400.GA5518@kroah.com> <CAMuHMdX3vQN5tF4-_vGjRQGdbxpPC+u4g-QU45=qykNZgwSj_w@mail.gmail.com>
+ <20190531140209.GA31961@kroah.com>
+In-Reply-To: <20190531140209.GA31961@kroah.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 31 May 2019 16:58:22 +0200
+Message-ID: <CAMuHMdUYTaDS+bJpchsUyc+xNPJeYoxQ3vozQUPH=gacFEcdFw@mail.gmail.com>
+Subject: Re: [GIT PULL] SPDX update for 5.2-rc3 - round 1
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-spdx@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8sDQoNCnN5emJvdCBmb3VuZCB0aGUgZm9sbG93aW5nIGNyYXNoIG9uOg0KDQpIRUFEIGNv
-bW1pdDogICAgN2IzZWQyYTEgTWVyZ2UgYnJhbmNoICcxMDBHYkUnIG9mIGdpdDovL2dpdC5rZXJu
-ZWwub3JnL3B1Yi4uDQpnaXQgdHJlZTogICAgICAgbmV0LW5leHQNCmNvbnNvbGUgb3V0cHV0OiBo
-dHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS94L2xvZy50eHQ/eD0xN2JmOGZkOGEwMDAwMA0K
-a2VybmVsIGNvbmZpZzogIGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvLmNvbmZpZz94
-PTE4MmFiNmVmMzgxMzQ1MDINCmRhc2hib2FyZCBsaW5rOiBodHRwczovL3N5emthbGxlci5hcHBz
-cG90LmNvbS9idWc/ZXh0aWQ9MjE0NTZlM2VmNThjZGUxNmUwZmENCmNvbXBpbGVyOiAgICAgICBn
-Y2MgKEdDQykgOS4wLjAgMjAxODEyMzEgKGV4cGVyaW1lbnRhbCkNCg0KVW5mb3J0dW5hdGVseSwg
-SSBkb24ndCBoYXZlIGFueSByZXByb2R1Y2VyIGZvciB0aGlzIGNyYXNoIHlldC4NCg0KSU1QT1JU
-QU5UOiBpZiB5b3UgZml4IHRoZSBidWcsIHBsZWFzZSBhZGQgdGhlIGZvbGxvd2luZyB0YWcgdG8g
-dGhlIGNvbW1pdDoNClJlcG9ydGVkLWJ5OiBzeXpib3QrMjE0NTZlM2VmNThjZGUxNmUwZmFAc3l6
-a2FsbGVyLmFwcHNwb3RtYWlsLmNvbQ0KDQouL2luY2x1ZGUvbGludXgvbmV0ZmlsdGVyX2lwdjYu
-aDoxMTA6OTogZXJyb3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mICANCmZ1bmN0aW9uIOKAmG5m
-X2N0X2ZyYWc2X2dhdGhlcuKAmSBbLVdlcnJvcj1pbXBsaWNpdC1mdW5jdGlvbi1kZWNsYXJhdGlv
-bl0NCg0KLS0tDQpUaGlzIGJ1ZyBpcyBnZW5lcmF0ZWQgYnkgYSBib3QuIEl0IG1heSBjb250YWlu
-IGVycm9ycy4NClNlZSBodHRwczovL2dvby5nbC90cHNtRUogZm9yIG1vcmUgaW5mb3JtYXRpb24g
-YWJvdXQgc3l6Ym90Lg0Kc3l6Ym90IGVuZ2luZWVycyBjYW4gYmUgcmVhY2hlZCBhdCBzeXprYWxs
-ZXJAZ29vZ2xlZ3JvdXBzLmNvbS4NCg0Kc3l6Ym90IHdpbGwga2VlcCB0cmFjayBvZiB0aGlzIGJ1
-ZyByZXBvcnQuIFNlZToNCmh0dHBzOi8vZ29vLmdsL3Rwc21FSiNzdGF0dXMgZm9yIGhvdyB0byBj
-b21tdW5pY2F0ZSB3aXRoIHN5emJvdC4NCg==
+Hi Greg,
+
+On Fri, May 31, 2019 at 4:02 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> On Fri, May 31, 2019 at 03:51:18PM +0200, Geert Uytterhoeven wrote:
+> > On Fri, May 31, 2019 at 3:24 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > On Fri, May 31, 2019 at 09:17:06AM +0200, Geert Uytterhoeven wrote:
+> > > > On Fri, May 31, 2019 at 3:49 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > > > The following changes since commit cd6c84d8f0cdc911df435bb075ba22ce3c605b07:
+> > > > >
+> > > > >   Linux 5.2-rc2 (2019-05-26 16:49:19 -0700)
+> > > > >
+> > > > > are available in the Git repository at:
+> > > > >
+> > > > >   git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git tags/spdx-5.2-rc3-1
+> > > > >
+> > > > > for you to fetch changes up to 96ac6d435100450f0565708d9b885ea2a7400e0a:
+> > > > >
+> > > > >   treewide: Add SPDX license identifier - Kbuild (2019-05-30 11:32:33 -0700)
+> > > > >
+> > > > > ----------------------------------------------------------------
+> > > > > SPDX update for 5.2-rc3, round 1
+> > > > >
+> > > > > Here is another set of reviewed patches that adds SPDX tags to different
+> > > > > kernel files, based on a set of rules that are being used to parse the
+> > > > > comments to try to determine that the license of the file is
+> > > > > "GPL-2.0-or-later" or "GPL-2.0-only".  Only the "obvious" versions of
+> > > > > these matches are included here, a number of "non-obvious" variants of
+> > > > > text have been found but those have been postponed for later review and
+> > > > > analysis.
+> > > > >
+> > > > > There is also a patch in here to add the proper SPDX header to a bunch
+> > > > > of Kbuild files that we have missed in the past due to new files being
+> > > > > added and forgetting that Kbuild uses two different file names for
+> > > > > Makefiles.  This issue was reported by the Kbuild maintainer.
+> > > > >
+> > > > > These patches have been out for review on the linux-spdx@vger mailing
+> > > > > list, and while they were created by automatic tools, they were
+> > > > > hand-verified by a bunch of different people, all whom names are on the
+> > > > > patches are reviewers.
+> > > > >
+> > > > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > >
+> > > > I'm sorry, but as long[*] as this does not conform to
+> > > > Documentation/process/license-rules.rst, I have to provide my:
+> > > > NAked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > > >
+> > > > [*] The obvious solution is to update Documentation/process/license-rules.rst,
+> > > >     as people have asked before.
+> > >
+> > > I don't understand, what does not conform?  We are trying _to_ conform
+> > > to that file, what did we do wrong?
+> >
+> > The new "-or-later" and "-only" variants are not (yet) documented in that file.
+> >
+> >    File format examples::
+> >
+> >       Valid-License-Identifier: GPL-2.0
+> >       Valid-License-Identifier: GPL-2.0+
+> >       SPDX-URL: https://spdx.org/licenses/GPL-2.0.html
+> >       Usage-Guide:
+> >         To use this license in source code, put one of the following SPDX
+> >         tag/value pairs into a comment according to the placement
+> >         guidelines in the licensing rules documentation.
+> >         For 'GNU General Public License (GPL) version 2 only' use:
+> >           SPDX-License-Identifier: GPL-2.0
+> >         For 'GNU General Public License (GPL) version 2 or any later
+> > version' use:
+> >           SPDX-License-Identifier: GPL-2.0+
+>
+>
+> They do not have to be documented in that file.  As what you quoted
+> said, "File format examples::"
+
+My bad, I should have quoted the syntax rule:
+
+   License identifiers for licenses like [L]GPL with the 'or later' option
+   are constructed by using a "+" for indicating the 'or later' option.::
+
+      // SPDX-License-Identifier: GPL-2.0+
+      // SPDX-License-Identifier: LGPL-2.1+
+
+Yes, this also predates the notion of "-only", so that is not documented
+there.
+
+> Please look in the files in the LICENSES directory for what all of the
+> documented identifiers should look like:
+>         $ head -n 4 LICENSES/preferred/GPL-2.0
+>         Valid-License-Identifier: GPL-2.0
+>         Valid-License-Identifier: GPL-2.0-only
+>         Valid-License-Identifier: GPL-2.0+
+>         Valid-License-Identifier: GPL-2.0-or-later
+
+Oh, so we can no longer look it up in a single place :-(
+I'm used to grepping in Documentation/process/license-rules.rst,
+as I don't know the exact syntax by heart.
+
+> If you want, please send a patch to fix up the documentation example,
+> but it is not incorrect :)
+
+May do, when I find a hole in my time/space continuum...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
