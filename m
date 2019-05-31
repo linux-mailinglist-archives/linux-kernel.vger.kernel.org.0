@@ -2,120 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5931E307FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 07:07:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 552A530803
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 07:12:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726520AbfEaFHc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 01:07:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34374 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725955AbfEaFHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 01:07:32 -0400
-Received: from localhost (unknown [106.201.101.143])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83030247AF;
-        Fri, 31 May 2019 05:07:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559279251;
-        bh=BuY1+L8PZfblsP3QxroLV+WEJj4MRFA04xBR95ykdxA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AquQ2Bgfoikgd5TO4sJHzyaj/LT1Z9vqakg/1fT2DY332WLCRR9HUtHKZsTxQ+OgN
-         ayAk//NFjxLiVcoqGaFtfzjoyKDh6d56R+XRh3HQ4da2svDXiCummIZ4OwZXRJfbyV
-         5asyWPhoCi7dva+x1pyXJLLlxYHDleiJBrKJVWEM=
-Date:   Fri, 31 May 2019 10:37:27 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Alan Mikhak <alan.mikhak@sifive.com>,
-        Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "wen.yang99@zte.com.cn" <wen.yang99@zte.com.cn>,
-        "kjlu@umn.edu" <kjlu@umn.edu>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "palmer@sifive.com" <palmer@sifive.com>,
-        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>
-Subject: Re: [PATCH] PCI: endpoint: Add DMA to Linux PCI EP Framework
-Message-ID: <20190531050727.GO15118@vkoul-mobl>
-References: <1558650258-15050-1-git-send-email-alan.mikhak@sifive.com>
- <305100E33629484CBB767107E4246BBB0A6FAFFD@DE02WEMBXB.internal.synopsys.com>
- <CABEDWGxsQ9NXrN7W_8HVrXQBb9HiBd+d1dNfv+cXmoBpXQnLwA@mail.gmail.com>
- <305100E33629484CBB767107E4246BBB0A6FC308@DE02WEMBXB.internal.synopsys.com>
- <CABEDWGxL-WYz1BY7yXJ6eKULgVtKeo67XhgHZjvtm5Ka5foKiA@mail.gmail.com>
- <192e3a19-8b69-dfaf-aa5c-45c7087548cc@ti.com>
+        id S1726635AbfEaFMz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 01:12:55 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:36885 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725955AbfEaFMy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 01:12:54 -0400
+Received: by mail-lf1-f66.google.com with SMTP id m15so6838247lfh.4
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 22:12:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YglXuDcWf9alTVQYtcbGhpd+g01E+BzX09PlpWU7znI=;
+        b=vVhfIp8bGmjkhBghXDT5wKTG0FfDZVItFEl3sfCf172am+PmH1Adz/XHBDFUqhtu+x
+         PdzEkUr9EJIUrSdSVgOW+hb72EbhNrKOaiHJ56nCFjWy9yEo9bxOj2PMGD0M0zqQnUbF
+         YVEBUhkwt1MXpWVuZ2jsfZ3VM4H3OY7H3xEQuM2p76dmYDARwDcHwPtB1aBTVjgvzGvt
+         6mi2luQHRT/irnsvNznPZANGcjVnMNo9kVtokTpYdN8YlrO+WTCsabpAOPCQXiUZIRWQ
+         vKRL2OwX7vgz49zDCahE3/HkLkwZC2/lhAYLoGmLXJCHjP4PxwtFf4U+LO+H43ok1ksg
+         7aAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YglXuDcWf9alTVQYtcbGhpd+g01E+BzX09PlpWU7znI=;
+        b=LE+Oyv+BD28oVNj2Qm5fJWaxEVePPXRDHIkfdHMMMIUJcj+igpMN8xI0F/k2GuKVC5
+         21GfclAfRGiGJSdXbnoxPLBxNJveBZ/ExNx8pibMcweUnhGYZ73ouw+mk1PSBTmXR6tk
+         RQeyQUp0cfPgFmhSDAV4aE3cPe4V6A9SWLMIDHlxMqRMzqZwtYiNynWEIBMaoK+DzWEJ
+         eb586YSNJtGn4IPgpegrCCVw4qCkHP5TA8fgsJnBiiP29cREmOOGUb9GF1oeHZ+DINVS
+         yngwjOIgu+ct0UUx85LL2ykYbwG0/P2ZO0ZzUO6Q8sLlDbqy1JoJtGO4UqvA7qLFk/IX
+         QJWQ==
+X-Gm-Message-State: APjAAAVUNEEqkoPTCuDsCfgqELrFjwNACHn1zgG9QregwUFp8oBFDpCE
+        J7KLS4cgqM7VV4kH/29SKETRSMU+hW+zkv1xujo=
+X-Google-Smtp-Source: APXvYqzxNanFqrzcDcuTnlHnXqkPxPoGos2xY39RE5g+INO2w2Vk/edgPmduLJWKiGd5hdWWAeZ+HBCuAyKUw/Xzsl8=
+X-Received: by 2002:a19:2045:: with SMTP id g66mr4252270lfg.132.1559279572547;
+ Thu, 30 May 2019 22:12:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <192e3a19-8b69-dfaf-aa5c-45c7087548cc@ti.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <cover.1559129225.git.vpillai@digitalocean.com>
+ <CAERHkruDE-7R5K=2yRqCJRCpV87HkHzDYbQA2WQkruVYpG7t7Q@mail.gmail.com> <e8872bd9-1c6b-fb12-b535-3d37740a0306@linux.alibaba.com>
+In-Reply-To: <e8872bd9-1c6b-fb12-b535-3d37740a0306@linux.alibaba.com>
+From:   Aubrey Li <aubrey.intel@gmail.com>
+Date:   Fri, 31 May 2019 13:12:40 +0800
+Message-ID: <CAERHkruVthrTgGqiH=yhCspZWpMDAu0G4rNcrDTKQzgPq9eqQQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 00/16] Core scheduling v3
+To:     Aaron Lu <aaron.lu@linux.alibaba.com>
+Cc:     Vineeth Remanan Pillai <vpillai@digitalocean.com>,
+        Nishanth Aravamudan <naravamudan@digitalocean.com>,
+        Julien Desfossez <jdesfossez@digitalocean.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Turner <pjt@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
+        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kishon,
+On Fri, May 31, 2019 at 11:01 AM Aaron Lu <aaron.lu@linux.alibaba.com> wrote:
+>
+> This feels like "date" failed to schedule on some CPU
+> on time.
+>
+> My first reaction is: when shell wakes up from sleep, it will
+> fork date. If the script is untagged and those workloads are
+> tagged and all available cores are already running workload
+> threads, the forked date can lose to the running workload
+> threads due to __prio_less() can't properly do vruntime comparison
+> for tasks on different CPUs. So those idle siblings can't run
+> date and are idled instead. See my previous post on this:
+> https://lore.kernel.org/lkml/20190429033620.GA128241@aaronlu/
+> (Now that I re-read my post, I see that I didn't make it clear
+> that se_bash and se_hog are assigned different tags(e.g. hog is
+> tagged and bash is untagged).
 
-On 30-05-19, 11:16, Kishon Vijay Abraham I wrote:
-> +Vinod Koul
-> 
-> Hi,
-> 
-> On 30/05/19 4:07 AM, Alan Mikhak wrote:
-> > On Mon, May 27, 2019 at 2:09 AM Gustavo Pimentel
-> > <Gustavo.Pimentel@synopsys.com> wrote:
-> >>
-> >> On Fri, May 24, 2019 at 20:42:43, Alan Mikhak <alan.mikhak@sifive.com>
-> >> wrote:
-> >>
-> >> Hi Alan,
-> >>
-> >>> On Fri, May 24, 2019 at 1:59 AM Gustavo Pimentel
-> >>> <Gustavo.Pimentel@synopsys.com> wrote:
-> >>>>
-> >>>> Hi Alan,
-> >>>>
-> >>>> This patch implementation is very HW implementation dependent and
-> >>>> requires the DMA to exposed through PCIe BARs, which aren't always the
-> >>>> case. Besides, you are defining some control bits on
-> >>>> include/linux/pci-epc.h that may not have any meaning to other types of
-> >>>> DMA.
-> >>>>
-> >>>> I don't think this was what Kishon had in mind when he developed the
-> >>>> pcitest, but let see what Kishon was to say about it.
-> >>>>
-> >>>> I've developed a DMA driver for DWC PCI using Linux Kernel DMAengine API
-> >>>> and which I submitted some days ago.
-> >>>> By having a DMA driver which implemented using DMAengine API, means the
-> >>>> pcitest can use the DMAengine client API, which will be completely
-> >>>> generic to any other DMA implementation.
-> 
-> right, my initial thought process was to use only dmaengine APIs in
-> pci-epf-test so that the system DMA or DMA within the PCIe controller can be
-> used transparently. But can we register DMA within the PCIe controller to the
-> DMA subsystem? AFAIK only system DMA should register with the DMA subsystem.
-> (ADMA in SDHCI doesn't use dmaengine). Vinod Koul can confirm.
+Yes, script is untagged. This looks like exactly the problem in you
+previous post. I didn't follow that, does that discussion lead to a solution?
 
-So would this DMA be dedicated for PCI and all PCI devices on the bus?
-If so I do not see a reason why this cannot be using dmaengine. The use
-case would be memcpy for DMA right or mem to device (vice versa) transfers?
+>
+> Siblings being forced idle is expected due to the nature of core
+> scheduling, but when two tasks belonging to two siblings are
+> fighting for schedule, we should let the higher priority one win.
+>
+> It used to work on v2 is probably due to we mistakenly
+> allow different tagged tasks to schedule on the same core at
+> the same time, but that is fixed in v3.
 
-Btw many driver in sdhci do use dmaengine APIs and yes we are missing
-support in framework than individual drivers
+I have 64 threads running on a 104-CPU server, that is, when the
+system has ~40% idle time, and "date" is still failed to be picked
+up onto CPU on time. This may be the nature of core scheduling,
+but it seems to be far from fairness.
 
-> If DMA within the PCIe controller cannot be registered in DMA subsystem, we
-> should use something like what Alan has done in this patch with dma_read ops.
-> The dma_read ops implementation in the EP controller can either use dmaengine
-> APIs or use the DMA within the PCIe controller.
-> 
-> I'll review the patch separately.
-> 
-> Thanks
-> Kishon
+Shouldn't we share the core between (sysbench+gemmbench)
+and (date)? I mean core level sharing instead of  "date" starvation?
 
--- 
-~Vinod
+Thanks,
+-Aubrey
