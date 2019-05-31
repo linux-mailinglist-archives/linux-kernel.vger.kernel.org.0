@@ -2,105 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DE2C30EF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 15:38:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BBD330EF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 15:39:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726667AbfEaNiZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 09:38:25 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51676 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726037AbfEaNiY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 09:38:24 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 73F8DA78;
-        Fri, 31 May 2019 06:38:23 -0700 (PDT)
-Received: from [10.1.196.129] (ostrya.cambridge.arm.com [10.1.196.129])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 36DC23F5AF;
-        Fri, 31 May 2019 06:38:22 -0700 (PDT)
-Subject: Re: [PATCH 3/4] iommu: Introduce device fault report API
-To:     Robin Murphy <robin.murphy@arm.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>
-Cc:     "yi.l.liu@linux.intel.com" <yi.l.liu@linux.intel.com>,
-        "ashok.raj@intel.com" <ashok.raj@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-References: <20190523180613.55049-1-jean-philippe.brucker@arm.com>
- <20190523180613.55049-4-jean-philippe.brucker@arm.com>
- <e56244fd-86fd-1fc9-17f7-d00179d586ac@arm.com>
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Message-ID: <023acfae-5c93-9e20-8355-5cd7410c15e7@arm.com>
-Date:   Fri, 31 May 2019 14:37:59 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726693AbfEaNjB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 09:39:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59484 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726518AbfEaNjA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 09:39:00 -0400
+Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF37C2133D;
+        Fri, 31 May 2019 13:38:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559309940;
+        bh=QejsJpJ1Xnpne98lLX4jJknIWWCbhoxePOTvB7gNbik=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=2DpJfcg9pfYTbU/2GXZr+pVR6QrKcy/SxJT9K74RqSRcrUqiy0DouKcIURLcqTko1
+         7fuV4O9/u3a7R+tuQ+pocFsSHlNfHxWXThM8iAh6BxQ33YmqzQu0W7z0WcxZ1LPIB+
+         LG8OeYRqgUIOEDZwYU5HWB/R53uXTa0o3tq7Z++U=
+Date:   Fri, 31 May 2019 06:38:59 -0700
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Chester Lin <clin@suse.com>
+Cc:     rjw@rjwysocki.net, lenb@kernel.org, jlee@suse.com, mhocko@suse.com,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] ACPI / device_sysfs: Add eject show attr to monitor
+ eject status
+Message-ID: <20190531133859.GA18231@kroah.com>
+References: <20190531065642.13254-1-clin@suse.com>
+ <20190531065642.13254-4-clin@suse.com>
 MIME-Version: 1.0
-In-Reply-To: <e56244fd-86fd-1fc9-17f7-d00179d586ac@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190531065642.13254-4-clin@suse.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/05/2019 19:56, Robin Murphy wrote:
-> On 23/05/2019 19:06, Jean-Philippe Brucker wrote:
->> From: Jacob Pan <jacob.jun.pan@linux.intel.com>
->>
->> Traditionally, device specific faults are detected and handled within
->> their own device drivers. When IOMMU is enabled, faults such as DMA
->> related transactions are detected by IOMMU. There is no generic
->> reporting mechanism to report faults back to the in-kernel device
->> driver or the guest OS in case of assigned devices.
->>
->> This patch introduces a registration API for device specific fault
->> handlers. This differs from the existing iommu_set_fault_handler/
->> report_iommu_fault infrastructures in several ways:
->> - it allows to report more sophisticated fault events (both
->>    unrecoverable faults and page request faults) due to the nature
->>    of the iommu_fault struct
->> - it is device specific and not domain specific.
->>
->> The current iommu_report_device_fault() implementation only handles
->> the "shoot and forget" unrecoverable fault case. Handling of page
->> request faults or stalled faults will come later.
->>
->> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
->> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
->> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
->> Signed-off-by: Eric Auger <eric.auger@redhat.com>
->> ---
->>   drivers/iommu/iommu.c | 127 ++++++++++++++++++++++++++++++++++++++++++
->>   include/linux/iommu.h |  29 ++++++++++
->>   2 files changed, 156 insertions(+)
->>
->> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
->> index 67ee6623f9b2..d546f7baa0d4 100644
->> --- a/drivers/iommu/iommu.c
->> +++ b/drivers/iommu/iommu.c
->> @@ -644,6 +644,13 @@ int iommu_group_add_device(struct iommu_group *group, struct device *dev)
->>   		goto err_free_name;
->>   	}
->>   
->> +	dev->iommu_param = kzalloc(sizeof(*dev->iommu_param), GFP_KERNEL);
->> +	if (!dev->iommu_param) {
->> +		ret = -ENOMEM;
->> +		goto err_free_name;
->> +	}
->> +	mutex_init(&dev->iommu_param->lock);
->> +
+On Fri, May 31, 2019 at 02:56:42PM +0800, Chester Lin wrote:
+> An acpi_eject_show attribute for users to monitor current status because
+> sometimes it might take time to finish an ejection so we need to know
+> whether it is still in progress or not.
 > 
-> Note that this gets a bit tricky when we come to move to move the 
-> fwspec/ops/etc. into iommu_param, since that data can have a longer 
-> lifespan than the group association. I'd suggest moving this management 
-> out to the iommu_{probe,release}_device() level from the start, but 
-> maybe we're happy to come back and change things later as necessary.
+> Signed-off-by: Chester Lin <clin@suse.com>
+> ---
+>  drivers/acpi/device_sysfs.c | 20 +++++++++++++++++++-
+>  drivers/acpi/internal.h     |  1 +
+>  drivers/acpi/scan.c         | 27 +++++++++++++++++++++++++++
+>  3 files changed, 47 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/acpi/device_sysfs.c b/drivers/acpi/device_sysfs.c
+> index 78c2653bf020..70b22eec6bbc 100644
+> --- a/drivers/acpi/device_sysfs.c
+> +++ b/drivers/acpi/device_sysfs.c
+> @@ -403,7 +403,25 @@ acpi_eject_store(struct device *d, struct device_attribute *attr,
+>  	return status == AE_NO_MEMORY ? -ENOMEM : -EAGAIN;
+>  }
+>  
+> -static DEVICE_ATTR(eject, 0200, NULL, acpi_eject_store);
+> +static ssize_t acpi_eject_show(struct device *d,
+> +				struct device_attribute *attr, char *buf)
+> +{
+> +	struct acpi_device *acpi_device = to_acpi_device(d);
+> +	acpi_object_type not_used;
+> +	acpi_status status;
+> +
+> +	if ((!acpi_device->handler || !acpi_device->handler->hotplug.enabled)
+> +	    && !acpi_device->driver)
+> +		return -ENODEV;
+> +
+> +	status = acpi_get_type(acpi_device->handle, &not_used);
+> +	if (ACPI_FAILURE(status) || !acpi_device->flags.ejectable)
+> +		return -ENODEV;
+> +
+> +	return sprintf(buf, "%s\n", acpi_eject_status_string(acpi_device));
+> +}
+> +
+> +static DEVICE_ATTR(eject, 0644, acpi_eject_show, acpi_eject_store);
 
-I'll do that, but iommu_probe_device() might still be too late.
-According to of_iommu_configure() there might be cases where
-iommu_probe_device() is called after iommu_fwspec_init(). So when moving
-everything to iommu_param, we might need to introduce something like
-iommu_get_dev_param() which allocates the param if it doesn't exist.
+DEVICE_ATTR_RW()?
 
-Thanks,
-Jean
+And you need to document the new sysfs file in Documentation/ABI/
+
+thanks,
+
+greg k-h
