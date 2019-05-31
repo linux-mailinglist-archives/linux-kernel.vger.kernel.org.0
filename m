@@ -2,86 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA9FD31502
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 20:57:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78F8431504
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 20:58:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbfEaS5U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 14:57:20 -0400
-Received: from smtprelay0090.hostedemail.com ([216.40.44.90]:49419 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726308AbfEaS5T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 14:57:19 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 12990181D3377;
-        Fri, 31 May 2019 18:57:18 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:599:960:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2194:2199:2393:2559:2562:2693:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3870:3874:4321:5007:6117:6119:6120:7901:7903:10004:10400:10848:11026:11232:11658:11914:12043:12048:12296:12740:12760:12895:13069:13255:13311:13357:13439:13548:14181:14659:14721:21080:21627:30029:30054:30056:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
-X-HE-Tag: sugar66_548a73896a2d
-X-Filterd-Recvd-Size: 2569
-Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf01.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 31 May 2019 18:57:16 +0000 (UTC)
-Message-ID: <53e1591ef288135f1dd803c15e971c96d06f54ba.camel@perches.com>
-Subject: Re: [PATCH v2 2/2] KVM: LAPIC: remove the trailing newline used in
- the fmt parameter of TP_printk
-From:   Joe Perches <joe@perches.com>
-To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Date:   Fri, 31 May 2019 11:57:04 -0700
-In-Reply-To: <1559284814-20378-2-git-send-email-wanpengli@tencent.com>
-References: <1559284814-20378-1-git-send-email-wanpengli@tencent.com>
-         <1559284814-20378-2-git-send-email-wanpengli@tencent.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
+        id S1727195AbfEaS6V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 14:58:21 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49128 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726439AbfEaS6U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 14:58:20 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8C600AEA3;
+        Fri, 31 May 2019 18:58:19 +0000 (UTC)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Fri, 31 May 2019 20:58:19 +0200
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     azat@libevent.org, akpm@linux-foundation.org,
+        viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 06/13] epoll: introduce helpers for adding/removing
+ events to uring
+In-Reply-To: <20190531165144.GE2606@hirez.programming.kicks-ass.net>
+References: <20190516085810.31077-1-rpenyaev@suse.de>
+ <20190516085810.31077-7-rpenyaev@suse.de>
+ <20190531095607.GC17637@hirez.programming.kicks-ass.net>
+ <274e29d102133f3be1f309c66cb0af36@suse.de>
+ <20190531125636.GZ2606@hirez.programming.kicks-ass.net>
+ <98e74ceeefdffc9b50fb33e597d270f7@suse.de>
+ <20190531165144.GE2606@hirez.programming.kicks-ass.net>
+Message-ID: <9e13f80872e5b6c96e9cd3343e27b1f1@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-05-31 at 14:40 +0800, Wanpeng Li wrote:
-> The trailing newlines will lead to extra newlines in the trace file
-[]
-> diff --git a/arch/x86/kvm/trace.h b/arch/x86/kvm/trace.h
-[]
-> @@ -1365,7 +1365,7 @@ TRACE_EVENT(kvm_hv_timer_state,
->  			__entry->vcpu_id = vcpu_id;
->  			__entry->hv_timer_in_use = hv_timer_in_use;
->  			),
-> -		TP_printk("vcpu_id %x hv_timer %x\n",
-> +		TP_printk("vcpu_id %x hv_timer %x",
->  			__entry->vcpu_id,
->  			__entry->hv_timer_in_use)
->  );
+On 2019-05-31 18:51, Peter Zijlstra wrote:
+> On Fri, May 31, 2019 at 04:21:30PM +0200, Roman Penyaev wrote:
+> 
+>> The ep_add_event_to_uring() is lockless, thus I can't increase tail 
+>> after,
+>> I need to reserve the index slot, where to write to.  I can use shadow 
+>> tail,
+>> which is not seen by userspace, but I have to guarantee that tail is 
+>> updated
+>> with shadow tail *after* all callers of ep_add_event_to_uring() are 
+>> left.
+>> That is possible, please see the code below, but it adds more 
+>> complexity:
+>> 
+>> (code was tested on user side, thus has c11 atomics)
+>> 
+>> static inline void add_event__kernel(struct ring *ring, unsigned bit)
+>> {
+>>         unsigned i, cntr, commit_cntr, *item_idx, tail, old;
+>> 
+>>         i = __atomic_fetch_add(&ring->cntr, 1, __ATOMIC_ACQUIRE);
+>>         item_idx = &ring->user_itemsindex[i % ring->nr];
+>> 
+>>         /* Update data */
+>>         *item_idx = bit;
+>> 
+>>         commit_cntr = __atomic_add_fetch(&ring->commit_cntr, 1,
+>> __ATOMIC_RELEASE);
+>> 
+>>         tail = ring->user_header->tail;
+>>         rmb();
+>>         do {
+>>                 cntr = ring->cntr;
+>>                 if (cntr != commit_cntr)
+>>                         /* Someone else will advance tail */
+>>                         break;
+>> 
+>>                 old = tail;
+>> 
+>>         } while ((tail =
+>> __sync_val_compare_and_swap(&ring->user_header->tail, old, cntr)) != 
+>> old);
+>> }
+> 
+> Yes, I'm well aware of that particular problem (see
+> kernel/events/ring_buffer.c:perf_output_put_handle for instance).
 
-Not about the kvm subsystem, but generically there are
-many of these that could be removed.
+I'll take a look, thanks.
 
-$ git grep -w TP_printk | grep '\\n' | wc -l
-45
+> But like you show, it can be done. It also makes the thing wait-free, 
+> as
+> opposed to merely lockless.
 
-Also, aren't all TP_printk formats supposed to be single line?
+You think it's better?  I did not like this variant from the very
+beginning because of the unnecessary complexity.  But maybe you're
+right.  No busy loops on user side makes it wait-free.  And also
+I can avoid c11 in kernel using cmpxchg along with atomic_t.
 
-If not, these are odd as well.
-
-$ git grep -w TP_printk | grep '\\n[^"]'
-include/trace/events/9p.h:	    TP_printk("clnt %lu %s(tag = %d)\n%.3x: %16ph\n%.3x: %16ph\n",
-net/tipc/trace.h:	TP_printk("%s\n%s", __get_str(header), __get_str(buf))
-net/tipc/trace.h:	TP_printk("%s\n%s", __get_str(header), __get_str(buf))
-net/tipc/trace.h:	TP_printk("<%u> %s\n%s%s", __entry->portid, __get_str(header),
-net/tipc/trace.h:	TP_printk("<%s> %s\n%s", __entry->name, __get_str(header),
-net/tipc/trace.h:	TP_printk("<%x> %s\n%s", __entry->addr, __get_str(header),
-
-Perhaps the documentation files around these formats
-	Documentation/trace/events.rst
-	Documentation/trace/tracepoints.rst
-could be improved as well.
+--
+Roman
 
 
