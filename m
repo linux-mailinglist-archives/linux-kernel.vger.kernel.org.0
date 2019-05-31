@@ -2,56 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B00383122D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 18:21:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D415631231
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 18:22:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726972AbfEaQVN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 12:21:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60366 "EHLO mail.kernel.org"
+        id S1726997AbfEaQWP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 12:22:15 -0400
+Received: from foss.arm.com ([217.140.101.70]:54096 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726518AbfEaQVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 12:21:12 -0400
-Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A8DA26BE0;
-        Fri, 31 May 2019 16:21:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559319672;
-        bh=EaLL25OmeV1g1vArLXJvZ/uhaYD9wKtPGoLI7ehD9E0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XqshSsVGx8xGEpX24MUxub0WcNLt3d7H7KOJxVlEQtq6DBEWGS9+Fcv/vCLF41As/
-         LXBakWa/16KjUXkoFYcnmkXr8BuDkrD1fop0ZCHCKVOVe//gWiLX26HVJQ0WxzFxKv
-         FDDPWsldjGRkBJq1+7YLde4YJm4NQ07H0IBwSNyE=
-Date:   Fri, 31 May 2019 09:21:11 -0700
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Oded Gabbay <oded.gabbay@gmail.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [git pull v2] habanalabs fixes for 5.2-rc2/3
-Message-ID: <20190531162111.GB15130@kroah.com>
-References: <20190524194930.GA13219@ogabbay-VM>
+        id S1726649AbfEaQWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 12:22:15 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 72A16341;
+        Fri, 31 May 2019 09:22:14 -0700 (PDT)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D9D693F59C;
+        Fri, 31 May 2019 09:22:08 -0700 (PDT)
+Date:   Fri, 31 May 2019 17:22:06 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        kvm@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alexander Deucher <Alexander.Deucher@amd.com>,
+        Christian Koenig <Christian.Koenig@amd.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kevin Brodsky <kevin.brodsky@arm.com>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
+Subject: Re: [PATCH v15 17/17] selftests, arm64: add a selftest for passing
+ tagged pointers to kernel
+Message-ID: <20190531162206.GB3568@arrakis.emea.arm.com>
+References: <cover.1557160186.git.andreyknvl@google.com>
+ <e31d9364eb0c2eba8ce246a558422e811d82d21b.1557160186.git.andreyknvl@google.com>
+ <20190522141612.GA28122@arrakis.emea.arm.com>
+ <CAAeHK+wUerHQOV2PuaTwTxcCucZHZodLwg48228SB+ymxEqT2A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190524194930.GA13219@ogabbay-VM>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <CAAeHK+wUerHQOV2PuaTwTxcCucZHZodLwg48228SB+ymxEqT2A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 24, 2019 at 10:49:30PM +0300, Oded Gabbay wrote:
-> Hi Greg,
+On Fri, May 31, 2019 at 04:21:48PM +0200, Andrey Konovalov wrote:
+> On Wed, May 22, 2019 at 4:16 PM Catalin Marinas <catalin.marinas@arm.com> wrote:
+> > On Mon, May 06, 2019 at 06:31:03PM +0200, Andrey Konovalov wrote:
+> > > This patch is a part of a series that extends arm64 kernel ABI to allow to
+> > > pass tagged user pointers (with the top byte set to something else other
+> > > than 0x00) as syscall arguments.
+> > >
+> > > This patch adds a simple test, that calls the uname syscall with a
+> > > tagged user pointer as an argument. Without the kernel accepting tagged
+> > > user pointers the test fails with EFAULT.
+> >
+> > That's probably sufficient for a simple example. Something we could add
+> > to Documentation maybe is a small library that can be LD_PRELOAD'ed so
+> > that you can run a lot more tests like LTP.
 > 
-> This is the pull request containing fixes for 5.2-rc2/3. It is now
-> correctly rebased on your char-misc-linux branch.
-> 
-> It supersedes the pull request from 12/5, so you can discard that pull
-> request, as I see you didn't merge it anyway.
-> 
-> It contains 3 fixes and 1 change to a new IOCTL that was introduced to
-> kernel 5.2 in the previous pull requests.
+> Should I add this into this series, or should this go into Vincenzo's patchset?
 
-Pulled and pushed out, thanks.
+If you can tweak the selftest Makefile to build a library and force it
+with LD_PRELOAD, you can keep it with this patch. It would be easier to
+extend to other syscall tests, signal handling etc.
 
-greg k-h
+-- 
+Catalin
