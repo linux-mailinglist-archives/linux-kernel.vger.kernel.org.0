@@ -2,116 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57DA7315C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 22:04:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 189FA315CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 22:05:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727404AbfEaUEX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 16:04:23 -0400
-Received: from mail-eopbgr710080.outbound.protection.outlook.com ([40.107.71.80]:23044
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727282AbfEaUEX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 16:04:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=D1u3cvrM+bp9Jx8KsAm/tulzwKsb5KjQfTyXUMbFK4A=;
- b=FS9kfrOmqbXMuUf0peOkqrr8KREXh+a4nR4KiRaREgRbG/tPuGGcmgWpzG7DUya4WTClVlmOpcMdHn8wAJ4wzBAtBoh7yXz380zDMmzXzel+LkrDPszRqAwyykc5wTSNDE+8tvmktpW4tyHOUwVejeLAacZAsjj902zL9Konux8=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB4166.namprd05.prod.outlook.com (52.135.200.33) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1943.15; Fri, 31 May 2019 20:04:19 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::2cb6:a3d1:f675:ced8]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::2cb6:a3d1:f675:ced8%3]) with mapi id 15.20.1943.016; Fri, 31 May 2019
- 20:04:19 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Jann Horn <jannh@google.com>
-CC:     Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [RFC PATCH v2 11/12] x86/mm/tlb: Use async and inline messages
- for flushing
-Thread-Topic: [RFC PATCH v2 11/12] x86/mm/tlb: Use async and inline messages
- for flushing
-Thread-Index: AQHVF3tKnfrC/xKd0kyiVp6wMVDUEqaFEHMAgAB+LICAAA4xgIAADEgA
-Date:   Fri, 31 May 2019 20:04:19 +0000
-Message-ID: <6331796E-8925-4426-A0A6-5CB342178202@vmware.com>
-References: <20190531063645.4697-1-namit@vmware.com>
- <20190531063645.4697-12-namit@vmware.com>
- <20190531105758.GO2623@hirez.programming.kicks-ass.net>
- <82791CFA-3748-4881-9F01-53F677108FC3@vmware.com>
- <CAG48ez1LxU_swf30Ndj=vjZLeSKg83Oi4f2Kd+wSUygPXA0cGg@mail.gmail.com>
-In-Reply-To: <CAG48ez1LxU_swf30Ndj=vjZLeSKg83Oi4f2Kd+wSUygPXA0cGg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [66.170.99.2]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 30c596e5-44b6-4060-034f-08d6e6032a9c
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:BYAPR05MB4166;
-x-ms-traffictypediagnostic: BYAPR05MB4166:
-x-microsoft-antispam-prvs: <BYAPR05MB4166FAFE6FF990B3F5129D8CD0190@BYAPR05MB4166.namprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 00540983E2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(396003)(366004)(376002)(39860400002)(199004)(189003)(4326008)(2906002)(76116006)(7736002)(53546011)(86362001)(6512007)(33656002)(66946007)(6436002)(6246003)(2616005)(73956011)(66556008)(305945005)(82746002)(14444005)(76176011)(99286004)(25786009)(6116002)(3846002)(478600001)(53936002)(66446008)(81156014)(8936002)(26005)(64756008)(7416002)(256004)(81166006)(6486002)(14454004)(229853002)(102836004)(6506007)(66476007)(6916009)(186003)(476003)(446003)(71200400001)(66066001)(71190400001)(8676002)(5660300002)(36756003)(68736007)(486006)(54906003)(11346002)(316002)(83716004);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4166;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: mJMcSWqVTQwPOurOJlPkvp8Vd0IzSx6sWL9iqukWCE6L/eqP4JS4zMWTj9d8u9WrQC+EqFVANNmgOTQD7CqM1b3Az4xob09SM0ObIa7hyiZH2UX0SIlIjRUwrLqAWJChwg9pKrovsWJ5+CeL9TqOMiDbE8cLM5eeSBZm1ObjtMTGAoTqE3FhotHfazykCr5mOg+lLjq2pnxdZ5rZmtgFvpF/hJx0VVy15Ud9/KkVRBGs3vvfNDqkJStGAjfNDpcc9/mzmTob+w1R8lIea6Gfz8X/bnloBCKoFwpl3lXPSpBxscMoziuDqH2YOAv5iYx7u/FCDkCUS5ZQbopE4seKVKGlCQSqyWOHn75xTlWJ+XQTumn9xXoYvWAtJ2fj9zcXzZAKUZce1NS4fQVji0VVl+7g4KlQV8qDRFw5z70Y6Fc=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6DAE826C7207C041AAE35556749C842E@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 30c596e5-44b6-4060-034f-08d6e6032a9c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 May 2019 20:04:19.2442
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: namit@vmware.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4166
+        id S1727467AbfEaUFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 16:05:46 -0400
+Received: from smtprelay0171.hostedemail.com ([216.40.44.171]:55333 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727287AbfEaUFq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 16:05:46 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 94FE640D7;
+        Fri, 31 May 2019 20:05:44 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3868:3870:4321:5007:7875:10004:10400:10848:11026:11232:11658:11914:12048:12114:12296:12555:12740:12760:12895:13069:13161:13229:13311:13357:13439:14659:14721:14915:21080:21627:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
+X-HE-Tag: milk45_14de4368b0321
+X-Filterd-Recvd-Size: 2042
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf17.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 31 May 2019 20:05:43 +0000 (UTC)
+Message-ID: <a7a2a7c70c2dcef122ddbe86eb84820fc4384c7e.camel@perches.com>
+Subject: Re: [PATCH] btrfs: Fix -Wunused-but-set-variable warnings
+From:   Joe Perches <joe@perches.com>
+To:     Andrey Abramov <st5pub@yandex.ru>, clm@fb.com,
+        josef@toxicpanda.com, dsterba@suse.com
+Cc:     linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 31 May 2019 13:05:41 -0700
+In-Reply-To: <20190531195349.31129-1-st5pub@yandex.ru>
+References: <20190531195349.31129-1-st5pub@yandex.ru>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBPbiBNYXkgMzEsIDIwMTksIGF0IDEyOjIwIFBNLCBKYW5uIEhvcm4gPGphbm5oQGdvb2dsZS5j
-b20+IHdyb3RlOg0KPiANCj4gT24gRnJpLCBNYXkgMzEsIDIwMTkgYXQgODoyOSBQTSBOYWRhdiBB
-bWl0IDxuYW1pdEB2bXdhcmUuY29tPiB3cm90ZToNCj4+IFsgK0phbm4gSG9ybiBdDQo+PiANCj4+
-PiBPbiBNYXkgMzEsIDIwMTksIGF0IDM6NTcgQU0sIFBldGVyIFppamxzdHJhIDxwZXRlcnpAaW5m
-cmFkZWFkLm9yZz4gd3JvdGU6DQo+Pj4gDQo+Pj4gT24gVGh1LCBNYXkgMzAsIDIwMTkgYXQgMTE6
-MzY6NDRQTSAtMDcwMCwgTmFkYXYgQW1pdCB3cm90ZToNCj4+Pj4gV2hlbiB3ZSBmbHVzaCB1c2Vy
-c3BhY2UgbWFwcGluZ3MsIHdlIGNhbiBkZWZlciB0aGUgVExCIGZsdXNoZXMsIGFzIGxvbmcNCj4+
-Pj4gdGhlIGZvbGxvd2luZyBjb25kaXRpb25zIGFyZSBtZXQ6DQo+Pj4+IA0KPj4+PiAxLiBObyB0
-YWJsZXMgYXJlIGZyZWVkLCBzaW5jZSBvdGhlcndpc2Ugc3BlY3VsYXRpdmUgcGFnZSB3YWxrcyBt
-aWdodA0KPj4+PiAgY2F1c2UgbWFjaGluZS1jaGVja3MuDQo+Pj4+IA0KPj4+PiAyLiBObyBvbmUg
-d291bGQgYWNjZXNzIHVzZXJzcGFjZSBiZWZvcmUgZmx1c2ggdGFrZXMgcGxhY2UuIFNwZWNpZmlj
-YWxseSwNCj4+Pj4gIE5NSSBoYW5kbGVycyBhbmQga3Byb2JlcyB3b3VsZCBhdm9pZCBhY2Nlc3Np
-bmcgdXNlcnNwYWNlLg0KPiBbLi4uXQ0KPj4gQSAjTUMgbWlnaHQgYmUgY2F1c2VkLiBJIHRyaWVk
-IHRvIGF2b2lkIGl0IGJ5IG5vdCBhbGxvd2luZyBmcmVlaW5nIG9mDQo+PiBwYWdlLXRhYmxlcyBp
-biBzdWNoIHdheS4gRGlkIEkgbWlzcyBzb21ldGhpbmcgZWxzZT8gU29tZSBpbnRlcmFjdGlvbiB3
-aXRoDQo+PiBNVFJSIGNoYW5nZXM/IEnigJlsbCB0aGluayBhYm91dCBpdCBzb21lIG1vcmUsIGJ1
-dCBJIGRvbuKAmXQgc2VlIGhvdy4NCj4gDQo+IEkgZG9uJ3QgcmVhbGx5IGtub3cgbXVjaCBhYm91
-dCB0aGlzIHRvcGljLCBidXQgaGVyZSdzIGEgcmFuZG9tIGNvbW1lbnQNCj4gc2luY2UgeW91IGNj
-J2VkIG1lOiBJZiB0aGUgcGh5c2ljYWwgbWVtb3J5IHJhbmdlIHdhcyBmcmVlZCBhbmQNCj4gcmVh
-bGxvY2F0ZWQsIGNvdWxkIHlvdSBlbmQgdXAgd2l0aCBzcGVjdWxhdGl2ZWx5IGV4ZWN1dGVkIGNh
-Y2hlZA0KPiBtZW1vcnkgcmVhZHMgZnJvbSBJL08gbWVtb3J5PyAoQW5kIGlmIHNvLCB3b3VsZCB0
-aGF0IGJlIGJhZD8pDQoNClRoYW5rcy4gSSB0aG91Z2h0IHRoYXQgeW91ciBleHBlcmllbmNlIHdp
-dGggVExCIHBhZ2UtZnJlZWluZyBidWdzIG1heQ0KYmUgdmFsdWFibGUsIGFuZCB5b3UgZnJlcXVl
-bnRseSBmaW5kIG15IG1pc3Rha2VzLiA7LSkNCg0KWWVzLCBzcGVjdWxhdGl2ZWx5IGV4ZWN1dGVk
-IGNhY2hlZCByZWFkcyBmcm9tIHRoZSBJL08gbWVtb3J5IGFyZSBhIGNvbmNlcm4uDQpJSVJDIHRo
-ZXkgY2F1c2VkICNNQyBvbiBBTUQuIElmIHBhZ2UtdGFibGVzIGFyZSBub3QgY2hhbmdlcywgYnV0
-IG9ubHkgUFRFcw0KYXJlIGNoYW5nZWQsIEkgZG9u4oCZdCBzZWUgaG93IGl0IGNhbiBiZSBhIHBy
-b2JsZW0uIEkgYWxzbyBsb29rZWQgYXQgdGhlIE1UUlINCnNldHRpbmcgY29kZSwgYnV0IEkgZG9u
-4oCZdCBzZWUgYSBjb25jcmV0ZSBwcm9ibGVtLg0KDQo=
+On Fri, 2019-05-31 at 22:53 +0300, Andrey Abramov wrote:
+> Fix -Wunused-but-set-variable warnings in raid56.c and sysfs.c files
+
+trivia:
+
+> diff --git a/fs/btrfs/raid56.c b/fs/btrfs/raid56.c
+> index f3d0576dd327..4ab29eacfdf3 100644
+> --- a/fs/btrfs/raid56.c
+> +++ b/fs/btrfs/raid56.c
+> @@ -1182,22 +1182,17 @@ static noinline void finish_rmw(struct btrfs_raid_bio *rbio)
+>  	int nr_data = rbio->nr_data;
+>  	int stripe;
+>  	int pagenr;
+> -	int p_stripe = -1;
+> -	int q_stripe = -1;
+> +	int is_q_stripe = 0;
+
+These uses seem boolean, so perhaps just use bool?
+
+> +	if (rbio->real_stripes - rbio->nr_data == 2)
+> +		is_q_stripe = 1;
+[]
+> @@ -1241,7 +1236,7 @@ static noinline void finish_rmw(struct btrfs_raid_bio *rbio)
+[]
+> +		if (is_q_stripe) {
+> @@ -2340,8 +2335,7 @@ static noinline void finish_parity_scrub(struct btrfs_raid_bio *rbio,
+[]
+> +	int is_q_stripe = 0;
+> @@ -2351,14 +2345,10 @@ static noinline void finish_parity_scrub(struct btrfs_raid_bio *rbio,
+> +	if (rbio->real_stripes - rbio->nr_data == 2)
+> +		is_q_stripe = 1;
+[]
+> @@ -2380,7 +2370,7 @@ static noinline void finish_parity_scrub(struct btrfs_raid_bio *rbio,
+[]
+> +	if (is_q_stripe) {
+
+
