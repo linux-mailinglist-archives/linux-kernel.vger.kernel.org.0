@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E46E30652
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 03:47:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0E9F30656
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 03:47:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726887AbfEaBrE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 21:47:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51298 "EHLO mail.kernel.org"
+        id S1726894AbfEaBre (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 21:47:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726372AbfEaBrD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 21:47:03 -0400
+        id S1726372AbfEaBrd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 21:47:33 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FBA02626B;
-        Fri, 31 May 2019 01:47:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B97002572F;
+        Fri, 31 May 2019 01:47:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559267223;
-        bh=OecpYtWJnFERvx0LdGFbAcYZk21QqOLhh8bV8JHhD/4=;
+        s=default; t=1559267252;
+        bh=+OeEewhapcQ/i3CLN4Cm0OE27Ar7683dWewuTciehp0=;
         h=Date:From:To:Cc:Subject:From;
-        b=KbyMfS4DMpDbYh9RO4X/dFNooozYWz70zWAEAuOZ1Y1OzZPRyZbcjVR0vWEpwieI7
-         Tgsatk8hS0o11M2o52Mc69wueIHlHMOLZYClrl7syVKEu16IBGpKZrK/fFhl8XZHVj
-         9Kek0Q83/P/sbTis6J9jpnO/SwJA0wjdDcwqIyIU=
-Date:   Thu, 30 May 2019 18:47:02 -0700
+        b=dO3JNUuP0GLdhhptxJJVh/Yf38FXkLmRItkZ2xE0xGm1IF7gwD/GY4mRKG0KFcs4V
+         cVOmlafd7ldyJ5RI6DS8AXWIDQchh+gZYW55bGmJ+yy4hHRfnyV0K2rezEhCmTas5O
+         A7b0NxI781PVVn8+8tuO3/wRtkl6zd9iIPgS99MI=
+Date:   Thu, 30 May 2019 18:47:32 -0700
 From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jiri Slaby <jslaby@suse.cz>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: [GIT PULL] TTY/Serial fixes for 5.2-rc3
-Message-ID: <20190531014702.GA30713@kroah.com>
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     devel@linuxdriverproject.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Staging/IIO driver fixes for 5.2-rc3
+Message-ID: <20190531014732.GA30765@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -47,45 +47,77 @@ The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-5.2-rc3
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git tags/staging-5.2-rc3
 
-for you to fetch changes up to a1ad1cc9704f64c169261a76e1aee1cf1ae51832:
+for you to fetch changes up to e61ff0fba72d981449c90b5299cebb74534b6f7c:
 
-  vt/fbcon: deinitialize resources in visual_init() after failed memory allocation (2019-05-24 17:08:18 +0200)
+  staging: kpc2000: Add dependency on MFD_CORE to kconfig symbol 'KPC2000' (2019-05-24 09:41:09 +0200)
 
 ----------------------------------------------------------------
-TTY/Serial driver fixes for 5.2-rc3
+Staging/IIO driver fixes for 5.2-rc3
 
-Here are some small serial and TTY driver fixes for 5.2-rc3.
+Here are some Staging and IIO driver fixes to resolve some reported
+problems for 5.2-rc3.
 
-Nothing major, just a number of fixes for reported issues.  The fbcon
-core fix also resolves an issue, and was acked by the relevant
-maintainer to go through this tree.
+Nothing major here, just some tiny changes, full details are in the
+shortlog.
 
-All of these have been in linux-next with no reported issues.
+All have been in linux-next for a while with no reported issues.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-George G. Davis (1):
-      serial: sh-sci: disable DMA for uart_console
+Chengguang Xu (1):
+      staging: erofs: set sb->s_root to NULL when failing from __getname()
 
-Grzegorz Halat (1):
-      vt/fbcon: deinitialize resources in visual_init() after failed memory allocation
+Dan Carpenter (4):
+      staging: kpc2000: double unlock in error handling in kpc_dma_transfer()
+      Staging: vc04_services: Fix a couple error codes
+      staging: vc04_services: prevent integer overflow in create_pagelist()
+      staging: wilc1000: Fix some double unlock bugs in wilc_wlan_cleanup()
 
-Joe Burmeister (1):
-      tty: max310x: Fix external crystal register setup
+Geordan Neukum (1):
+      staging: kpc2000: Add dependency on MFD_CORE to kconfig symbol 'KPC2000'
 
-Jorge Ramirez-Ortiz (1):
-      tty: serial: msm_serial: Fix XON/XOFF
+Greg Kroah-Hartman (1):
+      Merge tag 'iio-fixes-for-5.2a' of git://git.kernel.org/.../jic23/iio into staging-linus:
 
-Sascha Hauer (1):
-      serial: imx: remove log spamming error message
+Max Filippov (1):
+      staging: kpc2000: fix build error on xtensa
 
- drivers/tty/serial/imx.c         |  1 -
- drivers/tty/serial/max310x.c     |  2 +-
- drivers/tty/serial/msm_serial.c  |  5 ++++-
- drivers/tty/serial/sh-sci.c      |  7 +++++++
- drivers/tty/vt/vt.c              | 11 +++++++++--
- drivers/video/fbdev/core/fbcon.c |  2 +-
- 6 files changed, 22 insertions(+), 6 deletions(-)
+Ruslan Babayev (1):
+      iio: dac: ds4422/ds4424 fix chip verification
+
+Sean Nyekjaer (1):
+      iio: adc: ti-ads8688: fix timestamp is not updated in buffer
+
+Steve Moskovchenko (1):
+      iio: imu: mpu6050: Fix FIFO layout for ICM20602
+
+Tim Collier (1):
+      staging: wlan-ng: fix adapter initialization failure
+
+Tomer Maimon (1):
+      iio: adc: modify NPCM ADC read reference voltage
+
+Vincent Stehlé (1):
+      iio: adc: ads124: avoid buffer overflow
+
+YueHaibing (1):
+      staging: kpc2000: Fix build error without CONFIG_UIO
+
+ drivers/iio/adc/npcm_adc.c                         |  2 +-
+ drivers/iio/adc/ti-ads124s08.c                     |  2 +-
+ drivers/iio/adc/ti-ads8688.c                       |  2 +-
+ drivers/iio/dac/ds4424.c                           |  2 +-
+ drivers/iio/imu/inv_mpu6050/inv_mpu_core.c         | 46 ++++++++++++++++++++--
+ drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h          | 20 +++++++++-
+ drivers/iio/imu/inv_mpu6050/inv_mpu_ring.c         |  3 ++
+ drivers/staging/erofs/super.c                      |  1 +
+ drivers/staging/kpc2000/Kconfig                    |  2 +
+ drivers/staging/kpc2000/kpc_dma/fileops.c          |  4 +-
+ .../vc04_services/bcm2835-camera/controls.c        |  4 +-
+ .../interface/vchiq_arm/vchiq_2835_arm.c           |  9 +++++
+ drivers/staging/wilc1000/wilc_wlan.c               |  8 +++-
+ drivers/staging/wlan-ng/hfa384x_usb.c              |  3 +-
+ 14 files changed, 91 insertions(+), 17 deletions(-)
