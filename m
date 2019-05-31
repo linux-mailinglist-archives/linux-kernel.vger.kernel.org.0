@@ -2,130 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9A393118A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 17:47:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C888B31202
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 18:11:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbfEaPrE convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 31 May 2019 11:47:04 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:46594 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726518AbfEaPrE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 11:47:04 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 39EB3B2DE9;
-        Fri, 31 May 2019 15:46:52 +0000 (UTC)
-Received: from carbon (ovpn-200-32.brq.redhat.com [10.40.200.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 51B3460BF7;
-        Fri, 31 May 2019 15:46:45 +0000 (UTC)
-Date:   Fri, 31 May 2019 17:46:43 +0200
-From:   Jesper Dangaard Brouer <brouer@redhat.com>
-To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Cc:     grygorii.strashko@ti.com, hawk@kernel.org, davem@davemloft.net,
-        ast@kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, xdp-newbies@vger.kernel.org,
-        ilias.apalodimas@linaro.org, netdev@vger.kernel.org,
-        daniel@iogearbox.net, jakub.kicinski@netronome.com,
-        john.fastabend@gmail.com, brouer@redhat.com
-Subject: Re: [PATCH v2 net-next 7/7] net: ethernet: ti: cpsw: add XDP
- support
-Message-ID: <20190531174643.4be8b27f@carbon>
-In-Reply-To: <20190530182039.4945-8-ivan.khoronzhuk@linaro.org>
-References: <20190530182039.4945-1-ivan.khoronzhuk@linaro.org>
-        <20190530182039.4945-8-ivan.khoronzhuk@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 31 May 2019 15:47:04 +0000 (UTC)
+        id S1726798AbfEaQLr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 12:11:47 -0400
+Received: from smtprz14.163.net ([106.3.154.247]:36482 "EHLO smtp.tom.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726037AbfEaQLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 12:11:47 -0400
+Received: from my-app01.tom.com (my-app01.tom.com [127.0.0.1])
+        by freemail01.tom.com (Postfix) with ESMTP id 38A5B1C81BB1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 23:50:59 +0800 (CST)
+Received: from my-app01.tom.com (HELO smtp.tom.com) ([127.0.0.1])
+          by my-app01 (TOM SMTP Server) with SMTP ID 390728459
+          for <linux-kernel@vger.kernel.org>;
+          Fri, 31 May 2019 23:50:59 +0800 (CST)
+Received: from antispam1.tom.com (unknown [172.25.16.55])
+        by freemail01.tom.com (Postfix) with ESMTP id 5CFC71C81B97
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 23:50:58 +0800 (CST)
+Received: from antispam1.tom.com (antispam1.tom.com [127.0.0.1])
+        by antispam1.tom.com (Postfix) with ESMTP id 583E510018B7
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 23:50:58 +0800 (CST)
+X-Virus-Scanned: Debian amavisd-new at antispam1.tom.com
+Received: from antispam1.tom.com ([127.0.0.1])
+        by antispam1.tom.com (antispam1.tom.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id PcrpKDZU1KxI for <linux-kernel@vger.kernel.org>;
+        Fri, 31 May 2019 23:50:57 +0800 (CST)
+Received: from localhost (unknown [222.209.18.96])
+        by antispam1.tom.com (Postfix) with ESMTPA id 317E3100112A;
+        Fri, 31 May 2019 23:50:57 +0800 (CST)
+From:   Liu Xiang <liu.xiang6@zte.com.cn>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        liuxiang_1999@126.com, Liu Xiang <liu.xiang6@zte.com.cn>
+Subject: [PATCH v2] fs: buffer: fix fully_mapped reset in block_read_full_page()
+Date:   Fri, 31 May 2019 23:50:51 +0800
+Message-Id: <1559317851-3861-1-git-send-email-liu.xiang6@zte.com.cn>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Because get_block() might set the buffer mapped, fully_mapped reset 
+should be done according to the result of buffer_mapped(bh) 
+which check the buffer mapped attribute again after get_block().
 
-Hi Ivan,
+Signed-off-by: Liu Xiang <liu.xiang6@zte.com.cn>
+---
 
-From below code snippets, it looks like you only allocated 1 page_pool
-and sharing it with several RX-queues, as I don't have the full context
-and don't know this driver, I might be wrong?
+Changes in v2:
+ change comment
 
-To be clear, a page_pool object is needed per RX-queue, as it is
-accessing a small RX page cache (which protected by NAPI/softirq).
+ fs/buffer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Thu, 30 May 2019 21:20:39 +0300
-Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
-
-> @@ -1404,6 +1711,14 @@ static int cpsw_ndo_open(struct net_device *ndev)
->  			enable_irq(cpsw->irqs_table[0]);
->  		}
->  
-> +		pool_size = cpdma_get_num_rx_descs(cpsw->dma);
-> +		cpsw->page_pool = cpsw_create_page_pool(cpsw, pool_size);
-> +		if (IS_ERR(cpsw->page_pool)) {
-> +			ret = PTR_ERR(cpsw->page_pool);
-> +			cpsw->page_pool = NULL;
-> +			goto err_cleanup;
-> +		}
-
-On Thu, 30 May 2019 21:20:39 +0300
-Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
-
-> @@ -675,10 +742,33 @@ int cpsw_set_ringparam(struct net_device *ndev,
->  	if (cpsw->usage_count)
->  		cpdma_chan_split_pool(cpsw->dma);
->  
-> +	for (i = 0; i < cpsw->data.slaves; i++) {
-> +		struct net_device *ndev = cpsw->slaves[i].ndev;
-> +
-> +		if (!(ndev && netif_running(ndev)))
-> +			continue;
-> +
-> +		cpsw_xdp_unreg_rxqs(netdev_priv(ndev));
-> +	}
-> +
-> +	page_pool_destroy(cpsw->page_pool);
-> +	cpsw->page_pool = pool;
-> +
-
-On Thu, 30 May 2019 21:20:39 +0300
-Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
-
-> +void cpsw_xdp_unreg_rxqs(struct cpsw_priv *priv)
-> +{
-> +	struct cpsw_common *cpsw = priv->cpsw;
-> +	int i;
-> +
-> +	for (i = 0; i < cpsw->rx_ch_num; i++)
-> +		xdp_rxq_info_unreg(&priv->xdp_rxq[i]);
-> +}
-
-
-On Thu, 30 May 2019 21:20:39 +0300
-Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
-
-> +int cpsw_xdp_reg_rxq(struct cpsw_priv *priv, int ch)
-> +{
-> +	struct xdp_rxq_info *xdp_rxq = &priv->xdp_rxq[ch];
-> +	struct cpsw_common *cpsw = priv->cpsw;
-> +	int ret;
-> +
-> +	ret = xdp_rxq_info_reg(xdp_rxq, priv->ndev, ch);
-> +	if (ret)
-> +		goto err_cleanup;
-> +
-> +	ret = xdp_rxq_info_reg_mem_model(xdp_rxq, MEM_TYPE_PAGE_POOL,
-> +					 cpsw->page_pool);
-> +	if (ret)
-> +		goto err_cleanup;
-> +
-> +	return 0;
-
-
-
+diff --git a/fs/buffer.c b/fs/buffer.c
+index e450c55..987aadb 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -2243,7 +2243,6 @@ int block_read_full_page(struct page *page, get_block_t *get_block)
+ 		if (!buffer_mapped(bh)) {
+ 			int err = 0;
+ 
+-			fully_mapped = 0;
+ 			if (iblock < lblock) {
+ 				WARN_ON(bh->b_size != blocksize);
+ 				err = get_block(inode, iblock, bh, 0);
+@@ -2251,6 +2250,7 @@ int block_read_full_page(struct page *page, get_block_t *get_block)
+ 					SetPageError(page);
+ 			}
+ 			if (!buffer_mapped(bh)) {
++				fully_mapped = 0;
+ 				zero_user(page, i * blocksize, blocksize);
+ 				if (!err)
+ 					set_buffer_uptodate(bh);
 -- 
-Best regards,
-  Jesper Dangaard Brouer
-  MSc.CS, Principal Kernel Engineer at Red Hat
-  LinkedIn: http://www.linkedin.com/in/brouer
+1.9.1
+
