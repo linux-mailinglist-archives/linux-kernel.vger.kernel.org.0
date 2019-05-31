@@ -2,62 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C6A430D4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 13:23:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 039CA30D2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 13:15:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727186AbfEaLXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 07:23:50 -0400
-Received: from mail1.windriver.com ([147.11.146.13]:64077 "EHLO
-        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726158AbfEaLXu (ORCPT
+        id S1727140AbfEaLPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 07:15:03 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42694 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726240AbfEaLPC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 07:23:50 -0400
-Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
-        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id x4VBNZNC029641
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Fri, 31 May 2019 04:23:35 -0700 (PDT)
-Received: from [128.224.155.90] (128.224.155.90) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 31 May
- 2019 04:23:34 -0700
-Subject: Re: Userspace woes with 5.1.5 due to TIPC
-To:     Jon Maloy <jon.maloy@ericsson.com>,
-        Mihai Moldovan <ionic@ionic.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <4ad776cb-c597-da1d-7d5e-af39ded17c40@ionic.de>
- <CH2PR15MB3575BD29C90539022364B8719A180@CH2PR15MB3575.namprd15.prod.outlook.com>
- <1780dd6a-9546-0df5-7fb2-44b78643b079@ionic.de>
- <3cc60b11-2b63-3bfc-2be8-569f2b0ce7cf@windriver.com>
- <CH2PR15MB3575E1402F1FF4418C8C67139A190@CH2PR15MB3575.namprd15.prod.outlook.com>
-From:   Ying Xue <ying.xue@windriver.com>
-Message-ID: <5498070b-c6e4-30e5-dea4-5767fe50f617@windriver.com>
-Date:   Fri, 31 May 2019 19:13:43 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Fri, 31 May 2019 07:15:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=0bzCcEeHXEwR7c+WQ7EMhHPHTFa6pRbMCfQNYRgGQ50=; b=TZRqiz+eB19FKOviEbwMF50eL
+        tkVinge7hG7nufh2+jXjJimy3MX8tBcxRj3YQ//UpQYvtJgMfKOhWXOXbYLoPoseaA8GM16AkT9se
+        Jngp47DXJ0z8Aw/MuS1HRC8U73Vd1LivUdfY5v/tC0ZNDKoBOdj6+6VODUmz8iT2gJDy2a+4tpMBx
+        VO+5A3Gl8tI5ZU5dfFyOOeE7KYOq4wxlJF67H2SjwQSOphmha3VHx2Fo9JYu9EsuOvlTOySnke9tM
+        z2Nkt7Oukx13QfyTJ/CxJdaCY4q6AKkM/OC82uZli8h02Sua/xANMZ4b54zPgJGxij2HRdkFUR5Ql
+        hCLOaznLw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hWfUl-0002gF-9Z; Fri, 31 May 2019 11:14:47 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id BA181201D5AB1; Fri, 31 May 2019 13:14:45 +0200 (CEST)
+Date:   Fri, 31 May 2019 13:14:45 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Jann Horn <jannh@google.com>, Greg KH <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
+Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able
+ ring buffer
+Message-ID: <20190531111445.GO2677@hirez.programming.kicks-ass.net>
+References: <CAG48ez0R-R3Xs+3Xg9T9qcV3Xv6r4pnx1Z2y=Ltx7RGOayte_w@mail.gmail.com>
+ <20190528162603.GA24097@kroah.com>
+ <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
+ <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk>
+ <4031.1559064620@warthog.procyon.org.uk>
+ <20190528231218.GA28384@kroah.com>
+ <31936.1559146000@warthog.procyon.org.uk>
+ <16193.1559163763@warthog.procyon.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <CH2PR15MB3575E1402F1FF4418C8C67139A190@CH2PR15MB3575.namprd15.prod.outlook.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [128.224.155.90]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <16193.1559163763@warthog.procyon.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/31/19 7:02 PM, Jon Maloy wrote:
-> This was the very reason the broken patch was introduced. AFAIK there is no problem after the corrected version of that patch was applied.
+On Wed, May 29, 2019 at 10:02:43PM +0100, David Howells wrote:
+> Jann Horn <jannh@google.com> wrote:
+> 
+> > Does this mean that refcount_read() isn't sufficient for what you want
+> > to do with tracing (because for some reason you actually need to know
+> > the values atomically at the time of increment/decrement)?
+> 
+> Correct.  There's a gap and if an interrupt or something occurs, it's
+> sufficiently big for the refcount trace to go weird.
+> 
+> I've seen it in afs/rxrpc where the incoming network packets that are part of
+> the rxrpc call flow disrupt the refcounts noted in trace lines.
 
-I have prepared for our patches on net-next tree. But when I checked my
-patches on net tree, it's found that the issue has been fixed with
-commit 526f5b851a96566803ee4bee60d0a34df56c77f8 ("tipc: fix modprobe
-tipc failed after switch order of device registration"). There are four
-commits which were introduced recently, and their names are quite
-similar, and the fix is not merged into net-next tree, which makes me
-misunderstood the issue status.
+Can you re-iterate the exact problem? I konw we talked about this in the
+past, but I seem to have misplaced those memories :/
 
-Anyway, it looks like failing to insert TIPC module has been resolved.
-But I have not validated the fix by create multiple TIPC namespace, so I
-am not sure whether it works normally.
-
-Thanks,
-Ying
+FWIW I agree that kref is useless fluff, but I've long ago given up on
+that fight.
