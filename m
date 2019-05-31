@@ -2,156 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D068A30D39
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 13:17:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7265A30D3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 13:19:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbfEaLRE convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 31 May 2019 07:17:04 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32976 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726386AbfEaLRD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 07:17:03 -0400
-Received: from lhreml708-cah.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id DCBDC516BBC2B6FD8B3B;
-        Fri, 31 May 2019 12:17:01 +0100 (IST)
-Received: from lhreml703-chm.china.huawei.com (10.201.108.52) by
- lhreml708-cah.china.huawei.com (10.201.108.49) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 31 May 2019 12:17:01 +0100
-Received: from lhreml702-chm.china.huawei.com (10.201.108.51) by
- lhreml703-chm.china.huawei.com (10.201.108.52) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Fri, 31 May 2019 12:17:01 +0100
-Received: from lhreml702-chm.china.huawei.com ([10.201.68.197]) by
- lhreml702-chm.china.huawei.com ([10.201.68.197]) with mapi id 15.01.1713.004;
- Fri, 31 May 2019 12:17:01 +0100
-From:   Salil Mehta <salil.mehta@huawei.com>
-To:     linyunsheng <linyunsheng@huawei.com>,
-        "davem@davemloft.net" <davem@davemloft.net>
-CC:     "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "stephen@networkplumber.org" <stephen@networkplumber.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linuxarm <linuxarm@huawei.com>
-Subject: RE: [PATCH v2 net-next] net: link_watch: prevent starvation when
- processing linkwatch wq
-Thread-Topic: [PATCH v2 net-next] net: link_watch: prevent starvation when
- processing linkwatch wq
-Thread-Index: AQHVF4+KnJVjg+EZ+0GafWQlfrL2fqaFEd8g
-Date:   Fri, 31 May 2019 11:17:00 +0000
-Message-ID: <8a93eecf7a7a4ffd81f1b7d08f1a7442@huawei.com>
-References: <1559293233-43017-1-git-send-email-linyunsheng@huawei.com>
-In-Reply-To: <1559293233-43017-1-git-send-email-linyunsheng@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.202.226.43]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1727070AbfEaLTH convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 31 May 2019 07:19:07 -0400
+Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:51510
+        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1726240AbfEaLTG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 07:19:06 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 52716B469D9;
+        Fri, 31 May 2019 11:18:12 +0000 (UTC)
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id b2NvSRs0gY-t; Fri, 31 May 2019 11:18:11 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 982A5B469D2;
+        Fri, 31 May 2019 11:18:11 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id I9U1Z4rBW5w5; Fri, 31 May 2019 11:18:11 +0000 (UTC)
+Received: from [100.91.32.52] (unknown [106.197.219.163])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 02AB0B46880;
+        Fri, 31 May 2019 11:18:03 +0000 (UTC)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Alerta de correo
+To:     Recipients <alrodriguez@menpet.gob.ve>
+From:   =?utf-8?q?Administraci=C3=B3n_=3Calrodriguez=40menpet=2Egob=2Eve=3E?=@smspyt.cancun.gob.mx
+Date:   Fri, 31 May 2019 16:47:58 +0530
+Message-Id: <20190531111804.02AB0B46880@smspyt.cancun.gob.mx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: netdev-owner@vger.kernel.org [mailto:netdev-
-> owner@vger.kernel.org] On Behalf Of Yunsheng Lin
-> Sent: Friday, May 31, 2019 10:01 AM
-> To: davem@davemloft.net
-> Cc: hkallweit1@gmail.com; f.fainelli@gmail.com;
-> stephen@networkplumber.org; netdev@vger.kernel.org; linux-
-> kernel@vger.kernel.org; Linuxarm <linuxarm@huawei.com>
-> Subject: [PATCH v2 net-next] net: link_watch: prevent starvation when
-> processing linkwatch wq
-> 
-> When user has configured a large number of virtual netdev, such
-> as 4K vlans, the carrier on/off operation of the real netdev
-> will also cause it's virtual netdev's link state to be processed
-> in linkwatch. Currently, the processing is done in a work queue,
-> which may cause cpu and rtnl locking starvation problem.
-> 
-> This patch releases the cpu and rtnl lock when link watch worker
-> has processed a fixed number of netdev' link watch event.
-> 
-> Currently __linkwatch_run_queue is called with rtnl lock, so
-> enfore it with ASSERT_RTNL();
-> 
-> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-> ---
-> V2: use cond_resched and rtnl_unlock after processing a fixed
->     number of events
-> ---
->  net/core/link_watch.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
-> diff --git a/net/core/link_watch.c b/net/core/link_watch.c
-> index 7f51efb..07eebfb 100644
-> --- a/net/core/link_watch.c
-> +++ b/net/core/link_watch.c
-> @@ -168,9 +168,18 @@ static void linkwatch_do_dev(struct net_device
-> *dev)
-> 
->  static void __linkwatch_run_queue(int urgent_only)
->  {
-> +#define MAX_DO_DEV_PER_LOOP	100
-> +
-> +	int do_dev = MAX_DO_DEV_PER_LOOP;
->  	struct net_device *dev;
->  	LIST_HEAD(wrk);
-> 
-> +	ASSERT_RTNL();
-> +
-> +	/* Give urgent case more budget */
-> +	if (urgent_only)
-> +		do_dev += MAX_DO_DEV_PER_LOOP;
-> +
->  	/*
->  	 * Limit the number of linkwatch events to one
->  	 * per second so that a runaway driver does not
-> @@ -200,6 +209,14 @@ static void __linkwatch_run_queue(int urgent_only)
->  		}
->  		spin_unlock_irq(&lweventlist_lock);
->  		linkwatch_do_dev(dev);
-> +
-> +		if (--do_dev < 0) {
-> +			rtnl_unlock();
-> +			cond_resched();
+Estimado usuario de correo electrónico,
 
+Este mensaje es de nuestro centro de mensajes de administración para todos los usuarios de nuestra cuenta de correo electrónico. Estamos eliminando el acceso a todos nuestros clientes de correo web. Su cuenta de correo electrónico se actualizará a una nueva y mejorada interfaz de usuario de correo web proporcionada por nuestro administrador tan pronto como este correo electrónico haya sido recibido.
 
+Descontinuaremos el uso de nuestras interfaces webmail Lite, para asegurarnos de que su libreta de direcciones de correo electrónico esté almacenada en nuestra base de datos, haga clic o copie y pegue el siguiente enlace en su navegador e ingrese su nombre de usuario y contraseña para actualizar su cuenta.
 
-Sorry, missed in my earlier comment. I could see multiple problems here
-and please correct me if I am wrong:
+Si el clic no funciona, copie y pegue la URL a continuación en un navegador web para verificarlo.
 
-1. It looks like releasing the rtnl_lock here and then res-scheduling might
-   not be safe, especially when you have already held *lweventlist_lock*
-   (which is global and not per-netdev), and when you are trying to
-   reschedule. This can cause *deadlock* with itself.
+Haga clic en el enlace http://accountupdatebrodcaster.xtgem.com/ si el clic no funciona, copie y pegue en su navegador web y actualice su cuenta para que podamos transferir sus contactos a nuestra nueva base de datos de clientes de correo web.
 
-   Reason: once you release the rtnl_lock() the similar leg of function 
-   netdev_wait_allrefs() could be called for some other netdevice which
-   might end up in waiting for same global linkwatch event list lock
-   i.e. *lweventlist_lock*.
+¡Todos los correos electrónicos estarán seguros en esta transición! Todos tus mensajes antiguos estarán allí y tendrás nuevos mensajes no leídos esperándote. Fueron
+Seguro que te gustará la nueva y mejorada interfaz de correo web.
 
-2. After releasing the rtnl_lock() we have not ensured that all the rcu
-   operations are complete. Perhaps we need to take rcu_barrier() before
-   retaking the rtnl_lock()
+Si no cumple con este aviso, inmediatamente retiraremos el acceso a su cuenta de correo electrónico.
 
+Gracias por usar nuestro webmail.
 
+=============================================
+Número de registro 65628698L)
+ID de cliente 779862
+===============================================
 
-
-> +			do_dev = MAX_DO_DEV_PER_LOOP;
-
-
-
-Here, I think rcu_barrier() should exist.
-
-
-
-> +			rtnl_lock();
-> +		}
-> +
->  		spin_lock_irq(&lweventlist_lock);
->  	}
-
+Sinceramente Web Admin.
+Correo electrónico Servicio al cliente 46569 Copyright c 2019 E! Inc. (Co
+Reg.No. 65628698L) Todos los derechos reservados.
