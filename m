@@ -2,84 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0397831142
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 17:26:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74ED931150
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 17:29:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726762AbfEaP0m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 11:26:42 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54706 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726037AbfEaP0m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 11:26:42 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9BD09307D9D0;
-        Fri, 31 May 2019 15:26:36 +0000 (UTC)
-Received: from treble (ovpn-124-142.rdu2.redhat.com [10.10.124.142])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5B6A95DE84;
-        Fri, 31 May 2019 15:26:28 +0000 (UTC)
-Date:   Fri, 31 May 2019 10:26:26 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4] x86/power: Fix 'nosmt' vs. hibernation triple fault
- during resume
-Message-ID: <20190531152626.4nmyc7lj6mjwuo2v@treble>
-References: <nycvar.YFH.7.76.1905282326360.1962@cbobk.fhfr.pm>
- <20190531051456.fzkvn62qlkf6wqra@treble>
- <nycvar.YFH.7.76.1905311045240.1962@cbobk.fhfr.pm>
- <5564116.e9OFvgDRbB@kreacher>
- <CALCETrUpseta+NrhVwzzVFTe-BkBHtDUJBO22ci3mAsVR+XOog@mail.gmail.com>
- <nycvar.YFH.7.76.1905311628330.1962@cbobk.fhfr.pm>
- <B7AC83ED-3F11-42B9-8506-C842A5937B50@amacapital.net>
- <nycvar.YFH.7.76.1905311651450.1962@cbobk.fhfr.pm>
+        id S1726859AbfEaP3T convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 31 May 2019 11:29:19 -0400
+Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:39215
+        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1726579AbfEaP3T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 11:29:19 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id EFF2AB482E1;
+        Fri, 31 May 2019 15:27:37 +0000 (UTC)
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id ZJI0oopusGIy; Fri, 31 May 2019 15:27:37 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 4A178B482D8;
+        Fri, 31 May 2019 15:27:37 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id hz5iD9rEJXaT; Fri, 31 May 2019 15:27:37 +0000 (UTC)
+Received: from [100.71.203.62] (unknown [223.237.233.238])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 194B3B48220;
+        Fri, 31 May 2019 15:27:28 +0000 (UTC)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <nycvar.YFH.7.76.1905311651450.1962@cbobk.fhfr.pm>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 31 May 2019 15:26:41 +0000 (UTC)
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Alerta de correo
+To:     Recipients <alrodriguez@menpet.gob.ve>
+From:   =?utf-8?q?Administraci=C3=B3n_=3Calrodriguez=40menpet=2Egob=2Eve=3E?=@smspyt.cancun.gob.mx
+Date:   Fri, 31 May 2019 20:57:23 +0530
+Message-Id: <20190531152729.194B3B48220@smspyt.cancun.gob.mx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 31, 2019 at 04:54:20PM +0200, Jiri Kosina wrote:
-> On Fri, 31 May 2019, Andy Lutomirski wrote:
-> 
-> > For that matter, what actually happens if we get an SMI while halted?  
-> > Does RSM go directly to sleep or does it re-fetch the HLT?
-> 
-> Our mails just crossed, I replied to Josh's mwait() proposal patch a 
-> minute ago.
+Estimado usuario de correo electrónico,
 
-Good catch.  I agree that mwait seems unsafe across resume and my patch
-is bogus.
+Este mensaje es de nuestro centro de mensajes de administración para todos los usuarios de nuestra cuenta de correo electrónico. Estamos eliminando el acceso a todos nuestros clientes de correo web. Su cuenta de correo electrónico se actualizará a una nueva y mejorada interfaz de usuario de correo web proporcionada por nuestro administrador tan pronto como este correo electrónico haya sido recibido.
 
-Andy, in the short term it sounds like you're proposing to make
-native_play_dead() use hlt_play_dead() unconditionally.  Right?
+Descontinuaremos el uso de nuestras interfaces webmail Lite, para asegurarnos de que su libreta de direcciones de correo electrónico esté almacenada en nuestra base de datos, haga clic o copie y pegue el siguiente enlace en su navegador e ingrese su nombre de usuario y contraseña para actualizar su cuenta.
 
-That would simplify things and also would fix Jiri's bug I think.  The
-only question I'd have is if we have data on the power savings
-difference between hlt and mwait.  mwait seems to wake up on a lot of
-different conditions which might negate its deeper sleep state.
+Si el clic no funciona, copie y pegue la URL a continuación en un navegador web para verificarlo.
 
-Andy, for your long term idea to use INIT IPI, I wonder if that would
-work with SMT siblings?  Specifically I wonder about the Intel issue
-that requires siblings to have CR4.MCE set.
+Haga clic en el enlace http://accountupdatebrodcaster.xtgem.com/ si el clic no funciona, copie y pegue en su navegador web y actualice su cuenta para que podamos transferir sus contactos a nuestra nueva base de datos de clientes de correo web.
 
--- 
-Josh
+¡Todos los correos electrónicos estarán seguros en esta transición! Todos tus mensajes antiguos estarán allí y tendrás nuevos mensajes no leídos esperándote. Fueron
+Seguro que te gustará la nueva y mejorada interfaz de correo web.
+
+Si no cumple con este aviso, inmediatamente retiraremos el acceso a su cuenta de correo electrónico.
+
+Gracias por usar nuestro webmail.
+
+=============================================
+Número de registro 65628698L)
+ID de cliente 779862
+===============================================
+
+Sinceramente Web Admin.
+Correo electrónico Servicio al cliente 46569 Copyright c 2019 E! Inc. (Co
+Reg.No. 65628698L) Todos los derechos reservados.
