@@ -2,95 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 188DC3096A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 09:37:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBD313098D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 09:41:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726807AbfEaHhi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 03:37:38 -0400
-Received: from mga11.intel.com ([192.55.52.93]:41428 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725955AbfEaHhi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 03:37:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 May 2019 00:37:38 -0700
-X-ExtLoop1: 1
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
-  by fmsmga001.fm.intel.com with ESMTP; 31 May 2019 00:37:34 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 12/22] gpu: i915.rst: Fix references to renamed files
-In-Reply-To: <5ecde05364284f6845b651297fd9ce8225af2bcd.1559171394.git.mchehab+samsung@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <cover.1559171394.git.mchehab+samsung@kernel.org> <5ecde05364284f6845b651297fd9ce8225af2bcd.1559171394.git.mchehab+samsung@kernel.org>
-Date:   Fri, 31 May 2019 10:40:44 +0300
-Message-ID: <87ftov3wcj.fsf@intel.com>
+        id S1726887AbfEaHlD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 03:41:03 -0400
+Received: from mail-eopbgr1410120.outbound.protection.outlook.com ([40.107.141.120]:43006
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726275AbfEaHlC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 31 May 2019 03:41:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2JJfhjlChlsZblk494lEolIoahzYewRVgkt13gf0nWw=;
+ b=UuI8pqtaJug4kV9Uu/Oe/3rLCLNq7eiMY4k8vSVqL0yp2kn34OWbUyLri+F2I67YD2C4f6rdN6cRVi8PV4IZYEmMEzal8QtuafREC+3xfKedXeVm8UctCJCkwGFCbMP7wyNhtsYCeJXNji0p1CpPACp6jokK826sebNkCYGVx9w=
+Received: from OSBPR01MB2103.jpnprd01.prod.outlook.com (52.134.242.17) by
+ OSBPR01MB3159.jpnprd01.prod.outlook.com (52.134.253.78) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1922.17; Fri, 31 May 2019 07:40:52 +0000
+Received: from OSBPR01MB2103.jpnprd01.prod.outlook.com
+ ([fe80::a146:39f0:5df9:11bc]) by OSBPR01MB2103.jpnprd01.prod.outlook.com
+ ([fe80::a146:39f0:5df9:11bc%7]) with mapi id 15.20.1922.021; Fri, 31 May 2019
+ 07:40:52 +0000
+From:   Biju Das <biju.das@bp.renesas.com>
+To:     Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        Li Jun <jun.li@nxp.com>,
+        Badhri Jagan Sridharan <badhri@google.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Min Guo <min.guo@mediatek.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Yu Chen <chenyu56@huawei.com>
+Subject: RE: [PATCH v6 06/10] device connection: Add
+ fwnode_connection_find_match()
+Thread-Topic: [PATCH v6 06/10] device connection: Add
+ fwnode_connection_find_match()
+Thread-Index: AQHVFfJUqUbU7Icg8UiVJq3QJgY4TaaE3Adg
+Date:   Fri, 31 May 2019 07:40:52 +0000
+Message-ID: <OSBPR01MB2103EAE24D36E23BFE8A76A5B8190@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+References: <1559115828-19146-1-git-send-email-chunfeng.yun@mediatek.com>
+ <1559115828-19146-7-git-send-email-chunfeng.yun@mediatek.com>
+In-Reply-To: <1559115828-19146-7-git-send-email-chunfeng.yun@mediatek.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=biju.das@bp.renesas.com; 
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e226b5ac-0d7b-4e75-1332-08d6e59b4f1e
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:OSBPR01MB3159;
+x-ms-traffictypediagnostic: OSBPR01MB3159:
+x-microsoft-antispam-prvs: <OSBPR01MB31591D0E63212706D3957FACB8190@OSBPR01MB3159.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 00540983E2
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(39860400002)(396003)(376002)(346002)(366004)(189003)(199004)(51914003)(305945005)(53936002)(33656002)(110136005)(99286004)(5660300002)(256004)(14444005)(76176011)(4326008)(25786009)(68736007)(6116002)(2906002)(7736002)(6246003)(86362001)(7696005)(74316002)(71200400001)(11346002)(71190400001)(7416002)(476003)(3846002)(54906003)(52536014)(9686003)(66066001)(55016002)(186003)(76116006)(26005)(14454004)(102836004)(64756008)(66946007)(44832011)(229853002)(81156014)(73956011)(6436002)(478600001)(6506007)(316002)(446003)(66556008)(8936002)(66476007)(66446008)(486006)(81166006)(8676002);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB3159;H:OSBPR01MB2103.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
+received-spf: None (protection.outlook.com: bp.renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 9ve87iDhwS2Bv2t20CDXq8Lmym3IMLYLmUYuFGiVVhZDrG3GENrS7SgY7pnqrMT3/ZjRVbEDCvmoBaeUENs63lIDw7TKlli4dQ7R8gQO93Q6o1BwEbKkPZM4h+oLnAMB82hoB/8raodlNKKedS6veSvDqegQgbePg6vWFbZXkXSa9O8BxoX3oXr1s+DRjOdGTqj8Y7VW4xCSR2W022adb0g3eFiekoRIPHBAPCc0C92EpbxZgaO2qCnAO559QZESckJFltNM0dkP7Q9tY30XufQO5DiPAvOmuKCf+sCgSKbgMmx36D2CGLm+dKZ6ci/wfdOZa0PUuN3dIMhDzXmpwikBSw1No7LOGoAWbuMpfryrYXjOJdV1NKNRw0bK2z3zK8+jJuKVgqutNW0ICFaVTvV5+LLsk73NkjCaiMEtB9k=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e226b5ac-0d7b-4e75-1332-08d6e59b4f1e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 May 2019 07:40:52.6808
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: biju.das@bp.renesas.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB3159
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 May 2019, Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
-> WARNING: kernel-doc './scripts/kernel-doc -rst -enable-lineno -function Hardware workarounds ./drivers/gpu/drm/i915/intel_workarounds.c' failed with return code 1
-> WARNING: kernel-doc './scripts/kernel-doc -rst -enable-lineno -function Logical Rings, Logical Ring Contexts and Execlists ./drivers/gpu/drm/i915/intel_lrc.c' failed with return code 1
-> WARNING: kernel-doc './scripts/kernel-doc -rst -enable-lineno -internal ./drivers/gpu/drm/i915/intel_lrc.c' failed with return code 2
->
-> Fixes: 112ed2d31a46 ("drm/i915: Move GraphicsTechnology files under gt/")
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Hi,
+
+Thanks for the patch
+
+> Subject: [PATCH v6 06/10] device connection: Add
+> fwnode_connection_find_match()
+>=20
+> From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+>=20
+> The fwnode_connection_find_match() function is exactly the same as
+> device_connection_find_match(), except it takes struct fwnode_handle as
+> parameter instead of struct device.
+> That allows locating device connections before the device entries have be=
+en
+> created.
+>=20
+> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Tested-by: Biju Das <biju.das@bp.renesas.com>
 > ---
->  Documentation/gpu/i915.rst | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/Documentation/gpu/i915.rst b/Documentation/gpu/i915.rst
-> index 055df45596c1..38fefeb99bba 100644
-> --- a/Documentation/gpu/i915.rst
-> +++ b/Documentation/gpu/i915.rst
-> @@ -61,7 +61,7 @@ Intel GVT-g Host Support(vGPU device model)
->  Workarounds
->  -----------
->  
-> -.. kernel-doc:: drivers/gpu/drm/i915/intel_workarounds.c
-> +.. kernel-doc:: drivers/gpu/drm/i915/gt/selftest_workarounds.c
->     :doc: Hardware workarounds
+> v6:
+>   new patch
+> ---
+>  drivers/base/devcon.c  | 33 +++++++++++++++++++++++++--------
+> include/linux/device.h | 10 +++++++---
+>  2 files changed, 32 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/drivers/base/devcon.c b/drivers/base/devcon.c index
+> 04db9ae235e4..8311b70bbca2 100644
+> --- a/drivers/base/devcon.c
+> +++ b/drivers/base/devcon.c
+> @@ -12,9 +12,6 @@
+>  static DEFINE_MUTEX(devcon_lock);
+>  static LIST_HEAD(devcon_list);
+>=20
+> -typedef void *(*devcon_match_fn_t)(struct device_connection *con, int
+> ep,
+> -				   void *data);
+> -
+>  static void *
+>  fwnode_graph_devcon_match(struct fwnode_handle *fwnode, const char
+> *con_id,
+>  			  void *data, devcon_match_fn_t match) @@ -38,6
+> +35,28 @@ fwnode_graph_devcon_match(struct fwnode_handle *fwnode,
+> const char *con_id,
+>  	return NULL;
+>  }
+>=20
+> +/**
+> + * fwnode_connection_find_match - Find connection from a device node
+> + * @fwnode: Device node with the connection
+> + * @con_id: Identifier for the connection
+> + * @data: Data for the match function
+> + * @match: Function to check and convert the connection description
+> + *
+> + * Find a connection with unique identifier @con_id between @fwnode and
+> +another
+> + * device node. @match will be used to convert the connection
+> +description to
+> + * data the caller is expecting to be returned.
+> + */
+> +void *fwnode_connection_find_match(struct fwnode_handle *fwnode,
+> +				   const char *con_id, void *data,
+> +				   devcon_match_fn_t match)
+> +{
+> +	if (!fwnode || !match)
+> +		return NULL;
+> +
+> +	return fwnode_graph_devcon_match(fwnode, con_id, data, match);
+> }
+> +EXPORT_SYMBOL_GPL(fwnode_connection_find_match);
+> +
+>  /**
+>   * device_connection_find_match - Find physical connection to a device
+>   * @dev: Device with the connection
+> @@ -61,11 +80,9 @@ void *device_connection_find_match(struct device
+> *dev, const char *con_id,
+>  	if (!match)
+>  		return NULL;
+>=20
+> -	if (fwnode) {
+> -		ret =3D fwnode_graph_devcon_match(fwnode, con_id, data,
+> match);
+> -		if (ret)
+> -			return ret;
+> -	}
+> +	ret =3D fwnode_connection_find_match(fwnode, con_id, data,
+> match);
+> +	if (ret)
+> +		return ret;
+>=20
+>  	mutex_lock(&devcon_lock);
+>=20
+> diff --git a/include/linux/device.h b/include/linux/device.h index
+> e85264fb6616..9445f068602f 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -772,10 +772,14 @@ struct device_connection {
+>  	struct list_head	list;
+>  };
+>=20
+> +typedef void *(*devcon_match_fn_t)(struct device_connection *con, int
+> ep,
+> +				   void *data);
+> +
+> +void *fwnode_connection_find_match(struct fwnode_handle *fwnode,
+> +				   const char *con_id, void *data,
+> +				   devcon_match_fn_t match);
+>  void *device_connection_find_match(struct device *dev, const char
+> *con_id,
+> -				void *data,
+> -				void *(*match)(struct device_connection
+> *con,
+> -					       int ep, void *data));
+> +				   void *data, devcon_match_fn_t match);
+>=20
+>  struct device *device_connection_find(struct device *dev, const char
+> *con_id);
+>=20
+> --
+> 2.21.0
 
-Thanks for the patch. The basename should remain the same here.
-
-I can pick up the updated version via drm-intel.
-
-BR,
-Jani.
-
-
->  
->  Display Hardware Handling
-> @@ -379,10 +379,10 @@ User Batchbuffer Execution
->  Logical Rings, Logical Ring Contexts and Execlists
->  --------------------------------------------------
->  
-> -.. kernel-doc:: drivers/gpu/drm/i915/intel_lrc.c
-> +.. kernel-doc:: drivers/gpu/drm/i915/gt/intel_lrc.c
->     :doc: Logical Rings, Logical Ring Contexts and Execlists
->  
-> -.. kernel-doc:: drivers/gpu/drm/i915/intel_lrc.c
-> +.. kernel-doc:: drivers/gpu/drm/i915/gt/intel_lrc.c
->     :internal:
->  
->  Global GTT views
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
