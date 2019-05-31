@@ -2,114 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ADA63128F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 18:39:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF9B7312A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 May 2019 18:44:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726799AbfEaQjS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 12:39:18 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:50880 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726518AbfEaQjR (ORCPT
+        id S1726925AbfEaQoB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 12:44:01 -0400
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:49748 "EHLO
+        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726531AbfEaQn7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 12:39:17 -0400
-Received: from svr-orw-mbx-01.mgc.mentorg.com ([147.34.90.201])
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1hWkYi-0005oM-1T from George_Davis@mentor.com ; Fri, 31 May 2019 09:39:12 -0700
-Received: from localhost (147.34.91.1) by svr-orw-mbx-01.mgc.mentorg.com
- (147.34.90.201) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Fri, 31 May
- 2019 09:39:09 -0700
-Date:   Fri, 31 May 2019 12:39:08 -0400
-From:   "George G. Davis" <george_davis@mentor.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-CC:     Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC][PATCH] Makefile: Fix checkstack.pl arm64 wrong or unknown
- architecture
-Message-ID: <20190531163908.GB10644@mam-gdavis-lt>
-References: <1559316388-19565-1-git-send-email-george_davis@mentor.com>
- <CAK7LNATXzLzttF_gLA4wdfE1ue+bLPhvDZVsTKbB5K3nrN3jng@mail.gmail.com>
+        Fri, 31 May 2019 12:43:59 -0400
+Received: from cpe-2606-a000-111b-405a-0-0-0-162e.dyn6.twc.com ([2606:a000:111b:405a::162e] helo=localhost)
+        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
+        (Exim 4.63)
+        (envelope-from <nhorman@tuxdriver.com>)
+        id 1hWkd8-0003pv-Az; Fri, 31 May 2019 12:43:52 -0400
+Date:   Fri, 31 May 2019 12:43:19 -0400
+From:   Neil Horman <nhorman@tuxdriver.com>
+To:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Cc:     syzbot <syzbot+f7e9153b037eac9b1df8@syzkaller.appspotmail.com>,
+        davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, vyasevich@gmail.com
+Subject: Re: memory leak in sctp_process_init
+Message-ID: <20190531164319.GB3828@hmswarspite.think-freely.org>
+References: <00000000000097abb90589e804fd@google.com>
+ <20190528013600.GM5506@localhost.localdomain>
+ <20190528111550.GA4658@hmswarspite.think-freely.org>
+ <20190529190709.GE31099@hmswarspite.think-freely.org>
+ <20190529233757.GC3713@localhost.localdomain>
+ <20190530142011.GC1966@hmswarspite.think-freely.org>
+ <20190530151705.GD3713@localhost.localdomain>
+ <20190530195634.GD1966@hmswarspite.think-freely.org>
+ <20190531124242.GE3713@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK7LNATXzLzttF_gLA4wdfE1ue+bLPhvDZVsTKbB5K3nrN3jng@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-ClientProxiedBy: SVR-ORW-MBX-07.mgc.mentorg.com (147.34.90.207) To
- svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201)
+In-Reply-To: <20190531124242.GE3713@localhost.localdomain>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Spam-Score: -2.9 (--)
+X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Masahiro,
-
-On Sat, Jun 01, 2019 at 01:02:37AM +0900, Masahiro Yamada wrote:
-> On Sat, Jun 1, 2019 at 12:27 AM George G. Davis <george_davis@mentor.com> wrote:
-> >
-> > The following error occurs for the `make ARCH=arm64 checkstack` case:
-> >
-> > aarch64-linux-gnu-objdump -d vmlinux $(find . -name '*.ko') | \
-> > perl ./scripts/checkstack.pl arm64
-> > wrong or unknown architecture "arm64"
-> >
-> > Fix the above error by setting `CHECKSTACK_ARCH := aarch64` for the
-> > ARCH=arm64 case.
-> >
-> > Signed-off-by: George G. Davis <george_davis@mentor.com>
+On Fri, May 31, 2019 at 09:42:42AM -0300, Marcelo Ricardo Leitner wrote:
+> On Thu, May 30, 2019 at 03:56:34PM -0400, Neil Horman wrote:
+> > On Thu, May 30, 2019 at 12:17:05PM -0300, Marcelo Ricardo Leitner wrote:
+> ...
+> > > --- a/net/sctp/sm_sideeffect.c
+> > > +++ b/net/sctp/sm_sideeffect.c
+> > > @@ -898,6 +898,11 @@ static void sctp_cmd_new_state(struct sctp_cmd_seq *cmds,
+> > >  						asoc->rto_initial;
+> > >  	}
+> > >  
+> > > +	if (sctp_state(asoc, ESTABLISHED)) {
+> > > +		kfree(asoc->peer.cookie);
+> > > +		asoc->peer.cookie = NULL;
+> > > +	}
+> > > +
+> > Not sure I follow why this is needed.  It doesn't hurt anything of course, but
+> > if we're freeing in sctp_association_free, we don't need to duplicate the
+> > operation here, do we?
 > 
+> This one would be to avoid storing the cookie throughout the entire
+> association lifetime, as the cookie is only needed during the
+> handshake.
+> While the free in sctp_association_free will handle the freeing in
+> case the association never enters established state.
 > 
-> Why don't you fix scripts/checkstack.pl ?
 
-Like so?:
+Ok, I see we do that with the peer_random and other allocated values as well
+when they are no longer needed, but ew, I hate freeing in multiple places like
+that.  I'll fix this up on monday, but I wonder if we can't consolidate that
+somehow
 
+Neil
 
-diff --git a/scripts/checkstack.pl b/scripts/checkstack.pl
-index 122aef5e4e14..8502de57e2ef 100755
---- a/scripts/checkstack.pl
-+++ b/scripts/checkstack.pl
-@@ -41,6 +41,8 @@ my (@stack, $re, $dre, $x, $xs, $funcre);
- 	if ($arch eq "") {
- 		$arch = `uname -m`;
- 		chomp($arch);
-+	} elsif ($arch eq 'arm64') {
-+		$arch = "aarch64";
- 	}
- 
- 	$x	= "[0-9a-f]";	# hex character
-
-
-Thanks!
-
-> > diff --git a/Makefile b/Makefile
-> > index 11358153d8f2..3e615e8553c0 100644
-> > --- a/Makefile
-> > +++ b/Makefile
-> > @@ -1695,7 +1695,11 @@ PHONY += checkstack kernelrelease kernelversion image_name
-> >  ifeq ($(ARCH), um)
-> >  CHECKSTACK_ARCH := $(SUBARCH)
-> >  else
-> > -CHECKSTACK_ARCH := $(ARCH)
-> > +       ifeq ($(ARCH), arm64)
-> > +               CHECKSTACK_ARCH := aarch64
-> > +       else
-> > +               CHECKSTACK_ARCH := $(ARCH)
-> > +       endif
-> >  endif
-> >  checkstack:
-> >         $(OBJDUMP) -d vmlinux $$(find . -name '*.ko') | \
-> > --
-> > 2.7.4
-> >
+> > >  	if (sctp_state(asoc, ESTABLISHED) ||
+> > >  	    sctp_state(asoc, CLOSED) ||
+> > >  	    sctp_state(asoc, SHUTDOWN_RECEIVED)) {
+> > > 
+> > > Also untested, just sharing the idea.
+> > > 
+> > >   Marcelo
+> > > 
 > 
-> 
-> -- 
-> Best Regards
-> Masahiro Yamada
-
--- 
-Regards,
-George
