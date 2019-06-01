@@ -2,298 +2,263 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DF8931B08
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 11:41:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D423131FEC
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 18:20:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727001AbfFAJln (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Jun 2019 05:41:43 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36521 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726142AbfFAJlm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Jun 2019 05:41:42 -0400
-Received: by mail-lj1-f195.google.com with SMTP id m22so11630376ljc.3
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2019 02:41:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DIaQdPqCvZFyBC5nfnFv5TPdjUZvyzxkA6GFPJG3yUQ=;
-        b=opV0nyWc1cfqF5+eCYa/2JsuB0oELlPBifZETNCSuiFa3xegYl7KWCYHB9ZOGFWg6J
-         eBAbt43SRAhijpdN5WhaeARcqbcgZyOIrfpDvOAGF/3kX89AtUL2mQUk8ohSuFN6Yygo
-         F6YfIHM+SVq1swBigM/ljoCeHlKEql3ny6xLQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DIaQdPqCvZFyBC5nfnFv5TPdjUZvyzxkA6GFPJG3yUQ=;
-        b=aIGyKSLQOC2wh/hVr7fZFa7RE9H7bc0f92bxM+jUDG2gvaAc3/59TJVvLD7VSyCx8l
-         WYcpGjZlQP0pDJzPs1UUncDO1dCGlm+6rLWFigktjfnsR4QBjl1FUtMp5x7y2d8C6MeL
-         4Do5kttI/7DlG2UWW4Ww61NtQCR/jU1Fv7q6dMuke4cWaCoKInPMPY9GM79sDhtzxvGm
-         LfrJ+LFzVmDKNR9IGUkU7rP3KJuJIy7XS1I6PGX/AOg3PNrUoACvU9B1HUXqIh3BQuCK
-         XDyxDhhS6fJuCcfzzK1n19fLOlfGtTNkfSyW9349IJoyB+cuGjZurhVv5gtTaj08T/sN
-         BP/A==
-X-Gm-Message-State: APjAAAXWHAEWdRUG1DwpvPPYZKaVwxtq4ZE78/H89aXEEt4cz+muOwQU
-        vdXPPCBJzl7mQO1Ti4UmBbE2yfBTUJ1E/ne2RowjiE8Jiz8=
-X-Google-Smtp-Source: APXvYqwx/u4RMbLNpf+y8mmaQ1jG5mIOLHyMkzYpgjl22COUQQq82LGwCZNwFTo9GDwZvgkn7LcJGCLmiTU0M3E3XRo=
-X-Received: by 2002:a2e:9742:: with SMTP id f2mr8710125ljj.184.1559382099006;
- Sat, 01 Jun 2019 02:41:39 -0700 (PDT)
+        id S1726674AbfFAQUS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Jun 2019 12:20:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58946 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726149AbfFAQUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Jun 2019 12:20:17 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 49F9B2768D;
+        Sat,  1 Jun 2019 16:20:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559406016;
+        bh=/Lhe2sEcKW8SvoOtAko/S2GJXLG/IEpYQoiW1R5BlQs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bW3/tf/IjhTYIF9dVHbbhQDY5LQOd9rfpRKbuGGvifHLJPJBUixLyGl+cmp15HxWt
+         2zSWrd8Ib30f3McicDrq5snDI1NjNykAbd6PgUHYaSB7a+YvEGAHF4jTPsDji3H2A0
+         fy+UA9LDeexJUhWjW8oBjSgui5Bku6DbPVsDpy2A=
+Date:   Sat, 1 Jun 2019 02:42:19 -0700
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Wu Hao <hao.wu@intel.com>
+Cc:     atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Luwei Kang <luwei.kang@intel.com>,
+        Xu Yilun <yilun.xu@intel.com>
+Subject: Re: [PATCH v3 16/16] fpga: dfl: fme: add performance reporting
+ support
+Message-ID: <20190601094219.GA1998@kroah.com>
+References: <1558934546-12171-1-git-send-email-hao.wu@intel.com>
+ <1558934546-12171-17-git-send-email-hao.wu@intel.com>
+ <20190530190305.GA2909@kroah.com>
+ <20190601091147.GB3743@hao-dev>
 MIME-Version: 1.0
-References: <20190601093926.28158-1-joel@joelfernandes.org>
-In-Reply-To: <20190601093926.28158-1-joel@joelfernandes.org>
-From:   Joel Fernandes <joel@joelfernandes.org>
-Date:   Sat, 1 Jun 2019 05:41:27 -0400
-Message-ID: <CAEXW_YQK2Y-UknCgOPe64mPCTM-hXbovF-6vSB44cag8aU8Ang@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/1] doc/rcu: Add some more listRCU patterns in the kernel
-To:     LKML <linux-kernel@vger.kernel.org>, Neil Brown <neilb@suse.com>
-Cc:     rcu <rcu@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        kernel-team <kernel-team@android.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zilstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190601091147.GB3743@hao-dev>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Forgot to CC +Neil Brown , will do in the next posting, thanks!
+On Sat, Jun 01, 2019 at 05:11:47PM +0800, Wu Hao wrote:
+> On Thu, May 30, 2019 at 12:03:05PM -0700, Greg KH wrote:
+> > On Mon, May 27, 2019 at 01:22:26PM +0800, Wu Hao wrote:
+> > > --- /dev/null
+> > > +++ b/drivers/fpga/dfl-fme-perf.c
+> > > @@ -0,0 +1,962 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * Driver for FPGA Management Engine (FME) Global Performance Reporting
+> > > + *
+> > > + * Copyright 2019 Intel Corporation, Inc.
+> > > + *
+> > > + * Authors:
+> > > + *   Kang Luwei <luwei.kang@intel.com>
+> > > + *   Xiao Guangrong <guangrong.xiao@linux.intel.com>
+> > > + *   Wu Hao <hao.wu@intel.com>
+> > > + *   Joseph Grecco <joe.grecco@intel.com>
+> > > + *   Enno Luebbers <enno.luebbers@intel.com>
+> > > + *   Tim Whisonant <tim.whisonant@intel.com>
+> > > + *   Ananda Ravuri <ananda.ravuri@intel.com>
+> > > + *   Mitchel, Henry <henry.mitchel@intel.com>
+> > > + */
+> > > +
+> > > +#include "dfl.h"
+> > > +#include "dfl-fme.h"
+> > > +
+> > > +/*
+> > > + * Performance Counter Registers for Cache.
+> > > + *
+> > > + * Cache Events are listed below as CACHE_EVNT_*.
+> > > + */
+> > > +#define CACHE_CTRL			0x8
+> > > +#define CACHE_RESET_CNTR		BIT_ULL(0)
+> > > +#define CACHE_FREEZE_CNTR		BIT_ULL(8)
+> > > +#define CACHE_CTRL_EVNT			GENMASK_ULL(19, 16)
+> > > +#define CACHE_EVNT_RD_HIT		0x0
+> > > +#define CACHE_EVNT_WR_HIT		0x1
+> > > +#define CACHE_EVNT_RD_MISS		0x2
+> > > +#define CACHE_EVNT_WR_MISS		0x3
+> > > +#define CACHE_EVNT_RSVD			0x4
+> > > +#define CACHE_EVNT_HOLD_REQ		0x5
+> > > +#define CACHE_EVNT_DATA_WR_PORT_CONTEN	0x6
+> > > +#define CACHE_EVNT_TAG_WR_PORT_CONTEN	0x7
+> > > +#define CACHE_EVNT_TX_REQ_STALL		0x8
+> > > +#define CACHE_EVNT_RX_REQ_STALL		0x9
+> > > +#define CACHE_EVNT_EVICTIONS		0xa
+> > > +#define CACHE_EVNT_MAX			CACHE_EVNT_EVICTIONS
+> > > +#define CACHE_CHANNEL_SEL		BIT_ULL(20)
+> > > +#define CACHE_CHANNEL_RD		0
+> > > +#define CACHE_CHANNEL_WR		1
+> > > +#define CACHE_CHANNEL_MAX		2
+> > > +#define CACHE_CNTR0			0x10
+> > > +#define CACHE_CNTR1			0x18
+> > > +#define CACHE_CNTR_EVNT_CNTR		GENMASK_ULL(47, 0)
+> > > +#define CACHE_CNTR_EVNT			GENMASK_ULL(63, 60)
+> > > +
+> > > +/*
+> > > + * Performance Counter Registers for Fabric.
+> > > + *
+> > > + * Fabric Events are listed below as FAB_EVNT_*
+> > > + */
+> > > +#define FAB_CTRL			0x20
+> > > +#define FAB_RESET_CNTR			BIT_ULL(0)
+> > > +#define FAB_FREEZE_CNTR			BIT_ULL(8)
+> > > +#define FAB_CTRL_EVNT			GENMASK_ULL(19, 16)
+> > > +#define FAB_EVNT_PCIE0_RD		0x0
+> > > +#define FAB_EVNT_PCIE0_WR		0x1
+> > > +#define FAB_EVNT_PCIE1_RD		0x2
+> > > +#define FAB_EVNT_PCIE1_WR		0x3
+> > > +#define FAB_EVNT_UPI_RD			0x4
+> > > +#define FAB_EVNT_UPI_WR			0x5
+> > > +#define FAB_EVNT_MMIO_RD		0x6
+> > > +#define FAB_EVNT_MMIO_WR		0x7
+> > > +#define FAB_EVNT_MAX			FAB_EVNT_MMIO_WR
+> > > +#define FAB_PORT_ID			GENMASK_ULL(21, 20)
+> > > +#define FAB_PORT_FILTER			BIT_ULL(23)
+> > > +#define FAB_PORT_FILTER_DISABLE		0
+> > > +#define FAB_PORT_FILTER_ENABLE		1
+> > > +#define FAB_CNTR			0x28
+> > > +#define FAB_CNTR_EVNT_CNTR		GENMASK_ULL(59, 0)
+> > > +#define FAB_CNTR_EVNT			GENMASK_ULL(63, 60)
+> > > +
+> > > +/*
+> > > + * Performance Counter Registers for Clock.
+> > > + *
+> > > + * Clock Counter can't be reset or frozen by SW.
+> > > + */
+> > > +#define CLK_CNTR			0x30
+> > > +
+> > > +/*
+> > > + * Performance Counter Registers for IOMMU / VT-D.
+> > > + *
+> > > + * VT-D Events are listed below as VTD_EVNT_* and VTD_SIP_EVNT_*
+> > > + */
+> > > +#define VTD_CTRL			0x38
+> > > +#define VTD_RESET_CNTR			BIT_ULL(0)
+> > > +#define VTD_FREEZE_CNTR			BIT_ULL(8)
+> > > +#define VTD_CTRL_EVNT			GENMASK_ULL(19, 16)
+> > > +#define VTD_EVNT_AFU_MEM_RD_TRANS	0x0
+> > > +#define VTD_EVNT_AFU_MEM_WR_TRANS	0x1
+> > > +#define VTD_EVNT_AFU_DEVTLB_RD_HIT	0x2
+> > > +#define VTD_EVNT_AFU_DEVTLB_WR_HIT	0x3
+> > > +#define VTD_EVNT_DEVTLB_4K_FILL		0x4
+> > > +#define VTD_EVNT_DEVTLB_2M_FILL		0x5
+> > > +#define VTD_EVNT_DEVTLB_1G_FILL		0x6
+> > > +#define VTD_EVNT_MAX			VTD_EVNT_DEVTLB_1G_FILL
+> > > +#define VTD_CNTR			0x40
+> > > +#define VTD_CNTR_EVNT			GENMASK_ULL(63, 60)
+> > > +#define VTD_CNTR_EVNT_CNTR		GENMASK_ULL(47, 0)
+> > > +#define VTD_SIP_CTRL			0x48
+> > > +#define VTD_SIP_RESET_CNTR		BIT_ULL(0)
+> > > +#define VTD_SIP_FREEZE_CNTR		BIT_ULL(8)
+> > > +#define VTD_SIP_CTRL_EVNT		GENMASK_ULL(19, 16)
+> > > +#define VTD_SIP_EVNT_IOTLB_4K_HIT	0x0
+> > > +#define VTD_SIP_EVNT_IOTLB_2M_HIT	0x1
+> > > +#define VTD_SIP_EVNT_IOTLB_1G_HIT	0x2
+> > > +#define VTD_SIP_EVNT_SLPWC_L3_HIT	0x3
+> > > +#define VTD_SIP_EVNT_SLPWC_L4_HIT	0x4
+> > > +#define VTD_SIP_EVNT_RCC_HIT		0x5
+> > > +#define VTD_SIP_EVNT_IOTLB_4K_MISS	0x6
+> > > +#define VTD_SIP_EVNT_IOTLB_2M_MISS	0x7
+> > > +#define VTD_SIP_EVNT_IOTLB_1G_MISS	0x8
+> > > +#define VTD_SIP_EVNT_SLPWC_L3_MISS	0x9
+> > > +#define VTD_SIP_EVNT_SLPWC_L4_MISS	0xa
+> > > +#define VTD_SIP_EVNT_RCC_MISS		0xb
+> > > +#define VTD_SIP_EVNT_MAX		VTD_SIP_EVNT_RCC_MISS
+> > > +#define VTD_SIP_CNTR			0X50
+> > > +#define VTD_SIP_CNTR_EVNT		GENMASK_ULL(63, 60)
+> > > +#define VTD_SIP_CNTR_EVNT_CNTR		GENMASK_ULL(47, 0)
+> > > +
+> > > +#define PERF_OBJ_ROOT_ID		(~0)
+> > > +
+> > > +#define PERF_TIMEOUT			30
+> > > +
+> > > +/**
+> > > + * struct perf_object - object of performance counter
+> > > + *
+> > > + * @id: instance id. PERF_OBJ_ROOT_ID indicates it is a parent object which
+> > > + *      counts performance counters for all instances.
+> > > + * @attr_groups: the sysfs files are associated with this object.
+> > > + * @feature: pointer to related private feature.
+> > > + * @node: used to link itself to parent's children list.
+> > > + * @children: used to link its children objects together.
+> > > + * @kobj: generic kobject interface.
+> > > + *
+> > > + * 'node' and 'children' are used to construct parent-children hierarchy.
+> > > + */
+> > > +struct perf_object {
+> > > +	int id;
+> > > +	const struct attribute_group **attr_groups;
+> > > +	struct dfl_feature *feature;
+> > > +
+> > > +	struct list_head node;
+> > > +	struct list_head children;
+> > > +	struct kobject kobj;
+> > 
+> > Woah, why are you using a "raw" kobject and not a 'struct device' here?
+> > You just broke userspace and no libraries will see your kobject's
+> > properties as the "chain" of struct devices is not happening anymore.
+> > 
+> > Why can this not just be a 'struct device'?
+> 
+> Hi Greg,
+> 
+> Many thanks for the review and comments.
+> 
+> Actually we are just trying to create sysfs hierarchy for performance
+> counters using these data structures.
+> 
+> If we use 'struct device' instead of kobject, then we have to let userspace
+> code to deal with device's sysfs (e.g. ignore 'uevent' below). This is the
+> only concern from my side now, as I know that using 'struct device'
+> saves code as we don't need to introduce a new perf_obj_attribute then.
+> 
+> dfl-fme.0/perf/
+>  ├── iommu
+>  │   ├── afu0
+>  │   │   ├── devtlb_1g_fill
+>  │   │   ├── devtlb_2m_fill
+>  │   │   ├── devtlb_4k_fill
+>  │   │   ├── devtlb_read_hit
+>  │   │   ├── devtlb_write_hit
+>  │   │   ├── read_transaction
+>  │   │   ├── uevent
+>  │   │   └── write_transaction
+>  │   ├── freeze
+>  │   ├── iotlb_1g_hit
+>  │   ├── iotlb_1g_miss
+> 	 ...
+>      └── uevent
+>  ...
+> 
+> Do you think if we could keep it or it's better to use 'struct device'?
 
-On Sat, Jun 1, 2019 at 5:39 AM Joel Fernandes (Google)
-<joel@joelfernandes.org> wrote:
->
-> We keep the initially written audit examples and add to it, since the
-> code that audit has is still relevant even though slightly different in
-> the kernel.
->
-> Cc: rcu@vger.kernel.org
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> ---
->  Documentation/RCU/listRCU.txt | 154 +++++++++++++++++++++++++++++++---
->  1 file changed, 144 insertions(+), 10 deletions(-)
->
-> diff --git a/Documentation/RCU/listRCU.txt b/Documentation/RCU/listRCU.txt
-> index adb5a3782846..af5bf1bd689c 100644
-> --- a/Documentation/RCU/listRCU.txt
-> +++ b/Documentation/RCU/listRCU.txt
-> @@ -7,8 +7,54 @@ is that all of the required memory barriers are included for you in
->  the list macros.  This document describes several applications of RCU,
->  with the best fits first.
->
-> -
-> -Example 1: Read-Side Action Taken Outside of Lock, No In-Place Updates
-> +Example 1: Read-mostly list: Deferred Destruction
-> +
-> +A widely used usecase for RCU lists in the kernel is lockless iteration over
-> +all processes in the system. task_struct::tasks represents the list node that
-> +links all the processes. The list can be traversed in parallel to any list
-> +additions or removals.
-> +
-> +The traversal of the list is done using for_each_process() which is defined by
-> +the 2 macros:
-> +
-> +#define next_task(p) \
-> +       list_entry_rcu((p)->tasks.next, struct task_struct, tasks)
-> +
-> +#define for_each_process(p) \
-> +       for (p = &init_task ; (p = next_task(p)) != &init_task ; )
-> +
-> +The code traversing the list of all processes typically looks like:
-> +rcu_read_lock();
-> +for_each_process(p) {
-> +       /* Do something with p */
-> +}
-> +rcu_read_unlock();
-> +
-> +Thes code (simplified) removing a process from the task lists is in
-> +release_task():
-> +
-> +void release_task(struct task_struct *p)
-> +{
-> +       write_lock(&tasklist_lock);
-> +       list_del_rcu(&p->tasks);
-> +       write_unlock(&tasklist_lock);
-> +       call_rcu(&p->rcu, delayed_put_task_struct);
-> +}
-> +
-> +When a process exits, release_task() calls list_del_rcu(&p->tasks) to remove
-> +the task from the list of all tasks, under tasklist_lock writer lock
-> +protection. The tasklist_lock prevents concurrent list adds/removes from
-> +corrupting the list. Readers using for_each_process() are not protected with
-> +the tasklist_lock. To prevent readers from appearing to notice changes in the
-> +list pointers, the task_struct object is freed only after one more more grace
-> +periods elapse (with the help of call_rcu). This deferring of destruction
-> +ensures that any readers traversing the list will see valid p->tasks.next
-> +pointers and deletion/freeing can happen in parallel to traversal of the list.
-> +This pattern is also called an "existence lock" sometimes, since RCU makes sure
-> +the object exists in memory as long as readers exist, that are traversing.
-> +
-> +
-> +Example 2: Read-Side Action Taken Outside of Lock, No In-Place Updates
->
->  The best applications are cases where, if reader-writer locking were
->  used, the read-side lock would be dropped before taking any action
-> @@ -32,7 +78,7 @@ implementation of audit_filter_task() might be as follows:
->                 enum audit_state   state;
->
->                 read_lock(&auditsc_lock);
-> -               /* Note: audit_netlink_sem held by caller. */
-> +               /* Note: audit_filter_mutex held by caller. */
->                 list_for_each_entry(e, &audit_tsklist, list) {
->                         if (audit_filter_rules(tsk, &e->rule, NULL, &state)) {
->                                 read_unlock(&auditsc_lock);
-> @@ -56,7 +102,7 @@ This means that RCU can be easily applied to the read side, as follows:
->                 enum audit_state   state;
->
->                 rcu_read_lock();
-> -               /* Note: audit_netlink_sem held by caller. */
-> +               /* Note: audit_filter_mutex held by caller. */
->                 list_for_each_entry_rcu(e, &audit_tsklist, list) {
->                         if (audit_filter_rules(tsk, &e->rule, NULL, &state)) {
->                                 rcu_read_unlock();
-> @@ -139,7 +185,7 @@ Following are the RCU equivalents for these two functions:
->
->  Normally, the write_lock() and write_unlock() would be replaced by
->  a spin_lock() and a spin_unlock(), but in this case, all callers hold
-> -audit_netlink_sem, so no additional locking is required.  The auditsc_lock
-> +audit_filter_mutex, so no additional locking is required.  The auditsc_lock
->  can therefore be eliminated, since use of RCU eliminates the need for
->  writers to exclude readers.  Normally, the write_lock() calls would
->  be converted into spin_lock() calls.
-> @@ -155,7 +201,7 @@ So, when readers can tolerate stale data and when entries are either added
->  or deleted, without in-place modification, it is very easy to use RCU!
->
->
-> -Example 2: Handling In-Place Updates
-> +Example 3: Handling In-Place Updates
->
->  The system-call auditing code does not update auditing rules in place.
->  However, if it did, reader-writer-locked code to do so might look as
-> @@ -171,7 +217,7 @@ otherwise, the added fields would need to be filled in):
->                 struct audit_newentry *ne;
->
->                 write_lock(&auditsc_lock);
-> -               /* Note: audit_netlink_sem held by caller. */
-> +               /* Note: audit_filter_mutex held by caller. */
->                 list_for_each_entry(e, list, list) {
->                         if (!audit_compare_rule(rule, &e->rule)) {
->                                 e->rule.action = newaction;
-> @@ -213,13 +259,23 @@ RCU ("read-copy update") its name.  The RCU code is as follows:
->                 return -EFAULT;         /* No matching rule */
->         }
->
-> -Again, this assumes that the caller holds audit_netlink_sem.  Normally,
-> +Again, this assumes that the caller holds audit_filter_mutex.  Normally,
->  the reader-writer lock would become a spinlock in this sort of code.
->
-> +Another use of this pattern can be found in the openswitch driver's "connection
-> +tracking table" code (ct_limit_set()). The table holds connection tracking
-> +entries and has a limit on the maximum entries. There is one such table
-> +per-zone and hence one "limit" per zone. The zones are mapped to their limits
-> +through a hashtable using an RCU-managed hlist for the hash chains. When a new
-> +limit is to be set, a new limit object is allocated and ct_limit_set() is
-> +called to replace the old limit object with the new one using
-> +list_replace_rcu(). The old limit object is then freed after a grace period
-> +using kfree_rcu().
-> +
->
-> -Example 3: Eliminating Stale Data
-> +Example 4: Eliminating Stale Data
->
-> -The auditing examples above tolerate stale data, as do most algorithms
-> +The auditing exampes above tolerates stale data, as do most algorithms
->  that are tracking external state.  Because there is a delay from the
->  time the external state changes before Linux becomes aware of the change,
->  additional RCU-induced staleness is normally not a problem.
-> @@ -291,6 +347,84 @@ flag under the spinlock as follows:
->         }
->
->
-> +EXAMPLE 5: Skipping Stale Objects
-> +
-> +Stale data can also be eliminated for performance reasons since it is pointless
-> +to process items in a list, if the object is being destroyed.  One such example
-> +can be found in the timerfd subsystem. When a CLOCK_REALTIME clock is
-> +reprogrammed - for example due to setting of the system time, then all programmed
-> +timerfds that depend on this clock get triggered and processes waiting on them
-> +to expire are woken up in advance of their scheduled expiry. To facilitate
-> +this, all such timers are added to a 'cancel_list' when they are setup in
-> +timerfd_setup_cancel:
-> +
-> +static void timerfd_setup_cancel(struct timerfd_ctx *ctx, int flags)
-> +{
-> +       spin_lock(&ctx->cancel_lock);
-> +       if ((ctx->clockid == CLOCK_REALTIME &&
-> +           (flags & TFD_TIMER_ABSTIME) && (flags & TFD_TIMER_CANCEL_ON_SET)) {
-> +               if (!ctx->might_cancel) {
-> +                       ctx->might_cancel = true;
-> +                       spin_lock(&cancel_lock);
-> +                       list_add_rcu(&ctx->clist, &cancel_list);
-> +                       spin_unlock(&cancel_lock);
-> +               }
-> +       }
-> +       spin_unlock(&ctx->cancel_lock);
-> +}
-> +
-> +When a timerfd is freed (fd is closed), then the might_cancel flag of the
-> +timerfd object is cleared, the object removed from the cancel_list and destroyed:
-> +
-> +int timerfd_release(struct inode *inode, struct file *file)
-> +{
-> +       struct timerfd_ctx *ctx = file->private_data;
-> +
-> +       spin_lock(&ctx->cancel_lock);
-> +       if (ctx->might_cancel) {
-> +               ctx->might_cancel = false;
-> +               spin_lock(&cancel_lock);
-> +               list_del_rcu(&ctx->clist);
-> +               spin_unlock(&cancel_lock);
-> +       }
-> +       spin_unlock(&ctx->cancel_lock);
-> +
-> +       hrtimer_cancel(&ctx->t.tmr);
-> +       kfree_rcu(ctx, rcu);
-> +       return 0;
-> +}
-> +
-> +If the CLOCK_REALTIME clock is set, for example by a time server, the hrtimer
-> +framework calls timerfd_clock_was_set() which walks the cancel_list and wakes
-> +up processes waiting on the timerfd. While iterating the cancel list, the
-> +might_cancel flag is consulted to skip stale objects:
-> +
-> +void timerfd_clock_was_set(void)
-> +{
-> +       struct timerfd_ctx *ctx;
-> +       unsigned long flags;
-> +
-> +       rcu_read_lock();
-> +       list_for_each_entry_rcu(ctx, &cancel_list, clist) {
-> +               if (!ctx->might_cancel)
-> +                       continue;
-> +               spin_lock_irqsave(&ctx->wqh.lock, flags);
-> +               if (ctx->moffs != ktime_mono_to_real(0)) {
-> +                       ctx->moffs = KTIME_MAX;
-> +                       ctx->ticks++;
-> +                       wake_up_locked_poll(&ctx->wqh, EPOLLIN);
-> +               }
-> +               spin_unlock_irqrestore(&ctx->wqh.lock, flags);
-> +       }
-> +       rcu_read_unlock();
-> +}
-> +
-> +The key point here is, because RCU-traversal of the cancel_list happens while
-> +objects are being added and removed to the list, sometimes the traversal can
-> +step on an object that has been removed from the list. In this example, it is
-> +seen that it is better to skip such objects using a flag.
-> +
-> +
->  Summary
->
->  Read-mostly list-based data structures that can tolerate stale data are
-> --
-> 2.22.0.rc1.311.g5d7573a151-goog
->
+What about using the attribute group name?  That gives you a subdir for
+free.  Doing anything "deeper" than one level means that you really have
+a child device, and yes, you need to use a 'struct device'.  Make it
+part of your bus and just have it be a different "type" and all should
+be good.
+
+Again, NEVER use a raw kobject as a child of a 'struct device', that
+will break things.
+
+And please cc: me on this series from now on, as you are obviously
+trying to do complex things with the driver model and sysfs and it is
+easy to get very wrong.
+
+But wait, step back, why does this one driver have such a "special"
+user/kernel api that unique to it and nothing else?  That's also a big
+red flag, why not just use the normal perf api that everyone else uses?
+
+thanks,
+
+greg k-h
