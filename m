@@ -2,81 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1498031AE5
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 11:26:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D75F31B01
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 11:38:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727285AbfFAJ0x convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 1 Jun 2019 05:26:53 -0400
-Received: from mail.fireflyinternet.com ([109.228.58.192]:53427 "EHLO
-        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727158AbfFAJ0u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Jun 2019 05:26:50 -0400
-X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
-Received: from localhost (unverified [78.156.65.138]) 
-        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 16757666-1500050 
-        for multiple; Sat, 01 Jun 2019 10:26:25 +0100
-Content-Type: text/plain; charset="utf-8"
+        id S1726988AbfFAJih (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Jun 2019 05:38:37 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33072 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726109AbfFAJig (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Jun 2019 05:38:36 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0B916341;
+        Sat,  1 Jun 2019 02:38:36 -0700 (PDT)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E630B3F5AF;
+        Sat,  1 Jun 2019 02:38:32 -0700 (PDT)
+Date:   Sat, 1 Jun 2019 10:38:30 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Peter Collingbourne <pcc@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Huw Davies <huw@codeweavers.com>
+Subject: Re: [PATCH v6 15/19] arm64: Add vDSO compat support
+Message-ID: <20190601093830.GA13589@arrakis.emea.arm.com>
+References: <20190530141531.43462-1-vincenzo.frascino@arm.com>
+ <20190530141531.43462-16-vincenzo.frascino@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-From:   Chris Wilson <chris@chris-wilson.co.uk>
-In-Reply-To: <20190307153051.18815-1-willy@infradead.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
-        Song Liu <liu.song.a23@gmail.com>
-References: <20190307153051.18815-1-willy@infradead.org>
-Message-ID: <155938118174.22493.11599751119608173366@skylake-alporthouse-com>
-User-Agent: alot/0.6
-Subject: Re: [PATCH v4] page cache: Store only head pages in i_pages
-Date:   Sat, 01 Jun 2019 10:26:21 +0100
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190530141531.43462-16-vincenzo.frascino@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Matthew Wilcox (2019-03-07 15:30:51)
-> Transparent Huge Pages are currently stored in i_pages as pointers to
-> consecutive subpages.  This patch changes that to storing consecutive
-> pointers to the head page in preparation for storing huge pages more
-> efficiently in i_pages.
+On Thu, May 30, 2019 at 03:15:27PM +0100, Vincenzo Frascino wrote:
+> Add vDSO compat support to the arm64 building system.
 > 
-> Large parts of this are "inspired" by Kirill's patch
-> https://lore.kernel.org/lkml/20170126115819.58875-2-kirill.shutemov@linux.intel.com/
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+> ---
+>  arch/arm64/Kconfig         |  1 +
+>  arch/arm64/Makefile        | 23 +++++++++++++++++++++--
+>  arch/arm64/kernel/Makefile |  6 +++++-
+>  3 files changed, 27 insertions(+), 3 deletions(-)
 > 
-> Signed-off-by: Matthew Wilcox <willy@infradead.org>
-> Acked-by: Jan Kara <jack@suse.cz>
-> Reviewed-by: Kirill Shutemov <kirill@shutemov.name>
-> Reviewed-and-tested-by: Song Liu <songliubraving@fb.com>
-> Tested-by: William Kucharski <william.kucharski@oracle.com>
-> Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 952c9f8cf3b8..3e1d4f8347f4 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -108,6 +108,7 @@ config ARM64
+>  	select GENERIC_STRNLEN_USER
+>  	select GENERIC_TIME_VSYSCALL
+>  	select GENERIC_GETTIMEOFDAY
+> +	select GENERIC_COMPAT_VDSO if !CPU_BIG_ENDIAN
 
-I've bisected some new softlockups under THP mempressure to this patch.
-They are all rcu stalls that look similar to:
-[  242.645276] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-[  242.645293] rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-3): P828
-[  242.645301] 	(detected by 1, t=5252 jiffies, g=55501, q=221)
-[  242.645307] gem_syslatency  R  running task        0   828    815 0x00004000
-[  242.645315] Call Trace:
-[  242.645326]  ? __schedule+0x1a0/0x440
-[  242.645332]  ? preempt_schedule_irq+0x27/0x50
-[  242.645337]  ? apic_timer_interrupt+0xa/0x20
-[  242.645342]  ? xas_load+0x3c/0x80
-[  242.645347]  ? xas_load+0x8/0x80
-[  242.645353]  ? find_get_entry+0x4f/0x130
-[  242.645358]  ? pagecache_get_page+0x2b/0x210
-[  242.645364]  ? lookup_swap_cache+0x42/0x100
-[  242.645371]  ? do_swap_page+0x6f/0x600
-[  242.645375]  ? unmap_region+0xc2/0xe0
-[  242.645380]  ? __handle_mm_fault+0x7a9/0xfa0
-[  242.645385]  ? handle_mm_fault+0xc2/0x1c0
-[  242.645393]  ? __do_page_fault+0x198/0x410
-[  242.645399]  ? page_fault+0x5/0x20
-[  242.645404]  ? page_fault+0x1b/0x20
+This select needs to also depend on COMPAT (or rather be selected from
+the COMPAT menuconfig), otherwise, trying to build this series with 64K
+pages where COMPAT is disabled, I get:
 
-Any suggestions as to what information you might want?
--Chris
+  VDSOC_GTD   arch/arm64/kernel/vdso32/vgettimeofday.o
+  VDSOA   arch/arm64/kernel/vdso32/sigreturn.o
+arch/arm64/kernel/vdso32/sigreturn.S: Assembler messages:
+arch/arm64/kernel/vdso32/sigreturn.S:25: Error: expected #constant
+arch/arm64/kernel/vdso32/sigreturn.S:35: Error: expected #constant
+arch/arm64/kernel/vdso32/sigreturn.S:46: Error: expected #constant
+arch/arm64/kernel/vdso32/sigreturn.S:56: Error: expected #constant
+arch/arm64/kernel/vdso32/sigreturn.S:28: Error: undefined symbol __NR_compat_sigreturn used as an immediate value
+arch/arm64/kernel/vdso32/sigreturn.S:38: Error: undefined symbol __NR_compat_rt_sigreturn used as an immediate value
+make[2]: *** [arch/arm64/kernel/vdso32/Makefile:154: arch/arm64/kernel/vdso32/sigreturn.o] Error 1
+make[2]: *** Waiting for unfinished jobs....
+In file included from lib/vdso/gettimeofday.c:25:0,
+                 from <command-line>:0:
+arch/arm64/include/asm/vdso/compat_gettimeofday.h: In function 'gettimeofday_fallback':
+arch/arm64/include/asm/vdso/compat_gettimeofday.h:22:31: error: '__NR_compat_gettimeofday' undeclared (first use in this function); did you mean '__NR_gettimeofday'?
+  register long nr asm("r7") = __NR_compat_gettimeofday;
+                               ^~~~~~~~~~~~~~~~~~~~~~~~
+                               __NR_gettimeofday
+arch/arm64/include/asm/vdso/compat_gettimeofday.h:22:31: note: each undeclared identifier is reported only once for each function it appears in
+arch/arm64/include/asm/vdso/compat_gettimeofday.h: In function 'clock_gettime_fallback':
+arch/arm64/include/asm/vdso/compat_gettimeofday.h:40:31: error: '__NR_compat_clock_gettime64' undeclared (first use in this function); did you mean '__NR_clock_gettime'?
+  register long nr asm("r7") = __NR_compat_clock_gettime64;
+                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+                               __NR_clock_gettime
+arch/arm64/include/asm/vdso/compat_gettimeofday.h: In function 'clock_getres_fallback':
+arch/arm64/include/asm/vdso/compat_gettimeofday.h:58:31: error: '__NR_compat_clock_getres_time64' undeclared (first use in this function); did you mean '__NR_clock_gettime'?
+  register long nr asm("r7") = __NR_compat_clock_getres_time64;
+                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                               __NR_clock_gettime
+arch/arm64/kernel/vdso32/vgettimeofday.c: In function '__vdso_clock_gettime':
+arch/arm64/kernel/vdso32/vgettimeofday.c:15:17: error: 'TASK_SIZE_32' undeclared (first use in this function); did you mean 'TASK_SIZE_64'?
+  if ((u32)ts >= TASK_SIZE_32)
+                 ^~~~~~~~~~~~
+                 TASK_SIZE_64
+arch/arm64/kernel/vdso32/vgettimeofday.c: In function '__vdso_clock_gettime64':
+arch/arm64/kernel/vdso32/vgettimeofday.c:25:17: error: 'TASK_SIZE_32' undeclared (first use in this function); did you mean 'TASK_SIZE_64'?
+  if ((u32)ts >= TASK_SIZE_32)
+                 ^~~~~~~~~~~~
+                 TASK_SIZE_64
+arch/arm64/kernel/vdso32/vgettimeofday.c: In function '__vdso_clock_getres':
+arch/arm64/kernel/vdso32/vgettimeofday.c:41:18: error: 'TASK_SIZE_32' undeclared (first use in this function); did you mean 'TASK_SIZE_64'?
+  if ((u32)res >= TASK_SIZE_32)
+                  ^~~~~~~~~~~~
+                  TASK_SIZE_64
+make[2]: *** [arch/arm64/kernel/vdso32/Makefile:152: arch/arm64/kernel/vdso32/vgettimeofday.o] Error 1
+make[1]: *** [arch/arm64/Makefile:182: vdso_prepare] Error 2
+make: *** [Makefile:179: sub-make] Error 2
+
+-- 
+Catalin
