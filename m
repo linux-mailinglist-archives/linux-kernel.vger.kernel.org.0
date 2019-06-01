@@ -2,43 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4B66319CF
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 08:05:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F821319D1
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 08:08:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbfFAGFI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Jun 2019 02:05:08 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:45675 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726013AbfFAGFH (ORCPT
+        id S1726794AbfFAGII (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Jun 2019 02:08:08 -0400
+Received: from mail-it1-f198.google.com ([209.85.166.198]:44629 "EHLO
+        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbfFAGIH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Jun 2019 02:05:07 -0400
-Received: by mail-io1-f72.google.com with SMTP id b197so9309607iof.12
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 23:05:06 -0700 (PDT)
+        Sat, 1 Jun 2019 02:08:07 -0400
+Received: by mail-it1-f198.google.com with SMTP id o83so10110592itc.9
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 23:08:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=lT9g1a8Jz+3l58k+6DJ9mGkbBuPDfzIGdcwqTqL45gU=;
-        b=JpNDBZ2oBUtxe2MpcLA3WnDozxIcChxuPOA0zGwRdJCyUysP63vP4haFs4hWtf8aPX
-         FZx259csvRByzHUqLuITuNXdh3cXdpbHLlUtpLUVmmqHoouHm+AkbSpSLid1TyaKJOLD
-         uCIMOGLcl31IkzEyrmpaYVC2d08B5AMfIwO1cbQe6bU8MlURLvwpUEgZyaurLwVnkEm7
-         Jt5IwkvhDTo5mHK4pxWx+rslE/UDobHZPuI6CUa1CQdAxBCQFyxIGhwdkWeAwwjx0+ZV
-         81hWlkPbel5zrZvL74oLnuw3RDJBXp72qDno7T5cHiyjRkHd5lfc4Yw81syDtjNME8a/
-         Hp/Q==
-X-Gm-Message-State: APjAAAUx7z7AHB4J9Xr+02YBV+HzhYrFbxRhPlWp26/WIaI9utVYKM/j
-        XotvODlkuCZRJDPLpkDeO2mfvaQsZzKV9bq1Fp3CrNvZJsxn
-X-Google-Smtp-Source: APXvYqwkuNOq3KwVRLsW7nAdjeXFj3pLzGZcjf3e6nd2rCXJSUGddk7PrOysX5AEUooodzX2c1Tu3M9lZR2avUmqGOJwkTscsYQc
+        bh=8UTTULkwtsMoOI/rW0r8zzkuES3tsjU/CYGnZsvOq0A=;
+        b=DU2JTklTR1CRgEmwjZ2umN2dfgz1epeknVxehHnsMZxZGfAPwBmkXPbE0QYHBqbBuZ
+         PZcUPO1ljzr0OGuKPpc7ms7ggoee6mSiYBR90kIlvJjJWsEiPtWUNnBJyFVp3DlULDeU
+         TR+eDVL3Phs8MMCYSYla2WofEnVCdu23ZdEgMGcWHCWPjcXYw8x/UR6gKfq4ApTtvd12
+         5Mu0XhVKKCjBlolG+L8pdIovxvyvUYRSPbuFKKOE9VCrC0HS6gByXgVA4pg/tLzAjnoo
+         QU1C4nmc2dGQghWGl68dyCQJ6YB3eN+Ga6o6e02WWYlAkaKWXMchxaQqrKgEgZoKW5pI
+         wiqw==
+X-Gm-Message-State: APjAAAVADSdM2YDHC6dBebNlOeDN1AxBLQe2L/V4RHglYN+pK9p2R+9K
+        ZtnhH+Z8/iCDnZ3WpyAWVw1hpdYwXDiL+2qw5XLFEG2qIoR2
+X-Google-Smtp-Source: APXvYqyoP4KycHe/yLu9ubg6c4LS27pyf8cjRjLpGHwo+8mvuKiQmLRx52XI1LxAUJBaatKAcf/+leBPrwwYQyNHEWI8payr2RHU
 MIME-Version: 1.0
-X-Received: by 2002:a24:1c0a:: with SMTP id c10mr9570178itc.45.1559369106288;
- Fri, 31 May 2019 23:05:06 -0700 (PDT)
-Date:   Fri, 31 May 2019 23:05:06 -0700
+X-Received: by 2002:a5e:961a:: with SMTP id a26mr8752787ioq.125.1559369285382;
+ Fri, 31 May 2019 23:08:05 -0700 (PDT)
+Date:   Fri, 31 May 2019 23:08:05 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a7776f058a3ce9db@google.com>
-Subject: KASAN: user-memory-access Read in ip6_hold_safe (3)
-From:   syzbot <syzbot+a5b6e01ec8116d046842@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
+Message-ID: <000000000000543e45058a3cf40b@google.com>
+Subject: possible deadlock in get_user_pages_unlocked (2)
+From:   syzbot <syzbot+e1374b2ec8f6a25ab2e5@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, aneesh.kumar@linux.ibm.com,
+        dan.j.williams@intel.com, ira.weiny@intel.com, jhubbard@nvidia.com,
+        keith.busch@intel.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, rppt@linux.ibm.com, sfr@canb.auug.org.au,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -49,97 +51,153 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    dfb569f2 net: ll_temac: Fix compile error
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=10afcb8aa00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fc045131472947d7
-dashboard link: https://syzkaller.appspot.com/bug?extid=a5b6e01ec8116d046842
+HEAD commit:    3c09c195 Add linux-next specific files for 20190531
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=13b36b9aa00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6cfb24468280cd5c
+dashboard link: https://syzkaller.appspot.com/bug?extid=e1374b2ec8f6a25ab2e5
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+a5b6e01ec8116d046842@syzkaller.appspotmail.com
+Reported-by: syzbot+e1374b2ec8f6a25ab2e5@syzkaller.appspotmail.com
 
-==================================================================
-BUG: KASAN: user-memory-access in atomic_read  
-include/asm-generic/atomic-instrumented.h:26 [inline]
-BUG: KASAN: user-memory-access in atomic_fetch_add_unless  
-include/linux/atomic-fallback.h:1086 [inline]
-BUG: KASAN: user-memory-access in atomic_add_unless  
-include/linux/atomic-fallback.h:1111 [inline]
-BUG: KASAN: user-memory-access in atomic_inc_not_zero  
-include/linux/atomic-fallback.h:1127 [inline]
-BUG: KASAN: user-memory-access in dst_hold_safe include/net/dst.h:297  
-[inline]
-BUG: KASAN: user-memory-access in ip6_hold_safe+0xad/0x380  
-net/ipv6/route.c:1050
-Read of size 4 at addr 0000000000001ec4 by task syz-executor.0/10106
+======================================================
+WARNING: possible circular locking dependency detected
+5.2.0-rc2-next-20190531 #4 Not tainted
+------------------------------------------------------
+syz-executor.5/29536 is trying to acquire lock:
+0000000031b33a56 (&mm->mmap_sem#2){++++}, at:  
+get_user_pages_unlocked+0xfc/0x4a0 mm/gup.c:1174
 
-CPU: 0 PID: 10106 Comm: syz-executor.0 Not tainted 5.2.0-rc1+ #5
+but task is already holding lock:
+00000000e8d693f5 (&sb->s_type->i_mutex_key#10){++++}, at: inode_trylock  
+include/linux/fs.h:798 [inline]
+00000000e8d693f5 (&sb->s_type->i_mutex_key#10){++++}, at:  
+ext4_file_write_iter+0x246/0x1070 fs/ext4/file.c:232
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&sb->s_type->i_mutex_key#10){++++}:
+        down_write+0x38/0xa0 kernel/locking/rwsem.c:66
+        inode_lock include/linux/fs.h:778 [inline]
+        process_measurement+0x15ae/0x15e0  
+security/integrity/ima/ima_main.c:228
+        ima_file_mmap+0x11a/0x130 security/integrity/ima/ima_main.c:370
+        security_file_mprotect+0xd5/0x100 security/security.c:1430
+        do_mprotect_pkey+0x537/0xa30 mm/mprotect.c:550
+        __do_sys_pkey_mprotect mm/mprotect.c:590 [inline]
+        __se_sys_pkey_mprotect mm/mprotect.c:587 [inline]
+        __x64_sys_pkey_mprotect+0x97/0xf0 mm/mprotect.c:587
+        do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #0 (&mm->mmap_sem#2){++++}:
+        lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:4300
+        down_read+0x3f/0x1e0 kernel/locking/rwsem.c:24
+        get_user_pages_unlocked+0xfc/0x4a0 mm/gup.c:1174
+        __gup_longterm_unlocked mm/gup.c:2193 [inline]
+        get_user_pages_fast+0x43f/0x530 mm/gup.c:2245
+        iov_iter_get_pages+0x2c2/0xf80 lib/iov_iter.c:1287
+        dio_refill_pages fs/direct-io.c:171 [inline]
+        dio_get_page fs/direct-io.c:215 [inline]
+        do_direct_IO fs/direct-io.c:983 [inline]
+        do_blockdev_direct_IO+0x3f7b/0x8e00 fs/direct-io.c:1336
+        __blockdev_direct_IO+0xa1/0xca fs/direct-io.c:1422
+        ext4_direct_IO_write fs/ext4/inode.c:3782 [inline]
+        ext4_direct_IO+0xaa7/0x1bb0 fs/ext4/inode.c:3909
+        generic_file_direct_write+0x20a/0x4a0 mm/filemap.c:3110
+        __generic_file_write_iter+0x2ee/0x630 mm/filemap.c:3293
+        ext4_file_write_iter+0x332/0x1070 fs/ext4/file.c:266
+        call_write_iter include/linux/fs.h:1870 [inline]
+        new_sync_write+0x4d3/0x770 fs/read_write.c:483
+        __vfs_write+0xe1/0x110 fs/read_write.c:496
+        vfs_write+0x268/0x5d0 fs/read_write.c:558
+        ksys_write+0x14f/0x290 fs/read_write.c:611
+        __do_sys_write fs/read_write.c:623 [inline]
+        __se_sys_write fs/read_write.c:620 [inline]
+        __x64_sys_write+0x73/0xb0 fs/read_write.c:620
+        do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+other info that might help us debug this:
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(&sb->s_type->i_mutex_key#10);
+                                lock(&mm->mmap_sem#2);
+                                lock(&sb->s_type->i_mutex_key#10);
+   lock(&mm->mmap_sem#2);
+
+  *** DEADLOCK ***
+
+3 locks held by syz-executor.5/29536:
+  #0: 000000007070e315 (&f->f_pos_lock){+.+.}, at: __fdget_pos+0xee/0x110  
+fs/file.c:801
+  #1: 000000001278f3d0 (sb_writers#3){.+.+}, at: file_start_write  
+include/linux/fs.h:2836 [inline]
+  #1: 000000001278f3d0 (sb_writers#3){.+.+}, at: vfs_write+0x485/0x5d0  
+fs/read_write.c:557
+  #2: 00000000e8d693f5 (&sb->s_type->i_mutex_key#10){++++}, at:  
+inode_trylock include/linux/fs.h:798 [inline]
+  #2: 00000000e8d693f5 (&sb->s_type->i_mutex_key#10){++++}, at:  
+ext4_file_write_iter+0x246/0x1070 fs/ext4/file.c:232
+
+stack backtrace:
+CPU: 0 PID: 29536 Comm: syz-executor.5 Not tainted 5.2.0-rc2-next-20190531  
+#4
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  __kasan_report.cold+0x5/0x40 mm/kasan/report.c:321
-  kasan_report+0x12/0x20 mm/kasan/common.c:614
-  check_memory_region_inline mm/kasan/generic.c:185 [inline]
-  check_memory_region+0x123/0x190 mm/kasan/generic.c:191
-  kasan_check_read+0x11/0x20 mm/kasan/common.c:94
-  atomic_read include/asm-generic/atomic-instrumented.h:26 [inline]
-  atomic_fetch_add_unless include/linux/atomic-fallback.h:1086 [inline]
-  atomic_add_unless include/linux/atomic-fallback.h:1111 [inline]
-  atomic_inc_not_zero include/linux/atomic-fallback.h:1127 [inline]
-  dst_hold_safe include/net/dst.h:297 [inline]
-  ip6_hold_safe+0xad/0x380 net/ipv6/route.c:1050
-  rt6_get_pcpu_route net/ipv6/route.c:1277 [inline]
-  ip6_pol_route+0x339/0x1050 net/ipv6/route.c:1956
-  ip6_pol_route_output+0x54/0x70 net/ipv6/route.c:2132
-  fib6_rule_lookup+0x133/0x5a0 net/ipv6/fib6_rules.c:116
-  ip6_route_output_flags+0x2c4/0x350 net/ipv6/route.c:2161
-  ip6_route_output include/net/ip6_route.h:89 [inline]
-  ip6_dst_lookup_tail+0xd10/0x1b30 net/ipv6/ip6_output.c:966
-  ip6_dst_lookup_flow+0xa8/0x220 net/ipv6/ip6_output.c:1094
-  sctp_v6_get_dst+0x785/0x1d80 net/sctp/ipv6.c:293
-  sctp_transport_route+0x12d/0x360 net/sctp/transport.c:312
-  sctp_assoc_add_peer+0x53e/0xfc0 net/sctp/associola.c:678
-  sctp_process_param net/sctp/sm_make_chunk.c:2546 [inline]
-  sctp_process_init+0x2491/0x2b10 net/sctp/sm_make_chunk.c:2359
-  sctp_cmd_process_init net/sctp/sm_sideeffect.c:682 [inline]
-  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1384 [inline]
-  sctp_side_effects net/sctp/sm_sideeffect.c:1194 [inline]
-  sctp_do_sm+0x3a30/0x50e0 net/sctp/sm_sideeffect.c:1165
-  sctp_assoc_bh_rcv+0x343/0x660 net/sctp/associola.c:1074
-  sctp_inq_push+0x1e4/0x280 net/sctp/inqueue.c:95
-  sctp_backlog_rcv+0x196/0xbe0 net/sctp/input.c:354
-  sk_backlog_rcv include/net/sock.h:950 [inline]
-  __release_sock+0x129/0x390 net/core/sock.c:2418
-  release_sock+0x59/0x1c0 net/core/sock.c:2934
-  sctp_wait_for_connect+0x316/0x540 net/sctp/socket.c:9054
-  __sctp_connect+0xab2/0xcd0 net/sctp/socket.c:1241
-  __sctp_setsockopt_connectx+0x133/0x1a0 net/sctp/socket.c:1349
-  sctp_setsockopt_connectx_old net/sctp/socket.c:1365 [inline]
-  sctp_setsockopt net/sctp/socket.c:4659 [inline]
-  sctp_setsockopt+0x22c0/0x6d10 net/sctp/socket.c:4623
-  sock_common_setsockopt+0x94/0xd0 net/core/sock.c:3130
-  __sys_setsockopt+0x17a/0x280 net/socket.c:2078
-  __do_sys_setsockopt net/socket.c:2089 [inline]
-  __se_sys_setsockopt net/socket.c:2086 [inline]
-  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:2086
+  print_circular_bug.cold+0x1cc/0x28f kernel/locking/lockdep.c:1566
+  check_prev_add kernel/locking/lockdep.c:2311 [inline]
+  check_prevs_add kernel/locking/lockdep.c:2419 [inline]
+  validate_chain kernel/locking/lockdep.c:2801 [inline]
+  __lock_acquire+0x3755/0x5490 kernel/locking/lockdep.c:3790
+  lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:4300
+  down_read+0x3f/0x1e0 kernel/locking/rwsem.c:24
+  get_user_pages_unlocked+0xfc/0x4a0 mm/gup.c:1174
+  __gup_longterm_unlocked mm/gup.c:2193 [inline]
+  get_user_pages_fast+0x43f/0x530 mm/gup.c:2245
+  iov_iter_get_pages+0x2c2/0xf80 lib/iov_iter.c:1287
+  dio_refill_pages fs/direct-io.c:171 [inline]
+  dio_get_page fs/direct-io.c:215 [inline]
+  do_direct_IO fs/direct-io.c:983 [inline]
+  do_blockdev_direct_IO+0x3f7b/0x8e00 fs/direct-io.c:1336
+  __blockdev_direct_IO+0xa1/0xca fs/direct-io.c:1422
+  ext4_direct_IO_write fs/ext4/inode.c:3782 [inline]
+  ext4_direct_IO+0xaa7/0x1bb0 fs/ext4/inode.c:3909
+  generic_file_direct_write+0x20a/0x4a0 mm/filemap.c:3110
+  __generic_file_write_iter+0x2ee/0x630 mm/filemap.c:3293
+  ext4_file_write_iter+0x332/0x1070 fs/ext4/file.c:266
+  call_write_iter include/linux/fs.h:1870 [inline]
+  new_sync_write+0x4d3/0x770 fs/read_write.c:483
+  __vfs_write+0xe1/0x110 fs/read_write.c:496
+  vfs_write+0x268/0x5d0 fs/read_write.c:558
+  ksys_write+0x14f/0x290 fs/read_write.c:611
+  __do_sys_write fs/read_write.c:623 [inline]
+  __se_sys_write fs/read_write.c:620 [inline]
+  __x64_sys_write+0x73/0xb0 fs/read_write.c:620
   do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
 RIP: 0033:0x459279
 Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
 ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ff1e859ec78 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000459279
-RDX: 000000000000006b RSI: 0000000000000084 RDI: 0000000000000006
-RBP: 000000000075bf20 R08: 000000000000001c R09: 0000000000000000
-R10: 000000002055bfe4 R11: 0000000000000246 R12: 00007ff1e859f6d4
-R13: 00000000004cea80 R14: 00000000004dced0 R15: 00000000ffffffff
-==================================================================
+RSP: 002b:00007f65e9a0fc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000459279
+RDX: 000000010000000d RSI: 0000000020000000 RDI: 0000000000000004
+RBP: 000000000075bfc0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f65e9a106d4
+R13: 00000000004c8e8a R14: 00000000004dfae0 R15: 00000000ffffffff
 
 
 ---
