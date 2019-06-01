@@ -2,182 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABC1B31B0F
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 11:51:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18B1731B1E
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 11:53:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727075AbfFAJvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Jun 2019 05:51:19 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37399 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726832AbfFAJvS (ORCPT
+        id S1726839AbfFAJwx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Jun 2019 05:52:53 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:57066 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726134AbfFAJwv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Jun 2019 05:51:18 -0400
-Received: by mail-pg1-f195.google.com with SMTP id 20so5437661pgr.4
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2019 02:51:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=RNxGbxuQjJnKHmflH8io0Yh7K3STajOAFY5UlUeImlE=;
-        b=ftzq3jR2++4o8NJW8hDTNe4IEPPtpBxc6+CvixxSQYqrrMYyMK0FzKvHhVlVMpyjLp
-         tsuJMJbjfLULDaK8sjJNLkWrG9vMaaoGRnWlq0I6CSgjjB8uz8CX938f5shEc+LbxgsV
-         aI3kxJoTtsRnwz5Q1H9OZv8R6MOdfFvNsQ5gewgkPYS1+z7b/vNHrpeLVukE/dRo6gMn
-         54ps7O57q9L+8NcpZxWwMTIDedNIrIEmZ2qwSNkT8qyXqDxN3Z3dHi46EyyQC570ti1y
-         SOt7Ls7zsxDaxnTuxtrW4XT7TWqp284BP8+qP/5qZDEAqOV3Wav7gzaRZSro76A9VIWZ
-         V5rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RNxGbxuQjJnKHmflH8io0Yh7K3STajOAFY5UlUeImlE=;
-        b=GmzvIK7iRkX0ytBZmG2B9pY9kMO0JI7fYsZBPTSHDR5dFHHFmDb8kX95X4CpMDc5Er
-         tZPs5t9reKnQsiuNvqGvnMjAfF0Th2iXC6nmD9+BvxgkF7XUPTWt2+ZK5M5svgam8Zl9
-         iQZ2eV60pDeihM8ZpBz6cVwU46hkw6wo753f141aZyowvZohzRu7xM3o6VuO4uAMBorF
-         5PeV0lXh09ifPDXwLK2chOAF9iEvggGzqVjOiMHYe7rfOBT5lPORoVxOuIFf1e9QVmQP
-         CuQHhVRCkKgur33ZNn8hkEfTIN09qItiW+Rda0h4rD8F9kw1FDz9zNZ/ynN5QrLUQ4Nu
-         AgIA==
-X-Gm-Message-State: APjAAAW7hDURS+bToDdjGrKmrUtD31Uoqmy/hrqJrnC4JoQF8453t+rM
-        BS6l0upMnQHzM5kwm14erHDr
-X-Google-Smtp-Source: APXvYqx465ZqZSGI5f9aNCQ1QW6+B2C0NyP5YwUfaCtwz4wNoXssIWR/WyKtFDiUgKvIIdWIaw3JMw==
-X-Received: by 2002:a62:1993:: with SMTP id 141mr15320990pfz.97.1559382677973;
-        Sat, 01 Jun 2019 02:51:17 -0700 (PDT)
-Received: from Mani-XPS-13-9360 ([2405:204:73c0:f79b:51a5:964b:dc02:28ec])
-        by smtp.gmail.com with ESMTPSA id u14sm9611863pfc.31.2019.06.01.02.51.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 01 Jun 2019 02:51:16 -0700 (PDT)
-Date:   Sat, 1 Jun 2019 15:21:06 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Anand Moon <linux.amoon@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Vicente Bergas <vicencb@gmail.com>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: dts: rockchip: Add missing configuration pwr
- amd rst for PCIe
-Message-ID: <20190601095106.GA2213@Mani-XPS-13-9360>
-References: <20190531201913.1122-1-linux.amoon@gmail.com>
+        Sat, 1 Jun 2019 05:52:51 -0400
+X-UUID: 89a4df0d271742b38f24409b7d29a041-20190601
+X-UUID: 89a4df0d271742b38f24409b7d29a041-20190601
+Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <jitao.shi@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 704681345; Sat, 01 Jun 2019 17:52:40 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33DR.mediatek.inc
+ (172.27.6.106) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sat, 1 Jun
+ 2019 17:52:39 +0800
+Received: from mszsdaap41.mediatek.inc (172.27.4.253) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Sat, 1 Jun 2019 17:52:37 +0800
+From:   Jitao Shi <jitao.shi@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        <linux-pwm@vger.kernel.org>, David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     Jitao Shi <jitao.shi@mediatek.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Ajay Kumar <ajaykumar.rs@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Rahul Sharma <rahul.sharma@samsung.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Vincent Palatin <vpalatin@chromium.org>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
+        <cawa.cheng@mediatek.com>, <bibby.hsieh@mediatek.com>,
+        <ck.hu@mediatek.com>, <stonea168@163.com>
+Subject: [v4 0/3] Support mipitx for mt8183
+Date:   Sat, 1 Jun 2019 17:52:32 +0800
+Message-ID: <20190601095235.9194-1-jitao.shi@mediatek.com>
+X-Mailer: git-send-email 2.12.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190531201913.1122-1-linux.amoon@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Changes since v3:
+ - turn off PLL before setting PLL parameters.
 
-On Fri, May 31, 2019 at 08:19:13PM +0000, Anand Moon wrote:
-> This patch add missing PCIe gpio pin (#PCIE_PWR) for vcc3v3_pcie power
-> regulator node also add missing reset pinctrl (#PCIE_PERST_L) for PCIe node.
-> 
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
-> using schematics: thanks for suggested by Manivannan
-> [1] https://dl.vamrs.com/products/rock960/docs/hw/rock960_sch_v12_20180314.pdf
-> 
-> Changes from prevoius patch:
-> [2] https://patchwork.kernel.org/patch/10968695/
-> 
-> Fix the suject and commit message and corrected the PWR and PERST configuration
-> as per shematics and dts nodes.
-> ---
->  arch/arm64/boot/dts/rockchip/rk3399-ficus.dts    | 7 +++++++
->  arch/arm64/boot/dts/rockchip/rk3399-rock960.dts  | 7 +++++++
->  arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi | 3 +--
->  3 files changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-ficus.dts b/arch/arm64/boot/dts/rockchip/rk3399-ficus.dts
-> index 6b059bd7a04f..94e2a59bc1c7 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399-ficus.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399-ficus.dts
-> @@ -89,6 +89,8 @@
->  
->  &pcie0 {
->  	ep-gpios = <&gpio4 RK_PD4 GPIO_ACTIVE_HIGH>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pcie_clkreqn_cpm &pcie_perst_l>;
+Changes since v2:
+ - update Acked-by: Rob Herring <robh@kernel.org>
+ - update mt8183 max bit rate support
 
-Looks like ep-gpio is wrong here :/ I probably referred old schematics
-at that time. Correct pin mapping is,
+Changes since v1:
+ - update dt-bindings document for mt8183 mipitx.
+ - remove mtk_mipitx_clk_get_ops and assign clk_ops in probe.
+ - fix the lincence
+ - remove txdiv1 from mtk_mipi_tx_pll_prepare
 
-ep-gpios = <&gpio2 RK_PD4 GPIO_ACTIVE_HIGH>;
+Jitao Shi (3):
+  dt-bindings: display: mediatek: update dsi supported chips
+  drm/mediatek: separate mipi_tx to different file
+  drm/mediatek: add mipi_tx driver for mt8183
 
-And this should be fixed in a separate patch with "Fixes" tag!
+ .../bindings/display/mediatek/mediatek,dsi.txt     |   2 +-
+ drivers/gpu/drm/mediatek/Makefile                  |   2 +
+ drivers/gpu/drm/mediatek/mtk_mipi_tx.c             | 345 ++-------------------
+ drivers/gpu/drm/mediatek/mtk_mipi_tx.h             |  50 +++
+ drivers/gpu/drm/mediatek/mtk_mt8173_mipi_tx.c      | 289 +++++++++++++++++
+ drivers/gpu/drm/mediatek/mtk_mt8183_mipi_tx.c      | 162 ++++++++++
+ 6 files changed, 530 insertions(+), 320 deletions(-)
+ create mode 100644 drivers/gpu/drm/mediatek/mtk_mipi_tx.h
+ create mode 100644 drivers/gpu/drm/mediatek/mtk_mt8173_mipi_tx.c
+ create mode 100644 drivers/gpu/drm/mediatek/mtk_mt8183_mipi_tx.c
 
->  };
->  
->  &pinctrl {
-> @@ -104,6 +106,11 @@
->  			rockchip,pins =
->  				<1 RK_PD0 RK_FUNC_GPIO &pcfg_pull_none>;
->  			};
-> +
-> +		pcie_perst_l: pcie-perst-l {
-> +			rockchip,pins =
-> +				<4 RK_PD4 RK_FUNC_GPIO &pcfg_pull_none>;
-> +		};
->  	};
->  
->  	usb2 {
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dts b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dts
-> index 12285c51cceb..665fe09c7c74 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dts
-> @@ -64,6 +64,8 @@
->  
->  &pcie0 {
->  	ep-gpios = <&gpio2 RK_PA2 GPIO_ACTIVE_HIGH>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pcie_clkreqn_cpm &pcie_perst_l>;
->  };
->  
->  &pinctrl {
-> @@ -104,6 +106,11 @@
->  			rockchip,pins =
->  				<2 RK_PA5 RK_FUNC_GPIO &pcfg_pull_none>;
->  			};
-> +
-> +		pcie_perst_l: pcie-perst-l {
-> +			rockchip,pins =
-> +				<2 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
-> +		};
->  	};
->  
->  	usb2 {
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
-> index c7d48d41e184..3df0cd67b4b2 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
-> @@ -55,6 +55,7 @@
->  
->  	vcc3v3_pcie: vcc3v3-pcie-regulator {
->  		compatible = "regulator-fixed";
-> +		gpio = <&gpio2 RK_PA5 GPIO_ACTIVE_HIGH>;
+-- 
+2.12.5
 
-Actually the PWR pin mapping is defined in a separate node for both Rock960
-and Ficus in respective dts. So defining it here would be wrong as the PWR
-pin mapping is different for both boards.
-
-Thanks,
-Mani
-
->  		enable-active-high;
->  		pinctrl-names = "default";
->  		pinctrl-0 = <&pcie_drv>;
-> @@ -382,8 +383,6 @@
->  
->  &pcie0 {
->  	num-lanes = <4>;
-> -	pinctrl-names = "default";
-> -	pinctrl-0 = <&pcie_clkreqn_cpm>;
->  	vpcie3v3-supply = <&vcc3v3_pcie>;
->  	status = "okay";
->  };
-> -- 
-> 2.21.0
-> 
