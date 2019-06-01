@@ -2,117 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AF05319C9
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 07:47:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1B7E319CD
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 08:05:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726174AbfFAFr0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Jun 2019 01:47:26 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39473 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbfFAFrZ (ORCPT
+        id S1726485AbfFAGFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Jun 2019 02:05:07 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:51125 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726089AbfFAGFH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Jun 2019 01:47:25 -0400
-Received: by mail-pf1-f193.google.com with SMTP id j2so7458867pfe.6
-        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 22:47:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=N4NYqP5qcFsuKou3hOU2QoLbHi9KXa2wwTKFEejFE9g=;
-        b=YHiEJLdlNslOmqVxxCDPqKHWKNoy3U8FqNRl6OXkForegge1wL/cfA5vNcL0vXHSkE
-         16X7UP9rxWjnITY62EyvrbyaV9fp6E7FCjytDj5vKX2kTN95rG2hjUnaqnAH4yXXzCc0
-         iGd8IlCwyGAgw2dju6uBwMUTJoXf/3lU/8lFQLTwgTIJS1mYyGwf2R2IDjUov/x4Yu7m
-         x0+DDkFJx5erlLm/0DbDsR9oWSayJnjv9k4S6sq5ymhUsbEZ/IX0I7MTHDZAmJeulx7B
-         0HAxSc1JPDvaZvDg8sRaywaoUAh4n9RMy994KN5JDNQ0TMXoV3g8bzmvrfvUb5pvmGWg
-         2IGA==
+        Sat, 1 Jun 2019 02:05:07 -0400
+Received: by mail-io1-f69.google.com with SMTP id c3so9371540iol.17
+        for <linux-kernel@vger.kernel.org>; Fri, 31 May 2019 23:05:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=N4NYqP5qcFsuKou3hOU2QoLbHi9KXa2wwTKFEejFE9g=;
-        b=R32KDZcF9ZKnTYfluVl8yy0A0p3SbLVCQwkhXvCHnu9OOWG498TiCOZq08eY07VTCZ
-         erdD2qemg2psCeRCJIRPZ+o3a9w2kFnMcHhAddlXOiE0bb5s3bbxJa6MQwYjPOgvVUPO
-         CW1M4poMUnE7n8U4NJ24sKOPHO6nscVCTefae9DDR/j9S/4wFlQmUetcH/FGqfx1utnh
-         xzg6WyV7bQ+h6tHwr0j0xJBtP3CsRhkWB9u21Ww1CJL14PK7HiXY7CPEVWXxfyp1pSr/
-         7YVlsvj5zdPPZZ5sTERcIgwdTqA0T+Yq6M4BWTcxZujVDLNZVdLFiVGvzI7fhpFU/CNZ
-         t6zg==
-X-Gm-Message-State: APjAAAUUwPNSqgeCzXQ369Y6M0JUaWaXK8t5FnbVHjcPdHmfFYTs+jJc
-        qheGWKEjjKGMPY41tLUCBGde8A==
-X-Google-Smtp-Source: APXvYqyWwgqCn57/81AHKxNxBjxPxel3NYyFS7mKcCvinFDQWA3aWLt0spiLAHLYe9RqMBaXDnB0zw==
-X-Received: by 2002:a05:6a00:46:: with SMTP id i6mr1498503pfk.173.1559368044910;
-        Fri, 31 May 2019 22:47:24 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id n21sm7833707pff.92.2019.05.31.22.47.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 31 May 2019 22:47:24 -0700 (PDT)
-Date:   Fri, 31 May 2019 22:48:04 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Jordan Crouse <jcrouse@codeaurora.org>
-Cc:     freedreno@lists.freedesktop.org, Sean Paul <sean@poorly.run>,
-        Kees Cook <keescook@chromium.org>,
-        linux-arm-msm@vger.kernel.org,
-        Sharat Masetty <smasetty@codeaurora.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Rob Clark <robdclark@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Mamta Shukla <mamtashukla555@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH] drm/msm/adreno: Ensure that the zap shader region is big
- enough
-Message-ID: <20190601054804.GF22737@tuxbook-pro>
-References: <1559340578-11482-1-git-send-email-jcrouse@codeaurora.org>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=SXQQgqF/aSIlu13g8xFuBn/XDNM3CAXOv6SxuCbdpBU=;
+        b=O0aJSnQyk3ccmEVt/EDgkLV7UBVXxplQBK0BPUAWTRup/FLUmX8VrJhPY5Hx7YOJfq
+         iSArR28yuIMFUCbWsAyCYZUfRUZ3umG3/OI2GsSZjNNuPpSJ9hV2PEsPFPqFTnoCwGiX
+         UsbCtXt53ogkWeY8tWX0Yiwpiis04lf+obQBovoRpLcCsaLK8TRzPt8MDI9JeZjK7Jb4
+         KoqiH8RSze0ENpH8Zmh5w0aL6EaWk6L4SgpQJ0YKWrSNazYMIUWL4cWJLPkiNxvhtLSI
+         0r30EHc/ywk4DfzUTqmsCGuRNUtRKOy37ePP8oo5uNP1lv+O0oFrYXHjnRncoPP56fNj
+         F5fw==
+X-Gm-Message-State: APjAAAUN3nzyK2STaP9lOQAvFtYIQOGEAZWfoCN3RPdXEcSC3z8DIkGH
+        jtLnguUff2OMalebdm3dS2dd5O2UQmj1MaOFk7hMWnCrux0p
+X-Google-Smtp-Source: APXvYqy6SJ2GKwtVJS0kjybBhfdm82xPT/g8i/MTallIrAo4/fTzzlvirlc4bwrV4u3K5xmvtDvFmn5/JbicVHli2qPw2IAPBQHC
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1559340578-11482-1-git-send-email-jcrouse@codeaurora.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+X-Received: by 2002:a02:c7c9:: with SMTP id s9mr9197824jao.82.1559369106485;
+ Fri, 31 May 2019 23:05:06 -0700 (PDT)
+Date:   Fri, 31 May 2019 23:05:06 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000aa7a27058a3ce9aa@google.com>
+Subject: general protection fault in tcp_v6_connect
+From:   syzbot <syzbot+5ee26b4e30c45930bd3c@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, edumazet@google.com, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 31 May 15:09 PDT 2019, Jordan Crouse wrote:
+Hello,
 
-> Before loading the zap shader we should ensure that the reserved memory
-> region is big enough to hold the loaded file.
-> 
-> Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
+syzbot found the following crash on:
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+HEAD commit:    f4aa8012 cxgb4: Make t4_get_tp_e2c_map static
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1662cb12a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d137eb988ffd93c3
+dashboard link: https://syzkaller.appspot.com/bug?extid=5ee26b4e30c45930bd3c
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-> ---
-> 
->  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> index 6f7f411..3db8e49 100644
-> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> @@ -67,7 +67,6 @@ static int zap_shader_load_mdt(struct msm_gpu *gpu, const char *fwname,
->  		return ret;
->  
->  	mem_phys = r.start;
-> -	mem_size = resource_size(&r);
->  
->  	/* Request the MDT file for the firmware */
->  	fw = adreno_request_fw(to_adreno_gpu(gpu), fwname);
-> @@ -83,6 +82,13 @@ static int zap_shader_load_mdt(struct msm_gpu *gpu, const char *fwname,
->  		goto out;
->  	}
->  
-> +	if (mem_size > resource_size(&r)) {
-> +		DRM_DEV_ERROR(dev,
-> +			"memory region is too small to load the MDT\n");
-> +		ret = -E2BIG;
-> +		goto out;
-> +	}
-> +
->  	/* Allocate memory for the firmware image */
->  	mem_region = memremap(mem_phys, mem_size,  MEMREMAP_WC);
->  	if (!mem_region) {
-> -- 
-> 2.7.4
-> 
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+5ee26b4e30c45930bd3c@syzkaller.appspotmail.com
+
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 17324 Comm: syz-executor.5 Not tainted 5.2.0-rc1+ #2
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:__read_once_size include/linux/compiler.h:194 [inline]
+RIP: 0010:rt6_get_cookie include/net/ip6_fib.h:264 [inline]
+RIP: 0010:ip6_dst_store include/net/ip6_route.h:213 [inline]
+RIP: 0010:tcp_v6_connect+0xfd0/0x20a0 net/ipv6/tcp_ipv6.c:298
+Code: 89 e6 e8 83 a2 48 fb 45 84 e4 0f 84 90 09 00 00 e8 35 a1 48 fb 49 8d  
+7e 70 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
+85 57 0e 00 00 4d 8b 66 70 e8 4d 88 35 fb 31 ff 89
+RSP: 0018:ffff888066547800 EFLAGS: 00010207
+RAX: dffffc0000000000 RBX: ffff888064e839f0 RCX: ffffc90010e49000
+RDX: 000000000000002b RSI: ffffffff8628033b RDI: 000000000000015f
+RBP: ffff888066547980 R08: ffff8880a9412080 R09: ffffed1015d26be0
+R10: ffffed1015d26bdf R11: ffff8880ae935efb R12: 0000000000000001
+R13: ffff888064e82f40 R14: 00000000000000ef R15: ffff888066547de8
+FS:  00007f43abb71700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffc77267668 CR3: 00000000a5071000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  __inet_stream_connect+0x834/0xe90 net/ipv4/af_inet.c:659
+  tcp_sendmsg_fastopen net/ipv4/tcp.c:1143 [inline]
+  tcp_sendmsg_locked+0x2318/0x3920 net/ipv4/tcp.c:1185
+  tcp_sendmsg+0x30/0x50 net/ipv4/tcp.c:1419
+  inet_sendmsg+0x141/0x5d0 net/ipv4/af_inet.c:802
+  sock_sendmsg_nosec net/socket.c:652 [inline]
+  sock_sendmsg+0xd7/0x130 net/socket.c:671
+  __sys_sendto+0x262/0x380 net/socket.c:1964
+  __do_sys_sendto net/socket.c:1976 [inline]
+  __se_sys_sendto net/socket.c:1972 [inline]
+  __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1972
+  do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x459279
+Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f43abb70c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffda RBX: 0000000000000006 RCX: 0000000000459279
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+RBP: 000000000075c100 R08: 0000000020000380 R09: 000000000000001c
+R10: 0000000020000000 R11: 0000000000000246 R12: 00007f43abb716d4
+R13: 00000000004c6d9d R14: 00000000004dbc40 R15: 00000000ffffffff
+Modules linked in:
+---[ end trace c8448517bbb9ef43 ]---
+RIP: 0010:__read_once_size include/linux/compiler.h:194 [inline]
+RIP: 0010:rt6_get_cookie include/net/ip6_fib.h:264 [inline]
+RIP: 0010:ip6_dst_store include/net/ip6_route.h:213 [inline]
+RIP: 0010:tcp_v6_connect+0xfd0/0x20a0 net/ipv6/tcp_ipv6.c:298
+Code: 89 e6 e8 83 a2 48 fb 45 84 e4 0f 84 90 09 00 00 e8 35 a1 48 fb 49 8d  
+7e 70 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
+85 57 0e 00 00 4d 8b 66 70 e8 4d 88 35 fb 31 ff 89
+RSP: 0018:ffff888066547800 EFLAGS: 00010207
+RAX: dffffc0000000000 RBX: ffff888064e839f0 RCX: ffffc90010e49000
+RDX: 000000000000002b RSI: ffffffff8628033b RDI: 000000000000015f
+RBP: ffff888066547980 R08: ffff8880a9412080 R09: ffffed1015d26be0
+R10: ffffed1015d26bdf R11: ffff8880ae935efb R12: 0000000000000001
+R13: ffff888064e82f40 R14: 00000000000000ef R15: ffff888066547de8
+FS:  00007f43abb71700(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f86924a7000 CR3: 00000000a5071000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
