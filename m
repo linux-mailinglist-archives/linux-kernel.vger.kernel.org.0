@@ -2,88 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81B5931A14
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 09:28:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 227B031B8C
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 13:07:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726531AbfFAH17 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Jun 2019 03:27:59 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52450 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726058AbfFAH17 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Jun 2019 03:27:59 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 56B6D802F5; Sat,  1 Jun 2019 09:27:47 +0200 (CEST)
-Date:   Sat, 1 Jun 2019 09:27:56 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     pavel@ucw.cz
-Cc:     linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Keith Busch <keith.busch@intel.com>, Jan Kara <jack@suse.cz>,
-        Yufen Yu <yuyufen@huawei.com>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 130/276] block: fix use-after-free on gendisk
-Message-ID: <20190601072756.GA2215@amd>
-References: <20190530030523.133519668@linuxfoundation.org>
- <20190530030533.910471797@linuxfoundation.org>
+        id S1727122AbfFALHq convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 1 Jun 2019 07:07:46 -0400
+Received: from antyk.al.uw.edu.pl ([193.0.78.5]:60435 "EHLO antyk.al.uw.edu.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726134AbfFALHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Jun 2019 07:07:45 -0400
+X-Greylist: delayed 12779 seconds by postgrey-1.27 at vger.kernel.org; Sat, 01 Jun 2019 07:07:45 EDT
+Received: from [102.165.34.17] ([102.165.34.17])
+        (authenticated bits=0)
+        by antyk.al.uw.edu.pl (8.14.9/8.14.9) with ESMTP id x517W4t6045035;
+        Sat, 1 Jun 2019 09:34:23 +0200 (CEST)
+        (envelope-from aleksandra.wrobel@forner.pl)
+Message-Id: <201906010734.x517W4t6045035@antyk.al.uw.edu.pl>
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
-Content-Disposition: inline
-In-Reply-To: <20190530030533.910471797@linuxfoundation.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Good day
+To:     Recipients <aleksandra.wrobel@forner.pl>
+From:   "Lucas Rudenson" <aleksandra.wrobel@forner.pl>
+Date:   Sat, 01 Jun 2019 00:34:11 -0700
+Reply-To: lukasrudg70@gmail.com
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.4.3 (antyk.al.uw.edu.pl [193.0.78.5]); Sat, 01 Jun 2019 09:34:26 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Good day, My name is Lucas Rudenson, 50 years of age a Briton, the purpose of this email is to briefly introduce myself as the Accounting and Finance Manager of a crude Oil and Gas company here in United Kingdom. I wish to establish aprivate business partnership that is of utmost importance with you there in your home country.
 
---ibTvN161/egqYuK8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+For details please acknowledge the receipt of this email by contacting me on my email: lukasrudg70@gmail.com
 
-Hi!
-
-> +++ b/block/genhd.c
-> @@ -518,6 +518,18 @@ void blk_free_devt(dev_t devt)
->  	}
->  }
-> =20
-> +/**
-> + *	We invalidate devt by assigning NULL pointer for devt in idr.
-> + */
-> +void blk_invalidate_devt(dev_t devt)
-> +{
-> +	if (MAJOR(devt) =3D=3D BLOCK_EXT_MAJOR) {
-> +		spin_lock_bh(&ext_devt_lock);
-> +		idr_replace(&ext_devt_idr, NULL, blk_mangle_minor(MINOR(devt)));
-> +		spin_unlock_bh(&ext_devt_lock);
-> +	}
-> +}
-> +
-
-AFAICT /** means linuxdoc, but the comment does not have required
-format. Probably should be just /*.
-
-Thanks,
-								Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---ibTvN161/egqYuK8
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlzyKPwACgkQMOfwapXb+vJsrgCgqD+CDZs2l5FIKcmOJq0+LQpP
-yhcAnR/Uu9rulkUgtM5Yhv44dQ6hl1Uh
-=fDgO
------END PGP SIGNATURE-----
-
---ibTvN161/egqYuK8--
+Best regards,
+ 
+Lucas Rudenson
