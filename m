@@ -2,65 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0277431AC5
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 11:19:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E87631A9F
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 10:52:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726965AbfFAJTv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Jun 2019 05:19:51 -0400
-Received: from www74.your-server.de ([213.133.104.74]:59318 "EHLO
-        www74.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726089AbfFAJTv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Jun 2019 05:19:51 -0400
-X-Greylist: delayed 1721 seconds by postgrey-1.27 at vger.kernel.org; Sat, 01 Jun 2019 05:19:50 EDT
-Received: from [88.198.220.130] (helo=sslproxy01.your-server.de)
-        by www74.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <klaus.kusche@computerix.info>)
-        id 1hWzjE-0004z7-8O; Sat, 01 Jun 2019 10:51:04 +0200
-Received: from [95.91.33.208] (helo=[192.168.178.20])
-        by sslproxy01.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <klaus.kusche@computerix.info>)
-        id 1hWzjD-0007Qr-RS; Sat, 01 Jun 2019 10:51:03 +0200
-To:     keescook@chromium.org, johannes.hirte@datenkhaos.de
-From:   Klaus Kusche <klaus.kusche@computerix.info>
-Cc:     bp@suse.de, samitolvanen@google.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/build: Move _etext to actual end of .text
-Message-ID: <e76e3384-702e-e0f6-c949-79beaca2a109@computerix.info>
-Date:   Sat, 1 Jun 2019 10:51:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726960AbfFAIwQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Jun 2019 04:52:16 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:18067 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726058AbfFAIwQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Jun 2019 04:52:16 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id AB1817E6A55325AF0A27;
+        Sat,  1 Jun 2019 16:52:11 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Sat, 1 Jun 2019
+ 16:52:04 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <matthias.bgg@gmail.com>,
+        <shunli.wang@mediatek.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <alsa-devel@alsa-project.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] ASoC: da7219: Fix build error without CONFIG_I2C
+Date:   Sat, 1 Jun 2019 16:51:44 +0800
+Message-ID: <20190601085144.13832-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: klaus.kusche@computerix.info
-X-Virus-Scanned: Clear (ClamAV 0.100.3/25467/Sat Jun  1 10:00:07 2019)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fix gcc build error while CONFIG_I2C is not set
 
-Hello,
+sound/soc/codecs/da7219.c:2640:1: warning: data definition has no type or storage class
+ module_i2c_driver(da7219_i2c_driver);
+ ^~~~~~~~~~~~~~~~~
+sound/soc/codecs/da7219.c:2640:1: error: type defaults to int in declaration of module_i2c_driver [-Werror=implicit-int]
+sound/soc/codecs/da7219.c:2640:1: warning: parameter names (without types) in function declaration
+sound/soc/codecs/da7219.c:2629:26: warning: da7219_i2c_driver defined but not used [-Wunused-variable]
 
-same problem here.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 6d817c0e9fd7 ("ASoC: codecs: Add da7219 codec driver")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ sound/soc/mediatek/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-gcc version 9.1.0 (Gentoo 9.1.0 p1.0)
-linux-5.1.6
-
-RELOCS  arch/x86/boot/compressed/vmlinux.relocs
-Invalid absolute R_X86_64_32S relocation: _etext
-make[2]: *** [arch/x86/boot/compressed/Makefile:130: arch/x86/boot/compressed/vmlinux.relocs] Error 1
-make[2]: *** Deleting file 'arch/x86/boot/compressed/vmlinux.relocs'
-make[2]: *** Waiting for unfinished jobs....
-
-make clean or make distclean did *not* help.
-
+diff --git a/sound/soc/mediatek/Kconfig b/sound/soc/mediatek/Kconfig
+index 933ab51..111e44b 100644
+--- a/sound/soc/mediatek/Kconfig
++++ b/sound/soc/mediatek/Kconfig
+@@ -133,7 +133,7 @@ config SND_SOC_MT8183_MT6358_TS3A227E_MAX98357A
+ 
+ config SND_SOC_MT8183_DA7219_MAX98357A
+ 	tristate "ASoC Audio driver for MT8183 with DA7219 MAX98357A codec"
+-	depends on SND_SOC_MT8183
++	depends on SND_SOC_MT8183 && I2C
+ 	select SND_SOC_MT6358
+ 	select SND_SOC_MAX98357A
+ 	select SND_SOC_DA7219
 -- 
-Prof. Dr. Klaus Kusche
-Private address: Rosenberg 41, 07546 Gera, Germany
-+49 365 20413058 klaus.kusche@computerix.info https://www.computerix.info
-Office address: DHGE Gera, Weg der Freundschaft 4, 07546 Gera, Germany
-+49 365 4341 306 klaus.kusche@dhge.de https://www.dhge.de
+2.7.4
+
+
