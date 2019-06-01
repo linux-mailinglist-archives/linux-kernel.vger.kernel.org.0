@@ -2,109 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E9E631FE4
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 18:14:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00D8231FEF
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 18:20:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726601AbfFAQOh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Jun 2019 12:14:37 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:35856 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726044AbfFAQOg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Jun 2019 12:14:36 -0400
-Received: by mail-lf1-f65.google.com with SMTP id q26so10365781lfc.3
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2019 09:14:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TKTAJ8E7sNy2vEZhocfTI/IVyiugHenGqfHPAGmTqUU=;
-        b=RdmXCPI1V+CWEuQQLIpoDnZHvNbMKl90LuqFIcI1YnEKXhPCSK5AUEFPNd650/ERUV
-         Qh10sm7MSlB6HnOBHykL5KhchRGHirJ9ssAdIkVcDYKPumYo1Zi2YYM6BhTRVFDVSg7U
-         Nczzjs9o+pp1b0tTsgtO9YPvDZ1uwi7oKCdAA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TKTAJ8E7sNy2vEZhocfTI/IVyiugHenGqfHPAGmTqUU=;
-        b=ayZdzRqSd4dMh46ljB5TZUh8louDyL2/vyV9S4OwaeAeYbvF5Yu7XG/vCcIHFjE8Fy
-         cRcsaGx+CQN+qNOuCeSGJw0Mhc2jUavEy82Si/WYmexGiUQ9dPEAf4OyhwQa0UG/efWN
-         exTR0OHeO4YLx61DWZHZCJZLnKspZxyOpVPI9kThGPO1d/8c47B0N/nct8t4RUXnppio
-         iqPyQW5hWDkRrNFm88p6nTOwZ8HmIUHRbEMWZV3gdwoauaNqwAJ4YKdHOq4jFZMZJLw4
-         yLoq2JKaN9LKXKFglNgnA+vm3OKWvkqENogU93Dm7RZDQT5tl+pvsWVay8eyP62y3Sn4
-         AUug==
-X-Gm-Message-State: APjAAAWjZ2yPJEe1oCTVGPrZYDEUYkxy8ljleA+Oi76+e+7I+ddzy8q9
-        4PFTmY81c5Dnrk30ZR7OCphB0Ve0XbA=
-X-Google-Smtp-Source: APXvYqzOV8PUu7s2C30nL0b2Ji/D+NRcNaZWjUeRvds0wRCU4lvNCj5oLvFofG0nHSw4N6EF80nDGA==
-X-Received: by 2002:a19:ee12:: with SMTP id g18mr8741228lfb.58.1559405674583;
-        Sat, 01 Jun 2019 09:14:34 -0700 (PDT)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id e19sm1882392ljj.62.2019.06.01.09.14.33
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 01 Jun 2019 09:14:34 -0700 (PDT)
-Received: by mail-lf1-f41.google.com with SMTP id y13so10329595lfh.9
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2019 09:14:33 -0700 (PDT)
-X-Received: by 2002:a19:ae01:: with SMTP id f1mr8899724lfc.29.1559405673566;
- Sat, 01 Jun 2019 09:14:33 -0700 (PDT)
+        id S1726723AbfFAQUb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Jun 2019 12:20:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59174 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726143AbfFAQUa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Jun 2019 12:20:30 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CBC4C2768D;
+        Sat,  1 Jun 2019 16:20:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559406030;
+        bh=Oq4KykqH+FHZbNln7dGaSM784b0NrfPtmcIDwIh/rEU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JGtEHdBS0dgdz7gPH0yR5BeWGy3ydU7vnlxsuqlPICn4QM+atOaCpYjUQVYF83vNH
+         gvFdj+WgTBKpwMu6xOnCgofw0cNVzmT8+KzaczWL5shWKpsWwETTIeo1JTRMvKjaY5
+         6rPux7npxJQaXyMm7CxwO4sAjX/Co1iyzQThL9Xw=
+Date:   Sat, 1 Jun 2019 09:17:07 -0700
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Sahara <keun-o.park@darkmatter.ae>
+Subject: Re: [PATCH AUTOSEL 4.4 50/56] tty: pty: Fix race condition between
+ release_one_tty and pty_write
+Message-ID: <20190601161707.GC4200@kroah.com>
+References: <20190601132600.27427-1-sashal@kernel.org>
+ <20190601132600.27427-50-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20190601074959.14036-1-hch@lst.de> <20190601074959.14036-4-hch@lst.de>
-In-Reply-To: <20190601074959.14036-4-hch@lst.de>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 1 Jun 2019 09:14:17 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whusWKhS=SYoC9f9HjVmPvR5uP51Mq=ZCtktqTBT2qiBw@mail.gmail.com>
-Message-ID: <CAHk-=whusWKhS=SYoC9f9HjVmPvR5uP51Mq=ZCtktqTBT2qiBw@mail.gmail.com>
-Subject: Re: [PATCH 03/16] mm: simplify gup_fast_permitted
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-mips@vger.kernel.org,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Linux-MM <linux-mm@kvack.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190601132600.27427-50-sashal@kernel.org>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 1, 2019 at 12:50 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> Pass in the already calculated end value instead of recomputing it, and
-> leave the end > start check in the callers instead of duplicating them
-> in the arch code.
+On Sat, Jun 01, 2019 at 09:25:54AM -0400, Sasha Levin wrote:
+> From: Sahara <keun-o.park@darkmatter.ae>
+> 
+> [ Upstream commit b9ca5f8560af244489b4a1bc1ae88b341f24bc95 ]
+> 
+> Especially when a linked tty is used such as pty, the linked tty
+> port's buf works have not been cancelled while master tty port's
+> buf work has been cancelled. Since release_one_tty and flush_to_ldisc
+> run in workqueue threads separately, when pty_cleanup happens and
+> link tty port is freed, flush_to_ldisc tries to access freed port
+> and port->itty, eventually it causes a panic.
+> This patch utilizes the magic value with holding the tty_mutex to
+> check if the tty->link is valid.
+> 
+> Fixes: 2b022ab7542d ("pty: cancel pty slave port buf's work in tty_release")
+> Signed-off-by: Sahara <keun-o.park@darkmatter.ae>
+> Cc: stable <stable@vger.kernel.org>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  drivers/tty/pty.c    | 7 +++++++
+>  drivers/tty/tty_io.c | 3 +++
+>  2 files changed, 10 insertions(+)
 
-Good cleanup, except it's wrong.
+For some reason I did not apply this to the stable kernels, and this
+shouldn't only be for 4.4.y, so please drop this.
 
-> -       if (nr_pages <= 0)
-> +       if (end < start)
->                 return 0;
+thanks,
 
-You moved the overflow test to generic code - good.
-
-You removed the sign and zero test on nr_pages - bad.
-
-The zero test in particular is _important_ - the GUP range operators
-know and depend on the fact that they are passed a non-empty range.
-
-The sign test it less so, but is definitely appropriate. It might be
-even better to check that the "<< PAGE_SHIFT" doesn't overflow in
-"long", of course, but with callers being supposed to be trusted, the
-sign test at least checks for stupid underflow issues.
-
-So at the very least that "(end < start)" needs to be "(end <=
-start)", but honestly, I think the sign of the nr_pages should be
-continued to be checked.
-
-                      Linus
+greg k-h
