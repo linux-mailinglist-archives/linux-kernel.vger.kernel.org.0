@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21D463208D
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 20:44:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02EEF3208F
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 20:44:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbfFASoU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Jun 2019 14:44:20 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42509 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726849AbfFASoQ (ORCPT
+        id S1726964AbfFASoZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Jun 2019 14:44:25 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:35742 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726884AbfFASoT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Jun 2019 14:44:16 -0400
-Received: by mail-pl1-f194.google.com with SMTP id go2so5321063plb.9
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2019 11:44:16 -0700 (PDT)
+        Sat, 1 Jun 2019 14:44:19 -0400
+Received: by mail-pf1-f193.google.com with SMTP id d126so8200596pfd.2
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2019 11:44:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Jy5f39JtoflmsGwijkPz6ujk/wlkmv8ts/C2dFv0hM8=;
-        b=SMEXYnWBrGvRRxI8vI3wtGEtbCfacwdTp0wnY7tuMsvIFvsXKh0UcnNxfweZsQUGXb
-         oOJbNWXLZs8Tc2M/5oWBGsBcGZ/V6usf9HNpK2usPt/wZyDMww2g8YolyqRiV0AxDyzb
-         oUhZk6a4MY/OO2QW5MGHZA0LzDs0DgnbnoDruITIqdR8T0YMadzuSvPNrY+RrYtaaOXy
-         a6n3Z1ZLryT1udkgU7qlRbyk4v+7KEy0i/+PRkp2xWx7WdJHIzjkaZI7Ywdkc/zeDzze
-         YPevpOdGftF6jzkLSXpXyjFWx0a+dy9muf+Jd2d+OHUOcSrnzU53fQVD852KIrE7AsgB
-         TBwA==
+        bh=YwCCxRSn7S+aZ89GrQp9eL9ZxtaUz94owFWdDgVxvXo=;
+        b=Cvma/tJ4jhnnxmavSW5R8HdynzVCIFeNgUpgbtgjG+dibHth/4z0OfBZ5OZ9hHsqp2
+         fN8zWA3sCEZf3ysvc64SlYmCn2GiBMZ+O1ekdvDTwIz4khNT4+l13rK5uE7izEKjiChJ
+         /OQ1ftJ4SpDNCPDRh/Ec6zkJe3pH7+HOsxTN4AZ55u86I/Kax4UWnLA2wGeduFouNTLh
+         BkcDL1mgmqxOsW71GpHy/NHAfB8MbvgcOePKpKq3CWgzGZiL1NQD0mfdJ5SihtGVbBFT
+         KxkDVDWM4vi8lvXGBwL+S3SamPngToQ3Zwf6a9hE8CSj1FKuiYpkdoWWSdi2FaW25y5C
+         az7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Jy5f39JtoflmsGwijkPz6ujk/wlkmv8ts/C2dFv0hM8=;
-        b=hWcIVJtpq2nuiIafSEuA3MZ/KyEOldYhjZmr04WH1Sv1nF2L+9e5xIPogbB8m8PY2f
-         trojxNM3+Rn26bxV12gmR2QVp+gLHHexxcD1h62Pe40LRPh1NYfYdnTLRdXkJ3vcSiUx
-         4PYj7m1YL9jESDQIZkYkzai243g2jvmaCIgQaWLlCwWR/5V3mNaRiS7G4j5wW23Pd0f3
-         +ofaXqd79Dvbtu+hM0PCtTF9qNgRJh6qp4trxIaHB61OaauESxHZVbjX4Yr9+P/VLPBW
-         HtCxXk2n5HlIomZpBvLjiT8Z70y9KS9WTR2Pkjs+BKHCUL3zAAV5hAqc0lcm9xfWasc3
-         1z7A==
-X-Gm-Message-State: APjAAAWLwhT7huz0UkYJJ6nLx2/UJOQB4etBPbM5bPy0CYaQM2CChy51
-        6ZTyPSDPt6nFTcByxGrL6CtaPZFw
-X-Google-Smtp-Source: APXvYqwPXmXV5gbzkCjHvzXjyi4j5Nt9O9zQfVHzPiRwMWNHm1jHzULe7gfn9plaaFyXKpVWB5z6Gw==
-X-Received: by 2002:a17:902:9b81:: with SMTP id y1mr8911422plp.195.1559414655904;
-        Sat, 01 Jun 2019 11:44:15 -0700 (PDT)
+        bh=YwCCxRSn7S+aZ89GrQp9eL9ZxtaUz94owFWdDgVxvXo=;
+        b=ZEy9gDN2/wwZoHqaWB1df2ulyrbSHLlCRNVUaKlfXi+jbyL66xu/hAuvstadoxw36m
+         /Fv8Ly2hC3YfHCKZIZu4+L/4AQM9Fnf/UaA0T/c0/Z6HexIJ7IfFMjN72j6/wfGuZthf
+         t+v4Wf0W3LoUP84omkvVWde8+Yi7Un0vEi8GCIY36Vstce8bXqtuFP9f36sYh4SvA44P
+         FdRq9aG4UxvF9rlLtbNnPpjdbtUrWRQCqjAiUJ+t66uLULpmga+txwe/0yRo9RDtyml4
+         c8KhHasDuGLnxb/s2GOHi45mB7i8Taxme74HEvl5uGnAJPRoDlYoqXow7w7hij+CE4aT
+         6kJA==
+X-Gm-Message-State: APjAAAXQog9PybU0LPMyJaCC9/71dPVZfFwXmZA7kNv5y0rYYEi+ddBr
+        ba4BWmkbAogDwcZnguhKAyesOCMz
+X-Google-Smtp-Source: APXvYqzrzNvSac9MVtF5aUtRu2mi+jF6DkdPsk5qIIpChJ6nzwwvFC1p1GMaiZQBHa1afdaWw7aVQQ==
+X-Received: by 2002:a62:1707:: with SMTP id 7mr5319585pfx.26.1559414658614;
+        Sat, 01 Jun 2019 11:44:18 -0700 (PDT)
 Received: from localhost.localdomain ([117.192.16.207])
-        by smtp.googlemail.com with ESMTPSA id w187sm13287950pfw.20.2019.06.01.11.44.13
+        by smtp.googlemail.com with ESMTPSA id w187sm13287950pfw.20.2019.06.01.11.44.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 01 Jun 2019 11:44:15 -0700 (PDT)
+        Sat, 01 Jun 2019 11:44:18 -0700 (PDT)
 From:   Deepak Mishra <linux.dkm@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     gregkh@linuxfoundation.org, Larry.Finger@lwfinger.net,
         florian.c.schilhabel@googlemail.com, linux.dkm@gmail.com,
         himadri18.07@gmail.com, straube.linux@gmail.com
-Subject: [PATCH 5/8] staging: rtl8712: Fixed CamelCase in struct _adapter from drv_types.h
-Date:   Sun,  2 Jun 2019 00:13:39 +0530
-Message-Id: <dbb23bc21fcd7cfbad485ceefc15d97a38566dd0.1559412149.git.linux.dkm@gmail.com>
+Subject: [PATCH 6/8] staging: rtl8712: Fixed CamelCase in struct _adapter from drv_types.h
+Date:   Sun,  2 Jun 2019 00:13:40 +0530
+Message-Id: <2f2a4ffa529fb35ebfb0e7e5afa4b3969fd9c1a7.1559412149.git.linux.dkm@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <cover.1559412149.git.linux.dkm@gmail.com>
 References: <cover.1559412149.git.linux.dkm@gmail.com>
@@ -63,27 +63,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes CamelCase IsrContent to isr_content as suggested by
-checkpatch.pl
+This patch fixes CamelCase as reported by checkpatch.pl
+xmitThread renamed to xmit_thread
+recvThread renamed to recv_thread
 
 Signed-off-by: Deepak Mishra <linux.dkm@gmail.com>
 ---
- drivers/staging/rtl8712/drv_types.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rtl8712/drv_types.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/staging/rtl8712/drv_types.h b/drivers/staging/rtl8712/drv_types.h
-index 5360f049088a..a5060a020b2b 100644
+index a5060a020b2b..1f8aa0358b77 100644
 --- a/drivers/staging/rtl8712/drv_types.h
 +++ b/drivers/staging/rtl8712/drv_types.h
-@@ -148,7 +148,7 @@ struct _adapter {
- 	bool	driver_stopped;
- 	bool	surprise_removed;
- 	bool	suspended;
--	u32	IsrContent;
-+	u32	isr_content;
- 	u32	imr_content;
- 	u8	eeprom_address_size;
+@@ -154,8 +154,8 @@ struct _adapter {
  	u8	hw_init_completed;
+ 	struct task_struct *cmd_thread;
+ 	pid_t evt_thread;
+-	struct task_struct *xmitThread;
+-	pid_t recvThread;
++	struct task_struct *xmit_thread;
++	pid_t recv_thread;
+ 	uint (*dvobj_init)(struct _adapter *adapter);
+ 	void (*dvobj_deinit)(struct _adapter *adapter);
+ 	struct net_device *pnetdev;
 -- 
 2.19.1
 
