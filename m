@@ -2,101 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2887C31ABE
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 11:15:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA7D931AEE
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 11:27:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfFAJPh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Jun 2019 05:15:37 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:45048 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726134AbfFAJPg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Jun 2019 05:15:36 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 85489C906D572A0C7651;
-        Sat,  1 Jun 2019 17:15:34 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.439.0; Sat, 1 Jun 2019 17:15:25 +0800
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-To:     Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-CC:     <linuxcrypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH v2] crypto: pcrypt: Fix possible deadlock in padata_sysfs_release
-Date:   Sat, 1 Jun 2019 17:23:32 +0800
-Message-ID: <20190601092332.136481-1-wangkefeng.wang@huawei.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <1b71b136-3501-db1c-834b-ba7ed1431f4d@huawei.com>
-References: <1b71b136-3501-db1c-834b-ba7ed1431f4d@huawei.com>
+        id S1726921AbfFAJ03 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Jun 2019 05:26:29 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:64382 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726089AbfFAJ02 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Jun 2019 05:26:28 -0400
+X-UUID: 27c8530086f9486db697b69fb0584e58-20190601
+X-UUID: 27c8530086f9486db697b69fb0584e58-20190601
+Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <jitao.shi@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1148342631; Sat, 01 Jun 2019 17:26:21 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33DR.mediatek.inc
+ (172.27.6.106) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sat, 1 Jun
+ 2019 17:26:19 +0800
+Received: from mszsdclx1018.gcn.mediatek.inc (172.27.4.253) by
+ MTKCAS36.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
+ 15.0.1395.4 via Frontend Transport; Sat, 1 Jun 2019 17:26:18 +0800
+From:   Jitao Shi <jitao.shi@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        <linux-pwm@vger.kernel.org>, David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     Jitao Shi <jitao.shi@mediatek.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Ajay Kumar <ajaykumar.rs@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Rahul Sharma <rahul.sharma@samsung.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Vincent Palatin <vpalatin@chromium.org>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
+        <cawa.cheng@mediatek.com>, <bibby.hsieh@mediatek.com>,
+        <ck.hu@mediatek.com>, <stonea168@163.com>
+Subject: [v4 0/7] Support dsi for mt8183
+Date:   Sat, 1 Jun 2019 17:26:08 +0800
+Message-ID: <20190601092615.67917-1-jitao.shi@mediatek.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a deadlock issue in pcrypt_init_padata(),
+changes since v3
+ - add one more 'tab' for bitwise define.
+ - add Tested-by: Ryan Case <ryandcase@chromium.org>
+	and Reviewed-by: CK Hu <ck.hu@mediatek.com>.
+ - remove compare da_hs_zero to da_hs_prepare.
 
-pcrypt_init_padata()
-    cpus_read_lock()
-      padata_free()
-        padata_sysfs_release()
-          cpus_read_lock()
+Changes since v2:
+ - change the video timing calc method
+ - fine the dsi and mipitx init sequence
+ - fine tune commit msg
 
-Narrow rcu_read_lock/unlock() and move put_online_cpus()
-before padata_free() to fix it.
+Changes since v1:
+ - separate frame size and reg commit control independent patches.
+ - fix some return values in probe
+ - remove DSI_CMDW0 in "CMDQ reg address of mt8173 is different with mt2701" 
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
----
- crypto/pcrypt.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+Jitao Shi (7):
+  drm/mediatek: move mipi_dsi_host_register to probe
+  drm/mediatek: fixes CMDQ reg address of mt8173 is different with
+    mt2701
+  drm/mediatek: add dsi reg commit disable control
+  drm/mediatek: add frame size control
+  drm/mediatek: add mt8183 dsi driver support
+  drm/mediatek: change the dsi phytiming calculate method
+  drm: mediatek: adjust dsi and mipi_tx probe sequence
 
-diff --git a/crypto/pcrypt.c b/crypto/pcrypt.c
-index 0e9ce329fd47..f3dacb714cd4 100644
---- a/crypto/pcrypt.c
-+++ b/crypto/pcrypt.c
-@@ -407,16 +407,19 @@ static int pcrypt_init_padata(struct padata_pcrypt *pcrypt,
- 	int ret = -ENOMEM;
- 	struct pcrypt_cpumask *mask;
- 
--	get_online_cpus();
- 
- 	pcrypt->wq = alloc_workqueue("%s", WQ_MEM_RECLAIM | WQ_CPU_INTENSIVE,
- 				     1, name);
- 	if (!pcrypt->wq)
- 		goto err;
- 
-+	get_online_cpus();
-+
- 	pcrypt->pinst = padata_alloc_possible(pcrypt->wq);
--	if (!pcrypt->pinst)
-+	if (!pcrypt->pinst) {
-+		put_online_cpus();
- 		goto err_destroy_workqueue;
-+	}
- 
- 	mask = kmalloc(sizeof(*mask), GFP_KERNEL);
- 	if (!mask)
-@@ -448,12 +451,11 @@ static int pcrypt_init_padata(struct padata_pcrypt *pcrypt,
- 	free_cpumask_var(mask->mask);
- 	kfree(mask);
- err_free_padata:
-+	put_online_cpus();
- 	padata_free(pcrypt->pinst);
- err_destroy_workqueue:
- 	destroy_workqueue(pcrypt->wq);
- err:
--	put_online_cpus();
--
- 	return ret;
- }
- 
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c |   2 +-
+ drivers/gpu/drm/mediatek/mtk_dsi.c     | 222 ++++++++++++++++++-------
+ 2 files changed, 160 insertions(+), 64 deletions(-)
+
 -- 
-2.20.1
+2.21.0
 
