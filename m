@@ -2,129 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FEF4320F2
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 00:28:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA6F532106
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 00:29:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbfFAW2O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Jun 2019 18:28:14 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36763 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726947AbfFAW2J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Jun 2019 18:28:09 -0400
-Received: by mail-pf1-f193.google.com with SMTP id u22so8352906pfm.3
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2019 15:28:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Z4Z5Q8yj6p64Y2o7Spib8gfVriUeNJkKQsEzc/+Hzz0=;
-        b=tn0zxaPZcEF0gzwva8HqnPjJia9DDhSQmHjOrC5LIgyWnnOofGPjmYj/hXfVZ8L0em
-         XP3bB8/bqiw1eHWRAsDs+Eo+KMd0muYlR7W1IGD9w2kQhutp6W3nJjVkUHo/gqw0gscT
-         hSNuQPr6j2Tn6vwct85U2AwqZoqgLSmSxBAAc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Z4Z5Q8yj6p64Y2o7Spib8gfVriUeNJkKQsEzc/+Hzz0=;
-        b=ADfKbYpMQAFzTQYFayNogKyyV0NyABjtgkVAlX94hooWq4mM4+BJw2o0MCuSb5zN3R
-         /XUvR2NdTs8lRXKTeteq7thZ8yQJ+gi71aLnElOScYWl4KT7eLhNjcTUOx6sEEhzshjg
-         g7bhqaIceqUFj3EzIJiVcTHv4+QpxHtCtSfBq4Sqk3HRfLHEcbqTBKpuUeAqoF6uy84q
-         rNyqvY+1XAVX9on9DVqrZ9K2Etb6V60AnWDK2icx/cyfpIR+v2p1JYFV8akMVIIvs+H6
-         wLqzgK8aGJrzrvU25qiqoTT8B2MZvbuitDEqM/tZJ2iiuiKnmhtyTNcmsRCIp1npUcWg
-         8tEg==
-X-Gm-Message-State: APjAAAW+9M9YZ3ODeg4G5SprZXs+UT29I5Qdps9S542n61nuZ1/NawXu
-        rdSkf1oA9HU9XVJdchNPcLATj8wEyNZ9sA==
-X-Google-Smtp-Source: APXvYqyQL17LnHVw1B3g7pCMzLSsO7wfuWCIia7ACIsUpOs3uzhXYItiAbtRvGIh4rUXLEb0jWXqzQ==
-X-Received: by 2002:a63:a34c:: with SMTP id v12mr17850914pgn.198.1559428087981;
-        Sat, 01 Jun 2019 15:28:07 -0700 (PDT)
-Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id t33sm9908018pjb.1.2019.06.01.15.28.04
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sat, 01 Jun 2019 15:28:07 -0700 (PDT)
-From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "David S. Miller" <davem@davemloft.net>, edumazet@google.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>, keescook@chromium.org,
-        kernel-hardening@lists.openwall.com,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        neilb@suse.com, netdev@vger.kernel.org, oleg@redhat.com,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Pavel Machek <pavel@ucw.cz>, peterz@infradead.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, rcu@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Tejun Heo <tj@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
-Subject: [RFC 6/6] acpi: Use built-in RCU list checking for acpi_ioremaps list
-Date:   Sat,  1 Jun 2019 18:27:38 -0400
-Message-Id: <20190601222738.6856-7-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.22.0.rc1.311.g5d7573a151-goog
-In-Reply-To: <20190601222738.6856-1-joel@joelfernandes.org>
-References: <20190601222738.6856-1-joel@joelfernandes.org>
+        id S1727034AbfFAW3m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Jun 2019 18:29:42 -0400
+Received: from mga06.intel.com ([134.134.136.31]:24291 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726485AbfFAW3m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Jun 2019 18:29:42 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Jun 2019 15:29:41 -0700
+X-ExtLoop1: 1
+Received: from mczarkow-mobl2.ger.corp.intel.com (HELO mara.localdomain) ([10.249.140.11])
+  by orsmga006.jf.intel.com with ESMTP; 01 Jun 2019 15:29:39 -0700
+Received: from sailus by mara.localdomain with local (Exim 4.89)
+        (envelope-from <sakari.ailus@linux.intel.com>)
+        id 1hXCVP-00049t-Vd; Sun, 02 Jun 2019 01:29:42 +0300
+Date:   Sun, 2 Jun 2019 01:29:39 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 5/5] media: ov6650: Add .init_cfg() pad operation
+ callback
+Message-ID: <20190601222938.bonoowmbfs6cpctp@mara.localdomain>
+References: <20190526204758.1904-1-jmkrzyszt@gmail.com>
+ <20190526204758.1904-6-jmkrzyszt@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190526204758.1904-6-jmkrzyszt@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-list_for_each_entry_rcu has built-in RCU and lock checking. Make use of
-it for acpi_ioremaps list traversal.
+Hi Janusz,
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
----
- drivers/acpi/osl.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+On Sun, May 26, 2019 at 10:47:58PM +0200, Janusz Krzysztofik wrote:
+> The driver now supports V4L2_SUBDEV_FORMAT_TRY operation mode only in
+> .get/set_fmt() pad operation callbacks.  That means only .try_format
+> member of pad config is maintained.  As a consequence, active crop
+> rectangle is used as a referece while V4L2_SUBDEV_FORMAT_TRY requests
+> are processed.  In order to fix that, a method for initialization of
+> .try_crop pad config member is needed.
+> 
+> Implement .init_cfg() pad operation callback which initializes the pad
+> config from current active format and selection settings.  From now on,
 
-diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
-index f29e427d0d1d..c8b5d712c7ae 100644
---- a/drivers/acpi/osl.c
-+++ b/drivers/acpi/osl.c
-@@ -28,6 +28,7 @@
- #include <linux/slab.h>
- #include <linux/mm.h>
- #include <linux/highmem.h>
-+#include <linux/lockdep.h>
- #include <linux/pci.h>
- #include <linux/interrupt.h>
- #include <linux/kmod.h>
-@@ -94,6 +95,7 @@ struct acpi_ioremap {
- 
- static LIST_HEAD(acpi_ioremaps);
- static DEFINE_MUTEX(acpi_ioremap_lock);
-+#define acpi_ioremap_lock_held() lock_is_held(&acpi_ioremap_lock.dep_map)
- 
- static void __init acpi_request_region (struct acpi_generic_address *gas,
- 	unsigned int length, char *desc)
-@@ -220,7 +222,7 @@ acpi_map_lookup(acpi_physical_address phys, acpi_size size)
- {
- 	struct acpi_ioremap *map;
- 
--	list_for_each_entry_rcu(map, &acpi_ioremaps, list)
-+	list_for_each_entry_rcu(map, &acpi_ioremaps, list, acpi_ioremap_lock_held())
- 		if (map->phys <= phys &&
- 		    phys + size <= map->phys + map->size)
- 			return map;
-@@ -263,7 +265,7 @@ acpi_map_lookup_virt(void __iomem *virt, acpi_size size)
- {
- 	struct acpi_ioremap *map;
- 
--	list_for_each_entry_rcu(map, &acpi_ioremaps, list)
-+	list_for_each_entry_rcu(map, &acpi_ioremaps, list, acpi_ioremap_lock_held())
- 		if (map->virt <= virt &&
- 		    virt + size <= map->virt + map->size)
- 			return map;
+The values set by init_cfg should be the defaults and not reflect the
+current configuration. Apart from that the patch seems fine.
+
+> and before the driver V4L2_SUBDEV_FORMAT_TRY support is further
+> modified, host interface drivers should call .init_cfg() on a pad
+> config before passing it to V4L2_SUBDEV_FORMAT_TRY operations.
+> 
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> ---
+>  drivers/media/i2c/ov6650.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+> 
+> diff --git a/drivers/media/i2c/ov6650.c b/drivers/media/i2c/ov6650.c
+> index cc70d8952999..c3d4c1f598b2 100644
+> --- a/drivers/media/i2c/ov6650.c
+> +++ b/drivers/media/i2c/ov6650.c
+> @@ -447,6 +447,26 @@ static int ov6650_s_power(struct v4l2_subdev *sd, int on)
+>  	return ret;
+>  }
+>  
+> +static int ov6650_init_cfg(struct v4l2_subdev *sd,
+> +			   struct v4l2_subdev_pad_config *cfg)
+> +{
+> +	struct i2c_client *client = v4l2_get_subdevdata(sd);
+> +	struct ov6650 *priv = to_ov6650(client);
+> +	struct v4l2_mbus_framefmt *mf;
+> +	struct v4l2_rect *rect;
+> +
+> +	mf = &cfg->try_fmt;
+> +	*mf = ov6650_def_fmt;
+> +	mf->width = priv->rect.width >> priv->half_scale;
+> +	mf->height = priv->rect.height >> priv->half_scale;
+> +	mf->code = priv->code;
+> +
+> +	rect = &cfg->try_crop;
+> +	*rect = priv->rect;
+> +
+> +	return 0;
+> +}
+> +
+>  static int ov6650_get_selection(struct v4l2_subdev *sd,
+>  		struct v4l2_subdev_pad_config *cfg,
+>  		struct v4l2_subdev_selection *sel)
+> @@ -959,6 +979,7 @@ static const struct v4l2_subdev_video_ops ov6650_video_ops = {
+>  };
+>  
+>  static const struct v4l2_subdev_pad_ops ov6650_pad_ops = {
+> +	.init_cfg	= ov6650_init_cfg,
+>  	.enum_mbus_code = ov6650_enum_mbus_code,
+>  	.get_selection	= ov6650_get_selection,
+>  	.set_selection	= ov6650_set_selection,
+> -- 
+> 2.21.0
+> 
+
 -- 
-2.22.0.rc1.311.g5d7573a151-goog
-
+Sakari Ailus
+sakari.ailus@linux.intel.com
