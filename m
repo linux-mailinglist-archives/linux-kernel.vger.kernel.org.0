@@ -2,263 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D423131FEC
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 18:20:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABC1B31B0F
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 11:51:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbfFAQUS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Jun 2019 12:20:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58946 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726149AbfFAQUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Jun 2019 12:20:17 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49F9B2768D;
-        Sat,  1 Jun 2019 16:20:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559406016;
-        bh=/Lhe2sEcKW8SvoOtAko/S2GJXLG/IEpYQoiW1R5BlQs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bW3/tf/IjhTYIF9dVHbbhQDY5LQOd9rfpRKbuGGvifHLJPJBUixLyGl+cmp15HxWt
-         2zSWrd8Ib30f3McicDrq5snDI1NjNykAbd6PgUHYaSB7a+YvEGAHF4jTPsDji3H2A0
-         fy+UA9LDeexJUhWjW8oBjSgui5Bku6DbPVsDpy2A=
-Date:   Sat, 1 Jun 2019 02:42:19 -0700
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Wu Hao <hao.wu@intel.com>
-Cc:     atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Luwei Kang <luwei.kang@intel.com>,
-        Xu Yilun <yilun.xu@intel.com>
-Subject: Re: [PATCH v3 16/16] fpga: dfl: fme: add performance reporting
- support
-Message-ID: <20190601094219.GA1998@kroah.com>
-References: <1558934546-12171-1-git-send-email-hao.wu@intel.com>
- <1558934546-12171-17-git-send-email-hao.wu@intel.com>
- <20190530190305.GA2909@kroah.com>
- <20190601091147.GB3743@hao-dev>
+        id S1727075AbfFAJvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Jun 2019 05:51:19 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37399 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726832AbfFAJvS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Jun 2019 05:51:18 -0400
+Received: by mail-pg1-f195.google.com with SMTP id 20so5437661pgr.4
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2019 02:51:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RNxGbxuQjJnKHmflH8io0Yh7K3STajOAFY5UlUeImlE=;
+        b=ftzq3jR2++4o8NJW8hDTNe4IEPPtpBxc6+CvixxSQYqrrMYyMK0FzKvHhVlVMpyjLp
+         tsuJMJbjfLULDaK8sjJNLkWrG9vMaaoGRnWlq0I6CSgjjB8uz8CX938f5shEc+LbxgsV
+         aI3kxJoTtsRnwz5Q1H9OZv8R6MOdfFvNsQ5gewgkPYS1+z7b/vNHrpeLVukE/dRo6gMn
+         54ps7O57q9L+8NcpZxWwMTIDedNIrIEmZ2qwSNkT8qyXqDxN3Z3dHi46EyyQC570ti1y
+         SOt7Ls7zsxDaxnTuxtrW4XT7TWqp284BP8+qP/5qZDEAqOV3Wav7gzaRZSro76A9VIWZ
+         V5rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RNxGbxuQjJnKHmflH8io0Yh7K3STajOAFY5UlUeImlE=;
+        b=GmzvIK7iRkX0ytBZmG2B9pY9kMO0JI7fYsZBPTSHDR5dFHHFmDb8kX95X4CpMDc5Er
+         tZPs5t9reKnQsiuNvqGvnMjAfF0Th2iXC6nmD9+BvxgkF7XUPTWt2+ZK5M5svgam8Zl9
+         iQZ2eV60pDeihM8ZpBz6cVwU46hkw6wo753f141aZyowvZohzRu7xM3o6VuO4uAMBorF
+         5PeV0lXh09ifPDXwLK2chOAF9iEvggGzqVjOiMHYe7rfOBT5lPORoVxOuIFf1e9QVmQP
+         CuQHhVRCkKgur33ZNn8hkEfTIN09qItiW+Rda0h4rD8F9kw1FDz9zNZ/ynN5QrLUQ4Nu
+         AgIA==
+X-Gm-Message-State: APjAAAW7hDURS+bToDdjGrKmrUtD31Uoqmy/hrqJrnC4JoQF8453t+rM
+        BS6l0upMnQHzM5kwm14erHDr
+X-Google-Smtp-Source: APXvYqx465ZqZSGI5f9aNCQ1QW6+B2C0NyP5YwUfaCtwz4wNoXssIWR/WyKtFDiUgKvIIdWIaw3JMw==
+X-Received: by 2002:a62:1993:: with SMTP id 141mr15320990pfz.97.1559382677973;
+        Sat, 01 Jun 2019 02:51:17 -0700 (PDT)
+Received: from Mani-XPS-13-9360 ([2405:204:73c0:f79b:51a5:964b:dc02:28ec])
+        by smtp.gmail.com with ESMTPSA id u14sm9611863pfc.31.2019.06.01.02.51.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 01 Jun 2019 02:51:16 -0700 (PDT)
+Date:   Sat, 1 Jun 2019 15:21:06 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Anand Moon <linux.amoon@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Vicente Bergas <vicencb@gmail.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: rockchip: Add missing configuration pwr
+ amd rst for PCIe
+Message-ID: <20190601095106.GA2213@Mani-XPS-13-9360>
+References: <20190531201913.1122-1-linux.amoon@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190601091147.GB3743@hao-dev>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <20190531201913.1122-1-linux.amoon@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 01, 2019 at 05:11:47PM +0800, Wu Hao wrote:
-> On Thu, May 30, 2019 at 12:03:05PM -0700, Greg KH wrote:
-> > On Mon, May 27, 2019 at 01:22:26PM +0800, Wu Hao wrote:
-> > > --- /dev/null
-> > > +++ b/drivers/fpga/dfl-fme-perf.c
-> > > @@ -0,0 +1,962 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * Driver for FPGA Management Engine (FME) Global Performance Reporting
-> > > + *
-> > > + * Copyright 2019 Intel Corporation, Inc.
-> > > + *
-> > > + * Authors:
-> > > + *   Kang Luwei <luwei.kang@intel.com>
-> > > + *   Xiao Guangrong <guangrong.xiao@linux.intel.com>
-> > > + *   Wu Hao <hao.wu@intel.com>
-> > > + *   Joseph Grecco <joe.grecco@intel.com>
-> > > + *   Enno Luebbers <enno.luebbers@intel.com>
-> > > + *   Tim Whisonant <tim.whisonant@intel.com>
-> > > + *   Ananda Ravuri <ananda.ravuri@intel.com>
-> > > + *   Mitchel, Henry <henry.mitchel@intel.com>
-> > > + */
-> > > +
-> > > +#include "dfl.h"
-> > > +#include "dfl-fme.h"
-> > > +
-> > > +/*
-> > > + * Performance Counter Registers for Cache.
-> > > + *
-> > > + * Cache Events are listed below as CACHE_EVNT_*.
-> > > + */
-> > > +#define CACHE_CTRL			0x8
-> > > +#define CACHE_RESET_CNTR		BIT_ULL(0)
-> > > +#define CACHE_FREEZE_CNTR		BIT_ULL(8)
-> > > +#define CACHE_CTRL_EVNT			GENMASK_ULL(19, 16)
-> > > +#define CACHE_EVNT_RD_HIT		0x0
-> > > +#define CACHE_EVNT_WR_HIT		0x1
-> > > +#define CACHE_EVNT_RD_MISS		0x2
-> > > +#define CACHE_EVNT_WR_MISS		0x3
-> > > +#define CACHE_EVNT_RSVD			0x4
-> > > +#define CACHE_EVNT_HOLD_REQ		0x5
-> > > +#define CACHE_EVNT_DATA_WR_PORT_CONTEN	0x6
-> > > +#define CACHE_EVNT_TAG_WR_PORT_CONTEN	0x7
-> > > +#define CACHE_EVNT_TX_REQ_STALL		0x8
-> > > +#define CACHE_EVNT_RX_REQ_STALL		0x9
-> > > +#define CACHE_EVNT_EVICTIONS		0xa
-> > > +#define CACHE_EVNT_MAX			CACHE_EVNT_EVICTIONS
-> > > +#define CACHE_CHANNEL_SEL		BIT_ULL(20)
-> > > +#define CACHE_CHANNEL_RD		0
-> > > +#define CACHE_CHANNEL_WR		1
-> > > +#define CACHE_CHANNEL_MAX		2
-> > > +#define CACHE_CNTR0			0x10
-> > > +#define CACHE_CNTR1			0x18
-> > > +#define CACHE_CNTR_EVNT_CNTR		GENMASK_ULL(47, 0)
-> > > +#define CACHE_CNTR_EVNT			GENMASK_ULL(63, 60)
-> > > +
-> > > +/*
-> > > + * Performance Counter Registers for Fabric.
-> > > + *
-> > > + * Fabric Events are listed below as FAB_EVNT_*
-> > > + */
-> > > +#define FAB_CTRL			0x20
-> > > +#define FAB_RESET_CNTR			BIT_ULL(0)
-> > > +#define FAB_FREEZE_CNTR			BIT_ULL(8)
-> > > +#define FAB_CTRL_EVNT			GENMASK_ULL(19, 16)
-> > > +#define FAB_EVNT_PCIE0_RD		0x0
-> > > +#define FAB_EVNT_PCIE0_WR		0x1
-> > > +#define FAB_EVNT_PCIE1_RD		0x2
-> > > +#define FAB_EVNT_PCIE1_WR		0x3
-> > > +#define FAB_EVNT_UPI_RD			0x4
-> > > +#define FAB_EVNT_UPI_WR			0x5
-> > > +#define FAB_EVNT_MMIO_RD		0x6
-> > > +#define FAB_EVNT_MMIO_WR		0x7
-> > > +#define FAB_EVNT_MAX			FAB_EVNT_MMIO_WR
-> > > +#define FAB_PORT_ID			GENMASK_ULL(21, 20)
-> > > +#define FAB_PORT_FILTER			BIT_ULL(23)
-> > > +#define FAB_PORT_FILTER_DISABLE		0
-> > > +#define FAB_PORT_FILTER_ENABLE		1
-> > > +#define FAB_CNTR			0x28
-> > > +#define FAB_CNTR_EVNT_CNTR		GENMASK_ULL(59, 0)
-> > > +#define FAB_CNTR_EVNT			GENMASK_ULL(63, 60)
-> > > +
-> > > +/*
-> > > + * Performance Counter Registers for Clock.
-> > > + *
-> > > + * Clock Counter can't be reset or frozen by SW.
-> > > + */
-> > > +#define CLK_CNTR			0x30
-> > > +
-> > > +/*
-> > > + * Performance Counter Registers for IOMMU / VT-D.
-> > > + *
-> > > + * VT-D Events are listed below as VTD_EVNT_* and VTD_SIP_EVNT_*
-> > > + */
-> > > +#define VTD_CTRL			0x38
-> > > +#define VTD_RESET_CNTR			BIT_ULL(0)
-> > > +#define VTD_FREEZE_CNTR			BIT_ULL(8)
-> > > +#define VTD_CTRL_EVNT			GENMASK_ULL(19, 16)
-> > > +#define VTD_EVNT_AFU_MEM_RD_TRANS	0x0
-> > > +#define VTD_EVNT_AFU_MEM_WR_TRANS	0x1
-> > > +#define VTD_EVNT_AFU_DEVTLB_RD_HIT	0x2
-> > > +#define VTD_EVNT_AFU_DEVTLB_WR_HIT	0x3
-> > > +#define VTD_EVNT_DEVTLB_4K_FILL		0x4
-> > > +#define VTD_EVNT_DEVTLB_2M_FILL		0x5
-> > > +#define VTD_EVNT_DEVTLB_1G_FILL		0x6
-> > > +#define VTD_EVNT_MAX			VTD_EVNT_DEVTLB_1G_FILL
-> > > +#define VTD_CNTR			0x40
-> > > +#define VTD_CNTR_EVNT			GENMASK_ULL(63, 60)
-> > > +#define VTD_CNTR_EVNT_CNTR		GENMASK_ULL(47, 0)
-> > > +#define VTD_SIP_CTRL			0x48
-> > > +#define VTD_SIP_RESET_CNTR		BIT_ULL(0)
-> > > +#define VTD_SIP_FREEZE_CNTR		BIT_ULL(8)
-> > > +#define VTD_SIP_CTRL_EVNT		GENMASK_ULL(19, 16)
-> > > +#define VTD_SIP_EVNT_IOTLB_4K_HIT	0x0
-> > > +#define VTD_SIP_EVNT_IOTLB_2M_HIT	0x1
-> > > +#define VTD_SIP_EVNT_IOTLB_1G_HIT	0x2
-> > > +#define VTD_SIP_EVNT_SLPWC_L3_HIT	0x3
-> > > +#define VTD_SIP_EVNT_SLPWC_L4_HIT	0x4
-> > > +#define VTD_SIP_EVNT_RCC_HIT		0x5
-> > > +#define VTD_SIP_EVNT_IOTLB_4K_MISS	0x6
-> > > +#define VTD_SIP_EVNT_IOTLB_2M_MISS	0x7
-> > > +#define VTD_SIP_EVNT_IOTLB_1G_MISS	0x8
-> > > +#define VTD_SIP_EVNT_SLPWC_L3_MISS	0x9
-> > > +#define VTD_SIP_EVNT_SLPWC_L4_MISS	0xa
-> > > +#define VTD_SIP_EVNT_RCC_MISS		0xb
-> > > +#define VTD_SIP_EVNT_MAX		VTD_SIP_EVNT_RCC_MISS
-> > > +#define VTD_SIP_CNTR			0X50
-> > > +#define VTD_SIP_CNTR_EVNT		GENMASK_ULL(63, 60)
-> > > +#define VTD_SIP_CNTR_EVNT_CNTR		GENMASK_ULL(47, 0)
-> > > +
-> > > +#define PERF_OBJ_ROOT_ID		(~0)
-> > > +
-> > > +#define PERF_TIMEOUT			30
-> > > +
-> > > +/**
-> > > + * struct perf_object - object of performance counter
-> > > + *
-> > > + * @id: instance id. PERF_OBJ_ROOT_ID indicates it is a parent object which
-> > > + *      counts performance counters for all instances.
-> > > + * @attr_groups: the sysfs files are associated with this object.
-> > > + * @feature: pointer to related private feature.
-> > > + * @node: used to link itself to parent's children list.
-> > > + * @children: used to link its children objects together.
-> > > + * @kobj: generic kobject interface.
-> > > + *
-> > > + * 'node' and 'children' are used to construct parent-children hierarchy.
-> > > + */
-> > > +struct perf_object {
-> > > +	int id;
-> > > +	const struct attribute_group **attr_groups;
-> > > +	struct dfl_feature *feature;
-> > > +
-> > > +	struct list_head node;
-> > > +	struct list_head children;
-> > > +	struct kobject kobj;
-> > 
-> > Woah, why are you using a "raw" kobject and not a 'struct device' here?
-> > You just broke userspace and no libraries will see your kobject's
-> > properties as the "chain" of struct devices is not happening anymore.
-> > 
-> > Why can this not just be a 'struct device'?
-> 
-> Hi Greg,
-> 
-> Many thanks for the review and comments.
-> 
-> Actually we are just trying to create sysfs hierarchy for performance
-> counters using these data structures.
-> 
-> If we use 'struct device' instead of kobject, then we have to let userspace
-> code to deal with device's sysfs (e.g. ignore 'uevent' below). This is the
-> only concern from my side now, as I know that using 'struct device'
-> saves code as we don't need to introduce a new perf_obj_attribute then.
-> 
-> dfl-fme.0/perf/
->  ├── iommu
->  │   ├── afu0
->  │   │   ├── devtlb_1g_fill
->  │   │   ├── devtlb_2m_fill
->  │   │   ├── devtlb_4k_fill
->  │   │   ├── devtlb_read_hit
->  │   │   ├── devtlb_write_hit
->  │   │   ├── read_transaction
->  │   │   ├── uevent
->  │   │   └── write_transaction
->  │   ├── freeze
->  │   ├── iotlb_1g_hit
->  │   ├── iotlb_1g_miss
-> 	 ...
->      └── uevent
->  ...
-> 
-> Do you think if we could keep it or it's better to use 'struct device'?
+Hi,
 
-What about using the attribute group name?  That gives you a subdir for
-free.  Doing anything "deeper" than one level means that you really have
-a child device, and yes, you need to use a 'struct device'.  Make it
-part of your bus and just have it be a different "type" and all should
-be good.
+On Fri, May 31, 2019 at 08:19:13PM +0000, Anand Moon wrote:
+> This patch add missing PCIe gpio pin (#PCIE_PWR) for vcc3v3_pcie power
+> regulator node also add missing reset pinctrl (#PCIE_PERST_L) for PCIe node.
+> 
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+> using schematics: thanks for suggested by Manivannan
+> [1] https://dl.vamrs.com/products/rock960/docs/hw/rock960_sch_v12_20180314.pdf
+> 
+> Changes from prevoius patch:
+> [2] https://patchwork.kernel.org/patch/10968695/
+> 
+> Fix the suject and commit message and corrected the PWR and PERST configuration
+> as per shematics and dts nodes.
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3399-ficus.dts    | 7 +++++++
+>  arch/arm64/boot/dts/rockchip/rk3399-rock960.dts  | 7 +++++++
+>  arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi | 3 +--
+>  3 files changed, 15 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-ficus.dts b/arch/arm64/boot/dts/rockchip/rk3399-ficus.dts
+> index 6b059bd7a04f..94e2a59bc1c7 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3399-ficus.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399-ficus.dts
+> @@ -89,6 +89,8 @@
+>  
+>  &pcie0 {
+>  	ep-gpios = <&gpio4 RK_PD4 GPIO_ACTIVE_HIGH>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pcie_clkreqn_cpm &pcie_perst_l>;
 
-Again, NEVER use a raw kobject as a child of a 'struct device', that
-will break things.
+Looks like ep-gpio is wrong here :/ I probably referred old schematics
+at that time. Correct pin mapping is,
 
-And please cc: me on this series from now on, as you are obviously
-trying to do complex things with the driver model and sysfs and it is
-easy to get very wrong.
+ep-gpios = <&gpio2 RK_PD4 GPIO_ACTIVE_HIGH>;
 
-But wait, step back, why does this one driver have such a "special"
-user/kernel api that unique to it and nothing else?  That's also a big
-red flag, why not just use the normal perf api that everyone else uses?
+And this should be fixed in a separate patch with "Fixes" tag!
 
-thanks,
+>  };
+>  
+>  &pinctrl {
+> @@ -104,6 +106,11 @@
+>  			rockchip,pins =
+>  				<1 RK_PD0 RK_FUNC_GPIO &pcfg_pull_none>;
+>  			};
+> +
+> +		pcie_perst_l: pcie-perst-l {
+> +			rockchip,pins =
+> +				<4 RK_PD4 RK_FUNC_GPIO &pcfg_pull_none>;
+> +		};
+>  	};
+>  
+>  	usb2 {
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dts b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dts
+> index 12285c51cceb..665fe09c7c74 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dts
+> @@ -64,6 +64,8 @@
+>  
+>  &pcie0 {
+>  	ep-gpios = <&gpio2 RK_PA2 GPIO_ACTIVE_HIGH>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pcie_clkreqn_cpm &pcie_perst_l>;
+>  };
+>  
+>  &pinctrl {
+> @@ -104,6 +106,11 @@
+>  			rockchip,pins =
+>  				<2 RK_PA5 RK_FUNC_GPIO &pcfg_pull_none>;
+>  			};
+> +
+> +		pcie_perst_l: pcie-perst-l {
+> +			rockchip,pins =
+> +				<2 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
+> +		};
+>  	};
+>  
+>  	usb2 {
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
+> index c7d48d41e184..3df0cd67b4b2 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
+> @@ -55,6 +55,7 @@
+>  
+>  	vcc3v3_pcie: vcc3v3-pcie-regulator {
+>  		compatible = "regulator-fixed";
+> +		gpio = <&gpio2 RK_PA5 GPIO_ACTIVE_HIGH>;
 
-greg k-h
+Actually the PWR pin mapping is defined in a separate node for both Rock960
+and Ficus in respective dts. So defining it here would be wrong as the PWR
+pin mapping is different for both boards.
+
+Thanks,
+Mani
+
+>  		enable-active-high;
+>  		pinctrl-names = "default";
+>  		pinctrl-0 = <&pcie_drv>;
+> @@ -382,8 +383,6 @@
+>  
+>  &pcie0 {
+>  	num-lanes = <4>;
+> -	pinctrl-names = "default";
+> -	pinctrl-0 = <&pcie_clkreqn_cpm>;
+>  	vpcie3v3-supply = <&vcc3v3_pcie>;
+>  	status = "okay";
+>  };
+> -- 
+> 2.21.0
+> 
