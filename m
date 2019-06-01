@@ -2,81 +2,225 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DC2A31A4A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 09:52:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 971CD31A68
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 09:57:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727381AbfFAHvV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Jun 2019 03:51:21 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51310 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727357AbfFAHvQ (ORCPT
+        id S1726634AbfFAH5y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Jun 2019 03:57:54 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:45970 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726013AbfFAH5x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Jun 2019 03:51:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=rc9LqUIutMEld6u5RSQ1sWzYs7kKnMm3S4iYITq0SoM=; b=hmItU0MzoKBxkW0xZSY+1V9IVJ
-        UlnIz7x0urr62nzgcyqnB/5AQ1M6XxA40U4gxuVcAGCsZXzQMrqW+4eKIbaj5MYaWx5FKa+gz1mKz
-        HRuyf4AFR/AjCjgH8EDN4vHwAhjKlzmMds++4hoDLSl7tnnj8utVFIcJ1xF5v2BvjcyJSGfnZhRgg
-        CGtHKWy+mwizinD1wdoATmhB/sprl/mtqAL2Mea12uUVfEACrsVwrstfEucPET4mDXbr7743/4ZpD
-        tGZvwusRlY1sYBD80QVps0fAgFJ6FrIu6GKRIDGA4zcDNIRUJhWop4eFhMFiU+OV0AXhP+aTvhS++
-        PTXgcQDg==;
-Received: from 217-76-161-89.static.highway.a1.net ([217.76.161.89] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hWynB-0007sS-Px; Sat, 01 Jun 2019 07:51:06 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Nicholas Piggin <npiggin@gmail.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-mips@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-mm@kvack.org, x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 16/16] mm: mark the page referenced in gup_hugepte
-Date:   Sat,  1 Jun 2019 09:49:59 +0200
-Message-Id: <20190601074959.14036-17-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190601074959.14036-1-hch@lst.de>
-References: <20190601074959.14036-1-hch@lst.de>
+        Sat, 1 Jun 2019 03:57:53 -0400
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id E0096263967;
+        Sat,  1 Jun 2019 08:57:51 +0100 (BST)
+Date:   Sat, 1 Jun 2019 09:57:48 +0200
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     Kamal Dasu <kdasu.kdev@gmail.com>
+Cc:     linux-mtd@lists.infradead.org,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH 1/3] mtd: nand: raw: brcmnand: Refactored code and
+ introduced inline functions
+Message-ID: <20190601095748.35d1c1aa@collabora.com>
+In-Reply-To: <1559251257-12383-1-git-send-email-kdasu.kdev@gmail.com>
+References: <1559251257-12383-1-git-send-email-kdasu.kdev@gmail.com>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All other get_user_page_fast cases mark the page referenced, so do
-this here as well.
+On Thu, 30 May 2019 17:20:35 -0400
+Kamal Dasu <kdasu.kdev@gmail.com> wrote:
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- mm/gup.c | 1 +
- 1 file changed, 1 insertion(+)
+> Refactored NAND ECC and CMD address configuration code to use inline
+> functions.
 
-diff --git a/mm/gup.c b/mm/gup.c
-index 6090044227f1..d1fc008de292 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -2020,6 +2020,7 @@ static int gup_hugepte(pte_t *ptep, unsigned long sz, unsigned long addr,
- 		return 0;
- 	}
- 
-+	SetPageReferenced(head);
- 	return 1;
- }
- 
--- 
-2.20.1
+I'd expect the compiler to be smart enough to decide when inlining is
+appropriate. Did you check that adding the inline specifier actually
+makes a difference?
+
+> 
+> Signed-off-by: Kamal Dasu <kdasu.kdev@gmail.com>
+> ---
+>  drivers/mtd/nand/raw/brcmnand/brcmnand.c | 100 +++++++++++++++++++------------
+>  1 file changed, 62 insertions(+), 38 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/brcmnand/brcmnand.c b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+> index ce0b8ff..77b7850 100644
+> --- a/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+> +++ b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+> @@ -588,6 +588,54 @@ static inline void brcmnand_write_fc(struct brcmnand_controller *ctrl,
+>  	__raw_writel(val, ctrl->nand_fc + word * 4);
+>  }
+>  
+> +static inline void brcmnand_clear_ecc_addr(struct brcmnand_controller *ctrl)
+> +{
+> +
+> +	/* Clear error addresses */
+> +	brcmnand_write_reg(ctrl, BRCMNAND_UNCORR_ADDR, 0);
+> +	brcmnand_write_reg(ctrl, BRCMNAND_CORR_ADDR, 0);
+> +	brcmnand_write_reg(ctrl, BRCMNAND_UNCORR_EXT_ADDR, 0);
+> +	brcmnand_write_reg(ctrl, BRCMNAND_CORR_EXT_ADDR, 0);
+> +}
+> +
+> +static inline u64 brcmnand_get_uncorrecc_addr(struct brcmnand_controller *ctrl)
+> +{
+> +	u64 err_addr;
+> +
+> +	err_addr = brcmnand_read_reg(ctrl, BRCMNAND_UNCORR_ADDR);
+> +	err_addr |= ((u64)(brcmnand_read_reg(ctrl,
+> +					     BRCMNAND_UNCORR_EXT_ADDR)
+> +					     & 0xffff) << 32);
+> +
+> +	return err_addr;
+> +}
+> +
+> +static inline u64 brcmnand_get_correcc_addr(struct brcmnand_controller *ctrl)
+> +{
+> +	u64 err_addr;
+> +
+> +	err_addr = brcmnand_read_reg(ctrl, BRCMNAND_CORR_ADDR);
+> +	err_addr |= ((u64)(brcmnand_read_reg(ctrl,
+> +					     BRCMNAND_CORR_EXT_ADDR)
+> +					     & 0xffff) << 32);
+> +
+> +	return err_addr;
+> +}
+> +
+> +static inline void brcmnand_set_cmd_addr(struct mtd_info *mtd, u64 addr)
+> +{
+> +	struct nand_chip *chip =  mtd_to_nand(mtd);
+> +	struct brcmnand_host *host = nand_get_controller_data(chip);
+> +	struct brcmnand_controller *ctrl = host->ctrl;
+> +
+> +	brcmnand_write_reg(ctrl, BRCMNAND_CMD_EXT_ADDRESS,
+> +			   (host->cs << 16) | ((addr >> 32) & 0xffff));
+> +	(void)brcmnand_read_reg(ctrl, BRCMNAND_CMD_EXT_ADDRESS);
+> +	brcmnand_write_reg(ctrl, BRCMNAND_CMD_ADDRESS,
+> +			   lower_32_bits(addr));
+> +	(void)brcmnand_read_reg(ctrl, BRCMNAND_CMD_ADDRESS);
+> +}
+> +
+>  static inline u16 brcmnand_cs_offset(struct brcmnand_controller *ctrl, int cs,
+>  				     enum brcmnand_cs_reg reg)
+>  {
+> @@ -1213,9 +1261,12 @@ static void brcmnand_send_cmd(struct brcmnand_host *host, int cmd)
+>  {
+>  	struct brcmnand_controller *ctrl = host->ctrl;
+>  	int ret;
+> +	u64 cmd_addr;
+> +
+> +	cmd_addr = brcmnand_read_reg(ctrl, BRCMNAND_CMD_ADDRESS);
+> +
+> +	dev_dbg(ctrl->dev, "send native cmd %d addr 0x%llx\n", cmd, cmd_addr);
+>  
+> -	dev_dbg(ctrl->dev, "send native cmd %d addr_lo 0x%x\n", cmd,
+> -		brcmnand_read_reg(ctrl, BRCMNAND_CMD_ADDRESS));
+>  	BUG_ON(ctrl->cmd_pending != 0);
+>  	ctrl->cmd_pending = cmd;
+>  
+> @@ -1374,12 +1425,7 @@ static void brcmnand_cmdfunc(struct nand_chip *chip, unsigned command,
+>  	if (!native_cmd)
+>  		return;
+>  
+> -	brcmnand_write_reg(ctrl, BRCMNAND_CMD_EXT_ADDRESS,
+> -		(host->cs << 16) | ((addr >> 32) & 0xffff));
+> -	(void)brcmnand_read_reg(ctrl, BRCMNAND_CMD_EXT_ADDRESS);
+> -	brcmnand_write_reg(ctrl, BRCMNAND_CMD_ADDRESS, lower_32_bits(addr));
+> -	(void)brcmnand_read_reg(ctrl, BRCMNAND_CMD_ADDRESS);
+> -
+> +	brcmnand_set_cmd_addr(mtd, addr);
+>  	brcmnand_send_cmd(host, native_cmd);
+>  	brcmnand_waitfunc(chip);
+>  
+> @@ -1597,20 +1643,10 @@ static int brcmnand_read_by_pio(struct mtd_info *mtd, struct nand_chip *chip,
+>  	struct brcmnand_controller *ctrl = host->ctrl;
+>  	int i, j, ret = 0;
+>  
+> -	/* Clear error addresses */
+> -	brcmnand_write_reg(ctrl, BRCMNAND_UNCORR_ADDR, 0);
+> -	brcmnand_write_reg(ctrl, BRCMNAND_CORR_ADDR, 0);
+> -	brcmnand_write_reg(ctrl, BRCMNAND_UNCORR_EXT_ADDR, 0);
+> -	brcmnand_write_reg(ctrl, BRCMNAND_CORR_EXT_ADDR, 0);
+> -
+> -	brcmnand_write_reg(ctrl, BRCMNAND_CMD_EXT_ADDRESS,
+> -			(host->cs << 16) | ((addr >> 32) & 0xffff));
+> -	(void)brcmnand_read_reg(ctrl, BRCMNAND_CMD_EXT_ADDRESS);
+> +	brcmnand_clear_ecc_addr(ctrl);
+>  
+>  	for (i = 0; i < trans; i++, addr += FC_BYTES) {
+> -		brcmnand_write_reg(ctrl, BRCMNAND_CMD_ADDRESS,
+> -				   lower_32_bits(addr));
+> -		(void)brcmnand_read_reg(ctrl, BRCMNAND_CMD_ADDRESS);
+> +		brcmnand_set_cmd_addr(mtd, addr);
+>  		/* SPARE_AREA_READ does not use ECC, so just use PAGE_READ */
+>  		brcmnand_send_cmd(host, CMD_PAGE_READ);
+>  		brcmnand_waitfunc(chip);
+> @@ -1630,21 +1666,15 @@ static int brcmnand_read_by_pio(struct mtd_info *mtd, struct nand_chip *chip,
+>  					host->hwcfg.sector_size_1k);
+>  
+>  		if (!ret) {
+> -			*err_addr = brcmnand_read_reg(ctrl,
+> -					BRCMNAND_UNCORR_ADDR) |
+> -				((u64)(brcmnand_read_reg(ctrl,
+> -						BRCMNAND_UNCORR_EXT_ADDR)
+> -					& 0xffff) << 32);
+> +			*err_addr = brcmnand_get_uncorrecc_addr(ctrl);
+> +
+>  			if (*err_addr)
+>  				ret = -EBADMSG;
+>  		}
+>  
+>  		if (!ret) {
+> -			*err_addr = brcmnand_read_reg(ctrl,
+> -					BRCMNAND_CORR_ADDR) |
+> -				((u64)(brcmnand_read_reg(ctrl,
+> -						BRCMNAND_CORR_EXT_ADDR)
+> -					& 0xffff) << 32);
+> +			*err_addr = brcmnand_get_correcc_addr(ctrl);
+> +
+>  			if (*err_addr)
+>  				ret = -EUCLEAN;
+>  		}
+> @@ -1711,7 +1741,7 @@ static int brcmnand_read(struct mtd_info *mtd, struct nand_chip *chip,
+>  	dev_dbg(ctrl->dev, "read %llx -> %p\n", (unsigned long long)addr, buf);
+>  
+>  try_dmaread:
+> -	brcmnand_write_reg(ctrl, BRCMNAND_UNCORR_COUNT, 0);
+> +	brcmnand_clear_ecc_addr(ctrl);
+>  
+>  	if (has_flash_dma(ctrl) && !oob && flash_dma_buf_ok(buf)) {
+>  		err = brcmnand_dma_trans(host, addr, buf, trans * FC_BYTES,
+> @@ -1858,15 +1888,9 @@ static int brcmnand_write(struct mtd_info *mtd, struct nand_chip *chip,
+>  		goto out;
+>  	}
+>  
+> -	brcmnand_write_reg(ctrl, BRCMNAND_CMD_EXT_ADDRESS,
+> -			(host->cs << 16) | ((addr >> 32) & 0xffff));
+> -	(void)brcmnand_read_reg(ctrl, BRCMNAND_CMD_EXT_ADDRESS);
+> -
+>  	for (i = 0; i < trans; i++, addr += FC_BYTES) {
+>  		/* full address MUST be set before populating FC */
+> -		brcmnand_write_reg(ctrl, BRCMNAND_CMD_ADDRESS,
+> -				   lower_32_bits(addr));
+> -		(void)brcmnand_read_reg(ctrl, BRCMNAND_CMD_ADDRESS);
+> +		brcmnand_set_cmd_addr(mtd, addr);
+>  
+>  		if (buf) {
+>  			brcmnand_soc_data_bus_prepare(ctrl->soc, false);
 
