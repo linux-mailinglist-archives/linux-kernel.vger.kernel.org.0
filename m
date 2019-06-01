@@ -2,129 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F0A531D40
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 15:28:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1D3231F76
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 15:53:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730010AbfFAN1u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Jun 2019 09:27:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60808 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729971AbfFAN1j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Jun 2019 09:27:39 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9121726D2A;
-        Sat,  1 Jun 2019 13:27:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559395658;
-        bh=RzVdEbcgR3gqdeLqYWaRHctpGJEk+NWbLFfeHvZL7Sw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QNaalJd9UOGkzT4pkKfeSpb9J3GjaZRPmBZJlNPBbz1yyYus53xazU78xN7aB9ASc
-         TMyIcgSh61Cx36SA65X2ybqDdJl01psYBfLJD3sDCR4pbdhXdgYDkuVP2VYhh+dDWQ
-         lFhP7Oj5LdOVkcn0fK6jw3vj/nrYRLE0T9se3XZ8=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 56/56] ARM: exynos: Fix undefined instruction during Exynos5422 resume
-Date:   Sat,  1 Jun 2019 09:26:00 -0400
-Message-Id: <20190601132600.27427-56-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190601132600.27427-1-sashal@kernel.org>
-References: <20190601132600.27427-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+        id S1727357AbfFANxe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Jun 2019 09:53:34 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:58773 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727275AbfFANxd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Jun 2019 09:53:33 -0400
+Received: from orion.localdomain ([95.114.112.19]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MDN3O-1hOrFU0BKY-00AZwR; Sat, 01 Jun 2019 15:53:06 +0200
+From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     vireshk@kernel.org, b.zolnierkie@samsung.com, axboe@kernel.dk,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        linux-ide@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-crypto@vger.kernel.org
+Subject: RFC: declaring DT match tables (2nd take)
+Date:   Sat,  1 Jun 2019 15:52:55 +0200
+Message-Id: <1559397179-5833-1-git-send-email-info@metux.net>
+X-Mailer: git-send-email 1.9.1
+X-Provags-ID: V03:K1:6eR5FuObvStzaTwaSeJMTXjT3YTabwPEW7ElLE9COJw4VhtMuUe
+ 7klRWzxM0qEKRYASBKKWOgd4JLRnOW9D8256GOrsBf2kwpkGP/oPYI/+dYEax0EGgqLzyVL
+ wQvba3P8HARfrEU/VyV/vXPdPJd8HBurS3F0nasiuGJJfc1om5av0pwSQpw1Fd/IHLPPMAk
+ Fs6A8S0bThYHnX7m5zbHA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:2taVwbVMVbk=:xHjxX+T6hP9V71LkUfGcf+
+ VZ6QpOwcS0hJuPHuZPfabEXDMz5mHZ1Y3FPMF/EtfV4Y3Wen2q4h/xi5TNS/NrhCg5SFg3BX6
+ SuuDgzklm8/fh2hvz9/sov7v6tOBTQfdnz+VBdrpP1Ht5butdbR0lMEk8M3S/ep/uQ+irkd78
+ B5MI8ehPCY7d0NF2Mm1cX5cnH5DhimHJFeVLZP/Kxg0OorhwduACcspyYVVwZGoKUwY1Epkcr
+ 5I9Qz05WNjwLRmTb33wjmx3xgw4uwAEI2NBT9lAkeGpctR3wADBpiVIQX17f1aJbaluFGj0dj
+ 5A0UZeWTTktaeytgznjBLu8NKrKkrAEKylBCX74HYODKWa9GPOIYIh1Q/cGXrxV2DqbqQgb2J
+ bud+gSdtrXrssHchBHaXXXVZM5CNJ+T4Qi3Mi3SJQTnSYjTbeF0s/A7aHPBSDXilZ+IHrtJoh
+ AHw67RUWzf1xVYBU4/t42NQb2ymJ9ixcwE5ANhRM6w1gDRGhbuiiVNwAfnFCZvlf8OVpwp/Nv
+ Sa7KJ78kIYpiVUngrSSO8wdH6FTsoDCc+Ys2/mVL1tqQvKcB0I0RtgMCuJbhslLxJfk4r4QxQ
+ SIDcLZVAQYiROiPo8APmfafWXWfWBH280GbQaC2aRSkxI3gVnQfazSzEbr6qnPepXxQX2qQ77
+ 8lI19iP599vJkXawWpWEBePEUuD4E7ayBh2WfSNpAc007dEd0RTysmor1cKfz35P7KLPUWAyj
+ oORAMyfac7fd2ctBb/bYPyNleMUvomnZojFIdQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+Hi folks,
 
-[ Upstream commit 4d8e3e951a856777720272ce27f2c738a3eeef8c ]
 
-During early system resume on Exynos5422 with performance counters enabled
-the following kernel oops happens:
+few days ago I've posted a RFC for getting rid of many #ifdef CONFIG_OF
+cases by using a macro that checks for it on its own.
+(see: "RFC: get rid of #ifdef CONFIG_OF's around of match tables")
 
-    Internal error: Oops - undefined instruction: 0 [#1] PREEMPT SMP ARM
-    Modules linked in:
-    CPU: 0 PID: 1433 Comm: bash Tainted: G        W         5.0.0-rc5-next-20190208-00023-gd5fb5a8a13e6-dirty #5480
-    Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-    ...
-    Flags: nZCv  IRQs off  FIQs off  Mode SVC_32  ISA ARM  Segment none
-    Control: 10c5387d  Table: 4451006a  DAC: 00000051
-    Process bash (pid: 1433, stack limit = 0xb7e0e22f)
-    ...
-    (reset_ctrl_regs) from [<c0112ad0>] (dbg_cpu_pm_notify+0x1c/0x24)
-    (dbg_cpu_pm_notify) from [<c014c840>] (notifier_call_chain+0x44/0x84)
-    (notifier_call_chain) from [<c014cbc0>] (__atomic_notifier_call_chain+0x7c/0x128)
-    (__atomic_notifier_call_chain) from [<c01ffaac>] (cpu_pm_notify+0x30/0x54)
-    (cpu_pm_notify) from [<c055116c>] (syscore_resume+0x98/0x3f4)
-    (syscore_resume) from [<c0189350>] (suspend_devices_and_enter+0x97c/0xe74)
-    (suspend_devices_and_enter) from [<c0189fb8>] (pm_suspend+0x770/0xc04)
-    (pm_suspend) from [<c0187740>] (state_store+0x6c/0xcc)
-    (state_store) from [<c09fa698>] (kobj_attr_store+0x14/0x20)
-    (kobj_attr_store) from [<c030159c>] (sysfs_kf_write+0x4c/0x50)
-    (sysfs_kf_write) from [<c0300620>] (kernfs_fop_write+0xfc/0x1e0)
-    (kernfs_fop_write) from [<c0282be8>] (__vfs_write+0x2c/0x160)
-    (__vfs_write) from [<c0282ea4>] (vfs_write+0xa4/0x16c)
-    (vfs_write) from [<c0283080>] (ksys_write+0x40/0x8c)
-    (ksys_write) from [<c0101000>] (ret_fast_syscall+0x0/0x28)
+I've already mentioned I'm working on another approach that not just
+cares about adding the table to the module, but the also the declaration
+of the table itself. Here it is:
 
-Undefined instruction is triggered during CP14 reset, because bits: #16
-(Secure privileged invasive debug disabled) and #17 (Secure privileged
-noninvasive debug disable) are set in DSCR. Those bits depend on SPNIDEN
-and SPIDEN lines, which are provided by Secure JTAG hardware block. That
-block in turn is powered from cluster 0 (big/Eagle), but the Exynos5422
-boots on cluster 1 (LITTLE/KFC).
+Introducing a macro MODULE_DECLARE_OF_TABLE(foo, entries), which declares
+a static struct of_device_id array, fills in the entries (automatically
+adds the sentinel) and calls MODULE_DEVICE_TABLE() - if CONFIG_OF is
+enabled.
 
-To fix this issue it is enough to turn on the power on the cluster 0 for
-a while. This lets the Secure JTAG block to propagate the needed signals
-to LITTLE/KFC cores and change their DSCR.
+The current version isn't fully noop in absence of CONFIG_OF, but also
+declares a static const *pointer* variable, initialized NULL, with the
+same name. The idea behind: we don't need to use of_match_ptr() anymore.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/arm/mach-exynos/suspend.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+I believe, the compiler should be clever enough to find out that this
+field is always NULL and can't ever change, so it can be easily optimized
+away. (correct me if I'm wrong).
 
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index e8adb428dddb4..2b19695f5f35f 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -508,8 +508,27 @@ static void exynos3250_pm_resume(void)
- 
- static void exynos5420_prepare_pm_resume(void)
- {
-+	unsigned int mpidr, cluster;
-+
-+	mpidr = read_cpuid_mpidr();
-+	cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
-+
- 	if (IS_ENABLED(CONFIG_EXYNOS5420_MCPM))
- 		WARN_ON(mcpm_cpu_powered_up());
-+
-+	if (IS_ENABLED(CONFIG_HW_PERF_EVENTS) && cluster != 0) {
-+		/*
-+		 * When system is resumed on the LITTLE/KFC core (cluster 1),
-+		 * the DSCR is not properly updated until the power is turned
-+		 * on also for the cluster 0. Enable it for a while to
-+		 * propagate the SPNIDEN and SPIDEN signals from Secure JTAG
-+		 * block and avoid undefined instruction issue on CP14 reset.
-+		 */
-+		pmu_raw_writel(S5P_CORE_LOCAL_PWR_EN,
-+				EXYNOS_COMMON_CONFIGURATION(0));
-+		pmu_raw_writel(0,
-+				EXYNOS_COMMON_CONFIGURATION(0));
-+	}
- }
- 
- static void exynos5420_pm_resume(void)
--- 
-2.20.1
+
+Please have a look at the following example patches and let me know,
+whether we can go that way. If you're okay w/ that, I'll continue
+w/ converting the whole tree to using this approach. I've already did
+most of it, yet needs to be sorted out into easily digestable patches :)
+And I'd also do the same w/ the other table types (ACPI, PCI, I2C, ...)
+
+By the way: an interesting question arises: shall that conversion be
+done *everywhere*, or just those sites where explicit CONFIG_OF's are
+involved ?
+
+
+have fun,
+
+--mtx
+
+
+
+
 
