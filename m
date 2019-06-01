@@ -2,74 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EAF631886
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 02:01:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E70523189B
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 02:08:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbfFAABK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 31 May 2019 20:01:10 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:44974 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726610AbfFAABJ (ORCPT
+        id S1726901AbfFAAI1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 31 May 2019 20:08:27 -0400
+Received: from mailgw02.mediatek.com ([216.200.240.185]:33651 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726483AbfFAAI0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 31 May 2019 20:01:09 -0400
-Received: by mail-lf1-f65.google.com with SMTP id r15so9236159lfm.11;
-        Fri, 31 May 2019 17:01:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yKdvwn9RwsVp3ATSXapbe6ZW0aek57t8ojH7+ian7HM=;
-        b=kL/lYlFfJthahRmW8UDam8MACxdtYLAUTRKt4DilMNwK9KrzfJ58WAdyPV38esLCb2
-         zJ8538tu9N4Qk6rfPAzB+cl3gsk76G1vkfDUVUTb0LW441SNGEKRE1tQ1n1y/3rZDJ5L
-         Q5GmOgdpWUcz8nzMaVXDMydQsnUyaloQFx11y9lIMXlNyOb+HXPVBUwYq7RJKF6Kwpfp
-         R5axTB/E4JIlw+a5JbO+Gs7DjmeCN0BhwOjybvc81c/B4/QuiJW4LM9rkUGEaPj4TWUe
-         Wd+pyvuDGwPoP5Qo+wWtoTbpAuI3CD/+tANzbcndRz43iyun+CHf/E3pu6plNzdzHbi7
-         kb0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yKdvwn9RwsVp3ATSXapbe6ZW0aek57t8ojH7+ian7HM=;
-        b=C8sx+87QN+POsM5LfiK1bNFYbSgbVxINMT7pSbSaQ4eSyhuohiaf6kZRTMHEd8nkTM
-         oeEVH8QO0V4J28WhvlAfore0QN9qz9pm5D9a0VSlobcftFEMtqHjRiniI2vxYGySqKmD
-         Ec4QsUat9UjLvZmWLQslc5tWZeV8FueQQlwHX+mlSFThqWoHCumI3nmBqAibfHgTJGtm
-         wbsRdwLmj+HbeauZZtsIT9czVqd4PvDn7PUMw8/OtvWCPnuB6CA1rhqXHZ/fe1bKjTpc
-         J58Mi/a2aGXqpwXd/5GOcCe0hO8v7xQKUjcCxjxfkvuy6oIwaHw4CL2x7TpAZHYdRO+A
-         X3Wg==
-X-Gm-Message-State: APjAAAVy6f++vmfsyPMrrAYVlqdjc5OoGrXLfuJe3iIY1AQuS1AQ/Xsc
-        d+q+efjjqpiVNb/U1nt8oM+jihQPM2UnZfmKXXk=
-X-Google-Smtp-Source: APXvYqznjO5XK58TWy6Smzmc/NgjZWLcWIv6IboQBhMU2TwYzgdkZQ4gZu6P+so9ZG43jy2N3EJq4LrdDcQHBrOvfHY=
-X-Received: by 2002:ac2:4252:: with SMTP id m18mr7059629lfl.100.1559347267743;
- Fri, 31 May 2019 17:01:07 -0700 (PDT)
+        Fri, 31 May 2019 20:08:26 -0400
+X-Greylist: delayed 300 seconds by postgrey-1.27 at vger.kernel.org; Fri, 31 May 2019 20:08:26 EDT
+X-UUID: a8890faa009e4b42a9d51a1661fd203d-20190531
+X-UUID: a8890faa009e4b42a9d51a1661fd203d-20190531
+Received: from mtkcas66.mediatek.inc [(172.29.193.44)] by mailgw02.mediatek.com
+        (envelope-from <sean.wang@mediatek.com>)
+        (musrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1633841494; Fri, 31 May 2019 16:03:20 -0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ MTKMBS62N2.mediatek.inc (172.29.193.42) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 31 May 2019 17:03:19 -0700
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Sat, 1 Jun 2019 08:03:17 +0800
+From:   <sean.wang@mediatek.com>
+To:     <john@phrozen.org>, <davem@davemloft.net>
+CC:     <nbd@openwrt.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH net-next v1 0/6] Add MT7629 ethernet support
+Date:   Sat, 1 Jun 2019 08:03:09 +0800
+Message-ID: <1559347395-14058-1-git-send-email-sean.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-References: <20190530010359.2499670-1-guro@fb.com>
-In-Reply-To: <20190530010359.2499670-1-guro@fb.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Fri, 31 May 2019 17:00:56 -0700
-Message-ID: <CAADnVQKCYDdP2xvmV4P38Ewh5YgyPnT-EV10oWrUpeCCJBrqcA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 0/5] bpf: bpf maps memory accounting cleanup
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        bpf <bpf@vger.kernel.org>, Kernel Team <kernel-team@fb.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 6:04 PM Roman Gushchin <guro@fb.com> wrote:
->
-> During my work on memcg-based memory accounting for bpf maps
-> I've done some cleanups and refactorings of the existing
-> memlock rlimit-based code. It makes it more robust, unifies
-> size to pages conversion, size checks and corresponding error
-> codes. Also it adds coverage for cgroup local storage and
-> socket local storage maps.
->
-> It looks like some preliminary work on the mm side might be
-> required to start working on the memcg-based accounting,
-> so I'm sending these patches as a separate patchset.
+From: Sean Wang <sean.wang@mediatek.com>
 
-Applied. Thanks
+MT7629 inlcudes two sets of SGMIIs used for external switch or PHY, and embedded
+switch (ESW) via GDM1, GePHY via GMAC2, so add several patches in the series to
+make the code base common with the old SoCs.
+
+The patch 1, 3 and 6, adds extension for SGMII to have the hardware configured
+for 1G, 2.5G and AN to fit the capability of the target PHY. In patch 6 could be
+an example showing how to use these configurations for underlying PHY speed to
+match up the link speed of the target PHY.
+
+The patch 4 is used for automatically configured the hardware path from GMACx to
+the target PHY by the description in deviceetree topology to determine the
+proper value for the corresponding MUX.
+
+The patch 2 and 5 is for the update for MT7629 including dt-binding document and
+its driver.
+
+Sean Wang (6):
+  dt-bindings: clock: mediatek: Add an extra required property to
+    sgmiisys
+  dt-bindings: net: mediatek: Add support for MediaTek MT7629 SoC
+  net: ethernet: mediatek: Extend SGMII related functions
+  net: ethernet: mediatek: Integrate hardware path from GMAC to PHY
+    variants
+  net: ethernet: mediatek: Add MT7629 ethernet support
+  arm64: dts: mt7622: Enlarge the SGMII register range
+
+ .../arm/mediatek/mediatek,sgmiisys.txt        |   2 +
+ .../devicetree/bindings/net/mediatek-net.txt  |  14 +-
+ arch/arm64/boot/dts/mediatek/mt7622.dtsi      |   3 +-
+ drivers/net/ethernet/mediatek/Makefile        |   3 +-
+ drivers/net/ethernet/mediatek/mtk_eth_path.c  | 323 ++++++++++++++++++
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c   |  97 +++---
+ drivers/net/ethernet/mediatek/mtk_eth_soc.h   | 177 +++++++++-
+ drivers/net/ethernet/mediatek/mtk_sgmii.c     | 105 ++++++
+ 8 files changed, 647 insertions(+), 77 deletions(-)
+ create mode 100644 drivers/net/ethernet/mediatek/mtk_eth_path.c
+ create mode 100644 drivers/net/ethernet/mediatek/mtk_sgmii.c
+
+-- 
+2.17.1
+
