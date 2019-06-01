@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F917320FA
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 00:28:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 514C2320F0
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 00:28:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbfFAW2Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Jun 2019 18:28:25 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:43923 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726869AbfFAW2B (ORCPT
+        id S1726964AbfFAW2K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Jun 2019 18:28:10 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46412 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726922AbfFAW2F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Jun 2019 18:28:01 -0400
-Received: by mail-pl1-f194.google.com with SMTP id cl9so341311plb.10
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2019 15:28:01 -0700 (PDT)
+        Sat, 1 Jun 2019 18:28:05 -0400
+Received: by mail-pf1-f196.google.com with SMTP id y11so8321604pfm.13
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2019 15:28:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=joelfernandes.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=JYEdUUvy8S93JfyESlA9B4bQMgXK5qa78QvxuKI1iX8=;
-        b=JpIZxOLHu3pAr7XqjE6lQyNILkSNtWAhlsGBsqQ9nX8Mkf45RZkSqCsB1ogyuaGHYR
-         oID/Qzt9GUMhWhlEy7pzJd90HrYVZDZ4ddj9Se3v7fLclY18Kge6hu4MUcAmLD+wf4b0
-         XKyDW7+epwfSMkz4uMyVUA2uPZnDSVHkqAT6k=
+        bh=rPaZRgyzQF7DCy2Q79gveolqcRd2gZR4xnQeESxSxI8=;
+        b=cAGodZzSRsQMt/+agP3IVTRjmy7GJn9PFgRKDBVOfndMOmU790nOh6r8RDl2NSEttn
+         ozggt0Vl0AEPviZREUImDWgpoB8D77NfGsskgK/Bj9R0lxq+Xa1zB1Rz3dBJYKQUD7bL
+         uSS2mFmHddK5rTGvh+vSHZuyEX0sX9MRSOJjg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=JYEdUUvy8S93JfyESlA9B4bQMgXK5qa78QvxuKI1iX8=;
-        b=n4Vxa0C/FsNMfgMEcDDL026TpUcLAkA4qj2SZo81Lsy5HXX+5NHW2KpaWT4C8+BOkH
-         cAJsIdhzrWfQxfdwIwAGsmOIbTE1VTuuwuW2D77oT+fY/xhBA05+Ln2emFdy/yRdwOYt
-         sO4F/6fZ7TkOUxwhtOnoouNw9fShPPng7JO8EjcnQ26iJE8nJuvYOsokBzB5DxaJehIB
-         B3Ds/j0hMLug/5QfFtgdgh7j891spPCr/gXRMAEbRO8m82um2xghkE0gEXGMRQPRwZ6S
-         1EDAK5PUoF6vrhn3nNb2SW3J5Yhdnqua5XfsNhfeq68uwEcvtsDNLecNnGryPDcJUbfn
-         gVfA==
-X-Gm-Message-State: APjAAAWrhGbD7OB+85QQQ4rUkp246wHrwSub0lf/zxGLflykqAujTNaZ
-        Vsrzz4UOLnoYq+PbbysN0Ox34xGdwbL+sA==
-X-Google-Smtp-Source: APXvYqwKk4GW7sHHyPB0GuHYf6OQ+CpmILR8gGtCpOPuYf+Qeg4Mh/EguSHhpRRCqMTs3zQmTpmcmg==
-X-Received: by 2002:a17:902:9a9:: with SMTP id 38mr20196036pln.10.1559428080628;
-        Sat, 01 Jun 2019 15:28:00 -0700 (PDT)
+        bh=rPaZRgyzQF7DCy2Q79gveolqcRd2gZR4xnQeESxSxI8=;
+        b=dKKFKqzmh9mbJFJ9gmkS7fZqt1xLZ+TNkfE+kW5KqFMOZGIX5nIKjbifsxtKFjRTeI
+         U1Nx8R2BelnhQL/kq5GpEliYdYMJ9W5CKjopvJqRDdoJPDxBvWFoj1ldSGFQRTG3Pwn1
+         x6RS2fDXptlObpsYQxQERs/wAN16BCdGLiFSpXYFgEkFJfgutTAE0n29oM/m5X/oSAxd
+         Xhm07F534JV2vBLl41sIpi8VxRepArx0UUefWF9dxDPcJzdOxLLKdWNRWIp4AyGG/KiI
+         2mvMfziTu5Dvt6EWgnE2anDa++zvIU2VuLt7LHpM4q6EhZe8hejHT88/BUHoHsRkL+lr
+         AwAA==
+X-Gm-Message-State: APjAAAVuIps/5EarJwoEgBz9AFsCixcU5C0uuf9cu4pjkeQaOkbpPlfn
+        06vRca7qUZryahQYKyVFH+UOviLh/4F4iw==
+X-Google-Smtp-Source: APXvYqx/DSML7hGGCdUoQbZcef6z1i2E+ZJBXAJvbUYli+Bo+0PJ9dMusQpxsqpBr79TPzH4e5AIzA==
+X-Received: by 2002:a65:5206:: with SMTP id o6mr18823746pgp.248.1559428084316;
+        Sat, 01 Jun 2019 15:28:04 -0700 (PDT)
 Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id t33sm9908018pjb.1.2019.06.01.15.27.57
+        by smtp.gmail.com with ESMTPSA id t33sm9908018pjb.1.2019.06.01.15.28.00
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sat, 01 Jun 2019 15:27:59 -0700 (PDT)
+        Sat, 01 Jun 2019 15:28:03 -0700 (PDT)
 From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
@@ -66,9 +66,9 @@ Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
         Tejun Heo <tj@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
-Subject: [RFC 4/6] workqueue: Convert for_each_wq to use built-in list check
-Date:   Sat,  1 Jun 2019 18:27:36 -0400
-Message-Id: <20190601222738.6856-5-joel@joelfernandes.org>
+Subject: [RFC 5/6] x86/pci: Pass lockdep condition to pcm_mmcfg_list iterator
+Date:   Sat,  1 Jun 2019 18:27:37 -0400
+Message-Id: <20190601222738.6856-6-joel@joelfernandes.org>
 X-Mailer: git-send-email 2.22.0.rc1.311.g5d7573a151-goog
 In-Reply-To: <20190601222738.6856-1-joel@joelfernandes.org>
 References: <20190601222738.6856-1-joel@joelfernandes.org>
@@ -79,31 +79,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-list_for_each_entry_rcu now has support to check for RCU reader sections
-as well as lock. Just use the support in it, instead of explictly
-checking in the caller.
+The pcm_mmcfg_list is traversed with list_for_each_entry_rcu without a
+reader-lock held, because the pci_mmcfg_lock is already held. Make this
+known to the list macro so that it fixes new lockdep warnings that
+trigger due to lockdep checks added to list_for_each_entry_rcu().
 
 Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 ---
- kernel/workqueue.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ arch/x86/pci/mmconfig-shared.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index 9657315405de..91ed7aca16e5 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -424,9 +424,8 @@ static void workqueue_sysfs_unregister(struct workqueue_struct *wq);
-  * ignored.
-  */
- #define for_each_pwq(pwq, wq)						\
--	list_for_each_entry_rcu((pwq), &(wq)->pwqs, pwqs_node)		\
--		if (({ assert_rcu_or_wq_mutex(wq); false; })) { }	\
--		else
-+	list_for_each_entry_rcu((pwq), &(wq)->pwqs, pwqs_node,		\
-+				 lock_is_held(&(wq->mutex).dep_map))
+diff --git a/arch/x86/pci/mmconfig-shared.c b/arch/x86/pci/mmconfig-shared.c
+index 7389db538c30..6fa42e9c4e6f 100644
+--- a/arch/x86/pci/mmconfig-shared.c
++++ b/arch/x86/pci/mmconfig-shared.c
+@@ -29,6 +29,7 @@
+ static bool pci_mmcfg_running_state;
+ static bool pci_mmcfg_arch_init_failed;
+ static DEFINE_MUTEX(pci_mmcfg_lock);
++#define pci_mmcfg_lock_held() lock_is_held(&(pci_mmcfg_lock).dep_map)
  
- #ifdef CONFIG_DEBUG_OBJECTS_WORK
+ LIST_HEAD(pci_mmcfg_list);
  
+@@ -54,7 +55,7 @@ static void list_add_sorted(struct pci_mmcfg_region *new)
+ 	struct pci_mmcfg_region *cfg;
+ 
+ 	/* keep list sorted by segment and starting bus number */
+-	list_for_each_entry_rcu(cfg, &pci_mmcfg_list, list) {
++	list_for_each_entry_rcu(cfg, &pci_mmcfg_list, list, pci_mmcfg_lock_held()) {
+ 		if (cfg->segment > new->segment ||
+ 		    (cfg->segment == new->segment &&
+ 		     cfg->start_bus >= new->start_bus)) {
+@@ -118,7 +119,7 @@ struct pci_mmcfg_region *pci_mmconfig_lookup(int segment, int bus)
+ {
+ 	struct pci_mmcfg_region *cfg;
+ 
+-	list_for_each_entry_rcu(cfg, &pci_mmcfg_list, list)
++	list_for_each_entry_rcu(cfg, &pci_mmcfg_list, list, pci_mmcfg_lock_held())
+ 		if (cfg->segment == segment &&
+ 		    cfg->start_bus <= bus && bus <= cfg->end_bus)
+ 			return cfg;
 -- 
 2.22.0.rc1.311.g5d7573a151-goog
 
