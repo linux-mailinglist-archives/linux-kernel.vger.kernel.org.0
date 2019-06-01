@@ -2,124 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DEC932090
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 20:46:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0AA532093
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 21:07:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726981AbfFASo0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Jun 2019 14:44:26 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44011 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726944AbfFASoY (ORCPT
+        id S1726601AbfFATHZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Jun 2019 15:07:25 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39856 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726143AbfFATHZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Jun 2019 14:44:24 -0400
-Received: by mail-pf1-f195.google.com with SMTP id c6so8175453pfa.10
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Jun 2019 11:44:24 -0700 (PDT)
+        Sat, 1 Jun 2019 15:07:25 -0400
+Received: by mail-wm1-f66.google.com with SMTP id z23so7853624wma.4;
+        Sat, 01 Jun 2019 12:07:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=L8o6xZnk+AA5G0Hb3ZR7vX/fohNyZ7Mc6P+BC4SlPNc=;
-        b=jE1Z79hWunaHZ2AgkwpNryasxyA4uD0dNZ9h0JjmGklSaARKgABs6rq8GYZlEm0tZn
-         Bd3YzSoe+T9YW98kuyGrgLvusdzCNGgVu9gbcgQmbdPhQdDNqMmf+9oQrdUThp2jaNey
-         0rJd0qQO7zPPqTXI6fCSm2k7d8myDekPJShPqnntdyvA1Zr5o0lskQgpJwUlzL9R2Fcx
-         zEO+JkKFSoxwjyDCrzG1mBJosaI4zo1L6TKhBVXWx7IuqAKivx9TLUdqS9KHyG0IPsE4
-         tsJYGclN+aFe1Y/gxg4NuHYKvpsnIxbsd5XShYQE3Ba/bJjPkliRMIhBRmcnZwG6PPDg
-         WCiA==
+        h=subject:cc:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=9t2l3NuVxa0aZMyvkn87qI+SJPjkg845w5lS4yfH5bQ=;
+        b=BwcJC/Jm90DOAIpiy76hnt3jlP53J0ET/1wPixpJeicDUHajRxNCHoBH8iqtY8R5iE
+         SrqjM7lVUh+/NV9W30pSewkFQ0bOa2Q3mw8UWaLlC+aqHnpK85znwV/AkYvqN0wQJe7y
+         tXTkXuyYeONmfKHJmpvU+VC/T9cuMlX0YaeXSLpMiyWsYQbD5Q3jp8DVb/0DZbg95NKe
+         HZ+JiobxGjWJPQcl3YzvCdotM0broe/UiMu76ecWNgNUMmcffnnT3iw2OaE/wJDvopQy
+         IgFLkmVKPSpbf9xo+FS+OiOZ7HNzVb0wBs10rJOe1CShjQ7AFUMetSlHr6nR2n8Eiwrn
+         wkIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=L8o6xZnk+AA5G0Hb3ZR7vX/fohNyZ7Mc6P+BC4SlPNc=;
-        b=OjJQth6fuwTrq+zAyqroAF/GudxDoIgWFP5vrZKlH4mpG1k3sSoG9PAW+7Tiv3aLt3
-         XtgcqbIBmbwYf7Gl1p2I1ZCQMewhti5MXxCoMVZsKh7BjAV6NgwaQYPCSShBrkmUM0wH
-         zdsKLjdnSGOZKWRkGnyzl1dJ876kqZyO7lVMK8t1D79fn048jOIdxm/UYgjvzupYQ3RK
-         r999yIeFVSJo7tm53NcGC0y1FuFq6RjpzCaPvH9LkccqDKVanfXX9GafZzeCqThjqI7o
-         iokZcF8qV1PUM7SQwSEl2Np+JhhrmGDc9gDwlzjGtCqVC/GtKxt1dJ8fK/2xwhfyci7p
-         oXIw==
-X-Gm-Message-State: APjAAAXlntvzoTAfX5jjymEjIJGHHWxUbUHGButGsGPy0v8O/YJFREVX
-        qM8yTZ1cUIIPG88LUUOeTKf6YrMi
-X-Google-Smtp-Source: APXvYqzB9foPKgg4VEAKGLiJCJBJHzbQPPr0DnlubXv6Odl44h1yEZu0dPhylGUmXcxU1iF29R067w==
-X-Received: by 2002:a17:90a:1aa8:: with SMTP id p37mr18355687pjp.17.1559414664028;
-        Sat, 01 Jun 2019 11:44:24 -0700 (PDT)
-Received: from localhost.localdomain ([117.192.16.207])
-        by smtp.googlemail.com with ESMTPSA id w187sm13287950pfw.20.2019.06.01.11.44.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 01 Jun 2019 11:44:23 -0700 (PDT)
-From:   Deepak Mishra <linux.dkm@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, Larry.Finger@lwfinger.net,
-        florian.c.schilhabel@googlemail.com, linux.dkm@gmail.com,
-        himadri18.07@gmail.com, straube.linux@gmail.com
-Subject: [PATCH 8/8] staging: rtl8712: Fixed CamelCase in struct _adapter from drv_types.h
-Date:   Sun,  2 Jun 2019 00:13:42 +0530
-Message-Id: <ad9dad01b15d233cbded3f0693c3c33e21f8d286.1559412149.git.linux.dkm@gmail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <cover.1559412149.git.linux.dkm@gmail.com>
-References: <cover.1559412149.git.linux.dkm@gmail.com>
+        h=x-gm-message-state:subject:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9t2l3NuVxa0aZMyvkn87qI+SJPjkg845w5lS4yfH5bQ=;
+        b=UbEIAFrux1dnc30UAdI3HON8jHsPwdA+meaxLm49A+MdK22zDsTwwAq83faNe3Oe7V
+         9TOd/YYZGf9spCP98R45kXYMG6zEBLi6AlLcHxgWjJ+KE8n8Unh48bKTN+LjB82iXvqh
+         3aukW7blf4KiRQxHwnmtSLH9NrQWDf7VHffDmHFrFee4t1DAvkOP/SUg0cmKQ1v1Ht7O
+         B4y7P84dLFZ+hXuScsAuhskc/zy+8Da0gM1OenbzlzjUMuQLiffBGkZKepTnvFEZRDUX
+         V1Un0B7bculU5P8Vy6GQIU35dlHoed3Hi4jK9vJAZPkc2gWTqZ4PrDr6+3p8nLWSdflX
+         8VBQ==
+X-Gm-Message-State: APjAAAV57Ho/CB8bpGRaAEEPB6YY079YrvytQqSIg9qWlbV/QAk87P+T
+        mYEZdnBVTvoTjpQbY6Vy47g=
+X-Google-Smtp-Source: APXvYqzWNOhVnskl2Yi09eRNWFwis8pVkN+fPY+PJ9XfnnxE+iWb60MHK5ITo4wXUp4IhaelPdvlQg==
+X-Received: by 2002:a1c:c105:: with SMTP id r5mr9502761wmf.46.1559416042468;
+        Sat, 01 Jun 2019 12:07:22 -0700 (PDT)
+Received: from [192.168.2.202] (pD9E5A76A.dip0.t-ipconnect.de. [217.229.167.106])
+        by smtp.gmail.com with ESMTPSA id k184sm21379536wmk.0.2019.06.01.12.07.20
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Sat, 01 Jun 2019 12:07:21 -0700 (PDT)
+Subject: Re: [RFC 0/2] Support for buttons on newer MS Surface devices
+Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Chen Yu <yu.c.chen@intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+References: <20190516142523.117978-1-luzmaximilian@gmail.com>
+From:   Maximilian Luz <luzmaximilian@gmail.com>
+Message-ID: <a0f93af3-c587-40d5-2a85-fdc0f9e6b79f@gmail.com>
+Date:   Sat, 1 Jun 2019 21:07:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190516142523.117978-1-luzmaximilian@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes CamelCase blnEnableRxFF0Filter by renaming it
-to bln_enable_rx_ff0_filter in drv_types.h and related files rtl871x_cmd.c
-xmit_linux.c
+Hi,
 
-It was reported by checkpatch.pl
+any comments on this?
 
-Signed-off-by: Deepak Mishra <linux.dkm@gmail.com>
----
- drivers/staging/rtl8712/drv_types.h   | 2 +-
- drivers/staging/rtl8712/rtl871x_cmd.c | 2 +-
- drivers/staging/rtl8712/xmit_linux.c  | 4 ++--
- 3 files changed, 4 insertions(+), 4 deletions(-)
+I should also mention that this has been tested via
+https://github.com/jakeday/linux-surface.
 
-diff --git a/drivers/staging/rtl8712/drv_types.h b/drivers/staging/rtl8712/drv_types.h
-index ddab6514a549..33caa9477f9f 100644
---- a/drivers/staging/rtl8712/drv_types.h
-+++ b/drivers/staging/rtl8712/drv_types.h
-@@ -164,7 +164,7 @@ struct _adapter {
- 	struct iw_statistics iwstats;
- 	int pid; /*process id from UI*/
- 	struct work_struct wk_filter_rx_ff0;
--	u8 blnEnableRxFF0Filter;
-+	u8 bln_enable_rx_ff0_filter;
- 	spinlock_t lockRxFF0Filter;
- 	const struct firmware *fw;
- 	struct usb_interface *pusb_intf;
-diff --git a/drivers/staging/rtl8712/rtl871x_cmd.c b/drivers/staging/rtl8712/rtl871x_cmd.c
-index 05a78ac24987..873232d0be9f 100644
---- a/drivers/staging/rtl8712/rtl871x_cmd.c
-+++ b/drivers/staging/rtl8712/rtl871x_cmd.c
-@@ -238,7 +238,7 @@ u8 r8712_sitesurvey_cmd(struct _adapter *padapter,
- 	mod_timer(&pmlmepriv->scan_to_timer,
- 		  jiffies + msecs_to_jiffies(SCANNING_TIMEOUT));
- 	padapter->ledpriv.LedControlHandler(padapter, LED_CTL_SITE_SURVEY);
--	padapter->blnEnableRxFF0Filter = 0;
-+	padapter->bln_enable_rx_ff0_filter = 0;
- 	return _SUCCESS;
- }
- 
-diff --git a/drivers/staging/rtl8712/xmit_linux.c b/drivers/staging/rtl8712/xmit_linux.c
-index e65a51c7f372..241c0c91122b 100644
---- a/drivers/staging/rtl8712/xmit_linux.c
-+++ b/drivers/staging/rtl8712/xmit_linux.c
-@@ -103,11 +103,11 @@ void r8712_SetFilter(struct work_struct *work)
- 	r8712_write8(padapter, 0x117, newvalue);
- 
- 	spin_lock_irqsave(&padapter->lockRxFF0Filter, irqL);
--	padapter->blnEnableRxFF0Filter = 1;
-+	padapter->bln_enable_rx_ff0_filter = 1;
- 	spin_unlock_irqrestore(&padapter->lockRxFF0Filter, irqL);
- 	do {
- 		msleep(100);
--	} while (padapter->blnEnableRxFF0Filter == 1);
-+	} while (padapter->bln_enable_rx_ff0_filter == 1);
- 	r8712_write8(padapter, 0x117, oldvalue);
- }
- 
--- 
-2.19.1
+Maximilian
 
+
+On 5/16/19 4:25 PM, Maximilian Luz wrote:
+> This series adds suport for power and volume buttons on 5th and 6th
+> generation Microsoft Surface devices. Specifically, it adds support for
+> the power-button on the Surface Laptop 1 and Laptop 2, as well as
+> support for power- and (on-device) volume-buttons on the Surface Pro 5
+> (2017), Pro 6, and Book 2.
+> 
+> These devices use the same MSHW0040 device as on the Surface Pro 4,
+> however, whereas the Pro 4 uses an ACPI notify handler, the newer
+> devices use GPIO interrupts to signal these events.
+> 
+> The first patch of this series ensures that the surfacepro3_button
+> driver, used for MSHW0040 on the Pro 4, does not probe for the newer
+> devices. The second patch adapts soc_button_array to implement the
+> actual button support.
+> 
+> I think the changes to soc_button_array in the second patch warrant a
+> thorough review. I've tried to make things a bit more generic to be able
+> to integrate arbitrary ACPI GPIO power-/volume-button devices more
+> easily, I'm not sure if there may be reasons against this.
+> 
+> Maximilian Luz (2):
+>    platform: Fix device check for surfacepro3_button
+>    input: soc_button_array for newer surface devices
+> 
+>   drivers/input/misc/soc_button_array.c     | 134 ++++++++++++++++++++--
+>   drivers/platform/x86/surfacepro3_button.c |  38 ++++++
+>   2 files changed, 160 insertions(+), 12 deletions(-)
+> 
