@@ -2,60 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BF4531FF9
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 18:29:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 514C331FFE
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 18:29:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726708AbfFAQ3M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Jun 2019 12:29:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37650 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726075AbfFAQ3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Jun 2019 12:29:10 -0400
+        id S1726799AbfFAQ3y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Jun 2019 12:29:54 -0400
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:35179 "EHLO
+        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726601AbfFAQ3y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Jun 2019 12:29:54 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailnew.nyi.internal (Postfix) with ESMTP id C63301D34;
+        Sat,  1 Jun 2019 12:29:51 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Sat, 01 Jun 2019 12:29:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=G6joXSFpHr+xnj1AE0zs7wKpYB9
+        XnoEfEGHkoMcid1w=; b=nRY6su9IGsDoiTe9tsxFg667lnKPfE7bbeIx592as2E
+        em7dgml8pmc/pwKeUgSSxDHV4YRUE5iHljoVEX7GwRqUVrGqRVJkDxsFfQA30YNx
+        KAg+vCy3UqtEA8q+fvNg10SCASxR1++3b7VtYzJYC+N1OpR7dwMlIFWnvd3amsNv
+        Svcl/IGHc7g6aMVf2kFMIXlX7fD9mqL1hUcPRxNY4cX2VDdrexj6V4sFosvqQqLB
+        4QzWd5PIE2iO4hyQ8H5YfT8CtVcl1yoG2xcYid/UFIJHsE1B7gaFquYpVfosEu13
+        VwfxIFeXKA3/ohtuXL7ry3m+5gE3ZXXpLXrUVd048rg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=G6joXS
+        FpHr+xnj1AE0zs7wKpYB9XnoEfEGHkoMcid1w=; b=LjTxODYr47rpGdziuqBMg7
+        yzbx/pWEF8iqPYcSzsQUplRekJ5IrYNM+xmL983a3mf1SWpfxq3F7DR0iT7mPgeU
+        STzQullm7rLdvtyZIdH+WJpqeOD1ad59UZqYzemwryvZYYdMk6CZwJScn4TborJp
+        w6/yKs/RQw04Ww1niMzCezTy4/CfQDFX6NW9a9nDjT34AoDPEMxKO4MQXCnAIWvZ
+        HRj6oHNnNzqVEvFuEVXb2M7l+VA8FOfffWcG2Ehe07LmrALUZbx2SQtKNDkyGsoU
+        lhowFvWgeklx+BHL5sQIdBAKZwINajJLVc6FlkH/Mh8O/5JavUzd90IErunoJcYg
+        ==
+X-ME-Sender: <xms:_KfyXKCkChUD_dQe1UjZ39ztuPNZx9Mh3Q9HiHrIHQzqyL5Ydgpyyw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrudeffedguddtgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgv
+    ghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrkeelrd
+    dutdejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhen
+    ucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:_KfyXAKecZrq_nTMfU6kDLNs03MzA4OO4ALIlZVWyuGakKuhVf5kBg>
+    <xmx:_KfyXPup1dsrtKWSgylv0Ee6FekAGQ1T4Z2Xd_hJll_YFTxvMa7hKQ>
+    <xmx:_KfyXHIylZ0NZn-20E8FiO40B12uzL1ENnef06W7Z-EnIcHIVC4M0A>
+    <xmx:_6fyXFdKdLkEhd6BO8Vrb93mqDin6qbJozGTQ0UtET7KSfRiWhncJA>
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 717AE27753;
-        Sat,  1 Jun 2019 16:29:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559406550;
-        bh=9cyji5W/w3gbLF6yi/8SShOVJ7aru52p6Duz2OPhsWI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Yilr7e1TS/QXm+oWaOWbk/DSU4NcsL/dtLlbqwQEszU6azN9QYEeb5TwuJFUXMBV6
-         ZVawcKz+8SuISvEwXuinwm6ATX9KQS+MDq6bNGuAoNZl+1XN1H7Ab+MX9JeCidP2k2
-         UUENOivbzAFvzWGdvPyMpPiOMQMr5ezgOLRzryXo=
-Date:   Sat, 1 Jun 2019 18:29:07 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>
-Cc:     linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        tglx@linutronix.de, allison@lohutok.net, alexios.zavras@intel.com,
-        swinslow@gmail.com, rfontana@redhat.com,
-        linux-spdx@vger.kernel.org, torvalds@linux-foundation.org
-Subject: Re: [PATCH] crypto: ux500 - fix license comment syntax error
-Message-ID: <20190601162907.GB6261@kroah.com>
-References: <20190601144943.126995-1-alex_y_xu@yahoo.ca>
+        by mail.messagingengine.com (Postfix) with ESMTPA id E14418005C;
+        Sat,  1 Jun 2019 12:29:47 -0400 (EDT)
+Date:   Sat, 1 Jun 2019 18:29:45 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-spdx@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Joe Perches <joe@perches.com>,
+        Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
+        Mark Brown <broonie@kernel.org>, linux-gpio@vger.kernel.org,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-renesas-soc@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] treewide: fix typos of SPDX-License-Identifier
+Message-ID: <20190601162945.GA6395@kroah.com>
+References: <20190601032242.10405-1-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190601144943.126995-1-alex_y_xu@yahoo.ca>
+In-Reply-To: <20190601032242.10405-1-yamada.masahiro@socionext.com>
 User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 01, 2019 at 10:49:43AM -0400, Alex Xu (Hello71) wrote:
-> Causes error: drivers/crypto/ux500/cryp/Makefile:5: *** missing
-> separator.  Stop.
+On Sat, Jun 01, 2019 at 12:22:42PM +0900, Masahiro Yamada wrote:
+> Prior to the adoption of SPDX, it was difficult for tools to determine
+> the correct license due to incomplete or badly formatted license text.
+> The SPDX solves this issue, assuming people can correctly spell
+> "SPDX-License-Identifier" although this assumption is broken in some
+> places.
 > 
-> Fixes: af873fcecef5 ("treewide: Replace GPLv2 boilerplate/reference with SPDX - rule 194")
-> Signed-off-by: Alex Xu (Hello71) <alex_y_xu@yahoo.ca>
-> ---
->  drivers/crypto/ux500/cryp/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Since scripts/spdxcheck.py parses only lines that exactly matches to
+> the correct tag, it cannot (should not) detect this kind of error.
+> 
+> If the correct tag is missing, scripts/checkpatch.pl warns like this:
+> 
+>  WARNING: Missing or malformed SPDX-License-Identifier tag in line *
+> 
+> So, people should notice it before the patch submission, but in reality
+> broken tags sometimes slip in. The checkpatch warning is not useful for
+> checking the committed files globally since large number of files still
+> have no SPDX tag.
+> 
+> Also, I am not sure about the legal effect when the SPDX tag is broken.
+> 
+> Anyway, these typos are absolutely worth fixing. It is pretty easy to
+> find suspicious lines by grep.
+> 
+>   $ git grep --not -e SPDX-License-Identifier --and -e SPDX- -- \
+>     :^LICENSES :^scripts/spdxcheck.py :^*/license-rules.rst
+>   arch/arm/kernel/bugs.c:// SPDX-Identifier: GPL-2.0
+>   drivers/phy/st/phy-stm32-usbphyc.c:// SPDX-Licence-Identifier: GPL-2.0
+>   drivers/pinctrl/sh-pfc/pfc-r8a77980.c:// SPDX-Lincense-Identifier: GPL 2.0
+>   lib/test_stackinit.c:// SPDX-Licenses: GPLv2
+>   sound/soc/codecs/max9759.c:// SPDX-Licence-Identifier: GPL-2.0
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Also, how did 0-day not catch this?  Is this an odd configuration that
-it can not build?
-
-thanks,
+Very nice catch, thanks!  I'll go queue this up now.
 
 greg k-h
