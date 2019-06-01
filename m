@@ -2,79 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DD93320AE
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 22:21:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21981320B2
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Jun 2019 22:40:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726649AbfFAUVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Jun 2019 16:21:33 -0400
-Received: from guitar.tcltek.co.il ([192.115.133.116]:60179 "EHLO
-        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726149AbfFAUVd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Jun 2019 16:21:33 -0400
-Received: from tarshish (unknown [10.0.8.3])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx.tkos.co.il (Postfix) with ESMTPS id F354044077F;
-        Sat,  1 Jun 2019 23:21:11 +0300 (IDT)
-References: <20190531133733.16243-1-wangkefeng.wang@huawei.com>
-User-agent: mu4e 1.0; emacs 26.1
-From:   Baruch Siach <baruch@tkos.co.il>
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hulk Robot <hulkci@huawei.com>
-Subject: Re: [PATCH] tty/serial: digicolor: Fix digicolor-usart already registered warning
-In-reply-to: <20190531133733.16243-1-wangkefeng.wang@huawei.com>
-Date:   Sat, 01 Jun 2019 23:21:28 +0300
-Message-ID: <8736ktoy47.fsf@tarshish>
+        id S1726652AbfFAUkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Jun 2019 16:40:05 -0400
+Received: from relay12.mail.gandi.net ([217.70.178.232]:40787 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726149AbfFAUkE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 1 Jun 2019 16:40:04 -0400
+Received: from localhost (hy283-1-82-246-155-60.fbx.proxad.net [82.246.155.60])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 5F693200009;
+        Sat,  1 Jun 2019 20:39:57 +0000 (UTC)
+Date:   Sat, 1 Jun 2019 22:39:55 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Kartik Kartik <kkartik@nvidia.com>, linux-rtc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] rtc: tegra: Dust off and deferred probe support
+Message-ID: <20190601203955.GZ3274@piout.net>
+References: <20190527101359.5898-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190527101359.5898-1-thierry.reding@gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kefeng,
+On 27/05/2019 12:13:56+0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> The NVIDIA Tegra RTC driver has accumulated a bit of dust over the
+> years. Make a pass over it, addressing checkpatch warnings and fixing
+> some inconsistencies in comments and kernel messages as well as in
+> variable types and names.
+> 
+> Once cleaned up, also turn the driver into a regular driver in order
+> to support deferred probe which is needed to avoid a future regression
+> on Tegra186 and later.
+> 
+> Thierry
+> 
+> Thierry Reding (3):
+>   rtc: tegra: checkpatch and miscellaneous cleanups
+>   rtc: tegra: Use consistent variable names and types
+>   rtc: tegra: Turn into regular driver
+> 
+>  drivers/rtc/rtc-tegra.c | 254 ++++++++++++++++++++--------------------
+>  1 file changed, 128 insertions(+), 126 deletions(-)
+> 
 
-On Fri, May 31 2019, Kefeng Wang wrote:
-> When modprobe/rmmod/modprobe module, if platform_driver_register() fails,
-> the kernel complained,
->
->   proc_dir_entry 'driver/digicolor-usart' already registered
->   WARNING: CPU: 1 PID: 5636 at fs/proc/generic.c:360 proc_register+0x19d/0x270
->
-> Fix this by adding uart_unregister_driver() when platform_driver_register() fails.
->
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-
-Acked-by: Baruch Siach <baruch@tkos.co.il>
-
-Thanks,
-baruch
-
-> ---
->  drivers/tty/serial/digicolor-usart.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/tty/serial/digicolor-usart.c b/drivers/tty/serial/digicolor-usart.c
-> index f460cca139e2..13ac36e2da4f 100644
-> --- a/drivers/tty/serial/digicolor-usart.c
-> +++ b/drivers/tty/serial/digicolor-usart.c
-> @@ -541,7 +541,11 @@ static int __init digicolor_uart_init(void)
->  	if (ret)
->  		return ret;
->  
-> -	return platform_driver_register(&digicolor_uart_platform);
-> +	ret = platform_driver_register(&digicolor_uart_platform);
-> +	if (ret)
-> +		uart_unregister_driver(&digicolor_uart);
-> +
-> +	return ret;
->  }
->  module_init(digicolor_uart_init);
+All applied, thanks.
 
 -- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
