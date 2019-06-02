@@ -2,51 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E583432478
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 19:26:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BA0332470
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 19:25:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbfFBRZc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Jun 2019 13:25:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35214 "EHLO mail.kernel.org"
+        id S1726892AbfFBRZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Jun 2019 13:25:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726587AbfFBRZO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726634AbfFBRZO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 2 Jun 2019 13:25:14 -0400
-Subject: Re: [PULL REQUEST] i2c for 5.2
+Subject: Re: [GIT PULL] Thermal-SoC management fixes for v5.2-rc3
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559496314;
-        bh=9FWIEqhrbY65cbvWohqbtGpeD8HmsgvvclVV/yNsBaE=;
+        s=default; t=1559496313;
+        bh=bQHJLHPNT5pP74l9jEgP5wetQf4mrRfdkVTymsb0zEE=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=IgxmATjjakXwSBHVRr2gKOmWpEePfjkmq3Ko9TfBM3xHwKrTIUVnM5TILDLRx9fyX
-         SHAYLM5yGxdJHPFqd1+rVrDQA7iTd2ON/IH3hiKKQ4QUPgAjhXm8W26tp4PYhnHMG8
-         yeOdxiLbODyEYaUEdxKMdHet7BKJgjUSUkTQpFEw=
+        b=ql7ARcVedNMlFAl8nhgH8gEaomIeyax4o61Q3VYf9n7MhLdNc54m/4oj2OtCMqJKD
+         tMYwZF+g3nCJY8RfdHigq8Jvwf0ik9/nVkvF4ZsPPuUEWiovo3hWEHFWJPpRCQghXx
+         IFRh4cewg5szFcrayX3PCk1S2HKE7WomyIEaPeGE=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190602062356.GA1616@kunai>
-References: <20190602062356.GA1616@kunai>
+In-Reply-To: <20190601232205.GA7411@localhost.localdomain>
+References: <20190601232205.GA7411@localhost.localdomain>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190602062356.GA1616@kunai>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current
-X-PR-Tracked-Commit-Id: c8552db31d5e70f0311be031b22292bf256791da
+X-PR-Tracked-Message-Id: <20190601232205.GA7411@localhost.localdomain>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal
+ fixes
+X-PR-Tracked-Commit-Id: ca657468a0d4bcc25445f6636485a19a525267bd
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 38baf0bb79f51b4fcbf6df8fd181441d7b5c7913
-Message-Id: <155949631397.24242.15334043470129943507.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 378e853f68e9a9548c64687880715ac3cca31c22
+Message-Id: <155949631348.24242.8443286616973099270.pr-tracker-bot@kernel.org>
 Date:   Sun, 02 Jun 2019 17:25:13 +0000
-To:     Wolfram Sang <wsa@the-dreams.de>
+To:     Eduardo Valentin <edubezval@gmail.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Rosin <peda@axentia.se>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
+        Rui Zhang <rui.zhang@intel.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 2 Jun 2019 08:24:02 +0200:
+The pull request you sent on Sat, 1 Jun 2019 16:22:06 -0700:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current
+> git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal fixes
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/38baf0bb79f51b4fcbf6df8fd181441d7b5c7913
+https://git.kernel.org/torvalds/c/378e853f68e9a9548c64687880715ac3cca31c22
 
 Thank you!
 
