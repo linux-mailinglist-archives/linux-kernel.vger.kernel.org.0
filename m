@@ -2,107 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 419A632251
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 09:07:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C1B132278
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 09:35:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726269AbfFBHHQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Jun 2019 03:07:16 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52690 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbfFBHHQ (ORCPT
+        id S1726281AbfFBHfK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Jun 2019 03:35:10 -0400
+Received: from outgoing-stata.csail.mit.edu ([128.30.2.210]:45621 "EHLO
+        outgoing-stata.csail.mit.edu" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725875AbfFBHfJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Jun 2019 03:07:16 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 09A7780353; Sun,  2 Jun 2019 09:00:04 +0200 (CEST)
-Date:   Sun, 2 Jun 2019 09:00:14 +0200
-From:   Pavel Machek <pavel@denx.de>
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "David S. Miller" <davem@davemloft.net>, edumazet@google.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>, keescook@chromium.org,
-        kernel-hardening@lists.openwall.com,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        neilb@suse.com, netdev@vger.kernel.org, oleg@redhat.com,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>, peterz@infradead.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, rcu@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Tejun Heo <tj@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>
-Subject: Re: [RFC 2/6] ipv4: add lockdep condition to fix for_each_entry
-Message-ID: <20190602070014.GA543@amd>
-References: <20190601222738.6856-1-joel@joelfernandes.org>
- <20190601222738.6856-3-joel@joelfernandes.org>
+        Sun, 2 Jun 2019 03:35:09 -0400
+Received: from c-73-193-85-113.hsd1.wa.comcast.net ([73.193.85.113] helo=srivatsab-a01.vmware.com)
+        by outgoing-stata.csail.mit.edu with esmtpsa (TLS1.2:RSA_AES_128_CBC_SHA1:128)
+        (Exim 4.82)
+        (envelope-from <srivatsa@csail.mit.edu>)
+        id 1hXKXo-000XZY-I5; Sun, 02 Jun 2019 03:04:40 -0400
+Subject: Re: CFQ idling kills I/O performance on ext4 with blkio cgroup
+ controller
+To:     Paolo Valente <paolo.valente@linaro.org>
+Cc:     linux-fsdevel@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        Jeff Moyer <jmoyer@redhat.com>, Theodore Ts'o <tytso@mit.edu>,
+        amakhalov@vmware.com, anishs@vmware.com, srivatsab@vmware.com,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+References: <8d72fcf7-bbb4-2965-1a06-e9fc177a8938@csail.mit.edu>
+ <A0DFE635-EFEC-4670-AD70-5D813E170BEE@linaro.org>
+ <5B6570A2-541A-4CF8-98E0-979EA6E3717D@linaro.org>
+ <2CB39B34-21EE-4A95-A073-8633CF2D187C@linaro.org>
+ <FC24E25F-4578-454D-AE2B-8D8D352478D8@linaro.org>
+ <0e3fdf31-70d9-26eb-7b42-2795d4b03722@csail.mit.edu>
+ <F5E29C98-6CC4-43B8-994D-0B5354EECBF3@linaro.org>
+ <686D6469-9DE7-4738-B92A-002144C3E63E@linaro.org>
+ <01d55216-5718-767a-e1e6-aadc67b632f4@csail.mit.edu>
+ <CA8A23E2-6F22-4444-9A20-E052A94CAA9B@linaro.org>
+ <cc148388-3c82-d7c0-f9ff-8c31bb5dc77d@csail.mit.edu>
+ <6FE0A98F-1E3D-4EF6-8B38-2C85741924A4@linaro.org>
+ <2A58C239-EF3F-422B-8D87-E7A3B500C57C@linaro.org>
+ <a04368ba-f1d5-8f2c-1279-a685a137d024@csail.mit.edu>
+ <E270AD92-943E-4529-8158-AB480D6D9DF8@linaro.org>
+ <5b71028c-72f0-73dd-0cd5-f28ff298a0a3@csail.mit.edu>
+ <FFA44D26-75FF-4A8E-A331-495349BE5FFC@linaro.org>
+ <0d6e3c02-1952-2177-02d7-10ebeb133940@csail.mit.edu>
+ <7B74A790-BD98-412B-ADAB-3B513FB1944E@linaro.org>
+From:   "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
+Message-ID: <6a6f4aa4-fc95-f132-55b2-224ff52bd2d8@csail.mit.edu>
+Date:   Sun, 2 Jun 2019 00:04:34 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="u3/rZRmxL6MmkK24"
-Content-Disposition: inline
-In-Reply-To: <20190601222738.6856-3-joel@joelfernandes.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <7B74A790-BD98-412B-ADAB-3B513FB1944E@linaro.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 5/30/19 3:45 AM, Paolo Valente wrote:
+> 
+> 
+>> Il giorno 30 mag 2019, alle ore 10:29, Srivatsa S. Bhat <srivatsa@csail.mit.edu> ha scritto:
+>>
+[...]
+>>
+>> Your fix held up well under my testing :)
+>>
+> 
+> Great!
+> 
+>> As for throughput, with low_latency = 1, I get around 1.4 MB/s with
+>> bfq (vs 1.6 MB/s with mq-deadline). This is a huge improvement
+>> compared to what it was before (70 KB/s).
+>>
+> 
+> That's beautiful news!
+> 
+> So, now we have the best of the two worlds: maximum throughput and
+> total control on I/O (including minimum latency for interactive and
+> soft real-time applications).  Besides, no manual configuration
+> needed.  Of course, this holds unless/until you find other flaws ... ;)
+> 
 
---u3/rZRmxL6MmkK24
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Indeed, that's awesome! :)
 
-On Sat 2019-06-01 18:27:34, Joel Fernandes (Google) wrote:
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+>> With tracing on, the throughput is a bit lower (as expected I guess),
+>> about 1 MB/s, and the corresponding trace file
+>> (trace-waker-detection-1MBps) is available at:
+>>
+>> https://www.dropbox.com/s/3roycp1zwk372zo/bfq-traces.tar.gz?dl=0
+>>
+> 
+> Thank you for the new trace.  I've analyzed it carefully, and, as I
+> imagined, this residual 12% throughput loss is due to a couple of
+> heuristics that occasionally get something wrong.  Most likely, ~12%
+> is the worst-case loss, and if one repeats the tests, the loss may be
+> much lower in some runs.
+>
 
-This really needs to be merged to previous patch, you can't break
-compilation in middle of series...
+Ah, I see.
+ 
+> I think it is very hard to eliminate this fluctuation while keeping
+> full I/O control.  But, who knows, I might have some lucky idea in the
+> future.
+> 
 
-Or probably you need hlist_for_each_entry_rcu_lockdep() macro with
-additional argument, and switch users to it.
-								Pavel
+:)
 
->  net/ipv4/fib_frontend.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/net/ipv4/fib_frontend.c b/net/ipv4/fib_frontend.c
-> index b298255f6fdb..ef7c9f8e8682 100644
-> --- a/net/ipv4/fib_frontend.c
-> +++ b/net/ipv4/fib_frontend.c
-> @@ -127,7 +127,8 @@ struct fib_table *fib_get_table(struct net *net, u32 =
-id)
->  	h =3D id & (FIB_TABLE_HASHSZ - 1);
-> =20
->  	head =3D &net->ipv4.fib_table_hash[h];
-> -	hlist_for_each_entry_rcu(tb, head, tb_hlist) {
-> +	hlist_for_each_entry_rcu(tb, head, tb_hlist,
-> +				 lockdep_rtnl_is_held()) {
->  		if (tb->tb_id =3D=3D id)
->  			return tb;
->  	}
+> At any rate, since you pointed out that you are interested in
+> out-of-the-box performance, let me complete the context: in case
+> low_latency is left set, one gets, in return for this 12% loss,
+> a) at least 1000% higher responsiveness, e.g., 1000% lower start-up
+> times of applications under load [1];
+> b) 500-1000% higher throughput in multi-client server workloads, as I
+> already pointed out [2].
+> 
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+I'm very happy that you could solve the problem without having to
+compromise on any of the performance characteristics/features of BFQ!
 
---u3/rZRmxL6MmkK24
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+> I'm going to prepare complete patches.  In addition, if ok for you,
+> I'll report these results on the bug you created.  Then I guess we can
+> close it.
+> 
 
-iEYEARECAAYFAlzzc/4ACgkQMOfwapXb+vLLpgCfQoWBSykNcFHCJ34MeV9TE4Es
-/qIAn1NEzcdOi5m4WfplnoKX79226+10
-=Uigu
------END PGP SIGNATURE-----
+Sounds great!
 
---u3/rZRmxL6MmkK24--
+> [1] https://algo.ing.unimo.it/people/paolo/disk_sched/results.php
+> [2] https://www.linaro.org/blog/io-bandwidth-management-for-production-quality-services/
+> 
+>> Thank you so much for your tireless efforts in fixing this issue!
+>>
+> 
+> I did enjoy working on this with you: your test case and your support
+> enabled me to make important improvements.  So, thank you very much
+> for your collaboration so far,
+> Paolo
+
+My pleasure! :)
+ 
+Regards,
+Srivatsa
+VMware Photon OS
