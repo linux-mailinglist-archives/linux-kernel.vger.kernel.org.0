@@ -2,77 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FD6B323B0
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 17:04:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FB13323B1
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 17:04:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726713AbfFBPEP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Jun 2019 11:04:15 -0400
-Received: from smtprelay0167.hostedemail.com ([216.40.44.167]:43768 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726229AbfFBPEP (ORCPT
+        id S1726776AbfFBPEW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Jun 2019 11:04:22 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37686 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726229AbfFBPEW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Jun 2019 11:04:15 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id C570D100E86C9;
-        Sun,  2 Jun 2019 15:04:13 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:599:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2693:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3872:3874:4250:4321:4605:5007:7550:7901:10004:10400:10848:11026:11232:11473:11657:11658:11914:12043:12555:12740:12760:12895:13069:13149:13184:13229:13230:13311:13357:13439:14093:14097:14181:14659:14721:21080:21451:21611:21627:30029:30034:30054:30070:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
-X-HE-Tag: house36_7c1320b646819
-X-Filterd-Recvd-Size: 2610
-Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf04.hostedemail.com (Postfix) with ESMTPA;
-        Sun,  2 Jun 2019 15:04:12 +0000 (UTC)
-Message-ID: <2870be25585850e8968ed0e1237ac381a85b878c.camel@perches.com>
-Subject: Re: [GIT PULL] SPDX update for 5.2-rc3 - round 2
-From:   Joe Perches <joe@perches.com>
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-        linux-spdx@vger.kernel.org
-Date:   Sun, 02 Jun 2019 08:04:11 -0700
-In-Reply-To: <20190602063905.GA14513@kroah.com>
-References: <20190602063905.GA14513@kroah.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sun, 2 Jun 2019 11:04:22 -0400
+Received: by mail-wr1-f66.google.com with SMTP id h1so9606918wro.4
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2019 08:04:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:reply-to:mime-version
+         :content-transfer-encoding;
+        bh=vHjadsq2SmHKIIDi66BdXBr4HfecgU1lyBQr8KyLXzg=;
+        b=IkaWIRjd589JaVtRKzkjt7NCBSGtuWoo+EDldWeay10DJWIi5/p0t/nMAXnCrsZS/H
+         jY5FR/xyvLkVzS8n26eDC0kiLFpiu3koA6n4UDFq92n/teLUCPrsBCXZ7qoBnxCrHss2
+         NwfsRp0Om/HptRyyMhRYHVq/ybHbblr2iXjZ6ePUJHQG6jzaZISUQEdHZ7K+ldzI58kr
+         h0oscnkxc3f+FcVdSYako3LDaEjPvDF/MyWiZ1AvLoFdSlxrZ/h869oPzB2XFTpITtTW
+         Hz4TrnJq50BaIewGWVjjTOAiCLeFFvFIv67ZLvIycT47eBT3CW4N37GHqvFPyP2t3Hip
+         6ECg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :mime-version:content-transfer-encoding;
+        bh=vHjadsq2SmHKIIDi66BdXBr4HfecgU1lyBQr8KyLXzg=;
+        b=ebX5whkbs3i8cr4wIk9GLdtOQc6S6U8qui/qupaLlhpdkC1lk5PiN8uYFgeq3MVlEO
+         igurYOIJvh4B9SHDlIIkzhZ95S5O+8EP6j18PXXnqobwMRj+QoPGoy8cbvi5z+CMKu8U
+         /XB284lYQ9JMsYdKkAYI4a+1h4KmYQjmqXWp7mJiz/e+EyfCYcLOJ8ALq0GLDNqazX0g
+         VciUzhduMxUa2aCE156U1dBBdTCbdYYYm3Ix/CpYeheweWIDQ2tXbNw04rQNFUEVMZKQ
+         Ih5wNZn1v6GR/P1Q37iu47fnZ9HqsinRGbhFA93ehIAIUOnF3PSRR4Xo9mGSi6/m3S5B
+         3tFQ==
+X-Gm-Message-State: APjAAAW9vSotKxqxBBl976YWukHMZzOBkkbee2mObwQgq953e7AOZruM
+        9BWO+5N0IiqYuz/hmwEhPFPXaJAgX6E=
+X-Google-Smtp-Source: APXvYqzazP79W0E1lpEn5TinOne34Mrq//u4U5vcFB+/eA8laFzZuKcyMMi1tpuGTswUXDGry43WsA==
+X-Received: by 2002:adf:f544:: with SMTP id j4mr6219388wrp.150.1559487860378;
+        Sun, 02 Jun 2019 08:04:20 -0700 (PDT)
+Received: from p200300EEEE2F.fritz.box (p200300C98712670014A3D3D52C57F0B4.dip0.t-ipconnect.de. [2003:c9:8712:6700:14a3:d3d5:2c57:f0b4])
+        by smtp.gmail.com with ESMTPSA id u19sm31346627wmu.41.2019.06.02.08.04.19
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sun, 02 Jun 2019 08:04:19 -0700 (PDT)
+From:   Emanuel Bennici <benniciemanuel78@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Bjorn Helgaas <bhelgaas@google.com>, Joe Perches <joe@perches.com>
+Subject: [PATCH 1/2] pci: shpchp: Remove unused callback get_mode1_ECC_cap
+Date:   Sun,  2 Jun 2019 17:04:12 +0200
+Message-Id: <20190602150418.31723-1-benniciemanuel78@gmail.com>
+X-Mailer: git-send-email 2.19.1
+Reply-To: benniciemanuel78@gmail.com
+MIME-Version: 1.0
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2019-06-02 at 08:39 +0200, Greg KH wrote:
-> The second patch fixes up a number of places in the tree where people
-> mistyped the string "SPDX-License-Identifier".  Given that people can
-> not even type their own name all the time without mistakes, this was
-> bound to happen, and odds are, we will have to add some type of check
-> for this to checkpatch.pl to catch this happening in the future.
-[]
->  arch/arm/kernel/bugs.c                | 2 +-
->  drivers/crypto/ux500/cryp/Makefile    | 2 +-
->  drivers/phy/st/phy-stm32-usbphyc.c    | 2 +-
->  drivers/pinctrl/sh-pfc/pfc-r8a77980.c | 2 +-
->  lib/test_stackinit.c                  | 2 +-
->  sound/soc/codecs/max9759.c            | 2 +-
->  6 files changed, 6 insertions(+), 6 deletions(-)
+This callback is never invoked/ used in this driver.
+Removing this callback does not affect the driver.
 
-checkpatch already gives a warning for each of these files
-except the Makefile as it has no filename extension.
-Filenames without extensions are not checked.
+Signed-off-by: Emanuel Bennici <benniciemanuel78@gmail.com>
+---
+ drivers/pci/hotplug/shpchp_hpc.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-$ ./scripts/checkpatch.pl -f --types=SPDX_LICENSE_TAG --nosummary --terse \
-	arch/arm/kernel/bugs.c \
-	drivers/crypto/ux500/cryp/Makefile \
-	drivers/phy/st/phy-stm32-usbphyc.c \
-	drivers/pinctrl/sh-pfc/pfc-r8a77980.c \
-	lib/test_stackinit.c \
-	sound/soc/codecs/max9759.c
-arch/arm/kernel/bugs.c:1: WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
-drivers/phy/st/phy-stm32-usbphyc.c:1: WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
-drivers/pinctrl/sh-pfc/pfc-r8a77980.c:1: WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
-lib/test_stackinit.c:1: WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
-sound/soc/codecs/max9759.c:1: WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
+diff --git a/drivers/pci/hotplug/shpchp_hpc.c b/drivers/pci/hotplug/shpchp_hpc.c
+index db047284c291..59f75e567c63 100644
+--- a/drivers/pci/hotplug/shpchp_hpc.c
++++ b/drivers/pci/hotplug/shpchp_hpc.c
+@@ -905,7 +905,6 @@ static const struct hpc_ops shpchp_hpc_ops = {
+ 	.get_adapter_status		= hpc_get_adapter_status,
 
+ 	.get_adapter_speed		= hpc_get_adapter_speed,
+-	.get_mode1_ECC_cap		= hpc_get_mode1_ECC_cap,
+ 	.get_prog_int			= hpc_get_prog_int,
+
+ 	.query_power_fault		= hpc_query_power_fault,
+--
+2.19.1
 
