@@ -2,89 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BBB132135
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 01:53:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB94732140
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 02:04:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbfFAXxm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Jun 2019 19:53:42 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:33760 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726211AbfFAXxl (ORCPT
+        id S1726817AbfFBADG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Jun 2019 20:03:06 -0400
+Received: from mailgw02.mediatek.com ([216.200.240.185]:58844 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726414AbfFBADB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Jun 2019 19:53:41 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by kvm5.telegraphics.com.au (Postfix) with ESMTP id D444327652;
-        Sat,  1 Jun 2019 19:53:37 -0400 (EDT)
-Date:   Sun, 2 Jun 2019 09:53:47 +1000 (AEST)
-From:   Finn Thain <fthain@telegraphics.com.au>
-To:     Kangjie Lu <kjlu@umn.edu>
-cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>,
-        Rob Herring <robh@kernel.org>, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH AUTOSEL 4.4 44/56] video: imsttfb: fix potential NULL
- pointer dereferences
-In-Reply-To: <20190601161929.GA5028@kroah.com>
-Message-ID: <alpine.LNX.2.21.1906020944570.8@nippy.intranet>
-References: <20190601132600.27427-1-sashal@kernel.org> <20190601132600.27427-44-sashal@kernel.org> <20190601161929.GA5028@kroah.com>
+        Sat, 1 Jun 2019 20:03:01 -0400
+X-UUID: c6da88c72c644d519e08893f16711a77-20190601
+X-UUID: c6da88c72c644d519e08893f16711a77-20190601
+Received: from mtkcas66.mediatek.inc [(172.29.193.44)] by mailgw02.mediatek.com
+        (envelope-from <sean.wang@mediatek.com>)
+        (musrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 974600959; Sat, 01 Jun 2019 16:02:54 -0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ MTKMBS62N1.mediatek.inc (172.29.193.41) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Sat, 1 Jun 2019 17:02:52 -0700
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Sun, 2 Jun 2019 08:02:50 +0800
+From:   <sean.wang@mediatek.com>
+To:     <marcel@holtmann.org>, <johan.hedberg@gmail.com>
+CC:     <linux-bluetooth@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH v7 0/2] Bluetooth: btusb: Add protocol support for MediaTek USB devices
+Date:   Sun, 2 Jun 2019 08:02:47 +0800
+Message-ID: <1559433769-23749-1-git-send-email-sean.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 1 Jun 2019, Greg Kroah-Hartman wrote:
+From: Sean Wang <sean.wang@mediatek.com>
 
-> On Sat, Jun 01, 2019 at 09:25:48AM -0400, Sasha Levin wrote:
+v7:
+* rebase to latest code base.
 
-> > From: Kangjie Lu <kjlu@umn.edu>
-> > 
-> > [ Upstream commit 1d84353d205a953e2381044953b7fa31c8c9702d ]
-> > ...
-> 
-> Why only 4.4.y?  Shouldn't this be queued up for everything or none?
-> 
-> thanks,
-> 
-> greg k-h
-> 
+v6:
+* fix drivers/bluetooth/btusb.c:2683:2-3: Unneeded semicolon based reported by [1]
+* update power-on sequence with adding neccesary tci sleep comand to set up
+  low-power environmnet and a delay to wait the device to be stable.
+* sort variables declarations in reverse xmas order.
 
-Also, why not check the result of the other ioremap calls? (I should have 
-checked that when this first crossed my inbox...)
+[1]
+http://lists.infradead.org/pipermail/linux-mediatek/2019-January/017017.html
 
-From 1d84353d205a953e2381044953b7fa31c8c9702d Mon Sep 17 00:00:00 2001
-From: Kangjie Lu <kjlu@umn.edu>
-Date: Mon, 1 Apr 2019 17:46:58 +0200
-Subject: [PATCH] video: imsttfb: fix potential NULL pointer dereferences
+v5:
+* rebase to latest code base.
+* change the subject prefix.
+* change the place the firmware located at.
 
-In case ioremap fails, the fix releases resources and returns
--ENOMEM to avoid NULL pointer dereferences.
+v4:
+* use new BTUSB_TX_WAIT_VND_EVT instead of BTMTKUSB_TX_WAIT_VND_EVT
+  to avoid definition conflict and to fix bulk data transfer fails.
+* use the bluetooth-next as the base
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Cc: Aditya Pakki <pakki001@umn.edu>
-Cc: Finn Thain <fthain@telegraphics.com.au>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[b.zolnierkie: minor patch summary fixup]
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+v3:
+add fixes and enhancements based on [1]
+* reuse flags and evt_skb btusb already had
+* add ctrl_anchor and the corresponding handling
+* apply mtk specific recv function
+* add more comments explaining wmt ctrl urbs behavior.
 
-diff --git a/drivers/video/fbdev/imsttfb.c b/drivers/video/fbdev/imsttfb.c
-index 4b9615e4ce74..35bba3c2036d 100644
---- a/drivers/video/fbdev/imsttfb.c
-+++ b/drivers/video/fbdev/imsttfb.c
-@@ -1515,6 +1515,11 @@ static int imsttfb_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	info->fix.smem_start = addr;
- 	info->screen_base = (__u8 *)ioremap(addr, par->ramdac == IBM ?
- 					    0x400000 : 0x800000);
-+	if (!info->screen_base) {
-+		release_mem_region(addr, size);
-+		framebuffer_release(info);
-+		return -ENOMEM;
-+	}
- 	info->fix.mmio_start = addr + 0x800000;
- 	par->dc_regs = ioremap(addr + 0x800000, 0x1000);
- 	par->cmap_regs_phys = addr + 0x840000;
+[1]
+http://lists.infradead.org/pipermail/linux-mediatek/2018-August/014724.html
+
+v2:
+
+add fixes and enhancements based on [1]
+* include /sys/kernel/debug/usb/devices portion in the commit message.
+* turn default into n for config BT_HCIBTUSB_MTK in Kconfig
+* only add MediaTek support to btusb.c
+* drop cmd_sync callback usage
+* use __hci_cmd_send to send WMT commands
+* add wait event handling similar to what is being done in btmtkuart.c
+* submit a control IN URB similar to interrupt IN URB on demand for the WMT
+  commands during setup 
+* add cosmetic changes
+
+[1]
+http://lists.infradead.org/pipermail/linux-mediatek/2018-August/014650.html
+http://lists.infradead.org/pipermail/linux-mediatek/2018-August/014656.html
+
+v1:
+
+This adds the support of enabling MT7668U and MT7663U Bluetooth
+function running on the top of btusb driver. The patch also adds
+a newly created file mtkbt.c able to be reused independently from
+the transport type such as UART, USB and SDIO.
+
+Sean Wang (2):
+  Bluetooth: btusb: Add protocol support for MediaTek MT7668U USB
+    devices
+  Bluetooth: btusb: Add protocol support for MediaTek MT7663U USB
+    devices
+
+ drivers/bluetooth/Kconfig |  11 +
+ drivers/bluetooth/btusb.c | 581 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 592 insertions(+)
+
+-- 
+2.17.1
 
