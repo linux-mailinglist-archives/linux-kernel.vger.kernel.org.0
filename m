@@ -2,59 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C0503247D
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 19:40:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45B233247F
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 19:44:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbfFBRj6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Jun 2019 13:39:58 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39073 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726170AbfFBRj5 (ORCPT
+        id S1726896AbfFBRor (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Jun 2019 13:44:47 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34523 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726305AbfFBRor (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Jun 2019 13:39:57 -0400
-Received: by mail-wr1-f65.google.com with SMTP id x4so9771889wrt.6
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2019 10:39:56 -0700 (PDT)
+        Sun, 2 Jun 2019 13:44:47 -0400
+Received: by mail-wr1-f68.google.com with SMTP id e16so1510894wrn.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2019 10:44:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:user-agent;
-        bh=kZNw/ckwc2s5GyZb2ARCrIQNL0FAo29qnCwNB3a8SwQ=;
-        b=LD6NiyvUh0RktGXfAxvQZS46uuP2KUmAPqiZdl7dBNusIt8s+y6Mr/wO1YMp2fv1qQ
-         OR5XivCSfm6YiDfrJheb/E9HCU6CBul4FF3CVMzuYk3Kht9z0li68GvIYJLlu61tbviN
-         Ahsbq9dvs/KabMMRaETYW8JML/Ih8vaXcqSGI8ZFHkwpPliiu6fjMHfABeB0Y5/7DQyv
-         pFQFfPBnuCZkabYPECU/LbeYa34ncm/Gd3f1x2K3z1Gbqvx2JPZ+SWQ+E5jpUoydvzYu
-         4Sll78AgFQZo0LS6GlUWB5bwIakgqp/zJzaXSZDNHm6ERZVaBrw1T/4eR8euw93yLgOe
-         FSnQ==
+        bh=r1J8a/RNCwMUi6bqaH9PxiQN6J6KPYnt+nuirbzJvhg=;
+        b=TWsmvjKh381ZjYUKsK15ApL8U2uXKUOZzeB45ixb3foFEz+nkHNWPPbS5zVQMjuZqM
+         Z508pODxWuRko0FWpjRISdDJphMAZxjhmO74bKTgSNIPogL16Xdsig4IUvlxBveUQILi
+         215Pn4X+KJLGTnl20oGcE2d3eHSHWu4M8KPbXVyVDF35Y1c8kXK/O0ks40qo5NBOw8Bg
+         6CMYVqkWLaAHmbmGZz98yyfle5QIxas6mY0LBe0BTq0iOTvwDT7vn3Cm32hoNxRRVYiV
+         5UUxMYJD+WDz5UUKYh1JyKggha/oTT7aXtHbEdCHkHqFsPrrYx8NwyLKHEqSN0QzyHiF
+         Ydzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :mime-version:content-disposition:user-agent;
-        bh=kZNw/ckwc2s5GyZb2ARCrIQNL0FAo29qnCwNB3a8SwQ=;
-        b=RaHVIlMVLmt37M4EECc/i0jF75Cnftu+IeU0FPpoJWO6B6R+HYpKcdMPel7z5jDtbK
-         8tAaSt1Iv3Y1CzRMjhvxIYMaGdoIAzg0tOIPMdBVNxnX2ODIaCPm4jeJMvyR6GCxvGFf
-         IKTDA6EZYJH5KQ3Oc1SiGnxjiVWATwFj6BPuoYDZYIcTKNT5iV106yoVirI+KlNJgdZM
-         oCUA/hYN2jjFYsCUZdz+e8T7yymaM0GVvRJmM6GWyGq9LNVxrPU4ssDjtKitRj/PxvlD
-         2SB7h97rsiXJUq16EZvOKyEJ2LxtHDjHrOsuxJ18iDgTrJAsZbLNuFD8j0DywkHAeHtb
-         h46w==
-X-Gm-Message-State: APjAAAU5BNV6DpxS62/oJlqrBdT4v+FJuJx/MoLVffvSeYPsj6UQQErf
-        zAphT1/jw8EkR6gc+DZAlqo=
-X-Google-Smtp-Source: APXvYqzG3y8NfRunLU1pL/4lno8mg38t0+GsLIMuGTC7+ZffWVcatPQuMBdElVryAa4LPatriTPqoQ==
-X-Received: by 2002:a5d:4310:: with SMTP id h16mr14177683wrq.331.1559497195821;
-        Sun, 02 Jun 2019 10:39:55 -0700 (PDT)
+        bh=r1J8a/RNCwMUi6bqaH9PxiQN6J6KPYnt+nuirbzJvhg=;
+        b=UAIMS3y6Xk+0uUeqcpWAckOgcaRjySzLVJqfkL3Brya3z3wr6k8IKrPWNL4+f8uv0R
+         76qRZBCfdytxOsA9g/rWRi6UZntjbLwfDNGLLKbl38isZL869mi419cKL22SHYC6MrG9
+         OieK7lesvMMVwsGjkrtzDQFhFTGZ8XBt3ledo5rv97uJSrXD02qA7JnN0l9isPfdHBgf
+         SoCslMo2T7tBxgUE9FVphYtTjal52g8Y8xCyXXGHQbul0YIY7Z5Ihpaxl4qmjawq1/wU
+         78XGVJeRF8bYCG7A95C5ACcpsjsTt1NSVyxtXybXtOCwUMesdptNM+hxHONJE+VKaDGn
+         kAlQ==
+X-Gm-Message-State: APjAAAWUy72GQ4ONHygwV7DxPRxF4ySt/R9+cKyqncSESPLmckNfL1HA
+        UOprlf/yQgi9NlYhI64Yt4c=
+X-Google-Smtp-Source: APXvYqxqaOJ8W2oiGeTHxjCMxv6/Flt8+B9R+GiVqW59bajTo/paM5Ud2S8BJoVWLa/cmuzZcwNjhA==
+X-Received: by 2002:adf:e649:: with SMTP id b9mr13441808wrn.195.1559497485209;
+        Sun, 02 Jun 2019 10:44:45 -0700 (PDT)
 Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id c2sm17658372wrf.75.2019.06.02.10.39.54
+        by smtp.gmail.com with ESMTPSA id q9sm15518773wmq.9.2019.06.02.10.44.44
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 02 Jun 2019 10:39:55 -0700 (PDT)
-Date:   Sun, 2 Jun 2019 19:39:53 +0200
+        Sun, 02 Jun 2019 10:44:44 -0700 (PDT)
+Date:   Sun, 2 Jun 2019 19:44:42 +0200
 From:   Ingo Molnar <mingo@kernel.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Arnaldo Carvalho de Melo <acme@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] perf fixes
-Message-ID: <20190602173953.GA109592@gmail.com>
+Subject: [GIT PULL] x86 fixes
+Message-ID: <20190602174442.GA34993@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -66,80 +65,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-Please pull the latest perf-urgent-for-linus git tree from:
+Please pull the latest x86-urgent-for-linus git tree from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-for-linus
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-for-linus
 
-   # HEAD: 849e96f30068d4f6f8352715e02a10533a46deba Merge tag 'perf-urgent-for-mingo-5.2-20190528' of git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux into perf/urgent
+   # HEAD: 2ac44ab608705948564791ce1d15d43ba81a1e38 x86/CPU/AMD: Don't force the CPB cap when running under a hypervisor
 
-On the kernel side there's a bunch of ring-buffer ordering fixes for a 
-reproducible bug, plus a PEBS constraints regression fix - plus tooling 
-fixes.
+Two fixes: a quirk for KVM guests running on certain AMD CPUs, and a 
+KASAN related build fix.
 
  Thanks,
 
 	Ingo
 
 ------------------>
-Arnaldo Carvalho de Melo (8):
-      tools include UAPI: Update copy of files related to new fspick, fsmount, fsconfig, fsopen, move_mount and open_tree syscalls
-      tools arch x86: Sync asm/cpufeatures.h with the with the kernel
-      tools headers UAPI: Sync linux/sched.h with the kernel
-      tools headers UAPI: Sync linux/fs.h with the kernel
-      tools headers UAPI: Sync drm/i915_drm.h with the kernel
-      tools headers UAPI: Sync drm/drm.h with the kernel
-      perf test vmlinux-kallsyms: Ignore aliases to _etext when searching on kallsyms
-      tools headers UAPI: Sync kvm.h headers with the kernel sources
+Ard Biesheuvel (1):
+      x86/boot: Provide KASAN compatible aliases for string routines
 
-Jiri Olsa (1):
-      perf machine: Read also the end of the kernel
-
-Namhyung Kim (2):
-      perf namespace: Protect reading thread's namespace
-      perf session: Add missing swap ops for namespace events
-
-Peter Zijlstra (3):
-      perf/ring_buffer: Add ordering to rb->nest increment
-      perf/ring-buffer: Always use {READ,WRITE}_ONCE() for rb->user_page data
-      perf/ring-buffer: Use regular variables for nesting
-
-Shawn Landden (1):
-      perf data: Fix 'strncat may truncate' build failure with recent gcc
-
-Stephane Eranian (1):
-      perf/x86/intel/ds: Fix EVENT vs. UEVENT PEBS constraints
-
-Thomas Richter (1):
-      perf record: Fix s390 missing module symbol and warning for non-root users
-
-Vitaly Chikunov (1):
-      perf arm64: Fix mksyscalltbl when system kernel headers are ahead of the kernel
-
-Yabin Cui (1):
-      perf/ring_buffer: Fix exposing a temporarily decreased data_head
+Frank van der Linden (1):
+      x86/CPU/AMD: Don't force the CPB cap when running under a hypervisor
 
 
- arch/x86/events/intel/ds.c                        |  28 +--
- kernel/events/internal.h                          |   4 +-
- kernel/events/ring_buffer.c                       |  64 ++++--
- tools/arch/arm64/include/uapi/asm/kvm.h           |  43 ++++
- tools/arch/powerpc/include/uapi/asm/kvm.h         |  46 ++++
- tools/arch/s390/include/uapi/asm/kvm.h            |   4 +-
- tools/arch/x86/include/asm/cpufeatures.h          |   3 +
- tools/include/uapi/asm-generic/unistd.h           |  14 +-
- tools/include/uapi/drm/drm.h                      |  37 ++++
- tools/include/uapi/drm/i915_drm.h                 | 254 +++++++++++++++-------
- tools/include/uapi/linux/fcntl.h                  |   2 +
- tools/include/uapi/linux/fs.h                     |   3 +
- tools/include/uapi/linux/kvm.h                    |  15 +-
- tools/include/uapi/linux/mount.h                  |  62 ++++++
- tools/include/uapi/linux/sched.h                  |   1 +
- tools/perf/arch/arm64/entry/syscalls/mksyscalltbl |   2 +-
- tools/perf/arch/s390/util/machine.c               |   9 +-
- tools/perf/arch/x86/entry/syscalls/syscall_64.tbl |   6 +
- tools/perf/tests/vmlinux-kallsyms.c               |   9 +-
- tools/perf/util/data-convert-bt.c                 |   2 +-
- tools/perf/util/machine.c                         |  27 ++-
- tools/perf/util/session.c                         |  21 ++
- tools/perf/util/thread.c                          |  15 +-
- 23 files changed, 547 insertions(+), 124 deletions(-)
+ arch/x86/boot/compressed/string.c | 14 ++++++++++----
+ arch/x86/kernel/cpu/amd.c         |  7 +++++--
+ 2 files changed, 15 insertions(+), 6 deletions(-)
+
+diff --git a/arch/x86/boot/compressed/string.c b/arch/x86/boot/compressed/string.c
+index 19dbbcdd1a53..81fc1eaa3229 100644
+--- a/arch/x86/boot/compressed/string.c
++++ b/arch/x86/boot/compressed/string.c
+@@ -11,7 +11,7 @@
+ #include "../string.c"
+ 
+ #ifdef CONFIG_X86_32
+-static void *__memcpy(void *dest, const void *src, size_t n)
++static void *____memcpy(void *dest, const void *src, size_t n)
+ {
+ 	int d0, d1, d2;
+ 	asm volatile(
+@@ -25,7 +25,7 @@ static void *__memcpy(void *dest, const void *src, size_t n)
+ 	return dest;
+ }
+ #else
+-static void *__memcpy(void *dest, const void *src, size_t n)
++static void *____memcpy(void *dest, const void *src, size_t n)
+ {
+ 	long d0, d1, d2;
+ 	asm volatile(
+@@ -56,7 +56,7 @@ void *memmove(void *dest, const void *src, size_t n)
+ 	const unsigned char *s = src;
+ 
+ 	if (d <= s || d - s >= n)
+-		return __memcpy(dest, src, n);
++		return ____memcpy(dest, src, n);
+ 
+ 	while (n-- > 0)
+ 		d[n] = s[n];
+@@ -71,5 +71,11 @@ void *memcpy(void *dest, const void *src, size_t n)
+ 		warn("Avoiding potentially unsafe overlapping memcpy()!");
+ 		return memmove(dest, src, n);
+ 	}
+-	return __memcpy(dest, src, n);
++	return ____memcpy(dest, src, n);
+ }
++
++#ifdef CONFIG_KASAN
++extern void *__memset(void *s, int c, size_t n) __alias(memset);
++extern void *__memmove(void *dest, const void *src, size_t n) __alias(memmove);
++extern void *__memcpy(void *dest, const void *src, size_t n) __alias(memcpy);
++#endif
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index 80a405c2048a..8d4e50428b68 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -824,8 +824,11 @@ static void init_amd_zn(struct cpuinfo_x86 *c)
+ {
+ 	set_cpu_cap(c, X86_FEATURE_ZEN);
+ 
+-	/* Fix erratum 1076: CPB feature bit not being set in CPUID. */
+-	if (!cpu_has(c, X86_FEATURE_CPB))
++	/*
++	 * Fix erratum 1076: CPB feature bit not being set in CPUID.
++	 * Always set it, except when running under a hypervisor.
++	 */
++	if (!cpu_has(c, X86_FEATURE_HYPERVISOR) && !cpu_has(c, X86_FEATURE_CPB))
+ 		set_cpu_cap(c, X86_FEATURE_CPB);
+ }
+ 
