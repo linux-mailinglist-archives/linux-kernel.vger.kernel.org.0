@@ -2,124 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81F253213F
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 02:04:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB86E32144
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 02:15:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbfFBADC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Jun 2019 20:03:02 -0400
-Received: from mailgw01.mediatek.com ([216.200.240.184]:59097 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726343AbfFBADB (ORCPT
+        id S1726744AbfFBAPV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Jun 2019 20:15:21 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:50993 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726343AbfFBAPU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Jun 2019 20:03:01 -0400
-X-UUID: 4c28cb44c3044b0693bbde2c97d87ccf-20190601
-X-UUID: 4c28cb44c3044b0693bbde2c97d87ccf-20190601
-Received: from mtkcas68.mediatek.inc [(172.29.94.19)] by mailgw01.mediatek.com
-        (envelope-from <sean.wang@mediatek.com>)
-        (musrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1656217114; Sat, 01 Jun 2019 16:02:56 -0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- MTKMBS62DR.mediatek.inc (172.29.94.18) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Sat, 1 Jun 2019 17:02:54 -0700
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Sun, 2 Jun 2019 08:02:54 +0800
-From:   <sean.wang@mediatek.com>
-To:     <marcel@holtmann.org>, <johan.hedberg@gmail.com>
-CC:     <linux-bluetooth@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v7 2/2] Bluetooth: btusb: Add protocol support for MediaTek MT7663U USB devices
-Date:   Sun, 2 Jun 2019 08:02:49 +0800
-Message-ID: <1559433769-23749-3-git-send-email-sean.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1559433769-23749-1-git-send-email-sean.wang@mediatek.com>
-References: <1559433769-23749-1-git-send-email-sean.wang@mediatek.com>
+        Sat, 1 Jun 2019 20:15:20 -0400
+Received: from callcc.thunk.org ([66.31.38.53])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x520FFpP024883
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 1 Jun 2019 20:15:16 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 972BA420481; Sat,  1 Jun 2019 20:15:15 -0400 (EDT)
+Date:   Sat, 1 Jun 2019 20:15:15 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Andreas Dilger <adilger@dilger.ca>
+Cc:     Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ext4: remove unnecessary gotos in ext4_xattr_set_entry
+Message-ID: <20190602001515.GB15741@mit.edu>
+Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+References: <20190531121016.11727-1-ptikhomirov@virtuozzo.com>
+ <01FB1966-0466-4AB2-913B-F53E8CA816BE@dilger.ca>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <01FB1966-0466-4AB2-913B-F53E8CA816BE@dilger.ca>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
+On Fri, May 31, 2019 at 03:46:54PM -0600, Andreas Dilger wrote:
+> On May 31, 2019, at 6:10 AM, Pavel Tikhomirov <ptikhomirov@virtuozzo.com> wrote:
+> > 
+> > In the "out" label we only iput old/new_ea_inode-s, in all these places
+> > these variables are always NULL so there is no point in goto to "out".
+> > 
+> > Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+> 
+> I'm not a fan of changes like this, since it adds potential complexity/bugs
+> if the error handling path is changed in the future.  That is one of the major
+> benefits of the "goto out_*" model of error handling is that you only need to
+> add one new label to the end of the function when some new state is added that
+> needs to be cleaned up, compared to having to check each individual error to
+> see if something needs to be cleaned up.
 
-This adds the support of enabling MT7663U Bluetooth function running
-on the top of btusb driver.
+I'm not a fan either, for the reasons Andreas stated; if you ever move
+code around, it's much more hazardous because you now have to check if
+what had previously been a "return ret" now has to change into "goto
+outl".  In some case, it's really obvious, if the code is at the very
+beginning of the function, but when you're 35 lines down, well over
+the size of many of an editor window, it's no longer quite so obvious
+whether or not "goto out" is necessary.
 
-The information in /sys/kernel/debug/usb/devices about the Bluetooth
-device is listed as the below.
-
-T:  Bus=04 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  5 Spd=5000 MxCh= 0
-D:  Ver= 3.00 Cls=ef(misc ) Sub=02 Prot=01 MxPS= 9 #Cfgs=  1
-P:  Vendor=0e8d ProdID=7663 Rev= 1.00
-S:  Manufacturer=MediaTek Inc.
-S:  Product=Wireless_Device
-S:  SerialNumber=000000000
-C:* #Ifs= 3 Cfg#= 1 Atr=a0 MxPwr=160mA
-A:  FirstIf#= 0 IfCount= 2 Cls=e0(wlcon) Sub=01 Prot=01
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
-E:  Ad=82(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- drivers/bluetooth/btusb.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 91b4ac7cb203..31cec3657916 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -2463,6 +2463,7 @@ static int btusb_shutdown_intel_new(struct hci_dev *hdev)
- 
- #ifdef CONFIG_BT_HCIBTUSB_MTK
- 
-+#define FIRMWARE_MT7663		"mediatek/mt7663pr2h.bin"
- #define FIRMWARE_MT7668		"mediatek/mt7668pr2h.bin"
- 
- #define HCI_WMT_MAX_EVENT_SIZE		64
-@@ -2904,6 +2905,9 @@ static int btusb_mtk_setup(struct hci_dev *hdev)
- 	}
- 
- 	switch (dev_id) {
-+	case 0x7663:
-+		fwname = FIRMWARE_MT7663;
-+		break;
- 	case 0x7668:
- 		fwname = FIRMWARE_MT7668;
- 		break;
-@@ -3015,6 +3019,7 @@ static int btusb_mtk_shutdown(struct hci_dev *hdev)
- 	return 0;
- }
- 
-+MODULE_FIRMWARE(FIRMWARE_MT7663);
- MODULE_FIRMWARE(FIRMWARE_MT7668);
- #endif
- 
--- 
-2.17.1
-
+						- Ted
