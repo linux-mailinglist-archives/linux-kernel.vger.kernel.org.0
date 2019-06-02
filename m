@@ -2,89 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51ABE323D8
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 18:32:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2AF2323DD
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 18:35:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726749AbfFBQct (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Jun 2019 12:32:49 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39140 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726170AbfFBQcs (ORCPT
+        id S1726884AbfFBQfs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Jun 2019 12:35:48 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55865 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726776AbfFBQfq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Jun 2019 12:32:48 -0400
-Received: by mail-wr1-f66.google.com with SMTP id x4so9703895wrt.6
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2019 09:32:47 -0700 (PDT)
+        Sun, 2 Jun 2019 12:35:46 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 16so4534357wmg.5
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2019 09:35:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:reply-to:mime-version
+        h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=hXRaRyTkvJJsioc4WPPsWium9XCHIfD1KCToEtjOIPk=;
-        b=Ob/EwjWULzP69B+oWtqxXXhsLIYnsLv3gW4r3nLNcg99TcdSc1qNvCH0mikkdxj8bi
-         3F5yyXP8jutNO6SmlVBEFcxbU6L/KgM2Hi9bLFSSEf9l5uQ67DENh/VLjhpz7lie4ZeX
-         DC2mQ2cT5CJ0rdwn6KO8bodgzIiC0r5D3uOleit/VHp5wIf2zzRCAW+NWcC2trNQBJJs
-         bTUVAoHtvpiA9l4hxfzb2ATmBtsOIvYaBTK1hIlYWAgyclD9PwtALmoW5J9iNTUt2ijm
-         v2UWO8a5grToxhILrC3ID3pwrD0zoAl+dHfvn1L6JZC+/16Dz04hYHUH+75WVn+Dl2nz
-         hD4Q==
+        bh=bPqNziqN3jwSyP9jBiLarbBjFW7IRf4d6KG+ehEQH8I=;
+        b=i/GiEXl3PBCQeCimNLpYhU4zywZjhwiXRNfQ3cpTZcTQxDmQSWyACTwX2HXvQBeysq
+         oxRGLsVqO1D2udN0vLI8C3R05npvkHO2cAInkULu5L/MK0i04zXRRk8cRAZhJNBvk/9l
+         mz1F/ZFBurdBA5k4o3udZ+WvTuLxxVcSr2xAbu9aWeiNUnhOCv2/Piz8JTThQ91RWA6L
+         PF5iip+gG8OaY8tRu9bnbxOLfkKqZ+GO+DATgkn+D5FqQOaB04RYr9EyCKys7PGaFQ8i
+         +Rv6/6k+dN+nebejHRvb4f93IuPXOO39AXM5YF+5gI3HQfCbfHYj7nTxzyEokjbBZBaN
+         +ZuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :mime-version:content-transfer-encoding;
-        bh=hXRaRyTkvJJsioc4WPPsWium9XCHIfD1KCToEtjOIPk=;
-        b=lqoF/YXJ8qa0hj2UzdFWNLyQkAroNyH+cZXZCb84cPr34i++dqdOEzhJoL7InSCxxu
-         O9AEi7e4FGupA0c+hHJNhfZleg/owUpz4bgbKyb38d1cnyfREgba3ENJgKSTHGsawae8
-         ZG8sugH/TyZR4kMx1ydN+fIU+N7VosWRDBcZNQmqPlfndrLfmR23WjZQ6CTytNKQtfA9
-         EfH64mgWq30SuYc6kVXsZMemNHB7rZ1xLJYAF/ElpKhlmPl+JnAIgTtGbH6NTzBAmyOo
-         qkKDpxuWKfPZuG9Q7FB1EWAMSlRYg3SBM10t646AMChTAdua0eiS6XBLjgpIZ2bFiIpC
-         62Fg==
-X-Gm-Message-State: APjAAAXfYTJr4fU2FJlMFKsoZZPgzidZiWWh9obejRIEr75MAH503ixs
-        Bott34Ptq+Sc25kImbeOg+T0rtAC3OnRNQ==
-X-Google-Smtp-Source: APXvYqwOmltwwQi1aogH9gsTzw/b6utJQ/MMb3QzjQAx1fgRn4Eaql8AisRyuj7KH5CR6bf2lmGFwA==
-X-Received: by 2002:adf:e591:: with SMTP id l17mr2894862wrm.231.1559493166846;
-        Sun, 02 Jun 2019 09:32:46 -0700 (PDT)
-Received: from p200300EEEE2F.fritz.box (p200300C98712670014A3D3D52C57F0B4.dip0.t-ipconnect.de. [2003:c9:8712:6700:14a3:d3d5:2c57:f0b4])
-        by smtp.gmail.com with ESMTPSA id a139sm20420993wmd.18.2019.06.02.09.32.45
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bPqNziqN3jwSyP9jBiLarbBjFW7IRf4d6KG+ehEQH8I=;
+        b=LHyrAONchYIGCEcvGTdy3kiAy2okEfAprnbgQ83jY8S0UMxtqnZa5SzhvOeplKswbr
+         dCMXZpMEyOmt4nu/xS5HS0Kosybp/ZttEU9r1zzTkNBPXo3GyxhJMgVzfbrr8oT2LCxM
+         FXJmo80JFjTpfAUzoBgIJAMRuqsj600rlb6h6LtBWtWlklY9KbB76oPlnM9ps7LOhwM+
+         BZt/jgkhXT9qn7lxjIpzmMGg27sxhSaoAKf4Hbwdd9uAdj2ARf33W14B3J3vCEhHQUir
+         fANZpyb+px4mlM68I295KFPBEjFe8on5GX1IIK4IJx9iurFnUdT0Kg7N+0mkbJHBIOh1
+         zWkQ==
+X-Gm-Message-State: APjAAAUkPXygfp0lJEMEmC3GpyYrhTewSGbx9xzGK20WjaRtR2ZbZoDB
+        QqAylss/rQOGIQhK9xzIw2Y=
+X-Google-Smtp-Source: APXvYqxA0qvxMUvIHbPuyM/mUzR6nerSvsGDgs42I8IrUoZjKBqn/jV19eLqdUpRR1hmQOS+IFWrPA==
+X-Received: by 2002:a1c:ce:: with SMTP id 197mr11801235wma.48.1559493344522;
+        Sun, 02 Jun 2019 09:35:44 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:8108:96bf:e0ab:2b68:5d76:a12a:e6ba])
+        by smtp.gmail.com with ESMTPSA id c5sm6639273wma.19.2019.06.02.09.35.43
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 02 Jun 2019 09:32:46 -0700 (PDT)
-From:   Emanuel Bennici <benniciemanuel78@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Bjorn Helgaas <bhelgaas@google.com>, Joe Perches <joe@perches.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] pci: hotplug: ibmphp: Remove superfluous debug message
-Date:   Sun,  2 Jun 2019 18:32:39 +0200
-Message-Id: <20190602163244.6937-1-benniciemanuel78@gmail.com>
-X-Mailer: git-send-email 2.19.1
-Reply-To: benniciemanuel78@gmail.com
+        Sun, 02 Jun 2019 09:35:44 -0700 (PDT)
+From:   Michael Straube <straube.linux@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org,
+        Michael Straube <straube.linux@gmail.com>
+Subject: [PATCH 1/2] staging: rtl8188eu: remove redundant definition of ETH_ALEN
+Date:   Sun,  2 Jun 2019 18:35:27 +0200
+Message-Id: <20190602163528.28495-1-straube.linux@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 'Exit' Debug message is superfluous ftrace can be used instead.
+ETH_ALEN is defined in linux/if_ether.h which is included by
+osdep_service.h, so remove the redundant definition from ieee80211.h.
 
-Signed-off-by: Emanuel Bennici <benniciemanuel78@gmail.com>
+osdep_service.h:33:#include <linux/etherdevice.h>
+etherdevice.h:25:#include <linux/if_ether.h>
+
+Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/pci/hotplug/ibmphp_core.c | 1 -
+ drivers/staging/rtl8188eu/include/ieee80211.h | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/pci/hotplug/ibmphp_core.c b/drivers/pci/hotplug/ibmphp_core.c
-index cd73bea12bc7..a2ea1ff6cfbc 100644
---- a/drivers/pci/hotplug/ibmphp_core.c
-+++ b/drivers/pci/hotplug/ibmphp_core.c
-@@ -890,7 +890,6 @@ static int set_bus(struct slot *slot_cur)
- 	/* This is for x440, once Brandon fixes the firmware,
- 	will not need this delay */
- 	msleep(1000);
--	debug("%s - Exit\n", __func__);
- 	return 0;
- }
-
---
-2.19.1
+diff --git a/drivers/staging/rtl8188eu/include/ieee80211.h b/drivers/staging/rtl8188eu/include/ieee80211.h
+index c60b833ca110..d43aa4304ca5 100644
+--- a/drivers/staging/rtl8188eu/include/ieee80211.h
++++ b/drivers/staging/rtl8188eu/include/ieee80211.h
+@@ -14,7 +14,6 @@
+ 
+ #define MGMT_QUEUE_NUM 5
+ 
+-#define ETH_ALEN	6
+ #define ETH_TYPE_LEN		2
+ #define PAYLOAD_TYPE_LEN	1
+ 
+-- 
+2.21.0
 
