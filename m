@@ -2,82 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3746A324DF
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 23:02:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C5CD324D3
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 22:54:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbfFBVC1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Jun 2019 17:02:27 -0400
-Received: from mail-io1-f46.google.com ([209.85.166.46]:40572 "EHLO
-        mail-io1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726305AbfFBVC1 (ORCPT
+        id S1726896AbfFBUyT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Jun 2019 16:54:19 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:48372 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbfFBUyS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Jun 2019 17:02:27 -0400
-Received: by mail-io1-f46.google.com with SMTP id n5so12645942ioc.7
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2019 14:02:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HC8vtrRsh50Ohc3EaIB0NoebMSo23njywbCwxitxUSo=;
-        b=G05oV6yGANfGUrsafNDMFdY+sdiwhud8O9hlc5blEpxavx9e8NMec2fjDyxse4N94X
-         2a89tU71cAzexNCkHgP9PRg5MZKqWwfvM5tdRQOUzBE+IVLhk0nxFDg1nKUAGhNgYJWK
-         OTOxrwoH4oo/4pDSoZ0Fkojiw/sCTsCbJPv9w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HC8vtrRsh50Ohc3EaIB0NoebMSo23njywbCwxitxUSo=;
-        b=FTcHSl3nz+Mv/4Y4+d9/gYI1rRZ+WQNXh90HXKh+RXO2KnqFXo7NwwkKtt+1dkD9Nq
-         xJUrptdw+ZShPAr2JpKwDmu90j/ZbEgyvbVo9Gc+3/tYYxD1axCadeXmatunPPzXtqKs
-         sKAtla7cWGzxrZFHGDkGxhwAKuhtsRNf4wVBcnShf6ayuyWix1HqADowMFTQgr/9zgir
-         SeqvrHUIbSlX59+JdhYSmUhwDCd5ypb9XvHHFMdiIg6wrIa78q6De8VxS5IYprUsqJ0m
-         Dnjrkn8+I0cZrCCT/eik+EqHgAIv10j0pOC++1mdxcrnHVoIuJcVc4Yl2Ei2pHBVriUG
-         z4RA==
-X-Gm-Message-State: APjAAAWJTlj5Iz4C1Huov3XRjiX3jZmnTdAgKHX0abaQliuMRkqGUBTs
-        rbUTgc6ZCwY4XNdG5UPtuj1dpwUGSK8=
-X-Google-Smtp-Source: APXvYqxlnw73pTZ9X3LGfQhk4wHkxDI22S6dISiA1Mrh1rHUWpFhM8Ynp9JwrYuQPTbxTvYWg9PiIA==
-X-Received: by 2002:a05:6602:2285:: with SMTP id d5mr14055239iod.196.1559509346192;
-        Sun, 02 Jun 2019 14:02:26 -0700 (PDT)
-Received: from mail-it1-f171.google.com (mail-it1-f171.google.com. [209.85.166.171])
-        by smtp.gmail.com with ESMTPSA id y18sm4154690iob.64.2019.06.02.14.02.25
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 02 Jun 2019 14:02:26 -0700 (PDT)
-Received: by mail-it1-f171.google.com with SMTP id n189so5150651itd.0
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2019 14:02:25 -0700 (PDT)
-X-Received: by 2002:a24:5652:: with SMTP id o79mr15076656itb.164.1559508868756;
- Sun, 02 Jun 2019 13:54:28 -0700 (PDT)
-MIME-Version: 1.0
-References: <20150910005708.GA23369@wfg-t540p.sh.intel.com>
- <20150910102513.GA1677@fixme-laptop.cn.ibm.com> <20150910171649.GE4029@linux.vnet.ibm.com>
- <20150911021933.GA1521@fixme-laptop.cn.ibm.com> <20150921193045.GA13674@lerouge>
- <20150921204327.GH4029@linux.vnet.ibm.com> <20190602055607.bk5vgmwjvvt4wejd@gondor.apana.org.au>
-In-Reply-To: <20190602055607.bk5vgmwjvvt4wejd@gondor.apana.org.au>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 2 Jun 2019 13:54:12 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whLGKOmM++OQi5GX08_dfh8Xfz9Wq7khPo+MVtPYh_8hw@mail.gmail.com>
-Message-ID: <CAHk-=whLGKOmM++OQi5GX08_dfh8Xfz9Wq7khPo+MVtPYh_8hw@mail.gmail.com>
-Subject: Re: rcu_read_lock lost its compiler barrier
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Fengguang Wu <fengguang.wu@intel.com>, LKP <lkp@01.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 2 Jun 2019 16:54:18 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id D35961411E114;
+        Sun,  2 Jun 2019 13:54:17 -0700 (PDT)
+Date:   Sun, 02 Jun 2019 13:54:17 -0700 (PDT)
+Message-Id: <20190602.135417.1658688470668746683.davem@davemloft.net>
+To:     nikita.yoush@cogentembedded.com
+Cc:     andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com,
+        hkallweit1@gmail.com, marek.behun@nic.cz,
+        rmk+kernel@armlinux.org.uk, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, cphealy@gmail.com
+Subject: Re: [PATCH] net: dsa: mv88e6xxx: avoid error message on remove
+ from VLAN 0
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190531073514.2171-1-nikita.yoush@cogentembedded.com>
+References: <20190531073514.2171-1-nikita.yoush@cogentembedded.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 02 Jun 2019 13:54:18 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 1, 2019 at 10:56 PM Herbert Xu <herbert@gondor.apana.org.au> wrote:
->
-> You can't then go and decide to remove the compiler barrier!  To do
-> that you'd need to audit every single use of rcu_read_lock in the
-> kernel to ensure that they're not depending on the compiler barrier.
+From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Date: Fri, 31 May 2019 10:35:14 +0300
 
-What's the possible case where it would matter when there is no preemption?
+> When non-bridged, non-vlan'ed mv88e6xxx port is moving down, error
+> message is logged:
+> 
+> failed to kill vid 0081/0 for device eth_cu_1000_4
+> 
+> This is caused by call from __vlan_vid_del() with vin set to zero, over
+> call chain this results into _mv88e6xxx_port_vlan_del() called with
+> vid=0, and mv88e6xxx_vtu_get() called from there returns -EINVAL.
+> 
+> On symmetric path moving port up, call goes through
+> mv88e6xxx_port_vlan_prepare() that calls mv88e6xxx_port_check_hw_vlan()
+> that returns -EOPNOTSUPP for zero vid.
+> 
+> This patch changes mv88e6xxx_vtu_get() to also return -EOPNOTSUPP for
+> zero vid, then this error code is explicitly cleared in
+> dsa_slave_vlan_rx_kill_vid() and error message is no longer logged.
+> 
+> Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 
-          Linus
+Applied.
