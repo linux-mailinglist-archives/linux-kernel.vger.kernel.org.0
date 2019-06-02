@@ -2,105 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE6CF322B7
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 10:28:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C0D0322BD
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 10:39:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726190AbfFBI2U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Jun 2019 04:28:20 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37220 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbfFBI2U (ORCPT
+        id S1726674AbfFBIj0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Jun 2019 04:39:26 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39568 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726303AbfFBIjZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Jun 2019 04:28:20 -0400
-Received: by mail-wr1-f66.google.com with SMTP id h1so9219556wro.4
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2019 01:28:18 -0700 (PDT)
+        Sun, 2 Jun 2019 04:39:25 -0400
+Received: by mail-lj1-f194.google.com with SMTP id a10so10164157ljf.6
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2019 01:39:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WnNi9KkC4U+mIhXiCVi96pOXS/XmFU28bKFjrsJQpfY=;
-        b=QSOIKTSGa2YueIbuOgCUlbVf4/H4ir6PyaElNxFbkoz+rmtLL4YyRmskp/q+r/ScPR
-         mEUGT8rhc7UvlMCP+pQzH9Tj3XOK5qxHibwDGdmYFGZ676C1tLe9mkLFnzCfkR3Rggei
-         3GmyH67W4Aa6J5jdNr/IkzXJ4Chdt39vUP4P7fBvkXowwC2h/GUYpiZjBnW3tz2D9xjH
-         eEUHxymjFKxekx9IBq9J3a+NLbynIT782F044lNF5p78C6xp6jH8tqCn1fcFuy7SjKLp
-         zHaImxaigsJ3MkkB0sdkunuK9bb3sGFuQVEl6plBZBIUtpy7NVexFKYxZwoEfcc3RAk2
-         ZerA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yE2J5a6MB0Gc48eIqCKYzxTEPvXkEUZm6g5N6vUrQy0=;
+        b=ISwdVjqGJ/u5HKAq5gTbqhDyiyczVmMmlYTgwPHKcPUmp0SwhHzU7n9NBcQLBkvePA
+         AWZD4Y/Gd3Yl5vikkmWg5f0Ggh2Bx5BvM4zyG0wVU7KLmxO33iIVHM7rgYXNl1Ccs1Xy
+         GEnHP6yig7grGK7di8iJCX6nFOvvZ1avP631pXQHKH+bw1LgP2uBOkr+ExzwXGbxTYgr
+         xBp9nEvrC7335Ckbb2gq8dp5yWLCsj1QgPWMcODMuUhBThSETgSzzM7wrbzsLl7yxDBl
+         10ZyzxfsW7kA1z0zpt5fsaNVuQ+47nBrhlHLOro5mWUJ+Fcv0rdwL1eFPX/OFm+ns+pE
+         H4zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WnNi9KkC4U+mIhXiCVi96pOXS/XmFU28bKFjrsJQpfY=;
-        b=FpD1waO6eluSSmfsnGcS+vX4MgAQkzO0cz+HEJ+m/N5I/huqpbd8t3zfUp8vQqS8KA
-         rG03c084gebixYxORghUNR5S5GIdMoCqX33ku317qWBHLrf4f1OChsThsin3wLj97Cpk
-         UK6Qm7Zg4xxLl1jWwK6PS45rEiIeiiLA72k2Cc/0tFfrMC8laYBwe6sxWgpKTvRA3O/u
-         gQPx88uOcYC6JEWZWREUmo2AlFbvtl9uVLf1gH4mMYOW9wX7AT10y3h6max6fUaih1jR
-         +oJf7GSL4pOGDK/imspDKRyNOqOvokGrChbhydcLJ1s8g2b0U6Ws230nh0l4SK9JSJGL
-         J6Tg==
-X-Gm-Message-State: APjAAAU3c5QxqImB28mSbgKwlh//hH8jB5YvI8/aYamqgUy1U7brC7p1
-        nHGYNLgFG+9kIqLTIQJeOvA=
-X-Google-Smtp-Source: APXvYqwtRn6icomP8dU6EUlNiNqfA6oW0HYJpH6eAFdqakg1ERF0j3ZrKujTsTiiS6+vj957Pw8Yhw==
-X-Received: by 2002:a5d:6144:: with SMTP id y4mr12532929wrt.84.1559464098333;
-        Sun, 02 Jun 2019 01:28:18 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:8108:96bf:e0ab:2b68:5d76:a12a:e6ba])
-        by smtp.gmail.com with ESMTPSA id 32sm34252041wra.35.2019.06.02.01.28.17
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 02 Jun 2019 01:28:17 -0700 (PDT)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH] staging: rtl8188eu: remove ODM_PhyStatusQuery() wrapper
-Date:   Sun,  2 Jun 2019 10:28:00 +0200
-Message-Id: <20190602082800.5846-1-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.21.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yE2J5a6MB0Gc48eIqCKYzxTEPvXkEUZm6g5N6vUrQy0=;
+        b=c8j/b1uNfcKHJOxMVbmpTgt6GmFwpG9dowps9XUnN6hmCFYmxGXykvi7kQfFv3R8U8
+         vWq6ogmpj5ffQZ1mOg6KqKb9ddymtOyaNkRxsO3G3QwMrcX6xOTVZQRHUkHL3yj7i13d
+         Y/cgjTeIZCOjFQ1G7XcI6/zqv0w1XzH73QlBTurDqP0J16AjRCrNJYVQOeV/ku2EPklu
+         DC0KuheS34ibRGM/bVkHW8NdUZQr9Y7QEFbSV/tmmP4UjyIrRNVzLd2/eJlwwiuwUrAe
+         C63wLmUYgtF5LpRnJR0PiE6EJwIRytC5plNXvejIIItCKa4AEEwdJGbCtGaeMun4dkRK
+         fVOA==
+X-Gm-Message-State: APjAAAX+On8mjgTOnWqgbDtVAsyc3Q/u5YVb1Z4WGWCloRepA+wr0Myo
+        0pcDwyGNTP7LKrz8sTxDGhvzqtVd8G/7B7fxDFim2A==
+X-Google-Smtp-Source: APXvYqyh6hWIl5W5nMmF/9/ej0DWHVcr46h1HQVRnLm8WUwbiyWxXnadUkdktX1kP9ytr2yZqkgU50r5CZ++QGbwClo=
+X-Received: by 2002:a2e:8902:: with SMTP id d2mr10897010lji.94.1559464764019;
+ Sun, 02 Jun 2019 01:39:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190528091304.9932-1-yuehaibing@huawei.com>
+In-Reply-To: <20190528091304.9932-1-yuehaibing@huawei.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sun, 2 Jun 2019 10:39:12 +0200
+Message-ID: <CACRpkdb0dti=x2UxaOoP=VRrzxQTuAaeQ2==UM4U6KNyHC2QwQ@mail.gmail.com>
+Subject: Re: [PATCH -next] pinctrl: bcm2835: Fix build error without CONFIG_OF
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Doug Berger <opendmb@gmail.com>, Eric Anholt <eric@anholt.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Matheus Castello <matheus@castello.eng.br>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Function ODM_PhyStatusQuery() is just a wrapper around
-ODM_PhyStatusQuery_92CSeries(). Rename ODM_PhyStatusQuery_92CSeries()
-to ODM_PhyStatusQuery() and remove the wrapper.
+On Tue, May 28, 2019 at 11:18 AM YueHaibing <yuehaibing@huawei.com> wrote:
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
----
- drivers/staging/rtl8188eu/hal/odm_hwconfig.c | 15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
+> drivers/pinctrl/bcm/pinctrl-bcm2835.c: In function bcm2835_pctl_dt_node_to_map:
+> drivers/pinctrl/bcm/pinctrl-bcm2835.c:720:8: error: implicit declaration of function pinconf_generic_dt_node_to_map_all;
+> drivers/pinctrl/bcm/pinctrl-bcm2835.c: In function bcm2835_pinctrl_probe:
+> drivers/pinctrl/bcm/pinctrl-bcm2835.c:1022:15: error: struct gpio_chip has no member named of_node
+>   pc->gpio_chip.of_node = np;
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Fixes: 0de704955ee4 ("pinctrl: bcm2835: Add support for generic pinctrl binding")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-diff --git a/drivers/staging/rtl8188eu/hal/odm_hwconfig.c b/drivers/staging/rtl8188eu/hal/odm_hwconfig.c
-index 149b0009ad66..d5a9ac51e907 100644
---- a/drivers/staging/rtl8188eu/hal/odm_hwconfig.c
-+++ b/drivers/staging/rtl8188eu/hal/odm_hwconfig.c
-@@ -387,10 +387,9 @@ static void odm_Process_RSSIForDM(struct odm_dm_struct *dm_odm,
- }
- 
- /*  Endianness before calling this API */
--static void ODM_PhyStatusQuery_92CSeries(struct odm_dm_struct *dm_odm,
--					 struct odm_phy_status_info *pPhyInfo,
--					 u8 *pPhyStatus,
--					 struct odm_per_pkt_info *pPktinfo)
-+void ODM_PhyStatusQuery(struct odm_dm_struct *dm_odm,
-+			struct odm_phy_status_info *pPhyInfo,
-+			u8 *pPhyStatus, struct odm_per_pkt_info *pPktinfo)
- {
- 	odm_RxPhyStatus92CSeries_Parsing(dm_odm, pPhyInfo, pPhyStatus,
- 					 pPktinfo);
-@@ -398,12 +397,4 @@ static void ODM_PhyStatusQuery_92CSeries(struct odm_dm_struct *dm_odm,
- 		;/*  Select the packets to do RSSI checking for antenna switching. */
- 	else
- 		odm_Process_RSSIForDM(dm_odm, pPhyInfo, pPktinfo);
--
--}
--
--void ODM_PhyStatusQuery(struct odm_dm_struct *dm_odm,
--			struct odm_phy_status_info *pPhyInfo,
--			u8 *pPhyStatus, struct odm_per_pkt_info *pPktinfo)
--{
--	ODM_PhyStatusQuery_92CSeries(dm_odm, pPhyInfo, pPhyStatus, pPktinfo);
- }
--- 
-2.21.0
+Patch applied.
 
+Yours,
+Linus Walleij
