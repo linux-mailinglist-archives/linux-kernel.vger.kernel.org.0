@@ -2,78 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C2E7324B2
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 22:01:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7D46324BA
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 22:07:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbfFBUBW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Jun 2019 16:01:22 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:47914 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726485AbfFBUBW (ORCPT
+        id S1726933AbfFBUHe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Jun 2019 16:07:34 -0400
+Received: from smtprelay0185.hostedemail.com ([216.40.44.185]:35810 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726270AbfFBUHe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Jun 2019 16:01:22 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7B8EE1400F7B4;
-        Sun,  2 Jun 2019 13:01:21 -0700 (PDT)
-Date:   Sun, 02 Jun 2019 13:01:18 -0700 (PDT)
-Message-Id: <20190602.130118.1624703340305098863.davem@davemloft.net>
-To:     biao.huang@mediatek.com
-Cc:     joabreu@synopsys.com, peppe.cavallaro@st.com,
-        alexandre.torgue@st.com, mcoquelin.stm32@gmail.com,
-        matthias.bgg@gmail.com, netdev@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, yt.shen@mediatek.com,
-        jianguo.zhang@mediatek.com, boon.leong.ong@intel.com,
-        andrew@lunn.ch
-Subject: Re: [RESEND, PATCH 1/4] net: stmmac: dwmac-mediatek: enable
- Ethernet power domain
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1559209398-3607-2-git-send-email-biao.huang@mediatek.com>
-References: <1559209398-3607-1-git-send-email-biao.huang@mediatek.com>
-        <1559209398-3607-2-git-send-email-biao.huang@mediatek.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
+        Sun, 2 Jun 2019 16:07:34 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 3F17E688F;
+        Sun,  2 Jun 2019 20:07:33 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:599:968:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1567:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3867:3870:3871:3872:3873:4321:5007:10004:10400:10848:11026:11232:11473:11657:11658:11914:12043:12296:12555:12740:12760:12895:13069:13311:13357:13439:14659:14721:21063:21080:21451:21611:21627:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
+X-HE-Tag: frog64_79a000550354
+X-Filterd-Recvd-Size: 1430
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf12.hostedemail.com (Postfix) with ESMTPA;
+        Sun,  2 Jun 2019 20:07:32 +0000 (UTC)
+Message-ID: <9ca0c459d047c72fc459313ad570ecc59cf5d300.camel@perches.com>
+Subject: Re: [PATCH 1/2] staging: rtl8188eu: remove redundant definition of
+ ETH_ALEN
+From:   Joe Perches <joe@perches.com>
+To:     Michael Straube <straube.linux@gmail.com>,
+        gregkh@linuxfoundation.org
+Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Date:   Sun, 02 Jun 2019 13:07:30 -0700
+In-Reply-To: <20190602163528.28495-1-straube.linux@gmail.com>
+References: <20190602163528.28495-1-straube.linux@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 02 Jun 2019 13:01:22 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Biao Huang <biao.huang@mediatek.com>
-Date: Thu, 30 May 2019 17:43:15 +0800
-
-> @@ -364,6 +371,15 @@ static int mediatek_dwmac_probe(struct platform_device *pdev)
->  	return 0;
->  }
+On Sun, 2019-06-02 at 18:35 +0200, Michael Straube wrote:
+> ETH_ALEN is defined in linux/if_ether.h which is included by
+> osdep_service.h, so remove the redundant definition from ieee80211.h.
+[]
+> diff --git a/drivers/staging/rtl8188eu/include/ieee80211.h b/drivers/staging/rtl8188eu/include/ieee80211.h
+[]
+> @@ -14,7 +14,6 @@
 >  
-> +static int mediatek_dwmac_remove(struct platform_device *pdev)
-> +{
-> +	int ret;
-> +
-> +	ret = stmmac_pltfr_remove(pdev);
-> +
-> +	return ret;
-> +}
-> +
->  static const struct of_device_id mediatek_dwmac_match[] = {
->  	{ .compatible = "mediatek,mt2712-gmac",
->  	  .data = &mt2712_gmac_variant },
-> @@ -374,7 +390,7 @@ static int mediatek_dwmac_probe(struct platform_device *pdev)
+>  #define MGMT_QUEUE_NUM 5
 >  
->  static struct platform_driver mediatek_dwmac_driver = {
->  	.probe  = mediatek_dwmac_probe,
-> -	.remove = stmmac_pltfr_remove,
-> +	.remove = mediatek_dwmac_remove,
->  	.driver = {
->  		.name           = "dwmac-mediatek",
->  		.pm		= &stmmac_pltfr_pm_ops,
+> -#define ETH_ALEN	6
+>  #define ETH_TYPE_LEN		2
+>  #define PAYLOAD_TYPE_LEN	1
 
-This half of your patch has no effect and seems completely unnecessary.
+While you're at it:
 
-Please remove it.
+neither ETH_TYPE_LEN nor PAYLOAD_TYPE_LEN appear to be used.
+
+
