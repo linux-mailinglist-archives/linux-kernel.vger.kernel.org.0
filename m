@@ -2,50 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8686232471
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 19:25:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D261D32474
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 19:25:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbfFBRZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Jun 2019 13:25:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35214 "EHLO mail.kernel.org"
+        id S1727054AbfFBRZ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Jun 2019 13:25:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726876AbfFBRZP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Jun 2019 13:25:15 -0400
-Subject: Re: [GIT PULL] KVM fixes for 5.2-rc3
+        id S1726818AbfFBRZO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Jun 2019 13:25:14 -0400
+Subject: Re: [GIT PULL] SPDX update for 5.2-rc3 - round 2
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1559496314;
-        bh=TfLxWpOC4SbTif7Gsn4xrF0ocHhDsjWMGlOTKoLN1lc=;
+        bh=iOnJZE8EJahNdGN3ThHkcdQCXFY2cOQbI2F+QCjOLS8=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=jtlJlsakSJYX9uj2Oy+0tv6IkDt2Tx5c5zRgVRVvWmFuJ6eLxnf7SJ1aFy4wTXvjw
-         HiwaZEYuaMlw6Tr7ofB3fKeEy6EFuParAVTgUI6O6K1ojmWwiktYoiVew9jDdaTbk3
-         8y3CjuSP+D+54oaqdvV0tKlmAS5HVa/wB58Sf8OY=
+        b=RHvbWUzXpI3l1sxlMgNRQz3Z0gL8JRktj2q/DOx/UwH8IxlLdWmF+Wlj5WJZ8Xhgg
+         JpEyLFr0cO5KZfkLeLYOAFR6EvhJj89CHaott+3b83g/ln/n92FRcYSIg8Tf+QxPhq
+         xf/NVx6zpfradz87JxLvt7dWkcbfo1jMpS794SO8=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <1559469039-42045-1-git-send-email-pbonzini@redhat.com>
-References: <1559469039-42045-1-git-send-email-pbonzini@redhat.com>
+In-Reply-To: <20190602063905.GA14513@kroah.com>
+References: <20190602063905.GA14513@kroah.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <1559469039-42045-1-git-send-email-pbonzini@redhat.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/virt/kvm/kvm.git
- tags/for-linus
-X-PR-Tracked-Commit-Id: f8d221d2e0e1572d0d60174c118e3554d1aa79fa
+X-PR-Tracked-Message-Id: <20190602063905.GA14513@kroah.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
+ tags/spdx-5.2-rc3-2
+X-PR-Tracked-Commit-Id: 8e82fe2ab65a80b1526b285c661ab88cc5891e3a
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b44a1dd3f648a433c525efcdd6ba95ad89d50e27
-Message-Id: <155949631467.24242.16308911266332915750.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: a68dc6188242e1cc6f72eb3361e71633b4bc02a7
+Message-Id: <155949631417.24242.14157611336640878616.pr-tracker-bot@kernel.org>
 Date:   Sun, 02 Jun 2019 17:25:14 +0000
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        rkrcmar@redhat.com, kvm@vger.kernel.org
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-spdx@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun,  2 Jun 2019 11:50:39 +0200:
+The pull request you sent on Sun, 2 Jun 2019 08:39:05 +0200:
 
-> https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git tags/spdx-5.2-rc3-2
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b44a1dd3f648a433c525efcdd6ba95ad89d50e27
+https://git.kernel.org/torvalds/c/a68dc6188242e1cc6f72eb3361e71633b4bc02a7
 
 Thank you!
 
