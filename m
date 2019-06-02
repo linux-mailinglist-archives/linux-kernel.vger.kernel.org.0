@@ -2,123 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6071D322FD
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 12:27:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3166C322F2
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 12:25:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726998AbfFBK1A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Jun 2019 06:27:00 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36856 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726980AbfFBK06 (ORCPT
+        id S1726634AbfFBKZy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Jun 2019 06:25:54 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:56755 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726122AbfFBKZx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Jun 2019 06:26:58 -0400
-Received: by mail-pf1-f194.google.com with SMTP id u22so8873678pfm.3
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2019 03:26:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=H/UOYaUuSv3BYs/6fr1qvCTOeBxayYz1L+t266OVcrM=;
-        b=f9UqLVUs392Ph0L/TbCTOTvNh9vDFyO6aBR8WM/VEfZ7Ao6Y64ouJoLftyedkTp+wH
-         v4gVQBWvrGbgMXmXQfn0LH2GrVSMt02eslWBvymjU1L63NCBc9dpQSIer8uqXYBF6S44
-         SVw5dGM3K8A75YExPXrhD8VXbmyqjRvtb1jo0RKZP6DubHn+HOm7wuOTIPA5fdG/1gPM
-         4G5Y/7F4VWY4m3PG7tNP0a2Vbr87GyAVU32KGLoao6JiT9kUf7rZWWXz95Y+deHchgbk
-         dwtFvlvOuX15bmRjEjVX71ic10c2546Sj8pkFLu53U/xaH1dy+t2D3Q1x/Vv/DbifDqn
-         Tfnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=H/UOYaUuSv3BYs/6fr1qvCTOeBxayYz1L+t266OVcrM=;
-        b=nQG1Wkdx6Qt24mHREuyms+e5Fd6Jag/5Ax7qnJBOA+CBQfL92aj3ANB4v2jfTofQTG
-         Cn4lYQRt0O29/5JS0UchCzYjlATzQ+YuaYadFAwFQvPrbxh3C+Uywc9b4uswfsVy1SaU
-         HZ968OA5TDTTNjceNan+p4CX3ZpXQ7rEjkKqr6ayVScbg4GBj67GBJo5XAUt2PEBVrU2
-         EU5Wsy3Px2YV9zn9PVYVLXejGwe0FL1jimBRrMyxByxyR/qF0kX4ChUagG3gLL8clOKg
-         w+NmszvDc8eHp3Gzaw15pUtBcFbcgypAZxZI3pyNTe60mpLpbswIF9zn6x3FClgbLOHW
-         wdwA==
-X-Gm-Message-State: APjAAAW5dOV2iEqiSz2lL+ldOpPuKZXk1R49eRcWx302kq2/7MJPTvL0
-        0kCTfOe8waKU//GtJM8tyswsFlsK
-X-Google-Smtp-Source: APXvYqyWHPGgP7CteLevTrGH/40QdENuEg0lSDPHbszWS+obd++S0D+jxFWGaTJAA2u8g9C5tmx+sQ==
-X-Received: by 2002:a63:eb56:: with SMTP id b22mr20492557pgk.81.1559471217156;
-        Sun, 02 Jun 2019 03:26:57 -0700 (PDT)
-Received: from localhost.localdomain ([117.192.23.157])
-        by smtp.googlemail.com with ESMTPSA id j13sm12221099pfh.13.2019.06.02.03.26.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 02 Jun 2019 03:26:56 -0700 (PDT)
-From:   Deepak Mishra <linux.dkm@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, joe@perches.com, wlanfae@realtek.com,
-        Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
-        linux.dkm@gmail.com, himadri18.07@gmail.com,
-        straube.linux@gmail.com
-Subject: [PATCH v2 9/9] staging: rtl8712: Fixed CamelCase lockRxFF0Filter
-Date:   Sun,  2 Jun 2019 15:55:38 +0530
-Message-Id: <c555df2475320ac55d1498d87ca0e38681934af3.1559470738.git.linux.dkm@gmail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <cover.1559470737.git.linux.dkm@gmail.com>
-References: <cover.1559470737.git.linux.dkm@gmail.com>
+        Sun, 2 Jun 2019 06:25:53 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id D2D138037E; Sun,  2 Jun 2019 12:25:41 +0200 (CEST)
+Date:   Sun, 2 Jun 2019 12:25:41 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Johan Hovold <johan@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-omap@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
+Subject: Re: [PATCH 1/2] phy: core: Add phy_pm_runtime_enabled
+Message-ID: <20190602102541.GA12625@atrey.karlin.mff.cuni.cz>
+References: <20181117133755.9129-1-tony@atomide.com>
+ <20181117133755.9129-2-tony@atomide.com>
+ <20181117153845.GU19900@localhost>
+ <20181117154353.GM53235@atomide.com>
+ <20190602101434.GA1126@atrey.karlin.mff.cuni.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190602101434.GA1126@atrey.karlin.mff.cuni.cz>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes CamelCase lockRxFF0Filter by renaming to
-lock_rx_ff0_filter in drv_types.h and related files
-usb_intf.c and xmit_linux.c
+Hi!
 
-This was reported by checkpatch.pl
+> > > > @@ -240,6 +241,11 @@ static inline int phy_pm_runtime_put_sync(struct phy *phy)
+> > > >  	return -ENOSYS;
+> > > >  }
+> > > >  
+> > > > +static inline bool phy_pm_runtime_enabled(struct phy *phy)
+> > > > +{
+> > > > +	return false
+> > > 
+> > > Missing semicolon.
+> > 
+> > Oops thanks for catching that. I guess I did not try building
+> > without CONFIG_GENERIC_PHY. Will fix and repost.
+> 
+> Did this series get lost/forgotten somewhere? Is it still needed? Any
+> way I can help?
 
-Signed-off-by: Deepak Mishra <linux.dkm@gmail.com>
----
- drivers/staging/rtl8712/drv_types.h  | 2 +-
- drivers/staging/rtl8712/usb_intf.c   | 2 +-
- drivers/staging/rtl8712/xmit_linux.c | 4 ++--
- 3 files changed, 4 insertions(+), 4 deletions(-)
+Aha, it seems v2 of the series was applied, which touches different
+files and that's why I did not detect it. Sorry for the noise.
 
-diff --git a/drivers/staging/rtl8712/drv_types.h b/drivers/staging/rtl8712/drv_types.h
-index e3e2b32e964e..087fad7a4433 100644
---- a/drivers/staging/rtl8712/drv_types.h
-+++ b/drivers/staging/rtl8712/drv_types.h
-@@ -165,7 +165,7 @@ struct _adapter {
- 	int pid; /*process id from UI*/
- 	struct work_struct wk_filter_rx_ff0;
- 	bool enable_rx_ff0_filter;
--	spinlock_t lockRxFF0Filter;
-+	spinlock_t lock_rx_ff0_filter;
- 	const struct firmware *fw;
- 	struct usb_interface *pusb_intf;
- 	struct mutex mutex_start;
-diff --git a/drivers/staging/rtl8712/usb_intf.c b/drivers/staging/rtl8712/usb_intf.c
-index 200a271c28e1..d0daae0b8299 100644
---- a/drivers/staging/rtl8712/usb_intf.c
-+++ b/drivers/staging/rtl8712/usb_intf.c
-@@ -571,7 +571,7 @@ static int r871xu_drv_init(struct usb_interface *pusb_intf,
- 	/* step 6. Load the firmware asynchronously */
- 	if (rtl871x_load_fw(padapter))
- 		goto error;
--	spin_lock_init(&padapter->lockRxFF0Filter);
-+	spin_lock_init(&padapter->lock_rx_ff0_filter);
- 	mutex_init(&padapter->mutex_start);
- 	return 0;
- error:
-diff --git a/drivers/staging/rtl8712/xmit_linux.c b/drivers/staging/rtl8712/xmit_linux.c
-index 9fa1abcf5e50..1b52be50c04c 100644
---- a/drivers/staging/rtl8712/xmit_linux.c
-+++ b/drivers/staging/rtl8712/xmit_linux.c
-@@ -102,9 +102,9 @@ void r8712_SetFilter(struct work_struct *work)
- 	newvalue = oldvalue & 0xfe;
- 	r8712_write8(padapter, 0x117, newvalue);
- 
--	spin_lock_irqsave(&padapter->lockRxFF0Filter, irqL);
-+	spin_lock_irqsave(&padapter->lock_rx_ff0_filter, irqL);
- 	padapter->enable_rx_ff0_filter = true;
--	spin_unlock_irqrestore(&padapter->lockRxFF0Filter, irqL);
-+	spin_unlock_irqrestore(&padapter->lock_rx_ff0_filter, irqL);
- 	do {
- 		msleep(100);
- 	} while (padapter->enable_rx_ff0_filter == true);
+									Pavel
 -- 
-2.19.1
-
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
