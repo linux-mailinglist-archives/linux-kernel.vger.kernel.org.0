@@ -2,56 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE4EE3228A
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 10:01:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE0BC3228D
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 10:01:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726531AbfFBIBd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Jun 2019 04:01:33 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41736 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726032AbfFBIBd (ORCPT
+        id S1726697AbfFBIBf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Jun 2019 04:01:35 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40023 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726572AbfFBIBf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Jun 2019 04:01:33 -0400
-Received: by mail-wr1-f66.google.com with SMTP id c2so9186695wrm.8
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2019 01:01:32 -0700 (PDT)
+        Sun, 2 Jun 2019 04:01:35 -0400
+Received: by mail-wr1-f65.google.com with SMTP id p11so4356463wre.7
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2019 01:01:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sifive.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=lVmMBuEiI1TSAqk1FfU1U7RUZqQknARWWYl0UzTN3/Y=;
-        b=h7gLVYnLm/kUsn4wK95+sL2SBMrx+hS39lImfxCL7a5t3aAgMWd/a5XIETxd2AlQcO
-         KjWBs8hXvdmlhMKUwemrMqwjSbptuo/FwJsVn09PULAuqWbhDtTFC4RtyFsFvjOLUaAs
-         oZIIsIIgJW9vPhHR9F69zppcNkeFPjZdgv0WtYca/KsgRmscfX4rAAPsg9cWt9sNrFnK
-         +r6dTHRhy81CsFlU6DIF0DVPKi88seXGMQbPQNkYytiUxY5ga3p4tZw3rdC0sO3n7jNG
-         xB/Ra0o8YipjZ16UApgRWEDcRWUWQaZ/sYlL/205G37BtlzqS9sgCoA3jnxZlY9xRUYe
-         IutA==
+        bh=19JHlpBM08NaaoHMsfAWuVL8kWvPtpcvA1ACdpeOftw=;
+        b=D1YagV2wbPbvYWZG6MzOREWRKQGhvSfaNMR6MaRpuTG3+iRMDz8IOAruUW8V/2CsOV
+         dWr/OLZLPLXOS1ERStSTQ19mZ53xlDQFlCJOUKK8RJwaNcJpCG+KarzUiCyGZMQXpEIu
+         FrBKvFBcPrSGmn+reOALH9WfV1FPfwlGjHpjwpBngwFOMGCXiQBEKv5uQkawr3ERKQdC
+         /qUujjIVeGUijZJ+vZVg5y/1BqUbnG5ZHp4iAUZp0E30WUPtCT7Hb3CzQFd7FOATQ1wJ
+         4drT05q/92szPLAyQN6niHi0Skv8EP3tySB0tavCnhXN1cXgLJpaPi7XM/05hHIDrWaj
+         +3Zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=lVmMBuEiI1TSAqk1FfU1U7RUZqQknARWWYl0UzTN3/Y=;
-        b=FHh1dnJP0hAF5oArviYwbRtz8VQ2L0/b+JfTxkhMzet4XbL0bOYlItCknIo52Pq6Fl
-         sHeHeRXgFmZm2nCZwZ6IxvKeZCUlc3Ipx2VqPY6ZV1qLoaf0rTUFbWFr08Dv86wVv8Gv
-         n2nlI/B+6XWneFEVg+/gp4ZEljqWLfNyVNiJAkPIDsEFlJjfN5R+0RnhQkGLVW4EbVfT
-         rS3POlC732koIkvFOTUIRShWgLvFWcdmFIyHLxJyOLvrEj0Z5+hJay27P81aNy/ro1xp
-         ORkL3tFfTLad1FySB8RAon5xy7koB4lXlNHvG12DL7zbO7f+/r/Ls9/mNZs1oUkOCF4S
-         XV1A==
-X-Gm-Message-State: APjAAAXU+QnyvQZsX0u1/djJ61uqYt3eT1odaz+TJf+Y0bqQMfgHBHHq
-        MpWdbqcpm7eoRuMRipQso6Ys9sOY5UI=
-X-Google-Smtp-Source: APXvYqyzl0GBenPZ3PBEvpnd3Q3e392pV9ArIPE/Ls+QOYf7FH+9zlK3H9nw68c1OfcLmBth8HdTkw==
-X-Received: by 2002:a5d:5348:: with SMTP id t8mr12119924wrv.43.1559462491760;
-        Sun, 02 Jun 2019 01:01:31 -0700 (PDT)
+        bh=19JHlpBM08NaaoHMsfAWuVL8kWvPtpcvA1ACdpeOftw=;
+        b=p/u5/aS5jGpqIkeYF3XKmAIVWsq4cjeQGdqZTilvocyTxj1IDMewis+Mc+Dg92yRmt
+         KSAfbXNK9NVsjsGGipa9yfUjyFJlhMwA592PeSDFCHpSWafKApEIqdqkVAx8SSjs/oqu
+         kk5vtS7kMF/gSGdU17ISe/zh1Hjr5+MvNJL03Q8y+wT006IN+x2gMb+iLt68VC62Bjd5
+         6UpRRNrHTdAQvzE/FQtyeKyreAVdIoOfSuRkCoRiL7ufmKajpNF8SLMmTR9Vwng7jOc/
+         4oZDEbHJ5Bc6tbMwYbpmTLNX2PuZjOyd1E77Vo6obMffjjKPwbC9McPSOHrNTLkUuK+A
+         7U8g==
+X-Gm-Message-State: APjAAAVrzbmlVxwpF6LIpWVUjl/gruGSYi+PFH28GyIddJPbLQHEjnpQ
+        YENGkUhayM+wKwpI9BbHCD62fxB75OE=
+X-Google-Smtp-Source: APXvYqxIdhhZ2JdruuDE0wVdfP3W+Q1cj5pKLGr8tiWIFLeuCifPv8CGC4QztbWIeJssrrKzi3Ds7A==
+X-Received: by 2002:adf:c98f:: with SMTP id f15mr12552255wrh.279.1559462493346;
+        Sun, 02 Jun 2019 01:01:33 -0700 (PDT)
 Received: from viisi.fritz.box (217-76-161-89.static.highway.a1.net. [217.76.161.89])
-        by smtp.gmail.com with ESMTPSA id y133sm4868583wmg.5.2019.06.02.01.01.30
+        by smtp.gmail.com with ESMTPSA id y133sm4868583wmg.5.2019.06.02.01.01.31
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 02 Jun 2019 01:01:31 -0700 (PDT)
+        Sun, 02 Jun 2019 01:01:32 -0700 (PDT)
 From:   Paul Walmsley <paul.walmsley@sifive.com>
 To:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Cc:     Paul Walmsley <paul@pwsan.com>, Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>
-Subject: [PATCH 1/5] arch: riscv: add support for building DTB files from DT source data
-Date:   Sun,  2 Jun 2019 01:01:22 -0700
-Message-Id: <20190602080126.31075-2-paul.walmsley@sifive.com>
+Cc:     Paul Walmsley <paul@pwsan.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org
+Subject: [PATCH 2/5] dt-bindings: riscv: sifive: add YAML documentation for the SiFive FU540
+Date:   Sun,  2 Jun 2019 01:01:23 -0700
+Message-Id: <20190602080126.31075-3-paul.walmsley@sifive.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190602080126.31075-1-paul.walmsley@sifive.com>
 References: <20190602080126.31075-1-paul.walmsley@sifive.com>
@@ -62,29 +64,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Similar to ARM64, add support for building DTB files from DT source
-data for RISC-V boards.
+Add YAML DT binding documentation for the SiFive FU540 SoC.  This
+SoC is documented at:
 
-This patch starts with the infrastructure needed for SiFive boards.
-Boards from other vendors would add support here in a similar form.
+    https://static.dev.sifive.com/FU540-C000-v1.0.pdf
+
+Passes dt-doc-validate, as of yaml-bindings commit 4c79d42e9216.
+
+This second version incorporates review feedback from Rob Herring
+<robh@kernel.org>.
 
 Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
 Signed-off-by: Paul Walmsley <paul@pwsan.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Palmer Dabbelt <palmer@sifive.com>
 Cc: Albert Ou <aou@eecs.berkeley.edu>
+Cc: devicetree@vger.kernel.org
+Cc: linux-riscv@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
 ---
- arch/riscv/boot/dts/Makefile | 2 ++
- 1 file changed, 2 insertions(+)
- create mode 100644 arch/riscv/boot/dts/Makefile
+ .../devicetree/bindings/riscv/sifive.yaml     | 25 +++++++++++++++++++
+ MAINTAINERS                                   |  9 +++++++
+ 2 files changed, 34 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/riscv/sifive.yaml
 
-diff --git a/arch/riscv/boot/dts/Makefile b/arch/riscv/boot/dts/Makefile
+diff --git a/Documentation/devicetree/bindings/riscv/sifive.yaml b/Documentation/devicetree/bindings/riscv/sifive.yaml
 new file mode 100644
-index 000000000000..dcc3ada78455
+index 000000000000..ce7ca191789e
 --- /dev/null
-+++ b/arch/riscv/boot/dts/Makefile
-@@ -0,0 +1,2 @@
++++ b/Documentation/devicetree/bindings/riscv/sifive.yaml
+@@ -0,0 +1,25 @@
 +# SPDX-License-Identifier: GPL-2.0
-+subdir-y += sifive
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/riscv/sifive.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: SiFive SoC-based boards
++
++maintainers:
++  - Paul Walmsley <paul.walmsley@sifive.com>
++  - Palmer Dabbelt <palmer@sifive.com>
++
++description:
++  SiFive SoC-based boards
++
++properties:
++  $nodename:
++    const: '/'
++  compatible:
++    items:
++      - enum:
++          - sifive,freedom-unleashed-a00
++      - const: sifive,fu540-c000
++      - const: sifive,fu540
++...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5cfbea4ce575..8a64051cf5fc 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14322,6 +14322,15 @@ S:	Supported
+ K:	sifive
+ N:	sifive
+ 
++SIFIVE FU540 SYSTEM-ON-CHIP
++M:	Paul Walmsley <paul.walmsley@sifive.com>
++M:	Palmer Dabbelt <palmer@sifive.com>
++L:	linux-riscv@lists.infradead.org
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pjw/sifive.git
++S:	Supported
++K:	fu540
++N:	fu540
++
+ SILEAD TOUCHSCREEN DRIVER
+ M:	Hans de Goede <hdegoede@redhat.com>
+ L:	linux-input@vger.kernel.org
 -- 
 2.20.1
 
