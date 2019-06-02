@@ -2,93 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5804323C9
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 17:59:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 412FE323CB
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 18:00:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbfFBP7X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Jun 2019 11:59:23 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:39551 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726820AbfFBP7V (ORCPT
+        id S1726922AbfFBQAL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Jun 2019 12:00:11 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40205 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726594AbfFBQAL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Jun 2019 11:59:21 -0400
-Received: by mail-qt1-f196.google.com with SMTP id i34so6816994qta.6
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2019 08:59:20 -0700 (PDT)
+        Sun, 2 Jun 2019 12:00:11 -0400
+Received: by mail-wr1-f66.google.com with SMTP id p11so4822887wre.7
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2019 09:00:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=KoiwGzojzqWS04G3Vtf6A7KlpS48j88h/ZjvUsdgYpw=;
-        b=tR9j48sCzJxSI0PhXjlAQsYW+PvL/Rc1czHdQ6+7kWZVEpCAQfCujqP1Hdi1ibUKK7
-         cyj2Hbc5Wia9wlPPdqlFNARCcRuoDM6wF5JoMM8nZjjhS5+0nv1MBUxXqTvibDs5Sg/X
-         GxrF/9DLeRU/NJcoT8w/lYv4hnLAWCko9005beumexent1mM/ZjPHWaIonvWfULVVaLw
-         gkCZJPk++9V/AFD40d9JNbwLh97gJhKcRIxWQ9XZQXa5qfErF9gawbxCRfNB/S59Q8V/
-         xu10VXl30gsuboKcd26fPC5gw1BhhlbBQe+Lr16iAASQRT2OMobjTgiaDby/izR6mThC
-         iKog==
+        h=from:to:cc:subject:date:message-id:reply-to:mime-version
+         :content-transfer-encoding;
+        bh=QGKB1WOziohOdgSZNkbM6sC/IUkFSUfseafra2vm7rY=;
+        b=persvPumb883YcjBbuGme266xzDS0MZ4FKYzAMORy4d8LCT9Bsl5vTH7OUceGNkPJA
+         VIRzHArE0zyqAVQ5YuKxyBSdM64tJaofzQ+fKmP+oOkuaBlF+cQbfOkASVt7CHtQgDCA
+         nOG2j4rXy/dOwCzM5Y5FdhuMNzWr8uzn85IgNNVzVa+GEYtRyMxlc+xoZQlCk2x348+Q
+         ppLPTH7d8O+dkwd+VnIUrn5cP2PhL4k4iWGpKKp0CTxahAYKnYEqDmDywWkKpsEofcIK
+         clSVb4fRe1LYFzFaym/l1iUKyL0zGKpUyCLQ7LH4EsIsDfT0vLg0kuWEitvg6XA4ZBi2
+         MYEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=KoiwGzojzqWS04G3Vtf6A7KlpS48j88h/ZjvUsdgYpw=;
-        b=bqIT7rkbSuIfgT5+Yedzg1X6xB9KgJ3YKlqRCpZ7dVZKaStKsSZkiO8aUF9qi7zVKP
-         SaSuMWb7THYIjSMTYG0zQdmj0mKe+DSlmn3/Rqi24CYp3lJRkoZlv0TuFLkiKxBXPKUc
-         4RqxlEuw7XXbwbJZDllucAlbGhG6rjolXf+Lzw2IMZIFX3MZFY6tdQm2PynYVurZabeq
-         SFUU5aHzt0Pxo2jUHnnTji9YJMwQW/ELDj7jC7Tx4+tJzAGf7VCuAbYDC3X3O39NKDwt
-         ML0LhQX+rCzE6ooX+tPP5rtGadt0JcWGoEOXtkcFDB9WikDHQ2lXRhay7sg0b1wcbZ4p
-         FCng==
-X-Gm-Message-State: APjAAAUL6JnXgDcIMOcQJSsehOgg+bXIwWHUpYSUBGCgrlwyaXjijrkY
-        S5qyPV2PicT/OC+6nfirSgw=
-X-Google-Smtp-Source: APXvYqw9J/rFcfXbdhQskuwc1AHuGE0/QpenBHvEu+OMCKRnkBFxVYSaQWtYShts/aHwF0F3L9um6A==
-X-Received: by 2002:aed:38a1:: with SMTP id k30mr19835361qte.159.1559491160182;
-        Sun, 02 Jun 2019 08:59:20 -0700 (PDT)
-Received: from arch-01.home (c-73-132-202-198.hsd1.md.comcast.net. [73.132.202.198])
-        by smtp.gmail.com with ESMTPSA id n7sm7378589qkd.53.2019.06.02.08.59.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 02 Jun 2019 08:59:19 -0700 (PDT)
-From:   Geordan Neukum <gneukum1@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jeremy Sowden <jeremy@azazel.net>, Mao Wenan <maowenan@huawei.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Geordan Neukum <gneukum1@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] staging: kpc2000: kpc_spi: use devm_* API to manage mapped I/O space
-Date:   Sun,  2 Jun 2019 15:58:37 +0000
-Message-Id: <ea222a6da192a4eb0ba9c8c840843f240f414092.1559488571.git.gneukum1@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1559488571.git.gneukum1@gmail.com>
-References: <cover.1559488571.git.gneukum1@gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :mime-version:content-transfer-encoding;
+        bh=QGKB1WOziohOdgSZNkbM6sC/IUkFSUfseafra2vm7rY=;
+        b=ndnAqktFhFwN58MrEjh4qJ4wvtBpHukGbEZCdJkZhkUt1hpotyjPeX7MxNTUY8UfYA
+         fpVMPL+mRiex1v/Uf3KQQ0ocyf3xlt4oRBlRSm8dAXxKTY9xRJvqaw6n/a2Tpb8yw8c7
+         dJvAopWohO3dk2zbY0Or5E4vxTflmSD2SVy2KPzq1yNFvSzIV15M/x4TF5Cq1TsGkyIX
+         t0PTYw3NfgiOD+6LH7BFsjuXQL8encAp6YWH1KGViIOI+9GmgJp2Cmo4kJAs3hBEK5dU
+         Zvtw8JAmfLz616IXw6duRCZnRp2JLGwRxekhObTYctsUQbnzAH38R8ZX3maS5YfFPlQG
+         5Jcg==
+X-Gm-Message-State: APjAAAXDdk2F9rT1Mk6vWo9xPfZkKBJwU8GyNBlmaxKvXzmuCI1TIOMg
+        edaIrHktmW1ShiYxcDDV8JMf3Gvp65eALg==
+X-Google-Smtp-Source: APXvYqzecdbSyIx/xDu6/Ll+CabRxN8wFI5bEHJEcTvHFF3BaoIc7CLeq1VedFD4KgY9mdKXAh38Lw==
+X-Received: by 2002:a5d:6190:: with SMTP id j16mr13543601wru.49.1559491209376;
+        Sun, 02 Jun 2019 09:00:09 -0700 (PDT)
+Received: from p200300EEEE2F.fritz.box (p200300C98712670014A3D3D52C57F0B4.dip0.t-ipconnect.de. [2003:c9:8712:6700:14a3:d3d5:2c57:f0b4])
+        by smtp.gmail.com with ESMTPSA id i13sm2861962wrw.65.2019.06.02.09.00.08
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sun, 02 Jun 2019 09:00:08 -0700 (PDT)
+From:   Emanuel Bennici <benniciemanuel78@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Bjorn Helgaas <bhelgaas@google.com>, Joe Perches <joe@perches.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] pci: hotplug: ibmphp: Add white space to Debug Message
+Date:   Sun,  2 Jun 2019 18:00:05 +0200
+Message-Id: <20190602160007.24684-1-benniciemanuel78@gmail.com>
+X-Mailer: git-send-email 2.19.1
+Reply-To: benniciemanuel78@gmail.com
 MIME-Version: 1.0
+X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kpc_spi driver does not unmap its I/O space upon error cases in the
-probe() function or upon remove(). Make the driver clean up after itself
-more maintainably by migrating to using the managed resource API.
+Add a Whitespace between '-' and 'Exit' to keep the log messages consistent
 
-Signed-off-by: Geordan Neukum <gneukum1@gmail.com>
+Signed-off-by: Emanuel Bennici <benniciemanuel78@gmail.com>
 ---
- drivers/staging/kpc2000/kpc2000_spi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pci/hotplug/ibmphp_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/kpc2000/kpc2000_spi.c b/drivers/staging/kpc2000/kpc2000_spi.c
-index b513432a26ed..32d3ec532e26 100644
---- a/drivers/staging/kpc2000/kpc2000_spi.c
-+++ b/drivers/staging/kpc2000/kpc2000_spi.c
-@@ -471,7 +471,8 @@ kp_spi_probe(struct platform_device *pldev)
- 		goto free_master;
- 	}
- 
--	kpspi->phys = (unsigned long)ioremap_nocache(r->start, resource_size(r));
-+	kpspi->phys = (unsigned long)devm_ioremap_nocache(&pldev->dev, r->start,
-+							  resource_size(r));
- 	kpspi->base = (u64 __iomem *)kpspi->phys;
- 
- 	status = spi_register_master(master);
--- 
-2.21.0
+diff --git a/drivers/pci/hotplug/ibmphp_core.c b/drivers/pci/hotplug/ibmphp_core.c
+index 59840a094973..cd73bea12bc7 100644
+--- a/drivers/pci/hotplug/ibmphp_core.c
++++ b/drivers/pci/hotplug/ibmphp_core.c
+@@ -890,7 +890,7 @@ static int set_bus(struct slot *slot_cur)
+ 	/* This is for x440, once Brandon fixes the firmware,
+ 	will not need this delay */
+ 	msleep(1000);
+-	debug("%s -Exit\n", __func__);
++	debug("%s - Exit\n", __func__);
+ 	return 0;
+ }
+
+--
+2.19.1
 
