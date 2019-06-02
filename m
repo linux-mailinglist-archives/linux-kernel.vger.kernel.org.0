@@ -2,51 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4EED3246F
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 19:25:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E583432478
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 19:26:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726794AbfFBRZO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Jun 2019 13:25:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35186 "EHLO mail.kernel.org"
+        id S1727090AbfFBRZc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Jun 2019 13:25:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726587AbfFBRZN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Jun 2019 13:25:13 -0400
-Subject: Re: [GIT PULL] LED fix for 5.2-rc3
+        id S1726587AbfFBRZO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Jun 2019 13:25:14 -0400
+Subject: Re: [PULL REQUEST] i2c for 5.2
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559496313;
-        bh=jlcMWVzdPq3NOzQ6G/XPuPxeSqD9ynDnnBzWdfLQygk=;
+        s=default; t=1559496314;
+        bh=9FWIEqhrbY65cbvWohqbtGpeD8HmsgvvclVV/yNsBaE=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=gFWtRCnQvNbt8onbCekloKuslXbWumn/a+Ja9lTGgJKIlTbuTsuEdV1hZ7JhfYuQ2
-         KIRiprqebrliQSWuaTj/YABXfi2koqbu///IFkddDFCbr0xFQxFYu+1hyWCMrakUYF
-         WrU5uQvNnblGam02T06POvtBnPhHc+e2uQ66tkH8=
+        b=IgxmATjjakXwSBHVRr2gKOmWpEePfjkmq3Ko9TfBM3xHwKrTIUVnM5TILDLRx9fyX
+         SHAYLM5yGxdJHPFqd1+rVrDQA7iTd2ON/IH3hiKKQ4QUPgAjhXm8W26tp4PYhnHMG8
+         yeOdxiLbODyEYaUEdxKMdHet7BKJgjUSUkTQpFEw=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190601175944.21297-1-jacek.anaszewski@gmail.com>
-References: <20190601175944.21297-1-jacek.anaszewski@gmail.com>
+In-Reply-To: <20190602062356.GA1616@kunai>
+References: <20190602062356.GA1616@kunai>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190601175944.21297-1-jacek.anaszewski@gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git
- tags/led-fixes-for-5.2-rc3
-X-PR-Tracked-Commit-Id: 8c0f693c6effbc3f42f77a9e81209af9af20910c
+X-PR-Tracked-Message-Id: <20190602062356.GA1616@kunai>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current
+X-PR-Tracked-Commit-Id: c8552db31d5e70f0311be031b22292bf256791da
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f58c356ea74feef8c2bb774dd19ded91567a5cf2
-Message-Id: <155949631296.24242.20021876127476850.pr-tracker-bot@kernel.org>
-Date:   Sun, 02 Jun 2019 17:25:12 +0000
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com,
-        pavel@ucw.cz
+X-PR-Merge-Commit-Id: 38baf0bb79f51b4fcbf6df8fd181441d7b5c7913
+Message-Id: <155949631397.24242.15334043470129943507.pr-tracker-bot@kernel.org>
+Date:   Sun, 02 Jun 2019 17:25:13 +0000
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Rosin <peda@axentia.se>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat,  1 Jun 2019 19:59:44 +0200:
+The pull request you sent on Sun, 2 Jun 2019 08:24:02 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/led-fixes-for-5.2-rc3
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f58c356ea74feef8c2bb774dd19ded91567a5cf2
+https://git.kernel.org/torvalds/c/38baf0bb79f51b4fcbf6df8fd181441d7b5c7913
 
 Thank you!
 
