@@ -2,89 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 480A6323DC
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 18:35:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0F9E323E3
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 18:42:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbfFBQfr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Jun 2019 12:35:47 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50933 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726229AbfFBQfp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Jun 2019 12:35:45 -0400
-Received: by mail-wm1-f67.google.com with SMTP id f204so4960172wme.0
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2019 09:35:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:reply-to:mime-version
-         :content-transfer-encoding;
-        bh=hXRaRyTkvJJsioc4WPPsWium9XCHIfD1KCToEtjOIPk=;
-        b=mGagF19o9GZQ3c37OrzhCHf5yqSQcX3oxPfzSKPcVfZ4j84pwVu57aQxp2i1qGgU7B
-         Fq58TQJxTinSPo23+W3Pd3puM31J2YuS7eJatytp5HN32Qv3x1J7jvOB8tN9Q6ZvzODd
-         j/T7Vd4BHnMm6A0pcQocdQJ9OKddT8o+g0Nj8KC+xhoXFc34aP6SjUVEaY4HV2b25NFh
-         Kkmj6mQNN0cssPmB+CFDiYmJd2xpaPvAnlat/0O+ZFgOTsA091JEjfQOwg1JkrQVcYnG
-         Q493ILNwoEXBQ8BPE6UYzJFeDF0IcNPtiTvF3at+xaX0CDEUuM1xIa9feeQ8DuP0Asuk
-         NpZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :mime-version:content-transfer-encoding;
-        bh=hXRaRyTkvJJsioc4WPPsWium9XCHIfD1KCToEtjOIPk=;
-        b=PdJojoTTlcccoHUozL4nqNRIRnku893h3jrfanziK0PazvaC7nL0FXr8O4YKTSsMvE
-         3QuMMZbnp7Q/yc3XmBzM4ET6GDFSRslbbLE3MkGJVhkGnpDwXSNCYS/KZsTnw9x3QMMf
-         P77XoTT6rQ74dsjK1eXFzZsTiSi66S4huCc6jJrL5lFG+Z04T3y+ndPw35bj8yXId5ZB
-         l5a/PFgV5VgA5J2/rT22m/S/U4LyeZAecsl176grAGXGmZXCvkbs2lganWi3V9Er8to9
-         tzqQ0YaWIalm1OuTXcBqLd5szr0uAbWURTO2MWA76TvpDtxqyDX6drWWfoKFS3NW/rji
-         uBLw==
-X-Gm-Message-State: APjAAAXuK7h1iJbAgT74eQwrmUVppnR4+ztjSDOlOm1RwvMR6/0kc5ai
-        2Odazg2A7HliLxnzcLQArXQQCNG/CqaOBQ==
-X-Google-Smtp-Source: APXvYqySzcEO0kHHyTKLrSwe9OVMZXejkKvakyWJnoukpbU317JTou9t+IqqOeEL5Tdj6mGcwYJ8cQ==
-X-Received: by 2002:a1c:3d41:: with SMTP id k62mr10771399wma.61.1559493343526;
-        Sun, 02 Jun 2019 09:35:43 -0700 (PDT)
-Received: from p200300EEEE2F.fritz.box (p200300C98712670014A3D3D52C57F0B4.dip0.t-ipconnect.de. [2003:c9:8712:6700:14a3:d3d5:2c57:f0b4])
-        by smtp.gmail.com with ESMTPSA id l18sm28902282wrh.54.2019.06.02.09.35.42
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 02 Jun 2019 09:35:42 -0700 (PDT)
-From:   Emanuel Bennici <benniciemanuel78@gmail.com>
+        id S1726720AbfFBQlt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Jun 2019 12:41:49 -0400
+Received: from foss.arm.com ([217.140.101.70]:40928 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726305AbfFBQls (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Jun 2019 12:41:48 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0B19C374;
+        Sun,  2 Jun 2019 09:41:48 -0700 (PDT)
+Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C9EA83F246;
+        Sun,  2 Jun 2019 09:41:46 -0700 (PDT)
+From:   Valentin Schneider <valentin.schneider@arm.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Bjorn Helgaas <bhelgaas@google.com>, Joe Perches <joe@perches.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v2] pci: hotplug: ibmphp: Remove superfluous debug message
-Date:   Sun,  2 Jun 2019 18:35:39 +0200
-Message-Id: <20190602163541.8842-1-benniciemanuel78@gmail.com>
-X-Mailer: git-send-email 2.19.1
-Reply-To: benniciemanuel78@gmail.com
+Cc:     peterz@infradead.org, mingo@kernel.org, vincent.guittot@linaro.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH] sched/fair: Cleanup definition of NOHZ blocked load functions
+Date:   Sun,  2 Jun 2019 17:41:10 +0100
+Message-Id: <20190602164110.23231-1-valentin.schneider@arm.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <090C3AE4-55E4-45F3-AEAB-3E7F26FB7D6D@lca.pw>
+References: <090C3AE4-55E4-45F3-AEAB-3E7F26FB7D6D@lca.pw>
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 'Exit' Debug message is superfluous ftrace can be used instead.
+cfs_rq_has_blocked() and others_have_blocked() are only used within
+update_blocked_averages(). The !CONFIG_FAIR_GROUP_SCHED version of the
+latter calls them within a #define CONFIG_NO_HZ_COMMON block, whereas
+the CONFIG_FAIR_GROUP_SCHED one calls them unconditionnally.
 
-Signed-off-by: Emanuel Bennici <benniciemanuel78@gmail.com>
+As reported by Qian, the above leads to this warning in
+!CONFIG_NO_HZ_COMMON configs:
+
+  kernel/sched/fair.c: In function 'update_blocked_averages':
+  kernel/sched/fair.c:7750:7: warning: variable 'done' set but not used
+  [-Wunused-but-set-variable]
+
+It wouldn't be wrong to keep cfs_rq_has_blocked() and
+others_have_blocked() as they are, but since their only current use is
+to figure out when we can stop calling update_blocked_averages() on
+fully decayed NOHZ idle CPUs, we can give them a new definition for
+!CONFIG_NO_HZ_COMMON.
+
+Change the definition of cfs_rq_has_blocked() and
+others_have_blocked() for !CONFIG_NO_HZ_COMMON so that the
+NOHZ-specific blocks of update_blocked_averages() become no-ops and
+the 'done' variable gets optimised out.
+
+No change in functionality intended.
+
+Reported-by: Qian Cai <cai@lca.pw>
+Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
 ---
- drivers/pci/hotplug/ibmphp_core.c | 1 -
- 1 file changed, 1 deletion(-)
+ kernel/sched/fair.c | 23 ++++++++++++++++++-----
+ 1 file changed, 18 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pci/hotplug/ibmphp_core.c b/drivers/pci/hotplug/ibmphp_core.c
-index cd73bea12bc7..a2ea1ff6cfbc 100644
---- a/drivers/pci/hotplug/ibmphp_core.c
-+++ b/drivers/pci/hotplug/ibmphp_core.c
-@@ -890,7 +890,6 @@ static int set_bus(struct slot *slot_cur)
- 	/* This is for x440, once Brandon fixes the firmware,
- 	will not need this delay */
- 	msleep(1000);
--	debug("%s - Exit\n", __func__);
- 	return 0;
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index f35930f5e528..03919a316a03 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7695,6 +7695,7 @@ static void attach_tasks(struct lb_env *env)
+ 	rq_unlock(env->dst_rq, &rf);
  }
-
---
-2.19.1
+ 
++#ifdef CONFIG_NO_HZ_COMMON
+ static inline bool cfs_rq_has_blocked(struct cfs_rq *cfs_rq)
+ {
+ 	if (cfs_rq->avg.load_avg)
+@@ -7721,6 +7722,10 @@ static inline bool others_have_blocked(struct rq *rq)
+ 
+ 	return false;
+ }
++#else
++static inline bool cfs_rq_has_blocked(struct cfs_rq *cfs_rq) { return false; }
++static inline bool others_have_blocked(struct rq *rq) { return false; }
++#endif
+ 
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+ 
+@@ -7741,6 +7746,18 @@ static inline bool cfs_rq_is_decayed(struct cfs_rq *cfs_rq)
+ 	return true;
+ }
+ 
++#ifdef CONFIG_NO_HZ_COMMON
++static inline void update_blocked_load_status(struct rq *rq, bool has_blocked)
++{
++	rq->last_blocked_load_update_tick = jiffies;
++
++	if (!has_blocked)
++		rq->has_blocked_load = 0;
++}
++#else
++static inline void update_blocked_load_status(struct rq *rq, bool has_blocked) {}
++#endif
++
+ static void update_blocked_averages(int cpu)
+ {
+ 	struct rq *rq = cpu_rq(cpu);
+@@ -7787,11 +7804,7 @@ static void update_blocked_averages(int cpu)
+ 	if (others_have_blocked(rq))
+ 		done = false;
+ 
+-#ifdef CONFIG_NO_HZ_COMMON
+-	rq->last_blocked_load_update_tick = jiffies;
+-	if (done)
+-		rq->has_blocked_load = 0;
+-#endif
++	update_blocked_load_status(rq, !done);
+ 	rq_unlock_irqrestore(rq, &rf);
+ }
+ 
+-- 
+2.20.1
 
