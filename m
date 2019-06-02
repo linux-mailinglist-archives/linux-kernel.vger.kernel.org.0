@@ -2,64 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8581132174
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 03:23:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E57132177
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 03:29:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726773AbfFBBXU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 1 Jun 2019 21:23:20 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:14017 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726211AbfFBBXU (ORCPT
+        id S1726831AbfFBB3K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 1 Jun 2019 21:29:10 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:34616 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726496AbfFBB3J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 1 Jun 2019 21:23:20 -0400
-X-UUID: 42d88cd7ad0645b2906d049d2b5059b1-20190602
-X-UUID: 42d88cd7ad0645b2906d049d2b5059b1-20190602
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <chaotian.jing@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1797417067; Sun, 02 Jun 2019 09:23:13 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by mtkmbs07n1.mediatek.inc
- (172.21.101.16) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sun, 2 Jun
- 2019 09:23:12 +0800
-Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Sun, 2 Jun 2019 09:23:11 +0800
-Message-ID: <1559438591.25015.0.camel@mhfsdcap03>
-Subject: Re: fix controller busy issue and add 24bits segment support
-From:   Chaotian Jing <chaotian.jing@mediatek.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-CC:     <srv_heupstream@mediatek.com>, <linux-mmc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Sun, 2 Jun 2019 09:23:11 +0800
-In-Reply-To: <1558252637-10556-1-git-send-email-chaotian.jing@mediatek.com>
-References: <1558252637-10556-1-git-send-email-chaotian.jing@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-MTK:  N
+        Sat, 1 Jun 2019 21:29:09 -0400
+Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
+        id E546427E6E; Sat,  1 Jun 2019 21:29:06 -0400 (EDT)
+To:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     "Michael Schmitz" <schmitzmic@gmail.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Message-Id: <19811f876a9427adacc8f19606f21b754fd0b5bc.1559438652.git.fthain@telegraphics.com.au>
+In-Reply-To: <cover.1559438652.git.fthain@telegraphics.com.au>
+References: <cover.1559438652.git.fthain@telegraphics.com.au>
+From:   Finn Thain <fthain@telegraphics.com.au>
+Subject: [PATCH 3/7] scsi: NCR5380: Handle PDMA failure reliably
+Date:   Sun, 02 Jun 2019 11:24:12 +1000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ulf,
+A PDMA error is handled in the core driver by setting the device's
+'borken' flag and aborting the command. Unfortunately, do_abort() is not
+dependable. Perform a SCSI bus reset instead, to make sure that the
+command fails and gets retried.
 
-Gentle ping for this patch.
+Cc: Michael Schmitz <schmitzmic@gmail.com>
+Cc: stable@vger.kernel.org # v4.20+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Tested-by: Stan Johnson <userm57@yahoo.com>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+---
+ drivers/scsi/NCR5380.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-On Sun, 2019-05-19 at 15:57 +0800, Chaotian Jing wrote:
-> the below 2 patches fix controller busy issue when plug out SD card
-> and add 24bits segment size support.
-> 
-> Chaotian Jing (2):
->   mmc: mediatek: fix controller busy when plug out SD
->   mmc: mediatek: support 24bits segment size
-> 
->  drivers/mmc/host/mtk-sd.c | 24 ++++++++++++++++++------
->  1 file changed, 18 insertions(+), 6 deletions(-)
-> 
-
+diff --git a/drivers/scsi/NCR5380.c b/drivers/scsi/NCR5380.c
+index 08e3ea8159b3..d9fa9cf2fd8b 100644
+--- a/drivers/scsi/NCR5380.c
++++ b/drivers/scsi/NCR5380.c
+@@ -1761,10 +1761,8 @@ static void NCR5380_information_transfer(struct Scsi_Host *instance)
+ 						scmd_printk(KERN_INFO, cmd,
+ 							"switching to slow handshake\n");
+ 						cmd->device->borken = 1;
+-						sink = 1;
+-						do_abort(instance);
+-						cmd->result = DID_ERROR << 16;
+-						/* XXX - need to source or sink data here, as appropriate */
++						do_reset(instance);
++						bus_reset_cleanup(instance);
+ 					}
+ 				} else {
+ 					/* Transfer a small chunk so that the
+-- 
+2.21.0
 
