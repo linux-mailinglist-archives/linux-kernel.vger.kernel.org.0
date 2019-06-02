@@ -2,91 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C63F1323E0
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 18:35:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67563323DB
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 18:35:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726918AbfFBQfz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Jun 2019 12:35:55 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38217 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726387AbfFBQfq (ORCPT
+        id S1726765AbfFBQfn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Jun 2019 12:35:43 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:42384 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726229AbfFBQfn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Jun 2019 12:35:46 -0400
-Received: by mail-wr1-f66.google.com with SMTP id d18so9704887wrs.5
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2019 09:35:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=wWcxgEI3gs42SAaAZOA2b9Y+neLUp9KjqdAC8jB7QHQ=;
-        b=PmVtSjB7f/TOFWpB+2Q/vdiDC/y/WjxLBWpT23SHz8vsHy/i5nvOC7GCNJoxb7ltxk
-         nvX+h1438RNymOktsMGM8nKRWisn8Hhg4+AeXmHnJdEm/BeY+YR2lQFaaU1wtGIKanp3
-         EsOfq1KXs+Ut411etBiUeXsat/FA+CqwB28EAiT6IBOMklhGYQWy/gQGtCWWpTusNwlR
-         DDgVKHWKi2XGFF5AFA+e3tzI0isoqevl1mDrbad1aozr6xQgl6pP7O0VaCLL5NRi4BDo
-         fVeS/DmoOcKvKG78mYSNOLFywWF3cd3YA5KuI9tT7CmpePhO6FYG6TJ470QjEIdJVIfR
-         Ldww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=wWcxgEI3gs42SAaAZOA2b9Y+neLUp9KjqdAC8jB7QHQ=;
-        b=NEcr2qAehDoDWY1L54Chz0rleiOVgYMEqxTT3Wn5Q3l2c2bkcBfpSO5Pg3lWIGctNt
-         7tS3Uj0lALTr7gsFZLw5a7k5T97t0Iugj3Aih6Av0nyztsY5BUloO5zobcCc6UmMptS7
-         b3IgOO6OM2Td/uKSZA52cWVY0SM8MSmutxNyr8RdsiY2ZXMdN5EKtweVGRT982GN+xHu
-         UJQSTlkjhg9doj9DQOEODByus/jHN2wPqmYW5NraaLeZcOv+yKJu4nYTP6NiclL9AM11
-         tiNdV/R52gqyKyLlmbvXQGqk2BY6HGNa9ZJ91EX6MWiJrEHKbydncUelZsMJ9yDEGbuy
-         BJ4w==
-X-Gm-Message-State: APjAAAVhwWOZbUvypTyfN83vt4TT1/Umv5Hmx50nDqJUBcZqK1QRhF0W
-        rX0quAdumiSKXsnyVMJlUkk=
-X-Google-Smtp-Source: APXvYqx7op/7MpCSPePSRvMMp9c2IfcUO4+YSiAbeshsCOA5pXZyvI9CiP0SAE2kuxE3SH334Wd2KQ==
-X-Received: by 2002:adf:8306:: with SMTP id 6mr13626082wrd.155.1559493345342;
-        Sun, 02 Jun 2019 09:35:45 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:8108:96bf:e0ab:2b68:5d76:a12a:e6ba])
-        by smtp.gmail.com with ESMTPSA id c5sm6639273wma.19.2019.06.02.09.35.44
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 02 Jun 2019 09:35:44 -0700 (PDT)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 2/2] staging: rtl8188eu: remove unused definitions from ieee80211.h
-Date:   Sun,  2 Jun 2019 18:35:28 +0200
-Message-Id: <20190602163528.28495-2-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190602163528.28495-1-straube.linux@gmail.com>
-References: <20190602163528.28495-1-straube.linux@gmail.com>
+        Sun, 2 Jun 2019 12:35:43 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id E74AF5C13F9;
+        Sun,  2 Jun 2019 18:35:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1559493339;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=TLPIFtw8wW5Uo7zTBt1EGjS3mHTdYvG1RP4d99oqY1k=;
+        b=Ns2Y8lqdIvcdhIyuckIZwJ4ao1UebMtbGultA9s+Oqd4ibbZsli9+xMYVU935rmTtDMLj7
+        5WU9x7SfGvuXUEdnd2F5KixEes/5ypLmw6mTVPaSRbLDxS7qXzmOIRcL9HEr8tTVjEx0ia
+        HK8fW42HsJpV3bD86r4KvNeHAO8al64=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Sun, 02 Jun 2019 18:35:39 +0200
+From:   Stefan Agner <stefan@agner.ch>
+To:     Nick Desaulniers <ndesaulniers@google.com>,
+        Olof Johansson <olof@lixom.net>
+Cc:     arm@kernel.org, Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>, nico@fluxnic.net,
+        f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com,
+        bcm-kernel-feedback-list@broadcom.com, kgene@kernel.org,
+        krzk@kernel.org, Rob Herring <robh@kernel.org>,
+        ssantosh@kernel.org, jason@lakedaemon.net, andrew@lunn.ch,
+        gregory.clement@bootlin.com, sebastian.hesselbarth@gmail.com,
+        tony@atomide.com, Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        mans@mansr.com, Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 2/2] ARM: OMAP2: drop explicit assembler architecture
+In-Reply-To: <CAKwvOdmsHxyPU2O1vZ-Mah-E5vTtEWKHStp2EQCiE4A55D8xDQ@mail.gmail.com>
+References: <c0ca465daa7c7663c19b0bcb848c70e8da22baff.1558996564.git.stefan@agner.ch>
+ <5ead0fe96f7e5729e4a82f432022b16cb84458a6.1558996564.git.stefan@agner.ch>
+ <CAKwvOdmsHxyPU2O1vZ-Mah-E5vTtEWKHStp2EQCiE4A55D8xDQ@mail.gmail.com>
+Message-ID: <fa06b27eeea796f70f1e243096b86117@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MGMT_QUEUE_NUM, ETH_TYPE_LEN and PAYLOAD_TYPE_LEN are defined but
-not used in the driver code, so remove them.
+On 30.05.2019 22:02, Nick Desaulniers wrote:
+> On Mon, May 27, 2019 at 3:41 PM Stefan Agner <stefan@agner.ch> wrote:
+>>
+>> OMAP2 depends on ARCH_MULTI_V6, which makes sure that the kernel is
+>> compiled with -march=armv6. The compiler frontend will pass the
+>> architecture to the assembler. There is no explicit architecture
+>> specification necessary.
+>>
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> Acked-by: Tony Lindgren <tony@atomide.com>
+>> ---
+>> Changes since v2:
+>> - New patch
+>>
+>> Changes since v3:
+>> - Rebase on top of v5.2-rc2
+> 
+> Hi Stefan, looks like both patches are ack'd.  Are you waiting for an
+> explicit reviewed by tag to submit to
+> https://www.armlinux.org.uk/developer/patches/?
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
----
- drivers/staging/rtl8188eu/include/ieee80211.h | 5 -----
- 1 file changed, 5 deletions(-)
+This should go through arm-soc, it missed the last merge window, see
+Olofs message:
+https://lore.kernel.org/lkml/20190516214819.dopw4eiumt6is46e@localhost/T/#u
 
-diff --git a/drivers/staging/rtl8188eu/include/ieee80211.h b/drivers/staging/rtl8188eu/include/ieee80211.h
-index d43aa4304ca5..42ee4ebe90eb 100644
---- a/drivers/staging/rtl8188eu/include/ieee80211.h
-+++ b/drivers/staging/rtl8188eu/include/ieee80211.h
-@@ -12,11 +12,6 @@
- #include "wifi.h"
- #include <linux/wireless.h>
- 
--#define MGMT_QUEUE_NUM 5
--
--#define ETH_TYPE_LEN		2
--#define PAYLOAD_TYPE_LEN	1
--
- #ifdef CONFIG_88EU_AP_MODE
- 
- #define RTL_IOCTL_HOSTAPD (SIOCIWFIRSTPRIV + 28)
--- 
-2.21.0
+Should be still early enough to make it in this merge window.
 
+--
+Stefan
