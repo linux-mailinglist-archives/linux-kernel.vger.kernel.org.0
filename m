@@ -2,124 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD82E3253B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 00:00:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D0CF324FA
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 23:40:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbfFBWAK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Jun 2019 18:00:10 -0400
-Received: from gateway23.websitewelcome.com ([192.185.50.129]:23429 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726270AbfFBWAJ (ORCPT
+        id S1726851AbfFBVkD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Jun 2019 17:40:03 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34666 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726305AbfFBVkC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Jun 2019 18:00:09 -0400
-X-Greylist: delayed 1292 seconds by postgrey-1.27 at vger.kernel.org; Sun, 02 Jun 2019 18:00:09 EDT
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id EF8544ADF
-        for <linux-kernel@vger.kernel.org>; Sun,  2 Jun 2019 16:38:36 -0500 (CDT)
-Received: from br164.hostgator.com.br ([192.185.176.180])
-        by cmsmtp with SMTP
-        id XYBYhVp2LdnCeXYBYh9oJE; Sun, 02 Jun 2019 16:38:36 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=castello.eng.br; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=3yY6puF5yr6t9ajzI5zXVjuhpN5P/MQwRyHXK2uCu9Y=; b=weVrd+TD99WJUSZK0UrQH42JTt
-        qtv4X92WOjdU8XJmSO7aM4e3pRacAVkOnZ/DOlx5uv/KMLXNQq1FsE0KdYN6KRcEiwAYBLbADUwro
-        u2k7eCKfqjnboMEtV6c0pcXLLpPieOul+FO9B3yj3WpJF667TwKKdvXpRxORfKrMZcSBjxzHV7q1W
-        UCCHDakokr4RyB0GuUVxpojYIvw4mcQcT+I61sG5IkEoCqJBZQe9JgYlmYAUAg40ZLW36MBV+XApH
-        Zqx5zW712hoY9kF75XDRyDCz1fpHmcu6GTkEF5Ku71nq9lcNHYi/BEZgI1DM5h3yd7B1L/rWj1w8i
-        /F3u0lnw==;
-Received: from [177.34.20.96] (port=54464 helo=[192.168.0.28])
-        by br164.hostgator.com.br with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <matheus@castello.eng.br>)
-        id 1hXYBY-003QwH-8q; Sun, 02 Jun 2019 18:38:36 -0300
-Subject: Re: [PATCH v3 2/5] dt-bindings: power: supply: Max17040: Add low
- level SOC alert threshold
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     sre@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= 
-        <b.zolnierkie@samsung.com>, lee.jones@linaro.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <CAJKOXPf=nPrmw6Vzi_=LmO=dVsV4Gvoc-q75XP2FBEgm9Gxv0A@mail.gmail.com>
- <20190527022258.32748-1-matheus@castello.eng.br>
- <20190527022258.32748-3-matheus@castello.eng.br>
- <CAJKOXPdtsyY_GhniBAb0yV=HOhGx+x4xRPqNgdO+d0MDZRZ_7w@mail.gmail.com>
-From:   Matheus Castello <matheus@castello.eng.br>
-Message-ID: <71c4f6b6-fbbb-14ba-0cf0-2377498fdfbc@castello.eng.br>
-Date:   Sun, 2 Jun 2019 18:38:26 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <CAJKOXPdtsyY_GhniBAb0yV=HOhGx+x4xRPqNgdO+d0MDZRZ_7w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - br164.hostgator.com.br
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - castello.eng.br
-X-BWhitelist: no
-X-Source-IP: 177.34.20.96
-X-Source-L: No
-X-Exim-ID: 1hXYBY-003QwH-8q
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.0.28]) [177.34.20.96]:54464
-X-Source-Auth: matheus@castello.eng.br
-X-Email-Count: 10
-X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
-X-Local-Domain: yes
+        Sun, 2 Jun 2019 17:40:02 -0400
+Received: by mail-wr1-f66.google.com with SMTP id e16so1746811wrn.1;
+        Sun, 02 Jun 2019 14:40:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=0Tf20jDGMWUcH2Hcx3cmJ4DwwispS2qlIQRFHDPkcQI=;
+        b=A4BIpkTuPXp7L16AyptYnM75v5No/tAyjB3AVtK+9VhqbKVCGxEMErhuxuFDHYfJuE
+         Atd2b8EssPrhFc/y7UbPgIPnNrzjXI5tFQHfHXN0jOtWQMpyWsfdbPCbGPFMVY0PXNid
+         Q0mYnLahI5YRfBsApwkpxSz4CcbcEgk11xixnYXpBbavyDk5onAL6ltKdlEyE6WV5AKD
+         YUIa6/iscvfpBsQfaNTewStAsQbQyQWx8D13G4iqwZvaPWOGUnKO6GqAzlwKiuSXlO0T
+         fMSiMi3qIwxcFXIKyK+CpULIpNRqMxRiIKIre7NxLWqPvjlYNykKSg1VqHgY38FtT0Ih
+         40Lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=0Tf20jDGMWUcH2Hcx3cmJ4DwwispS2qlIQRFHDPkcQI=;
+        b=mRRUYSqFV0saa6hnFOm1hWEGEByP0GOlJ1LcXWPq0oKW444Z/05ZzwXPI2bd+UM6P3
+         WFHm5doFir1TwGokg0EWOpR7mLFpGVoDHAGBNo/6NFdLGhV5n0K9Cb15CFLLt4bFJQ1i
+         u6zdP/cIOU8BazPmWNrmUv8dL3cLCu083MXAhbcSdfzYkrPUx4IfmpbujMD4ZkGeARvp
+         7RnG4aSgLOz/e3pOHuBr4TtqcPfm/a0c61Kf23SC2IO5afij03uPU/+Y0aHPEI/EyPL9
+         zT3nGS+FHyevF6Y77RWTwc+MbrKIh6NJipH+PrLWXJLNfvz8iAvbZpZVF/wr3uVdQXSX
+         UrQA==
+X-Gm-Message-State: APjAAAVJRojPoVnXkFQ3TnieH9Swjv2zfrFjs8p0PKfDrtQKEMr17xxs
+        x5udCUVip8IYEfKYM4T0LTs=
+X-Google-Smtp-Source: APXvYqzVNB63iJ9xrHZ5YzOTZapHlZRNWawMHdaY5d0DoQDgRibB92wTxvQpezVjfuNE9t8T8ku/OA==
+X-Received: by 2002:adf:ce8f:: with SMTP id r15mr2153892wrn.122.1559511600409;
+        Sun, 02 Jun 2019 14:40:00 -0700 (PDT)
+Received: from localhost.localdomain ([86.121.27.188])
+        by smtp.gmail.com with ESMTPSA id 65sm26486793wro.85.2019.06.02.14.39.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 02 Jun 2019 14:40:00 -0700 (PDT)
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     f.fainelli@gmail.com, vivien.didelot@gmail.com, andrew@lunn.ch,
+        davem@davemloft.net, richardcochran@gmail.com,
+        john.stultz@linaro.org, tglx@linutronix.de, sboyd@kernel.org
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        Vladimir Oltean <olteanv@gmail.com>
+Subject: [PATCH v2 net-next 00/10] PTP support for the SJA1105 DSA driver
+Date:   Mon,  3 Jun 2019 00:39:16 +0300
+Message-Id: <20190602213926.2290-1-olteanv@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Mon, 27 May 2019 at 04:45, Matheus Castello <matheus@castello.eng.br> wrote:
->>
->> For configure low level state of charge threshold alert signaled from
->> max17040 we add "maxim,alert-low-soc-level" property.
->>
->> Signed-off-by: Matheus Castello <matheus@castello.eng.br>
->> ---
->>   .../power/supply/max17040_battery.txt         | 28 +++++++++++++++++++
->>   1 file changed, 28 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/power/supply/max17040_battery.txt
->>
->> diff --git a/Documentation/devicetree/bindings/power/supply/max17040_battery.txt b/Documentation/devicetree/bindings/power/supply/max17040_battery.txt
->> new file mode 100644
->> index 000000000000..a13e8d50ff7b
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/power/supply/max17040_battery.txt
->> @@ -0,0 +1,28 @@
->> +max17040_battery
->> +~~~~~~~~~~~~~~~~
->> +
->> +Required properties :
->> + - compatible : "maxim,max17040" or "maxim,max77836-battery"
-> 
-> One more comment. The datasheet for max17040 says that there is on
-> ALERT pin and ALERT bits in RCOMP register. Which device are you
-> using? If it turns out that max17040 does not support it, then the
-> driver and bindings should reflect this - interrupts should not be set
-> on max17040.
-> 
+This patchset adds the following:
 
-Yes you are right, max17040 have no ALERT pin. I am using max17043. Let 
-me know what you think would be best, put a note about it in the 
-description, add a compatibles like "maxim,max17043" and 
-"maxim,max17044"? What do you think?
+ - A timecounter/cyclecounter based PHC for the free-running
+   timestamping clock of this switch.
 
-Best Regards,
-Matheus Castello
+ - A state machine implemented in the DSA tagger for SJA1105, which
+   keeps track of metadata follow-up Ethernet frames (the switch's way
+   of transmitting RX timestamps).
 
-> Best regards,
-> Krzysztof
-> 
+Clock manipulations on the actual hardware PTP clock will have to be
+implemented anyway, for the TTEthernet block and the time-based ingress
+policer.
+
+This depends upon the "FDB updates for SJA1105 DSA driver" series at:
+https://patchwork.ozlabs.org/project/netdev/list/?series=111354&state=*
+
+v1 patchset can be found at:
+https://lkml.org/lkml/2019/5/28/1093
+
+Changes from v1:
+
+- Removed the addition of the DSA .can_timestamp callback.
+
+- Waiting for meta frames is done completely inside the tagger, and all
+  frames emitted on RX are already partially timestamped.
+
+- Added a global data structure for the tagger common to all ports.
+
+- Made PTP work with ports in standalone mode, by limiting use of the
+  DMAC-mangling "incl_srcpt" mode only when ports are bridged, aka when
+  the DSA master is already promiscuous and can receive anything.
+  Also changed meta frames to be sent at the 01-80-C2-00-00-0E DMAC.
+
+- Made some progress w.r.t. observed negative path delay.  Apparently it
+  only appears when the delay mechanism is the delay request-response
+  (end-to-end) one. If peer delay is used (-P), the path delay is
+  positive and appears reasonable for an 1000Base-T link (485 ns in
+  steady state).
+
+  SJA1105 as PTP slave (OC) with E2E path delay:
+
+ptp4l[55.600]: master offset          8 s2 freq  +83677 path delay     -2390
+ptp4l[56.600]: master offset         17 s2 freq  +83688 path delay     -2391
+ptp4l[57.601]: master offset          6 s2 freq  +83682 path delay     -2391
+ptp4l[58.601]: master offset         -1 s2 freq  +83677 path delay     -2391
+
+  SJA1105 as PTP slave (OC) with P2P path delay:
+
+ptp4l[48.343]: master offset          5 s2 freq  +83715 path delay       484
+ptp4l[48.468]: master offset         -3 s2 freq  +83705 path delay       485
+ptp4l[48.593]: master offset          0 s2 freq  +83708 path delay       485
+ptp4l[48.718]: master offset          1 s2 freq  +83710 path delay       485
+ptp4l[48.844]: master offset          1 s2 freq  +83710 path delay       485
+ptp4l[48.969]: master offset         -5 s2 freq  +83702 path delay       485
+ptp4l[49.094]: master offset          3 s2 freq  +83712 path delay       485
+ptp4l[49.219]: master offset          4 s2 freq  +83714 path delay       485
+ptp4l[49.344]: master offset         -5 s2 freq  +83702 path delay       485
+ptp4l[49.469]: master offset          3 s2 freq  +83713 path delay       487
+
+Vladimir Oltean (10):
+  net: dsa: Keep a pointer to the skb clone for TX timestamping
+  net: dsa: Add teardown callback for drivers
+  net: dsa: tag_8021q: Create helper function for removing VLAN header
+  net: dsa: sja1105: Move sja1105_change_tpid into
+    sja1105_vlan_filtering
+  net: dsa: sja1105: Limit use of incl_srcpt to bridge+vlan mode
+  net: dsa: sja1105: Add support for the PTP clock
+  net: dsa: sja1105: Move sja1105_is_link_local to include/linux
+  net: dsa: sja1105: Make sja1105_is_link_local not match meta frames
+  net: dsa: sja1105: Add support for PTP timestamping
+  net: dsa: sja1105: Increase priority of CPU-trapped frames
+
+ drivers/net/dsa/sja1105/Kconfig               |   7 +
+ drivers/net/dsa/sja1105/Makefile              |   1 +
+ drivers/net/dsa/sja1105/sja1105.h             |  29 ++
+ .../net/dsa/sja1105/sja1105_dynamic_config.c  |   2 +
+ drivers/net/dsa/sja1105/sja1105_main.c        | 317 ++++++++++++--
+ drivers/net/dsa/sja1105/sja1105_ptp.c         | 392 ++++++++++++++++++
+ drivers/net/dsa/sja1105/sja1105_ptp.h         |  64 +++
+ drivers/net/dsa/sja1105/sja1105_spi.c         |  33 ++
+ .../net/dsa/sja1105/sja1105_static_config.c   |  59 +++
+ .../net/dsa/sja1105/sja1105_static_config.h   |  10 +
+ include/linux/dsa/8021q.h                     |   7 +
+ include/linux/dsa/sja1105.h                   |  51 +++
+ include/net/dsa.h                             |   1 +
+ net/dsa/dsa2.c                                |   3 +
+ net/dsa/slave.c                               |   3 +
+ net/dsa/tag_8021q.c                           |  15 +
+ net/dsa/tag_sja1105.c                         | 203 ++++++++-
+ 17 files changed, 1150 insertions(+), 47 deletions(-)
+ create mode 100644 drivers/net/dsa/sja1105/sja1105_ptp.c
+ create mode 100644 drivers/net/dsa/sja1105/sja1105_ptp.h
+
+-- 
+2.17.1
+
