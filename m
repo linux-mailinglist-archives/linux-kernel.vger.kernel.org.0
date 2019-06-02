@@ -2,118 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F7A732248
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 08:24:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D460332261
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 09:17:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726168AbfFBGYG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Jun 2019 02:24:06 -0400
-Received: from sauhun.de ([88.99.104.3]:55462 "EHLO pokefinder.org"
+        id S1726572AbfFBHRX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Jun 2019 03:17:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725871AbfFBGYF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Jun 2019 02:24:05 -0400
-Received: from localhost (ip5b40b67c.dynamic.kabel-deutschland.de [91.64.182.124])
-        by pokefinder.org (Postfix) with ESMTPSA id B24BD2C3559;
-        Sun,  2 Jun 2019 08:24:02 +0200 (CEST)
-Date:   Sun, 2 Jun 2019 08:24:02 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Rosin <peda@axentia.se>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PULL REQUEST] i2c for 5.2
-Message-ID: <20190602062356.GA1616@kunai>
+        id S1725875AbfFBHRW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Jun 2019 03:17:22 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E51227733;
+        Sun,  2 Jun 2019 06:39:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559457548;
+        bh=O+3+OXsUykY6xtILDT723jPRKJIi/7RvARHMb53RRzI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=bVDLlnKXdeOxpN00HkTCvXVd1RNVJsqhgWQUPNO+kmptrFPFoDSvgmQy6RJdj5zHb
+         oxXabYrokmQSZOR68dcL+z/h96MbbLp87KGcslYQj/BOxwZqyYNcEjXstI781x0vJr
+         qjz/RLVOFlYPVzHiKwCQ+gVxTKzJevc+GI4B8jvg=
+Date:   Sun, 2 Jun 2019 08:39:05 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        linux-spdx@vger.kernel.org
+Subject: [GIT PULL] SPDX update for 5.2-rc3 - round 2
+Message-ID: <20190602063905.GA14513@kroah.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="9jxsPFA5p3P2qPhR"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The following changes since commit 2f4c53349961c8ca480193e47da4d44fdb8335a8:
 
---9jxsPFA5p3P2qPhR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Linus,
-
-I2C has for you a memleak fix for the core, two driver bugfixes, as well
-as fixing missing file patterns to MAINTAINERS.
-
-Please pull.
-
-Thanks,
-
-   Wolfram
-
-
-The following changes since commit cd6c84d8f0cdc911df435bb075ba22ce3c605b07:
-
-  Linux 5.2-rc2 (2019-05-26 16:49:19 -0700)
+  Merge tag 'spdx-5.2-rc3-1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core (2019-05-31 08:34:32 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git tags/spdx-5.2-rc3-2
 
-for you to fetch changes up to c8552db31d5e70f0311be031b22292bf256791da:
+for you to fetch changes up to 8e82fe2ab65a80b1526b285c661ab88cc5891e3a:
 
-  MAINTAINERS: add I2C DT bindings to ARM platforms (2019-06-01 14:52:13 +0200)
+  treewide: fix typos of SPDX-License-Identifier (2019-06-01 18:29:58 +0200)
 
 ----------------------------------------------------------------
-Masahisa Kojima (1):
-      i2c: synquacer: fix synquacer_i2c_doxfer() return value
+SPDX fixes for 5.2-rc3, round 2
 
-Vadim Pasternak (1):
-      i2c: mlxcpld: Fix wrong initialization order in probe
+Here are just two small patches, that fix up some found SPDX identifier
+issues.
 
-Wolfram Sang (2):
-      MAINTAINERS: add DT bindings to i2c drivers
-      MAINTAINERS: add I2C DT bindings to ARM platforms
+The first patch fixes an error in a previous SPDX fixup patch, that
+causes build errors when doing 'make clean' on the tree (the fact that
+almost no one noticed it reflects the fact that kernel developers don't
+like doing that option very often...)
 
-Yingjoe Chen (1):
-      i2c: dev: fix potential memory leak in i2cdev_ioctl_rdwr
+The second patch fixes up a number of places in the tree where people
+mistyped the string "SPDX-License-Identifier".  Given that people can
+not even type their own name all the time without mistakes, this was
+bound to happen, and odds are, we will have to add some type of check
+for this to checkpatch.pl to catch this happening in the future.
 
+Both of these have passed testing by 0-day.
 
-with much appreciated quality assurance from
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ----------------------------------------------------------------
-Andrew Lunn (1):
-      (Rev.) MAINTAINERS: add DT bindings to i2c drivers
+Alex Xu (Hello71) (1):
+      crypto: ux500 - fix license comment syntax error
 
-Heiko Stuebner (1):
-      (Rev.) MAINTAINERS: add I2C DT bindings to ARM platforms
+Masahiro Yamada (1):
+      treewide: fix typos of SPDX-License-Identifier
 
-Linus Walleij (1):
-      (Rev.) MAINTAINERS: add I2C DT bindings to ARM platforms
-
-Michal Simek (1):
-      (Rev.) MAINTAINERS: add I2C DT bindings to ARM platforms
-
- MAINTAINERS                        | 18 ++++++++++++++++++
- drivers/i2c/busses/i2c-mlxcpld.c   |  2 +-
- drivers/i2c/busses/i2c-synquacer.c |  2 +-
- drivers/i2c/i2c-dev.c              |  1 +
- 4 files changed, 21 insertions(+), 2 deletions(-)
-
---9jxsPFA5p3P2qPhR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlzza3cACgkQFA3kzBSg
-KbYKVRAAtJp1SvqEyUMCJKsSvsj67n7lEiL6A+YEDHqjU4joBDorP/x8ZnnWnVgl
-T7MK1bQaiDxMOkyhSax+iFu+ufRigYlB+7He5zm+jvqbAkHVOn1BNY7ROF+up4n6
-HGP1xsoQBWCMsz6HeXyL/WDJ3yLUVt9tz8tpaBlBKpmUOZUdnHJKUUIft3tuIhZ7
-FT+LVrtQfYewUiKBajM8DK+8+YlJt0ttNhdD1BazTuP2ZyQhF6+KZXzNUOCM3UeE
-9pMDiJaFI0lskHKSNu0OS18kgoCCXll0o79iFbOOKyZtPkgThvg01TuSssrk/n4I
-livz1w6KKx/AExhcld7qIX322pjznXkcl0UrGPL9/7vrdjrml17FErWZG4sHUeXZ
-DdALAo+oQVsJymaHnEaPPU8b3vJKzk3TVv/qpWbsfWYjvOW0nKkFfojhp8j39EXm
-OF87XcyW6VjEIASY65DJFgEl7z7ngqFEyju6XIthx060UBrnFrXSoUF1ZuqkzjJP
-eKZgBTaF7T50CSnj9uIQNaVkZ8nkOcmj6EAPsj4fZ4ByiGnp92cvTKGXMkZKtvPp
-xB+VfG3X+umLXTZJjZ4WHOgoWpnGPqz0DMDsoYeBcSAHlmbYOKwE4V42Ez04cWT8
-6KxBMfG9RXe0TyF0kTFGw0p9+nq3bSQc48CfdW2KhY11IOLPByI=
-=QTnz
------END PGP SIGNATURE-----
-
---9jxsPFA5p3P2qPhR--
+ arch/arm/kernel/bugs.c                | 2 +-
+ drivers/crypto/ux500/cryp/Makefile    | 2 +-
+ drivers/phy/st/phy-stm32-usbphyc.c    | 2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a77980.c | 2 +-
+ lib/test_stackinit.c                  | 2 +-
+ sound/soc/codecs/max9759.c            | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
