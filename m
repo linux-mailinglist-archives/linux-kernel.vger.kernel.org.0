@@ -2,59 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E357322F4
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 12:26:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CF03322F5
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 12:26:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726713AbfFBK0a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Jun 2019 06:26:30 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38640 "EHLO
+        id S1726795AbfFBK0d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Jun 2019 06:26:33 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43933 "EHLO
         mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726168AbfFBK03 (ORCPT
+        with ESMTP id S1726716AbfFBK0c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Jun 2019 06:26:29 -0400
-Received: by mail-pg1-f193.google.com with SMTP id v11so6561844pgl.5
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2019 03:26:29 -0700 (PDT)
+        Sun, 2 Jun 2019 06:26:32 -0400
+Received: by mail-pg1-f193.google.com with SMTP id f25so6557557pgv.10
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2019 03:26:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=aaxKPyv2ZkSoSLlbiUzUfzTm8zGISBR0eF/G7f2PZcE=;
-        b=a+7c6Q/rH8yGZnIiR0P5vj3AbE0f9Hsb0ZWBgTUraFZD+7iMAuzNLY904cQ4ussiq8
-         tl3yHirSsOnlA4SZQLNTmPOVdNd3BCYyNYLwhjRgYJFkpz9GsihhGnOE+ZdhxQdTb/B6
-         XQrFviLvi29psA/KXLINtVRezvygYm/xjdG6lJv4XB+krNJ+QY+UXb2MR/iehMVcqPzh
-         RdV7uL/1euPr+zo2mWyNs2oNqk+MdDOfQblFqGCRiQFmL93EbjC4lFIapkib3qBZnyKc
-         T5vI6ZGYJ3cfyOonOfcuwyb3Zx62dnZIKKb/P0IqxUU8xBehWJfRtaKDI8dXRx1eXQxn
-         kXBg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=yCdVRr7mANjXJtV9EmJLK/WkxyR5NULqnVw4jsKhao0=;
+        b=PGIO0EXhWZd1UjXvZCIpiTwP4KBvOSMrUlJKigyNfhe7rysKtiLYvxhAGRwbB/I5L9
+         Tg5p1+WNX8Y/eW2Mg4PRBLnsYFgNNblZ0cwWA5JDbwlhgFSaUgmZnSCrQxr4RmnQLNJr
+         RzxdLwrK9aCv9mhlIwfCr0jdIxA8kjAT+wczOB6/85EnRWZKIh5rJ76nJmmLFLxOlK8H
+         dnSkukov4Y8DfAYOMW7iDzFj95Igs/H3HW3Fu87Tehl9JZY/PFrvpI+ldEJVB8WMF+35
+         8uH3XA1HChfBAUn23qrD1lgvdIzGUL/RIkX9VikWURTo1VmDFkSCqHxdFagzAbBAOwPJ
+         fGxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=aaxKPyv2ZkSoSLlbiUzUfzTm8zGISBR0eF/G7f2PZcE=;
-        b=LDLvzzPUeL+55SBVb0u9woRjix47GjysyaPrGfWi2HDcBAQlfE2n/6RiHa9gx+XecR
-         O++5s1dOSdiMvM+8cBIeSSFkppsdzwW7x4Z5PoflLOLj4An4KAypPPeq6av8EDYUA/JY
-         k1Up0TLszNomdAt9yDFb7+5kqOWQW5kveUoVQrnemkjq71tHWHu8WqNnf/QUE4mhIpNB
-         7WoJj4yMrBuRV9USP0J/8s+0mAiND5cdy7eecRYFRoQovHu4qILET3+O5luiXGZUD6KL
-         m5ruf1aOoPd3QEbFQWLgzzzyPo03aiRcC+Lq2Z7BTDUqPaBMGbjAXOEB3BbE4wNukit2
-         q70g==
-X-Gm-Message-State: APjAAAWou63hV91bWy6zhT489NoJplJg6/M0OmIIVrrf9j2nXDBi57hA
-        S+Wo5bbcG18c/exE6JLjQvGMkpyf
-X-Google-Smtp-Source: APXvYqy8lUoajjVgXX+T7Je7m9CWdCqZyiZ4+7Vw9Hs4xHZ4OFMYWh81VcfMdrwricnBJV4xmw5i1Q==
-X-Received: by 2002:a62:4d03:: with SMTP id a3mr23698470pfb.2.1559471188681;
-        Sun, 02 Jun 2019 03:26:28 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=yCdVRr7mANjXJtV9EmJLK/WkxyR5NULqnVw4jsKhao0=;
+        b=WMwaGDkPycJ0q6Q1hxadpsI70nWiqLrbg+hbCvmZYc8ClGiPXKYmZlPyOZiwGtamJv
+         45IRkmckQXzCbbX7RHENxWUsNmP4GVOj06BRGxa4mYb6jAciIowlLasoTwuZG3mfy8Gb
+         47pgPpVimul+7qgnMylVhoESKnWk+mr3d1Oj3/FwZiyu1rTSzNEtqelcjDu7rMZVT7FB
+         vYPrnJwFaBWgHIHPeQ1y0eYwvpxppan/6Y3amLJHhnYmiWygJqRXmJZ/mI6jvIXWtmBs
+         2Ho8K8RGjGSlRIobzUnwoMwxFkSVkDzToKP9OjXUI4hh/jc7xbI3SicSCPzFyrRQM/4O
+         Pf/w==
+X-Gm-Message-State: APjAAAVSqRhKG9GRPXnOMw+bBw5IJbVuoQnVSfk2lF/UYU6oSX0Wl/Ls
+        47eqUWnPv7rYz7fdfF7CNHTAA6h7
+X-Google-Smtp-Source: APXvYqwU7tg1Z0/3+ZLgMXbawhku5u7AAnCga6NojHxfPMtRVvQLXxcAch3PonpL6UhvqWJ5cG8isw==
+X-Received: by 2002:a62:b50c:: with SMTP id y12mr17406452pfe.171.1559471191878;
+        Sun, 02 Jun 2019 03:26:31 -0700 (PDT)
 Received: from localhost.localdomain ([117.192.23.157])
-        by smtp.googlemail.com with ESMTPSA id j13sm12221099pfh.13.2019.06.02.03.26.25
+        by smtp.googlemail.com with ESMTPSA id j13sm12221099pfh.13.2019.06.02.03.26.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 02 Jun 2019 03:26:27 -0700 (PDT)
+        Sun, 02 Jun 2019 03:26:31 -0700 (PDT)
 From:   Deepak Mishra <linux.dkm@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     gregkh@linuxfoundation.org, joe@perches.com, wlanfae@realtek.com,
         Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
         linux.dkm@gmail.com, himadri18.07@gmail.com,
         straube.linux@gmail.com
-Subject: [PATCH v2 0/9] staging: rtl8712: Fixed CamelCase in struct _adapter
-Date:   Sun,  2 Jun 2019 15:55:29 +0530
-Message-Id: <cover.1559470737.git.linux.dkm@gmail.com>
+Subject: [PATCH v2 1/9] staging: rtl8712: Fixed CamelCase rename ImrContent to imr_content
+Date:   Sun,  2 Jun 2019 15:55:30 +0530
+Message-Id: <b23b7ef3b339923fee07045b6cc053a05bd9b717.1559470738.git.linux.dkm@gmail.com>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <cover.1559470737.git.linux.dkm@gmail.com>
+References: <cover.1559470737.git.linux.dkm@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,37 +64,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset fixes CamelCase checks in struct _adapter in drv_types.h
-and in files where struct _adapter is used by renaming the variables
-without camel case.
+This patch renames CamelCase ImrContent to imr_content in struct _adapter and related
+files drv_types.h, rtl871x_mp_ioctl.c, rtl871x_pwrctrl.h
 
-These check were reported by checkpatch.pl
+CHECK: Avoid CamelCase: <ImrContent>
 
-This patch also changes type of enable_rx_ff0_filter as bool
+Signed-off-by: Deepak Mishra <linux.dkm@gmail.com>
+---
+ drivers/staging/rtl8712/drv_types.h        | 2 +-
+ drivers/staging/rtl8712/rtl871x_mp_ioctl.c | 2 +-
+ drivers/staging/rtl8712/rtl871x_pwrctrl.h  | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-Deepak Mishra (9):
-  staging: rtl8712: Fixed CamelCase rename ImrContent to imr_content
-  staging: rtl8712: Fixed CamelCase EepromAddressSize rename to
-    eeprom_address_size
-  staging: rtl8712: Fixed CamelCase cmdThread rename to cmd_thread
-  staging: rtl8712: Fixed CamelCase renames evtThread to evt_thread
-  staging: rtl8712: Fixed CamelCase renames IsrContent to isr_content
-  staging: rtl8712: Fixed CamelCase renames xmitThread and recvThread
-  staging: rtl8712: Fixed CamelCase wkFilterRxFF0 to wk_filter_rx_ff0 in
-  staging: rtl8712: fixed enable_rx_ff0_filter as bool and CamelCase
-  staging: rtl8712: Fixed CamelCase lockRxFF0Filter
-
- drivers/staging/rtl8712/drv_types.h        | 20 ++++++++++----------
- drivers/staging/rtl8712/os_intfs.c         |  6 +++---
- drivers/staging/rtl8712/rtl871x_cmd.c      |  2 +-
- drivers/staging/rtl8712/rtl871x_eeprom.c   |  6 +++---
- drivers/staging/rtl8712/rtl871x_mp_ioctl.c |  2 +-
- drivers/staging/rtl8712/rtl871x_pwrctrl.h  |  2 +-
- drivers/staging/rtl8712/rtl871x_xmit.c     |  2 +-
- drivers/staging/rtl8712/usb_intf.c         |  4 ++--
- drivers/staging/rtl8712/xmit_linux.c       | 10 +++++-----
- 9 files changed, 27 insertions(+), 27 deletions(-)
-
+diff --git a/drivers/staging/rtl8712/drv_types.h b/drivers/staging/rtl8712/drv_types.h
+index 9ae86631fa8b..89ebb5a49d25 100644
+--- a/drivers/staging/rtl8712/drv_types.h
++++ b/drivers/staging/rtl8712/drv_types.h
+@@ -149,7 +149,7 @@ struct _adapter {
+ 	bool	surprise_removed;
+ 	bool	suspended;
+ 	u32	IsrContent;
+-	u32	ImrContent;
++	u32	imr_content;
+ 	u8	EepromAddressSize;
+ 	u8	hw_init_completed;
+ 	struct task_struct *cmdThread;
+diff --git a/drivers/staging/rtl8712/rtl871x_mp_ioctl.c b/drivers/staging/rtl8712/rtl871x_mp_ioctl.c
+index 588346da1412..4cf9d3afd2c5 100644
+--- a/drivers/staging/rtl8712/rtl871x_mp_ioctl.c
++++ b/drivers/staging/rtl8712/rtl871x_mp_ioctl.c
+@@ -665,7 +665,7 @@ uint oid_rt_pro_write_register_hdl(struct oid_par_priv *poid_par_priv)
+ 		if ((status == RNDIS_STATUS_SUCCESS) &&
+ 		    (RegRWStruct->offset == HIMR) &&
+ 		    (RegRWStruct->width == 4))
+-			Adapter->ImrContent = RegRWStruct->value;
++			Adapter->imr_content = RegRWStruct->value;
+ 	}
+ 	return status;
+ }
+diff --git a/drivers/staging/rtl8712/rtl871x_pwrctrl.h b/drivers/staging/rtl8712/rtl871x_pwrctrl.h
+index 11b5034f203d..cca81a3f4031 100644
+--- a/drivers/staging/rtl8712/rtl871x_pwrctrl.h
++++ b/drivers/staging/rtl8712/rtl871x_pwrctrl.h
+@@ -88,7 +88,7 @@ struct	pwrctrl_priv {
+ 	uint pwr_mode;
+ 	uint smart_ps;
+ 	uint alives;
+-	uint ImrContent;	/* used to store original imr. */
++	uint imr_content;	/* used to store original imr. */
+ 	uint bSleep; /* sleep -> active is different from active -> sleep. */
+ 
+ 	struct work_struct SetPSModeWorkItem;
 -- 
 2.19.1
 
