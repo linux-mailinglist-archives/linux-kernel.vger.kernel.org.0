@@ -2,55 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1AD8324D1
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 22:50:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3746A324DF
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Jun 2019 23:02:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbfFBUuN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Jun 2019 16:50:13 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:48296 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbfFBUuM (ORCPT
+        id S1726976AbfFBVC1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Jun 2019 17:02:27 -0400
+Received: from mail-io1-f46.google.com ([209.85.166.46]:40572 "EHLO
+        mail-io1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726305AbfFBVC1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Jun 2019 16:50:12 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id ACB2F1411B403;
-        Sun,  2 Jun 2019 13:50:10 -0700 (PDT)
-Date:   Sun, 02 Jun 2019 13:50:10 -0700 (PDT)
-Message-Id: <20190602.135010.1382762534390460032.davem@davemloft.net>
-To:     horatiu.vultur@microchip.com
-Cc:     alexandre.belloni@bootlin.com, UNGLinuxDriver@microchip.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, ralf@linux-mips.org,
-        paul.burton@mips.com, jhogan@kernel.org,
-        linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH net-next v3 0/2] Add hw offload of TC flower on MSCC
- Ocelot
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1559287017-32397-1-git-send-email-horatiu.vultur@microchip.com>
-References: <1559287017-32397-1-git-send-email-horatiu.vultur@microchip.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 02 Jun 2019 13:50:11 -0700 (PDT)
+        Sun, 2 Jun 2019 17:02:27 -0400
+Received: by mail-io1-f46.google.com with SMTP id n5so12645942ioc.7
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2019 14:02:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HC8vtrRsh50Ohc3EaIB0NoebMSo23njywbCwxitxUSo=;
+        b=G05oV6yGANfGUrsafNDMFdY+sdiwhud8O9hlc5blEpxavx9e8NMec2fjDyxse4N94X
+         2a89tU71cAzexNCkHgP9PRg5MZKqWwfvM5tdRQOUzBE+IVLhk0nxFDg1nKUAGhNgYJWK
+         OTOxrwoH4oo/4pDSoZ0Fkojiw/sCTsCbJPv9w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HC8vtrRsh50Ohc3EaIB0NoebMSo23njywbCwxitxUSo=;
+        b=FTcHSl3nz+Mv/4Y4+d9/gYI1rRZ+WQNXh90HXKh+RXO2KnqFXo7NwwkKtt+1dkD9Nq
+         xJUrptdw+ZShPAr2JpKwDmu90j/ZbEgyvbVo9Gc+3/tYYxD1axCadeXmatunPPzXtqKs
+         sKAtla7cWGzxrZFHGDkGxhwAKuhtsRNf4wVBcnShf6ayuyWix1HqADowMFTQgr/9zgir
+         SeqvrHUIbSlX59+JdhYSmUhwDCd5ypb9XvHHFMdiIg6wrIa78q6De8VxS5IYprUsqJ0m
+         Dnjrkn8+I0cZrCCT/eik+EqHgAIv10j0pOC++1mdxcrnHVoIuJcVc4Yl2Ei2pHBVriUG
+         z4RA==
+X-Gm-Message-State: APjAAAWJTlj5Iz4C1Huov3XRjiX3jZmnTdAgKHX0abaQliuMRkqGUBTs
+        rbUTgc6ZCwY4XNdG5UPtuj1dpwUGSK8=
+X-Google-Smtp-Source: APXvYqxlnw73pTZ9X3LGfQhk4wHkxDI22S6dISiA1Mrh1rHUWpFhM8Ynp9JwrYuQPTbxTvYWg9PiIA==
+X-Received: by 2002:a05:6602:2285:: with SMTP id d5mr14055239iod.196.1559509346192;
+        Sun, 02 Jun 2019 14:02:26 -0700 (PDT)
+Received: from mail-it1-f171.google.com (mail-it1-f171.google.com. [209.85.166.171])
+        by smtp.gmail.com with ESMTPSA id y18sm4154690iob.64.2019.06.02.14.02.25
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 02 Jun 2019 14:02:26 -0700 (PDT)
+Received: by mail-it1-f171.google.com with SMTP id n189so5150651itd.0
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2019 14:02:25 -0700 (PDT)
+X-Received: by 2002:a24:5652:: with SMTP id o79mr15076656itb.164.1559508868756;
+ Sun, 02 Jun 2019 13:54:28 -0700 (PDT)
+MIME-Version: 1.0
+References: <20150910005708.GA23369@wfg-t540p.sh.intel.com>
+ <20150910102513.GA1677@fixme-laptop.cn.ibm.com> <20150910171649.GE4029@linux.vnet.ibm.com>
+ <20150911021933.GA1521@fixme-laptop.cn.ibm.com> <20150921193045.GA13674@lerouge>
+ <20150921204327.GH4029@linux.vnet.ibm.com> <20190602055607.bk5vgmwjvvt4wejd@gondor.apana.org.au>
+In-Reply-To: <20190602055607.bk5vgmwjvvt4wejd@gondor.apana.org.au>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 2 Jun 2019 13:54:12 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whLGKOmM++OQi5GX08_dfh8Xfz9Wq7khPo+MVtPYh_8hw@mail.gmail.com>
+Message-ID: <CAHk-=whLGKOmM++OQi5GX08_dfh8Xfz9Wq7khPo+MVtPYh_8hw@mail.gmail.com>
+Subject: Re: rcu_read_lock lost its compiler barrier
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Fengguang Wu <fengguang.wu@intel.com>, LKP <lkp@01.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-Date: Fri, 31 May 2019 09:16:55 +0200
+On Sat, Jun 1, 2019 at 10:56 PM Herbert Xu <herbert@gondor.apana.org.au> wrote:
+>
+> You can't then go and decide to remove the compiler barrier!  To do
+> that you'd need to audit every single use of rcu_read_lock in the
+> kernel to ensure that they're not depending on the compiler barrier.
 
-> This patch series enables hardware offload for flower filter used in
-> traffic controller on MSCC Ocelot board.
-> 
-> v2->v3 changes:
->  - remove the check for shared blocks
-> 
-> v1->v2 changes:
->  - when declaring variables use reverse christmas tree
+What's the possible case where it would matter when there is no preemption?
 
-Series applied, thanks.
+          Linus
