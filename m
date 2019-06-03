@@ -2,153 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 022BD339F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 23:41:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EB5333A06
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 23:44:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726561AbfFCVln (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 17:41:43 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:34499 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725956AbfFCVln (ORCPT
+        id S1726341AbfFCVol (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 17:44:41 -0400
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:37153 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726101AbfFCVok (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 17:41:43 -0400
-Received: by mail-ed1-f67.google.com with SMTP id c26so18724437edt.1;
-        Mon, 03 Jun 2019 14:41:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=yhLYhpx5r94UcNbu2SZQmZBVQeUmPq6PVimIkeEn7pk=;
-        b=scIwGBKI357lkVXW52kw03XCI4+Ae6ho42noCT0DWTtPRkLPw37gVYJBmgatjte/fr
-         txxL6xswgG2bwv4dcBi9ilccueJ2EbcEKZtiqgVr0w/zR7p00TQxQ68X081DlJksiVJp
-         bQq/Q6WuN9RqstqJonmfHCKtiFMA7q9w/UyTa+NDl7ayqnpxpJkR/MsE/cnrEjpN5UnF
-         pDmYt0I6nf0M8NtJy0pn3MNogc07CPwCXpJcmFU/YcoTOESdyv+YzC8Zd1MT32D8/vBb
-         qcdBZinoMMfM8+8dbAMFVV623Db3nfb+VmQu9rZFXZf1rykogdgYpXDWtPbozhqhF8So
-         ROsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yhLYhpx5r94UcNbu2SZQmZBVQeUmPq6PVimIkeEn7pk=;
-        b=MCmId1Zl9qj25uQBhO7pU+QGGm+BalZm3MMtSR0MyE2UQwVeo7EVnJheXrdAdW7ReD
-         9kINWPVKyoR4V9KG0Wsz+SDo9y1crj1LVDJHp/Y0ViasgdINNDpsU08mvyv9SnwM96Aw
-         ZmkJKft6FQPMpPjHonkDQoDGzHtjBoeyvC9glRGKd04zt0U5Re7DmVKeJm1oO8GZFws0
-         cTFrrIxohqkxgGbf105j4gvB2d5aioqoPaA1JVZZDiJS2pZVpdUgx7IC+N4/7ctx9vZ7
-         n7eBsokzz/Pg0lXbTC/IaBxkhpABUokwbTDiRYKkd6MYEfJPMPFXAktX90yde7TswSFN
-         gmQA==
-X-Gm-Message-State: APjAAAV6roatVNc05VRAgbj8aaNJJz7LKbX75DAe+UWpfWwbwwlIe9NI
-        kAo1nxv85NEXGlaYZKqe1BU=
-X-Google-Smtp-Source: APXvYqwCMUWcithGJqx45+EgRmxCCI6sjYqisr91FRxovWqn6/a/0IS0IDUQUvDAHCpQkkCQxu0u/A==
-X-Received: by 2002:a17:907:20d0:: with SMTP id qq16mr14587748ejb.244.1559598100632;
-        Mon, 03 Jun 2019 14:41:40 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id e45sm4208929edb.12.2019.06.03.14.41.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Jun 2019 14:41:39 -0700 (PDT)
-Date:   Mon, 3 Jun 2019 21:41:39 +0000
-From:   Wei Yang <richard.weiyang@gmail.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Igor Mammedov <imammedo@redhat.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Jun Yao <yaojun8558363@gmail.com>, Yu Zhao <yuzhao@google.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>
-Subject: Re: [PATCH v3 04/11] arm64/mm: Add temporary arch_remove_memory()
- implementation
-Message-ID: <20190603214139.mercn5hol2yyfl2s@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20190527111152.16324-1-david@redhat.com>
- <20190527111152.16324-5-david@redhat.com>
+        Mon, 3 Jun 2019 17:44:40 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id E0B35220DB;
+        Mon,  3 Jun 2019 17:44:39 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Mon, 03 Jun 2019 17:44:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        pedrovanzella.com; h=date:from:to:cc:subject:message-id
+        :references:mime-version:content-type:in-reply-to; s=fm3; bh=sJt
+        vpQ8YjOpkGpI3jG3o8DzEDik537U+60zTVFQ+ys0=; b=aE8seyUSGyaHXH3+i4L
+        oV35I4W9JYM+W1eF+mv30VZxIbltvL8Bd1MMmdR0J17aoNg+dELpu+K7AIbqQBcI
+        P97vLuAeP1TrVzmuTTtik6yh+ebSJZxHOv5DvKAlcY3J4DeF20d44lKVYZES1s1s
+        Ju0hhhHTh9pDa7aplJy8v06CItpsmSKX67H4Dcr2Od00UUdChG0lJl6kz5X/FwD5
+        ONbKePcxq8sxEZMileIH2iOGx0J3Cfb5I2gU3WnBrEm/EK7jATs2HXDIpGVVy3rz
+        6ukwL+dY4LTLpqHkrRmJOzPT1MbAQfYmrz4scDzGgdPUUyuhfvMsT3Dd90tL9vk8
+        Q3w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=sJtvpQ
+        8YjOpkGpI3jG3o8DzEDik537U+60zTVFQ+ys0=; b=InOlRsv+DslFkm9areGgJf
+        VXxVP2+GZcPGLv5m6FarnjJIHyDY8B2A+szwE1JEqaBPzRzv04BYtKnEjOOutZgk
+        nUebQ7zmG6XVuNpA7RdcihRt0OtmtkrLUVjpiSOv24yd2v8JZ3F/7ODc2YvPVgfU
+        41iA/qc3coFeuO+Z0NfhnJPArNfLWn2UX5Zuqy16E8Eo6NPr2fc/T5YLl8PT8t5u
+        g/xSvQkzf7HQ7RbQ7R6KhI5wbyGAf/YqluuS1vH0/SG1xbot0O+gvAWFmTF8ZKVf
+        J8x5k3ysTCg5lHPTBVPs+VSGkQs+rBiL9Sew0JyHKv7SzFu6+fRS7bqMsggWkf4A
+        ==
+X-ME-Sender: <xms:x5T1XIJopwmdDhzQPLrmkPfN7n4i4ltRPERpqqztpuQfiihxe4UqUw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrudefkedgtddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjfgesghdtreertdervdenucfhrhhomheprfgvughr
+    ohcugggrnhiivghllhgruceophgvughrohesphgvughrohhvrghniigvlhhlrgdrtghomh
+    eqnecuffhomhgrihhnpehpvggurhhovhgrnhiivghllhgrrdgtohhmpdhkvghrnhgvlhdr
+    ohhrghenucfkphepjedtrddvjedrvdejrddugeelnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehpvggurhhosehpvggurhhovhgrnhiivghllhgrrdgtohhmnecuvehluhhsthgvrhfu
+    ihiivgeptd
+X-ME-Proxy: <xmx:x5T1XFhChO6a-kokg4xZnKUdMTkTmFYDgYvLusqtRJ2xWK_llnScIA>
+    <xmx:x5T1XEtE7a9G2Botqh4H1VeDtSlyfNh2v4wmtIdijdPSwWQZT5KfpA>
+    <xmx:x5T1XJH4T7Q2vuNMYuKTN7jt3bKxYpxGqxeIDJq3leXqvNujlJML1Q>
+    <xmx:x5T1XBKF6ydfyU_2sJe3x1YdwaZWKYeTn5BvO7S8YJazSMVGer7QQQ>
+Received: from localhost (toroon020aw-lp130-02-70-27-27-149.dsl.bell.ca [70.27.27.149])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 50875380084;
+        Mon,  3 Jun 2019 17:44:39 -0400 (EDT)
+Date:   Mon, 3 Jun 2019 17:44:38 -0400
+From:   Pedro Vanzella <pedro@pedrovanzella.com>
+To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc:     "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] HID: hid-logitech-hidpp: detect wireless lightspeed
+ devices
+Message-ID: <20190603214438.2cnmrx7g2sakjdr4@Fenrir>
+References: <20190528162924.32754-1-pedro@pedrovanzella.com>
+ <CAO-hwJ+zAvDizJRpykky+D3pf1M1NhFGWztwyA4mJEv8C+nO-w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="il23bg2tbeerivkt"
 Content-Disposition: inline
-In-Reply-To: <20190527111152.16324-5-david@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAO-hwJ+zAvDizJRpykky+D3pf1M1NhFGWztwyA4mJEv8C+nO-w@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 27, 2019 at 01:11:45PM +0200, David Hildenbrand wrote:
->A proper arch_remove_memory() implementation is on its way, which also
->cleanly removes page tables in arch_add_memory() in case something goes
->wrong.
 
-Would this be better to understand?
+--il23bg2tbeerivkt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-    removes page tables created in arch_add_memory
+On 05/28, Benjamin Tissoires wrote:
+> On Tue, May 28, 2019 at 6:30 PM Pedro Vanzella <pedro@pedrovanzella.com> =
+wrote:
+> >
+> > Send a low device index when the device is connected via the lightspeed
+> > receiver so that the receiver will pass the message along to the device
+> > instead of responding. If we don't do that, we end up thinking it's a
+> > hidpp10 device and miss out on all new features available to newer devi=
+ces.
+> >
+> > This will enable correct detection of the following models:
+> > G603, GPro, G305, G613, G900 and G903, and possibly others.
+>=20
+> Thanks for the patch.
+Thanks for reviewing it :)
 
->
->As we want to use arch_remove_memory() in case something goes wrong
->during memory hotplug after arch_add_memory() finished, let's add
->a temporary hack that is sufficient enough until we get a proper
->implementation that cleans up page table entries.
->
->We will remove CONFIG_MEMORY_HOTREMOVE around this code in follow up
->patches.
->
->Cc: Catalin Marinas <catalin.marinas@arm.com>
->Cc: Will Deacon <will.deacon@arm.com>
->Cc: Mark Rutland <mark.rutland@arm.com>
->Cc: Andrew Morton <akpm@linux-foundation.org>
->Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->Cc: Chintan Pandya <cpandya@codeaurora.org>
->Cc: Mike Rapoport <rppt@linux.ibm.com>
->Cc: Jun Yao <yaojun8558363@gmail.com>
->Cc: Yu Zhao <yuzhao@google.com>
->Cc: Robin Murphy <robin.murphy@arm.com>
->Cc: Anshuman Khandual <anshuman.khandual@arm.com>
->Signed-off-by: David Hildenbrand <david@redhat.com>
->---
-> arch/arm64/mm/mmu.c | 19 +++++++++++++++++++
-> 1 file changed, 19 insertions(+)
->
->diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
->index a1bfc4413982..e569a543c384 100644
->--- a/arch/arm64/mm/mmu.c
->+++ b/arch/arm64/mm/mmu.c
->@@ -1084,4 +1084,23 @@ int arch_add_memory(int nid, u64 start, u64 size,
-> 	return __add_pages(nid, start >> PAGE_SHIFT, size >> PAGE_SHIFT,
-> 			   restrictions);
-> }
->+#ifdef CONFIG_MEMORY_HOTREMOVE
->+void arch_remove_memory(int nid, u64 start, u64 size,
->+			struct vmem_altmap *altmap)
->+{
->+	unsigned long start_pfn = start >> PAGE_SHIFT;
->+	unsigned long nr_pages = size >> PAGE_SHIFT;
->+	struct zone *zone;
->+
->+	/*
->+	 * FIXME: Cleanup page tables (also in arch_add_memory() in case
->+	 * adding fails). Until then, this function should only be used
->+	 * during memory hotplug (adding memory), not for memory
->+	 * unplug. ARCH_ENABLE_MEMORY_HOTREMOVE must not be
->+	 * unlocked yet.
->+	 */
->+	zone = page_zone(pfn_to_page(start_pfn));
+> However, there is already support for this receiver in Linus' tree:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
+/drivers/hid/hid-logitech-dj.c?id=3Df5fb57a74e88bd1788f57bf77d587c91d4dc9d57
+>=20
+> With kernel 5.2-rc1, the connected device should already be handled by
+> hid-logitech-hidpp :)
+Why are the wireless receivers handled by hid-logitech-dj and the wired
+mice handled by hid-logitech-hidpp? They are, in the end, all hidpp
+devices, and having them all handled by the -hidpp driver with a quirk
+class would allow us to check for support for the battery voltage
+feature, as it seems to be an either-or scenario here.
 
-Compared with arch_remove_memory in x86. If altmap is not NULL, zone will be
-retrieved from page related to altmap. Not sure why this is not the same?
+- Pedro
+>=20
+> Cheers,
+> Benjamin
+>=20
+> >
+> > Signed-off-by: Pedro Vanzella <pedro@pedrovanzella.com>
+> > ---
+> >  drivers/hid/hid-logitech-hidpp.c | 10 +++++++++-
+> >  1 file changed, 9 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitec=
+h-hidpp.c
+> > index 72fc9c0566db..621fce141d9f 100644
+> > --- a/drivers/hid/hid-logitech-hidpp.c
+> > +++ b/drivers/hid/hid-logitech-hidpp.c
+> > @@ -62,6 +62,7 @@ MODULE_PARM_DESC(disable_tap_to_click,
+> >  #define HIDPP_QUIRK_CLASS_K400                 BIT(2)
+> >  #define HIDPP_QUIRK_CLASS_G920                 BIT(3)
+> >  #define HIDPP_QUIRK_CLASS_K750                 BIT(4)
+> > +#define HIDPP_QUIRK_CLASS_LIGHTSPEED           BIT(5)
+> >
+> >  /* bits 2..20 are reserved for classes */
+> >  /* #define HIDPP_QUIRK_CONNECT_EVENTS          BIT(21) disabled */
+> > @@ -236,7 +237,11 @@ static int __hidpp_send_report(struct hid_device *=
+hdev,
+> >          * set the device_index as the receiver, it will be overwritten=
+ by
+> >          * hid_hw_request if needed
+> >          */
+> > -       hidpp_report->device_index =3D 0xff;
+> > +       if (hidpp->quirks & HIDPP_QUIRK_CLASS_LIGHTSPEED) {
+> > +               hidpp_report->device_index =3D 0x01;
+> > +       } else {
+> > +               hidpp_report->device_index =3D 0xff;
+> > +       }
+> >
+> >         if (hidpp->quirks & HIDPP_QUIRK_FORCE_OUTPUT_REPORTS) {
+> >                 ret =3D hid_hw_output_report(hdev, (u8 *)hidpp_report, =
+fields_count);
+> > @@ -3753,6 +3758,9 @@ static const struct hid_device_id hidpp_devices[]=
+ =3D {
+> >           HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, 0xC06B) },
+> >         { /* Logitech G900 Gaming Mouse over USB */
+> >           HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, 0xC081) },
+> > +       { /* Logitech Gaming Mice over Lightspeed Receiver */
+> > +         HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, 0xC539),
+> > +         .driver_data =3D HIDPP_QUIRK_CLASS_LIGHTSPEED },
+> >         { /* Logitech G920 Wheel over USB */
+> >           HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH=
+_G920_WHEEL),
+> >                 .driver_data =3D HIDPP_QUIRK_CLASS_G920 | HIDPP_QUIRK_F=
+ORCE_OUTPUT_REPORTS},
+> > --
+> > 2.21.0
+> >
 
->+	__remove_pages(zone, start_pfn, nr_pages, altmap);
->+}
->+#endif
-> #endif
->-- 
->2.20.1
+--=20
+Pedro Vanzella
+pedrovanzella.com
+#include <paranoia.h>
+Don't Panic
 
--- 
-Wei Yang
-Help you, Help me
+--il23bg2tbeerivkt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEXrNKwhI/eDFBCGo3v5huqi4pBxkFAlz1lLUACgkQv5huqi4p
+Bxk2IRAAhZ/xJZ8uT7NGw8Ix8cOQJ4kqLzZbTv/jr2a9FAs8y4tj22VBKoo1zNwo
+hyQuvToImgP6Tnql+l/SyTWoG14n6GBnmCv2CUy6rNpt7yBlr1w2UuYzIw+bHsN4
+DEwjNg0RjM5o5fNHGDUzRz1+WuZDNVDmGYdWeg4PLw1aK3TXbqTQBXaqq5xHZTLx
+MF1ZxwGD1+Cyp4gCwn/Rns50/hM9iDg1mUg9L2VrlSkuSHWWhD2WEprovd2fe2xD
+ELV/fu88M8Y2SF2HqWD57hQCGnqG0nsRCdcCV7wC7n1mjqvQFIBnPkx5dm2RJYan
+ubarZ3Qt/B0F9bfC3S2b74YNCUxFMtm+iWcg+4SI2g4uDCBA64HfJtsL67mb5IbA
+q4JW7wyJH83stHNFwFNgWio3q4jmrlEaB06xQ7joeT+w/79Gs/Y0zRWiGLBX3PGT
+yZWNojwJU7T3wLwlm/yASFFXmg1HiG2VuQkzJGamsbil1XnEIXxPR1O41zN50cym
+IlS4T4ciBfymVhYNOwPpUwxRVLW1EG3aurBurx9QAssKKc9ho4LbnZP5o9xlPowl
+TflW78Cr9ga4AJUZZzxW0ptxeqM0HHxYAX1eBfn2MsWnQjW4TI3gw9yOXtQk7sA3
+96uiUjrYY3PNzKAhc5x00v4QbtGO7npEnCm9XHedEc/RaVHvilo=
+=fbNq
+-----END PGP SIGNATURE-----
+
+--il23bg2tbeerivkt--
