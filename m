@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6067328C5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 08:48:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39C5A328C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 08:47:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727353AbfFCGsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 02:48:00 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:43713 "EHLO
+        id S1727335AbfFCGro (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 02:47:44 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:37512 "EHLO
         smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727268AbfFCGrj (ORCPT
+        by vger.kernel.org with ESMTP id S1727269AbfFCGrl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 02:47:39 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.0843899|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.425534-0.023847-0.550619;FP=0|0|0|0|0|-1|-1|-1;HT=e01a16378;MF=han_mao@c-sky.com;NM=1;PH=DS;RN=5;RT=5;SR=0;TI=SMTPD_---.EglnAtr_1559544454;
-Received: from localhost(mailfrom:han_mao@c-sky.com fp:SMTPD_---.EglnAtr_1559544454)
-          by smtp.aliyun-inc.com(10.147.40.7);
+        Mon, 3 Jun 2019 02:47:41 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07611708|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.136347-0.00582676-0.857826;FP=0|0|0|0|0|-1|-1|-1;HT=e01a16378;MF=han_mao@c-sky.com;NM=1;PH=DS;RN=5;RT=5;SR=0;TI=SMTPD_---.EglLA8M_1559544454;
+Received: from localhost(mailfrom:han_mao@c-sky.com fp:SMTPD_---.EglLA8M_1559544454)
+          by smtp.aliyun-inc.com(10.147.40.44);
           Mon, 03 Jun 2019 14:47:34 +0800
 From:   Mao Han <han_mao@c-sky.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Mao Han <han_mao@c-sky.com>, Rob Herring <robh+dt@kernel.org>,
+Cc:     Guo Ren <ren_guo@c-sky.com>, Mao Han <han_mao@c-sky.com>,
         Guo Ren <guoren@kernel.org>, linux-csky@vger.kernel.org
-Subject: [PATCH V3 4/6] dt-bindings: csky: Add csky PMU bindings
-Date:   Mon,  3 Jun 2019 14:46:23 +0800
-Message-Id: <bb3a684599185ff30e11fa6cd82a44932e61e9ef.1559544301.git.han_mao@c-sky.com>
+Subject: [PATCH V3 5/6] csky: Fixup some error count in 810 & 860.
+Date:   Mon,  3 Jun 2019 14:46:24 +0800
+Message-Id: <2263cf331f1a1c6c8afe82134503f41b4477e6ef.1559544301.git.han_mao@c-sky.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1559544301.git.han_mao@c-sky.com>
 References: <cover.1559544301.git.han_mao@c-sky.com>
@@ -33,62 +33,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the documentation to describe that how to add pmu node in
-dts.
+From: Guo Ren <ren_guo@c-sky.com>
 
+ck810 pmu only support event with index 0-8 and 0xd; ck860 only
+support event 1~4, 0xa~0x1b. So do not register unsupport event
+to hardware cache event, which may leader to unknown behavior.
+
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
 Signed-off-by: Mao Han <han_mao@c-sky.com>
-CC: Rob Herring <robh+dt@kernel.org>
 CC: Guo Ren <guoren@kernel.org>
 CC: linux-csky@vger.kernel.org
 ---
- Documentation/devicetree/bindings/csky/pmu.txt | 38 ++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/csky/pmu.txt
+ arch/csky/kernel/perf_event.c | 60 ++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 54 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/csky/pmu.txt b/Documentation/devicetree/bindings/csky/pmu.txt
-new file mode 100644
-index 0000000..4046b3b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/csky/pmu.txt
-@@ -0,0 +1,38 @@
-+============================
-+C-SKY Performance Monitor Units
-+============================
-+
-+C-SKY 8xx series cores often have a PMU for counting cpu and cache events.
-+The C-SKY PMU representation in the device tree should be done as under:
-+
-+==============================
-+PMU node bindings definition
-+==============================
-+
-+	Description: Describes PMU
-+
-+	PROPERTIES
-+
-+	- compatible
-+		Usage: required
-+		Value type: <string>
-+		Definition: must be "csky,csky-pmu"
-+	- interrupts
-+		Usage: required
-+		Value type: <u32>
-+		Definition: must be pmu irq num defined by soc
-+	- reg-io-width
-+		Usage: optional
-+		Value type: <u32>
-+		Definition: the width of pmu counter
-+
-+Examples:
-+---------
-+
-+        pmu {
-+                compatible = "csky,csky-pmu";
-+                interrupts = <0x17 IRQ_TYPE_EDGE_RISING>;
-+                interrupt-parent = <&intc>;
-+		reg-io-width = <0x30>;
-+        };
-+
+diff --git a/arch/csky/kernel/perf_event.c b/arch/csky/kernel/perf_event.c
+index 0eb630e..de95005 100644
+--- a/arch/csky/kernel/perf_event.c
++++ b/arch/csky/kernel/perf_event.c
+@@ -736,6 +736,20 @@ static const int csky_pmu_hw_map[PERF_COUNT_HW_MAX] = {
+ #define CACHE_OP_UNSUPPORTED	0xffff
+ static const int csky_pmu_cache_map[C(MAX)][C(OP_MAX)][C(RESULT_MAX)] = {
+ 	[C(L1D)] = {
++#ifdef CONFIG_CPU_CK810
++		[C(OP_READ)] = {
++			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
++			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
++		},
++		[C(OP_WRITE)] = {
++			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
++			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
++		},
++		[C(OP_PREFETCH)] = {
++			[C(RESULT_ACCESS)]	= 0x5,
++			[C(RESULT_MISS)]	= 0x6,
++		},
++#else
+ 		[C(OP_READ)] = {
+ 			[C(RESULT_ACCESS)]	= 0x14,
+ 			[C(RESULT_MISS)]	= 0x15,
+@@ -745,9 +759,10 @@ static const int csky_pmu_cache_map[C(MAX)][C(OP_MAX)][C(RESULT_MAX)] = {
+ 			[C(RESULT_MISS)]	= 0x17,
+ 		},
+ 		[C(OP_PREFETCH)] = {
+-			[C(RESULT_ACCESS)]	= 0x5,
+-			[C(RESULT_MISS)]	= 0x6,
++			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
++			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
+ 		},
++#endif
+ 	},
+ 	[C(L1I)] = {
+ 		[C(OP_READ)] = {
+@@ -764,6 +779,20 @@ static const int csky_pmu_cache_map[C(MAX)][C(OP_MAX)][C(RESULT_MAX)] = {
+ 		},
+ 	},
+ 	[C(LL)] = {
++#ifdef CONFIG_CPU_CK810
++		[C(OP_READ)] = {
++			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
++			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
++		},
++		[C(OP_WRITE)] = {
++			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
++			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
++		},
++		[C(OP_PREFETCH)] = {
++			[C(RESULT_ACCESS)]	= 0x7,
++			[C(RESULT_MISS)]	= 0x8,
++		},
++#else
+ 		[C(OP_READ)] = {
+ 			[C(RESULT_ACCESS)]	= 0x18,
+ 			[C(RESULT_MISS)]	= 0x19,
+@@ -773,29 +802,48 @@ static const int csky_pmu_cache_map[C(MAX)][C(OP_MAX)][C(RESULT_MAX)] = {
+ 			[C(RESULT_MISS)]	= 0x1b,
+ 		},
+ 		[C(OP_PREFETCH)] = {
+-			[C(RESULT_ACCESS)]	= 0x7,
+-			[C(RESULT_MISS)]	= 0x8,
++			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
++			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
+ 		},
++#endif
+ 	},
+ 	[C(DTLB)] = {
++#ifdef CONFIG_CPU_CK810
+ 		[C(OP_READ)] = {
+-			[C(RESULT_ACCESS)]	= 0x5,
+-			[C(RESULT_MISS)]	= 0xb,
++			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
++			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
+ 		},
+ 		[C(OP_WRITE)] = {
+ 			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
+ 			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
+ 		},
++#else
++		[C(OP_READ)] = {
++			[C(RESULT_ACCESS)]	= 0x14,
++			[C(RESULT_MISS)]	= 0xb,
++		},
++		[C(OP_WRITE)] = {
++			[C(RESULT_ACCESS)]	= 0x16,
++			[C(RESULT_MISS)]	= 0xb,
++		},
++#endif
+ 		[C(OP_PREFETCH)] = {
+ 			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
+ 			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
+ 		},
+ 	},
+ 	[C(ITLB)] = {
++#ifdef CONFIG_CPU_CK810
++		[C(OP_READ)] = {
++			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
++			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
++		},
++#else
+ 		[C(OP_READ)] = {
+ 			[C(RESULT_ACCESS)]	= 0x3,
+ 			[C(RESULT_MISS)]	= 0xa,
+ 		},
++#endif
+ 		[C(OP_WRITE)] = {
+ 			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
+ 			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
 -- 
 2.7.4
 
