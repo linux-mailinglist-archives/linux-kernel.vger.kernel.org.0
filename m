@@ -2,28 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49CBB333F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:51:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F3393341F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:54:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729368AbfFCPvp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 11:51:45 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53816 "EHLO
+        id S1729487AbfFCPxz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 11:53:55 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53824 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729282AbfFCPvm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 11:51:42 -0400
+        id S1729339AbfFCPvn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 11:51:43 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E50551A25;
-        Mon,  3 Jun 2019 08:51:41 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 69BF31AED;
+        Mon,  3 Jun 2019 08:51:43 -0700 (PDT)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 04E1A3F246;
-        Mon,  3 Jun 2019 08:51:40 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2DCE63F246;
+        Mon,  3 Jun 2019 08:51:42 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        suzuki.poulose@arm.com
-Subject: [RFC PATCH 28/57] drivers: class: Add variants of class_find_device()
-Date:   Mon,  3 Jun 2019 16:49:54 +0100
-Message-Id: <1559577023-558-29-git-send-email-suzuki.poulose@arm.com>
+        suzuki.poulose@arm.com,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Subject: [RFC PATCH 29/57] drivers: stm: Use class_find_device_by_name() helper
+Date:   Mon,  3 Jun 2019 16:49:55 +0100
+Message-Id: <1559577023-558-30-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
 References: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
@@ -32,85 +34,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Similar to the bus_find_device_by_*() helpers add wrappers
-for class_find_device() to find devices by generic attributes.
+Use the new class_find_device_by_name() helper.
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- include/linux/device.h | 58 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
+ drivers/hwtracing/stm/core.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index e8d1267..1945c3d 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -528,6 +528,64 @@ extern int class_for_each_device(struct class *class, struct device *start,
- extern struct device *class_find_device(struct class *class,
- 					struct device *start, const void *data,
- 					int (*match)(struct device *, const void *));
-+/**
-+ * class_find_device_by_name - device iterator for locating a particular device
-+ * of a specific name.
-+ * @class: the class we're iterating
-+ * @start: Device to begin with
-+ * @name: name of the device to match
-+ *
-+ * This is similar to the class_find_device() above, but it handles searching
-+ * by a name automatically.
-+ */
-+static inline struct device *class_find_device_by_name(struct class *class,
-+						       struct device *start,
-+						       const void *name)
-+{
-+	return class_find_device(class, start, name, device_match_name);
-+}
-+
-+/**
-+ * class_find_device_by_devt - device iterator for locating a particular device
-+ * by devt.
-+ * @class: the class we're iterating
-+ * @start: Device to begin with
-+ * @devt: devt of the device to match
-+ */
-+static inline struct device *class_find_device_by_devt(struct class *class,
-+						       struct device *start,
-+						       dev_t devt)
-+{
-+	return class_find_device(class, start, &devt, device_match_devt);
-+}
-+
-+/**
-+ * class_find_device_by_of_node - device iterator for locating a particular device
-+ * by of_node.
-+ * @class: the class we're iterating
-+ * @start: Device to begin with
-+ * @np: of_node of the device to match
-+ */
-+static inline struct device *class_find_device_by_of_node(struct class *class,
-+							  struct device *start,
-+							  struct device_node *np)
-+{
-+	return class_find_device(class, start, np, device_match_of_node);
-+}
-+
-+/**
-+ * class_find_device_by_fwnode - device iterator for locating a particular device
-+ * by fwnode.
-+ * @class: the class we're iterating
-+ * @start: Device to begin with
-+ * @fwnode: fwnode of the device to match
-+ */
-+static inline struct device *class_find_device_by_fwnode(struct class *class,
-+							  struct device *start,
-+							  struct fwnode_handle *fwnode)
-+{
-+	return class_find_device(class, start, fwnode, device_match_fwnode);
-+}
+diff --git a/drivers/hwtracing/stm/core.c b/drivers/hwtracing/stm/core.c
+index e55b902..e110958 100644
+--- a/drivers/hwtracing/stm/core.c
++++ b/drivers/hwtracing/stm/core.c
+@@ -89,13 +89,6 @@ static struct class stm_class = {
+ 	.dev_groups	= stm_groups,
+ };
  
- struct class_attribute {
- 	struct attribute attr;
+-static int stm_dev_match(struct device *dev, const void *data)
+-{
+-	const char *name = data;
+-
+-	return sysfs_streq(name, dev_name(dev));
+-}
+-
+ /**
+  * stm_find_device() - find stm device by name
+  * @buf:	character buffer containing the name
+@@ -116,7 +109,7 @@ struct stm_device *stm_find_device(const char *buf)
+ 	if (!stm_core_up)
+ 		return NULL;
+ 
+-	dev = class_find_device(&stm_class, NULL, buf, stm_dev_match);
++	dev = class_find_device_by_name(&stm_class, NULL, buf);
+ 	if (!dev)
+ 		return NULL;
+ 
 -- 
 2.7.4
 
