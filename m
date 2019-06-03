@@ -2,69 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFA7332828
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 07:51:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B85FD32852
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 08:09:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726819AbfFCFvY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 01:51:24 -0400
-Received: from mga09.intel.com ([134.134.136.24]:64428 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726314AbfFCFvX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 01:51:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jun 2019 22:51:23 -0700
-X-ExtLoop1: 1
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.198]) ([10.237.72.198])
-  by fmsmga008.fm.intel.com with ESMTP; 02 Jun 2019 22:51:21 -0700
-Subject: Re: [PATCH 18/22] perf scripts python: exported-sql-viewer.py: Add
- IPC information to the Branch reports
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-References: <20190520113728.14389-1-adrian.hunter@intel.com>
- <20190520113728.14389-19-adrian.hunter@intel.com>
- <20190531164444.GB20408@kernel.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <50fdb104-e965-feab-f1a6-e6b274269448@intel.com>
-Date:   Mon, 3 Jun 2019 08:50:11 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726878AbfFCGJO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 02:09:14 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:25340 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726383AbfFCGJO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 02:09:14 -0400
+X-UUID: 214002602fcd426283422b64a153e3fa-20190603
+X-UUID: 214002602fcd426283422b64a153e3fa-20190603
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <ryder.lee@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1521034927; Mon, 03 Jun 2019 14:09:04 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 3 Jun 2019 14:09:03 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 3 Jun 2019 14:09:03 +0800
+From:   Ryder Lee <ryder.lee@mediatek.com>
+To:     Felix Fietkau <nbd@nbd.name>,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+CC:     Roy Luo <royluo@google.com>, YF Luo <yf.luo@mediatek.com>,
+        Yiwei Chung <yiwei.chung@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Chih-Min Chen <chih-min.Chen@mediatek.com>,
+        <linux-wireless@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH v3 1/2] mt76: mt7615: enable support for mesh
+Date:   Mon, 3 Jun 2019 14:08:43 +0800
+Message-ID: <a1ff446dfc06e2443552e7ec2d754099aacce7df.1559541944.git.ryder.lee@mediatek.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <20190531164444.GB20408@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/05/19 7:44 PM, Arnaldo Carvalho de Melo wrote:
-> Em Mon, May 20, 2019 at 02:37:24PM +0300, Adrian Hunter escreveu:
->> Enhance the "All branches" and "Selected branches" reports to display IPC
->> information if it is available.
-> 
-> So, testing this I noticed that it all starts with the left arrow in every
-> line, that should mean there is some tree there, i.e. look at all those ▶
-> symbols:
-> 
-> Time              CPU Command         PID   TID   Branch Type  In Tx  Insn Cnt  Cyc Cnt  IPC  Branch
-> ▶ 187836112195670 7   simple-retpolin 23003 23003 trace begin  No     0         0        0               0 unknown (unknown) -> 7f6f33d4f110 _start (ld-2.28.so)
-> ▶ 187836112195987 7   simple-retpolin 23003 23003 trace end    No     0         883      0    7f6f33d4f110 _start (ld-2.28.so) -> 0 unknown (unknown)
-> ▶ 187836112199189 7   simple-retpolin 23003 23003 trace begin  No     0         0        0               0 unknown (unknown) -> 7f6f33d4f110 _start (ld-2.28.so)
-> ▶ 187836112199189 7   simple-retpolin 23003 23003 call         No     0         0        0    7f6f33d4f113 _start+0x3 (ld-2.28.so) -> 7f6f33d4ff50 _dl_start (ld-2.28.so)
-> ▶ 187836112199544 7   simple-retpolin 23003 23003 trace end    No     17        996      0.02 7f6f33d4ff73 _dl_start+0x23 (ld-2.28.so) -> 0 unknown (unknown)
-> ▶ 187836112200939 7   simple-retpolin 23003 23003 trace begin  No     0         0        0               0 unknown (unknown) -> 7f6f33d4ff73 _dl_start+0x23 (ld-2.28.so)
-> ▶ 187836112201229 7   simple-retpolin 23003 23003 trace end    No     1         816      0.00 7f6f33d4ff7a _dl_start+0x2a (ld-2.28.so) -> 0 unknown (unknown)
-> ▶ 187836112203500 7   simple-retpolin 23003 23003 trace begin  No     0         0        0               0 unknown (unknown) -> 7f6f33d4ff7a _dl_start+0x2a (ld-2.28.so)
-> 
-> But if you click on it, that ▶ disappears and a new click doesn't make it
-> reappear, looks buggy, but seems like a minor oddity that will not prevent me
-> from applying it now, please check and provide a fix on top of this,
+Enable NL80211_IFTYPE_MESH_POINT and update its path.
 
-The arrow is to display disssassembly, but only if xed is installed and the
-object is in the buildid cache.  Unfortunately, it is not efficient to
-determine if there is anything to expand before the user clicks.
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+---
+Changes since v3 - fix a wrong expression
+Changes since v2 - remove unused definitions
+---
+ drivers/net/wireless/mediatek/mt76/mt7615/init.c | 6 ++++++
+ drivers/net/wireless/mediatek/mt76/mt7615/main.c | 1 +
+ drivers/net/wireless/mediatek/mt76/mt7615/mcu.c  | 4 +++-
+ drivers/net/wireless/mediatek/mt76/mt7615/mcu.h  | 6 ------
+ 4 files changed, 10 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/init.c b/drivers/net/wireless/mediatek/mt76/mt7615/init.c
+index 59f604f3161f..f860af6a42da 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7615/init.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7615/init.c
+@@ -133,6 +133,9 @@ static const struct ieee80211_iface_limit if_limits[] = {
+ 	{
+ 		.max = MT7615_MAX_INTERFACES,
+ 		.types = BIT(NL80211_IFTYPE_AP) |
++#ifdef CONFIG_MAC80211_MESH
++			 BIT(NL80211_IFTYPE_MESH_POINT) |
++#endif
+ 			 BIT(NL80211_IFTYPE_STATION)
+ 	}
+ };
+@@ -195,6 +198,9 @@ int mt7615_register_device(struct mt7615_dev *dev)
+ 	dev->mt76.antenna_mask = 0xf;
+ 
+ 	wiphy->interface_modes = BIT(NL80211_IFTYPE_STATION) |
++#ifdef CONFIG_MAC80211_MESH
++				 BIT(NL80211_IFTYPE_MESH_POINT) |
++#endif
+ 				 BIT(NL80211_IFTYPE_AP);
+ 
+ 	ret = mt76_register_device(&dev->mt76, true, mt7615_rates,
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/main.c b/drivers/net/wireless/mediatek/mt76/mt7615/main.c
+index b0bb7cc12385..585e67fa2728 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7615/main.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7615/main.c
+@@ -37,6 +37,7 @@ static int get_omac_idx(enum nl80211_iftype type, u32 mask)
+ 
+ 	switch (type) {
+ 	case NL80211_IFTYPE_AP:
++	case NL80211_IFTYPE_MESH_POINT:
+ 		/* ap use hw bssid 0 and ext bssid */
+ 		if (~mask & BIT(HW_BSSID_0))
+ 			return HW_BSSID_0;
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
+index 43f70195244c..e82297048449 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
+@@ -754,6 +754,7 @@ int mt7615_mcu_set_bss_info(struct mt7615_dev *dev,
+ 
+ 	switch (vif->type) {
+ 	case NL80211_IFTYPE_AP:
++	case NL80211_IFTYPE_MESH_POINT:
+ 		tx_wlan_idx = mvif->sta.wcid.idx;
+ 		conn_type = CONNECTION_INFRA_AP;
+ 		break;
+@@ -968,7 +969,7 @@ int mt7615_mcu_add_wtbl(struct mt7615_dev *dev, struct ieee80211_vif *vif,
+ 		.rx_wtbl = {
+ 			.tag = cpu_to_le16(WTBL_RX),
+ 			.len = cpu_to_le16(sizeof(struct wtbl_rx)),
+-			.rca1 = vif->type != NL80211_IFTYPE_AP,
++			.rca1 = vif->type == NL80211_IFTYPE_STATION,
+ 			.rca2 = 1,
+ 			.rv = 1,
+ 		},
+@@ -1042,6 +1043,7 @@ static void sta_rec_convert_vif_type(enum nl80211_iftype type, u32 *conn_type)
+ {
+ 	switch (type) {
+ 	case NL80211_IFTYPE_AP:
++	case NL80211_IFTYPE_MESH_POINT:
+ 		if (conn_type)
+ 			*conn_type = CONNECTION_INFRA_STA;
+ 		break;
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.h b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.h
+index e96efb13fa4d..0915cb735699 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.h
++++ b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.h
+@@ -105,25 +105,19 @@ enum {
+ #define STA_TYPE_STA		BIT(0)
+ #define STA_TYPE_AP		BIT(1)
+ #define STA_TYPE_ADHOC		BIT(2)
+-#define STA_TYPE_TDLS		BIT(3)
+ #define STA_TYPE_WDS		BIT(4)
+ #define STA_TYPE_BC		BIT(5)
+ 
+ #define NETWORK_INFRA		BIT(16)
+ #define NETWORK_P2P		BIT(17)
+ #define NETWORK_IBSS		BIT(18)
+-#define NETWORK_MESH		BIT(19)
+-#define NETWORK_BOW		BIT(20)
+ #define NETWORK_WDS		BIT(21)
+ 
+ #define CONNECTION_INFRA_STA	(STA_TYPE_STA | NETWORK_INFRA)
+ #define CONNECTION_INFRA_AP	(STA_TYPE_AP | NETWORK_INFRA)
+ #define CONNECTION_P2P_GC	(STA_TYPE_STA | NETWORK_P2P)
+ #define CONNECTION_P2P_GO	(STA_TYPE_AP | NETWORK_P2P)
+-#define CONNECTION_MESH_STA	(STA_TYPE_STA | NETWORK_MESH)
+-#define CONNECTION_MESH_AP	(STA_TYPE_AP | NETWORK_MESH)
+ #define CONNECTION_IBSS_ADHOC	(STA_TYPE_ADHOC | NETWORK_IBSS)
+-#define CONNECTION_TDLS		(STA_TYPE_STA | NETWORK_INFRA | STA_TYPE_TDLS)
+ #define CONNECTION_WDS		(STA_TYPE_WDS | NETWORK_WDS)
+ #define CONNECTION_INFRA_BC	(STA_TYPE_BC | NETWORK_INFRA)
+ 
+-- 
+2.18.0
+
