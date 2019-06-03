@@ -2,117 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2074833A87
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 23:59:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8135339D1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 22:36:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbfFCV7k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 17:59:40 -0400
-Received: from mga11.intel.com ([192.55.52.93]:65178 "EHLO mga11.intel.com"
+        id S1726559AbfFCUgM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 16:36:12 -0400
+Received: from mga18.intel.com ([134.134.136.126]:21498 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726572AbfFCV7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 17:59:39 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1726055AbfFCUgM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 16:36:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 13:37:12 -0700
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 13:36:11 -0700
 X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by orsmga008.jf.intel.com with ESMTP; 03 Jun 2019 13:37:12 -0700
-Date:   Mon, 3 Jun 2019 13:37:12 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Cedric Xing <cedric.xing@intel.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-sgx@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, Serge Ayoun <serge.ayoun@intel.com>,
-        Shay Katz-zamir <shay.katz-zamir@intel.com>,
-        Haitao Huang <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kai Svahn <kai.svahn@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Kai Huang <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        William Roberts <william.c.roberts@intel.com>,
-        Philip Tricca <philip.b.tricca@intel.com>
-Subject: Re: [RFC PATCH 3/9] x86/sgx: Allow userspace to add multiple pages
- in single ioctl()
-Message-ID: <20190603203712.GI13384@linux.intel.com>
-References: <20190531233159.30992-1-sean.j.christopherson@intel.com>
- <20190531233159.30992-4-sean.j.christopherson@intel.com>
- <beb8ac7a-b580-8ff2-7467-fb2870fb8cf0@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <beb8ac7a-b580-8ff2-7467-fb2870fb8cf0@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-IronPort-AV: E=Sophos;i="5.60,548,1549958400"; 
+   d="scan'208";a="181288485"
+Received: from tthayer-hp-z620.an.intel.com ([10.122.105.146])
+  by fmsmga002.fm.intel.com with ESMTP; 03 Jun 2019 13:36:10 -0700
+From:   thor.thayer@linux.intel.com
+To:     bp@alien8.de, mchehab@kernel.org, james.morse@arm.com
+Cc:     linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thor Thayer <thor.thayer@linux.intel.com>
+Subject: [PATCH] EDAC/altera: Warm Reset option for Stratix10 peripheral DBE
+Date:   Mon,  3 Jun 2019 15:37:49 -0500
+Message-Id: <1559594269-10077-1-git-send-email-thor.thayer@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 03, 2019 at 01:14:45PM -0700, Dave Hansen wrote:
-> On 5/31/19 4:31 PM, Sean Christopherson wrote:
-> > -struct sgx_enclave_add_page {
-> > +struct sgx_enclave_add_pages {
-> >  	__u64	addr;
-> >  	__u64	src;
-> >  	__u64	secinfo;
-> > +	__u32	nr_pages;
-> >  	__u16	mrmask;
-> >  } __attribute__((__packed__));
-> 
-> IMNHO this follows a user interface anti-pattern: exposing page sizes
-> where not strictly required.
-> 
-> Think of how this would look to an application if page size was
-> variable.  With this interface, they always need to scale their
-> operations by page size instead of just aligning it.
+From: Thor Thayer <thor.thayer@linux.intel.com>
 
-I briefly considered taking size in bytes, but I took a shortcut because
-EPC pages are architecturally defined to be 4k sized and aligned.  That
-being said, I don't necessarily disagree, especially if nr_pages isn't
-squeezed into a u32.
+The Stratix10 peripheral FIFO memories can recover from double
+bit errors with a warm reset instead of a cold reset.
+Add the option of a warm reset for peripheral (USB, Ethernet)
+memories.
+
+CPU memories such as SDRAM and OCRAM require a cold reset for
+DBEs.
+Filter on whether the error is a SDRAM/OCRAM or a peripheral
+FIFO memory to determine which reset to use when the warm
+reset option is configured.
+
+Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+---
+ drivers/edac/Kconfig       |  9 +++++++++
+ drivers/edac/altera_edac.c | 31 +++++++++++++++++++++++++++++--
+ drivers/edac/altera_edac.h |  4 ++++
+ 3 files changed, 42 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
+index 47eb4d13ed5f..e47c428d485d 100644
+--- a/drivers/edac/Kconfig
++++ b/drivers/edac/Kconfig
+@@ -394,6 +394,15 @@ config EDAC_ALTERA
+ 	  Altera SOCs. This is the global enable for the
+ 	  various Altera peripherals.
  
-> BTW, why is nr_pages a u32?  Do we never envision a case where you can
-> add more than 4TB of memory to an enclave? ;)
++config EDAC_ALTERA_ARM64_WARM_RESET
++	bool "Altera ARM64 Peripheral Warm Reset"
++	depends on EDAC_ALTERA=y && ARM64
++	help
++	  Support for Warm Reset on peripheral FIFO double bit errors
++	  on SoCFPGA ARM64 platforms. Otherwise a peripheral FIFO DBE
++	  will cause a cold reset. SDRAM and OCRAM DBEs always cause
++	  a cold reset.
++
+ config EDAC_ALTERA_SDRAM
+ 	bool "Altera SDRAM ECC"
+ 	depends on EDAC_ALTERA=y
+diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
+index 8816f74a22b4..179601f14b48 100644
+--- a/drivers/edac/altera_edac.c
++++ b/drivers/edac/altera_edac.c
+@@ -2036,6 +2036,19 @@ static const struct irq_domain_ops a10_eccmgr_ic_ops = {
+ /* panic routine issues reboot on non-zero panic_timeout */
+ extern int panic_timeout;
+ 
++#ifdef CONFIG_EDAC_ALTERA_ARM64_WARM_RESET
++/* EL3 SMC call to setup CPUs for warm reset */
++void panic_smp_self_stop(void)
++{
++	struct arm_smccc_res result;
++
++	__cpu_disable();
++	cpu_relax();
++	arm_smccc_smc(INTEL_SIP_SMC_ECC_DBE, S10_WARM_RESET_WFI_FLAG,
++		      S10_WARM_RESET_WFI_FLAG, 0, 0, 0, 0, 0, &result);
++}
++#endif
++
+ /*
+  * The double bit error is handled through SError which is fatal. This is
+  * called as a panic notifier to printout ECC error info as part of the panic.
+@@ -2067,14 +2080,28 @@ static int s10_edac_dberr_handler(struct notifier_block *this,
+ 			regmap_write(edac->ecc_mgr_map,
+ 				     S10_SYSMGR_UE_ADDR_OFST, err_addr);
+ 			edac_printk(KERN_ERR, EDAC_DEVICE,
+-				    "EDAC: [Fatal DBE on %s @ 0x%08X]\n",
+-				    ed->edac_dev_name, err_addr);
++				    "EDAC: [Fatal DBE on %s [CPU=%d] @ 0x%08X]\n",
++				    ed->edac_dev_name, raw_smp_processor_id(),
++				    err_addr);
+ 			break;
+ 		}
+ 		/* Notify the System through SMC. Reboot delay = 1 second */
++#ifdef CONFIG_EDAC_ALTERA_ARM64_WARM_RESET
++		/* Handle peripheral FIFO DBE as Warm Resets */
++		if (dberror & S10_COLD_RESET_MASK) {
++			panic_timeout = 1;
++			arm_smccc_smc(INTEL_SIP_SMC_ECC_DBE, dberror, 0, 0, 0,
++				      0, 0, 0, &result);
++		} else {
++			arm_smccc_smc(INTEL_SIP_SMC_ECC_DBE,
++				      S10_WARM_RESET_WFI_FLAG | dberror, 0, 0,
++				      0, 0, 0, 0, &result);
++		}
++#else
+ 		panic_timeout = 1;
+ 		arm_smccc_smc(INTEL_SIP_SMC_ECC_DBE, dberror, 0, 0, 0, 0,
+ 			      0, 0, &result);
++#endif
+ 	}
+ 
+ 	return NOTIFY_DONE;
+diff --git a/drivers/edac/altera_edac.h b/drivers/edac/altera_edac.h
+index 55654cc4bcdf..e5936fbe3964 100644
+--- a/drivers/edac/altera_edac.h
++++ b/drivers/edac/altera_edac.h
+@@ -327,6 +327,10 @@ struct altr_sdram_mc_data {
+ #define ECC_READ_EOVR                     0x2
+ #define ECC_READ_EDOVR                    0x3
+ 
++/* DRAM and OCRAM require cold reset */
++#define S10_COLD_RESET_MASK               0x30002
++#define S10_WARM_RESET_WFI_FLAG           BIT(31)
++
+ struct altr_edac_device_dev;
+ 
+ struct edac_device_prv_data {
+-- 
+2.7.4
 
-Heh, fair enough.  IIRC, a while back someone posted about having problems
-building a 512gb enclave in a 92mb EPC...
-
-How about this for the intermediate patch:
-
-	struct sgx_enclave_add_region {
-		__u64	addr;
-		__u64	src;
-		__u64	size;
-		__u64	secinfo;
-		__u16	mrmask;
-		__u16	reserved16;
-		__u32	reserved;
-	}
-
-and with the flags field:
-
-	struct sgx_enclave_add_region {
-		__u64	addr;
-		__u64	src;
-		__u64	size;
-		__u64	secinfo;
-		__u16	mrmask;
-		__u16	flags;
-		__u32	reserved;
-	}
