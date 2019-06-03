@@ -2,94 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B59632AD7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 10:29:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D3FC32AC8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 10:28:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727755AbfFCI3s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 04:29:48 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55616 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725856AbfFCI3r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 04:29:47 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 7D2FF80295; Mon,  3 Jun 2019 10:29:35 +0200 (CEST)
-Date:   Mon, 3 Jun 2019 10:29:45 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        dri-devel@lists.freedesktop.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCHv6 0/4] omapdrm: DSI command mode panel support
-Message-ID: <20190603082945.GA29122@amd>
-References: <20190523200756.25314-1-sebastian.reichel@collabora.com>
- <60c45d23-de2f-d94a-c3d7-146a2bee538f@ti.com>
- <20190527112122.GJ5447@atomide.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="WIyZ46R2i8wDzkSu"
-Content-Disposition: inline
-In-Reply-To: <20190527112122.GJ5447@atomide.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1727704AbfFCI2a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 04:28:30 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:50576 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725856AbfFCI2a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 04:28:30 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 538DE1A03AD;
+        Mon,  3 Jun 2019 10:28:27 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9E7BD1A03A5;
+        Mon,  3 Jun 2019 10:28:20 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 70820402D5;
+        Mon,  3 Jun 2019 16:28:12 +0800 (SGT)
+From:   peng.fan@nxp.com
+To:     robh+dt@kernel.org, mark.rutland@arm.com, jassisinghbrar@gmail.com,
+        sudeep.holla@arm.com, f.fainelli@gmail.com
+Cc:     kernel@pengutronix.de, linux-imx@nxp.com, shawnguo@kernel.org,
+        festevam@gmail.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        andre.przywara@arm.com, van.freenix@gmail.com,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V2 0/2] mailbox: arm: introduce smc triggered mailbox
+Date:   Mon,  3 Jun 2019 16:30:03 +0800
+Message-Id: <20190603083005.4304-1-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Peng Fan <peng.fan@nxp.com>
 
---WIyZ46R2i8wDzkSu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is a modified version from Andre Przywara's patch series
+https://lore.kernel.org/patchwork/cover/812997/.
+The modification are mostly:
+Introduce arm,num-chans
+Introduce arm_smccc_mbox_cmd
+txdone_poll and txdone_irq are both set to false
+arm,func-ids are kept, but as an optional property.
+Rewords SCPI to SCMI, because I am trying SCMI over SMC, not SCPI.
+Introduce interrupts notification.
 
-Hi!
+[1] is a draft implementation of i.MX8MM SCMI ATF implementation that
+use smc as mailbox, power/clk is included, but only part of clk has been
+implemented to work with hardware, power domain only supports get name
+for now.
 
-> > > Here is another round of the DSI command mode panel patchset
-> > > integrating the feedback from PATCHv5. The patches are based
-> > > on v5.2-rc1 tag. It does not contain the patches required for
-> > > OMAP3 support (it needs a workaround for a hardware bug) and
-> > > for automatic display rotation. They should get their own series,
-> > > once after everything has been moved to DRM panel API. I think
-> > > DRM panel conversion should happen _after_ this series, since
-> > > otherwise there is a high risk of bricking DSI support completely.
-> > > I already started a WIP branch for converting DSI to the DRM panel
-> > > API on top of this patchset.
-> >=20
-> > Looks good to me. For some reason I can't boot 5.2-rc2 (on x15) so I ha=
-ven't
-> > been able to test yet. I'll pick the series up in any case, and I'll te=
-st it
-> > when I get the kernel booting.
->=20
-> Great good to have these merged finally :)
->=20
-> Hmm I wonder if some x15 models are affected by the SoC variant
-> changes queued in my fixes branch?
+The traditional Linux mailbox mechanism uses some kind of dedicated hardware
+IP to signal a condition to some other processing unit, typically a dedicated
+management processor.
+This mailbox feature is used for instance by the SCMI protocol to signal a
+request for some action to be taken by the management processor.
+However some SoCs does not have a dedicated management core to provide
+those services. In order to service TEE and to avoid linux shutdown
+power and clock that used by TEE, need let firmware to handle power
+and clock, the firmware here is ARM Trusted Firmware that could also
+run SCMI service.
 
-I still don't see the patches in next-20190603 . Are they expected to
-be there, or should I use different tree?
+The existing SCMI implementation uses a rather flexible shared memory
+region to communicate commands and their parameters, it still requires a
+mailbox to actually trigger the action.
 
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+This patch series provides a Linux mailbox compatible service which uses
+smc calls to invoke firmware code, for instance taking care of SCMI requests.
+The actual requests are still communicated using the standard SCMI way of
+shared memory regions, but a dedicated mailbox hardware IP can be replaced via
+this new driver.
 
---WIyZ46R2i8wDzkSu
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+This simple driver uses the architected SMC calling convention to trigger
+firmware services, also allows for using "HVC" calls to call into hypervisors
+or firmware layers running in the EL2 exception level.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Patch 1 contains the device tree binding documentation, patch 2 introduces
+the actual mailbox driver.
 
-iEYEARECAAYFAlz02nkACgkQMOfwapXb+vJNjwCgxBzU0XaaaAImhYPAPGMUURue
-jMUAoJpDkOfXt+oO5pGBCMG6SHJyy49H
-=nupB
------END PGP SIGNATURE-----
+Please note that this driver just provides a generic mailbox mechanism,
+It could support synchronous TX/RX, or synchronous TX with asynchronous
+RX. And while providing SCMI services was the reason for this exercise,
+this driver is in no way bound to this use case, but can be used generically
+where the OS wants to signal a mailbox condition to firmware or a
+hypervisor.
+Also the driver is in no way meant to replace any existing firmware
+interface, but actually to complement existing interfaces.
 
---WIyZ46R2i8wDzkSu--
+[1] https://github.com/MrVan/arm-trusted-firmware/tree/scmi
+
+Peng Fan (2):
+  DT: mailbox: add binding doc for the ARM SMC mailbox
+  mailbox: introduce ARM SMC based mailbox
+
+ .../devicetree/bindings/mailbox/arm-smc.txt        | 101 +++++++++++
+ drivers/mailbox/Kconfig                            |   7 +
+ drivers/mailbox/Makefile                           |   2 +
+ drivers/mailbox/arm-smc-mailbox.c                  | 190 +++++++++++++++++++++
+ include/linux/mailbox/arm-smc-mailbox.h            |  10 ++
+ 5 files changed, 310 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/arm-smc.txt
+ create mode 100644 drivers/mailbox/arm-smc-mailbox.c
+ create mode 100644 include/linux/mailbox/arm-smc-mailbox.h
+
+-- 
+2.16.4
+
