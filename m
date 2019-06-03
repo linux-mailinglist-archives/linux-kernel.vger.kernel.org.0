@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 359DA33AC7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:07:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BABC733AF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:16:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726711AbfFCWHI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 18:07:08 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:38900 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726336AbfFCWHH (ORCPT
+        id S1726795AbfFCWP5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 18:15:57 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37684 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726241AbfFCWP5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 18:07:07 -0400
-Received: by mail-pf1-f194.google.com with SMTP id a186so10680522pfa.5
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 15:07:07 -0700 (PDT)
+        Mon, 3 Jun 2019 18:15:57 -0400
+Received: by mail-pg1-f194.google.com with SMTP id 20so9074621pgr.4
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 15:15:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0EoeyvI+6nSZVdPsXoo6A3bLjv7jCmnakg13/Vo0S7g=;
-        b=jQQKpymP0x+HXM6AidEDpl+oryXhrFlsULaSJxrk+bRuLIK2zph32NK7fQ9YAJaCBe
-         N7+enaR2Vc1oYLo8aptLEfjl+dIsZ+yBuVWMXGIzNgNQI9SdCmD/jLhITwBQ9ehLSkb+
-         XEVP/h3PMZVC5vzDLRMA2ctacgD5ioiLhXBcIfjUB5IUWXVcT3hHScDrk9eh/9mNvu5o
-         PWXDbM+Um+WQ9hcOjSXq+jo3FDIH6cYOI+MipuzXRWJvoaNI+qxII2acSgoctNl9nHHf
-         375AuTgxJjHK4jIuhHyjGLr4uaIo2/oQ034Ox+mp98rzfJnHVOkExpOIKkw9vVPM1s+r
-         yyag==
+        bh=z23PZhEFw+QhEt/mQOsZQQYtYHRN5d+bP7DeTd5XrzA=;
+        b=DVH2GCKNrNgADjceKBBm6o8NfcLS2rdp3xbn242c7DdynX2bTZq4lklw8oXnSFQnsP
+         NGyQM9FAa2/b8444R5NSB4X4p380FKi//ZWqYSF8qzZaECNMNRpbAybJZ2BM1iWaV+s3
+         3eFr0kg1fA8ronXzk9Pr181m/Ny9gvc2kpgw9erAMN5iYNk2qxPccfp3hm+epjm3HBXt
+         1bbGpvoMnBQUqho/8UxBBQGfussO1/i8lX0lnXrCrpNWBTzZQjUao2PJ+zbEwfsPvsbW
+         URn6vyjMORUJY2XLzMBMrP5keu32Tll/EFKeFSibqGMVbJAeC06fgohHiwrA/2dgpz5v
+         4obA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0EoeyvI+6nSZVdPsXoo6A3bLjv7jCmnakg13/Vo0S7g=;
-        b=fXEH/S5EbEJL2b6lp3NmmufeVU6mikGZOMeGjzPg1TvCeZm09XcIp6Hnghk2wqlAim
-         +JpdWOsLt42RK/VlQ2jF6/Q9a76SSxfcoDjzu88EHJgMTj8mhjHkRSYPSZ9hcUD5do4o
-         wY7v/4Wx+YBH8bkkhHXo7vH6WsK/jrNXvTcesBDADyoGJe0/I0H2gY6hxQGwhlrl4FrV
-         4HT3wb2xqIcgPCgIzkzbnhPep8scFG9YVJQSquBkQgnRJEWxK89XG0VzSfAOpcEB0X9g
-         uxRx8xqQXpiLou9uWRgGLZwEMfFiUqUp1DSAKk9n690VZNG5DQGp+0c9u3nrK09EuSpU
-         t4qQ==
-X-Gm-Message-State: APjAAAXpzE04zkA3KawjIc8zdF/5R2X6UptQuZOY6z1sPrbx2jVI+mwH
-        QCGez4XYMh7MXDWq6YYwa5jDxw==
-X-Google-Smtp-Source: APXvYqxa0AysWp131gGXPRfGsUoOrmmAU0oaOx10qyqfliSX/gy0fcowTdd1qaAaihU44ugQyNlEYQ==
-X-Received: by 2002:a63:a34c:: with SMTP id v12mr30337699pgn.198.1559596104078;
-        Mon, 03 Jun 2019 14:08:24 -0700 (PDT)
+        bh=z23PZhEFw+QhEt/mQOsZQQYtYHRN5d+bP7DeTd5XrzA=;
+        b=oy9ar7lrEkhwBToKbAnvwrq5RJ5xhWP3Wsd+tSCKVkOdw1/C4RWdB7crMNxOOiuNyF
+         8r7n//HzxV4ragOQzjzc5T0I1ITG1DsFXofExY/U15dH5CNG4Z9dlTvjaJnf01dB5aKz
+         JVA26Sc1bZD3LS8HLKsAGvKboWaDvctVYI2JSZJFD0UqNChOzGl5h3iEQ06nq6I/iCsm
+         2Dwt1O9utPeZpa2v5RZqviw19G9t8y6CM3He0SjVSuX/SwnQxf02flhMWcefpmqoEfmI
+         naH6sUad3zum6xJca8OXm7YEsoe2x853j8qhBH3Hnt72he6Fkhe8xsHo3VllJxJlPVHk
+         bfpA==
+X-Gm-Message-State: APjAAAXxItMXuhDrF0WajAd7kNgBa8n7QoO54opI2Yd8BS8xNiF62P/s
+        e/B38UNKypJLIu99KbfA3gRU4Q==
+X-Google-Smtp-Source: APXvYqwW2xQ5NzacN/EZXV09Xd6hmdDoAcI7Jqj6YbOTZQDIG92ILIAFvZ/468Og785TyGk0vKofnA==
+X-Received: by 2002:a63:1a5e:: with SMTP id a30mr27923212pgm.433.1559596106992;
+        Mon, 03 Jun 2019 14:08:26 -0700 (PDT)
 Received: from localhost ([2620:10d:c091:500::1:9fa4])
-        by smtp.gmail.com with ESMTPSA id n32sm7753279pji.29.2019.06.03.14.08.23
+        by smtp.gmail.com with ESMTPSA id j15sm18799263pfn.187.2019.06.03.14.08.25
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Jun 2019 14:08:23 -0700 (PDT)
+        Mon, 03 Jun 2019 14:08:25 -0700 (PDT)
 From:   Johannes Weiner <hannes@cmpxchg.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
@@ -52,9 +52,9 @@ Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
         cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-team@fb.com
-Subject: [PATCH 01/11] mm: vmscan: move inactive_list_is_low() swap check to the caller
-Date:   Mon,  3 Jun 2019 17:07:36 -0400
-Message-Id: <20190603210746.15800-2-hannes@cmpxchg.org>
+Subject: [PATCH 02/11] mm: clean up and clarify lruvec lookup procedure
+Date:   Mon,  3 Jun 2019 17:07:37 -0400
+Message-Id: <20190603210746.15800-3-hannes@cmpxchg.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190603210746.15800-1-hannes@cmpxchg.org>
 References: <20190603210746.15800-1-hannes@cmpxchg.org>
@@ -65,59 +65,256 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-inactive_list_is_low() should be about one thing: checking the ratio
-between inactive and active list. Kitchensink checks like the one for
-swap space makes the function hard to use and modify its
-callsites. Luckly, most callers already have an understanding of the
-swap situation, so it's easy to clean up.
+There is a per-memcg lruvec and a NUMA node lruvec. Which one is being
+used is somewhat confusing right now, and it's easy to make mistakes -
+especially when it comes to global reclaim.
 
-get_scan_count() has its own, memcg-aware swap check, and doesn't even
-get to the inactive_list_is_low() check on the anon list when there is
-no swap space available.
+How it works: when memory cgroups are enabled, we always use the
+root_mem_cgroup's per-node lruvecs. When memory cgroups are not
+compiled in or disabled at runtime, we use pgdat->lruvec.
 
-shrink_list() is called on the results of get_scan_count(), so that
-check is redundant too.
+Document that in a comment.
 
-age_active_anon() has its own totalswap_pages check right before it
-checks the list proportions.
+Due to the way the reclaim code is generalized, all lookups use the
+mem_cgroup_lruvec() helper function, and nobody should have to find
+the right lruvec manually right now. But to avoid future mistakes,
+rename the pgdat->lruvec member to pgdat->__lruvec and delete the
+convenience wrapper that suggests it's a commonly accessed member.
 
-The shrink_node_memcg() site is the only one that doesn't do its own
-swap check. Add it there.
-
-Then delete the swap check from inactive_list_is_low().
+While in this area, swap the mem_cgroup_lruvec() argument order. The
+name suggests a memcg operation, yet it takes a pgdat first and a
+memcg second. I have to double take every time I call this. Fix that.
 
 Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
 ---
- mm/vmscan.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ include/linux/memcontrol.h | 26 +++++++++++++-------------
+ include/linux/mmzone.h     | 15 ++++++++-------
+ mm/memcontrol.c            |  6 +++---
+ mm/page_alloc.c            |  2 +-
+ mm/vmscan.c                |  6 +++---
+ mm/workingset.c            |  8 ++++----
+ 6 files changed, 32 insertions(+), 31 deletions(-)
 
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index fa1e8cb1b3e2..fc32cfaebf32 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -382,22 +382,22 @@ mem_cgroup_nodeinfo(struct mem_cgroup *memcg, int nid)
+ }
+ 
+ /**
+- * mem_cgroup_lruvec - get the lru list vector for a node or a memcg zone
+- * @node: node of the wanted lruvec
++ * mem_cgroup_lruvec - get the lru list vector for a memcg & node
+  * @memcg: memcg of the wanted lruvec
++ * @node: node of the wanted lruvec
+  *
+- * Returns the lru list vector holding pages for a given @node or a given
+- * @memcg and @zone. This can be the node lruvec, if the memory controller
+- * is disabled.
++ * Returns the lru list vector holding pages for a given @memcg &
++ * @node combination. This can be the node lruvec, if the memory
++ * controller is disabled.
+  */
+-static inline struct lruvec *mem_cgroup_lruvec(struct pglist_data *pgdat,
+-				struct mem_cgroup *memcg)
++static inline struct lruvec *mem_cgroup_lruvec(struct mem_cgroup *memcg,
++					       struct pglist_data *pgdat)
+ {
+ 	struct mem_cgroup_per_node *mz;
+ 	struct lruvec *lruvec;
+ 
+ 	if (mem_cgroup_disabled()) {
+-		lruvec = node_lruvec(pgdat);
++		lruvec = &pgdat->__lruvec;
+ 		goto out;
+ 	}
+ 
+@@ -716,7 +716,7 @@ static inline void __mod_lruvec_page_state(struct page *page,
+ 		return;
+ 	}
+ 
+-	lruvec = mem_cgroup_lruvec(pgdat, page->mem_cgroup);
++	lruvec = mem_cgroup_lruvec(page->mem_cgroup, pgdat);
+ 	__mod_lruvec_state(lruvec, idx, val);
+ }
+ 
+@@ -887,16 +887,16 @@ static inline void mem_cgroup_migrate(struct page *old, struct page *new)
+ {
+ }
+ 
+-static inline struct lruvec *mem_cgroup_lruvec(struct pglist_data *pgdat,
+-				struct mem_cgroup *memcg)
++static inline struct lruvec *mem_cgroup_lruvec(struct mem_cgroup *memcg,
++					       struct pglist_data *pgdat)
+ {
+-	return node_lruvec(pgdat);
++	return &pgdat->__lruvec;
+ }
+ 
+ static inline struct lruvec *mem_cgroup_page_lruvec(struct page *page,
+ 						    struct pglist_data *pgdat)
+ {
+-	return &pgdat->lruvec;
++	return &pgdat->__lruvec;
+ }
+ 
+ static inline bool mm_match_cgroup(struct mm_struct *mm,
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 427b79c39b3c..95d63a395f40 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -761,7 +761,13 @@ typedef struct pglist_data {
+ #endif
+ 
+ 	/* Fields commonly accessed by the page reclaim scanner */
+-	struct lruvec		lruvec;
++
++	/*
++	 * NOTE: THIS IS UNUSED IF MEMCG IS ENABLED.
++	 *
++	 * Use mem_cgroup_lruvec() to look up lruvecs.
++	 */
++	struct lruvec		__lruvec;
+ 
+ 	unsigned long		flags;
+ 
+@@ -784,11 +790,6 @@ typedef struct pglist_data {
+ #define node_start_pfn(nid)	(NODE_DATA(nid)->node_start_pfn)
+ #define node_end_pfn(nid) pgdat_end_pfn(NODE_DATA(nid))
+ 
+-static inline struct lruvec *node_lruvec(struct pglist_data *pgdat)
+-{
+-	return &pgdat->lruvec;
+-}
+-
+ static inline unsigned long pgdat_end_pfn(pg_data_t *pgdat)
+ {
+ 	return pgdat->node_start_pfn + pgdat->node_spanned_pages;
+@@ -826,7 +827,7 @@ static inline struct pglist_data *lruvec_pgdat(struct lruvec *lruvec)
+ #ifdef CONFIG_MEMCG
+ 	return lruvec->pgdat;
+ #else
+-	return container_of(lruvec, struct pglist_data, lruvec);
++	return container_of(lruvec, struct pglist_data, __lruvec);
+ #endif
+ }
+ 
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index c193aef3ba9e..6de8ca735ee2 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -1200,7 +1200,7 @@ struct lruvec *mem_cgroup_page_lruvec(struct page *page, struct pglist_data *pgd
+ 	struct lruvec *lruvec;
+ 
+ 	if (mem_cgroup_disabled()) {
+-		lruvec = &pgdat->lruvec;
++		lruvec = &pgdat->__lruvec;
+ 		goto out;
+ 	}
+ 
+@@ -1518,7 +1518,7 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
+ static bool test_mem_cgroup_node_reclaimable(struct mem_cgroup *memcg,
+ 		int nid, bool noswap)
+ {
+-	struct lruvec *lruvec = mem_cgroup_lruvec(NODE_DATA(nid), memcg);
++	struct lruvec *lruvec = mem_cgroup_lruvec(memcg, NODE_DATA(nid));
+ 
+ 	if (lruvec_page_state(lruvec, NR_INACTIVE_FILE) ||
+ 	    lruvec_page_state(lruvec, NR_ACTIVE_FILE))
+@@ -3406,7 +3406,7 @@ static int mem_cgroup_move_charge_write(struct cgroup_subsys_state *css,
+ static unsigned long mem_cgroup_node_nr_lru_pages(struct mem_cgroup *memcg,
+ 					   int nid, unsigned int lru_mask)
+ {
+-	struct lruvec *lruvec = mem_cgroup_lruvec(NODE_DATA(nid), memcg);
++	struct lruvec *lruvec = mem_cgroup_lruvec(memcg, NODE_DATA(nid));
+ 	unsigned long nr = 0;
+ 	enum lru_list lru;
+ 
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index a345418b548e..cd8e64e536f7 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -6619,7 +6619,7 @@ static void __meminit pgdat_init_internals(struct pglist_data *pgdat)
+ 
+ 	pgdat_page_ext_init(pgdat);
+ 	spin_lock_init(&pgdat->lru_lock);
+-	lruvec_init(node_lruvec(pgdat));
++	lruvec_init(&pgdat->__lruvec);
+ }
+ 
+ static void __meminit zone_init_internals(struct zone *zone, enum zone_type idx, int nid,
 diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 84dcb651d05c..f396424850aa 100644
+index f396424850aa..853be16ee5e2 100644
 --- a/mm/vmscan.c
 +++ b/mm/vmscan.c
-@@ -2165,13 +2165,6 @@ static bool inactive_list_is_low(struct lruvec *lruvec, bool file,
- 	unsigned long refaults;
- 	unsigned long gb;
+@@ -2477,7 +2477,7 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
+ static void shrink_node_memcg(struct pglist_data *pgdat, struct mem_cgroup *memcg,
+ 			      struct scan_control *sc)
+ {
+-	struct lruvec *lruvec = mem_cgroup_lruvec(pgdat, memcg);
++	struct lruvec *lruvec = mem_cgroup_lruvec(memcg, pgdat);
+ 	unsigned long nr[NR_LRU_LISTS];
+ 	unsigned long targets[NR_LRU_LISTS];
+ 	unsigned long nr_to_scan;
+@@ -2988,7 +2988,7 @@ static void snapshot_refaults(struct mem_cgroup *root_memcg, pg_data_t *pgdat)
+ 		unsigned long refaults;
+ 		struct lruvec *lruvec;
  
--	/*
--	 * If we don't have swap space, anonymous page deactivation
--	 * is pointless.
--	 */
--	if (!file && !total_swap_pages)
--		return false;
--
- 	inactive = lruvec_lru_size(lruvec, inactive_lru, sc->reclaim_idx);
- 	active = lruvec_lru_size(lruvec, active_lru, sc->reclaim_idx);
+-		lruvec = mem_cgroup_lruvec(pgdat, memcg);
++		lruvec = mem_cgroup_lruvec(memcg, pgdat);
+ 		refaults = lruvec_page_state_local(lruvec, WORKINGSET_ACTIVATE);
+ 		lruvec->refaults = refaults;
+ 	} while ((memcg = mem_cgroup_iter(root_memcg, memcg, NULL)));
+@@ -3351,7 +3351,7 @@ static void age_active_anon(struct pglist_data *pgdat,
  
-@@ -2592,7 +2585,7 @@ static void shrink_node_memcg(struct pglist_data *pgdat, struct mem_cgroup *memc
- 	 * Even if we did not try to evict anon pages at all, we want to
- 	 * rebalance the anon lru active/inactive ratio.
- 	 */
--	if (inactive_list_is_low(lruvec, false, sc, true))
-+	if (total_swap_pages && inactive_list_is_low(lruvec, false, sc, true))
- 		shrink_active_list(SWAP_CLUSTER_MAX, lruvec,
- 				   sc, LRU_ACTIVE_ANON);
+ 	memcg = mem_cgroup_iter(NULL, NULL, NULL);
+ 	do {
+-		struct lruvec *lruvec = mem_cgroup_lruvec(pgdat, memcg);
++		struct lruvec *lruvec = mem_cgroup_lruvec(memcg, pgdat);
+ 
+ 		if (inactive_list_is_low(lruvec, false, sc, true))
+ 			shrink_active_list(SWAP_CLUSTER_MAX, lruvec,
+diff --git a/mm/workingset.c b/mm/workingset.c
+index e0b4edcb88c8..2aaa70bea99c 100644
+--- a/mm/workingset.c
++++ b/mm/workingset.c
+@@ -233,7 +233,7 @@ void *workingset_eviction(struct page *page)
+ 	VM_BUG_ON_PAGE(page_count(page), page);
+ 	VM_BUG_ON_PAGE(!PageLocked(page), page);
+ 
+-	lruvec = mem_cgroup_lruvec(pgdat, memcg);
++	lruvec = mem_cgroup_lruvec(memcg, pgdat);
+ 	eviction = atomic_long_inc_return(&lruvec->inactive_age);
+ 	return pack_shadow(memcgid, pgdat, eviction, PageWorkingset(page));
  }
+@@ -280,7 +280,7 @@ void workingset_refault(struct page *page, void *shadow)
+ 	memcg = mem_cgroup_from_id(memcgid);
+ 	if (!mem_cgroup_disabled() && !memcg)
+ 		goto out;
+-	lruvec = mem_cgroup_lruvec(pgdat, memcg);
++	lruvec = mem_cgroup_lruvec(memcg, pgdat);
+ 	refault = atomic_long_read(&lruvec->inactive_age);
+ 	active_file = lruvec_lru_size(lruvec, LRU_ACTIVE_FILE, MAX_NR_ZONES);
+ 
+@@ -345,7 +345,7 @@ void workingset_activation(struct page *page)
+ 	memcg = page_memcg_rcu(page);
+ 	if (!mem_cgroup_disabled() && !memcg)
+ 		goto out;
+-	lruvec = mem_cgroup_lruvec(page_pgdat(page), memcg);
++	lruvec = mem_cgroup_lruvec(memcg, page_pgdat(page));
+ 	atomic_long_inc(&lruvec->inactive_age);
+ out:
+ 	rcu_read_unlock();
+@@ -428,7 +428,7 @@ static unsigned long count_shadow_nodes(struct shrinker *shrinker,
+ 		struct lruvec *lruvec;
+ 		int i;
+ 
+-		lruvec = mem_cgroup_lruvec(NODE_DATA(sc->nid), sc->memcg);
++		lruvec = mem_cgroup_lruvec(sc->memcg, NODE_DATA(sc->nid));
+ 		for (pages = 0, i = 0; i < NR_LRU_LISTS; i++)
+ 			pages += lruvec_page_state_local(lruvec,
+ 							 NR_LRU_BASE + i);
 -- 
 2.21.0
 
