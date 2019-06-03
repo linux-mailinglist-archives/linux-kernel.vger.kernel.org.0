@@ -2,129 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A762C3286D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 08:23:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD39532874
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 08:26:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbfFCGX2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 02:23:28 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:32881 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726792AbfFCGX1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 02:23:27 -0400
-Received: by mail-lj1-f194.google.com with SMTP id v29so3720191ljv.0;
-        Sun, 02 Jun 2019 23:23:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lU1yMqA1q556Chq2SdDTyPyC3Sn1W2i9WqstPYhXvqc=;
-        b=ZYF8ZHHot0+aZVLTzj+zFLYJ/Bax7NjPF5zoBNHKQebLv17ZWFbuKANwmK5WZwUDvZ
-         MiseXXo2G/AkEf+q9+hSpO/y6pv3wHhxeZeLOiZpBZy/0detOd1WQWYqXl5G8EBtALxp
-         JD/IFUoOqzXXjCQ5Md5i8RnrZrNoGstocyG5YTq7ORlPezlXmeHI9rRalz8KsAZKosb5
-         uXPl/z/YQDeWKOoQg3A39X8AInZ2TU47/LlZl2NtH2k9sFMYrsVHrpqZNkXQ38CfLTjp
-         SDfM8P64sk+PvbVyTQzIRXhnPCp/rFwSX7gEC63ezV8eFWirfipUk3tj6kR2ByVOqpOp
-         fNNg==
-X-Gm-Message-State: APjAAAV+mSHsmQXCf+FxnTZ2Wau2VGtG8XgjxO/+olk36DAg9Y33Q5ze
-        NjPKqczPKrGP4yC5hX+Kw2ZVFM7t1wcWZfhtwYY=
-X-Google-Smtp-Source: APXvYqxu94SdIj8eZwrxLgUmofdtiuDh9HF9JNbyCeGXFuCdouBxJZhEJasbn4kldVZoxvTiWP1esfEMR+kiTlTlDag=
-X-Received: by 2002:a2e:91c5:: with SMTP id u5mr1310202ljg.65.1559543005801;
- Sun, 02 Jun 2019 23:23:25 -0700 (PDT)
+        id S1726941AbfFCG0L convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 3 Jun 2019 02:26:11 -0400
+Received: from mga07.intel.com ([134.134.136.100]:41645 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726486AbfFCG0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 02:26:11 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jun 2019 23:26:10 -0700
+X-ExtLoop1: 1
+Received: from orsmsx105.amr.corp.intel.com ([10.22.225.132])
+  by orsmga005.jf.intel.com with ESMTP; 02 Jun 2019 23:26:10 -0700
+Received: from orsmsx126.amr.corp.intel.com (10.22.240.126) by
+ ORSMSX105.amr.corp.intel.com (10.22.225.132) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Sun, 2 Jun 2019 23:26:10 -0700
+Received: from orsmsx116.amr.corp.intel.com ([169.254.7.165]) by
+ ORSMSX126.amr.corp.intel.com ([169.254.4.35]) with mapi id 14.03.0415.000;
+ Sun, 2 Jun 2019 23:26:10 -0700
+From:   "Xing, Cedric" <cedric.xing@intel.com>
+To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        "Jarkko Sakkinen" <jarkko.sakkinen@linux.intel.com>
+CC:     Andy Lutomirski <luto@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        "Roberts, William C" <william.c.roberts@intel.com>,
+        "Tricca, Philip B" <philip.b.tricca@intel.com>
+Subject: RE: [RFC PATCH 3/9] x86/sgx: Allow userspace to add multiple pages
+ in single ioctl()
+Thread-Topic: [RFC PATCH 3/9] x86/sgx: Allow userspace to add multiple pages
+ in single ioctl()
+Thread-Index: AQHVGAki7TYpY4ZsUk+m4jTej+khLaaJYAJQ
+Date:   Mon, 3 Jun 2019 06:26:09 +0000
+Message-ID: <960B34DE67B9E140824F1DCDEC400C0F654ECBBD@ORSMSX116.amr.corp.intel.com>
+References: <20190531233159.30992-1-sean.j.christopherson@intel.com>
+ <20190531233159.30992-4-sean.j.christopherson@intel.com>
+In-Reply-To: <20190531233159.30992-4-sean.j.christopherson@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMTFhYjE5MTAtN2M1Ny00NzQ1LWI4MWYtYTYyOTljMTBlOWY1IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiUUo4ZUN3aGVZbGxhQ3RnK21xZWRVZTVxWVBtS1VnYVVcL25DMmVCOGoyTnlTbDQ5aFYxa09ySVwvQ2VOZjNNcU1oIn0=
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.600.7
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <cover.1559438652.git.fthain@telegraphics.com.au>
- <c56deeb735545c7942607a93f017bb536f581ae5.1559438652.git.fthain@telegraphics.com.au>
- <CAMuHMdWxRtJU2aRQQjXzR2mvpfpDezCVu42Eo1eXDsQaPb+j6Q@mail.gmail.com> <alpine.LNX.2.21.1906030903510.20@nippy.intranet>
-In-Reply-To: <alpine.LNX.2.21.1906030903510.20@nippy.intranet>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 3 Jun 2019 08:23:13 +0200
-Message-ID: <CAMuHMdUFxQnmJmkr2qm4waTfFA5yfCHAFngyD37cFH6gbbD-Pg@mail.gmail.com>
-Subject: Re: [PATCH 5/7] scsi: mac_scsi: Fix pseudo DMA implementation, take 2
-To:     Finn Thain <fthain@telegraphics.com.au>
-Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        scsi <linux-scsi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Finn,
+> From: Christopherson, Sean J
+> Sent: Friday, May 31, 2019 4:32 PM
+> 
+> +/**
+> + * sgx_ioc_enclave_add_pages - handler for %SGX_IOC_ENCLAVE_ADD_PAGES
+> + *
+> + * @filep:	open file to /dev/sgx
+> + * @cmd:	the command value
+> + * @arg:	pointer to an &sgx_enclave_add_page instance
+> + *
+> + * Add a range of pages to an uninitialized enclave (EADD), and
+> +optionally
+> + * extend the enclave's measurement with the contents of the page (EEXTEND).
+> + * The range of pages must be virtually contiguous.  The SECINFO and
+> + * measurement maskare applied to all pages, i.e. pages with different
+> + * properties must be added in separate calls.
+> + *
+> + * EADD and EEXTEND are done asynchronously via worker threads.  A
+> +successful
+> + * sgx_ioc_enclave_add_page() only indicates the pages have been added
+> +to the
+> + * work queue, it does not guarantee adding the pages to the enclave
+> +will
+> + * succeed.
+> + *
+> + * Return:
+> + *   0 on success,
+> + *   -errno otherwise
+> + */
+> +static long sgx_ioc_enclave_add_pages(struct file *filep, unsigned int cmd,
+> +				      unsigned long arg)
+> +{
+> +	struct sgx_enclave_add_pages *addp = (void *)arg;
+> +	struct sgx_encl *encl = filep->private_data;
+> +	struct sgx_secinfo secinfo;
+> +	unsigned int i;
+> +	int ret;
+> +
+> +	if (copy_from_user(&secinfo, (void __user *)addp->secinfo,
+> +			   sizeof(secinfo)))
+> +		return -EFAULT;
+> +
+> +	for (i = 0, ret = 0; i < addp->nr_pages && !ret; i++) {
+> +		if (signal_pending(current))
+> +			return -ERESTARTSYS;
 
-On Mon, Jun 3, 2019 at 1:32 AM Finn Thain <fthain@telegraphics.com.au> wrote:
-> On Sun, 2 Jun 2019, Geert Uytterhoeven wrote:
-> > On Sun, Jun 2, 2019 at 3:29 AM Finn Thain <fthain@telegraphics.com.au>
-> > wrote:
-> > > A system bus error during a PDMA transfer can mess up the calculation
-> > > of the transfer residual (the PDMA handshaking hardware lacks a byte
-> > > counter). This results in data corruption.
-> > >
-> > > The algorithm in this patch anticipates a bus error by starting each
-> > > transfer with a MOVE.B instruction. If a bus error is caught the
-> > > transfer will be retried. If a bus error is caught later in the
-> > > transfer (for a MOVE.W instruction) the transfer gets failed and
-> > > subsequent requests for that target will use PIO instead of PDMA.
-> > >
-> > > This avoids the "!REQ and !ACK" error so the severity level of that
-> > > message is reduced to KERN_DEBUG.
-> > >
-> > > Cc: Michael Schmitz <schmitzmic@gmail.com>
-> > > Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> > > Cc: stable@vger.kernel.org # v4.14+
-> > > Fixes: 3a0f64bfa907 ("mac_scsi: Fix pseudo DMA implementation")
-> > > Reported-by: Chris Jones <chris@martin-jones.com>
-> > > Tested-by: Stan Johnson <userm57@yahoo.com>
-> > > Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-> >
-> > Thanks for your patch!
-> >
-> > > ---
-> > >  arch/m68k/include/asm/mac_pdma.h | 179 +++++++++++++++++++++++++++
-> > >  drivers/scsi/mac_scsi.c          | 201 ++++++++-----------------------
-> >
-> > Why have you moved the PDMA implementation to a header file under
-> > arch/m68k/? Do you intend to reuse it by other drivers?
-> >
->
-> There are a couple of reasons: the mac_esp driver also uses PDMA and the
-> NuBus PowerMac port also uses mac_scsi.c. OTOH, the NuBus PowerMac port is
-> still out-of-tree, and it is unclear whether the mac_esp driver will ever
-> benefit from this code.
+If interrupted, how would user mode code know how many pages have been EADD'ed?
 
-So you do have future sharing in mind...
+> +
+> +		if (need_resched())
+> +			cond_resched();
+> +
+> +		ret = sgx_encl_add_page(encl, addp->addr + i*PAGE_SIZE,
+> +					addp->src + i*PAGE_SIZE,
+> +					&secinfo, addp->mrmask);
+> +	}
+>  	return ret;
+>  }
+> 
+> @@ -823,8 +845,8 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+>  	case SGX_IOC_ENCLAVE_CREATE:
+>  		handler = sgx_ioc_enclave_create;
+>  		break;
+> -	case SGX_IOC_ENCLAVE_ADD_PAGE:
+> -		handler = sgx_ioc_enclave_add_page;
+> +	case SGX_IOC_ENCLAVE_ADD_PAGES:
+> +		handler = sgx_ioc_enclave_add_pages;
+>  		break;
+>  	case SGX_IOC_ENCLAVE_INIT:
+>  		handler = sgx_ioc_enclave_init;
+> --
+> 2.21.0
 
-> > If not, please keep it in the driver, so (a) you don't need an ack from
-> > me ;-), and (b) your change may be easier to review.
->
-> I take your wink to mean that you don't want to ask the SCSI maintainers
-> to review m68k asm. Putting aside the code review process for a moment, do
-
-I meant that apart from the code containing m68k assembler source, it
-is not related to arch/m68k/, and thus belongs to the driver.
-There are several other drivers that contain pieces of assembler code.
-
-> you have an opinion on the most logical way to organise this sort of code,
-> from the point-of-view of maintainability, re-usability, readability etc.?
-
-If the code is used by multiple SCSI drivers, you can move it to a header
-file under drivers/scsi/.
-If the code is shared by drivers belonging to multiple subsystems, you can
-move it to a header file under include/linux/.
-
-Anyone who has a better solution?
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
