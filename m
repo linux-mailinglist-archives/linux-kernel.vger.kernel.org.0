@@ -2,28 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DD6C33425
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:54:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95797333EB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:51:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729195AbfFCPvd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 11:51:33 -0400
-Received: from foss.arm.com ([217.140.101.70]:53698 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728994AbfFCPvY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 11:51:24 -0400
+        id S1729080AbfFCPv2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 11:51:28 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53706 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728963AbfFCPvZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 11:51:25 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EAB8E1715;
-        Mon,  3 Jun 2019 08:51:23 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4C7AD169E;
+        Mon,  3 Jun 2019 08:51:25 -0700 (PDT)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DB6D83F246;
-        Mon,  3 Jun 2019 08:51:22 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3375A3F246;
+        Mon,  3 Jun 2019 08:51:24 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        suzuki.poulose@arm.com, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [RFC PATCH 17/57] drivers: Add generic match by device type helper
-Date:   Mon,  3 Jun 2019 16:49:43 +0100
-Message-Id: <1559577023-558-18-git-send-email-suzuki.poulose@arm.com>
+        suzuki.poulose@arm.com,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: [RFC PATCH 18/57] drivers: intel_th: Use bus_find_device_by_devt helper
+Date:   Mon,  3 Jun 2019 16:49:44 +0100
+Message-Id: <1559577023-558-19-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
 References: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
@@ -32,65 +33,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a generic helper routine to match the device type of
-a given device.
+Switch to using the bus_find_device_by_devt helper
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/base/core.c    |  6 ++++++
- include/linux/device.h | 15 +++++++++++++++
- 2 files changed, 21 insertions(+)
+ drivers/hwtracing/intel_th/core.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 141c4f8..9df812f 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -3340,3 +3340,9 @@ int device_match_fwnode(struct device *dev, void *fwnode)
- 	return dev_fwnode(dev) == fwnode;
- }
- EXPORT_SYMBOL_GPL(device_match_fwnode);
-+
-+int device_match_devt(struct device *dev, void *pdevt)
-+{
-+	return dev->devt == *(dev_t *)pdevt;
-+}
-+EXPORT_SYMBOL_GPL(device_match_devt);
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 54be931..83c0745 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -165,6 +165,7 @@ void subsys_dev_iter_exit(struct subsys_dev_iter *iter);
- 
- int device_match_of_node(struct device *dev, void *np);
- int device_match_fwnode(struct device *dev, void *fwnode);
-+int device_match_devt(struct device *dev, void *pdevt);
- 
- int bus_for_each_dev(struct bus_type *bus, struct device *start, void *data,
- 		     int (*fn)(struct device *dev, void *data));
-@@ -203,6 +204,20 @@ static inline struct device *bus_find_device_by_fwnode(struct bus_type *bus,
- 	return bus_find_device(bus, start, fwnode, device_match_fwnode);
+diff --git a/drivers/hwtracing/intel_th/core.c b/drivers/hwtracing/intel_th/core.c
+index 033dce5..a85e236 100644
+--- a/drivers/hwtracing/intel_th/core.c
++++ b/drivers/hwtracing/intel_th/core.c
+@@ -789,13 +789,6 @@ static int intel_th_populate(struct intel_th *th)
+ 	return 0;
  }
  
-+/**
-+ * bus_find_device_by_devt : device iterator for locating a particular device
-+ * matching the device type.
-+ * @bus: bus type
-+ * @start: Device to begin with
-+ * @devt: device type of the device to match.
-+ */
-+static inline struct device *bus_find_device_by_devt(struct bus_type *bus,
-+						     struct device *start,
-+						     dev_t devt)
-+{
-+	return bus_find_device(bus, start, &devt, device_match_devt);
-+}
-+
- struct device *subsys_find_device_by_id(struct bus_type *bus, unsigned int id,
- 					struct device *hint);
- int bus_for_each_drv(struct bus_type *bus, struct device_driver *start,
+-static int match_devt(struct device *dev, void *data)
+-{
+-	dev_t devt = (dev_t)(unsigned long)data;
+-
+-	return dev->devt == devt;
+-}
+-
+ static int intel_th_output_open(struct inode *inode, struct file *file)
+ {
+ 	const struct file_operations *fops;
+@@ -803,9 +796,7 @@ static int intel_th_output_open(struct inode *inode, struct file *file)
+ 	struct device *dev;
+ 	int err;
+ 
+-	dev = bus_find_device(&intel_th_bus, NULL,
+-			      (void *)(unsigned long)inode->i_rdev,
+-			      match_devt);
++	dev = bus_find_device_by_devt(&intel_th_bus, NULL, inode->i_rdev);
+ 	if (!dev || !dev->driver)
+ 		return -ENODEV;
+ 
 -- 
 2.7.4
 
