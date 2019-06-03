@@ -2,86 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1540532D19
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:48:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2356F32D24
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:49:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727931AbfFCJrz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 05:47:55 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51966 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727865AbfFCJrx (ORCPT
+        id S1727048AbfFCJtL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 05:49:11 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59846 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726805AbfFCJtK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 05:47:53 -0400
-Received: by mail-wm1-f68.google.com with SMTP id f10so10448464wmb.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 02:47:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ySITkoSpV5tz/0UidgwrcEdFJZVNdmdPr2B7jtp9jvc=;
-        b=NDatLUATUjuiUD4hERuG9znRQfMuTUCAU4ggEVOIBP+FgVSRJt3WZaY0RrGa7Dwvb1
-         tPXdCBOtf0m2SVVhC/s51PZUQLWyTn//g+w5QgkbouvAEZZfvo/hYS0Qvxc9mY1N3RDl
-         12CLAjcT2rNrEYGTTAfmXLf/b4PMau58fO8Tf1EJrQQRkioz3g1D42ztA9XxEOAFB+W/
-         su2WX/nD5EDsKD8vv14foqsrzziZLg0rVZSxVTe2nVknHPJXLy1BppZQLalDKIXavP16
-         72N48w4vbmtGK60MSJzcw8yI8w33mpxO9I6dUgQOrevlX7znnciyGipSUQ3j2jUt1vHw
-         bNhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ySITkoSpV5tz/0UidgwrcEdFJZVNdmdPr2B7jtp9jvc=;
-        b=OBAQnQUvbZxBRl2IRZ2JUqwYu7jMk/CVPoLjhTSnOK8wZVwT3VmGxXAZrkLatlTQRO
-         m592HabhnZj10ckGZPGv6nKNnQXLRv4aBPsoL1EtLfZeiJDOS6lKWJv8Wu3y535P6mBp
-         eBp+4X3ADTSXxKg065enquCPyWh16qDMcnL5Gmbi8DGMe0S9+pdeseo97K+pl1HzugIK
-         CHpzrlrQETZxvt4NKsc12YnhJBoABROtCQ59bEOQDzDnfhMS3Y7BYAM7yaG4w8ZmFshy
-         Im1hNkiD9uXh5tq8ac4TKv06CkAchEmehQNgBTERFqu/HDH0ThluiHwcmXLbUBVr2yXW
-         AI4A==
-X-Gm-Message-State: APjAAAUNI0/U3TDXBaJpOqApQXfTtFeq4gXgJHgEuORJtwDTGCnx+2/Z
-        D0HLwUiFO/33dImdxK1mODBWOw==
-X-Google-Smtp-Source: APXvYqyFQyOwq3NatVmnOTvLBdiP1Y15tNjKDOOA5BlWh3lX91HYLp+dMM229VRYhDYAQ5xrcfOheQ==
-X-Received: by 2002:a1c:b046:: with SMTP id z67mr1498018wme.49.1559555271273;
-        Mon, 03 Jun 2019 02:47:51 -0700 (PDT)
-Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id z14sm11235375wrh.86.2019.06.03.02.47.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 03 Jun 2019 02:47:50 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     khilman@baylibre.com
-Cc:     linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 4/4] arm64: dts: meson-g12a-x96-max: bump bluetooth bus speed to 2Mbaud/s
-Date:   Mon,  3 Jun 2019 11:47:40 +0200
-Message-Id: <20190603094740.12255-5-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190603094740.12255-1-narmstrong@baylibre.com>
-References: <20190603094740.12255-1-narmstrong@baylibre.com>
+        Mon, 3 Jun 2019 05:49:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=65d4Y+1Ap7Wq4oBfZo3msirKt5xkc5tCjlN63jde964=; b=RrCV1GymZsHV1Th3QTzbw2prm
+        UjrJRPyT7kPJCk8yfzqL2iTr4w2Jg6krm9LEIrk3anCpSMFz+rM5pwqH5xWdG4v2Z+RsODytT7eZY
+        JAZAmjg/0G2TtlUUOsbRD49rR2S42j31E6T6c7sa/TcULUGfel2EFK4VLb+o92Z2pG058OtDj9213
+        siiC6ac3TYjJQhVrhBaWCX44+9bDHGtkqFavaidrm/gWywZ+y0xJ0r4pjyj4f/eFnnk2Aa6ZW6TAk
+        XlY3q9GCYPKMLu6BaNMHvvFrIlsnj3I+AJqnvvpBm121IWjrfdHe3ihWplfn914C8sND1kMRSKWQB
+        yWOqntmMQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hXjaV-0001GT-Mx; Mon, 03 Jun 2019 09:49:07 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 94AC6202CD6A0; Mon,  3 Jun 2019 11:49:05 +0200 (CEST)
+Date:   Mon, 3 Jun 2019 11:49:05 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Liangyan <liangyan.peng@linux.alibaba.com>
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
+        yun.wang@linux.alibaba.com, shanpeic@linux.alibaba.com,
+        xlpang@linux.alibaba.com,
+        "liangyan.ply" <liangyan.ply@linux.alibaba.com>,
+        Ben Segall <bsegall@google.com>
+Subject: Re: [PATCH] sched/fair: don't restart enqueued cfs quota slack timer
+Message-ID: <20190603094905.GA3419@hirez.programming.kicks-ass.net>
+References: <20190603044309.168065-1-liangyan.peng@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190603044309.168065-1-liangyan.peng@linux.alibaba.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Setting to 2Mbaud/s is the nominal bus speed for common usages.
+On Mon, Jun 03, 2019 at 12:43:09PM +0800, Liangyan wrote:
+> From: "liangyan.ply" <liangyan.ply@linux.alibaba.com>
+> 
+> start_cfs_slack_bandwidth() will restart the quota slack timer,
+> if it is called frequently, this timer will be restarted continuously
+> and may have no chance to expire to unthrottle cfs tasks.
+> This will cause that the throttled tasks can't be unthrottled in time
+> although they have remaining quota.
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts | 1 +
- 1 file changed, 1 insertion(+)
+This looks very similar to the patch from Ben here:
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts
-index aa9da5de5c2d..300c29dad49f 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts
-@@ -206,6 +206,7 @@
- 	bluetooth {
- 		compatible = "brcm,bcm43438-bt";
- 		shutdown-gpios = <&gpio GPIOX_17 GPIO_ACTIVE_HIGH>;
-+		max-speed = <2000000>;
- 		clocks = <&wifi32k>;
- 		clock-names = "lpo";
- 	};
--- 
-2.21.0
+  https://lkml.kernel.org/r/xm26blzlyr9d.fsf@bsegall-linux.svl.corp.google.com
 
+> 
+> Signed-off-by: Liangyan <liangyan.peng@linux.alibaba.com>
+> ---
+>  kernel/sched/fair.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index d90a64620072..fdb03c752f97 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -4411,9 +4411,11 @@ static void start_cfs_slack_bandwidth(struct cfs_bandwidth *cfs_b)
+>  	if (runtime_refresh_within(cfs_b, min_left))
+>  		return;
+>  
+> -	hrtimer_start(&cfs_b->slack_timer,
+> +	if (!hrtimer_active(&cfs_b->slack_timer)) {
+> +		hrtimer_start(&cfs_b->slack_timer,
+>  			ns_to_ktime(cfs_bandwidth_slack_period),
+>  			HRTIMER_MODE_REL);
+> +	}
+>  }
+>  
+>  /* we know any runtime found here is valid as update_curr() precedes return */
+> -- 
+> 2.14.4.44.g2045bb6
+> 
