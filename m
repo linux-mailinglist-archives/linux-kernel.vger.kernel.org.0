@@ -2,103 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 387CD337DE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 20:32:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 157B5337E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 20:33:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726645AbfFCSb4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 14:31:56 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:38282 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726241AbfFCSb4 (ORCPT
+        id S1726681AbfFCSdH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 14:33:07 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:15140 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726112AbfFCSdG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 14:31:56 -0400
-Received: by mail-oi1-f194.google.com with SMTP id 18so12833746oij.5
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 11:31:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=landley-net.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JB7G7a3obPccO07RyvNY8mElks92DaU5NY5QKwWTZvQ=;
-        b=lE/gBTu5gNk+nG3gMkLC5L1qqMeFZke1tNjNI5xgMMMUPlBG3ZAzppxMiEuBOtKiMI
-         Y6xOk9eUEgPGAqGCVGFZpHU68PsLFNawXTBrG55HWus8sEfa/pbs2FkPH3l9y2eEvDvI
-         iGvFo6MBYyAPDhEBFQ/4NNauvhmdicFzBSZLXBRHikKFhbpLDxXobG2dm7zdUMcMLlR4
-         bLxdEBF7g9pTfKNAUVZBPWJPnMha7n3pUfVeRzY2e9a5BSDSaj0E6B5Lem8uEQQeVdh+
-         wXJNvLH9D4lzgEpF3Pu7V+6V4lfAyFJbr7/0knZSFvSon08cblLXIUE+SrdvBuzGJp3y
-         AyZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JB7G7a3obPccO07RyvNY8mElks92DaU5NY5QKwWTZvQ=;
-        b=POs0rh96i+0G8LLMktYV9Y5EaRw01HRZ8LmmDlLJ2wz3c2x4eP9VNJddl/bp0/OJtw
-         2U7w2ERFwJxhoHELRiNn2+iUDlU5C6LzlMANM7IX+U3Qa5SI/ML3nRpG7p9NEzJDIqeG
-         lTWn0tRdL8xyFfu074T6ufhDWsbklqsCdnDIeMqMunkAJCcnUYL1Tn12I/M9JAH30aw3
-         lR1qPNNpdLm12XG2D6QN542UFCaj9d2dCGDmMyMaPvSJF/XH29+KzccckkEXl9odrfYP
-         4TfQDSPHGTb8Iu71pvZnQTDq7vqsfDDEV0ov6dFbYgZgyclVImhKiW1Oe13JAEazTMat
-         MOxQ==
-X-Gm-Message-State: APjAAAVSCWCBQZAn8/VzX/GHcZhFhdw3V6ddfhFU9htRAeLjbcNErKCp
-        2LwC7i8kcpZ8m02+N/AHBCyPQQ==
-X-Google-Smtp-Source: APXvYqx/JQHKW1RVtJywUChZiZhbYIWjyWjyP52wifJ5hVzfHkQZ9dKculi7hqOvLpAffmvtGewfWA==
-X-Received: by 2002:aca:c382:: with SMTP id t124mr1900442oif.9.1559586715364;
-        Mon, 03 Jun 2019 11:31:55 -0700 (PDT)
-Received: from [192.168.1.5] (072-182-052-210.res.spectrum.com. [72.182.52.210])
-        by smtp.googlemail.com with ESMTPSA id b127sm6172046oih.43.2019.06.03.11.31.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Jun 2019 11:31:54 -0700 (PDT)
-Subject: Re: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
- ram disk
-To:     Roberto Sassu <roberto.sassu@huawei.com>, viro@zeniv.linux.org.uk
-Cc:     linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bug-cpio@gnu.org,
-        zohar@linux.vnet.ibm.com, silviu.vlasceanu@huawei.com,
-        dmitry.kasatkin@huawei.com, takondra@cisco.com, kamensky@cisco.com,
-        hpa@zytor.com, arnd@arndb.de, james.w.mcmechan@gmail.com,
-        niveditas98@gmail.com
-References: <20190523121803.21638-1-roberto.sassu@huawei.com>
- <cf9d08ca-74c7-c945-5bf9-7c3495907d1e@huawei.com>
-From:   Rob Landley <rob@landley.net>
-Message-ID: <541e9ea1-024f-5c22-0b58-f8692e6c1eb1@landley.net>
-Date:   Mon, 3 Jun 2019 13:32:53 -0500
+        Mon, 3 Jun 2019 14:33:06 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cf567e00000>; Mon, 03 Jun 2019 11:33:04 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 03 Jun 2019 11:33:05 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 03 Jun 2019 11:33:05 -0700
+Received: from [10.26.11.157] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 3 Jun
+ 2019 18:33:02 +0000
+Subject: Re: [PATCH 4.19 00/32] 4.19.48-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <20190603090308.472021390@linuxfoundation.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <87bedfca-5d88-a697-1f10-25fe964d69a3@nvidia.com>
+Date:   Mon, 3 Jun 2019 19:33:00 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <cf9d08ca-74c7-c945-5bf9-7c3495907d1e@huawei.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190603090308.472021390@linuxfoundation.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1559586784; bh=u+wT24mGyHsbtfP2s/PCxFI9aBFkb1je47cecOWWjtg=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=A3TCvfX00eCyOkJR/lHdsD5rB1AG9tggA4TWpheR/52rBnWtQZnfw/hCuld3CFxt6
+         9BCjrvH/h2aX534SvEAxecCWJGjvDQaWnjXzoQfc34/xwqUF7Or8x/zTdazg/WdgEt
+         OZrtcGZp6a8aoZMIhqTqF1ef9ydwMSdLQCgW5oUjs17o836rRjI1JZO7YY2l13iu/F
+         VqA21gwSbEFqxj+DJst7I1An3Jgoue3K03fAGRdJJPq/Xv2+b4HedDN+9dxDUOEfiv
+         xsDfg6eIF7YRgEuS9cjnm6+GBwz1sND/dODpRASVUiWXJswHURy2GatG/Ho/r7vR/S
+         Qc72yClYjV4xA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/3/19 4:31 AM, Roberto Sassu wrote:
->> This patch set aims at solving the following use case: appraise files from
->> the initial ram disk. To do that, IMA checks the signature/hash from the
->> security.ima xattr. Unfortunately, this use case cannot be implemented
->> currently, as the CPIO format does not support xattrs.
->>
->> This proposal consists in including file metadata as additional files named
->> METADATA!!!, for each file added to the ram disk. The CPIO parser in the
->> kernel recognizes these special files from the file name, and calls the
->> appropriate parser to add metadata to the previously extracted file. It has
->> been proposed to use bit 17:16 of the file mode as a way to recognize files
->> with metadata, but both the kernel and the cpio tool declare the file mode
->> as unsigned short.
->
-> Any opinion on this patch set?
+
+On 03/06/2019 10:07, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.48 release.
+> There are 32 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Thanks
+> Responses should be made by Wed 05 Jun 2019 09:02:49 AM UTC.
+> Anything received after that time might be too late.
 > 
-> Roberto
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.48-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Sorry, I've had the window open since you posted it but haven't gotten around to
-it. I'll try to build it later today.
+All tests are passing for Tegra ...
 
-It does look interesting, and I have no objections to the basic approach. I
-should be able to add support to toybox cpio over a weekend once I've got the
-kernel doing it to test against.
+Test results for stable-v4.19:
+    12 builds:	12 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    32 tests:	32 pass, 0 fail
 
-Rob
+Linux version:	4.19.48-rc1-g322f407
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
+
+-- 
+nvpublic
