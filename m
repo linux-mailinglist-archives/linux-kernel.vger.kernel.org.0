@@ -2,114 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B5B132E65
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 13:15:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B6E232E6D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 13:16:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728068AbfFCLPL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 07:15:11 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41919 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727455AbfFCLPK (ORCPT
+        id S1728167AbfFCLQy convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 3 Jun 2019 07:16:54 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:42603 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728144AbfFCLQx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 07:15:10 -0400
-Received: by mail-pf1-f193.google.com with SMTP id q17so10429815pfq.8;
-        Mon, 03 Jun 2019 04:15:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PjN0az7QArZrmsQJmkJ/5qpl3C88tEWYXS2nv4TfJWw=;
-        b=IazKRBbRUmNjd+gZlH5rp0qxNAmfOqEDWyGOMhd76X7RWoJHjElGBr+iSEFeGn1/OO
-         cjakAu0KPqFAaPfY1vl9Bs2C3d5Pii6nahyStziKn23bxL5kAoOTkBQwlQSTOGP/jV1J
-         NqupfknUl95GuA0/CygMocoDIS5vb6ypSCRd5j0Jm4c+uudwzJ7TNfD95NMHV3cmtccA
-         ecm4pyGUVL6wbEVFyYXTrfJmX1qAfqK1elVZKywYkCYQngjWApAHyjXvP4SXKLQH1N0L
-         3JsHSjGgDUOeqgTuFzIenuTjV+qFIZXYJWlc2Vd/Sv360sQXJnDbhRfKI/v/EBh5EU/V
-         6/Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=PjN0az7QArZrmsQJmkJ/5qpl3C88tEWYXS2nv4TfJWw=;
-        b=LwxCfBNlFTSmtl7FK1YftFhZYt8C3a+nuBOcngRYtL6dqM2aFr1oHhJHL0PgjCFvPi
-         qZ+do4nnXsjoTt7OeV64IO2blwRRsLUpT4X8MnCUV+I99AuLIHSXm4flwLIThBr6G/Fy
-         WvGZVSxckILpYRE+TeN9S5rkUD8fI+4Np/LjEi13jWGGRBqmN4BXwQX2Tjzuq/8tN9RL
-         4VZkUC12p/4GiT+6NjGOQyTpD7VCMy4HYH6QSD1Zr6T4gyzJbJ0NinuWgiiTX1DVCE4u
-         Ye5VYsKnmAc10f0RMNnMOwfM1F51oFl2VymQ8iY2//GOXriBijSYq8b4cosdrjFvbqDJ
-         j42g==
-X-Gm-Message-State: APjAAAUtRsB3NbvCf7qqEcM75tQzzuWskNcPX86kzbY8C3mEFRT1AKRA
-        taOWCKkbRBCRf2rKRlDNfoKXJDe3
-X-Google-Smtp-Source: APXvYqyYR0rkdfaRHRBoN/HdEUkdmu++yT+gsYMx2ivIlYIvESf8Gq0dsf869wpgQTC/jYrpquSZxw==
-X-Received: by 2002:a63:4045:: with SMTP id n66mr27322540pga.386.1559560510231;
-        Mon, 03 Jun 2019 04:15:10 -0700 (PDT)
-Received: from [192.168.2.145] ([94.29.35.141])
-        by smtp.googlemail.com with ESMTPSA id v23sm15989449pff.185.2019.06.03.04.15.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Jun 2019 04:15:09 -0700 (PDT)
-Subject: Re: [PATCH v3 0/8] NVIDIA Tegra clocksource driver improvements
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nicolas Chauvet <kwizart@gmail.com>
-References: <20190524153253.28564-1-digetx@gmail.com>
- <20190531082634.GA6070@pdeschrijver-desktop.Nvidia.com>
- <c686aae8-3be0-805e-265b-a7f16f2a6c02@gmail.com>
- <20190603071750.GA29894@pdeschrijver-desktop.Nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <fafaaba1-1d77-f8fa-1a62-d1dd70fd8d52@gmail.com>
-Date:   Mon, 3 Jun 2019 14:14:59 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190603071750.GA29894@pdeschrijver-desktop.Nvidia.com>
-Content-Type: text/plain; charset=utf-8
+        Mon, 3 Jun 2019 07:16:53 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-108-o7jhmQwnN0qxpv2KrDfHtw-1; Mon, 03 Jun 2019 12:16:50 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon,
+ 3 Jun 2019 12:16:49 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 3 Jun 2019 12:16:49 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Masahiro Yamada' <yamada.masahiro@socionext.com>,
+        "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>
+CC:     Vineet Gupta <vgupta@synopsys.com>,
+        Alexey Brodkin <abrodkin@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        linux-stable <stable@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] kbuild: use more portable 'command -v' for
+ cc-cross-prefix
+Thread-Topic: [PATCH] kbuild: use more portable 'command -v' for
+ cc-cross-prefix
+Thread-Index: AQHVGfoc7Nk6FX5Ty02s910sxgLWxaaJxwdw
+Date:   Mon, 3 Jun 2019 11:16:49 +0000
+Message-ID: <3dcacca3f71c46cc98fa64b13a405b59@AcuMS.aculab.com>
+References: <20190603104902.23799-1-yamada.masahiro@socionext.com>
+In-Reply-To: <20190603104902.23799-1-yamada.masahiro@socionext.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-MC-Unique: o7jhmQwnN0qxpv2KrDfHtw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-03.06.2019 10:17, Peter De Schrijver пишет:
-> On Fri, May 31, 2019 at 03:33:41PM +0300, Dmitry Osipenko wrote:
->> 31.05.2019 11:26, Peter De Schrijver пишет:
->>> On Fri, May 24, 2019 at 06:32:45PM +0300, Dmitry Osipenko wrote:
->>>> Hello,
->>>>
->>>> This series primarily unifies the driver code across all Tegra SoC
->>>> generations. In a result the clocksources are allocated per-CPU on
->>>> older Tegra's and have a higher rating than the arch-timer, the newer
->>>> Tegra210 is getting support for microsecond clocksource and the driver's
->>>> code is getting much cleaner. Note that arch-timer usage is discouraged on
->>>> all Tegra's due to the time jitter caused by the CPU frequency scaling.
->>>
->>> I think the limitations are more as follows:
->>>
->>> Chip	timer		suffers cpu dvfs jitter		can wakeup from cc7
->>> T20	us-timer	No				Yes
->>> T20	twd timer	Yes				No?
->>> T30	us-timer	No				Yes
->>> T30	twd timer	Yes				No?
->>> T114	us-timer	No				Yes
->>> T114	arch timer	No				Yes
->>> T124	us-timer	No				Yes
->>> T124	arch timer	No				Yes
->>> T210	us-timer	No				Yes
->>> T210	arch timer	No				No
->>> T210	clk_m timer	No				Yes
->>>
->>> right?
->>
->> Doesn't arch timer run off the CPU clock? If yes (that's what I
->> assumed), then it should be affected by the DVFS. Otherwise I'll lower
->> the clocksource's rating for T114/124/132.
->>
+From: Masahiro Yamada
+> Sent: 03 June 2019 11:49
 > 
-> No. It doesn't. This is the big change between A9 and later CPUs. 
+> To print the pathname that will be used by shell in the current
+> environment, 'command -v' is a standardized way. [1]
+> 
+> 'which' is also often used in scripting, but it is not portable.
 
-Thank you for the clarification, I'll add a patch to lower the rating
-where appropriate.
+All uses of 'which' should be expunged.
+It is a bourne shell script that is trying to emulate a csh builtin.
+It is doomed to fail in corner cases.
+ISTR it has serious problems with shell functions and aliases.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
