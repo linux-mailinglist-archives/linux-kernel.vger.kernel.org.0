@@ -2,47 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B40032D70
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 12:04:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4B9632D6F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 12:04:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728226AbfFCKEM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 06:04:12 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35493 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728129AbfFCKED (ORCPT
+        id S1728196AbfFCKEH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 06:04:07 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55300 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728130AbfFCKEE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 06:04:03 -0400
-Received: by mail-wr1-f67.google.com with SMTP id m3so11377753wrv.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 03:04:02 -0700 (PDT)
+        Mon, 3 Jun 2019 06:04:04 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 16so6073677wmg.5
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 03:04:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Q9lcLmPi8XMHiXaXMu2ntTG9e0dgqGl+ZMcMDCcYGe4=;
-        b=gEBC5aL1kPVPR+LUHjfVvz0ksvv2DkipPibJaPYpBIPdIqcM+Wcug6FummvXcULaSt
-         /Ak+nz2LW/+jWrdpXj/9L3uqCtc/L/EQhvRcc+qNcnX+sa7SEKxtWOQmPJc+djEPENPL
-         ag8UllJ6ZX10pf/GraIjEOQZE+zOnxTzDRK7nWjNgtib/eG3aucWdr1ZVJu/DJ64w9J2
-         eGtUk6ICjuCy73lD1JthOtI4xIwTtmD6KtJColr4X0ifGIEAfakyl+9LAP6HVYhw9xPv
-         ipt8IIFLV7TXnaHsvB9MpKt745rrzjKVNxLpXCcD6NGOCkhz2U60c9CV9mZhFlJk/RdP
-         1OMw==
+        bh=YMQH+YmMqEi+gsXseHBWQuJ/Imet99lfOVHmWm+WY1U=;
+        b=DdmABLlIarebcQdqi3kcWqkFCKN8OCuNG59wewyDGcKAmrYKfr4JXLl1AP6wzl3YnU
+         cafRtqasdDcyAiVJ1sbLHANKERnpmh+6duZfsY8gKWAXzaEw+YRofetU93bp1TwWWjT1
+         2JQCeHyGP0sIj91aN+eYFRhbHw7QgLBofq5ImYTNMbTpKVhB3SI7gIdVQXuZs93/kyBY
+         PHLRTZXOWh4QigbIJpr+9Plzf4c58yNlDaY1APglo5023V6SHJdFFiQgB5lpbkMjZGZh
+         0j26+h44qPOXglXqXVh/dkcJ2Rfq5Qrmim/TrYizfEvchBGLPcnAvQplDPEl/jktQQJ5
+         qilA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Q9lcLmPi8XMHiXaXMu2ntTG9e0dgqGl+ZMcMDCcYGe4=;
-        b=fk69fjwEVIkoL5ZZFXqaKJrkWIlB7rBTItejPpDm7zkPzppxgLY4OE9/IrrJd1l5UA
-         z72sYtNfKyG9oXFJoWxUm/GnismIoenwHNp1g6lpTc1/lIucT8+nQWvnPp4Y41oZSmj9
-         x+JNIyy3Rr2zPI5FBjYthjIeT4G2ETjMuNvIqrfW7EazUbOVjy58EhjRv1nBy/sqCaN6
-         ZBIuSncBYuvaEnqMIbffDPjqyeU7maKP/xW8/oknnJSr62o8X+rghYdx71f4TDP7idUC
-         VazciWb0d7rxv5v1iQychHgfllB/+wp+mUzJVBtlA83TEFeF5tNoOk7jANMjMUrTpHAI
-         Jjaw==
-X-Gm-Message-State: APjAAAVJzRlalsOF6qyqBeOKC4vov2O3cviICcpI0EmfSfWsDXH/rVO9
-        u7AXX74GVFLVXvO5n0N1wahpag==
-X-Google-Smtp-Source: APXvYqwdNaVQrH1Hfwg41zEcu8yAiSsSfc+9kG7/WdtS15tQvV/Gq7PthCS+3NtUj9DsCTd99kW1+w==
-X-Received: by 2002:adf:e30d:: with SMTP id b13mr1845319wrj.246.1559556241668;
-        Mon, 03 Jun 2019 03:04:01 -0700 (PDT)
+        bh=YMQH+YmMqEi+gsXseHBWQuJ/Imet99lfOVHmWm+WY1U=;
+        b=QRsHXDbaskZGgTXx9u3w7/Iz0dBYzLvxWJc9LhShQs/tEnj4rY6BsbxnIgS8wRz0nu
+         JnEUTiLnvJZMt3ErbB6hyU2E4/RDVex7lAzEOajB7Qqp65m0nOa25accSbdEEEJMn1UB
+         UNLOICJLWBBrawypkc5pxM3LX45HKQ3CYcVxGe3iZpZhcipemMIHsStvQR82aJ7gDfGl
+         jus7q49fbpKrOi7lCd0/t7DyeGNx82c/Kl+zJ1p2lP863T4VaWRMrSIq/cRGEgunYcm9
+         wlx3o1vZ8+jQ52WKd5S787qC30Q1O8bhAnJEGty+UF9tzjTPqu5D6S9goHI/10upILGc
+         UY2Q==
+X-Gm-Message-State: APjAAAW5CLxOEn1q4E/YT0d8JHOvvGPbBqgJInJdQNRqmuCLa7GxJC8N
+        eZQB6F2Ub+by35oh8lqsJRWwnQ==
+X-Google-Smtp-Source: APXvYqxdgJNt/Z8H7RA95G1FQJxTUqwXFFclxWFD9X0UAVrW1pgptWbzt5ot7MgiYRg+s06Hj5jzqw==
+X-Received: by 2002:a1c:5546:: with SMTP id j67mr1855939wmb.80.1559556242355;
+        Mon, 03 Jun 2019 03:04:02 -0700 (PDT)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id o3sm11282098wrv.94.2019.06.03.03.04.00
+        by smtp.gmail.com with ESMTPSA id o3sm11282098wrv.94.2019.06.03.03.04.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
         Mon, 03 Jun 2019 03:04:01 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
@@ -50,9 +50,9 @@ To:     khilman@baylibre.com
 Cc:     linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 3/4] arm64: dts: meson-g12a-x96-max: Enable Wifi SDIO Module
-Date:   Mon,  3 Jun 2019 12:03:56 +0200
-Message-Id: <20190603100357.16799-4-narmstrong@baylibre.com>
+Subject: [PATCH 4/4] arm64: dts: meson-g12a-sei510: Enable Wifi SDIO module
+Date:   Mon,  3 Jun 2019 12:03:57 +0200
+Message-Id: <20190603100357.16799-5-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190603100357.16799-1-narmstrong@baylibre.com>
 References: <20190603100357.16799-1-narmstrong@baylibre.com>
@@ -63,36 +63,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The X96 Max embeds an AP6398S SDIO module, let's add the
+The SEI510 embeds an AP6398S SDIO module, let's add the
 corresponding SDIO, PWM clock and mmc-pwrseq nodes.
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- .../boot/dts/amlogic/meson-g12a-x96-max.dts   | 48 +++++++++++++++++++
+ .../boot/dts/amlogic/meson-g12a-sei510.dts    | 48 +++++++++++++++++++
  1 file changed, 48 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts
-index 69aae6c03dc5..8b263ec1e7a2 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts
-@@ -50,6 +50,13 @@
- 		reset-gpios = <&gpio BOOT_12 GPIO_ACTIVE_LOW>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts
+index be1d9ed6d521..5a97379f2417 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts
+@@ -128,6 +128,20 @@
+ 			no-map;
+ 		};
  	};
- 
++
 +	sdio_pwrseq: sdio-pwrseq {
 +		compatible = "mmc-pwrseq-simple";
 +		reset-gpios = <&gpio GPIOX_6 GPIO_ACTIVE_LOW>;
 +		clocks = <&wifi32k>;
 +		clock-names = "ext_clock";
 +	};
-+
- 	flash_1v8: regulator-flash_1v8 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "FLASH_1V8";
-@@ -114,6 +121,13 @@
- 		vin-supply = <&dc_in>;
- 		regulator-always-on;
- 	};
 +
 +	wifi32k: wifi32k {
 +		compatible = "pwm-clock";
@@ -103,7 +96,7 @@ index 69aae6c03dc5..8b263ec1e7a2 100644
  };
  
  &cec_AO {
-@@ -155,6 +169,12 @@
+@@ -174,11 +188,45 @@
  	pinctrl-names = "default";
  };
  
@@ -113,11 +106,9 @@ index 69aae6c03dc5..8b263ec1e7a2 100644
 +	pinctrl-names = "default";
 +};
 +
- &uart_A {
+ &saradc {
  	status = "okay";
- 	pinctrl-0 = <&uart_a_pins>, <&uart_a_cts_rts_pins>;
-@@ -178,6 +198,34 @@
- 	dr_mode = "host";
+ 	vref-supply = <&vddio_ao1v8>;
  };
  
 +/* SDIO */
@@ -140,7 +131,7 @@ index 69aae6c03dc5..8b263ec1e7a2 100644
 +	mmc-pwrseq = <&sdio_pwrseq>;
 +
 +	vmmc-supply = <&vddao_3v3>;
-+	vqmmc-supply = <&vddao_1v8>;
++	vqmmc-supply = <&vddio_ao1v8>;
 +
 +	brcmf: wifi@1 {
 +		reg = <1>;
