@@ -2,147 +2,341 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8135339D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 22:36:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41D00339F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 23:42:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726559AbfFCUgM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 16:36:12 -0400
-Received: from mga18.intel.com ([134.134.136.126]:21498 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726055AbfFCUgM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 16:36:12 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 13:36:11 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,548,1549958400"; 
-   d="scan'208";a="181288485"
-Received: from tthayer-hp-z620.an.intel.com ([10.122.105.146])
-  by fmsmga002.fm.intel.com with ESMTP; 03 Jun 2019 13:36:10 -0700
-From:   thor.thayer@linux.intel.com
-To:     bp@alien8.de, mchehab@kernel.org, james.morse@arm.com
-Cc:     linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thor Thayer <thor.thayer@linux.intel.com>
-Subject: [PATCH] EDAC/altera: Warm Reset option for Stratix10 peripheral DBE
-Date:   Mon,  3 Jun 2019 15:37:49 -0500
-Message-Id: <1559594269-10077-1-git-send-email-thor.thayer@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1726604AbfFCVmK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 17:42:10 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:46780 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbfFCVmJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 17:42:09 -0400
+Received: by mail-pg1-f194.google.com with SMTP id v9so9002391pgr.13
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 14:42:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9LPKxd1nI0ZUtX3abWKWE3c/1njFqcKECDTFnlPGL2o=;
+        b=FKzf7YDb4qFfQZg6nrRvW4ycRM0/BZA6wFJ1vLs7IldrWmXI3xJqN0FlXgOQuQtP3w
+         iOoOuxKQT7vJoEYXgkm50Y9hp80Pmxe+shwuUB2Ha8D0dFvrbw5EAmGRXa3yKpuykMQh
+         /CppskyHBegOtPKxkPQ7roJoyW89VLBsMI0Bfo6B2vlNLav5Dco6HA8KDsSFZZi5OQ5Z
+         il27slw+3ar1ciVjpOeX4xK/PenlX19YM86soJ9NsAQy3ikiOc6C3ehQyzUxB5b//hfS
+         dYp8IKidYk9ktoLayJxda7dxkdAexm0k6mkAj4XUyG4mrXnHZTQF7Q5Yu31yVOH6NfVZ
+         p/Fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9LPKxd1nI0ZUtX3abWKWE3c/1njFqcKECDTFnlPGL2o=;
+        b=CoW2hsTTvat5Zlw2TYBT8fGQPcyqOhkKJIkyLcnFtNiU0g9hBdRCRpauBgLfrV5YCn
+         voQDWdWxjYHeHkuYVhg66j3TW4sh+nGyo5NlTOfSA2FXpbvIi8R6ocSoKHhDj7UorK25
+         teCGAQ5exN0nRkVHI8KrjWBPtPHUCsUyubwZmGcXAM9ucU7OmeRIgqK7EqV/tqzJJleA
+         /FdJCwnCMRF8tPJ+JdtaCikR4WoVItG/+0KiRfFUxhu4iPNYlEZ5J/kTNXA92LIxUGuX
+         5YmSS3OETI7cexIcIEixNuuPeiozKL6ClFpD+O3bu28Vm2p744diADuestxZn6O12dRO
+         E/bQ==
+X-Gm-Message-State: APjAAAWnOs+BnsMflgL7OnJua6u3RiVv6Wu0JGul1J4CW5fId+ygT0nu
+        0dy434Zvx4xstNK9EQsDKDvrimBlbzw=
+X-Google-Smtp-Source: APXvYqyM2Y0sae+nSGLXKThpQney4UrZWsYqt8jVPmg5YWX93aNmlOJcmKBPnSemkZt8jdJU4q+2Dg==
+X-Received: by 2002:a17:90a:17c4:: with SMTP id q62mr11770806pja.104.1559594353536;
+        Mon, 03 Jun 2019 13:39:13 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::1:9fa4])
+        by smtp.gmail.com with ESMTPSA id l21sm15463318pff.40.2019.06.03.13.39.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Jun 2019 13:39:12 -0700 (PDT)
+Date:   Mon, 3 Jun 2019 16:39:11 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
+        Michal Hocko <mhocko@suse.com>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>, jannh@google.com,
+        oleg@redhat.com, christian@brauner.io, oleksandr@redhat.com,
+        hdanton@sina.com
+Subject: Re: [PATCH v1 4/4] mm: introduce MADV_PAGEOUT
+Message-ID: <20190603203911.GA14953@cmpxchg.org>
+References: <20190603053655.127730-1-minchan@kernel.org>
+ <20190603053655.127730-5-minchan@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190603053655.127730-5-minchan@kernel.org>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thor Thayer <thor.thayer@linux.intel.com>
+On Mon, Jun 03, 2019 at 02:36:55PM +0900, Minchan Kim wrote:
+> When a process expects no accesses to a certain memory range
+> for a long time, it could hint kernel that the pages can be
+> reclaimed instantly but data should be preserved for future use.
+> This could reduce workingset eviction so it ends up increasing
+> performance.
+> 
+> This patch introduces the new MADV_PAGEOUT hint to madvise(2)
+> syscall. MADV_PAGEOUT can be used by a process to mark a memory
+> range as not expected to be used for a long time so that kernel
+> reclaims *any LRU* pages instantly. The hint can help kernel in deciding
+> which pages to evict proactively.
+> 
+> All of error rule is same with MADV_DONTNEED.
+> 
+> Note:
+>     This hint works with only private pages(IOW, page_mapcount(page) < 2)
+>     because shared page could have more chance to be accessed from other
+>     processes sharing the page so that it could cause major fault soon,
+>     which is inefficient.
+> 
+> * RFC v2
+>  * make reclaim_pages simple via factoring out isolate logic - hannes
+> 
+> * RFCv1
+>  * rename from MADV_COLD to MADV_PAGEOUT - hannes
+>  * bail out if process is being killed - Hillf
+>  * fix reclaim_pages bugs - Hillf
+> 
+> Signed-off-by: Minchan Kim <minchan@kernel.org>
+> ---
+>  include/linux/swap.h                   |   1 +
+>  include/uapi/asm-generic/mman-common.h |   1 +
+>  mm/madvise.c                           | 126 +++++++++++++++++++++++++
+>  mm/vmscan.c                            |  34 +++++++
+>  4 files changed, 162 insertions(+)
+> 
+> diff --git a/include/linux/swap.h b/include/linux/swap.h
+> index 0ce997edb8bb..063c0c1e112b 100644
+> --- a/include/linux/swap.h
+> +++ b/include/linux/swap.h
+> @@ -365,6 +365,7 @@ extern int vm_swappiness;
+>  extern int remove_mapping(struct address_space *mapping, struct page *page);
+>  extern unsigned long vm_total_pages;
+>  
+> +extern unsigned long reclaim_pages(struct list_head *page_list);
+>  #ifdef CONFIG_NUMA
+>  extern int node_reclaim_mode;
+>  extern int sysctl_min_unmapped_ratio;
+> diff --git a/include/uapi/asm-generic/mman-common.h b/include/uapi/asm-generic/mman-common.h
+> index 1190f4e7f7b9..92e347a89ddc 100644
+> --- a/include/uapi/asm-generic/mman-common.h
+> +++ b/include/uapi/asm-generic/mman-common.h
+> @@ -44,6 +44,7 @@
+>  #define MADV_WILLNEED	3		/* will need these pages */
+>  #define MADV_DONTNEED	4		/* don't need these pages */
+>  #define MADV_COLD	5		/* deactivatie these pages */
+> +#define MADV_PAGEOUT	6		/* reclaim these pages */
+>  
+>  /* common parameters: try to keep these consistent across architectures */
+>  #define MADV_FREE	8		/* free pages only if memory pressure */
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index ab158766858a..b010249cb8b6 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -41,6 +41,7 @@ static int madvise_need_mmap_write(int behavior)
+>  	case MADV_WILLNEED:
+>  	case MADV_DONTNEED:
+>  	case MADV_COLD:
+> +	case MADV_PAGEOUT:
+>  	case MADV_FREE:
+>  		return 0;
+>  	default:
+> @@ -415,6 +416,128 @@ static long madvise_cold(struct vm_area_struct *vma,
+>  	return 0;
+>  }
+>  
+> +static int madvise_pageout_pte_range(pmd_t *pmd, unsigned long addr,
+> +				unsigned long end, struct mm_walk *walk)
+> +{
+> +	pte_t *orig_pte, *pte, ptent;
+> +	spinlock_t *ptl;
+> +	LIST_HEAD(page_list);
+> +	struct page *page;
+> +	int isolated = 0;
+> +	struct vm_area_struct *vma = walk->vma;
+> +	unsigned long next;
+> +
+> +	if (fatal_signal_pending(current))
+> +		return -EINTR;
+> +
+> +	next = pmd_addr_end(addr, end);
+> +	if (pmd_trans_huge(*pmd)) {
+> +		ptl = pmd_trans_huge_lock(pmd, vma);
+> +		if (!ptl)
+> +			return 0;
+> +
+> +		if (is_huge_zero_pmd(*pmd))
+> +			goto huge_unlock;
+> +
+> +		page = pmd_page(*pmd);
+> +		if (page_mapcount(page) > 1)
+> +			goto huge_unlock;
+> +
+> +		if (next - addr != HPAGE_PMD_SIZE) {
+> +			int err;
+> +
+> +			get_page(page);
+> +			spin_unlock(ptl);
+> +			lock_page(page);
+> +			err = split_huge_page(page);
+> +			unlock_page(page);
+> +			put_page(page);
+> +			if (!err)
+> +				goto regular_page;
+> +			return 0;
+> +		}
+> +
+> +		if (isolate_lru_page(page))
+> +			goto huge_unlock;
+> +
+> +		list_add(&page->lru, &page_list);
+> +huge_unlock:
+> +		spin_unlock(ptl);
+> +		reclaim_pages(&page_list);
+> +		return 0;
+> +	}
+> +
+> +	if (pmd_trans_unstable(pmd))
+> +		return 0;
+> +regular_page:
+> +	orig_pte = pte_offset_map_lock(vma->vm_mm, pmd, addr, &ptl);
+> +	for (pte = orig_pte; addr < end; pte++, addr += PAGE_SIZE) {
+> +		ptent = *pte;
+> +		if (!pte_present(ptent))
+> +			continue;
+> +
+> +		page = vm_normal_page(vma, addr, ptent);
+> +		if (!page)
+> +			continue;
+> +
+> +		if (page_mapcount(page) > 1)
+> +			continue;
+> +
+> +		if (isolate_lru_page(page))
+> +			continue;
+> +
+> +		isolated++;
+> +		list_add(&page->lru, &page_list);
+> +		if (isolated >= SWAP_CLUSTER_MAX) {
+> +			pte_unmap_unlock(orig_pte, ptl);
+> +			reclaim_pages(&page_list);
+> +			isolated = 0;
+> +			pte = pte_offset_map_lock(vma->vm_mm, pmd, addr, &ptl);
+> +			orig_pte = pte;
+> +		}
+> +	}
+> +
+> +	pte_unmap_unlock(orig_pte, ptl);
+> +	reclaim_pages(&page_list);
+> +	cond_resched();
+> +
+> +	return 0;
+> +}
+> +
+> +static void madvise_pageout_page_range(struct mmu_gather *tlb,
+> +			     struct vm_area_struct *vma,
+> +			     unsigned long addr, unsigned long end)
+> +{
+> +	struct mm_walk warm_walk = {
+> +		.pmd_entry = madvise_pageout_pte_range,
+> +		.mm = vma->vm_mm,
+> +	};
+> +
+> +	tlb_start_vma(tlb, vma);
+> +	walk_page_range(addr, end, &warm_walk);
+> +	tlb_end_vma(tlb, vma);
+> +}
+> +
+> +
+> +static long madvise_pageout(struct vm_area_struct *vma,
+> +			struct vm_area_struct **prev,
+> +			unsigned long start_addr, unsigned long end_addr)
+> +{
+> +	struct mm_struct *mm = vma->vm_mm;
+> +	struct mmu_gather tlb;
+> +
+> +	*prev = vma;
+> +	if (!can_madv_lru_vma(vma))
+> +		return -EINVAL;
+> +
+> +	lru_add_drain();
+> +	tlb_gather_mmu(&tlb, mm, start_addr, end_addr);
+> +	madvise_pageout_page_range(&tlb, vma, start_addr, end_addr);
+> +	tlb_finish_mmu(&tlb, start_addr, end_addr);
+> +
+> +	return 0;
+> +}
+> +
+>  static int madvise_free_pte_range(pmd_t *pmd, unsigned long addr,
+>  				unsigned long end, struct mm_walk *walk)
+>  
+> @@ -805,6 +928,8 @@ madvise_vma(struct vm_area_struct *vma, struct vm_area_struct **prev,
+>  		return madvise_willneed(vma, prev, start, end);
+>  	case MADV_COLD:
+>  		return madvise_cold(vma, prev, start, end);
+> +	case MADV_PAGEOUT:
+> +		return madvise_pageout(vma, prev, start, end);
+>  	case MADV_FREE:
+>  	case MADV_DONTNEED:
+>  		return madvise_dontneed_free(vma, prev, start, end, behavior);
+> @@ -827,6 +952,7 @@ madvise_behavior_valid(int behavior)
+>  	case MADV_DONTNEED:
+>  	case MADV_FREE:
+>  	case MADV_COLD:
+> +	case MADV_PAGEOUT:
+>  #ifdef CONFIG_KSM
+>  	case MADV_MERGEABLE:
+>  	case MADV_UNMERGEABLE:
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 56df55e8afcd..2c2cf442db58 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -2136,6 +2136,40 @@ static void shrink_active_list(unsigned long nr_to_scan,
+>  			nr_deactivate, nr_rotated, sc->priority, file);
+>  }
+>  
+> +unsigned long reclaim_pages(struct list_head *page_list)
+> +{
+> +	unsigned long nr_reclaimed = 0;
+> +	LIST_HEAD(node_page_list);
+> +	struct reclaim_stat dummy_stat;
+> +	struct scan_control sc = {
+> +		.gfp_mask = GFP_KERNEL,
+> +		.priority = DEF_PRIORITY,
+> +		.may_writepage = 1,
+> +		.may_unmap = 1,
+> +		.may_swap = 1,
+> +	};
+> +
+> +	while (!list_empty(page_list)) {
+> +		struct page *page;
+> +
+> +		page = lru_to_page(page_list);
+> +		list_move(&page->lru, &node_page_list);
+> +		nr_reclaimed += shrink_page_list(&node_page_list,
+> +						page_pgdat(page),
+> +						&sc, TTU_IGNORE_ACCESS,
+> +						&dummy_stat, true);
+> +		if (!list_empty(&node_page_list)) {
+> +			struct page *page = lru_to_page(&node_page_list);
+> +
+> +			list_del(&page->lru);
+> +			putback_lru_page(page);
+> +
+> +		}
+> +	}
 
-The Stratix10 peripheral FIFO memories can recover from double
-bit errors with a warm reset instead of a cold reset.
-Add the option of a warm reset for peripheral (USB, Ethernet)
-memories.
+Awesome, this is way more readable now. Thanks for the cleanup!
 
-CPU memories such as SDRAM and OCRAM require a cold reset for
-DBEs.
-Filter on whether the error is a SDRAM/OCRAM or a peripheral
-FIFO memory to determine which reset to use when the warm
-reset option is configured.
-
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
----
- drivers/edac/Kconfig       |  9 +++++++++
- drivers/edac/altera_edac.c | 31 +++++++++++++++++++++++++++++--
- drivers/edac/altera_edac.h |  4 ++++
- 3 files changed, 42 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
-index 47eb4d13ed5f..e47c428d485d 100644
---- a/drivers/edac/Kconfig
-+++ b/drivers/edac/Kconfig
-@@ -394,6 +394,15 @@ config EDAC_ALTERA
- 	  Altera SOCs. This is the global enable for the
- 	  various Altera peripherals.
- 
-+config EDAC_ALTERA_ARM64_WARM_RESET
-+	bool "Altera ARM64 Peripheral Warm Reset"
-+	depends on EDAC_ALTERA=y && ARM64
-+	help
-+	  Support for Warm Reset on peripheral FIFO double bit errors
-+	  on SoCFPGA ARM64 platforms. Otherwise a peripheral FIFO DBE
-+	  will cause a cold reset. SDRAM and OCRAM DBEs always cause
-+	  a cold reset.
-+
- config EDAC_ALTERA_SDRAM
- 	bool "Altera SDRAM ECC"
- 	depends on EDAC_ALTERA=y
-diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
-index 8816f74a22b4..179601f14b48 100644
---- a/drivers/edac/altera_edac.c
-+++ b/drivers/edac/altera_edac.c
-@@ -2036,6 +2036,19 @@ static const struct irq_domain_ops a10_eccmgr_ic_ops = {
- /* panic routine issues reboot on non-zero panic_timeout */
- extern int panic_timeout;
- 
-+#ifdef CONFIG_EDAC_ALTERA_ARM64_WARM_RESET
-+/* EL3 SMC call to setup CPUs for warm reset */
-+void panic_smp_self_stop(void)
-+{
-+	struct arm_smccc_res result;
-+
-+	__cpu_disable();
-+	cpu_relax();
-+	arm_smccc_smc(INTEL_SIP_SMC_ECC_DBE, S10_WARM_RESET_WFI_FLAG,
-+		      S10_WARM_RESET_WFI_FLAG, 0, 0, 0, 0, 0, &result);
-+}
-+#endif
-+
- /*
-  * The double bit error is handled through SError which is fatal. This is
-  * called as a panic notifier to printout ECC error info as part of the panic.
-@@ -2067,14 +2080,28 @@ static int s10_edac_dberr_handler(struct notifier_block *this,
- 			regmap_write(edac->ecc_mgr_map,
- 				     S10_SYSMGR_UE_ADDR_OFST, err_addr);
- 			edac_printk(KERN_ERR, EDAC_DEVICE,
--				    "EDAC: [Fatal DBE on %s @ 0x%08X]\n",
--				    ed->edac_dev_name, err_addr);
-+				    "EDAC: [Fatal DBE on %s [CPU=%d] @ 0x%08X]\n",
-+				    ed->edac_dev_name, raw_smp_processor_id(),
-+				    err_addr);
- 			break;
- 		}
- 		/* Notify the System through SMC. Reboot delay = 1 second */
-+#ifdef CONFIG_EDAC_ALTERA_ARM64_WARM_RESET
-+		/* Handle peripheral FIFO DBE as Warm Resets */
-+		if (dberror & S10_COLD_RESET_MASK) {
-+			panic_timeout = 1;
-+			arm_smccc_smc(INTEL_SIP_SMC_ECC_DBE, dberror, 0, 0, 0,
-+				      0, 0, 0, &result);
-+		} else {
-+			arm_smccc_smc(INTEL_SIP_SMC_ECC_DBE,
-+				      S10_WARM_RESET_WFI_FLAG | dberror, 0, 0,
-+				      0, 0, 0, 0, &result);
-+		}
-+#else
- 		panic_timeout = 1;
- 		arm_smccc_smc(INTEL_SIP_SMC_ECC_DBE, dberror, 0, 0, 0, 0,
- 			      0, 0, &result);
-+#endif
- 	}
- 
- 	return NOTIFY_DONE;
-diff --git a/drivers/edac/altera_edac.h b/drivers/edac/altera_edac.h
-index 55654cc4bcdf..e5936fbe3964 100644
---- a/drivers/edac/altera_edac.h
-+++ b/drivers/edac/altera_edac.h
-@@ -327,6 +327,10 @@ struct altr_sdram_mc_data {
- #define ECC_READ_EOVR                     0x2
- #define ECC_READ_EDOVR                    0x3
- 
-+/* DRAM and OCRAM require cold reset */
-+#define S10_COLD_RESET_MASK               0x30002
-+#define S10_WARM_RESET_WFI_FLAG           BIT(31)
-+
- struct altr_edac_device_dev;
- 
- struct edac_device_prv_data {
--- 
-2.7.4
-
+Regarding the loop, for the vast majority of instances, pages on
+page_list will actually be from the same node. It would make sense to
+do batching here and collect pages until last_pgdat != pgdat. That
+should reduce the number of tlb flushes and memcg uncharge flushes in
+shrink_page_list().
