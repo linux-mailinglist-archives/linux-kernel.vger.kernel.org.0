@@ -2,123 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6715C333D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:44:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEA93333D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:48:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727649AbfFCPoM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 11:44:12 -0400
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:44788 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726889AbfFCPoM (ORCPT
+        id S1727960AbfFCPsH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 11:48:07 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:54274 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727458AbfFCPsG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 11:44:12 -0400
-Received: by mail-ua1-f67.google.com with SMTP id p5so905688uar.11
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 08:44:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Pxr2tsBIRKskeHWPSwMDss/AepFRvbtFu+kFFRUCb+Q=;
-        b=FeiRgsweRwTNxjLQEZKDRVMSsebGvhERPWsd1c7KGoMTjJVDnHHl1PLX97BQ+pii77
-         hXtgyY75bU/8TkqS3pgzN5I5hTHdt4eK7NIYTXesu+y8UAKBHgjB0t9mjdZt3w+naCKT
-         rM9EkwPnii6j9iaJgVUuZV9kmbIImg2XC97jJMlaEswKCY5ECylPsSlPW/geZgkeQ6uC
-         dSkTIW8/omAz6+vXCb/USUR0sqDwhsiGnB6pp2PyqiyEsckbAVuvNkDzmpDyALKbtt/p
-         PfvvZJYgSqX83KJQk1Sl9u3JzNGJUxILFZ7nxCKabg0SZXDzVVCf5/7Tg4QlIB3fGbEx
-         ZYCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Pxr2tsBIRKskeHWPSwMDss/AepFRvbtFu+kFFRUCb+Q=;
-        b=f7M7LVSiKjbTGAJ+gmfDGg1z/tgmRzLbRyRdzWMRRXm048NSLKxdd/J8OhXkWI9HhI
-         Up2zI1cunQg0wyB4MRw/EkoSfNHUaE6JpIOuI1vKINMCw3KJ0GCZ/9fjw8wTfeFOjL+7
-         gIcpHg5JjSqYzNOlq5S1DlZM6QaKf/axUkirF14oph1AINPJsuJwLi9a0ORnYzslMREM
-         W8vmzUdN0DNcUP8ORAVy6U00YwTZ5rAIwliZNh1SkfpdhW41XvxjhchZhyIKE3WWWN0y
-         yA5QaWGn1krmPBw3Og5lNHQBsYJFO6OEqlncw58NjB+dUXb4dpnPQFept/98SJT2Yqpr
-         5DbQ==
-X-Gm-Message-State: APjAAAUtaThlj+HavubTo8BMZX9+MKXpSYVkvKhlNFLBf54eKoR27Cd/
-        QUJlvwXp1OlqW1VopsBjEELV70h8dyjHboyjvv3kVQ==
-X-Google-Smtp-Source: APXvYqzC/biQeMQwwnleohw9UkPA9qCfiYB7Q+NAS71L23R0SboHrt/PF2NrayEW15/9pMefLmUdej7+yCs2uAGXatU=
-X-Received: by 2002:ab0:6198:: with SMTP id h24mr3159945uan.41.1559576651190;
- Mon, 03 Jun 2019 08:44:11 -0700 (PDT)
+        Mon, 3 Jun 2019 11:48:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=RHZ0xaAf/ckgPfj0zlFSV1kVsqjqoOm1zs8CgP8zISg=; b=EtqdNP4ltpzt4uTJqo5dA9Act
+        MyEcDGtD9kzTFBGJHfXbYuBcW90l/2a4WwN3iiaLCEKzQ4S3t7K++jeHWY5Y6VwODX/+iuxXqduTZ
+        HgN2/BCUqT+E7hc1Ze4c5c3JHX+6UDSVmg2tK//fryiFvubqmTZ52IgDVO82QqtOAGj86/fgMzlvv
+        uNfBmxuvCLda1Uwvn0H5AaMZDhsecYz2MZPPJ3V1b9/Qy4pRPp0ClcUKaNI7t/dJF6NGfsKM1WXb2
+        Xo8ReH/UB8I49VGHxyiPmFqzCWcT4/GsctlSrMaaI2ouUkgtBU3NYqE/U7PKrr6f9OsL89EwCHGJ6
+        SOSEKAdtw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hXpBg-0004EG-8h; Mon, 03 Jun 2019 15:47:52 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id D5E1E2066CC1B; Mon,  3 Jun 2019 17:47:50 +0200 (CEST)
+Date:   Mon, 3 Jun 2019 17:47:50 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     kan.liang@linux.intel.com
+Cc:     mingo@redhat.com, bp@alien8.de, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, x86@kernel.org, qiuxu.zhuo@intel.com,
+        tony.luck@intel.com, rui.zhang@intel.com
+Subject: Re: [PATCH 2/3] perf/x86/intel: Add more Icelake CPUIDs
+Message-ID: <20190603154750.GA3402@hirez.programming.kicks-ass.net>
+References: <20190603134122.13853-1-kan.liang@linux.intel.com>
+ <20190603134122.13853-2-kan.liang@linux.intel.com>
 MIME-Version: 1.0
-References: <20190531064313.193437-1-minchan@kernel.org> <20190531064313.193437-2-minchan@kernel.org>
- <20190531084752.GI6896@dhcp22.suse.cz> <20190531133904.GC195463@google.com>
- <20190531140332.GT6896@dhcp22.suse.cz> <20190531143407.GB216592@google.com> <20190603071607.GB4531@dhcp22.suse.cz>
-In-Reply-To: <20190603071607.GB4531@dhcp22.suse.cz>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Mon, 3 Jun 2019 08:43:59 -0700
-Message-ID: <CAKOZuetW1UsPP3fDm-zTBOiO_oWkkDwADu+Apy53abWNs-UcUA@mail.gmail.com>
-Subject: Re: [RFCv2 1/6] mm: introduce MADV_COLD
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tim Murray <timmurray@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Brian Geffon <bgeffon@google.com>,
-        Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
-        Christian Brauner <christian@brauner.io>, oleksandr@redhat.com,
-        hdanton@sina.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190603134122.13853-2-kan.liang@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 3, 2019 at 12:16 AM Michal Hocko <mhocko@kernel.org> wrote:
-> On Fri 31-05-19 23:34:07, Minchan Kim wrote:
-> > On Fri, May 31, 2019 at 04:03:32PM +0200, Michal Hocko wrote:
-> > > On Fri 31-05-19 22:39:04, Minchan Kim wrote:
-> > > > On Fri, May 31, 2019 at 10:47:52AM +0200, Michal Hocko wrote:
-> > > > > On Fri 31-05-19 15:43:08, Minchan Kim wrote:
-> > > > > > When a process expects no accesses to a certain memory range, it could
-> > > > > > give a hint to kernel that the pages can be reclaimed when memory pressure
-> > > > > > happens but data should be preserved for future use.  This could reduce
-> > > > > > workingset eviction so it ends up increasing performance.
-> > > > > >
-> > > > > > This patch introduces the new MADV_COLD hint to madvise(2) syscall.
-> > > > > > MADV_COLD can be used by a process to mark a memory range as not expected
-> > > > > > to be used in the near future. The hint can help kernel in deciding which
-> > > > > > pages to evict early during memory pressure.
-> > > > > >
-> > > > > > Internally, it works via deactivating pages from active list to inactive's
-> > > > > > head if the page is private because inactive list could be full of
-> > > > > > used-once pages which are first candidate for the reclaiming and that's a
-> > > > > > reason why MADV_FREE move pages to head of inactive LRU list. Therefore,
-> > > > > > if the memory pressure happens, they will be reclaimed earlier than other
-> > > > > > active pages unless there is no access until the time.
-> > > > >
-> > > > > [I am intentionally not looking at the implementation because below
-> > > > > points should be clear from the changelog - sorry about nagging ;)]
-> > > > >
-> > > > > What kind of pages can be deactivated? Anonymous/File backed.
-> > > > > Private/shared? If shared, are there any restrictions?
-> > > >
-> > > > Both file and private pages could be deactived from each active LRU
-> > > > to each inactive LRU if the page has one map_count. In other words,
-> > > >
-> > > >     if (page_mapcount(page) <= 1)
-> > > >         deactivate_page(page);
-> > >
-> > > Why do we restrict to pages that are single mapped?
-> >
-> > Because page table in one of process shared the page would have access bit
-> > so finally we couldn't reclaim the page. The more process it is shared,
-> > the more fail to reclaim.
->
-> So what? In other words why should it be restricted solely based on the
-> map count. I can see a reason to restrict based on the access
-> permissions because we do not want to simplify all sorts of side channel
-> attacks but memory reclaim is capable of reclaiming shared pages and so
-> far I haven't heard any sound argument why madvise should skip those.
-> Again if there are any reasons, then document them in the changelog.
+On Mon, Jun 03, 2019 at 06:41:21AM -0700, kan.liang@linux.intel.com wrote:
+> @@ -4962,7 +4965,9 @@ __init int intel_pmu_init(void)
+>  		x86_pmu.cpu_events = get_icl_events_attrs();
+>  		x86_pmu.rtm_abort_event = X86_CONFIG(.event=0xca, .umask=0x02);
+>  		x86_pmu.lbr_pt_coexist = true;
+> -		intel_pmu_pebs_data_source_skl(false);
+> +		intel_pmu_pebs_data_source_skl(
+> +			(boot_cpu_data.x86_model == INTEL_FAM6_ICELAKE_X) ||
+> +			(boot_cpu_data.x86_model == INTEL_FAM6_ICELAKE_XEON_D));
 
-Whether to reclaim shared pages is a policy decision best left to
-userland, IMHO.
+That's pretty sad, a model switch inside a model switch :/
+
+>  		pr_cont("Icelake events, ");
+>  		name = "icelake";
+>  		break;
+
+Would something like so not be nicer?
+
+---
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -4485,6 +4485,7 @@ __init int intel_pmu_init(void)
+ 	struct event_constraint *c;
+ 	unsigned int unused;
+ 	struct extra_reg *er;
++	bool pmem = false;
+ 	int version, i;
+ 	char *name;
+ 
+@@ -4936,9 +4937,10 @@ __init int intel_pmu_init(void)
+ 		name = "knights-landing";
+ 		break;
+ 
++	case INTEL_FAM6_SKYLAKE_X:
++		pmem = true;
+ 	case INTEL_FAM6_SKYLAKE_MOBILE:
+ 	case INTEL_FAM6_SKYLAKE_DESKTOP:
+-	case INTEL_FAM6_SKYLAKE_X:
+ 	case INTEL_FAM6_KABYLAKE_MOBILE:
+ 	case INTEL_FAM6_KABYLAKE_DESKTOP:
+ 		x86_add_quirk(intel_pebs_isolation_quirk);
+@@ -4970,8 +4972,7 @@ __init int intel_pmu_init(void)
+ 		td_attr  = hsw_events_attrs;
+ 		mem_attr = hsw_mem_events_attrs;
+ 		tsx_attr = hsw_tsx_events_attrs;
+-		intel_pmu_pebs_data_source_skl(
+-			boot_cpu_data.x86_model == INTEL_FAM6_SKYLAKE_X);
++		intel_pmu_pebs_data_source_skl(pmem);
+ 
+ 		if (boot_cpu_has(X86_FEATURE_TSX_FORCE_ABORT)) {
+ 			x86_pmu.flags |= PMU_FL_TFA;
+@@ -4985,7 +4986,11 @@ __init int intel_pmu_init(void)
+ 		name = "skylake";
+ 		break;
+ 
++	case INTEL_FAM6_ICELAKE_X:
++	case INTEL_FAM6_ICELAKE_XEON_D:
++		pmem = true;
+ 	case INTEL_FAM6_ICELAKE_MOBILE:
++	case INTEL_FAM6_ICELAKE_DESKTOP:
+ 		x86_pmu.late_ack = true;
+ 		memcpy(hw_cache_event_ids, skl_hw_cache_event_ids, sizeof(hw_cache_event_ids));
+ 		memcpy(hw_cache_extra_regs, skl_hw_cache_extra_regs, sizeof(hw_cache_extra_regs));
+@@ -5009,7 +5014,7 @@ __init int intel_pmu_init(void)
+ 		tsx_attr = icl_tsx_events_attrs;
+ 		x86_pmu.rtm_abort_event = X86_CONFIG(.event=0xca, .umask=0x02);
+ 		x86_pmu.lbr_pt_coexist = true;
+-		intel_pmu_pebs_data_source_skl(false);
++		intel_pmu_pebs_data_source_skl(pmem);
+ 		pr_cont("Icelake events, ");
+ 		name = "icelake";
+ 		break;
