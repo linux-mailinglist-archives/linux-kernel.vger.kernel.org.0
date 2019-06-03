@@ -2,129 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 883D232B4A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:01:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C22A32B70
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:07:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726809AbfFCJBk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 05:01:40 -0400
-Received: from mail-eopbgr70042.outbound.protection.outlook.com ([40.107.7.42]:29038
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727003AbfFCJBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 05:01:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=b4lMmQ5IOK3yFjAuwD9kRjqaVsV4ogoUCOJJcal1oQs=;
- b=BftrIDswrGVoc03wgZKhzpNukQuzzcua6n/36RfuRee6n/o3Cd94dsM2spDoEu9DlWESHyx5Npw/iTP6gL/+YsFERNAVDdY0uaxlgVXOw3WMU/811I8ZUGaZZQuCISngUbjMlv/ltzhftbK9nJ8IM6VMEvuwLQ9oLTKjCD2gKec=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3818.eurprd04.prod.outlook.com (52.134.71.29) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1943.22; Mon, 3 Jun 2019 09:01:33 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::5835:e874:bd94:fec]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::5835:e874:bd94:fec%5]) with mapi id 15.20.1943.018; Mon, 3 Jun 2019
- 09:01:33 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     Leonard Crestez <leonard.crestez@nxp.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "olof@lixom.net" <olof@lixom.net>,
-        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
-        "jagan@amarulasolutions.com" <jagan@amarulasolutions.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "dinguyen@kernel.org" <dinguyen@kernel.org>,
-        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH V2 2/3] clk: imx: Add support for i.MX8MN clock driver
-Thread-Topic: [PATCH V2 2/3] clk: imx: Add support for i.MX8MN clock driver
-Thread-Index: AQHVGaxeLRS7zF6kSEqSfwNQzT+zYKaJonPw
-Date:   Mon, 3 Jun 2019 09:01:33 +0000
-Message-ID: <DB3PR0402MB39162498C890AB92D9722595F5140@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <20190603013503.40626-1-Anson.Huang@nxp.com>
- <20190603013503.40626-2-Anson.Huang@nxp.com>
- <VI1PR04MB5055D6EB38E84E370E881425EE140@VI1PR04MB5055.eurprd04.prod.outlook.com>
-In-Reply-To: <VI1PR04MB5055D6EB38E84E370E881425EE140@VI1PR04MB5055.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2e689b54-883d-4a3d-7660-08d6e8021383
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:DB3PR0402MB3818;
-x-ms-traffictypediagnostic: DB3PR0402MB3818:
-x-microsoft-antispam-prvs: <DB3PR0402MB3818825C7C401FA173C5A1E3F5140@DB3PR0402MB3818.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:113;
-x-forefront-prvs: 0057EE387C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(346002)(366004)(396003)(39860400002)(189003)(199004)(13464003)(53546011)(478600001)(8936002)(76176011)(316002)(229853002)(8676002)(25786009)(6506007)(7736002)(81166006)(71190400001)(81156014)(305945005)(256004)(11346002)(44832011)(102836004)(86362001)(74316002)(71200400001)(6436002)(476003)(2201001)(446003)(7416002)(33656002)(486006)(68736007)(53936002)(6246003)(55016002)(2501003)(5660300002)(9686003)(52536014)(14454004)(2906002)(66066001)(110136005)(26005)(7696005)(6116002)(99286004)(73956011)(64756008)(3846002)(66946007)(186003)(76116006)(66446008)(4326008)(66556008)(66476007)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3818;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 5EhKgCqbkxVJFWFHUW+do0fx6ehLjMR/AbhN23eUHbXTy84CLYqgVUjxoJNQsSq2RldPHN2YUuRN/1o99abBS8fn++Dq4uBR9PiUhOFG8rUNNFNtdID0SxQbKeZQed23gG6SvxT1ZSaTBSXy9W3asUo7AtM4MoKUCLUGeAjkQ94WpLlnNknsdU0fz+cgeJZ80s1f/nM/P2VCyKHGzCCt5fHwSsEYocIN6ch8hWdjN7mgwNVZukwmE5oKSbscTgbQm+ZoDhiIj6R3cVSzYgot7DO54z5hMwy0JDU8nwgp6G6isJ0wzn5EojnGh+Vj9+83gfSO5d9qsRk0xPbxcumGevUB7wKjHVSBprhjHuWG9QmH7kNJ417LpVwAIygXEg5Mo6/t423TlLuJcvABXaVz6BiI/no3KMK2MIc2emrDoSc=
+        id S1727487AbfFCJHA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 05:07:00 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:49484 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726710AbfFCJHA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 05:07:00 -0400
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190603090658epoutp03d0a397ffa58e158c13268388f9c142fa~kpQaAuEPV0823408234epoutp03X
+        for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2019 09:06:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190603090658epoutp03d0a397ffa58e158c13268388f9c142fa~kpQaAuEPV0823408234epoutp03X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1559552818;
+        bh=x9TvWZRKI+58saE3CQvcUnn9RCw3ppnUZs9YYIiiZ/I=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=oZefJvOlU8qpcdJ8UNkf5ziPhZ7lXJWL+BQWD1roKRC3tBS4FZbD82qhBAjYCjt+Y
+         E04ke0Bhc669EG7WVABM/qp6lTp6btu1E1n8juZGBlEKmcLc//B10w/Z1BA+1rd6nC
+         XHMDoYRV+Cuw7BCpeeN9l/+WPXiDOI/WB++sQ/8I=
+Received: from epsmges5p3new.samsung.com (unknown [182.195.40.195]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20190603090656epcas5p2aed2847ba654ce4870bdaecf271597b6~kpQX3QFs-1305313053epcas5p2L;
+        Mon,  3 Jun 2019 09:06:56 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        1A.D9.04067.F23E4FC5; Mon,  3 Jun 2019 18:06:55 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20190603090227epcas5p348327061a3facbb9dfcf662bf2bc196e~kpMePusAL2178021780epcas5p3h;
+        Mon,  3 Jun 2019 09:02:27 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190603090227epsmtrp1e61081ec8c23756baee30b24a93169f1~kpMeO4VwJ1674016740epsmtrp1f;
+        Mon,  3 Jun 2019 09:02:27 +0000 (GMT)
+X-AuditID: b6c32a4b-7a3ff70000000fe3-ae-5cf4e32fb70b
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        64.FB.03662.322E4FC5; Mon,  3 Jun 2019 18:02:27 +0900 (KST)
+Received: from localhost.localdomain (unknown [107.109.224.135]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190603090225epsmtip20d2b100d394310406c978ae5d0230e39~kpMcNWAC11650516505epsmtip2l;
+        Mon,  3 Jun 2019 09:02:25 +0000 (GMT)
+From:   Maninder Singh <maninder1.s@samsung.com>
+To:     akpm@linux-foundation.org, herbert@gondor.apana.org.au,
+        davem@davemloft.net, keescook@chromium.org, gustavo@embeddedor.com
+Cc:     joe@perches.com, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, a.sahrawat@samsung.com,
+        pankaj.m@samsung.com, v.narang@samsung.com,
+        Maninder Singh <maninder1.s@samsung.com>
+Subject: [PATCH 0/4] zstd: reduce stack usage
+Date:   Mon,  3 Jun 2019 14:32:02 +0530
+Message-Id: <1559552526-4317-1-git-send-email-maninder1.s@samsung.com>
+X-Mailer: git-send-email 2.7.4
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0gUURj17oyzY7QyrVY3S9kmljBfu9ra9DB7mAwotNWfCMNGvai0Ozvt
+        7FYGgYUZaWmGYrmWQhQpPU1Dd83HWqRRhpWaFWpaUT4oUyMrqt0do/6d77vn3HPudz8SU+YQ
+        AWQmb0FmnjPQxBz8TltwcFjE8FSSxvZyLdPlQEz5jasEU/4kB2fqGtVM/sgSxjYwjDOP8o3M
+        QP+MjHlmLyeYtopcnOkfq5Mxzo7zYMNc1pbdhbO1VX0y9nqrmr3Tombbz/7A2anqHowtqK0G
+        7GRNkJ7cZViXgbg0ZFYhPtWUlsmnx9AJO5I3J+uiNdow7WpmFa3iOSOKoeMS9WHxmQZXUFq1
+        nzNYXS09J4p0xPp1ZpPVglQZJtESQyMhzSBoI4VwkTOKVj49PNVkXKPVaCJ1LuYeQ0b/p3xC
+        aKAOlvy2ZIPLvnnAh4TUSlg1UEzkgTmkknIA+L35KS4VXwC85Wgh3Cwl9RXAnJqQPEB6FO3d
+        yyTOXQDflI3LJc40gDOlWW5MUOGw2t7oucifygawv7sIuAuMagXwXe5F4Gb5UWHQ8euxxwGn
+        1HDg0XMPVlDxsKD1m0zKFwT7Ok9gbjGk6gn4frzSWzqIg52FTwkJ+8GRB7VyCQfAj4W5cklw
+        HMDecz24VBQDeOJT1SwrFg6+uC93PwijguENe4TUDoQlD697nDHKF5768XY2hQLWX/iL1TCn
+        7+ZsiMVwcmIClzAL39ZVAWkWu+H0tyb5aRBY9s+hEoBqsAgJojEdiTohikcH/v+pGuDZwBUJ
+        9aCmM9EJKBLQcxWffaaSlN7cfjHL6ASQxGh/BffK1VKkcVmHkNmUbLYakOgEOtcIi7CA+akm
+        1z7zlmStLjI6WrNao4tiorX0QsUZ7+4kJZXOWdBehARk/quTkT4B2UDdc6Tj6OGdssCha1+P
+        lZAlY/cKKr1WrRXmLbaNb0+JTelaUBi79KD697EK9pC9seGnve3Uljgv4+vBx8WlzKURfnmF
+        32j5TosoECGO09w+bAb3bQ5vHZ5xtnXE682yHq/eK7dDHbm3R0O2hQ7F0k+86rJatm86uTHG
+        1tS+NVT1gcbFDE67AjOL3B8Q6yQ0lwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHLMWRmVeSWpSXmKPExsWy7bCSvK7yoy8xBjOvmltc3J1qMWf9GjaL
+        OedbWCy27lG16H4lYzH7/mMWizPduRb37/1ksri8aw6bxeH5bSwW995sZbI4dHIuowOPx+yG
+        iyweW1beZPJYd1DVY9sBVY8TM36zeHxZdY3Zo2/LKkaPz5vkAjiiuGxSUnMyy1KL9O0SuDLu
+        ve9mK9gpUDH1f0kD4zK+LkYODgkBE4kTV5W7GLk4hAR2M0pseHSMvYuREyguLfHz33sWCFtY
+        YuW/5+wQRZ8ZJfZO6WYCSbAJ6Ems2rWHBSQhItDGKNG/8T8riMMscJJR4m7nB2aQKmEBXYnd
+        /86ygdgsAqoS989cAbN5Bdwk+g7+YIJYISdx81wn8wRGngWMDKsYJVMLinPTc4sNC4zyUsv1
+        ihNzi0vz0vWS83M3MYJDUUtrB+OJE/GHGAU4GJV4eGewf4kRYk0sK67MPcQowcGsJMKbeBso
+        xJuSWFmVWpQfX1Sak1p8iFGag0VJnFc+/1ikkEB6YklqdmpqQWoRTJaJg1OqgZGv5ETIW9Ea
+        Lc29fssX33/lyhw80Xz2pwRO01qp0JmOOwPWiC7/wul5wMA2cW3obwfnf2mt8WZlfIWnOq+k
+        qkVqMgcKnbVJbG58cPXpPa3Cq6YqbJKNvx9prDnVonWmfnrcUyaHw/bft/C8Wsir7p96gpd/
+        Bc/jeSb8B25y3hDcdcjt2h9FByWW4oxEQy3mouJEAGzeAMBBAgAA
+X-CMS-MailID: 20190603090227epcas5p348327061a3facbb9dfcf662bf2bc196e
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2e689b54-883d-4a3d-7660-08d6e8021383
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jun 2019 09:01:33.3075
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: anson.huang@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3818
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190603090227epcas5p348327061a3facbb9dfcf662bf2bc196e
+References: <CGME20190603090227epcas5p348327061a3facbb9dfcf662bf2bc196e@epcas5p3.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTGVvbmFyZCBDcmVzdGV6
-DQo+IFNlbnQ6IE1vbmRheSwgSnVuZSAzLCAyMDE5IDQ6NDUgUE0NCj4gVG86IEFuc29uIEh1YW5n
-IDxhbnNvbi5odWFuZ0BueHAuY29tPjsgbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207DQo+IHNib3lk
-QGtlcm5lbC5vcmc7IHJvYmgrZHRAa2VybmVsLm9yZzsgbWFyay5ydXRsYW5kQGFybS5jb207DQo+
-IHNoYXduZ3VvQGtlcm5lbC5vcmc7IHMuaGF1ZXJAcGVuZ3V0cm9uaXguZGU7IGtlcm5lbEBwZW5n
-dXRyb25peC5kZTsNCj4gZmVzdGV2YW1AZ21haWwuY29tOyBjYXRhbGluLm1hcmluYXNAYXJtLmNv
-bTsgd2lsbC5kZWFjb25AYXJtLmNvbTsNCj4gbWF4aW1lLnJpcGFyZEBib290bGluLmNvbTsgb2xv
-ZkBsaXhvbS5uZXQ7IGhvcm1zK3JlbmVzYXNAdmVyZ2UubmV0LmF1Ow0KPiBqYWdhbkBhbWFydWxh
-c29sdXRpb25zLmNvbTsgYmpvcm4uYW5kZXJzc29uQGxpbmFyby5vcmc7DQo+IGRpbmd1eWVuQGtl
-cm5lbC5vcmc7IGVucmljLmJhbGxldGJvQGNvbGxhYm9yYS5jb207IEFpc2hlbmcgRG9uZw0KPiA8
-YWlzaGVuZy5kb25nQG54cC5jb20+OyBKYWNreSBCYWkgPHBpbmcuYmFpQG54cC5jb20+OyBBYmVs
-IFZlc2ENCj4gPGFiZWwudmVzYUBueHAuY29tPjsgbC5zdGFjaEBwZW5ndXRyb25peC5kZTsgbGlu
-dXgtY2xrQHZnZXIua2VybmVsLm9yZzsNCj4gZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IGxp
-bnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXgtDQo+IGtlcm5lbEB2Z2Vy
-Lmtlcm5lbC5vcmcNCj4gQ2M6IGRsLWxpbnV4LWlteCA8bGludXgtaW14QG54cC5jb20+DQo+IFN1
-YmplY3Q6IFJlOiBbUEFUQ0ggVjIgMi8zXSBjbGs6IGlteDogQWRkIHN1cHBvcnQgZm9yIGkuTVg4
-TU4gY2xvY2sgZHJpdmVyDQo+IA0KPiBPbiA2LzMvMjAxOSA0OjMzIEFNLCBBbnNvbi5IdWFuZ0Bu
-eHAuY29tIHdyb3RlOg0KPiA+IEZyb206IEFuc29uIEh1YW5nIDxBbnNvbi5IdWFuZ0BueHAuY29t
-Pg0KPiA+DQo+ID4gVGhpcyBwYXRjaCBhZGRzIGkuTVg4TU4gY2xvY2sgZHJpdmVyIHN1cHBvcnQu
-DQo+IA0KPiA+ICsjaW5jbHVkZSAiY2xrLmgiDQo+ID4gKw0KPiA+ICsjZGVmaW5lIFBMTF8xNDE2
-WF9SQVRFKF9yYXRlLCBfbSwgX3AsIF9zKQkJXA0KPiA+ICsJewkJCQkJCVwNCj4gPiArCQkucmF0
-ZQk9CShfcmF0ZSksCQlcDQo+ID4gKwkJLm1kaXYJPQkoX20pLAkJCVwNCj4gPiArCQkucGRpdgk9
-CShfcCksCQkJXA0KPiA+ICsJCS5zZGl2CT0JKF9zKSwJCQlcDQo+ID4gKwl9DQo+ID4gKw0KPiA+
-ICsjZGVmaW5lIFBMTF8xNDQzWF9SQVRFKF9yYXRlLCBfbSwgX3AsIF9zLCBfaykJCVwNCj4gPiAr
-CXsJCQkJCQlcDQo+ID4gKwkJLnJhdGUJPQkoX3JhdGUpLAkJXA0KPiA+ICsJCS5tZGl2CT0JKF9t
-KSwJCQlcDQo+ID4gKwkJLnBkaXYJPQkoX3ApLAkJCVwNCj4gPiArCQkuc2Rpdgk9CShfcyksCQkJ
-XA0KPiA+ICsJCS5rZGl2CT0JKF9rKSwJCQlcDQo+ID4gKwl9DQo+IA0KPiBUaGVzZSBtYWNyb3Mg
-YXJlIHNoYXJlZCB3aXRoIGNsay1pbXg4bW0gKGFuZCBwZXJoYXBzIHNvbWUgZnV0dXJlIGNoaXBz
-KQ0KPiBzbyB0aGV5IHNob3VsZCBiZSBtb3ZlZCB0byBkcml2ZXIvY2xrL2lteC9jbGsuaA0KDQpP
-Sywgd2lsbCBtb3ZlIHRoZW0gaW50byBjbGsuaCBpbiBWMy4NCg0KQW5zb24uDQo=
+This patch set reduces stack usage for zstd code, because target like ARM has
+limited 8KB kernel stack, which is getting overflowed due to hight stack usage
+of zstd code with call flow like:
+
+....
+....
+(FSE_compress_usingCTable) from (HUF_compressWeights_wksp+0x140/0x200)
+(HUF_compressWeights_wksp) from (HUF_writeCTable_wksp+0xdc/0x1c8)
+(HUF_writeCTable_wksp) from (HUF_compress4X_repeat+0x214/0x450)
+(HUF_compress4X_repeat) from  (ZSTD_compressBlock_internal+0x228/0x135c)
+(ZSTD_compressBlock_internal) from  (ZSTD_compressContinue_internal+0x1f8/0x3c8)
+(ZSTD_compressContinue_internal) from  (ZSTD_compressCCtx+0xc0/0x1cc)
+(ZSTD_compressCCtx) from  (zstd_compress+0x90/0xa8)
+(zstd_compress) from  (crypto_compress+0x2c/0x34) 
+(crypto_compress) from  (zcomp_compress+0x3c/0x44)
+(zcomp_compress) from  (zram_bvec_rw+0x2f8/0xa7c)
+(zram_bvec_rw) from [<c03e1e58>] (zram_rw_page+0x104/0x170)
+(zram_rw_page) from [<c01d3f94>] (bdev_write_page+0x80/0xb4)
+(bdev_write_page) from [<c017dc9c>] (__swap_writepage+0x160/0x29c)
+(__swap_writepage) from [<c017de14>] (swap_writepage+0x3c/0x58)
+(swap_writepage) from [<c014f88c>] (shrink_page_list+0x788/0xae0)
+(shrink_page_list) from [<c01502e0>] (shrink_inactive_list+0x210/0x4a8)
+(shrink_inactive_list) from [<c0150dd4>] (shrink_zone+0x53c/0x7c0)
+(shrink_zone) from [<c0151354>] (try_to_free_pages+0x2fc/0x7cc)
+(try_to_free_pages) from [<c0144c60>] (__alloc_pages_nodemask+0x534/0x91c)
+(__alloc_pages_nodemask) from [<c01393ac>] (pagecache_get_page+0xe0/0x1d8)
+....
+....
+
+Maninder Singh, Vaneet Narang (4):
+  zstd: pass pointer rathen than structure to functions
+  zstd: use U16 data type for rankPos
+  zstd: move params structure to global variable to reduce stack
+    usage
+  zstd: change structure variable from int to char
+
+ crypto/zstd.c           | 11 ++++---
+ include/linux/zstd.h    | 16 +++++-----
+ lib/zstd/compress.c     | 85 +++++++++++++++++++++++++------------------------
+ lib/zstd/decompress.c   |  2 +-
+ lib/zstd/huf_compress.c |  4 +--
+ 5 files changed, 62 insertions(+), 56 deletions(-)
+
+-- 
+2.7.4
+
