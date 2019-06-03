@@ -2,31 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DF0E333FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:52:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E20EA333FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:52:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729574AbfFCPwS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 11:52:18 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54048 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729544AbfFCPwN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 11:52:13 -0400
+        id S1729562AbfFCPwR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 11:52:17 -0400
+Received: from foss.arm.com ([217.140.101.70]:54058 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729531AbfFCPwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 11:52:14 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 08C7715AB;
-        Mon,  3 Jun 2019 08:52:13 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 78C51169E;
+        Mon,  3 Jun 2019 08:52:14 -0700 (PDT)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A3FD63F246;
-        Mon,  3 Jun 2019 08:52:11 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 45D393F246;
+        Mon,  3 Jun 2019 08:52:13 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        suzuki.poulose@arm.com,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: [RFC PATCH 48/57] drivers: s390: cio: Use driver_find_by_name() helper
-Date:   Mon,  3 Jun 2019 16:50:14 +0100
-Message-Id: <1559577023-558-49-git-send-email-suzuki.poulose@arm.com>
+        suzuki.poulose@arm.com, Thor Thayer <thor.thayer@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [RFC PATCH 49/57] drivers: mfd: altera: Use driver_find_device_by_of_node() helper
+Date:   Mon,  3 Jun 2019 16:50:15 +0100
+Message-Id: <1559577023-558-50-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
 References: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
@@ -35,80 +33,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the new driver_find_by_name() helper.
+Use the new helper to find device by of_node.
 
-Cc: Peter Oberparleiter <oberpar@linux.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Thor Thayer <thor.thayer@linux.intel.com>
+Cc: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/s390/cio/ccwgroup.c | 10 +---------
- drivers/s390/cio/device.c   | 17 +----------------
- 2 files changed, 2 insertions(+), 25 deletions(-)
+ drivers/mfd/altera-sysmgr.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/s390/cio/ccwgroup.c b/drivers/s390/cio/ccwgroup.c
-index c554f16..b1e24fb 100644
---- a/drivers/s390/cio/ccwgroup.c
-+++ b/drivers/s390/cio/ccwgroup.c
-@@ -606,13 +606,6 @@ void ccwgroup_driver_unregister(struct ccwgroup_driver *cdriver)
- }
- EXPORT_SYMBOL(ccwgroup_driver_unregister);
+diff --git a/drivers/mfd/altera-sysmgr.c b/drivers/mfd/altera-sysmgr.c
+index 2ee14d8..1fbe06c 100644
+--- a/drivers/mfd/altera-sysmgr.c
++++ b/drivers/mfd/altera-sysmgr.c
+@@ -88,16 +88,6 @@ static struct regmap_config altr_sysmgr_regmap_cfg = {
+ };
  
--static int __ccwgroupdev_check_busid(struct device *dev, const void *id)
--{
--	char *bus_id = id;
--
--	return (strcmp(bus_id, dev_name(dev)) == 0);
--}
--
  /**
-  * get_ccwgroupdev_by_busid() - obtain device from a bus id
-  * @gdrv: driver the device is owned by
-@@ -629,8 +622,7 @@ struct ccwgroup_device *get_ccwgroupdev_by_busid(struct ccwgroup_driver *gdrv,
- {
- 	struct device *dev;
- 
--	dev = driver_find_device(&gdrv->driver, NULL, bus_id,
--				 __ccwgroupdev_check_busid);
-+	dev = driver_find_device_by_name(&gdrv->driver, NULL, bus_id);
- 
- 	return dev ? to_ccwgroupdev(dev) : NULL;
- }
-diff --git a/drivers/s390/cio/device.c b/drivers/s390/cio/device.c
-index a5c2765..262e81c 100644
---- a/drivers/s390/cio/device.c
-+++ b/drivers/s390/cio/device.c
-@@ -1649,20 +1649,6 @@ int ccw_device_force_console(struct ccw_device *cdev)
- EXPORT_SYMBOL_GPL(ccw_device_force_console);
- #endif
- 
--/*
-- * get ccw_device matching the busid, but only if owned by cdrv
+- * sysmgr_match_phandle
+- * Matching function used by driver_find_device().
+- * Return: True if match is found, otherwise false.
 - */
--static int
--__ccwdev_check_busid(struct device *dev, const void *id)
+-static int sysmgr_match_phandle(struct device *dev, const void *data)
 -{
--	char *bus_id;
--
--	bus_id = id;
--
--	return (strcmp(bus_id, dev_name(dev)) == 0);
+-	return dev->of_node == (const struct device_node *)data;
 -}
 -
--
- /**
-  * get_ccwdev_by_busid() - obtain device from a bus id
-  * @cdrv: driver the device is owned by
-@@ -1679,8 +1665,7 @@ struct ccw_device *get_ccwdev_by_busid(struct ccw_driver *cdrv,
- {
- 	struct device *dev;
+-/**
+  * altr_sysmgr_regmap_lookup_by_phandle
+  * Find the sysmgr previous configured in probe() and return regmap property.
+  * Return: regmap if found or error if not found.
+@@ -117,8 +107,8 @@ struct regmap *altr_sysmgr_regmap_lookup_by_phandle(struct device_node *np,
+ 	if (!sysmgr_np)
+ 		return ERR_PTR(-ENODEV);
  
--	dev = driver_find_device(&cdrv->driver, NULL, (void *)bus_id,
--				 __ccwdev_check_busid);
-+	dev = driver_find_device_by_name(&cdrv->driver, NULL, bus_id);
- 
- 	return dev ? to_ccwdev(dev) : NULL;
- }
+-	dev = driver_find_device(&altr_sysmgr_driver.driver, NULL,
+-				 (void *)sysmgr_np, sysmgr_match_phandle);
++	dev = driver_find_device_by_of_node(&altr_sysmgr_driver.driver, NULL,
++					    (void *)sysmgr_np);
+ 	of_node_put(sysmgr_np);
+ 	if (!dev)
+ 		return ERR_PTR(-EPROBE_DEFER);
 -- 
 2.7.4
 
