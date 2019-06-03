@@ -2,99 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07EEC33C14
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 01:48:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D83333C1A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 01:49:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726349AbfFCXsZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 19:48:25 -0400
-Received: from www62.your-server.de ([213.133.104.62]:46692 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726101AbfFCXsZ (ORCPT
+        id S1726541AbfFCXtU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 19:49:20 -0400
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:56259 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726101AbfFCXtU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 19:48:25 -0400
-Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1hXwgf-00010o-Eh; Tue, 04 Jun 2019 01:48:21 +0200
-Received: from [178.197.249.21] (helo=linux.home)
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1hXwgf-000Lnk-48; Tue, 04 Jun 2019 01:48:21 +0200
-Subject: Re: [PATCH bpf v2] bpf: preallocate a perf_sample_data per event fd
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Matt Mullins <mmullins@fb.com>
-Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Andrew Hall <hall@fb.com>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Martin Lau <kafai@fb.com>, Yonghong Song <yhs@fb.com>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        Song Liu <songliubraving@fb.com>
-References: <20190531223735.4998-1-mmullins@fb.com>
- <6c6a4d47-796a-20e2-eb12-503a00d1fa0b@iogearbox.net>
- <68841715-4d5b-6ad1-5241-4e7199dd63da@iogearbox.net>
- <05626702394f7b95273ab19fef30461677779333.camel@fb.com>
- <CAADnVQKAPTao3nE1AC5dvYtCKFhDHu9VeCnVE04TLjGpY6yANw@mail.gmail.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <70b9a1b2-c960-b810-96f9-1fb5f4a4061b@iogearbox.net>
-Date:   Tue, 4 Jun 2019 01:48:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Mon, 3 Jun 2019 19:49:20 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id CB32C2208A;
+        Mon,  3 Jun 2019 19:49:18 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Mon, 03 Jun 2019 19:49:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
+        :from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=Jim7BdHYS9RK8KAODKzQVSAg1fZ
+        oNCKTLGYojHFLSlM=; b=n/MGNySPj2d2OHVK8uoH4PFT57rO9SEcQhHCyxP0Xog
+        3YPfXBo01tfTywzzpAuJYrAPEyhHFBy2e2jwz4XyZm2lDPv7URIXl/XS0l5Tl6A7
+        hc2TbiW2gF0PXDcQiYO18gJ/CORFMxMYb0YeJypwlpSSDA9KDNLBaz0enHtZE9mj
+        LUNF4l/aWcpPbczXs3LvSlaaEjh4OwB7BB9l3ZHIsHMughwJQhl6bEAFyrpMtG0+
+        P31zJfKP7P8kelfy4iRowZxVWvAYWk3lSm26oiPWoUBjRt32XDkJnSa15pW6YJwf
+        aW57zUIrJG8Z4Hnomg8vx6WE6EJsvPkKNZsNmeE5ShQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=Jim7Bd
+        HYS9RK8KAODKzQVSAg1fZoNCKTLGYojHFLSlM=; b=RD9n5fuHzdInhhKTz/0l/q
+        0OO+yr4axwpReb0AhNvj8yefpEf0gwD1x7IQiTCeu7OGQ3G6rtHhZXDMj8CanRSI
+        BTcPuBY5flm5H0uYwjMotp9y2hQ9hc1HXW8rJjeOABsvaifHAFrYLW0+dabzTIym
+        ohCnJiZHYNWpipUD8frb/fUW90XdEubCC8VdX5zweqCtHQ+uUB6zAVMLx2KPJzpn
+        iR5sEOOJGEnnsri3lY8zuOdm8byJ1rGPFe1pL+KT/feK3iDKo5MySFgdqxE2HHfq
+        zqJtQ/AnHh8W3ne2Gyfl0iXdthG30F3eqes8FUyiL6ovcP2gmXbJ1rUvktR2lPNQ
+        ==
+X-ME-Sender: <xms:_rH1XKra4TaHORNbY6PM5cilPcKjXtyz_imakGvyF5onQ5LoZ520pw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrudefkedgvdejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    gfrhhlucfvnfffucdludehmdenucfjughrpeffhffvuffkfhggtggujgfofgesthdtredt
+    ofervdenucfhrhhomhepfdfvohgsihhnucevrdcujfgrrhguihhnghdfuceomhgvsehtoh
+    gsihhnrdgttgeqnecukfhppeduvddurdeggedrvdeffedrvdeggeenucfrrghrrghmpehm
+    rghilhhfrhhomhepmhgvsehtohgsihhnrdgttgenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:_rH1XIkXuEjKzWT4lowVRy-KT65nQGBISqeotW1tEpEawV4SCws_iA>
+    <xmx:_rH1XKw51OuieiddDEwnkcn1wI6kKw8xrTxps23omkBJzMGskHkb6Q>
+    <xmx:_rH1XO1qhcRN_i3qE1EDbi2O9SMDSDZba3NFKYjnhCVMnmXBSAVkFA>
+    <xmx:_rH1XDI7CWQc3o6uheK_fNyD4vpzhnRUbzMzuyZbNz1Z6dNyYvGP2Q>
+Received: from localhost (ppp121-44-233-244.bras2.syd2.internode.on.net [121.44.233.244])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 9EC18380088;
+        Mon,  3 Jun 2019 19:49:17 -0400 (EDT)
+Date:   Tue, 4 Jun 2019 09:48:34 +1000
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     "Tobin C. Harding" <tobin@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Neil Brown <neilb@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/9] docs: Convert VFS doc to RST
+Message-ID: <20190603234834.GB13575@eros.localdomain>
+References: <20190515002913.12586-1-tobin@kernel.org>
+ <20190529163052.6ce91581@lwn.net>
 MIME-Version: 1.0
-In-Reply-To: <CAADnVQKAPTao3nE1AC5dvYtCKFhDHu9VeCnVE04TLjGpY6yANw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.3/25469/Mon Jun  3 09:59:22 2019)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190529163052.6ce91581@lwn.net>
+X-Mailer: Mutt 1.12.0 (2019-05-25)
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/04/2019 01:27 AM, Alexei Starovoitov wrote:
-> On Mon, Jun 3, 2019 at 3:59 PM Matt Mullins <mmullins@fb.com> wrote:
->>
->> If these are invariably non-nested, I can easily keep bpf_misc_sd when
->> I resubmit.  There was no technical reason other than keeping the two
->> codepaths as similar as possible.
->>
->> What resource gives you worry about doing this for the networking
->> codepath?
+On Wed, May 29, 2019 at 04:30:52PM -0600, Jonathan Corbet wrote:
+> On Wed, 15 May 2019 10:29:04 +1000
+> "Tobin C. Harding" <tobin@kernel.org> wrote:
 > 
-> my preference would be to keep tracing and networking the same.
-> there is already minimal nesting in networking and probably we see
-> more when reuseport progs will start running from xdp and clsbpf
+> > Here is an updated version of the VFS doc conversion.  This series in no
+> > way represents a final point for the VFS documentation rather it is a
+> > small step towards getting VFS docs updated.  This series does not
+> > update the content of vfs.txt, only does formatting.
 > 
->>> Aside from that it's also really bad to miss events like this as exporting
->>> through rb is critical. Why can't you have a per-CPU counter that selects a
->>> sample data context based on nesting level in tracing? (I don't see a discussion
->>> of this in your commit message.)
->>
->> This change would only drop messages if the same perf_event is
->> attempted to be used recursively (i.e. the same CPU on the same
->> PERF_EVENT_ARRAY map, as I haven't observed anything use index !=
->> BPF_F_CURRENT_CPU in testing).
->>
->> I'll try to accomplish the same with a percpu nesting level and
->> allocating 2 or 3 perf_sample_data per cpu.  I think that'll solve the
->> same problem -- a local patch keeping track of the nesting level is how
->> I got the above stack trace, too.
+> I've finally gotten to this, sorry for taking so long.  Applying it to
+> docs-next turned out to be a bit of a chore; there have been intervening
+> changes to vfs.txt that we didn't want to lose.  But I did it.
 > 
-> I don't think counter approach works. The amount of nesting is unknown.
-> imo the approach taken in this patch is good.
-> I don't see any issue when event_outputs will be dropped for valid progs.
-> Only when user called the helper incorrectly without BPF_F_CURRENT_CPU.
-> But that's an error anyway.
+> Unfortunately, there's still a remaining issue.  You did a lot of list
+> conversions like this:
+> 
+> > -  struct file_system_type *fs_type: describes the filesystem, partly initialized
+> > +``struct file_system_type *fs_type``: describes the filesystem, partly initialized
+> >  	by the specific filesystem code
+> 
+> but that does not render the way you would like, trust me.  You really
+> want to use the list format, something like:
+> 
+>     ``struct file_system_type *fs_type``
+> 	 describes the filesystem, partly initialized by the specific
+> 	 filesystem code
+> 
+> There are, unfortunately, a lot of these to fix...  I bet it could be done
+> with an elisp function, but I don't have time to beat my head against that
+> wall right now.
+> 
+> Any chance you would have time to send me a followup patch fixing these
+> up?  I'll keep my branch with this set for now so there's no need to
+> rebase those.
 
-My main worry with this xchg() trick is that we'll miss to export crucial
-data with the EBUSY bailing out especially given nesting could increase in
-future as you state, so users might have a hard time debugging this kind of
-issue if they share the same perf event map among these programs, and no
-option to get to this data otherwise. Supporting nesting up to a certain
-level would still be better than a lost event which is also not reported
-through the usual way aka perf rb.
+Is this branch public Jon?  I'll work on top of this series but if the
+branch is public then I can check it applies, save you having problems.
+
+Cheers,
+Tobin.
