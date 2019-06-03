@@ -2,68 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A441F328C3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 08:47:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEA30328CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 08:49:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727350AbfFCGrv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 02:47:51 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:48155 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727291AbfFCGru (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 02:47:50 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.09180124|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.416466-0.0537556-0.529779;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03311;MF=han_mao@c-sky.com;NM=1;PH=DS;RN=4;RT=4;SR=0;TI=SMTPD_---.EglZUbk_1559544455;
-Received: from localhost(mailfrom:han_mao@c-sky.com fp:SMTPD_---.EglZUbk_1559544455)
-          by smtp.aliyun-inc.com(10.147.42.197);
-          Mon, 03 Jun 2019 14:47:35 +0800
-From:   Mao Han <han_mao@c-sky.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Mao Han <han_mao@c-sky.com>, Guo Ren <guoren@kernel.org>,
-        linux-csky@vger.kernel.org
-Subject: [PATCH V3 6/6] csky: Fix perf record in kernel/user space
-Date:   Mon,  3 Jun 2019 14:46:25 +0800
-Message-Id: <79c0094b29f2315045a9a2544c9837bcf6f78fea.1559544301.git.han_mao@c-sky.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1559544301.git.han_mao@c-sky.com>
-References: <cover.1559544301.git.han_mao@c-sky.com>
-In-Reply-To: <cover.1559544301.git.han_mao@c-sky.com>
-References: <cover.1559544301.git.han_mao@c-sky.com>
+        id S1727225AbfFCGtX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 02:49:23 -0400
+Received: from verein.lst.de ([213.95.11.211]:54901 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726618AbfFCGtW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 02:49:22 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 9F53A68B05; Mon,  3 Jun 2019 08:48:55 +0200 (CEST)
+Date:   Mon, 3 Jun 2019 08:48:55 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Paul Burton <paul.burton@mips.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Ley Foon Tan <lftan@altera.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Subject: Re: [PATCH 5/7 v2] MIPS: use the generic uncached segment support
+ in dma-direct
+Message-ID: <20190603064855.GA22023@lst.de>
+References: <20190430110032.25301-1-hch@lst.de> <20190430110032.25301-6-hch@lst.de> <20190430201041.536amvinrcvd2wua@pburton-laptop> <20190430202947.GA30262@lst.de> <20190430211105.ielntedm46uqamca@pburton-laptop> <20190501131339.GA890@lst.de> <20190501171355.7wnrutfnax5djkpx@pburton-laptop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190501171355.7wnrutfnax5djkpx@pburton-laptop>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-csky_pmu_event_init is called several times during the perf record
-initialzation. After configure the event counter in either kernel
-space or user space, csky_pmu_event_init is called twice with no
-attr specified. Configuration will be overwritten with sampling in
-both kernel space and user space. --all-kernel/--all-user is
-useless without this patch applied.
+On Wed, May 01, 2019 at 05:13:57PM +0000, Paul Burton wrote:
+> Hi Christoph,
+> 
+> On Wed, May 01, 2019 at 03:13:39PM +0200, Christoph Hellwig wrote:
+> > Stop providing our arch alloc/free hooks and just expose the segment
+> > offset instead.
+> > 
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > ---
+> >  arch/mips/Kconfig              |  1 +
+> >  arch/mips/include/asm/page.h   |  3 ---
+> >  arch/mips/jazz/jazzdma.c       |  6 ------
+> >  arch/mips/mm/dma-noncoherent.c | 26 +++++++++-----------------
+> >  4 files changed, 10 insertions(+), 26 deletions(-)
+> 
+> This one looks good to me now, for patches 1 & 5:
+> 
+>   Acked-by: Paul Burton <paul.burton@mips.com>
 
-Signed-off-by: Mao Han <han_mao@c-sky.com>
-CC: Guo Ren <guoren@kernel.org>
-CC: linux-csky@vger.kernel.org
----
- arch/csky/kernel/perf_event.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/arch/csky/kernel/perf_event.c b/arch/csky/kernel/perf_event.c
-index de95005..011fd9b 100644
---- a/arch/csky/kernel/perf_event.c
-+++ b/arch/csky/kernel/perf_event.c
-@@ -983,6 +983,12 @@ static int csky_pmu_event_init(struct perf_event *event)
- 	struct hw_perf_event *hwc = &event->hw;
- 	int ret;
- 
-+	if (event->attr.type != PERF_TYPE_HARDWARE &&
-+	    event->attr.type != PERF_TYPE_HW_CACHE &&
-+	    event->attr.type != PERF_TYPE_RAW) {
-+		return -ENOENT;
-+	}
-+
- 	if (event->attr.exclude_user)
- 		csky_pmu.hpcr = BIT(2);
- 	else if (event->attr.exclude_kernel)
--- 
-2.7.4
-
+Thanks, I've merged thos into the dma-mapping tree.
