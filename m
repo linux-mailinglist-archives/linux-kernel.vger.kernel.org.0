@@ -2,632 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 783B933429
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:54:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8D7633435
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:55:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729724AbfFCPyX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 11:54:23 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37781 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729193AbfFCPyU (ORCPT
+        id S1729280AbfFCPze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 11:55:34 -0400
+Received: from mail-lf1-f41.google.com ([209.85.167.41]:34358 "EHLO
+        mail-lf1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727164AbfFCPze (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 11:54:20 -0400
-Received: by mail-wr1-f66.google.com with SMTP id h1so12648492wro.4;
-        Mon, 03 Jun 2019 08:54:18 -0700 (PDT)
+        Mon, 3 Jun 2019 11:55:34 -0400
+Received: by mail-lf1-f41.google.com with SMTP id y198so3525914lfa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 08:55:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0zKx35JS5zDMZj/xr7RSXIs88Xc/ONr10+AAkHp/7/4=;
-        b=tpcLZNtKMEYeQSJEsQt279ld1LQAuKADyD7SfARmACN4YqxGd0v5OiRBtbAneQtXYL
-         LZFtNMXLRvO8e3OVMbCmzok7I2Hd/2BRxXPVtVCGpTRh4hqNQyuaFSn+s9h3ui8FD5W1
-         SAxHwjx5MnmwBoHIbE4QOTWrl4q/jTVXileqrI98QaMJsjEURis+s8ibZRX/52CJZuCl
-         2OpxGF69wM17yImvjh4SnT3SMjorTS7HabZMq/Dnd1k6y0h0mONqrMvAohj3ARlT9v4r
-         lXS9zMcv9UMrT/wo5mihvUnNr9FofgjVOPTlgzG1fGR3+evZ+35b7iq6wAKuWHjeyixz
-         FHsg==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GEvt8pGQEbFr4DBC3ZactO5sklI3XbY8H2zkXOcjs2g=;
+        b=T1/m84q35iHVOMXlWw9a8KqEj4GwEOwLm06PoeEgn4nWnDGiSSZJiqTH54Nkz4QWfQ
+         Eai3tdr9Z6bLfZm3CrxIY8OH3lKIsIpqVEb9uhG2g1I7juYcrS7cchRhE83PYLM0QaLt
+         JDimS+ZheOBnr5JA+kS1fzrufMArQn4GLQAp8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0zKx35JS5zDMZj/xr7RSXIs88Xc/ONr10+AAkHp/7/4=;
-        b=cbV5RrLki2JeWbnU97fqNSZSyWA7TfikmzpPR5Fomma52ZSt2f6wkeDJ/zQEPdV3cH
-         FOQY+3c8J7MoHwYJovY0XSpitz+pbd17iFmc4j6IL2+3cxdVA7Gzuqh708eiLqcONZwj
-         bKQwlbyhs91xxzTx3JSGK3ZWa+gZsf73Q0s7LbNuCZqzU8z0IBpgiOEVtaJGL4C0XJmR
-         qLrPy0JTYVRUjq13H1UL5cDuJkvfQjf8WuzDe8u170ir2q60q8CA3uy1eDGKTR9/qMXE
-         VNjnQ/6dqFRjylwkPQarazYGaVT7uLAhBILmpOsx2cRZzASoqlx022V7zyDegMdMvwg9
-         EoqQ==
-X-Gm-Message-State: APjAAAX3HBTE12u/29E327kZnCrjzfxGBvtf1zxVBSkbRW5Pb7fnokNO
-        HTEvxNK7bV+s1Rts15R74jY=
-X-Google-Smtp-Source: APXvYqxWzvR+hTMAKm7t8aJRIJw0yo5NM9QWBl6GuHKabjC2Mt/hUJ3UdANULWv26ZTRqSBHh1ValA==
-X-Received: by 2002:adf:c654:: with SMTP id u20mr3367325wrg.271.1559577257310;
-        Mon, 03 Jun 2019 08:54:17 -0700 (PDT)
-Received: from localhost.localdomain (131.ip-164-132-48.eu. [164.132.48.131])
-        by smtp.googlemail.com with ESMTPSA id l190sm14187767wml.25.2019.06.03.08.54.15
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 03 Jun 2019 08:54:16 -0700 (PDT)
-From:   Tomasz Maciej Nowak <tmn505@gmail.com>
-To:     Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Konstantin Porotchkin <kostap@marvell.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] arm64: dts: marvell: add ESPRESSObin variants
-Date:   Mon,  3 Jun 2019 17:53:54 +0200
-Message-Id: <20190603155354.3902-1-tmn505@gmail.com>
-X-Mailer: git-send-email 2.21.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GEvt8pGQEbFr4DBC3ZactO5sklI3XbY8H2zkXOcjs2g=;
+        b=U5CN3JLd7/a03sCakzpNRCgHKIS6MZOg88mSXvRVvD0Q7FvaV3Kt1j2jC1ALnc/sFo
+         M2Wb+Zjmp0bqvr/wNssV1MSPHu5cmBu3P5z9eDA06qeuE1wBixV0cOH5NlLHD5SbEwsn
+         A4wAyyR2yWOOdKnGukc4Q5xfYKu/wraIfUi6OG5Tr2m5+7+jntaMg60yZOmxcLfD/8aq
+         DBOWlpZqttQnwas2S+wH590h9Mm+O0XGf8w8EB3+isrlN0ljQ3n7ZV9vv2WbYQ/kZjRc
+         WGJpBeoUbQifXzKr/VtZZiRqTfwz/4ZMykJJGzCUhAb6D1ZQ4k0X7WpRzSCT+YUVF4H5
+         zyPQ==
+X-Gm-Message-State: APjAAAWRzW5MBtDbPkij7YX+/dW64nIhghDww6OS7+lciuMIAfuY0mrp
+        dpYIs3/y+eZRY7Ld0qaJDJlm5tJAFko=
+X-Google-Smtp-Source: APXvYqzxhy4P5M006q/X8P0J1DxJCVuNODetb/BobzCJ4kbFcXgAmUv+ckXkxoRDeXvcN/gsM02YNg==
+X-Received: by 2002:ac2:419a:: with SMTP id z26mr13667676lfh.122.1559577330924;
+        Mon, 03 Jun 2019 08:55:30 -0700 (PDT)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
+        by smtp.gmail.com with ESMTPSA id h23sm3253445ljf.28.2019.06.03.08.55.29
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Jun 2019 08:55:30 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id i21so2166760ljj.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 08:55:29 -0700 (PDT)
+X-Received: by 2002:a2e:85d1:: with SMTP id h17mr14153700ljj.1.1559577329451;
+ Mon, 03 Jun 2019 08:55:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20150910005708.GA23369@wfg-t540p.sh.intel.com>
+ <20150910102513.GA1677@fixme-laptop.cn.ibm.com> <20150910171649.GE4029@linux.vnet.ibm.com>
+ <20150911021933.GA1521@fixme-laptop.cn.ibm.com> <20150921193045.GA13674@lerouge>
+ <20150921204327.GH4029@linux.vnet.ibm.com> <20190602055607.bk5vgmwjvvt4wejd@gondor.apana.org.au>
+ <20190603000617.GD28207@linux.ibm.com> <20190603030324.kl3bckqmebzis2vw@gondor.apana.org.au>
+In-Reply-To: <20190603030324.kl3bckqmebzis2vw@gondor.apana.org.au>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 3 Jun 2019 08:55:13 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj2t+GK+DGQ7Xy6U7zMf72e7Jkxn4_-kGyfH3WFEoH+YQ@mail.gmail.com>
+Message-ID: <CAHk-=wj2t+GK+DGQ7Xy6U7zMf72e7Jkxn4_-kGyfH3WFEoH+YQ@mail.gmail.com>
+Subject: Re: rcu_read_lock lost its compiler barrier
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Fengguang Wu <fengguang.wu@intel.com>, LKP <lkp@01.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds dts for different variants of ESPRESSObin board:
+On Sun, Jun 2, 2019 at 8:03 PM Herbert Xu <herbert@gondor.apana.org.au> wrote:
+>
+> In any case, I am now even more certain that compiler barriers are
+> not needed in the code in question.  The reasoning is quite simple.
+> If you need those compiler barriers then you surely need real memory
+> barriers.
 
-ESPRESSObin with soldered eMMC,
+So the above statement is not necessarily correct.
 
-ESPRESSObin V7, compared to prior versions some passive elements changed
-and ethernet ports labels positions have been reversed,
+Compiler barriers very much can have real effects even in the absense
+of "real" memory barriers.
 
-ESPRESSObin V7 with soldered eMMC.
+But those effects are obviously not about multiple CPU's - they are
+about code generation and can be about ordering on _one_ CPU. Those
+effects definitely happen, though.
 
-Since most of elements are the same, one common dtsi is created and
-referenced in each dts of particular variant.
+So a compiler barrier without a memory barrier may make a difference if you
 
-Signed-off-by: Tomasz Maciej Nowak <tmn505@gmail.com>
----
-v1 -> v2 rebase on top of:
-mvebu/dt64 + "arm64: dts: armada-3720-espressobin: correct spi node"
+ (a) compile for UP (when a compiler barrier basically _is_ a memory barrier)
 
- .../marvell/armada-3720-espressobin-emmc.dts  |  42 ++++
- .../armada-3720-espressobin-v7-emmc.dts       |  59 ++++++
- .../marvell/armada-3720-espressobin-v7.dts    |  36 ++++
- .../dts/marvell/armada-3720-espressobin.dts   | 184 +-----------------
- .../dts/marvell/armada-3720-espressobin.dtsi  | 177 +++++++++++++++++
- 5 files changed, 315 insertions(+), 183 deletions(-)
- create mode 100644 arch/arm64/boot/dts/marvell/armada-3720-espressobin-emmc.dts
- create mode 100644 arch/arm64/boot/dts/marvell/armada-3720-espressobin-v7-emmc.dts
- create mode 100644 arch/arm64/boot/dts/marvell/armada-3720-espressobin-v7.dts
- create mode 100644 arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtsi
+ (b) have deadlock or ordering avoidance with only the local CPU
+taking interrupts.
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-3720-espressobin-emmc.dts b/arch/arm64/boot/dts/marvell/armada-3720-espressobin-emmc.dts
-new file mode 100644
-index 000000000000..bd9ed9dc9c3e
---- /dev/null
-+++ b/arch/arm64/boot/dts/marvell/armada-3720-espressobin-emmc.dts
-@@ -0,0 +1,42 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Device Tree file for Globalscale Marvell ESPRESSOBin Board with eMMC
-+ * Copyright (C) 2018 Marvell
-+ *
-+ * Romain Perier <romain.perier@free-electrons.com>
-+ * Konstantin Porotchkin <kostap@marvell.com>
-+ *
-+ */
-+/*
-+ * Schematic available at http://espressobin.net/wp-content/uploads/2017/08/ESPRESSObin_V5_Schematics.pdf
-+ */
-+
-+#include "armada-3720-espressobin.dtsi"
-+
-+/ {
-+	model = "Globalscale Marvell ESPRESSOBin Board (eMMC)";
-+	compatible = "globalscale,espressobin-emmc", "globalscale,espressobin",
-+		     "marvell,armada3720", "marvell,armada3710";
-+};
-+
-+/* U11 */
-+&sdhci0 {
-+	non-removable;
-+	bus-width = <8>;
-+	mmc-ddr-1_8v;
-+	mmc-hs400-1_8v;
-+	marvell,xenon-emmc;
-+	marvell,xenon-tun-count = <9>;
-+	marvell,pad-type = "fixed-1-8v";
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc_pins>;
-+	status = "okay";
-+
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	mmccard: mmccard@0 {
-+		compatible = "mmc-card";
-+		reg = <0>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/marvell/armada-3720-espressobin-v7-emmc.dts b/arch/arm64/boot/dts/marvell/armada-3720-espressobin-v7-emmc.dts
-new file mode 100644
-index 000000000000..6e876a6d9532
---- /dev/null
-+++ b/arch/arm64/boot/dts/marvell/armada-3720-espressobin-v7-emmc.dts
-@@ -0,0 +1,59 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Device Tree file for Globalscale Marvell ESPRESSOBin Board V7 with eMMC
-+ * Copyright (C) 2018 Marvell
-+ *
-+ * Romain Perier <romain.perier@free-electrons.com>
-+ * Konstantin Porotchkin <kostap@marvell.com>
-+ *
-+ */
-+/*
-+ * Schematic available at http://wiki.espressobin.net/tiki-download_file.php?fileId=200
-+ */
-+
-+#include "armada-3720-espressobin.dtsi"
-+
-+/ {
-+	model = "Globalscale Marvell ESPRESSOBin Board V7 (eMMC)";
-+	compatible = "globalscale,espressobin-v7-emmc", "globalscale,espressobin-v7",
-+		     "globalscale,espressobin", "marvell,armada3720",
-+		     "marvell,armada3710";
-+};
-+
-+&switch0 {
-+	ports {
-+		port@1 {
-+			reg = <1>;
-+			label = "lan1";
-+			phy-handle = <&switch0phy0>;
-+		};
-+
-+		port@3 {
-+			reg = <3>;
-+			label = "wan";
-+			phy-handle = <&switch0phy2>;
-+		};
-+	};
-+};
-+
-+/* U11 */
-+&sdhci0 {
-+	non-removable;
-+	bus-width = <8>;
-+	mmc-ddr-1_8v;
-+	mmc-hs400-1_8v;
-+	marvell,xenon-emmc;
-+	marvell,xenon-tun-count = <9>;
-+	marvell,pad-type = "fixed-1-8v";
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc_pins>;
-+	status = "okay";
-+
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	mmccard: mmccard@0 {
-+		compatible = "mmc-card";
-+		reg = <0>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/marvell/armada-3720-espressobin-v7.dts b/arch/arm64/boot/dts/marvell/armada-3720-espressobin-v7.dts
-new file mode 100644
-index 000000000000..0f8405d085fd
---- /dev/null
-+++ b/arch/arm64/boot/dts/marvell/armada-3720-espressobin-v7.dts
-@@ -0,0 +1,36 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Device Tree file for Globalscale Marvell ESPRESSOBin Board V7
-+ * Copyright (C) 2018 Marvell
-+ *
-+ * Romain Perier <romain.perier@free-electrons.com>
-+ * Konstantin Porotchkin <kostap@marvell.com>
-+ *
-+ */
-+/*
-+ * Schematic available at http://wiki.espressobin.net/tiki-download_file.php?fileId=200
-+ */
-+
-+#include "armada-3720-espressobin.dtsi"
-+
-+/ {
-+	model = "Globalscale Marvell ESPRESSOBin Board V7";
-+	compatible = "globalscale,espressobin-v7", "globalscale,espressobin",
-+		     "marvell,armada3720", "marvell,armada3710";
-+};
-+
-+&switch0 {
-+	ports {
-+		port@1 {
-+			reg = <1>;
-+			label = "lan1";
-+			phy-handle = <&switch0phy0>;
-+		};
-+
-+		port@3 {
-+			reg = <3>;
-+			label = "wan";
-+			phy-handle = <&switch0phy2>;
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts b/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts
-index fbcf03f86c96..1542d836c090 100644
---- a/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts
-+++ b/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts
-@@ -12,191 +12,9 @@
- 
- /dts-v1/;
- 
--#include <dt-bindings/gpio/gpio.h>
--#include "armada-372x.dtsi"
-+#include "armada-3720-espressobin.dtsi"
- 
- / {
- 	model = "Globalscale Marvell ESPRESSOBin Board";
- 	compatible = "globalscale,espressobin", "marvell,armada3720", "marvell,armada3710";
--
--	chosen {
--		stdout-path = "serial0:115200n8";
--	};
--
--	memory@0 {
--		device_type = "memory";
--		reg = <0x00000000 0x00000000 0x00000000 0x20000000>;
--	};
--
--	vcc_sd_reg1: regulator {
--		compatible = "regulator-gpio";
--		regulator-name = "vcc_sd1";
--		regulator-min-microvolt = <1800000>;
--		regulator-max-microvolt = <3300000>;
--		regulator-boot-on;
--
--		gpios = <&gpionb 4 GPIO_ACTIVE_HIGH>;
--		gpios-states = <0>;
--		states = <1800000 0x1
--			  3300000 0x0>;
--		enable-active-high;
--	};
--};
--
--/* J9 */
--&pcie0 {
--	status = "okay";
--	phys = <&comphy1 0>;
--	pinctrl-names = "default";
--	pinctrl-0 = <&pcie_reset_pins &pcie_clkreq_pins>;
--};
--
--/* J6 */
--&sata {
--	status = "okay";
--	phys = <&comphy2 0>;
--	phy-names = "sata-phy";
--};
--
--/* J1 */
--&sdhci1 {
--	wp-inverted;
--	bus-width = <4>;
--	cd-gpios = <&gpionb 3 GPIO_ACTIVE_LOW>;
--	marvell,pad-type = "sd";
--	vqmmc-supply = <&vcc_sd_reg1>;
--
--	pinctrl-names = "default";
--	pinctrl-0 = <&sdio_pins>;
--	status = "okay";
--};
--
--/* U11 */
--&sdhci0 {
--	non-removable;
--	bus-width = <8>;
--	mmc-ddr-1_8v;
--	mmc-hs400-1_8v;
--	marvell,xenon-emmc;
--	marvell,xenon-tun-count = <9>;
--	marvell,pad-type = "fixed-1-8v";
--
--	pinctrl-names = "default";
--	pinctrl-0 = <&mmc_pins>;
--/*
-- * This eMMC is not populated on all boards, so disable it by
-- * default and let the bootloader enable it, if it is present
-- */
--	status = "disabled";
--};
--
--&spi0 {
--	status = "okay";
--
--	flash@0 {
--		reg = <0>;
--		compatible = "jedec,spi-nor";
--		spi-max-frequency = <104000000>;
--		m25p,fast-read;
--	};
--};
--
--/* Exported on the micro USB connector J5 through an FTDI */
--&uart0 {
--	pinctrl-names = "default";
--	pinctrl-0 = <&uart1_pins>;
--	status = "okay";
--};
--
--/*
-- * Connector J17 and J18 expose a number of different features. Some pins are
-- * multiplexed. This is the case for instance for the following features:
-- * - UART1 (pin 24 = RX, pin 26 = TX). See armada-3720-db.dts for an example of
-- *   how to enable it. Beware that the signals are 1.8V TTL.
-- * - I2C
-- * - SPI
-- * - MMC
-- */
--
--/* J7 */
--&usb3 {
--	status = "okay";
--};
--
--/* J8 */
--&usb2 {
--	status = "okay";
--};
--
--&mdio {
--	switch0: switch0@1 {
--		compatible = "marvell,mv88e6085";
--		#address-cells = <1>;
--		#size-cells = <0>;
--		reg = <1>;
--
--		dsa,member = <0 0>;
--
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				label = "cpu";
--				ethernet = <&eth0>;
--				phy-mode = "rgmii-id";
--				fixed-link {
--					speed = <1000>;
--					full-duplex;
--				};
--			};
--
--			port@1 {
--				reg = <1>;
--				label = "wan";
--				phy-handle = <&switch0phy0>;
--			};
--
--			port@2 {
--				reg = <2>;
--				label = "lan0";
--				phy-handle = <&switch0phy1>;
--			};
--
--			port@3 {
--				reg = <3>;
--				label = "lan1";
--				phy-handle = <&switch0phy2>;
--			};
--
--		};
--
--		mdio {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			switch0phy0: switch0phy0@11 {
--				reg = <0x11>;
--			};
--			switch0phy1: switch0phy1@12 {
--				reg = <0x12>;
--			};
--			switch0phy2: switch0phy2@13 {
--				reg = <0x13>;
--			};
--		};
--	};
--};
--
--&eth0 {
--	pinctrl-names = "default";
--	pinctrl-0 = <&rgmii_pins>, <&smi_pins>;
--	phy-mode = "rgmii-id";
--	status = "okay";
--
--	fixed-link {
--		speed = <1000>;
--		full-duplex;
--	};
- };
-diff --git a/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtsi b/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtsi
-new file mode 100644
-index 000000000000..53b8ac55a7f3
---- /dev/null
-+++ b/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dtsi
-@@ -0,0 +1,177 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Device Tree file for Globalscale Marvell ESPRESSOBin Board
-+ * Copyright (C) 2016 Marvell
-+ *
-+ * Romain Perier <romain.perier@free-electrons.com>
-+ *
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include "armada-372x.dtsi"
-+
-+/ {
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@0 {
-+		device_type = "memory";
-+		reg = <0x00000000 0x00000000 0x00000000 0x20000000>;
-+	};
-+
-+	vcc_sd_reg1: regulator {
-+		compatible = "regulator-gpio";
-+		regulator-name = "vcc_sd1";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+
-+		gpios = <&gpionb 4 GPIO_ACTIVE_HIGH>;
-+		gpios-states = <0>;
-+		states = <1800000 0x1
-+			  3300000 0x0>;
-+		enable-active-high;
-+	};
-+};
-+
-+/* J9 */
-+&pcie0 {
-+	status = "okay";
-+	phys = <&comphy1 0>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcie_reset_pins &pcie_clkreq_pins>;
-+};
-+
-+/* J6 */
-+&sata {
-+	status = "okay";
-+	phys = <&comphy2 0>;
-+	phy-names = "sata-phy";
-+};
-+
-+/* J1 */
-+&sdhci1 {
-+	wp-inverted;
-+	bus-width = <4>;
-+	cd-gpios = <&gpionb 3 GPIO_ACTIVE_LOW>;
-+	marvell,pad-type = "sd";
-+	vqmmc-supply = <&vcc_sd_reg1>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sdio_pins>;
-+	status = "okay";
-+};
-+
-+&spi0 {
-+	status = "okay";
-+
-+	flash@0 {
-+		reg = <0>;
-+		compatible = "jedec,spi-nor";
-+		spi-max-frequency = <104000000>;
-+		m25p,fast-read;
-+	};
-+};
-+
-+/* Exported on the micro USB connector J5 through an FTDI */
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart1_pins>;
-+	status = "okay";
-+};
-+
-+/*
-+ * Connector J17 and J18 expose a number of different features. Some pins are
-+ * multiplexed. This is the case for instance for the following features:
-+ * - UART1 (pin 24 = RX, pin 26 = TX). See armada-3720-db.dts for an example of
-+ *   how to enable it. Beware that the signals are 1.8V TTL.
-+ * - I2C
-+ * - SPI
-+ * - MMC
-+ */
-+
-+/* J7 */
-+&usb3 {
-+	status = "okay";
-+};
-+
-+/* J8 */
-+&usb2 {
-+	status = "okay";
-+};
-+
-+&mdio {
-+	switch0: switch0@1 {
-+		compatible = "marvell,mv88e6085";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <1>;
-+
-+		dsa,member = <0 0>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				label = "cpu";
-+				ethernet = <&eth0>;
-+				phy-mode = "rgmii-id";
-+				fixed-link {
-+					speed = <1000>;
-+					full-duplex;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				label = "wan";
-+				phy-handle = <&switch0phy0>;
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+				label = "lan0";
-+				phy-handle = <&switch0phy1>;
-+			};
-+
-+			port@3 {
-+				reg = <3>;
-+				label = "lan1";
-+				phy-handle = <&switch0phy2>;
-+			};
-+
-+		};
-+
-+		mdio {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			switch0phy0: switch0phy0@11 {
-+				reg = <0x11>;
-+			};
-+			switch0phy1: switch0phy1@12 {
-+				reg = <0x12>;
-+			};
-+			switch0phy2: switch0phy2@13 {
-+				reg = <0x13>;
-+			};
-+		};
-+	};
-+};
-+
-+&eth0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&rgmii_pins>, <&smi_pins>;
-+	phy-mode = "rgmii-id";
-+	status = "okay";
-+
-+	fixed-link {
-+		speed = <1000>;
-+		full-duplex;
-+	};
-+};
--- 
-2.21.0
+ (c) need to re-load a value in a loop, but ordering isn't a concern
 
+and possibly other situations.
+
+In the above, (a) may be pointless and trivial, but (b) and (c) are
+issues even on SMP. Some things only matter for the local CPU - an
+interrupt or a code sequence that happens on another CPU can just
+block, but if an interrupt comes in on the same CPU may dead-lock and
+depend on particular access ordering. And (c) is for things like
+cpu_relax() in loops that read stuff (although honestly, READ_ONCE()
+is generally a much better pattern).
+
+But it sounds like in this case at least, Herbert's and Paul's
+disagreements aren't really all that fundamentally about the memory
+barriers and locking, as just the fact that in general the only thing
+that RCU protects against is single accesses, and thus any RCU region
+technically should use something that guarantees that the compiler
+might not do stupid things.
+
+We do require a _minimum_ of compiler sanity, but the compiler turning
+a non-marked read into two reads has definitely happened, and can be
+very subtle. Even if on a C level it looks like a single access, and
+correctness doesn't care about _what_ the value we read is, it might
+be turned by the compiler into two separate accesses that get two
+different values, and then the end result may be insane and
+unreliable.
+
+So on the whole, I do think that it's usually a good idea to show
+_which_ access is protected by RCU. Perhaps with a
+READ_ONCE/WRITE_ONCE pattern, although it can be other things.
+
+I don't believe that it would necessarily help to turn a
+rcu_read_lock() into a compiler barrier, because for the non-preempt
+case rcu_read_lock() doesn't need to actually _do_ anything, and
+anything that matters for the RCU read lock will already be a compiler
+barrier for other reasons (ie a function call that can schedule).
+
+Anyway, I suspect the code is correct in practice, but I do have some
+sympathy for the "RCU protected accesses should be marked".
+
+                    Linus
