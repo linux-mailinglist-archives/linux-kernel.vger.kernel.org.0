@@ -2,79 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 167ED32E2D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 13:07:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 791AA32E3C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 13:09:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727772AbfFCLHW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 07:07:22 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36860 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727182AbfFCLHW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 07:07:22 -0400
-Received: by mail-wr1-f67.google.com with SMTP id n4so8526787wrs.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 04:07:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Rdf+QSazMX9W42t15vMnXFExNCmmHTg2hetZgBVUhIY=;
-        b=bUCXPNYGxCSv7sE9jDNu9rfkI2GOdr/d9CT6tw3rUi1WcB2tjanXcvabQuQ543It91
-         /fOHF7UaT4wVdqTGX/tUAgss1PTiL2/eIYzTI/ecRjPAqXszHQsgCvkcuTBYyb6AhLDh
-         COXaCoA1VAuydgtTZVYtEfRyjwB2KRRs2noEhvwI+SsXeu2H/t3TQIKUdajiRE/U7+JJ
-         ZZ6o5XpP9wDV0mgsytKJvgT9ysZdBo+WR6qtVE4FMCfFSMTXG4lmshoAQTUMU485QLk2
-         aOllNoTroV7AZquI+WVBBUrQsG6ji8krFdFa7BVzDkmlYxA5qBRLJejdkiTMZphrluHU
-         XPMw==
-X-Gm-Message-State: APjAAAU8xa9qz/6JSngkgjJx5HbtSEmvLlfmjx+FuS5ND21MrcyWd60q
-        0uVO9PIL94gG0Th1QLHwHdcfsw==
-X-Google-Smtp-Source: APXvYqzxDfQTTupgrN70BEqNhLgAiEj+6mlq4Bfy4o1lRFeVEHVZDlJsyp3DX8S5zo8Bj0v34tqjEQ==
-X-Received: by 2002:adf:aa0a:: with SMTP id p10mr15815063wrd.125.1559560040922;
-        Mon, 03 Jun 2019 04:07:20 -0700 (PDT)
-Received: from steredhat.homenet.telecomitalia.it (host253-229-dynamic.248-95-r.retail.telecomitalia.it. [95.248.229.253])
-        by smtp.gmail.com with ESMTPSA id w14sm1632043wrk.44.2019.06.03.04.07.19
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 03 Jun 2019 04:07:20 -0700 (PDT)
-Date:   Mon, 3 Jun 2019 13:07:17 +0200
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     David Miller <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, stefanha@redhat.com,
-        virtualization@lists.linux-foundation.org, mst@redhat.com,
-        jasowang@redhat.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] vsock/virtio: fix locking for fwd_cnt and
- buf_alloc
-Message-ID: <20190603110717.rjbwfojpdpye3yxe@steredhat.homenet.telecomitalia.it>
-References: <20190531133954.122567-1-sgarzare@redhat.com>
- <20190531133954.122567-3-sgarzare@redhat.com>
- <20190602.180334.1932703293092139564.davem@davemloft.net>
+        id S1727856AbfFCLJb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 07:09:31 -0400
+Received: from foss.arm.com ([217.140.101.70]:48878 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726587AbfFCLJa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 07:09:30 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1A80FA78;
+        Mon,  3 Jun 2019 04:09:30 -0700 (PDT)
+Received: from [10.1.197.61] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D810C3F5AF;
+        Mon,  3 Jun 2019 04:09:28 -0700 (PDT)
+Subject: Re: [PATCH 0/2] arm64: smp: Include smp_plat.h from smp.h
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Shaokun Zhang <zhangshaokun@hisilicon.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <20190530230518.4334-1-f.fainelli@gmail.com>
+ <c0492b62-0ad2-3dae-7a6d-06e89afd59fe@gmail.com>
+ <20190530231735.n7so5mhec72xjmhm@shell.armlinux.org.uk>
+ <43c5568f-b230-0ed2-e810-7870703b54f0@gmail.com>
+ <20190530233427.qbaa76ukbzuuic22@shell.armlinux.org.uk>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <7ebad255-f2c1-d1be-af42-e24c197ab05d@arm.com>
+Date:   Mon, 3 Jun 2019 12:09:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190602.180334.1932703293092139564.davem@davemloft.net>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190530233427.qbaa76ukbzuuic22@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 02, 2019 at 06:03:34PM -0700, David Miller wrote:
-> From: Stefano Garzarella <sgarzare@redhat.com>
-> Date: Fri, 31 May 2019 15:39:51 +0200
+On 31/05/2019 00:34, Russell King - ARM Linux admin wrote:
+> On Thu, May 30, 2019 at 04:20:37PM -0700, Florian Fainelli wrote:
+>> On 5/30/19 4:17 PM, Russell King - ARM Linux admin wrote:
+>>> On Thu, May 30, 2019 at 04:14:28PM -0700, Florian Fainelli wrote:
+>>>> On 5/30/19 4:05 PM, Florian Fainelli wrote:
+>>>>> Hi ARM64 maintainers,
+>>>>>
+>>>>> This patch series aims at enabling irq-bcm7038-l1.c on
+>>>>> ARM64/ARCH_BRCMSTB, this driver makes use of cpu_logical_map[] and in
+>>>>> order to avoid adding a CONFIG_ARM64 conditional inclusion of
+>>>>> smp_plat.h, instead smp.h includes smp_plat.h, which is in turn included
+>>>>> by linux/smp.h.
+>>>>>
+>>>>> If you like the approach, I would suggest to carry that through the
+>>>>> Broadcom ARM64 SoC pull request for 5.3.
+>>>>
+>>>> ARM (32-bit) needs the same thing kind of thing so a conditional include
+>>>> may be appropriate after all...
+>>>
+>>> The whole idea of the smp_plat.h vs smp.h separation is to avoid
+>>> including lots of arch-private stuff in the rest of the kernel
+>>> build, thereby exposing arch-private stuff to the world.  I'm be
+>>> opposed to that.
+>>
+>> I was on the fence, sent it just in case, but ended up doing this:
+>>
+>> https://lore.kernel.org/patchwork/patch/1082410/
+>>
+>> will take patch #2 through the Broadcom ARM64 SoC tree once this patch
+>> above gets accepted.
 > 
-> > @@ -434,7 +434,9 @@ void virtio_transport_set_buffer_size(struct vsock_sock *vsk, u64 val)
-> >  	if (val > vvs->buf_size_max)
-> >  		vvs->buf_size_max = val;
-> >  	vvs->buf_size = val;
-> > +	spin_lock_bh(&vvs->rx_lock);
-> >  	vvs->buf_alloc = val;
-> > +	spin_unlock_bh(&vvs->rx_lock);
-> 
-> This locking doesn't do anything other than to strongly order the
-> buf_size store to occur before the buf_alloc one.
+> Well, there's another alternative: we move just what is required from
+> smp_plat.h to smp.h.
 
-Sure, I'll remove the lock. I was confused because I moved its reading
-under the rx_lock (together with other variables), but here I'm updating
-only buf_alloc, so this lock is useless.
+I think that's the best course of action, and would align arm/arm64 with
+mips, sparc, sh, xtensa and parisc.
+
+Florian, do you mind writing these two patches?
 
 Thanks,
-Stefano
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
