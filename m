@@ -2,51 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E91A3314A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:42:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BC0C33154
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:42:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728927AbfFCNmE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 09:42:04 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33229 "EHLO
+        id S1728977AbfFCNmt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 09:42:49 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47289 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726635AbfFCNmE (ORCPT
+        with ESMTP id S1728876AbfFCNms (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 09:42:04 -0400
+        Mon, 3 Jun 2019 09:42:48 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x53DfnY8611928
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x53DgXqK612230
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 3 Jun 2019 06:41:49 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x53DfnY8611928
+        Mon, 3 Jun 2019 06:42:33 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x53DgXqK612230
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1559569310;
-        bh=awTI1eeX+Qg2TS+otR6dg6T9jf7a0nGzNV2qFkooTqc=;
+        s=2019051801; t=1559569354;
+        bh=1B3EFEXNw0umT7bq7uVdz46zLj4UUSpc8p0Z55Jy9nE=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=T8wjLAkvzpep2pOMtIPklyK+6F5SNJHckD+6FXk3W8vRpc0DUcOU2JG0v6k34Vdc8
-         et/QIvkwBlfsZ5xjGL8ZqpkZLJ451aKEKw6HVo7rBVjQhnjHTQzveIz0NyME2aOwn1
-         Ixr/HzeQSVcS8+xSwgYXXyavFvjgxdP82BIxSi/nYUHyz6giv/H+Z+4Vtn6MGqb0WL
-         bKxM/fHPSdEPjzYkHIqML+VvKst7O8yuzCBmHPMFOcaHm2U+Y9yKvEm8TL8J1tqFMX
-         7z5qzBW4Fx2UNQNm9uRzGUYikXWL1XEMzgEEVhNMNmCqrWthD7jhLtZ38muWx05yAd
-         RXaPpf7Vc2DDQ==
+        b=eQp16pAtjwJEW54ip5k8WhcZI5I6mLc1OdyvRrhIhnjg+5K394x6+KWT3a6eJtRzd
+         dCFMeKkZovMdfR0uNElg0qyTKo0gtYNzUzMLuJPOBHnkLXhuzWHBnwKSzf1TMCx77+
+         CoKn9A/006wmB+X1b1XFBRjrUzkrXdNdJgznUvkFnN95StWnk8siaZFcNCXy0unHDs
+         /LIpeYBDJdb8rMKg0XSIRPryJ5ZSFfyia/LLwnhTICSNVjZAJomx7+sRXuUq+ebkOU
+         pGyQYhlyKIzvkRhpQ8svUhJlT5LKxH216hCyahVLVdwnjqVtRH28jlA/+0RJ7oNYvA
+         +j4ZiBhR/mkvQ==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x53Dfntw611925;
-        Mon, 3 Jun 2019 06:41:49 -0700
-Date:   Mon, 3 Jun 2019 06:41:49 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x53DgXSH612223;
+        Mon, 3 Jun 2019 06:42:33 -0700
+Date:   Mon, 3 Jun 2019 06:42:33 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Mark Rutland <tipbot@zytor.com>
-Message-ID: <tip-0754211847d7a228f1c34a49fd122979dfd19a1a@git.kernel.org>
-Cc:     mark.rutland@arm.com, hpa@zytor.com, peterz@infradead.org,
-        aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, mingo@kernel.org, will.deacon@arm.com,
-        torvalds@linux-foundation.org, palmer@sifive.com
-Reply-To: hpa@zytor.com, mark.rutland@arm.com, palmer@sifive.com,
-          mingo@kernel.org, torvalds@linux-foundation.org,
-          will.deacon@arm.com, aou@eecs.berkeley.edu, peterz@infradead.org,
-          tglx@linutronix.de, linux-kernel@vger.kernel.org
-In-Reply-To: <20190522132250.26499-13-mark.rutland@arm.com>
-References: <20190522132250.26499-13-mark.rutland@arm.com>
+Message-ID: <tip-0ca94800762e8a2f7037c9b02ba74aff8016dd82@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        torvalds@linux-foundation.org, hpa@zytor.com,
+        heiko.carstens@de.ibm.com, mark.rutland@arm.com,
+        will.deacon@arm.com, peterz@infradead.org, tglx@linutronix.de
+Reply-To: torvalds@linux-foundation.org, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          will.deacon@arm.com, peterz@infradead.org,
+          heiko.carstens@de.ibm.com, mark.rutland@arm.com, hpa@zytor.com
+In-Reply-To: <20190522132250.26499-14-mark.rutland@arm.com>
+References: <20190522132250.26499-14-mark.rutland@arm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] locking/atomic, riscv: Use s64 for atomic64
-Git-Commit-ID: 0754211847d7a228f1c34a49fd122979dfd19a1a
+Subject: [tip:locking/core] locking/atomic, s390: Use s64 for atomic64
+Git-Commit-ID: 0ca94800762e8a2f7037c9b02ba74aff8016dd82
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -64,164 +64,151 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0754211847d7a228f1c34a49fd122979dfd19a1a
-Gitweb:     https://git.kernel.org/tip/0754211847d7a228f1c34a49fd122979dfd19a1a
+Commit-ID:  0ca94800762e8a2f7037c9b02ba74aff8016dd82
+Gitweb:     https://git.kernel.org/tip/0ca94800762e8a2f7037c9b02ba74aff8016dd82
 Author:     Mark Rutland <mark.rutland@arm.com>
-AuthorDate: Wed, 22 May 2019 14:22:44 +0100
+AuthorDate: Wed, 22 May 2019 14:22:45 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Mon, 3 Jun 2019 12:32:56 +0200
 
-locking/atomic, riscv: Use s64 for atomic64
+locking/atomic, s390: Use s64 for atomic64
 
 As a step towards making the atomic64 API use consistent types treewide,
-let's have the RISC-V atomic64 implementation use s64 as the underlying
+let's have the s390 atomic64 implementation use s64 as the underlying
 type for atomic64_t, rather than long, matching the generated headers.
 
 As atomic64_read() depends on the generic defintion of atomic64_t, this
-still returns long on 64-bit. This will be converted in a subsequent
-patch.
+still returns long. This will be converted in a subsequent patch.
 
-Otherwise, there should be no functional change as a result of this patch.
+The s390-internal __atomic64_*() ops are also used by the s390 bitops,
+and expect pointers to long. Since atomic64_t::counter will be converted
+to s64 in a subsequent patch, pointes to this are explicitly cast to
+pointers to long when passed to __atomic64_*() ops.
+
+Otherwise, there should be no functional change as a result of this
+patch.
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
-Cc: Albert Ou <aou@eecs.berkeley.edu>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Will Deacon <will.deacon@arm.com>
+Cc: aou@eecs.berkeley.edu
 Cc: arnd@arndb.de
 Cc: bp@alien8.de
 Cc: catalin.marinas@arm.com
 Cc: davem@davemloft.net
 Cc: fenghua.yu@intel.com
-Cc: heiko.carstens@de.ibm.com
 Cc: herbert@gondor.apana.org.au
 Cc: ink@jurassic.park.msu.ru
 Cc: jhogan@kernel.org
 Cc: linux@armlinux.org.uk
 Cc: mattst88@gmail.com
 Cc: mpe@ellerman.id.au
+Cc: palmer@sifive.com
 Cc: paul.burton@mips.com
 Cc: paulus@samba.org
 Cc: ralf@linux-mips.org
 Cc: rth@twiddle.net
 Cc: tony.luck@intel.com
 Cc: vgupta@synopsys.com
-Link: https://lkml.kernel.org/r/20190522132250.26499-13-mark.rutland@arm.com
+Link: https://lkml.kernel.org/r/20190522132250.26499-14-mark.rutland@arm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/riscv/include/asm/atomic.h | 44 +++++++++++++++++++++--------------------
- 1 file changed, 23 insertions(+), 21 deletions(-)
+ arch/s390/include/asm/atomic.h | 38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/arch/riscv/include/asm/atomic.h b/arch/riscv/include/asm/atomic.h
-index 9c263bd9d5ad..96f95c9ebd97 100644
---- a/arch/riscv/include/asm/atomic.h
-+++ b/arch/riscv/include/asm/atomic.h
-@@ -38,11 +38,11 @@ static __always_inline void atomic_set(atomic_t *v, int i)
+diff --git a/arch/s390/include/asm/atomic.h b/arch/s390/include/asm/atomic.h
+index fd20ab5d4cf7..491ad53a0d4e 100644
+--- a/arch/s390/include/asm/atomic.h
++++ b/arch/s390/include/asm/atomic.h
+@@ -84,9 +84,9 @@ static inline int atomic_cmpxchg(atomic_t *v, int old, int new)
  
- #ifndef CONFIG_GENERIC_ATOMIC64
- #define ATOMIC64_INIT(i) { (i) }
--static __always_inline long atomic64_read(const atomic64_t *v)
-+static __always_inline s64 atomic64_read(const atomic64_t *v)
+ #define ATOMIC64_INIT(i)  { (i) }
+ 
+-static inline long atomic64_read(const atomic64_t *v)
++static inline s64 atomic64_read(const atomic64_t *v)
  {
- 	return READ_ONCE(v->counter);
+-	long c;
++	s64 c;
+ 
+ 	asm volatile(
+ 		"	lg	%0,%1\n"
+@@ -94,49 +94,49 @@ static inline long atomic64_read(const atomic64_t *v)
+ 	return c;
  }
--static __always_inline void atomic64_set(atomic64_t *v, long i)
-+static __always_inline void atomic64_set(atomic64_t *v, s64 i)
+ 
+-static inline void atomic64_set(atomic64_t *v, long i)
++static inline void atomic64_set(atomic64_t *v, s64 i)
  {
- 	WRITE_ONCE(v->counter, i);
+ 	asm volatile(
+ 		"	stg	%1,%0\n"
+ 		: "=Q" (v->counter) : "d" (i));
  }
-@@ -66,11 +66,11 @@ void atomic##prefix##_##op(c_type i, atomic##prefix##_t *v)		\
  
- #ifdef CONFIG_GENERIC_ATOMIC64
- #define ATOMIC_OPS(op, asm_op, I)					\
--        ATOMIC_OP (op, asm_op, I, w,  int,   )
-+        ATOMIC_OP (op, asm_op, I, w, int,   )
- #else
- #define ATOMIC_OPS(op, asm_op, I)					\
--        ATOMIC_OP (op, asm_op, I, w,  int,   )				\
--        ATOMIC_OP (op, asm_op, I, d, long, 64)
-+        ATOMIC_OP (op, asm_op, I, w, int,   )				\
-+        ATOMIC_OP (op, asm_op, I, d, s64, 64)
- #endif
- 
- ATOMIC_OPS(add, add,  i)
-@@ -127,14 +127,14 @@ c_type atomic##prefix##_##op##_return(c_type i, atomic##prefix##_t *v)	\
- 
- #ifdef CONFIG_GENERIC_ATOMIC64
- #define ATOMIC_OPS(op, asm_op, c_op, I)					\
--        ATOMIC_FETCH_OP( op, asm_op,       I, w,  int,   )		\
--        ATOMIC_OP_RETURN(op, asm_op, c_op, I, w,  int,   )
-+        ATOMIC_FETCH_OP( op, asm_op,       I, w, int,   )		\
-+        ATOMIC_OP_RETURN(op, asm_op, c_op, I, w, int,   )
- #else
- #define ATOMIC_OPS(op, asm_op, c_op, I)					\
--        ATOMIC_FETCH_OP( op, asm_op,       I, w,  int,   )		\
--        ATOMIC_OP_RETURN(op, asm_op, c_op, I, w,  int,   )		\
--        ATOMIC_FETCH_OP( op, asm_op,       I, d, long, 64)		\
--        ATOMIC_OP_RETURN(op, asm_op, c_op, I, d, long, 64)
-+        ATOMIC_FETCH_OP( op, asm_op,       I, w, int,   )		\
-+        ATOMIC_OP_RETURN(op, asm_op, c_op, I, w, int,   )		\
-+        ATOMIC_FETCH_OP( op, asm_op,       I, d, s64, 64)		\
-+        ATOMIC_OP_RETURN(op, asm_op, c_op, I, d, s64, 64)
- #endif
- 
- ATOMIC_OPS(add, add, +,  i)
-@@ -166,11 +166,11 @@ ATOMIC_OPS(sub, add, +, -i)
- 
- #ifdef CONFIG_GENERIC_ATOMIC64
- #define ATOMIC_OPS(op, asm_op, I)					\
--        ATOMIC_FETCH_OP(op, asm_op, I, w,  int,   )
-+        ATOMIC_FETCH_OP(op, asm_op, I, w, int,   )
- #else
- #define ATOMIC_OPS(op, asm_op, I)					\
--        ATOMIC_FETCH_OP(op, asm_op, I, w,  int,   )			\
--        ATOMIC_FETCH_OP(op, asm_op, I, d, long, 64)
-+        ATOMIC_FETCH_OP(op, asm_op, I, w, int,   )			\
-+        ATOMIC_FETCH_OP(op, asm_op, I, d, s64, 64)
- #endif
- 
- ATOMIC_OPS(and, and, i)
-@@ -219,9 +219,10 @@ static __always_inline int atomic_fetch_add_unless(atomic_t *v, int a, int u)
- #define atomic_fetch_add_unless atomic_fetch_add_unless
- 
- #ifndef CONFIG_GENERIC_ATOMIC64
--static __always_inline long atomic64_fetch_add_unless(atomic64_t *v, long a, long u)
-+static __always_inline s64 atomic64_fetch_add_unless(atomic64_t *v, s64 a, s64 u)
+-static inline long atomic64_add_return(long i, atomic64_t *v)
++static inline s64 atomic64_add_return(s64 i, atomic64_t *v)
  {
--       long prev, rc;
-+       s64 prev;
-+       long rc;
+-	return __atomic64_add_barrier(i, &v->counter) + i;
++	return __atomic64_add_barrier(i, (long *)&v->counter) + i;
+ }
  
- 	__asm__ __volatile__ (
- 		"0:	lr.d     %[p],  %[c]\n"
-@@ -290,11 +291,11 @@ c_t atomic##prefix##_cmpxchg(atomic##prefix##_t *v, c_t o, c_t n)	\
- 
- #ifdef CONFIG_GENERIC_ATOMIC64
- #define ATOMIC_OPS()							\
--	ATOMIC_OP( int,   , 4)
-+	ATOMIC_OP(int,   , 4)
- #else
- #define ATOMIC_OPS()							\
--	ATOMIC_OP( int,   , 4)						\
--	ATOMIC_OP(long, 64, 8)
-+	ATOMIC_OP(int,   , 4)						\
-+	ATOMIC_OP(s64, 64, 8)
- #endif
- 
- ATOMIC_OPS()
-@@ -332,9 +333,10 @@ static __always_inline int atomic_sub_if_positive(atomic_t *v, int offset)
- #define atomic_dec_if_positive(v)	atomic_sub_if_positive(v, 1)
- 
- #ifndef CONFIG_GENERIC_ATOMIC64
--static __always_inline long atomic64_sub_if_positive(atomic64_t *v, long offset)
-+static __always_inline s64 atomic64_sub_if_positive(atomic64_t *v, s64 offset)
+-static inline long atomic64_fetch_add(long i, atomic64_t *v)
++static inline s64 atomic64_fetch_add(s64 i, atomic64_t *v)
  {
--       long prev, rc;
-+       s64 prev;
-+       long rc;
+-	return __atomic64_add_barrier(i, &v->counter);
++	return __atomic64_add_barrier(i, (long *)&v->counter);
+ }
  
- 	__asm__ __volatile__ (
- 		"0:	lr.d     %[p],  %[c]\n"
+-static inline void atomic64_add(long i, atomic64_t *v)
++static inline void atomic64_add(s64 i, atomic64_t *v)
+ {
+ #ifdef CONFIG_HAVE_MARCH_Z196_FEATURES
+ 	if (__builtin_constant_p(i) && (i > -129) && (i < 128)) {
+-		__atomic64_add_const(i, &v->counter);
++		__atomic64_add_const(i, (long *)&v->counter);
+ 		return;
+ 	}
+ #endif
+-	__atomic64_add(i, &v->counter);
++	__atomic64_add(i, (long *)&v->counter);
+ }
+ 
+ #define atomic64_xchg(v, new) (xchg(&((v)->counter), new))
+ 
+-static inline long atomic64_cmpxchg(atomic64_t *v, long old, long new)
++static inline s64 atomic64_cmpxchg(atomic64_t *v, s64 old, s64 new)
+ {
+-	return __atomic64_cmpxchg(&v->counter, old, new);
++	return __atomic64_cmpxchg((long *)&v->counter, old, new);
+ }
+ 
+ #define ATOMIC64_OPS(op)						\
+-static inline void atomic64_##op(long i, atomic64_t *v)			\
++static inline void atomic64_##op(s64 i, atomic64_t *v)			\
+ {									\
+-	__atomic64_##op(i, &v->counter);				\
++	__atomic64_##op(i, (long *)&v->counter);			\
+ }									\
+-static inline long atomic64_fetch_##op(long i, atomic64_t *v)		\
++static inline long atomic64_fetch_##op(s64 i, atomic64_t *v)		\
+ {									\
+-	return __atomic64_##op##_barrier(i, &v->counter);		\
++	return __atomic64_##op##_barrier(i, (long *)&v->counter);	\
+ }
+ 
+ ATOMIC64_OPS(and)
+@@ -145,8 +145,8 @@ ATOMIC64_OPS(xor)
+ 
+ #undef ATOMIC64_OPS
+ 
+-#define atomic64_sub_return(_i, _v)	atomic64_add_return(-(long)(_i), _v)
+-#define atomic64_fetch_sub(_i, _v)	atomic64_fetch_add(-(long)(_i), _v)
+-#define atomic64_sub(_i, _v)		atomic64_add(-(long)(_i), _v)
++#define atomic64_sub_return(_i, _v)	atomic64_add_return(-(s64)(_i), _v)
++#define atomic64_fetch_sub(_i, _v)	atomic64_fetch_add(-(s64)(_i), _v)
++#define atomic64_sub(_i, _v)		atomic64_add(-(s64)(_i), _v)
+ 
+ #endif /* __ARCH_S390_ATOMIC__  */
