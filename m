@@ -2,90 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A30C63352F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 18:42:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95F923352A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 18:42:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729462AbfFCQmT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 12:42:19 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43610 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729427AbfFCQmR (ORCPT
+        id S1729405AbfFCQmL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 12:42:11 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38536 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727747AbfFCQmJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 12:42:17 -0400
-Received: by mail-lj1-f194.google.com with SMTP id 16so3289192ljv.10
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 09:42:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZxdsJUzrzirDV9SoFUmfun9q9AXOSWclIRGIX2baL2Y=;
-        b=N7C/10lLvMRhc2gCSkGs8QaF+cwD/Qcw7BW0cuFy6wQsDwPxn8AmDJJUuIvTaSjEXg
-         SuzZSrENjfTHUoDrJ6gD+eOIU3cpI6oqUldqD9gs2uNz8p7DQdwOTjAg+JMH/x601m7H
-         Esxj/dVD0a+fnLHEKWjDWxB9FvUVdOvgv8KqwpaScBTvTAbmRS3azMY3CwiT4OWn4i6Y
-         dWBL2iKbD9fISePhoUn07PDTAFHu94rMZVQ+81cO+p8GrIJhU6lTdQO7ywMxlzLHz6vS
-         cuTS+gGOJOMt2YW8aJavsWZNikY7/5MZY90WYuuJip/QPnSi9RebnPJjk6zKZH75y4Fb
-         3Oaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZxdsJUzrzirDV9SoFUmfun9q9AXOSWclIRGIX2baL2Y=;
-        b=q5O3Ojsoe+X4M3BrPjCT3dbQpKo+CTW0sTj7L9NW9+LKxaS/pK03MvyYJv4uPlGgvR
-         EIeUDoN616qOo5Xx2TLqgK96J1IHWCTJHKX52lOYbFUOcDJbjLMkgE/CGc0dLBqmUAcg
-         GIZ46V9qiqQGA397kv0x7bAArC1NM5+ydYpcQvmuTwd30znETOB9DFAXKGkFwCgKeLhU
-         WCE3M02nr6t7jpcSY30bKcqUBUZMtQzkW1n71Wi/JDyW5Buyy67bNqjnpNesV+/PDKnb
-         AIlVPRVq7yW7hMQBK9Y6fD9AOiAmUfw6KHDV4PF7V3k/lsFv7mSrhAhYunhWY3qR6VCg
-         mrxw==
-X-Gm-Message-State: APjAAAXK0iPl25ARASKEf34rfbiamJ1wVunSckLee1kpffCgfqALCC9I
-        e7bRyZNh9X/P+PKwQOkWVb0=
-X-Google-Smtp-Source: APXvYqxXFTRtKG8W/wE7vPy3gcwzNZsFCLLCuA9ttno3xoT+sqGIVtk64GC8X0e7QSJHyfZsXHThsg==
-X-Received: by 2002:a2e:4256:: with SMTP id p83mr14154095lja.201.1559580135602;
-        Mon, 03 Jun 2019 09:42:15 -0700 (PDT)
-Received: from krolik-desktop.lan ([91.238.216.6])
-        by smtp.gmail.com with ESMTPSA id d5sm3251109lji.85.2019.06.03.09.42.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Jun 2019 09:42:15 -0700 (PDT)
-From:   Pawel Dembicki <paweldembicki@gmail.com>
-Cc:     Pawel Dembicki <paweldembicki@gmail.com>,
-        Christian Lamparter <chunkeey@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] powerpc: Enable kernel XZ compression option on PPC_85xx
-Date:   Mon,  3 Jun 2019 18:41:14 +0200
-Message-Id: <20190603164115.27471-1-paweldembicki@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        Mon, 3 Jun 2019 12:42:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=PF/DPANZU4B/91WFDIx5XMAZHVrwBhQKQlUd+pBcvEQ=; b=JaGOnQRJd1s1Tei2klsqm9Xw/
+        K+z8AjG++0f7WOFL/9N6Okkg4uIaPUTec2wS0KZv9WBhCaHl/IlAg12WlNGF9X3X1ne26v6tNfcRm
+        baazZKctsmnFG3aRsZx9tnHSrz9yxqhAKpKpiJ1sfbSRzxS/uDGXrmsE0lPn/YhAz4qbBZrsD3WEp
+        FbTU1Uf+Wizk64U4jhZaOSb/xG1FH0WAO0PocMjrBCWoPs/TFenlK4ecED2g5xHbefvRUt0vQb5Ky
+        fsv04MugJsd7+QypPkbI1we9jNwnpg22UdePuUom2zg4VPZISZ9R3lbk3EDd4sqSVYBhL1ouD3fwO
+        dIMR8XMFg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hXq2A-0002Ps-63; Mon, 03 Jun 2019 16:42:06 +0000
+Date:   Mon, 3 Jun 2019 09:42:06 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Pingfan Liu <kernelfans@gmail.com>
+Cc:     linux-mm@kvack.org, Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Keith Busch <keith.busch@intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 1/2] mm/gup: fix omission of check on FOLL_LONGTERM in
+ get_user_pages_fast()
+Message-ID: <20190603164206.GB29719@infradead.org>
+References: <1559543653-13185-1-git-send-email-kernelfans@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1559543653-13185-1-git-send-email-kernelfans@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable kernel XZ compression option on PPC_85xx. Tested with
-simpleImage on TP-Link TL-WDR4900 (Freescale P1014 processor).
+> +#if defined(CONFIG_CMA)
 
-Suggested-by: Christian Lamparter <chunkeey@gmail.com>
-Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
----
- arch/powerpc/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+You can just use #ifdef here.
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 8c1c636308c8..daf4cb968922 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -196,7 +196,7 @@ config PPC
- 	select HAVE_IOREMAP_PROT
- 	select HAVE_IRQ_EXIT_ON_IRQ_STACK
- 	select HAVE_KERNEL_GZIP
--	select HAVE_KERNEL_XZ			if PPC_BOOK3S || 44x
-+	select HAVE_KERNEL_XZ			if PPC_BOOK3S || 44x || PPC_85xx
- 	select HAVE_KPROBES
- 	select HAVE_KPROBES_ON_FTRACE
- 	select HAVE_KRETPROBES
--- 
-2.20.1
+> +static inline int reject_cma_pages(int nr_pinned, unsigned int gup_flags,
+> +	struct page **pages)
 
+Please use two instead of one tab to indent the continuing line of
+a function declaration.
+
+> +{
+> +	if (unlikely(gup_flags & FOLL_LONGTERM)) {
+
+IMHO it would be a little nicer if we could move this into the caller.
