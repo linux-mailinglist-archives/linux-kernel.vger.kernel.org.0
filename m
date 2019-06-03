@@ -2,114 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A10EC339A6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 22:23:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BD41339AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 22:24:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726642AbfFCUXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 16:23:50 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:35700 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726463AbfFCUXu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 16:23:50 -0400
-Received: by mail-pl1-f194.google.com with SMTP id p1so7401959plo.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 13:23:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:references:date:in-reply-to:message-id
-         :user-agent:mime-version;
-        bh=KCAuqRvIU2ckCVob7UWIpr/PcPCBeVFLEtuvFQkKpqI=;
-        b=ml7wuVQqI13CX5CtZbEMSvLH+lTnj7SlZGlSspITVoAwDFKDNOP2M5SbtrMFVvoJBg
-         F1HtFgtNNXBSieNILcwxBBAS47/WpYlBjJN4f2BfJeBdg8ua3fnnsAS+jd+GFq+CBTCh
-         /V36KrM5l2j0FhaqLdLUxP+tkluWMC9ieIwfbpbu3VyR7KPebNLO3FFT4TXLvoU6OUtM
-         nmz1G5ET6hvaDV6HOcbenZaSQe7pRVoxIuBVhjy9oAwVnrcfrTrZoaowimguuMYy0Sl+
-         fjEhQRmRl3xC9olgZaqPN8CQypG4auGESOS+8XfBSe/zNfyUuAqciNa65BiRckd1a489
-         8KUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:references:date:in-reply-to
-         :message-id:user-agent:mime-version;
-        bh=KCAuqRvIU2ckCVob7UWIpr/PcPCBeVFLEtuvFQkKpqI=;
-        b=kuh2ciwjJ/93SzT3dFEH+ID3q3je9/WBEGbeyzgsdSwpKu20ukQAJxRgZqBWRstS8v
-         P7Z54/eiMqr2Bc4Y3CeZnOzx8FDwmmS56xNl1A8ESqf4k2W+via93ql62Mrh2Rd4S/na
-         QOBMlj5IHPjhGu2y0e1b460ZKmmiJbCQdNNW8Wy5W7Qew/QCHN8qTSC1MI1PpWLqYZm2
-         epXN8kFBx0/sdn+d/Go60C88wo+nyYq6loT0s+VTZ1BHVf3iL9Km5/Ejf7QzaKl8iPN1
-         ApGZO2l8Fp33esEMzji18rGvBrii1gsg1QmBZA4huqBJwm2+LJyXylyXIhHEEPssYVlb
-         yoZg==
-X-Gm-Message-State: APjAAAUqs9tG5qGqthGU4UcrIhexp8KBTHL+PwDSQBPRtYtzS0fm9zcA
-        AB8u/nywPsgmMUA/pyidgMUy31vkwA96vw==
-X-Google-Smtp-Source: APXvYqyT/rioNX/CjI8MK8d4J/CnQvOHs3ooFykn9bW567HHKi+5SQ4e2xqB5glHws46IA2CER8BLg==
-X-Received: by 2002:a17:902:b717:: with SMTP id d23mr17071198pls.53.1559593429452;
-        Mon, 03 Jun 2019 13:23:49 -0700 (PDT)
-Received: from bsegall-linux.svl.corp.google.com.localhost ([2620:15c:2cd:202:39d7:98b3:2536:e93f])
-        by smtp.gmail.com with ESMTPSA id v64sm7361064pjb.3.2019.06.03.13.23.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Jun 2019 13:23:48 -0700 (PDT)
-From:   bsegall@google.com
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Liangyan <liangyan.peng@linux.alibaba.com>, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, yun.wang@linux.alibaba.com,
-        shanpeic@linux.alibaba.com, xlpang@linux.alibaba.com,
-        "liangyan.ply" <liangyan.ply@linux.alibaba.com>
-Subject: Re: [PATCH] sched/fair: don't restart enqueued cfs quota slack timer
-References: <20190603044309.168065-1-liangyan.peng@linux.alibaba.com>
-        <20190603094905.GA3419@hirez.programming.kicks-ass.net>
-Date:   Mon, 03 Jun 2019 13:23:47 -0700
-In-Reply-To: <20190603094905.GA3419@hirez.programming.kicks-ass.net> (Peter
-        Zijlstra's message of "Mon, 3 Jun 2019 11:49:05 +0200")
-Message-ID: <xm26sgsqxvsc.fsf@bsegall-linux.svl.corp.google.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
+        id S1726837AbfFCUYr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 16:24:47 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51268 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725956AbfFCUYq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 16:24:46 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 697D9306E33B;
+        Mon,  3 Jun 2019 20:24:39 +0000 (UTC)
+Received: from x2.localnet (ovpn-122-112.rdu2.redhat.com [10.10.122.112])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DC03E19936;
+        Mon,  3 Jun 2019 20:24:23 +0000 (UTC)
+From:   Steve Grubb <sgrubb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Richard Guy Briggs <rgb@redhat.com>,
+        Tycho Andersen <tycho@tycho.ws>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        omosnace@redhat.com, dhowells@redhat.com, simo@redhat.com,
+        Eric Paris <eparis@parisplace.org>, ebiederm@xmission.com,
+        nhorman@tuxdriver.com
+Subject: Re: [PATCH ghak90 V6 02/10] audit: add container id
+Date:   Mon, 03 Jun 2019 16:24:23 -0400
+Message-ID: <97478582.yP93vGJyqj@x2>
+Organization: Red Hat
+In-Reply-To: <CAHC9VhTrM1op_EH=YAn9pU8dMOr=jB-Ph4SxFeqGFskwLmFnCA@mail.gmail.com>
+References: <20190529145742.GA8959@cisco> <20190531002058.tsddah4edcazkuzs@madcap2.tricolour.ca> <CAHC9VhTrM1op_EH=YAn9pU8dMOr=jB-Ph4SxFeqGFskwLmFnCA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Mon, 03 Jun 2019 20:24:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Peter Zijlstra <peterz@infradead.org> writes:
+Hello Paul,
 
-> On Mon, Jun 03, 2019 at 12:43:09PM +0800, Liangyan wrote:
->> From: "liangyan.ply" <liangyan.ply@linux.alibaba.com>
->> 
->> start_cfs_slack_bandwidth() will restart the quota slack timer,
->> if it is called frequently, this timer will be restarted continuously
->> and may have no chance to expire to unthrottle cfs tasks.
->> This will cause that the throttled tasks can't be unthrottled in time
->> although they have remaining quota.
->
-> This looks very similar to the patch from Ben here:
->
->   https://lkml.kernel.org/r/xm26blzlyr9d.fsf@bsegall-linux.svl.corp.google.com
+I am curious about this. We seemed to be close to getting this patch pulled 
+in. A lot of people are waiting for it. Can you summarize what you think the 
+patches need and who we think needs to do it? I'm lost. Does LXC people need 
+to propose something? Does Richard? Someone else? Who's got the ball?
 
-Yeah, it should do the same sort of thing, but testing hrtimer_active
-is racy (we could miss restarting the timer if it's just dropped the
-cfsb lock but hasn't finished yet), so the extra accounting flag is
-needed.
+Thank,
+-Steve
 
->
->> 
->> Signed-off-by: Liangyan <liangyan.peng@linux.alibaba.com>
->> ---
->>  kernel/sched/fair.c | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->> 
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index d90a64620072..fdb03c752f97 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->> @@ -4411,9 +4411,11 @@ static void start_cfs_slack_bandwidth(struct cfs_bandwidth *cfs_b)
->>  	if (runtime_refresh_within(cfs_b, min_left))
->>  		return;
->>  
->> -	hrtimer_start(&cfs_b->slack_timer,
->> +	if (!hrtimer_active(&cfs_b->slack_timer)) {
->> +		hrtimer_start(&cfs_b->slack_timer,
->>  			ns_to_ktime(cfs_bandwidth_slack_period),
->>  			HRTIMER_MODE_REL);
->> +	}
->>  }
->>  
->>  /* we know any runtime found here is valid as update_curr() precedes return */
->> -- 
->> 2.14.4.44.g2045bb6
->> 
+On Friday, May 31, 2019 8:44:45 AM EDT Paul Moore wrote:
+> On Thu, May 30, 2019 at 8:21 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > On 2019-05-30 19:26, Paul Moore wrote:
+> > > On Thu, May 30, 2019 at 5:29 PM Tycho Andersen <tycho@tycho.ws> wrote:
+> > > > On Thu, May 30, 2019 at 03:29:32PM -0400, Paul Moore wrote:
+> > > > > [REMINDER: It is an "*audit* container ID" and not a general
+> > > > > "container ID" ;)  Smiley aside, I'm not kidding about that part.]
+> > > > 
+> > > > This sort of seems like a distinction without a difference;
+> > > > presumably
+> > > > audit is going to want to differentiate between everything that
+> > > > people
+> > > > in userspace call a container. So you'll have to support all this
+> > > > insanity anyway, even if it's "not a container ID".
+> > > 
+> > > That's not quite right.  Audit doesn't care about what a container is,
+> > > or is not, it also doesn't care if the "audit container ID" actually
+> > > matches the ID used by the container engine in userspace and I think
+> > > that is a very important line to draw.  Audit is simply given a value
+> > > which it calls the "audit container ID", it ensures that the value is
+> > > inherited appropriately (e.g. children inherit their parent's audit
+> > > container ID), and it uses the value in audit records to provide some
+> > > additional context for log analysis.  The distinction isn't limited to
+> > > the value itself, but also to how it is used; it is an "audit
+> > > container ID" and not a "container ID" because this value is
+> > > exclusively for use by the audit subsystem.  We are very intentionally
+> > > not adding a generic container ID to the kernel.  If the kernel does
+> > > ever grow a general purpose container ID we will be one of the first
+> > > ones in line to make use of it, but we are not going to be the ones to
+> > > generically add containers to the kernel.  Enough people already hate
+> > > audit ;)
+> > > 
+> > > > > I'm not interested in supporting/merging something that isn't
+> > > > > useful;
+> > > > > if this doesn't work for your use case then we need to figure out
+> > > > > what
+> > > > > would work.  It sounds like nested containers are much more common
+> > > > > in
+> > > > > the lxc world, can you elaborate a bit more on this?
+> > > > > 
+> > > > > As far as the possible solutions you mention above, I'm not sure I
+> > > > > like the per-userns audit container IDs, I'd much rather just emit
+> > > > > the
+> > > > > necessary tracking information via the audit record stream and let
+> > > > > the
+> > > > > log analysis tools figure it out.  However, the bigger question is
+> > > > > how
+> > > > > to limit (re)setting the audit container ID when you are in a
+> > > > > non-init
+> > > > > userns.  For reasons already mentioned, using capable() is a non
+> > > > > starter for everything but the initial userns, and using
+> > > > > ns_capable()
+> > > > > is equally poor as it essentially allows any userns the ability to
+> > > > > munge it's audit container ID (obviously not good).  It appears we
+> > > > > need a different method for controlling access to the audit
+> > > > > container
+> > > > > ID.
+> > > > 
+> > > > One option would be to make it a string, and have it be append only.
+> > > > That should be safe with no checks.
+> > > > 
+> > > > I know there was a long thread about what type to make this thing. I
+> > > > think you could accomplish the append-only-ness with a u64 if you had
+> > > > some rule about only allowing setting lower order bits than those
+> > > > that
+> > > > are already set. With 4 bits for simplicity:
+> > > > 
+> > > > 1100         # initial container id
+> > > > 1100 -> 1011 # not allowed
+> > > > 1100 -> 1101 # allowed, but now 1101 is set in stone since there are
+> > > > 
+> > > >              # no lower order bits left
+> > > > 
+> > > > There are probably fancier ways to do it if you actually understand
+> > > > math :)
+> > >  
+> > >  ;)
+> > >  
+> > > > Since userns nesting is limited to 32 levels (right now, IIRC), and
+> > > > you have 64 bits, this might be reasonable. You could just teach
+> > > > container engines to use the first say N bits for themselves, with a
+> > > > 1
+> > > > bit for the barrier at the end.
+> > > 
+> > > I like the creativity, but I worry that at some point these
+> > > limitations are going to be raised (limits have a funny way of doing
+> > > that over time) and we will be in trouble.  I say "trouble" because I
+> > > want to be able to quickly do an audit container ID comparison and
+> > > we're going to pay a penalty for these larger values (we'll need this
+> > > when we add multiple auditd support and the requisite record routing).
+> > > 
+> > > Thinking about this makes me also realize we probably need to think a
+> > > bit longer about audit container ID conflicts between orchestrators.
+> > > Right now we just take the value that is given to us by the
+> > > orchestrator, but if we want to allow multiple container orchestrators
+> > > to work without some form of cooperation in userspace (I think we have
+> > > to assume the orchestrators will not talk to each other) we likely
+> > > need to have some way to block reuse of an audit container ID.  We
+> > > would either need to prevent the orchestrator from explicitly setting
+> > > an audit container ID to a currently in use value, or instead generate
+> > > the audit container ID in the kernel upon an event triggered by the
+> > > orchestrator (e.g. a write to a /proc file).  I suspect we should
+> > > start looking at the idr code, I think we will need to make use of it.
+> > 
+> > My first reaction to using the IDR code is that once an idr is given up,
+> > it can be reused.  I suppose we request IDRs and then never give them up
+> > to avoid reuse...
+> 
+> I'm not sure we ever what to guarantee that an audit container ID
+> won't be reused during the lifetime of the system, it is a discrete
+> integer after all.  What I think we do want to guarantee is that we
+> won't allow an unintentional audit container ID collision between
+> different orchestrators; if a single orchestrator wants to reuse an
+> audit container ID then that is its choice.
+> 
+> > I already had some ideas of preventing an existing ID from being reused,
+> 
+> Cool.  I only made the idr suggestion since it is used for PIDs and
+> solves a very similar problem.
+> 
+> > but that makes the practice of some container engines injecting
+> > processes into existing containers difficult if not impossible.
+> 
+> Yes, we'll need some provision to indicate which orchestrator
+> "controls" that particular audit container ID, and allow that
+> orchestrator to reuse that particular audit container ID (until all
+> those containers disappear and the audit container ID is given back to
+> the pool).
+
+
+
+
