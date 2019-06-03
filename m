@@ -2,93 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83FF1329E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 09:43:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B89D329EA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 09:44:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726800AbfFCHm7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 03:42:59 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:50995 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725856AbfFCHm7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 03:42:59 -0400
-Received: from localhost (aaubervilliers-681-1-24-139.w90-88.abo.wanadoo.fr [90.88.144.139])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 8ECBB100016;
-        Mon,  3 Jun 2019 07:42:47 +0000 (UTC)
-Date:   Mon, 3 Jun 2019 09:42:47 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Luca Weiss <luca@z3ntu.xyz>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "moderated list:ARM/Allwinner sunXi SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] arm64: dts: allwinner: a64: Add lradc node
-Message-ID: <20190603074247.hlayod2pxq55f6ci@flea>
-References: <20190518170929.24789-1-luca@z3ntu.xyz>
- <4343071.IDWclfcoxo@g550jk>
- <20190524092001.ztf3kntaj4uiswnv@flea>
- <6901794.oDhxEVzEqc@g550jk>
+        id S1726858AbfFCHos (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 03:44:48 -0400
+Received: from verein.lst.de ([213.95.11.211]:55214 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725856AbfFCHos (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 03:44:48 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 74D3067358; Mon,  3 Jun 2019 09:44:21 +0200 (CEST)
+Date:   Mon, 3 Jun 2019 09:44:21 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Christoph Hellwig <hch@lst.de>, Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-mips@vger.kernel.org,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Linux-MM <linux-mm@kvack.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 08/16] sparc64: add the missing pgd_page definition
+Message-ID: <20190603074421.GB22920@lst.de>
+References: <20190601074959.14036-1-hch@lst.de> <20190601074959.14036-9-hch@lst.de> <CAHk-=wj9w5NxTcJsqpvYUiL3OBOH-J3=4-vXcc3GaG_U8H-gJw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pck2udhpnuo5jdg4"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6901794.oDhxEVzEqc@g550jk>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAHk-=wj9w5NxTcJsqpvYUiL3OBOH-J3=4-vXcc3GaG_U8H-gJw@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Jun 01, 2019 at 09:28:54AM -0700, Linus Torvalds wrote:
+> Both sparc64 and sh had this pattern, but now that I look at it more
+> closely, I think your version is wrong, or at least nonoptimal.
 
---pck2udhpnuo5jdg4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I bet it is.  Then again these symbols are just required for the code
+to compile, as neither sparc64 nor sh actually use the particular
+variant of huge pages we need it for.  Then again even actually dead
+code should better be not too buggy if it isn't just a stub.
 
-Hi,
+> So I thgink this would be better done with
+> 
+>      #define pgd_page(pgd)    pfn_to_page(pgd_pfn(pgd))
+> 
+> where that "pgd_pfn()" would need to be a new (but likely very
+> trivial) function. That's what we do for pte_pfn().
+> 
+> IOW, it would likely end up something like
+> 
+>   #define pgd_to_pfn(pgd) (pgd_val(x) >> PFN_PGD_SHIFT)
 
-On Fri, May 31, 2019 at 12:27:55PM +0200, Luca Weiss wrote:
-> On Freitag, 24. Mai 2019 11:20:01 CEST Maxime Ripard wrote:
-> >
-> > It would be great to drop the -keys from the compatible, and to
-> > document the bindings
-> >
-> > Looks good otherwise
-> >
-> > Maxime
->
-> So I should just document the "allwinner,sun50i-a64-lradc" string in
-> Documentation/devicetree/bindings/input/sun4i-lradc-keys.txt ? Don't I also
-> have to add the compatible to the driver code then? Just adding the a64
-> compatible to a dts wouldn't work without that.
-
-What I meant was that you needed both, something like:
-
-compatible = "allwinner,sun50i-a64-lradc", "allwinner,sun8i-a83t-lradc";
-
-That way, the OS will try to match a driver for the A64 compatible if
-any, and fallback to the A83's otherwise. And since we don't have any
-quirk at the moment, there's no change needed to the driver.
-
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---pck2udhpnuo5jdg4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXPTPdwAKCRDj7w1vZxhR
-xdBQAQCizjZAoJNebpV+1K7cJAfYCjktS+jc7qUnLh5ZXhZI3AEA46RCz7UuQmCi
-CFyLUjFOAPabqusD+2Y5LmXDs76vYg4=
-=CmYf
------END PGP SIGNATURE-----
-
---pck2udhpnuo5jdg4--
+True.  I guess it would be best if we could get most if not all
+architectures to use common versions of these macros so that we have
+the issue settled once.
