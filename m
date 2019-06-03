@@ -2,77 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0AD133373
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:24:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 232B53337A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:26:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727575AbfFCPYr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 11:24:47 -0400
-Received: from mail-vs1-f50.google.com ([209.85.217.50]:41477 "EHLO
-        mail-vs1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726343AbfFCPYq (ORCPT
+        id S1727611AbfFCP00 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 11:26:26 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:50356 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726989AbfFCP00 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 11:24:46 -0400
-Received: by mail-vs1-f50.google.com with SMTP id g24so9432295vso.8
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 08:24:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=Zseq1GZeTqMaMENYkGCy4nd4edGfJrBEbxocT6fFXUI=;
-        b=U5d1tm81DWwwhYT2aOwrSvimQ7FC2F1idrQyh3secSIYdt/faQPXZc6i7ibf9FtI1g
-         ErDCRIGxNcf6MdfCNk35vinF5q8B5d4gi7hdhXoVNt4IaPUsnFbU19Rkw3Aa0bdTOoqM
-         cYzJvrpF/eAgzzFhs6mNF0F8V+Zytk6tjIPPW7Ns0KyxwEYNO5qKYRThH7APIiHf3dai
-         S2rnxJpiueDD1BiNC8XtBNpKRVX319qq1dFZZjK0WMXZ2CRtDzvhAGvY20BkhIXofTuE
-         bVi/6QmsLKR5bCuBQOfEHjx0O0cYz5O4xC42moamd418S9Rpd9hBc2N99Wj9geU3DgEo
-         VXJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=Zseq1GZeTqMaMENYkGCy4nd4edGfJrBEbxocT6fFXUI=;
-        b=btyYmPRpRAUh7YQ7gmNDkUz/r7BVL4bA5nk1GXdw+dGfdlNzfmvRW8/It3os7Luqy5
-         Kx9w/AQikuDbQJOkWEtAdvBiSf+1qSIH3kefE0WpXAJhfup4JRupOpF5V7D02bVvnm9S
-         ho/dVI9EePMcwLhhx/tn2NgkiGK6YPO1mwfbPvapeOrqCzPOO442KmDdQ1N/zw0C5gWR
-         iGI/fmyXZ3XitLLUFqrlbHREROXi6Eo0kWpN2m0IL4jBrjnNOZL86Lkv5cES8fjSd3Ur
-         ZBPaAG+x5C9rjsOVFGtn7CCscwXdEIpaugjqeow7XOJquWOU9FQU4Zh40QgvTDI9clAk
-         1HPw==
-X-Gm-Message-State: APjAAAVf/ibk62f0nL/MqEzDop1WKVsfhPwWQ+87/k9ma6bu10veTK3z
-        UF7I7/eO95Luo8vn8kbGCzqK2YDRl/BGR+hbXKgaAg==
-X-Google-Smtp-Source: APXvYqz+7Y+FqrheKmfgGO6xhSDbDEGS0G3Mw8mOQLhnYpdBIr2FillGn28kMat6G0UWw+qxiZ6aXG+cEAryoCB7cr8=
-X-Received: by 2002:a67:f3c5:: with SMTP id j5mr12977698vsn.232.1559575485636;
- Mon, 03 Jun 2019 08:24:45 -0700 (PDT)
+        Mon, 3 Jun 2019 11:26:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1559575583; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:references; bh=HE4CQPY/zjM71d5YcrWnITVnnDDo1P+pXVsHmG+Q88g=;
+        b=NVRF1jROkqVnmc5j86acG8s6j6Skd1JiciZ3tvJqM4lFS9EEo22F3D4zHJ8NUUz+ESg8/n
+        0ZukzBeFUYugLS8cq2KlIOhuIwSGOh7s9XXDBsES2KjEjA2gaw2fik+vmNMme7k2hRjJft
+        pXB5W+QLoqeYswOVmuMt/0YnIk2fdXM=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     od@zcrc.me, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v2 1/2] dt-bindings: display: Add King Display KD035G6-54NT panel documentation
+Date:   Mon,  3 Jun 2019 17:25:54 +0200
+Message-Id: <20190603152555.23527-1-paul@crapouillou.net>
 MIME-Version: 1.0
-Received: by 2002:a67:efd3:0:0:0:0:0 with HTTP; Mon, 3 Jun 2019 08:24:44 -0700 (PDT)
-From:   Joshua Hudson <joshudson@gmail.com>
-Date:   Mon, 3 Jun 2019 08:24:44 -0700
-Message-ID: <CA+jjjYT6_ZZP5Ucqxvtmcd3d18vAC1LRtruiXojFVaxpJ-HhLA@mail.gmail.com>
-Subject: O_CLOFORK use case
-To:     linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I ran headlong into the use case for O_CLOFORK and got into a locking
-debate over it.
+The KD035G6-54NT is a 3.5" 320x240 24-bit TFT LCD panel.
 
-The actual use case involves squashing a thread race between two
-threads. If a file is opened for write in one thread with O_CLOEXEC
-while another thread calls fork(), a race condition can happen where
-the thread that closes the handle misses the out of disk error because
-the child process closed the handle last inside execve().
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
 
-The decades old idiom for replacing config files isn't safe in
-multi-threaded code. Yipe.
+Notes:
+    v2: - Add an address to the panel node
+    	- Add information about SPI properties
+    	- Add information about the 'port' sub-node
 
-    int h = open(".configfile~", O_WRONY | O_EXCL | O_CLOEXEC, 0666);
-    if (h < 0) { perror(".configfile"); return 1; }
-    ssize_t delta = 0;
-    while ((delta = write(h, newconfigdata, newconfiglen)) > 0) {
-        newconfigdata += delta;
-        newconfiglen -= delta;
-    }
-    if (delta < 0) { perror(".configfile"); return 1; }
-    if (close(h)) { perror(".configfile"); return 1; }
-    rename(".configfile~", ".configfile");
+ .../panel/kingdisplay,kd035g6-54nt.txt        | 42 +++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/kingdisplay,kd035g6-54nt.txt
 
-To fix it, we have to put locks around close() and fork()/vfork(). Ugh.
+diff --git a/Documentation/devicetree/bindings/display/panel/kingdisplay,kd035g6-54nt.txt b/Documentation/devicetree/bindings/display/panel/kingdisplay,kd035g6-54nt.txt
+new file mode 100644
+index 000000000000..fa9596082e44
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/kingdisplay,kd035g6-54nt.txt
+@@ -0,0 +1,42 @@
++King Display KD035G6-54NT 3.5" (320x240 pixels) 24-bit TFT LCD panel
++
++Required properties:
++- compatible: should be "kingdisplay,kd035g6-54nt"
++- power-supply: See panel-common.txt
++- reset-gpios: See panel-common.txt
++
++Optional properties:
++- backlight: see panel-common.txt
++
++The generic bindings for the SPI slaves documented in [1] also apply.
++
++The device node can contain one 'port' child node with one child
++'endpoint' node, according to the bindings defined in [2]. This
++node should describe panel's video bus.
++
++[1]: Documentation/devicetree/bindings/spi/spi-bus.txt
++[2]: Documentation/devicetree/bindings/graph.txt
++
++Example:
++
++&spi {
++	panel@0 {
++		compatible = "kingdisplay,kd035g6-54nt";
++		reg = <0>;
++
++		spi-max-frequency = <3125000>;
++		spi-3wire;
++		spi-cs-high;
++
++		reset-gpios = <&gpe 2 GPIO_ACTIVE_LOW>;
++
++		backlight = <&backlight>;
++		power-supply = <&ldo6>;
++
++		port {
++			panel_input: endpoint {
++				remote-endpoint = <&panel_output>;
++			};
++		};
++	};
++};
+-- 
+2.21.0.593.g511ec345e18
+
