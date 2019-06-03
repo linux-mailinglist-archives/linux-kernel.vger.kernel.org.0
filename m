@@ -2,77 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C3ED32C2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:16:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2077432CB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:24:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729053AbfFCJOn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 05:14:43 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:47522 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729032AbfFCJOl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 05:14:41 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id E475A1C793E5AEDA66D9;
-        Mon,  3 Jun 2019 17:14:38 +0800 (CST)
-Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
- (10.3.19.206) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 3 Jun 2019
- 17:14:28 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     LKML <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>,
-        "Ingo Molnar" <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        <stable@vger.kernel.org>, Miao Xie <miaoxie@huawei.com>,
-        <koujilong@huawei.com>, Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v2] sched/core: add __sched tag for io_schedule()
-Date:   Mon, 3 Jun 2019 17:13:38 +0800
-Message-ID: <20190603091338.2695-1-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190531082912.80724-1-gaoxiang25@huawei.com>
-References: <20190531082912.80724-1-gaoxiang25@huawei.com>
+        id S1727969AbfFCJYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 05:24:09 -0400
+Received: from mga14.intel.com ([192.55.52.115]:54536 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726684AbfFCJYJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 05:24:09 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 02:24:09 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,546,1549958400"; 
+   d="scan'208";a="181096317"
+Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
+  by fmsmga002.fm.intel.com with ESMTP; 03 Jun 2019 02:24:07 -0700
+From:   Tomas Winkler <tomas.winkler@intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-kernel@vger.kernel.org,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Subject: [char-misc-next 0/7] mei: docs: move documentation under driver-api
+Date:   Mon,  3 Jun 2019 12:13:59 +0300
+Message-Id: <20190603091406.28915-1-tomas.winkler@intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.140.130.215]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-non-inline io_schedule() was introduced in
-commit 10ab56434f2f ("sched/core: Separate out io_schedule_prepare() and io_schedule_finish()")
-Keep in line with io_schedule_timeout, Otherwise
-"/proc/<pid>/wchan" will report io_schedule()
-rather than its callers when waiting io.
+Move mei documentation under driver-api, convert the docs to rst,
+fix the outdated information, update broken links, and add new docs.
 
-Reported-by: Jilong Kou <koujilong@huawei.com>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Acked-by: Tejun Heo <tj@kernel.org>
-Fixes: 10ab56434f2f ("sched/core: Separate out io_schedule_prepare() and io_schedule_finish()")
-Cc: <stable@vger.kernel.org> # 4.11+
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
-change log v2:
- - add missing tags
 
- kernel/sched/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Tomas Winkler (7):
+  mei: docs: move documentation under driver-api
+  mei: docs: move iamt docs to a iamt.rst file
+  mei: docs: update mei documentation
+  mei: docs: update mei client bus documentation.
+  mei: docs: add a short description for nfc behind mei
+  mei: docs: add hdcp documentation
+  mei: docs: fix broken links in iamt documentation.
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 874c427742a9..4d5962232a55 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5123,7 +5123,7 @@ long __sched io_schedule_timeout(long timeout)
- }
- EXPORT_SYMBOL(io_schedule_timeout);
- 
--void io_schedule(void)
-+void __sched io_schedule(void)
- {
- 	int token;
- 
+ Documentation/driver-api/index.rst            |   1 +
+ Documentation/driver-api/mei/hdcp.rst         |  32 +++
+ Documentation/driver-api/mei/iamt.rst         | 101 +++++++
+ Documentation/driver-api/mei/index.rst        |  23 ++
+ .../driver-api/mei/mei-client-bus.rst         | 168 +++++++++++
+ Documentation/driver-api/mei/mei.rst          | 176 ++++++++++++
+ Documentation/driver-api/mei/nfc.rst          |  28 ++
+ .../misc-devices/mei/mei-client-bus.txt       | 141 ----------
+ Documentation/misc-devices/mei/mei.txt        | 266 ------------------
+ MAINTAINERS                                   |   2 +-
+ drivers/misc/mei/hdcp/mei_hdcp.c              |  11 +-
+ 11 files changed, 534 insertions(+), 415 deletions(-)
+ create mode 100644 Documentation/driver-api/mei/hdcp.rst
+ create mode 100644 Documentation/driver-api/mei/iamt.rst
+ create mode 100644 Documentation/driver-api/mei/index.rst
+ create mode 100644 Documentation/driver-api/mei/mei-client-bus.rst
+ create mode 100644 Documentation/driver-api/mei/mei.rst
+ create mode 100644 Documentation/driver-api/mei/nfc.rst
+ delete mode 100644 Documentation/misc-devices/mei/mei-client-bus.txt
+ delete mode 100644 Documentation/misc-devices/mei/mei.txt
+
 -- 
-2.17.1
+2.20.1
 
