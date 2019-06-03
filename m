@@ -2,274 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6379033822
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 20:36:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 515D5337E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 20:33:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727227AbfFCSgc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 14:36:32 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40831 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726835AbfFCSeZ (ORCPT
+        id S1726527AbfFCSdu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 14:33:50 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:15187 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726112AbfFCSdu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 14:34:25 -0400
-Received: by mail-pg1-f196.google.com with SMTP id d30so8762919pgm.7
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 11:34:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OvZiZSSFkASZ5axf4GdcvO3VA5BWdLsCt0PgYjP2wg8=;
-        b=GaEfwoE3r3zfeWQ4KDC6T9NUpxSoP6jdGq8hH/BjsINnpD03nl2cgu0I8T2F9a9F6c
-         mQW61XXsEsbci5U+4KZHQWSkrFsuH3VY5j5n89f7DdHLRY6mo3AHH2lHzAim0rTq4/i/
-         Ckpp8IYQQYNL+V6jmNmc/Ld4MfHznd6Jhvhz4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OvZiZSSFkASZ5axf4GdcvO3VA5BWdLsCt0PgYjP2wg8=;
-        b=nyYXv0K/QPQGPoLsGp/ryM/Ig9wK7MyNaswk771PYl/c7VZzc2t8gZ5Kl+hLUSWh4p
-         gGHyf1EFlqNJu3y5HxOL5EuviZ3YIruCvfaDfESEsKoUejEhEpFT+lrco0AxThWJYf4H
-         S6U3ZOd2BJ8FP3b4iTyy9oJAkDrpxpA/t0C/KlcX8nERmb8xVGxyePYKYD6zRJc0JI+H
-         K8lxJG72J6F6Iq5Nlg2Q0qIYpFx279rQJsi4ztXTlwUeN/UWQ5v21XfeyW9lPYkXZDIs
-         VfBg/+fU8kK4TntnnZT+bhNtoEE8mUYwGMqHDswlqLbaQ7/i9s56Xz4XPwhtlWa2HTMY
-         EWpw==
-X-Gm-Message-State: APjAAAU7mXpGtXWr6YBLbvBRLVXnTslmahu7W7zD2Fnd66r+VHKPatda
-        7dVFoNT2/zw4aSvueXqjPhN19A==
-X-Google-Smtp-Source: APXvYqxhGSi8FalDs2H+ynSi6npuip07SQ4klfbB8Og2QjsS3T0o8XHpuUCWAcI6eabjmwACtAnkZw==
-X-Received: by 2002:aa7:93ba:: with SMTP id x26mr32460996pff.238.1559586864995;
-        Mon, 03 Jun 2019 11:34:24 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:3c8f:512b:3522:dfaf])
-        by smtp.gmail.com with ESMTPSA id x128sm17682344pfd.186.2019.06.03.11.34.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Jun 2019 11:34:24 -0700 (PDT)
-From:   Gwendal Grignou <gwendal@chromium.org>
-To:     enric.balletbo@collabora.com, bleung@chromium.org,
-        groeck@chromium.org, lee.jones@linaro.org, jic23@kernel.org,
-        broonie@kernel.org, cychiang@chromium.org, tiwai@suse.com,
-        fabien.lahoudere@collabora.com
-Cc:     linux-iio@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org,
-        Gwendal Grignou <gwendal@chromium.org>
-Subject: [RESEND PATCH v3 12/30] mfd: cros_ec: Add lightbar v2 API
-Date:   Mon,  3 Jun 2019 11:33:43 -0700
-Message-Id: <20190603183401.151408-13-gwendal@chromium.org>
-X-Mailer: git-send-email 2.22.0.rc1.311.g5d7573a151-goog
-In-Reply-To: <20190603183401.151408-1-gwendal@chromium.org>
-References: <20190603183401.151408-1-gwendal@chromium.org>
+        Mon, 3 Jun 2019 14:33:50 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cf5680c0000>; Mon, 03 Jun 2019 11:33:48 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 03 Jun 2019 11:33:49 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 03 Jun 2019 11:33:49 -0700
+Received: from [10.26.11.157] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 3 Jun
+ 2019 18:33:46 +0000
+Subject: Re: [PATCH 5.0 00/36] 5.0.21-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <20190603090520.998342694@linuxfoundation.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <1b2e0b8f-dce7-c829-7c69-ea9550a3d010@nvidia.com>
+Date:   Mon, 3 Jun 2019 19:33:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190603090520.998342694@linuxfoundation.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1559586828; bh=oI7xHfAkUTVg+QxW+zVCtnfr5y5ban5i6ZfoWPsUfSc=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=W+h0iSxV5Pyctytbyfn2QYdnPtaYnSeYPEsojED92Pk+rwUpZb/xaEj1WmFXOQBxg
+         chlpKezNCUq2e0fyc/LXSkKgGbsvr3HMCzMQZKkC5Qrm+LPSHXfO15sZ3BGj5CHcKd
+         vXF9FU845kSFwLIkaeQPHBXvglAXO8cOebsCpYyjPj3gGVvzr5UfwooOv1Og9ifVd9
+         mYF9k2cnAyk9sSTO14fgyPm1J7esyqv84z2tMhb9xZ9WdCt7EqG9V1FDShP7CF/2iU
+         1URokRa9plBW574DPJxjs+U3Ryrsj4NSDt/ddlsaBWjSQg9T6AWzsKS56cwoEg9ecI
+         0XvxmIYCLXRBw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-New API split commands, improve EC command latency.
 
-Acked-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Acked-by: Benson Leung <bleung@chromium.org>
-Reviewed-by: Fabien Lahoudere <fabien.lahoudere@collabora.com>
-Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
----
- include/linux/mfd/cros_ec_commands.h | 124 ++++++++++++++++++++++++++-
- 1 file changed, 120 insertions(+), 4 deletions(-)
+On 03/06/2019 10:08, Greg Kroah-Hartman wrote:
+> Note, this is going to be the LAST 5.0.y kernel release.  After this one, it is
+> end-of-life, please move to 5.1.y at this point in time.  If there is anything
+> wrong with the 5.1.y tree, preventing you from moving to 5.1.y, please let me
+> know.
+> 
+> This is the start of the stable review cycle for the 5.0.21 release.
+> There are 36 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed 05 Jun 2019 09:04:48 AM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.0.21-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.0.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
-index 2b3a94a4f0f4..0ff1941288cf 100644
---- a/include/linux/mfd/cros_ec_commands.h
-+++ b/include/linux/mfd/cros_ec_commands.h
-@@ -1658,7 +1658,10 @@ struct lightbar_params_v1 {
- 	int32_t s3_sleep_for;
- 	int32_t s3_ramp_up;
- 	int32_t s3_ramp_down;
-+	int32_t s5_ramp_up;
-+	int32_t s5_ramp_down;
- 	int32_t tap_tick_delay;
-+	int32_t tap_gate_delay;
- 	int32_t tap_display_time;
- 
- 	/* Tap-for-battery params */
-@@ -1686,11 +1689,82 @@ struct lightbar_params_v1 {
- 	uint8_t s0_idx[2][LB_BATTERY_LEVELS];	/* AP is running */
- 	uint8_t s3_idx[2][LB_BATTERY_LEVELS];	/* AP is sleeping */
- 
-+	/* s5: single color pulse on inhibited power-up */
-+	uint8_t s5_idx;
-+
- 	/* Color palette */
- 	struct rgb_s color[8];			/* 0-3 are Google colors */
- } __ec_todo_packed;
- 
--/* Lightbar program */
-+/* Lightbar command params v2
-+ * crbug.com/467716
-+ *
-+ * lightbar_parms_v1 was too big for i2c, therefore in v2, we split them up by
-+ * logical groups to make it more manageable ( < 120 bytes).
-+ *
-+ * NOTE: Each of these groups must be less than 120 bytes.
-+ */
-+
-+struct lightbar_params_v2_timing {
-+	/* Timing */
-+	int32_t google_ramp_up;
-+	int32_t google_ramp_down;
-+	int32_t s3s0_ramp_up;
-+	int32_t s0_tick_delay[2];		/* AC=0/1 */
-+	int32_t s0a_tick_delay[2];		/* AC=0/1 */
-+	int32_t s0s3_ramp_down;
-+	int32_t s3_sleep_for;
-+	int32_t s3_ramp_up;
-+	int32_t s3_ramp_down;
-+	int32_t s5_ramp_up;
-+	int32_t s5_ramp_down;
-+	int32_t tap_tick_delay;
-+	int32_t tap_gate_delay;
-+	int32_t tap_display_time;
-+} __ec_todo_packed;
-+
-+struct lightbar_params_v2_tap {
-+	/* Tap-for-battery params */
-+	uint8_t tap_pct_red;
-+	uint8_t tap_pct_green;
-+	uint8_t tap_seg_min_on;
-+	uint8_t tap_seg_max_on;
-+	uint8_t tap_seg_osc;
-+	uint8_t tap_idx[3];
-+} __ec_todo_packed;
-+
-+struct lightbar_params_v2_oscillation {
-+	/* Oscillation */
-+	uint8_t osc_min[2];			/* AC=0/1 */
-+	uint8_t osc_max[2];			/* AC=0/1 */
-+	uint8_t w_ofs[2];			/* AC=0/1 */
-+} __ec_todo_packed;
-+
-+struct lightbar_params_v2_brightness {
-+	/* Brightness limits based on the backlight and AC. */
-+	uint8_t bright_bl_off_fixed[2];		/* AC=0/1 */
-+	uint8_t bright_bl_on_min[2];		/* AC=0/1 */
-+	uint8_t bright_bl_on_max[2];		/* AC=0/1 */
-+} __ec_todo_packed;
-+
-+struct lightbar_params_v2_thresholds {
-+	/* Battery level thresholds */
-+	uint8_t battery_threshold[LB_BATTERY_LEVELS - 1];
-+} __ec_todo_packed;
-+
-+struct lightbar_params_v2_colors {
-+	/* Map [AC][battery_level] to color index */
-+	uint8_t s0_idx[2][LB_BATTERY_LEVELS];	/* AP is running */
-+	uint8_t s3_idx[2][LB_BATTERY_LEVELS];	/* AP is sleeping */
-+
-+	/* s5: single color pulse on inhibited power-up */
-+	uint8_t s5_idx;
-+
-+	/* Color palette */
-+	struct rgb_s color[8];			/* 0-3 are Google colors */
-+} __ec_todo_packed;
-+
-+/* Lightbar program. */
- #define EC_LB_PROG_LEN 192
- struct lightbar_program {
- 	uint8_t size;
-@@ -1704,7 +1778,10 @@ struct ec_params_lightbar {
- 		 * The following commands have no args:
- 		 *
- 		 * dump, off, on, init, get_seq, get_params_v0, get_params_v1,
--		 * version, get_brightness, get_demo, suspend, resume
-+		 * version, get_brightness, get_demo, suspend, resume,
-+		 * get_params_v2_timing, get_params_v2_tap, get_params_v2_osc,
-+		 * get_params_v2_bright, get_params_v2_thlds,
-+		 * get_params_v2_colors
- 		 *
- 		 * Don't use an empty struct, because C++ hates that.
- 		 */
-@@ -1731,6 +1808,14 @@ struct ec_params_lightbar {
- 
- 		struct lightbar_params_v0 set_params_v0;
- 		struct lightbar_params_v1 set_params_v1;
-+
-+		struct lightbar_params_v2_timing set_v2par_timing;
-+		struct lightbar_params_v2_tap set_v2par_tap;
-+		struct lightbar_params_v2_oscillation set_v2par_osc;
-+		struct lightbar_params_v2_brightness set_v2par_bright;
-+		struct lightbar_params_v2_thresholds set_v2par_thlds;
-+		struct lightbar_params_v2_colors set_v2par_colors;
-+
- 		struct lightbar_program set_program;
- 	};
- } __ec_todo_packed;
-@@ -1752,6 +1837,14 @@ struct ec_response_lightbar {
- 		struct lightbar_params_v0 get_params_v0;
- 		struct lightbar_params_v1 get_params_v1;
- 
-+
-+		struct lightbar_params_v2_timing get_params_v2_timing;
-+		struct lightbar_params_v2_tap get_params_v2_tap;
-+		struct lightbar_params_v2_oscillation get_params_v2_osc;
-+		struct lightbar_params_v2_brightness get_params_v2_bright;
-+		struct lightbar_params_v2_thresholds get_params_v2_thlds;
-+		struct lightbar_params_v2_colors get_params_v2_colors;
-+
- 		struct __ec_todo_unpacked {
- 			uint32_t num;
- 			uint32_t flags;
-@@ -1764,9 +1857,11 @@ struct ec_response_lightbar {
- 		/*
- 		 * The following commands have no response:
- 		 *
--		 * off, on, init, set_brightness, seq, reg, set_rgb,
-+		 * off, on, init, set_brightness, seq, reg, set_rgb, demo,
- 		 * set_params_v0, set_params_v1, set_program,
--		 * manual_suspend_ctrl, suspend, resume
-+		 * manual_suspend_ctrl, suspend, resume, set_v2par_timing,
-+		 * set_v2par_tap, set_v2par_osc, set_v2par_bright,
-+		 * set_v2par_thlds, set_v2par_colors
- 		 */
- 	};
- } __ec_todo_packed;
-@@ -1795,6 +1890,18 @@ enum lightbar_command {
- 	LIGHTBAR_CMD_MANUAL_SUSPEND_CTRL = 19,
- 	LIGHTBAR_CMD_SUSPEND = 20,
- 	LIGHTBAR_CMD_RESUME = 21,
-+	LIGHTBAR_CMD_GET_PARAMS_V2_TIMING = 22,
-+	LIGHTBAR_CMD_SET_PARAMS_V2_TIMING = 23,
-+	LIGHTBAR_CMD_GET_PARAMS_V2_TAP = 24,
-+	LIGHTBAR_CMD_SET_PARAMS_V2_TAP = 25,
-+	LIGHTBAR_CMD_GET_PARAMS_V2_OSCILLATION = 26,
-+	LIGHTBAR_CMD_SET_PARAMS_V2_OSCILLATION = 27,
-+	LIGHTBAR_CMD_GET_PARAMS_V2_BRIGHTNESS = 28,
-+	LIGHTBAR_CMD_SET_PARAMS_V2_BRIGHTNESS = 29,
-+	LIGHTBAR_CMD_GET_PARAMS_V2_THRESHOLDS = 30,
-+	LIGHTBAR_CMD_SET_PARAMS_V2_THRESHOLDS = 31,
-+	LIGHTBAR_CMD_GET_PARAMS_V2_COLORS = 32,
-+	LIGHTBAR_CMD_SET_PARAMS_V2_COLORS = 33,
- 	LIGHTBAR_NUM_CMDS
- };
- 
-@@ -1813,6 +1920,14 @@ enum ec_led_id {
- 	EC_LED_ID_POWER_LED,
- 	/* LED on power adapter or its plug */
- 	EC_LED_ID_ADAPTER_LED,
-+	/* LED to indicate left side */
-+	EC_LED_ID_LEFT_LED,
-+	/* LED to indicate right side */
-+	EC_LED_ID_RIGHT_LED,
-+	/* LED to indicate recovery mode with HW_REINIT */
-+	EC_LED_ID_RECOVERY_HW_REINIT_LED,
-+	/* LED to indicate sysrq debug mode. */
-+	EC_LED_ID_SYSRQ_DEBUG_LED,
- 
- 	EC_LED_ID_COUNT
- };
-@@ -1827,6 +1942,7 @@ enum ec_led_colors {
- 	EC_LED_COLOR_BLUE,
- 	EC_LED_COLOR_YELLOW,
- 	EC_LED_COLOR_WHITE,
-+	EC_LED_COLOR_AMBER,
- 
- 	EC_LED_COLOR_COUNT
- };
+All tests are passing for Tegra ...
+
+Test results for stable-v5.0:
+    12 builds:	12 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    32 tests:	32 pass, 0 fail
+
+Linux version:	5.0.21-rc1-g9866761
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
+
 -- 
-2.21.0.1020.gf2820cf01a-goog
-
+nvpublic
