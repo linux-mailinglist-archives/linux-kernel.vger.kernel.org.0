@@ -2,60 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B26DF331D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 16:15:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3C13331DE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 16:17:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728897AbfFCOPs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 10:15:48 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:60672 "EHLO deadmen.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726968AbfFCOPs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 10:15:48 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1hXnkK-0003TA-Vh; Mon, 03 Jun 2019 22:15:33 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1hXnkC-0002q7-KC; Mon, 03 Jun 2019 22:15:24 +0800
-Date:   Mon, 3 Jun 2019 22:15:24 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Harald Freudenberger <freude@linux.ibm.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-kernel <linux-kernel@vger.kernel.org>, linux-imx@nxp.com,
-        festevam@gmail.com, kernel <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>, shawnguo@kernel.org,
-        davem@davemloft.net, david <david@sigma-star.at>
-Subject: Re: [RFC PATCH 1/2] crypto: Allow working with key references
-Message-ID: <20190603141524.wmjmgre4qge7zqjh@gondor.apana.org.au>
-References: <20190529224844.25203-1-richard@nod.at>
- <20190530023357.2mrjtslnka4i6dbl@gondor.apana.org.au>
- <2084969721.73871.1559201016164.JavaMail.zimbra@nod.at>
- <14ffcdf2-ed9f-be07-fde5-62dfb1fce4f9@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <14ffcdf2-ed9f-be07-fde5-62dfb1fce4f9@linux.ibm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1728973AbfFCORx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 10:17:53 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45811 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726968AbfFCORx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 10:17:53 -0400
+Received: by mail-wr1-f66.google.com with SMTP id b18so12237991wrq.12
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 07:17:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=KAC1TPImFCotEdm440j6roz5khMTaZly6qZwqAJTL0A=;
+        b=LDRhQ0GxAoaa1xYNU4bz3whjgV7vMOulgp/7oUEDzyvF8DLe0pfMjqEe10lV/lqUfc
+         +ZtEDT0u7T9s83JNDJ0F7oq2faHUKT2SJnyTvYAMtKVHFIZgqU0TLgoMiy0SrxLqhpa2
+         n4tdIntutujIZ0gsJLtaZP0/sTaaAJoVnBYqbpKf0Rirrqeb7upWpqbGufFLtWmr9Ob6
+         6HmRtxjPOR/K6t0jSclptjufcYSPAZNeQCygRFuViBMTAnbO5I0rjjorjjb1oEgFR2F+
+         fVpeuegHf3KL00J9pNVBRw/C4MVmQ6Xp36Dut5b5bUBDStdWjrGHFse6XS8xFCX1hxuX
+         KfNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=KAC1TPImFCotEdm440j6roz5khMTaZly6qZwqAJTL0A=;
+        b=YXS+A9erEK3x+uYJoKLRVKWBnXJrwzDsWLVN0hJRY1co3hp9xBfFJLtRCb/mJuy5Ib
+         dRmjSsYB1UIjENwB8nbdG3QEyfPP1pdMJSmvnPV5YCWlcVGaFObtRLa5eNazg1eNhJhp
+         jvqUU9QsOZd9+lbDIfkj+3OtGb69SFNeAL16mrHIkpsLCCxUREd/w1QbQacjmofQhMeX
+         njrfrgha/SzFQsdH/kZramOI9+Ov5kF+PxJbAEw17n3F1UHKoEGBxjsAp9UFzNYtMtU4
+         kncVe8GSHwg8LarZdR1lywJyjDb6qpa5It4H+maM3W0M4DQqx/PSCgsmE5Dm2NsO4Afi
+         bcTQ==
+X-Gm-Message-State: APjAAAV8gGBp8tNdxNMzezFLM9NOtCXXiYbJCmvL8Rx0VPhEQkUI7oMA
+        rJ8+TyNE7fzRfQxan6Nw65NSAw==
+X-Google-Smtp-Source: APXvYqyaUTStKWFW6wuDQ3RS8JGwQCCFsr4nPZv5I59ht3en2kpWMlKTZ25g7h+WKzgN9r7cZsXBuA==
+X-Received: by 2002:a5d:56c1:: with SMTP id m1mr17394223wrw.26.1559571470222;
+        Mon, 03 Jun 2019 07:17:50 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:e0a:f:6020:8816:b980:b875:4d47])
+        by smtp.gmail.com with ESMTPSA id h8sm7116223wrt.59.2019.06.03.07.17.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 03 Jun 2019 07:17:49 -0700 (PDT)
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+To:     mingo@redhat.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>
+Subject: [PATCH] sched/fair: clean up asym packing
+Date:   Mon,  3 Jun 2019 16:17:16 +0200
+Message-Id: <1559571436-29091-1-git-send-email-vincent.guittot@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1559571064-28087-1-git-send-email-vincent.guitto@linaro.org>
+References: <1559571064-28087-1-git-send-email-vincent.guitto@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 03, 2019 at 09:59:53AM +0200, Harald Freudenberger wrote:
->
-> The "p" in paes is because we call it "protected key aes". I think you are not limited
-> to the "p". What Herbert tries to point out is that you may define your own
-> cipher with an unique name and there you can handle your secure key references
-> as you like. You may use the s390 paes implementation as a starting point.
+Clean up asym packing to follow the default load balance behavior:
+- classify the group by creating a group_asym_capacity field.
+- calculate the imbalance in calculate_imbalance() instead of bypassing it.
 
-Well we have one other driver that is also using the paes name
-ccree so I think we should all use this name for hardware keys
-with AES.  Only the driver name needs to be unique.
+We don't need to test twice same conditions anymore to detect asym packing
+and we consolidate the calculation of imbalance in calculate_imbalance().
 
-Cheers,
+There is no functional changes.
+
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+---
+ kernel/sched/fair.c | 63 ++++++++++++++---------------------------------------
+ 1 file changed, 16 insertions(+), 47 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index f35930f..93c2447 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7888,6 +7888,7 @@ struct sg_lb_stats {
+ 	unsigned int group_weight;
+ 	enum group_type group_type;
+ 	int group_no_capacity;
++	int group_asym_capacity;
+ 	unsigned long group_misfit_task_load; /* A CPU has a task too big for its capacity */
+ #ifdef CONFIG_NUMA_BALANCING
+ 	unsigned int nr_numa_running;
+@@ -8382,9 +8383,17 @@ static bool update_sd_pick_busiest(struct lb_env *env,
+ 	 * ASYM_PACKING needs to move all the work to the highest
+ 	 * prority CPUs in the group, therefore mark all groups
+ 	 * of lower priority than ourself as busy.
++	 *
++	 * This is primarily intended to used at the sibling level.  Some
++	 * cores like POWER7 prefer to use lower numbered SMT threads.  In the
++	 * case of POWER7, it can move to lower SMT modes only when higher
++	 * threads are idle.  When in lower SMT modes, the threads will
++	 * perform better since they share less core resources.  Hence when we
++	 * have idle threads, we want them to be the higher ones.
+ 	 */
+ 	if (sgs->sum_nr_running &&
+ 	    sched_asym_prefer(env->dst_cpu, sg->asym_prefer_cpu)) {
++		sgs->group_asym_capacity = 1;
+ 		if (!sds->busiest)
+ 			return true;
+ 
+@@ -8522,51 +8531,6 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
+ }
+ 
+ /**
+- * check_asym_packing - Check to see if the group is packed into the
+- *			sched domain.
+- *
+- * This is primarily intended to used at the sibling level.  Some
+- * cores like POWER7 prefer to use lower numbered SMT threads.  In the
+- * case of POWER7, it can move to lower SMT modes only when higher
+- * threads are idle.  When in lower SMT modes, the threads will
+- * perform better since they share less core resources.  Hence when we
+- * have idle threads, we want them to be the higher ones.
+- *
+- * This packing function is run on idle threads.  It checks to see if
+- * the busiest CPU in this domain (core in the P7 case) has a higher
+- * CPU number than the packing function is being run on.  Here we are
+- * assuming lower CPU number will be equivalent to lower a SMT thread
+- * number.
+- *
+- * Return: 1 when packing is required and a task should be moved to
+- * this CPU.  The amount of the imbalance is returned in env->imbalance.
+- *
+- * @env: The load balancing environment.
+- * @sds: Statistics of the sched_domain which is to be packed
+- */
+-static int check_asym_packing(struct lb_env *env, struct sd_lb_stats *sds)
+-{
+-	int busiest_cpu;
+-
+-	if (!(env->sd->flags & SD_ASYM_PACKING))
+-		return 0;
+-
+-	if (env->idle == CPU_NOT_IDLE)
+-		return 0;
+-
+-	if (!sds->busiest)
+-		return 0;
+-
+-	busiest_cpu = sds->busiest->asym_prefer_cpu;
+-	if (sched_asym_prefer(busiest_cpu, env->dst_cpu))
+-		return 0;
+-
+-	env->imbalance = sds->busiest_stat.group_load;
+-
+-	return 1;
+-}
+-
+-/**
+  * fix_small_imbalance - Calculate the minor imbalance that exists
+  *			amongst the groups of a sched_domain, during
+  *			load balancing.
+@@ -8650,6 +8614,11 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
+ 	local = &sds->local_stat;
+ 	busiest = &sds->busiest_stat;
+ 
++	if (busiest->group_asym_capacity) {
++		env->imbalance = busiest->group_load;
++		return;
++	}
++
+ 	if (busiest->group_type == group_imbalanced) {
+ 		/*
+ 		 * In the group_imb case we cannot rely on group-wide averages
+@@ -8754,8 +8723,8 @@ static struct sched_group *find_busiest_group(struct lb_env *env)
+ 	busiest = &sds.busiest_stat;
+ 
+ 	/* ASYM feature bypasses nice load balance check */
+-	if (check_asym_packing(env, &sds))
+-		return sds.busiest;
++	if (busiest->group_asym_capacity)
++		goto force_balance;
+ 
+ 	/* There is no busy sibling group to pull tasks from */
+ 	if (!sds.busiest || busiest->sum_nr_running == 0)
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.7.4
+
