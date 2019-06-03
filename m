@@ -2,100 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3462F33BE9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 01:27:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12D8833BF3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 01:32:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726501AbfFCX1h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 19:27:37 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:32966 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbfFCX1h (ORCPT
+        id S1726537AbfFCXby (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 19:31:54 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43624 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726101AbfFCXbx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 19:27:37 -0400
-Received: by mail-lf1-f68.google.com with SMTP id y17so14930501lfe.0;
-        Mon, 03 Jun 2019 16:27:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=o9KhBDmRSvyA17K9yLz93GnFppJZ9/pTjhne6a8KQc4=;
-        b=dvwzkPELPl5nUZRVZU4gRYPnhCE55hxxM399myYdEENPvpGIE8RV7G9g73ozE+ApRw
-         dJuqDbQdACfLbz60Tuqd9wyM78ah1m/nMlr997ItFEOHJhubidgZlOXj3Vi46T1mph5e
-         EFWmMJV5idtQTYKRlkwXIbmz9AjLzCLzNLYH+MD3SZdEZXII665wE2hoL42y5KjN5F0Z
-         I0nNupJH/f9mQKbJpDjqoTxTGmYE7U2PlXCO+wH1jTWVzNgVNcpwzxm4u6oV07Bxcq6t
-         6vc5uJMNz5oJY9I4A6X/rGGqnSFbwz7QCIxB5ORArf/3pNlxirELVli+BHINObtCFGlM
-         X1sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=o9KhBDmRSvyA17K9yLz93GnFppJZ9/pTjhne6a8KQc4=;
-        b=h0/GIW+khEMAGiGF33uKgLNJPXEc7CUwUjZkPtioQKLoC9C/Y0CD6IvUUWNZcOduUv
-         S1SIueFPpDf/yDw/Ju/RzvSeni8QNAeYrazolH+0044VvMp+zjQhMlSnPHL3bulk/n53
-         gNyIGd3iSc2Xv4NRG06EdWl2DJhO/qqWBMJu671b09t2mJhRwJKsjZkjfRqP59ZkarjG
-         syRWKKr7Mg+33Gwq8eK1XSTaayxD5THPmFe0Ijgen/AZfrj9NJUX5D30KH/YXB7/OxFy
-         Ct4SvNHCVE2OY/a+/6HG9wjk+oxdG55SZU4JyEQ5OhQtvJuddlMLF+MzmWeJd/CsMIKk
-         /Ukg==
-X-Gm-Message-State: APjAAAXA82n3naRa96Kq2ex1FG4DXGkJnIJc6UUQf0L6/36bTW/CmPLg
-        ODF3Giu7SOg3HYl4oeg6vF8TGkYreFer3IsqbAlbTO4Q
-X-Google-Smtp-Source: APXvYqz9hOL4RaiKfOlOB3Z42QvxuObHHBxVPqDnbWXCIStvl7miabWH+J5FaAVZ8iLPzbs/JlQZ0s2aIwOnIbw59D8=
-X-Received: by 2002:ac2:4252:: with SMTP id m18mr14656401lfl.100.1559604454843;
- Mon, 03 Jun 2019 16:27:34 -0700 (PDT)
+        Mon, 3 Jun 2019 19:31:53 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x53NM6vv089988;
+        Mon, 3 Jun 2019 19:31:45 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2swcx4gp2v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 Jun 2019 19:31:44 -0400
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x53NMfpX090962;
+        Mon, 3 Jun 2019 19:31:44 -0400
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2swcx4gp2f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 Jun 2019 19:31:44 -0400
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x53HYdGb030561;
+        Mon, 3 Jun 2019 17:36:45 GMT
+Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
+        by ppma01dal.us.ibm.com with ESMTP id 2suh093trb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 Jun 2019 17:36:45 +0000
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x53NUR7H36110428
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 3 Jun 2019 23:30:27 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6EF4DAC060;
+        Mon,  3 Jun 2019 23:30:27 +0000 (GMT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1C153AC05F;
+        Mon,  3 Jun 2019 23:30:26 +0000 (GMT)
+Received: from oc6857751186.ibm.com (unknown [9.85.191.102])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon,  3 Jun 2019 23:30:25 +0000 (GMT)
+Subject: Re: [PATCH] scsi: ibmvscsi: Don't use rc uninitialized in
+ ibmvscsi_do_work
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Tyrel Datwyler <tyreld@linux.ibm.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     clang-built-linux@googlegroups.com, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
+References: <20190531185306.41290-1-natechancellor@gmail.com>
+ <87blzgnvhx.fsf@concordia.ellerman.id.au>
+From:   Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Message-ID: <031eaca1-bb6d-a14f-bb66-a520219549e4@linux.vnet.ibm.com>
+Date:   Mon, 3 Jun 2019 16:30:25 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20190531223735.4998-1-mmullins@fb.com> <6c6a4d47-796a-20e2-eb12-503a00d1fa0b@iogearbox.net>
- <68841715-4d5b-6ad1-5241-4e7199dd63da@iogearbox.net> <05626702394f7b95273ab19fef30461677779333.camel@fb.com>
-In-Reply-To: <05626702394f7b95273ab19fef30461677779333.camel@fb.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Mon, 3 Jun 2019 16:27:23 -0700
-Message-ID: <CAADnVQKAPTao3nE1AC5dvYtCKFhDHu9VeCnVE04TLjGpY6yANw@mail.gmail.com>
-Subject: Re: [PATCH bpf v2] bpf: preallocate a perf_sample_data per event fd
-To:     Matt Mullins <mmullins@fb.com>
-Cc:     "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Andrew Hall <hall@fb.com>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Martin Lau <kafai@fb.com>, Yonghong Song <yhs@fb.com>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        Song Liu <songliubraving@fb.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <87blzgnvhx.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-03_18:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906030157
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 3, 2019 at 3:59 PM Matt Mullins <mmullins@fb.com> wrote:
->
-> If these are invariably non-nested, I can easily keep bpf_misc_sd when
-> I resubmit.  There was no technical reason other than keeping the two
-> codepaths as similar as possible.
->
-> What resource gives you worry about doing this for the networking
-> codepath?
+On 06/02/2019 03:15 AM, Michael Ellerman wrote:
+> Hi Nathan,
+> 
+> Nathan Chancellor <natechancellor@gmail.com> writes:
+>> clang warns:
+>>
+>> drivers/scsi/ibmvscsi/ibmvscsi.c:2126:7: warning: variable 'rc' is used
+>> uninitialized whenever switch case is taken [-Wsometimes-uninitialized]
+>>         case IBMVSCSI_HOST_ACTION_NONE:
+>>              ^~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/scsi/ibmvscsi/ibmvscsi.c:2151:6: note: uninitialized use occurs
+>> here
+>>         if (rc) {
+>>             ^~
+>>
+>> Initialize rc to zero so that the atomic_set and dev_err statement don't
+>> trigger for the cases that just break.
+>>
+>> Fixes: 035a3c4046b5 ("scsi: ibmvscsi: redo driver work thread to use enum action states")
+>> Link: https://github.com/ClangBuiltLinux/linux/issues/502
+>> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+>> ---
+>>  drivers/scsi/ibmvscsi/ibmvscsi.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/scsi/ibmvscsi/ibmvscsi.c b/drivers/scsi/ibmvscsi/ibmvscsi.c
+>> index 727c31dc11a0..6714d8043e62 100644
+>> --- a/drivers/scsi/ibmvscsi/ibmvscsi.c
+>> +++ b/drivers/scsi/ibmvscsi/ibmvscsi.c
+>> @@ -2118,7 +2118,7 @@ static unsigned long ibmvscsi_get_desired_dma(struct vio_dev *vdev)
+>>  static void ibmvscsi_do_work(struct ibmvscsi_host_data *hostdata)
+>>  {
+>>  	unsigned long flags;
+>> -	int rc;
+>> +	int rc = 0;
+>>  	char *action = "reset";
+>>  
+>>  	spin_lock_irqsave(hostdata->host->host_lock, flags);
+> 
+> It's always preferable IMHO to keep any initialisation as localised as
+> possible, so that the compiler can continue to warn about uninitialised
+> usages elsewhere. In this case that would mean doing the rc = 0 in the
+> switch, something like:
+> 
+> diff --git a/drivers/scsi/ibmvscsi/ibmvscsi.c b/drivers/scsi/ibmvscsi/ibmvscsi.c
+> index 727c31dc11a0..7ee5755cf636 100644
+> --- a/drivers/scsi/ibmvscsi/ibmvscsi.c
+> +++ b/drivers/scsi/ibmvscsi/ibmvscsi.c
+> @@ -2123,9 +2123,6 @@ static void ibmvscsi_do_work(struct ibmvscsi_host_data *hostdata)
+>  
+>         spin_lock_irqsave(hostdata->host->host_lock, flags);
+>         switch (hostdata->action) {
+> -       case IBMVSCSI_HOST_ACTION_NONE:
+> -       case IBMVSCSI_HOST_ACTION_UNBLOCK:
+> -               break;
+>         case IBMVSCSI_HOST_ACTION_RESET:
+>                 spin_unlock_irqrestore(hostdata->host->host_lock, flags);
+>                 rc = ibmvscsi_reset_crq_queue(&hostdata->queue, hostdata);
+> @@ -2142,7 +2139,10 @@ static void ibmvscsi_do_work(struct ibmvscsi_host_data *hostdata)
+>                 if (!rc)
+>                         rc = ibmvscsi_send_crq(hostdata, 0xC001000000000000LL, 0);
+>                 break;
+> +       case IBMVSCSI_HOST_ACTION_NONE:
+> +       case IBMVSCSI_HOST_ACTION_UNBLOCK:
+>         default:
+> +               rc = 0;
+>                 break;
+>         }
+> 
+> 
+> But then that makes me wonder if that's actually correct?
+> 
+> If we get an action that we don't recognise should we just throw it away
+> like that? (by doing hostdata->action = IBMVSCSI_HOST_ACTION_NONE). Tyrel?
 
-my preference would be to keep tracing and networking the same.
-there is already minimal nesting in networking and probably we see
-more when reuseport progs will start running from xdp and clsbpf
+On initial pass I was ok with this, but after thinking on it I think it is more
+subtle.
 
-> > Aside from that it's also really bad to miss events like this as exporting
-> > through rb is critical. Why can't you have a per-CPU counter that selects a
-> > sample data context based on nesting level in tracing? (I don't see a discussion
-> > of this in your commit message.)
->
-> This change would only drop messages if the same perf_event is
-> attempted to be used recursively (i.e. the same CPU on the same
-> PERF_EVENT_ARRAY map, as I haven't observed anything use index !=
-> BPF_F_CURRENT_CPU in testing).
->
-> I'll try to accomplish the same with a percpu nesting level and
-> allocating 2 or 3 perf_sample_data per cpu.  I think that'll solve the
-> same problem -- a local patch keeping track of the nesting level is how
-> I got the above stack trace, too.
+The right approach is to set rc = 0 for HOST_ACTION_UNBLOCK as we want to fall
+through. For HOST_ACTION_NONE and default we need to return directly from the
+function.
 
-I don't think counter approach works. The amount of nesting is unknown.
-imo the approach taken in this patch is good.
-I don't see any issue when event_outputs will be dropped for valid progs.
-Only when user called the helper incorrectly without BPF_F_CURRENT_CPU.
-But that's an error anyway.
+-Tyrel
+
+> 
+> cheers
+> 
+
