@@ -2,147 +2,251 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EC2C33990
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 22:13:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02AB533994
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 22:13:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726474AbfFCUN3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 16:13:29 -0400
-Received: from sauhun.de ([88.99.104.3]:40334 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726173AbfFCUN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 16:13:28 -0400
-Received: from localhost (p5486CC42.dip0.t-ipconnect.de [84.134.204.66])
-        by pokefinder.org (Postfix) with ESMTPSA id 5FA242CF690;
-        Mon,  3 Jun 2019 22:13:26 +0200 (CEST)
-Date:   Mon, 3 Jun 2019 22:13:26 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Asmaa Mnebhi <Asmaa@mellanox.com>
-Cc:     "minyard@acm.org" <minyard@acm.org>,
-        Vadim Pasternak <vadimp@mellanox.com>,
-        Michael Shych <michaelsh@mellanox.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Subject: Re: [PATCH v9 1/1] Add support for IPMB driver
-Message-ID: <20190603201325.GC2383@kunai>
-References: <cover.1557322882.git.Asmaa@mellanox.com>
- <a4d9fe418013b604e7224bf3038c294da42d5534.1557322882.git.Asmaa@mellanox.com>
- <20190519140231.GA7291@kunai>
- <VI1PR05MB623971FF6F956A091840716DDA060@VI1PR05MB6239.eurprd05.prod.outlook.com>
+        id S1726734AbfFCUNr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 16:13:47 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:36348 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726173AbfFCUNq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 16:13:46 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: koike)
+        with ESMTPSA id 23EA8276DCD
+Subject: Re: [PATCH v4 1/5] drm/rockchip: fix fb references in async update
+To:     dri-devel@lists.freedesktop.org, nicholas.kazlauskas@amd.com
+Cc:     andrey.grodzovsky@amd.com, daniel.vetter@ffwll.ch,
+        linux-kernel@vger.kernel.org, Tomasz Figa <tfiga@chromium.org>,
+        boris.brezillon@collabora.com, David Airlie <airlied@linux.ie>,
+        Sean Paul <seanpaul@google.com>, kernel@collabora.com,
+        harry.wentland@amd.com,
+        =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@google.com>,
+        Sandy Huang <hjc@rock-chips.com>,
+        linux-rockchip@lists.infradead.org,
+        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Daniel Vetter <daniel@ffwll.ch>
+References: <20190603165610.24614-1-helen.koike@collabora.com>
+ <20190603165610.24614-2-helen.koike@collabora.com>
+From:   Helen Koike <helen.koike@collabora.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=helen.koike@collabora.com; keydata=
+ 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
+Message-ID: <aecadca2-f67b-5d9d-550e-f90cbca5fd3f@collabora.com>
+Date:   Mon, 3 Jun 2019 17:13:34 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="9Ek0hoCL9XbhcSqy"
-Content-Disposition: inline
-In-Reply-To: <VI1PR05MB623971FF6F956A091840716DDA060@VI1PR05MB6239.eurprd05.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190603165610.24614-2-helen.koike@collabora.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---9Ek0hoCL9XbhcSqy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Asmaa,
+On 6/3/19 1:56 PM, Helen Koike wrote:
+> In the case of async update, modifications are done in place, i.e. in the
+> current plane state, so the new_state is prepared and the new_state is
+> cleaned up (instead of the old_state, unlike what happens in a
+> normal sync update).
+> To cleanup the old_fb properly, it needs to be placed in the new_state
+> in the end of async_update, so cleanup call will unreference the old_fb
+> correctly.
+> 
+> Also, the previous code had a:
+> 
+> 	plane_state = plane->funcs->atomic_duplicate_state(plane);
+> 	...
+> 	swap(plane_state, plane->state);
+> 
+> 	if (plane->state->fb && plane->state->fb != new_state->fb) {
+> 	...
+> 	}
+> 
+> Which was wrong, as the fb were just assigned to be equal, so this if
+> statement nevers evaluates to true.
+> 
+> Another details is that the function drm_crtc_vblank_get() can only be
+> called when vop->is_enabled is true, otherwise it has no effect and
+> trows a WARN_ON().
+> 
+> Calling drm_atomic_set_fb_for_plane() (which get a referent of the new
+> fb and pus the old fb) is not required, as it is taken care by
+> drm_mode_cursor_universal() when calling
+> drm_atomic_helper_update_plane().
+> 
+> Signed-off-by: Helen Koike <helen.koike@collabora.com>
 
-sorry for the long wait. I missed this mail was still sitting in my
-Drafts folder :(
+Cc: <stable@vger.kernel.org> # v4.20+
+Fixes: 15609559a834 ("drm/rockchip: update cursors asynchronously
+through atomic.")
 
-> >> Am I overlooking something? Why are you protecting an atomic_read with=
- a spinlock?
->=20
-> A thread would lock the ipmb_dev->lock spinlock (above) for all the code =
-below ONLY IF the atomic_read for the request_queue_len reports a value dif=
-ferent from 0:
-
-Well, not really. The spinlock is taken _before_ the atomic read. But
-the read is atomic, so there should be no need. I am asking if the code
-could look like this?
-
-+	while (!atomic_read(&ipmb_dev->request_queue_len)) {
-+		if (non_blocking)
-+			return -EAGAIN;
-+
-+		res =3D wait_event_interruptible(ipmb_dev->wait_queue,
-+				atomic_read(&ipmb_dev->request_queue_len));
-+		if (res)
-+			return res;
-+	}
-+
-+	spin_lock_irqsave(&ipmb_dev->lock, flags);
-+	if (list_empty(&ipmb_dev->request_queue)) {
-
-> if (list_empty(&ipmb_dev->request_queue)) {
-> 260 +               dev_err(&ipmb_dev->client->dev, "request_queue is emp=
-ty\n");
-> 261 +               spin_unlock_irqrestore(&ipmb_dev->lock, flags);
-
-The unlock operation could come before the dev_err. We don't need to
-protect the printout and save time with the spinlock held.
-
-> > +	rq_sa =3D msg[RQ_SA_8BIT_IDX] >> 1;
-> > +	netf_rq_lun =3D msg[NETFN_LUN_IDX];
-> > +	/*
-> > +	 * subtract rq_sa and netf_rq_lun from the length of the msg passed to
-> > +	 * i2c_smbus_write_block_data_local
-> > +	 */
-> > +	msg_len =3D msg[IPMB_MSG_LEN_IDX] - SMBUS_MSG_HEADER_LENGTH;
-> > +
-> > +	strcpy(rq_client.name, "ipmb_requester");
-> > +	rq_client.adapter =3D ipmb_dev->client->adapter;
-> > +	rq_client.flags =3D ipmb_dev->client->flags;
-> > +	rq_client.addr =3D rq_sa;
->=20
-> >> Is it possible to determine in a race-free way if rq_sa (which came
-> >> from userspace AFAIU) is really the address from which the request
-> >> came in (again if I understood all this correctly)?
-> Yes there is. I see 2 options:
->=20
-> 1) This is less explicit than option 2 but uses existing code and is
-> simpler. we can use the ipmb_verify_checksum1 function since the IPMB
-> response format is as follows:
-> Byte 1: rq_sa
-> Byte 2: netfunction/rqLUN
-> Byte 3: checksum1
-
-Hmmm, does that really prove that rq_sa is the same address the request
-came from? Or does it only prove that the response packet is not
-mangled?
-
-> So if checksum1 is verified, it means rq_sa is correct.
->=20
-> 2) I am not sure we want this but have a global variable which stores
-> the address of the requester once the first request is received. We
-> would compare that address with the one received from userspace in the
-> code above.
-
-Can there be only one requester in the system?
-
-Thanks,
-
-   Wolfram
-
---9Ek0hoCL9XbhcSqy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlz1f2UACgkQFA3kzBSg
-KbZe1A//dZCx+YmQNFnYXW6fwX4hm2JFolCqtolCDfbAEKvqcqgEf7VwQ0Qoy4wm
-P+RbEvYTBlnvPfk01PM8Kbe3D79xGgjGLAzfaLyVN5khGiQguK1nWND76tSxAkws
-otCtiiNEcVv0z2uRGheJZWZvmANEt9nzbwqcyJzqaCDZKATQNstu1ClkWrIZLxJ4
-rqXP2mPGJHAv7KzquR5dlpAmAz8yxA0uqoUzQoKbWuchg6fSKbIp7JzVePJvGI7o
-7U/pNuhQ7hJ/tAPrj5fWELHjazDsDUkgu/vsQObvps1ixUuCFymFk+7l2tmPCAnX
-OzFNk79jBbh3YgpSAqMLqPi9ftMrn6so7c3JzchzXzrmAvRmLvf/ChBwTIB8fGZi
-f7958PVOdDr5c386w9EOLB0q9MLc5ONLDlKO96SVnvC8kLrq1iylbpRm17xmJywb
-29Aao9YdsjIoijXsuskYV02XxMGh4JxgrewBOq0IcAuit/YWKsJldp1RyMuWESjM
-gdptkXyp69N1Y6wVL72zkDNB2Cd6NWpoCu4mJDgb6XfX/zv2hadXIgL4yq4cZncx
-61wRgMM0F0MZEiXGsC85qlryaZuBUFdlZnKj1sBbkaRdvDbSpykE1NcGvOti1fIM
-UIYYy9E2Vo/VzPxXR4Gx5JO+6UTjvX2onpJgPAbGOTAiC8Yn53s=
-=REap
------END PGP SIGNATURE-----
-
---9Ek0hoCL9XbhcSqy--
+> 
+> ---
+> Hello,
+> 
+> I tested on the rockchip ficus v1.1 using igt plane_cursor_legacy and
+> kms_cursor_legacy and I didn't see any regressions.
+> 
+> Changes in v4: None
+> Changes in v3:
+> - use swap() to swap old and new framebuffers in async_update
+> - get the reference to old_fb and set the worker after vop_plane_atomic_update()
+> - add a FIXME tag for when we have multiple fbs to be released when
+> vblank happens.
+> - update commit message
+> 
+> Changes in v2: None
+> 
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 51 +++++++++++----------
+>  1 file changed, 26 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> index 4189ca17f381..b7c47d1153c6 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> @@ -919,29 +919,17 @@ static void vop_plane_atomic_async_update(struct drm_plane *plane,
+>  					  struct drm_plane_state *new_state)
+>  {
+>  	struct vop *vop = to_vop(plane->state->crtc);
+> -	struct drm_plane_state *plane_state;
+> -
+> -	plane_state = plane->funcs->atomic_duplicate_state(plane);
+> -	plane_state->crtc_x = new_state->crtc_x;
+> -	plane_state->crtc_y = new_state->crtc_y;
+> -	plane_state->crtc_h = new_state->crtc_h;
+> -	plane_state->crtc_w = new_state->crtc_w;
+> -	plane_state->src_x = new_state->src_x;
+> -	plane_state->src_y = new_state->src_y;
+> -	plane_state->src_h = new_state->src_h;
+> -	plane_state->src_w = new_state->src_w;
+> -
+> -	if (plane_state->fb != new_state->fb)
+> -		drm_atomic_set_fb_for_plane(plane_state, new_state->fb);
+> -
+> -	swap(plane_state, plane->state);
+> -
+> -	if (plane->state->fb && plane->state->fb != new_state->fb) {
+> -		drm_framebuffer_get(plane->state->fb);
+> -		WARN_ON(drm_crtc_vblank_get(plane->state->crtc) != 0);
+> -		drm_flip_work_queue(&vop->fb_unref_work, plane->state->fb);
+> -		set_bit(VOP_PENDING_FB_UNREF, &vop->pending);
+> -	}
+> +	struct drm_framebuffer *old_fb = plane->state->fb;
+> +
+> +	plane->state->crtc_x = new_state->crtc_x;
+> +	plane->state->crtc_y = new_state->crtc_y;
+> +	plane->state->crtc_h = new_state->crtc_h;
+> +	plane->state->crtc_w = new_state->crtc_w;
+> +	plane->state->src_x = new_state->src_x;
+> +	plane->state->src_y = new_state->src_y;
+> +	plane->state->src_h = new_state->src_h;
+> +	plane->state->src_w = new_state->src_w;
+> +	swap(plane->state->fb, new_state->fb);
+>  
+>  	if (vop->is_enabled) {
+>  		rockchip_drm_psr_inhibit_get_state(new_state->state);
+> @@ -950,9 +938,22 @@ static void vop_plane_atomic_async_update(struct drm_plane *plane,
+>  		vop_cfg_done(vop);
+>  		spin_unlock(&vop->reg_lock);
+>  		rockchip_drm_psr_inhibit_put_state(new_state->state);
+> -	}
+>  
+> -	plane->funcs->atomic_destroy_state(plane, plane_state);
+> +		/*
+> +		 * A scanout can still be occurring, so we can't drop the
+> +		 * reference to the old framebuffer. To solve this we get a
+> +		 * reference to old_fb and set a worker to release it later.
+> +		 * FIXME: if we perform 500 async_update calls before the
+> +		 * vblank, then we can have 500 different framebuffers waiting
+> +		 * to be released.
+> +		 */
+> +		if (old_fb && plane->state->fb != old_fb) {
+> +			drm_framebuffer_get(old_fb);
+> +			WARN_ON(drm_crtc_vblank_get(plane->state->crtc) != 0);
+> +			drm_flip_work_queue(&vop->fb_unref_work, old_fb);
+> +			set_bit(VOP_PENDING_FB_UNREF, &vop->pending);
+> +		}
+> +	}
+>  }
+>  
+>  static const struct drm_plane_helper_funcs plane_helper_funcs = {
+> 
