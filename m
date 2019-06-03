@@ -2,29 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA90D33404
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:52:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7549B333FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:52:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729615AbfFCPwn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 11:52:43 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54092 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729585AbfFCPwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 11:52:20 -0400
+        id S1729612AbfFCPwX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 11:52:23 -0400
+Received: from foss.arm.com ([217.140.101.70]:54098 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729600AbfFCPwV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 11:52:21 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 257EC1A25;
-        Mon,  3 Jun 2019 08:52:20 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D68A1AED;
+        Mon,  3 Jun 2019 08:52:21 -0700 (PDT)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0C5B13F246;
-        Mon,  3 Jun 2019 08:52:18 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 623E43F246;
+        Mon,  3 Jun 2019 08:52:20 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        suzuki.poulose@arm.com,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [RFC PATCH 53/57] drivers: Introduce bus_find_next_device() helper
-Date:   Mon,  3 Jun 2019 16:50:19 +0100
-Message-Id: <1559577023-558-54-git-send-email-suzuki.poulose@arm.com>
+        suzuki.poulose@arm.com, Bjorn Helgaas <bhelgaas@google.com>
+Subject: [RFC PATCH 54/57] drivers: pci: Use bus_find_next_device() helper
+Date:   Mon,  3 Jun 2019 16:50:20 +0100
+Message-Id: <1559577023-558-55-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
 References: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
@@ -33,37 +32,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a helper to find the next device on the given bus from a
-given device iterator position.
+Reuse the generic helper to find the next device on bus.
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- include/linux/device.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/pci/probe.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 7ea15e6..528efc0 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -234,6 +234,16 @@ static inline struct device *bus_find_device_by_devt(struct bus_type *bus,
- 	return bus_find_device(bus, start, &devt, device_match_devt);
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index f9ef7ad..3504695 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -64,11 +64,6 @@ static struct resource *get_pci_domain_busn_res(int domain_nr)
+ 	return &r->res;
  }
  
-+/**
-+ * bus_find_next_device - Find the next device after a given device in a
-+ * given bus.
-+ */
-+static inline struct device *bus_find_next_device(struct bus_type *bus,
-+						  struct device *start)
-+{
-+	return bus_find_device(bus, start, NULL, device_match_any);
-+}
-+
- struct device *subsys_find_device_by_id(struct bus_type *bus, unsigned int id,
- 					struct device *hint);
- int bus_for_each_drv(struct bus_type *bus, struct device_driver *start,
+-static int find_anything(struct device *dev, const void *data)
+-{
+-	return 1;
+-}
+-
+ /*
+  * Some device drivers need know if PCI is initiated.
+  * Basically, we think PCI is not initiated when there
+@@ -79,7 +74,7 @@ int no_pci_devices(void)
+ 	struct device *dev;
+ 	int no_devices;
+ 
+-	dev = bus_find_device(&pci_bus_type, NULL, NULL, find_anything);
++	dev = bus_find_next_device(&pci_bus_type, NULL);
+ 	no_devices = (dev == NULL);
+ 	put_device(dev);
+ 	return no_devices;
 -- 
 2.7.4
 
