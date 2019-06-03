@@ -2,71 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52B7833372
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:24:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0AD133373
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:24:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbfFCPYc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 11:24:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38970 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726806AbfFCPYb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 11:24:31 -0400
-Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F31827212;
-        Mon,  3 Jun 2019 15:24:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559575470;
-        bh=a3ZkqBR9ntiyTwcVktdqZT3z2YhgAzl95hFO2PmfLyY=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=2uk8OK+RF7L77lIHwLQ/aOEgO0LH1vB3pqhLZz7u4gmHVKjpluOchGU2crqeR/Ci2
-         rO1hbIP2NusUfgTXGU1QM0UhGJEtf/Kz42/qpzJ4ofnbGmTN96UPT8+gKQHpeU7T0Q
-         /UwkAVzaR7i2Z5MY3hz6kfH2nVUlkKg9j3QwIeaU=
-Date:   Mon, 3 Jun 2019 17:24:26 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-cc:     Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4] x86/power: Fix 'nosmt' vs. hibernation triple fault
- during resume
-In-Reply-To: <20190603142330.GA13384@linux.intel.com>
-Message-ID: <nycvar.YFH.7.76.1906031722380.1962@cbobk.fhfr.pm>
-References: <20190531051456.fzkvn62qlkf6wqra@treble> <nycvar.YFH.7.76.1905311045240.1962@cbobk.fhfr.pm> <5564116.e9OFvgDRbB@kreacher> <CALCETrUpseta+NrhVwzzVFTe-BkBHtDUJBO22ci3mAsVR+XOog@mail.gmail.com> <nycvar.YFH.7.76.1905311628330.1962@cbobk.fhfr.pm>
- <B7AC83ED-3F11-42B9-8506-C842A5937B50@amacapital.net> <nycvar.YFH.7.76.1905311651450.1962@cbobk.fhfr.pm> <CALCETrUQzZTRnvmOS09UvRM9UCGEDvSdbJtkeeEa2foMf+hF2w@mail.gmail.com> <nycvar.YFH.7.76.1905312251350.1962@cbobk.fhfr.pm> <98E57C7E-24E2-4EB8-A14E-FCA80316F812@amacapital.net>
- <20190603142330.GA13384@linux.intel.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1727575AbfFCPYr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 11:24:47 -0400
+Received: from mail-vs1-f50.google.com ([209.85.217.50]:41477 "EHLO
+        mail-vs1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726343AbfFCPYq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 11:24:46 -0400
+Received: by mail-vs1-f50.google.com with SMTP id g24so9432295vso.8
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 08:24:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=Zseq1GZeTqMaMENYkGCy4nd4edGfJrBEbxocT6fFXUI=;
+        b=U5d1tm81DWwwhYT2aOwrSvimQ7FC2F1idrQyh3secSIYdt/faQPXZc6i7ibf9FtI1g
+         ErDCRIGxNcf6MdfCNk35vinF5q8B5d4gi7hdhXoVNt4IaPUsnFbU19Rkw3Aa0bdTOoqM
+         cYzJvrpF/eAgzzFhs6mNF0F8V+Zytk6tjIPPW7Ns0KyxwEYNO5qKYRThH7APIiHf3dai
+         S2rnxJpiueDD1BiNC8XtBNpKRVX319qq1dFZZjK0WMXZ2CRtDzvhAGvY20BkhIXofTuE
+         bVi/6QmsLKR5bCuBQOfEHjx0O0cYz5O4xC42moamd418S9Rpd9hBc2N99Wj9geU3DgEo
+         VXJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=Zseq1GZeTqMaMENYkGCy4nd4edGfJrBEbxocT6fFXUI=;
+        b=btyYmPRpRAUh7YQ7gmNDkUz/r7BVL4bA5nk1GXdw+dGfdlNzfmvRW8/It3os7Luqy5
+         Kx9w/AQikuDbQJOkWEtAdvBiSf+1qSIH3kefE0WpXAJhfup4JRupOpF5V7D02bVvnm9S
+         ho/dVI9EePMcwLhhx/tn2NgkiGK6YPO1mwfbPvapeOrqCzPOO442KmDdQ1N/zw0C5gWR
+         iGI/fmyXZ3XitLLUFqrlbHREROXi6Eo0kWpN2m0IL4jBrjnNOZL86Lkv5cES8fjSd3Ur
+         ZBPaAG+x5C9rjsOVFGtn7CCscwXdEIpaugjqeow7XOJquWOU9FQU4Zh40QgvTDI9clAk
+         1HPw==
+X-Gm-Message-State: APjAAAVf/ibk62f0nL/MqEzDop1WKVsfhPwWQ+87/k9ma6bu10veTK3z
+        UF7I7/eO95Luo8vn8kbGCzqK2YDRl/BGR+hbXKgaAg==
+X-Google-Smtp-Source: APXvYqz+7Y+FqrheKmfgGO6xhSDbDEGS0G3Mw8mOQLhnYpdBIr2FillGn28kMat6G0UWw+qxiZ6aXG+cEAryoCB7cr8=
+X-Received: by 2002:a67:f3c5:: with SMTP id j5mr12977698vsn.232.1559575485636;
+ Mon, 03 Jun 2019 08:24:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Received: by 2002:a67:efd3:0:0:0:0:0 with HTTP; Mon, 3 Jun 2019 08:24:44 -0700 (PDT)
+From:   Joshua Hudson <joshudson@gmail.com>
+Date:   Mon, 3 Jun 2019 08:24:44 -0700
+Message-ID: <CA+jjjYT6_ZZP5Ucqxvtmcd3d18vAC1LRtruiXojFVaxpJ-HhLA@mail.gmail.com>
+Subject: O_CLOFORK use case
+To:     linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 3 Jun 2019, Sean Christopherson wrote:
+I ran headlong into the use case for O_CLOFORK and got into a locking
+debate over it.
 
-> For P6 and later, i.e. all modern CPUs, Intel processors go straight to
-> halted state and don't fetch/decode the HLT instruction.
+The actual use case involves squashing a thread race between two
+threads. If a file is opened for write in one thread with O_CLOEXEC
+while another thread calls fork(), a race condition can happen where
+the thread that closes the handle misses the out of disk error because
+the child process closed the handle last inside execve().
 
-That'd be a rather relieving fact actually. Do you happen to know if this 
-is stated in some Intel documentation and we've just overlooked it, or 
-whether it's rather an information that's being carried over from 
-generation to generation by whispering through grapevine?
+The decades old idiom for replacing config files isn't safe in
+multi-threaded code. Yipe.
 
-Thanks,
+    int h = open(".configfile~", O_WRONY | O_EXCL | O_CLOEXEC, 0666);
+    if (h < 0) { perror(".configfile"); return 1; }
+    ssize_t delta = 0;
+    while ((delta = write(h, newconfigdata, newconfiglen)) > 0) {
+        newconfigdata += delta;
+        newconfiglen -= delta;
+    }
+    if (delta < 0) { perror(".configfile"); return 1; }
+    if (close(h)) { perror(".configfile"); return 1; }
+    rename(".configfile~", ".configfile");
 
--- 
-Jiri Kosina
-SUSE Labs
-
+To fix it, we have to put locks around close() and fork()/vfork(). Ugh.
