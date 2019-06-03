@@ -2,59 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91AA633AF2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:15:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DEE433B0B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:18:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbfFCWPi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 18:15:38 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36978 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726101AbfFCWPi (ORCPT
+        id S1726893AbfFCWSp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 18:18:45 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:38038 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbfFCWSp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 18:15:38 -0400
-Received: by mail-pl1-f194.google.com with SMTP id bh12so1424122plb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 15:15:38 -0700 (PDT)
+        Mon, 3 Jun 2019 18:18:45 -0400
+Received: by mail-pg1-f194.google.com with SMTP id v11so9065531pgl.5
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 15:18:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:in-reply-to:references:date:message-id
          :mime-version;
-        bh=AS+5msGMEX1/8R6Y37Be553kjtYeh4WbTw7nlVDQ3fw=;
-        b=qBcbQOrH7/lAUooQqY7B354nOSfo8120KYrAagGRLluXFqf/5E8SAIO8ERKuFud2gE
-         DrWecjYJNk/bl/ev7vgVtZOG7sM/RMZmAB+BubapSjxCH878TfewaumtVkfkG0jQbQST
-         a772e/QIUaUCP1tbEY/5RdTLGx/POkz5uABZ9GTS22CyHk6+ZpJ20vj62+B6trv4A/Nq
-         RDjLugBO9fExWsJmkkk9aGrASUEWNz+TVzULoJxaync77pFmd+mRHhuPFnw77c91y38j
-         KZGFBsxGV5BIYnuogEDU6PDawdkkRN9orJTj9zTZgDforVxWoW7hDZm2sUBPctKOnY9z
-         WTSw==
+        bh=lng3YCfvWetNAz2+44DaHDxjjqaun6E9sSpFqRzVz88=;
+        b=swVmE75Gx9Icf78XSIxk0xvUmHLSxKYl4ZJf6JejS2/x2g/+q3CBP1aebGn9Vh7xnq
+         HCt9rTiXWhZISUMAu/ATX+gJckPqApnN8GQH2CRXsvMb567x7Rr3miNccLFWWebgI061
+         9qweJrPVvZ9ZWI0J82decXcuBhHRMOy5uTEBuhQdoMU1vS7NCJcEoDWh9Xz3VwgFWsU8
+         npBt6fkSqvCHEt9pUAT9lq84e8bQunHY1NuIMzcK+KvyCY32GrZ44PEzTQLw9B3l2QMD
+         5jvv5crEUgKIM/SjAA4VIMl8AHEQTBT+Nhc1XB4u286VbUV3L5gs6SIvjnhUGYMYliaG
+         wjnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
          :message-id:mime-version;
-        bh=AS+5msGMEX1/8R6Y37Be553kjtYeh4WbTw7nlVDQ3fw=;
-        b=KPuynnZJiK6KugDAJRi3GG57SxPDEvMO6mfkQDQ0H4dKeq3t+YlHu1AC9xt07hBvAP
-         rdydp8wvcWw6naWFerXyWRmFdKQq/xuZgY+/7pLVw6/K6D4RNSGELGjaE0jfF47Y0T9U
-         iGAcr0SCJdQZl95tkUxKaIn0uOF7YaCU2w6sbsjgUKFP9apstlaF9SXWaG+wRs3YHjgb
-         4fH53w2dOGCaWHLdjh+VQDC9UCBx71enO1vwhvL3PClrUsUirT3/98g93UIe48brR0aZ
-         A4RJpy77PB+3P/cDGMFo+EYtRITcnZ/2fGng1nECOahOpRkRMvmtsJJZA26m5hKeNeiZ
-         HDDw==
-X-Gm-Message-State: APjAAAXVjJzFj7usa0tu91DVGoO7Vc4uFgzXOkCNsvTzDQjQOHbI2JqC
-        uaK+fSUFP/PrFGkXLDuesulPJw==
-X-Google-Smtp-Source: APXvYqzW4UJMHXhVyffvyuhaOGHNRco6mfxCHAHPih8GypHJkUx+ZG8CTCoQM38gm5YIRTyALBFE5Q==
-X-Received: by 2002:a17:902:31a4:: with SMTP id x33mr4946785plb.331.1559600137824;
-        Mon, 03 Jun 2019 15:15:37 -0700 (PDT)
+        bh=lng3YCfvWetNAz2+44DaHDxjjqaun6E9sSpFqRzVz88=;
+        b=BAGUHhe9sNfvz53IHsYsAcpZFv3tvfbVsVUcjJYsvT+bbTqHdo5yL5N54asquAljvk
+         Re666fX8TmcIfXbnXzcF4s0HhAp8yDsN40PciwFOB9tKJKTaM7M71mddpUdtSiKtMAeP
+         WkJyJS+iyhb7VEt3R7rPvEk8Eg3tBYBdJaBV+g/4dR/VwWcn+LL1HktlhSVoWeKbr+Ue
+         QMK1M/zolFlO5x2BfxF6QBXDFlg/HJAU0PX77VnKJPO3NdCKmoTmagxteG6VDmKOwiWE
+         ZBxqnxSUK0wtVVzYDTpj3m/PE7vwetlQkaLjBsiyW0fB7se5UowTNmxFfaNLkYaPLidH
+         5fVA==
+X-Gm-Message-State: APjAAAUAmlNGhc49bTKb4BT1AbAdWDrTtdZLhqL3LskFNit82FlAitCi
+        6nCsrf2s8szNOR6Xm3NvVPiNJA==
+X-Google-Smtp-Source: APXvYqz1uHqZZKUs881sATdhhromAIfPEI6o4+UmjIEM+WLgGPKPchtRCk86aJfCmtLcNlhsietZTQ==
+X-Received: by 2002:a63:680a:: with SMTP id d10mr31248979pgc.117.1559600324710;
+        Mon, 03 Jun 2019 15:18:44 -0700 (PDT)
 Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.googlemail.com with ESMTPSA id d6sm14561224pjo.32.2019.06.03.15.15.37
+        by smtp.googlemail.com with ESMTPSA id f2sm12757024pgs.83.2019.06.03.15.18.44
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Jun 2019 15:15:37 -0700 (PDT)
+        Mon, 03 Jun 2019 15:18:44 -0700 (PDT)
 From:   Kevin Hilman <khilman@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] arm64: dts: meson-g12a-x96-max: Add Gigabit Ethernet Support
-In-Reply-To: <CAFBinCD67XCpT-zmppJ3SSs5Q5ruse-otGqMLdbeaTnkr3PKiQ@mail.gmail.com>
-References: <20190527130043.3384-1-narmstrong@baylibre.com> <CAFBinCD67XCpT-zmppJ3SSs5Q5ruse-otGqMLdbeaTnkr3PKiQ@mail.gmail.com>
-Date:   Mon, 03 Jun 2019 15:15:36 -0700
-Message-ID: <7hpnnuiad3.fsf@baylibre.com>
+To:     hex dump <hexdump0815@gmail.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] ARM: dts: meson8b: mxq: improve support for the TRONFY MXQ S805
+In-Reply-To: <CAKTihDVyQqq82KKofCTKoUYJOyT6T738uq_A=kiEqahDx9YQfA@mail.gmail.com>
+References: <20190524181936.29470-1-martin.blumenstingl@googlemail.com> <20190524181936.29470-2-martin.blumenstingl@googlemail.com> <CAKTihDVyQqq82KKofCTKoUYJOyT6T738uq_A=kiEqahDx9YQfA@mail.gmail.com>
+Date:   Mon, 03 Jun 2019 15:18:43 -0700
+Message-ID: <7hlfyiia7w.fsf@baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,17 +62,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
+hex dump <hexdump0815@gmail.com> writes:
 
-> On Mon, May 27, 2019 at 3:00 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+> Am Fr., 24. Mai 2019 um 20:19 Uhr schrieb Martin Blumenstingl <
+> martin.blumenstingl@googlemail.com>:
+>
+>> The TRONFY MXQ comes with either 1GB or 2GB RAM.
 >>
->> Enable the network interface of the X96 Mac using an external
->> Realtek RTL8211F gigabit PHY, needing the same broken-eee properties
->> as the previous Amlogic SoC generations.
+>> Both variants share (like most boards based on Amlogic reference
+>> designs):
+>> - 10/100 PHY (IC Plus IP101GR) with GPIOH_4 being the reset line and
+>>   GPIOH_3 the interrupt line
+>> - SD card slot with the card detection GPIO at CARD_6
+>> - VCCK is generated by PWM_C with a period of 1148ns and XTAL as input
+>>   clock
+>> - USB OTG exposed on one of the USB-A connectors
+>> - 4-port USB hub with 3 ports exposed to the outside
 >>
->> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>> There seem the multiple board revision out there according to various
+>> forum posts:
+>> - storage: eMMC or NAND flash
+>> - wifi: Ampak AP6210 or Realtek 8189
+>>
+>> Add support for the following functionality:
+>> - SoC temperature (hwmon)
+>> - changing the CPU voltage
+>> - Ethernet connectivity
+>> - SD card
+>> - USB
+>>
+>> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>>
+>
+> Tested-by: hexdump <hexdump0815@googlemail.com>
 
-Queued for v5.3,
+Thanks for testing.
+
+Queued for v5,3,
 
 Kevin
