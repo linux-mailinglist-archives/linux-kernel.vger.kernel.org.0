@@ -2,55 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E27F033123
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:33:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B4BD33125
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:34:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728572AbfFCNdy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 09:33:54 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:49815 "EHLO
+        id S1728706AbfFCNe0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 09:34:26 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33955 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727387AbfFCNdy (ORCPT
+        with ESMTP id S1727387AbfFCNeZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 09:33:54 -0400
+        Mon, 3 Jun 2019 09:34:25 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x53DXNKa610554
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x53DY7OZ610618
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 3 Jun 2019 06:33:23 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x53DXNKa610554
+        Mon, 3 Jun 2019 06:34:07 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x53DY7OZ610618
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1559568804;
-        bh=yeiSwi4vhGBmjedmweLO6MFjvESJJPY/hFcT1Ie7yCQ=;
+        s=2019051801; t=1559568847;
+        bh=oDp92secCUoa43S8dFljpvXFHoubG8yt7jgslaGl6aU=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=cOL0X8u4hLcsiNoBoQUngRdWn74flNkhaBTXqbrNc3W3UAhogLjr69GJ9+kff1oXc
-         K6KZIbHdo7sJPAfuUw6SgnxNNxdAvvq2XkUPZByJfKrd5JLIFyasmNmDjUQb/G3hDa
-         RK+3IPOfXtE4z8lA/ATCTfv0qUNw4QIkTS6PKMH6BVg3nOet625ACx7ut+ePPvsKpC
-         v2COVVnt9Da+TMtXVOF19V9K9tOO6ne7xNDe+bxODxjcF620os2DYKgKcMgEk4+Fx1
-         +GzxqYSVHo1tr+Z7LjBYdPXQNeVabyKi2+4JIG7SXqvIUn1aRaTlz/jls+9/rBPVcq
-         H38LcXLMt10Zg==
+        b=XEdiNBhvT1SCV2H3R9A0rCt/bVlU9NPF4nq1VfR+EbEaCO9B8QNIPiwlejbDiqudi
+         f95YE2/qeLfo+lmYmRBqBoIjQ8Xj7t3Vlw+No6mXK1ggxgka/WnNlP4gFtMGLHuWMU
+         MdaljGf7JFd6GgOJu0WHS6ZfoYMzNF4X6ae0WGybFQldVvGgoD2WjRqg+2vepziS9m
+         BwGiJkl0+YLKbulhTLsOIn1C4rRHI8xGDGMQOdF+xb2PuumvpYChqRB3qnu5YqyCxx
+         te3DzZzFypA7kKx7OHFz6TllAdY5o4W9v8b5KNH3/qq9r+//M9ad9/JNbiESlIqJnJ
+         fTsBt4G6T9WRg==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x53DXMRA610551;
-        Mon, 3 Jun 2019 06:33:22 -0700
-Date:   Mon, 3 Jun 2019 06:33:22 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x53DY6xM610615;
+        Mon, 3 Jun 2019 06:34:06 -0700
+Date:   Mon, 3 Jun 2019 06:34:06 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Peter Zijlstra <tipbot@zytor.com>
-Message-ID: <tip-24811637dbfd07c69da7e9db586d35d17e6afca3@git.kernel.org>
-Cc:     huang.ying.caritas@gmail.com, hpa@zytor.com, tglx@linutronix.de,
-        mingo@kernel.org, longman@redhat.com,
-        torvalds@linux-foundation.org, bp@alien8.de,
-        tim.c.chen@linux.intel.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        dave@stgolabs.net
-Reply-To: dave@stgolabs.net, peterz@infradead.org,
-          linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-          bp@alien8.de, tim.c.chen@linux.intel.com, will.deacon@arm.com,
-          tglx@linutronix.de, hpa@zytor.com, huang.ying.caritas@gmail.com,
-          longman@redhat.com, mingo@kernel.org
-In-Reply-To: <20190527082326.GP2623@hirez.programming.kicks-ass.net>
-References: <20190527082326.GP2623@hirez.programming.kicks-ass.net>
+From:   tip-bot for Mark Rutland <tipbot@zytor.com>
+Message-ID: <tip-90fde663aed0a1c27e50dd1bf3f121141b2fe9f2@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        peterz@infradead.org, will.deacon@arm.com, hpa@zytor.com,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        herbert@gondor.apana.org.au, mingo@kernel.org
+Reply-To: linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+          peterz@infradead.org, will.deacon@arm.com,
+          torvalds@linux-foundation.org, hpa@zytor.com, tglx@linutronix.de,
+          herbert@gondor.apana.org.au, mingo@kernel.org
+In-Reply-To: <20190522132250.26499-2-mark.rutland@arm.com>
+References: <20190522132250.26499-2-mark.rutland@arm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] locking/lock_events: Use raw_cpu_{add,inc}() for
- stats
-Git-Commit-ID: 24811637dbfd07c69da7e9db586d35d17e6afca3
+Subject: [tip:locking/core] locking/atomic, crypto/nx: Prepare for
+ atomic64_read() conversion
+Git-Commit-ID: 90fde663aed0a1c27e50dd1bf3f121141b2fe9f2
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,109 +56,102 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Status: No, score=-2.4 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
 X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  24811637dbfd07c69da7e9db586d35d17e6afca3
-Gitweb:     https://git.kernel.org/tip/24811637dbfd07c69da7e9db586d35d17e6afca3
-Author:     Peter Zijlstra <peterz@infradead.org>
-AuthorDate: Mon, 27 May 2019 10:23:26 +0200
+Commit-ID:  90fde663aed0a1c27e50dd1bf3f121141b2fe9f2
+Gitweb:     https://git.kernel.org/tip/90fde663aed0a1c27e50dd1bf3f121141b2fe9f2
+Author:     Mark Rutland <mark.rutland@arm.com>
+AuthorDate: Wed, 22 May 2019 14:22:33 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Mon, 3 Jun 2019 12:32:56 +0200
 
-locking/lock_events: Use raw_cpu_{add,inc}() for stats
+locking/atomic, crypto/nx: Prepare for atomic64_read() conversion
 
-Instead of playing silly games with CONFIG_DEBUG_PREEMPT toggling
-between this_cpu_*() and __this_cpu_*() use raw_cpu_*(), which is
-exactly what we want here.
+The return type of atomic64_read() varies by architecture. It may return
+long (e.g. powerpc), long long (e.g. arm), or s64 (e.g. x86_64). This is
+somewhat painful, and mandates the use of explicit casts in some cases
+(e.g. when printing the return value).
 
+To ameliorate matters, subsequent patches will make the atomic64 API
+consistently use s64.
+
+As a preparatory step, this patch updates the nx-842 code to treat the
+return value of atomic64_read() as s64, using explicit casts. These
+casts will be removed once the s64 conversion is complete.
+
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Waiman Long <longman@redhat.com>
 Cc: Will Deacon <will.deacon@arm.com>
-Cc: huang ying <huang.ying.caritas@gmail.com>
-Link: https://lkml.kernel.org/r/20190527082326.GP2623@hirez.programming.kicks-ass.net
+Cc: aou@eecs.berkeley.edu
+Cc: arnd@arndb.de
+Cc: bp@alien8.de
+Cc: catalin.marinas@arm.com
+Cc: davem@davemloft.net
+Cc: fenghua.yu@intel.com
+Cc: heiko.carstens@de.ibm.com
+Cc: ink@jurassic.park.msu.ru
+Cc: jhogan@kernel.org
+Cc: linux@armlinux.org.uk
+Cc: mattst88@gmail.com
+Cc: mpe@ellerman.id.au
+Cc: palmer@sifive.com
+Cc: paul.burton@mips.com
+Cc: paulus@samba.org
+Cc: ralf@linux-mips.org
+Cc: rth@twiddle.net
+Cc: tony.luck@intel.com
+Cc: vgupta@synopsys.com
+Link: https://lkml.kernel.org/r/20190522132250.26499-2-mark.rutland@arm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/locking/lock_events.h | 45 ++++----------------------------------------
- 1 file changed, 4 insertions(+), 41 deletions(-)
+ drivers/crypto/nx/nx-842-pseries.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/locking/lock_events.h b/kernel/locking/lock_events.h
-index 46b71af8eef2..8c7e7d25f09c 100644
---- a/kernel/locking/lock_events.h
-+++ b/kernel/locking/lock_events.h
-@@ -31,50 +31,13 @@ enum lock_events {
- DECLARE_PER_CPU(unsigned long, lockevents[lockevent_num]);
- 
- /*
-- * The purpose of the lock event counting subsystem is to provide a low
-- * overhead way to record the number of specific locking events by using
-- * percpu counters. It is the percpu sum that matters, not specifically
-- * how many of them happens in each cpu.
-- *
-- * It is possible that the same percpu counter may be modified in both
-- * the process and interrupt contexts. For architectures that perform
-- * percpu operation with multiple instructions, it is possible to lose
-- * count if a process context percpu update is interrupted in the middle
-- * and the same counter is updated in the interrupt context. Therefore,
-- * the generated percpu sum may not be precise. The error, if any, should
-- * be small and insignificant.
-- *
-- * For those architectures that do multi-instruction percpu operation,
-- * preemption in the middle and moving the task to another cpu may cause
-- * a larger error in the count. Again, this will be few and far between.
-- * Given the imprecise nature of the count and the possibility of resetting
-- * the count and doing the measurement again, this is not really a big
-- * problem.
-- *
-- * To get a better picture of what is happening under the hood, it is
-- * suggested that a few measurements should be taken with the counts
-- * reset in between to stamp out outliner because of these possible
-- * error conditions.
-- *
-- * To minimize overhead, we use __this_cpu_*() in all cases except when
-- * CONFIG_DEBUG_PREEMPT is defined. In this particular case, this_cpu_*()
-- * will be used to avoid the appearance of unwanted BUG messages.
-- */
--#ifdef CONFIG_DEBUG_PREEMPT
--#define lockevent_percpu_inc(x)		this_cpu_inc(x)
--#define lockevent_percpu_add(x, v)	this_cpu_add(x, v)
--#else
--#define lockevent_percpu_inc(x)		__this_cpu_inc(x)
--#define lockevent_percpu_add(x, v)	__this_cpu_add(x, v)
--#endif
--
--/*
-- * Increment the PV qspinlock statistical counters
-+ * Increment the statistical counters. use raw_cpu_inc() because of lower
-+ * overhead and we don't care if we loose the occasional update.
-  */
- static inline void __lockevent_inc(enum lock_events event, bool cond)
- {
- 	if (cond)
--		lockevent_percpu_inc(lockevents[event]);
-+		raw_cpu_inc(lockevents[event]);
+diff --git a/drivers/crypto/nx/nx-842-pseries.c b/drivers/crypto/nx/nx-842-pseries.c
+index 5c4aa606208c..938332ce3b60 100644
+--- a/drivers/crypto/nx/nx-842-pseries.c
++++ b/drivers/crypto/nx/nx-842-pseries.c
+@@ -856,8 +856,8 @@ static ssize_t nx842_##_name##_show(struct device *dev,		\
+ 	rcu_read_lock();						\
+ 	local_devdata = rcu_dereference(devdata);			\
+ 	if (local_devdata)						\
+-		p = snprintf(buf, PAGE_SIZE, "%ld\n",			\
+-		       atomic64_read(&local_devdata->counters->_name));	\
++		p = snprintf(buf, PAGE_SIZE, "%lld\n",			\
++		       (s64)atomic64_read(&local_devdata->counters->_name));	\
+ 	rcu_read_unlock();						\
+ 	return p;							\
  }
+@@ -909,17 +909,17 @@ static ssize_t nx842_timehist_show(struct device *dev,
+ 	}
  
- #define lockevent_inc(ev)	  __lockevent_inc(LOCKEVENT_ ##ev, true)
-@@ -82,7 +45,7 @@ static inline void __lockevent_inc(enum lock_events event, bool cond)
+ 	for (i = 0; i < (NX842_HIST_SLOTS - 2); i++) {
+-		bytes = snprintf(p, bytes_remain, "%u-%uus:\t%ld\n",
++		bytes = snprintf(p, bytes_remain, "%u-%uus:\t%lld\n",
+ 			       i ? (2<<(i-1)) : 0, (2<<i)-1,
+-			       atomic64_read(&times[i]));
++			       (s64)atomic64_read(&times[i]));
+ 		bytes_remain -= bytes;
+ 		p += bytes;
+ 	}
+ 	/* The last bucket holds everything over
+ 	 * 2<<(NX842_HIST_SLOTS - 2) us */
+-	bytes = snprintf(p, bytes_remain, "%uus - :\t%ld\n",
++	bytes = snprintf(p, bytes_remain, "%uus - :\t%lld\n",
+ 			2<<(NX842_HIST_SLOTS - 2),
+-			atomic64_read(&times[(NX842_HIST_SLOTS - 1)]));
++			(s64)atomic64_read(&times[(NX842_HIST_SLOTS - 1)]));
+ 	p += bytes;
  
- static inline void __lockevent_add(enum lock_events event, int inc)
- {
--	lockevent_percpu_add(lockevents[event], inc);
-+	raw_cpu_add(lockevents[event], inc);
- }
- 
- #define lockevent_add(ev, c)	__lockevent_add(LOCKEVENT_ ##ev, c)
+ 	rcu_read_unlock();
