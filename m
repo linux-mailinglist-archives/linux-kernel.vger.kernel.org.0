@@ -2,113 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB3E432C65
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:17:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A27932BFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:14:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728902AbfFCJRH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 05:17:07 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:41482 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728522AbfFCJLy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 05:11:54 -0400
-Received: by mail-ed1-f65.google.com with SMTP id x25so13710888eds.8
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 02:11:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OG+wv3KqwkIxkFn1hvlOhyQJMdD3qAH7uLRblyeIxmw=;
-        b=hGZAYoZqefZdKEh2IvuFHZoH2jMmweH23m7kzh8kBSP0WX+mCvB/axNY+1bYGZ61we
-         h1Su4MTGuQj1N3DgLRHw5lgv9vDnvDl9X4qf3BKOSVYS/qE0ab5z0T6DoDaI47mynVDk
-         gRGir8zIJ9LaGwwMaXoBXWnMB2F1bfsk6pEPOoZyDUyWB01+6arH2iDwn6qy3Xi2xDiM
-         GcTm23daMZrx3nOjb2w7cOm8DUHlDzrS0jaWXB9QHetMvwWGfjmwDKQMVNRh+sPdOlgI
-         mdPZZrlEQBROuma2ORi9Ns6AJaT124nEebmYfszHCu15GuUC0t8bWheXJAuV0kG/CdbU
-         /vYw==
-X-Gm-Message-State: APjAAAX+WGsEaISJ5Tr07h9JAB0LxSuEfe4Tn1Ot5HDJjk07Mm27PjKP
-        PVorkAGWKlhdN/tUEERsQfdoPY1gX9w=
-X-Google-Smtp-Source: APXvYqz1vb/GtNDI0d8P3KGIusxxHGOCkfnzNhDpbmeVWD1r4YyvZTFrjQYsLumEjHBqId5ctx21ww==
-X-Received: by 2002:a50:fc82:: with SMTP id f2mr26823610edq.72.1559553111720;
-        Mon, 03 Jun 2019 02:11:51 -0700 (PDT)
-Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id y8sm2530322ejq.24.2019.06.03.02.11.50
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Jun 2019 02:11:51 -0700 (PDT)
-Subject: Re: hid-related 5.2-rc1 boot hang
-To:     Jiri Kosina <jikos@kernel.org>, Dave Hansen <dave.hansen@intel.com>
-Cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <2c1684f6-9def-93dc-54ab-888142fd5e71@intel.com>
- <nycvar.YFH.7.76.1905281913140.1962@cbobk.fhfr.pm>
- <CAO-hwJJzNAuFbdMVFZ4+h7J=bh6QHr_MioyK2yTV=M5R6CTm=A@mail.gmail.com>
- <8a17e6e2-b468-28fd-5b40-0c258ca7efa9@intel.com>
- <4689a737-6c40-b4ae-cc38-5df60318adce@redhat.com>
- <a349dfac-be58-93bd-e44c-080ed935ab06@intel.com>
- <nycvar.YFH.7.76.1906010014150.1962@cbobk.fhfr.pm>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <e158d983-1e7e-4c49-aaab-ff2092d36438@redhat.com>
-Date:   Mon, 3 Jun 2019 11:11:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <nycvar.YFH.7.76.1906010014150.1962@cbobk.fhfr.pm>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1728853AbfFCJN3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 05:13:29 -0400
+Received: from wind.enjellic.com ([76.10.64.91]:34382 "EHLO wind.enjellic.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727961AbfFCJN1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 05:13:27 -0400
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id x539C8O2013972;
+        Mon, 3 Jun 2019 04:12:08 -0500
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id x539C6Fb013971;
+        Mon, 3 Jun 2019 04:12:06 -0500
+Date:   Mon, 3 Jun 2019 04:12:06 -0500
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        William Roberts <bill.c.roberts@gmail.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+Message-ID: <20190603091206.GA13614@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <960B34DE67B9E140824F1DCDEC400C0F654EB487@ORSMSX116.amr.corp.intel.com> <678a37af-797d-7bd5-a406-32548a270e3d@tycho.nsa.gov> <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com> <c1135352-0b5e-4694-b1a9-105876095877@tycho.nsa.gov> <CALCETrWsEXzUC33eJpGCpdMCBO4aYVviZLRD-CLMNaG5Jv-TCA@mail.gmail.com> <20190530180110.GB23930@linux.intel.com> <CALCETrX2PgUc_jetXHqp85aaS0a0jHB8E7=T1rsW+5vyRgwnUA@mail.gmail.com> <20190530211645.GB27551@linux.intel.com> <CALCETrVAoDppmdJzkpwagt3q64M-QpNajXbKGR1yQdqyofeANQ@mail.gmail.com> <20190530213601.GC27551@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190530213601.GC27551@linux.intel.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Mon, 03 Jun 2019 04:12:08 -0500 (CDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, May 30, 2019 at 02:36:01PM -0700, Sean Christopherson wrote:
 
-On 01-06-19 00:15, Jiri Kosina wrote:
-> On Thu, 30 May 2019, Dave Hansen wrote:
-> 
->> On 5/29/19 2:17 AM, Hans de Goede wrote:
->> ...
->>> Dave, can you try building your initrd without the hid-logitech-dj module
->>> included in the initrd?
->>
->> I did this on a vanilla 5.2-rc2 kernel (without the reverts) and still
->> experienced the boot hang while the device was inserted.
->>
->>> Also can you check if your modprobe is provided by module-init-tools
->>> or by kmod ?
->>
->> $ dpkg -S `which modprobe`
->> kmod: /sbin/modprobe
-> 
-> Benjamin, Hans, are you looking into this?
+Good morning, I hope everyone had a pleasant weekend.
 
-Not really, I cannot reproduce the request_module problem. I was hoping some
-of the info from Dave would help to pinpoint it, but it does not :|
+> Assuming MRENCLAVE generated by Graphene or any other hosting scheme
+> are stable[1], then avoiding EXEC<whatever> means the user can
+> effectively whitelist what enclaves are runnable by Graphene, even
+> if the kernel doesn't implement security_enclave_create/init().
+>
+> I agree that it probably isn't all that important, it's more of a
+> "why not" argument, i.e. what is gained by not using sigstruct as a
+> proxy?
+>
+> [1] What in the world is being attested if MRENCLAVE isn't stable?
 
-> If not, I think we should start reverting (at least the request_module()
-> changes
+The cryptographic identity of the entity that signed the enclave and
+generated the SIGSTRUCT.
 
-I agree we need to do something about the request_module changes.
+At the risk of being the monotone in the choir, any relevant SGX
+security controls require verifying the identity of whoever signed the
+identity characteristics (SIGSTRUCT) of the image that initiates the
+execution of an SGX TEE.  Other then verifying the initial execution
+image, the MRENCLAVE value isn't all that relevant.
 
-I myself was thinking about somehow making them conditional, e.g. we
-could add a (temporary) module option defaulting to false for this
-while we investigate further.
+This issue is further evidenced by the fact that sealing data to an
+enclave uses the MRSIGNER variant of ENCLU[EGETKEY] key derivation.
 
-I'm afraid that if we just revert we will never find the root cause and then
-we will be stuck with the suboptimal behavior of first the generic hid driver
-binding followed by a unbind + bind of the new driver shortly afterwards,
-which also leads to a ton of udev events being fired to userspace (well I
-guess this does make for a good stress test of the userspace hotplug code).
+The current work on LSM controls seems to focus on the identity of the
+entity that is requesting the image to be loaded rather then who
+actually signed, and presumably authored, the code.  As I have
+previously noted, with SGX2/EDMM, a platform owner may not even have
+any visibility into the code that an SGX TEE may ultimately load and
+execute.
 
-> not sure about the rest of logitech issues yet) next week.
+Any security relevant LSM control in this space has to focus on
+providing the platform owner the ability to take action based on the
+contents of the SIGSTRUCT of the initiating image.  In addition to the
+identity of who is requesting the image to be loaded.
 
-The main problem seems to be the request_module patches. Although I also
-have 2 reports of problems with hid-logitech-dj driving the 0xc52f product-id,
-so we may need to drop that product-id from hid-logitech-dj, I'm working on
-that one...
+Have a good week.
 
-Regards,
+Dr. Greg
 
-Hans
-
+As always,
+Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
+4206 N. 19th Ave.           Specializing in information infra-structure
+Fargo, ND  58102            development.
+PH: 701-281-1686
+FAX: 701-281-3949           EMAIL: greg@enjellic.com
+------------------------------------------------------------------------------
+"Experience is something you don't get until just after you need it."
+                                -- Olivier
