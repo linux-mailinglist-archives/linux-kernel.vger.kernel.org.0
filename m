@@ -2,87 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40B6B32EE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 13:45:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50B6932EE8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 13:46:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726806AbfFCLpE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 07:45:04 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49542 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726561AbfFCLpE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 07:45:04 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 22B6515A2;
-        Mon,  3 Jun 2019 04:45:03 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BAE9C3F5AF;
-        Mon,  3 Jun 2019 04:45:01 -0700 (PDT)
-Date:   Mon, 3 Jun 2019 12:44:56 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>, tglx@linutronix.de,
-        mingo@kernel.org, jpoimboe@redhat.com, mojha@codeaurora.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH HACK RFC] cpu: Prevent late-arriving interrupts from
- disrupting offline
-Message-ID: <20190603114455.GA16119@lakrids.cambridge.arm.com>
-References: <20190602011253.GA6167@linux.ibm.com>
- <20190603083848.GB3436@hirez.programming.kicks-ass.net>
+        id S1727268AbfFCLqE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 07:46:04 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:43326 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726336AbfFCLqE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 07:46:04 -0400
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id x53BjrOD005594;
+        Mon, 3 Jun 2019 20:45:53 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x53BjrOD005594
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1559562354;
+        bh=xcdVS2lZM1a48jGewJjV7DieZdVaVvo2sv103QVTF4A=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=vD2ZSXItTjKjdiNBHbKw3ZwxymGkS+mFzGNJdILthjozmnTu79/V5i1V8R22/nnLr
+         3Bw8q1gvPjzDonVsJOuFRSuMKPvOQAUdQaZmuCbo0GRiGSBfxaddMQx1ahOH8UJqTx
+         YfHiSmxDHnUIL+meK6FxxCOVklZh415UQpOq1Dp0zXb3EiK/jpR2st9Kjvipf0isXu
+         A5q5swRbapK7hp912uNtA2dqkyZEP2HMa1B5c0V0HrNiot0WqaCOeKEbm0bkGoddoU
+         csou2T6LFFYdEKH87VrsG7p35LArxmFUjTiFl5fSqOU9j7jWNvgLKYgGp4n52MswfN
+         ml+ums0o22Y+Q==
+X-Nifty-SrcIP: [209.85.221.180]
+Received: by mail-vk1-f180.google.com with SMTP id k1so2803503vkb.2;
+        Mon, 03 Jun 2019 04:45:53 -0700 (PDT)
+X-Gm-Message-State: APjAAAW2o2ixN0XDlOCxvgENyQLU56pos+NFFWK8eeRKkM8sW1+L1gAb
+        Dla9sbdsjNZeex+fZGoENQmmtTBpcODboDmwks8=
+X-Google-Smtp-Source: APXvYqxzUHPoQIku6KGXaYa9Qp+9KgMH/y/NROsn43MQouSz1p//qa19a5lw5lYTcOIKJq2hnfSJHM9bQSGQoQwpkgs=
+X-Received: by 2002:ac5:c215:: with SMTP id m21mr8858804vkk.84.1559562352459;
+ Mon, 03 Jun 2019 04:45:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190603083848.GB3436@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+References: <20190603104902.23799-1-yamada.masahiro@socionext.com> <3dcacca3f71c46cc98fa64b13a405b59@AcuMS.aculab.com>
+In-Reply-To: <3dcacca3f71c46cc98fa64b13a405b59@AcuMS.aculab.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 3 Jun 2019 20:45:16 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATt=P5rHrnK_8PTmjMb+tdtPg2qBgopRUDBFw_fkP2SsQ@mail.gmail.com>
+Message-ID: <CAK7LNATt=P5rHrnK_8PTmjMb+tdtPg2qBgopRUDBFw_fkP2SsQ@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: use more portable 'command -v' for cc-cross-prefix
+To:     David Laight <David.Laight@aculab.com>
+Cc:     "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Alexey Brodkin <abrodkin@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        linux-stable <stable@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 03, 2019 at 10:38:48AM +0200, Peter Zijlstra wrote:
-> On Sat, Jun 01, 2019 at 06:12:53PM -0700, Paul E. McKenney wrote:
-> > Scheduling-clock interrupts can arrive late in the CPU-offline process,
-> > after idle entry and the subsequent call to cpuhp_report_idle_dead().
-> > Once execution passes the call to rcu_report_dead(), RCU is ignoring
-> > the CPU, which results in lockdep complaints when the interrupt handler
-> > uses RCU:
-> 
-> > diff --git a/kernel/cpu.c b/kernel/cpu.c
-> > index 448efc06bb2d..3b33d83b793d 100644
-> > --- a/kernel/cpu.c
-> > +++ b/kernel/cpu.c
-> > @@ -930,6 +930,7 @@ void cpuhp_report_idle_dead(void)
-> >  	struct cpuhp_cpu_state *st = this_cpu_ptr(&cpuhp_state);
-> >  
-> >  	BUG_ON(st->state != CPUHP_AP_OFFLINE);
-> > +	local_irq_disable();
-> >  	rcu_report_dead(smp_processor_id());
-> >  	st->state = CPUHP_AP_IDLE_DEAD;
-> >  	udelay(1000);
-> 
-> Urgh... I'd almost suggest we do something like the below.
-> 
-> 
-> But then I started looking at the various arch_cpu_idle_dead()
-> implementations and ran into arm's implementation, which is calling
-> complete() where generic code already established this isn't possible
-> (see for example cpuhp_report_idle_dead()).
+On Mon, Jun 3, 2019 at 8:16 PM David Laight <David.Laight@aculab.com> wrote:
+>
+> From: Masahiro Yamada
+> > Sent: 03 June 2019 11:49
+> >
+> > To print the pathname that will be used by shell in the current
+> > environment, 'command -v' is a standardized way. [1]
+> >
+> > 'which' is also often used in scripting, but it is not portable.
+>
+> All uses of 'which' should be expunged.
+> It is a bourne shell script that is trying to emulate a csh builtin.
+> It is doomed to fail in corner cases.
+> ISTR it has serious problems with shell functions and aliases.
 
-IIRC, that should have been migrated over to cpu_report_death(), as
-arm64 was in commit:
+OK, I do not have time to check it treewide.
+I expect somebody will contribute to it.
 
-  05981277a4de1ad6 ("arm64: Use common outgoing-CPU-notification code")
 
-... but it looks like Paul's patch to do so [1] fell through the cracks;
-I'm not aware of any reason that shouldn't have been taken.
-  
-[1] https://lore.kernel.org/lkml/1431467407-1223-8-git-send-email-paulmck@linux.vnet.ibm.com/
 
-Paul, do you want to resend that?
+BTW, I see yet another way to get the command path.
 
-For arm64 we mask SError, debug, and FIQ exceptions later in our
-cpu_die(). FIQ should never happen, but we could take SError or debug
-exceptions, and I think we end up using RCU behind the scenes in the
-handlers for those. :/
+'type -path' is bash-specific.
 
-Thanks,
-Mark.
+Maybe, we should do this too:
+
+diff --git a/scripts/mkuboot.sh b/scripts/mkuboot.sh
+index 4b1fe09e9042..77829ee4268e 100755
+--- a/scripts/mkuboot.sh
++++ b/scripts/mkuboot.sh
+@@ -1,14 +1,14 @@
+-#!/bin/bash
++#!/bin/sh
+ # SPDX-License-Identifier: GPL-2.0
+
+ #
+ # Build U-Boot image when `mkimage' tool is available.
+ #
+
+-MKIMAGE=$(type -path "${CROSS_COMPILE}mkimage")
++MKIMAGE=$(command -v "${CROSS_COMPILE}mkimage")
+
+ if [ -z "${MKIMAGE}" ]; then
+-       MKIMAGE=$(type -path mkimage)
++       MKIMAGE=$(command -v mkimage)
+        if [ -z "${MKIMAGE}" ]; then
+                # Doesn't exist
+                echo '"mkimage" command not found - U-Boot images will
+not be built' >&2
+
+
+-- 
+Best Regards
+Masahiro Yamada
