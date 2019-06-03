@@ -2,277 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A70CB33242
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 16:35:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E512233245
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 16:35:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729082AbfFCOfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 10:35:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54820 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728984AbfFCOfP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 10:35:15 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EDAEFAD8B;
-        Mon,  3 Jun 2019 14:35:11 +0000 (UTC)
-From:   Vlastimil Babka <vbabka@suse.cz>
-To:     linux-mm@kvack.org
-Cc:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 3/3] mm, debug_pagealloc: use a page type instead of page_ext flag
-Date:   Mon,  3 Jun 2019 16:34:51 +0200
-Message-Id: <20190603143451.27353-4-vbabka@suse.cz>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190603143451.27353-1-vbabka@suse.cz>
-References: <20190603143451.27353-1-vbabka@suse.cz>
+        id S1729113AbfFCOfg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 10:35:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41508 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728988AbfFCOfg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 10:35:36 -0400
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8423227AF4;
+        Mon,  3 Jun 2019 14:35:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559572535;
+        bh=hk/xMLxFXk4kJBGBwlcG++wGkbLPTKk2rGWiw3Ye9mQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=xRY+ChZwcxFTR01zBWEpCDzqDawzaXX8BoxQ0hmqSrh2c+43cmgeskejeZ2bdG25X
+         vRPjSFEyjtGBkNKFUbEn3pOB1Ubc6IkL+wNksi7gfju4OwJjpwhSuOFaCRWfP5229N
+         ZPfaGKPgvA6q8jvaV/hupBv4lNEgmua37PINB+R0=
+Received: by mail-lf1-f46.google.com with SMTP id y13so13771879lfh.9;
+        Mon, 03 Jun 2019 07:35:35 -0700 (PDT)
+X-Gm-Message-State: APjAAAU8lvTy+JzUyncGZ/BV6VOyE6XJtIgUvo8obSn6bJFnxRF7dcIY
+        Rupsv9K+pZEDORPnwFrzi6nLUFhrKmw3UYwkRSk=
+X-Google-Smtp-Source: APXvYqweQ+vKT3uUCXOStqdayFxBRi48G3kwhXvoDIjzC25dmMqP23a+ZySiUA8IqV9rXywdcuG6d+pcD6+MWJ+InEE=
+X-Received: by 2002:ac2:4891:: with SMTP id x17mr2053137lfc.60.1559572533667;
+ Mon, 03 Jun 2019 07:35:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAJKOXPcTVpLtSSs=Q0G3fQgXYoVa=kHxWcWXyvS13ie73ByZBw@mail.gmail.com>
+ <20190603135939.e2mb7vkxp64qairr@pc636> <CAJKOXPdczUnsaBeXTuutZXCQ70ejDT68xnVm-e+SSdLZi-vyCA@mail.gmail.com>
+ <20190604003153.76f33dd2@canb.auug.org.au>
+In-Reply-To: <20190604003153.76f33dd2@canb.auug.org.au>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Mon, 3 Jun 2019 16:35:22 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPed=npnfk0H2WUDityHg5cPLH_zwShyRd+B2RS8h6C7SQ@mail.gmail.com>
+Message-ID: <CAJKOXPed=npnfk0H2WUDityHg5cPLH_zwShyRd+B2RS8h6C7SQ@mail.gmail.com>
+Subject: Re: [BUG BISECT] bug mm/vmalloc.c:470 (mm/vmalloc.c: get rid of one
+ single unlink_va() when merge)
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Uladzislau Rezki <urezki@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org,
+        Hillf Danton <hdanton@sina.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tejun Heo <tj@kernel.org>, Andrei Vagin <avagin@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When debug_pagealloc is enabled, we currently allocate the page_ext array to
-mark guard pages with the PAGE_EXT_DEBUG_GUARD flag. Now that we have the
-page_type field in struct page, we can use that instead, as guard pages are
-neither PageSlab nor mapped to userspace. This reduces memory overhead when
-debug_pagealloc is enabled and there are no other features requiring the
-page_ext array.
+On Mon, 3 Jun 2019 at 16:32, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi Krzysztof,
+>
+> On Mon, 3 Jun 2019 16:10:40 +0200 Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> >
+> > Indeed it looks like effect of merge conflict resolution or applying.
+> > When I look at MMOTS, it is the same as yours:
+> > http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/commit/?id=b77b8cce67f246109f9d87417a32cd38f0398f2f
+> >
+> > However in linux-next it is different.
+> >
+> > Stephen, any thoughts?
+>
+> Have you had a look at today's linux-next?  It looks correct in
+> there.  Andrew updated his patch series over the weekend.
 
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Cc: Matthew Wilcox <willy@infradead.org>
----
- .../admin-guide/kernel-parameters.txt         | 10 ++---
- include/linux/mm.h                            | 10 +----
- include/linux/page-flags.h                    |  6 +++
- include/linux/page_ext.h                      |  1 -
- mm/Kconfig.debug                              |  1 -
- mm/page_alloc.c                               | 40 +++----------------
- mm/page_ext.c                                 |  3 --
- 7 files changed, 17 insertions(+), 54 deletions(-)
+Yes, I am looking at today's next. Both the source code and the commit
+728e0fbf263e3ed359c10cb13623390564102881 have wrong "if (merged)" (put
+in wrong hunk).
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 138f6664b2e2..32003e76ba3b 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -805,12 +805,10 @@
- 			tracking down these problems.
- 
- 	debug_pagealloc=
--			[KNL] When CONFIG_DEBUG_PAGEALLOC is set, this
--			parameter enables the feature at boot time. In
--			default, it is disabled. We can avoid allocating huge
--			chunk of memory for debug pagealloc if we don't enable
--			it at boot time and the system will work mostly same
--			with the kernel built without CONFIG_DEBUG_PAGEALLOC.
-+			[KNL] When CONFIG_DEBUG_PAGEALLOC is set, this parameter
-+			enables the feature at boot time. By default, it is
-+			disabled and the system will work mostly the same as a
-+			kernel built without CONFIG_DEBUG_PAGEALLOC.
- 			on: enable the feature
- 
- 	debugpat	[X86] Enable PAT debugging
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index c71ed22769f3..2ba991e687db 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2846,8 +2846,6 @@ extern long copy_huge_page_from_user(struct page *dst_page,
- 				bool allow_pagefault);
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE || CONFIG_HUGETLBFS */
- 
--extern struct page_ext_operations debug_guardpage_ops;
--
- #ifdef CONFIG_DEBUG_PAGEALLOC
- extern unsigned int _debug_guardpage_minorder;
- DECLARE_STATIC_KEY_FALSE(_debug_guardpage_enabled);
-@@ -2864,16 +2862,10 @@ static inline bool debug_guardpage_enabled(void)
- 
- static inline bool page_is_guard(struct page *page)
- {
--	struct page_ext *page_ext;
--
- 	if (!debug_guardpage_enabled())
- 		return false;
- 
--	page_ext = lookup_page_ext(page);
--	if (unlikely(!page_ext))
--		return false;
--
--	return test_bit(PAGE_EXT_DEBUG_GUARD, &page_ext->flags);
-+	return PageGuard(page);
- }
- #else
- static inline unsigned int debug_guardpage_minorder(void) { return 0; }
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 9f8712a4b1a5..b848517da64c 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -703,6 +703,7 @@ PAGEFLAG_FALSE(DoubleMap)
- #define PG_offline	0x00000100
- #define PG_kmemcg	0x00000200
- #define PG_table	0x00000400
-+#define PG_guard	0x00000800
- 
- #define PageType(page, flag)						\
- 	((page->page_type & (PAGE_TYPE_BASE | flag)) == PAGE_TYPE_BASE)
-@@ -754,6 +755,11 @@ PAGE_TYPE_OPS(Kmemcg, kmemcg)
-  */
- PAGE_TYPE_OPS(Table, table)
- 
-+/*
-+ * Marks guardpages used with debug_pagealloc.
-+ */
-+PAGE_TYPE_OPS(Guard, guard)
-+
- extern bool is_free_buddy_page(struct page *page);
- 
- __PAGEFLAG(Isolated, isolated, PF_ANY);
-diff --git a/include/linux/page_ext.h b/include/linux/page_ext.h
-index f84f167ec04c..09592951725c 100644
---- a/include/linux/page_ext.h
-+++ b/include/linux/page_ext.h
-@@ -17,7 +17,6 @@ struct page_ext_operations {
- #ifdef CONFIG_PAGE_EXTENSION
- 
- enum page_ext_flags {
--	PAGE_EXT_DEBUG_GUARD,
- 	PAGE_EXT_OWNER,
- #if defined(CONFIG_IDLE_PAGE_TRACKING) && !defined(CONFIG_64BIT)
- 	PAGE_EXT_YOUNG,
-diff --git a/mm/Kconfig.debug b/mm/Kconfig.debug
-index a35ab6c55192..82b6a20898bd 100644
---- a/mm/Kconfig.debug
-+++ b/mm/Kconfig.debug
-@@ -12,7 +12,6 @@ config DEBUG_PAGEALLOC
- 	bool "Debug page memory allocations"
- 	depends on DEBUG_KERNEL
- 	depends on !HIBERNATION || ARCH_SUPPORTS_DEBUG_PAGEALLOC && !PPC && !SPARC
--	select PAGE_EXTENSION
- 	select PAGE_POISONING if !ARCH_SUPPORTS_DEBUG_PAGEALLOC
- 	---help---
- 	  Unmap pages from the kernel linear mapping after free_pages().
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index e6248e391358..b178f297df68 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -50,7 +50,6 @@
- #include <linux/backing-dev.h>
- #include <linux/fault-inject.h>
- #include <linux/page-isolation.h>
--#include <linux/page_ext.h>
- #include <linux/debugobjects.h>
- #include <linux/kmemleak.h>
- #include <linux/compaction.h>
-@@ -670,18 +669,6 @@ static int __init early_debug_pagealloc(char *buf)
- }
- early_param("debug_pagealloc", early_debug_pagealloc);
- 
--static bool need_debug_guardpage(void)
--{
--	/* If we don't use debug_pagealloc, we don't need guard page */
--	if (!debug_pagealloc_enabled())
--		return false;
--
--	if (!debug_guardpage_minorder())
--		return false;
--
--	return true;
--}
--
- static void init_debug_guardpage(void)
- {
- 	if (!debug_pagealloc_enabled())
-@@ -693,11 +680,6 @@ static void init_debug_guardpage(void)
- 	static_branch_enable(&_debug_guardpage_enabled);
- }
- 
--struct page_ext_operations debug_guardpage_ops = {
--	.need = need_debug_guardpage,
--	.init = init_debug_guardpage,
--};
--
- static int __init debug_guardpage_minorder_setup(char *buf)
- {
- 	unsigned long res;
-@@ -715,20 +697,13 @@ early_param("debug_guardpage_minorder", debug_guardpage_minorder_setup);
- static inline bool set_page_guard(struct zone *zone, struct page *page,
- 				unsigned int order, int migratetype)
- {
--	struct page_ext *page_ext;
--
- 	if (!debug_guardpage_enabled())
- 		return false;
- 
- 	if (order >= debug_guardpage_minorder())
- 		return false;
- 
--	page_ext = lookup_page_ext(page);
--	if (unlikely(!page_ext))
--		return false;
--
--	__set_bit(PAGE_EXT_DEBUG_GUARD, &page_ext->flags);
--
-+	__SetPageGuard(page);
- 	INIT_LIST_HEAD(&page->lru);
- 	set_page_private(page, order);
- 	/* Guard pages are not available for any usage */
-@@ -740,23 +715,16 @@ static inline bool set_page_guard(struct zone *zone, struct page *page,
- static inline void clear_page_guard(struct zone *zone, struct page *page,
- 				unsigned int order, int migratetype)
- {
--	struct page_ext *page_ext;
--
- 	if (!debug_guardpage_enabled())
- 		return;
- 
--	page_ext = lookup_page_ext(page);
--	if (unlikely(!page_ext))
--		return;
--
--	__clear_bit(PAGE_EXT_DEBUG_GUARD, &page_ext->flags);
-+	__ClearPageGuard(page);
- 
- 	set_page_private(page, 0);
- 	if (!is_migrate_isolate(migratetype))
- 		__mod_zone_freepage_state(zone, (1 << order), migratetype);
- }
- #else
--struct page_ext_operations debug_guardpage_ops;
- static inline bool set_page_guard(struct zone *zone, struct page *page,
- 			unsigned int order, int migratetype) { return false; }
- static inline void clear_page_guard(struct zone *zone, struct page *page,
-@@ -1931,6 +1899,10 @@ void __init page_alloc_init_late(void)
- 
- 	for_each_populated_zone(zone)
- 		set_zone_contiguous(zone);
-+
-+#ifdef CONFIG_DEBUG_PAGEALLOC
-+	init_debug_guardpage();
-+#endif
- }
- 
- #ifdef CONFIG_CMA
-diff --git a/mm/page_ext.c b/mm/page_ext.c
-index d8f1aca4ad43..5f5769c7db3b 100644
---- a/mm/page_ext.c
-+++ b/mm/page_ext.c
-@@ -59,9 +59,6 @@
-  */
- 
- static struct page_ext_operations *page_ext_ops[] = {
--#ifdef CONFIG_DEBUG_PAGEALLOC
--	&debug_guardpage_ops,
--#endif
- #ifdef CONFIG_PAGE_OWNER
- 	&page_owner_ops,
- #endif
--- 
-2.21.0
-
+Best regards,
+Krzysztof
