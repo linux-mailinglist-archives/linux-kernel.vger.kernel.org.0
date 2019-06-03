@@ -2,58 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9E9A33474
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 18:03:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A75B93347E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 18:04:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728906AbfFCQDB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 12:03:01 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:50980 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726720AbfFCQDB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 12:03:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=lLnVi0vjdBv3imxv284zynBchnb9I9Y9jAX/8+xha3s=; b=fuzdJxCv9LO36YHp5x6ASAWoiI
-        iNziBbInEc80Fwre75HbrhuS/gu1wtFmLgtvBJv6dPRw1xbOjGQPjNlwnVlJ93IO3ulQZRQ4nYKGa
-        AstKb8V/vM+yKwXGbPkLglgbSo1Up5Z8htHHtPV2OcAfO1mwBtfz212uGeFGTFF704fE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hXpQH-0006UX-Ct; Mon, 03 Jun 2019 18:02:57 +0200
-Date:   Mon, 3 Jun 2019 18:02:57 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
+        id S1729434AbfFCQEM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 12:04:12 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54530 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729359AbfFCQEJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 12:04:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=0ucS/kI4RoTagRVnKejFbeSo7H42KuZSv6+50wgMi6g=; b=XXsE/34kd2FVwxJwQ6n4Zf5GD
+        w6ZS9bOr9GL+ppDwKYIgCVoC4N/sDLzqjrlmGMNeciZ1rPgX6D4WFQpAPhozm3Sl3+CtIpHE/I1YH
+        YOO1j/B1zTcCdLO5d4J88N7Hhz60Tnpxg1Qe17c5/HBh0tOxjg1hZf4lK88+6jAF2kAp0=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hXpRN-0002It-Kn; Mon, 03 Jun 2019 16:04:05 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id 046D7440046; Mon,  3 Jun 2019 17:04:04 +0100 (BST)
+Date:   Mon, 3 Jun 2019 17:04:04 +0100
+From:   Mark Brown <broonie@kernel.org>
 To:     Suzuki K Poulose <suzuki.poulose@arm.com>
 Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        rafael@kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [RFC PATCH 41/57] drivers: net: phy: Use
- class_find_device_by_of_node helper
-Message-ID: <20190603160257.GL19627@lunn.ch>
+        rafael@kernel.org, linux-spi@vger.kernel.org
+Subject: Re: [RFC PATCH 08/57] drivers: spi: Use bus_find_device_by_of_node
+ helper
+Message-ID: <20190603160404.GB27065@sirena.org.uk>
 References: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
- <1559577023-558-42-git-send-email-suzuki.poulose@arm.com>
+ <1559577023-558-9-git-send-email-suzuki.poulose@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="qcHopEYAB45HaUaB"
 Content-Disposition: inline
-In-Reply-To: <1559577023-558-42-git-send-email-suzuki.poulose@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1559577023-558-9-git-send-email-suzuki.poulose@arm.com>
+X-Cookie: Been Transferred Lately?
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 03, 2019 at 04:50:07PM +0100, Suzuki K Poulose wrote:
-> Use the generic helper to find a device matching the of_node.
-> 
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Florian Fainelli <f.fainelli@gmail.com>
-> Cc: Heiner Kallweit <hkallweit1@gmail.com>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+--qcHopEYAB45HaUaB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-    Andrew
+On Mon, Jun 03, 2019 at 04:49:34PM +0100, Suzuki K Poulose wrote:
+> Switch to using the bus_find_device_by_of_node helper
+
+Acked-by: Mark Brown <broonie@kernel.org>
+
+--qcHopEYAB45HaUaB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlz1RPQACgkQJNaLcl1U
+h9BXywf+PLFx0lkRGZEfw5IZNYRqZfaVe2asdEE8TGCDbggkTn/3pGXKq5dYe4L3
+HoTFkDRqRjtLq4COXOHxRQywm55vCWRLOBbeEzpzgdtV9Ya1ZjgoUK/T9yFa96YF
+4sm3P5JyvJ0pGDbgXhTe2uy7NlK69P3nNlsYcDHMzdPxNg26Yos/P0UzLsNdu60K
+NmEpruSUpWpFLG6R8BnuPw4pVmSioBPcIpayrICjudNldt3W8TmosL8HUXQqLDgP
+slmAV5jvLoZF2mM5TjJPuXbpTbJs+V7BYuZYXGHF+JoBQCkiH0nzCujVwOs/jnJ9
+kRzXLhhCpobMcp+dg9tElwPRGsG2mQ==
+=MQwB
+-----END PGP SIGNATURE-----
+
+--qcHopEYAB45HaUaB--
