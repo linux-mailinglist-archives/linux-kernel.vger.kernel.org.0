@@ -2,28 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3F193340E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:53:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 150B6333F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:52:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729681AbfFCPxO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 11:53:14 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53986 "EHLO
+        id S1729523AbfFCPwH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 11:52:07 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53998 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729491AbfFCPwE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 11:52:04 -0400
+        id S1729486AbfFCPwG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 11:52:06 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 804261A25;
-        Mon,  3 Jun 2019 08:52:04 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F030D15AB;
+        Mon,  3 Jun 2019 08:52:05 -0700 (PDT)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 672DB3F246;
-        Mon,  3 Jun 2019 08:52:03 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BD4693F246;
+        Mon,  3 Jun 2019 08:52:04 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        suzuki.poulose@arm.com, Jiri Slaby <jslaby@suse.com>
-Subject: [RFC PATCH 43/57] drivers: tty : Use class_find_device_by_of_node helper
-Date:   Mon,  3 Jun 2019 16:50:09 +0100
-Message-Id: <1559577023-558-44-git-send-email-suzuki.poulose@arm.com>
+        suzuki.poulose@arm.com,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        linux-usb@vger.kernel.org
+Subject: [RFC PATCH 44/57] drivers: usb : Use class_find_device_by_fwnode() helper
+Date:   Mon,  3 Jun 2019 16:50:10 +0100
+Message-Id: <1559577023-558-45-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
 References: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
@@ -32,37 +34,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the generic helper to find a device matching the of_node.
+Reuse the generic helper to find a device by fwnode handle.
 
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: linux-usb@vger.kernel.org
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/tty/tty_io.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/usb/roles/class.c | 8 +-------
+ drivers/usb/typec/class.c | 8 +-------
+ 2 files changed, 2 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index 033ac7e..b078fdb 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -2950,17 +2950,11 @@ void do_SAK(struct tty_struct *tty)
+diff --git a/drivers/usb/roles/class.c b/drivers/usb/roles/class.c
+index 3dc78cb..be9b70c 100644
+--- a/drivers/usb/roles/class.c
++++ b/drivers/usb/roles/class.c
+@@ -85,11 +85,6 @@ enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw)
+ }
+ EXPORT_SYMBOL_GPL(usb_role_switch_get_role);
  
- EXPORT_SYMBOL(do_SAK);
- 
--static int dev_match_devt(struct device *dev, const void *data)
+-static int switch_fwnode_match(struct device *dev, const void *fwnode)
 -{
--	const dev_t *devt = data;
--	return dev->devt == *devt;
+-	return dev_fwnode(dev) == fwnode;
 -}
 -
- /* Must put_device() after it's unused! */
- static struct device *tty_get_device(struct tty_struct *tty)
+ static void *usb_role_switch_match(struct device_connection *con, int ep,
+ 				   void *data)
  {
- 	dev_t devt = tty_devnum(tty);
--	return class_find_device(tty_class, NULL, &devt, dev_match_devt);
-+	return class_find_device_by_devt(tty_class, NULL, devt);
+@@ -99,8 +94,7 @@ static void *usb_role_switch_match(struct device_connection *con, int ep,
+ 		if (!fwnode_property_present(con->fwnode, con->id))
+ 			return NULL;
+ 
+-		dev = class_find_device(role_class, NULL, con->fwnode,
+-					switch_fwnode_match);
++		dev = class_find_device_by_fwnode(role_class, NULL, con->fwnode);
+ 	} else {
+ 		dev = class_find_device_by_name(role_class, NULL, con->endpoint[ep]);
+ 	}
+diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
+index c11cc5f..12f9759 100644
+--- a/drivers/usb/typec/class.c
++++ b/drivers/usb/typec/class.c
+@@ -205,11 +205,6 @@ static void typec_altmode_put_partner(struct altmode *altmode)
+ 	put_device(&adev->dev);
  }
  
+-static int typec_port_fwnode_match(struct device *dev, const void *fwnode)
+-{
+-	return dev_fwnode(dev) == fwnode;
+-}
+-
+ static void *typec_port_match(struct device_connection *con, int ep, void *data)
+ {
+ 	struct device *dev;
+@@ -219,8 +214,7 @@ static void *typec_port_match(struct device_connection *con, int ep, void *data)
+ 	 * we need to return ERR_PTR(-PROBE_DEFER) when there is no device.
+ 	 */
+ 	if (con->fwnode)
+-		return class_find_device(typec_class, NULL, con->fwnode,
+-					 typec_port_fwnode_match);
++		return class_find_device_by_fwnode(typec_class, NULL, con->fwnode);
+ 
+ 	dev = class_find_device_by_name(typec_class, NULL, con->endpoint[ep]);
  
 -- 
 2.7.4
