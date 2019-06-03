@@ -2,182 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CA233310B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:30:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A645133106
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:29:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728670AbfFCNaL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 09:30:11 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43311 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726516AbfFCNaK (ORCPT
+        id S1728239AbfFCN3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 09:29:34 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:42846 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726360AbfFCN3e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 09:30:10 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x53DSxJI609720
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 3 Jun 2019 06:28:59 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x53DSxJI609720
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1559568540;
-        bh=YtIgHkHPA3A/jVFcLpcLzWmm43DeZfRqyAMLsSpPAAA=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=wr5p++n+662ItOUW2iznlhW/YmjGC8mf/DsTc2RDwSghkfpjzUnT6LjeTyq23mDDv
-         gjrSbFxuykK0IQtNuUTMLFdR1debeWWndBvrbYSi8O5KQMBodnITypGfYgeOXWNG1P
-         qbJ1oW6Hu+PJpIjKdXQvCrm6wgFydk1fsmQlHBqCW3rap2olNRgWbqtkYqlyDjzosh
-         x/EGNZXf/LpkfFrgkYgw1EWa2omNgFx7BQiNrjZiJ4W90Ft1bp6jOgkKfYOD0cg1tf
-         Xj0fufGUvh/wM27Z6VepteL0rWlbQF7Gv2fDiVD7k5s07spOyHBXuSLhB0KnazenSu
-         2zv8mjoMsMjJQ==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x53DSxBO609717;
-        Mon, 3 Jun 2019 06:28:59 -0700
-Date:   Mon, 3 Jun 2019 06:28:59 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-1f157286829c78c0bd8e495951a5c098d88e3d1a@git.kernel.org>
-Cc:     acme@kernel.org, peterz@infradead.org,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, gregkh@linuxfoundation.org, hpa@zytor.com,
-        tglx@linutronix.de, mingo@kernel.org
-Reply-To: mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com,
-          gregkh@linuxfoundation.org, namhyung@kernel.org,
-          jolsa@kernel.org, alexander.shishkin@linux.intel.com,
-          linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-          peterz@infradead.org, acme@kernel.org
-In-Reply-To: <20190512155518.21468-7-jolsa@kernel.org>
-References: <20190512155518.21468-7-jolsa@kernel.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf/x86: Use update attribute groups for caps
-Git-Commit-ID: 1f157286829c78c0bd8e495951a5c098d88e3d1a
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
+        Mon, 3 Jun 2019 09:29:34 -0400
+Received: by mail-qt1-f195.google.com with SMTP id s15so9268659qtk.9
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 06:29:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=mZev96uN8n10EvmVIXtu7wkuFnMrbFGBNKk++AfTZ1E=;
+        b=bEsneHSjj52GjgF8l8Dc2ToLi/EkgcaZmpYGfwkd8iqgakVeS0vHif1pKbYP6+gKSY
+         ci2/zAAk6rqRWnZJuMlhMXvbWcLTrcC7HNxk4gahYTMl8/+Ym9xGS8ERPJVv0goMsep7
+         iyu0h8/ch4w8JwxB1YZWIfsPb9mV5CG8m0uv0VmkAxyFw64bIxgYGyzcrjWvtCveRPPY
+         zlmWzEb9vQmOo5A/Oc+w5h4vTIPZdKtp+/ZsSkCCTsGPAa82mmsg3MtDEsfS65YDOHcS
+         IRxwJvUDOsGZ9hXQZTwk88dYyoVW+X1wlYM9F5F5nvaD+F5VS4dqr1fzHgdVMaizSwO1
+         BG+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=mZev96uN8n10EvmVIXtu7wkuFnMrbFGBNKk++AfTZ1E=;
+        b=Ty6kMPrWOaqMb8JNEZ5xqWQmiH16FaD3yeqbEemCuW+x8meKutVCXV9PWV2agI63rb
+         tzz8XyrizkccZ8mRDnlvyUhvz9yf9Gb1tU/i8yhql6CiJhnbT5kmnPuboRljuFA52bhO
+         U5bduF0qOhShGjYgF3hNX4a3eor4lgZWR20sK8YhNqSJWtFIVzqO4Uaxl/67YRk0W1XM
+         8qhk/j1TypbhHTjg+xrDDbufYefSdcNKOCMTZLInGcUr9hZWCz/xBj7b7XR6E7HNoo7V
+         qlHeHfGN6IcUMde/BjNHR0OtfmJlsEPc5ZsP2W9AhH2VbYtytIW1WrzSdzAulml24PCI
+         vYow==
+X-Gm-Message-State: APjAAAUKGHTVsIMhfD11LWXo4HUul1FxpsvXpSSpb0v68jCjqv9HUF9R
+        AFKtTUm628lcQz3L5OX37FCgSQ==
+X-Google-Smtp-Source: APXvYqye0Wu5YYJf2p5hR3aP5of+NBIqggqx412TOzc22Tu4TSfg9fOF7G4PVGU5gtTBViT3vCctxQ==
+X-Received: by 2002:a0c:bf4a:: with SMTP id b10mr21132334qvj.120.1559568572920;
+        Mon, 03 Jun 2019 06:29:32 -0700 (PDT)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id y29sm9931599qkj.8.2019.06.03.06.29.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Jun 2019 06:29:32 -0700 (PDT)
+Message-ID: <1559568571.6132.42.camel@lca.pw>
+Subject: Re: [PATCH] iommu: replace single-char identifiers in macros
+From:   Qian Cai <cai@lca.pw>
+To:     Robin Murphy <robin.murphy@arm.com>, jroedel@suse.de
+Cc:     akpm@linux-foundation.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 03 Jun 2019 09:29:31 -0400
+In-Reply-To: <fe5e8da4-38d2-c663-c2e2-70e6d4f7640f@arm.com>
+References: <1559566783-13627-1-git-send-email-cai@lca.pw>
+         <fe5e8da4-38d2-c663-c2e2-70e6d4f7640f@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-2.4 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  1f157286829c78c0bd8e495951a5c098d88e3d1a
-Gitweb:     https://git.kernel.org/tip/1f157286829c78c0bd8e495951a5c098d88e3d1a
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Sun, 12 May 2019 17:55:15 +0200
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 3 Jun 2019 11:58:24 +0200
+On Mon, 2019-06-03 at 14:07 +0100, Robin Murphy wrote:
+> On 03/06/2019 13:59, Qian Cai wrote:
+> > There are a few macros in IOMMU have single-char identifiers make the
+> > code hard to read and debug. Replace them with meaningful names.
+> > 
+> > Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+> > Signed-off-by: Qian Cai <cai@lca.pw>
+> > ---
+> >   include/linux/dmar.h | 14 ++++++++------
+> >   1 file changed, 8 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/include/linux/dmar.h b/include/linux/dmar.h
+> > index f8af1d770520..eb634912f475 100644
+> > --- a/include/linux/dmar.h
+> > +++ b/include/linux/dmar.h
+> > @@ -104,12 +104,14 @@ static inline bool dmar_rcu_check(void)
+> >   
+> >   #define	dmar_rcu_dereference(p)	rcu_dereference_check((p),
+> > dmar_rcu_check())
+> >   
+> > -#define	for_each_dev_scope(a, c, p, d)	\
+> > -	for ((p) = 0; ((d) = (p) < (c) ? dmar_rcu_dereference((a)[(p)].dev)
+> > : \
+> > -			NULL, (p) < (c)); (p)++)
+> > -
+> > -#define	for_each_active_dev_scope(a, c, p, d)	\
+> > -	for_each_dev_scope((a), (c), (p), (d))	if (!(d)) { continue;
+> > } else
+> > +#define for_each_dev_scope(devs, cnt, i, tmp)				
+> > \
+> > +	for ((i) = 0; ((tmp) = (i) < (cnt) ?				
+> > \
+> 
+> Given that "tmp" actually appears to be some sort of device cursor, I'm 
+> not sure that that naming really achieves the stated goal of clarity :/
 
-perf/x86: Use update attribute groups for caps
-
-Using the new pmu::update_attrs attribute group for
-"caps" directory.
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190512155518.21468-7-jolsa@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/events/core.c       |  8 --------
- arch/x86/events/intel/core.c | 25 ++++++++++++++++++++-----
- arch/x86/events/perf_event.h |  1 -
- 3 files changed, 20 insertions(+), 14 deletions(-)
-
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index b831091d4c10..dd0996ba75c3 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -1821,14 +1821,6 @@ static int __init init_hw_perf_events(void)
- 
- 	x86_pmu_format_group.attrs = x86_pmu.format_attrs;
- 
--	if (x86_pmu.caps_attrs) {
--		struct attribute **tmp;
--
--		tmp = merge_attr(x86_pmu_caps_group.attrs, x86_pmu.caps_attrs);
--		if (!WARN_ON(!tmp))
--			x86_pmu_caps_group.attrs = tmp;
--	}
--
- 	if (!x86_pmu.events_sysfs_show)
- 		x86_pmu_events_group.attrs = &empty_attrs;
- 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 600e87055ba9..d4002e71a0b8 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -4411,6 +4411,12 @@ pebs_is_visible(struct kobject *kobj, struct attribute *attr, int i)
- 	return x86_pmu.pebs ? attr->mode : 0;
- }
- 
-+static umode_t
-+lbr_is_visible(struct kobject *kobj, struct attribute *attr, int i)
-+{
-+	return x86_pmu.lbr_nr ? attr->mode : 0;
-+}
-+
- static struct attribute_group group_events_td  = {
- 	.name = "events",
- };
-@@ -4425,10 +4431,23 @@ static struct attribute_group group_events_tsx = {
- 	.is_visible = tsx_is_visible,
- };
- 
-+static struct attribute_group group_caps_gen = {
-+	.name  = "caps",
-+	.attrs = intel_pmu_caps_attrs,
-+};
-+
-+static struct attribute_group group_caps_lbr = {
-+	.name       = "caps",
-+	.attrs	    = lbr_attrs,
-+	.is_visible = lbr_is_visible,
-+};
-+
- static const struct attribute_group *attr_update[] = {
- 	&group_events_td,
- 	&group_events_mem,
- 	&group_events_tsx,
-+	&group_caps_gen,
-+	&group_caps_lbr,
- 	NULL,
- };
- 
-@@ -5055,12 +5074,8 @@ __init int intel_pmu_init(void)
- 			x86_pmu.lbr_nr = 0;
- 	}
- 
--	x86_pmu.caps_attrs = intel_pmu_caps_attrs;
--
--	if (x86_pmu.lbr_nr) {
--		x86_pmu.caps_attrs = merge_attr(x86_pmu.caps_attrs, lbr_attrs);
-+	if (x86_pmu.lbr_nr)
- 		pr_cont("%d-deep LBR, ", x86_pmu.lbr_nr);
--	}
- 
- 	/*
- 	 * Access extra MSR may cause #GP under certain circumstances.
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index 629b313d8b8b..1da9b6f0b279 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -631,7 +631,6 @@ struct x86_pmu {
- 	int		attr_rdpmc_broken;
- 	int		attr_rdpmc;
- 	struct attribute **format_attrs;
--	struct attribute **caps_attrs;
- 
- 	ssize_t		(*events_sysfs_show)(char *page, u64 config);
- 	const struct attribute_group **attr_update;
+"tmp" is used in the callers everywhere though, although I suppose something
+like "tmp_dev" can be used if you prefer.
