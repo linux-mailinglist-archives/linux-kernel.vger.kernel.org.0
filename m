@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5812332BFF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:14:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72E6532C4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:17:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728871AbfFCJNi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 05:13:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33760 "EHLO mail.kernel.org"
+        id S1728668AbfFCJMj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 05:12:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60148 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728841AbfFCJN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 05:13:28 -0400
+        id S1728202AbfFCJMh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 05:12:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 751A0276E6;
-        Mon,  3 Jun 2019 09:13:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09FE426F51;
+        Mon,  3 Jun 2019 09:12:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559553208;
-        bh=SR5S+zg4vfPJpt4EjZu8DEszS+aX+A9Nblv/L3pQI14=;
+        s=default; t=1559553156;
+        bh=famVA7ob8TpRxTb4UrHWZEGJtnZWdrQQBvRwDY8CjhA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wTQW0mWclYvlvoFgxLX9dEMLGB/+3t8G+XW48fAu6sT4o2rojhbe4R2x8cBhr9Nne
-         yYhgzxHBp7II5WoP/fkTWlrshux5Jy0LSKZheiVQ9dngI+cIo1B21RviG1ZPirgZGQ
-         jxdeA6qquRn7j2B0WXTmVOrYDqs5QT8D42Fbl1xQ=
+        b=pbG5zpvtN4ZZ+r8si55iV7A2IXSlxEn7E6PWgkC+ZKGhY5Xqx/hNq9DQmIwXKI9fX
+         JPiRRvr4icT0uZrAGHuhNrwM2qSqpCbwtx0xHmVi2uEZ326wOE5b5pNift6vgxOLBR
+         V2/6lrBFZ8WP2db/AHyM0BTwXUemDzG3rHvidA7Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
-        Daniel Jurgens <danielj@mellanox.com>,
-        Mark Bloch <markb@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 5.1 23/40] net/mlx5: Allocate root ns memory using kzalloc to match kfree
-Date:   Mon,  3 Jun 2019 11:09:16 +0200
-Message-Id: <20190603090524.039817876@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.0 29/36] net/tls: fix state removal with feature flags off
+Date:   Mon,  3 Jun 2019 11:09:17 +0200
+Message-Id: <20190603090522.925911024@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190603090522.617635820@linuxfoundation.org>
-References: <20190603090522.617635820@linuxfoundation.org>
+In-Reply-To: <20190603090520.998342694@linuxfoundation.org>
+References: <20190603090520.998342694@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,38 +45,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Parav Pandit <parav@mellanox.com>
+From: Jakub Kicinski <jakub.kicinski@netronome.com>
 
-[ Upstream commit 25fa506b70cadb580c1e9cbd836d6417276d4bcd ]
+[ Upstream commit 3686637e507b48525fcea6fb91e1988bdbc14530 ]
 
-root ns is yet another fs core node which is freed using kfree() by
-tree_put_node().
-Rest of the other fs core objects are also allocated using kmalloc
-variants.
+TLS offload drivers shouldn't (and currently don't) block
+the TLS offload feature changes based on whether there are
+active offloaded connections or not.
 
-However, root ns memory is allocated using kvzalloc().
-Hence allocate root ns memory using kzalloc().
+This seems to be a good idea, because we want the admin to
+be able to disable the TLS offload at any time, and there
+is no clean way of disabling it for active connections
+(TX side is quite problematic).  So if features are cleared
+existing connections will stay offloaded until they close,
+and new connections will not attempt offload to a given
+device.
 
-Fixes: 2530236303d9e ("net/mlx5_core: Flow steering tree initialization")
-Signed-off-by: Parav Pandit <parav@mellanox.com>
-Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
-Reviewed-by: Mark Bloch <markb@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+However, the offload state removal handling is currently
+broken if feature flags get cleared while there are
+active TLS offloads.
+
+RX side will completely bail from cleanup, even on normal
+remove path, leaving device state dangling, potentially
+causing issues when the 5-tuple is reused.  It will also
+fail to release the netdev reference.
+
+Remove the RX-side warning message, in next release cycle
+it should be printed when features are disabled, rather
+than when connection dies, but for that we need a more
+efficient method of finding connection of a given netdev
+(a'la BPF offload code).
+
+Fixes: 4799ac81e52a ("tls: Add rx inline crypto offload")
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Reviewed-by: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/fs_core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/tls/tls_device.c |    6 ------
+ 1 file changed, 6 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
-@@ -2286,7 +2286,7 @@ static struct mlx5_flow_root_namespace
- 		cmds = mlx5_fs_cmd_get_default_ipsec_fpga_cmds(table_type);
+--- a/net/tls/tls_device.c
++++ b/net/tls/tls_device.c
+@@ -923,12 +923,6 @@ void tls_device_offload_cleanup_rx(struc
+ 	if (!netdev)
+ 		goto out;
  
- 	/* Create the root namespace */
--	root_ns = kvzalloc(sizeof(*root_ns), GFP_KERNEL);
-+	root_ns = kzalloc(sizeof(*root_ns), GFP_KERNEL);
- 	if (!root_ns)
- 		return NULL;
+-	if (!(netdev->features & NETIF_F_HW_TLS_RX)) {
+-		pr_err_ratelimited("%s: device is missing NETIF_F_HW_TLS_RX cap\n",
+-				   __func__);
+-		goto out;
+-	}
+-
+ 	netdev->tlsdev_ops->tls_dev_del(netdev, tls_ctx,
+ 					TLS_OFFLOAD_CTX_DIR_RX);
  
 
 
