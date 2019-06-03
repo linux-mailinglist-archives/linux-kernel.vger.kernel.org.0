@@ -2,82 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5EFA331F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 16:20:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCFA4331FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 16:21:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729012AbfFCOUd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 10:20:33 -0400
-Received: from ozlabs.org ([203.11.71.1]:53485 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728883AbfFCOUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 10:20:33 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Hcf52SY6z9s1c;
-        Tue,  4 Jun 2019 00:20:29 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1559571630;
-        bh=Q4B8FpfsK6DpZ7z9YCUHwiC5RVI5aIkPJwaUh8DL63w=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=sznVNVN0JD/wPHa8k7oqf6G/YwvOXs4ukGTnK5khxI8ufSGFC9A/3nPKGq/x8XZ5x
-         EgtoXse9P1DCAIpa/AKIZNYS4BvpVt2Mg6dAlhGT3aZ27XD+6atMQ2hw4L2FGxMMpf
-         I+1N/C0Cm8mAl+v3WWal/s6XyZ/DlqMrE1gD3l70f5cmAL96rNaf+pYkHpvsPGJhkz
-         9+Ai2Tjukd47or6FgeZ3DPCKuPEeAFpiSSc88eSYE99jdk5pIypU2j6NMc9pPghBHr
-         PYxjqlwR1YL1kukEN3IHLyyYNqVtBbwr551uKwt41bm5zrcfZDHD216bktTX9efVJU
-         6/B6K6h+q8fMw==
-Date:   Tue, 4 Jun 2019 00:20:28 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Gregory CLEMENT <gregory.clement@bootlin.com>
-Cc:     Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-        ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: unable to fetch the mvebu tree
-Message-ID: <20190604002028.57b0431c@canb.auug.org.au>
-In-Reply-To: <87y32ikbbs.fsf@FE-laptop>
-References: <20190603082346.7bd1d7a4@canb.auug.org.au>
-        <87y32ikbbs.fsf@FE-laptop>
+        id S1729034AbfFCOVK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 10:21:10 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:54005 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727429AbfFCOVJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 10:21:09 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hXnpe-0002aE-GG; Mon, 03 Jun 2019 14:21:02 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Jyri Sarha <jsarha@ti.com>, Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/bridge: sii902x: fix comparision of u32 with less than zero
+Date:   Mon,  3 Jun 2019 15:21:02 +0100
+Message-Id: <20190603142102.27191-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/IjKKVR6x0E8Lm5amJ.5B/P="; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/IjKKVR6x0E8Lm5amJ.5B/P=
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Colin Ian King <colin.king@canonical.com>
 
-Hi Gregory,
+The less than check for the variable num_lanes is always going to be
+false because the variable is a u32.  Fix this by making num_lanes an
+int and also make loop index i an int too.
 
-On Mon, 03 Jun 2019 16:11:51 +0200 Gregory CLEMENT <gregory.clement@bootlin=
-.com> wrote:
->
-> But now it should be available.
+Addresses-Coverity: ("Unsigned compared against 0")
+Fixes: ff5781634c41 ("drm/bridge: sii902x: Implement HDMI audio support")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/bridge/sii902x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Looks good now, thanks.
+diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
+index d6f98d388ac2..21a947603c88 100644
+--- a/drivers/gpu/drm/bridge/sii902x.c
++++ b/drivers/gpu/drm/bridge/sii902x.c
+@@ -719,7 +719,7 @@ static int sii902x_audio_codec_init(struct sii902x *sii902x,
+ 		.max_i2s_channels = 0,
+ 	};
+ 	u8 lanes[4];
+-	u32 num_lanes, i;
++	int num_lanes, i;
+ 
+ 	if (!of_property_read_bool(dev->of_node, "#sound-dai-cells")) {
+ 		dev_dbg(dev, "%s: No \"#sound-dai-cells\", no audio\n",
+-- 
+2.20.1
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/IjKKVR6x0E8Lm5amJ.5B/P=
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz1LKwACgkQAVBC80lX
-0GyKxwgAg/pkt9W9v4z32zFUGoB0nFf+57pHKDyXkBltI7xReRxDv9e6FLU8pBlH
-KwelCWSDEagINzPjCQQ23FhJb7YfPNMlewG5epuKE35nFV47/5PJmJNNwkewg9gY
-LhL5tUGRdWD52YLGdsFO4f1ikNx/9Yau1wN4sIRPXSqJvNFSCriUjPt57qZ/bhpi
-pt2ssbUyHD1ABC3WWEj5OxgpSSBtK/TAhTM14ZAx164m+GlnaLr2Xwz7NqSsjcB4
-djIBVVRkmn6skLZiSEut3I9zezAZbVLqYxvIaz03RfZQybff0xBQ5bkybHu3r1Q9
-qBPRuGugzYBEyB12RZBvL3FAt6vdFg==
-=t3c6
------END PGP SIGNATURE-----
-
---Sig_/IjKKVR6x0E8Lm5amJ.5B/P=--
