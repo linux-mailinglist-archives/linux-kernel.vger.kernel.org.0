@@ -2,80 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01E0232A4C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 10:03:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0025F32A5A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 10:04:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727576AbfFCIDR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 04:03:17 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:39226 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725856AbfFCIDR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 04:03:17 -0400
-Received: by mail-lf1-f66.google.com with SMTP id p24so6360746lfo.6;
-        Mon, 03 Jun 2019 01:03:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8zHct7gI+WfUh/TYxaDLq5h6uP1yLHgrI/pUFB8t+sU=;
-        b=WydoQGQtheDUkzNlnfXg6bIcCAeCnYe/k3ENUzLjiyjbnDefF7SSVbF6Ssc4iEA4i3
-         CDPtNLV2pUMkPkIOLm45G5+LYnhGQzYve3ucee+gOoxzzOm2CIROorTTtRn0ovjYLac3
-         dQXqjnXfbJCUXXD8q4kZJb/ls0Pu5TXHHdLjHOpIOBMekWZM+fIefBrgp/K2NiAkN/2o
-         cICWMI1OrVySVDE7gkSqNt2grQ64y4/tQFbHbwHXe/zoSND20DNuNRGgWl1/Et9i6c5X
-         gvyyiwFrbUt9ptUGXO9Rt4+nnzyl89XaQt7BPUQWAf1o6NEkX2+CAgVHlAIGwmWTKofj
-         WMlQ==
-X-Gm-Message-State: APjAAAXxd/2o0UFcZOg871FwbKMp+RzF+t64VZIr+C9GsdYzyDn+nhF4
-        g+bWM6WKaqywQnc6CP3Igcdjo1l7thc616GhKu4=
-X-Google-Smtp-Source: APXvYqyVB06zohxUXif7x65zmAadYby0VPFg9MxWvFJ0TDCVPewZTLK9b7hBeBYQLOtfa00Znr8eMwxhl8PVi66ukiM=
-X-Received: by 2002:ac2:5a04:: with SMTP id q4mr12927243lfn.90.1559548994812;
- Mon, 03 Jun 2019 01:03:14 -0700 (PDT)
+        id S1727610AbfFCIEO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 04:04:14 -0400
+Received: from mail-eopbgr80094.outbound.protection.outlook.com ([40.107.8.94]:20974
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725856AbfFCIEN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 04:04:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prevas.se;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=W0EI1mCB1KYrocYqIE5bdD3myKTeyCjqok9MCtjZwkw=;
+ b=KjNPLVHkTD9/7sUsvgfiWkS97vzc040gDvRfuqftPp/2jpPr56baoTD7ZrqGlh0FbNwvGr4nmlcucapTtHaJvGBhPjP6/DnaiNW4gZVTShf9qm7iIHYe1G8prccrEJqHTmhgAsMOZH2n59nmfmt5wG4DgiabJCRcw+MtiwKgD1o=
+Received: from VI1PR10MB2639.EURPRD10.PROD.OUTLOOK.COM (20.178.126.80) by
+ VI1PR10MB2783.EURPRD10.PROD.OUTLOOK.COM (20.178.204.85) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1943.22; Mon, 3 Jun 2019 08:04:09 +0000
+Received: from VI1PR10MB2639.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8844:426d:816b:f5d5]) by VI1PR10MB2639.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8844:426d:816b:f5d5%6]) with mapi id 15.20.1943.018; Mon, 3 Jun 2019
+ 08:04:09 +0000
+From:   Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+To:     Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+CC:     Rasmus Villemoes <Rasmus.Villemoes@prevas.se>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH] net: dsa: mv88e6xxx: make mv88e6xxx_g1_stats_wait static
+Thread-Topic: [PATCH] net: dsa: mv88e6xxx: make mv88e6xxx_g1_stats_wait static
+Thread-Index: AQHVGeLstGN9HejI90yCwDmeLZ5eTg==
+Date:   Mon, 3 Jun 2019 08:04:09 +0000
+Message-ID: <20190603080353.18957-1-rasmus.villemoes@prevas.dk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HE1P190CA0020.EURP190.PROD.OUTLOOK.COM (2603:10a6:3:bc::30)
+ To VI1PR10MB2639.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:803:e1::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Rasmus.Villemoes@prevas.se; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.20.1
+x-originating-ip: [81.216.59.226]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f2b0d3a3-5e12-4c5b-ea7a-08d6e7fa0ecb
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:VI1PR10MB2783;
+x-ms-traffictypediagnostic: VI1PR10MB2783:
+x-microsoft-antispam-prvs: <VI1PR10MB2783CB85B72F2B85808D74EA8A140@VI1PR10MB2783.EURPRD10.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:449;
+x-forefront-prvs: 0057EE387C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(396003)(366004)(39850400004)(346002)(376002)(189003)(199004)(52116002)(8936002)(99286004)(8976002)(50226002)(6116002)(72206003)(3846002)(256004)(478600001)(386003)(1076003)(6506007)(25786009)(102836004)(4326008)(81156014)(81166006)(5660300002)(8676002)(6512007)(53936002)(2906002)(74482002)(14454004)(68736007)(36756003)(44832011)(66476007)(54906003)(486006)(476003)(6436002)(73956011)(66946007)(66446008)(64756008)(66556008)(110136005)(66066001)(316002)(71190400001)(71200400001)(305945005)(7736002)(26005)(2616005)(6486002)(42882007)(186003);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR10MB2783;H:VI1PR10MB2639.EURPRD10.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: prevas.se does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: hin0lT+nBTC6DVNPuiXpQT09v6zTXMS+bt5H6DsmVeDkHwc8GCtWalHQ03Nlw1RBejZ2//gFtcoJpLgfB3JiL4b8u8XdYxz7H7eshS3t+Ze3dnPAaqVZEi6trJDHuo8I80hD3qYmv1chqDv91rOEtF9+ftTcKtJJNlWUxIrCOQYki71DqJJBIK5d81HXKBgGNIobj9IiDxGWPhEh8RgcZz2B+lA1LZ+lw6k0Kr4h7A0qurauwt/NY6YEALCmB1MS6IsMFIty5JAbl7pHZbm/g1eynm9RLVv0X6IaTPOufkuehNuVde5gNSyZsh5+7vlTCLXEmetS+zqEP8qPGuWFG+LEx9JugwZHmLXQ5KUEfzlV8kUQJycpPZpT1PtVgIiynm1pOW2uoHvoPp1uP0wjsZnZX5yrflXT6LDem8qb5uE=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <1559044467-2639-1-git-send-email-gareth.williams.jx@renesas.com> <1559044467-2639-2-git-send-email-gareth.williams.jx@renesas.com>
-In-Reply-To: <1559044467-2639-2-git-send-email-gareth.williams.jx@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 3 Jun 2019 10:03:02 +0200
-Message-ID: <CAMuHMdXM7j_tCWR-9FZc8DOARmdXqfd88+a=TYHwKZEmMuHCrg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] dt-bindings: clock: renesas,r9a06g032-sysctrl:
- Document power Domains
-To:     Gareth Williams <gareth.williams.jx@renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: prevas.dk
+X-MS-Exchange-CrossTenant-Network-Message-Id: f2b0d3a3-5e12-4c5b-ea7a-08d6e7fa0ecb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jun 2019 08:04:09.8417
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d350cf71-778d-4780-88f5-071a4cb1ed61
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Rasmus.Villemoes@prevas.dk
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB2783
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 28, 2019 at 1:55 PM Gareth Williams
-<gareth.williams.jx@renesas.com> wrote:
-> The driver is gaining power domain support, so add the new property
-> to the DT binding and update the examples.
->
-> Signed-off-by: Gareth Williams <gareth.williams.jx@renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v4:
->  - Added missing HCLK to UART0 example to show the clock added
->    to the driver.
->  - Added Geert's Reviewed-by line.
-
-Thanks for the update, will queue in clock-renesas-for-v5.3.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+bXY4OGU2eHh4X2cxX3N0YXRzX3dhaXQgaGFzIG5vIHVzZXJzIG91dHNpZGUgZ2xvYmFsMS5jLCBz
+byBtYWtlIGl0DQpzdGF0aWMuDQoNClNpZ25lZC1vZmYtYnk6IFJhc211cyBWaWxsZW1vZXMgPHJh
+c211cy52aWxsZW1vZXNAcHJldmFzLmRrPg0KLS0tDQogZHJpdmVycy9uZXQvZHNhL212ODhlNnh4
+eC9nbG9iYWwxLmMgfCAyICstDQogZHJpdmVycy9uZXQvZHNhL212ODhlNnh4eC9nbG9iYWwxLmgg
+fCAxIC0NCiAyIGZpbGVzIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAyIGRlbGV0aW9ucygtKQ0K
+DQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvZHNhL212ODhlNnh4eC9nbG9iYWwxLmMgYi9kcml2
+ZXJzL25ldC9kc2EvbXY4OGU2eHh4L2dsb2JhbDEuYw0KaW5kZXggYjVjZWZmMjk0NmZlLi43NzBj
+MDM0MDYwMzMgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL25ldC9kc2EvbXY4OGU2eHh4L2dsb2JhbDEu
+Yw0KKysrIGIvZHJpdmVycy9uZXQvZHNhL212ODhlNnh4eC9nbG9iYWwxLmMNCkBAIC00NjUsNyAr
+NDY1LDcgQEAgaW50IG12ODhlNnh4eF9nMV9zZXRfZGV2aWNlX251bWJlcihzdHJ1Y3QgbXY4OGU2
+eHh4X2NoaXAgKmNoaXAsIGludCBpbmRleCkNCiANCiAvKiBPZmZzZXQgMHgxZDogU3RhdGlzdGlj
+cyBPcGVyYXRpb24gMiAqLw0KIA0KLWludCBtdjg4ZTZ4eHhfZzFfc3RhdHNfd2FpdChzdHJ1Y3Qg
+bXY4OGU2eHh4X2NoaXAgKmNoaXApDQorc3RhdGljIGludCBtdjg4ZTZ4eHhfZzFfc3RhdHNfd2Fp
+dChzdHJ1Y3QgbXY4OGU2eHh4X2NoaXAgKmNoaXApDQogew0KIAlyZXR1cm4gbXY4OGU2eHh4X2cx
+X3dhaXQoY2hpcCwgTVY4OEU2WFhYX0cxX1NUQVRTX09QLA0KIAkJCQkgTVY4OEU2WFhYX0cxX1NU
+QVRTX09QX0JVU1kpOw0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2RzYS9tdjg4ZTZ4eHgvZ2xv
+YmFsMS5oIGIvZHJpdmVycy9uZXQvZHNhL212ODhlNnh4eC9nbG9iYWwxLmgNCmluZGV4IDJmMTk1
+YTBiZDg5MS4uYmI5MmExMzBjYmVmIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9uZXQvZHNhL212ODhl
+Nnh4eC9nbG9iYWwxLmgNCisrKyBiL2RyaXZlcnMvbmV0L2RzYS9tdjg4ZTZ4eHgvZ2xvYmFsMS5o
+DQpAQCAtMjYzLDcgKzI2Myw2IEBAIGludCBtdjg4ZTYzNTJfZzFfcmVzZXQoc3RydWN0IG12ODhl
+Nnh4eF9jaGlwICpjaGlwKTsNCiBpbnQgbXY4OGU2MTg1X2cxX3BwdV9lbmFibGUoc3RydWN0IG12
+ODhlNnh4eF9jaGlwICpjaGlwKTsNCiBpbnQgbXY4OGU2MTg1X2cxX3BwdV9kaXNhYmxlKHN0cnVj
+dCBtdjg4ZTZ4eHhfY2hpcCAqY2hpcCk7DQogDQotaW50IG12ODhlNnh4eF9nMV9zdGF0c193YWl0
+KHN0cnVjdCBtdjg4ZTZ4eHhfY2hpcCAqY2hpcCk7DQogaW50IG12ODhlNnh4eF9nMV9zdGF0c19z
+bmFwc2hvdChzdHJ1Y3QgbXY4OGU2eHh4X2NoaXAgKmNoaXAsIGludCBwb3J0KTsNCiBpbnQgbXY4
+OGU2MzIwX2cxX3N0YXRzX3NuYXBzaG90KHN0cnVjdCBtdjg4ZTZ4eHhfY2hpcCAqY2hpcCwgaW50
+IHBvcnQpOw0KIGludCBtdjg4ZTYzOTBfZzFfc3RhdHNfc25hcHNob3Qoc3RydWN0IG12ODhlNnh4
+eF9jaGlwICpjaGlwLCBpbnQgcG9ydCk7DQotLSANCjIuMjAuMQ0KDQo=
