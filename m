@@ -2,196 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1066D3308E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:05:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B1183308B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:05:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728251AbfFCNFS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 09:05:18 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:59077 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728223AbfFCNFR (ORCPT
+        id S1728216AbfFCNFE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 09:05:04 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44936 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726336AbfFCNFE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 09:05:17 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x53D4wYC604148
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 3 Jun 2019 06:04:58 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x53D4wYC604148
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1559567099;
-        bh=D6DpzBwzh/Z+6H+FWVWChRq72LuKqmNRa06S+03s8vE=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=Ny0Nx61a95BmITLLYKedhcPUC6y2qXRQ6+pAbjMMJ2/Fsb12wCoR1tme6Im/UcVdf
-         xpb7nKqjGmflTgup6T8tFOoKW16HwXnA6nrG/g/WATV+0k0GLsvbSIPea9/BfF+n7g
-         JWn4Z3dLnV9AYrjqYosRpFFptIjqvAh0UYky/uUc0K4k6gt9X3E5nSh2nxCzjgxaTl
-         eTtkGF+9dm8hBnm1rsBbW7/ajcezUj0jMH3oTTcuWpSycPlsQBdtxsFWu4BNSh22K7
-         C90ZS6wJJVekI/F84OmX21dSncuwz03jLRVPlbFe6vmT+LpN/Ry6vdrRvbJ8vhCMPk
-         +2GjFb3Z4C9LA==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x53D4vHU604145;
-        Mon, 3 Jun 2019 06:04:57 -0700
-Date:   Mon, 3 Jun 2019 06:04:57 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Dietmar Eggemann <tipbot@zytor.com>
-Message-ID: <tip-0e1fef63d92d61ed561e504c3a078a827a0f9bfe@git.kernel.org>
-Cc:     morten.rasmussen@arm.com, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, quentin.perret@arm.com,
-        riel@surriel.com, mingo@kernel.org, dietmar.eggemann@arm.com,
-        tglx@linutronix.de, hpa@zytor.com, peterz@infradead.org,
-        valentin.schneider@arm.com, fweisbec@gmail.com,
-        patrick.bellasi@arm.com, vincent.guittot@linaro.org
-Reply-To: valentin.schneider@arm.com, fweisbec@gmail.com,
-          patrick.bellasi@arm.com, vincent.guittot@linaro.org,
-          tglx@linutronix.de, hpa@zytor.com, peterz@infradead.org,
-          quentin.perret@arm.com, riel@surriel.com, mingo@kernel.org,
-          dietmar.eggemann@arm.com, torvalds@linux-foundation.org,
-          morten.rasmussen@arm.com, linux-kernel@vger.kernel.org
-In-Reply-To: <20190527062116.11512-6-dietmar.eggemann@arm.com>
-References: <20190527062116.11512-6-dietmar.eggemann@arm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/core: Remove sd->*_idx
-Git-Commit-ID: 0e1fef63d92d61ed561e504c3a078a827a0f9bfe
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 3 Jun 2019 09:05:04 -0400
+Received: by mail-wr1-f68.google.com with SMTP id w13so11956014wru.11
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 06:05:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=xFD+U0dBeslY3ue8+myEMtSBz10lKWAKa0J7f56lYrY=;
+        b=fTu3itVzP4DOlQsORHeIUunGjTuGF9qM5FvxRmAuVC+7KkIEJeJjDPevNLQPFqgDi8
+         vGza/hRM1ZbiS02iDMOeziKt/5CdIB4fU9WxYFyFVxqolWV8hwrTq7x7dx9YeopQSyy0
+         xRvpMnrppafOasWC/Z4/fl7qLGxHYvEo9i3Zy1kIw4UWLZi7aaFB6My/ENZq4Io8cfHR
+         by1+9u1zyIvj+FCRDugI5nJddJqWRn+9o/MVhYOgoK0llWbg3H3B8Kj3L1CHH+rjoh9t
+         EFLgN/tAzvwZNG7OU1hlTuQF8lN02h8OBQvPT10mN448N8dc8n1GRrobMtS9B9FVATND
+         VeOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=xFD+U0dBeslY3ue8+myEMtSBz10lKWAKa0J7f56lYrY=;
+        b=IX+YgK9xoMmlnolY9942do87whggUQZWlBrHZljIECYFdi+Ieksmjo0IqwGoUvKkbQ
+         AVgkY2Cvenp5cOulvWu7zDNMMb3G5vmnAKJwjXYihRAnH0B6yV55k+pBdI7PQaUS/OlI
+         9HQWKedFK10A/AcDwp2j8Sk9CobBXHXgvMM+8HvwpEbwbKQKZD9N6C3JjVLhgtjIPghF
+         kVBA0QhhmbAl3zx98ucxOKrYcJ3AC7gbiTtT3Rp9suNC1TNIBOyhGtbUz0DXppsqaGdX
+         IUtpf8L4tpLvbGdQo2EvWspK3z+vluS23JT0WTvDw9YH/rATWYMIOpXSKbIUIRYR40gY
+         iKLA==
+X-Gm-Message-State: APjAAAWkTvUkPhTR0+UWL+m6e6mEuJe3dmn2txdoa1/S6ByYZ/L7DF6g
+        1l4QWOMdCvkGC85tbDflhIXT6D5URkc=
+X-Google-Smtp-Source: APXvYqwF0AEloQRGLwHGwVmPbmIhrNzuTM5ARF0vbel1R5wsQC5aybtZnky7fAgs5ut5WwysAaAGlA==
+X-Received: by 2002:adf:afd5:: with SMTP id y21mr15978606wrd.12.1559567102834;
+        Mon, 03 Jun 2019 06:05:02 -0700 (PDT)
+Received: from dell ([2.27.167.43])
+        by smtp.gmail.com with ESMTPSA id 67sm26500429wmd.38.2019.06.03.06.05.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Jun 2019 06:05:02 -0700 (PDT)
+Date:   Mon, 3 Jun 2019 14:05:00 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] mfd: intel-lpss: Keep device tables sorted by ID
+Message-ID: <20190603130500.GY4797@dell>
+References: <20190524181344.70653-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190524181344.70653-1-andriy.shevchenko@linux.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0e1fef63d92d61ed561e504c3a078a827a0f9bfe
-Gitweb:     https://git.kernel.org/tip/0e1fef63d92d61ed561e504c3a078a827a0f9bfe
-Author:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-AuthorDate: Mon, 27 May 2019 07:21:14 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 3 Jun 2019 11:49:40 +0200
+On Fri, 24 May 2019, Andy Shevchenko wrote:
 
-sched/core: Remove sd->*_idx
+> Easier to find and maintain if the device tables sorted by ID.
+> Do it here for intel-lpss MFD driver.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/mfd/intel-lpss-pci.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-The sched domain per rq load index files also disappear from the
-/proc/sys/kernel/sched_domain/cpuX/domainY directories.
+Applied, thanks.
 
-Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Rik van Riel <riel@surriel.com>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Morten Rasmussen <morten.rasmussen@arm.com>
-Cc: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Quentin Perret <quentin.perret@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Valentin Schneider <valentin.schneider@arm.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Link: https://lkml.kernel.org/r/20190527062116.11512-6-dietmar.eggemann@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- include/linux/sched/topology.h |  5 -----
- kernel/sched/debug.c           | 25 ++++++++++---------------
- kernel/sched/topology.c        | 10 ----------
- 3 files changed, 10 insertions(+), 30 deletions(-)
-
-diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-index cfc0a89a7159..53afbe07354a 100644
---- a/include/linux/sched/topology.h
-+++ b/include/linux/sched/topology.h
-@@ -84,11 +84,6 @@ struct sched_domain {
- 	unsigned int busy_factor;	/* less balancing by factor if busy */
- 	unsigned int imbalance_pct;	/* No balance until over watermark */
- 	unsigned int cache_nice_tries;	/* Leave cache hot tasks for # tries */
--	unsigned int busy_idx;
--	unsigned int idle_idx;
--	unsigned int newidle_idx;
--	unsigned int wake_idx;
--	unsigned int forkexec_idx;
- 
- 	int nohz_idle;			/* NOHZ IDLE status */
- 	int flags;			/* See SD_* */
-diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-index a0b0d6e21e5b..7ffde8ce82fd 100644
---- a/kernel/sched/debug.c
-+++ b/kernel/sched/debug.c
-@@ -251,25 +251,20 @@ set_table_entry(struct ctl_table *entry,
- static struct ctl_table *
- sd_alloc_ctl_domain_table(struct sched_domain *sd)
- {
--	struct ctl_table *table = sd_alloc_ctl_entry(14);
-+	struct ctl_table *table = sd_alloc_ctl_entry(9);
- 
- 	if (table == NULL)
- 		return NULL;
- 
--	set_table_entry(&table[0],  "min_interval",	   &sd->min_interval,	     sizeof(long), 0644, proc_doulongvec_minmax);
--	set_table_entry(&table[1],  "max_interval",	   &sd->max_interval,	     sizeof(long), 0644, proc_doulongvec_minmax);
--	set_table_entry(&table[2],  "busy_idx",		   &sd->busy_idx,	     sizeof(int),  0644, proc_dointvec_minmax);
--	set_table_entry(&table[3],  "idle_idx",		   &sd->idle_idx,	     sizeof(int),  0644, proc_dointvec_minmax);
--	set_table_entry(&table[4],  "newidle_idx",	   &sd->newidle_idx,	     sizeof(int),  0644, proc_dointvec_minmax);
--	set_table_entry(&table[5],  "wake_idx",		   &sd->wake_idx,	     sizeof(int),  0644, proc_dointvec_minmax);
--	set_table_entry(&table[6],  "forkexec_idx",	   &sd->forkexec_idx,	     sizeof(int),  0644, proc_dointvec_minmax);
--	set_table_entry(&table[7],  "busy_factor",	   &sd->busy_factor,	     sizeof(int),  0644, proc_dointvec_minmax);
--	set_table_entry(&table[8],  "imbalance_pct",	   &sd->imbalance_pct,	     sizeof(int),  0644, proc_dointvec_minmax);
--	set_table_entry(&table[9],  "cache_nice_tries",	   &sd->cache_nice_tries,    sizeof(int),  0644, proc_dointvec_minmax);
--	set_table_entry(&table[10], "flags",		   &sd->flags,		     sizeof(int),  0644, proc_dointvec_minmax);
--	set_table_entry(&table[11], "max_newidle_lb_cost", &sd->max_newidle_lb_cost, sizeof(long), 0644, proc_doulongvec_minmax);
--	set_table_entry(&table[12], "name",		   sd->name,		CORENAME_MAX_SIZE, 0444, proc_dostring);
--	/* &table[13] is terminator */
-+	set_table_entry(&table[0], "min_interval",	  &sd->min_interval,	    sizeof(long), 0644, proc_doulongvec_minmax);
-+	set_table_entry(&table[1], "max_interval",	  &sd->max_interval,	    sizeof(long), 0644, proc_doulongvec_minmax);
-+	set_table_entry(&table[2], "busy_factor",	  &sd->busy_factor,	    sizeof(int),  0644, proc_dointvec_minmax);
-+	set_table_entry(&table[3], "imbalance_pct",	  &sd->imbalance_pct,	    sizeof(int),  0644, proc_dointvec_minmax);
-+	set_table_entry(&table[4], "cache_nice_tries",	  &sd->cache_nice_tries,    sizeof(int),  0644, proc_dointvec_minmax);
-+	set_table_entry(&table[5], "flags",		  &sd->flags,		    sizeof(int),  0644, proc_dointvec_minmax);
-+	set_table_entry(&table[6], "max_newidle_lb_cost", &sd->max_newidle_lb_cost, sizeof(long), 0644, proc_doulongvec_minmax);
-+	set_table_entry(&table[7], "name",		  sd->name,	       CORENAME_MAX_SIZE, 0444, proc_dostring);
-+	/* &table[8] is terminator */
- 
- 	return table;
- }
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index f53f89df837d..63184cf0d0d7 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1344,11 +1344,6 @@ sd_init(struct sched_domain_topology_level *tl,
- 		.imbalance_pct		= 125,
- 
- 		.cache_nice_tries	= 0,
--		.busy_idx		= 0,
--		.idle_idx		= 0,
--		.newidle_idx		= 0,
--		.wake_idx		= 0,
--		.forkexec_idx		= 0,
- 
- 		.flags			= 1*SD_LOAD_BALANCE
- 					| 1*SD_BALANCE_NEWIDLE
-@@ -1400,13 +1395,10 @@ sd_init(struct sched_domain_topology_level *tl,
- 	} else if (sd->flags & SD_SHARE_PKG_RESOURCES) {
- 		sd->imbalance_pct = 117;
- 		sd->cache_nice_tries = 1;
--		sd->busy_idx = 2;
- 
- #ifdef CONFIG_NUMA
- 	} else if (sd->flags & SD_NUMA) {
- 		sd->cache_nice_tries = 2;
--		sd->busy_idx = 3;
--		sd->idle_idx = 2;
- 
- 		sd->flags &= ~SD_PREFER_SIBLING;
- 		sd->flags |= SD_SERIALIZE;
-@@ -1419,8 +1411,6 @@ sd_init(struct sched_domain_topology_level *tl,
- #endif
- 	} else {
- 		sd->cache_nice_tries = 1;
--		sd->busy_idx = 2;
--		sd->idle_idx = 1;
- 	}
- 
- 	/*
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
