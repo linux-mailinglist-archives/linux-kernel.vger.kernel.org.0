@@ -2,109 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93ACF3350B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 18:34:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1F5A3350F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 18:35:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729219AbfFCQep (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 12:34:45 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:38189 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728577AbfFCQep (ORCPT
+        id S1729322AbfFCQfG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 12:35:06 -0400
+Received: from mail-it1-f200.google.com ([209.85.166.200]:38332 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729080AbfFCQfG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 12:34:45 -0400
-Received: by mail-lf1-f65.google.com with SMTP id b11so14126442lfa.5
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 09:34:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=draconx-ca.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=20IQdLWV7LoswGVHvSCpf8ERmeNkVp/K1G2Z5GkZ+1U=;
-        b=u8ZfzoD3hHurL5QG+Z+mWq3CZdM3MIEEVB3w0hJMMnl2vWx4nC/soIoZSNR6nCkvWJ
-         0/ExaNuiYQOoutuvMtBd3tfrU5EyoYPGDpSnNkc2CvJ+mTaaGVYFdjDNCtBCqUgK8OCv
-         vhW/eaG+/FeVpMQRKDJDwwDR7Kj/YhYETdxP59uFUyrsvHkCxH/T9igDZ9rxeNOPXuw+
-         ssvJ9RnlKlOFlf1agAcQLraZHRWa4g5L6rnm8umQU+TvnvFZBrnN2EGHS7UmaHhaN4cW
-         D546v2z54ieNiynWg4TkVZZFpS2s1Qu49FrkN/3oPyqnyIOrq+O2a6V1xoLaLaO2/G7g
-         hhxg==
+        Mon, 3 Jun 2019 12:35:06 -0400
+Received: by mail-it1-f200.google.com with SMTP id m20so15557898itn.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 09:35:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=20IQdLWV7LoswGVHvSCpf8ERmeNkVp/K1G2Z5GkZ+1U=;
-        b=mvT4YJZVM0sKgzNS8beszml6Knn3pEaOo7FrIqXob6eCdRDkLP8zYVkaQOWiA43rAx
-         oAvJro27+iyZvJvUT6d5edcy8IN/WtE5TFkdCpfTVd4Q+Kd2vtKR2qPf1JhDwkcX9oyv
-         O9TbJP1/XjXqfDkk/klSEhhyqM4KzfvxV9fq+SUJkGi9/vmbvaGoErt8AoxU1CKylc/C
-         BrOyqmIT3owDkBLCxTIcvvUybtq19qm50YEUkurBSbS2sncbCQFOJOPSW21w58Yijqzg
-         bT8R2/p6UWdqFPACkoqSawWf+6YHIMJ39IfrFiuggLk4pbkpb/GYisCzR8H3BjVmklG5
-         MKOg==
-X-Gm-Message-State: APjAAAU5VcL+EL8/eNcnTUmGG6hF5fIBy32Zs8ns4UrZhPZp+lQDmIEX
-        vg4wnxO1IkL81YSCMJExD9hfrZ0qZK9pVKoxCkySNA==
-X-Google-Smtp-Source: APXvYqz+KdFqPyEMENFndOR9VE/dXUxVoGpFujxYLLjTpgVpbz0x3OjumZjOp3+WmstyFCo9OomSPnUxROYGc9swfcQ=
-X-Received: by 2002:a19:5046:: with SMTP id z6mr14316936lfj.185.1559579683831;
- Mon, 03 Jun 2019 09:34:43 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=RXLeb+ORgwCAgu+4FGMm/Rx6n81aoggbaLi2l8MCmkM=;
+        b=LZOWHyOQbX/vvfwfsQJGDdsRBBhWg2PEJax1JXkEuQgpgo5/LjAZyjf447C3YPQWCt
+         sL5XpBPO2eqTem52dS77wCcP6NuHwKyFTWGEinwy7C+3iTDn7vXuABykIoXXnwkVnbyS
+         x8M+nkYApOMrlsUi2JLDV8YP3oFQW2BQjXfZSRqF1MaWF++d32qP5Q+gyfkqbxCnTG69
+         X9LHtrsoWCOdrTBlSxU4K0y8l2Ru4+h5EzN8VpxMS2D9+Iz/spdMjQR7Xxgc8V+HmY6L
+         FRMo/QW4xGx5Gyddl00iTfy2RxGn6D7IuxsuFzQH7p+aDNXKc1U3D6vcAqHovEwUM55W
+         Y4kA==
+X-Gm-Message-State: APjAAAW3K+ty8Ed7YMcdf1/w7ehzu1B95biTgAf/rgmWiZ/1QLxYiaJP
+        tYCfpeXA//4//ajjRqYuqO312/5hnporWkvhrACy+T0qEFnY
+X-Google-Smtp-Source: APXvYqzEWTKXME9yCi31qNI0/C/QrdV2NUT4ptM0qpWlNPhLn1B1nq1zalaZ/RiwrleKK9PDU3DFKjHrhYIZH9devvLa+fcinn8m
 MIME-Version: 1.0
-Received: by 2002:a2e:9d89:0:0:0:0:0 with HTTP; Mon, 3 Jun 2019 09:34:43 -0700 (PDT)
-X-Originating-IP: [162.243.96.244]
-In-Reply-To: <CAN-5tyHws9bO5Yuj9FTn6EdcPcY5QGK0419aBbujU7Ugt4_6uQ@mail.gmail.com>
-References: <20190529151003.hzmesyoiopnbcgkb@aura.draconx.ca>
- <ceecedad1b650f703a12ec3424493c4a73d1e20e.camel@hammerspace.com> <CAN-5tyHws9bO5Yuj9FTn6EdcPcY5QGK0419aBbujU7Ugt4_6uQ@mail.gmail.com>
-From:   Nick Bowler <nbowler@draconx.ca>
-Date:   Mon, 3 Jun 2019 12:34:43 -0400
-Message-ID: <CADyTPEyJRC+Yi1yJb_Vqb+7zsDKvk-5egBVDvFsTLG=kOrffMA@mail.gmail.com>
-Subject: Re: PROBLEM: oops spew with Linux 5.1.5 (NFS regression?)
-To:     Olga Kornievskaia <aglo@umich.edu>
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Olga.Kornievskaia@netapp.com" <Olga.Kornievskaia@netapp.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a05:660c:6c9:: with SMTP id z9mr4713948itk.94.1559579705269;
+ Mon, 03 Jun 2019 09:35:05 -0700 (PDT)
+Date:   Mon, 03 Jun 2019 09:35:05 -0700
+In-Reply-To: <0000000000003302870578477029@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000054e5d1058a6df2eb@google.com>
+Subject: Re: possible deadlock in process_measurement
+From:   syzbot <syzbot+5ab61747675a87ea359d@syzkaller.appspotmail.com>
+To:     dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, zohar@linux.ibm.com,
+        zohar@linux.vnet.ibm.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-05-29, Olga Kornievskaia <aglo@umich.edu> wrote:
-> On Wed, May 29, 2019 at 1:14 PM Trond Myklebust <trondmy@hammerspace.com>
-> wrote:
->>
->> On Wed, 2019-05-29 at 11:10 -0400, Nick Bowler wrote:
->> > Hi,
->> >
->> > I upgraded to Linux 5.1.5 on one machine yesterday, and this morning
->> > I happened noticed a large amount of backtraces in the log.  It appears
->> > that the system oopsed 62 times over a period of about 5 minutes,
->> > producing about half a megabyte of log messages, after which the
->> > messages stopped.  No idea what action (if any) triggered these.
->> >
->> > However, other than the noise in the logs there is nothing obviously
->> > broken, but I thought I should report the spews anyway.  I was
->> > running 5.0.9 previously and have not seen any similar errors.  The
->> > first couple spews are appended.  All 64 faults look very similar
->> > to these ones, with the same faulting address and the same
->> > rpc_check_timeout function at the top of the backtrace.
->>
->> OK, I think this is the same problem that Olga was seeing (Cced), and
->> it looks like I missed the use-after-free issue when the server returns
->> a credential error when she asked.
->
-> I think this is actually different than what I encountered for the
-> umount case but the trigger is the same -- failing validation.
->
-> I tried to reproduce Nick's oops on 5.2-rc but haven't been able to
-> (but I'm not confident I produced the right trigger conditions. will
-> try 5.1).
+syzbot has found a reproducer for the following crash on:
 
-OK, I think I found something that triggers this fault.  This happens
-when certain local users try to stat a file or directory on an nfs
-mount.  Presumably these UIDs do not have appropriate permissions on
-the server but I'm not sure exactly (I do not control the server).
+HEAD commit:    3c09c195 Add linux-next specific files for 20190531
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=10f61a0ea00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6cfb24468280cd5c
+dashboard link: https://syzkaller.appspot.com/bug?extid=5ab61747675a87ea359d
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=177c3d16a00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14ec01baa00000
 
-I can reproduce the oops with a command like this:
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+5ab61747675a87ea359d@syzkaller.appspotmail.com
 
-  # su -s/bin/sh -c 'stat /path/to/nfs/file' problematic_user
+get_swap_device: Bad swap file entry 6000000000000001
+get_swap_device: Bad swap file entry 6400000000000001
+get_swap_device: Bad swap file entry 6800000000000001
+get_swap_device: Bad swap file entry 6c00000000000001
+get_swap_device: Bad swap file entry 7000000000000001
+get_swap_device: Bad swap file entry 7400000000000001
+======================================================
+WARNING: possible circular locking dependency detected
+5.2.0-rc2-next-20190531 #4 Not tainted
+------------------------------------------------------
+syz-executor395/17373 is trying to acquire lock:
+000000003d1a4a53 (&sb->s_type->i_mutex_key#10){+.+.}, at: inode_lock  
+include/linux/fs.h:778 [inline]
+000000003d1a4a53 (&sb->s_type->i_mutex_key#10){+.+.}, at:  
+process_measurement+0x15ae/0x15e0 security/integrity/ima/ima_main.c:228
 
-which oopes every time (and SIGKILLs the stat command).   (I have not yet
-rebooted since the original report or tried with Trond's patch applied.
-I will do that next, and also try 5.1.6).
+but task is already holding lock:
+00000000e0714fc5 (&mm->mmap_sem#2){++++}, at: do_mprotect_pkey+0x1f6/0xa30  
+mm/mprotect.c:485
 
-Cheers,
-  Nick
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&mm->mmap_sem#2){++++}:
+        down_read+0x3f/0x1e0 kernel/locking/rwsem.c:24
+        get_user_pages_unlocked+0xfc/0x4a0 mm/gup.c:1174
+        __gup_longterm_unlocked mm/gup.c:2193 [inline]
+        get_user_pages_fast+0x43f/0x530 mm/gup.c:2245
+        iov_iter_get_pages+0x2c2/0xf80 lib/iov_iter.c:1287
+        dio_refill_pages fs/direct-io.c:171 [inline]
+        dio_get_page fs/direct-io.c:215 [inline]
+        do_direct_IO fs/direct-io.c:983 [inline]
+        do_blockdev_direct_IO+0x3f7b/0x8e00 fs/direct-io.c:1336
+        __blockdev_direct_IO+0xa1/0xca fs/direct-io.c:1422
+        ext4_direct_IO_write fs/ext4/inode.c:3782 [inline]
+        ext4_direct_IO+0xaa7/0x1bb0 fs/ext4/inode.c:3909
+        generic_file_direct_write+0x20a/0x4a0 mm/filemap.c:3110
+        __generic_file_write_iter+0x2ee/0x630 mm/filemap.c:3293
+        ext4_file_write_iter+0x332/0x1070 fs/ext4/file.c:266
+        call_write_iter include/linux/fs.h:1870 [inline]
+        new_sync_write+0x4d3/0x770 fs/read_write.c:483
+        __vfs_write+0xe1/0x110 fs/read_write.c:496
+        vfs_write+0x268/0x5d0 fs/read_write.c:558
+        ksys_write+0x14f/0x290 fs/read_write.c:611
+        __do_sys_write fs/read_write.c:623 [inline]
+        __se_sys_write fs/read_write.c:620 [inline]
+        __x64_sys_write+0x73/0xb0 fs/read_write.c:620
+        do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #0 (&sb->s_type->i_mutex_key#10){+.+.}:
+        lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:4300
+        down_write+0x38/0xa0 kernel/locking/rwsem.c:66
+        inode_lock include/linux/fs.h:778 [inline]
+        process_measurement+0x15ae/0x15e0  
+security/integrity/ima/ima_main.c:228
+        ima_file_mmap+0x11a/0x130 security/integrity/ima/ima_main.c:370
+        security_file_mprotect+0xd5/0x100 security/security.c:1430
+        do_mprotect_pkey+0x537/0xa30 mm/mprotect.c:550
+        __do_sys_pkey_mprotect mm/mprotect.c:590 [inline]
+        __se_sys_pkey_mprotect mm/mprotect.c:587 [inline]
+        __x64_sys_pkey_mprotect+0x97/0xf0 mm/mprotect.c:587
+        do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+other info that might help us debug this:
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(&mm->mmap_sem#2);
+                                lock(&sb->s_type->i_mutex_key#10);
+                                lock(&mm->mmap_sem#2);
+   lock(&sb->s_type->i_mutex_key#10);
+
+  *** DEADLOCK ***
+
+1 lock held by syz-executor395/17373:
+  #0: 00000000e0714fc5 (&mm->mmap_sem#2){++++}, at:  
+do_mprotect_pkey+0x1f6/0xa30 mm/mprotect.c:485
+
+stack backtrace:
+CPU: 1 PID: 17373 Comm: syz-executor395 Not tainted 5.2.0-rc2-next-20190531  
+#4
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  print_circular_bug.cold+0x1cc/0x28f kernel/locking/lockdep.c:1566
+  check_prev_add kernel/locking/lockdep.c:2311 [inline]
+  check_prevs_add kernel/locking/lockdep.c:2419 [inline]
+  validate_chain kernel/locking/lockdep.c:2801 [inline]
+  __lock_acquire+0x3755/0x5490 kernel/locking/lockdep.c:3790
+  lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:4300
+  down_write+0x38/0xa0 kernel/locking/rwsem.c:66
+  inode_lock include/linux/fs.h:778 [inline]
+  process_measurement+0x15ae/0x15e0 security/integrity/ima/ima_main.c:228
+  ima_file_mmap+0x11a/0x130 security/integrity/ima/ima_main.c:370
+  security_file_mprotect+0xd5/0x100 security/security.c:1430
+  do_mprotect_pkey+0x537/0xa30 mm/mprotect.c:550
+  __do_sys_pkey_mprotect mm/mprotect.c:590 [inline]
+  __se_sys_pkey_mprotect mm/mprotect.c:587 [inline]
+  __x64_sys_pkey_mprotect+0x97/0xf0 mm/mprotect.c:587
+  do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x440279
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffeec2f48d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000149
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440279
+RDX: 000000000000000
+
