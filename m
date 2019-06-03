@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0DBE32C1A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:15:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C754132BE8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:14:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728842AbfFCJN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 05:13:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33680 "EHLO mail.kernel.org"
+        id S1728678AbfFCJMl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 05:12:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728394AbfFCJN0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 05:13:26 -0400
+        id S1728652AbfFCJMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 05:12:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE23B276DB;
-        Mon,  3 Jun 2019 09:13:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7EF4D26121;
+        Mon,  3 Jun 2019 09:12:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559553205;
-        bh=N1GD6wogL0wc3ROCjL0Tr4+i1aVNnoY969QvokdKYgw=;
+        s=default; t=1559553154;
+        bh=lFZ3PGfZK2qjQolczzZuiGrnCp8ui3kQL4gKKqL5Ufk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vWe+tStIlF9TfwDhkKdPpt9jPcwlROqXMQ9poC4KKEMfGJ/9ZNoLaKDoMAO5hfYZB
-         5cCW47QmvEOq6xk/Ln/626oLmYb1gF7y4MHgZ28bRCw+6cYhMI4aSZHzuORFR4o9Xk
-         3zcU5xTcyVaAb8gJ7KHXcI0E1nbN2Sr8NtXt/eWI=
+        b=TLb1eIgJbZEDJ1BSUAeJYuIJ24ayY7H7XwDWrawli/HXaeVSnPk3ix8/4AwtvQFvG
+         x/wvK2SfZ3LHPkBOa+gXJ9/IY5BNY+rBFlZjvClsEHVmFRB3dMmcjitbGZmoZmR2+m
+         hAYnxGVZEny3y+WMC8nTo1yX3e6VaZa2fIRyPgfk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.1 22/40] tipc: Avoid copying bytes beyond the supplied data
-Date:   Mon,  3 Jun 2019 11:09:15 +0200
-Message-Id: <20190603090523.981084133@linuxfoundation.org>
+Subject: [PATCH 5.0 28/36] bnxt_en: Reduce memory usage when running in kdump kernel.
+Date:   Mon,  3 Jun 2019 11:09:16 +0200
+Message-Id: <20190603090522.857884217@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190603090522.617635820@linuxfoundation.org>
-References: <20190603090522.617635820@linuxfoundation.org>
+In-Reply-To: <20190603090520.998342694@linuxfoundation.org>
+References: <20190603090520.998342694@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,67 +43,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+From: Michael Chan <michael.chan@broadcom.com>
 
-TLV_SET is called with a data pointer and a len parameter that tells us
-how many bytes are pointed to by data. When invoking memcpy() we need
-to careful to only copy len bytes.
+[ Upstream commit d629522e1d66561f38e5c8d4f52bb6d254ec0707 ]
 
-Previously we would copy TLV_LENGTH(len) bytes which would copy an extra
-4 bytes past the end of the data pointer which newer GCC versions
-complain about.
+Skip RDMA context memory allocations, reduce to 1 ring, and disable
+TPA when running in the kdump kernel.  Without this patch, the driver
+fails to initialize with memory allocation errors when running in a
+typical kdump kernel.
 
- In file included from test.c:17:
- In function 'TLV_SET',
-     inlined from 'test' at test.c:186:5:
- /usr/include/linux/tipc_config.h:317:3:
- warning: 'memcpy' forming offset [33, 36] is out of the bounds [0, 32]
- of object 'bearer_name' with type 'char[32]' [-Warray-bounds]
-     memcpy(TLV_DATA(tlv_ptr), data, tlv_len);
-     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- test.c: In function 'test':
- test.c::161:10: note:
- 'bearer_name' declared here
-     char bearer_name[TIPC_MAX_BEARER_NAME];
-          ^~~~~~~~~~~
-
-We still want to ensure any padding bytes at the end are initialised, do
-this with a explicit memset() rather than copy bytes past the end of
-data. Apply the same logic to TCM_SET.
-
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Fixes: cf6daed098d1 ("bnxt_en: Increase context memory allocations on 57500 chips for RDMA.")
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/uapi/linux/tipc_config.h |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c |    4 ++--
+ drivers/net/ethernet/broadcom/bnxt/bnxt.h |    4 +++-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
---- a/include/uapi/linux/tipc_config.h
-+++ b/include/uapi/linux/tipc_config.h
-@@ -307,8 +307,10 @@ static inline int TLV_SET(void *tlv, __u
- 	tlv_ptr = (struct tlv_desc *)tlv;
- 	tlv_ptr->tlv_type = htons(type);
- 	tlv_ptr->tlv_len  = htons(tlv_len);
--	if (len && data)
--		memcpy(TLV_DATA(tlv_ptr), data, tlv_len);
-+	if (len && data) {
-+		memcpy(TLV_DATA(tlv_ptr), data, len);
-+		memset(TLV_DATA(tlv_ptr) + len, 0, TLV_SPACE(len) - tlv_len);
-+	}
- 	return TLV_SPACE(len);
- }
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -6338,7 +6338,7 @@ static int bnxt_alloc_ctx_mem(struct bnx
+ 	if (!ctx || (ctx->flags & BNXT_CTX_FLAG_INITED))
+ 		return 0;
  
-@@ -405,8 +407,10 @@ static inline int TCM_SET(void *msg, __u
- 	tcm_hdr->tcm_len   = htonl(msg_len);
- 	tcm_hdr->tcm_type  = htons(cmd);
- 	tcm_hdr->tcm_flags = htons(flags);
--	if (data_len && data)
-+	if (data_len && data) {
- 		memcpy(TCM_DATA(msg), data, data_len);
-+		memset(TCM_DATA(msg) + data_len, 0, TCM_SPACE(data_len) - msg_len);
-+	}
- 	return TCM_SPACE(data_len);
- }
+-	if (bp->flags & BNXT_FLAG_ROCE_CAP) {
++	if ((bp->flags & BNXT_FLAG_ROCE_CAP) && !is_kdump_kernel()) {
+ 		pg_lvl = 2;
+ 		extra_qps = 65536;
+ 		extra_srqs = 8192;
+@@ -10279,7 +10279,7 @@ static int bnxt_set_dflt_rings(struct bn
  
+ 	if (sh)
+ 		bp->flags |= BNXT_FLAG_SHARED_RINGS;
+-	dflt_rings = netif_get_num_default_rss_queues();
++	dflt_rings = is_kdump_kernel() ? 1 : netif_get_num_default_rss_queues();
+ 	/* Reduce default rings on multi-port cards so that total default
+ 	 * rings do not exceed CPU count.
+ 	 */
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
+@@ -20,6 +20,7 @@
+ 
+ #include <linux/interrupt.h>
+ #include <linux/rhashtable.h>
++#include <linux/crash_dump.h>
+ #include <net/devlink.h>
+ #include <net/dst_metadata.h>
+ #include <net/switchdev.h>
+@@ -1367,7 +1368,8 @@ struct bnxt {
+ #define BNXT_CHIP_TYPE_NITRO_A0(bp) ((bp)->flags & BNXT_FLAG_CHIP_NITRO_A0)
+ #define BNXT_RX_PAGE_MODE(bp)	((bp)->flags & BNXT_FLAG_RX_PAGE_MODE)
+ #define BNXT_SUPPORTS_TPA(bp)	(!BNXT_CHIP_TYPE_NITRO_A0(bp) &&	\
+-				 !(bp->flags & BNXT_FLAG_CHIP_P5))
++				 !(bp->flags & BNXT_FLAG_CHIP_P5) &&	\
++				 !is_kdump_kernel())
+ 
+ /* Chip class phase 5 */
+ #define BNXT_CHIP_P5(bp)			\
 
 
