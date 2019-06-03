@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53B92330E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:21:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26A2E330E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:21:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728579AbfFCNVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 09:21:09 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41703 "EHLO
+        id S1728603AbfFCNVv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 09:21:51 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:44251 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726336AbfFCNVJ (ORCPT
+        with ESMTP id S1726336AbfFCNVv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 09:21:09 -0400
+        Mon, 3 Jun 2019 09:21:51 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x53DKwrI606800
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x53DLeso607066
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 3 Jun 2019 06:20:58 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x53DKwrI606800
+        Mon, 3 Jun 2019 06:21:40 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x53DLeso607066
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1559568058;
-        bh=j+X4HwT3zRPvMXzZ/Y4z3RR1/ToKXk8zq47jxNaY5D8=;
+        s=2019051801; t=1559568100;
+        bh=RN2wDhoFLq6ABqLxgEME/VQcliZo+R93w8KdtFHEgTo=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=iEq4FLB/4F2L4isKSs7ZDpgFw7Y7JyA/hUpmX8GWH4vnxa/fmmE1yaG66SRNFgrvZ
-         7vFOnQQd9E0Da9wuTWwcZH4qXnqAgbuwrxj/PXrho9HVkNEY5f590QlDk/1TxfOdL8
-         KMXUvIpzoZ8kgHVi7GALbOcegYUifHvLHVyMSof0UXvGfZ36XmogeU9RcUqu0XbeUK
-         s73BEiBjK7FXxO8BjGLfbLgf4PalwxDyDgzZIXSzJebTcfF4nfBtXLQ+ujRa2Gm7wi
-         2KybB0lev2A+y5vsQebE70VsKRs4Mi7AdpGtK0o7rFndJJg1yAqfaTBBq4ZquSq00s
-         u3MrEBgeMzK/A==
+        b=fcHr2hRTwMOaX1y+aJr3L3AP6c+MX52XBxnjU+Jjw2xgSUzPPpTXh2fpwUHfkSGM5
+         9fUx7fCKO8u32nMgVZsjYuBW1T4wvnPhOExFQG2OwFuydRMGVqpJXCavtbohHVGO5g
+         SmkOxRVR+/uielN8iiNDy7aCY/ln9IHwpAhjDGKmcr7LAkZTyU7UnNj38M42MdYbeb
+         WWtf3L1zyaohpfFzh02Xs3cbbuNN9eVwQDDafsccI/AiVqLLu3m/vK5jpWvueNU0Pr
+         0P1gloB5rzpqqv8uFLTTI2lMR15Inf/Yb12Tf2PVSu4KvffVkbvgBhNCORSOYefFjc
+         JUviDy11Y/MRQ==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x53DKwTa606797;
-        Mon, 3 Jun 2019 06:20:58 -0700
-Date:   Mon, 3 Jun 2019 06:20:58 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x53DLedE607063;
+        Mon, 3 Jun 2019 06:21:40 -0700
+Date:   Mon, 3 Jun 2019 06:21:40 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Yuyang Du <tipbot@zytor.com>
-Message-ID: <tip-091806515124b20f8cff7927b4b7ff399483b109@git.kernel.org>
-Cc:     hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, duyuyang@gmail.com,
-        torvalds@linux-foundation.org, peterz@infradead.org
-Reply-To: linux-kernel@vger.kernel.org, duyuyang@gmail.com,
-          peterz@infradead.org, tglx@linutronix.de, mingo@kernel.org,
-          torvalds@linux-foundation.org, hpa@zytor.com
-In-Reply-To: <20190506081939.74287-22-duyuyang@gmail.com>
-References: <20190506081939.74287-22-duyuyang@gmail.com>
+Message-ID: <tip-4d56330df22dd9dd9a24f147014f60ee4c914fb8@git.kernel.org>
+Cc:     hpa@zytor.com, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        mingo@kernel.org, peterz@infradead.org, duyuyang@gmail.com
+Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          mingo@kernel.org, torvalds@linux-foundation.org,
+          peterz@infradead.org, duyuyang@gmail.com
+In-Reply-To: <20190506081939.74287-23-duyuyang@gmail.com>
+References: <20190506081939.74287-23-duyuyang@gmail.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] locking/lockdep: Consolidate lock usage bit
- initialization
-Git-Commit-ID: 091806515124b20f8cff7927b4b7ff399483b109
+Subject: [tip:locking/core] locking/lockdep: Adjust new bit cases in
+ mark_lock
+Git-Commit-ID: 4d56330df22dd9dd9a24f147014f60ee4c914fb8
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -63,17 +63,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  091806515124b20f8cff7927b4b7ff399483b109
-Gitweb:     https://git.kernel.org/tip/091806515124b20f8cff7927b4b7ff399483b109
+Commit-ID:  4d56330df22dd9dd9a24f147014f60ee4c914fb8
+Gitweb:     https://git.kernel.org/tip/4d56330df22dd9dd9a24f147014f60ee4c914fb8
 Author:     Yuyang Du <duyuyang@gmail.com>
-AuthorDate: Mon, 6 May 2019 16:19:37 +0800
+AuthorDate: Mon, 6 May 2019 16:19:38 +0800
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 3 Jun 2019 11:55:51 +0200
+CommitDate: Mon, 3 Jun 2019 11:55:52 +0200
 
-locking/lockdep: Consolidate lock usage bit initialization
+locking/lockdep: Adjust new bit cases in mark_lock
 
-Lock usage bit initialization is consolidated into one function
-mark_usage(). Trivial readability improvement. No functional change.
+The new bit can be any possible lock usage except it is garbage, so the
+cases in switch can be made simpler. Warn early on if wrong usage bit is
+passed without taking locks. No functional change.
 
 Signed-off-by: Yuyang Du <duyuyang@gmail.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
@@ -84,64 +85,53 @@ Cc: bvanassche@acm.org
 Cc: frederic@kernel.org
 Cc: ming.lei@redhat.com
 Cc: will.deacon@arm.com
-Link: https://lkml.kernel.org/r/20190506081939.74287-22-duyuyang@gmail.com
+Link: https://lkml.kernel.org/r/20190506081939.74287-23-duyuyang@gmail.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/locking/lockdep.c | 22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+ kernel/locking/lockdep.c | 21 +++++++--------------
+ 1 file changed, 7 insertions(+), 14 deletions(-)
 
 diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 63b82921698d..1123e7e6c78d 100644
+index 1123e7e6c78d..9c4e2a7547d3 100644
 --- a/kernel/locking/lockdep.c
 +++ b/kernel/locking/lockdep.c
-@@ -3460,8 +3460,12 @@ void trace_softirqs_off(unsigned long ip)
- 		debug_atomic_inc(redundant_softirqs_off);
- }
- 
--static int mark_irqflags(struct task_struct *curr, struct held_lock *hlock)
-+static int
-+mark_usage(struct task_struct *curr, struct held_lock *hlock, int check)
+@@ -3582,6 +3582,11 @@ static int mark_lock(struct task_struct *curr, struct held_lock *this,
  {
-+	if (!check)
-+		goto lock_used;
+ 	unsigned int new_mask = 1 << new_bit, ret = 1;
+ 
++	if (new_bit >= LOCK_USAGE_STATES) {
++		DEBUG_LOCKS_WARN_ON(1);
++		return 0;
++	}
 +
  	/*
- 	 * If non-trylock use in a hardirq or softirq context, then
- 	 * mark the lock as used in these contexts:
-@@ -3505,6 +3509,11 @@ static int mark_irqflags(struct task_struct *curr, struct held_lock *hlock)
- 		}
- 	}
- 
-+lock_used:
-+	/* mark it as used: */
-+	if (!mark_lock(curr, hlock, LOCK_USED))
-+		return 0;
-+
- 	return 1;
- }
- 
-@@ -3546,8 +3555,8 @@ int mark_lock_irq(struct task_struct *curr, struct held_lock *this,
- 	return 1;
- }
- 
--static inline int mark_irqflags(struct task_struct *curr,
--		struct held_lock *hlock)
-+static inline int
-+mark_usage(struct task_struct *curr, struct held_lock *hlock, int check)
- {
- 	return 1;
- }
-@@ -3833,11 +3842,8 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
- #endif
- 	hlock->pin_count = pin_count;
- 
--	if (check && !mark_irqflags(curr, hlock))
--		return 0;
--
--	/* mark it as used: */
--	if (!mark_lock(curr, hlock, LOCK_USED))
-+	/* Initialize the lock usage bit */
-+	if (!mark_usage(curr, hlock, check))
+ 	 * If already set then do not dirty the cacheline,
+ 	 * nor do any checks:
+@@ -3605,25 +3610,13 @@ static int mark_lock(struct task_struct *curr, struct held_lock *this,
  		return 0;
  
- 	/*
+ 	switch (new_bit) {
+-#define LOCKDEP_STATE(__STATE)			\
+-	case LOCK_USED_IN_##__STATE:		\
+-	case LOCK_USED_IN_##__STATE##_READ:	\
+-	case LOCK_ENABLED_##__STATE:		\
+-	case LOCK_ENABLED_##__STATE##_READ:
+-#include "lockdep_states.h"
+-#undef LOCKDEP_STATE
+-		ret = mark_lock_irq(curr, this, new_bit);
+-		if (!ret)
+-			return 0;
+-		break;
+ 	case LOCK_USED:
+ 		debug_atomic_dec(nr_unused_locks);
+ 		break;
+ 	default:
+-		if (!debug_locks_off_graph_unlock())
++		ret = mark_lock_irq(curr, this, new_bit);
++		if (!ret)
+ 			return 0;
+-		WARN_ON(1);
+-		return 0;
+ 	}
+ 
+ 	graph_unlock();
