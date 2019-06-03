@@ -2,59 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22B5332C0A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:14:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B4D832CBE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:24:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728972AbfFCJOO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 05:14:14 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:41874 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728223AbfFCJOJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 05:14:09 -0400
-Received: by mail-lf1-f66.google.com with SMTP id 136so1465400lfa.8
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 02:14:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+y2pHh+GcgrSTo/c/Dh+rI5M9UbSYW68+phN/wa7KlA=;
-        b=XwNM5aaSm3fVul6uRnmu+Fwt9JaXj3z2dqhDZMARNqS5naUoZNgGLSLwsvVmsEz9yL
-         c0arF2jfhe472ek/T7KaHJmQe9ZWn1vIfZ1zP3sWpdcTKzQYLngpHvbE9cMqmevghtv2
-         92WTx36NG/u22grAhRBghDdGYWYAN10P/F+6XrvTXTaVMDBR/IAUa7VqHxE5fhzulF7u
-         TBxjumz03UwitufJJztAVu7RNIaNbl7bk2FnoJQgm9CNOu+gAMsfZDTuf2C3ANydj6hx
-         8nQoerNpFuFxav5hC+2HVyIO1P5ydRDPAKnde4Ng8ABvXfh6QZ+0BZrD8Kl48BfUb6cH
-         mriQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+y2pHh+GcgrSTo/c/Dh+rI5M9UbSYW68+phN/wa7KlA=;
-        b=j1bqvcR05wwiAL1U0/68KfLPDmzS+Zy5Fdmsdmwt/ovNe9VZIV+6K1SLeC3lBPZpqT
-         qz4dNdns2tBBHLXDB+HR6EG7zyVSQXxPcFZovgpASFFUkDxD4vmosDNOtDNC5Ud/CMCz
-         YCIDtkuYRxSz92g5VZd67srbJYHDiiiBGfho2NcxExvKFZYx9cPicOlLgbkln5cdDnmv
-         JM5HdfTb7MLaCjP0VVI68kHOrN1Ts8FPRR9Gbd2+Ak1SamVpDxnqAXJcP0TyXukSik7t
-         6NnOhvVj7lOC2tj2FTOcgm0S4kVKSd8UY3AIqsZu07VG5qKOVyGTX0figV52utfyBC2r
-         Az5Q==
-X-Gm-Message-State: APjAAAUYR8sjaB1gVFB1wNrNnnX0KKGn+CedBQxZwatJkno4R2KTd0c5
-        pL8NNueoVnjrf1MJs0vD5BCofA==
-X-Google-Smtp-Source: APXvYqycSNEtNTgVc9EBZuUkjuvDVTlF4uWCWZ8DhHDbwtYYrszDaNXZo89BJZ2WkACsE6TdHAl2TA==
-X-Received: by 2002:ac2:5449:: with SMTP id d9mr14199136lfn.126.1559553247684;
-        Mon, 03 Jun 2019 02:14:07 -0700 (PDT)
-Received: from localhost (c-1c3670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.28])
-        by smtp.gmail.com with ESMTPSA id o184sm3068020lfo.37.2019.06.03.02.14.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Jun 2019 02:14:07 -0700 (PDT)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     mark.rutland@arm.com, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, mingo@redhat.com,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH 2/3] arm64: arch_timer: mark functions as __always_inline
-Date:   Mon,  3 Jun 2019 11:14:02 +0200
-Message-Id: <20190603091402.25115-1-anders.roxell@linaro.org>
+        id S1728126AbfFCJYS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 05:24:18 -0400
+Received: from mga14.intel.com ([192.55.52.115]:54536 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726684AbfFCJYP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 05:24:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 02:24:15 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,546,1549958400"; 
+   d="scan'208";a="181096352"
+Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
+  by fmsmga002.fm.intel.com with ESMTP; 03 Jun 2019 02:24:14 -0700
+From:   Tomas Winkler <tomas.winkler@intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-kernel@vger.kernel.org,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Subject: [char-misc-next 3/7] mei: docs: update mei documentation
+Date:   Mon,  3 Jun 2019 12:14:02 +0300
+Message-Id: <20190603091406.28915-4-tomas.winkler@intel.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190603091406.28915-1-tomas.winkler@intel.com>
+References: <20190603091406.28915-1-tomas.winkler@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,61 +39,200 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CONFIG_FUNCTION_GRAPH_TRACER is enabled function
-arch_counter_get_cntvct() is marked as notrace. However, function
-__arch_counter_get_cntvct is marked as inline. If
-CONFIG_OPTIMIZE_INLINING is set that will make the two functions
-tracable which they shouldn't.
+The mei driver went via multiple changes, update
+the documentation and fix formatting.
 
-Rework so that functions __arch_counter_get_* are marked with
-__always_inline so they will be inlined even if CONFIG_OPTIMIZE_INLINING
-is turned on.
-
-Fixes: 0ea415390cd3 ("clocksource/arm_arch_timer: Use arch_timer_read_counter to access stable counters")
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 ---
- arch/arm64/include/asm/arch_timer.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ Documentation/driver-api/mei/mei.rst | 96 ++++++++++++++++++----------
+ 1 file changed, 61 insertions(+), 35 deletions(-)
 
-diff --git a/arch/arm64/include/asm/arch_timer.h b/arch/arm64/include/asm/arch_timer.h
-index b7bca1ae09e6..50b3ab7ded4f 100644
---- a/arch/arm64/include/asm/arch_timer.h
-+++ b/arch/arm64/include/asm/arch_timer.h
-@@ -193,7 +193,7 @@ static inline void arch_timer_set_cntkctl(u32 cntkctl)
- 	: "=r" (tmp) : "r" (_val));					\
- } while (0)
+diff --git a/Documentation/driver-api/mei/mei.rst b/Documentation/driver-api/mei/mei.rst
+index c7f10a4b46ff..c800d8e5f422 100644
+--- a/Documentation/driver-api/mei/mei.rst
++++ b/Documentation/driver-api/mei/mei.rst
+@@ -5,34 +5,32 @@ Introduction
  
--static inline u64 __arch_counter_get_cntpct_stable(void)
-+static __always_inline u64 __arch_counter_get_cntpct_stable(void)
- {
- 	u64 cnt;
+ The Intel Management Engine (Intel ME) is an isolated and protected computing
+ resource (Co-processor) residing inside certain Intel chipsets. The Intel ME
+-provides support for computer/IT management features. The feature set
+-depends on the Intel chipset SKU.
++provides support for computer/IT management and security features.
++The actual feature set depends on the Intel chipset SKU.
  
-@@ -203,7 +203,7 @@ static inline u64 __arch_counter_get_cntpct_stable(void)
- 	return cnt;
- }
+ The Intel Management Engine Interface (Intel MEI, previously known as HECI)
+ is the interface between the Host and Intel ME. This interface is exposed
+-to the host as a PCI device. The Intel MEI Driver is in charge of the
+-communication channel between a host application and the Intel ME feature.
++to the host as a PCI device, actually multiple PCI devices might be exposed.
++The Intel MEI Driver is in charge of the communication channel between
++a host application and the Intel ME features.
  
--static inline u64 __arch_counter_get_cntpct(void)
-+static __always_inline u64 __arch_counter_get_cntpct(void)
- {
- 	u64 cnt;
+-Each Intel ME feature (Intel ME Client) is addressed by a GUID/UUID and
++Each Intel ME feature, or Intel ME Client is addressed by a unique GUID and
+ each client has its own protocol. The protocol is message-based with a
+-header and payload up to 512 bytes.
++header and payload up to maximal number of bytes advertised by the client,
++upon connection.
  
-@@ -213,7 +213,7 @@ static inline u64 __arch_counter_get_cntpct(void)
- 	return cnt;
- }
+ Intel MEI Driver
+ ================
  
--static inline u64 __arch_counter_get_cntvct_stable(void)
-+static __always_inline u64 __arch_counter_get_cntvct_stable(void)
- {
- 	u64 cnt;
+-The driver exposes a misc device called /dev/mei.
++The driver exposes a character device with device nodes /dev/meiX.
  
-@@ -223,7 +223,7 @@ static inline u64 __arch_counter_get_cntvct_stable(void)
- 	return cnt;
- }
+ An application maintains communication with an Intel ME feature while
+-/dev/mei is open. The binding to a specific feature is performed by calling
+-MEI_CONNECT_CLIENT_IOCTL, which passes the desired UUID.
++/dev/meiX is open. The binding to a specific feature is performed by calling
++:c:macro:`MEI_CONNECT_CLIENT_IOCTL`, which passes the desired GUID.
+ The number of instances of an Intel ME feature that can be opened
+ at the same time depends on the Intel ME feature, but most of the
+ features allow only a single instance.
  
--static inline u64 __arch_counter_get_cntvct(void)
-+static __always_inline u64 __arch_counter_get_cntvct(void)
- {
- 	u64 cnt;
+-The Intel AMT Host Interface (Intel AMTHI) feature supports multiple
+-simultaneous user connected applications. The Intel MEI driver
+-handles this internally by maintaining request queues for the applications.
+-
+ The driver is transparent to data that are passed between firmware feature
+ and host application.
+ 
+@@ -40,6 +38,8 @@ Because some of the Intel ME features can change the system
+ configuration, the driver by default allows only a privileged
+ user to access it.
+ 
++The session is terminated calling :c:func:`close(int fd)`.
++
+ A code snippet for an application communicating with Intel AMTHI client:
+ 
+ .. code-block:: C
+@@ -47,13 +47,13 @@ A code snippet for an application communicating with Intel AMTHI client:
+ 	struct mei_connect_client_data data;
+ 	fd = open(MEI_DEVICE);
+ 
+-	data.d.in_client_uuid = AMTHI_UUID;
++	data.d.in_client_uuid = AMTHI_GUID;
+ 
+ 	ioctl(fd, IOCTL_MEI_CONNECT_CLIENT, &data);
+ 
+ 	printf("Ver=%d, MaxLen=%ld\n",
+-			data.d.in_client_uuid.protocol_version,
+-			data.d.in_client_uuid.max_msg_length);
++	       data.d.in_client_uuid.protocol_version,
++	       data.d.in_client_uuid.max_msg_length);
+ 
+ 	[...]
+ 
+@@ -67,60 +67,86 @@ A code snippet for an application communicating with Intel AMTHI client:
+ 	close(fd);
+ 
+ 
+-IOCTLs
+-======
++User space API
++
++IOCTLs:
++=======
+ 
+ The Intel MEI Driver supports the following IOCTL commands:
+-	IOCTL_MEI_CONNECT_CLIENT	Connect to firmware Feature (client).
+ 
+-	usage:
+-		struct mei_connect_client_data clientData;
+-		ioctl(fd, IOCTL_MEI_CONNECT_CLIENT, &clientData);
++IOCTL_MEI_CONNECT_CLIENT
++-------------------------
++Connect to firmware Feature/Client.
++
++.. code-block:: none
++
++	Usage:
+ 
+-	inputs:
+-		mei_connect_client_data struct contain the following
+-		input field:
++        struct mei_connect_client_data client_data;
+ 
+-		in_client_uuid -	UUID of the FW Feature that needs
++        ioctl(fd, IOCTL_MEI_CONNECT_CLIENT, &client_data);
++
++	Inputs:
++
++        struct mei_connect_client_data - contain the following
++	Input field:
++
++		in_client_uuid -	GUID of the FW Feature that needs
+ 					to connect to.
+-	outputs:
++         Outputs:
+ 		out_client_properties - Client Properties: MTU and Protocol Version.
+ 
+-	error returns:
++         Error returns:
++
++                ENOTTY  No such client (i.e. wrong GUID) or connection is not allowed.
+ 		EINVAL	Wrong IOCTL Number
+-		ENODEV	Device or Connection is not initialized or ready. (e.g. Wrong UUID)
++		ENODEV	Device or Connection is not initialized or ready.
+ 		ENOMEM	Unable to allocate memory to client internal data.
+ 		EFAULT	Fatal Error (e.g. Unable to access user input data)
+ 		EBUSY	Connection Already Open
+ 
++:Note:
+         max_msg_length (MTU) in client properties describes the maximum
+         data that can be sent or received. (e.g. if MTU=2K, can send
+         requests up to bytes 2k and received responses up to 2k bytes).
+ 
+-	IOCTL_MEI_NOTIFY_SET: enable or disable event notifications
++
++IOCTL_MEI_NOTIFY_SET
++---------------------
++Enable or disable event notifications.
++
++
++.. code-block:: none
+ 
+ 	Usage:
++
+ 		uint32_t enable;
++
+ 		ioctl(fd, IOCTL_MEI_NOTIFY_SET, &enable);
+ 
+-	Inputs:
++
+ 		uint32_t enable = 1;
+ 		or
+ 		uint32_t enable[disable] = 0;
+ 
+ 	Error returns:
++
++
+ 		EINVAL	Wrong IOCTL Number
+ 		ENODEV	Device  is not initialized or the client not connected
+ 		ENOMEM	Unable to allocate memory to client internal data.
+ 		EFAULT	Fatal Error (e.g. Unable to access user input data)
+ 		EOPNOTSUPP if the device doesn't support the feature
+ 
++:Note:
+ 	The client must be connected in order to enable notification events
+ 
+ 
+-	IOCTL_MEI_NOTIFY_GET : retrieve event
++IOCTL_MEI_NOTIFY_GET
++--------------------
++Retrieve event
++
++.. code-block:: none
+ 
+ 	Usage:
+ 		uint32_t event;
+@@ -137,7 +163,7 @@ The Intel MEI Driver supports the following IOCTL commands:
+ 		EFAULT	Fatal Error (e.g. Unable to access user input data)
+ 		EOPNOTSUPP if the device doesn't support the feature
+ 
++:Note:
+ 	The client must be connected and event notification has to be enabled
+ 	in order to receive an event
  
 -- 
 2.20.1
