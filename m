@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBDE232C05
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:14:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE47A32C2A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:15:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728920AbfFCJN5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 05:13:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34332 "EHLO mail.kernel.org"
+        id S1728637AbfFCJOj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 05:14:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728164AbfFCJNw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 05:13:52 -0400
+        id S1729032AbfFCJOf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 05:14:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B00621952;
-        Mon,  3 Jun 2019 09:13:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81ED527EDF;
+        Mon,  3 Jun 2019 09:14:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559553232;
-        bh=8Az0AwzX3b9nGOZ0VZTWq+bLJqd5hRLz7w6L96IVQRc=;
+        s=default; t=1559553275;
+        bh=F+WH521pKwpdz27eW9ZhfHJ86+Jmo59k6+j31Jvp1PA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=roSy1h4c2vLItvn8AkKdrJheDKEg7AM0MaN7xX0E18CA05ah9kBGLKWgYXm61su6A
-         GN+7Wr3+o55Uu28nZltXL6R6YUiQz1djYVSycTrh3/vfSdQu9M90R3RZZMuoeUrmYC
-         4pyD1IDhH3kt4pvCN4sotoaKQENd91jcCfRxVsUw=
+        b=chL90GiYFzxBPW6t+YbHNb1/xKzVmupMfX6CEiX16g0pFLgFo7p/Ez0/6pVrgxHSW
+         5SuxZY9uYGpAvZAuv/y6PNOzJX8CymHtVvyYRaByDN/+l3J0LprtKH/AOZpvTUKc3e
+         zRRlQywXgP6UK8sJ8dp6WZDGzNQ8jDA3wCCHFO1k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
+        David Beckett <david.beckett@netronome.com>,
         Jakub Kicinski <jakub.kicinski@netronome.com>,
         Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.1 31/40] selftests/tls: test for lowat overshoot with multiple records
-Date:   Mon,  3 Jun 2019 11:09:24 +0200
-Message-Id: <20190603090524.461355889@linuxfoundation.org>
+Subject: [PATCH 5.1 32/40] net/tls: fix no wakeup on partial reads
+Date:   Mon,  3 Jun 2019 11:09:25 +0200
+Message-Id: <20190603090524.509763583@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190603090522.617635820@linuxfoundation.org>
 References: <20190603090522.617635820@linuxfoundation.org>
@@ -47,46 +48,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jakub Kicinski <jakub.kicinski@netronome.com>
 
-[ Upstream commit 7718a855cd7ae9fc27a2aa1532ee105d52eb7634 ]
+[ Upstream commit 04b25a5411f966c2e586909a8496553b71876fae ]
 
-Set SO_RCVLOWAT and test it gets respected when gathering
-data from multiple records.
+When tls_sw_recvmsg() partially copies a record it pops that
+record from ctx->recv_pkt and places it on rx_list.
 
+Next iteration of tls_sw_recvmsg() reads from rx_list via
+process_rx_list() before it enters the decryption loop.
+If there is no more records to be read tls_wait_data()
+will put the process on the wait queue and got to sleep.
+This is incorrect, because some data was already copied
+in process_rx_list().
+
+In case of RPC connections process may never get woken up,
+because peer also simply blocks in read().
+
+I think this may also fix a similar issue when BPF is at
+play, because after __tcp_bpf_recvmsg() returns some data
+we subtract it from len and use continue to restart the
+loop, but len could have just reached 0, so again we'd
+sleep unnecessarily. That's added by:
+commit d3b18ad31f93 ("tls: add bpf support to sk_msg handling")
+
+Fixes: 692d7b5d1f91 ("tls: Fix recvmsg() to be able to peek across multiple records")
+Reported-by: David Beckett <david.beckett@netronome.com>
 Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Reviewed-by: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
+Tested-by: David Beckett <david.beckett@netronome.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/net/tls.c |   19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ net/tls/tls_sw.c |    8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
---- a/tools/testing/selftests/net/tls.c
-+++ b/tools/testing/selftests/net/tls.c
-@@ -575,6 +575,25 @@ TEST_F(tls, recv_peek_large_buf_mult_rec
- 	EXPECT_EQ(memcmp(test_str, buf, len), 0);
- }
+--- a/net/tls/tls_sw.c
++++ b/net/tls/tls_sw.c
+@@ -1692,7 +1692,7 @@ int tls_sw_recvmsg(struct sock *sk,
+ 	len = len - copied;
+ 	timeo = sock_rcvtimeo(sk, flags & MSG_DONTWAIT);
  
-+TEST_F(tls, recv_lowat)
-+{
-+	char send_mem[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-+	char recv_mem[20];
-+	int lowat = 8;
-+
-+	EXPECT_EQ(send(self->fd, send_mem, 10, 0), 10);
-+	EXPECT_EQ(send(self->fd, send_mem, 5, 0), 5);
-+
-+	memset(recv_mem, 0, 20);
-+	EXPECT_EQ(setsockopt(self->cfd, SOL_SOCKET, SO_RCVLOWAT,
-+			     &lowat, sizeof(lowat)), 0);
-+	EXPECT_EQ(recv(self->cfd, recv_mem, 1, MSG_WAITALL), 1);
-+	EXPECT_EQ(recv(self->cfd, recv_mem + 1, 6, MSG_WAITALL), 6);
-+	EXPECT_EQ(recv(self->cfd, recv_mem + 7, 10, 0), 8);
-+
-+	EXPECT_EQ(memcmp(send_mem, recv_mem, 10), 0);
-+	EXPECT_EQ(memcmp(send_mem, recv_mem + 10, 5), 0);
-+}
+-	do {
++	while (len && (decrypted + copied < target || ctx->recv_pkt)) {
+ 		bool retain_skb = false;
+ 		bool zc = false;
+ 		int to_decrypt;
+@@ -1823,11 +1823,7 @@ pick_next_record:
+ 		} else {
+ 			break;
+ 		}
+-
+-		/* If we have a new message from strparser, continue now. */
+-		if (decrypted + copied >= target && !ctx->recv_pkt)
+-			break;
+-	} while (len);
++	}
  
- TEST_F(tls, pollin)
- {
+ recv_end:
+ 	if (num_async) {
 
 
