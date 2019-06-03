@@ -2,138 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83DEA33B0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:20:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBB6533B30
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:27:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbfFCWU1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 18:20:27 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:34748 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726102AbfFCWU1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 18:20:27 -0400
-Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 4BFF9C0095;
-        Mon,  3 Jun 2019 21:04:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1559595844; bh=R+FVTEWGulAWEKsPb0obkH8ecitpx7eLDBgOUZworRU=;
-        h=To:CC:From:Subject:Date:From;
-        b=B8IhMCKQ3u/nIyeziU5WaOmUKM/JOM/21m4kGjtL9jbSiX4BV7exT/0uWl1SzS34P
-         nr/xiAJT8RDTWNTs5LpvR1m7/KixO/XVpN/Aj1Xh18bKvvQyBFql92+kknomw70VI1
-         3Aw9PIVF4TPafUSPC4Q0E2QqYs4msGMqx+foiu51G/4nFtbGxxxahPpPDo6p7m8BPJ
-         l0Ta2LPTimxgiHCi/vE4SOuqK1WDsQp/Ut+DyJR9AXvs8tduohqIksrg+DQJP5cJje
-         AlATMFZrQWpKFvshIp7N+ZMQFfLPExjFrm2yXmzySIj91fMujcF2Gg2UfCfcow4UNd
-         Ge33dYlGr/lYQ==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 8A5AEA0093;
-        Mon,  3 Jun 2019 21:04:23 +0000 (UTC)
-Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.106) by
- US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 3 Jun 2019 14:04:23 -0700
-Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.103) by
- IN01WEHTCB.internal.synopsys.com (10.144.199.105) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 4 Jun 2019 02:34:20 +0530
-Received: from [10.10.161.35] (10.10.161.35) by
- IN01WEHTCA.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 4 Jun 2019 02:34:32 +0530
-X-Mozilla-News-Host: news://gmane.comp.lib.uclibc.buildroot:119
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-CC:     arcml <linux-snps-arc@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        "Jose Abreu" <Jose.Abreu@synopsys.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Subject: [GIT PULL] ARC updates for 5.2-rc4
-Openpgp: preference=signencrypt
-Autocrypt: addr=vgupta@synopsys.com; keydata=
- mQINBFEffBMBEADIXSn0fEQcM8GPYFZyvBrY8456hGplRnLLFimPi/BBGFA24IR+B/Vh/EFk
- B5LAyKuPEEbR3WSVB1x7TovwEErPWKmhHFbyugdCKDv7qWVj7pOB+vqycTG3i16eixB69row
- lDkZ2RQyy1i/wOtHt8Kr69V9aMOIVIlBNjx5vNOjxfOLux3C0SRl1veA8sdkoSACY3McOqJ8
- zR8q1mZDRHCfz+aNxgmVIVFN2JY29zBNOeCzNL1b6ndjU73whH/1hd9YMx2Sp149T8MBpkuQ
- cFYUPYm8Mn0dQ5PHAide+D3iKCHMupX0ux1Y6g7Ym9jhVtxq3OdUI5I5vsED7NgV9c8++baM
- 7j7ext5v0l8UeulHfj4LglTaJIvwbUrCGgtyS9haKlUHbmey/af1j0sTrGxZs1ky1cTX7yeF
- nSYs12GRiVZkh/Pf3nRLkjV+kH++ZtR1GZLqwamiYZhAHjo1Vzyl50JT9EuX07/XTyq/Bx6E
- dcJWr79ZphJ+mR2HrMdvZo3VSpXEgjROpYlD4GKUApFxW6RrZkvMzuR2bqi48FThXKhFXJBd
- JiTfiO8tpXaHg/yh/V9vNQqdu7KmZIuZ0EdeZHoXe+8lxoNyQPcPSj7LcmE6gONJR8ZqAzyk
- F5voeRIy005ZmJJ3VOH3Gw6Gz49LVy7Kz72yo1IPHZJNpSV5xwARAQABtCpWaW5lZXQgR3Vw
- dGEgKGFsaWFzKSA8dmd1cHRhQHN5bm9wc3lzLmNvbT6JAj4EEwECACgCGwMGCwkIBwMCBhUI
- AgkKCwQWAgMBAh4BAheABQJbBYpwBQkLx0HcAAoJEGnX8d3iisJeChAQAMR2UVbJyydOv3aV
- jmqP47gVFq4Qml1weP5z6czl1I8n37bIhdW0/lV2Zll+yU1YGpMgdDTHiDqnGWi4pJeu4+c5
- xsI/VqkH6WWXpfruhDsbJ3IJQ46//jb79ogjm6VVeGlOOYxx/G/RUUXZ12+CMPQo7Bv+Jb+t
- NJnYXYMND2Dlr2TiRahFeeQo8uFbeEdJGDsSIbkOV0jzrYUAPeBwdN8N0eOB19KUgPqPAC4W
- HCg2LJ/o6/BImN7bhEFDFu7gTT0nqFVZNXlOw4UcGGpM3dq/qu8ZgRE0turY9SsjKsJYKvg4
- djAaOh7H9NJK72JOjUhXY/sMBwW5vnNwFyXCB5t4ZcNxStoxrMtyf35synJVinFy6wCzH3eJ
- XYNfFsv4gjF3l9VYmGEJeI8JG/ljYQVjsQxcrU1lf8lfARuNkleUL8Y3rtxn6eZVtAlJE8q2
- hBgu/RUj79BKnWEPFmxfKsaj8of+5wubTkP0I5tXh0akKZlVwQ3lbDdHxznejcVCwyjXBSny
- d0+qKIXX1eMh0/5sDYM06/B34rQyq9HZVVPRHdvsfwCU0s3G+5Fai02mK68okr8TECOzqZtG
- cuQmkAeegdY70Bpzfbwxo45WWQq8dSRURA7KDeY5LutMphQPIP2syqgIaiEatHgwetyVCOt6
- tf3ClCidHNaGky9KcNSQ
-Message-ID: <e1a01d01-fccc-fab8-7022-9a18bb4d8f10@synopsys.com>
-Date:   Mon, 3 Jun 2019 14:04:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726488AbfFCW10 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 18:27:26 -0400
+Received: from mga18.intel.com ([134.134.136.126]:27917 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726025AbfFCW1Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 18:27:25 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 14:05:46 -0700
+X-ExtLoop1: 1
+Received: from jgaire-mobl.ger.corp.intel.com (HELO localhost) ([10.252.20.169])
+  by fmsmga005.fm.intel.com with ESMTP; 03 Jun 2019 14:05:35 -0700
+Date:   Tue, 4 Jun 2019 00:05:34 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        William Roberts <bill.c.roberts@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+Message-ID: <20190603210534.GF4894@linux.intel.com>
+References: <CALCETrXXVMutX8eZk6nnkOAeS+Tj0sQd0FkW+wk6Rx8hQxCe6w@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F654E9824@ORSMSX116.amr.corp.intel.com>
+ <20190528202407.GB13158@linux.intel.com>
+ <285f279f-b500-27f0-ab42-fb1dbcc5ab18@tycho.nsa.gov>
+ <960B34DE67B9E140824F1DCDEC400C0F654EB487@ORSMSX116.amr.corp.intel.com>
+ <678a37af-797d-7bd5-a406-32548a270e3d@tycho.nsa.gov>
+ <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com>
+ <c1135352-0b5e-4694-b1a9-105876095877@tycho.nsa.gov>
+ <CALCETrWsEXzUC33eJpGCpdMCBO4aYVviZLRD-CLMNaG5Jv-TCA@mail.gmail.com>
+ <20190530180110.GB23930@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.10.161.35]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190530180110.GB23930@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Thu, May 30, 2019 at 11:01:10AM -0700, Sean Christopherson wrote:
+>   - Requires enclave builder to mark enclave pages executable in the
+>     non-enclave VMAs, which may unnecessarily require EXECMOD on the
+>     source file, or even worse, EXECMEM, and potentially increases the
+>     attack surface since the file must be executable.
 
-Please pull.
+Enclave builder marks *non-enclave pages*? Not following.
 
-Thx,
--Vineet
-------------------------->
-The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+> W^X handling:
+>   - mmap() to /dev/sgx/enclave only allowed with PROT_NONE, i.e. force
+>     userspace through mprotect() to simplify the kernel implementation.
+>   - Add vm_ops mprotect() ops hook (I'll refer to SGX's implementation
+>     as SGX.mprotect())
+>   - Take explicit ALLOW_WRITE at ADD_REGION, a.k.a. EADD
+>   - ADD_REGION also used to describe EAUG region (tentatively for SGX2).
+>   - Track "can be written at some point in time (past or future)" as
+>     ALLOW_WRITE (to avoid confusiong with MAY_WRITE).  A priori knowledge
+>     of writability avoids having to track/coordinate PROT_WRITE across
+>     VMAs and MMs.
 
-  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+Still not sure why you want to use vm_ops instead of file_operations.
 
-are available in the git repository at:
+The approach I've been proposing earlier in this email thread before
+these new proposals can be summarized from hook perspective as:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc.git/ tags/arc-5.2-rc4
+- Allow mmap() only before ECREATE and require it to be size
+  of the ELRANGE (ECREATE ioctl would check this). This would
+  be with PROT_NONE.
+- Disallow mprotect() before EINIT. Requires a new callback
+  to file_operations like mmap() has.
+- After EINIT check for each mprotect() that it matches the
+  permissions of underlying enclave pages. Disallow mmap()
+  after EINIT.
 
-for you to fetch changes up to 46e04c25e72f002d0d14be072300c2dd827d99b6:
-
-  ARC: [plat-hsdk] Get rid of inappropriate PHY settings (2019-05-28 10:09:31 -0700)
-
-----------------------------------------------------------------
-ARC fixes for 5.2-rc4
-
- - Fix for userspace trying to access kernel vaddr space
-
- - HSDK platform DT updates
-
- - Cleanup some build warnings
-
-----------------------------------------------------------------
-Alexey Brodkin (1):
-      ARC: [plat-hsdk] Get rid of inappropriate PHY settings
-
-Eugeniy Paltsev (3):
-      ARC: mm: SIGSEGV userspace trying to access kernel virtual memory
-      ARC: [plat-hsdk]: enable creg-gpio controller
-      ARC: [plat-hsdk]: Add support of Vivante GPU
-
-Jose Abreu (2):
-      ARC: [plat-hsdk]: Add missing multicast filter bins number to GMAC node
-      ARC: [plat-hsdk]: Add missing FIFO size entry in GMAC node
-
-Vineet Gupta (1):
-      ARC: fix build warnings
-
- arch/arc/boot/dts/hsdk.dts      | 45 +++++++++++++++++++++++++++++++++++++----
- arch/arc/configs/hsdk_defconfig |  3 ++-
- arch/arc/include/asm/cmpxchg.h  | 14 +++++++++----
- arch/arc/mm/fault.c             |  9 +++------
- arch/arc/mm/tlb.c               | 13 +++++++-----
- 5 files changed, 64 insertions(+), 20 deletions(-)
+/Jarkko
