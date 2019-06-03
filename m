@@ -2,139 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 121C632A10
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 09:52:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CF0F32A17
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 09:53:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727110AbfFCHwz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 03:52:55 -0400
-Received: from mail-eopbgr130102.outbound.protection.outlook.com ([40.107.13.102]:34879
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725856AbfFCHwy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 03:52:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prevas.se;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pW1yIgQ6rrrRseTC6AMboN4w7TzbyrgQrm1HqlO8r0k=;
- b=R9dM50hBEKCR4JeoqKqCO/VGoim5YjazswaZjwvLLWUsh1lVjUUKz/vXPmkdI/O7kal55KpzgfGUS+3txfnTS+SBIMbYOyMKblNMyRVNNpGklVkJYUlldHDMAlPdNwcXHT1uaIBf1PH5xqVsXj+LBkkCE7mV5dXJTdkbCiH8/IE=
-Received: from VI1PR10MB2639.EURPRD10.PROD.OUTLOOK.COM (20.178.126.80) by
- VI1PR10MB2478.EURPRD10.PROD.OUTLOOK.COM (20.177.59.75) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1943.22; Mon, 3 Jun 2019 07:52:46 +0000
-Received: from VI1PR10MB2639.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8844:426d:816b:f5d5]) by VI1PR10MB2639.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8844:426d:816b:f5d5%6]) with mapi id 15.20.1943.018; Mon, 3 Jun 2019
- 07:52:46 +0000
-From:   Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-To:     Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-CC:     Rasmus Villemoes <Rasmus.Villemoes@prevas.se>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH net-next] net: dsa: mv88e6xxx: fix comments and macro names in
- mv88e6390_g1_mgmt_rsvd2cpu
-Thread-Topic: [PATCH net-next] net: dsa: mv88e6xxx: fix comments and macro
- names in mv88e6390_g1_mgmt_rsvd2cpu
-Thread-Index: AQHVGeFVBsiRXJ9dkEWwSdw5tHml9Q==
-Date:   Mon, 3 Jun 2019 07:52:46 +0000
-Message-ID: <20190603075236.18470-1-rasmus.villemoes@prevas.dk>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HE1PR0701CA0045.eurprd07.prod.outlook.com
- (2603:10a6:3:9e::13) To VI1PR10MB2639.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:803:e1::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Rasmus.Villemoes@prevas.se; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.20.1
-x-originating-ip: [81.216.59.226]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 1ecba8de-6e80-4796-ba1a-08d6e7f87765
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:VI1PR10MB2478;
-x-ms-traffictypediagnostic: VI1PR10MB2478:
-x-microsoft-antispam-prvs: <VI1PR10MB2478164B32EA5F0A4E8568C98A140@VI1PR10MB2478.EURPRD10.PROD.OUTLOOK.COM>
-x-ms-oob-tlc-oobclassifiers: OLM:1169;
-x-forefront-prvs: 0057EE387C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39850400004)(346002)(136003)(366004)(376002)(189003)(199004)(14454004)(8936002)(50226002)(4326008)(81166006)(386003)(6512007)(6506007)(256004)(110136005)(8976002)(99286004)(68736007)(52116002)(54906003)(102836004)(53936002)(66066001)(66946007)(73956011)(36756003)(305945005)(7736002)(71190400001)(71200400001)(5660300002)(66556008)(66476007)(66446008)(64756008)(26005)(476003)(44832011)(186003)(74482002)(3846002)(6116002)(316002)(1076003)(25786009)(81156014)(2616005)(6486002)(72206003)(6436002)(8676002)(478600001)(486006)(42882007)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR10MB2478;H:VI1PR10MB2639.EURPRD10.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: prevas.se does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: by/1Sh10CgkfYTNjHYDsCKOY0k79dFR9x/YEuqqVOVENTXNvu0yYeLBuvt3lw7CQOUzN7z6cxVmVrlNbJIl7qdajIfwGaeBXflUNU0o/Hi55IUekNZYUL1YRdVX/DJY5PjCGpsUq8eB5diAJTzKF17n2+xdoGDKuvHrkKVuRjyz9jZ8Jdo8kET0WZn93XjpeLjcFbzqFA33tcaEIbAhFzPvnrTTQRasidWljxObdy35ewQlqqIpjt5NbxcvPLFM2bKbjsgUCLNF4ylwZiBbvGlj3gYyjQdr0x28Wd/rremwyCIyn93fXkE+eip4t8xpA4/VbgU1eJUZNplQXcuPdOrhXb4ZYfkR+h/LznLGpeBQ6XRrVkCt1PH9bWDOyUaqjq2OJenyvZs7X5Q5fDZtBA8NT96z5Kzz5JI9QRDjNVdg=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727377AbfFCHxj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 03:53:39 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46915 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727266AbfFCHxj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 03:53:39 -0400
+Received: by mail-lj1-f195.google.com with SMTP id m15so6911985ljg.13;
+        Mon, 03 Jun 2019 00:53:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lzAu1h4ws8etdnR0vU/6kchHWm+HERlVg4Pmf8ziv2U=;
+        b=A97aK9G6Hq9dQ0cvsetYkFPpfiU6T3l00Rh9NBc+1G8HKjbuqe0iHziPoJqp22tclA
+         SqlgHnmBR8YX4xLdUD1ewVuJJlswtcInr6VY4mqEeI8obYoD4caMzZXqWZEFtRmAHGIZ
+         7AWj5sLzVm0q2fuw2f2cBwGvI0osMpVY6RqRfUJdDtlqLsVKUayNAv4T3qUdvQXmTXOI
+         OyO+ASLdHdJTQL4axKSNvyV3BmKqMUMN2MG6LQLCMiYDyVY4TDHXGjANiyi7xT0rJj66
+         lAhrGfMmqjlGY5LWirbRh7tI8bzhvUpdSzGKjEuzUd09m38JOZ3csmVmPOGPR7cDmU0q
+         hh+g==
+X-Gm-Message-State: APjAAAWISBy3txLBxMBhuEhx9lbf+seTJdS76ueImSv2Xum7ZV+biout
+        TmDjZaFN2G1Sjv9pEqWiqrHDNVKXPr6JeGA4WgY=
+X-Google-Smtp-Source: APXvYqx+a8Vn6llNZaSeUiwhPpGeG7DsGesioGycPlDZreFw3MX3k5wLMh4T4QIhDHY2JgclwMbqAbNpr2tRxmlxJVs=
+X-Received: by 2002:a2e:9185:: with SMTP id f5mr10007939ljg.51.1559548416410;
+ Mon, 03 Jun 2019 00:53:36 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: prevas.dk
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1ecba8de-6e80-4796-ba1a-08d6e7f87765
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jun 2019 07:52:46.2803
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d350cf71-778d-4780-88f5-071a4cb1ed61
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Rasmus.Villemoes@prevas.dk
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB2478
+References: <cover.1559438652.git.fthain@telegraphics.com.au>
+ <c56deeb735545c7942607a93f017bb536f581ae5.1559438652.git.fthain@telegraphics.com.au>
+ <CAMuHMdWxRtJU2aRQQjXzR2mvpfpDezCVu42Eo1eXDsQaPb+j6Q@mail.gmail.com>
+ <alpine.LNX.2.21.1906030903510.20@nippy.intranet> <CAMuHMdUFxQnmJmkr2qm4waTfFA5yfCHAFngyD37cFH6gbbD-Pg@mail.gmail.com>
+ <alpine.LNX.2.21.1906031702220.37@nippy.intranet>
+In-Reply-To: <alpine.LNX.2.21.1906031702220.37@nippy.intranet>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 3 Jun 2019 09:53:24 +0200
+Message-ID: <CAMuHMdXDvrTe09PVFxoDGj6xg-x+99iAhWoM8xXG-7WPKJBZOw@mail.gmail.com>
+Subject: Re: [PATCH 5/7] scsi: mac_scsi: Fix pseudo DMA implementation, take 2
+To:     Finn Thain <fthain@telegraphics.com.au>
+Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        scsi <linux-scsi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VGhlIG1hY3JvcyBoYXZlIGFuIGV4dHJhbmVvdXMgJzgwMCcgKGFmdGVyIDAxODBDMiB0aGVyZSBz
-aG91bGQgYmUganVzdA0Kc2l4IG5pYmJsZXMsIHdpdGggWCByZXByZXNlbnRpbmcgb25lKSwgd2hp
-bGUgdGhlIGNvbW1lbnRzIGhhdmUNCmludGVyY2hhbmdlZCBjMiBhbmQgODAgYW5kIGFuIGV4dHJh
-IDowMC4NCg0KU2lnbmVkLW9mZi1ieTogUmFzbXVzIFZpbGxlbW9lcyA8cmFzbXVzLnZpbGxlbW9l
-c0BwcmV2YXMuZGs+DQotLS0NCiBkcml2ZXJzL25ldC9kc2EvbXY4OGU2eHh4L2dsb2JhbDEuYyB8
-IDE2ICsrKysrKysrLS0tLS0tLS0NCiBkcml2ZXJzL25ldC9kc2EvbXY4OGU2eHh4L2dsb2JhbDEu
-aCB8ICA4ICsrKystLS0tDQogMiBmaWxlcyBjaGFuZ2VkLCAxMiBpbnNlcnRpb25zKCspLCAxMiBk
-ZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2RzYS9tdjg4ZTZ4eHgvZ2xv
-YmFsMS5jIGIvZHJpdmVycy9uZXQvZHNhL212ODhlNnh4eC9nbG9iYWwxLmMNCmluZGV4IDM4ZTM5
-OWUwZjMwZS4uYjVjZWZmMjk0NmZlIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9uZXQvZHNhL212ODhl
-Nnh4eC9nbG9iYWwxLmMNCisrKyBiL2RyaXZlcnMvbmV0L2RzYS9tdjg4ZTZ4eHgvZ2xvYmFsMS5j
-DQpAQCAtMzc5LDI2ICszNzksMjYgQEAgaW50IG12ODhlNjM5MF9nMV9tZ210X3JzdmQyY3B1KHN0
-cnVjdCBtdjg4ZTZ4eHhfY2hpcCAqY2hpcCkNCiAJdTE2IHB0cjsNCiAJaW50IGVycjsNCiANCi0J
-LyogMDE6YzI6ODA6MDA6MDA6MDA6MDAtMDE6YzI6ODA6MDA6MDA6MDA6MDcgYXJlIE1hbmFnZW1l
-bnQgKi8NCi0JcHRyID0gTVY4OEU2MzkwX0cxX01PTklUT1JfTUdNVF9DVExfUFRSXzAxODBDMjgw
-MDAwMDAwWExPOw0KKwkvKiAwMTo4MDpjMjowMDowMDowMC0wMTo4MDpjMjowMDowMDowNyBhcmUg
-TWFuYWdlbWVudCAqLw0KKwlwdHIgPSBNVjg4RTYzOTBfRzFfTU9OSVRPUl9NR01UX0NUTF9QVFJf
-MDE4MEMyMDAwMDBYTE87DQogCWVyciA9IG12ODhlNjM5MF9nMV9tb25pdG9yX3dyaXRlKGNoaXAs
-IHB0ciwgMHhmZik7DQogCWlmIChlcnIpDQogCQlyZXR1cm4gZXJyOw0KIA0KLQkvKiAwMTpjMjo4
-MDowMDowMDowMDowOC0wMTpjMjo4MDowMDowMDowMDowZiBhcmUgTWFuYWdlbWVudCAqLw0KLQlw
-dHIgPSBNVjg4RTYzOTBfRzFfTU9OSVRPUl9NR01UX0NUTF9QVFJfMDE4MEMyODAwMDAwMDBYSEk7
-DQorCS8qIDAxOjgwOmMyOjAwOjAwOjA4LTAxOjgwOmMyOjAwOjAwOjBmIGFyZSBNYW5hZ2VtZW50
-ICovDQorCXB0ciA9IE1WODhFNjM5MF9HMV9NT05JVE9SX01HTVRfQ1RMX1BUUl8wMTgwQzIwMDAw
-MFhISTsNCiAJZXJyID0gbXY4OGU2MzkwX2cxX21vbml0b3Jfd3JpdGUoY2hpcCwgcHRyLCAweGZm
-KTsNCiAJaWYgKGVycikNCiAJCXJldHVybiBlcnI7DQogDQotCS8qIDAxOmMyOjgwOjAwOjAwOjAw
-OjIwLTAxOmMyOjgwOjAwOjAwOjAwOjI3IGFyZSBNYW5hZ2VtZW50ICovDQotCXB0ciA9IE1WODhF
-NjM5MF9HMV9NT05JVE9SX01HTVRfQ1RMX1BUUl8wMTgwQzI4MDAwMDAwMlhMTzsNCisJLyogMDE6
-ODA6YzI6MDA6MDA6MjAtMDE6ODA6YzI6MDA6MDA6MjcgYXJlIE1hbmFnZW1lbnQgKi8NCisJcHRy
-ID0gTVY4OEU2MzkwX0cxX01PTklUT1JfTUdNVF9DVExfUFRSXzAxODBDMjAwMDAyWExPOw0KIAll
-cnIgPSBtdjg4ZTYzOTBfZzFfbW9uaXRvcl93cml0ZShjaGlwLCBwdHIsIDB4ZmYpOw0KIAlpZiAo
-ZXJyKQ0KIAkJcmV0dXJuIGVycjsNCiANCi0JLyogMDE6YzI6ODA6MDA6MDA6MDA6MjgtMDE6YzI6
-ODA6MDA6MDA6MDA6MmYgYXJlIE1hbmFnZW1lbnQgKi8NCi0JcHRyID0gTVY4OEU2MzkwX0cxX01P
-TklUT1JfTUdNVF9DVExfUFRSXzAxODBDMjgwMDAwMDAyWEhJOw0KKwkvKiAwMTo4MDpjMjowMDow
-MDoyOC0wMTo4MDpjMjowMDowMDoyZiBhcmUgTWFuYWdlbWVudCAqLw0KKwlwdHIgPSBNVjg4RTYz
-OTBfRzFfTU9OSVRPUl9NR01UX0NUTF9QVFJfMDE4MEMyMDAwMDJYSEk7DQogCWVyciA9IG12ODhl
-NjM5MF9nMV9tb25pdG9yX3dyaXRlKGNoaXAsIHB0ciwgMHhmZik7DQogCWlmIChlcnIpDQogCQly
-ZXR1cm4gZXJyOw0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2RzYS9tdjg4ZTZ4eHgvZ2xvYmFs
-MS5oIGIvZHJpdmVycy9uZXQvZHNhL212ODhlNnh4eC9nbG9iYWwxLmgNCmluZGV4IGJlZjAxMzMx
-MjY2Zi4uMmYxOTVhMGJkODkxIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9uZXQvZHNhL212ODhlNnh4
-eC9nbG9iYWwxLmgNCisrKyBiL2RyaXZlcnMvbmV0L2RzYS9tdjg4ZTZ4eHgvZ2xvYmFsMS5oDQpA
-QCAtMTkwLDEwICsxOTAsMTAgQEANCiAjZGVmaW5lIE1WODhFNjM5MF9HMV9NT05JVE9SX01HTVRf
-Q1RMCQkJCTB4MWENCiAjZGVmaW5lIE1WODhFNjM5MF9HMV9NT05JVE9SX01HTVRfQ1RMX1VQREFU
-RQkJCTB4ODAwMA0KICNkZWZpbmUgTVY4OEU2MzkwX0cxX01PTklUT1JfTUdNVF9DVExfUFRSX01B
-U0sJCQkweDNmMDANCi0jZGVmaW5lIE1WODhFNjM5MF9HMV9NT05JVE9SX01HTVRfQ1RMX1BUUl8w
-MTgwQzI4MDAwMDAwMFhMTwkweDAwMDANCi0jZGVmaW5lIE1WODhFNjM5MF9HMV9NT05JVE9SX01H
-TVRfQ1RMX1BUUl8wMTgwQzI4MDAwMDAwMFhISQkweDAxMDANCi0jZGVmaW5lIE1WODhFNjM5MF9H
-MV9NT05JVE9SX01HTVRfQ1RMX1BUUl8wMTgwQzI4MDAwMDAwMlhMTwkweDAyMDANCi0jZGVmaW5l
-IE1WODhFNjM5MF9HMV9NT05JVE9SX01HTVRfQ1RMX1BUUl8wMTgwQzI4MDAwMDAwMlhISQkweDAz
-MDANCisjZGVmaW5lIE1WODhFNjM5MF9HMV9NT05JVE9SX01HTVRfQ1RMX1BUUl8wMTgwQzIwMDAw
-MFhMTwkweDAwMDANCisjZGVmaW5lIE1WODhFNjM5MF9HMV9NT05JVE9SX01HTVRfQ1RMX1BUUl8w
-MTgwQzIwMDAwMFhISQkweDAxMDANCisjZGVmaW5lIE1WODhFNjM5MF9HMV9NT05JVE9SX01HTVRf
-Q1RMX1BUUl8wMTgwQzIwMDAwMlhMTwkweDAyMDANCisjZGVmaW5lIE1WODhFNjM5MF9HMV9NT05J
-VE9SX01HTVRfQ1RMX1BUUl8wMTgwQzIwMDAwMlhISQkweDAzMDANCiAjZGVmaW5lIE1WODhFNjM5
-MF9HMV9NT05JVE9SX01HTVRfQ1RMX1BUUl9JTkdSRVNTX0RFU1QJCTB4MjAwMA0KICNkZWZpbmUg
-TVY4OEU2MzkwX0cxX01PTklUT1JfTUdNVF9DVExfUFRSX0VHUkVTU19ERVNUCQkweDIxMDANCiAj
-ZGVmaW5lIE1WODhFNjM5MF9HMV9NT05JVE9SX01HTVRfQ1RMX1BUUl9DUFVfREVTVAkJMHgzMDAw
-DQotLSANCjIuMjAuMQ0KDQo=
+Hi Finn,
+
+On Mon, Jun 3, 2019 at 9:40 AM Finn Thain <fthain@telegraphics.com.au> wrote:
+> On Mon, 3 Jun 2019, Geert Uytterhoeven wrote:
+> > On Mon, Jun 3, 2019 at 1:32 AM Finn Thain <fthain@telegraphics.com.au> wrote:
+> > > On Sun, 2 Jun 2019, Geert Uytterhoeven wrote:
+> > > > On Sun, Jun 2, 2019 at 3:29 AM Finn Thain <fthain@telegraphics.com.au>
+> > > > wrote:
+> > > > > A system bus error during a PDMA transfer can mess up the calculation
+> > > > > of the transfer residual (the PDMA handshaking hardware lacks a byte
+> > > > > counter). This results in data corruption.
+> > > > >
+> > > > > The algorithm in this patch anticipates a bus error by starting each
+> > > > > transfer with a MOVE.B instruction. If a bus error is caught the
+> > > > > transfer will be retried. If a bus error is caught later in the
+> > > > > transfer (for a MOVE.W instruction) the transfer gets failed and
+> > > > > subsequent requests for that target will use PIO instead of PDMA.
+> > > > >
+> > > > > This avoids the "!REQ and !ACK" error so the severity level of that
+> > > > > message is reduced to KERN_DEBUG.
+> > > > >
+> > > > > Cc: Michael Schmitz <schmitzmic@gmail.com>
+> > > > > Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> > > > > Cc: stable@vger.kernel.org # v4.14+
+> > > > > Fixes: 3a0f64bfa907 ("mac_scsi: Fix pseudo DMA implementation")
+> > > > > Reported-by: Chris Jones <chris@martin-jones.com>
+> > > > > Tested-by: Stan Johnson <userm57@yahoo.com>
+> > > > > Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+> > > >
+> > > > Thanks for your patch!
+> > > >
+> > > > > ---
+> > > > >  arch/m68k/include/asm/mac_pdma.h | 179 +++++++++++++++++++++++++++
+> > > > >  drivers/scsi/mac_scsi.c          | 201 ++++++++-----------------------
+> > > >
+> > > > Why have you moved the PDMA implementation to a header file under
+> > > > arch/m68k/? Do you intend to reuse it by other drivers?
+> > > >
+> > >
+> > > There are a couple of reasons: the mac_esp driver also uses PDMA and the
+> > > NuBus PowerMac port also uses mac_scsi.c. OTOH, the NuBus PowerMac port is
+> > > still out-of-tree, and it is unclear whether the mac_esp driver will ever
+> > > benefit from this code.
+> >
+> > So you do have future sharing in mind...
+> >
+> > > > If not, please keep it in the driver, so (a) you don't need an ack from
+> > > > me ;-), and (b) your change may be easier to review.
+> > >
+> > > I take your wink to mean that you don't want to ask the SCSI maintainers
+> > > to review m68k asm. Putting aside the code review process for a moment, do
+> >
+> > I meant that apart from the code containing m68k assembler source, it is
+> > not related to arch/m68k/, and thus belongs to the driver.
+>
+> That criterion seems insufficient. It could describe most of arch/m68k/mac
+> (which has headers in arch/m68k/include).
+>
+> > There are several other drivers that contain pieces of assembler code.
+> >
+>
+> Does any driver contain assembler code for multiple architectures? I was
+> trying to avoid that -- though admittedly I don't yet have actual code for
+> the PDMA implementation for mac_scsi for Nubus PowerMacs.
+>
+> However, the existence of that out-of-tree port suggests to me that
+> arch/powerpc/include/mac_scsi.h and arch/m68k/include/mac_scsi.h would be
+> an appropriate layout.
+>
+> But if there's no clear policy then perhaps we should ignore the whole
+> question until the driver code actually becomes shared code. I don't mind
+> re-working the patch to combine the two files.
+
+Yep, can be handled when the need arises.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
