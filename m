@@ -2,206 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B35432BB2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:11:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E38CC32B82
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:08:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728230AbfFCJKr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 05:10:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55338 "EHLO mail.kernel.org"
+        id S1727437AbfFCJIs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 05:08:48 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60338 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728208AbfFCJKp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 05:10:45 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726561AbfFCJIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 05:08:47 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF1E527E1E;
-        Mon,  3 Jun 2019 09:10:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559553044;
-        bh=U4wZDwjrEdThU8RjwG6l75IDt3flc+d3mukryRYq2rU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ln5JREuN1e22Zlwu43LNzaJiP1MLjsdhXKAdqYUunnN9FXAtUmHbrtCHvPrz5Ec87
-         TsvXP10cOt7KpZ5MpICGCsCYXJNS/GMN6shBIMQBnV56FFacGVCRmGyOyiLEMcETL2
-         wxYTDmRhHaS0pA4yTCJBbiEhg+0tAv3x/BA/km+U=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Junwei Hu <hujunwei4@huawei.com>,
-        Wang Wang <wangwang2@huawei.com>,
-        syzbot+1e8114b61079bfe9cbc5@syzkaller.appspotmail.com,
-        Kang Zhou <zhoukang7@huawei.com>,
-        Suanming Mou <mousuanming@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 32/32] tipc: fix modprobe tipc failed after switch order of device registration
-Date:   Mon,  3 Jun 2019 11:08:26 +0200
-Message-Id: <20190603090315.660475284@linuxfoundation.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190603090308.472021390@linuxfoundation.org>
-References: <20190603090308.472021390@linuxfoundation.org>
-User-Agent: quilt/0.66
+        by mx1.redhat.com (Postfix) with ESMTPS id 7C3C2308404B;
+        Mon,  3 Jun 2019 09:08:47 +0000 (UTC)
+Received: from gondolin (ovpn-204-96.brq.redhat.com [10.40.204.96])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C650C648B1;
+        Mon,  3 Jun 2019 09:08:43 +0000 (UTC)
+Date:   Mon, 3 Jun 2019 11:08:39 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Harald Freudenberger <freude@linux.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>
+Subject: Re: [PATCH v1] s390/pkey: Use -ENODEV instead of -EOPNOTSUPP
+Message-ID: <20190603110839.1a44f352.cohuck@redhat.com>
+In-Reply-To: <67136b8b-251f-4745-a220-2624aeac289e@redhat.com>
+References: <20190531093628.14766-1-david@redhat.com>
+        <3dfea8fd-dbe7-f9d0-f7a7-2c65349c0a81@linux.ibm.com>
+        <67136b8b-251f-4745-a220-2624aeac289e@redhat.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 03 Jun 2019 09:08:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Junwei Hu <hujunwei4@huawei.com>
+On Mon, 3 Jun 2019 10:14:53 +0200
+David Hildenbrand <david@redhat.com> wrote:
 
-commit 526f5b851a96566803ee4bee60d0a34df56c77f8 upstream.
+> On 03.06.19 09:48, Harald Freudenberger wrote:
+> > On 31.05.19 11:36, David Hildenbrand wrote:  
+> >> systemd-modules-load.service automatically tries to load the pkey module
+> >> on systems that have MSA.
+> >>
+> >> Pkey also requires the MSA3 facility and a bunch of subfunctions.
+> >> Failing with -EOPNOTSUPP makes "systemd-modules-load.service" fail on
+> >> any system that does not have all needed subfunctions. For example,
+> >> when running under QEMU TCG (but also on systems where protected keys
+> >> are disabled via the HMC).
+> >>
+> >> Let's use -ENODEV, so systemd-modules-load.service properly ignores
+> >> failing to load the pkey module because of missing HW functionality.
+> >>
+> >> Cc: Harald Freudenberger <freude@linux.ibm.com>
+> >> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+> >> Cc: Cornelia Huck <cohuck@redhat.com>
+> >> Cc: Christian Borntraeger <borntraeger@de.ibm.com>
+> >> Signed-off-by: David Hildenbrand <david@redhat.com>
+> >> ---
+> >>  drivers/s390/crypto/pkey_api.c | 6 +++---
+> >>  1 file changed, 3 insertions(+), 3 deletions(-)
+> >>
+> >> diff --git a/drivers/s390/crypto/pkey_api.c b/drivers/s390/crypto/pkey_api.c
+> >> index 45eb0c14b880..ddfcefb47284 100644
+> >> --- a/drivers/s390/crypto/pkey_api.c
+> >> +++ b/drivers/s390/crypto/pkey_api.c
+> >> @@ -1695,15 +1695,15 @@ static int __init pkey_init(void)
+> >>  	 * are able to work with protected keys.
+> >>  	 */
+> >>  	if (!cpacf_query(CPACF_PCKMO, &pckmo_functions))
+> >> -		return -EOPNOTSUPP;
+> >> +		return -ENODEV;
+> >>  
+> >>  	/* check for kmc instructions available */
+> >>  	if (!cpacf_query(CPACF_KMC, &kmc_functions))
+> >> -		return -EOPNOTSUPP;
+> >> +		return -ENODEV;
+> >>  	if (!cpacf_test_func(&kmc_functions, CPACF_KMC_PAES_128) ||
+> >>  	    !cpacf_test_func(&kmc_functions, CPACF_KMC_PAES_192) ||
+> >>  	    !cpacf_test_func(&kmc_functions, CPACF_KMC_PAES_256))
+> >> -		return -EOPNOTSUPP;
+> >> +		return -ENODEV;
+> >>  
+> >>  	pkey_debug_init();
+> >>    
+> > I can't really agree to this: there are a lot more modules returning
+> > EOPNOTSUPP, for example have a look into the arch/s390/crypto
+> > subdirectory. The ghash_s390 module also registers for MSA feature
+> > and also returns EOPNOTSUPPORTED when the required hardware extension  
+> 
+> For s390x KVM, we return ENODEV in case the SIE (the HW feature) is not
+> available. Just because s390x crypto is doing it consistently this way
+> doesn't mean it is the right thing to do.
+> 
+> Maybe we should change all s390x crypto modules then.
 
-Error message printed:
-modprobe: ERROR: could not insert 'tipc': Address family not
-supported by protocol.
-when modprobe tipc after the following patch: switch order of
-device registration, commit 7e27e8d6130c
-("tipc: switch order of device registration to fix a crash")
+I agree.
 
-Because sock_create_kern(net, AF_TIPC, ...) called by
-tipc_topsrv_create_listener() in the initialization process
-of tipc_init_net(), so tipc_socket_init() must be execute before that.
-Meanwhile, tipc_net_id need to be initialized when sock_create()
-called, and tipc_socket_init() is no need to be called for each namespace.
+> 
+> > is not available. Same with the prng kernel module, sha1_s390, sha256_s390
+> > and I assume there is a bunch of other kernel modules with same behavior.
+> > I would prefer having this fixed on the systemd-modules-load.service side.  
+> 
+> 
+> A very, very bad comparison (because it contains a lot of false positives):
+> 
+> t460s: ~/git/linux memory_block_devices2 $ git grep -A 20 "_init("  --
+> 'drivers*.[c]' | grep ENODEV | wc -l
+> 1552
+> 
+> t460s: ~/git/linux memory_block_devices2 $ git grep -A 20 "_init("  --
+> 'drivers*.[c]' | grep EOPNOTSUPP | wc -l
+> 56
+> 
+> No, I don't think EOPNOTSUPP is the right thing to do.
 
-I add a variable tipc_topsrv_net_ops, and split the
-register_pernet_subsys() of tipc into two parts, and split
-tipc_socket_init() with initialization of pernet params.
+If we frame it as
+-EOPNOTSUPP -> operation not supported (i.e. we cannot perform this
+operation)
+-ENODEV -> no such device (i.e. we're lacking hardware support)
 
-By the way, I fixed resources rollback error when tipc_bcast_init()
-failed in tipc_init_net().
-
-Fixes: 7e27e8d6130c ("tipc: switch order of device registration to fix a crash")
-Signed-off-by: Junwei Hu <hujunwei4@huawei.com>
-Reported-by: Wang Wang <wangwang2@huawei.com>
-Reported-by: syzbot+1e8114b61079bfe9cbc5@syzkaller.appspotmail.com
-Reviewed-by: Kang Zhou <zhoukang7@huawei.com>
-Reviewed-by: Suanming Mou <mousuanming@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- net/tipc/core.c   |   18 ++++++++++++------
- net/tipc/subscr.h |    5 +++--
- net/tipc/topsrv.c |   14 ++++++++++++--
- 3 files changed, 27 insertions(+), 10 deletions(-)
-
---- a/net/tipc/core.c
-+++ b/net/tipc/core.c
-@@ -75,9 +75,6 @@ static int __net_init tipc_init_net(stru
- 		goto out_nametbl;
- 
- 	INIT_LIST_HEAD(&tn->dist_queue);
--	err = tipc_topsrv_start(net);
--	if (err)
--		goto out_subscr;
- 
- 	err = tipc_bcast_init(net);
- 	if (err)
-@@ -86,8 +83,6 @@ static int __net_init tipc_init_net(stru
- 	return 0;
- 
- out_bclink:
--	tipc_bcast_stop(net);
--out_subscr:
- 	tipc_nametbl_stop(net);
- out_nametbl:
- 	tipc_sk_rht_destroy(net);
-@@ -97,7 +92,6 @@ out_sk_rht:
- 
- static void __net_exit tipc_exit_net(struct net *net)
- {
--	tipc_topsrv_stop(net);
- 	tipc_net_stop(net);
- 	tipc_bcast_stop(net);
- 	tipc_nametbl_stop(net);
-@@ -111,6 +105,11 @@ static struct pernet_operations tipc_net
- 	.size = sizeof(struct tipc_net),
- };
- 
-+static struct pernet_operations tipc_topsrv_net_ops = {
-+	.init = tipc_topsrv_init_net,
-+	.exit = tipc_topsrv_exit_net,
-+};
-+
- static int __init tipc_init(void)
- {
- 	int err;
-@@ -141,6 +140,10 @@ static int __init tipc_init(void)
- 	if (err)
- 		goto out_socket;
- 
-+	err = register_pernet_subsys(&tipc_topsrv_net_ops);
-+	if (err)
-+		goto out_pernet_topsrv;
-+
- 	err = tipc_bearer_setup();
- 	if (err)
- 		goto out_bearer;
-@@ -148,6 +151,8 @@ static int __init tipc_init(void)
- 	pr_info("Started in single node mode\n");
- 	return 0;
- out_bearer:
-+	unregister_pernet_subsys(&tipc_topsrv_net_ops);
-+out_pernet_topsrv:
- 	tipc_socket_stop();
- out_socket:
- 	unregister_pernet_subsys(&tipc_net_ops);
-@@ -165,6 +170,7 @@ out_netlink:
- static void __exit tipc_exit(void)
- {
- 	tipc_bearer_cleanup();
-+	unregister_pernet_subsys(&tipc_topsrv_net_ops);
- 	tipc_socket_stop();
- 	unregister_pernet_subsys(&tipc_net_ops);
- 	tipc_netlink_stop();
---- a/net/tipc/subscr.h
-+++ b/net/tipc/subscr.h
-@@ -77,8 +77,9 @@ void tipc_sub_report_overlap(struct tipc
- 			     u32 found_lower, u32 found_upper,
- 			     u32 event, u32 port, u32 node,
- 			     u32 scope, int must);
--int tipc_topsrv_start(struct net *net);
--void tipc_topsrv_stop(struct net *net);
-+
-+int __net_init tipc_topsrv_init_net(struct net *net);
-+void __net_exit tipc_topsrv_exit_net(struct net *net);
- 
- void tipc_sub_put(struct tipc_subscription *subscription);
- void tipc_sub_get(struct tipc_subscription *subscription);
---- a/net/tipc/topsrv.c
-+++ b/net/tipc/topsrv.c
-@@ -643,7 +643,7 @@ static void tipc_topsrv_work_stop(struct
- 	destroy_workqueue(s->send_wq);
- }
- 
--int tipc_topsrv_start(struct net *net)
-+static int tipc_topsrv_start(struct net *net)
- {
- 	struct tipc_net *tn = tipc_net(net);
- 	const char name[] = "topology_server";
-@@ -677,7 +677,7 @@ int tipc_topsrv_start(struct net *net)
- 	return ret;
- }
- 
--void tipc_topsrv_stop(struct net *net)
-+static void tipc_topsrv_stop(struct net *net)
- {
- 	struct tipc_topsrv *srv = tipc_topsrv(net);
- 	struct socket *lsock = srv->listener;
-@@ -702,3 +702,13 @@ void tipc_topsrv_stop(struct net *net)
- 	idr_destroy(&srv->conn_idr);
- 	kfree(srv);
- }
-+
-+int __net_init tipc_topsrv_init_net(struct net *net)
-+{
-+	return tipc_topsrv_start(net);
-+}
-+
-+void __net_exit tipc_topsrv_exit_net(struct net *net)
-+{
-+	tipc_topsrv_stop(net);
-+}
-
-
+I think -ENODEV makes more sense (even though we could argue for both.)
+And it is an easy change to make...
