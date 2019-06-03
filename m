@@ -2,115 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73DAA3330A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:05:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD15633316
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:06:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729276AbfFCPE4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 11:04:56 -0400
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:53873 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729166AbfFCPE4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 11:04:56 -0400
-X-Originating-IP: 92.137.69.152
-Received: from localhost (alyon-656-1-672-152.w92-137.abo.wanadoo.fr [92.137.69.152])
-        (Authenticated sender: gregory.clement@bootlin.com)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id A018B40008;
-        Mon,  3 Jun 2019 15:04:49 +0000 (UTC)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Tomasz Maciej Nowak <tmn505@gmail.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Ellie Reeves <ellierevves@gmail.com>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: armada-3720-espressobin: correct spi node
-In-Reply-To: <20190527111614.3694-1-tmn505@gmail.com>
-References: <20190527111614.3694-1-tmn505@gmail.com>
-Date:   Mon, 03 Jun 2019 17:04:49 +0200
-Message-ID: <87h896k8vi.fsf@FE-laptop>
+        id S1729368AbfFCPG1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 11:06:27 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:50754 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729081AbfFCPG0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 11:06:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=HVCAKnGE2o6vcUDUe+ngXqRsklPv7HNwpc9aiFTjxqY=; b=tPEEj9eo0d/eQNi5ewgQrBGxFP
+        GQsLe/xdWnEr2bRxVObacb7/WZlL7Cnmry6dWAs75DziNxOi486Eqc7Ge73JRDNkcEp6wEqbacgKU
+        J9kdRbEtsvrUPrBN88a7uEK6mHjxIWbahGlf6xPFNrbyz5zFJ7UFnndMZqvt1qmB1J5w=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hXoXV-000612-Ku; Mon, 03 Jun 2019 17:06:21 +0200
+Date:   Mon, 3 Jun 2019 17:06:21 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Cc:     Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rasmus Villemoes <Rasmus.Villemoes@prevas.se>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v3 07/10] net: dsa: mv88e6xxx: implement
+ port_link_state for mv88e6250
+Message-ID: <20190603150621.GF19627@lunn.ch>
+References: <20190603144112.27713-1-rasmus.villemoes@prevas.dk>
+ <20190603144112.27713-8-rasmus.villemoes@prevas.dk>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190603144112.27713-8-rasmus.villemoes@prevas.dk>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tomasz Maciej Nowak <tmn505@gmail.com> writes:
+On Mon, Jun 03, 2019 at 02:42:20PM +0000, Rasmus Villemoes wrote:
+> The mv88e6250 has a rather different way of reporting the link, speed
+> and duplex status. A simple difference is that the link bit is bit 12
+> rather than bit 11 of the port status register.
+> 
+> It gets more complicated for speed and duplex, which do not have
+> separate fields. Instead, there's a four-bit PortMode field, and
+> decoding that depends on whether it's a phy or mii port. For the phy
+> ports, only four of the 16 values have defined meaning; the rest are
+> called "reserved", so returning {SPEED,DUPLEX}_UNKNOWN seems
+> reasonable.
+> 
+> For the mii ports, most possible values are documented (0x3 and 0x5
+> are reserved), but I'm unable to make sense of them all. Since the
+> bits simply reflect the Px_MODE[3:0] configuration pins, just support
+> the subset that I'm certain about. Support for other setups can be
+> added later.
 
-> The manufacturer of this board, ships it with various SPI NOR chips and
-> increments U-Boot bootloader version along the time. There is no way to
-> tell which is placed on the board since no revision bump takes place.
-> This creates two issues.
->
-> The first, cosmetic. Since the NOR chip may differ, there's message on
-> boot stating that kernel expected w25q32dw and found different one. To
-> correct this, remove optional device-specific compatible string. Being
-> here lets replace bogus "spi-flash" compatible string with proper one.
->
-> The second is linked to partitions layout, it changed after commit:
-> 81e7251252 ("arm64: mvebu: config: move env to the end of the 4MB boot
-> device") in Marvells downstream U-Boot fork [1], shifting environment
-> location to the end of boot device. Since the new boards will have U-Boot
-> with this change, it'll lead to improper results writing or reading from
-> these partitions. We can't tell if users will update bootloader to recent
-> version provided on manufacturer website, so lets drop partitons layout.
->
-> 1. https://github.com/MarvellEmbeddedProcessors/u-boot-marvell.git
->
-> Signed-off-by: Tomasz Maciej Nowak <tmn505@gmail.com>
+The code looks sensible and covers the most likely scenarios.
 
-Applied on mvebu/dt64
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Thanks,
-
-Gregory
-
-> ---
->  .../dts/marvell/armada-3720-espressobin.dts    | 18 +-----------------
->  1 file changed, 1 insertion(+), 17 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts b/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts
-> index 6be019e1888e..fbcf03f86c96 100644
-> --- a/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts
-> +++ b/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts
-> @@ -95,25 +95,9 @@
->  
->  	flash@0 {
->  		reg = <0>;
-> -		compatible = "winbond,w25q32dw", "jedec,spi-flash";
-> +		compatible = "jedec,spi-nor";
->  		spi-max-frequency = <104000000>;
->  		m25p,fast-read;
-> -
-> -		partitions {
-> -			compatible = "fixed-partitions";
-> -			#address-cells = <1>;
-> -			#size-cells = <1>;
-> -
-> -			partition@0 {
-> -				label = "uboot";
-> -				reg = <0 0x180000>;
-> -			};
-> -
-> -			partition@180000 {
-> -				label = "ubootenv";
-> -				reg = <0x180000 0x10000>;
-> -			};
-> -		};
->  	};
->  };
->  
-> -- 
-> 2.21.0
->
-
--- 
-Gregory Clement, Bootlin
-Embedded Linux and Kernel engineering
-http://bootlin.com
+    Andrew
