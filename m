@@ -2,83 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87FE033686
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 19:25:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B7B533691
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 19:27:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729854AbfFCRZo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 13:25:44 -0400
-Received: from foss.arm.com ([217.140.101.70]:56480 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726805AbfFCRZn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 13:25:43 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EE81B1682;
-        Mon,  3 Jun 2019 10:25:42 -0700 (PDT)
-Received: from eglon.cambridge.arm.com (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 504D43F5AF;
-        Mon,  3 Jun 2019 10:25:41 -0700 (PDT)
-From:   James Morse <james.morse@arm.com>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org
-Cc:     Fenghua Yu <fenghua.yu@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Avin <hpa@zytor.com>, james.morse@arm.com
-Subject: [PATCH v2] x86/resctrl: Don't stop walking closids when a locksetup group is found
-Date:   Mon,  3 Jun 2019 18:25:31 +0100
-Message-Id: <20190603172531.178830-1-james.morse@arm.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727619AbfFCR1V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 13:27:21 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46006 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726867AbfFCR1U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 13:27:20 -0400
+Received: by mail-pg1-f195.google.com with SMTP id w34so8647967pga.12
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 10:27:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=giaaUlfYCB4p9IcMpuBt2FywCr2iJGrguh6BYXiq67g=;
+        b=PQ5b4O2XlL6OPmwtnnq6KaLa51qn9sjNwVfi0PlxHiJGJ+i7VnVu+20+W1qNQomvSl
+         O3Bv5aHsJ+ipuVoMtxh+kzpSWlW4Fk3QMjP1zhFNcetUhou0CknU1EGHuroPrIz5z14C
+         qXzhT/f5tH7ZDs5fLUiEx4n4L8NnZWU7fN3LdyUmT8Mxq9mRnmUApBPrT2zWXQJ0feWI
+         4w3/MUVcT9pZIZJFcwZJF1GD0/TY6J7eT+huIUuMCYafpele/5qrcMQKXrkYlANL17q9
+         CUPSL9cFDkj7VHokflPz+CnEZ0hF9rhqwkjU7vUo1G4IBQ9beS8fsUpGZc8+5T2/sgSJ
+         Qd7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=giaaUlfYCB4p9IcMpuBt2FywCr2iJGrguh6BYXiq67g=;
+        b=f/gmXD9/4JrZX6achbsPN5LpEOJIUQhUBoqQ7ZBFNBcyGoLxIkiNAD1v/UvtflZJ9N
+         jGCQEDYepdgahAxOEzGuInC6DxyRPFLi/7Pz26ly94noOwRIClGHixIxxo+cPKuDfIA1
+         ftCgd/8HSRWA5UnijiLB1im3VLby/b7Nqsvd7bxVgXrsIPDYf3kYopCjD/cz97RA8lM9
+         u/Qkf3r96CzdgxuCWI0ZFSNaHFWiilMrH5bBFpAoXL8SIvIG/k5htrfZwOHmyqaOj2wi
+         WyGuJy+tReUhOfcAmfY2OPHcSI+HtctKjOvVsmIcrqHk/zHYIjH+6MckLQk4Ezprk1Lx
+         z+GQ==
+X-Gm-Message-State: APjAAAVABVuIb/05DOlUjahnkAWecwrJshOt/Ri5zp5TEaRXvo+AuxfX
+        ZXwyEDfB1j7MgVKLVV8EFkGs+g==
+X-Google-Smtp-Source: APXvYqzgq4qEKaWZh0wCQxHsqzHbOHu4nbzb40a+iOcqwVisgDkpzRyOJZZvootYCQo7snWqgQqhRA==
+X-Received: by 2002:a17:90a:8a10:: with SMTP id w16mr31345882pjn.133.1559582839582;
+        Mon, 03 Jun 2019 10:27:19 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::1:9fa4])
+        by smtp.gmail.com with ESMTPSA id s1sm12158354pgp.94.2019.06.03.10.27.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Jun 2019 10:27:18 -0700 (PDT)
+Date:   Mon, 3 Jun 2019 13:27:17 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Minchan Kim <minchan@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>, jannh@google.com,
+        oleg@redhat.com, christian@brauner.io, oleksandr@redhat.com,
+        hdanton@sina.com
+Subject: Re: [RFCv2 1/6] mm: introduce MADV_COLD
+Message-ID: <20190603172717.GA30363@cmpxchg.org>
+References: <20190531064313.193437-1-minchan@kernel.org>
+ <20190531064313.193437-2-minchan@kernel.org>
+ <20190531084752.GI6896@dhcp22.suse.cz>
+ <20190531133904.GC195463@google.com>
+ <20190531140332.GT6896@dhcp22.suse.cz>
+ <20190531143407.GB216592@google.com>
+ <20190603071607.GB4531@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190603071607.GB4531@dhcp22.suse.cz>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a new control group is created __init_one_rdt_domain() walks all
-the other closids to calculate the sets of used and unused bits.
+On Mon, Jun 03, 2019 at 09:16:07AM +0200, Michal Hocko wrote:
+> On Fri 31-05-19 23:34:07, Minchan Kim wrote:
+> > On Fri, May 31, 2019 at 04:03:32PM +0200, Michal Hocko wrote:
+> > > On Fri 31-05-19 22:39:04, Minchan Kim wrote:
+> > > > On Fri, May 31, 2019 at 10:47:52AM +0200, Michal Hocko wrote:
+> > > > > On Fri 31-05-19 15:43:08, Minchan Kim wrote:
+> > > > > > When a process expects no accesses to a certain memory range, it could
+> > > > > > give a hint to kernel that the pages can be reclaimed when memory pressure
+> > > > > > happens but data should be preserved for future use.  This could reduce
+> > > > > > workingset eviction so it ends up increasing performance.
+> > > > > > 
+> > > > > > This patch introduces the new MADV_COLD hint to madvise(2) syscall.
+> > > > > > MADV_COLD can be used by a process to mark a memory range as not expected
+> > > > > > to be used in the near future. The hint can help kernel in deciding which
+> > > > > > pages to evict early during memory pressure.
+> > > > > > 
+> > > > > > Internally, it works via deactivating pages from active list to inactive's
+> > > > > > head if the page is private because inactive list could be full of
+> > > > > > used-once pages which are first candidate for the reclaiming and that's a
+> > > > > > reason why MADV_FREE move pages to head of inactive LRU list. Therefore,
+> > > > > > if the memory pressure happens, they will be reclaimed earlier than other
+> > > > > > active pages unless there is no access until the time.
+> > > > > 
+> > > > > [I am intentionally not looking at the implementation because below
+> > > > > points should be clear from the changelog - sorry about nagging ;)]
+> > > > > 
+> > > > > What kind of pages can be deactivated? Anonymous/File backed.
+> > > > > Private/shared? If shared, are there any restrictions?
+> > > > 
+> > > > Both file and private pages could be deactived from each active LRU
+> > > > to each inactive LRU if the page has one map_count. In other words,
+> > > > 
+> > > >     if (page_mapcount(page) <= 1)
+> > > >         deactivate_page(page);
+> > > 
+> > > Why do we restrict to pages that are single mapped?
+> > 
+> > Because page table in one of process shared the page would have access bit
+> > so finally we couldn't reclaim the page. The more process it is shared,
+> > the more fail to reclaim.
+> 
+> So what? In other words why should it be restricted solely based on the
+> map count. I can see a reason to restrict based on the access
+> permissions because we do not want to simplify all sorts of side channel
+> attacks but memory reclaim is capable of reclaiming shared pages and so
+> far I haven't heard any sound argument why madvise should skip those.
+> Again if there are any reasons, then document them in the changelog.
 
-If it discovers a pseudo_locksetup group, it breaks out of the loop.
-This means any later closid doesn't get its used bits added to used_b.
-These bits will then get set in unused_b, and added to the new
-control group's configuration, even if they were marked as exclusive
-for a later closid.
+I think it makes sense. It could be explained, but it also follows
+established madvise semantics, and I'm not sure it's necessarily
+Minchan's job to re-iterate those.
 
-When encountering a pseudo_locksetup group, we should continue. This
-is because "a resource group enters 'pseudo-locked' mode after the
-schemata is written while the resource group is in 'pseudo-locksetup'
-mode." When we find a pseudo_locksetup group, its configuration is
-expected to be overwritten, we can skip it.
+Sharing isn't exactly transparent to userspace. The kernel does COW,
+ksm etc. When you madvise, you can really only speak for your own
+reference to that memory - "*I* am not using this."
 
-Fixes: dfe9674b04ff6 ("x86/intel_rdt: Enable entering of pseudo-locksetup mode")
-Cc: <stable@vger.kernel.org>
-Acked-by: Reinette Chatre <reinette.chatre@intel.com>
-Signed-off-by: James Morse <james.morse@arm.com>
----
-Changes since v1:
- * Removed braces round multi-line comment and whitespace after the if() block
-
- arch/x86/kernel/cpu/resctrl/rdtgroup.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index 333c177a2471..869cbef5da81 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -2542,7 +2542,12 @@ static int __init_one_rdt_domain(struct rdt_domain *d, struct rdt_resource *r,
- 		if (closid_allocated(i) && i != closid) {
- 			mode = rdtgroup_mode_by_closid(i);
- 			if (mode == RDT_MODE_PSEUDO_LOCKSETUP)
--				break;
-+				/*
-+				 * ctrl values for locksetup aren't relevant
-+				 * until the schemata is written, and the mode
-+				 * becomes RDT_MODE_PSEUDO_LOCKED.
-+				 */
-+				continue;
- 			/*
- 			 * If CDP is active include peer domain's
- 			 * usage to ensure there is no overlap
--- 
-2.20.1
-
+This is in line with other madvise calls: MADV_DONTNEED clears the
+local page table entries and drops the corresponding references, so
+shared pages won't get freed. MADV_FREE clears the pte dirty bit and
+also has explicit mapcount checks before clearing PG_dirty, so again
+shared pages don't get freed.
