@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E82B632BC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:12:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CBA332BF3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:14:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728004AbfFCJLn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 05:11:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56888 "EHLO mail.kernel.org"
+        id S1728770AbfFCJNK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 05:13:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728454AbfFCJLl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 05:11:41 -0400
+        id S1728745AbfFCJND (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 05:13:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32C5B27E7A;
-        Mon,  3 Jun 2019 09:11:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 842EE245DF;
+        Mon,  3 Jun 2019 09:13:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559553100;
-        bh=CTkVSg+rXuHNPoxO3EoCcjXORt2gm5ovl/sfC/VO0Yc=;
+        s=default; t=1559553183;
+        bh=w/nMXZBsMbJGzSpX0xnGjerq2RFpskK0JWksbaweKws=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ap55URctMhjD4GkWtkbnZTSDY/Fr+18/YAp9BeujecX7bBezmr8TJkFc4RCFTyAgU
-         xVEOOXT+DVgNianO8AuQnUGhhvtTc7bfjMGOidnlcKoql8kY6SRgzezMDo3I1Qz5ez
-         hQ82i+QKn92PoCIbuYME1Qb0AJi+8oTqugz6nZow=
+        b=tErxMYcqPr6l+dur5Hw76osdFpmQlKq1R4hCPc+wJ0Kvbk+L9mZ6PVibJxrhSZZ1x
+         jY/z0OtaS0cEvCIy9djDQO1ABP1EtcH401DFIlImF14FG2YNec7xPRZXxcL4frASHZ
+         PjdP4f3b2rqFm8XABcpYShwzkRMvbn0rTPqBn8yU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
-        Mark Bloch <markb@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 5.0 20/36] net/mlx5: Avoid double free in fs init error unwinding path
+        stable@vger.kernel.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.1 15/40] net: mvpp2: fix bad MVPP2_TXQ_SCHED_TOKEN_CNTR_REG queue value
 Date:   Mon,  3 Jun 2019 11:09:08 +0200
-Message-Id: <20190603090522.324158521@linuxfoundation.org>
+Message-Id: <20190603090523.564537785@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190603090520.998342694@linuxfoundation.org>
-References: <20190603090520.998342694@linuxfoundation.org>
+In-Reply-To: <20190603090522.617635820@linuxfoundation.org>
+References: <20190603090522.617635820@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,71 +44,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Parav Pandit <parav@mellanox.com>
+From: Antoine Tenart <antoine.tenart@bootlin.com>
 
-[ Upstream commit 9414277a5df3669c67e818708c0f881597e0118e ]
+[ Upstream commit 21808437214637952b61beaba6034d97880fbeb3 ]
 
-In below code flow, for ingress acl table root ns memory leads
-to double free.
+MVPP2_TXQ_SCHED_TOKEN_CNTR_REG() expects the logical queue id but
+the current code is passing the global tx queue offset, so it ends
+up writing to unknown registers (between 0x8280 and 0x82fc, which
+seemed to be unused by the hardware). This fixes the issue by using
+the logical queue id instead.
 
-mlx5_init_fs
-  init_ingress_acls_root_ns()
-    init_ingress_acl_root_ns
-       kfree(steering->esw_ingress_root_ns);
-       /* steering->esw_ingress_root_ns is not marked NULL */
-  mlx5_cleanup_fs
-    cleanup_ingress_acls_root_ns
-       steering->esw_ingress_root_ns non NULL check passes.
-       kfree(steering->esw_ingress_root_ns);
-       /* double free */
-
-Similar issue exist for other tables.
-
-Hence zero out the pointers to not process the table again.
-
-Fixes: 9b93ab981e3bf ("net/mlx5: Separate ingress/egress namespaces for each vport")
-Fixes: 40c3eebb49e51 ("net/mlx5: Add support in RDMA RX steering")
-Signed-off-by: Parav Pandit <parav@mellanox.com>
-Reviewed-by: Mark Bloch <markb@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Fixes: 3f518509dedc ("ethernet: Add new driver for Marvell Armada 375 network unit")
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/fs_core.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c |   10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
-@@ -2390,6 +2390,7 @@ static void cleanup_egress_acls_root_ns(
- 		cleanup_root_ns(steering->esw_egress_root_ns[i]);
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+@@ -1455,7 +1455,7 @@ static inline void mvpp2_xlg_max_rx_size
+ /* Set defaults to the MVPP2 port */
+ static void mvpp2_defaults_set(struct mvpp2_port *port)
+ {
+-	int tx_port_num, val, queue, ptxq, lrxq;
++	int tx_port_num, val, queue, lrxq;
  
- 	kfree(steering->esw_egress_root_ns);
-+	steering->esw_egress_root_ns = NULL;
- }
+ 	if (port->priv->hw_version == MVPP21) {
+ 		/* Update TX FIFO MIN Threshold */
+@@ -1476,11 +1476,9 @@ static void mvpp2_defaults_set(struct mv
+ 	mvpp2_write(port->priv, MVPP2_TXP_SCHED_FIXED_PRIO_REG, 0);
  
- static void cleanup_ingress_acls_root_ns(struct mlx5_core_dev *dev)
-@@ -2404,6 +2405,7 @@ static void cleanup_ingress_acls_root_ns
- 		cleanup_root_ns(steering->esw_ingress_root_ns[i]);
+ 	/* Close bandwidth for all queues */
+-	for (queue = 0; queue < MVPP2_MAX_TXQ; queue++) {
+-		ptxq = mvpp2_txq_phys(port->id, queue);
++	for (queue = 0; queue < MVPP2_MAX_TXQ; queue++)
+ 		mvpp2_write(port->priv,
+-			    MVPP2_TXQ_SCHED_TOKEN_CNTR_REG(ptxq), 0);
+-	}
++			    MVPP2_TXQ_SCHED_TOKEN_CNTR_REG(queue), 0);
  
- 	kfree(steering->esw_ingress_root_ns);
-+	steering->esw_ingress_root_ns = NULL;
- }
+ 	/* Set refill period to 1 usec, refill tokens
+ 	 * and bucket size to maximum
+@@ -2336,7 +2334,7 @@ static void mvpp2_txq_deinit(struct mvpp
+ 	txq->descs_dma         = 0;
  
- void mlx5_cleanup_fs(struct mlx5_core_dev *dev)
-@@ -2572,6 +2574,7 @@ cleanup_root_ns:
- 	for (i--; i >= 0; i--)
- 		cleanup_root_ns(steering->esw_egress_root_ns[i]);
- 	kfree(steering->esw_egress_root_ns);
-+	steering->esw_egress_root_ns = NULL;
- 	return err;
- }
+ 	/* Set minimum bandwidth for disabled TXQs */
+-	mvpp2_write(port->priv, MVPP2_TXQ_SCHED_TOKEN_CNTR_REG(txq->id), 0);
++	mvpp2_write(port->priv, MVPP2_TXQ_SCHED_TOKEN_CNTR_REG(txq->log_id), 0);
  
-@@ -2599,6 +2602,7 @@ cleanup_root_ns:
- 	for (i--; i >= 0; i--)
- 		cleanup_root_ns(steering->esw_ingress_root_ns[i]);
- 	kfree(steering->esw_ingress_root_ns);
-+	steering->esw_ingress_root_ns = NULL;
- 	return err;
- }
- 
+ 	/* Set Tx descriptors queue starting address and size */
+ 	thread = mvpp2_cpu_to_thread(port->priv, get_cpu());
 
 
