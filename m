@@ -2,18 +2,18 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EDE033243
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 16:35:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08D1F3323F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 16:35:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729094AbfFCOfX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 10:35:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54842 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728988AbfFCOfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729058AbfFCOfO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Mon, 3 Jun 2019 10:35:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54814 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728883AbfFCOfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 10:35:13 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F19ADADDA;
+        by mx1.suse.de (Postfix) with ESMTP id ECABCAD43;
         Mon,  3 Jun 2019 14:35:11 +0000 (UTC)
 From:   Vlastimil Babka <vbabka@suse.cz>
 To:     linux-mm@kvack.org
@@ -22,12 +22,12 @@ Cc:     linux-kernel@vger.kernel.org,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         Michal Hocko <mhocko@kernel.org>,
         Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
         Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 1/3] mm, debug_pagelloc: use static keys to enable debugging
-Date:   Mon,  3 Jun 2019 16:34:49 +0200
-Message-Id: <20190603143451.27353-2-vbabka@suse.cz>
+        Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH 2/3] mm, page_alloc: more extensive free page checking with debug_pagealloc
+Date:   Mon,  3 Jun 2019 16:34:50 +0200
+Message-Id: <20190603143451.27353-3-vbabka@suse.cz>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190603143451.27353-1-vbabka@suse.cz>
 References: <20190603143451.27353-1-vbabka@suse.cz>
@@ -38,111 +38,164 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CONFIG_DEBUG_PAGEALLOC has been redesigned by 031bc5743f15
-("mm/debug-pagealloc: make debug-pagealloc boottime configurable") to allow
-being always enabled in a distro kernel, but only perform its expensive
-functionality when booted with debug_pagelloc=on. We can further reduce
-the overhead when not boot-enabled (including page allocator fast paths) using
-static keys. This patch introduces one for debug_pagealloc core functionality,
-and another for the optional guard page functionality (enabled by booting with
-debug_guardpage_minorder=X).
+The page allocator checks struct pages for expected state (mapcount, flags etc)
+as pages are being allocated (check_new_page()) and freed (free_pages_check())
+to provide some defense against errors in page allocator users. Prior commits
+479f854a207c ("mm, page_alloc: defer debugging checks of pages allocated from
+the PCP") and 4db7548ccbd9 ("mm, page_alloc: defer debugging checks of freed
+pages until a PCP drain") this has happened for order-0 pages as they were
+allocated from or freed to the per-cpu caches (pcplists). Since those are fast
+paths, the checks are now performed only when pages are moved between pcplists
+and global free lists. This however lowers the chances of catching errors soon
+enough.
+
+In order to increase the chances of the checks to catch errors, the kernel has
+to be rebuilt with CONFIG_DEBUG_VM, which also enables multiple other internal
+debug checks (VM_BUG_ON() etc), which is suboptimal when the goal is to catch
+errors in mm users, not in mm code itself.
+
+To catch some wrong users of page allocator, we have CONFIG_DEBUG_PAGEALLOC,
+which is designed to have virtually no overhead unless enabled at boot time.
+Memory corruptions when writing to freed pages have often the same underlying
+errors (use-after-free, double free) as corrupting the corresponding struct
+pages, so this existing debugging functionality is a good fit to extend by
+also perform struct page checks at least as often as if CONFIG_DEBUG_VM was
+enabled.
+
+Specifically, after this patch, when debug_pagealloc is enabled on boot, and
+CONFIG_DEBUG_VM disabled, pages are checked when allocated from or freed to the
+pcplists *in addition* to being moved between pcplists and free lists. When
+both debug_pagealloc and CONFIG_DEBUG_VM are enabled, pages are checked when
+being moved between pcplists and free lists *in addition* to when allocated
+from or freed to the pcplists.
+
+When debug_pagealloc is not enabled on boot, the overhead in fast paths should
+be virtually none thanks to the use of static key.
 
 Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Mel Gorman <mgorman@techsingularity.net>
 ---
- include/linux/mm.h | 15 +++++++++++----
- mm/page_alloc.c    | 23 +++++++++++++++++------
- 2 files changed, 28 insertions(+), 10 deletions(-)
+ mm/Kconfig.debug | 13 ++++++++----
+ mm/page_alloc.c  | 53 +++++++++++++++++++++++++++++++++++++++---------
+ 2 files changed, 52 insertions(+), 14 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 0e8834ac32b7..c71ed22769f3 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2685,11 +2685,18 @@ static inline void kernel_poison_pages(struct page *page, int numpages,
- 					int enable) { }
- #endif
+diff --git a/mm/Kconfig.debug b/mm/Kconfig.debug
+index fa6d79281368..a35ab6c55192 100644
+--- a/mm/Kconfig.debug
++++ b/mm/Kconfig.debug
+@@ -19,12 +19,17 @@ config DEBUG_PAGEALLOC
+ 	  Depending on runtime enablement, this results in a small or large
+ 	  slowdown, but helps to find certain types of memory corruption.
  
--extern bool _debug_pagealloc_enabled;
-+#ifdef CONFIG_DEBUG_PAGEALLOC_ENABLE_DEFAULT
-+DECLARE_STATIC_KEY_TRUE(_debug_pagealloc_enabled);
-+#else
-+DECLARE_STATIC_KEY_FALSE(_debug_pagealloc_enabled);
-+#endif
- 
- static inline bool debug_pagealloc_enabled(void)
- {
--	return IS_ENABLED(CONFIG_DEBUG_PAGEALLOC) && _debug_pagealloc_enabled;
-+	if (!IS_ENABLED(CONFIG_DEBUG_PAGEALLOC))
-+		return false;
++	  Also, the state of page tracking structures is checked more often as
++	  pages are being allocated and freed, as unexpected state changes
++	  often happen for same reasons as memory corruption (e.g. double free,
++	  use-after-free).
 +
-+	return static_branch_unlikely(&_debug_pagealloc_enabled);
- }
+ 	  For architectures which don't enable ARCH_SUPPORTS_DEBUG_PAGEALLOC,
+ 	  fill the pages with poison patterns after free_pages() and verify
+-	  the patterns before alloc_pages().  Additionally,
+-	  this option cannot be enabled in combination with hibernation as
+-	  that would result in incorrect warnings of memory corruption after
+-	  a resume because free pages are not saved to the suspend image.
++	  the patterns before alloc_pages(). Additionally, this option cannot
++	  be enabled in combination with hibernation as that would result in
++	  incorrect warnings of memory corruption after a resume because free
++	  pages are not saved to the suspend image.
  
- #if defined(CONFIG_DEBUG_PAGEALLOC) || defined(CONFIG_ARCH_HAS_SET_DIRECT_MAP)
-@@ -2843,7 +2850,7 @@ extern struct page_ext_operations debug_guardpage_ops;
- 
- #ifdef CONFIG_DEBUG_PAGEALLOC
- extern unsigned int _debug_guardpage_minorder;
--extern bool _debug_guardpage_enabled;
-+DECLARE_STATIC_KEY_FALSE(_debug_guardpage_enabled);
- 
- static inline unsigned int debug_guardpage_minorder(void)
- {
-@@ -2852,7 +2859,7 @@ static inline unsigned int debug_guardpage_minorder(void)
- 
- static inline bool debug_guardpage_enabled(void)
- {
--	return _debug_guardpage_enabled;
-+	return static_branch_unlikely(&_debug_guardpage_enabled);
- }
- 
- static inline bool page_is_guard(struct page *page)
+ 	  By default this option will have a small overhead, e.g. by not
+ 	  allowing the kernel mapping to be backed by large pages on some
 diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index d66bc8abe0af..639f1f9e74c5 100644
+index 639f1f9e74c5..e6248e391358 100644
 --- a/mm/page_alloc.c
 +++ b/mm/page_alloc.c
-@@ -646,16 +646,27 @@ void prep_compound_page(struct page *page, unsigned int order)
+@@ -1162,19 +1162,36 @@ static __always_inline bool free_pages_prepare(struct page *page,
+ }
  
- #ifdef CONFIG_DEBUG_PAGEALLOC
- unsigned int _debug_guardpage_minorder;
--bool _debug_pagealloc_enabled __read_mostly
--			= IS_ENABLED(CONFIG_DEBUG_PAGEALLOC_ENABLE_DEFAULT);
-+
-+#ifdef CONFIG_DEBUG_PAGEALLOC_ENABLE_DEFAULT
-+DEFINE_STATIC_KEY_TRUE(_debug_pagealloc_enabled);
-+#else
-+DEFINE_STATIC_KEY_FALSE(_debug_pagealloc_enabled);
-+#endif
- EXPORT_SYMBOL(_debug_pagealloc_enabled);
--bool _debug_guardpage_enabled __read_mostly;
-+
-+DEFINE_STATIC_KEY_FALSE(_debug_guardpage_enabled);
- 
- static int __init early_debug_pagealloc(char *buf)
+ #ifdef CONFIG_DEBUG_VM
+-static inline bool free_pcp_prepare(struct page *page)
++/*
++ * With DEBUG_VM enabled, order-0 pages are checked immediately when being freed
++ * to pcp lists. With debug_pagealloc also enabled, they are also rechecked when
++ * moved from pcp lists to free lists.
++ */
++static bool free_pcp_prepare(struct page *page)
  {
--	if (!buf)
-+	bool enable = false;
-+
-+	if (kstrtobool(buf, &enable))
- 		return -EINVAL;
--	return kstrtobool(buf, &_debug_pagealloc_enabled);
-+
-+	if (enable)
-+		static_branch_enable(&_debug_pagealloc_enabled);
-+
-+	return 0;
- }
- early_param("debug_pagealloc", early_debug_pagealloc);
- 
-@@ -679,7 +690,7 @@ static void init_debug_guardpage(void)
- 	if (!debug_guardpage_minorder())
- 		return;
- 
--	_debug_guardpage_enabled = true;
-+	static_branch_enable(&_debug_guardpage_enabled);
+ 	return free_pages_prepare(page, 0, true);
  }
  
- struct page_ext_operations debug_guardpage_ops = {
+-static inline bool bulkfree_pcp_prepare(struct page *page)
++static bool bulkfree_pcp_prepare(struct page *page)
+ {
+-	return false;
++	if (debug_pagealloc_enabled())
++		return free_pages_check(page);
++	else
++		return false;
+ }
+ #else
++/*
++ * With DEBUG_VM disabled, order-0 pages being freed are checked only when
++ * moving from pcp lists to free list in order to reduce overhead. With
++ * debug_pagealloc enabled, they are checked also immediately when being freed
++ * to the pcp lists.
++ */
+ static bool free_pcp_prepare(struct page *page)
+ {
+-	return free_pages_prepare(page, 0, false);
++	if (debug_pagealloc_enabled())
++		return free_pages_prepare(page, 0, true);
++	else
++		return free_pages_prepare(page, 0, false);
+ }
+ 
+ static bool bulkfree_pcp_prepare(struct page *page)
+@@ -2036,23 +2053,39 @@ static inline bool free_pages_prezeroed(void)
+ }
+ 
+ #ifdef CONFIG_DEBUG_VM
+-static bool check_pcp_refill(struct page *page)
++/*
++ * With DEBUG_VM enabled, order-0 pages are checked for expected state when
++ * being allocated from pcp lists. With debug_pagealloc also enabled, they are
++ * also checked when pcp lists are refilled from the free lists.
++ */
++static inline bool check_pcp_refill(struct page *page)
+ {
+-	return false;
++	if (debug_pagealloc_enabled())
++		return check_new_page(page);
++	else
++		return false;
+ }
+ 
+-static bool check_new_pcp(struct page *page)
++static inline bool check_new_pcp(struct page *page)
+ {
+ 	return check_new_page(page);
+ }
+ #else
+-static bool check_pcp_refill(struct page *page)
++/*
++ * With DEBUG_VM disabled, free order-0 pages are checked for expected state
++ * when pcp lists are being refilled from the free lists. With debug_pagealloc
++ * enabled, they are also checked when being allocated from the pcp lists.
++ */
++static inline bool check_pcp_refill(struct page *page)
+ {
+ 	return check_new_page(page);
+ }
+-static bool check_new_pcp(struct page *page)
++static inline bool check_new_pcp(struct page *page)
+ {
+-	return false;
++	if (debug_pagealloc_enabled())
++		return check_new_page(page);
++	else
++		return false;
+ }
+ #endif /* CONFIG_DEBUG_VM */
+ 
 -- 
 2.21.0
 
