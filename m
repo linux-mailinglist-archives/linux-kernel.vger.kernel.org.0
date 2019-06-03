@@ -2,96 +2,252 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0374B33973
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 22:02:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AAF533979
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 22:03:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726658AbfFCUC0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 16:02:26 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:36081 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726057AbfFCUCZ (ORCPT
+        id S1726793AbfFCUDK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 16:03:10 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46424 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726097AbfFCUDK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 16:02:25 -0400
-Received: by mail-ed1-f68.google.com with SMTP id a8so28549349edx.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 13:02:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=06mX7DZj6K5oJW8VbpxeNXsQxMH44Hoi5GZ+vc9+3NU=;
-        b=XJiVT0URG98q8ll/RZfM8w8XIeepi8T+vKHfUMBB8AjYOpsLbSxEAQd3SeIR0f5Uzi
-         6i/MK28pOh1yhBVv6t7QpezDUwTK7rSJ33HZ6bYMzRfiW1/2hYWUxJWnQY4GWfVWHuyo
-         gx8tXxBYgCPlaMNFG3KqwCJr+X1a5Di6EnGPA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=06mX7DZj6K5oJW8VbpxeNXsQxMH44Hoi5GZ+vc9+3NU=;
-        b=JHaj4zucAC16AGBxU0ipMxFWM2hkfC4uvoIRDfzDffd1z0qxLt60amwBL9yVyjFksY
-         XnfhzFSeQd6dfe9xcE8ou5psVUH7eWUZhLFiNd/qeCwDhUJ7NZXEbWpVi2IaWppwm/Wf
-         L49HL4Mr9Vp3bf2vDqMW1fQJC4yyqlszID8Wd9YdVWz8F//8mLAekNNOPqJwytsYNvaK
-         LjT++n8zQEA2wLyN4GF5ywX0wF68LdyI8AEyzW1QnjYStueoSv3ElywuAm85w6z4Mh4P
-         QbS2hICt7ApYKXL6fjpyHmC2l59wzrdbAJVd1X5cLG2YQ+52JjPMAbLc04U2tdjsrpv6
-         +qQw==
-X-Gm-Message-State: APjAAAXAB5ZuPIKfgGo2jbHTqkUDB3tph5iS0mB2b2XWvaqCqh/EjFep
-        NovUmXsVH56Ed+TxZWMLolhhDFAVvNfPX+u1
-X-Google-Smtp-Source: APXvYqzYYELpm5TEhVNJOw5fhHjs2QJBBfdKH5bpit0zIOS3GFcVZn1EQEEl79k5OejkBy8RCFQRUA==
-X-Received: by 2002:a17:906:ce21:: with SMTP id sd1mr7186359ejb.189.1559592143343;
-        Mon, 03 Jun 2019 13:02:23 -0700 (PDT)
-Received: from [192.168.1.149] (ip-5-186-118-63.cgn.fibianet.dk. [5.186.118.63])
-        by smtp.gmail.com with ESMTPSA id e45sm4149864edb.12.2019.06.03.13.02.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Jun 2019 13:02:22 -0700 (PDT)
-Subject: Re: arm64 patch
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <CAKwvOd=r3x7Z-4M-xY-+G9HhHeMFbizsSWvNLGK+DSfoaY_wjQ@mail.gmail.com>
- <20190515033158.GA31802@archlinux-i9>
- <20190521224209.d33c11d59eaabcbb44d28b2a@linux-foundation.org>
- <245ffcf0-6e0f-18ed-9c5f-1362a77c4097@rasmusvillemoes.dk>
-Message-ID: <9eddb8d2-da20-3dd5-ccbc-e8d0824eb715@rasmusvillemoes.dk>
-Date:   Mon, 3 Jun 2019 22:02:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Mon, 3 Jun 2019 16:03:10 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x53JvVH8042690
+        for <linux-kernel@vger.kernel.org>; Mon, 3 Jun 2019 16:03:08 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2swa130qcw-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 16:03:08 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 3 Jun 2019 21:03:07 +0100
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 3 Jun 2019 21:03:03 +0100
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x53K32hT35783002
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 3 Jun 2019 20:03:02 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C72E1B206A;
+        Mon,  3 Jun 2019 20:03:02 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 72CF6B2065;
+        Mon,  3 Jun 2019 20:03:02 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.210.156])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon,  3 Jun 2019 20:03:02 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id DF1A016C5DA0; Mon,  3 Jun 2019 13:03:01 -0700 (PDT)
+Date:   Mon, 3 Jun 2019 13:03:01 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Boqun Feng <boqun.feng@gmail.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Fengguang Wu <fengguang.wu@intel.com>, LKP <lkp@01.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>, stern@rowland.harvard.edu
+Subject: Re: rcu_read_lock lost its compiler barrier
+Reply-To: paulmck@linux.ibm.com
+References: <20150910171649.GE4029@linux.vnet.ibm.com>
+ <20150911021933.GA1521@fixme-laptop.cn.ibm.com>
+ <20150921193045.GA13674@lerouge>
+ <20150921204327.GH4029@linux.vnet.ibm.com>
+ <20190602055607.bk5vgmwjvvt4wejd@gondor.apana.org.au>
+ <CAHk-=whLGKOmM++OQi5GX08_dfh8Xfz9Wq7khPo+MVtPYh_8hw@mail.gmail.com>
+ <20190603024640.2soysu4rpkwjuash@gondor.apana.org.au>
+ <20190603034707.GG28207@linux.ibm.com>
+ <20190603052626.nz2qktwmkswxfnsd@gondor.apana.org.au>
+ <20190603064200.GA11024@tardis>
 MIME-Version: 1.0
-In-Reply-To: <245ffcf0-6e0f-18ed-9c5f-1362a77c4097@rasmusvillemoes.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190603064200.GA11024@tardis>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19060320-0060-0000-0000-0000034B914A
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011209; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000286; SDB=6.01212780; UDB=6.00637369; IPR=6.00993840;
+ MB=3.00027168; MTD=3.00000008; XFM=3.00000015; UTC=2019-06-03 20:03:07
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19060320-0061-0000-0000-0000499BB539
+Message-Id: <20190603200301.GM28207@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-03_15:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906030133
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/05/2019 08.21, Rasmus Villemoes wrote:
-> On 22/05/2019 07.42, Andrew Morton wrote:
+On Mon, Jun 03, 2019 at 02:42:00PM +0800, Boqun Feng wrote:
+> On Mon, Jun 03, 2019 at 01:26:26PM +0800, Herbert Xu wrote:
+> > On Sun, Jun 02, 2019 at 08:47:07PM -0700, Paul E. McKenney wrote:
+> > > 
+> > > 1.	These guarantees are of full memory barriers, -not- compiler
+> > > 	barriers.
+> > 
+> > What I'm saying is that wherever they are, they must come with
+> > compiler barriers.  I'm not aware of any synchronisation mechanism
+> > in the kernel that gives a memory barrier without a compiler barrier.
+> > 
+> > > 2.	These rules don't say exactly where these full memory barriers
+> > > 	go.  SRCU is at one extreme, placing those full barriers in
+> > > 	srcu_read_lock() and srcu_read_unlock(), and !PREEMPT Tree RCU
+> > > 	at the other, placing these barriers entirely within the callback
+> > > 	queueing/invocation, grace-period computation, and the scheduler.
+> > > 	Preemptible Tree RCU is in the middle, with rcu_read_unlock()
+> > > 	sometimes including a full memory barrier, but other times with
+> > > 	the full memory barrier being confined as it is with !PREEMPT
+> > > 	Tree RCU.
+> > 
+> > The rules do say that the (full) memory barrier must precede any
+> > RCU read-side that occur after the synchronize_rcu and after the
+> > end of any RCU read-side that occur before the synchronize_rcu.
+> > 
+> > All I'm arguing is that wherever that full mb is, as long as it
+> > also carries with it a barrier() (which it must do if it's done
+> > using an existing kernel mb/locking primitive), then we're fine.
+> > 
+> > > Interleaving and inserting full memory barriers as per the rules above:
+> > > 
+> > > 	CPU1: WRITE_ONCE(a, 1)
+> > > 	CPU1: synchronize_rcu	
+> > > 	/* Could put a full memory barrier here, but it wouldn't help. */
+> > 
+> > 	CPU1: smp_mb();
+> > 	CPU2: smp_mb();
+> > 
+> > Let's put them in because I think they are critical.  smp_mb() also
+> > carries with it a barrier().
+> > 
+> > > 	CPU2: rcu_read_lock();
+> > > 	CPU1: b = 2;	
+> > > 	CPU2: if (READ_ONCE(a) == 0)
+> > > 	CPU2:         if (b != 1)  /* Weakly ordered CPU moved this up! */
+> > > 	CPU2:                 b = 1;
+> > > 	CPU2: rcu_read_unlock
+> > > 
+> > > In fact, CPU2's load from b might be moved up to race with CPU1's store,
+> > > which (I believe) is why the model complains in this case.
+> > 
+> > Let's put aside my doubt over how we're even allowing a compiler
+> > to turn
+> > 
+> > 	b = 1
+> > 
+> > into
+> > 
+> > 	if (b != 1)
+> > 		b = 1
+> > 
+> > Since you seem to be assuming that (a == 0) is true in this case
 > 
-> Andrew, please drop the following five patches from your tree (sha1s as
-> per next-20190522):
+> I think Paul's example assuming (a == 0) is false, and maybe
+
+Yes, otherwise, P0()'s write to "b" cannot have happened.
+
+> speculative writes (by compilers) needs to added into consideration?
+
+I would instead call it the compiler eliminating needless writes
+by inventing reads -- if the variable already has the correct value,
+no write happens.  So no compiler speculation.
+
+However, it is difficult to create a solid defensible example.  Yes,
+from LKMM's viewpoint, the weakly reordered invented read from "b"
+can be concurrent with P0()'s write to "b", but in that case the value
+loaded would have to manage to be equal to 1 for anything bad to happen.
+This does feel wrong to me, but again, it is difficult to create a solid
+defensible example.
+
+> Please consider the following case (I add a few smp_mb()s), the case may
+> be a little bit crasy, you have been warned ;-)
 > 
-> f418571688c5 powerpc: select DYNAMIC_DEBUG_RELATIVE_POINTERS for PPC64
-> 0dd95e972ef8 arm64: select DYNAMIC_DEBUG_RELATIVE_POINTERS
-> 1a086a6f12ca x86_64: select DYNAMIC_DEBUG_RELATIVE_POINTERS
-> a6e9afb84c99 lib/dynamic_debug.c: add asm-generic implementation for
-> DYNAMIC_DEBUG_RELATIVE_POINTERS
-> e301d47f9756 lib/dynamic_debug.c: introduce
-> CONFIG_DYNAMIC_DEBUG_RELATIVE_POINTERS
+>  	CPU1: WRITE_ONCE(a, 1)
+>  	CPU1: synchronize_rcu called
+> 
+>  	CPU1: smp_mb(); /* let assume there is one here */
+> 
+>  	CPU2: rcu_read_lock();
+>  	CPU2: smp_mb(); /* let assume there is one here */
+> 
+> 	/* "if (b != 1) b = 1" reordered  */
+>  	CPU2: r0 = b;       /* if (b != 1) reordered here, r0 == 0 */
+>  	CPU2: if (r0 != 1)  /* true */
+> 	CPU2:     b = 1;    /* b == 1 now, this is a speculative write
+> 	                       by compiler
+> 			     */
+> 
+> 	CPU1: b = 2;        /* b == 2 */
+> 
+>  	CPU2: if (READ_ONCE(a) == 0) /* false */
+> 	CPU2: ...
+> 	CPU2  else                   /* undo the speculative write */
+> 	CPU2:	  b = r0;   /* b == 0 */
+> 
+>  	CPU2: smp_mb();
+> 	CPU2: read_read_unlock();
+> 
+> I know this is too crasy for us to think a compiler like this, but this
+> might be the reason why the model complain about this.
+> 
+> Paul, did I get this right? Or you mean something else?
 
-And, since the cover letter was folded into 1/10 and almost everything
-in there doesn't apply anymore, please also drop the rest, i.e.
+Mostly there, except that I am not yet desperate enough to appeal to
+compilers speculating stores.  ;-)
 
-2485c16b7714 lib/dynamic_debug.c: drop use of bitfields in struct _ddebug
-4c3e1594c3cc lib/dynamic_debug.c: introduce accessors for string members
-of struct _ddebug
-e44665d77b55 linux/printk.h: use unique identifier for each struct _ddebug
-a7a47cbde940 linux/net.h: use unique identifier for each struct _ddebug
-2ab6736a2041 linux/device.h: use unique identifier for each struct _ddebug
+							Thanx, Paul
 
-Thanks,
-Rasmus
+> Regards,
+> Boqun
+> 
+> 
+> 
+> > (as the assignment b = 1 is carried out), then because of the
+> > presence of the full memory barrier, the RCU read-side section
+> > must have started prior to the synchronize_rcu.  This means that
+> > synchronize_rcu is not allowed to return until at least the end
+> > of the grace period, or at least until the end of rcu_read_unlock.
+> > 
+> > So it actually should be:
+> > 
+> > 	CPU1: WRITE_ONCE(a, 1)
+> > 	CPU1: synchronize_rcu called
+> > 	/* Could put a full memory barrier here, but it wouldn't help. */
+> > 
+> > 	CPU1: smp_mb();
+> > 	CPU2: smp_mb();
+> > 
+> > 	CPU2: grace period starts
+> > 	...time passes...
+> > 	CPU2: rcu_read_lock();
+> > 	CPU2: if (READ_ONCE(a) == 0)
+> > 	CPU2:         if (b != 1)  /* Weakly ordered CPU moved this up! */
+> > 	CPU2:                 b = 1;
+> > 	CPU2: rcu_read_unlock
+> > 	...time passes...
+> > 	CPU2: grace period ends
+> > 
+> > 	/* This full memory barrier is also guaranteed by RCU. */
+> > 	CPU2: smp_mb();
+> > 
+> > 	CPU1 synchronize_rcu returns
+> > 	CPU1: b = 2;	
+> > 
+> > Cheers,
+> > -- 
+> > Email: Herbert Xu <herbert@gondor.apana.org.au>
+> > Home Page: http://gondor.apana.org.au/~herbert/
+> > PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+
+
