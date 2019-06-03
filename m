@@ -2,173 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39B4A32B7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:07:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00F5732B52
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:03:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727900AbfFCJHg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 05:07:36 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:45584 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727215AbfFCJHg (ORCPT
+        id S1727113AbfFCJDL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 05:03:11 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38493 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726902AbfFCJDL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 05:07:36 -0400
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190603090733epoutp0280c4e1ee1290fcc0d4330624ac72d79c~kpQ62fdoR2326123261epoutp02V
-        for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2019 09:07:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190603090733epoutp0280c4e1ee1290fcc0d4330624ac72d79c~kpQ62fdoR2326123261epoutp02V
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1559552853;
-        bh=Yd2cOToR+vjJ86ocOT/jMyRteAv9ma3tL/lsMJSLD4s=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=STX+aLuaNPGbq7+PbrBO3l4jAdufXhm5RsRnLstLg1MXQ7/8ld814RFKt8YH/Wqdw
-         CgUjca8gmEqZfGb+KqSRTHzFRsXXUBGUvE9lEY8U4I72j7dLuXIVzgsm/yo7kF/T4j
-         vHzx4Uqvjh+MEXXDXv4H/03J7q8RbFRI1x8AMQ4k=
-Received: from epsmges5p3new.samsung.com (unknown [182.195.40.194]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-        20190603090731epcas5p24e9d86df21e3125b4458c9a00eb67360~kpQ48kC8T2256922569epcas5p2b;
-        Mon,  3 Jun 2019 09:07:31 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        7F.0A.04067.F43E4FC5; Mon,  3 Jun 2019 18:07:27 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20190603090245epcas5p4a6cdfdb7ef72bfd36472f43bb4e1e0f1~kpMu6zcfz1942819428epcas5p4_;
-        Mon,  3 Jun 2019 09:02:45 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190603090245epsmtrp252984807868b80dae3cd04524c3bc792~kpMu56t3B2094820948epsmtrp2P;
-        Mon,  3 Jun 2019 09:02:45 +0000 (GMT)
-X-AuditID: b6c32a4b-7a3ff70000000fe3-38-5cf4e34f75ca
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        97.FB.03662.532E4FC5; Mon,  3 Jun 2019 18:02:45 +0900 (KST)
-Received: from localhost.localdomain (unknown [107.109.224.135]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190603090243epsmtip20bcdb3e867cc32a6eed2c77935413a53~kpMs7JybS1194011940epsmtip2U;
-        Mon,  3 Jun 2019 09:02:43 +0000 (GMT)
-From:   Maninder Singh <maninder1.s@samsung.com>
-To:     akpm@linux-foundation.org, herbert@gondor.apana.org.au,
-        davem@davemloft.net, keescook@chromium.org, gustavo@embeddedor.com
-Cc:     joe@perches.com, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, a.sahrawat@samsung.com,
-        pankaj.m@samsung.com, v.narang@samsung.com,
-        Maninder Singh <maninder1.s@samsung.com>
-Subject: [PATCH 4/4] zstd: change structure variable from int to char
-Date:   Mon,  3 Jun 2019 14:32:06 +0530
-Message-Id: <1559552526-4317-5-git-send-email-maninder1.s@samsung.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1559552526-4317-1-git-send-email-maninder1.s@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjm2znOYzk7TKsvqyEnJmipZ9bWybQCUw8YZQgWIazD/FBpO1s7
-        0zL6IXgplS5mhfd1IcNLGuJlTSNTLLspw6ysULtYIVHqNLAy29yk/j3v877P9zy830tg0hKx
-        P5HOm5CR57SUeBne1hMUHLLvw0wyXfxlFWPrQExlU4OYqRzIxZnWTjlTNLGOqRj9gDNPi3TM
-        6MiciBm0VoqZHnM+zox8bRUx3Y+qwC5vtiLbhrMttcMitvG+nG3rkrN9pb9wdqbuBcaebakD
-        rL1ZlkAc0kamIS4FGQMQr9GnpPOpUVR8ojparVTRihDFNmYrFcBzOhRF7d6TEBKbrnUEpQIy
-        OW2Gg0rgBIEK2xFp1GeYUECaXjBFUciQojUowg2hAqcTMvjUUI1eF6Gg6XClY/KwNq2koQYY
-        Hvgd75l/7JkNFshC4EVAcgs0v7aDQrCMkJIdAFp+nvVwFdMADkz2uosfALa9f+OxJBk8l+Nu
-        3AXwt7kKOBtSchbAhrcrnFhMhsI6ayfuHPIjswEcGSpeNMHI+wCO519fVPiSMfBavxl3YpyU
-        w2d984sWEjIW9s6fw112MjjcX4AVAoLwIuPgk3txzncgOSiGfXcq3JF2wzFbuacL+8KJhy1u
-        7A/t3+6KXYJTAL4se4G7iosAFnyvdU/thGOvej2dDhgZBJusYS56Pbz0uFHkxBjpA8/8+ihy
-        8RJoqV7Ccpg7fNsdYi20T025Q7NwvL1e5NpROYB3qvM9zwNZ+T+LKwDUgTXIIOhSkaA0bObR
-        sf8/rhksHmRwvAU09+/pBiQBKG/JpNdMstSDyxSydN0AEhjlJ+HeOChJCpd1Ahn1amOGFgnd
-        QOlYZzHmv1Kjd5w3b1IrlOEqFb2NVm5mVApqteSCx1CylEzlTOgIQgZkXNKJCC//bHAgfuHV
-        XNzY9uVleTExSWFAZcGvFvCqgczIGGvRBdrmm2hWmyLi64cWfP5cvhaCLDepvunScTwh9Jn3
-        mVuj0dbLtq+n4975FZn3Rrduoj9rB0sPtW/0kZ1cHijLqu7qKpk9GvjuY3nSXOuUpuSnIqfm
-        Rtbwp97nURMb8g5OD6zYT+FCGqcIxowC9xfSEB3+pgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGLMWRmVeSWpSXmKPExsWy7bCSvK7poy8xBj0/jC0u7k61mLN+DZvF
-        nPMtLBZb96hadL+SsZh9/zGLxZnuXIv7934yWVzeNYfN4vD8NhaLe2+2MlkcOjmX0YHHY3bD
-        RRaPLStvMnmsO6jqse2AqseJGb9ZPL6susbs0bdlFaPH501yARxRXDYpqTmZZalF+nYJXBmT
-        1yxjLDgmUnH47yn2Bsb/Al2MnBwSAiYSl/ubWUFsIYHdjBJXlyRAxKUlfv57zwJhC0us/Pec
-        vYuRC6jmM6NEb9c+dpAEm4CexKpde1hAEiICbYwS/Rv/s4I4zAInGSXudn5gBqkSFnCVWHRu
-        PtgoFgFVibMn/oKt4xVwkzj6tx9qhZzEzXOdQPUcHJwC7hKn97tDXOQmsettE+sERr4FjAyr
-        GCVTC4pz03OLDQuM8lLL9YoTc4tL89L1kvNzNzGCQ1dLawfjiRPxhxgFOBiVeHhnsH+JEWJN
-        LCuuzD3EKMHBrCTCm3gbKMSbklhZlVqUH19UmpNafIhRmoNFSZxXPv9YpJBAemJJanZqakFq
-        EUyWiYNTqoGx69uEWZ/S7FWPGYmtUu24sXFVe8Fb+Q3dT2eKNHP+v8iT5LbEyFAvLDMh27Q2
-        Ztqi91diHknFpO2Ki9k716nv3eWHHtI6fw6yGLrrhDmG51zewRAqwJG7VDP9pzD3ZZZTUr93
-        tRxUrOfYe+t65OGuyrZZay9cmbE4I5l9Z5/L2u8/bgcfzS9UYinOSDTUYi4qTgQA5mQnyFkC
-        AAA=
-X-CMS-MailID: 20190603090245epcas5p4a6cdfdb7ef72bfd36472f43bb4e1e0f1
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190603090245epcas5p4a6cdfdb7ef72bfd36472f43bb4e1e0f1
-References: <1559552526-4317-1-git-send-email-maninder1.s@samsung.com>
-        <CGME20190603090245epcas5p4a6cdfdb7ef72bfd36472f43bb4e1e0f1@epcas5p4.samsung.com>
+        Mon, 3 Jun 2019 05:03:11 -0400
+Received: by mail-wr1-f65.google.com with SMTP id d18so11153496wrs.5
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 02:03:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=axSkmR4/Wmhd1GVR+mG5T3r4ivwoxDL81oDdaQFl5E8=;
+        b=QdL2vqG+S5MqpQeBh4plB+1IVk7Xk3sr+fQQIhcv1OMnz0WncZc+jCab8dnn2qc2Wo
+         G/vDVBkFzxjiX8rg5EC6g2Ez7FIdYktE2SbC6I4poAZE1Vj8yVwxBmTYP+nAvEPfayOO
+         f+mNlv9G5fgP/VF7WsU1L9p0W2EhrcwW4kaRobljvbCTqRS9404Fn12Y9V7rupVM3jBb
+         gRjdCrwe04T0Rrp+1wki4RTE+UDN36YYQxZNvlZiWhyG+5MhTIbxQqybqa0JwF8ZyU2o
+         eAGPCQZDb7wZ7tYD7P9DPeTtJ0sQ3Aq5ivf6w1V5likg8SU9hizveJjB7lZaDp/COIxP
+         JXdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=axSkmR4/Wmhd1GVR+mG5T3r4ivwoxDL81oDdaQFl5E8=;
+        b=GMgp7p404EuQLobi3rgrHa4xH8pmEufX71nTGMJM7aH1Ifj8HeZbRe5JfGX3gxEVRd
+         04DkJqOMDrSq48wpyQfYw1ANylZqBc9OPTD03nxdldF2vWXiIZgRnkL/qVunSadOZu8l
+         2lpHBlhprFoeXrep5zIwFSTpeG96sNCMs/ut70RtVetDwcUxIc8T7x6r6AAvbIuRd3//
+         uBKMt2jVx6oEKhGg3y03e07bumv5KwaoisHUPffI+3KynF7CN7G32VFKl9WDX6UwJ/VI
+         1l5gNH6ngTS82wnGrKb+iXbJT4PqaXdEHKMYJbrpgPd91r9V24Sg/vSGWD9eFr42/wow
+         xR6w==
+X-Gm-Message-State: APjAAAUqc7iXKpll1woXWh6hmArtlnNrz45qFkhCGcuZxjKpqFEBXfuF
+        EX4P2ChMPEhnozJ6C0xNb30/CBDdhVs=
+X-Google-Smtp-Source: APXvYqxAFgAGgOSEI8r8mePcq1atG3EcjGeizbjbvD0TfUwUAfZ7nS3C2kTq9eJdbcf/MS2IzVlcQQ==
+X-Received: by 2002:adf:a749:: with SMTP id e9mr15762108wrd.64.1559552589525;
+        Mon, 03 Jun 2019 02:03:09 -0700 (PDT)
+Received: from dell ([2.27.167.43])
+        by smtp.gmail.com with ESMTPSA id l15sm8588945wrb.42.2019.06.03.02.03.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Jun 2019 02:03:08 -0700 (PDT)
+Date:   Mon, 3 Jun 2019 10:03:06 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Keerthy <j-keerthy@ti.com>
+Cc:     robh+dt@kernel.org, broonie@kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-omap@vger.kernel.org, t-kristo@ti.com
+Subject: Re: [PATCH 1/3] dt-bindings: mfd: lp87565: Add lp87561 configuration
+Message-ID: <20190603090306.GH4797@dell>
+References: <20190515100848.19560-1-j-keerthy@ti.com>
+ <20190515100848.19560-2-j-keerthy@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190515100848.19560-2-j-keerthy@ti.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Elements of ZSTD_frameParameters structure are used as flag, so
-just declare them as char. ZSTD_frameParameters structure is used by
-ZSTD_parameters.
+On Wed, 15 May 2019, Keerthy wrote:
 
-Before:
-======
-sizeof(ZSTD_parameters)
-$1 = 40
+> lp87561 is a single output 4-phase regulator configuration.
+> Add support for the same.
+> 
+> Data Sheet: https://www.ti.com/lit/ds/symlink/lp87561-q1.pdf
+> 
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> ---
+>  .../devicetree/bindings/mfd/lp87565.txt       | 36 +++++++++++++++++++
+>  1 file changed, 36 insertions(+)
 
-After:
-=====
-sizeof(ZSTD_parameters)
-$1 = 32
+Applied, thanks.
 
-Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
-Signed-off-by: Vaneet Narang <v.narang@samsung.com>
----
- include/linux/zstd.h  | 6 +++---
- lib/zstd/compress.c   | 4 ++--
- lib/zstd/decompress.c | 2 +-
- 3 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/include/linux/zstd.h b/include/linux/zstd.h
-index 5103efa..a1e3483 100644
---- a/include/linux/zstd.h
-+++ b/include/linux/zstd.h
-@@ -164,9 +164,9 @@ typedef struct {
-  * The default value is all fields set to 0.
-  */
- typedef struct {
--	unsigned int contentSizeFlag;
--	unsigned int checksumFlag;
--	unsigned int noDictIDFlag;
-+	unsigned char contentSizeFlag;
-+	unsigned char checksumFlag;
-+	unsigned char noDictIDFlag;
- } ZSTD_frameParameters;
- 
- /**
-diff --git a/lib/zstd/compress.c b/lib/zstd/compress.c
-index 306e31b..7e0cea2 100644
---- a/lib/zstd/compress.c
-+++ b/lib/zstd/compress.c
-@@ -2435,9 +2435,9 @@ static size_t ZSTD_writeFrameHeader(void *dst, size_t dstCapacity, ZSTD_paramete
- {
- 	BYTE *const op = (BYTE *)dst;
- 	U32 const dictIDSizeCode = (dictID > 0) + (dictID >= 256) + (dictID >= 65536); /* 0-3 */
--	U32 const checksumFlag = params->fParams.checksumFlag > 0;
-+	BYTE const checksumFlag = params->fParams.checksumFlag > 0;
- 	U32 const windowSize = 1U << params->cParams.windowLog;
--	U32 const singleSegment = params->fParams.contentSizeFlag && (windowSize >= pledgedSrcSize);
-+	BYTE const singleSegment = params->fParams.contentSizeFlag && (windowSize >= pledgedSrcSize);
- 	BYTE const windowLogByte = (BYTE)((params->cParams.windowLog - ZSTD_WINDOWLOG_ABSOLUTEMIN) << 3);
- 	U32 const fcsCode =
- 	    params->fParams.contentSizeFlag ? (pledgedSrcSize >= 256) + (pledgedSrcSize >= 65536 + 256) + (pledgedSrcSize >= 0xFFFFFFFFU) : 0; /* 0-3 */
-diff --git a/lib/zstd/decompress.c b/lib/zstd/decompress.c
-index 269ee9a..7828264 100644
---- a/lib/zstd/decompress.c
-+++ b/lib/zstd/decompress.c
-@@ -233,7 +233,7 @@ size_t ZSTD_getFrameParams(ZSTD_frameParams *fparamsPtr, const void *src, size_t
- 		BYTE const fhdByte = ip[4];
- 		size_t pos = 5;
- 		U32 const dictIDSizeCode = fhdByte & 3;
--		U32 const checksumFlag = (fhdByte >> 2) & 1;
-+		BYTE const checksumFlag = (fhdByte >> 2) & 1;
- 		U32 const singleSegment = (fhdByte >> 5) & 1;
- 		U32 const fcsID = fhdByte >> 6;
- 		U32 const windowSizeMax = 1U << ZSTD_WINDOWLOG_MAX;
 -- 
-2.7.4
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
