@@ -2,84 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA72232EC5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 13:38:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CD7E32ECF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 13:40:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728435AbfFCLie (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 07:38:34 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:56235 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728148AbfFCLid (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 07:38:33 -0400
-X-Originating-IP: 90.88.144.139
-Received: from localhost (aaubervilliers-681-1-24-139.w90-88.abo.wanadoo.fr [90.88.144.139])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id C3B3D20014;
-        Mon,  3 Jun 2019 11:38:27 +0000 (UTC)
-Date:   Mon, 3 Jun 2019 13:38:27 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     paul.kocialkowski@bootlin.com, wens@csie.org, mchehab@kernel.org,
-        gregkh@linuxfoundation.org, linux-media@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/7] media: cedrus: Disable engine after each slice
- decoding
-Message-ID: <20190603113827.2nmm5wkycf44aqox@flea>
-References: <20190530211516.1891-1-jernej.skrabec@siol.net>
- <20190530211516.1891-2-jernej.skrabec@siol.net>
+        id S1728474AbfFCLke (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 07:40:34 -0400
+Received: from mga11.intel.com ([192.55.52.93]:57686 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728216AbfFCLkd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 07:40:33 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 04:40:32 -0700
+X-ExtLoop1: 1
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga001.fm.intel.com with SMTP; 03 Jun 2019 04:40:29 -0700
+Received: by lahna (sSMTP sendmail emulation); Mon, 03 Jun 2019 14:40:29 +0300
+Date:   Mon, 3 Jun 2019 14:40:29 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Sven Van Asbroeck <thesven73@gmail.com>
+Cc:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-pwm@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH -next] pwm: pca9685: Remove set but not used variable
+ 'pwm'
+Message-ID: <20190603114029.GC2781@lahna.fi.intel.com>
+References: <20190601035709.85379-1-yuehaibing@huawei.com>
+ <CAGngYiXZM0QUdKE_zDK763J9iDuiKSbmFeTVA1PJ_4WvjntjQQ@mail.gmail.com>
+ <20190601160459.baedo5pp5hsrltzs@pengutronix.de>
+ <CAGngYiUfGGF+PwaT4SE2ZJkrCidc7-QWeuRsPTDwrLL1onm88w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jzwau3t2b77xs3xp"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190530211516.1891-2-jernej.skrabec@siol.net>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGngYiUfGGF+PwaT4SE2ZJkrCidc7-QWeuRsPTDwrLL1onm88w@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Jun 02, 2019 at 10:18:15AM -0400, Sven Van Asbroeck wrote:
+> On Sat, Jun 1, 2019 at 12:05 PM Uwe Kleine-König
+> <u.kleine-koenig@pengutronix.de> wrote:
+> >
+> > I didn't look into the driver to try to understand that, but the
+> > definitely needs a comment to explain for the next person to think they
+> > can do a cleanup here.
+> 
+> Certainly.
 
---jzwau3t2b77xs3xp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I agree.
 
-Hi,
+> But if we do restore the old behaviour, there may still be problems.
+> I'm unsure if the old synchronization was working correctly.
+> See the example at the end of this email.
 
-On Thu, May 30, 2019 at 11:15:10PM +0200, Jernej Skrabec wrote:
-> libvdpau-sunxi always disables engine after each decoded slice.
-> Do same in Cedrus driver.
->
-> Presumably this also lowers power consumption which is always nice.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+I think you are right. pca9685_pwm_request() should take the mutex as
+long as it is requesting PWM.
 
-Is it fixing anything though?
+> An intuitive way forward would be to use a simple bitfield in
+> struct pca9685 to track if a specific pwm is in use by either
+> pwm or gpio. Protected by a mutex.
 
-I indeed saw that cedar did disable it everytime, but I couldn't find
-a reason why.
+A flag would probably be easier to understand than the magic we have
+now. Or then wrap it inside function with an explanation comment:
 
-Also, the power management improvement would need to be measured, it
-can even create the opposite situation where the device will draw more
-current from being woken up than if it had just remained disabled.
+static inline void pca9685_pwm_set_as_gpio(struct pwm_device *pwm)
+{
+	/*
+	 * We use ->chip_data to convoy the fact that the PWM channel is
+	 * being used as GPIO instead of PWM.
+	 */
+	pwm_set_chip_data(pwm, (void *)1)
+}
 
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---jzwau3t2b77xs3xp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXPUGswAKCRDj7w1vZxhR
-xcoOAP9mzllurMZRL+0rmJfj1Ie1ewdM8HeuqLiB1e/Mm8M0VQD/ULwrfBAx5fRS
-/tgzkYR2nXRMpj0jQ6+7xa2pyZdkdw0=
-=lu1j
------END PGP SIGNATURE-----
-
---jzwau3t2b77xs3xp--
+static inline void pca9685_pwm_set_as_pwm(struct pwm_device *pwm)
+{
+	pwm_set_chip_data(pwm, NULL);
+}
