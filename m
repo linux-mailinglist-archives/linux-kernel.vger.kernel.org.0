@@ -2,54 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17AA533104
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:28:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CA233310B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:30:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728638AbfFCN22 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 09:28:28 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:48181 "EHLO
+        id S1728670AbfFCNaL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 09:30:11 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43311 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726360AbfFCN22 (ORCPT
+        with ESMTP id S1726516AbfFCNaK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 09:28:28 -0400
+        Mon, 3 Jun 2019 09:30:10 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x53DSHA9609665
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x53DSxJI609720
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 3 Jun 2019 06:28:17 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x53DSHA9609665
+        Mon, 3 Jun 2019 06:28:59 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x53DSxJI609720
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1559568498;
-        bh=gbQJThFwkE8MxLw8eOWCZ4O/ukMLlgODAsDr5hpi4vk=;
+        s=2019051801; t=1559568540;
+        bh=YtIgHkHPA3A/jVFcLpcLzWmm43DeZfRqyAMLsSpPAAA=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=OIkuKoL6ugK9agu+eMEchfRk2JdnyUAbLwjlRiF82/52ETt30KZHcCXiGpJIVPmhl
-         KNpqTt7poOSreAZavGsMXlQxooBmxzZNogX04jqdJrt1XDt8c/VBbRbW+TEDsalJP1
-         3Gw8p4Ns80ihqhqDt78IOe8jFwOa2Wxtf2jpo0rAECY5JkBx+nuwphtc3RnF5+x3Wq
-         EShLhKeZ35SwQpppZx7VtN2O7sANCe3zT7gR1IIqppgyj0Fqg5KGLWovwldI5yUeE+
-         ywnFAPVX2cwNuBnOZIk1Y312Sw7MBYQreqfNp/RldXqVpjCG6Nn/8tEFQOwNSZ8x+n
-         1C6sqZUpsF2xw==
+        b=wr5p++n+662ItOUW2iznlhW/YmjGC8mf/DsTc2RDwSghkfpjzUnT6LjeTyq23mDDv
+         gjrSbFxuykK0IQtNuUTMLFdR1debeWWndBvrbYSi8O5KQMBodnITypGfYgeOXWNG1P
+         qbJ1oW6Hu+PJpIjKdXQvCrm6wgFydk1fsmQlHBqCW3rap2olNRgWbqtkYqlyDjzosh
+         x/EGNZXf/LpkfFrgkYgw1EWa2omNgFx7BQiNrjZiJ4W90Ft1bp6jOgkKfYOD0cg1tf
+         Xj0fufGUvh/wM27Z6VepteL0rWlbQF7Gv2fDiVD7k5s07spOyHBXuSLhB0KnazenSu
+         2zv8mjoMsMjJQ==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x53DSGQC609662;
-        Mon, 3 Jun 2019 06:28:16 -0700
-Date:   Mon, 3 Jun 2019 06:28:16 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x53DSxBO609717;
+        Mon, 3 Jun 2019 06:28:59 -0700
+Date:   Mon, 3 Jun 2019 06:28:59 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-3d5672735b2348f5b13679a27f90c0847d22125d@git.kernel.org>
-Cc:     peterz@infradead.org, hpa@zytor.com, gregkh@linuxfoundation.org,
-        mingo@kernel.org, namhyung@kernel.org,
-        alexander.shishkin@linux.intel.com, acme@kernel.org,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org, jolsa@kernel.org,
-        torvalds@linux-foundation.org
-Reply-To: hpa@zytor.com, peterz@infradead.org, mingo@kernel.org,
-          gregkh@linuxfoundation.org, tglx@linutronix.de, acme@kernel.org,
-          alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-          torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-          jolsa@kernel.org
-In-Reply-To: <20190512155518.21468-6-jolsa@kernel.org>
-References: <20190512155518.21468-6-jolsa@kernel.org>
+Message-ID: <tip-1f157286829c78c0bd8e495951a5c098d88e3d1a@git.kernel.org>
+Cc:     acme@kernel.org, peterz@infradead.org,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        namhyung@kernel.org, gregkh@linuxfoundation.org, hpa@zytor.com,
+        tglx@linutronix.de, mingo@kernel.org
+Reply-To: mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com,
+          gregkh@linuxfoundation.org, namhyung@kernel.org,
+          jolsa@kernel.org, alexander.shishkin@linux.intel.com,
+          linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+          peterz@infradead.org, acme@kernel.org
+In-Reply-To: <20190512155518.21468-7-jolsa@kernel.org>
+References: <20190512155518.21468-7-jolsa@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf/x86: Add is_visible attribute_group callback
- for base events
-Git-Commit-ID: 3d5672735b2348f5b13679a27f90c0847d22125d
+Subject: [tip:perf/core] perf/x86: Use update attribute groups for caps
+Git-Commit-ID: 1f157286829c78c0bd8e495951a5c098d88e3d1a
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -67,17 +66,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  3d5672735b2348f5b13679a27f90c0847d22125d
-Gitweb:     https://git.kernel.org/tip/3d5672735b2348f5b13679a27f90c0847d22125d
+Commit-ID:  1f157286829c78c0bd8e495951a5c098d88e3d1a
+Gitweb:     https://git.kernel.org/tip/1f157286829c78c0bd8e495951a5c098d88e3d1a
 Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Sun, 12 May 2019 17:55:14 +0200
+AuthorDate: Sun, 12 May 2019 17:55:15 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 3 Jun 2019 11:58:23 +0200
+CommitDate: Mon, 3 Jun 2019 11:58:24 +0200
 
-perf/x86: Add is_visible attribute_group callback for base events
+perf/x86: Use update attribute groups for caps
 
-We dont need to pre-filter out unsupported base events,
-we can just use its group's is_visible function to do this.
+Using the new pmu::update_attrs attribute group for
+"caps" directory.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
@@ -88,90 +87,97 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190512155518.21468-6-jolsa@kernel.org
+Link: https://lkml.kernel.org/r/20190512155518.21468-7-jolsa@kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/events/core.c | 53 ++++++++++++++------------------------------------
- 1 file changed, 15 insertions(+), 38 deletions(-)
+ arch/x86/events/core.c       |  8 --------
+ arch/x86/events/intel/core.c | 25 ++++++++++++++++++++-----
+ arch/x86/events/perf_event.h |  1 -
+ 3 files changed, 20 insertions(+), 14 deletions(-)
 
 diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index db815ceb5017..b831091d4c10 100644
+index b831091d4c10..dd0996ba75c3 100644
 --- a/arch/x86/events/core.c
 +++ b/arch/x86/events/core.c
-@@ -1618,42 +1618,6 @@ static struct attribute_group x86_pmu_format_group __ro_after_init = {
- 	.attrs = NULL,
+@@ -1821,14 +1821,6 @@ static int __init init_hw_perf_events(void)
+ 
+ 	x86_pmu_format_group.attrs = x86_pmu.format_attrs;
+ 
+-	if (x86_pmu.caps_attrs) {
+-		struct attribute **tmp;
+-
+-		tmp = merge_attr(x86_pmu_caps_group.attrs, x86_pmu.caps_attrs);
+-		if (!WARN_ON(!tmp))
+-			x86_pmu_caps_group.attrs = tmp;
+-	}
+-
+ 	if (!x86_pmu.events_sysfs_show)
+ 		x86_pmu_events_group.attrs = &empty_attrs;
+ 
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 600e87055ba9..d4002e71a0b8 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -4411,6 +4411,12 @@ pebs_is_visible(struct kobject *kobj, struct attribute *attr, int i)
+ 	return x86_pmu.pebs ? attr->mode : 0;
+ }
+ 
++static umode_t
++lbr_is_visible(struct kobject *kobj, struct attribute *attr, int i)
++{
++	return x86_pmu.lbr_nr ? attr->mode : 0;
++}
++
+ static struct attribute_group group_events_td  = {
+ 	.name = "events",
+ };
+@@ -4425,10 +4431,23 @@ static struct attribute_group group_events_tsx = {
+ 	.is_visible = tsx_is_visible,
  };
  
--/*
-- * Remove all undefined events (x86_pmu.event_map(id) == 0)
-- * out of events_attr attributes.
-- */
--static void __init filter_events(struct attribute **attrs)
--{
--	struct device_attribute *d;
--	struct perf_pmu_events_attr *pmu_attr;
--	int offset = 0;
--	int i, j;
--
--	for (i = 0; attrs[i]; i++) {
--		d = (struct device_attribute *)attrs[i];
--		pmu_attr = container_of(d, struct perf_pmu_events_attr, attr);
--		/* str trumps id */
--		if (pmu_attr->event_str)
--			continue;
--		if (x86_pmu.event_map(i + offset))
--			continue;
--
--		for (j = i; attrs[j]; j++)
--			attrs[j] = attrs[j + 1];
--
--		/* Check the shifted attr. */
--		i--;
--
--		/*
--		 * event_map() is index based, the attrs array is organized
--		 * by increasing event index. If we shift the events, then
--		 * we need to compensate for the event_map(), otherwise
--		 * we are looking up the wrong event in the map
--		 */
--		offset++;
--	}
--}
--
- /* Merge two pointer arrays */
- __init struct attribute **merge_attr(struct attribute **a, struct attribute **b)
- {
-@@ -1744,9 +1708,24 @@ static struct attribute *events_attr[] = {
++static struct attribute_group group_caps_gen = {
++	.name  = "caps",
++	.attrs = intel_pmu_caps_attrs,
++};
++
++static struct attribute_group group_caps_lbr = {
++	.name       = "caps",
++	.attrs	    = lbr_attrs,
++	.is_visible = lbr_is_visible,
++};
++
+ static const struct attribute_group *attr_update[] = {
+ 	&group_events_td,
+ 	&group_events_mem,
+ 	&group_events_tsx,
++	&group_caps_gen,
++	&group_caps_lbr,
  	NULL,
  };
  
-+/*
-+ * Remove all undefined events (x86_pmu.event_map(id) == 0)
-+ * out of events_attr attributes.
-+ */
-+static umode_t
-+is_visible(struct kobject *kobj, struct attribute *attr, int idx)
-+{
-+	struct perf_pmu_events_attr *pmu_attr;
-+
-+	pmu_attr = container_of(attr, struct perf_pmu_events_attr, attr.attr);
-+	/* str trumps id */
-+	return pmu_attr->event_str || x86_pmu.event_map(idx) ? attr->mode : 0;
-+}
-+
- static struct attribute_group x86_pmu_events_group __ro_after_init = {
- 	.name = "events",
- 	.attrs = events_attr,
-+	.is_visible = is_visible,
- };
+@@ -5055,12 +5074,8 @@ __init int intel_pmu_init(void)
+ 			x86_pmu.lbr_nr = 0;
+ 	}
  
- ssize_t x86_event_sysfs_show(char *page, u64 config, u64 event)
-@@ -1852,8 +1831,6 @@ static int __init init_hw_perf_events(void)
+-	x86_pmu.caps_attrs = intel_pmu_caps_attrs;
+-
+-	if (x86_pmu.lbr_nr) {
+-		x86_pmu.caps_attrs = merge_attr(x86_pmu.caps_attrs, lbr_attrs);
++	if (x86_pmu.lbr_nr)
+ 		pr_cont("%d-deep LBR, ", x86_pmu.lbr_nr);
+-	}
  
- 	if (!x86_pmu.events_sysfs_show)
- 		x86_pmu_events_group.attrs = &empty_attrs;
--	else
--		filter_events(x86_pmu_events_group.attrs);
+ 	/*
+ 	 * Access extra MSR may cause #GP under certain circumstances.
+diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+index 629b313d8b8b..1da9b6f0b279 100644
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -631,7 +631,6 @@ struct x86_pmu {
+ 	int		attr_rdpmc_broken;
+ 	int		attr_rdpmc;
+ 	struct attribute **format_attrs;
+-	struct attribute **caps_attrs;
  
- 	if (x86_pmu.attrs) {
- 		struct attribute **tmp;
+ 	ssize_t		(*events_sysfs_show)(char *page, u64 config);
+ 	const struct attribute_group **attr_update;
