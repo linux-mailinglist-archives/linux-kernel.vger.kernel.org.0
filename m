@@ -2,74 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 917B732A41
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 10:01:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1196532A51
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 10:03:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727545AbfFCIBm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 04:01:42 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38156 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727530AbfFCIBk (ORCPT
+        id S1727601AbfFCIDh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 04:03:37 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:50138 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725856AbfFCIDg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 04:01:40 -0400
-Received: by mail-lj1-f195.google.com with SMTP id o13so15231702lji.5;
-        Mon, 03 Jun 2019 01:01:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KkW+WcA8xr3IAwKXO0NCLpjNO+SlOMn996T9vCAZgFM=;
-        b=H+m0ZxZZf+fC5n4l7BHI/0Fb9/YJl2/Dlwg6UTY9zsze8Zr9LSfEN4Hr1Lztq5n9yx
-         0Ztv2IVK/uyXj4ApVAsi7xSNHvwgNyYy77vI1qMXXOWKRhGzlEYxJbzxqGfN8bKQCQpV
-         gI5AFwvObRfq/sV+9SYQXjfZp+uk5Hi23NqqjQ99nEYXs4jT8fJH5/DyxoJ8bY2N2xbC
-         RV6jBPrdNYfjNVN0xMMKxrdByCIbXOVNx0saAJdNtjjOJgFSsLE5818aQaqdTN8fJ9+i
-         9tI81Z4d6hvy0H5RsaHQG5oOOcgzzELAyseXf5HIJGxCkG0Yv3b1cHVcUCn472OB4oLJ
-         8u0A==
-X-Gm-Message-State: APjAAAVjR/qv8IiPw5rDR/nTk1RIDpxuS4zcE9d34fxSsDxyoJAk5I5H
-        23+XxDhO76Gcga6nywU1hGR0C+tV7EEkfsrK2Rs=
-X-Google-Smtp-Source: APXvYqzGr2OJE5ibdf/4JMBzaDSw+RyaCvo/V1a/stIxCLEME3rIBFMKVouuvHC7voDpXdzuXIoF5hUrjPfHo3CULAU=
-X-Received: by 2002:a2e:2b8d:: with SMTP id r13mr238216ljr.145.1559548898567;
- Mon, 03 Jun 2019 01:01:38 -0700 (PDT)
+        Mon, 3 Jun 2019 04:03:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=YGw/VDsnOloIaXgrEbA/FOCyBbJYxl2QNc1vAYVXNY0=; b=Kh81Fh/GkYy+PcGkyTuRLYqJr
+        5d3meB8Iu/apofeU9LBaVTbdU34exlCBZ6/cvkSTsWYbCITa+85dcFdl1TuwCCRcbBbbBHcmz79tU
+        YNA75f//Beu0qWv4xrOjE3yCBU/h7Wpdldb8AXCdnFyE/xt6GG7X5SHHOhvkwxY2EDPpuVJ40I8NT
+        ZcmLp7vu3BxxYFbsJSX2sSX4rHSTxLEQ0MZogDpDfR8tMLBVyzA2HGhhcxPa3RuWryoN7hsbltCid
+        ApVADLC1Be6a9Xztz6ysLp/Pg3F0N3np5vQaItnOalc4ycKqr7JKLLA3Zs069bXnA/w4o4wPQqclC
+        BYeGsVrnQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hXhuM-0001Ln-LU; Mon, 03 Jun 2019 08:01:31 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 0FE772029F880; Mon,  3 Jun 2019 10:01:28 +0200 (CEST)
+Date:   Mon, 3 Jun 2019 10:01:28 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "David S. Miller" <davem@davemloft.net>, edumazet@google.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>, keescook@chromium.org,
+        kernel-hardening@lists.openwall.com,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        neilb@suse.com, netdev@vger.kernel.org, oleg@redhat.com,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, rcu@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Tejun Heo <tj@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>
+Subject: Re: [RFC 1/6] rcu: Add support for consolidated-RCU reader checking
+Message-ID: <20190603080128.GA3436@hirez.programming.kicks-ass.net>
+References: <20190601222738.6856-1-joel@joelfernandes.org>
+ <20190601222738.6856-2-joel@joelfernandes.org>
 MIME-Version: 1.0
-References: <1559044467-2639-1-git-send-email-gareth.williams.jx@renesas.com> <1559044467-2639-3-git-send-email-gareth.williams.jx@renesas.com>
-In-Reply-To: <1559044467-2639-3-git-send-email-gareth.williams.jx@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 3 Jun 2019 10:01:26 +0200
-Message-ID: <CAMuHMdXFVY6x37KtZWYfp4E3gSfEPs4uQDp2wofRTzKm_LFGrA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] clk: renesas: r9a06g032: Add clock domain support
-To:     Gareth Williams <gareth.williams.jx@renesas.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190601222738.6856-2-joel@joelfernandes.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 28, 2019 at 1:55 PM Gareth Williams
-<gareth.williams.jx@renesas.com> wrote:
-> There are several clocks on the r9a06g032 which are currently not
-> enabled in their drivers that can be delegated to clock domain system
-> for power management. Therefore add support for clock domain
-> functionality to the r9a06g032 clock driver.
->
-> Signed-off-by: Gareth Williams <gareth.williams.jx@renesas.com>
+On Sat, Jun 01, 2019 at 06:27:33PM -0400, Joel Fernandes (Google) wrote:
+> +#define list_for_each_entry_rcu(pos, head, member, cond...)		\
+> +	if (COUNT_VARGS(cond) != 0) {					\
+> +		__list_check_rcu_cond(0, ## cond);			\
+> +	} else {							\
+> +		__list_check_rcu();					\
+> +	}								\
+> +	for (pos = list_entry_rcu((head)->next, typeof(*pos), member);	\
+> +		&pos->member != (head);					\
+>  		pos = list_entry_rcu(pos->member.next, typeof(*pos), member))
+>  
+>  /**
+> @@ -621,7 +648,12 @@ static inline void hlist_add_behind_rcu(struct hlist_node *n,
+>   * the _rcu list-mutation primitives such as hlist_add_head_rcu()
+>   * as long as the traversal is guarded by rcu_read_lock().
+>   */
+> +#define hlist_for_each_entry_rcu(pos, head, member, cond...)		\
+> +	if (COUNT_VARGS(cond) != 0) {					\
+> +		__list_check_rcu_cond(0, ## cond);			\
+> +	} else {							\
+> +		__list_check_rcu();					\
+> +	}								\
+>  	for (pos = hlist_entry_safe (rcu_dereference_raw(hlist_first_rcu(head)),\
+>  			typeof(*(pos)), member);			\
+>  		pos;							\
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in clock-renesas-for-v5.3.
 
-Gr{oetje,eeting}s,
+This breaks code like:
 
-                        Geert
+	if (...)
+		list_for_each_entry_rcu(...);
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+as they are no longer a single statement. You'll have to frob it into
+the initializer part of the for statement.
