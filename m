@@ -2,206 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D065932C28
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:15:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91F6732C84
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:18:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729035AbfFCJOf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 05:14:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35374 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728999AbfFCJOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 05:14:33 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F23B427ED9;
-        Mon,  3 Jun 2019 09:14:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559553272;
-        bh=70XdtqCKL2HSQ+O8iNV/GIT53S9ae4n5XVq2zIPyzn0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jyd9/jTcALwpo+rBvEVStTDxvLJWuSK+P7Cad643F7F5KiR/xywgJvaQNubwwHGTt
-         g76wlrEIFRsXiwdyXSOjTJm1fuLOqdb9bXsW2mKNsE7XYEXTAQN17iB/jWark98PhK
-         /KekmY9Q84Zv1GMDmX/aUaQjB7qUpZowKt3d7Kco=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Junwei Hu <hujunwei4@huawei.com>,
-        Wang Wang <wangwang2@huawei.com>,
-        syzbot+1e8114b61079bfe9cbc5@syzkaller.appspotmail.com,
-        Kang Zhou <zhoukang7@huawei.com>,
-        Suanming Mou <mousuanming@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.1 40/40] tipc: fix modprobe tipc failed after switch order of device registration
-Date:   Mon,  3 Jun 2019 11:09:33 +0200
-Message-Id: <20190603090524.869318441@linuxfoundation.org>
+        id S1728143AbfFCJK2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 05:10:28 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37088 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728071AbfFCJKW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 05:10:22 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 22so1948367wmg.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 02:10:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nQvczT9rgRgEoiOd9jOJm49nuBwwy90Cz49p7tEEfqk=;
+        b=iz3NBvtvi6AeY1DsmYRuQyHSYP3gCHFihFbV9pM4ae0V95Lbk4fl4UbaaV6F5aqenS
+         ba9PLk99CAS7dhepZLUIybSceHSPz7WW0POoDTjqg4beEA4ge0z60kqIWsrNlVLO4W22
+         gNKdvwAH+r7KuWWA6rWHAgHBPx/7UytDtmg4b+DCyIw1PEgzOdmHU0EAGIClTc/pwVHF
+         rbXMw9dudAx/+mjfV0dQTs9YIFdQoFw5D4bUZSrHpBIMC2AsOVGcXyaTb5x+bvL9pdkR
+         uA9BqN8/mbV+bS47/2pcjD0qtuBL8A0wb2VEpSMbqZiv3eMqyoPA8tIVquoFLBBMTwA6
+         xuow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nQvczT9rgRgEoiOd9jOJm49nuBwwy90Cz49p7tEEfqk=;
+        b=Ka0oJBjsbAV7ZLmY5ufThhZdlOUtEgO7QDNXKD+zcKvMBpVt8TKQPWP5Ikz8D00nps
+         enJt/pjHfI9HKBfc0glZ1HkI6LWH1UCinZYEJb7SkPnACKviLuFKuIIvasDiicIA75FL
+         gS0CRSOlYJXkVyfNOW9Afaaral/V8y3X94KtTpA6I3DLp7uw/vjDQG8qqX7w5ec+S2ED
+         kGi1GiuZOu+YwkAkIKCrf4gdHIgobc5Ol0BPl+pFm0wpw6aJlzjRxpkM1ofHKw/058+w
+         L7NhcwcZQs0FlnFHf/tNQge4RlsbjOrszg0C2V4wOPAD+G43GxF0TdtZyWRGvZO/mHmu
+         rdsQ==
+X-Gm-Message-State: APjAAAXTlD2c/ksTjufDQRwYDgpBwwVGynHrtQ13ZYnjvvE1mLXfTWWm
+        KRdtDMFG1o2YX94+vzFQ7o2qmQ==
+X-Google-Smtp-Source: APXvYqzY8Tog/IwFDWz+dNeTw9ZVgosoUZm310PR6zlHI7aI6TLrpXW6T95uCS7iMfYlOHWJd6RD7w==
+X-Received: by 2002:a1c:9602:: with SMTP id y2mr14245367wmd.115.1559553020661;
+        Mon, 03 Jun 2019 02:10:20 -0700 (PDT)
+Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id e15sm10676809wme.0.2019.06.03.02.10.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 03 Jun 2019 02:10:20 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     khilman@baylibre.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/3] arm64: Add initial support for Odroid-N2
+Date:   Mon,  3 Jun 2019 11:10:05 +0200
+Message-Id: <20190603091008.2382-1-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190603090522.617635820@linuxfoundation.org>
-References: <20190603090522.617635820@linuxfoundation.org>
-User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Junwei Hu <hujunwei4@huawei.com>
+This patchset adds basic support for :
+- Amlogic G12B, which is very similar to G12A
+- The HardKernel Odroid-N2 based on the S922X SoC
 
-commit 526f5b851a96566803ee4bee60d0a34df56c77f8 upstream.
+The Amlogic G12B SoC is very similar with the G12A SoC, sharing
+most of the features and architecture, but with these differences :
+- The first CPU cluster only has 2xCortex-A53 instead of 4
+- G12B has a second cluster of 4xCortex-A73
+- Both cluster can achieve 2GHz instead of 1,8GHz for G12A
+- CPU Clock architecture is difference, thus needing a different
+  compatible to handle this slight difference
+- Supports a MIPI CSI input
+- Embeds a Mali-G52 instead of a Mali-G31, but integration is the same
 
-Error message printed:
-modprobe: ERROR: could not insert 'tipc': Address family not
-supported by protocol.
-when modprobe tipc after the following patch: switch order of
-device registration, commit 7e27e8d6130c
-("tipc: switch order of device registration to fix a crash")
+Actual support is done in the same way as for the GXM support, including
+the G12A dtsi and redefining the CPU clusters.
+Unlike GXM, the first cluster is different, thus needing to remove
+the last 2 cpu nodes of the first cluster.
 
-Because sock_create_kern(net, AF_TIPC, ...) called by
-tipc_topsrv_create_listener() in the initialization process
-of tipc_init_net(), so tipc_socket_init() must be execute before that.
-Meanwhile, tipc_net_id need to be initialized when sock_create()
-called, and tipc_socket_init() is no need to be called for each namespace.
+Dependencies :
+- Patch 1, 2 : YAML rewrite of amlogic.txt bindings at [7]
+- Patch 3 : None since clock + g12b bindings has been acked
 
-I add a variable tipc_topsrv_net_ops, and split the
-register_pernet_subsys() of tipc into two parts, and split
-tipc_socket_init() with initialization of pernet params.
+Changes since v4 at [9]:
+- Fix regulators for USB Host
 
-By the way, I fixed resources rollback error when tipc_bcast_init()
-failed in tipc_init_net().
+Changes since v3 at [8]:
+- Dropped arm,armv8
+- Dropped eee disable, not needed in further tests
+- Add comments about where are connected the regulators pins
+- Moved the phy0 regulator to the usb vbus regulator
 
-Fixes: 7e27e8d6130c ("tipc: switch order of device registration to fix a crash")
-Signed-off-by: Junwei Hu <hujunwei4@huawei.com>
-Reported-by: Wang Wang <wangwang2@huawei.com>
-Reported-by: syzbot+1e8114b61079bfe9cbc5@syzkaller.appspotmail.com
-Reviewed-by: Kang Zhou <zhoukang7@huawei.com>
-Reviewed-by: Suanming Mou <mousuanming@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Changes since v2 at [5]:
+- sent the clk patches in standalone at [6]
+- rewrote the bindings on top of the YAML rewrite at [7]
+- Added MMC, SDCard and Network support to Odroid-N2
 
----
- net/tipc/core.c   |   18 ++++++++++++------
- net/tipc/subscr.h |    5 +++--
- net/tipc/topsrv.c |   14 ++++++++++++--
- 3 files changed, 27 insertions(+), 10 deletions(-)
+Changes since v1 at [3]:
+- Renamed the g12b cpu clocks like g12a counterparts
+- Rebased clock patches on top of Guillaume's Temperature sensor Clock patches at [4]
+- Added AO-CEC-B support to N2 DTS
 
---- a/net/tipc/core.c
-+++ b/net/tipc/core.c
-@@ -75,9 +75,6 @@ static int __net_init tipc_init_net(stru
- 		goto out_nametbl;
- 
- 	INIT_LIST_HEAD(&tn->dist_queue);
--	err = tipc_topsrv_start(net);
--	if (err)
--		goto out_subscr;
- 
- 	err = tipc_bcast_init(net);
- 	if (err)
-@@ -86,8 +83,6 @@ static int __net_init tipc_init_net(stru
- 	return 0;
- 
- out_bclink:
--	tipc_bcast_stop(net);
--out_subscr:
- 	tipc_nametbl_stop(net);
- out_nametbl:
- 	tipc_sk_rht_destroy(net);
-@@ -97,7 +92,6 @@ out_sk_rht:
- 
- static void __net_exit tipc_exit_net(struct net *net)
- {
--	tipc_topsrv_stop(net);
- 	tipc_net_stop(net);
- 	tipc_bcast_stop(net);
- 	tipc_nametbl_stop(net);
-@@ -111,6 +105,11 @@ static struct pernet_operations tipc_net
- 	.size = sizeof(struct tipc_net),
- };
- 
-+static struct pernet_operations tipc_topsrv_net_ops = {
-+	.init = tipc_topsrv_init_net,
-+	.exit = tipc_topsrv_exit_net,
-+};
-+
- static int __init tipc_init(void)
- {
- 	int err;
-@@ -141,6 +140,10 @@ static int __init tipc_init(void)
- 	if (err)
- 		goto out_socket;
- 
-+	err = register_pernet_subsys(&tipc_topsrv_net_ops);
-+	if (err)
-+		goto out_pernet_topsrv;
-+
- 	err = tipc_bearer_setup();
- 	if (err)
- 		goto out_bearer;
-@@ -148,6 +151,8 @@ static int __init tipc_init(void)
- 	pr_info("Started in single node mode\n");
- 	return 0;
- out_bearer:
-+	unregister_pernet_subsys(&tipc_topsrv_net_ops);
-+out_pernet_topsrv:
- 	tipc_socket_stop();
- out_socket:
- 	unregister_pernet_subsys(&tipc_net_ops);
-@@ -165,6 +170,7 @@ out_netlink:
- static void __exit tipc_exit(void)
- {
- 	tipc_bearer_cleanup();
-+	unregister_pernet_subsys(&tipc_topsrv_net_ops);
- 	tipc_socket_stop();
- 	unregister_pernet_subsys(&tipc_net_ops);
- 	tipc_netlink_stop();
---- a/net/tipc/subscr.h
-+++ b/net/tipc/subscr.h
-@@ -77,8 +77,9 @@ void tipc_sub_report_overlap(struct tipc
- 			     u32 found_lower, u32 found_upper,
- 			     u32 event, u32 port, u32 node,
- 			     u32 scope, int must);
--int tipc_topsrv_start(struct net *net);
--void tipc_topsrv_stop(struct net *net);
-+
-+int __net_init tipc_topsrv_init_net(struct net *net);
-+void __net_exit tipc_topsrv_exit_net(struct net *net);
- 
- void tipc_sub_put(struct tipc_subscription *subscription);
- void tipc_sub_get(struct tipc_subscription *subscription);
---- a/net/tipc/topsrv.c
-+++ b/net/tipc/topsrv.c
-@@ -635,7 +635,7 @@ static void tipc_topsrv_work_stop(struct
- 	destroy_workqueue(s->send_wq);
- }
- 
--int tipc_topsrv_start(struct net *net)
-+static int tipc_topsrv_start(struct net *net)
- {
- 	struct tipc_net *tn = tipc_net(net);
- 	const char name[] = "topology_server";
-@@ -668,7 +668,7 @@ int tipc_topsrv_start(struct net *net)
- 	return ret;
- }
- 
--void tipc_topsrv_stop(struct net *net)
-+static void tipc_topsrv_stop(struct net *net)
- {
- 	struct tipc_topsrv *srv = tipc_topsrv(net);
- 	struct socket *lsock = srv->listener;
-@@ -693,3 +693,13 @@ void tipc_topsrv_stop(struct net *net)
- 	idr_destroy(&srv->conn_idr);
- 	kfree(srv);
- }
-+
-+int __net_init tipc_topsrv_init_net(struct net *net)
-+{
-+	return tipc_topsrv_start(net);
-+}
-+
-+void __net_exit tipc_topsrv_exit_net(struct net *net)
-+{
-+	tipc_topsrv_stop(net);
-+}
+Changes since RFC at [1]:
+- Added bindings review tags
+- Moved the fclk_div3 CRITICAL flags to the gate
+- Removed invalid CRITICAL flags on the cpu clocks
 
+[1] https://lkml.kernel.org/r/20190327103308.25058-1-narmstrong@baylibre.com
+[2] https://lkml.kernel.org/r/20190325145914.32391-1-narmstrong@baylibre.com
+[3] https://lkml.kernel.org/r/20190404150518.30337-1-narmstrong@baylibre.com
+[4] https://lkml.kernel.org/r/20190412100221.26740-1-glaroque@baylibre.com
+[5] https://lkml.kernel.org/r/20190423091503.10847-1-narmstrong@baylibre.com
+[6] https://lkml.kernel.org/r/20190521150130.31684-1-narmstrong@baylibre.com
+[7] https://lkml.kernel.org/r/20190517152723.28518-2-robh@kernel.org
+[8] https://lkml.kernel.org/r/20190521151952.2779-1-narmstrong@baylibre.com
+[9] https://lkml.kernel.org/r/20190527140206.30392-1-narmstrong@baylibre.com
+
+Neil Armstrong (3):
+  dt-bindings: arm: amlogic: add G12B bindings
+  dt-bindings: arm: amlogic: add Odroid-N2 binding
+  arm64: dts: meson: Add minimal support for Odroid-N2
+
+ .../devicetree/bindings/arm/amlogic.yaml      |   6 +
+ arch/arm64/boot/dts/amlogic/Makefile          |   1 +
+ .../boot/dts/amlogic/meson-g12b-odroid-n2.dts | 289 ++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/meson-g12b.dtsi   |  82 +++++
+ 4 files changed, 378 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12b.dtsi
+
+-- 
+2.21.0
 
