@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86ECA32FFF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 14:44:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1D5E32FF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 14:43:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728116AbfFCMoL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 08:44:11 -0400
-Received: from mail-eopbgr770075.outbound.protection.outlook.com ([40.107.77.75]:12399
+        id S1728056AbfFCMnv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 08:43:51 -0400
+Received: from mail-eopbgr770077.outbound.protection.outlook.com ([40.107.77.77]:2273
         "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727675AbfFCMnk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 08:43:40 -0400
+        id S1727954AbfFCMnu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 08:43:50 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=micron.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vUZDn4kynYb8CzfeIIUlIK5EF6qvw4aXhcKlRXa1dcg=;
- b=jrcqtaqPxl84vmO7/MIcWqfEkT/63hcIyHP1yfScR2d9eqzpXQALhdgt9pnW1Klf9o5kV8gV+ovrLCMzeHBf8sVZBauSn/9emEdotyEU60m3miYn52dJTvS/UZ4y2uxjaZ7TeFXYhvsFd/CcwQURB8PZ3dhLJ7pvYjvPhquTSsE=
+ bh=ceEg2Cu+TtkgwAu5gnOJH72jT2tkLxZkbe0TP39b7qY=;
+ b=wPSy3R92swnQJg5ommpIzzJ/w2bC0zZ73yaK3IpeyfVTIjQDFft2OUBLdtlNiMY3P/n6eoJJcmUnJgCd1zYbl3r63K25O4yBfZfFirjRcVdyKgURxCpm/2Ooe8e9myR/hfMWWS6AKeQmTcExdWqSGpZg4Fr+tJt8VwDjnfTaOFs=
 Received: from MN2PR08MB5951.namprd08.prod.outlook.com (20.179.85.220) by
  MN2PR08MB5854.namprd08.prod.outlook.com (20.179.98.213) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1943.22; Mon, 3 Jun 2019 12:43:37 +0000
+ 15.20.1943.22; Mon, 3 Jun 2019 12:43:38 +0000
 Received: from MN2PR08MB5951.namprd08.prod.outlook.com
  ([fe80::f0f7:f262:a3c6:ce23]) by MN2PR08MB5951.namprd08.prod.outlook.com
  ([fe80::f0f7:f262:a3c6:ce23%7]) with mapi id 15.20.1943.018; Mon, 3 Jun 2019
- 12:43:37 +0000
+ 12:43:38 +0000
 From:   "Shivamurthy Shastri (sshivamurthy)" <sshivamurthy@micron.com>
 To:     Miquel Raynal <miquel.raynal@bootlin.com>,
         Richard Weinberger <richard@nod.at>,
@@ -44,11 +44,13 @@ To:     Miquel Raynal <miquel.raynal@bootlin.com>,
         Chuanhong Guo <gch981213@gmail.com>,
         "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 08/12] mtd: spinand: add parameter page fixup function
-Thread-Topic: [PATCH v3 08/12] mtd: spinand: add parameter page fixup function
-Thread-Index: AdUaBeblBBkTiS6jRfmQuYfbqm3u7g==
-Date:   Mon, 3 Jun 2019 12:43:36 +0000
-Message-ID: <MN2PR08MB59519F9C67AB1D6CAC6FCEAEB8140@MN2PR08MB5951.namprd08.prod.outlook.com>
+Subject: [PATCH v3 09/12] mtd: spinand: micron: prepare for generalizing
+ driver
+Thread-Topic: [PATCH v3 09/12] mtd: spinand: micron: prepare for generalizing
+ driver
+Thread-Index: AdUaBiMix19KY2jqS2qrkB9UmPjl7g==
+Date:   Mon, 3 Jun 2019 12:43:38 +0000
+Message-ID: <MN2PR08MB5951A62F8BE7AC5A125F1949B8140@MN2PR08MB5951.namprd08.prod.outlook.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -57,23 +59,23 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=sshivamurthy@micron.com; 
 x-originating-ip: [165.225.81.42]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 4d38a7a5-159e-474a-7d01-08d6e82118f9
+x-ms-office365-filtering-correlation-id: 9ffc65b4-4f50-43ca-8584-08d6e82119f2
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:MN2PR08MB5854;
 x-ms-traffictypediagnostic: MN2PR08MB5854:|MN2PR08MB5854:
-x-microsoft-antispam-prvs: <MN2PR08MB5854F089BAE35606A126BB27B8140@MN2PR08MB5854.namprd08.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2043;
+x-microsoft-antispam-prvs: <MN2PR08MB5854B512C2D7B1F78C760109B8140@MN2PR08MB5854.namprd08.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3631;
 x-forefront-prvs: 0057EE387C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(136003)(396003)(376002)(39860400002)(189003)(199004)(5660300002)(81166006)(8936002)(7696005)(14444005)(7736002)(8676002)(305945005)(55016002)(256004)(2501003)(81156014)(102836004)(2906002)(110136005)(6506007)(25786009)(55236004)(33656002)(76116006)(476003)(73956011)(66066001)(66556008)(66946007)(26005)(99286004)(64756008)(486006)(66446008)(186003)(66476007)(52536014)(6436002)(74316002)(9686003)(6116002)(3846002)(2201001)(14454004)(7416002)(86362001)(316002)(53936002)(71190400001)(71200400001)(68736007)(478600001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR08MB5854;H:MN2PR08MB5951.namprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(136003)(396003)(376002)(39860400002)(189003)(199004)(5660300002)(81166006)(8936002)(7696005)(14444005)(7736002)(8676002)(305945005)(55016002)(256004)(2501003)(81156014)(102836004)(2906002)(110136005)(53546011)(6506007)(25786009)(55236004)(33656002)(76116006)(476003)(73956011)(66066001)(66556008)(66946007)(26005)(99286004)(64756008)(486006)(66446008)(186003)(66476007)(52536014)(6436002)(74316002)(9686003)(6116002)(3846002)(2201001)(14454004)(7416002)(86362001)(316002)(53936002)(71190400001)(71200400001)(68736007)(478600001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR08MB5854;H:MN2PR08MB5951.namprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: micron.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 2cCEbgFW0oux968vZAZ5+PK4vE/2EobbGSH5rQuHNWgXxCtlc4FvyeJddPoqFBIH7lm/LyqUQCK8DrvebadzbsyO3EYrqgHs62EgyEp5my9tl7alR9/kC8H6h++jK0FPRCpmAdV+ldIoJRRMbb4dgHq9b0Y5UF0FLF9wkBQiQRhKgAu3heq6efZodPwpgZZm9BKmqVEADtbxQWbzzbtdY+LcNJUqwjSqSb5C8EZXlTtO0k5+zFlV9rb664s96SZzwr8EUmGrrKxDtJC3WxcHgRnRRJ7BBUBOzxsQo4X02sOo3BDkx4xUwcmPI0hlYvKsHqxsMNkWQQtv4G/y+jeqy6FIent2z1DFMBklGqrGvl36E8ATx+gTz3+yLC5lkgsH13pyANU4BMGyGIsxvqFBwi77HtVct6IZs9HE+2yfWlI=
+x-microsoft-antispam-message-info: AF+l9W2C39jPSeRoqKul7jeoVnEjumdeCK2i2y2BWI8b/mwt8zp3rV9jfdEq1Mn0sXDd5ZEOuMG0bDvC+hnPgc8JOsTTYuGpCdnvXYXP6BeCrgZ1kV5lFS7rOxm8P1fFVudYOEePXxGrs+uWP41uWF4kGVk0D+TpPdtJPuwHCgsl7Nn81jk0tZhbHy9HracgiHGdrvE+LOMaLBt6O0AemUSuM2dWh1mdYAudy0SjUZ2brprFaxTT1S5aUU02IOb56H3/NABp6EMGg/o8kQsid8v8pgJ3SqpMNNI88xzaeIZNqoKRqPzi4VXOEeBaT1D2NP4FOEaZ9SW9F1umN8b4ThF4fO6HSq6zCOXeNmRcatOHqq8GEQjekwGV8NFMcCKGjjchtG9xVDWCHDW825SGyWMlAankMef+dGssFkwt2Vs=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: micron.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d38a7a5-159e-474a-7d01-08d6e82118f9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jun 2019 12:43:36.7663
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9ffc65b4-4f50-43ca-8584-08d6e82119f2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jun 2019 12:43:38.4244
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: f38a5ecd-2813-4862-b11b-ac1d563c806f
@@ -85,46 +87,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Parameter page not following any standard. Hence, manufacturers may
-interpret parameters differently, and it is better to have a fixup
-function.
+From 654f8acf5d0724fda54c352cc91b0ab576dff928 Mon Sep 17 00:00:00 2001
+From: Shivamurthy Shastri <sshivamurthy@micron.com>
+Date: Tue, 7 May 2019 15:19:22 +0200
+Subject: [PATCH 09/12] mtd: spinand: micron: prepare for generalizing drive=
+r
+
+Generalize OOB layout structure and function names.
 
 Signed-off-by: Shivamurthy Shastri <sshivamurthy@micron.com>
 ---
- drivers/mtd/nand/spi/core.c | 6 ++++++
- include/linux/mtd/spinand.h | 2 ++
- 2 files changed, 8 insertions(+)
+ drivers/mtd/nand/spi/micron.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
-index b031c4a2cdf9..cdf578c45c08 100644
---- a/drivers/mtd/nand/spi/core.c
-+++ b/drivers/mtd/nand/spi/core.c
-@@ -479,6 +479,12 @@ static int check_version(struct nand_device *base,
- static int spinand_intf_data(struct nand_device *base,
- 			     struct nand_onfi_params *p)
+diff --git a/drivers/mtd/nand/spi/micron.c b/drivers/mtd/nand/spi/micron.c
+index 7d7b1f7fcf71..95bc5264ebc1 100644
+--- a/drivers/mtd/nand/spi/micron.c
++++ b/drivers/mtd/nand/spi/micron.c
+@@ -34,38 +34,38 @@ static SPINAND_OP_VARIANTS(update_cache_variants,
+ 		SPINAND_PROG_LOAD_X4(false, 0, NULL, 0),
+ 		SPINAND_PROG_LOAD(false, 0, NULL, 0));
+=20
+-static int mt29f2g01abagd_ooblayout_ecc(struct mtd_info *mtd, int section,
+-					struct mtd_oob_region *region)
++static int micron_ooblayout_ecc(struct mtd_info *mtd, int section,
++				struct mtd_oob_region *region)
  {
-+	struct spinand_device *spinand =3D nand_to_spinand(base);
-+
-+	/* Manufacturers may interpret the parameter page differently */
-+	if (spinand->manufacturer->ops->fixup_param_page)
-+		spinand->manufacturer->ops->fixup_param_page(spinand, p);
-+
+ 	if (section)
+ 		return -ERANGE;
+=20
+-	region->offset =3D 64;
+-	region->length =3D 64;
++	region->offset =3D mtd->oobsize / 2;
++	region->length =3D mtd->oobsize / 2;
+=20
  	return 0;
  }
 =20
-diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
-index 507f7e289bd1..41a03d59f003 100644
---- a/include/linux/mtd/spinand.h
-+++ b/include/linux/mtd/spinand.h
-@@ -179,6 +179,8 @@ struct spinand_manufacturer_ops {
- 	int (*detect)(struct spinand_device *spinand);
- 	int (*init)(struct spinand_device *spinand);
- 	void (*cleanup)(struct spinand_device *spinand);
-+	void (*fixup_param_page)(struct spinand_device *spinand,
-+				 struct nand_onfi_params *p);
+-static int mt29f2g01abagd_ooblayout_free(struct mtd_info *mtd, int section=
+,
+-					 struct mtd_oob_region *region)
++static int micron_ooblayout_free(struct mtd_info *mtd, int section,
++				 struct mtd_oob_region *region)
+ {
+ 	if (section)
+ 		return -ERANGE;
+=20
+ 	/* Reserve 2 bytes for the BBM. */
+ 	region->offset =3D 2;
+-	region->length =3D 62;
++	region->length =3D (mtd->oobsize / 2) - 2;
+=20
+ 	return 0;
+ }
+=20
+-static const struct mtd_ooblayout_ops mt29f2g01abagd_ooblayout =3D {
+-	.ecc =3D mt29f2g01abagd_ooblayout_ecc,
+-	.free =3D mt29f2g01abagd_ooblayout_free,
++static const struct mtd_ooblayout_ops micron_ooblayout_ops =3D {
++	.ecc =3D micron_ooblayout_ecc,
++	.free =3D micron_ooblayout_free,
  };
 =20
- /**
+-static int mt29f2g01abagd_ecc_get_status(struct spinand_device *spinand,
+-					 u8 status)
++static int micron_ecc_get_status(struct spinand_device *spinand,
++				 u8 status)
+ {
+ 	switch (status & MICRON_STATUS_ECC_MASK) {
+ 	case STATUS_ECC_NO_BITFLIPS:
+@@ -98,8 +98,8 @@ static const struct spinand_info micron_spinand_table[] =
+=3D {
+ 					      &write_cache_variants,
+ 					      &update_cache_variants),
+ 		     0,
+-		     SPINAND_ECCINFO(&mt29f2g01abagd_ooblayout,
+-				     mt29f2g01abagd_ecc_get_status)),
++		     SPINAND_ECCINFO(&micron_ooblayout_ops,
++				     micron_ecc_get_status)),
+ };
+=20
+ static int micron_spinand_detect(struct spinand_device *spinand)
 --=20
 2.17.1
 
