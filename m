@@ -2,107 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EC2932EF1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 13:49:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40B6B32EE3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 13:45:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727299AbfFCLt0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 07:49:26 -0400
-Received: from mailout2n.rrzn.uni-hannover.de ([130.75.2.113]:44226 "EHLO
-        mailout2n.rrzn.uni-hannover.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726269AbfFCLt0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 07:49:26 -0400
-X-Greylist: delayed 310 seconds by postgrey-1.27 at vger.kernel.org; Mon, 03 Jun 2019 07:49:24 EDT
-Received: from h2730561.stratoserver.net (h2730561.stratoserver.net [85.214.29.144])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailout2n.rrzn.uni-hannover.de (Postfix) with ESMTPSA id 90CDA1F41F;
-        Mon,  3 Jun 2019 13:44:11 +0200 (CEST)
-From:   =?UTF-8?q?Tobias=20Nie=C3=9Fen?= 
-        <tobias.niessen@stud.uni-hannover.de>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        linux-kernel@i4.cs.fau.de,
-        =?UTF-8?q?Tobias=20Nie=C3=9Fen?= 
-        <tobias.niessen@stud.uni-hannover.de>,
-        Sabrina Gaube <sabrina-gaube@web.de>
-Subject: [PATCH] Improve code style in drivers/staging/rts5208
-Date:   Mon,  3 Jun 2019 13:43:50 +0200
-Message-Id: <20190603114350.32242-1-tobias.niessen@stud.uni-hannover.de>
-X-Mailer: git-send-email 2.17.0
+        id S1726806AbfFCLpE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 07:45:04 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49542 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726561AbfFCLpE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 07:45:04 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 22B6515A2;
+        Mon,  3 Jun 2019 04:45:03 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BAE9C3F5AF;
+        Mon,  3 Jun 2019 04:45:01 -0700 (PDT)
+Date:   Mon, 3 Jun 2019 12:44:56 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>, tglx@linutronix.de,
+        mingo@kernel.org, jpoimboe@redhat.com, mojha@codeaurora.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH HACK RFC] cpu: Prevent late-arriving interrupts from
+ disrupting offline
+Message-ID: <20190603114455.GA16119@lakrids.cambridge.arm.com>
+References: <20190602011253.GA6167@linux.ibm.com>
+ <20190603083848.GB3436@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190603083848.GB3436@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These changes to sd.c and xd.c slightly improve the code style and
-reduce the overall line length.
+On Mon, Jun 03, 2019 at 10:38:48AM +0200, Peter Zijlstra wrote:
+> On Sat, Jun 01, 2019 at 06:12:53PM -0700, Paul E. McKenney wrote:
+> > Scheduling-clock interrupts can arrive late in the CPU-offline process,
+> > after idle entry and the subsequent call to cpuhp_report_idle_dead().
+> > Once execution passes the call to rcu_report_dead(), RCU is ignoring
+> > the CPU, which results in lockdep complaints when the interrupt handler
+> > uses RCU:
+> 
+> > diff --git a/kernel/cpu.c b/kernel/cpu.c
+> > index 448efc06bb2d..3b33d83b793d 100644
+> > --- a/kernel/cpu.c
+> > +++ b/kernel/cpu.c
+> > @@ -930,6 +930,7 @@ void cpuhp_report_idle_dead(void)
+> >  	struct cpuhp_cpu_state *st = this_cpu_ptr(&cpuhp_state);
+> >  
+> >  	BUG_ON(st->state != CPUHP_AP_OFFLINE);
+> > +	local_irq_disable();
+> >  	rcu_report_dead(smp_processor_id());
+> >  	st->state = CPUHP_AP_IDLE_DEAD;
+> >  	udelay(1000);
+> 
+> Urgh... I'd almost suggest we do something like the below.
+> 
+> 
+> But then I started looking at the various arch_cpu_idle_dead()
+> implementations and ran into arm's implementation, which is calling
+> complete() where generic code already established this isn't possible
+> (see for example cpuhp_report_idle_dead()).
 
-Signed-off-by: Tobias Nießen <tobias.niessen@stud.uni-hannover.de>
-Signed-off-by: Sabrina Gaube <sabrina-gaube@web.de>
----
- drivers/staging/rts5208/sd.c | 23 +++++++++++------------
- drivers/staging/rts5208/xd.c |  8 ++++----
- 2 files changed, 15 insertions(+), 16 deletions(-)
+IIRC, that should have been migrated over to cpu_report_death(), as
+arm64 was in commit:
 
-diff --git a/drivers/staging/rts5208/sd.c b/drivers/staging/rts5208/sd.c
-index c256a2398651..d654a698142f 100644
---- a/drivers/staging/rts5208/sd.c
-+++ b/drivers/staging/rts5208/sd.c
-@@ -4512,20 +4512,19 @@ int sd_execute_write_data(struct scsi_cmnd *srb, struct rtsx_chip *chip)
- 			sd_lock_state, sd_card->sd_lock_status);
- 		if (sd_lock_state ^ (sd_card->sd_lock_status & SD_LOCKED)) {
- 			sd_card->sd_lock_notify = 1;
--			if (sd_lock_state) {
--				if (sd_card->sd_lock_status & SD_LOCK_1BIT_MODE) {
--					sd_card->sd_lock_status |= (
--						SD_UNLOCK_POW_ON | SD_SDR_RST);
--					if (CHK_SD(sd_card)) {
--						retval = reset_sd(chip);
--						if (retval != STATUS_SUCCESS) {
--							sd_card->sd_lock_status &= ~(SD_UNLOCK_POW_ON | SD_SDR_RST);
--							goto sd_execute_write_cmd_failed;
--						}
-+			if (sd_lock_state &&
-+			    (sd_card->sd_lock_status & SD_LOCK_1BIT_MODE)) {
-+				sd_card->sd_lock_status |= (
-+					SD_UNLOCK_POW_ON | SD_SDR_RST);
-+				if (CHK_SD(sd_card)) {
-+					retval = reset_sd(chip);
-+					if (retval != STATUS_SUCCESS) {
-+						sd_card->sd_lock_status &= ~(SD_UNLOCK_POW_ON | SD_SDR_RST);
-+						goto sd_execute_write_cmd_failed;
- 					}
--
--					sd_card->sd_lock_status &= ~(SD_UNLOCK_POW_ON | SD_SDR_RST);
- 				}
-+
-+				sd_card->sd_lock_status &= ~(SD_UNLOCK_POW_ON | SD_SDR_RST);
- 			}
- 		}
- 	}
-diff --git a/drivers/staging/rts5208/xd.c b/drivers/staging/rts5208/xd.c
-index c5ee04ecd1c9..f3dc96a4c59d 100644
---- a/drivers/staging/rts5208/xd.c
-+++ b/drivers/staging/rts5208/xd.c
-@@ -1155,10 +1155,10 @@ static int xd_copy_page(struct rtsx_chip *chip, u32 old_blk, u32 new_blk,
- 					return STATUS_FAIL;
- 				}
- 
--				if (((reg & (XD_ECC1_ERROR | XD_ECC1_UNCORRECTABLE)) ==
--						(XD_ECC1_ERROR | XD_ECC1_UNCORRECTABLE)) ||
--					((reg & (XD_ECC2_ERROR | XD_ECC2_UNCORRECTABLE)) ==
--						(XD_ECC2_ERROR | XD_ECC2_UNCORRECTABLE))) {
-+				if (((reg & XD_ECC1_ERROR) &&
-+				     (reg & XD_ECC1_UNCORRECTABLE)) ||
-+				    ((reg & XD_ECC2_ERROR) &&
-+				     (reg & XD_ECC2_UNCORRECTABLE))) {
- 					rtsx_write_register(chip,
- 							    XD_PAGE_STATUS,
- 							    0xFF,
--- 
-2.17.0
+  05981277a4de1ad6 ("arm64: Use common outgoing-CPU-notification code")
 
+... but it looks like Paul's patch to do so [1] fell through the cracks;
+I'm not aware of any reason that shouldn't have been taken.
+  
+[1] https://lore.kernel.org/lkml/1431467407-1223-8-git-send-email-paulmck@linux.vnet.ibm.com/
+
+Paul, do you want to resend that?
+
+For arm64 we mask SError, debug, and FIQ exceptions later in our
+cpu_die(). FIQ should never happen, but we could take SError or debug
+exceptions, and I think we end up using RCU behind the scenes in the
+handlers for those. :/
+
+Thanks,
+Mark.
