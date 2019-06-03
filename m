@@ -2,94 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51360339BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 22:29:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A457D339BB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 22:29:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726658AbfFCU3Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 16:29:16 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42744 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726055AbfFCU3P (ORCPT
+        id S1726574AbfFCU3L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 16:29:11 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38197 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726055AbfFCU3L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 16:29:15 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x53KLmHe107402;
-        Mon, 3 Jun 2019 16:29:04 -0400
-Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2sw9kxjs3a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 03 Jun 2019 16:29:04 -0400
-Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
-        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x53ESVIQ011007;
-        Mon, 3 Jun 2019 14:34:05 GMT
-Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
-        by ppma01dal.us.ibm.com with ESMTP id 2suh092qdy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 03 Jun 2019 14:34:05 +0000
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x53KT2hU19267592
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 3 Jun 2019 20:29:02 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CDA4FAC060;
-        Mon,  3 Jun 2019 20:29:02 +0000 (GMT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 29472AC05E;
-        Mon,  3 Jun 2019 20:29:02 +0000 (GMT)
-Received: from oc6857751186.ibm.com (unknown [9.85.191.102])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon,  3 Jun 2019 20:29:01 +0000 (GMT)
-Subject: Re: linux-next: build warning after merge of the scsi tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-References: <20190531133612.35276ad9@canb.auug.org.au>
-From:   Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Message-ID: <4029bacf-3b74-b54c-ad52-42a67a6c13f9@linux.vnet.ibm.com>
-Date:   Mon, 3 Jun 2019 13:29:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 3 Jun 2019 16:29:11 -0400
+Received: by mail-wr1-f66.google.com with SMTP id d18so13485765wrs.5
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 13:29:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=51738Kb2/QYKt+E/Z2/iQjgWGT06tBLjlpfqcB3W3fk=;
+        b=Q+x6zwy5+By3/xgl+FGyA/13aMR6MUP8auhc4+K4u2cafdMbyhlktcuOgy05hrvixs
+         /Dw7wLYtTl15H43MScz7xz38StWcEUB+M6hxOVyJy0n3zx8ipu0HqcjrcGQ6sVCG6Wg/
+         wPTd6UgHvaNkhJkRZHkyeZLWoJynxQ/No22WQIy9tdr5vGH5WZdnVRNCqC5Nxecuf8dE
+         wq4rISkbVK1R2b/SKJG1y+OAHhlmYPTagjVgp+qJlNwLN2wKeJe5/Rt9m/o4kLsj4IzS
+         +dIYVndi13Ed2kHtJACNPRRIToTN7ZXXBpC+SXIqc4bS1zM/OVkaPTTc5RVY4gLSfRK1
+         pQ5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=51738Kb2/QYKt+E/Z2/iQjgWGT06tBLjlpfqcB3W3fk=;
+        b=Fvch9ifnPmGAACizATuDYrdQF94MXsdGi7sh+CiEHoaSuCGpot98+qgmS7dOVOEn+t
+         dzV9LjkDzOz9o1O2ZzOafm1iSatlGSs9XlUmEtlSBCW/rGicvPlC1vus55nuHl7GwD+i
+         F7rbtbc8TcsDJ7K9lIjrsmORr2Gw1eli7u2gpwwsNdmmXCOQdCQvqdFpZ2x99C/jlGEP
+         ilLzwcPtg23Rfh/c2R7x5Dp3MhFg0uhEQ6MBkWf9pL/OG0BhwhvzZsE+rHL3VqYt0cf0
+         3JWA0lgBl+kn41cFDGQO33x9apdHNw+vWzB7Ik8Kq7Ol3Tgp2Pj3WhOuarac4TDQ4zye
+         JNIg==
+X-Gm-Message-State: APjAAAUs2dOGsfb2C/5HPf15Y36kGod7OV/sFH5lmcFb8KuyGh2QjgQv
+        NTuODDM5IFrP69VE3nretqdVfso4og9R6Igk2L8=
+X-Google-Smtp-Source: APXvYqzYuRxTVHbQklBYj/KTeDyhNgGGEZ4fgXjQb8stvntTHek1cNWcs0CokqQ770lQphBn6VR1cDZi5orU88BN+pg=
+X-Received: by 2002:adf:f311:: with SMTP id i17mr18131014wro.207.1559593749552;
+ Mon, 03 Jun 2019 13:29:09 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190531133612.35276ad9@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-03_16:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906030137
+Received: by 2002:adf:9e05:0:0:0:0:0 with HTTP; Mon, 3 Jun 2019 13:29:09 -0700 (PDT)
+Reply-To: mrphilippine8@gmail.com
+From:   "Mr.Philip" <mrs11alice001@gmail.com>
+Date:   Mon, 3 Jun 2019 13:29:09 -0700
+Message-ID: <CAGc13NOOYWpERuq0YJSxqez_4=Li6Q1AHiUyfhHgG_ugB9=2Rg@mail.gmail.com>
+Subject: Compliment of the day,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/30/2019 08:36 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the scsi tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced this warning:
-> 
-> drivers/scsi/ibmvscsi/ibmvscsi.c: In function 'ibmvscsi_work':
-> drivers/scsi/ibmvscsi/ibmvscsi.c:2151:5: warning: 'rc' may be used uninitialized in this function [-Wmaybe-uninitialized]
->   if (rc) {
->      ^
-> drivers/scsi/ibmvscsi/ibmvscsi.c:2121:6: note: 'rc' was declared here
->   int rc;
->       ^~
-> 
-> Introduced by commit
-> 
->   035a3c4046b5 ("scsi: ibmvscsi: redo driver work thread to use enum action states")
-> 
+Compliment of the day,
 
-Oof, looks like I didn't compile with pedantic enough options, or just didn't
-notice the warning. Declaration should be "int rc = 0;". I can send a follow on
-patch.
+I am Mr.Philip.Kabore I Have a Business Proposal of $5.3 million For
+You. I am aware of the unsafe nature of the internet, and was
+compelled to use this medium due to the nature of this project.
 
--Tyrel
+I have access to very vital information that can be used to transfer
+this huge amount of money, which may culminate into the investment of
+the said funds into your company or any lucrative venture in your
+country.
+
+If you will like to assist me as a partner then indicate your
+interest, after which we shall both discuss the modalities and the
+sharing percentage.
+
+Upon receipt of your reply on your expression of Interest I will give
+you full details,
+on how the business will be executed I am open for negotiation. You
+should forward your reply to this private email id  Thanks for your
+anticipated cooperation.
+
+Note you might receive this message in your inbox or spam or junk
+folder, depends on your web host or server network.
+
+Thanks=E2=80=99
+Best Regards
+Mr.Philip.Kabore,
