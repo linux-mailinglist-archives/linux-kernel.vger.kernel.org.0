@@ -2,147 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 955AC3364E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 19:16:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0014233659
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 19:17:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729060AbfFCRP5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 13:15:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58924 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726823AbfFCRP4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 13:15:56 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57F13275EA;
-        Mon,  3 Jun 2019 17:15:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559582154;
-        bh=2h+RgAo0T6Nw45DtDKzzxaVU7MlALt05Scf5Fgt49lk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MvZWeWA/8epHjqHuL6VTVUApc4IZNGyNZsVJltEL26ScletXNr8OHi7br7PtN3ckx
-         +sOtvoXrv3FO3yOIVuol3GsDJeZsQV8opd2LgfOetfr1do6a6tb/72Ogah+znW515S
-         1maFoGxeVbW4jAmBC56rm9Uex3K31EmupO8DqX78=
-Date:   Mon, 3 Jun 2019 12:15:52 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Abhishek Sahu <abhsahu@nvidia.com>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH 1/2] PCI: Code reorganization for VGA device link
-Message-ID: <20190603171552.GB189360@google.com>
-References: <20190531050109.16211-1-abhsahu@nvidia.com>
- <20190531050109.16211-2-abhsahu@nvidia.com>
+        id S1729167AbfFCRQ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 13:16:56 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:52815 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726717AbfFCRQz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 13:16:55 -0400
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id x53HGqQY028806;
+        Tue, 4 Jun 2019 02:16:53 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x53HGqQY028806
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1559582213;
+        bh=p2MCoDaSkOYHsUqev5UiEB/8d3quV+bRpPgivCGnysQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=zZwpUjSV2+g865NLZvT3kmnhA3WdvY29vNCbQF/YKGy0xqOlzsP5fhB3d0WBPZtNR
+         FluTczWN+cu6Wk//8jWXwF3Z0CZNHftIZxnPac0/w/SECsnaacwLXgYiqAR3JNiLNw
+         k79qyEKQ1BzzH4VWlLE/ep6XD16TkHY39/u1K+QQp3tjJ5uQldsaKhsbUqLw6UunK7
+         qmrFrNQYNaEM3EprqAlUIQ1tU7aWGeZ88fEf7wFptRf66sYPxyQgWbHKYPDu3b6tw+
+         j/tgeqIlbHP72nRVH8E7S7ZNrXVy4dGuRyr7yf/Sfcr8EY/04AKPEtpTT79Qw8U7pN
+         asnAHgdeFFFSg==
+X-Nifty-SrcIP: [209.85.217.52]
+Received: by mail-vs1-f52.google.com with SMTP id o5so11744255vsq.4;
+        Mon, 03 Jun 2019 10:16:53 -0700 (PDT)
+X-Gm-Message-State: APjAAAXkgIhVjJdD5h/AO+RBjHFf2gdt6OUEJvH/jM4LcCfhlMqYuVFE
+        8Rub3dem482ALWvb2q613AagFzAnM7pM2LE8yWs=
+X-Google-Smtp-Source: APXvYqx+2aihAKpGUBJam+w6nqhJC5i9XtjkNSKhzYLP9vE1JNxYbwQurHMIybogfxhj6RAF+lKZQxEXjYTEsmk7NzE=
+X-Received: by 2002:a67:de99:: with SMTP id r25mr13343402vsk.215.1559582212209;
+ Mon, 03 Jun 2019 10:16:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190531050109.16211-2-abhsahu@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190516194818.29230-1-jani.nikula@intel.com> <CAK7LNAQv-fm2iV6HW_FM0Fe6hNDeJ25c9CS2SbroSOneoepFMQ@mail.gmail.com>
+ <87zhnh8ou6.fsf@intel.com>
+In-Reply-To: <87zhnh8ou6.fsf@intel.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 4 Jun 2019 02:16:16 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT=nB0=at0X4OnHVKB=y7WwHGm4LXkrQnCw9HpjB5LooA@mail.gmail.com>
+Message-ID: <CAK7LNAT=nB0=at0X4OnHVKB=y7WwHGm4LXkrQnCw9HpjB5LooA@mail.gmail.com>
+Subject: Re: [Intel-gfx] [RFC 1/3] kbuild: add support for ensuring headers
+ are self-contained
+To:     Jani Nikula <jani.nikula@intel.com>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        intel-gfx@lists.freedesktop.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Lukas]
+Hi Jani,
 
-On Fri, May 31, 2019 at 10:31:08AM +0530, Abhishek Sahu wrote:
-> This patch does minor code reorganization. It introduces a helper
-> function which creates device link from the non-VGA controller
-> (consumer) to the VGA (supplier) and uses this helper function for
-> creating device link from integrated HDA controller to VGA. It will
-> help in subsequent patches which require a similar kind of device
-> link from USB/Type-C USCI controller to VGA.
-> 
-> Signed-off-by: Abhishek Sahu <abhsahu@nvidia.com>
-> ---
->  drivers/pci/quirks.c | 44 +++++++++++++++++++++++++++++---------------
->  1 file changed, 29 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> index a077f67fe1da..a20f7771a323 100644
-> --- a/drivers/pci/quirks.c
-> +++ b/drivers/pci/quirks.c
-> @@ -4916,36 +4916,50 @@ static void quirk_fsl_no_msi(struct pci_dev *pdev)
->  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_FREESCALE, PCI_ANY_ID, quirk_fsl_no_msi);
->  
->  /*
-> - * GPUs with integrated HDA controller for streaming audio to attached displays
-> - * need a device link from the HDA controller (consumer) to the GPU (supplier)
-> - * so that the GPU is powered up whenever the HDA controller is accessed.
-> - * The GPU and HDA controller are functions 0 and 1 of the same PCI device.
-> - * The device link stays in place until shutdown (or removal of the PCI device
-> - * if it's hotplugged).  Runtime PM is allowed by default on the HDA controller
-> - * to prevent it from permanently keeping the GPU awake.
-> + * GPUs can be multi-function PCI device which can contain controllers other
-> + * than VGA (like Audio, USB, etc.). Internally in the hardware, these non-VGA
-> + * controllers are tightly coupled with VGA controller. Whenever these
-> + * controllers are runtime active, the VGA controller should also be in active
-> + * state. Normally, in these GPUs, the VGA controller is present at function 0.
-> + *
-> + * This is a helper function which creates device link from the non-VGA
-> + * controller (consumer) to the VGA (supplier). The device link stays in place
-> + * until shutdown (or removal of the PCI device if it's hotplugged).
-> + * Runtime PM is allowed by default on these non-VGA controllers to prevent
-> + * it from permanently keeping the GPU awake.
->   */
-> -static void quirk_gpu_hda(struct pci_dev *hda)
-> +static void
-> +pci_create_device_link_with_vga(struct pci_dev *pdev, unsigned int devfn)
+On Mon, May 20, 2019 at 6:16 PM Jani Nikula <jani.nikula@intel.com> wrote:
+>
+> >
+> > I will take a little time to considier
+> > how far we can extend the idea about
+> > "headers should be self-contained".
+>
+> Thanks! Please let me know if/when you need further action from me, I
+> won't post new versions until then.
 
-There's nothing in this functionality that depends on VGA, so let's
-remove "GPU, "VGA", etc from the description, the function name, the
-local variable name, and the log message.  Maybe you need to allow the
-caller to supply the class type (PCI_BASE_CLASS_DISPLAY for current
-users, but Lukas mentioned a NIC that might be able to use this too).
 
-Follow the prevailing indentation style, with return type and function
-name on the same line, i.e.,
+Could you send v2 with the following changes ?
 
-  static void pci_create_device_link(...)
 
->  {
->  	struct pci_dev *gpu;
->  
-> -	if (PCI_FUNC(hda->devfn) != 1)
-> +	if (PCI_FUNC(pdev->devfn) != devfn)
->  		return;
->  
-> -	gpu = pci_get_domain_bus_and_slot(pci_domain_nr(hda->bus),
-> -					  hda->bus->number,
-> -					  PCI_DEVFN(PCI_SLOT(hda->devfn), 0));
-> +	gpu = pci_get_domain_bus_and_slot(pci_domain_nr(pdev->bus),
-> +					  pdev->bus->number,
-> +					  PCI_DEVFN(PCI_SLOT(pdev->devfn), 0));
->  	if (!gpu || (gpu->class >> 16) != PCI_BASE_CLASS_DISPLAY) {
->  		pci_dev_put(gpu);
->  		return;
->  	}
->  
-> -	if (!device_link_add(&hda->dev, &gpu->dev,
-> +	if (!device_link_add(&pdev->dev, &gpu->dev,
->  			     DL_FLAG_STATELESS | DL_FLAG_PM_RUNTIME))
-> -		pci_err(hda, "cannot link HDA to GPU %s\n", pci_name(gpu));
-> +		pci_err(pdev, "cannot link with VGA %s\n", pci_name(gpu));
+[1] Could you rename *.header_test.c to *.hdrtest.c ?
+    (I just thought .header_test.c was a bit too long.)
 
-I think we should emit a message in the success case, too.  There is
-one in device_link_add(), but it's a dev_dbg() so we can't count on it
-being in the log.  I'd like a pci_info() that we can count on.
+[2] %.hdrtest.c should not depend on the header
 
-> -	pm_runtime_allow(&hda->dev);
-> +	pm_runtime_allow(&pdev->dev);
->  	pci_dev_put(gpu);
->  }
-> +
-> +/*
-> + * Create device link for GPUs with integrated HDA controller for streaming
-> + * audio to attached displays.
-> + */
-> +static void quirk_gpu_hda(struct pci_dev *hda)
-> +{
-> +	pci_create_device_link_with_vga(hda, 1);
-> +}
->  DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_ATI, PCI_ANY_ID,
->  			      PCI_CLASS_MULTIMEDIA_HD_AUDIO, 8, quirk_gpu_hda);
->  DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_AMD, PCI_ANY_ID,
-> -- 
-> 2.17.1
-> 
+This will avoid unnecessary regeneration of *.hdrtest.c
+
+quiet_cmd_header_test = HDRTEST $@
+      cmd_header_test = echo "\#include \"$*.h\"" > $@
+
+$(obj)/%.hdrtest.c:
+        $(call cmd,header_test)
+
+[3] Please add '*.hdrtest.c' to  .gitignore, Documentation/dontdiff
+
+[4] Please add '*.hdrtest.c' to 'make clean' (around line 1640 of top Makefile)
+
+
+-- 
+Best Regards
+Masahiro Yamada
