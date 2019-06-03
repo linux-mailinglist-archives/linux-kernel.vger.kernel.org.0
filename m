@@ -2,30 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F3393341F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:54:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D131033419
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:53:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729487AbfFCPxz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 11:53:55 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53824 "EHLO
+        id S1729393AbfFCPvs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 11:51:48 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53836 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729339AbfFCPvn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 11:51:43 -0400
+        id S1729369AbfFCPvp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 11:51:45 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 69BF31AED;
-        Mon,  3 Jun 2019 08:51:43 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 352DC1A25;
+        Mon,  3 Jun 2019 08:51:45 -0700 (PDT)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2DCE63F246;
-        Mon,  3 Jun 2019 08:51:42 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A6C423F246;
+        Mon,  3 Jun 2019 08:51:43 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
         suzuki.poulose@arm.com,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Subject: [RFC PATCH 29/57] drivers: stm: Use class_find_device_by_name() helper
-Date:   Mon,  3 Jun 2019 16:49:55 +0100
-Message-Id: <1559577023-558-30-git-send-email-suzuki.poulose@arm.com>
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        linux-leds@vger.kernel.org
+Subject: [RFC PATCH 30/57] drivers: leds: Use class_find_device_by_name() helper
+Date:   Mon,  3 Jun 2019 16:49:56 +0100
+Message-Id: <1559577023-558-31-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
 References: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
@@ -36,40 +37,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Use the new class_find_device_by_name() helper.
 
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Dan Murphy <dmurphy@ti.com>
+Cc: linux-leds@vger.kernel.org
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/hwtracing/stm/core.c | 9 +--------
+ drivers/leds/led-class.c | 9 +--------
  1 file changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/drivers/hwtracing/stm/core.c b/drivers/hwtracing/stm/core.c
-index e55b902..e110958 100644
---- a/drivers/hwtracing/stm/core.c
-+++ b/drivers/hwtracing/stm/core.c
-@@ -89,13 +89,6 @@ static struct class stm_class = {
- 	.dev_groups	= stm_groups,
- };
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index 85848c5..ee052aa 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -216,13 +216,6 @@ static int led_resume(struct device *dev)
  
--static int stm_dev_match(struct device *dev, const void *data)
+ static SIMPLE_DEV_PM_OPS(leds_class_dev_pm_ops, led_suspend, led_resume);
+ 
+-static int match_name(struct device *dev, const void *data)
 -{
--	const char *name = data;
--
--	return sysfs_streq(name, dev_name(dev));
+-	if (!dev_name(dev))
+-		return 0;
+-	return !strcmp(dev_name(dev), (char *)data);
 -}
 -
- /**
-  * stm_find_device() - find stm device by name
-  * @buf:	character buffer containing the name
-@@ -116,7 +109,7 @@ struct stm_device *stm_find_device(const char *buf)
- 	if (!stm_core_up)
- 		return NULL;
+ static int led_classdev_next_name(const char *init_name, char *name,
+ 				  size_t len)
+ {
+@@ -233,7 +226,7 @@ static int led_classdev_next_name(const char *init_name, char *name,
+ 	strlcpy(name, init_name, len);
  
--	dev = class_find_device(&stm_class, NULL, buf, stm_dev_match);
-+	dev = class_find_device_by_name(&stm_class, NULL, buf);
- 	if (!dev)
- 		return NULL;
- 
+ 	while ((ret < len) &&
+-	       (dev = class_find_device(leds_class, NULL, name, match_name))) {
++	       (dev = class_find_device_by_name(leds_class, NULL, name))) {
+ 		put_device(dev);
+ 		ret = snprintf(name, len, "%s_%u", init_name, ++i);
+ 	}
 -- 
 2.7.4
 
