@@ -2,112 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97AF432F70
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 14:21:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C2B732F7F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 14:23:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727731AbfFCMVF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 08:21:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56724 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726342AbfFCMVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 08:21:05 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 03AD1AE4B;
-        Mon,  3 Jun 2019 12:21:03 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 12668DA85E; Mon,  3 Jun 2019 14:21:54 +0200 (CEST)
-Date:   Mon, 3 Jun 2019 14:21:52 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Andrey Abramov <st5pub@yandex.ru>
-Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] btrfs: Fix -Wunused-but-set-variable warnings
-Message-ID: <20190603122152.GM15290@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Andrey Abramov <st5pub@yandex.ru>,
-        clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190531195349.31129-1-st5pub@yandex.ru>
+        id S1727215AbfFCMXG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 08:23:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57156 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726137AbfFCMXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 08:23:06 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED3CB27D77;
+        Mon,  3 Jun 2019 12:23:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559564585;
+        bh=JUpzLa7o+gjfbaXzaqNHUDC0SKjhj6jOWbWu5myQmaM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XfYhRn1JfzWsBVGa/xKOV1EHw5Uj9YPVbOaWR2lXReNjVmjYIF4M1POmpIHGA2N7s
+         U/IBHx+WvGwzHhciZPN+t+eaxXGgVuhXGLnN9cxghHVyaIuAnmW+9hcb7fhYdYT2ID
+         P/0Eg328GEnIMRAnDqyVWj8CaFbtebMLfLREdqo8=
+Date:   Mon, 3 Jun 2019 14:23:03 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Jim Lin <jilin@nvidia.com>
+Cc:     mathias.nyman@intel.com, stern@rowland.harvard.edu,
+        kai.heng.feng@canonical.com, drinkcat@chromium.org,
+        Thinh.Nguyen@synopsys.com, nsaenzjulienne@suse.de,
+        jflat@chromium.org, malat@debian.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 0/2] usb: xhci: Add Clear_TT_Buffer
+Message-ID: <20190603122303.GA16267@kroah.com>
+References: <1559559224-9845-1-git-send-email-jilin@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190531195349.31129-1-st5pub@yandex.ru>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+In-Reply-To: <1559559224-9845-1-git-send-email-jilin@nvidia.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 31, 2019 at 10:53:49PM +0300, Andrey Abramov wrote:
-> Fix -Wunused-but-set-variable warnings in raid56.c and sysfs.c files
-
-Please ignore the warnings for now. The RAID56 needs more cleanups than
-that an the sysfs part needs to be reworked. The stale code comes from
-e410e34fad913dd568ec28d2a9949694324c14db that reverted
-14e46e04958df740c6c6a94849f176159a333f13.
-
-> Signed-off-by: Andrey Abramov <st5pub@yandex.ru>
-> ---
->  fs/btrfs/raid56.c | 32 +++++++++++---------------------
->  fs/btrfs/sysfs.c  |  5 +----
->  2 files changed, 12 insertions(+), 25 deletions(-)
+On Mon, Jun 03, 2019 at 06:53:42PM +0800, Jim Lin wrote:
+> USB 2.0 specification chapter 11.17.5 says "as part of endpoint halt
+> processing for full-/low-speed endpoints connected via a TT, the host
+> software must use the Clear_TT_Buffer request to the TT to ensure
+> that the buffer is not in the busy state".
 > 
-> diff --git a/fs/btrfs/raid56.c b/fs/btrfs/raid56.c
-> index f3d0576dd327..4ab29eacfdf3 100644
-> --- a/fs/btrfs/raid56.c
-> +++ b/fs/btrfs/raid56.c
-> @@ -1182,22 +1182,17 @@ static noinline void finish_rmw(struct btrfs_raid_bio *rbio)
->  	int nr_data = rbio->nr_data;
->  	int stripe;
->  	int pagenr;
-> -	int p_stripe = -1;
-> -	int q_stripe = -1;
-> +	int is_q_stripe = 0;
->  	struct bio_list bio_list;
->  	struct bio *bio;
->  	int ret;
->  
->  	bio_list_init(&bio_list);
->  
-> -	if (rbio->real_stripes - rbio->nr_data == 1) {
-> -		p_stripe = rbio->real_stripes - 1;
-> -	} else if (rbio->real_stripes - rbio->nr_data == 2) {
-> -		p_stripe = rbio->real_stripes - 2;
-> -		q_stripe = rbio->real_stripes - 1;
-> -	} else {
-> +	if (rbio->real_stripes - rbio->nr_data == 2)
-> +		is_q_stripe = 1;
-> +	else if (rbio->real_stripes - rbio->nr_data != 1)
->  		BUG();
-> -	}
+> In our case, a full-speed speaker (ConferenceCam) is behind a high-
+> speed hub (ConferenceCam Connect), sometimes once we get STALL on a
+> request we may continue to get STALL with the folllowing requests,
+> like Set_Interface.
+> 
+> Solution is to invoke usb_hub_clear_tt_buffer() to send
+> Clear_TT_Buffer request to the hub of the device for the following
+> Set_Interface requests to the device to get ACK successfully.
+> 
+> The Clear_TT_Buffer request sent to the hub includes the address of
+> the LS/FS child device in wValue field. usb_hub_clear_tt_buffer()
+> uses udev->devnum to set the address wValue. This won't work for
+> devices connected to xHC.
+> 
+> For other host controllers udev->devnum is the same as the address of
+> the usb device, chosen and set by usb core. With xHC the controller
+> hardware assigns the address, and won't be the same as devnum.
+> 
+> Here we have two patches.
+> One is to add devaddr in struct usb_device for
+> usb_hub_clear_tt_buffer() to use.
+> Another is to invoke usb_hub_clear_tt_buffer() for halt processing.
 
-The original code is better structured, enumerates the expected cases
-and leaves a catch-all branch.
+Why did you resend patch series 11?
 
->  
->  	/* at this point we either have a full stripe,
->  	 * or we've read the full stripe from the drive.
-> @@ -1241,7 +1236,7 @@ static noinline void finish_rmw(struct btrfs_raid_bio *rbio)
->  		SetPageUptodate(p);
->  		pointers[stripe++] = kmap(p);
->  
-> -		if (q_stripe != -1) {
-> +		if (is_q_stripe) {
->  
->  			/*
->  			 * raid6, add the qstripe and call the
-> @@ -2340,8 +2335,7 @@ static noinline void finish_parity_scrub(struct btrfs_raid_bio *rbio,
->  	int nr_data = rbio->nr_data;
->  	int stripe;
->  	int pagenr;
-> -	int p_stripe = -1;
+> Signed-off-by: Jim Lin <jilin@nvidia.com>
 
-To get rid of the warning, perhaps just this initialization could be
-removed, the rest of the code untouched.
+There is nothing to sign off on a 0/X patch :)
 
-> -	int q_stripe = -1;
-> +	int is_q_stripe = 0;
->  	struct page *p_page = NULL;
->  	struct page *q_page = NULL;
->  	struct bio_list bio_list;
+thanks,
+
+greg k-h
