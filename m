@@ -2,243 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 629E533581
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 18:56:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5FDB33588
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 18:56:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729770AbfFCQ4U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 12:56:20 -0400
-Received: from mail-qk1-f201.google.com ([209.85.222.201]:46625 "EHLO
-        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729737AbfFCQ4R (ORCPT
+        id S1729793AbfFCQ4f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 12:56:35 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:35312 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726958AbfFCQ4d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 12:56:17 -0400
-Received: by mail-qk1-f201.google.com with SMTP id 18so980960qkl.13
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 09:56:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=v9MzlIb7HY1yKtXIqdaDnLUOCgnoLYityVGh+V+FCFI=;
-        b=E8Ist5LC6WVHrU8hj11VtWQb5rjU7iBORWjaptcqcX3l9oPWYIMo05KmXzzCVgt3cu
-         lYJ4Yvl8mbNlJpJWSEYMIryL5scHXmPmVUqUSjI9X7Fuxa39wo8rzDRZFWMAkoj3uwjY
-         mqiCqrBWPtOVkiL+4ZV5H/HhzxJmpTR97uHC/IdXM4tljhuvgYTiLw3741mzKX8NYLUt
-         uc6Aqh8uuXDuaxHP4yeJ0XLPpMovyAE85DGwVCzioR0Gt6moVfBUOYshZAWVCnGUBbU4
-         06NzOvSR4tkaeqT9+eniQMZF90V1u65K6kkbFscWsH7pqN+ptT1wb5JpdkKVZRneJwoH
-         CGYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=v9MzlIb7HY1yKtXIqdaDnLUOCgnoLYityVGh+V+FCFI=;
-        b=JPmR/27GT1a95rc+nocnGfot4sTZKDWGjwqxtIjlZihxdSvNo+XWCaN7Pa8pk27NxC
-         EmiuknHCrOOytvHLS3urjnCcIXIUqi4nKj0TLPhWp3yRuMR4NXpnYbwtdVsh4W5UMx+/
-         AN2hIjIEeD+4zXi7mU3lPYowq9RyUEQmxMIR/Zqo5zAKQyvkeW2ZdTisU6TZiUlLPEDY
-         W0HcEBRJu/qZwSZd7WvO/QVKu9jzeiWLzMSadq/WrSgl9NeepIg7pnpM39lyw6yw1ufj
-         hwLB75FXILFULKw0Ivs8rF7G9Zyzdez/MLyvt5SmO7HSQ5NFxkmrMXV7AHR12Wu/WEHU
-         LyWw==
-X-Gm-Message-State: APjAAAUQeJgpp6nIlFaZk30Q3C5qPzVcdwxhOfVma32eKmgEArI9X/O2
-        XOtnMeVnl3bUKFUfxch2nxTRFcVrIACKYXKh
-X-Google-Smtp-Source: APXvYqyupRnjjQO94efnTljbt6p9DxywyyDuZaQUfwBf3Y405Fl40dWCznelJThhDpEIkj52c6mVbKSb6DjD/rvF
-X-Received: by 2002:a37:de06:: with SMTP id h6mr3881914qkj.322.1559580976267;
- Mon, 03 Jun 2019 09:56:16 -0700 (PDT)
-Date:   Mon,  3 Jun 2019 18:55:18 +0200
-In-Reply-To: <cover.1559580831.git.andreyknvl@google.com>
-Message-Id: <9e1b5998a28f82b16076fc85ab4f88af5381cf74.1559580831.git.andreyknvl@google.com>
-Mime-Version: 1.0
-References: <cover.1559580831.git.andreyknvl@google.com>
-X-Mailer: git-send-email 2.22.0.rc1.311.g5d7573a151-goog
-Subject: [PATCH v16 16/16] selftests, arm64: add a selftest for passing tagged
- pointers to kernel
-From:   Andrey Konovalov <andreyknvl@google.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        linux-media@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Alexander Deucher <Alexander.Deucher@amd.com>,
-        Christian Koenig <Christian.Koenig@amd.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>, enh <enh@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 3 Jun 2019 12:56:33 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: koike)
+        with ESMTPSA id 82DD527FDB2
+From:   Helen Koike <helen.koike@collabora.com>
+To:     dri-devel@lists.freedesktop.org, nicholas.kazlauskas@amd.com
+Cc:     andrey.grodzovsky@amd.com, daniel.vetter@ffwll.ch,
+        linux-kernel@vger.kernel.org, Tomasz Figa <tfiga@chromium.org>,
+        boris.brezillon@collabora.com, David Airlie <airlied@linux.ie>,
+        Sean Paul <seanpaul@google.com>, kernel@collabora.com,
+        harry.wentland@amd.com,
+        =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@google.com>,
+        Helen Koike <helen.koike@collabora.com>,
+        Sean Paul <sean@poorly.run>, Sandy Huang <hjc@rock-chips.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>, eric@anholt.net,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        Anthony Koo <Anthony.Koo@amd.com>,
+        amd-gfx@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>, Rob Clark <robdclark@gmail.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Leo Li <sunpeng.li@amd.com>, linux-arm-msm@vger.kernel.org,
+        Jeykumar Sankaran <jsanka@codeaurora.org>,
+        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        linux-arm-kernel@lists.infradead.org,
+        David Francis <David.Francis@amd.com>,
+        Mario Kleiner <mario.kleiner.de@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        freedreno@lists.freedesktop.org,
+        Mamta Shukla <mamtashukla555@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: [PATCH v4 0/5] drm: Fix fb changes for async updates
+Date:   Mon,  3 Jun 2019 13:56:05 -0300
+Message-Id: <20190603165610.24614-1-helen.koike@collabora.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is a part of a series that extends arm64 kernel ABI to allow to
-pass tagged user pointers (with the top byte set to something else other
-than 0x00) as syscall arguments.
+Hello,
 
-This patch adds a simple test, that calls the uname syscall with a
-tagged user pointer as an argument. Without the kernel accepting tagged
-user pointers the test fails with EFAULT.
+I'm re-sending this series with the acked by in the msm patch and
+updating the docs in the last patch, the rest is the same.
 
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
----
- tools/testing/selftests/arm64/.gitignore      |  1 +
- tools/testing/selftests/arm64/Makefile        | 22 ++++++++++
- .../testing/selftests/arm64/run_tags_test.sh  | 12 ++++++
- tools/testing/selftests/arm64/tags_lib.c      | 42 +++++++++++++++++++
- tools/testing/selftests/arm64/tags_test.c     | 18 ++++++++
- 5 files changed, 95 insertions(+)
- create mode 100644 tools/testing/selftests/arm64/.gitignore
- create mode 100644 tools/testing/selftests/arm64/Makefile
- create mode 100755 tools/testing/selftests/arm64/run_tags_test.sh
- create mode 100644 tools/testing/selftests/arm64/tags_lib.c
- create mode 100644 tools/testing/selftests/arm64/tags_test.c
+v3 link: https://patchwork.kernel.org/project/dri-devel/list/?series=91353
 
-diff --git a/tools/testing/selftests/arm64/.gitignore b/tools/testing/selftests/arm64/.gitignore
-new file mode 100644
-index 000000000000..e8fae8d61ed6
---- /dev/null
-+++ b/tools/testing/selftests/arm64/.gitignore
-@@ -0,0 +1 @@
-+tags_test
-diff --git a/tools/testing/selftests/arm64/Makefile b/tools/testing/selftests/arm64/Makefile
-new file mode 100644
-index 000000000000..9dee18727923
---- /dev/null
-+++ b/tools/testing/selftests/arm64/Makefile
-@@ -0,0 +1,22 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+include ../lib.mk
-+
-+# ARCH can be overridden by the user for cross compiling
-+ARCH ?= $(shell uname -m 2>/dev/null || echo not)
-+
-+ifneq (,$(filter $(ARCH),aarch64 arm64))
-+
-+TEST_CUSTOM_PROGS := $(OUTPUT)/tags_test
-+
-+$(OUTPUT)/tags_test: tags_test.c $(OUTPUT)/tags_lib.so
-+	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $<
-+
-+$(OUTPUT)/tags_lib.so: tags_lib.c
-+	$(CC) -o $@ -shared $(CFLAGS) $(LDFLAGS) $^
-+
-+TEST_PROGS := run_tags_test.sh
-+
-+all: $(TEST_CUSTOM_PROGS)
-+
-+endif
-diff --git a/tools/testing/selftests/arm64/run_tags_test.sh b/tools/testing/selftests/arm64/run_tags_test.sh
-new file mode 100755
-index 000000000000..2bbe0cd4220b
---- /dev/null
-+++ b/tools/testing/selftests/arm64/run_tags_test.sh
-@@ -0,0 +1,12 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+
-+echo "--------------------"
-+echo "running tags test"
-+echo "--------------------"
-+LD_PRELOAD=./tags_lib.so ./tags_test
-+if [ $? -ne 0 ]; then
-+	echo "[FAIL]"
-+else
-+	echo "[PASS]"
-+fi
-diff --git a/tools/testing/selftests/arm64/tags_lib.c b/tools/testing/selftests/arm64/tags_lib.c
-new file mode 100644
-index 000000000000..8a674509216e
---- /dev/null
-+++ b/tools/testing/selftests/arm64/tags_lib.c
-@@ -0,0 +1,42 @@
-+#include <stdlib.h>
-+
-+#define TAG_SHIFT	(56)
-+#define TAG_MASK	(0xffUL << TAG_SHIFT)
-+
-+void *__libc_malloc(size_t size);
-+void __libc_free(void *ptr);
-+void *__libc_realloc(void *ptr, size_t size);
-+void *__libc_calloc(size_t nmemb, size_t size);
-+
-+static void *tag_ptr(void *ptr)
-+{
-+	unsigned long tag = rand() & 0xff;
-+	if (!ptr)
-+		return ptr;
-+	return (void *)((unsigned long)ptr | (tag << TAG_SHIFT));
-+}
-+
-+static void *untag_ptr(void *ptr)
-+{
-+	return (void *)((unsigned long)ptr & ~TAG_MASK);
-+}
-+
-+void *malloc(size_t size)
-+{
-+	return tag_ptr(__libc_malloc(size));
-+}
-+
-+void free(void *ptr)
-+{
-+	__libc_free(untag_ptr(ptr));
-+}
-+
-+void *realloc(void *ptr, size_t size)
-+{
-+	return tag_ptr(__libc_realloc(untag_ptr(ptr), size));
-+}
-+
-+void *calloc(size_t nmemb, size_t size)
-+{
-+	return tag_ptr(__libc_calloc(nmemb, size));
-+}
-diff --git a/tools/testing/selftests/arm64/tags_test.c b/tools/testing/selftests/arm64/tags_test.c
-new file mode 100644
-index 000000000000..263b302874ed
---- /dev/null
-+++ b/tools/testing/selftests/arm64/tags_test.c
-@@ -0,0 +1,18 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <unistd.h>
-+#include <stdint.h>
-+#include <sys/utsname.h>
-+
-+int main(void)
-+{
-+	struct utsname *ptr;
-+	int err;
-+
-+	ptr = (struct utsname *)malloc(sizeof(*ptr));
-+	err = uname(ptr);
-+	free(ptr);
-+	return err;
-+}
+Thanks!
+Helen
+
+Changes in v4:
+- add acked by tag
+- update docs in atomic_async_update callback
+
+Changes in v3:
+- use swap() to swap old and new framebuffers in async_update
+- get the reference to old_fb and set the worker after vop_plane_atomic_update()
+- add a FIXME tag for when we have multiple fbs to be released when
+vblank happens.
+- update commit message
+- Add Reviewed-by tags
+- Add TODO in drm_atomic_helper_async_commit()
+
+Changes in v2:
+- added reviewed-by tag
+- update CC stable and Fixes tag
+- Added reviewed-by tag
+- updated CC stable and Fixes tag
+- Change the order of the patch in the series, add this as the last one.
+- Add documentation
+- s/ballanced/balanced
+
+Helen Koike (5):
+  drm/rockchip: fix fb references in async update
+  drm/amd: fix fb references in async update
+  drm/msm: fix fb references in async update
+  drm/vc4: fix fb references in async update
+  drm: don't block fb changes for async plane updates
+
+ .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |  3 +-
+ drivers/gpu/drm/drm_atomic_helper.c           | 22 ++++----
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_plane.c    |  4 ++
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c   | 51 ++++++++++---------
+ drivers/gpu/drm/vc4/vc4_plane.c               |  2 +-
+ include/drm/drm_modeset_helper_vtables.h      |  8 +++
+ 6 files changed, 52 insertions(+), 38 deletions(-)
+
 -- 
-2.22.0.rc1.311.g5d7573a151-goog
+2.20.1
 
