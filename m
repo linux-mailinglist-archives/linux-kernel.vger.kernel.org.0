@@ -2,133 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 887F832FFB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 14:44:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04F6F33000
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 14:44:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728032AbfFCMnu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 08:43:50 -0400
-Received: from mail-eopbgr750043.outbound.protection.outlook.com ([40.107.75.43]:30142
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727963AbfFCMnr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 08:43:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=micron.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jDI9X7fwjzc5oPf8aBzUA2Q5zcmT50zy8AWNrXSJAuc=;
- b=bEaNcS4RvRPaIW2MO9IysgAmxb/8WVeo/cUt78YiBybHFlLmIrz1YsyrPAF2/3+tIWdu68/w87pNPER3eCZyOKfdfkd4UR+BzS/hAcyU7rBLFu/ZV5FicIPbU1rmF0QvsWetkQYlZN7P5BFuT8+TPE9lJqcfSyeuWsCLkDSlEKs=
-Received: from MN2PR08MB5951.namprd08.prod.outlook.com (20.179.85.220) by
- MN2PR08MB5872.namprd08.prod.outlook.com (20.179.86.153) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1943.18; Mon, 3 Jun 2019 12:43:44 +0000
-Received: from MN2PR08MB5951.namprd08.prod.outlook.com
- ([fe80::f0f7:f262:a3c6:ce23]) by MN2PR08MB5951.namprd08.prod.outlook.com
- ([fe80::f0f7:f262:a3c6:ce23%7]) with mapi id 15.20.1943.018; Mon, 3 Jun 2019
- 12:43:44 +0000
-From:   "Shivamurthy Shastri (sshivamurthy)" <sshivamurthy@micron.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Lucas Stach <dev@lynxeye.de>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        "Bean Huo (beanhuo)" <beanhuo@micron.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Chuanhong Guo <gch981213@gmail.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 12/12] mtd: spinand: micron: Enable micron flashes with
- multi-die
-Thread-Topic: [PATCH v3 12/12] mtd: spinand: micron: Enable micron flashes
- with multi-die
-Thread-Index: AdUaBuuDD5Zu6ZlIQOytGKfMP/706g==
-Date:   Mon, 3 Jun 2019 12:43:44 +0000
-Message-ID: <MN2PR08MB595106104C80B33816648BE6B8140@MN2PR08MB5951.namprd08.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=sshivamurthy@micron.com; 
-x-originating-ip: [165.225.81.42]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 15f9ba9e-b346-4ba5-e571-08d6e8211d86
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MN2PR08MB5872;
-x-ms-traffictypediagnostic: MN2PR08MB5872:|MN2PR08MB5872:
-x-microsoft-antispam-prvs: <MN2PR08MB5872AC54D61E5C63EA1FCA27B8140@MN2PR08MB5872.namprd08.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1728;
-x-forefront-prvs: 0057EE387C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(1496009)(396003)(376002)(136003)(346002)(39860400002)(366004)(189003)(199004)(76116006)(14454004)(99286004)(7696005)(71200400001)(71190400001)(66446008)(5660300002)(9686003)(52536014)(73956011)(66946007)(66476007)(66066001)(66556008)(64756008)(2201001)(55236004)(6116002)(478600001)(316002)(102836004)(110136005)(2906002)(3846002)(6506007)(86362001)(7416002)(53936002)(486006)(26005)(2501003)(8936002)(476003)(33656002)(14444005)(256004)(8676002)(74316002)(81166006)(81156014)(6436002)(68736007)(7736002)(305945005)(186003)(25786009)(55016002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR08MB5872;H:MN2PR08MB5951.namprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: micron.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 3nz4eYj1uWTdedVtxDU1IVvUhyGDbXSVB6nOf0BD5Kb8ZTqq5f09szA1q3qoDzm3aJbOHQ6AQe+JpNIruiNy8egKjJ5tHD0MQaM/VRzZbu8AoeDuidnJ0Thk2Knm+Degi5+4XU7JXQTB/u1IPo8xH53GBIQ3/SK3d/+hEYDz0Bk/Gz9M+Iv6vubjIKO/Lx8YmGQQBiRYkashNbfGDseQy+EGwTrgD+AIeCEjbays5+qainNcTiu2d87oMzj4MPm1pC9XM6fgEfZGP0SOc/Ert1ua1cGOL2Sm27ho++LOkeONDyqP55Xlg5jgrfPTnjFCzYg9aaNZMbtL+/qRae788G5EmCAYN6juculaZ5wbWIDp3JzimxzZQ2c18bSJAVgekkWGb5JYyk+keH28o+Y6jOGnSaRf9Ipn+SjN4MVc6VM=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1728135AbfFCMoM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 08:44:12 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58728 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728083AbfFCMoJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 08:44:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=GNP3D276BFtDK39lLo6rJPWpnwlFMjiWsjF1eSRNq9k=; b=kNNcDuFgjSY3vB9kQuAo8Ap2W
+        LZjW6ej3axV9mqJfEPOQFrK+BxXkmgewzcyXkXEFQ+hm/CEJTLQGKgVTB5n8CAXGs7hKVoBe6o+pD
+        NVaeCspnEij+mfEOtozvjOHEcxOtjBcWqhpbjaxRfUU87KZ+f0jBRMoRfpzzjfMHRhzDmN5dDbvY5
+        hlb6vN8a82YFI3+tI26fcMhxrMjTfMYk7TH61euKay+ArCHXVntMUgrvk28lZR4AlDs9wrqOPLlyv
+        R4QthQrORiZVlXpb3A5eNEt+oucLFWpIKVIvVP+yiz9BLLHGzskGur/XNFIBDQGswlMoikfSWafKe
+        meD4M2llg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hXmJn-0004ug-CU; Mon, 03 Jun 2019 12:44:03 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id B738F20274AFF; Mon,  3 Jun 2019 14:44:01 +0200 (CEST)
+Date:   Mon, 3 Jun 2019 14:44:01 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Qian Cai <cai@lca.pw>, akpm@linux-foundation.org, hch@lst.de,
+        oleg@redhat.com, gkohli@codeaurora.org, mingo@redhat.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] block: fix a crash in do_task_dead()
+Message-ID: <20190603124401.GB3463@hirez.programming.kicks-ass.net>
+References: <1559161526-618-1-git-send-email-cai@lca.pw>
+ <20190530080358.GG2623@hirez.programming.kicks-ass.net>
+ <82e88482-1b53-9423-baad-484312957e48@kernel.dk>
+ <20190603123705.GB3419@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-X-OriginatorOrg: micron.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 15f9ba9e-b346-4ba5-e571-08d6e8211d86
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jun 2019 12:43:44.4459
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f38a5ecd-2813-4862-b11b-ac1d563c806f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: sshivamurthy@micron.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR08MB5872
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190603123705.GB3419@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some of the Micron flashes has multi-die, and need to select the die
-each time while accessing it.
+On Mon, Jun 03, 2019 at 02:37:05PM +0200, Peter Zijlstra wrote:
 
-Signed-off-by: Shivamurthy Shastri <sshivamurthy@micron.com>
----
- drivers/mtd/nand/spi/micron.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+> Anyway, Oleg, do you see anything blatantly buggered with this patch?
+> 
+> (the stats were already dodgy for rq-stats, this patch makes them dodgy
+> for task-stats too)
 
-diff --git a/drivers/mtd/nand/spi/micron.c b/drivers/mtd/nand/spi/micron.c
-index 1e28ea3d1362..fa2b43caf39d 100644
---- a/drivers/mtd/nand/spi/micron.c
-+++ b/drivers/mtd/nand/spi/micron.c
-@@ -90,6 +90,19 @@ static int micron_ecc_get_status(struct spinand_device *=
-spinand,
- 	return -EINVAL;
- }
-=20
-+static int micron_select_target(struct spinand_device *spinand,
-+				unsigned int target)
-+{
-+	struct spi_mem_op op =3D SPINAND_SET_FEATURE_OP(0xd0,
-+						      spinand->scratchbuf);
-+
-+	if (target =3D=3D 1)
-+		target =3D 0x40;
-+
-+	*spinand->scratchbuf =3D target;
-+	return spi_mem_exec_op(spinand->spimem, &op);
-+}
-+
- static int micron_spinand_detect(struct spinand_device *spinand)
- {
- 	const struct spi_mem_op *op;
-@@ -105,6 +118,7 @@ static int micron_spinand_detect(struct spinand_device =
-*spinand)
- 	spinand->flags =3D 0;
- 	spinand->eccinfo.get_status =3D micron_ecc_get_status;
- 	spinand->eccinfo.ooblayout =3D &micron_ooblayout_ops;
-+	spinand->select_target =3D micron_select_target;
-=20
- 	op =3D spinand_select_op_variant(spinand,
- 				       &read_cache_variants);
---=20
-2.17.1
+It now also has concurrency on wakeup; but afaict that's harmless, we'll
+get racing stores of p->state = TASK_RUNNING, much the same as if there
+was a remote wakeup vs a wait-loop terminating early.
 
+I suppose the tracepoint consumers might have to deal with some
+artifacts there, but that's their problem.
+
+> ---
+>  kernel/sched/core.c | 38 ++++++++++++++++++++++++++++++++------
+>  1 file changed, 32 insertions(+), 6 deletions(-)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 102dfcf0a29a..474aa4c8e9d2 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -1990,6 +1990,28 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+>  	unsigned long flags;
+>  	int cpu, success = 0;
+>  
+> +	if (p == current) {
+> +		/*
+> +		 * We're waking current, this means 'p->on_rq' and 'task_cpu(p)
+> +		 * == smp_processor_id()'. Together this means we can special
+> +		 * case the whole 'p->on_rq && ttwu_remote()' case below
+> +		 * without taking any locks.
+> +		 *
+> +		 * In particular:
+> +		 *  - we rely on Program-Order guarantees for all the ordering,
+> +		 *  - we're serialized against set_special_state() by virtue of
+> +		 *    it disabling IRQs (this allows not taking ->pi_lock).
+> +		 */
+> +		if (!(p->state & state))
+> +			goto out;
+> +
+> +		success = 1;
+> +		trace_sched_waking(p);
+> +		p->state = TASK_RUNNING;
+> +		trace_sched_woken(p);
+> +		goto out;
+> +	}
+> +
+>  	/*
+>  	 * If we are going to wake up a thread waiting for CONDITION we
+>  	 * need to ensure that CONDITION=1 done by the caller can not be
+> @@ -1999,7 +2021,7 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+>  	raw_spin_lock_irqsave(&p->pi_lock, flags);
+>  	smp_mb__after_spinlock();
+>  	if (!(p->state & state))
+> -		goto out;
+> +		goto unlock;
+>  
+>  	trace_sched_waking(p);
+>  
+> @@ -2029,7 +2051,7 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+>  	 */
+>  	smp_rmb();
+>  	if (p->on_rq && ttwu_remote(p, wake_flags))
+> -		goto stat;
+> +		goto unlock;
+>  
+>  #ifdef CONFIG_SMP
+>  	/*
+> @@ -2089,12 +2111,16 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+>  #endif /* CONFIG_SMP */
+>  
+>  	ttwu_queue(p, cpu, wake_flags);
+> -stat:
+> -	ttwu_stat(p, cpu, wake_flags);
+> -out:
+> +unlock:
+>  	raw_spin_unlock_irqrestore(&p->pi_lock, flags);
+>  
+> -	return success;
+> +out:
+> +	if (success) {
+> +		ttwu_stat(p, cpu, wake_flags);
+> +		return true;
+> +	}
+> +
+> +	return false;
+>  }
+>  
+>  /**
