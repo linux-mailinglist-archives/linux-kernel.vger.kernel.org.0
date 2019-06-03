@@ -2,51 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC35B33524
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 18:40:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A30C63352F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 18:42:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729421AbfFCQkN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 12:40:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38436 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729004AbfFCQkN (ORCPT
+        id S1729462AbfFCQmT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 12:42:19 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43610 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729427AbfFCQmR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 12:40:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Tjyhgy2fgeHHPnpoqtNQPAm53pWhbWbj3ulml192Dyk=; b=OQe3dlwtD7AjT43Hir+bEmntv
-        h/UiBgIn/xIsXSkDNUE/Fs8lzhUahXAGEBmByXKmOv0y0nHoa3T7Q+TgNb6kQYJY8KQF1KLZTpjDT
-        RqkoVsGcsOn4R8ILir3fcdP5xFGTWWanJkLWnQWPq9lu1+5VHtV4jrFBKQMSC1sK4BznZamw2u2+a
-        KYK1HR0fIF1CepFnvTP8GMevU+IECw/M02uo+q4hd29HuTrSuRtI8XDDnv77hN7Vjcry6elFGznK7
-        jTkkvCWwMTR4qCZC/4FCGB4FmRx/oZ/eefAHTzB489pfzsBvFCfEiFc+9VnBRjaayQYk1ATEZMDaC
-        YzRA4o3Kg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hXq0K-0002MX-OR; Mon, 03 Jun 2019 16:40:12 +0000
-Date:   Mon, 3 Jun 2019 09:40:12 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-Cc:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH] ARC: build: Try to guess CROSS_COMPILE with
- cc-cross-prefix
-Message-ID: <20190603164012.GA29719@infradead.org>
-References: <20190603063119.36544-1-abrodkin@synopsys.com>
+        Mon, 3 Jun 2019 12:42:17 -0400
+Received: by mail-lj1-f194.google.com with SMTP id 16so3289192ljv.10
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 09:42:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZxdsJUzrzirDV9SoFUmfun9q9AXOSWclIRGIX2baL2Y=;
+        b=N7C/10lLvMRhc2gCSkGs8QaF+cwD/Qcw7BW0cuFy6wQsDwPxn8AmDJJUuIvTaSjEXg
+         SuzZSrENjfTHUoDrJ6gD+eOIU3cpI6oqUldqD9gs2uNz8p7DQdwOTjAg+JMH/x601m7H
+         Esxj/dVD0a+fnLHEKWjDWxB9FvUVdOvgv8KqwpaScBTvTAbmRS3azMY3CwiT4OWn4i6Y
+         dWBL2iKbD9fISePhoUn07PDTAFHu94rMZVQ+81cO+p8GrIJhU6lTdQO7ywMxlzLHz6vS
+         cuTS+gGOJOMt2YW8aJavsWZNikY7/5MZY90WYuuJip/QPnSi9RebnPJjk6zKZH75y4Fb
+         3Oaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZxdsJUzrzirDV9SoFUmfun9q9AXOSWclIRGIX2baL2Y=;
+        b=q5O3Ojsoe+X4M3BrPjCT3dbQpKo+CTW0sTj7L9NW9+LKxaS/pK03MvyYJv4uPlGgvR
+         EIeUDoN616qOo5Xx2TLqgK96J1IHWCTJHKX52lOYbFUOcDJbjLMkgE/CGc0dLBqmUAcg
+         GIZ46V9qiqQGA397kv0x7bAArC1NM5+ydYpcQvmuTwd30znETOB9DFAXKGkFwCgKeLhU
+         WCE3M02nr6t7jpcSY30bKcqUBUZMtQzkW1n71Wi/JDyW5Buyy67bNqjnpNesV+/PDKnb
+         AIlVPRVq7yW7hMQBK9Y6fD9AOiAmUfw6KHDV4PF7V3k/lsFv7mSrhAhYunhWY3qR6VCg
+         mrxw==
+X-Gm-Message-State: APjAAAXK0iPl25ARASKEf34rfbiamJ1wVunSckLee1kpffCgfqALCC9I
+        e7bRyZNh9X/P+PKwQOkWVb0=
+X-Google-Smtp-Source: APXvYqxXFTRtKG8W/wE7vPy3gcwzNZsFCLLCuA9ttno3xoT+sqGIVtk64GC8X0e7QSJHyfZsXHThsg==
+X-Received: by 2002:a2e:4256:: with SMTP id p83mr14154095lja.201.1559580135602;
+        Mon, 03 Jun 2019 09:42:15 -0700 (PDT)
+Received: from krolik-desktop.lan ([91.238.216.6])
+        by smtp.gmail.com with ESMTPSA id d5sm3251109lji.85.2019.06.03.09.42.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Jun 2019 09:42:15 -0700 (PDT)
+From:   Pawel Dembicki <paweldembicki@gmail.com>
+Cc:     Pawel Dembicki <paweldembicki@gmail.com>,
+        Christian Lamparter <chunkeey@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] powerpc: Enable kernel XZ compression option on PPC_85xx
+Date:   Mon,  3 Jun 2019 18:41:14 +0200
+Message-Id: <20190603164115.27471-1-paweldembicki@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190603063119.36544-1-abrodkin@synopsys.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I wish we could just set CROSS_COMPILE and ARCH in .config.  That would
-make everyones life compile testing on multiple architectures so much
-easier.
+Enable kernel XZ compression option on PPC_85xx. Tested with
+simpleImage on TP-Link TL-WDR4900 (Freescale P1014 processor).
+
+Suggested-by: Christian Lamparter <chunkeey@gmail.com>
+Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
+---
+ arch/powerpc/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 8c1c636308c8..daf4cb968922 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -196,7 +196,7 @@ config PPC
+ 	select HAVE_IOREMAP_PROT
+ 	select HAVE_IRQ_EXIT_ON_IRQ_STACK
+ 	select HAVE_KERNEL_GZIP
+-	select HAVE_KERNEL_XZ			if PPC_BOOK3S || 44x
++	select HAVE_KERNEL_XZ			if PPC_BOOK3S || 44x || PPC_85xx
+ 	select HAVE_KPROBES
+ 	select HAVE_KPROBES_ON_FTRACE
+ 	select HAVE_KRETPROBES
+-- 
+2.20.1
+
