@@ -2,105 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59A8A32E35
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 13:08:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBF4432E19
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 12:58:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727839AbfFCLIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 07:08:09 -0400
-Received: from mx1.tq-group.com ([62.157.118.193]:21981 "EHLO mx1.tq-group.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726587AbfFCLII (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 07:08:08 -0400
-X-Greylist: delayed 587 seconds by postgrey-1.27 at vger.kernel.org; Mon, 03 Jun 2019 07:08:00 EDT
-X-IronPort-AV: E=Sophos;i="5.60,546,1549926000"; 
-   d="scan'208";a="7665934"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 03 Jun 2019 12:58:11 +0200
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Mon, 03 Jun 2019 12:58:12 +0200
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Mon, 03 Jun 2019 12:58:12 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1559559491; x=1591095491;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=ZLG5fX7UU9AzbSEEnsbZKEWE/R7gaNCrk+0uE58Tc7U=;
-  b=juhs5WdzDM2DBEOm5b2EiUWdwABpa2u190ZtJk0AJaYgwkmMFUoagyLb
-   nIenGCdGGIsEIOnls41TMpRKSzzsTlbwAQAECSOPkkweWxhP0AA5jKTgz
-   L1JkD36A1oCeKC8Hqo9+RliSfb/JL/voucNluCyaeieWb8dBNvEvmAn3y
-   9Bwxq2+godqdd72MLGjTE0krX2KjEqQmACYi58KAX/2u1jmeABp1kl2c5
-   It2a4JBE0yKvS1OLpp60s0hPo+ldTVibgtQDrY2JMRPsK32NBN/0mZesT
-   PcoMs29Z+YJXxpK0H0kLV8OLc1APOwtKprYpEV1rrZW9DzIv7bnqwqrkT
-   g==;
-X-IronPort-AV: E=Sophos;i="5.60,546,1549926000"; 
-   d="scan'208";a="7665933"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 03 Jun 2019 12:58:11 +0200
-Received: from schifferm-ubuntu4.tq-net.de (schifferm-ubuntu4.tq-net.de [10.117.49.26])
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPA id A18CA280077;
-        Mon,  3 Jun 2019 12:58:15 +0200 (CEST)
-From:   Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To:     Russell King <linux@armlinux.org.uk>, Jessica Yu <jeyu@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-ia64@vger.kernel.org,
-        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Subject: [PATCH modules 2/2] ARM: module: recognize unwind exit sections
-Date:   Mon,  3 Jun 2019 12:57:26 +0200
-Message-Id: <20190603105726.22436-3-matthias.schiffer@ew.tq-group.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190603105726.22436-1-matthias.schiffer@ew.tq-group.com>
-References: <20190603105726.22436-1-matthias.schiffer@ew.tq-group.com>
+        id S1727343AbfFCK6R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 06:58:17 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45825 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726924AbfFCK6R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 06:58:17 -0400
+Received: by mail-lj1-f194.google.com with SMTP id r76so15707442lja.12
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 03:58:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3Hkb6ZGh0otQQtsG7EyeKc0XPVB1qeyVKCVz7z7GAK4=;
+        b=MNMZwokibxUU6+0ryf7ELuQ9C9y6uLdFUZOlzwg8shXKvhfYvV5rRTTzeh41/lQAZ0
+         1LQYdLODDWtYRXLksN6sfVGsFKWNE/4H3RgIXGAVjS1WA+aSNz/WyaO88z1qtMbacZYi
+         uQLRyzQiUXprUBV1rwhQdLbRxTqLq5tncp1K/DcF5kuGm15RXfZlVbfkTKQSq2t+AA7A
+         huj8SnqIzDRgQgjB36zFWJgjWu+yJQIQhFigor+UBthANFKjAT+aJXi3GcdwzFWW10EI
+         eRIotdz3v5wpob/mQOhREKzUz3fvttn9KQVGTI0T/TaHwb3rwmpTMjPzsCjP0iPCVqn7
+         OlXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3Hkb6ZGh0otQQtsG7EyeKc0XPVB1qeyVKCVz7z7GAK4=;
+        b=TJzUft6d5Ok0uNq9ra0o4ksmlBUPq75yx6BQq9TD9sBu6UAXoxDwt0uWrkaLQapImg
+         iFF5aPaQDAgXUUMxAcN8R9zgIN/ko/l3YMSxHfuziDgy6Y4wYQh+PCcnWMhUkdA9XDeR
+         GF6TxeLuhxujfP9cctHdsLnEwB0FwX47EqpQM0aaHymgFge+nKViNq+6uSYeInEZWnCl
+         mD0HVHqz31rb/sftT0v7CNshE5MWDQdOcw9edvywaemSOPhMx7E6vyer77WJzuRepE/w
+         MhXnYJQu8iS/PxNTISzbwxo+qaF346N/THYifi9BzZIz+HgfO/XxXTV3Qn2ljCACQzw9
+         KpUQ==
+X-Gm-Message-State: APjAAAVAuD3fdy0q58uLp5TlZ9Mn0Y/iS+fzi1byMeCwrC9S0mlcwKT6
+        P8dCF5Yp6bqznNGi2HKM94AAVz/EQuMRH4hdAKHrxA==
+X-Google-Smtp-Source: APXvYqxo/ADke86oscEtkWdOZe3GDp/cLqsLQ6zE2mLLJbDnU81g0eCO5QoeN9mSyfQkx4QxgcHARZqrEYTDhPchXJA=
+X-Received: by 2002:a2e:9018:: with SMTP id h24mr6376615ljg.165.1559559494919;
+ Mon, 03 Jun 2019 03:58:14 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190529145322.20630-1-thierry.reding@gmail.com>
+ <20190529145322.20630-2-thierry.reding@gmail.com> <CACRpkdb5vB6OwcAxtjsKLzHt9V27juEOEEDqqQczKT-3r+7X-g@mail.gmail.com>
+ <20190603075324.GA27753@ulmo>
+In-Reply-To: <20190603075324.GA27753@ulmo>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 3 Jun 2019 12:58:02 +0200
+Message-ID: <CACRpkda47EX981Dw=jLrU=PHn50+AQhJmpVRWJ9uJEQdcAsrTw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] gpio: Add support for hierarchical IRQ domains
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Bitan Biswas <bbiswas@nvidia.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In addition to the prefix ".exit", ".ARM.extab.exit" and ".ARM.exidx.exit"
-must be recognizes as exit sections as well. Otherwise, loading modules can
-fail without CONFIG_MODULE_UNLOAD depending on the memory layout, when
-relocations for the unwind sections refer to the .exit.text section:
+On Mon, Jun 3, 2019 at 9:53 AM Thierry Reding <thierry.reding@gmail.com> wrote:
+> Me
 
-  imx_sdma: section 16 reloc 0 sym '': relocation 42 out of range
-  (0x7f015260 -> 0xc0f5a5e8)
+> > Please drop this. The default .to_irq() should be good for everyone.
+> > Also patch 2/2 now contains a identical copy of the gpiolib
+> > .to_irq() which I suspect you indended to drop, actually.
+>
+> It's not actually identical to the gpiolib implementation. There's still
+> the conversion to the non-linear DT representation for GPIO specifiers
+> from the linear GPIO number space, which is not taken care of by the
+> gpiolib variant. That's precisely the point why this patch makes it
+> possible to let the driver override things.
 
-where 0x7F000000 is the module load area and 0xC0000000 is the vmalloc
-area. Relocation 42 refers to R_ARM_PREL31, which is limited to signed
-31bit offsets.
+OK something is off here, because the purpose of the irqdomain
+is exactly to translate between different number spaces, so it should
+not happen in the .to_irq() function at all.
 
-Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
----
- arch/arm/include/asm/module.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Irqdomain uses .map() in the old variant and .translate() in the
+hierarchical variant to do this, so something is skewed.
 
-diff --git a/arch/arm/include/asm/module.h b/arch/arm/include/asm/module.h
-index 182163b55546..f3401758d711 100644
---- a/arch/arm/include/asm/module.h
-+++ b/arch/arm/include/asm/module.h
-@@ -4,6 +4,8 @@
- 
- #include <asm-generic/module.h>
- 
-+#include <linux/string.h>
-+
- struct unwind_table;
- 
- #ifdef CONFIG_ARM_UNWIND
-@@ -72,4 +74,13 @@ static inline unsigned long kallsyms_symbol_value(const Elf_Sym *sym)
- }
- #endif
- 
-+#define HAVE_ARCH_MODULE_EXIT_SECTION
-+static inline bool module_exit_section(const char *name)
-+{
-+	return strstarts(name, ".exit") ||
-+		strstarts(name, ".ARM.extab.exit") ||
-+		strstarts(name, ".ARM.exidx.exit");
-+
-+}
-+
- #endif /* _ASM_ARM_MODULE_H */
--- 
-2.17.1
+All .to_irq() should ever do is just call the irqdomain to do the
+translation, no other logic (unless I am mistaken) so we should
+be able to keep the simple .to_irq() logic inside gpiolib.
 
+Yours,
+Linus Walleij
