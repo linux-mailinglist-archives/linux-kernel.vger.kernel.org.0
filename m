@@ -2,108 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF5AB333C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:41:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6715C333D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:44:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728068AbfFCPlD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 11:41:03 -0400
-Received: from mail-lf1-f43.google.com ([209.85.167.43]:43862 "EHLO
-        mail-lf1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727649AbfFCPlB (ORCPT
+        id S1727649AbfFCPoM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 11:44:12 -0400
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:44788 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726889AbfFCPoM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 11:41:01 -0400
-Received: by mail-lf1-f43.google.com with SMTP id j29so54308lfk.10
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 08:41:00 -0700 (PDT)
+        Mon, 3 Jun 2019 11:44:12 -0400
+Received: by mail-ua1-f67.google.com with SMTP id p5so905688uar.11
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 08:44:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=88zEtlZo9VcPYvQYA1jKvAsBkyo9fzTE6nwo1Hgnw4c=;
-        b=g7xyhXorBa6FBLPRxz237Si+Si/iS47DotxTNT9gS16OG4gjNWyRGb5dCcvnI/8QvX
-         xq3WRPTwie1oOh6i5GON8NUyBCfTnraWU9T+b3l1nrZg7dNuzHbATVP6/ijneNfXZlNj
-         GO03Ng2cp1/WOXDZ9RS2z8kXYjDpjQg1kccFQ=
+        bh=Pxr2tsBIRKskeHWPSwMDss/AepFRvbtFu+kFFRUCb+Q=;
+        b=FeiRgsweRwTNxjLQEZKDRVMSsebGvhERPWsd1c7KGoMTjJVDnHHl1PLX97BQ+pii77
+         hXtgyY75bU/8TkqS3pgzN5I5hTHdt4eK7NIYTXesu+y8UAKBHgjB0t9mjdZt3w+naCKT
+         rM9EkwPnii6j9iaJgVUuZV9kmbIImg2XC97jJMlaEswKCY5ECylPsSlPW/geZgkeQ6uC
+         dSkTIW8/omAz6+vXCb/USUR0sqDwhsiGnB6pp2PyqiyEsckbAVuvNkDzmpDyALKbtt/p
+         PfvvZJYgSqX83KJQk1Sl9u3JzNGJUxILFZ7nxCKabg0SZXDzVVCf5/7Tg4QlIB3fGbEx
+         ZYCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=88zEtlZo9VcPYvQYA1jKvAsBkyo9fzTE6nwo1Hgnw4c=;
-        b=gO5iXLwsHyPCAyRd4P8ku97KfUKitv9/ul+4Ldy+JDVH8FqwMswVdIc3SvbaMqrjcP
-         kxNiSHdr4TN7f1KiRoNXbeivZq04slV9aSFYzJ+9SUbzH9TYCb52i46y6b+xvKP44SIC
-         ebNfZsjRIDs2QORhamvpSsFt7av62H4IOyXIklJROtCMQk6vlrbq246CwNkuyi1V6AKH
-         bQgQuA+3vLaXGxArauZc9n1ioGLsuE25rZ8Pa6BX2eHThVAryMKbJRFL37mmzgo3p+D7
-         Why8Ky05o3mqLwOFkbotOpK4la6JXlS9YVi7m4VcpPwrKHcW5N/08TNBZUyXEXnnM7My
-         GZJA==
-X-Gm-Message-State: APjAAAUL2m++qvrWFOEf/q2LqgO7YaDorNMFbsUFIRVrjgQwrYmciaga
-        wa392gihE3ewDTtZ7kpXNAGJqF8XOJw=
-X-Google-Smtp-Source: APXvYqyIalw2eb7sW0V1xFl9BtOPEerJcx5tc+1R4p6Rra80xnsJzKg5gLWQGVZoNnP/l00cEuMDwQ==
-X-Received: by 2002:a19:e308:: with SMTP id a8mr13573829lfh.69.1559576458739;
-        Mon, 03 Jun 2019 08:40:58 -0700 (PDT)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id a18sm1227030ljf.35.2019.06.03.08.40.57
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Jun 2019 08:40:57 -0700 (PDT)
-Received: by mail-lj1-f176.google.com with SMTP id a21so1466813ljh.7
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 08:40:57 -0700 (PDT)
-X-Received: by 2002:a2e:9ad1:: with SMTP id p17mr14530773ljj.147.1559576456787;
- Mon, 03 Jun 2019 08:40:56 -0700 (PDT)
+        bh=Pxr2tsBIRKskeHWPSwMDss/AepFRvbtFu+kFFRUCb+Q=;
+        b=f7M7LVSiKjbTGAJ+gmfDGg1z/tgmRzLbRyRdzWMRRXm048NSLKxdd/J8OhXkWI9HhI
+         Up2zI1cunQg0wyB4MRw/EkoSfNHUaE6JpIOuI1vKINMCw3KJ0GCZ/9fjw8wTfeFOjL+7
+         gIcpHg5JjSqYzNOlq5S1DlZM6QaKf/axUkirF14oph1AINPJsuJwLi9a0ORnYzslMREM
+         W8vmzUdN0DNcUP8ORAVy6U00YwTZ5rAIwliZNh1SkfpdhW41XvxjhchZhyIKE3WWWN0y
+         yA5QaWGn1krmPBw3Og5lNHQBsYJFO6OEqlncw58NjB+dUXb4dpnPQFept/98SJT2Yqpr
+         5DbQ==
+X-Gm-Message-State: APjAAAUtaThlj+HavubTo8BMZX9+MKXpSYVkvKhlNFLBf54eKoR27Cd/
+        QUJlvwXp1OlqW1VopsBjEELV70h8dyjHboyjvv3kVQ==
+X-Google-Smtp-Source: APXvYqzC/biQeMQwwnleohw9UkPA9qCfiYB7Q+NAS71L23R0SboHrt/PF2NrayEW15/9pMefLmUdej7+yCs2uAGXatU=
+X-Received: by 2002:ab0:6198:: with SMTP id h24mr3159945uan.41.1559576651190;
+ Mon, 03 Jun 2019 08:44:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <20150910171649.GE4029@linux.vnet.ibm.com> <20150911021933.GA1521@fixme-laptop.cn.ibm.com>
- <20150921193045.GA13674@lerouge> <20150921204327.GH4029@linux.vnet.ibm.com>
- <20190602055607.bk5vgmwjvvt4wejd@gondor.apana.org.au> <CAHk-=whLGKOmM++OQi5GX08_dfh8Xfz9Wq7khPo+MVtPYh_8hw@mail.gmail.com>
- <20190603024640.2soysu4rpkwjuash@gondor.apana.org.au> <20190603034707.GG28207@linux.ibm.com>
- <20190603040114.st646bujtgyu7adn@gondor.apana.org.au> <20190603072339.GH28207@linux.ibm.com>
- <20190603084214.GA1496@linux.ibm.com> <9c0a9e2faae7404cb712f57910c8db34@AcuMS.aculab.com>
-In-Reply-To: <9c0a9e2faae7404cb712f57910c8db34@AcuMS.aculab.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 3 Jun 2019 08:40:40 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj4pqF9bwjQHNzAKBmbAFTDWi9KwvLznj0HZLAZ+eGFpw@mail.gmail.com>
-Message-ID: <CAHk-=wj4pqF9bwjQHNzAKBmbAFTDWi9KwvLznj0HZLAZ+eGFpw@mail.gmail.com>
-Subject: Re: rcu_read_lock lost its compiler barrier
-To:     David Laight <David.Laight@aculab.com>
-Cc:     "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Fengguang Wu <fengguang.wu@intel.com>, LKP <lkp@01.org>,
+References: <20190531064313.193437-1-minchan@kernel.org> <20190531064313.193437-2-minchan@kernel.org>
+ <20190531084752.GI6896@dhcp22.suse.cz> <20190531133904.GC195463@google.com>
+ <20190531140332.GT6896@dhcp22.suse.cz> <20190531143407.GB216592@google.com> <20190603071607.GB4531@dhcp22.suse.cz>
+In-Reply-To: <20190603071607.GB4531@dhcp22.suse.cz>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Mon, 3 Jun 2019 08:43:59 -0700
+Message-ID: <CAKOZuetW1UsPP3fDm-zTBOiO_oWkkDwADu+Apy53abWNs-UcUA@mail.gmail.com>
+Subject: Re: [RFCv2 1/6] mm: introduce MADV_COLD
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Minchan Kim <minchan@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>
+        Linux API <linux-api@vger.kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>,
+        Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
+        Christian Brauner <christian@brauner.io>, oleksandr@redhat.com,
+        hdanton@sina.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 3, 2019 at 8:26 AM David Laight <David.Laight@aculab.com> wrote:
+On Mon, Jun 3, 2019 at 12:16 AM Michal Hocko <mhocko@kernel.org> wrote:
+> On Fri 31-05-19 23:34:07, Minchan Kim wrote:
+> > On Fri, May 31, 2019 at 04:03:32PM +0200, Michal Hocko wrote:
+> > > On Fri 31-05-19 22:39:04, Minchan Kim wrote:
+> > > > On Fri, May 31, 2019 at 10:47:52AM +0200, Michal Hocko wrote:
+> > > > > On Fri 31-05-19 15:43:08, Minchan Kim wrote:
+> > > > > > When a process expects no accesses to a certain memory range, it could
+> > > > > > give a hint to kernel that the pages can be reclaimed when memory pressure
+> > > > > > happens but data should be preserved for future use.  This could reduce
+> > > > > > workingset eviction so it ends up increasing performance.
+> > > > > >
+> > > > > > This patch introduces the new MADV_COLD hint to madvise(2) syscall.
+> > > > > > MADV_COLD can be used by a process to mark a memory range as not expected
+> > > > > > to be used in the near future. The hint can help kernel in deciding which
+> > > > > > pages to evict early during memory pressure.
+> > > > > >
+> > > > > > Internally, it works via deactivating pages from active list to inactive's
+> > > > > > head if the page is private because inactive list could be full of
+> > > > > > used-once pages which are first candidate for the reclaiming and that's a
+> > > > > > reason why MADV_FREE move pages to head of inactive LRU list. Therefore,
+> > > > > > if the memory pressure happens, they will be reclaimed earlier than other
+> > > > > > active pages unless there is no access until the time.
+> > > > >
+> > > > > [I am intentionally not looking at the implementation because below
+> > > > > points should be clear from the changelog - sorry about nagging ;)]
+> > > > >
+> > > > > What kind of pages can be deactivated? Anonymous/File backed.
+> > > > > Private/shared? If shared, are there any restrictions?
+> > > >
+> > > > Both file and private pages could be deactived from each active LRU
+> > > > to each inactive LRU if the page has one map_count. In other words,
+> > > >
+> > > >     if (page_mapcount(page) <= 1)
+> > > >         deactivate_page(page);
+> > >
+> > > Why do we restrict to pages that are single mapped?
+> >
+> > Because page table in one of process shared the page would have access bit
+> > so finally we couldn't reclaim the page. The more process it is shared,
+> > the more fail to reclaim.
 >
-> From: Paul E. McKenney
->
-> > We do
-> > occasionally use READ_ONCE() to prevent load-fusing optimizations that
-> > would otherwise cause the compiler to turn while-loops into if-statements
-> > guarding infinite loops.
->
-> In that case the variable ought to be volatile...
+> So what? In other words why should it be restricted solely based on the
+> map count. I can see a reason to restrict based on the access
+> permissions because we do not want to simplify all sorts of side channel
+> attacks but memory reclaim is capable of reclaiming shared pages and so
+> far I haven't heard any sound argument why madvise should skip those.
+> Again if there are any reasons, then document them in the changelog.
 
-No.
-
-We do not use volatile on variables.
-
-The C people got the semantics wrong, probably because 'volatile' was
-historically for IO, not for access atomicity without locking.
-
-It's not the memory location that is volatile, it is really the
-_access_ that is volatile.
-
-The same memory location might be completely stable in other access
-situations (ie when done under a lock).
-
-In other words, we should *never* use volatile in the kernel. It's
-fundamentally mis-designed for modern use.
-
-(Of course, we then can use volatile in a cast in code, which drives
-some compiler people crazy, but that's because said compiler people
-don't care about reality, they care about some paperwork).
-
-                      Linus
+Whether to reclaim shared pages is a policy decision best left to
+userland, IMHO.
