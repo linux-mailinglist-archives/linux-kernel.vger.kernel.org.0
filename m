@@ -2,56 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25EF333073
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:03:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2AAF3307A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:03:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728058AbfFCNDE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 09:03:04 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:48841 "EHLO
+        id S1728089AbfFCNDs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 09:03:48 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:54705 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726754AbfFCNDE (ORCPT
+        with ESMTP id S1726379AbfFCNDs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 09:03:04 -0400
+        Mon, 3 Jun 2019 09:03:48 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x53D2lQq602107
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x53D3UMd602412
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 3 Jun 2019 06:02:47 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x53D2lQq602107
+        Mon, 3 Jun 2019 06:03:31 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x53D3UMd602412
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1559566968;
-        bh=K3urjQF6gb2vS7AitEUt69E8yo4hQfAk4YYunD66sR0=;
+        s=2019051801; t=1559567011;
+        bh=sfc0k++Mi1BMilo2QMC3tOzYzrbD88d5pwRgZ9GEWAM=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=tQvVjQQeLE/KL3GrjZGLGpJzpJ9MzaBgYWhMgDgPTpFCXjgQ5pWhbS//XXot89yTu
-         knC8qfi73AwXtkbscZJs7EPX2Px3gCjea1QLgg09qFAt070J/8m38ZCqP/GjtOgBUW
-         80A6aKhm08fFkrGK+cVGIdxPRFbMhbIt98mpoKQuoMG0zz+5KDc7zCuk/Dyb691SJ8
-         kjlOA+B2gt1+l4JQsmn8lwstyJlY5LiyKbKSi3Jg6ZxMIFf+W9rSgvq9++iMpLLE1O
-         WlsYoMOUMl4xTyUBh3RxlBSeGemxx+I00iM4DhZtlBpZ51yRCT70JNQTurFH53ipVE
-         CYDNKwndrG9lg==
+        b=NDEd435rXjA1WClnJTLLyzX27nbarhaadr8SURYYfjN0K2iVA+Ux9WrHxjmdyv6tf
+         HYbzkQLeJRHQxH3Ru/QMZ/w8FqBYPPdZ9nXRALk5Hl4WShPB82LiNN7c++F5QEidn3
+         Cx3uJ8nUmcLSXxqFV6aBiG0Bkwe9BED8Zof6QdfFEvR7xO2AuPiDAlPFoHZRXe2d/G
+         9VeXRflwnu6HavrUKE6hBVgOFok3lMc7OBq/gt21jiGwGV4hXCjOqNo4vOtgq2HC42
+         TfJkGlC1jFKAOfJFrS4ypnMSY236kNl2c7cx5OkibsSCFnw9vIS1yNk+aLWhj/NWBl
+         Y0GSa2WbAiE5Q==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x53D2k6d602103;
-        Mon, 3 Jun 2019 06:02:46 -0700
-Date:   Mon, 3 Jun 2019 06:02:46 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x53D3T7f602409;
+        Mon, 3 Jun 2019 06:03:29 -0700
+Date:   Mon, 3 Jun 2019 06:03:29 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Dietmar Eggemann <tipbot@zytor.com>
-Message-ID: <tip-1c1b8a7b03ef50f80f5d0c871ee261c04a6c967e@git.kernel.org>
-Cc:     morten.rasmussen@arm.com, valentin.schneider@arm.com,
-        dietmar.eggemann@arm.com, torvalds@linux-foundation.org,
-        vincent.guittot@linaro.org, quentin.perret@arm.com,
-        fweisbec@gmail.com, hpa@zytor.com, patrick.bellasi@arm.com,
-        mingo@kernel.org, riel@surriel.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, tglx@linutronix.de
-Reply-To: valentin.schneider@arm.com, morten.rasmussen@arm.com,
-          dietmar.eggemann@arm.com, quentin.perret@arm.com,
-          vincent.guittot@linaro.org, torvalds@linux-foundation.org,
-          patrick.bellasi@arm.com, fweisbec@gmail.com, hpa@zytor.com,
-          mingo@kernel.org, riel@surriel.com, linux-kernel@vger.kernel.org,
-          peterz@infradead.org, tglx@linutronix.de
-In-Reply-To: <20190527062116.11512-3-dietmar.eggemann@arm.com>
-References: <20190527062116.11512-3-dietmar.eggemann@arm.com>
+Message-ID: <tip-3d8d53554405952993bb0279ef3ebebc51740074@git.kernel.org>
+Cc:     tglx@linutronix.de, dietmar.eggemann@arm.com,
+        morten.rasmussen@arm.com, hpa@zytor.com, patrick.bellasi@arm.com,
+        peterz@infradead.org, riel@surriel.com, quentin.perret@arm.com,
+        torvalds@linux-foundation.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, valentin.schneider@arm.com,
+        fweisbec@gmail.com, vincent.guittot@linaro.org
+Reply-To: peterz@infradead.org, riel@surriel.com, quentin.perret@arm.com,
+          mingo@kernel.org, torvalds@linux-foundation.org,
+          linux-kernel@vger.kernel.org, valentin.schneider@arm.com,
+          fweisbec@gmail.com, vincent.guittot@linaro.org,
+          tglx@linutronix.de, morten.rasmussen@arm.com,
+          dietmar.eggemann@arm.com, hpa@zytor.com, patrick.bellasi@arm.com
+In-Reply-To: <20190527062116.11512-4-dietmar.eggemann@arm.com>
+References: <20190527062116.11512-4-dietmar.eggemann@arm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/fair: Replace source_load() & target_load()
- with weighted_cpuload()
-Git-Commit-ID: 1c1b8a7b03ef50f80f5d0c871ee261c04a6c967e
+Subject: [tip:sched/core] sched/debug: Remove sd->*_idx range on sysctl
+Git-Commit-ID: 3d8d53554405952993bb0279ef3ebebc51740074
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -69,22 +68,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  1c1b8a7b03ef50f80f5d0c871ee261c04a6c967e
-Gitweb:     https://git.kernel.org/tip/1c1b8a7b03ef50f80f5d0c871ee261c04a6c967e
+Commit-ID:  3d8d53554405952993bb0279ef3ebebc51740074
+Gitweb:     https://git.kernel.org/tip/3d8d53554405952993bb0279ef3ebebc51740074
 Author:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-AuthorDate: Mon, 27 May 2019 07:21:11 +0100
+AuthorDate: Mon, 27 May 2019 07:21:12 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Mon, 3 Jun 2019 11:49:39 +0200
 
-sched/fair: Replace source_load() & target_load() with weighted_cpuload()
+sched/debug: Remove sd->*_idx range on sysctl
 
-With LB_BIAS disabled, source_load() & target_load() return
-weighted_cpuload(). Replace both with calls to weighted_cpuload().
+This reverts:
 
-The function to obtain the load index (sd->*_idx) for an sd,
-get_sd_load_idx(), can be removed as well.
+  commit 201c373e8e48 ("sched/debug: Limit sd->*_idx range on sysctl")
 
-Finally, get rid of the sched feature LB_BIAS.
+Load indexes (sd->*_idx) are no longer needed without rq->cpu_load[].
+The range check for load indexes can be removed as well. Get rid of it
+before the rq->cpu_load[] since it uses CPU_LOAD_IDX_MAX.
+
+At the same time, fix the following coding style issues detected by
+scripts/checkpatch.pl:
+
+  ERROR: space prohibited before that ','
+  ERROR: space prohibited before that close parenthesis ')'
 
 Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
@@ -98,188 +103,73 @@ Cc: Quentin Perret <quentin.perret@arm.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Valentin Schneider <valentin.schneider@arm.com>
 Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Link: https://lkml.kernel.org/r/20190527062116.11512-3-dietmar.eggemann@arm.com
+Link: https://lkml.kernel.org/r/20190527062116.11512-4-dietmar.eggemann@arm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/fair.c     | 90 +++----------------------------------------------
- kernel/sched/features.h |  1 -
- 2 files changed, 4 insertions(+), 87 deletions(-)
+ kernel/sched/debug.c | 37 ++++++++++++++-----------------------
+ 1 file changed, 14 insertions(+), 23 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 1aab323f1b4b..5b9691e5ea59 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1467,8 +1467,6 @@ bool should_numa_migrate_memory(struct task_struct *p, struct page * page,
+diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+index 150043e1d716..5c7b066d7de6 100644
+--- a/kernel/sched/debug.c
++++ b/kernel/sched/debug.c
+@@ -236,25 +236,16 @@ static void sd_free_ctl_entry(struct ctl_table **tablep)
+ 	*tablep = NULL;
  }
  
- static unsigned long weighted_cpuload(struct rq *rq);
--static unsigned long source_load(int cpu, int type);
--static unsigned long target_load(int cpu, int type);
- 
- /* Cached statistics for all CPUs within a node */
- struct numa_stats {
-@@ -5333,45 +5331,11 @@ static struct {
- 
- #endif /* CONFIG_NO_HZ_COMMON */
- 
--/* Used instead of source_load when we know the type == 0 */
- static unsigned long weighted_cpuload(struct rq *rq)
+-static int min_load_idx = 0;
+-static int max_load_idx = CPU_LOAD_IDX_MAX-1;
+-
+ static void
+ set_table_entry(struct ctl_table *entry,
+ 		const char *procname, void *data, int maxlen,
+-		umode_t mode, proc_handler *proc_handler,
+-		bool load_idx)
++		umode_t mode, proc_handler *proc_handler)
  {
- 	return cfs_rq_runnable_load_avg(&rq->cfs);
- }
- 
--/*
-- * Return a low guess at the load of a migration-source CPU weighted
-- * according to the scheduling class and "nice" value.
-- *
-- * We want to under-estimate the load of migration sources, to
-- * balance conservatively.
-- */
--static unsigned long source_load(int cpu, int type)
--{
--	struct rq *rq = cpu_rq(cpu);
--	unsigned long total = weighted_cpuload(rq);
+ 	entry->procname = procname;
+ 	entry->data = data;
+ 	entry->maxlen = maxlen;
+ 	entry->mode = mode;
+ 	entry->proc_handler = proc_handler;
 -
--	if (type == 0 || !sched_feat(LB_BIAS))
--		return total;
--
--	return min(rq->cpu_load[type-1], total);
--}
--
--/*
-- * Return a high guess at the load of a migration-target CPU weighted
-- * according to the scheduling class and "nice" value.
-- */
--static unsigned long target_load(int cpu, int type)
--{
--	struct rq *rq = cpu_rq(cpu);
--	unsigned long total = weighted_cpuload(rq);
--
--	if (type == 0 || !sched_feat(LB_BIAS))
--		return total;
--
--	return max(rq->cpu_load[type-1], total);
--}
--
- static unsigned long capacity_of(int cpu)
- {
- 	return cpu_rq(cpu)->cpu_capacity;
-@@ -5479,7 +5443,7 @@ wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
- 	s64 this_eff_load, prev_eff_load;
- 	unsigned long task_load;
- 
--	this_eff_load = target_load(this_cpu, sd->wake_idx);
-+	this_eff_load = weighted_cpuload(cpu_rq(this_cpu));
- 
- 	if (sync) {
- 		unsigned long current_load = task_h_load(current);
-@@ -5497,7 +5461,7 @@ wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
- 		this_eff_load *= 100;
- 	this_eff_load *= capacity_of(prev_cpu);
- 
--	prev_eff_load = source_load(prev_cpu, sd->wake_idx);
-+	prev_eff_load = weighted_cpuload(cpu_rq(prev_cpu));
- 	prev_eff_load -= task_load;
- 	if (sched_feat(WA_BIAS))
- 		prev_eff_load *= 100 + (sd->imbalance_pct - 100) / 2;
-@@ -5558,14 +5522,10 @@ find_idlest_group(struct sched_domain *sd, struct task_struct *p,
- 	unsigned long this_runnable_load = ULONG_MAX;
- 	unsigned long min_avg_load = ULONG_MAX, this_avg_load = ULONG_MAX;
- 	unsigned long most_spare = 0, this_spare = 0;
--	int load_idx = sd->forkexec_idx;
- 	int imbalance_scale = 100 + (sd->imbalance_pct-100)/2;
- 	unsigned long imbalance = scale_load_down(NICE_0_LOAD) *
- 				(sd->imbalance_pct-100) / 100;
- 
--	if (sd_flag & SD_BALANCE_WAKE)
--		load_idx = sd->wake_idx;
--
- 	do {
- 		unsigned long load, avg_load, runnable_load;
- 		unsigned long spare_cap, max_spare_cap;
-@@ -5589,12 +5549,7 @@ find_idlest_group(struct sched_domain *sd, struct task_struct *p,
- 		max_spare_cap = 0;
- 
- 		for_each_cpu(i, sched_group_span(group)) {
--			/* Bias balancing toward CPUs of our domain */
--			if (local_group)
--				load = source_load(i, load_idx);
--			else
--				load = target_load(i, load_idx);
--
-+			load = weighted_cpuload(cpu_rq(i));
- 			runnable_load += load;
- 
- 			avg_load += cfs_rq_load_avg(&cpu_rq(i)->cfs);
-@@ -7676,34 +7631,6 @@ static inline void init_sd_lb_stats(struct sd_lb_stats *sds)
- 	};
- }
- 
--/**
-- * get_sd_load_idx - Obtain the load index for a given sched domain.
-- * @sd: The sched_domain whose load_idx is to be obtained.
-- * @idle: The idle status of the CPU for whose sd load_idx is obtained.
-- *
-- * Return: The load index.
-- */
--static inline int get_sd_load_idx(struct sched_domain *sd,
--					enum cpu_idle_type idle)
--{
--	int load_idx;
--
--	switch (idle) {
--	case CPU_NOT_IDLE:
--		load_idx = sd->busy_idx;
--		break;
--
--	case CPU_NEWLY_IDLE:
--		load_idx = sd->newidle_idx;
--		break;
--	default:
--		load_idx = sd->idle_idx;
--		break;
+-	if (load_idx) {
+-		entry->extra1 = &min_load_idx;
+-		entry->extra2 = &max_load_idx;
 -	}
--
--	return load_idx;
--}
--
- static unsigned long scale_rt_capacity(struct sched_domain *sd, int cpu)
- {
- 	struct rq *rq = cpu_rq(cpu);
-@@ -7992,9 +7919,6 @@ static inline void update_sg_lb_stats(struct lb_env *env,
- 				      struct sg_lb_stats *sgs,
- 				      int *sg_status)
- {
--	int local_group = cpumask_test_cpu(env->dst_cpu, sched_group_span(group));
--	int load_idx = get_sd_load_idx(env->sd, env->idle);
--	unsigned long load;
- 	int i, nr_running;
+ }
  
- 	memset(sgs, 0, sizeof(*sgs));
-@@ -8005,13 +7929,7 @@ static inline void update_sg_lb_stats(struct lb_env *env,
- 		if ((env->flags & LBF_NOHZ_STATS) && update_nohz_stats(rq, false))
- 			env->flags |= LBF_NOHZ_AGAIN;
+ static struct ctl_table *
+@@ -265,19 +256,19 @@ sd_alloc_ctl_domain_table(struct sched_domain *sd)
+ 	if (table == NULL)
+ 		return NULL;
  
--		/* Bias balancing toward CPUs of our domain: */
--		if (local_group)
--			load = target_load(i, load_idx);
--		else
--			load = source_load(i, load_idx);
--
--		sgs->group_load += load;
-+		sgs->group_load += weighted_cpuload(rq);
- 		sgs->group_util += cpu_util(i);
- 		sgs->sum_nr_running += rq->cfs.h_nr_running;
+-	set_table_entry(&table[0] , "min_interval",	   &sd->min_interval,	     sizeof(long), 0644, proc_doulongvec_minmax, false);
+-	set_table_entry(&table[1] , "max_interval",	   &sd->max_interval,	     sizeof(long), 0644, proc_doulongvec_minmax, false);
+-	set_table_entry(&table[2] , "busy_idx",		   &sd->busy_idx,	     sizeof(int) , 0644, proc_dointvec_minmax,   true );
+-	set_table_entry(&table[3] , "idle_idx",		   &sd->idle_idx,	     sizeof(int) , 0644, proc_dointvec_minmax,   true );
+-	set_table_entry(&table[4] , "newidle_idx",	   &sd->newidle_idx,	     sizeof(int) , 0644, proc_dointvec_minmax,   true );
+-	set_table_entry(&table[5] , "wake_idx",		   &sd->wake_idx,	     sizeof(int) , 0644, proc_dointvec_minmax,   true );
+-	set_table_entry(&table[6] , "forkexec_idx",	   &sd->forkexec_idx,	     sizeof(int) , 0644, proc_dointvec_minmax,   true );
+-	set_table_entry(&table[7] , "busy_factor",	   &sd->busy_factor,	     sizeof(int) , 0644, proc_dointvec_minmax,   false);
+-	set_table_entry(&table[8] , "imbalance_pct",	   &sd->imbalance_pct,	     sizeof(int) , 0644, proc_dointvec_minmax,   false);
+-	set_table_entry(&table[9] , "cache_nice_tries",	   &sd->cache_nice_tries,    sizeof(int) , 0644, proc_dointvec_minmax,   false);
+-	set_table_entry(&table[10], "flags",		   &sd->flags,		     sizeof(int) , 0644, proc_dointvec_minmax,   false);
+-	set_table_entry(&table[11], "max_newidle_lb_cost", &sd->max_newidle_lb_cost, sizeof(long), 0644, proc_doulongvec_minmax, false);
+-	set_table_entry(&table[12], "name",		   sd->name,		CORENAME_MAX_SIZE, 0444, proc_dostring,		 false);
++	set_table_entry(&table[0],  "min_interval",	   &sd->min_interval,	     sizeof(long), 0644, proc_doulongvec_minmax);
++	set_table_entry(&table[1],  "max_interval",	   &sd->max_interval,	     sizeof(long), 0644, proc_doulongvec_minmax);
++	set_table_entry(&table[2],  "busy_idx",		   &sd->busy_idx,	     sizeof(int),  0644, proc_dointvec_minmax);
++	set_table_entry(&table[3],  "idle_idx",		   &sd->idle_idx,	     sizeof(int),  0644, proc_dointvec_minmax);
++	set_table_entry(&table[4],  "newidle_idx",	   &sd->newidle_idx,	     sizeof(int),  0644, proc_dointvec_minmax);
++	set_table_entry(&table[5],  "wake_idx",		   &sd->wake_idx,	     sizeof(int),  0644, proc_dointvec_minmax);
++	set_table_entry(&table[6],  "forkexec_idx",	   &sd->forkexec_idx,	     sizeof(int),  0644, proc_dointvec_minmax);
++	set_table_entry(&table[7],  "busy_factor",	   &sd->busy_factor,	     sizeof(int),  0644, proc_dointvec_minmax);
++	set_table_entry(&table[8],  "imbalance_pct",	   &sd->imbalance_pct,	     sizeof(int),  0644, proc_dointvec_minmax);
++	set_table_entry(&table[9],  "cache_nice_tries",	   &sd->cache_nice_tries,    sizeof(int),  0644, proc_dointvec_minmax);
++	set_table_entry(&table[10], "flags",		   &sd->flags,		     sizeof(int),  0644, proc_dointvec_minmax);
++	set_table_entry(&table[11], "max_newidle_lb_cost", &sd->max_newidle_lb_cost, sizeof(long), 0644, proc_doulongvec_minmax);
++	set_table_entry(&table[12], "name",		   sd->name,		CORENAME_MAX_SIZE, 0444, proc_dostring);
+ 	/* &table[13] is terminator */
  
-diff --git a/kernel/sched/features.h b/kernel/sched/features.h
-index 858589b83377..2410db5e9a35 100644
---- a/kernel/sched/features.h
-+++ b/kernel/sched/features.h
-@@ -39,7 +39,6 @@ SCHED_FEAT(WAKEUP_PREEMPTION, true)
- 
- SCHED_FEAT(HRTICK, false)
- SCHED_FEAT(DOUBLE_TICK, false)
--SCHED_FEAT(LB_BIAS, false)
- 
- /*
-  * Decrement CPU capacity based on time not spent running tasks
+ 	return table;
