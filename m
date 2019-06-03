@@ -2,98 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 157B5337E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 20:33:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D94D337EB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 20:34:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726681AbfFCSdH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 14:33:07 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:15140 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726112AbfFCSdG (ORCPT
+        id S1726660AbfFCSeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 14:34:09 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:38977 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726112AbfFCSeI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 14:33:06 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cf567e00000>; Mon, 03 Jun 2019 11:33:04 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 03 Jun 2019 11:33:05 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 03 Jun 2019 11:33:05 -0700
-Received: from [10.26.11.157] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 3 Jun
- 2019 18:33:02 +0000
-Subject: Re: [PATCH 4.19 00/32] 4.19.48-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
-References: <20190603090308.472021390@linuxfoundation.org>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <87bedfca-5d88-a697-1f10-25fe964d69a3@nvidia.com>
-Date:   Mon, 3 Jun 2019 19:33:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Mon, 3 Jun 2019 14:34:08 -0400
+Received: by mail-pf1-f193.google.com with SMTP id j2so11099350pfe.6
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 11:34:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OMm3tcPOrrK8tIoq8oT9gk0/r727fXOc1tebJgYu2Sw=;
+        b=ZEy6TWExPeP5gABfGQNd1Z7UgaOyMyRV5h3+HhRUFWa9YK4pIKlzz9hm8yasAXu1Z7
+         uSI/5H14hoCeAy70BDaQN11YQsoDp5nlp6K5FRHWVqJiCjhnBnuxrLAVjhVL2MEEMucO
+         ArMLSNFye5QXV42DdZrv7mC3u86TzX7IJwSMk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OMm3tcPOrrK8tIoq8oT9gk0/r727fXOc1tebJgYu2Sw=;
+        b=fl8hKg93NABM5gqbu2OIXZtK1xDDJmzxul6HNzf7BY19ZGUmW9mHsgD56gond5nW1e
+         lvosNzP0lW7gZseGkIh0GvDQzW4P/32/XtixhJ1q/2tNGLNYWAR6PiFx1c9kKIhVBXSx
+         S87ggQ1OZ6VcfAk6Bbyt/ugXmOD+d9ck3ZB29LT3bAKmgepPSoqHSr6dq/iSBkpb67jC
+         SIRGlrzbTJwyLTTCC5PYFXJH4MvCrT+04hPGJPVT7wmGIa29/tuHh63xp2+sM5+oWUS/
+         xFHS+rM49G/5T14OhZnRmMhyy+0WgQTsDjoRnLfoPVWjpIQxB1SfLzQsBartYyfNiZgF
+         qREA==
+X-Gm-Message-State: APjAAAWahKF0d6rnedHNmrGoMtOrjv/AZJZULbBKdUKzBWlkuqboUBSN
+        Ruag27QjZY8l2ySg/SvbvAZiFw==
+X-Google-Smtp-Source: APXvYqwBmiL5k+2ddQT3SaivO2LUTpE1S9J9MlaHPCVbvu7tNhvMpErqzNivenjCl/SMFrlSdiCNDw==
+X-Received: by 2002:a63:6c87:: with SMTP id h129mr30982099pgc.427.1559586846808;
+        Mon, 03 Jun 2019 11:34:06 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:3c8f:512b:3522:dfaf])
+        by smtp.gmail.com with ESMTPSA id y24sm1611759pfn.63.2019.06.03.11.34.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Jun 2019 11:34:06 -0700 (PDT)
+From:   Gwendal Grignou <gwendal@chromium.org>
+To:     enric.balletbo@collabora.com, bleung@chromium.org,
+        groeck@chromium.org, lee.jones@linaro.org, jic23@kernel.org,
+        broonie@kernel.org, cychiang@chromium.org, tiwai@suse.com,
+        fabien.lahoudere@collabora.com
+Cc:     linux-iio@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org,
+        Gwendal Grignou <gwendal@chromium.org>
+Subject: [RESEND PATCH v3 00/30] Update cros_ec_commands.h
+Date:   Mon,  3 Jun 2019 11:33:31 -0700
+Message-Id: <20190603183401.151408-1-gwendal@chromium.org>
+X-Mailer: git-send-email 2.22.0.rc1.311.g5d7573a151-goog
 MIME-Version: 1.0
-In-Reply-To: <20190603090308.472021390@linuxfoundation.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1559586784; bh=u+wT24mGyHsbtfP2s/PCxFI9aBFkb1je47cecOWWjtg=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=A3TCvfX00eCyOkJR/lHdsD5rB1AG9tggA4TWpheR/52rBnWtQZnfw/hCuld3CFxt6
-         9BCjrvH/h2aX534SvEAxecCWJGjvDQaWnjXzoQfc34/xwqUF7Or8x/zTdazg/WdgEt
-         OZrtcGZp6a8aoZMIhqTqF1ef9ydwMSdLQCgW5oUjs17o836rRjI1JZO7YY2l13iu/F
-         VqA21gwSbEFqxj+DJst7I1An3Jgoue3K03fAGRdJJPq/Xv2+b4HedDN+9dxDUOEfiv
-         xsDfg6eIF7YRgEuS9cjnm6+GBwz1sND/dODpRASVUiWXJswHURy2GatG/Ho/r7vR/S
-         Qc72yClYjV4xA==
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The interface between CrosEC embedded controller and the host,
+described by cros_ec_commands.h, as diverged from what the embedded
+controller really support.
 
-On 03/06/2019 10:07, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.48 release.
-> There are 32 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed 05 Jun 2019 09:02:49 AM UTC.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.48-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+The source of thruth is at
+https://chromium.googlesource.com/chromiumos/platform/ec/+/master/include/ec_commands.h
 
-All tests are passing for Tegra ...
+That include file is converted to remove ACPI and Embedded only code.
 
-Test results for stable-v4.19:
-    12 builds:	12 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    32 tests:	32 pass, 0 fail
+From now on, cros_ec_commands.h will be automatically generated from
+the file above, do not modify directly.
 
-Linux version:	4.19.48-rc1-g322f407
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
+Fell free to squash the commits below.
 
-Cheers
-Jon
+v3 resent: Add Fabien's ack.
+
+Changes in v3:
+- Rebase after commit 81888d8ab1532 ("mfd: cros_ec: Update the EC feature codes")
+- Add Acked-by: Benson Leung <bleung@chromium.org>
+Reviewed-by: Fabien Lahoudere <fabien.lahoudere@collabora.com>
+
+Changes in v2:
+- Move I2S changes at the end of the patchset, squashed with change in
+  sound/soc/codecs/cros_ec_codec.c to match new interface.
+- Add Acked-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+
+Gwendal Grignou (30):
+  mfd: cros_ec: Update license term
+  mfd: cros_ec: Zero BUILD_ macro
+  mfd: cros_ec: set comments properly
+  mfd: cros_ec: add ec_align macros
+  mfd: cros_ec: Define commands as 4-digit UPPER CASE hex values
+  mfd: cros_ec: use BIT macro
+  mfd: cros_ec: Update ACPI interface definition
+  mfd: cros_ec: move HDMI CEC API definition
+  mfd: cros_ec: Remove zero-size structs
+  mfd: cros_ec: Add Flash V2 commands API
+  mfd: cros_ec: Add PWM_SET_DUTY API
+  mfd: cros_ec: Add lightbar v2 API
+  mfd: cros_ec: Expand hash API
+  mfd: cros_ec: Add EC transport protocol v4
+  mfd: cros_ec: Complete MEMS sensor API
+  mfd: cros_ec: Fix event processing API
+  mfd: cros_ec: Add fingerprint API
+  mfd: cros_ec: Fix temperature API
+  mfd: cros_ec: Complete Power and USB PD API
+  mfd: cros_ec: Add API for keyboard testing
+  mfd: cros_ec: Add Hibernate API
+  mfd: cros_ec: Add Smart Battery Firmware update API
+  mfd: cros_ec: Add I2C passthru protection API
+  mfd: cros_ec: Add API for EC-EC communication
+  mfd: cros_ec: Add API for Touchpad support
+  mfd: cros_ec: Add API for Fingerprint support
+  mfd: cros_ec: Add API for rwsig
+  mfd: cros_ec: Add SKU ID and Secure storage API
+  mfd: cros_ec: Add Management API entry points
+  mfd: cros_ec: Update I2S API
+
+ include/linux/mfd/cros_ec_commands.h | 3658 ++++++++++++++++++++------
+ sound/soc/codecs/cros_ec_codec.c     |    8 +-
+ 2 files changed, 2915 insertions(+), 751 deletions(-)
 
 -- 
-nvpublic
+2.21.0.1020.gf2820cf01a-goog
+
