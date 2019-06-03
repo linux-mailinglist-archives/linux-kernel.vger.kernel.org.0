@@ -2,46 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEB1632BED
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:14:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A60C732BD3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:12:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728726AbfFCJMz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 05:12:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60988 "EHLO mail.kernel.org"
+        id S1728560AbfFCJMA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 05:12:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728693AbfFCJMr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 05:12:47 -0400
+        id S1728546AbfFCJL5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 05:11:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4856F245B9;
-        Mon,  3 Jun 2019 09:12:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 17F8327E78;
+        Mon,  3 Jun 2019 09:11:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559553166;
-        bh=erX6YxDH2r6uXzI9LcRs8ZHxY09bIc1J7b+RmnL8fMQ=;
+        s=default; t=1559553116;
+        bh=WErwZMQyPgreMbLYiOkZR0ikTQOzKpZqE6LfbGPexJM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aS91T9+Xmh5q7CpqlkXFGskdaGSaVzQkIHi7J9piv3sQRgupXj1aDCh0CS2xxCMqy
-         vKlqJlhRVuGeTaMWIlfaTwGkC1izpru7sfz9fABBamKe4R+fryWzZnwu8wXSdTovyj
-         /5pFSu5wDabtuIL5D1/N+JiPpqcH/bSdmUAU2JWM=
+        b=Hqlvgcs1hv+QqvqKEwbRVc6qqFTkTLIpeGVMIZ4JKT+AGg+eQtd8F9oUfDIbqrr7o
+         o6OV60jLLFZL38IimT96ESznxL/jXCkJfGMM/i/OIFXYL660HBenJgqaE0pa2Xaumj
+         TPbdeqT4Gsy/y64/kLtsEawDPVn1G811ZH05NGmU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jay Vosburgh <j.vosburgh@gmail.com>,
-        Veaceslav Falico <vfalico@gmail.com>,
-        Andy Gospodarek <andy@greyhouse.net>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Heesoon Kim <Heesoon.Kim@stratus.com>,
-        Jarod Wilson <jarod@redhat.com>,
-        Jay Vosburgh <jay.vosburgh@canonical.com>
-Subject: [PATCH 5.1 01/40] bonding/802.3ad: fix slave link initialization transition states
-Date:   Mon,  3 Jun 2019 11:08:54 +0200
-Message-Id: <20190603090522.709589250@linuxfoundation.org>
+        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.0 07/36] ipv6: Fix redirect with VRF
+Date:   Mon,  3 Jun 2019 11:08:55 +0200
+Message-Id: <20190603090521.437510938@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190603090522.617635820@linuxfoundation.org>
-References: <20190603090522.617635820@linuxfoundation.org>
+In-Reply-To: <20190603090520.998342694@linuxfoundation.org>
+References: <20190603090520.998342694@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -50,67 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jarod Wilson <jarod@redhat.com>
+From: David Ahern <dsahern@gmail.com>
 
-[ Upstream commit 334031219a84b9994594015aab85ed7754c80176 ]
+[ Upstream commit 31680ac265802397937d75461a2809a067b9fb93 ]
 
-Once in a while, with just the right timing, 802.3ad slaves will fail to
-properly initialize, winding up in a weird state, with a partner system
-mac address of 00:00:00:00:00:00. This started happening after a fix to
-properly track link_failure_count tracking, where an 802.3ad slave that
-reported itself as link up in the miimon code, but wasn't able to get a
-valid speed/duplex, started getting set to BOND_LINK_FAIL instead of
-BOND_LINK_DOWN. That was the proper thing to do for the general "my link
-went down" case, but has created a link initialization race that can put
-the interface in this odd state.
+IPv6 redirect is broken for VRF. __ip6_route_redirect walks the FIB
+entries looking for an exact match on ifindex. With VRF the flowi6_oif
+is updated by l3mdev_update_flow to the l3mdev index and the
+FLOWI_FLAG_SKIP_NH_OIF set in the flags to tell the lookup to skip the
+device match. For redirects the device match is requires so use that
+flag to know when the oif needs to be reset to the skb device index.
 
-The simple fix is to instead set the slave link to BOND_LINK_DOWN again,
-if the link has never been up (last_link_up == 0), so the link state
-doesn't bounce from BOND_LINK_DOWN to BOND_LINK_FAIL -- it hasn't failed
-in this case, it simply hasn't been up yet, and this prevents the
-unnecessary state change from DOWN to FAIL and getting stuck in an init
-failure w/o a partner mac.
-
-Fixes: ea53abfab960 ("bonding/802.3ad: fix link_failure_count tracking")
-CC: Jay Vosburgh <j.vosburgh@gmail.com>
-CC: Veaceslav Falico <vfalico@gmail.com>
-CC: Andy Gospodarek <andy@greyhouse.net>
-CC: "David S. Miller" <davem@davemloft.net>
-CC: netdev@vger.kernel.org
-Tested-by: Heesoon Kim <Heesoon.Kim@stratus.com>
-Signed-off-by: Jarod Wilson <jarod@redhat.com>
-Acked-by: Jay Vosburgh <jay.vosburgh@canonical.com>
+Fixes: ca254490c8df ("net: Add VRF support to IPv6 stack")
+Signed-off-by: David Ahern <dsahern@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/bonding/bond_main.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ net/ipv6/route.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -3122,13 +3122,18 @@ static int bond_slave_netdev_event(unsig
- 	case NETDEV_CHANGE:
- 		/* For 802.3ad mode only:
- 		 * Getting invalid Speed/Duplex values here will put slave
--		 * in weird state. So mark it as link-fail for the time
--		 * being and let link-monitoring (miimon) set it right when
--		 * correct speeds/duplex are available.
-+		 * in weird state. Mark it as link-fail if the link was
-+		 * previously up or link-down if it hasn't yet come up, and
-+		 * let link-monitoring (miimon) set it right when correct
-+		 * speeds/duplex are available.
- 		 */
- 		if (bond_update_speed_duplex(slave) &&
--		    BOND_MODE(bond) == BOND_MODE_8023AD)
--			slave->link = BOND_LINK_FAIL;
-+		    BOND_MODE(bond) == BOND_MODE_8023AD) {
-+			if (slave->last_link_up)
-+				slave->link = BOND_LINK_FAIL;
-+			else
-+				slave->link = BOND_LINK_DOWN;
-+		}
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -2448,6 +2448,12 @@ static struct rt6_info *__ip6_route_redi
+ 	struct fib6_info *rt;
+ 	struct fib6_node *fn;
  
- 		if (BOND_MODE(bond) == BOND_MODE_8023AD)
- 			bond_3ad_adapter_speed_duplex_changed(slave);
++	/* l3mdev_update_flow overrides oif if the device is enslaved; in
++	 * this case we must match on the real ingress device, so reset it
++	 */
++	if (fl6->flowi6_flags & FLOWI_FLAG_SKIP_NH_OIF)
++		fl6->flowi6_oif = skb->dev->ifindex;
++
+ 	/* Get the "current" route for this destination and
+ 	 * check if the redirect has come from appropriate router.
+ 	 *
 
 
