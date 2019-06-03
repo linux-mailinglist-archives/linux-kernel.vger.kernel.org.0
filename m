@@ -2,141 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C26FE330E0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:20:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87A48330E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:21:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728574AbfFCNU0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 09:20:26 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:42291 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726360AbfFCNU0 (ORCPT
+        id S1728593AbfFCNVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 09:21:14 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:44812 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726336AbfFCNVN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 09:20:26 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x53DKEnA606748
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 3 Jun 2019 06:20:15 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x53DKEnA606748
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1559568015;
-        bh=w+97sUoxh7aXFSaM+YX5AeARnMCTvJK9stemRThqBvo=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=lhaWEFoPNh4OPdihfbJlkXIDCp5Zcwa1ZCVs6GcOpJ0LCgt+UJjUhwisUQVc7GD3v
-         BoFxyIFKaN9zhcC62mavNdyAXsP92rHDh99I6OVfgxMiB6TIzOYTime/z344QtNSF+
-         DHasEl4rDW62oGYcddTVm9fFCGSM6JgnPSitP2O1YGgEquTLhYr75Nr2pK7GDuwJ0g
-         3eDLXf6Gtt9l4G12ZHfT+c6FRseyMvwrBF7DYV/nn1sH3c1/oFNygYhWLhcy2189Et
-         vL2if/YFemiW4Y+4G9I+KF5UrCZedr+esfc8e2gpPO94uu7NznJqMMWS4FT/F5MRZT
-         VpiXn2N0VXHjg==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x53DKEhP606745;
-        Mon, 3 Jun 2019 06:20:14 -0700
-Date:   Mon, 3 Jun 2019 06:20:14 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Yuyang Du <tipbot@zytor.com>
-Message-ID: <tip-68e9dc29f8f42c79d2a3755223ed910ce36b4ae2@git.kernel.org>
-Cc:     hpa@zytor.com, torvalds@linux-foundation.org, peterz@infradead.org,
-        duyuyang@gmail.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, mingo@kernel.org
-Reply-To: mingo@kernel.org, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, hpa@zytor.com,
-          peterz@infradead.org, torvalds@linux-foundation.org,
-          duyuyang@gmail.com
-In-Reply-To: <20190506081939.74287-21-duyuyang@gmail.com>
-References: <20190506081939.74287-21-duyuyang@gmail.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] locking/lockdep: Check redundant dependency only
- when CONFIG_LOCKDEP_SMALL
-Git-Commit-ID: 68e9dc29f8f42c79d2a3755223ed910ce36b4ae2
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 3 Jun 2019 09:21:13 -0400
+Received: by mail-ed1-f68.google.com with SMTP id b8so26877123edm.11;
+        Mon, 03 Jun 2019 06:21:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zUZXyuZyG2fDHsGvmi+k7bXfPwkhPnoz7sk7xMguNts=;
+        b=ombLNLEaF/dFYAicRp2VoKFrkfCYOqTVTAkLZD4bpMiRzOLoLKdG4QuF1LUCIDERjI
+         9nh8/D1Dmnh1QItnCTXmxbAahU1gtgAYQ0pDKCRsFsjMXOMMgiKZJ2uY0R/Jhe20DHR5
+         U34UETveyU0xFGQMqw6+DC4o55r3lOPN5QNA2GCjyaAyTv/UOoe56m/faFSCjtkguOnw
+         Y6sE+Nu256ykweXIkvNxVunSA2c21HCDKqnhoG8GS3lJFerLLZcOY2Nhov1GRDlzSMMl
+         5WLNDHK7k1IXXW+dCeCSt2tTHplLmDWdFlRgXMAj3uiLlW41gmqy5HJLitsfJiuYljfp
+         PDJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zUZXyuZyG2fDHsGvmi+k7bXfPwkhPnoz7sk7xMguNts=;
+        b=kZN1LlybrkTy8mEY22pUFS42bxch1S6630UYVp0VpaPITAWSUPJFqycKViwByv3Wcu
+         ViI1Smk/7jZGSdLnuaidu1hv0I8seMHnpPzmqSxwLvFMsR4IyJXPbLztY1RjUVcHi2Qe
+         2H7X3+7DRh1nKOBtCCfR2yKAMM6acnSsToCNenJErye6oMkyc8cBQ0XTMAXMpwBUZoO9
+         bwJgww3C4sc8kvvvbERcf9U1BqQk0saoSiT+SLyd/LHNawhASIXto6Q5ToWsUjQI6JxT
+         hY5s4AFMUMyhb14cNB4wlPOACgQl1BKzC+u/ctCQkUnTP8O9KXweRJqWHWq/QH/07ra7
+         hD7g==
+X-Gm-Message-State: APjAAAX3lCDNMq1/47JUUJLDUVbLu4L66PWeYHLQl+YFWHq3cYlfbV7H
+        aaphO7b1W6qGSNCJ84KwpqbQQWKOt6nfpohNTxk=
+X-Google-Smtp-Source: APXvYqyKo7O9gwJcMEKm78nevLJSasxgDOvAf3Bu9lrKU3SGNfxGO3bGLZsPCGJciHrCkDKyNdKoIOvLbGurRikTp7A=
+X-Received: by 2002:a50:a7a5:: with SMTP id i34mr28554346edc.294.1559568070994;
+ Mon, 03 Jun 2019 06:21:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+References: <20181201165348.24140-1-robdclark@gmail.com> <CAL_JsqJmPqis46Un91QyhXgdrVtfATMP_hTp6wSeSAfc8MLFfw@mail.gmail.com>
+ <CAF6AEGs9Nsft8ofZkGz_yWBPBC+prh8dBSkJ4PJr8yk2c5FMdQ@mail.gmail.com>
+ <CAF6AEGt-dhbQS5zZCNVTLT57OiUwO0RiP5bawTSu2RKZ-7W-aw@mail.gmail.com>
+ <CAAFQd5BdrJFL5LKK8O5NPDKWfFgkTX_JU-jU3giEz33tj-jwCA@mail.gmail.com>
+ <CAF6AEGtj+kyXqKeJK2-0e1jw_A4wz-yBEyv5zhf5Vfoi2_p2CA@mail.gmail.com> <401f9948-14bd-27a2-34c1-fb429cae966d@arm.com>
+In-Reply-To: <401f9948-14bd-27a2-34c1-fb429cae966d@arm.com>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Mon, 3 Jun 2019 06:20:57 -0700
+Message-ID: <CAF6AEGuGGAThqs9ztTNyGnMyhFc9wbtn=N8A4qqQxcN_PAxsEw@mail.gmail.com>
+Subject: Re: [PATCH] of/device: add blacklist for iommu dma_ops
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Tomasz Figa <tfiga@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  68e9dc29f8f42c79d2a3755223ed910ce36b4ae2
-Gitweb:     https://git.kernel.org/tip/68e9dc29f8f42c79d2a3755223ed910ce36b4ae2
-Author:     Yuyang Du <duyuyang@gmail.com>
-AuthorDate: Mon, 6 May 2019 16:19:36 +0800
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 3 Jun 2019 11:55:50 +0200
+On Mon, Jun 3, 2019 at 4:14 AM Robin Murphy <robin.murphy@arm.com> wrote:
+>
+> On 03/06/2019 11:47, Rob Clark wrote:
+> > On Sun, Jun 2, 2019 at 11:25 PM Tomasz Figa <tfiga@chromium.org> wrote:
+> >>
+> >> On Mon, Jun 3, 2019 at 4:40 AM Rob Clark <robdclark@gmail.com> wrote:
+> >>>
+> >>> So, another case I've come across, on the display side.. I'm working
+> >>> on handling the case where bootloader enables display (and takes iommu
+> >>> out of reset).. as soon as DMA domain gets attached we get iommu
+> >>> faults, because bootloader has already configured display for scanout.
+> >>> Unfortunately this all happens before actual driver is probed and has
+> >>> a chance to intervene.
+> >>>
+> >>> It's rather unfortunate that we tried to be clever rather than just
+> >>> making drivers call some function to opt-in to the hookup of dma iommu
+> >>> ops :-(
+> >>
+> >> I think it still works for the 90% of cases and if 10% needs some
+> >> explicit work in the drivers, that's better than requiring 100% of the
+> >> drivers to do things manually.
+>
+> Right, it's not about "being clever", it's about not adding opt-in code
+> to the hundreds and hundreds and hundreds of drivers which *might* ever
+> find themselves used on a system where they would need the IOMMU's help
+> for DMA.
 
-locking/lockdep: Check redundant dependency only when CONFIG_LOCKDEP_SMALL
+Well, I mean, at one point we didn't do the automatic iommu hookup, we
+could have just stuck with that and added a helper so drivers could
+request the hookup.  Things wouldn't have been any more broken than
+before, and when people bring up systems where iommu is required, they
+could have added the necessary dma_iommu_configure() call.  But that
+is water under the bridge now.
 
-As Peter has put it all sound and complete for the cause, I simply quote:
+> >> Adding Marek who had the same problem on Exynos.
+> >
+> > I do wonder how many drivers need to iommu_map in their ->probe()?
+> > I'm thinking moving the auto-hookup to after a successful probe(),
+> > with some function a driver could call if they need mapping in probe,
+> > might be a way to eventually get rid of the blacklist.  But I've no
+> > idea how to find the subset of drivers that would be broken without a
+> > dma_setup_iommu_stuff() call in their probe.
+>
+> Wouldn't help much. That particular issue is nothing to do with DMA ops
+> really, it's about IOMMU initialisation. On something like SMMUv3 there
+> is literally no way to turn the thing on without blocking unknown
+> traffic - it *has* to have stream table entries programmed before it can
+> even allow stuff to bypass.
 
-"It (check_redundant) was added for cross-release (which has since been
-reverted) which would generate a lot of redundant links (IIRC) but
-having it makes the reports more convoluted -- basically, if we had an
-A-B-C relation, then A-C will not be added to the graph because it is
-already covered. This then means any report will include B, even though
-a shorter cycle might have been possible."
+fwiw, on these sdm850 laptops (and I think sdm845 boards like mtp and
+db845c) the SMMU (v2) is taken out of bypass by the bootloader.  Bjorn
+has some patches for arm-smmu to read-back the state at boot.
 
-This would increase the number of direct dependencies. For a simple workload
-(make clean; reboot; make vmlinux -j8), the data looks like this:
+(Although older devices were booting with display enabled but SMMU in bypass.)
 
- CONFIG_LOCKDEP_SMALL: direct dependencies:                  6926
+> The answer is either to either pay attention to the "Quiesce all DMA
+> capable devices" part of the boot protocol (which has been there since
+> pretty much forever), or to come up with some robust way of
+> communicating "live" boot-time mappings to IOMMU drivers so that they
+> can program themselves appropriately during probe.
 
-!CONFIG_LOCKDEP_SMALL: direct dependencies:                  9052    (+30.7%)
+Unfortunately display lit up by bootloader is basically ubiquitous.
+Every single android phone does it.  All of the windows-arm laptops do
+it.  Basically 99.9% of things that have a display do it.  It's a
+tough problem to solve involving clks, gdsc, regulators, etc, in
+addition to the display driver.. and sadly now smmu.  And devices
+where we can make changes to and update the firmware are rather rare.
+So there is really no option to ignore this problem.
 
-Suggested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Yuyang Du <duyuyang@gmail.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: bvanassche@acm.org
-Cc: frederic@kernel.org
-Cc: ming.lei@redhat.com
-Cc: will.deacon@arm.com
-Link: https://lkml.kernel.org/r/20190506081939.74287-21-duyuyang@gmail.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/locking/lockdep.c | 4 ++++
- 1 file changed, 4 insertions(+)
+I guess if we had some early-quirks mechanism like x86 does, we could
+mash the display off early in boot.  That would be an easy solution.
+Although I'd prefer a proper solution so that android phones aren't
+carrying around enormous stacks of hack patches to achieve a smooth
+flicker-free boot.
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 30a1c0e32573..63b82921698d 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -1739,6 +1739,7 @@ check_noncircular(struct held_lock *src, struct held_lock *target,
- 	return ret;
- }
- 
-+#ifdef CONFIG_LOCKDEP_SMALL
- /*
-  * Check that the dependency graph starting at <src> can lead to
-  * <target> or not. If it can, <src> -> <target> dependency is already
-@@ -1768,6 +1769,7 @@ check_redundant(struct held_lock *src, struct held_lock *target)
- 
- 	return ret;
- }
-+#endif
- 
- #ifdef CONFIG_TRACE_IRQFLAGS
- 
-@@ -2428,12 +2430,14 @@ check_prev_add(struct task_struct *curr, struct held_lock *prev,
- 		}
- 	}
- 
-+#ifdef CONFIG_LOCKDEP_SMALL
- 	/*
- 	 * Is the <prev> -> <next> link redundant?
- 	 */
- 	ret = check_redundant(prev, next);
- 	if (ret != 1)
- 		return ret;
-+#endif
- 
- 	if (!trace->nr_entries && !save_trace(trace))
- 		return 0;
+I suppose arm-smmu could realize that the context bank is already
+taken out of bypass..  although I'm not entirely sure if we can assume
+that the CPU would be able to read back the pagetable setup by the
+bootloader.  Maybe Vivek has an idea about that?
+
+BR,
+-R
