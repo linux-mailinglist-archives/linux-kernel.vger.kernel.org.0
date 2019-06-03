@@ -2,120 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FC10336FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 19:43:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EB3E33708
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 19:45:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728606AbfFCRnB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 13:43:01 -0400
-Received: from mga04.intel.com ([192.55.52.120]:56237 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726635AbfFCRnB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 13:43:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 10:43:00 -0700
-X-ExtLoop1: 1
-Received: from linux.intel.com ([10.54.29.200])
-  by FMSMGA003.fm.intel.com with ESMTP; 03 Jun 2019 10:43:00 -0700
-Received: from [10.251.11.94] (kliang2-mobl.ccr.corp.intel.com [10.251.11.94])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id 8A84D5801E6;
-        Mon,  3 Jun 2019 10:42:59 -0700 (PDT)
-Subject: Re: [PATCH V2 3/5] perf stat: Support per-die aggregation
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        ak@linux.intel.com
-References: <1559228029-5876-1-git-send-email-kan.liang@linux.intel.com>
- <1559228029-5876-3-git-send-email-kan.liang@linux.intel.com>
- <20190603163636.GC12203@krava>
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <cc4eea9a-e18e-af7e-2290-98727fce2f6a@linux.intel.com>
-Date:   Mon, 3 Jun 2019 13:42:58 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1728922AbfFCRo4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 13:44:56 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:35688 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727415AbfFCRo4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 13:44:56 -0400
+Received: by mail-ed1-f66.google.com with SMTP id p26so28067198edr.2;
+        Mon, 03 Jun 2019 10:44:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UvPJ0pMiZoixpn1vorRDAMa+r0PwCmpA/CAl7+RUBFU=;
+        b=mDpQCM0tAqeODReAP8OTV9DQoxN3yLTrbJtlUsVjnmtI/1iuLx7p9FbWDiC0DYh6UQ
+         Y0jCK+ksupdzG1tNrJR5ovgGWsKJ78pddBKDrQ33b4nE4T0Iw58uPk+joii9Zs8Fj7tA
+         UFLSIUl8IF4g9SukjZM3OHserAnn95viimi3WLCbD1Q2sx2tghWyqFQFfOWOgCLR8sk+
+         J5e7xvriKldbYic86yWsDLSX8O+We57jRa9t30ZRAN79w2hxdd3Ts2NDWXdaC3si33zD
+         +fd75c1OaYBe1maShaI11cbdIvM7wrX0TRoEYAXqBQW2Aw1PvXbI2y4M5QySroTMvWmp
+         33ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UvPJ0pMiZoixpn1vorRDAMa+r0PwCmpA/CAl7+RUBFU=;
+        b=PlKiAmyiO6SsAOsF5rBhpNK4Vs8z0G17c9q8bXuHJd40+bZ3wIaYYo/zPNOlR9W8FU
+         XYtHulO6wuLWaGCwkwSzf9qhnqi9AEIyEN7+Q3tzTV3h5h6DL+2LV38+trBIKHsa6ftq
+         giuu2vagx4GJ/D1RkTY2afiH7Pe6tU2peLszlLOKl9eLd06y3ZNVo40JHWsUiiNVEUsi
+         LGGyxmRvJJSKpClBPqXNMAyG1+iet9xjbCVGmltcrfpF/GYQzI/nqYEmNppHgp9Qh8Ej
+         E6+0epcthni28ZptPQWF65kPm3yE5CldIQ4un3XTmWAGk5x5g1ttiGmeEr79NZziqoLG
+         Vmdg==
+X-Gm-Message-State: APjAAAWvYj7csnULFpNEM/eSFo8gSWgGgIjoie4aZYb4Sl8DK4k7gOJz
+        mQ9PxNW8/Iw2ndQQxB0Gk2s=
+X-Google-Smtp-Source: APXvYqwYAH8FNbjJRPVG0DUMG7ZcBF+6mEqLYoc4xqQXZ9P5ym/vMa4fHhFVqcDLNjjZ9ibMHPZOTA==
+X-Received: by 2002:a17:906:951:: with SMTP id j17mr23314130ejd.174.1559583894230;
+        Mon, 03 Jun 2019 10:44:54 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f9:2b:2b15::2])
+        by smtp.gmail.com with ESMTPSA id i31sm266996edd.90.2019.06.03.10.44.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Jun 2019 10:44:53 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Tyrel Datwyler <tyreld@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] PCI: rpaphp: Avoid a sometimes-uninitialized warning
+Date:   Mon,  3 Jun 2019 10:43:23 -0700
+Message-Id: <20190603174323.48251-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.22.0.rc2
 MIME-Version: 1.0
-In-Reply-To: <20190603163636.GC12203@krava>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When building with -Wsometimes-uninitialized, clang warns:
 
+drivers/pci/hotplug/rpaphp_core.c:243:14: warning: variable 'fndit' is
+used uninitialized whenever 'for' loop exits because its condition is
+false [-Wsometimes-uninitialized]
+        for (j = 0; j < entries; j++) {
+                    ^~~~~~~~~~~
+drivers/pci/hotplug/rpaphp_core.c:256:6: note: uninitialized use occurs
+here
+        if (fndit)
+            ^~~~~
+drivers/pci/hotplug/rpaphp_core.c:243:14: note: remove the condition if
+it is always true
+        for (j = 0; j < entries; j++) {
+                    ^~~~~~~~~~~
+drivers/pci/hotplug/rpaphp_core.c:233:14: note: initialize the variable
+'fndit' to silence this warning
+        int j, fndit;
+                    ^
+                     = 0
 
-On 6/3/2019 12:36 PM, Jiri Olsa wrote:
-> On Thu, May 30, 2019 at 07:53:47AM -0700, kan.liang@linux.intel.com wrote:
-> 
-> SNIP
-> 
->> +
->>   static int perf_env__get_core(struct cpu_map *map, int idx, void *data)
->>   {
->>   	struct perf_env *env = data;
->>   	int core = -1, cpu = perf_env__get_cpu(env, map, idx);
->>   
->>   	if (cpu != -1) {
->> -		int socket_id = env->cpu[cpu].socket_id;
->> -
->>   		/*
->> -		 * Encode socket in upper 16 bits
->> -		 * core_id is relative to socket, and
->> +		 * Encode socket in upper 24 bits
-> 
-> please note we use upper 8 bits for socket number,
-> the comments suggests it's 24 bits
+Looking at the loop in a vacuum as clang would, fndit could be
+uninitialized if entries was ever zero or the if statement was
+always true within the loop. Regardless of whether or not this
+warning is a problem in practice, "found" variables should always
+be initialized to false so that there is no possibility of
+undefined behavior.
 
-I will fix it in v3.
+Link: https://github.com/ClangBuiltLinux/linux/issues/504
+Fixes: 2fcf3ae508c2 ("hotplug/drc-info: Add code to search ibm,drc-info property")
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/pci/hotplug/rpaphp_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
->> +		 * encode die id in upper 16 bits
->> +		 * core_id is relative to socket and die,
->>   		 * we need a global id. So we combine
->> -		 * socket + core id.
->> +		 * socket + die id + core id
->>   		 */
->> -		core = (socket_id << 16) | (env->cpu[cpu].core_id & 0xffff);
->> +		if (WARN_ONCE(env->cpu[cpu].socket_id >> 8,
->> +		    "The socket_id number is too big. Please upgrade the perf tool.\n"))
-> 
-> hum, how's perf tool upgrade going to help in here?
+diff --git a/drivers/pci/hotplug/rpaphp_core.c b/drivers/pci/hotplug/rpaphp_core.c
+index bcd5d357ca23..07b56bf2886f 100644
+--- a/drivers/pci/hotplug/rpaphp_core.c
++++ b/drivers/pci/hotplug/rpaphp_core.c
+@@ -230,7 +230,7 @@ static int rpaphp_check_drc_props_v2(struct device_node *dn, char *drc_name,
+ 	struct of_drc_info drc;
+ 	const __be32 *value;
+ 	char cell_drc_name[MAX_DRC_NAME_LEN];
+-	int j, fndit;
++	int j, fndit = 0;
+ 
+ 	info = of_find_property(dn->parent, "ibm,drc-info", NULL);
+ 	if (info == NULL)
+-- 
+2.22.0.rc2
 
-
-I think there is nothing we can do for current encoding, if the socket 
-number or die number is bigger than 8 bits. We have to design a new 
-encoding method, which needs to update the perf tool.
-So I use a similar expression from process_cpu_topology().
-		if (do_core_id_test && nr != (u32)-1 && nr > (u32)cpu_nr) {
-			pr_debug("socket_id number is too big."
-				 "You may need to upgrade the perf tool.\n");
-			goto free_cpu;
-		}
-
-Any suggestions for the warning message?
-
-
-
-> 
->> +			return -1;
->> +
->> +		if (WARN_ONCE(env->cpu[cpu].die_id >> 8,
->> +		    "The die_id number is too big. Please upgrade the perf tool.\n"))
->> +			return -1;
->> +
->> +		core = (env->cpu[cpu].socket_id << 24) |
->> +		       (env->cpu[cpu].die_id << 16) |
->> +		       (env->cpu[cpu].core_id & 0xffff);
->>   	}
-> 
-> other than comments above, the patchset looks good to me
->
-
-Thanks for the review. I will send out V3 after the comments are addressed.
-
-Thanks,
-Kan
