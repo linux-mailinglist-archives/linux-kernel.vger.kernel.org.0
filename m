@@ -2,102 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DEE433B0B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:18:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A264F33B0F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:21:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbfFCWSp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 18:18:45 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38038 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbfFCWSp (ORCPT
+        id S1726717AbfFCWU7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 18:20:59 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:42556 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbfFCWU7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 18:18:45 -0400
-Received: by mail-pg1-f194.google.com with SMTP id v11so9065531pgl.5
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 15:18:45 -0700 (PDT)
+        Mon, 3 Jun 2019 18:20:59 -0400
+Received: by mail-ed1-f68.google.com with SMTP id z25so2965139edq.9;
+        Mon, 03 Jun 2019 15:20:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=lng3YCfvWetNAz2+44DaHDxjjqaun6E9sSpFqRzVz88=;
-        b=swVmE75Gx9Icf78XSIxk0xvUmHLSxKYl4ZJf6JejS2/x2g/+q3CBP1aebGn9Vh7xnq
-         HCt9rTiXWhZISUMAu/ATX+gJckPqApnN8GQH2CRXsvMb567x7Rr3miNccLFWWebgI061
-         9qweJrPVvZ9ZWI0J82decXcuBhHRMOy5uTEBuhQdoMU1vS7NCJcEoDWh9Xz3VwgFWsU8
-         npBt6fkSqvCHEt9pUAT9lq84e8bQunHY1NuIMzcK+KvyCY32GrZ44PEzTQLw9B3l2QMD
-         5jvv5crEUgKIM/SjAA4VIMl8AHEQTBT+Nhc1XB4u286VbUV3L5gs6SIvjnhUGYMYliaG
-         wjnA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=6SwsUdnmJqsKjqmMv1ig0nFgLQISlIZ4mL0Bgh3d+ww=;
+        b=rHbA+7ojNx2L8Y/O1X17tjfQ/ccJkMcflnR9LyPSByMs/+CaDM7588Ir9t9RCF6Tin
+         lNZZwQ9Gf0eaxcIBJmjzcKt2W/7xPDdtLNk3lqUkdPFDIqLQfWYVNK1FRCS6m8izMj8o
+         CR8zKd+dzcYJmoPDewqMUtr0ZbSeKyM9zcbLqCVtcX+d99RD0IWoF/R+GdWe40Jb+ghp
+         5EOciicMprv68Ht7k4mZyACACMbu85DqHslBZ5G3Oo68aNWaOSqAEOq69+ZZj5//eY+r
+         LpdPgsxdma7p37jEdVF6X/XXb3au94zh2bUhNBDUHRdrMUmk0e4c3GsyikXDu4Bjt3eQ
+         PDww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=lng3YCfvWetNAz2+44DaHDxjjqaun6E9sSpFqRzVz88=;
-        b=BAGUHhe9sNfvz53IHsYsAcpZFv3tvfbVsVUcjJYsvT+bbTqHdo5yL5N54asquAljvk
-         Re666fX8TmcIfXbnXzcF4s0HhAp8yDsN40PciwFOB9tKJKTaM7M71mddpUdtSiKtMAeP
-         WkJyJS+iyhb7VEt3R7rPvEk8Eg3tBYBdJaBV+g/4dR/VwWcn+LL1HktlhSVoWeKbr+Ue
-         QMK1M/zolFlO5x2BfxF6QBXDFlg/HJAU0PX77VnKJPO3NdCKmoTmagxteG6VDmKOwiWE
-         ZBxqnxSUK0wtVVzYDTpj3m/PE7vwetlQkaLjBsiyW0fB7se5UowTNmxFfaNLkYaPLidH
-         5fVA==
-X-Gm-Message-State: APjAAAUAmlNGhc49bTKb4BT1AbAdWDrTtdZLhqL3LskFNit82FlAitCi
-        6nCsrf2s8szNOR6Xm3NvVPiNJA==
-X-Google-Smtp-Source: APXvYqz1uHqZZKUs881sATdhhromAIfPEI6o4+UmjIEM+WLgGPKPchtRCk86aJfCmtLcNlhsietZTQ==
-X-Received: by 2002:a63:680a:: with SMTP id d10mr31248979pgc.117.1559600324710;
-        Mon, 03 Jun 2019 15:18:44 -0700 (PDT)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.googlemail.com with ESMTPSA id f2sm12757024pgs.83.2019.06.03.15.18.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Jun 2019 15:18:44 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     hex dump <hexdump0815@gmail.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] ARM: dts: meson8b: mxq: improve support for the TRONFY MXQ S805
-In-Reply-To: <CAKTihDVyQqq82KKofCTKoUYJOyT6T738uq_A=kiEqahDx9YQfA@mail.gmail.com>
-References: <20190524181936.29470-1-martin.blumenstingl@googlemail.com> <20190524181936.29470-2-martin.blumenstingl@googlemail.com> <CAKTihDVyQqq82KKofCTKoUYJOyT6T738uq_A=kiEqahDx9YQfA@mail.gmail.com>
-Date:   Mon, 03 Jun 2019 15:18:43 -0700
-Message-ID: <7hlfyiia7w.fsf@baylibre.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=6SwsUdnmJqsKjqmMv1ig0nFgLQISlIZ4mL0Bgh3d+ww=;
+        b=j3eIMRCrgDkGoAWQ8zUldsnwj55+6HcRqmJO5zs5ipr8avXK5OFFMd7uqodoooVE/Y
+         Sq7ik0zpx+XuWAdAEDxvp+AdA46jaL0GBXvjqDxCKVtfrrV/FfcxYETnO/CHFN1qCwKC
+         U394R4M5AGMo2iqtQYiwL2p2uaiJ1yAOVPqpqwS548+s5djDGELvGA3H1BdPWNBj72HD
+         Wh76v71yG6O+vutQvTIECvFZkZVKgAivtVG0xNU1bh/dLJlPz/gxQjHZnWUM69rWpSJg
+         fbfFhQMkKj3I4u5VPCACFPoaNnBFpkpEmL3OiCC6EGlDDiehmYY8QBMKNAuQHeZSuqWm
+         /N2g==
+X-Gm-Message-State: APjAAAWM00YO1Y0WYy6B/WocBB35GiJRjYtkYFhsgwrmo/ZhSTlyrPVS
+        pyTmr2HZ74nAnCQwSG83lLg=
+X-Google-Smtp-Source: APXvYqzntAHVC76B3HN+FQleN5MXwP0M+Bge4licIbThASXbaFHS9A4UtGAue+zV3RciZP5zzKQGDw==
+X-Received: by 2002:a50:a4f7:: with SMTP id x52mr31464852edb.86.1559600457550;
+        Mon, 03 Jun 2019 15:20:57 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f9:2b:2b15::2])
+        by smtp.gmail.com with ESMTPSA id j9sm1515579ejm.68.2019.06.03.15.20.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Jun 2019 15:20:56 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Tyrel Datwyler <tyreld@linux.ibm.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-scsi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH v2] scsi: ibmvscsi: Don't use rc uninitialized in ibmvscsi_do_work
+Date:   Mon,  3 Jun 2019 15:19:42 -0700
+Message-Id: <20190603221941.65432-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.22.0.rc3
+In-Reply-To: <20190531185306.41290-1-natechancellor@gmail.com>
+References: <20190531185306.41290-1-natechancellor@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hex dump <hexdump0815@gmail.com> writes:
+clang warns:
 
-> Am Fr., 24. Mai 2019 um 20:19 Uhr schrieb Martin Blumenstingl <
-> martin.blumenstingl@googlemail.com>:
->
->> The TRONFY MXQ comes with either 1GB or 2GB RAM.
->>
->> Both variants share (like most boards based on Amlogic reference
->> designs):
->> - 10/100 PHY (IC Plus IP101GR) with GPIOH_4 being the reset line and
->>   GPIOH_3 the interrupt line
->> - SD card slot with the card detection GPIO at CARD_6
->> - VCCK is generated by PWM_C with a period of 1148ns and XTAL as input
->>   clock
->> - USB OTG exposed on one of the USB-A connectors
->> - 4-port USB hub with 3 ports exposed to the outside
->>
->> There seem the multiple board revision out there according to various
->> forum posts:
->> - storage: eMMC or NAND flash
->> - wifi: Ampak AP6210 or Realtek 8189
->>
->> Add support for the following functionality:
->> - SoC temperature (hwmon)
->> - changing the CPU voltage
->> - Ethernet connectivity
->> - SD card
->> - USB
->>
->> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
->>
->
-> Tested-by: hexdump <hexdump0815@googlemail.com>
+drivers/scsi/ibmvscsi/ibmvscsi.c:2126:7: warning: variable 'rc' is used
+uninitialized whenever switch case is taken [-Wsometimes-uninitialized]
+        case IBMVSCSI_HOST_ACTION_NONE:
+             ^~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/scsi/ibmvscsi/ibmvscsi.c:2151:6: note: uninitialized use occurs
+here
+        if (rc) {
+            ^~
 
-Thanks for testing.
+Initialize rc to zero in the case statements that clang mentions so that
+the atomic_set and dev_err statement don't trigger for them.
 
-Queued for v5,3,
+Fixes: 035a3c4046b5 ("scsi: ibmvscsi: redo driver work thread to use enum action states")
+Link: https://github.com/ClangBuiltLinux/linux/issues/502
+Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
 
-Kevin
+v1 -> v2:
+
+* Initialize rc in the case statements, rather than at the top of the
+  function, as suggested by Michael.
+
+ drivers/scsi/ibmvscsi/ibmvscsi.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/scsi/ibmvscsi/ibmvscsi.c b/drivers/scsi/ibmvscsi/ibmvscsi.c
+index 65053daef5f7..3b5647d622d9 100644
+--- a/drivers/scsi/ibmvscsi/ibmvscsi.c
++++ b/drivers/scsi/ibmvscsi/ibmvscsi.c
+@@ -2109,9 +2109,6 @@ static void ibmvscsi_do_work(struct ibmvscsi_host_data *hostdata)
+ 
+ 	spin_lock_irqsave(hostdata->host->host_lock, flags);
+ 	switch (hostdata->action) {
+-	case IBMVSCSI_HOST_ACTION_NONE:
+-	case IBMVSCSI_HOST_ACTION_UNBLOCK:
+-		break;
+ 	case IBMVSCSI_HOST_ACTION_RESET:
+ 		spin_unlock_irqrestore(hostdata->host->host_lock, flags);
+ 		rc = ibmvscsi_reset_crq_queue(&hostdata->queue, hostdata);
+@@ -2128,7 +2125,10 @@ static void ibmvscsi_do_work(struct ibmvscsi_host_data *hostdata)
+ 		if (!rc)
+ 			rc = ibmvscsi_send_crq(hostdata, 0xC001000000000000LL, 0);
+ 		break;
++	case IBMVSCSI_HOST_ACTION_NONE:
++	case IBMVSCSI_HOST_ACTION_UNBLOCK:
+ 	default:
++		rc = 0;
+ 		break;
+ 	}
+ 
+-- 
+2.22.0.rc3
+
