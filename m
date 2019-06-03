@@ -2,89 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 173BE32FB3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 14:32:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B92C432FB4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 14:33:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727321AbfFCMcr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 08:32:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42958 "EHLO mail.kernel.org"
+        id S1726315AbfFCMcv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 08:32:51 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:38091 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726270AbfFCMcr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 08:32:47 -0400
-Received: from dragon (li1232-89.members.linode.com [45.79.133.89])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4405C26A31;
-        Mon,  3 Jun 2019 12:32:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559565167;
-        bh=nH7El9F5kOiagXyhzBVYhdnWSGsNuX6qBDg41snSmDs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=k/BlXcMhrQvbfDVb3Rns/tjKuya+BuFBiSA0VusyE3Kq+8ab3qZQsmVQXufMv5piA
-         GJu1alG/6SqCfX3OlRoYWSQSZcURZJl6NIBhX1hrYLjW/HCvFdS3Jt6mkqzC/bBNmt
-         MwJBCSEXrkWQiwU5ttd7ObCaKAA7DEZ8uKuK2uaQ=
-Date:   Mon, 3 Jun 2019 20:32:31 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "olof@lixom.net" <olof@lixom.net>,
-        "agross@kernel.org" <agross@kernel.org>,
-        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
-        "jagan@amarulasolutions.com" <jagan@amarulasolutions.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "dinguyen@kernel.org" <dinguyen@kernel.org>,
-        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V7 1/2] soc: imx: Add SCU SoC info driver support
-Message-ID: <20190603123124.GB16651@dragon>
-References: <1558662440-8820-1-git-send-email-Anson.Huang@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1558662440-8820-1-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S1726270AbfFCMcs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 08:32:48 -0400
+Received: by ozlabs.org (Postfix, from userid 1034)
+        id 45HZFp6yhxz9s7h; Mon,  3 Jun 2019 22:32:46 +1000 (AEST)
+X-powerpc-patch-notification: thanks
+X-powerpc-patch-commit: 02c5f5394918b9b47ff4357b1b18335768cd867d
+X-Patchwork-Hint: ignore
+Content-Type: text/plain; charset="utf-8";
+In-Reply-To: <155568805354.600470.13376593185688810607.stgit@bahia.lan>
+To:     Greg Kurz <groug@kaod.org>, linux-kernel@vger.kernel.org
+From:   Michael Ellerman <patch-notifications@ellerman.id.au>
+Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
+        linuxppc-dev@lists.ozlabs.org,
+        Alistair Popple <alistair@popple.id.au>
+Subject: Re: [PATCH] powerpc/powernv/npu: Fix reference leak
+Message-Id: <45HZFp6yhxz9s7h@ozlabs.org>
+Date:   Mon,  3 Jun 2019 22:32:46 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 24, 2019 at 01:52:36AM +0000, Anson Huang wrote:
-> Add i.MX SCU SoC info driver to support i.MX8QXP SoC, introduce
-> driver dependency into Kconfig as CONFIG_IMX_SCU must be
-> selected to support i.MX SCU SoC driver, also need to use
-> platform driver model to make sure IMX_SCU driver is probed
-> before i.MX SCU SoC driver.
+On Fri, 2019-04-19 at 15:34:13 UTC, Greg Kurz wrote:
+> Since 902bdc57451c, get_pci_dev() calls pci_get_domain_bus_and_slot(). This
+> has the effect of incrementing the reference count of the PCI device, as
+> explained in drivers/pci/search.c:
 > 
-> With this patch, SoC info can be read from sysfs:
+>  * Given a PCI domain, bus, and slot/function number, the desired PCI
+>  * device is located in the list of PCI devices. If the device is
+>  * found, its reference count is increased and this function returns a
+>  * pointer to its data structure.  The caller must decrement the
+>  * reference count by calling pci_dev_put().  If no device is found,
+>  * %NULL is returned.
 > 
-> i.mx8qxp-mek# cat /sys/devices/soc0/family
-> Freescale i.MX
+> Nothing was done to call pci_dev_put() and the reference count of GPU and
+> NPU PCI devices rockets up.
 > 
-> i.mx8qxp-mek# cat /sys/devices/soc0/soc_id
-> 0x2
+> A natural way to fix this would be to teach the callers about the change,
+> so that they call pci_dev_put() when done with the pointer. This turns
+> out to be quite intrusive, as it affects many paths in npu-dma.c,
+> pci-ioda.c and vfio_pci_nvlink2.c. Also, the issue appeared in 4.16 and
+> some affected code got moved around since then: it would be problematic
+> to backport the fix to stable releases.
 > 
-> i.mx8qxp-mek# cat /sys/devices/soc0/machine
-> Freescale i.MX8QXP MEK
+> All that code never cared for reference counting anyway. Call pci_dev_put()
+> from get_pci_dev() to revert to the previous behavior.
 > 
-> i.mx8qxp-mek# cat /sys/devices/soc0/revision
-> 1.1
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
-> Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+> Fixes: 902bdc57451c ("powerpc/powernv/idoa: Remove unnecessary pcidev from pci_dn")
+> Cc: stable@vger.kernel.org # v4.16
+> Signed-off-by: Greg Kurz <groug@kaod.org>
+> Reviewed-by: Alexey Kardashevskiy <aik@ozlabs.ru>
 
-Applied, thanks.
+Applied to powerpc next, thanks.
+
+https://git.kernel.org/powerpc/c/02c5f5394918b9b47ff4357b1b183357
+
+cheers
