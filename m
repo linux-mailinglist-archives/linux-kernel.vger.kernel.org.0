@@ -2,45 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D4BD32FB8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 14:33:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4695332FC0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 14:35:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727597AbfFCMdA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 08:33:00 -0400
-Received: from ozlabs.org ([203.11.71.1]:47467 "EHLO ozlabs.org"
+        id S1726991AbfFCMfy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 08:35:54 -0400
+Received: from mga14.intel.com ([192.55.52.115]:64545 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727349AbfFCMc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 08:32:59 -0400
-Received: by ozlabs.org (Postfix, from userid 1034)
-        id 45HZG14vJpz9sP6; Mon,  3 Jun 2019 22:32:57 +1000 (AEST)
-X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: efa9ace68e487ddd29c2b4d6dd23242158f1f607
-X-Patchwork-Hint: ignore
-Content-Type: text/plain; charset="utf-8";
-In-Reply-To: <20190526024240.GA14546@zhanggen-UX430UQ>
-To:     Gen Zhang <blackgod016574@gmail.com>, benh@kernel.crashing.org,
-        paulus@samba.org
-From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     nfont@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dlpar: Fix a missing-check bug in dlpar_parse_cc_property()
-Message-Id: <45HZG14vJpz9sP6@ozlabs.org>
-Date:   Mon,  3 Jun 2019 22:32:57 +1000 (AEST)
+        id S1726137AbfFCMfx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 08:35:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 05:35:53 -0700
+X-ExtLoop1: 1
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.198]) ([10.237.72.198])
+  by orsmga005.jf.intel.com with ESMTP; 03 Jun 2019 05:35:49 -0700
+Subject: Re: [PATCH 4/9] mmc: sdhci-sprd: Implement the
+ get_max_timeout_count() interface
+To:     Baolin Wang <baolin.wang@linaro.org>, ulf.hansson@linaro.org,
+        zhang.lyra@gmail.com, orsonzhai@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, arnd@arndb.de, olof@lixom.net
+Cc:     vincent.guittot@linaro.org, arm@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <cover.1558346019.git.baolin.wang@linaro.org>
+ <ae6e23d4de6bb25cd697412f1402036d5ecc9843.1558346019.git.baolin.wang@linaro.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <ed5bdd08-7227-4d55-23de-e78e15d315c7@intel.com>
+Date:   Mon, 3 Jun 2019 15:34:38 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <ae6e23d4de6bb25cd697412f1402036d5ecc9843.1558346019.git.baolin.wang@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2019-05-26 at 02:42:40 UTC, Gen Zhang wrote:
-> In dlpar_parse_cc_property(), 'prop->name' is allocated by kstrdup().
-> kstrdup() may return NULL, so it should be checked and handle error.
-> And prop should be freed if 'prop->name' is NULL.
+On 20/05/19 1:11 PM, Baolin Wang wrote:
+> Implement the get_max_timeout_count() interface to set the Spredtrum SD
+> host controller actual maximum timeout count.
 > 
-> Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
-> Acked-by: Nathan Lynch <nathanl@linux.ibm.com>
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 
-Applied to powerpc next, thanks.
+Seems surprising that there isn't a custom ->set_timeout() as well.
+Nevertheless:
 
-https://git.kernel.org/powerpc/c/efa9ace68e487ddd29c2b4d6dd232421
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-cheers
+> ---
+>  drivers/mmc/host/sdhci-sprd.c |    7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
+> index 31ba7d6..d91281d 100644
+> --- a/drivers/mmc/host/sdhci-sprd.c
+> +++ b/drivers/mmc/host/sdhci-sprd.c
+> @@ -285,6 +285,12 @@ static void sdhci_sprd_hw_reset(struct sdhci_host *host)
+>  	usleep_range(300, 500);
+>  }
+>  
+> +static unsigned int sdhci_sprd_get_max_timeout_count(struct sdhci_host *host)
+> +{
+> +	/* The Spredtrum controller actual maximum timeout count is 1 << 31 */
+> +	return 1 << 31;
+> +}
+> +
+>  static struct sdhci_ops sdhci_sprd_ops = {
+>  	.read_l = sdhci_sprd_readl,
+>  	.write_l = sdhci_sprd_writel,
+> @@ -296,6 +302,7 @@ static void sdhci_sprd_hw_reset(struct sdhci_host *host)
+>  	.reset = sdhci_reset,
+>  	.set_uhs_signaling = sdhci_sprd_set_uhs_signaling,
+>  	.hw_reset = sdhci_sprd_hw_reset,
+> +	.get_max_timeout_count = sdhci_sprd_get_max_timeout_count,
+>  };
+>  
+>  static void sdhci_sprd_request(struct mmc_host *mmc, struct mmc_request *mrq)
+> 
+
