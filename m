@@ -2,117 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE5B132B6A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:06:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69DCC32B7F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:08:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727470AbfFCJFu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 05:05:50 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46876 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726876AbfFCJFt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 05:05:49 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6AB3B374;
-        Mon,  3 Jun 2019 02:05:49 -0700 (PDT)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2C69F3F690;
-        Mon,  3 Jun 2019 02:05:45 -0700 (PDT)
-Date:   Mon, 3 Jun 2019 10:05:31 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Atish Patra <atish.patra@wdc.com>
-Cc:     Jeremy Linton <jeremy.linton@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Anup Patel <anup@brainfault.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Ingo Molnar <mingo@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Rob Herring <robh+dt@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Otto Sabart <ottosabart@seberm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH v6 2/7] dt-binding: cpu-topology: Move cpu-map to a
- common binding.
-Message-ID: <20190603090531.GA26487@e107155-lin>
-References: <20190529211340.17087-1-atish.patra@wdc.com>
- <20190529211340.17087-3-atish.patra@wdc.com>
- <0515d803-0da5-dcbe-3d3e-bb786b320d8b@arm.com>
- <28118149-193d-2a8a-995a-2f1829e95c1c@wdc.com>
+        id S1727907AbfFCJIB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 05:08:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53042 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726561AbfFCJIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 05:08:00 -0400
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D586F2713A;
+        Mon,  3 Jun 2019 09:07:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559552880;
+        bh=Rzr6gfXjAXNtZ72i1f03ZP5xQADxqoyjKQjlDsDgnOU=;
+        h=From:Date:Subject:To:From;
+        b=OFyk4NY4DclC0oTHFd+eXw4x0tlpPhoixH2tmw3kBXKOXH5TYz61qqu8iPuV6Oxov
+         pUaAnT2yl/SpS/pTBkp8RfXYzmGPLR5VVU8Rq3Bsvowc2B50/wekJgJPg8z8tp5OC0
+         3dySqY9w+R7b6avLDJk8xQJPQ038nr55Pc74dKLs=
+Received: by mail-lj1-f181.google.com with SMTP id r76so15397974lja.12;
+        Mon, 03 Jun 2019 02:07:59 -0700 (PDT)
+X-Gm-Message-State: APjAAAUN/U+s+/4kff/ksnLsTx92XpgCoKoTq/3GmFh1N1n/oBVm8KQJ
+        xbkABQ2gvTbsTXw4122o0OqgW/6EFFzyyEy066s=
+X-Google-Smtp-Source: APXvYqw8WHJT+fvLmcEcp0Lo0YX/2W6ao7L44cq/RA1vj/2N8oEiiJnTLU0U+PgTYKDOUB7tqpELGDErPLLk8DYOMYs=
+X-Received: by 2002:a2e:980e:: with SMTP id a14mr2097047ljj.60.1559552878019;
+ Mon, 03 Jun 2019 02:07:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <28118149-193d-2a8a-995a-2f1829e95c1c@wdc.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Mon, 3 Jun 2019 11:07:46 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPcTVpLtSSs=Q0G3fQgXYoVa=kHxWcWXyvS13ie73ByZBw@mail.gmail.com>
+Message-ID: <CAJKOXPcTVpLtSSs=Q0G3fQgXYoVa=kHxWcWXyvS13ie73ByZBw@mail.gmail.com>
+Subject: [BUG BISECT] bug mm/vmalloc.c:470 (mm/vmalloc.c: get rid of one
+ single unlink_va() when merge)
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+        Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Hillf Danton <hdanton@sina.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Tejun Heo <tj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 03, 2019 at 01:49:13AM -0700, Atish Patra wrote:
-> On 5/30/19 1:55 PM, Jeremy Linton wrote:
-> > Hi,
-> >
-> > On 5/29/19 4:13 PM, Atish Patra wrote:
-> > > cpu-map binding can be used to described cpu topology for both
-> > > RISC-V & ARM. It makes more sense to move the binding to document
-> > > to a common place.
-> > >
-> > > The relevant discussion can be found here.
-> > > https://lkml.org/lkml/2018/11/6/19
-> > >
-> > > Signed-off-by: Atish Patra <atish.patra@wdc.com>
-> > > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > ---
-> > >    .../topology.txt => cpu/cpu-topology.txt}     | 82 +++++++++++++++----
-> > >    1 file changed, 66 insertions(+), 16 deletions(-)
-> > >    rename Documentation/devicetree/bindings/{arm/topology.txt => cpu/cpu-topology.txt} (86%)
-> > >
+Hi,
 
-[...]
+On recent next I see bugs during boot (after bringing up user-space or
+during reboot):
+kernel BUG at ../mm/vmalloc.c:470!
+On all my boards. On QEMU I see something similar, although the
+message is "Internal error: Oops - undefined instruction: 0 [#1] ARM",
 
-> > <nit picking>
-> >
-> > While socket is optional, its probably a good idea to include the node
-> > in the example even if the result is the same.
->
-> Sure. I will update that.
->
-> That is because at least
-> > on arm64 the DT clusters=sockets decision had performance implications
-> > for larger systems.
-> >
-> > Assuring the socket information is correct is helpful by itself to avoid
-> > having to explain why a single socket machine is displaying some other
-> > value in lscpu.
-> >
-> Just for my understanding, can you give a example?
->
+The calltrace is:
+[   34.565126] [<c0275c9c>] (__free_vmap_area) from [<c0276044>]
+(__purge_vmap_area_lazy+0xd0/0x170)
+[   34.573963] [<c0276044>] (__purge_vmap_area_lazy) from [<c0276d50>]
+(_vm_unmap_aliases+0x1fc/0x244)
+[   34.582974] [<c0276d50>] (_vm_unmap_aliases) from [<c0279500>]
+(__vunmap+0x170/0x200)
+[   34.590770] [<c0279500>] (__vunmap) from [<c01d5a70>]
+(do_free_init+0x40/0x5c)
+[   34.597955] [<c01d5a70>] (do_free_init) from [<c01478f4>]
+(process_one_work+0x228/0x810)
+[   34.606018] [<c01478f4>] (process_one_work) from [<c0147f0c>]
+(worker_thread+0x30/0x570)
+[   34.614077] [<c0147f0c>] (worker_thread) from [<c014e8b4>]
+(kthread+0x134/0x164)
+[   34.621438] [<c014e8b4>] (kthread) from [<c01010b4>]
+(ret_from_fork+0x14/0x20)
 
-That's simple. Today any ARM{32,64} DT based platform sets their cluster
-id to physical package id, which is exposed to userspace. The userspace
-can/must interpret that as multi-socket system. E.g. TC2/Juno which
-2 clusters show up as 2 socket systems which is wrong and needs fixing.
-We have fixed it for ARM64 ACPI based systems but for DT(mostly used in
-mobile/embedded) we need to make sure we don't break anything else before
-we fix it.
+Full log here:
+https://krzk.eu/#/builders/1/builds/3356/steps/14/logs/serial0
+https://krzk.eu/#/builders/22/builds/1118/steps/35/logs/serial0
 
---
-Regards,
-Sudeep
+Bisect pointed to:
+728e0fbf263e3ed359c10cb13623390564102881 is the first bad commit
+commit 728e0fbf263e3ed359c10cb13623390564102881
+Author: Uladzislau Rezki (Sony) <urezki@gmail.com>
+Date:   Sat Jun 1 12:20:19 2019 +1000
+    mm/vmalloc.c: get rid of one single unlink_va() when merge
+
+Boards:
+1. Arch ARM Linux
+2. exynos_defconfig
+3. Exynos boards (Odroid XU3, etc), ARMv7, octa-core (Cortex-A7+A15),
+Exynos5422 SoC
+4. Systemd: v239, static IP set in kernel command line
+
+Best regards,
+Krzysztof
