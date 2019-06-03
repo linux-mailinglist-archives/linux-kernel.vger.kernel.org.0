@@ -2,139 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A32833491
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 18:07:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F085334AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 18:14:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728688AbfFCQHu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 12:07:50 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34990 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726720AbfFCQHu (ORCPT
+        id S1728633AbfFCQOK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 12:14:10 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:38940 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbfFCQOK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 12:07:50 -0400
-Received: by mail-lj1-f193.google.com with SMTP id h11so16799487ljb.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 09:07:49 -0700 (PDT)
+        Mon, 3 Jun 2019 12:14:10 -0400
+Received: by mail-lj1-f194.google.com with SMTP id a10so13541634ljf.6
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 09:14:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=pxJWbikYyn86QHCb0MwofCFDPmQed9mzRIadXSeX7vU=;
-        b=Z2rW7Y52J1jlD/vdLzyZA3EE5ZKf8u+7QkfyHu0DdN3BFL0k8qRy5xZypKkCU/4QVp
-         +V9e3HJeIoju1wARoAembK05/AsHz0rFh3AYCJO3uYP54sEvCqed8Mb5dRqEOMI34gWw
-         O6AIkk+mUiIV/IIPKYXRJlzU0eZx96PLgqUzc=
+        bh=lgsfrWNkeAwXitTJcoIdmm+S5jV0yGJC2wH7GAyc/RM=;
+        b=WCXqjpyK9CxskKR1Rsa2JsUVjNbLjTBCO3DKbpdiCOAgDG3/x4OwA5zT3oR9AF+TAb
+         KoxRzjysV3/yPddUMg57RzzWz8pj3wl00UXp/zI8qmqY5Pxb0GSO0BkOluklf9MnQYLn
+         o8mf30F5cjoqsx0tY+OcCybKIrmRF+OMKq7aY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=pxJWbikYyn86QHCb0MwofCFDPmQed9mzRIadXSeX7vU=;
-        b=Ax974xg7+aMV3dobL47FPLtZukl0xXAaW2S1ej/rz17VnjJmSq8vWPoRaUH4AqJE0P
-         3af5cIj/bp7eNY5SjhKJovWoRaEME4U3cwNhAQ8V2fYxPi3Ntf5OrQnaMHNxv8B/bBb/
-         xpfk47664m0T2bAdcDgWE/5JAQrM19iqyPTVUFvAFiGbVAvK4R9uaacU0gYQKvfrI3tz
-         U0imr0zNLkTC+R2I8irHrj3BrideDLe3FbWhmrRpF7ohn/pQAUxP74Fo9wexF5EfoD+f
-         RZq87ed9CDbrdfPDogI4g0HnrU8TQ5toejsgQKohlJeVFidOBAby1jsz6qWoL3OfkJrM
-         9dtA==
-X-Gm-Message-State: APjAAAUBVjJ+Jtmxr1rafcv+3vvD90wI9de10EL+4Xeie2K1RQythEZo
-        s72D7iA/hQ5KEavI8HfM8Auua0Az1eA=
-X-Google-Smtp-Source: APXvYqxLnTbtvlIaXbigFB9WyyOcD+b07P3xTbeN5v0nOXpCz4q+GDWpoi7Os1FmwPqX4/+QeIX+PA==
-X-Received: by 2002:a2e:2b11:: with SMTP id q17mr14351395lje.23.1559578067323;
-        Mon, 03 Jun 2019 09:07:47 -0700 (PDT)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
-        by smtp.gmail.com with ESMTPSA id z24sm3641805lfh.63.2019.06.03.09.07.46
+        bh=lgsfrWNkeAwXitTJcoIdmm+S5jV0yGJC2wH7GAyc/RM=;
+        b=MZoN0RznvbxwXAV8llFuB8SQsZl77lGuh0P9nJU4YAjEaAq1eNHAtpcvbbVIm8e+9s
+         qQPJ2s1OTyW2uzVGFW9X3Cbd4XKwpXHV6Dxjl9IvziHYZK9HWA9V2d8YHk+pKc/CO+Lq
+         RyX1gCxvzOoj3q1s80zjKOjEv0qojGyoIynABo3KqLl5Sc2BVY3ObvSs+7P8Hb7gTO++
+         C7j+g4/WepygFy4QsYWg1wOVqSc4E6siFgIeKzu330DKPwEK9QWa1+flglgN0xl0nVxv
+         FruCgJI9mMq3761hJxeAM9/rOlC6SK+NjU1oy9AioX1spMhxC18P23vbKBbUyIkuRdrM
+         LX5w==
+X-Gm-Message-State: APjAAAXPtjS0V6WaMQ17X8DpIlFt8PLLtcCpRijBuxj6eJH5327Q8G1g
+        vFVZ2oiKsIPBaTdMZRJkZwgG95EnP3Q=
+X-Google-Smtp-Source: APXvYqznebQNTLsOVdmh1KJyvD7fkBl0VlVsigg/OctgM1RY+oQApUAAwVxrUrw7gjupjlk4B3zvqw==
+X-Received: by 2002:a2e:868f:: with SMTP id l15mr8577978lji.118.1559578447516;
+        Mon, 03 Jun 2019 09:14:07 -0700 (PDT)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id y20sm1912527ljd.96.2019.06.03.09.14.07
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Jun 2019 09:07:46 -0700 (PDT)
-Received: by mail-lj1-f173.google.com with SMTP id v29so5473673ljv.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 09:07:46 -0700 (PDT)
-X-Received: by 2002:a2e:85d1:: with SMTP id h17mr14182608ljj.1.1559578065814;
- Mon, 03 Jun 2019 09:07:45 -0700 (PDT)
+        Mon, 03 Jun 2019 09:14:07 -0700 (PDT)
+Received: by mail-lj1-f180.google.com with SMTP id a10so13541561ljf.6
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 09:14:07 -0700 (PDT)
+X-Received: by 2002:a2e:4246:: with SMTP id p67mr14377820lja.44.1559578139147;
+ Mon, 03 Jun 2019 09:08:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <20150910005708.GA23369@wfg-t540p.sh.intel.com>
- <20150910102513.GA1677@fixme-laptop.cn.ibm.com> <20150910171649.GE4029@linux.vnet.ibm.com>
- <20150911021933.GA1521@fixme-laptop.cn.ibm.com> <20150921193045.GA13674@lerouge>
- <20150921204327.GH4029@linux.vnet.ibm.com> <20190602055607.bk5vgmwjvvt4wejd@gondor.apana.org.au>
- <20190603000617.GD28207@linux.ibm.com> <20190603030324.kl3bckqmebzis2vw@gondor.apana.org.au>
- <CAHk-=wj2t+GK+DGQ7Xy6U7zMf72e7Jkxn4_-kGyfH3WFEoH+YQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wj2t+GK+DGQ7Xy6U7zMf72e7Jkxn4_-kGyfH3WFEoH+YQ@mail.gmail.com>
+References: <20190601074959.14036-1-hch@lst.de> <20190601074959.14036-4-hch@lst.de>
+ <CAHk-=whusWKhS=SYoC9f9HjVmPvR5uP51Mq=ZCtktqTBT2qiBw@mail.gmail.com> <20190603074121.GA22920@lst.de>
+In-Reply-To: <20190603074121.GA22920@lst.de>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 3 Jun 2019 09:07:29 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgZcrb_vQi5rwpv+=wwG+68SRDY16HcqcMtgPFL_kdfyQ@mail.gmail.com>
-Message-ID: <CAHk-=wgZcrb_vQi5rwpv+=wwG+68SRDY16HcqcMtgPFL_kdfyQ@mail.gmail.com>
-Subject: Re: rcu_read_lock lost its compiler barrier
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Fengguang Wu <fengguang.wu@intel.com>, LKP <lkp@01.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>
+Date:   Mon, 3 Jun 2019 09:08:43 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg5mww3StP8HqPN4d5eij3KmEayM743v-nDKAMgRe2J6g@mail.gmail.com>
+Message-ID: <CAHk-=wg5mww3StP8HqPN4d5eij3KmEayM743v-nDKAMgRe2J6g@mail.gmail.com>
+Subject: Re: [PATCH 03/16] mm: simplify gup_fast_permitted
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-mips@vger.kernel.org,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Linux-MM <linux-mm@kvack.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 3, 2019 at 8:55 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Mon, Jun 3, 2019 at 12:41 AM Christoph Hellwig <hch@lst.de> wrote:
 >
-> I don't believe that it would necessarily help to turn a
-> rcu_read_lock() into a compiler barrier, because for the non-preempt
-> case rcu_read_lock() doesn't need to actually _do_ anything, and
-> anything that matters for the RCU read lock will already be a compiler
-> barrier for other reasons (ie a function call that can schedule).
+> I only removed a duplicate of it.
 
-Actually, thinking a bit more about this, and trying to come up with
-special cases, I'm not at all convinced.
+I don't see any remaining cases.
 
-Even if we don't have preemption enabled, it turns out that we *do*
-have things that can cause scheduling without being compiler barriers.
+> The full (old) code in get_user_pages_fast() looks like this:
+>
+>         if (nr_pages <= 0)
+>                 return 0;
+>
+>         if (unlikely(!access_ok((void __user *)start, len)))
+>                 return -EFAULT;
+>
+>         if (gup_fast_permitted(start, nr_pages)) {
 
-In particular, user accesses are not necessarily full compiler
-barriers. One common pattern (x86) is
+Yes, and that code was correct.
 
-        asm volatile("call __get_user_%P4"
+The new code has no test at all for "nr_pages == 0", afaik.
 
-which explicitly has a "asm volaile" so that it doesn't re-order wrt
-other asms (and thus other user accesses), but it does *not* have a
-"memory" clobber, because the user access doesn't actually change
-kernel memory. Not even if it's a "put_user()".
-
-So we've made those fairly relaxed on purpose. And they might be
-relaxed enough that they'd allow re-ordering wrt something that does a
-rcu read lock, unless the rcu read lock has some compiler barrier in
-it.
-
-IOW, imagine completely made up code like
-
-     get_user(val, ptr)
-     rcu_read_lock();
-     WRITE_ONCE(state, 1);
-
-and unless the rcu lock has a barrier in it, I actually think that
-write to 'state' could migrate to *before* the get_user().
-
-I'm not convinced we have anything that remotely looks like the above,
-but I'm actually starting to think that yes, all RCU barriers had
-better be compiler barriers.
-
-Because this is very much an example of something where you don't
-necessarily need a memory barrier, but there's a code generation
-barrier needed because of local ordering requirements. The possible
-faulting behavior of "get_user()" must not migrate into the RCU
-critical region.
-
-Paul?
-
-So I think the rule really should be: every single form of locking
-that has any semantic meaning at all, absolutely needs to be at least
-a compiler barrier.
-
-(That "any semantic meaning" weaselwording is because I suspect that
-we have locking that truly and intentionally becomes no-ops because
-it's based on things that aren't relevant in some configurations. But
-generally compiler barriers are really pretty damn cheap, even from a
-code generation standpoint, and can help make the resulting code more
-legible, so I think we should not try to aggressively remove them
-without _very_ good reasons)
-
-                      Linus
+                 Linus
