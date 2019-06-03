@@ -2,78 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 959DD328BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 08:46:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEF473324B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 16:39:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727216AbfFCGql (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 02:46:41 -0400
-Received: from mga02.intel.com ([134.134.136.20]:39148 "EHLO mga02.intel.com"
+        id S1729008AbfFCOjQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 10:39:16 -0400
+Received: from relay.sw.ru ([185.231.240.75]:35164 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727183AbfFCGqh (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 02:46:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Jun 2019 23:46:36 -0700
-X-ExtLoop1: 1
-Received: from skl.sh.intel.com ([10.239.159.132])
-  by FMSMGA003.fm.intel.com with ESMTP; 02 Jun 2019 23:46:35 -0700
-From:   Jin Yao <yao.jin@linux.intel.com>
-To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com
-Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com,
-        Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH v2 7/7] perf diff: Documentation -c cycles option
-Date:   Mon,  3 Jun 2019 22:36:17 +0800
-Message-Id: <1559572577-25436-8-git-send-email-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1559572577-25436-1-git-send-email-yao.jin@linux.intel.com>
-References: <1559572577-25436-1-git-send-email-yao.jin@linux.intel.com>
+        id S1728681AbfFCOjP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 10:39:15 -0400
+Received: from [172.16.25.169]
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1hXo72-0004Ve-7f; Mon, 03 Jun 2019 17:39:00 +0300
+Subject: Re: [PATCH v2 0/7] mm: process_vm_mmap() -- syscall for duplication a
+ process mapping
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     akpm@linux-foundation.org, dan.j.williams@intel.com,
+        mhocko@suse.com, keith.busch@intel.com,
+        kirill.shutemov@linux.intel.com, alexander.h.duyck@linux.intel.com,
+        ira.weiny@intel.com, andreyknvl@google.com, arunks@codeaurora.org,
+        vbabka@suse.cz, cl@linux.com, riel@surriel.com,
+        keescook@chromium.org, hannes@cmpxchg.org, npiggin@gmail.com,
+        mathieu.desnoyers@efficios.com, shakeelb@google.com, guro@fb.com,
+        aarcange@redhat.com, hughd@google.com, jglisse@redhat.com,
+        mgorman@techsingularity.net, daniel.m.jordan@oracle.com,
+        jannh@google.com, kilobyte@angband.pl, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <155836064844.2441.10911127801797083064.stgit@localhost.localdomain>
+ <20190522152254.5cyxhjizuwuojlix@box>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <4228b541-d31c-b76a-2570-1924df0d4724@virtuozzo.com>
+Date:   Mon, 3 Jun 2019 17:38:58 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <20190522152254.5cyxhjizuwuojlix@box>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Documentation the new computation selection 'cycles'.
+On 22.05.2019 18:22, Kirill A. Shutemov wrote:
+> On Mon, May 20, 2019 at 05:00:01PM +0300, Kirill Tkhai wrote:
+>> This patchset adds a new syscall, which makes possible
+>> to clone a VMA from a process to current process.
+>> The syscall supplements the functionality provided
+>> by process_vm_writev() and process_vm_readv() syscalls,
+>> and it may be useful in many situation.
+> 
+> Kirill, could you explain how the change affects rmap and how it is safe.
+> 
+> My concern is that the patchset allows to map the same page multiple times
+> within one process or even map page allocated by child to the parrent.
 
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
----
- tools/perf/Documentation/perf-diff.txt | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+Speaking honestly, we already support this model, since ZERO_PAGE() may
+be mapped multiply times in any number of mappings.
 
-diff --git a/tools/perf/Documentation/perf-diff.txt b/tools/perf/Documentation/perf-diff.txt
-index da7809b..198119b 100644
---- a/tools/perf/Documentation/perf-diff.txt
-+++ b/tools/perf/Documentation/perf-diff.txt
-@@ -90,9 +90,10 @@ OPTIONS
- 
- -c::
- --compute::
--        Differential computation selection - delta, ratio, wdiff, delta-abs
--        (default is delta-abs).  Default can be changed using diff.compute
--        config option.  See COMPARISON METHODS section for more info.
-+        Differential computation selection - delta, ratio, wdiff, cycles,
-+        delta-abs (default is delta-abs).  Default can be changed using
-+        diff.compute config option.  See COMPARISON METHODS section for
-+        more info.
- 
- -p::
- --period::
-@@ -278,6 +279,13 @@ If specified the 'Weighted diff' column is displayed with value 'd' computed as:
-     - WEIGHT-A being the weight of the data file
-     - WEIGHT-B being the weight of the baseline data file
- 
-+cycles
-+~~~~~~
-+If specified the 'Block cycles diff [start:end]' column is displayed.
-+It displays the cycles difference of same program basic block amongst
-+two perf.data. The program basic block is the code block between
-+two branches in a function (indicated by [start:end]).
-+
- SEE ALSO
- --------
- linkperf:perf-record[1], linkperf:perf-report[1]
--- 
-2.7.4
-
+Kirill
