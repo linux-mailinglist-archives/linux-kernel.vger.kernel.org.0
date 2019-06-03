@@ -2,29 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 568E933427
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:54:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A18433421
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:54:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729609AbfFCPyP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 11:54:15 -0400
-Received: from foss.arm.com ([217.140.101.70]:53756 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729193AbfFCPvd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 11:51:33 -0400
+        id S1729712AbfFCPyL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 11:54:11 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53766 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729210AbfFCPve (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 11:51:34 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2554E1AED;
-        Mon,  3 Jun 2019 08:51:33 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 573D11A25;
+        Mon,  3 Jun 2019 08:51:34 -0700 (PDT)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DD7383F246;
-        Mon,  3 Jun 2019 08:51:31 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 620843F246;
+        Mon,  3 Jun 2019 08:51:33 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        suzuki.poulose@arm.com, Mark Brown <broonie@kernel.org>,
-        linux-spi@vger.kernel.org
-Subject: [RFC PATCH 23/57] drivers: spi: Use bus_find_device_by_acpi_dev match helper
-Date:   Mon,  3 Jun 2019 16:49:49 +0100
-Message-Id: <1559577023-558-24-git-send-email-suzuki.poulose@arm.com>
+        suzuki.poulose@arm.com
+Subject: [RFC PATCH 24/57] drivers: staging: most-core: Use bus_find_device_by_name
+Date:   Mon,  3 Jun 2019 16:49:50 +0100
+Message-Id: <1559577023-558-25-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
 References: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
@@ -33,41 +32,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch to the generic helper bus_find_device_by_acpi_dev.
+Use bus_find_device_by_name() helper.
 
-Cc: Mark Brown <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/spi/spi.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/staging/most/core.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index ecdd602..5224ded 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -3634,11 +3634,6 @@ static int spi_acpi_controller_match(struct device *dev, const void *data)
- 	return ACPI_COMPANION(dev->parent) == data;
+diff --git a/drivers/staging/most/core.c b/drivers/staging/most/core.c
+index 86a8545..b9841adb 100644
+--- a/drivers/staging/most/core.c
++++ b/drivers/staging/most/core.c
+@@ -561,13 +561,6 @@ static int split_string(char *buf, char **a, char **b, char **c, char **d)
+ 	return 0;
  }
  
--static int spi_acpi_device_match(struct device *dev, void *data)
+-static int match_bus_dev(struct device *dev, void *data)
 -{
--	return ACPI_COMPANION(dev) == data;
+-	char *mdev_name = data;
+-
+-	return !strcmp(dev_name(dev), mdev_name);
 -}
 -
- static struct spi_controller *acpi_spi_find_controller_by_adev(struct acpi_device *adev)
- {
- 	struct device *dev;
-@@ -3658,8 +3653,7 @@ static struct spi_device *acpi_spi_find_device_by_adev(struct acpi_device *adev)
- {
- 	struct device *dev;
+ /**
+  * get_channel - get pointer to channel
+  * @mdev: name of the device interface
+@@ -579,7 +572,7 @@ static struct most_channel *get_channel(char *mdev, char *mdev_ch)
+ 	struct most_interface *iface;
+ 	struct most_channel *c, *tmp;
  
--	dev = bus_find_device(&spi_bus_type, NULL, adev, spi_acpi_device_match);
--
-+	dev = bus_find_device(&spi_bus_type, NULL, adev, device_match_acpi_dev);
- 	return dev ? to_spi_device(dev) : NULL;
- }
- 
+-	dev = bus_find_device(&mc.bus, NULL, mdev, match_bus_dev);
++	dev = bus_find_device_by_name(&mc.bus, NULL, mdev);
+ 	if (!dev)
+ 		return NULL;
+ 	iface = to_most_interface(dev);
 -- 
 2.7.4
 
