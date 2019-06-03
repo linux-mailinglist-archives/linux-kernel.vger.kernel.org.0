@@ -2,165 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 333D433724
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 19:48:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76E4533733
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 19:49:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729231AbfFCRr5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 13:47:57 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:39064 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729104AbfFCRrt (ORCPT
+        id S1727667AbfFCRtl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 13:49:41 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:39612 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726211AbfFCRth (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 13:47:49 -0400
-Received: by mail-lf1-f68.google.com with SMTP id p24so7821211lfo.6
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 10:47:47 -0700 (PDT)
+        Mon, 3 Jun 2019 13:49:37 -0400
+Received: by mail-qt1-f194.google.com with SMTP id i34so10437056qta.6
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 10:49:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=EP52HnBImDdJf7rjJmYz8TmWwXw2UkH57yWmp4TnU6I=;
-        b=kMsbuH2VtRAEevl5PD0Za9pWTeLXxKuZwm2mHSVRGrcCaYkRfyGB+0tHVh91anOQGN
-         FYwkWYWsIihC4795iLplxVDLLXtfzAQ6DOM6E8El2aNrydKRwy28SquK0vH9sLvpLjLT
-         jwKnojjBWsjbAAreyuIrVTIqzOIti97HpgvGfm04mDGeewtxm3Jd87mQH51hLybGLdh5
-         OyEWvy3aM9qAYIN35EpfsQdb7h2epMb5+ofP4GkLqrLXmgojB/PlCVHrVlMOg4QKL/WL
-         5FiymJDpz+YNejmqj5tsoisorq9ICjxaGuHdF/wPI0Jzlo2gCt4XuJGo0tciwbKdEkoM
-         NHpQ==
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=YGNZXdoeRNmz7BqeF0/v3i59X3wiJHrSCMaZEz5idac=;
+        b=UaVuEr/kuy5hiq44Vf2xKm1Yj7c+f/OmHOwwwaNBE+hEEHXF2JMkizF7W0TNG0ZqOV
+         vAVGiZfmwhJNGAgCvAwCEhC1PlGwzWbBUyCLkgOrSi7zvR0FxhY8W1dJelfaN/00dRWc
+         97P8ELdZwEXFh0hdUXrMdmEPvlEVZ51R4ltg0ecUrBNziApYmpfYaVpnkP+bkP2otft+
+         lmVLkL3cATiX1Uxg1dV/nKaKl5/rore1zlk0dVi5wn/2NoB6BLWN4UFAlG2KYsqcomDC
+         iSM/Vgcuf5WgI+Kxky6hG1HH47rBWZ0MWU2MSoJ5sSqrZ21p0sl7SGN6kTgzFeEOlqww
+         nQHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=EP52HnBImDdJf7rjJmYz8TmWwXw2UkH57yWmp4TnU6I=;
-        b=YGUw3nlXOe3NKTOhT9LZ5thAftNi8Ge/8o+mfBZddFtAC22r1psrAguOMskZaed4RK
-         nGh9+zJoG9X+NbR7DAXXTOjAC4Cug2WFP+6w36zS+4wSgqq4zsgvYtRRBbU3q7GGgQq9
-         pNkEvlz4oF0LtaZYSa4Rx3QzhjDSGr5H0obOAeYjOBflkYEMIbOyXCJ1CYB64dHBzjV+
-         SZVDMaQdGeYYxggeOsKDV3nxePkds1JJEQj2pjZU/5ya5k5czLzz6Hxjs5gbmqTpTJ6r
-         D9vO8ud+Zf5uwgQiw2wFR83kYxwsXmE3tEQ0O3R85s8BNk+LArLv3uvuwY7P9IETydXi
-         rNew==
-X-Gm-Message-State: APjAAAWHhBWbGdyoDmDMxysQjDf34R72KVQFynW8767n+O1UR/gtnEbg
-        lcznr3HDalq80rEdFdd5zCXcQkbO
-X-Google-Smtp-Source: APXvYqzDuyyZ8jJoRuUrujErMlbCM25unS3jF7phVTl+Z3OyXyZoUzPLavy5f6g40fgZMjB6nWJWbA==
-X-Received: by 2002:ac2:47fa:: with SMTP id b26mr1178893lfp.82.1559584066627;
-        Mon, 03 Jun 2019 10:47:46 -0700 (PDT)
-Received: from localhost.localdomain ([188.150.253.81])
-        by smtp.gmail.com with ESMTPSA id n7sm2803532lfi.68.2019.06.03.10.47.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Jun 2019 10:47:46 -0700 (PDT)
-From:   codekipper@gmail.com
-To:     maxime.ripard@free-electrons.com, wens@csie.org,
-        linux-sunxi@googlegroups.com
-Cc:     linux-arm-kernel@lists.infradead.org, lgirdwood@gmail.com,
-        broonie@kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, be17068@iperbole.bo.it,
-        Marcus Cooper <codekipper@gmail.com>
-Subject: [PATCH v4 9/9] ASoC: sun4i-i2s: Adjust regmap settings
-Date:   Mon,  3 Jun 2019 19:47:35 +0200
-Message-Id: <20190603174735.21002-10-codekipper@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190603174735.21002-1-codekipper@gmail.com>
-References: <20190603174735.21002-1-codekipper@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=YGNZXdoeRNmz7BqeF0/v3i59X3wiJHrSCMaZEz5idac=;
+        b=UJqQqXSo+KXPkIcu/53o0a/47zwX/RTOqbg+ko/T2OFyUSeVGfAInLWKa6Jp1WWf68
+         9lvPcnXpzi42JKzN2hXCBqV/ffC/UV7/TCu6t+f1cIGw6Pg9UBYzDOcRUlSseFKodLAD
+         EVxsI4x3QjBPArlFggHbFglyt6N9Lum/2KT0XjLIh/AGuEJUsBf9Ei5HZwM0EU9bvQ0U
+         /cH6rF88FbV1RZVXdofmDduD09xxYVbhd0D1vt6OQLwYlP1Aw5j0rwlIZGd1F2ywZYWe
+         XgVJKtBEBBkO/c7aKTHY4e6A3G6m+ZDADqHHJYUFyTe8RkuJxN3bfV9b+osdiORyFGeL
+         G6fw==
+X-Gm-Message-State: APjAAAWTNq7WR8UmQorDuwpUSMRWKf3K9tRuCaGYYXKdXhwbbNvojGyk
+        r4fpRGqaISY9jlJY9Yv2D1Ty9g==
+X-Google-Smtp-Source: APXvYqy/e+Icc90gZvRu6SLe47LtjkZ15LHtXZ8eD5H9j0kECFuBEjDcn8Vx5zAwaodVM/Kr93ev9Q==
+X-Received: by 2002:a0c:b5c7:: with SMTP id o7mr22920460qvf.220.1559584175979;
+        Mon, 03 Jun 2019 10:49:35 -0700 (PDT)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id e133sm11972673qkb.76.2019.06.03.10.49.34
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 03 Jun 2019 10:49:35 -0700 (PDT)
+Date:   Mon, 3 Jun 2019 10:49:30 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        netdev@vger.kernel.org, xdp-newbies@vger.kernel.org,
+        bpf@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] bpf: remove redundant assignment to err
+Message-ID: <20190603104930.466a306b@cakuba.netronome.com>
+In-Reply-To: <276525bd-dd79-052e-7663-9acc92621853@canonical.com>
+References: <20190603170247.9951-1-colin.king@canonical.com>
+        <20190603102140.70fee157@cakuba.netronome.com>
+        <276525bd-dd79-052e-7663-9acc92621853@canonical.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcus Cooper <codekipper@gmail.com>
+On Mon, 3 Jun 2019 18:39:16 +0100, Colin Ian King wrote:
+> On 03/06/2019 18:21, Jakub Kicinski wrote:
+> > On Mon,  3 Jun 2019 18:02:47 +0100, Colin King wrote:  
+> >> From: Colin Ian King <colin.king@canonical.com>
+> >>
+> >> The variable err is assigned with the value -EINVAL that is never
+> >> read and it is re-assigned a new value later on.  The assignment is
+> >> redundant and can be removed.
+> >>
+> >> Addresses-Coverity: ("Unused value")
+> >> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> >> ---
+> >>  kernel/bpf/devmap.c | 2 +-
+> >>  kernel/bpf/xskmap.c | 2 +-
+> >>  2 files changed, 2 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
+> >> index 5ae7cce5ef16..a76cc6412fc4 100644
+> >> --- a/kernel/bpf/devmap.c
+> >> +++ b/kernel/bpf/devmap.c
+> >> @@ -88,7 +88,7 @@ static u64 dev_map_bitmap_size(const union bpf_attr *attr)
+> >>  static struct bpf_map *dev_map_alloc(union bpf_attr *attr)
+> >>  {
+> >>  	struct bpf_dtab *dtab;
+> >> -	int err = -EINVAL;
+> >> +	int err;
+> >>  	u64 cost;  
+> > 
+> > Perhaps keep the variables ordered longest to shortest?  
+> 
+> Is that a required coding standard?
 
-Bypass the regmap cache when flushing the i2s FIFOs and modify the tables
-to reflect this.
+For networking code, yes.  Just look around the files you're changing
+and see for yourself.
 
-Signed-off-by: Marcus Cooper <codekipper@gmail.com>
----
- sound/soc/sunxi/sun4i-i2s.c | 29 +++++++++--------------------
- 1 file changed, 9 insertions(+), 20 deletions(-)
-
-diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-index 351b8021173b..92828a84902d 100644
---- a/sound/soc/sunxi/sun4i-i2s.c
-+++ b/sound/soc/sunxi/sun4i-i2s.c
-@@ -595,9 +595,11 @@ static int sun4i_i2s_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
- static void sun4i_i2s_start_capture(struct sun4i_i2s *i2s)
- {
- 	/* Flush RX FIFO */
-+	regcache_cache_bypass(i2s->regmap, true);
- 	regmap_update_bits(i2s->regmap, SUN4I_I2S_FIFO_CTRL_REG,
- 			   SUN4I_I2S_FIFO_CTRL_FLUSH_RX,
- 			   SUN4I_I2S_FIFO_CTRL_FLUSH_RX);
-+	regcache_cache_bypass(i2s->regmap, false);
- 
- 	/* Clear RX counter */
- 	regmap_write(i2s->regmap, SUN4I_I2S_RX_CNT_REG, 0);
-@@ -616,9 +618,11 @@ static void sun4i_i2s_start_capture(struct sun4i_i2s *i2s)
- static void sun4i_i2s_start_playback(struct sun4i_i2s *i2s)
- {
- 	/* Flush TX FIFO */
-+	regcache_cache_bypass(i2s->regmap, true);
- 	regmap_update_bits(i2s->regmap, SUN4I_I2S_FIFO_CTRL_REG,
- 			   SUN4I_I2S_FIFO_CTRL_FLUSH_TX,
- 			   SUN4I_I2S_FIFO_CTRL_FLUSH_TX);
-+	regcache_cache_bypass(i2s->regmap, false);
- 
- 	/* Clear TX counter */
- 	regmap_write(i2s->regmap, SUN4I_I2S_TX_CNT_REG, 0);
-@@ -771,13 +775,7 @@ static const struct snd_soc_component_driver sun4i_i2s_component = {
- 
- static bool sun4i_i2s_rd_reg(struct device *dev, unsigned int reg)
- {
--	switch (reg) {
--	case SUN4I_I2S_FIFO_TX_REG:
--		return false;
--
--	default:
--		return true;
--	}
-+	return true;
- }
- 
- static bool sun4i_i2s_wr_reg(struct device *dev, unsigned int reg)
-@@ -796,6 +794,8 @@ static bool sun4i_i2s_volatile_reg(struct device *dev, unsigned int reg)
- {
- 	switch (reg) {
- 	case SUN4I_I2S_FIFO_RX_REG:
-+	case SUN4I_I2S_FIFO_TX_REG:
-+	case SUN4I_I2S_FIFO_STA_REG:
- 	case SUN4I_I2S_INT_STA_REG:
- 	case SUN4I_I2S_RX_CNT_REG:
- 	case SUN4I_I2S_TX_CNT_REG:
-@@ -806,23 +806,12 @@ static bool sun4i_i2s_volatile_reg(struct device *dev, unsigned int reg)
- 	}
- }
- 
--static bool sun8i_i2s_rd_reg(struct device *dev, unsigned int reg)
--{
--	switch (reg) {
--	case SUN8I_I2S_FIFO_TX_REG:
--		return false;
--
--	default:
--		return true;
--	}
--}
--
- static bool sun8i_i2s_volatile_reg(struct device *dev, unsigned int reg)
- {
- 	if (reg == SUN8I_I2S_INT_STA_REG)
- 		return true;
- 	if (reg == SUN8I_I2S_FIFO_TX_REG)
--		return false;
-+		return true;
- 
- 	return sun4i_i2s_volatile_reg(dev, reg);
- }
-@@ -877,7 +866,7 @@ static const struct regmap_config sun8i_i2s_regmap_config = {
- 	.reg_defaults	= sun8i_i2s_reg_defaults,
- 	.num_reg_defaults	= ARRAY_SIZE(sun8i_i2s_reg_defaults),
- 	.writeable_reg	= sun4i_i2s_wr_reg,
--	.readable_reg	= sun8i_i2s_rd_reg,
-+	.readable_reg	= sun4i_i2s_rd_reg,
- 	.volatile_reg	= sun8i_i2s_volatile_reg,
- };
- 
--- 
-2.21.0
-
+> >>  	if (!capable(CAP_NET_ADMIN))
+> >> diff --git a/kernel/bpf/xskmap.c b/kernel/bpf/xskmap.c
+> >> index 22066c28ba61..26859c6c9491 100644
+> >> --- a/kernel/bpf/xskmap.c
+> >> +++ b/kernel/bpf/xskmap.c
+> >> @@ -17,7 +17,7 @@ struct xsk_map {
+> >>  
+> >>  static struct bpf_map *xsk_map_alloc(union bpf_attr *attr)
+> >>  {
+> >> -	int cpu, err = -EINVAL;
+> >> +	int cpu, err;
+> >>  	struct xsk_map *m;
+> >>  	u64 cost;  
+> > 
+> > And here.
