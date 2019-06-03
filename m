@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EB9032D1A
+	by mail.lfdr.de (Postfix) with ESMTP id 1540532D19
 	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:48:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727957AbfFCJsC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 05:48:02 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35233 "EHLO
+        id S1727931AbfFCJrz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 05:47:55 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51966 "EHLO
         mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727048AbfFCJrw (ORCPT
+        with ESMTP id S1727865AbfFCJrx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 05:47:52 -0400
-Received: by mail-wm1-f68.google.com with SMTP id c6so7385873wml.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 02:47:51 -0700 (PDT)
+        Mon, 3 Jun 2019 05:47:53 -0400
+Received: by mail-wm1-f68.google.com with SMTP id f10so10448464wmb.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 02:47:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=T9Ny5N7xcGaPs9PTlrreMwQ78swu8eI1bqcwr5eO4vE=;
-        b=jZRdLLd/0Cwb2WksjvzB5nfmewOs6XQTiqgY3942FTJZbY3otyh522qliwYQUxB80r
-         tldzgHNhJJDUtVqZqbbUaurGWFIWMjB07Tbpi2Nr2fXQbwTBScqSPtUEzGg/REKu8y74
-         96r+RTtykcM+FmDC49Bf97j7ggNKk0RTHUuwghW1TiaWe9aw9eVSzVAoxtuj+vxVomPN
-         tE8aXdcslm6uL7cb4sB09Tn+q496+67zaoL3zQAiyh29M07k1Qg3Rxo9T99jVmXQrivZ
-         e5NouXydbCRiZ+Waa4lXIO2rqDLnEoyHPxG/FtOnB3HRl6PwFtyvfszgfY8tbh8F0jq/
-         nGpg==
+        bh=ySITkoSpV5tz/0UidgwrcEdFJZVNdmdPr2B7jtp9jvc=;
+        b=NDatLUATUjuiUD4hERuG9znRQfMuTUCAU4ggEVOIBP+FgVSRJt3WZaY0RrGa7Dwvb1
+         tPXdCBOtf0m2SVVhC/s51PZUQLWyTn//g+w5QgkbouvAEZZfvo/hYS0Qvxc9mY1N3RDl
+         12CLAjcT2rNrEYGTTAfmXLf/b4PMau58fO8Tf1EJrQQRkioz3g1D42ztA9XxEOAFB+W/
+         su2WX/nD5EDsKD8vv14foqsrzziZLg0rVZSxVTe2nVknHPJXLy1BppZQLalDKIXavP16
+         72N48w4vbmtGK60MSJzcw8yI8w33mpxO9I6dUgQOrevlX7znnciyGipSUQ3j2jUt1vHw
+         bNhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=T9Ny5N7xcGaPs9PTlrreMwQ78swu8eI1bqcwr5eO4vE=;
-        b=lzSgY9DWaGC9QJYpR5/M4mgG3WYgTmbiyQLxZ3B8nK8C5d91I/oFshEPhTACLwoeNA
-         YcVa11cUVrnSQcJLs96k6K1oIeIU64xBbLHWebxRfsR/rj+GZNSP+1bp5bKcAMs40Bh0
-         q17Vf7Ra4Fi0RIx6QyWivJ5//juR/0t33knYnN3NXg16pp8U9LuENocY9ebaADATc9sz
-         viPHxGzYXCLWXPvN56xUy/jLbBiYPaA+DDu3orHoGS0c6H5wqpqKvKHEGkoXRpyYD0W/
-         14GiZGMicU/B6WtB61aXGefCCCHUJcbSB8+rd2oRkprx7YOS0wjpaZSAFEIfj//teMMa
-         r2AQ==
-X-Gm-Message-State: APjAAAXb1LAioBO99xUC8AlvuufHRl3LHEs6wlw8iG7uKiAneCax01qq
-        yO+qMLQx5mIZ+LniiCyJczAlo2IgzEQLpA==
-X-Google-Smtp-Source: APXvYqxYgQQ6aKW2VVH6+UX/ZVBFLY7/jEsZhudyesWCvOJtNp0VN66G3eM04FyN/tjpGKCky56o9g==
-X-Received: by 2002:a7b:cd8e:: with SMTP id y14mr13747212wmj.155.1559555270333;
-        Mon, 03 Jun 2019 02:47:50 -0700 (PDT)
+        bh=ySITkoSpV5tz/0UidgwrcEdFJZVNdmdPr2B7jtp9jvc=;
+        b=OBAQnQUvbZxBRl2IRZ2JUqwYu7jMk/CVPoLjhTSnOK8wZVwT3VmGxXAZrkLatlTQRO
+         m592HabhnZj10ckGZPGv6nKNnQXLRv4aBPsoL1EtLfZeiJDOS6lKWJv8Wu3y535P6mBp
+         eBp+4X3ADTSXxKg065enquCPyWh16qDMcnL5Gmbi8DGMe0S9+pdeseo97K+pl1HzugIK
+         CHpzrlrQETZxvt4NKsc12YnhJBoABROtCQ59bEOQDzDnfhMS3Y7BYAM7yaG4w8ZmFshy
+         Im1hNkiD9uXh5tq8ac4TKv06CkAchEmehQNgBTERFqu/HDH0ThluiHwcmXLbUBVr2yXW
+         AI4A==
+X-Gm-Message-State: APjAAAUNI0/U3TDXBaJpOqApQXfTtFeq4gXgJHgEuORJtwDTGCnx+2/Z
+        D0HLwUiFO/33dImdxK1mODBWOw==
+X-Google-Smtp-Source: APXvYqyFQyOwq3NatVmnOTvLBdiP1Y15tNjKDOOA5BlWh3lX91HYLp+dMM229VRYhDYAQ5xrcfOheQ==
+X-Received: by 2002:a1c:b046:: with SMTP id z67mr1498018wme.49.1559555271273;
+        Mon, 03 Jun 2019 02:47:51 -0700 (PDT)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id z14sm11235375wrh.86.2019.06.03.02.47.49
+        by smtp.gmail.com with ESMTPSA id z14sm11235375wrh.86.2019.06.03.02.47.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 03 Jun 2019 02:47:49 -0700 (PDT)
+        Mon, 03 Jun 2019 02:47:50 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     khilman@baylibre.com
 Cc:     linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 3/4] arm64: dts: meson-g12a-sei510: bump bluetooth bus speed to 2Mbaud/s
-Date:   Mon,  3 Jun 2019 11:47:39 +0200
-Message-Id: <20190603094740.12255-4-narmstrong@baylibre.com>
+Subject: [PATCH 4/4] arm64: dts: meson-g12a-x96-max: bump bluetooth bus speed to 2Mbaud/s
+Date:   Mon,  3 Jun 2019 11:47:40 +0200
+Message-Id: <20190603094740.12255-5-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190603094740.12255-1-narmstrong@baylibre.com>
 References: <20190603094740.12255-1-narmstrong@baylibre.com>
@@ -67,21 +67,21 @@ Setting to 2Mbaud/s is the nominal bus speed for common usages.
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts | 1 +
+ arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts
-index 3e0e119c13ce..4fc30131e5e7 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts
-@@ -530,6 +530,7 @@
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts
+index aa9da5de5c2d..300c29dad49f 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts
+@@ -206,6 +206,7 @@
  	bluetooth {
  		compatible = "brcm,bcm43438-bt";
  		shutdown-gpios = <&gpio GPIOX_17 GPIO_ACTIVE_HIGH>;
 +		max-speed = <2000000>;
  		clocks = <&wifi32k>;
  		clock-names = "lpo";
- 		vbat-supply = <&vddao_3v3>;
+ 	};
 -- 
 2.21.0
 
