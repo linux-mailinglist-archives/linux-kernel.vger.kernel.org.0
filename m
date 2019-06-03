@@ -2,78 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9306337C6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 20:25:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE4DA3374C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 19:53:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726416AbfFCSZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 14:25:15 -0400
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:38267 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725876AbfFCSZP (ORCPT
+        id S1726797AbfFCRxT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 13:53:19 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:35799 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726292AbfFCRxS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 14:25:15 -0400
-X-Originating-IP: 90.89.68.76
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 125B44000A;
-        Mon,  3 Jun 2019 18:25:04 +0000 (UTC)
-Date:   Mon, 3 Jun 2019 19:53:09 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     linux-sunxi@googlegroups.com, Chen-Yu Tsai <wens@csie.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [linux-sunxi] [PATCH v6 0/6] Add support for Orange Pi 3
-Message-ID: <20190603175309.qjlyfymbl6ybrpag@flea>
-References: <20190527162237.18495-1-megous@megous.com>
- <20190531125246.qqfvmgmw2mv442tq@core.my.home>
+        Mon, 3 Jun 2019 13:53:18 -0400
+Received: by mail-lf1-f66.google.com with SMTP id a25so14316814lfg.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 10:53:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Srx+JSQEvVah+8jZbb/etDm06U9ghyEFAowtj168rhg=;
+        b=hBvj2a/SxeY8uo2/eITryp250u7lguAtkLG3Rzw/28UO6KoV8ECca3G6kiHt9yAFR8
+         4GYgW/r5DAJg5uGAXloHi0Kqx3rpg5+lP5dDjIFmwXxGsTiIlSYcvgfn9XfogyQ/Lw73
+         BBjkwHmuinB+Jej8dicc57ngL+G5Xkokj4e7d4rLBGc8oFNaNuhR+xNXZXgXHj98Rv5e
+         Hd8T2iOkvt6klZc5R/VZB65XH/tHhVZkSWsnW3xgRdaxOKnJ+aEww9sdKG1hp9VB371Z
+         L6pePxzhDKwYKHZskQL5tNPsFmXYZvbYRNnBt4uRwKc7cyZbOOavOnwXzMsKlivIZcxI
+         S75w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Srx+JSQEvVah+8jZbb/etDm06U9ghyEFAowtj168rhg=;
+        b=FbAc29uHun2RtvWotKwjVfV5lXgaikcwiviUloAzAMIPzDcEkTBQBUrFiv1kFjebXi
+         3X9ed1eQd6+6Wxuuby5B2I9Gg01yOQ932PV/WAp2ThvX0IsMW0om6Qhb8q96Jbi/FwIo
+         QObSenm2pWx2h7spxAHciwQW1WoCO34mYMOWrdOpIlNGejr1TykvR2dMDdwYX5p6CP6T
+         I4y+N3ZIBNl5aH7hxASU0wzAIC1QpScVPsHpjAE/KthuOpI/zkliydpOjeZPvhSuwYTC
+         bBFseajCf7WRWhWk/oMW+ISQX09ZrwGnG+kxxBTSXj8OGvm/NNsiYFTKyMieFxtFDZzn
+         7O4g==
+X-Gm-Message-State: APjAAAWMcq9GgfUffmlvxo6ogED2V/Cpbgf9EjcgttvOxhUWl7vWqriA
+        2DbRDKUaNc/9fWJsim4dt2A=
+X-Google-Smtp-Source: APXvYqwkNqnG7HCV7jYR28Yp6QjtylKEBiui88FHYvyLoqwJOwUAPczmn457xBJ7dqYkon33WuCwMg==
+X-Received: by 2002:ac2:42c8:: with SMTP id n8mr6415lfl.28.1559584396076;
+        Mon, 03 Jun 2019 10:53:16 -0700 (PDT)
+Received: from pc636 ([37.139.158.167])
+        by smtp.gmail.com with ESMTPSA id v16sm3315552ljk.80.2019.06.03.10.53.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Jun 2019 10:53:15 -0700 (PDT)
+From:   Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date:   Mon, 3 Jun 2019 19:53:12 +0200
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Uladzislau Rezki <urezki@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Hillf Danton <hdanton@sina.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Garnier <thgarnie@google.com>,
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH v3 2/4] mm/vmap: preload a CPU with one object for split
+ purpose
+Message-ID: <20190603175312.72td46uahgchfgma@pc636>
+References: <20190527093842.10701-1-urezki@gmail.com>
+ <20190527093842.10701-3-urezki@gmail.com>
+ <20190528224217.GG27847@tower.DHCP.thefacebook.com>
+ <20190529142715.pxzrjthsthqudgh2@pc636>
+ <20190529163435.GC3228@tower.DHCP.thefacebook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190531125246.qqfvmgmw2mv442tq@core.my.home>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190529163435.GC3228@tower.DHCP.thefacebook.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 31, 2019 at 02:52:46PM +0200, Ondřej Jirman wrote:
-> Hello,
->
-> On Mon, May 27, 2019 at 06:22:31PM +0200, megous via linux-sunxi wrote:
-> > From: Ondrej Jirman <megous@megous.com>
-> >
-> > This series implements support for Xunlong Orange Pi 3 board.
-> >
-> > Unfortunately, this board needs some small driver patches, so I have
-> > split the boards DT patch into chunks that require patches for drivers
-> > in various subsystems.
-> >
-> > Suggested merging plan/dependencies:
-> >
-> > - stmmac patches are needed for ethernet support (patches 1-3)
-> >   - these should be ready now
-> > - HDMI support (patches 4-6)
-> >   - should be ready
->
-> If there are no futher comments, can all these patches please be merged?
+Hello, Roman!
 
-I'm waiting for some feedback on the stmmac and the DW-HDMI
-developpers to merge the rest
+On Wed, May 29, 2019 at 04:34:40PM +0000, Roman Gushchin wrote:
+> On Wed, May 29, 2019 at 04:27:15PM +0200, Uladzislau Rezki wrote:
+> > Hello, Roman!
+> > 
+> > > On Mon, May 27, 2019 at 11:38:40AM +0200, Uladzislau Rezki (Sony) wrote:
+> > > > Refactor the NE_FIT_TYPE split case when it comes to an
+> > > > allocation of one extra object. We need it in order to
+> > > > build a remaining space.
+> > > > 
+> > > > Introduce ne_fit_preload()/ne_fit_preload_end() functions
+> > > > for preloading one extra vmap_area object to ensure that
+> > > > we have it available when fit type is NE_FIT_TYPE.
+> > > > 
+> > > > The preload is done per CPU in non-atomic context thus with
+> > > > GFP_KERNEL allocation masks. More permissive parameters can
+> > > > be beneficial for systems which are suffer from high memory
+> > > > pressure or low memory condition.
+> > > > 
+> > > > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> > > > ---
+> > > >  mm/vmalloc.c | 79 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++---
+> > > >  1 file changed, 76 insertions(+), 3 deletions(-)
+> > > 
+> > > Hi Uladzislau!
+> > > 
+> > > This patch generally looks good to me (see some nits below),
+> > > but it would be really great to add some motivation, e.g. numbers.
+> > > 
+> > The main goal of this patch to get rid of using GFP_NOWAIT since it is
+> > more restricted due to allocation from atomic context. IMHO, if we can
+> > avoid of using it that is a right way to go.
+> > 
+> > From the other hand, as i mentioned before i have not seen any issues
+> > with that on all my test systems during big rework. But it could be
+> > beneficial for tiny systems where we do not have any swap and are
+> > limited in memory size.
+> 
+> Ok, that makes sense to me. Is it possible to emulate such a tiny system
+> on kvm and measure the benefits? Again, not a strong opinion here,
+> but it will be easier to justify adding a good chunk of code.
+> 
+It seems it is not so straightforward as it looks like. I tried it before,
+but usually the systems gets panic due to out of memory or just invokes
+the OOM killer.
 
-Maxime
+I will upload a new version of it, where i embed "preloading" logic directly
+into alloc_vmap_area() function.
+
+Thanks.
 
 --
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Vlad Rezki
