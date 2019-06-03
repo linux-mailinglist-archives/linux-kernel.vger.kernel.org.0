@@ -2,215 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 492483380C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 20:36:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8183033825
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 20:36:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727166AbfFCSfb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 14:35:31 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:40701 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727035AbfFCSey (ORCPT
+        id S1726813AbfFCSeX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 14:34:23 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:4380 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726715AbfFCSeO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 14:34:54 -0400
-Received: by mail-pl1-f193.google.com with SMTP id g69so7311135plb.7
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 11:34:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=f7iJhfSxbvGyPbdfrmcAg8sSv8WMS29kN5cUgY35bNE=;
-        b=hZJjb2cjBN8UboJnQL/09SGjONAOq1PWgb3KWui9VazwtHPQ4+NS56/5G51CM3jh1X
-         1eH2Fo63O6qfWxnI8vOCjxQhhBwM7306sKNN8GaFW+EP1836t0OhyY5B08n5rPgSszdR
-         zqJJDmZmK9AmvR0G4yo7dj9pifJ+0NkL9nuBc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=f7iJhfSxbvGyPbdfrmcAg8sSv8WMS29kN5cUgY35bNE=;
-        b=dMuSQ9OafYlTlynDoyVTrzBa8Ce6m2aYP4uly0J5P9PGUsAEQQRfRUGnUClFmAk7hf
-         b5glW++NKNv7s1h+CAjqIbT9atUPGf/3czoay2NinXFiPFwWeBR4F/rjNI8xdME12+lN
-         sIgy34lDhYwhDCQZrmgrI06/K5+KQJnIq3c/ztB9El/6hFJrs1DrNFGLjUp8fLzcf4RH
-         JOdl96aERdLrsJA4YHIfkd1MeX729KYWTVnd0GeUOc6vmyQBAxjnf+iXX7xFJn8umhDL
-         ZA6QTDO7z+JqdJG2lAfH0bFl2UQFhz29fkeh4VUhxiZQsg+Zd59UN1mVpp18hQmwg/dF
-         9GMg==
-X-Gm-Message-State: APjAAAVGdoiaVLKogCZykzTdzfm6bBQNuDfEvigq5y22TMKLnq7hqDNP
-        XjWy6+bsHp+ulWsDmSl0hkoDZQ==
-X-Google-Smtp-Source: APXvYqx8jFEMmF7hlpd037c6zysXKhYr/YrSXZJeqz6j71siPIMBbQ25Ain08xLw9CPbQpOffhY7LA==
-X-Received: by 2002:a17:902:4481:: with SMTP id l1mr32255226pld.121.1559586893829;
-        Mon, 03 Jun 2019 11:34:53 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:3c8f:512b:3522:dfaf])
-        by smtp.gmail.com with ESMTPSA id s24sm2930237pfh.133.2019.06.03.11.34.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Jun 2019 11:34:53 -0700 (PDT)
-From:   Gwendal Grignou <gwendal@chromium.org>
-To:     enric.balletbo@collabora.com, bleung@chromium.org,
-        groeck@chromium.org, lee.jones@linaro.org, jic23@kernel.org,
-        broonie@kernel.org, cychiang@chromium.org, tiwai@suse.com,
-        fabien.lahoudere@collabora.com
-Cc:     linux-iio@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org,
-        Gwendal Grignou <gwendal@chromium.org>
-Subject: [RESEND PATCH v3 30/30] mfd: cros_ec: Update I2S API
-Date:   Mon,  3 Jun 2019 11:34:01 -0700
-Message-Id: <20190603183401.151408-31-gwendal@chromium.org>
-X-Mailer: git-send-email 2.22.0.rc1.311.g5d7573a151-goog
-In-Reply-To: <20190603183401.151408-1-gwendal@chromium.org>
-References: <20190603183401.151408-1-gwendal@chromium.org>
+        Mon, 3 Jun 2019 14:34:14 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cf568240001>; Mon, 03 Jun 2019 11:34:12 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 03 Jun 2019 11:34:13 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 03 Jun 2019 11:34:13 -0700
+Received: from [10.26.11.157] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 3 Jun
+ 2019 18:34:11 +0000
+Subject: Re: [PATCH 5.1 00/40] 5.1.7-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <20190603090522.617635820@linuxfoundation.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <75303365-74d0-de3c-2f54-5cff3469d8a0@nvidia.com>
+Date:   Mon, 3 Jun 2019 19:34:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190603090522.617635820@linuxfoundation.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1559586852; bh=yT2aKoUSjC1S496mvwRzbK4hBYRD0SeSWYW01CRMMn0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=ekYMgx6mGLFm7AY85sJOnEg8rkEFkTjF0zSjRh0/I74CMliENYS9kSyqDWVePeEMT
+         Z+m/pJjgMA1F+Y8WsYCWcItO4BgfppNFk4yjQ0HK6cGE4wA1KT13FGZ+ZLQY1T0Ryu
+         5InpQ74kl0H7mt3/uN3K7SYQ3dpTZ630HPcjkj6YAZRjozY4mR5kgdu9hT8toINNE0
+         Oi0bShbUWl5zeqd+9ow2IqjjuUAcYUh7/Kez6nixY7g0In0XwX+SnfvptdxjXAgfoj
+         nbgoRlqr+jecbEjZ6mOl46o9rq/vyx5+peonsbroAV0ILXktibBpDPENd5Mfd0MsSM
+         h9L8SiiAor/VQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Improve I2S API.
-Rename ec_response_codec_gain into ec_codec_i2s_gain,
-update caller accordlingly.
 
-Acked-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Acked-by: Benson Leung <bleung@chromium.org>
-Reviewed-by: Fabien Lahoudere <fabien.lahoudere@collabora.com>
-Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
----
- include/linux/mfd/cros_ec_commands.h | 44 +++++++++++++---------------
- sound/soc/codecs/cros_ec_codec.c     |  8 ++---
- 2 files changed, 24 insertions(+), 28 deletions(-)
+On 03/06/2019 10:08, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.1.7 release.
+> There are 40 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed 05 Jun 2019 09:04:46 AM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.7-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
-index fc8babce1576..fa397722f17e 100644
---- a/include/linux/mfd/cros_ec_commands.h
-+++ b/include/linux/mfd/cros_ec_commands.h
-@@ -4471,6 +4471,7 @@ enum mkbp_cec_event {
- /* Commands for I2S recording on audio codec. */
- 
- #define EC_CMD_CODEC_I2S 0x00BC
-+#define EC_WOV_I2S_SAMPLE_RATE 48000
- 
- enum ec_codec_i2s_subcmd {
- 	EC_CODEC_SET_SAMPLE_DEPTH = 0x0,
-@@ -4480,6 +4481,7 @@ enum ec_codec_i2s_subcmd {
- 	EC_CODEC_I2S_SET_CONFIG = 0x4,
- 	EC_CODEC_I2S_SET_TDM_CONFIG = 0x5,
- 	EC_CODEC_I2S_SET_BCLK = 0x6,
-+	EC_CODEC_I2S_SUBCMD_COUNT = 0x7,
- };
- 
- enum ec_sample_depth_value {
-@@ -4496,6 +4498,21 @@ enum ec_i2s_config {
- 	EC_DAI_FMT_PCM_TDM = 5,
- };
- 
-+/*
-+ * For subcommand EC_CODEC_GET_GAIN.
-+ */
-+struct __ec_align1 ec_codec_i2s_gain {
-+	uint8_t left;
-+	uint8_t right;
-+};
-+
-+struct __ec_todo_unpacked ec_param_codec_i2s_tdm {
-+	int16_t ch0_delay; /* 0 to 496 */
-+	int16_t ch1_delay; /* -1 to 496 */
-+	uint8_t adjacent_to_ch0;
-+	uint8_t adjacent_to_ch1;
-+};
-+
- struct __ec_todo_packed ec_param_codec_i2s {
- 	/* enum ec_codec_i2s_subcmd */
- 	uint8_t cmd;
-@@ -4510,10 +4527,7 @@ struct __ec_todo_packed ec_param_codec_i2s {
- 		 * EC_CODEC_SET_GAIN
- 		 * Value should be 0~43 for both channels.
- 		 */
--		struct __ec_align1 ec_param_codec_i2s_set_gain {
--			uint8_t left;
--			uint8_t right;
--		} gain;
-+		struct ec_codec_i2s_gain gain;
- 
- 		/*
- 		 * EC_CODEC_I2S_ENABLE
-@@ -4522,7 +4536,7 @@ struct __ec_todo_packed ec_param_codec_i2s {
- 		uint8_t i2s_enable;
- 
- 		/*
--		 * EC_CODEC_I2S_SET_COFNIG
-+		 * EC_CODEC_I2S_SET_CONFIG
- 		 * Value should be one of ec_i2s_config.
- 		 */
- 		uint8_t i2s_config;
-@@ -4531,18 +4545,7 @@ struct __ec_todo_packed ec_param_codec_i2s {
- 		 * EC_CODEC_I2S_SET_TDM_CONFIG
- 		 * Value should be one of ec_i2s_config.
- 		 */
--		struct __ec_todo_unpacked ec_param_codec_i2s_tdm {
--			/*
--			 * 0 to 496
--			 */
--			int16_t ch0_delay;
--			/*
--			 * -1 to 496
--			 */
--			int16_t ch1_delay;
--			uint8_t adjacent_to_ch0;
--			uint8_t adjacent_to_ch1;
--		} tdm_param;
-+		struct ec_param_codec_i2s_tdm tdm_param;
- 
- 		/*
- 		 * EC_CODEC_I2S_SET_BCLK
-@@ -4551,13 +4554,6 @@ struct __ec_todo_packed ec_param_codec_i2s {
- 	};
- };
- 
--/*
-- * For subcommand EC_CODEC_GET_GAIN.
-- */
--struct ec_response_codec_gain {
--	uint8_t left;
--	uint8_t right;
--} __ec_align1;
- 
- /*****************************************************************************/
- /* System commands */
-diff --git a/sound/soc/codecs/cros_ec_codec.c b/sound/soc/codecs/cros_ec_codec.c
-index 99a3af8a15ff..87830ed5ebf4 100644
---- a/sound/soc/codecs/cros_ec_codec.c
-+++ b/sound/soc/codecs/cros_ec_codec.c
-@@ -38,21 +38,21 @@ static const DECLARE_TLV_DB_SCALE(ec_mic_gain_tlv, 0, 100, 0);
- 
- static int ec_command_get_gain(struct snd_soc_component *component,
- 			       struct ec_param_codec_i2s *param,
--			       struct ec_response_codec_gain *resp)
-+			       struct ec_codec_i2s_gain *resp)
- {
- 	struct cros_ec_codec_data *codec_data =
- 		snd_soc_component_get_drvdata(component);
- 	struct cros_ec_device *ec_device = codec_data->ec_device;
- 	u8 buffer[sizeof(struct cros_ec_command) +
- 		  max(sizeof(struct ec_param_codec_i2s),
--		      sizeof(struct ec_response_codec_gain))];
-+		      sizeof(struct ec_codec_i2s_gain))];
- 	struct cros_ec_command *msg = (struct cros_ec_command *)&buffer;
- 	int ret;
- 
- 	msg->version = 0;
- 	msg->command = EC_CMD_CODEC_I2S;
- 	msg->outsize = sizeof(struct ec_param_codec_i2s);
--	msg->insize = sizeof(struct ec_response_codec_gain);
-+	msg->insize = sizeof(struct ec_codec_i2s_gain);
- 
- 	memcpy(msg->data, param, msg->outsize);
- 
-@@ -226,7 +226,7 @@ static int get_ec_mic_gain(struct snd_soc_component *component,
- 			   u8 *left, u8 *right)
- {
- 	struct ec_param_codec_i2s param;
--	struct ec_response_codec_gain resp;
-+	struct ec_codec_i2s_gain resp;
- 	int ret;
- 
- 	param.cmd = EC_CODEC_GET_GAIN;
+All tests are passing for Tegra ...
+
+Test results for stable-v5.1:
+    12 builds:	12 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    32 tests:	32 pass, 0 fail
+
+Linux version:	5.1.7-rc1-ge674455
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
+
 -- 
-2.21.0.1020.gf2820cf01a-goog
-
+nvpublic
