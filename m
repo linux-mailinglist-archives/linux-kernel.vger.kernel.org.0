@@ -2,92 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 824F532FB1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 14:32:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EDFE32FC8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 14:37:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbfFCMc1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 08:32:27 -0400
-Received: from mga11.intel.com ([192.55.52.93]:60756 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726270AbfFCMc0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 08:32:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 05:32:26 -0700
-X-ExtLoop1: 1
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
-  by orsmga007.jf.intel.com with ESMTP; 03 Jun 2019 05:32:23 -0700
-Subject: Re: [PATCH v11 2/2] usb: xhci: Add Clear_TT_Buffer
-To:     Jim Lin <jilin@nvidia.com>, gregkh@linuxfoundation.org,
-        mathias.nyman@intel.com, stern@rowland.harvard.edu,
-        kai.heng.feng@canonical.com, drinkcat@chromium.org,
-        Thinh.Nguyen@synopsys.com, nsaenzjulienne@suse.de,
-        jflat@chromium.org, malat@debian.org
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1559559224-9845-1-git-send-email-jilin@nvidia.com>
- <1559559224-9845-3-git-send-email-jilin@nvidia.com>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Message-ID: <10d35c94-5938-aa47-0f12-7ce1143caa41@linux.intel.com>
-Date:   Mon, 3 Jun 2019 15:35:09 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1727154AbfFCMhQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 08:37:16 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:52298 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726360AbfFCMhQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 08:37:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=N37Qdwkcyg7EfrQtvP7k2DD+LJdWpMJfet+l9N2pWCw=; b=RpyhTr7FxDLVWQbbN8XqrLI0g
+        uxTLKDJT9I9RwGqBT/czRJ81DXC43wsY4QZ7eQ9Q2S0WqsyGFqFhFtoKLqoYU7/SDE/nUknk9W/OB
+        XF6d+gWiC4Lxi6pOkN/rDEQX2St80wJPmwVdhHC156iTpNa77SkQKbcZdg10kWrgXRpqmsWohHdN5
+        5OhFaPwpy7S6fMdjqeRRs/pLPKRHLs+aTfeSxOUXcHRiP5p3Lbw2zG/coThdqDiiBEIsN9P0RJDZS
+        dAhaGhrXzP6sW9NnJ7L+aH/A4tEs2cHS1uIfj+azB60BXAxj+bbEopuFgLfNjbIevd3+fttLtpVJl
+        /F9/mxeGA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hXmD5-0002tk-JL; Mon, 03 Jun 2019 12:37:07 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2023D20274AFF; Mon,  3 Jun 2019 14:37:05 +0200 (CEST)
+Date:   Mon, 3 Jun 2019 14:37:05 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Qian Cai <cai@lca.pw>, akpm@linux-foundation.org, hch@lst.de,
+        oleg@redhat.com, gkohli@codeaurora.org, mingo@redhat.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] block: fix a crash in do_task_dead()
+Message-ID: <20190603123705.GB3419@hirez.programming.kicks-ass.net>
+References: <1559161526-618-1-git-send-email-cai@lca.pw>
+ <20190530080358.GG2623@hirez.programming.kicks-ass.net>
+ <82e88482-1b53-9423-baad-484312957e48@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <1559559224-9845-3-git-send-email-jilin@nvidia.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <82e88482-1b53-9423-baad-484312957e48@kernel.dk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3.6.2019 13.53, Jim Lin wrote:
-> USB 2.0 specification chapter 11.17.5 says "as part of endpoint halt
-> processing for full-/low-speed endpoints connected via a TT, the host
-> software must use the Clear_TT_Buffer request to the TT to ensure
-> that the buffer is not in the busy state".
-> 
-> In our case, a full-speed speaker (ConferenceCam) is behind a high-
-> speed hub (ConferenceCam Connect), sometimes once we get STALL on a
-> request we may continue to get STALL with the folllowing requests,
-> like Set_Interface.
-> 
-> Here we invoke usb_hub_clear_tt_buffer() to send Clear_TT_Buffer
-> request to the hub of the device for the following Set_Interface
-> requests to the device to get ACK successfully.
-> 
-> Signed-off-by: Jim Lin <jilin@nvidia.com>
-> ---
-> v2: xhci_clear_tt_buffer_complete: add static, shorter indentation
->      , remove its claiming in xhci.h
-> v3: Add description for clearing_tt (xhci.h)
-> v4: Remove clearing_tt flag because hub_tt_work has hub->tt.lock
->      to protect for Clear_TT_Buffer to be run serially.
->      Remove xhci_clear_tt_buffer_complete as it's not necessary.
->      Same reason as the above.
->      Extend usb_hub_clear_tt_buffer parameter
-> v5: Not extending usb_hub_clear_tt_buffer parameter
->      Add description.
-> v6: Remove unused parameter slot_id from xhci_clear_hub_tt_buffer
-> v7: Add devaddr field in "struct usb_device"
-> v8: split as two patches
-> v9: no change flag
-> v10: Add EP_CLEARING_TT flag
-> v11: Add spin_lock/unlock in xhci_clear_tt_buffer_complete
-> 
-> 
->   drivers/usb/host/xhci-ring.c | 27 ++++++++++++++++++++++++++-
->   drivers/usb/host/xhci.c      | 21 +++++++++++++++++++++
->   drivers/usb/host/xhci.h      |  5 +++++
->   3 files changed, 52 insertions(+), 1 deletion(-)
-> 
+On Fri, May 31, 2019 at 03:12:13PM -0600, Jens Axboe wrote:
+> On 5/30/19 2:03 AM, Peter Zijlstra wrote:
 
-xhci parts look good to me,
+> > What is the purpose of that patch ?! The Changelog doesn't mention any
+> > benefit or performance gain. So why not revert that?
+> 
+> Yeah that is actually pretty weak. There are substantial performance
+> gains for small IOs using this trick, the changelog should have
+> included those. I guess that was left on the list...
 
-In case Greg wants to pick up both the core changes (1/2) and
-the xhci changes (2/2) at the same time:
+OK. I've looked at the try_to_wake_up() path for these exact
+conditions and we're certainly sub-optimal there, and I think we can put
+much of this special case in there. Please see below.
 
-Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+> I know it's not super kosher, your patch, but I don't think it's that
+> bad hidden in a generic helper.
 
+How about the thing that Oleg proposed? That is, not set a waiter when
+we know the loop is polling? That would avoid the need for this
+alltogether, it would also avoid any set_current_state() on the wait
+side of things.
 
+Anyway, Oleg, do you see anything blatantly buggered with this patch?
+
+(the stats were already dodgy for rq-stats, this patch makes them dodgy
+for task-stats too)
+
+---
+ kernel/sched/core.c | 38 ++++++++++++++++++++++++++++++++------
+ 1 file changed, 32 insertions(+), 6 deletions(-)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 102dfcf0a29a..474aa4c8e9d2 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1990,6 +1990,28 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+ 	unsigned long flags;
+ 	int cpu, success = 0;
+ 
++	if (p == current) {
++		/*
++		 * We're waking current, this means 'p->on_rq' and 'task_cpu(p)
++		 * == smp_processor_id()'. Together this means we can special
++		 * case the whole 'p->on_rq && ttwu_remote()' case below
++		 * without taking any locks.
++		 *
++		 * In particular:
++		 *  - we rely on Program-Order guarantees for all the ordering,
++		 *  - we're serialized against set_special_state() by virtue of
++		 *    it disabling IRQs (this allows not taking ->pi_lock).
++		 */
++		if (!(p->state & state))
++			goto out;
++
++		success = 1;
++		trace_sched_waking(p);
++		p->state = TASK_RUNNING;
++		trace_sched_woken(p);
++		goto out;
++	}
++
+ 	/*
+ 	 * If we are going to wake up a thread waiting for CONDITION we
+ 	 * need to ensure that CONDITION=1 done by the caller can not be
+@@ -1999,7 +2021,7 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+ 	raw_spin_lock_irqsave(&p->pi_lock, flags);
+ 	smp_mb__after_spinlock();
+ 	if (!(p->state & state))
+-		goto out;
++		goto unlock;
+ 
+ 	trace_sched_waking(p);
+ 
+@@ -2029,7 +2051,7 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+ 	 */
+ 	smp_rmb();
+ 	if (p->on_rq && ttwu_remote(p, wake_flags))
+-		goto stat;
++		goto unlock;
+ 
+ #ifdef CONFIG_SMP
+ 	/*
+@@ -2089,12 +2111,16 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+ #endif /* CONFIG_SMP */
+ 
+ 	ttwu_queue(p, cpu, wake_flags);
+-stat:
+-	ttwu_stat(p, cpu, wake_flags);
+-out:
++unlock:
+ 	raw_spin_unlock_irqrestore(&p->pi_lock, flags);
+ 
+-	return success;
++out:
++	if (success) {
++		ttwu_stat(p, cpu, wake_flags);
++		return true;
++	}
++
++	return false;
+ }
+ 
+ /**
