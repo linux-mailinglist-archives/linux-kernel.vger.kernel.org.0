@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32F9E3371A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 19:47:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C19B13371E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 19:48:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728957AbfFCRrj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 13:47:39 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34445 "EHLO
+        id S1729001AbfFCRrn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 13:47:43 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37940 "EHLO
         mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725876AbfFCRrj (ORCPT
+        with ESMTP id S1727649AbfFCRrk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 13:47:39 -0400
-Received: by mail-lf1-f66.google.com with SMTP id y198so3797795lfa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 10:47:38 -0700 (PDT)
+        Mon, 3 Jun 2019 13:47:40 -0400
+Received: by mail-lf1-f66.google.com with SMTP id b11so14298008lfa.5
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 10:47:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=f1Dtl9xXT8tEGwrUxBzQBfGddt3tp9MI+UPqkpN1WN0=;
-        b=mqTz1839SvTGVA6JMBG6+XjE0xYwF2fSddZ7+seYCgdrXgukg0+NU1E4tXpmGF15Im
-         UZJXC+yUDioaBsN6la1dNtjTzmPzvL4teQe+GSwWL7g0C0GQ8xS+7Y5L2BBcCfXp+86x
-         wmMcAuVi4hbPPf8Pu4a/f2A02J0NXA367FrEGeAtR7D+OzvyqwIKbnX6pmohPchdxcab
-         om1NVhjh5ihdIMLobhgkrDeIrhVafIUwILMNvwzW9QzXJf7xfvMfpFZqOPjCRzZdWpdS
-         xCDuNsMcjH7LJDGLtHTp/dy+CwlmAJLQAjPt9FsfMow6RPEaUZ3hCIdNIW31jvDpVBA0
-         Et6A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=GjT900taG1ijSa9lWUX/G6V7gIXt/Ttjrhy2y92+ySQ=;
+        b=Ogrh9eTDgQAUONxtoCEsmlhtx9p4ZZt29kbWmmfagH5K1N51dWWiwQXBmLQshGR8J8
+         JaNQR+8WKr/MTf8K1xrO0Syb9jjiMj35sivUp6zm1jV3T/QuMpE6Dw6L+RD342txYebk
+         NJV8ZHfOTYFNFDubmYUOXAbSAhy5J+kUkggW04A+6mKqqgGSxB3BC5kzw4qweIKUiWXc
+         RWh6GQHeO7X8UFlW3a9oj4ZkCyHYFG6u8OIgykswrOARCeyPCclz+zAeg7NjyYx51bDx
+         //dpzaNZ8IwgIk00p3O4Qkzp3RAjBuhVSNlUHZlOzqvOgVE12g4mWxUF53/MCmxYTpvE
+         sw7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=f1Dtl9xXT8tEGwrUxBzQBfGddt3tp9MI+UPqkpN1WN0=;
-        b=DDfIEuMVBS7ypq6Rl8VdBzC7GPDDJ/b7fyYid/ejXPVtw1pqAHtj+67BqXyt7HskY6
-         6tKksyqSMB1bVqqS0ZW8Ng8Wz32C2IAwoKAJ9KURRptKsmOAVgysx5gOI7c5gom3FzgT
-         PW5QizjTA+sQJEm9+Y3HlhOQrdqZLMSoqRLQfTgTwIhS2nXYEU6FlcfqW/N7RIUDPpOQ
-         8dhVtv6IVJu27+RUjwSjeQhMz0JoeqfeDzuKvpuvgcbAeEvFAxpqGfq1WubRwW+E+PTq
-         sr/zQsZ3EwQkgXKp3s4f1t17XOd51dWXv5rSjk4B1oz+xP2b8SRD0N52xGHuLNy41Co3
-         EDrg==
-X-Gm-Message-State: APjAAAXW29R+051qHkDQV054dmtBkFSUymx22nnTgNdCpjitqe+C5tH7
-        b42+i3X5qvtwhupKNNftGOY=
-X-Google-Smtp-Source: APXvYqxCQNjDQHJYWJnJyGea/doMquTKfXFLsAZndtY60a6k8pR2NhL8Rsw2Q/prcSP3U/G6IrOLRg==
-X-Received: by 2002:ac2:599b:: with SMTP id w27mr15110769lfn.184.1559584057528;
-        Mon, 03 Jun 2019 10:47:37 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=GjT900taG1ijSa9lWUX/G6V7gIXt/Ttjrhy2y92+ySQ=;
+        b=JjfPipyjCk/seOse13dgyGq8U+5dMtLl4b2YfJWJZ11tCzoxU0bwgkMg0iw+lCtN7n
+         oDRxP73hv72Tzvw0N36Kl6Z7kxFTdjD7R0YVgFvPc21B4Nn188V2dZVBnUJVy86ukaOf
+         RUdnKqQnSC5TZ/gZyWDTkI8ORFIW2TYA/k8dDEheO7WtZNeRKdz+KuDU8mFbVpXSpqyJ
+         osmWtTq8eQtUiWAbF5zPrVhQTngqceYSpltArJE7+g/Li3JQP/1V8/LDH2eEt5NQIDA+
+         byXOqcx97gTcJrsCZo0nO/XqjEJHvQn9kOLsqQPsK4oLMhWD65WRIdsbOdNmw+EzkMqE
+         acAg==
+X-Gm-Message-State: APjAAAW+QJVQJkNDJIPoPjkpx1YdgxWCsC5pc5VJpzqvt0ikmN3d/ky6
+        GeJkhOZYFVxW5Q3erZnuR8g=
+X-Google-Smtp-Source: APXvYqymibEEWq50h1UhkT3XaRXxM5Grj6g5eLWzSPNypWuItCujKf4Kk6Dvxeq4YPayp2H9tk8i+A==
+X-Received: by 2002:ac2:4c3c:: with SMTP id u28mr4407330lfq.136.1559584058502;
+        Mon, 03 Jun 2019 10:47:38 -0700 (PDT)
 Received: from localhost.localdomain ([188.150.253.81])
-        by smtp.gmail.com with ESMTPSA id n7sm2803532lfi.68.2019.06.03.10.47.36
+        by smtp.gmail.com with ESMTPSA id n7sm2803532lfi.68.2019.06.03.10.47.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Jun 2019 10:47:36 -0700 (PDT)
+        Mon, 03 Jun 2019 10:47:38 -0700 (PDT)
 From:   codekipper@gmail.com
 To:     maxime.ripard@free-electrons.com, wens@csie.org,
         linux-sunxi@googlegroups.com
@@ -52,10 +52,12 @@ Cc:     linux-arm-kernel@lists.infradead.org, lgirdwood@gmail.com,
         broonie@kernel.org, linux-kernel@vger.kernel.org,
         alsa-devel@alsa-project.org, be17068@iperbole.bo.it,
         Marcus Cooper <codekipper@gmail.com>
-Subject: [PATCH v4 0/9]ASoC: sun4i-i2s: Updates to the driver
-Date:   Mon,  3 Jun 2019 19:47:26 +0200
-Message-Id: <20190603174735.21002-1-codekipper@gmail.com>
+Subject: [PATCH v4 1/9] ASoC: sun4i-i2s: Fix sun8i tx channel offset mask
+Date:   Mon,  3 Jun 2019 19:47:27 +0200
+Message-Id: <20190603174735.21002-2-codekipper@gmail.com>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190603174735.21002-1-codekipper@gmail.com>
+References: <20190603174735.21002-1-codekipper@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -65,74 +67,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcus Cooper <codekipper@gmail.com>
 
-Hi All,
+Although not causing any noticeable issues, the mask for the
+channel offset is covering too many bits.
 
-here is a patch series to add some improvements to the sun4i-i2s driver
-found whilst getting slave clocking and hdmi audio working on the newer
-SoCs. As the LibreELEC project is progressing extremely well then there
-has been some activity getting surround sound working and this is included.
-
-The functionality included with the new patch set has been extended to
-cover more sample resolutions, multi-lane data output for HDMI audio
-and some bug fixes that have been discovered along the way.
-
-I can see more usage of the tdm property since I last attempted to push
-these patches and the examples currently in mainline sort of the opposite
-to what I'm trying to achieve. When we first started looking at the i2s
-driver, the codecs that we were using allowed for the frame width to be
-determined based on the sampling resolution but in most use cases it
-seems that a fixed width is required(my highest priority should be to get
-HDMI audio support in). We're using the tdm property to override the old
-way to calculate the frame width. What I've seen in what has already been
-mainlined is that the i2s driver has a frame width that is fixed to 32
-bits and this can be overridden using the tdm property.
-
-I still need to investigate the FIFO syncing issues which i've not had a 
-chance to change or address the concerns that broonie and wens brought up.
-This change has been moved to the top of the patch stack.
-
-BR,
-CK
-
+Signed-off-by: Marcus Cooper <codekipper@gmail.com>
 ---
-v4 changes compared to v3 are:
-- Moved patches around so that the more controversial of patches are
-  at the top of the stack.
-- Added more details to commit messages.
-- Fixed 20bit audio PCM format to use 4 bytes.
-- Reduced number of flags used to indicate a new SoC.
+ sound/soc/sunxi/sun4i-i2s.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v3 changes compared to v2 are:
- - added back slave mode changes
- - added back the use of tdm properties
- - changes to regmap and caching
- - removed loopback functionality
- - fixes to the channel offset mask
-
-v2 changes compared to v1 are:
- - removed slave mode changes which didn't set mclk and bclk div.
- - removed use of tdm and now use a dedicated property.
- - fix commit message to better explain reason for sign extending
- - add divider calculations for newer SoCs.
- - add support for multi-lane i2s data output.
- - add support for 20, 24 and 32 bit samples.
- - add loopback property so blocks can be tested without a codec.
-
-
-Marcus Cooper (9):
-  ASoC: sun4i-i2s: Fix sun8i tx channel offset mask
-  ASoC: sun4i-i2s: Add offset to RX channel select
-  ASoC: sun4i-i2s: Add regmap field to sign extend sample
-  ASoC: sun4i-i2s: Reduce quirks for sun8i-h3
-  ASoC: sun4i-i2s: Add set_tdm_slot functionality
-  ASoC: sun4i-i2s: Add multi-lane functionality
-  ASoC: sun4i-i2s: Add multichannel functionality
-  ASoc: sun4i-i2s: Add 20, 24 and 32 bit support
-  ASoC: sun4i-i2s: Adjust regmap settings
-
- sound/soc/sunxi/sun4i-i2s.c | 242 ++++++++++++++++++++++++------------
- 1 file changed, 164 insertions(+), 78 deletions(-)
-
+diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
+index c53bfed8d4c2..90bd3963d8ae 100644
+--- a/sound/soc/sunxi/sun4i-i2s.c
++++ b/sound/soc/sunxi/sun4i-i2s.c
+@@ -106,7 +106,7 @@
+ 
+ #define SUN8I_I2S_TX_CHAN_MAP_REG	0x44
+ #define SUN8I_I2S_TX_CHAN_SEL_REG	0x34
+-#define SUN8I_I2S_TX_CHAN_OFFSET_MASK		GENMASK(13, 11)
++#define SUN8I_I2S_TX_CHAN_OFFSET_MASK		GENMASK(13, 12)
+ #define SUN8I_I2S_TX_CHAN_OFFSET(offset)	(offset << 12)
+ #define SUN8I_I2S_TX_CHAN_EN_MASK		GENMASK(11, 4)
+ #define SUN8I_I2S_TX_CHAN_EN(num_chan)		(((1 << num_chan) - 1) << 4)
 -- 
 2.21.0
 
