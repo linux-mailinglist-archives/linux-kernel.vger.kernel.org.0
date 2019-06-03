@@ -2,249 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAC2432873
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 08:25:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23ECF3286A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 08:22:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726794AbfFCGZt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 02:25:49 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34658 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726486AbfFCGZt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 02:25:49 -0400
-Received: by mail-ed1-f68.google.com with SMTP id c26so15120325edt.1
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2019 23:25:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nGXg/S8Ld073VgO+miIGCLU87nn8ri4F6H7CKJTX7Sc=;
-        b=auFQVuBqB+wcbhH3JH9krRMEs8avmNjhoxV6GipZlU4spye4UYzjLsQS8DcHOOFtH0
-         y3mfC3SYYKnEgSrN8xPguEiS9anuQIDJlzROUesJFkqzrF/YhJiXmPIrePddT7kEcuGz
-         FZUWAvjU/ACo4ErFvLHXor6veSw+WTskXQuhM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nGXg/S8Ld073VgO+miIGCLU87nn8ri4F6H7CKJTX7Sc=;
-        b=ZwQBwTHT0rKWH5XSw2KtUS7Cyl2WRz2I5T2vhaZEfBSjjrF8LppXFzy8RtItsjmnyF
-         ILZCIGojZ0id7MaXUoHI7zmdOctBbD/BavOpUeILmMHZYZqXj62fTBoYS7JQ2XcaR33o
-         SHNktk3rFEy9FEnlh+neEjDJ02lJydnLx/FoF+bixhssOsGgyWJgjzqHZgxbcxVm8gQQ
-         y8rLjy/uvockLCG2DtT+5uknOBRWyzbclByDbJxHMASpUTWu1quv3ROqWdoy3tDtmU3c
-         Mx5EL7Hv1pvRxymdMIrXR2OjDwE/nBIYoU9R/Sx7ZHCNiXm8Bnnbciy7QrpGTZhwppQ1
-         45ZA==
-X-Gm-Message-State: APjAAAVv4knc/QwfNDpzXHgD+53Lut02JLkrFH53wArrkQUdZ2NovkKj
-        24frNpWctXSQioIaB+2vZJn6vlqiPNXpsQ==
-X-Google-Smtp-Source: APXvYqwDdsDeqV+VKwiqnrRA9ewK9P3L05bi5rG5njzA4OSmAUqKy86kXbECOWzx83kHbz/Fco2gWA==
-X-Received: by 2002:a17:906:260b:: with SMTP id h11mr21662407ejc.293.1559543146266;
-        Sun, 02 Jun 2019 23:25:46 -0700 (PDT)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com. [209.85.128.52])
-        by smtp.gmail.com with ESMTPSA id x25sm3838088edb.43.2019.06.02.23.25.46
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Sun, 02 Jun 2019 23:25:46 -0700 (PDT)
-Received: by mail-wm1-f52.google.com with SMTP id d17so2092528wmb.3
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2019 23:25:46 -0700 (PDT)
-X-Received: by 2002:a7b:c8d4:: with SMTP id f20mr1100332wml.90.1559542813396;
- Sun, 02 Jun 2019 23:20:13 -0700 (PDT)
+        id S1726863AbfFCGWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 02:22:20 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:37489 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726383AbfFCGWU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 02:22:20 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45HQ2K2h3wz9s4Y;
+        Mon,  3 Jun 2019 16:22:17 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1559542937;
+        bh=qtRLL5MmwkVppNQC2HhXBoAeLnIwZD4NL/50uFan5SU=;
+        h=Date:From:To:Cc:Subject:From;
+        b=usyZjCBMTorPhShHFMWkb8U6KufF4zisxKgg93tf98GQElT38ZO/mkJRMLJU0AkAO
+         fvcAnveLGmuIMGSOUt6n8BnmXd4ECIgT3Ii4aJRxXZ4eY8qQ/Ptn81dvmoy4bSvXkP
+         C3PhkBtT34d4GO6x/7U6m0uMAsJS1L3pZ/ofuJj1HhkWFGGmrFJLXRTKDDehOdbQUA
+         KG19z8vZqiuNH209Lkre3yx1bJLqJrgYHPeAY6FqHVfdgtk247eyIzbQg/fW7Rp53C
+         Zt91O6knQIRCZt+n3Yc4nKexRUunh0xFq6/TDlsUSvnkblHekOSv27W2DYKM3rmsvg
+         jnrzghbrpL1xg==
+Date:   Mon, 3 Jun 2019 16:22:15 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: runtime failure of next-20190603
+Message-ID: <20190603162215.6390707f@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20181201165348.24140-1-robdclark@gmail.com> <CAL_JsqJmPqis46Un91QyhXgdrVtfATMP_hTp6wSeSAfc8MLFfw@mail.gmail.com>
- <CAF6AEGs9Nsft8ofZkGz_yWBPBC+prh8dBSkJ4PJr8yk2c5FMdQ@mail.gmail.com> <CAF6AEGt-dhbQS5zZCNVTLT57OiUwO0RiP5bawTSu2RKZ-7W-aw@mail.gmail.com>
-In-Reply-To: <CAF6AEGt-dhbQS5zZCNVTLT57OiUwO0RiP5bawTSu2RKZ-7W-aw@mail.gmail.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Mon, 3 Jun 2019 15:20:02 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5BdrJFL5LKK8O5NPDKWfFgkTX_JU-jU3giEz33tj-jwCA@mail.gmail.com>
-Message-ID: <CAAFQd5BdrJFL5LKK8O5NPDKWfFgkTX_JU-jU3giEz33tj-jwCA@mail.gmail.com>
-Subject: Re: [PATCH] of/device: add blacklist for iommu dma_ops
-To:     Rob Clark <robdclark@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/+TiVC.xekiq4xkQ7ICT.F+4"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 3, 2019 at 4:40 AM Rob Clark <robdclark@gmail.com> wrote:
->
-> On Fri, May 10, 2019 at 7:35 AM Rob Clark <robdclark@gmail.com> wrote:
-> >
-> > On Tue, Dec 4, 2018 at 2:29 PM Rob Herring <robh+dt@kernel.org> wrote:
-> > >
-> > > On Sat, Dec 1, 2018 at 10:54 AM Rob Clark <robdclark@gmail.com> wrote:
-> > > >
-> > > > This solves a problem we see with drm/msm, caused by getting
-> > > > iommu_dma_ops while we attach our own domain and manage it directly at
-> > > > the iommu API level:
-> > > >
-> > > >   [0000000000000038] user address but active_mm is swapper
-> > > >   Internal error: Oops: 96000005 [#1] PREEMPT SMP
-> > > >   Modules linked in:
-> > > >   CPU: 7 PID: 70 Comm: kworker/7:1 Tainted: G        W         4.19.3 #90
-> > > >   Hardware name: xxx (DT)
-> > > >   Workqueue: events deferred_probe_work_func
-> > > >   pstate: 80c00009 (Nzcv daif +PAN +UAO)
-> > > >   pc : iommu_dma_map_sg+0x7c/0x2c8
-> > > >   lr : iommu_dma_map_sg+0x40/0x2c8
-> > > >   sp : ffffff80095eb4f0
-> > > >   x29: ffffff80095eb4f0 x28: 0000000000000000
-> > > >   x27: ffffffc0f9431578 x26: 0000000000000000
-> > > >   x25: 00000000ffffffff x24: 0000000000000003
-> > > >   x23: 0000000000000001 x22: ffffffc0fa9ac010
-> > > >   x21: 0000000000000000 x20: ffffffc0fab40980
-> > > >   x19: ffffffc0fab40980 x18: 0000000000000003
-> > > >   x17: 00000000000001c4 x16: 0000000000000007
-> > > >   x15: 000000000000000e x14: ffffffffffffffff
-> > > >   x13: ffff000000000000 x12: 0000000000000028
-> > > >   x11: 0101010101010101 x10: 7f7f7f7f7f7f7f7f
-> > > >   x9 : 0000000000000000 x8 : ffffffc0fab409a0
-> > > >   x7 : 0000000000000000 x6 : 0000000000000002
-> > > >   x5 : 0000000100000000 x4 : 0000000000000000
-> > > >   x3 : 0000000000000001 x2 : 0000000000000002
-> > > >   x1 : ffffffc0f9431578 x0 : 0000000000000000
-> > > >   Process kworker/7:1 (pid: 70, stack limit = 0x0000000017d08ffb)
-> > > >   Call trace:
-> > > >    iommu_dma_map_sg+0x7c/0x2c8
-> > > >    __iommu_map_sg_attrs+0x70/0x84
-> > > >    get_pages+0x170/0x1e8
-> > > >    msm_gem_get_iova+0x8c/0x128
-> > > >    _msm_gem_kernel_new+0x6c/0xc8
-> > > >    msm_gem_kernel_new+0x4c/0x58
-> > > >    dsi_tx_buf_alloc_6g+0x4c/0x8c
-> > > >    msm_dsi_host_modeset_init+0xc8/0x108
-> > > >    msm_dsi_modeset_init+0x54/0x18c
-> > > >    _dpu_kms_drm_obj_init+0x430/0x474
-> > > >    dpu_kms_hw_init+0x5f8/0x6b4
-> > > >    msm_drm_bind+0x360/0x6c8
-> > > >    try_to_bring_up_master.part.7+0x28/0x70
-> > > >    component_master_add_with_match+0xe8/0x124
-> > > >    msm_pdev_probe+0x294/0x2b4
-> > > >    platform_drv_probe+0x58/0xa4
-> > > >    really_probe+0x150/0x294
-> > > >    driver_probe_device+0xac/0xe8
-> > > >    __device_attach_driver+0xa4/0xb4
-> > > >    bus_for_each_drv+0x98/0xc8
-> > > >    __device_attach+0xac/0x12c
-> > > >    device_initial_probe+0x24/0x30
-> > > >    bus_probe_device+0x38/0x98
-> > > >    deferred_probe_work_func+0x78/0xa4
-> > > >    process_one_work+0x24c/0x3dc
-> > > >    worker_thread+0x280/0x360
-> > > >    kthread+0x134/0x13c
-> > > >    ret_from_fork+0x10/0x18
-> > > >   Code: d2800004 91000725 6b17039f 5400048a (f9401f40)
-> > > >   ---[ end trace f22dda57f3648e2c ]---
-> > > >   Kernel panic - not syncing: Fatal exception
-> > > >   SMP: stopping secondary CPUs
-> > > >   Kernel Offset: disabled
-> > > >   CPU features: 0x0,22802a18
-> > > >   Memory Limit: none
-> > > >
-> > > > The problem is that when drm/msm does it's own iommu_attach_device(),
-> > > > now the domain returned by iommu_get_domain_for_dev() is drm/msm's
-> > > > domain, and it doesn't have domain->iova_cookie.
-> > > >
-> > > > We kind of avoided this problem prior to sdm845/dpu because the iommu
-> > > > was attached to the mdp node in dt, which is a child of the toplevel
-> > > > mdss node (which corresponds to the dev passed in dma_map_sg()).  But
-> > > > with sdm845, now the iommu is attached at the mdss level so we hit the
-> > > > iommu_dma_ops in dma_map_sg().
-> > > >
-> > > > But auto allocating/attaching a domain before the driver is probed was
-> > > > already a blocking problem for enabling per-context pagetables for the
-> > > > GPU.  This problem is also now solved with this patch.
-> > > >
-> > > > Fixes: 97890ba9289c dma-mapping: detect and configure IOMMU in of_dma_configure
-> > > > Tested-by: Douglas Anderson <dianders@chromium.org>
-> > > > Signed-off-by: Rob Clark <robdclark@gmail.com>
-> > > > ---
-> > > > This is an alternative/replacement for [1].  What it lacks in elegance
-> > > > it makes up for in practicality ;-)
-> > > >
-> > > > [1] https://patchwork.freedesktop.org/patch/264930/
-> > > >
-> > > >  drivers/of/device.c | 22 ++++++++++++++++++++++
-> > > >  1 file changed, 22 insertions(+)
-> > > >
-> > > > diff --git a/drivers/of/device.c b/drivers/of/device.c
-> > > > index 5957cd4fa262..15ffee00fb22 100644
-> > > > --- a/drivers/of/device.c
-> > > > +++ b/drivers/of/device.c
-> > > > @@ -72,6 +72,14 @@ int of_device_add(struct platform_device *ofdev)
-> > > >         return device_add(&ofdev->dev);
-> > > >  }
-> > > >
-> > > > +static const struct of_device_id iommu_blacklist[] = {
-> > > > +       { .compatible = "qcom,mdp4" },
-> > > > +       { .compatible = "qcom,mdss" },
-> > > > +       { .compatible = "qcom,sdm845-mdss" },
-> > > > +       { .compatible = "qcom,adreno" },
-> > > > +       {}
-> > > > +};
-> > >
-> > > Not completely clear to whether this is still needed or not, but this
-> > > really won't scale. Why can't the driver for these devices override
-> > > whatever has been setup by default?
-> > >
-> >
-> > fwiw, at the moment it is not needed, but it will become needed again
-> > to implement per-context pagetables (although I suppose for this we
-> > only need to blacklist qcom,adreno and not also the display nodes).
->
-> So, another case I've come across, on the display side.. I'm working
-> on handling the case where bootloader enables display (and takes iommu
-> out of reset).. as soon as DMA domain gets attached we get iommu
-> faults, because bootloader has already configured display for scanout.
-> Unfortunately this all happens before actual driver is probed and has
-> a chance to intervene.
->
-> It's rather unfortunate that we tried to be clever rather than just
-> making drivers call some function to opt-in to the hookup of dma iommu
-> ops :-(
+--Sig_/+TiVC.xekiq4xkQ7ICT.F+4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I think it still works for the 90% of cases and if 10% needs some
-explicit work in the drivers, that's better than requiring 100% of the
-drivers to do things manually.
+Hi all,
 
-Adding Marek who had the same problem on Exynos.
+My qemu powerpc_pseries_le_defconfig boots failed today with the following
+output at shutdown time:
 
-Best regards,
-Tomasz
+# halt
+# Stopping network...[   32.109495] watchdog: BUG: soft lockup - CPU#0 stuc=
+k for 22s! [ifdown:97]
+[   32.109794] Modules linked in:
+[   32.110367] CPU: 0 PID: 97 Comm: ifdown Not tainted 5.2.0-rc3 #2
+[   32.110577] NIP:  c000000000bbeb38 LR: c000000000bbf0a0 CTR: 00000000000=
+00000
+[   32.110732] REGS: c00000007c50f4d0 TRAP: 0901   Not tainted  (5.2.0-rc3)
+[   32.110813] MSR:  8000000000009033 <SF,EE,ME,IR,DR,RI,LE>  CR: 24422422 =
+ XER: 20000000
+[   32.111162] CFAR: c000000000bbf09c IRQMASK: 0=20
+[   32.111162] GPR00: c0000000002fa540 c00000007c50f760 c00000000119c100 c0=
+0000007c50f7b8=20
+[   32.111162] GPR04: ffffffffffffffff 000000000000000f c00000007c50f8f0 00=
+00000000000003=20
+[   32.111162] GPR08: c00000007d468450 0000000000000003 c00c000000006834 c0=
+0000007ffe7000=20
+[   32.111162] GPR12: c000000001268a90 c000000001380000=20
+[   32.112430] NIP [c000000000bbeb38] xas_load+0x8/0xd0
+[   32.112506] LR [c000000000bbf0a0] xas_find+0x1b0/0x260
+[   32.112737] Call Trace:
+[   32.112859] [c00000007c50f760] [c000000000bbf0a0] xas_find+0x1b0/0x260 (=
+unreliable)
+[   32.113082] [c00000007c50f790] [c0000000002fa540] find_get_entries+0x2e0=
+/0x350
+[   32.113204] [c00000007c50f840] [c00000000031fe08] shmem_undo_range+0x2d8=
+/0xa90
+[   32.113292] [c00000007c50f9f0] [c0000000003205ec] shmem_truncate_range+0=
+x2c/0x60
+[   32.113381] [c00000007c50fa20] [c000000000320ca4] shmem_setattr+0x3a4/0x=
+3e0
+[   32.113467] [c00000007c50fa80] [c00000000040e600] notify_change+0x2d0/0x=
+5c0
+[   32.113596] [c00000007c50fae0] [c0000000003d8f7c] do_truncate+0x9c/0x140
+[   32.113672] [c00000007c50fb70] [c0000000003f66d8] path_openat+0x848/0x16=
+60
+[   32.113747] [c00000007c50fc70] [c0000000003f900c] do_filp_open+0x8c/0x120
+[   32.113816] [c00000007c50fda0] [c0000000003da9e8] do_sys_open+0x248/0x350
+[   32.113956] [c00000007c50fe20] [c00000000000bce4] system_call+0x5c/0x70
+[   32.114123] Instruction dump:
+[   32.114508] 4e800020 60000000 3900c005 7fa94040 409dff60 7d291674 2f8900=
+00 419eff54=20
+[   32.114651] 38600000 4e800020 3c4c005e 3842d5d0 <7c0802a6> fbe1fff8 7c7f=
+1b78 f8010010=20
 
->
-> BR,
-> -R
->
-> >
-> > The reason is that in the current state the core code creates the
-> > first domain before the driver has a chance to intervene and tell it
-> > not to.  And this results that driver ends up using a different
-> > context bank on the iommu than what the firmware expects.
-> >
-> > I guess the alternative is to put some property in DT.. but that
-> > doesn't really feel right.  I guess there aren't really many (or any?)
-> > other drivers that have this specific problem, so I don't really
-> > expect it to be a scaling problem.
-> >
-> > Yeah, it's a bit ugly, but I'll take a small ugly working hack, over
-> > elegant but non-working any day ;-)... but if someone has a better
-> > idea then I'm all ears.
-> >
-> > BR,
-> > -R
+Reverting commit
+
+  fa858b6eec3f ("XArray: Add xas_replace")
+
+made the failure go away.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/+TiVC.xekiq4xkQ7ICT.F+4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz0vJcACgkQAVBC80lX
+0Gxj8gf/VjZVL3NuxGCcA/fQWIZi2QUrNTpQVsVn7/XpqL5ylaAoRCVtsqKvtJ2i
+opCS8iyYyun/S8HOqxe6Su0LCBoeb3gXXo6Vj79hdWkjK5AN49NGpQoZWLd+O7Dw
+Jx4yjHOb9RrLOBHpZFoeJqsjaneRqk3XLgT40TcCgmNF+O9Kr51nPFrbodPan3hY
+R/OzBGrascS0yaK6JQbiIL+iII55G7UgSbtups3u84kOxCJ2ysDpRjNAgsNQAMDl
+TfJ0mIkDMaUnMo6niRoOn1n1ikgWQ2gRA7aUFcjVpAjrLYkRh6ME69WFtGuUrrOY
+TwlcOgW3dwUv3gi6nz+Bgpw9ZIY9aQ==
+=3mjZ
+-----END PGP SIGNATURE-----
+
+--Sig_/+TiVC.xekiq4xkQ7ICT.F+4--
