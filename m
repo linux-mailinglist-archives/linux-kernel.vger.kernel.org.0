@@ -2,60 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6DD332D46
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:59:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D08DC32D43
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:58:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727437AbfFCJ6y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 05:58:54 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:50159 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726822AbfFCJ6w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 05:58:52 -0400
-Received: from starbug-2.treewalker.org (unknown [193.22.133.58])
-        (Authenticated sender: relay@treewalker.org)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 69DCF200019;
-        Mon,  3 Jun 2019 09:58:43 +0000 (UTC)
-Received: from hyperion.localnet (hyperion.local.treewalker.org [192.168.0.43])
-        by starbug-2.treewalker.org (Postfix) with ESMTP id 8419F99E971;
-        Mon,  3 Jun 2019 11:58:39 +0200 (CEST)
-From:   Maarten ter Huurne <maarten@treewalker.org>
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Paul Cercueil <paul@crapouillou.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, od@zcrc.me
-Subject: Re: [PATCH 2/2] drm/panel: Add Novatek NT39016 panel support
-Date:   Mon, 03 Jun 2019 11:58:39 +0200
-Message-ID: <4433088.CzTouAtFss@hyperion>
-In-Reply-To: <20190602184453.GB10060@ravnborg.org>
-References: <20190602164844.15659-1-paul@crapouillou.net> <20190602164844.15659-2-paul@crapouillou.net> <20190602184453.GB10060@ravnborg.org>
+        id S1727349AbfFCJ6v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 05:58:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51448 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726708AbfFCJ6v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 05:58:51 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id F19B4AFA9;
+        Mon,  3 Jun 2019 09:58:49 +0000 (UTC)
+Date:   Mon, 3 Jun 2019 11:58:48 +0200
+From:   Joerg Roedel <jroedel@suse.de>
+To:     Qian Cai <cai@lca.pw>
+Cc:     jamessewart@arista.com, baolu.lu@linux.intel.com,
+        dwmw2@infradead.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] intel-iommu: fix a variable set but not used
+Message-ID: <20190603095848.GD8151@suse.de>
+References: <1559333762-2436-1-git-send-email-cai@lca.pw>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1559333762-2436-1-git-send-email-cai@lca.pw>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sunday, 2 June 2019 20:44:53 CEST Sam Ravnborg wrote:
-
-> > Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+On Fri, May 31, 2019 at 04:16:02PM -0400, Qian Cai wrote:
+> The commit "iommu/vt-d: Delegate the dma domain to upper layer" left an
+> unused variable,
 > 
-> This driver is authored by Maarten ter Huurne <maarten@treewalker.org>
-> as well as you.
-> Could you get a s-o-b or at least some other formal
-> attribution of Maarten in the changelog.
+> drivers/iommu/intel-iommu.c: In function 'disable_dmar_iommu':
+> drivers/iommu/intel-iommu.c:1652:23: warning: variable 'domain' set but
+> not used [-Wunused-but-set-variable]
+> 
+> Signed-off-by: Qian Cai <cai@lca.pw>
+> ---
+>  drivers/iommu/intel-iommu.c | 4 ----
+>  1 file changed, 4 deletions(-)
 
-This is based on a driver I wrote for the GCW Zero back when we were 
-using fbdev. Paul updated it for drm and did additional cleanups.
-
-Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
-
-Bye,
-		Maarten
-
-
-
+Applied, thanks.
