@@ -2,57 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 433AC33AE4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:13:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 433B333AEB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:14:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726637AbfFCWNb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 18:13:31 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:36144 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725956AbfFCWNa (ORCPT
+        id S1726828AbfFCWOA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 18:14:00 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47385 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbfFCWN7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 18:13:30 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id D358F136E16B0;
-        Mon,  3 Jun 2019 15:13:29 -0700 (PDT)
-Date:   Mon, 03 Jun 2019 15:13:29 -0700 (PDT)
-Message-Id: <20190603.151329.1880364693299986138.davem@davemloft.net>
-To:     grygorii.strashko@ti.com
-Cc:     ssantosh@kernel.org, richardcochran@gmail.com, robh+dt@kernel.org,
-        nsekhar@ti.com, m-karicheri2@ti.com, w-kwok2@ti.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net-next 04/10] net: ethernet: ti: cpts: add support
- for rftclk selection
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190601104534.25790-5-grygorii.strashko@ti.com>
-References: <20190601104534.25790-1-grygorii.strashko@ti.com>
-        <20190601104534.25790-5-grygorii.strashko@ti.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 03 Jun 2019 15:13:30 -0700 (PDT)
+        Mon, 3 Jun 2019 18:13:59 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id BF51A802AA; Tue,  4 Jun 2019 00:13:46 +0200 (CEST)
+Date:   Tue, 4 Jun 2019 00:13:56 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     Nick Crews <ncrews@chromium.org>, bleung@chromium.org,
+        linux-leds@vger.kernel.org, jacek.anaszewski@gmail.com,
+        linux-kernel@vger.kernel.org, dlaurie@chromium.org, sjg@google.com,
+        groeck@google.com, dtor@google.com
+Subject: Re: [PATCH v6] platform/chrome: Add Wilco EC keyboard backlight LEDs
+ support
+Message-ID: <20190603221356.GA20392@amd>
+References: <20190409001642.249197-1-ncrews@chromium.org>
+ <20190409095503.GB32344@atrey.karlin.mff.cuni.cz>
+ <66bafd50-1599-db70-99da-e7f5877281c2@collabora.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="azLHFNyN32YCQGCU"
+Content-Disposition: inline
+In-Reply-To: <66bafd50-1599-db70-99da-e7f5877281c2@collabora.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Date: Sat, 1 Jun 2019 13:45:28 +0300
 
-> +static int cpts_of_mux_clk_setup(struct cpts *cpts, struct device_node *node)
-> +{
-> +	unsigned int num_parents;
-> +	const char **parent_names;
-> +	struct device_node *refclk_np;
-> +	struct clk_hw *clk_hw;
-> +	u32 *mux_table;
-> +	int ret = -EINVAL;
+--azLHFNyN32YCQGCU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reverse christmas tree please.
+Hi!
 
-Thank you.
+> On 9/4/19 11:55, Pavel Machek wrote:
+> >> The EC is in charge of controlling the keyboard backlight on
+> >> the Wilco platform. We expose a standard LED class device at
+> >> /sys/class/leds/chromeos::kbd_backlight. This driver is modeled
+> >=20
+> > As discussed, please use platform::.
+> >=20
+>=20
+> Last time I looked at this patch there were some work and discussion ongo=
+ing
+> about led naming in led ML, did the discussion end? I'm not able to find =
+if
+> there is a final agreement.
+
+Jacek is working on series to clean up naming, yes.
+
+Under new naming system, it should be
+"/sys/class/leds/color:kbd_backlight", AFAICT. That is acceptable to
+me.
+
+Best regards,
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--azLHFNyN32YCQGCU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlz1m6QACgkQMOfwapXb+vJ5LwCgpek5SXHzggCsQQ2ueC/e0eSG
+2R0An3py0o6dk8ItqDWaq+E99cUrXv68
+=AtT6
+-----END PGP SIGNATURE-----
+
+--azLHFNyN32YCQGCU--
