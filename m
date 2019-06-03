@@ -2,192 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C04D73310D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:30:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B24E833112
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:31:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728633AbfFCNaj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 09:30:39 -0400
-Received: from ozlabs.org ([203.11.71.1]:32983 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726516AbfFCNaj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 09:30:39 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45HbXV0k6Kz9s1c;
-        Mon,  3 Jun 2019 23:30:33 +1000 (AEST)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Will Deacon <will.deacon@arm.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Young Xiao <92siuyang@gmail.com>, linux@armlinux.org.uk,
-        mark.rutland@arm.com, mingo@redhat.com, bp@alien8.de,
-        hpa@zytor.com, x86@kernel.org, kan.liang@linux.intel.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        ravi.bangoria@linux.vnet.ibm.com, acme@redhat.com,
-        eranian@google.com, fweisbec@gmail.com, jolsa@redhat.com
-Subject: Re: [PATCH] perf: Fix oops when kthread execs user process
-In-Reply-To: <20190531153703.GA21288@fuggles.cambridge.arm.com>
-References: <1559046689-24091-1-git-send-email-92siuyang@gmail.com> <20190528140103.GT2623@hirez.programming.kicks-ass.net> <20190528153224.GE20758@fuggles.cambridge.arm.com> <20190528173228.GW2623@hirez.programming.kicks-ass.net> <20190529091733.GA4485@fuggles.cambridge.arm.com> <20190529101042.GN2623@hirez.programming.kicks-ass.net> <20190529102022.GC4485@fuggles.cambridge.arm.com> <20190529125557.GU2623@hirez.programming.kicks-ass.net> <efcd5cf4-3501-f3b6-bf47-145a9ef19a53@linux.ibm.com> <8b55f79a-c324-0701-e85f-c7797a60a708@linux.ibm.com> <20190531153703.GA21288@fuggles.cambridge.arm.com>
-Date:   Mon, 03 Jun 2019 23:30:33 +1000
-Message-ID: <875zpmokxy.fsf@concordia.ellerman.id.au>
+        id S1728700AbfFCNbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 09:31:06 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:47696 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726516AbfFCNbF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 09:31:05 -0400
+Received: by mail-io1-f70.google.com with SMTP id r27so13820821iob.14
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 06:31:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=Xd9c0wiNMk6Apek2lhhQ7MeiJewPRVMefJXoiTf1Kzk=;
+        b=dkOOAwrlN5nygRsv7swcPsh/wR1CUApGUklrgG7kCqbGpOnd5vD+Oi3nXgUZrvpjx5
+         +9dBJdHaqLbuxrkyMcUF/8Jx46Wp5BD6DAvEMTZUhD1RLvKUJnRmYsCgssfMkvGO+N6Z
+         +RZjVFpFSaQRFwsK7OV7AbZk/hHlhQDEG/HspiHroh5lCNBwUg1E00vDPanp+Cs5r1eR
+         E3GL29S8Cwh55iGN+ux2glDPdn5XiBrz7CsONtX1GAkk2iweKaZ18R0YCkR+aVQw2r6C
+         PZzWgjp3HdSr6y/VxifNwyUnqeGN/l5DlH23Rkl3+ygVzMALfzwF0gq5Ouxc3V2Frruz
+         9PcA==
+X-Gm-Message-State: APjAAAUMb5PBZw/mtfCVxk21YA8oGGivcmCy/vt7CoRK5SPRL4qjCW5c
+        z46Am97cc++lBaIxkxrIcdrfuDIIPmCN7i/lXXRAZhLlpIFT
+X-Google-Smtp-Source: APXvYqzgujQbAIS/Q+3FyQrH3nuh9kfgM04XgvloUsUlk8OX4StVb91+53wTYXM1u9UxnN/Ag0AEck9BFvOQ2gzYiBIaW0D8pNES
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Received: by 2002:a24:6e90:: with SMTP id w138mr17164666itc.150.1559568664806;
+ Mon, 03 Jun 2019 06:31:04 -0700 (PDT)
+Date:   Mon, 03 Jun 2019 06:31:04 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000044cec9058a6b6003@google.com>
+Subject: INFO: trying to register non-static key in mwifiex_unregister_dev
+From:   syzbot <syzbot+373e6719b49912399d21@syzkaller.appspotmail.com>
+To:     amitkarwar@gmail.com, andreyknvl@google.com, davem@davemloft.net,
+        gbhat@marvell.com, huxinming820@gmail.com, kvalo@codeaurora.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        nishants@marvell.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Will Deacon <will.deacon@arm.com> writes:
-> On Thu, May 30, 2019 at 03:57:36PM +0530, Ravi Bangoria wrote:
->> On 5/30/19 2:08 PM, Ravi Bangoria wrote:
->> >> ---
->> >> Subject: perf: Fix perf_sample_regs_user()
->> >> From: Peter Zijlstra <peterz@infradead.org>
->> >> Date: Wed May 29 14:37:24 CEST 2019
->> >>
->> >> perf_sample_regs_user() uses 'current->mm' to test for the presence of
->> >> userspace, but this is insufficient, consider use_mm().
->> >>
->> >> A better test is: '!(current->flags & PF_KTHREAD)', exec() clears
->> >> PF_KTHREAD after it sets the new ->mm but before it drops to userspace
->> >> for the first time.
->> > 
->> > This looks correct. I'll give it a try.
->> > 
->> >>
->> >> Possibly obsoletes: bf05fc25f268 ("powerpc/perf: Fix oops when kthread execs user process")
->> >>
->> >> Reported-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
->> >> Reported-by: Young Xiao <92siuyang@gmail.com>
->> >> Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
->> >> Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
->> >> Cc: Michael Ellerman <mpe@ellerman.id.au>
->> >> Cc: Jiri Olsa <jolsa@redhat.com>
->> >> Cc: Frederic Weisbecker <fweisbec@gmail.com>
->> >> Cc: Stephane Eranian <eranian@google.com>
->> >> Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
->> >> Acked-by: Will Deacon <will.deacon@arm.com>
->> >> Fixes: 4018994f3d87 ("perf: Add ability to attach user level registers dump to sample")
->> >> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
->> >> ---
->> >>  kernel/events/core.c |    2 +-
->> >>  1 file changed, 1 insertion(+), 1 deletion(-)
->> >>
->> >> --- a/kernel/events/core.c
->> >> +++ b/kernel/events/core.c
->> >> @@ -5923,7 +5923,7 @@ static void perf_sample_regs_user(struct
->> >>  	if (user_mode(regs)) {
->> >>  		regs_user->abi = perf_reg_abi(current);
->> >>  		regs_user->regs = regs;
->> >> -	} else if (current->mm) {
->> >> +	} else if (!(current->flags & PF_KTHREAD)) {
->> 
->> With this patch applied and my patch reverted, I still see it crashing
->> because current->flags does not have PF_KTHREAD set. Sample trace with
->> v5.0 kernel:
->> 
->> 
->>    BUG: Kernel NULL pointer dereference at 0x00000000
->>    Faulting instruction address: 0xc0000000000f1a6c
->>    Oops: Kernel access of bad area, sig: 11 [#1]
->>    LE SMP NR_CPUS=2048 NUMA pSeries
->>    CPU: 17 PID: 3241 Comm: systemd-cgroups Kdump: loaded Not tainted 5.0.0+ #7
->>    NIP:  c0000000000f1a6c LR: c0000000002acc7c CTR: c0000000002a8f90
->>    REGS: c0000001e80469a0 TRAP: 0300   Not tainted  (5.0.0+)
->>    MSR:  8000000000001033 <SF,ME,IR,DR,RI,LE>  CR: 48022448  XER: 20000000
->>    CFAR: c00000000000deb4 DAR: 0000000000000000 DSISR: 40000000 IRQMASK: 1 
->>    GPR00: c0000000002acc7c c0000001e8046c30 c000000001607500 0000000000000000 
->>    GPR04: 0000000000000000 0000000000000000 0000000000000000 c000000000128618 
->>    GPR08: 000007ffffffffff 0000000000000000 ffffffffffffffff c00000000001cd40 
->>    GPR12: c000000000446fd8 c00000003ffdf080 00000000ffff0000 0000000000000007 
->>    GPR16: c0000001edd74988 c0000001edd60400 00007fff89801130 000000000005e1b0 
->>    GPR20: c0000001edb77a08 c0000001e8047208 c0000001f03d9800 c0000001e8046e00 
->>    GPR24: 000000000000b1af c000000001126938 c0000001f03d9b28 0000000000010000 
->>    GPR28: c0000001e8046d30 0000000000000000 0000000000000000 0000000000000000 
->>    NIP [c0000000000f1a6c] perf_reg_value+0x5c/0xc0
->>    LR [c0000000002acc7c] perf_output_sample_regs+0x6c/0xd0
->>    Call Trace:
->>    [c0000001e8046c30] [c0000000002acc7c] perf_output_sample_regs+0x6c/0xd0 (unreliable)
->>    [c0000001e8046c80] [c0000000002b9cd0] perf_output_sample+0x620/0x8c0
->>    [c0000001e8046d10] [c0000000002ba6b4] perf_event_output_forward+0x64/0x90
->>    [c0000001e8046d80] [c0000000002b2908] __perf_event_overflow+0x88/0x1e0
->>    [c0000001e8046dd0] [c0000000000f3d18] record_and_restart+0x288/0x670
->>    [c0000001e8047180] [c0000000000f4c18] perf_event_interrupt+0x2b8/0x4b0
->>    [c0000001e8047280] [c00000000002b380] performance_monitor_exception+0x50/0x70
->>    [c0000001e80472a0] [c000000000009ca0] performance_monitor_common+0x110/0x120
->>    --- interrupt: f01 at slice_scan_available+0x20/0xc0
->>        LR = slice_find_area+0x174/0x210
->>    [c0000001e8047630] [c000000000083ea0] slice_get_unmapped_area+0x3d0/0x7f0
->>    [c0000001e8047ae0] [c00000000032d5b0] get_unmapped_area+0xa0/0x170
->>    [c0000001e8047b10] [c00000000001cd40] arch_setup_additional_pages+0xc0/0x1c0
->>    [c0000001e8047b60] [c000000000446fd8] load_elf_binary+0xb48/0x1580
->>    [c0000001e8047c80] [c0000000003c3938] search_binary_handler+0xe8/0x2a0
->>    [c0000001e8047d10] [c0000000003c42f4] __do_execve_file.isra.13+0x694/0x980
->>    [c0000001e8047de0] [c000000000128618] call_usermodehelper_exec_async+0x248/0x290
->>    [c0000001e8047e20] [c00000000000b65c] ret_from_kernel_thread+0x5c/0x80
->>    Instruction dump:
->>    7c9e2378 7c7f1b78 f8010010 f821ffd1 419e0044 3d22ff6b 7bc41764 3929ae10 
->>    7d29202e 2b890150 419d003c 38210030 <7c7f482a> e8010010 ebc1fff0 ebe1fff8 
->>    ---[ end trace 54f3492ad1d403d8 ]---
->
-> Oh, nice! I think this happens because Power doesn't actually initialise
-> the regs after a kthread execs() until late in start_thread().
+Hello,
 
-Hmm, it's more or less at the top of start_thread(), but that's late vs
-flush_old_exec(), so there's definitely a window there.
+syzbot found the following crash on:
 
-> But the plot thickens somewhat, since current_pt_regs() is different to
-> task_pt_regs(current) on Power (the former cannot return NULL).
+HEAD commit:    69bbe8c7 usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git usb-fuzzer
+console output: https://syzkaller.appspot.com/x/log.txt?x=1448d0f2a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=193d8457178b3229
+dashboard link: https://syzkaller.appspot.com/bug?extid=373e6719b49912399d21
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16e57ca6a00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1106eda2a00000
 
-Ugh.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+373e6719b49912399d21@syzkaller.appspotmail.com
 
-Mark had convinced me in the other part of the thread that returning
-NULL for kthreads made sense, but having different results depending on
-which similarly named accessor you use is gross.
-
-We used to implement current_pt_regs() without actually looking at
-current via:
-
-	((struct pt_regs *)((unsigned long)current_thread_info() + THREAD_SIZE) - 1)
-
-Where current_thread_info() just masked the stack pointer, so that was a
-nice optimisation.
-
-But now that we have THREAD_INFO_IN_TASK we're going via current anyway,
-so we may as well just get rid of current_pt_regs() and make it a
-synonym for task_pt_regs(current).
-
-Though that will probably cause something else to break :D
+usb 1-1: Using ep0 maxpacket: 8
+usb 1-1: config 0 has an invalid interface number: 182 but max is 0
+usb 1-1: config 0 has no interface number 0
+usb 1-1: New USB device found, idVendor=1286, idProduct=2052,  
+bcdDevice=61.43
+usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+usb 1-1: config 0 descriptor??
+usb 1-1: Direct firmware load for mrvl/usbusb8997_combo_v4.bin failed with  
+error -2
+usb 1-1: Failed to get firmware mrvl/usbusb8997_combo_v4.bin
+usb 1-1: info: _mwifiex_fw_dpc: unregister device
+INFO: trying to register non-static key.
+the code is fine but needs lockdep annotation.
+turning off the locking correctness validator.
+CPU: 1 PID: 21 Comm: kworker/1:1 Not tainted 5.2.0-rc1+ #10
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events request_firmware_work_func
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0xca/0x13e lib/dump_stack.c:113
+  assign_lock_key kernel/locking/lockdep.c:774 [inline]
+  register_lock_class+0x11ae/0x1240 kernel/locking/lockdep.c:1083
+  __lock_acquire+0x11d/0x5340 kernel/locking/lockdep.c:3673
+  lock_acquire+0x100/0x2b0 kernel/locking/lockdep.c:4302
+  del_timer_sync+0x3a/0x130 kernel/time/timer.c:1277
+  mwifiex_usb_cleanup_tx_aggr  
+drivers/net/wireless/marvell/mwifiex/usb.c:1358 [inline]
+  mwifiex_unregister_dev+0x416/0x690  
+drivers/net/wireless/marvell/mwifiex/usb.c:1370
+  _mwifiex_fw_dpc+0x577/0xda0 drivers/net/wireless/marvell/mwifiex/main.c:651
+  request_firmware_work_func+0x126/0x242  
+drivers/base/firmware_loader/main.c:785
+  process_one_work+0x905/0x1570 kernel/workqueue.c:2268
+  worker_thread+0x96/0xe20 kernel/workqueue.c:2414
+  kthread+0x30b/0x410 kernel/kthread.c:254
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+------------[ cut here ]------------
+ODEBUG: assert_init not available (active state 0) object type: timer_list  
+hint: 0x0
+WARNING: CPU: 1 PID: 21 at lib/debugobjects.c:325  
+debug_print_object+0x160/0x250 lib/debugobjects.c:325
 
 
-> So a really hideous hack on top of Peter's patch might be:
->
-> diff --git a/arch/arm64/kernel/perf_regs.c b/arch/arm64/kernel/perf_regs.c
-> index 0bbac612146e..5bde866024b6 100644
-> --- a/arch/arm64/kernel/perf_regs.c
-> +++ b/arch/arm64/kernel/perf_regs.c
-> @@ -57,6 +57,6 @@ void perf_get_regs_user(struct perf_regs *regs_user,
->  			struct pt_regs *regs,
->  			struct pt_regs *regs_user_copy)
->  {
-> -	regs_user->regs = task_pt_regs(current);
-> +	regs_user->regs = current_pt_regs();
->  	regs_user->abi = perf_reg_abi(current);
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-
-I'd be inclined to stick with what we've got, at least so long as we're
-the only arch that lets task_pt_regs() return NULL.
-
-void perf_get_regs_user(struct perf_regs *regs_user,
-			struct pt_regs *regs,
-			struct pt_regs *regs_user_copy)
-{
-	regs_user->regs = task_pt_regs(current);
-	regs_user->abi = (regs_user->regs) ? perf_reg_abi(current) :
-			 PERF_SAMPLE_REGS_ABI_NONE;
-}
-
-
-cheers
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
