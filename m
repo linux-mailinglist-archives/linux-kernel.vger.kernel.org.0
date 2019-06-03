@@ -2,115 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5585C33583
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 18:56:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19E60335A1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 18:57:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729783AbfFCQ43 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 12:56:29 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58690 "EHLO mx1.redhat.com"
+        id S1729832AbfFCQ5E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 12:57:04 -0400
+Received: from foss.arm.com ([217.140.101.70]:55640 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727866AbfFCQ41 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 12:56:27 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 683FE8B947;
-        Mon,  3 Jun 2019 16:56:22 +0000 (UTC)
-Received: from flask (unknown [10.43.2.83])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 456101017E3E;
-        Mon,  3 Jun 2019 16:56:17 +0000 (UTC)
-Received: by flask (sSMTP sendmail emulation); Mon, 03 Jun 2019 18:56:17 +0200
-Date:   Mon, 3 Jun 2019 18:56:17 +0200
-From:   Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To:     Like Xu <like.xu@linux.intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v3] KVM: x86: Add Intel CPUID.1F cpuid emulation
- support
-Message-ID: <20190603165616.GA11101@flask>
-References: <20190526133052.4069-1-like.xu@linux.intel.com>
+        id S1727071AbfFCQ5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 12:57:00 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC65A80D;
+        Mon,  3 Jun 2019 09:56:59 -0700 (PDT)
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2D30F3F5AF;
+        Mon,  3 Jun 2019 09:56:57 -0700 (PDT)
+Date:   Mon, 3 Jun 2019 17:56:51 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     peng.fan@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        jassisinghbrar@gmail.com, kernel@pengutronix.de, linux-imx@nxp.com,
+        shawnguo@kernel.org, festevam@gmail.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, andre.przywara@arm.com,
+        van.freenix@gmail.com, Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH V2 1/2] DT: mailbox: add binding doc for the ARM SMC
+ mailbox
+Message-ID: <20190603165651.GA12196@e107155-lin>
+References: <20190603083005.4304-1-peng.fan@nxp.com>
+ <20190603083005.4304-2-peng.fan@nxp.com>
+ <ae4c79f0-4aec-250e-e312-20aba5554665@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190526133052.4069-1-like.xu@linux.intel.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 03 Jun 2019 16:56:27 +0000 (UTC)
+In-Reply-To: <ae4c79f0-4aec-250e-e312-20aba5554665@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2019-05-26 21:30+0800, Like Xu:
-> Add support to expose Intel V2 Extended Topology Enumeration Leaf for
-> some new systems with multiple software-visible die within each package.
-> 
-> Per Intel's SDM, when CPUID executes with EAX set to 1FH, the processor
-> returns information about extended topology enumeration data. Software
-> must detect the presence of CPUID leaf 1FH by verifying (a) the highest
-> leaf index supported by CPUID is >= 1FH, and (b) CPUID.1FH:EBX[15:0]
-> reports a non-zero value.
-> 
-> Co-developed-by: Xiaoyao Li <xiaoyao.li@linux.intel.com>
-> Signed-off-by: Xiaoyao Li <xiaoyao.li@linux.intel.com>
-> Signed-off-by: Like Xu <like.xu@linux.intel.com>
-> Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
-> ==changelog==
-> v3:
-> - Refine commit message and comment
-> 
-> v2: https://lkml.org/lkml/2019/4/25/1246
-> 
-> - Apply cpuid.1f check rule on Intel SDM page 3-222 Vol.2A
-> - Add comment to handle 0x1f anf 0xb in common code
-> - Reduce check time in a descending-break style
-> 
-> v1: https://lkml.org/lkml/2019/4/22/28
-> 
->  arch/x86/kvm/cpuid.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 80a642a0143d..f9b41f0103b3 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -426,6 +426,11 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
->  
->  	switch (function) {
->  	case 0:
-> +		/* Check if the cpuid leaf 0x1f is actually implemented */
-> +		if (entry->eax >= 0x1f && (cpuid_ebx(0x1f) & 0x0000ffff)) {
-> +			entry->eax = 0x1f;
+On Mon, Jun 03, 2019 at 09:22:16AM -0700, Florian Fainelli wrote:
+> On 6/3/19 1:30 AM, peng.fan@nxp.com wrote:
+> > From: Peng Fan <peng.fan@nxp.com>
+> >
+> > The ARM SMC mailbox binding describes a firmware interface to trigger
+> > actions in software layers running in the EL2 or EL3 exception levels.
+> > The term "ARM" here relates to the SMC instruction as part of the ARM
+> > instruction set, not as a standard endorsed by ARM Ltd.
+> >
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > ---
+> >
+> > V2:
+> > Introduce interrupts as a property.
+> >
+> > V1:
+> > arm,func-ids is still kept as an optional property, because there is no
+> > defined SMC funciton id passed from SCMI. So in my test, I still use
+> > arm,func-ids for ARM SIP service.
+> >
+> >  .../devicetree/bindings/mailbox/arm-smc.txt        | 101 +++++++++++++++++++++
+> >  1 file changed, 101 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/mailbox/arm-smc.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/mailbox/arm-smc.txt b/Documentation/devicetree/bindings/mailbox/arm-smc.txt
+> > new file mode 100644
+> > index 000000000000..401887118c09
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/mailbox/arm-smc.txt
+> > @@ -0,0 +1,101 @@
 
-Sorry for my late reply, but I think this check does more harm than
-good.
+[...]
 
-We'll need to change it if we ever add leaf above 0x1f, which also puts
-burden on the new submitter to check that exposing it by an unrelated
-feature doesn't break anything.  Just like you had to see whether the
-leaf 0x14 is still ok when exposing it without f_intel_pt.
+> > +Optional properties:
+> > +- arm,func-ids		An array of 32-bit values specifying the function
+> > +			IDs used by each mailbox channel. Those function IDs
+> > +			follow the ARM SMC calling convention standard [1].
+> > +			There is one identifier per channel and the number
+> > +			of supported channels is determined by the length
+> > +			of this array.
+> > +- interrupts		SPI interrupts may be listed for notification,
+> > +			each channel should use a dedicated interrupt
+> > +			line.
+>
+> I would not go about defining a specific kind of interrupt, since SPI is
+> a GIC terminology, this firmware interface could be used in premise with
+> any parent interrupt controller, for which the concept of a SPI/PPI/SGI
+> may not be relevant.
+>
 
-Also, I don't see anything that would make 0x1f worthy of protection
-when enabling it also exposes unimplemented leaves (0x14;0x1f).
-Zeroing 0x1f.ebx disables it and that is implicitly being done if the
-presence check above would fail.
+While I agree the binding document may not contain specifics, I still
+don't see how to use SGI with this. Also note it's generally reserved
+for OS future use(IPC) and using this for other than IPC may be bit
+challenging IMO. It opens up lots of questions.
 
-> +			break;
-> +		}
->  		entry->eax = min(entry->eax, (u32)(f_intel_pt ? 0x14 : 0xd));
-
-Similarly in the existing code.  If we don't have f_intel_pt, then we
-should make sure that leaf 0x14 is not being filled, but we don't really
-have to limit the maximal index.
-
-Adding a single clamping like
-
-		/* Limited to the highest leaf implemented in KVM. */
-		entry->eax = min(entry->eax, 0x1f);
-
-seems sufficient.
-
-(Passing the hardware value is ok in theory, but it is a cheap way to
- avoid future leaves that cannot be simply zeroed for some weird reason.)
-
-Thanks.
+--
+Regards,
+Sudeep
