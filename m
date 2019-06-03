@@ -2,68 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E577F33089
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:04:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D6433308A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:04:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727524AbfFCNEm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 09:04:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38248 "EHLO mail.kernel.org"
+        id S1728208AbfFCNEs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 09:04:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727957AbfFCNEl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 09:04:41 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726336AbfFCNEs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 09:04:48 -0400
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B23327FCE;
-        Mon,  3 Jun 2019 13:04:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9117F27FCE;
+        Mon,  3 Jun 2019 13:04:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559567081;
-        bh=5o50LdHm3nR94Xxp/EevvTYgj831Yo8VmYlaVsbg47w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nHYsLOa1+niQjcFrjsnZT8EygUoVc8Nsv4c4oqFFgYUZ2SUlcmxk2Sy1puqQfMkK0
-         1Kanun8sHE3WY9gFz6g4Y5WfpgyHvipjQK2OmuCLPi7sLiKZWyr1RBrAregltfBzt8
-         SblmkUHUu+NKoTX1nlF8yo2OJB9LXko+1NFDY9Jo=
-Date:   Mon, 3 Jun 2019 15:04:37 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Christian =?iso-8859-1?Q?M=FCller?= <muellerch-privat@web.de>
-Cc:     devel@driverdev.osuosl.org, felix.trommer@hotmail.de,
-        linux-kernel@i4.cs.fau.de, linux-kernel@vger.kernel.org,
-        johnfwhitmore@gmail.com
-Subject: Re: [PATCH 1/3] drivers/staging/rtl8192u: Reformat comments
-Message-ID: <20190603130437.GA30732@kroah.com>
-References: <20190603122104.2564-1-muellerch-privat@web.de>
- <20190603122104.2564-2-muellerch-privat@web.de>
+        s=default; t=1559567087;
+        bh=NLlyuoL8659H1E2jNxb1kSF6VtTnVPNy54AwF0w2a18=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=jCglHfcTjyT8PmV+FXdBYjkt9g7gM/46ccpplI93C7bsmvcNDVoAbUyl/Z4xRRkQx
+         YwUzMGfmSMw1auhhoWrkcBaEc9bezJ8DQY+7L6SkPkMIaLZ7P8xnUbcjg+fcTu/wJ8
+         ErGNAF1+28ifKLsvAvydeLh9uNJpP03D4WVuwtD8=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] kprobes: Fix to init kprobes in subsys_initcall
+Date:   Mon,  3 Jun 2019 22:04:42 +0900
+Message-Id: <155956708268.12228.10363800793132214198.stgit@devnote2>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190603214105.715a4072472ef4946123dc20@kernel.org>
+References: <20190603214105.715a4072472ef4946123dc20@kernel.org>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190603122104.2564-2-muellerch-privat@web.de>
-User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 03, 2019 at 02:21:02PM +0200, Christian Müller wrote:
-> From: Felix Trommer <felix.trommer@hotmail.de>
-> 
-> Replace C99-Style comments with C89-Style comments.
+Since arm64 kernel initializes breakpoint trap vector in arch_initcall(),
+initializing kprobe (and run smoke test) in postcore_initcall() causes
+a kernel panic.
 
-What does that mean?
+To fix this issue, move the kprobe initialization in subsys_initcall()
+(which is called right afer the arch_initcall).
 
->  		if (MaxChnlNum >= pTriple->first_channel) {
-> -			/* It is not in a monotonically increasing order, so
-> +			/*
-> +			 * It is not in a monotonically increasing order, so
->  			 * stop processing.
->  			 */
+In-kernel kprobe users (ftrace and bpf) are using fs_initcall() which is
+called after subsys_initcall(), so this shouldn't cause more problem.
 
-Those are both /* */ style comments.  Where in the C99 or C89 spec does
-it say anything about this type of change?
+Reported-by: Anders Roxell <anders.roxell@linaro.org>
+Fixes: b5f8b32c93b2 ("kprobes: Initialize kprobes at postcore_initcall")
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ kernel/kprobes.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Are you sure you are not getting confused about // for a comment marker
-in C99 which is not in C89?
+diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+index 54aaaad00a47..5471efbeb937 100644
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -2289,7 +2289,7 @@ static int __init init_kprobes(void)
+ 		init_test_probes();
+ 	return err;
+ }
+-postcore_initcall(init_kprobes);
++subsys_initcall(init_kprobes);
+ 
+ #ifdef CONFIG_DEBUG_FS
+ static void report_probe(struct seq_file *pi, struct kprobe *p,
 
-thanks,
-
-greg k-h
