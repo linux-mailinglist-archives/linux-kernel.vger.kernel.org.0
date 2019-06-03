@@ -2,97 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA849338C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 21:04:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D537E338B7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 21:01:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbfFCTEb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 15:04:31 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:35871 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726842AbfFCTE2 (ORCPT
+        id S1726637AbfFCTBh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 15:01:37 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:34901 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725876AbfFCTBh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 15:04:28 -0400
-Received: by mail-lf1-f68.google.com with SMTP id q26so14466181lfc.3;
-        Mon, 03 Jun 2019 12:04:26 -0700 (PDT)
+        Mon, 3 Jun 2019 15:01:37 -0400
+Received: by mail-pl1-f196.google.com with SMTP id p1so7329456plo.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 12:01:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=UtwYPIjZ42A6onEXbTjq/QuGswOItAJSTPwR+apDGiY=;
-        b=sMrvAxcYfXNUviEHEnCtvKgFVE836xKMCpUXm73t5lOkP5xUvKxgb5/vk75z0Sjajo
-         5krxgUniGjRrd/KPOmOD8i+pXAoaMGMd+63f99E4Ebe1QpxRQ7TT91KZATx2+aT2kAzL
-         ke0VDy4NjLHdCQ3m5iBEgswbHThd8+p2Lqk8FDX98kJCeBN7OHpBy2bm40vzWY4jRDgY
-         EPtlZw7svD1ZzInc22n5kGwVpG+Jdmu0v9k9+8EeUwUNRmem8oSzlSF4rsKGqQudCoKA
-         jwWyT4ZorP4SuWRCUaTCA4WVXP9iVmLTS0hMj6c2RLt8feNYuRcZGiid/Fvj32G5E9ZD
-         q8Ig==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=uOj8qS4yMWJcPzBr8jU/oW2KYVngTdjQDL1LJv/Tl0k=;
+        b=mu8+YrUWQdYC2yPvI31aJeWbUy+/m/JdlBnvxPwbPgA4aR3Dko6HDsZHyi2HsBRRA8
+         5ZlaLTjxNM68Al1YETdnGXAFwRlrElG6NZZ1j8Hx4UVHJ3hcuZD5Y/7VqGQRirguL3N7
+         ccmPcVkphF2ROPyPYGWb6oqTC7KpewSiRiDXKJGxCopyHEAW0lSbHXCTbSbo40S30gSm
+         UrgWiQJ9MzEPZG4NWjrakLfjBSt+eTyVA+31+Grrka+qDfU5BzOXXSXNlVKnOEoumMGs
+         c9QGJJG4EXRd5w2FiwIHepI++jpU4ZPuUEBJf4WhgSmpKyN4NxdhbypbTGeXH38oeMkA
+         5P+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=UtwYPIjZ42A6onEXbTjq/QuGswOItAJSTPwR+apDGiY=;
-        b=FV9ZIMl/+uO7AHvm48oQ50XZeD2QRzefiYtTorCsW81pqJwqS0MfllYSEhhWesJUk+
-         Y/Un/TRvYDA+60mBA28suk9tMSHwRDqu2P+Z05OyXf3AAvr2KXMA8X0V7pp3lx4ihatJ
-         tn2255Z9NGD00JBeUsoyvsbOZaH7Hub7JqTvbbSssxVhilH7su/1+sPdAJWZp5s5Pznk
-         xOdJodcXT4W/AKvsU38XXGqM6j8GJeX1exWT7EShMFE/LBjnEg+UabA0QD9nrdgk9qYB
-         WphCWK6ijxHlqdv0mi/oI5BCM83GkCVvbvfeSN9583BlRdpVB5NbWFZkU2NJWEd2alJs
-         qytg==
-X-Gm-Message-State: APjAAAWzIDKHisLB6gNsVz1teSEE4UXh+x5dhtA3W/71QQw51ZVUS6mS
-        DR1zPIe9ONHGnl0LpT0oDOQeUxo5
-X-Google-Smtp-Source: APXvYqzqzLCtVGr7EitdsLEfbcc9TA3vFm+FQ8dUIaK97cWDR55QlhwCkEm47jV09PlMx00U/VkVHg==
-X-Received: by 2002:ac2:5922:: with SMTP id v2mr14401591lfi.180.1559588665943;
-        Mon, 03 Jun 2019 12:04:25 -0700 (PDT)
-Received: from localhost.localdomain ([94.29.35.141])
-        by smtp.gmail.com with ESMTPSA id l22sm2768805ljb.39.2019.06.03.12.04.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Jun 2019 12:04:25 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 10/10] clocksource/drivers/tegra: Rename timer-tegra20.c to timer-tegra.c
-Date:   Mon,  3 Jun 2019 21:59:48 +0300
-Message-Id: <20190603185948.30438-11-digetx@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190603185948.30438-1-digetx@gmail.com>
-References: <20190603185948.30438-1-digetx@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uOj8qS4yMWJcPzBr8jU/oW2KYVngTdjQDL1LJv/Tl0k=;
+        b=WArcoyXT/2R1p1NAJT99b7d+fO6/qNGB+YsxTfieMYOUDoXJxhPzMYwy++ZVJhA+Vw
+         c6YYihozzzkEzPhp40742bp9GdCyeOAUvcL3X1yqY8YbPCVT2hzFGy7iUPCtsyUIzzh2
+         j3k8c+Y9J8u9VhLtBF0o4Rq35DsWN/kFdMy0J7BGqWS9sY+HqcXvP+Ed2WXxLMI45i1c
+         vWXmGmoiBlJnBzOcnqD24ItR8askVTtDW5Q3Vo1tQiTaiyoRmEhWMGoTPCoNxgn3rcDB
+         8jUMZW5FbkXrj5nOALQJ/zKgvtdeJaH+ur87rHzG1eR4a4Iu1rHf5uDfjtIpcVZ6cCGq
+         058A==
+X-Gm-Message-State: APjAAAUL8b1frWOrysvCErLTP7/b+D1m/L9BEqrlhaFVKll+YLJto4pi
+        gqsIuOBvmEbh19PBrD5w3Zliqg==
+X-Google-Smtp-Source: APXvYqykPgkSoXQZvF7692GpCMJ2OMiNKz9Vibqh/vST8wLXn0EjIfLgD7N96K2Ny86xOMvDMWXBGw==
+X-Received: by 2002:a17:902:bc83:: with SMTP id bb3mr9026727plb.56.1559588495811;
+        Mon, 03 Jun 2019 12:01:35 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id 24sm17259787pgn.32.2019.06.03.12.01.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Jun 2019 12:01:35 -0700 (PDT)
+Date:   Mon, 3 Jun 2019 13:01:33 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        leo.yan@linaro.org, coresight@lists.linaro.org,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH] Documentation: coresight: Update the generic device names
+Message-ID: <20190603190133.GA20462@xps15>
+References: <1559229077-26436-1-git-send-email-suzuki.poulose@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1559229077-26436-1-git-send-email-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename driver's source file to better reflect that it's not specific to
-older SoC generations.
+Hi Suzuki,
 
-Suggested-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clocksource/Makefile                           | 2 +-
- drivers/clocksource/{timer-tegra20.c => timer-tegra.c} | 0
- 2 files changed, 1 insertion(+), 1 deletion(-)
- rename drivers/clocksource/{timer-tegra20.c => timer-tegra.c} (100%)
+On Thu, May 30, 2019 at 04:11:17PM +0100, Suzuki K Poulose wrote:
+> Update the documentation to reflect the new naming scheme with
+> latest changes.
+> 
+> Reported-by: Leo Yan <leo.yan@linaro.org>
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>  Documentation/trace/coresight.txt | 34 +++++++++++++++++++---------------
+>  1 file changed, 19 insertions(+), 15 deletions(-)
+> 
+> diff --git a/Documentation/trace/coresight.txt b/Documentation/trace/coresight.txt
+> index efbc832..7b427cf 100644
+> --- a/Documentation/trace/coresight.txt
+> +++ b/Documentation/trace/coresight.txt
+> @@ -326,16 +326,20 @@ amount of processor cores), the "cs_etm" PMU will be listed only once.
+>  A Coresight PMU works the same way as any other PMU, i.e the name of the PMU is
+>  listed along with configuration options within forward slashes '/'.  Since a
+>  Coresight system will typically have more than one sink, the name of the sink to
+> -work with needs to be specified as an event option.  Names for sink to choose
+> -from are listed in sysFS under ($SYSFS)/bus/coresight/devices:
+> +work with needs to be specified as an event option.
+> +On newer kernels the available sinks are listed in sysFS under:
+> +($SYSFS)/bus/event_source/devices/cs_etm/sinks/
+>  
+> -	root@linaro-nano:~# ls /sys/bus/coresight/devices/
+> -		20010000.etf   20040000.funnel  20100000.stm  22040000.etm
+> -		22140000.etm  230c0000.funnel  23240000.etm 20030000.tpiu
+> -		20070000.etr     20120000.replicator  220c0000.funnel
+> -		23040000.etm  23140000.etm     23340000.etm
+> +	root@localhost:/sys/bus/event_source/devices/cs_etm/sinks# ls
+> +	tmc_etf0  tmc_etr0  tpiu0
+>  
+> -	root@linaro-nano:~# perf record -e cs_etm/@20070000.etr/u --per-thread program
+> +On older kernels, this may need to be found from the list of coresight devices,
+> +available under ($SYSFS)/bus/coresight/devices/:
+> +
+> +	root@localhost:/sys/bus/coresight/devices# ls
+> +	etm0  etm1  etm2  etm3  etm4  etm5  funnel0  funnel1  funnel2  replicator0  stm0 tmc_etf0  tmc_etr0  tpiu0
+> +
+> +	root@linaro-nano:~# perf record -e cs_etm/@tmc_etr0/u --per-thread program
 
-diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
-index 236858fa7fbf..4145b21eaed3 100644
---- a/drivers/clocksource/Makefile
-+++ b/drivers/clocksource/Makefile
-@@ -36,7 +36,7 @@ obj-$(CONFIG_U300_TIMER)	+= timer-u300.o
- obj-$(CONFIG_SUN4I_TIMER)	+= timer-sun4i.o
- obj-$(CONFIG_SUN5I_HSTIMER)	+= timer-sun5i.o
- obj-$(CONFIG_MESON6_TIMER)	+= timer-meson6.o
--obj-$(CONFIG_TEGRA_TIMER)	+= timer-tegra20.o
-+obj-$(CONFIG_TEGRA_TIMER)	+= timer-tegra.o
- obj-$(CONFIG_VT8500_TIMER)	+= timer-vt8500.o
- obj-$(CONFIG_NSPIRE_TIMER)	+= timer-zevio.o
- obj-$(CONFIG_BCM_KONA_TIMER)	+= bcm_kona_timer.o
-diff --git a/drivers/clocksource/timer-tegra20.c b/drivers/clocksource/timer-tegra.c
-similarity index 100%
-rename from drivers/clocksource/timer-tegra20.c
-rename to drivers/clocksource/timer-tegra.c
--- 
-2.21.0
+On the "older" kernels you are referring to one would find the original naming
+convention.  Everything else looks good to me.
 
+Mathieu
+
+>  
+>  The syntax within the forward slashes '/' is important.  The '@' character
+>  tells the parser that a sink is about to be specified and that this is the sink
+> @@ -352,7 +356,7 @@ perf can be used to record and analyze trace of programs.
+>  Execution can be recorded using 'perf record' with the cs_etm event,
+>  specifying the name of the sink to record to, e.g:
+>  
+> -    perf record -e cs_etm/@20070000.etr/u --per-thread
+> +    perf record -e cs_etm/@tmc_etr0/u --per-thread
+>  
+>  The 'perf report' and 'perf script' commands can be used to analyze execution,
+>  synthesizing instruction and branch events from the instruction trace.
+> @@ -381,7 +385,7 @@ sort example is from the AutoFDO tutorial (https://gcc.gnu.org/wiki/AutoFDO/Tuto
+>  	Bubble sorting array of 30000 elements
+>  	5910 ms
+>  
+> -	$ perf record -e cs_etm/@20070000.etr/u --per-thread taskset -c 2 ./sort
+> +	$ perf record -e cs_etm/@tmc_etr0/u --per-thread taskset -c 2 ./sort
+>  	Bubble sorting array of 30000 elements
+>  	12543 ms
+>  	[ perf record: Woken up 35 times to write data ]
+> @@ -405,7 +409,7 @@ than the program flow through the code.
+>  As with any other CoreSight component, specifics about the STM tracer can be
+>  found in sysfs with more information on each entry being found in [1]:
+>  
+> -root@genericarmv8:~# ls /sys/bus/coresight/devices/20100000.stm
+> +root@genericarmv8:~# ls /sys/bus/coresight/devices/stm0
+>  enable_source   hwevent_select  port_enable     subsystem       uevent
+>  hwevent_enable  mgmt            port_select     traceid
+>  root@genericarmv8:~#
+> @@ -413,14 +417,14 @@ root@genericarmv8:~#
+>  Like any other source a sink needs to be identified and the STM enabled before
+>  being used:
+>  
+> -root@genericarmv8:~# echo 1 > /sys/bus/coresight/devices/20010000.etf/enable_sink
+> -root@genericarmv8:~# echo 1 > /sys/bus/coresight/devices/20100000.stm/enable_source
+> +root@genericarmv8:~# echo 1 > /sys/bus/coresight/devices/tmc_etf0/enable_sink
+> +root@genericarmv8:~# echo 1 > /sys/bus/coresight/devices/stm0/enable_source
+>  
+>  From there user space applications can request and use channels using the devfs
+>  interface provided for that purpose by the generic STM API:
+>  
+> -root@genericarmv8:~# ls -l /dev/20100000.stm
+> -crw-------    1 root     root       10,  61 Jan  3 18:11 /dev/20100000.stm
+> +root@genericarmv8:~# ls -l /dev/stm0
+> +crw-------    1 root     root       10,  61 Jan  3 18:11 /dev/stm0
+>  root@genericarmv8:~#
+>  
+>  Details on how to use the generic STM API can be found here [2].
+> -- 
+> 2.7.4
+> 
