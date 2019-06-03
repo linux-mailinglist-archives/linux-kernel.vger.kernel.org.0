@@ -2,245 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0BCB32BE1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:14:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3E7B32C41
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:16:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728631AbfFCJMW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 05:12:22 -0400
-Received: from alpha.anastas.io ([104.248.188.109]:46139 "EHLO
-        alpha.anastas.io" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728606AbfFCJMR (ORCPT
+        id S1728482AbfFCJQB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 05:16:01 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35000 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728757AbfFCJNH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 05:12:17 -0400
-Received: from authenticated-user (alpha.anastas.io [104.248.188.109])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by alpha.anastas.io (Postfix) with ESMTPSA id 96F27808B8;
-        Mon,  3 Jun 2019 04:12:15 -0500 (CDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=anastas.io; s=mail;
-        t=1559553136; bh=qJnfDDzz4DgW5+Ag559cHbbNjOf/DlUtH7AzqY69aiA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=SmF0L0dskQ1MJbih5rNVzg+tVHtmU/zlfVvYEUmq92M0OhrXOUy/d5uuQMk+Wmrkx
-         +269Ntl6yHMwBJmUTDbfNbiVEDJmWzTUyQvetEgSF9YNI0nqcdmnes9OqKy73POI5Q
-         pzZ59z6ZMElAapcl+4jKLv31Mq2dxT2WSuRRhOhBV3/FkRiEiffPgtthLhoq4OBnyZ
-         S1RAXEVNL2hZwkQxVRSrdX8IokIk+FnUeyPRpzVpPxVrZTFW82b2Duijb5C1uNMkFs
-         J0Vp95wbcSPb3iFYYBoMS94F1BAHZesbnxCuw9t7i8dnr/3pW6fnqIFC7+x7Kj0h0d
-         5U6IMSUPhWPZg==
-Subject: Re: [PATCH v3 1/3] PCI: Introduce pcibios_ignore_alignment_request
-To:     Alexey Kardashevskiy <aik@ozlabs.ru>
-Cc:     Oliver <oohall@gmail.com>, Sam Bobroff <sbobroff@linux.ibm.com>,
-        linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        rppt@linux.ibm.com, Paul Mackerras <paulus@samba.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, xyjxie@linux.vnet.ibm.com,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-References: <20190528040313.35582-1-shawn@anastas.io>
- <20190528040313.35582-2-shawn@anastas.io>
- <CAOSf1CEFfbmwfvmdqT1xdt8SFb=tYdYXLfXeyZ8=iRnhg4a3Pg@mail.gmail.com>
- <b0a38504-24c3-77bc-b308-7b498f07760a@ozlabs.ru>
- <bccfec8f-c8a4-fac1-7e96-be84113b9a73@anastas.io>
- <3e6b9d7d-5d18-645e-5ef9-6b8a77fa62e9@ozlabs.ru>
- <985681e4-1236-fff7-e9e7-189a340487dd@anastas.io>
- <81a015ed-2c99-7ca8-c5ad-cede93aeba97@ozlabs.ru>
- <bdc914aa-9aab-1377-c036-cca4710ef233@anastas.io>
- <2f4185ac-d19f-6668-7b3e-a300ce3b9e00@ozlabs.ru>
- <bab59b8e-f1fc-f92a-36bb-4ff471e6da24@ozlabs.ru>
-From:   Shawn Anastasio <shawn@anastas.io>
-Message-ID: <419bf151-401d-231e-649e-22ddf53c4fcc@anastas.io>
-Date:   Mon, 3 Jun 2019 04:12:14 -0500
+        Mon, 3 Jun 2019 05:13:07 -0400
+Received: by mail-lj1-f194.google.com with SMTP id h11so15468192ljb.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 02:13:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=p2w7Kl57iLHckjKus0ozI/d6mjFcbpIqopjV/HxyM1s=;
+        b=LErR/q1Cw7oedcRjmOCVzqcAxs8gPx/T7/buH9Lwg8mSGR8eAtJ2kTcwFRHivjn5Ex
+         kEjWaZ0dS19gIlRmtSTi0+74wxiQjf4cTAxf6mfbrFI1L/VVIf/lavH55pIQidTKt0LG
+         2bOOWaw3tWlDzpGQXwdZjUkhHrTMpQohW7T04THJ1XaQ294z0vbUDDvwYtL4a72rZ7KG
+         7x2a+G2Gwx/2N46KE1z6HifQw3qO52VIzGyZMI0hqpYVvdNJTb4Zob+fSBJTFrWEwMFa
+         uMVDaQRSfaZWNnyGyJJqBArLdT7HZuOV1TPrk5K2dQgjo5cyiopk3TKCtcAeZbSyhF7P
+         7NYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=p2w7Kl57iLHckjKus0ozI/d6mjFcbpIqopjV/HxyM1s=;
+        b=attQ9WyYMwZjSEEjMFYbts7xkxVQpd5Dh7NwyieoCpcTFsRbUxEgOW9l78sWziA/3b
+         NSLB9CHl3ZTzvlAxoeRZxaE8GXY0fYu+aJyXpW2FxDbBZCNwqnl/EdHVzQiJ4Gyz9zsq
+         ojeAcUIefMHO4relPdh55GKAqx1DGS+4NCdTeIUbEZmo1BYq9YxZzC6bBFfa/ud/Hyqz
+         Rxs7gs5rqDt7GoPatUSesAsZqUZqpESRp2d0cEfXl9cp0WNX5wCRLo8zcGtL5AVbmbKG
+         l9m45MuuSUy9qArwQy7v1iFd8tAlKP0BNGe0T8bMFfUJQ//WDEXcrhvQA6z0b1u3UJe3
+         ytOA==
+X-Gm-Message-State: APjAAAXbVdBMJLdd/B/TNQYuep8Udjhevtaqyqlbh5Z2sZ8BNKYIAwM9
+        Mqboimb71OGRq70RzMRh13xutA==
+X-Google-Smtp-Source: APXvYqzH+12IqYjeDa9Cf9SfS3k+UN9FSA/zr7tE4XHHnE6+zYlsVHzadgAxfalAVmWokf3dCikz8w==
+X-Received: by 2002:a2e:5b94:: with SMTP id m20mr3452661lje.7.1559553185375;
+        Mon, 03 Jun 2019 02:13:05 -0700 (PDT)
+Received: from localhost (c-1c3670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.28])
+        by smtp.gmail.com with ESMTPSA id v2sm3030127lfi.52.2019.06.03.02.13.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Jun 2019 02:13:04 -0700 (PDT)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     mark.rutland@arm.com, marc.zyngier@arm.com,
+        daniel.lezcano@linaro.org, tglx@linutronix.de
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH 1/3] clocksource/arm_arch_timer: mark arch_counter_get_* as notrace
+Date:   Mon,  3 Jun 2019 11:12:56 +0200
+Message-Id: <20190603091256.25012-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <bab59b8e-f1fc-f92a-36bb-4ff471e6da24@ozlabs.ru>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When CONFIG_FUNCTION_GRAPH_TRACER is enabled we end up in this circular
+call trace since function arch_counter_get_cntvct() isn't marked with no
+trace:
 
+[   17.914934] Call trace:
+[   17.915211]  ftrace_return_to_handler+0x194/0x288
+[   17.915551]  return_to_handler+0x1c/0x38
+[   17.915855]  trace_clock_local+0x38/0x88
+[   17.916159]  function_graph_enter+0xf0/0x258
+[   17.916465]  prepare_ftrace_return+0x60/0x90
+[   17.916772]  ftrace_graph_caller+0x1c/0x24
+[   17.917093]  arch_counter_get_cntvct+0x10/0x30
+[   17.917417]  sched_clock+0x70/0x218
+[   17.917723]  trace_clock_local+0x38/0x88
+[   17.918026]  function_graph_enter+0xf0/0x258
+[   17.918332]  prepare_ftrace_return+0x60/0x90
+[   17.918649]  ftrace_graph_caller+0x1c/0x24
+[   17.918963]  arch_counter_get_cntvct+0x10/0x30
+[   17.919286]  sched_clock+0x70/0x218
 
-On 6/3/19 3:35 AM, Alexey Kardashevskiy wrote:
-> 
-> 
-> On 03/06/2019 15:02, Alexey Kardashevskiy wrote:
->>
->>
->> On 03/06/2019 12:23, Shawn Anastasio wrote:
->>>
->>>
->>> On 5/30/19 10:56 PM, Alexey Kardashevskiy wrote:
->>>>
->>>>
->>>> On 31/05/2019 08:49, Shawn Anastasio wrote:
->>>>> On 5/29/19 10:39 PM, Alexey Kardashevskiy wrote:
->>>>>>
->>>>>>
->>>>>> On 28/05/2019 17:39, Shawn Anastasio wrote:
->>>>>>>
->>>>>>>
->>>>>>> On 5/28/19 1:27 AM, Alexey Kardashevskiy wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>> On 28/05/2019 15:36, Oliver wrote:
->>>>>>>>> On Tue, May 28, 2019 at 2:03 PM Shawn Anastasio <shawn@anastas.io>
->>>>>>>>> wrote:
->>>>>>>>>>
->>>>>>>>>> Introduce a new pcibios function pcibios_ignore_alignment_request
->>>>>>>>>> which allows the PCI core to defer to platform-specific code to
->>>>>>>>>> determine whether or not to ignore alignment requests for PCI
->>>>>>>>>> resources.
->>>>>>>>>>
->>>>>>>>>> The existing behavior is to simply ignore alignment requests when
->>>>>>>>>> PCI_PROBE_ONLY is set. This is behavior is maintained by the
->>>>>>>>>> default implementation of pcibios_ignore_alignment_request.
->>>>>>>>>>
->>>>>>>>>> Signed-off-by: Shawn Anastasio <shawn@anastas.io>
->>>>>>>>>> ---
->>>>>>>>>>      drivers/pci/pci.c   | 9 +++++++--
->>>>>>>>>>      include/linux/pci.h | 1 +
->>>>>>>>>>      2 files changed, 8 insertions(+), 2 deletions(-)
->>>>>>>>>>
->>>>>>>>>> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
->>>>>>>>>> index 8abc843b1615..8207a09085d1 100644
->>>>>>>>>> --- a/drivers/pci/pci.c
->>>>>>>>>> +++ b/drivers/pci/pci.c
->>>>>>>>>> @@ -5882,6 +5882,11 @@ resource_size_t __weak
->>>>>>>>>> pcibios_default_alignment(void)
->>>>>>>>>>             return 0;
->>>>>>>>>>      }
->>>>>>>>>>
->>>>>>>>>> +int __weak pcibios_ignore_alignment_request(void)
->>>>>>>>>> +{
->>>>>>>>>> +       return pci_has_flag(PCI_PROBE_ONLY);
->>>>>>>>>> +}
->>>>>>>>>> +
->>>>>>>>>>      #define RESOURCE_ALIGNMENT_PARAM_SIZE COMMAND_LINE_SIZE
->>>>>>>>>>      static char
->>>>>>>>>> resource_alignment_param[RESOURCE_ALIGNMENT_PARAM_SIZE] = {0};
->>>>>>>>>>      static DEFINE_SPINLOCK(resource_alignment_lock);
->>>>>>>>>> @@ -5906,9 +5911,9 @@ static resource_size_t
->>>>>>>>>> pci_specified_resource_alignment(struct pci_dev *dev,
->>>>>>>>>>             p = resource_alignment_param;
->>>>>>>>>>             if (!*p && !align)
->>>>>>>>>>                     goto out;
->>>>>>>>>> -       if (pci_has_flag(PCI_PROBE_ONLY)) {
->>>>>>>>>> +       if (pcibios_ignore_alignment_request()) {
->>>>>>>>>>                     align = 0;
->>>>>>>>>> -               pr_info_once("PCI: Ignoring requested alignments
->>>>>>>>>> (PCI_PROBE_ONLY)\n");
->>>>>>>>>> +               pr_info_once("PCI: Ignoring requested
->>>>>>>>>> alignments\n");
->>>>>>>>>>                     goto out;
->>>>>>>>>>             }
->>>>>>>>>
->>>>>>>>> I think the logic here is questionable to begin with. If the user
->>>>>>>>> has
->>>>>>>>> explicitly requested re-aligning a resource via the command line
->>>>>>>>> then
->>>>>>>>> we should probably do it even if PCI_PROBE_ONLY is set. When it
->>>>>>>>> breaks
->>>>>>>>> they get to keep the pieces.
->>>>>>>>>
->>>>>>>>> That said, the real issue here is that PCI_PROBE_ONLY probably
->>>>>>>>> shouldn't be set under qemu/kvm. Under the other hypervisor
->>>>>>>>> (PowerVM)
->>>>>>>>> hotplugged devices are configured by firmware before it's passed to
->>>>>>>>> the guest and we need to keep the FW assignments otherwise things
->>>>>>>>> break. QEMU however doesn't do any BAR assignments and relies on
->>>>>>>>> that
->>>>>>>>> being handled by the guest. At boot time this is done by SLOF, but
->>>>>>>>> Linux only keeps SLOF around until it's extracted the device-tree.
->>>>>>>>> Once that's done SLOF gets blown away and the kernel needs to do
->>>>>>>>> it's
->>>>>>>>> own BAR assignments. I'm guessing there's a hack in there to make it
->>>>>>>>> work today, but it's a little surprising that it works at all...
->>>>>>>>
->>>>>>>>
->>>>>>>> The hack is to run a modified qemu-aware "/usr/sbin/rtas_errd" in the
->>>>>>>> guest which receives an event from qemu (RAS_EPOW from
->>>>>>>> /proc/interrupts), fetches device tree chunks (and as I understand
->>>>>>>> it -
->>>>>>>> they come with BARs from phyp but without from qemu) and writes
->>>>>>>> "1" to
->>>>>>>> "/sys/bus/pci/rescan" which calls pci_assign_resource() eventually:
->>>>>>>
->>>>>>> Interesting. Does this mean that the PHYP hotplug path doesn't
->>>>>>> call pci_assign_resource?
->>>>>>
->>>>>>
->>>>>> I'd expect dlpar_add_slot() to be called under phyp and eventually
->>>>>> pci_device_add() which (I think) may or may not trigger later
->>>>>> reassignment.
->>>>>>
->>>>>>
->>>>>>> If so it means the patch may not
->>>>>>> break that platform after all, though it still may not be
->>>>>>> the correct way of doing things.
->>>>>>
->>>>>>
->>>>>> We should probably stop enforcing the PCI_PROBE_ONLY flag - it seems
->>>>>> that (unless resource_alignment= is used) the pseries guest should just
->>>>>> walk through all allocated resources and leave them unchanged.
->>>>>
->>>>> If we add a pcibios_default_alignment() implementation like was
->>>>> suggested earlier, then it will behave as if the user has
->>>>> specified resource_alignment= by default and SLOF's assignments
->>>>> won't be honored (I think).
->>>>
->>>>
->>>> I removed pci_add_flags(PCI_PROBE_ONLY) from pSeries_setup_arch and
->>>> tried booting with and without pci=resource_alignment= and I can see no
->>>> difference - BARs are still aligned to 64K as programmed in SLOF; if I
->>>> hack SLOF to align to 4K or 32K - BARs get packed and the guest leaves
->>>> them unchanged.
->>>>
->>>>
->>>>> I guess it boils down to one question - is it important that we
->>>>> observe SLOF's initial BAR assignments?
->>>>
->>>> It isn't if it's SLOF but it is if it's phyp. It used to not
->>>> allow/support BAR reassignment and even if it does not, I'd rather avoid
->>>> touching them.
->>>
->>> A quick update. I tried removing pci_add_flags(PCI_PROBE_ONLY) which
->>> worked, but if I add an implementation of pcibios_default_alignment
->>> which simply returns PAGE_SIZE, my VM fails to boot and many errors
->>> from the virtio disk driver are printed to the console.
->>>
->>> After some investigation, it seems that with pcibios_default_alignment
->>> present, Linux will reallocate all resources provided by SLOF on
->>> boot. I'm still not sure why exactly this causes the virtio driver
->>> to fail, but it does indicate that there is a reason to keep
->>> SLOF's initial assignments.
->>>
->>> Anybody have an idea what's causing this?
->>
->> With your changes the guest feels the urge to reassign bars (no idea why
->> but ok), when it does so, it puts both BARs (one is prefetchable) into
->> the 32bit non-prefetchable window of the PHB (SLOF puts the prefetchable
->> bar to a 64bit prefetchable window, I have no idea why the guest does it
->> different either but this must still work) and then qemu does not
->> emulate something properly - unassigned_mem_accepts() is triggered on
->> the bar access - no idea why - I am debugging it right now.
-> 
-> 
-> Sooo the problem is that resouce::flags has 2 bits to describe 64bit
-> BARs - PCI_BASE_ADDRESS_MEM_TYPE_64 and IORESOURCE_MEM_64 - and we don't
-> set IORESOURCE_MEM_64 for 64bit BARs when parsing the fdt.
-> 
-> So the BAR reallocator moves the BAR to 32bit window (which is not
-> desirable but permitted, I still have to chase it) and then
-> pci_std_update_resource() writes BAR back but since now it is 32bit BAR,
-> it does not write to the upper 32bits so that half remains 0x2100, QEMU
-> does not move BAR to the right window and the MMIO stops working.
-> 
-> Try this in the guest kernel, it seems to keep bars where they were
-> after slof.
+Rework so that function arch_counter_get_cntvct() is marked with notrace.
 
-Nice debugging work! With your patch the VM does boot. I'm not sure
-if SLOF's original allocations are being kept or if Linux is redoing
-them (how do you check?), but MMIO works and the system boots anyways.
+Fixes: 0ea415390cd3 ("clocksource/arm_arch_timer: Use arch_timer_read_counter to access stable counters")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ drivers/clocksource/arm_arch_timer.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-I've also tested hotplug and the BAR allocations are page-aligned too,
-as expected.
+diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
+index b2a951a798e2..f4d5bd8fe906 100644
+--- a/drivers/clocksource/arm_arch_timer.c
++++ b/drivers/clocksource/arm_arch_timer.c
+@@ -149,22 +149,22 @@ u32 arch_timer_reg_read(int access, enum arch_timer_reg reg,
+ 	return val;
+ }
+ 
+-static u64 arch_counter_get_cntpct_stable(void)
++static u64 notrace arch_counter_get_cntpct_stable(void)
+ {
+ 	return __arch_counter_get_cntpct_stable();
+ }
+ 
+-static u64 arch_counter_get_cntpct(void)
++static u64 notrace arch_counter_get_cntpct(void)
+ {
+ 	return __arch_counter_get_cntpct();
+ }
+ 
+-static u64 arch_counter_get_cntvct_stable(void)
++static u64 notrace arch_counter_get_cntvct_stable(void)
+ {
+ 	return __arch_counter_get_cntvct_stable();
+ }
+ 
+-static u64 arch_counter_get_cntvct(void)
++static u64 notrace arch_counter_get_cntvct(void)
+ {
+ 	return __arch_counter_get_cntvct();
+ }
+@@ -947,7 +947,7 @@ bool arch_timer_evtstrm_available(void)
+ 	return cpumask_test_cpu(raw_smp_processor_id(), &evtstrm_available);
+ }
+ 
+-static u64 arch_counter_get_cntvct_mem(void)
++static u64 notrace arch_counter_get_cntvct_mem(void)
+ {
+ 	u32 vct_lo, vct_hi, tmp_hi;
+ 
+-- 
+2.20.1
+
