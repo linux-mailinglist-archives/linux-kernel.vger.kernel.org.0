@@ -2,178 +2,203 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6870C339C1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 22:30:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B6DC339C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 22:31:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbfFCUag (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 16:30:36 -0400
-Received: from mail-pg1-f172.google.com ([209.85.215.172]:39586 "EHLO
-        mail-pg1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726033AbfFCUaf (ORCPT
+        id S1726645AbfFCUbn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 16:31:43 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:49600 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726163AbfFCUbm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 16:30:35 -0400
-Received: by mail-pg1-f172.google.com with SMTP id 196so8933494pgc.6
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 13:30:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=yTPjNqx5yTV5LH1cuolBMQNpbpZp8rde3AW3nNYF3Iw=;
-        b=MbJAneImaEfsr3f9N8spvMH0pbKGHwznOY5+TMazOVkw1rV/NMigju62expu+A88rn
-         nwDQVDSy7+27gc68Uuj6CfmkO4xv6e0cICVo9ZaVR+hmf/M2JCmnmHLWNFeBCaBZCYDi
-         r4xNavN7o8x3DTRrHt/QdhxoCaR+ucQYZ7gP1Wvr21OXdrvGcEDWwmsha9EnQ7HtnGro
-         n7ecsUoDpwKwK4wv0Pj8KLJag4Y1UVdsxEuiKZ43wZe1lvn4XjOnG74BQOZhnzj8wnCF
-         f2BXhqH1+8j3r9fBpvX3hfUdzvlM5D4u3YaRIuGnTzghpF8t3H/G1zTd2ZiwrqxAN/KH
-         tleQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=yTPjNqx5yTV5LH1cuolBMQNpbpZp8rde3AW3nNYF3Iw=;
-        b=l55WzW7zjnexbAx5lwcD0y9JyqeQ4dUihN1K71Jq8vnoUx/3b33rJykOgVjEFTnjma
-         zq9IUFkzPfiLaWz6FJ6tgmdZv1UQXU2GWMSL5lyrkm2cZtnRwDs1uiciMLxuGh0Hl4fE
-         bhr9maU+x/FC2KTarZmHGJLXXqbM/RPf8RC0JflSb78X/YdOBSYbMKy4haXBxdrl7Q7r
-         qd9tI8uujy0UF411bHKE4pszgRDql8ZjSa5W4pUZ3y+s+FZEeO/Id0miR8sTsU7P+wSH
-         2Cm/UBDe1tzE6erSH1ONIZwzQ37+z+ry5cvMRqPDDwNY2e68wr1CZAdl949DT7tiDVWp
-         E5xQ==
-X-Gm-Message-State: APjAAAWmVjej6B+vmBhqz8V+K7CxbO/sq+H8XeuJWgJ7fl8xNToFBTWE
-        gOMg2BOfueVE4rIokDRKiauOY+vWEBp0rE4XwzUVwUIB
-X-Google-Smtp-Source: APXvYqwNcd6oX6jU9x15SogL47WvdwQ0FN8oUxDGvhoUmf0fmNU4RKc6FvwCuvvfRFKD8L0agsq+KJo+YvhJEMzWseQ=
-X-Received: by 2002:a17:90a:b105:: with SMTP id z5mr32740917pjq.76.1559593834396;
- Mon, 03 Jun 2019 13:30:34 -0700 (PDT)
+        Mon, 3 Jun 2019 16:31:42 -0400
+Received: from pps.filterd (m0001255.ppops.net [127.0.0.1])
+        by mx0b-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x53KM55Y020253;
+        Mon, 3 Jun 2019 13:30:29 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=Cm7ryaXuFUYiWgw+pjH9SnNqXBRoDlGHD9r3IrqhOtk=;
+ b=ZJMk1TOpd7ignu9o7qpsv0AddPqjSHpovo3Bjwjfrbqowhj0l6L1uNRgDJfQQNOVwc2u
+ gF5v8fSd/e/VdaI9xOce6iMNjCaN6wecJHtEQvYuhEVLj7TDSrISOw2SvT0m83+dnnV8
+ CWHt09kG4eJxpOf+u9I3TIGioZhqJzyn8qo= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0b-00082601.pphosted.com with ESMTP id 2swa6s037u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Mon, 03 Jun 2019 13:30:29 -0700
+Received: from ash-exopmbx101.TheFacebook.com (2620:10d:c0a8:82::b) by
+ ash-exhub101.TheFacebook.com (2620:10d:c0a8:82::e) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Mon, 3 Jun 2019 13:30:29 -0700
+Received: from ash-exhub201.TheFacebook.com (2620:10d:c0a8:83::7) by
+ ash-exopmbx101.TheFacebook.com (2620:10d:c0a8:82::b) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Mon, 3 Jun 2019 13:30:28 -0700
+Received: from NAM02-CY1-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.36.101) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
+ via Frontend Transport; Mon, 3 Jun 2019 13:30:28 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Cm7ryaXuFUYiWgw+pjH9SnNqXBRoDlGHD9r3IrqhOtk=;
+ b=Mb3ec1DCQWQC69evhHHRH7NmLyoUrjgg534+Z6jo7IagfIdtcn6l0HARgsp0LXIUN+Vzt2zhU+SvLwsim9m8FW9mZx3vAdbLxl34t5XjB579YLvoGvvrg8zi1X7a2m/3AHr9OxP7cibOu86Gkq9XLMylgCIr3Gdn++0qzI3yXJ4=
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com (20.179.156.24) by
+ BYAPR15MB2856.namprd15.prod.outlook.com (20.178.206.85) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1943.22; Mon, 3 Jun 2019 20:30:26 +0000
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::d4f6:b485:69ee:fd9a]) by BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::d4f6:b485:69ee:fd9a%7]) with mapi id 15.20.1943.018; Mon, 3 Jun 2019
+ 20:30:26 +0000
+From:   Roman Gushchin <guro@fb.com>
+To:     Uladzislau Rezki <urezki@gmail.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Hillf Danton <hdanton@sina.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Garnier <thgarnie@google.com>,
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH v3 4/4] mm/vmap: move BUG_ON() check to the unlink_va()
+Thread-Topic: [PATCH v3 4/4] mm/vmap: move BUG_ON() check to the unlink_va()
+Thread-Index: AQHVFHAFBgyZ0nJ640yaup+zuj/dD6aAsSSAgAFzHYD//7QaAIAIZDwAgAAw3YA=
+Date:   Mon, 3 Jun 2019 20:30:26 +0000
+Message-ID: <20190603203021.GB14526@tower.DHCP.thefacebook.com>
+References: <20190527093842.10701-1-urezki@gmail.com>
+ <20190527093842.10701-5-urezki@gmail.com>
+ <20190528225001.GI27847@tower.DHCP.thefacebook.com>
+ <20190529135817.tr7usoi2xwx5zl2s@pc636>
+ <20190529162638.GB3228@tower.DHCP.thefacebook.com>
+ <20190603173528.7ukfgznmiypzfyze@pc636>
+In-Reply-To: <20190603173528.7ukfgznmiypzfyze@pc636>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR22CA0047.namprd22.prod.outlook.com
+ (2603:10b6:300:69::33) To BYAPR15MB2631.namprd15.prod.outlook.com
+ (2603:10b6:a03:152::24)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:200::5409]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: a0540a03-11a9-44f2-6b64-08d6e8624f77
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR15MB2856;
+x-ms-traffictypediagnostic: BYAPR15MB2856:
+x-microsoft-antispam-prvs: <BYAPR15MB28563D2D2B2A01CF1E689819BE140@BYAPR15MB2856.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0057EE387C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(366004)(396003)(136003)(39860400002)(52314003)(199004)(189003)(1076003)(102836004)(4326008)(316002)(14454004)(81166006)(229853002)(2906002)(6506007)(99286004)(81156014)(386003)(6486002)(52116002)(86362001)(6246003)(186003)(8676002)(7736002)(305945005)(6916009)(66476007)(25786009)(66556008)(73956011)(46003)(6116002)(54906003)(71200400001)(71190400001)(66946007)(66446008)(1411001)(6436002)(68736007)(64756008)(14444005)(6512007)(9686003)(8936002)(53936002)(11346002)(76176011)(476003)(7416002)(486006)(256004)(446003)(478600001)(5660300002)(33656002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2856;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: L2+W3h8eSLnW/xCIlERNceR3DgzH8STZwI4pUiqd/JwEshArlLF5MOEI/gbIUk/zo+38P6wRxgta3NZdkiebe+O+qnAgfOb7YMN6yB0Q1OwYnfSyl4BXVEyupLejNw+XoLJZNxmJHVn8UQgxyoj4QtswuLPhxS1NZIhwVNJDtGCGtgYzDjveU5w5jpn6lNj5hfB6K/GnoeH5dFTS0C1cqBpZbZRjUL/BkqvWzHQKOw3GFCwp4CBPenoutxU+z3jKEHNS6O2XZIK30/2EJgLo7XBl4AJ5npZFCf5MDLvjKrjMc4hREoe85+XVoqyjGjTIb7Pl7QEBL++DAuyZ4rXuNmLcrcNn+MTGwFtUFBFZ2qi6XSuK35wu/xmDPVAbEB82eAPXElu6RQRoyWc+lerevQOsGjkioybrCPeAo5Yckhc=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <624474166666AE4E9974023247D462FF@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-From:   noman pouigt <variksla@gmail.com>
-Date:   Mon, 3 Jun 2019 13:30:23 -0700
-Message-ID: <CAES_P+8ASijfmugGEL5am540nQTRATdYFmYgtYdkJnmLSVdt_w@mail.gmail.com>
-Subject: deadline scheduler BUG_ON trigger
-To:     linux-kernel@vger.kernel.org, mingo@redhat.com,
-        peterz@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-Network-Message-Id: a0540a03-11a9-44f2-6b64-08d6e8624f77
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jun 2019 20:30:26.0957
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: guro@fb.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2856
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-03_16:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906030137
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Folks,
+On Mon, Jun 03, 2019 at 07:35:28PM +0200, Uladzislau Rezki wrote:
+> Hello, Roman!
+>=20
+> On Wed, May 29, 2019 at 04:26:43PM +0000, Roman Gushchin wrote:
+> > On Wed, May 29, 2019 at 03:58:17PM +0200, Uladzislau Rezki wrote:
+> > > Hello, Roman!
+> > >=20
+> > > > > Move the BUG_ON()/RB_EMPTY_NODE() check under unlink_va()
+> > > > > function, it means if an empty node gets freed it is a BUG
+> > > > > thus is considered as faulty behaviour.
+> > > >=20
+> > > > It's not exactly clear from the description, why it's better.
+> > > >=20
+> > > It is rather about if "unlink" happens on unhandled node it is
+> > > faulty behavior. Something that clearly written in stone. We used
+> > > to call "unlink" on detached node during merge, but after:
+> > >=20
+> > > [PATCH v3 3/4] mm/vmap: get rid of one single unlink_va() when merge
+> > >=20
+> > > it is not supposed to be ever happened across the logic.
+> > >=20
+> > > >
+> > > > Also, do we really need a BUG_ON() in either place?
+> > > >=20
+> > > Historically we used to have the BUG_ON there. We can get rid of it
+> > > for sure. But in this case, it would be harder to find a head or tail
+> > > of it when the crash occurs, soon or later.
+> > >=20
+> > > > Isn't something like this better?
+> > > >=20
+> > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > > > index c42872ed82ac..2df0e86d6aff 100644
+> > > > --- a/mm/vmalloc.c
+> > > > +++ b/mm/vmalloc.c
+> > > > @@ -1118,7 +1118,8 @@ EXPORT_SYMBOL_GPL(unregister_vmap_purge_notif=
+ier);
+> > > > =20
+> > > >  static void __free_vmap_area(struct vmap_area *va)
+> > > >  {
+> > > > -       BUG_ON(RB_EMPTY_NODE(&va->rb_node));
+> > > > +       if (WARN_ON_ONCE(RB_EMPTY_NODE(&va->rb_node)))
+> > > > +               return;
+> > > >
+> > > I was thinking about WARN_ON_ONCE. The concern was about if the
+> > > message gets lost due to kernel ring buffer. Therefore i used that.
+> > > I am not sure if we have something like WARN_ONE_RATELIMIT that
+> > > would be the best i think. At least it would indicate if a warning
+> > > happens periodically or not.
+> > >=20
+> > > Any thoughts?
+> >=20
+> > Hello, Uladzislau!
+> >=20
+> > I don't have a strong opinion here. If you're worried about losing the =
+message,
+> > WARN_ON() should be fine here. I don't think that this event will happe=
+n often,
+> > if at all.
+> >
+>=20
+>=20
+> If it happens then we are in trouble :) I prefer to keep it here as of no=
+w,
+> later on will see. Anyway, let's keep it and i will update it with:
+>=20
+> <snip>
+>     if (WARN_ON(RB_EMPTY_NODE(&va->rb_node)))
+>         return;
+> <snip>
 
-I am using sched deadline in the case of audio recording over SPI to
-maintain the consistency in reading the data.
+Works for me. Thank you!
 
-However, getting this BUG_ON triggered rarely. Is it because the calculated
-runtime is less than actual runtime? I only have one SCHED_DEADLINE task
-in the entire system.
+>=20
+> Thank you for the comments!
 
-.sched_runtime = 5 * 1000 * 1000
+You're welcome!
 
-<6>[  354.001991] ------------[ cut here ]------------
-<2>[  354.002006] kernel BUG at
-/mnt/build/workspace/fireos_main_nougat_neptune-build/VARIANT/userdebug/label/PRODUCT_BUILD_DUAL_EXEC/kernel/qcom/msm-4.4/kernel/sched/deadline.c:1035!
-<6>[  354.002071] ------------[ cut here ]------------
-<2>[  354.003880] kernel BUG at
-/mnt/build/workspace/fireos_main_nougat_neptune-build/VARIANT/userdebug/label/PRODUCT_BUILD_DUAL_EXEC/kernel/qcom/msm-4.4/kernel/sched/deadline.c:1035!
-<0>[  354.004491] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
-<6>[  354.006429] Modules linked in: wlan_mt76x8_sdio(OE)
-btmtksdio(OE) wlan_mt76x8_sdio_prealloc(POE)
-<6>[  354.008166] CPU: 2 PID: 298 Comm: spi1 Tainted: P           OE
-4.4.21+ #1
-<6>[  354.008211] Hardware name: Amazon Vesta Neptune proto-3 (DT)
-<6>[  354.009057] task: ffffffd936d9a580 ti: ffffffd936da8000 task.ti:
-ffffffd936da8000
-<6>[  354.009805] PC is at enqueue_task_dl+0x2fc/0x33c
-<6>[  354.010713] LR is at enqueue_task_dl+0x2c/0x33c
-<6>[  354.011297] pc : [<ffffff83c8cddf3c>] lr : [<ffffff83c8cddc6c>]
-pstate: 800001c5
-<6>[  354.011837] sp : ffffffd936dab9a0
-<6>[  354.012781] x29: ffffffd936dab9a0 x28: ffffffd9364a3c48
-<6>[  354.013814] x27: ffffffd936d9ab90 x26: 0000000000000000
-<6>[  354.014477] x25: ffffffd93e0ea100 x24: 0000000000000001
-<6>[  354.015138] x23: ffffffd93e0c0100 x22: ffffffd886e77090
-<6>[  354.015801] x21: 0000000000000001 x20: ffffffd886e77080
-<6>[  354.016462] x19: ffffffd886e77368 x18: 0000000000000044
-<6>[  354.017125] x17: 0000007c4cbe7f50 x16: ffffff83c8d1b20c
-<6>[  354.017786] x15: 0000000000000000 x14: 0000007c49f6e940
-<6>[  354.018448] x13: 000000000019fe5a x12: 0000000001312d00
-<6>[  354.019109] x11: 000000526c14c33c x10: ffffffd93e0eab40
-<6>[  354.019772] x9 : ffffffd93e0eab50 x8 : 0000000000000000
-<6>[  354.020434] x7 : 0000005573c60000 x6 : 0000000000000004
-<6>[  354.021095] x5 : 0000005573c36000 x4 : 000000052a5b36ce
-<6>[  354.021758] x3 : ffffff83c8cddc40 x2 : 0000000000000000
-<6>[  354.022418] x1 : ffffffd886e77080 x0 : 0000000000000078
-<6>[  354.023082]
-<6>[  354.023082] PC: 0xffffff83c8cddefc:
-<6>[  354.023114] defc  aa1503e0 97fffe20 f9445ae0 eb14001f 540002c0
-b943a680 7100041f 5400026d
-<6>[  354.024731] df1c  aa1703e0 aa1403e1 97fffeb4 1400000f 910ba001
-17ffff59 7100405f 54000040
-<6>[  354.025751] df3c  d4210000 b9433e80 35000100 17fffffd d4210000
-17ffff72 d4210000 17ffffb6
-<6>[  354.026770] df5c  f9419401 17ffffe0 a94153f3 a9425bf5 a94363f7
-f94023f9 a8c67bfd d65f03c0
-<6>[  354.027791]
-<6>[  354.027791] LR: 0xffffff83c8cddc2c:
-<6>[  354.027814] dc2c  17ffffed a94153f3 a9425bf5 a8c37bfd d65f03c0
-a9ba7bfd 910003fd a90363f7
-<6>[  354.029428] dc4c  aa0003f7 aa0103e0 a90153f3 f9002fa2 aa0103f4
-a9025bf5 f90023f9 940045e0
-<6>[  354.030449] dc6c  910ba293 f9402fa2 b40000a0 b9433e81 34000061
-b9405001 37f81541 b9405280
-<6>[  354.031469] dc8c  36f81540 aa1303e1 b9433680 34000040 36201642
-f9417699 eb19027f 54000040
-<6>[  354.032489]
-<6>[  354.032489] SP: 0xffffffd936dab960:
-<6>[  354.032512] b960  c8cddc6c ffffff83 36dab9a0 ffffffd9 c8cddf3c
-ffffff83 800001c5 00000000
-<6>[  354.034126] b980  3e0c0100 ffffffd9 39411400 ffffffd9 ffffffff
-ffffffff c8cce2fc ffffff83
-<6>[  354.035147] b9a0  36daba00 ffffffd9 c8cc6738 ffffff83 86e77080
-ffffffd8 3e0c0100 ffffffd9
-<6>[  354.036168] b9c0  00000001 00000000 86e77090 ffffffd8 3e0c0100
-ffffffd9 00000001 00000000
-<6>[  354.037186]
-<0>[  354.037203] Process spi1 (pid: 298, stack limit = 0xffffffd936da8020)
-<6>[  354.037409] Call trace:
-<6>[  354.038194] Exception stack(0xffffffd936dab7d0 to 0xffffffd936dab900)
-<6>[  354.038485] b7c0:
-ffffffd886e77368 0000008000000000
-<6>[  354.039314] b7e0: ffffffd936dab9a0 ffffff83c8cddf3c
-ffffffd93844c808 0000000000000002
-<6>[  354.040290] b800: ffffffd9385bf200 ffffffd93844d800
-0000000000000001 0000000000000000
-<6>[  354.041266] b820: 0000000000000001 ffffff83ca48a100
-ffffffd93844c808 0000000000000002
-<6>[  354.042242] b840: ffffff83cac06a04 0000000000000000
-ffffffd936da8000 ffffffd9335a6400
-<6>[  354.043219] b860: ffffffd936dab8a0 ffffff83c969ca30
-0000000000000078 ffffffd886e77080
-<6>[  354.044195] b880: 0000000000000000 ffffff83c8cddc40
-000000052a5b36ce 0000005573c36000
-<6>[  354.045173] b8a0: 0000000000000004 0000005573c60000
-0000000000000000 ffffffd93e0eab50
-<6>[  354.046149] b8c0: ffffffd93e0eab40 000000526c14c33c
-0000000001312d00 000000000019fe5a
-<6>[  354.047126] b8e0: 0000007c49f6e940 0000000000000000
-ffffff83c8d1b20c 0000007c4cbe7f50
-<6>[  354.048103] [<ffffff83c8cddf3c>] enqueue_task_dl+0x2fc/0x33c
-<6>[  354.049078] [<ffffff83c8cc6738>] activate_task+0x74/0x124
-<6>[  354.049790] [<ffffff83c8cdeabc>] push_dl_task.part.35+0x160/0x1c0
-<6>[  354.050453] [<ffffff83c8cdee30>] push_dl_tasks+0x20/0x30
-<6>[  354.051212] [<ffffff83c8cc4160>] __balance_callback+0x3c/0x5c
-<6>[  354.051888] [<ffffff83c99cc6d8>] __schedule+0x4c4/0x770
-<6>[  354.052587] [<ffffff83c99cca08>] schedule+0x84/0xa4
-<6>[  354.053217] [<ffffff83c99ce91c>] __rt_mutex_slowlock+0x80/0xd8
-<6>[  354.053826] [<ffffff83c99cea40>] rt_mutex_slowlock+0xcc/0x170
-<6>[  354.054565] [<ffffff83c99ceb2c>] rt_mutex_lock+0x48/0x50
-<6>[  354.055292] [<ffffff83c90d7664>] update_bw_adhoc+0x30/0x1d8
-<6>[  354.055964] [<ffffff83c90d3294>] msm_bus_scale_update_bw+0x20/0x4c
-<6>[  354.056628] [<ffffff83c9254c14>] msm_spi_clk_path_vote+0x2c/0x34
-<6>[  354.057408] [<ffffff83c9254b44>] msm_spi_set_cs+0x5c/0xe4
-<6>[  354.058177] [<ffffff83c924f03c>] spi_set_cs+0x50/0x5c
-<6>[  354.058837] [<ffffff83c924fb4c>] spi_transfer_one_message+0x358/0x410
-<6>[  354.059470] [<ffffff83c9250438>] __spi_pump_messages+0x5f8/0x624
-<6>[  354.060271] [<ffffff83c9250478>] spi_pump_messages+0x14/0x1c
-<6>[  354.061032] [<ffffff83c8cb9078>] kthread_worker_fn+0xb4/0x130
-<6>[  354.061736] [<ffffff83c8cb8fbc>] kthread+0xdc/0xe4
-<6>[  354.062440] [<ffffff83c8c845f0>] ret_from_fork+0x10/0x20
-<0>[  354.063028] Code: 910ba001 17ffff59 7100405f 54000040 (d4210000)
-<4>[  354.063711] ---[ end trace c62a47584ac7d903 ]---
-
-Thanks,
-variksla
+Roman
