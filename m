@@ -2,64 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BA123271B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 06:01:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 281A53271D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 06:05:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726342AbfFCEB1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 00:01:27 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:47486 "EHLO deadmen.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725818AbfFCEB0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 00:01:26 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1hXe9w-0000BY-Iu; Mon, 03 Jun 2019 12:01:20 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1hXe9q-00024t-Qt; Mon, 03 Jun 2019 12:01:14 +0800
-Date:   Mon, 3 Jun 2019 12:01:14 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Fengguang Wu <fengguang.wu@intel.com>, LKP <lkp@01.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: rcu_read_lock lost its compiler barrier
-Message-ID: <20190603040114.st646bujtgyu7adn@gondor.apana.org.au>
-References: <20150910005708.GA23369@wfg-t540p.sh.intel.com>
- <20150910102513.GA1677@fixme-laptop.cn.ibm.com>
- <20150910171649.GE4029@linux.vnet.ibm.com>
- <20150911021933.GA1521@fixme-laptop.cn.ibm.com>
- <20150921193045.GA13674@lerouge>
- <20150921204327.GH4029@linux.vnet.ibm.com>
- <20190602055607.bk5vgmwjvvt4wejd@gondor.apana.org.au>
- <CAHk-=whLGKOmM++OQi5GX08_dfh8Xfz9Wq7khPo+MVtPYh_8hw@mail.gmail.com>
- <20190603024640.2soysu4rpkwjuash@gondor.apana.org.au>
- <20190603034707.GG28207@linux.ibm.com>
+        id S1726369AbfFCEFX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 00:05:23 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:41756 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725818AbfFCEFX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 00:05:23 -0400
+Received: by mail-io1-f67.google.com with SMTP id w25so13126619ioc.8
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Jun 2019 21:05:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bSsDlepu/Gv2h+jW37zv087KL7ej7kJEQqTYULWSEk0=;
+        b=RmVKplReHg0sL2j2EUBICn8EXrzONwvrUn2mMxUBdCYefsBuBJKkosK4yAGfCiGUcx
+         9aHC80EcMn0EeE3jSkwaIPZsxZg4dPeStRsG1pYO3VB7iM/nnwdfl3Zl0YtR8pnEMvO5
+         X5uGwpChIw8jwNCQP8KOaV5bkWiOb7tPNiq5Y/l+ANODYt62XJbL5Wb2C9YU2ZlLL94L
+         jWj/p4FoYnq75s2xSMMcAvVRw9X3UdxaDw2iojoAm9Lmahc3mgvn9qTOLXRl0ClqLgkG
+         posT3/22lEQqVXi13RGA4YzRiswNmBNj9bVK50RNQbAxKL1Dpp1FkTYuFn2/pHxdNXzy
+         4Jqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bSsDlepu/Gv2h+jW37zv087KL7ej7kJEQqTYULWSEk0=;
+        b=IazpGLzac14mxOtfBXb7dI/nDMQ6ILwrJX2FUGzk4Dt+hI6odC9DEKMoudxX04y49X
+         po1ItWiEk89zkirX/fUQiIvRfBilXltD9R1xI8ayFW5SFMYYk5KIiRRABwhEHMTNPbz7
+         yJMfL47Jhl5t3OoKjqsghaXKjNpKdoUru/Rau6E9hiK3zc5iDUH/hPhi07s+exvFhil8
+         IFblUdURSochh5Ioiex5W4s8+GdDdtLKVWNxoQa8meOPFmuZBk+iihMuklviJWiLta0x
+         ddIon+8akaMJaY3FdDWHo804RjDtHeY+ZGo5FAe9BDMJ6RynoTa5IZO90DG8TKil+koU
+         NiJw==
+X-Gm-Message-State: APjAAAUb09VUt0EuzmovsXb+taBVe3zopkV8+6uYd3XfuWoNhAcP1qBQ
+        /qw2jSB4kJPu0qbBpH+VzVPxzcY0pHrAXdAVjG27
+X-Google-Smtp-Source: APXvYqxmU/Kryj20Rs1ffPcWzCCAZzKVb0we2q0TWbrrO4z5swArh/gIW5kqLqMWArYz4SlyKxpfhGgArRMXe0deVpo=
+X-Received: by 2002:a5e:d70c:: with SMTP id v12mr13169113iom.12.1559534722712;
+ Sun, 02 Jun 2019 21:05:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190603034707.GG28207@linux.ibm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <1559170444-3304-1-git-send-email-kernelfans@gmail.com>
+ <20190530214726.GA14000@iweiny-DESK2.sc.intel.com> <1497636a-8658-d3ff-f7cd-05230fdead19@nvidia.com>
+ <CAFgQCTtVcmLUdua_nFwif_TbzeX5wp31GfTpL6CWmXXviYYLyw@mail.gmail.com> <20190531171336.GA30649@iweiny-DESK2.sc.intel.com>
+In-Reply-To: <20190531171336.GA30649@iweiny-DESK2.sc.intel.com>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Mon, 3 Jun 2019 12:05:11 +0800
+Message-ID: <CAFgQCTsWN6g__pF71qo1VAviT+98LEX6d9WLx2Lk7QktcciPqA@mail.gmail.com>
+Subject: Re: [PATCH] mm/gup: fix omission of check on FOLL_LONGTERM in get_user_pages_fast()
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     John Hubbard <jhubbard@nvidia.com>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Keith Busch <keith.busch@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 02, 2019 at 08:47:07PM -0700, Paul E. McKenney wrote:
+On Sat, Jun 1, 2019 at 1:12 AM Ira Weiny <ira.weiny@intel.com> wrote:
 >
-> 	CPU2:         if (b != 1)
-> 	CPU2:                 b = 1;
+> On Fri, May 31, 2019 at 07:05:27PM +0800, Pingfan Liu wrote:
+> > On Fri, May 31, 2019 at 7:21 AM John Hubbard <jhubbard@nvidia.com> wrote:
+> > >
+> > >
+> > > Rather lightly tested...I've compile-tested with CONFIG_CMA and !CONFIG_CMA,
+> > > and boot tested with CONFIG_CMA, but could use a second set of eyes on whether
+> > > I've added any off-by-one errors, or worse. :)
+> > >
+> > Do you mind I send V2 based on your above patch? Anyway, it is a simple bug fix.
+>
+> FWIW please split out the nr_pinned change to a separate patch.
+>
+OK.
 
-Stop right there.  The kernel is full of code that assumes that
-assignment to an int/long is atomic.  If your compiler breaks this
-assumption that we can kiss the kernel good-bye.
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Thanks,
+  Pingfan
