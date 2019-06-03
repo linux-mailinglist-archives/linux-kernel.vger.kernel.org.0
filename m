@@ -2,29 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6701D33416
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:53:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FEAC33410
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:53:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729399AbfFCPxk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 11:53:40 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53906 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729426AbfFCPvy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 11:51:54 -0400
+        id S1729466AbfFCPwA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 11:52:00 -0400
+Received: from foss.arm.com ([217.140.101.70]:53920 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729440AbfFCPv4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 11:51:56 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 42D101AED;
-        Mon,  3 Jun 2019 08:51:54 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B31AC169E;
+        Mon,  3 Jun 2019 08:51:55 -0700 (PDT)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 06C723F246;
-        Mon,  3 Jun 2019 08:51:52 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7FFA53F246;
+        Mon,  3 Jun 2019 08:51:54 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        suzuki.poulose@arm.com, Tomas Winkler <tomas.winkler@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [RFC PATCH 36/57] drivers: mei: Use class_find_device_by_devt match helper
-Date:   Mon,  3 Jun 2019 16:50:02 +0100
-Message-Id: <1559577023-558-37-git-send-email-suzuki.poulose@arm.com>
+        suzuki.poulose@arm.com,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: [RFC PATCH 37/57] drivers: s390: zcrypt: Use class_find_device_by_devt helper
+Date:   Mon,  3 Jun 2019 16:50:03 +0100
+Message-Id: <1559577023-558-38-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
 References: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
@@ -33,43 +34,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch to the generic helper class_find_device_by_devt.
+Use the generic helper to find a device matching the devt.
 
-Cc: Tomas Winkler <tomas.winkler@intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Harald Freudenberger <freude@linux.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/misc/mei/main.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ drivers/s390/crypto/zcrypt_api.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/drivers/misc/mei/main.c b/drivers/misc/mei/main.c
-index ad02097..243b481 100644
---- a/drivers/misc/mei/main.c
-+++ b/drivers/misc/mei/main.c
-@@ -858,13 +858,6 @@ static ssize_t dev_state_show(struct device *device,
- }
- static DEVICE_ATTR_RO(dev_state);
+diff --git a/drivers/s390/crypto/zcrypt_api.c b/drivers/s390/crypto/zcrypt_api.c
+index 16cad8e..99c9b77 100644
+--- a/drivers/s390/crypto/zcrypt_api.c
++++ b/drivers/s390/crypto/zcrypt_api.c
+@@ -133,12 +133,6 @@ struct zcdn_device {
+ static int zcdn_create(const char *name);
+ static int zcdn_destroy(const char *name);
  
--static int match_devt(struct device *dev, const void *data)
+-/* helper function, matches the devt value for find_zcdndev_by_devt() */
+-static int __match_zcdn_devt(struct device *dev, const void *data)
 -{
--	const dev_t *devt = data;
--
--	return dev->devt == *devt;
+-	return dev->devt == *((dev_t *) data);
 -}
 -
- /**
-  * dev_set_devstate: set to new device state and notify sysfs file.
-  *
-@@ -880,7 +873,7 @@ void mei_set_devstate(struct mei_device *dev, enum mei_dev_state state)
+ /*
+  * Find zcdn device by name.
+  * Returns reference to the zcdn device which needs to be released
+@@ -159,10 +153,7 @@ static inline struct zcdn_device *find_zcdndev_by_name(const char *name)
+  */
+ static inline struct zcdn_device *find_zcdndev_by_devt(dev_t devt)
+ {
+-	struct device *dev =
+-		class_find_device(zcrypt_class, NULL,
+-				  (void *) &devt,
+-				  __match_zcdn_devt);
++	struct device *dev = class_find_device_by_devt(zcrypt_class, NULL, devt);
  
- 	dev->dev_state = state;
- 
--	clsdev = class_find_device(mei_class, NULL, &dev->cdev.dev, match_devt);
-+	clsdev = class_find_device_by_devt(mei_class, NULL, dev->cdev.dev);
- 	if (clsdev) {
- 		sysfs_notify(&clsdev->kobj, NULL, "dev_state");
- 		put_device(clsdev);
+ 	return dev ? to_zcdn_dev(dev) : NULL;
+ }
 -- 
 2.7.4
 
