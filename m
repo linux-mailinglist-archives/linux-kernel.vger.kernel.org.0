@@ -2,104 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9AE132ED2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 13:40:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4F2F32EDF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 13:41:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728492AbfFCLkt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 07:40:49 -0400
-Received: from dc2-smtprelay2.synopsys.com ([198.182.61.142]:36000 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726798AbfFCLks (ORCPT
+        id S1728560AbfFCLlR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 07:41:17 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:56961 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728505AbfFCLlH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 07:40:48 -0400
-Received: from mailhost.synopsys.com (dc8-mailhost2.synopsys.com [10.13.135.210])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 30711C1E73;
-        Mon,  3 Jun 2019 11:40:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1559562028; bh=JNgLsT7LPunYfej4pP5aCroqrdhvEaNr8asK8r1HI7Y=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=QnpyQMXRrAFzeVwuPSVQX9syBt+Hb02uRHs7Fs7uKpQolYd8MaUOTYFEKb3Tvkqt9
-         ryS1+FR7+e8qYxHQFmZexwW9ROZau/gsFbKRW8YZxLn2JNuZh0RFRNvE3Kww/Cahjm
-         /VUoCFFnV/yofaYRK2uhyZ+RJ7lRutTQ9dWPb1YmY7UW8cmdF60WTBv9hcvoxI4Aa1
-         tw6oUYRs/E7Xfe8+LHapSeLdJuzhzEiI2BZQ0K/HHKSB/fX0xsfVFNPqGQUdZIPVMS
-         dbyLdu/ckJRdYQAGzW7p+A4V8h3eT/bTrRTjx0LBuOmQ6nw2vvbDvdGQ7gKWFrOtEn
-         NrO2YR068NpfA==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 87BABA0067;
-        Mon,  3 Jun 2019 11:40:40 +0000 (UTC)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 3 Jun 2019 04:40:40 -0700
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Mon,
- 3 Jun 2019 13:40:37 +0200
-From:   Jose Abreu <Jose.Abreu@synopsys.com>
-To:     Biao Huang <biao.huang@mediatek.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "andrew@lunn.ch" <andrew@lunn.ch>
-CC:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "yt.shen@mediatek.com" <yt.shen@mediatek.com>,
-        "jianguo.zhang@mediatek.com" <jianguo.zhang@mediatek.com>,
-        "boon.leong.ong@intel.com" <boon.leong.ong@intel.com>
-Subject: RE: [v2, PATCH 3/4] net: stmmac: modify default value of tx-frames
-Thread-Topic: [v2, PATCH 3/4] net: stmmac: modify default value of tx-frames
-Thread-Index: AQHVGa/XGYfQ4t70BkaeZd4pZlVHSKaJzoyA
-Date:   Mon, 3 Jun 2019 11:40:37 +0000
-Message-ID: <78EB27739596EE489E55E81C33FEC33A0B93B6DF@DE02WEMBXB.internal.synopsys.com>
-References: <1559527086-7227-1-git-send-email-biao.huang@mediatek.com>
- <1559527086-7227-4-git-send-email-biao.huang@mediatek.com>
-In-Reply-To: <1559527086-7227-4-git-send-email-biao.huang@mediatek.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.107.19.176]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 3 Jun 2019 07:41:07 -0400
+Received: by mail-io1-f69.google.com with SMTP id u25so7505287iol.23
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 04:41:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=bhQQCMoe6xPIhB2Fv3HqxvRnlBzDpLuZ7Y8s9DIRbgE=;
+        b=RrfMN1TXhotmNAoTJ+GCGdyQsjFF5Rwm1sn3B7gVTInc9BuTQ/Rqn9x2lZE40Dj8Jh
+         cy43/D5OGd1L6B6QX9mudLdnu51GliTtqW1WI+EL78Cl1EnsLPqzo/FpRzF13/ZZKUZW
+         V4k1pDu2Onf6OQ8svZGFnIouPhYFl5bz9WaAr47mlCB9yoT8EgUaNZDMLnsPf7VFzf95
+         GGUXC9vcTAQscsJl8EsHhP3QCpLVtCtqJ96+rkMG7w/XarzS2Ai8+IdLo6ec64UlH/1p
+         JapeKNUHGYvgVzvaiWv2lY3Bk7EkzYVAo/1Q9eZmE64eopHy9iwALRyxxBD1seSdbxUI
+         6NGQ==
+X-Gm-Message-State: APjAAAV+161RnXxsSNmxMs564zjsKr/zRMcR7hPW7tIHzATNe3ZKEUPl
+        sAqxbweC7wVC21yzZcKipjKGNTA7JuVBBKOVGER8iOEx+695
+X-Google-Smtp-Source: APXvYqyPlO6vnRJSyc3hzDhLfNy7BkuowSIfOch06+5YCfj4AnEtaMrUAx+ZvZFXPcXMoVuoZSiyfEXaNResGzA5vY/gsEc03e3s
 MIME-Version: 1.0
+X-Received: by 2002:a02:3b55:: with SMTP id i21mr16663261jaf.128.1559562066262;
+ Mon, 03 Jun 2019 04:41:06 -0700 (PDT)
+Date:   Mon, 03 Jun 2019 04:41:06 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f7047d058a69d653@google.com>
+Subject: KASAN: use-after-free Write in v4l2_prio_close
+From:   syzbot <syzbot+a6566701042e6e3e4ed1@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, ezequiel@collabora.com,
+        hans.verkuil@cisco.com, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
+        mchehab@kernel.org, niklas.soderlund+renesas@ragnatech.se,
+        sakari.ailus@linux.intel.com, syzkaller-bugs@googlegroups.com,
+        tfiga@chromium.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Biao Huang <biao.huang@mediatek.com>
+Hello,
 
-> the default value of tx-frames is 25, it's too late when
-> passing tstamp to stack, then the ptp4l will fail:
->=20
-> ptp4l -i eth0 -f gPTP.cfg -m
-> ptp4l: selected /dev/ptp0 as PTP clock
-> ptp4l: port 1: INITIALIZING to LISTENING on INITIALIZE
-> ptp4l: port 0: INITIALIZING to LISTENING on INITIALIZE
-> ptp4l: port 1: link up
-> ptp4l: timed out while polling for tx timestamp
-> ptp4l: increasing tx_timestamp_timeout may correct this issue,
->        but it is likely caused by a driver bug
-> ptp4l: port 1: send peer delay response failed
-> ptp4l: port 1: LISTENING to FAULTY on FAULT_DETECTED (FT_UNSPECIFIED)
->=20
-> ptp4l tests pass when changing the tx-frames from 25 to 1 with
-> ethtool -C option.
-> It should be fine to set tx-frames default value to 1, so ptp4l will pass
-> by default.
+syzbot found the following crash on:
 
-I'm not sure if this is the right approach ... What's the timeout value=20
-you have for TX Timestamp ?
+HEAD commit:    69bbe8c7 usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git usb-fuzzer
+console output: https://syzkaller.appspot.com/x/log.txt?x=142ef636a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=193d8457178b3229
+dashboard link: https://syzkaller.appspot.com/bug?extid=a6566701042e6e3e4ed1
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-Thanks,
-Jose Miguel Abreu
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+a6566701042e6e3e4ed1@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: use-after-free in atomic_dec  
+include/asm-generic/atomic-instrumented.h:329 [inline]
+BUG: KASAN: use-after-free in v4l2_prio_close+0x45/0x60  
+drivers/media/v4l2-core/v4l2-dev.c:285
+Write of size 4 at addr ffff8881d4d21890 by task v4l_id/3238
+
+CPU: 1 PID: 3238 Comm: v4l_id Not tainted 5.2.0-rc1+ #10
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0xca/0x13e lib/dump_stack.c:113
+  print_address_description+0x67/0x231 mm/kasan/report.c:188
+  __kasan_report.cold+0x1a/0x32 mm/kasan/report.c:317
+  kasan_report+0xe/0x20 mm/kasan/common.c:614
+  atomic_dec include/asm-generic/atomic-instrumented.h:329 [inline]
+  v4l2_prio_close+0x45/0x60 drivers/media/v4l2-core/v4l2-dev.c:285
+  v4l2_fh_release+0x41/0x70 drivers/media/v4l2-core/v4l2-fh.c:104
+  v4l2_release+0x2e7/0x390 drivers/media/v4l2-core/v4l2-dev.c:459
+  __fput+0x2d7/0x790 fs/file_table.c:279
+  task_work_run+0x13f/0x1c0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+  exit_to_usermode_loop+0x1c5/0x1f0 arch/x86/entry/common.c:168
+  prepare_exit_to_usermode arch/x86/entry/common.c:199 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:279 [inline]
+  do_syscall_64+0x43f/0x560 arch/x86/entry/common.c:304
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x7f5bcbde22b0
+Code: 40 75 0b 31 c0 48 83 c4 08 e9 0c ff ff ff 48 8d 3d c5 32 08 00 e8 c0  
+07 02 00 83 3d 45 a3 2b 00 00 75 10 b8 03 00 00 00 0f 05 <48> 3d 01 f0 ff  
+ff 73 31 c3 48 83 ec 08 e8 ce 8a 01 00 48 89 04 24
+RSP: 002b:00007ffd54ae7938 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
+RAX: 0000000000000000 RBX: 0000000000000003 RCX: 00007f5bcbde22b0
+RDX: 0000000000000013 RSI: 0000000080685600 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000400884
+R13: 00007ffd54ae7a90 R14: 0000000000000000 R15: 0000000000000000
+
+Allocated by task 2762:
+  save_stack+0x1b/0x80 mm/kasan/common.c:71
+  set_track mm/kasan/common.c:79 [inline]
+  __kasan_kmalloc mm/kasan/common.c:489 [inline]
+  __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:462
+  slab_post_alloc_hook mm/slab.h:437 [inline]
+  slab_alloc_node mm/slub.c:2748 [inline]
+  __kmalloc_node_track_caller+0xee/0x370 mm/slub.c:4363
+  alloc_dr drivers/base/devres.c:103 [inline]
+  devm_kmalloc+0x87/0x190 drivers/base/devres.c:793
+  devm_kzalloc include/linux/device.h:679 [inline]
+  usb_raremono_probe+0x2f/0x231 drivers/media/radio/radio-raremono.c:298
+  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
+  really_probe+0x281/0x660 drivers/base/dd.c:509
+  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
+  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
+  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+  __device_attach+0x217/0x360 drivers/base/dd.c:843
+  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+  device_add+0xae6/0x16f0 drivers/base/core.c:2111
+  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
+  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
+  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
+  really_probe+0x281/0x660 drivers/base/dd.c:509
+  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
+  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
+  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+  __device_attach+0x217/0x360 drivers/base/dd.c:843
+  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+  device_add+0xae6/0x16f0 drivers/base/core.c:2111
+  usb_new_device.cold+0x8c1/0x1016 drivers/usb/core/hub.c:2534
+  hub_port_connect drivers/usb/core/hub.c:5089 [inline]
+  hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
+  port_event drivers/usb/core/hub.c:5350 [inline]
+  hub_event+0x1ada/0x3590 drivers/usb/core/hub.c:5432
+  process_one_work+0x905/0x1570 kernel/workqueue.c:2268
+  process_scheduled_works kernel/workqueue.c:2330 [inline]
+  worker_thread+0x7ab/0xe20 kernel/workqueue.c:2416
+  kthread+0x30b/0x410 kernel/kthread.c:254
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+Freed by task 2762:
+  save_stack+0x1b/0x80 mm/kasan/common.c:71
+  set_track mm/kasan/common.c:79 [inline]
+  __kasan_slab_free+0x130/0x180 mm/kasan/common.c:451
+  slab_free_hook mm/slub.c:1421 [inline]
+  slab_free_freelist_hook mm/slub.c:1448 [inline]
+  slab_free mm/slub.c:2994 [inline]
+  kfree+0xd7/0x280 mm/slub.c:3949
+  release_nodes+0x4a1/0x910 drivers/base/devres.c:508
+  devres_release_all+0x74/0xc3 drivers/base/devres.c:529
+  __device_release_driver drivers/base/dd.c:1085 [inline]
+  device_release_driver_internal+0x21b/0x4c0 drivers/base/dd.c:1112
+  bus_remove_device+0x2dc/0x4a0 drivers/base/bus.c:556
+  device_del+0x460/0xb80 drivers/base/core.c:2274
+  usb_disable_device+0x211/0x690 drivers/usb/core/message.c:1237
+  usb_disconnect+0x284/0x830 drivers/usb/core/hub.c:2197
+  hub_port_connect drivers/usb/core/hub.c:4940 [inline]
+  hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
+  port_event drivers/usb/core/hub.c:5350 [inline]
+  hub_event+0x1409/0x3590 drivers/usb/core/hub.c:5432
+  process_one_work+0x905/0x1570 kernel/workqueue.c:2268
+  process_scheduled_works kernel/workqueue.c:2330 [inline]
+  worker_thread+0x7ab/0xe20 kernel/workqueue.c:2416
+  kthread+0x30b/0x410 kernel/kthread.c:254
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+The buggy address belongs to the object at ffff8881d4d21100
+  which belongs to the cache kmalloc-4k of size 4096
+The buggy address is located 1936 bytes inside of
+  4096-byte region [ffff8881d4d21100, ffff8881d4d22100)
+The buggy address belongs to the page:
+page:ffffea0007534800 refcount:1 mapcount:0 mapping:ffff8881dac02600  
+index:0x0 compound_mapcount: 0
+flags: 0x200000000010200(slab|head)
+raw: 0200000000010200 dead000000000100 dead000000000200 ffff8881dac02600
+raw: 0000000000000000 0000000000070007 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8881d4d21780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8881d4d21800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8881d4d21880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                          ^
+  ffff8881d4d21900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8881d4d21980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
