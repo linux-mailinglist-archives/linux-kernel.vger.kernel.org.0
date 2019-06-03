@@ -2,101 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19E60335A1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 18:57:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09B23335DE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 19:01:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729832AbfFCQ5E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 12:57:04 -0400
-Received: from foss.arm.com ([217.140.101.70]:55640 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727071AbfFCQ5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 12:57:00 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC65A80D;
-        Mon,  3 Jun 2019 09:56:59 -0700 (PDT)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2D30F3F5AF;
-        Mon,  3 Jun 2019 09:56:57 -0700 (PDT)
-Date:   Mon, 3 Jun 2019 17:56:51 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     peng.fan@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        jassisinghbrar@gmail.com, kernel@pengutronix.de, linux-imx@nxp.com,
-        shawnguo@kernel.org, festevam@gmail.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, andre.przywara@arm.com,
-        van.freenix@gmail.com, Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH V2 1/2] DT: mailbox: add binding doc for the ARM SMC
- mailbox
-Message-ID: <20190603165651.GA12196@e107155-lin>
-References: <20190603083005.4304-1-peng.fan@nxp.com>
- <20190603083005.4304-2-peng.fan@nxp.com>
- <ae4c79f0-4aec-250e-e312-20aba5554665@gmail.com>
+        id S1726792AbfFCRBa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 13:01:30 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:41164 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726336AbfFCRBa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 13:01:30 -0400
+Received: by mail-oi1-f195.google.com with SMTP id b21so9436382oic.8
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 10:01:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:reply-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0MLgXQF5vH23h1KYWlPuV0evmen8yKWQSXaDjS7gROU=;
+        b=bXTYdOAOmCBEf4dZJMRmpwMXGA9bG6Ccvf3Tcu0lzgGBdta805U47eXIQFOvzITEwV
+         GzLaA/WMnLuUDj+UfCE7D/ld3YbgmbNotWvVfQstlemsJy4fQieFileAfYeF8dywWKbq
+         OEkl48OlryjHpdlCqQOfH937m1t3uGidXZOVgBOY9WPDhtpp3DZ6m/j6htorHs1IPvc8
+         Tlq7bF8pEf0hohGoT/oFUv/ikU27hMC2Qz+9mnhLii4phXP6GfcVWmPFNmqr5eENrbPM
+         ckZgiCzehhjOKmM7h5n0rEs/6yCuwRbjo6PQe77sedJWVuIHxTkLuB/6gZXqRdq0Q3Pk
+         XLAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :reply-to:references:mime-version:content-disposition:in-reply-to
+         :user-agent;
+        bh=0MLgXQF5vH23h1KYWlPuV0evmen8yKWQSXaDjS7gROU=;
+        b=LLYJFQhTRjlaFf+d6zynNZUFNuoca7DssoxdEgDfVolpdRj45Jal6+I0tu17ol60G+
+         psUycmNhuoUWJfygEfrdmWVD3BCxj/ui3iXqAlal2FagEBqqAgpEPwQIMzlb38fpN/2r
+         Q1xwDnZzl8HhL+xlAgoG5L3LAHU419FTyzNNfSZRD6zsJTTVAwTv8lATafPINYbK6i2h
+         NqMUeB68guwf86glNAnUVhQgt2AsIwEbQUo47wzrLi9XzVQwPavaVTw2h2993GUnb0bX
+         jFYTlos0ClGcYxsD3Ap190FgjAFs4633YRer8htS1sa8B7a7eUxWQOAjlj0stJkDbhXw
+         QVxQ==
+X-Gm-Message-State: APjAAAXYgk5ULZ4vs6QxO6xwalQMLj7TjYkXLj4nlUKC/l895VIKMuyu
+        71F+F98VjhXXxagVkJjdeA==
+X-Google-Smtp-Source: APXvYqy386isB9eeY65vjp8u9TUF3ySUcf9XTJCl0DyAa6L5k7AmZV9/Y9kS0f3/FDI2KTuXe5FLaw==
+X-Received: by 2002:aca:55d7:: with SMTP id j206mr1646137oib.71.1559581288876;
+        Mon, 03 Jun 2019 10:01:28 -0700 (PDT)
+Received: from serve.minyard.net (serve.minyard.net. [2001:470:b8f6:1b::1])
+        by smtp.gmail.com with ESMTPSA id t206sm1669134oig.30.2019.06.03.10.01.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Jun 2019 10:01:28 -0700 (PDT)
+Received: from minyard.net (unknown [IPv6:2001:470:b8f6:1b:c2:e16b:3a60:98fc])
+        by serve.minyard.net (Postfix) with ESMTPSA id 81A4C1800CD;
+        Mon,  3 Jun 2019 17:01:27 +0000 (UTC)
+Date:   Mon, 3 Jun 2019 12:01:25 -0500
+From:   Corey Minyard <minyard@acm.org>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        rafael@kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [RFC PATCH 02/57] drivers: ipmi: Drop device reference
+Message-ID: <20190603170125.GM2742@minyard.net>
+Reply-To: minyard@acm.org
+References: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
+ <1559577023-558-3-git-send-email-suzuki.poulose@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ae4c79f0-4aec-250e-e312-20aba5554665@gmail.com>
+In-Reply-To: <1559577023-558-3-git-send-email-suzuki.poulose@arm.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 03, 2019 at 09:22:16AM -0700, Florian Fainelli wrote:
-> On 6/3/19 1:30 AM, peng.fan@nxp.com wrote:
-> > From: Peng Fan <peng.fan@nxp.com>
-> >
-> > The ARM SMC mailbox binding describes a firmware interface to trigger
-> > actions in software layers running in the EL2 or EL3 exception levels.
-> > The term "ARM" here relates to the SMC instruction as part of the ARM
-> > instruction set, not as a standard endorsed by ARM Ltd.
-> >
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > ---
-> >
-> > V2:
-> > Introduce interrupts as a property.
-> >
-> > V1:
-> > arm,func-ids is still kept as an optional property, because there is no
-> > defined SMC funciton id passed from SCMI. So in my test, I still use
-> > arm,func-ids for ARM SIP service.
-> >
-> >  .../devicetree/bindings/mailbox/arm-smc.txt        | 101 +++++++++++++++++++++
-> >  1 file changed, 101 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/mailbox/arm-smc.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/mailbox/arm-smc.txt b/Documentation/devicetree/bindings/mailbox/arm-smc.txt
-> > new file mode 100644
-> > index 000000000000..401887118c09
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/mailbox/arm-smc.txt
-> > @@ -0,0 +1,101 @@
+On Mon, Jun 03, 2019 at 04:49:28PM +0100, Suzuki K Poulose wrote:
+> Drop the reference to a device found via bus_find_device()
 
-[...]
+This change is correct, but it probably doesn't belong in this
+series.  Would you like me to take it as a stand-alone change?
 
-> > +Optional properties:
-> > +- arm,func-ids		An array of 32-bit values specifying the function
-> > +			IDs used by each mailbox channel. Those function IDs
-> > +			follow the ARM SMC calling convention standard [1].
-> > +			There is one identifier per channel and the number
-> > +			of supported channels is determined by the length
-> > +			of this array.
-> > +- interrupts		SPI interrupts may be listed for notification,
-> > +			each channel should use a dedicated interrupt
-> > +			line.
->
-> I would not go about defining a specific kind of interrupt, since SPI is
-> a GIC terminology, this firmware interface could be used in premise with
-> any parent interrupt controller, for which the concept of a SPI/PPI/SGI
-> may not be relevant.
->
+-corey
 
-While I agree the binding document may not contain specifics, I still
-don't see how to use SGI with this. Also note it's generally reserved
-for OS future use(IPC) and using this for other than IPC may be bit
-challenging IMO. It opens up lots of questions.
-
---
-Regards,
-Sudeep
+> 
+> Cc: Corey Minyard <minyard@acm.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>  drivers/char/ipmi/ipmi_si_platform.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/char/ipmi/ipmi_si_platform.c b/drivers/char/ipmi/ipmi_si_platform.c
+> index f2a91c4..ff82353 100644
+> --- a/drivers/char/ipmi/ipmi_si_platform.c
+> +++ b/drivers/char/ipmi/ipmi_si_platform.c
+> @@ -442,6 +442,7 @@ void ipmi_remove_platform_device_by_name(char *name)
+>  				      pdev_match_name))) {
+>  		struct platform_device *pdev = to_platform_device(dev);
+>  
+> +		put_device(dev);
+>  		platform_device_unregister(pdev);
+>  	}
+>  }
+> -- 
+> 2.7.4
+> 
