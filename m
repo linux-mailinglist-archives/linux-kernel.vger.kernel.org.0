@@ -2,133 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4AB732AA7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 10:20:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10E7A32AC5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 10:28:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727694AbfFCIUc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 04:20:32 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:6990 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726272AbfFCIUc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 04:20:32 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 45HSfc02pHz9typt;
-        Mon,  3 Jun 2019 10:20:24 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=HKXKteSe; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id zr09SGG8LgmD; Mon,  3 Jun 2019 10:20:23 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 45HSfb66BNz9typs;
-        Mon,  3 Jun 2019 10:20:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1559550023; bh=+Dy4E19F4WwnCTLPgVfWD0Hzr4dGN4PVcDn0mVnwdX4=;
-        h=From:Subject:To:Cc:Date:From;
-        b=HKXKteSeJVqAwnfV652Zlbx/9HBL6LLz0ee+FohA66lTxGEmoJRWHxZ/jlM8/vxiK
-         PJWHxCothJ27GwxxvTKjt9y8M/6WKV2tQBo7RjFfa2Dg3quIH/XYJnefgUrZ58gR0s
-         gflCbR5IEkusGiIW12lxirectA+CQXWuWyNcecxA=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7FB5E8B7B8;
-        Mon,  3 Jun 2019 10:20:28 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 0biTqtzBvmD1; Mon,  3 Jun 2019 10:20:28 +0200 (CEST)
-Received: from po16846vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 596B48B7B1;
-        Mon,  3 Jun 2019 10:20:28 +0200 (CEST)
-Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 2570168B20; Mon,  3 Jun 2019 08:20:28 +0000 (UTC)
-Message-Id: <56efc3b317622d5f607d1f7a35894b194c385492.1559549824.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v3] powerpc: fix kexec failure on book3s/32
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Mon,  3 Jun 2019 08:20:28 +0000 (UTC)
+        id S1727663AbfFCI2V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 04:28:21 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:41110 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725856AbfFCI2V (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 04:28:21 -0400
+Received: by mail-ua1-f68.google.com with SMTP id n2so6165888uad.8;
+        Mon, 03 Jun 2019 01:28:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EDoCDFTeq/DV5924Jr300cDXUIemOxujb3aLvb1Pkn0=;
+        b=izqSZAFsSv7SOmGqsDoVfN9penvenlTefSopGisyHYiY/XskElii9B/+HWXg3LY744
+         T5f2psSGpD9PJU7SbhE5E1k/7fbwKQu6BzfoPagMmVWs3mtkea2i9t8bVk9XEUKpi+iP
+         stYqxHiW7ZczPEF3yWAmhGks+gpi73T7NJzTTy+q8uNFPSSPGDe5IkisuivboMSetRKF
+         xQiX4fRkLAkVxfrUr+w/3FEQTD/SSydjPobocRo2lRJxoy4qzAhiqul6RFmKFgZZbXgx
+         3R925AMT8OJf9H/lfFDk4RFZ8qei57vUyS3sBrdVOft5CaSurYGwoCpT01zEyVJdahHk
+         jEIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EDoCDFTeq/DV5924Jr300cDXUIemOxujb3aLvb1Pkn0=;
+        b=jJhfqZIfbCA+keYbRrjuHSkeaqOaZV7YzTheelELSUoZWXYEGRJeXZAEhUKLuS71KL
+         woKFa+SEZgxgjLrF8MvsUOpZqZ2N0Y65UwMg9vTRLjBYpsuMCBr7wGqosXy7IoWxgQ+v
+         38oWaz2suQ6wbSHkZWxrdYzq2X8VQRvlqynN5/S4pLJXtYKnDKJTB1SeqkAjHJSolVC9
+         Y3TKO961n/Swu1AZuBeLUhve3b40rdWEE7NwTzThRyZ0NebqXLEwh+yck3Kd26cI5g++
+         PNvPGRb+D6TF6RJCkzj58AsSgO8gaTwPeyp37hs3GvTA7ZRcu4lvOHPP16kDaWaEl3Wi
+         1oGg==
+X-Gm-Message-State: APjAAAXkpZh3KdTN402bNZsEFESEbX1tWRoBSOtmSirmzzCvwdJFibEj
+        XHlmI/WIT9vSsIccXGuHFh7st1CMwQW2BFDbhk4=
+X-Google-Smtp-Source: APXvYqwHPHJVbjOmU3beNqvuieIuS0+sxO+hdF3ELDqayT2TnNjKZYL7ukuC99dJpgkpMcNMhWFjx76wOKe6XdqAvus=
+X-Received: by 2002:ab0:4e12:: with SMTP id g18mr11891564uah.1.1559550500034;
+ Mon, 03 Jun 2019 01:28:20 -0700 (PDT)
+MIME-Version: 1.0
+References: <1559532216-12114-1-git-send-email-92siuyang@gmail.com> <CADvbK_eUYhP=pSLqHdBp8E3-NJP28=jErSSvW5moO9WVK=X8XQ@mail.gmail.com>
+In-Reply-To: <CADvbK_eUYhP=pSLqHdBp8E3-NJP28=jErSSvW5moO9WVK=X8XQ@mail.gmail.com>
+From:   Yang Xiao <92siuyang@gmail.com>
+Date:   Mon, 3 Jun 2019 16:27:41 +0800
+Message-ID: <CAKgHYH1_Jcie=qP-TWRLMXV4OTCe8hm6qZzs2bu4Ciooo2hFiQ@mail.gmail.com>
+Subject: Re: [PATCH] ipvlan: Don't propagate IFF_ALLMULTI changes on down interfaces.
+To:     Xin Long <lucien.xin@gmail.com>
+Cc:     davem <davem@davemloft.net>,
+        Daniel Borkmann <daniel@iogearbox.net>, petrm@mellanox.com,
+        jiri@mellanox.com, idosch@mellanox.com, uehaibing@huawei.com,
+        Hangbin Liu <liuhangbin@gmail.com>,
+        network dev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the old days, _PAGE_EXEC didn't exist on 6xx aka book3s/32.
-Therefore, allthough __mapin_ram_chunk() was already mapping kernel
-text with PAGE_KERNEL_TEXT and the rest with PAGE_KERNEL, the entire
-memory was executable. Part of the memory (first 512kbytes) was
-mapped with BATs instead of page table, but it was also entirely
-mapped as executable.
+Based on your explanation, I found that the patch I submitted is useless.
+Great thanks and sorry for the trouble.
 
-In commit 385e89d5b20f ("powerpc/mm: add exec protection on
-powerpc 603"), we started adding exec protection to some 6xx, namely
-the 603, for pages mapped via pagetables.
-
-Then, in commit 63b2bc619565 ("powerpc/mm/32s: Use BATs for
-STRICT_KERNEL_RWX"), the exec protection was extended to BAT mapped
-memory, so that really only the kernel text could be executed.
-
-The problem here is that kexec is based on copying some code into
-upper part of memory then executing it from there in order to install
-a fresh new kernel at its definitive location.
-
-However, the code is position independant and first part of it is
-just there to deactivate the MMU and jump to the second part. So it
-is possible to run this first part inplace instead of running the
-copy. Once the MMU is off, there is no protection anymore and the
-second part of the code will just run as before.
-
-Reported-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-Fixes: 63b2bc619565 ("powerpc/mm/32s: Use BATs for STRICT_KERNEL_RWX")
-Cc: stable@vger.kernel.org
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- Aaro, can you test this patch ? Thanks.
-
- arch/powerpc/include/asm/kexec.h       | 3 +++
- arch/powerpc/kernel/machine_kexec_32.c | 4 +++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/include/asm/kexec.h b/arch/powerpc/include/asm/kexec.h
-index 4a585cba1787..c68476818753 100644
---- a/arch/powerpc/include/asm/kexec.h
-+++ b/arch/powerpc/include/asm/kexec.h
-@@ -94,6 +94,9 @@ static inline bool kdump_in_progress(void)
- 	return crashing_cpu >= 0;
- }
- 
-+void relocate_new_kernel(unsigned long indirection_page, unsigned long reboot_code_buffer,
-+			 unsigned long start_address) __noreturn;
-+
- #ifdef CONFIG_KEXEC_FILE
- extern const struct kexec_file_ops kexec_elf64_ops;
- 
-diff --git a/arch/powerpc/kernel/machine_kexec_32.c b/arch/powerpc/kernel/machine_kexec_32.c
-index affe5dcce7f4..2b160d68db49 100644
---- a/arch/powerpc/kernel/machine_kexec_32.c
-+++ b/arch/powerpc/kernel/machine_kexec_32.c
-@@ -30,7 +30,6 @@ typedef void (*relocate_new_kernel_t)(
-  */
- void default_machine_kexec(struct kimage *image)
- {
--	extern const unsigned char relocate_new_kernel[];
- 	extern const unsigned int relocate_new_kernel_size;
- 	unsigned long page_list;
- 	unsigned long reboot_code_buffer, reboot_code_buffer_phys;
-@@ -58,6 +57,9 @@ void default_machine_kexec(struct kimage *image)
- 				reboot_code_buffer + KEXEC_CONTROL_PAGE_SIZE);
- 	printk(KERN_INFO "Bye!\n");
- 
-+	if (!IS_ENABLED(CONFIG_FSL_BOOKE) && !IS_ENABLED(CONFIG_44x))
-+		relocate_new_kernel(page_list, reboot_code_buffer_phys, image->start);
-+
- 	/* now call it */
- 	rnk = (relocate_new_kernel_t) reboot_code_buffer;
- 	(*rnk)(page_list, reboot_code_buffer_phys, image->start);
--- 
-2.13.3
-
+On Mon, Jun 3, 2019 at 3:54 PM Xin Long <lucien.xin@gmail.com> wrote:
+>
+> On Mon, Jun 3, 2019 at 11:22 AM Young Xiao <92siuyang@gmail.com> wrote:
+> >
+> > Clearing the IFF_ALLMULTI flag on a down interface could cause an allmulti
+> > overflow on the underlying interface.
+> >
+> > Attempting the set IFF_ALLMULTI on the underlying interface would cause an
+> > error and the log message:
+> >
+> > "allmulti touches root, set allmulti failed."
+> s/root/roof
+>
+> I guess this patch was inspired by:
+>
+> commit bbeb0eadcf9fe74fb2b9b1a6fea82cd538b1e556
+> Author: Peter Christensen <pch@ordbogen.com>
+> Date:   Thu May 8 11:15:37 2014 +0200
+>
+>     macvlan: Don't propagate IFF_ALLMULTI changes on down interfaces.
+>
+> I could trigger this error on macvlan prior to this patch with:
+>
+>   # ip link add mymacvlan1 link eth2 type macvlan mode bridge
+>   # ip link set mymacvlan1 up
+>   # ip link set mymacvlan1 allmulticast on
+>   # ip link set mymacvlan1 down
+>   # ip link set mymacvlan1 allmulticast off
+>   # ip link set mymacvlan1 allmulticast on
+>
+> but not on ipvlan, could you?
+>
+> macvlan had this problem, as lowerdev's allmulticast is cleared when doing
+> dev_stop and set when doing dev_open, which doesn't happen on ipvlan.
+>
+> So I'd think this patch fixes nothing unless you want to add
+> dev_set_allmulti(1/-1) in ipvlan_open/stop(), but that's another topic.
+>
+> did I miss something?
+>
+> >
+> > Signed-off-by: Young Xiao <92siuyang@gmail.com>
+> > ---
+> >  drivers/net/ipvlan/ipvlan_main.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/net/ipvlan/ipvlan_main.c b/drivers/net/ipvlan/ipvlan_main.c
+> > index bbeb162..523bb83 100644
+> > --- a/drivers/net/ipvlan/ipvlan_main.c
+> > +++ b/drivers/net/ipvlan/ipvlan_main.c
+> > @@ -242,8 +242,10 @@ static void ipvlan_change_rx_flags(struct net_device *dev, int change)
+> >         struct ipvl_dev *ipvlan = netdev_priv(dev);
+> >         struct net_device *phy_dev = ipvlan->phy_dev;
+> >
+> > -       if (change & IFF_ALLMULTI)
+> > -               dev_set_allmulti(phy_dev, dev->flags & IFF_ALLMULTI? 1 : -1);
+> > +       if (dev->flags & IFF_UP) {
+> > +               if (change & IFF_ALLMULTI)
+> > +                       dev_set_allmulti(phy_dev, dev->flags & IFF_ALLMULTI ? 1 : -1);
+> > +       }
+> >  }
+> >
+> >  static void ipvlan_set_multicast_mac_filter(struct net_device *dev)
+> > --
+> > 2.7.4
+> >
