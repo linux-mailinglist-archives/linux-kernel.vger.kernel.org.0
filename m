@@ -2,66 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21C8A338F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 21:18:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DB61338FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 21:19:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726573AbfFCTST (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 15:18:19 -0400
-Received: from mga11.intel.com ([192.55.52.93]:55903 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725876AbfFCTST (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 15:18:19 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 12:18:18 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by orsmga002.jf.intel.com with ESMTP; 03 Jun 2019 12:18:18 -0700
-Date:   Mon, 3 Jun 2019 12:18:18 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc:     Like Xu <like.xu@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v3] KVM: x86: Add Intel CPUID.1F cpuid emulation
- support
-Message-ID: <20190603191818.GF13384@linux.intel.com>
-References: <20190526133052.4069-1-like.xu@linux.intel.com>
- <20190603165616.GA11101@flask>
+        id S1726784AbfFCTTi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 15:19:38 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41908 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726049AbfFCTTh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 15:19:37 -0400
+Received: by mail-pg1-f193.google.com with SMTP id 83so2009687pgg.8;
+        Mon, 03 Jun 2019 12:19:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=y1POYuY5yv6TKMl+TVizfTG3p/FI2fRpGzaKg8qUjGU=;
+        b=B6Luh7lFrEGKMS0YaCVBv8YPdG1mQ6kipZMlOOIWg7PtGkDH5BzB5dbwoj+XazEPrQ
+         gW4udVF7MtZdA8ZcHF04cxCgpkQ1Bq+DjrhRoEue0Qwkffa0UKyhVn5PZvC7IVcn+W0q
+         jqKBgtw0etiOYNrWWIaxWusHOxiXee9ERSe2jvi8PwAE8XbNewSlVh9Po8LFTzZu1W4g
+         URBPlLPp80M14E+DSIZklLmwiFd9NcKnayxknqEJMYSwethFJ+YjK+IXhoO/vhD5bTaY
+         MiuHszmiwHy9XAa3KIJdZDvcPAXfPUzPE7AqYAr8j2favgR6jg2YNM4ih6TJ08VXIxUL
+         fEMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y1POYuY5yv6TKMl+TVizfTG3p/FI2fRpGzaKg8qUjGU=;
+        b=Ee+QsZ7ks/J7M3BDK+749+UKFpzdR8aloGRM3LsshzqiF9TUMwSel2PEftz/f+iJSi
+         jfIiljzmfH7KyTZBtNHpxTLinjDp6cYjACQGVja7Y0bO1WJqgTinISgblIEAZZb2fe3C
+         pFAO5DoKgxpEqRZWBrfy0JtHb9wn4JYIQmHKwYCUfukTM3e+4smWUcGMRBfoVZ91RHDn
+         KPpsnP8QoY6BLd/8XlojxkA0QPpU7ZJmvtu3OiT9hZqgJ58RbFKplQMDMeVJu8YycIMD
+         R01HLeoyDfCR+OO8Ie4LipMdLYqW2vgwDmG7YDrGrSVSvjffVBYBATlrMad80FcB0oUF
+         vDAw==
+X-Gm-Message-State: APjAAAVNGmWKu4VG5QQIA4WQ6jp7UPxcywyrAiq2ob0caIvk0zdlg5CZ
+        j9Oq6ROuhJw8Aby/qU21lhJ/axBnBqAeWrGp6S4=
+X-Google-Smtp-Source: APXvYqyxiiO0bsYaQbImkXitEOhDYoQvgmXhCfueX9MbGIWAyuoj8TggJ5ZITYx8TlJOta8cZTfOSJeb38kdARJg9LI=
+X-Received: by 2002:a63:81c6:: with SMTP id t189mr14722226pgd.293.1559589576950;
+ Mon, 03 Jun 2019 12:19:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190603165616.GA11101@flask>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <CAJKOXPcTVpLtSSs=Q0G3fQgXYoVa=kHxWcWXyvS13ie73ByZBw@mail.gmail.com>
+ <20190603135939.e2mb7vkxp64qairr@pc636> <CAJKOXPdczUnsaBeXTuutZXCQ70ejDT68xnVm-e+SSdLZi-vyCA@mail.gmail.com>
+ <20190604003153.76f33dd2@canb.auug.org.au> <CAJKOXPed=npnfk0H2WUDityHg5cPLH_zwShyRd+B2RS8h6C7SQ@mail.gmail.com>
+In-Reply-To: <CAJKOXPed=npnfk0H2WUDityHg5cPLH_zwShyRd+B2RS8h6C7SQ@mail.gmail.com>
+From:   Dexuan-Linux Cui <dexuan.linux@gmail.com>
+Date:   Mon, 3 Jun 2019 12:19:25 -0700
+Message-ID: <CAA42JLZa4OgiEYk7d+gM9pu-gvVbOfQj3-VfEb8kvx538-atew@mail.gmail.com>
+Subject: Re: [BUG BISECT] bug mm/vmalloc.c:470 (mm/vmalloc.c: get rid of one
+ single unlink_va() when merge)
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hillf Danton <hdanton@sina.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tejun Heo <tj@kernel.org>, Andrei Vagin <avagin@gmail.com>,
+        Dexuan Cui <decui@microsoft.com>, v-lide@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 03, 2019 at 06:56:17PM +0200, Radim Krčmář wrote:
-> > +			break;
-> > +		}
-> >  		entry->eax = min(entry->eax, (u32)(f_intel_pt ? 0x14 : 0xd));
-> 
-> Similarly in the existing code.  If we don't have f_intel_pt, then we
-> should make sure that leaf 0x14 is not being filled, but we don't really
-> have to limit the maximal index.
-> 
-> Adding a single clamping like
-> 
-> 		/* Limited to the highest leaf implemented in KVM. */
-> 		entry->eax = min(entry->eax, 0x1f);
-> 
-> seems sufficient.
+On Mon, Jun 3, 2019 at 7:37 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
-> (Passing the hardware value is ok in theory, but it is a cheap way to
->  avoid future leaves that cannot be simply zeroed for some weird reason.)
+> On Mon, 3 Jun 2019 at 16:32, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Hi Krzysztof,
+> >
+> > On Mon, 3 Jun 2019 16:10:40 +0200 Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > >
+> > > Indeed it looks like effect of merge conflict resolution or applying.
+> > > When I look at MMOTS, it is the same as yours:
+> > > http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/commit/?id=b77b8cce67f246109f9d87417a32cd38f0398f2f
+> > >
+> > > However in linux-next it is different.
+> > >
+> > > Stephen, any thoughts?
+> >
+> > Have you had a look at today's linux-next?  It looks correct in
+> > there.  Andrew updated his patch series over the weekend.
+>
+> Yes, I am looking at today's next. Both the source code and the commit
+> 728e0fbf263e3ed359c10cb13623390564102881 have wrong "if (merged)" (put
+> in wrong hunk).
+>
+> Best regards,
+> Krzysztof
 
-I don't have a strong opinion regarding the code itself, but whatever ends
-up getting committed should have a big beefy changelog explaining why the
-clamping exists, or at least extolling its virtues.  I had a hell of a
-time understanding the intent of this one line of code because as your
-response shows, there is no one right answer.
+FYI, we also see the issue in our x86 VM running on Hyper-V.
+
+Thanks,
+Dexuan
