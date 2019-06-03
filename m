@@ -2,168 +2,457 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6427733075
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:03:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E24C33306D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:02:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728077AbfFCNDP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 09:03:15 -0400
-Received: from mga01.intel.com ([192.55.52.88]:50872 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726360AbfFCNDO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 09:03:14 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 06:03:14 -0700
-X-ExtLoop1: 1
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.198]) ([10.237.72.198])
-  by orsmga005.jf.intel.com with ESMTP; 03 Jun 2019 06:03:09 -0700
-Subject: Re: [PATCH 8/9] mmc: sdhci-sprd: Add PHY DLL delay configuration
-To:     Baolin Wang <baolin.wang@linaro.org>, ulf.hansson@linaro.org,
-        zhang.lyra@gmail.com, orsonzhai@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, arnd@arndb.de, olof@lixom.net
-Cc:     vincent.guittot@linaro.org, arm@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <cover.1558346019.git.baolin.wang@linaro.org>
- <aafceaeb2fc7e9d103d1d7a19cdae97759dd1500.1558346019.git.baolin.wang@linaro.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <6b539c8b-c2fd-6c37-d645-ef714c0e29c9@intel.com>
-Date:   Mon, 3 Jun 2019 16:01:58 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1727832AbfFCNCW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 09:02:22 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47619 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726349AbfFCNCV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 09:02:21 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x53D22mu602037
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 3 Jun 2019 06:02:02 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x53D22mu602037
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1559566923;
+        bh=1yxrG+MTFWj3X5ypgdDdIvx24h1C9nVN55UCZyf4D9s=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=iEYUldxObyoHP9oJvww2BRZpBXeJeaKyYVF+Qwxf50jm8EvAliQTr3uoQ76fNKygG
+         9jh1Tu6LHaa7TNYOxWlbsrIhYaSdoInbKfoeJqXoUHoYYZGl2r6+ArLoa0mYfZHf+e
+         t9smjJd8rC+d0Nm6bFudQM7m5AGzC+TPhrH5O31A5sZr3S5H3ssNFCek0/i2jdcIyB
+         EZOnPawFw3ithRtTOudtqD8FuB4+bg1qpjteFEfx4lNiKONmm1Tk7IgfUaB1dzxCP5
+         t4J9kXJmBNtG1NnpcIKV5IhQYTwTOScLlCr2nz0hX/fzV1G4oeCNqkeYTI6mWfaM7j
+         JL6dAlqxxa/sQ==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x53D223D602034;
+        Mon, 3 Jun 2019 06:02:02 -0700
+Date:   Mon, 3 Jun 2019 06:02:02 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Dietmar Eggemann <tipbot@zytor.com>
+Message-ID: <tip-5e83eafbfd3b351537c0d74467fc43e8a88f4ae4@git.kernel.org>
+Cc:     fweisbec@gmail.com, mingo@kernel.org, patrick.bellasi@arm.com,
+        hpa@zytor.com, torvalds@linux-foundation.org,
+        vincent.guittot@linaro.org, valentin.schneider@arm.com,
+        tglx@linutronix.de, morten.rasmussen@arm.com, peterz@infradead.org,
+        dietmar.eggemann@arm.com, quentin.perret@arm.com,
+        linux-kernel@vger.kernel.org, riel@surriel.com
+Reply-To: dietmar.eggemann@arm.com, peterz@infradead.org,
+          morten.rasmussen@arm.com, tglx@linutronix.de, riel@surriel.com,
+          linux-kernel@vger.kernel.org, quentin.perret@arm.com,
+          hpa@zytor.com, patrick.bellasi@arm.com, mingo@kernel.org,
+          fweisbec@gmail.com, vincent.guittot@linaro.org,
+          valentin.schneider@arm.com, torvalds@linux-foundation.org
+In-Reply-To: <20190527062116.11512-2-dietmar.eggemann@arm.com>
+References: <20190527062116.11512-2-dietmar.eggemann@arm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/core] sched/fair: Remove the rq->cpu_load[] update code
+Git-Commit-ID: 5e83eafbfd3b351537c0d74467fc43e8a88f4ae4
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <aafceaeb2fc7e9d103d1d7a19cdae97759dd1500.1558346019.git.baolin.wang@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/05/19 1:12 PM, Baolin Wang wrote:
-> Set the PHY DLL delay for each timing mode, which is used to sample the clock
-> accurately and make the clock more stable.
-> 
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Commit-ID:  5e83eafbfd3b351537c0d74467fc43e8a88f4ae4
+Gitweb:     https://git.kernel.org/tip/5e83eafbfd3b351537c0d74467fc43e8a88f4ae4
+Author:     Dietmar Eggemann <dietmar.eggemann@arm.com>
+AuthorDate: Mon, 27 May 2019 07:21:10 +0100
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 3 Jun 2019 11:49:38 +0200
 
-One comment, nevertheless:
+sched/fair: Remove the rq->cpu_load[] update code
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+With LB_BIAS disabled, there is no need to update the rq->cpu_load[idx]
+any more.
 
-> ---
->  drivers/mmc/host/sdhci-sprd.c |   51 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 51 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
-> index e6eda13..911a09b 100644
-> --- a/drivers/mmc/host/sdhci-sprd.c
-> +++ b/drivers/mmc/host/sdhci-sprd.c
-> @@ -29,6 +29,8 @@
->  #define  SDHCI_SPRD_DLL_INIT_COUNT	0xc00
->  #define  SDHCI_SPRD_DLL_PHASE_INTERNAL	0x3
->  
-> +#define SDHCI_SPRD_REG_32_DLL_DLY	0x204
-> +
->  #define SDHCI_SPRD_REG_32_DLL_DLY_OFFSET	0x208
->  #define  SDHCIBSPRD_IT_WR_DLY_INV		BIT(5)
->  #define  SDHCI_SPRD_BIT_CMD_DLY_INV		BIT(13)
-> @@ -72,6 +74,24 @@ struct sdhci_sprd_host {
->  	struct clk *clk_2x_enable;
->  	u32 base_rate;
->  	int flags; /* backup of host attribute */
-> +	u32 phy_delay[MMC_TIMING_MMC_HS400 + 2];
-> +};
-> +
-> +struct sdhci_sprd_phy_cfg {
-> +	const char *property;
-> +	u8 timing;
-> +};
-> +
-> +static const struct sdhci_sprd_phy_cfg sdhci_sprd_phy_cfgs[] = {
-> +	{ "sprd,phy-delay-legacy", MMC_TIMING_LEGACY, },
-> +	{ "sprd,phy-delay-sd-highspeed", MMC_TIMING_MMC_HS, },
+Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Rik van Riel <riel@surriel.com>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Morten Rasmussen <morten.rasmussen@arm.com>
+Cc: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Quentin Perret <quentin.perret@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Valentin Schneider <valentin.schneider@arm.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Link: https://lkml.kernel.org/r/20190527062116.11512-2-dietmar.eggemann@arm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ include/linux/sched/nohz.h |   8 --
+ kernel/sched/core.c        |   1 -
+ kernel/sched/fair.c        | 255 ---------------------------------------------
+ kernel/sched/sched.h       |   6 --
+ kernel/time/tick-sched.c   |   2 -
+ 5 files changed, 272 deletions(-)
 
-Did you mean MMC_TIMING_SD_HS
-
-> +	{ "sprd,phy-delay-sd-uhs-sdr50", MMC_TIMING_UHS_SDR50, },
-> +	{ "sprd,phy-delay-sd-uhs-sdr104", MMC_TIMING_UHS_SDR104, },
-> +	{ "sprd,phy-delay-mmc-highspeed", MMC_TIMING_MMC_HS, },
-> +	{ "sprd,phy-delay-mmc-ddr52", MMC_TIMING_MMC_DDR52, },
-> +	{ "sprd,phy-delay-mmc-hs200", MMC_TIMING_MMC_HS200, },
-> +	{ "sprd,phy-delay-mmc-hs400", MMC_TIMING_MMC_HS400, },
-> +	{ "sprd,phy-delay-mmc-hs400es", MMC_TIMING_MMC_HS400 + 1, },
->  };
->  
->  #define TO_SPRD_HOST(host) sdhci_pltfm_priv(sdhci_priv(host))
-> @@ -276,6 +296,9 @@ static unsigned int sdhci_sprd_get_min_clock(struct sdhci_host *host)
->  static void sdhci_sprd_set_uhs_signaling(struct sdhci_host *host,
->  					 unsigned int timing)
->  {
-> +	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
-> +	struct mmc_host *mmc = host->mmc;
-> +	u32 *p = sprd_host->phy_delay;
->  	u16 ctrl_2;
->  
->  	if (timing == host->timing)
-> @@ -314,6 +337,9 @@ static void sdhci_sprd_set_uhs_signaling(struct sdhci_host *host,
->  	}
->  
->  	sdhci_writew(host, ctrl_2, SDHCI_HOST_CONTROL2);
-> +
-> +	if (!mmc->ios.enhanced_strobe)
-> +		sdhci_writel(host, p[timing], SDHCI_SPRD_REG_32_DLL_DLY);
->  }
->  
->  static void sdhci_sprd_hw_reset(struct sdhci_host *host)
-> @@ -381,6 +407,8 @@ static void sdhci_sprd_hs400_enhanced_strobe(struct mmc_host *mmc,
->  					     struct mmc_ios *ios)
->  {
->  	struct sdhci_host *host = mmc_priv(mmc);
-> +	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
-> +	u32 *p = sprd_host->phy_delay;
->  	u16 ctrl_2;
->  
->  	if (!ios->enhanced_strobe)
-> @@ -395,6 +423,28 @@ static void sdhci_sprd_hs400_enhanced_strobe(struct mmc_host *mmc,
->  	sdhci_writew(host, ctrl_2, SDHCI_HOST_CONTROL2);
->  
->  	sdhci_sprd_sd_clk_on(host);
-> +
-> +	/* Set the PHY DLL delay value for HS400 enhanced strobe mode */
-> +	sdhci_writel(host, p[MMC_TIMING_MMC_HS400 + 1],
-> +		     SDHCI_SPRD_REG_32_DLL_DLY);
-> +}
-> +
-> +static void sdhci_sprd_phy_param_parse(struct sdhci_sprd_host *sprd_host,
-> +				       struct device_node *np)
-> +{
-> +	u32 *p = sprd_host->phy_delay;
-> +	int ret, i, index;
-> +	u32 val[4];
-> +
-> +	for (i = 0; i < ARRAY_SIZE(sdhci_sprd_phy_cfgs); i++) {
-> +		ret = of_property_read_u32_array(np,
-> +				sdhci_sprd_phy_cfgs[i].property, val, 4);
-> +		if (ret)
-> +			continue;
-> +
-> +		index = sdhci_sprd_phy_cfgs[i].timing;
-> +		p[index] = val[0] | (val[1] << 8) | (val[2] << 16) | (val[3] << 24);
-> +	}
->  }
->  
->  static const struct sdhci_pltfm_data sdhci_sprd_pdata = {
-> @@ -428,6 +478,7 @@ static int sdhci_sprd_probe(struct platform_device *pdev)
->  		goto pltfm_free;
->  
->  	sprd_host = TO_SPRD_HOST(host);
-> +	sdhci_sprd_phy_param_parse(sprd_host, pdev->dev.of_node);
->  
->  	clk = devm_clk_get(&pdev->dev, "sdio");
->  	if (IS_ERR(clk)) {
-> 
-
+diff --git a/include/linux/sched/nohz.h b/include/linux/sched/nohz.h
+index b36f4cf38111..1abe91ff6e4a 100644
+--- a/include/linux/sched/nohz.h
++++ b/include/linux/sched/nohz.h
+@@ -6,14 +6,6 @@
+  * This is the interface between the scheduler and nohz/dynticks:
+  */
+ 
+-#if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
+-extern void cpu_load_update_nohz_start(void);
+-extern void cpu_load_update_nohz_stop(void);
+-#else
+-static inline void cpu_load_update_nohz_start(void) { }
+-static inline void cpu_load_update_nohz_stop(void) { }
+-#endif
+-
+ #if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
+ extern void nohz_balance_enter_idle(int cpu);
+ extern int get_nohz_timer_target(void);
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 93ab85f0d076..00b8966802a8 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3033,7 +3033,6 @@ void scheduler_tick(void)
+ 
+ 	update_rq_clock(rq);
+ 	curr->sched_class->task_tick(rq, curr, 0);
+-	cpu_load_update_active(rq);
+ 	calc_global_load_tick(rq);
+ 	psi_task_tick(rq);
+ 
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 08b1cb06f968..1aab323f1b4b 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5322,71 +5322,6 @@ DEFINE_PER_CPU(cpumask_var_t, load_balance_mask);
+ DEFINE_PER_CPU(cpumask_var_t, select_idle_mask);
+ 
+ #ifdef CONFIG_NO_HZ_COMMON
+-/*
+- * per rq 'load' arrray crap; XXX kill this.
+- */
+-
+-/*
+- * The exact cpuload calculated at every tick would be:
+- *
+- *   load' = (1 - 1/2^i) * load + (1/2^i) * cur_load
+- *
+- * If a CPU misses updates for n ticks (as it was idle) and update gets
+- * called on the n+1-th tick when CPU may be busy, then we have:
+- *
+- *   load_n   = (1 - 1/2^i)^n * load_0
+- *   load_n+1 = (1 - 1/2^i)   * load_n + (1/2^i) * cur_load
+- *
+- * decay_load_missed() below does efficient calculation of
+- *
+- *   load' = (1 - 1/2^i)^n * load
+- *
+- * Because x^(n+m) := x^n * x^m we can decompose any x^n in power-of-2 factors.
+- * This allows us to precompute the above in said factors, thereby allowing the
+- * reduction of an arbitrary n in O(log_2 n) steps. (See also
+- * fixed_power_int())
+- *
+- * The calculation is approximated on a 128 point scale.
+- */
+-#define DEGRADE_SHIFT		7
+-
+-static const u8 degrade_zero_ticks[CPU_LOAD_IDX_MAX] = {0, 8, 32, 64, 128};
+-static const u8 degrade_factor[CPU_LOAD_IDX_MAX][DEGRADE_SHIFT + 1] = {
+-	{   0,   0,  0,  0,  0,  0, 0, 0 },
+-	{  64,  32,  8,  0,  0,  0, 0, 0 },
+-	{  96,  72, 40, 12,  1,  0, 0, 0 },
+-	{ 112,  98, 75, 43, 15,  1, 0, 0 },
+-	{ 120, 112, 98, 76, 45, 16, 2, 0 }
+-};
+-
+-/*
+- * Update cpu_load for any missed ticks, due to tickless idle. The backlog
+- * would be when CPU is idle and so we just decay the old load without
+- * adding any new load.
+- */
+-static unsigned long
+-decay_load_missed(unsigned long load, unsigned long missed_updates, int idx)
+-{
+-	int j = 0;
+-
+-	if (!missed_updates)
+-		return load;
+-
+-	if (missed_updates >= degrade_zero_ticks[idx])
+-		return 0;
+-
+-	if (idx == 1)
+-		return load >> missed_updates;
+-
+-	while (missed_updates) {
+-		if (missed_updates % 2)
+-			load = (load * degrade_factor[idx][j]) >> DEGRADE_SHIFT;
+-
+-		missed_updates >>= 1;
+-		j++;
+-	}
+-	return load;
+-}
+ 
+ static struct {
+ 	cpumask_var_t idle_cpus_mask;
+@@ -5398,201 +5333,12 @@ static struct {
+ 
+ #endif /* CONFIG_NO_HZ_COMMON */
+ 
+-/**
+- * __cpu_load_update - update the rq->cpu_load[] statistics
+- * @this_rq: The rq to update statistics for
+- * @this_load: The current load
+- * @pending_updates: The number of missed updates
+- *
+- * Update rq->cpu_load[] statistics. This function is usually called every
+- * scheduler tick (TICK_NSEC).
+- *
+- * This function computes a decaying average:
+- *
+- *   load[i]' = (1 - 1/2^i) * load[i] + (1/2^i) * load
+- *
+- * Because of NOHZ it might not get called on every tick which gives need for
+- * the @pending_updates argument.
+- *
+- *   load[i]_n = (1 - 1/2^i) * load[i]_n-1 + (1/2^i) * load_n-1
+- *             = A * load[i]_n-1 + B ; A := (1 - 1/2^i), B := (1/2^i) * load
+- *             = A * (A * load[i]_n-2 + B) + B
+- *             = A * (A * (A * load[i]_n-3 + B) + B) + B
+- *             = A^3 * load[i]_n-3 + (A^2 + A + 1) * B
+- *             = A^n * load[i]_0 + (A^(n-1) + A^(n-2) + ... + 1) * B
+- *             = A^n * load[i]_0 + ((1 - A^n) / (1 - A)) * B
+- *             = (1 - 1/2^i)^n * (load[i]_0 - load) + load
+- *
+- * In the above we've assumed load_n := load, which is true for NOHZ_FULL as
+- * any change in load would have resulted in the tick being turned back on.
+- *
+- * For regular NOHZ, this reduces to:
+- *
+- *   load[i]_n = (1 - 1/2^i)^n * load[i]_0
+- *
+- * see decay_load_misses(). For NOHZ_FULL we get to subtract and add the extra
+- * term.
+- */
+-static void cpu_load_update(struct rq *this_rq, unsigned long this_load,
+-			    unsigned long pending_updates)
+-{
+-	unsigned long __maybe_unused tickless_load = this_rq->cpu_load[0];
+-	int i, scale;
+-
+-	this_rq->nr_load_updates++;
+-
+-	/* Update our load: */
+-	this_rq->cpu_load[0] = this_load; /* Fasttrack for idx 0 */
+-	for (i = 1, scale = 2; i < CPU_LOAD_IDX_MAX; i++, scale += scale) {
+-		unsigned long old_load, new_load;
+-
+-		/* scale is effectively 1 << i now, and >> i divides by scale */
+-
+-		old_load = this_rq->cpu_load[i];
+-#ifdef CONFIG_NO_HZ_COMMON
+-		old_load = decay_load_missed(old_load, pending_updates - 1, i);
+-		if (tickless_load) {
+-			old_load -= decay_load_missed(tickless_load, pending_updates - 1, i);
+-			/*
+-			 * old_load can never be a negative value because a
+-			 * decayed tickless_load cannot be greater than the
+-			 * original tickless_load.
+-			 */
+-			old_load += tickless_load;
+-		}
+-#endif
+-		new_load = this_load;
+-		/*
+-		 * Round up the averaging division if load is increasing. This
+-		 * prevents us from getting stuck on 9 if the load is 10, for
+-		 * example.
+-		 */
+-		if (new_load > old_load)
+-			new_load += scale - 1;
+-
+-		this_rq->cpu_load[i] = (old_load * (scale - 1) + new_load) >> i;
+-	}
+-}
+-
+ /* Used instead of source_load when we know the type == 0 */
+ static unsigned long weighted_cpuload(struct rq *rq)
+ {
+ 	return cfs_rq_runnable_load_avg(&rq->cfs);
+ }
+ 
+-#ifdef CONFIG_NO_HZ_COMMON
+-/*
+- * There is no sane way to deal with nohz on smp when using jiffies because the
+- * CPU doing the jiffies update might drift wrt the CPU doing the jiffy reading
+- * causing off-by-one errors in observed deltas; {0,2} instead of {1,1}.
+- *
+- * Therefore we need to avoid the delta approach from the regular tick when
+- * possible since that would seriously skew the load calculation. This is why we
+- * use cpu_load_update_periodic() for CPUs out of nohz. However we'll rely on
+- * jiffies deltas for updates happening while in nohz mode (idle ticks, idle
+- * loop exit, nohz_idle_balance, nohz full exit...)
+- *
+- * This means we might still be one tick off for nohz periods.
+- */
+-
+-static void cpu_load_update_nohz(struct rq *this_rq,
+-				 unsigned long curr_jiffies,
+-				 unsigned long load)
+-{
+-	unsigned long pending_updates;
+-
+-	pending_updates = curr_jiffies - this_rq->last_load_update_tick;
+-	if (pending_updates) {
+-		this_rq->last_load_update_tick = curr_jiffies;
+-		/*
+-		 * In the regular NOHZ case, we were idle, this means load 0.
+-		 * In the NOHZ_FULL case, we were non-idle, we should consider
+-		 * its weighted load.
+-		 */
+-		cpu_load_update(this_rq, load, pending_updates);
+-	}
+-}
+-
+-/*
+- * Called from nohz_idle_balance() to update the load ratings before doing the
+- * idle balance.
+- */
+-static void cpu_load_update_idle(struct rq *this_rq)
+-{
+-	/*
+-	 * bail if there's load or we're actually up-to-date.
+-	 */
+-	if (weighted_cpuload(this_rq))
+-		return;
+-
+-	cpu_load_update_nohz(this_rq, READ_ONCE(jiffies), 0);
+-}
+-
+-/*
+- * Record CPU load on nohz entry so we know the tickless load to account
+- * on nohz exit. cpu_load[0] happens then to be updated more frequently
+- * than other cpu_load[idx] but it should be fine as cpu_load readers
+- * shouldn't rely into synchronized cpu_load[*] updates.
+- */
+-void cpu_load_update_nohz_start(void)
+-{
+-	struct rq *this_rq = this_rq();
+-
+-	/*
+-	 * This is all lockless but should be fine. If weighted_cpuload changes
+-	 * concurrently we'll exit nohz. And cpu_load write can race with
+-	 * cpu_load_update_idle() but both updater would be writing the same.
+-	 */
+-	this_rq->cpu_load[0] = weighted_cpuload(this_rq);
+-}
+-
+-/*
+- * Account the tickless load in the end of a nohz frame.
+- */
+-void cpu_load_update_nohz_stop(void)
+-{
+-	unsigned long curr_jiffies = READ_ONCE(jiffies);
+-	struct rq *this_rq = this_rq();
+-	unsigned long load;
+-	struct rq_flags rf;
+-
+-	if (curr_jiffies == this_rq->last_load_update_tick)
+-		return;
+-
+-	load = weighted_cpuload(this_rq);
+-	rq_lock(this_rq, &rf);
+-	update_rq_clock(this_rq);
+-	cpu_load_update_nohz(this_rq, curr_jiffies, load);
+-	rq_unlock(this_rq, &rf);
+-}
+-#else /* !CONFIG_NO_HZ_COMMON */
+-static inline void cpu_load_update_nohz(struct rq *this_rq,
+-					unsigned long curr_jiffies,
+-					unsigned long load) { }
+-#endif /* CONFIG_NO_HZ_COMMON */
+-
+-static void cpu_load_update_periodic(struct rq *this_rq, unsigned long load)
+-{
+-#ifdef CONFIG_NO_HZ_COMMON
+-	/* See the mess around cpu_load_update_nohz(). */
+-	this_rq->last_load_update_tick = READ_ONCE(jiffies);
+-#endif
+-	cpu_load_update(this_rq, load, 1);
+-}
+-
+-/*
+- * Called from scheduler_tick()
+- */
+-void cpu_load_update_active(struct rq *this_rq)
+-{
+-	unsigned long load = weighted_cpuload(this_rq);
+-
+-	if (tick_nohz_tick_stopped())
+-		cpu_load_update_nohz(this_rq, READ_ONCE(jiffies), load);
+-	else
+-		cpu_load_update_periodic(this_rq, load);
+-}
+-
+ /*
+  * Return a low guess at the load of a migration-source CPU weighted
+  * according to the scheduling class and "nice" value.
+@@ -9876,7 +9622,6 @@ static bool _nohz_idle_balance(struct rq *this_rq, unsigned int flags,
+ 
+ 			rq_lock_irqsave(rq, &rf);
+ 			update_rq_clock(rq);
+-			cpu_load_update_idle(rq);
+ 			rq_unlock_irqrestore(rq, &rf);
+ 
+ 			if (flags & NOHZ_BALANCE_KICK)
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index c308410675ed..3750b5e53792 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -96,12 +96,6 @@ extern atomic_long_t calc_load_tasks;
+ extern void calc_global_load_tick(struct rq *this_rq);
+ extern long calc_load_fold_active(struct rq *this_rq, long adjust);
+ 
+-#ifdef CONFIG_SMP
+-extern void cpu_load_update_active(struct rq *this_rq);
+-#else
+-static inline void cpu_load_update_active(struct rq *this_rq) { }
+-#endif
+-
+ /*
+  * Helpers for converting nanosecond timing to jiffy resolution
+  */
+diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+index f4ee1a3428ae..be9707f68024 100644
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -782,7 +782,6 @@ static void tick_nohz_stop_tick(struct tick_sched *ts, int cpu)
+ 	 */
+ 	if (!ts->tick_stopped) {
+ 		calc_load_nohz_start();
+-		cpu_load_update_nohz_start();
+ 		quiet_vmstat();
+ 
+ 		ts->last_tick = hrtimer_get_expires(&ts->sched_timer);
+@@ -829,7 +828,6 @@ static void tick_nohz_restart_sched_tick(struct tick_sched *ts, ktime_t now)
+ {
+ 	/* Update jiffies first */
+ 	tick_do_update_jiffies64(now);
+-	cpu_load_update_nohz_stop();
+ 
+ 	/*
+ 	 * Clear the timer idle flag, so we avoid IPIs on remote queueing and
