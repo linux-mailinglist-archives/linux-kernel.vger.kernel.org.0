@@ -2,94 +2,225 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9AAB33AFA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:17:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FE9533AE9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:14:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbfFCWQo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 18:16:44 -0400
-Received: from mga09.intel.com ([134.134.136.24]:19879 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726101AbfFCWQo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 18:16:44 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 13:54:20 -0700
-X-ExtLoop1: 1
-Received: from jgaire-mobl.ger.corp.intel.com (HELO localhost) ([10.252.20.169])
-  by orsmga001.jf.intel.com with ESMTP; 03 Jun 2019 13:54:07 -0700
-Date:   Mon, 3 Jun 2019 23:54:05 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        William Roberts <bill.c.roberts@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
+        id S1726773AbfFCWNv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 18:13:51 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:36830 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbfFCWNv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 18:13:51 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id 5CB1B261114
+Message-ID: <57649a3c8809b3dd0abbd2955aea46f06f881d96.camel@collabora.com>
+Subject: Re: [PATCH] platform/chrome: cros_ec_lpc: Choose Microchip EC at
+ runtime
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Nick Crews <ncrews@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>, kernel@collabora.com,
+        Duncan Laurie <dlaurie@google.com>,
+        Benson Leung <bleung@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-Message-ID: <20190603205405.GE4894@linux.intel.com>
-References: <960B34DE67B9E140824F1DCDEC400C0F654E965F@ORSMSX116.amr.corp.intel.com>
- <CALCETrXXVMutX8eZk6nnkOAeS+Tj0sQd0FkW+wk6Rx8hQxCe6w@mail.gmail.com>
- <960B34DE67B9E140824F1DCDEC400C0F654E9824@ORSMSX116.amr.corp.intel.com>
- <20190528202407.GB13158@linux.intel.com>
- <285f279f-b500-27f0-ab42-fb1dbcc5ab18@tycho.nsa.gov>
- <960B34DE67B9E140824F1DCDEC400C0F654EB487@ORSMSX116.amr.corp.intel.com>
- <678a37af-797d-7bd5-a406-32548a270e3d@tycho.nsa.gov>
- <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com>
- <c1135352-0b5e-4694-b1a9-105876095877@tycho.nsa.gov>
- <CALCETrWsEXzUC33eJpGCpdMCBO4aYVviZLRD-CLMNaG5Jv-TCA@mail.gmail.com>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date:   Mon, 03 Jun 2019 17:56:18 -0300
+In-Reply-To: <20190530171120.31590-1-enric.balletbo@collabora.com>
+References: <20190530171120.31590-1-enric.balletbo@collabora.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrWsEXzUC33eJpGCpdMCBO4aYVviZLRD-CLMNaG5Jv-TCA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 09:14:10AM -0700, Andy Lutomirski wrote:
-> > What is the "source file" i.e. the target of the check?  Enclave file,
-> > sigstruct file, or /dev/sgx/enclave?
+Hi Enric,
+
+On Thu, 2019-05-30 at 19:11 +0200, Enric Balletbo i Serra wrote:
+> On many boards, communication between the kernel and the Embedded
+> Controller happens over an LPC bus. In these cases, the kernel config
+> CONFIG_CROS_EC_LPC is enabled. Some of these LPC boards contain a
+> Microchip Embedded Controller (MEC) that is different from the regular
+> EC. On these devices, the same LPC bus is used, but the protocol is
+> a little different. In these cases, the CONFIG_CROS_EC_LPC_MEC kernel
+> config is enabled. Currently, the kernel decides at compile-time whether
+> or not to use the MEC variant, and, when that kernel option is selected
+> it breaks the other boards. We would like a kind of runtime detection to
+> avoid this.
 > 
-> Enclave file -- that is, the file backing the vma from which the data
-> is loaded.
+> This patch adds that detection mechanism by probing the protocol at
+> runtime, first we assume that a MEC variant is connected, and if the
+> protocol fails it fallbacks to the regular EC. This adds a bit of
+> overload because we try to read twice on those LPC boards that doesn't
+> contain a MEC variant, but is a better solution than having to select the
+> EC variant at compile-time.
+> 
+> While here also fix the alignment in Kconfig file for this config option
+> replacing the spaces by tabs.
+> 
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
+> Hi,
+> 
+> This is the first attempt to solve the issue to be able to select at
+> runtime the CrOS MEC variant. My first thought was check for a device ID,
+> the MEC1322 has a register that contains the device ID, however I am not
+> sure if we can read that register from the host without modifying the
+> firmware. Also, I am not sure if the MEC1322 is the only device used
+> that supports that LPC protocol variant, so I ended with a more easy
+> solution, check if the protocol fails or not. Some background on this
+> issue can be found [1] and [2]
+> 
+> The patch has been tested on:
+>  - Acer Chromebook R11 (Cyan - MEC variant)
+>  - Pixel Chromebook 2015 (Samus - non-MEC variant)
+>  - Dell Chromebook 11 (Wolf - non-MEC variant)
+>  - Toshiba Chromebook (Leon - non-MEC variant)
+> 
+> Nick, could you test the patch for Wilco?
+> 
+> Best regards,
+>  Enric
+> 
+> [1] https://bugs.chromium.org/p/chromium/issues/detail?id=932626
+> [2] https://chromium-review.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/1474254
+> 
+>  drivers/platform/chrome/Kconfig           | 29 +++++-----------
+>  drivers/platform/chrome/Makefile          |  3 +-
+>  drivers/platform/chrome/cros_ec_lpc.c     | 15 ++++++--
+>  drivers/platform/chrome/cros_ec_lpc_reg.c | 42 +++++++++--------------
+>  drivers/platform/chrome/cros_ec_lpc_reg.h |  3 ++
+>  drivers/platform/chrome/wilco_ec/Kconfig  |  2 +-
+>  6 files changed, 43 insertions(+), 51 deletions(-)
+> 
+> diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
+> index 2826f7136f65..453e69733842 100644
+> --- a/drivers/platform/chrome/Kconfig
+> +++ b/drivers/platform/chrome/Kconfig
+> @@ -83,28 +83,17 @@ config CROS_EC_SPI
+>  	  'pre-amble' bytes before the response actually starts.
+>  
+>  config CROS_EC_LPC
+> -        tristate "ChromeOS Embedded Controller (LPC)"
+> -        depends on MFD_CROS_EC && ACPI && (X86 || COMPILE_TEST)
+> -        help
+> -          If you say Y here, you get support for talking to the ChromeOS EC
+> -          over an LPC bus. This uses a simple byte-level protocol with a
+> -          checksum. This is used for userspace access only. The kernel
+> -          typically has its own communication methods.
+> -
+> -          To compile this driver as a module, choose M here: the
+> -          module will be called cros_ec_lpc.
+> -
+> -config CROS_EC_LPC_MEC
+> -	bool "ChromeOS Embedded Controller LPC Microchip EC (MEC) variant"
+> -	depends on CROS_EC_LPC
+> -	default n
+> +	tristate "ChromeOS Embedded Controller (LPC)"
+> +	depends on MFD_CROS_EC && ACPI && (X86 || COMPILE_TEST)
+>  	help
+> -	  If you say Y here, a variant LPC protocol for the Microchip EC
+> -	  will be used. Note that this variant is not backward compatible
+> -	  with non-Microchip ECs.
+> +	  If you say Y here, you get support for talking to the ChromeOS EC
+> +	  over an LPC bus, including the LPC Microchip EC (MEC) variant.
+> +	  This uses a simple byte-level protocol with a checksum. This is
+> +	  used for userspace access only. The kernel typically has its own
+> +	  communication methods.
+>  
+> -	  If you have a ChromeOS Embedded Controller Microchip EC variant
+> -	  choose Y here.
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called cros_ec_lpcs.
+>  
+>  config CROS_EC_PROTO
+>          bool
+> diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
+> index 1b2f1dcfcd5c..d6416411888f 100644
+> --- a/drivers/platform/chrome/Makefile
+> +++ b/drivers/platform/chrome/Makefile
+> @@ -9,8 +9,7 @@ obj-$(CONFIG_CHROMEOS_TBMC)		+= chromeos_tbmc.o
+>  obj-$(CONFIG_CROS_EC_I2C)		+= cros_ec_i2c.o
+>  obj-$(CONFIG_CROS_EC_RPMSG)		+= cros_ec_rpmsg.o
+>  obj-$(CONFIG_CROS_EC_SPI)		+= cros_ec_spi.o
+> -cros_ec_lpcs-objs			:= cros_ec_lpc.o cros_ec_lpc_reg.o
+> -cros_ec_lpcs-$(CONFIG_CROS_EC_LPC_MEC)	+= cros_ec_lpc_mec.o
+> +cros_ec_lpcs-objs			:= cros_ec_lpc.o cros_ec_lpc_reg.o cros_ec_lpc_mec.o
+>  obj-$(CONFIG_CROS_EC_LPC)		+= cros_ec_lpcs.o
+>  obj-$(CONFIG_CROS_EC_PROTO)		+= cros_ec_proto.o cros_ec_trace.o
+>  obj-$(CONFIG_CROS_KBD_LED_BACKLIGHT)	+= cros_kbd_led_backlight.o
+> diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
+> index c9c240fbe7c6..2cbc71c8edba 100644
+> --- a/drivers/platform/chrome/cros_ec_lpc.c
+> +++ b/drivers/platform/chrome/cros_ec_lpc.c
+> @@ -248,10 +248,21 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
+>  		return -EBUSY;
+>  	}
+>  
+> +	/*
+> +	 * Read the mapped ID twice, the first one is assuming the
+> +	 * EC is a Microchip Embedded Controller (MEC) variant, if the
+> +	 * protocol fails, fallback to the non MEC variant and try to
+> +	 * read again the ID.
+> +	 */
+>  	cros_ec_lpc_read_bytes(EC_LPC_ADDR_MEMMAP + EC_MEMMAP_ID, 2, buf);
+>  	if (buf[0] != 'E' || buf[1] != 'C') {
+> -		dev_err(dev, "EC ID not detected\n");
+> -		return -ENODEV;
+> +		cros_ec_is_microchip = false;
+> +		cros_ec_lpc_read_bytes(EC_LPC_ADDR_MEMMAP + EC_MEMMAP_ID,
+> +				       2, buf);
+> +		if (buf[0] != 'E' || buf[1] != 'C') {
+> +			dev_err(dev, "EC ID not detected\n");
+> +			return -ENODEV;
+> +		}
+>  	}
+>  
+>  	if (!devm_request_region(dev, EC_HOST_CMD_REGION0,
+> diff --git a/drivers/platform/chrome/cros_ec_lpc_reg.c b/drivers/platform/chrome/cros_ec_lpc_reg.c
+> index 0f5cd0ac8b49..953580ac207e 100644
+> --- a/drivers/platform/chrome/cros_ec_lpc_reg.c
+> +++ b/drivers/platform/chrome/cros_ec_lpc_reg.c
+> @@ -9,6 +9,12 @@
+>  
+>  #include "cros_ec_lpc_mec.h"
+>  
+> +/*
+> + * Assume that the Embedded Controller is the Microhcip variant, we will
+> + * mark as false if that's not the case.
+> + */
+> +bool cros_ec_is_microchip = true;
+> +
 
-Wonder why KVM gets away without having this given that enclaves are
-lot alike VMs.
+I'm reluctant to add global state to the kernel, specially when it's something
+that's not per-kernel but rather a property of the cros ec device.
 
-> It's provided by userspace based on whether it thinks the data in
-> question is enclave code.  source->vm_file is the file from which the
-> code is being loaded.  I'm assuming that the user code will only set
-> excute_intent ==true if it actually wants to execute the code, so, if
-> there's a denial, it will be fatal.  The normal case will be that the
-> request will be granted on the basis of EXECUTE.
+Maybe this can be represented with a priv data inside a union:
 
-AFAIK user spaces tells that already with the SECINFO flags. I don't
-get why we need a duplicate parameter.
+struct cros_ec_lpc_hw {
+        u8 (*read_bytes)(unsigned int offset, unsigned int length, u8 *dest);
+        ...
+};
 
-/Jarkko
+struct cros_ec_device {
+...
+        union {
+                struct cros_ec_lpc_hw lpc_priv;
+        }
+};
+
+You can then detect the protocol at probe time, and assign the I/O
+hooks (read_bytes, etc).
+
+Should work the same way, but with a different design.
+
+Thanks,
+Eze
+
