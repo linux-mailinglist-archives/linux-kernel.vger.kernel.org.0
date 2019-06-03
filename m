@@ -2,90 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8DC933368
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:23:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52B7833372
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:24:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729296AbfFCPXv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 11:23:51 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:40835 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729004AbfFCPXu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 11:23:50 -0400
-Received: by mail-vs1-f68.google.com with SMTP id c24so11486842vsp.7
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 08:23:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9judtLYfqHwUB7Dzm0O97CSTyEDxQ+ofDcdysxtxnb0=;
-        b=SV84aIFwcxu5sQtz4Nc3vAuL8WayY9YwJpMXI/qPu6GbsJQr18rz8h9V7oHkhg0GP1
-         xUP5txmTn1J8KStVFrf36YIhS03wm6GWKebOIreLtqeKZnZKA6k4NX9vKIl8vnHuI74D
-         owyyEzL8cEjPTrp2WzUX3qTKDJdOlkpxMU7I4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9judtLYfqHwUB7Dzm0O97CSTyEDxQ+ofDcdysxtxnb0=;
-        b=eLmcphjLbDBk5HDE8p8udUlEzT8lO/TN47wFdv84tBBjWfS2xevzB2tyG5lXHFSBmS
-         3ZIEsalULyiV9ELRl9Qs68YI6UJ0j76jjoG/EYhFnvvc0zQMLhwiEcyGudau3SDPafbO
-         b49dbM14mzmCM4nqbma4HrSqt65XEGfFS+xxo24Mx82AnPXwB5+HGGhPTU1u9CfkO0GS
-         dryPynCVsT6HNUlMarVbgl25XzsUI7DfTb8yMiiCHfcxMjHwLYdECNl7CdUUTUprJJEj
-         VwshyEZFfscoJYV3FsT3TyYjUZ8cATBlA8Vl/nCvrzWt9NGX83DULbzFTh1Vco8J+rtJ
-         EY4w==
-X-Gm-Message-State: APjAAAVqUMO8tDkVILVYNZ4ptyGWmqUtLFyQh0qIs05V7L1aIcGeMNPL
-        emixMsEvtBr2G52JI256etJHKFVSXAs=
-X-Google-Smtp-Source: APXvYqy3OJhHRZXUUNPTCKyVpaDh0QZ2W0rZ7rQlU8oWiG+uYS3/2n13WYf93Ee95DxVfgIZFPirIA==
-X-Received: by 2002:a67:ff8b:: with SMTP id v11mr13125737vsq.88.1559575429834;
-        Mon, 03 Jun 2019 08:23:49 -0700 (PDT)
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
-        by smtp.gmail.com with ESMTPSA id b7sm7735530uae.14.2019.06.03.08.23.47
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Jun 2019 08:23:48 -0700 (PDT)
-Received: by mail-vs1-f52.google.com with SMTP id z11so11466486vsq.9
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 08:23:47 -0700 (PDT)
-X-Received: by 2002:a67:1cc2:: with SMTP id c185mr12704099vsc.20.1559575427301;
- Mon, 03 Jun 2019 08:23:47 -0700 (PDT)
+        id S1727542AbfFCPYc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 11:24:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38970 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726806AbfFCPYb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 11:24:31 -0400
+Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F31827212;
+        Mon,  3 Jun 2019 15:24:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559575470;
+        bh=a3ZkqBR9ntiyTwcVktdqZT3z2YhgAzl95hFO2PmfLyY=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=2uk8OK+RF7L77lIHwLQ/aOEgO0LH1vB3pqhLZz7u4gmHVKjpluOchGU2crqeR/Ci2
+         rO1hbIP2NusUfgTXGU1QM0UhGJEtf/Kz42/qpzJ4ofnbGmTN96UPT8+gKQHpeU7T0Q
+         /UwkAVzaR7i2Z5MY3hz6kfH2nVUlkKg9j3QwIeaU=
+Date:   Mon, 3 Jun 2019 17:24:26 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+cc:     Andy Lutomirski <luto@amacapital.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4] x86/power: Fix 'nosmt' vs. hibernation triple fault
+ during resume
+In-Reply-To: <20190603142330.GA13384@linux.intel.com>
+Message-ID: <nycvar.YFH.7.76.1906031722380.1962@cbobk.fhfr.pm>
+References: <20190531051456.fzkvn62qlkf6wqra@treble> <nycvar.YFH.7.76.1905311045240.1962@cbobk.fhfr.pm> <5564116.e9OFvgDRbB@kreacher> <CALCETrUpseta+NrhVwzzVFTe-BkBHtDUJBO22ci3mAsVR+XOog@mail.gmail.com> <nycvar.YFH.7.76.1905311628330.1962@cbobk.fhfr.pm>
+ <B7AC83ED-3F11-42B9-8506-C842A5937B50@amacapital.net> <nycvar.YFH.7.76.1905311651450.1962@cbobk.fhfr.pm> <CALCETrUQzZTRnvmOS09UvRM9UCGEDvSdbJtkeeEa2foMf+hF2w@mail.gmail.com> <nycvar.YFH.7.76.1905312251350.1962@cbobk.fhfr.pm> <98E57C7E-24E2-4EB8-A14E-FCA80316F812@amacapital.net>
+ <20190603142330.GA13384@linux.intel.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-References: <20190507234857.81414-1-dianders@chromium.org> <79ca5499-6b7d-fe55-2030-283f5cfb1d27@rock-chips.com>
- <82480aa5-ab2e-11c5-8dd5-c395f72fc6e7@ti.com> <CAD=FV=Us1WyEqYDqVSuA+QPCDU7ceMEwwaWKtLz9ZNBFD0E7NQ@mail.gmail.com>
-In-Reply-To: <CAD=FV=Us1WyEqYDqVSuA+QPCDU7ceMEwwaWKtLz9ZNBFD0E7NQ@mail.gmail.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 3 Jun 2019 08:23:35 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XfxT+GB=WvuGm68SaUWhSg7vS5AjQ-sv9e5wdKN7sFjQ@mail.gmail.com>
-Message-ID: <CAD=FV=XfxT+GB=WvuGm68SaUWhSg7vS5AjQ-sv9e5wdKN7sFjQ@mail.gmail.com>
-Subject: Re: [PATCH] phy: rockchip-dp: Avoid power leak by leaving the PHY
- power on
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Caesar Wang <wxt@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>,
-        Lin Huang <hl@rock-chips.com>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Derek Basehore <dbasehore@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Ryan Case <ryandcase@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "nickey.yang (nickey.yang@rock-chips.com)" 
-        <nickey.yang@rock-chips.com>, wzz <wzz@rock-chips.com>,
-        Huang Jiachai <hjc@rock-chips.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, 3 Jun 2019, Sean Christopherson wrote:
 
-On Mon, Jun 3, 2019 at 8:22 AM Doug Anderson <dianders@chromium.org> wrote:
-> > Can someone in Rockchip try to find the root-cause of the issue? Keeping the
-> > PHY off shouldn't increase power draw.
->
-> It sounded like Chris already answered this, though?  Basically things
+> For P6 and later, i.e. all modern CPUs, Intel processors go straight to
+> halted state and don't fetch/decode the HLT instruction.
 
-Doh!  Don't know why I said Chris when it was clearly Caesar that
-answered.  Sorry Caesar!
+That'd be a rather relieving fact actually. Do you happen to know if this 
+is stated in some Intel documentation and we've just overlooked it, or 
+whether it's rather an information that's being carried over from 
+generation to generation by whispering through grapevine?
 
--Doug
+Thanks,
+
+-- 
+Jiri Kosina
+SUSE Labs
+
