@@ -2,122 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF4353322C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 16:31:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5C9F33234
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 16:32:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729097AbfFCObx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 10:31:53 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:60606 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728975AbfFCObw (ORCPT
+        id S1729131AbfFCOcE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 10:32:04 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40979 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728975AbfFCOcC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 10:31:52 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id A82388EE1D8;
-        Mon,  3 Jun 2019 07:31:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1559572311;
-        bh=dBf6OsH1dH1yiJZKwGirpHIR1BMjca9GHmos7hCcdg0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=YGxWww1S7CcKvc1sv2E62wGx8Ey/cpVtHAKv/JuRQR4FcmB7DEFuQ3Fri7Rkfw+Df
-         G9K033KMQ28qgVyxK9MlIkX/z1A566W4I+THsAO3pzFLu1rCTehu+q0zF7yMetx1Rk
-         h4bceWm/oVJ7OmjWxyvsVPcFyxRSbt973N8QCYlI=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 5R8vaiKHL1DO; Mon,  3 Jun 2019 07:31:51 -0700 (PDT)
-Received: from jarvis.guest.haifa.ibm.com (unknown [195.110.41.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 2191D8EE104;
-        Mon,  3 Jun 2019 07:31:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1559572311;
-        bh=dBf6OsH1dH1yiJZKwGirpHIR1BMjca9GHmos7hCcdg0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=YGxWww1S7CcKvc1sv2E62wGx8Ey/cpVtHAKv/JuRQR4FcmB7DEFuQ3Fri7Rkfw+Df
-         G9K033KMQ28qgVyxK9MlIkX/z1A566W4I+THsAO3pzFLu1rCTehu+q0zF7yMetx1Rk
-         h4bceWm/oVJ7OmjWxyvsVPcFyxRSbt973N8QCYlI=
-Message-ID: <1559572305.5052.19.camel@HansenPartnership.com>
-Subject: Re: [PATCH v2 2/3] ima: don't ignore INTEGRITY_UNKNOWN EVM status
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, dmitry.kasatkin@huawei.com,
-        mjg59@google.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
-        stable@vger.kernel.org
-Date:   Mon, 03 Jun 2019 17:31:45 +0300
-In-Reply-To: <3667fbd4-b6ed-6a76-9ff4-84ec3c2dda12@huawei.com>
-References: <20190529133035.28724-1-roberto.sassu@huawei.com>
-         <20190529133035.28724-3-roberto.sassu@huawei.com>
-         <1559217621.4008.7.camel@linux.ibm.com>
-         <e6b31aa9-0319-1805-bdfc-3ddde5884494@huawei.com>
-         <1559569401.5052.17.camel@HansenPartnership.com>
-         <3667fbd4-b6ed-6a76-9ff4-84ec3c2dda12@huawei.com>
+        Mon, 3 Jun 2019 10:32:02 -0400
+Received: by mail-pf1-f196.google.com with SMTP id q17so10731360pfq.8
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 07:32:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hzUTYLyJIfqWCjhTtjBG0SwXN5C9pieJX1yZ/fNJlfM=;
+        b=eaLPFr+Eaf59bCyCzpVAHIPnC8xqLgpWXZaR4rZz8ItD+0nBJJeq69I92bv3/zpy2O
+         41hZVzQIDPfP+wD63PGly4n4s0gTBx70DvVQMCVrx/HhSth24Q5Wi4TakwbZhuJS6rip
+         cz3RHY+nauj3rE0y4a8pBcSQOdRwozKlJSWLGK9DK4i3eTakYP7btsk4XWihEYedjE2n
+         3pChjIa2/IfYRg/2RQcCBUhi1yUFmNqcbvSA0QzljaudvdI/ZVQnpRQFz/hiiCleLfkq
+         iI4SLIlK93MtjqC67lx6+neBootb9ne1ziuUOW7s51yCKC4B2MK723+klvt9EfbBrR93
+         fJLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hzUTYLyJIfqWCjhTtjBG0SwXN5C9pieJX1yZ/fNJlfM=;
+        b=swGYkJKtrjek+Rc/sVyMAlq6t7OcxQ7LEVBEjgqefNoVsVDZ6tAjd6ELnU8LJ1USt0
+         tj0gTXZOznRLT/9dyjnGs/QfRjQGbBHkRh39ARI8WOpxrbFFyXBwMxmAnJGRGCVAB3W+
+         auiFDZFZ+Gf0wH65mAJq7dsAaCYb6zkNPu4oRLeXzZjGqnEdS5JrUlcN4ipfD9HnKtAB
+         dBdn3vNuP6vLhlpfR0ykGeCsRCbg0fGqcQvjRfkwgejDqPzKGAVYExkuqSSrlEPCZ0eO
+         liJhkeYFTmfwo+2Q8tBUS43AC2z0aPE3oYCiR7PkTJVeMSrgQ1Hq8okE468Segmr3aPF
+         Pevw==
+X-Gm-Message-State: APjAAAUC2pGm0bJzC82ImwSnKy+eFkUDEuGHw62yVcm+ZrP0/f3DrIpk
+        HQZNrSxibnCtYwIRa995SE/y2vyZ/6Qi6iul1DkItQ==
+X-Google-Smtp-Source: APXvYqz62JARGj8JxGWFy+5viuvU32dXkhQ5iv+X79Ts4VPYi9LH21dOu2hiS+UtzZDuokRswnFwn9epckI55I9JNQY=
+X-Received: by 2002:a65:64d9:: with SMTP id t25mr28553940pgv.130.1559572321848;
+ Mon, 03 Jun 2019 07:32:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <00000000000044cec9058a6b6003@google.com>
+In-Reply-To: <00000000000044cec9058a6b6003@google.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Mon, 3 Jun 2019 16:31:50 +0200
+Message-ID: <CAAeHK+z6wQA_ZMG0bC7M9792JXDY=-y4qG=_qypVjwuNbFnFpw@mail.gmail.com>
+Subject: Re: INFO: trying to register non-static key in mwifiex_unregister_dev
+To:     syzbot <syzbot+373e6719b49912399d21@syzkaller.appspotmail.com>
+Cc:     amitkarwar@gmail.com, "David S. Miller" <davem@davemloft.net>,
+        gbhat@marvell.com, huxinming820@gmail.com,
+        Kalle Valo <kvalo@codeaurora.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        linux-wireless@vger.kernel.org, netdev <netdev@vger.kernel.org>,
+        nishants@marvell.com,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-06-03 at 16:29 +0200, Roberto Sassu wrote:
-> On 6/3/2019 3:43 PM, James Bottomley wrote:
-> > On Mon, 2019-06-03 at 11:25 +0200, Roberto Sassu wrote:
-> > > On 5/30/2019 2:00 PM, Mimi Zohar wrote:
-> > > > On Wed, 2019-05-29 at 15:30 +0200, Roberto Sassu wrote:
-> > > > > Currently, ima_appraise_measurement() ignores the EVM status
-> > > > > when evm_verifyxattr() returns INTEGRITY_UNKNOWN. If a file
-> > > > > has a valid security.ima xattr with type IMA_XATTR_DIGEST or
-> > > > > IMA_XATTR_DIGEST_NG, ima_appraise_measurement() returns
-> > > > > INTEGRITY_PASS regardless of the EVM status. The problem is
-> > > > > that the EVM status is overwritten with the appraisal statu
-> > > > 
-> > > > Roberto, your framing of this problem is harsh and
-> > > > misleading.  IMA and EVM are intentionally independent of each
-> > > > other and can be configured independently of each other.  The
-> > > > intersection of the two is the call to
-> > > > evm_verifyxattr().  INTEGRITY_UNKNOWN is
-> > > > returned for a number of reasons - when EVM is not configured,
-> > > > the EVM hmac key has not yet been loaded, the protected
-> > > > security attribute is unknown, or the file is not in policy.
-> > > > 
-> > > > This patch does not differentiate between any of the above
-> > > > cases, requiring mutable files to always be protected by EVM,
-> > > > when specified as an "ima_appraise=" option on the boot command
-> > > > line.
-> > > > 
-> > > > IMA could be extended to require EVM on a per IMA policy rule
-> > > > basis. Instead of framing allowing IMA file hashes without EVM
-> > > > as a bug that has existed from the very beginning, now that
-> > > > IMA/EVM have matured and is being used, you could frame it as
-> > > > extending IMA or hardening.
-> > > 
-> > > I'm seeing it from the perspective of an administrator that
-> > > manages an already hardened system, and expects that the system
-> > > only grants access to files with a valid signature/HMAC. That
-> > > system would not enforce this behavior if EVM keys are removed
-> > > and the digest in security.ima is set to the actual file digest.
-> > > 
-> > > Framing it as a bug rather than an extension would in my opinion
-> > > help to convince people about the necessity to switch to the safe
-> > > mode, if their system is already hardened.
-> > 
-> > I have a use case for IMA where I use it to enforce immutability of
-> > containers.  In this use case, the cluster admin places hashes on
-> > executables as the image is unpacked so that if an executable file
-> > is changed, IMA will cause an execution failure.  For this use
-> > case, I don't care about the EVM, in fact we don't use it, because
-> > the only object is to fail execution if a binary is mutated.
-> 
-> How would you prevent root in the container from updating
-> security.ima?
+On Mon, Jun 3, 2019 at 3:31 PM syzbot
+<syzbot+373e6719b49912399d21@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    69bbe8c7 usb-fuzzer: main usb gadget fuzzer driver
+> git tree:       https://github.com/google/kasan.git usb-fuzzer
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1448d0f2a00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=193d8457178b3229
+> dashboard link: https://syzkaller.appspot.com/bug?extid=373e6719b49912399d21
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16e57ca6a00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1106eda2a00000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+373e6719b49912399d21@syzkaller.appspotmail.com
+>
+> usb 1-1: Using ep0 maxpacket: 8
+> usb 1-1: config 0 has an invalid interface number: 182 but max is 0
+> usb 1-1: config 0 has no interface number 0
+> usb 1-1: New USB device found, idVendor=1286, idProduct=2052,
+> bcdDevice=61.43
+> usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+> usb 1-1: config 0 descriptor??
+> usb 1-1: Direct firmware load for mrvl/usbusb8997_combo_v4.bin failed with
+> error -2
+> usb 1-1: Failed to get firmware mrvl/usbusb8997_combo_v4.bin
+> usb 1-1: info: _mwifiex_fw_dpc: unregister device
+> INFO: trying to register non-static key.
+> the code is fine but needs lockdep annotation.
+> turning off the locking correctness validator.
+> CPU: 1 PID: 21 Comm: kworker/1:1 Not tainted 5.2.0-rc1+ #10
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Workqueue: events request_firmware_work_func
+> Call Trace:
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0xca/0x13e lib/dump_stack.c:113
+>   assign_lock_key kernel/locking/lockdep.c:774 [inline]
+>   register_lock_class+0x11ae/0x1240 kernel/locking/lockdep.c:1083
+>   __lock_acquire+0x11d/0x5340 kernel/locking/lockdep.c:3673
+>   lock_acquire+0x100/0x2b0 kernel/locking/lockdep.c:4302
+>   del_timer_sync+0x3a/0x130 kernel/time/timer.c:1277
+>   mwifiex_usb_cleanup_tx_aggr
+> drivers/net/wireless/marvell/mwifiex/usb.c:1358 [inline]
+>   mwifiex_unregister_dev+0x416/0x690
+> drivers/net/wireless/marvell/mwifiex/usb.c:1370
+>   _mwifiex_fw_dpc+0x577/0xda0 drivers/net/wireless/marvell/mwifiex/main.c:651
+>   request_firmware_work_func+0x126/0x242
+> drivers/base/firmware_loader/main.c:785
+>   process_one_work+0x905/0x1570 kernel/workqueue.c:2268
+>   worker_thread+0x96/0xe20 kernel/workqueue.c:2414
+>   kthread+0x30b/0x410 kernel/kthread.c:254
+>   ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+> ------------[ cut here ]------------
+> ODEBUG: assert_init not available (active state 0) object type: timer_list
+> hint: 0x0
+> WARNING: CPU: 1 PID: 21 at lib/debugobjects.c:325
+> debug_print_object+0x160/0x250 lib/debugobjects.c:325
+>
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
 
-We don't.  We only guarantee immutability for unprivileged containers,
-so root can't be inside.
-
-James
-
+#syz dup: INFO: trying to register non-static key in del_timer_sync (2)
