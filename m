@@ -2,122 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 830CE33A09
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 23:45:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDAB233A16
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 23:47:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726520AbfFCVpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 17:45:11 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:36531 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726101AbfFCVpL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 17:45:11 -0400
-Received: by mail-ua1-f65.google.com with SMTP id 94so7065131uam.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 14:45:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=abYS+Uz7A281R7NvC6O8zM/sshSHcswm8DbDdd1frRg=;
-        b=YI3bF1wxRrFFyQe1fOOz0HEeP24BXNJUB5WaMcuJQiiEXYicZaZjP+RDPlt4vZZTFG
-         eXNqIAopT3I9G6yVvErYwCBjRHaou0mmLJA3k221pf03KQ0A+QkDPr4pbAevxP3HQjos
-         ANB17tDD0zu4EM4sRMHhzs02e9QgRsbY7hTmc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=abYS+Uz7A281R7NvC6O8zM/sshSHcswm8DbDdd1frRg=;
-        b=HkD5E4jbJNGvpJ9wy+Ea9vWhoGQT3xU2yvhPFSnsc5ZMqDUxMxWasrKHXF5bBpCw8a
-         BzGTLb4PvIFYi89Qtrzu7FD2s1N04UyXYJtErt5h/jClbGnU4x8XcWFrhc0hkoAUuuqB
-         QUHtrUL7r46NBHYyI9X+tLg+qGSxlVEDNaAoaWf6zX1oBLUiCET/0Ki7c7pDp6xOXvqL
-         Bc/lNnJiVFuemohS7YdmimDouysIUQLQpwfWiNydX+fgFLPajs6qZk/MCr91uZlJaup0
-         WHmykM0FSWAU12cWVZ+GviSbWA/xuKWFfYnVGcjoYrScFTQx3OyksIAt5Krk4uXFkt3M
-         Z3Wg==
-X-Gm-Message-State: APjAAAWIc2lc1lyYPO9AO4Su77+I2QHpOaHXxJLDAFoe8BrItaR7qYg6
-        jRMSbQkrTMbIn0R176aupjuzdjrFgoM=
-X-Google-Smtp-Source: APXvYqz7gHf82JbZ7jJUpsU8XARYof6sZHonHDJEUVfIy7qAFR4gg7BwIKBWAF4vQbt1SjOUJ41Yfg==
-X-Received: by 2002:ab0:1849:: with SMTP id j9mr7768803uag.75.1559597841541;
-        Mon, 03 Jun 2019 14:37:21 -0700 (PDT)
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
-        by smtp.gmail.com with ESMTPSA id s24sm5494835vsj.26.2019.06.03.14.37.19
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Jun 2019 14:37:20 -0700 (PDT)
-Received: by mail-ua1-f48.google.com with SMTP id 7so7061191uah.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 14:37:19 -0700 (PDT)
-X-Received: by 2002:ab0:670c:: with SMTP id q12mr13608918uam.106.1559597839129;
- Mon, 03 Jun 2019 14:37:19 -0700 (PDT)
+        id S1726527AbfFCVrZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 17:47:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36696 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726162AbfFCVrY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 17:47:24 -0400
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 102C6246A4
+        for <linux-kernel@vger.kernel.org>; Mon,  3 Jun 2019 21:37:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559597851;
+        bh=n9SyFEz1scq0F+hulkDOofWavK0RVDUzt5KbFhVJxXU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Wl+zxf1zXrXTscPd69no8f3com+w7DM1Ij9JSl6nzJEwn21nR1/vkX/KVRgO+NKi5
+         HqAYbd2/RvghdNstiyg9ha1DYR41NNpT/hot0tEZcFGgwBDLilwmu/lIQ6aGvQ7kRp
+         XYe9TujRyGiqLtBNWH6Yz4U1SacrGQimo6MS5eD0=
+Received: by mail-wm1-f41.google.com with SMTP id v22so12599955wml.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 14:37:30 -0700 (PDT)
+X-Gm-Message-State: APjAAAVktJ/6edtXh9X95D9egohorJL/DNTkZkrWnOOryzCJncXijwrT
+        oXEW//KN5pHQGFP9BIqyS9H0m3zcU4hFIaKiiJ+ZKw==
+X-Google-Smtp-Source: APXvYqxdUr7TDIteSerX6UkuNzjBgbrWWlCpsdbDlcFwObi9TtMlsj3g3nDpINh3WF26sC6Rc/305H4m02M04UFf+ic=
+X-Received: by 2002:a1c:9a53:: with SMTP id c80mr9098862wme.173.1559597849219;
+ Mon, 03 Jun 2019 14:37:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190516214022.65220-1-dianders@chromium.org>
-In-Reply-To: <20190516214022.65220-1-dianders@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 3 Jun 2019 14:37:07 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Ukt+Y=CNDR2uRLx5JhwyBK36UH4fCaY00a3FoMm-0VCA@mail.gmail.com>
-Message-ID: <CAD=FV=Ukt+Y=CNDR2uRLx5JhwyBK36UH4fCaY00a3FoMm-0VCA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] drm: bridge: dw-hdmi: Add hook for resume
-To:     Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Cc:     "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Sandy Huang <hjc@rock-chips.com>
+References: <960B34DE67B9E140824F1DCDEC400C0F654E965F@ORSMSX116.amr.corp.intel.com>
+ <CALCETrXXVMutX8eZk6nnkOAeS+Tj0sQd0FkW+wk6Rx8hQxCe6w@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F654E9824@ORSMSX116.amr.corp.intel.com>
+ <20190528202407.GB13158@linux.intel.com> <285f279f-b500-27f0-ab42-fb1dbcc5ab18@tycho.nsa.gov>
+ <960B34DE67B9E140824F1DCDEC400C0F654EB487@ORSMSX116.amr.corp.intel.com>
+ <678a37af-797d-7bd5-a406-32548a270e3d@tycho.nsa.gov> <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com>
+ <c1135352-0b5e-4694-b1a9-105876095877@tycho.nsa.gov> <CALCETrWsEXzUC33eJpGCpdMCBO4aYVviZLRD-CLMNaG5Jv-TCA@mail.gmail.com>
+ <20190603205405.GE4894@linux.intel.com>
+In-Reply-To: <20190603205405.GE4894@linux.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 3 Jun 2019 14:37:17 -0700
+X-Gmail-Original-Message-ID: <CALCETrVS15kAsD9mko9sreyZ8uciiOfOpnMabcQr4_3jE-npNA@mail.gmail.com>
+Message-ID: <CALCETrVS15kAsD9mko9sreyZ8uciiOfOpnMabcQr4_3jE-npNA@mail.gmail.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        William Roberts <bill.c.roberts@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Laurent,
+On Mon, Jun 3, 2019 at 1:54 PM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> On Thu, May 30, 2019 at 09:14:10AM -0700, Andy Lutomirski wrote:
+> > > What is the "source file" i.e. the target of the check?  Enclave file,
+> > > sigstruct file, or /dev/sgx/enclave?
+> >
+> > Enclave file -- that is, the file backing the vma from which the data
+> > is loaded.
+>
+> Wonder why KVM gets away without having this given that enclaves are
+> lot alike VMs.
+>
 
-On Thu, May 16, 2019 at 2:40 PM Douglas Anderson <dianders@chromium.org> wrote:
->
-> On Rockchip rk3288-based Chromebooks when you do a suspend/resume
-> cycle:
->
-> 1. You lose the ability to detect an HDMI device being plugged in.
->
-> 2. If you're using the i2c bus built in to dw_hdmi then it stops
-> working.
->
-> Let's add a hook to the core dw-hdmi driver so that we can call it in
-> dw_hdmi-rockchip in the next commit.
->
-> NOTE: the exact set of steps I've done here in resume come from
-> looking at the normal dw_hdmi init sequence in upstream Linux plus the
-> sequence that we did in downstream Chrome OS 3.14.  Testing show that
-> it seems to work, but if an extra step is needed or something here is
-> not needed we could improve it.
->
-> As part of this change we'll refactor the hardware init bits of
-> dw-hdmi to happen all in one function and all at the same time.  Since
-> we need to init the interrupt mutes before we request the IRQ, this
-> means moving the hardware init earlier in the function, but there
-> should be no problems with that.  Also as part of this we now
-> unconditionally init the "i2c" parts of dw-hdmi, but again that ought
-> to be fine.
->
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
->
-> Changes in v2:
-> - No empty stub for suspend (Laurent)
-> - Refactor to use the same code in probe and resume (Laurent)
-> - Unconditionally init i2c (seems OK + needed before hdmi->i2c init)
-> - Combine "init" of i2c and "setup" of i2c (no reason to split)
-
-Are you happy with this now?  Even if you feel like you don't want to
-give it a full Reviewed-by, it'd good if you could confirm that I
-handled your suggestions properly.
-
-Thanks!  :-)
-
--Doug
+I would argue it's because access to /dev/kvm means you can execute
+whatever you code you want in a VM.  I don't see how this is
+avoidable. On the other hand, it would be nice for SGX to not imply
+this same sort of "execute anything" right, especially since, unlike
+KVM, SGX is not a sandbox.
