@@ -2,121 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2852E32C36
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:16:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8380B32C60
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:17:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728823AbfFCJPW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 05:15:22 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:44431 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728344AbfFCJPT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 05:15:19 -0400
-Received: by mail-lf1-f65.google.com with SMTP id r15so12984144lfm.11
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 02:15:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PR8lLBLyYvGMiS0Uym8abST4zelhaOVi9Iwrklqg+JM=;
-        b=WIMKxnbm4jO3KJFthTYVKBxdmkT1G96bERBd6FIDYNYhFfSTjUb3750sWesJG0TUYL
-         bxWMY37Ut3+qwQttQ+NSVhD2nzOpnVadPB7YAZSmTvHbRNm9Vsw0pjGkbrjkhfCV9Qoi
-         qtRXjAe+4qc7ZkyUel1mSbqjR/epygQ0DNkwGnKF9qRfQEEkRGIsQGP4G5AWKC36h7RL
-         jRVzmDYhz5eFURzz2IQ8gJEa71grNVKYOacWuRLabzeEtxIAwaUb59PPVymqS0pEF1k3
-         TT42cFX5wZMHxIb7CdLFy+R/SnaPs77uoDVYWvEPreCWjB6tx5WdBkS5ZQmuCOXCN49b
-         HNJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PR8lLBLyYvGMiS0Uym8abST4zelhaOVi9Iwrklqg+JM=;
-        b=PtwbjpSJ2NjXEKcQo+elueG4ZM+PnKZkN1aLUkl9qxdeR8v4LOoGy/ftG3K3y/A4Bp
-         6yRiARXIlSQKcrW8VqpmGy016qBDMxzVjTdn65HcN6t1SsIjCSdCg21v6V8r21yG/qcV
-         cqggw4aPABWk0LTS40tqL0qkIKjkRxVNgG/A6t6+sgUf1wXtNGzQGBkn4UQN1kJtu9zd
-         nx7EqnurywRXeSrRQhwxpmydVqdgbUeSdNgLFd10gSuvXVEvK+zoMS6c/XbYr14zzh1C
-         PDEMEWcQf9zjRCpm3KBGe4Am1KNZHX0zHF1vKKsiLWrDqt/bYQtqa0A4MUM1Ols2rSl9
-         p1FA==
-X-Gm-Message-State: APjAAAVJAkrgvr9/ifhv+SA7CYJknTkD6fGgzY30fhad7TV6r1GqnPwX
-        J/DJoAY3U+Z7pJa27P4lp9E2RA==
-X-Google-Smtp-Source: APXvYqwctOBDRg0FjRVPjNSS+OgP9LZF1AQuiSF/Mk+/WqjBT70Z2+BjtM8kSX3oNGhLTa/6lXJf6w==
-X-Received: by 2002:a19:4bc5:: with SMTP id y188mr13319717lfa.113.1559553317031;
-        Mon, 03 Jun 2019 02:15:17 -0700 (PDT)
-Received: from localhost (c-1c3670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.28])
-        by smtp.gmail.com with ESMTPSA id k16sm3018089lje.30.2019.06.03.02.15.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Jun 2019 02:15:16 -0700 (PDT)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     mark.rutland@arm.com, marc.zyngier@arm.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, mingo@redhat.com,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH 3/3] arm: arch_timer: mark functions as __always_inline
-Date:   Mon,  3 Jun 2019 11:15:12 +0200
-Message-Id: <20190603091512.25298-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.20.1
+        id S1728893AbfFCJQy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 05:16:54 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:7450 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728048AbfFCJQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 05:16:52 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 45HTvX2c3jz9v0D1;
+        Mon,  3 Jun 2019 11:16:40 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=qK7a3Bjr; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id h-bkbOG883yC; Mon,  3 Jun 2019 11:16:40 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 45HTvX1RnFz9v0Cw;
+        Mon,  3 Jun 2019 11:16:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1559553400; bh=K6V04fp2wmNbVXlm3f+rVXZBYc12IY9zUHEdy7YPcVY=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=qK7a3Bjr5D25uyATGphCM9C/xx8iCEUSQGdHuU9XkZ6fme6ggDZem5DtAkMj1EdTH
+         yynocMV1TG0Mi6+RMi7USLvmLHcBw1mrY+q/bg1aMBm6F1x8byrpJFvnDw89c54Lt3
+         oLMDPd1y2F/oH5SezRWm9qg2/2wwVHaLZjKqNzr8=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id DFCF68B879;
+        Mon,  3 Jun 2019 11:16:44 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id xrKd7VIqcsZv; Mon,  3 Jun 2019 11:16:44 +0200 (CEST)
+Received: from po16846vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id AD5C18B7B1;
+        Mon,  3 Jun 2019 11:16:44 +0200 (CEST)
+Subject: Re: [PATCH v3 14/16] powerpc/32: implement fast entry for syscalls on
+ BOOKE
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, Paul Mackerras <paulus@ozlabs.org>
+References: <cover.1556627571.git.christophe.leroy@c-s.fr>
+ <3e254178a157e7eaeef48f983880f71f97d1f296.1556627571.git.christophe.leroy@c-s.fr>
+ <20190523061427.GA19655@blackberry>
+ <98bf5745-88ae-7f17-fcb9-7d06ba5b9e49@c-s.fr>
+ <58f0e70f-ed9d-965e-e8d2-cc5d13a4c9eb@c-s.fr>
+ <87r28jp2b0.fsf@concordia.ellerman.id.au>
+ <20190528190341.Horde.nTXOule-IO2ReXFiNIqNbg8@messagerie.si.c-s.fr>
+Message-ID: <c4ff97c8-f601-0e62-9408-08bbef409636@c-s.fr>
+Date:   Mon, 3 Jun 2019 09:16:21 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <20190528190341.Horde.nTXOule-IO2ReXFiNIqNbg8@messagerie.si.c-s.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CONFIG_FUNCTION_GRAPH_TRACER is enabled function
-arch_counter_get_cntvct() is marked as notrace. However, function
-__arch_counter_get_cntvct is marked as inline. If
-CONFIG_OPTIMIZE_INLINING is set that will make the two functions
-tracable which they shouldn't.
 
-Rework so that functions __arch_counter_get_* are marked with
-__always_inline so they will be inlined even if CONFIG_OPTIMIZE_INLINING
-is turned on.
 
-Originally found on arm64, but doing the same thing on arm for
-consistency.
+On 05/28/2019 05:03 PM, Christophe Leroy wrote:
+> Michael Ellerman <mpe@ellerman.id.au> a écrit :
+> 
+>> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+>>> Le 23/05/2019 à 09:00, Christophe Leroy a écrit :
+>>>
+>>> [...]
+>>>
+>>>>> arch/powerpc/kernel/head_fsl_booke.o: In function `SystemCall':
+>>>>> arch/powerpc/kernel/head_fsl_booke.S:416: undefined reference to
+>>>>> `kvmppc_handler_BOOKE_INTERRUPT_SYSCALL_SPRN_SRR1'
+>>>>> Makefile:1052: recipe for target 'vmlinux' failed
+>>>>>
+>>>>>> +.macro SYSCALL_ENTRY trapno intno
+>>>>>> +    mfspr    r10, SPRN_SPRG_THREAD
+>>>>>> +#ifdef CONFIG_KVM_BOOKE_HV
+>>>>>> +BEGIN_FTR_SECTION
+>>>>>> +    mtspr    SPRN_SPRG_WSCRATCH0, r10
+>>>>>> +    stw    r11, THREAD_NORMSAVE(0)(r10)
+>>>>>> +    stw    r13, THREAD_NORMSAVE(2)(r10)
+>>>>>> +    mfcr    r13            /* save CR in r13 for now       */
+>>>>>> +    mfspr    r11, SPRN_SRR1
+>>>>>> +    mtocrf    0x80, r11    /* check MSR[GS] without clobbering 
+>>>>>> reg */
+>>>>>> +    bf    3, 1975f
+>>>>>> +    b    kvmppc_handler_BOOKE_INTERRUPT_\intno\()_SPRN_SRR1
+>>>>>
+>>>>> It seems to me that the "_SPRN_SRR1" on the end of this line
+>>>>> isn't meant to be there...  However, it still fails to link with that
+>>>>> removed.
+>>>
+>>> It looks like I missed the macro expansion.
+>>>
+>>> The called function should be kvmppc_handler_8_0x01B
+>>>
+>>> Seems like kisskb doesn't build any config like this.
+>>
+>> I thought we did, ie:
+>>
+>> http://kisskb.ellerman.id.au/kisskb/buildresult/13817941/
+> 
+> That's a ppc64 config it seems. The problem was on booke32.
+> 
+> Christophe
+> 
+>>
+>> But clearly something is missing to trigger the bug.
 
-Fixes: 0ea415390cd3 ("clocksource/arm_arch_timer: Use arch_timer_read_counter to access stable counters")
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- arch/arm/include/asm/arch_timer.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+I was able to trigger the bug with mpc85xx_defconfig + 
+CONFIG_VIRTUALIZATION + CONFIG_PPC_E500MC
 
-diff --git a/arch/arm/include/asm/arch_timer.h b/arch/arm/include/asm/arch_timer.h
-index 4b66ecd6be99..73a72ce41dc3 100644
---- a/arch/arm/include/asm/arch_timer.h
-+++ b/arch/arm/include/asm/arch_timer.h
-@@ -83,7 +83,7 @@ static inline u32 arch_timer_get_cntfrq(void)
- 	return val;
- }
- 
--static inline u64 __arch_counter_get_cntpct(void)
-+static __always_inline u64 __arch_counter_get_cntpct(void)
- {
- 	u64 cval;
- 
-@@ -92,12 +92,12 @@ static inline u64 __arch_counter_get_cntpct(void)
- 	return cval;
- }
- 
--static inline u64 __arch_counter_get_cntpct_stable(void)
-+static __always_inline u64 __arch_counter_get_cntpct_stable(void)
- {
- 	return __arch_counter_get_cntpct();
- }
- 
--static inline u64 __arch_counter_get_cntvct(void)
-+static __always_inline u64 __arch_counter_get_cntvct(void)
- {
- 	u64 cval;
- 
-@@ -106,7 +106,7 @@ static inline u64 __arch_counter_get_cntvct(void)
- 	return cval;
- }
- 
--static inline u64 __arch_counter_get_cntvct_stable(void)
-+static __always_inline u64 __arch_counter_get_cntvct_stable(void)
- {
- 	return __arch_counter_get_cntvct();
- }
--- 
-2.20.1
+The bug pops up when CONFIG_KVM_BOOKE_HV is set.
 
+Christophe
+
+>>
+>> cheers
+> 
+> 
