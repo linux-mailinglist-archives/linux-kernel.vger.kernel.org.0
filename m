@@ -2,59 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CB4D33AD2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:09:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C0B533AD7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:11:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726736AbfFCWJ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 18:09:29 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45354 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbfFCWJ3 (ORCPT
+        id S1726805AbfFCWKz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 18:10:55 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:43265 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726681AbfFCWKx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 18:09:29 -0400
-Received: by mail-pf1-f196.google.com with SMTP id s11so11371787pfm.12
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 15:09:28 -0700 (PDT)
+        Mon, 3 Jun 2019 18:10:53 -0400
+Received: by mail-pg1-f195.google.com with SMTP id f25so9052292pgv.10
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 15:10:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:in-reply-to:references:date:message-id
          :mime-version;
-        bh=jDdg1OwF0FAhl89N9DnPSHZNHtzrEJIzfPoyVuGv+78=;
-        b=LzGFxQZ0HmsQrlNUSQTMFV923mwkZPYwGjfWrL8bk6Qf75flD9EWeDTDtnlRYNUeSX
-         Z6g/fAiv//bzpgk278/+RMf6+0sie1PDBOJDC0NrwjM55QOJBK2hL2XCflc2vZQGv6Zw
-         Jt00ADsRrcrZH4s4HaaGYWtM0Z+5eRuramr2PeArPDnHHWMxxgHM6chzVAzG4iybTVet
-         GcU4AXW65i1dwoBVxDNf1e0OAvSKOmUq5/CU2oKa7Ldmk+/UCFVWFgdD99gJLOt6BW77
-         oXj6E96l0DF1oFOKkz8oPIx2KVMi+1yzMdfGMpVRo6dCXidZbLV4zHvrwhiTpJ80onOb
-         q39A==
+        bh=Lqtk1JLPJRbV/Uor8A27eWDozVcUr19IPuyQSb2ZXss=;
+        b=LOMmLUn3OWji8hcp69Cer8ETlOICLjhPAltnN4rp4K5f25q0RlT24pWNBHwJHhZbmV
+         2AOmASgj1C5kiQPqxC5BPsx0ELPuyx2MPcfB89pVUNo90bBPw2TRyhbzh5SH2Scu6/j8
+         m64nBG/w+Yhv5R/ZfbzdPZw0gQ0oUVHxnJXordTCw9ZhsQak0YrH89m5teRm4Ut/zuvh
+         GgbweAG/DCgafajg9GpEaZgoG0ZouFPc22PwC77s1UnfGj1yN3pzGXJgXrWenNphhHR9
+         KJ1JQnfDizgW24Rp47icxjhjBl6WVLrhUsPnikns/XcaLkcA7vJy2Q2/jZAQk1GQB/eo
+         bz1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
          :message-id:mime-version;
-        bh=jDdg1OwF0FAhl89N9DnPSHZNHtzrEJIzfPoyVuGv+78=;
-        b=Wg461Osf5/9SW7bWgNY55GR8NfMzcOevqD2MOvdKWjBjaYq1c05tWlXHaVjsPZ2+Oe
-         XgAhNuVoQ/sV8P3M/QM3RGSL9jo/QKWx330AI4dLfoiM9730dupE5bxueUWUtANYKesH
-         WBMKiqqB9oIYtRrDurFavB/L+QkKPCLvXUsHADyYj3XsHo0GPKDtj/chatNg9XBvA05U
-         9bw6Mf2Lhjum0WlnJbMLsRw7tIySG1j6wMSukLEeBuyZ9rgG447tSr+j/z+M4oXzTnnP
-         pTO3zK+42rKMKwfwepYT+9XPRyvK7KOpqZzXH+VRcbfTtMSD8P4zEJndvCMOPLRht0Mu
-         IjhA==
-X-Gm-Message-State: APjAAAVahfECM3s0sYSj6A3S1wtiJFR7yAiw7jeLsnwm2Px7hll1UqS3
-        OaufxP2aqY/XY7VL6AWSgTCCJQ==
-X-Google-Smtp-Source: APXvYqxg8k7T+sG/qb4J+4RL4O/uO7OVHc+0v4sMYS2wFnS6GZbj06GAxSZ4+jmaEw+VTfJLuCeQSQ==
-X-Received: by 2002:a17:90a:30a1:: with SMTP id h30mr33597503pjb.14.1559599768218;
-        Mon, 03 Jun 2019 15:09:28 -0700 (PDT)
+        bh=Lqtk1JLPJRbV/Uor8A27eWDozVcUr19IPuyQSb2ZXss=;
+        b=kBzgR7d6IBh48MGv56vk+vU18XCH9KNlJBCNGry2Vi6nWK4aiK8SgUIgZC5sItASoT
+         fHbOCoxApe3ByB3lERZpyFGJ36OHGVozNFJX3IWyA4b7ZmNSQsuyLGWbkbxopK9L+cEt
+         HyxmJRKcJha4Xn7pobnanfNvHGLaISytsWjIdA6PVHg12frnlngivOCOalGM/31uaYWA
+         CQWiyrTY+3ZRep7cbnVxHp0jXUxaL4b8yGMdzEVzFopAKmDLPSZVNMKyTdxYWxFZ4/4D
+         wm/WpIobk/WweGcoKwokR0rTErXQG4/iqRRNN0Qu9uv1Ro32/Ypq0r4jrTiY7QVHuuTC
+         o0aQ==
+X-Gm-Message-State: APjAAAV6cshSj0l+NpzWTGR1cW/pYUgWfkSEcckrzUA/p7FOnjxF6bz1
+        gJB14UG67yD9UGFFESW2N87jcA==
+X-Google-Smtp-Source: APXvYqxTWg1pff0VpEjIEtZaLRKwlbARqN5oAhRdttUjDIsDawnE2zYntfrph7HTS32iO+Wx978D4A==
+X-Received: by 2002:a17:90a:29a4:: with SMTP id h33mr27038831pjd.105.1559599852823;
+        Mon, 03 Jun 2019 15:10:52 -0700 (PDT)
 Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.googlemail.com with ESMTPSA id t7sm13213708pjq.20.2019.06.03.15.09.27
+        by smtp.googlemail.com with ESMTPSA id p20sm27244237pgk.7.2019.06.03.15.10.52
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Jun 2019 15:09:27 -0700 (PDT)
+        Mon, 03 Jun 2019 15:10:52 -0700 (PDT)
 From:   Kevin Hilman <khilman@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>
-Cc:     devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: meson: add dwmac-3.70a to ethmac compatible list
-In-Reply-To: <CAFBinCCKA-15sFwyXpoxmqw5b4=6j1t-fdrHM7CoAojqN+ZGzQ@mail.gmail.com>
-References: <20190524130817.18920-1-jbrunet@baylibre.com> <CAFBinCCKA-15sFwyXpoxmqw5b4=6j1t-fdrHM7CoAojqN+ZGzQ@mail.gmail.com>
-Date:   Mon, 03 Jun 2019 15:09:27 -0700
-Message-ID: <7h4l56jp7s.fsf@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>, ulf.hansson@linaro.org
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-mmc@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH v2 3/3] arm64: dts: meson: g12a: add SDIO controller
+In-Reply-To: <20190527124307.32075-4-narmstrong@baylibre.com>
+References: <20190527124307.32075-1-narmstrong@baylibre.com> <20190527124307.32075-4-narmstrong@baylibre.com>
+Date:   Mon, 03 Jun 2019 15:10:51 -0700
+Message-ID: <7hwoi2ial0.fsf@baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,19 +63,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
+Neil Armstrong <narmstrong@baylibre.com> writes:
 
-> Hi Jerome,
+> From: Jerome Brunet <jbrunet@baylibre.com>
 >
-> On Fri, May 24, 2019 at 3:08 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
->>
->> After discussing with Amlogic, the Synopsys GMAC version used by
->> the gx and axg family is the 3.70a. Set this is in DT
->>
->> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> The Amlogic G12A SDIO Controller has a bug preventing direct DDR access,
+> add the port A (SDIO) pinctrl and controller nodes and mark this specific
+> controller with the amlogic,dram-access-quirk property.
+>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 
-Queued for v5.3, w/Martin's tag,
+Queued for v5.3,
 
 Thanks,
 
