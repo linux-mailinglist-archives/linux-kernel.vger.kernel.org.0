@@ -2,54 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 731BE32A68
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 10:05:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93FAE32A70
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 10:07:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727626AbfFCIF0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 04:05:26 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:49125 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725856AbfFCIFZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 04:05:25 -0400
-X-Originating-IP: 90.88.144.139
-Received: from localhost.localdomain (aaubervilliers-681-1-24-139.w90-88.abo.wanadoo.fr [90.88.144.139])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 014721C000D;
-        Mon,  3 Jun 2019 08:05:21 +0000 (UTC)
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     =?utf-8?q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        kyungmin.park@samsung.com
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>, bbrezillon@kernel.org,
-        richard@nod.at, Jonathan Bakker <xc-racer2@live.ca>,
-        linux-kernel@vger.kernel.org, marek.vasut@gmail.com,
-        linux-mtd@lists.infradead.org, computersforpeace@gmail.com,
-        dwmw2@infradead.org
-Subject: Re: [PATCH] mtd: onenand: Add support for 8Gb datasize onenand
-Date:   Mon,  3 Jun 2019 10:05:18 +0200
-Message-Id: <20190603080518.29054-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190426150634.5643-1-pawel.mikolaj.chmiel@gmail.com>
-References: 
+        id S1727551AbfFCIHb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 04:07:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55122 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725856AbfFCIHa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 04:07:30 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7EDBFB133;
+        Mon,  3 Jun 2019 08:07:29 +0000 (UTC)
+Date:   Mon, 3 Jun 2019 10:07:29 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] livepatch: Use static buffer for debugging messages
+ under rq lock
+Message-ID: <20190603080729.67je4pl4epsjtgtg@pathway.suse.cz>
+References: <20190531074147.27616-1-pmladek@suse.com>
+ <20190531074147.27616-4-pmladek@suse.com>
+ <alpine.LSU.2.21.1905311433230.742@pobox.suse.cz>
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: 04e8af9c0b99907a47a16bf47eb46a74079b59f0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.21.1905311433230.742@pobox.suse.cz>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-04-26 at 15:06:34 UTC, =?utf-8?q?Pawe=C5=82_Chmiel?= wrote:
-> From: Jonathan Bakker <xc-racer2@live.ca>
+On Fri 2019-05-31 14:37:52, Miroslav Benes wrote:
+> On Fri, 31 May 2019, Petr Mladek wrote:
 > 
-> Used in several S5PV210-based Galaxy S devices, among them SGH-T959V,
-> SGH-T959P, SGH-T839, and SPH-D700.
+> > The err_buf array uses 128 bytes of stack space.  Move it off the stack
+> > by making it static.  It's safe to use a shared buffer because
+> > klp_try_switch_task() is called under klp_mutex.
+> > 
+> > diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
+> > index 1bf362df76e1..5c4f0c1f826e 100644
+> > --- a/kernel/livepatch/transition.c
+> > +++ b/kernel/livepatch/transition.c
+> > @@ -327,7 +327,6 @@ static bool klp_try_switch_task(struct task_struct *task)
+> >  		pr_debug("%s", err_buf);
+> >  
+> >  	return success;
+> > -
+> >  }
 > 
-> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
-> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> This could go in separately as it is not connected to the rest of the 
+> series.
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
+I have never seen a standalone commit just removing an empty line.
+It is usually done when one touches the code around.
 
-Miquel
+If you resist, we could omit this hunk from the patch and leave
+the code as is.
+
+Best Regards,
+Petr
