@@ -2,81 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D893833046
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 14:52:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4D193304C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 14:53:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727590AbfFCMwL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 08:52:11 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40464 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726713AbfFCMwL (ORCPT
+        id S1727663AbfFCMxS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 08:53:18 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41682 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727337AbfFCMxR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 08:52:11 -0400
-Received: by mail-wr1-f65.google.com with SMTP id p11so7097682wre.7
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 05:52:10 -0700 (PDT)
+        Mon, 3 Jun 2019 08:53:17 -0400
+Received: by mail-wr1-f67.google.com with SMTP id c2so11944845wrm.8
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 05:53:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=wq4yXJBlhuJZxMm1hF9bS2M5hccH7sIFbHfwg9bPyr8=;
-        b=u0FiRAG1N1Uc7hXsujUHXgiHeLFDEduvv2RaP9IH4uBuwimI4HmDFnwWTCj/YuqzlN
-         GHtC4OSLAXSoEGZgkYrBiCnnjYAKdsQrWDtYs70f+dbavzGxEnWcuxe2ScUjnutYWmvo
-         gzD56w7XjOfdy/bHa3vFc9EzoVt0VT5wuf+1hIyrpuT2FHQHWHjZ9Bm+Bp6Unu/7mqxU
-         9G+YzbZmQCJm07mZ24PQbLpTNBU6ijYualwFvtX6LIdd1lsxYKIamM4UrdxzzT5kFulT
-         itq42B17nQ5vpo/TxNUMY36cNp3NsCWrx90hg7OleUfxzpTp5ofnjUaZuFERuMLbV+wg
-         NdcQ==
+        bh=mJzvhiGffEycEWujL+bss26vNVFhjmchmuQXEPVt3OI=;
+        b=i336iScQCfCZvbvTGweyXXgI7STx9ES6GbBUErWAbm2GYjsrk15DzygvtflxAU75bw
+         7zytegesZVYlVbKGZQl2/uIhWWJLVtIB42A7hmZakjv5JVueeBrWMm6YSSJtVlMdtPEu
+         6BS5T8Nzfd4M/xL4YMfXi7rwAtZ+RcQH5RAVDIramgsZf91yFBzp7pqCwOhqc+14iMv2
+         k6i1pJeIxiMLnLrjUBpYDHmESWhAfOV6uapL12RaqR4azwGZxYYhiO+BCDffN6O90661
+         6HD5JtgDf3Vn7KATsxAB91xl0IhFjSUR8bnZnOe3m9rHBgba5fZbGmYl6BbASR1XySRS
+         JaoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=wq4yXJBlhuJZxMm1hF9bS2M5hccH7sIFbHfwg9bPyr8=;
-        b=hU39v8fLGKDVQ0ly06jaTK8ALjFgT4k0eq8E49cswXZhQ2Svj4KQ/Z3sy2zsMZui2G
-         TJv4LGhLfFTAepkm4ifv8H64LNG0PTZFYn4hYBQWX1gtstnjhcduCFHL/Ollpzbv4kVS
-         4jbs16ZHvXYZ8Llc4/H99As8NVdcSDMuY+Rip9CJqrWQAFfEaYO2lwEbjiot8SIrz+wT
-         dpoL4+y/IhO2l5K/2aQnOyhT8JJpf8eo1zHZvE/4Y36oPNVUua/weLm/U26MXUbP0yWO
-         OLHGAoLoQKoXugyuYVq7YbFzhkGwio4ArczNlXqGz1gWKCAXzubgrYQG+2sjCQAUoe6b
-         bmuA==
-X-Gm-Message-State: APjAAAVMEQbcxbdulJZDPleeKgFt6Ve2jCxkf27SAkJ2rujeRQSO1PCj
-        WSHmIGBdezNjP7pYRiDbVWztcg==
-X-Google-Smtp-Source: APXvYqyHqS828di86eR4vgH2o4EKGJYQNKkueq2r86n9Zcm0f3WrLAXn3vXIJ40ZJjMdjHZWGSyg0g==
-X-Received: by 2002:adf:eb45:: with SMTP id u5mr2393533wrn.38.1559566329776;
-        Mon, 03 Jun 2019 05:52:09 -0700 (PDT)
+        bh=mJzvhiGffEycEWujL+bss26vNVFhjmchmuQXEPVt3OI=;
+        b=jhoepZElXzSMnoft3cQM0SRN+sEk1srxhFoXBCraTSUKkyfA5cycpYikoTWJVMqXJG
+         I7mcrEsoqH3xgCq6EOrQXi+3Rv8vLlwPG5zgBEJeUFUh3RVyZm+c+Gcn5haa/X3mdBx9
+         q1ml4fhx1sGKeEv6ECtlW6PKohfLLVZs2IN06mKgTnublY18m+Rm9RqgC2Afd9l8Wsoh
+         0tM/7vm6zyV9BU24l2rX7OCevou9l3sKBqAnzY5Xx81u8fKJyLNwqKcYMoJFFjYiNXEU
+         Gh8mtE0HjUePSfjg/OswgVtHXUR2Z0usxJJ9kIEVr2VpTAjXH27unl4ISAwRlszV9S1K
+         0tBA==
+X-Gm-Message-State: APjAAAUz2EOfFkRNzTwBsOBgQfhiWi5Wz0IrUNkAwsmu6w3mFpy3s+8W
+        izO01lkUbm8U6BVt1rP0JZNUxg==
+X-Google-Smtp-Source: APXvYqxFE0118CiSNYTdmHv39GS0d43c8AFGtSRqVsdLZ2291NPcyMYGAd6S+TG69G1rOWsB4WIMmg==
+X-Received: by 2002:a5d:6849:: with SMTP id o9mr2541732wrw.196.1559566395383;
+        Mon, 03 Jun 2019 05:53:15 -0700 (PDT)
 Received: from dell ([2.27.167.43])
-        by smtp.gmail.com with ESMTPSA id o3sm11745269wrv.94.2019.06.03.05.52.08
+        by smtp.gmail.com with ESMTPSA id g8sm1176779wmf.17.2019.06.03.05.53.14
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Jun 2019 05:52:09 -0700 (PDT)
-Date:   Mon, 3 Jun 2019 13:52:07 +0100
+        Mon, 03 Jun 2019 05:53:14 -0700 (PDT)
+Date:   Mon, 3 Jun 2019 13:53:13 +0100
 From:   Lee Jones <lee.jones@linaro.org>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mfd: menelaus: Remove superfluous error message
-Message-ID: <20190603125207.GT4797@dell>
-References: <20190521204304.21295-1-alexandre.belloni@bootlin.com>
+To:     Gwendal Grignou <gwendal@chromium.org>
+Cc:     enric.balletbo@collabora.com, bleung@chromium.org,
+        groeck@chromium.org, jic23@kernel.org, broonie@kernel.org,
+        cychiang@chromium.org, tiwai@suse.com, linux-iio@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 00/30] Update cros_ec_commands.h
+Message-ID: <20190603125313.GU4797@dell>
+References: <20190509211353.213194-1-gwendal@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190521204304.21295-1-alexandre.belloni@bootlin.com>
+In-Reply-To: <20190509211353.213194-1-gwendal@chromium.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 May 2019, Alexandre Belloni wrote:
+On Thu, 09 May 2019, Gwendal Grignou wrote:
 
-> The RTC core already has error messages in case of failure, there is no
-> need to have another message in the driver.
+> The interface between CrosEC embedded controller and the host,
+> described by cros_ec_commands.h, as diverged from what the embedded
+> controller really support.
 > 
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> ---
->  drivers/mfd/menelaus.c | 2 --
->  1 file changed, 2 deletions(-)
+> The source of thruth is at
+> https://chromium.googlesource.com/chromiumos/platform/ec/+/master/include/ec_commands.h
+> 
+> That include file is converted to remove ACPI and Embedded only code.
+> 
+> From now on, cros_ec_commands.h will be automatically generated from
+> the file above, do not modify directly.
+> 
+> Fell free to squash the commits below.
+> 
+> Changes in v3:
+> - Rebase after commit 81888d8ab1532 ("mfd: cros_ec: Update the EC feature codes")
+> - Add Acked-by: Benson Leung <bleung@chromium.org>
+> 
+> Changes in v2:
+> - Move I2S changes at the end of the patchset, squashed with change in
+>   sound/soc/codecs/cros_ec_codec.c to match new interface.
+> - Add Acked-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> 
+> Gwendal Grignou (30):
+>   mfd: cros_ec: Update license term
+>   mfd: cros_ec: Zero BUILD_ macro
+>   mfd: cros_ec: set comments properly
+>   mfd: cros_ec: add ec_align macros
+>   mfd: cros_ec: Define commands as 4-digit UPPER CASE hex values
+>   mfd: cros_ec: use BIT macro
+>   mfd: cros_ec: Update ACPI interface definition
+>   mfd: cros_ec: move HDMI CEC API definition
+>   mfd: cros_ec: Remove zero-size structs
+>   mfd: cros_ec: Add Flash V2 commands API
+>   mfd: cros_ec: Add PWM_SET_DUTY API
+>   mfd: cros_ec: Add lightbar v2 API
+>   mfd: cros_ec: Expand hash API
+>   mfd: cros_ec: Add EC transport protocol v4
+>   mfd: cros_ec: Complete MEMS sensor API
+>   mfd: cros_ec: Fix event processing API
+>   mfd: cros_ec: Add fingerprint API
+>   mfd: cros_ec: Fix temperature API
+>   mfd: cros_ec: Complete Power and USB PD API
+>   mfd: cros_ec: Add API for keyboard testing
+>   mfd: cros_ec: Add Hibernate API
+>   mfd: cros_ec: Add Smart Battery Firmware update API
+>   mfd: cros_ec: Add I2C passthru protection API
+>   mfd: cros_ec: Add API for EC-EC communication
+>   mfd: cros_ec: Add API for Touchpad support
+>   mfd: cros_ec: Add API for Fingerprint support
+>   mfd: cros_ec: Add API for rwsig
+>   mfd: cros_ec: Add SKU ID and Secure storage API
+>   mfd: cros_ec: Add Management API entry points
+>   mfd: cros_ec: Update I2S API
+> 
+>  include/linux/mfd/cros_ec_commands.h | 3658 ++++++++++++++++++++------
+>  sound/soc/codecs/cros_ec_codec.c     |    8 +-
+>  2 files changed, 2915 insertions(+), 751 deletions(-)
 
-Applied, thanks.
+Okay, I'm ready to apply this now.  Could you collect all of the Acks
+you received and submit a RESEND please?
 
 -- 
 Lee Jones [李琼斯]
