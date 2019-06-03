@@ -2,29 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED2EB33434
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:55:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DB28333E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:51:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729485AbfFCPzH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 11:55:07 -0400
-Received: from foss.arm.com ([217.140.101.70]:53542 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728296AbfFCPvE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 11:51:04 -0400
+        id S1728426AbfFCPvJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 11:51:09 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53556 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728373AbfFCPvG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 11:51:06 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4F58D169E;
-        Mon,  3 Jun 2019 08:51:04 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3F0A715AB;
+        Mon,  3 Jun 2019 08:51:06 -0700 (PDT)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1C7283F246;
-        Mon,  3 Jun 2019 08:51:02 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8CD0C3F246;
+        Mon,  3 Jun 2019 08:51:04 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        suzuki.poulose@arm.com, Ulf Hansson <ulf.hansson@linaro.org>,
-        Joe Perches <joe@perches.com>
-Subject: [RFC PATCH 04/57] drivers: Add generic match helper to match the device of_node
-Date:   Mon,  3 Jun 2019 16:49:30 +0100
-Message-Id: <1559577023-558-5-git-send-email-suzuki.poulose@arm.com>
+        suzuki.poulose@arm.com,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: [RFC PATCH 05/57] drm: mipi_dsi: Use bus_find_device_by_of_node() helper
+Date:   Mon,  3 Jun 2019 16:49:31 +0100
+Message-Id: <1559577023-558-6-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
 References: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
@@ -33,69 +36,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of spilling the match function to check the of_node for
-a given value, lets add a common helper. Also add a wrapper to
-find device by of_node pointer for bus.
+Switch to using the bus_find_device_by_of_node() helper.
 
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Joe Perches <joe@perches.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: David Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel@ffwll.ch>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/base/core.c    |  6 ++++++
- include/linux/device.h | 17 +++++++++++++++++
- 2 files changed, 23 insertions(+)
+ drivers/gpu/drm/drm_mipi_dsi.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index fd7511e..d20699c 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -3328,3 +3328,9 @@ void device_set_of_node_from_dev(struct device *dev, const struct device *dev2)
- 	dev->of_node_reused = true;
- }
- EXPORT_SYMBOL_GPL(device_set_of_node_from_dev);
-+
-+int device_match_of_node(struct device *dev, void *np)
-+{
-+	return dev->of_node == np;
-+}
-+EXPORT_SYMBOL_GPL(device_match_of_node);
-diff --git a/include/linux/device.h b/include/linux/device.h
-index e85264f..fe16be4 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -163,6 +163,8 @@ void subsys_dev_iter_init(struct subsys_dev_iter *iter,
- struct device *subsys_dev_iter_next(struct subsys_dev_iter *iter);
- void subsys_dev_iter_exit(struct subsys_dev_iter *iter);
+diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
+index 80b7550..4c5a397 100644
+--- a/drivers/gpu/drm/drm_mipi_dsi.c
++++ b/drivers/gpu/drm/drm_mipi_dsi.c
+@@ -93,11 +93,6 @@ static struct bus_type mipi_dsi_bus_type = {
+ 	.pm = &mipi_dsi_device_pm_ops,
+ };
  
-+int device_match_of_node(struct device *dev, void *np);
-+
- int bus_for_each_dev(struct bus_type *bus, struct device *start, void *data,
- 		     int (*fn)(struct device *dev, void *data));
- struct device *bus_find_device(struct bus_type *bus, struct device *start,
-@@ -171,6 +173,21 @@ struct device *bus_find_device(struct bus_type *bus, struct device *start,
- struct device *bus_find_device_by_name(struct bus_type *bus,
- 				       struct device *start,
- 				       const char *name);
-+
-+/**
-+ * bus_find_device_by_of_node : device iterator for locating a particular device
-+ * matching the of_node.
-+ * @bus: bus type
-+ * @start: Device to begin with
-+ * @np: of_node of the device to match.
-+ */
-+static inline struct device *bus_find_device_by_of_node(struct bus_type *bus,
-+							struct device *start,
-+							struct device_node *np)
-+{
-+	return bus_find_device(bus, start, np, device_match_of_node);
-+}
-+
- struct device *subsys_find_device_by_id(struct bus_type *bus, unsigned int id,
- 					struct device *hint);
- int bus_for_each_drv(struct bus_type *bus, struct device_driver *start,
+-static int of_device_match(struct device *dev, void *data)
+-{
+-	return dev->of_node == data;
+-}
+-
+ /**
+  * of_find_mipi_dsi_device_by_node() - find the MIPI DSI device matching a
+  *    device tree node
+@@ -110,7 +105,7 @@ struct mipi_dsi_device *of_find_mipi_dsi_device_by_node(struct device_node *np)
+ {
+ 	struct device *dev;
+ 
+-	dev = bus_find_device(&mipi_dsi_bus_type, NULL, np, of_device_match);
++	dev = bus_find_device_by_of_node(&mipi_dsi_bus_type, NULL, np);
+ 
+ 	return dev ? to_mipi_dsi_device(dev) : NULL;
+ }
 -- 
 2.7.4
 
