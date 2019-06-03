@@ -2,173 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 927FD33A88
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 23:59:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 363A833A7E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 23:59:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbfFCV7m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 17:59:42 -0400
-Received: from mga11.intel.com ([192.55.52.93]:65178 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726637AbfFCV7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 17:59:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 14:07:26 -0700
-X-ExtLoop1: 1
-Received: from ray.jf.intel.com (HELO [10.7.198.156]) ([10.7.198.156])
-  by orsmga008.jf.intel.com with ESMTP; 03 Jun 2019 14:07:26 -0700
-Subject: Re: linux-next: runtime failure of next-20190603
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190603162215.6390707f@canb.auug.org.au>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <a6c98d75-078a-797f-a582-9687324e8c02@intel.com>
-Date:   Mon, 3 Jun 2019 14:07:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726690AbfFCV7A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 17:59:00 -0400
+Received: from mail-pg1-f172.google.com ([209.85.215.172]:45343 "EHLO
+        mail-pg1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726049AbfFCV7A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 17:59:00 -0400
+Received: by mail-pg1-f172.google.com with SMTP id w34so9023742pga.12
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 14:58:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hcbe5XK5tsFMWxSLs2tZ84hRD+cj/6YTqAC2Tmv3P6A=;
+        b=hOCZMeOhk+mnIUArMWNnC4vOoecC/JJjH016s1tw4Q96mSLD+0XvEFZfhYCyOuiLe3
+         3JPco6SQFbsgOo3tJVA/rGxuMMqV+PxWgHbtFyYjLLr4aJ45fWaaT3ONrFh3O59CMhRv
+         1a7SdQk8hx4KAgvnXTXy4jWGFB5OfJ5r7LCWoltwNWxy5L9bf/dZJoxBT8mbb0BqQ+14
+         aoRFh3Hi+L5+3to6drNMaTiQ5MWNn112T5jPH2jmcr2nTpfYazs2lHbfT0EgV4wDf9p7
+         +ZAzMj5wXkBDVcVYUtZ37FLCh0uEdyTwkwGCZK2XRuhvUzzguAJo+j34T00y0fKG5UdN
+         paFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hcbe5XK5tsFMWxSLs2tZ84hRD+cj/6YTqAC2Tmv3P6A=;
+        b=fuoAAXMyKpzmCC3Y4MO4107USzh18UvqxzM6TT4293H5Rlh7lXj+GS59kj/IoNnFIB
+         n97C7rBwi01DRwAz7AfeS9swVUxSri7j+EC4HLs3Zy/wcX6g0EYCZR/RU0fzqaV+xvI9
+         NcA9OF8jzl8g/hkGFsoL76/8roJC+8OSkwaUamvP3dnVlolZgRwCznLnJgC7A9uYffLX
+         2F6SAUgizPaitktHU+Rr+8T/8ufkyQwhsQBGfbcF6LUIb00jPz6qfcDTjRHz1dctwCOe
+         28FQMIoGt567OS1kQx+NNJJHtR9qbOkBHKJJtgLlWlOQP+jLMJIWr3l/60MSABWC/IIb
+         IJ7w==
+X-Gm-Message-State: APjAAAXXtouYjRv4DkaVDgPFg2ayUX41bMpS6M2ZOoJx/8WI6sz+lvDE
+        Tjm9UcBiAME4xlDnQmNOsb/HcB+e94M=
+X-Google-Smtp-Source: APXvYqz4Qw8yGDgRFudiuxfXs7P+jDtt3/2W1h5CX5aNY5aXM70fQ7T4ZIHJj3eYv41Qd3NLYGM9aQ==
+X-Received: by 2002:a17:90a:7146:: with SMTP id g6mr32429865pjs.45.1559596101827;
+        Mon, 03 Jun 2019 14:08:21 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::1:9fa4])
+        by smtp.gmail.com with ESMTPSA id i12sm17107336pfd.33.2019.06.03.14.08.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Jun 2019 14:08:21 -0700 (PDT)
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: [PATCH 00/11] mm: fix page aging across multiple cgroups
+Date:   Mon,  3 Jun 2019 17:07:35 -0400
+Message-Id: <20190603210746.15800-1-hannes@cmpxchg.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <20190603162215.6390707f@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/2/19 11:22 PM, Stephen Rothwell wrote:
-> My qemu powerpc_pseries_le_defconfig boots failed today with the
-> following output at shutdown time:
-...
-> [   32.112430] NIP [c000000000bbeb38] xas_load+0x8/0xd0
-...
-> Reverting commit
-> 
-> fa858b6eec3f ("XArray: Add xas_replace")
-> 
-> made the failure go away.
+When applications are put into unconfigured cgroups for memory
+accounting purposes, the cgrouping itself should not change the
+behavior of the page reclaim code. We expect the VM to reclaim the
+coldest pages in the system. But right now the VM can reclaim hot
+pages in one cgroup while there is eligible cold cache in others.
 
-I'm seeing a similar softlockup:
+This is because one part of the reclaim algorithm isn't truly cgroup
+hierarchy aware: the inactive/active list balancing. That is the part
+that is supposed to protect hot cache data from one-off streaming IO.
 
-> [124384.345395] watchdog: BUG: soft lockup - CPU#1 stuck for 22s!
-> [TaskSchedulerFo:22804] [124384.345405] Modules linked in: bridge
-> stp llc ctr ccm hid_logitech_hidpp hid_logitech_dj xt_MASQUERADE
-> rfcomm hid_generic usbhid hid bnep iptable_nat nf_nat nf_conntrack
-> nf_defrag_ipv6 nf_defrag_ipv4 ip_tables x_tables bpfilter arc4
-> iwlmvm intel_rapl snd_hda_codec_hdmi x86_pkg_temp_thermal mac80211
-> wmi_bmof coretemp snd_hda_codec_realtek snd_hda_codec_generic
-> ghash_clmulni_intel snd_hda_intel snd_hda_codec aesni_intel
-> snd_hwdep aes_x86_64 snd_hda_core glue_helper crypto_simd
-> thinkpad_acpi cryptd snd_pcm nvram iwlwifi btusb ledtrig_audio
-> btrtl snd_seq_midi btbcm snd_seq_midi_event btintel snd_rawmidi
-> bluetooth snd_seq snd_timer snd_seq_device ecdh_generic cfg80211
-> ecc snd joydev soundcore kvm_intel mac_hid wmi kvm irqbypass
-> squashfs zstd_decompress lz4_decompress netconsole rtsx_pci_sdmmc
-> rtsx_pci [124384.345426] CPU: 1 PID: 22804 Comm: TaskSchedulerFo
-> Not tainted 5.2.0-rc2 #14 [124384.345427] Hardware name: LENOVO
-> 20F5S7V800/20F5S7V800, BIOS R02ET70W (1.43 ) 01/28/2019 
-> [124384.345431] RIP: 0010:xas_load+0x2c/0x80 [124384.345432] Code:
-> 89 fb e8 67 ff ff ff eb 5b 48 3d 00 10 00 00 76 5f 0f b6 48 fe 48
-> 8d 70 fe 38 4b 10 77 52 48 8b 53 08 48 d3 ea 83 e2 3f 89 d0 <48> 8d
-> 44 c6 20 48 8b 40 08 48 89 73 18 48 89 c1 83 e1 03 48 83 f9 
-> [124384.345433] RSP: 0018:ffffc900095f3a70 EFLAGS: 00000206
-> ORIG_RAX: ffffffffffffff13 [124384.345434] RAX: 0000000000000022
-> RBX: ffffc900095f3a80 RCX: 0000000000000006 [124384.345435] RDX:
-> 0000000000000022 RSI: ffff888085eb4490 RDI: ffffc900095f3a80 
-> [124384.345435] RBP: 00000000001dc8b0 R08: 0000000000000001 R09:
-> ffff8884216fab80 [124384.345436] R10: ffff8884216fa000 R11:
-> ffff8884216fa000 R12: 0000000000000000 [124384.345437] R13:
-> ffff88840a006bd8 R14: 00000000001dc8b0 R15: ffff88810cc12580 
-> [124384.345437] FS:  00007f1aa5b77700(0000)
-> GS:ffff888411880000(0000) knlGS:0000000000000000 [124384.345438]
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033 [124384.345439]
-> CR2: 00007f1ae3ffd9d0 CR3: 00000003e925c001 CR4: 00000000003626e0 
-> [124384.345439] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
-> 0000000000000000 [124384.345440] DR3: 0000000000000000 DR6:
-> 00000000fffe0ff0 DR7: 0000000000000400 [124384.345440] Call Trace: 
-> [124384.345464]  find_get_entry+0x74/0x1a0 [124384.345466]
-> pagecache_get_page+0x27/0x250 [124384.345467]
-> __try_to_reclaim_swap.isra.38+0x47/0xe0 [124384.345469]
-> free_swap_and_cache+0x6e/0x70 [124384.345470]
-> unmap_page_range+0x444/0xa50 [124384.345472]  unmap_vmas+0x81/0xe0 
-> [124384.345474]  exit_mmap+0xab/0x1a0 [124384.345477]
-> mmput+0x5d/0x130 [124384.345478]  do_exit+0x2af/0xbf0 
-> [124384.345480]  do_group_exit+0x3d/0xb0 [124384.345481]
-> get_signal+0x12d/0x8b0 [124384.345483]  do_signal+0x36/0x6a0 
-> [124384.345485]  ? __might_fault+0x2b/0x30 [124384.345486]  ?
-> _copy_from_user+0x5b/0x90 [124384.345488]  ?
-> exit_to_usermode_loop+0x4a/0xb0 [124384.345489]
-> exit_to_usermode_loop+0x62/0xb0 [124384.345507]
-> do_syscall_64+0xfc/0x120 [124384.345508]
-> entry_SYSCALL_64_after_hwframe+0x49/0xbe
+The recursive cgroup reclaim scheme will scan and rotate the physical
+LRU lists of each eligible cgroup at the same rate in a round-robin
+fashion, thereby establishing a relative order among the pages of all
+those cgroups. However, the inactive/active balancing decisions are
+made locally within each cgroup, so when a cgroup is running low on
+cold pages, its hot pages will get reclaimed - even when sibling
+cgroups have plenty of cold cache eligible in the same reclaim run.
 
-I saw this over a period of time and caught a bunch of different
-softlokup messages.  They almost all appear under xas_load, though:
+For example:
 
- RIP: 0010:xas_load+0x13/0x80
- RIP: 0010:xas_load+0x17/0x80
- RIP: 0010:xas_load+0x1b/0x80
- RIP: 0010:xas_load+0x27/0x80
- RIP: 0010:xas_load+0x2c/0x80
- RIP: 0010:xas_load+0x35/0x80
- RIP: 0010:xas_load+0x35/0x80
- RIP: 0010:xas_load+0x35/0x80
- RIP: 0010:xas_load+0x35/0x80
- RIP: 0010:xas_load+0x35/0x80
- RIP: 0010:xas_load+0x45/0x80
- RIP: 0010:xas_load+0x66/0x80
- RIP: 0010:xas_load+0xb/0x80
- RIP: 0010:xas_start+0x45/0x90
+   [root@ham ~]# head -n1 /proc/meminfo 
+   MemTotal:        1016336 kB
 
-So it seems like it's actively spinning in a fairly big loop since
-it's hitting a bunch of different places.
+   [root@ham ~]# ./reclaimtest2.sh 
+   Establishing 50M active files in cgroup A...
+   Hot pages cached: 12800/12800 workingset-a
+   Linearly scanning through 18G of file data in cgroup B:
+   real    0m4.269s
+   user    0m0.051s
+   sys     0m4.182s
+   Hot pages cached: 134/12800 workingset-a
 
-I only hit this once, though.  It's not easily reproducible for me.  I
-haven't tried the above revert.
+The streaming IO in B, which doesn't benefit from caching at all,
+pushes out most of the workingset in A.
+
+Solution
+
+This series fixes the problem by elevating inactive/active balancing
+decisions to the toplevel of the reclaim run. This is either a cgroup
+that hit its limit, or straight-up global reclaim if there is physical
+memory pressure. From there, it takes a recursive view of the cgroup
+subtree to decide whether page deactivation is necessary.
+
+In the test above, the VM will then recognize that cgroup B has plenty
+of eligible cold cache, and that thet hot pages in A can be spared:
+
+   [root@ham ~]# ./reclaimtest2.sh 
+   Establishing 50M active files in cgroup A...
+   Hot pages cached: 12800/12800 workingset-a
+   Linearly scanning through 18G of file data in cgroup B:
+   real    0m4.244s
+   user    0m0.064s
+   sys     0m4.177s
+   Hot pages cached: 12800/12800 workingset-a
+
+Implementation
+
+Whether active pages can be deactivated or not is influenced by two
+factors: the inactive list dropping below a minimum size relative to
+the active list, and the occurence of refaults.
+
+After some cleanups and preparations, this patch series first moves
+refault detection to the reclaim root, then enforces the minimum
+inactive size based on a recursive view of the cgroup tree's LRUs.
+
+History
+
+Note that this actually never worked correctly in Linux cgroups. In
+the past it worked for global reclaim and leaf limit reclaim only (we
+used to have two physical LRU linkages per page), but it never worked
+for intermediate limit reclaim over multiple leaf cgroups.
+
+We're noticing this now because 1) we're putting everything into
+cgroups for accounting, not just the things we want to control and 2)
+we're moving away from leaf limits that invoke reclaim on individual
+cgroups, toward large tree reclaim, triggered by high-level limits or
+physical memory pressure, that is influenced by local protections such
+as memory.low and memory.min instead.
+
+Requirements
+
+These changes are based on the fast recursive memcg stats merged in
+5.2-rc1. The patches are against v5.2-rc2-mmots-2019-05-29-20-56-12
+plus the page cache fix in https://lkml.org/lkml/2019/5/24/813.
+
+ include/linux/memcontrol.h |  37 +--
+ include/linux/mmzone.h     |  30 +-
+ include/linux/swap.h       |   2 +-
+ mm/memcontrol.c            |   6 +-
+ mm/page_alloc.c            |   2 +-
+ mm/vmscan.c                | 667 ++++++++++++++++++++++---------------------
+ mm/workingset.c            |  74 +++--
+ 7 files changed, 437 insertions(+), 381 deletions(-)
+
+
