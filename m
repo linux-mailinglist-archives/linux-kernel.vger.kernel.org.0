@@ -2,84 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A83A533ABD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:05:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CB4D33AD2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:09:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726863AbfFCWFm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 18:05:42 -0400
-Received: from mga11.intel.com ([192.55.52.93]:1031 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726205AbfFCWFj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 18:05:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 15:05:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,548,1549958400"; 
-   d="scan'208";a="181310106"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by fmsmga002.fm.intel.com with ESMTP; 03 Jun 2019 15:05:38 -0700
-Date:   Mon, 3 Jun 2019 15:08:42 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Cc:     joro@8bytes.org, alex.williamson@redhat.com, eric.auger@redhat.com,
-        ashok.raj@intel.com, yi.l.liu@intel.com, robdclark@gmail.com,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        robin.murphy@arm.com, jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v2 2/4] iommu: Introduce device fault data
-Message-ID: <20190603150842.11070cfd@jacob-builder>
-In-Reply-To: <20190603145749.46347-3-jean-philippe.brucker@arm.com>
-References: <20190603145749.46347-1-jean-philippe.brucker@arm.com>
-        <20190603145749.46347-3-jean-philippe.brucker@arm.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1726736AbfFCWJ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 18:09:29 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45354 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbfFCWJ3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 18:09:29 -0400
+Received: by mail-pf1-f196.google.com with SMTP id s11so11371787pfm.12
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 15:09:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=jDdg1OwF0FAhl89N9DnPSHZNHtzrEJIzfPoyVuGv+78=;
+        b=LzGFxQZ0HmsQrlNUSQTMFV923mwkZPYwGjfWrL8bk6Qf75flD9EWeDTDtnlRYNUeSX
+         Z6g/fAiv//bzpgk278/+RMf6+0sie1PDBOJDC0NrwjM55QOJBK2hL2XCflc2vZQGv6Zw
+         Jt00ADsRrcrZH4s4HaaGYWtM0Z+5eRuramr2PeArPDnHHWMxxgHM6chzVAzG4iybTVet
+         GcU4AXW65i1dwoBVxDNf1e0OAvSKOmUq5/CU2oKa7Ldmk+/UCFVWFgdD99gJLOt6BW77
+         oXj6E96l0DF1oFOKkz8oPIx2KVMi+1yzMdfGMpVRo6dCXidZbLV4zHvrwhiTpJ80onOb
+         q39A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=jDdg1OwF0FAhl89N9DnPSHZNHtzrEJIzfPoyVuGv+78=;
+        b=Wg461Osf5/9SW7bWgNY55GR8NfMzcOevqD2MOvdKWjBjaYq1c05tWlXHaVjsPZ2+Oe
+         XgAhNuVoQ/sV8P3M/QM3RGSL9jo/QKWx330AI4dLfoiM9730dupE5bxueUWUtANYKesH
+         WBMKiqqB9oIYtRrDurFavB/L+QkKPCLvXUsHADyYj3XsHo0GPKDtj/chatNg9XBvA05U
+         9bw6Mf2Lhjum0WlnJbMLsRw7tIySG1j6wMSukLEeBuyZ9rgG447tSr+j/z+M4oXzTnnP
+         pTO3zK+42rKMKwfwepYT+9XPRyvK7KOpqZzXH+VRcbfTtMSD8P4zEJndvCMOPLRht0Mu
+         IjhA==
+X-Gm-Message-State: APjAAAVahfECM3s0sYSj6A3S1wtiJFR7yAiw7jeLsnwm2Px7hll1UqS3
+        OaufxP2aqY/XY7VL6AWSgTCCJQ==
+X-Google-Smtp-Source: APXvYqxg8k7T+sG/qb4J+4RL4O/uO7OVHc+0v4sMYS2wFnS6GZbj06GAxSZ4+jmaEw+VTfJLuCeQSQ==
+X-Received: by 2002:a17:90a:30a1:: with SMTP id h30mr33597503pjb.14.1559599768218;
+        Mon, 03 Jun 2019 15:09:28 -0700 (PDT)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.googlemail.com with ESMTPSA id t7sm13213708pjq.20.2019.06.03.15.09.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Jun 2019 15:09:27 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>
+Cc:     devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: meson: add dwmac-3.70a to ethmac compatible list
+In-Reply-To: <CAFBinCCKA-15sFwyXpoxmqw5b4=6j1t-fdrHM7CoAojqN+ZGzQ@mail.gmail.com>
+References: <20190524130817.18920-1-jbrunet@baylibre.com> <CAFBinCCKA-15sFwyXpoxmqw5b4=6j1t-fdrHM7CoAojqN+ZGzQ@mail.gmail.com>
+Date:   Mon, 03 Jun 2019 15:09:27 -0700
+Message-ID: <7h4l56jp7s.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  3 Jun 2019 15:57:47 +0100
-Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
+Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
 
-> +/**
-> + * struct iommu_fault_page_request - Page Request data
-> + * @flags: encodes whether the corresponding fields are valid and
-> whether this
-> + *         is the last page in group (IOMMU_FAULT_PAGE_REQUEST_*
-> values)
-> + * @pasid: Process Address Space ID
-> + * @grpid: Page Request Group Index
-> + * @perm: requested page permissions (IOMMU_FAULT_PERM_* values)
-> + * @addr: page address
-> + * @private_data: device-specific private information
-> + */
-> +struct iommu_fault_page_request {
-> +#define IOMMU_FAULT_PAGE_REQUEST_PASID_VALID	(1 << 0)
-> +#define IOMMU_FAULT_PAGE_REQUEST_LAST_PAGE	(1 << 1)
-> +#define IOMMU_FAULT_PAGE_REQUEST_PRIV_DATA	(1 << 2)
-> +	__u32	flags;
-> +	__u32	pasid;
-> +	__u32	grpid;
-> +	__u32	perm;
-> +	__u64	addr;
-> +	__u64	private_data[2];
-> +};
-> +
+> Hi Jerome,
+>
+> On Fri, May 24, 2019 at 3:08 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+>>
+>> After discussing with Amlogic, the Synopsys GMAC version used by
+>> the gx and axg family is the 3.70a. Set this is in DT
+>>
+>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Just a thought, for non-identity G-H PASID management. We could pass on
-guest PASID in PRQ to save a lookup in QEMU. In this case, QEMU
-allocate a GPASID for vIOMMU then a host PASID for pIOMMU. QEMU has a
-G->H lookup. When PRQ comes in to the pIOMMU with HPASID, IOMMU driver
-can retrieve GPASID from the bind data then report to the guest via
-VFIO. In this case QEMU does not need to do a H->G PASID lookup.
-
-Should we add a gpasid field here? or we can add a flag and field
-later, up to you.
+Queued for v5.3, w/Martin's tag,
 
 Thanks,
 
-Jacob
+Kevin
