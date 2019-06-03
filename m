@@ -2,80 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B26EC3317E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:49:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 758E233182
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:51:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728853AbfFCNtR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 09:49:17 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:48875 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728594AbfFCNtQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 09:49:16 -0400
-X-Originating-IP: 90.88.144.139
-Received: from localhost (aaubervilliers-681-1-24-139.w90-88.abo.wanadoo.fr [90.88.144.139])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 6670A1BF205;
-        Mon,  3 Jun 2019 13:49:08 +0000 (UTC)
-Date:   Mon, 3 Jun 2019 15:49:07 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bshah@mykolab.com, Vasily Khoruzhick <anarsoul@gmail.com>,
-        powerpan@qq.com, michael@amarulasolutions.com,
-        linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v10 09/11] drm/sun4i: sun6i_mipi_dsi: Add VCC-DSI
- regulator support
-Message-ID: <20190603134907.lh5rdpucbrzrsdps@flea>
-References: <20190520090318.27570-1-jagan@amarulasolutions.com>
- <20190520090318.27570-10-jagan@amarulasolutions.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2trpzmkxqvxmxm5n"
-Content-Disposition: inline
-In-Reply-To: <20190520090318.27570-10-jagan@amarulasolutions.com>
-User-Agent: NeoMutt/20180716
+        id S1728589AbfFCNu5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 09:50:57 -0400
+Received: from fglinks.com.br ([187.191.113.207]:44923 "EHLO topdialog.top"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727904AbfFCNu5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 09:50:57 -0400
+X-Greylist: delayed 21352 seconds by postgrey-1.27 at vger.kernel.org; Mon, 03 Jun 2019 09:50:56 EDT
+To:     linux-kernel@vger.kernel.org
+From:   Martin Winkler <info@topdialog.top>
+Subject: Nachricht
+Date:   Mon, 3 Jun 2019 13:49:48 +0000
+Message-ID: <20190603_134948_041568.info@topdialog.top>
+X-Mailer: WEBMAIL
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Sehr geehrte Damen und Herren,
 
---2trpzmkxqvxmxm5n
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+nach unserem Besuch Ihrer Homepage möchten wir Ihnen ein Angebot von Produkten vorstellen, das Ihnen ermöglichen wird, den Verkauf Ihrer Produkte sowie Dienstleistungen deutlich zu erhöhen.
 
-On Mon, May 20, 2019 at 02:33:16PM +0530, Jagan Teki wrote:
-> Allwinner MIPI DSI controllers are supplied with SoC
-> DSI power rails via VCC-DSI pin.
->
-> Add support for this supply pin by adding voltage
-> regulator handling code to MIPI DSI driver.
->
-> Tested-by: Merlijn Wajer <merlijn@wizzup.org>
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Die Datenbanken der Firmen sind in für Sie interessante und relevante Zielgruppen untergliedert.
 
-This creates a lot of warnings at boot time on my board this is
-missing vcc-dsi-supply.
-
-Maxime
+Die Firmenangaben beinhalten: Name der Firma, Ansprechpartner, E-mail Adresse, Tel. + Fax-Nr., PLZ, Ort, Straße etc.
 
 --
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+1. Gesamtpaket 2019 DE 1 Mio. Firmenadressen ( 1 457 620 ) - 190 EUR ( bis zum 03.06.2019 )
+2. Gesamtpaket 2019 DE,AT,CH ( 1 747 921 ) - 240 EUR ( bis zum 03.06.2019 )
+--
 
---2trpzmkxqvxmxm5n
-Content-Type: application/pgp-signature; name="signature.asc"
+Die Verwendungsmöglichkeiten der Datenbanken sind praktisch unbegrenzt und Sie können durch Verwendung der von uns entwickelten
+Programme des personalisierten Versendens von Angeboten u.ä. mittels E-mailing bzw. Fax effektive und sichere Werbekampagnen damit durchführen.
 
------BEGIN PGP SIGNATURE-----
+Bitte informieren Sie sich über die weiteren Details einmal unverbindlich auf unseren Webseiten:
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXPUlUwAKCRDj7w1vZxhR
-xSZ5AP43IgKaIr/p5/Gjo6oF9Ue3I+oWwJZbLyNFgh2oN9mw1QEA6PQIqgMXkKM4
-cIW0qgxT/pqGVx3/w7T2Q9HObKfCpgI=
-=aqhG
------END PGP SIGNATURE-----
+http://www.topdialog.net/?p=1
 
---2trpzmkxqvxmxm5n--
+Mit freundlichen Grüßen
+Martin Winkler
+
