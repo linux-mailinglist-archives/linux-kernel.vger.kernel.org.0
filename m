@@ -2,80 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E361F326C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 04:48:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77B85326C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 04:49:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbfFCCsi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Jun 2019 22:48:38 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42796 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbfFCCsi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Jun 2019 22:48:38 -0400
-Received: by mail-lj1-f194.google.com with SMTP id t28so3561119lje.9;
-        Sun, 02 Jun 2019 19:48:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=C39z48dT4cw82rVIn1K+CbAu/jegU5y+sxR7gF6uO+I=;
-        b=urIYmDURC0bvf3Ucz7YsBrIWg5eMQIponz+Pxkb/eV9piukxxId/2OWfuKkGH2hkKA
-         r/VBNM5WVI0OxTtlbhbO/t6rspN3eb76pxRhHICiMxRIEdmOfi8nQTfK7ZUULWFw7oaL
-         75wnDH3wxFSfm4QBfscKXjAFxysb/VPBhZZNpO6L1n1vksX785ldOR+Zrb6fGut2XLXt
-         wuwkWKdeydqT6p5WHeBWdNZU++DQ7hDfsu1eNo/0GCJQpRqh0dhSfeBDvLooE/AnyQng
-         8vVN5PIwQt0+Cqq1VTKYAqG5miD8XWcHXi3E8BMCPqwukUqGJ+ccUaVwXDm8pN/Wt1LI
-         Xwkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=C39z48dT4cw82rVIn1K+CbAu/jegU5y+sxR7gF6uO+I=;
-        b=TdOgFk6CPsPTuL6YgvM4gI8J9auhSU+W8QDfsZTXBwI1me4c17ZScO6RPPs/1hy0Q5
-         dwyuMLeTP7HN1vz6JT6mZYgcEvbUnZBslou2ovlRkU3g5IloNzdfmokgOe+208ZyOUls
-         tpr+R9sCGIet26OVaU4zF2RXqbOWLArJwZA3X9W34Fi4qyMW0T1Cxxt2lZM7eZ+d/qnN
-         tzdlRbF7BSZYwYdonV1Ng3A+OfQCC2JwGpdUKDeX4cjrCfLDgYc3UGDssXY689PA/Dz9
-         vM9xqoGbRz11XrX7tn+HAau+soXX/Ovnunn/RrlojHPDUxV6ooX1PVqTaPWtim/gZc1H
-         KNUA==
-X-Gm-Message-State: APjAAAWW16j+IEKJ7qJUu/bky1NL/ARF4GzvY28OuyMp5zoYgwjwMI7m
-        TgdZQ9zZeTWgHHh+4MevNH2oDbTXmlnuPzGdOJo=
-X-Google-Smtp-Source: APXvYqxAyGdiaZ+w+cYB8umtQAviM0JQI2N2QJGsGxd55Saz01+W66hBjgtHwFxEDz5PS3hi/3bkmn3WhI8AIMTuC/U=
-X-Received: by 2002:a2e:9185:: with SMTP id f5mr9457522ljg.51.1559530115662;
- Sun, 02 Jun 2019 19:48:35 -0700 (PDT)
+        id S1726998AbfFCCtM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Jun 2019 22:49:12 -0400
+Received: from smtp2.provo.novell.com ([137.65.250.81]:47830 "EHLO
+        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbfFCCtL (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Sun, 2 Jun 2019 22:49:11 -0400
+Received: from linux-8mug (prva10-snat226-2.provo.novell.com [137.65.226.36])
+        by smtp2.provo.novell.com with ESMTP (TLS encrypted); Sun, 02 Jun 2019 20:49:02 -0600
+Date:   Mon, 3 Jun 2019 10:48:50 +0800
+From:   Chester Lin <clin@suse.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     rjw@rjwysocki.net, lenb@kernel.org, jlee@suse.com, mhocko@suse.com,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] ACPI / device_sysfs: Add eject show attr to monitor
+ eject status
+Message-ID: <20190603024850.GA664@linux-8mug>
+References: <20190531065642.13254-1-clin@suse.com>
+ <20190531065642.13254-4-clin@suse.com>
+ <20190531133859.GA18231@kroah.com>
 MIME-Version: 1.0
-References: <20190603004820.36247-1-Anson.Huang@nxp.com>
-In-Reply-To: <20190603004820.36247-1-Anson.Huang@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Sun, 2 Jun 2019 23:48:33 -0300
-Message-ID: <CAOMZO5B_1HTg6i2Aybv1Hdm4jXg=1R7FRbOnkAXjjG0mk3RZ=A@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: imx8mm: Fix build warnings
-To:     Yongcai Huang <Anson.Huang@nxp.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Ping Bai <ping.bai@nxp.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <Linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190531133859.GA18231@kroah.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anson,
+On Fri, May 31, 2019 at 06:38:59AM -0700, Greg KH wrote:
+> On Fri, May 31, 2019 at 02:56:42PM +0800, Chester Lin wrote:
+> > An acpi_eject_show attribute for users to monitor current status because
+> > sometimes it might take time to finish an ejection so we need to know
+> > whether it is still in progress or not.
+> > 
+> > Signed-off-by: Chester Lin <clin@suse.com>
+> > ---
+> >  drivers/acpi/device_sysfs.c | 20 +++++++++++++++++++-
+> >  drivers/acpi/internal.h     |  1 +
+> >  drivers/acpi/scan.c         | 27 +++++++++++++++++++++++++++
+> >  3 files changed, 47 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/acpi/device_sysfs.c b/drivers/acpi/device_sysfs.c
+> > index 78c2653bf020..70b22eec6bbc 100644
+> > --- a/drivers/acpi/device_sysfs.c
+> > +++ b/drivers/acpi/device_sysfs.c
+> > @@ -403,7 +403,25 @@ acpi_eject_store(struct device *d, struct device_attribute *attr,
+> >  	return status == AE_NO_MEMORY ? -ENOMEM : -EAGAIN;
+> >  }
+> >  
+> > -static DEVICE_ATTR(eject, 0200, NULL, acpi_eject_store);
+> > +static ssize_t acpi_eject_show(struct device *d,
+> > +				struct device_attribute *attr, char *buf)
+> > +{
+> > +	struct acpi_device *acpi_device = to_acpi_device(d);
+> > +	acpi_object_type not_used;
+> > +	acpi_status status;
+> > +
+> > +	if ((!acpi_device->handler || !acpi_device->handler->hotplug.enabled)
+> > +	    && !acpi_device->driver)
+> > +		return -ENODEV;
+> > +
+> > +	status = acpi_get_type(acpi_device->handle, &not_used);
+> > +	if (ACPI_FAILURE(status) || !acpi_device->flags.ejectable)
+> > +		return -ENODEV;
+> > +
+> > +	return sprintf(buf, "%s\n", acpi_eject_status_string(acpi_device));
+> > +}
+> > +
+> > +static DEVICE_ATTR(eject, 0644, acpi_eject_show, acpi_eject_store);
+> 
+> DEVICE_ATTR_RW()?
+> 
+> And you need to document the new sysfs file in Documentation/ABI/
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-On Sun, Jun 2, 2019 at 9:46 PM <Anson.Huang@nxp.com> wrote:
->
-> From: Anson Huang <Anson.Huang@nxp.com>
->
-> This patch fixes below build warning with "W=1":
+Hi Greg,
 
-I have already sent patches to fix these warnings.
+Thank you for the reminder and I will fix these two in v2.
+
+Regards,
+Chester
