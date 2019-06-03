@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4695332FC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 14:35:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 824F532FB1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 14:32:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726991AbfFCMfy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 08:35:54 -0400
-Received: from mga14.intel.com ([192.55.52.115]:64545 "EHLO mga14.intel.com"
+        id S1727183AbfFCMc1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 08:32:27 -0400
+Received: from mga11.intel.com ([192.55.52.93]:60756 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726137AbfFCMfx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 08:35:53 -0400
+        id S1726270AbfFCMc0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 08:32:26 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 05:35:53 -0700
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 05:32:26 -0700
 X-ExtLoop1: 1
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.198]) ([10.237.72.198])
-  by orsmga005.jf.intel.com with ESMTP; 03 Jun 2019 05:35:49 -0700
-Subject: Re: [PATCH 4/9] mmc: sdhci-sprd: Implement the
- get_max_timeout_count() interface
-To:     Baolin Wang <baolin.wang@linaro.org>, ulf.hansson@linaro.org,
-        zhang.lyra@gmail.com, orsonzhai@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, arnd@arndb.de, olof@lixom.net
-Cc:     vincent.guittot@linaro.org, arm@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <cover.1558346019.git.baolin.wang@linaro.org>
- <ae6e23d4de6bb25cd697412f1402036d5ecc9843.1558346019.git.baolin.wang@linaro.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <ed5bdd08-7227-4d55-23de-e78e15d315c7@intel.com>
-Date:   Mon, 3 Jun 2019 15:34:38 +0300
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
+  by orsmga007.jf.intel.com with ESMTP; 03 Jun 2019 05:32:23 -0700
+Subject: Re: [PATCH v11 2/2] usb: xhci: Add Clear_TT_Buffer
+To:     Jim Lin <jilin@nvidia.com>, gregkh@linuxfoundation.org,
+        mathias.nyman@intel.com, stern@rowland.harvard.edu,
+        kai.heng.feng@canonical.com, drinkcat@chromium.org,
+        Thinh.Nguyen@synopsys.com, nsaenzjulienne@suse.de,
+        jflat@chromium.org, malat@debian.org
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1559559224-9845-1-git-send-email-jilin@nvidia.com>
+ <1559559224-9845-3-git-send-email-jilin@nvidia.com>
+From:   Mathias Nyman <mathias.nyman@linux.intel.com>
+Message-ID: <10d35c94-5938-aa47-0f12-7ce1143caa41@linux.intel.com>
+Date:   Mon, 3 Jun 2019 15:35:09 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <ae6e23d4de6bb25cd697412f1402036d5ecc9843.1558346019.git.baolin.wang@linaro.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1559559224-9845-3-git-send-email-jilin@nvidia.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -45,45 +42,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/05/19 1:11 PM, Baolin Wang wrote:
-> Implement the get_max_timeout_count() interface to set the Spredtrum SD
-> host controller actual maximum timeout count.
+On 3.6.2019 13.53, Jim Lin wrote:
+> USB 2.0 specification chapter 11.17.5 says "as part of endpoint halt
+> processing for full-/low-speed endpoints connected via a TT, the host
+> software must use the Clear_TT_Buffer request to the TT to ensure
+> that the buffer is not in the busy state".
 > 
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-
-Seems surprising that there isn't a custom ->set_timeout() as well.
-Nevertheless:
-
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-
+> In our case, a full-speed speaker (ConferenceCam) is behind a high-
+> speed hub (ConferenceCam Connect), sometimes once we get STALL on a
+> request we may continue to get STALL with the folllowing requests,
+> like Set_Interface.
+> 
+> Here we invoke usb_hub_clear_tt_buffer() to send Clear_TT_Buffer
+> request to the hub of the device for the following Set_Interface
+> requests to the device to get ACK successfully.
+> 
+> Signed-off-by: Jim Lin <jilin@nvidia.com>
 > ---
->  drivers/mmc/host/sdhci-sprd.c |    7 +++++++
->  1 file changed, 7 insertions(+)
+> v2: xhci_clear_tt_buffer_complete: add static, shorter indentation
+>      , remove its claiming in xhci.h
+> v3: Add description for clearing_tt (xhci.h)
+> v4: Remove clearing_tt flag because hub_tt_work has hub->tt.lock
+>      to protect for Clear_TT_Buffer to be run serially.
+>      Remove xhci_clear_tt_buffer_complete as it's not necessary.
+>      Same reason as the above.
+>      Extend usb_hub_clear_tt_buffer parameter
+> v5: Not extending usb_hub_clear_tt_buffer parameter
+>      Add description.
+> v6: Remove unused parameter slot_id from xhci_clear_hub_tt_buffer
+> v7: Add devaddr field in "struct usb_device"
+> v8: split as two patches
+> v9: no change flag
+> v10: Add EP_CLEARING_TT flag
+> v11: Add spin_lock/unlock in xhci_clear_tt_buffer_complete
 > 
-> diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
-> index 31ba7d6..d91281d 100644
-> --- a/drivers/mmc/host/sdhci-sprd.c
-> +++ b/drivers/mmc/host/sdhci-sprd.c
-> @@ -285,6 +285,12 @@ static void sdhci_sprd_hw_reset(struct sdhci_host *host)
->  	usleep_range(300, 500);
->  }
->  
-> +static unsigned int sdhci_sprd_get_max_timeout_count(struct sdhci_host *host)
-> +{
-> +	/* The Spredtrum controller actual maximum timeout count is 1 << 31 */
-> +	return 1 << 31;
-> +}
-> +
->  static struct sdhci_ops sdhci_sprd_ops = {
->  	.read_l = sdhci_sprd_readl,
->  	.write_l = sdhci_sprd_writel,
-> @@ -296,6 +302,7 @@ static void sdhci_sprd_hw_reset(struct sdhci_host *host)
->  	.reset = sdhci_reset,
->  	.set_uhs_signaling = sdhci_sprd_set_uhs_signaling,
->  	.hw_reset = sdhci_sprd_hw_reset,
-> +	.get_max_timeout_count = sdhci_sprd_get_max_timeout_count,
->  };
->  
->  static void sdhci_sprd_request(struct mmc_host *mmc, struct mmc_request *mrq)
 > 
+>   drivers/usb/host/xhci-ring.c | 27 ++++++++++++++++++++++++++-
+>   drivers/usb/host/xhci.c      | 21 +++++++++++++++++++++
+>   drivers/usb/host/xhci.h      |  5 +++++
+>   3 files changed, 52 insertions(+), 1 deletion(-)
+> 
+
+xhci parts look good to me,
+
+In case Greg wants to pick up both the core changes (1/2) and
+the xhci changes (2/2) at the same time:
+
+Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+
 
