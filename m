@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 033E632BF4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:14:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0343132BDD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:14:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728781AbfFCJNO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 05:13:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33280 "EHLO mail.kernel.org"
+        id S1728595AbfFCJMK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 05:12:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728764AbfFCJNI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 05:13:08 -0400
+        id S1728061AbfFCJMI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 05:12:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E5CC25B40;
-        Mon,  3 Jun 2019 09:13:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC50D27E5C;
+        Mon,  3 Jun 2019 09:12:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559553188;
-        bh=PR3pEMZSH3KFbln8alkYbGUX03PjFYjijAN0mROfEMo=;
+        s=default; t=1559553128;
+        bh=MivKhZFqyVucaP+giaGMPW53cagxJeI36GhOt82tA+E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CePBlhZGEP6VKtyrRXEwLDZGw7mcF4uX+7t1t6dgDPKyqDJhc6JmQX1TW+YWYEtk5
-         yF5ELLsryoxUVJooMtfT6BSXwKWVqGGCiGCvuhg8dcr3pc0igXh4BLeYA4p7NWaym9
-         hbmgtLsH3X2pirc1rqPl8+7CKEJORqn81L9/Wxuo=
+        b=DkNtJuwk7f7LnHVvn5QigPj9kX9MUNYv989ArGYwXOV03dmGTPl8RUTi0u4QEWE0L
+         GwRY6jt+X22CaXn+tbDW48feu4oAmos+Wthgx90EW665I0L1ZEu8yl/wPONaWsaXe/
+         6h3YyVAMu3pdXPWhKNw+b22qvAW4X5McHfyqUDUk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vlad Buslov <vladbu@mellanox.com>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.1 17/40] net: sched: dont use tc_action->order during action dump
-Date:   Mon,  3 Jun 2019 11:09:10 +0200
-Message-Id: <20190603090523.682667101@linuxfoundation.org>
+        stable@vger.kernel.org, Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 5.0 23/36] net/mlx5e: Disable rxhash when CQE compress is enabled
+Date:   Mon,  3 Jun 2019 11:09:11 +0200
+Message-Id: <20190603090522.514888806@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190603090522.617635820@linuxfoundation.org>
-References: <20190603090522.617635820@linuxfoundation.org>
+In-Reply-To: <20190603090520.998342694@linuxfoundation.org>
+References: <20190603090520.998342694@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,55 +42,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vlad Buslov <vladbu@mellanox.com>
+From: Saeed Mahameed <saeedm@mellanox.com>
 
-[ Upstream commit 4097e9d250fb17958c1d9b94538386edd3f20144 ]
+[ Upstream commit c0194e2d0ef0e5ce5e21a35640d23a706827ae28 ]
 
-Function tcf_action_dump() relies on tc_action->order field when starting
-nested nla to send action data to userspace. This approach breaks in
-several cases:
+When CQE compression is enabled (Multi-host systems), compressed CQEs
+might arrive to the driver rx, compressed CQEs don't have a valid hash
+offload and the driver already reports a hash value of 0 and invalid hash
+type on the skb for compressed CQEs, but this is not good enough.
 
-- When multiple filters point to same shared action, tc_action->order field
-  is overwritten each time it is attached to filter. This causes filter
-  dump to output action with incorrect attribute for all filters that have
-  the action in different position (different order) from the last set
-  tc_action->order value.
+On a congested PCIe, where CQE compression will kick in aggressively,
+gro will deliver lots of out of order packets due to the invalid hash
+and this might cause a serious performance drop.
 
-- When action data is displayed using tc action API (RTM_GETACTION), action
-  order is overwritten by tca_action_gd() according to its position in
-  resulting array of nl attributes, which will break filter dump for all
-  filters attached to that shared action that expect it to have different
-  order value.
+The only valid solution, is to disable rxhash offload at all when CQE
+compression is favorable (Multi-host systems).
 
-Don't rely on tc_action->order when dumping actions. Set nla according to
-action position in resulting array of actions instead.
-
-Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
-Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 7219ab34f184 ("net/mlx5e: CQE compression")
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/act_api.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/net/sched/act_api.c
-+++ b/net/sched/act_api.c
-@@ -800,7 +800,7 @@ int tcf_action_dump(struct sk_buff *skb,
- 
- 	for (i = 0; i < TCA_ACT_MAX_PRIO && actions[i]; i++) {
- 		a = actions[i];
--		nest = nla_nest_start(skb, a->order);
-+		nest = nla_nest_start(skb, i + 1);
- 		if (nest == NULL)
- 			goto nla_put_failure;
- 		err = tcf_action_dump_1(skb, a, bind, ref);
-@@ -1300,7 +1300,6 @@ tca_action_gd(struct net *net, struct nl
- 			ret = PTR_ERR(act);
- 			goto err;
- 		}
--		act->order = i;
- 		attr_size += tcf_action_fill_size(act);
- 		actions[i - 1] = act;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+@@ -3789,6 +3789,12 @@ static netdev_features_t mlx5e_fix_featu
+ 			netdev_warn(netdev, "Disabling LRO, not supported in legacy RQ\n");
  	}
+ 
++	if (MLX5E_GET_PFLAG(params, MLX5E_PFLAG_RX_CQE_COMPRESS)) {
++		features &= ~NETIF_F_RXHASH;
++		if (netdev->features & NETIF_F_RXHASH)
++			netdev_warn(netdev, "Disabling rxhash, not supported when CQE compress is active\n");
++	}
++
+ 	mutex_unlock(&priv->state_lock);
+ 
+ 	return features;
+@@ -3915,6 +3921,9 @@ int mlx5e_hwstamp_set(struct mlx5e_priv
+ 	memcpy(&priv->tstamp, &config, sizeof(config));
+ 	mutex_unlock(&priv->state_lock);
+ 
++	/* might need to fix some features */
++	netdev_update_features(priv->netdev);
++
+ 	return copy_to_user(ifr->ifr_data, &config,
+ 			    sizeof(config)) ? -EFAULT : 0;
+ }
+@@ -4744,6 +4753,10 @@ static void mlx5e_build_nic_netdev(struc
+ 	if (!priv->channels.params.scatter_fcs_en)
+ 		netdev->features  &= ~NETIF_F_RXFCS;
+ 
++	/* prefere CQE compression over rxhash */
++	if (MLX5E_GET_PFLAG(&priv->channels.params, MLX5E_PFLAG_RX_CQE_COMPRESS))
++		netdev->features &= ~NETIF_F_RXHASH;
++
+ #define FT_CAP(f) MLX5_CAP_FLOWTABLE(mdev, flow_table_properties_nic_receive.f)
+ 	if (FT_CAP(flow_modify_en) &&
+ 	    FT_CAP(modify_root) &&
 
 
