@@ -2,60 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 417DC33A8D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:00:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56C8533AAB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:04:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726656AbfFCWAT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 18:00:19 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:35948 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbfFCWAT (ORCPT
+        id S1726786AbfFCWEC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 18:04:02 -0400
+Received: from mail-it1-f198.google.com ([209.85.166.198]:40978 "EHLO
+        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726382AbfFCWEB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 18:00:19 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id A6E78133E98DA;
-        Mon,  3 Jun 2019 15:00:18 -0700 (PDT)
-Date:   Mon, 03 Jun 2019 15:00:18 -0700 (PDT)
-Message-Id: <20190603.150018.656008041790620010.davem@davemloft.net>
-To:     sean.wang@mediatek.com
-Cc:     john@phrozen.org, nbd@openwrt.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH net-next v1 0/6] Add MT7629 ethernet support
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1559347395-14058-1-git-send-email-sean.wang@mediatek.com>
-References: <1559347395-14058-1-git-send-email-sean.wang@mediatek.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 03 Jun 2019 15:00:18 -0700 (PDT)
+        Mon, 3 Jun 2019 18:04:01 -0400
+Received: by mail-it1-f198.google.com with SMTP id g142so8310078ita.6
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 15:04:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=J4fvUgW1EwHf5GdkMvLmBkbktAv6wzecd5S4Jz43ikQ=;
+        b=cSuYXy/PAXfhriMFHaNGjTNDFrFsSSR5mYF9r7ll4wLwWfsdmKIzHqigtWZdj5bW4q
+         v8H5/0pNS8nNyZ8PWJzvbU3WS7Il79wVXixqdxDmVLVHqMW4yRi0AhnL09edLGI5gCe1
+         u57XsBI92s7h6AsR5tTxDMH2Ro1nNPzqxNCtszWuhU2JT8TTjsFnhsBbX/dBKnGL7eJG
+         LQxo3QNrczTbNo9oDdd/g4CLM5UDeE7G5W4VkoTFR0UsiyxERC6gQXI1rZSs1WSWopbc
+         JAm2BLtAAJlBmmDQoj1zkjC5rRa5luoLuYqCjocpO5nOoX6Km+AcP3s2HDhgDeKMQuej
+         t5wQ==
+X-Gm-Message-State: APjAAAUR+28qvXjkStX5QPXV/4f39uIb17EKevdAz2L75xka2gqC5sv+
+        5mpdZPiGKKXS5e8C8HRuL+8EFqqJvedGyYUm10vprYgbGcgY
+X-Google-Smtp-Source: APXvYqy092dyuRmUAcZWsDzruOze1nu2JQlB3MegZ3Kb0WH/yI/h42We3X9lAKWA1LcM4A9vfuDNs1zplvdSKP5p/7RrqdxuebqJ
+MIME-Version: 1.0
+X-Received: by 2002:a24:3ce:: with SMTP id e197mr19185899ite.143.1559599440698;
+ Mon, 03 Jun 2019 15:04:00 -0700 (PDT)
+Date:   Mon, 03 Jun 2019 15:04:00 -0700
+In-Reply-To: <000000000000fa91e1058a358cd5@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a7a51a058a728a6c@google.com>
+Subject: Re: possible deadlock in __do_page_fault (2)
+From:   syzbot <syzbot+606e524a3ca9617cf8c0@syzkaller.appspotmail.com>
+To:     adilger.kernel@dilger.ca, hdanton@sina.com, jmorris@namei.org,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, tytso@mit.edu, zohar@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: <sean.wang@mediatek.com>
-Date: Sat, 1 Jun 2019 08:03:09 +0800
+syzbot has bisected this bug to:
 
-> From: Sean Wang <sean.wang@mediatek.com>
-> 
-> MT7629 inlcudes two sets of SGMIIs used for external switch or PHY, and embedded
-> switch (ESW) via GDM1, GePHY via GMAC2, so add several patches in the series to
-> make the code base common with the old SoCs.
-> 
-> The patch 1, 3 and 6, adds extension for SGMII to have the hardware configured
-> for 1G, 2.5G and AN to fit the capability of the target PHY. In patch 6 could be
-> an example showing how to use these configurations for underlying PHY speed to
-> match up the link speed of the target PHY.
-> 
-> The patch 4 is used for automatically configured the hardware path from GMACx to
-> the target PHY by the description in deviceetree topology to determine the
-> proper value for the corresponding MUX.
-> 
-> The patch 2 and 5 is for the update for MT7629 including dt-binding document and
-> its driver.
+commit 69d61f577d147b396be0991b2ac6f65057f7d445
+Author: Mimi Zohar <zohar@linux.ibm.com>
+Date:   Wed Apr 3 21:47:46 2019 +0000
 
-Series applied.
+     ima: verify mprotect change is consistent with mmap policy
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16461c5aa00000
+start commit:   3c09c195 Add linux-next specific files for 20190531
+git tree:       linux-next
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=15461c5aa00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11461c5aa00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6cfb24468280cd5c
+dashboard link: https://syzkaller.appspot.com/bug?extid=606e524a3ca9617cf8c0
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10572ca6a00000
+
+Reported-by: syzbot+606e524a3ca9617cf8c0@syzkaller.appspotmail.com
+Fixes: 69d61f577d14 ("ima: verify mprotect change is consistent with mmap  
+policy")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
