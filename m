@@ -2,154 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B3A432F78
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 14:22:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D41232F74
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 14:21:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727997AbfFCMWF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 08:22:05 -0400
-Received: from mga17.intel.com ([192.55.52.151]:24308 "EHLO mga17.intel.com"
+        id S1727840AbfFCMVi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 08:21:38 -0400
+Received: from mout.web.de ([212.227.17.11]:55411 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726968AbfFCMWE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 08:22:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 05:22:03 -0700
-X-ExtLoop1: 1
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.198]) ([10.237.72.198])
-  by orsmga005.jf.intel.com with ESMTP; 03 Jun 2019 05:21:59 -0700
-Subject: Re: [PATCH 3/9] mmc: sdhci-sprd: Add optional gate clock support
-To:     Baolin Wang <baolin.wang@linaro.org>, ulf.hansson@linaro.org,
-        zhang.lyra@gmail.com, orsonzhai@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, arnd@arndb.de, olof@lixom.net
-Cc:     vincent.guittot@linaro.org, arm@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <cover.1558346019.git.baolin.wang@linaro.org>
- <16b895cf30c235dc656eeed5888069b6266ab5f8.1558346019.git.baolin.wang@linaro.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <2969091b-408d-c505-d406-ce4b4f0679e0@intel.com>
-Date:   Mon, 3 Jun 2019 15:20:48 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726379AbfFCMVi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 08:21:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1559564486;
+        bh=H+mYUcCUxLh+PaxmPpuNy/NUK3kvMoT8KgwI5OrJRH0=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=lh2B0LamfEDclMUyxIJw6kQ+/NNtsbJFM8n1xZtbiY3Vp4k8uienlblCXqMBwIhwz
+         8VS3gZ3OIcSB1A4mE3p/hie/ya1Ts7ab5xHGHvSCmnVbV8ODza2GuDJH2Pmp74b+tB
+         Nw/Tmh7Aj38nUk/KYOj5Byv0XcIy8i1pytZG2uV0=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from lab-pc08.sra.uni-hannover.de ([130.75.33.87]) by smtp.web.de
+ (mrweb102 [213.165.67.124]) with ESMTPSA (Nemesis) id
+ 0MK24P-1hWP3L1FS9-001SxR; Mon, 03 Jun 2019 14:21:26 +0200
+From:   =?UTF-8?q?Christian=20M=C3=BCller?= <muellerch-privat@web.de>
+To:     gregkh@linuxfoundation.org
+Cc:     johnfwhitmore@gmail.com, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, linux-kernel@i4.cs.fau.de,
+        felix.trommer@hotmail.de,
+        =?UTF-8?q?Christian=20M=C3=BCller?= <muellerch-privat@web.de>
+Subject: [PATCH 0/3] Fixing style errors in staging/drivers/rtl8192u
+Date:   Mon,  3 Jun 2019 14:21:01 +0200
+Message-Id: <20190603122104.2564-1-muellerch-privat@web.de>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <16b895cf30c235dc656eeed5888069b6266ab5f8.1558346019.git.baolin.wang@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:VPSFcTBh0Ipw6QYZ0N/RslXaVNL2v2bwzj2HYaZwVIFdP7fr9Qn
+ UDCcvVCRNAzcxLyxlMHcs7/J78/KIDlSALfG77AQNkLMUFB8DSO8EtpXDoxaV9bqFKFVLE1
+ E6s6VF/3+kJrpD5O4JaAt72tEoqePiDVLMnxC6P9LwYXvi8wtROg6SLfIr3Um+dhnEf0OUx
+ tBxFonv9MgbLFn9UPyv5Q==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:KTJZ7FqmO1k=:8f/TeISIdn+Z4R21lYXDRs
+ wEFNoc4wEnIYKaq0ALBY2sZ3MzwrDrGnvvQKXabAM5ehXe9hy6hlbWos/UxjryBo582lFZQ4Q
+ Sxo2T8g63yS84bhIol6kJBEY7Wv7iWRFYzoYtR14sqBcpfVf9fg6ufEU4L4r2m0Gz4fLI2L7+
+ b3jmPRQxZmnzNFDQLuBXNG8n9lik0gDntzMq6+Ehm3O/ZG96Bnu+cTydIRP7qOauJGbu6XJ9m
+ AA4swYrbd+zQIQhmEU6MduC4gCYCxIoPF2mXR5wK+XKWZE80B73n/E+OkRkAfuxce3hUJIqb3
+ CFaEU4pthiIMfRIufCCvjthpOlBN7BA/lUgllpTafsfKamoacHCK1D/TNjq+c7IZUQLAlyxUs
+ 3rt5xXxpJX6WZoTlyfQEQVhNeL75bbzaLeBgxcAjEakwYs7mb2XvAYBU7QnBuE59zemvD9f2y
+ wgfiM+143tiSZMCAhO0qI30xoFZD8jjjfKSCkNAAL9Ka9+h2Gem3JhlG8EmqlbLjiJ2LJGhe9
+ kMBgcBEZ3KeaTtubBdHwtyRZChoyssAua21Pa0oNpZ3LAlyTgcw1u9an0mDINgzoySExmHqGq
+ KfhxIei98y5JTOUlTjIcG+CROZNcgTrXuElAx/z7HN+0QUA/S1Hn5NxczsgFnNvtTt719KEjy
+ FoyPuhn8Eq+YLWJctjVGz4uRf+9aN65sdyNHFY/QRwl3Vw2uhn0mXQbVZ359udd2iDdouukq+
+ RvJkSbPAa9GiEuNy5h7XEZMMbEpHGzH4crwOZE+VWuK05+lsTlWYdP535nX0gCazT1wfqZ9IO
+ ipnjWzpwL5dVXuPqZ73vvNECrCeElZA1fCwTSU75ZMro9pk4NZKlzAF0CeYbDbcEtrhHQL0Wu
+ cLkYpKoSdD+wa6U9so2T1vHtmLwI6P+IuNR3RlCMce2TXzH0X6xfMtRVlXNdCWjFtDOWKxye0
+ Devw0xUML8wnqXFI3uYQZ9nYUIhnfm/Wt+/Pt01PPzsGS5GsJzi0O
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/05/19 1:11 PM, Baolin Wang wrote:
-> For the Spreadtrum SC9860 platform, we should enable another gate clock
-> '2x_enable' to make the SD host controller work well.
-> 
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+This series of patches fixes various style errors in the rtl8192u
+staging driver. These fixes contain reformatting of code comments,
+changing of indentations, cleaning up commented out code within the
+source-code and fixes for individual errors indicated by the checkpatch to=
+ol.
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Christian M=C3=BCller (1):
+  drivers/staging/rtl8192u: Fix of checkpatch-errors
 
-> ---
->  drivers/mmc/host/sdhci-sprd.c |   35 +++++++++++++++++++++++++++++------
->  1 file changed, 29 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
-> index e741491..31ba7d6 100644
-> --- a/drivers/mmc/host/sdhci-sprd.c
-> +++ b/drivers/mmc/host/sdhci-sprd.c
-> @@ -60,6 +60,7 @@ struct sdhci_sprd_host {
->  	u32 version;
->  	struct clk *clk_sdio;
->  	struct clk *clk_enable;
-> +	struct clk *clk_2x_enable;
->  	u32 base_rate;
->  	int flags; /* backup of host attribute */
->  };
-> @@ -364,6 +365,10 @@ static int sdhci_sprd_probe(struct platform_device *pdev)
->  	}
->  	sprd_host->clk_enable = clk;
->  
-> +	clk = devm_clk_get(&pdev->dev, "2x_enable");
-> +	if (!IS_ERR(clk))
-> +		sprd_host->clk_2x_enable = clk;
-> +
->  	ret = clk_prepare_enable(sprd_host->clk_sdio);
->  	if (ret)
->  		goto pltfm_free;
-> @@ -372,6 +377,10 @@ static int sdhci_sprd_probe(struct platform_device *pdev)
->  	if (ret)
->  		goto clk_disable;
->  
-> +	ret = clk_prepare_enable(sprd_host->clk_2x_enable);
-> +	if (ret)
-> +		goto clk_disable2;
-> +
->  	sdhci_sprd_init_config(host);
->  	host->version = sdhci_readw(host, SDHCI_HOST_VERSION);
->  	sprd_host->version = ((host->version & SDHCI_VENDOR_VER_MASK) >>
-> @@ -408,6 +417,9 @@ static int sdhci_sprd_probe(struct platform_device *pdev)
->  	pm_runtime_disable(&pdev->dev);
->  	pm_runtime_set_suspended(&pdev->dev);
->  
-> +	clk_disable_unprepare(sprd_host->clk_2x_enable);
-> +
-> +clk_disable2:
->  	clk_disable_unprepare(sprd_host->clk_enable);
->  
->  clk_disable:
-> @@ -427,6 +439,7 @@ static int sdhci_sprd_remove(struct platform_device *pdev)
->  	mmc_remove_host(mmc);
->  	clk_disable_unprepare(sprd_host->clk_sdio);
->  	clk_disable_unprepare(sprd_host->clk_enable);
-> +	clk_disable_unprepare(sprd_host->clk_2x_enable);
->  
->  	mmc_free_host(mmc);
->  
-> @@ -449,6 +462,7 @@ static int sdhci_sprd_runtime_suspend(struct device *dev)
->  
->  	clk_disable_unprepare(sprd_host->clk_sdio);
->  	clk_disable_unprepare(sprd_host->clk_enable);
-> +	clk_disable_unprepare(sprd_host->clk_2x_enable);
->  
->  	return 0;
->  }
-> @@ -459,19 +473,28 @@ static int sdhci_sprd_runtime_resume(struct device *dev)
->  	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
->  	int ret;
->  
-> -	ret = clk_prepare_enable(sprd_host->clk_enable);
-> +	ret = clk_prepare_enable(sprd_host->clk_2x_enable);
->  	if (ret)
->  		return ret;
->  
-> +	ret = clk_prepare_enable(sprd_host->clk_enable);
-> +	if (ret)
-> +		goto clk_2x_disable;
-> +
->  	ret = clk_prepare_enable(sprd_host->clk_sdio);
-> -	if (ret) {
-> -		clk_disable_unprepare(sprd_host->clk_enable);
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		goto clk_disable;
->  
->  	sdhci_runtime_resume_host(host);
-> -
->  	return 0;
-> +
-> +clk_disable:
-> +	clk_disable_unprepare(sprd_host->clk_enable);
-> +
-> +clk_2x_disable:
-> +	clk_disable_unprepare(sprd_host->clk_2x_enable);
-> +
-> +	return ret;
->  }
->  #endif
->  
-> 
+Felix Trommer (2):
+  drivers/staging/rtl8192u: Reformat comments
+  drivers/staging/rtl8192u: Remove comment-out code
+
+ drivers/staging/rtl8192u/ieee80211/dot11d.c   |   6 +-
+ drivers/staging/rtl8192u/ieee80211/dot11d.h   |   2 +-
+ .../staging/rtl8192u/ieee80211/ieee80211.h    | 311 +++---
+ .../rtl8192u/ieee80211/ieee80211_crypt.c      |   3 +-
+ .../rtl8192u/ieee80211/ieee80211_crypt.h      |  15 +-
+ .../rtl8192u/ieee80211/ieee80211_crypt_ccmp.c |   7 +-
+ .../rtl8192u/ieee80211/ieee80211_crypt_tkip.c |  13 +-
+ .../rtl8192u/ieee80211/ieee80211_crypt_wep.c  |   9 +-
+ .../rtl8192u/ieee80211/ieee80211_module.c     |   6 +-
+ .../staging/rtl8192u/ieee80211/ieee80211_rx.c | 973 ++++++++----------
+ .../rtl8192u/ieee80211/ieee80211_softmac.c    | 336 +++---
+ .../rtl8192u/ieee80211/ieee80211_softmac_wx.c |  21 +-
+ .../staging/rtl8192u/ieee80211/ieee80211_tx.c | 311 +++---
+ .../staging/rtl8192u/ieee80211/ieee80211_wx.c | 115 +--
+ .../staging/rtl8192u/ieee80211/rtl819x_BA.h   |   2 +-
+ .../rtl8192u/ieee80211/rtl819x_BAProc.c       | 169 +--
+ .../staging/rtl8192u/ieee80211/rtl819x_HT.h   | 111 +-
+ .../rtl8192u/ieee80211/rtl819x_HTProc.c       | 264 ++---
+ .../staging/rtl8192u/ieee80211/rtl819x_Qos.h  |  24 +-
+ .../rtl8192u/ieee80211/rtl819x_TSProc.c       | 110 +-
+ drivers/staging/rtl8192u/r8180_93cx6.c        |   3 +-
+ drivers/staging/rtl8192u/r8180_93cx6.h        |   4 +-
+ drivers/staging/rtl8192u/r8190_rtl8256.c      |  36 +-
+ drivers/staging/rtl8192u/r8192U.h             |  47 +-
+ drivers/staging/rtl8192u/r8192U_core.c        | 159 ++-
+ drivers/staging/rtl8192u/r8192U_dm.c          | 232 ++---
+ drivers/staging/rtl8192u/r8192U_dm.h          |  22 +-
+ drivers/staging/rtl8192u/r8192U_hw.h          | 192 ++--
+ drivers/staging/rtl8192u/r8192U_wx.c          |  17 +-
+ drivers/staging/rtl8192u/r819xU_cmdpkt.c      |  77 +-
+ drivers/staging/rtl8192u/r819xU_cmdpkt.h      |  14 +-
+ drivers/staging/rtl8192u/r819xU_firmware.c    |  12 +-
+ drivers/staging/rtl8192u/r819xU_phy.c         |  30 +-
+ drivers/staging/rtl8192u/r819xU_phy.h         |   4 +-
+ drivers/staging/rtl8192u/r819xU_phyreg.h      |   9 +-
+ 35 files changed, 1747 insertions(+), 1919 deletions(-)
+
+=2D-
+2.17.1
 
