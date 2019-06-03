@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A88B9338DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 21:05:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B575338CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 21:04:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727045AbfFCTFI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 15:05:08 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43461 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726136AbfFCTEP (ORCPT
+        id S1726849AbfFCTEX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 15:04:23 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:35858 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726776AbfFCTES (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 15:04:15 -0400
-Received: by mail-lj1-f195.google.com with SMTP id 16so3710131ljv.10;
-        Mon, 03 Jun 2019 12:04:13 -0700 (PDT)
+        Mon, 3 Jun 2019 15:04:18 -0400
+Received: by mail-lf1-f67.google.com with SMTP id q26so14465847lfc.3;
+        Mon, 03 Jun 2019 12:04:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ETNkw8fFUbaK1GsH9w3HEMnksKyWiZUE22AHo7ajX+U=;
-        b=CY8h8WmpWp2u0+cokTb39locVU2prxk6QwaH6+0+aw2cBoHKZvL5PEWfiu7JQs3Uo/
-         BsjCLJ2onfdmOrvDTXsmZuHwv8JY0zLOvZY1U2hFAh6cPKLAn3gTrfeN6XWswKhOJ+3M
-         wA+hV3ZR+dsDyh2dt7HsNP9jKQVb0qqjcq7l5xz+1WOEbItJvTJ80GQJw9h5kY6G2Z3Z
-         3kN3MPwV+Z+SDEkFsI7USdOMMwJcrh73g/7p9SNOfTkNBEbmMvwXgW1dJZYOV4jfGvKx
-         +Czzxg1yl/a4Qd1vNJCuEBLwzEnNa0qnJdTW+BL2mOk2qqc03r9d9OSxIsaQqgofAx4R
-         j6wg==
+        bh=a9tPoKh6v4/2G+YqR2rAKuMQIIR4hdO1ztimbmlKniY=;
+        b=ctz2j1CPsOaRHbcP3FCfLFeKnXv1Q+au7eLGREH7GC+Wt3xgU775ylu3EmR/1ws7FB
+         K2DVmU2k2MuTRFIHGEXM+skt8cFnvh57fdrkHqp1ntjTVR/BnogxucDM/4L+KbfuprEy
+         oVdikngLg+KDQ3ZFgWnIZrzm7nAfio00KB+FkwKO0KZg3u1eClV22hWx5z9y+fywKxwb
+         XQmoLU6S7oFLfVpcC8tczLJ9o77QdmI8FSCLGsor9Rul2hscjK9YQyueuleVSAVPJBIM
+         otqUYW+T1mgsVuTqSulLWlfneJl2+h7KzFq1jvdbO12buZGOVRe2dK62mMF+FZ3QPNuc
+         oSbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ETNkw8fFUbaK1GsH9w3HEMnksKyWiZUE22AHo7ajX+U=;
-        b=r2fs7V3DHng37x6R/fzv5jK/tc2xdTDpbnZ12ss/s702tyNjJzHhxC66Nj5qFlfutr
-         o0RUbjWXCyGICrNJfN7epngbS7XNpVfBRIOSGsHZCI/eV64NMWzk63O4j7me23r9TeJc
-         7x3AcmmOItsEgf/SFFqaNRCrmch72L9GdkFjQ18FnSb2or4fmEcCXN3+afqeJsooOd3q
-         A7CANTl/N1Ag1B2w5mh7MNpOhmMcHNbCUx9Q2JjKn/hO+FkSiG5Po7/TiPJnEgBseMun
-         3wodcIzxTDXIDKIj6HRiPbBDHzZ0nxNHGfZgNnCf0Rp1Rn6G+W7d/l4hfZxf4HaaRGzT
-         M1jg==
-X-Gm-Message-State: APjAAAXiH698FKPdJouu1WmMGJb8/qXe4An7AZhfsTpT8Pdet9I1q1kT
-        Jj4C8jGBABOO/SoFFZY4GDA=
-X-Google-Smtp-Source: APXvYqxQRsHEFoS0bcsLgzG562Q4RL+81J3KPPWi4gc2p7n5sDd7pPPiyXedMyERUe0wAZ9eUPKS1w==
-X-Received: by 2002:a2e:9d43:: with SMTP id y3mr13612103ljj.154.1559588653193;
-        Mon, 03 Jun 2019 12:04:13 -0700 (PDT)
+        bh=a9tPoKh6v4/2G+YqR2rAKuMQIIR4hdO1ztimbmlKniY=;
+        b=W0tTx/GqUmkPINGgeGLpjV7Zzul+g/nUnhnMDAjTgJ7imAwKsDlyXIb/AqCkoWjCda
+         MiT+wlq3P3S1JXeLX6wlXsNPcMXvnx1H23M+wQU8MixJMKv/P6bEkPr7jGhlu8ACyqwL
+         G1mUBDLnphF8hAar2ZG+eK8sIkYDRkrIepwWMBVKsIFz7AIrX6AmAcTMFNA5W/eJ/h/I
+         aECl/balMOiaplchpeALg0m8HpO2RdN+qJwb1q9RqyxkQpDfurHcNlUFWlR7veu6GmTV
+         /DJg5JpTUSy0WNpz2M6AZVqEWgXBwt4sm8IOYR8mq+VGdQ001wgHCpaXVErDenpzhsWu
+         U2ag==
+X-Gm-Message-State: APjAAAXG52RNvIYoWBdWHjpFritdJ67j3iLjYnxCQ0jdcLL1ezGpzruZ
+        4uQMSXcUbFXzbYuhNwpiVvI=
+X-Google-Smtp-Source: APXvYqxixX828rCbWc6NDvLD9nrlJyu6+Gr/f5AKQPDc72s7CPX9d1V1Uw9ToNaaV8OqYr7AUxp9fA==
+X-Received: by 2002:ac2:5324:: with SMTP id f4mr14529107lfh.156.1559588655130;
+        Mon, 03 Jun 2019 12:04:15 -0700 (PDT)
 Received: from localhost.localdomain ([94.29.35.141])
-        by smtp.gmail.com with ESMTPSA id l22sm2768805ljb.39.2019.06.03.12.04.11
+        by smtp.gmail.com with ESMTPSA id l22sm2768805ljb.39.2019.06.03.12.04.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Jun 2019 12:04:12 -0700 (PDT)
+        Mon, 03 Jun 2019 12:04:13 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         Joseph Lo <josephl@nvidia.com>,
@@ -52,9 +52,9 @@ To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>
 Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 03/10] clocksource/drivers/tegra: Reset hardware state on init
-Date:   Mon,  3 Jun 2019 21:59:41 +0300
-Message-Id: <20190603185948.30438-4-digetx@gmail.com>
+Subject: [PATCH v4 04/10] clocksource/drivers/tegra: Replace readl/writel with relaxed versions
+Date:   Mon,  3 Jun 2019 21:59:42 +0300
+Message-Id: <20190603185948.30438-5-digetx@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190603185948.30438-1-digetx@gmail.com>
 References: <20190603185948.30438-1-digetx@gmail.com>
@@ -65,28 +65,128 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reset timer's hardware state to ensure that initially it is in a
-predictable state.
+The readl/writel functions are inserting memory barrier to ensure that
+outstanding memory writes are completed, this results in L2 cache syncing
+being done on Tegra20 and Tegra30 which isn't a very cheap operation.
+Replace all readl/writel occurrences in the code with the relaxed versions
+since there is no need for the memory-access syncing.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clocksource/timer-tegra20.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clocksource/timer-tegra20.c | 35 +++++++++++++++--------------
+ 1 file changed, 18 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/clocksource/timer-tegra20.c b/drivers/clocksource/timer-tegra20.c
-index 57e7aa2b80a3..739f83fdb318 100644
+index 739f83fdb318..55e9b3e1fbeb 100644
 --- a/drivers/clocksource/timer-tegra20.c
 +++ b/drivers/clocksource/timer-tegra20.c
-@@ -132,6 +132,9 @@ static int tegra_timer_setup(unsigned int cpu)
+@@ -61,9 +61,9 @@ static int tegra_timer_set_next_event(unsigned long cycles,
+ {
+ 	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
+ 
+-	writel(TIMER_PTV_EN |
+-	       ((cycles > 1) ? (cycles - 1) : 0), /* n+1 scheme */
+-	       reg_base + TIMER_PTV);
++	writel_relaxed(TIMER_PTV_EN |
++		       ((cycles > 1) ? (cycles - 1) : 0), /* n+1 scheme */
++		       reg_base + TIMER_PTV);
+ 
+ 	return 0;
+ }
+@@ -72,7 +72,7 @@ static int tegra_timer_shutdown(struct clock_event_device *evt)
+ {
+ 	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
+ 
+-	writel(0, reg_base + TIMER_PTV);
++	writel_relaxed(0, reg_base + TIMER_PTV);
+ 
+ 	return 0;
+ }
+@@ -81,9 +81,9 @@ static int tegra_timer_set_periodic(struct clock_event_device *evt)
+ {
+ 	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
+ 
+-	writel(TIMER_PTV_EN | TIMER_PTV_PER |
+-	       ((timer_of_rate(to_timer_of(evt)) / HZ) - 1),
+-	       reg_base + TIMER_PTV);
++	writel_relaxed(TIMER_PTV_EN | TIMER_PTV_PER |
++		       ((timer_of_rate(to_timer_of(evt)) / HZ) - 1),
++		       reg_base + TIMER_PTV);
+ 
+ 	return 0;
+ }
+@@ -93,7 +93,7 @@ static irqreturn_t tegra_timer_isr(int irq, void *dev_id)
+ 	struct clock_event_device *evt = (struct clock_event_device *)dev_id;
+ 	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
+ 
+-	writel(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
++	writel_relaxed(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
+ 	evt->event_handler(evt);
+ 
+ 	return IRQ_HANDLED;
+@@ -103,12 +103,12 @@ static void tegra_timer_suspend(struct clock_event_device *evt)
+ {
+ 	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
+ 
+-	writel(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
++	writel_relaxed(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
+ }
+ 
+ static void tegra_timer_resume(struct clock_event_device *evt)
+ {
+-	writel(usec_config, timer_reg_base + TIMERUS_USEC_CFG);
++	writel_relaxed(usec_config, timer_reg_base + TIMERUS_USEC_CFG);
+ }
+ 
+ static DEFINE_PER_CPU(struct timer_of, tegra_to) = {
+@@ -132,8 +132,8 @@ static int tegra_timer_setup(unsigned int cpu)
  {
  	struct timer_of *to = per_cpu_ptr(&tegra_to, cpu);
  
-+	writel(0, timer_of_base(to) + TIMER_PTV);
-+	writel(TIMER_PCR_INTR_CLR, timer_of_base(to) + TIMER_PCR);
-+
+-	writel(0, timer_of_base(to) + TIMER_PTV);
+-	writel(TIMER_PCR_INTR_CLR, timer_of_base(to) + TIMER_PCR);
++	writel_relaxed(0, timer_of_base(to) + TIMER_PTV);
++	writel_relaxed(TIMER_PCR_INTR_CLR, timer_of_base(to) + TIMER_PCR);
+ 
  	irq_force_affinity(to->clkevt.irq, cpumask_of(cpu));
  	enable_irq(to->clkevt.irq);
+@@ -157,13 +157,13 @@ static int tegra_timer_stop(unsigned int cpu)
  
+ static u64 notrace tegra_read_sched_clock(void)
+ {
+-	return readl(timer_reg_base + TIMERUS_CNTR_1US);
++	return readl_relaxed(timer_reg_base + TIMERUS_CNTR_1US);
+ }
+ 
+ #ifdef CONFIG_ARM
+ static unsigned long tegra_delay_timer_read_counter_long(void)
+ {
+-	return readl(timer_reg_base + TIMERUS_CNTR_1US);
++	return readl_relaxed(timer_reg_base + TIMERUS_CNTR_1US);
+ }
+ 
+ static struct delay_timer tegra_delay_timer = {
+@@ -184,8 +184,9 @@ static struct timer_of suspend_rtc_to = {
+  */
+ static u64 tegra_rtc_read_ms(struct clocksource *cs)
+ {
+-	u32 ms = readl(timer_of_base(&suspend_rtc_to) + RTC_MILLISECONDS);
+-	u32 s = readl(timer_of_base(&suspend_rtc_to) + RTC_SHADOW_SECONDS);
++	void __iomem *reg_base = timer_of_base(&suspend_rtc_to);
++	u32 ms = readl_relaxed(reg_base + RTC_MILLISECONDS);
++	u32 s = readl_relaxed(reg_base + RTC_SHADOW_SECONDS);
+ 	return (u64)s * MSEC_PER_SEC + ms;
+ }
+ 
+@@ -270,7 +271,7 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20)
+ 		goto out;
+ 	}
+ 
+-	writel(usec_config, timer_reg_base + TIMERUS_USEC_CFG);
++	writel_relaxed(usec_config, timer_reg_base + TIMERUS_USEC_CFG);
+ 
+ 	for_each_possible_cpu(cpu) {
+ 		struct timer_of *cpu_to = per_cpu_ptr(&tegra_to, cpu);
 -- 
 2.21.0
 
