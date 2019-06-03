@@ -2,216 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2123933A7C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 23:58:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F57933A0D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 23:47:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726791AbfFCV6x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 17:58:53 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:36768 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726049AbfFCV6v (ORCPT
+        id S1726317AbfFCVq5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 17:46:57 -0400
+Received: from mail-it1-f200.google.com ([209.85.166.200]:33550 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726055AbfFCVq5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 17:58:51 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 09EB52639F4
-Subject: Re: [PATCH v2] platform/chrome: wilco_ec: Add version sysfs entries
-To:     Raul E Rangel <rrangel@chromium.org>, ncrews@chromium.org
-Cc:     linux-kernel@vger.kernel.org, Benson Leung <bleung@chromium.org>
-References: <20190603181649.143640-1-rrangel@chromium.org>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <073e1600-18fe-84ea-03df-7b53b9b7c690@collabora.com>
-Date:   Mon, 3 Jun 2019 22:40:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Mon, 3 Jun 2019 17:46:57 -0400
+Received: by mail-it1-f200.google.com with SMTP id z7so691667itc.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 14:46:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=zy+G7CpgELhLwgzs/ScfOsi6z+cOCikk738HcwlNl2M=;
+        b=ktAveZjLvLXAVj7he284zzprV2fxMoOnOkxYbv+8Kh6YKwSxYSyvgK1chgR9Zw5Stc
+         xQPDA0BlPxb44b7tvIfMgiOtQdGoc46FHKCdVpaB6uFsE9k8fhumYJWd5Y6f7k0n+Nve
+         UnClmSOJ1CU6sOxCSwAaM77Bb2S0oGs9mXZVZfTjzOLWaSu/wOiW5WLb/l3UNm01lVCM
+         TTzqEWIt8Cp/+w+LWz4i5LqY2sA3/lvtf6OUK9OmTT15BLjSGLoYdYr+qgFAtY2Urh90
+         Z02DArhQVKpiHVgfkPA+cNuOx7tCUeOGWaovMbEHNf8W7jb4iBjvAGYTU+KIJ3EoXURt
+         M8HQ==
+X-Gm-Message-State: APjAAAXlSQk8GVULdWfDz33G6iyuKf18920vBv2ELWPPwEMD7phdce4Y
+        SVoP441KV5PHIcxlijj9VhUXDNSooWwR6VoYfvgezVJa8/Q6
+X-Google-Smtp-Source: APXvYqwmPGLNecgCGODGKgKJBDEzDLmk5wLcXzOhpW2pvyGFBZA3BINPBhUXmcKOpGkbD6FtVQKBDBIrb1Hwd/5PqbkyAfSsRKsZ
 MIME-Version: 1.0
-In-Reply-To: <20190603181649.143640-1-rrangel@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a6b:14c2:: with SMTP id 185mr3504074iou.69.1559594465472;
+ Mon, 03 Jun 2019 13:41:05 -0700 (PDT)
+Date:   Mon, 03 Jun 2019 13:41:05 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001bb6d7058a716205@google.com>
+Subject: memory leak in raw_sendmsg
+From:   syzbot <syzbot+a90604060cb40f5bdd16@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, linux-can@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mkl@pengutronix.de,
+        netdev@vger.kernel.org, socketcan@hartkopp.net,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nick,
+Hello,
 
-On 3/6/19 20:16, Raul E Rangel wrote:
-> Add the ability to extract version information from the EC.
-> 
-> Example Output:
-> $ cd /sys/bus/platform/devices/GOOG000C:00
-> $ tail build_date build_revision version model_number
-> ==> build_date <==
-> 04/25/19
-> 
-> ==> build_revision <==
-> d2592cae0
-> 
-> ==> version <==
-> 00.00.14
-> 
-> ==> model_number <==
-> 08B6
-> 
-> Signed-off-by: Raul E Rangel <rrangel@chromium.org>
+syzbot found the following crash on:
 
-Can I get your rb here?
+HEAD commit:    3ab4436f Merge tag 'nfsd-5.2-1' of git://linux-nfs.org/~bf..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=158090a6a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=50393f7bfe444ff6
+dashboard link: https://syzkaller.appspot.com/bug?extid=a90604060cb40f5bdd16
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12e42092a00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1327b0a6a00000
 
-Thanks,
- Enric
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+a90604060cb40f5bdd16@syzkaller.appspotmail.com
 
-> ---
-> This patch is rebased on chromeos-platform/for-next. It was originally
-> developed on the chromiumos 4.19 kernel which has the following patch
-> applied: https://lore.kernel.org/patchwork/patch/1062995/. That patch is
-> not currently upstream.
-> 
-> Changes in v2:
-> - Removed version directory
-> - Renamed label to version
-> - Sorted documentation
-> 
->  .../ABI/testing/sysfs-platform-wilco-ec       | 31 ++++++++
->  drivers/platform/chrome/wilco_ec/sysfs.c      | 79 +++++++++++++++++++
->  2 files changed, 110 insertions(+)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-platform-wilco-ec b/Documentation/ABI/testing/sysfs-platform-wilco-ec
-> index 8e5d6eee44db2..8827a734f9331 100644
-> --- a/Documentation/ABI/testing/sysfs-platform-wilco-ec
-> +++ b/Documentation/ABI/testing/sysfs-platform-wilco-ec
-> @@ -7,3 +7,34 @@ Description:
->  		want to run their device headless or with a dock.
->  
->  		Input should be parseable by kstrtou8() to 0 or 1.
-> +
-> +What:          /sys/bus/platform/devices/GOOG000C\:00/build_date
-> +Date:          May 2019
-> +KernelVersion: 5.3
-> +Description:
-> +               Display Wilco Embedded Controller firmware build date.
-> +               Output will a MM/DD/YY string.
-> +
-> +What:          /sys/bus/platform/devices/GOOG000C\:00/build_revision
-> +Date:          May 2019
-> +KernelVersion: 5.3
-> +Description:
-> +               Display Wilco Embedded Controller build revision.
-> +               Output will a version string be similar to the example below:
-> +               d2592cae0
-> +
-> +What:          /sys/bus/platform/devices/GOOG000C\:00/model_number
-> +Date:          May 2019
-> +KernelVersion: 5.3
-> +Description:
-> +               Display Wilco Embedded Controller model number.
-> +               Output will a version string be similar to the example below:
-> +               08B6
-> +
-> +What:          /sys/bus/platform/devices/GOOG000C\:00/version
-> +Date:          May 2019
-> +KernelVersion: 5.3
-> +Description:
-> +               Display Wilco Embedded Controller firmware version.
-> +               The format of the string is x.y.z. Where x is major, y is minor
-> +               and z is the build number. For example: 95.00.06
-> diff --git a/drivers/platform/chrome/wilco_ec/sysfs.c b/drivers/platform/chrome/wilco_ec/sysfs.c
-> index f84f0480460ae..3b86a21005d3e 100644
-> --- a/drivers/platform/chrome/wilco_ec/sysfs.c
-> +++ b/drivers/platform/chrome/wilco_ec/sysfs.c
-> @@ -23,6 +23,25 @@ struct boot_on_ac_request {
->  	u8 reserved7;
->  } __packed;
->  
-> +#define CMD_EC_INFO			0x38
-> +enum get_ec_info_op {
-> +	CMD_GET_EC_LABEL	= 0,
-> +	CMD_GET_EC_REV		= 1,
-> +	CMD_GET_EC_MODEL	= 2,
-> +	CMD_GET_EC_BUILD_DATE	= 3,
-> +};
-> +
-> +struct get_ec_info_req {
-> +	u8 cmd;			/* Always CMD_EC_INFO */
-> +	u8 reserved;
-> +	u8 op;			/* One of enum get_ec_info_op */
-> +} __packed;
-> +
-> +struct get_ec_info_resp {
-> +	u8 reserved[2];
-> +	char value[9]; /* __nonstring: might not be null terminated */
-> +} __packed;
-> +
->  static ssize_t boot_on_ac_store(struct device *dev,
->  				struct device_attribute *attr,
->  				const char *buf, size_t count)
-> @@ -57,8 +76,68 @@ static ssize_t boot_on_ac_store(struct device *dev,
->  
->  static DEVICE_ATTR_WO(boot_on_ac);
->  
-> +static ssize_t get_info(struct device *dev, char *buf, enum get_ec_info_op op)
-> +{
-> +	struct wilco_ec_device *ec = dev_get_drvdata(dev);
-> +	struct get_ec_info_req req = { .cmd = CMD_EC_INFO, .op = op };
-> +	struct get_ec_info_resp resp;
-> +	int ret;
-> +
-> +	struct wilco_ec_message msg = {
-> +		.type = WILCO_EC_MSG_LEGACY,
-> +		.request_data = &req,
-> +		.request_size = sizeof(req),
-> +		.response_data = &resp,
-> +		.response_size = sizeof(resp),
-> +	};
-> +
-> +	ret = wilco_ec_mailbox(ec, &msg);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return scnprintf(buf, PAGE_SIZE, "%.*s\n", (int)sizeof(resp.value),
-> +			 (char *)&resp.value);
-> +}
-> +
-> +static ssize_t version_show(struct device *dev, struct device_attribute *attr,
-> +			  char *buf)
-> +{
-> +	return get_info(dev, buf, CMD_GET_EC_LABEL);
-> +}
-> +
-> +static DEVICE_ATTR_RO(version);
-> +
-> +static ssize_t build_revision_show(struct device *dev,
-> +				   struct device_attribute *attr, char *buf)
-> +{
-> +	return get_info(dev, buf, CMD_GET_EC_REV);
-> +}
-> +
-> +static DEVICE_ATTR_RO(build_revision);
-> +
-> +static ssize_t build_date_show(struct device *dev,
-> +			       struct device_attribute *attr, char *buf)
-> +{
-> +	return get_info(dev, buf, CMD_GET_EC_BUILD_DATE);
-> +}
-> +
-> +static DEVICE_ATTR_RO(build_date);
-> +
-> +static ssize_t model_number_show(struct device *dev,
-> +				 struct device_attribute *attr, char *buf)
-> +{
-> +	return get_info(dev, buf, CMD_GET_EC_MODEL);
-> +}
-> +
-> +static DEVICE_ATTR_RO(model_number);
-> +
-> +
->  static struct attribute *wilco_dev_attrs[] = {
->  	&dev_attr_boot_on_ac.attr,
-> +	&dev_attr_build_date.attr,
-> +	&dev_attr_build_revision.attr,
-> +	&dev_attr_model_number.attr,
-> +	&dev_attr_version.attr,
->  	NULL,
->  };
->  
-> 
+DRCONF(NETDEV_CHANGE): hsr_slave_0: link becomes ready
+executing program
+executing program
+BUG: memory leak
+unreferenced object 0xffff88812af50600 (size 512):
+   comm "syz-executor081", pid 7046, jiffies 4294948162 (age 13.870s)
+   hex dump (first 32 bytes):
+     0d 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00  ................
+     9d 92 de d5 ec ad bc 02 6f 66 69 6c 65 3d 30 20  ........ofile=0
+   backtrace:
+     [<00000000c4297f99>] kmemleak_alloc_recursive  
+include/linux/kmemleak.h:55 [inline]
+     [<00000000c4297f99>] slab_post_alloc_hook mm/slab.h:439 [inline]
+     [<00000000c4297f99>] slab_alloc_node mm/slab.c:3269 [inline]
+     [<00000000c4297f99>] kmem_cache_alloc_node_trace+0x15b/0x2a0  
+mm/slab.c:3597
+     [<0000000066d13723>] __do_kmalloc_node mm/slab.c:3619 [inline]
+     [<0000000066d13723>] __kmalloc_node_track_caller+0x38/0x50  
+mm/slab.c:3634
+     [<00000000ed0585ca>] __kmalloc_reserve.isra.0+0x40/0xb0  
+net/core/skbuff.c:138
+     [<000000009a9dc318>] __alloc_skb+0xa0/0x210 net/core/skbuff.c:206
+     [<00000000926a7d5b>] alloc_skb include/linux/skbuff.h:1054 [inline]
+     [<00000000926a7d5b>] alloc_skb_with_frags+0x5f/0x250  
+net/core/skbuff.c:5327
+     [<00000000c4ab3faa>] sock_alloc_send_pskb+0x269/0x2a0  
+net/core/sock.c:2219
+     [<00000000723cdeb0>] sock_alloc_send_skb+0x32/0x40 net/core/sock.c:2236
+     [<000000009ba80e2d>] raw_sendmsg+0xce/0x300 net/can/raw.c:761
+     [<0000000000a68d92>] sock_sendmsg_nosec net/socket.c:646 [inline]
+     [<0000000000a68d92>] sock_sendmsg+0x54/0x70 net/socket.c:665
+     [<000000004e3a95f6>] ___sys_sendmsg+0x393/0x3c0 net/socket.c:2286
+     [<00000000ec078bc9>] __sys_sendmsg+0x80/0xf0 net/socket.c:2324
+     [<0000000002d8ab21>] __do_sys_sendmsg net/socket.c:2333 [inline]
+     [<0000000002d8ab21>] __se_sys_sendmsg net/socket.c:2331 [inline]
+     [<0000000002d8ab21>] __x64_sys_sendmsg+0x23/0x30 net/socket.c:2331
+     [<0000000007c3590d>] do_syscall_64+0x76/0x1a0  
+arch/x86/entry/common.c:301
+     [<000000003149a5e4>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+BUG: memory leak
+unreferenced object 0xffff888118308200 (size 224):
+   comm "syz-executor081", pid 7046, jiffies 4294948162 (age 13.870s)
+   hex dump (first 32 bytes):
+     b0 64 19 2a 81 88 ff ff b0 64 19 2a 81 88 ff ff  .d.*.....d.*....
+     00 90 28 24 81 88 ff ff 00 64 19 2a 81 88 ff ff  ..($.....d.*....
+   backtrace:
+     [<0000000085e706a4>] kmemleak_alloc_recursive  
+include/linux/kmemleak.h:55 [inline]
+     [<0000000085e706a4>] slab_post_alloc_hook mm/slab.h:439 [inline]
+     [<0000000085e706a4>] slab_alloc mm/slab.c:3326 [inline]
+     [<0000000085e706a4>] kmem_cache_alloc+0x134/0x270 mm/slab.c:3488
+     [<000000005a366403>] skb_clone+0x6e/0x140 net/core/skbuff.c:1321
+     [<00000000854d44b1>] __skb_tstamp_tx+0x19f/0x220 net/core/skbuff.c:4434
+     [<0000000091e53e01>] __dev_queue_xmit+0x920/0xd60 net/core/dev.c:3813
+     [<0000000043e22300>] dev_queue_xmit+0x18/0x20 net/core/dev.c:3910
+     [<0000000091bdc746>] can_send+0x138/0x2b0 net/can/af_can.c:290
+     [<000000002dddbaef>] raw_sendmsg+0x1bb/0x300 net/can/raw.c:780
+     [<0000000000a68d92>] sock_sendmsg_nosec net/socket.c:646 [inline]
+     [<0000000000a68d92>] sock_sendmsg+0x54/0x70 net/socket.c:665
+     [<000000004e3a95f6>] ___sys_sendmsg+0x393/0x3c0 net/socket.c:2286
+     [<00000000ec078bc9>] __sys_sendmsg+0x80/0xf0 net/socket.c:2324
+     [<0000000002d8ab21>] __do_sys_sendmsg net/socket.c:2333 [inline]
+     [<0000000002d8ab21>] __se_sys_sendmsg net/socket.c:2331 [inline]
+     [<0000000002d8ab21>] __x64_sys_sendmsg+0x23/0x30 net/socket.c:2331
+     [<0000000007c3590d>] do_syscall_64+0x76/0x1a0  
+arch/x86/entry/common.c:301
+     [<000000003149a5e4>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
