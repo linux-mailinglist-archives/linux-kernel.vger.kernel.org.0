@@ -2,122 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E63733ACA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:08:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E69733B4B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:30:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726851AbfFCWH5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 18:07:57 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36434 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726503AbfFCWH4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 18:07:56 -0400
-Received: by mail-pf1-f193.google.com with SMTP id u22so11389069pfm.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 15:07:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jsqt76+/tC7lNIGkBOfSxOR0w7kTsY9VRuEizjLylaM=;
-        b=lWohiKBqCPBenj/eJUzVHOJpCdAi91g5TtT2pyrV0FfesO2LcED3e8srNOon8Iibg8
-         XtIVB4yvu8opanO7FhZdkXkw4qrcWHepKTZehjxMhdJDV96SRObFjXSOJ7rGU53BIOCP
-         amFtVM8IVZTgsTynPUL6wWPlqXYRwRZZzxCbIY9Ee0e3Vl33p4qUyAVxj8FpxZ60liZ+
-         tlqBRl6mtiIkFKWFCab1uDZBalnO4+vn2OxS13m7xXU6v0FU5TV28RkCj9ovOInxVDww
-         AAHmWcMNk0lFA89DRsCsZY4WJwkQ6CMV6qh3KnKzsG3YvEUYZUc8GLtbMBr5SeewywTj
-         cL0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jsqt76+/tC7lNIGkBOfSxOR0w7kTsY9VRuEizjLylaM=;
-        b=YHpf2yXBvY2JksGVu3nbOm6GQrpdPGLOuUueWFofy85vSusR7wsvYh8u/putOnxakU
-         EChJAYWminft4osUOcDWoImGeb3Zg6kTTeqPxKnxrXHFEH7AKHFr5Po2/UIahSbXVlPo
-         9HSV2ssoaiBExGAUCJAeWBNSu+8JVKHNnQmGMlTrL4fU/OBDXH5ejeWanWvbmds9xbSP
-         d3KSz2/DcAg4jUtMBqpMK8OXWltEJeK38h2v0tsElfngI/vnMeLi7fOnMDIuU7/Qt4l4
-         0/fj/b4JyzQHSfLN6s1W6M/ZmQDflPTmaztkAI4vZK2gl1NRcjFRgOfKjVcsKdstrMTS
-         Es5Q==
-X-Gm-Message-State: APjAAAUGgK39spSddVRo1Ijh9bYe/ZGex4eCgPHBSuh2hnR/WdH7AwTF
-        YhJ+Rocu+YJAh4h7AsDeBmXF1Za2/eXajjIoBpDiMw==
-X-Google-Smtp-Source: APXvYqwtRDahz95jt5ckTsuH+i7KTn9MRTd6CF+6hpsuPoa7lkdPVCsC5gUhiu+y1T7oPa6/2fCZnPaB/OkOvv8EDa4=
-X-Received: by 2002:a17:90a:bf02:: with SMTP id c2mr5763850pjs.73.1559596083400;
- Mon, 03 Jun 2019 14:08:03 -0700 (PDT)
+        id S1726793AbfFCWaU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 18:30:20 -0400
+Received: from mga04.intel.com ([192.55.52.120]:8672 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726379AbfFCWaT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 18:30:19 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 14:08:36 -0700
+X-ExtLoop1: 1
+Received: from jgaire-mobl.ger.corp.intel.com (HELO localhost) ([10.252.20.169])
+  by fmsmga005.fm.intel.com with ESMTP; 03 Jun 2019 14:08:26 -0700
+Date:   Tue, 4 Jun 2019 00:08:25 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        William Roberts <bill.c.roberts@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+Message-ID: <20190603210825.GG4894@linux.intel.com>
+References: <960B34DE67B9E140824F1DCDEC400C0F654EB487@ORSMSX116.amr.corp.intel.com>
+ <678a37af-797d-7bd5-a406-32548a270e3d@tycho.nsa.gov>
+ <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com>
+ <c1135352-0b5e-4694-b1a9-105876095877@tycho.nsa.gov>
+ <CALCETrWsEXzUC33eJpGCpdMCBO4aYVviZLRD-CLMNaG5Jv-TCA@mail.gmail.com>
+ <20190530180110.GB23930@linux.intel.com>
+ <CALCETrX2PgUc_jetXHqp85aaS0a0jHB8E7=T1rsW+5vyRgwnUA@mail.gmail.com>
+ <20190530211645.GB27551@linux.intel.com>
+ <CALCETrVAoDppmdJzkpwagt3q64M-QpNajXbKGR1yQdqyofeANQ@mail.gmail.com>
+ <20190530213601.GC27551@linux.intel.com>
 MIME-Version: 1.0
-References: <20190603174323.48251-1-natechancellor@gmail.com>
-In-Reply-To: <20190603174323.48251-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 3 Jun 2019 14:07:50 -0700
-Message-ID: <CAKwvOdkQzdZezwf51UddFVGQh0mRFMEexr1cMHx=va88T515YQ@mail.gmail.com>
-Subject: Re: [PATCH] PCI: rpaphp: Avoid a sometimes-uninitialized warning
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Tyrel Datwyler <tyreld@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190530213601.GC27551@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 3, 2019 at 10:44 AM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
-> Looking at the loop in a vacuum as clang would, fndit could be
-> uninitialized if entries was ever zero or the if statement was
-> always true within the loop. Regardless of whether or not this
-> warning is a problem in practice, "found" variables should always
-> be initialized to false so that there is no possibility of
-> undefined behavior.
+On Thu, May 30, 2019 at 02:36:01PM -0700, Sean Christopherson wrote:
+> Assuming MRENCLAVE generated by Graphene or any other hosting scheme are
+> stable[1], then avoiding EXEC<whatever> means the user can effectively
+> whitelist what enclaves are runnable by Graphene, even if the kernel
+> doesn't implement security_enclave_create/init().
+> 
+> I agree that it probably isn't all that important, it's more of a "why
+> not" argument, i.e. what is gained by not using sigstruct as a proxy?
+> 
+> [1] What in the world is being attested if MRENCLAVE isn't stable?
 
-Thanks for the patch Nathan.  fndit isn't really being used for
-anything other than a print statement outside of the loop.  How about:
+If I've understood correctly, Graphene uses a single loader enclave
+that loads the executable in.
 
-```
-diff --git a/drivers/pci/hotplug/rpaphp_core.c
-b/drivers/pci/hotplug/rpaphp_core.c
-index bcd5d357ca23..c3899ee1db99 100644
---- a/drivers/pci/hotplug/rpaphp_core.c
-+++ b/drivers/pci/hotplug/rpaphp_core.c
-@@ -230,7 +230,7 @@ static int rpaphp_check_drc_props_v2(struct
-device_node *dn, char *drc_name,
-  struct of_drc_info drc;
-  const __be32 *value;
-  char cell_drc_name[MAX_DRC_NAME_LEN];
-- int j, fndit;
-+ int j;
-
-  info = of_find_property(dn->parent, "ibm,drc-info", NULL);
-  if (info == NULL)
-@@ -245,17 +245,13 @@ static int rpaphp_check_drc_props_v2(struct
-device_node *dn, char *drc_name,
-
-  /* Should now know end of current entry */
-
-- if (my_index > drc.last_drc_index)
-- continue;
--
-- fndit = 1;
-- break;
-+ /* Found it */
-+ if (my_index <= drc.last_drc_index) {
-+ sprintf(cell_drc_name, "%s%d", drc.drc_name_prefix,
-+ my_index);
-+ break;
-+ }
-  }
-- /* Found it */
--
-- if (fndit)
-- sprintf(cell_drc_name, "%s%d", drc.drc_name_prefix,
-- my_index);
-
-  if (((drc_name == NULL) ||
-       (drc_name && !strcmp(drc_name, cell_drc_name))) &&
-```
-(not sure my tabs were pasted properly in the above...)
-
--- 
-Thanks,
-~Nick Desaulniers
+/Jarkko
