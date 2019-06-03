@@ -2,162 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1C5333B9D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:56:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC43033BC8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 01:13:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726301AbfFCW4W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 18:56:22 -0400
-Received: from mga12.intel.com ([192.55.52.136]:1498 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726025AbfFCW4V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 18:56:21 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 15:56:20 -0700
-X-ExtLoop1: 1
-Received: from marshy.an.intel.com (HELO [10.122.105.159]) ([10.122.105.159])
-  by orsmga001.jf.intel.com with ESMTP; 03 Jun 2019 15:56:18 -0700
-Subject: Re: A potential broken at platform driver?
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, dinguyen@kernel.org,
-        atull@kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, sen.li@intel.com,
-        Richard Gong <richard.gong@intel.com>
-References: <1559074833-1325-1-git-send-email-richard.gong@linux.intel.com>
- <1559074833-1325-3-git-send-email-richard.gong@linux.intel.com>
- <20190528232224.GA29225@kroah.com>
- <1e3b5447-b776-f929-bca6-306f90ac0856@linux.intel.com>
- <b608d657-9d8c-9307-9290-2f6b052a71a9@linux.intel.com>
- <20190603180255.GA18054@kroah.com>
-From:   Richard Gong <richard.gong@linux.intel.com>
-Message-ID: <b3dd022b-b585-3dfb-5fe6-9c9f5498bc77@linux.intel.com>
-Date:   Mon, 3 Jun 2019 18:08:37 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726406AbfFCXNb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 19:13:31 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:35770 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726097AbfFCXNa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 19:13:30 -0400
+Received: by mail-ed1-f68.google.com with SMTP id p26so29212777edr.2;
+        Mon, 03 Jun 2019 16:13:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Nri5hU1JrVEqtA4r+2sZlw3+yvE80eWqFfb9xwcT2OY=;
+        b=uR6AEwG7x0FN4XSTCsDC/ZRDJJ2DQb0nwwu5Jna57WNv9cfuW7BjDNTWh0LT4Ge2bC
+         Rso37okspkqVW0kbIoclPtj0BA0tkUamEA+1JiMxOIyCWu3XpZfnyNG4Wd2wQsBNOKgz
+         uu21lqZ9Tq/zCSuqpP3KSQsn1T3QxJfk04PhEldAaLdl1S1Foq1wxMuLUcBsYLzQtUA5
+         6l8QmZpMUZTze6GlYSdZyfQaM4DyUnteGKyMWpKBAInD7oK7h/A9nlyxWpzLqLmNUX3G
+         Xtn2+c0C/GThuppxKhYUqd7Ye/6p87WAthvwOmgwqoY1Jav+ltNYoXsYj4I3KK1e3Jel
+         z85Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Nri5hU1JrVEqtA4r+2sZlw3+yvE80eWqFfb9xwcT2OY=;
+        b=qaQHIGpzx4XnKwivpZ9olJF6TPiaSjC/Rn2HTvVW5GcROjWkfh6mLJidRjUstek9XV
+         23KpH1gmcUS4I3s1X0ZeyACADAqZujk6H7R70sQyfm6pjGb1G3B0Bps1PCvHlMfb3Bj+
+         r4oNQsXwWbcaKqa0DRhjywI20ppjQ6PKl9N1w72/QgBPmfc3Xk9m2dcfviPmuElE6dut
+         O0DMrZFdvUm66XOuTqpZtL0Qv3o4Du7VJn6KX+ihHkEevPBf9YIWh/ca+BJ1UvejHFE2
+         0nC0YCSuZQ19AXyeYww3ohe5QL+NFIgptAcXJ40tRFOZ9p5yZpym5iJuaJHlH7x8vUn+
+         PN6A==
+X-Gm-Message-State: APjAAAUAq5upYwBQU35zl1yxVbK7C9U0KrBreT65YeFH/dPLxnLpOWuA
+        CUfmBAmr1/K8pxJAbwvkbrj0yZX481KF/HsdWyk=
+X-Google-Smtp-Source: APXvYqwNRwNzukAWmwUOs3YBExLPE65Lglm3cahyu+HYVKD5XpIhE3R9PwPs42PHvMqXauefLRQpfW4YHq7DEwfME0Y=
+X-Received: by 2002:a50:fd0a:: with SMTP id i10mr30998950eds.117.1559603608065;
+ Mon, 03 Jun 2019 16:13:28 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190603180255.GA18054@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190602213926.2290-1-olteanv@gmail.com>
+In-Reply-To: <20190602213926.2290-1-olteanv@gmail.com>
+From:   Vladimir Oltean <olteanv@gmail.com>
+Date:   Tue, 4 Jun 2019 02:13:16 +0300
+Message-ID: <CA+h21hoOO1apNWXer01LE572pgdnVdmf_e7-Tnp6jgJuTPbGHg@mail.gmail.com>
+Subject: Re: [PATCH v2 net-next 00/10] PTP support for the SJA1105 DSA driver
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        Richard Cochran <richardcochran@gmail.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+On Mon, 3 Jun 2019 at 00:40, Vladimir Oltean <olteanv@gmail.com> wrote:
+>
+> This patchset adds the following:
+>
+>  - A timecounter/cyclecounter based PHC for the free-running
+>    timestamping clock of this switch.
+>
+>  - A state machine implemented in the DSA tagger for SJA1105, which
+>    keeps track of metadata follow-up Ethernet frames (the switch's way
+>    of transmitting RX timestamps).
+>
+> Clock manipulations on the actual hardware PTP clock will have to be
+> implemented anyway, for the TTEthernet block and the time-based ingress
+> policer.
+>
+> This depends upon the "FDB updates for SJA1105 DSA driver" series at:
+> https://patchwork.ozlabs.org/project/netdev/list/?series=111354&state=*
+>
+> v1 patchset can be found at:
+> https://lkml.org/lkml/2019/5/28/1093
+>
+> Changes from v1:
+>
+> - Removed the addition of the DSA .can_timestamp callback.
+>
+> - Waiting for meta frames is done completely inside the tagger, and all
+>   frames emitted on RX are already partially timestamped.
+>
+> - Added a global data structure for the tagger common to all ports.
+>
+> - Made PTP work with ports in standalone mode, by limiting use of the
+>   DMAC-mangling "incl_srcpt" mode only when ports are bridged, aka when
+>   the DSA master is already promiscuous and can receive anything.
+>   Also changed meta frames to be sent at the 01-80-C2-00-00-0E DMAC.
+>
+> - Made some progress w.r.t. observed negative path delay.  Apparently it
+>   only appears when the delay mechanism is the delay request-response
+>   (end-to-end) one. If peer delay is used (-P), the path delay is
+>   positive and appears reasonable for an 1000Base-T link (485 ns in
+>   steady state).
+>
+>   SJA1105 as PTP slave (OC) with E2E path delay:
+>
+> ptp4l[55.600]: master offset          8 s2 freq  +83677 path delay     -2390
+> ptp4l[56.600]: master offset         17 s2 freq  +83688 path delay     -2391
+> ptp4l[57.601]: master offset          6 s2 freq  +83682 path delay     -2391
+> ptp4l[58.601]: master offset         -1 s2 freq  +83677 path delay     -2391
+>
+>   SJA1105 as PTP slave (OC) with P2P path delay:
+>
+> ptp4l[48.343]: master offset          5 s2 freq  +83715 path delay       484
+> ptp4l[48.468]: master offset         -3 s2 freq  +83705 path delay       485
+> ptp4l[48.593]: master offset          0 s2 freq  +83708 path delay       485
+> ptp4l[48.718]: master offset          1 s2 freq  +83710 path delay       485
+> ptp4l[48.844]: master offset          1 s2 freq  +83710 path delay       485
+> ptp4l[48.969]: master offset         -5 s2 freq  +83702 path delay       485
+> ptp4l[49.094]: master offset          3 s2 freq  +83712 path delay       485
+> ptp4l[49.219]: master offset          4 s2 freq  +83714 path delay       485
+> ptp4l[49.344]: master offset         -5 s2 freq  +83702 path delay       485
+> ptp4l[49.469]: master offset          3 s2 freq  +83713 path delay       487
+>
+> Vladimir Oltean (10):
+>   net: dsa: Keep a pointer to the skb clone for TX timestamping
+>   net: dsa: Add teardown callback for drivers
+>   net: dsa: tag_8021q: Create helper function for removing VLAN header
+>   net: dsa: sja1105: Move sja1105_change_tpid into
+>     sja1105_vlan_filtering
+>   net: dsa: sja1105: Limit use of incl_srcpt to bridge+vlan mode
+>   net: dsa: sja1105: Add support for the PTP clock
+>   net: dsa: sja1105: Move sja1105_is_link_local to include/linux
+>   net: dsa: sja1105: Make sja1105_is_link_local not match meta frames
+>   net: dsa: sja1105: Add support for PTP timestamping
+>   net: dsa: sja1105: Increase priority of CPU-trapped frames
+>
+>  drivers/net/dsa/sja1105/Kconfig               |   7 +
+>  drivers/net/dsa/sja1105/Makefile              |   1 +
+>  drivers/net/dsa/sja1105/sja1105.h             |  29 ++
+>  .../net/dsa/sja1105/sja1105_dynamic_config.c  |   2 +
+>  drivers/net/dsa/sja1105/sja1105_main.c        | 317 ++++++++++++--
+>  drivers/net/dsa/sja1105/sja1105_ptp.c         | 392 ++++++++++++++++++
+>  drivers/net/dsa/sja1105/sja1105_ptp.h         |  64 +++
+>  drivers/net/dsa/sja1105/sja1105_spi.c         |  33 ++
+>  .../net/dsa/sja1105/sja1105_static_config.c   |  59 +++
+>  .../net/dsa/sja1105/sja1105_static_config.h   |  10 +
+>  include/linux/dsa/8021q.h                     |   7 +
+>  include/linux/dsa/sja1105.h                   |  51 +++
+>  include/net/dsa.h                             |   1 +
+>  net/dsa/dsa2.c                                |   3 +
+>  net/dsa/slave.c                               |   3 +
+>  net/dsa/tag_8021q.c                           |  15 +
+>  net/dsa/tag_sja1105.c                         | 203 ++++++++-
+>  17 files changed, 1150 insertions(+), 47 deletions(-)
+>  create mode 100644 drivers/net/dsa/sja1105/sja1105_ptp.c
+>  create mode 100644 drivers/net/dsa/sja1105/sja1105_ptp.h
+>
+> --
+> 2.17.1
+>
 
-On 6/3/19 1:02 PM, Greg KH wrote:
-> On Mon, Jun 03, 2019 at 10:57:18AM -0500, Richard Gong wrote:
->>
->> Hi Greg,
->>
->> Following your suggestion, I replaced devm_device_add_groups() with .group =
->> rus_groups in my version #4 submission. But I found out that RSU driver
->> outputs the garbage data if I use .group = rsu_groups.
-> 
-> What is "garbage"?
-I mean incorrect status info.
+Hi Dave,
 
-> 
->> To make RSU driver work properly, I have to revert the change at version #4
->> and use devm_device_add_groups() again. Sorry, I didn't catch this problem
->> early.
->>
->> I did some debug & below are captured log, you can see priv pointer get
->> messed at current_image_show(). I am not sure if something related to
->> platform driver work properly. I attach my debug patch in this mail.
->>
->> 1. Using .groups = rsu_groups,
->>
->> [    1.191115] *** rsu_status_callback:
->> [    1.194782] res->a1=2000000
->> [    1.197588] res->a1=0
->> [    1.199865] res->a2=0
->> [    1.202150] res->a3=0
->> [    1.204433] priv=0xffff80007aa28e80
->> [    1.207933] version=0, state=0, current_image=2000000, fail_image=0,
->> error_location=0, error_details=0
->> [    1.217249] *** stratix10_rsu_probe: priv=0xffff80007aa28e80
->> root@stratix10:/sys/bus/platform/drivers/stratix10-rsu# cat current_image
->> [   38.849341] *** current_image_show: priv=0xffff80007aa28d00
->> ... output garbage data
->> priv pointer got changed
-> 
-> I don't understand this, sorry.  Are you sure you are actually using the
-> correct pointer to your device?
-> 
-I think so.
+This series appears in patchwork as "superseded":
+https://patchwork.ozlabs.org/project/netdev/list/?series=111356&state=*
+Perhaps it got mixed up with another one?
 
-The dev pointer at current_image_show() should points to RSU device, but 
-it seems point to driver_private if I use .group = rsU_groups. As a 
-result I can't get the priv pointer properly at current_image_show().
-
-[    1.190993] *** rsu_status_callback:
-[    1.194669] dev=0xffff80007b409410
-[    1.198083] priv=0xffff80007a4d4e80
-[    1.201582] version=0, state=0, current_image=0x2000000, 
-fail_image=0x0, error_location=0x0, error_details=0
-[    1.211416] *** stratix10_rsu_probe: priv=0xffff80007a4d4e80
-[    1.217063] *** stratix10_rsu_probe: dev=0xffff80007b409410
-
-root@stratix10:/sys/bus/platform/drivers/stratix10-rsu# cat current_image
-[   72.101277] *** current_image_show: dev=stratix10_rsu_driver
-[   72.136205] *** current_image_show: priv=0xffff80007a4d4d00
-
-If I use devm_device_add_groups(), the dev pointer does point to RSU device,
-
-[    1.191456] *** rsu_status_callback:
-[    1.195124] priv=0xffff80007a429280
-[    1.198615] version=0, state=0, current_image=0x2000000, 
-fail_image=0x0, error_location=0x0, error_details=0
-[    1.208458] *** stratix10_rsu_probe: priv=0xffff80007a429280
-[    1.214105] *** stratix10_rsu_probe: dev=0xffff80007b409410
-
-root@stratix10:/sys/devices/platform/stratix10-rsu.0# cat current_image
-[   31.484131] *** current_image_show: dev=0xffff80007b409410
-[   31.489651] *** current_image_show: priv=0xffff80007a429280
-
-
->> @@ -394,7 +432,7 @@ static struct platform_driver stratix10_rsu_driver = {
->>   	.remove = stratix10_rsu_remove,
->>   	.driver = {
->>   		.name = "stratix10-rsu",
->> -		.groups = rsu_groups,
->> +//		.groups = rsu_groups,
-> 
-> Are you sure this is the correct pointer?  I think that might be
-> pointing to the driver's attributes, not the device's attributes.
-> 
-> If platform drivers do not have a way to register groups properly, then
-> that really needs to be fixed, as trying to register it by yourself as
-> you are doing, is ripe for racing with userspace.
-> 
-I agree we shouldn't call devm_device_add_groups() directly.
-
-RSU status is only updated after power on or reboot, RSU driver get 
-status info at probe() & save them to the private pointer priv via 
-platform_set_drvdata().
-
-static struct platform_driver stratix10_rsu_driver = {
-         .probe = stratix10_rsu_probe,
-         .remove = stratix10_rsu_remove,
-         .driver = {
-                 .name = "stratix10-rsu",
-                 .groups = rsu_groups,
-         },
-};
-
-The problem is that I don't have a way to properly retrieve the priv 
-pointer at xx_show() functions. Global variable is a work around, but I 
-don't think it is a good approach.
-
-Any suggestion?
-
-Regards,
-Richard
-
-> thanks,
-> 
-> greg k-h
-> 
+Thanks,
+-Vladimir
