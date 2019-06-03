@@ -2,18 +2,18 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9181C3323E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 16:35:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EDE033243
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 16:35:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729029AbfFCOfN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 10:35:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54862 "EHLO mx1.suse.de"
+        id S1729094AbfFCOfX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 10:35:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54842 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728998AbfFCOfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 10:35:13 -0400
+        id S1728988AbfFCOfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 10:35:14 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EC697ACCE;
+        by mx1.suse.de (Postfix) with ESMTP id F19ADADDA;
         Mon,  3 Jun 2019 14:35:11 +0000 (UTC)
 From:   Vlastimil Babka <vbabka@suse.cz>
 To:     linux-mm@kvack.org
@@ -25,10 +25,12 @@ Cc:     linux-kernel@vger.kernel.org,
         Joonsoo Kim <iamjoonsoo.kim@lge.com>,
         Matthew Wilcox <willy@infradead.org>,
         Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 0/3] debug_pagealloc improvements
-Date:   Mon,  3 Jun 2019 16:34:48 +0200
-Message-Id: <20190603143451.27353-1-vbabka@suse.cz>
+Subject: [PATCH 1/3] mm, debug_pagelloc: use static keys to enable debugging
+Date:   Mon,  3 Jun 2019 16:34:49 +0200
+Message-Id: <20190603143451.27353-2-vbabka@suse.cz>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190603143451.27353-1-vbabka@suse.cz>
+References: <20190603143451.27353-1-vbabka@suse.cz>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -36,33 +38,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I have been recently debugging some pcplist corruptions, where it would be
-useful to perform struct page checks immediately as pages are allocated from
-and freed to pcplists, which is now only possible by rebuilding the kernel with
-CONFIG_DEBUG_VM (details in Patch 2 changelog).
+CONFIG_DEBUG_PAGEALLOC has been redesigned by 031bc5743f15
+("mm/debug-pagealloc: make debug-pagealloc boottime configurable") to allow
+being always enabled in a distro kernel, but only perform its expensive
+functionality when booted with debug_pagelloc=on. We can further reduce
+the overhead when not boot-enabled (including page allocator fast paths) using
+static keys. This patch introduces one for debug_pagealloc core functionality,
+and another for the optional guard page functionality (enabled by booting with
+debug_guardpage_minorder=X).
 
-To make this kind of debugging simpler in future on a distro kernel, I have
-improved CONFIG_DEBUG_PAGEALLOC so that it has even smaller overhead when not
-enabled at boot time (Patch 1) and also when enabled (Patch 3), and extended it
-to perform the struct page checks more often when enabled (Patch 2). Now it can
-be configured in when building a distro kernel without extra overhead, and
-debugging page use after free or double free can be enabled simply by rebooting
-with debug_pagealloc=on.
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+---
+ include/linux/mm.h | 15 +++++++++++----
+ mm/page_alloc.c    | 23 +++++++++++++++++------
+ 2 files changed, 28 insertions(+), 10 deletions(-)
 
-Vlastimil Babka (3):
-  mm, debug_pagelloc: use static keys to enable debugging
-  mm, page_alloc: more extensive free page checking with debug_pagealloc
-  mm, debug_pagealloc: use a page type instead of page_ext flag
-
- .../admin-guide/kernel-parameters.txt         |  10 +-
- include/linux/mm.h                            |  25 ++--
- include/linux/page-flags.h                    |   6 +
- include/linux/page_ext.h                      |   1 -
- mm/Kconfig.debug                              |  14 ++-
- mm/page_alloc.c                               | 114 ++++++++++--------
- mm/page_ext.c                                 |   3 -
- 7 files changed, 96 insertions(+), 77 deletions(-)
-
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 0e8834ac32b7..c71ed22769f3 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2685,11 +2685,18 @@ static inline void kernel_poison_pages(struct page *page, int numpages,
+ 					int enable) { }
+ #endif
+ 
+-extern bool _debug_pagealloc_enabled;
++#ifdef CONFIG_DEBUG_PAGEALLOC_ENABLE_DEFAULT
++DECLARE_STATIC_KEY_TRUE(_debug_pagealloc_enabled);
++#else
++DECLARE_STATIC_KEY_FALSE(_debug_pagealloc_enabled);
++#endif
+ 
+ static inline bool debug_pagealloc_enabled(void)
+ {
+-	return IS_ENABLED(CONFIG_DEBUG_PAGEALLOC) && _debug_pagealloc_enabled;
++	if (!IS_ENABLED(CONFIG_DEBUG_PAGEALLOC))
++		return false;
++
++	return static_branch_unlikely(&_debug_pagealloc_enabled);
+ }
+ 
+ #if defined(CONFIG_DEBUG_PAGEALLOC) || defined(CONFIG_ARCH_HAS_SET_DIRECT_MAP)
+@@ -2843,7 +2850,7 @@ extern struct page_ext_operations debug_guardpage_ops;
+ 
+ #ifdef CONFIG_DEBUG_PAGEALLOC
+ extern unsigned int _debug_guardpage_minorder;
+-extern bool _debug_guardpage_enabled;
++DECLARE_STATIC_KEY_FALSE(_debug_guardpage_enabled);
+ 
+ static inline unsigned int debug_guardpage_minorder(void)
+ {
+@@ -2852,7 +2859,7 @@ static inline unsigned int debug_guardpage_minorder(void)
+ 
+ static inline bool debug_guardpage_enabled(void)
+ {
+-	return _debug_guardpage_enabled;
++	return static_branch_unlikely(&_debug_guardpage_enabled);
+ }
+ 
+ static inline bool page_is_guard(struct page *page)
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index d66bc8abe0af..639f1f9e74c5 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -646,16 +646,27 @@ void prep_compound_page(struct page *page, unsigned int order)
+ 
+ #ifdef CONFIG_DEBUG_PAGEALLOC
+ unsigned int _debug_guardpage_minorder;
+-bool _debug_pagealloc_enabled __read_mostly
+-			= IS_ENABLED(CONFIG_DEBUG_PAGEALLOC_ENABLE_DEFAULT);
++
++#ifdef CONFIG_DEBUG_PAGEALLOC_ENABLE_DEFAULT
++DEFINE_STATIC_KEY_TRUE(_debug_pagealloc_enabled);
++#else
++DEFINE_STATIC_KEY_FALSE(_debug_pagealloc_enabled);
++#endif
+ EXPORT_SYMBOL(_debug_pagealloc_enabled);
+-bool _debug_guardpage_enabled __read_mostly;
++
++DEFINE_STATIC_KEY_FALSE(_debug_guardpage_enabled);
+ 
+ static int __init early_debug_pagealloc(char *buf)
+ {
+-	if (!buf)
++	bool enable = false;
++
++	if (kstrtobool(buf, &enable))
+ 		return -EINVAL;
+-	return kstrtobool(buf, &_debug_pagealloc_enabled);
++
++	if (enable)
++		static_branch_enable(&_debug_pagealloc_enabled);
++
++	return 0;
+ }
+ early_param("debug_pagealloc", early_debug_pagealloc);
+ 
+@@ -679,7 +690,7 @@ static void init_debug_guardpage(void)
+ 	if (!debug_guardpage_minorder())
+ 		return;
+ 
+-	_debug_guardpage_enabled = true;
++	static_branch_enable(&_debug_guardpage_enabled);
+ }
+ 
+ struct page_ext_operations debug_guardpage_ops = {
 -- 
 2.21.0
 
