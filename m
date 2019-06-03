@@ -2,143 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F57933A0D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 23:47:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34A0E33ABC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:05:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726317AbfFCVq5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 17:46:57 -0400
-Received: from mail-it1-f200.google.com ([209.85.166.200]:33550 "EHLO
-        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726055AbfFCVq5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 17:46:57 -0400
-Received: by mail-it1-f200.google.com with SMTP id z7so691667itc.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 14:46:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=zy+G7CpgELhLwgzs/ScfOsi6z+cOCikk738HcwlNl2M=;
-        b=ktAveZjLvLXAVj7he284zzprV2fxMoOnOkxYbv+8Kh6YKwSxYSyvgK1chgR9Zw5Stc
-         xQPDA0BlPxb44b7tvIfMgiOtQdGoc46FHKCdVpaB6uFsE9k8fhumYJWd5Y6f7k0n+Nve
-         UnClmSOJ1CU6sOxCSwAaM77Bb2S0oGs9mXZVZfTjzOLWaSu/wOiW5WLb/l3UNm01lVCM
-         TTzqEWIt8Cp/+w+LWz4i5LqY2sA3/lvtf6OUK9OmTT15BLjSGLoYdYr+qgFAtY2Urh90
-         Z02DArhQVKpiHVgfkPA+cNuOx7tCUeOGWaovMbEHNf8W7jb4iBjvAGYTU+KIJ3EoXURt
-         M8HQ==
-X-Gm-Message-State: APjAAAXlSQk8GVULdWfDz33G6iyuKf18920vBv2ELWPPwEMD7phdce4Y
-        SVoP441KV5PHIcxlijj9VhUXDNSooWwR6VoYfvgezVJa8/Q6
-X-Google-Smtp-Source: APXvYqwmPGLNecgCGODGKgKJBDEzDLmk5wLcXzOhpW2pvyGFBZA3BINPBhUXmcKOpGkbD6FtVQKBDBIrb1Hwd/5PqbkyAfSsRKsZ
+        id S1726797AbfFCWFj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 18:05:39 -0400
+Received: from mga05.intel.com ([192.55.52.43]:46272 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726097AbfFCWFi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 18:05:38 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 13:44:07 -0700
+X-ExtLoop1: 1
+Received: from jgaire-mobl.ger.corp.intel.com (HELO localhost) ([10.252.20.169])
+  by orsmga004.jf.intel.com with ESMTP; 03 Jun 2019 13:43:54 -0700
+Date:   Mon, 3 Jun 2019 23:43:53 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        William Roberts <bill.c.roberts@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+Message-ID: <20190603204353.GC4894@linux.intel.com>
+References: <20190524224107.GJ365@linux.intel.com>
+ <683B5E3D-AFB6-4B45-8D39-B00847312209@amacapital.net>
+ <960B34DE67B9E140824F1DCDEC400C0F654E965F@ORSMSX116.amr.corp.intel.com>
+ <CALCETrXXVMutX8eZk6nnkOAeS+Tj0sQd0FkW+wk6Rx8hQxCe6w@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F654E9824@ORSMSX116.amr.corp.intel.com>
+ <20190528202407.GB13158@linux.intel.com>
+ <285f279f-b500-27f0-ab42-fb1dbcc5ab18@tycho.nsa.gov>
+ <960B34DE67B9E140824F1DCDEC400C0F654EB487@ORSMSX116.amr.corp.intel.com>
+ <678a37af-797d-7bd5-a406-32548a270e3d@tycho.nsa.gov>
+ <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:14c2:: with SMTP id 185mr3504074iou.69.1559594465472;
- Mon, 03 Jun 2019 13:41:05 -0700 (PDT)
-Date:   Mon, 03 Jun 2019 13:41:05 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001bb6d7058a716205@google.com>
-Subject: memory leak in raw_sendmsg
-From:   syzbot <syzbot+a90604060cb40f5bdd16@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, linux-can@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mkl@pengutronix.de,
-        netdev@vger.kernel.org, socketcan@hartkopp.net,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, May 30, 2019 at 07:31:14AM -0700, Andy Lutomirski wrote:
+>  - To create an X mapping of an enclave page that came from EADD, you
+> need EXECUTE on the source file.  Optionally, we could also permit
+> this if you have EXECMOD.
 
-syzbot found the following crash on:
+Source file? EADD ioctl takes memory buffer in right now.
 
-HEAD commit:    3ab4436f Merge tag 'nfsd-5.2-1' of git://linux-nfs.org/~bf..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=158090a6a00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=50393f7bfe444ff6
-dashboard link: https://syzkaller.appspot.com/bug?extid=a90604060cb40f5bdd16
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12e42092a00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1327b0a6a00000
+> And I have two design proposals.  One is static and one is dynamic.
+> To implement either one, we will probably need a new .may_mprotect vm
+> operation, and that operation can call an LSM hook.  Or we can give
+> LSMs a way to detect that a given vm_area_struct is an enclave.  As I
+> see it, this is an implementation detail that is certainly solveable.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+a90604060cb40f5bdd16@syzkaller.appspotmail.com
+Why VM operation and not file operation?
 
-DRCONF(NETDEV_CHANGE): hsr_slave_0: link becomes ready
-executing program
-executing program
-BUG: memory leak
-unreferenced object 0xffff88812af50600 (size 512):
-   comm "syz-executor081", pid 7046, jiffies 4294948162 (age 13.870s)
-   hex dump (first 32 bytes):
-     0d 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00  ................
-     9d 92 de d5 ec ad bc 02 6f 66 69 6c 65 3d 30 20  ........ofile=0
-   backtrace:
-     [<00000000c4297f99>] kmemleak_alloc_recursive  
-include/linux/kmemleak.h:55 [inline]
-     [<00000000c4297f99>] slab_post_alloc_hook mm/slab.h:439 [inline]
-     [<00000000c4297f99>] slab_alloc_node mm/slab.c:3269 [inline]
-     [<00000000c4297f99>] kmem_cache_alloc_node_trace+0x15b/0x2a0  
-mm/slab.c:3597
-     [<0000000066d13723>] __do_kmalloc_node mm/slab.c:3619 [inline]
-     [<0000000066d13723>] __kmalloc_node_track_caller+0x38/0x50  
-mm/slab.c:3634
-     [<00000000ed0585ca>] __kmalloc_reserve.isra.0+0x40/0xb0  
-net/core/skbuff.c:138
-     [<000000009a9dc318>] __alloc_skb+0xa0/0x210 net/core/skbuff.c:206
-     [<00000000926a7d5b>] alloc_skb include/linux/skbuff.h:1054 [inline]
-     [<00000000926a7d5b>] alloc_skb_with_frags+0x5f/0x250  
-net/core/skbuff.c:5327
-     [<00000000c4ab3faa>] sock_alloc_send_pskb+0x269/0x2a0  
-net/core/sock.c:2219
-     [<00000000723cdeb0>] sock_alloc_send_skb+0x32/0x40 net/core/sock.c:2236
-     [<000000009ba80e2d>] raw_sendmsg+0xce/0x300 net/can/raw.c:761
-     [<0000000000a68d92>] sock_sendmsg_nosec net/socket.c:646 [inline]
-     [<0000000000a68d92>] sock_sendmsg+0x54/0x70 net/socket.c:665
-     [<000000004e3a95f6>] ___sys_sendmsg+0x393/0x3c0 net/socket.c:2286
-     [<00000000ec078bc9>] __sys_sendmsg+0x80/0xf0 net/socket.c:2324
-     [<0000000002d8ab21>] __do_sys_sendmsg net/socket.c:2333 [inline]
-     [<0000000002d8ab21>] __se_sys_sendmsg net/socket.c:2331 [inline]
-     [<0000000002d8ab21>] __x64_sys_sendmsg+0x23/0x30 net/socket.c:2331
-     [<0000000007c3590d>] do_syscall_64+0x76/0x1a0  
-arch/x86/entry/common.c:301
-     [<000000003149a5e4>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> EADD takes an execute_intent flag.  It calls a new hook:
+> 
+>   int security_enclave_load(struct vm_area_struct *source, bool execute_intent);
+> 
+> This hook will fail if execute_intent==true and the caller has neither
+> EXECUTE, EXECMOD, nor EXECMEM.
+> 
+> EAUG sets execute_intent = false.
+> 
+> EINIT takes a sigstruct pointer.  SGX can (when initially upstreamed
+> or later on once there's demand) call a new hook:
+> 
+>   security_enclave_init(struct sigstruct *sigstruct, struct
+> vm_area_struct *source);
 
-BUG: memory leak
-unreferenced object 0xffff888118308200 (size 224):
-   comm "syz-executor081", pid 7046, jiffies 4294948162 (age 13.870s)
-   hex dump (first 32 bytes):
-     b0 64 19 2a 81 88 ff ff b0 64 19 2a 81 88 ff ff  .d.*.....d.*....
-     00 90 28 24 81 88 ff ff 00 64 19 2a 81 88 ff ff  ..($.....d.*....
-   backtrace:
-     [<0000000085e706a4>] kmemleak_alloc_recursive  
-include/linux/kmemleak.h:55 [inline]
-     [<0000000085e706a4>] slab_post_alloc_hook mm/slab.h:439 [inline]
-     [<0000000085e706a4>] slab_alloc mm/slab.c:3326 [inline]
-     [<0000000085e706a4>] kmem_cache_alloc+0x134/0x270 mm/slab.c:3488
-     [<000000005a366403>] skb_clone+0x6e/0x140 net/core/skbuff.c:1321
-     [<00000000854d44b1>] __skb_tstamp_tx+0x19f/0x220 net/core/skbuff.c:4434
-     [<0000000091e53e01>] __dev_queue_xmit+0x920/0xd60 net/core/dev.c:3813
-     [<0000000043e22300>] dev_queue_xmit+0x18/0x20 net/core/dev.c:3910
-     [<0000000091bdc746>] can_send+0x138/0x2b0 net/can/af_can.c:290
-     [<000000002dddbaef>] raw_sendmsg+0x1bb/0x300 net/can/raw.c:780
-     [<0000000000a68d92>] sock_sendmsg_nosec net/socket.c:646 [inline]
-     [<0000000000a68d92>] sock_sendmsg+0x54/0x70 net/socket.c:665
-     [<000000004e3a95f6>] ___sys_sendmsg+0x393/0x3c0 net/socket.c:2286
-     [<00000000ec078bc9>] __sys_sendmsg+0x80/0xf0 net/socket.c:2324
-     [<0000000002d8ab21>] __do_sys_sendmsg net/socket.c:2333 [inline]
-     [<0000000002d8ab21>] __se_sys_sendmsg net/socket.c:2331 [inline]
-     [<0000000002d8ab21>] __x64_sys_sendmsg+0x23/0x30 net/socket.c:2331
-     [<0000000007c3590d>] do_syscall_64+0x76/0x1a0  
-arch/x86/entry/common.c:301
-     [<000000003149a5e4>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+What is the source VMA in these callbacks? Why is @execute_intent
+needed anyway as a ioctl arugment and not deduced from SECINFO?
 
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+/Jarkko
