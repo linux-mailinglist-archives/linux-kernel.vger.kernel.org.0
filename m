@@ -2,101 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FE733339B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:34:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84D1F333B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:37:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727867AbfFCPeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 11:34:09 -0400
-Received: from mailoutvs5.siol.net ([185.57.226.196]:50891 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727647AbfFCPeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 11:34:09 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 7973A521018;
-        Mon,  3 Jun 2019 17:34:05 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id I185maW5QRX1; Mon,  3 Jun 2019 17:34:05 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 10534520F7B;
-        Mon,  3 Jun 2019 17:34:05 +0200 (CEST)
-Received: from jernej-laptop.localnet (cpe-86-58-52-202.static.triera.net [86.58.52.202])
-        (Authenticated sender: jernej.skrabec@siol.net)
-        by mail.siol.net (Postfix) with ESMTPA id A9764520F69;
-        Mon,  3 Jun 2019 17:34:03 +0200 (CEST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     paul.kocialkowski@bootlin.com, wens@csie.org, mchehab@kernel.org,
-        gregkh@linuxfoundation.org, linux-media@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, nicolas@ndufresne.ca,
-        boris.brezillon@collabora.com, jonas@kwiboo.se
-Subject: Re: [PATCH 2/7] media: cedrus: Fix H264 default reference index count
-Date:   Mon, 03 Jun 2019 17:34:03 +0200
-Message-ID: <8861995.Bqp6Xp4pol@jernej-laptop>
-In-Reply-To: <20190603114620.vsvbxz6gyhg3tn7b@flea>
-References: <20190530211516.1891-1-jernej.skrabec@siol.net> <20190530211516.1891-3-jernej.skrabec@siol.net> <20190603114620.vsvbxz6gyhg3tn7b@flea>
+        id S1728225AbfFCPhv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 11:37:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55120 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727150AbfFCPhu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 11:37:50 -0400
+Received: from localhost (unknown [223.226.32.210])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D7DC21851;
+        Mon,  3 Jun 2019 15:37:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559576270;
+        bh=zcP9KtKgAhz3mU5lmAfLMYUlzYRfYyCo6F2EvR1j1zw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lw31aVh04wQTEv/7BJ6nkBiZ5zgifqLpQU/x0ATsCfH40b+ZcENsaEHWo2nm7JN07
+         wzB4oR54h8ors5pwFLQMd5NDzFoRSph6VbJUKJKu45bS+6ZEYO2+OQX6Szk0kQ/epF
+         6p5bOIm9qZqTLrTeR7EE5DtJb7/pF2CIJogTQPP8=
+Date:   Mon, 3 Jun 2019 21:04:40 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Doug Anderson <dianders@chromium.org>,
+        Arun Kumar Neelakantam <aneela@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 2/4] soc: qcom: Add AOSS QMP driver
+Message-ID: <20190603153440.GT15118@vkoul-mobl>
+References: <20190531030057.18328-1-bjorn.andersson@linaro.org>
+ <20190531030057.18328-3-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190531030057.18328-3-bjorn.andersson@linaro.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne ponedeljek, 03. junij 2019 ob 13:46:20 CEST je Maxime Ripard napisal(a):
-> On Thu, May 30, 2019 at 11:15:11PM +0200, Jernej Skrabec wrote:
-> > Reference index count in VE_H264_PPS reg should come from PPS control.
-> > However, this is not really important because reference index count is
-> > in our case always overridden by that from slice header.
-> > 
-> > Cc: nicolas@ndufresne.ca
-> > Cc: boris.brezillon@collabora.com
-> > Cc: jonas@kwiboo.se
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+On 30-05-19, 20:00, Bjorn Andersson wrote:
+> The Always On Subsystem (AOSS) Qualcomm Messaging Protocol (QMP) driver
+> is used to communicate with the AOSS for certain side-channel requests,
+> that are not available through the RPMh interface.
 > 
-> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> The communication is a very simple synchronous mechanism of messages
+> being written in message RAM and a doorbell in the AOSS is rung. As the
+> AOSS has processed the message length is cleared and an interrupt is
+> fired by the AOSS as acknowledgment.
 > 
-> > ---
-> > We have to decide if we drop pps->num_ref_idx_l0_default_active_minus1
-> > and pps->num_ref_idx_l1_default_active_minus1 fields or add
-> > num_ref_idx_l0_active_override_flag and
-> > num_ref_idx_l0_active_override_flag
-> > to slice control.
+> The driver exposes the QDSS clock as a clock and the low-power state
+> associated with the remoteprocs in the system as a set of power-domains.
 
-Actually only one flag is in bitstream valid for both l0 and l1 ref list.
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
 
-> > 
-> > Current control doesn't have those two flags, so in Cedrus override flag
-> > is
-> > always set and we rely on userspace to set
-> > slice->num_ref_idx_l0_active_minus1 and
-> > slice->num_ref_idx_l1_active_minus1 to correct values. This means that
-> > values stored in PPS are not needed and always ignored by VPU.
-> > 
-> > If I understand correctly, algorithm is very simple:
-> > 
-> > ref_count = PPS->ref_count
-> > if (override_flag)
-> > 
-> > 	ref_count = slice->ref_count
-> > 
-> > It seems that VAAPI provides only final value. In my opinion we should do
-> > the same - get rid of PPS default ref index count fields.
-> 
-> The rationale was to be as conservative as possible and just expose
-> everything that is in the bitstream in those controls to accomodate
-> for as many weird hardware as possible.
-
-Ok, so then we should add that override flag, which would align with h264 specs 
-and you can still do same trick in VAAPI library which it's currently used in 
-Cedrus driver - always set override flag and fill out only slice reflist count. 
-At the end it shouldn't matter for proper decoding in any driver.
-
-Best regards,
-Jernej
-
-
-
+-- 
+~Vinod
