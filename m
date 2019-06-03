@@ -2,135 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D86AC333DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:48:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89879333E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 17:51:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728153AbfFCPsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 11:48:31 -0400
-Received: from mailoutvs60.siol.net ([185.57.226.251]:54987 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727458AbfFCPsb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 11:48:31 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 54562521077;
-        Mon,  3 Jun 2019 17:48:27 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id iTDkvQqWG0oc; Mon,  3 Jun 2019 17:48:27 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id E4C9152089C;
-        Mon,  3 Jun 2019 17:48:26 +0200 (CEST)
-Received: from jernej-laptop.localnet (cpe-86-58-52-202.static.triera.net [86.58.52.202])
-        (Authenticated sender: jernej.skrabec@siol.net)
-        by mail.siol.net (Postfix) with ESMTPA id 800E75210B0;
-        Mon,  3 Jun 2019 17:48:25 +0200 (CEST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     paul.kocialkowski@bootlin.com, wens@csie.org, mchehab@kernel.org,
-        gregkh@linuxfoundation.org, linux-media@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/7] media: cedrus: Add infra for extra buffers connected to capture buffers
-Date:   Mon, 03 Jun 2019 17:48:25 +0200
-Message-ID: <3029072.frl2UAsRGt@jernej-laptop>
-In-Reply-To: <20190603121859.sbphcjy75kmed6oc@flea>
-References: <20190530211516.1891-1-jernej.skrabec@siol.net> <20190530211516.1891-7-jernej.skrabec@siol.net> <20190603121859.sbphcjy75kmed6oc@flea>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        id S1728258AbfFCPvA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 11:51:00 -0400
+Received: from foss.arm.com ([217.140.101.70]:53500 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726211AbfFCPvA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 11:51:00 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0599515AB;
+        Mon,  3 Jun 2019 08:51:00 -0700 (PDT)
+Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A35A63F246;
+        Mon,  3 Jun 2019 08:50:58 -0700 (PDT)
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
+        suzuki.poulose@arm.com, Sebastian Ott <sebott@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: [RFC PATCH 01/57] drivers: s390/cio: Use driver_for_each_device
+Date:   Mon,  3 Jun 2019 16:49:27 +0100
+Message-Id: <1559577023-558-2-git-send-email-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
+References: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne ponedeljek, 03. junij 2019 ob 14:18:59 CEST je Maxime Ripard napisal(a):
-> Hi,
-> 
-> On Thu, May 30, 2019 at 11:15:15PM +0200, Jernej Skrabec wrote:
-> > H264 and HEVC engines need additional buffers for each capture buffer.
-> > H264 engine has this currently solved by allocating fixed size pool,
-> > which is not ideal. Most of the time pool size is much bigger than it
-> > needs to be.
-> > 
-> > Ideally, extra buffer should be allocated at buffer initialization, but
-> > that's not efficient. It's size in H264 depends on flags set in SPS, but
-> > that information is not available in buffer init callback.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  drivers/staging/media/sunxi/cedrus/cedrus.h   |  4 ++++
-> >  .../staging/media/sunxi/cedrus/cedrus_video.c | 19 +++++++++++++++++++
-> >  2 files changed, 23 insertions(+)
-> > 
-> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus.h
-> > b/drivers/staging/media/sunxi/cedrus/cedrus.h index
-> > d8e6777e5e27..16c1bdfd243a 100644
-> > --- a/drivers/staging/media/sunxi/cedrus/cedrus.h
-> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus.h
-> > @@ -81,6 +81,10 @@ struct cedrus_run {
-> > 
-> >  struct cedrus_buffer {
-> >  
-> >  	struct v4l2_m2m_buffer          m2m_buf;
-> > 
-> > +	void		*extra_buf;
-> > +	dma_addr_t	extra_buf_dma;
-> > +	ssize_t		extra_buf_size;
-> > +
-> > 
-> >  	union {
-> >  	
-> >  		struct {
-> >  		
-> >  			unsigned int			position;
-> > 
-> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_video.c
-> > b/drivers/staging/media/sunxi/cedrus/cedrus_video.c index
-> > 681dfe3367a6..d756e0e69634 100644
-> > --- a/drivers/staging/media/sunxi/cedrus/cedrus_video.c
-> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_video.c
-> > @@ -411,6 +411,24 @@ static void cedrus_queue_cleanup(struct vb2_queue
-> > *vq, u32 state)> 
-> >  	}
-> >  
-> >  }
-> > 
-> > +static void cedrus_buf_cleanup(struct vb2_buffer *vb)
-> > +{
-> > +	struct vb2_queue *vq = vb->vb2_queue;
-> > +
-> > +	if (!V4L2_TYPE_IS_OUTPUT(vq->type)) {
-> > +		struct cedrus_ctx *ctx = vb2_get_drv_priv(vq);
-> > +		struct cedrus_buffer *cedrus_buf;
-> > +
-> > +		cedrus_buf = vb2_to_cedrus_buffer(vq->bufs[vb->index]);
-> > +
-> > +		if (cedrus_buf->extra_buf_size)
-> > +			dma_free_coherent(ctx->dev->dev,
-> > +					  cedrus_buf-
->extra_buf_size,
-> > +					  cedrus_buf-
->extra_buf,
-> > +					  cedrus_buf-
->extra_buf_dma);
-> > +	}
-> > +}
-> > +
-> 
-> I'm really not a fan of allocating something somewhere, and freeing it
-> somewhere else. Making sure you don't leak something is hard enough to
-> not have some non-trivial allocation scheme.
+The cio driver use driver_find_device() to find all devices
+to release them before the driver is unregistered. Instead,
+it could easily use a lighter driver_for_each_device() helper
+to iterate over all the devices.
 
-Ok, what about introducing two new optional methods in engine callbacks, 
-buffer_init and buffer_destroy, which would be called from cedrus_buf_init() and 
-cedrus_buf_cleanup(), respectively. That way all (de)allocation logic stays 
-within the same engine.
+Cc: Sebastian Ott <sebott@linux.ibm.com>
+Cc: Peter Oberparleiter <oberpar@linux.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+---
+ drivers/s390/cio/ccwgroup.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-Best regards,
-Jernej
-
-
+diff --git a/drivers/s390/cio/ccwgroup.c b/drivers/s390/cio/ccwgroup.c
+index 4ebf6d4..a006945 100644
+--- a/drivers/s390/cio/ccwgroup.c
++++ b/drivers/s390/cio/ccwgroup.c
+@@ -581,9 +581,12 @@ int ccwgroup_driver_register(struct ccwgroup_driver *cdriver)
+ }
+ EXPORT_SYMBOL(ccwgroup_driver_register);
+ 
+-static int __ccwgroup_match_all(struct device *dev, void *data)
++static int ccwgroup_release_device(struct device *dev, void *unused)
+ {
+-	return 1;
++	struct ccwgroup_device *gdev = to_ccwgroupdev(dev);
++
++	ccwgroup_ungroup(gdev);
++	return 0;
+ }
+ 
+ /**
+@@ -594,16 +597,11 @@ static int __ccwgroup_match_all(struct device *dev, void *data)
+  */
+ void ccwgroup_driver_unregister(struct ccwgroup_driver *cdriver)
+ {
+-	struct device *dev;
++	int ret;
+ 
+ 	/* We don't want ccwgroup devices to live longer than their driver. */
+-	while ((dev = driver_find_device(&cdriver->driver, NULL, NULL,
+-					 __ccwgroup_match_all))) {
+-		struct ccwgroup_device *gdev = to_ccwgroupdev(dev);
+-
+-		ccwgroup_ungroup(gdev);
+-		put_device(dev);
+-	}
++	ret = driver_for_each_device(&cdriver->driver, NULL, NULL,
++				     ccwgroup_release_device);
+ 	driver_unregister(&cdriver->driver);
+ }
+ EXPORT_SYMBOL(ccwgroup_driver_unregister);
+-- 
+2.7.4
 
