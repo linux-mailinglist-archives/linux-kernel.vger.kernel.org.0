@@ -2,89 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 954F633AA0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:03:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 264BA33A9D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:02:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726719AbfFCWDD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 18:03:03 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45624 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726241AbfFCWDD (ORCPT
+        id S1726821AbfFCWC3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 18:02:29 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:34762 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726700AbfFCWCY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 18:03:03 -0400
-Received: by mail-lj1-f194.google.com with SMTP id r76so17720746lja.12
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 15:03:02 -0700 (PDT)
+        Mon, 3 Jun 2019 18:02:24 -0400
+Received: by mail-pl1-f196.google.com with SMTP id i2so3147819plt.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 15:02:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=9i0fLB3ctHjhbMv4GYPOBusi0dAWBcq7kpoGxU/5uy0=;
-        b=ONMCeqFi2tN4KQtO8Da4s9yG59tc8l/KfFqoS1qMjM18ZALi+QRdNvLyvmqjblfODX
-         AEDDqvyyVbhpxg/VK23dTgeYdOCNfUAeN9FMKxPHyN0oOgeZXok+ZdnjAU71ZRwhjRcZ
-         RKItIQEhhsnBqu68xNOZ4kGcM7U88snPqRtDsLUEx8rf3Yhzq0Qic4T7B76sFqZf00i7
-         AElPiJoLHOF+jb7bESf1g+jcZihky+tgr51oHeOGb6U4JSkGjP+rWTQfsGba+S3nPimu
-         AO4tBX9I8ylLnCTVAKVNnUMY5lmasvu4gqpdI4OdGfoDFbNCBNxdy/VApJOD7Zps4aJo
-         qZmw==
+        bh=OE+DV1iDnGanqSUQ3gSDQa7SpBzGqjCR4U6alQ1giEk=;
+        b=ETzhMp4AEe8Flmgo/kSIOHAb7In2pkCCzlaZrVqjGS9VomKBpb1Ew6hcj8mmKX5knn
+         qGoou8mTUyHaPd6kEBiCAvMFFqs9xPDPAahfq2DISXT7b3tUfemptyic2Dfi0t9BpdxU
+         F1j3aJwvPscd/wm+FgfdySro9d9yOzeALIWESgnLEF5tzpnxDb2/J7Pmfzvivo3Be7Xf
+         UBUVP+ncVzuScyUppESTqcypqYa4JYtDfPpuKlBTvwzBSTFHthCGJDOBUB/d/qalXVgs
+         nCETrnR6yqwNkehtkPxHB2rObaxAN8vz1FJTz7TaCD84ah988wtYkhqREBsjw4zTgvvw
+         Nfdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=9i0fLB3ctHjhbMv4GYPOBusi0dAWBcq7kpoGxU/5uy0=;
-        b=tc/DcvpVEWs/+XK9/41WE02qbgX2nGqCKtjXcz7KTvYugd2qgHm5KQ25IV4EERwV/U
-         CfZS6T4GNBr1PmQ4K9W3OiAmRdiugyZd7vdPNeq+lRANtfEWeHTuwyiLypF7BQqvKMEz
-         bxIZT1DCGBosvRlxiTTQrBAcvhskZ25N+1WLL/OAeDd72NsUtk/y2fKkWwRYbNsrfMdn
-         UU4pOBmCXUz8QC0snZTJo5SswEFXoddNg1zaduPbGNvdbOY8h9i4DfTL59cMaKZ0u90y
-         OGYAZfq2CUaxenMzOMkGHPZzMgoeKUTc8jw1UEr/8G6uEEFHD52bKHIEtG4BBh+mtRte
-         mLRA==
-X-Gm-Message-State: APjAAAXxFJifEcpexTYfzQPs6fx1DfOK+AB9CFlfccpqpcOGI/aDj07r
-        OGgqxFs7kBp/UwAeJmBmR4vTGm4MQaxYcXD+BDjO
-X-Google-Smtp-Source: APXvYqwOt5QwwF991N5QgfhgtcwXRJbuTWTAvKoJqehKyrnMTSwptDkGcIf1MEltn7xdxIzkIBJlP3kGx13ECWw/nmo=
-X-Received: by 2002:a2e:900e:: with SMTP id h14mr14762142ljg.77.1559595589392;
- Mon, 03 Jun 2019 13:59:49 -0700 (PDT)
+        bh=OE+DV1iDnGanqSUQ3gSDQa7SpBzGqjCR4U6alQ1giEk=;
+        b=WBzHYp9rj5pCAJcw3czkYoTxpvq13HJu1HrOarjcSWfuoVGkzxADPxotr5xtxQQEzH
+         skHnlGX8qn0/HKAX2xzXzUfKEUSZitwpjD6/z6L0XsFjGd/Ce3WOup25MTkTSEnaihmM
+         f1EiwgIMPCULxGwUpuQbfIrQoQPVzlSBoAr84kgvfAgIyYJQk1itFxXOMtLkmU2OvcsK
+         wMhzBYmGUkZ4VMCWS7Lca8g8/y9DBsTW7fve8c+boVHuQdrq0UW5hNj1qMhsSB4mdWfy
+         4n81EfeZIn47HGtwsZs9GUnFiKecKQFLGc48NPj0R6scP+mXvmyU5XDXiIx1ZLJG3PYa
+         ygyg==
+X-Gm-Message-State: APjAAAVoMVVJ/rxM3oKrrT3+J/AidsDKPRHCw0fODbHBs024f43tEh3g
+        wSt7rYB+MGQxQG6e5OT5gWMtARm//hagWdbsPmyC1g==
+X-Google-Smtp-Source: APXvYqzWBbPLVBPrbFmTJEk5UIt7x6cHDuEBIJzj+RPH298Lvex7X1nAJmKmLK8YBWA/7kyIcORyGRLOjXTDhT0qVT4=
+X-Received: by 2002:a17:902:b944:: with SMTP id h4mr31112655pls.179.1559595616814;
+ Mon, 03 Jun 2019 14:00:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190601021526.GA8264@zhanggen-UX430UQ> <20190601022527.GR17978@ZenIV.linux.org.uk>
- <20190601024459.GA8563@zhanggen-UX430UQ>
-In-Reply-To: <20190601024459.GA8563@zhanggen-UX430UQ>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 3 Jun 2019 16:59:38 -0400
-Message-ID: <CAHC9VhSbS6_Hp6_k0qpqQTvyG29ADx+b7JoXjDgXViO9bRXVMA@mail.gmail.com>
-Subject: Re: [PATCH v3] selinux: lsm: fix a missing-check bug in selinux_sb_eat_lsm_opts()
-To:     Gen Zhang <blackgod016574@gmail.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, omosnace@redhat.com,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org
+References: <20190603204953.44235-1-natechancellor@gmail.com>
+In-Reply-To: <20190603204953.44235-1-natechancellor@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 3 Jun 2019 14:00:05 -0700
+Message-ID: <CAKwvOdkSJzTrJMvRzOvLrSh7Bwqf+a3_X8Z=v8_mbpNC46A9yw@mail.gmail.com>
+Subject: Re: [PATCH] net: mscc: ocelot: Fix some struct initializations
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 31, 2019 at 10:45 PM Gen Zhang <blackgod016574@gmail.com> wrote:
-> On Sat, Jun 01, 2019 at 03:25:27AM +0100, Al Viro wrote:
-> > On Sat, Jun 01, 2019 at 10:15:26AM +0800, Gen Zhang wrote:
-> > > In selinux_sb_eat_lsm_opts(), 'arg' is allocated by kmemdup_nul(). It
-> > > returns NULL when fails. So 'arg' should be checked. And 'mnt_opts'
-> > > should be freed when error.
-> >
-> > What's the latter one for?  On failure we'll get to put_fs_context()
-> > pretty soon, so
-> >         security_free_mnt_opts(&fc->security);
-> > will be called just fine.  Leaving it allocated on failure is fine...
-> Paul Moore <paul@paul-moore.com> wrote:
-> >It seems like we should also check for, and potentially free *mnt_opts
-> >as the selinux_add_opt() error handling does just below this change,
-> >yes?  If that is the case we might want to move that error handling
-> >code to the bottom of the function and jump there on error.
-> I am not familiar with this part. So could you please show the function
-> call sequence?
+On Mon, Jun 3, 2019 at 1:51 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+> Fixes: b596229448dd ("net: mscc: ocelot: Add support for tcam")
+> Link: https://github.com/ClangBuiltLinux/linux/issues/505
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 
-I'm not sure I understand your question above, but I did review your
-latest patch and agree with Ondrej's comment regarding the ret/rc
-variable.  If you make that change I think we can merge this into
-selinux/stable-5.2.
-
+LGTM thanks Nathan.
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 -- 
-paul moore
-www.paul-moore.com
+Thanks,
+~Nick Desaulniers
