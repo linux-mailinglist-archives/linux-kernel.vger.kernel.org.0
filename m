@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A6D133B46
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:29:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66F8A33B44
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:29:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbfFCW3a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 18:29:30 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:44687 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726410AbfFCW3X (ORCPT
+        id S1726616AbfFCW31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 18:29:27 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:43274 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbfFCW3Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 18:29:23 -0400
-Received: by mail-lj1-f194.google.com with SMTP id p67so1308963ljp.11
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 15:29:22 -0700 (PDT)
+        Mon, 3 Jun 2019 18:29:24 -0400
+Received: by mail-lf1-f68.google.com with SMTP id j29so927534lfk.10
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 15:29:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=nikanor-nu.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=YUw6e+dM1SFz4LeXvxWXBqLHb/4EQFux2poSTpQulfs=;
-        b=1cEQIfCIKJfVCTos3XMuSoqM2U+PvoPD7LC7s6YoZfoxGpkDY9eXGkU/Th/FXYTUVF
-         5XC2sFEp7cNyN73zx/nz3xzU8Tz/QzjeBXE0O7LL2DW3XM2bFjCG/bXF2mx8/KCshYbX
-         PUW760UiVlfCTVCQS4DuofV6W2ZG3gp+gJNTpGggKTwdYwUFOPtbXIrxmSNeNDwW408k
-         UXeTb2PDO4g8q1gFCe5rqyxU4+MfoFqOO319qY7HWKYnjHCCZkaVDvaGPPhKIfauJIgc
-         qK5Bgog3ZeIbRLvc4KAvnAYYIp8AXJ+4Qu5X87QZcuSE0zhGuVPum3a0J7Ba0Dta1PS/
-         YSsQ==
+        bh=knrbzBuDehhtfPEvKniXQQfSPEDHGGizKqNa8Zubbfg=;
+        b=EjM5lDCiMw6pXgAainRP5g/6sW/3yKfXeYL1CNZoC0BQuAktWkxX3dyb5aZUPQJUev
+         UZlr4MdGCD597hOvjCTD3/jxp+mVmm7WTZZDDv24f1W9CVjKOREZWCsIoKhsKMCpYQSF
+         gBxK/bgtj2QQXNZ6srHy9cnbWtRp5R4vbH50vu0azBEUKMn/jY22QdAbEDkSmBqgVG8u
+         s1CxX8yhFvkpc7HQNjgBIlmnk5nIt3Lmqt3e5exmEaNpxtXR90K1Sxh13i8IVl0OIc8y
+         M3Y6/Zodpsr7Pm+YDAFPxsS49ID+HB96VCuBj0hp9RCuvRWJnnO2IyIz5/mw9vkM9GgX
+         5bAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=YUw6e+dM1SFz4LeXvxWXBqLHb/4EQFux2poSTpQulfs=;
-        b=eytlpui22RFRer1RBc8RICC2sn3LzLCFYIxVSzm7d7rmXBMv9pineRMS6cDpFV3ZXE
-         7dXWKJWDT+Up90FKiAMw93OmaiNVmu7ACc19NK1vzYfDf+w7VETZj999SLpRB7nIAuyB
-         rPlWCQ9iu2HyCbVm6hfQb28G65vCiBW2VpVdMSlEQ5Kbo8OX3v/mD+PKt+esudAX7aVV
-         zyh2WVMjfX1Jh/6KTUNMJ5Jt5gb0UfSkUmZVXVIHKlfCLs6eO6tRFA58LEDSnzNgIHcH
-         hRfqCGT9GApTYSPDtFK1rm7Z+Ku+xx6Gx5/R7fQoMZ0j1kH639sCFHdfUW+gND2P/KwR
-         jA/w==
-X-Gm-Message-State: APjAAAWZ0gI9ArTnqqW77h2ZPCKzBsZkm2w5/1dJlnPTrpLX2IJt8ZCC
-        jgEZ5t4YslVDF7VzTeGBFbiNIg==
-X-Google-Smtp-Source: APXvYqwuNbQDJm9cbNb24r/eoLAKrjnQfU3R0fDqZHb/fRAksALPYf2adShFQXQ0CIZQgQ8ImcBe9g==
-X-Received: by 2002:a2e:9185:: with SMTP id f5mr12072389ljg.51.1559600961696;
-        Mon, 03 Jun 2019 15:29:21 -0700 (PDT)
+        bh=knrbzBuDehhtfPEvKniXQQfSPEDHGGizKqNa8Zubbfg=;
+        b=J0oV4oQFh88r0iUbNn8LI0u+8AkWswsGINcFY2ri+84B8HZXldVB2XVoZNrhY6R3RO
+         dbkqYgKI6iDrfRlNafeyTf/kao6VdhNt7kmDXSR1H2F6/g1CzmbeqKFBFe4Bi0fC3ybC
+         AGvGF/yhW61DKqaznRsUsAIVbQhDcMsh5XrvXhalFV802niXpptRtDOz7556s9fA3q7T
+         XNVKXzPZTNiCyFikzFlmNj6UtGqokonEUv5565/bU/l9dDSYwqgHS5GT80F991osXZCP
+         yyAcu+cM8+XoQReb2PkRUvWduRk4wJzercUq+sWSCI6aiw1bOxam66I77najEuHKXLZX
+         c+zQ==
+X-Gm-Message-State: APjAAAWI4yy3gvB80se1Jnu/idcq+hvzPloF64Y9jDu2z5shdvD+8g94
+        u1UeA8QbMCgmdqs646FK5lUGbQ==
+X-Google-Smtp-Source: APXvYqxmRVrpJxfb8ZX6pzol8sIO/jZaTkrcussFYhqIEtc8sF9OLnnbp4UPgEp616MGLfhDvHZ5vQ==
+X-Received: by 2002:ac2:51a3:: with SMTP id f3mr10276923lfk.125.1559600962748;
+        Mon, 03 Jun 2019 15:29:22 -0700 (PDT)
 Received: from dev.nikanor.nu (78-72-133-4-no161.tbcn.telia.com. [78.72.133.4])
-        by smtp.gmail.com with ESMTPSA id x20sm2175874ljj.14.2019.06.03.15.29.20
+        by smtp.gmail.com with ESMTPSA id x20sm2175874ljj.14.2019.06.03.15.29.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Jun 2019 15:29:21 -0700 (PDT)
+        Mon, 03 Jun 2019 15:29:22 -0700 (PDT)
 From:   =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>
 To:     gregkh@linuxfoundation.org
 Cc:     simon@nikanor.nu, jeremy@azazel.net, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/7] staging: kpc2000: remove unnecessary parentheses in core.c
-Date:   Tue,  4 Jun 2019 00:29:11 +0200
-Message-Id: <20190603222916.20698-3-simon@nikanor.nu>
+Subject: [PATCH 3/7] staging: kpc2000: remove unnecessary oom message in core.c
+Date:   Tue,  4 Jun 2019 00:29:12 +0200
+Message-Id: <20190603222916.20698-4-simon@nikanor.nu>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190603222916.20698-1-simon@nikanor.nu>
 References: <20190603222916.20698-1-simon@nikanor.nu>
@@ -63,45 +63,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes checkpatch.pl check "Unnecessary parentheses around
-pdev->dev.kobj".
+Fixes checkpatch.pl warning "Possible unnecessary 'out of memory'
+message".
 
 Signed-off-by: Simon Sandström <simon@nikanor.nu>
 ---
- drivers/staging/kpc2000/kpc2000/core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/kpc2000/kpc2000/core.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
 diff --git a/drivers/staging/kpc2000/kpc2000/core.c b/drivers/staging/kpc2000/kpc2000/core.c
-index 356a272c0b9c..dc6940e6c320 100644
+index dc6940e6c320..a70665a202c3 100644
 --- a/drivers/staging/kpc2000/kpc2000/core.c
 +++ b/drivers/staging/kpc2000/kpc2000/core.c
-@@ -491,7 +491,7 @@ static int kp2000_pcie_probe(struct pci_dev *pdev,
- 	/*
- 	 * Step 9: Setup sysfs attributes
+@@ -319,11 +319,8 @@ static int kp2000_pcie_probe(struct pci_dev *pdev,
+ 	 * Step 1: Allocate a struct for the pcard
  	 */
--	err = sysfs_create_files(&(pdev->dev.kobj), kp_attr_list);
-+	err = sysfs_create_files(&pdev->dev.kobj, kp_attr_list);
- 	if (err) {
- 		dev_err(&pdev->dev, "Failed to add sysfs files: %d\n", err);
- 		goto out9;
-@@ -515,7 +515,7 @@ static int kp2000_pcie_probe(struct pci_dev *pdev,
- 	return 0;
+ 	pcard = kzalloc(sizeof(struct kp2000_device), GFP_KERNEL);
+-	if (!pcard) {
+-		dev_err(&pdev->dev,
+-			"probe: failed to allocate private card data\n");
++	if (!pcard)
+ 		return -ENOMEM;
+-	}
+ 	dev_dbg(&pdev->dev, "probe: allocated struct kp2000_device @ %p\n",
+ 		pcard);
  
- out10:
--	sysfs_remove_files(&(pdev->dev.kobj), kp_attr_list);
-+	sysfs_remove_files(&pdev->dev.kobj, kp_attr_list);
- out9:
- 	free_irq(pcard->pdev->irq, pcard);
- out8b:
-@@ -552,7 +552,7 @@ static void kp2000_pcie_remove(struct pci_dev *pdev)
- 	mutex_lock(&pcard->sem);
- 	kp2000_remove_cores(pcard);
- 	mfd_remove_devices(PCARD_TO_DEV(pcard));
--	sysfs_remove_files(&(pdev->dev.kobj), kp_attr_list);
-+	sysfs_remove_files(&pdev->dev.kobj, kp_attr_list);
- 	free_irq(pcard->pdev->irq, pcard);
- 	pci_disable_msi(pcard->pdev);
- 	if (pcard->dma_bar_base) {
 -- 
 2.20.1
 
