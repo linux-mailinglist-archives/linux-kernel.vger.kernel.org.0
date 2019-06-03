@@ -2,97 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F5CC33232
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 16:32:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 254403323A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 16:34:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729109AbfFCOcA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 10:32:00 -0400
-Received: from ozlabs.org ([203.11.71.1]:49757 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728975AbfFCOcA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 10:32:00 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45HcvH3K3cz9s7h;
-        Tue,  4 Jun 2019 00:31:55 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1559572317;
-        bh=9CSpMug+i5yMEa9Kh1285Mi9cdGyu1MghkPju4EXwHk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=aSIFYxHneOS8/EOrgnuN6HYuL+Kq/SKfwpd5sfHzNxUD5wqS8A5eOJoxCpfkxShsR
-         DIa0BgZF8/jrwFdkNwpuVCqzy/jlmM0/MPUuciMfNvNzwRL8M4rJyiSoXig+eU97Uq
-         /LVxMKvQXiTLuXlhxJrQjkKSlsYQ8QOGqdyarRMTtHm9jtMmdi5J0nm/bpEU9XUtGD
-         cIbztJ3tOY3MOEIzcQ+nznEwe0b9CM6xH42VrTnrHUIoLilVyChzQOcCMZXirU2/m9
-         HU9BONazvVQqhNZ+ggH6uR9xc3GbQh6ZKB6B+J33UQHRaVjeDD5tWbmyDvqmc5uHRl
-         Svamyc6afxd1Q==
-Date:   Tue, 4 Jun 2019 00:31:53 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Uladzislau Rezki <urezki@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org,
-        Hillf Danton <hdanton@sina.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tejun Heo <tj@kernel.org>, Andrei Vagin <avagin@gmail.com>
-Subject: Re: [BUG BISECT] bug mm/vmalloc.c:470 (mm/vmalloc.c: get rid of one
- single unlink_va() when merge)
-Message-ID: <20190604003153.76f33dd2@canb.auug.org.au>
-In-Reply-To: <CAJKOXPdczUnsaBeXTuutZXCQ70ejDT68xnVm-e+SSdLZi-vyCA@mail.gmail.com>
-References: <CAJKOXPcTVpLtSSs=Q0G3fQgXYoVa=kHxWcWXyvS13ie73ByZBw@mail.gmail.com>
-        <20190603135939.e2mb7vkxp64qairr@pc636>
-        <CAJKOXPdczUnsaBeXTuutZXCQ70ejDT68xnVm-e+SSdLZi-vyCA@mail.gmail.com>
+        id S1728974AbfFCOeW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 10:34:22 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:61319 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728681AbfFCOeW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 10:34:22 -0400
+Received: from svr-orw-mbx-01.mgc.mentorg.com ([147.34.90.201])
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1hXo2W-0004B8-6v from George_Davis@mentor.com ; Mon, 03 Jun 2019 07:34:20 -0700
+Received: from localhost (147.34.91.1) by svr-orw-mbx-01.mgc.mentorg.com
+ (147.34.90.201) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Mon, 3 Jun
+ 2019 07:34:18 -0700
+Date:   Mon, 3 Jun 2019 10:34:17 -0400
+From:   "George G. Davis" <george_davis@mentor.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+CC:     Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC][PATCH] Makefile: Fix checkstack.pl arm64 wrong or unknown
+ architecture
+Message-ID: <20190603143416.GA17299@mam-gdavis-lt>
+References: <1559316388-19565-1-git-send-email-george_davis@mentor.com>
+ <CAK7LNATXzLzttF_gLA4wdfE1ue+bLPhvDZVsTKbB5K3nrN3jng@mail.gmail.com>
+ <20190531163908.GB10644@mam-gdavis-lt>
+ <CAK7LNASq8eW0D8fpbxFGhAgR5D158emTR2quCD5ufyC+kK-2GQ@mail.gmail.com>
+ <20190531174506.GC10644@mam-gdavis-lt>
+ <CAK7LNASazA2496=GkJdJFVw3S7mQ8LaVqHc6dX=FU0DGYtRTBg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/T8JB7vmA6.0wdOso2xn.yrp"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAK7LNASazA2496=GkJdJFVw3S7mQ8LaVqHc6dX=FU0DGYtRTBg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-ClientProxiedBy: svr-orw-mbx-08.mgc.mentorg.com (147.34.90.208) To
+ svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/T8JB7vmA6.0wdOso2xn.yrp
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello Masahiro,
 
-Hi Krzysztof,
+On Sat, Jun 01, 2019 at 11:09:15AM +0900, Masahiro Yamada wrote:
+> On Sat, Jun 1, 2019 at 2:45 AM George G. Davis <george_davis@mentor.com> wrote:
+> > > Following this pattern, does this work for you?
+> > >
+> > > diff --git a/scripts/checkstack.pl b/scripts/checkstack.pl
+> > > index 122aef5e4e14..371bd17a4983 100755
+> > > --- a/scripts/checkstack.pl
+> > > +++ b/scripts/checkstack.pl
+> > > @@ -46,7 +46,7 @@ my (@stack, $re, $dre, $x, $xs, $funcre);
+> > >         $x      = "[0-9a-f]";   # hex character
+> > >         $xs     = "[0-9a-f ]";  # hex character or space
+> > >         $funcre = qr/^$x* <(.*)>:$/;
+> > > -       if ($arch eq 'aarch64') {
+> > > +       if ($arch =~ '^(aarch|arm)64$') {
+> >
+> > Yes, that works, thanks!
+> >
+> > Will you submit a fix or would you like me to resubmit with the above suggested
+> > fix?
+> 
+> Please send v2.
 
-On Mon, 3 Jun 2019 16:10:40 +0200 Krzysztof Kozlowski <krzk@kernel.org> wro=
-te:
->
-> Indeed it looks like effect of merge conflict resolution or applying.
-> When I look at MMOTS, it is the same as yours:
-> http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/commit/?id=3Db77b8cce67f2=
-46109f9d87417a32cd38f0398f2f
->=20
-> However in linux-next it is different.
->=20
-> Stephen, any thoughts?
+Done:
 
-Have you had a look at today's linux-next?  It looks correct in
-there.  Andrew updated his patch series over the weekend.
+https://patchwork.kernel.org/patch/10972965/
 
---=20
-Cheers,
-Stephen Rothwell
+Thanks!
 
---Sig_/T8JB7vmA6.0wdOso2xn.yrp
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+> 
+> Thanks.
+> 
+> -- 
+> Best Regards
+> Masahiro Yamada
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz1L1kACgkQAVBC80lX
-0Gy6Nwf/eOmUW6/H8C+yiT3y7MfpDwgD9FP9IuOOQsC1eGfyZ//CGE7jojPjuwCp
-827J8ZM8CaEvBsV9iELlKg+w1zy+RrNVDoNQE+l2z8O7MJYW9Tm9u95cdAsLqWwA
-oZfzmqKp+5GJ/rYEXm/zRzT9rkR/NnKdUr5WumOp7gUlVhzjQ9KgFQPnhjrIB94Z
-Ib+WdHZ9IgaisVD1pA8rWju5wTAq2SyKLKfAL35h18Lj6T0+QZiEx23Je8GiiWtR
-30VF4LCZvtL95TjMz8vNDOIEU57lDRSXEGQcM17KHLVLpM3a1VmN6IKYyVTKd21m
-0FAZGs8EWDEh4iitzOEbJD0KE6N0jA==
-=59/d
------END PGP SIGNATURE-----
-
---Sig_/T8JB7vmA6.0wdOso2xn.yrp--
+-- 
+Regards,
+George
