@@ -2,93 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DBC4334A1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 18:10:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D67E7334AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 18:15:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728399AbfFCQKN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 12:10:13 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54662 "EHLO mx1.redhat.com"
+        id S1728825AbfFCQO6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 12:14:58 -0400
+Received: from mga18.intel.com ([134.134.136.126]:4337 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727501AbfFCQKN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 12:10:13 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726521AbfFCQO6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 12:14:58 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 09:14:56 -0700
+X-ExtLoop1: 1
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga002.jf.intel.com with ESMTP; 03 Jun 2019 09:14:56 -0700
+Received: from [10.251.11.94] (kliang2-mobl.ccr.corp.intel.com [10.251.11.94])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 38B0731628E3;
-        Mon,  3 Jun 2019 16:10:00 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 0B0785D6A9;
-        Mon,  3 Jun 2019 16:09:55 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Mon,  3 Jun 2019 18:09:58 +0200 (CEST)
-Date:   Mon, 3 Jun 2019 18:09:53 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
+        by linux.intel.com (Postfix) with ESMTPS id EDE665801E6;
+        Mon,  3 Jun 2019 09:14:50 -0700 (PDT)
+Subject: Re: [PATCH 2/3] perf/x86/intel: Add more Icelake CPUIDs
 To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, Qian Cai <cai@lca.pw>,
-        akpm@linux-foundation.org, hch@lst.de, gkohli@codeaurora.org,
-        mingo@redhat.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] block: fix a crash in do_task_dead()
-Message-ID: <20190603160953.GA15244@redhat.com>
-References: <1559161526-618-1-git-send-email-cai@lca.pw>
- <20190530080358.GG2623@hirez.programming.kicks-ass.net>
- <82e88482-1b53-9423-baad-484312957e48@kernel.dk>
- <20190603123705.GB3419@hirez.programming.kicks-ass.net>
- <20190603124401.GB3463@hirez.programming.kicks-ass.net>
+Cc:     mingo@redhat.com, bp@alien8.de, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, x86@kernel.org, qiuxu.zhuo@intel.com,
+        tony.luck@intel.com, rui.zhang@intel.com
+References: <20190603134122.13853-1-kan.liang@linux.intel.com>
+ <20190603134122.13853-2-kan.liang@linux.intel.com>
+ <20190603154750.GA3402@hirez.programming.kicks-ass.net>
+From:   "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <ae87acab-5dbe-25a8-93f8-1c8f8ecb547b@linux.intel.com>
+Date:   Mon, 3 Jun 2019 12:14:49 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190603124401.GB3463@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 03 Jun 2019 16:10:12 +0000 (UTC)
+In-Reply-To: <20190603154750.GA3402@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/03, Peter Zijlstra wrote:
->
-> It now also has concurrency on wakeup; but afaict that's harmless, we'll
-> get racing stores of p->state = TASK_RUNNING, much the same as if there
-> was a remote wakeup vs a wait-loop terminating early.
->
-> I suppose the tracepoint consumers might have to deal with some
-> artifacts there, but that's their problem.
 
-I guess you mean that trace_sched_waking/wakeup can be reported twice if
-try_to_wake_up(current) races with ttwu_remote(). And ttwu_stat().
 
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -1990,6 +1990,28 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
-> >  	unsigned long flags;
-> >  	int cpu, success = 0;
-> >  
-> > +	if (p == current) {
-> > +		/*
-> > +		 * We're waking current, this means 'p->on_rq' and 'task_cpu(p)
-> > +		 * == smp_processor_id()'. Together this means we can special
-> > +		 * case the whole 'p->on_rq && ttwu_remote()' case below
-> > +		 * without taking any locks.
-> > +		 *
-> > +		 * In particular:
-> > +		 *  - we rely on Program-Order guarantees for all the ordering,
-> > +		 *  - we're serialized against set_special_state() by virtue of
-> > +		 *    it disabling IRQs (this allows not taking ->pi_lock).
-> > +		 */
-> > +		if (!(p->state & state))
-> > +			goto out;
-> > +
-> > +		success = 1;
-> > +		trace_sched_waking(p);
-> > +		p->state = TASK_RUNNING;
-> > +		trace_sched_woken(p);
-                ^^^^^^^^^^^^^^^^^
-trace_sched_wakeup(p) ?
+On 6/3/2019 11:47 AM, Peter Zijlstra wrote:
+> On Mon, Jun 03, 2019 at 06:41:21AM -0700, kan.liang@linux.intel.com wrote:
+>> @@ -4962,7 +4965,9 @@ __init int intel_pmu_init(void)
+>>   		x86_pmu.cpu_events = get_icl_events_attrs();
+>>   		x86_pmu.rtm_abort_event = X86_CONFIG(.event=0xca, .umask=0x02);
+>>   		x86_pmu.lbr_pt_coexist = true;
+>> -		intel_pmu_pebs_data_source_skl(false);
+>> +		intel_pmu_pebs_data_source_skl(
+>> +			(boot_cpu_data.x86_model == INTEL_FAM6_ICELAKE_X) ||
+>> +			(boot_cpu_data.x86_model == INTEL_FAM6_ICELAKE_XEON_D));
+> 
+> That's pretty sad, a model switch inside a model switch :/
+> 
+>>   		pr_cont("Icelake events, ");
+>>   		name = "icelake";
+>>   		break;
+> 
+> Would something like so not be nicer?
 
-I see nothing wrong... but probably this is because I don't fully understand
-this change. In particular, I don't really understand who else can benefit from
-this optimization...
+Yes, it looks better. Thanks.
 
-Oleg.
+Should I combine your patch with mine, and send out V2?
+Or are you prefer to add your patch on top of this patch set?
 
+Thanks,
+Kan
+
+> 
+> ---
+> --- a/arch/x86/events/intel/core.c
+> +++ b/arch/x86/events/intel/core.c
+> @@ -4485,6 +4485,7 @@ __init int intel_pmu_init(void)
+>   	struct event_constraint *c;
+>   	unsigned int unused;
+>   	struct extra_reg *er;
+> +	bool pmem = false;
+>   	int version, i;
+>   	char *name;
+>   
+> @@ -4936,9 +4937,10 @@ __init int intel_pmu_init(void)
+>   		name = "knights-landing";
+>   		break;
+>   
+> +	case INTEL_FAM6_SKYLAKE_X:
+> +		pmem = true;
+>   	case INTEL_FAM6_SKYLAKE_MOBILE:
+>   	case INTEL_FAM6_SKYLAKE_DESKTOP:
+> -	case INTEL_FAM6_SKYLAKE_X:
+>   	case INTEL_FAM6_KABYLAKE_MOBILE:
+>   	case INTEL_FAM6_KABYLAKE_DESKTOP:
+>   		x86_add_quirk(intel_pebs_isolation_quirk);
+> @@ -4970,8 +4972,7 @@ __init int intel_pmu_init(void)
+>   		td_attr  = hsw_events_attrs;
+>   		mem_attr = hsw_mem_events_attrs;
+>   		tsx_attr = hsw_tsx_events_attrs;
+> -		intel_pmu_pebs_data_source_skl(
+> -			boot_cpu_data.x86_model == INTEL_FAM6_SKYLAKE_X);
+> +		intel_pmu_pebs_data_source_skl(pmem);
+>   
+>   		if (boot_cpu_has(X86_FEATURE_TSX_FORCE_ABORT)) {
+>   			x86_pmu.flags |= PMU_FL_TFA;
+> @@ -4985,7 +4986,11 @@ __init int intel_pmu_init(void)
+>   		name = "skylake";
+>   		break;
+>   
+> +	case INTEL_FAM6_ICELAKE_X:
+> +	case INTEL_FAM6_ICELAKE_XEON_D:
+> +		pmem = true;
+>   	case INTEL_FAM6_ICELAKE_MOBILE:
+> +	case INTEL_FAM6_ICELAKE_DESKTOP:
+>   		x86_pmu.late_ack = true;
+>   		memcpy(hw_cache_event_ids, skl_hw_cache_event_ids, sizeof(hw_cache_event_ids));
+>   		memcpy(hw_cache_extra_regs, skl_hw_cache_extra_regs, sizeof(hw_cache_extra_regs));
+> @@ -5009,7 +5014,7 @@ __init int intel_pmu_init(void)
+>   		tsx_attr = icl_tsx_events_attrs;
+>   		x86_pmu.rtm_abort_event = X86_CONFIG(.event=0xca, .umask=0x02);
+>   		x86_pmu.lbr_pt_coexist = true;
+> -		intel_pmu_pebs_data_source_skl(false);
+> +		intel_pmu_pebs_data_source_skl(pmem);
+>   		pr_cont("Icelake events, ");
+>   		name = "icelake";
+>   		break;
+> 
