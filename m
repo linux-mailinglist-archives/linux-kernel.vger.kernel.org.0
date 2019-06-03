@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 363A833A7E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 23:59:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 359DA33AC7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:07:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbfFCV7A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 17:59:00 -0400
-Received: from mail-pg1-f172.google.com ([209.85.215.172]:45343 "EHLO
-        mail-pg1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726049AbfFCV7A (ORCPT
+        id S1726711AbfFCWHI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 18:07:08 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38900 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726336AbfFCWHH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 17:59:00 -0400
-Received: by mail-pg1-f172.google.com with SMTP id w34so9023742pga.12
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 14:58:59 -0700 (PDT)
+        Mon, 3 Jun 2019 18:07:07 -0400
+Received: by mail-pf1-f194.google.com with SMTP id a186so10680522pfa.5
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 15:07:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hcbe5XK5tsFMWxSLs2tZ84hRD+cj/6YTqAC2Tmv3P6A=;
-        b=hOCZMeOhk+mnIUArMWNnC4vOoecC/JJjH016s1tw4Q96mSLD+0XvEFZfhYCyOuiLe3
-         3JPco6SQFbsgOo3tJVA/rGxuMMqV+PxWgHbtFyYjLLr4aJ45fWaaT3ONrFh3O59CMhRv
-         1a7SdQk8hx4KAgvnXTXy4jWGFB5OfJ5r7LCWoltwNWxy5L9bf/dZJoxBT8mbb0BqQ+14
-         aoRFh3Hi+L5+3to6drNMaTiQ5MWNn112T5jPH2jmcr2nTpfYazs2lHbfT0EgV4wDf9p7
-         +ZAzMj5wXkBDVcVYUtZ37FLCh0uEdyTwkwGCZK2XRuhvUzzguAJo+j34T00y0fKG5UdN
-         paFA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=0EoeyvI+6nSZVdPsXoo6A3bLjv7jCmnakg13/Vo0S7g=;
+        b=jQQKpymP0x+HXM6AidEDpl+oryXhrFlsULaSJxrk+bRuLIK2zph32NK7fQ9YAJaCBe
+         N7+enaR2Vc1oYLo8aptLEfjl+dIsZ+yBuVWMXGIzNgNQI9SdCmD/jLhITwBQ9ehLSkb+
+         XEVP/h3PMZVC5vzDLRMA2ctacgD5ioiLhXBcIfjUB5IUWXVcT3hHScDrk9eh/9mNvu5o
+         PWXDbM+Um+WQ9hcOjSXq+jo3FDIH6cYOI+MipuzXRWJvoaNI+qxII2acSgoctNl9nHHf
+         375AuTgxJjHK4jIuhHyjGLr4uaIo2/oQ034Ox+mp98rzfJnHVOkExpOIKkw9vVPM1s+r
+         yyag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hcbe5XK5tsFMWxSLs2tZ84hRD+cj/6YTqAC2Tmv3P6A=;
-        b=fuoAAXMyKpzmCC3Y4MO4107USzh18UvqxzM6TT4293H5Rlh7lXj+GS59kj/IoNnFIB
-         n97C7rBwi01DRwAz7AfeS9swVUxSri7j+EC4HLs3Zy/wcX6g0EYCZR/RU0fzqaV+xvI9
-         NcA9OF8jzl8g/hkGFsoL76/8roJC+8OSkwaUamvP3dnVlolZgRwCznLnJgC7A9uYffLX
-         2F6SAUgizPaitktHU+Rr+8T/8ufkyQwhsQBGfbcF6LUIb00jPz6qfcDTjRHz1dctwCOe
-         28FQMIoGt567OS1kQx+NNJJHtR9qbOkBHKJJtgLlWlOQP+jLMJIWr3l/60MSABWC/IIb
-         IJ7w==
-X-Gm-Message-State: APjAAAXXtouYjRv4DkaVDgPFg2ayUX41bMpS6M2ZOoJx/8WI6sz+lvDE
-        Tjm9UcBiAME4xlDnQmNOsb/HcB+e94M=
-X-Google-Smtp-Source: APXvYqz4Qw8yGDgRFudiuxfXs7P+jDtt3/2W1h5CX5aNY5aXM70fQ7T4ZIHJj3eYv41Qd3NLYGM9aQ==
-X-Received: by 2002:a17:90a:7146:: with SMTP id g6mr32429865pjs.45.1559596101827;
-        Mon, 03 Jun 2019 14:08:21 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=0EoeyvI+6nSZVdPsXoo6A3bLjv7jCmnakg13/Vo0S7g=;
+        b=fXEH/S5EbEJL2b6lp3NmmufeVU6mikGZOMeGjzPg1TvCeZm09XcIp6Hnghk2wqlAim
+         +JpdWOsLt42RK/VlQ2jF6/Q9a76SSxfcoDjzu88EHJgMTj8mhjHkRSYPSZ9hcUD5do4o
+         wY7v/4Wx+YBH8bkkhHXo7vH6WsK/jrNXvTcesBDADyoGJe0/I0H2gY6hxQGwhlrl4FrV
+         4HT3wb2xqIcgPCgIzkzbnhPep8scFG9YVJQSquBkQgnRJEWxK89XG0VzSfAOpcEB0X9g
+         uxRx8xqQXpiLou9uWRgGLZwEMfFiUqUp1DSAKk9n690VZNG5DQGp+0c9u3nrK09EuSpU
+         t4qQ==
+X-Gm-Message-State: APjAAAXpzE04zkA3KawjIc8zdF/5R2X6UptQuZOY6z1sPrbx2jVI+mwH
+        QCGez4XYMh7MXDWq6YYwa5jDxw==
+X-Google-Smtp-Source: APXvYqxa0AysWp131gGXPRfGsUoOrmmAU0oaOx10qyqfliSX/gy0fcowTdd1qaAaihU44ugQyNlEYQ==
+X-Received: by 2002:a63:a34c:: with SMTP id v12mr30337699pgn.198.1559596104078;
+        Mon, 03 Jun 2019 14:08:24 -0700 (PDT)
 Received: from localhost ([2620:10d:c091:500::1:9fa4])
-        by smtp.gmail.com with ESMTPSA id i12sm17107336pfd.33.2019.06.03.14.08.20
+        by smtp.gmail.com with ESMTPSA id n32sm7753279pji.29.2019.06.03.14.08.23
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Jun 2019 14:08:21 -0700 (PDT)
+        Mon, 03 Jun 2019 14:08:23 -0700 (PDT)
 From:   Johannes Weiner <hannes@cmpxchg.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
@@ -52,10 +52,12 @@ Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
         cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-team@fb.com
-Subject: [PATCH 00/11] mm: fix page aging across multiple cgroups
-Date:   Mon,  3 Jun 2019 17:07:35 -0400
-Message-Id: <20190603210746.15800-1-hannes@cmpxchg.org>
+Subject: [PATCH 01/11] mm: vmscan: move inactive_list_is_low() swap check to the caller
+Date:   Mon,  3 Jun 2019 17:07:36 -0400
+Message-Id: <20190603210746.15800-2-hannes@cmpxchg.org>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190603210746.15800-1-hannes@cmpxchg.org>
+References: <20190603210746.15800-1-hannes@cmpxchg.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -63,98 +65,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When applications are put into unconfigured cgroups for memory
-accounting purposes, the cgrouping itself should not change the
-behavior of the page reclaim code. We expect the VM to reclaim the
-coldest pages in the system. But right now the VM can reclaim hot
-pages in one cgroup while there is eligible cold cache in others.
+inactive_list_is_low() should be about one thing: checking the ratio
+between inactive and active list. Kitchensink checks like the one for
+swap space makes the function hard to use and modify its
+callsites. Luckly, most callers already have an understanding of the
+swap situation, so it's easy to clean up.
 
-This is because one part of the reclaim algorithm isn't truly cgroup
-hierarchy aware: the inactive/active list balancing. That is the part
-that is supposed to protect hot cache data from one-off streaming IO.
+get_scan_count() has its own, memcg-aware swap check, and doesn't even
+get to the inactive_list_is_low() check on the anon list when there is
+no swap space available.
 
-The recursive cgroup reclaim scheme will scan and rotate the physical
-LRU lists of each eligible cgroup at the same rate in a round-robin
-fashion, thereby establishing a relative order among the pages of all
-those cgroups. However, the inactive/active balancing decisions are
-made locally within each cgroup, so when a cgroup is running low on
-cold pages, its hot pages will get reclaimed - even when sibling
-cgroups have plenty of cold cache eligible in the same reclaim run.
+shrink_list() is called on the results of get_scan_count(), so that
+check is redundant too.
 
-For example:
+age_active_anon() has its own totalswap_pages check right before it
+checks the list proportions.
 
-   [root@ham ~]# head -n1 /proc/meminfo 
-   MemTotal:        1016336 kB
+The shrink_node_memcg() site is the only one that doesn't do its own
+swap check. Add it there.
 
-   [root@ham ~]# ./reclaimtest2.sh 
-   Establishing 50M active files in cgroup A...
-   Hot pages cached: 12800/12800 workingset-a
-   Linearly scanning through 18G of file data in cgroup B:
-   real    0m4.269s
-   user    0m0.051s
-   sys     0m4.182s
-   Hot pages cached: 134/12800 workingset-a
+Then delete the swap check from inactive_list_is_low().
 
-The streaming IO in B, which doesn't benefit from caching at all,
-pushes out most of the workingset in A.
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+---
+ mm/vmscan.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-Solution
-
-This series fixes the problem by elevating inactive/active balancing
-decisions to the toplevel of the reclaim run. This is either a cgroup
-that hit its limit, or straight-up global reclaim if there is physical
-memory pressure. From there, it takes a recursive view of the cgroup
-subtree to decide whether page deactivation is necessary.
-
-In the test above, the VM will then recognize that cgroup B has plenty
-of eligible cold cache, and that thet hot pages in A can be spared:
-
-   [root@ham ~]# ./reclaimtest2.sh 
-   Establishing 50M active files in cgroup A...
-   Hot pages cached: 12800/12800 workingset-a
-   Linearly scanning through 18G of file data in cgroup B:
-   real    0m4.244s
-   user    0m0.064s
-   sys     0m4.177s
-   Hot pages cached: 12800/12800 workingset-a
-
-Implementation
-
-Whether active pages can be deactivated or not is influenced by two
-factors: the inactive list dropping below a minimum size relative to
-the active list, and the occurence of refaults.
-
-After some cleanups and preparations, this patch series first moves
-refault detection to the reclaim root, then enforces the minimum
-inactive size based on a recursive view of the cgroup tree's LRUs.
-
-History
-
-Note that this actually never worked correctly in Linux cgroups. In
-the past it worked for global reclaim and leaf limit reclaim only (we
-used to have two physical LRU linkages per page), but it never worked
-for intermediate limit reclaim over multiple leaf cgroups.
-
-We're noticing this now because 1) we're putting everything into
-cgroups for accounting, not just the things we want to control and 2)
-we're moving away from leaf limits that invoke reclaim on individual
-cgroups, toward large tree reclaim, triggered by high-level limits or
-physical memory pressure, that is influenced by local protections such
-as memory.low and memory.min instead.
-
-Requirements
-
-These changes are based on the fast recursive memcg stats merged in
-5.2-rc1. The patches are against v5.2-rc2-mmots-2019-05-29-20-56-12
-plus the page cache fix in https://lkml.org/lkml/2019/5/24/813.
-
- include/linux/memcontrol.h |  37 +--
- include/linux/mmzone.h     |  30 +-
- include/linux/swap.h       |   2 +-
- mm/memcontrol.c            |   6 +-
- mm/page_alloc.c            |   2 +-
- mm/vmscan.c                | 667 ++++++++++++++++++++++---------------------
- mm/workingset.c            |  74 +++--
- 7 files changed, 437 insertions(+), 381 deletions(-)
-
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 84dcb651d05c..f396424850aa 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -2165,13 +2165,6 @@ static bool inactive_list_is_low(struct lruvec *lruvec, bool file,
+ 	unsigned long refaults;
+ 	unsigned long gb;
+ 
+-	/*
+-	 * If we don't have swap space, anonymous page deactivation
+-	 * is pointless.
+-	 */
+-	if (!file && !total_swap_pages)
+-		return false;
+-
+ 	inactive = lruvec_lru_size(lruvec, inactive_lru, sc->reclaim_idx);
+ 	active = lruvec_lru_size(lruvec, active_lru, sc->reclaim_idx);
+ 
+@@ -2592,7 +2585,7 @@ static void shrink_node_memcg(struct pglist_data *pgdat, struct mem_cgroup *memc
+ 	 * Even if we did not try to evict anon pages at all, we want to
+ 	 * rebalance the anon lru active/inactive ratio.
+ 	 */
+-	if (inactive_list_is_low(lruvec, false, sc, true))
++	if (total_swap_pages && inactive_list_is_low(lruvec, false, sc, true))
+ 		shrink_active_list(SWAP_CLUSTER_MAX, lruvec,
+ 				   sc, LRU_ACTIVE_ANON);
+ }
+-- 
+2.21.0
 
