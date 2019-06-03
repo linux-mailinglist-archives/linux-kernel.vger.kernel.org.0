@@ -2,36 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B020632CBC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:24:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22B5332C0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 11:14:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728071AbfFCJYO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 05:24:14 -0400
-Received: from mga14.intel.com ([192.55.52.115]:54536 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728029AbfFCJYN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 05:24:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 02:24:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,546,1549958400"; 
-   d="scan'208";a="181096340"
-Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
-  by fmsmga002.fm.intel.com with ESMTP; 03 Jun 2019 02:24:12 -0700
-From:   Tomas Winkler <tomas.winkler@intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-kernel@vger.kernel.org,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Subject: [char-misc-next 2/7] mei: docs: move iamt docs to a iamt.rst file
-Date:   Mon,  3 Jun 2019 12:14:01 +0300
-Message-Id: <20190603091406.28915-3-tomas.winkler@intel.com>
+        id S1728972AbfFCJOO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 05:14:14 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:41874 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728223AbfFCJOJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 05:14:09 -0400
+Received: by mail-lf1-f66.google.com with SMTP id 136so1465400lfa.8
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 02:14:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+y2pHh+GcgrSTo/c/Dh+rI5M9UbSYW68+phN/wa7KlA=;
+        b=XwNM5aaSm3fVul6uRnmu+Fwt9JaXj3z2dqhDZMARNqS5naUoZNgGLSLwsvVmsEz9yL
+         c0arF2jfhe472ek/T7KaHJmQe9ZWn1vIfZ1zP3sWpdcTKzQYLngpHvbE9cMqmevghtv2
+         92WTx36NG/u22grAhRBghDdGYWYAN10P/F+6XrvTXTaVMDBR/IAUa7VqHxE5fhzulF7u
+         TBxjumz03UwitufJJztAVu7RNIaNbl7bk2FnoJQgm9CNOu+gAMsfZDTuf2C3ANydj6hx
+         8nQoerNpFuFxav5hC+2HVyIO1P5ydRDPAKnde4Ng8ABvXfh6QZ+0BZrD8Kl48BfUb6cH
+         mriQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+y2pHh+GcgrSTo/c/Dh+rI5M9UbSYW68+phN/wa7KlA=;
+        b=j1bqvcR05wwiAL1U0/68KfLPDmzS+Zy5Fdmsdmwt/ovNe9VZIV+6K1SLeC3lBPZpqT
+         qz4dNdns2tBBHLXDB+HR6EG7zyVSQXxPcFZovgpASFFUkDxD4vmosDNOtDNC5Ud/CMCz
+         YCIDtkuYRxSz92g5VZd67srbJYHDiiiBGfho2NcxExvKFZYx9cPicOlLgbkln5cdDnmv
+         JM5HdfTb7MLaCjP0VVI68kHOrN1Ts8FPRR9Gbd2+Ak1SamVpDxnqAXJcP0TyXukSik7t
+         6NnOhvVj7lOC2tj2FTOcgm0S4kVKSd8UY3AIqsZu07VG5qKOVyGTX0figV52utfyBC2r
+         Az5Q==
+X-Gm-Message-State: APjAAAUYR8sjaB1gVFB1wNrNnnX0KKGn+CedBQxZwatJkno4R2KTd0c5
+        pL8NNueoVnjrf1MJs0vD5BCofA==
+X-Google-Smtp-Source: APXvYqycSNEtNTgVc9EBZuUkjuvDVTlF4uWCWZ8DhHDbwtYYrszDaNXZo89BJZ2WkACsE6TdHAl2TA==
+X-Received: by 2002:ac2:5449:: with SMTP id d9mr14199136lfn.126.1559553247684;
+        Mon, 03 Jun 2019 02:14:07 -0700 (PDT)
+Received: from localhost (c-1c3670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.28])
+        by smtp.gmail.com with ESMTPSA id o184sm3068020lfo.37.2019.06.03.02.14.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Jun 2019 02:14:07 -0700 (PDT)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     mark.rutland@arm.com, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, mingo@redhat.com,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH 2/3] arm64: arch_timer: mark functions as __always_inline
+Date:   Mon,  3 Jun 2019 11:14:02 +0200
+Message-Id: <20190603091402.25115-1-anders.roxell@linaro.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190603091406.28915-1-tomas.winkler@intel.com>
-References: <20190603091406.28915-1-tomas.winkler@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -39,258 +62,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move intel amt documentation to a seprate file.
+If CONFIG_FUNCTION_GRAPH_TRACER is enabled function
+arch_counter_get_cntvct() is marked as notrace. However, function
+__arch_counter_get_cntvct is marked as inline. If
+CONFIG_OPTIMIZE_INLINING is set that will make the two functions
+tracable which they shouldn't.
 
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Rework so that functions __arch_counter_get_* are marked with
+__always_inline so they will be inlined even if CONFIG_OPTIMIZE_INLINING
+is turned on.
+
+Fixes: 0ea415390cd3 ("clocksource/arm_arch_timer: Use arch_timer_read_counter to access stable counters")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 ---
- Documentation/driver-api/mei/iamt.rst  | 106 +++++++++++++++++++++++++
- Documentation/driver-api/mei/index.rst |   1 +
- Documentation/driver-api/mei/mei.rst   | 100 -----------------------
- 3 files changed, 107 insertions(+), 100 deletions(-)
- create mode 100644 Documentation/driver-api/mei/iamt.rst
+ arch/arm64/include/asm/arch_timer.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/driver-api/mei/iamt.rst b/Documentation/driver-api/mei/iamt.rst
-new file mode 100644
-index 000000000000..6dcf5b16e958
---- /dev/null
-+++ b/Documentation/driver-api/mei/iamt.rst
-@@ -0,0 +1,106 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+Intel(R) Active Management Technology (Intel AMT)
-+=================================================
-+
-+Prominent usage of the Intel ME Interface is to communicate with Intel(R)
-+Active Management Technology (Intel AMT) implemented in firmware running on
-+the Intel ME.
-+
-+Intel AMT provides the ability to manage a host remotely out-of-band (OOB)
-+even when the operating system running on the host processor has crashed or
-+is in a sleep state.
-+
-+Some examples of Intel AMT usage are:
-+   - Monitoring hardware state and platform components
-+   - Remote power off/on (useful for green computing or overnight IT
-+     maintenance)
-+   - OS updates
-+   - Storage of useful platform information such as software assets
-+   - Built-in hardware KVM
-+   - Selective network isolation of Ethernet and IP protocol flows based
-+     on policies set by a remote management console
-+   - IDE device redirection from remote management console
-+
-+Intel AMT (OOB) communication is based on SOAP (deprecated
-+starting with Release 6.0) over HTTP/S or WS-Management protocol over
-+HTTP/S that are received from a remote management console application.
-+
-+For more information about Intel AMT:
-+http://software.intel.com/sites/manageability/AMT_Implementation_and_Reference_Guide
-+
-+
-+Intel AMT Applications
-+======================
-+
-+	1) Intel Local Management Service (Intel LMS)
-+
-+	   Applications running locally on the platform communicate with Intel AMT Release
-+	   2.0 and later releases in the same way that network applications do via SOAP
-+	   over HTTP (deprecated starting with Release 6.0) or with WS-Management over
-+	   SOAP over HTTP. This means that some Intel AMT features can be accessed from a
-+	   local application using the same network interface as a remote application
-+	   communicating with Intel AMT over the network.
-+
-+	   When a local application sends a message addressed to the local Intel AMT host
-+	   name, the Intel LMS, which listens for traffic directed to the host name,
-+	   intercepts the message and routes it to the Intel MEI.
-+	   For more information:
-+	   http://software.intel.com/sites/manageability/AMT_Implementation_and_Reference_Guide
-+	   Under "About Intel AMT" => "Local Access"
-+
-+	   For downloading Intel LMS:
-+	   http://software.intel.com/en-us/articles/download-the-latest-intel-amt-open-source-drivers/
-+
-+	   The Intel LMS opens a connection using the Intel MEI driver to the Intel LMS
-+	   firmware feature using a defined UUID and then communicates with the feature
-+	   using a protocol called Intel AMT Port Forwarding Protocol (Intel APF protocol).
-+	   The protocol is used to maintain multiple sessions with Intel AMT from a
-+	   single application.
-+
-+	   See the protocol specification in the Intel AMT Software Development Kit (SDK)
-+	   http://software.intel.com/sites/manageability/AMT_Implementation_and_Reference_Guide
-+	   Under "SDK Resources" => "Intel(R) vPro(TM) Gateway (MPS)"
-+	   => "Information for Intel(R) vPro(TM) Gateway Developers"
-+	   => "Description of the Intel AMT Port Forwarding (APF) Protocol"
-+
-+	2) Intel AMT Remote configuration using a Local Agent
-+
-+	   A Local Agent enables IT personnel to configure Intel AMT out-of-the-box
-+	   without requiring installing additional data to enable setup. The remote
-+	   configuration process may involve an ISV-developed remote configuration
-+	   agent that runs on the host.
-+	   For more information:
-+	   http://software.intel.com/sites/manageability/AMT_Implementation_and_Reference_Guide
-+	   Under "Setup and Configuration of Intel AMT" =>
-+	   "SDK Tools Supporting Setup and Configuration" =>
-+	   "Using the Local Agent Sample"
-+
-+	   An open source Intel AMT configuration utility,	implementing a local agent
-+	   that accesses the Intel MEI driver, can be found here:
-+	   http://software.intel.com/en-us/articles/download-the-latest-intel-amt-open-source-drivers/
-+
-+
-+Intel AMT OS Health Watchdog
-+============================
-+
-+The Intel AMT Watchdog is an OS Health (Hang/Crash) watchdog.
-+Whenever the OS hangs or crashes, Intel AMT will send an event
-+to any subscriber to this event. This mechanism means that
-+IT knows when a platform crashes even when there is a hard failure on the host.
-+
-+The Intel AMT Watchdog is composed of two parts:
-+	1) Firmware feature - receives the heartbeats
-+	   and sends an event when the heartbeats stop.
-+	2) Intel MEI iAMT watchdog driver - connects to the watchdog feature,
-+	   configures the watchdog and sends the heartbeats.
-+
-+The Intel iAMT watchdog MEI driver uses the kernel watchdog API to configure
-+the Intel AMT Watchdog and to send heartbeats to it. The default timeout of the
-+watchdog is 120 seconds.
-+
-+If the Intel AMT is not enabled in the firmware then the watchdog client won't enumerate
-+on the me client bus and watchdog devices won't be exposed.
-+
-+---
-+linux-mei@linux.intel.com
-diff --git a/Documentation/driver-api/mei/index.rst b/Documentation/driver-api/mei/index.rst
-index 35c1117d8366..d261afac6852 100644
---- a/Documentation/driver-api/mei/index.rst
-+++ b/Documentation/driver-api/mei/index.rst
-@@ -20,3 +20,4 @@ Intel(R) Management Engine Interface (Intel(R) MEI)
+diff --git a/arch/arm64/include/asm/arch_timer.h b/arch/arm64/include/asm/arch_timer.h
+index b7bca1ae09e6..50b3ab7ded4f 100644
+--- a/arch/arm64/include/asm/arch_timer.h
++++ b/arch/arm64/include/asm/arch_timer.h
+@@ -193,7 +193,7 @@ static inline void arch_timer_set_cntkctl(u32 cntkctl)
+ 	: "=r" (tmp) : "r" (_val));					\
+ } while (0)
  
-    mei
-    mei-client-bus
-+   iamt
-diff --git a/Documentation/driver-api/mei/mei.rst b/Documentation/driver-api/mei/mei.rst
-index 5aa3a5e6496a..c7f10a4b46ff 100644
---- a/Documentation/driver-api/mei/mei.rst
-+++ b/Documentation/driver-api/mei/mei.rst
-@@ -17,33 +17,6 @@ Each Intel ME feature (Intel ME Client) is addressed by a GUID/UUID and
- each client has its own protocol. The protocol is message-based with a
- header and payload up to 512 bytes.
+-static inline u64 __arch_counter_get_cntpct_stable(void)
++static __always_inline u64 __arch_counter_get_cntpct_stable(void)
+ {
+ 	u64 cnt;
  
--Prominent usage of the Intel ME Interface is to communicate with Intel(R)
--Active Management Technology (Intel AMT) implemented in firmware running on
--the Intel ME.
--
--Intel AMT provides the ability to manage a host remotely out-of-band (OOB)
--even when the operating system running on the host processor has crashed or
--is in a sleep state.
--
--Some examples of Intel AMT usage are:
--   - Monitoring hardware state and platform components
--   - Remote power off/on (useful for green computing or overnight IT
--     maintenance)
--   - OS updates
--   - Storage of useful platform information such as software assets
--   - Built-in hardware KVM
--   - Selective network isolation of Ethernet and IP protocol flows based
--     on policies set by a remote management console
--   - IDE device redirection from remote management console
--
--Intel AMT (OOB) communication is based on SOAP (deprecated
--starting with Release 6.0) over HTTP/S or WS-Management protocol over
--HTTP/S that are received from a remote management console application.
--
--For more information about Intel AMT:
--http://software.intel.com/sites/manageability/AMT_Implementation_and_Reference_Guide
--
--
- Intel MEI Driver
- ================
+@@ -203,7 +203,7 @@ static inline u64 __arch_counter_get_cntpct_stable(void)
+ 	return cnt;
+ }
  
-@@ -169,82 +142,9 @@ The Intel MEI Driver supports the following IOCTL commands:
- 	in order to receive an event
+-static inline u64 __arch_counter_get_cntpct(void)
++static __always_inline u64 __arch_counter_get_cntpct(void)
+ {
+ 	u64 cnt;
  
+@@ -213,7 +213,7 @@ static inline u64 __arch_counter_get_cntpct(void)
+ 	return cnt;
+ }
  
--Intel ME Applications
--=====================
--
--	1) Intel Local Management Service (Intel LMS)
--
--	   Applications running locally on the platform communicate with Intel AMT Release
--	   2.0 and later releases in the same way that network applications do via SOAP
--	   over HTTP (deprecated starting with Release 6.0) or with WS-Management over
--	   SOAP over HTTP. This means that some Intel AMT features can be accessed from a
--	   local application using the same network interface as a remote application
--	   communicating with Intel AMT over the network.
--
--	   When a local application sends a message addressed to the local Intel AMT host
--	   name, the Intel LMS, which listens for traffic directed to the host name,
--	   intercepts the message and routes it to the Intel MEI.
--	   For more information:
--	   http://software.intel.com/sites/manageability/AMT_Implementation_and_Reference_Guide
--	   Under "About Intel AMT" => "Local Access"
--
--	   For downloading Intel LMS:
--	   http://software.intel.com/en-us/articles/download-the-latest-intel-amt-open-source-drivers/
--
--	   The Intel LMS opens a connection using the Intel MEI driver to the Intel LMS
--	   firmware feature using a defined UUID and then communicates with the feature
--	   using a protocol called Intel AMT Port Forwarding Protocol (Intel APF protocol).
--	   The protocol is used to maintain multiple sessions with Intel AMT from a
--	   single application.
--
--	   See the protocol specification in the Intel AMT Software Development Kit (SDK)
--	   http://software.intel.com/sites/manageability/AMT_Implementation_and_Reference_Guide
--	   Under "SDK Resources" => "Intel(R) vPro(TM) Gateway (MPS)"
--	   => "Information for Intel(R) vPro(TM) Gateway Developers"
--	   => "Description of the Intel AMT Port Forwarding (APF) Protocol"
--
--	2) Intel AMT Remote configuration using a Local Agent
--
--	   A Local Agent enables IT personnel to configure Intel AMT out-of-the-box
--	   without requiring installing additional data to enable setup. The remote
--	   configuration process may involve an ISV-developed remote configuration
--	   agent that runs on the host.
--	   For more information:
--	   http://software.intel.com/sites/manageability/AMT_Implementation_and_Reference_Guide
--	   Under "Setup and Configuration of Intel AMT" =>
--	   "SDK Tools Supporting Setup and Configuration" =>
--	   "Using the Local Agent Sample"
--
--	   An open source Intel AMT configuration utility,	implementing a local agent
--	   that accesses the Intel MEI driver, can be found here:
--	   http://software.intel.com/en-us/articles/download-the-latest-intel-amt-open-source-drivers/
--
--
--Intel AMT OS Health Watchdog
--============================
--
--The Intel AMT Watchdog is an OS Health (Hang/Crash) watchdog.
--Whenever the OS hangs or crashes, Intel AMT will send an event
--to any subscriber to this event. This mechanism means that
--IT knows when a platform crashes even when there is a hard failure on the host.
--
--The Intel AMT Watchdog is composed of two parts:
--	1) Firmware feature - receives the heartbeats
--	   and sends an event when the heartbeats stop.
--	2) Intel MEI iAMT watchdog driver - connects to the watchdog feature,
--	   configures the watchdog and sends the heartbeats.
--
--The Intel iAMT watchdog MEI driver uses the kernel watchdog API to configure
--the Intel AMT Watchdog and to send heartbeats to it. The default timeout of the
--watchdog is 120 seconds.
--
--If the Intel AMT is not enabled in the firmware then the watchdog client won't enumerate
--on the me client bus and watchdog devices won't be exposed.
+-static inline u64 __arch_counter_get_cntvct_stable(void)
++static __always_inline u64 __arch_counter_get_cntvct_stable(void)
+ {
+ 	u64 cnt;
  
- Supported Chipsets
- ==================
- 82X38/X48 Express and newer
+@@ -223,7 +223,7 @@ static inline u64 __arch_counter_get_cntvct_stable(void)
+ 	return cnt;
+ }
  
--
-----
- linux-mei@linux.intel.com
+-static inline u64 __arch_counter_get_cntvct(void)
++static __always_inline u64 __arch_counter_get_cntvct(void)
+ {
+ 	u64 cnt;
+ 
 -- 
 2.20.1
 
