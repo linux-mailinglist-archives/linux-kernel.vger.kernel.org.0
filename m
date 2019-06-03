@@ -2,109 +2,223 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34F7C339FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 23:43:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E772D33A27
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 23:50:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726694AbfFCVn1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 17:43:27 -0400
-Received: from ja.ssi.bg ([178.16.129.10]:55560 "EHLO ja.ssi.bg"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726102AbfFCVn1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 17:43:27 -0400
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-        by ja.ssi.bg (8.15.2/8.15.2) with ESMTP id x53LWMvZ008943;
-        Tue, 4 Jun 2019 00:32:22 +0300
-Date:   Tue, 4 Jun 2019 00:32:22 +0300 (EEST)
-From:   Julian Anastasov <ja@ssi.bg>
-To:     syzbot <syzbot+722da59ccb264bc19910@syzkaller.appspotmail.com>
-cc:     coreteam@netfilter.org, "David S. Miller" <davem@davemloft.net>,
-        fw@strlen.de, kadlec@blackhole.kfki.hu,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        pablo@netfilter.org, syzkaller-bugs@googlegroups.com,
-        lvs-devel@vger.kernel.org
-Subject: Re: memory leak in nf_hook_entries_grow
-In-Reply-To: <0000000000002b2262058a70001d@google.com>
-Message-ID: <alpine.LFD.2.21.1906040021510.3876@ja.home.ssi.bg>
-References: <0000000000002b2262058a70001d@google.com>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        id S1726341AbfFCVuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 17:50:18 -0400
+Received: from mail.efficios.com ([167.114.142.138]:36418 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726076AbfFCVuS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 17:50:18 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 4EF181E9743;
+        Mon,  3 Jun 2019 17:32:42 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id iW9oEad8S2sy; Mon,  3 Jun 2019 17:32:41 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 1BD5D1E973F;
+        Mon,  3 Jun 2019 17:32:41 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 1BD5D1E973F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1559597561;
+        bh=nfyfj63ozJ3ZHO2GDnfJlIrHT8/X+g8nEVUfeEufS0E=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=otHK+Dp5OVJMd0mX0rbfivDErrWmYljmuqreMoJKrsEYYo4qW388sSFRdx9KhrNX2
+         DVjb4tg3AOPMQEnf1ZOJF/PqaUKOqsniOJirxx9RnVq30/djWOfioV8bdRyegqkpDu
+         3RRRaTU/j/q08678zbIoYAPBUF5WIhQlKN6NqKX7cXBxd0tgUdIr8Sq6zxVWual1pr
+         6klJJRNwieVYf7RMBx39HCn/fQoIKeHawu6zdN4/d2LjZytsiQUTmdhLvfvWYx7HB8
+         MUgHGhaZk4ekVwWf1l57wjjdEOQdGOpBJ+Mg8BPmzVjuC6WW54VOe58xqHVPbz7d6S
+         AO6qv2Qev1s5w==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id ZN0JoOtfhMII; Mon,  3 Jun 2019 17:32:41 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id F20BF1E9735;
+        Mon,  3 Jun 2019 17:32:40 -0400 (EDT)
+Date:   Mon, 3 Jun 2019 17:32:40 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     linux-kernel <linux-kernel@vger.kernel.org>,
+        lttng-dev <lttng-dev@lists.lttng.org>, rp <rp@svcs.cs.pdx.edu>
+Cc:     Stephen Hemminger <stephen@networkplumber.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Alan Stern <stern@rowland.harvard.edu>
+Message-ID: <1807476901.26032.1559597560952.JavaMail.zimbra@efficios.com>
+In-Reply-To: <990796059.510.1557174774246.JavaMail.zimbra@efficios.com>
+References: <990796059.510.1557174774246.JavaMail.zimbra@efficios.com>
+Subject: Re: [lttng-dev] [RELEASE] Userspace RCU 0.11
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.12_GA_3803 (ZimbraWebClient - FF67 (Linux)/8.8.12_GA_3794)
+Thread-Topic: Userspace RCU 0.11
+Thread-Index: 2Iev/flw77z+21I02ATmbGCqmUpBFOfMPHS/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+----- On May 6, 2019, at 4:32 PM, Mathieu Desnoyers mathieu.desnoyers@efficios.com wrote:
 
-	Hello,
-
-On Mon, 3 Jun 2019, syzbot wrote:
-
-> Hello,
+> Hi,
 > 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    3ab4436f Merge tag 'nfsd-5.2-1' of git://linux-nfs.org/~bf..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15feaf82a00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=50393f7bfe444ff6
-> dashboard link: https://syzkaller.appspot.com/bug?extid=722da59ccb264bc19910
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12f02772a00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1657b80ea00000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+722da59ccb264bc19910@syzkaller.appspotmail.com
-> 
-> 035][ T7273] IPVS: ftp: loaded support on port[0] = 21
-> BUG: memory leak
-> unreferenced object 0xffff88810acd8a80 (size 96):
->  comm "syz-executor073", pid 7254, jiffies 4294950560 (age 22.250s)
->  hex dump (first 32 bytes):
->    02 00 00 00 00 00 00 00 50 8b bb 82 ff ff ff ff  ........P.......
->    00 00 00 00 00 00 00 00 00 77 bb 82 ff ff ff ff  .........w......
->  backtrace:
->    [<0000000013db61f1>] kmemleak_alloc_recursive include/linux/kmemleak.h:55
->    [inline]
->    [<0000000013db61f1>] slab_post_alloc_hook mm/slab.h:439 [inline]
->    [<0000000013db61f1>] slab_alloc_node mm/slab.c:3269 [inline]
->    [<0000000013db61f1>] kmem_cache_alloc_node_trace+0x15b/0x2a0 mm/slab.c:3597
->    [<000000001a27307d>] __do_kmalloc_node mm/slab.c:3619 [inline]
->    [<000000001a27307d>] __kmalloc_node+0x38/0x50 mm/slab.c:3627
->    [<0000000025054add>] kmalloc_node include/linux/slab.h:590 [inline]
->    [<0000000025054add>] kvmalloc_node+0x4a/0xd0 mm/util.c:431
->    [<0000000050d1bc00>] kvmalloc include/linux/mm.h:637 [inline]
->    [<0000000050d1bc00>] kvzalloc include/linux/mm.h:645 [inline]
->    [<0000000050d1bc00>] allocate_hook_entries_size+0x3b/0x60
->    net/netfilter/core.c:61
->    [<00000000e8abe142>] nf_hook_entries_grow+0xae/0x270
->    net/netfilter/core.c:128
->    [<000000004b94797c>] __nf_register_net_hook+0x9a/0x170
->    net/netfilter/core.c:337
->    [<00000000d1545cbc>] nf_register_net_hook+0x34/0xc0
->    net/netfilter/core.c:464
->    [<00000000876c9b55>] nf_register_net_hooks+0x53/0xc0
->    net/netfilter/core.c:480
->    [<000000002ea868e0>] __ip_vs_init+0xe8/0x170
->    net/netfilter/ipvs/ip_vs_core.c:2280
+> This is a 0.11 release of the Userspace RCU project.
 
-	After commit "ipvs: Fix use-after-free in ip_vs_in" we planned
-to call nf_register_net_hooks() only when rule is created but this
-is net-next material and we should not leave leak in the error path.
-I'll post a patch that adds .init handler for ipvs_core_dev_ops, so
-that nf_register_net_hooks() is called there.
+FYI, I just released a 0.11.1 tag of Userspace RCU which does a
+mandatory soname bump. Distributions wishing to package it should
+grab 0.11.1. The prior release 0.11.0 changed the soname from 6.0.0 down
+to 5.1.0, which was not intended. This release bumps it to 6.1.0 as
+originally intended.
 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
+Changes:
+
+2019-06-03 Userspace RCU 0.11.1
+        * Fix: SONAME bump to 6.1.0
+        * Fix: urcu/futex.h: users of struct timespec should include time.h
+
+Thanks,
+
+Mathieu
+
+
 > 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
+> liburcu is a LGPLv2.1 userspace RCU (read-copy-update) library. This
+> data synchronization library provides read-side access which scales
+> linearly with the number of cores. It does so by allowing multiple
+> copies of a given data structure to live at the same time, and by
+> monitoring the data structure accesses to detect grace periods after
+> which memory reclamation is possible.
+> 
+> liburcu-cds provides efficient data structures based on RCU and
+> lock-free algorithms. Those structures include hash tables, queues,
+> stacks, and doubly-linked lists.
+> 
+> Here is the high-level view of the changes introduced in this release:
+> 
+> * Allow combining many urcu flavors within the same
+>  compile unit. Prefix public APIs with urcu_<flavor>_ prefix. Keep old
+>  symbols as aliases for backward compatibility.
+> 
+> * liburcu flavors public headers are moved, including them from previous
+>  headers for backward compatibility:
+> 
+>  urcu-bp.h -> urcu/urcu-bp.h
+>  urcu-qsbr.h -> urcu/urcu-qsbr.h
+>  urcu.h -> urcu/urcu-memb.h
+>  urcu.h (after #define RCU_MEMBARRIER) -> urcu/urcu-memb.h
+>  urcu.h (after #define RCU_MB) -> urcu/urcu-mb.h
+>  urcu.h (after #define RCU_SIGNAL) -> urcu/urcu-mb.h
+> 
+> * The library liburcu is renamed to liburcu-memb, keeping the old
+>  library name as alias for backward compatibility.
+> 
+> * RCU lock-free hash table debugging:
+> 
+>  --enable-cds-lfht-iter-debug is introduced.
+> 
+>  Building liburcu with --enable-cds-lfht-iter-debug and rebuilding
+>  application to match the ABI change allows finding cases where the hash
+>  table iterator is re-purposed to be used on a different hash table
+>  while still being used to iterate on a hash table.
+> 
+>  This option alters the rculfhash ABI. Make sure to compile both library
+>  and application with matching configuration.
+> 
+> * Added support for RISC-V architecture.
+> 
+> * Use membarrier PRIVATE_EXPEDITED when available from liburcu-bp and
+>  liburcu-memb flavors.
+> 
+> The backward compatibility header files, library shared objects, and
+> symbols will be kept for a few liburcu versions before being removed, at
+> which point a major soname bump will happen.
+> 
+> As always, feedback is welcome!
+> 
+> Thanks,
+> 
+> Mathieu
+> 
+> Changelog:
+> 
+> 2019-05-06 Userspace RCU 0.11.0
+>        * Bump library version to 6:0:1
+>        * Cleanup: update code layout to fix old gcc warning
+>        * Fix: typo CPPLAGS in examples Makefile
+>        * Harmonize pprint macro across projects
+>        * Check for TLS support after CC detection
+>        * Update macros from the autotools archive
+>        * tap-driver.sh: flush stdout after each test result
+>        * Update dead link in lgpl-relicensing.txt
+>        * Add multiflavor compat identifiers
+>        * Cleanup: missing sign compare fixes
+>        * Cleanup: enable signed/unsigned compare compiler warning
+>        * Cleanup: compiler warning on 32-bit architectures
+>        * config.h.in: rename CONFIG_RCU_MULTIFLAVOR to CONFIG_RCU_HAVE_MULTIFLAVOR
+>        * rculfhash: implement iterator debugging config option
+>        * Fix: examples silent rules on Solaris
+>        * Add missing fall through annotations
+>        * Fix: symbol aliases with TLS compat
+>        * Port: no symbols aliases on MacOS
+>        * Add -Wextra to CFLAGS
+>        * Add silent mode to examples Makefiles
+>        * doc: update examples to API changes
+>        * test multiflavor single compile unit
+>        * Update README following API changes
+>        * Use new header locations for includes from urcu code
+>        * Update call-rcu.h and defer.h comments and include guards
+>        * rculfqueue.h: do not include urcu-call-rcu.h
+>        * rculfhash: support use with multiple flavors per compile unit
+>        * rculfhash: do not include urcu-call-rcu.h from public API
+>        * Refactor liburcu to support many flavors per compile unit
+>        * Fix: only wait if work queue is empty in real-time mode
+>        * Fix: don't wait after completion of a work queue job batch
+>        * Fix: don't wait after completion of job batch if work queue is empty
+>        * Fix: workqueue: struct urcu_work vs rcu_head mixup
+>        * Cleanup: workqueue: update comments referring to call-rcu
+>        * Fix: mixup between URCU_WORKQUEUE_RT and URCU_CALL_RCU_RT
+>        * test_rwlock: Add per-thread count to verbose output
+>        * Add *.exe to gitignore for Cygwin
+>        * Fix: pthread_rwlock initialization on Cygwin
+>        * Fix: compat_futex_noasync on Cygwin
+>        * wfcqueue: allow defining CDS_WFCQ_WAIT_SLEEP to override `poll'
+>        * Update documentation for call_rcu before/after fork
+>        * Add support for the RISC-V architecture
+>        * Tests: Add tap-driver.sh for automake < 1.12
+>        * Tests: Replace prove by autotools tap runner
+>        * liburcu-bp: Use membarrier private expedited when available
+>        * liburcu: Use membarrier private expedited when available
+>        * rculfhash: improve error handling of mmap backend
+>        * Fix: don't use overlapping mmap mappings on Cygwin
+>        * Tests fix: errors in shell scripts
+>        * Revert "Use initial-exec tls model"
+>        * Use initial-exec tls model
+>        * Fix: don't use membarrier SHARED syscall command in liburcu-bp
+>        * Tests fix: add missing Cygwin thread id
+>        * Fix: assignment from incompatible pointer type warnings
+>        * Tests fix: unused variable warnings
+>        * Fix: add missing m68k headers to dist
+>        * Bump version to 0.11-pre
+> 
+> 
+> Project website: http://liburcu.org
+> Git repository: git://git.liburcu.org/urcu.git
+> 
+> --
+> Mathieu Desnoyers
+> EfficiOS Inc.
+> http://www.efficios.com
+> _______________________________________________
+> lttng-dev mailing list
+> lttng-dev@lists.lttng.org
+> https://lists.lttng.org/cgi-bin/mailman/listinfo/lttng-dev
 
-Regards
-
---
-Julian Anastasov <ja@ssi.bg>
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
