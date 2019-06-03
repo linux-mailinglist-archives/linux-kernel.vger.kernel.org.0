@@ -2,88 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7B8E32639
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 03:48:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A2FB32643
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 03:58:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbfFCBsk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Jun 2019 21:48:40 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:38750 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726270AbfFCBsk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Jun 2019 21:48:40 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7AA281A0314;
-        Mon,  3 Jun 2019 03:48:38 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6553D1A02F9;
-        Mon,  3 Jun 2019 03:48:32 +0200 (CEST)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id AEACF402A2;
-        Mon,  3 Jun 2019 09:48:24 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        leonard.crestez@nxp.com, aisheng.dong@nxp.com,
-        viresh.kumar@linaro.org, ping.bai@nxp.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] arm64: dts: imx8mm: Move gic node into soc node
-Date:   Mon,  3 Jun 2019 09:50:20 +0800
-Message-Id: <20190603015020.41410-1-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.17.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726939AbfFCB63 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Jun 2019 21:58:29 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:9859 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726587AbfFCB62 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Jun 2019 21:58:28 -0400
+X-UUID: 883802220f714c1b96c41c46de9ef1f6-20190603
+X-UUID: 883802220f714c1b96c41c46de9ef1f6-20190603
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <biao.huang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 95759638; Mon, 03 Jun 2019 09:58:20 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 3 Jun 2019 09:58:18 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 3 Jun 2019 09:58:17 +0800
+From:   Biao Huang <biao.huang@mediatek.com>
+To:     <davem@davemloft.net>, Jose Abreu <joabreu@synopsys.com>,
+        <andrew@lunn.ch>
+CC:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <netdev@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <yt.shen@mediatek.com>,
+        <biao.huang@mediatek.com>, <jianguo.zhang@mediatek.com>,
+        <boon.leong.ong@intel.com>
+Subject: [v2, PATCH 0/4] complete dwmac-mediatek driver and fix flow control issue
+Date:   Mon, 3 Jun 2019 09:58:02 +0800
+Message-ID: <1559527086-7227-1-git-send-email-biao.huang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+MIME-Version: 1.0
+Content-Type: text/plain
+X-TM-SNTS-SMTP: EC69FD41C9E8FD24660C96396E7791983B1B28FC35671685A2509970C2084FF82000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
-
-GIC is inside of SoC from architecture perspective, it should
-be located inside of soc node in DT.
-
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mm.dtsi | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-index dc99f45..429312e 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-@@ -169,15 +169,6 @@
- 		clock-output-names = "clk_ext4";
- 	};
- 
--	gic: interrupt-controller@38800000 {
--		compatible = "arm,gic-v3";
--		reg = <0x0 0x38800000 0 0x10000>, /* GIC Dist */
--		      <0x0 0x38880000 0 0xC0000>; /* GICR (RD_base + SGI_base) */
--		#interrupt-cells = <3>;
--		interrupt-controller;
--		interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
--	};
--
- 	psci {
- 		compatible = "arm,psci-1.0";
- 		method = "smc";
-@@ -739,6 +730,15 @@
- 			dma-names = "rx-tx";
- 			status = "disabled";
- 		};
-+
-+		gic: interrupt-controller@38800000 {
-+			compatible = "arm,gic-v3";
-+			reg = <0x38800000 0x10000>, /* GIC Dist */
-+			      <0x38880000 0xc0000>; /* GICR (RD_base + SGI_base) */
-+			#interrupt-cells = <3>;
-+			interrupt-controller;
-+			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+		};
- 	};
- 
- 	usbphynop1: usbphynop1 {
--- 
-2.7.4
+Changes in v2:                                                                  
+        patch#1: there is no extra action in mediatek_dwmac_remove, remove it            
+                                                                                
+v1:                                                                             
+This series mainly complete dwmac-mediatek driver:                              
+        1. add power on/off operations for dwmac-mediatek.                      
+        2. disable rx watchdog to reduce rx path reponding time.                
+        3. change the default value of tx-frames from 25 to 1, so               
+           ptp4l will test pass by default.                                     
+                                                                                
+and also fix the issue that flow control won't be disabled any more             
+once being enabled.                                                             
+                                                                                
+Biao Huang (4):                                                                 
+  net: stmmac: dwmac-mediatek: enable Ethernet power domain                     
+  net: stmmac: dwmac-mediatek: disable rx watchdog                              
+  net: stmmac: modify default value of tx-frames                                
+  net: stmmac: dwmac4: fix flow control issue                                   
+                                                                                
+ drivers/net/ethernet/stmicro/stmmac/common.h       |    2 +-                   
+ .../net/ethernet/stmicro/stmmac/dwmac-mediatek.c   |    8 ++++++++             
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c  |    8 ++++++--             
+ 3 files changed, 15 insertions(+), 3 deletions(-)                              
+                                                                                
+--                                                                              
+1.7.9.5
 
