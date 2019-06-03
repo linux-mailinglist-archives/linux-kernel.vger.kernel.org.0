@@ -2,118 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C9AD33286
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 16:44:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D171E33293
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 16:44:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729388AbfFCOoT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 10:44:19 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32980 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729238AbfFCOoS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 10:44:18 -0400
-Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 970C97DED53F5CEC1E01;
-        Mon,  3 Jun 2019 15:44:14 +0100 (IST)
-Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
- (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 3 Jun
- 2019 15:44:04 +0100
-Subject: Re: [PATCH v2 2/3] ima: don't ignore INTEGRITY_UNKNOWN EVM status
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
-        <mjg59@google.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <silviu.vlasceanu@huawei.com>, <stable@vger.kernel.org>
-References: <20190529133035.28724-1-roberto.sassu@huawei.com>
- <20190529133035.28724-3-roberto.sassu@huawei.com>
- <1559217621.4008.7.camel@linux.ibm.com>
- <e6b31aa9-0319-1805-bdfc-3ddde5884494@huawei.com>
- <1559569401.5052.17.camel@HansenPartnership.com>
- <3667fbd4-b6ed-6a76-9ff4-84ec3c2dda12@huawei.com>
- <1559572305.5052.19.camel@HansenPartnership.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <b38d75b1-873a-1630-0148-41c49571531a@huawei.com>
-Date:   Mon, 3 Jun 2019 16:44:12 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S1729397AbfFCOo4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 10:44:56 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:34592 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728722AbfFCOoz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 10:44:55 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id 5A81B28A185
+Message-ID: <435028daafebcf23425dd5b9338dc3126fac8b89.camel@collabora.com>
+Subject: Re: [PATCH] arm64: dts: rockchip: fix isp iommu clocks and power
+ domain
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     Helen Koike <helen.koike@collabora.com>,
+        linux-rockchip@lists.infradead.org
+Cc:     kernel@collabora.com, laurent.pinchart@ideasonboard.com,
+        manivannan.sadhasivam@linaro.org,
+        linux-arm-kernel@lists.infradead.org,
+        Vicente Bergas <vicencb@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org,
+        Klaus Goger <klaus.goger@theobroma-systems.com>,
+        linux-kernel@vger.kernel.org,
+        Christoph Muellner <christoph.muellner@theobroma-systems.com>,
+        Randy Li <ayaka@soulik.info>,
+        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tony Xie <tony.xie@rock-chips.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Date:   Mon, 03 Jun 2019 11:44:43 -0300
+In-Reply-To: <20190603142214.24686-1-helen.koike@collabora.com>
+References: <20190603142214.24686-1-helen.koike@collabora.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1 
 MIME-Version: 1.0
-In-Reply-To: <1559572305.5052.19.camel@HansenPartnership.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.220.96.108]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/3/2019 4:31 PM, James Bottomley wrote:
-> On Mon, 2019-06-03 at 16:29 +0200, Roberto Sassu wrote:
->> On 6/3/2019 3:43 PM, James Bottomley wrote:
->>> On Mon, 2019-06-03 at 11:25 +0200, Roberto Sassu wrote:
->>>> On 5/30/2019 2:00 PM, Mimi Zohar wrote:
->>>>> On Wed, 2019-05-29 at 15:30 +0200, Roberto Sassu wrote:
->>>>>> Currently, ima_appraise_measurement() ignores the EVM status
->>>>>> when evm_verifyxattr() returns INTEGRITY_UNKNOWN. If a file
->>>>>> has a valid security.ima xattr with type IMA_XATTR_DIGEST or
->>>>>> IMA_XATTR_DIGEST_NG, ima_appraise_measurement() returns
->>>>>> INTEGRITY_PASS regardless of the EVM status. The problem is
->>>>>> that the EVM status is overwritten with the appraisal statu
->>>>>
->>>>> Roberto, your framing of this problem is harsh and
->>>>> misleading.  IMA and EVM are intentionally independent of each
->>>>> other and can be configured independently of each other.  The
->>>>> intersection of the two is the call to
->>>>> evm_verifyxattr().  INTEGRITY_UNKNOWN is
->>>>> returned for a number of reasons - when EVM is not configured,
->>>>> the EVM hmac key has not yet been loaded, the protected
->>>>> security attribute is unknown, or the file is not in policy.
->>>>>
->>>>> This patch does not differentiate between any of the above
->>>>> cases, requiring mutable files to always be protected by EVM,
->>>>> when specified as an "ima_appraise=" option on the boot command
->>>>> line.
->>>>>
->>>>> IMA could be extended to require EVM on a per IMA policy rule
->>>>> basis. Instead of framing allowing IMA file hashes without EVM
->>>>> as a bug that has existed from the very beginning, now that
->>>>> IMA/EVM have matured and is being used, you could frame it as
->>>>> extending IMA or hardening.
->>>>
->>>> I'm seeing it from the perspective of an administrator that
->>>> manages an already hardened system, and expects that the system
->>>> only grants access to files with a valid signature/HMAC. That
->>>> system would not enforce this behavior if EVM keys are removed
->>>> and the digest in security.ima is set to the actual file digest.
->>>>
->>>> Framing it as a bug rather than an extension would in my opinion
->>>> help to convince people about the necessity to switch to the safe
->>>> mode, if their system is already hardened.
->>>
->>> I have a use case for IMA where I use it to enforce immutability of
->>> containers.  In this use case, the cluster admin places hashes on
->>> executables as the image is unpacked so that if an executable file
->>> is changed, IMA will cause an execution failure.  For this use
->>> case, I don't care about the EVM, in fact we don't use it, because
->>> the only object is to fail execution if a binary is mutated.
->>
->> How would you prevent root in the container from updating
->> security.ima?
+On Mon, 2019-06-03 at 11:22 -0300, Helen Koike wrote:
+> isp iommu requires wrapper variants of the clocks.
+> noc variants are always on and using the wrapper variants will activate
+> {A,H}CLK_ISP{0,1} due to the hierarchy.
 > 
-> We don't.  We only guarantee immutability for unprivileged containers,
-> so root can't be inside.
+> Also add the respective power domain.
+> 
+> Refer:
+>  RK3399 TRM v1.4 Fig. 2-4 RK3399 Clock Architecture Diagram
+>  RK3399 TRM v1.4 Fig. 8-1 RK3399 Power Domain Partition
+> 
+> Signed-off-by: Helen Koike <helen.koike@collabora.com>
+> 
+> ---
+> Hello,
+> 
+> I tested this using the isp patch set (which is not upstream
+> yet). Without this patch, streaming from the isp stalls.
+> 
+> I'm also enabling the power domain and removing the disable status,
+> please let me know if this should be done in a separated patch.
+> 
 
-Ok.
+I think you might want to put the comments about enabling power domain
+and removing disable status on the commit log. It's useful information :-)
 
-Regarding the new behavior, this must be explicitly enabled by adding
-ima_appraise=enforce-evm or log-evm to the kernel command line.
-Otherwise, the current behavior is preserved with this patch. Would this
-be ok?
+Thanks,
+Eze
 
-Roberto
+> Thanks
+> Helen
+> 
+>  arch/arm64/boot/dts/rockchip/rk3399.dtsi | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+> index 196ac9b78076..89594a7276f4 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+> @@ -1706,11 +1706,11 @@
+>  		reg = <0x0 0xff914000 0x0 0x100>, <0x0 0xff915000 0x0 0x100>;
+>  		interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH 0>;
+>  		interrupt-names = "isp0_mmu";
+> -		clocks = <&cru ACLK_ISP0_NOC>, <&cru HCLK_ISP0_NOC>;
+> +		clocks = <&cru ACLK_ISP0_WRAPPER>, <&cru HCLK_ISP0_WRAPPER>;
+>  		clock-names = "aclk", "iface";
+>  		#iommu-cells = <0>;
+> +		power-domains = <&power RK3399_PD_ISP0>;
+>  		rockchip,disable-mmu-reset;
+> -		status = "disabled";
+>  	};
+>  
+>  	isp1_mmu: iommu@ff924000 {
+> @@ -1718,11 +1718,11 @@
+>  		reg = <0x0 0xff924000 0x0 0x100>, <0x0 0xff925000 0x0 0x100>;
+>  		interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH 0>;
+>  		interrupt-names = "isp1_mmu";
+> -		clocks = <&cru ACLK_ISP1_NOC>, <&cru HCLK_ISP1_NOC>;
+> +		clocks = <&cru ACLK_ISP1_WRAPPER>, <&cru HCLK_ISP1_WRAPPER>;
+>  		clock-names = "aclk", "iface";
+>  		#iommu-cells = <0>;
+> +		power-domains = <&power RK3399_PD_ISP1>;
+>  		rockchip,disable-mmu-reset;
+> -		status = "disabled";
+>  	};
+>  
+>  	hdmi_sound: hdmi-sound {
 
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+
