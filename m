@@ -2,84 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAFCE336D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 19:33:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E014336D7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 19:35:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727273AbfFCRdk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 13:33:40 -0400
-Received: from asavdk4.altibox.net ([109.247.116.15]:44520 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726656AbfFCRdk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 13:33:40 -0400
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk4.altibox.net (Postfix) with ESMTPS id 7E733806A0;
-        Mon,  3 Jun 2019 19:33:35 +0200 (CEST)
-Date:   Mon, 3 Jun 2019 19:33:28 +0200
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Jani Nikula <jani.nikula@intel.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        intel-gfx@lists.freedesktop.org,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Michal Marek <michal.lkml@markovi.net>
-Subject: Re: [RFC 1/3] kbuild: add support for ensuring headers are
- self-contained
-Message-ID: <20190603173328.GA11045@ravnborg.org>
-References: <20190516194818.29230-1-jani.nikula@intel.com>
- <20190524174011.GA23737@ravnborg.org>
- <CAK7LNARY_L3Oyi7hhCZXVwNRAsf6ceSarTNDrzdfXQGj1tDFJw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNARY_L3Oyi7hhCZXVwNRAsf6ceSarTNDrzdfXQGj1tDFJw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=VcLZwmh9 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10
-        a=xbvA-TkhMh5VV6G_q3AA:9 a=CjuIK1q_8ugA:10
+        id S1727547AbfFCRfN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 13:35:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49698 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726341AbfFCRfM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 13:35:12 -0400
+Subject: Re: [GIT] Sparc
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559583311;
+        bh=2oHZAAcEVet9Dl0q7cdZbLhcN/D87+W9xMIk8orH9mg=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=y70UlKa9SAY3J2mIfUOb8oZOd1VjX+T1xhFUOdne+cNUJszG6siEQElRVgx8Tljm+
+         ZG6TyXgotuhqd2tFqK8reB0227uCZdrKWoZEHuMSkqSmrECS7WSNtF6uTdhR9aQofz
+         cs3TTLLQOJ4l5q18k/vYKiCqCpeu6ajWSCoRSRL4=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190602.222107.923223011133534329.davem@davemloft.net>
+References: <20190602.222107.923223011133534329.davem@davemloft.net>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190602.222107.923223011133534329.davem@davemloft.net>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc.git
+ refs/heads/master
+X-PR-Tracked-Commit-Id: 56cd0aefa475079e9613085b14a0f05037518fed
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 01e7a841b4346836f19b40677e1fef4657cc0d0d
+Message-Id: <155958331179.6762.4502817821711131059.pr-tracker-bot@kernel.org>
+Date:   Mon, 03 Jun 2019 17:35:11 +0000
+To:     David Miller <davem@davemloft.net>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masahiro/Jani.
+The pull request you sent on Sun, 02 Jun 2019 22:21:07 -0700 (PDT):
 
-> 
-> Following the obj-y pattern,
-> I want to make header-test-y relative to $(obj).
+> git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc.git refs/heads/master
 
-I also considered this and agree this is better.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/01e7a841b4346836f19b40677e1fef4657cc0d0d
 
-Otherwise we end up with a spaghetti of dependencies across the tree.
+Thank you!
 
-What I made just fit the purpose I had that day,
-which is no excuse for bad design.
-
-> I prefer this:
-> 
-> quiet_cmd_header_test = HDRTEST $@
->       cmd_header_test = echo "\#include \"$*.h\"" > $@
-> 
-> $(obj)/%.header_test.c:
->         $(call cmd,header_test)
-
-Even better - good.
-
-We call it HDRTEST - so why not just go for that name:
-
-    hdrtest-y += headerfile.h
-
-??
-
-The current proposal with "header-test-y" hurts the eye a little with
-two '-', and all other variables uses only one '-' as is today.
-(generic-y, obj-y etc).
-
-This is bikeshedding but is was itcing me a little.
-
-	Sam
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
