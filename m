@@ -2,142 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 991C032FE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 14:42:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4A9D32FDE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 14:41:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727588AbfFCMmO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 08:42:14 -0400
-Received: from mga11.intel.com ([192.55.52.93]:61293 "EHLO mga11.intel.com"
+        id S1727381AbfFCMlM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 08:41:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726360AbfFCMmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 08:42:14 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 05:42:13 -0700
-X-ExtLoop1: 1
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.198]) ([10.237.72.198])
-  by orsmga005.jf.intel.com with ESMTP; 03 Jun 2019 05:42:09 -0700
-Subject: Re: [PATCH 6/9] mmc: sdhci-sprd: Enable PHY DLL to make clock stable
-To:     Baolin Wang <baolin.wang@linaro.org>, ulf.hansson@linaro.org,
-        zhang.lyra@gmail.com, orsonzhai@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, arnd@arndb.de, olof@lixom.net
-Cc:     vincent.guittot@linaro.org, arm@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <cover.1558346019.git.baolin.wang@linaro.org>
- <270e86bf6b1ce138e40830fb63c9bcf150440426.1558346019.git.baolin.wang@linaro.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <8a792a0c-ed53-56ca-ede8-4a2657158b81@intel.com>
-Date:   Mon, 3 Jun 2019 15:40:58 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <270e86bf6b1ce138e40830fb63c9bcf150440426.1558346019.git.baolin.wang@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        id S1726137AbfFCMlM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 08:41:12 -0400
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A2D425FCC;
+        Mon,  3 Jun 2019 12:41:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559565670;
+        bh=purKlpevxX3/NR3bDCz6o1xMW5szM0zAXaiUthXoA0U=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=oIZuSZQ3HNjdYL9Uax26ZKlLqdFY7cxDE9izwPcPzn2ztTWZIitCGV2cG+R/V6pjJ
+         ZCEL/kr8yiiclHuZpXrYEwPjl0XjWFuPx8kCMZ3qTYzUwqX3ZBHVaJKuJnxVP0fhxN
+         ieA70HfpZDhxDPP8uKjnGBl1lWvqfWrkQYucpfl8=
+Date:   Mon, 3 Jun 2019 21:41:05 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] tracing/kprobe: Add kprobe_event= boot parameter
+Message-Id: <20190603214105.715a4072472ef4946123dc20@kernel.org>
+In-Reply-To: <20190603205238.3cef1ef724bda35d11369ea7@kernel.org>
+References: <155851393823.15728.9489409117921369593.stgit@devnote2>
+        <155851395498.15728.830529496248543583.stgit@devnote2>
+        <CADYN=9KHQPQTgy==TYZ5iD_zViPbHq4hgOUwuX69aQWV6vZOQg@mail.gmail.com>
+        <20190528083629.3c100256@gandalf.local.home>
+        <CADYN=9L2Lz9xgsP7jn3UNMOtAYtg6fAb1hbv=OJ_Xi4dA0Z5NQ@mail.gmail.com>
+        <20190603205238.3cef1ef724bda35d11369ea7@kernel.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/05/19 1:11 PM, Baolin Wang wrote:
-> For the Spreadtrum SD host controller, when we changed the clock to be
-> more than 52M, we should enable the PHY DLL which is used to track the
-> clock frequency to make the clock work more stable. Otherwise deviation
-> may occur of the higher clock.
-> 
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+On Mon, 3 Jun 2019 20:52:38 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-
-> ---
->  drivers/mmc/host/sdhci-sprd.c |   44 ++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 43 insertions(+), 1 deletion(-)
+> Hi Anders,
 > 
-> diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
-> index edec197..e6eda13 100644
-> --- a/drivers/mmc/host/sdhci-sprd.c
-> +++ b/drivers/mmc/host/sdhci-sprd.c
-> @@ -22,6 +22,13 @@
->  /* SDHCI_ARGUMENT2 register high 16bit */
->  #define SDHCI_SPRD_ARG2_STUFF		GENMASK(31, 16)
->  
-> +#define SDHCI_SPRD_REG_32_DLL_CFG	0x200
-> +#define  SDHCI_SPRD_DLL_ALL_CPST_EN	(BIT(18) | BIT(24) | BIT(25) | BIT(26) | BIT(27))
-> +#define  SDHCI_SPRD_DLL_EN		BIT(21)
-> +#define  SDHCI_SPRD_DLL_SEARCH_MODE	BIT(16)
-> +#define  SDHCI_SPRD_DLL_INIT_COUNT	0xc00
-> +#define  SDHCI_SPRD_DLL_PHASE_INTERNAL	0x3
-> +
->  #define SDHCI_SPRD_REG_32_DLL_DLY_OFFSET	0x208
->  #define  SDHCIBSPRD_IT_WR_DLY_INV		BIT(5)
->  #define  SDHCI_SPRD_BIT_CMD_DLY_INV		BIT(13)
-> @@ -56,6 +63,7 @@
->  #define SDHCI_SPRD_CLK_MAX_DIV		1023
->  
->  #define SDHCI_SPRD_CLK_DEF_RATE		26000000
-> +#define SDHCI_SPRD_PHY_DLL_CLK		52000000
->  
->  struct sdhci_sprd_host {
->  	u32 version;
-> @@ -200,9 +208,33 @@ static inline void _sdhci_sprd_set_clock(struct sdhci_host *host,
->  	}
->  }
->  
-> +static void sdhci_sprd_enable_phy_dll(struct sdhci_host *host)
-> +{
-> +	u32 tmp;
-> +
-> +	tmp = sdhci_readl(host, SDHCI_SPRD_REG_32_DLL_CFG);
-> +	tmp &= ~(SDHCI_SPRD_DLL_EN | SDHCI_SPRD_DLL_ALL_CPST_EN);
-> +	sdhci_writel(host, tmp, SDHCI_SPRD_REG_32_DLL_CFG);
-> +	/* wait 1ms */
-> +	usleep_range(1000, 1250);
-> +
-> +	tmp = sdhci_readl(host, SDHCI_SPRD_REG_32_DLL_CFG);
-> +	tmp |= SDHCI_SPRD_DLL_ALL_CPST_EN | SDHCI_SPRD_DLL_SEARCH_MODE |
-> +		SDHCI_SPRD_DLL_INIT_COUNT | SDHCI_SPRD_DLL_PHASE_INTERNAL;
-> +	sdhci_writel(host, tmp, SDHCI_SPRD_REG_32_DLL_CFG);
-> +	/* wait 1ms */
-> +	usleep_range(1000, 1250);
-> +
-> +	tmp = sdhci_readl(host, SDHCI_SPRD_REG_32_DLL_CFG);
-> +	tmp |= SDHCI_SPRD_DLL_EN;
-> +	sdhci_writel(host, tmp, SDHCI_SPRD_REG_32_DLL_CFG);
-> +	/* wait 1ms */
-> +	usleep_range(1000, 1250);
-> +}
-> +
->  static void sdhci_sprd_set_clock(struct sdhci_host *host, unsigned int clock)
->  {
-> -	bool en = false;
-> +	bool en = false, clk_changed = false;
->  
->  	if (clock == 0) {
->  		sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
-> @@ -214,9 +246,19 @@ static void sdhci_sprd_set_clock(struct sdhci_host *host, unsigned int clock)
->  			en = true;
->  		sdhci_sprd_set_dll_invert(host, SDHCI_SPRD_BIT_CMD_DLY_INV |
->  					  SDHCI_SPRD_BIT_POSRD_DLY_INV, en);
-> +		clk_changed = true;
->  	} else {
->  		_sdhci_sprd_set_clock(host, clock);
->  	}
-> +
-> +	/*
-> +	 * According to the Spreadtrum SD host specification, when we changed
-> +	 * the clock to be more than 52M, we should enable the PHY DLL which
-> +	 * is used to track the clock frequency to make the clock work more
-> +	 * stable. Otherwise deviation may occur of the higher clock.
-> +	 */
-> +	if (clk_changed && clock > SDHCI_SPRD_PHY_DLL_CLK)
-> +		sdhci_sprd_enable_phy_dll(host);
->  }
->  
->  static unsigned int sdhci_sprd_get_max_clock(struct sdhci_host *host)
+> Sorry for replying later.
 > 
+> On Tue, 28 May 2019 15:39:15 +0200
+> Anders Roxell <anders.roxell@linaro.org> wrote:
+> 
+> > On Tue, 28 May 2019 at 14:36, Steven Rostedt <rostedt@goodmis.org> wrote:
+> > >
+> > > On Tue, 28 May 2019 14:23:43 +0200
+> > > Anders Roxell <anders.roxell@linaro.org> wrote:
+> > >
+> > > > On Wed, 22 May 2019 at 10:32, Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> > > > >
+> > > > > Add kprobe_event= boot parameter to define kprobe events
+> > > > > at boot time.
+> > > > > The definition syntax is similar to tracefs/kprobe_events
+> > > > > interface, but use ',' and ';' instead of ' ' and '\n'
+> > > > > respectively. e.g.
+> > > > >
+> > > > >   kprobe_event=p,vfs_read,$arg1,$arg2
+> > > > >
+> > > > > This puts a probe on vfs_read with argument1 and 2, and
+> > > > > enable the new event.
+> > > > >
+> > > > > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > > >
+> > > > I built an arm64 kernel from todays linux-next tag next-20190528 and
+> > > > ran in to this issue when I booted it up in qemu:
+> 
+> Thank you for reporting!
+> 
+> 
+> > [    9.020354][    T1] Kprobe smoke test: started
+> > [    9.064132][    T1] Internal error: aarch64 BRK: f2000004 [#1] PREEMPT SMP
+> > [    9.067084][    T1] Modules linked in:
+> > [    9.068772][    T1] CPU: 0 PID: 1 Comm: swapper/0 Not tainted
+> > 5.2.0-rc2-next-20190528-00019-g9a6008710716 #8
+> > [    9.072893][    T1] Hardware name: linux,dummy-virt (DT)
+> > [    9.075143][    T1] pstate: 80400005 (Nzcv daif +PAN -UAO)
+> > [    9.077528][    T1] pc : kprobe_target+0x0/0x30
+> > [    9.079479][    T1] lr : init_test_probes+0x134/0x540
+> > [    9.081611][    T1] sp : ffff80003f51fbe0
+> > [    9.083331][    T1] x29: ffff80003f51fbe0 x28: ffff200013c17820
+> > [    9.085906][    T1] x27: ffff200015d3ab40 x26: ffff2000122bb120
+> > [    9.088491][    T1] x25: 0000000000000000 x24: ffff200013c08ae0
+> > [    9.091068][    T1] x23: ffff200015d39000 x22: ffff200013a15ac8
+> > [    9.093667][    T1] x21: 1ffff00007ea3f86 x20: ffff200015d39420
+> > [    9.096214][    T1] x19: ffff2000122bad20 x18: 0000000000001400
+> > [    9.098831][    T1] x17: 0000000000000000 x16: ffff80003f510040
+> > [    9.101410][    T1] x15: 0000000000001480 x14: 1ffff00007ea3ea2
+> > [    9.103963][    T1] x13: 00000000f1f1f1f1 x12: ffff040002782e0d
+> > [    9.106549][    T1] x11: 1fffe40002782e0c x10: ffff040002782e0c
+> > [    9.109120][    T1] x9 : 1fffe40002782e0c x8 : dfff200000000000
+> > [    9.111676][    T1] x7 : ffff040002782e0d x6 : ffff200013c17067
+> > [    9.114234][    T1] x5 : ffff80003f510040 x4 : 0000000000000000
+> > [    9.116843][    T1] x3 : ffff200010427508 x2 : 0000000000000000
+> > [    9.119409][    T1] x1 : ffff200010426e10 x0 : 0000000000a6326b
+> > [    9.121980][    T1] Call trace:
+> > [    9.123380][    T1]  kprobe_target+0x0/0x30
+> > [    9.125205][    T1]  init_kprobes+0x2b8/0x300
+> > [    9.127074][    T1]  do_one_initcall+0x4c0/0xa68
+> > [    9.129076][    T1]  kernel_init_freeable+0x3c4/0x4e4
+> > [    9.131234][    T1]  kernel_init+0x14/0x1fc
+> > [    9.133032][    T1]  ret_from_fork+0x10/0x18
+> > [    9.134908][    T1] Code: a9446bf9 f9402bfb a8d87bfd d65f03c0 (d4200080)
+> > [    9.137845][    T1] ---[ end trace 49243ee03446b072 ]---
+> > [    9.140114][    T1] Kernel panic - not syncing: Fatal exception
+> > [    9.142684][    T1] ---[ end Kernel panic - not syncing: Fatal exception ]---
+> 
+> Ah, I think you hit this in [1/2], not this change. 
+> 
+> I guess arm64's breakpoint handler is not initialized at postcore_initcall().
+> I have to check the arch depend implementation on arm64.
 
+Yes, for some reason, arm64 breakpoint handler vector is initalized in arch_initcall().
+Let's move init_kprobes to subsys_initcall, which is called before fs_initcall.
+
+Thank you,
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
