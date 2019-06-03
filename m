@@ -2,226 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D511325F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 03:20:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3621932614
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 03:26:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbfFCBUo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 2 Jun 2019 21:20:44 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:64559 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726305AbfFCBUo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 2 Jun 2019 21:20:44 -0400
-X-UUID: d58baef425e641cebf8114c8a7d32732-20190603
-X-UUID: d58baef425e641cebf8114c8a7d32732-20190603
-Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 76009542; Mon, 03 Jun 2019 09:20:33 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- MTKMBS33N2.mediatek.inc (172.27.4.76) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 3 Jun 2019 09:20:30 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 3 Jun 2019 09:20:28 +0800
-Message-ID: <1559524828.14616.0.camel@mtksdaap41>
-Subject: Re: [v4 1/7] drm/mediatek: move mipi_dsi_host_register to probe
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Jitao Shi <jitao.shi@mediatek.com>
-CC:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        <linux-pwm@vger.kernel.org>, David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "Thierry Reding" <treding@nvidia.com>,
-        Ajay Kumar <ajaykumar.rs@samsung.com>,
-        "Inki Dae" <inki.dae@samsung.com>,
-        Rahul Sharma <rahul.sharma@samsung.com>,
-        "Sean Paul" <seanpaul@chromium.org>,
-        Vincent Palatin <vpalatin@chromium.org>,
-        "Andy Yan" <andy.yan@rock-chips.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
-        <cawa.cheng@mediatek.com>, <bibby.hsieh@mediatek.com>,
-        <stonea168@163.com>
-Date:   Mon, 3 Jun 2019 09:20:28 +0800
-In-Reply-To: <20190601092615.67917-2-jitao.shi@mediatek.com>
-References: <20190601092615.67917-1-jitao.shi@mediatek.com>
-         <20190601092615.67917-2-jitao.shi@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+        id S1726820AbfFCB0P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 2 Jun 2019 21:26:15 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:41116 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726600AbfFCB0O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 2 Jun 2019 21:26:14 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id CA68B200316;
+        Mon,  3 Jun 2019 03:26:12 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3E0A520031C;
+        Mon,  3 Jun 2019 03:26:03 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 4BFA9402CB;
+        Mon,  3 Jun 2019 09:25:51 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        andrew.smirnov@gmail.com, manivannan.sadhasivam@linaro.org,
+        marex@denx.de, ping.bai@nxp.com, u.kleine-koenig@pengutronix.de,
+        leoyang.li@nxp.com, l.stach@pengutronix.de, aisheng.dong@nxp.com,
+        bhaskar.upadhaya@nxp.com, pankaj.bansal@nxp.com,
+        vabhav.sharma@nxp.com, pramod.kumar_1@nxp.com,
+        leonard.crestez@nxp.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V2 1/3] dt-bindings: arm: imx: Add the soc binding for i.MX8MN
+Date:   Mon,  3 Jun 2019 09:27:45 +0800
+Message-Id: <20190603012747.38921-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Jitao:
+From: Anson Huang <Anson.Huang@nxp.com>
 
-On Sat, 2019-06-01 at 17:26 +0800, Jitao Shi wrote:
-> DSI panel driver need attach function which is inculde in
-> mipi_dsi_host_ops.
-> 
-> If mipi_dsi_host_register is not in probe, dsi panel will
-> probe more delay.
-> 
-> So move the mipi_dsi_host_register to probe from bind.
-> 
-> Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_dsi.c | 50 ++++++++++++++++++------------
->  1 file changed, 30 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> index b00eb2d2e086..6c4ac37f983d 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> @@ -1045,12 +1045,6 @@ static int mtk_dsi_bind(struct device *dev, struct device *master, void *data)
->  		return ret;
->  	}
->  
-> -	ret = mipi_dsi_host_register(&dsi->host);
-> -	if (ret < 0) {
-> -		dev_err(dev, "failed to register DSI host: %d\n", ret);
-> -		goto err_ddp_comp_unregister;
-> -	}
-> -
->  	ret = mtk_dsi_create_conn_enc(drm, dsi);
->  	if (ret) {
->  		DRM_ERROR("Encoder create failed with %d\n", ret);
-> @@ -1060,8 +1054,6 @@ static int mtk_dsi_bind(struct device *dev, struct device *master, void *data)
->  	return 0;
->  
->  err_unregister:
-> -	mipi_dsi_host_unregister(&dsi->host);
-> -err_ddp_comp_unregister:
->  	mtk_ddp_comp_unregister(drm, &dsi->ddp_comp);
->  	return ret;
->  }
-> @@ -1097,31 +1089,37 @@ static int mtk_dsi_probe(struct platform_device *pdev)
->  
->  	dsi->host.ops = &mtk_dsi_ops;
->  	dsi->host.dev = dev;
-> +	dsi->dev = dev;
+This patch adds the soc & board binding for i.MX8MN.
 
-Except this line,
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+No changes.
+---
+ Documentation/devicetree/bindings/arm/fsl.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
-
-> +	ret = mipi_dsi_host_register(&dsi->host);
-> +	if (ret < 0) {
-> +		dev_err(dev, "failed to register DSI host: %d\n", ret);
-> +		return ret;
-> +	}
->  
->  	ret = drm_of_find_panel_or_bridge(dev->of_node, 0, 0,
->  					  &dsi->panel, &dsi->bridge);
->  	if (ret)
-> -		return ret;
-> +		goto err_unregister_host;
->  
->  	dsi->engine_clk = devm_clk_get(dev, "engine");
->  	if (IS_ERR(dsi->engine_clk)) {
->  		ret = PTR_ERR(dsi->engine_clk);
->  		dev_err(dev, "Failed to get engine clock: %d\n", ret);
-> -		return ret;
-> +		goto err_unregister_host;
->  	}
->  
->  	dsi->digital_clk = devm_clk_get(dev, "digital");
->  	if (IS_ERR(dsi->digital_clk)) {
->  		ret = PTR_ERR(dsi->digital_clk);
->  		dev_err(dev, "Failed to get digital clock: %d\n", ret);
-> -		return ret;
-> +		goto err_unregister_host;
->  	}
->  
->  	dsi->hs_clk = devm_clk_get(dev, "hs");
->  	if (IS_ERR(dsi->hs_clk)) {
->  		ret = PTR_ERR(dsi->hs_clk);
->  		dev_err(dev, "Failed to get hs clock: %d\n", ret);
-> -		return ret;
-> +		goto err_unregister_host;
->  	}
->  
->  	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> @@ -1129,33 +1127,35 @@ static int mtk_dsi_probe(struct platform_device *pdev)
->  	if (IS_ERR(dsi->regs)) {
->  		ret = PTR_ERR(dsi->regs);
->  		dev_err(dev, "Failed to ioremap memory: %d\n", ret);
-> -		return ret;
-> +		goto err_unregister_host;
->  	}
->  
->  	dsi->phy = devm_phy_get(dev, "dphy");
->  	if (IS_ERR(dsi->phy)) {
->  		ret = PTR_ERR(dsi->phy);
->  		dev_err(dev, "Failed to get MIPI-DPHY: %d\n", ret);
-> -		return ret;
-> +		goto err_unregister_host;
->  	}
->  
->  	comp_id = mtk_ddp_comp_get_id(dev->of_node, MTK_DSI);
->  	if (comp_id < 0) {
->  		dev_err(dev, "Failed to identify by alias: %d\n", comp_id);
-> -		return comp_id;
-> +		ret = comp_id;
-> +		goto err_unregister_host;
->  	}
->  
->  	ret = mtk_ddp_comp_init(dev, dev->of_node, &dsi->ddp_comp, comp_id,
->  				&mtk_dsi_funcs);
->  	if (ret) {
->  		dev_err(dev, "Failed to initialize component: %d\n", ret);
-> -		return ret;
-> +		goto err_unregister_host;
->  	}
->  
->  	irq_num = platform_get_irq(pdev, 0);
->  	if (irq_num < 0) {
-> -		dev_err(&pdev->dev, "failed to request dsi irq resource\n");
-> -		return -EPROBE_DEFER;
-> +		dev_err(&pdev->dev, "failed to get dsi irq_num: %d\n", irq_num);
-> +		ret = irq_num;
-> +		goto err_unregister_host;
->  	}
->  
->  	irq_set_status_flags(irq_num, IRQ_TYPE_LEVEL_LOW);
-> @@ -1163,14 +1163,24 @@ static int mtk_dsi_probe(struct platform_device *pdev)
->  			       IRQF_TRIGGER_LOW, dev_name(&pdev->dev), dsi);
->  	if (ret) {
->  		dev_err(&pdev->dev, "failed to request mediatek dsi irq\n");
-> -		return -EPROBE_DEFER;
-> +		goto err_unregister_host;
->  	}
->  
->  	init_waitqueue_head(&dsi->irq_wait_queue);
->  
->  	platform_set_drvdata(pdev, dsi);
->  
-> -	return component_add(&pdev->dev, &mtk_dsi_component_ops);
-> +	ret = component_add(&pdev->dev, &mtk_dsi_component_ops);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failed to add component: %d\n", ret);
-> +		goto err_unregister_host;
-> +	}
-> +
-> +	return 0;
-> +
-> +err_unregister_host:
-> +	mipi_dsi_host_unregister(&dsi->host);
-> +	return ret;
->  }
->  
->  static int mtk_dsi_remove(struct platform_device *pdev)
-
+diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+index 407138e..b1a5231 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.yaml
++++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+@@ -171,6 +171,12 @@ properties:
+           - const: compulab,cl-som-imx7
+           - const: fsl,imx7d
+ 
++      - description: i.MX8MN based Boards
++        items:
++          - enum:
++              - fsl,imx8mn-ddr4-evk            # i.MX8MN DDR4 EVK Board
++          - const: fsl,imx8mn
++
+       - description: i.MX8MM based Boards
+         items:
+           - enum:
+-- 
+2.7.4
 
