@@ -2,89 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E69733B4B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 00:30:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8839339F5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 23:42:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726793AbfFCWaU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 18:30:20 -0400
-Received: from mga04.intel.com ([192.55.52.120]:8672 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726379AbfFCWaT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 18:30:19 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Jun 2019 14:08:36 -0700
-X-ExtLoop1: 1
-Received: from jgaire-mobl.ger.corp.intel.com (HELO localhost) ([10.252.20.169])
-  by fmsmga005.fm.intel.com with ESMTP; 03 Jun 2019 14:08:26 -0700
-Date:   Tue, 4 Jun 2019 00:08:25 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        William Roberts <bill.c.roberts@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-Message-ID: <20190603210825.GG4894@linux.intel.com>
-References: <960B34DE67B9E140824F1DCDEC400C0F654EB487@ORSMSX116.amr.corp.intel.com>
- <678a37af-797d-7bd5-a406-32548a270e3d@tycho.nsa.gov>
- <CALCETrWXB9fNNDH7gZxPTx05F78Og6K=ZtAr2aA++BDwY09Wbg@mail.gmail.com>
- <c1135352-0b5e-4694-b1a9-105876095877@tycho.nsa.gov>
- <CALCETrWsEXzUC33eJpGCpdMCBO4aYVviZLRD-CLMNaG5Jv-TCA@mail.gmail.com>
- <20190530180110.GB23930@linux.intel.com>
- <CALCETrX2PgUc_jetXHqp85aaS0a0jHB8E7=T1rsW+5vyRgwnUA@mail.gmail.com>
- <20190530211645.GB27551@linux.intel.com>
- <CALCETrVAoDppmdJzkpwagt3q64M-QpNajXbKGR1yQdqyofeANQ@mail.gmail.com>
- <20190530213601.GC27551@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190530213601.GC27551@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726638AbfFCVmO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 17:42:14 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:34460 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbfFCVmN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 17:42:13 -0400
+Received: by mail-qt1-f195.google.com with SMTP id m29so6119325qtu.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 14:42:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=pjVCLroEtR5thtHENU+41rmsthzX90Qup8xKfLtuOIo=;
+        b=pfkd4E2GZhwBrpTBDy41iK9bDLDvxxPtMWsvXyKKAvnL3nyFYdOlbY+4chm5yWk0Wb
+         qXmRk96a+AKlcw9Z3ejPTjgd79mhpu7UizX6spgbdgENGWa/jwTRUHMlrToiuoAJMXND
+         pq6xFCh5TxYutdpHSbzSbSobJ9V0XIJnU6lmOLmKAl2i3vIOozeoVogTcrvFGgTShzZU
+         cO20V/X8ahmZtzIPNoUXp0ZcNoj+4diTVOHseIupVeJumksjKbwj/uhca/ZxUwhqL1Vp
+         gi94VQSybvkwzPKLsP1AHd++spokzJb8dbXt1mseN7tA41hL6RREvck60u2mdwu1CfQ8
+         f+nQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=pjVCLroEtR5thtHENU+41rmsthzX90Qup8xKfLtuOIo=;
+        b=OG/Zi7cdXfjSukJ7Lot2IJ68FzLsPmGla38gKkH7i2bwkHM9vFQkw79mFs+MdV1ZYf
+         FMC8+djZO4AcfISN1DwJU1k4P9fZI7qmI6sTV5EzG/d3PmPHOA1C7u3r3i5yEySxIp/x
+         BK+JpkReJX1Y7rGD25WajERoArvFUP1qF1Z1R2YXZr8qPoy1brvfNeJMWnpxVuIqWxod
+         DGWoeG4QYjAC6G5hG/nCrs26bkvRhJ049rLva5y+VmX2wR38VmVBnzmOrJLhefPlFvYH
+         C4V4XE/jA70tTDF8/bixJJpd6g4KhFRSu2KjMIH85/zVo5/8AJZalr5rDXdZetrE2YhP
+         qH5A==
+X-Gm-Message-State: APjAAAWhW0d+W4IhUG8hIvlHafXTsdpY3voYs/ZmPiEXLQM6PmvaDhxx
+        nBkjO5yjp+89X4JWfQezcVK91rR1Yag=
+X-Google-Smtp-Source: APXvYqx2IFqPZYkpCNzUaA3pYzBxSExTSI6Kjnb4xGdkz0M1DgqStPbaU54SKBENuzBxcSlvUoF7sw==
+X-Received: by 2002:a0c:d91b:: with SMTP id p27mr7963388qvj.236.1559596330763;
+        Mon, 03 Jun 2019 14:12:10 -0700 (PDT)
+Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id d25sm1245907qko.96.2019.06.03.14.12.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Jun 2019 14:12:10 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     mingo@redhat.com
+Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH v2] sched: fix "runnable_avg_yN_inv" not used warnings
+Date:   Mon,  3 Jun 2019 17:11:44 -0400
+Message-Id: <1559596304-31581-1-git-send-email-cai@lca.pw>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 02:36:01PM -0700, Sean Christopherson wrote:
-> Assuming MRENCLAVE generated by Graphene or any other hosting scheme are
-> stable[1], then avoiding EXEC<whatever> means the user can effectively
-> whitelist what enclaves are runnable by Graphene, even if the kernel
-> doesn't implement security_enclave_create/init().
-> 
-> I agree that it probably isn't all that important, it's more of a "why
-> not" argument, i.e. what is gained by not using sigstruct as a proxy?
-> 
-> [1] What in the world is being attested if MRENCLAVE isn't stable?
+runnable_avg_yN_inv[] is only used in kernel/sched/pelt.c but was
+included in several other places because they need other macros all
+came from kernel/sched/sched-pelt.h which was generated by
+Documentation/scheduler/sched-pelt. As the result, it causes compilation
+a lot of warnings,
 
-If I've understood correctly, Graphene uses a single loader enclave
-that loads the executable in.
+In file included from kernel/sched/pelt.h:2,
+                 from kernel/sched/rt.c:8:
+kernel/sched/sched-pelt.h:4:18: warning: 'runnable_avg_yN_inv' defined
+but not used [-Wunused-const-variable=]
+In file included from kernel/sched/pelt.h:2,
+                 from kernel/sched/fair.c:705:
+kernel/sched/sched-pelt.h:4:18: warning: 'runnable_avg_yN_inv' defined
+but not used [-Wunused-const-variable=]
+In file included from kernel/sched/pelt.h:2,
+                 from kernel/sched/deadline.c:19:
+kernel/sched/sched-pelt.h:4:18: warning: 'runnable_avg_yN_inv' defined
+but not used [-Wunused-const-variable=]
 
-/Jarkko
+Silence it by appending the __maybe_unused attribute for it, so all
+generated variables and macros can still be kept in the same file.
+
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+
+v2: add a comment for __maybe_unused.
+
+ Documentation/scheduler/sched-pelt.c | 3 ++-
+ kernel/sched/sched-pelt.h            | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/scheduler/sched-pelt.c b/Documentation/scheduler/sched-pelt.c
+index e4219139386a..7238b355919c 100644
+--- a/Documentation/scheduler/sched-pelt.c
++++ b/Documentation/scheduler/sched-pelt.c
+@@ -20,7 +20,8 @@ void calc_runnable_avg_yN_inv(void)
+ 	int i;
+ 	unsigned int x;
+ 
+-	printf("static const u32 runnable_avg_yN_inv[] = {");
++	/* To silence -Wunused-but-set-variable warnings. */
++	printf("static const u32 runnable_avg_yN_inv[] __maybe_unused = {");
+ 	for (i = 0; i < HALFLIFE; i++) {
+ 		x = ((1UL<<32)-1)*pow(y, i);
+ 
+diff --git a/kernel/sched/sched-pelt.h b/kernel/sched/sched-pelt.h
+index a26473674fb7..c529706bed11 100644
+--- a/kernel/sched/sched-pelt.h
++++ b/kernel/sched/sched-pelt.h
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /* Generated by Documentation/scheduler/sched-pelt; do not modify. */
+ 
+-static const u32 runnable_avg_yN_inv[] = {
++static const u32 runnable_avg_yN_inv[] __maybe_unused = {
+ 	0xffffffff, 0xfa83b2da, 0xf5257d14, 0xefe4b99a, 0xeac0c6e6, 0xe5b906e6,
+ 	0xe0ccdeeb, 0xdbfbb796, 0xd744fcc9, 0xd2a81d91, 0xce248c14, 0xc9b9bd85,
+ 	0xc5672a10, 0xc12c4cc9, 0xbd08a39e, 0xb8fbaf46, 0xb504f333, 0xb123f581,
+-- 
+1.8.3.1
+
