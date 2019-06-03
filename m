@@ -2,82 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 918163308D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:05:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED9773308F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Jun 2019 15:05:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728228AbfFCNFQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 09:05:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38770 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726336AbfFCNFQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 09:05:16 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1728264AbfFCNFm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 09:05:42 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:33496 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727846AbfFCNFm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 09:05:42 -0400
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 36E7C27F5E;
-        Mon,  3 Jun 2019 13:05:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559567115;
-        bh=hvxRq+vA9NJlN13fkQsg4UkvRkk5tlRIY54i7UP0W08=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=F7REBrsAD78ynBHQ/dAPvj7q58oyGl8zRMPnwBFkThTZX7TVNNJRHOv5JVjgFdzaZ
-         gHUEot/83QUyDDCxVeDHP3T98ENuNCQx5dz9Yxl9ecz6Ffrwz79ko1OkNq3OiZ3azZ
-         hdB4ltHX4jF4s6BD68IjmUZ2DrKZggSDFU0ywiqU=
-Date:   Mon, 3 Jun 2019 15:05:13 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Christian =?iso-8859-1?Q?M=FCller?= <muellerch-privat@web.de>
-Cc:     johnfwhitmore@gmail.com, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, linux-kernel@i4.cs.fau.de,
-        felix.trommer@hotmail.de
-Subject: Re: [PATCH 3/3] drivers/staging/rtl8192u: Fix of checkpatch-errors
-Message-ID: <20190603130513.GB30732@kroah.com>
-References: <20190603122104.2564-1-muellerch-privat@web.de>
- <20190603122104.2564-4-muellerch-privat@web.de>
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id BDC3D285189;
+        Mon,  3 Jun 2019 14:05:39 +0100 (BST)
+Date:   Mon, 3 Jun 2019 15:05:37 +0200
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     "Shivamurthy Shastri (sshivamurthy)" <sshivamurthy@micron.com>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Lucas Stach <dev@lynxeye.de>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        "Bean Huo (beanhuo)" <beanhuo@micron.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Chuanhong Guo <gch981213@gmail.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 04/12] mtd: rawnand: introduce struct onfi_helper
+Message-ID: <20190603150537.3ca5ca8a@collabora.com>
+In-Reply-To: <MN2PR08MB5951E35FED92DD502F57B590B8140@MN2PR08MB5951.namprd08.prod.outlook.com>
+References: <MN2PR08MB5951E35FED92DD502F57B590B8140@MN2PR08MB5951.namprd08.prod.outlook.com>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190603122104.2564-4-muellerch-privat@web.de>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 03, 2019 at 02:21:04PM +0200, Christian Müller wrote:
-> Fix issues that lead to multiple checkpatch warnings and errors, most of
-> them regarding formatting of code and comments.
-> Comments that contain only commented out code are removed as well.
+Hi Shivamurthy,
+
+On Mon, 3 Jun 2019 12:43:28 +0000
+"Shivamurthy Shastri (sshivamurthy)" <sshivamurthy@micron.com> wrote:
+
+> Create onfi_helper object. This is base to turn ONFI code to generic.
 > 
-> Signed-off-by: Felix Trommer <felix.trommer@hotmail.de>
-> Signed-off-by: Christian Müller <muellerch-privat@web.de>
+> Signed-off-by: Shivamurthy Shastri <sshivamurthy@micron.com>
+> ---
+>  include/linux/mtd/nand.h | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+> 
+> diff --git a/include/linux/mtd/nand.h b/include/linux/mtd/nand.h
+> index 3cdf06cae8b6..645dde4c5797 100644
+> --- a/include/linux/mtd/nand.h
+> +++ b/include/linux/mtd/nand.h
+> @@ -11,6 +11,7 @@
+>  #define __LINUX_MTD_NAND_H
+>  
+>  #include <linux/mtd/mtd.h>
+> +#include <linux/mtd/onfi.h>
+>  
+>  /**
+>   * struct nand_memory_organization - Memory organization structure
+> @@ -157,6 +158,24 @@ struct nand_ops {
+>  	bool (*isbad)(struct nand_device *nand, const struct nand_pos *pos);
+>  };
+>  
+> +/**
+> + * struct onfi_helper - ONFI helper functions that should be implemented by
+> + * specialized layers (raw NAND, SPI NAND, etc.)
+> + * @page: Page number for ONFI parameter table
+> + * @check_revision: Check ONFI revision number
+> + * @parameter_page_read: Function to read parameter pages
+> + * @init_intf_data: Initialize interface specific data or fixups
+> + */
+> +struct onfi_helper {
+> +	u8 page;
+> +	int (*check_revision)(struct nand_device *base,
+> +			      struct nand_onfi_params *p, int *onfi_version);
+> +	int (*parameter_page_read)(struct nand_device *base, u8 page,
+> +				   void *buf, unsigned int len);
+> +	int (*init_intf_data)(struct nand_device *base,
+> +			      struct nand_onfi_params *p);
+> +};
+> +
+>  /**
+>   * struct nand_device - NAND device
+>   * @mtd: MTD instance attached to the NAND device
+> @@ -165,6 +184,7 @@ struct nand_ops {
+>   * @rowconv: position to row address converter
+>   * @bbt: bad block table info
+>   * @ops: NAND operations attached to the NAND device
+> + * @helper: Helper functions to detect and initialize ONFI NAND
+>   *
+>   * Generic NAND object. Specialized NAND layers (raw NAND, SPI NAND, OneNAND)
+>   * should declare their own NAND object embedding a nand_device struct (that's
+> @@ -183,6 +203,7 @@ struct nand_device {
+>  	struct nand_row_converter rowconv;
+>  	struct nand_bbt bbt;
+>  	const struct nand_ops *ops;
+> +	struct onfi_helper helper;
 
+Sorry, but I don't think that's the right solution. When I said we
+should have ONFI code shared I was thinking about the code that parses
+the ONFI struct/data to extract nand_memory_organization bits or other
+generic info, not something that would abstract how to retrieve the
+ONFI param page. Clearly, the generic NAND layer is not supposed to
+handle such protocol/low-level details.
 
-- Your patch did many different things all at once, making it difficult
-  to review.  All Linux kernel patches need to only do one thing at a
-  time.  If you need to do multiple things (such as clean up all coding
-  style issues in a file/driver), do it in a sequence of patches, each
-  one doing only one thing.  This will make it easier to review the
-  patches to ensure that they are correct, and to help alleviate any
-  merge issues that larger patches can cause.
+Regards,
 
-- You did not specify a description of why the patch is needed, or
-  possibly, any description at all, in the email body.  Please read the
-  section entitled "The canonical patch format" in the kernel file,
-  Documentation/SubmittingPatches for what is needed in order to
-  properly describe the change.
-
-- You did not write a descriptive Subject: for the patch, allowing Greg,
-  and everyone else, to know what this patch is all about.  Please read
-  the section entitled "The canonical patch format" in the kernel file,
-  Documentation/SubmittingPatches for what a proper Subject: line should
-  look like.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+Boris
