@@ -2,47 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A399034B20
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:59:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F352A34B49
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 17:00:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727964AbfFDO7M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 10:59:12 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48738 "EHLO
+        id S1728012AbfFDO7U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 10:59:20 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48966 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727900AbfFDO7J (ORCPT
+        with ESMTP id S1727967AbfFDO7P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 10:59:09 -0400
+        Tue, 4 Jun 2019 10:59:15 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=/4bLYTz4FCL+5b2S/FXwjLi4433MjHEE1bCm7iOrEcM=; b=pdN5QjTxRGyP
-        NKhdHnw581ytBzis1BuVcwgAoY46ggvS+ljEpSD/rtjcZNzNmfhxHtDMwJed6BvHoXJeO1PhA3DG0
-        amtlxEwYMw0uqtmp3u/oAelhrbKgJhSE/2pDBiQu0iBXVnc+bf8t5EEKIeX5rwwIomZvJUf8AL92L
-        IxUSo=;
-Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.sirena.org.uk)
+        List-Archive; bh=KJndiTBlNhoODFuKB7HEW0uTpDTeJGa/gjvrJqwZm40=; b=ashcMC599Hot
+        FC9kiBFa0K0pnuu/h8v/cv2VNuqFJnrsgDpJvxi4hFDIA5R7wRNmjkBqE+d4GCRaLkP+vBaCzQ6Kz
+        Lboi0QxeFj/+nExh+13db+yPkrxeJdJ8bcjP3rs7msVfHaJZ7FkG74r0v2/aNlqh5pvTwToUr/GIc
+        pbpLU=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hYAtu-0006EO-LR; Tue, 04 Jun 2019 14:58:58 +0000
+        id 1hYAtv-0006EW-Lw; Tue, 04 Jun 2019 14:58:59 +0000
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 1D7AA440046; Tue,  4 Jun 2019 15:58:58 +0100 (BST)
+        id 3CED2440046; Tue,  4 Jun 2019 15:58:59 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Yu-Hsuan Hsu <yuhsuan@chromium.org>
-Cc:     alsa-devel@alsa-project.org, cychiang@chromium.org,
-        dgreid@chromium.org, Jaroslav Kysela <perex@perex.cz>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
+        Hulk Robot <hulkci@huawei.com>, lgirdwood@gmail.com,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        perex@perex.cz, pierre-louis.bossart@linux.intel.com,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.com>
-Subject: Applied "ASoC: max98090: remove 24-bit format support if RJ is 0" to the asoc tree
-In-Reply-To: <20190604104909.112984-1-yuhsuan@chromium.org>
+        tiwai@suse.com, yingjiang.zhu@linux.intel.com
+Subject: Applied "ASoC: SOF: Intel: hda: Fix COMPILE_TEST build error" to the asoc tree
+In-Reply-To: <20190531142526.12712-1-yuehaibing@huawei.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190604145858.1D7AA440046@finisterre.sirena.org.uk>
-Date:   Tue,  4 Jun 2019 15:58:58 +0100 (BST)
+Message-Id: <20190604145859.3CED2440046@finisterre.sirena.org.uk>
+Date:   Tue,  4 Jun 2019 15:58:59 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -50,7 +49,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: max98090: remove 24-bit format support if RJ is 0
+   ASoC: SOF: Intel: hda: Fix COMPILE_TEST build error
 
 has been applied to the asoc tree at
 
@@ -75,56 +74,52 @@ to this mail.
 Thanks,
 Mark
 
-From 5628c8979642a076f91ee86c3bae5ad251639af0 Mon Sep 17 00:00:00 2001
-From: Yu-Hsuan Hsu <yuhsuan@chromium.org>
-Date: Tue, 4 Jun 2019 18:49:09 +0800
-Subject: [PATCH] ASoC: max98090: remove 24-bit format support if RJ is 0
+From ad169f9f0dbb531cd68db921b351ccafcf684ae4 Mon Sep 17 00:00:00 2001
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Fri, 31 May 2019 22:25:26 +0800
+Subject: [PATCH] ASoC: SOF: Intel: hda: Fix COMPILE_TEST build error
 
-The supported formats are S16_LE and S24_LE now. However, by datasheet
-of max98090, S24_LE is only supported when it is in the right justified
-mode. We should remove 24-bit format if it is not in that mode to avoid
-triggering error.
+while building without PCI:
 
-Signed-off-by: Yu-Hsuan Hsu <yuhsuan@chromium.org>
+sound/soc/sof/intel/hda.o: In function `hda_dsp_probe':
+hda.c:(.text+0x79c): undefined reference to `pci_ioremap_bar'
+hda.c:(.text+0x79c): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `pci_ioremap_bar'
+hda.c:(.text+0x7c4): undefined reference to `pci_ioremap_bar'
+hda.c:(.text+0x7c4): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `pci_ioremap_bar'
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: e13ef82a9ab8 ("ASoC: SOF: add COMPILE_TEST for PCI options")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/max98090.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ sound/soc/sof/intel/hda.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/sound/soc/codecs/max98090.c b/sound/soc/codecs/max98090.c
-index 7619ea31ab50..ada8c25e643d 100644
---- a/sound/soc/codecs/max98090.c
-+++ b/sound/soc/codecs/max98090.c
-@@ -1909,6 +1909,21 @@ static int max98090_configure_dmic(struct max98090_priv *max98090,
- 	return 0;
- }
+diff --git a/sound/soc/sof/intel/hda.c b/sound/soc/sof/intel/hda.c
+index 8f5c68861bbc..9e2e0f21524e 100644
+--- a/sound/soc/sof/intel/hda.c
++++ b/sound/soc/sof/intel/hda.c
+@@ -227,7 +227,9 @@ static int hda_init(struct snd_sof_dev *sdev)
  
-+static int max98090_dai_startup(struct snd_pcm_substream *substream,
-+				struct snd_soc_dai *dai)
-+{
-+	struct snd_soc_component *component = dai->component;
-+	struct max98090_priv *max98090 = snd_soc_component_get_drvdata(component);
-+	unsigned int fmt = max98090->dai_fmt;
-+
-+	/* Remove 24-bit format support if it is not in right justified mode. */
-+	if ((fmt & SND_SOC_DAIFMT_FORMAT_MASK) != SND_SOC_DAIFMT_RIGHT_J) {
-+		substream->runtime->hw.formats = SNDRV_PCM_FMTBIT_S16_LE;
-+		snd_pcm_hw_constraint_msbits(substream->runtime, 0, 16, 16);
-+	}
-+	return 0;
-+}
-+
- static int max98090_dai_hw_params(struct snd_pcm_substream *substream,
- 				   struct snd_pcm_hw_params *params,
- 				   struct snd_soc_dai *dai)
-@@ -2316,6 +2331,7 @@ EXPORT_SYMBOL_GPL(max98090_mic_detect);
- #define MAX98090_FORMATS (SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S24_LE)
+ 	/* initialise hdac bus */
+ 	bus->addr = pci_resource_start(pci, 0);
++#if IS_ENABLED(CONFIG_PCI)
+ 	bus->remap_addr = pci_ioremap_bar(pci, 0);
++#endif
+ 	if (!bus->remap_addr) {
+ 		dev_err(bus->dev, "error: ioremap error\n");
+ 		return -ENXIO;
+@@ -454,7 +456,9 @@ int hda_dsp_probe(struct snd_sof_dev *sdev)
+ 		goto hdac_bus_unmap;
  
- static const struct snd_soc_dai_ops max98090_dai_ops = {
-+	.startup = max98090_dai_startup,
- 	.set_sysclk = max98090_dai_set_sysclk,
- 	.set_fmt = max98090_dai_set_fmt,
- 	.set_tdm_slot = max98090_set_tdm_slot,
+ 	/* DSP base */
++#if IS_ENABLED(CONFIG_PCI)
+ 	sdev->bar[HDA_DSP_BAR] = pci_ioremap_bar(pci, HDA_DSP_BAR);
++#endif
+ 	if (!sdev->bar[HDA_DSP_BAR]) {
+ 		dev_err(sdev->dev, "error: ioremap error\n");
+ 		ret = -ENXIO;
 -- 
 2.20.1
 
