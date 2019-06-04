@@ -2,119 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13E1534CC1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 18:00:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FB5034CD9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 18:08:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728249AbfFDQAu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 12:00:50 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47682 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727422AbfFDQAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 12:00:47 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EBE6F30C31AF;
-        Tue,  4 Jun 2019 16:00:38 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-85.bos.redhat.com [10.18.17.85])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5F12517CFA;
-        Tue,  4 Jun 2019 16:00:34 +0000 (UTC)
-Subject: Re: [PATCH v8 07/19] locking/rwsem: Implement lock handoff to prevent
- lock starvation
-To:     Boqun Feng <boqun.feng@gmail.com>, Yuyang Du <duyuyang@gmail.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        huang ying <huang.ying.caritas@gmail.com>
-References: <20190520205918.22251-1-longman@redhat.com>
- <20190520205918.22251-8-longman@redhat.com>
- <CAHttsrYx=pgen5yVpYfCKaymoCaA7iJ52B8t_ycD2UcDR2848Q@mail.gmail.com>
- <CAHttsrZCGMqBi4ifj7A1rO3G3nOz-0pbD8TXRtUQ1rGQRAGiUw@mail.gmail.com>
- <20190604091220.GA29633@tardis>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <d1a2894e-144e-d30b-966d-c2fd7b6f3f7e@redhat.com>
-Date:   Tue, 4 Jun 2019 12:00:33 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1728278AbfFDQI1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 12:08:27 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:34585 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728225AbfFDQI1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 12:08:27 -0400
+Received: by mail-ua1-f66.google.com with SMTP id 7so8010750uah.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 09:08:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=JJnKTszq0LucT9tff8aVBNiTlpqFIuwICl/wZRuN/SM=;
+        b=GQPGFwKdD+yYos6fP+5thtoEjgvr0MNDy0yHYc8fZz73MyW879mUUBZAhYk/YR5/zU
+         9hIznQ03ADry6HE/yWZjoTrxElltsqKGduoZz2kRZMN1cCWbM/+RGRexzWI62NcqV19V
+         CocEHM4nD9FB9MbHrma4vtmwngw3CVYG9b9VA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=JJnKTszq0LucT9tff8aVBNiTlpqFIuwICl/wZRuN/SM=;
+        b=CM+tYUY1O3cHJZt9b5jJ/mEOp0rURvN2jYjOm1NUEf2CF8ebFj8EzyxZU6iWNajdQa
+         aL01xFB9eHUr8S3E3U2Vhw7cWBqKLOPx1068QszNDa6eZp12jKZT+/0Z+Y/4qbFVyotE
+         KGDdWdiVrMiAgsH+s9+QrXetnFmAgrwBvZ5eqTBDCzjIgFXjvLMEsb+YCnjfbr93ubui
+         Ukl1FlZzfk5d1L6DQ8chWYLBbBxuA5s+lRu7blWGf60810qyf4P2q0I2/hC+RreX0NjJ
+         aMq6LHBp5D7AZhI6tixB2Q66rnqYSUWI0JB50W2A6/mJ6/T7HJTKXuca3YWZpDKnYQKW
+         FN8g==
+X-Gm-Message-State: APjAAAX0hxKCkOzdR8A3lz8BGXr0QH9g8Tl9tFEkHVgXqUEkQmXeZ7py
+        KvT+z9sdZ53x520QwFiPR+S+fOPtwiA=
+X-Google-Smtp-Source: APXvYqyNUrYoXq9Nvaxmaz/emnUbSL/MohPAg7QLul3tq7PHDmuegUNr74CQa3OfIJmbel8Jx+VHHw==
+X-Received: by 2002:ab0:13e2:: with SMTP id n31mr4724069uae.61.1559664505219;
+        Tue, 04 Jun 2019 09:08:25 -0700 (PDT)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id 66sm1237043vko.27.2019.06.04.09.08.25
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Jun 2019 09:08:25 -0700 (PDT)
+Received: by mail-ua1-f51.google.com with SMTP id n2so8002160uad.8
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 09:08:25 -0700 (PDT)
+X-Received: by 2002:ab0:5ad0:: with SMTP id x16mr15793093uae.124.1559664085104;
+ Tue, 04 Jun 2019 09:01:25 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190604091220.GA29633@tardis>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 04 Jun 2019 16:00:46 +0000 (UTC)
+References: <20190517225420.176893-2-dianders@chromium.org>
+ <20190528121833.7D3A460A00@smtp.codeaurora.org> <CAD=FV=VtxdEeFQsdF=U7-_7R+TXfVmA2_JMB_-WYidGHTLDgLw@mail.gmail.com>
+ <16aff33f3e0.2764.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+ <16aff358a20.2764.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com> <40587a64-490b-8b1e-8a11-1e1aebdab2f3@cypress.com>
+In-Reply-To: <40587a64-490b-8b1e-8a11-1e1aebdab2f3@cypress.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 4 Jun 2019 09:01:10 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=Wr4WsO7Xmei5GB4X91L_sDN331B1_oH+CPZOeFUkxyMg@mail.gmail.com>
+Message-ID: <CAD=FV=Wr4WsO7Xmei5GB4X91L_sDN331B1_oH+CPZOeFUkxyMg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] brcmfmac: re-enable command decode in sdio_aos for
+ BRCM 4354
+To:     Wright Feng <Wright.Feng@cypress.com>
+Cc:     Arend Van Spriel <arend.vanspriel@broadcom.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Madhan Mohan R <MadhanMohan.R@cypress.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        Chi-Hsien Lin <Chi-Hsien.Lin@cypress.com>,
+        Brian Norris <briannorris@chromium.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        "brcm80211-dev-list.pdl@broadcom.com" 
+        <brcm80211-dev-list.pdl@broadcom.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Naveen Gupta <Naveen.Gupta@cypress.com>,
+        brcm80211-dev-list <brcm80211-dev-list@cypress.com>,
+        Double Lo <Double.Lo@cypress.com>,
+        Franky Lin <franky.lin@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/4/19 5:12 AM, Boqun Feng wrote:
-> On Tue, Jun 04, 2019 at 11:26:30AM +0800, Yuyang Du wrote:
->> On Tue, 4 Jun 2019 at 11:03, Yuyang Du <duyuyang@gmail.com> wrote:
->>> Hi Waiman,
->>>
->>> On Tue, 21 May 2019 at 05:01, Waiman Long <longman@redhat.com> wrote:
->>>> Because of writer lock stealing, it is possible that a constant
->>>> stream of incoming writers will cause a waiting writer or reader to
->>>> wait indefinitely leading to lock starvation.
->>>>
->>>> This patch implements a lock handoff mechanism to disable lock stealing
->>>> and force lock handoff to the first waiter or waiters (for readers)
->>>> in the queue after at least a 4ms waiting period unless it is a RT
->>>> writer task which doesn't need to wait. The waiting period is used to
->>>> avoid discouraging lock stealing too much to affect performance.
->>> I was working on a patchset to solve read-write lock deadlock
->>> detection problem (https://lkml.org/lkml/2019/5/16/93).
->>>
->>> One of the mistakes in that work is that I considered the following
->>> case as deadlock:
->> Sorry everyone, but let me rephrase:
->>
->> One of the mistakes in that work is that I considered the following
->> case as no deadlock:
->>
->>>   T1            T2
->>>   --            --
->>>
->>>   down_read1    down_write2
->>>
->>>   down_write2   down_read1
->>>
-> Not sure I understand the whole context here, but isn't adding a third
-> independent task makes this a deadlock?
+Hi,
+
+On Mon, Jun 3, 2019 at 8:20 PM Wright Feng <Wright.Feng@cypress.com> wrote:
 >
-> 	 T1            T2		T3
-> 	 --            --		--
->
-> 	 down_read1    down_write2
-> 	 				down_write1
-> 	 down_write2   down_read1
->
-> from the perspective of lockdep, we cannot be sure whether there will
-> a T3 or not.
+> On 2019/5/29 =E4=B8=8A=E5=8D=88 12:11, Arend Van Spriel wrote:
+> > On May 28, 2019 6:09:21 PM Arend Van Spriel
+> > <arend.vanspriel@broadcom.com> wrote:
+> >
+> >> On May 28, 2019 5:52:10 PM Doug Anderson <dianders@chromium.org> wrote=
+:
+> >>
+> >>> Hi,
+> >>>
+> >>> On Tue, May 28, 2019 at 5:18 AM Kalle Valo <kvalo@codeaurora.org> wro=
+te:
+> >>>>
+> >>>> Douglas Anderson <dianders@chromium.org> wrote:
+> >>>>
+> >>>> > In commit 29f6589140a1 ("brcmfmac: disable command decode in
+> >>>> > sdio_aos") we disabled something called "command decode in sdio_ao=
+s"
+> >>>> > for a whole bunch of Broadcom SDIO WiFi parts.
+> >>>> >
+> >>>> > After that patch landed I find that my kernel log on
+> >>>> > rk3288-veyron-minnie and rk3288-veyron-speedy is filled with:
+> >>>> >   brcmfmac: brcmf_sdio_bus_sleep: error while changing bus sleep
+> >>>> state -110
+> >>>> >
+> >>>> > This seems to happen every time the Broadcom WiFi transitions out =
+of
+> >>>> > sleep mode.  Reverting the part of the commit that affects the
+> >>>> WiFi on
+> >>>> > my boards fixes the problem for me, so that's what this patch does=
+.
+> >>>> >
+> >>>> > Note that, in general, the justification in the original commit
+> >>>> seemed
+> >>>> > a little weak.  It looked like someone was testing on a SD card
+> >>>> > controller that would sometimes die if there were CRC errors on th=
+e
+> >>>> > bus.  This used to happen back in early days of dw_mmc (the
+> >>>> controller
+> >>>> > on my boards), but we fixed it.  Disabling a feature on all boards
+> >>>> > just because one SD card controller is broken seems bad.  ...so
+> >>>> > instead of just this patch possibly the right thing to do is to fu=
+lly
+> >>>> > revert the original commit.
+> >>>> >
+> Since the commit 29f6589140a1 ("brcmfmac: disable command decode in
+> sdio_aos") causes the regression on other SD card controller, it is
+> better to revert it as you mentioned.
+> Actually, without the commit, we hit MMC timeout(-110) and hanged
+> instead of CRC error in our test.
 
-Yes, that will be a deadlock even with the my rwsem patch applied, as it
-will still try to preserve the reader-writer ordering. So it will
-certainly be safer to have the same lock ordering for both tasks.
+Any chance I can convince you to provide some official tags like
+Reviewed-by or Tested-by on the revert?
 
->
-> In case that I mis-understood you, maybe your point is about in the
-> above case whether "down_read1" on T2 can *gauranteedly* steal (in the
-> sense of breaking the fairness) the read lock after Waiman modification?
-> If so, I will wait for Waiman's response ;-)
+> Would you please share the analysis of
+> dw_mmc issue which you fixed? We'd like to compare whether we got the
+> same issue.
 
-With my patchset applied, the reader-writer ordering is still supposed
-to be preserved. Of course, there can be exceptions depending on the
-exact timing, but we can't rely on that to prevent deadlock.
+I'm not sure there's any single magic commit I can point to.  When I
+started working on dw_mmc it was terrible at handling error cases and
+would often crash / hang / stop all future communication upon certain
+classes or efforts.  There were dozens of problems we've had to fix
+over the years.  These problems showed up when we started supporting
+HS200 / UHS since the tuning phase really stress the error handling of
+the host controller.
 
-Cheers,
-Longman
+I searched and by the time we were supporting Broadcom SDIO cards the
+error handling was already pretty good.  ...but if we hadn't already
+made the error handling more robust for UHS tuning then we would have
+definitely hit these types of problems.  The only problem I remember
+having to solve in dw_mmc that was unique to Broadcom was commit
+0bdbd0e88cf6 ("mmc: dw_mmc: Don't start commands while busy").  Any
+chance that could be what you're hitting?
 
+What host controller are you having problems with?
+
+-Doug
