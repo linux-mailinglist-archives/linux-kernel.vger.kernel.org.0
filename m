@@ -2,59 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0487B34577
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 13:33:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29A7134570
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 13:32:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbfFDLd3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 07:33:29 -0400
-Received: from mga17.intel.com ([192.55.52.151]:41793 "EHLO mga17.intel.com"
+        id S1727378AbfFDLcz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 07:32:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727287AbfFDLd2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 07:33:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jun 2019 04:33:28 -0700
-X-ExtLoop1: 1
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.198]) ([10.237.72.198])
-  by orsmga006.jf.intel.com with ESMTP; 04 Jun 2019 04:33:26 -0700
-Subject: Re: [PATCH 01/22] perf intel-pt: Fix itrace defaults for perf script
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-References: <20190520113728.14389-1-adrian.hunter@intel.com>
- <20190520113728.14389-2-adrian.hunter@intel.com>
- <20190520144516.GL8945@kernel.org> <20190531164547.GC20408@kernel.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <7f73ed6e-7935-b325-14af-0b9e43144ed4@intel.com>
-Date:   Tue, 4 Jun 2019 14:32:15 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1727180AbfFDLcz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 07:32:55 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4EA7524BF6;
+        Tue,  4 Jun 2019 11:32:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559647974;
+        bh=z2EjDCTcT92+f1VvJz7U+5/wwwQjkLdwVNlS8g18beE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Otof87+OfgLmvRj/6KNALbkbBBNOkDHFxW0rhMxulQlRP2l51oSC6ApSOC2jq9eT2
+         etgU13TSvXmDkgvnPUpTuxfL+iPqHUKp5EQNkTITOgVPMbdbX0+QhIRhvNsJXIwnGM
+         I5r7me5wfGuUiFEj24BpwT864wipnPaJPDJMl4i4=
+Date:   Tue, 4 Jun 2019 13:32:52 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-kernel@vger.kernel.org, rafael@kernel.org
+Subject: Re: [RFC PATCH 46/57] driver: Add variants of driver_find_device()
+Message-ID: <20190604113252.GB18535@kroah.com>
+References: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
+ <1559577023-558-47-git-send-email-suzuki.poulose@arm.com>
+ <20190603191041.GD6487@kroah.com>
+ <97a6b41f-7b30-54fc-a633-e59895467902@arm.com>
+ <0ed1eb1e-df7f-d531-19ee-8b29ee37ae6d@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190531164547.GC20408@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0ed1eb1e-df7f-d531-19ee-8b29ee37ae6d@arm.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/05/19 7:45 PM, Arnaldo Carvalho de Melo wrote:
-> Em Mon, May 20, 2019 at 11:45:16AM -0300, Arnaldo Carvalho de Melo escreveu:
->> Em Mon, May 20, 2019 at 02:37:07PM +0300, Adrian Hunter escreveu:
->>> Commit 4eb068157121 ("perf script: Make itrace script default to all
->>> calls") does not work because 'use_browser' is being used to determine
->>> whether to default to periodic sampling (i.e. better for perf report).
->>> The result is that nothing but CBR events display for perf script
->>> when no --itrace option is specified.
->>>
->>> Fix by using 'default_no_sample' and 'inject' instead.
->>
->> Applied 1-3 for now, concentrating on fixes, will process 4-22 later.
+On Tue, Jun 04, 2019 at 11:55:36AM +0100, Suzuki K Poulose wrote:
 > 
-> Tested the ones that affect sqlite databases an the GUI, all look good,
-> added committer notes and text screenshots as committer notes, thanks!
+> 
+> On 04/06/2019 09:45, Suzuki K Poulose wrote:
+> > 
+> > 
+> > On 03/06/2019 20:10, Greg KH wrote:
+> > > On Mon, Jun 03, 2019 at 04:50:12PM +0100, Suzuki K Poulose wrote:
+> > > > Add a wrappers to lookup a device by name for a given driver, by various
+> > > > generic properties of a device. This can avoid the proliferation of custom
+> > > > match functions throughout the drivers.
+> > > > 
+> > > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> > > > Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> > > > ---
+> > > >    include/linux/device.h | 44 ++++++++++++++++++++++++++++++++++++++++++++
+> > > >    1 file changed, 44 insertions(+)
+> > > 
+> > > You should put the "here are the new functions that everyone can use"
+> > > much earlier in the patch series, otherwise it's hard to dig out.
+> > 
+> > Sure, I will add it in the respective commits.
+> > 
+> > > 
+> > > And if you send just those as an individual series, and they look good,
+> > > I can queue them up now so that everyone else can take the individual
+> > > patches through their respective trees.
+> > 
+> > I see. I think I may be able to do that.
+> 
+> The API change patch (i.e, "drivers: Unify the match prototype for
+> bus_find_device with class_find_device" ) is tricky and prevents us from
+> doing
+> this. So, that patch has to come via your tree as it must be a one shot change.
+> And that would make the individual subsystem patches conflict with your tree.
+> Also, it would break the builds until the individual subsystem trees are merged
+> with your tree with the new API.
+> 
+> So I am not quite sure what the best approach here would be.
 
-Thanks for applying!  Are patches 11-22 in your tree?
+That's for you to work out :)
+
+one-shot changes are usually not a good idea, there are lots of ways to
+prevent this from being required.
+
+good luck!
+
+greg k-h
