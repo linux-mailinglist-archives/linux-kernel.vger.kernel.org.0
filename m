@@ -2,84 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CD6633E94
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 07:49:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CB5633E96
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 07:50:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726682AbfFDFtr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 01:49:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38950 "EHLO mail.kernel.org"
+        id S1726652AbfFDFuR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 01:50:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39274 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726530AbfFDFtr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 01:49:47 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726136AbfFDFuR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 01:50:17 -0400
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A16732064A;
-        Tue,  4 Jun 2019 05:49:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97E732064A;
+        Tue,  4 Jun 2019 05:50:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559627386;
-        bh=Cp1M7M5lwY2172OZCuc8q6Bam/oQDv/B2nA08ZbydRg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=i9LyBIRv7aF+DPTixovlNvUtojp+B1dBAaE4w+88LGUgHfmamuvHb1b0WM4hE5YFB
-         V0rRkR1yDWQgfueaEPbRq7LZeAGfGa3SVEbCl8UF04avnNfgilADt3Rud0/Ao9fQ8H
-         oBA+C0h3vkG5swz7rAoTEPbU9gkQN8/SryEXifgM=
-Date:   Tue, 4 Jun 2019 07:49:43 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Kevin Hilman <khilman@baylibre.com>
-Cc:     "kernelci.org bot" <bot@kernelci.org>,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH 5.1 00/40] 5.1.7-stable review
-Message-ID: <20190604054943.GB16504@kroah.com>
-References: <20190603090522.617635820@linuxfoundation.org>
- <5cf53378.1c69fb81.9dd1b.494b@mx.google.com>
- <7hmuiyjzg8.fsf@baylibre.com>
+        s=default; t=1559627415;
+        bh=6pJxXDhunaU05disWJij71yT3C7+q3muGfwv90tuWo4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=iqAhl4YBQP0Nn6w3xOTrY0YuLNVq3JgdWzAMZlqZSB+1oL9YXG7AOTZyANpzXZODk
+         yzZo0zvmUI/lNOJ6Uj7Btnxw5Y5mjUv38qo3KIG+C3kEXGv5z7bKNKkIQThp1oB45S
+         NUpxUsIKRAzx/ushYV42GJSXmQvs2iAf/xDouoL0=
+Received: by mail-wm1-f47.google.com with SMTP id f10so13435426wmb.1;
+        Mon, 03 Jun 2019 22:50:15 -0700 (PDT)
+X-Gm-Message-State: APjAAAUfQsBTQCIqXSg4ttUIHYD2aul1u1fu0SBNSey3pds+ACpFIID9
+        XWGf30oHwgHnDuUwVmNxOkacoZlgY8Cz7CVLyf4=
+X-Google-Smtp-Source: APXvYqwKGJHh0ntjQgNiGL/j64qTKgLXFRql1Lr9kdThNL4/Ysi2b7nspk8shhQppQLzt2KIFQQbnaE5UZaLmQhqoAg=
+X-Received: by 2002:a1c:3c8a:: with SMTP id j132mr4542669wma.172.1559627414252;
+ Mon, 03 Jun 2019 22:50:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7hmuiyjzg8.fsf@baylibre.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+References: <cover.1559614824.git.han_mao@c-sky.com> <40e0b27c342458360f9f30ef16026cb63e792850.1559614824.git.han_mao@c-sky.com>
+In-Reply-To: <40e0b27c342458360f9f30ef16026cb63e792850.1559614824.git.han_mao@c-sky.com>
+From:   Guo Ren <guoren@kernel.org>
+Date:   Tue, 4 Jun 2019 13:50:03 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTTV5byJkCU4Z-NMvD+W8K7J56mmYNaXdchb+z-rbQm+1w@mail.gmail.com>
+Message-ID: <CAJF2gTTV5byJkCU4Z-NMvD+W8K7J56mmYNaXdchb+z-rbQm+1w@mail.gmail.com>
+Subject: Re: [PATCH V4 1/6] csky: Init pmu as a device
+To:     Mao Han <han_mao@c-sky.com>
+Cc:     linux-kernel@vger.kernel.org, linux-csky@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 03, 2019 at 11:28:23AM -0700, Kevin Hilman wrote:
-> "kernelci.org bot" <bot@kernelci.org> writes:
-> 
-> > stable-rc/linux-5.1.y boot: 132 boots: 1 failed, 131 passed (v5.1.6-41-ge674455b9242)
-> >
-> > Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux-5.1.y/kernel/v5.1.6-41-ge674455b9242/
-> > Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-5.1.y/kernel/v5.1.6-41-ge674455b9242/
-> >
-> > Tree: stable-rc
-> > Branch: linux-5.1.y
-> > Git Describe: v5.1.6-41-ge674455b9242
-> > Git Commit: e674455b924207b06e6527d961a4b617cf13e7a9
-> > Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> > Tested: 73 unique boards, 23 SoC families, 14 builds out of 209
-> >
-> > Boot Failure Detected:
-> >
-> > arm:
-> >     multi_v7_defconfig:
-> >         gcc-8:
-> >             bcm4708-smartrg-sr400ac: 1 failed lab
-> 
-> FYI, this one has been fixed and marked with Fixes tag[1], but it
-> appears the patch hasn't yet landed in mainline.
+Hello Mao,
 
-A Fixes: tag will not guarantee it will make it into a stable release.
-It might, a month or so later, if we get bored.  You should always use a
- Cc: stable@ tag instead, as that is the documented way to ensure that
-the patch makes it into a stable release.
+On Tue, Jun 4, 2019 at 10:25 AM Mao Han <han_mao@c-sky.com> wrote:
+>
+> This patch change the csky pmu initialization from arch init to
+> device init. The pmu can be configued with information from
+> device tree(pmu device name, irq number and etc.).
+>
+> Signed-off-by: Mao Han <han_mao@c-sky.com>
+> Cc: Guo Ren <guoren@kernel.org>
+> ---
+>  arch/csky/kernel/perf_event.c | 58 ++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 57 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/csky/kernel/perf_event.c b/arch/csky/kernel/perf_event.c
+> index 376c972..c022acc 100644
+> --- a/arch/csky/kernel/perf_event.c
+> +++ b/arch/csky/kernel/perf_event.c
+> @@ -21,6 +21,8 @@ struct csky_pmu_t {
+>         uint32_t        hpcr;
+>  } csky_pmu;
+>
+> +typedef int (*csky_pmu_init)(struct csky_pmu_t *);
+Is the type of csky_pmu_init() the same with init_hw_perf_events ?
 
-Once this hits Linus's tree, send me the SHA1 and I will be glad to
-queue it up.
+And I also think you should remove the hook style, because there
+is only one init for the driver.
 
-thanks,
+> +
+>  #define cprgr(reg)                             \
+>  ({                                             \
+>         unsigned int tmp;                       \
+> @@ -1028,4 +1030,58 @@ int __init init_hw_perf_events(void)
+>
+>         return perf_pmu_register(&csky_pmu.pmu, "cpu", PERF_TYPE_RAW);
+>  }
+> -arch_initcall(init_hw_perf_events);
+> +
+> +int csky_pmu_device_probe(struct platform_device *pdev,
+> +                         const struct of_device_id *of_table)
+> +{
+> +       const struct of_device_id *of_id;
+> +       csky_pmu_init init_fn;
+> +       struct device_node *node = pdev->dev.of_node;
+> +       int ret = -ENODEV;
+> +
 
-greg k-h
+> +       of_id = of_match_node(of_table, pdev->dev.of_node);
+> +       if (node && of_id) {
+> +               init_fn = of_id->data;
+> +               ret = init_fn(&csky_pmu);
+> +       }
+Ditto, all 7 lines above should be removed and use directly like:
+            ret = init_hw_perf_events();
+
+> +       if (ret) {
+> +               pr_notice("[perf] failed to probe PMU!\n");
+> +               return ret;
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +const static struct of_device_id csky_pmu_of_device_ids[] = {
+> +       {.compatible = "csky,csky-pmu", .data = init_hw_perf_events},
+Ditto, Nothing for .data.
+
+Best Regards
+ Guo Ren
