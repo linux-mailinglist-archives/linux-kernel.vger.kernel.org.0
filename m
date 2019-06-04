@@ -2,93 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2FAD34251
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 10:56:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9252B3426C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 10:57:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727085AbfFDIzv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 04:55:51 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41778 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726883AbfFDIzu (ORCPT
+        id S1727056AbfFDI5Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 04:57:25 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:48840 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726927AbfFDI5Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 04:55:50 -0400
-Received: by mail-pg1-f194.google.com with SMTP id 83so3137004pgg.8
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 01:55:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kx5q7zCTFKw0j3QN1oqE8pZnZTP9To8Le7W99DKm2LU=;
-        b=sW4SdT2R95XIX+vXafemro3dM2V7gCnY1WEO1ChuJw8577FfF4rpJTWX3J2hPWsmiw
-         b15JXnIO87kszDkbXvD9vAIkC9jcBM/+CZdeQeK64Dili6fANlVoIrxtnTODhCmQaosz
-         ZrjP9hAEmTn5YbHldzcM7oZW+ufKWM2emARh/YhJkOag4U+xO/+uS0WFmSLd9i8MNg/e
-         WWUyHYR2R9bUxhOGAymLg4gqZMSc01/zfU9c5fUJQoQhTJXQPpwh2ABhYsBOrDJ67hEX
-         YxLddJ/KMmCzeJO8Wd67wtIPVoFogIEfgAWggKTgK12LnKB7X7XfxzQdPQxjlpFB7N4p
-         UEXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kx5q7zCTFKw0j3QN1oqE8pZnZTP9To8Le7W99DKm2LU=;
-        b=b3rYm75O8t0TFazPAmrjAVcEAAU1KlTqnN8dhA6GrDULYm1XijeJ1rAeH7zYCX8O++
-         /UqIjfZ+K1Dl0+vCu9CdZjH9gCAKisLCvUYTVLN/NiFWi63ustBgJNvhNjfzmFXbZNva
-         W4gpvAVrQeKT9zw3D5J4WDGMcj5/yUOX9bPjOeiWfT91NTaZOpMgwtncyiHisggSkJwl
-         eO68x5a169LuN7oiYlYk83B9BvCt0AI7BOdyRc1RWRBf5L+BkkcIMAZemBHHxUEC4i/5
-         Ra4IDBpc2ONhcSubRa9xV9h/jVq9J3cqZkiSiJy22qrmcii6jlBAkVCwhPLN8/+7B0xn
-         SX0w==
-X-Gm-Message-State: APjAAAUxHbexVQ0j5A9cXVYARVm+z2kE1KyEIimsClMP2RSSjj18sq1V
-        XgFF98e6R2/Z5W/x+r76JgbWbwtKeW0=
-X-Google-Smtp-Source: APXvYqxAVFtSOCZX5AfZ+92Sy7EAVfXddvBIiq0QZdyyoPKzviGrJnwpdWBBPBjPOpg361VTnR4AkA==
-X-Received: by 2002:a17:90a:bf84:: with SMTP id d4mr34814181pjs.124.1559638549661;
-        Tue, 04 Jun 2019 01:55:49 -0700 (PDT)
-Received: from localhost ([122.172.66.84])
-        by smtp.gmail.com with ESMTPSA id l23sm18420974pgh.68.2019.06.04.01.55.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Jun 2019 01:55:47 -0700 (PDT)
-Date:   Tue, 4 Jun 2019 14:25:45 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Dave Martin <Dave.Martin@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Suzuki K Pouloze <suzuki.poulose@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: arm64: Drop 'const' from argument of vq_present()
-Message-ID: <20190604085545.hsmxfqkpt2cbrhtw@vireshk-i7>
-References: <699121e5c938c6f4b7b14a7e2648fa15af590a4a.1559623368.git.viresh.kumar@linaro.org>
- <20190604084349.prnnvjvjaeuhsmgs@mbp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190604084349.prnnvjvjaeuhsmgs@mbp>
-User-Agent: NeoMutt/20180716-391-311a52
+        Tue, 4 Jun 2019 04:57:24 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 1ABE08EE1D8;
+        Tue,  4 Jun 2019 01:57:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1559638644;
+        bh=wI/8+wiijGgOqLSYHFzdmNaGRkSygv9a+oR+A5uQbEQ=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=rfb3INXuVy4qOBudIOjCKyAXVMI684m+PxHEGeKwMGmp8gEHXGZRA6JyeEUZ9c0/H
+         e5CXWketma7GjLRupwrcYJuK0Nxl5pnqMZPaALWCUjCi1h3sMe7r/PfGIwTfBtzB5W
+         b2aD8n3OoevNwekKzuL3YRh6eZ3F2lB83HOGoqEI=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id vVbUH0cOyB66; Tue,  4 Jun 2019 01:57:23 -0700 (PDT)
+Received: from jarvis.guest.haifa.ibm.com (unknown [195.110.41.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 8921B8EE101;
+        Tue,  4 Jun 2019 01:57:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1559638643;
+        bh=wI/8+wiijGgOqLSYHFzdmNaGRkSygv9a+oR+A5uQbEQ=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=xUN9j1ybZGq/0Fl2pBKJHXRrazk9uYYwC16X//yILiBdGZMFtElgxzDbIW10F1dGI
+         EPTJZ1M2kM6L9rgoiph1CxRKJoIr2ylDIAJE3kej12ObHS2hd/gghg2HghWz8WO5bW
+         WhQt5hGy8hYOjB3EkU8u9iFo2QeiMmgNL4x3WP4Q=
+Message-ID: <1559638637.3410.3.camel@HansenPartnership.com>
+Subject: Re: [PATCH v2 2/3] ima: don't ignore INTEGRITY_UNKNOWN EVM status
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, dmitry.kasatkin@huawei.com,
+        mjg59@google.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
+        stable@vger.kernel.org
+Date:   Tue, 04 Jun 2019 11:57:17 +0300
+In-Reply-To: <b38d75b1-873a-1630-0148-41c49571531a@huawei.com>
+References: <20190529133035.28724-1-roberto.sassu@huawei.com>
+         <20190529133035.28724-3-roberto.sassu@huawei.com>
+         <1559217621.4008.7.camel@linux.ibm.com>
+         <e6b31aa9-0319-1805-bdfc-3ddde5884494@huawei.com>
+         <1559569401.5052.17.camel@HansenPartnership.com>
+         <3667fbd4-b6ed-6a76-9ff4-84ec3c2dda12@huawei.com>
+         <1559572305.5052.19.camel@HansenPartnership.com>
+         <b38d75b1-873a-1630-0148-41c49571531a@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04-06-19, 09:43, Catalin Marinas wrote:
-> On Tue, Jun 04, 2019 at 10:13:19AM +0530, Viresh Kumar wrote:
-> > We currently get following compilation warning:
+On Mon, 2019-06-03 at 16:44 +0200, Roberto Sassu wrote:
+> On 6/3/2019 4:31 PM, James Bottomley wrote:
+> > On Mon, 2019-06-03 at 16:29 +0200, Roberto Sassu wrote:
+[...]
+> > > How would you prevent root in the container from updating
+> > > security.ima?
 > > 
-> > arch/arm64/kvm/guest.c: In function 'set_sve_vls':
-> > arch/arm64/kvm/guest.c:262:18: warning: passing argument 1 of 'vq_present' from incompatible pointer type
-> > arch/arm64/kvm/guest.c:212:13: note: expected 'const u64 (* const)[8]' but argument is of type 'u64 (*)[8]'
+> > We don't.  We only guarantee immutability for unprivileged
+> > containers, so root can't be inside.
 > 
-> Since the vq_present() function does not modify the vqs array, I don't
-> understand why this warning. Compiler bug?
+> Ok.
+> 
+> Regarding the new behavior, this must be explicitly enabled by adding
+> ima_appraise=enforce-evm or log-evm to the kernel command line.
+> Otherwise, the current behavior is preserved with this patch. Would
+> this be ok?
 
-Probably yes. Also marking array argument to functions as const is a
-right thing to do, to declare that the function wouldn't change the
-array values.
+Sure, as long as it's an opt-in flag, meaning the behaviour of my
+kernels on physical cloud systems doesn't change as I upgrade them, I'm
+fine with that.
 
-I tried a recent toolchain and this doesn't happen anymore.
+James
 
-Sorry for the noise.
-
--- 
-viresh
