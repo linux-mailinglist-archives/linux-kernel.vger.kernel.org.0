@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBCE434782
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 15:02:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5640A34785
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 15:02:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727697AbfFDNCT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 09:02:19 -0400
+        id S1727755AbfFDNCZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 09:02:25 -0400
 Received: from mga07.intel.com ([134.134.136.100]:5114 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727636AbfFDNCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 09:02:16 -0400
+        id S1727676AbfFDNCS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 09:02:18 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jun 2019 06:02:15 -0700
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jun 2019 06:02:17 -0700
 X-ExtLoop1: 1
 Received: from ahunter-desktop.fi.intel.com ([10.237.72.198])
-  by fmsmga005.fm.intel.com with ESMTP; 04 Jun 2019 06:02:14 -0700
+  by fmsmga005.fm.intel.com with ESMTP; 04 Jun 2019 06:02:15 -0700
 From:   Adrian Hunter <adrian.hunter@intel.com>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Jiri Olsa <jolsa@redhat.com>, Jin Yao <yao.jin@linux.intel.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 15/19] perf time-utils: Fix --time documentation
-Date:   Tue,  4 Jun 2019 16:00:13 +0300
-Message-Id: <20190604130017.31207-16-adrian.hunter@intel.com>
+Subject: [PATCH 16/19] perf time-utils: Simplify perf_time__parse_for_ranges() error paths slightly
+Date:   Tue,  4 Jun 2019 16:00:14 +0300
+Message-Id: <20190604130017.31207-17-adrian.hunter@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190604130017.31207-1-adrian.hunter@intel.com>
 References: <20190604130017.31207-1-adrian.hunter@intel.com>
@@ -34,73 +34,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Correct some punctuation and spelling and correct the format to show that
-the time resolution is nanoseconds not microseconds.
+Simplify perf_time__parse_for_ranges() error paths slightly.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- tools/perf/Documentation/perf-diff.txt   | 6 +++---
- tools/perf/Documentation/perf-report.txt | 6 +++---
- tools/perf/Documentation/perf-script.txt | 6 +++---
- 3 files changed, 9 insertions(+), 9 deletions(-)
+ tools/perf/util/time-utils.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/Documentation/perf-diff.txt b/tools/perf/Documentation/perf-diff.txt
-index da7809b15cc9..5732f69580ab 100644
---- a/tools/perf/Documentation/perf-diff.txt
-+++ b/tools/perf/Documentation/perf-diff.txt
-@@ -142,9 +142,9 @@ OPTIONS
- 	  perf diff --time 0%-10%,30%-40%
+diff --git a/tools/perf/util/time-utils.c b/tools/perf/util/time-utils.c
+index 3e87c21c293c..9a463752dba8 100644
+--- a/tools/perf/util/time-utils.c
++++ b/tools/perf/util/time-utils.c
+@@ -403,7 +403,7 @@ int perf_time__parse_for_ranges(const char *time_str,
+ 				int *range_size, int *range_num)
+ {
+ 	struct perf_time_interval *ptime_range;
+-	int size, num, ret;
++	int size, num, ret = -EINVAL;
  
- 	It also supports analyzing samples within a given time window
--	<start>,<stop>. Times have the format seconds.microseconds. If 'start'
--	is not given (i.e., time string is ',x.y') then analysis starts at
--	the beginning of the file. If stop time is not given (i.e, time
-+	<start>,<stop>. Times have the format seconds.nanoseconds. If 'start'
-+	is not given (i.e. time string is ',x.y') then analysis starts at
-+	the beginning of the file. If stop time is not given (i.e. time
- 	string is 'x.y,') then analysis goes to the end of the file. Time string is
- 	'a1.b1,c1.d1:a2.b2,c2.d2'. Use ':' to separate timestamps for different
- 	perf.data files.
-diff --git a/tools/perf/Documentation/perf-report.txt b/tools/perf/Documentation/perf-report.txt
-index f441baa794ce..3de029f6881d 100644
---- a/tools/perf/Documentation/perf-report.txt
-+++ b/tools/perf/Documentation/perf-report.txt
-@@ -412,12 +412,12 @@ OPTIONS
+ 	ptime_range = perf_time__range_alloc(time_str, &size);
+ 	if (!ptime_range)
+@@ -415,7 +415,6 @@ int perf_time__parse_for_ranges(const char *time_str,
+ 			pr_err("HINT: no first/last sample time found in perf data.\n"
+ 			       "Please use latest perf binary to execute 'perf record'\n"
+ 			       "(if '--buildid-all' is enabled, please set '--timestamp-boundary').\n");
+-			ret = -EINVAL;
+ 			goto error;
+ 		}
  
- --time::
- 	Only analyze samples within given time window: <start>,<stop>. Times
--	have the format seconds.microseconds. If start is not given (i.e., time
-+	have the format seconds.nanoseconds. If start is not given (i.e. time
- 	string is ',x.y') then analysis starts at the beginning of the file. If
--	stop time is not given (i.e, time string is 'x.y,') then analysis goes
-+	stop time is not given (i.e. time string is 'x.y,') then analysis goes
- 	to end of file.
+@@ -425,11 +424,8 @@ int perf_time__parse_for_ranges(const char *time_str,
+ 				session->evlist->first_sample_time,
+ 				session->evlist->last_sample_time);
  
--	Also support time percent with multiple time range. Time string is
-+	Also support time percent with multiple time ranges. Time string is
- 	'a%/n,b%/m,...' or 'a%-b%,c%-%d,...'.
+-		if (num < 0) {
+-			pr_err("Invalid time string\n");
+-			ret = -EINVAL;
+-			goto error;
+-		}
++		if (num < 0)
++			goto error_invalid;
+ 	} else {
+ 		num = 1;
+ 	}
+@@ -439,6 +435,8 @@ int perf_time__parse_for_ranges(const char *time_str,
+ 	*ranges = ptime_range;
+ 	return 0;
  
- 	For example:
-diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
-index c59fd52e9e91..878349cce968 100644
---- a/tools/perf/Documentation/perf-script.txt
-+++ b/tools/perf/Documentation/perf-script.txt
-@@ -361,12 +361,12 @@ include::itrace.txt[]
- 
- --time::
- 	Only analyze samples within given time window: <start>,<stop>. Times
--	have the format seconds.microseconds. If start is not given (i.e., time
-+	have the format seconds.nanoseconds. If start is not given (i.e. time
- 	string is ',x.y') then analysis starts at the beginning of the file. If
--	stop time is not given (i.e, time string is 'x.y,') then analysis goes
-+	stop time is not given (i.e. time string is 'x.y,') then analysis goes
- 	to end of file.
- 
--	Also support time percent with multipe time range. Time string is
-+	Also support time percent with multiple time ranges. Time string is
- 	'a%/n,b%/m,...' or 'a%-b%,c%-%d,...'.
- 
- 	For example:
++error_invalid:
++	pr_err("Invalid time string\n");
+ error:
+ 	free(ptime_range);
+ 	return ret;
 -- 
 2.17.1
 
