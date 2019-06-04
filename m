@@ -2,59 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B08E349F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:18:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5013334A0C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:19:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727866AbfFDOSK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 10:18:10 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52560 "EHLO
+        id S1727960AbfFDOSt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 10:18:49 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52654 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727725AbfFDOSD (ORCPT
+        with ESMTP id S1727789AbfFDOSE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 10:18:03 -0400
+        Tue, 4 Jun 2019 10:18:04 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=fnKal4vlAfnEhHiZ62MpoW51VyknnUeB4tHqDSZ7yb0=; b=QGB5fTPS0Y1QbkDcmoH+UkgrxA
-        1pMk8z+7aPIz0M+LOllnD+yAWo2PKijhU9Of83jsAWaNOGHbvnhM2IQck3GnEi+acdgX4PFfjXX1W
-        8dYMp+e54crQ0CzwiC48jwbmrELFhJ/gciYLAQXJe7mP/wV/+2HI55UusjHY/V6bFASKi5HgkPP8Q
-        /bkB7ouKvrGMio/R1G2oLILaMq7yd6Ah+rImQZ6uCGXSZrYPpd7QLN9erf94Abeheb/CCJfEZt9RB
-        qRJj+GdOJUVq+4w4bfEshAGOm9wTPo4f9yMhKZrNIpSOMQmMnojudwXZzDT8MIJIASC6ZhOHf4clg
-        y0SDma1Q==;
+        bh=mg43HsbuIUpIY3IZlyoqhA6BT/bTMdQva0Wd1znkidQ=; b=mZBNRm0NbpbBZmnL/j+lOVKrJD
+        ec/CqZkcU8Tn0FANuPI9rDCxmHE6x388Bg07ZRLESUJeiSMxzWAS/NwdxAkxYQSqBhRYYxm7ljyIF
+        RDB7puPWazquTOozeiI6hM1i0fqqM68aEUCPAOYyJaHrpYASlRqTNghQnDcKwgwvq4Smb3wbRtswp
+        nj64T47Mt4vC42bGlVpSvdFWnEqgQJAtJO63EI1llPpaacKJxt6bVPDbLqhFNn+iyzUf4EoarOQiz
+        Bo4SuauI6J7/pG/TgUuQNLeEKowQtQ8J4aNee8EdIpoN5lzipPWLprpKZob2gEoGsfs2DjWzGZHWE
+        MdMnATYQ==;
 Received: from [179.182.172.34] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hYAGH-0001Rz-VM; Tue, 04 Jun 2019 14:18:01 +0000
+        id 1hYAGH-0001S0-U2; Tue, 04 Jun 2019 14:18:01 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hYAGE-0002lw-V3; Tue, 04 Jun 2019 11:17:58 -0300
+        id 1hYAGF-0002m9-15; Tue, 04 Jun 2019 11:17:59 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Shuah Khan <shuah@kernel.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, Arnd Bergmann <arnd@arndb.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Changbin Du <changbin.du@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org
-Subject: [PATCH v2 18/22] docs: move protection-keys.rst to the core-api book
-Date:   Tue,  4 Jun 2019 11:17:52 -0300
-Message-Id: <07193510c4ce4be2332ec03e5232779c36e7bb4c.1559656538.git.mchehab+samsung@kernel.org>
+        Hugues Fruchet <hugues.fruchet@st.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Olivier Moysan <olivier.moysan@st.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        devicetree@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
+Subject: [PATCH v2 20/22] dt: bindings: fix some broken links from txt->yaml conversion
+Date:   Tue,  4 Jun 2019 11:17:54 -0300
+Message-Id: <92db0dbd37803154475fc73948fe59893ea041e8.1559656538.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1559656538.git.mchehab+samsung@kernel.org>
 References: <cover.1559656538.git.mchehab+samsung@kernel.org>
@@ -65,91 +65,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This document is used by multiple architectures:
-
-	$ echo $(git grep -l  pkey_mprotect arch|cut -d'/' -f 2|sort|uniq)
-	alpha arm arm64 ia64 m68k microblaze mips parisc powerpc s390 sh sparc x86 xtensa
-
-So, let's move it to the core book and adjust the links to it
-accordingly.
+Some new files got converted to yaml, but references weren't
+updated accordingly.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/core-api/index.rst                    | 1 +
- Documentation/{x86 => core-api}/protection-keys.rst | 0
- Documentation/x86/index.rst                         | 1 -
- arch/powerpc/Kconfig                                | 2 +-
- arch/x86/Kconfig                                    | 2 +-
- tools/testing/selftests/x86/protection_keys.c       | 2 +-
- 6 files changed, 4 insertions(+), 4 deletions(-)
- rename Documentation/{x86 => core-api}/protection-keys.rst (100%)
+ Documentation/devicetree/bindings/media/st,stm32-dcmi.txt | 2 +-
+ Documentation/devicetree/bindings/sound/st,stm32-i2s.txt  | 2 +-
+ Documentation/devicetree/bindings/sound/st,stm32-sai.txt  | 2 +-
+ MAINTAINERS                                               | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
-index ee1bb8983a88..2466a4c51031 100644
---- a/Documentation/core-api/index.rst
-+++ b/Documentation/core-api/index.rst
-@@ -34,6 +34,7 @@ Core utilities
-    timekeeping
-    boot-time-mm
-    memory-hotplug
-+   protection-keys
+diff --git a/Documentation/devicetree/bindings/media/st,stm32-dcmi.txt b/Documentation/devicetree/bindings/media/st,stm32-dcmi.txt
+index 249790a93017..3122ded82eb4 100644
+--- a/Documentation/devicetree/bindings/media/st,stm32-dcmi.txt
++++ b/Documentation/devicetree/bindings/media/st,stm32-dcmi.txt
+@@ -11,7 +11,7 @@ Required properties:
+ - clock-names: must contain "mclk", which is the DCMI peripherial clock
+ - pinctrl: the pincontrol settings to configure muxing properly
+            for pins that connect to DCMI device.
+-           See Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt.
++           See Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml.
+ - dmas: phandle to DMA controller node,
+         see Documentation/devicetree/bindings/dma/stm32-dma.txt
+ - dma-names: must contain "tx", which is the transmit channel from DCMI to DMA
+diff --git a/Documentation/devicetree/bindings/sound/st,stm32-i2s.txt b/Documentation/devicetree/bindings/sound/st,stm32-i2s.txt
+index 58c341300552..cbf24bcd1b8d 100644
+--- a/Documentation/devicetree/bindings/sound/st,stm32-i2s.txt
++++ b/Documentation/devicetree/bindings/sound/st,stm32-i2s.txt
+@@ -18,7 +18,7 @@ Required properties:
+     See Documentation/devicetree/bindings/dma/stm32-dma.txt.
+   - dma-names: Identifier for each DMA request line. Must be "tx" and "rx".
+   - pinctrl-names: should contain only value "default"
+-  - pinctrl-0: see Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
++  - pinctrl-0: see Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
  
+ Optional properties:
+   - resets: Reference to a reset controller asserting the reset controller
+diff --git a/Documentation/devicetree/bindings/sound/st,stm32-sai.txt b/Documentation/devicetree/bindings/sound/st,stm32-sai.txt
+index 3f4467ff0aa2..944743dd9212 100644
+--- a/Documentation/devicetree/bindings/sound/st,stm32-sai.txt
++++ b/Documentation/devicetree/bindings/sound/st,stm32-sai.txt
+@@ -41,7 +41,7 @@ SAI subnodes required properties:
+ 	"tx": if sai sub-block is configured as playback DAI
+ 	"rx": if sai sub-block is configured as capture DAI
+   - pinctrl-names: should contain only value "default"
+-  - pinctrl-0: see Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
++  - pinctrl-0: see Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
  
- Interfaces for kernel debugging
-diff --git a/Documentation/x86/protection-keys.rst b/Documentation/core-api/protection-keys.rst
-similarity index 100%
-rename from Documentation/x86/protection-keys.rst
-rename to Documentation/core-api/protection-keys.rst
-diff --git a/Documentation/x86/index.rst b/Documentation/x86/index.rst
-index ae36fc5fc649..f2de1b2d3ac7 100644
---- a/Documentation/x86/index.rst
-+++ b/Documentation/x86/index.rst
-@@ -19,7 +19,6 @@ x86-specific Documentation
-    tlb
-    mtrr
-    pat
--   protection-keys
-    intel_mpx
-    amd-memory-encryption
-    pti
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 1120ff8ac715..e437aa3e78b4 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -898,7 +898,7 @@ config PPC_MEM_KEYS
- 	  page-based protections, but without requiring modification of the
- 	  page tables when an application changes protection domains.
+ SAI subnodes Optional properties:
+   - st,sync: specify synchronization mode.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0dc7c3c5ddb0..2ab2337a029c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1298,7 +1298,7 @@ ARM PRIMECELL SSP PL022 SPI DRIVER
+ M:	Linus Walleij <linus.walleij@linaro.org>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/spi/spi_pl022.txt
++F:	Documentation/devicetree/bindings/spi/spi-pl022.yaml
+ F:	drivers/spi/spi-pl022.c
  
--	  For details, see Documentation/vm/protection-keys.rst
-+	  For details, see Documentation/core-api/protection-keys.rst
- 
- 	  If unsure, say y.
- 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 23de3b9da480..61244bdb886f 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1911,7 +1911,7 @@ config X86_INTEL_MEMORY_PROTECTION_KEYS
- 	  page-based protections, but without requiring modification of the
- 	  page tables when an application changes protection domains.
- 
--	  For details, see Documentation/x86/protection-keys.txt
-+	  For details, see Documentation/core-api/protection-keys.rst
- 
- 	  If unsure, say y.
- 
-diff --git a/tools/testing/selftests/x86/protection_keys.c b/tools/testing/selftests/x86/protection_keys.c
-index 5d546dcdbc80..480995bceefa 100644
---- a/tools/testing/selftests/x86/protection_keys.c
-+++ b/tools/testing/selftests/x86/protection_keys.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Tests x86 Memory Protection Keys (see Documentation/x86/protection-keys.txt)
-+ * Tests x86 Memory Protection Keys (see Documentation/core-api/protection-keys.rst)
-  *
-  * There are examples in here of:
-  *  * how to set protection keys on memory
+ ARM PRIMECELL UART PL010 AND PL011 DRIVERS
 -- 
 2.21.0
 
