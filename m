@@ -2,85 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6829A343A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 12:01:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A002534389
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 11:56:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727290AbfFDKBZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 06:01:25 -0400
-Received: from mga06.intel.com ([134.134.136.31]:46146 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727197AbfFDKBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 06:01:22 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jun 2019 03:01:22 -0700
-X-ExtLoop1: 1
-Received: from gvt.bj.intel.com ([10.238.158.187])
-  by orsmga005.jf.intel.com with ESMTP; 04 Jun 2019 03:01:19 -0700
-From:   Tina Zhang <tina.zhang@intel.com>
-To:     intel-gvt-dev@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Tina Zhang <tina.zhang@intel.com>, kraxel@redhat.com,
-        zhenyuw@linux.intel.com, zhiyuan.lv@intel.com,
-        zhi.a.wang@intel.com, kevin.tian@intel.com, hang.yuan@intel.com,
-        alex.williamson@redhat.com
-Subject: [RFC PATCH v2 3/3] drm/i915/gvt: Send plane flip events to user space
-Date:   Tue,  4 Jun 2019 17:55:34 +0800
-Message-Id: <20190604095534.10337-4-tina.zhang@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190604095534.10337-1-tina.zhang@intel.com>
-References: <20190604095534.10337-1-tina.zhang@intel.com>
+        id S1727161AbfFDJ4h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 05:56:37 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40744 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727027AbfFDJ4h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 05:56:37 -0400
+Received: by mail-wr1-f68.google.com with SMTP id p11so10277289wre.7
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 02:56:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6ZbLcJhbADzOCXOElQ4BPrniesq/GHeYDcXBdpu8YX0=;
+        b=XGIvDcKDTGlVulUF/Qp2Ny2YLbHmCjYULB5q7v0ZOWxmJaDGhm54f27fBe0ZaOEKtI
+         aLRR5sDenAGiUb3VMhShIIZLSKEg2ZXwsw1Knu5GfYRA0HNMIXbaCGFbEordr56Pg0eR
+         c7s1prXvtpai1Rl9r/w1uiKOqxGab9MVZLDo7VCxlT4vgU7NtW3vFZgwCpNBZUFEsQtd
+         i3I2eDIXaIQf/6fObZN86bAd3t+mY+GZ0Ucv0KwbcW8Wa9rmHEQLg9Xft/egx6qtCsrE
+         8oK7PpXW3LxORrEUEgNYM+N1qLUgbUsybdWD+SXId+mIvgIqCN+zKjTQE4SAmiChpdhx
+         p0vA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6ZbLcJhbADzOCXOElQ4BPrniesq/GHeYDcXBdpu8YX0=;
+        b=VuXHvJX1Ot7PIxCUV8Nk1COilVmSqhA7HvNST5bZznomI/mUx2d8vAmlwAIIv6AdXZ
+         qdcOlZzbjxEwzZgHMFiXE/yr2dc9X0gpL31OW7yiF6on+7mRUOQBjs8zd4N3dd4DZ1m1
+         wqx2Ezqk2IioSSrJ/lhoYOI9GNAi38gf3SbydSQjIU448T4xV8PdlMUhQB+SQlyRBdqV
+         /t8izm0268J5Iz7WUBfRI//uB7I62/SywoEA/4hWs4FQiHhcq5i8bvw0oKLC9eQGk9rm
+         3y/Ota9wT5Fe358jzLbkn9VUMBIMbRI4u373+5wstDbEk9YoqNmJAdaTBD/mUwDmiJic
+         Mr7w==
+X-Gm-Message-State: APjAAAXRL3AQtbXXrmI1+mWL10mTQGZYZj2ETqeygtO/uSd3ANgNkzO0
+        9K5VCaaDiE4ASg3wbo7tzjU5mg==
+X-Google-Smtp-Source: APXvYqzTcIFclDpx5BpmdTLFHU2RBH91jk3706KaCS4Z5VGJ0ycig9TDYbME7Msj15OvwxDmQcXd1Q==
+X-Received: by 2002:a5d:5747:: with SMTP id q7mr18731165wrw.226.1559642195049;
+        Tue, 04 Jun 2019 02:56:35 -0700 (PDT)
+Received: from brauner.io ([212.91.227.56])
+        by smtp.gmail.com with ESMTPSA id a62sm19187246wmf.19.2019.06.04.02.56.33
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 04 Jun 2019 02:56:34 -0700 (PDT)
+Date:   Tue, 4 Jun 2019 11:56:33 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     David Howells <dhowells@redhat.com>
+Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, jannh@google.com,
+        keescook@chromium.org, fweimer@redhat.com, oleg@redhat.com,
+        arnd@arndb.de, Pavel Emelyanov <xemul@virtuozzo.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Adrian Reber <adrian@lisas.de>,
+        Andrei Vagin <avagin@gmail.com>, linux-api@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] fork: add clone3
+Message-ID: <20190604095632.gsapgrmvup3mabga@brauner.io>
+References: <20190603144331.16760-1-christian@brauner.io>
+ <4020.1559640492@warthog.procyon.org.uk>
+ <20190604094317.4wfelmbw4lgxzide@brauner.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190604094317.4wfelmbw4lgxzide@brauner.io>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Send the primary plane and the cursor plane flip events to user space.
+On Tue, Jun 04, 2019 at 11:43:17AM +0200, Christian Brauner wrote:
+> On Tue, Jun 04, 2019 at 10:28:12AM +0100, David Howells wrote:
+> > Christian Brauner <christian@brauner.io> wrote:
+> > 
+> > > +#include <linux/compiler_types.h>
+> > 
+> > I suspect you don't want to include that directly.
+> > 
+> > Also, to avoid bloating linux/sched/task.h yet further, maybe put this in
+> > linux/sched/clone.h?
+> 
+> Yeah, not the worst idea.
+> Though I'd leave the flags where they are and just add struct
+> kernel_clone_args in there. But I assume that's what you meant anyway.
 
-Signed-off-by: Tina Zhang <tina.zhang@intel.com>
----
- drivers/gpu/drm/i915/gvt/handlers.c | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+Actually, I would like to defer this to the cleanup patch too.
+This way the patch stays small and clean and task.h is currently the
+right place to put it.
 
-diff --git a/drivers/gpu/drm/i915/gvt/handlers.c b/drivers/gpu/drm/i915/gvt/handlers.c
-index 18f01eeb2510..67129de8bc45 100644
---- a/drivers/gpu/drm/i915/gvt/handlers.c
-+++ b/drivers/gpu/drm/i915/gvt/handlers.c
-@@ -763,6 +763,20 @@ static int pri_surf_mmio_write(struct intel_vgpu *vgpu, unsigned int offset,
- 	else
- 		set_bit(event, vgpu->irq.flip_done_event[pipe]);
- 
-+	if (vgpu->vdev.pri_flip_trigger)
-+		eventfd_signal(vgpu->vdev.pri_flip_trigger, 1);
-+
-+	return 0;
-+}
-+
-+static int cur_surf_mmio_write(struct intel_vgpu *vgpu, unsigned int offset,
-+		void *p_data, unsigned int bytes)
-+{
-+	write_vreg(vgpu, offset, p_data, bytes);
-+
-+	if (vgpu->vdev.cur_flip_trigger)
-+		eventfd_signal(vgpu->vdev.cur_flip_trigger, 1);
-+
- 	return 0;
- }
- 
-@@ -1969,9 +1983,9 @@ static int init_generic_mmio_info(struct intel_gvt *gvt)
- 	MMIO_D(CURPOS(PIPE_B), D_ALL);
- 	MMIO_D(CURPOS(PIPE_C), D_ALL);
- 
--	MMIO_D(CURBASE(PIPE_A), D_ALL);
--	MMIO_D(CURBASE(PIPE_B), D_ALL);
--	MMIO_D(CURBASE(PIPE_C), D_ALL);
-+	MMIO_DH(CURBASE(PIPE_A), D_ALL, NULL, cur_surf_mmio_write);
-+	MMIO_DH(CURBASE(PIPE_B), D_ALL, NULL, cur_surf_mmio_write);
-+	MMIO_DH(CURBASE(PIPE_C), D_ALL, NULL, cur_surf_mmio_write);
- 
- 	MMIO_D(CUR_FBC_CTL(PIPE_A), D_ALL);
- 	MMIO_D(CUR_FBC_CTL(PIPE_B), D_ALL);
--- 
-2.17.1
-
+> 
+> > 
+> > > -extern long _do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *, unsigned long);
+> > > +extern long _do_fork(struct kernel_clone_args *kargs);
+> > >  extern long do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *);
+> > 
+> > Maybe these could move into linux/sched/clone.h too.
+> 
+> Meh, that could be a separate cleanup patch after clone3() has been
+> merged.
+> 
+> > 
+> > > +#define CLONE_MAX ~0U
+> > 
+> > Can you add a comment summarising the meaning?
+> 
+> Yes, can do.
+> 
+> > 
+> > > +	u64 clone_flags = args->flags;
+> > > +	int __user *child_tidptr = args->child_tid;
+> > > +	unsigned long tls = args->tls;
+> > > +	unsigned long stack_start = args->stack;
+> > > +	unsigned long stack_size = args->stack_size;
+> > 
+> > Some of these are only used once, so it's probably not worth sticking them in
+> > local variables.
+> 
+> [1]:
+> Ok, will double check.
+> This was just to minimize copy-paste erros for variables which were used
+> multiple times.
+> 
+> > 
+> > > -		if (clone_flags &
+> > > -		    (CLONE_DETACHED | CLONE_PARENT_SETTID | CLONE_THREAD))
+> > > -			return ERR_PTR(-EINVAL);
+> > 
+> > Did this error check get lost?  I can see part of it further on, but the check
+> > on CLONE_PARENT_SETTID is absent.
+> 
+> No, it's only relevant for legacy clone() since it uses the
+> parent_tidptr argument to return the pidfd. clone3() has a dedicated
+> return argument for that in clone_args.
+> The check for legacy clone() is now done in legacy clone() directly.
+> copy_process() should only do generic checks for all version of
+> clone(),fork(),vfork(), etc.
+> 
+> > 
+> > > +	int __user *parent_tidptr = args->parent_tid;
+> > 
+> > There's only one usage remaining after this patch, so a local var doesn't gain
+> > a lot.
+> 
+> Yes, that leads back to [1].
+> 
+> > 
+> > >  pid_t kernel_thread(int (*fn)(void *), void *arg, unsigned long flags)
+> > >  {
+> > > -	return _do_fork(flags|CLONE_VM|CLONE_UNTRACED, (unsigned long)fn,
+> > > -		(unsigned long)arg, NULL, NULL, 0);
+> > > +	struct kernel_clone_args args = {
+> > > +		.flags = ((flags | CLONE_VM | CLONE_UNTRACED) & ~CSIGNAL),
+> > > +		.exit_signal = (flags & CSIGNAL),
+> > 
+> > Kernel threads can have exit signals?
+> 
+> Yes,
+> 
+> kernel/kthread.c:       pid = kernel_thread(kthread, create, CLONE_FS | CLONE_FILES | SIGCHLD);
+> kernel/umh.c:   pid = kernel_thread(call_usermodehelper_exec_async, sub_info, SIGCHLD);
+> 
+> And even if they couldn't have. This is just to make sure that if they
+> ever would we'd be prepared.
+> 
+> > 
+> > > +static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
+> > > +				     struct clone_args __user *uargs,
+> > > +				     size_t size)
+> > 
+> > I would make this "noinline".  If it gets inlined, local variable "args" may
+> > still be on the stack when _do_fork() gets called.
+> 
+> Hm, can do.
+> 
+> Thanks!
+> Christian
