@@ -2,94 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCA993448A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 12:45:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF326344AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 12:46:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727505AbfFDKpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 06:45:09 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43235 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727483AbfFDKpI (ORCPT
+        id S1727574AbfFDKpm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 06:45:42 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:41761 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727429AbfFDKpl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 06:45:08 -0400
-Received: by mail-wr1-f66.google.com with SMTP id r18so6266056wrm.10
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 03:45:07 -0700 (PDT)
+        Tue, 4 Jun 2019 06:45:41 -0400
+Received: by mail-pl1-f194.google.com with SMTP id s24so8046601plr.8
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 03:45:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=MkGVFZY1XhtlH3EXbDSeWCPiZrbaYk4zwPdOeyiIsNc=;
-        b=hljw8RsTFEcbuplHCj6D4tq/5nIpPFTXoAK24WDaO16R2lM4A4tkIl52AnrPf6JXw1
-         gT3EjpICXK9lQrDnqMtsHhdKD3i45MO0tlSwTZkOGsLnygeqnS1GEq42hVT5+HlqpNGw
-         T+gYf8t0vIU7HSEAEdNBmet5opXalvHQjYcEdfz/km30EDtQQfXPpL8nTAL5/46rMhak
-         gMuexpRELw1yz4AqSHcBpII97mOzlQXjdBv9q9uxJg0vY4L2Wkz4mWfTGT41kUyPjWyf
-         oCCUVzTVMMLzv8BuVscDTyHO0HMHqetsCPsptCOLxfHbS+xv6PqNZFqqiN1cTF5Ezas/
-         RETA==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Tnxaz1jFi+0c70adFdZwh4smT92+AgzJSxKEKHIEhF4=;
+        b=Lhbk6CaRYULPnEKNSyq8RYLlZKVu0r/YOy5oOmx4UPBjmsxzCga0HaKw+Z60/X04OK
+         GJ6slNfxshzwmy+Sk4gmQlinmXFXyRbTnIRFZ2ctwS8EZW85i4fmCX7gqfNNeKWpJcZd
+         eaLMNpFWIOg95t5sHxnxp2cdnsuFv5BLyGijo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=MkGVFZY1XhtlH3EXbDSeWCPiZrbaYk4zwPdOeyiIsNc=;
-        b=l57Av9MD36F8vgWBE/ptZ9fmK2/SEdk4v1qGWsguPE0s14/jkEXAxwLDzbFvbmoyC/
-         /FpWUjzlEHYzdy7PiaSoKiazMC05Rqb7PoxoHtkvJrSNiaKJkn19GNnqY12D+JNydVkY
-         k22teemySCgHVafnWg2enBPJIC74NwD1Krn8yQyO2rEkFs+HSwDva4LJ1U6h/rEHes70
-         i4GIodroZBYRkv8rGmeFMr8CtOdolCSdRFwYZHDhmx8oJ0/ECiRwJazT8ecEZqqXIqMh
-         fEzfoeHd6RaDecy+2Xtd+yycDXJtkleV1Of5P4KnYMOSqu7RxAcNdzDs5wvV/cLTNToh
-         ahjg==
-X-Gm-Message-State: APjAAAWhroxCPScAyycjIeuelG0ovpG/bo0JifwPCh54PcEZCeQspSYT
-        dZ/Yft328vxsEhMpKHnvNHDngw==
-X-Google-Smtp-Source: APXvYqyK+bgytdW+OPwhr0ZBevMVV7NDVd58ezc6owb6wL4UOd2DK/LWci6dPsr3n48XMl5sTrJS0w==
-X-Received: by 2002:adf:a38d:: with SMTP id l13mr13613323wrb.187.1559645107190;
-        Tue, 04 Jun 2019 03:45:07 -0700 (PDT)
-Received: from localhost.localdomain ([2.27.167.43])
-        by smtp.gmail.com with ESMTPSA id t140sm2718623wmt.0.2019.06.04.03.45.06
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Tnxaz1jFi+0c70adFdZwh4smT92+AgzJSxKEKHIEhF4=;
+        b=qXP1D35Is8MB0iT3tR4SeHby539cR8VEq5dv7/rxLR5snFzFAUAJk55F/dO0UIQ04s
+         tIhFgoFyQCzcnDbsLv6Cqtn0sz9yhNP68bEjkhvJIJnC0eBYiK3q3GUDjbWxOXEP+ANc
+         WmpZdwBNLh5u9GHkNVYXeVNHqVRBlFOWjus656C85LGJGJ3vAN9fwb+T00GyP6XI3PnF
+         m09iA3tnpd9CokVnItE4ie14WZlwAJAlWcClDcQf/QuScbYF64rKJyg49QcVs+279ooz
+         kakH1zxrDn4/wpr0O5nVmqsZci7bTY3QUppIPKmnvlaUVBlmn5nrB1jT/5n7arBJcWj5
+         bNag==
+X-Gm-Message-State: APjAAAWdyC9uXUjhlu3rvxxGCQLBfL4kyODwlaozlkxkKXS847BCuzOW
+        +Cji6y85xV+Sj3/0uJAh3gG6wDYxXC0=
+X-Google-Smtp-Source: APXvYqwh/4ffwfhgvj6Uv62eFrI0oVq5vlDa+xCXZjEBrFlgI5XBmHVEkkd3NqjNx2+6PfY2MIM85Q==
+X-Received: by 2002:a17:902:1cb:: with SMTP id b69mr36438915plb.1.1559645139983;
+        Tue, 04 Jun 2019 03:45:39 -0700 (PDT)
+Received: from localhost ([2401:fa00:1:10:845f:e35d:e30c:4b47])
+        by smtp.gmail.com with ESMTPSA id j20sm14171954pff.183.2019.06.04.03.45.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Jun 2019 03:45:06 -0700 (PDT)
-From:   Lee Jones <lee.jones@linaro.org>
-To:     alokc@codeaurora.org, kramasub@codeaurora.org,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        wsa+renesas@sang-engineering.com, bjorn.andersson@linaro.org,
-        linus.walleij@linaro.org, balbi@kernel.org,
-        gregkh@linuxfoundation.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        jlhugo@gmail.com, linux-i2c@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-usb@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 8/8] usb: dwc3: qcom: Improve error handling
-Date:   Tue,  4 Jun 2019 11:44:55 +0100
-Message-Id: <20190604104455.8877-8-lee.jones@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190604104455.8877-1-lee.jones@linaro.org>
-References: <20190604104455.8877-1-lee.jones@linaro.org>
+        Tue, 04 Jun 2019 03:45:39 -0700 (PDT)
+From:   Yu-Hsuan Hsu <yuhsuan@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Yu-Hsuan Hsu <yuhsuan@chromium.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, dgreid@chromium.org,
+        cychiang@chromium.org
+Subject: [PATCH v3] ASoC: max98090: remove 24-bit format support if RJ is 0
+Date:   Tue,  4 Jun 2019 18:45:32 +0800
+Message-Id: <20190604104532.110492-1-yuhsuan@chromium.org>
+X-Mailer: git-send-email 2.22.0.rc1.311.g5d7573a151-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dwc3_qcom_clk_init() is called with of_count_phandle_with_args() as an
-argument.  If of_count_phandle_with_args() returns an error, the number
-of clocks will be a negative value and will lead to undefined behaviour.
+The supported formats are S16_LE and S24_LE now. However, by datasheet
+of max98090, S24_LE is only supported when it is in the right justified
+mode. We should remove 24-bit format if it is not in that mode to avoid
+triggering error.
 
-Ensure we check for an error before attempting to blindly use the value.
-
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Change-Id: I304882e0b67974f8fe4c2a47c61a41a04635b2df
+Signed-off-by: Yu-Hsuan Hsu <yuhsuan@chromium.org>
 ---
- drivers/usb/dwc3/dwc3-qcom.c | 3 +++
- 1 file changed, 3 insertions(+)
+Fix compile error.
+codec->dai => dai
+runtime => substream->runtime
 
-diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
-index f21fdd6cdd1a..633482926497 100644
---- a/drivers/usb/dwc3/dwc3-qcom.c
-+++ b/drivers/usb/dwc3/dwc3-qcom.c
-@@ -419,6 +419,9 @@ static int dwc3_qcom_clk_init(struct dwc3_qcom *qcom, int count)
- 	if (!count || ACPI_HANDLE(dev))
- 		return 0;
+ sound/soc/codecs/max98090.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/sound/soc/codecs/max98090.c b/sound/soc/codecs/max98090.c
+index 7619ea31ab50..ada8c25e643d 100644
+--- a/sound/soc/codecs/max98090.c
++++ b/sound/soc/codecs/max98090.c
+@@ -1909,6 +1909,21 @@ static int max98090_configure_dmic(struct max98090_priv *max98090,
+ 	return 0;
+ }
  
-+	if (count < 0)
-+		return count;
++static int max98090_dai_startup(struct snd_pcm_substream *substream,
++				struct snd_soc_dai *dai)
++{
++	struct snd_soc_component *component = dai->component;
++	struct max98090_priv *max98090 = snd_soc_component_get_drvdata(component);
++	unsigned int fmt = max98090->dai_fmt;
 +
- 	qcom->clks = devm_kcalloc(dev, qcom->num_clocks,
- 				  sizeof(struct clk *), GFP_KERNEL);
- 	if (!qcom->clks)
++	/* Remove 24-bit format support if it is not in right justified mode. */
++	if ((fmt & SND_SOC_DAIFMT_FORMAT_MASK) != SND_SOC_DAIFMT_RIGHT_J) {
++		substream->runtime->hw.formats = SNDRV_PCM_FMTBIT_S16_LE;
++		snd_pcm_hw_constraint_msbits(substream->runtime, 0, 16, 16);
++	}
++	return 0;
++}
++
+ static int max98090_dai_hw_params(struct snd_pcm_substream *substream,
+ 				   struct snd_pcm_hw_params *params,
+ 				   struct snd_soc_dai *dai)
+@@ -2316,6 +2331,7 @@ EXPORT_SYMBOL_GPL(max98090_mic_detect);
+ #define MAX98090_FORMATS (SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S24_LE)
+ 
+ static const struct snd_soc_dai_ops max98090_dai_ops = {
++	.startup = max98090_dai_startup,
+ 	.set_sysclk = max98090_dai_set_sysclk,
+ 	.set_fmt = max98090_dai_set_fmt,
+ 	.set_tdm_slot = max98090_set_tdm_slot,
 -- 
-2.17.1
+2.22.0.rc1.311.g5d7573a151-goog
 
