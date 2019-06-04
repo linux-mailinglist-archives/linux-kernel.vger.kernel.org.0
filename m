@@ -2,151 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1B61346CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:31:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60C54346E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:33:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727858AbfFDMbf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 08:31:35 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:58656 "EHLO inva020.nxp.com"
+        id S1727750AbfFDMdT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 08:33:19 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38278 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727834AbfFDMb3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 08:31:29 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 35DF71A0F08;
-        Tue,  4 Jun 2019 14:31:27 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 844D21A0F12;
-        Tue,  4 Jun 2019 14:31:21 +0200 (CEST)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 4C2E4402DD;
-        Tue,  4 Jun 2019 20:31:14 +0800 (SGT)
-From:   daniel.baluta@nxp.com
-To:     shawnguo@kernel.org
-Cc:     mark.rutland@arm.com, robh+dt@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        shengjiu.wang@nxp.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        m.felsch@pengutronix.de, Daniel Baluta <daniel.baluta@nxp.com>
-Subject: [PATCH v4 2/2] arm64: dts: imx8mm-evk: Enable audio codec wm8524
-Date:   Tue,  4 Jun 2019 20:32:57 +0800
-Message-Id: <20190604123257.2920-3-daniel.baluta@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190604123257.2920-1-daniel.baluta@nxp.com>
-References: <20190604123257.2920-1-daniel.baluta@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727403AbfFDMdS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 08:33:18 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A7E3B8E3C6;
+        Tue,  4 Jun 2019 12:33:12 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D87DB648D6;
+        Tue,  4 Jun 2019 12:33:06 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAOQ4uxjLzURf8c1UH_xCJKkuD2es8i-=P-ZNM=t3aFcZLMwXEg@mail.gmail.com>
+References: <CAOQ4uxjLzURf8c1UH_xCJKkuD2es8i-=P-ZNM=t3aFcZLMwXEg@mail.gmail.com> <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk> <CAOQ4uxjC1M7jwjd9zSaSa6UW2dbEjc+ZbFSo7j9F1YHAQxQ8LQ@mail.gmail.com> <20190529142504.GC32147@quack2.suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     dhowells@redhat.com, Jan Kara <jack@suse.cz>,
+        Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-api@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC][PATCH 0/7] Mount, FS, Block and Keyrings notifications
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <16166.1559651581.1@warthog.procyon.org.uk>
+Date:   Tue, 04 Jun 2019 13:33:01 +0100
+Message-ID: <16167.1559651581@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 04 Jun 2019 12:33:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Baluta <daniel.baluta@nxp.com>
+Amir Goldstein <amir73il@gmail.com> wrote:
 
-i.MX8MM has one wm8524 audio codec connected with
-SAI3 digital audio interface.
+> Well I am sure that ring buffer for fanotify events would be useful, so
+> seeing that David is proposing a generic notification mechanism, I wanted
+> to know how that mechanism could best share infrastructure with fsnotify.
+>
+> But apart from that I foresee the questions from users about why the
+> mount notification API and filesystem events API do not have better
+> integration.
+>
+> The way I see it, the notification queue can serve several classes
+> of notifications and fsnotify could be one of those classes
+> (at least FAN_CLASS_NOTIF fits nicely to the model).
 
-This patch uses simple-card machine driver in order
-to enable wm8524 codec.
+It could be done; the main thing that concerns me is that the buffer is of
+limited capacity.
 
-We need to set:
-	* SAI3 pinctrl configuration
-	* codec reset gpio pinctrl configuration
-	* clock hierarchy
-	* codec node
-	* simple-card configuration
+However, I could take this:
 
-Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
----
- arch/arm64/boot/dts/freescale/imx8mm-evk.dts | 55 ++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+	struct fanotify_event_metadata {
+		__u32 event_len;
+		__u8 vers;
+		__u8 reserved;
+		__u16 metadata_len;
+		__aligned_u64 mask;
+		__s32 fd;
+		__s32 pid;
+	};
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
-index f8ff0a4b8961..7d2ec0326659 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
-@@ -37,6 +37,37 @@
- 		gpio = <&gpio2 19 GPIO_ACTIVE_HIGH>;
- 		enable-active-high;
- 	};
-+
-+	wm8524: audio-codec {
-+		#sound-dai-cells = <0>;
-+		compatible = "wlf,wm8524";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_gpio_wlf>;
-+		wlf,mute-gpios = <&gpio5 21 GPIO_ACTIVE_LOW>;
-+	};
-+
-+	sound-wm8524 {
-+		compatible = "simple-audio-card";
-+		simple-audio-card,name = "wm8524-audio";
-+		simple-audio-card,format = "i2s";
-+		simple-audio-card,frame-master = <&cpudai>;
-+		simple-audio-card,bitclock-master = <&cpudai>;
-+		simple-audio-card,widgets =
-+			"Line", "Left Line Out Jack",
-+			"Line", "Right Line Out Jack";
-+		simple-audio-card,routing =
-+			"Left Line Out Jack", "LINEVOUTL",
-+			"Right Line Out Jack", "LINEVOUTR";
-+
-+		cpudai: simple-audio-card,cpu {
-+			sound-dai = <&sai3>;
-+		};
-+
-+		simple-audio-card,codec {
-+			sound-dai = <&wm8524>;
-+			clocks = <&clk IMX8MM_CLK_SAI3_ROOT>;
-+		};
-+	};
- };
- 
- &A53_0 {
-@@ -65,6 +96,15 @@
- 	};
- };
- 
-+&sai3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_sai3>;
-+	assigned-clocks = <&clk IMX8MM_CLK_SAI3>;
-+	assigned-clock-parents = <&clk IMX8MM_AUDIO_PLL1_OUT>;
-+	assigned-clock-rates = <24576000>;
-+	status = "okay";
-+};
-+
- &uart2 { /* console */
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_uart2>;
-@@ -242,6 +282,12 @@
- 		>;
- 	};
- 
-+	pinctrl_gpio_wlf: gpiowlfgrp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_I2C4_SDA_GPIO5_IO21	0xd6
-+		>;
-+	};
-+
- 	pinctrl_i2c1: i2c1grp {
- 		fsl,pins = <
- 			MX8MM_IOMUXC_I2C1_SCL_I2C1_SCL			0x400001c3
-@@ -261,6 +307,15 @@
- 		>;
- 	};
- 
-+	pinctrl_sai3: sai3grp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_SAI3_TXFS_SAI3_TX_SYNC     0xd6
-+			MX8MM_IOMUXC_SAI3_TXC_SAI3_TX_BCLK      0xd6
-+			MX8MM_IOMUXC_SAI3_MCLK_SAI3_MCLK        0xd6
-+			MX8MM_IOMUXC_SAI3_TXD_SAI3_TX_DATA0     0xd6
-+		>;
-+	};
-+
- 	pinctrl_uart2: uart2grp {
- 		fsl,pins = <
- 			MX8MM_IOMUXC_UART2_RXD_UART2_DCE_RX	0x140
--- 
-2.17.1
+and map it to:
 
+	struct fanotify_notification {
+		struct watch_notification watch; /* WATCH_TYPE_FANOTIFY */
+		__aligned_u64	mask;
+		__u16		metadata_len;
+		__u8		vers;
+		__u8		reserved;
+		__u32		reserved2;
+		__s32		fd;
+		__s32		pid;
+	};
+
+and some of the watch::info bit could be used:
+
+	n->watch.info & WATCH_INFO_OVERRUN	watch queue overran
+	n->watch.info & WATCH_INFO_LENGTH	event_len
+	n->watch.info & WATCH_INFO_RECURSIVE	FAN_EVENT_ON_CHILD
+	n->watch.info & WATCH_INFO_FLAG_0	FAN_*_PERM
+	n->watch.info & WATCH_INFO_FLAG_1	FAN_Q_OVERFLOW
+	n->watch.info & WATCH_INFO_FLAG_2	FAN_ON_DIR
+	n->subtype				ffs(n->mask)
+
+Ideally, I'd dispense with metadata_len, vers, reserved* and set the version
+when setting the watch.
+
+	fanotify_watch(int watchfd, unsigned int flags, u64 *mask,
+		       int dirfd, const char *pathname, unsigned int at_flags);
+
+We might also want to extend the watch_filter to allow you to, say, filter on
+the first __u64 after the watch member so that you could filter on specific
+events:
+
+	struct watch_notification_type_filter {
+		__u32	type;
+		__u32	info_filter;
+		__u32	info_mask;
+		__u32	subtype_filter[8];
+		__u64	payload_mask[1];
+		__u64	payload_set[1];
+	};
+
+So, in this case, it would require:
+
+	n->mask & wf->payload_mask[0] == wf->payload_set[0]
+
+to be true to record the message.
+
+David
