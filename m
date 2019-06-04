@@ -2,79 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3E0A344CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 12:52:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84F8F344A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 12:45:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727413AbfFDKww convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 4 Jun 2019 06:52:52 -0400
-Received: from mga18.intel.com ([134.134.136.126]:36958 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727088AbfFDKwu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 06:52:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jun 2019 03:52:49 -0700
-X-ExtLoop1: 1
-Received: from pgsmsx112-dag.png.intel.com (HELO PGSMSX112.gar.corp.intel.com) ([10.108.55.234])
-  by fmsmga004.fm.intel.com with ESMTP; 04 Jun 2019 03:52:47 -0700
-Received: from pgsmsx103.gar.corp.intel.com ([169.254.2.93]) by
- PGSMSX112.gar.corp.intel.com ([169.254.3.134]) with mapi id 14.03.0415.000;
- Tue, 4 Jun 2019 18:44:52 +0800
-From:   "Voon, Weifeng" <weifeng.voon@intel.com>
-To:     Jose Abreu <Jose.Abreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Giuseppe Cavallaro" <peppe.cavallaro@st.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "Florian Fainelli" <f.fainelli@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        biao huang <biao.huang@mediatek.com>,
-        "Ong, Boon Leong" <boon.leong.ong@intel.com>,
-        "Kweh, Hock Leong" <hock.leong.kweh@intel.com>
-Subject: RE: [PATCH net-next v5 0/5] net: stmmac: enable EHL SGMI
-Thread-Topic: [PATCH net-next v5 0/5] net: stmmac: enable EHL SGMI
-Thread-Index: AQHVF6gS/5FY/hbRY0qoIZQd1nkGR6aJUNoAgAIDo9A=
-Date:   Tue, 4 Jun 2019 10:44:51 +0000
-Message-ID: <D6759987A7968C4889FDA6FA91D5CBC814709476@PGSMSX103.gar.corp.intel.com>
-References: <1559332694-6354-1-git-send-email-weifeng.voon@intel.com>
- <78EB27739596EE489E55E81C33FEC33A0B93B791@DE02WEMBXB.internal.synopsys.com>
-In-Reply-To: <78EB27739596EE489E55E81C33FEC33A0B93B791@DE02WEMBXB.internal.synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.600.7
-dlp-reaction: no-action
-x-originating-ip: [172.30.20.205]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+        id S1727563AbfFDKpc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 06:45:32 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38715 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727429AbfFDKpF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 06:45:05 -0400
+Received: by mail-wr1-f66.google.com with SMTP id d18so15275127wrs.5
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 03:45:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Ixa6PZM7Qd3yNTQ1/2lb9UJukHzNBYD4+3OM8ec4OSs=;
+        b=SrM3zAvHO7s4r4kfWRb3yKeFRE5PBTe75g4T6jp6QVLZ+DbjYiqMYZ/caaJl2svogL
+         Dho1YX4HBmmhcjNwienKNpKLHxULynaK4RwnoYB8aEOifJlkpTWldE/+L9a6CBOW2SBV
+         8TY+kVlRP8QzflACyJFTgmXnlx9rJAUzH4CNwmMUfhVqaznt97K1fxCP8/Zawp6/IgVv
+         nclsKzImAAkMxU8Y2NicxZ+aWSjqdzGCXD6Uy2EN7XkkhnMLxpGxX+mLyl/mAhj77crl
+         3OedRVGkpp68L5HrhDth6eUQCdIJppx09j67O+gWfpNvj+pXqJRqm3HD5nbQBk9OGfYV
+         t2xQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Ixa6PZM7Qd3yNTQ1/2lb9UJukHzNBYD4+3OM8ec4OSs=;
+        b=LbDl6KkG7SdwQr8SHj9qZ0k3gIoICf4eH7qOwnfFUFp/35Qg6BKAUoQZEqTp48ky4m
+         rs1j5DkcSJWA33IuaSuLIiHMQdSAE7swv9g2bfLT8dd+NC0u5rPL/EtqNMrwH1qUiyou
+         +NByIGsc/0DCUfAeDq6rcpHlTf3/zpxe1/05gdygvLb4Wavf06hqqileUDpX6KuEroAb
+         Wd0w2tAOLciziTg00bW5REiduBAi0f4snzqFPk46F6ZZFedRO47o1cDV7ZnfXtHcVMOJ
+         eGD1deUzb2v4FVhydbpCrO2rOdupSoC2n+b9yAZpcGrgagtwXbu0wmWQK727QZBD6BAk
+         EFVw==
+X-Gm-Message-State: APjAAAUsevGuBkBzK9eCGGnw7MQVeT+TzNoQCM4uFUHxbkzuJbqArK6i
+        D4RpiXgo6z4En0o9EIkPXvVYvA==
+X-Google-Smtp-Source: APXvYqxeY6H93q1Bt0x5h2fNrnGLPGAkTcBxIAddnWtbIbwQwr3Fz5wwwK1XYktubxlpc0VDO1ZA7Q==
+X-Received: by 2002:adf:e286:: with SMTP id v6mr6228022wri.340.1559645103884;
+        Tue, 04 Jun 2019 03:45:03 -0700 (PDT)
+Received: from localhost.localdomain ([2.27.167.43])
+        by smtp.gmail.com with ESMTPSA id t140sm2718623wmt.0.2019.06.04.03.45.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Jun 2019 03:45:03 -0700 (PDT)
+From:   Lee Jones <lee.jones@linaro.org>
+To:     alokc@codeaurora.org, kramasub@codeaurora.org,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        wsa+renesas@sang-engineering.com, bjorn.andersson@linaro.org,
+        linus.walleij@linaro.org, balbi@kernel.org,
+        gregkh@linuxfoundation.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        jlhugo@gmail.com, linux-i2c@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-usb@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 5/8] soc: qcom: geni: Add support for ACPI
+Date:   Tue,  4 Jun 2019 11:44:52 +0100
+Message-Id: <20190604104455.8877-5-lee.jones@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190604104455.8877-1-lee.jones@linaro.org>
+References: <20190604104455.8877-1-lee.jones@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > This patch-set is to enable Ethernet controller (DW Ethernet QoS and
-> > DW Ethernet PCS) with SGMII interface in Elkhart Lake.
-> > The DW Ethernet PCS is the Physical Coding Sublayer that is between
-> > Ethernet MAC and PHY and uses MDIO Clause-45 as Communication.
-> 
-> This series look fine to me but unfortunately I don't have my GMAC5.10
-> setup available to test for regressions ... The changes look isolated
-> though.
-> 
-> Could you please run the stmmac selftests at least and add the output
-> here ?
+When booting with ACPI as the active set of configuration tables,
+all; clocks, regulators, pin functions ect are expected to be at
+their ideal values/levels/rates, thus the associated frameworks
+are unavailable.  Ensure calls to these APIs are shielded when
+ACPI is enabled.
 
-Sure, the selftests feature is good as I am able to detect that the 
-dwmac510_xpcs_ops misses the selftest entry. I will fix and add the
-selftests results in the v6 cover letter. 
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/soc/qcom/qcom-geni-se.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/soc/qcom/qcom-geni-se.c b/drivers/soc/qcom/qcom-geni-se.c
+index 6b8ef01472e9..cff0a413e59a 100644
+--- a/drivers/soc/qcom/qcom-geni-se.c
++++ b/drivers/soc/qcom/qcom-geni-se.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ // Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
+ 
++#include <linux/acpi.h>
+ #include <linux/clk.h>
+ #include <linux/slab.h>
+ #include <linux/dma-mapping.h>
+@@ -450,6 +451,9 @@ int geni_se_resources_off(struct geni_se *se)
+ {
+ 	int ret;
+ 
++	if (ACPI_HANDLE(se->dev))
++		return 0;
++
+ 	ret = pinctrl_pm_select_sleep_state(se->dev);
+ 	if (ret)
+ 		return ret;
+@@ -487,6 +491,9 @@ int geni_se_resources_on(struct geni_se *se)
+ {
+ 	int ret;
+ 
++	if (ACPI_HANDLE(se->dev))
++		return 0;
++
+ 	ret = geni_se_clks_on(se);
+ 	if (ret)
+ 		return ret;
+@@ -724,12 +731,14 @@ static int geni_se_probe(struct platform_device *pdev)
+ 	if (IS_ERR(wrapper->base))
+ 		return PTR_ERR(wrapper->base);
+ 
+-	wrapper->ahb_clks[0].id = "m-ahb";
+-	wrapper->ahb_clks[1].id = "s-ahb";
+-	ret = devm_clk_bulk_get(dev, NUM_AHB_CLKS, wrapper->ahb_clks);
+-	if (ret) {
+-		dev_err(dev, "Err getting AHB clks %d\n", ret);
+-		return ret;
++	if (!ACPI_HANDLE(&pdev->dev)) {
++		wrapper->ahb_clks[0].id = "m-ahb";
++		wrapper->ahb_clks[1].id = "s-ahb";
++		ret = devm_clk_bulk_get(dev, NUM_AHB_CLKS, wrapper->ahb_clks);
++		if (ret) {
++			dev_err(dev, "Err getting AHB clks %d\n", ret);
++			return ret;
++		}
+ 	}
+ 
+ 	dev_set_drvdata(dev, wrapper);
+-- 
+2.17.1
 
-> 
-> Thanks,
-> Jose Miguel Abreu
