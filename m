@@ -2,98 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 906FD34966
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 15:50:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EFA734998
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 15:57:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727615AbfFDNux (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 09:50:53 -0400
-Received: from mga02.intel.com ([134.134.136.20]:39344 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727129AbfFDNux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 09:50:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jun 2019 06:50:52 -0700
-X-ExtLoop1: 1
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
-  by orsmga007.jf.intel.com with ESMTP; 04 Jun 2019 06:50:50 -0700
-Subject: Re: [PATCH] xhci: clear port_remote_wakeup after resume failure
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Mathias Nyman <mathias.nyman@intel.com>
-Cc:     oneukum@suse.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190524145231.6605-1-nsaenzjulienne@suse.de>
- <eb5d9252-1283-be73-96d6-c24a0fdf1eab@linux.intel.com>
- <e2dd83c5dbba1bb9bd300285285ab07135dc6166.camel@suse.de>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Message-ID: <9286ec05-d2a2-bd23-3397-b6a3623cad8f@linux.intel.com>
-Date:   Tue, 4 Jun 2019 16:53:37 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1727787AbfFDN5O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 09:57:14 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:18083 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727622AbfFDN5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 09:57:13 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id A8AFF21670982FC0CCF9;
+        Tue,  4 Jun 2019 21:54:49 +0800 (CST)
+Received: from [127.0.0.1] (10.133.213.239) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Tue, 4 Jun 2019
+ 21:54:45 +0800
+Subject: Re: [PATCH v3] kernel/module: Fix mem leak in
+ module_add_modinfo_attrs
+To:     Miroslav Benes <mbenes@suse.cz>
+References: <20190530134304.4976-1-yuehaibing@huawei.com>
+ <20190603144554.18168-1-yuehaibing@huawei.com>
+ <alpine.LSU.2.21.1906041107510.16030@pobox.suse.cz>
+CC:     <jeyu@kernel.org>, <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+From:   Yuehaibing <yuehaibing@huawei.com>
+Message-ID: <5705910c-ea13-9ff0-0d94-f2311fa510d9@huawei.com>
+Date:   Tue, 4 Jun 2019 21:54:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-In-Reply-To: <e2dd83c5dbba1bb9bd300285285ab07135dc6166.camel@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <alpine.LSU.2.21.1906041107510.16030@pobox.suse.cz>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27.5.2019 14.28, Nicolas Saenz Julienne wrote:
-> Hi Matthias,
-> thanks for the review.
+On 2019/6/4 18:46, Miroslav Benes wrote:
+> On Mon, 3 Jun 2019, YueHaibing wrote:
 > 
-> On Mon, 2019-05-27 at 14:16 +0300, Mathias Nyman wrote:
->> On 24.5.2019 17.52, Nicolas Saenz Julienne wrote:
->>> This was seen on a Dell Precision 5520 using it's WD15 dock. The dock's
->>> Ethernet device interfaces with the laptop through one of it's USB3
->>> ports. While idle, the Ethernet device and HCD are suspended by runtime
->>> PM, being the only device connected on the bus. Then, both are resumed on
->>> behalf of the Ethernet device, which has remote wake-up capabilities.
->>>
->>> The Ethernet device was observed to randomly disconnect from the USB
->>> port shortly after submitting it's remote wake-up request. Probably a
->>> weird timing issue yet to be investigated. This causes runtime PM to
->>> busyloop causing some tangible CPU load. The reason is the port gets
->>> stuck in the middle of a remote wake-up operation, waiting for the
->>> device to switch to U0. This never happens, leaving "port_remote_wakeup"
->>> enabled, and automatically triggering a failure on any further suspend
->>> operation.
->>>
->>> This patch clears "port_remote_wakeup" upon detecting a device with a
->>> wrong resuming port state (see Table 4-9 in 4.15.2.3). Making sure the
->>> above mentioned situation doesn't trigger a PM busyloop.
->>>
+>> In module_add_modinfo_attrs if sysfs_create_file
+>> fails, we forget to free allocated modinfo_attrs
+>> and roll back the sysfs files.
 >>
->> There was a similar case where the USB3 link had transitioned to a
->> lower power U1 or U2 state after resume, before driver read the state,
->> leaving port_remote_wakeup flag uncleared.
->>
->> This was fixed in 5.1 kernel by commit:
->>
->> 6cbcf59 xhci: Fix port resume done detection for SS ports with LPM enable
->>
->> Can you check if you have it?
->> It should be in recent stable releases as well.
+>> Fixes: 03e88ae1b13d ("[PATCH] fix module sysfs files reference counting")
+>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>> ---
+>> v3: reuse module_remove_modinfo_attrs
+>> v2: free from '--i' instead of 'i--'
+>> ---
+>>  kernel/module.c | 21 ++++++++++++++++-----
+>>  1 file changed, 16 insertions(+), 5 deletions(-)
 > 
-> I was aware of that patch, unfortunately it doesn't address the same issue. In
-> my case I never get a second port status event (so no PLC == 1 or any state
-> change seen in PLS). The device simply disconnects from the bus.
+> I'm afraid it is not completely correct.
+>  
+>> diff --git a/kernel/module.c b/kernel/module.c
+>> index 80c7c09..c6b8912 100644
+>> --- a/kernel/module.c
+>> +++ b/kernel/module.c
+>> @@ -1697,6 +1697,8 @@ static int add_usage_links(struct module *mod)
+>>  	return ret;
+>>  }
+>>  
+>> +static void module_remove_modinfo_attrs(struct module *mod, int end);
+>> +
+>>  static int module_add_modinfo_attrs(struct module *mod)
+>>  {
+>>  	struct module_attribute *attr;
+>> @@ -1711,24 +1713,33 @@ static int module_add_modinfo_attrs(struct module *mod)
+>>  		return -ENOMEM;
+>>  
+>>  	temp_attr = mod->modinfo_attrs;
+>> -	for (i = 0; (attr = modinfo_attrs[i]) && !error; i++) {
+>> +	for (i = 0; (attr = modinfo_attrs[i]); i++) {
+>>  		if (!attr->test || attr->test(mod)) {
+>>  			memcpy(temp_attr, attr, sizeof(*temp_attr));
+>>  			sysfs_attr_init(&temp_attr->attr);
+>>  			error = sysfs_create_file(&mod->mkobj.kobj,
+>>  					&temp_attr->attr);
+>> +			if (error)
+>> +				goto error_out;
+> 
+> sysfs_create_file() failed, so we need to clear all previously processed 
+> attrs and not the current one.
+> 
+>>  			++temp_attr;
+>>  		}
+>>  	}
+>> +
+>> +	return 0;
+>> +
+>> +error_out:
+>> +	module_remove_modinfo_attrs(mod, --i);
+> 
+> It says "call sysfs_remove_file() on all attrs ending with --i included 
+> (all correctly processed attrs).
+> 
+>>  	return error;
+>>  }
+>>  
+>> -static void module_remove_modinfo_attrs(struct module *mod)
+>> +static void module_remove_modinfo_attrs(struct module *mod, int end)
+>>  {
+>>  	struct module_attribute *attr;
+>>  	int i;
+>>  
+>>  	for (i = 0; (attr = &mod->modinfo_attrs[i]); i++) {
+>> +		if (end >= 0 && i > end)
+>> +			break;
+> 
+> If end == 0, you break the loop without calling sysfs_remove_file(), which 
+> is a bug if you called module_remove_modinfo_attrs(mod, 0).
+
+If end == 0 and i == 0, if statement is false, it won't break the loop.
+
+At other places, I use end == -1, which means clean all and keeps the old behavior
+
+-	module_remove_modinfo_attrs(mod);
++	module_remove_modinfo_attrs(mod, -1);
+
+
+> 
+> Calling module_remove_modinfo_attrs(mod, i); in module_add_modinfo_attrs() 
+> under error_out label and changing the condition here to 
+> 
+> if (end >= 0 && i >= end)
+> 	break;
+> 
+> should work as expected.
+> 
+> But let me ask another question and it might be more to Jessica. Why is 
+> there even a call to attr->free(mod); (if it exists) in 
+> module_remove_modinfo_attrs()? The same is in free_modinfo() (as opposed 
+> to setup_modinfo() where attr->setup(mod) is called. Is it because 
+> free_modinfo() is called only in load_module()'s error path, while 
+> module_remove_modinfo_attrs() is called even in free_module() path?
+> 
+> kfree() checks for NULL pointer, so there is no bug, but it is certainly 
+> not nice and it calls for cleanup. But I may be missing something.
+> 
+> Regards,
+> Miroslav
+> 
+> .
 > 
 
-I see, ok, then we need to clear the flag in the hub thread.
-
-But to me it looks like this patch could cause a small race risk in the successful
-device initiated resume cases.
-
-If the hub thread, i.e. the get_port_status() function, notices the U0 state before
-the interrupt handler, i.e. handle_port_status() function, then port_remote_wakeup
-flag is cleared in the hub thread and the wakeup notification is never called from
-handle_port_status().
-
-Would it be enough to just check for (port_remote_wakeup flag && !PORT_CONNECT) in the hub thread?
-USB3 PORT_CONNECT bit is lost in most error cases.
-
--Mathias
