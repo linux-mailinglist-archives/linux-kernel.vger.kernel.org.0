@@ -2,313 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA20E3492F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 15:42:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE63234934
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 15:43:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727504AbfFDNlw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 09:41:52 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51338 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727129AbfFDNlw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 09:41:52 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E2E7330ADC7A;
-        Tue,  4 Jun 2019 13:41:25 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 582FB6199A;
-        Tue,  4 Jun 2019 13:41:18 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue,  4 Jun 2019 15:41:25 +0200 (CEST)
-Date:   Tue, 4 Jun 2019 15:41:17 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, arnd@arndb.de, dbueso@suse.de,
-        axboe@kernel.dk, dave@stgolabs.net, e@80x24.org, jbaron@akamai.com,
-        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
-        omar.kilani@gmail.com, tglx@linutronix.de, stable@vger.kernel.org,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Laight <David.Laight@ACULAB.COM>
-Subject: [PATCH] signal: remove the wrong signal_pending() check in
- restore_user_sigmask()
-Message-ID: <20190604134117.GA29963@redhat.com>
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190529161157.GA27659@redhat.com>
+        id S1727555AbfFDNmd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 09:42:33 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:35838 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727129AbfFDNmd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 09:42:33 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x54DfteG014985;
+        Tue, 4 Jun 2019 15:41:56 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
+ date : message-id : references : in-reply-to : content-type : content-id :
+ content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=M1ARtYLXli88iDKYpkMnq7TdIq5neeJeurB8IVq3Y8M=;
+ b=b9g0hMiciQtFL5y2yOY571VXhnDx2lIN/CI7j+1MLpKo1hrGXeSH497fap8dykQRQigX
+ 5zC0ptZgKu3QpKYo/dSuF/bywTIktJ0N1OQK6gPHDE+Q4fGPxm/oglW40BWHia+02+Yf
+ dJE6nj4/ah802DrCqnbpweoyHTZpFes4l6OGcXBVtO/K86WFtANxHqVvRnyWV1KkCRnp
+ 3tYasdyHASH/fqtLBw6FH6A9TM0z75LgXQcdIytLXF75wWfGpY4rdDhXcyS6Fam9BFS0
+ dpCJjP+1epNmXoLPgp6uCfpf1GEZczW4Z5oDWXEJBAkehXQa8+wiY6i3wlnC/kW6A3Xe YA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2sunds15t3-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 04 Jun 2019 15:41:56 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6908F70;
+        Tue,  4 Jun 2019 13:41:47 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 36F7D2AEA;
+        Tue,  4 Jun 2019 13:41:47 +0000 (GMT)
+Received: from SFHDAG3NODE1.st.com (10.75.127.7) by SFHDAG3NODE3.st.com
+ (10.75.127.9) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 4 Jun
+ 2019 15:41:47 +0200
+Received: from SFHDAG3NODE1.st.com ([fe80::1166:1abb:aad4:5f86]) by
+ SFHDAG3NODE1.st.com ([fe80::1166:1abb:aad4:5f86%20]) with mapi id
+ 15.00.1347.000; Tue, 4 Jun 2019 15:41:46 +0200
+From:   Erwan LE RAY <erwan.leray@st.com>
+To:     Borut Seljak <borut.seljak@t-2.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "\"; linux-arm-kernel\"@lists.infradead.org" 
+        <"; linux-arm-kernel"@lists.infradead.org>
+Subject: Re: Fwd: [PATCH] serial: stm32: fix a recursive locking in
+ stm32_config_rs485
+Thread-Topic: Fwd: [PATCH] serial: stm32: fix a recursive locking in
+ stm32_config_rs485
+Thread-Index: AQHVGr0egfGBr+I5bUuvhxEmcTN9eaaLX30A
+Date:   Tue, 4 Jun 2019 13:41:46 +0000
+Message-ID: <41dddd5f-5c1c-3346-890a-8018f26ebd49@st.com>
+References: <20190604095452.6360-1-borut.seljak@t-2.net>
+ <f2a264ac-e334-63b7-18c9-e45cde7bdf95@st.com>
+In-Reply-To: <f2a264ac-e334-63b7-18c9-e45cde7bdf95@st.com>
+Accept-Language: en-US, fr-FR
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.46]
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <524BAF3F71F59E4E93DCC9EEEDA70D24@st.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190529161157.GA27659@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 04 Jun 2019 13:41:51 +0000 (UTC)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-04_09:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the minimal fix for stable, I'll send cleanups later.
+Hi Borut,
 
-The commit 854a6ed56839a40f6b5d02a2962f48841482eec4 ("signal: Add
-restore_user_sigmask()") introduced the visible change which breaks
-user-space: a signal temporary unblocked by set_user_sigmask() can
-be delivered even if the caller returns success or timeout.
+Please add the following line in the commit message (before your=20
+sign-off) in a V2 of your patch:
 
-Change restore_user_sigmask() to accept the additional "interrupted"
-argument which should be used instead of signal_pending() check, and
-update the callers.
+fixes: 1bcda09d291081 ("serial: stm32: add support for RS485 hardware=20
+control mode")
 
-Reported-by: Eric Wong <e@80x24.org>
-Fixes: 854a6ed56839a40f6b5d02a2962f48841482eec4 ("signal: Add restore_user_sigmask()")
-cc: stable@vger.kernel.org (v5.0+)
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
----
- fs/aio.c               | 28 ++++++++++++++++++++--------
- fs/eventpoll.c         |  4 ++--
- fs/io_uring.c          |  7 ++++---
- fs/select.c            | 18 ++++++------------
- include/linux/signal.h |  2 +-
- kernel/signal.c        |  5 +++--
- 6 files changed, 36 insertions(+), 28 deletions(-)
+I'm OK with the patch itself.
 
-diff --git a/fs/aio.c b/fs/aio.c
-index 3490d1f..c1e581d 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -2095,6 +2095,7 @@ SYSCALL_DEFINE6(io_pgetevents,
- 	struct __aio_sigset	ksig = { NULL, };
- 	sigset_t		ksigmask, sigsaved;
- 	struct timespec64	ts;
-+	bool interrupted;
- 	int ret;
- 
- 	if (timeout && unlikely(get_timespec64(&ts, timeout)))
-@@ -2108,8 +2109,10 @@ SYSCALL_DEFINE6(io_pgetevents,
- 		return ret;
- 
- 	ret = do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &ts : NULL);
--	restore_user_sigmask(ksig.sigmask, &sigsaved);
--	if (signal_pending(current) && !ret)
-+
-+	interrupted = signal_pending(current);
-+	restore_user_sigmask(ksig.sigmask, &sigsaved, interrupted);
-+	if (interrupted && !ret)
- 		ret = -ERESTARTNOHAND;
- 
- 	return ret;
-@@ -2128,6 +2131,7 @@ SYSCALL_DEFINE6(io_pgetevents_time32,
- 	struct __aio_sigset	ksig = { NULL, };
- 	sigset_t		ksigmask, sigsaved;
- 	struct timespec64	ts;
-+	bool interrupted;
- 	int ret;
- 
- 	if (timeout && unlikely(get_old_timespec32(&ts, timeout)))
-@@ -2142,8 +2146,10 @@ SYSCALL_DEFINE6(io_pgetevents_time32,
- 		return ret;
- 
- 	ret = do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &ts : NULL);
--	restore_user_sigmask(ksig.sigmask, &sigsaved);
--	if (signal_pending(current) && !ret)
-+
-+	interrupted = signal_pending(current);
-+	restore_user_sigmask(ksig.sigmask, &sigsaved, interrupted);
-+	if (interrupted && !ret)
- 		ret = -ERESTARTNOHAND;
- 
- 	return ret;
-@@ -2193,6 +2199,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents,
- 	struct __compat_aio_sigset ksig = { NULL, };
- 	sigset_t ksigmask, sigsaved;
- 	struct timespec64 t;
-+	bool interrupted;
- 	int ret;
- 
- 	if (timeout && get_old_timespec32(&t, timeout))
-@@ -2206,8 +2213,10 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents,
- 		return ret;
- 
- 	ret = do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &t : NULL);
--	restore_user_sigmask(ksig.sigmask, &sigsaved);
--	if (signal_pending(current) && !ret)
-+
-+	interrupted = signal_pending(current);
-+	restore_user_sigmask(ksig.sigmask, &sigsaved, interrupted);
-+	if (interrupted && !ret)
- 		ret = -ERESTARTNOHAND;
- 
- 	return ret;
-@@ -2226,6 +2235,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents_time64,
- 	struct __compat_aio_sigset ksig = { NULL, };
- 	sigset_t ksigmask, sigsaved;
- 	struct timespec64 t;
-+	bool interrupted;
- 	int ret;
- 
- 	if (timeout && get_timespec64(&t, timeout))
-@@ -2239,8 +2249,10 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents_time64,
- 		return ret;
- 
- 	ret = do_io_getevents(ctx_id, min_nr, nr, events, timeout ? &t : NULL);
--	restore_user_sigmask(ksig.sigmask, &sigsaved);
--	if (signal_pending(current) && !ret)
-+
-+	interrupted = signal_pending(current);
-+	restore_user_sigmask(ksig.sigmask, &sigsaved, interrupted);
-+	if (interrupted && !ret)
- 		ret = -ERESTARTNOHAND;
- 
- 	return ret;
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index c6f5131..4c74c76 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -2325,7 +2325,7 @@ SYSCALL_DEFINE6(epoll_pwait, int, epfd, struct epoll_event __user *, events,
- 
- 	error = do_epoll_wait(epfd, events, maxevents, timeout);
- 
--	restore_user_sigmask(sigmask, &sigsaved);
-+	restore_user_sigmask(sigmask, &sigsaved, error == -EINTR);
- 
- 	return error;
- }
-@@ -2350,7 +2350,7 @@ COMPAT_SYSCALL_DEFINE6(epoll_pwait, int, epfd,
- 
- 	err = do_epoll_wait(epfd, events, maxevents, timeout);
- 
--	restore_user_sigmask(sigmask, &sigsaved);
-+	restore_user_sigmask(sigmask, &sigsaved, err == -EINTR);
- 
- 	return err;
- }
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 0fbb486..1147c5d 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2201,11 +2201,12 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
- 	}
- 
- 	ret = wait_event_interruptible(ctx->wait, io_cqring_events(ring) >= min_events);
--	if (ret == -ERESTARTSYS)
--		ret = -EINTR;
- 
- 	if (sig)
--		restore_user_sigmask(sig, &sigsaved);
-+		restore_user_sigmask(sig, &sigsaved, ret == -ERESTARTSYS);
-+
-+	if (ret == -ERESTARTSYS)
-+		ret = -EINTR;
- 
- 	return READ_ONCE(ring->r.head) == READ_ONCE(ring->r.tail) ? ret : 0;
- }
-diff --git a/fs/select.c b/fs/select.c
-index 6cbc9ff..a4d8f6e 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -758,10 +758,9 @@ static long do_pselect(int n, fd_set __user *inp, fd_set __user *outp,
- 		return ret;
- 
- 	ret = core_sys_select(n, inp, outp, exp, to);
-+	restore_user_sigmask(sigmask, &sigsaved, ret == -ERESTARTNOHAND);
- 	ret = poll_select_copy_remaining(&end_time, tsp, type, ret);
- 
--	restore_user_sigmask(sigmask, &sigsaved);
--
- 	return ret;
- }
- 
-@@ -1106,8 +1105,7 @@ SYSCALL_DEFINE5(ppoll, struct pollfd __user *, ufds, unsigned int, nfds,
- 
- 	ret = do_sys_poll(ufds, nfds, to);
- 
--	restore_user_sigmask(sigmask, &sigsaved);
--
-+	restore_user_sigmask(sigmask, &sigsaved, ret == -EINTR);
- 	/* We can restart this syscall, usually */
- 	if (ret == -EINTR)
- 		ret = -ERESTARTNOHAND;
-@@ -1142,8 +1140,7 @@ SYSCALL_DEFINE5(ppoll_time32, struct pollfd __user *, ufds, unsigned int, nfds,
- 
- 	ret = do_sys_poll(ufds, nfds, to);
- 
--	restore_user_sigmask(sigmask, &sigsaved);
--
-+	restore_user_sigmask(sigmask, &sigsaved, ret == -EINTR);
- 	/* We can restart this syscall, usually */
- 	if (ret == -EINTR)
- 		ret = -ERESTARTNOHAND;
-@@ -1350,10 +1347,9 @@ static long do_compat_pselect(int n, compat_ulong_t __user *inp,
- 		return ret;
- 
- 	ret = compat_core_sys_select(n, inp, outp, exp, to);
-+	restore_user_sigmask(sigmask, &sigsaved, ret == -ERESTARTNOHAND);
- 	ret = poll_select_copy_remaining(&end_time, tsp, type, ret);
- 
--	restore_user_sigmask(sigmask, &sigsaved);
--
- 	return ret;
- }
- 
-@@ -1425,8 +1421,7 @@ COMPAT_SYSCALL_DEFINE5(ppoll_time32, struct pollfd __user *, ufds,
- 
- 	ret = do_sys_poll(ufds, nfds, to);
- 
--	restore_user_sigmask(sigmask, &sigsaved);
--
-+	restore_user_sigmask(sigmask, &sigsaved, ret == -EINTR);
- 	/* We can restart this syscall, usually */
- 	if (ret == -EINTR)
- 		ret = -ERESTARTNOHAND;
-@@ -1461,8 +1456,7 @@ COMPAT_SYSCALL_DEFINE5(ppoll_time64, struct pollfd __user *, ufds,
- 
- 	ret = do_sys_poll(ufds, nfds, to);
- 
--	restore_user_sigmask(sigmask, &sigsaved);
--
-+	restore_user_sigmask(sigmask, &sigsaved, ret == -EINTR);
- 	/* We can restart this syscall, usually */
- 	if (ret == -EINTR)
- 		ret = -ERESTARTNOHAND;
-diff --git a/include/linux/signal.h b/include/linux/signal.h
-index 9702016..78c2bb3 100644
---- a/include/linux/signal.h
-+++ b/include/linux/signal.h
-@@ -276,7 +276,7 @@ extern int sigprocmask(int, sigset_t *, sigset_t *);
- extern int set_user_sigmask(const sigset_t __user *usigmask, sigset_t *set,
- 	sigset_t *oldset, size_t sigsetsize);
- extern void restore_user_sigmask(const void __user *usigmask,
--				 sigset_t *sigsaved);
-+				 sigset_t *sigsaved, bool interrupted);
- extern void set_current_blocked(sigset_t *);
- extern void __set_current_blocked(const sigset_t *);
- extern int show_unhandled_signals;
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 328a01e..aa6a6f1 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2912,7 +2912,8 @@ EXPORT_SYMBOL(set_compat_user_sigmask);
-  * This is useful for syscalls such as ppoll, pselect, io_pgetevents and
-  * epoll_pwait where a new sigmask is passed in from userland for the syscalls.
-  */
--void restore_user_sigmask(const void __user *usigmask, sigset_t *sigsaved)
-+void restore_user_sigmask(const void __user *usigmask, sigset_t *sigsaved,
-+				bool interrupted)
- {
- 
- 	if (!usigmask)
-@@ -2922,7 +2923,7 @@ void restore_user_sigmask(const void __user *usigmask, sigset_t *sigsaved)
- 	 * Restoring sigmask here can lead to delivering signals that the above
- 	 * syscalls are intended to block because of the sigmask passed in.
- 	 */
--	if (signal_pending(current)) {
-+	if (interrupted) {
- 		current->saved_sigmask = *sigsaved;
- 		set_restore_sigmask();
- 		return;
--- 
-2.5.0
+Erwan.
 
 
+Subject: [PATCH] serial: stm32: fix a recursive locking in
+> stm32_config_rs485
+> Date: Tue,  4 Jun 2019 11:54:51 +0200
+> From: Borut Seljak <borut.seljak@t-2.net>
+> CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+> <alexandre.torgue@st.com>, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
+> borut.seljak@t-2.net, linux-serial@vger.kernel.org, Jiri Slaby
+> <jslaby@suse.com>, linux-stm32@st-md-mailman.stormreply.com,
+> linux-arm-kernel@lists.infradead.org
+>
+> Remove spin_lock_irqsave in stm32_config_rs485, it cause recursive lockin=
+g.
+> Already locked in uart_set_rs485_config.
+>
+> Signed-off-by: Borut Seljak <borut.seljak@t-2.net>
+> ---
+>   drivers/tty/serial/stm32-usart.c | 2 --
+>   1 file changed, 2 deletions(-)
+>
+> diff --git a/drivers/tty/serial/stm32-usart.c
+> b/drivers/tty/serial/stm32-usart.c
+> index e8d7a7bb4339..da373a465f51 100644
+> --- a/drivers/tty/serial/stm32-usart.c
+> +++ b/drivers/tty/serial/stm32-usart.c
+> @@ -107,7 +107,6 @@ static int stm32_config_rs485(struct uart_port *port,
+>   	bool over8;
+>   	unsigned long flags;
+>   -	spin_lock_irqsave(&port->lock, flags);
+>   	stm32_clr_bits(port, ofs->cr1, BIT(cfg->uart_enable_bit));
+>    	port->rs485 =3D *rs485conf;
+> @@ -147,7 +146,6 @@ static int stm32_config_rs485(struct uart_port *port,
+>   	}
+>    	stm32_set_bits(port, ofs->cr1, BIT(cfg->uart_enable_bit));
+> -	spin_unlock_irqrestore(&port->lock, flags);
+>    	return 0;
+>   }=
