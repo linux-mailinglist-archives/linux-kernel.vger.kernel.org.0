@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 801DF34A91
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:39:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 241F134A97
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:41:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727626AbfFDOi4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 10:38:56 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37850 "EHLO
+        id S1727574AbfFDOlV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 10:41:21 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53799 "EHLO
         mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727182AbfFDOi4 (ORCPT
+        with ESMTP id S1727318AbfFDOlU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 10:38:56 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 22so334646wmg.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 07:38:54 -0700 (PDT)
+        Tue, 4 Jun 2019 10:41:20 -0400
+Received: by mail-wm1-f67.google.com with SMTP id d17so329042wmb.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 07:41:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:in-reply-to:references:date:message-id
          :mime-version;
-        bh=8yVp8LW/5tvDYIdw2ZjGi4ruSvPsT4gaU3KQr2PELI4=;
-        b=A7Kqt8FA/PZlIOCWpIHikU1GTW15SgXKBI4w+GU2YVXQrsV5zxKoLF/CNIHmi/wveq
-         JjUw4ZVMXLxXu0efAKQUqxDpWj6q6qWrZx3Ti20klLgsB/Rv8hNLgRL1R23KwIhPM0Vz
-         hQvfg8kFzMZ2Gm6kl74A7T/JIsM55Jy6eBAGX3dVxxuv3o7b4fvenKXHlAzfic5292ip
-         LSSA9xjv4P2N+g4wXhCwkoP1NYwvmzrsuKWHDOf3UGYqFuBqHc2pKg787buWRZi+hXsO
-         HNkPeJ/Q41f4bF4uDFj4XYlrQuEuuvtI7SePznEdEu5Mnx/cFCyyBa8GskLwLc/FFQtr
-         zgIA==
+        bh=JYu/Sf6DYA1LvVsAE9hAP2/zUxBfGo6g6Cc3589jfpA=;
+        b=QFezxepBvrgiXhmKm1McpNMYyYT4mjgtLdF0nIx340LiL8knK4tBoXTMiANhRLdvUz
+         WT1jjJjAx7LRstuYIGqb5S2luxmEgQuy8ZCzLwt4Nv5SPg9u09Z6R4GTFbIjngteY7DQ
+         bZfU38bR0MYhdpoYlf8QngSBFdr5U4n2PClMG0cNR/0FiS7WZNUKJBA6oobE2kj39HJ2
+         X+7KY+xPSi36O9Jc4LSb+sJGTx3q25GGVKVevxhS8ZanmDbnT5mPMWZMB7ood8v6nsGs
+         SQqWV22m1Y89u8IMFn4hhhBfibFC4h8/rZWieu1EHOO0eXT2T2GtD/blPXf2PYWYE4h9
+         mfKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
          :message-id:mime-version;
-        bh=8yVp8LW/5tvDYIdw2ZjGi4ruSvPsT4gaU3KQr2PELI4=;
-        b=I8r5XPcE106G7kktZ96QEqAKfwL5Ome4E9oDFMgumY/kWTSTYDDqcUqX8uvnyWoElq
-         wBPhNICt3ozz9Iq3F5HzprNBelKKf1ajYcsgOFCEt8pu6KIjiMhX9G9CqAkZTjW2Y1hv
-         KiQexDPiEXml7RcF0k2N4mOPPEL4pZtMa2P5dc92hMEm/0WkzGPMr2o9OcYRNxwAigHl
-         rnDBq78w0zM2nVY8FaXFSMtFd5+JTOrKBuxErVhcureEodpir883sGERW+M2uncFnAn4
-         d3R4JJF0vbQTLzpP0GgQzaJnovka65Wsl1KMEBkfR8k0q43gkkFeGwILQSrdSVZet2tv
-         byqA==
-X-Gm-Message-State: APjAAAXDtrQ7v5riWvWxaEydNXuohHqcT+2d/wstXZg/mezgqf9Z6krR
-        uy6gX8u7WxEEbMEMBksFplZRDQ==
-X-Google-Smtp-Source: APXvYqxRW4nwf4GpDLyd87BakAfZ89olYzNbTVRR1tlK/pY6mlbd9mILPL7WAvRnQL8m2ze14qkPFg==
-X-Received: by 2002:a7b:ce01:: with SMTP id m1mr8827610wmc.1.1559659134003;
-        Tue, 04 Jun 2019 07:38:54 -0700 (PDT)
+        bh=JYu/Sf6DYA1LvVsAE9hAP2/zUxBfGo6g6Cc3589jfpA=;
+        b=KPfOi570pmF0PIR13ebP3KGYQA5mDASwUNCslz6Upur8z5p8pzQ7cZk4MbnEhss5t5
+         /icUIY4JRR6RikOk7O03B1dal4yXs3KhlOyYsmc/d//zZTjju4v/KobhLYRckLAje3vh
+         R908OFHAUcE/szSE4kUsg3fSusTNnyDDb+4oPyiA7kXvOtsxWefiq8gh+RZWO56qhSHI
+         GwZmyhgKrIKv5hUGTxHGbUyH4uiO0g55le/5Ea7Ww1sLit2nHN4FjSnjc8VNSKsd3j4k
+         +Qv2d4oKGTgRTV2tQH4ldjfOj8y2apaM3YqFtsvFYJ1XW2YsXUWH6jDzgKI7zzos37ir
+         j2aQ==
+X-Gm-Message-State: APjAAAUtNz4jM27lFI8TAh6j9pFOh8LwsK2VxmVNYNUuuQutWTVuhLJT
+        iExPZBu2Uuuvkhpexq9O7Bt44Q==
+X-Google-Smtp-Source: APXvYqyc1QeM0/4vvWBgZDrhojj2xAQnDeiCexy1d/QXuq48dTOxl1LvD7DQ5J2L9IH0Govxwc79Lw==
+X-Received: by 2002:a1c:188:: with SMTP id 130mr18108451wmb.18.1559659279143;
+        Tue, 04 Jun 2019 07:41:19 -0700 (PDT)
 Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id s14sm15595662wrw.10.2019.06.04.07.38.53
+        by smtp.gmail.com with ESMTPSA id q14sm15217623wrw.60.2019.06.04.07.41.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Jun 2019 07:38:53 -0700 (PDT)
+        Tue, 04 Jun 2019 07:41:18 -0700 (PDT)
 From:   Loys Ollivier <lollivier@baylibre.com>
 To:     Paul Walmsley <paul.walmsley@sifive.com>,
         linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
@@ -52,13 +52,12 @@ Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
         Paul Walmsley <paul@pwsan.com>,
         Albert Ou <aou@eecs.berkeley.edu>,
         Palmer Dabbelt <palmer@sifive.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        ShihPo Hung <shihpo.hung@sifive.com>
-Subject: Re: [PATCH v3 4/5] riscv: dts: add initial support for the SiFive FU540-C000 SoC
-In-Reply-To: <20190602080500.31700-5-paul.walmsley@sifive.com>
-References: <20190602080500.31700-1-paul.walmsley@sifive.com> <20190602080500.31700-5-paul.walmsley@sifive.com>
-Date:   Tue, 04 Jun 2019 16:38:51 +0200
-Message-ID: <86sgsph0uc.fsf@baylibre.com>
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v3 5/5] riscv: dts: add initial board data for the SiFive HiFive Unleashed
+In-Reply-To: <20190602080500.31700-6-paul.walmsley@sifive.com>
+References: <20190602080500.31700-1-paul.walmsley@sifive.com> <20190602080500.31700-6-paul.walmsley@sifive.com>
+Date:   Tue, 04 Jun 2019 16:41:17 +0200
+Message-ID: <86pnnth0qa.fsf@baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -66,19 +65,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 02 Jun 2019 at 01:04, Paul Walmsley <paul.walmsley@sifive.com> wrote:
+On Sun 02 Jun 2019 at 01:05, Paul Walmsley <paul.walmsley@sifive.com> wrote:
 
-> Add initial support for the SiFive FU540-C000 SoC.  This is a 28nm SoC
-> based around the SiFive U54-MC core complex and a TileLink
-> interconnect.
+> Add initial board data for the SiFive HiFive Unleashed A00.
 >
-> This file is expected to grow as more device drivers are added to the
-> kernel.
+> Currently the data populated in this DT file describes the board
+> DRAM configuration and the external clock sources that supply the
+> PRCI.
 >
-> This patch includes a fix to the QSPI memory map due to a
-> documentation bug, found by ShihPo Hung <shihpo.hung@sifive.com>, adds
-> entries for the I2C controller, and merges all DT changes that
-> formerly were made dynamically by the riscv-pk BBL proxy kernel.
+> This third version incorporates changes based on more comments from
+> Rob Herring <robh+dt@kernel.org>.
 >
 > Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
 > Signed-off-by: Paul Walmsley <paul@pwsan.com>
@@ -87,7 +83,6 @@ Tested-by: Loys Ollivier <lollivier@baylibre.com>
 > Cc: Mark Rutland <mark.rutland@arm.com>
 > Cc: Palmer Dabbelt <palmer@sifive.com>
 > Cc: Albert Ou <aou@eecs.berkeley.edu>
-> Cc: ShihPo Hung <shihpo.hung@sifive.com>
 > Cc: devicetree@vger.kernel.org
 > Cc: linux-riscv@lists.infradead.org
 > Cc: linux-kernel@vger.kernel.org
