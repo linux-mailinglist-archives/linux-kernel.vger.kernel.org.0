@@ -2,110 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28C9333D58
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 04:59:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8957833D5F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 05:04:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726354AbfFDC6H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 22:58:07 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:41156 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726136AbfFDC6H (ORCPT
+        id S1726536AbfFDDEN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 23:04:13 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:42206 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726076AbfFDDEL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 22:58:07 -0400
-Received: by mail-pl1-f193.google.com with SMTP id s24so7590571plr.8
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 19:58:07 -0700 (PDT)
+        Mon, 3 Jun 2019 23:04:11 -0400
+Received: by mail-qt1-f194.google.com with SMTP id s15so12059104qtk.9
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 20:04:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=VLAZA3mAxtAxc7sjq/ycXQ3CaKlvlwmmoeCBvwMr7B8=;
-        b=ITvr9KhpT8ky5VlbXAeC73PK4m3joLBkof6irFxZHpCnty3heHbDfVg5eAlO9lQ2x+
-         J+7n/Qj4eJ8Yh2KAUsxBOOlUYbwGGHJyC82zqtWnNXW0fOs4kqnoFR//ffUXD4Gk3Uo6
-         uQLb0ZqLfp7m5cEepRI9bj0MqNBWv+ZlPJa/syTu7P1kLO3BmsrSJRQasidhQisjy2IW
-         hzAznOo29tsvjDD7lEV1b98m0IuSZJ6OKgo6Q23meb/wLu6oaWDXVI3i2QB/J3EpDjf3
-         jcH2+l3ROuv6fySejyOu5rbAlIY4S7r1G2vd2yglkG4NEDvYAN2H8bS9RggTOP4YX59/
-         hkaA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lWwUvsAr9T4nSJk+dRlogEWMDvacYZxKYcOW5ekFU4A=;
+        b=dURqAY7tExeylq0yOsamuJ16N5lt4vhiOzYwKYELEUMMaVnCFIpPhEA0W9axjo4uUj
+         5Y8q3vrtpDRyYpEUFwyB4d48Zm5uYG+copb1ZzIlWmgoFDCPV25EBdvvuveF06NUIgQP
+         3yfPwvVki4eyiIJOyJaKQBOInGlrJQlwVoXU+ac9pKdGbWvNe+LVY5Bn24+sbowCcUhj
+         xKCAL4TFkGcR97fr+QgyAhWxCWQKWmmDmshQ1KV8uiP4tyun6N4U6qdsas92nd6IZo5J
+         zYlAShbbkNgtbd18I97LUnRR8K4muLv7KpCviTjw9R2W01LeDEY+4/esjmY+TrBjPhGP
+         gSpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VLAZA3mAxtAxc7sjq/ycXQ3CaKlvlwmmoeCBvwMr7B8=;
-        b=YRYzC23ocI5SF+aUuG6mvhm5AU2zQKZzxltfO4zCmcXWHayttxPe9h4kt7lgEB+eDD
-         VIR3ukflzEdSV7UYwnTLqHGn3S/y1eVwKUy3N9RYPOPnH2tH1J85S1UbShwJrn3IoFOA
-         KWQmNo0xN1vaC2jSi+O8EJ1SBWzjOl6JlD96C5dm4npEtT6lhWsaBbzm+oc271aSYGBQ
-         LdMxFqIcL66u29gCqUy6RdKx8kRHcMp6nPTiXH54PIyUa1+On9fKhxUg78DHqSSkFYwy
-         efGCxLLvLSwqnchurS46Horm8ViFQe6IUgrckShNCh0nLaCqI0kOYnb9Pu927O65AM8B
-         9xAQ==
-X-Gm-Message-State: APjAAAUefSoluGvTv9EDCU1R1jM40qbHg/9mUDqTEDhSl/0gwJjuhLYU
-        Pn+iV3MW3bmXLhTwEU3E4uc34ItsSt0=
-X-Google-Smtp-Source: APXvYqxf9PeMHR15w+6O7G1DNcjciSY+CmqIcYtt7DvFBckAVFIcpkK8zH1d/QFf2EJVxFmVjT7HaA==
-X-Received: by 2002:a17:902:2a69:: with SMTP id i96mr25404027plb.108.1559617086552;
-        Mon, 03 Jun 2019 19:58:06 -0700 (PDT)
-Received: from localhost ([122.172.66.84])
-        by smtp.gmail.com with ESMTPSA id b15sm15929188pfi.141.2019.06.03.19.58.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Jun 2019 19:58:04 -0700 (PDT)
-Date:   Tue, 4 Jun 2019 08:28:02 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Vincent Guittot <vincent.guittot@linaro.org>, tkjos@google.com,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        quentin.perret@linaro.org, chris.redpath@arm.com,
-        Dietmar.Eggemann@arm.com, linux-kernel@vger.kernel.org
-Subject: Re: [RFC V2 2/2] sched/fair: Fallback to sched-idle CPU if idle CPU
- isn't found
-Message-ID: <20190604025802.p7k5l3jhqrwbxy6j@vireshk-i7>
-References: <cover.1556182964.git.viresh.kumar@linaro.org>
- <59b37c56b8fcb834f7d3234e776eaeff74ad117f.1556182965.git.viresh.kumar@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lWwUvsAr9T4nSJk+dRlogEWMDvacYZxKYcOW5ekFU4A=;
+        b=sdVzyDp/4XBsbq4AjNDc7AGeaPm3s8l2Npn9ERzdfWmVU4dFjzu3k5DYipsvQKydMi
+         eUp32YLWumzOWrXkUhYKBarPdZ3IkbSlbfCypHMZum5ZxwPdM/3++UFGrx6JAqzH8a4V
+         N3bMD6WVm8eCGyRLj/JXS+Rkmyqzma/ssSXFF2Pb9klEwEauyxqfqqYXh1eWxixHMHD1
+         eLFOQSLCFMsANpzsV7mKma2lL/68S+Wt6gfBuEZ+RTgc8TR7MvjxHB7yzvFR1rf5YXUG
+         L0wOWEzKTjLS/fAT/dZdy7LzSKfr7lYKrQDwbLRX+FTZaXjsnFfZKalzRtYv6oV8H1/a
+         oeCA==
+X-Gm-Message-State: APjAAAU8G/4a/HMzS2Ln4a+cb2I6X6jZqzWlkQkmgZhfsppn5Y04Fy1a
+        o0aQiVjfSh1jGKIAJADHHSjqvkZ36gwfzAqyvLE=
+X-Google-Smtp-Source: APXvYqwwbDl/SD0oSVeetHDAy1CgljBQzy5S02/5U+g17LzBEnxrQxr4rsnIHS9I5zbvbhHE9MrFaICnPq+qAmS11rY=
+X-Received: by 2002:ac8:359a:: with SMTP id k26mr26024661qtb.87.1559617449970;
+ Mon, 03 Jun 2019 20:04:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <59b37c56b8fcb834f7d3234e776eaeff74ad117f.1556182965.git.viresh.kumar@linaro.org>
-User-Agent: NeoMutt/20180716-391-311a52
+References: <20190520205918.22251-1-longman@redhat.com> <20190520205918.22251-8-longman@redhat.com>
+In-Reply-To: <20190520205918.22251-8-longman@redhat.com>
+From:   Yuyang Du <duyuyang@gmail.com>
+Date:   Tue, 4 Jun 2019 11:03:58 +0800
+Message-ID: <CAHttsrYx=pgen5yVpYfCKaymoCaA7iJ52B8t_ycD2UcDR2848Q@mail.gmail.com>
+Subject: Re: [PATCH v8 07/19] locking/rwsem: Implement lock handoff to prevent
+ lock starvation
+To:     Waiman Long <longman@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        huang ying <huang.ying.caritas@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25-04-19, 15:07, Viresh Kumar wrote:
-> We target for an idle CPU in select_idle_sibling() to run the next task,
-> but in case we don't find idle CPUs it is better to pick a CPU which
-> will run the task the soonest, for performance reason. A CPU which isn't
-> idle but has only SCHED_IDLE activity queued on it should be a good
-> target based on this criteria as any normal fair task will most likely
-> preempt the currently running SCHED_IDLE task immediately. In fact,
-> choosing a SCHED_IDLE CPU shall give better results as it should be able
-> to run the task sooner than an idle CPU (which requires to be woken up
-> from an idle state).
-> 
-> This patch updates the fast path to fallback to a sched-idle CPU if the
-> idle CPU isn't found, the slow path can be updated separately later.
-> 
-> Following is the order in which select_idle_sibling() picks up next CPU
-> to run the task now:
-> 
-> 1. idle_cpu(target) OR sched_idle_cpu(target)
-> 2. idle_cpu(prev) OR sched_idle_cpu(prev)
-> 3. idle_cpu(recent_used_cpu) OR sched_idle_cpu(recent_used_cpu)
-> 4. idle core(sd)
-> 5. idle_cpu(sd)
-> 6. sched_idle_cpu(sd)
-> 7. idle_cpu(p) - smt
-> 8. sched_idle_cpu(p)- smt
-> 
-> Though the policy can be tweaked a bit if we want to have different
-> priorities.
-> 
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  kernel/sched/fair.c | 28 +++++++++++++++++++++-------
->  1 file changed, 21 insertions(+), 7 deletions(-)
+Hi Waiman,
 
-Hi Peter,
+On Tue, 21 May 2019 at 05:01, Waiman Long <longman@redhat.com> wrote:
+>
+> Because of writer lock stealing, it is possible that a constant
+> stream of incoming writers will cause a waiting writer or reader to
+> wait indefinitely leading to lock starvation.
+>
+> This patch implements a lock handoff mechanism to disable lock stealing
+> and force lock handoff to the first waiter or waiters (for readers)
+> in the queue after at least a 4ms waiting period unless it is a RT
+> writer task which doesn't need to wait. The waiting period is used to
+> avoid discouraging lock stealing too much to affect performance.
 
-I was looking to send V3 with the changes you suggested for the patch 1/2, are
-there any changes that I should be doing in this patch along with it ?
+I was working on a patchset to solve read-write lock deadlock
+detection problem (https://lkml.org/lkml/2019/5/16/93).
 
--- 
-viresh
+One of the mistakes in that work is that I considered the following
+case as deadlock:
+
+  T1            T2
+  --            --
+
+  down_read1    down_write2
+
+  down_write2   down_read1
+
+So I was trying to understand what really went wrong and find the
+problem is that if I understand correctly the current rwsem design
+isn't showing real fairness but priority in favor of write locks, and
+thus one of the bad effects is that read locks can be starved if write
+locks keep coming.
+
+Luckily, I noticed you are revamping rwsem and seem to have thought
+about it already. I am not crystal sure what is your work's
+ramification on the above case, so hope that you can shed some light
+and perhaps share your thoughts on this.
+
+Thanks,
+Yuyang
