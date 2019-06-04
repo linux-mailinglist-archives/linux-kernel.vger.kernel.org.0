@@ -2,203 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F80F34CE9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 18:10:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C25234CF1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 18:11:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728341AbfFDQKB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 12:10:01 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34798 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728330AbfFDQKA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 12:10:00 -0400
-Received: by mail-wr1-f67.google.com with SMTP id e16so8199538wrn.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 09:09:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ygMGl15yL8Dl/CKxDv58CFgXErk1JZawsiPT7PZu59c=;
-        b=Ugq8j9ea6T6m2QJYNrHxhrwF0Gfbdtq8EVLSsuEpeXNBxuPCF1eyBO0rdgcAhxHjlU
-         a4SO8JY6dra7YmOYqhoAsKfOR7vbCsFCacO5FpAsmS0jFl4+Zhvlb4Dh4S0hdP7ZRL6S
-         Pp5sDM0b/05jQIonO7S6jG2u200oGGYlwVHW5JFYRj9S4y/UhHJBfoynyuzBCeKzEAqo
-         5MtXRUUfco1DLg/7OIsMowDvKTd8Xt548bUkDZthXP38d/cbyEKRls+Nx6TpBtsYjyPa
-         v+Z41qiuP582owphpatCNRAmB7NK7TzOht+2VeefvCYV9aX54HC/QTdjVr6DTTDHWkhZ
-         dHYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ygMGl15yL8Dl/CKxDv58CFgXErk1JZawsiPT7PZu59c=;
-        b=XmX55KimTe8QBLMxTfbs+gGKC/x8ByWDKQ/koa+0CJJah4eT8JzUhSBsa6yA+UQ9jN
-         agBc6JgqHiNVeQTsdWVAlECNdEVnQxjEzwcM+NBgoc4X1SPrVd14eR/B5q18g9rN1SFW
-         hs8yqaujE22JkoPfCPRcv4f6NEjnin9/6mUeXyUY482zcCtRpygs2E6w/E2IlWt5Czvs
-         l+a24fU/TVuy1CIsg9YczPXKBNnyoJqNdjtPW1mxj6l0TgA41KsHhICTDaHLaEFgxwxZ
-         4MegiiAziSo39Ks/N8TzxKuAouyWuOV9RHwO07CsEE9dzAdl0+TAdZmAoqWM9yZGHpiS
-         2Mdw==
-X-Gm-Message-State: APjAAAV8oEElR/+NcYjgKywIKW8mlnoGgROPcikQKi2ZKly0K3wLM/JT
-        PixsK1TcZXf9TJB23IsI2hffKg==
-X-Google-Smtp-Source: APXvYqx9i1pt2SCjFhQVYdpuY6VDAIjUCZcF1txJy0/ITOaZoGzSMolb0o0Ld1KzyHQYmwpTjyKRAw==
-X-Received: by 2002:a5d:4b49:: with SMTP id w9mr7207099wrs.113.1559664598427;
-        Tue, 04 Jun 2019 09:09:58 -0700 (PDT)
-Received: from localhost.localdomain (p548C9938.dip0.t-ipconnect.de. [84.140.153.56])
-        by smtp.gmail.com with ESMTPSA id e6sm10578055wrw.83.2019.06.04.09.09.57
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 04 Jun 2019 09:09:57 -0700 (PDT)
-From:   Christian Brauner <christian@brauner.io>
-To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, jannh@google.com
-Cc:     keescook@chromium.org, fweimer@redhat.com, oleg@redhat.com,
-        arnd@arndb.de, dhowells@redhat.com,
-        Christian Brauner <christian@brauner.io>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Adrian Reber <adrian@lisas.de>, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v3 2/2] arch: wire-up clone3() syscall
-Date:   Tue,  4 Jun 2019 18:09:44 +0200
-Message-Id: <20190604160944.4058-2-christian@brauner.io>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190604160944.4058-1-christian@brauner.io>
-References: <20190604160944.4058-1-christian@brauner.io>
+        id S1728288AbfFDQLr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 12:11:47 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:32772 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728178AbfFDQLp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 12:11:45 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E301D2F8BDD;
+        Tue,  4 Jun 2019 16:11:21 +0000 (UTC)
+Received: from [10.36.116.67] (ovpn-116-67.ams2.redhat.com [10.36.116.67])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C5C836064C;
+        Tue,  4 Jun 2019 16:11:09 +0000 (UTC)
+Subject: Re: [PATCH v8 26/29] vfio-pci: Register an iommu fault handler
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     eric.auger.pro@gmail.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        jacob.jun.pan@linux.intel.com, yi.l.liu@intel.com,
+        jean-philippe.brucker@arm.com, will.deacon@arm.com,
+        robin.murphy@arm.com, kevin.tian@intel.com, ashok.raj@intel.com,
+        marc.zyngier@arm.com, peter.maydell@linaro.org,
+        vincent.stehle@arm.com
+References: <20190526161004.25232-1-eric.auger@redhat.com>
+ <20190526161004.25232-27-eric.auger@redhat.com>
+ <20190603163139.70fe8839@x1.home>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <10dd60d9-4af0-c0eb-08c9-a0db7ee1925e@redhat.com>
+Date:   Tue, 4 Jun 2019 18:11:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190603163139.70fe8839@x1.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 04 Jun 2019 16:11:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wire up the clone3() call on all arches that don't require hand-rolled
-assembly.
+Hi Alex,
 
-Some of the arches look like they need special assembly massaging and it is
-probably smarter if the appropriate arch maintainers would do the actual
-wiring. Arches that are wired-up are:
-- x86{_32,64}
-- arm{64}
-- xtensa
+On 6/4/19 12:31 AM, Alex Williamson wrote:
+> On Sun, 26 May 2019 18:10:01 +0200
+> Eric Auger <eric.auger@redhat.com> wrote:
+> 
+>> This patch registers a fault handler which records faults in
+>> a circular buffer and then signals an eventfd. This buffer is
+>> exposed within the fault region.
+>>
+>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>>
+>> ---
+>>
+>> v3 -> v4:
+>> - move iommu_unregister_device_fault_handler to vfio_pci_release
+>> ---
+>>  drivers/vfio/pci/vfio_pci.c         | 49 +++++++++++++++++++++++++++++
+>>  drivers/vfio/pci/vfio_pci_private.h |  1 +
+>>  2 files changed, 50 insertions(+)
+>>
+>> diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+>> index f75f61127277..520999994ba8 100644
+>> --- a/drivers/vfio/pci/vfio_pci.c
+>> +++ b/drivers/vfio/pci/vfio_pci.c
+>> @@ -30,6 +30,7 @@
+>>  #include <linux/vfio.h>
+>>  #include <linux/vgaarb.h>
+>>  #include <linux/nospec.h>
+>> +#include <linux/circ_buf.h>
+>>  
+>>  #include "vfio_pci_private.h"
+>>  
+>> @@ -296,6 +297,46 @@ static const struct vfio_pci_regops vfio_pci_fault_prod_regops = {
+>>  	.add_capability = vfio_pci_fault_prod_add_capability,
+>>  };
+>>  
+>> +int vfio_pci_iommu_dev_fault_handler(struct iommu_fault_event *evt, void *data)
+>> +{
+>> +	struct vfio_pci_device *vdev = (struct vfio_pci_device *) data;
+>> +	struct vfio_region_fault_prod *prod_region =
+>> +		(struct vfio_region_fault_prod *)vdev->fault_pages;
+>> +	struct vfio_region_fault_cons *cons_region =
+>> +		(struct vfio_region_fault_cons *)(vdev->fault_pages + 2 * PAGE_SIZE);
+>> +	struct iommu_fault *new =
+>> +		(struct iommu_fault *)(vdev->fault_pages + prod_region->offset +
+>> +			prod_region->prod * prod_region->entry_size);
+>> +	int prod, cons, size;
+>> +
+>> +	mutex_lock(&vdev->fault_queue_lock);
+>> +
+>> +	if (!vdev->fault_abi)
+>> +		goto unlock;
+>> +
+>> +	prod = prod_region->prod;
+>> +	cons = cons_region->cons;
+>> +	size = prod_region->nb_entries;
+>> +
+>> +	if (CIRC_SPACE(prod, cons, size) < 1)
+>> +		goto unlock;
+>> +
+>> +	*new = evt->fault;
+>> +	prod = (prod + 1) % size;
+>> +	prod_region->prod = prod;
+>> +	mutex_unlock(&vdev->fault_queue_lock);
+>> +
+>> +	mutex_lock(&vdev->igate);
+>> +	if (vdev->dma_fault_trigger)
+>> +		eventfd_signal(vdev->dma_fault_trigger, 1);
+>> +	mutex_unlock(&vdev->igate);
+>> +	return 0;
+>> +
+>> +unlock:
+>> +	mutex_unlock(&vdev->fault_queue_lock);
+>> +	return -EINVAL;
+>> +}
+>> +
+>>  static int vfio_pci_init_fault_region(struct vfio_pci_device *vdev)
+>>  {
+>>  	struct vfio_region_fault_prod *header;
+>> @@ -328,6 +369,13 @@ static int vfio_pci_init_fault_region(struct vfio_pci_device *vdev)
+>>  	header = (struct vfio_region_fault_prod *)vdev->fault_pages;
+>>  	header->version = -1;
+>>  	header->offset = PAGE_SIZE;
+>> +
+>> +	ret = iommu_register_device_fault_handler(&vdev->pdev->dev,
+>> +					vfio_pci_iommu_dev_fault_handler,
+>> +					vdev);
+>> +	if (ret)
+>> +		goto out;
+>> +
+>>  	return 0;
+>>  out:
+>>  	kfree(vdev->fault_pages);
+>> @@ -570,6 +618,7 @@ static void vfio_pci_release(void *device_data)
+>>  	if (!(--vdev->refcnt)) {
+>>  		vfio_spapr_pci_eeh_release(vdev->pdev);
+>>  		vfio_pci_disable(vdev);
+>> +		iommu_unregister_device_fault_handler(&vdev->pdev->dev);
+> 
+> 
+> But this can fail if there are pending faults which leaves a device
+> reference and then the system is broken :(
+This series only features unrecoverable errors and for those the
+unregistration cannot fail. Now unrecoverable errors were added I admit
+this is confusing. We need to sort this out or clean the dependencies.
 
-Signed-off-by: Christian Brauner <christian@brauner.io>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Adrian Reber <adrian@lisas.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Florian Weimer <fweimer@redhat.com>
-Cc: linux-api@vger.kernel.org
-Cc: linux-arch@vger.kernel.org
-Cc: x86@kernel.org
----
-v1: unchanged
-v2: unchanged
-v3:
-- Christian Brauner <christian@brauner.io>:
-  - wire up clone3 on all arches that don't have hand-rolled entry points
-    for clone
----
- arch/arm/tools/syscall.tbl                  | 1 +
- arch/arm64/include/asm/unistd.h             | 2 +-
- arch/arm64/include/asm/unistd32.h           | 2 ++
- arch/microblaze/kernel/syscalls/syscall.tbl | 1 +
- arch/x86/entry/syscalls/syscall_32.tbl      | 1 +
- arch/x86/entry/syscalls/syscall_64.tbl      | 1 +
- arch/xtensa/kernel/syscalls/syscall.tbl     | 1 +
- include/uapi/asm-generic/unistd.h           | 4 +++-
- 8 files changed, 11 insertions(+), 2 deletions(-)
+Thanks
 
-diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-index aaf479a9e92d..e99a82bdb93a 100644
---- a/arch/arm/tools/syscall.tbl
-+++ b/arch/arm/tools/syscall.tbl
-@@ -447,3 +447,4 @@
- 431	common	fsconfig			sys_fsconfig
- 432	common	fsmount				sys_fsmount
- 433	common	fspick				sys_fspick
-+436	common	clone3				sys_clone3
-diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
-index 70e6882853c0..24480c2d95da 100644
---- a/arch/arm64/include/asm/unistd.h
-+++ b/arch/arm64/include/asm/unistd.h
-@@ -44,7 +44,7 @@
- #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
- #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
- 
--#define __NR_compat_syscalls		434
-+#define __NR_compat_syscalls		437
- #endif
- 
- #define __ARCH_WANT_SYS_CLONE
-diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-index c39e90600bb3..b144ea675d70 100644
---- a/arch/arm64/include/asm/unistd32.h
-+++ b/arch/arm64/include/asm/unistd32.h
-@@ -886,6 +886,8 @@ __SYSCALL(__NR_fsconfig, sys_fsconfig)
- __SYSCALL(__NR_fsmount, sys_fsmount)
- #define __NR_fspick 433
- __SYSCALL(__NR_fspick, sys_fspick)
-+#define __NR_clone3 436
-+__SYSCALL(__NR_clone3, sys_clone3)
- 
- /*
-  * Please add new compat syscalls above this comment and update
-diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
-index 26339e417695..3110440bcc31 100644
---- a/arch/microblaze/kernel/syscalls/syscall.tbl
-+++ b/arch/microblaze/kernel/syscalls/syscall.tbl
-@@ -439,3 +439,4 @@
- 431	common	fsconfig			sys_fsconfig
- 432	common	fsmount				sys_fsmount
- 433	common	fspick				sys_fspick
-+436	common	clone3				sys_clone3
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index ad968b7bac72..80e26211feff 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -438,3 +438,4 @@
- 431	i386	fsconfig		sys_fsconfig			__ia32_sys_fsconfig
- 432	i386	fsmount			sys_fsmount			__ia32_sys_fsmount
- 433	i386	fspick			sys_fspick			__ia32_sys_fspick
-+436	i386	clone3			sys_clone3			__ia32_sys_clone3
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index b4e6f9e6204a..7968f0b5b5e8 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -355,6 +355,7 @@
- 431	common	fsconfig		__x64_sys_fsconfig
- 432	common	fsmount			__x64_sys_fsmount
- 433	common	fspick			__x64_sys_fspick
-+436	common	clone3			__x64_sys_clone3/ptregs
- 
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
-diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
-index 5fa0ee1c8e00..b2767c8c2b4e 100644
---- a/arch/xtensa/kernel/syscalls/syscall.tbl
-+++ b/arch/xtensa/kernel/syscalls/syscall.tbl
-@@ -404,3 +404,4 @@
- 431	common	fsconfig			sys_fsconfig
- 432	common	fsmount				sys_fsmount
- 433	common	fspick				sys_fspick
-+436	common	clone3				sys_clone3
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index a87904daf103..45bc87687c47 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -844,9 +844,11 @@ __SYSCALL(__NR_fsconfig, sys_fsconfig)
- __SYSCALL(__NR_fsmount, sys_fsmount)
- #define __NR_fspick 433
- __SYSCALL(__NR_fspick, sys_fspick)
-+#define __NR_clone3 436
-+__SYSCALL(__NR_clone3, sys_clone3)
- 
- #undef __NR_syscalls
--#define __NR_syscalls 434
-+#define __NR_syscalls 437
- 
- /*
-  * 32 bit systems traditionally used different
--- 
-2.21.0
-
+Eric
+> 
+>>  	}
+>>  
+>>  	mutex_unlock(&vdev->reflck->lock);
+>> diff --git a/drivers/vfio/pci/vfio_pci_private.h b/drivers/vfio/pci/vfio_pci_private.h
+>> index 8e0a55682d3f..a9276926f008 100644
+>> --- a/drivers/vfio/pci/vfio_pci_private.h
+>> +++ b/drivers/vfio/pci/vfio_pci_private.h
+>> @@ -122,6 +122,7 @@ struct vfio_pci_device {
+>>  	int			ioeventfds_nr;
+>>  	struct eventfd_ctx	*err_trigger;
+>>  	struct eventfd_ctx	*req_trigger;
+>> +	struct eventfd_ctx	*dma_fault_trigger;
+>>  	struct mutex		fault_queue_lock;
+>>  	int			fault_abi;
+>>  	struct list_head	dummy_resources_list;
+> 
