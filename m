@@ -2,177 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5C6E349AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:01:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22489349BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:03:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727653AbfFDOBH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 10:01:07 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:40975 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727443AbfFDOBH (ORCPT
+        id S1727482AbfFDODt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 10:03:49 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:35501 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727137AbfFDODt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 10:01:07 -0400
-Received: by mail-lj1-f194.google.com with SMTP id s21so9158141lji.8
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 07:01:05 -0700 (PDT)
+        Tue, 4 Jun 2019 10:03:49 -0400
+Received: by mail-ed1-f68.google.com with SMTP id p26so665109edr.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 07:03:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cCCcfuCqU/qdREtoEDzLnVLy4LPKMGX0jGv9c5Rh1B8=;
-        b=HJSNN4aGaVf75WsJzCiqd24YGmv+eZuyGZvznilJ1e+2a0cE9WH+E2w1582cVJHoki
-         7R15HFWDhBVWJe95YMNP8tx/FFttEqVFVHJwcCY7JKwNjDsvxC0GDd1Fsj1omDTbMOYV
-         9NMNrqjplqfUQr+pP71ijNH1O1RSDigcSsd0c=
+        d=essensium-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=C89Zm5tqX6wwdqdwxOr1J581zGxrK1/FIkPJm608gBw=;
+        b=ReKQN1Ltrc6A4Z2El8pR0PXGPrStXWhkcji/2N49UFsdqNCVNCvN0X51v/dE1/VPRd
+         HPhxKvSXknjmV5O5G37Zgr/+sD5IH9j3pfDGes/yd1qFzfjvkOeVJ9ueDFqRPogPOMFE
+         kJ0k087RquGzueGpV1rBYb6vJ2sXkSzbpZJEhwVmSl81s4UCQC0LKLN+Kql5RCnWBOsn
+         XRliNKxpM+wnPaNSqjD2PMGxo0FoKaNIJgMgeqzR0F/pRgTERUGzKSF7SKhZ08gis1dK
+         olAB2pwpRVOYAw2XSWckeGQzDeMlS+P1M1RAjn+UinMUCzpJFpsiHg6Plsn6gDvyRZ4t
+         dcFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=cCCcfuCqU/qdREtoEDzLnVLy4LPKMGX0jGv9c5Rh1B8=;
-        b=JQsvo/9SaTH+Mk/fIcwhGJW5+84g3J/Rb38mbLcq2YZodNNxyvmEK5qqOG6U+fH9AO
-         eP/EmN2l/GCu89HbnS2ElSszeQ2DUHXRTEsxypY1sU3GX94xS5ttD2suNcGJX2RDL3F9
-         c+pLdfbfJsSQLFbXR+/i1dabwavyyH5yrQNi9yTDyiG4hnsz0wHG9Qa5sDiRjkgfqDyC
-         MG3On0epOFs3yT8wu/aQwxPvOncTMOxyXUBiP3SMXK9vObxjVpLSvn552dtdyvSo4LEr
-         H9KCdr4HeMXayWFW8KKRFvMFniqV9vHfxUBwiqo/dLP2WzlBEDkkf4gXidpHKfEkWv/h
-         9Zfg==
-X-Gm-Message-State: APjAAAWcK19fO2HILmtLyKHA1EHNSBxhSD3DVGp0F+XyAq0jw7GlIV3t
-        2bpGUjiweMPtOICJ1v/pSfzWsw==
-X-Google-Smtp-Source: APXvYqwG4oEZZFnE0bcH3TRJ/Wba3p5uDNigTPmrPwm+Ag78TvQVmitBkN+Um1v3cCkDe6yNMmLSRw==
-X-Received: by 2002:a2e:834f:: with SMTP id l15mr13058888ljh.56.1559656863956;
-        Tue, 04 Jun 2019 07:01:03 -0700 (PDT)
-Received: from [172.16.11.26] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id x27sm3831041ljm.52.2019.06.04.07.01.01
+        bh=C89Zm5tqX6wwdqdwxOr1J581zGxrK1/FIkPJm608gBw=;
+        b=VNH4IhpmAm//hKI8r5RiHssb3OE+Wr4ahLbnBKWM7g7seV/PdlbQMW1O0fGyZSZbK4
+         qd14UtOVYqbKw8NM5bhxlCcODqWgduWr6Hejo8VRZzxunrJgBm6rVcjqVGfccmHX9bQ6
+         zgTaI7IsfLt0HEalLWkaG2qq13+BimxZjcb3hzEOuOYLcnNks9MQsi3ZEHascJj05dx4
+         6reMV6lBa2inzeip/SVTAI12w79P2BmYNkLvkxig6HHlZFE2vtO+um1bNn9Z7KqFWLFP
+         h3GIV7h/iNihkFDXIBXKDK3uxK8Uh4m1WZuU7rpz+219BCJP15PEQvqs2xQfaloIYfdS
+         1+CA==
+X-Gm-Message-State: APjAAAUO/R+UN/0SSf5sqC5DgCm96+h3W1n9Z2voj5GWzInDiAQAXLQq
+        c9832VWbVAQQ15YEydOxHJRYLg==
+X-Google-Smtp-Source: APXvYqzNo6pxIWtWg6c+hl2tqLBkAFuScB+C1FTzvmh8Szoa7TT0yDrjXkqI6mOBi2SBSea2psc1yg==
+X-Received: by 2002:a50:905a:: with SMTP id z26mr35907729edz.96.1559657027339;
+        Tue, 04 Jun 2019 07:03:47 -0700 (PDT)
+Received: from localhost.localdomain (ip-188-118-3-185.reverse.destiny.be. [188.118.3.185])
+        by smtp.gmail.com with ESMTPSA id j27sm3194485eja.91.2019.06.04.07.03.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Jun 2019 07:01:03 -0700 (PDT)
-Subject: Re: [RFC 1/6] rcu: Add support for consolidated-RCU reader checking
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "David S. Miller" <davem@davemloft.net>, edumazet@google.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>, keescook@chromium.org,
-        kernel-hardening@lists.openwall.com,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        neilb@suse.com, netdev@vger.kernel.org, oleg@redhat.com,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Pavel Machek <pavel@ucw.cz>, peterz@infradead.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, rcu@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Tejun Heo <tj@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>
-References: <20190601222738.6856-1-joel@joelfernandes.org>
- <20190601222738.6856-2-joel@joelfernandes.org>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <0ff9e0e3-b9fb-8953-1f76-807102f785ee@rasmusvillemoes.dk>
-Date:   Tue, 4 Jun 2019 16:01:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Tue, 04 Jun 2019 07:03:46 -0700 (PDT)
+From:   Patrick Havelange <patrick.havelange@essensium.com>
+To:     William Breathitt Gray <vilhelm.gray@gmail.com>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Patrick Havelange <patrick.havelange@essensium.com>
+Subject: [PATCH 1/1] counter/ftm-quaddec: Add missing dependencies in Kconfig
+Date:   Tue,  4 Jun 2019 16:03:26 +0200
+Message-Id: <20190604140326.12295-1-patrick.havelange@essensium.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <20190601222738.6856-2-joel@joelfernandes.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/06/2019 00.27, Joel Fernandes (Google) wrote:
-> This patch adds support for checking RCU reader sections in list
-> traversal macros. Optionally, if the list macro is called under SRCU or
-> other lock/mutex protection, then appropriate lockdep expressions can be
-> passed to make the checks pass.
-> 
-> Existing list_for_each_entry_rcu() invocations don't need to pass the
-> optional fourth argument (cond) unless they are under some non-RCU
-> protection and needs to make lockdep check pass.
-> 
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> ---
->  include/linux/rculist.h  | 40 ++++++++++++++++++++++++++++++++++++----
->  include/linux/rcupdate.h |  7 +++++++
->  kernel/rcu/update.c      | 26 ++++++++++++++++++++++++++
->  3 files changed, 69 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/linux/rculist.h b/include/linux/rculist.h
-> index e91ec9ddcd30..b641fdd9f1a2 100644
-> --- a/include/linux/rculist.h
-> +++ b/include/linux/rculist.h
-> @@ -40,6 +40,25 @@ static inline void INIT_LIST_HEAD_RCU(struct list_head *list)
->   */
->  #define list_next_rcu(list)	(*((struct list_head __rcu **)(&(list)->next)))
->  
-> +/*
-> + * Check during list traversal that we are within an RCU reader
-> + */
-> +#define __list_check_rcu()						\
-> +	RCU_LOCKDEP_WARN(!rcu_read_lock_any_held(),			\
-> +			 "RCU-list traversed in non-reader section!")
-> +
-> +static inline void __list_check_rcu_cond(int dummy, ...)
-> +{
-> +	va_list ap;
-> +	int cond;
-> +
-> +	va_start(ap, dummy);
-> +	cond = va_arg(ap, int);
-> +	va_end(ap);
-> +
-> +	RCU_LOCKDEP_WARN(!cond && !rcu_read_lock_any_held(),
-> +			 "RCU-list traversed in non-reader section!");
-> +}
->  /*
->   * Insert a new entry between two known consecutive entries.
->   *
-> @@ -338,6 +357,9 @@ static inline void list_splice_tail_init_rcu(struct list_head *list,
->  						  member) : NULL; \
->  })
->  
-> +#define SIXTH_ARG(a1, a2, a3, a4, a5, a6, ...) a6
-> +#define COUNT_VARGS(...) SIXTH_ARG(dummy, ## __VA_ARGS__, 4, 3, 2, 1, 0)
-> +>  /**
->   * list_for_each_entry_rcu	-	iterate over rcu list of given type
->   * @pos:	the type * to use as a loop cursor.
-> @@ -348,9 +370,14 @@ static inline void list_splice_tail_init_rcu(struct list_head *list,
->   * the _rcu list-mutation primitives such as list_add_rcu()
->   * as long as the traversal is guarded by rcu_read_lock().
->   */
-> -#define list_for_each_entry_rcu(pos, head, member) \
-> -	for (pos = list_entry_rcu((head)->next, typeof(*pos), member); \
-> -		&pos->member != (head); \
-> +#define list_for_each_entry_rcu(pos, head, member, cond...)		\
-> +	if (COUNT_VARGS(cond) != 0) {					\
-> +		__list_check_rcu_cond(0, ## cond);			\
-> +	} else {							\
-> +		__list_check_rcu();					\
-> +	}								\
-> +	for (pos = list_entry_rcu((head)->next, typeof(*pos), member);	\
-> +		&pos->member != (head);					\
->  		pos = list_entry_rcu(pos->member.next, typeof(*pos), member))
+This driver uses devm_ioremap and of* functions. This fixes a
+linking failure with e.g. ARCH=um.
 
-Wouldn't something as simple as
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Patrick Havelange <patrick.havelange@essensium.com>
+---
+ drivers/counter/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-#define __list_check_rcu(dummy, cond, ...) \
-       RCU_LOCKDEP_WARN(!cond && !rcu_read_lock_any_held(), \
-			 "RCU-list traversed in non-reader section!");
+diff --git a/drivers/counter/Kconfig b/drivers/counter/Kconfig
+index 233ac305d878..c9e3f5c98484 100644
+--- a/drivers/counter/Kconfig
++++ b/drivers/counter/Kconfig
+@@ -50,6 +50,7 @@ config STM32_LPTIMER_CNT
+ 
+ config FTM_QUADDEC
+ 	tristate "Flex Timer Module Quadrature decoder driver"
++	depends on HAS_IOMEM && OF
+ 	help
+ 	  Select this option to enable the Flex Timer Quadrature decoder
+ 	  driver.
+-- 
+2.19.1
 
-for ( ({ __list_check_rcu(junk, ##cond, 0); }), pos = ... )
-
-work just as well (i.e., no need for two list_check_rcu and
-list_check_rcu_cond variants)? If there's an optional cond, we use that,
-if not, we pick the trailing 0, so !cond disappears and it reduces to
-your __list_check_rcu(). Moreover, this ensures the RCU_LOCKDEP_WARN
-expansion actually picks up the __LINE__ and __FILE__ where the for loop
-is used, and not the __FILE__ and __LINE__ of the static inline function
-from the header file. It also makes it a bit more type safe/type generic
-(if the cond expression happened to have type long or u64 something
-rather odd could happen with the inline vararg function).
-
-Rasmus
