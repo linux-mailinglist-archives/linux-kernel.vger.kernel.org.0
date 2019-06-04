@@ -2,118 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A42EB35476
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 01:41:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3151035481
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 01:45:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726693AbfFDXlH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 19:41:07 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38570 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726454AbfFDXlH (ORCPT
+        id S1726792AbfFDXpW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 19:45:22 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38936 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726269AbfFDXpP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 19:41:07 -0400
-Received: by mail-pl1-f193.google.com with SMTP id f97so8979081plb.5
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 16:41:06 -0700 (PDT)
+        Tue, 4 Jun 2019 19:45:15 -0400
+Received: by mail-pl1-f195.google.com with SMTP id g9so8961495plm.6
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 16:45:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PEW0YI52v17ROAEu88+lgWes0aNQUTZHMT31ckUQV0Y=;
-        b=k97nBHkWVfd4b6neMJHJ1ikRwOa0Dnrb283GaiQ9vr42eeTi4Bzx6eCgd+XwXVRSHQ
-         +onY9F03ZXXkt961UHeohcEMV+3oVQjVMP8xX5A5k2iFczJ8DXypJQjgkI6Y0qM4JS/K
-         X6xlrAgYcrnXayME8/5i7jtCSAS9PDoDxUXeIuPik6D3MpMv/zhxeVc2gd9oChlT0ywk
-         WLa+Ici1IoaTqRUddVaU+Bo3ZPhwVoZEoTDhExOOelm9e4OIM3C7JYQ+uXAByKwZJAdQ
-         j8E891XgJw6IGm1muVCiqTp+SlMuul/l0INLSkvimO8nHpLf8Va+JU3vk4R98MYNb2xr
-         CbWA==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=Q4JWFL9DePErvGO9qsbHL0QkxmXMM03CukJMak3SgGU=;
+        b=E900YRtgVRnCMc/Rs85r8+Zp+OlDma14yMbxQLEMNMMDpIM1B0u+S1SUYKljVg2HJF
+         mP7yJNMi/0UjXSZvks5r79f0h2UIFSqvnDvahgE/cFelgxVDH0YHea0S8qoOc9BnveqI
+         e44vvYuqpj7e9pamH2Gdc8BDmSU5dtPt8PtKk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PEW0YI52v17ROAEu88+lgWes0aNQUTZHMT31ckUQV0Y=;
-        b=TNkx3UzEK4o2Vhv0Gj3zxdmyg/jaZ2eO+Jyuji4cE2maHpT0g6tb0lBMf/MEq1tPUQ
-         MxwjPcYxs+pJOdLCZIsoMX7x9cwgMISxJrteZKwMpcchqRp2PdtZqSrFllpUpLt49s20
-         ubrF6tpr2mXUMDopqLo1cYUkMuOjVd8RmaIqnoya10BwlUyxWeVVu7mpk41hUrqQZ33u
-         Xr0/eUeqzhdfu1dZu10g8qL6VeCxCwpEg5FZ3OVsHhAL6bA7WrCJjWoLNwn+TSD1dyXB
-         d2x92eEGT52mv0yOma734qrvBmcXmv3oVu+RQAWBtz+sOkwGNJ+ptxmWM6Xd+pIr2i91
-         9jQQ==
-X-Gm-Message-State: APjAAAV7wPqdSCrsU2vbipURdIXfythQ1XibphjYxDDRRlB+PB/UUwYk
-        aImwyhTrPi7KPk2L35DwPufeIcdLaTw=
-X-Google-Smtp-Source: APXvYqwB9Rs6qdMKX9gf7PQIrUTJvFAVQlDRxbVsBIYlA6lXkdsejqKkUUFki/Do31p/eXmdrr7tew==
-X-Received: by 2002:a17:902:d916:: with SMTP id c22mr14264492plz.195.1559691666284;
-        Tue, 04 Jun 2019 16:41:06 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id a9sm17192793pgw.72.2019.06.04.16.41.04
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Q4JWFL9DePErvGO9qsbHL0QkxmXMM03CukJMak3SgGU=;
+        b=iPbys00VsiWTYlPZLYEoT8/fXUOZL0DLROPN+LMbm0RZdIefjpNR0xXxJuObnH60DV
+         Lx83knYdN4pSpTEnEN2pPw1rEvwkd6597R2UUlgtayBsubJGeaR2GePbF6ptCOGptuI2
+         k/hZ7LDvIu3AjRLbWDJp7uUq7rymWm5+Ru1tyiKDhHUcvcGiezrET0Sba23oRMJoqAwh
+         eNUh6S5hZGL9NMG+SzV+9cEsnzX8DAP4BLTyUee9pTMVy4Z/ZQqtbuCetTBWUTh7TtAW
+         wDaektEu52IWlmsp+JBTomR6DWM9I5LwK1E3UdeMcHJBwsKoAasCdip6saJlwV0eCKzt
+         JVSQ==
+X-Gm-Message-State: APjAAAWVXT0qUZvHzt3zC/C1dW+vu0O2cibjTUlS+aW7dXpEf2A7250Q
+        fDfvs+tamDCO6nVbnTlxC5+/Ilq1rhY=
+X-Google-Smtp-Source: APXvYqzCFexmOTgjDeZYXhal4pxi4iXkpJMTobHWl0qTo4G2sIuEd6RehnfsDbwiKcA6R/9xbZjUMA==
+X-Received: by 2002:a17:902:8c94:: with SMTP id t20mr38110527plo.141.1559691914883;
+        Tue, 04 Jun 2019 16:45:14 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id f17sm19441187pgv.16.2019.06.04.16.45.12
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Jun 2019 16:41:05 -0700 (PDT)
-Date:   Tue, 4 Jun 2019 16:41:03 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Will Deacon <will.deacon@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>
-Cc:     Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        Vivek Gautam <vgautam@qti.qualcomm.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] iommu: io-pgtable: Support non-coherent page tables
-Message-ID: <20190604234103.GH4814@minitux>
-References: <20190515233234.22990-1-bjorn.andersson@linaro.org>
- <CAFp+6iEMQd1uAWdkLysYWt0et8eRojoivG6+e78y0DU+4=H+_g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFp+6iEMQd1uAWdkLysYWt0et8eRojoivG6+e78y0DU+4=H+_g@mail.gmail.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+        Tue, 04 Jun 2019 16:45:12 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] x86/asm: Pin sensitive CR4 and CR0 bits
+Date:   Tue,  4 Jun 2019 16:44:20 -0700
+Message-Id: <20190604234422.29391-1-keescook@chromium.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 15 May 23:47 PDT 2019, Vivek Gautam wrote:
+Hi,
 
-> On Thu, May 16, 2019 at 5:03 AM Bjorn Andersson
-> <bjorn.andersson@linaro.org> wrote:
-> >
-> > Describe the memory related to page table walks as non-cachable for iommu
-> > instances that are not DMA coherent.
-> >
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> >  drivers/iommu/io-pgtable-arm.c | 12 +++++++++---
-> >  1 file changed, 9 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-> > index 4e21efbc4459..68ff22ffd2cb 100644
-> > --- a/drivers/iommu/io-pgtable-arm.c
-> > +++ b/drivers/iommu/io-pgtable-arm.c
-> > @@ -803,9 +803,15 @@ arm_64_lpae_alloc_pgtable_s1(struct io_pgtable_cfg *cfg, void *cookie)
-> >                 return NULL;
-> >
-> >         /* TCR */
-> > -       reg = (ARM_LPAE_TCR_SH_IS << ARM_LPAE_TCR_SH0_SHIFT) |
-> > -             (ARM_LPAE_TCR_RGN_WBWA << ARM_LPAE_TCR_IRGN0_SHIFT) |
-> > -             (ARM_LPAE_TCR_RGN_WBWA << ARM_LPAE_TCR_ORGN0_SHIFT);
-> > +       if (cfg->quirks & IO_PGTABLE_QUIRK_NO_DMA) {
-> > +               reg = (ARM_LPAE_TCR_SH_IS << ARM_LPAE_TCR_SH0_SHIFT) |
-> > +                     (ARM_LPAE_TCR_RGN_WBWA << ARM_LPAE_TCR_IRGN0_SHIFT) |
-> > +                     (ARM_LPAE_TCR_RGN_WBWA << ARM_LPAE_TCR_ORGN0_SHIFT);
-> > +       } else {
-> > +               reg = (ARM_LPAE_TCR_SH_IS << ARM_LPAE_TCR_SH0_SHIFT) |
-> > +                     (ARM_LPAE_TCR_RGN_NC << ARM_LPAE_TCR_IRGN0_SHIFT) |
-> > +                     (ARM_LPAE_TCR_RGN_NC << ARM_LPAE_TCR_ORGN0_SHIFT);
-> > +       }
-> 
-> This looks okay to me based on the discussion that we had on a similar
-> patch that I
-> posted. So,
-> Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> 
-> [1] https://lore.kernel.org/patchwork/patch/1032939/
-> 
+Here's a v2 that hopefully addresses the concerns from the v1 thread[1] on
+CR4 pinning. Now it's using static branches to avoid potential atomicity
+problems (though perhaps that is overkill), and it has dropped the
+needless volatile marking in favor of proper asm constraint flags. The
+one piece that eluded me, but which I think is okay, is delaying bit
+setting on a per-CPU basis. But since the bits are global state and we
+don't have read-only per-CPU data, it seemed safe as I've got it here.
 
-Will, Robin, any input on this patch?
+Full patch 1 commit log follows, just in case it's useful to have it
+in this cover letter...
 
-Regards,
-Bjorn
+[1] https://lkml.kernel.org/r/CAHk-=wjNes0wn0KUMMY6dOK_sN69z2TiGpDZ2cyzYF07s64bXQ@mail.gmail.com
+
+-Kees
+
+
+Several recent exploits have used direct calls to the native_write_cr4()
+function to disable SMEP and SMAP before then continuing their exploits
+using userspace memory access. This pins bits of CR4 so that they cannot
+be changed through a common function. This is not intended to be general
+ROP protection (which would require CFI to defend against properly), but
+rather a way to avoid trivial direct function calling (or CFI bypasses
+via a matching function prototype) as seen in:
+
+https://googleprojectzero.blogspot.com/2017/05/exploiting-linux-kernel-via-packet.html
+(https://github.com/xairy/kernel-exploits/tree/master/CVE-2017-7308)
+
+The goals of this change:
+ - pin specific bits (SMEP, SMAP, and UMIP) when writing CR4.
+ - avoid setting the bits too early (they must become pinned only after
+   CPU feature detection and selection has finished).
+ - pinning mask needs to be read-only during normal runtime.
+ - pinning needs to be checked after write to avoid jumps past the
+   preceding "or".
+
+Using __ro_after_init on the mask is done so it can't be first disabled
+with a malicious write.
+
+Since these bits are global state (once established by the boot CPU
+and kernel boot parameters), they are safe to write to secondary CPUs
+before those CPUs have finished feature detection. As such, the bits are
+written with an "or" performed before the register write as that is both
+easier and uses a few bytes less storage of a location we don't have:
+read-only per-CPU data. (Note that initialization via cr4_init_shadow()
+isn't early enough to avoid early native_write_cr4() calls.)
+
+A check is performed after the register write because an attack could
+just skip over the "or" before the register write. Such a direct jump
+is possible because of how this function may be built by the compiler
+(especially due to the removal of frame pointers) where it doesn't add
+a stack frame (function exit may only be a retq without pops) which
+is sufficient for trivial exploitation like in the timer overwrites
+mentioned above).
+
+The asm argument constraints gain the "+" modifier to convince the
+compiler that it shouldn't make ordering assumptions about the arguments
+or memory, and treat them as changed.
+
+---
+v2:
+- move setup until after CPU feature detection and selection.
+- refactor to use static branches to have atomic enabling.
+- only perform the "or" after a failed check.
+---
+
+Kees Cook (2):
+  x86/asm: Pin sensitive CR4 bits
+  x86/asm: Pin sensitive CR0 bits
+
+ arch/x86/include/asm/special_insns.h | 41 ++++++++++++++++++++++++++--
+ arch/x86/kernel/cpu/common.c         | 18 ++++++++++++
+ 2 files changed, 57 insertions(+), 2 deletions(-)
+
+-- 
+2.17.1
+
