@@ -2,185 +2,407 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA6C33470B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:39:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2584B34734
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:46:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727813AbfFDMjw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 08:39:52 -0400
-Received: from mga02.intel.com ([134.134.136.20]:34824 "EHLO mga02.intel.com"
+        id S1727829AbfFDMp4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 08:45:56 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:20924 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727580AbfFDMjv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 08:39:51 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jun 2019 05:39:50 -0700
-X-ExtLoop1: 1
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
-  by fmsmga001.fm.intel.com with ESMTP; 04 Jun 2019 05:39:46 -0700
-From:   Jani Nikula <jani.nikula@intel.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild@vger.kernel.org
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH v2] kbuild: add support for ensuring headers are self-contained
-Date:   Tue,  4 Jun 2019 15:42:48 +0300
-Message-Id: <20190604124248.5564-1-jani.nikula@intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190604101409.2078-14-yamada.masahiro@socionext.com>
-References: <20190604101409.2078-14-yamada.masahiro@socionext.com>
+        id S1727723AbfFDMp4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 08:45:56 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 45JBVS5s84z9vDbD;
+        Tue,  4 Jun 2019 14:45:52 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=QKUG8xzb; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 0dKNbhHsbTGC; Tue,  4 Jun 2019 14:45:52 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 45JBVS4b2tz9vDbC;
+        Tue,  4 Jun 2019 14:45:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1559652352; bh=0bIuEy7DiebcxthQL0padbBj5NRJHe3Hz83QMlXOndI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=QKUG8xzb8+maCp9s7Mw7gLUNcx0jafliGipMuLQ0A5SZQB7aaR8NTUzHFd3Nt9eag
+         vp6MsqLz+flb5FFeX0QmLgWEksJeTX11Mea+VDgBFVl9L2RYV+2HGZamG3mNx1yhWR
+         urvu01+YvxnGlsf5mljAzpAPcJEHurF84kerxsII=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7823D8B982;
+        Tue,  4 Jun 2019 14:45:53 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id fQkei6wJwUHI; Tue,  4 Jun 2019 14:45:53 +0200 (CEST)
+Received: from localhost.localdomain (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id B907E8B967;
+        Tue,  4 Jun 2019 14:45:51 +0200 (CEST)
+Subject: Re: [RFC PATCH] powerpc/book3e: KASAN Full support for 64bit
+To:     Daniel Axtens <dja@axtens.net>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <3401648225001077db54172ee87573b21e1cfa38.1553782837.git.christophe.leroy@c-s.fr>
+ <877ea7za12.fsf@dja-thinkpad.axtens.net>
+ <028d7332-57e0-bbec-1843-29f87b33a1d4@c-s.fr>
+ <87woi2xm8l.fsf@dja-thinkpad.axtens.net>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <a0c04cb8-a19b-2d73-5725-4868556e2b47@c-s.fr>
+Date:   Tue, 4 Jun 2019 12:43:30 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <87woi2xm8l.fsf@dja-thinkpad.axtens.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sometimes it's useful to be able to explicitly ensure certain headers
-remain self-contained, i.e. that they are compilable as standalone
-units, by including and/or forward declaring everything they depend on.
 
-Add special target header-test-y where individual Makefiles can add
-headers to be tested if CONFIG_HEADER_TEST is enabled. This will
-generate a dummy C file per header that gets built as part of extra-y.
 
-Cc: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: Sam Ravnborg <sam@ravnborg.org>
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+On 06/03/2019 11:50 PM, Daniel Axtens wrote:
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+> 
+>> Hi,
+>>
+>> Ok, can you share your .config ?
+> 
+> Sure! This one is with kasan off as the last build I did was testing to
+> see if the code reorgisation was the cause of the issues. (it was not)
+> 
+> 
+> 
+> 
+> This was the kasan-enabled config that failed to boot:
+> 
+> 
 
----
+Same issue with your .config under QEMU:
 
-v2: changes suggested by Masahiro:
+A go with gdb shows:
 
-http://mid.mail-archive.com/CAK7LNAT=nB0=at0X4OnHVKB=y7WwHGm4LXkrQnCw9HpjB5LooA@mail.gmail.com
----
- .gitignore                         | 1 +
- Documentation/dontdiff             | 1 +
- Documentation/kbuild/makefiles.txt | 7 +++++++
- Makefile                           | 1 +
- init/Kconfig                       | 9 +++++++++
- scripts/Makefile.build             | 9 +++++++++
- scripts/Makefile.lib               | 3 +++
- 7 files changed, 31 insertions(+)
+Breakpoint 3, 0xc000000000027b6c in exc_0x700_common ()
+=> 0xc000000000027b6c <exc_0x700_common+0>:	f8 01 00 70	std     r0,112(r1)
+(gdb) bt
+#0  0xc000000000027b6c in exc_0x700_common ()
+#1  0xc00000000136f80c in .udbg_init_memcons ()
 
-diff --git a/.gitignore b/.gitignore
-index 7587ef56b92d..4bb60f0fa23b 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -22,6 +22,7 @@
- *.elf
- *.gcno
- *.gz
-+*.hdrtest.c
- *.i
- *.ko
- *.lex.c
-diff --git a/Documentation/dontdiff b/Documentation/dontdiff
-index 5eba889ea84d..554dfe4883d2 100644
---- a/Documentation/dontdiff
-+++ b/Documentation/dontdiff
-@@ -19,6 +19,7 @@
- *.grep
- *.grp
- *.gz
-+*.hdrtest.c
- *.html
- *.i
- *.jpeg
-diff --git a/Documentation/kbuild/makefiles.txt b/Documentation/kbuild/makefiles.txt
-index d65ad5746f94..a31e54bd9ddd 100644
---- a/Documentation/kbuild/makefiles.txt
-+++ b/Documentation/kbuild/makefiles.txt
-@@ -1022,6 +1022,13 @@ When kbuild executes, the following steps are followed (roughly):
- 	In this example, extra-y is used to list object files that
- 	shall be built, but shall not be linked as part of built-in.a.
- 
-+    header-test-y
-+
-+	header-test-y specifies headers (*.h) in the current directory that
-+	should be compile tested to ensure they are self-contained,
-+	i.e. compilable as standalone units. If CONFIG_HEADER_TEST is enabled,
-+	this autogenerates dummy sources to include the headers, and builds them
-+	as part of extra-y.
- 
- --- 6.7 Commands useful for building a boot image
- 
-diff --git a/Makefile b/Makefile
-index 11358153d8f2..b347be697fbb 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1646,6 +1646,7 @@ clean: $(clean-dirs)
- 		-o -name '*.dwo' -o -name '*.lst' \
- 		-o -name '*.su'  \
- 		-o -name '.*.d' -o -name '.*.tmp' -o -name '*.mod.c' \
-+		-o -name '*.hdrtest.c' \
- 		-o -name '*.lex.c' -o -name '*.tab.[ch]' \
- 		-o -name '*.asn1.[ch]' \
- 		-o -name '*.symtypes' -o -name 'modules.order' \
-diff --git a/init/Kconfig b/init/Kconfig
-index 36894c9fb420..02d8897b91fb 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -96,6 +96,15 @@ config COMPILE_TEST
- 	  here. If you are a user/distributor, say N here to exclude useless
- 	  drivers to be distributed.
- 
-+config HEADER_TEST
-+	bool "Compile test headers that should be standalone compilable"
-+	help
-+	  Compile test headers listed in header-test-y target to ensure they are
-+	  self-contained, i.e. compilable as standalone units.
-+
-+	  If you are a developer or tester and want to ensure the requested
-+	  headers are self-contained, say Y here. Otherwise, choose N.
-+
- config LOCALVERSION
- 	string "Local version - append to kernel release"
- 	help
-diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index ae9cf740633e..ee0319560513 100644
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -294,6 +294,15 @@ quiet_cmd_cc_lst_c = MKLST   $@
- $(obj)/%.lst: $(src)/%.c FORCE
- 	$(call if_changed_dep,cc_lst_c)
- 
-+# Dummy C sources for header test (header-test-y target)
-+# ---------------------------------------------------------------------------
-+
-+quiet_cmd_header_test = HDRTEST $@
-+      cmd_header_test = echo "\#include \"$*.h\"" > $@
-+
-+$(obj)/%.hdrtest.c:
-+	$(call cmd,header_test)
-+
- # Compile assembler sources (.S)
- # ---------------------------------------------------------------------------
- 
-diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-index f1f38c8cdc74..3e630fcaffd1 100644
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -66,6 +66,9 @@ extra-y += $(patsubst %.dtb,%.dt.yaml, $(dtb-y))
- extra-$(CONFIG_OF_ALL_DTBS) += $(patsubst %.dtb,%.dt.yaml, $(dtb-))
- endif
- 
-+# Test self-contained headers
-+extra-$(CONFIG_HEADER_TEST) += $(patsubst %.h,%.hdrtest.o,$(header-test-y))
-+
- # Add subdir path
- 
- extra-y		:= $(addprefix $(obj)/,$(extra-y))
--- 
-2.20.1
 
+Without CONFIG_PPC_EARLY_DEBUG, it boots fine for me. Can you check on 
+your side ?
+
+Deactivating KASAN for arch/powerpc/kernel/udbg.o and 
+arch/powerpc/sysdev/udbg_memcons.o is not enough, we hit a call to 
+strstr() in register_early_udbg_console(), and once we get rid of it (in 
+the same way as in prom_init.c) the next issue is register_console() and 
+I don't know what to do about that one.
+
+Christophe
+
+> 
+> 
+> Regards,
+> Daniel
+> 
+>>
+>> Christophe
+>>
+>> Le 31/05/2019 à 03:29, Daniel Axtens a écrit :
+>>> Hi Christophe,
+>>>
+>>> I tried this on the t4240rdb and it fails to boot if KASAN is
+>>> enabled. It does boot with the patch applied but KASAN disabled, so that
+>>> narrows it down a little bit.
+>>>
+>>> I need to focus on 3s first so I'll just drop 3e from my patch set for
+>>> now.
+>>>
+>>> Regards,
+>>> Daniel
+>>>
+>>>> The KASAN shadow area is mapped into vmemmap space:
+>>>> 0x8000 0400 0000 0000 to 0x8000 0600 0000 0000.
+>>>> For this vmemmap has to be disabled.
+>>>>
+>>>> Cc: Daniel Axtens <dja@axtens.net>
+>>>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>>>> ---
+>>>>    arch/powerpc/Kconfig                  |   1 +
+>>>>    arch/powerpc/Kconfig.debug            |   3 +-
+>>>>    arch/powerpc/include/asm/kasan.h      |  11 +++
+>>>>    arch/powerpc/kernel/Makefile          |   2 +
+>>>>    arch/powerpc/kernel/head_64.S         |   3 +
+>>>>    arch/powerpc/kernel/setup_64.c        |  20 +++---
+>>>>    arch/powerpc/mm/kasan/Makefile        |   1 +
+>>>>    arch/powerpc/mm/kasan/kasan_init_64.c | 129 ++++++++++++++++++++++++++++++++++
+>>>>    8 files changed, 159 insertions(+), 11 deletions(-)
+>>>>    create mode 100644 arch/powerpc/mm/kasan/kasan_init_64.c
+>>>>
+>>>> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+>>>> index 1a2fb50126b2..e0b7c45e4dc7 100644
+>>>> --- a/arch/powerpc/Kconfig
+>>>> +++ b/arch/powerpc/Kconfig
+>>>> @@ -174,6 +174,7 @@ config PPC
+>>>>    	select HAVE_ARCH_AUDITSYSCALL
+>>>>    	select HAVE_ARCH_JUMP_LABEL
+>>>>    	select HAVE_ARCH_KASAN			if PPC32
+>>>> +	select HAVE_ARCH_KASAN			if PPC_BOOK3E_64 && !SPARSEMEM_VMEMMAP
+>>>>    	select HAVE_ARCH_KGDB
+>>>>    	select HAVE_ARCH_MMAP_RND_BITS
+>>>>    	select HAVE_ARCH_MMAP_RND_COMPAT_BITS	if COMPAT
+>>>> diff --git a/arch/powerpc/Kconfig.debug b/arch/powerpc/Kconfig.debug
+>>>> index 61febbbdd02b..b4140dd6b4e4 100644
+>>>> --- a/arch/powerpc/Kconfig.debug
+>>>> +++ b/arch/powerpc/Kconfig.debug
+>>>> @@ -370,4 +370,5 @@ config PPC_FAST_ENDIAN_SWITCH
+>>>>    config KASAN_SHADOW_OFFSET
+>>>>    	hex
+>>>>    	depends on KASAN
+>>>> -	default 0xe0000000
+>>>> +	default 0xe0000000 if PPC32
+>>>> +	default 0x6800040000000000 if PPC64
+>>>> diff --git a/arch/powerpc/include/asm/kasan.h b/arch/powerpc/include/asm/kasan.h
+>>>> index 296e51c2f066..756b3d58f921 100644
+>>>> --- a/arch/powerpc/include/asm/kasan.h
+>>>> +++ b/arch/powerpc/include/asm/kasan.h
+>>>> @@ -23,10 +23,21 @@
+>>>>    
+>>>>    #define KASAN_SHADOW_OFFSET	ASM_CONST(CONFIG_KASAN_SHADOW_OFFSET)
+>>>>    
+>>>> +#ifdef CONFIG_PPC32
+>>>>    #define KASAN_SHADOW_END	0UL
+>>>>    
+>>>>    #define KASAN_SHADOW_SIZE	(KASAN_SHADOW_END - KASAN_SHADOW_START)
+>>>>    
+>>>> +#else
+>>>> +
+>>>> +#include <asm/pgtable.h>
+>>>> +
+>>>> +#define KASAN_SHADOW_SIZE	(KERN_VIRT_SIZE >> KASAN_SHADOW_SCALE_SHIFT)
+>>>> +
+>>>> +#define KASAN_SHADOW_END	(KASAN_SHADOW_START + KASAN_SHADOW_SIZE)
+>>>> +
+>>>> +#endif /* CONFIG_PPC32 */
+>>>> +
+>>>>    #ifdef CONFIG_KASAN
+>>>>    void kasan_early_init(void);
+>>>>    void kasan_mmu_init(void);
+>>>> diff --git a/arch/powerpc/kernel/Makefile b/arch/powerpc/kernel/Makefile
+>>>> index 0ea6c4aa3a20..7f232c06f11d 100644
+>>>> --- a/arch/powerpc/kernel/Makefile
+>>>> +++ b/arch/powerpc/kernel/Makefile
+>>>> @@ -35,6 +35,8 @@ KASAN_SANITIZE_early_32.o := n
+>>>>    KASAN_SANITIZE_cputable.o := n
+>>>>    KASAN_SANITIZE_prom_init.o := n
+>>>>    KASAN_SANITIZE_btext.o := n
+>>>> +KASAN_SANITIZE_paca.o := n
+>>>> +KASAN_SANITIZE_setup_64.o := n
+>>>>    
+>>>>    ifdef CONFIG_KASAN
+>>>>    CFLAGS_early_32.o += -DDISABLE_BRANCH_PROFILING
+>>>> diff --git a/arch/powerpc/kernel/head_64.S b/arch/powerpc/kernel/head_64.S
+>>>> index 3fad8d499767..80fbd8024fb2 100644
+>>>> --- a/arch/powerpc/kernel/head_64.S
+>>>> +++ b/arch/powerpc/kernel/head_64.S
+>>>> @@ -966,6 +966,9 @@ start_here_multiplatform:
+>>>>    	 * and SLB setup before we turn on relocation.
+>>>>    	 */
+>>>>    
+>>>> +#ifdef CONFIG_KASAN
+>>>> +	bl	kasan_early_init
+>>>> +#endif
+>>>>    	/* Restore parameters passed from prom_init/kexec */
+>>>>    	mr	r3,r31
+>>>>    	bl	early_setup		/* also sets r13 and SPRG_PACA */
+>>>> diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
+>>>> index ba404dd9ce1d..d2bf860dd966 100644
+>>>> --- a/arch/powerpc/kernel/setup_64.c
+>>>> +++ b/arch/powerpc/kernel/setup_64.c
+>>>> @@ -311,6 +311,16 @@ void __init early_setup(unsigned long dt_ptr)
+>>>>     	DBG(" -> early_setup(), dt_ptr: 0x%lx\n", dt_ptr);
+>>>>    
+>>>>    	/*
+>>>> +	 * Configure exception handlers. This include setting up trampolines
+>>>> +	 * if needed, setting exception endian mode, etc...
+>>>> +	 */
+>>>> +	configure_exceptions();
+>>>> +
+>>>> +	/* Apply all the dynamic patching */
+>>>> +	apply_feature_fixups();
+>>>> +	setup_feature_keys();
+>>>> +
+>>>> +	/*
+>>>>    	 * Do early initialization using the flattened device
+>>>>    	 * tree, such as retrieving the physical memory map or
+>>>>    	 * calculating/retrieving the hash table size.
+>>>> @@ -325,16 +335,6 @@ void __init early_setup(unsigned long dt_ptr)
+>>>>    	setup_paca(paca_ptrs[boot_cpuid]);
+>>>>    	fixup_boot_paca();
+>>>>    
+>>>> -	/*
+>>>> -	 * Configure exception handlers. This include setting up trampolines
+>>>> -	 * if needed, setting exception endian mode, etc...
+>>>> -	 */
+>>>> -	configure_exceptions();
+>>>> -
+>>>> -	/* Apply all the dynamic patching */
+>>>> -	apply_feature_fixups();
+>>>> -	setup_feature_keys();
+>>>> -
+>>>>    	/* Initialize the hash table or TLB handling */
+>>>>    	early_init_mmu();
+>>>>    
+>>>> diff --git a/arch/powerpc/mm/kasan/Makefile b/arch/powerpc/mm/kasan/Makefile
+>>>> index 6577897673dd..0bfbe3892808 100644
+>>>> --- a/arch/powerpc/mm/kasan/Makefile
+>>>> +++ b/arch/powerpc/mm/kasan/Makefile
+>>>> @@ -3,3 +3,4 @@
+>>>>    KASAN_SANITIZE := n
+>>>>    
+>>>>    obj-$(CONFIG_PPC32)           += kasan_init_32.o
+>>>> +obj-$(CONFIG_PPC64)	+= kasan_init_64.o
+>>>> diff --git a/arch/powerpc/mm/kasan/kasan_init_64.c b/arch/powerpc/mm/kasan/kasan_init_64.c
+>>>> new file mode 100644
+>>>> index 000000000000..7fd71b8e883b
+>>>> --- /dev/null
+>>>> +++ b/arch/powerpc/mm/kasan/kasan_init_64.c
+>>>> @@ -0,0 +1,129 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0
+>>>> +
+>>>> +#define DISABLE_BRANCH_PROFILING
+>>>> +
+>>>> +#include <linux/kasan.h>
+>>>> +#include <linux/printk.h>
+>>>> +#include <linux/memblock.h>
+>>>> +#include <linux/sched/task.h>
+>>>> +#include <asm/pgalloc.h>
+>>>> +
+>>>> +static void __init kasan_populate_pte(pte_t *ptep, pgprot_t prot)
+>>>> +{
+>>>> +	unsigned long va = (unsigned long)kasan_early_shadow_page;
+>>>> +	phys_addr_t pa = __pa(kasan_early_shadow_page);
+>>>> +	int i;
+>>>> +
+>>>> +	for (i = 0; i < PTRS_PER_PTE; i++, ptep++)
+>>>> +		__set_pte_at(&init_mm, va, ptep, pfn_pte(PHYS_PFN(pa), prot), 0);
+>>>> +}
+>>>> +
+>>>> +static void __init kasan_populate_pmd(pmd_t *pmdp)
+>>>> +{
+>>>> +	int i;
+>>>> +
+>>>> +	for (i = 0; i < PTRS_PER_PMD; i++)
+>>>> +		pmd_populate_kernel(&init_mm, pmdp + i, kasan_early_shadow_pte);
+>>>> +}
+>>>> +
+>>>> +static void __init kasan_populate_pud(pud_t *pudp)
+>>>> +{
+>>>> +	int i;
+>>>> +
+>>>> +	for (i = 0; i < PTRS_PER_PUD; i++)
+>>>> +		pud_populate(&init_mm, pudp + i, kasan_early_shadow_pmd);
+>>>> +}
+>>>> +
+>>>> +static void __init *kasan_alloc_pgtable(unsigned long size)
+>>>> +{
+>>>> +	void *ptr = memblock_alloc_try_nid(size, size, MEMBLOCK_LOW_LIMIT,
+>>>> +					   __pa(MAX_DMA_ADDRESS), NUMA_NO_NODE);
+>>>> +
+>>>> +	if (!ptr)
+>>>> +		panic("%s: Failed to allocate %lu bytes align=0x%lx max_addr=%lx\n",
+>>>> +		      __func__, size, size, __pa(MAX_DMA_ADDRESS));
+>>>> +
+>>>> +	return ptr;
+>>>> +}
+>>>> +
+>>>> +static int __init kasan_map_page(unsigned long va, unsigned long pa, pgprot_t prot)
+>>>> +{
+>>>> +	pgd_t *pgdp = pgd_offset_k(va);
+>>>> +	pud_t *pudp;
+>>>> +	pmd_t *pmdp;
+>>>> +	pte_t *ptep;
+>>>> +
+>>>> +	if (pgd_none(*pgdp) || (void *)pgd_page_vaddr(*pgdp) == kasan_early_shadow_pud) {
+>>>> +		pudp = kasan_alloc_pgtable(PUD_TABLE_SIZE);
+>>>> +		kasan_populate_pud(pudp);
+>>>> +		pgd_populate(&init_mm, pgdp, pudp);
+>>>> +	}
+>>>> +	pudp = pud_offset(pgdp, va);
+>>>> +	if (pud_none(*pudp) || (void *)pud_page_vaddr(*pudp) == kasan_early_shadow_pmd) {
+>>>> +		pmdp = kasan_alloc_pgtable(PMD_TABLE_SIZE);
+>>>> +		kasan_populate_pmd(pmdp);
+>>>> +		pud_populate(&init_mm, pudp, pmdp);
+>>>> +	}
+>>>> +	pmdp = pmd_offset(pudp, va);
+>>>> +	if (!pmd_present(*pmdp) || (void *)pmd_page_vaddr(*pmdp) == kasan_early_shadow_pte) {
+>>>> +		ptep = kasan_alloc_pgtable(PTE_TABLE_SIZE);
+>>>> +		kasan_populate_pte(ptep, PAGE_KERNEL);
+>>>> +		pmd_populate_kernel(&init_mm, pmdp, ptep);
+>>>> +	}
+>>>> +	ptep = pte_offset_kernel(pmdp, va);
+>>>> +
+>>>> +	__set_pte_at(&init_mm, va, ptep, pfn_pte(pa >> PAGE_SHIFT, prot), 0);
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>> +static void __init kasan_init_region(struct memblock_region *reg)
+>>>> +{
+>>>> +	void *start = __va(reg->base);
+>>>> +	void *end = __va(reg->base + reg->size);
+>>>> +	unsigned long k_start, k_end, k_cur;
+>>>> +
+>>>> +	if (start >= end)
+>>>> +		return;
+>>>> +
+>>>> +	k_start = (unsigned long)kasan_mem_to_shadow(start);
+>>>> +	k_end = (unsigned long)kasan_mem_to_shadow(end);
+>>>> +
+>>>> +	for (k_cur = k_start; k_cur < k_end; k_cur += PAGE_SIZE) {
+>>>> +		void *va = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
+>>>> +
+>>>> +		kasan_map_page(k_cur, __pa(va), PAGE_KERNEL);
+>>>> +	}
+>>>> +	flush_tlb_kernel_range(k_start, k_end);
+>>>> +}
+>>>> +
+>>>> +void __init kasan_init(void)
+>>>> +{
+>>>> +	struct memblock_region *reg;
+>>>> +
+>>>> +	for_each_memblock(memory, reg)
+>>>> +		kasan_init_region(reg);
+>>>> +
+>>>> +	/* It's too early to use clear_page() ! */
+>>>> +	memset(kasan_early_shadow_page, 0, sizeof(kasan_early_shadow_page));
+>>>> +
+>>>> +	/* Enable error messages */
+>>>> +	init_task.kasan_depth = 0;
+>>>> +	pr_info("KASAN init done\n");
+>>>> +}
+>>>> +
+>>>> +/* The early shadow maps everything to a single page of zeroes */
+>>>> +asmlinkage void __init kasan_early_init(void)
+>>>> +{
+>>>> +	unsigned long addr = KASAN_SHADOW_START;
+>>>> +	unsigned long end = KASAN_SHADOW_END;
+>>>> +	pgd_t *pgdp = pgd_offset_k(addr);
+>>>> +
+>>>> +	kasan_populate_pte(kasan_early_shadow_pte, PAGE_KERNEL);
+>>>> +	kasan_populate_pmd(kasan_early_shadow_pmd);
+>>>> +	kasan_populate_pud(kasan_early_shadow_pud);
+>>>> +
+>>>> +	do {
+>>>> +		pgd_populate(&init_mm, pgdp, kasan_early_shadow_pud);
+>>>> +	} while (pgdp++, addr = pgd_addr_end(addr, end), addr != end);
+>>>> +}
+>>>> -- 
+>>>> 2.13.3
