@@ -2,103 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EC32344DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 12:56:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF191344D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 12:54:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727552AbfFDK4M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 06:56:12 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:58686 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727486AbfFDK4J (ORCPT
+        id S1727443AbfFDKyv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 06:54:51 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37751 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727240AbfFDKyv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 06:56:09 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07517718|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.6789-0.00815059-0.31295;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07447;MF=han_mao@c-sky.com;NM=1;PH=DS;RN=4;RT=4;SR=0;TI=SMTPD_---.EhJOZAc_1559645766;
-Received: from localhost(mailfrom:han_mao@c-sky.com fp:SMTPD_---.EhJOZAc_1559645766)
-          by smtp.aliyun-inc.com(10.147.42.135);
-          Tue, 04 Jun 2019 18:56:06 +0800
-From:   Mao Han <han_mao@c-sky.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Mao Han <han_mao@c-sky.com>, linux-csky@vger.kernel.org,
-        Guo Ren <guoren@kernel.org>
-Subject: [PATCH V5 2/6] csky: Add count-width property for csky pmu
-Date:   Tue,  4 Jun 2019 18:54:45 +0800
-Message-Id: <93df91a6bdd2fe46dcf71fdd996fa1e164a8adf4.1559644961.git.han_mao@c-sky.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1559644961.git.han_mao@c-sky.com>
-References: <cover.1559644961.git.han_mao@c-sky.com>
-In-Reply-To: <cover.1559644961.git.han_mao@c-sky.com>
-References: <cover.1559644961.git.han_mao@c-sky.com>
+        Tue, 4 Jun 2019 06:54:51 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 22so5989052wmg.2;
+        Tue, 04 Jun 2019 03:54:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=j6hUjIqRG1YkL75o/DPFfpMfo/IVNVfXJC4sNpNd0tg=;
+        b=APWwtvePIWTDcmPk7AtpRlDbr1f2wInftq4QFEJXHzXrs/AXrq6ZbwtQ6YVl7LxQSc
+         OCrQKXigLLaA0wNdtGjyDGmGgZpSRWsnhoNLR+hiD5Cn4c81m48Xovo/n6axPPo0K86t
+         k8ZV0YwsVLhYgj5Ocx6ujK13fNgxIY3QROEmaetKSyh4SQ1/axt/exIWF8thZkdo6AYo
+         jwmcOCjvNiDZ9MdIzwb9s4QhLF9mSh8ZogUMm6xNW+FIgkdJXVGfH4UUzvBBpYjoKQ7x
+         BeAXdkKv+r1swHZ2ySRHqSQstSfq+0Pps0Ce0tRJ12MRhC7k050di+ydIzofqtbej1xN
+         HMVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=j6hUjIqRG1YkL75o/DPFfpMfo/IVNVfXJC4sNpNd0tg=;
+        b=gwRQ/2HqaeqnRfLOrMFKaqDhz/Eqm8mzloQ/4nV1P2grSVvVPnHlg6uGBD8gRKr4sE
+         +2hDMX6HN83sBYfp3HTJH5MDFzBhBi0N8q13cp2VkQo9OvdTKPyh/A3BqN9qHk9JDEtE
+         sn0MmnG5ElPDPusbBvSXxCBHjgjYju18N5egyo1ZHup2pAJET3fW1oT3LuUr95D/VJPq
+         Gncd7I5xQRqdAqZMiI1RDMEbZf5wnT9xeQp/0BCM3RVG66btyVQf0zdwjJz76rTTNYRM
+         v0/Rzdx0aM7abySEWXa9R1jVCFS0L41f//FoNnTNqPjRxxHyQRdKCoL+X7vHP/c8P+sw
+         AG/A==
+X-Gm-Message-State: APjAAAU2+Wqpa2mMApN/75MWm0dmrooCiq6rNFJBfQW4PUVJBMPTJFw6
+        eHORhN2L8Ri6rcFatqMfn04=
+X-Google-Smtp-Source: APXvYqxutJ6NBBR2g6rHF5LKUIMrFLHnOtdFcq1XJfM/uFiLfMehOpzohOS+/agVOJNsl49BvO9GHA==
+X-Received: by 2002:a1c:be03:: with SMTP id o3mr17643273wmf.139.1559645688942;
+        Tue, 04 Jun 2019 03:54:48 -0700 (PDT)
+Received: from localhost (p2E5BEF36.dip0.t-ipconnect.de. [46.91.239.54])
+        by smtp.gmail.com with ESMTPSA id b5sm13175277wrx.22.2019.06.04.03.54.47
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 04 Jun 2019 03:54:47 -0700 (PDT)
+Date:   Tue, 4 Jun 2019 12:54:46 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 01/16] PM / devfreq: tegra: Fix kHz to Hz conversion
+Message-ID: <20190604105446.GA16519@ulmo>
+References: <20190501233815.32643-1-digetx@gmail.com>
+ <20190501233815.32643-2-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="LZvS9be/3tNcYl/X"
+Content-Disposition: inline
+In-Reply-To: <20190501233815.32643-2-digetx@gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The csky pmu counter may have different io width. When the counter is
-smaller then 64 bits and counter value is smaller than the old value, it
-will result to a extremely large delta value. So the sampled value should
-be extend to 64 bits to avoid this, the extension bits base on the
-count-width property from dts.
 
-Signed-off-by: Mao Han <han_mao@c-sky.com>
-Cc: Guo Ren <guoren@kernel.org>
----
- arch/csky/kernel/perf_event.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+--LZvS9be/3tNcYl/X
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/csky/kernel/perf_event.c b/arch/csky/kernel/perf_event.c
-index 2282554..a15b397 100644
---- a/arch/csky/kernel/perf_event.c
-+++ b/arch/csky/kernel/perf_event.c
-@@ -9,6 +9,7 @@
- #include <linux/platform_device.h>
- 
- #define CSKY_PMU_MAX_EVENTS 32
-+#define DEFAULT_COUNT_WIDTH 48
- 
- #define HPCR		"<0, 0x0>"	/* PMU Control reg */
- #define HPCNTENR	"<0, 0x4>"	/* Count Enable reg */
-@@ -18,6 +19,7 @@ static void (*hw_raw_write_mapping[CSKY_PMU_MAX_EVENTS])(uint64_t val);
- 
- struct csky_pmu_t {
- 	struct pmu	pmu;
-+	uint32_t	count_width;
- 	uint32_t	hpcr;
- } csky_pmu;
- 
-@@ -804,7 +806,12 @@ static void csky_perf_event_update(struct perf_event *event,
- 				   struct hw_perf_event *hwc)
- {
- 	uint64_t prev_raw_count = local64_read(&hwc->prev_count);
--	uint64_t new_raw_count = hw_raw_read_mapping[hwc->idx]();
-+	/*
-+	 * Sign extend count value to 64bit, otherwise delta calculation
-+	 * would be incorrect when overflow occurs.
-+	 */
-+	uint64_t new_raw_count = sign_extend64(
-+		hw_raw_read_mapping[hwc->idx](), csky_pmu.count_width - 1);
- 	int64_t delta = new_raw_count - prev_raw_count;
- 
- 	/*
-@@ -1032,6 +1039,7 @@ int init_hw_perf_events(void)
- int csky_pmu_device_probe(struct platform_device *pdev,
- 			  const struct of_device_id *of_table)
- {
-+	struct device_node *node = pdev->dev.of_node;
- 	int ret;
- 
- 	ret = init_hw_perf_events();
-@@ -1040,6 +1048,11 @@ int csky_pmu_device_probe(struct platform_device *pdev,
- 		return ret;
- 	}
- 
-+	if (of_property_read_u32(node, "count-width",
-+				 &csky_pmu.count_width)) {
-+		csky_pmu.count_width = DEFAULT_COUNT_WIDTH;
-+	}
-+
- 	return ret;
- }
- 
--- 
-2.7.4
+On Thu, May 02, 2019 at 02:38:00AM +0300, Dmitry Osipenko wrote:
+> The kHz to Hz is incorrectly converted in a few places in the code,
+> this results in a wrong frequency being calculated because devfreq core
+> uses OPP frequencies that are given in Hz to clamp the rate, while
+> tegra-devfreq gives to the core value in kHz and then it also expects to
+> receive value in kHz from the core. In a result memory freq is always set
+> to a value which is close to ULONG_MAX because of the bug. Hence the EMC
+> frequency is always capped to the maximum and the driver doesn't do
+> anything useful. This patch was tested on Tegra30 and Tegra124 SoC's, EMC
+> frequency scaling works properly now.
+>=20
+> Cc: <stable@vger.kernel.org> # 4.14+
+> Tested-by: Steev Klimaszewski <steev@kali.org>
+> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/devfreq/tegra-devfreq.c | 12 +++++-------
+>  1 file changed, 5 insertions(+), 7 deletions(-)
 
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--LZvS9be/3tNcYl/X
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlz2TfQACgkQ3SOs138+
+s6GExg/9HsPjT2SjCQvZabaE2o3s+/XY1gquN4JnV0phciJyXkDiCEYstAtLTcwR
+K464Jww0SwHI9j28NVkTwfCI5ZCV8PJgjY+5R/NRSW0JidhZS8AaMKkFfCMa8Ubz
+8KBWHvn+iRlGR4Lpssr/nWPqk0NLga+exxpzQVQmY7iPZ02yxoC3sNiJmbXHT54F
+o7QgAd1qwFST5DQ/yMHzZK27iUhFdupDGkyb2BVh2X0y6q2iseuvoW5at81ZuoVI
+TB8Knl5dWItuG/ERGfnfoU8hV5i7RJDzTcnlLh//GSdD4cpRLGFVDbDE7lgnd4vq
+DSCu/I4befv91FmHVIgEgI5qmccCzm9sFUrRT3Ga8hGtclm/namJyL8std4Jxh+b
+9s7O9EeBAo/ZisfXhlzZnY5mg2Z8dfCxwxbxXhPZE/Mz6/ndmGfVFKsXRIvVBd5f
+lDn71dlug/uXWQ5Tudkz/23JQyGW6dbQK14BZPt/2EEygyJnsmJckQuyOYUhy3Ak
+xBkemlaQNzBS/ILhs7TVKA/+EFkdS/8Fcow5Kl4RdORdx9aXpbNxPIOMNWqyJYVH
+v7Y0DsHPN98oshCFNQ7K0z9XIV6auZrlZ7RCnyfXhCz4NLQcxlrGYGQX6NIafFN8
+ZXJgm+e4fuFBdNGBWUeh5STwqInQ4zLEdp9RwywxzH+SUoA6ePg=
+=8Afm
+-----END PGP SIGNATURE-----
+
+--LZvS9be/3tNcYl/X--
