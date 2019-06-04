@@ -2,108 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 988B634B01
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:54:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0DE734B0B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:55:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727836AbfFDOyd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 10:54:33 -0400
-Received: from vps.xff.cz ([195.181.215.36]:35170 "EHLO vps.xff.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727586AbfFDOyd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 10:54:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1559660071; bh=95GYOgwl829tExfkDRtkMvcWLHLqIMDdOvd0ItQBRPA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lQ08PYzAowbpDALh/bdzfBKo2Glb31I+mPrDYyfuk3YUz7jUjP2TtF05N7MRU/ABy
-         ys6ZI84RcheuM7k2KhWKh1CcT2ElO9D+OfXrBtTR/YWsT7VFHVOTIUXA0gPdGnbJtF
-         tNWOQaooGXJWtgGvUEWRkvO6/e0ePeOF9ehbh9GQ=
-Date:   Tue, 4 Jun 2019 16:54:30 +0200
-From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
-To:     =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v3 03/12] media: rc: sunxi: Add A31 compatible
-Message-ID: <20190604145430.xqufpyosetgb4bo7@core.my.home>
-Mail-Followup-To: =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
-References: <20190528161440.27172-1-peron.clem@gmail.com>
- <20190528161440.27172-4-peron.clem@gmail.com>
+        id S1727855AbfFDOzR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 10:55:17 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44424 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727574AbfFDOzQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 10:55:16 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x54Ei7eE041491
+        for <linux-kernel@vger.kernel.org>; Tue, 4 Jun 2019 10:55:15 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2swtnw8g84-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 10:55:15 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Tue, 4 Jun 2019 15:55:13 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 4 Jun 2019 15:55:10 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x54Et8P259048174
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 4 Jun 2019 14:55:08 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B491BAE05D;
+        Tue,  4 Jun 2019 14:55:08 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6BECEAE051;
+        Tue,  4 Jun 2019 14:55:08 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.21])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue,  4 Jun 2019 14:55:08 +0000 (GMT)
+Date:   Tue, 4 Jun 2019 16:55:07 +0200
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH] s390: configs: Remove useless UEVENT_HELPER_PATH
+References: <1559635137-20900-1-git-send-email-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190528161440.27172-4-peron.clem@gmail.com>
+In-Reply-To: <1559635137-20900-1-git-send-email-krzk@kernel.org>
+X-TM-AS-GCONF: 00
+x-cbid: 19060414-0020-0000-0000-0000034515ED
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19060414-0021-0000-0000-000021981FF4
+Message-Id: <20190604145506.GF5774@osiris>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-04_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=321 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906040097
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 28, 2019 at 06:14:31PM +0200, Clément Péron wrote:
-> Allwiner A31 has a different memory mapping so add the compatible
-> we will need it later.
+On Tue, Jun 04, 2019 at 09:58:57AM +0200, Krzysztof Kozlowski wrote:
+> Remove the CONFIG_UEVENT_HELPER_PATH because:
+> 1. It is disabled since commit 1be01d4a5714 ("driver: base: Disable
+>    CONFIG_UEVENT_HELPER by default") as its dependency (UEVENT_HELPER) was
+>    made default to 'n',
+> 2. It is not recommended (help message: "This should not be used today
+>    [...] creates a high system load") and was kept only for ancient
+>    userland,
+> 3. Certain userland specifically requests it to be disabled (systemd
+>    README: "Legacy hotplug slows down the system and confuses udev").
 > 
-> Signed-off-by: Clément Péron <peron.clem@gmail.com>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->  drivers/media/rc/sunxi-cir.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/media/rc/sunxi-cir.c b/drivers/media/rc/sunxi-cir.c
-> index d02dcb6fd0a5..0504ebfc831f 100644
-> --- a/drivers/media/rc/sunxi-cir.c
-> +++ b/drivers/media/rc/sunxi-cir.c
-> @@ -343,6 +343,11 @@ static const struct sunxi_ir_quirks sun5i_a13_ir_quirks = {
->  	.fifo_size = 64,
->  };
->  
-> +static const struct sunxi_ir_quirks sun6i_a31_ir_quirks = {
-> +	.has_reset = true,
-> +	.fifo_size = 64,
-> +};
-> +
+>  arch/s390/configs/defconfig          | 1 -
+>  arch/s390/configs/zfcpdump_defconfig | 1 -
+>  2 files changed, 2 deletions(-)
 
-BTW, H6 BSP uses FIFO size 40:
+Applied, thanks.
 
-https://github.com/orangepi-xunlong/OrangePiH6_Linux4_9/blob/master/drivers/media/rc/sunxi-ir-dev.c#L290
-
-Have you tried filling the fifo with over 40 words on H6, to see if it works?
-
-I know it's docummented as having 64 words in the manual, so maybe Allwiner
-just didn't care enough to make the driver configurable, and the H6
-FIFO really has that depth.
-
-regards,
-	o.
-
->  static const struct of_device_id sunxi_ir_match[] = {
->  	{
->  		.compatible = "allwinner,sun4i-a10-ir",
-> @@ -352,6 +357,10 @@ static const struct of_device_id sunxi_ir_match[] = {
->  		.compatible = "allwinner,sun5i-a13-ir",
->  		.data = &sun5i_a13_ir_quirks,
->  	},
-> +	{
-> +		.compatible = "allwinner,sun6i-a31-ir",
-> +		.data = &sun6i_a31_ir_quirks,
-> +	},
->  	{}
->  };
->  MODULE_DEVICE_TABLE(of, sunxi_ir_match);
-> -- 
-> 2.20.1
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
