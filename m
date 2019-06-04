@@ -2,167 +2,261 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4132D34DDC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 18:42:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E275D34DDE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 18:42:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbfFDQmZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 12:42:25 -0400
-Received: from mail-eopbgr150130.outbound.protection.outlook.com ([40.107.15.130]:4014
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727482AbfFDQmZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 12:42:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
- s=selector1-nokia-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TgfJacl8xSAowGMqepIoTDjEhZqrOcuzr07TAyLK5LY=;
- b=hgR9eR80oeMl7LRtrOZRAJP4sicIqzSO5kfvyddFqxQ4Gjq8AGN0Q0ZL7h6DrbPPo7VjzlqmzESFOvcIolUjegrZmYhSndYzymDsld7qAEAsbp8IZFGPLs59dcO+yqnB2IKrS/6kVNGHbLkpDXUo0ux+RPe7MgBdY3yvDPsuKig=
-Received: from VI1PR07MB3165.eurprd07.prod.outlook.com (10.175.243.15) by
- VI1PR07MB4560.eurprd07.prod.outlook.com (20.177.56.205) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1965.4; Tue, 4 Jun 2019 16:42:21 +0000
-Received: from VI1PR07MB3165.eurprd07.prod.outlook.com
- ([fe80::1403:5377:c11d:a41a]) by VI1PR07MB3165.eurprd07.prod.outlook.com
- ([fe80::1403:5377:c11d:a41a%7]) with mapi id 15.20.1965.011; Tue, 4 Jun 2019
- 16:42:21 +0000
-From:   "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
-To:     "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Vas Dias <jason.vas.dias@gmail.com>
-Subject: [PATCH v2] x86/vdso: implement clock_gettime(CLOCK_MONOTONIC_RAW,
- ...)
-Thread-Topic: [PATCH v2] x86/vdso: implement
- clock_gettime(CLOCK_MONOTONIC_RAW, ...)
-Thread-Index: AQHVGvR6xh0mXQ5auk6Hqpq4T1roAg==
-Date:   Tue, 4 Jun 2019 16:42:20 +0000
-Message-ID: <20190604164117.22154-1-alexander.sverdlin@nokia.com>
-In-Reply-To: <alpine.DEB.2.21.1905281055240.1859@nanos.tec.linutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [131.228.32.181]
-x-mailer: git-send-email 2.21.0
-x-clientproxiedby: HE1PR0402CA0007.eurprd04.prod.outlook.com
- (2603:10a6:3:d0::17) To VI1PR07MB3165.eurprd07.prod.outlook.com
- (2603:10a6:802:21::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=alexander.sverdlin@nokia.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 51a009a2-581e-4cc1-8185-08d6e90b9cef
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR07MB4560;
-x-ms-traffictypediagnostic: VI1PR07MB4560:
-x-ms-exchange-purlcount: 2
-x-microsoft-antispam-prvs: <VI1PR07MB4560B778F41680D3CD40255B88150@VI1PR07MB4560.eurprd07.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 0058ABBBC7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(39860400002)(346002)(396003)(366004)(54534003)(189003)(199004)(11346002)(2906002)(305945005)(14444005)(66946007)(66556008)(66446008)(6486002)(86362001)(66476007)(256004)(8676002)(966005)(5660300002)(2501003)(36756003)(6506007)(486006)(99286004)(64756008)(186003)(6436002)(53936002)(386003)(14454004)(26005)(68736007)(52116002)(3846002)(6116002)(71190400001)(25786009)(6512007)(508600001)(6306002)(4326008)(8936002)(316002)(66066001)(102836004)(1076003)(50226002)(73956011)(81166006)(110136005)(54906003)(71200400001)(2616005)(7736002)(476003)(81156014);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR07MB4560;H:VI1PR07MB3165.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nokia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: EsGdnHPqTELWBCZY6tM4+kcADczWXaWhNM3kUohak7z3qDZWZZpzOV+XbBR+XOqmxrFbvPuWYJ1wOHAgIbN2h9ywewll2IXGlaIpR3TqZa0FYQ0XIhm5qFwzOPW8jmJXb7l1h3G6khOL+XcISrS0vj943bH0NzTe1W1tl2rMs270KMGKivsiBrEEitvEGn/JhHsKt6M0OZr7oMkJaRJc0l0NHqg+iThl+9t+zU3ePUQrfV5nFnAstylHnS5rX49wXOxWCNsngFfBSMumPXTpAP+SS3ATJ56j0gWoZjDF+pq7OSA+/6sibbnZKdOwS4CrsGBM1CcsqCLwOcQjv9v3sbkbxRz+lJCIMhSyEkCf/MVzIWW6sCJGTzJLJnpGC9l3x+xKAin+Duo5TIPzbHgGPPIoJ0pJUeEhaiaAEw2VfEA=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727927AbfFDQmv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 12:42:51 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51642 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727848AbfFDQmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 12:42:51 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id ABA292F8BE7;
+        Tue,  4 Jun 2019 16:42:45 +0000 (UTC)
+Received: from [10.40.205.182] (unknown [10.40.205.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 59EC052F9;
+        Tue,  4 Jun 2019 16:42:24 +0000 (UTC)
+Subject: Re: [RFC][Patch v10 1/2] mm: page_hinting: core infrastructure
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
+        pagupta@redhat.com, wei.w.wang@intel.com,
+        Yang Zhang <yang.zhang.wz@gmail.com>,
+        Rik van Riel <riel@surriel.com>,
+        David Hildenbrand <david@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>, dodgen@google.com,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>
+References: <20190603170306.49099-1-nitesh@redhat.com>
+ <20190603170306.49099-2-nitesh@redhat.com>
+ <CAKgT0Udnc_cmgBLFEZ5udexsc1cfjX1rJR3qQFOW-7bfuFh6gQ@mail.gmail.com>
+ <4cdfee20-126e-bc28-cf1c-2cfd484ca28e@redhat.com>
+ <CAKgT0Ud6uKpcj9HFHYOThCY=0_P0=quBLbsDR7uUMdbwcYeSTw@mail.gmail.com>
+ <09e6caea-7000-b3e4-d297-df6bea78e127@redhat.com>
+ <CAKgT0UeMpcckGpT6OnC2kqgtyT2p9bvNgE2C0eqW1GOJTU-DHA@mail.gmail.com>
+From:   Nitesh Narayan Lal <nitesh@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nitesh@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ VujM7c/b4pps
+Organization: Red Hat Inc,
+Message-ID: <13b96507-6347-1702-7822-6efb0f1bbf20@redhat.com>
+Date:   Tue, 4 Jun 2019 12:42:21 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 51a009a2-581e-4cc1-8185-08d6e90b9cef
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jun 2019 16:42:20.8916
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: alexander.sverdlin@nokia.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR07MB4560
+In-Reply-To: <CAKgT0UeMpcckGpT6OnC2kqgtyT2p9bvNgE2C0eqW1GOJTU-DHA@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="jf1umoW1bcFaPAaBAQpdkCcXl2MICRVIC"
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 04 Jun 2019 16:42:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogQWxleGFuZGVyIFN2ZXJkbGluIDxhbGV4YW5kZXIuc3ZlcmRsaW5Abm9raWEuY29tPg0K
-DQpBZGQgQ0xPQ0tfTU9OT1RPTklDX1JBVyB0byB0aGUgZXhpc3RpbmcgY2xvY2tfZ2V0dGltZSgp
-IHZEU08NCmltcGxlbWVudGF0aW9uLiBUaGlzIGlzIGJhc2VkIG9uIHRoZSBpZGVhcyBvZiBKYXNv
-biBWYXMgRGlhcyBhbmQgY29tbWVudHMNCm9mIFRob21hcyBHbGVpeG5lci4NCg0KLS0tLSBUZXN0
-IGNvZGUgLS0tLQ0KICNpbmNsdWRlIDxlcnJuby5oPg0KICNpbmNsdWRlIDxzdGRpby5oPg0KICNp
-bmNsdWRlIDxzdGRsaWIuaD4NCiAjaW5jbHVkZSA8dGltZS5oPg0KICNpbmNsdWRlIDx1bmlzdGQu
-aD4NCg0KICNkZWZpbmUgQ0xPQ0tfVFlQRSBDTE9DS19NT05PVE9OSUNfUkFXDQogI2RlZmluZSBE
-VVJBVElPTl9TRUMgMTANCg0KaW50IG1haW4oaW50IGFyZ2MsIGNoYXIgKiphcmd2KQ0Kew0KCXN0
-cnVjdCB0aW1lc3BlYyB0LCBlbmQ7DQoJdW5zaWduZWQgbG9uZyBsb25nIGNudCA9IDA7DQoNCglj
-bG9ja19nZXR0aW1lKENMT0NLX1RZUEUsICZlbmQpOw0KCWVuZC50dl9zZWMgKz0gRFVSQVRJT05f
-U0VDOw0KDQoJZG8gew0KCQljbG9ja19nZXR0aW1lKENMT0NLX1RZUEUsICZ0KTsNCgkJKytjbnQ7
-DQoJfSB3aGlsZSAodC50dl9zZWMgPCBlbmQudHZfc2VjIHx8IHQudHZfbnNlYyA8IGVuZC50dl9u
-c2VjKTsNCg0KCWRwcmludGYoU1RET1VUX0ZJTEVOTywgIiVsbHUiLCBjbnQpOw0KDQoJcmV0dXJu
-IEVYSVRfU1VDQ0VTUzsNCn0NCi0tLS0tLS0tLS0tLS0tLS0tLS0NCg0KVGhlIHJlc3VsdHMgZnJv
-bSB0aGUgYWJvdmUgdGVzdCBwcm9ncmFtOg0KDQpDbG9jayAgICAgICAgICAgICAgICAgICBCZWZv
-cmUgIEFmdGVyICAgRGlmZg0KLS0tLS0gICAgICAgICAgICAgICAgICAgLS0tLS0tICAtLS0tLSAg
-IC0tLS0NCkNMT0NLX01PTk9UT05JQyAgICAgICAgIDM1NS41TSAgMzU1LjVNDQpDTE9DS19NT05P
-VE9OSUNfUkFXICAgICAgNDQuOU0gIDM3MS4yTSAgKzcyNiUNCkNMT0NLX1JFQUxUSU1FICAgICAg
-ICAgIDM1NS41TSAgMzU1LjVNDQoNCkxpbms6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL3BhdGNo
-d29yay9wYXRjaC85MzM1ODMvDQpMaW5rOiBodHRwczovL2J1Z3ppbGxhLmtlcm5lbC5vcmcvc2hv
-d19idWcuY2dpP2lkPTE5ODk2MQ0KQ2M6IFRob21hcyBHbGVpeG5lciA8dGdseEBsaW51dHJvbml4
-LmRlPg0KQ2M6IEphc29uIFZhcyBEaWFzIDxqYXNvbi52YXMuZGlhc0BnbWFpbC5jb20+DQpTaWdu
-ZWQtb2ZmLWJ5OiBBbGV4YW5kZXIgU3ZlcmRsaW4gPGFsZXhhbmRlci5zdmVyZGxpbkBub2tpYS5j
-b20+DQotLS0NCkNoYW5nZWxvZzoNCnYyOiBjb3B5IGRvX2hyZXMoKSBpbnRvIGRvX21vbm90b25p
-Y19yYXcoKQ0KDQogYXJjaC94ODYvZW50cnkvdmRzby92Y2xvY2tfZ2V0dGltZS5jICAgIHwgMzUg
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQogYXJjaC94ODYvZW50cnkvdnN5c2Nh
-bGwvdnN5c2NhbGxfZ3RvZC5jIHwgIDYgKysrKysrDQogYXJjaC94ODYvaW5jbHVkZS9hc20vdmd0
-b2QuaCAgICAgICAgICAgIHwgIDIgKysNCiAzIGZpbGVzIGNoYW5nZWQsIDQzIGluc2VydGlvbnMo
-KykNCg0KZGlmZiAtLWdpdCBhL2FyY2gveDg2L2VudHJ5L3Zkc28vdmNsb2NrX2dldHRpbWUuYyBi
-L2FyY2gveDg2L2VudHJ5L3Zkc28vdmNsb2NrX2dldHRpbWUuYw0KaW5kZXggMGY4MmE3MC4uNjQ3
-MzZhNCAxMDA2NDQNCi0tLSBhL2FyY2gveDg2L2VudHJ5L3Zkc28vdmNsb2NrX2dldHRpbWUuYw0K
-KysrIGIvYXJjaC94ODYvZW50cnkvdmRzby92Y2xvY2tfZ2V0dGltZS5jDQpAQCAtMTY4LDYgKzE2
-OCwzOSBAQCBub3RyYWNlIHN0YXRpYyBpbnQgZG9faHJlcyhjbG9ja2lkX3QgY2xrLCBzdHJ1Y3Qg
-dGltZXNwZWMgKnRzKQ0KIAlyZXR1cm4gMDsNCiB9DQogDQorLyoNCisgKiBBdHRlbXB0cyB0byBt
-ZXJnZSB0aGUgYmVsb3cgY29weSB3aXRoIHRoZSBhYm92ZSByb3V0aW5lIGxlZCB0byA1JSBwZXJm
-b3JtYW5jZQ0KKyAqIGRyb3AgKENMT0NLX01PTk9UT05JQywgQ0xPQ0tfUkVBTFRJTUUpIHVwIHRv
-IG5vdy4gVGVzdCBiZWZvcmUgbWFraW5nIGNoYW5nZXMuDQorICovDQorbm90cmFjZSBzdGF0aWMg
-aW50IGRvX21vbm90b25pY19yYXcoc3RydWN0IHRpbWVzcGVjICp0cykNCit7DQorCXN0cnVjdCB2
-Z3RvZF90cyAqYmFzZSA9ICZndG9kLT5iYXNldGltZVtDTE9DS19NT05PVE9OSUNfUkFXXTsNCisJ
-dTY0IGN5Y2xlcywgbGFzdCwgc2VjLCBuczsNCisJdW5zaWduZWQgaW50IHNlcTsNCisNCisJZG8g
-ew0KKwkJc2VxID0gZ3RvZF9yZWFkX2JlZ2luKGd0b2QpOw0KKwkJY3ljbGVzID0gdmdldGN5Yyhn
-dG9kLT52Y2xvY2tfbW9kZSk7DQorCQlucyA9IGJhc2UtPm5zZWM7DQorCQlsYXN0ID0gZ3RvZC0+
-Y3ljbGVfbGFzdDsNCisJCWlmICh1bmxpa2VseSgoczY0KWN5Y2xlcyA8IDApKQ0KKwkJCXJldHVy
-biB2ZHNvX2ZhbGxiYWNrX2dldHRpbWUoQ0xPQ0tfTU9OT1RPTklDX1JBVywgdHMpOw0KKwkJaWYg
-KGN5Y2xlcyA+IGxhc3QpDQorCQkJbnMgKz0gKGN5Y2xlcyAtIGxhc3QpICogZ3RvZC0+cmF3X211
-bHQ7DQorCQlucyA+Pj0gZ3RvZC0+cmF3X3NoaWZ0Ow0KKwkJc2VjID0gYmFzZS0+c2VjOw0KKwl9
-IHdoaWxlICh1bmxpa2VseShndG9kX3JlYWRfcmV0cnkoZ3RvZCwgc2VxKSkpOw0KKw0KKwkvKg0K
-KwkgKiBEbyB0aGlzIG91dHNpZGUgdGhlIGxvb3A6IGEgcmFjZSBpbnNpZGUgdGhlIGxvb3AgY291
-bGQgcmVzdWx0DQorCSAqIGluIF9faXRlcl9kaXZfdTY0X3JlbSgpIGJlaW5nIGV4dHJlbWVseSBz
-bG93Lg0KKwkgKi8NCisJdHMtPnR2X3NlYyA9IHNlYyArIF9faXRlcl9kaXZfdTY0X3JlbShucywg
-TlNFQ19QRVJfU0VDLCAmbnMpOw0KKwl0cy0+dHZfbnNlYyA9IG5zOw0KKw0KKwlyZXR1cm4gMDsN
-Cit9DQorDQogbm90cmFjZSBzdGF0aWMgdm9pZCBkb19jb2Fyc2UoY2xvY2tpZF90IGNsaywgc3Ry
-dWN0IHRpbWVzcGVjICp0cykNCiB7DQogCXN0cnVjdCB2Z3RvZF90cyAqYmFzZSA9ICZndG9kLT5i
-YXNldGltZVtjbGtdOw0KQEAgLTE5OSw2ICsyMzIsOCBAQCBub3RyYWNlIGludCBfX3Zkc29fY2xv
-Y2tfZ2V0dGltZShjbG9ja2lkX3QgY2xvY2ssIHN0cnVjdCB0aW1lc3BlYyAqdHMpDQogCQlkb19j
-b2Fyc2UoY2xvY2ssIHRzKTsNCiAJCXJldHVybiAwOw0KIAl9DQorCWlmIChjbG9jayA9PSBDTE9D
-S19NT05PVE9OSUNfUkFXKQ0KKwkJcmV0dXJuIGRvX21vbm90b25pY19yYXcodHMpOw0KIAlyZXR1
-cm4gdmRzb19mYWxsYmFja19nZXR0aW1lKGNsb2NrLCB0cyk7DQogfQ0KIA0KZGlmZiAtLWdpdCBh
-L2FyY2gveDg2L2VudHJ5L3ZzeXNjYWxsL3ZzeXNjYWxsX2d0b2QuYyBiL2FyY2gveDg2L2VudHJ5
-L3ZzeXNjYWxsL3ZzeXNjYWxsX2d0b2QuYw0KaW5kZXggY2ZjZGJhMC4uOWY3NzQ0ZjMgMTAwNjQ0
-DQotLS0gYS9hcmNoL3g4Ni9lbnRyeS92c3lzY2FsbC92c3lzY2FsbF9ndG9kLmMNCisrKyBiL2Fy
-Y2gveDg2L2VudHJ5L3ZzeXNjYWxsL3ZzeXNjYWxsX2d0b2QuYw0KQEAgLTQ2LDYgKzQ2LDggQEAg
-dm9pZCB1cGRhdGVfdnN5c2NhbGwoc3RydWN0IHRpbWVrZWVwZXIgKnRrKQ0KIAl2ZGF0YS0+bWFz
-awkJPSB0ay0+dGtyX21vbm8ubWFzazsNCiAJdmRhdGEtPm11bHQJCT0gdGstPnRrcl9tb25vLm11
-bHQ7DQogCXZkYXRhLT5zaGlmdAkJPSB0ay0+dGtyX21vbm8uc2hpZnQ7DQorCXZkYXRhLT5yYXdf
-bXVsdAkJPSB0ay0+dGtyX3Jhdy5tdWx0Ow0KKwl2ZGF0YS0+cmF3X3NoaWZ0CT0gdGstPnRrcl9y
-YXcuc2hpZnQ7DQogDQogCWJhc2UgPSAmdmRhdGEtPmJhc2V0aW1lW0NMT0NLX1JFQUxUSU1FXTsN
-CiAJYmFzZS0+c2VjID0gdGstPnh0aW1lX3NlYzsNCkBAIC02NSw2ICs2NywxMCBAQCB2b2lkIHVw
-ZGF0ZV92c3lzY2FsbChzdHJ1Y3QgdGltZWtlZXBlciAqdGspDQogCX0NCiAJYmFzZS0+bnNlYyA9
-IG5zZWM7DQogDQorCWJhc2UgPSAmdmRhdGEtPmJhc2V0aW1lW0NMT0NLX01PTk9UT05JQ19SQVdd
-Ow0KKwliYXNlLT5zZWMgPSB0ay0+cmF3X3NlYzsNCisJYmFzZS0+bnNlYyA9IHRrLT50a3JfcmF3
-Lnh0aW1lX25zZWM7DQorDQogCWJhc2UgPSAmdmRhdGEtPmJhc2V0aW1lW0NMT0NLX1JFQUxUSU1F
-X0NPQVJTRV07DQogCWJhc2UtPnNlYyA9IHRrLT54dGltZV9zZWM7DQogCWJhc2UtPm5zZWMgPSB0
-ay0+dGtyX21vbm8ueHRpbWVfbnNlYyA+PiB0ay0+dGtyX21vbm8uc2hpZnQ7DQpkaWZmIC0tZ2l0
-IGEvYXJjaC94ODYvaW5jbHVkZS9hc20vdmd0b2QuaCBiL2FyY2gveDg2L2luY2x1ZGUvYXNtL3Zn
-dG9kLmgNCmluZGV4IDkxM2ExMzMuLjY1YWMzMjAgMTAwNjQ0DQotLS0gYS9hcmNoL3g4Ni9pbmNs
-dWRlL2FzbS92Z3RvZC5oDQorKysgYi9hcmNoL3g4Ni9pbmNsdWRlL2FzbS92Z3RvZC5oDQpAQCAt
-NDMsNiArNDMsOCBAQCBzdHJ1Y3QgdnN5c2NhbGxfZ3RvZF9kYXRhIHsNCiAJdTY0CQltYXNrOw0K
-IAl1MzIJCW11bHQ7DQogCXUzMgkJc2hpZnQ7DQorCXUzMgkJcmF3X211bHQ7DQorCXUzMgkJcmF3
-X3NoaWZ0Ow0KIA0KIAlzdHJ1Y3Qgdmd0b2RfdHMJYmFzZXRpbWVbVkdUT0RfQkFTRVNdOw0KIA0K
-LS0gDQoyLjQuNg0KDQo=
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--jf1umoW1bcFaPAaBAQpdkCcXl2MICRVIC
+Content-Type: multipart/mixed; boundary="hDVCrsXT6XY2ZnqUvudAAxDzhZ69HDqzd";
+ protected-headers="v1"
+From: Nitesh Narayan Lal <nitesh@redhat.com>
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: kvm list <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ linux-mm <linux-mm@kvack.org>, Paolo Bonzini <pbonzini@redhat.com>,
+ lcapitulino@redhat.com, pagupta@redhat.com, wei.w.wang@intel.com,
+ Yang Zhang <yang.zhang.wz@gmail.com>, Rik van Riel <riel@surriel.com>,
+ David Hildenbrand <david@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+ dodgen@google.com, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+ dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>
+Message-ID: <13b96507-6347-1702-7822-6efb0f1bbf20@redhat.com>
+Subject: Re: [RFC][Patch v10 1/2] mm: page_hinting: core infrastructure
+References: <20190603170306.49099-1-nitesh@redhat.com>
+ <20190603170306.49099-2-nitesh@redhat.com>
+ <CAKgT0Udnc_cmgBLFEZ5udexsc1cfjX1rJR3qQFOW-7bfuFh6gQ@mail.gmail.com>
+ <4cdfee20-126e-bc28-cf1c-2cfd484ca28e@redhat.com>
+ <CAKgT0Ud6uKpcj9HFHYOThCY=0_P0=quBLbsDR7uUMdbwcYeSTw@mail.gmail.com>
+ <09e6caea-7000-b3e4-d297-df6bea78e127@redhat.com>
+ <CAKgT0UeMpcckGpT6OnC2kqgtyT2p9bvNgE2C0eqW1GOJTU-DHA@mail.gmail.com>
+In-Reply-To: <CAKgT0UeMpcckGpT6OnC2kqgtyT2p9bvNgE2C0eqW1GOJTU-DHA@mail.gmail.com>
+
+--hDVCrsXT6XY2ZnqUvudAAxDzhZ69HDqzd
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+
+
+On 6/4/19 12:25 PM, Alexander Duyck wrote:
+> On Tue, Jun 4, 2019 at 9:08 AM Nitesh Narayan Lal <nitesh@redhat.com> w=
+rote:
+>>
+>> On 6/4/19 11:14 AM, Alexander Duyck wrote:
+>>> On Tue, Jun 4, 2019 at 5:55 AM Nitesh Narayan Lal <nitesh@redhat.com>=
+ wrote:
+>>>> On 6/3/19 3:04 PM, Alexander Duyck wrote:
+>>>>> On Mon, Jun 3, 2019 at 10:04 AM Nitesh Narayan Lal <nitesh@redhat.c=
+om> wrote:
+>>>>>> This patch introduces the core infrastructure for free page hintin=
+g in
+>>>>>> virtual environments. It enables the kernel to track the free page=
+s which
+>>>>>> can be reported to its hypervisor so that the hypervisor could
+>>>>>> free and reuse that memory as per its requirement.
+>>>>>>
+>>>>>> While the pages are getting processed in the hypervisor (e.g.,
+>>>>>> via MADV_FREE), the guest must not use them, otherwise, data loss
+>>>>>> would be possible. To avoid such a situation, these pages are
+>>>>>> temporarily removed from the buddy. The amount of pages removed
+>>>>>> temporarily from the buddy is governed by the backend(virtio-ballo=
+on
+>>>>>> in our case).
+>>>>>>
+>>>>>> To efficiently identify free pages that can to be hinted to the
+>>>>>> hypervisor, bitmaps in a coarse granularity are used. Only fairly =
+big
+>>>>>> chunks are reported to the hypervisor - especially, to not break u=
+p THP
+>>>>>> in the hypervisor - "MAX_ORDER - 2" on x86, and to save space. The=
+ bits
+>>>>>> in the bitmap are an indication whether a page *might* be free, no=
+t a
+>>>>>> guarantee. A new hook after buddy merging sets the bits.
+>>>>>>
+>>>>>> Bitmaps are stored per zone, protected by the zone lock. A workque=
+ue
+>>>>>> asynchronously processes the bitmaps, trying to isolate and report=
+ pages
+>>>>>> that are still free. The backend (virtio-balloon) is responsible f=
+or
+>>>>>> reporting these batched pages to the host synchronously. Once repo=
+rting/
+>>>>>> freeing is complete, isolated pages are returned back to the buddy=
+=2E
+>>>>>>
+>>>>>> There are still various things to look into (e.g., memory hotplug,=
+ more
+>>>>>> efficient locking, possible races when disabling).
+>>>>>>
+>>>>>> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>
+>>>>> So one thing I had thought about, that I don't believe that has bee=
+n
+>>>>> addressed in your solution, is to determine a means to guarantee
+>>>>> forward progress. If you have a noisy thread that is allocating and=
+
+>>>>> freeing some block of memory repeatedly you will be stuck processin=
+g
+>>>>> that and cannot get to the other work. Specifically if you have a z=
+one
+>>>>> where somebody is just cycling the number of pages needed to fill y=
+our
+>>>>> hinting queue how do you get around it and get to the data that is
+>>>>> actually code instead of getting stuck processing the noise?
+>>>> It should not matter. As every time the memory threshold is met, ent=
+ire
+>>>> bitmap
+>>>> is scanned and not just a chunk of memory for possible isolation. Th=
+is
+>>>> will guarantee
+>>>> forward progress.
+>>> So I think there may still be some issues. I see how you go from the
+>>> start to the end, but how to you loop back to the start again as page=
+s
+>>> are added? The init_hinting_wq doesn't seem to have a way to get back=
+
+>>> to the start again if there is still work to do after you have
+>>> completed your pass without queue_work_on firing off another thread.
+>>>
+>> That will be taken care as the part of a new job, which will be
+>> en-queued as soon
+>> as the free memory count for the respective zone will reach the thresh=
+old.
+> So does that mean that you have multiple threads all calling
+> queue_work_on until you get below the threshold?
+Every time a page of order MAX_ORDER - 2 is added to the buddy, free
+memory count will be incremented if the bit is not already set and its
+value will be checked against the threshold.
+>  If so it seems like
+> that would get expensive since that is an atomic test and set
+> operation that would be hammered until you get below that threshold.
+
+Not sure if I understood "until you get below that threshold".
+Can you please explain?
+test_and_set_bit() will be called every time a page with MAX_ORDER -2
+order is added to the buddy. (Not already hinted)
+
+
+--=20
+Regards
+Nitesh
+
+
+--hDVCrsXT6XY2ZnqUvudAAxDzhZ69HDqzd--
+
+--jf1umoW1bcFaPAaBAQpdkCcXl2MICRVIC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEkXcoRVGaqvbHPuAGo4ZA3AYyozkFAlz2n20ACgkQo4ZA3AYy
+ozmdDRAAk+lwKdGjRKO3i+yCypPjo6aKDjJ5F4vchzVyvZ8mswaTucpjf3YbljB9
+n3FDj0nRISWOuk7ySVX/xFPBAWqWvIpb5HKCp/2ciK2uxuGBSnzpxSvyRQ2uSxmS
+fiegjiI3D2IPn6xFi6e5/Jt1zl1xz6W+DSfRHubRYU9nTiEpKzvSZ/DRC+CgUt8f
+5A/F8Am+iKV1SCcwU/V0jp3T+w3Pj/qS/RwVm0l45aVc+f64nd008jzLWRo+XCTH
+Su2Q9w/6jztle6XPkxWq9JkZT3BZzKfDyrX2KdmWjdPvpTkx9lUUTlha/ly4FkW8
+H+H0DSZLR+KRlZb1YF7qUtzzMBDstNFGr8QWwEJ2y7bSjwZ1HPut3DTudGlfwcja
+FL1bXALqy1KDN019sK+8Xiy4j/eZMxzpWBFoo1k8aB4x/OZDHH65Vxr67DshAfEf
+k5hso0+j1mUqIzEWqaLiNd4lSs46cfJEB7oVrfLUKdZDE22eS6OP73LMnYM1ooAh
+fygV+Ii0Iv4TLdevo23E83VKfdWJVY3n6jXqJwZLwoGxLUGKReRNbNREE7an6UjG
+xUulUGbH7TKrGq0RAIMCojAiVg+Er4JQlOzLsopuup56gsUrFJNrKvSUPCX4gJKJ
+Jbrq1bh0zkfV1QMl/2Nll1MGr6oaIt/Lyb+iUfzHGB6zCYXUelg=
+=RfpA
+-----END PGP SIGNATURE-----
+
+--jf1umoW1bcFaPAaBAQpdkCcXl2MICRVIC--
