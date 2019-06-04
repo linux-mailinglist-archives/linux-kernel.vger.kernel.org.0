@@ -2,222 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2253634E5C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 19:08:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F04E34E77
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 19:11:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728231AbfFDRI1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 13:08:27 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51251 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728178AbfFDRIZ (ORCPT
+        id S1728122AbfFDRKq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 13:10:46 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:65097 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727741AbfFDRKp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 13:08:25 -0400
-Received: by mail-wm1-f68.google.com with SMTP id f10so860944wmb.1;
-        Tue, 04 Jun 2019 10:08:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=7zg3SCsT162YAfVm5nLpLdKqn9whSCY1Rxht1S/nNIc=;
-        b=lphz+S+pGCbT0+iqVrqyPvQITYKN9lukFxUjmcarBbRbf/B4bVKLcoNd3cDFLOfqsU
-         sOSP2YrjhxAEWC6YrVyy3i5FwxQb5/IGQBcaL9/SWJHt9OS5W1sE7HfGBWPAZGWFO6P5
-         wxrNXoXZdUpqr3vOQV0NpALMQfP16X/O/jZBh586AI/J93fsxnSCsilRx3GG2TRSZXSl
-         txYl5YbzEpI+XaJDSVDVK3r+R9b3dAykUk5F7CRi5GZpCz1rkyujHtCXNjZWisvDENIh
-         wzuZkp+zTd+UubNJkQYOhY9UMpORRTC5YHFhNZ5lLAt877Cj5HuUylySoNZu99CX+C3G
-         Ffbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=7zg3SCsT162YAfVm5nLpLdKqn9whSCY1Rxht1S/nNIc=;
-        b=jaw29EioBGChdmeQl+7foJhqw9spb5OO7k6N+stHIdGoH0dxtLV1LZLeW22VIQ46Sb
-         G8tBCeXxBD/pwNmFvgoRwLbh6latQm4PDYjFSfgvScyQy6BDFY2STBR5sqUXae1cHEmx
-         bRNXGjNzLf/sXhIWuJn4xKPZ+xhu1QTT6Sewz16j8j6jMhOsWwn0yoxGVq/9szSXq5mX
-         dVczx/4VvbAIuf5LNHJCSNczv/JyZmdahy1lo+TJSrpJKu615tkjW2r6tGkYaYH5EwD+
-         +QP37HBcsbP59MRRzzYsDjKA1Sfkfome359MMsHXXhTs0b6/KPvVmU6EXJ/oIaq/6tjH
-         a1dQ==
-X-Gm-Message-State: APjAAAXRD/qeCBCKGhMBbQlXBteEO4tV53gbw9CKP1ZsXcp/lL2usLqZ
-        k/43uxMIigP3VoV+7NFwJMY=
-X-Google-Smtp-Source: APXvYqyQmg30bVeekL1yFvpn+MZnwWUEaXbtvC9Ldzb9cSajOdwJOYlhLDiTXQ9zvedxL3KUJVIYmQ==
-X-Received: by 2002:a1c:cc19:: with SMTP id h25mr6778570wmb.167.1559668102205;
-        Tue, 04 Jun 2019 10:08:22 -0700 (PDT)
-Received: from localhost.localdomain ([86.121.27.188])
-        by smtp.gmail.com with ESMTPSA id f2sm19692218wme.12.2019.06.04.10.08.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Jun 2019 10:08:21 -0700 (PDT)
-From:   Vladimir Oltean <olteanv@gmail.com>
-To:     f.fainelli@gmail.com, vivien.didelot@gmail.com, andrew@lunn.ch,
-        davem@davemloft.net, richardcochran@gmail.com,
-        john.stultz@linaro.org, tglx@linutronix.de, sboyd@kernel.org
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        Vladimir Oltean <olteanv@gmail.com>
-Subject: [PATCH v3 net-next 17/17] net: dsa: sja1105: Expose PTP timestamping ioctls to userspace
-Date:   Tue,  4 Jun 2019 20:07:56 +0300
-Message-Id: <20190604170756.14338-18-olteanv@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190604170756.14338-1-olteanv@gmail.com>
-References: <20190604170756.14338-1-olteanv@gmail.com>
+        Tue, 4 Jun 2019 13:10:45 -0400
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id x54HAYxP020362;
+        Wed, 5 Jun 2019 02:10:35 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x54HAYxP020362
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1559668235;
+        bh=Slc2+gHJC0ncTFXH2S6Mwj/lCFnEVr0lILMPCaAZeVU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=dMM7dIuCDTtFuJYIcBXPrAo2ayPwD/SeTz8zIdx6XoJFP0nkzZRaxcAEwFCSw+Hdg
+         ytMwqSC9ql8swH2IzRcrr+Z+IuiR0GYXP+ROfkxx9tesIeV+aUk7h4ngXM4c//uZyl
+         l98Bs9QO1DQHpGiw3ETwnoLU42/Pr+CbTcT+VTAjca41Rr5EyD08OuLluWfYbVG9Z8
+         5WvQGLTU+nc4kAyAd1NEc9AkD1gNn7Yn0CC/esdboGyImfWVRIrxLSD21yT2SbYD9B
+         QjSacYi20r+DZg9GtGsBrZqK/Q78cR48YWICbPjwRGihlzun7JrFcjevXkDsAEyjFr
+         kewch354dLjkA==
+X-Nifty-SrcIP: [209.85.222.45]
+Received: by mail-ua1-f45.google.com with SMTP id v18so2077486uad.12;
+        Tue, 04 Jun 2019 10:10:35 -0700 (PDT)
+X-Gm-Message-State: APjAAAU+y1Wv871PCkcxj6d0Rb8c26JqeWgb0xNW/KjPpbv084sR5dyH
+        6LjmpS7+1ZL9sDJ+jrPcuO4w5fcokBrQwxd7ivw=
+X-Google-Smtp-Source: APXvYqzuL8SXnYQrdgrAutUkMcCFO90NLosfUu2gibEtX3OXVNh6UM5LCCazY92IJ91iFAITTHzqRNMUrKeix3/xVuU=
+X-Received: by 2002:ab0:4a11:: with SMTP id q17mr15111205uae.25.1559668233986;
+ Tue, 04 Jun 2019 10:10:33 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190529080434.1409-1-malat@debian.org>
+In-Reply-To: <20190529080434.1409-1-malat@debian.org>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 5 Jun 2019 02:09:58 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT7tdqVzbo0Un6mZfKoVGMpVtXAh=UakjOLOqY-pr8V0g@mail.gmail.com>
+Message-ID: <CAK7LNAT7tdqVzbo0Un6mZfKoVGMpVtXAh=UakjOLOqY-pr8V0g@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: Remove -Waggregate-return from scripts/Makefile.extrawarn
+To:     Mathieu Malaterre <malat@debian.org>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This enables the PTP support towards userspace applications such as
-linuxptp.
+On Wed, May 29, 2019 at 5:16 PM Mathieu Malaterre <malat@debian.org> wrote:
+>
+> It makes little sense to pass -Waggregate-return these days since large
+> part of the linux kernel rely on returning struct(s). For instance:
+>
+>   ../include/linux/timekeeping.h: In function 'show_uptime':
+>   ../include/linux/ktime.h:91:34: error: function call has aggregate value [-Werror=aggregate-return]
+>    #define ktime_to_timespec64(kt)  ns_to_timespec64((kt))
+>                                     ^~~~~~~~~~~~~~~~~~~~~~
+>   ../include/linux/timekeeping.h:166:8: note: in expansion of macro 'ktime_to_timespec64'
+>     *ts = ktime_to_timespec64(ktime_get_coarse_boottime());
+>
+> Remove this warning from W=2 completely.
+>
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> ---
 
-The switches can timestamp only trapped multicast MAC frames, and
-therefore only the profiles of 1588 over L2 are supported.
+Applied to linux-kbuild. Thanks.
 
-TX timestamping can be enabled per port, but RX timestamping is enabled
-globally. As long as RX timestamping is enabled, the switch will emit
-metadata follow-up frames that will be processed by the tagger. It may
-be a problem that linuxptp does not restore the RX timestamping settings
-when exiting.
 
-Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
----
-Changes in v3:
 
-Split from previous 09/10 patch (no functional changes).
+>  scripts/Makefile.extrawarn | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
+> index 3ab8d1a303cd..98081ab300e5 100644
+> --- a/scripts/Makefile.extrawarn
+> +++ b/scripts/Makefile.extrawarn
+> @@ -34,7 +34,6 @@ warning-1 += $(call cc-option, -Wstringop-truncation)
+>  warning-1 += -Wno-missing-field-initializers
+>  warning-1 += -Wno-sign-compare
+>
+> -warning-2 := -Waggregate-return
+>  warning-2 += -Wcast-align
+>  warning-2 += -Wdisabled-optimization
+>  warning-2 += -Wnested-externs
+> --
+> 2.20.1
+>
 
-Changes in v2:
 
-None.
-
- drivers/net/dsa/sja1105/sja1105_main.c | 96 ++++++++++++++++++++++++++
- drivers/net/dsa/sja1105/sja1105_ptp.c  |  6 +-
- 2 files changed, 100 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/dsa/sja1105/sja1105_main.c b/drivers/net/dsa/sja1105/sja1105_main.c
-index 46a851f54b83..b68136c002bb 100644
---- a/drivers/net/dsa/sja1105/sja1105_main.c
-+++ b/drivers/net/dsa/sja1105/sja1105_main.c
-@@ -1755,6 +1755,100 @@ static int sja1105_set_ageing_time(struct dsa_switch *ds,
- 	return sja1105_static_config_reload(priv);
- }
- 
-+/* Caller must hold priv->tagger_data.meta_lock */
-+static int sja1105_change_rxtstamping(struct sja1105_private *priv,
-+				      bool on)
-+{
-+	struct sja1105_general_params_entry *general_params;
-+	struct sja1105_table *table;
-+	int rc;
-+
-+	table = &priv->static_config.tables[BLK_IDX_GENERAL_PARAMS];
-+	general_params = table->entries;
-+	general_params->send_meta1 = on;
-+	general_params->send_meta0 = on;
-+
-+	rc = sja1105_init_avb_params(priv, on);
-+	if (rc < 0)
-+		return rc;
-+
-+	/* Initialize the meta state machine to a known state */
-+	if (priv->tagger_data.stampable_skb) {
-+		kfree_skb(priv->tagger_data.stampable_skb);
-+		priv->tagger_data.stampable_skb = NULL;
-+	}
-+
-+	return sja1105_static_config_reload(priv);
-+}
-+
-+static int sja1105_hwtstamp_set(struct dsa_switch *ds, int port,
-+				struct ifreq *ifr)
-+{
-+	struct sja1105_private *priv = ds->priv;
-+	struct hwtstamp_config config;
-+	bool rx_on;
-+	int rc;
-+
-+	if (copy_from_user(&config, ifr->ifr_data, sizeof(config)))
-+		return -EFAULT;
-+
-+	switch (config.tx_type) {
-+	case HWTSTAMP_TX_OFF:
-+		priv->ports[port].hwts_tx_en = false;
-+		break;
-+	case HWTSTAMP_TX_ON:
-+		priv->ports[port].hwts_tx_en = true;
-+		break;
-+	default:
-+		return -ERANGE;
-+	}
-+
-+	switch (config.rx_filter) {
-+	case HWTSTAMP_FILTER_NONE:
-+		rx_on = false;
-+		break;
-+	default:
-+		rx_on = true;
-+		break;
-+	}
-+
-+	if (rx_on != priv->tagger_data.hwts_rx_en) {
-+		spin_lock(&priv->tagger_data.meta_lock);
-+		rc = sja1105_change_rxtstamping(priv, rx_on);
-+		spin_unlock(&priv->tagger_data.meta_lock);
-+		if (rc < 0) {
-+			dev_err(ds->dev,
-+				"Failed to change RX timestamping: %d\n", rc);
-+			return -EFAULT;
-+		}
-+		priv->tagger_data.hwts_rx_en = rx_on;
-+	}
-+
-+	if (copy_to_user(ifr->ifr_data, &config, sizeof(config)))
-+		return -EFAULT;
-+	return 0;
-+}
-+
-+static int sja1105_hwtstamp_get(struct dsa_switch *ds, int port,
-+				struct ifreq *ifr)
-+{
-+	struct sja1105_private *priv = ds->priv;
-+	struct hwtstamp_config config;
-+
-+	config.flags = 0;
-+	if (priv->ports[port].hwts_tx_en)
-+		config.tx_type = HWTSTAMP_TX_ON;
-+	else
-+		config.tx_type = HWTSTAMP_TX_OFF;
-+	if (priv->tagger_data.hwts_rx_en)
-+		config.rx_filter = HWTSTAMP_FILTER_PTP_V2_L2_EVENT;
-+	else
-+		config.rx_filter = HWTSTAMP_FILTER_NONE;
-+
-+	return copy_to_user(ifr->ifr_data, &config, sizeof(config)) ?
-+		-EFAULT : 0;
-+}
-+
- #define to_tagger(d) \
- 	container_of((d), struct sja1105_tagger_data, rxtstamp_work)
- #define to_sja1105(d) \
-@@ -1850,6 +1944,8 @@ static const struct dsa_switch_ops sja1105_switch_ops = {
- 	.port_mdb_add		= sja1105_mdb_add,
- 	.port_mdb_del		= sja1105_mdb_del,
- 	.port_deferred_xmit	= sja1105_port_deferred_xmit,
-+	.port_hwtstamp_get	= sja1105_hwtstamp_get,
-+	.port_hwtstamp_set	= sja1105_hwtstamp_set,
- 	.port_rxtstamp		= sja1105_port_rxtstamp,
- 	.port_txtstamp		= sja1105_port_txtstamp,
- };
-diff --git a/drivers/net/dsa/sja1105/sja1105_ptp.c b/drivers/net/dsa/sja1105/sja1105_ptp.c
-index 1fce413a3fb4..c7ce1edd8471 100644
---- a/drivers/net/dsa/sja1105/sja1105_ptp.c
-+++ b/drivers/net/dsa/sja1105/sja1105_ptp.c
-@@ -70,8 +70,10 @@ int sja1105_get_ts_info(struct dsa_switch *ds, int port,
- 	info->so_timestamping = SOF_TIMESTAMPING_TX_HARDWARE |
- 				SOF_TIMESTAMPING_RX_HARDWARE |
- 				SOF_TIMESTAMPING_RAW_HARDWARE;
--	info->tx_types = (1 << HWTSTAMP_TX_OFF);
--	info->rx_filters = (1 << HWTSTAMP_FILTER_NONE);
-+	info->tx_types = (1 << HWTSTAMP_TX_OFF) |
-+			 (1 << HWTSTAMP_TX_ON);
-+	info->rx_filters = (1 << HWTSTAMP_FILTER_NONE) |
-+			   (1 << HWTSTAMP_FILTER_PTP_V2_L2_EVENT);
- 	info->phc_index = ptp_clock_index(priv->clock);
- 	return 0;
- }
 -- 
-2.17.1
-
+Best Regards
+Masahiro Yamada
