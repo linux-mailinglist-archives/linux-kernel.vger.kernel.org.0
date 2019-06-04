@@ -2,94 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11E3333F66
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 08:58:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47E7033F64
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 08:58:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbfFDG6z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 02:58:55 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:37259 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726837AbfFDG6x (ORCPT
+        id S1726828AbfFDG6u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 02:58:50 -0400
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:26585 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726547AbfFDG6t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 02:58:53 -0400
-Received: by mail-lj1-f193.google.com with SMTP id 131so6039843ljf.4
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 23:58:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=miy+F0UoMi0lHDhsda5tGypnZkgAe9GPxZhd/GwR4u4=;
-        b=mVr5fzjsLR1nkrv+kdyuXyQZYPVgVYh780mkZNBtzql5tdvV6xYIXziep7mAHvlpgr
-         wgVyucCn9Q+gRs9xdpx5DDJBkgsWgpVO758qfmyjDY+nq/AGEVHSIj6TD8fqoVO6NuB2
-         gmN9XNCHZemMWo7MBLZf9LlwZdrVYmZpT4HX/YhK8tgItVFx1+9PVUn4axVECn2cPbiR
-         xaZ9JlI8wU4yhQ5NKlasEhRA9N5TlsYY08c9dTH9lwSnisaGNESI7RSrQuR+URHoqolU
-         7sWzDFpg5l+yS+IUyV3P5ZwDTQ9RdxIoM9FShhqodspBm7i0OQ2BQQ+n7YVmD1emI5gi
-         c3RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=miy+F0UoMi0lHDhsda5tGypnZkgAe9GPxZhd/GwR4u4=;
-        b=cYnIHcX3bDD5TB9nbvCaZbJHO/scJvmzjlpx4WHdTlcJcmlH0TjG90atOosmF/vK3r
-         uJblnkGl4ACqNqfoJ4BK/4fYy4WeiD5/txhqhZYEEJ0Gv0CWx46MgmXb9kX9ni0ZN1Ju
-         uS2ferPFOsZl8zA8E7lGxMa1mbyFw+DKhsQF1FaY9ZaUBUIxsHAnExKGJkyWgq9r6jPk
-         SxM7RFbggbmG78aNgipi7gwERLlfJ66KMuim5UuODx0fQhixJeceCJJVl4uQ+Ymrmt0U
-         91THeEKSAatFLJ+pUfYXefVuZPHXvXJsmA7LKwvP4e5a0Sh38dXFF0wksNQzzZPrWKxB
-         rSog==
-X-Gm-Message-State: APjAAAUFiHTnVmepLUJTJHkVLWMwy/38+s6JcI1hTIBrD9lW8XWo6ruM
-        ftevDhaI22usT7OAR7CE1SPaqg==
-X-Google-Smtp-Source: APXvYqzs6Jwh4UF70YPDT+9ZM8x2yVImFgcqBfuOAwxH86MX/JoTCM2AAKQTK0oKPr9S/2mco/Dh9Q==
-X-Received: by 2002:a2e:9654:: with SMTP id z20mr3491108ljh.52.1559631531818;
-        Mon, 03 Jun 2019 23:58:51 -0700 (PDT)
-Received: from localhost (c-1c3670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.28])
-        by smtp.gmail.com with ESMTPSA id r11sm2978344ljh.90.2019.06.03.23.58.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Jun 2019 23:58:51 -0700 (PDT)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     minchan@kernel.org, ngupta@vflare.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] zsmalloc: remove unused variable
-Date:   Tue,  4 Jun 2019 08:58:26 +0200
-Message-Id: <20190604065826.26064-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.20.1
+        Tue, 4 Jun 2019 02:58:49 -0400
+Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
+ EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
+ 15.0.1156.6; Mon, 3 Jun 2019 23:58:46 -0700
+Received: from ubuntu.eng.vmware.com (unknown [10.33.74.142])
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 59ABA4132E;
+        Mon,  3 Jun 2019 23:58:48 -0700 (PDT)
+From:   Ronak Doshi <doshir@vmware.com>
+To:     <netdev@vger.kernel.org>
+CC:     Ronak Doshi <doshir@vmware.com>,
+        "VMware, Inc." <pv-drivers@vmware.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH net-next] vmxnet3: turn off lro when rxcsum is disabled
+Date:   Mon, 3 Jun 2019 23:58:38 -0700
+Message-ID: <20190604065838.22243-1-doshir@vmware.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-002.vmware.com: doshir@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The variable 'entry' is no longer used and the compiler rightly
-complains that it should be removed.
+Currently, when rx csum is disabled, vmxnet3 driver does not turn
+off lro, which can cause performance issues if user does not turn off
+lro explicitly. This patch adds fix_features support which is used to
+turn off LRO whenever RXCSUM is disabled.
 
-../mm/zsmalloc.c: In function ‘zs_pool_stat_create’:
-../mm/zsmalloc.c:648:17: warning: unused variable ‘entry’ [-Wunused-variable]
-  struct dentry *entry;
-                 ^~~~~
-
-Rework to remove the unused variable.
-
-Fixes: 4268509a36a7 ("zsmalloc: no need to check return value of debugfs_create functions")
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Ronak Doshi <doshir@vmware.com>
+Acked-by: Rishi Mehta <rmehta@vmware.com>
 ---
- mm/zsmalloc.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/net/vmxnet3/vmxnet3_drv.c     |  1 +
+ drivers/net/vmxnet3/vmxnet3_ethtool.c | 10 ++++++++++
+ drivers/net/vmxnet3/vmxnet3_int.h     |  7 +++++--
+ 3 files changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index 1347d7922ea2..db09eb3669c5 100644
---- a/mm/zsmalloc.c
-+++ b/mm/zsmalloc.c
-@@ -645,8 +645,6 @@ DEFINE_SHOW_ATTRIBUTE(zs_stats_size);
+diff --git a/drivers/net/vmxnet3/vmxnet3_drv.c b/drivers/net/vmxnet3/vmxnet3_drv.c
+index 1b2a18ea855c..3f48f05dd2a6 100644
+--- a/drivers/net/vmxnet3/vmxnet3_drv.c
++++ b/drivers/net/vmxnet3/vmxnet3_drv.c
+@@ -3247,6 +3247,7 @@ vmxnet3_probe_device(struct pci_dev *pdev,
+ 		.ndo_start_xmit = vmxnet3_xmit_frame,
+ 		.ndo_set_mac_address = vmxnet3_set_mac_addr,
+ 		.ndo_change_mtu = vmxnet3_change_mtu,
++		.ndo_fix_features = vmxnet3_fix_features,
+ 		.ndo_set_features = vmxnet3_set_features,
+ 		.ndo_get_stats64 = vmxnet3_get_stats64,
+ 		.ndo_tx_timeout = vmxnet3_tx_timeout,
+diff --git a/drivers/net/vmxnet3/vmxnet3_ethtool.c b/drivers/net/vmxnet3/vmxnet3_ethtool.c
+index 559db051a500..0a38c76688ab 100644
+--- a/drivers/net/vmxnet3/vmxnet3_ethtool.c
++++ b/drivers/net/vmxnet3/vmxnet3_ethtool.c
+@@ -257,6 +257,16 @@ vmxnet3_get_strings(struct net_device *netdev, u32 stringset, u8 *buf)
+ 	}
+ }
  
- static void zs_pool_stat_create(struct zs_pool *pool, const char *name)
++netdev_features_t vmxnet3_fix_features(struct net_device *netdev,
++				       netdev_features_t features)
++{
++	/* If Rx checksum is disabled, then LRO should also be disabled */
++	if (!(features & NETIF_F_RXCSUM))
++		features &= ~NETIF_F_LRO;
++
++	return features;
++}
++
+ int vmxnet3_set_features(struct net_device *netdev, netdev_features_t features)
  {
--	struct dentry *entry;
--
- 	if (!zs_stat_root) {
- 		pr_warn("no root stat dir, not creating <%s> stat dir\n", name);
- 		return;
+ 	struct vmxnet3_adapter *adapter = netdev_priv(netdev);
+diff --git a/drivers/net/vmxnet3/vmxnet3_int.h b/drivers/net/vmxnet3/vmxnet3_int.h
+index a2c554f8a61b..1cc1cd4aaa59 100644
+--- a/drivers/net/vmxnet3/vmxnet3_int.h
++++ b/drivers/net/vmxnet3/vmxnet3_int.h
+@@ -69,12 +69,12 @@
+ /*
+  * Version numbers
+  */
+-#define VMXNET3_DRIVER_VERSION_STRING   "1.4.16.0-k"
++#define VMXNET3_DRIVER_VERSION_STRING   "1.4.17.0-k"
+ 
+ /* Each byte of this 32-bit integer encodes a version number in
+  * VMXNET3_DRIVER_VERSION_STRING.
+  */
+-#define VMXNET3_DRIVER_VERSION_NUM      0x01041000
++#define VMXNET3_DRIVER_VERSION_NUM      0x01041100
+ 
+ #if defined(CONFIG_PCI_MSI)
+ 	/* RSS only makes sense if MSI-X is supported. */
+@@ -454,6 +454,9 @@ vmxnet3_tq_destroy_all(struct vmxnet3_adapter *adapter);
+ void
+ vmxnet3_rq_destroy_all(struct vmxnet3_adapter *adapter);
+ 
++netdev_features_t
++vmxnet3_fix_features(struct net_device *netdev, netdev_features_t features);
++
+ int
+ vmxnet3_set_features(struct net_device *netdev, netdev_features_t features);
+ 
 -- 
-2.20.1
+2.11.0
 
