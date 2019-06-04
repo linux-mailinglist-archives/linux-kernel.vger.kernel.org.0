@@ -2,127 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89FB933CFD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 04:06:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0921833CFF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 04:09:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726399AbfFDCFz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 22:05:55 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:44001 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726245AbfFDCFy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 22:05:54 -0400
-X-UUID: 5629ac9e18844ae7ac5ca849e7c642eb-20190604
-X-UUID: 5629ac9e18844ae7ac5ca849e7c642eb-20190604
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 2031812081; Tue, 04 Jun 2019 10:05:42 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkexhb02.mediatek.inc (172.21.101.103) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 4 Jun 2019 10:05:41 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by mtkcas08.mediatek.inc
- (172.21.101.126) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 4 Jun
- 2019 10:05:40 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 4 Jun 2019 10:05:40 +0800
-Message-ID: <1559613940.9975.0.camel@mtksdaap41>
-Subject: Re: [PATCH v4] gpu/drm: mediatek: call mtk_dsi_stop() after
- mtk_drm_crtc_atomic_disable()
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Hsin-Yi Wang <hsinyi@chromium.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Date:   Tue, 4 Jun 2019 10:05:40 +0800
-In-Reply-To: <20190530091847.90263-1-hsinyi@chromium.org>
-References: <20190530091847.90263-1-hsinyi@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1726369AbfFDCIy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 22:08:54 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:17661 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726163AbfFDCIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 22:08:54 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B6F40E578F138A30FD44;
+        Tue,  4 Jun 2019 10:08:51 +0800 (CST)
+Received: from [127.0.0.1] (10.133.213.239) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Tue, 4 Jun 2019
+ 10:08:48 +0800
+Subject: Re: [PATCH] ARM: mm: remove unused variables
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+References: <20190512114105.41792-1-yuehaibing@huawei.com>
+ <CAJKOXPeDRuvmHG=KUCYiPav2ODT4MC4hEgi5hAsy7s_+v-DB3g@mail.gmail.com>
+CC:     <linux@armlinux.org.uk>, <rppt@linux.ibm.com>,
+        <akpm@linux-foundation.org>, <geert+renesas@glider.be>,
+        <keescook@chromium.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+From:   Yuehaibing <yuehaibing@huawei.com>
+Message-ID: <208eb75a-dda5-98d9-3cad-c4f67cbf267f@huawei.com>
+Date:   Tue, 4 Jun 2019 10:08:47 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
+In-Reply-To: <CAJKOXPeDRuvmHG=KUCYiPav2ODT4MC4hEgi5hAsy7s_+v-DB3g@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-MTK:  N
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Hsin-Yi:
-
-On Thu, 2019-05-30 at 17:18 +0800, Hsin-Yi Wang wrote:
-> mtk_dsi_stop() should be called after mtk_drm_crtc_atomic_disable(), which needs
-> ovl irq for drm_crtc_wait_one_vblank(), since after mtk_dsi_stop() is called,
-> ovl irq will be disabled. If drm_crtc_wait_one_vblank() is called after last
-> irq, it will timeout with this message: "vblank wait timed out on crtc 0". This
-> happens sometimes when turning off the screen.
+On 2019/6/4 2:45, Krzysztof Kozlowski wrote:
+> On Sun, 12 May 2019 at 13:51, YueHaibing <yuehaibing@huawei.com> wrote:
+>>
+>> Fix gcc warnings:
+>>
+>> arch/arm/mm/init.c: In function 'mem_init':
+>> arch/arm/mm/init.c:456:13: warning: unused variable 'itcm_end' [-Wunused-variable]
+>>   extern u32 itcm_end;
+>>              ^
+>> arch/arm/mm/init.c:455:13: warning: unused variable 'dtcm_end' [-Wunused-variable]
+>>   extern u32 dtcm_end;
+>>              ^
+>>
+>> They are not used any more since
+>> commit 1c31d4e96b8c ("ARM: 8820/1: mm: Stop printing the virtual memory layout")
+>>
+>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>> ---
+>>  arch/arm/mm/init.c | 6 ------
+>>  1 file changed, 6 deletions(-)
 > 
-> In drm_atomic_helper.c#disable_outputs(),
-> the calling sequence when turning off the screen is:
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 > 
-> 1. mtk_dsi_encoder_disable()
->      --> mtk_output_dsi_disable()
->        --> mtk_dsi_stop();  // sometimes make vblank timeout in atomic_disable
->        --> mtk_dsi_poweroff();
-> 2. mtk_drm_crtc_atomic_disable()
->      --> drm_crtc_wait_one_vblank();
->      ...
->        --> mtk_dsi_ddp_stop()
->          --> mtk_dsi_poweroff();
-> 
-> mtk_dsi_poweroff() has reference count design, change to make mtk_dsi_stop()
-> called in mtk_dsi_poweroff() when refcount is 0.
+> Did you submit it to Russell's patch system?
 
-Applied to mediatek-drm-fixes-5.2 [1], thanks.
-
-[1]
-https://github.com/ckhu-mediatek/linux.git-tags/commits/mediatek-drm-fixes-5.2
-
-Regards,
-CK
+Thanks for your reminder, I will send it.
 
 > 
-> Fixes: 0707632b5bac ("drm/mediatek: update DSI sub driver flow for sending commands to panel")
-> Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
-> ---
-> change log v3->v4:
-> * add comment in code.
-> ---
->  drivers/gpu/drm/mediatek/mtk_dsi.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
+> Best regards,
+> Krzysztof
 > 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> index b00eb2d2e086..730594a91440 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> @@ -630,6 +630,15 @@ static void mtk_dsi_poweroff(struct mtk_dsi *dsi)
->  	if (--dsi->refcount != 0)
->  		return;
->  
-> +	/* 
-> +	 * mtk_dsi_stop() and mtk_dsi_start() is asymmetric, since
-> +	 * mtk_dsi_stop() should be called after mtk_drm_crtc_atomic_disable(),
-> +	 * which needs irq for vblank, and mtk_dsi_stop() will disable irq.
-> +	 * mtk_dsi_start() needs to be called in mtk_output_dsi_enable(),
-> +	 * after dsi is fully set.
-> +	 */
-> +	mtk_dsi_stop(dsi);
-> +
->  	if (!mtk_dsi_switch_to_cmd_mode(dsi, VM_DONE_INT_FLAG, 500)) {
->  		if (dsi->panel) {
->  			if (drm_panel_unprepare(dsi->panel)) {
-> @@ -696,7 +705,6 @@ static void mtk_output_dsi_disable(struct mtk_dsi *dsi)
->  		}
->  	}
->  
-> -	mtk_dsi_stop(dsi);
->  	mtk_dsi_poweroff(dsi);
->  
->  	dsi->enabled = false;
-
+> .
+> 
 
