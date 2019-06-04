@@ -2,110 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5B1F342C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 11:12:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D946342CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 11:12:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727011AbfFDJML (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 05:12:11 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:33645 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726877AbfFDJML (ORCPT
+        id S1727134AbfFDJMa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 05:12:30 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:36073 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726877AbfFDJM3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 05:12:11 -0400
-Received: by mail-pl1-f194.google.com with SMTP id g21so8106435plq.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 02:12:10 -0700 (PDT)
+        Tue, 4 Jun 2019 05:12:29 -0400
+Received: by mail-qt1-f195.google.com with SMTP id u12so12899503qth.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 02:12:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PkvAy0HG/cZzH7p73LTDgLYGpVT1MehWvYFfFdnT2Fc=;
-        b=XLsvONrFeGHoW3EfQRkoyPM7lWU3JuUCXY3/sd7tNiIwxHShI/cMEKKFLrma4d6TQ3
-         fpgQ+RtwMent0S3STZcQk5dhjKKKDFKirRchZ0nxX+tawmlWqJZMILnadviSRkJMxLth
-         gfA6mrJ6r3qG+GBkDg9Yl9yjjJtsvmkyYNNqc=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TZjOmNk5dlZs6JCR0pqtWM8aMInzhb+srND/4pbYH+c=;
+        b=PsuLWyedA9S92R+2nWtF2Yz24LzFXCsBTf167zkIv79OiU6qVvTHm192kCwWqn5PvX
+         bGrzVcHU8OPPh3E6HCsn2b0QJSLJNlcW5JgGABdRTUHPMbqSTe26UshsIffKE7e7Z1W/
+         6O6vN386CdRE1BWTxm9SrDgkV0cP2AqYUTsZW1ySsamxQTiuayOZeK+5/6PGYsQL8Q9C
+         xQvIy8hfCQCwodTr/x/oETasbDgn9PU6BdD/lDEmdeH7JNytL7zCOFldJ2rrFURbCD7P
+         OOTW7QJJYYv3cEu95tHrkk0a8gANUVx086E3E1eMXlo60vfCEurZ7pPDND+jJmPXlmFi
+         r/eQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PkvAy0HG/cZzH7p73LTDgLYGpVT1MehWvYFfFdnT2Fc=;
-        b=LWYbzuOnFeV1ypm0iHW8g6pvgJHpbAacXkpHTScCFT/TVqNmO1FeMhycWnztKNIDxU
-         k1+I7vGXXKh15mlZvgLlatgaO+337EeKgqBA0gr/2pEUBhRmGnaBTov4EbqRrDJr+gcq
-         g13gYhlMZaK/bF+Ht+kAAQaxrnSIH/eStxtrALJnYzj4v5un+qdzkxIUU6Pr3PmPgorS
-         abmDcz0Ie6GYjTahFaVpcdzNbF2/gDMzCsvLyIgzgsUkmFnpjhiTYUJi8Q4DxBiNOEoq
-         7o6Oj3xGDsC59OevT37a0UKkMe9bGfYTxpISyG/v/ndc80fo8d9d+vgN+txVYfI86B+V
-         +9HQ==
-X-Gm-Message-State: APjAAAXnFKHDkHH2pgeDFbkwJmzYsT51vZgS2gUIM9Ck34xhkma1Vdez
-        RmBwbABTZXNTGSwttsPkU9CJZPyjeQs=
-X-Google-Smtp-Source: APXvYqxDyY0ozrmSHzomFvWje7xUaWGpFIWh42pUXi1Mg8hI3/M46iMnwG1Ys2iAiNUMGp3qdug8tg==
-X-Received: by 2002:a17:902:9f93:: with SMTP id g19mr20221589plq.223.1559639530118;
-        Tue, 04 Jun 2019 02:12:10 -0700 (PDT)
-Received: from localhost ([2401:fa00:1:10:845f:e35d:e30c:4b47])
-        by smtp.gmail.com with ESMTPSA id x21sm773591pfi.91.2019.06.04.02.12.07
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TZjOmNk5dlZs6JCR0pqtWM8aMInzhb+srND/4pbYH+c=;
+        b=DG0kWlLJrVQ+G/LPA9oigwC942e2UW6c1BKYWPnjgVw45MJQEOEMwd1/UfdvxAYBbt
+         TBqtrPheDWADltuYIjKHmsOh76GapVrpOqUatr/jb5lnBRyUvUhmmtdWVuA2y2UtvJfT
+         7390O+OZzhJ6cCwzoT46jJQkSBQ1LPbftZpW7byGZFkORcon4LhGvsAuP3Zny+ZLzR/d
+         zy0M0456/tFKPbaOwEWrWd7MXApACy0s1VCAAS14EyC/AmwpfPc3CZspuFDXQxc1Bxy9
+         cixGs0omii59zeOMSqR9zXwOE0i9QS54PO6x9+T47sYncaTY7j5eCjiNbQY3PEEBwK7F
+         oRiA==
+X-Gm-Message-State: APjAAAUyU3FlNK8ZKgZ621ic6Erhh2VdQKeikLLWpoTI7gPioGNRjheu
+        w2XOBNS7OntnrXOBQr5AJ3E=
+X-Google-Smtp-Source: APXvYqzJFCRwarT7YuE37Vnfr5CY2paBDjWIjpezgSMcODEWMlSy0E4PcULxKDAV7DZ1ZfqvO/ByiQ==
+X-Received: by 2002:ac8:3637:: with SMTP id m52mr13924648qtb.238.1559639548638;
+        Tue, 04 Jun 2019 02:12:28 -0700 (PDT)
+Received: from auth2-smtp.messagingengine.com (auth2-smtp.messagingengine.com. [66.111.4.228])
+        by smtp.gmail.com with ESMTPSA id n6sm1669701qkk.61.2019.06.04.02.12.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Jun 2019 02:12:09 -0700 (PDT)
-From:   Yu-Hsuan Hsu <yuhsuan@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Yu-Hsuan Hsu <yuhsuan@chromium.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, dgreid@chromium.org,
-        cychiang@chromium.org
-Subject: [PATCH v2] ASoC: max98090: remove 24-bit format support if RJ is 0
-Date:   Tue,  4 Jun 2019 17:11:50 +0800
-Message-Id: <20190604091150.154384-1-yuhsuan@chromium.org>
-X-Mailer: git-send-email 2.22.0.rc1.311.g5d7573a151-goog
+        Tue, 04 Jun 2019 02:12:27 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailauth.nyi.internal (Postfix) with ESMTP id 0CC8321F2E;
+        Tue,  4 Jun 2019 05:12:26 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Tue, 04 Jun 2019 05:12:26 -0400
+X-ME-Sender: <xms:-DX2XCo34kLGNSzyXGu2-v84wwHqxhEKBOSYo8fYqSbeLf8wJS2W-Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrudefledgudefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjfgesghdtreertdervdenucfhrhhomhepuehoqhhu
+    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucffohhmrg
+    hinheplhhkmhhlrdhorhhgnecukfhppeeghedrfedvrdduvdekrddutdelnecurfgrrhgr
+    mhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlh
+    hithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehg
+    mhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:-DX2XE4uvp98lqk8QiDUfLonyDhcoITdffsqen7pVLR7iy_Po84v7g>
+    <xmx:-DX2XCO4Jvftma64FvFiI9AryQM75Q1kpTvCqu0qiSvU_j7sKBvz8Q>
+    <xmx:-DX2XGPiLi6VB_SBuhdAO7cjAAjpPQnGAZufW-tget3u6VDvo6DaJw>
+    <xmx:-jX2XN6lRvVTJPF_zezHqgA993jytDtYuiSA1NwaHBs9OGirMyOAWdW2Tzw>
+Received: from localhost (unknown [45.32.128.109])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 60BED8005C;
+        Tue,  4 Jun 2019 05:12:23 -0400 (EDT)
+Date:   Tue, 4 Jun 2019 17:12:20 +0800
+From:   Boqun Feng <boqun.feng@gmail.com>
+To:     Yuyang Du <duyuyang@gmail.com>
+Cc:     Waiman Long <longman@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        huang ying <huang.ying.caritas@gmail.com>
+Subject: Re: [PATCH v8 07/19] locking/rwsem: Implement lock handoff to
+ prevent lock starvation
+Message-ID: <20190604091220.GA29633@tardis>
+References: <20190520205918.22251-1-longman@redhat.com>
+ <20190520205918.22251-8-longman@redhat.com>
+ <CAHttsrYx=pgen5yVpYfCKaymoCaA7iJ52B8t_ycD2UcDR2848Q@mail.gmail.com>
+ <CAHttsrZCGMqBi4ifj7A1rO3G3nOz-0pbD8TXRtUQ1rGQRAGiUw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="HcAYCG3uE/tztfnV"
+Content-Disposition: inline
+In-Reply-To: <CAHttsrZCGMqBi4ifj7A1rO3G3nOz-0pbD8TXRtUQ1rGQRAGiUw@mail.gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The supported formats are S16_LE and S24_LE now. However, by datasheet
-of max98090, S24_LE is only supported when it is in the right justified
-mode. We should remove 24-bit format if it is not in that mode to avoid
-triggering error.
 
-Signed-off-by: Yu-Hsuan Hsu <yuhsuan@chromium.org>
----
- sound/soc/codecs/max98090.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+--HcAYCG3uE/tztfnV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/sound/soc/codecs/max98090.c b/sound/soc/codecs/max98090.c
-index 7619ea31ab50..a6c2cb89767c 100644
---- a/sound/soc/codecs/max98090.c
-+++ b/sound/soc/codecs/max98090.c
-@@ -1909,6 +1909,21 @@ static int max98090_configure_dmic(struct max98090_priv *max98090,
- 	return 0;
- }
- 
-+static int max98090_dai_startup(struct snd_pcm_substream *substream,
-+				struct snd_soc_dai *dai)
-+{
-+	struct snd_soc_component *component = codec_dai->component;
-+	struct max98090_priv *max98090 = snd_soc_component_get_drvdata(component);
-+	unsigned int fmt = max98090->dai_fmt;
-+
-+	/* Remove 24-bit format support if it is not in right justified mode. */
-+	if ((fmt & SND_SOC_DAIFMT_FORMAT_MASK) != SND_SOC_DAIFMT_RIGHT_J) {
-+		runtime->hw.formats = SNDRV_PCM_FMTBIT_S16_LE;
-+		snd_pcm_hw_constraint_msbits(substream->runtime, 0, 16, 16);
-+	}
-+	return 0;
-+}
-+
- static int max98090_dai_hw_params(struct snd_pcm_substream *substream,
- 				   struct snd_pcm_hw_params *params,
- 				   struct snd_soc_dai *dai)
-@@ -2316,6 +2331,7 @@ EXPORT_SYMBOL_GPL(max98090_mic_detect);
- #define MAX98090_FORMATS (SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S24_LE)
- 
- static const struct snd_soc_dai_ops max98090_dai_ops = {
-+	.startup = max98090_dai_startup,
- 	.set_sysclk = max98090_dai_set_sysclk,
- 	.set_fmt = max98090_dai_set_fmt,
- 	.set_tdm_slot = max98090_set_tdm_slot,
--- 
-2.22.0.rc1.311.g5d7573a151-goog
+On Tue, Jun 04, 2019 at 11:26:30AM +0800, Yuyang Du wrote:
+> On Tue, 4 Jun 2019 at 11:03, Yuyang Du <duyuyang@gmail.com> wrote:
+> >
+> > Hi Waiman,
+> >
+> > On Tue, 21 May 2019 at 05:01, Waiman Long <longman@redhat.com> wrote:
+> > >
+> > > Because of writer lock stealing, it is possible that a constant
+> > > stream of incoming writers will cause a waiting writer or reader to
+> > > wait indefinitely leading to lock starvation.
+> > >
+> > > This patch implements a lock handoff mechanism to disable lock steali=
+ng
+> > > and force lock handoff to the first waiter or waiters (for readers)
+> > > in the queue after at least a 4ms waiting period unless it is a RT
+> > > writer task which doesn't need to wait. The waiting period is used to
+> > > avoid discouraging lock stealing too much to affect performance.
+> >
+> > I was working on a patchset to solve read-write lock deadlock
+> > detection problem (https://lkml.org/lkml/2019/5/16/93).
+> >
+> > One of the mistakes in that work is that I considered the following
+> > case as deadlock:
+>=20
+> Sorry everyone, but let me rephrase:
+>=20
+> One of the mistakes in that work is that I considered the following
+> case as no deadlock:
+>=20
+> >
+> >   T1            T2
+> >   --            --
+> >
+> >   down_read1    down_write2
+> >
+> >   down_write2   down_read1
+> >
 
+Not sure I understand the whole context here, but isn't adding a third
+independent task makes this a deadlock?
+
+	 T1            T2		T3
+	 --            --		--
+
+	 down_read1    down_write2
+	 				down_write1
+	 down_write2   down_read1
+
+=66rom the perspective of lockdep, we cannot be sure whether there will
+a T3 or not.
+
+In case that I mis-understood you, maybe your point is about in the
+above case whether "down_read1" on T2 can *gauranteedly* steal (in the
+sense of breaking the fairness) the read lock after Waiman modification?
+If so, I will wait for Waiman's response ;-)
+
+Regards,
+Boqun
+
+> > So I was trying to understand what really went wrong and find the
+> > problem is that if I understand correctly the current rwsem design
+> > isn't showing real fairness but priority in favor of write locks, and
+> > thus one of the bad effects is that read locks can be starved if write
+> > locks keep coming.
+> >
+> > Luckily, I noticed you are revamping rwsem and seem to have thought
+> > about it already. I am not crystal sure what is your work's
+> > ramification on the above case, so hope that you can shed some light
+> > and perhaps share your thoughts on this.
+> >
+> > Thanks,
+> > Yuyang
+
+--HcAYCG3uE/tztfnV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEj5IosQTPz8XU1wRHSXnow7UH+rgFAlz2Ne0ACgkQSXnow7UH
++rjhfwf9FR6yMoJ+Xw63WFRRFgZR2LvoYKvDKMAPANUVVKrnzKjKCcpbNj0wZN7G
+zNPKiuh8gSrEWfPXo0bWSjiGacJMZ1p6huLIXO1A+QEQOPXiUtBHS5IgPwYSvjEp
+jPb9T9Tf5VHdytBK+Kez4obcrAavUA/9w9bnd2oeq3ZQLzIPJu4sNIrmZwlwPqRF
+IMYsimqaVlrXX3tVnoBy2b6J2qexaOFkde8rpqfRYkxilnWcD0neSeQhoqg6/hOs
+mTV11Pw7469wY/AAS+G74BvUEKwFbWUWRovTuNlI+6OnRyoGLmkl8ZzkUJ/c86Rb
+g74f+qU0zZgUhG2JlJUynGbzxoheIA==
+=ZMS6
+-----END PGP SIGNATURE-----
+
+--HcAYCG3uE/tztfnV--
