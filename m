@@ -2,97 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A38E34D42
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 18:29:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4328734D6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 18:31:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727563AbfFDQ3h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 12:29:37 -0400
-Received: from gateway23.websitewelcome.com ([192.185.50.164]:33494 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727385AbfFDQ3h (ORCPT
+        id S1727765AbfFDQaI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 12:30:08 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53343 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727385AbfFDQaI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 12:29:37 -0400
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id 2A8AE1233F
-        for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2019 11:29:36 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id YCJch0ufKdnCeYCJcheZN2; Tue, 04 Jun 2019 11:29:36 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.127.120] (port=39294 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hYCJb-001PBz-5g; Tue, 04 Jun 2019 11:29:35 -0500
-Date:   Tue, 4 Jun 2019 11:29:28 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] afs: security: Use struct_size() in kzalloc()
-Message-ID: <20190604162928.GA12389@embeddedor>
+        Tue, 4 Jun 2019 12:30:08 -0400
+Received: by mail-wm1-f68.google.com with SMTP id d17so732226wmb.3;
+        Tue, 04 Jun 2019 09:30:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=54TIXqXvsDNltB2y1UR+6mRVKP/XVI4s+wemNTylSEI=;
+        b=eAeCHlIeQmyEBytc8R7znUKKSXeP6uAgH6bsKtTUo6/LR/LaWzFOo4o+kjmL2TTsXF
+         WRIL7PlmUuz7oi+O48P8do6MJFKG2YSiWOhQwL8XDZIWYw1r5KK0jFOgJBzPSyBaSGCY
+         KplZ5nTEUEj2PiuFR0LqmnSb0dlGOsCbj1NPi6M2eHfALDABG1RX8VfpA3QGV/mBu8MX
+         5+57ngT6OULxfwDsJMHN42siVFlvyOyck7HvANM/0W2SaRylp3lTwLIyuooEFHkI+l8D
+         HZ4duZAvjpjhT5gDtrj8K8i5FMUXeIF44tLP2SaLsX3EWxTXMJqlj4Ztw/fqzWsBVFEl
+         CYpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=54TIXqXvsDNltB2y1UR+6mRVKP/XVI4s+wemNTylSEI=;
+        b=PSbT5qW6NCCXbtSXu2zCWL9meFTt0gRxEWbD0G3A1K8helEV17csi4adkcWA0ykbcU
+         OMAa6wy+0XgtH38hFWQLc2q3vjb91I2w938QNOQ+yydQvObyo/KVixHuglRjyYDTCnIZ
+         nfHf6XzUj6fCyA0YdzEj8hjtbSrfJlAqQhUrT+BaphWAxbH5cxuXbbgm4p8qcRclaVqt
+         3kG7DNfnHCwzGsBgEtxfUd7OsrKBDk32UnPpj1AchzWQmu3dbYhVMLFVORe8JyCpmp5C
+         c4Ynmp2C7yejaDZtfkJSk1gBF/Nka1EEdOzufKA5PW9ObsRXkBZCrvePzrferVi13Nqr
+         A+Vw==
+X-Gm-Message-State: APjAAAV5OvqNj26xENGKcIJra4z2Lzj5GWZ1V9pkUxuMXHiwUbpiaT7W
+        /15QEwXLurm1uJMoosAIP9A=
+X-Google-Smtp-Source: APXvYqwiwhiDPZmf0yBeaqw/xNa68/cr0Q9ihEI2dgTEsPXakPgC/zw8DdYNnQIwnbK1H7dNDgAE9g==
+X-Received: by 2002:a05:600c:218d:: with SMTP id e13mr18972396wme.101.1559665805401;
+        Tue, 04 Jun 2019 09:30:05 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:e0a:1f1:d0f0::4e2b:d7ca])
+        by smtp.gmail.com with ESMTPSA id y12sm15108176wrh.40.2019.06.04.09.30.04
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 04 Jun 2019 09:30:04 -0700 (PDT)
+From:   =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com,
+        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+Subject: [PATCH v4 00/13] Allwinner A64/H6 IR support
+Date:   Tue,  4 Jun 2019 18:29:46 +0200
+Message-Id: <20190604162959.29199-1-peron.clem@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.127.120
-X-Source-L: No
-X-Exim-ID: 1hYCJb-001PBz-5g
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.127.120]:39294
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+Hi,
 
-struct foo {
-   int stuff;
-   struct boo entry[];
-};
+A64 IR support series[1] pointed out that an A31 bindings should be
+introduced.
 
-instance = kzalloc(sizeof(struct foo) + count * sizeof(struct boo), GFP_KERNEL);
+This series introduce the A31 compatible bindings, then switch it on
+the already existing board.
 
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
+Finally introduce A64 and H6 support.
 
-instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+I have reenable the other H6 boards IR support as Ondrej solve the issue.
 
-This code was detected with the help of Coccinelle.
+Regards,
+Clément
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- fs/afs/security.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+[1] https://lore.kernel.org/patchwork/patch/1031390/#1221464
+[2] https://lkml.org/lkml/2019/5/27/321
+[3] https://patchwork.kernel.org/patch/10975563/
 
-diff --git a/fs/afs/security.c b/fs/afs/security.c
-index 71e71c07568f..82753f3c097f 100644
---- a/fs/afs/security.c
-+++ b/fs/afs/security.c
-@@ -191,8 +191,7 @@ void afs_cache_permit(struct afs_vnode *vnode, struct key *key,
- 	 * yet.
- 	 */
- 	size++;
--	new = kzalloc(sizeof(struct afs_permits) +
--		      sizeof(struct afs_permit) * size, GFP_NOFS);
-+	new = kzalloc(struct_size(new, permits, size), GFP_NOFS);
- 	if (!new)
- 		goto out_put;
- 
+Changes since v3:
+ - Reenable IR for other H6 boards
+ - Add RXSTA bits definition
+ - Add Sean Young's "Acked-by" tags
+
+Changes since v2:
+ - Disable IR for other H6 boards
+ - Split DTS patch for H3/H5
+ - Introduce IR quirks
+
+Changes since v1:
+ - Document reset lines as required since A31
+ - Explain the memory mapping difference in commit log
+ - Fix misspelling "Allwiner" to "Allwinner"
+Clément Péron (11):
+  dt-bindings: media: sunxi-ir: Add A31 compatible
+  media: rc: Introduce sunxi_ir_quirks
+  media: rc: sunxi: Add A31 compatible
+  media: rc: sunxi: Add RXSTA bits definition
+  ARM: dts: sunxi: Prefer A31 bindings for IR
+  ARM: dts: sunxi: Prefer A31 bindings for IR
+  dt-bindings: media: sunxi-ir: Add A64 compatible
+  dt-bindings: media: sunxi-ir: Add H6 compatible
+  arm64: dts: allwinner: h6: Add IR receiver node
+  arm64: dts: allwinner: h6: Enable IR on H6 boards
+  arm64: defconfig: Enable IR SUNXI option
+
+Igors Makejevs (1):
+  arm64: dts: allwinner: a64: Add IR node
+
+Jernej Skrabec (1):
+  arm64: dts: allwinner: a64: Enable IR on Orange Pi Win
+
+ .../devicetree/bindings/media/sunxi-ir.txt    | 11 ++-
+ arch/arm/boot/dts/sun6i-a31.dtsi              |  2 +-
+ arch/arm/boot/dts/sun8i-a83t.dtsi             |  2 +-
+ arch/arm/boot/dts/sun9i-a80.dtsi              |  2 +-
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi            |  2 +-
+ .../dts/allwinner/sun50i-a64-orangepi-win.dts |  4 +
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 18 ++++
+ .../dts/allwinner/sun50i-h6-beelink-gs1.dts   |  4 +
+ .../dts/allwinner/sun50i-h6-orangepi.dtsi     |  4 +
+ .../boot/dts/allwinner/sun50i-h6-pine-h64.dts |  4 +
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  | 19 ++++
+ arch/arm64/configs/defconfig                  |  1 +
+ drivers/media/rc/sunxi-cir.c                  | 88 ++++++++++++++-----
+ 13 files changed, 135 insertions(+), 26 deletions(-)
+
 -- 
-2.21.0
+2.20.1
 
