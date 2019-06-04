@@ -2,79 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B48B0341CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 10:30:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52A37341D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 10:30:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726984AbfFDI37 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 04:29:59 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:57331 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726642AbfFDI37 (ORCPT
+        id S1727038AbfFDIak (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 04:30:40 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47910 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726642AbfFDIak (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 04:29:59 -0400
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id x548TsXm016165;
-        Tue, 4 Jun 2019 17:29:54 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com x548TsXm016165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1559636994;
-        bh=wgPN+vEMC9yLs8VRlcnC/BEteIcw2sS7DW+DFAzIrnw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Lsu3ucxmcI56axCWBnGH1GAVLRjnf2cYY2dVKvHvwZ2Yng20JRUEDX0u4KuBItlEb
-         /56vFgqvVDnLuDIFa/cGtaE90vX+4/ECuTGXybjnWsO5LoFiRLQS4QGRFIxC7lJRyR
-         LJ0YEFknuivGha9fvxRYwmzGWNFwTgGvSMSC2/4024Ynmc/wZY3r+t0eR444t7e5BM
-         wJRT7ZYog/AGyOXkQ8uchHcDGaiFwVuUt0w4zKPf/0Qg8ZV7dL9RzPheSRoQdS6AqK
-         t0lt7/Ba/aQahCr7NLvw1+8lSEPmCtlPxPaghg14hUdb1VJDxRqQ+Wukkq9OQRZxxU
-         igyid8NLlS6mw==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        linux-s390@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Tue, 4 Jun 2019 04:30:40 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x548LgUW078405
+        for <linux-kernel@vger.kernel.org>; Tue, 4 Jun 2019 04:30:38 -0400
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2swjgny62e-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 04:30:38 -0400
+Received: from localhost
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
+        Tue, 4 Jun 2019 09:30:37 +0100
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 4 Jun 2019 09:30:34 +0100
+Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x548UXQM32637338
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 4 Jun 2019 08:30:33 GMT
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 86C816E04C;
+        Tue,  4 Jun 2019 08:30:33 +0000 (GMT)
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9BC076E04E;
+        Tue,  4 Jun 2019 08:30:30 +0000 (GMT)
+Received: from [9.124.35.234] (unknown [9.124.35.234])
+        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue,  4 Jun 2019 08:30:30 +0000 (GMT)
+Subject: Re: [PATCH] mm/gup: remove unnecessary check against CMA in
+ __gup_longterm_locked()
+To:     Pingfan Liu <kernelfans@gmail.com>, linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Keith Busch <keith.busch@intel.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] s390: fix unrecognized __aligned() in uapi header
-Date:   Tue,  4 Jun 2019 17:29:47 +0900
-Message-Id: <20190604082947.26328-1-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+References: <1559633160-14809-1-git-send-email-kernelfans@gmail.com>
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Date:   Tue, 4 Jun 2019 14:00:29 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1559633160-14809-1-git-send-email-kernelfans@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19060408-0020-0000-0000-00000EF3EFEC
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011212; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000286; SDB=6.01213022; UDB=6.00637519; IPR=6.00994090;
+ MB=3.00027177; MTD=3.00000008; XFM=3.00000015; UTC=2019-06-04 08:30:37
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19060408-0021-0000-0000-000066163871
+Message-Id: <bb4fe1fe-dde0-b86b-740a-4b3dfa81d6f0@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-04_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=918 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906040057
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-__aligned() is a shorthand that is only available in the kernel space
-because it is defined in include/linux/compiler_attributes.h, which is
-not exported to the user space.
+On 6/4/19 12:56 PM, Pingfan Liu wrote:
+> The PF_MEMALLOC_NOCMA is set by memalloc_nocma_save(), which is finally
+> cast to ~_GFP_MOVABLE.  So __get_user_pages_locked() will get pages from
+> non CMA area and pin them.  There is no need to
+> check_and_migrate_cma_pages().
 
-Detected by compile-testing exported headers.
 
-./usr/include/asm/runtime_instr.h:60:37: error: expected declaration specifiers or ‘...’ before numeric constant
- } __attribute__((packed)) __aligned(8);
-                                     ^
+That is not completely correct. We can fault in that pages outside 
+get_user_pages_longterm at which point those pages can get allocated 
+from CMA region. memalloc_nocma_save() as added as an optimization to 
+avoid unnecessary page migration.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
 
- arch/s390/include/uapi/asm/runtime_instr.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/s390/include/uapi/asm/runtime_instr.h b/arch/s390/include/uapi/asm/runtime_instr.h
-index 45c9ec984e6b..455da46e3193 100644
---- a/arch/s390/include/uapi/asm/runtime_instr.h
-+++ b/arch/s390/include/uapi/asm/runtime_instr.h
-@@ -57,7 +57,7 @@ struct runtime_instr_cb {
- 	__u64 sf;
- 	__u64 rsic;
- 	__u64 reserved8;
--} __packed __aligned(8);
-+} __attribute__((__packed__, __aligned__(8)));
- 
- static inline void load_runtime_instr_cb(struct runtime_instr_cb *cb)
- {
--- 
-2.17.1
+-aneesh
 
