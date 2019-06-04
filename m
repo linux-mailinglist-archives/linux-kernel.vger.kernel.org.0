@@ -2,151 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EFA734998
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 15:57:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9674134982
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 15:56:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727787AbfFDN5O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 09:57:14 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:18083 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727622AbfFDN5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 09:57:13 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id A8AFF21670982FC0CCF9;
-        Tue,  4 Jun 2019 21:54:49 +0800 (CST)
-Received: from [127.0.0.1] (10.133.213.239) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Tue, 4 Jun 2019
- 21:54:45 +0800
-Subject: Re: [PATCH v3] kernel/module: Fix mem leak in
- module_add_modinfo_attrs
-To:     Miroslav Benes <mbenes@suse.cz>
-References: <20190530134304.4976-1-yuehaibing@huawei.com>
- <20190603144554.18168-1-yuehaibing@huawei.com>
- <alpine.LSU.2.21.1906041107510.16030@pobox.suse.cz>
-CC:     <jeyu@kernel.org>, <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-From:   Yuehaibing <yuehaibing@huawei.com>
-Message-ID: <5705910c-ea13-9ff0-0d94-f2311fa510d9@huawei.com>
-Date:   Tue, 4 Jun 2019 21:54:44 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        id S1727463AbfFDNz6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 09:55:58 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:38892 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727033AbfFDNz6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 09:55:58 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x54DlLtO019052;
+        Tue, 4 Jun 2019 15:55:44 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
+ date : message-id : references : in-reply-to : content-type : content-id :
+ content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=/l+I9/VrslMxF9koCf1mice5DTAFdPweFnW/HGgh+yI=;
+ b=rv9CHvkXyrmpcAoDio1Pfc/MNx3qZ51DB0Q5F3hkUzvJKrd3xH1K+w4/qRbYM0SylD6d
+ xN76Ltc2s9LmsGqKNES984we0hKcBkDGCGwoPd8aQCyUgW9Xfbo7N8FtEEItSeX1vNbz
+ z/6HWuw55C/2E+LnHwa97k/59GASjfVM3WrEkh+D0scfNsIKRU0A1vhPdJvj4FJ0Mhnj
+ F/kRxHd8fdO0TWjewwgHhWcUcMgyoJiDwKq8p5TVwPQDmw9ryk8/HjjzTfqtuJgfL4LZ
+ N2CdQImk8Qx2n2ALqAFfLNMkD3E8jLRpDiFy1Es+aejds6vvLamHuljewox7UD+SLEkU AA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2sunds184k-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 04 Jun 2019 15:55:44 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 88BD738;
+        Tue,  4 Jun 2019 13:55:43 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 666A12B3B;
+        Tue,  4 Jun 2019 13:55:43 +0000 (GMT)
+Received: from SFHDAG3NODE1.st.com (10.75.127.7) by SFHDAG3NODE3.st.com
+ (10.75.127.9) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 4 Jun
+ 2019 15:55:43 +0200
+Received: from SFHDAG3NODE1.st.com ([fe80::1166:1abb:aad4:5f86]) by
+ SFHDAG3NODE1.st.com ([fe80::1166:1abb:aad4:5f86%20]) with mapi id
+ 15.00.1347.000; Tue, 4 Jun 2019 15:55:43 +0200
+From:   Erwan LE RAY <erwan.leray@st.com>
+To:     Borut Seljak <borut.seljak@t-2.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: Fwd: [PATCH] serial: stm32: fix a recursive locking in
+ stm32_config_rs485
+Thread-Topic: Fwd: [PATCH] serial: stm32: fix a recursive locking in
+ stm32_config_rs485
+Thread-Index: AQHVGr0egfGBr+I5bUuvhxEmcTN9eaaLX30AgAAD5wA=
+Date:   Tue, 4 Jun 2019 13:55:42 +0000
+Message-ID: <33271a7e-644b-70e3-f84c-d019b394ce77@st.com>
+References: <20190604095452.6360-1-borut.seljak@t-2.net>
+ <f2a264ac-e334-63b7-18c9-e45cde7bdf95@st.com>
+ <41dddd5f-5c1c-3346-890a-8018f26ebd49@st.com>
+In-Reply-To: <41dddd5f-5c1c-3346-890a-8018f26ebd49@st.com>
+Accept-Language: en-US, fr-FR
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.46]
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <D7564DEF725C3147AC98F2B3035C4186@st.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <alpine.LSU.2.21.1906041107510.16030@pobox.suse.cz>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-04_09:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/6/4 18:46, Miroslav Benes wrote:
-> On Mon, 3 Jun 2019, YueHaibing wrote:
-> 
->> In module_add_modinfo_attrs if sysfs_create_file
->> fails, we forget to free allocated modinfo_attrs
->> and roll back the sysfs files.
+
+> Hi Borut,
+>
+> Please add the following line in the commit message (before your=20
+> sign-off) in a V2 of your patch:
+>
+> fixes: 1bcda09d291081 ("serial: stm32: add support for RS485 hardware=20
+> control mode")
+>
+> I'm OK with the patch itself.
+>
+> Erwan.
+>
+>
+> Subject: [PATCH] serial: stm32: fix a recursive locking in
+>> stm32_config_rs485
+>> Date: Tue,=A0 4 Jun 2019 11:54:51 +0200
+>> From: Borut Seljak <borut.seljak@t-2.net>
+>> CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+>> <alexandre.torgue@st.com>, Greg Kroah-Hartman
+>> <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
+>> borut.seljak@t-2.net, linux-serial@vger.kernel.org, Jiri Slaby
+>> <jslaby@suse.com>, linux-stm32@st-md-mailman.stormreply.com,
+>> linux-arm-kernel@lists.infradead.org
 >>
->> Fixes: 03e88ae1b13d ("[PATCH] fix module sysfs files reference counting")
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>> Remove spin_lock_irqsave in stm32_config_rs485, it cause recursive=20
+>> locking.
+>> Already locked in uart_set_rs485_config.
+>>
+>> Signed-off-by: Borut Seljak <borut.seljak@t-2.net>
 >> ---
->> v3: reuse module_remove_modinfo_attrs
->> v2: free from '--i' instead of 'i--'
->> ---
->>  kernel/module.c | 21 ++++++++++++++++-----
->>  1 file changed, 16 insertions(+), 5 deletions(-)
-> 
-> I'm afraid it is not completely correct.
->  
->> diff --git a/kernel/module.c b/kernel/module.c
->> index 80c7c09..c6b8912 100644
->> --- a/kernel/module.c
->> +++ b/kernel/module.c
->> @@ -1697,6 +1697,8 @@ static int add_usage_links(struct module *mod)
->>  	return ret;
->>  }
->>  
->> +static void module_remove_modinfo_attrs(struct module *mod, int end);
->> +
->>  static int module_add_modinfo_attrs(struct module *mod)
->>  {
->>  	struct module_attribute *attr;
->> @@ -1711,24 +1713,33 @@ static int module_add_modinfo_attrs(struct module *mod)
->>  		return -ENOMEM;
->>  
->>  	temp_attr = mod->modinfo_attrs;
->> -	for (i = 0; (attr = modinfo_attrs[i]) && !error; i++) {
->> +	for (i = 0; (attr = modinfo_attrs[i]); i++) {
->>  		if (!attr->test || attr->test(mod)) {
->>  			memcpy(temp_attr, attr, sizeof(*temp_attr));
->>  			sysfs_attr_init(&temp_attr->attr);
->>  			error = sysfs_create_file(&mod->mkobj.kobj,
->>  					&temp_attr->attr);
->> +			if (error)
->> +				goto error_out;
-> 
-> sysfs_create_file() failed, so we need to clear all previously processed 
-> attrs and not the current one.
-> 
->>  			++temp_attr;
->>  		}
->>  	}
->> +
->> +	return 0;
->> +
->> +error_out:
->> +	module_remove_modinfo_attrs(mod, --i);
-> 
-> It says "call sysfs_remove_file() on all attrs ending with --i included 
-> (all correctly processed attrs).
-> 
->>  	return error;
->>  }
->>  
->> -static void module_remove_modinfo_attrs(struct module *mod)
->> +static void module_remove_modinfo_attrs(struct module *mod, int end)
->>  {
->>  	struct module_attribute *attr;
->>  	int i;
->>  
->>  	for (i = 0; (attr = &mod->modinfo_attrs[i]); i++) {
->> +		if (end >= 0 && i > end)
->> +			break;
-> 
-> If end == 0, you break the loop without calling sysfs_remove_file(), which 
-> is a bug if you called module_remove_modinfo_attrs(mod, 0).
-
-If end == 0 and i == 0, if statement is false, it won't break the loop.
-
-At other places, I use end == -1, which means clean all and keeps the old behavior
-
--	module_remove_modinfo_attrs(mod);
-+	module_remove_modinfo_attrs(mod, -1);
-
-
-> 
-> Calling module_remove_modinfo_attrs(mod, i); in module_add_modinfo_attrs() 
-> under error_out label and changing the condition here to 
-> 
-> if (end >= 0 && i >= end)
-> 	break;
-> 
-> should work as expected.
-> 
-> But let me ask another question and it might be more to Jessica. Why is 
-> there even a call to attr->free(mod); (if it exists) in 
-> module_remove_modinfo_attrs()? The same is in free_modinfo() (as opposed 
-> to setup_modinfo() where attr->setup(mod) is called. Is it because 
-> free_modinfo() is called only in load_module()'s error path, while 
-> module_remove_modinfo_attrs() is called even in free_module() path?
-> 
-> kfree() checks for NULL pointer, so there is no bug, but it is certainly 
-> not nice and it calls for cleanup. But I may be missing something.
-> 
-> Regards,
-> Miroslav
-> 
-> .
-> 
-
+>> =A0 drivers/tty/serial/stm32-usart.c | 2 --
+>> =A0 1 file changed, 2 deletions(-)
+>>
+>> diff --git a/drivers/tty/serial/stm32-usart.c
+>> b/drivers/tty/serial/stm32-usart.c
+>> index e8d7a7bb4339..da373a465f51 100644
+>> --- a/drivers/tty/serial/stm32-usart.c
+>> +++ b/drivers/tty/serial/stm32-usart.c
+>> @@ -107,7 +107,6 @@ static int stm32_config_rs485(struct uart_port=20
+>> *port,
+>> =A0=A0=A0=A0=A0 bool over8;
+>> =A0=A0=A0=A0=A0 unsigned long flags;
+>> =A0 -=A0=A0=A0 spin_lock_irqsave(&port->lock, flags);
+>> =A0=A0=A0=A0=A0 stm32_clr_bits(port, ofs->cr1, BIT(cfg->uart_enable_bit)=
+);
+>> =A0=A0=A0=A0=A0=A0 port->rs485 =3D *rs485conf;
+>> @@ -147,7 +146,6 @@ static int stm32_config_rs485(struct uart_port=20
+>> *port,
+>> =A0=A0=A0=A0=A0 }
+>> =A0=A0=A0=A0=A0=A0 stm32_set_bits(port, ofs->cr1, BIT(cfg->uart_enable_b=
+it));
+>> -=A0=A0=A0 spin_unlock_irqrestore(&port->lock, flags);
+>> =A0=A0=A0=A0=A0=A0 return 0;
+>> =A0 }=
