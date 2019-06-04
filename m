@@ -2,171 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EE9D344CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 12:54:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33ED9344DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 12:56:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727434AbfFDKyL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 06:54:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51490 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727088AbfFDKyL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 06:54:11 -0400
-Received: from oasis.local.home (unknown [146.247.46.6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A53624986;
-        Tue,  4 Jun 2019 10:54:03 +0000 (UTC)
-Date:   Tue, 4 Jun 2019 06:53:58 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "David S. Miller" <davem@davemloft.net>, edumazet@google.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>, keescook@chromium.org,
-        kernel-hardening@lists.openwall.com,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        neilb@suse.com, netdev@vger.kernel.org, oleg@redhat.com,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, rcu@vger.kernel.org,
-        Tejun Heo <tj@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>
-Subject: Re: [RFC 1/6] rcu: Add support for consolidated-RCU reader checking
-Message-ID: <20190604065358.73347ced@oasis.local.home>
-In-Reply-To: <20190603141847.GA94186@google.com>
-References: <20190601222738.6856-1-joel@joelfernandes.org>
-        <20190601222738.6856-2-joel@joelfernandes.org>
-        <20190603080128.GA3436@hirez.programming.kicks-ass.net>
-        <20190603141847.GA94186@google.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727498AbfFDK4H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 06:56:07 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:43221 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727353AbfFDK4H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 06:56:07 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.0782919|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.102947-0.0128022-0.88425;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07391;MF=han_mao@c-sky.com;NM=1;PH=DS;RN=4;RT=4;SR=0;TI=SMTPD_---.EhJTrBQ_1559645764;
+Received: from localhost(mailfrom:han_mao@c-sky.com fp:SMTPD_---.EhJTrBQ_1559645764)
+          by smtp.aliyun-inc.com(10.147.40.7);
+          Tue, 04 Jun 2019 18:56:04 +0800
+From:   Mao Han <han_mao@c-sky.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Mao Han <han_mao@c-sky.com>, linux-csky@vger.kernel.org,
+        Guo Ren <guoren@kernel.org>
+Subject: [PATCH V5 0/6] csky: Add pmu hardware sampling support
+Date:   Tue,  4 Jun 2019 18:54:43 +0800
+Message-Id: <cover.1559644961.git.han_mao@c-sky.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 3 Jun 2019 10:18:47 -0400
-Joel Fernandes <joel@joelfernandes.org> wrote:
+This patch set add hardware sampling support for csky-pmu, and
+also add some properties to pmu node definition. perf can record
+on hardware event with this patch applied.
 
-> On Mon, Jun 03, 2019 at 10:01:28AM +0200, Peter Zijlstra wrote:
-> > On Sat, Jun 01, 2019 at 06:27:33PM -0400, Joel Fernandes (Google) wrote:  
-> > > +#define list_for_each_entry_rcu(pos, head, member, cond...)		\
-> > > +	if (COUNT_VARGS(cond) != 0) {					\
-> > > +		__list_check_rcu_cond(0, ## cond);			\
-> > > +	} else {							\
-> > > +		__list_check_rcu();					\
-> > > +	}								\
-> > > +	for (pos = list_entry_rcu((head)->next, typeof(*pos), member);	\
-> > > +		&pos->member != (head);					\
-> > >  		pos = list_entry_rcu(pos->member.next, typeof(*pos), member))
-> > >  
-> > >  /**
-> > > @@ -621,7 +648,12 @@ static inline void hlist_add_behind_rcu(struct hlist_node *n,
-> > >   * the _rcu list-mutation primitives such as hlist_add_head_rcu()
-> > >   * as long as the traversal is guarded by rcu_read_lock().
-> > >   */
-> > > +#define hlist_for_each_entry_rcu(pos, head, member, cond...)		\
-> > > +	if (COUNT_VARGS(cond) != 0) {					\
-> > > +		__list_check_rcu_cond(0, ## cond);			\
-> > > +	} else {							\
-> > > +		__list_check_rcu();					\
-> > > +	}								\
-> > >  	for (pos = hlist_entry_safe (rcu_dereference_raw(hlist_first_rcu(head)),\
-> > >  			typeof(*(pos)), member);			\
-> > >  		pos;							\  
-> > 
-> > 
-> > This breaks code like:
-> > 
-> > 	if (...)
-> > 		list_for_each_entry_rcu(...);
-> > 
-> > as they are no longer a single statement. You'll have to frob it into
-> > the initializer part of the for statement.  
-> 
-> Thanks a lot for that. I fixed it as below (diff is on top of the patch):
-> 
-> If not for that '##' , I could have abstracted the whole if/else
-> expression into its own macro and called it from list_for_each_entry_rcu() to
-> keep it more clean.
-> 
-> ---8<-----------------------
-> 
-> diff --git a/include/linux/rculist.h b/include/linux/rculist.h
-> index b641fdd9f1a2..cc742d294bb0 100644
-> --- a/include/linux/rculist.h
-> +++ b/include/linux/rculist.h
-> @@ -371,12 +372,15 @@ static inline void list_splice_tail_init_rcu(struct list_head *list,
->   * as long as the traversal is guarded by rcu_read_lock().
->   */
->  #define list_for_each_entry_rcu(pos, head, member, cond...)		\
-> -	if (COUNT_VARGS(cond) != 0) {					\
-> -		__list_check_rcu_cond(0, ## cond);			\
-> -	} else {							\
-> -		__list_check_rcu();					\
-> -	}								\
-> -	for (pos = list_entry_rcu((head)->next, typeof(*pos), member);	\
-> +	for (								\
-> +	     ({								\
-> +		if (COUNT_VARGS(cond) != 0) {				\
-> +			__list_check_rcu_cond(0, ## cond);		\
-> +		} else {						\
-> +			__list_check_rcu_nocond();			\
-> +		}							\
-> +	      }),							\
+Cc: Guo Ren <guoren@kernel.org>
 
-For easier to read I would do something like this:
+Changes since v4:
+  - remove some function hook registration
 
-#define check_rcu_list(cond)						\
-	({								\
-		if (COUNT_VARGS(cond) != 0)				\
-			__list_check_rcu_cond(0, ## cond);		\
-		else							\
-			__list_check_rcu_nocond();			\
-	})
+Changes since v3:
+  - change reg-io-width to count-width
+  - use macro sign_extend64
+  - update commit log
 
-#define list_for_each_entry_rcu(pos, head, member, cond...)		\
-	for (check_rcu_list(cond),					\
+Changes since v2:
+  - update dt-binding(csky pmu use rising edge interrupt)
+  - use cpuhp_setup_state to enable irq(fix irq enable on smp)
 
+Changes since v1:
+  - do not update hpcr when event type is invalid(fix option
+    --all-kernel/--all-user)
 
--- Steve
+Guo Ren (1):
+  csky: Fixup some error count in 810 & 860.
 
-> +	     pos = list_entry_rcu((head)->next, typeof(*pos), member);	\
->  		&pos->member != (head);					\
->  		pos = list_entry_rcu(pos->member.next, typeof(*pos), member))
->  
-> @@ -649,12 +653,15 @@ static inline void hlist_add_behind_rcu(struct hlist_node *n,
->   * as long as the traversal is guarded by rcu_read_lock().
->   */
->  #define hlist_for_each_entry_rcu(pos, head, member, cond...)		\
-> -	if (COUNT_VARGS(cond) != 0) {					\
-> -		__list_check_rcu_cond(0, ## cond);			\
-> -	} else {							\
-> -		__list_check_rcu();					\
-> -	}								\
-> -	for (pos = hlist_entry_safe (rcu_dereference_raw(hlist_first_rcu(head)),\
-> +	for (								\
-> +	     ({								\
-> +		if (COUNT_VARGS(cond) != 0) {				\
-> +			__list_check_rcu_cond(0, ## cond);		\
-> +		} else {						\
-> +			__list_check_rcu_nocond();			\
-> +		}							\
-> +	     }),							\
-> +	     pos = hlist_entry_safe (rcu_dereference_raw(hlist_first_rcu(head)),\
->  			typeof(*(pos)), member);			\
->  		pos;							\
->  		pos = hlist_entry_safe(rcu_dereference_raw(hlist_next_rcu(\
+Mao Han (5):
+  csky: Init pmu as a device
+  csky: Add count-width property for csky pmu
+  csky: Add pmu interrupt support
+  dt-bindings: csky: Add csky PMU bindings
+  csky: Fix perf record in kernel/user space
+
+ Documentation/devicetree/bindings/csky/pmu.txt |  38 +++
+ arch/csky/kernel/perf_event.c                  | 422 +++++++++++++++++++++++--
+ 2 files changed, 425 insertions(+), 35 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/csky/pmu.txt
+
+-- 
+2.7.4
 
