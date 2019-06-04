@@ -2,87 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB93534F32
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 19:43:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63FB334F41
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 19:44:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726354AbfFDRnr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 13:43:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52428 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725932AbfFDRnp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 13:43:45 -0400
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 850E72070B
-        for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2019 17:43:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559670224;
-        bh=q9FCF59QilTvzP7T56Okch9a0m+P6mELSmCw7lx2Jdg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=iUJtv0HucSbDarovWS1Z7qwfmDSbs5V9BN4rc4AfZZPIhTLPWwcEgKdhs+XzNMK+s
-         pP8EDf6d0HflzvWnlJ4iq2AvL5hnyP/MdAXApObUvjiErqeduqz/IyMephgucibraL
-         8s2h2J/D8oHyhQ7Laf/f2tfZG/DdDxC54JI8t/7o=
-Received: by mail-wm1-f53.google.com with SMTP id s3so963914wms.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 10:43:44 -0700 (PDT)
-X-Gm-Message-State: APjAAAV65yTqMezWYy7epLLaekSkOPBGMf+8SHPSazCNUp4Sc5xjGzYD
-        lJBUCKbIdCkh7yhyWsX6RDdHIX/k3pVsDtjgANGsUA==
-X-Google-Smtp-Source: APXvYqxmFA0LxGXReVPmYeoh54PQ9wGQ/UBD/iQSPrsklI94PoCtyKGznvMTvJtTVRnlwuNsvcMNxx02fdTaRs78X5M=
-X-Received: by 2002:a1c:6242:: with SMTP id w63mr15439095wmb.161.1559670223114;
- Tue, 04 Jun 2019 10:43:43 -0700 (PDT)
+        id S1726817AbfFDRoU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 13:44:20 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:44320 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726460AbfFDRny (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 13:43:54 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x54HhlH4058566;
+        Tue, 4 Jun 2019 12:43:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1559670228;
+        bh=HtfMt2uOW+klYRskuwW/3O5vVBGnGwm8wRY2nAEaw3I=;
+        h=From:To:CC:Subject:Date;
+        b=Xd+W/Ugd8scVYteI97TYB1W+ZW/PCqDr6rotKP0wrB+q40QfaEnIkqkN6viWJg7dP
+         Xm1/zlB/bh3Z2gbJg/lYU42drisKZ/Rfiv69iWJFeI4dSklqg/9OZgq00yjlV8Rq54
+         FS5fzMKlceTyIsdSplGNtlveVstTCBEEXrUV4zqg=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x54Hhlc8064375
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 4 Jun 2019 12:43:47 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 4 Jun
+ 2019 12:43:47 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 4 Jun 2019 12:43:47 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x54Hhlti110641;
+        Tue, 4 Jun 2019 12:43:47 -0500
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <broonie@kernel.org>,
+        <lgirdwood@gmail.com>
+CC:     <lee.jones@linaro.org>, <linux-leds@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v5 0/6] LM36274 Introduction
+Date:   Tue, 4 Jun 2019 12:43:39 -0500
+Message-ID: <20190604174345.14841-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.21.0.5.gaeb582a983
 MIME-Version: 1.0
-References: <155966609977.17449.5624614375035334363.stgit@warthog.procyon.org.uk>
-In-Reply-To: <155966609977.17449.5624614375035334363.stgit@warthog.procyon.org.uk>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 4 Jun 2019 10:43:32 -0700
-X-Gmail-Original-Message-ID: <CALCETrWzDR=Ap8NQ5-YrVhXCEBgr+hwpjw9fBn0m2NkZzZ7XLQ@mail.gmail.com>
-Message-ID: <CALCETrWzDR=Ap8NQ5-YrVhXCEBgr+hwpjw9fBn0m2NkZzZ7XLQ@mail.gmail.com>
-Subject: Re: [RFC][PATCH 0/8] Mount, FS, Block and Keyrings notifications [ver #2]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Casey Schaufler <casey@schaufler-ca.com>, raven@themaw.net,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 4, 2019 at 9:35 AM David Howells <dhowells@redhat.com> wrote:
->
->
-> Hi Al,
->
-> Here's a set of patches to add a general variable-length notification queue
-> concept and to add sources of events for:
+Hello
 
-I asked before and didn't see a response, so I'll ask again.  Why are
-you paying any attention at all to the creds that generate an event?
-It seems like the resulting security model will be vary hard to
-understand and probably buggy.  Can't you define a sensible model in
-which only the listener creds matter?
+This is v5 of the patchset.  There is only one patch that has changed in the
+series and that is the regulator: lm363x: Add support for LM36274 patch.  This
+patch was updated to add flexibility in setting the bit to enable GPIO regulator
+control.
 
-> LSM support is included:
->
->  (1) The creds of the process that did the fput() that reduced the refcount
->      to zero are cached in the file struct.
->
->  (2) __fput() overrides the current creds with the creds from (1) whilst
->      doing the cleanup, thereby making sure that the creds seen by the
->      destruction notification generated by mntput() appears to come from
->      the last fputter.
+This change was made on top of the branch
 
-That looks like duct tape that is, at best, likely to be very buggy.
+repo: https://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git
+branch: ti-lmu-led-drivers
 
->
->  (3) security_post_notification() is called for each queue that we might
->      want to post a notification into, thereby allowing the LSM to prevent
->      covert communications.
+Dan
 
-This seems like the wrong approach.  If an LSM wants to prevent covert
-communication from, say, mount actions, then it shouldn't allow the
-watch to be set up in the first place.
+Dan Murphy (6):
+  regulator: lm363x: Make the gpio register enable flexible
+  dt-bindings: mfd: Add lm36274 bindings to ti-lmu
+  mfd: ti-lmu: Add LM36274 support to the ti-lmu
+  regulator: lm363x: Add support for LM36274
+  dt-bindings: leds: Add LED bindings for the LM36274
+  leds: lm36274: Introduce the TI LM36274 LED driver
+
+ .../devicetree/bindings/leds/leds-lm36274.txt |  82 +++++++++
+ .../devicetree/bindings/mfd/ti-lmu.txt        |  54 ++++++
+ drivers/leds/Kconfig                          |   8 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-lm36274.c                   | 174 ++++++++++++++++++
+ drivers/mfd/Kconfig                           |   5 +-
+ drivers/mfd/ti-lmu.c                          |  14 ++
+ drivers/regulator/Kconfig                     |   2 +-
+ drivers/regulator/lm363x-regulator.c          |  56 +++++-
+ include/linux/mfd/ti-lmu-register.h           |  23 +++
+ include/linux/mfd/ti-lmu.h                    |   4 +
+ 11 files changed, 417 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-lm36274.txt
+ create mode 100644 drivers/leds/leds-lm36274.c
+
+-- 
+2.21.0.5.gaeb582a983
+
