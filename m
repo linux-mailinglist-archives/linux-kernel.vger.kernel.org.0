@@ -2,156 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 767583469D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:26:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60C5734697
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:25:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727737AbfFDM0d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 08:26:33 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60454 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726994AbfFDM0d (ORCPT
+        id S1727783AbfFDMZ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 08:25:26 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44330 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726994AbfFDMZY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 08:26:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=S4Pz7TRu5Lcq2yQdR4kxNmctJu60r/vgdLSlDc7rPg0=; b=eiJuW/BajBOBAudFTNG/cNt5a
-        LupcpeNZRNJyKXf4PQEQBYvCelsX0tWh7MJQKqm8D4c3+W6Bd91f0bvq2YrQcp9rpMnPfL/d7wKjg
-        01E2RaVCrVT1tDzZDM2lS8tqt805U0W6FEZE8lDOFoXI7hPv6hpqz7VDNRWjXvVGYwwsgm1PzuLhU
-        NVxGuSisF6dMxjRDKI8dwiVM8WBwwEg8lbskmgEbmOQrDF9w4DOHvy+PXoJL7CpJFHsA83C+3RRo5
-        2irH7anFq7WNHUOI99LRjjOe/yZK5KW55SIofR+zqhTbefHWW+sO/aBox0n17zSdNY+p23AATvYGi
-        cF5OhO08w==;
-Received: from [187.113.6.249] (helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hY8WO-000464-B3; Tue, 04 Jun 2019 12:26:32 +0000
-Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
-        (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hY8WK-000213-FZ; Tue, 04 Jun 2019 09:26:28 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] docs: Kbuild/Makefile: allow check for missing docs at build time
-Date:   Tue,  4 Jun 2019 09:26:27 -0300
-Message-Id: <8ac254a7cf0569f1eeced9c9263cd7b0bfe4ed78.1559651025.git.mchehab+samsung@kernel.org>
-X-Mailer: git-send-email 2.21.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 4 Jun 2019 08:25:24 -0400
+Received: by mail-pg1-f194.google.com with SMTP id n2so10260569pgp.11;
+        Tue, 04 Jun 2019 05:25:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=wnihfRtnOZly/8sbh9urZ5IlVD0j11FdjgEyNkCSnR0=;
+        b=E2HdfzpWcOtm9481R5yVrEJB1Cg7gFP3Uw9A8bL6m6QonZkiLDJYJbk757getw1IaH
+         Fv5bP64xuaxdQ5b9w0BFh4u7BPnH3b0L4d8wTWRk/K0inaP0sdbYIK3by/SF77SSGnmv
+         wD5wbDhZpaCtusxXLbmkvHj6aTkBjbDh2QQqp6yp2BaHNxQZN0GAfh9EqpOnxEgcMktg
+         Ff+KtGLQ1UzSyKsl7+WRk7rXtZDon+MgvFwaD9LMwKyX5Bp7PglFWbKeG/jWkb677OUp
+         6sBRDMotvgkjBB/VtJIBtX5EJIkQL0LAfVE9PFrCoOgLc2jwwVH97TBkINUsVpAv7PX8
+         QqkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=wnihfRtnOZly/8sbh9urZ5IlVD0j11FdjgEyNkCSnR0=;
+        b=daNTIJCLcy1sVUMjrTm0zpIcA9e0Utm7/WxlfV1cCWmlOzgVSl7f4F7uEQbaauxPJ4
+         hA2giBkEnyv+eIN058ncSkQUvQ/1U5si/V2FrehxGbE8dRUQsagcAmuDfNm2urw5pjAX
+         BimQ/wEHj9AgDtcdGLssTTpc2UXkRN2g8hx78vNtMcGUbZyS24M9GP4NQ/x6kxpMlaPt
+         SaDHoqSRcWTGZLD2+D5VLjaFgqz2bJ/WI9SxQm0Besv04bw1P3naOs/zXs9OyblrUPYn
+         fSAb4gSng/CDw8A/MWafA2i86pRQIWjqbV1187G4M7KnN7OyTzx8f5m3W1mRnbZFFknR
+         FjXw==
+X-Gm-Message-State: APjAAAUReISI1PYkmH1toEAHawNqM0kgiPQCrPyXChaHcV3QAdfBCwHj
+        kyqifWzYt1PfCTl/F625Pbo=
+X-Google-Smtp-Source: APXvYqzTlaNsaIjqCx2gUiMYqRlw5zgTvcx8dM1r+OCqK8xtt80+DErHL4mnu2N1mhYlevg/dow/Ug==
+X-Received: by 2002:a62:a508:: with SMTP id v8mr37065808pfm.87.1559651124115;
+        Tue, 04 Jun 2019 05:25:24 -0700 (PDT)
+Received: from xy-data.openstacklocal (ecs-159-138-22-150.compute.hwclouds-dns.com. [159.138.22.150])
+        by smtp.gmail.com with ESMTPSA id j22sm24660576pfn.121.2019.06.04.05.25.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 04 Jun 2019 05:25:23 -0700 (PDT)
+From:   Young Xiao <92siuyang@gmail.com>
+To:     prabhakar.csengg@gmail.com, mchehab@kernel.org, hverkuil@xs4all.nl,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Young Xiao <92siuyang@gmail.com>
+Subject: [PATCH] media: davinci: vpif_capture: fix memory leak in vpif_probe()
+Date:   Tue,  4 Jun 2019 20:26:33 +0800
+Message-Id: <1559651193-17982-1-git-send-email-92siuyang@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While this doesn't make sense for production Kernels, in order to
-avoid regressions when documents are touched, let's add a
-check target at the make file.
+If vpif_probe() fails on v4l2_device_register() and vpif_probe_complete(),
+then memory allocated at initialize_vpif() for global vpif_obj.dev[i]
+become unreleased.
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+The patch adds deallocation of vpif_obj.dev[i] on the error path.
+
+Signed-off-by: Young Xiao <92siuyang@gmail.com>
 ---
+ drivers/media/platform/davinci/vpif_capture.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-Jon,
-
-It is very common for people to shift things around and forget to rename
-the documentation files. 
-
-Just on this new Kernel cycle, every time I update from linux-next I get more
-broken stuff.
-
-IMO, the best is to run the check script with COMPILE_TEST, as this will make
-build robots to warn people about such breakages, with will hopefully help
-to avoid regressions due to broken documentation references.
-
-
- Documentation/Kconfig                | 13 +++++++++++++
- Documentation/Makefile               |  5 +++++
- Kconfig                              |  2 ++
- scripts/documentation-file-ref-check |  9 +++++++++
- 4 files changed, 29 insertions(+)
- create mode 100644 Documentation/Kconfig
-
-diff --git a/Documentation/Kconfig b/Documentation/Kconfig
-new file mode 100644
-index 000000000000..66046fa1c341
---- /dev/null
-+++ b/Documentation/Kconfig
-@@ -0,0 +1,13 @@
-+config WARN_MISSING_DOCUMENTS
-+
-+	bool "Warn if there's a missing documentation file"
-+	depends on COMPILE_TEST
-+	help
-+	   It is not uncommon that a document gets renamed.
-+	   This option makes the Kernel to check for missing dependencies,
-+	   warning when something is missing. Works only if the Kernel
-+	   is built from a git tree.
-+
-+	   If unsure, select 'N'.
-+
-+
-diff --git a/Documentation/Makefile b/Documentation/Makefile
-index 2edd03b1dad6..89857285a024 100644
---- a/Documentation/Makefile
-+++ b/Documentation/Makefile
-@@ -4,6 +4,11 @@
+diff --git a/drivers/media/platform/davinci/vpif_capture.c b/drivers/media/platform/davinci/vpif_capture.c
+index b5aacb0..75c2c10 100644
+--- a/drivers/media/platform/davinci/vpif_capture.c
++++ b/drivers/media/platform/davinci/vpif_capture.c
+@@ -1385,6 +1385,14 @@ static int initialize_vpif(void)
+ 	return err;
+ }
  
- subdir-y := devicetree/bindings/
- 
-+# Check for broken documentation file references
-+ifeq ($(CONFIG_WARN_MISSING_DOCUMENTS),y)
-+$(shell $(srctree)/scripts/documentation-file-ref-check --warn)
-+endif
++static inline void free_vpif_objs(void)
++{
++	int i;
 +
- # You can set these variables from the command line.
- SPHINXBUILD   = sphinx-build
- SPHINXOPTS    =
-diff --git a/Kconfig b/Kconfig
-index 48a80beab685..990b0c390dfc 100644
---- a/Kconfig
-+++ b/Kconfig
-@@ -30,3 +30,5 @@ source "crypto/Kconfig"
- source "lib/Kconfig"
- 
- source "lib/Kconfig.debug"
-+
-+source "Documentation/Kconfig"
-diff --git a/scripts/documentation-file-ref-check b/scripts/documentation-file-ref-check
-index ff16db269079..440227bb55a9 100755
---- a/scripts/documentation-file-ref-check
-+++ b/scripts/documentation-file-ref-check
-@@ -22,9 +22,16 @@ $scriptname =~ s,.*/([^/]+/),$1,;
- # Parse arguments
- my $help = 0;
- my $fix = 0;
-+my $warn = 0;
-+
-+if (! -d ".git") {
-+	printf "Warning: can't check if file exists, as this is not a git tree";
-+	exit 0;
++	for (i = 0; i < VPIF_CAPTURE_MAX_DEVICES; i++)
++		kfree(vpif_obj.dev[i]);
 +}
++
+ static int vpif_async_bound(struct v4l2_async_notifier *notifier,
+ 			    struct v4l2_subdev *subdev,
+ 			    struct v4l2_async_subdev *asd)
+@@ -1654,7 +1662,7 @@ static __init int vpif_probe(struct platform_device *pdev)
+ 	err = v4l2_device_register(vpif_dev, &vpif_obj.v4l2_dev);
+ 	if (err) {
+ 		v4l2_err(vpif_dev->driver, "Error registering v4l2 device\n");
+-		goto cleanup;
++		goto vpif_free;
+ 	}
  
- GetOptions(
- 	'fix' => \$fix,
-+	'warn' => \$warn,
- 	'h|help|usage' => \$help,
- );
- 
-@@ -139,6 +146,8 @@ while (<IN>) {
- 			if (!($ref =~ m/(scripts|Kconfig|Kbuild)/)) {
- 				$broken_ref{$ref}++;
- 			}
-+		} elsif ($warn) {
-+			print STDERR "Warning: $f references a file that doesn't exist: $fulref\n";
- 		} else {
- 			print STDERR "$f: $fulref\n";
+ 	while ((res = platform_get_resource(pdev, IORESOURCE_IRQ, res_idx))) {
+@@ -1701,7 +1709,9 @@ static __init int vpif_probe(struct platform_device *pdev)
+ 				  "registered sub device %s\n",
+ 				   subdevdata->name);
  		}
+-		vpif_probe_complete();
++		err = vpif_probe_complete();
++		if (err)
++			goto probe_subdev_out;
+ 	} else {
+ 		vpif_obj.notifier.ops = &vpif_async_ops;
+ 		err = v4l2_async_notifier_register(&vpif_obj.v4l2_dev,
+@@ -1720,6 +1730,8 @@ static __init int vpif_probe(struct platform_device *pdev)
+ 	kfree(vpif_obj.sd);
+ vpif_unregister:
+ 	v4l2_device_unregister(&vpif_obj.v4l2_dev);
++vpif_free:
++	free_vpif_objs();
+ cleanup:
+ 	v4l2_async_notifier_cleanup(&vpif_obj.notifier);
+ 
 -- 
-2.21.0
-
+2.7.4
 
