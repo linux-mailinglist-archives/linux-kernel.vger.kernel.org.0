@@ -2,102 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9689C3547F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 01:45:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43A2B35487
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 01:51:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726637AbfFDXpO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 19:45:14 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35320 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726269AbfFDXpO (ORCPT
+        id S1726674AbfFDXvx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 19:51:53 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:48712 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726427AbfFDXvx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 19:45:14 -0400
-Received: by mail-pg1-f196.google.com with SMTP id s27so5677088pgl.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 16:45:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=cHnNg4XtFEYoLnQEw/XfFsePIT8BBPSNq7MudRDS36k=;
-        b=ATRO1aTs6+299taKxHTHEoxOHK2BN/NbivR1BwD6wUmG4PXRnMzshBWZ7GdSKo8FAB
-         o1rNGCpuN6Uf27POpOroJ+GELrQ9q4JrhaqlEOj+pK0Qz9vAkiseXnK5XTZvlK+PGj+c
-         ITLnJzW3gXi/8R8ctVGRoXbuDafR7RYGUuff4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=cHnNg4XtFEYoLnQEw/XfFsePIT8BBPSNq7MudRDS36k=;
-        b=Ni7Usbw5jvkRX3biG6lOYlmRMFK5b2vL1ip9aFsyL2zJzpPknaaFCxmzlkcdHZTgMM
-         OivVfEjn9WCeTochfWIV24TptEDI23SoxCl7Onk7WQD8U5dvSTRRh82T2QY+Y2MibbmQ
-         ON2l11SPYP+RcrMUpuF2l5rCicjXTbLWalflkqQUDRz7RMmmx1JHwWjm5jDTfRhFnvtZ
-         Fb8SN27rs8zr5scWSCjs4WDh27SsYBXz2IQ0TCzZTJQPTPSx9OeitVb9C9MwhyERC4CI
-         K+lfvv+X7WEjV9NYfqQ0uMKkQeW+U+4wae3rwDvrPrigwxskTQ63+m94KFRCRH7GgCvk
-         zE7Q==
-X-Gm-Message-State: APjAAAWv0KTAUTyZgoq4c5xrdfOjOcYQhNVYoHMxVJoPFHOxDbvAw2qT
-        pvaSW1rNrg8KM75SMN0ibV3dTA==
-X-Google-Smtp-Source: APXvYqwRmQzJ5TBEJwVont89XoUey1p+VXvdgxkaWsqZQp5vr0bJX3e08W1uskVC0tV7Le8blSEzbQ==
-X-Received: by 2002:a65:48c3:: with SMTP id o3mr409690pgs.351.1559691913611;
-        Tue, 04 Jun 2019 16:45:13 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id c142sm20929180pfb.171.2019.06.04.16.45.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Jun 2019 16:45:12 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] x86/asm: Pin sensitive CR0 bits
-Date:   Tue,  4 Jun 2019 16:44:22 -0700
-Message-Id: <20190604234422.29391-3-keescook@chromium.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190604234422.29391-1-keescook@chromium.org>
-References: <20190604234422.29391-1-keescook@chromium.org>
+        Tue, 4 Jun 2019 19:51:53 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1hYJDZ-0007Eb-FK; Tue, 04 Jun 2019 17:51:49 -0600
+Received: from ip72-206-97-68.om.om.cox.net ([72.206.97.68] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1hYJDY-0007E1-J9; Tue, 04 Jun 2019 17:51:49 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Davidlohr Bueso <dbueso@suse.de>, Jens Axboe <axboe@kernel.dk>,
+        Davidlohr Bueso <dave@stgolabs.net>, e@80x24.org,
+        Jason Baron <jbaron@akamai.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-aio@kvack.org, omar.kilani@gmail.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        stable <stable@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Laight <David.Laight@aculab.com>
+References: <20190522032144.10995-1-deepa.kernel@gmail.com>
+        <20190529161157.GA27659@redhat.com>
+        <20190604134117.GA29963@redhat.com>
+        <CAHk-=wjSOh5zmApq2qsNjmY-GMn4CWe9YwdcKPjT+nVoGiDKOQ@mail.gmail.com>
+Date:   Tue, 04 Jun 2019 18:51:39 -0500
+In-Reply-To: <CAHk-=wjSOh5zmApq2qsNjmY-GMn4CWe9YwdcKPjT+nVoGiDKOQ@mail.gmail.com>
+        (Linus Torvalds's message of "Tue, 4 Jun 2019 14:26:42 -0700")
+Message-ID: <878sugewok.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1hYJDY-0007E1-J9;;;mid=<878sugewok.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=72.206.97.68;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18JWsEY56EAlEOUXsS4oiORhVM/2epMWVE=
+X-SA-Exim-Connect-IP: 72.206.97.68
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa04.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.9 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,FVGT_m_MULTI_ODD,T_TM2_M_HEADER_IN_MSG,
+        T_TooManySym_01,T_TooManySym_02,XMSubLong autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.4 FVGT_m_MULTI_ODD Contains multiple odd letter combinations
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Linus Torvalds <torvalds@linux-foundation.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 487 ms - load_scoreonly_sql: 0.06 (0.0%),
+        signal_user_changed: 3.8 (0.8%), b_tie_ro: 2.6 (0.5%), parse: 1.62
+        (0.3%), extract_message_metadata: 20 (4.2%), get_uri_detail_list: 3.9
+        (0.8%), tests_pri_-1000: 20 (4.0%), tests_pri_-950: 1.82 (0.4%),
+        tests_pri_-900: 1.45 (0.3%), tests_pri_-90: 34 (7.0%), check_bayes: 32
+        (6.6%), b_tokenize: 13 (2.6%), b_tok_get_all: 10 (2.0%), b_comp_prob:
+        3.6 (0.7%), b_tok_touch_all: 3.2 (0.7%), b_finish: 0.74 (0.2%),
+        tests_pri_0: 383 (78.8%), check_dkim_signature: 0.62 (0.1%),
+        check_dkim_adsp: 3.1 (0.6%), poll_dns_idle: 0.03 (0.0%), tests_pri_10:
+        4.6 (0.9%), tests_pri_500: 11 (2.2%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] signal: remove the wrong signal_pending() check in restore_user_sigmask()
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With sensitive CR4 bits pinned now, it's possible that the WP bit for
-CR0 might become a target as well. Following the same reasoning for
-the CR4 pinning, this pins CR0's WP bit (but this can be done with a
-static value).
+Linus Torvalds <torvalds@linux-foundation.org> writes:
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- arch/x86/include/asm/special_insns.h | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+> On Tue, Jun 4, 2019 at 6:41 AM Oleg Nesterov <oleg@redhat.com> wrote:
+>>
+>> This is the minimal fix for stable, I'll send cleanups later.
+>
+> Ugh. I htink this is correct, but I wish we had a better and more
+> intuitive interface.
+>
+> In particular, since restore_user_sigmask() basically wants to check
+> for "signal_pending()" anyway (to decide if the mask should be
+> restored by signal handling or by that function), I really get the
+> feeling that a lot of these patterns like
 
-diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
-index 284a77d52fea..9c9fd3760079 100644
---- a/arch/x86/include/asm/special_insns.h
-+++ b/arch/x86/include/asm/special_insns.h
-@@ -31,7 +31,22 @@ static inline unsigned long native_read_cr0(void)
- 
- static inline void native_write_cr0(unsigned long val)
- {
--	asm volatile("mov %0,%%cr0": : "r" (val), "m" (__force_order));
-+	unsigned long bits_missing = 0;
-+
-+set_register:
-+	if (static_branch_likely(&cr_pinning))
-+		val |= X86_CR0_WP;
-+
-+	asm volatile("mov %0,%%cr0": "+r" (val), "+m" (__force_order));
-+
-+	if (static_branch_likely(&cr_pinning)) {
-+		if (unlikely((val & X86_CR0_WP) != X86_CR0_WP)) {
-+			bits_missing = X86_CR0_WP;
-+			goto set_register;
-+		}
-+		/* Warn after we've set the missing bits. */
-+		WARN_ONCE(bits_missing, "CR0 WP bit went missing!?\n");
-+	}
- }
- 
- static inline unsigned long native_read_cr2(void)
--- 
-2.17.1
+Linus that checking for signal_pending() in restore_user_sigmask is the
+bug that caused the regression.
 
+>> -       restore_user_sigmask(ksig.sigmask, &sigsaved);
+>> -       if (signal_pending(current) && !ret)
+>> +
+>> +       interrupted = signal_pending(current);
+>> +       restore_user_sigmask(ksig.sigmask, &sigsaved, interrupted);
+>> +       if (interrupted && !ret)
+>>                 ret = -ERESTARTNOHAND;
+>
+> are wrong to begin with, and we really should aim for an interface
+> which says "tell me whether you completed the system call, and I'll
+> give you an error return if not".
+
+The pattern you are pointing out is specific to io_pgetevents and it's
+variations.  It does look buggy to me but not for the reason you point
+out, but instead because it does not appear to let a pending signal
+cause io_pgetevents to return early.
+
+I suspect we should fix that and have do_io_getevents return
+-EINTR or -ERESTARTNOHAND like everyone else.
+
+The concept of interrupted (aka return -EINTR to userspace) is truly
+fundamental to the current semantics.  We effectively put a normally
+blocked signal that was triggered back if we won't be returning -EINTR
+to userspace.
+
+> How about we make restore_user_sigmask() take two return codes: the
+> 'ret' we already have, and the return we would get if there is a
+> signal pending and w're currently returning zero.
+>
+> IOW, I think the above could become
+>
+>         ret = restore_user_sigmask(ksig.sigmask, &sigsaved, ret, -ERESTARTHAND);
+>
+> instead if we just made the right interface decision.
+>
+> Hmm?
+
+At best I think that is a cleanup that will complicate creating a simple
+straight forward regression fix.
+
+Unless I am misreading things that is optimizing the interface for
+dealing with broken code.
+
+So can we please get this fix in and then look at cleaning up and
+simplifying this code.
+
+Eric
+
+p.s. A rather compelling cleanup is to:
+
+- Leave the signal mask alone.
+- Register with signalfd_wqh for wake ups.
+- Have a helper
+
+   int signal_pending_sigmask(sigset_t *blocked)
+   {
+   	struct task_struct *tsk = current;
+   	int ret = 0;
+   	spin_lock_irq(&tsk->sighand->siglock);
+        if (next_signal(&tsk->pending, blocked) ||
+            next_signal(&tsk->signal->pending, blocked)) {
+        	ret = -ERESTARTHAND;
+                if (!sigequalsets(&tsk->blocked, blocked)) {
+                	tsk->saved_sigmask = tsk->blocked;
+                	__set_task_blocked(tsk, blocked);
+                        set_restore_sigmask();
+		}
+        }
+        spin_unlock_irq(&tsk->sighand->siglock);
+        return ret;
+   }
+  
+- Use that helper instead of signal_pending() in the various
+  sleep functions.
+- Possibly get the signal mask from tsk instead of passing it into
+  all of the helpers.
+
+Eric
