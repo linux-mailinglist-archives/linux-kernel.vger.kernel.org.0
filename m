@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31CA534A12
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:19:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20EB8349F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:18:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727993AbfFDOTD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 10:19:03 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52496 "EHLO
+        id S1727852AbfFDOSH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 10:18:07 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52550 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727436AbfFDOSD (ORCPT
+        with ESMTP id S1727719AbfFDOSD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 4 Jun 2019 10:18:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,29 +18,34 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=NXx6PmnhUtUTm/ybGqV0WKQy6usM3ULP72To5/hYtqI=; b=hhBf5LG46k5k+tlTkgrDdgTk9s
-        okl9la7n1x4PnoWk8QeEavzXjTZaCxWLoPU9MPEH6BMBEhTdezg9JgJLifi84w+ITFDVVepvlgHdJ
-        +3gXP2f/T5HL+E1Fr2eK8qcTk0wRY7aZNdSl+oZE4ODiLUcZJPdF8VZT2ZBYg0KA7dFfe9uWHzKnn
-        zY4EqvnO4WDNlNSaHt+QX8kmpzPZGFsarGscykbhEidJRMDKBCkEcHyM7xjjGK7YWgV3kPFLc9A2C
-        qf/V0mcgqYCaEMZwDtFLm892SiAQ892RqQY8cBtqvcUqJBRWvFvuCBeLG1QtsXNLfUD3Hp2E2Tlwd
-        4ivpsxAA==;
+        bh=kjhz9ZDClKO+GVwWomvO0sdT8nN7V5kJ8pUXdG9VfXk=; b=JTYXEHZMLzldK0P3t1DJm7x6nb
+        BQmvT1qrKWPVRiEbb53beHUKHD30P1fdTUfE0YObx5pm6PM+ksAgw35d0J3/9gTMHsm5TFTEsajWy
+        60UoXiA/rNuU+y+k99eOJadMchlmm4pSTkYo7UancRfAKIyHzPvk5kwCMJ3sJ+pJ2Y7iaCBL/Iems
+        FrwZ4B+lpEg1lLmiAF979ZFmN6zicC33fN8sPhNdztaXa+vP6Rfrjl0FUBCYlkwUZhIlDRFHW3LuD
+        yhi4IUPvVHEMRbwoW+WyuZPiMAgeqrrqKj5eZe/J8yJZJUq4wXroABdmkCPrNmtXeuppgD+x1fawI
+        9kHZ5WDQ==;
 Received: from [179.182.172.34] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hYAGH-0001Rk-VT; Tue, 04 Jun 2019 14:18:02 +0000
+        id 1hYAGH-0001Rs-VW; Tue, 04 Jun 2019 14:18:01 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hYAGE-0002l3-M1; Tue, 04 Jun 2019 11:17:58 -0300
+        id 1hYAGE-0002l7-Mq; Tue, 04 Jun 2019 11:17:58 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org
-Subject: [PATCH v2 07/22] docs: amd-memory-encryption.rst get rid of warnings
-Date:   Tue,  4 Jun 2019 11:17:41 -0300
-Message-Id: <7b916c2b8d551aa06527f332e423e25254b23adc.1559656538.git.mchehab+samsung@kernel.org>
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: [PATCH v2 08/22] gpu: i915.rst: Fix references to renamed files
+Date:   Tue,  4 Jun 2019 11:17:42 -0300
+Message-Id: <bd7dd29b9fb2101c954c8cfb2c3b4efc7d277045.1559656538.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1559656538.git.mchehab+samsung@kernel.org>
 References: <cover.1559656538.git.mchehab+samsung@kernel.org>
@@ -51,35 +56,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Get rid of those warnings:
+WARNING: kernel-doc './scripts/kernel-doc -rst -enable-lineno -function Hardware workarounds ./drivers/gpu/drm/i915/intel_workarounds.c' failed with return code 1
+WARNING: kernel-doc './scripts/kernel-doc -rst -enable-lineno -function Logical Rings, Logical Ring Contexts and Execlists ./drivers/gpu/drm/i915/intel_lrc.c' failed with return code 1
+WARNING: kernel-doc './scripts/kernel-doc -rst -enable-lineno -internal ./drivers/gpu/drm/i915/intel_lrc.c' failed with return code 2
 
-    Documentation/virtual/kvm/amd-memory-encryption.rst:244: WARNING: Citation [white-paper] is not referenced.
-    Documentation/virtual/kvm/amd-memory-encryption.rst:246: WARNING: Citation [amd-apm] is not referenced.
-    Documentation/virtual/kvm/amd-memory-encryption.rst:247: WARNING: Citation [kvm-forum] is not referenced.
-
-For references that aren't mentioned at the text by adding an
-explicit reference to them.
-
+Fixes: 112ed2d31a46 ("drm/i915: Move GraphicsTechnology files under gt/")
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Acked-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- Documentation/virtual/kvm/amd-memory-encryption.rst | 3 +++
- 1 file changed, 3 insertions(+)
+ Documentation/gpu/i915.rst | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/virtual/kvm/amd-memory-encryption.rst b/Documentation/virtual/kvm/amd-memory-encryption.rst
-index 659bbc093b52..d18c97b4e140 100644
---- a/Documentation/virtual/kvm/amd-memory-encryption.rst
-+++ b/Documentation/virtual/kvm/amd-memory-encryption.rst
-@@ -241,6 +241,9 @@ Returns: 0 on success, -negative on error
- References
- ==========
+diff --git a/Documentation/gpu/i915.rst b/Documentation/gpu/i915.rst
+index 055df45596c1..6c75380b2928 100644
+--- a/Documentation/gpu/i915.rst
++++ b/Documentation/gpu/i915.rst
+@@ -61,7 +61,7 @@ Intel GVT-g Host Support(vGPU device model)
+ Workarounds
+ -----------
  
-+
-+See [white-paper]_, [api-spec]_, [amd-apm]_ and [kvm-forum]_ for more info.
-+
- .. [white-paper] http://amd-dev.wpengine.netdna-cdn.com/wordpress/media/2013/12/AMD_Memory_Encryption_Whitepaper_v7-Public.pdf
- .. [api-spec] http://support.amd.com/TechDocs/55766_SEV-KM_API_Specification.pdf
- .. [amd-apm] http://support.amd.com/TechDocs/24593.pdf (section 15.34)
+-.. kernel-doc:: drivers/gpu/drm/i915/intel_workarounds.c
++.. kernel-doc:: drivers/gpu/drm/i915/gt/intel_workarounds.c
+    :doc: Hardware workarounds
+ 
+ Display Hardware Handling
+@@ -379,10 +379,10 @@ User Batchbuffer Execution
+ Logical Rings, Logical Ring Contexts and Execlists
+ --------------------------------------------------
+ 
+-.. kernel-doc:: drivers/gpu/drm/i915/intel_lrc.c
++.. kernel-doc:: drivers/gpu/drm/i915/gt/intel_lrc.c
+    :doc: Logical Rings, Logical Ring Contexts and Execlists
+ 
+-.. kernel-doc:: drivers/gpu/drm/i915/intel_lrc.c
++.. kernel-doc:: drivers/gpu/drm/i915/gt/intel_lrc.c
+    :internal:
+ 
+ Global GTT views
 -- 
 2.21.0
 
