@@ -2,43 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB3D834A2B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:20:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6437349F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:18:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727765AbfFDOTt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 10:19:49 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52484 "EHLO
+        id S1727907AbfFDOSP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 10:18:15 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52526 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727404AbfFDOSC (ORCPT
+        with ESMTP id S1727602AbfFDOSD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 10:18:02 -0400
+        Tue, 4 Jun 2019 10:18:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=uax00MhLlFpYA5SZzOVY82diwalzYA3SNqGmlnWlanE=; b=rWg2aqJgOjMzW/83fP7ArscMmH
-        J8fnYCZxolbjo3Cc39M2+rC4GbXGG2l0e/uy7/nc95qm9OC7GC017Xa2VC84CTVi2Boa8R2+rEc0l
-        Vg75wTOW07VCcL8fXafq/a2X508hOAQMWC3FOIk0ulDZ0x4Sss6lM0coeO0Er3PibuHYCmjU/HPmZ
-        10Ji0hK6+rPvI1zYm6C/k18EKQkVnOJ+H/Ndw4Nd03/fRi7I9z1H9jwB04bhE0TgzI/tnrzAd/R8K
-        6EYXIxWHZVCvHovrKyt9a9hhx2sxPvXDSF9Rphgja3mIyza+CdtLUnhIP2g1Yc/c/forOea8dLV8w
-        S5KyO17w==;
+        bh=WyA/RRUzEMCNSDUX0J/2kOmsPoE/y5/FaiFLeEY8Z7g=; b=b+jGFR+FqWUUKyYHiwJnW2zNxG
+        AQHjUBqohGyiKmiM8QJtfzgadwn5knHuqTTQyOI4jg71iS/obQc6K16soiuTxMaam488022zBsNI9
+        MnZeXMnsxG7Vo1gPsRqFv2yTOck32RwAe2pknIhnS3T5PhujxscxysQ1vUF/grkkg7CnaHGlHo2wT
+        AxbMWEV4mLaVmjGUnydXYeARNse9IeDmMNbMyw6Urfs7bz+3TEd2WOiC2gGEi+tjBStnpHX21AjoQ
+        u1K/LJ9CSk/wkGLTjQ1yNYMOur/rpovICKiqjLKFlwZFUDF4zvN5jU+4Fzk2BCq1dCWRSWQpHhIwr
+        MDP4MUmg==;
 Received: from [179.182.172.34] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hYAGH-0001Rr-V2; Tue, 04 Jun 2019 14:18:01 +0000
+        id 1hYAGH-0001Rv-Um; Tue, 04 Jun 2019 14:18:01 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hYAGE-0002la-ST; Tue, 04 Jun 2019 11:17:58 -0300
+        id 1hYAGE-0002lg-TI; Tue, 04 Jun 2019 11:17:58 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org
-Subject: [PATCH v2 15/22] docs: security: core.rst: Fix several warnings
-Date:   Tue,  4 Jun 2019 11:17:49 -0300
-Message-Id: <21350864823e07cc951e1dc7f0601baa09920ac4.1559656538.git.mchehab+samsung@kernel.org>
+        "David S. Miller" <davem@davemloft.net>,
+        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+        Roy Pledge <roy.pledge@nxp.com>,
+        Ioana Radulescu <ruxandra.radulescu@nxp.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Randy Dunlap <rdunlap@infradead.org>, netdev@vger.kernel.org
+Subject: [PATCH v2 16/22] docs: net: dpio-driver.rst: fix two codeblock warnings
+Date:   Tue,  4 Jun 2019 11:17:50 -0300
+Message-Id: <f5e4bcdb6cc89c270d4ec8ae6cfb932146a834ca.1559656538.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1559656538.git.mchehab+samsung@kernel.org>
 References: <cover.1559656538.git.mchehab+samsung@kernel.org>
@@ -49,65 +54,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Multi-line literal markups only work when they're idented at the
-same level, with is not the case here:
-
-   Documentation/security/keys/core.rst:1597: WARNING: Inline literal start-string without end-string.
-   Documentation/security/keys/core.rst:1597: WARNING: Inline emphasis start-string without end-string.
-   Documentation/security/keys/core.rst:1597: WARNING: Inline emphasis start-string without end-string.
-   Documentation/security/keys/core.rst:1598: WARNING: Inline emphasis start-string without end-string.
-   Documentation/security/keys/core.rst:1598: WARNING: Inline emphasis start-string without end-string.
-   Documentation/security/keys/core.rst:1600: WARNING: Inline literal start-string without end-string.
-   Documentation/security/keys/core.rst:1600: WARNING: Inline emphasis start-string without end-string.
-   Documentation/security/keys/core.rst:1600: WARNING: Inline emphasis start-string without end-string.
-   Documentation/security/keys/core.rst:1600: WARNING: Inline emphasis start-string without end-string.
-   Documentation/security/keys/core.rst:1600: WARNING: Inline emphasis start-string without end-string.
-   Documentation/security/keys/core.rst:1666: WARNING: Inline literal start-string without end-string.
-   Documentation/security/keys/core.rst:1666: WARNING: Inline emphasis start-string without end-string.
-   Documentation/security/keys/core.rst:1666: WARNING: Inline emphasis start-string without end-string.
-   Documentation/security/keys/core.rst:1666: WARNING: Inline emphasis start-string without end-string.
-
-Fix it by using a code-block instead.
+    Documentation/networking/device_drivers/freescale/dpaa2/dpio-driver.rst:43: WARNING: Definition list ends without a blank line; unexpected unindent.
+    Documentation/networking/device_drivers/freescale/dpaa2/dpio-driver.rst:63: WARNING: Unexpected indentation. looking for now-outdated files... none found
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/security/keys/core.rst | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ .../networking/device_drivers/freescale/dpaa2/dpio-driver.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/security/keys/core.rst b/Documentation/security/keys/core.rst
-index 9521c4207f01..3fd60dcb2dc6 100644
---- a/Documentation/security/keys/core.rst
-+++ b/Documentation/security/keys/core.rst
-@@ -1594,10 +1594,12 @@ The structure has a number of fields, some of which are mandatory:
-      attempted key link operation. If there is no match, -EINVAL is returned.
+diff --git a/Documentation/networking/device_drivers/freescale/dpaa2/dpio-driver.rst b/Documentation/networking/device_drivers/freescale/dpaa2/dpio-driver.rst
+index 5045df990a4c..17dbee1ac53e 100644
+--- a/Documentation/networking/device_drivers/freescale/dpaa2/dpio-driver.rst
++++ b/Documentation/networking/device_drivers/freescale/dpaa2/dpio-driver.rst
+@@ -39,8 +39,7 @@ The Linux DPIO driver consists of 3 primary components--
  
+    DPIO service-- provides APIs to other Linux drivers for services
  
--  *  ``int (*asym_eds_op)(struct kernel_pkey_params *params,
--			  const void *in, void *out);``
--     ``int (*asym_verify_signature)(struct kernel_pkey_params *params,
--				    const void *in, const void *in2);``
-+  *  ``asym_eds_op`` and ``asym_verify_signature``::
+-   QBman portal interface-- sends portal commands, gets responses
+-::
++   QBman portal interface-- sends portal commands, gets responses::
+ 
+           fsl-mc          other
+            bus           drivers
+@@ -60,6 +59,7 @@ The Linux DPIO driver consists of 3 primary components--
+ 
+ The diagram below shows how the DPIO driver components fit with the other
+ DPAA2 Linux driver components::
 +
-+       int (*asym_eds_op)(struct kernel_pkey_params *params,
-+			  const void *in, void *out);
-+       int (*asym_verify_signature)(struct kernel_pkey_params *params,
-+				    const void *in, const void *in2);
- 
-      These methods are optional.  If provided the first allows a key to be
-      used to encrypt, decrypt or sign a blob of data, and the second allows a
-@@ -1662,8 +1664,10 @@ The structure has a number of fields, some of which are mandatory:
-      required crypto isn't available.
- 
- 
--  *  ``int (*asym_query)(const struct kernel_pkey_params *params,
--			 struct kernel_pkey_query *info);``
-+  *  ``asym_query``::
-+
-+       int (*asym_query)(const struct kernel_pkey_params *params,
-+			 struct kernel_pkey_query *info);
- 
-      This method is optional.  If provided it allows information about the
-      public or asymmetric key held in the key to be determined.
+                                                    +------------+
+                                                    | OS Network |
+                                                    |   Stack    |
 -- 
 2.21.0
 
