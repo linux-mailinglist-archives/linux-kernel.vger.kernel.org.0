@@ -2,66 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A3B63437D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 11:45:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 465853438A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 11:56:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727163AbfFDJpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 05:45:50 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:34732 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726982AbfFDJpt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 05:45:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=b556LW/zGhsIEQ9wHaNnyQTbhd3GmK1j6Cg3hlYc5bo=; b=XWKe+mTFt3zXResDGnP6d80+u
-        2YVpccshMns9ta6L1XaQPYItmwKWTuuRrdUgMzlFCoLUU9icno8xYQSzBeEdYpK/aKQU3gWITlKFK
-        4F9lKyrgWiAgzQNY3Xycp75Jq138zRGPxz6EqaZw7l0sszEGuFsvA4kyrZovoA4Y1ePIaPM0TkYAb
-        PvLq5UM5gvNsfbvc7D9B1rkZQFl/DIUFKbpnLb/etPZMBjF6C3sTiSkgAXlGsppmnvBipYzETVVYh
-        s7idfkNFL8Z/7+T5fPoJxfDM1+89KnDgVTIKaNM6Zy7C53CiKKroR6hsdBecp8mXXCzyUK+mw8j5g
-        keuqZZLgg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hY60h-0003K8-B3; Tue, 04 Jun 2019 09:45:39 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 26B5F2010DE5F; Tue,  4 Jun 2019 11:45:37 +0200 (CEST)
-Date:   Tue, 4 Jun 2019 11:45:37 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        huang ying <huang.ying.caritas@gmail.com>
-Subject: Re: [PATCH v8 17/19] locking/rwsem: Merge owner into count on x86-64
-Message-ID: <20190604094537.GK3402@hirez.programming.kicks-ass.net>
-References: <20190520205918.22251-1-longman@redhat.com>
- <20190520205918.22251-18-longman@redhat.com>
+        id S1727137AbfFDJ4h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 05:56:37 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:18080 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727075AbfFDJ4h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 05:56:37 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 7D02DE4F6DB8E951CA4C;
+        Tue,  4 Jun 2019 17:48:55 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 4 Jun 2019
+ 17:48:53 +0800
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: add a rw_sem to cover quota flag
+ changes
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20190530033115.16853-1-jaegeuk@kernel.org>
+ <20190530175714.GB28719@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <c4348b1c-02ba-44e7-598c-e2435e53077d@huawei.com>
+Date:   Tue, 4 Jun 2019 17:48:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190520205918.22251-18-longman@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190530175714.GB28719@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 20, 2019 at 04:59:16PM -0400, Waiman Long wrote:
-> With separate count and owner, there are timing windows where the two
-> values are inconsistent. That can cause problem when trying to figure
-> out the exact state of the rwsem. For instance, a RT task will stop
-> optimistic spinning if the lock is acquired by a writer but the owner
-> field isn't set yet. That can be solved by combining the count and
-> owner together in a single atomic value.
+On 2019/5/31 1:57, Jaegeuk Kim wrote:
+> thread 1:                        thread 2:
+> writeback                        checkpoint
+> set QUOTA_NEED_FLUSH
+>                                  clear QUOTA_NEED_FLUSH
+> f2fs_dquot_commit
+> dquot_commit
+> clear_dquot_dirty
+>                                  f2fs_quota_sync
+>                                  dquot_writeback_dquots
+> 				 nothing to commit
+> commit_dqblk
+> quota_write
+> f2fs_quota_write
+> waiting for f2fs_lock_op()
+> 				 pass __need_flush_quota
+>                                  (no F2FS_DIRTY_QDATA)
+> 
+> -> up-to-date quota is not written
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-I just realized we can use cmpxchg_double() here (where available of
-course).
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
+Thanks,
