@@ -2,184 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B379350FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 22:32:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A25913511F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 22:37:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726830AbfFDUc1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 16:32:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60388 "EHLO mail.kernel.org"
+        id S1726726AbfFDUhZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 16:37:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726788AbfFDUcY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 16:32:24 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726589AbfFDUhY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 16:37:24 -0400
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73A842070B;
-        Tue,  4 Jun 2019 20:26:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D71E020B1F
+        for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2019 20:29:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559680011;
-        bh=/AqGiZDSEw4WYJPXkLsV5qAXCrwMCotDuhGsf4zvuCg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pokyw4qBpjQn4MzvAhuN6BHrC10UueaDCimFSZNh8SNIadcM8xlChWRwa/QoQIpTK
-         QC4EuJ3iVx+GZKfzuqTTfHp4LIabb94QKzdaikpaMTH3dNttmhZdIF0ETxfVf4uwXq
-         C/4ZSc2bhCFIG1th7FFi+HfYl1OnWpmzOVLxXkTI=
-Date:   Tue, 4 Jun 2019 15:26:48 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>
-Cc:     mj@ucw.cz, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: Add PCIe 5.0 data rate (32 GT/s) support
-Message-ID: <20190604202648.GC84290@google.com>
-References: <92365e3caf0fc559f9ab14bcd053bfc92d4f661c.1559664969.git.gustavo.pimentel@synopsys.com>
+        s=default; t=1559680163;
+        bh=cFvISWqZtenk/itmER7f+dDnKlLEKMgxPk2A4pPepQo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=2HRcWilzppDkhdZc4TaBjrV5UIkT55QL43VjaSXEiVplRVpcAxBwNkDcNug+37B+Y
+         t9fbgeUJZIdsTchPZypFGwlhJLgpyuR/aNqVnzXAOqtuoX8oEoU5j1y8GrjbLYqYJn
+         ogGs6TSf8PXi12+IZT5rOfJH6kFTruNBQ6p9qQWM=
+Received: by mail-wr1-f51.google.com with SMTP id d18so17193533wrs.5
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 13:29:22 -0700 (PDT)
+X-Gm-Message-State: APjAAAUVFs+pyuSWaSWiCpABGufl3Du2PpFF6GX2DkNt6icZ3v/Ba7q8
+        djqTE2/o55YnLOJtENJnxXgVbD4zhEdpcX+nwkekCQ==
+X-Google-Smtp-Source: APXvYqzggKbEmevf1hAGqsqkg6nyK2jhLYRBA68/pK6t43ULfTO2FFzNf9MvZev2j4Pu6QQWtmJouUP2ZUsabFVGcpo=
+X-Received: by 2002:adf:f2c8:: with SMTP id d8mr92723wrp.221.1559680161582;
+ Tue, 04 Jun 2019 13:29:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <92365e3caf0fc559f9ab14bcd053bfc92d4f661c.1559664969.git.gustavo.pimentel@synopsys.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190531233159.30992-1-sean.j.christopherson@intel.com> <20190531233159.30992-9-sean.j.christopherson@intel.com>
+In-Reply-To: <20190531233159.30992-9-sean.j.christopherson@intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 4 Jun 2019 13:29:10 -0700
+X-Gmail-Original-Message-ID: <CALCETrXf3ujAn6uOwWMU8SRZOvBRb8ALvo_LQvwxc899mrakwQ@mail.gmail.com>
+Message-ID: <CALCETrXf3ujAn6uOwWMU8SRZOvBRb8ALvo_LQvwxc899mrakwQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 8/9] LSM: x86/sgx: Introduce ->enclave_load() hook for
+ Intel SGX
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-sgx@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, Serge Ayoun <serge.ayoun@intel.com>,
+        Shay Katz-zamir <shay.katz-zamir@intel.com>,
+        Haitao Huang <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kai Svahn <kai.svahn@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Kai Huang <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        William Roberts <william.c.roberts@intel.com>,
+        Philip Tricca <philip.b.tricca@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 04, 2019 at 06:24:43PM +0200, Gustavo Pimentel wrote:
-> PCIe 5.0 allows an effective 32.0 GT/s speed per lane.
-> 
-> Currently if you read a PCIe 5.0 EP link data rate through sysfs, the
-> resulting output will be "Unknown speed" instead of "32.0 GT/s" as we
-> would be expect.
-> 
-> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-
-Applied to pci/enumeration for v5.3, thanks!
-
-I reworded the commit log to emphasize that this only affects
-*decoding* of the new speed; the actual *support* for operating at this
-speed is in the hardware and needs no assistance from the OS.
-
-  PCI: Decode PCIe 32 GT/s link speed
-
-  PCIe r5.0, sec 7.5.3.18, defines a new 32.0 GT/s bit in the Supported Link
-  Speeds Vector of Link Capabilities 2.  Decode this new speed.  This does
-  not affect the speed of the link, which should be negotiated automatically
-  by the hardware; it only adds decoding when showing the speed to the user.
-
-  Previously, reading the speed of a link operating at this speed showed
-  "Unknown speed" instead of "32.0 GT/s".
-
+On Fri, May 31, 2019 at 4:32 PM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
+>
+> enclave_load() is roughly analogous to the existing file_mprotect().
+>
+> Due to the nature of SGX and its Enclave Page Cache (EPC), all enclave
+> VMAs are backed by a single file, i.e. /dev/sgx/enclave, that must be
+> MAP_SHARED.  Furthermore, all enclaves need read, write and execute
+> VMAs.  As a result, file_mprotect() does not provide any meaningful
+> security for enclaves since an LSM can only deny/grant access to the
+> EPC as a whole.
+>
+> security_enclave_load() is called when SGX is first loading an enclave
+> page, i.e. copying a page from normal memory into the EPC.  The notable
+> difference from file_mprotect() is the allowed_prot parameter, which
+> is essentially an SGX-specific version of a VMA's MAY_{READ,WRITE,EXEC}
+> flags.  The purpose of allowed_prot is to enable checks such as
+> SELinux's FILE__EXECMOD permission without having to track and update
+> VMAs across multiple mm structs, i.e. SGX can ensure userspace doesn't
+> overstep its bounds simply by restricting an enclave VMA's protections
+> by vetting what is maximally allowed during build time.
+>
+> An alternative to the allowed_prot approach would be to use an enclave's
+> SIGSTRUCT (a smallish structure that can uniquely identify an enclave)
+> as a proxy for the enclave.  For example, SGX could take and hold a
+> reference to the file containing the SIGSTRUCT (if it's in a file) and
+> call security_enclave_load() during mprotect().  While the SIGSTRUCT
+> approach would provide better precision, the actual value added was
+> deemed to be negligible.  On the other hand, pinning a file for the
+> lifetime of the enclave is ugly, and essentially caching LSM policies
+> in each page's allowed_prot avoids having to make an extra LSM upcall
+> during mprotect().
+>
+> Note, extensive discussion yielded no sane alternative to some form of
+> SGX specific LSM hook[1].
+>
+> [1] https://lkml.kernel.org/r/CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com
+>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 > ---
-> Changes:
-> v1 -> v2
->  - Rebase patch
-> 
->  drivers/pci/pci-sysfs.c       | 3 +++
->  drivers/pci/pci.c             | 4 +++-
->  drivers/pci/probe.c           | 2 +-
->  drivers/pci/slot.c            | 1 +
->  include/linux/pci.h           | 1 +
->  include/uapi/linux/pci_regs.h | 4 ++++
->  6 files changed, 13 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> index 6d27475..d52d304 100644
-> --- a/drivers/pci/pci-sysfs.c
-> +++ b/drivers/pci/pci-sysfs.c
-> @@ -182,6 +182,9 @@ static ssize_t current_link_speed_show(struct device *dev,
->  		return -EINVAL;
->  
->  	switch (linkstat & PCI_EXP_LNKSTA_CLS) {
-> +	case PCI_EXP_LNKSTA_CLS_32_0GB:
-> +		speed = "32 GT/s";
-> +		break;
->  	case PCI_EXP_LNKSTA_CLS_16_0GB:
->  		speed = "16 GT/s";
->  		break;
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 8abc843..4729a7c 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -5621,7 +5621,9 @@ enum pci_bus_speed pcie_get_speed_cap(struct pci_dev *dev)
->  	 */
->  	pcie_capability_read_dword(dev, PCI_EXP_LNKCAP2, &lnkcap2);
->  	if (lnkcap2) { /* PCIe r3.0-compliant */
-> -		if (lnkcap2 & PCI_EXP_LNKCAP2_SLS_16_0GB)
-> +		if (lnkcap2 & PCI_EXP_LNKCAP2_SLS_32_0GB)
-> +			return PCIE_SPEED_32_0GT;
-> +		else if (lnkcap2 & PCI_EXP_LNKCAP2_SLS_16_0GB)
->  			return PCIE_SPEED_16_0GT;
->  		else if (lnkcap2 & PCI_EXP_LNKCAP2_SLS_8_0GB)
->  			return PCIE_SPEED_8_0GT;
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index 0e8e2c1..c5f27c8 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -668,7 +668,7 @@ const unsigned char pcie_link_speed[] = {
->  	PCIE_SPEED_5_0GT,		/* 2 */
->  	PCIE_SPEED_8_0GT,		/* 3 */
->  	PCIE_SPEED_16_0GT,		/* 4 */
-> -	PCI_SPEED_UNKNOWN,		/* 5 */
-> +	PCIE_SPEED_32_0GT,		/* 5 */
->  	PCI_SPEED_UNKNOWN,		/* 6 */
->  	PCI_SPEED_UNKNOWN,		/* 7 */
->  	PCI_SPEED_UNKNOWN,		/* 8 */
-> diff --git a/drivers/pci/slot.c b/drivers/pci/slot.c
-> index f4d92b1..ae4aa0e 100644
-> --- a/drivers/pci/slot.c
-> +++ b/drivers/pci/slot.c
-> @@ -75,6 +75,7 @@ static const char *pci_bus_speed_strings[] = {
->  	"5.0 GT/s PCIe",	/* 0x15 */
->  	"8.0 GT/s PCIe",	/* 0x16 */
->  	"16.0 GT/s PCIe",	/* 0x17 */
-> +	"32.0 GT/s PCIe",	/* 0x18 */
->  };
->  
->  static ssize_t bus_speed_read(enum pci_bus_speed speed, char *buf)
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 4a5a84d..2173e6b 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -258,6 +258,7 @@ enum pci_bus_speed {
->  	PCIE_SPEED_5_0GT		= 0x15,
->  	PCIE_SPEED_8_0GT		= 0x16,
->  	PCIE_SPEED_16_0GT		= 0x17,
-> +	PCIE_SPEED_32_0GT		= 0x18,
->  	PCI_SPEED_UNKNOWN		= 0xff,
->  };
->  
-> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-> index 2716476..f28e562 100644
-> --- a/include/uapi/linux/pci_regs.h
-> +++ b/include/uapi/linux/pci_regs.h
-> @@ -528,6 +528,7 @@
->  #define  PCI_EXP_LNKCAP_SLS_5_0GB 0x00000002 /* LNKCAP2 SLS Vector bit 1 */
->  #define  PCI_EXP_LNKCAP_SLS_8_0GB 0x00000003 /* LNKCAP2 SLS Vector bit 2 */
->  #define  PCI_EXP_LNKCAP_SLS_16_0GB 0x00000004 /* LNKCAP2 SLS Vector bit 3 */
-> +#define  PCI_EXP_LNKCAP_SLS_32_0GB 0x00000005 /* LNKCAP2 SLS Vector bit 4 */
->  #define  PCI_EXP_LNKCAP_MLW	0x000003f0 /* Maximum Link Width */
->  #define  PCI_EXP_LNKCAP_ASPMS	0x00000c00 /* ASPM Support */
->  #define  PCI_EXP_LNKCAP_L0SEL	0x00007000 /* L0s Exit Latency */
-> @@ -556,6 +557,7 @@
->  #define  PCI_EXP_LNKSTA_CLS_5_0GB 0x0002 /* Current Link Speed 5.0GT/s */
->  #define  PCI_EXP_LNKSTA_CLS_8_0GB 0x0003 /* Current Link Speed 8.0GT/s */
->  #define  PCI_EXP_LNKSTA_CLS_16_0GB 0x0004 /* Current Link Speed 16.0GT/s */
-> +#define  PCI_EXP_LNKSTA_CLS_32_0GB 0x0005 /* Current Link Speed 32.0GT/s */
->  #define  PCI_EXP_LNKSTA_NLW	0x03f0	/* Negotiated Link Width */
->  #define  PCI_EXP_LNKSTA_NLW_X1	0x0010	/* Current Link Width x1 */
->  #define  PCI_EXP_LNKSTA_NLW_X2	0x0020	/* Current Link Width x2 */
-> @@ -661,6 +663,7 @@
->  #define  PCI_EXP_LNKCAP2_SLS_5_0GB	0x00000004 /* Supported Speed 5GT/s */
->  #define  PCI_EXP_LNKCAP2_SLS_8_0GB	0x00000008 /* Supported Speed 8GT/s */
->  #define  PCI_EXP_LNKCAP2_SLS_16_0GB	0x00000010 /* Supported Speed 16GT/s */
-> +#define  PCI_EXP_LNKCAP2_SLS_32_0GB	0x00000020 /* Supported Speed 32GT/s */
->  #define  PCI_EXP_LNKCAP2_CROSSLINK	0x00000100 /* Crosslink supported */
->  #define PCI_EXP_LNKCTL2		48	/* Link Control 2 */
->  #define  PCI_EXP_LNKCTL2_TLS		0x000f
-> @@ -668,6 +671,7 @@
->  #define  PCI_EXP_LNKCTL2_TLS_5_0GT	0x0002 /* Supported Speed 5GT/s */
->  #define  PCI_EXP_LNKCTL2_TLS_8_0GT	0x0003 /* Supported Speed 8GT/s */
->  #define  PCI_EXP_LNKCTL2_TLS_16_0GT	0x0004 /* Supported Speed 16GT/s */
-> +#define  PCI_EXP_LNKCTL2_TLS_32_0GT	0x0005 /* Supported Speed 32GT/s */
->  #define PCI_EXP_LNKSTA2		50	/* Link Status 2 */
->  #define PCI_CAP_EXP_ENDPOINT_SIZEOF_V2	52	/* v2 endpoints with link end here */
->  #define PCI_EXP_SLTCAP2		52	/* Slot Capabilities 2 */
-> -- 
-> 2.7.4
-> 
+>  arch/x86/kernel/cpu/sgx/driver/ioctl.c | 14 +++++++++-----
+>  include/linux/lsm_hooks.h              | 16 ++++++++++++++++
+>  include/linux/security.h               |  2 ++
+>  security/security.c                    |  8 ++++++++
+>  4 files changed, 35 insertions(+), 5 deletions(-)
+>
+> diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+> index 5f71be7cbb01..260417ecbcff 100644
+> --- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+> +++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+> @@ -8,6 +8,7 @@
+>  #include <linux/highmem.h>
+>  #include <linux/ratelimit.h>
+>  #include <linux/sched/signal.h>
+> +#include <linux/security.h>
+>  #include <linux/shmem_fs.h>
+>  #include <linux/slab.h>
+>  #include <linux/suspend.h>
+> @@ -580,21 +581,24 @@ static int sgx_encl_page_protect(unsigned long src, unsigned long prot,
+>                                  unsigned long *allowed_prot)
+>  {
+>         struct vm_area_struct *vma;
+> +       int ret = 0;
+>
+> -       if (!(*allowed_prot & VM_EXEC))
+> +       if (!(*allowed_prot & VM_EXEC) && !IS_ENABLED(CONFIG_SECURITY))
+>                 goto do_check;
+>
+>         down_read(&current->mm->mmap_sem);
+>         vma = find_vma(current->mm, src);
+>         if (!vma || (vma->vm_file && path_noexec(&vma->vm_file->f_path)))
+>                 *allowed_prot &= ~VM_EXEC;
+> +#ifdef CONFIG_SECURITY
+> +       ret = security_enclave_load(vma, prot, allowed_prot);
+> +#endif
+>         up_read(&current->mm->mmap_sem);
+>
+>  do_check:
+> -       if (prot & ~*allowed_prot)
+> -               return -EACCES;
+> -
+> -       return 0;
+> +       if (!ret && (prot & ~*allowed_prot))
+> +               ret = -EACCES;
+> +       return ret;
+>  }
+>
+>  static int sgx_encl_add_page(struct sgx_encl *encl, unsigned long addr,
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 47f58cfb6a19..0562775424a0 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -1446,6 +1446,14 @@
+>   * @bpf_prog_free_security:
+>   *     Clean up the security information stored inside bpf prog.
+>   *
+> + * Security hooks for Intel SGX enclaves.
+> + *
+> + * @enclave_load:
+> + *     On success, returns 0 and optionally adjusts @allowed_prot
+> + *     @vma: the source memory region of the enclave page being loaded.
+> + *     @prot: the initial protection of the enclave page.
+
+What do you mean "initial"?  The page is always mapped PROT_NONE when
+this is called, right?  I feel like I must be missing something here.
