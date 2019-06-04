@@ -2,83 +2,254 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A21033D45
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 04:45:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2713733D5A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 04:59:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726427AbfFDCpN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 22:45:13 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:37849 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726136AbfFDCpM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 22:45:12 -0400
-Received: from [222.129.45.111] (helo=localhost.localdomain)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <aaron.ma@canonical.com>)
-        id 1hXzRk-000358-4P; Tue, 04 Jun 2019 02:45:08 +0000
-Subject: Re: [PATCH 1/2] Input: synaptics-rmi4 - clear irqs before set irqs
-From:   Aaron Ma <aaron.ma@canonical.com>
-To:     Christopher Heiny <Cheiny@synaptics.com>,
-        "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrew Duggan <aduggan@synaptics.com>,
-        "benjamin.tissoires@redhat.com" <benjamin.tissoires@redhat.com>
-References: <20190220164200.31044-1-aaron.ma@canonical.com>
- <17cd420ea32a9787c56ba25e36e7661541c2f65f.camel@synaptics.com>
- <a0f21198-5715-8858-8368-51e43092181e@canonical.com>
- <acd07f4d-1602-46c5-c486-c917f1868b59@canonical.com>
- <f4f7265d9ad06726bb2ef12ab6b7529d2fb06165.camel@synaptics.com>
- <9321df87-5bc5-0c75-2815-f8602ecf9d86@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=aaron.ma@canonical.com; prefer-encrypt=mutual; keydata=
- mQENBFffeLkBCACi4eE4dPsgWN6B9UDOVcAvb5QgU/hRG6yS0I1lGKQv4KA+bke0c5g8clbO
- 9gIlIl2bityfA9NzBsDik4Iei3AxMbFyxv9keMwcOFQBIOZF0P3f05qjxftF8P+yp9QTV4hp
- BkFzsXzWRgXN3r8hU8wqZybepF4B1C83sm2kQ5A5N0AUGbZli9i2G+/VscG9sWfLy8T7f4YW
- MjmlijCjoV6k29vsmTWQPZ7EApNpvR5BnZQPmQWzkkr0lNXlsKcyLgefQtlwg6drK4fe4wz0
- ouBIHJEiXE1LWK1hUzkCUASra4WRwKk1Mv/NLLE/aJRqEvF2ukt3uVuM77RWfl7/H/v5ABEB
- AAG0IUFhcm9uIE1hIDxhYXJvbi5tYUBjYW5vbmljYWwuY29tPokBNwQTAQgAIQUCV994uQIb
- AwULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRDNxCzQfVU6ntJ9B/9aVy0+RkLqF9QpLmw+
- LAf1m3Fd+4ZarPTerqDqkLla3ekYhbrEtlI1mYuB5f+gtrIjmcW27gacHdslKB9YwaL8B4ZB
- GJKhcrntLg4YPzYUnXZkHHTv1hMw7fBYw82cBT+EbG0Djh6Po6Ihqyr3auHhfFcp1PZH4Mtq
- 6hN5KaDZzF/go+tRF5e4bn61Nhdue7mrhFSlfkzLG2ehHWmRV+S91ksH81YDFnazK0sRINBx
- V1S8ts3WJ2f1AbgmnDlbK3c/AfI5YxnIHn/x2ZdXj1P/wn7DgZHmpMy5DMuk0gN34NLUPLA/
- cHeKoBAF8emugljiKecKBpMTLe8FrVOxbkrauQENBFffeLkBCACweKP3Wx+gK81+rOUpuQ00
- sCyKzdtMuXXJ7oL4GzYHbLfJq+F+UHpQbytVGTn3R5+Y61v41g2zTYZooaC+Hs1+ixf+buG2
- +2LZjPSELWPNzH9lsKNlCcEvu1XhyyHkBDbnFFHWlUlql3nSXMo//dOTG/XGKaEaZUxjCLUC
- 8ehLc16DJDvdXsPwWhHrCH/4k92F6qQ14QigBMsl75jDTDJMEYgRYEBT1D/bwxdIeoN1BfIG
- mYgf059RrWax4SMiJtVDSUuDOpdwoEcZ0FWesRfbFrM+k/XKiIbjMZSvLunA4FIsOdWYOob4
- Hh0rsm1G+fBLYtT+bE26OWpQ/lSn4TdhABEBAAGJAR8EGAEIAAkFAlffeLkCGwwACgkQzcQs
- 0H1VOp6p5Af/ap5EVuP1AhFdPD3pXLNrUUt72W3cuAOjXyss43qFC2YRjGfktrizsDjQU46g
- VKoD6EW9XUPgvYM+k8BJEoXDLhHWnCnMKlbHP3OImxzLRhF4kdlnLicz1zKRcessQatRpJgG
- NIiD+eFyh0CZcWBO1BB5rWikjO/idicHao2stFdaBmIeXvhT9Xp6XNFEmzOmfHps+kKpWshY
- 9LDAU0ERBNsW4bekOCa/QxfqcbZYRjrVQvya0EhrPhq0bBpzkIL/7QSBMcdv6IajTlHnLARF
- nAIofCEKeEl7+ksiRapL5Nykcbt4dldE3sQWxIybC94SZ4inENKw6I8RNpigWm0R5w==
-Message-ID: <2995b27a-9ec8-eebe-78b6-2d3bf5098af8@canonical.com>
-Date:   Tue, 4 Jun 2019 10:45:01 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <9321df87-5bc5-0c75-2815-f8602ecf9d86@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726501AbfFDC7d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 22:59:33 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:39892 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726136AbfFDC7c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 3 Jun 2019 22:59:32 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E30031A05CB;
+        Tue,  4 Jun 2019 04:59:29 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5C5171A05B0;
+        Tue,  4 Jun 2019 04:59:26 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id BA86D402A6;
+        Tue,  4 Jun 2019 10:59:21 +0800 (SGT)
+From:   Yuantian Tang <andy.tang@nxp.com>
+To:     edubezval@gmail.com, rui.zhang@intel.com
+Cc:     daniel.lezcano@linaro.org, leoyang.li@nxp.com,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yuantian Tang <andy.tang@nxp.com>
+Subject: [PATCH] thermal: qoriq: add thermal monitor unit version 2 support
+Date:   Tue,  4 Jun 2019 10:51:14 +0800
+Message-Id: <20190604025114.46085-1-andy.tang@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christopher:
+Thermal Monitor Unit v2 is introduced on new Layscape SoC.
+Compared to v1, TMUv2 has a little different register layout
+and digital output is fairly linear.
 
-Have got time to review these 2 patches?
-Users reported it works fine since I sent out this patch.
+Signed-off-by: Yuantian Tang <andy.tang@nxp.com>
+---
+ drivers/thermal/qoriq_thermal.c | 122 +++++++++++++++++++++++++-------
+ 1 file changed, 98 insertions(+), 24 deletions(-)
 
-Thanks,
-Aaron
+diff --git a/drivers/thermal/qoriq_thermal.c b/drivers/thermal/qoriq_thermal.c
+index 3b5f5b3fb1bc..0df6dfddf804 100644
+--- a/drivers/thermal/qoriq_thermal.c
++++ b/drivers/thermal/qoriq_thermal.c
+@@ -13,6 +13,15 @@
+ #include "thermal_core.h"
+ 
+ #define SITES_MAX	16
++#define TMR_DISABLE	0x0
++#define TMR_ME		0x80000000
++#define TMR_ALPF	0x0c000000
++#define TMR_ALPF_V2	0x03000000
++#define TMTMIR_DEFAULT	0x0000000f
++#define TIER_DISABLE	0x0
++#define TEUMR0_V2	0x51009C00
++#define TMU_VER1	0x1
++#define TMU_VER2	0x2
+ 
+ /*
+  * QorIQ TMU Registers
+@@ -23,17 +32,55 @@ struct qoriq_tmu_site_regs {
+ 	u8 res0[0x8];
+ };
+ 
+-struct qoriq_tmu_regs {
++struct qoriq_tmu_regs_v2 {
++	u32 tmr;		/* Mode Register */
++	u32 tsr;		/* Status Register */
++	u32 tmsr;		/* monitor site register */
++	u32 tmtmir;		/* Temperature measurement interval Register */
++	u8 res0[0x10];
++	u32 tier;		/* Interrupt Enable Register */
++	u32 tidr;		/* Interrupt Detect Register */
++	u8 res1[0x8];
++	u32 tiiscr;		/* interrupt immediate site capture register */
++	u32 tiascr;		/* interrupt average site capture register */
++	u32 ticscr;		/* Interrupt Critical Site Capture Register */
++	u32 res2;
++	u32 tmhtcr;		/* monitor high temperature capture register */
++	u32 tmltcr;		/* monitor low temperature capture register */
++	u32 tmrtrcr;	/* monitor rising temperature rate capture register */
++	u32 tmftrcr;	/* monitor falling temperature rate capture register */
++	u32 tmhtitr;	/* High Temperature Immediate Threshold */
++	u32 tmhtatr;	/* High Temperature Average Threshold */
++	u32 tmhtactr;	/* High Temperature Average Crit Threshold */
++	u32 res3;
++	u32 tmltitr;	/* monitor low temperature immediate threshold */
++	u32 tmltatr;	/* monitor low temperature average threshold register */
++	u32 tmltactr;	/* monitor low temperature average critical threshold */
++	u32 res4;
++	u32 tmrtrctr;	/* monitor rising temperature rate critical threshold */
++	u32 tmftrctr;	/* monitor falling temperature rate critical threshold*/
++	u8 res5[0x8];
++	u32 ttcfgr;	/* Temperature Configuration Register */
++	u32 tscfgr;	/* Sensor Configuration Register */
++	u8 res6[0x78];
++	struct qoriq_tmu_site_regs site[SITES_MAX];
++	u8 res7[0x9f8];
++	u32 ipbrr0;		/* IP Block Revision Register 0 */
++	u32 ipbrr1;		/* IP Block Revision Register 1 */
++	u8 res8[0x300];
++	u32 teumr0;
++	u32 teumr1;
++	u32 teumr2;
++	u32 res9;
++	u32 ttrcr[4];	/* Temperature Range Control Register */
++};
++
++struct qoriq_tmu_regs_v1 {
+ 	u32 tmr;		/* Mode Register */
+-#define TMR_DISABLE	0x0
+-#define TMR_ME		0x80000000
+-#define TMR_ALPF	0x0c000000
+ 	u32 tsr;		/* Status Register */
+ 	u32 tmtmir;		/* Temperature measurement interval Register */
+-#define TMTMIR_DEFAULT	0x0000000f
+ 	u8 res0[0x14];
+ 	u32 tier;		/* Interrupt Enable Register */
+-#define TIER_DISABLE	0x0
+ 	u32 tidr;		/* Interrupt Detect Register */
+ 	u32 tiscr;		/* Interrupt Site Capture Register */
+ 	u32 ticscr;		/* Interrupt Critical Site Capture Register */
+@@ -53,10 +100,7 @@ struct qoriq_tmu_regs {
+ 	u32 ipbrr0;		/* IP Block Revision Register 0 */
+ 	u32 ipbrr1;		/* IP Block Revision Register 1 */
+ 	u8 res6[0x310];
+-	u32 ttr0cr;		/* Temperature Range 0 Control Register */
+-	u32 ttr1cr;		/* Temperature Range 1 Control Register */
+-	u32 ttr2cr;		/* Temperature Range 2 Control Register */
+-	u32 ttr3cr;		/* Temperature Range 3 Control Register */
++	u32 ttrcr[4];		/* Temperature Range Control Register */
+ };
+ 
+ struct qoriq_tmu_data;
+@@ -71,7 +115,9 @@ struct qoriq_sensor {
+ };
+ 
+ struct qoriq_tmu_data {
+-	struct qoriq_tmu_regs __iomem *regs;
++	int ver;
++	struct qoriq_tmu_regs_v1 __iomem *regs;
++	struct qoriq_tmu_regs_v2 __iomem *regv2;
+ 	bool little_endian;
+ 	struct qoriq_sensor	*sensor[SITES_MAX];
+ };
+@@ -111,7 +157,7 @@ static const struct thermal_zone_of_device_ops tmu_tz_ops = {
+ static int qoriq_tmu_register_tmu_zone(struct platform_device *pdev)
+ {
+ 	struct qoriq_tmu_data *qdata = platform_get_drvdata(pdev);
+-	int id, sites = 0;
++	int id, sites = 0, sv2 = 0;
+ 
+ 	for (id = 0; id < SITES_MAX; id++) {
+ 		qdata->sensor[id] = devm_kzalloc(&pdev->dev,
+@@ -130,12 +176,24 @@ static int qoriq_tmu_register_tmu_zone(struct platform_device *pdev)
+ 				return PTR_ERR(qdata->sensor[id]->tzd);
+ 		}
+ 
+-		sites |= 0x1 << (15 - id);
++		if (qdata->ver == TMU_VER1)
++			sites |= 0x1 << (15 - id);
++		else
++			sv2 |= 0x1 << id;
+ 	}
+ 
+ 	/* Enable monitoring */
+-	if (sites != 0)
+-		tmu_write(qdata, sites | TMR_ME | TMR_ALPF, &qdata->regs->tmr);
++	if (qdata->ver == TMU_VER1) {
++		if (sites != 0)
++			tmu_write(qdata, sites | TMR_ME | TMR_ALPF,
++					&qdata->regs->tmr);
++	} else {
++		if (sv2 != 0) {
++			tmu_write(qdata, sv2, &qdata->regv2->tmsr);
++			tmu_write(qdata, TMR_ME | TMR_ALPF_V2,
++					&qdata->regv2->tmr);
++		}
++	}
+ 
+ 	return 0;
+ }
+@@ -148,16 +206,20 @@ static int qoriq_tmu_calibration(struct platform_device *pdev)
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct qoriq_tmu_data *data = platform_get_drvdata(pdev);
+ 
+-	if (of_property_read_u32_array(np, "fsl,tmu-range", range, 4)) {
+-		dev_err(&pdev->dev, "missing calibration range.\n");
+-		return -ENODEV;
++	len = of_property_count_u32_elems(np, "fsl,tmu-range");
++	if (len == -ENODATA || len == -EINVAL || len > 4) {
++		dev_err(&pdev->dev, "invalid range data.\n");
++		return len;
+ 	}
+ 
+-	/* Init temperature range registers */
+-	tmu_write(data, range[0], &data->regs->ttr0cr);
+-	tmu_write(data, range[1], &data->regs->ttr1cr);
+-	tmu_write(data, range[2], &data->regs->ttr2cr);
+-	tmu_write(data, range[3], &data->regs->ttr3cr);
++	val = of_property_read_u32_array(np, "fsl,tmu-range", range, len);
++	if (val != 0) {
++		dev_err(&pdev->dev, "invalid range data.\n");
++		return val;
++	}
++
++	for (i = 0; i < len; i++)
++		tmu_write(data, range[i], &data->regs->ttrcr[i]);
+ 
+ 	calibration = of_get_property(np, "fsl,tmu-calibration", &len);
+ 	if (calibration == NULL || len % 8) {
+@@ -181,7 +243,12 @@ static void qoriq_tmu_init_device(struct qoriq_tmu_data *data)
+ 	tmu_write(data, TIER_DISABLE, &data->regs->tier);
+ 
+ 	/* Set update_interval */
+-	tmu_write(data, TMTMIR_DEFAULT, &data->regs->tmtmir);
++	if (data->ver == TMU_VER1) {
++		tmu_write(data, TMTMIR_DEFAULT, &data->regs->tmtmir);
++	} else {
++		tmu_write(data, TMTMIR_DEFAULT, &data->regv2->tmtmir);
++		tmu_write(data, TEUMR0_V2, &data->regv2->teumr0);
++	}
+ 
+ 	/* Disable monitoring */
+ 	tmu_write(data, TMR_DISABLE, &data->regs->tmr);
+@@ -190,6 +257,7 @@ static void qoriq_tmu_init_device(struct qoriq_tmu_data *data)
+ static int qoriq_tmu_probe(struct platform_device *pdev)
+ {
+ 	int ret;
++	u32 ver;
+ 	struct qoriq_tmu_data *data;
+ 	struct device_node *np = pdev->dev.of_node;
+ 
+@@ -214,6 +282,12 @@ static int qoriq_tmu_probe(struct platform_device *pdev)
+ 		goto err_iomap;
+ 	}
+ 
++	/* version register offset at: 0xbf8 on both v1 and v2 */
++	ver = tmu_read(data, &data->regs->ipbrr0);
++	data->ver = (ver >> 8) & 0xff;
++	if (data->ver == TMU_VER2)
++		data->regv2 = (void __iomem *)data->regs;
++
+ 	qoriq_tmu_init_device(data);	/* TMU initialization */
+ 
+ 	ret = qoriq_tmu_calibration(pdev);	/* TMU calibration */
+-- 
+2.17.1
 
-On 4/3/19 9:58 PM, Aaron Ma wrote:
-> Sure, take your time, if you have any questions let me know please.
-> 
-> Thanks,
-> Aaron
