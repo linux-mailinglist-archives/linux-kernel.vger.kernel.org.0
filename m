@@ -2,124 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35EDC33D0D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 04:18:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E82FB33D13
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 04:23:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726352AbfFDCSv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 3 Jun 2019 22:18:51 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:41345 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726076AbfFDCSv (ORCPT
+        id S1726416AbfFDCXL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 3 Jun 2019 22:23:11 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:45062 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726211AbfFDCXL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 3 Jun 2019 22:18:51 -0400
-Received: by mail-ot1-f68.google.com with SMTP id 107so12268619otj.8
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 19:18:51 -0700 (PDT)
+        Mon, 3 Jun 2019 22:23:11 -0400
+Received: by mail-ot1-f67.google.com with SMTP id t24so4350916otl.12
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 19:23:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1l+D3rSEai4qzn+TyHSQz7IIWfxK6zl3YHxlBM75Sxk=;
-        b=ji0kqvdjzqwIUAMrKo44/NCdPxG7kCOt7Hn0ZEmNeX4IylO3gLu2LJSi/pElY7IIbM
-         HN5nagHzCYI8L27LLselXWAYkf6bFKXGIxq2Vctezw/AB8zsC8WOydU92z/XH/2aoK2A
-         yh2lvRhAVbV8FPmdWiyypeA6uHZAXIx5pvFi+Ct0Kh7I0FAf64XN2E/BwPIBb0bcHdSX
-         0Gta6gcFmqEcmnp9kCfe3nLwyWf+SbQ1Nw+DlL57VPLsJeN/JiL8rhTgp1JmmBtAQZsF
-         I1fiAFO0iWTIN38nBkT3M8I9T/Fupjok5DxcRbIXHTx7RIXemRNu1Cdirlm7sqCCiuyq
-         CTFQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=sBuZQgLGgSQ7kvRAL03aIr/Wcvjnnb3lyTs/Aaqfbwk=;
+        b=WZjSu9fWsFtV+Dg4mjjWZSbtmlKfWbAItRIRRuNmK4fUla7Ceoed4enMfXQEEEwOzJ
+         XC/gUaZECTNOU8zmYgHIYBF0AWcRAi6CRfBYab23pUhKqLmGmN9lHB6ul085Q6LIxFOI
+         Xa5IxAaJ0CgsEG7GHMwJPODxHtNXxPemrJB6ZySDIdNBK4R119DyIFOcFhIuH30sLE/E
+         wPM6yWTVkqWggfvdJUBJrs+NI1b0CJBYVuOUQHlbBxhX27zesqH28Ap82NpNIXNaIxDW
+         bArYDl1ymSztvrwh+GYVRX/tZhQLox4brdvUTKyiMJeymC69f7LdUWDKETdereJ/OXL1
+         8Osw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1l+D3rSEai4qzn+TyHSQz7IIWfxK6zl3YHxlBM75Sxk=;
-        b=F+zbp4SWcdJjg7HpOeJn1Kz39wqmeOg1ppZhFoWasLvioOF9YENuMHB0qTaf3jWfrB
-         Vr+TGN+rT65qqmT+ZrW4U3piv5ifVjJMO8zcZgXmn8RiZyDR+JlvGTUXqUjnXUNOoC7t
-         mQqBOffBDMGaLr4MeVdjp/jSRyBHk4gf3NpesRfAFSjXK8FK50Gbxdd6YfrLi56U4YTz
-         PNgki6CS2+eOB07TMq+VECJsmapIhRcRwD68SMPLUJhxxMWvnvl7dsr7+BlUUXNEh26Y
-         2oZbgeSjaujj1IgJDr+41VQ6p0JV04cej0B8gxTTsBP+5BJz3elyWmGRS7OkIPkhR4WE
-         hwwQ==
-X-Gm-Message-State: APjAAAV44hsHlBZninsaQFwq8wAVr/iyUa8NfmHaC0MEsalby43mLnzV
-        YAXqgficsg/FpuKjL7AwPcFcLqVPrQVfZKu4fFq4iw==
-X-Google-Smtp-Source: APXvYqyRqFO8DnlUxTuulaeN51Ccoi/wNUL1xOjgvaLRhN641y5Hw/UsspKPB9nl9NukmCmvcMaNWtuiBw6YLY/JcLo=
-X-Received: by 2002:a9d:10c:: with SMTP id 12mr3560362otu.123.1559614730649;
- Mon, 03 Jun 2019 19:18:50 -0700 (PDT)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=sBuZQgLGgSQ7kvRAL03aIr/Wcvjnnb3lyTs/Aaqfbwk=;
+        b=NdpqJAuokXG+YMC4bS4L1XCPpo5GEl9DEn8Mibg0isCBR/vJYe0WIqQnLC7jOo2hUu
+         LU65EO18KLM0RTzzmLAZh5/uPhtIzDKlnCUJfL8jb1K/ycQWx9VHr3T/JdfHE/L/Pdvw
+         XLFUBNlPSXxGevkLRvYo26Y4m9lApeJgUeYV9Qx7HFWHwL1sHc0wl2/93XqDgN3u2Gkx
+         Ow4uWbBK/Sp3hZtaqpj52SqmNB2xPMMoVUapany8Q7Z+ZD1w9e7xvjoaKsoekSOiQPYG
+         zOSA/6DrX+5KY3SCXp7JqCHhh98MKKM+pw6CuJpf+rI4O3PVqUjCeTZrTc0SLbDztyFD
+         GELA==
+X-Gm-Message-State: APjAAAU73QmFtrccUN1Li+OgwldMPSqNO9vJGbiCLO8XEe/RQUfrWqHa
+        rDemu96xJOinexjaYO3aO8c2+oCwmclD5AaHWTo=
+X-Google-Smtp-Source: APXvYqx+nFFODKg2fs9A66g83X0CXOsRE5mSH71jABzJRpL47tJ7gnJG6bz0fdxWbcql5jsz5mZgC4pjWDCR996KxXQ=
+X-Received: by 2002:a9d:3c5:: with SMTP id f63mr2144544otf.210.1559614990821;
+ Mon, 03 Jun 2019 19:23:10 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1558346019.git.baolin.wang@linaro.org> <aafceaeb2fc7e9d103d1d7a19cdae97759dd1500.1558346019.git.baolin.wang@linaro.org>
- <6b539c8b-c2fd-6c37-d645-ef714c0e29c9@intel.com>
-In-Reply-To: <6b539c8b-c2fd-6c37-d645-ef714c0e29c9@intel.com>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Tue, 4 Jun 2019 10:18:39 +0800
-Message-ID: <CAMz4kuKXqTWfH0d=4hV_+k8ukYhihQP4QcqFQ+jpiQSu21TQ3g@mail.gmail.com>
-Subject: Re: [PATCH 8/9] mmc: sdhci-sprd: Add PHY DLL delay configuration
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        arm-soc <arm@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>
+Received: by 2002:a4a:97e3:0:0:0:0:0 with HTTP; Mon, 3 Jun 2019 19:23:09 -0700 (PDT)
+Reply-To: officeinfo1089@gmail.com
+From:   "Mr.Adams Bello" <monicabentley645@gmail.com>
+Date:   Tue, 4 Jun 2019 03:23:09 +0100
+Message-ID: <CAEB4qVagTgmvNLAogkgQscWZRO37oLXpLw8FMHHpvTZrQjKmgw@mail.gmail.com>
+Subject: ATTENTION
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Adrian,
-
-On Mon, 3 Jun 2019 at 21:03, Adrian Hunter <adrian.hunter@intel.com> wrote:
->
-> On 20/05/19 1:12 PM, Baolin Wang wrote:
-> > Set the PHY DLL delay for each timing mode, which is used to sample the clock
-> > accurately and make the clock more stable.
-> >
-> > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->
-> One comment, nevertheless:
->
-> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
->
-> > ---
-> >  drivers/mmc/host/sdhci-sprd.c |   51 +++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 51 insertions(+)
-> >
-> > diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
-> > index e6eda13..911a09b 100644
-> > --- a/drivers/mmc/host/sdhci-sprd.c
-> > +++ b/drivers/mmc/host/sdhci-sprd.c
-> > @@ -29,6 +29,8 @@
-> >  #define  SDHCI_SPRD_DLL_INIT_COUNT   0xc00
-> >  #define  SDHCI_SPRD_DLL_PHASE_INTERNAL       0x3
-> >
-> > +#define SDHCI_SPRD_REG_32_DLL_DLY    0x204
-> > +
-> >  #define SDHCI_SPRD_REG_32_DLL_DLY_OFFSET     0x208
-> >  #define  SDHCIBSPRD_IT_WR_DLY_INV            BIT(5)
-> >  #define  SDHCI_SPRD_BIT_CMD_DLY_INV          BIT(13)
-> > @@ -72,6 +74,24 @@ struct sdhci_sprd_host {
-> >       struct clk *clk_2x_enable;
-> >       u32 base_rate;
-> >       int flags; /* backup of host attribute */
-> > +     u32 phy_delay[MMC_TIMING_MMC_HS400 + 2];
-> > +};
-> > +
-> > +struct sdhci_sprd_phy_cfg {
-> > +     const char *property;
-> > +     u8 timing;
-> > +};
-> > +
-> > +static const struct sdhci_sprd_phy_cfg sdhci_sprd_phy_cfgs[] = {
-> > +     { "sprd,phy-delay-legacy", MMC_TIMING_LEGACY, },
-> > +     { "sprd,phy-delay-sd-highspeed", MMC_TIMING_MMC_HS, },
->
-> Did you mean MMC_TIMING_SD_HS
-
-Ah, yes, my copy mistake and will fix it in next version.
-Thanks for your reviewing and comments.
-
 -- 
-Baolin Wang
+Dear Beneficiary,
+
+The is to bring to your notice that the Department of Treasury Office
+in Nigeria in affiliation with the Federal Government of Nigeria,and
+the Office of Foreign Assets Control here in Nigeria has been
+authorized in their sanction programs to compensate 1,000 scam victims
+who has being a victim of internet scam. The Federal Government of
+Nigeria in collaboration with the Department of the Treasury Office
+has decided to pay $1,000.000.00 USD(One Million United States
+Dollars) each in order to restore the global economy to the enviable
+standard of respectable persons that was scammed. Your names and
+particulars was mentioned by one of the syndicates who was arrested as
+one of the victims of their operations. Although to issue payments to
+the right persons we need you to reconfirm your information's to
+compare with what was given to us. Most importantly you are hereby
+warned not to communicate or duplicate this message to anyone or
+whatsoever as investigations are still ongoing in trace of the other
+criminals so therefore this information's should remain confidential
+to you alone and the agencies involved in the exercise.
+
+Finally all payments are done by AUTOMATED TELLER MACHINE(ATM), loaded
+with $1,000.000.00 with your names on the ATM CARD waiting to be sent
+to you reconfirmation of your information's on our desk.
+
 Best Regards
+Mr. Adams Bello
+Secretary's Desk
+E-mail: officeinfo1089@gmail.com
