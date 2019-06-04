@@ -2,93 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EB6A35413
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 01:30:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C66635355
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 01:24:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727607AbfFDXaq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 19:30:46 -0400
-Received: from gateway33.websitewelcome.com ([192.185.146.130]:15907 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727347AbfFDXXq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 19:23:46 -0400
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 391F269465
-        for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2019 18:23:45 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id YImPh6yqsdnCeYImPhkaKr; Tue, 04 Jun 2019 18:23:45 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.127.120] (port=46184 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hYImO-000iEN-4v; Tue, 04 Jun 2019 18:23:44 -0500
-Date:   Tue, 4 Jun 2019 18:23:43 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] kernel: module: Use struct_size() helper
-Message-ID: <20190604232343.GA2475@embeddedor>
+        id S1726943AbfFDXYV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 19:24:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35286 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726930AbfFDXYT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 19:24:19 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0942208E4;
+        Tue,  4 Jun 2019 23:24:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559690658;
+        bh=SMRdr6xuwV72HutdCUTMBMFsTciMYgBeEfJBnyYVZto=;
+        h=From:To:Cc:Subject:Date:From;
+        b=07k3WF3ydnff1CTi20ESlpURFdKsEa51sgXhe/GRr0OuCTYLBxiN/8aLILXNSUjCM
+         KdoiPBSyy2b9NVskSjgUuFJVXCvhGaD7qr4K/4SiCryHW2qRMXfALK/sGY0Aywn2xh
+         msbuX2dpBGlQqQ2Z8bIuN8/FMh42d82rzoR1rI9k=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 01/24] x86/uaccess, kcov: Disable stack protector
+Date:   Tue,  4 Jun 2019 19:23:52 -0400
+Message-Id: <20190604232416.7479-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.127.120
-X-Source-L: No
-X-Exim-ID: 1hYImO-000iEN-4v
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.127.120]:46184
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 10
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make use of the struct_size() helper instead of an open-coded version
-in order to avoid any potential type mistakes, in particular in the
-context in which this code is being used.
+From: Peter Zijlstra <peterz@infradead.org>
 
-So, replace the following form:
+[ Upstream commit 40ea97290b08be2e038b31cbb33097d1145e8169 ]
 
-sizeof(*sect_attrs) + nloaded * sizeof(sect_attrs->attrs[0]
+New tooling noticed this mishap:
 
-with:
+  kernel/kcov.o: warning: objtool: write_comp_data()+0x138: call to __stack_chk_fail() with UACCESS enabled
+  kernel/kcov.o: warning: objtool: __sanitizer_cov_trace_pc()+0xd9: call to __stack_chk_fail() with UACCESS enabled
 
-struct_size(sect_attrs, attrs, nloaded)
+All the other instrumentation (KASAN,UBSAN) also have stack protector
+disabled.
 
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/module.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ kernel/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/module.c b/kernel/module.c
-index 80c7c09584cf..3f3bb090fbf4 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -1492,8 +1492,7 @@ static void add_sect_attrs(struct module *mod, const struct load_info *info)
- 	for (i = 0; i < info->hdr->e_shnum; i++)
- 		if (!sect_empty(&info->sechdrs[i]))
- 			nloaded++;
--	size[0] = ALIGN(sizeof(*sect_attrs)
--			+ nloaded * sizeof(sect_attrs->attrs[0]),
-+	size[0] = ALIGN(struct_size(sect_attrs, attrs, nloaded),
- 			sizeof(sect_attrs->grp.attrs[0]));
- 	size[1] = (nloaded + 1) * sizeof(sect_attrs->grp.attrs[0]);
- 	sect_attrs = kzalloc(size[0] + size[1], GFP_KERNEL);
+diff --git a/kernel/Makefile b/kernel/Makefile
+index 172d151d429c..3085141c055c 100644
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@ -30,6 +30,7 @@ KCOV_INSTRUMENT_extable.o := n
+ # Don't self-instrument.
+ KCOV_INSTRUMENT_kcov.o := n
+ KASAN_SANITIZE_kcov.o := n
++CFLAGS_kcov.o := $(call cc-option, -fno-conserve-stack -fno-stack-protector)
+ 
+ # cond_syscall is currently not LTO compatible
+ CFLAGS_sys_ni.o = $(DISABLE_LTO)
 -- 
-2.21.0
+2.20.1
 
