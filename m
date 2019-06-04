@@ -2,129 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4EA534AFE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:54:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D554634B07
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:54:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727809AbfFDOyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 10:54:18 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:17665 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727563AbfFDOyS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 10:54:18 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 5E0234E8820ACC109B4F;
-        Tue,  4 Jun 2019 22:54:14 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Tue, 4 Jun 2019
- 22:54:04 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <ebiggers@google.com>, <rob.rice@broadcom.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] crypto: bcm - Make some symbols static
-Date:   Tue, 4 Jun 2019 22:53:51 +0800
-Message-ID: <20190604145351.19392-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1727868AbfFDOyk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 10:54:40 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37090 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727791AbfFDOyd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 10:54:33 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x54EbDJG050950
+        for <linux-kernel@vger.kernel.org>; Tue, 4 Jun 2019 10:54:33 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2swt7gsw29-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 10:54:32 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Tue, 4 Jun 2019 15:54:30 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 4 Jun 2019 15:54:26 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x54EsPk160882980
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 4 Jun 2019 14:54:25 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A5A23AE045;
+        Tue,  4 Jun 2019 14:54:25 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A6587AE055;
+        Tue,  4 Jun 2019 14:54:24 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.53])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue,  4 Jun 2019 14:54:24 +0000 (GMT)
+Date:   Tue, 4 Jun 2019 17:54:22 +0300
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Qian Cai <cai@lca.pw>, akpm@linux-foundation.org,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, mhocko@kernel.org,
+        linux-mm@kvack.org, vdavydov.dev@gmail.com, hannes@cmpxchg.org,
+        guro@fb.com, cgroups@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH -next] arm64/mm: fix a bogus GFP flag in pgd_alloc()
+References: <1559656836-24940-1-git-send-email-cai@lca.pw>
+ <20190604142338.GC24467@lakrids.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190604142338.GC24467@lakrids.cambridge.arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19060414-4275-0000-0000-0000033CA09A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19060414-4276-0000-0000-0000384CB014
+Message-Id: <20190604145422.GG8417@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-04_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=7 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906040097
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix sparse warnings:
+On Tue, Jun 04, 2019 at 03:23:38PM +0100, Mark Rutland wrote:
+> On Tue, Jun 04, 2019 at 10:00:36AM -0400, Qian Cai wrote:
+> > The commit "arm64: switch to generic version of pte allocation"
+> > introduced endless failures during boot like,
+> > 
+> > kobject_add_internal failed for pgd_cache(285:chronyd.service) (error:
+> > -2 parent: cgroup)
+> > 
+> > It turns out __GFP_ACCOUNT is passed to kernel page table allocations
+> > and then later memcg finds out those don't belong to any cgroup.
+> 
+> Mike, I understood from [1] that this wasn't expected to be a problem,
+> as the accounting should bypass kernel threads.
+> 
+> Was that assumption wrong, or is something different happening here?
 
-drivers/crypto/bcm/cipher.c:99:6: warning: symbol 'BCMHEADER' was not declared. Should it be static?
-drivers/crypto/bcm/cipher.c:2096:6: warning: symbol 'spu_no_incr_hash' was not declared. Should it be static?
-drivers/crypto/bcm/cipher.c:4823:5: warning: symbol 'bcm_spu_probe' was not declared. Should it be static?
-drivers/crypto/bcm/cipher.c:4867:5: warning: symbol 'bcm_spu_remove' was not declared. Should it be static?
-drivers/crypto/bcm/spu2.c:52:6: warning: symbol 'spu2_cipher_type_names' was not declared. Should it be static?
-drivers/crypto/bcm/spu2.c:56:6: warning: symbol 'spu2_cipher_mode_names' was not declared. Should it be static?
-drivers/crypto/bcm/spu2.c:60:6: warning: symbol 'spu2_hash_type_names' was not declared. Should it be static?
-drivers/crypto/bcm/spu2.c:66:6: warning: symbol 'spu2_hash_mode_names' was not declared. Should it be static?
+I was under impression that all allocations are going through
+__memcg_kmem_charge() which does the bypass.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/crypto/bcm/cipher.c |  8 ++++----
- drivers/crypto/bcm/spu2.c   | 10 +++++-----
- 2 files changed, 9 insertions(+), 9 deletions(-)
+Apparently, it's not the case :(
 
-diff --git a/drivers/crypto/bcm/cipher.c b/drivers/crypto/bcm/cipher.c
-index 25f8d39..d972ffa 100644
---- a/drivers/crypto/bcm/cipher.c
-+++ b/drivers/crypto/bcm/cipher.c
-@@ -96,7 +96,7 @@ MODULE_PARM_DESC(aead_pri, "Priority for AEAD algos");
-  * 0x70 - ring 2
-  * 0x78 - ring 3
-  */
--char BCMHEADER[] = { 0x60, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x28 };
-+static char BCMHEADER[] = { 0x60, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x28 };
- /*
-  * Some SPU hw does not use BCM header on SPU messages. So BCM_HDR_LEN
-  * is set dynamically after reading SPU type from device tree.
-@@ -2094,7 +2094,7 @@ static int __ahash_init(struct ahash_request *req)
-  * Return: true if incremental hashing is not supported
-  *         false otherwise
-  */
--bool spu_no_incr_hash(struct iproc_ctx_s *ctx)
-+static bool spu_no_incr_hash(struct iproc_ctx_s *ctx)
- {
- 	struct spu_hw *spu = &iproc_priv.spu;
+> > 
+> > backtrace:
+> >   kobject_add_internal
+> >   kobject_init_and_add
+> >   sysfs_slab_add+0x1a8
+> >   __kmem_cache_create
+> >   create_cache
+> >   memcg_create_kmem_cache
+> >   memcg_kmem_cache_create_func
+> >   process_one_work
+> >   worker_thread
+> >   kthread
+> > 
+> > Signed-off-by: Qian Cai <cai@lca.pw>
+> > ---
+> >  arch/arm64/mm/pgd.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/arm64/mm/pgd.c b/arch/arm64/mm/pgd.c
+> > index 769516cb6677..53c48f5c8765 100644
+> > --- a/arch/arm64/mm/pgd.c
+> > +++ b/arch/arm64/mm/pgd.c
+> > @@ -38,7 +38,7 @@ pgd_t *pgd_alloc(struct mm_struct *mm)
+> >  	if (PGD_SIZE == PAGE_SIZE)
+> >  		return (pgd_t *)__get_free_page(gfp);
+> >  	else
+> > -		return kmem_cache_alloc(pgd_cache, gfp);
+> > +		return kmem_cache_alloc(pgd_cache, GFP_PGTABLE_KERNEL);
+> 
+> This is used to allocate PGDs for both user and kernel pagetables (e.g.
+> for the efi runtime services), so while this may fix the regression, I'm
+> not sure it's the right fix.
+
+Me neither.
  
-@@ -4820,7 +4820,7 @@ static int spu_dt_read(struct platform_device *pdev)
- 	return 0;
- }
+> Do we need a separate pgd_alloc_kernel()?
  
--int bcm_spu_probe(struct platform_device *pdev)
-+static int bcm_spu_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct spu_hw *spu = &iproc_priv.spu;
-@@ -4864,7 +4864,7 @@ int bcm_spu_probe(struct platform_device *pdev)
- 	return err;
- }
- 
--int bcm_spu_remove(struct platform_device *pdev)
-+static int bcm_spu_remove(struct platform_device *pdev)
- {
- 	int i;
- 	struct device *dev = &pdev->dev;
-diff --git a/drivers/crypto/bcm/spu2.c b/drivers/crypto/bcm/spu2.c
-index bf7ac62..960b472 100644
---- a/drivers/crypto/bcm/spu2.c
-+++ b/drivers/crypto/bcm/spu2.c
-@@ -49,21 +49,21 @@ enum spu2_proto_sel {
- 	SPU2_DTLS_AEAD = 10
- };
- 
--char *spu2_cipher_type_names[] = { "None", "AES128", "AES192", "AES256",
-+static char *spu2_cipher_type_names[] = { "None", "AES128", "AES192", "AES256",
- 	"DES", "3DES"
- };
- 
--char *spu2_cipher_mode_names[] = { "ECB", "CBC", "CTR", "CFB", "OFB", "XTS",
--	"CCM", "GCM"
-+static char *spu2_cipher_mode_names[] = { "ECB", "CBC", "CTR", "CFB", "OFB",
-+	"XTS", "CCM", "GCM"
- };
- 
--char *spu2_hash_type_names[] = { "None", "AES128", "AES192", "AES256",
-+static char *spu2_hash_type_names[] = { "None", "AES128", "AES192", "AES256",
- 	"Reserved", "Reserved", "MD5", "SHA1", "SHA224", "SHA256", "SHA384",
- 	"SHA512", "SHA512/224", "SHA512/256", "SHA3-224", "SHA3-256",
- 	"SHA3-384", "SHA3-512"
- };
- 
--char *spu2_hash_mode_names[] = { "CMAC", "CBC-MAC", "XCBC-MAC", "HMAC",
-+static char *spu2_hash_mode_names[] = { "CMAC", "CBC-MAC", "XCBC-MAC", "HMAC",
- 	"Rabin", "CCM", "GCM", "Reserved"
- };
- 
+I'd like to take a closer look at memcg paths once again before adding
+pgd_alloc_kernel().
+
+Johannes, Roman, can you please advise anything?
+
+> Thanks,
+> Mark.
+> 
+> [1] https://lkml.kernel.org/r/20190505061956.GE15755@rapoport-lnx
+> 
+
 -- 
-2.7.4
-
+Sincerely yours,
+Mike.
 
