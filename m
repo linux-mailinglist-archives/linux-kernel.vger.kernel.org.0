@@ -2,142 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BCA834CBC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 17:59:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13E1534CC1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 18:00:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728216AbfFDP7l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 11:59:41 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:39169 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727422AbfFDP7k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 11:59:40 -0400
-Received: by mail-vs1-f66.google.com with SMTP id n2so5432779vso.6
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 08:59:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=posk.io; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pNSmlxy+hHS9DdorXvCYVqoqTtmJb7A32aLQZ8rGLog=;
-        b=RfsnL1Cbm3++1fTT2oGbQiSR45EERV453FCrAn8rOCd28WFS7LG/EAeJ2yCFN2XybD
-         XI8/icvh2H2QI6+HRCPUlTjo4pZVdlgKgMQGLdWd/jG/oLKHWp2/lZGEBzUGqtLQRxh3
-         FG0t4K2f7GbVj8ORugI7RNhutqiBPT3PXLsLWQwdWj7jSwutVlADqPYeWTb39h6z689z
-         5XoNsGqZZAlEMLOLskrBAOx+0Zj06NIaRHTlXl+WEmjPcnO/K3p+oa7Me394MngtPSjm
-         QWTSLWFF7YZmdOGLaJzrQf6c6T/n//nr51idY2+OMa4CUH5fYUxP7EPaptsRdVt6c1j1
-         5hMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pNSmlxy+hHS9DdorXvCYVqoqTtmJb7A32aLQZ8rGLog=;
-        b=lCEVnSVq5frlRMx55l+ubU7f/j1VKCVViGU8ho/VwX6IUbogcWjOxkiFjOlfv0MZ9i
-         2l5SM2z/t3e1xMcjWNYUtUXqPYSkYmaUBsvYR6UIcDwdDgzQCIaZhot+Uv7PtR5uUjNJ
-         YgdVQuMcer5F7z5HOj0tIgIHgRrfSxm8hpNIhv1hFvhT8S96/6AmrF5vPf6mWPjstCgU
-         SlqZBzP2bXHsOt5JRaj0x1o0WpK6b6q/0sGXvDO1LRhHtf8C7CgEgSBZA/+0m4wZRPHE
-         UxjOx3G+m1Ih6t/izkGky0EQsQYC5pA7RChF+3mxK6Pss2k3TUAg6WJXGL7k/OYg04oM
-         FXSQ==
-X-Gm-Message-State: APjAAAVtru1ri+LfYV1KO2ihQIFKT65csj868BTlc9SuWjcJ3oZooAZY
-        jKirJq82qiF5BYkn6jTFuYTEdXfeXP3XyuMr6gooxQ==
-X-Google-Smtp-Source: APXvYqzmEbcEQLzsKI5Mr/6AhhWgZhi9tfoIoQbe0F5ZUEaJn8TCq8CL+QBWe3VBgS7UmzAm/55bL9ZC3B5I5usQkPs=
-X-Received: by 2002:a67:ea58:: with SMTP id r24mr16770160vso.60.1559663979613;
- Tue, 04 Jun 2019 08:59:39 -0700 (PDT)
+        id S1728249AbfFDQAu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 12:00:50 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47682 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727422AbfFDQAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 12:00:47 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EBE6F30C31AF;
+        Tue,  4 Jun 2019 16:00:38 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-85.bos.redhat.com [10.18.17.85])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5F12517CFA;
+        Tue,  4 Jun 2019 16:00:34 +0000 (UTC)
+Subject: Re: [PATCH v8 07/19] locking/rwsem: Implement lock handoff to prevent
+ lock starvation
+To:     Boqun Feng <boqun.feng@gmail.com>, Yuyang Du <duyuyang@gmail.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        huang ying <huang.ying.caritas@gmail.com>
+References: <20190520205918.22251-1-longman@redhat.com>
+ <20190520205918.22251-8-longman@redhat.com>
+ <CAHttsrYx=pgen5yVpYfCKaymoCaA7iJ52B8t_ycD2UcDR2848Q@mail.gmail.com>
+ <CAHttsrZCGMqBi4ifj7A1rO3G3nOz-0pbD8TXRtUQ1rGQRAGiUw@mail.gmail.com>
+ <20190604091220.GA29633@tardis>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <d1a2894e-144e-d30b-966d-c2fd7b6f3f7e@redhat.com>
+Date:   Tue, 4 Jun 2019 12:00:33 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <b477ac75a2b163048bdaeb37f57b4c3f04f75a31.1559631700.git.viresh.kumar@linaro.org>
-In-Reply-To: <b477ac75a2b163048bdaeb37f57b4c3f04f75a31.1559631700.git.viresh.kumar@linaro.org>
-From:   Peter Oskolkov <posk@posk.io>
-Date:   Tue, 4 Jun 2019 08:59:28 -0700
-Message-ID: <CAFTs51WUXwJbgsFCRbOwdUWnv55Mbt55-hmoMyETPGC5yMDSCQ@mail.gmail.com>
-Subject: Re: [PATCH] sched/fair: Introduce fits_capacity()
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190604091220.GA29633@tardis>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 04 Jun 2019 16:00:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 4, 2019 at 12:02 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+On 6/4/19 5:12 AM, Boqun Feng wrote:
+> On Tue, Jun 04, 2019 at 11:26:30AM +0800, Yuyang Du wrote:
+>> On Tue, 4 Jun 2019 at 11:03, Yuyang Du <duyuyang@gmail.com> wrote:
+>>> Hi Waiman,
+>>>
+>>> On Tue, 21 May 2019 at 05:01, Waiman Long <longman@redhat.com> wrote:
+>>>> Because of writer lock stealing, it is possible that a constant
+>>>> stream of incoming writers will cause a waiting writer or reader to
+>>>> wait indefinitely leading to lock starvation.
+>>>>
+>>>> This patch implements a lock handoff mechanism to disable lock stealing
+>>>> and force lock handoff to the first waiter or waiters (for readers)
+>>>> in the queue after at least a 4ms waiting period unless it is a RT
+>>>> writer task which doesn't need to wait. The waiting period is used to
+>>>> avoid discouraging lock stealing too much to affect performance.
+>>> I was working on a patchset to solve read-write lock deadlock
+>>> detection problem (https://lkml.org/lkml/2019/5/16/93).
+>>>
+>>> One of the mistakes in that work is that I considered the following
+>>> case as deadlock:
+>> Sorry everyone, but let me rephrase:
+>>
+>> One of the mistakes in that work is that I considered the following
+>> case as no deadlock:
+>>
+>>>   T1            T2
+>>>   --            --
+>>>
+>>>   down_read1    down_write2
+>>>
+>>>   down_write2   down_read1
+>>>
+> Not sure I understand the whole context here, but isn't adding a third
+> independent task makes this a deadlock?
 >
-> The same formula to check utilization against capacity (after
-> considering capacity_margin) is already used at 5 different locations.
+> 	 T1            T2		T3
+> 	 --            --		--
 >
-> This patch creates a new macro, fits_capacity(), which can be used from
-> all these locations without exposing the details of it and hence
-> simplify code.
+> 	 down_read1    down_write2
+> 	 				down_write1
+> 	 down_write2   down_read1
 >
-> All the 5 code locations are updated as well to use it..
->
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  kernel/sched/fair.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 7f8d477f90fe..db3a218b7928 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -102,6 +102,8 @@ int __weak arch_asym_cpu_priority(int cpu)
->   * (default: ~20%)
->   */
->  static unsigned int capacity_margin                    = 1280;
-> +
-> +#define fits_capacity(cap, max)        ((cap) * capacity_margin < (max) * 1024)
+> from the perspective of lockdep, we cannot be sure whether there will
+> a T3 or not.
 
-Any reason to have this as a macro and not as an inline function?
+Yes, that will be a deadlock even with the my rwsem patch applied, as it
+will still try to preserve the reader-writer ordering. So it will
+certainly be safer to have the same lock ordering for both tasks.
 
->  #endif
 >
->  #ifdef CONFIG_CFS_BANDWIDTH
-> @@ -3727,7 +3729,7 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
->
->  static inline int task_fits_capacity(struct task_struct *p, long capacity)
->  {
-> -       return capacity * 1024 > task_util_est(p) * capacity_margin;
-> +       return fits_capacity(task_util_est(p), capacity);
->  }
->
->  static inline void update_misfit_status(struct task_struct *p, struct rq *rq)
-> @@ -5143,7 +5145,7 @@ static inline unsigned long cpu_util(int cpu);
->
->  static inline bool cpu_overutilized(int cpu)
->  {
-> -       return (capacity_of(cpu) * 1024) < (cpu_util(cpu) * capacity_margin);
-> +       return !fits_capacity(cpu_util(cpu), capacity_of(cpu));
->  }
->
->  static inline void update_overutilized_status(struct rq *rq)
-> @@ -6304,7 +6306,7 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
->                         /* Skip CPUs that will be overutilized. */
->                         util = cpu_util_next(cpu, p, cpu);
->                         cpu_cap = capacity_of(cpu);
-> -                       if (cpu_cap * 1024 < util * capacity_margin)
-> +                       if (!fits_capacity(util, cpu_cap))
->                                 continue;
->
->                         /* Always use prev_cpu as a candidate. */
-> @@ -7853,8 +7855,7 @@ group_is_overloaded(struct lb_env *env, struct sg_lb_stats *sgs)
->  static inline bool
->  group_smaller_min_cpu_capacity(struct sched_group *sg, struct sched_group *ref)
->  {
-> -       return sg->sgc->min_capacity * capacity_margin <
-> -                                               ref->sgc->min_capacity * 1024;
-> +       return fits_capacity(sg->sgc->min_capacity, ref->sgc->min_capacity);
->  }
->
->  /*
-> @@ -7864,8 +7865,7 @@ group_smaller_min_cpu_capacity(struct sched_group *sg, struct sched_group *ref)
->  static inline bool
->  group_smaller_max_cpu_capacity(struct sched_group *sg, struct sched_group *ref)
->  {
-> -       return sg->sgc->max_capacity * capacity_margin <
-> -                                               ref->sgc->max_capacity * 1024;
-> +       return fits_capacity(sg->sgc->max_capacity, ref->sgc->max_capacity);
->  }
->
->  static inline enum
-> --
-> 2.21.0.rc0.269.g1a574e7a288b
->
+> In case that I mis-understood you, maybe your point is about in the
+> above case whether "down_read1" on T2 can *gauranteedly* steal (in the
+> sense of breaking the fairness) the read lock after Waiman modification?
+> If so, I will wait for Waiman's response ;-)
+
+With my patchset applied, the reader-writer ordering is still supposed
+to be preserved. Of course, there can be exceptions depending on the
+exact timing, but we can't rely on that to prevent deadlock.
+
+Cheers,
+Longman
+
