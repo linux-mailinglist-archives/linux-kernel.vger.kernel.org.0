@@ -2,136 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C997345D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 13:46:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C42C345D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 13:47:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727609AbfFDLqq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 07:46:46 -0400
-Received: from mail-eopbgr710081.outbound.protection.outlook.com ([40.107.71.81]:34813
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727433AbfFDLqp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 07:46:45 -0400
+        id S1727648AbfFDLrK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 07:47:10 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45791 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727373AbfFDLrI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 07:47:08 -0400
+Received: by mail-pl1-f195.google.com with SMTP id x7so7260021plr.12
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 04:47:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DqUjcMcbMs7i/otuz38agqtYdmvPCMOB96DAhTDcH7M=;
- b=ynNgfZ2/NknECAm/daCNfCH29Z1DxAsuwfFuBhdlp1+VB3OacXYoJ26WcvWqRM+bPN33FbGpNWdzgF+TDJydRUFhqWePfwJaUUL01/yI/w9fdPPebdgskMYB8omtC5fOo2fAlv4Hg0Z1OZL8yLLuUfO003hADVZfXaLXk34wF/U=
-Received: from DM5PR12MB1546.namprd12.prod.outlook.com (10.172.36.23) by
- DM5PR12MB2454.namprd12.prod.outlook.com (52.132.141.35) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1943.22; Tue, 4 Jun 2019 11:46:39 +0000
-Received: from DM5PR12MB1546.namprd12.prod.outlook.com
- ([fe80::e1b1:5b6f:b2df:afa5]) by DM5PR12MB1546.namprd12.prod.outlook.com
- ([fe80::e1b1:5b6f:b2df:afa5%7]) with mapi id 15.20.1943.018; Tue, 4 Jun 2019
- 11:46:39 +0000
-From:   "Koenig, Christian" <Christian.Koenig@amd.com>
-To:     Andrey Konovalov <andreyknvl@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Catalin Marinas <catalin.marinas@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        "Kuehling, Felix" <Felix.Kuehling@amd.com>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>, enh <enh@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-Subject: Re: [PATCH] uaccess: add noop untagged_addr definition
-Thread-Topic: [PATCH] uaccess: add noop untagged_addr definition
-Thread-Index: AQHVGsrrPMdhu+tmg0GkOarNrJ33baaLYLQA
-Date:   Tue, 4 Jun 2019 11:46:39 +0000
-Message-ID: <d74b1621-70a2-94a0-e24b-dae32adc457d@amd.com>
-References: <8ab5cd1813b0890f8780018e9784838456ace49e.1559648669.git.andreyknvl@google.com>
-In-Reply-To: <8ab5cd1813b0890f8780018e9784838456ace49e.1559648669.git.andreyknvl@google.com>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-x-originating-ip: [2a02:908:1252:fb60:be8a:bd56:1f94:86e7]
-x-clientproxiedby: AM0PR02CA0063.eurprd02.prod.outlook.com
- (2603:10a6:208:d2::40) To DM5PR12MB1546.namprd12.prod.outlook.com
- (2603:10b6:4:8::23)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Christian.Koenig@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b5afe70f-bd4c-4ef0-b2cd-08d6e8e24e58
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM5PR12MB2454;
-x-ms-traffictypediagnostic: DM5PR12MB2454:
-x-microsoft-antispam-prvs: <DM5PR12MB24547D2498D24083A63E19D283150@DM5PR12MB2454.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 0058ABBBC7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(376002)(39860400002)(346002)(366004)(189003)(199004)(102836004)(5660300002)(2501003)(64126003)(8676002)(81156014)(6116002)(186003)(4326008)(76176011)(8936002)(6246003)(81166006)(71200400001)(71190400001)(110136005)(54906003)(31696002)(2201001)(2906002)(86362001)(316002)(58126008)(53936002)(256004)(478600001)(65806001)(46003)(72206003)(52116002)(6506007)(386003)(2616005)(11346002)(7406005)(36756003)(99286004)(66446008)(476003)(66946007)(6512007)(6436002)(66476007)(446003)(66556008)(64756008)(6486002)(25786009)(31686004)(305945005)(14454004)(68736007)(65826007)(65956001)(7416002)(7736002)(73956011)(229853002)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB2454;H:DM5PR12MB1546.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: BTUYgxf6LVWOUaiXhcDIXPqKTGV8JQlWKUiPF7BHdbvpw2EvuLfEKVhud6WGOw6XmPZVynz+zFRdlpYHRE+F115S+IxcRZYuBeIszGrpu7pC+Mi3Ag3+SBFn3MMIDq6u1vKLEWfXeseTdLxby6CeBXAVKtxYbNkKrIIB7V9aVaK8l8wAfEPyVezvSDCjDWmnwomXsU5xfFG5P8PaLwINRy3oGBUDJZpLI1NUyE2GNqzPywtHVYVZMAeYxK0vjd6mWOG5cJax0LwhWWa/LNNXowMjWOfP1+QGM5GIHhT34T11+CzGzg2QOSyJUHRWAbLMrgwWYBL6yToCAnpGvRtevQxUkyvCv3ibiDQogv5Xmh6DezwDp6vDKQStVUSjqpID+69S03umWcSxh5dt31HX3NwqHJJagQ6m5NyGv2bCVFc=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <71D9DBF4A3B16B4F887771F2B480FC3F@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Dqp69e2uVFEsGCK8JhiQUI0eIhdoGk5h13T4mTC3vdY=;
+        b=l/j965oTYVXJlxTYWvckE8VTMI089RUFBuoqrrqtaXuZS/XGL2imWUR4Yj62ofLJ5B
+         DgxG1n0xNvR+Z1Q2WKLjXP4Ic6bW7ST7vC/dzKmyj0IUR6vTT0z9AontN1QI8ObMfrqT
+         YfQOny7N2gMtvrAIhPa+UYF2M069gzxKv7PwiRWZjJ1iI6LDinGjOYSS+sjqs5grnF0B
+         e9aJoVfdsnL4PaWC5CyQ3SVTmBWLITUXFdUA/VEb4rquThulv4tr3tFv4LY7s8DA7Ygg
+         QJSsuhRnspRaLycykpAiwScHW5uSOeCZARUrOt7CO58SxO5d7ZxzOztZ8o9JgluM7fHh
+         Jptw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Dqp69e2uVFEsGCK8JhiQUI0eIhdoGk5h13T4mTC3vdY=;
+        b=YgD7pnU/KxeL54kZnMDhhsaB9ildDBz810j7XT/WIuBw46IJKH2Ov0emUixczyG3KB
+         qB5HTXXp3s0Xu9HOyZpHc9CLWPSKvhQiHLOhqiZ1Y8Y5Whlg7JKVPgmdexrjNE6AaHEl
+         bUpKY6Zdwgud19FMltHzcQpwnP4dbFo0MRiR6asChzonyARHnjKJWNx1l8BIwLtZqzOH
+         oWNspmSqmtYsiXWZHpSMKbqtyibADS8NEO1CHEXNQHtPYgtyVBPj4qYP8HeeNjtsw+CH
+         Gx3Gz3fRtvw1PV3SMdiW6oz3UqXKqNdCExugKcQfL/e8ms60is8spC4/Owq48MUZeTdO
+         VX2g==
+X-Gm-Message-State: APjAAAVsc55WOmoH9jX/Xvyvc2z4Vg6UEacWf3xJFqi7TMX637sJ7aDB
+        DqWpJJuElCiCQMkWBv914Cj7SydiRWE1dmrXlWJA8g==
+X-Google-Smtp-Source: APXvYqxxKCotfIzPUp2KWeKyy9ei43iIKcJ+7sjPmxGSimbHW7NgNBX2aQnmBFtOckHX4w3Dtt0BdqhA9Y8aOzwYWxs=
+X-Received: by 2002:a17:902:1566:: with SMTP id b35mr36931113plh.147.1559648827583;
+ Tue, 04 Jun 2019 04:47:07 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b5afe70f-bd4c-4ef0-b2cd-08d6e8e24e58
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jun 2019 11:46:39.8145
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ckoenig@amd.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB2454
+References: <20190601074959.14036-1-hch@lst.de> <20190601074959.14036-2-hch@lst.de>
+ <431c7395-2327-2f7c-cc8f-b01412b74e10@oracle.com> <20190604072706.GF15680@lst.de>
+In-Reply-To: <20190604072706.GF15680@lst.de>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Tue, 4 Jun 2019 13:46:56 +0200
+Message-ID: <CAAeHK+xtFwY+S0VY-yyb+i_+GnSjYHfgYHB9Ss=r9xxZZvsKFw@mail.gmail.com>
+Subject: Re: [PATCH 01/16] uaccess: add untagged_addr definition for other arches
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Khalid Aziz <khalid.aziz@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-mips@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QW0gMDQuMDYuMTkgdW0gMTM6NDQgc2NocmllYiBBbmRyZXkgS29ub3ZhbG92Og0KPiBBcmNoaXRl
-Y3R1cmVzIHRoYXQgc3VwcG9ydCBtZW1vcnkgdGFnZ2luZyBoYXZlIGEgbmVlZCB0byBwZXJmb3Jt
-IHVudGFnZ2luZw0KPiAoc3RyaXBwaW5nIHRoZSB0YWcpIGluIHZhcmlvdXMgcGFydHMgb2YgdGhl
-IGtlcm5lbC4gVGhpcyBwYXRjaCBhZGRzIGFuDQo+IHVudGFnZ2VkX2FkZHIoKSBtYWNybywgd2hp
-Y2ggaXMgZGVmaW5lZCBhcyBub29wIGZvciBhcmNoaXRlY3R1cmVzIHRoYXQgZG8NCj4gbm90IHN1
-cHBvcnQgbWVtb3J5IHRhZ2dpbmcuIFRoZSBvbmNvbWluZyBwYXRjaCBzZXJpZXMgd2lsbCBkZWZp
-bmUgaXQgYXQNCj4gbGVhc3QgZm9yIHNwYXJjNjQgYW5kIGFybTY0Lg0KPg0KPiBBY2tlZC1ieTog
-Q2F0YWxpbiBNYXJpbmFzIDxjYXRhbGluLm1hcmluYXNAYXJtLmNvbT4NCj4gUmV2aWV3ZWQtYnk6
-IEtoYWxpZCBBeml6IDxraGFsaWQuYXppekBvcmFjbGUuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBB
-bmRyZXkgS29ub3ZhbG92IDxhbmRyZXlrbnZsQGdvb2dsZS5jb20+DQo+IC0tLQ0KPiAgIGluY2x1
-ZGUvbGludXgvbW0uaCB8IDQgKysrKw0KPiAgIDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMo
-KykNCj4NCj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvbW0uaCBiL2luY2x1ZGUvbGludXgv
-bW0uaA0KPiBpbmRleCAwZTg4MzRhYzMyYjcuLjk0OWQ0M2U5YzBiNiAxMDA2NDQNCj4gLS0tIGEv
-aW5jbHVkZS9saW51eC9tbS5oDQo+ICsrKyBiL2luY2x1ZGUvbGludXgvbW0uaA0KPiBAQCAtOTks
-NiArOTksMTAgQEAgZXh0ZXJuIGludCBtbWFwX3JuZF9jb21wYXRfYml0cyBfX3JlYWRfbW9zdGx5
-Ow0KPiAgICNpbmNsdWRlIDxhc20vcGd0YWJsZS5oPg0KPiAgICNpbmNsdWRlIDxhc20vcHJvY2Vz
-c29yLmg+DQo+ICAgDQo+ICsjaWZuZGVmIHVudGFnZ2VkX2FkZHINCj4gKyNkZWZpbmUgdW50YWdn
-ZWRfYWRkcihhZGRyKSAoYWRkcikNCj4gKyNlbmRpZg0KPiArDQoNCk1heWJlIGFkZCBhIGNvbW1l
-bnQgd2hhdCB0YWdnaW5nIGFjdHVhbGx5IGlzPyBDYXVzZSB0aGF0IGlzIG5vdCByZWFsbHkgDQpv
-YnZpb3VzIGZyb20gdGhlIGNvbnRleHQuDQoNCkNocmlzdGlhbi4NCg0KPiAgICNpZm5kZWYgX19w
-YV9zeW1ib2wNCj4gICAjZGVmaW5lIF9fcGFfc3ltYm9sKHgpICBfX3BhKFJFTE9DX0hJREUoKHVu
-c2lnbmVkIGxvbmcpKHgpLCAwKSkNCj4gICAjZW5kaWYNCg0K
+On Tue, Jun 4, 2019 at 9:27 AM Christoph Hellwig <hch@lst.de> wrote:
+>
+> On Mon, Jun 03, 2019 at 09:16:08AM -0600, Khalid Aziz wrote:
+> > Could you reword above sentence? We are already starting off with
+> > untagged_addr() not being no-op for arm64 and sparc64. It will expand
+> > further potentially. So something more along the lines of "Define it as
+> > noop for architectures that do not support memory tagging". The first
+> > paragraph in the log can also be rewritten to be not specific to arm64.
+>
+> Well, as of this patch this actually is a no-op for everyone.
+>
+> Linus, what do you think of applying this patch (maybe with a slightly
+> fixed up commit log) to 5.2-rc so that we remove a cross dependency
+> between the series?
+
+(I have adjusted the patch description and have just sent it out
+separately from the series).
