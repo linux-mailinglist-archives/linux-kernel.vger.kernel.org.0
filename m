@@ -2,47 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E87534048
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 09:35:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A8C834053
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 09:35:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbfFDHfD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 03:35:03 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:44792 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727057AbfFDHfC (ORCPT
+        id S1727169AbfFDHff (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 03:35:35 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:37947 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727146AbfFDHfc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 03:35:02 -0400
-Received: by mail-lf1-f66.google.com with SMTP id r15so15621258lfm.11
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 00:35:01 -0700 (PDT)
+        Tue, 4 Jun 2019 03:35:32 -0400
+Received: by mail-lf1-f68.google.com with SMTP id b11so15654308lfa.5;
+        Tue, 04 Jun 2019 00:35:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=5cZ5vrBQdIFZDypwr9kljKVEFMA5gzDIaaO0eZaBBhU=;
-        b=RHZt0cfmTHRKWuQe1JF9J8SkTLJTmMa4aVh3ac5uJcRc59YMsnqzDbx9thB0aVkCHH
-         2NW/QaLE7G91ekYTZ64AeBbD2SCJAMSqPL8Re8EyVrSkkYxj11FwRRqO4B6ag6TowVTV
-         2BeEZz6o2kUF8aevFEzjhtTSUwIz7SKmF8RgzsPVZ2utrQ186Gqmo6I+WfLniH/Ik28S
-         TmZrMLjXcZdHEgYgCcxt5hVlWZRASKEL74j3l9w684NCaXyZNuuXnGK/K7g9RFDv2tie
-         A2yLzSjf1IMcMAAVwG/OjmScgau0DpIvMDpHkIXMfwFTLm8xHwjxnefUNLsjbLaumVSy
-         xiFw==
-X-Gm-Message-State: APjAAAXNLtJuskwoIECi2N4OP6gi6T/pm+roRLHdSbBhmowajnzWnqaD
-        DkFkQxPoqmBGJ/noWUBI5qYNK1lTa8kv7C4W91gTkA==
-X-Google-Smtp-Source: APXvYqzdO8i4+jQJ0vwwHpPYk5r1+ltqOa44LD9ssUNlLgDYP1ute8FONlULT2TMVj9qsbxPicgCdZS0qObm2v3elRI=
-X-Received: by 2002:ac2:5a04:: with SMTP id q4mr15815107lfn.90.1559633700810;
- Tue, 04 Jun 2019 00:35:00 -0700 (PDT)
+        bh=ObbNbZR/72D98Vc550uzYyGenM0+DWmngeVzeXEi0ZM=;
+        b=ib0Xu1g61kKt4saR39X37LXuWJON+tfn85aLur4B3MXKxOJKsfGcIrueka9ap5bITB
+         GZoaEwnWIFosuMgHN8xJ84pTa1Na4qwF5dIz7HuW1rrERMosDX86L2l8Fh60r2plgffi
+         wygnHVaoMDJdhDTRBf8gJG/cvFPWof0X0UXRFoQAa+4To8SVIiWJPznjo7/KP/ruXsku
+         zWpiEzqudMm+yTj4usuJcPEfEEh4oqWP2FQ7wSx0x0mmb+5SLE5TDO+r2CQgAIxECjqT
+         nvdoPLYYOB4vNCVIsAb67gsneD5g5ExuqyzTCFOlEG4UbJB0UdS8u+UZsAtiga1lSjMJ
+         o1KA==
+X-Gm-Message-State: APjAAAVEY6okXx8ui8koZ53gOQ05I/nYLdNNnd3RVjefPUInN16wUlQR
+        hNh8DkJbnCcnDZ5xJ575U/aVjDYqHYMjWqjN1mQ=
+X-Google-Smtp-Source: APXvYqzZy7bAsh6aATIcduZ/ydlM1aKS4jqm+mf9GX84nUleah+LyhiDwD0TYIniqNJly32Ees0tY+eMT6LcuMOqD9Q=
+X-Received: by 2002:a19:c142:: with SMTP id r63mr17039438lff.49.1559633729962;
+ Tue, 04 Jun 2019 00:35:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190429081937.7544-1-geert@linux-m68k.org> <20190603122608.GA21347@jerusalem>
- <d474e366-cf5f-bbf3-9521-c5ea29bb9c19@linux-m68k.org>
-In-Reply-To: <d474e366-cf5f-bbf3-9521-c5ea29bb9c19@linux-m68k.org>
+References: <20190528142424.19626-1-geert@linux-m68k.org> <20190528142424.19626-3-geert@linux-m68k.org>
+ <15499.1559298884@warthog.procyon.org.uk> <CAMuHMdX57DKCMpLXdtZPE-w0esUNVv9-SwYjmT5=m+u9ryAiHQ@mail.gmail.com>
+ <9306.1559633653@warthog.procyon.org.uk>
+In-Reply-To: <9306.1559633653@warthog.procyon.org.uk>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 4 Jun 2019 09:34:48 +0200
-Message-ID: <CAMuHMdVTOO13Y49D82r5YgTFGwvgB0UdCZ3o1VAXHWzYof05xA@mail.gmail.com>
-Subject: Re: [PATCH] m68k: io: Fix io{read,write}{16,32}be() for Coldfire peripherals
-To:     Greg Ungerer <gerg@linux-m68k.org>
-Cc:     Angelo Dureghello <angelo@sysam.it>,
-        Logan Gunthorpe <logang@deltatee.com>,
+Date:   Tue, 4 Jun 2019 09:35:16 +0200
+Message-ID: <CAMuHMdXOikfh56DAHGpNUoRefbhYSbh=VK3J8EzZCXVLqZtEVw@mail.gmail.com>
+Subject: Re: [PATCH] rxrpc: Fix uninitialized error code in rxrpc_send_data_packet()
+To:     David Howells <dhowells@redhat.com>
+Cc:     Igor Konopko <igor.j.konopko@intel.com>,
+        "Mohit P . Tahiliani" <tahiliani@nitk.edu.in>,
+        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Eran Ben Elisha <eranbe@mellanox.com>,
+        Matias Bjorling <mb@lightnvm.io>,
+        Jiri Pirko <jiri@mellanox.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Joe Perches <joe@perches.com>,
         Arnd Bergmann <arnd@arndb.de>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        linux-block@vger.kernel.org, netdev <netdev@vger.kernel.org>,
+        linux-afs@lists.infradead.org,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -50,20 +64,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+Hi David,
 
-On Tue, Jun 4, 2019 at 9:18 AM Greg Ungerer <gerg@linux-m68k.org> wrote:
-> On 3/6/19 10:26 pm, Angelo Dureghello wrote:
-> > couldn't seen any follow up on this patch. I tested it and at least
-> > for mcf5441x it works properly and solves all issues.
-> >
-> > Do you think it may be accepted as an initial fix ?
+On Tue, Jun 4, 2019 at 9:34 AM David Howells <dhowells@redhat.com> wrote:
+> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 >
-> I'll add it to the m68knommu git tree.
-> Seeing as you wrote it Geert I assume you have no problem with that?  :-)
+> > I'm not such a big fan of BUG(), so I'd go for ret = -EAFNOSUPPORT, but given
+> > rxrpc is already full of BUG() calls, I guess it is an acceptable solution.
+>
+> Okay.  Are you okay with this going through net-next?
 
-Actually I wanted to look into the issues pointed out by Arnd, but didn't
-get to that yet...
+Yes, I am.
 
 Gr{oetje,eeting}s,
 
