@@ -2,45 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5EB2340F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 09:59:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0A69340F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 10:00:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727015AbfFDH7h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 03:59:37 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40386 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726792AbfFDH7h (ORCPT
+        id S1727165AbfFDIAD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 04:00:03 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35899 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726792AbfFDIAD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 03:59:37 -0400
-Received: by mail-lj1-f196.google.com with SMTP id a21so3526214ljh.7;
-        Tue, 04 Jun 2019 00:59:35 -0700 (PDT)
+        Tue, 4 Jun 2019 04:00:03 -0400
+Received: by mail-lj1-f195.google.com with SMTP id i21so4185198ljj.3;
+        Tue, 04 Jun 2019 01:00:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
         bh=S0nzKAfA25Nd/B5b94/lEffHmOkj3bNdRwQPedDI7ZE=;
-        b=iYsPPhnsC0EJTsHqeeq0mjjcxm9WXPAI/rdF7X6cP16AjIIPs3VSFWSS27cmjrJW5n
-         jyWXeJtLvDVLeQDOR8FH7IBenyNSKMoO5vVfrVGJZhjieveJJ/AtZb/XV2F1uPZHn24B
-         6gGxSN7OgSD704Gy86J3kNRILn0Glf47KC2K2cQcAunGWMHd3eaJJBj4+j02lQe56jq/
-         /Q0HIVlhu7/QE1tHWX1X1eqe0NshnMGX+NkkWacdDCpgpEns6iPpgkpOJM1YkjRWPjiH
-         g2fcxv0xXDer1TcdSOfDadzFlKlVOF+Tl9o1gY1sPTa1XCLjWQe8fnrIZBzeHJJn137L
-         ekaQ==
-X-Gm-Message-State: APjAAAWOVHXXyaDM+A9eWxNBu+pa6+KiuEE92DmoFGkZgjf22PcvKw/x
-        UUV4dpXUk7oL3qC6NpeM/8Qhv7mTA5Plo+2JAFz4rg==
-X-Google-Smtp-Source: APXvYqzyrjK66udRCjVrFtHeJQc9LooEJGHnCm5cn7phdyFg8MU2Z7Z0IJKhJVKh9a9iL2ykJCk01AUjQnJwzYRKzgI=
-X-Received: by 2002:a2e:2b8d:: with SMTP id r13mr3487195ljr.145.1559635174859;
- Tue, 04 Jun 2019 00:59:34 -0700 (PDT)
+        b=OI/PEGCG0AW9iBzeH4rrpP65/tY/38N/Je3OZbYMqonc+zG3X3g4NtbmU5KUJERQcj
+         JOGmW/GRK6VVJ6FN4jgzN0r4F3B/4rL8+gbUnTnhQQGByo6lIk2qun9ZA6N6+hTRz6fn
+         k6rWz3FuOTJribtuNNGd/mLz1AZlndbHL1vL6dxkXqDaBrRNMfBna2Z5UqjaTp5kTRoA
+         viB+BNzbacpVRyULXkwQKLrOrAwp8dyTTBLk1pLv9iKuBMqkg3SEhfg+bTVipIqFp4ki
+         wJPALzZGS0T1lzy6fXbkPBAS8x0AVDFRHfWWe6EgzNDG8zzn1bq5biwzZNdKNG7svRwx
+         QFtw==
+X-Gm-Message-State: APjAAAVzKPFvBQ0RvFK7b2hNRShG83Kr9IshtD5O+6SxspmS+7MpmxjG
+        Xtb0fbGyOwc4y3M3bC236yhaTfOTWQMB0yHyW2Q=
+X-Google-Smtp-Source: APXvYqyoBaVAxOjrtV2Ji+hWa5waNuOxjEdz1mUYrMwlgc6CSvMY+lU2zMT8JWn9CFnYIjBvKQS+A9XR8Ls2/8HbLK0=
+X-Received: by 2002:a2e:960e:: with SMTP id v14mr16250077ljh.31.1559635201102;
+ Tue, 04 Jun 2019 01:00:01 -0700 (PDT)
 MIME-Version: 1.0
-References: <1559634980-20463-1-git-send-email-krzk@kernel.org>
-In-Reply-To: <1559634980-20463-1-git-send-email-krzk@kernel.org>
+References: <1559635002-20533-1-git-send-email-krzk@kernel.org>
+In-Reply-To: <1559635002-20533-1-git-send-email-krzk@kernel.org>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 4 Jun 2019 09:59:22 +0200
-Message-ID: <CAMuHMdU9hW1N_DDbFiBjWW0bnRnT46820bqvNg4iWvy2Ho35yg@mail.gmail.com>
-Subject: Re: [PATCH] sh: configs: Remove useless UEVENT_HELPER_PATH
+Date:   Tue, 4 Jun 2019 09:59:49 +0200
+Message-ID: <CAMuHMdWkuhJ+Y+RTu=TK0CN4xKDQ0hRDY-FJc3EKRvJwz8f5rQ@mail.gmail.com>
+Subject: Re: [PATCH] ia64: configs: Remove useless UEVENT_HELPER_PATH
 To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
+Cc:     Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
+        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>
 Content-Type: text/plain; charset="UTF-8"
