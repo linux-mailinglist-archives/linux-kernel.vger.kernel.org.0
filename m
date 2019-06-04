@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83E11344DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 12:56:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82925344E0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 12:56:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727581AbfFDK4N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 06:56:13 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:35773 "EHLO
+        id S1727601AbfFDK4Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 06:56:24 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:52391 "EHLO
         smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727509AbfFDK4L (ORCPT
+        by vger.kernel.org with ESMTP id S1726877AbfFDK4M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 06:56:11 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07611556|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.136347-0.00582676-0.857826;FP=11371346456618404203|2|2|3|0|-1|-1|-1;HT=e01a16368;MF=han_mao@c-sky.com;NM=1;PH=DS;RN=5;RT=5;SR=0;TI=SMTPD_---.EhJMHgY_1559645768;
-Received: from localhost(mailfrom:han_mao@c-sky.com fp:SMTPD_---.EhJMHgY_1559645768)
-          by smtp.aliyun-inc.com(10.147.42.197);
-          Tue, 04 Jun 2019 18:56:08 +0800
+        Tue, 4 Jun 2019 06:56:12 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07489662|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.122591-0.00828454-0.869125;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03299;MF=han_mao@c-sky.com;NM=1;PH=DS;RN=4;RT=4;SR=0;TI=SMTPD_---.EhJB.ip_1559645769;
+Received: from localhost(mailfrom:han_mao@c-sky.com fp:SMTPD_---.EhJB.ip_1559645769)
+          by smtp.aliyun-inc.com(10.147.40.2);
+          Tue, 04 Jun 2019 18:56:09 +0800
 From:   Mao Han <han_mao@c-sky.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Guo Ren <ren_guo@c-sky.com>, linux-csky@vger.kernel.org,
-        Mao Han <han_mao@c-sky.com>, Guo Ren <guoren@kernel.org>
-Subject: [PATCH V5 5/6] csky: Fixup some error count in 810 & 860.
-Date:   Tue,  4 Jun 2019 18:54:48 +0800
-Message-Id: <e8c6c15b69147780880f0e8345d3aebce3d952ea.1559644961.git.han_mao@c-sky.com>
+Cc:     Mao Han <han_mao@c-sky.com>, linux-csky@vger.kernel.org,
+        Guo Ren <guoren@kernel.org>
+Subject: [PATCH V5 6/6] csky: Fix perf record in kernel/user space
+Date:   Tue,  4 Jun 2019 18:54:49 +0800
+Message-Id: <210ca538c85e6f1b9f1539fd9f69cc59d046dc11.1559644961.git.han_mao@c-sky.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1559644961.git.han_mao@c-sky.com>
 References: <cover.1559644961.git.han_mao@c-sky.com>
@@ -33,132 +33,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guo Ren <ren_guo@c-sky.com>
+csky_pmu_event_init is called several times during the perf record
+initialzation. After configure the event counter in either kernel
+space or user space, csky_pmu_event_init is called twice with no
+attr specified. Configuration will be overwritten with sampling in
+both kernel space and user space. --all-kernel/--all-user is
+useless without this patch applied.
 
-CK810 pmu only support event with index 0-8 and 0xd; CK860 only
-support event 1~4, 0xa~0x1b. So do not register unsupport event
-to hardware cache event, which may leader to unknown behavior.
-
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
 Signed-off-by: Mao Han <han_mao@c-sky.com>
 Cc: Guo Ren <guoren@kernel.org>
 Cc: linux-csky@vger.kernel.org
 ---
- arch/csky/kernel/perf_event.c | 60 ++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 54 insertions(+), 6 deletions(-)
+ arch/csky/kernel/perf_event.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
 diff --git a/arch/csky/kernel/perf_event.c b/arch/csky/kernel/perf_event.c
-index 8d4547e..499427e 100644
+index 499427e..13a254e 100644
 --- a/arch/csky/kernel/perf_event.c
 +++ b/arch/csky/kernel/perf_event.c
-@@ -734,6 +734,20 @@ static const int csky_pmu_hw_map[PERF_COUNT_HW_MAX] = {
- #define CACHE_OP_UNSUPPORTED	0xffff
- static const int csky_pmu_cache_map[C(MAX)][C(OP_MAX)][C(RESULT_MAX)] = {
- 	[C(L1D)] = {
-+#ifdef CONFIG_CPU_CK810
-+		[C(OP_READ)] = {
-+			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
-+			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
-+		},
-+		[C(OP_WRITE)] = {
-+			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
-+			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
-+		},
-+		[C(OP_PREFETCH)] = {
-+			[C(RESULT_ACCESS)]	= 0x5,
-+			[C(RESULT_MISS)]	= 0x6,
-+		},
-+#else
- 		[C(OP_READ)] = {
- 			[C(RESULT_ACCESS)]	= 0x14,
- 			[C(RESULT_MISS)]	= 0x15,
-@@ -743,9 +757,10 @@ static const int csky_pmu_cache_map[C(MAX)][C(OP_MAX)][C(RESULT_MAX)] = {
- 			[C(RESULT_MISS)]	= 0x17,
- 		},
- 		[C(OP_PREFETCH)] = {
--			[C(RESULT_ACCESS)]	= 0x5,
--			[C(RESULT_MISS)]	= 0x6,
-+			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
-+			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
- 		},
-+#endif
- 	},
- 	[C(L1I)] = {
- 		[C(OP_READ)] = {
-@@ -762,6 +777,20 @@ static const int csky_pmu_cache_map[C(MAX)][C(OP_MAX)][C(RESULT_MAX)] = {
- 		},
- 	},
- 	[C(LL)] = {
-+#ifdef CONFIG_CPU_CK810
-+		[C(OP_READ)] = {
-+			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
-+			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
-+		},
-+		[C(OP_WRITE)] = {
-+			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
-+			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
-+		},
-+		[C(OP_PREFETCH)] = {
-+			[C(RESULT_ACCESS)]	= 0x7,
-+			[C(RESULT_MISS)]	= 0x8,
-+		},
-+#else
- 		[C(OP_READ)] = {
- 			[C(RESULT_ACCESS)]	= 0x18,
- 			[C(RESULT_MISS)]	= 0x19,
-@@ -771,29 +800,48 @@ static const int csky_pmu_cache_map[C(MAX)][C(OP_MAX)][C(RESULT_MAX)] = {
- 			[C(RESULT_MISS)]	= 0x1b,
- 		},
- 		[C(OP_PREFETCH)] = {
--			[C(RESULT_ACCESS)]	= 0x7,
--			[C(RESULT_MISS)]	= 0x8,
-+			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
-+			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
- 		},
-+#endif
- 	},
- 	[C(DTLB)] = {
-+#ifdef CONFIG_CPU_CK810
- 		[C(OP_READ)] = {
--			[C(RESULT_ACCESS)]	= 0x5,
--			[C(RESULT_MISS)]	= 0xb,
-+			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
-+			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
- 		},
- 		[C(OP_WRITE)] = {
- 			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
- 			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
- 		},
-+#else
-+		[C(OP_READ)] = {
-+			[C(RESULT_ACCESS)]	= 0x14,
-+			[C(RESULT_MISS)]	= 0xb,
-+		},
-+		[C(OP_WRITE)] = {
-+			[C(RESULT_ACCESS)]	= 0x16,
-+			[C(RESULT_MISS)]	= 0xb,
-+		},
-+#endif
- 		[C(OP_PREFETCH)] = {
- 			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
- 			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
- 		},
- 	},
- 	[C(ITLB)] = {
-+#ifdef CONFIG_CPU_CK810
-+		[C(OP_READ)] = {
-+			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
-+			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
-+		},
-+#else
- 		[C(OP_READ)] = {
- 			[C(RESULT_ACCESS)]	= 0x3,
- 			[C(RESULT_MISS)]	= 0xa,
- 		},
-+#endif
- 		[C(OP_WRITE)] = {
- 			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
- 			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
+@@ -976,15 +976,6 @@ static int csky_pmu_event_init(struct perf_event *event)
+ 	struct hw_perf_event *hwc = &event->hw;
+ 	int ret;
+ 
+-	if (event->attr.exclude_user)
+-		csky_pmu.hpcr = BIT(2);
+-	else if (event->attr.exclude_kernel)
+-		csky_pmu.hpcr = BIT(3);
+-	else
+-		csky_pmu.hpcr = BIT(2) | BIT(3);
+-
+-	csky_pmu.hpcr |= BIT(1) | BIT(0);
+-
+ 	switch (event->attr.type) {
+ 	case PERF_TYPE_HARDWARE:
+ 		if (event->attr.config >= PERF_COUNT_HW_MAX)
+@@ -993,21 +984,32 @@ static int csky_pmu_event_init(struct perf_event *event)
+ 		if (ret == HW_OP_UNSUPPORTED)
+ 			return -ENOENT;
+ 		hwc->idx = ret;
+-		return 0;
++		break;
+ 	case PERF_TYPE_HW_CACHE:
+ 		ret = csky_pmu_cache_event(event->attr.config);
+ 		if (ret == CACHE_OP_UNSUPPORTED)
+ 			return -ENOENT;
+ 		hwc->idx = ret;
+-		return 0;
++		break;
+ 	case PERF_TYPE_RAW:
+ 		if (hw_raw_read_mapping[event->attr.config] == NULL)
+ 			return -ENOENT;
+ 		hwc->idx = event->attr.config;
+-		return 0;
++		break;
+ 	default:
+ 		return -ENOENT;
+ 	}
++
++	if (event->attr.exclude_user)
++		csky_pmu.hpcr = BIT(2);
++	else if (event->attr.exclude_kernel)
++		csky_pmu.hpcr = BIT(3);
++	else
++		csky_pmu.hpcr = BIT(2) | BIT(3);
++
++	csky_pmu.hpcr |= BIT(1) | BIT(0);
++
++	return 0;
+ }
+ 
+ /* starts all counters */
 -- 
 2.7.4
 
