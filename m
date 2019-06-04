@@ -2,110 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23C3B35245
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 23:53:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E0683524D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 23:53:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726556AbfFDVxb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 17:53:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48004 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726305AbfFDVxb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 17:53:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=G3wca+SCAKCdsPgfUllmpTtM4KBQO++LAonxpdM2SmA=; b=ovLdSL4iAcKuZnniUJB1ElA5+
-        Fp9dAaModSnLLv5ULQEvzleUTmQu7HgDtfC2fAIoa1LMTHd9ib5dojCWOJUplVR6ywN5ZoFGG4MTj
-        JIp7a8O8J4FCD6qCx/6PrsasyG/i0qdRuVMdJc+uYmunn0avLzwQslZ9VN/CzGhOnT3leHlCOorb7
-        lIvlTdJJrBdQr+7tCEtwVJ3E8w7qIMdthjNLVE5X6Ptegt1KFF3ysvR6dz+kEQNsZdt4KbX5Ib2eI
-        p7eYeJdAxvXE/Vp6/tR4T9J4wFmvruI6CcaAzJz2y7BwsMz6KVhYHtjrH+oOiEvXSF06g15/gCY3H
-        9/zgjJpEA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hYHN0-0006qf-6V; Tue, 04 Jun 2019 21:53:26 +0000
-Date:   Tue, 4 Jun 2019 14:53:26 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        x86@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        "David S. Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [RFC V2] mm: Generalize notify_page_fault()
-Message-ID: <20190604215325.GA2025@bombadil.infradead.org>
-References: <1559630046-12940-1-git-send-email-anshuman.khandual@arm.com>
+        id S1726694AbfFDVxn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 17:53:43 -0400
+Received: from ozlabs.org ([203.11.71.1]:41523 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726519AbfFDVxl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 17:53:41 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45JQfV4RwXz9sNl;
+        Wed,  5 Jun 2019 07:53:38 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1559685219;
+        bh=cHNqCa+2DKAV6M0vMR9bkHDYjtCKwtQoZhwxJ+54gVI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=NMXueQNnTEcIDQt5X450JA3xwHhFoOXBn4Buv4VarPzSbw1U7RY8/uFkNlOAjMNx9
+         XnOibpQFQrCnnfH4JV6YC/AwqIR/0E21n3x/J1KZtDo6vK3glguw/IP+Jich2tF89s
+         rnB8uEPXsAJeT1r9IzY8dRoX5F6eY5+4ovSeqAXy5ACxFg3yyeH2NQ9NUenQOmJbTZ
+         46GjhyFA4k90W/W/E7VR0v57MxE0VXHKWgFHz7GI9RFCu5jMY+9zhxRhSLzV8HMp3a
+         AUbtC+RN8okV9Un8bFt+glmqRL3hnKl1YxzqU9azJnVGlxeLBY7S2VSNN3ROjR3iwl
+         WyHbMiCslZlTQ==
+Date:   Wed, 5 Jun 2019 07:53:30 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Benson Leung <bleung@google.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the chrome-platform
+ tree
+Message-ID: <20190605075330.79a4725d@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1559630046-12940-1-git-send-email-anshuman.khandual@arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/un..cX/b10_C=VlA+JHf84O"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 04, 2019 at 12:04:06PM +0530, Anshuman Khandual wrote:
-> +++ b/arch/x86/mm/fault.c
-> @@ -46,23 +46,6 @@ kmmio_fault(struct pt_regs *regs, unsigned long addr)
->  	return 0;
->  }
->  
-> -static nokprobe_inline int kprobes_fault(struct pt_regs *regs)
-> -{
-...
-> -}
+--Sig_/un..cX/b10_C=VlA+JHf84O
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 0e8834a..c5a8dcf 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1778,6 +1778,7 @@ static inline int pte_devmap(pte_t pte)
->  }
->  #endif
->  
-> +int notify_page_fault(struct pt_regs *regs, unsigned int trap);
+Hi all,
 
-Why is it now out-of-line?  
+Commit
 
-> +++ b/mm/memory.c
-> +int __kprobes notify_page_fault(struct pt_regs *regs, unsigned int trap)
-> +{
-> +	int ret = 0;
-> +
-> +	/*
-> +	 * To be potentially processing a kprobe fault and to be allowed
-> +	 * to call kprobe_running(), we have to be non-preemptible.
-> +	 */
-> +	if (kprobes_built_in() && !preemptible() && !user_mode(regs)) {
-> +		if (kprobe_running() && kprobe_fault_handler(regs, trap))
-> +			ret = 1;
-> +	}
-> +	return ret;
-> +}
-> +
+  4c1bd8b0e181 ("platform/chrome: wilco_ec: Add telemetry char device inter=
+face")
 
-I would argue this should be in kprobes.h as a static nokprobe_inline.
+is missing a Signed-off-by from its committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/un..cX/b10_C=VlA+JHf84O
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz26FoACgkQAVBC80lX
+0GyYRQgAjUyXj7QxTT/MRJDPEt2YlXkC9JAXiSGE/tkj/mzpB1FUpu990OmwCd9c
+lKU1B0omKGxnKC84cvnt1N4YSu6WQNDaaOkOCB3qIu/mb8Zn8b5WcocYQUq/yafp
+5+gD+Tl+ZZV0myVGRN1eDxtSNw2TMev9kcnwGJRAhdGwNss1nwUI9iyYb0f0igFC
+l98oov21u6QGO2MvUhNW9cRyeqrY+7a1Y6z415RJyAV6HJdh+MqKYyvlkoedRtd/
+fUO2543RDNhEzW+3Eu4oVgYXr2Dgl1V9YhK3g7Efw108yZM6+qMwQcJCYccw1b8C
+VF5U/dE+BZrbQV3l8m+4/r93aODTAQ==
+=19ng
+-----END PGP SIGNATURE-----
+
+--Sig_/un..cX/b10_C=VlA+JHf84O--
