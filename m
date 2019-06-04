@@ -2,91 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E547F34A8E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:37:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE93B34A87
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:37:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727800AbfFDOhi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 10:37:38 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39347 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727182AbfFDOhi (ORCPT
+        id S1727586AbfFDOhM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 10:37:12 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:36733 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727182AbfFDOhL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 10:37:38 -0400
-Received: by mail-pf1-f193.google.com with SMTP id j2so12809791pfe.6;
-        Tue, 04 Jun 2019 07:37:37 -0700 (PDT)
+        Tue, 4 Jun 2019 10:37:11 -0400
+Received: by mail-wm1-f67.google.com with SMTP id v22so340674wml.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 07:37:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Qzbfu0dliCkkEmJ1UFnYukQdP9RWNNavonlb+Fp2x7g=;
-        b=B6Z4giGie6KhK2KkxWuIhscXtPyiQHeMiQvlupiBP6cuxnHxnkXC7r77dL910UfzOp
-         NbF6jRlrR+fe5PwMr2YdnxhZNvwetSZZa3fSdtJDlWfp2SL6I309qlCdjHgsmEeIhY4X
-         4ZrmS2LFhTrynTLrQxkzzst9w2U0QbfyK5S8C2eHE4lo4WlNv6bg+GxASJxWiLvLJYJZ
-         4vraMmMpkN9pYK7SgbT+8yeb9DtD+3+r+D4rN7oN0ni70urCpD9eRBY3MFNoaI45wugG
-         ECx1VtVgxzw4ohf0wQgQ7/gIGbYiBRYngTDo7tdYImb28Rq0OSmIb06tELlMUi0p4pv0
-         Tscg==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=4BkP7vL18hh/Y2SYGfaK20f4ZMauMq57h6342TGfhGs=;
+        b=zwz6SgMY3ch+xUVaDLBu8CesXxZYj8excN9ZvfYtO9uZjTtjKhvtwDPZ1Nu9AC1ttH
+         nuHWUq+Xf8/Y66jY55H3hHAfYr118Omduae13KxQxUid/39xMjcymjuGI5BdstieMDhw
+         SjFgxmqYNp+19t2UYhwSYl70IRKuqajNiu3fJ3GeR02OvaOw1LKwDD889i+aWsUfT5wT
+         E5Col1tPqrpUpbOz7ILdjxhdMWGcjuz9kjPqCcIjcuP5AHXmaTFLBLzj1SWlfHa/f2bG
+         2WtInzVZJ+H5jzA6gBai6HCAjAeMtP8VWcXRwqPWcSQhJCg+jbkoxwEECL+cYkhiVnum
+         Endw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Qzbfu0dliCkkEmJ1UFnYukQdP9RWNNavonlb+Fp2x7g=;
-        b=DIjg6BRk4P+XgQ7nfgoj+xgE0Cw9up3T1hwFFts3vDZWuNj0Cag3YJeDdSa3STHU+B
-         24nNFcpKYCKdAJFa92U0HRqgfXk746D28s0LmakouCUr5N0LQVSx7JOGcfJVmC0gjETj
-         VgAm8LuCI84YHdKxdzaLDScryBkZLQqBmviGg51+M/XpMRJP+KXy0o+lrdqnYaDQcfyL
-         JwyP5RzXaxdPIkQR9W6mxyQDuaPxkTcL3NAZfhS0Jp6s/0Lrz9+sJPX9rTZXy4bcJdmj
-         +DmznlTmaS5C0T3xfpJDa07CAAiUADTP+i9jRNjTrwxjS1w3kmgvJI5p5anpQ1nDtYPs
-         GSgg==
-X-Gm-Message-State: APjAAAUpPif+CsMMSd4Sntyww4oMRvAvDsNvEgaysW0YBsAmqAN0T0hj
-        DeWGQ3ElEe11ajP8ns2AUoE=
-X-Google-Smtp-Source: APXvYqxODlBBHGGcFQeLSbBlxK42pdQc5O3+h4I1eh+4EBYLKe4wKcH39RExLE1ACFUyrK4KVJo6gA==
-X-Received: by 2002:a62:f201:: with SMTP id m1mr32199419pfh.217.1559659057712;
-        Tue, 04 Jun 2019 07:37:37 -0700 (PDT)
-Received: from mail.broadcom.com ([192.19.231.250])
-        by smtp.gmail.com with ESMTPSA id m6sm24156872pjl.18.2019.06.04.07.37.35
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=4BkP7vL18hh/Y2SYGfaK20f4ZMauMq57h6342TGfhGs=;
+        b=lWvZh/QWo52UXxqnfeHR4wwajqaAno06iMX0EOGMP9rghHBznsPHc4ai6ygGRfec2+
+         JNJ0WN5ktYn3iVr1h0d98tDOkpnWhlxG2UhVtx+Jun60BVQXXdwVErxQ+vXJq+Y+vKLI
+         lX5iGdnZyradpAus9hVG3uZIQx10MmyqDA+WnBHPvQGpkpZPQSOA5UevhOqAqmKmyBTm
+         G2quAt1CPwZZMJuh9MPl0zLeCE8Rn7zEAwnLTF4RD2KpRX9H4h5FSExOMP+fasEVMEwc
+         rlkXvVAgYN0gYqQy/6P0yDWYy95R1TBpe//19iWfEx4w5CoLAlwVc8rhRleZk8L+9Fjh
+         wUpw==
+X-Gm-Message-State: APjAAAWiVEG+aKdAmC9J9f6eyWErYDZPVooN5YfeWfM3QuqHi0oO3kDN
+        JhUrG1UkxtF01FZAVj7GdrBQJQ==
+X-Google-Smtp-Source: APXvYqxGadUkWTjW4QvcK05BF6VgFxTONXlpWUID2n0UK6pxnIxdvT5GzX5nOsiVPLz/AMK5qgbF8A==
+X-Received: by 2002:a7b:c94a:: with SMTP id i10mr15828555wml.97.1559659029834;
+        Tue, 04 Jun 2019 07:37:09 -0700 (PDT)
+Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id x129sm14348068wmg.44.2019.06.04.07.37.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Jun 2019 07:37:37 -0700 (PDT)
-From:   Kamal Dasu <kdasu.kdev@gmail.com>
-To:     linux-mtd@lists.infradead.org
-Cc:     bcm-kernel-feedback-list@broadcom.com,
-        linux-kernel@vger.kernel.org, Kamal Dasu <kdasu.kdev@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [PATCH v2 3/3] dt: bindings: mtd: brcmand: Add brcmnand,brcmnand-v7.3 support
-Date:   Tue,  4 Jun 2019 10:36:31 -0400
-Message-Id: <1559659013-34502-3-git-send-email-kdasu.kdev@gmail.com>
-X-Mailer: git-send-email 1.9.0.138.g2de3478
-In-Reply-To: <1559659013-34502-1-git-send-email-kdasu.kdev@gmail.com>
-References: <1559659013-34502-1-git-send-email-kdasu.kdev@gmail.com>
+        Tue, 04 Jun 2019 07:37:09 -0700 (PDT)
+From:   Loys Ollivier <lollivier@baylibre.com>
+To:     Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Cc:     Paul Walmsley <paul@pwsan.com>, Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>
+Subject: Re: [PATCH v3 1/5] arch: riscv: add support for building DTB files from DT source data
+In-Reply-To: <20190602080500.31700-2-paul.walmsley@sifive.com>
+References: <20190602080500.31700-1-paul.walmsley@sifive.com> <20190602080500.31700-2-paul.walmsley@sifive.com>
+Date:   Tue, 04 Jun 2019 16:37:07 +0200
+Message-ID: <86v9xlh0x8.fsf@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added brcm,brcmnand-v7.3 as possible compatible string to support
-brcmnand controller v7.3.
+On Sun 02 Jun 2019 at 01:04, Paul Walmsley <paul.walmsley@sifive.com> wrote:
 
-Signed-off-by: Kamal Dasu <kdasu.kdev@gmail.com>
----
- Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt | 1 +
- 1 file changed, 1 insertion(+)
+> Similar to ARM64, add support for building DTB files from DT source
+> data for RISC-V boards.
+>
+> This patch starts with the infrastructure needed for SiFive boards.
+> Boards from other vendors would add support here in a similar form.
+>
+> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+> Signed-off-by: Paul Walmsley <paul@pwsan.com>
+> Cc: Palmer Dabbelt <palmer@sifive.com>
+> Cc: Albert Ou <aou@eecs.berkeley.edu>
+> ---
+>  arch/riscv/boot/dts/Makefile | 2 ++
+>  1 file changed, 2 insertions(+)
+>  create mode 100644 arch/riscv/boot/dts/Makefile
+>
+> diff --git a/arch/riscv/boot/dts/Makefile b/arch/riscv/boot/dts/Makefile
+> new file mode 100644
+> index 000000000000..dcc3ada78455
+> --- /dev/null
+> +++ b/arch/riscv/boot/dts/Makefile
+> @@ -0,0 +1,2 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +subdir-y += sifive
 
-diff --git a/Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt b/Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt
-index 0b7c373..ad4cd30 100644
---- a/Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt
-+++ b/Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt
-@@ -28,6 +28,7 @@ Required properties:
-                          brcm,brcmnand-v7.0
-                          brcm,brcmnand-v7.1
-                          brcm,brcmnand-v7.2
-+                         brcm,brcmnand-v7.3
-                          brcm,brcmnand
- - reg              : the register start and length for NAND register region.
-                      (optional) Flash DMA register range (if present)
--- 
-1.9.0.138.g2de3478
-
+Always build it ?
+Any particular reason to drop ARCH_SIFIVE ?
