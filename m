@@ -2,56 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A327B3474D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:51:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D6DB34751
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:52:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727857AbfFDMvH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 08:51:07 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42666 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727394AbfFDMvH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 08:51:07 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 88202A78;
-        Tue,  4 Jun 2019 05:51:04 -0700 (PDT)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 77B853F690;
-        Tue,  4 Jun 2019 05:51:03 -0700 (PDT)
-Date:   Tue, 4 Jun 2019 13:51:00 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH] arm64/mm: Simplify protection flag creation for kernel
- huge mappings
-Message-ID: <20190604125100.GC6610@arrakis.emea.arm.com>
-References: <1558929495-19898-1-git-send-email-anshuman.khandual@arm.com>
+        id S1727815AbfFDMw0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 08:52:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57766 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727462AbfFDMw0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 08:52:26 -0400
+Received: from localhost (173-25-83-245.client.mchsi.com [173.25.83.245])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 445CF2075C;
+        Tue,  4 Jun 2019 12:52:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559652745;
+        bh=TI//IwvVH2KA10K2fPqSGn4jya7M7Om2ADT6qWSZz60=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UX+QyaR1JZL+2rhj/O/mvKmEnURKyjwVwjIesADGaL7D1soH7BrbMcNGEZ0a1Pan7
+         molVHJYOjaNNJf2mUaP1xnf5jzhjI05SQmOjBSDNcescJ0l8dZFGB+S9PEKapob+p5
+         NwjexAwr6aKk4/OME9Hu1loH3YOeScpWUNnwPsY4=
+Date:   Tue, 4 Jun 2019 07:52:24 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Niklas Cassel <niklas.cassel@linaro.org>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 0/3] Qualcomm QCS404 PCIe support
+Message-ID: <20190604125224.GG189360@google.com>
+References: <20190529005710.23950-1-bjorn.andersson@linaro.org>
+ <20190529163155.GA24655@redmoon>
+ <20190604113347.GA13029@centauri.ideon.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1558929495-19898-1-git-send-email-anshuman.khandual@arm.com>
+In-Reply-To: <20190604113347.GA13029@centauri.ideon.se>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 27, 2019 at 09:28:15AM +0530, Anshuman Khandual wrote:
-> Even though they have got the same value, PMD_TYPE_SECT and PUD_TYPE_SECT
-> get used for kernel huge mappings. But before that first the table bit gets
-> cleared using leaf level PTE_TABLE_BIT. Though functionally they are same,
-> we should use page table level specific macros to be consistent as per the
-> MMU specifications. Create page table level specific wrappers for kernel
-> huge mapping entries and just drop mk_sect_prot() which does not have any
-> other user.
+On Tue, Jun 04, 2019 at 01:33:47PM +0200, Niklas Cassel wrote:
+> On Wed, May 29, 2019 at 05:31:55PM +0100, Lorenzo Pieralisi wrote:
+> > On Tue, May 28, 2019 at 05:57:07PM -0700, Bjorn Andersson wrote:
+> > > This series adds support for the PCIe controller in the Qualcomm QCS404
+> > > platform.
+> > > 
+> > > Bjorn Andersson (3):
+> > >   PCI: qcom: Use clk_bulk API for 2.4.0 controllers
+> > >   dt-bindings: PCI: qcom: Add QCS404 to the binding
+> > >   PCI: qcom: Add QCS404 PCIe controller support
+> > > 
+> > >  .../devicetree/bindings/pci/qcom,pcie.txt     |  25 +++-
+> > >  drivers/pci/controller/dwc/pcie-qcom.c        | 113 ++++++++----------
+> > >  2 files changed, 75 insertions(+), 63 deletions(-)
+> > 
+> > Applied to pci/qcom for v5.3, thanks.
+> > 
+> > Lorenzo
 > 
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
+> Hello Lorenzo,
+> 
+> I don't see these patches in linux-next.
+> 
+> It appears that only Bjorn Helgaas tree is in linux-next, and not yours.
+> 
+> I think that it makes a lot of sense for patches to cook in linux-next
+> for as long a possible.
+> 
+> Perhaps you and Bjorn Helgaas could have a shared PCI git tree?
+> Or perhaps you could add your tree to linux-next?
+> ..or some other solution :)
 
-Queued for 5.3. Thanks.
-
--- 
-Catalin
+I pull Lorenzo's branches into my -nexst branch.  I just haven't
+gotten to it yet.
