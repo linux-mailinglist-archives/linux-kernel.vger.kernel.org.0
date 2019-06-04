@@ -2,175 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DC07343EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 12:13:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7649F34445
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 12:18:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727458AbfFDKM4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 06:12:56 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42997 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727122AbfFDKMy (ORCPT
+        id S1727340AbfFDKSj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 06:18:39 -0400
+Received: from conuserg-08.nifty.com ([210.131.2.75]:44024 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727139AbfFDKSj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 06:12:54 -0400
-Received: by mail-wr1-f67.google.com with SMTP id o12so8050316wrj.9
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 03:12:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=um8w67w6LCCsT/DE9snQkkvxxZYU83IofxVrJcLAJG0=;
-        b=dj4jGaaRWKIYULybOblXCZOtUr7fy2Vq1eHI6heDrbSkqaTsRFC/G+DE9a7AJSZUB6
-         EAHXLNffMIiy1t8ysusi8A0hpey1Q7AkUDtqtwGzA6UqRq4VGalN8E7sMiHoq0PUjs0T
-         dcbR5WGr9lAl6g0rwxdnG1uT3wFgR76dvXKN0/LoF77GW3bZTmrBaoKvkKiTmNMC+ezi
-         oNvrPVUrEoHADSSqRBUPs0ITpw2NGLSR9JqaeH1FSgLTqH7ZCS4keb9AmbJQvP/2V8c8
-         PLjnXI3aEud42KAindupvSP/JEffX8r7mucGND+BXKHOKcVue81PwsenAPTCtlYhxDtR
-         ePcQ==
-X-Gm-Message-State: APjAAAXwBofidnZpN48GOEide0vROBLXv13repp6snalU22AbohbUjAS
-        6vim9hGgMikgttxkjU5HevtO/Q==
-X-Google-Smtp-Source: APXvYqysysYFV8pNSuW6aoEX5F5E5f6lPRUrjBSYHLBZXWplX7+pNvtU7Q3yZEBCXKa37b0Vt63Q6Q==
-X-Received: by 2002:adf:ee0e:: with SMTP id y14mr18755685wrn.275.1559643172203;
-        Tue, 04 Jun 2019 03:12:52 -0700 (PDT)
-Received: from t460s.bristot.redhat.com ([5.170.68.106])
-        by smtp.gmail.com with ESMTPSA id h21sm14765898wmb.47.2019.06.04.03.12.50
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Jun 2019 03:12:51 -0700 (PDT)
-Subject: Re: [RFC 2/3] preempt_tracer: Disable IRQ while starting/stopping due
- to a preempt_counter change
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, williams@redhat.com,
-        daniel@bristot.me, "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
-References: <cover.1559051152.git.bristot@redhat.com>
- <f2ca7336162b6dc45f413cfe4e0056e6aa32e7ed.1559051152.git.bristot@redhat.com>
- <20190529083357.GF2623@hirez.programming.kicks-ass.net>
- <b47631c3-d65a-4506-098a-355c8cf50601@redhat.com>
- <20190531074729.GA153831@google.com>
-From:   Daniel Bristot de Oliveira <bristot@redhat.com>
-Message-ID: <3a17724b-f903-bc18-1a35-84efd3ea90c9@redhat.com>
-Date:   Tue, 4 Jun 2019 12:12:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190531074729.GA153831@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 4 Jun 2019 06:18:39 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-08.nifty.com with ESMTP id x54AEC76032511;
+        Tue, 4 Jun 2019 19:14:12 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com x54AEC76032511
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1559643254;
+        bh=2Cnt75TjD0TucqN65Zm4F4aK2FsJEMupPn4+qQfaomQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=T4jvQ0G6x7AI4kdGX5qwlpK7HOvTaBPAv/cRO5t4X32Dcs0uPZAvSErXh4DSjGB31
+         HcpKj3d7GK+dEJgeRDnlb3IgG5M1SUitGYK8fWYBHTStYwEem3M/mbalLmPcf7FXff
+         2NyynthHyJ0CxXthF++gCaIlODh+BwsYOnM6Vm7DKEJGoJYT3haZXkmHOejQU4htdI
+         qbLlQa5xUwjLEMB8M7yoUoLHvQw77TZmiZ2m1IsbGjpX7v+Ox9dBMBaEmddSnnMqUe
+         FudqJKtGFxDLUHkFG12GbiN4Ma4TLji3PyPSof/DKDCjFWY8qenZH14JVAqU6EKQqf
+         rZdDvtK1Yi38A==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        linux-riscv@lists.infradead.org,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        linux-s390@vger.kernel.org, Greentime Hu <green.hu@gmail.com>,
+        Helge Deller <deller@gmx.de>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        linux-snps-arc@lists.infradead.org,
+        Song Liu <songliubraving@fb.com>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Yonghong Song <yhs@fb.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Paul Mackerras <paulus@samba.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        linux-parisc@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-kernel@vger.kernel.org, Vincent Chen <deanbo422@gmail.com>,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH 00/15] kbuild: refactor headers_install and support compile-test of UAPI headers
+Date:   Tue,  4 Jun 2019 19:13:54 +0900
+Message-Id: <20190604101409.2078-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/05/2019 09:47, Joel Fernandes wrote:
-> On Wed, May 29, 2019 at 11:40:34AM +0200, Daniel Bristot de Oliveira wrote:
->> On 29/05/2019 10:33, Peter Zijlstra wrote:
->>> On Tue, May 28, 2019 at 05:16:23PM +0200, Daniel Bristot de Oliveira wrote:
->>>> The preempt_disable/enable tracepoint only traces in the disable <-> enable
->>>> case, which is correct. But think about this case:
->>>>
->>>> ---------------------------- %< ------------------------------
->>>> 	THREAD					IRQ
->>>> 	   |					 |
->>>> preempt_disable() {
->>>>     __preempt_count_add(1)
->>>> 	------->	    smp_apic_timer_interrupt() {
->>>> 				preempt_disable()
->>>> 				    do not trace (preempt count >= 1)
->>>> 				    ....
->>>> 				preempt_enable()
->>>> 				    do not trace (preempt count >= 1)
->>>> 			    }
->>>>     trace_preempt_disable();
->>>> }
->>>> ---------------------------- >% ------------------------------
->>>>
->>>> The tracepoint will be skipped.
->>>
->>> .... for the IRQ. But IRQs are not preemptible anyway, so what the
->>> problem?
->>
->>
->> right, they are.
->>
->> exposing my problem in a more specific way:
->>
->> To show in a model that an event always takes place with preemption disabled,
->> but not necessarily with IRQs disabled, it is worth having the preemption
->> disable events separated from IRQ disable ones.
->>
->> The main reason is that, although IRQs disabled postpone the execution of the
->> scheduler, it is more pessimistic, as it also delays IRQs. So the more precise
->> the model is, the less pessimistic the analysis will be.
->>
->> But there are other use-cases, for instance:
->>
->> (Steve, correct me if I am wrong)
->>
->> The preempt_tracer will not notice a "preempt disabled" section in an IRQ
->> handler if the problem above happens.
->>
->> (Yeah, I know these problems are very specific... but...)
-> 
-> I agree with the problem. I think Daniel does not want to miss the preemption
-> disabled event caused by the IRQ disabling.
 
-Hi Joel!
+Multiple people have suggested to compile-test UAPI headers.
 
-Correct, but ... look bellow.
+Currently, Kbuild provides simple sanity checks by headers_check
+but they are not enough to catch bugs.
 
->>>> To avoid skipping the trace, the change in the counter should be "atomic"
->>>> with the start/stop, w.r.t the interrupts.
->>>>
->>>> Disable interrupts while the adding/starting stopping/subtracting.
->>>
->>>> +static inline void preempt_add_start_latency(int val)
->>>> +{
->>>> +	unsigned long flags;
->>>> +
->>>> +	raw_local_irq_save(flags);
->>>> +	__preempt_count_add(val);
->>>> +	preempt_latency_start(val);
->>>> +	raw_local_irq_restore(flags);
->>>> +}
->>>
->>>> +static inline void preempt_sub_stop_latency(int val)
->>>> +{
->>>> +	unsigned long flags;
->>>> +
->>>> +	raw_local_irq_save(flags);
->>>> +	preempt_latency_stop(val);
->>>> +	__preempt_count_sub(val);
->>>> +	raw_local_irq_restore(flags);
->>>> +}
->>>
->>> That is hideously expensive :/
->>
->> Yeah... :-( Is there another way to provide such "atomicity"?
->>
->> Can I use the argument "if one has these tracepoints enabled, they are not
->> considering it as a hot-path?"
-> 
-> The only addition here seems to  the raw_local_irq_{save,restore} around the
-> calls to increment the preempt counter and start the latency tracking.
-> 
-> Is there any performance data with the tracepoint enabled and with/without
-> this patch? Like with hackbench?
+The most recent patch I know is David Howells' work:
+https://patchwork.kernel.org/patch/10590203/
 
-I discussed this with Steve at the Summit on the Summit (the reason why I did
-not reply this email earlier is because I was in the conf/traveling), and he
-also agrees with peterz, disabling and (mainly) re-enabling IRQs costs too much.
+I agree that we need better tests for UAPI headers,
+but I want to integrate it in a clean way.
 
-We need to find another way to resolve this problem (or mitigate the cost).... :-(.
+The idea that has been in my mind is to compile each header
+to make sure the selfcontainedness.
 
-Ideas?
+Recently, Jani Nikula proposed a new syntax 'header-test-y'.
+https://patchwork.kernel.org/patch/10947005/
 
-Thanks!!
+So, I implemented UAPI compile-testing on top of that.
 
--- Daniel
+When adding a new feature, cleaning the code first is a
+good practice.
+
+[1] Remove headers_install_all
+
+This target installs UAPI headers of all architectures
+in a single tree.
+It does not make sense to compile test of headers from
+multiple arches at the same time. Hence, removed.
+
+[2] Split header installation into 'make headers' and 'make headers_install'
+
+To compile-test UAPI headers, we need a work-directory somewhere
+to save objects and .*.cmd files.
+
+usr/include/ will be the work-directory.
+
+Since we cannot pollute the final destination of headers_install,
+
+I split the header installation into two stages.
+
+'make headers' will build up
+the ready-to-install headers in usr/include,
+which will be also used as a work-directory for the compile-test.
+
+'make headers_install' will copy headers
+from usr/include to $(INSTALL_HDR_PATH)/include.
+
+[3] Support compile-test of UAPI headers
+
+This is implemented in usr/include/Makefile
+
+
+Jani Nikula (1):
+  kbuild: add support for ensuring headers are self-contained
+
+Masahiro Yamada (14):
+  kbuild: remove headers_{install,check}_all
+  kbuild: remove stale dependency between Documentation/ and
+    headers_install
+  kbuild: make gdb_script depend on prepare0 instead of prepare
+  kbuild: fix Kconfig prompt of CONFIG_HEADERS_CHECK
+  kbuild: add CONFIG_HEADERS_INSTALL and loosen the dependency of
+    samples
+  kbuild: remove build_unifdef target in scripts/Makefile
+  kbuild: build all prerequisite of headers_install simultaneously
+  kbuild: add 'headers' target to build up ready-to-install uapi headers
+  kbuild: re-implement Makefile.headersinst without directory descending
+  kbuild: move hdr-inst shorthand to top Makefile
+  kbuild: simplify scripts/headers_install.sh
+  kbuild: deb-pkg: do not run headers_check
+  fixup: kbuild: add support for ensuring headers are self-contained
+  kbuild: compile test UAPI headers to ensure they are self-contained
+
+ Documentation/kbuild/headers_install.txt |   7 --
+ Documentation/kbuild/makefiles.txt       |  13 ++-
+ Makefile                                 |  56 +++++-----
+ arch/arc/configs/tb10x_defconfig         |   1 +
+ arch/nds32/configs/defconfig             |   1 +
+ arch/parisc/configs/a500_defconfig       |   1 +
+ arch/parisc/configs/b180_defconfig       |   1 +
+ arch/parisc/configs/c3000_defconfig      |   1 +
+ arch/parisc/configs/default_defconfig    |   1 +
+ arch/powerpc/configs/ppc6xx_defconfig    |   1 +
+ arch/s390/configs/debug_defconfig        |   1 +
+ include/uapi/{linux => }/Kbuild          |   6 +-
+ init/Kconfig                             |  20 ++++
+ lib/Kconfig.debug                        |  25 +++--
+ samples/Kconfig                          |  14 ++-
+ samples/Makefile                         |   4 +-
+ scripts/Kbuild.include                   |   6 --
+ scripts/Makefile                         |   5 -
+ scripts/Makefile.build                   |   9 ++
+ scripts/Makefile.headersinst             | 132 ++++++++++-------------
+ scripts/Makefile.lib                     |   3 +
+ scripts/cc-system-headers.sh             |   8 ++
+ scripts/headers.sh                       |  29 -----
+ scripts/headers_install.sh               |  48 ++++-----
+ scripts/package/builddeb                 |   2 +-
+ usr/.gitignore                           |   1 -
+ usr/Makefile                             |   2 +
+ usr/include/.gitignore                   |   3 +
+ usr/include/Makefile                     | 132 +++++++++++++++++++++++
+ 29 files changed, 329 insertions(+), 204 deletions(-)
+ rename include/uapi/{linux => }/Kbuild (77%)
+ create mode 100755 scripts/cc-system-headers.sh
+ delete mode 100755 scripts/headers.sh
+ create mode 100644 usr/include/.gitignore
+ create mode 100644 usr/include/Makefile
+
+-- 
+2.17.1
+
