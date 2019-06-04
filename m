@@ -2,138 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0286034E37
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 19:02:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEE3234E40
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 19:02:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728046AbfFDRCM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 13:02:12 -0400
-Received: from mail-lf1-f51.google.com ([209.85.167.51]:38439 "EHLO
-        mail-lf1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727809AbfFDRCL (ORCPT
+        id S1728031AbfFDRCo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 13:02:44 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:40946 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727716AbfFDRCo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 13:02:11 -0400
-Received: by mail-lf1-f51.google.com with SMTP id b11so17010859lfa.5
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 10:02:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rXMpeJuEOdKOx/HQKDVkHmCBlz8jhse9a4h820958SA=;
-        b=kCYP3ZkPc2TvMg2Wi6ykhEAq4aOHidw2VC3+oseBzc57ug/iY8JEtSMAXw6A6MUtF1
-         S9yL/tH/xkUNlN3qJW4dF10MPEQnzpcwNq7tvbstlGF03df00RR1u0SOhWMo+8mu6Aro
-         fwkZkPVtKFpCmx/STkQFd0upVUm2ETInWkqTgH+hEAGeH2C72eInDqu1Ky2MX/QdjMjF
-         dsqpTezlmEfIEMQO3UtEtcObUWMcTUp4e3piA1yK6iYuemvPhS+Ge3PGBVDG0ecFXmb9
-         c9JZwoRR02YUqGoN/2rOvmNEDw35p5/PZsL4p7Zo5PkE1hPFiUQsIlX3me9epNMjMa7d
-         nmbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rXMpeJuEOdKOx/HQKDVkHmCBlz8jhse9a4h820958SA=;
-        b=DecN7swQ6/zw870b/ZNhg079plA96koh2jIzc6agxWNYow4SPyJmBxkn4HwqWoHzsU
-         AaVDHZ4XyoYe8afEaIlEj6aJl/OoOgaReA4hMRMg2G/+E40MvVxNFUL49ibt/QGQO/3q
-         7MJmGhvpcnidiIyI7fU5YPfP7zzD+27pAX0jPy94trmAq6Me2ZVK5g40aCPgL+Bph6d1
-         hOvFBLLopkd9xYHI5ZUO/YTvc8Ao5QzAI1xpSMM6+x4qEeNY8YWbIAvWyB5feSxBAcy8
-         idHPhaw/2u30bap+ucKkGm32yJbyyTwDVXqPJ8b0QvZXlri7JVcqEANL2b+cxBkXDFym
-         g6MA==
-X-Gm-Message-State: APjAAAV6fAFSb8Dtj69UcBFI3LZRt6T1u10hCRcSErLFvjVtu5GPAg2i
-        ButEZFbIYudHc+PAQOngeIvbGII2UAzYzF7YOIC6kA==
-X-Google-Smtp-Source: APXvYqx3T5pRH32no890qB33wNihmq1VvYcMK9pbP5hOQJiKRjsEJv6pyoSP9K1gnMzp+pf+T7PWymXwtX8g7raiNnY=
-X-Received: by 2002:a05:6512:30a:: with SMTP id t10mr1839716lfp.22.1559667729967;
- Tue, 04 Jun 2019 10:02:09 -0700 (PDT)
+        Tue, 4 Jun 2019 13:02:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=cOmAcXP3xslB9SN+5584hLRHldJIouXYPbVgjk2nYSM=; b=iPXATZBtcyo8M05+4EfxuLU+b
+        mk10UIWmgoSKPjpOIFJx92Ro5KTGoGDRD2cHYYIXwj5ONEuphhuEINydK47JTVs8Wzw71hfn19MC7
+        JGHMuVBbd6AmmoHBxq5ZB6ZNL6fuZkwyHburri88Vbs8wJrfL5CuNwDBUfXT8tWUq7BkFHRSLeGNv
+        IE+1IWJwOOAqwPMdGfWwcFpeCIOECFGQqgbsAC6kRoiebf9aOMkKwd9EOniVOijd14p1BOlE/xftP
+        RzsPBhT15AButzFfThpFJFD3MQLX4DT8bVxDcnvInzRlPx1qdlJoOCF23F3vX7mLE3OriUii9bcaR
+        7yVJlD5cw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hYCpJ-0007Zn-5N; Tue, 04 Jun 2019 17:02:21 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A2C0220114D92; Tue,  4 Jun 2019 19:02:18 +0200 (CEST)
+Date:   Tue, 4 Jun 2019 19:02:18 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        huang ying <huang.ying.caritas@gmail.com>
+Subject: Re: [PATCH v8 17/19] locking/rwsem: Merge owner into count on x86-64
+Message-ID: <20190604170218.GE3419@hirez.programming.kicks-ass.net>
+References: <20190520205918.22251-1-longman@redhat.com>
+ <20190520205918.22251-18-longman@redhat.com>
+ <20190604094537.GK3402@hirez.programming.kicks-ass.net>
+ <d03f319a-790c-3084-2908-76f44d3f41f5@redhat.com>
 MIME-Version: 1.0
-References: <73fac64c-fe49-4738-49a4-0afe668eed94@canonical.com>
- <201905310740.522B3A7C1@keescook> <c80362bd-1dec-3e4f-c3e8-1c58d3a33070@canonical.com>
- <CANRnR9Q4AY1nyTebWgkVM-wUfZv7kKNLnsrchWPBH4HPbB-X6Q@mail.gmail.com> <201905311330.EA6B6E5F@keescook>
-In-Reply-To: <201905311330.EA6B6E5F@keescook>
-From:   Ke Wu <mikewu@google.com>
-Date:   Tue, 4 Jun 2019 10:01:58 -0700
-Message-ID: <CANRnR9R5mhMRMfTUkU5i_GhGwEiXmhhHBN2E6bo+N5KtBUVecQ@mail.gmail.com>
-Subject: Re: security/loadpin: Allow to exclude specific file types
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d03f319a-790c-3084-2908-76f44d3f41f5@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I sent out a new patch according to your last suggestion. Please take
-a look. Thanks!
+On Tue, Jun 04, 2019 at 11:47:21AM -0400, Waiman Long wrote:
+> On 6/4/19 5:45 AM, Peter Zijlstra wrote:
+> > On Mon, May 20, 2019 at 04:59:16PM -0400, Waiman Long wrote:
+> >> With separate count and owner, there are timing windows where the two
+> >> values are inconsistent. That can cause problem when trying to figure
+> >> out the exact state of the rwsem. For instance, a RT task will stop
+> >> optimistic spinning if the lock is acquired by a writer but the owner
+> >> field isn't set yet. That can be solved by combining the count and
+> >> owner together in a single atomic value.
+> > I just realized we can use cmpxchg_double() here (where available of
+> > course).
+> 
+> Does the 2 doubles need to be 128-bit aligned to use cmpxchg_double()? I
+> don't think we can guarantee that unless we explicitly set this alignment.
 
-
-On Fri, May 31, 2019 at 1:33 PM Kees Cook <keescook@chromium.org> wrote:
->
-> On Fri, May 31, 2019 at 11:03:17AM -0700, Ke Wu wrote:
-> > I think Coverity is correct. Note that it's the size of
-> > kernel_read_file_str (rather than exclude_read_files) doesn't equal to
-> > ignore_read_file_id.
-> >
-> > This is because READING_MAX_ID is also an element in
-> > kernel_read_file_str, which makes the size of kernel_read_file_str to
-> > be READING_MAX_ID+1. I will send a new patch to fix the issue. Thanks
-> > for the  analysis!
->
-> Ah! Yes, I see now. I was looking at the wrong things. It should be
-> possible to just do:
->
-> > > >> 209                for (j = 0; j < ARRAY_SIZE(kernel_read_file_str); j++) {
->
-> for (j = 0; j < ARRAY_SIZE(ignore_read_file_id); j++)
->
-> and add a
->
-> BUILD_BUG_ON(ARRAY_SIZE(kernel_read_file_str) < ARRAY_SIZE(ignore_read_file_id))
->
-> for future robustness checking.
->
-> Thanks for looking at this more closely!
->
-> -Kees
->
-> > > >> 210                        if (strcmp(cur, kernel_read_file_str[j]) == 0) {
-> > > >> 211                                pr_info("excluding: %s\n",
-> > > >> 212                                        kernel_read_file_str[j]);
-> > > >>
-> > > >> CID 81977 (#1 of 1): Out-of-bounds write
-> > > >> overrun-local: Overrunning array ignore_read_file_id of 8 4-byte
-> > > >> elements at element index 8 (byte offset 35) using index j (which
-> > > >> evaluates to 8).
-> > > >>
-> > > >> 213                                ignore_read_file_id[j] = 1;
-> > > >>
-> > > >> According to Coverity ignore_read_file_id is an array of 8 integers.
-> > > >> However, ARRAY_SIZE(kernel_read_file_str) is 9, so we have an out of
-> > > >> bounds write on ignore_read_file[j] when j is 8.
-> > > >
-> > > > What am I missing? This doesn't fail the build:
-> > > >
-> > > > +       BUILD_BUG_ON(ARRAY_SIZE(exclude_read_files) !=
-> > > > +                    ARRAY_SIZE(ignore_read_file_id));
-> > > >
-> > > > They have the same number of elements.
-> > > >
-> > >
-> > > Yep, that's very true. I'll discuss this with Coverity as this seems
-> > > like a weird false positive.
-> > >
-> > > Apologies for the noise.
-> > >
-> > > Colin
-> >
-> >
-> >
-> > --
-> > Ke Wu | Software Engineer | mikewu@google.com | Google Inc.
->
-> --
-> Kees Cook
-
-
-
--- 
-Ke Wu | Software Engineer | mikewu@google.com | Google Inc.
+It does :/ and yes, we'd need to play games with __align(2*sizeof(long))
+and such.
