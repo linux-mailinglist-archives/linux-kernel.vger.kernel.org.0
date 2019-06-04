@@ -2,210 +2,243 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2565434B11
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:56:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 945D434B18
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:57:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727914AbfFDO4f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 10:56:35 -0400
-Received: from mga17.intel.com ([192.55.52.151]:55411 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727801AbfFDO4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 10:56:34 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jun 2019 07:56:34 -0700
-X-ExtLoop1: 1
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga008.fm.intel.com with ESMTP; 04 Jun 2019 07:56:33 -0700
-Received: from [10.125.252.178] (abudanko-mobl.ccr.corp.intel.com [10.125.252.178])
-        by linux.intel.com (Postfix) with ESMTP id 5FF225803EA;
-        Tue,  4 Jun 2019 07:56:31 -0700 (PDT)
-Subject: Re: [PATCH v5] perf record: collect user registers set jointly with
- dwarf stacks
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <e7fd37b1-af22-0d94-a0dc-5895e803bbfe@linux.intel.com>
- <20190530194111.GA6540@kernel.org>
- <3dc0c67e-9ea3-b9f5-1aa2-e87603b29c37@linux.intel.com>
- <20190604141220.GG24504@kernel.org>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <ecf1d25f-8c28-934d-f426-26c9d0a68304@linux.intel.com>
-Date:   Tue, 4 Jun 2019 17:56:30 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1727938AbfFDO5e convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 4 Jun 2019 10:57:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34484 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727537AbfFDO5e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 10:57:34 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 78525AE79;
+        Tue,  4 Jun 2019 14:57:31 +0000 (UTC)
+Date:   Tue, 4 Jun 2019 16:57:29 +0200
+From:   Jean Delvare <jdelvare@suse.de>
+To:     Pali =?UTF-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+Cc:     Wolfram Sang <wsa@the-dreams.de>,
+        =?UTF-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>,
+        Steven Honeyman <stevenhoneyman@gmail.com>,
+        Valdis.Kletnieks@vt.edu,
+        Jochen Eisinger <jochen@penguin-breeder.org>,
+        Gabriele Mazzotta <gabriele.mzt@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>, Mario_Limonciello@dell.com,
+        Alex Hung <alex.hung@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v3] i2c: i801: Register optional lis3lv02d i2c device on
+ Dell machines
+Message-ID: <20190604165729.4b67222f@endymion>
+In-Reply-To: <20190602132003.1911-1-pali.rohar@gmail.com>
+References: <20180127133209.28995-1-pali.rohar@gmail.com>
+        <20190602132003.1911-1-pali.rohar@gmail.com>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20190604141220.GG24504@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Pali,
 
-On 04.06.2019 17:12, Arnaldo Carvalho de Melo wrote:
-> Em Fri, May 31, 2019 at 09:27:38AM +0300, Alexey Budankov escreveu:
-<SNIP>
-> 
-> Now cross building to a few arches is failing, so far:
-> 
-> [perfbuilder@quaco ~]$ cat /tmp/dm.log/summary
->  alpine:3.4: Ok
->  alpine:3.5: Ok
->  alpine:3.6: Ok
->  alpine:3.7: Ok
->  alpine:3.8: Ok
->  alpine:3.9: Ok
->  alpine:edge: Ok
->  amazonlinux:1: Ok
->  amazonlinux:2: Ok
->  android-ndk:r12b-arm: Ok
->  android-ndk:r15c-arm: Ok
->  centos:5: Ok
->  centos:6: Ok
->  centos:7: Ok
->  clearlinux:latest: Ok
->  debian:8: Ok
->  debian:9: Ok
->  debian:experimental: Ok
->  debian:experimental-x-arm64: Ok
->  debian:experimental-x-mips: FAIL
->  debian:experimental-x-mips64: FAIL
->  debian:experimental-x-mipsel: FAIL
->  fedora:20: Ok
->  fedora:22: Ok
->  fedora:23: Ok
->  fedora:24: Ok
->  fedora:24-x-ARC-uClibc: FAIL
->  fedora:25: Ok
->  fedora:26: Ok
->  fedora:27: Ok
-> [perfbuilder@quaco ~]$
+Next time, please start a new thread for a new version of a patch.
 
-That below can fix it. Unfortunately can't test in advance on that architectures.
+On Sun,  2 Jun 2019 15:20:03 +0200, Pali Rohár wrote:
+> Dell platform team told us that some (DMI whitelisted) Dell Latitude
+> machines have ST microelectronics accelerometer at i2c address 0x29.
+> 
+> Presence of that ST microelectronics accelerometer is verified by existence
+> of SMO88xx ACPI device which represent that accelerometer. Unfortunately
+> ACPI device does not specify i2c address.
+> 
+> This patch registers lis3lv02d device for selected Dell Latitude machines
+> at i2c address 0x29 after detection. And for Dell Vostro V131 machine at
+> i2c address 0x1d which was manually detected.
+> 
+> Finally commit a7ae81952cda ("i2c: i801: Allow ACPI SystemIO OpRegion to
+> conflict with PCI BAR") allowed to use i2c-i801 driver on Dell machines so
+> lis3lv02d correctly initialize accelerometer.
+> 
+> Tested on Dell Latitude E6440.
+> 
+> Signed-off-by: Pali Rohár <pali.rohar@gmail.com>
+> 
+> ---
+> Changes since v2:
+>  * Use explicit list of SMOxx ACPI devices
+> 
+> Changes since v1:
+>  * Added Dell Vostro V131 based on Michał Kępień testing
+>  * Changed DMI product structure to include also i2c address
+> ---
+>  drivers/i2c/busses/i2c-i801.c       | 118 ++++++++++++++++++++++++++++++++++++
+>  drivers/platform/x86/dell-smo8800.c |   1 +
+>  2 files changed, 119 insertions(+)
+> 
+> diff --git a/drivers/i2c/busses/i2c-i801.c b/drivers/i2c/busses/i2c-i801.c
+> index ac7f7817dc89..2ac8ff41cc24 100644
+> --- a/drivers/i2c/busses/i2c-i801.c
+> +++ b/drivers/i2c/busses/i2c-i801.c
+> @@ -1134,6 +1134,121 @@ static void dmi_check_onboard_devices(const struct dmi_header *dm, void *adap)
+>  	}
+>  }
+>  
+> +/* NOTE: Keep this list in sync with drivers/platform/x86/dell-smo8800.c */
+> +static const struct acpi_device_id acpi_smo8800_ids[] = {
+> +	{ "SMO8800", 0 },
+> +	{ "SMO8801", 0 },
+> +	{ "SMO8810", 0 },
+> +	{ "SMO8811", 0 },
+> +	{ "SMO8820", 0 },
+> +	{ "SMO8821", 0 },
+> +	{ "SMO8830", 0 },
+> +	{ "SMO8831", 0 },
+> +};
+> +
+> +static acpi_status check_acpi_smo88xx_device(acpi_handle obj_handle,
+> +					     u32 nesting_level,
+> +					     void *context,
+> +					     void **return_value)
+> +{
+> +	struct acpi_device_info *info;
+> +	acpi_status status;
+> +	char *hid;
+> +	int i;
+> +
+> +	status = acpi_get_object_info(obj_handle, &info);
+> +	if (!ACPI_SUCCESS(status) || !(info->valid & ACPI_VALID_HID))
+> +		return AE_OK;
+> +
+> +	hid = info->hardware_id.string;
+> +	if (!hid)
+> +		return AE_OK;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(acpi_smo8800_ids); ++i) {
+> +		if (strcmp(hid, acpi_smo8800_ids[i].id) == 0) {
+> +			*((bool *)return_value) = true;
+> +			return AE_CTRL_TERMINATE;
+> +		}
+> +	}
+> +
+> +	return AE_OK;
+> +
+
+Unneeded blank line.
+
+> +}
+> +
+> +static bool is_dell_system_with_lis3lv02d(void)
+> +{
+> +	bool found;
+> +	acpi_status status;
+> +	const char *vendor;
+> +
+> +	vendor = dmi_get_system_info(DMI_SYS_VENDOR);
+> +	if (strcmp(vendor, "Dell Inc.") != 0)
+> +		return false;
+> +
+> +	/*
+> +	 * Check that ACPI device SMO88xx exists and is enabled. That ACPI
+
+I see how you check that the device exists, but not that it is enabled.
+
+> +	 * device represent our ST microelectronics lis3lv02d accelerometer but
+> +	 * unfortunately without any other information (like i2c address).
+
+I2C
+
+> +	 */
+> +	found = false;
+> +	status = acpi_get_devices(NULL, check_acpi_smo88xx_device, NULL,
+> +				  (void **)&found);
+> +	if (!ACPI_SUCCESS(status) || !found)
+> +		return false;
+> +
+> +	return true;
+
+Looks more complex than it needs to be. You don't really care about the
+status, as in the end you return the same on error as you do when no
+device is found. So I think you can simply go with:
+
+	found = false;
+	acpi_get_devices(NULL, check_acpi_smo88xx_device, NULL,
+				  (void **)&found);
+
+	return found;
+
+
+> +}
+> +
+> +/*
+> + * Accelerometer's i2c address is not specified in DMI nor ACPI,
+
+I2C
+
+> + * so it is needed to define mapping table based on DMI product names.
+> + */
+> +static struct {
+
+Any reason to not make it const?
+
+> +	const char *dmi_product_name;
+> +	unsigned short i2c_addr;
+> +} dell_lis3lv02d_devices[] = {
+> +	/*
+> +	 * Dell platform team told us that these Latitude devices have
+> +	 * ST microelectronics accelerometer at i2c address 0x29.
+
+I2C
+
+> +	 */
+> +	{ "Latitude E5250",     0x29 },
+> +	{ "Latitude E5450",     0x29 },
+> +	{ "Latitude E5550",     0x29 },
+> +	{ "Latitude E6440",     0x29 },
+> +	{ "Latitude E6440 ATG", 0x29 },
+> +	{ "Latitude E6540",     0x29 },
+> +	/*
+> +	 * Additional individual entries were added after verification.
+> +	 */
+> +	{ "Vostro V131",        0x1d },
+> +};
+> +
+> +static void register_dell_lis3lv02d_i2c_device(struct i801_priv *priv)
+> +{
+> +	struct i2c_board_info info;
+> +	const char *dmi_product_name;
+> +	int i;
+> +
+> +	dmi_product_name = dmi_get_system_info(DMI_PRODUCT_NAME);
+> +	for (i = 0; i < ARRAY_SIZE(dell_lis3lv02d_devices); ++i) {
+> +		if (strcmp(dmi_product_name,
+> +			   dell_lis3lv02d_devices[i].dmi_product_name) == 0)
+> +			break;
+> +	}
+> +
+> +	if (i == ARRAY_SIZE(dell_lis3lv02d_devices)) {
+> +		dev_warn(&priv->pci_dev->dev,
+> +			 "Accelerometer lis3lv02d is present on i2c bus but its"
+
+i2c bus -> SMBus
+
+> +			 " i2c address is unknown, skipping registration...\n");
+
+I2C (or just s/i2c //, as it's kind of redundant)
+
+Suspension points not really needed IMHO.
+
+> +		return;
+> +	}
+> + (...)
+
+All the rest looks good to me.
 
 Thanks,
-Alexey
-
----
- tools/perf/util/evsel.c     | 4 +---
- tools/perf/util/perf_regs.h | 4 ++++
- 2 files changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 375ab4eb7560..cc6e7a0dda92 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -669,8 +669,6 @@ int perf_evsel__group_desc(struct perf_evsel *evsel, char *buf, size_t size)
- 	return ret;
- }
- 
--#define DWARF_MINIMAL_REGS ((1ULL << PERF_REG_IP) | (1ULL << PERF_REG_SP))
--
- static void __perf_evsel__config_callchain(struct perf_evsel *evsel,
- 					   struct record_opts *opts,
- 					   struct callchain_param *param)
-@@ -704,7 +702,7 @@ static void __perf_evsel__config_callchain(struct perf_evsel *evsel,
- 		if (!function) {
- 			perf_evsel__set_sample_bit(evsel, REGS_USER);
- 			perf_evsel__set_sample_bit(evsel, STACK_USER);
--			if (opts->sample_user_regs) {
-+			if (opts->sample_user_regs && DWARF_MINIMAL_REGS != PERF_REGS_MASK) {
- 				attr->sample_regs_user |= DWARF_MINIMAL_REGS;
- 				pr_warning("WARNING: The use of --call-graph=dwarf may require all the user registers, "
- 					   "specifying a subset with --user-regs may render DWARF unwinding unreliable, "
-diff --git a/tools/perf/util/perf_regs.h b/tools/perf/util/perf_regs.h
-index cb9c246c8962..47fe34e5f7d5 100644
---- a/tools/perf/util/perf_regs.h
-+++ b/tools/perf/util/perf_regs.h
-@@ -29,12 +29,16 @@ uint64_t arch__user_reg_mask(void);
- #ifdef HAVE_PERF_REGS_SUPPORT
- #include <perf_regs.h>
- 
-+#define DWARF_MINIMAL_REGS ((1ULL << PERF_REG_IP) | (1ULL << PERF_REG_SP))
-+
- int perf_reg_value(u64 *valp, struct regs_dump *regs, int id);
- 
- #else
- #define PERF_REGS_MASK	0
- #define PERF_REGS_MAX	0
- 
-+#define DWARF_MINIMAL_REGS PERF_REGS_MASK
-+
- static inline const char *perf_reg_name(int id __maybe_unused)
- {
- 	return NULL;
----
-
-> 
-> For instance:
-> 
-> [perfbuilder@quaco ~]$ cat /tmp/dm.log/debian\:experimental-x-mips64
-> <SNIP>
->   CC       /tmp/build/perf/tests/pmu.o
-> util/evsel.c: In function '__perf_evsel__config_callchain':
-> util/evsel.c:672:38: error: 'PERF_REG_IP' undeclared (first use in this function); did you mean 'PERF_REGS_MAX'?
->  #define DWARF_MINIMAL_REGS ((1ULL << PERF_REG_IP) | (1ULL << PERF_REG_SP))
->                                       ^~~~~~~~~~~
-> util/evsel.c:708:31: note: in expansion of macro 'DWARF_MINIMAL_REGS'
->      attr->sample_regs_user |= DWARF_MINIMAL_REGS;
->                                ^~~~~~~~~~~~~~~~~~
-> util/evsel.c:672:38: note: each undeclared identifier is reported only once for each function it appears in
->  #define DWARF_MINIMAL_REGS ((1ULL << PERF_REG_IP) | (1ULL << PERF_REG_SP))
->                                       ^~~~~~~~~~~
-> util/evsel.c:708:31: note: in expansion of macro 'DWARF_MINIMAL_REGS'
->      attr->sample_regs_user |= DWARF_MINIMAL_REGS;
->                                ^~~~~~~~~~~~~~~~~~
-> util/evsel.c:672:62: error: 'PERF_REG_SP' undeclared (first use in this function); did you mean 'PERF_MEM_S'?
->  #define DWARF_MINIMAL_REGS ((1ULL << PERF_REG_IP) | (1ULL << PERF_REG_SP))
->                                                               ^~~~~~~~~~~
-> util/evsel.c:708:31: note: in expansion of macro 'DWARF_MINIMAL_REGS'
->      attr->sample_regs_user |= DWARF_MINIMAL_REGS;
->                                ^~~~~~~~~~~~~~~~~~
->   LD       /tmp/build/perf/bench/perf-in.o
->   CC       /tmp/build/perf/tests/hists_common.o
-> mv: cannot stat '/tmp/build/perf/util/.evsel.o.tmp': No such file or directory
-> make[4]: *** [/git/linux/tools/build/Makefile.build:97: /tmp/build/perf/util/evsel.o] Error 1
-> make[4]: *** Waiting for unfinished jobs....
-> <SNIP>
-> 
-> 
-> 
-> [perfbuilder@quaco ~]$ cat /tmp/dm.log/fedora\:24-x-ARC-uClibc
-> 
-> <SNIP>
->   CC       /tmp/build/perf/tests/mmap-basic.o
->   CC       /tmp/build/perf/ui/hist.o
-> util/evsel.c: In function '__perf_evsel__config_callchain':
-> util/evsel.c:672:38: error: 'PERF_REG_IP' undeclared (first use in this function); did you mean 'PERF_MEM_S'?
->  #define DWARF_MINIMAL_REGS ((1ULL << PERF_REG_IP) | (1ULL << PERF_REG_SP))
->                                       ^
-> util/evsel.c:708:31: note: in expansion of macro 'DWARF_MINIMAL_REGS'
->      attr->sample_regs_user |= DWARF_MINIMAL_REGS;
->                                ^~~~~~~~~~~~~~~~~~
-> util/evsel.c:672:38: note: each undeclared identifier is reported only once for each function it appears in
->  #define DWARF_MINIMAL_REGS ((1ULL << PERF_REG_IP) | (1ULL << PERF_REG_SP))
->                                       ^
-> util/evsel.c:708:31: note: in expansion of macro 'DWARF_MINIMAL_REGS'
->      attr->sample_regs_user |= DWARF_MINIMAL_REGS;
->                                ^~~~~~~~~~~~~~~~~~
-> util/evsel.c:672:62: error: 'PERF_REG_SP' undeclared (first use in this function); did you mean 'PERF_REG_IP'?
->  #define DWARF_MINIMAL_REGS ((1ULL << PERF_REG_IP) | (1ULL << PERF_REG_SP))
->                                                               ^
-> util/evsel.c:708:31: note: in expansion of macro 'DWARF_MINIMAL_REGS'
->      attr->sample_regs_user |= DWARF_MINIMAL_REGS;
->                                ^~~~~~~~~~~~~~~~~~
->   MKDIR    /tmp/build/perf/ui/stdio/
-> mv: cannot stat '/tmp/build/perf/util/.evsel.o.tmp': No such file or directory
-> /git/linux/tools/build/Makefile.build:96: recipe for target '/tmp/build/perf/util/evsel.o' failed
-> make[4]: *** [/tmp/build/perf/util/evsel.o] Error 1
-> 
-> 
+-- 
+Jean Delvare
+SUSE L3 Support
