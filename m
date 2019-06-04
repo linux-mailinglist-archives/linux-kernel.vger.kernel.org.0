@@ -2,177 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A002534389
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 11:56:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE9903438F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 11:57:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727161AbfFDJ4h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 05:56:37 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40744 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727027AbfFDJ4h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 05:56:37 -0400
-Received: by mail-wr1-f68.google.com with SMTP id p11so10277289wre.7
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 02:56:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6ZbLcJhbADzOCXOElQ4BPrniesq/GHeYDcXBdpu8YX0=;
-        b=XGIvDcKDTGlVulUF/Qp2Ny2YLbHmCjYULB5q7v0ZOWxmJaDGhm54f27fBe0ZaOEKtI
-         aLRR5sDenAGiUb3VMhShIIZLSKEg2ZXwsw1Knu5GfYRA0HNMIXbaCGFbEordr56Pg0eR
-         c7s1prXvtpai1Rl9r/w1uiKOqxGab9MVZLDo7VCxlT4vgU7NtW3vFZgwCpNBZUFEsQtd
-         i3I2eDIXaIQf/6fObZN86bAd3t+mY+GZ0Ucv0KwbcW8Wa9rmHEQLg9Xft/egx6qtCsrE
-         8oK7PpXW3LxORrEUEgNYM+N1qLUgbUsybdWD+SXId+mIvgIqCN+zKjTQE4SAmiChpdhx
-         p0vA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6ZbLcJhbADzOCXOElQ4BPrniesq/GHeYDcXBdpu8YX0=;
-        b=VuXHvJX1Ot7PIxCUV8Nk1COilVmSqhA7HvNST5bZznomI/mUx2d8vAmlwAIIv6AdXZ
-         qdcOlZzbjxEwzZgHMFiXE/yr2dc9X0gpL31OW7yiF6on+7mRUOQBjs8zd4N3dd4DZ1m1
-         wqx2Ezqk2IioSSrJ/lhoYOI9GNAi38gf3SbydSQjIU448T4xV8PdlMUhQB+SQlyRBdqV
-         /t8izm0268J5Iz7WUBfRI//uB7I62/SywoEA/4hWs4FQiHhcq5i8bvw0oKLC9eQGk9rm
-         3y/Ota9wT5Fe358jzLbkn9VUMBIMbRI4u373+5wstDbEk9YoqNmJAdaTBD/mUwDmiJic
-         Mr7w==
-X-Gm-Message-State: APjAAAXRL3AQtbXXrmI1+mWL10mTQGZYZj2ETqeygtO/uSd3ANgNkzO0
-        9K5VCaaDiE4ASg3wbo7tzjU5mg==
-X-Google-Smtp-Source: APXvYqzTcIFclDpx5BpmdTLFHU2RBH91jk3706KaCS4Z5VGJ0ycig9TDYbME7Msj15OvwxDmQcXd1Q==
-X-Received: by 2002:a5d:5747:: with SMTP id q7mr18731165wrw.226.1559642195049;
-        Tue, 04 Jun 2019 02:56:35 -0700 (PDT)
-Received: from brauner.io ([212.91.227.56])
-        by smtp.gmail.com with ESMTPSA id a62sm19187246wmf.19.2019.06.04.02.56.33
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 04 Jun 2019 02:56:34 -0700 (PDT)
-Date:   Tue, 4 Jun 2019 11:56:33 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, jannh@google.com,
-        keescook@chromium.org, fweimer@redhat.com, oleg@redhat.com,
-        arnd@arndb.de, Pavel Emelyanov <xemul@virtuozzo.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Adrian Reber <adrian@lisas.de>,
-        Andrei Vagin <avagin@gmail.com>, linux-api@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] fork: add clone3
-Message-ID: <20190604095632.gsapgrmvup3mabga@brauner.io>
-References: <20190603144331.16760-1-christian@brauner.io>
- <4020.1559640492@warthog.procyon.org.uk>
- <20190604094317.4wfelmbw4lgxzide@brauner.io>
+        id S1727182AbfFDJ5S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 05:57:18 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39178 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727061AbfFDJ5S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 05:57:18 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EAB0B80D;
+        Tue,  4 Jun 2019 02:57:17 -0700 (PDT)
+Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6EFFB3F246;
+        Tue,  4 Jun 2019 02:57:16 -0700 (PDT)
+Date:   Tue, 4 Jun 2019 10:57:14 +0100
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] KVM: arm64: Drop 'const' from argument of vq_present()
+Message-ID: <20190604095713.GV28398@e103592.cambridge.arm.com>
+References: <699121e5c938c6f4b7b14a7e2648fa15af590a4a.1559623368.git.viresh.kumar@linaro.org>
+ <20190604084349.prnnvjvjaeuhsmgs@mbp>
+ <20190604085545.hsmxfqkpt2cbrhtw@vireshk-i7>
+ <20190604092639.GS28398@e103592.cambridge.arm.com>
+ <20190604093153.2pzv55knl6axugrv@vireshk-i7>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190604094317.4wfelmbw4lgxzide@brauner.io>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190604093153.2pzv55knl6axugrv@vireshk-i7>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 04, 2019 at 11:43:17AM +0200, Christian Brauner wrote:
-> On Tue, Jun 04, 2019 at 10:28:12AM +0100, David Howells wrote:
-> > Christian Brauner <christian@brauner.io> wrote:
-> > 
-> > > +#include <linux/compiler_types.h>
-> > 
-> > I suspect you don't want to include that directly.
-> > 
-> > Also, to avoid bloating linux/sched/task.h yet further, maybe put this in
-> > linux/sched/clone.h?
+On Tue, Jun 04, 2019 at 03:01:53PM +0530, Viresh Kumar wrote:
+> On 04-06-19, 10:26, Dave Martin wrote:
+> > I'm in two minds about whether this is worth fixing, but if you want to
+> > post a patch to remove the extra const (or convert vq_present() to a
+> > macro), I'll take a look at it.
 > 
-> Yeah, not the worst idea.
-> Though I'd leave the flags where they are and just add struct
-> kernel_clone_args in there. But I assume that's what you meant anyway.
+> This patch already does what you are asking for (remove the extra
+> const), isn't it ?
 
-Actually, I would like to defer this to the cleanup patch too.
-This way the patch stays small and clean and task.h is currently the
-right place to put it.
+Yes, sorry -- I didn't scroll back far enough.
 
+> I looked at my textbook (The C programming Language, By Brian W.
+> Kernighan and Dennis M. Ritchie.) and it says:
 > 
-> > 
-> > > -extern long _do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *, unsigned long);
-> > > +extern long _do_fork(struct kernel_clone_args *kargs);
-> > >  extern long do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *);
-> > 
-> > Maybe these could move into linux/sched/clone.h too.
+> "
+> The const declaration can also be used with array arguments, to
+> indicate that the function does not change that array:
 > 
-> Meh, that could be a separate cleanup patch after clone3() has been
-> merged.
+> int strlen(const char[]);
+> "
 > 
-> > 
-> > > +#define CLONE_MAX ~0U
-> > 
-> > Can you add a comment summarising the meaning?
-> 
-> Yes, can do.
-> 
-> > 
-> > > +	u64 clone_flags = args->flags;
-> > > +	int __user *child_tidptr = args->child_tid;
-> > > +	unsigned long tls = args->tls;
-> > > +	unsigned long stack_start = args->stack;
-> > > +	unsigned long stack_size = args->stack_size;
-> > 
-> > Some of these are only used once, so it's probably not worth sticking them in
-> > local variables.
-> 
-> [1]:
-> Ok, will double check.
-> This was just to minimize copy-paste erros for variables which were used
-> multiple times.
-> 
-> > 
-> > > -		if (clone_flags &
-> > > -		    (CLONE_DETACHED | CLONE_PARENT_SETTID | CLONE_THREAD))
-> > > -			return ERR_PTR(-EINVAL);
-> > 
-> > Did this error check get lost?  I can see part of it further on, but the check
-> > on CLONE_PARENT_SETTID is absent.
-> 
-> No, it's only relevant for legacy clone() since it uses the
-> parent_tidptr argument to return the pidfd. clone3() has a dedicated
-> return argument for that in clone_args.
-> The check for legacy clone() is now done in legacy clone() directly.
-> copy_process() should only do generic checks for all version of
-> clone(),fork(),vfork(), etc.
-> 
-> > 
-> > > +	int __user *parent_tidptr = args->parent_tid;
-> > 
-> > There's only one usage remaining after this patch, so a local var doesn't gain
-> > a lot.
-> 
-> Yes, that leads back to [1].
-> 
-> > 
-> > >  pid_t kernel_thread(int (*fn)(void *), void *arg, unsigned long flags)
-> > >  {
-> > > -	return _do_fork(flags|CLONE_VM|CLONE_UNTRACED, (unsigned long)fn,
-> > > -		(unsigned long)arg, NULL, NULL, 0);
-> > > +	struct kernel_clone_args args = {
-> > > +		.flags = ((flags | CLONE_VM | CLONE_UNTRACED) & ~CSIGNAL),
-> > > +		.exit_signal = (flags & CSIGNAL),
-> > 
-> > Kernel threads can have exit signals?
-> 
-> Yes,
-> 
-> kernel/kthread.c:       pid = kernel_thread(kthread, create, CLONE_FS | CLONE_FILES | SIGCHLD);
-> kernel/umh.c:   pid = kernel_thread(call_usermodehelper_exec_async, sub_info, SIGCHLD);
-> 
-> And even if they couldn't have. This is just to make sure that if they
-> ever would we'd be prepared.
-> 
-> > 
-> > > +static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
-> > > +				     struct clone_args __user *uargs,
-> > > +				     size_t size)
-> > 
-> > I would make this "noinline".  If it gets inlined, local variable "args" may
-> > still be on the stack when _do_fork() gets called.
-> 
-> Hm, can do.
-> 
-> Thanks!
-> Christian
+> and so this patch isn't necessary for sure.
+
+This is an array to which a pointer argument points, not an array
+argument.  I think that's how we hit the constified double-indirection
+problem.
+
+Cheers
+---Dave
