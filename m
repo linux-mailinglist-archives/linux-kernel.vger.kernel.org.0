@@ -2,89 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5720534388
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 11:55:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C73FE3439B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 12:01:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727101AbfFDJzI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 05:55:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58650 "EHLO mail.kernel.org"
+        id S1727223AbfFDKBP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 06:01:15 -0400
+Received: from mga06.intel.com ([134.134.136.31]:46146 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727027AbfFDJzH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 05:55:07 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 56BBE24B36;
-        Tue,  4 Jun 2019 09:55:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559642106;
-        bh=j6tNQKAb3k8wxyLpbWBR8zk77facM632E43SzMuSftY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AO7mBtZ5bHgJfJlW6M+hHlIKCtcfz7BinSiE0B/CrsrPMloie/CjR0uNu3SKDaBV9
-         HdS85ELXr0tzo4WWq91dK2kBufPnWRup2g2AnJ3bjMp0EWeN91hymaoEOBbQnId/1y
-         skEOn4IiJflmmn2gCt4Ok+ml4cF8h7wAdoh57vJw=
-Date:   Tue, 4 Jun 2019 11:55:04 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Pavel Machek <pavel@denx.de>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH 4.19 29/32] jump_label: move asm goto support test to
- Kconfig
-Message-ID: <20190604095504.GA6186@kroah.com>
-References: <20190603090308.472021390@linuxfoundation.org>
- <20190603090315.474902271@linuxfoundation.org>
- <20190604093032.GA2689@amd>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190604093032.GA2689@amd>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+        id S1727170AbfFDKBP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 06:01:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jun 2019 03:01:14 -0700
+X-ExtLoop1: 1
+Received: from gvt.bj.intel.com ([10.238.158.187])
+  by orsmga005.jf.intel.com with ESMTP; 04 Jun 2019 03:01:11 -0700
+From:   Tina Zhang <tina.zhang@intel.com>
+To:     intel-gvt-dev@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Tina Zhang <tina.zhang@intel.com>, kraxel@redhat.com,
+        zhenyuw@linux.intel.com, zhiyuan.lv@intel.com,
+        zhi.a.wang@intel.com, kevin.tian@intel.com, hang.yuan@intel.com,
+        alex.williamson@redhat.com
+Subject: [RFC PATCH v2 0/3] Deliver vGPU page flip events to userspace
+Date:   Tue,  4 Jun 2019 17:55:31 +0800
+Message-Id: <20190604095534.10337-1-tina.zhang@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 04, 2019 at 11:30:32AM +0200, Pavel Machek wrote:
-> On Mon 2019-06-03 11:08:23, Greg Kroah-Hartman wrote:
-> > From: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > 
-> > commit e9666d10a5677a494260d60d1fa0b73cc7646eb3 upstream.
-> > 
-> > Currently, CONFIG_JUMP_LABEL just means "I _want_ to use jump label".
-> > 
-> > The jump label is controlled by HAVE_JUMP_LABEL, which is defined
-> > like this:
-> > 
-> >   #if defined(CC_HAVE_ASM_GOTO) && defined(CONFIG_JUMP_LABEL)
-> >   # define HAVE_JUMP_LABEL
-> >   #endif
-> > 
-> > We can improve this by testing 'asm goto' support in Kconfig, then
-> > make JUMP_LABEL depend on CC_HAS_ASM_GOTO.
-> > 
-> > Ugly #ifdef HAVE_JUMP_LABEL will go away, and CONFIG_JUMP_LABEL will
-> > match to the real kernel capability.
-> > 
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
-> > Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
-> > [nc: Fix trivial conflicts in 4.19
-> >      arch/xtensa/kernel/jump_label.c doesn't exist yet
-> >      Ensured CC_HAVE_ASM_GOTO and HAVE_JUMP_LABEL were sufficiently
-> >      eliminated]
-> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-> This does not matche stable-kernel rules. It is nice cleanup, but it
-> does not really fix any bug (does it?), and resulting patch is too
-> big.
+This series tries to send the vGPU page flip events to userspace, which
+can be used by QEMU UI for rendering and display with the latest guest
+framebuffers.
 
-Please see the original email on the stable mailing list for why this
-patch was submitted and accepted.
+v2: Use VFIO irq chain to get eventfds from userspace instead of adding
+a new ABI. (Alex)
 
-thanks,
+v1: https://patchwork.kernel.org/cover/10962341/
 
-greg k-h
+
+Tina Zhang (3):
+  vfio: Use capability chains to handle device specific irq
+  drm/i915/gvt: Leverage irq capability chain to get eventfd
+  drm/i915/gvt: Send plane flip events to user space
+
+ drivers/gpu/drm/i915/gvt/display.c   |  10 +-
+ drivers/gpu/drm/i915/gvt/gvt.h       |   4 +
+ drivers/gpu/drm/i915/gvt/handlers.c  |  20 ++-
+ drivers/gpu/drm/i915/gvt/hypercall.h |   1 +
+ drivers/gpu/drm/i915/gvt/kvmgt.c     | 208 +++++++++++++++++++++++++--
+ drivers/gpu/drm/i915/gvt/mpt.h       |  16 +++
+ include/uapi/linux/vfio.h            |  23 ++-
+ 7 files changed, 268 insertions(+), 14 deletions(-)
+
+-- 
+2.17.1
+
