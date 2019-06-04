@@ -2,87 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A8C834053
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 09:35:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E0D734063
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 09:37:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727169AbfFDHff (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 03:35:35 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:37947 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727146AbfFDHfc (ORCPT
+        id S1726924AbfFDHhC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 03:37:02 -0400
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:59271 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726711AbfFDHhC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 03:35:32 -0400
-Received: by mail-lf1-f68.google.com with SMTP id b11so15654308lfa.5;
-        Tue, 04 Jun 2019 00:35:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ObbNbZR/72D98Vc550uzYyGenM0+DWmngeVzeXEi0ZM=;
-        b=ib0Xu1g61kKt4saR39X37LXuWJON+tfn85aLur4B3MXKxOJKsfGcIrueka9ap5bITB
-         GZoaEwnWIFosuMgHN8xJ84pTa1Na4qwF5dIz7HuW1rrERMosDX86L2l8Fh60r2plgffi
-         wygnHVaoMDJdhDTRBf8gJG/cvFPWof0X0UXRFoQAa+4To8SVIiWJPznjo7/KP/ruXsku
-         zWpiEzqudMm+yTj4usuJcPEfEEh4oqWP2FQ7wSx0x0mmb+5SLE5TDO+r2CQgAIxECjqT
-         nvdoPLYYOB4vNCVIsAb67gsneD5g5ExuqyzTCFOlEG4UbJB0UdS8u+UZsAtiga1lSjMJ
-         o1KA==
-X-Gm-Message-State: APjAAAVEY6okXx8ui8koZ53gOQ05I/nYLdNNnd3RVjefPUInN16wUlQR
-        hNh8DkJbnCcnDZ5xJ575U/aVjDYqHYMjWqjN1mQ=
-X-Google-Smtp-Source: APXvYqzZy7bAsh6aATIcduZ/ydlM1aKS4jqm+mf9GX84nUleah+LyhiDwD0TYIniqNJly32Ees0tY+eMT6LcuMOqD9Q=
-X-Received: by 2002:a19:c142:: with SMTP id r63mr17039438lff.49.1559633729962;
- Tue, 04 Jun 2019 00:35:29 -0700 (PDT)
+        Tue, 4 Jun 2019 03:37:02 -0400
+X-Originating-IP: 90.88.144.139
+Received: from localhost (aaubervilliers-681-1-24-139.w90-88.abo.wanadoo.fr [90.88.144.139])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id D5E191BF212;
+        Tue,  4 Jun 2019 07:36:51 +0000 (UTC)
+Date:   Tue, 4 Jun 2019 09:36:51 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     codekipper@gmail.com
+Cc:     wens@csie.org, linux-sunxi@googlegroups.com,
+        linux-arm-kernel@lists.infradead.org, lgirdwood@gmail.com,
+        broonie@kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, be17068@iperbole.bo.it
+Subject: Re: [PATCH v4 2/9] ASoC: sun4i-i2s: Add offset to RX channel select
+Message-ID: <20190604073651.gst57ki7ohzxcrqz@flea>
+References: <20190603174735.21002-1-codekipper@gmail.com>
+ <20190603174735.21002-3-codekipper@gmail.com>
 MIME-Version: 1.0
-References: <20190528142424.19626-1-geert@linux-m68k.org> <20190528142424.19626-3-geert@linux-m68k.org>
- <15499.1559298884@warthog.procyon.org.uk> <CAMuHMdX57DKCMpLXdtZPE-w0esUNVv9-SwYjmT5=m+u9ryAiHQ@mail.gmail.com>
- <9306.1559633653@warthog.procyon.org.uk>
-In-Reply-To: <9306.1559633653@warthog.procyon.org.uk>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 4 Jun 2019 09:35:16 +0200
-Message-ID: <CAMuHMdXOikfh56DAHGpNUoRefbhYSbh=VK3J8EzZCXVLqZtEVw@mail.gmail.com>
-Subject: Re: [PATCH] rxrpc: Fix uninitialized error code in rxrpc_send_data_packet()
-To:     David Howells <dhowells@redhat.com>
-Cc:     Igor Konopko <igor.j.konopko@intel.com>,
-        "Mohit P . Tahiliani" <tahiliani@nitk.edu.in>,
-        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Eran Ben Elisha <eranbe@mellanox.com>,
-        Matias Bjorling <mb@lightnvm.io>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Joe Perches <joe@perches.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-block@vger.kernel.org, netdev <netdev@vger.kernel.org>,
-        linux-afs@lists.infradead.org,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="azthyenqniabzk6h"
+Content-Disposition: inline
+In-Reply-To: <20190603174735.21002-3-codekipper@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
 
-On Tue, Jun 4, 2019 at 9:34 AM David Howells <dhowells@redhat.com> wrote:
-> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+--azthyenqniabzk6h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, Jun 03, 2019 at 07:47:28PM +0200, codekipper@gmail.com wrote:
+> From: Marcus Cooper <codekipper@gmail.com>
 >
-> > I'm not such a big fan of BUG(), so I'd go for ret = -EAFNOSUPPORT, but given
-> > rxrpc is already full of BUG() calls, I guess it is an acceptable solution.
+> Whilst testing the capture functionality of the i2s on the newer
+> SoCs it was noticed that the recording was somewhat distorted.
+> This was due to the offset not being set correctly on the receiver
+> side.
 >
-> Okay.  Are you okay with this going through net-next?
+> Signed-off-by: Marcus Cooper <codekipper@gmail.com>
 
-Yes, I am.
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-Gr{oetje,eeting}s,
+Maxime
 
-                        Geert
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+--azthyenqniabzk6h
+Content-Type: application/pgp-signature; name="signature.asc"
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXPYfkwAKCRDj7w1vZxhR
+xZFqAP9C7z4TKS6sO/uThXEHeSEOFsVxLA+hFezA6ZHPPwE+owD/YRL3Nd9adWWD
+EG4ONA4mwLOBAc5utHFMpqL3ASmaTAA=
+=3Iua
+-----END PGP SIGNATURE-----
+
+--azthyenqniabzk6h--
