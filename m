@@ -2,42 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4235134B3E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:59:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7381834B4A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 17:00:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727952AbfFDO7L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 10:59:11 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48736 "EHLO
+        id S1728025AbfFDO7X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 10:59:23 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49118 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727829AbfFDO7K (ORCPT
+        with ESMTP id S1728001AbfFDO7V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 10:59:10 -0400
+        Tue, 4 Jun 2019 10:59:21 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=RbstzphZvlrTV6oS0dsnCRyk4ToW/lQ4snN4C+vyhtE=; b=RWsKsz7nmfQ/
-        u7wQuxhxavNRgyeEccQTmkwSX4SAJTO5a+2SrtQyDtYC0/eK014eSfNOSMmb7qWCTW654mOAKw5A6
-        LCtvxpJ+8wOaUR2Dufse2OTcMUhxkV0zpzkmObfsfCyTP8ROhskEa2vhqRf6G9xk5eZXug0u7EA2c
-        wJU9c=;
+        List-Archive; bh=H/ZcNeXJodL5Cb2bnUP5HmMZO4APpeQuHpnxJOQLxfk=; b=whxSdku8q/zL
+        lOLDiPZC2Yeb3aEsSRQyxXApgSYlPeIxbaBAg/2QQ2J/tHSTd5cHMjOFOuRulT2I9DIS1UkAde92w
+        fuPcrjbaZ3+dfqvYA8W4HtR0yw/lZDy7rpkTeLNCXOhMxOQjfbgB/nIpvTAxzUCG8hIwO3qXPODa0
+        1fd1M=;
 Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hYAtx-0006Eo-EN; Tue, 04 Jun 2019 14:59:01 +0000
+        id 1hYAtw-0006Eg-SR; Tue, 04 Jun 2019 14:59:01 +0000
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id E9721440049; Tue,  4 Jun 2019 15:59:00 +0100 (BST)
+        id 5CA98440046; Tue,  4 Jun 2019 15:59:00 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     YueHaibing <yuehaibing@huawei.com>
 Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, perex@perex.cz, tiwai@suse.com
-Subject: Applied "ASoC: cx2072x: remove set but not used variable 'is_right_j '" to the asoc tree
-In-Reply-To: <20190525123204.16148-1-yuehaibing@huawei.com>
+        Hulk Robot <hulkci@huawei.com>, kaichieh.chuang@mediatek.com,
+        lgirdwood@gmail.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        Mark Brown <broonie@kernel.org>, matthias.bgg@gmail.com,
+        perex@perex.cz, tiwai@suse.com
+Subject: Applied "ASoC: mediatek: Make some symbols static" to the asoc tree
+In-Reply-To: <20190529150437.19004-1-yuehaibing@huawei.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190604145900.E9721440049@finisterre.sirena.org.uk>
+Message-Id: <20190604145900.5CA98440046@finisterre.sirena.org.uk>
 Date:   Tue,  4 Jun 2019 15:59:00 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -46,7 +49,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: cx2072x: remove set but not used variable 'is_right_j '
+   ASoC: mediatek: Make some symbols static
 
 has been applied to the asoc tree at
 
@@ -71,45 +74,71 @@ to this mail.
 Thanks,
 Mark
 
-From 190d9e0332ab43b28cbb1856fc73ed7fafbfad7c Mon Sep 17 00:00:00 2001
+From 52194513ba1388443a067cee9606d6fe27e7650e Mon Sep 17 00:00:00 2001
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 25 May 2019 20:32:04 +0800
-Subject: [PATCH] ASoC: cx2072x: remove set but not used variable 'is_right_j '
+Date: Wed, 29 May 2019 23:04:37 +0800
+Subject: [PATCH] ASoC: mediatek: Make some symbols static
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Fix sparse warnings:
 
-sound/soc/codecs/cx2072x.c: In function cx2072x_config_i2spcm:
-sound/soc/codecs/cx2072x.c:679:6: warning: variable is_right_j set but not used [-Wunused-but-set-variable]
+sound/soc/mediatek/common/mtk-btcvsd.c:410:5: warning: symbol 'mtk_btcvsd_write_to_bt' was not declared. Should it be static?
+sound/soc/mediatek/common/mtk-btcvsd.c:698:9: warning: symbol 'mtk_btcvsd_snd_read' was not declared. Should it be static?
+sound/soc/mediatek/common/mtk-btcvsd.c:779:9: warning: symbol 'mtk_btcvsd_snd_write' was not declared. Should it be static?
 
-It's never used and can be removed.
-
+Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Reviewed-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/cx2072x.c | 2 --
- 1 file changed, 2 deletions(-)
+ sound/soc/mediatek/common/mtk-btcvsd.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/sound/soc/codecs/cx2072x.c b/sound/soc/codecs/cx2072x.c
-index 8b0830854bb3..f2cb35a50726 100644
---- a/sound/soc/codecs/cx2072x.c
-+++ b/sound/soc/codecs/cx2072x.c
-@@ -676,7 +676,6 @@ static int cx2072x_config_i2spcm(struct cx2072x_priv *cx2072x)
- 	unsigned int bclk_rate = 0;
- 	int is_i2s = 0;
- 	int has_one_bit_delay = 0;
--	int is_right_j = 0;
- 	int is_frame_inv = 0;
- 	int is_bclk_inv = 0;
- 	int pulse_len;
-@@ -740,7 +739,6 @@ static int cx2072x_config_i2spcm(struct cx2072x_priv *cx2072x)
+diff --git a/sound/soc/mediatek/common/mtk-btcvsd.c b/sound/soc/mediatek/common/mtk-btcvsd.c
+index bd55c546e790..c7a81c4be068 100644
+--- a/sound/soc/mediatek/common/mtk-btcvsd.c
++++ b/sound/soc/mediatek/common/mtk-btcvsd.c
+@@ -407,11 +407,11 @@ static int mtk_btcvsd_read_from_bt(struct mtk_btcvsd_snd *bt,
+ 	return 0;
+ }
  
- 	case SND_SOC_DAIFMT_RIGHT_J:
- 		is_i2s = 1;
--		is_right_j = 1;
- 		pulse_len = frame_len / 2;
- 		break;
+-int mtk_btcvsd_write_to_bt(struct mtk_btcvsd_snd *bt,
+-			   enum bt_sco_packet_len packet_type,
+-			   unsigned int packet_length,
+-			   unsigned int packet_num,
+-			   unsigned int blk_size)
++static int mtk_btcvsd_write_to_bt(struct mtk_btcvsd_snd *bt,
++				  enum bt_sco_packet_len packet_type,
++				  unsigned int packet_length,
++				  unsigned int packet_num,
++				  unsigned int blk_size)
+ {
+ 	unsigned int i;
+ 	unsigned long flags;
+@@ -695,9 +695,9 @@ static int wait_for_bt_irq(struct mtk_btcvsd_snd *bt,
+ 	return 0;
+ }
  
+-ssize_t mtk_btcvsd_snd_read(struct mtk_btcvsd_snd *bt,
+-			    char __user *buf,
+-			    size_t count)
++static ssize_t mtk_btcvsd_snd_read(struct mtk_btcvsd_snd *bt,
++				   char __user *buf,
++				   size_t count)
+ {
+ 	ssize_t read_size = 0, read_count = 0, cur_read_idx, cont;
+ 	unsigned int cur_buf_ofs = 0;
+@@ -776,9 +776,9 @@ ssize_t mtk_btcvsd_snd_read(struct mtk_btcvsd_snd *bt,
+ 	return read_count;
+ }
+ 
+-ssize_t mtk_btcvsd_snd_write(struct mtk_btcvsd_snd *bt,
+-			     char __user *buf,
+-			     size_t count)
++static ssize_t mtk_btcvsd_snd_write(struct mtk_btcvsd_snd *bt,
++				    char __user *buf,
++				    size_t count)
+ {
+ 	int written_size = count, avail = 0, cur_write_idx, write_size, cont;
+ 	unsigned int cur_buf_ofs = 0;
 -- 
 2.20.1
 
