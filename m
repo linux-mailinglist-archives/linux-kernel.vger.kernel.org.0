@@ -2,132 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3147134102
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 10:00:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5EB2340F3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 09:59:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727202AbfFDIAz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 04:00:55 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:40426 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727181AbfFDIAz (ORCPT
+        id S1727015AbfFDH7h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 03:59:37 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:40386 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726792AbfFDH7h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 04:00:55 -0400
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 76BB4260E1F;
-        Tue,  4 Jun 2019 09:00:52 +0100 (BST)
-Date:   Tue, 4 Jun 2019 09:58:58 +0200
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     Qii Wang <qii.wang@mediatek.com>
-Cc:     <bbrezillon@kernel.org>, devicetree@vger.kernel.org,
-        srv_heupstream@mediatek.com, leilk.liu@mediatek.com,
-        gregkh@linuxfoundation.org, xinping.qian@mediatek.com,
-        linux-kernel@vger.kernel.org, liguo.zhang@mediatek.com,
-        linux-mediatek@lists.infradead.org, matthias.bgg@gmail.com,
-        linux-i3c@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] i3c: master: Add driver for MediaTek IP
-Message-ID: <20190604095858.38ed9a28@collabora.com>
-In-Reply-To: <1559533863-10292-3-git-send-email-qii.wang@mediatek.com>
-References: <1559533863-10292-1-git-send-email-qii.wang@mediatek.com>
-        <1559533863-10292-3-git-send-email-qii.wang@mediatek.com>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Tue, 4 Jun 2019 03:59:37 -0400
+Received: by mail-lj1-f196.google.com with SMTP id a21so3526214ljh.7;
+        Tue, 04 Jun 2019 00:59:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=S0nzKAfA25Nd/B5b94/lEffHmOkj3bNdRwQPedDI7ZE=;
+        b=iYsPPhnsC0EJTsHqeeq0mjjcxm9WXPAI/rdF7X6cP16AjIIPs3VSFWSS27cmjrJW5n
+         jyWXeJtLvDVLeQDOR8FH7IBenyNSKMoO5vVfrVGJZhjieveJJ/AtZb/XV2F1uPZHn24B
+         6gGxSN7OgSD704Gy86J3kNRILn0Glf47KC2K2cQcAunGWMHd3eaJJBj4+j02lQe56jq/
+         /Q0HIVlhu7/QE1tHWX1X1eqe0NshnMGX+NkkWacdDCpgpEns6iPpgkpOJM1YkjRWPjiH
+         g2fcxv0xXDer1TcdSOfDadzFlKlVOF+Tl9o1gY1sPTa1XCLjWQe8fnrIZBzeHJJn137L
+         ekaQ==
+X-Gm-Message-State: APjAAAWOVHXXyaDM+A9eWxNBu+pa6+KiuEE92DmoFGkZgjf22PcvKw/x
+        UUV4dpXUk7oL3qC6NpeM/8Qhv7mTA5Plo+2JAFz4rg==
+X-Google-Smtp-Source: APXvYqzyrjK66udRCjVrFtHeJQc9LooEJGHnCm5cn7phdyFg8MU2Z7Z0IJKhJVKh9a9iL2ykJCk01AUjQnJwzYRKzgI=
+X-Received: by 2002:a2e:2b8d:: with SMTP id r13mr3487195ljr.145.1559635174859;
+ Tue, 04 Jun 2019 00:59:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <1559634980-20463-1-git-send-email-krzk@kernel.org>
+In-Reply-To: <1559634980-20463-1-git-send-email-krzk@kernel.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 4 Jun 2019 09:59:22 +0200
+Message-ID: <CAMuHMdU9hW1N_DDbFiBjWW0bnRnT46820bqvNg4iWvy2Ho35yg@mail.gmail.com>
+Subject: Re: [PATCH] sh: configs: Remove useless UEVENT_HELPER_PATH
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 3 Jun 2019 11:51:03 +0800
-Qii Wang <qii.wang@mediatek.com> wrote:
+On Tue, Jun 4, 2019 at 9:56 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> Remove the CONFIG_UEVENT_HELPER_PATH because:
+> 1. It is disabled since commit 1be01d4a5714 ("driver: base: Disable
+>    CONFIG_UEVENT_HELPER by default") as its dependency (UEVENT_HELPER) was
+>    made default to 'n',
+> 2. It is not recommended (help message: "This should not be used today
+>    [...] creates a high system load") and was kept only for ancient
+>    userland,
+> 3. Certain userland specifically requests it to be disabled (systemd
+>    README: "Legacy hotplug slows down the system and confuses udev").
+>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> +static int mtk_i3c_master_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct mtk_i3c_master *master;
-> +	struct resource *res;
-> +	int ret, irqnr;
-> +
-> +	master = devm_kzalloc(dev, sizeof(*master), GFP_KERNEL);
-> +	if (!master)
-> +		return -ENOMEM;
-> +
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "main");
-> +	master->regs = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(master->regs))
-> +		return PTR_ERR(master->regs);
-> +
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dma");
-> +	master->dma_regs = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(master->dma_regs))
-> +		return PTR_ERR(master->dma_regs);
-> +
-> +	irqnr = platform_get_irq(pdev, 0);
-> +	if (irqnr < 0)
-> +		return irqnr;
-> +
-> +	ret = devm_request_irq(dev, irqnr, mtk_i3c_master_irq,
-> +			       IRQF_TRIGGER_NONE, DRV_NAME, master);
-> +	if (ret < 0) {
-> +		dev_err(dev, "Request I3C IRQ %d fail\n", irqnr);
-> +		return ret;
-> +	}
-> +
-> +	ret = of_property_read_u32(pdev->dev.of_node, "clock-div",
-> +				   &master->clk_src_div);
+Gr{oetje,eeting}s,
 
-You say in one comment that this clock divider is fixed in HW but might
-change on a per-SoC basis. If that's the case, you should get rid of
-this clock-div prop and attach the divider to the compatible (using an
-mtk_i3c_master_variant struct that contains a divider field).
+                        Geert
 
-> +	if (ret < 0)
-> +		return -EINVAL;
-> +
-> +	spin_lock_init(&master->xferqueue.lock);
-> +	INIT_LIST_HEAD(&master->xferqueue.list);
-> +
-> +	if (dma_set_mask(dev, DMA_BIT_MASK(33))) {
-> +		dev_err(dev, "dma_set_mask return error.\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	master->clk_main = devm_clk_get(dev, "main");
-> +	if (IS_ERR(master->clk_main)) {
-> +		dev_err(dev, "cannot get main clock\n");
-> +		return PTR_ERR(master->clk_main);
-> +	}
-> +	master->clk_dma = devm_clk_get(dev, "dma");
-> +	if (IS_ERR(master->clk_dma)) {
-> +		dev_err(dev, "cannot get dma clock\n");
-> +		return PTR_ERR(master->clk_dma);
-> +	}
-> +
-> +	master->clk_arb = devm_clk_get_optional(dev, "arb");
-> +	if (IS_ERR(master->clk_arb))
-> +		return PTR_ERR(master->clk_arb);
-> +
-> +	ret = mtk_i3c_master_clock_enable(master);
-> +	if (ret) {
-> +		dev_err(dev, "clock enable failed!\n");
-> +		return ret;
-> +	}
-> +
-> +	master->dev = dev;
-> +	platform_set_drvdata(pdev, master);
-> +
-> +	ret = i3c_master_register(&master->mas_ctrler, dev,
-> +				  &mtk_i3c_master_ops, false);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to add i3c bus to i3c core\n");
-> +		mtk_i3c_master_clock_disable(master);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
