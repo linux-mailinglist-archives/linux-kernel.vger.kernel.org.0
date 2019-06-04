@@ -2,213 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B984934DF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 18:48:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3743C34DEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 18:47:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727938AbfFDQsh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 12:48:37 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33018 "EHLO mx1.redhat.com"
+        id S1727902AbfFDQrK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 12:47:10 -0400
+Received: from mga14.intel.com ([192.55.52.115]:37263 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727809AbfFDQsg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 12:48:36 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E07753087944;
-        Tue,  4 Jun 2019 16:48:35 +0000 (UTC)
-Received: from [10.40.205.182] (unknown [10.40.205.182])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1E296611D6;
-        Tue,  4 Jun 2019 16:48:15 +0000 (UTC)
-Subject: Re: [QEMU PATCH] KVM: Support for page hinting
-To:     Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
-        pagupta@redhat.com, wei.w.wang@intel.com,
-        Yang Zhang <yang.zhang.wz@gmail.com>,
-        Rik van Riel <riel@surriel.com>,
-        David Hildenbrand <david@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>, dodgen@google.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>
-References: <20190603170306.49099-1-nitesh@redhat.com>
- <20190603170432.1195-1-nitesh@redhat.com>
- <CAKgT0UeRzF24WeVkTN2WW41iKSUpXpZbpD55-g=MBHf814RV+A@mail.gmail.com>
-From:   Nitesh Narayan Lal <nitesh@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nitesh@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- VujM7c/b4pps
-Organization: Red Hat Inc,
-Message-ID: <0194ca6a-ec00-2a43-545d-aee6459a7582@redhat.com>
-Date:   Tue, 4 Jun 2019 12:48:13 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727470AbfFDQrJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 12:47:09 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jun 2019 09:47:08 -0700
+X-ExtLoop1: 1
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga004.fm.intel.com with ESMTP; 04 Jun 2019 09:47:08 -0700
+From:   ira.weiny@intel.com
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>
+Subject: [PATCH v3] mm/swap: Fix release_pages() when releasing devmap pages
+Date:   Tue,  4 Jun 2019 09:48:13 -0700
+Message-Id: <20190604164813.31514-1-ira.weiny@intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <CAKgT0UeRzF24WeVkTN2WW41iKSUpXpZbpD55-g=MBHf814RV+A@mail.gmail.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="TLcRB331klf72kYiAgAoPavq6ytwUZyUY"
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Tue, 04 Jun 2019 16:48:36 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---TLcRB331klf72kYiAgAoPavq6ytwUZyUY
-Content-Type: multipart/mixed; boundary="4e4kVK3A45X5fOFtNPeg6Nk226eTMC0od";
- protected-headers="v1"
-From: Nitesh Narayan Lal <nitesh@redhat.com>
-To: Alexander Duyck <alexander.duyck@gmail.com>
-Cc: kvm list <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- linux-mm <linux-mm@kvack.org>, Paolo Bonzini <pbonzini@redhat.com>,
- lcapitulino@redhat.com, pagupta@redhat.com, wei.w.wang@intel.com,
- Yang Zhang <yang.zhang.wz@gmail.com>, Rik van Riel <riel@surriel.com>,
- David Hildenbrand <david@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>,
- dodgen@google.com, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
- dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>
-Message-ID: <0194ca6a-ec00-2a43-545d-aee6459a7582@redhat.com>
-Subject: Re: [QEMU PATCH] KVM: Support for page hinting
-References: <20190603170306.49099-1-nitesh@redhat.com>
- <20190603170432.1195-1-nitesh@redhat.com>
- <CAKgT0UeRzF24WeVkTN2WW41iKSUpXpZbpD55-g=MBHf814RV+A@mail.gmail.com>
-In-Reply-To: <CAKgT0UeRzF24WeVkTN2WW41iKSUpXpZbpD55-g=MBHf814RV+A@mail.gmail.com>
+From: Ira Weiny <ira.weiny@intel.com>
 
---4e4kVK3A45X5fOFtNPeg6Nk226eTMC0od
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
+release_pages() is an optimized version of a loop around put_page().
+Unfortunately for devmap pages the logic is not entirely correct in
+release_pages().  This is because device pages can be more than type
+MEMORY_DEVICE_PUBLIC.  There are in fact 4 types, private, public, FS
+DAX, and PCI P2PDMA.  Some of these have specific needs to "put" the
+page while others do not.
 
+This logic to handle any special needs is contained in
+put_devmap_managed_page().  Therefore all devmap pages should be
+processed by this function where we can contain the correct logic for a
+page put.
 
-On 6/4/19 12:41 PM, Alexander Duyck wrote:
-> On Mon, Jun 3, 2019 at 10:04 AM Nitesh Narayan Lal <nitesh@redhat.com> =
-wrote:
->> Enables QEMU to call madvise on the pages which are reported
->> by the guest kernel.
->>
->> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>
->> ---
->>  hw/virtio/trace-events                        |  1 +
->>  hw/virtio/virtio-balloon.c                    | 85 ++++++++++++++++++=
-+
->>  include/hw/virtio/virtio-balloon.h            |  2 +-
->>  include/qemu/osdep.h                          |  7 ++
->>  .../standard-headers/linux/virtio_balloon.h   |  1 +
->>  5 files changed, 95 insertions(+), 1 deletion(-)
-> <snip>
->
->> diff --git a/include/qemu/osdep.h b/include/qemu/osdep.h
->> index 840af09cb0..4d632933a9 100644
->> --- a/include/qemu/osdep.h
->> +++ b/include/qemu/osdep.h
->> @@ -360,6 +360,11 @@ void qemu_anon_ram_free(void *ptr, size_t size);
->>  #else
->>  #define QEMU_MADV_REMOVE QEMU_MADV_INVALID
->>  #endif
->> +#ifdef MADV_FREE
->> +#define QEMU_MADV_FREE MADV_FREE
->> +#else
->> +#define QEMU_MADV_FREE QEMU_MADV_INVALID
->> +#endif
-> Is there a specific reason for making this default to INVALID instead
-> of just using DONTNEED?
-No specific reason.
->  I ran into some issues as my host kernel
-> didn't have support for MADV_FREE in the exported kernel headers
-> apparently so I was getting no effect. It seems like it would be
-> better to fall back to doing DONTNEED instead of just disabling the
-> functionality all together.
-Possibly, I will further look into it.
->>  #elif defined(CONFIG_POSIX_MADVISE)
->>
->> @@ -373,6 +378,7 @@ void qemu_anon_ram_free(void *ptr, size_t size);
->>  #define QEMU_MADV_HUGEPAGE  QEMU_MADV_INVALID
->>  #define QEMU_MADV_NOHUGEPAGE  QEMU_MADV_INVALID
->>  #define QEMU_MADV_REMOVE QEMU_MADV_INVALID
->> +#define QEMU_MADV_FREE QEMU_MADV_INVALID
-> Same here. If you already have MADV_DONTNEED you could just use that
-> instead of disabling the functionality.
->
->>  #else /* no-op */
->>
->> @@ -386,6 +392,7 @@ void qemu_anon_ram_free(void *ptr, size_t size);
->>  #define QEMU_MADV_HUGEPAGE  QEMU_MADV_INVALID
->>  #define QEMU_MADV_NOHUGEPAGE  QEMU_MADV_INVALID
->>  #define QEMU_MADV_REMOVE QEMU_MADV_INVALID
->> +#define QEMU_MADV_FREE QEMU_MADV_INVALID
->>
->>  #endif
->>
---=20
-Regards
-Nitesh
+Handle all device type pages within release_pages() by calling
+put_devmap_managed_page() on all devmap pages.  If
+put_devmap_managed_page() returns true the page has been put and we
+continue with the next page.  A false return of
+put_devmap_managed_page() means the page did not require special
+processing and should fall to "normal" processing.
 
+This was found via code inspection while determining if release_pages()
+and the new put_user_pages() could be interchangeable.[1]
 
---4e4kVK3A45X5fOFtNPeg6Nk226eTMC0od--
+[1] https://lore.kernel.org/lkml/20190523172852.GA27175@iweiny-DESK2.sc.intel.com/
 
---TLcRB331klf72kYiAgAoPavq6ytwUZyUY
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+Cc: Jérôme Glisse <jglisse@redhat.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
------BEGIN PGP SIGNATURE-----
+---
+Changes from V2:
+	Update changelog for more clarity as requested by Michal
+	Update comment WRT "failing" of put_devmap_managed_page()
 
-iQIzBAEBCAAdFiEEkXcoRVGaqvbHPuAGo4ZA3AYyozkFAlz2oM0ACgkQo4ZA3AYy
-ozkA/Q//ZRIMGLMXhxoYzE4ppch83oeD+378YExYsIKrUaWCfG8x6PaEjZ/mfSiF
-YmKSq9CHK8MhELTPPwbba/9/SHGtWa0rD3LL1RHR2GO7QtpcF3YbUR74GipuGbNM
-WlLicfK0xAupX8iYaTntB9FWO4GOfadQOAfWO5bLT0C2PcYA6ChKQMmVBGDnKtiI
-wORJjlYLfW5NQ2Yqe8UjI5+GeqIiDsT32T41vbdV7g4LC1HCQhhsXrSYnq7AgLpj
-e7DtZP1KAse3hN7Wdya4QONN4yqDcUgCZHH/H6Eq60hOjE7vIWO5JP8+kDIae/I1
-sAzobLZi1SF7ZrwaT9C41jUkKojjnb7/rm/YjAX1W1fgbxQOaTV2j/ipSnguBMC+
-jx6KQdS2ybiikGLb9jaT/vxkQHuSMwPU7+9rmAlkd//H3zA966yh84ZSGUku7jeI
-I/ONAtGzd5u+CyPg/2wfFKEZHYa7336ts8yIXIUbQisvgt21nfDR6y9V8WZEHLul
-aQJeGYrJPHeAaaBFdV0O8JD4nWoct5X7jbnWXIFf6h8FepV5aVjxtGKnH7JyAQmQ
-KMx72W2gEqUKGf33iAWh/4IzmpPdefNzFkucKe/KpTMOCHiTvx1qZ9KKBzq5gXUp
-E1WPdIoxrWxi7KOtRzYmGZimN0zqo4oAjbCxHG4ogFtWu/nPUIQ=
-=4/9C
------END PGP SIGNATURE-----
+Changes from V1:
+	Add comment clarifying that put_devmap_managed_page() can still
+	fail.
+	Add Reviewed-by tags.
 
---TLcRB331klf72kYiAgAoPavq6ytwUZyUY--
+ mm/swap.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/mm/swap.c b/mm/swap.c
+index 7ede3eddc12a..6d153ce4cb8c 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -740,15 +740,20 @@ void release_pages(struct page **pages, int nr)
+ 		if (is_huge_zero_page(page))
+ 			continue;
+ 
+-		/* Device public page can not be huge page */
+-		if (is_device_public_page(page)) {
++		if (is_zone_device_page(page)) {
+ 			if (locked_pgdat) {
+ 				spin_unlock_irqrestore(&locked_pgdat->lru_lock,
+ 						       flags);
+ 				locked_pgdat = NULL;
+ 			}
+-			put_devmap_managed_page(page);
+-			continue;
++			/*
++			 * Not all zone-device-pages require special
++			 * processing.  Those pages return 'false' from
++			 * put_devmap_managed_page() expecting a call to
++			 * put_page_testzero()
++			 */
++			if (put_devmap_managed_page(page))
++				continue;
+ 		}
+ 
+ 		page = compound_head(page);
+-- 
+2.20.1
+
