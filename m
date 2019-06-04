@@ -2,101 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A78CC349DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:16:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 011E6349F3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:18:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727681AbfFDOQQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 10:16:16 -0400
-Received: from mail-eopbgr20081.outbound.protection.outlook.com ([40.107.2.81]:7552
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727287AbfFDOQQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 10:16:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mP2uNhqziyf2SrorO4naRi812nTeSt/+EQtEN4LUSBs=;
- b=RPPCHm7yxd0KiASeaJ+bRc/JWDgMD3+mf5fTa+1qlZijP7LT7V00W1LSiw2+GV/LWfgC4hL/hm2bVSK09HkzP0NKCueZRSq0DASl5chIyj7a5YjzcBaZgBshGphHtVcpq1L6OSRPFHr6XZWG/3hnIwOApStJCwmSNwAOV7W4zuE=
-Received: from VI1PR04MB5134.eurprd04.prod.outlook.com (20.177.50.159) by
- VI1PR04MB5310.eurprd04.prod.outlook.com (20.177.52.11) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1965.12; Tue, 4 Jun 2019 14:16:11 +0000
-Received: from VI1PR04MB5134.eurprd04.prod.outlook.com
- ([fe80::8d0e:de86:9b49:b40]) by VI1PR04MB5134.eurprd04.prod.outlook.com
- ([fe80::8d0e:de86:9b49:b40%7]) with mapi id 15.20.1943.018; Tue, 4 Jun 2019
- 14:16:11 +0000
-From:   Laurentiu Tudor <laurentiu.tudor@nxp.com>
-To:     Christoph Hellwig <hch@lst.de>
-CC:     Greg KH <gregkh@linuxfoundation.org>,
-        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "marex@denx.de" <marex@denx.de>, Leo Li <leoyang.li@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>,
-        "noring@nocrew.org" <noring@nocrew.org>,
-        "JuergenUrban@gmx.de" <JuergenUrban@gmx.de>
-Subject: Re: [PATCH v7 0/5] prerequisites for device reserved local mem rework
-Thread-Topic: [PATCH v7 0/5] prerequisites for device reserved local mem
- rework
-Thread-Index: AQHVFglQMB1lnLjYnE2Z8bn8+67UAKaB+N+AgAAA+wCAAClrAIADUJmAgAYgLAA=
-Date:   Tue, 4 Jun 2019 14:16:11 +0000
-Message-ID: <014526bf-e3e9-bd94-a239-0ec1e7feaf72@nxp.com>
-References: <20190529102843.13174-1-laurentiu.tudor@nxp.com>
- <20190529113427.GC11952@kroah.com> <20190529113758.GA9399@lst.de>
- <5b8164b3-74a3-9ba4-8c28-61a14ec57a39@nxp.com>
- <20190531164327.GB27525@lst.de>
-In-Reply-To: <20190531164327.GB27525@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=laurentiu.tudor@nxp.com; 
-x-originating-ip: [89.37.124.34]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 92d539a7-3fda-4b67-b4a0-08d6e8f7325d
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB5310;
-x-ms-traffictypediagnostic: VI1PR04MB5310:
-x-microsoft-antispam-prvs: <VI1PR04MB531006D2B409E43E4F3B9DD2EC150@VI1PR04MB5310.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 0058ABBBC7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(366004)(396003)(136003)(346002)(189003)(199004)(51914003)(66066001)(4744005)(7736002)(478600001)(66556008)(229853002)(66446008)(64756008)(25786009)(66476007)(26005)(66946007)(14454004)(68736007)(36756003)(6916009)(6486002)(186003)(91956017)(2906002)(31696002)(73956011)(6512007)(76116006)(86362001)(3846002)(8936002)(6116002)(71200400001)(71190400001)(102836004)(4326008)(476003)(2616005)(81156014)(81166006)(53546011)(5660300002)(6506007)(31686004)(305945005)(8676002)(446003)(316002)(11346002)(44832011)(486006)(76176011)(99286004)(256004)(54906003)(6436002)(6246003)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5310;H:VI1PR04MB5134.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: IALOywrHg9DS6hVVCmuW0CDKbK2fs5DUTRbfFLFFNaZpKA1lM8Cxd5PUyoSmR3L2pK6lXn7FB1HvNbLlc0IERHy5I7McSV0u0vxlQhvdA39u5wvsyfZW4n7Ga/xwGQlL0f/DbdK5F6voOKysrXKzDLcLHDPb9iZGcPVE5opRgzlA2baSymUN5qBYU+qH5GuhdQ5bkf4myGSgN3AQlzsKi3v7W1LkFbFMWMy4WWXtfe8uL59PF0JuEHO9c9TtpqlyjGQDiFtLl8sAQk2mQqwXv4eZ7WGz2QkGNSyG5N+RMFlScRJU0MWWMniY8P1fn5mTYrclwG9QvkGEfm1UG9bhyBd0Ldh5SZuda4OWGwB6EQQVoHC9bERJoIrUBq9iLC7gPTK9eh0pfftPccHKcxsuxze5QMSxNajRL2x7OOP9p38=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8E2FA2478BFDE8439FF33B9FBC3DD2DF@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1727879AbfFDOSM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 10:18:12 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52572 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727729AbfFDOSD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 10:18:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=5pILMQXKeyLYh5ydaNJLoPQY2CsjJ232NGCECQ6ieOU=; b=QLUJW3Xy70Q2w9OUNVuRZY0o4
+        yWEYAcj9wsEw/WCH3Ev2mmzFxcX3nSL4HEiIv6hp/loWiN4uF7rzQIqHqcU7ri65t0K8wXd2HAu32
+        2qao64KVRLpHeaks4KHMJG0MEhxr4/9evrll3GcDcTV8HO/nsABvymJIdTvw0UDffzz0uUe/RWTxq
+        ZK/VHAgrMxMZA/7JVdt8Xq59mnyk5F8VKB64zj6NS8ZVedxbkIR1tg3EaCh7nTghyuOfPODuStkaL
+        BMYE86ezcmk7k/DZmlS1YAx9pXLecloginxyygBPabhwPbkn78TFuiL2uXY5h2thVba5HWy/RmD7c
+        bFRQzyRtQ==;
+Received: from [179.182.172.34] (helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hYAGH-0001Rn-U6; Tue, 04 Jun 2019 14:18:02 +0000
+Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
+        (envelope-from <mchehab@bombadil.infradead.org>)
+        id 1hYAGE-0002kc-G7; Tue, 04 Jun 2019 11:17:58 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        netdev@vger.kernel.org, bpf@vger.kernel.org
+Subject: [PATCH v2 00/22] Some documentation fixes
+Date:   Tue,  4 Jun 2019 11:17:34 -0300
+Message-Id: <cover.1559656538.git.mchehab+samsung@kernel.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 92d539a7-3fda-4b67-b4a0-08d6e8f7325d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jun 2019 14:16:11.7602
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: laurentiu.tudor@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5310
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMzEuMDUuMjAxOSAxOTo0MywgQ2hyaXN0b3BoIEhlbGx3aWcgd3JvdGU6DQo+IE9uIFdlZCwg
-TWF5IDI5LCAyMDE5IGF0IDAyOjA2OjEyUE0gKzAwMDAsIExhdXJlbnRpdSBUdWRvciB3cm90ZToN
-Cj4+IFRoYW5rcywgaG9wZSB0aGlzIHRpbWUgZXZlcnl0aGluZyBpcyBmaW5lLg0KPiANCj4gSSd2
-ZSBhcHBsaWVkIGl0IHRvIHRoZSBkbWEtbWFwcGluZyB0cmVlIG5vdy4NCj4gDQo+PiBXaGVuIHlv
-dSBnZXQgdGhlIHRpbWUsIHBsZWFzZSBsZXQgbWUga25vdyB5b3VyIGlkZWFzIG9uIHRoZSBuZXh0
-IHN0ZXBzLg0KPiANCj4gSSB0aGluayB0aGUgbmV4dCBzdGVwIGlzIHRvIG1vdmUgdGhlIGNhbGwg
-dG8NCj4gZG1hX2FsbG9jX2Zyb21fZGV2X2NvaGVyZW50IGZyb20gZG1hX2FsbG9jX2F0dHJzIGlu
-dG8gdGhlIC0+YWxsb2MNCj4gaW5zdGFuY2VzLiAgVGhlIG9ubHkgb25jZXMgdGhhdCByZWFsbHkg
-bmVlZCBpdCBmb3Igbm93IGFyZSB0aGUNCj4gZ2VuZXJpYyBhbmQgbGVnYWN5IGFybSBkbWEtZGly
-ZWN0IGNvZGUsIGFuZCBkcml2ZXJzL2lvbW11L2RtYS1pb21tdS5jDQo+IGFzIHdlbGwgYXMgdGhl
-IEFSTSBETUEgQVBJIGNvZGUsIGFzIHRob3NlIGFyZSB0aGUgb25lcyB1c2UgZm9yDQo+IGFyY2hp
-dGVjdHVyZXMgdGhhdCBkZWNsYXJlIGNvaGVyZW50IHJlZ2lvbnMuICBUaGUgb3RoZXIgaW9tbXVz
-IGFyZQ0KPiBub3QgdXNlZCBvbiBPRiBwbGF0Zm9ybXMgKGF0IGxlYXN0IHRoYXQncyB3aGF0IG15
-IGFuYWx5c2lzIHNhaWQgYSB3aGlsZQ0KPiBhZ28sIGZlZWwgZnJlZSB0byBkb3VibGUgY2hlY2sg
-aXQpDQoNClRoYW5rcyBmb3IgdGhlIGRldGFpbHMuIEknbGwgYmUgT09PIG5leHQgd2VlayBzbyBw
-cm9iYWJseSBJJ2xsIHN0YXJ0IA0KbG9va2luZyBpbnRvIGl0IG5leHQgbmV4dCB3ZWVrLg0KDQot
-LS0NCkJlc3QgUmVnYXJkcywgTGF1cmVudGl1
+
+Fix several warnings and broken links.
+
+This series was generated against linux-next, but was rebased to be applied at
+docs-next. It should apply cleanly on either tree.
+
+There's a git tree with all of them applied on the top of docs/docs-next
+at:
+
+https://git.linuxtv.org/mchehab/experimental.git/log/?h=fix_doc_links_v2
+
+-
+
+v2:
+
+- added received acks/reviewed-by tags
+- removed patches that got merged at linux-next
+- Removed it_IT patches, as a different version was already submitted;
+- removed mfd: madera: patch, assuming that it will be merged via
+  some other tree;
+- Removed the :orphan:  markups for KVM patches, as those are fixed
+  at -next;
+- zh_CN: use a different approach to fix duplicate references;
+- added a patch moving protection-keys.rst to the core-api book;
+- added 3 patches fixing new broken stuff:
+
+	docs: isdn: remove hisax references from kernel-parameters.txt
+	dt: bindings: fix some broken links from txt->yaml conversion
+	docs: fix broken documentation links
+
+
+Mauro Carvalho Chehab (22):
+  ABI: sysfs-devices-system-cpu: point to the right docs
+  isdn: mISDN: remove a bogus reference to a non-existing doc
+  docs: zh_CN: get rid of basic_profiling.txt
+  docs: mm: numaperf.rst: get rid of a build warning
+  docs: bpf: get rid of two warnings
+  docs: mark orphan documents as such
+  docs: amd-memory-encryption.rst get rid of warnings
+  gpu: i915.rst: Fix references to renamed files
+  docs: zh_CN: avoid duplicate citation references
+  docs: vm: hmm.rst: fix some warnings
+  docs: it: license-rules.rst: get rid of warnings
+  docs: gpio: driver.rst: fix a bad tag
+  docs: soundwire: locking: fix tags for a code-block
+  docs: security: trusted-encrypted.rst: fix code-block tag
+  docs: security: core.rst: Fix several warnings
+  docs: net: dpio-driver.rst: fix two codeblock warnings
+  docs: net: sja1105.rst: fix table format
+  docs: move protection-keys.rst to the core-api book
+  docs: fix broken documentation links
+  dt: bindings: fix some broken links from txt->yaml conversion
+  docs: isdn: remove hisax references from kernel-parameters.txt
+  docs: Kbuild/Makefile: allow check for missing docs at build time
+
+ .../ABI/testing/sysfs-devices-system-cpu      |  3 +-
+ Documentation/Kconfig                         | 13 ++++
+ Documentation/Makefile                        |  5 ++
+ Documentation/accelerators/ocxl.rst           |  2 +
+ Documentation/acpi/dsd/leds.txt               |  2 +-
+ .../admin-guide/kernel-parameters.rst         |  6 +-
+ .../admin-guide/kernel-parameters.txt         | 19 +++--
+ Documentation/admin-guide/mm/numaperf.rst     |  5 +-
+ Documentation/admin-guide/ras.rst             |  2 +-
+ Documentation/arm/stm32/overview.rst          |  2 +
+ .../arm/stm32/stm32f429-overview.rst          |  2 +
+ .../arm/stm32/stm32f746-overview.rst          |  2 +
+ .../arm/stm32/stm32f769-overview.rst          |  2 +
+ .../arm/stm32/stm32h743-overview.rst          |  2 +
+ .../arm/stm32/stm32mp157-overview.rst         |  2 +
+ Documentation/bpf/btf.rst                     |  2 +
+ Documentation/core-api/index.rst              |  1 +
+ .../{x86 => core-api}/protection-keys.rst     |  0
+ .../bindings/media/st,stm32-dcmi.txt          |  2 +-
+ .../devicetree/bindings/net/fsl-enetc.txt     |  7 +-
+ .../bindings/pci/amlogic,meson-pcie.txt       |  2 +-
+ .../regulator/qcom,rpmh-regulator.txt         |  2 +-
+ .../bindings/sound/st,stm32-i2s.txt           |  2 +-
+ .../bindings/sound/st,stm32-sai.txt           |  2 +-
+ .../devicetree/booting-without-of.txt         |  2 +-
+ Documentation/driver-api/gpio/board.rst       |  2 +-
+ Documentation/driver-api/gpio/consumer.rst    |  2 +-
+ Documentation/driver-api/gpio/driver.rst      |  2 +-
+ .../driver-api/soundwire/locking.rst          |  4 +-
+ .../firmware-guide/acpi/enumeration.rst       |  2 +-
+ .../firmware-guide/acpi/method-tracing.rst    |  2 +-
+ Documentation/gpu/i915.rst                    |  6 +-
+ Documentation/gpu/msm-crash-dump.rst          |  2 +
+ Documentation/i2c/instantiating-devices       |  2 +-
+ Documentation/interconnect/interconnect.rst   |  2 +
+ Documentation/laptops/lg-laptop.rst           |  2 +
+ .../freescale/dpaa2/dpio-driver.rst           |  4 +-
+ Documentation/networking/dsa/sja1105.rst      |  6 +-
+ Documentation/powerpc/isa-versions.rst        |  2 +
+ Documentation/security/keys/core.rst          | 16 +++--
+ .../security/keys/trusted-encrypted.rst       |  4 +-
+ Documentation/sysctl/kernel.txt               |  4 +-
+ .../it_IT/process/license-rules.rst           | 28 ++++----
+ .../translations/zh_CN/basic_profiling.txt    | 71 -------------------
+ .../translations/zh_CN/process/4.Coding.rst   |  2 +-
+ .../zh_CN/process/management-style.rst        |  4 +-
+ .../zh_CN/process/programming-language.rst    | 59 +++++++++++----
+ .../virtual/kvm/amd-memory-encryption.rst     |  3 +
+ Documentation/vm/hmm.rst                      |  3 +-
+ Documentation/x86/index.rst                   |  1 -
+ Documentation/x86/x86_64/5level-paging.rst    |  2 +-
+ Documentation/x86/x86_64/boot-options.rst     |  4 +-
+ .../x86/x86_64/fake-numa-for-cpusets.rst      |  2 +-
+ Kconfig                                       |  2 +
+ MAINTAINERS                                   |  6 +-
+ arch/arm/Kconfig                              |  2 +-
+ arch/arm64/kernel/kexec_image.c               |  2 +-
+ arch/powerpc/Kconfig                          |  2 +-
+ arch/x86/Kconfig                              | 16 ++---
+ arch/x86/Kconfig.debug                        |  2 +-
+ arch/x86/boot/header.S                        |  2 +-
+ arch/x86/entry/entry_64.S                     |  2 +-
+ arch/x86/include/asm/bootparam_utils.h        |  2 +-
+ arch/x86/include/asm/page_64_types.h          |  2 +-
+ arch/x86/include/asm/pgtable_64_types.h       |  2 +-
+ arch/x86/kernel/cpu/microcode/amd.c           |  2 +-
+ arch/x86/kernel/kexec-bzimage64.c             |  2 +-
+ arch/x86/kernel/pci-dma.c                     |  2 +-
+ arch/x86/mm/tlb.c                             |  2 +-
+ arch/x86/platform/pvh/enlighten.c             |  2 +-
+ drivers/acpi/Kconfig                          | 10 +--
+ drivers/isdn/mISDN/dsp_core.c                 |  2 -
+ drivers/net/ethernet/faraday/ftgmac100.c      |  2 +-
+ .../fieldbus/Documentation/fieldbus_dev.txt   |  4 +-
+ drivers/vhost/vhost.c                         |  2 +-
+ include/acpi/acpi_drivers.h                   |  2 +-
+ include/linux/fs_context.h                    |  2 +-
+ include/linux/lsm_hooks.h                     |  2 +-
+ mm/Kconfig                                    |  2 +-
+ scripts/documentation-file-ref-check          |  9 +++
+ security/Kconfig                              |  2 +-
+ tools/include/linux/err.h                     |  2 +-
+ .../Documentation/stack-validation.txt        |  4 +-
+ tools/testing/selftests/x86/protection_keys.c |  2 +-
+ 84 files changed, 227 insertions(+), 206 deletions(-)
+ create mode 100644 Documentation/Kconfig
+ rename Documentation/{x86 => core-api}/protection-keys.rst (100%)
+ delete mode 100644 Documentation/translations/zh_CN/basic_profiling.txt
+
+-- 
+2.21.0
+
+
