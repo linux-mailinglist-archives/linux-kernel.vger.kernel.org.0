@@ -2,124 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D25A634623
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:04:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 877F734625
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:05:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727586AbfFDMEw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 08:04:52 -0400
-Received: from mail-vs1-f73.google.com ([209.85.217.73]:57054 "EHLO
-        mail-vs1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727377AbfFDMEw (ORCPT
+        id S1727636AbfFDMFA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 08:05:00 -0400
+Received: from smtprelay0146.hostedemail.com ([216.40.44.146]:44039 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727250AbfFDME7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 08:04:52 -0400
-Received: by mail-vs1-f73.google.com with SMTP id i4so6242709vsi.23
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 05:04:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=jQ4jdowRSjR3urFOBjyFZklSNNoQ/ud0fhl6APbdVCA=;
-        b=GowLAStz/2F1T2+1l2LwgSfjTKRmMNBrNNCBZBil5igL4JQyaWlnxhbbmWCoX861Oi
-         B/gqgNlu7CEqXMP2+z7kELt1QAkywzQ/4/CBIgoztk4jhPS0IDaW6f2xT62bZyvCkGPW
-         ChaaC18egrJWcY5tXKS1tu+1ggnllHfRVAt4dSrOhgYxZTnaC50stPSrxwS8K7gbAyLN
-         UjDTA5LQ+N55Gnmek72ZITAekTqyE/lF715JE4SsnddL1vL3d3tMoF9CBM84jFEXZ+Fi
-         /tVHki2lXZ2QdEK7Q+gvSqDXWwBEJ/eJ981jOBPiAFjG2vVRecZEHKzlptA4WkyhnZzl
-         0RUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=jQ4jdowRSjR3urFOBjyFZklSNNoQ/ud0fhl6APbdVCA=;
-        b=fe5HhQbu6mIAjY3toVBsHEMaiTdKqoRlkmGhP743e5C7uBDUTdmFJka+PLMH7fX/6J
-         nnKp4de0q0wdMTufKkEc3vQ5Amc+tZ9qEmvraBoDGiO2Gs6qIJdDo6VSg8QT0S3cY9Rw
-         +qApp2TVnoBV8JvUkSwd+X9VbBcKyK50wSzGtWE8f/lN3cNgLsQ8NVdDPb+xgV8q4o66
-         XM354su9KNuIjLzZwThKl9rwA136nMHoNG9XIeVeEz0Nn2kIF06FVtbDxH1HqLs9kn63
-         0u6gMtzTO5U2ydJ5Oo7RPpM3oWX32Naj96YgRCUEfClbygWq9k4Hq9Jt17YfLiHF8kXi
-         BLlg==
-X-Gm-Message-State: APjAAAWbhs1ZKhm5RHyRZCzfTzG/FIDC3ndERedHsgP5lzBlV8bp5TOl
-        tOsapTLPy0veXM37B+dYkQv4GuPI6/cvrxR2
-X-Google-Smtp-Source: APXvYqzbAGU8OQBoy9uHFFBvYRcfDQrSEKOseigLTkDo7YUO7FMQDDHLZj47ajW7+eNrCdw8uM2m21YgNxpjq+Kq
-X-Received: by 2002:ab0:184e:: with SMTP id j14mr15665222uag.91.1559649891290;
- Tue, 04 Jun 2019 05:04:51 -0700 (PDT)
-Date:   Tue,  4 Jun 2019 14:04:47 +0200
-Message-Id: <c8311f9b759e254308a8e57d9f6eb17728a686a7.1559649879.git.andreyknvl@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.22.0.rc1.311.g5d7573a151-goog
-Subject: [PATCH v2] uaccess: add noop untagged_addr definition
-From:   Andrey Konovalov <andreyknvl@google.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-arm-kernel@lists.infradead.org, sparclinux@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Alexander Deucher <Alexander.Deucher@amd.com>,
-        Christian Koenig <Christian.Koenig@amd.com>,
+        Tue, 4 Jun 2019 08:04:59 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 6F9BE100E86D1;
+        Tue,  4 Jun 2019 12:04:58 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:355:379:421:599:800:960:967:968:973:988:989:1260:1263:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:1981:2110:2194:2199:2393:2525:2553:2560:2563:2682:2685:2691:2828:2859:2895:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:3873:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4321:5007:6117:7903:8814:9025:9040:9388:10004:10400:10848:11232:11658:11914:12043:12740:12760:12895:13069:13161:13229:13311:13357:13439:14094:14096:14181:14659:14721:21080:21324:21627:21788:21795:30054:30060:30070:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:35,LUA_SUMMARY:none
+X-HE-Tag: class59_827f50f7dee18
+X-Filterd-Recvd-Size: 2744
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf14.hostedemail.com (Postfix) with ESMTPA;
+        Tue,  4 Jun 2019 12:04:56 +0000 (UTC)
+Message-ID: <2674b675063812e7c422a7964afdef6b7c712e4b.camel@perches.com>
+Subject: Re: [PATCH] media: do not use C++ style comments in uapi headers
+From:   Joe Perches <joe@perches.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-media@vger.kernel.org,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>, enh <enh@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 04 Jun 2019 05:04:55 -0700
+In-Reply-To: <CAK7LNAR9iz8_wvybmrVFqDaiP3bzxjQ18EUwkvC1LMjR96WWag@mail.gmail.com>
+References: <20190604111334.22182-1-yamada.masahiro@socionext.com>
+         <8cf48e20064eabdfe150795365e6ca6f36032e9f.camel@perches.com>
+         <CAK7LNAR9iz8_wvybmrVFqDaiP3bzxjQ18EUwkvC1LMjR96WWag@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Architectures that support memory tagging have a need to perform untagging
-(stripping the tag) in various parts of the kernel. This patch adds an
-untagged_addr() macro, which is defined as noop for architectures that do
-not support memory tagging. The oncoming patch series will define it at
-least for sparc64 and arm64.
+On Tue, 2019-06-04 at 20:48 +0900, Masahiro Yamada wrote:
+> On Tue, Jun 4, 2019 at 8:24 PM Joe Perches <joe@perches.com> wrote:
+> > On Tue, 2019-06-04 at 20:13 +0900, Masahiro Yamada wrote:
+> > > On the other hand, uapi headers are written in more strict C, where
+> > > the C++ comment style is forbidden.
+> > 
+> > Is this a real problem for any toolchain?
+> 
+> I was waiting for this comment!
+> 
+> Which standard should UAPI headers follow?
+> Is it defined somewhere?
+> 
+> If there is no rule, is it up to subsystem maintainers?
+> 
+> We have a certain of unknowledge in user-space,
+> I do not know it it is a real problem.
+> 
+> Actually, this patch is related to this thread:
+> https://lkml.org/lkml/2019/5/22/1441
+> 
+> Thomas and you agreed
+> // should be avoided for SPDX tags in UAPI headers.
 
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-Reviewed-by: Khalid Aziz <khalid.aziz@oracle.com>
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
----
- include/linux/mm.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+If it's really a generic issue, I think there are more
+uses of // comments in uapi files.
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 0e8834ac32b7..dd0b5f4e1e45 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -99,6 +99,17 @@ extern int mmap_rnd_compat_bits __read_mostly;
- #include <asm/pgtable.h>
- #include <asm/processor.h>
- 
-+/*
-+ * Architectures that support memory tagging (assigning tags to memory regions,
-+ * embedding these tags into addresses that point to these memory regions, and
-+ * checking that the memory and the pointer tags match on memory accesses)
-+ * redefine this macro to strip tags from pointers.
-+ * It's defined as noop for arcitectures that don't support memory tagging.
-+ */
-+#ifndef untagged_addr
-+#define untagged_addr(addr) (addr)
-+#endif
-+
- #ifndef __pa_symbol
- #define __pa_symbol(x)  __pa(RELOC_HIDE((unsigned long)(x), 0))
- #endif
--- 
-2.22.0.rc1.311.g5d7573a151-goog
+$ git grep '//' include/uapi/ | grep -vP '(http://|https://|ftp:/)' | wc -l
+101
+
+> So, I just thought C99 was forbidden for user-space.
+
+No idea, I just believe if it's really a problem
+it likely would have been reported already.
+
+> If C89/C90 is already fantasy,
+> let's clearly say "Kernel requires C99 for user-space",
+> and use // everywhere for SPDX tags?
+
+OK by me.
+
+I have a checkpatch patch waiting to submit to remove the
+requirement to use the /* */ comment style in .h files.
+
+The docs need to be updated too.
+
+cheers, Joe
 
