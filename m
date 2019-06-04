@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6B0A352D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 00:51:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D8B7352D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 00:51:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726693AbfFDWvP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 18:51:15 -0400
-Received: from mga01.intel.com ([192.55.52.88]:52979 "EHLO mga01.intel.com"
+        id S1726713AbfFDWvS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 18:51:18 -0400
+Received: from mga01.intel.com ([192.55.52.88]:52991 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726649AbfFDWvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726663AbfFDWvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 4 Jun 2019 18:51:13 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jun 2019 15:51:12 -0700
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jun 2019 15:51:13 -0700
 X-ExtLoop1: 1
 Received: from otc-lr-04.jf.intel.com ([10.54.39.141])
-  by FMSMGA003.fm.intel.com with ESMTP; 04 Jun 2019 15:51:12 -0700
+  by FMSMGA003.fm.intel.com with ESMTP; 04 Jun 2019 15:51:13 -0700
 From:   kan.liang@linux.intel.com
 To:     acme@kernel.org, jolsa@kernel.org, mingo@redhat.com,
         linux-kernel@vger.kernel.org
 Cc:     peterz@infradead.org, ak@linux.intel.com,
         Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V3 4/5] perf header: Rename "sibling cores" to "sibling sockets"
-Date:   Tue,  4 Jun 2019 15:50:43 -0700
-Message-Id: <1559688644-106558-4-git-send-email-kan.liang@linux.intel.com>
+Subject: [PATCH V3 5/5] perf tools: Apply new CPU topology sysfs attributes
+Date:   Tue,  4 Jun 2019 15:50:44 -0700
+Message-Id: <1559688644-106558-5-git-send-email-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1559688644-106558-1-git-send-email-kan.liang@linux.intel.com>
 References: <1559688644-106558-1-git-send-email-kan.liang@linux.intel.com>
@@ -36,46 +36,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-The "sibling cores" actually shows the sibling CPUs of a socket.
-The name "sibling cores" is very misleading.
+The existing "thread_siblings" and "thread_siblings_list" attribute will
+be deprecated.
+Use the new CPU topology sysfs attributes, "core_cpus" and
+"core_cpus_list", which are synonymous with the deprecated attributes.
 
-Rename "sibling cores" to "sibling sockets"
+Check the new name first. If not available, use the deprecated name to
+be compatible with old kernel.
 
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
 
 No changes since V2.
 
- tools/perf/Documentation/perf.data-file-format.txt | 2 +-
- tools/perf/util/header.c                           | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/util/cputopo.c | 8 +++++++-
+ tools/perf/util/smt.c     | 8 ++++++--
+ 2 files changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/Documentation/perf.data-file-format.txt b/tools/perf/Documentation/perf.data-file-format.txt
-index 0165e92..de78183 100644
---- a/tools/perf/Documentation/perf.data-file-format.txt
-+++ b/tools/perf/Documentation/perf.data-file-format.txt
-@@ -168,7 +168,7 @@ struct {
- };
+diff --git a/tools/perf/util/cputopo.c b/tools/perf/util/cputopo.c
+index 85fa87f..26e73a4b 100644
+--- a/tools/perf/util/cputopo.c
++++ b/tools/perf/util/cputopo.c
+@@ -15,6 +15,8 @@
+ 	"%s/devices/system/cpu/cpu%d/topology/die_cpus_list"
+ #define THRD_SIB_FMT \
+ 	"%s/devices/system/cpu/cpu%d/topology/thread_siblings_list"
++#define THRD_SIB_FMT_NEW \
++	"%s/devices/system/cpu/cpu%d/topology/core_cpus_list"
+ #define NODE_ONLINE_FMT \
+ 	"%s/devices/system/node/online"
+ #define NODE_MEMINFO_FMT \
+@@ -91,8 +93,12 @@ static int build_cpu_topology(struct cpu_topology *tp, int cpu)
+ 	ret = 0;
  
- Example:
--	sibling cores   : 0-8
-+	sibling sockets : 0-8
- 	sibling dies	: 0-3
- 	sibling dies	: 4-7
- 	sibling threads : 0-1
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index 6497625..06ddb66 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -1460,7 +1460,7 @@ static void print_cpu_topology(struct feat_fd *ff, FILE *fp)
- 	str = ph->env.sibling_cores;
+ try_threads:
+-	scnprintf(filename, MAXPATHLEN, THRD_SIB_FMT,
++	scnprintf(filename, MAXPATHLEN, THRD_SIB_FMT_NEW,
+ 		  sysfs__mountpoint(), cpu);
++	if (access(filename, F_OK) == -1) {
++		scnprintf(filename, MAXPATHLEN, THRD_SIB_FMT,
++			  sysfs__mountpoint(), cpu);
++	}
+ 	fp = fopen(filename, "r");
+ 	if (!fp)
+ 		goto done;
+diff --git a/tools/perf/util/smt.c b/tools/perf/util/smt.c
+index 453f6f6..3b791ef 100644
+--- a/tools/perf/util/smt.c
++++ b/tools/perf/util/smt.c
+@@ -23,8 +23,12 @@ int smt_on(void)
+ 		char fn[256];
  
- 	for (i = 0; i < nr; i++) {
--		fprintf(fp, "# sibling cores   : %s\n", str);
-+		fprintf(fp, "# sibling sockets : %s\n", str);
- 		str += strlen(str) + 1;
- 	}
- 
+ 		snprintf(fn, sizeof fn,
+-			"devices/system/cpu/cpu%d/topology/thread_siblings",
+-			cpu);
++			"devices/system/cpu/cpu%d/topology/core_cpus", cpu);
++		if (access(fn, F_OK) == -1) {
++			snprintf(fn, sizeof fn,
++				"devices/system/cpu/cpu%d/topology/thread_siblings",
++				cpu);
++		}
+ 		if (sysfs__read_str(fn, &str, &strlen) < 0)
+ 			continue;
+ 		/* Entry is hex, but does not have 0x, so need custom parser */
 -- 
 2.7.4
 
