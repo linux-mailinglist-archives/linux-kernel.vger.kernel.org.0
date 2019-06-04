@@ -2,146 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 702FA346A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:26:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7E20346A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:27:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727789AbfFDM0w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 08:26:52 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:15625 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726994AbfFDM0v (ORCPT
+        id S1727822AbfFDM1S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 08:27:18 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:46627 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727522AbfFDM1R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 08:26:51 -0400
-X-UUID: e64f5e4932bb49efa567b16a9c3a2533-20190604
-X-UUID: e64f5e4932bb49efa567b16a9c3a2533-20190604
-Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <qii.wang@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 404720184; Tue, 04 Jun 2019 20:26:42 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31N2.mediatek.inc
- (172.27.4.87) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 4 Jun
- 2019 20:26:41 +0800
-Received: from [10.17.3.153] (172.27.4.253) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 4 Jun 2019 20:26:40 +0800
-Message-ID: <1559651200.5871.2.camel@mhfsdcap03>
-Subject: Re: [PATCH 2/2] i3c: master: Add driver for MediaTek IP
-From:   Qii Wang <qii.wang@mediatek.com>
-To:     Boris Brezillon <boris.brezillon@collabora.com>
-CC:     <bbrezillon@kernel.org>, <devicetree@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, <leilk.liu@mediatek.com>,
-        <gregkh@linuxfoundation.org>, <xinping.qian@mediatek.com>,
-        <linux-kernel@vger.kernel.org>, <liguo.zhang@mediatek.com>,
-        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
-        <linux-i3c@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Tue, 4 Jun 2019 20:26:40 +0800
-In-Reply-To: <20190604095858.38ed9a28@collabora.com>
-References: <1559533863-10292-1-git-send-email-qii.wang@mediatek.com>
-         <1559533863-10292-3-git-send-email-qii.wang@mediatek.com>
-         <20190604095858.38ed9a28@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Tue, 4 Jun 2019 08:27:17 -0400
+Received: by mail-qt1-f193.google.com with SMTP id z19so13380233qtz.13
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 05:27:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wnsJg5IBUcpd0uvGih9L7zWjhXAHb1EJO0yOEExZSzo=;
+        b=dcNC7UmtypwgYv25SVviVAOUG7URTCQh95rjKD+gc1HkGG0jrMjWKvaHqgOqnkLXCe
+         CmoljchytuIVIDVbprMz3tL0S5wF3BfmVPwpXMEcKwEKuopvqQDwmPbpLySBrTe+5P0P
+         +zjXSkVABYGjw15OrEI3UNK6X3hEEYJ5lmU4VodgY1OGgetHeu4xf6gu/Drrr5PoUFZD
+         NGszqORq933qFqUy4wxVOf9PkDJzNBd6Vt6SxvMrx9KcQhBJruI+UAnsanyndNgyFsW8
+         SfJHC+U7tiqZ4PP8CoYnZCXFGYoMymsmvspjQbzELX76TfLMwbqeFyJLFyTuqJIB4Dhp
+         ZF+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wnsJg5IBUcpd0uvGih9L7zWjhXAHb1EJO0yOEExZSzo=;
+        b=h8lnQ9NQu6mZHYI+SjjH6EHpeOviBEayoxlvk/QWvRPrcVFVIO5mWyGWEXUjoUiDgl
+         Ek45sxB7NUjEQFb0XQmWDr0NRIQFH40RkHxodSnHAO69ugMZfAyTIgEPEKVDpNiNP7gl
+         atyGLUNnzzpFiZAG6MHRbwsQYwKFzO+p6Wtb6BO8gB05RRy63Fffb6RYgR7FV6+VjtS2
+         26vwaujUmbe+Jbxi4hLXnn1VcD7qTjUgypD6oJSpuL87MG7p8YHrH4/lTwXm4A248A5C
+         ZQCaUBebVuDzm45HdfgHBA9Gvttpwja2Tft2rsCew4Byu1zZq/okxE6OLbf9Qs68JfKi
+         BcYQ==
+X-Gm-Message-State: APjAAAVEDf1zuYBQftn3q9JPKFS5fA+MCN17AvQVPV5ftljDCMSDLquV
+        ZwymYwN/gKXBIKSlw9Tl4Nhm/g==
+X-Google-Smtp-Source: APXvYqyQKZsajkt/gWb5hfUpWdj5TzMt6KfoFh/bz/W6aTLwqi1dm4Rk21CH5MrcGrt3uoh1Lu64hg==
+X-Received: by 2002:aed:3a87:: with SMTP id o7mr27583430qte.310.1559651236150;
+        Tue, 04 Jun 2019 05:27:16 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id c18sm4454633qkm.78.2019.06.04.05.27.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Jun 2019 05:27:15 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hY8X4-000416-LN; Tue, 04 Jun 2019 09:27:14 -0300
+Date:   Tue, 4 Jun 2019 09:27:14 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        kvm@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alexander Deucher <Alexander.Deucher@amd.com>,
+        Christian Koenig <Christian.Koenig@amd.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>, enh <enh@google.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Kevin Brodsky <kevin.brodsky@arm.com>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
+Subject: Re: [PATCH v16 12/16] IB, arm64: untag user pointers in
+ ib_uverbs_(re)reg_mr()
+Message-ID: <20190604122714.GA15385@ziepe.ca>
+References: <cover.1559580831.git.andreyknvl@google.com>
+ <c829f93b19ad6af1b13be8935ce29baa8e58518f.1559580831.git.andreyknvl@google.com>
+ <20190603174619.GC11474@ziepe.ca>
+ <CAAeHK+xy-dx4dLDLLj9dRzRNSVG9H5nDPPnjpYF38qKZNNCh_g@mail.gmail.com>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAeHK+xy-dx4dLDLLj9dRzRNSVG9H5nDPPnjpYF38qKZNNCh_g@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-06-04 at 09:58 +0200, Boris Brezillon wrote:
-> On Mon, 3 Jun 2019 11:51:03 +0800
-> Qii Wang <qii.wang@mediatek.com> wrote:
+On Tue, Jun 04, 2019 at 02:18:19PM +0200, Andrey Konovalov wrote:
+> On Mon, Jun 3, 2019 at 7:46 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> >
+> > On Mon, Jun 03, 2019 at 06:55:14PM +0200, Andrey Konovalov wrote:
+> > > This patch is a part of a series that extends arm64 kernel ABI to allow to
+> > > pass tagged user pointers (with the top byte set to something else other
+> > > than 0x00) as syscall arguments.
+> > >
+> > > ib_uverbs_(re)reg_mr() use provided user pointers for vma lookups (through
+> > > e.g. mlx4_get_umem_mr()), which can only by done with untagged pointers.
+> > >
+> > > Untag user pointers in these functions.
+> > >
+> > > Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+> > >  drivers/infiniband/core/uverbs_cmd.c | 4 ++++
+> > >  1 file changed, 4 insertions(+)
+> > >
+> > > diff --git a/drivers/infiniband/core/uverbs_cmd.c b/drivers/infiniband/core/uverbs_cmd.c
+> > > index 5a3a1780ceea..f88ee733e617 100644
+> > > +++ b/drivers/infiniband/core/uverbs_cmd.c
+> > > @@ -709,6 +709,8 @@ static int ib_uverbs_reg_mr(struct uverbs_attr_bundle *attrs)
+> > >       if (ret)
+> > >               return ret;
+> > >
+> > > +     cmd.start = untagged_addr(cmd.start);
+> > > +
+> > >       if ((cmd.start & ~PAGE_MASK) != (cmd.hca_va & ~PAGE_MASK))
+> > >               return -EINVAL;
+> >
+> > I feel like we shouldn't thave to do this here, surely the cmd.start
+> > should flow unmodified to get_user_pages, and gup should untag it?
+> >
+> > ie, this sort of direction for the IB code (this would be a giant
+> > patch, so I didn't have time to write it all, but I think it is much
+> > saner):
 > 
+> Hi Jason,
 > 
-> > +static int mtk_i3c_master_probe(struct platform_device *pdev)
-> > +{
-> > +	struct device *dev = &pdev->dev;
-> > +	struct mtk_i3c_master *master;
-> > +	struct resource *res;
-> > +	int ret, irqnr;
-> > +
-> > +	master = devm_kzalloc(dev, sizeof(*master), GFP_KERNEL);
-> > +	if (!master)
-> > +		return -ENOMEM;
-> > +
-> > +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "main");
-> > +	master->regs = devm_ioremap_resource(dev, res);
-> > +	if (IS_ERR(master->regs))
-> > +		return PTR_ERR(master->regs);
-> > +
-> > +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dma");
-> > +	master->dma_regs = devm_ioremap_resource(dev, res);
-> > +	if (IS_ERR(master->dma_regs))
-> > +		return PTR_ERR(master->dma_regs);
-> > +
-> > +	irqnr = platform_get_irq(pdev, 0);
-> > +	if (irqnr < 0)
-> > +		return irqnr;
-> > +
-> > +	ret = devm_request_irq(dev, irqnr, mtk_i3c_master_irq,
-> > +			       IRQF_TRIGGER_NONE, DRV_NAME, master);
-> > +	if (ret < 0) {
-> > +		dev_err(dev, "Request I3C IRQ %d fail\n", irqnr);
-> > +		return ret;
-> > +	}
-> > +
-> > +	ret = of_property_read_u32(pdev->dev.of_node, "clock-div",
-> > +				   &master->clk_src_div);
-> 
-> You say in one comment that this clock divider is fixed in HW but might
-> change on a per-SoC basis. If that's the case, you should get rid of
-> this clock-div prop and attach the divider to the compatible (using an
-> mtk_i3c_master_variant struct that contains a divider field).
-> 
+> ib_uverbs_reg_mr() passes cmd.start to mlx4_get_umem_mr(), which calls
+> find_vma(), which only accepts untagged addresses. Could you explain
+> how your patch helps?
 
-ok, I will attach the divider to the compatible.
+That mlx4 is just a 'weird duck', it is not the normal flow, and I
+don't think the core code should be making special consideration for
+it.
 
-> > +	if (ret < 0)
-> > +		return -EINVAL;
-> > +
-> > +	spin_lock_init(&master->xferqueue.lock);
-> > +	INIT_LIST_HEAD(&master->xferqueue.list);
-> > +
-> > +	if (dma_set_mask(dev, DMA_BIT_MASK(33))) {
-> > +		dev_err(dev, "dma_set_mask return error.\n");
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	master->clk_main = devm_clk_get(dev, "main");
-> > +	if (IS_ERR(master->clk_main)) {
-> > +		dev_err(dev, "cannot get main clock\n");
-> > +		return PTR_ERR(master->clk_main);
-> > +	}
-> > +	master->clk_dma = devm_clk_get(dev, "dma");
-> > +	if (IS_ERR(master->clk_dma)) {
-> > +		dev_err(dev, "cannot get dma clock\n");
-> > +		return PTR_ERR(master->clk_dma);
-> > +	}
-> > +
-> > +	master->clk_arb = devm_clk_get_optional(dev, "arb");
-> > +	if (IS_ERR(master->clk_arb))
-> > +		return PTR_ERR(master->clk_arb);
-> > +
-> > +	ret = mtk_i3c_master_clock_enable(master);
-> > +	if (ret) {
-> > +		dev_err(dev, "clock enable failed!\n");
-> > +		return ret;
-> > +	}
-> > +
-> > +	master->dev = dev;
-> > +	platform_set_drvdata(pdev, master);
-> > +
-> > +	ret = i3c_master_register(&master->mas_ctrler, dev,
-> > +				  &mtk_i3c_master_ops, false);
-> > +	if (ret) {
-> > +		dev_err(dev, "Failed to add i3c bus to i3c core\n");
-> > +		mtk_i3c_master_clock_disable(master);
-> > +		return ret;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-
-
+Jason
