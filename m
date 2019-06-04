@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6611F34A1F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:19:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5096134A00
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:18:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728083AbfFDOTa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 10:19:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52502 "EHLO
+        id S1727813AbfFDOSE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 10:18:04 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52538 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727450AbfFDOSD (ORCPT
+        with ESMTP id S1727718AbfFDOSD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 4 Jun 2019 10:18:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,28 +18,27 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=49OX8NmvmI055r/OXImGhv4c7c/FNWltAI84LJFVh/A=; b=fi4odz0CcZkQgAroB59pt3fkKR
-        YOlYGx+2Khehitc5h84rSj9HrV2itUypVSSnL0uVn0lCrA38rF20ogqiYo0uFOahLKxVfV3SMmFay
-        cekZdnv4H+I7N8o19U5SycWaX3OXQBpcGPcteYjhKgQ6GKDLkkOtNukpXOwZvh0akIww516rMyTFF
-        MXbe0H8KPm9VyDKITothwl7CfjI0702MUTdANFBs5mZH/F36mrL0GVJbJOKBWSJV4y1Bdn3yMecQt
-        9XlqQQUz8K2XWPm7ylvRXE0MAviOkDshVO2E9ntL35ZnSZK8sLKIrjEEJex2o+jKDpIDYSeT9wY4n
-        iP/ANkTQ==;
+        bh=VCZG76F1HMdmo0ADdNu78x95s6CEjH1DNcxwfGs+eM8=; b=j+C0tMNDBGV57XYtGvw6OWyFUt
+        /KaXEE9W6hLLDQCTQGh5NENbnqv1ytsTJh77tZhl2xPDruGUwtXCdEzD0WbWU/k6fq/V2+1Z1oogB
+        BwRs4BimYm2JGWgj54GBbykBdkrzTtLycvzPTvKK4mrDfq0hfAcAmFHaxG92j2IvBIIDUdfDGJUhi
+        8pkpQaHYQza5O4k/0LJl1Jh0apY26fDW28l7LlyqSsn2o0OzevOCdA79ldnGlP+LYwo6GdIJOj8SP
+        xg9nt7ovDXMqAuq9iE/psPu2UhcG1hlBtUhXzDcLa9kngArVwjnx40rUciEZsKZ0J0BrCy6vdYaMz
+        HXoP9SsA==;
 Received: from [179.182.172.34] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hYAGH-0001Ri-UA; Tue, 04 Jun 2019 14:18:01 +0000
+        id 1hYAGH-0001Rl-UQ; Tue, 04 Jun 2019 14:18:01 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hYAGE-0002lF-OP; Tue, 04 Jun 2019 11:17:58 -0300
+        id 1hYAGE-0002lJ-PF; Tue, 04 Jun 2019 11:17:58 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        linux-mm@kvack.org
-Subject: [PATCH v2 10/22] docs: vm: hmm.rst: fix some warnings
-Date:   Tue,  4 Jun 2019 11:17:44 -0300
-Message-Id: <ee4ae1fd9119e1a69b80ccea8ed642b18e3d0eb2.1559656538.git.mchehab+samsung@kernel.org>
+        Federico Vaga <federico.vaga@vaga.pv.it>
+Subject: [PATCH v2 11/22] docs: it: license-rules.rst: get rid of warnings
+Date:   Tue,  4 Jun 2019 11:17:45 -0300
+Message-Id: <6a7cfac6d9a2f14475c8b9baef0f55e4996b9210.1559656538.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1559656538.git.mchehab+samsung@kernel.org>
 References: <cover.1559656538.git.mchehab+samsung@kernel.org>
@@ -50,27 +49,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-    Documentation/vm/hmm.rst:292: WARNING: Unexpected indentation.
-    Documentation/vm/hmm.rst:300: WARNING: Unexpected indentation.
+There's a wrong identation on a code block, and it tries to use
+a reference that was not defined at the Italian translation.
+
+    Documentation/translations/it_IT/process/license-rules.rst:329: WARNING: Literal block expected; none found.
+    Documentation/translations/it_IT/process/license-rules.rst:332: WARNING: Unexpected indentation.
+    Documentation/translations/it_IT/process/license-rules.rst:339: WARNING: Block quote ends without a blank line; unexpected unindent.
+    Documentation/translations/it_IT/process/license-rules.rst:341: WARNING: Unexpected indentation.
+    Documentation/translations/it_IT/process/license-rules.rst:305: WARNING: Unknown target name: "metatags".
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/vm/hmm.rst | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ .../it_IT/process/license-rules.rst           | 28 +++++++++----------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/Documentation/vm/hmm.rst b/Documentation/vm/hmm.rst
-index 7cdf7282e022..f22bb5fb5eec 100644
---- a/Documentation/vm/hmm.rst
-+++ b/Documentation/vm/hmm.rst
-@@ -283,7 +283,8 @@ The hmm_range struct has 2 fields default_flags and pfn_flags_mask that allows
- to set fault or snapshot policy for a whole range instead of having to set them
- for each entries in the range.
+diff --git a/Documentation/translations/it_IT/process/license-rules.rst b/Documentation/translations/it_IT/process/license-rules.rst
+index f058e06996dc..4cd87a3a7bf9 100644
+--- a/Documentation/translations/it_IT/process/license-rules.rst
++++ b/Documentation/translations/it_IT/process/license-rules.rst
+@@ -303,7 +303,7 @@ essere categorizzate in:
+      LICENSES/dual
  
--For instance if the device flags for device entries are:
-+For instance if the device flags for device entries are::
-+
-     VALID (1 << 63)
-     WRITE (1 << 62)
+    I file in questa cartella contengono il testo completo della rispettiva
+-   licenza e i suoi `Metatags`_.  I nomi dei file sono identici agli
++   licenza e i suoi `Metatag`_.  I nomi dei file sono identici agli
+    identificatori di licenza SPDX che dovrebbero essere usati nei file
+    sorgenti.
+ 
+@@ -326,19 +326,19 @@ essere categorizzate in:
+ 
+    Esempio del formato del file::
+ 
+-   Valid-License-Identifier: MPL-1.1
+-   SPDX-URL: https://spdx.org/licenses/MPL-1.1.html
+-   Usage-Guide:
+-     Do NOT use. The MPL-1.1 is not GPL2 compatible. It may only be used for
+-     dual-licensed files where the other license is GPL2 compatible.
+-     If you end up using this it MUST be used together with a GPL2 compatible
+-     license using "OR".
+-     To use the Mozilla Public License version 1.1 put the following SPDX
+-     tag/value pair into a comment according to the placement guidelines in
+-     the licensing rules documentation:
+-   SPDX-License-Identifier: MPL-1.1
+-   License-Text:
+-     Full license text
++    Valid-License-Identifier: MPL-1.1
++    SPDX-URL: https://spdx.org/licenses/MPL-1.1.html
++    Usage-Guide:
++      Do NOT use. The MPL-1.1 is not GPL2 compatible. It may only be used for
++      dual-licensed files where the other license is GPL2 compatible.
++      If you end up using this it MUST be used together with a GPL2 compatible
++      license using "OR".
++      To use the Mozilla Public License version 1.1 put the following SPDX
++      tag/value pair into a comment according to the placement guidelines in
++      the licensing rules documentation:
++    SPDX-License-Identifier: MPL-1.1
++    License-Text:
++      Full license text
+ 
+ |
  
 -- 
 2.21.0
