@@ -2,51 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 386E9349F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:18:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0408E34A29
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:20:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727934AbfFDOSa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 10:18:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52812 "EHLO
+        id S1728102AbfFDOTn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 10:19:43 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52490 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727848AbfFDOSH (ORCPT
+        with ESMTP id S1727408AbfFDOSC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 10:18:07 -0400
+        Tue, 4 Jun 2019 10:18:02 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=fQNjrRRG0JXmnC2bc/oI9ttAVWkiwCnUOXEY32vBUqw=; b=hxTpvHzDzRk4jCcpTyHRD1soUM
-        pDpjEkszOABmHjhyE0Xp9N8Kfpj3ZwcRfVqPmTqXCgAO2FY1gDO8Bpjsl7GNioH/PN+ibxxhNF9VM
-        vM4eB/XzOO8qnRpW0qCwg/dd/NnPQ1a+gQzgkPmoL/IRzYBzmssI6Euwk8kOBbRop0P+PLj/Qfsu/
-        6Iji+LxM484O7xq/40mk93wkoZAoJEDxQoHooXRdUaeDr1QMBS0tKeiqjKBGWpO0WdeLTZv1UjYTJ
-        PH92FDF+sUzmMtJVXbNy36MaDNKRM0pbkn4F6QN8pJxNgeQBqxr414cTIiMIJEtr7IyYqHYprJ66J
-        KnN1VW0w==;
+        bh=iin/rdSO0fH26p9LlU038nNL9Jh7a8Qf/HGkBqoFdvo=; b=XgN7w3B42kFk+jBxuEN+zaNJMv
+        LwUzSxEeX3iaiIhuMKPlDVHB7aHJrFFOAD3EkLQTAnprmAnSFMMvDH6PjOIeSB2VqiHabPCCgUXBa
+        jcaCFh23Znibn7aP8/l7vnOxSH+CkQ/jbZW0RXrHNMzkCupSyqiTzlnBRnMDg1HMoDBtJrpxvJCz5
+        3m5qfZP6+O1kSuYwYVQgAAPclyTjvTVxKercof2Ss9qqgTkQr/O+OU2pzUms+5regIjePb2EuIFbq
+        y6zIf7N2clssAUPFtxFC7p3Fh8WkGwJ8vrjwdMzE1dw5iV5lx3lv1Y2f9Dgvu54wcfRmrxz20mvMf
+        dqYmiMyA==;
 Received: from [179.182.172.34] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hYAGM-0001Ry-Av; Tue, 04 Jun 2019 14:18:06 +0000
+        id 1hYAGH-0001Rx-U6; Tue, 04 Jun 2019 14:18:01 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hYAGF-0002mF-1u; Tue, 04 Jun 2019 11:17:59 -0300
+        id 1hYAGF-0002mK-2i; Tue, 04 Jun 2019 11:17:59 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH v2 21/22] docs: isdn: remove hisax references from kernel-parameters.txt
-Date:   Tue,  4 Jun 2019 11:17:55 -0300
-Message-Id: <a02ca3104dd0613c104e0df86d76edcde802dd66.1559656538.git.mchehab+samsung@kernel.org>
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH v2 22/22] docs: Kbuild/Makefile: allow check for missing docs at build time
+Date:   Tue,  4 Jun 2019 11:17:56 -0300
+Message-Id: <a092d6340a59425593355fb456435208389bc9b0.1559656538.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1559656538.git.mchehab+samsung@kernel.org>
 References: <cover.1559656538.git.mchehab+samsung@kernel.org>
@@ -57,30 +50,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The hisax driver got removed on 85993b8c9786 ("isdn: remove hisax driver"),
-but a left-over was kept at kernel-parameters.txt.
+While this doesn't make sense for production Kernels, in order to
+avoid regressions when new documents are added, let's add a
+check target at the make file.
 
-Fixes: 85993b8c9786 ("isdn: remove hisax driver")
+For now, the only check it does is to verify if there isn't
+any documents with a broken link.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/admin-guide/kernel-parameters.txt | 3 ---
- 1 file changed, 3 deletions(-)
+ Documentation/Kconfig                | 13 +++++++++++++
+ Documentation/Makefile               |  5 +++++
+ Kconfig                              |  2 ++
+ scripts/documentation-file-ref-check |  9 +++++++++
+ 4 files changed, 29 insertions(+)
+ create mode 100644 Documentation/Kconfig
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index ab29adb55d18..ef03220fdf8f 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1388,9 +1388,6 @@
- 			Valid parameters: "on", "off"
- 			Default: "on"
+diff --git a/Documentation/Kconfig b/Documentation/Kconfig
+new file mode 100644
+index 000000000000..66046fa1c341
+--- /dev/null
++++ b/Documentation/Kconfig
+@@ -0,0 +1,13 @@
++config WARN_MISSING_DOCUMENTS
++
++	bool "Warn if there's a missing documentation file"
++	depends on COMPILE_TEST
++	help
++	   It is not uncommon that a document gets renamed.
++	   This option makes the Kernel to check for missing dependencies,
++	   warning when something is missing. Works only if the Kernel
++	   is built from a git tree.
++
++	   If unsure, select 'N'.
++
++
+diff --git a/Documentation/Makefile b/Documentation/Makefile
+index 2edd03b1dad6..89857285a024 100644
+--- a/Documentation/Makefile
++++ b/Documentation/Makefile
+@@ -4,6 +4,11 @@
  
--	hisax=		[HW,ISDN]
--			See Documentation/isdn/README.HiSax.
--
- 	hlt		[BUGS=ARM,SH]
+ subdir-y := devicetree/bindings/
  
- 	hpet=		[X86-32,HPET] option to control HPET usage
++# Check for broken documentation file references
++ifeq ($(CONFIG_WARN_MISSING_DOCUMENTS),y)
++$(shell $(srctree)/scripts/documentation-file-ref-check --warn)
++endif
++
+ # You can set these variables from the command line.
+ SPHINXBUILD   = sphinx-build
+ SPHINXOPTS    =
+diff --git a/Kconfig b/Kconfig
+index 48a80beab685..990b0c390dfc 100644
+--- a/Kconfig
++++ b/Kconfig
+@@ -30,3 +30,5 @@ source "crypto/Kconfig"
+ source "lib/Kconfig"
+ 
+ source "lib/Kconfig.debug"
++
++source "Documentation/Kconfig"
+diff --git a/scripts/documentation-file-ref-check b/scripts/documentation-file-ref-check
+index ff16db269079..440227bb55a9 100755
+--- a/scripts/documentation-file-ref-check
++++ b/scripts/documentation-file-ref-check
+@@ -22,9 +22,16 @@ $scriptname =~ s,.*/([^/]+/),$1,;
+ # Parse arguments
+ my $help = 0;
+ my $fix = 0;
++my $warn = 0;
++
++if (! -d ".git") {
++	printf "Warning: can't check if file exists, as this is not a git tree";
++	exit 0;
++}
+ 
+ GetOptions(
+ 	'fix' => \$fix,
++	'warn' => \$warn,
+ 	'h|help|usage' => \$help,
+ );
+ 
+@@ -139,6 +146,8 @@ while (<IN>) {
+ 			if (!($ref =~ m/(scripts|Kconfig|Kbuild)/)) {
+ 				$broken_ref{$ref}++;
+ 			}
++		} elsif ($warn) {
++			print STDERR "Warning: $f references a file that doesn't exist: $fulref\n";
+ 		} else {
+ 			print STDERR "$f: $fulref\n";
+ 		}
 -- 
 2.21.0
 
