@@ -2,107 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81E0034253
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 10:56:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2FAD34251
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 10:56:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbfFDIzy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 04:55:54 -0400
-Received: from foss.arm.com ([217.140.101.70]:38072 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726883AbfFDIzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 04:55:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 22552A78;
-        Tue,  4 Jun 2019 01:55:52 -0700 (PDT)
-Received: from e107533-lin.cambridge.arm.com (unknown [10.37.9.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4595D3F246;
-        Tue,  4 Jun 2019 01:55:43 -0700 (PDT)
-Date:   Tue, 4 Jun 2019 09:55:36 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     arm@kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>,
-        Russell King <linux@armlinux.org.uk>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Tony Lindgren <tony@atomide.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Mans Rullgard <mans@mansr.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org, linux-omap@vger.kernel.org,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH v2] ARM: configs: Remove useless UEVENT_HELPER_PATH
-Message-ID: <20190604085536.GA23250@e107533-lin.cambridge.arm.com>
-References: <1559636093-26005-1-git-send-email-krzk@kernel.org>
+        id S1727085AbfFDIzv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 04:55:51 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41778 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726883AbfFDIzu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 04:55:50 -0400
+Received: by mail-pg1-f194.google.com with SMTP id 83so3137004pgg.8
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 01:55:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kx5q7zCTFKw0j3QN1oqE8pZnZTP9To8Le7W99DKm2LU=;
+        b=sW4SdT2R95XIX+vXafemro3dM2V7gCnY1WEO1ChuJw8577FfF4rpJTWX3J2hPWsmiw
+         b15JXnIO87kszDkbXvD9vAIkC9jcBM/+CZdeQeK64Dili6fANlVoIrxtnTODhCmQaosz
+         ZrjP9hAEmTn5YbHldzcM7oZW+ufKWM2emARh/YhJkOag4U+xO/+uS0WFmSLd9i8MNg/e
+         WWUyHYR2R9bUxhOGAymLg4gqZMSc01/zfU9c5fUJQoQhTJXQPpwh2ABhYsBOrDJ67hEX
+         YxLddJ/KMmCzeJO8Wd67wtIPVoFogIEfgAWggKTgK12LnKB7X7XfxzQdPQxjlpFB7N4p
+         UEXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kx5q7zCTFKw0j3QN1oqE8pZnZTP9To8Le7W99DKm2LU=;
+        b=b3rYm75O8t0TFazPAmrjAVcEAAU1KlTqnN8dhA6GrDULYm1XijeJ1rAeH7zYCX8O++
+         /UqIjfZ+K1Dl0+vCu9CdZjH9gCAKisLCvUYTVLN/NiFWi63ustBgJNvhNjfzmFXbZNva
+         W4gpvAVrQeKT9zw3D5J4WDGMcj5/yUOX9bPjOeiWfT91NTaZOpMgwtncyiHisggSkJwl
+         eO68x5a169LuN7oiYlYk83B9BvCt0AI7BOdyRc1RWRBf5L+BkkcIMAZemBHHxUEC4i/5
+         Ra4IDBpc2ONhcSubRa9xV9h/jVq9J3cqZkiSiJy22qrmcii6jlBAkVCwhPLN8/+7B0xn
+         SX0w==
+X-Gm-Message-State: APjAAAUxHbexVQ0j5A9cXVYARVm+z2kE1KyEIimsClMP2RSSjj18sq1V
+        XgFF98e6R2/Z5W/x+r76JgbWbwtKeW0=
+X-Google-Smtp-Source: APXvYqxAVFtSOCZX5AfZ+92Sy7EAVfXddvBIiq0QZdyyoPKzviGrJnwpdWBBPBjPOpg361VTnR4AkA==
+X-Received: by 2002:a17:90a:bf84:: with SMTP id d4mr34814181pjs.124.1559638549661;
+        Tue, 04 Jun 2019 01:55:49 -0700 (PDT)
+Received: from localhost ([122.172.66.84])
+        by smtp.gmail.com with ESMTPSA id l23sm18420974pgh.68.2019.06.04.01.55.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Jun 2019 01:55:47 -0700 (PDT)
+Date:   Tue, 4 Jun 2019 14:25:45 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Dave Martin <Dave.Martin@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Suzuki K Pouloze <suzuki.poulose@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: arm64: Drop 'const' from argument of vq_present()
+Message-ID: <20190604085545.hsmxfqkpt2cbrhtw@vireshk-i7>
+References: <699121e5c938c6f4b7b14a7e2648fa15af590a4a.1559623368.git.viresh.kumar@linaro.org>
+ <20190604084349.prnnvjvjaeuhsmgs@mbp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1559636093-26005-1-git-send-email-krzk@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190604084349.prnnvjvjaeuhsmgs@mbp>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 04, 2019 at 10:14:53AM +0200, Krzysztof Kozlowski wrote:
-> Remove the CONFIG_UEVENT_HELPER_PATH because:
-> 1. It is disabled since commit 1be01d4a5714 ("driver: base: Disable
->    CONFIG_UEVENT_HELPER by default") as its dependency (UEVENT_HELPER) was
->    made default to 'n',
-> 2. It is not recommended (help message: "This should not be used today
->    [...] creates a high system load") and was kept only for ancient
->    userland,
-> 3. Certain userland specifically requests it to be disabled (systemd
->    README: "Legacy hotplug slows down the system and confuses udev").
+On 04-06-19, 09:43, Catalin Marinas wrote:
+> On Tue, Jun 04, 2019 at 10:13:19AM +0530, Viresh Kumar wrote:
+> > We currently get following compilation warning:
+> > 
+> > arch/arm64/kvm/guest.c: In function 'set_sve_vls':
+> > arch/arm64/kvm/guest.c:262:18: warning: passing argument 1 of 'vq_present' from incompatible pointer type
+> > arch/arm64/kvm/guest.c:212:13: note: expected 'const u64 (* const)[8]' but argument is of type 'u64 (*)[8]'
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> ---
-> 
-> Changes since v2:
-> 1. Remove unrelated files.
-> 2. Add Geert's ack.
-> ---
+> Since the vq_present() function does not modify the vqs array, I don't
+> understand why this warning. Compiler bug?
 
-[...]
+Probably yes. Also marking array argument to functions as const is a
+right thing to do, to declare that the function wouldn't change the
+array values.
 
-> diff --git a/arch/arm/configs/vexpress_defconfig b/arch/arm/configs/vexpress_defconfig
-> index d170da388389..25753552277a 100644
-> --- a/arch/arm/configs/vexpress_defconfig
-> +++ b/arch/arm/configs/vexpress_defconfig
-> @@ -45,7 +45,6 @@ CONFIG_IP_PNP_BOOTP=y
->  # CONFIG_WIRELESS is not set
->  CONFIG_NET_9P=y
->  CONFIG_NET_9P_VIRTIO=y
-> -CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
->  CONFIG_DEVTMPFS=y
->  CONFIG_DMA_CMA=y
->  CONFIG_MTD=y
+I tried a recent toolchain and this doesn't happen anymore.
 
-(for vexpress)
+Sorry for the noise.
 
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
-
---
-Regards,
-Sudeep
+-- 
+viresh
