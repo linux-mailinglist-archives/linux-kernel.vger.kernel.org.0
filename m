@@ -2,47 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD47F34B4E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 17:00:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6A4E34B3F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:59:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728033AbfFDO7h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 10:59:37 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48776 "EHLO
+        id S1727981AbfFDO7Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 10:59:16 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48888 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727287AbfFDO7L (ORCPT
+        with ESMTP id S1727900AbfFDO7O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 10:59:11 -0400
+        Tue, 4 Jun 2019 10:59:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=LmvDBFBaxX8IESNmPJ1qIhurOxBytWFJfTUlkeGLfyk=; b=PqJS5kV1PwRs
-        7fINX6Dm6j3c5xOTv/jCLhat7cloSMMtpSC/CHYAD9BWbehf76Ssgk1II4UVQWTYiqL9GA9BRLQg3
-        XC2RgjRfEswTaw6k4gCHJHVWcct1Eu0oKMH/qU9BGUSEnxaVTqjAZuPQdEqX4rfTeuofVJza0HGXY
-        GKWDw=;
-Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.sirena.org.uk)
+        List-Archive; bh=Z6xN0yGWulWekvwXXiRFtdPpBCls+d5un3yiyvhzWJA=; b=X7BkEqWKl2vx
+        eFmyzsSa+3DadoZ9AeZmxFZ05FVHdT+qL8M5kDSju8lXI3UFKy4JHg+lLuRoRdyEVDmkzf0ukwtFx
+        iYlhRxTA7rRNXC3AWCSQR75rXxTBWXW7smwMat7oBzlxZB2UFlUmUtOOpXD+1g+rC2cJh0hKWHeYH
+        5e/48=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hYAtu-0006EJ-1j; Tue, 04 Jun 2019 14:58:58 +0000
+        id 1hYAtv-0006ER-2y; Tue, 04 Jun 2019 14:58:59 +0000
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 84383440049; Tue,  4 Jun 2019 15:58:57 +0100 (BST)
+        id A0D11440049; Tue,  4 Jun 2019 15:58:58 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Marcus Cooper <codekipper@gmail.com>
-Cc:     alsa-devel@alsa-project.org, be17068@iperbole.bo.it,
-        broonie@kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        lgirdwood@gmail.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Mark Brown <broonie@kernel.org>,
-        maxime.ripard@free-electrons.com,
-        Maxime Ripard <maxime.ripard@bootlin.com>, wens@csie.org
-Subject: Applied "ASoC: sun4i-i2s: Fix sun8i tx channel offset mask" to the asoc tree
-In-Reply-To: <20190603174735.21002-2-codekipper@gmail.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
+        Hulk Robot <hulkci@huawei.com>, lgirdwood@gmail.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        Mark Brown <broonie@kernel.org>, matthias.bgg@gmail.com,
+        perex@perex.cz, shunli.wang@mediatek.com, tiwai@suse.com
+Subject: Applied "ASoC: da7219: Fix build error without CONFIG_I2C" to the asoc tree
+In-Reply-To: <20190601085144.13832-1-yuehaibing@huawei.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190604145857.84383440049@finisterre.sirena.org.uk>
-Date:   Tue,  4 Jun 2019 15:58:57 +0100 (BST)
+Message-Id: <20190604145858.A0D11440049@finisterre.sirena.org.uk>
+Date:   Tue,  4 Jun 2019 15:58:58 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -50,7 +49,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: sun4i-i2s: Fix sun8i tx channel offset mask
+   ASoC: da7219: Fix build error without CONFIG_I2C
 
 has been applied to the asoc tree at
 
@@ -75,35 +74,41 @@ to this mail.
 Thanks,
 Mark
 
-From 7e46169a5f35762f335898a75d1b8a242f2ae0f5 Mon Sep 17 00:00:00 2001
-From: Marcus Cooper <codekipper@gmail.com>
-Date: Mon, 3 Jun 2019 19:47:27 +0200
-Subject: [PATCH] ASoC: sun4i-i2s: Fix sun8i tx channel offset mask
+From cbc0fa7b6e8c6180c18fd951d28197281a526330 Mon Sep 17 00:00:00 2001
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 1 Jun 2019 16:51:44 +0800
+Subject: [PATCH] ASoC: da7219: Fix build error without CONFIG_I2C
 
-Although not causing any noticeable issues, the mask for the
-channel offset is covering too many bits.
+Fix gcc build error while CONFIG_I2C is not set
 
-Signed-off-by: Marcus Cooper <codekipper@gmail.com>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+sound/soc/codecs/da7219.c:2640:1: warning: data definition has no type or storage class
+ module_i2c_driver(da7219_i2c_driver);
+ ^~~~~~~~~~~~~~~~~
+sound/soc/codecs/da7219.c:2640:1: error: type defaults to int in declaration of module_i2c_driver [-Werror=implicit-int]
+sound/soc/codecs/da7219.c:2640:1: warning: parameter names (without types) in function declaration
+sound/soc/codecs/da7219.c:2629:26: warning: da7219_i2c_driver defined but not used [-Wunused-variable]
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 6d817c0e9fd7 ("ASoC: codecs: Add da7219 codec driver")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sunxi/sun4i-i2s.c | 2 +-
+ sound/soc/mediatek/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-index d5ec1a20499d..8162e107e50b 100644
---- a/sound/soc/sunxi/sun4i-i2s.c
-+++ b/sound/soc/sunxi/sun4i-i2s.c
-@@ -110,7 +110,7 @@
+diff --git a/sound/soc/mediatek/Kconfig b/sound/soc/mediatek/Kconfig
+index f70b7109f2b6..59980df5add6 100644
+--- a/sound/soc/mediatek/Kconfig
++++ b/sound/soc/mediatek/Kconfig
+@@ -132,7 +132,7 @@ config SND_SOC_MT8183_MT6358_TS3A227E_MAX98357A
  
- #define SUN8I_I2S_TX_CHAN_MAP_REG	0x44
- #define SUN8I_I2S_TX_CHAN_SEL_REG	0x34
--#define SUN8I_I2S_TX_CHAN_OFFSET_MASK		GENMASK(13, 11)
-+#define SUN8I_I2S_TX_CHAN_OFFSET_MASK		GENMASK(13, 12)
- #define SUN8I_I2S_TX_CHAN_OFFSET(offset)	(offset << 12)
- #define SUN8I_I2S_TX_CHAN_EN_MASK		GENMASK(11, 4)
- #define SUN8I_I2S_TX_CHAN_EN(num_chan)		(((1 << num_chan) - 1) << 4)
+ config SND_SOC_MT8183_DA7219_MAX98357A
+ 	tristate "ASoC Audio driver for MT8183 with DA7219 MAX98357A codec"
+-	depends on SND_SOC_MT8183
++	depends on SND_SOC_MT8183 && I2C
+ 	select SND_SOC_MT6358
+ 	select SND_SOC_MAX98357A
+ 	select SND_SOC_DA7219
 -- 
 2.20.1
 
