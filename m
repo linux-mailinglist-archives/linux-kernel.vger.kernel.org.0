@@ -2,82 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18DB434738
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:46:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0DC734740
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:49:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727856AbfFDMq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 08:46:27 -0400
-Received: from www62.your-server.de ([213.133.104.62]:50958 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727709AbfFDMq1 (ORCPT
+        id S1727785AbfFDMtB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 08:49:01 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:38774 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726994AbfFDMtB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 08:46:27 -0400
-Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1hY8pa-00046h-T5; Tue, 04 Jun 2019 14:46:22 +0200
-Received: from [178.197.249.21] (helo=linux.home)
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1hY8pa-000BRN-Ma; Tue, 04 Jun 2019 14:46:22 +0200
-Subject: Re: [PATCH] net: compat: fix msg_controllen overflow in
- scm_detach_fds_compat()
-To:     Young Xiao <92siuyang@gmail.com>
-References: <1559651505-18137-1-git-send-email-92siuyang@gmail.com>
-Cc:     davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, eric.dumazet@gmail.com
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <a4887243-9018-9926-0cbe-8c1ae3b7769e@iogearbox.net>
-Date:   Tue, 4 Jun 2019 14:46:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Tue, 4 Jun 2019 08:49:01 -0400
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id x54CmnVr002530;
+        Tue, 4 Jun 2019 21:48:50 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x54CmnVr002530
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1559652530;
+        bh=H21/n5ZeA1Sd3QqC5U97OCEIy4trQ6PmVFi/VT4QN+4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=HYwodEMul5OlQzmwKhEX6b6C1LVY4TFC427YWZnAh8FpKOLhbGx3nkXMth/GG8vu2
+         /ge7aM6G/sHybQ+pNIcbuI8FxmcgcwZpYWkWGaYIUJZ5DwYtxgReCPxBybOnfwhUMd
+         3spDI9xYERz6OQKv8WTZQiXN7llNojzp6+LdN2w2XgwiOIe519QIgyi/IvNIGXNJOO
+         OE84YjAYKvwfo6fEVcNQ33COgUHWK6EsY/UI7PdO9kNSx2E1YlSuqnsGX5kvuzmGzM
+         1whvXLCXmyCN0NJcZeWukuJEr5LjgNF4jQ1HDzP8BJHPKCmUoCd5Irc+i+8DBEhKbB
+         zBsK14Sf9hL1g==
+X-Nifty-SrcIP: [209.85.217.42]
+Received: by mail-vs1-f42.google.com with SMTP id c24so13398068vsp.7;
+        Tue, 04 Jun 2019 05:48:49 -0700 (PDT)
+X-Gm-Message-State: APjAAAXxL+TITY0bnE3OumKbASPm/GvMWMibydToHEFS6AiEJQjR6O2l
+        nQ9qOQdShazob2DID7T10qqFc0L07V9YcaiWn0o=
+X-Google-Smtp-Source: APXvYqyl1i9lHN0jNv7AJ7DU8zIFIGmuYR+L/Yq9Azwv8O1F0W+l+BJxWSTbx748qLtCYkM7STINmYgRtNldie1Bjvc=
+X-Received: by 2002:a67:b109:: with SMTP id w9mr5031632vsl.155.1559652528996;
+ Tue, 04 Jun 2019 05:48:48 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1559651505-18137-1-git-send-email-92siuyang@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.3/25470/Tue Jun  4 10:01:16 2019)
+References: <20190604111334.22182-1-yamada.masahiro@socionext.com>
+ <8cf48e20064eabdfe150795365e6ca6f36032e9f.camel@perches.com> <CAK8P3a1oDfNF_T+NCoPsXkJAY2x4_uCWSwrDXHi7dDSaMqfnfA@mail.gmail.com>
+In-Reply-To: <CAK8P3a1oDfNF_T+NCoPsXkJAY2x4_uCWSwrDXHi7dDSaMqfnfA@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 4 Jun 2019 21:48:12 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS0Ph2Z6x0-UPSkJUC31NvPi09BmFrve+YJcXMrop-BGA@mail.gmail.com>
+Message-ID: <CAK7LNAS0Ph2Z6x0-UPSkJUC31NvPi09BmFrve+YJcXMrop-BGA@mail.gmail.com>
+Subject: Re: [PATCH] media: do not use C++ style comments in uapi headers
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Joe Perches <joe@perches.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/04/2019 02:31 PM, Young Xiao wrote:
-> There is a missing check between kmsg->msg_controllen and cmlen,
-> which can possibly lead to overflow.
-> 
-> This bug is similar to vulnerability that was fixed in commit 6900317f5eff
-> ("net, scm: fix PaX detected msg_controllen overflow in scm_detach_fds").
+On Tue, Jun 4, 2019 at 8:55 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Tue, Jun 4, 2019 at 1:23 PM Joe Perches <joe@perches.com> wrote:
+> >
+> > On Tue, 2019-06-04 at 20:13 +0900, Masahiro Yamada wrote:
+> > > On the other hand, uapi headers are written in more strict C, where
+> > > the C++ comment style is forbidden.
+> >
+> > Is this a real problem for any toolchain?
+>
+> There is likely some code that is built with -Wpedandic -Werror --std=c89
+> or similar. Since glibc allows this combination for its own headers, it seems
+> best to also allow it in kernel headers that may be included by libc headers
+> or by applications, at least where it does not hurt.
+>
+> Realistically though, we probably assume c99 or gnu89 in user space
+> headers anyway, since there is no 'long long' in earlier standards.
+>
+>        Arnd
 
-Back then I mentioned in commit 6900317f5eff:
+In fact, I detected this issue by the following patch:
+https://patchwork.kernel.org/patch/10974669/
 
-    In case of MSG_CMSG_COMPAT (scm_detach_fds_compat()), I haven't seen an
-    issue in my tests as alignment seems always on 4 byte boundary. Same
-    should be in case of native 32 bit, where we end up with 4 byte boundaries
-    as well.
+When I worked on it, I wondered which
+c-dialect flags should be used.
 
-Do you have an actual reproducer or is it based on code inspection?
+This code:
 
-> Signed-off-by: Young Xiao <92siuyang@gmail.com>
-> ---
->  net/compat.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/net/compat.c b/net/compat.c
-> index a031bd3..8e74dfb 100644
-> --- a/net/compat.c
-> +++ b/net/compat.c
-> @@ -301,6 +301,8 @@ void scm_detach_fds_compat(struct msghdr *kmsg, struct scm_cookie *scm)
->  			err = put_user(cmlen, &cm->cmsg_len);
->  		if (!err) {
->  			cmlen = CMSG_COMPAT_SPACE(i * sizeof(int));
-> +			if (kmsg->msg_controllen < cmlen)
-> +				cmlen = kmsg->msg_controllen;
->  			kmsg->msg_control += cmlen;
->  			kmsg->msg_controllen -= cmlen;
->  		}
-> 
+> # Unlike the kernel space, uapi headers are written in more strict C.
+> #  - Forbid C++ style comments
+> #  - Use '__inline', '__asm__' instead of 'inline', 'asm'
+> #
+> # -std=c90 (equivalent to -ansi) catches the violation of those.
+> # We cannot go as far as adding -Wpedantic since it emits too many warnings.
+> #
+> # REVISIT: re-consider the proper set of compiler flags for uapi compile-test.
+>
+> UAPI_CFLAGS := -std=c90 -Wpedantic -Wall -Werror=implicit-function-declaration
 
+Even "-std=c99 -Wpedantic" emits lots of warnings.
+
+
+
+I noticed one more thing.
+
+There are two ways to define fixed-width type.
+
+[1] #include <linux/types.h>, __u8, __u16, __u32, __u64
+
+      vs
+
+[2] #include <stdint.h>, uint8_t, uint16_t, uint32_t, uint64_t
+
+
+Both are used in UAPI headers.
+IIRC, <stdint.h> was standardized by C99.
+
+So, we have already relied on C99 in user-space too.
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
