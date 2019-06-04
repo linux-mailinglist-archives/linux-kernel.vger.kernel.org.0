@@ -2,113 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3BA93452B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 13:15:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C3A134530
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 13:15:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727647AbfFDLPY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 07:15:24 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40863 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727576AbfFDLPT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 07:15:19 -0400
-Received: by mail-wm1-f66.google.com with SMTP id u16so9038646wmc.5;
-        Tue, 04 Jun 2019 04:15:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zPFzmHYxVWGfcjIi5c7v3LhvCIeBieSiSPntUBB3SC4=;
-        b=GY3nRNDL17ndRzjTCiW200nOhrbaIG+aE5U/UpONmeE1DwSQ/rgB+C76POxlEqOcPx
-         W7RcA7H1Khz5dNylPal1q9VCNjGP5sAtiuUJim9oQe7hbNSImWIM6F5IwN8HzsnTXOGW
-         F4A814XXhdD/uEaAYDdBkifOXamgRQLS6ekaeOTHvmiomE4imSsEGik4BxVL6FcuC2r+
-         vLrEEyhGyDUNCK2HGinM6Lb75LQz2RW9Q5QrYN+1IPO8mUUwFycs7VXhOkrXcVcUpSPP
-         7m1Yy/N3YPzw1lSP7GqQAvlu7aa6xzxtRHUvaqyWVPH09u41RIgrfZuuIZlp6+fQ+ZSv
-         0f4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zPFzmHYxVWGfcjIi5c7v3LhvCIeBieSiSPntUBB3SC4=;
-        b=CVGFqDagqTY3Mo03BiHQcsI2DaaINKtykl7RZRfmSMoyzIncGqvYkqEW5HCYjc3SFD
-         Vio/ofaAT9HgPCaJG2s8h+jMe2iVZz2ZlzO5oxCSMXgFSeYRvF0cg87Ffg446imE9Jx8
-         JmlJVsZZ6SE4JVpTbUunR/WxJ2kFi8V691AVAI0j69DHcj2xrpFIdnH5k5CiRezCsvpN
-         csG1uO8AmnU2sOBWgnoemfABNxiZ1bpA0H6Pj3hu7DVG+m+Q46hvk1bN5AkenbJiKdo6
-         uUrnhCdeXHZqBAM/F6FaK2Qr3gSc+Ie3xlCMiO4puvPt/n9Aa/Y9j9BYJc8IsRtIhorB
-         DhSw==
-X-Gm-Message-State: APjAAAXltt/1Ac31OZzrHE515ue3FfHVsMOYQXm5BwNjx1I0sBhfaiCC
-        sl0WH3VA3ET7d+Z7zvz5ynY=
-X-Google-Smtp-Source: APXvYqxkiIujyS2MrCWkC3IBRS9ZRPIbwCIDm4A+1MI6Xw/H6pZf2eGYyVcAFLpqNXe/6SRNQe2lBA==
-X-Received: by 2002:a1c:40c6:: with SMTP id n189mr17402289wma.118.1559646916831;
-        Tue, 04 Jun 2019 04:15:16 -0700 (PDT)
-Received: from localhost (p2E5BEF36.dip0.t-ipconnect.de. [46.91.239.54])
-        by smtp.gmail.com with ESMTPSA id b69sm13401811wme.44.2019.06.04.04.15.15
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 04 Jun 2019 04:15:16 -0700 (PDT)
-Date:   Tue, 4 Jun 2019 13:15:15 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 10/16] PM / devfreq: tegra: Mark ACTMON's governor as
- immutable
-Message-ID: <20190604111515.GJ16519@ulmo>
-References: <20190501233815.32643-1-digetx@gmail.com>
- <20190501233815.32643-11-digetx@gmail.com>
+        id S1727696AbfFDLPm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 07:15:42 -0400
+Received: from mga11.intel.com ([192.55.52.93]:64072 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727323AbfFDLPl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 07:15:41 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jun 2019 04:15:40 -0700
+X-ExtLoop1: 1
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.189])
+  by fmsmga001.fm.intel.com with ESMTP; 04 Jun 2019 04:15:33 -0700
+Date:   Tue, 4 Jun 2019 14:15:33 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-sgx@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, Serge Ayoun <serge.ayoun@intel.com>,
+        Shay Katz-zamir <shay.katz-zamir@intel.com>,
+        Haitao Huang <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kai Svahn <kai.svahn@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Kai Huang <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        William Roberts <william.c.roberts@intel.com>,
+        Philip Tricca <philip.b.tricca@intel.com>
+Subject: Re: [RFC PATCH 0/9] security: x86/sgx: SGX vs. LSM
+Message-ID: <20190604111533.GA15393@linux.intel.com>
+References: <20190531233159.30992-1-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="x0KprKst+ZOYEj2z"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190501233815.32643-11-digetx@gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190531233159.30992-1-sean.j.christopherson@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, May 31, 2019 at 04:31:50PM -0700, Sean Christopherson wrote:
+> This series is the result of a rather absurd amount of discussion over
+> how to get SGX to play nice with LSM policies, without having to resort
+> to evil shenanigans or put undue burden on userspace.  The discussion
+> definitely wandered into completely insane territory at times, but I
+> think/hope we ended up with something reasonable.
 
---x0KprKst+ZOYEj2z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+By definition this is a broken series because it does not apply to
+mainline. Even RFC series should at least apply. Would be better idea to
+discuss design ideas and use snippets instead. Now you have to take
+original v20 and apply to these patches to evaluate anything.
 
-On Thu, May 02, 2019 at 02:38:09AM +0300, Dmitry Osipenko wrote:
-> The ACTMON's governor supports only the Tegra's devfreq device and there
-> is no need to use any other governor, hence let's mark Tegra governor as
-> immutable to permanently stick it with Tegra's devfreq device.
->=20
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/devfreq/Kconfig         | 1 -
->  drivers/devfreq/tegra-devfreq.c | 1 +
->  2 files changed, 1 insertion(+), 1 deletion(-)
+> The basic gist of the approach is to require userspace to declare what
+> protections are maximally allowed for any given page, e.g. add a flags
+> field for loading enclave pages that takes ALLOW_{READ,WRITE,EXEC}.  LSMs
+> can then adjust the allowed protections, e.g. clear ALLOW_EXEC to prevent
+> ever mapping the page with PROT_EXEC.  SGX enforces the allowed perms
+> via a new mprotect() vm_ops hook, e.g. like regular mprotect() uses
+> MAY_{READ,WRITE,EXEC}.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+mprotect() does not use MAY_{READ,WRITE,EXEC} constants. It uses
+VM_MAY{READ,WRITE,EXEC,SHARED} constants.
 
---x0KprKst+ZOYEj2z
-Content-Type: application/pgp-signature; name="signature.asc"
+What are ALLOW_{READ,WRITE,EXEC} and how they are used? What does the
+hook do and why it is in vm_ops and not in file_operations? Are they
+arguments to the ioctl or internal variables that are set based on
+SECINFO?
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlz2UsMACgkQ3SOs138+
-s6FeHw/8DpennipWHJZs16Spe8PMpTRqUEUMRe1bA6x36n7C9dP3gYROw09b5ySi
-a1Eea+j8bPt59BB3FRWjQbGVkiR4ckSWzbcfwNtAjk3ISpte8YzzQppnbgMaOkmt
-SgAIhvFKKcC27260sSn0VSpWjU4I4ruXUO5Y52YcRrNdxBodObcV1AcTNrlZbrdd
-S9rK9pQT7WAJfMjRAEeAbWQ5Vqg8PS4jvxPHygqUoZxmh3ZVTJLPsiASYfRt83TQ
-7ynFRYWqi6JKyMw/S0dRUSKG38vZdeAQyeiPMdh3so31GItLD5Vwy3Hfpbrkiqg1
-wFveOrtgQIonYmk487eWDu5EgqQUnlpDclU0XL5t0v0Y0lBpNm58G58mxptelK0I
-cf8IwAtwucgEltpfFpxuOHOZfaKfS199gqlYAUlUVtZcrx/PDf1FNRDFDhAj5MZY
-fnXevxW9x4nHx8DBoEsUufIfSbOIFUgff9I1VrqprtHY7X5f+t+S/5dT8oc+r8yF
-03J7+unNywVR9y5I9tQMbgpnGn3Sb/vklqjU3Yik00cPyqaZG9khBftCJ4EpOe2W
-c2rAosrAR19aiSoCNJN+Ttrwa8xvSXIj957e8+uocM0QNN9K/vU8HanC9iAFNCp2
-Ea3NL3AhomKLeGF/gIEUX6FxFlWVqPZuISutPTHNujZQafevTXM=
-=2pq8
------END PGP SIGNATURE-----
-
---x0KprKst+ZOYEj2z--
+/Jarkko
