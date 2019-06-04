@@ -2,81 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52D1135304
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 01:18:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 556CE35307
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 01:22:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726464AbfFDXSx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 19:18:53 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:41718 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbfFDXSx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 19:18:53 -0400
-Received: by mail-ua1-f66.google.com with SMTP id n2so8469502uad.8
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 16:18:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=tbweoSIUdu4pNtpHxAKL7cCr+H2zEFnfdOiAwOJTnlk=;
-        b=bS2L4Lno3vWNWaMFphG4NfBZ0F42O3AAzJYq7ugpl4JMZyjf0nrL9duUkWpZ6GCa+t
-         l+goOGF/Oug3n0x54D9gEKvBlHJbe68rEThCzUnAzfJdETHk+yF5GffMvxaMBoml3EmZ
-         J+iVOvlvrhR6P3tQpcbD24ysd5qDrdKWk1QW3QLK79BXSUHkXaxPrnvbA2we62gt4UM2
-         JplDJ/Z9g0/dzp2ejD4V2MlnnzJNlnONtb3rOieN2v23tqV80ruJjQJa0fa1fHohjQaB
-         2rjlNFXYaPCdpmuvbclLcVml4EmbcO1pJyaAvVw5acF8DlrV49wfo7c0jUUDqsLsYqiF
-         aTOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to:content-transfer-encoding;
-        bh=tbweoSIUdu4pNtpHxAKL7cCr+H2zEFnfdOiAwOJTnlk=;
-        b=Etjk+uj2+qr+2bxO5OQaU9A4ToHUBkEGdUsij+f5fUszzedqY+X5PFVGJOFS9fhjMl
-         oJ3dVKKdYDhXHDDoHklw/XG6A3INp8FEk0B59L3K6bHPpqdYtPy8XTFzv/LVwm1Z0RbT
-         9u+2e3c86+R71IqrKNtJQgPVp6I545+WbU/DMBTGd0DZ3jb5YkzsUuZ5KJ6dunLBJNkY
-         FQPrkX01VvZJBS5hHZcyJ0vEM5uEMKIRGcKi4YUPMf2+VF+DOhWRgG3YDff6lqEcYxKq
-         /IhROBC/ZiixIYXeg1QD+wJY7VD0/F8ZuA6W3VKk1SK7CHyPx4s/u1mtMZxAwr9VHiWX
-         ZSEA==
-X-Gm-Message-State: APjAAAUUxe2ROazuOvb6mQezgZVZpQWG62BtSi4nop0/JPbg/uV6SNL4
-        OMaA4EZvk5vgQzjkVUvtfh9Pvt7VoAQM8CvoLgA=
-X-Google-Smtp-Source: APXvYqxze5Eb/h/0d60FKLUkhk5WV2swI68chRUUP0UIiBLUF4OmnN6EDsZuneUgC5nnLMgbGx06oiOEvJ7Tbu8ttlE=
-X-Received: by 2002:ab0:7384:: with SMTP id l4mr8496253uap.8.1559690332243;
- Tue, 04 Jun 2019 16:18:52 -0700 (PDT)
+        id S1726537AbfFDXWQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 19:22:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60362 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726179AbfFDXWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 19:22:15 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 190FF20851;
+        Tue,  4 Jun 2019 23:22:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559690535;
+        bh=gy8a2WMB91m89Hl9bICWGdCu1b9GfLzb2vz386JCyrM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=GALRFBsnBC5owwxBrO4/6DoY0iAtcCugjMe4aLF+CXi1PbpSFcNnrdSC/6waXqrSS
+         /QrzVUq0Xx6QGRam3VGI2aPPeZVRCkAjFwY+jb0eqGo0/w1Tf76gGHCO4RsIaxJBlf
+         H7xS5MJiaDyCAcOnkTE5OInmHmkIgTv52L4R/EQ4=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.1 01/60] x86/uaccess, kcov: Disable stack protector
+Date:   Tue,  4 Jun 2019 19:21:11 -0400
+Message-Id: <20190604232212.6753-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Received: by 2002:ab0:20c2:0:0:0:0:0 with HTTP; Tue, 4 Jun 2019 16:18:51 -0700 (PDT)
-From:   Ayesha Al-Gaddafi <aishagaddafimd@gmail.com>
-Date:   Tue, 4 Jun 2019 23:18:51 +0000
-X-Google-Sender-Auth: nLBWiysdqUCw-00d9RglBCKq_3c
-Message-ID: <CAAVrDud18F-Uk4bR2MpN6ET2hh9PSivCuZSat-_hVtxaqmZXLw@mail.gmail.com>
-Subject: I need your Investment assistant,,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend.
+From: Peter Zijlstra <peterz@infradead.org>
 
- It=E2=80=99s my pleasure to contact you through this media as i am in need=
- of
-your urgent assistance. My names are Mrs. Ayesha Al-Qaddafi a single
-Mother and a Widow with three Children. I am the only biological
-Daughter of late Libyan President (Late Colonel Muammar Al-Qaddafi).
+[ Upstream commit 40ea97290b08be2e038b31cbb33097d1145e8169 ]
 
-I have an investment funds worth Twenty Eight Million Four Hundred
-Thousand United State Dollars ($28.400.000.00) and i need an
-investment Manager/Partner and because of the asylum status i will
-authorize you the ownership of the funds, however, I am interested in
-you for the investment project assistance in your country, may be from
-there, we can build a business relationship in the near future.
+New tooling noticed this mishap:
 
-I am willing to negotiate investment/business profit sharing ratio
-with you base on the future investment earning profits. If you are
-willing to handle this project kindly reply urgent if only you are
-interested in this transaction to enable me provide you more
-information about the investment funds. Your Urgent Reply Will Be
-Appreciated.
+  kernel/kcov.o: warning: objtool: write_comp_data()+0x138: call to __stack_chk_fail() with UACCESS enabled
+  kernel/kcov.o: warning: objtool: __sanitizer_cov_trace_pc()+0xd9: call to __stack_chk_fail() with UACCESS enabled
 
-Best Regards
-Mrs. Ayesha Al-Qaddafi.
+All the other instrumentation (KASAN,UBSAN) also have stack protector
+disabled.
+
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ kernel/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/kernel/Makefile b/kernel/Makefile
+index 6c57e78817da..62471e75a2b0 100644
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@ -30,6 +30,7 @@ KCOV_INSTRUMENT_extable.o := n
+ # Don't self-instrument.
+ KCOV_INSTRUMENT_kcov.o := n
+ KASAN_SANITIZE_kcov.o := n
++CFLAGS_kcov.o := $(call cc-option, -fno-conserve-stack -fno-stack-protector)
+ 
+ # cond_syscall is currently not LTO compatible
+ CFLAGS_sys_ni.o = $(DISABLE_LTO)
+-- 
+2.20.1
+
