@@ -2,271 +2,290 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29CE334B68
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 17:03:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07A4534ADE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:48:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727903AbfFDPDx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 11:03:53 -0400
-Received: from mga06.intel.com ([134.134.136.31]:64497 "EHLO mga06.intel.com"
+        id S1727943AbfFDOsD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 10:48:03 -0400
+Received: from vps.xff.cz ([195.181.215.36]:35054 "EHLO vps.xff.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727586AbfFDPDw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 11:03:52 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jun 2019 08:03:51 -0700
-X-ExtLoop1: 1
-Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
-  by fmsmga004.fm.intel.com with ESMTP; 04 Jun 2019 08:03:49 -0700
-Date:   Tue, 4 Jun 2019 22:47:28 +0800
-From:   Wu Hao <hao.wu@intel.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Luwei Kang <luwei.kang@intel.com>,
-        Xu Yilun <yilun.xu@intel.com>
-Subject: Re: [PATCH v3 16/16] fpga: dfl: fme: add performance reporting
- support
-Message-ID: <20190604144728.GA18051@hao-dev>
-References: <1558934546-12171-1-git-send-email-hao.wu@intel.com>
- <1558934546-12171-17-git-send-email-hao.wu@intel.com>
- <20190530190305.GA2909@kroah.com>
- <20190601091147.GB3743@hao-dev>
- <20190601094219.GA1998@kroah.com>
+        id S1727545AbfFDOsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 10:48:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
+        t=1559659678; bh=m7FYiw/lRi8vxPdtVV/tO0Y5qL275wWEx2HUX5agu3M=;
+        h=Date:From:To:Subject:References:In-Reply-To:From;
+        b=NN4aIj1cwcxEh5mltj87MvcnHB3JrYZTga8oxK2lH8Kq1c0J6kYq9QdROaaTFvhnS
+         TZoH3knREI6iaWll87BLLt3ms9LWZdZLtxsWv4MXQj/CJbi14N8Swx2E8/4dTtWil+
+         8oJhIxMN7qnZbhezw4k5NU9raQ141//OBr9EJNMs=
+Date:   Tue, 4 Jun 2019 16:47:57 +0200
+From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
+To:     =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-media@vger.kernel.org
+Subject: Re: [linux-sunxi] Re: [PATCH v3 10/12] arm64: dts: allwinner: h6:
+ Add IR receiver node
+Message-ID: <20190604144757.xvggmj6asyf44vuc@core.my.home>
+Mail-Followup-To: =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-media@vger.kernel.org
+References: <20190528161440.27172-1-peron.clem@gmail.com>
+ <20190528161440.27172-11-peron.clem@gmail.com>
+ <20190530145550.amalnxmx7kpokykv@core.my.home>
+ <CAJiuCce7nHSktVsDKcR8GLRpD3WrN5yP3Nb_Hbu_Q9NjUQbSMw@mail.gmail.com>
+ <20190531124630.q2guo54kjfzr7rkn@core.my.home>
+ <CAJiuCcdMftAjCwk2_naE9VBGGqS=OY9xcqv6+5pDX2Z8O=L28w@mail.gmail.com>
+ <20190604123355.m47ufmhtzuzfvmp7@core.my.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190601094219.GA1998@kroah.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190604123355.m47ufmhtzuzfvmp7@core.my.home>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 01, 2019 at 02:42:19AM -0700, Greg KH wrote:
-> On Sat, Jun 01, 2019 at 05:11:47PM +0800, Wu Hao wrote:
-> > On Thu, May 30, 2019 at 12:03:05PM -0700, Greg KH wrote:
-> > > On Mon, May 27, 2019 at 01:22:26PM +0800, Wu Hao wrote:
-> > > > --- /dev/null
-> > > > +++ b/drivers/fpga/dfl-fme-perf.c
-> > > > @@ -0,0 +1,962 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0
-> > > > +/*
-> > > > + * Driver for FPGA Management Engine (FME) Global Performance Reporting
-> > > > + *
-> > > > + * Copyright 2019 Intel Corporation, Inc.
-> > > > + *
-> > > > + * Authors:
-> > > > + *   Kang Luwei <luwei.kang@intel.com>
-> > > > + *   Xiao Guangrong <guangrong.xiao@linux.intel.com>
-> > > > + *   Wu Hao <hao.wu@intel.com>
-> > > > + *   Joseph Grecco <joe.grecco@intel.com>
-> > > > + *   Enno Luebbers <enno.luebbers@intel.com>
-> > > > + *   Tim Whisonant <tim.whisonant@intel.com>
-> > > > + *   Ananda Ravuri <ananda.ravuri@intel.com>
-> > > > + *   Mitchel, Henry <henry.mitchel@intel.com>
-> > > > + */
-> > > > +
-> > > > +#include "dfl.h"
-> > > > +#include "dfl-fme.h"
-> > > > +
-> > > > +/*
-> > > > + * Performance Counter Registers for Cache.
-> > > > + *
-> > > > + * Cache Events are listed below as CACHE_EVNT_*.
-> > > > + */
-> > > > +#define CACHE_CTRL			0x8
-> > > > +#define CACHE_RESET_CNTR		BIT_ULL(0)
-> > > > +#define CACHE_FREEZE_CNTR		BIT_ULL(8)
-> > > > +#define CACHE_CTRL_EVNT			GENMASK_ULL(19, 16)
-> > > > +#define CACHE_EVNT_RD_HIT		0x0
-> > > > +#define CACHE_EVNT_WR_HIT		0x1
-> > > > +#define CACHE_EVNT_RD_MISS		0x2
-> > > > +#define CACHE_EVNT_WR_MISS		0x3
-> > > > +#define CACHE_EVNT_RSVD			0x4
-> > > > +#define CACHE_EVNT_HOLD_REQ		0x5
-> > > > +#define CACHE_EVNT_DATA_WR_PORT_CONTEN	0x6
-> > > > +#define CACHE_EVNT_TAG_WR_PORT_CONTEN	0x7
-> > > > +#define CACHE_EVNT_TX_REQ_STALL		0x8
-> > > > +#define CACHE_EVNT_RX_REQ_STALL		0x9
-> > > > +#define CACHE_EVNT_EVICTIONS		0xa
-> > > > +#define CACHE_EVNT_MAX			CACHE_EVNT_EVICTIONS
-> > > > +#define CACHE_CHANNEL_SEL		BIT_ULL(20)
-> > > > +#define CACHE_CHANNEL_RD		0
-> > > > +#define CACHE_CHANNEL_WR		1
-> > > > +#define CACHE_CHANNEL_MAX		2
-> > > > +#define CACHE_CNTR0			0x10
-> > > > +#define CACHE_CNTR1			0x18
-> > > > +#define CACHE_CNTR_EVNT_CNTR		GENMASK_ULL(47, 0)
-> > > > +#define CACHE_CNTR_EVNT			GENMASK_ULL(63, 60)
-> > > > +
-> > > > +/*
-> > > > + * Performance Counter Registers for Fabric.
-> > > > + *
-> > > > + * Fabric Events are listed below as FAB_EVNT_*
-> > > > + */
-> > > > +#define FAB_CTRL			0x20
-> > > > +#define FAB_RESET_CNTR			BIT_ULL(0)
-> > > > +#define FAB_FREEZE_CNTR			BIT_ULL(8)
-> > > > +#define FAB_CTRL_EVNT			GENMASK_ULL(19, 16)
-> > > > +#define FAB_EVNT_PCIE0_RD		0x0
-> > > > +#define FAB_EVNT_PCIE0_WR		0x1
-> > > > +#define FAB_EVNT_PCIE1_RD		0x2
-> > > > +#define FAB_EVNT_PCIE1_WR		0x3
-> > > > +#define FAB_EVNT_UPI_RD			0x4
-> > > > +#define FAB_EVNT_UPI_WR			0x5
-> > > > +#define FAB_EVNT_MMIO_RD		0x6
-> > > > +#define FAB_EVNT_MMIO_WR		0x7
-> > > > +#define FAB_EVNT_MAX			FAB_EVNT_MMIO_WR
-> > > > +#define FAB_PORT_ID			GENMASK_ULL(21, 20)
-> > > > +#define FAB_PORT_FILTER			BIT_ULL(23)
-> > > > +#define FAB_PORT_FILTER_DISABLE		0
-> > > > +#define FAB_PORT_FILTER_ENABLE		1
-> > > > +#define FAB_CNTR			0x28
-> > > > +#define FAB_CNTR_EVNT_CNTR		GENMASK_ULL(59, 0)
-> > > > +#define FAB_CNTR_EVNT			GENMASK_ULL(63, 60)
-> > > > +
-> > > > +/*
-> > > > + * Performance Counter Registers for Clock.
-> > > > + *
-> > > > + * Clock Counter can't be reset or frozen by SW.
-> > > > + */
-> > > > +#define CLK_CNTR			0x30
-> > > > +
-> > > > +/*
-> > > > + * Performance Counter Registers for IOMMU / VT-D.
-> > > > + *
-> > > > + * VT-D Events are listed below as VTD_EVNT_* and VTD_SIP_EVNT_*
-> > > > + */
-> > > > +#define VTD_CTRL			0x38
-> > > > +#define VTD_RESET_CNTR			BIT_ULL(0)
-> > > > +#define VTD_FREEZE_CNTR			BIT_ULL(8)
-> > > > +#define VTD_CTRL_EVNT			GENMASK_ULL(19, 16)
-> > > > +#define VTD_EVNT_AFU_MEM_RD_TRANS	0x0
-> > > > +#define VTD_EVNT_AFU_MEM_WR_TRANS	0x1
-> > > > +#define VTD_EVNT_AFU_DEVTLB_RD_HIT	0x2
-> > > > +#define VTD_EVNT_AFU_DEVTLB_WR_HIT	0x3
-> > > > +#define VTD_EVNT_DEVTLB_4K_FILL		0x4
-> > > > +#define VTD_EVNT_DEVTLB_2M_FILL		0x5
-> > > > +#define VTD_EVNT_DEVTLB_1G_FILL		0x6
-> > > > +#define VTD_EVNT_MAX			VTD_EVNT_DEVTLB_1G_FILL
-> > > > +#define VTD_CNTR			0x40
-> > > > +#define VTD_CNTR_EVNT			GENMASK_ULL(63, 60)
-> > > > +#define VTD_CNTR_EVNT_CNTR		GENMASK_ULL(47, 0)
-> > > > +#define VTD_SIP_CTRL			0x48
-> > > > +#define VTD_SIP_RESET_CNTR		BIT_ULL(0)
-> > > > +#define VTD_SIP_FREEZE_CNTR		BIT_ULL(8)
-> > > > +#define VTD_SIP_CTRL_EVNT		GENMASK_ULL(19, 16)
-> > > > +#define VTD_SIP_EVNT_IOTLB_4K_HIT	0x0
-> > > > +#define VTD_SIP_EVNT_IOTLB_2M_HIT	0x1
-> > > > +#define VTD_SIP_EVNT_IOTLB_1G_HIT	0x2
-> > > > +#define VTD_SIP_EVNT_SLPWC_L3_HIT	0x3
-> > > > +#define VTD_SIP_EVNT_SLPWC_L4_HIT	0x4
-> > > > +#define VTD_SIP_EVNT_RCC_HIT		0x5
-> > > > +#define VTD_SIP_EVNT_IOTLB_4K_MISS	0x6
-> > > > +#define VTD_SIP_EVNT_IOTLB_2M_MISS	0x7
-> > > > +#define VTD_SIP_EVNT_IOTLB_1G_MISS	0x8
-> > > > +#define VTD_SIP_EVNT_SLPWC_L3_MISS	0x9
-> > > > +#define VTD_SIP_EVNT_SLPWC_L4_MISS	0xa
-> > > > +#define VTD_SIP_EVNT_RCC_MISS		0xb
-> > > > +#define VTD_SIP_EVNT_MAX		VTD_SIP_EVNT_RCC_MISS
-> > > > +#define VTD_SIP_CNTR			0X50
-> > > > +#define VTD_SIP_CNTR_EVNT		GENMASK_ULL(63, 60)
-> > > > +#define VTD_SIP_CNTR_EVNT_CNTR		GENMASK_ULL(47, 0)
-> > > > +
-> > > > +#define PERF_OBJ_ROOT_ID		(~0)
-> > > > +
-> > > > +#define PERF_TIMEOUT			30
-> > > > +
-> > > > +/**
-> > > > + * struct perf_object - object of performance counter
-> > > > + *
-> > > > + * @id: instance id. PERF_OBJ_ROOT_ID indicates it is a parent object which
-> > > > + *      counts performance counters for all instances.
-> > > > + * @attr_groups: the sysfs files are associated with this object.
-> > > > + * @feature: pointer to related private feature.
-> > > > + * @node: used to link itself to parent's children list.
-> > > > + * @children: used to link its children objects together.
-> > > > + * @kobj: generic kobject interface.
-> > > > + *
-> > > > + * 'node' and 'children' are used to construct parent-children hierarchy.
-> > > > + */
-> > > > +struct perf_object {
-> > > > +	int id;
-> > > > +	const struct attribute_group **attr_groups;
-> > > > +	struct dfl_feature *feature;
-> > > > +
-> > > > +	struct list_head node;
-> > > > +	struct list_head children;
-> > > > +	struct kobject kobj;
-> > > 
-> > > Woah, why are you using a "raw" kobject and not a 'struct device' here?
-> > > You just broke userspace and no libraries will see your kobject's
-> > > properties as the "chain" of struct devices is not happening anymore.
-> > > 
-> > > Why can this not just be a 'struct device'?
-> > 
-> > Hi Greg,
-> > 
-> > Many thanks for the review and comments.
-> > 
-> > Actually we are just trying to create sysfs hierarchy for performance
-> > counters using these data structures.
-> > 
-> > If we use 'struct device' instead of kobject, then we have to let userspace
-> > code to deal with device's sysfs (e.g. ignore 'uevent' below). This is the
-> > only concern from my side now, as I know that using 'struct device'
-> > saves code as we don't need to introduce a new perf_obj_attribute then.
-> > 
-> > dfl-fme.0/perf/
-> >  ├── iommu
-> >  │   ├── afu0
-> >  │   │   ├── devtlb_1g_fill
-> >  │   │   ├── devtlb_2m_fill
-> >  │   │   ├── devtlb_4k_fill
-> >  │   │   ├── devtlb_read_hit
-> >  │   │   ├── devtlb_write_hit
-> >  │   │   ├── read_transaction
-> >  │   │   ├── uevent
-> >  │   │   └── write_transaction
-> >  │   ├── freeze
-> >  │   ├── iotlb_1g_hit
-> >  │   ├── iotlb_1g_miss
-> > 	 ...
-> >      └── uevent
-> >  ...
-> > 
-> > Do you think if we could keep it or it's better to use 'struct device'?
-> 
-> What about using the attribute group name?  That gives you a subdir for
-> free.  Doing anything "deeper" than one level means that you really have
-> a child device, and yes, you need to use a 'struct device'.  Make it
-> part of your bus and just have it be a different "type" and all should
-> be good.
-> 
-> Again, NEVER use a raw kobject as a child of a 'struct device', that
-> will break things.
-> 
-> And please cc: me on this series from now on, as you are obviously
-> trying to do complex things with the driver model and sysfs and it is
-> easy to get very wrong.
-> 
-> But wait, step back, why does this one driver have such a "special"
-> user/kernel api that unique to it and nothing else?  That's also a big
-> red flag, why not just use the normal perf api that everyone else uses?
->
+Hi Clément,
 
-Hi Greg,
-
-Actually we just tried to add some interfaces for users to read hardware
-counters, Yes, I fully agree that we should use the existing apis whenever
-possible. I will look into perf api to see if we can use them instead.
-
-Many thanks for the review and comments!
-
-Hao
-
-> thanks,
+On Tue, Jun 04, 2019 at 02:33:55PM +0200, verejna wrote:
+> Hi Clément,
 > 
-> greg k-h
+> On Mon, Jun 03, 2019 at 09:58:23PM +0200, Clément Péron wrote:
+> > Hi Ondrej,
+> > 
+> > On Fri, 31 May 2019 at 14:46, Ondřej Jirman <megous@megous.com> wrote:
+> > >
+> > > Hello Clément,
+> > >
+> > > On Fri, May 31, 2019 at 12:25:32AM +0200, Clément Péron wrote:
+> > > > Hi Ondrej,
+> > > >
+> > > > On Thu, 30 May 2019 at 16:55, Ondřej Jirman <megous@megous.com> wrote:
+> > > > >
+> > > > > Hello Clément,
+> > > > >
+> > > > > On Tue, May 28, 2019 at 06:14:38PM +0200, Clément Péron wrote:
+> > > > > > Allwinner H6 IR is similar to A31 and can use same driver.
+> > > > > >
+> > > > > > Add support for it.
+> > > > > >
+> > > > > > Signed-off-by: Clément Péron <peron.clem@gmail.com>
+> > > > > > ---
+> > > > > >  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 19 +++++++++++++++++++
+> > > > > >  1 file changed, 19 insertions(+)
+> > > > > >
+> > > > > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> > > > > > index 16c5c3d0fd81..649cbdfe452e 100644
+> > > > > > --- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> > > > > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> > > > > > @@ -647,6 +647,25 @@
+> > > > > >                               pins = "PL0", "PL1";
+> > > > > >                               function = "s_i2c";
+> > > > > >                       };
+> > > > > > +
+> > > > > > +                     r_ir_rx_pin: r-ir-rx-pin {
+> > > > > > +                             pins = "PL9";
+> > > > > > +                             function = "s_cir_rx";
+> > > > > > +                     };
+> > > > > > +             };
+> > > > > > +
+> > > > > > +             r_ir: ir@7040000 {
+> > > > > > +                             compatible = "allwinner,sun50i-h6-ir",
+> > > > > > +                                          "allwinner,sun6i-a31-ir";
+> > > > > > +                             reg = <0x07040000 0x400>;
+> > > > > > +                             interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
+> > > > > > +                             clocks = <&r_ccu CLK_R_APB1_IR>,
+> > > > > > +                                      <&r_ccu CLK_IR>;
+> > > > > > +                             clock-names = "apb", "ir";
+> > > > > > +                             resets = <&r_ccu RST_R_APB1_IR>;
+> > > > > > +                             pinctrl-names = "default";
+> > > > > > +                             pinctrl-0 = <&r_ir_rx_pin>;
+> > > > > > +                             status = "disabled";
+> > > > > >               };
+> > > > >
+> > > > > Please make a comment here, that this is known broken on some boards and may
+> > > > > result IRQ flood if enabled. Otherwise noone will know.
+> > > >
+> > > > I'm planning to send a v4 next week with the IRQ_NONE return as Maxime
+> > > > suggested it.
+> > > > https://github.com/clementperon/linux/tree/h6_ir_v4
+> > > >
+> > > > But maybe we could also use the bit 5 of the IRQ status.
+> > >
+> > > Thanks, that's nice, but that will not make the HW work. That will just disable
+> > > it. The comment is still necessary.
+> > I have pushed a new version on my github.
+> > https://github.com/clementperon/linux/commits/h6_ir_v4
+> > 
+> > I will submit it, if you are ok with it.
+> 
+> the changes make it worse. Console is flooded with "Temporarily disable IRQ"
+> and other symptoms are the same as I described before. Interrupts are not
+> disabled in a any reasonable time. (I've waited for more > 5mins already.)
+> 
+> You probably need to disable interrupts right away, not wait for 100k failures.
+
+Hmm, this is what the registers look like post-probe:
+
+R_CIR:
+0x07040000 : 00000030
+0x07040004 : 00000030
+0x07040008 : 00000030
+0x0704000c : 00000030
+0x07040010 : 00000030
+0x07040014 : 00000030
+0x07040018 : 00000030
+0x0704001c : 00000030
+0x07040020 : 00000030
+0x07040024 : 00000030
+0x07040028 : 00000030
+0x0704002c : 00000030
+0x07040030 : 00000030
+0x07040034 : 00000030
+0x07040038 : 00000030
+0x0704003c : 00000030
+0x07040040 : 00000030
+0x07040044 : 00000030
+0x07040048 : 00000030
+0x0704004c : 00000030
+0x07040050 : 00000030
+0x07040054 : 00000030
+0x07040058 : 00000030
+0x0704005c : 00000030
+0x07040060 : 00000030
+0x07040064 : 00000030
+0x07040068 : 00000030
+0x0704006c : 00000030
+0x07040070 : 00000030
+0x07040074 : 00000030
+0x07040078 : 00000030
+0x0704007c : 00000030
+0x07040080 : 00000030
+0x07040084 : 00000030
+0x07040088 : 00000030
+0x0704008c : 00000030
+0x07040090 : 00000030
+0x07040094 : 00000030
+0x07040098 : 00000030
+0x0704009c : 00000030
+0x070400a0 : 00000030
+0x070400a4 : 00000030
+0x070400a8 : 00000030
+0x070400ac : 00000030
+0x070400b0 : 00000030
+0x070400b4 : 00000030
+0x070400b8 : 00000030
+0x070400bc : 00000030
+0x070400c0 : 00000030
+0x070400c4 : 00000030
+0x070400c8 : 00000030
+0x070400cc : 00000030
+0x070400d0 : 00000030
+0x070400d4 : 00000030
+0x070400d8 : 00000030
+0x070400dc : 00000030
+0x070400e0 : 00000030
+0x070400e4 : 00000030
+0x070400e8 : 00000030
+0x070400ec : 00000030
+0x070400f0 : 00000030
+0x070400f4 : 00000030
+0x070400f8 : 00000030
+0x070400fc : 00000030
+
+Clearly not right. It's just the R_CIR module, other modules have normal values.
+
+I've checked:
+0x070101c0 : 81000002
+(IR clock config register)
+0x070101cc : 00010000
+(IR reset/bus clk gate reg)
+
+static const char * const r_mod0_default_parents[] = { "osc32k", "osc24M" };
+static SUNXI_CCU_MP_WITH_MUX_GATE(ir_clk, "ir",
+                                  r_mod0_default_parents, 0x1c0,
+                                  0, 5,         /* M */
+                                  8, 2,         /* P */
+                                  24, 1,        /* mux */
+                                  BIT(31),      /* gate */
+                                  0);
+
+static SUNXI_CCU_GATE(r_apb1_ir_clk,    "r-apb1-ir",    "r-apb1",
+                      0x1cc, BIT(0), 0);
+
+        [RST_R_APB1_IR]         =  { 0x1cc, BIT(16) },
+
+So parent clock seems to be OK. But gate clock is not enabled, so the bus
+is not working.
+
+And look at this!!:
+
+static SUNXI_CCU_GATE(r_apb1_ir_clk,    "r-apb1-ir",    "r-apb1",
+                      0x1cc, BIT(0), 0);
+static SUNXI_CCU_GATE(r_apb1_w1_clk,    "r-apb1-w1",    "r-apb1",
+                      0x1cc, BIT(0), 0);
+
+So, it's wrong w1 gate config!
+
+You can drop your changes, because I've probbably found the root cause.
+
+regards,
+	o.
+
+> thank you and regards,
+> 	o.
+> 
+> > Thanks,
+> > Clément
+> > 
+> > >
+> > > thank you,
+> > >         o.
+> > >
+> > > > Regards, Clement
+> > > >
+> > > > >
+> > > > > thanks,
+> > > > >         o.
+> > > > >
+> > > > > >               r_i2c: i2c@7081400 {
+> > > > > > --
+> > > > > > 2.20.1
+> > > > > >
+> > > > > >
+> > > > > > _______________________________________________
+> > > > > > linux-arm-kernel mailing list
+> > > > > > linux-arm-kernel@lists.infradead.org
+> > > > > > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> > > >
+> > > > --
+> > > > You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> > > > To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> > > > To view this discussion on the web, visit https://groups.google.com/d/msgid/linux-sunxi/CAJiuCce7nHSktVsDKcR8GLRpD3WrN5yP3Nb_Hbu_Q9NjUQbSMw%40mail.gmail.com.
+> > > > For more options, visit https://groups.google.com/d/optout.
+> > 
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
