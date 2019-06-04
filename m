@@ -2,428 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A306134CA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 17:52:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D684B34CB9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 17:58:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728175AbfFDPwd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 11:52:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39330 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728030AbfFDPwd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 11:52:33 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF4D42053B;
-        Tue,  4 Jun 2019 15:52:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559663551;
-        bh=QfvCKDJp8Es7MYRcaMIXsgUghIeWtwKUC27RbPRUb4s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ul36q5bDJsxC6Yivv3gZtQVCJTzUKvrhMlsokJxZQJsPWcuTc6FqYHCUOtgFGgREt
-         J0CZ+jpVtCDhM1MXss7PahI6QMhFqhSRIVdAKn/v/ygFvrX/a3zK/DPJhB99jJYo48
-         oSnA7ZyD1ydo05Adflo7my89W5k75zPpijD3Kbgc=
-Date:   Tue, 4 Jun 2019 17:52:28 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     linux-kernel@vger.kernel.org, gwendal@chromium.org,
-        Guenter Roeck <groeck@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Lee Jones <lee.jones@linaro.org>, kernel@collabora.com,
-        dtor@chromium.org,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-doc@vger.kernel.org, Enno Luebbers <enno.luebbers@intel.com>,
-        Guido Kiener <guido@kiener-muenchen.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Jonathan Corbet <corbet@lwn.net>, Wu Hao <hao.wu@intel.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Jilayne Lovejoy <opensource@jilayne.com>
-Subject: Re: [PATCH 03/10] mfd / platform: cros_ec: Miscellaneous character
- device to talk with the EC
-Message-ID: <20190604155228.GB9981@kroah.com>
-References: <20190604152019.16100-1-enric.balletbo@collabora.com>
- <20190604152019.16100-4-enric.balletbo@collabora.com>
+        id S1728255AbfFDP6E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 11:58:04 -0400
+Received: from mail-eopbgr770040.outbound.protection.outlook.com ([40.107.77.40]:9539
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727422AbfFDP6E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 11:58:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4jBKXr+/OasCKHUWnkQcHw5ZzynnvwLr8ZgCYtc2sgA=;
+ b=FYzxb29GNmi0CnuWptP1aXHhXHQUbEhBm6/HG7yIgfW9nSyLpfzbsJN8Y8LPHT4syd4JRXq9MkfEu3q/xUuV+msnmf5CTrbNZ+vbITD8leNNPii2y5omZQbdb81m6Y2bF+0hl/i4yKrs8g3qr0NPJF9lvAfpCOAiB24KsUVspZM=
+Received: from DM6PR12MB3163.namprd12.prod.outlook.com (20.179.104.150) by
+ DM6PR12MB2746.namprd12.prod.outlook.com (20.176.118.88) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1943.22; Tue, 4 Jun 2019 15:56:14 +0000
+Received: from DM6PR12MB3163.namprd12.prod.outlook.com
+ ([fe80::bcaf:86d4:677f:9555]) by DM6PR12MB3163.namprd12.prod.outlook.com
+ ([fe80::bcaf:86d4:677f:9555%6]) with mapi id 15.20.1943.018; Tue, 4 Jun 2019
+ 15:56:14 +0000
+From:   "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
+To:     Baoquan He <bhe@redhat.com>
+CC:     "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: The current SME implementation fails kexec/kdump kernel booting.
+Thread-Topic: The current SME implementation fails kexec/kdump kernel booting.
+Thread-Index: AQHVGtxpl7Okj5q6IUu+1zsUud1soaaLplcA
+Date:   Tue, 4 Jun 2019 15:56:14 +0000
+Message-ID: <508c2853-dc4f-70a6-6fa8-97c950dc31c6@amd.com>
+References: <20190604134952.GC26891@MiWiFi-R3L-srv>
+In-Reply-To: <20190604134952.GC26891@MiWiFi-R3L-srv>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN4PR0201CA0050.namprd02.prod.outlook.com
+ (2603:10b6:803:20::12) To DM6PR12MB3163.namprd12.prod.outlook.com
+ (2603:10b6:5:182::22)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Thomas.Lendacky@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.77.1]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 858a807c-ca9a-4963-4bcf-08d6e9052c25
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:DM6PR12MB2746;
+x-ms-traffictypediagnostic: DM6PR12MB2746:
+x-microsoft-antispam-prvs: <DM6PR12MB27463E5CC03B3A2995BEDE8DEC150@DM6PR12MB2746.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 0058ABBBC7
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(346002)(136003)(39860400002)(396003)(189003)(199004)(14444005)(256004)(31696002)(64756008)(73956011)(66946007)(66476007)(66556008)(36756003)(54906003)(6116002)(3846002)(86362001)(11346002)(476003)(102836004)(446003)(26005)(2906002)(81156014)(6246003)(2616005)(68736007)(66066001)(81166006)(25786009)(53936002)(186003)(7736002)(305945005)(8676002)(4326008)(8936002)(66446008)(229853002)(6512007)(31686004)(71190400001)(52116002)(486006)(76176011)(5660300002)(6486002)(316002)(72206003)(6436002)(6506007)(386003)(53546011)(99286004)(71200400001)(478600001)(6916009)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB2746;H:DM6PR12MB3163.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: IW0ZyDsOez+RkEtH82npNt4nPCKymOPbYw0WbX1cteoWXZCA9488q6QOM+2c3U2pjnyVeVHZggi6CVxMS4XlV8j7rrmir8tS2Z2J1ewuQPJfhr9a+TmyFkzcWPaVYuHy8OrmtGjlClkOerSDI4K1ILA1xj2ITQWOAUABu9diWspjKdmgFZ42juLK7yWsmNFfgZp2gPYmmUtXKIym3WV7Uc11msF+c11RDwVciW9cfe9lcjLEjrHw862wGHHASnQuQXlxbnY3AMQmDKj/qOaoJRYWjwKTHodB1QB7Fh3xV4z0z8bj0ACFnzrzHbiUwMrxsvU3MubDO+rTz0Z86xaGR8C/8nJw9WUq/D4nYzSGuLXji8f9hgiHaTJ79U6A0Q/WRi88Dojb8A/yvM5CInVQaCn5TkA24x4H0APTB197X6I=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D13757902CD10A43859E451C8DC1BB6A@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190604152019.16100-4-enric.balletbo@collabora.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 858a807c-ca9a-4963-4bcf-08d6e9052c25
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jun 2019 15:56:14.7711
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: tlendack@amd.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2746
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 04, 2019 at 05:20:12PM +0200, Enric Balletbo i Serra wrote:
-> That's a driver to talk with the ChromeOS Embedded Controller via a
-> miscellaneous character device, it creates an entry in /dev for every
-> instance and implements basic file operations for communicating with the
-> Embedded Controller with an userspace application. The API is moved to
-> the uapi folder, which is supposed to contain the user space API of the
-> kernel.
-> 
-> Note that this will replace current character device interface
-> implemented in the cros-ec-dev driver in the MFD subsystem. The idea is
-> to move all the functionality that extends the bounds of what MFD was
-> designed to platform/chrome subsystem.
-> 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
-> 
->  Documentation/ioctl/ioctl-number.txt          |   2 +-
->  drivers/mfd/cros_ec_dev.c                     |   2 +-
->  drivers/platform/chrome/Kconfig               |  11 +
->  drivers/platform/chrome/Makefile              |   1 +
->  drivers/platform/chrome/cros_ec_chardev.c     | 279 ++++++++++++++++++
->  .../uapi/linux/cros_ec_chardev.h              |  18 +-
->  6 files changed, 302 insertions(+), 11 deletions(-)
->  create mode 100644 drivers/platform/chrome/cros_ec_chardev.c
->  rename drivers/mfd/cros_ec_dev.h => include/uapi/linux/cros_ec_chardev.h (70%)
-> 
-> diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
-> index c9558146ac58..8bd7907ee36d 100644
-> --- a/Documentation/ioctl/ioctl-number.txt
-> +++ b/Documentation/ioctl/ioctl-number.txt
-> @@ -340,7 +340,7 @@ Code  Seq#(hex)	Include File		Comments
->  0xDD	00-3F	ZFCP device driver	see drivers/s390/scsi/
->  					<mailto:aherrman@de.ibm.com>
->  0xE5	00-3F	linux/fuse.h
-> -0xEC	00-01	drivers/platform/chrome/cros_ec_dev.h	ChromeOS EC driver
-> +0xEC	00-01	include/uapi/linux/cros_ec_chardev.h	ChromeOS EC driver
->  0xF3	00-3F	drivers/usb/misc/sisusbvga/sisusb.h	sisfb (in development)
->  					<mailto:thomas@winischhofer.net>
->  0xF4	00-1F	video/mbxfb.h		mbxfb
-> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> index 607383b67cf1..11b791c28f84 100644
-> --- a/drivers/mfd/cros_ec_dev.c
-> +++ b/drivers/mfd/cros_ec_dev.c
-> @@ -15,7 +15,7 @@
->  #include <linux/slab.h>
->  #include <linux/uaccess.h>
->  
-> -#include "cros_ec_dev.h"
-> +#include <uapi/linux/cros_ec_chardev.h>
->  
->  #define DRV_NAME "cros-ec-dev"
->  
-> diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
-> index 9417b982ad92..3a9ad001838a 100644
-> --- a/drivers/platform/chrome/Kconfig
-> +++ b/drivers/platform/chrome/Kconfig
-> @@ -147,6 +147,17 @@ config CROS_KBD_LED_BACKLIGHT
->  	  To compile this driver as a module, choose M here: the
->  	  module will be called cros_kbd_led_backlight.
->  
-> +config CROS_EC_CHARDEV
-> +	tristate "ChromeOS EC miscdevice"
-> +	depends on MFD_CROS_EC_CHARDEV
-> +	default MFD_CROS_EC_CHARDEV
-> +	help
-> +	  This driver adds file operations support to talk with the
-> +	  ChromeOS EC from userspace via a character device.
-> +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called cros_ec_chardev.
-> +
->  config CROS_EC_LIGHTBAR
->  	tristate "Chromebook Pixel's lightbar support"
->  	depends on MFD_CROS_EC_CHARDEV
-> diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
-> index ebb57e21923b..d47a7e1097ee 100644
-> --- a/drivers/platform/chrome/Makefile
-> +++ b/drivers/platform/chrome/Makefile
-> @@ -16,6 +16,7 @@ cros_ec_lpcs-$(CONFIG_CROS_EC_LPC_MEC)	+= cros_ec_lpc_mec.o
->  obj-$(CONFIG_CROS_EC_LPC)		+= cros_ec_lpcs.o
->  obj-$(CONFIG_CROS_EC_PROTO)		+= cros_ec_proto.o cros_ec_trace.o
->  obj-$(CONFIG_CROS_KBD_LED_BACKLIGHT)	+= cros_kbd_led_backlight.o
-> +obj-$(CONFIG_CROS_EC_CHARDEV)		+= cros_ec_chardev.o
->  obj-$(CONFIG_CROS_EC_LIGHTBAR)		+= cros_ec_lightbar.o
->  obj-$(CONFIG_CROS_EC_VBC)		+= cros_ec_vbc.o
->  obj-$(CONFIG_CROS_EC_DEBUGFS)		+= cros_ec_debugfs.o
-> diff --git a/drivers/platform/chrome/cros_ec_chardev.c b/drivers/platform/chrome/cros_ec_chardev.c
-> new file mode 100644
-> index 000000000000..1a0a27080026
-> --- /dev/null
-> +++ b/drivers/platform/chrome/cros_ec_chardev.c
-> @@ -0,0 +1,279 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Miscellaneous character driver for ChromeOS Embedded Controller
-> + *
-> + * Copyright 2019 Google LLC
-> + */
-> +
-> +#include <linux/init.h>
-> +#include <linux/device.h>
-> +#include <linux/fs.h>
-> +#include <linux/list.h>
-> +#include <linux/mfd/cros_ec.h>
-> +#include <linux/mfd/cros_ec_commands.h>
-> +#include <linux/miscdevice.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +#include <linux/spinlock.h>
-> +#include <linux/types.h>
-> +#include <linux/uaccess.h>
-> +
-> +#include <uapi/linux/cros_ec_chardev.h>
-> +
-> +#define DRV_NAME	"cros-ec-chardev"
-> +
-> +static LIST_HEAD(chardev_devices);
-> +static DEFINE_SPINLOCK(chardev_lock);
-> +
-> +struct chardev_data {
-> +	struct list_head list;
-> +	struct cros_ec_dev *ec_dev;
-> +	struct miscdevice misc;
-> +};
-> +
-> +static int ec_get_version(struct cros_ec_dev *ec, char *str, int maxlen)
-> +{
-> +	static const char * const current_image_name[] = {
-> +		"unknown", "read-only", "read-write", "invalid",
-> +	};
-> +	struct ec_response_get_version *resp;
-> +	struct cros_ec_command *msg;
-> +	int ret;
-> +
-> +	msg = kzalloc(sizeof(*msg) + sizeof(*resp), GFP_KERNEL);
-> +	if (!msg)
-> +		return -ENOMEM;
-> +
-> +	msg->command = EC_CMD_GET_VERSION + ec->cmd_offset;
-> +	msg->insize = sizeof(*resp);
-> +
-> +	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
-> +	if (ret < 0) {
-> +		snprintf(str, maxlen,
-> +			 "Unknown EC version, returned error: %d\n",
-> +			 msg->result);
-> +		goto exit;
-> +	}
-> +
-> +	resp = (struct ec_response_get_version *)msg->data;
-> +	if (resp->current_image >= ARRAY_SIZE(current_image_name))
-> +		resp->current_image = 3; /* invalid */
-> +
-> +	snprintf(str, maxlen, "%s\n%s\n%s\n",
-> +		 resp->version_string_ro,
-> +		 resp->version_string_rw,
-> +		 current_image_name[resp->current_image]);
-> +
-> +	ret = 0;
-> +exit:
-> +	kfree(msg);
-> +	return ret;
-> +}
-> +
-> +/*
-> + * Device file ops
-> + */
-> +static int cros_ec_chardev_open(struct inode *inode, struct file *filp)
-> +{
-> +	struct miscdevice *mdev = filp->private_data;
-> +	struct cros_ec_dev *ec_dev = dev_get_drvdata(mdev->parent);
-> +
-> +	filp->private_data = ec_dev;
-> +	nonseekable_open(inode, filp);
-> +
-> +	return 0;
-> +}
-> +
-> +static ssize_t cros_ec_chardev_read(struct file *filp, char __user *buffer,
-> +				     size_t length, loff_t *offset)
-> +{
-> +	char msg[sizeof(struct ec_response_get_version) +
-> +		 sizeof(CROS_EC_DEV_VERSION)];
-> +	struct cros_ec_dev *ec = filp->private_data;
-> +	size_t count;
-> +	int ret;
-> +
-> +	if (*offset != 0)
-> +		return 0;
-> +
-> +	ret = ec_get_version(ec, msg, sizeof(msg));
-> +	if (ret)
-> +		return ret;
-> +
-> +	count = min(length, strlen(msg));
-> +
-> +	if (copy_to_user(buffer, msg, count))
-> +		return -EFAULT;
-> +
-> +	*offset = count;
-> +	return count;
-> +}
-> +
-> +/*
-> + * Ioctls
-> + */
-> +static long cros_ec_chardev_ioctl_xcmd(struct cros_ec_dev *ec, void __user *arg)
-> +{
-> +	struct cros_ec_command *s_cmd;
-> +	struct cros_ec_command u_cmd;
-> +	long ret;
-> +
-> +	if (copy_from_user(&u_cmd, arg, sizeof(u_cmd)))
-> +		return -EFAULT;
-> +
-> +	if (u_cmd.outsize > EC_MAX_MSG_BYTES ||
-> +	    u_cmd.insize > EC_MAX_MSG_BYTES)
-> +		return -EINVAL;
-> +
-> +	s_cmd = kmalloc(sizeof(*s_cmd) + max(u_cmd.outsize, u_cmd.insize),
-> +			GFP_KERNEL);
-> +	if (!s_cmd)
-> +		return -ENOMEM;
-> +
-> +	if (copy_from_user(s_cmd, arg, sizeof(*s_cmd) + u_cmd.outsize)) {
-> +		ret = -EFAULT;
-> +		goto exit;
-> +	}
-> +
-> +	if (u_cmd.outsize != s_cmd->outsize ||
-> +	    u_cmd.insize != s_cmd->insize) {
-> +		ret = -EINVAL;
-> +		goto exit;
-> +	}
-> +
-> +	s_cmd->command += ec->cmd_offset;
-> +	ret = cros_ec_cmd_xfer(ec->ec_dev, s_cmd);
-> +	/* Only copy data to userland if data was received. */
-> +	if (ret < 0)
-> +		goto exit;
-> +
-> +	if (copy_to_user(arg, s_cmd, sizeof(*s_cmd) + s_cmd->insize))
-> +		ret = -EFAULT;
-> +exit:
-> +	kfree(s_cmd);
-> +	return ret;
-> +}
-> +
-> +static long cros_ec_chardev_ioctl_readmem(struct cros_ec_dev *ec,
-> +					   void __user *arg)
-> +{
-> +	struct cros_ec_device *ec_dev = ec->ec_dev;
-> +	struct cros_ec_readmem s_mem = { };
-> +	long num;
-> +
-> +	/* Not every platform supports direct reads */
-> +	if (!ec_dev->cmd_readmem)
-> +		return -ENOTTY;
-> +
-> +	if (copy_from_user(&s_mem, arg, sizeof(s_mem)))
-> +		return -EFAULT;
-> +
-> +	num = ec_dev->cmd_readmem(ec_dev, s_mem.offset, s_mem.bytes,
-> +				  s_mem.buffer);
-> +	if (num <= 0)
-> +		return num;
-> +
-> +	if (copy_to_user((void __user *)arg, &s_mem, sizeof(s_mem)))
-> +		return -EFAULT;
-> +
-> +	return num;
-> +}
-> +
-> +static long cros_ec_chardev_ioctl(struct file *filp, unsigned int cmd,
-> +				   unsigned long arg)
-> +{
-> +	struct cros_ec_dev *ec = filp->private_data;
-> +
-> +	if (_IOC_TYPE(cmd) != CROS_EC_DEV_IOC)
-> +		return -ENOTTY;
-> +
-> +	switch (cmd) {
-> +	case CROS_EC_DEV_IOCXCMD:
-> +		return cros_ec_chardev_ioctl_xcmd(ec, (void __user *)arg);
-> +	case CROS_EC_DEV_IOCRDMEM:
-> +		return cros_ec_chardev_ioctl_readmem(ec, (void __user *)arg);
-> +	}
-> +
-> +	return -ENOTTY;
-> +}
-> +
-> +static const struct file_operations chardev_fops = {
-> +	.open		= cros_ec_chardev_open,
-> +	.read		= cros_ec_chardev_read,
-> +	.unlocked_ioctl	= cros_ec_chardev_ioctl,
-> +#ifdef CONFIG_COMPAT
-> +	.compat_ioctl	= cros_ec_chardev_ioctl,
-> +#endif
-> +};
-> +
-> +static int cros_ec_chardev_probe(struct platform_device *pdev)
-> +{
-> +	struct cros_ec_dev *ec_dev = dev_get_drvdata(pdev->dev.parent);
-> +	struct cros_ec_platform *ec_platform = dev_get_platdata(ec_dev->dev);
-> +	struct chardev_data *data;
-> +	int ret;
-> +
-> +	/* Create a char device: we want to create it anew */
-> +	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	data->ec_dev = ec_dev;
-> +	data->misc.minor = MISC_DYNAMIC_MINOR;
-> +	data->misc.fops = &chardev_fops;
-> +	data->misc.name = ec_platform->ec_name;
-> +	data->misc.parent = pdev->dev.parent;
-> +
-> +	ret = misc_register(&data->misc);
-> +	if (ret)
-> +		return ret;
-> +
-> +	spin_lock(&chardev_lock);
-> +	list_add(&data->list, &chardev_devices);
-> +	spin_unlock(&chardev_lock);
-> +
-> +	dev_info(&pdev->dev, "Created misc device /dev/%s\n",
-> +		 data->misc.name);
-
-No need to be noisy, if all goes well, your code should be quiet.
-
-> +
-> +	return 0;
-> +}
-> +
-> +static int cros_ec_chardev_remove(struct platform_device *pdev)
-> +{
-> +	struct cros_ec_dev *ec_dev = dev_get_drvdata(pdev->dev.parent);
-> +	struct chardev_data *data;
-> +
-> +	list_for_each_entry(data, &chardev_devices, list)
-> +		if (data->ec_dev == ec_dev)
-> +			break;
-> +
-> +	if (data->ec_dev != ec_dev) {
-> +		dev_err(&pdev->dev,
-> +			"remove called but miscdevice %s not found\n",
-> +			data->misc.name);
-> +		return -ENODEV;
-> +	}
-
-Why do you have this separate list of devices?  You don't seem to need
-it, you only iterate over it, why is it needed?
-
-> +	spin_lock(&chardev_lock);
-> +	list_del(&data->list);
-> +	spin_unlock(&chardev_lock);
-> +	misc_deregister(&data->misc);
-> +
-> +	return 0;
-> +}
-
-You also iterate over the list without the lock, so why even have the
-lock?  Are you sure the list, and the lock, is even needed?
-
-thanks,
-
-greg k-h
+T24gNi80LzE5IDg6NDkgQU0sIEJhb3F1YW4gSGUgd3JvdGU6DQo+IEhpIFRvbSwNCj4gDQo+IExp
+YW5ibyByZXBvcnRlZCBrZHVtcCBrZXJuZWwgY2FuJ3QgYm9vdCB3ZWxsIHdpdGggJ25va2FzbHIn
+IGFkZGVkLCBhbmQNCj4gaGF2ZSB0byBlbmFibGUgS0FTTFIgaW4ga2R1bXAga2VybmVsIHRvIG1h
+a2UgaXQgYm9vdCBzdWNjZXNzZnVsbHkuIFRoaXMNCj4gYmxvY2tlZCBoaXMgd29yayBvbiBlbmFi
+bGluZyBzbWUgZm9yIGtleGVjL2tkdW1wLiBBbmQgb24gc29tZSBtYWNoaW5lcw0KPiBTTUUga2Vy
+bmVsIGNhbid0IGJvb3QgaW4gMXN0IGtlcm5lbC4NCj4gDQo+IEkgY2hlY2tlZCBjb2RlIG9mIFNN
+RSBpbXBsZW1lbnRhdGlvbiwgYW5kIGZvdW5kIG91dCB0aGUgcm9vdCBjYXVzZS4gVGhlDQo+IGFi
+b3ZlIGZhaWx1cmVzIGFyZSBjYXVzZWQgYnkgU01FIGNvZGUsIHNtZV9lbmNyeXB0X2tlcm5lbCgp
+LiBJbg0KPiBzbWVfZW5jcnlwdF9rZXJuZWwoKSwgeW91IGdldCBhIDJNIG9mIGVuY3J5cHRpb24g
+d29yayBhcmVhIGFzIGludGVybWVkaWF0ZQ0KPiBidWZmZXIgdG8gZW5jcnlwdCBrZXJuZWwgaW4t
+cGxhY2UuIEFuZCB0aGUgd29yayBhcmVhIGlzIGp1c3QgYWZ0ZXIgX2VuZCBvZg0KPiBrZXJuZWwu
+DQoNCkkgcmVtZW1iZXIgd29ycnlpbmcgYWJvdXQgc29tZXRoaW5nIGxpa2UgdGhpcyBiYWNrIHdo
+ZW4gSSB3YXMgdGVzdGluZyB0aGUNCmtleGVjIHN1cHBvcnQuIEkgaGFkIGNvbWUgdXAgd2l0aCBh
+IHBhdGNoIHRvIGFkZHJlc3MgaXQsIGJ1dCBuZXZlciBnb3QgdGhlDQp0aW1lIHRvIHRlc3QgYW5k
+IHN1Ym1pdCBpdC4gIEkndmUgaW5jbHVkZWQgaXQgaGVyZSBpZiB5b3UnZCBsaWtlIHRvIHRlc3QN
+Cml0IChJIGhhdmVuJ3QgZG9uZSBydW4gdGhpcyBwYXRjaCBpbiBxdWl0ZSBzb21lIHRpbWUpLiBJ
+ZiBpdCB3b3Jrcywgd2UgY2FuDQp0aGluayBhYm91dCBzdWJtaXR0aW5nIGl0Lg0KDQpUaGFua3Ms
+DQpUb20NCg0KLS0tDQp4ODYvbW06IENyZWF0ZSBhbiBTTUUgd29ya2FyZWEgaW4gdGhlIGtlcm5l
+bCBmb3IgZWFybHkgZW5jcnlwdGlvbg0KDQpGcm9tOiBUb20gTGVuZGFja3kgPHRob21hcy5sZW5k
+YWNreUBhbWQuY29tPg0KDQpUaGUgU01FIHdvcmthcmVhIHVzZWQgZHVyaW5nIGVhcmx5IGVuY3J5
+cHRpb24gb2YgdGhlIGtlcm5lbCBkdXJpbmcgYm9vdA0KaXMgc2l0dWF0ZWQgb24gYSAyTUIgYm91
+bmRhcnkgYWZ0ZXIgdGhlIGVuZCBvZiB0aGUga2VybmVsIHRleHQsIGRhdGEsDQpldGMuIHNlY3Rp
+b25zIChfZW5kKS4gIFRoaXMgd29ya3Mgd2VsbCBkdXJpbmcgaW5pdGlhbCBib290IG9mIGEgY29t
+cHJlc3NlZA0Ka2VybmVsIGJlY2F1c2Ugb2YgdGhlIHJlbG9jYXRpb24gdXNlZCBmb3IgZGVjb21w
+cmVzc2lvbiBvZiB0aGUga2VybmVsLg0KQnV0IHdoZW4gcGVyZm9ybWluZyBhIGtleGVjIGJvb3Qs
+IHRoZXJlJ3MgYSBjaGFuY2UgdGhhdCB0aGUgU01FIHdvcmthcmVhDQptYXkgbm90IGJlIG1hcHBl
+ZCBieSB0aGUga2V4ZWMgcGFnZXRhYmxlcyBvciB0aGF0IHNvbWUgb2YgdGhlIG90aGVyIGRhdGEN
+CnVzZWQgYnkga2V4ZWMgY291bGQgZXhpc3QgaW4gdGhpcyByYW5nZS4NCg0KQ3JlYXRlIGEgc2Vj
+dGlvbiBmb3IgU01FIGluIHRoZSB2bWxpbnV4Lmxkcy5TLiAgUG9zaXRpb24gaXQgYWZ0ZXIgIl9l
+bmQiDQpzbyB0aGF0IHRoZSBtZW1vcnkgd2lsbCBiZSByZWNsYWltZWQgZHVyaW5nIGJvb3QgYW5k
+IHNpbmNlIGl0IGlzIGFsbA0KemVyb2VzIGl0IGNvbXByZXNzZXMgd2VsbC4gIFNpbmNlIHRoaXMg
+bmV3IHNlY3Rpb24gd2lsbCBiZSBwYXJ0IG9mIHRoZQ0Ka2VybmVsLCBrZXhlYyB3aWxsIGFjY291
+bnQgZm9yIGl0IGluIHBhZ2V0YWJsZSBtYXBwaW5ncyBhbmQgcGxhY2VtZW50IG9mDQpkYXRhIGFm
+dGVyIHRoZSBrZXJuZWwuDQoNCkhlcmUncyBhbiBleGFtcGxlIG9mIGEga2VybmVsIHNpemUgd2l0
+aG91dCBhbmQgd2l0aCB0aGUgU01FIHNlY3Rpb246DQoJd2l0aG91dDoNCgkJdm1saW51eDoJMzYs
+NTAxLDYxNg0KCQliekltYWdlOgkgNiw0OTcsMzQ0DQoNCgkJMTAwMDAwMDAwLTQ3ZjM3ZmZmZiA6
+IFN5c3RlbSBSQU0NCgkJICAxZTQwMDAwMDAtMWU0NzY3N2Q0IDogS2VybmVsIGNvZGUJKDB4NzY3
+N2Q0KQ0KCQkgIDFlNDc2NzdkNS0xZTRlMmUwYmYgOiBLZXJuZWwgZGF0YQkoMHg2YzY4ZWEpDQoJ
+CSAgMWU1MDc0MDAwLTFlNTM3MmZmZiA6IEtlcm5lbCBic3MJKDB4MmZlZmZmKQ0KDQoJd2l0aDoN
+CgkJdm1saW51eDoJNDQsNDE5LDQwOA0KCQliekltYWdlOgkgNiw1MDMsMTM2DQoNCgkJODgwMDAw
+MDAwLWM3ZmY3ZmZmZiA6IFN5c3RlbSBSQU0NCgkJICA4Y2YwMDAwMDAtOGNmNzY3N2Q0IDogS2Vy
+bmVsIGNvZGUJKDB4NzY3N2Q0KQ0KCQkgIDhjZjc2NzdkNS04Y2ZlMmUwYmYgOiBLZXJuZWwgZGF0
+YQkoMHg2YzY4ZWEpDQoJCSAgOGQwMDc0MDAwLThkMDM3MmZmZiA6IEtlcm5lbCBic3MJKDB4MmZl
+ZmZmKQ0KDQpTaWduZWQtb2ZmLWJ5OiBUb20gTGVuZGFja3kgPHRob21hcy5sZW5kYWNreUBhbWQu
+Y29tPg0KLS0tDQogYXJjaC94ODYva2VybmVsL3ZtbGludXgubGRzLlMgICAgICB8ICAgMTYgKysr
+KysrKysrKysrKysrKw0KIGFyY2gveDg2L21tL21lbV9lbmNyeXB0X2lkZW50aXR5LmMgfCAgIDIy
+ICsrKysrKysrKysrKysrKysrKysrLS0NCiAyIGZpbGVzIGNoYW5nZWQsIDM2IGluc2VydGlvbnMo
+KyksIDIgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9hcmNoL3g4Ni9rZXJuZWwvdm1saW51
+eC5sZHMuUyBiL2FyY2gveDg2L2tlcm5lbC92bWxpbnV4Lmxkcy5TDQppbmRleCAwODUwYjUxNDkz
+NDUuLjhjNDM3Nzk4M2U1NCAxMDA2NDQNCi0tLSBhL2FyY2gveDg2L2tlcm5lbC92bWxpbnV4Lmxk
+cy5TDQorKysgYi9hcmNoL3g4Ni9rZXJuZWwvdm1saW51eC5sZHMuUw0KQEAgLTM3OSw2ICszNzks
+MjIgQEAgU0VDVElPTlMNCiAJLiA9IEFMSUdOKFBBR0VfU0laRSk7CQkvKiBrZWVwIFZPX0lOSVRf
+U0laRSBwYWdlIGFsaWduZWQgKi8NCiAJX2VuZCA9IC47DQogDQorI2lmZGVmIENPTkZJR19BTURf
+TUVNX0VOQ1JZUFQNCisJLyoNCisJICogU01FIHdvcmthcmVhIHNlY3Rpb246IExpdmVzIG91dHNp
+ZGUgb2YgdGhlIGtlcm5lbCBwcm9wZXINCisJICogKF90ZXh0IC0gX2VuZCkgZm9yIHBlcmZvcm1p
+bmcgaW4tcGxhY2UgZW5jcnlwdGlvbi4gUmVzaWRlcw0KKwkgKiBvbiBhIDJNQiBib3VuZGFyeSB0
+byBzaW1wbGlmeSB0aGUgcGFnZXRhYmxlIHNldHVwIHVzZWQgZm9yDQorCSAqIHRoZSBlbmNyeXB0
+aW9uLg0KKwkgKi8NCisJLiA9IEFMSUdOKEhQQUdFX1NJWkUpOw0KKwkuc21lIDogQVQoQUREUigu
+c21lKSAtIExPQURfT0ZGU0VUKSB7DQorCQlfX3NtZV9iZWdpbiA9IC47DQorCQkqKC5zbWUpDQor
+CQkuID0gQUxJR04oSFBBR0VfU0laRSk7DQorCQlfX3NtZV9lbmQgPSAuOw0KKwl9DQorI2VuZGlm
+DQorDQogCVNUQUJTX0RFQlVHDQogCURXQVJGX0RFQlVHDQogDQpkaWZmIC0tZ2l0IGEvYXJjaC94
+ODYvbW0vbWVtX2VuY3J5cHRfaWRlbnRpdHkuYyBiL2FyY2gveDg2L21tL21lbV9lbmNyeXB0X2lk
+ZW50aXR5LmMNCmluZGV4IDRhYTliMTQ4MDg2Ni4uYzU1YzJlYzhmYjEyIDEwMDY0NA0KLS0tIGEv
+YXJjaC94ODYvbW0vbWVtX2VuY3J5cHRfaWRlbnRpdHkuYw0KKysrIGIvYXJjaC94ODYvbW0vbWVt
+X2VuY3J5cHRfaWRlbnRpdHkuYw0KQEAgLTczLDYgKzczLDE5IEBAIHN0cnVjdCBzbWVfcG9wdWxh
+dGVfcGdkX2RhdGEgew0KIAl1bnNpZ25lZCBsb25nIHZhZGRyX2VuZDsNCiB9Ow0KIA0KKy8qDQor
+ICogVGhpcyB3b3JrIGFyZWEgbGl2ZXMgaW4gdGhlIC5zbWUgc2VjdGlvbiwgd2hpY2ggbGl2ZXMg
+b3V0c2lkZSBvZg0KKyAqIHRoZSBrZXJuZWwgcHJvcGVyLiBJdCBpcyBzaXplZCB0byBob2xkIHRo
+ZSBpbnRlcm1lZGlhdGUgY29weSBidWZmZXINCisgKiBhbmQgbW9yZSB0aGFuIGVub3VnaCBwYWdl
+dGFibGUgcGFnZXMuDQorICoNCisgKiBCeSB1c2luZyB0aGlzIHNlY3Rpb24sIHRoZSBrZXJuZWwg
+Y2FuIGJlIGVuY3J5cHRlZCBpbiBwbGFjZSBhbmQgd2UNCisgKiBhdm9pZCBhbnkgcG9zc2liaWxp
+dHkgb2YgYm9vdCBwYXJhbWV0ZXJzIG9yIGluaXRyYW1mcyBpbWFnZXMgYmVpbmcNCisgKiBwbGFj
+ZWQgc3VjaCB0aGF0IHRoZSBpbi1wbGFjZSBlbmNyeXB0aW9uIGxvZ2ljIG92ZXJ3cml0ZXMgdGhl
+bS4gIFRoaXMNCisgKiBzZWN0aW9uIGlzIDJNQiBhbGlnbmVkIHRvIGFsbG93IGZvciBzaW1wbGUg
+cGFnZXRhYmxlIHNldHVwIHVzaW5nIG9ubHkNCisgKiBQTUQgZW50cmllcyAoc2VlIHZtbGludXgu
+bGRzLlMpLg0KKyAqLw0KK3N0YXRpYyBjaGFyIHNtZV93b3JrYXJlYVsyICogUE1EX1BBR0VfU0la
+RV0gX19zZWN0aW9uKC5zbWUpOw0KKw0KIHN0YXRpYyBjaGFyIHNtZV9jbWRsaW5lX2FyZ1tdIF9f
+aW5pdGRhdGEgPSAibWVtX2VuY3J5cHQiOw0KIHN0YXRpYyBjaGFyIHNtZV9jbWRsaW5lX29uW10g
+IF9faW5pdGRhdGEgPSAib24iOw0KIHN0YXRpYyBjaGFyIHNtZV9jbWRsaW5lX29mZltdIF9faW5p
+dGRhdGEgPSAib2ZmIjsNCkBAIC0zMTQsOCArMzI3LDEzIEBAIHZvaWQgX19pbml0IHNtZV9lbmNy
+eXB0X2tlcm5lbChzdHJ1Y3QgYm9vdF9wYXJhbXMgKmJwKQ0KIAl9DQogI2VuZGlmDQogDQotCS8q
+IFNldCB0aGUgZW5jcnlwdGlvbiB3b3JrYXJlYSB0byBiZSBpbW1lZGlhdGVseSBhZnRlciB0aGUg
+a2VybmVsICovDQotCXdvcmthcmVhX3N0YXJ0ID0ga2VybmVsX2VuZDsNCisJLyoNCisJICogV2Un
+cmUgcnVubmluZyBpZGVudGl0eSBtYXBwZWQsIHNvIHdlIG11c3Qgb2J0YWluIHRoZSBhZGRyZXNz
+IHRvIHRoZQ0KKwkgKiBTTUUgZW5jcnlwdGlvbiB3b3JrYXJlYSB1c2luZyByaXAtcmVsYXRpdmUg
+YWRkcmVzc2luZy4NCisJICovDQorCWFzbSAoImxlYSBzbWVfd29ya2FyZWEoJSVyaXApLCAlMCIN
+CisJICAgICA6ICI9ciIgKHdvcmthcmVhX3N0YXJ0KQ0KKwkgICAgIDogInAiIChzbWVfd29ya2Fy
+ZWEpKTsNCiANCiAJLyoNCiAJICogQ2FsY3VsYXRlIHJlcXVpcmVkIG51bWJlciBvZiB3b3JrYXJl
+YSBieXRlcyBuZWVkZWQ6DQoNCg0KPiANCj4gVGhpcyBoYXBwZW5zIHRvIHdvcmsgaW4gMXN0IGtl
+cm5lbC4gQnV0IGl0IHdpbGwgZmFpbCBrZXhlYy9rZHVtcCBrZXJuZWwNCj4gYWJzb2x1dGVseS4g
+QmVjYXVzZSB3ZSBsb2FkIHJlYWxtb2RlL2tlcm5lbC9pbml0cmQgaW4ga2V4ZWMtdG9vbHMgZnJv
+bQ0KPiB0b3AgdG8gZG93bi4gSW4ga2V4ZWMtdG9vbHMsIHJlYWxtb2RlIGlzIHB1dCBqdXN0IGFm
+dGVyIGtlcm5lbCBpbWFnZS4gSWYNCj4gS0FTTFIgZW5hYmxlZCwga2VybmVsIG1heSBiZSByYW5k
+b21pemVkIHRvIG90aGVyIHBvc2l0aW9uLCB0aGVuIGtkdW1wDQo+IGtlcm5lbCBjYW4gYm9vdC4g
+SG93ZXZlciwgaWYgbm9rYXNsciBzcGVjaWZpZWQsIHRoZSAyTSBpbnRlcm1lZGlhdGUNCj4gZW5j
+cnlwdGlvbiB3b3JrYXJlYSB3aWxsIGRlZmluaXRlbHkgc3R1bXAgaW50byB0aGUgZm9sbG93aW5n
+IHJlYWxtb2RlLA0KPiBhbmQgZmFpbCBrZXhlYy9rZHVtcCBrZXJuZWwgYm9vdGluZy4NCj4gDQo+
+IEkgaGF2ZSBoYWNrZWQga2V4ZWMtdG9vbHMgY29kZSB0byBwdXQgcmVhbCBtb2RlIGFyZWEgNE0g
+YXdheSBmcm9tIHRoZQ0KPiBrZXJuZWwgaW1hZ2UgZW5kLCBpdCB3b3JrcyBhbmQgY29uZmlybSBt
+eSBmaW5kaW5nLiBTbyB0aGUgY3VycmVudCBTTUUNCj4gaW4tcGxhY2UgZW5jcnlwdGlvbiB3YXkg
+aXMgbm90IG9ubHkgYSBrZXhlYy9rZHVtcCBpc3N1ZSwgYnV0IGFsc28gYW4NCj4gaXNzdWUgaW4g
+MXN0IGtlcm5lbC4gQmVjYXVzZSBLQVNMUiBjb3VsZCBwdXQga2VybmVsIGF0IHRoZSBlbmQgb2Yg
+YW4NCj4gYXZhaWxhYmxlIG1lbW9yeSByZWdpb24sIGhvdyB0byBtYWtlIHN1cmUgdGhlIG5leHQg
+Mk0gaW50ZXJtZWRpYXRlDQo+IHdvcmthcmVhIG11c3QgZXhpc3Q7IGlmIEtBU0xSIHB1dCBrZXJu
+ZWwgdG8gYmUgY2xvc2UgdG8gc3RhcnRpbmcgYWRkcmVzcw0KPiBvZiBhbnkgY21kbGluZS9pbml0
+cmQvc2V0dXBfZGF0YSwgaG93IHRvIG1ha2Ugc3VyZSB0aGUgZ2FwIGJldHdlZW4gdGhlbQ0KPiBt
+dXN0IGJlIGxhcmdlciB0aGFuIDJNLg0KPiANCj4gVGhhbmtzDQo+IEJhb3F1YW4NCj4gDQo=
