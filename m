@@ -2,111 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52411352D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 00:48:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A622352D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 00:51:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726305AbfFDWs3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 18:48:29 -0400
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:34549 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726293AbfFDWs2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 18:48:28 -0400
-Received: by mail-vk1-f194.google.com with SMTP id d7so3910496vkf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 15:48:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+yOTYAZZHsN9vSJiFSddF1i+Vhk1s4jxk8U4YBT4J2E=;
-        b=XY6grJDuWRpc6A4FNnTuk9YNCNdoSL2AaPa7Rn61s/Bmwv5EE0r0C4ldNxVpvdOjbQ
-         Q0fiuZrX5aZi+ehYt9wyEZr3Oj6r+Klx0ItoVVEcCOBtyUUmCikY42wI0XiIHnrijKCy
-         rzT8yT7yngP1vnlP0YeRUr5tNjjNKFluG5jds=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+yOTYAZZHsN9vSJiFSddF1i+Vhk1s4jxk8U4YBT4J2E=;
-        b=trfulGA4RKFnw/GbuwLHy2GdFYNXb3Nw9kUDupZ/0r3MZ7CQ97oe3BYe6muVQIsWUx
-         P0ICcBrbfD0wNB6rHP1PMHePbMH2in/YfPMG10dNS4xg5PuG8JuBscxD5VI26n5vvxza
-         Bb5aYuHioI7tC+cxq8Jrab9wOFLu0SGt21wFsl8fDKIGTK14jW+RodAoqOdn0kOop/i8
-         l7aBewOYRXzmpLV+SIDjuB1Fo7PnKhQh4+uZsPUkpb7+AHy6WCMlvtg9XaigoDrGb4Od
-         SXQMiXQpHL1DSPSQDjSs4dld5/Ob6oFYNDudgOB1wN07XJWXUvpV46gPAa67hEan/loH
-         gzNw==
-X-Gm-Message-State: APjAAAXi6aA+Oo6D2r/MDrxe88SSmZUSUUCrzwPwK228YzNlsMjuNYZj
-        I++iANI6apAaJXS5vnvw3rZ1vXn5cZo=
-X-Google-Smtp-Source: APXvYqyGe102fIyTA03qn0oLAa8XJVRuUMvdaQS0ctLEWyCvEab7U9egwJa1OehRovCzAkWWV9YTqA==
-X-Received: by 2002:a1f:24c4:: with SMTP id k187mr13422328vkk.26.1559688507292;
-        Tue, 04 Jun 2019 15:48:27 -0700 (PDT)
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
-        by smtp.gmail.com with ESMTPSA id b17sm5741255vka.1.2019.06.04.15.48.26
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Jun 2019 15:48:26 -0700 (PDT)
-Received: by mail-ua1-f54.google.com with SMTP id r7so8451393ual.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 15:48:26 -0700 (PDT)
-X-Received: by 2002:ab0:4a97:: with SMTP id s23mr4142251uae.19.1559688506041;
- Tue, 04 Jun 2019 15:48:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190604222939.195471-1-swboyd@chromium.org> <20190604223700.GE4814@minitux>
-In-Reply-To: <20190604223700.GE4814@minitux>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 4 Jun 2019 15:48:13 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=W08iWhbM_aDjhrz0Rm5O-Gbn6DVFNcWK5X6AB2W9YiLw@mail.gmail.com>
-Message-ID: <CAD=FV=W08iWhbM_aDjhrz0Rm5O-Gbn6DVFNcWK5X6AB2W9YiLw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: sdm845: Add iommus property to qup1
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>, Andy Gross <agross@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Sibi Sankar <sibis@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726530AbfFDWvK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 18:51:10 -0400
+Received: from mga01.intel.com ([192.55.52.88]:52979 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726179AbfFDWvJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 18:51:09 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jun 2019 15:51:08 -0700
+X-ExtLoop1: 1
+Received: from otc-lr-04.jf.intel.com ([10.54.39.141])
+  by FMSMGA003.fm.intel.com with ESMTP; 04 Jun 2019 15:51:07 -0700
+From:   kan.liang@linux.intel.com
+To:     acme@kernel.org, jolsa@kernel.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org
+Cc:     peterz@infradead.org, ak@linux.intel.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH V3 1/5] perf cpumap: Retrieve die id information
+Date:   Tue,  4 Jun 2019 15:50:40 -0700
+Message-Id: <1559688644-106558-1-git-send-email-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Kan Liang <kan.liang@linux.intel.com>
 
-On Tue, Jun 4, 2019 at 3:37 PM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
->
-> On Tue 04 Jun 15:29 PDT 2019, Stephen Boyd wrote:
->
-> > The SMMU that sits in front of the QUP needs to be programmed properly
-> > so that the i2c geni driver can allocate DMA descriptors. Failure to do
-> > this leads to faults when using devices such as an i2c touchscreen where
-> > the transaction is larger than 32 bytes and we use a DMA buffer.
-> >
->
-> I'm pretty sure I've run into this problem, but before we marked the
-> smmu bypass_disable and as such didn't get the fault, thanks.
->
-> >  arm-smmu 15000000.iommu: Unexpected global fault, this could be serious
-> >  arm-smmu 15000000.iommu:         GFSR 0x00000002, GFSYNR0 0x00000002, GFSYNR1 0x000006c0, GFSYNR2 0x00000000
-> >
-> > Add the right SID and mask so this works.
-> >
-> > Cc: Sibi Sankar <sibis@codeaurora.org>
-> > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> > ---
-> >  arch/arm64/boot/dts/qcom/sdm845.dtsi | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > index fcb93300ca62..2e57e861e17c 100644
-> > --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > @@ -900,6 +900,7 @@
-> >                       #address-cells = <2>;
-> >                       #size-cells = <2>;
-> >                       ranges;
-> > +                     iommus = <&apps_smmu 0x6c0 0x3>;
->
-> According to the docs this stream belongs to TZ, the HLOS stream should
-> be 0x6c3.
+There is no function to retrieve die id information of a given CPU.
 
-Since you've already got the docs in front of you, how about looking
-up the value for qup0 so we can fix both of 'em?
+Add cpu_map__get_die_id() to retrieve die id information.
 
--Doug
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+
+No changes since V2.
+
+ tools/perf/util/cpumap.c | 7 +++++++
+ tools/perf/util/cpumap.h | 1 +
+ 2 files changed, 8 insertions(+)
+
+diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
+index 0b59922..7db1365 100644
+--- a/tools/perf/util/cpumap.c
++++ b/tools/perf/util/cpumap.c
+@@ -373,6 +373,13 @@ int cpu_map__build_map(struct cpu_map *cpus, struct cpu_map **res,
+ 	return 0;
+ }
+ 
++int cpu_map__get_die_id(int cpu)
++{
++	int value, ret = cpu__get_topology_int(cpu, "die_id", &value);
++
++	return ret ?: value;
++}
++
+ int cpu_map__get_core_id(int cpu)
+ {
+ 	int value, ret = cpu__get_topology_int(cpu, "core_id", &value);
+diff --git a/tools/perf/util/cpumap.h b/tools/perf/util/cpumap.h
+index f00ce62..6762ff9 100644
+--- a/tools/perf/util/cpumap.h
++++ b/tools/perf/util/cpumap.h
+@@ -25,6 +25,7 @@ size_t cpu_map__snprint_mask(struct cpu_map *map, char *buf, size_t size);
+ size_t cpu_map__fprintf(struct cpu_map *map, FILE *fp);
+ int cpu_map__get_socket_id(int cpu);
+ int cpu_map__get_socket(struct cpu_map *map, int idx, void *data);
++int cpu_map__get_die_id(int cpu);
+ int cpu_map__get_core_id(int cpu);
+ int cpu_map__get_core(struct cpu_map *map, int idx, void *data);
+ int cpu_map__build_socket_map(struct cpu_map *cpus, struct cpu_map **sockp);
+-- 
+2.7.4
+
