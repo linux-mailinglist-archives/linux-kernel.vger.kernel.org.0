@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DA2C344E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 12:56:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EC32344DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 12:56:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727536AbfFDK4M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1727552AbfFDK4M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Tue, 4 Jun 2019 06:56:12 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:41233 "EHLO
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:58686 "EHLO
         smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727038AbfFDK4I (ORCPT
+        by vger.kernel.org with ESMTP id S1727486AbfFDK4J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 06:56:08 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07446621|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.72441-0.0119977-0.263592;FP=0|0|0|0|0|-1|-1|-1;HT=e01a16378;MF=han_mao@c-sky.com;NM=1;PH=DS;RN=4;RT=4;SR=0;TI=SMTPD_---.EhJUzkJ_1559645765;
-Received: from localhost(mailfrom:han_mao@c-sky.com fp:SMTPD_---.EhJUzkJ_1559645765)
-          by smtp.aliyun-inc.com(10.147.41.120);
-          Tue, 04 Jun 2019 18:56:05 +0800
+        Tue, 4 Jun 2019 06:56:09 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07517718|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.6789-0.00815059-0.31295;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07447;MF=han_mao@c-sky.com;NM=1;PH=DS;RN=4;RT=4;SR=0;TI=SMTPD_---.EhJOZAc_1559645766;
+Received: from localhost(mailfrom:han_mao@c-sky.com fp:SMTPD_---.EhJOZAc_1559645766)
+          by smtp.aliyun-inc.com(10.147.42.135);
+          Tue, 04 Jun 2019 18:56:06 +0800
 From:   Mao Han <han_mao@c-sky.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Mao Han <han_mao@c-sky.com>, linux-csky@vger.kernel.org,
         Guo Ren <guoren@kernel.org>
-Subject: [PATCH V5 1/6] csky: Init pmu as a device
-Date:   Tue,  4 Jun 2019 18:54:44 +0800
-Message-Id: <06bdeb08d3d1240900c37a83c2c5dfa131f61554.1559644961.git.han_mao@c-sky.com>
+Subject: [PATCH V5 2/6] csky: Add count-width property for csky pmu
+Date:   Tue,  4 Jun 2019 18:54:45 +0800
+Message-Id: <93df91a6bdd2fe46dcf71fdd996fa1e164a8adf4.1559644961.git.han_mao@c-sky.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1559644961.git.han_mao@c-sky.com>
 References: <cover.1559644961.git.han_mao@c-sky.com>
@@ -33,81 +33,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch change the csky pmu initialization from arch init to
-device init. The pmu can be configued with information from
-device tree(pmu device name, irq number and etc.).
+The csky pmu counter may have different io width. When the counter is
+smaller then 64 bits and counter value is smaller than the old value, it
+will result to a extremely large delta value. So the sampled value should
+be extend to 64 bits to avoid this, the extension bits base on the
+count-width property from dts.
 
 Signed-off-by: Mao Han <han_mao@c-sky.com>
 Cc: Guo Ren <guoren@kernel.org>
 ---
- arch/csky/kernel/perf_event.c | 50 +++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 48 insertions(+), 2 deletions(-)
+ arch/csky/kernel/perf_event.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
 diff --git a/arch/csky/kernel/perf_event.c b/arch/csky/kernel/perf_event.c
-index 376c972..2282554 100644
+index 2282554..a15b397 100644
 --- a/arch/csky/kernel/perf_event.c
 +++ b/arch/csky/kernel/perf_event.c
-@@ -949,7 +949,7 @@ static int csky_pmu_add(struct perf_event *event, int flags)
- 	return 0;
- }
+@@ -9,6 +9,7 @@
+ #include <linux/platform_device.h>
  
--int __init init_hw_perf_events(void)
-+int init_hw_perf_events(void)
+ #define CSKY_PMU_MAX_EVENTS 32
++#define DEFAULT_COUNT_WIDTH 48
+ 
+ #define HPCR		"<0, 0x0>"	/* PMU Control reg */
+ #define HPCNTENR	"<0, 0x4>"	/* Count Enable reg */
+@@ -18,6 +19,7 @@ static void (*hw_raw_write_mapping[CSKY_PMU_MAX_EVENTS])(uint64_t val);
+ 
+ struct csky_pmu_t {
+ 	struct pmu	pmu;
++	uint32_t	count_width;
+ 	uint32_t	hpcr;
+ } csky_pmu;
+ 
+@@ -804,7 +806,12 @@ static void csky_perf_event_update(struct perf_event *event,
+ 				   struct hw_perf_event *hwc)
  {
- 	csky_pmu.pmu = (struct pmu) {
- 		.pmu_enable	= csky_pmu_enable,
-@@ -1028,4 +1028,50 @@ int __init init_hw_perf_events(void)
+ 	uint64_t prev_raw_count = local64_read(&hwc->prev_count);
+-	uint64_t new_raw_count = hw_raw_read_mapping[hwc->idx]();
++	/*
++	 * Sign extend count value to 64bit, otherwise delta calculation
++	 * would be incorrect when overflow occurs.
++	 */
++	uint64_t new_raw_count = sign_extend64(
++		hw_raw_read_mapping[hwc->idx](), csky_pmu.count_width - 1);
+ 	int64_t delta = new_raw_count - prev_raw_count;
  
- 	return perf_pmu_register(&csky_pmu.pmu, "cpu", PERF_TYPE_RAW);
- }
--arch_initcall(init_hw_perf_events);
-+
-+int csky_pmu_device_probe(struct platform_device *pdev,
-+			  const struct of_device_id *of_table)
-+{
-+	int ret;
-+
-+	ret = init_hw_perf_events();
-+	if (ret) {
-+		pr_notice("[perf] failed to probe PMU!\n");
-+		return ret;
+ 	/*
+@@ -1032,6 +1039,7 @@ int init_hw_perf_events(void)
+ int csky_pmu_device_probe(struct platform_device *pdev,
+ 			  const struct of_device_id *of_table)
+ {
++	struct device_node *node = pdev->dev.of_node;
+ 	int ret;
+ 
+ 	ret = init_hw_perf_events();
+@@ -1040,6 +1048,11 @@ int csky_pmu_device_probe(struct platform_device *pdev,
+ 		return ret;
+ 	}
+ 
++	if (of_property_read_u32(node, "count-width",
++				 &csky_pmu.count_width)) {
++		csky_pmu.count_width = DEFAULT_COUNT_WIDTH;
 +	}
 +
-+	return ret;
-+}
-+
-+const static struct of_device_id csky_pmu_of_device_ids[] = {
-+	{.compatible = "csky,csky-pmu"},
-+	{},
-+};
-+
-+static int csky_pmu_dev_probe(struct platform_device *pdev)
-+{
-+	return csky_pmu_device_probe(pdev, csky_pmu_of_device_ids);
-+}
-+
-+static struct platform_driver csky_pmu_driver = {
-+	.driver = {
-+		   .name = "csky-pmu",
-+		   .of_match_table = csky_pmu_of_device_ids,
-+		   },
-+	.probe = csky_pmu_dev_probe,
-+};
-+
-+static int __init csky_pmu_probe(void)
-+{
-+	int ret;
-+
-+	ret = platform_driver_register(&csky_pmu_driver);
-+	if (ret)
-+		pr_notice("[perf] PMU initialization failed\n");
-+	else
-+		pr_notice("[perf] PMU initialization done\n");
-+
-+	return ret;
-+}
-+
-+device_initcall(csky_pmu_probe);
+ 	return ret;
+ }
+ 
 -- 
 2.7.4
 
