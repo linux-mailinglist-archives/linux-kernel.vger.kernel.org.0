@@ -2,119 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 993EA352EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 00:59:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53941352F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 01:04:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726633AbfFDW7e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 18:59:34 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44947 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726269AbfFDW7e (ORCPT
+        id S1726502AbfFDXEo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 19:04:44 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:36668 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbfFDXEn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 18:59:34 -0400
-Received: by mail-pg1-f193.google.com with SMTP id n2so11211169pgp.11
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 15:59:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2x/6dym/wJBwbh6+t1lbnKjE5x4RtuWi4gD3SnKAZ30=;
-        b=fUIpItUeGWs1El53UJTO7arimX5f3Q03oxlhM+LZSQLk4f6jC2FOWuIuPU9n/R57ij
-         16itbc1GNd5Fwvqse0VWcvJ1zSc/Nyrz3xNBw0omDrhYOE8hZnUWXqiYI9uzvf+DKG1x
-         uD0JAbnEK0mc5kl08VQQlocHVrp0YaLZacv8LOUyfghzIWBa+BdCCQSO7qMV7R8kM2Xk
-         Cv5VhmRdZxiVFaNtoNzVMRKe+zba1WEYtBrG+roxg3ObtJbg6CSaxU65iBmRWUTMW89T
-         OjlxEmpv4swHEg2CjiB6qrzbfHR8luEd63JZjBJiFsNXVy8hYy2RhixCC+ESPcdZShQL
-         KDBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2x/6dym/wJBwbh6+t1lbnKjE5x4RtuWi4gD3SnKAZ30=;
-        b=qRs0iED0psDpuFw/xYdpV3/JxZhK14jA+yWGQnqexn6uf2UvgJNWPsDSVthEzdKhuc
-         l2b1tGP5UesCRzs37lyMNFThzvJ9WpvYOKlzPNryStH4eAiPtwlyDNvNWucxoSZvFnW3
-         xLLBacypBWQbkCWoyI+skydi5UBnvCLqXjA2kaRaHgWTz9FfcpK00vAZBMesjbqBSMP4
-         rE81FDTiCg576CmWRbeCNZvTjFMo3TxjCE8jQ0iFiJu++/7Wtylm6o0OErjSVzA7gzxp
-         AZ/Zzi2Pay25HoQbvZvaSD2T+mRXJSGJ/WkGcit9LdGbKz+6AnpvLDa0+YDJgrwdMZll
-         KjEg==
-X-Gm-Message-State: APjAAAUWDYtumIIXN8ZbOlbnBKcHbsqY1Qa8BtPIigRj95zMfRfqvhKr
-        hDh4gjVtAw+xlM1bBoZScFSDeRUKaV8=
-X-Google-Smtp-Source: APXvYqzbo4KgZDKcMiTV0gkusEc5LPCSwW5uOvd6fOEYHvt+CGXxRongSvJFzcSbuwCyj3K6py6hDQ==
-X-Received: by 2002:aa7:9256:: with SMTP id 22mr28183848pfp.69.1559689173725;
-        Tue, 04 Jun 2019 15:59:33 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id a21sm9754032pjh.10.2019.06.04.15.59.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Jun 2019 15:59:33 -0700 (PDT)
-Date:   Tue, 4 Jun 2019 15:59:31 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <swboyd@chromium.org>, vivek.gautam@codeaurora.org
-Cc:     Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
-Subject: Re: [PATCH] arm64: dts: sdm845: Add iommus property to qup1
-Message-ID: <20190604225931.GG4814@minitux>
-References: <20190604222939.195471-1-swboyd@chromium.org>
- <20190604223700.GE4814@minitux>
- <5cf6f4bb.1c69fb81.c39da.5496@mx.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5cf6f4bb.1c69fb81.c39da.5496@mx.google.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+        Tue, 4 Jun 2019 19:04:43 -0400
+Received: from 95.172.237.253.ip.static.uno.uk.net ([95.172.237.253] helo=localhost.localdomain)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <chris.coulson@canonical.com>)
+        id 1hYITw-0006ef-GL; Tue, 04 Jun 2019 23:04:40 +0000
+From:   Chris Coulson <chris.coulson@canonical.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     Chris Coulson <chris.coulson@canonical.com>,
+        linux-efi@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Matthew Garrett <mjg59@google.com>,
+        Bartosz Szczepanek <bsz@semihalf.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/1] Fix crash in __calc_tpm2_event_size
+Date:   Wed,  5 Jun 2019 00:04:32 +0100
+Message-Id: <20190604230433.20936-1-chris.coulson@canonical.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 04 Jun 15:46 PDT 2019, Stephen Boyd wrote:
+I've been testing the latest code in the linux-tpmdd branch and I'm
+experiencing a crash in __calc_tpm2_event_size when it's called to
+calculate the size of events in the final log. I hope I'm not stepping on
+anyone's toes, but this small change seems to fix it.
 
-> Quoting Bjorn Andersson (2019-06-04 15:37:00)
-> > On Tue 04 Jun 15:29 PDT 2019, Stephen Boyd wrote:
-> > 
-> > > The SMMU that sits in front of the QUP needs to be programmed properly
-> > > so that the i2c geni driver can allocate DMA descriptors. Failure to do
-> > > this leads to faults when using devices such as an i2c touchscreen where
-> > > the transaction is larger than 32 bytes and we use a DMA buffer.
-> > > 
-> > 
-> > I'm pretty sure I've run into this problem, but before we marked the
-> > smmu bypass_disable and as such didn't get the fault, thanks.
-> > 
-> > >  arm-smmu 15000000.iommu: Unexpected global fault, this could be serious
-> > >  arm-smmu 15000000.iommu:         GFSR 0x00000002, GFSYNR0 0x00000002, GFSYNR1 0x000006c0, GFSYNR2 0x00000000
-> > > 
-> > > Add the right SID and mask so this works.
-> > > 
-> > > Cc: Sibi Sankar <sibis@codeaurora.org>
-> > > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> > > ---
-> > >  arch/arm64/boot/dts/qcom/sdm845.dtsi | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > > 
-> > > diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > > index fcb93300ca62..2e57e861e17c 100644
-> > > --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > > +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > > @@ -900,6 +900,7 @@
-> > >                       #address-cells = <2>;
-> > >                       #size-cells = <2>;
-> > >                       ranges;
-> > > +                     iommus = <&apps_smmu 0x6c0 0x3>;
-> > 
-> > According to the docs this stream belongs to TZ, the HLOS stream should
-> > be 0x6c3.
-> 
-> Aye, I saw this line in the downstream kernel but it doesn't work for
-> me. If I specify <&apps_smmu 0x6c3 0x0> it still blows up. I wonder if
-> my firmware perhaps is missing some initialization here to make the QUP
-> operate in HLOS mode? Otherwise, I thought that the 0x3 at the end was
-> the mask and so it should be split off to the second cell in the DT
-> specifier but that seemed a little weird.
-> 
+What seems to happen is that the event header is mapped here:
 
-Both 0x3 and 0x6c3 are documented as the actual HLOS stream id, with
-mask of 0x0. 
+    /* Map the event header */
+    if (do_mapping) {
+        mapping_size = marker - marker_start;
+        mapping = TPM_MEMREMAP((unsigned long)marker_start,
+                       mapping_size);
 
-Looping in Vivek as well.
+    ...
 
-Regards,
-Bjorn
+    event = (struct tcg_pcr_event2_head *)mapping;
+
+When calculating the cumulative size of the digests, the event header is
+dereferenced here on each loop iteration in order to obtain the digest
+count:
+
+    for (i = 0; i < event->count; i++) {
+        halg_size = sizeof(event->digests[i].alg_id);
+
+But the first iteration of the loop unmaps the event header:
+
+        /* Map the digest's algorithm identifier */
+        if (do_mapping) {
+            TPM_MEMUNMAP(mapping, mapping_size);
+            mapping_size = halg_size;
+            mapping = TPM_MEMREMAP((unsigned long)marker,
+                         mapping_size);
+
+Subsequent loop iterations then dereference a pointer to unmapped memory.
+
+Chris Coulson (1):
+  tpm: Don't dereference event after it's unmapped in
+    __calc_tpm2_event_size
+
+ include/linux/tpm_eventlog.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+-- 
+2.17.1
+
