@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20AB234DFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 18:51:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E94834E02
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 18:52:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727890AbfFDQvv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 12:51:51 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:44280 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727623AbfFDQvv (ORCPT
+        id S1727934AbfFDQwA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 12:52:00 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:44550 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727906AbfFDQv6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 12:51:51 -0400
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.16.0.27/8.16.0.27) with SMTP id x54GYHh2010392
-        for <linux-kernel@vger.kernel.org>; Tue, 4 Jun 2019 09:51:49 -0700
+        Tue, 4 Jun 2019 12:51:58 -0400
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x54Gd82V023788
+        for <linux-kernel@vger.kernel.org>; Tue, 4 Jun 2019 09:51:57 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=e4naQYLOgSB4W5gzyf2D9ya4eydHyxTdM1krXnD1/N4=;
- b=Z04b3DzWU4kO2rrzPtBVxVYW2ApReohxpsqDTZsr29EGlceJxjTx7Vc+eoXxo/oYcOd2
- 17ZShpiE05PHl3mV+NVbk2380mTGhxoTNPm/5qXW/Wgg/uOJ6Ei2DMTmC9yYsFuVfshi
- BFajJji+x6CqhiPJHnudKzXS+F6qJgAP91A= 
+ content-type; s=facebook; bh=MR6fp4k0GSjen+IjWvEdAVeV4aJcgnyY2DTlkJp1kX0=;
+ b=oQFRwoGG5Aj4+OVviID7vM+knNq4x1P90EH6YS1PoN1K9BuhMEwB63zAQuwYWGL21OKU
+ X/8XNBDCMyFfD16zbPVw8iOkAnaTnnH2HWFhVYIC8iRG6YevuOlSN9+cZAWCYHlQA7kp
+ V9lKC1P4J2NDJsD5oDYk+KEDQkgY4eNZMtQ= 
 Received: from maileast.thefacebook.com ([163.114.130.16])
-        by m0089730.ppops.net with ESMTP id 2swun487rn-3
+        by mx0a-00082601.pphosted.com with ESMTP id 2swr7ms081-3
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 09:51:49 -0700
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 09:51:54 -0700
 Received: from mx-out.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::5) with Microsoft SMTP Server
+ mail.thefacebook.com (2620:10d:c0a8:82::d) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Tue, 4 Jun 2019 09:51:48 -0700
+ 15.1.1713.5; Tue, 4 Jun 2019 09:51:52 -0700
 Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id E527B62E1EE3; Tue,  4 Jun 2019 09:51:46 -0700 (PDT)
+        id D993D62E1EE3; Tue,  4 Jun 2019 09:51:48 -0700 (PDT)
 Smtp-Origin-Hostprefix: devbig
 From:   Song Liu <songliubraving@fb.com>
 Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
@@ -40,9 +40,9 @@ CC:     <peterz@infradead.org>, <oleg@redhat.com>, <rostedt@goodmis.org>,
         <kernel-team@fb.com>, <william.kucharski@oracle.com>,
         Song Liu <songliubraving@fb.com>
 Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH uprobe, thp v2 2/5] uprobe: use original page when all uprobes are removed
-Date:   Tue, 4 Jun 2019 09:51:35 -0700
-Message-ID: <20190604165138.1520916-3-songliubraving@fb.com>
+Subject: [PATCH uprobe, thp v2 3/5] mm, thp: introduce FOLL_SPLIT_PMD
+Date:   Tue, 4 Jun 2019 09:51:36 -0700
+Message-ID: <20190604165138.1520916-4-songliubraving@fb.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190604165138.1520916-1-songliubraving@fb.com>
 References: <20190604165138.1520916-1-songliubraving@fb.com>
@@ -52,7 +52,7 @@ Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-04_11:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1906040106
@@ -62,106 +62,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, uprobe swaps the target page with a anonymous page in both
-install_breakpoint() and remove_breakpoint(). When all uprobes on a page
-are removed, the given mm is still using an anonymous page (not the
-original page).
+This patches introduces a new foll_flag: FOLL_SPLIT_PMD. As the name says
+FOLL_SPLIT_PMD splits huge pmd for given mm_struct, the underlining huge
+page stays as-is.
 
-This patch allows uprobe to use original page when possible (all uprobes
-on the page are already removed).
+FOLL_SPLIT_PMD is useful for cases where we need to use regular pages,
+but would switch back to huge page and huge pmd on. One of such example
+is uprobe. The following patches use FOLL_SPLIT_PMD in uprobe.
 
 Signed-off-by: Song Liu <songliubraving@fb.com>
 ---
- kernel/events/uprobes.c | 42 ++++++++++++++++++++++++++++++++---------
- 1 file changed, 33 insertions(+), 9 deletions(-)
+ include/linux/mm.h |  1 +
+ mm/gup.c           | 15 ++++++++++++---
+ 2 files changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 78f61bfc6b79..3fca7c55d370 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -160,16 +160,19 @@ static int __replace_page(struct vm_area_struct *vma, unsigned long addr,
- 	int err;
- 	struct mmu_notifier_range range;
- 	struct mem_cgroup *memcg;
-+	bool orig = new_page->mapping != NULL;  /* new_page == orig_page */
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 1bdaf1872492..8b5f4a9aea0b 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2633,6 +2633,7 @@ struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
+ #define FOLL_COW	0x4000	/* internal GUP flag */
+ #define FOLL_ANON	0x8000	/* don't do file mappings */
+ #define FOLL_LONGTERM	0x10000	/* mapping lifetime is indefinite: see below */
++#define FOLL_SPLIT_PMD	0x20000	/* split huge pmd before returning */
  
- 	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma, mm, addr,
- 				addr + PAGE_SIZE);
- 
- 	VM_BUG_ON_PAGE(PageTransHuge(old_page), old_page);
- 
--	err = mem_cgroup_try_charge(new_page, vma->vm_mm, GFP_KERNEL, &memcg,
--			false);
--	if (err)
--		return err;
-+	if (!orig) {
-+		err = mem_cgroup_try_charge(new_page, vma->vm_mm, GFP_KERNEL,
-+					    &memcg, false);
-+		if (err)
-+			return err;
-+	}
- 
- 	/* For try_to_free_swap() and munlock_vma_page() below */
- 	lock_page(old_page);
-@@ -177,15 +180,22 @@ static int __replace_page(struct vm_area_struct *vma, unsigned long addr,
- 	mmu_notifier_invalidate_range_start(&range);
- 	err = -EAGAIN;
- 	if (!page_vma_mapped_walk(&pvmw)) {
--		mem_cgroup_cancel_charge(new_page, memcg, false);
-+		if (!orig)
-+			mem_cgroup_cancel_charge(new_page, memcg, false);
- 		goto unlock;
+ /*
+  * NOTE on FOLL_LONGTERM:
+diff --git a/mm/gup.c b/mm/gup.c
+index 63ac50e48072..bdc350d95d99 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -398,7 +398,7 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
+ 		spin_unlock(ptl);
+ 		return follow_page_pte(vma, address, pmd, flags, &ctx->pgmap);
  	}
- 	VM_BUG_ON_PAGE(addr != pvmw.address, old_page);
+-	if (flags & FOLL_SPLIT) {
++	if (flags & (FOLL_SPLIT | FOLL_SPLIT_PMD)) {
+ 		int ret;
+ 		page = pmd_page(*pmd);
+ 		if (is_huge_zero_page(page)) {
+@@ -407,7 +407,7 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
+ 			split_huge_pmd(vma, pmd, address);
+ 			if (pmd_trans_unstable(pmd))
+ 				ret = -EBUSY;
+-		} else {
++		} else if (flags & FOLL_SPLIT) {
+ 			if (unlikely(!try_get_page(page))) {
+ 				spin_unlock(ptl);
+ 				return ERR_PTR(-ENOMEM);
+@@ -419,8 +419,17 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
+ 			put_page(page);
+ 			if (pmd_none(*pmd))
+ 				return no_page_table(vma, flags);
+-		}
++		} else {  /* flags & FOLL_SPLIT_PMD */
++			pte_t *pte;
  
- 	get_page(new_page);
--	page_add_new_anon_rmap(new_page, vma, addr, false);
--	mem_cgroup_commit_charge(new_page, memcg, false, false);
--	lru_cache_add_active_or_unevictable(new_page, vma);
-+	if (orig) {
-+		page_add_file_rmap(new_page, false);
-+		inc_mm_counter(mm, mm_counter_file(new_page));
-+		dec_mm_counter(mm, MM_ANONPAGES);
-+	} else {
-+		page_add_new_anon_rmap(new_page, vma, addr, false);
-+		mem_cgroup_commit_charge(new_page, memcg, false, false);
-+		lru_cache_add_active_or_unevictable(new_page, vma);
-+	}
- 
- 	if (!PageAnon(old_page)) {
- 		dec_mm_counter(mm, mm_counter_file(old_page));
-@@ -461,9 +471,10 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
- 			unsigned long vaddr, uprobe_opcode_t opcode)
- {
- 	struct uprobe *uprobe;
--	struct page *old_page, *new_page;
-+	struct page *old_page, *new_page, *orig_page = NULL;
- 	struct vm_area_struct *vma;
- 	int ret, is_register, ref_ctr_updated = 0;
-+	pgoff_t index;
- 
- 	is_register = is_swbp_insn(&opcode);
- 	uprobe = container_of(auprobe, struct uprobe, arch);
-@@ -501,6 +512,19 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
- 	copy_highpage(new_page, old_page);
- 	copy_to_page(new_page, vaddr, &opcode, UPROBE_SWBP_INSN_SIZE);
- 
-+	index = vaddr_to_offset(vma, vaddr & PAGE_MASK) >> PAGE_SHIFT;
-+	orig_page = find_get_page(vma->vm_file->f_inode->i_mapping, index);
-+	if (orig_page) {
-+		if (pages_identical(new_page, orig_page)) {
-+			/* if new_page matches orig_page, use orig_page */
-+			put_page(new_page);
-+			new_page = orig_page;
-+		} else {
-+			put_page(orig_page);
-+			orig_page = NULL;
++			spin_unlock(ptl);
++			split_huge_pmd(vma, pmd, address);
++			pte = get_locked_pte(mm, address, &ptl);
++			if (!pte)
++				return no_page_table(vma, flags);
++			spin_unlock(ptl);
++			ret = 0;
 +		}
-+	}
-+
- 	ret = __replace_page(vma, vaddr, old_page, new_page);
- 	put_page(new_page);
- put_old:
+ 		return ret ? ERR_PTR(ret) :
+ 			follow_page_pte(vma, address, pmd, flags, &ctx->pgmap);
+ 	}
 -- 
 2.17.1
 
