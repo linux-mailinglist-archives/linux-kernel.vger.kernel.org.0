@@ -2,96 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4547E35425
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 01:31:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01E7F35446
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 01:32:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727841AbfFDXbE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 19:31:04 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:55094 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727667AbfFDXbC (ORCPT
+        id S1727829AbfFDXcJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 19:32:09 -0400
+Received: from gateway34.websitewelcome.com ([192.185.148.164]:23764 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727372AbfFDXcI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 19:31:02 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x54NSfYV119967;
-        Tue, 4 Jun 2019 23:30:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : from :
- subject : message-id : date : mime-version : content-type :
- content-transfer-encoding; s=corp-2018-07-02;
- bh=PYnlYwcrqismRpkktUNEE7wpHvUCY2x+J4QeRuh9P6A=;
- b=hI8t2IGipGArSITl/hZ8ilGOQA3SwfM5OFN5CTLViC6D7NnOh8xBuFffelsP3dEI+RMH
- Hdb/7hAU/AjL4ogfjWmXKJ5wJKtn4x7jxQK8G0NAZQKLUlQdM128/bGuyEVtgB3xZ/De
- G6zPw1OrSFKlAVP7XoMFbXi0hBeSswBSWOaAuuSHbFz9yLoTnKRKnJ/3muZD8rT8Vfxa
- jOtDdPEnrPKmhjWQnjVzxw2c7BoSqKr8zeCUpyyZ3onUtqGKnTrNfKmWpYRvS0tR34mK
- LsDzzKYDR3xGHuLMvbF1ag5wQAJ1biwk+nU2UxHV8MemR0+UxtjsYEYF8nA6YJDSSon6 yQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 2sugstfy9q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 04 Jun 2019 23:30:52 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x54NUbbL004697;
-        Tue, 4 Jun 2019 23:30:51 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 2swnhbvg30-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 04 Jun 2019 23:30:51 +0000
-Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x54NUm5x010464;
-        Tue, 4 Jun 2019 23:30:48 GMT
-Received: from [192.168.1.222] (/71.63.128.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 04 Jun 2019 16:30:48 -0700
-To:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Subject: question: should_compact_retry limit
-Message-ID: <6377c199-2b9e-e30d-a068-c304d8a3f706@oracle.com>
-Date:   Tue, 4 Jun 2019 16:30:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Tue, 4 Jun 2019 19:32:08 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id B28F5615C8
+        for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2019 18:32:07 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id YIuVh73g2dnCeYIuVhkf6E; Tue, 04 Jun 2019 18:32:07 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.127.120] (port=46282 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hYIuU-000mO4-N5; Tue, 04 Jun 2019 18:32:06 -0500
+Date:   Tue, 4 Jun 2019 18:32:05 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] video: fbdev-MMP: Use struct_size() in devm_kzalloc()
+Message-ID: <20190604233205.GA5377@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9278 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906040149
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9278 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906040149
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.127.120
+X-Source-L: No
+X-Exim-ID: 1hYIuU-000mO4-N5
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.127.120]:46282
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 14
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While looking at some really long hugetlb page allocation times, I noticed
-instances where should_compact_retry() was returning true more often that
-I expected.  In one allocation attempt, it returned true 765668 times in a
-row.  To me, this was unexpected because of the following:
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-#define MAX_COMPACT_RETRIES 16
-int max_retries = MAX_COMPACT_RETRIES;
+struct foo {
+    int stuff;
+    struct boo entry[];
+};
 
-However, if should_compact_retry() returns true via the following path we
-do not increase the retry count.
+size = sizeof(struct foo) + count * sizeof(struct boo);
+instance = devm_kzalloc(dev, size, GFP_KERNEL);
 
-	/*
-	 * make sure the compaction wasn't deferred or didn't bail out early
-	 * due to locks contention before we declare that we should give up.
-	 * But do not retry if the given zonelist is not suitable for
-	 * compaction.
-	 */
-	if (compaction_withdrawn(compact_result)) {
-		ret = compaction_zonelist_suitable(ac, order, alloc_flags);
-		goto out;
-	}
+Instead of leaving these open-coded and prone to type mistakes, we can
+now use the new struct_size() helper:
 
-Just curious, is this intentional?
+instance = devm_kzalloc(dev, struct_size(instance, entry, count), GFP_KERNEL);
+
+Notice that, in this case, variable size is not necessary, hence it
+is removed.
+
+This code was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/video/fbdev/mmp/hw/mmp_ctrl.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/video/fbdev/mmp/hw/mmp_ctrl.c b/drivers/video/fbdev/mmp/hw/mmp_ctrl.c
+index 87d943f15a12..17174cd7a5bb 100644
+--- a/drivers/video/fbdev/mmp/hw/mmp_ctrl.c
++++ b/drivers/video/fbdev/mmp/hw/mmp_ctrl.c
+@@ -433,7 +433,7 @@ static int mmphw_probe(struct platform_device *pdev)
+ {
+ 	struct mmp_mach_plat_info *mi;
+ 	struct resource *res;
+-	int ret, i, size, irq;
++	int ret, i, irq;
+ 	struct mmphw_path_plat *path_plat;
+ 	struct mmphw_ctrl *ctrl = NULL;
+ 
+@@ -461,9 +461,9 @@ static int mmphw_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* allocate */
+-	size = sizeof(struct mmphw_ctrl) + sizeof(struct mmphw_path_plat) *
+-	       mi->path_num;
+-	ctrl = devm_kzalloc(&pdev->dev, size, GFP_KERNEL);
++	ctrl = devm_kzalloc(&pdev->dev,
++			    struct_size(ctrl, path_plats, mi->path_num),
++			    GFP_KERNEL);
+ 	if (!ctrl) {
+ 		ret = -ENOMEM;
+ 		goto failed;
 -- 
-Mike Kravetz
+2.21.0
+
