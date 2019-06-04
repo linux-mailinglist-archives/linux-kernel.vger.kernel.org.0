@@ -2,99 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F216D34A6F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:30:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D62834A7B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:31:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbfFDOa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 10:30:26 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45294 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727347AbfFDOaZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 10:30:25 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 41343341;
-        Tue,  4 Jun 2019 07:30:25 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2C5B83F690;
-        Tue,  4 Jun 2019 07:30:23 -0700 (PDT)
-Date:   Tue, 4 Jun 2019 15:30:20 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Qian Cai <cai@lca.pw>, rppt@linux.ibm.com
-Cc:     akpm@linux-foundation.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        mhocko@kernel.org, linux-mm@kvack.org, vdavydov.dev@gmail.com,
-        hannes@cmpxchg.org, cgroups@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH -next] arm64/mm: fix a bogus GFP flag in pgd_alloc()
-Message-ID: <20190604143020.GD24467@lakrids.cambridge.arm.com>
-References: <1559656836-24940-1-git-send-email-cai@lca.pw>
- <20190604142338.GC24467@lakrids.cambridge.arm.com>
+        id S1727770AbfFDObh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 10:31:37 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:33657 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727552AbfFDObg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 10:31:36 -0400
+Received: by mail-wm1-f67.google.com with SMTP id v19so2427123wmh.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 07:31:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:subject:in-reply-to:date:message-id:mime-version;
+        bh=iZarr12ESEXM+3F555ibf1PVEySArgP2BdGs23qHHOA=;
+        b=BbQdUxnvVlxCxjXC7jUR55mdDIO8JQj5nGqaIpxfqMhT4ghZzSoCZx77DBgbcsqwrz
+         rMZbiCqwmEVBq64HEj4vliR38yhgwyeYzCZ/RBfJwQiJpgi1x5jXQaS1gD2Q3n+TZAmu
+         hY6gIZhMkdbXSsd8cmATmf9FyREaXKDKS9BgV5x0lI3F1liX4vtXHHgABkBTTKwZ43Xb
+         jcCbcwKCJq26Xg2itgXgPZARdQDLxsSX7/GOdiwm6EtOU93u4mcdHEd6KmnhrDeKAfCw
+         JL7/VJIAysoim+22ES9fVyDvkzGOV8TNKWJfdoKXyf/8vJVIBTggZi9+alvNGmt9A7Or
+         vV4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:in-reply-to:date:message-id
+         :mime-version;
+        bh=iZarr12ESEXM+3F555ibf1PVEySArgP2BdGs23qHHOA=;
+        b=ZMLcr5RCem6hkK+hzrPPmiMI72oE7tIp0SAir/Wf5lAgETVNxcZyfrxYkAgYpAf9MB
+         2ezlpHcmPqoQJsEpxoBJicXw2dVWIuXwZoFMT+vZnr5GfCxNDlxMnzq9zohi3kqR0uiK
+         6uWVN4wW0HfAFNUWmd2akKMnOpi21xGWVHkovETliXkep4NA5z0ESabgM4eOhzBTSWZB
+         4jsDpyZ+hg2ZKAoWIj0gUNxKCO3nJ8T/agi33NagV/EjhkPpnNmJGIFFYLhLpDLmv+yv
+         +81jDoBebZIbcH3fLRGulQKtMwN4gyXTIqAK5iiHdxCvxgmLLD6HsvvGmf7DVHK6A3f7
+         fNWg==
+X-Gm-Message-State: APjAAAWpX8osnvKOe8UDglQQRsF0uqkbGCii6TzKPiStFDDlTvKJbuFk
+        l1CkizG7j3dTxIh577qDMQnTeQ==
+X-Google-Smtp-Source: APXvYqyIooETwPZrZMrF2j6qHwH8bld2cOLZ1ydsgGSFZ6macMr3fCWCAcQrNOmgK6emptf2WEzGxg==
+X-Received: by 2002:a1c:4184:: with SMTP id o126mr6303600wma.68.1559658695037;
+        Tue, 04 Jun 2019 07:31:35 -0700 (PDT)
+Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id w3sm12685803wmc.8.2019.06.04.07.31.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Jun 2019 07:31:34 -0700 (PDT)
+From:   Loys Ollivier <lollivier@baylibre.com>
+To:     Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v3 0/5] arch: riscv: add board and SoC DT file support
+In-Reply-To: <20190602080500.31700-1-paul.walmsley@sifive.com>
+Date:   Tue, 04 Jun 2019 16:31:32 +0200
+Message-ID: <86y32hh16j.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190604142338.GC24467@lakrids.cambridge.arm.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 04, 2019 at 03:23:38PM +0100, Mark Rutland wrote:
-> On Tue, Jun 04, 2019 at 10:00:36AM -0400, Qian Cai wrote:
-> > The commit "arm64: switch to generic version of pte allocation"
-> > introduced endless failures during boot like,
-> > 
-> > kobject_add_internal failed for pgd_cache(285:chronyd.service) (error:
-> > -2 parent: cgroup)
-> > 
-> > It turns out __GFP_ACCOUNT is passed to kernel page table allocations
-> > and then later memcg finds out those don't belong to any cgroup.
-> 
-> Mike, I understood from [1] that this wasn't expected to be a problem,
-> as the accounting should bypass kernel threads.
-> 
-> Was that assumption wrong, or is something different happening here?
-> 
-> > backtrace:
-> >   kobject_add_internal
-> >   kobject_init_and_add
-> >   sysfs_slab_add+0x1a8
-> >   __kmem_cache_create
-> >   create_cache
-> >   memcg_create_kmem_cache
-> >   memcg_kmem_cache_create_func
-> >   process_one_work
-> >   worker_thread
-> >   kthread
-> > 
-> > Signed-off-by: Qian Cai <cai@lca.pw>
-> > ---
-> >  arch/arm64/mm/pgd.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/arm64/mm/pgd.c b/arch/arm64/mm/pgd.c
-> > index 769516cb6677..53c48f5c8765 100644
-> > --- a/arch/arm64/mm/pgd.c
-> > +++ b/arch/arm64/mm/pgd.c
-> > @@ -38,7 +38,7 @@ pgd_t *pgd_alloc(struct mm_struct *mm)
-> >  	if (PGD_SIZE == PAGE_SIZE)
-> >  		return (pgd_t *)__get_free_page(gfp);
-> >  	else
-> > -		return kmem_cache_alloc(pgd_cache, gfp);
-> > +		return kmem_cache_alloc(pgd_cache, GFP_PGTABLE_KERNEL);
-> 
-> This is used to allocate PGDs for both user and kernel pagetables (e.g.
-> for the efi runtime services), so while this may fix the regression, I'm
-> not sure it's the right fix.
+On Sun 02 Jun 2019 at 01:04, Paul Walmsley <paul.walmsley@sifive.com> wrote:
 
-I see that since [1], pgd_alloc() was updated to special-case the
-init_mm, which is not sufficient for cases like:
+> Add support for building flattened DT files from DT source files under
+> arch/riscv/boot/dts.  Follow existing kernel precedent from other SoC
+> architectures.  Start our board support by adding initial support for
+> the SiFive FU540 SoC and the first development board that uses it, the
+> SiFive HiFive Unleashed A00.
+>
+> This third version of the patch set adds I2C data for the chip,
+> incorporates all remaining changes that riscv-pk was making
+> automatically, and addresses a comment from Rob Herring
+> <robh@kernel.org>.
+>
+> Boot-tested on v5.2-rc1 on a HiFive Unleashed A00 board, using the
+> BBL and open-source FSBL, with modifications to pass in the DTB
+> file generated by these patches.
+>
+> This patch series can be found, along with the PRCI patch set
+> and the DT macro prerequisite patch, at:
+>
+> https://github.com/sifive/riscv-linux/tree/dev/paulw/dts-v5.2-rc1
+>
+>
+> - Paul
+>
 
-	efi_mm.pgd = pgd_alloc(&efi_mm)
+Tested patch 1, 4 and 5 using FSBL + OpenSBI + U-Boot on HiFive Unleashed.
+Tested-by: Loys Ollivier <lollivier@baylibre.com>
 
-... which occurs in a kthread.
+>
+> Paul Walmsley (5):
+>   arch: riscv: add support for building DTB files from DT source data
+>   dt-bindings: riscv: sifive: add YAML documentation for the SiFive
+>     FU540
+>   dt-bindings: riscv: convert cpu binding to json-schema
+>   riscv: dts: add initial support for the SiFive FU540-C000 SoC
+>   riscv: dts: add initial board data for the SiFive HiFive Unleashed
+>
+>  .../devicetree/bindings/riscv/cpus.yaml       | 168 ++++++++++++++
+>  .../devicetree/bindings/riscv/sifive.yaml     |  25 ++
+>  MAINTAINERS                                   |   9 +
+>  arch/riscv/boot/dts/Makefile                  |   2 +
+>  arch/riscv/boot/dts/sifive/Makefile           |   2 +
+>  arch/riscv/boot/dts/sifive/fu540-c000.dtsi    | 215 ++++++++++++++++++
+>  .../boot/dts/sifive/hifive-unleashed-a00.dts  |  67 ++++++
+>  7 files changed, 488 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/riscv/cpus.yaml
+>  create mode 100644 Documentation/devicetree/bindings/riscv/sifive.yaml
+>  create mode 100644 arch/riscv/boot/dts/Makefile
+>  create mode 100644 arch/riscv/boot/dts/sifive/Makefile
+>  create mode 100644 arch/riscv/boot/dts/sifive/fu540-c000.dtsi
+>  create mode 100644 arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts
 
-So let's have a pgd_alloc_kernel() to make that explicit.
+Note: the -fu540 was dropped from the previous version which results in
+a different dtb file.
 
-Thanks,
-Mark.
+Loys
