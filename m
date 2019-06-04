@@ -2,191 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA1BC352FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 01:13:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1E3C35474
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 01:39:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726474AbfFDXNG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 19:13:06 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:37527 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbfFDXNG (ORCPT
+        id S1726683AbfFDXjE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 19:39:04 -0400
+Received: from gateway36.websitewelcome.com ([192.185.197.22]:28206 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726317AbfFDXjE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 19:13:06 -0400
-Received: by mail-pl1-f195.google.com with SMTP id bh12so2860292plb.4
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 16:13:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=5A1oQW2zEmTGlil5PX6ZgxMyrNMDmkKoK9pr4QFXIFg=;
-        b=iYm3jIgWYnzVYAyhEA93tszC3hr2XfumPIFAW/dw5CQQM27l88HF5pQG+UBSTfMlOm
-         nCuYDdvTpwLQ7acBWNEFy2MN3JRuHVWi1CqtJ5jB1KvvrUjXNCk9KtcgV23NaoCvpVRq
-         hArOVrYZsdD3dqBNjNdGxCFIKVwhJ2OvMR4ZA3kWXXFA/13vTZYsOaE7UT06tQvVScyx
-         4T9hYsru3W6ICnHc3CuVYv7v24kqUBKXrFMLXA6YVB4n1hUjCRP+2+yLQRfO8sUYvrj0
-         QcjFyVuqZBGBQ6GbQMeNoKHMd/kaMlW5T7JishOiTxzTpkLL7jvXomPGbRuWlc74/L5U
-         Sarg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=5A1oQW2zEmTGlil5PX6ZgxMyrNMDmkKoK9pr4QFXIFg=;
-        b=HsjBKE5QGQj5NrOEKOb78sr3DqFG+Rr7ZmeEcXCmY3GdIx+uJ27i+J8O8878qyaoaR
-         WPMY/mBe2Aqea7vQqfUO5lBf5evm3fDWwXBnOIcEttTlfi6Ikp1/2pcZ8w3R/3e/TUjW
-         usCRIqedHF3PhFpAFiDT2fWITcqYURAfGyc7EiiaQc1jk0tpEr5w52O1+Zf+j0GK4xQO
-         83JA3SIi+M9xgdqDK4ZfDBuL4+fkxJhiUrrWFyndeyh1vu6xqIEdkBIiMcymz/+4fjba
-         5I6TTTKscNytTiVWP1HvGY/qw3bQTc/yJmnwhqLwEaqZF3ZgWV+evy6Cou3sEmdirkFS
-         Z8VA==
-X-Gm-Message-State: APjAAAWEw9361n+QJc7l7SxGsZueNgnCzBwkEb3xtkNjU4WfvPTjDe2f
-        qLzgPX32Fpzzf7ceiaKNVSOSVilCKC498r/5ZXzwclYQ
-X-Google-Smtp-Source: APXvYqyLRxAg47zb9tpmqBHEiBXvilkJfBzmKJNLF7nL1K21T8UPq5JiU6h4Zn/rmhfOvnttd5Fo5gz+Dh+0HowTbXc=
-X-Received: by 2002:a17:902:aa0a:: with SMTP id be10mr32310325plb.27.1559689985095;
- Tue, 04 Jun 2019 16:13:05 -0700 (PDT)
+        Tue, 4 Jun 2019 19:39:04 -0400
+X-Greylist: delayed 1365 seconds by postgrey-1.27 at vger.kernel.org; Tue, 04 Jun 2019 19:39:03 EDT
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 7E405400C8BAD
+        for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2019 17:37:08 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id YIfChnwDH90onYIfChpmSQ; Tue, 04 Jun 2019 18:16:18 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.127.120] (port=45750 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hYIfB-000fBA-4A; Tue, 04 Jun 2019 18:16:17 -0500
+Date:   Tue, 4 Jun 2019 18:16:16 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] irqchip/qcom: Use struct_size() in devm_kzalloc()
+Message-ID: <20190604231616.GA31969@embeddedor>
 MIME-Version: 1.0
-References: <CAES_P+8ASijfmugGEL5am540nQTRATdYFmYgtYdkJnmLSVdt_w@mail.gmail.com>
-In-Reply-To: <CAES_P+8ASijfmugGEL5am540nQTRATdYFmYgtYdkJnmLSVdt_w@mail.gmail.com>
-From:   noman pouigt <variksla@gmail.com>
-Date:   Tue, 4 Jun 2019 16:12:53 -0700
-Message-ID: <CAES_P+9v6MPK2AhzQobHV5CPysk_Tnf=M3yo71BYXPdVC5Fk6w@mail.gmail.com>
-Subject: Re: deadline scheduler BUG_ON trigger
-To:     linux-kernel@vger.kernel.org, juri.lelli@arm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.127.120
+X-Source-L: No
+X-Exim-ID: 1hYIfB-000fBA-4A
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.127.120]:45750
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 8
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Juri
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-Patch(sched/deadline: don't replenish from a !SCHED_DEADLINE entity)
-introduced  fixed the case when the task is deboosted and it is normal
-priority task so as to avoid getting replenished from it.However,
-what is the intention of BUG_ON? How does it help in fixing the
-problem when indeed it is normal priority task and this BUG ON
-is getting triggered. We should just return, no?
+struct foo {
+    int stuff;
+    struct boo entry[];
+};
 
-On Mon, Jun 3, 2019 at 1:30 PM noman pouigt <variksla@gmail.com> wrote:
->
-> Folks,
->
-> I am using sched deadline in the case of audio recording over SPI to
-> maintain the consistency in reading the data.
->
-> However, getting this BUG_ON triggered rarely. Is it because the calculated
-> runtime is less than actual runtime? I only have one SCHED_DEADLINE task
-> in the entire system.
->
-> .sched_runtime = 5 * 1000 * 1000
->
-> <6>[  354.001991] ------------[ cut here ]------------
-> <2>[  354.002006] kernel BUG at
-> /mnt/build/workspace/fireos_main_nougat_neptune-build/VARIANT/userdebug/label/PRODUCT_BUILD_DUAL_EXEC/kernel/qcom/msm-4.4/kernel/sched/deadline.c:1035!
-> <6>[  354.002071] ------------[ cut here ]------------
-> <2>[  354.003880] kernel BUG at
-> /mnt/build/workspace/fireos_main_nougat_neptune-build/VARIANT/userdebug/label/PRODUCT_BUILD_DUAL_EXEC/kernel/qcom/msm-4.4/kernel/sched/deadline.c:1035!
-> <0>[  354.004491] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
-> <6>[  354.006429] Modules linked in: wlan_mt76x8_sdio(OE)
-> btmtksdio(OE) wlan_mt76x8_sdio_prealloc(POE)
-> <6>[  354.008166] CPU: 2 PID: 298 Comm: spi1 Tainted: P           OE
-> 4.4.21+ #1
-> <6>[  354.008211] Hardware name: Amazon Vesta Neptune proto-3 (DT)
-> <6>[  354.009057] task: ffffffd936d9a580 ti: ffffffd936da8000 task.ti:
-> ffffffd936da8000
-> <6>[  354.009805] PC is at enqueue_task_dl+0x2fc/0x33c
-> <6>[  354.010713] LR is at enqueue_task_dl+0x2c/0x33c
-> <6>[  354.011297] pc : [<ffffff83c8cddf3c>] lr : [<ffffff83c8cddc6c>]
-> pstate: 800001c5
-> <6>[  354.011837] sp : ffffffd936dab9a0
-> <6>[  354.012781] x29: ffffffd936dab9a0 x28: ffffffd9364a3c48
-> <6>[  354.013814] x27: ffffffd936d9ab90 x26: 0000000000000000
-> <6>[  354.014477] x25: ffffffd93e0ea100 x24: 0000000000000001
-> <6>[  354.015138] x23: ffffffd93e0c0100 x22: ffffffd886e77090
-> <6>[  354.015801] x21: 0000000000000001 x20: ffffffd886e77080
-> <6>[  354.016462] x19: ffffffd886e77368 x18: 0000000000000044
-> <6>[  354.017125] x17: 0000007c4cbe7f50 x16: ffffff83c8d1b20c
-> <6>[  354.017786] x15: 0000000000000000 x14: 0000007c49f6e940
-> <6>[  354.018448] x13: 000000000019fe5a x12: 0000000001312d00
-> <6>[  354.019109] x11: 000000526c14c33c x10: ffffffd93e0eab40
-> <6>[  354.019772] x9 : ffffffd93e0eab50 x8 : 0000000000000000
-> <6>[  354.020434] x7 : 0000005573c60000 x6 : 0000000000000004
-> <6>[  354.021095] x5 : 0000005573c36000 x4 : 000000052a5b36ce
-> <6>[  354.021758] x3 : ffffff83c8cddc40 x2 : 0000000000000000
-> <6>[  354.022418] x1 : ffffffd886e77080 x0 : 0000000000000078
-> <6>[  354.023082]
-> <6>[  354.023082] PC: 0xffffff83c8cddefc:
-> <6>[  354.023114] defc  aa1503e0 97fffe20 f9445ae0 eb14001f 540002c0
-> b943a680 7100041f 5400026d
-> <6>[  354.024731] df1c  aa1703e0 aa1403e1 97fffeb4 1400000f 910ba001
-> 17ffff59 7100405f 54000040
-> <6>[  354.025751] df3c  d4210000 b9433e80 35000100 17fffffd d4210000
-> 17ffff72 d4210000 17ffffb6
-> <6>[  354.026770] df5c  f9419401 17ffffe0 a94153f3 a9425bf5 a94363f7
-> f94023f9 a8c67bfd d65f03c0
-> <6>[  354.027791]
-> <6>[  354.027791] LR: 0xffffff83c8cddc2c:
-> <6>[  354.027814] dc2c  17ffffed a94153f3 a9425bf5 a8c37bfd d65f03c0
-> a9ba7bfd 910003fd a90363f7
-> <6>[  354.029428] dc4c  aa0003f7 aa0103e0 a90153f3 f9002fa2 aa0103f4
-> a9025bf5 f90023f9 940045e0
-> <6>[  354.030449] dc6c  910ba293 f9402fa2 b40000a0 b9433e81 34000061
-> b9405001 37f81541 b9405280
-> <6>[  354.031469] dc8c  36f81540 aa1303e1 b9433680 34000040 36201642
-> f9417699 eb19027f 54000040
-> <6>[  354.032489]
-> <6>[  354.032489] SP: 0xffffffd936dab960:
-> <6>[  354.032512] b960  c8cddc6c ffffff83 36dab9a0 ffffffd9 c8cddf3c
-> ffffff83 800001c5 00000000
-> <6>[  354.034126] b980  3e0c0100 ffffffd9 39411400 ffffffd9 ffffffff
-> ffffffff c8cce2fc ffffff83
-> <6>[  354.035147] b9a0  36daba00 ffffffd9 c8cc6738 ffffff83 86e77080
-> ffffffd8 3e0c0100 ffffffd9
-> <6>[  354.036168] b9c0  00000001 00000000 86e77090 ffffffd8 3e0c0100
-> ffffffd9 00000001 00000000
-> <6>[  354.037186]
-> <0>[  354.037203] Process spi1 (pid: 298, stack limit = 0xffffffd936da8020)
-> <6>[  354.037409] Call trace:
-> <6>[  354.038194] Exception stack(0xffffffd936dab7d0 to 0xffffffd936dab900)
-> <6>[  354.038485] b7c0:
-> ffffffd886e77368 0000008000000000
-> <6>[  354.039314] b7e0: ffffffd936dab9a0 ffffff83c8cddf3c
-> ffffffd93844c808 0000000000000002
-> <6>[  354.040290] b800: ffffffd9385bf200 ffffffd93844d800
-> 0000000000000001 0000000000000000
-> <6>[  354.041266] b820: 0000000000000001 ffffff83ca48a100
-> ffffffd93844c808 0000000000000002
-> <6>[  354.042242] b840: ffffff83cac06a04 0000000000000000
-> ffffffd936da8000 ffffffd9335a6400
-> <6>[  354.043219] b860: ffffffd936dab8a0 ffffff83c969ca30
-> 0000000000000078 ffffffd886e77080
-> <6>[  354.044195] b880: 0000000000000000 ffffff83c8cddc40
-> 000000052a5b36ce 0000005573c36000
-> <6>[  354.045173] b8a0: 0000000000000004 0000005573c60000
-> 0000000000000000 ffffffd93e0eab50
-> <6>[  354.046149] b8c0: ffffffd93e0eab40 000000526c14c33c
-> 0000000001312d00 000000000019fe5a
-> <6>[  354.047126] b8e0: 0000007c49f6e940 0000000000000000
-> ffffff83c8d1b20c 0000007c4cbe7f50
-> <6>[  354.048103] [<ffffff83c8cddf3c>] enqueue_task_dl+0x2fc/0x33c
-> <6>[  354.049078] [<ffffff83c8cc6738>] activate_task+0x74/0x124
-> <6>[  354.049790] [<ffffff83c8cdeabc>] push_dl_task.part.35+0x160/0x1c0
-> <6>[  354.050453] [<ffffff83c8cdee30>] push_dl_tasks+0x20/0x30
-> <6>[  354.051212] [<ffffff83c8cc4160>] __balance_callback+0x3c/0x5c
-> <6>[  354.051888] [<ffffff83c99cc6d8>] __schedule+0x4c4/0x770
-> <6>[  354.052587] [<ffffff83c99cca08>] schedule+0x84/0xa4
-> <6>[  354.053217] [<ffffff83c99ce91c>] __rt_mutex_slowlock+0x80/0xd8
-> <6>[  354.053826] [<ffffff83c99cea40>] rt_mutex_slowlock+0xcc/0x170
-> <6>[  354.054565] [<ffffff83c99ceb2c>] rt_mutex_lock+0x48/0x50
-> <6>[  354.055292] [<ffffff83c90d7664>] update_bw_adhoc+0x30/0x1d8
-> <6>[  354.055964] [<ffffff83c90d3294>] msm_bus_scale_update_bw+0x20/0x4c
-> <6>[  354.056628] [<ffffff83c9254c14>] msm_spi_clk_path_vote+0x2c/0x34
-> <6>[  354.057408] [<ffffff83c9254b44>] msm_spi_set_cs+0x5c/0xe4
-> <6>[  354.058177] [<ffffff83c924f03c>] spi_set_cs+0x50/0x5c
-> <6>[  354.058837] [<ffffff83c924fb4c>] spi_transfer_one_message+0x358/0x410
-> <6>[  354.059470] [<ffffff83c9250438>] __spi_pump_messages+0x5f8/0x624
-> <6>[  354.060271] [<ffffff83c9250478>] spi_pump_messages+0x14/0x1c
-> <6>[  354.061032] [<ffffff83c8cb9078>] kthread_worker_fn+0xb4/0x130
-> <6>[  354.061736] [<ffffff83c8cb8fbc>] kthread+0xdc/0xe4
-> <6>[  354.062440] [<ffffff83c8c845f0>] ret_from_fork+0x10/0x20
-> <0>[  354.063028] Code: 910ba001 17ffff59 7100405f 54000040 (d4210000)
-> <4>[  354.063711] ---[ end trace c62a47584ac7d903 ]---
->
-> Thanks,
-> variksla
+size = sizeof(struct foo) + count * sizeof(struct boo);
+instance = devm_kzalloc(dev, size, GFP_KERNEL);
+
+Instead of leaving these open-coded and prone to type mistakes, we can
+now use the new struct_size() helper:
+
+instance = devm_kzalloc(dev, struct_size(instance, entry, count), GFP_KERNEL);
+
+Notice that, in this case, variable alloc_sz is not necessary, hence it
+is removed.
+
+This code was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/irqchip/qcom-irq-combiner.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/irqchip/qcom-irq-combiner.c b/drivers/irqchip/qcom-irq-combiner.c
+index 7f0c0be322e0..d269a7722032 100644
+--- a/drivers/irqchip/qcom-irq-combiner.c
++++ b/drivers/irqchip/qcom-irq-combiner.c
+@@ -237,7 +237,6 @@ static int get_registers(struct platform_device *pdev, struct combiner *comb)
+ static int __init combiner_probe(struct platform_device *pdev)
+ {
+ 	struct combiner *combiner;
+-	size_t alloc_sz;
+ 	int nregs;
+ 	int err;
+ 
+@@ -247,8 +246,8 @@ static int __init combiner_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	alloc_sz = sizeof(*combiner) + sizeof(struct combiner_reg) * nregs;
+-	combiner = devm_kzalloc(&pdev->dev, alloc_sz, GFP_KERNEL);
++	combiner = devm_kzalloc(&pdev->dev, struct_size(combiner, regs, nregs),
++				GFP_KERNEL);
+ 	if (!combiner)
+ 		return -ENOMEM;
+ 
+-- 
+2.21.0
+
