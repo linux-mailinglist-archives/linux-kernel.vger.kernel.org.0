@@ -2,135 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8D91353DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 01:28:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4547E35425
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 01:31:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727939AbfFDX2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 19:28:54 -0400
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:54653 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726707AbfFDX2u (ORCPT
+        id S1727841AbfFDXbE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 19:31:04 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:55094 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727667AbfFDXbC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 19:28:50 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id 67ACF22254;
-        Tue,  4 Jun 2019 19:28:49 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Tue, 04 Jun 2019 19:28:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        pedrovanzella.com; h=from:to:cc:subject:date:message-id
-        :in-reply-to:references:mime-version:content-transfer-encoding;
-         s=fm3; bh=DsACNtiGvfC/Ki2npzczHrtAo6mekGtphSEjso81n5M=; b=jH/Bt
-        t6sJlXT2vgCGQ3KCSy0AIaeaY706gokPGiRdJQnLtAi3aD+oMuRZBDpwmk8SMZeK
-        K/vZrPeal891ZObtW2/C2OH2BtJvNenyPV/Q6rkp7eV7XGFXVvEEwiK+aG+JybEq
-        Ec6CC09BSqrlBxKtpsg+9ruCmevv4EyujsNreXMzw38hREdBQNP8INcUvp5CoW1A
-        gpNksmjqcGeUMmkRW5GLZA217P4rXP89dq4oexSZfTY3GrYZXzXRKe+KCw06cpfG
-        OnTtSJiGUvnSnVA9VSfhlbmiWruqc2zSxEsmHi65qR2cEgkxrrAgAv+NmTwPZVTS
-        8suLu3OYLnLOQ95CA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=DsACNtiGvfC/Ki2npzczHrtAo6mekGtphSEjso81n5M=; b=8Y1t13kf
-        F5/SL504krbm6dERJ9tihtWVSdDW0vyYIUlvqt3tXfI3tNMcqCTiRYLwBI/GLSBf
-        9LhbGVNrpQzeIDFWusOO9ih6ks7ivpFUKH28hPi8fL+Gb7xgh1mzsj0yjbegcW48
-        0LsK3WifgBZn4ra36R5YL79+tt4c74Vc8pmuQI6KNOJQzhb9hJLeqZSnRpXujctC
-        x8P7u2T9K/AzPBzB3xQv9zYgGTjeAwPVQEZ9uP6LW6EpPMcMTI/JCbp0XqAKwAaf
-        eC3KO2nhEktIwUXFAAJtWY+Xn/T/C70JohTmf+QgOznX4iuwmJ/iprUGdCo2Vxvu
-        80XhLc3GryrYgA==
-X-ME-Sender: <xms:sf72XCQcsmGG77Ss3qLC_vmfjFVYteyoKEs0RhAEeEp3X9tx6Bt3Ug>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrudeguddgvddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefrvggurhho
-    ucggrghniigvlhhlrgcuoehpvggurhhosehpvggurhhovhgrnhiivghllhgrrdgtohhmqe
-    enucfkphepjedtrddvjedrvdejrddugeelnecurfgrrhgrmhepmhgrihhlfhhrohhmpehp
-    vggurhhosehpvggurhhovhgrnhiivghllhgrrdgtohhmnecuvehluhhsthgvrhfuihiivg
-    epud
-X-ME-Proxy: <xmx:sf72XKH3R2RLif6qzhSqYefDyk9CtbX1v0JxOq-277P11zVzVnT7Tw>
-    <xmx:sf72XOhyXl4Tj0VvZHc1TOjjvVNMCRQ3yxSjM15eWur0W5_umNehWg>
-    <xmx:sf72XK9ygKAa1rZ5dGnaSFR4pw41TRGLeuEVLZnDFegMfKMSmnqXrA>
-    <xmx:sf72XHWceCXmZGz5IofXWLAU8pXxfmw-880J4Ta79XuucB2iFvZ2xA>
-Received: from localhost (toroon020aw-lp130-02-70-27-27-149.dsl.bell.ca [70.27.27.149])
-        by mail.messagingengine.com (Postfix) with ESMTPA id EE2AC380083;
-        Tue,  4 Jun 2019 19:28:48 -0400 (EDT)
-From:   Pedro Vanzella <pedro@pedrovanzella.com>
-To:     linux-input@vger.kernel.org
-Cc:     Pedro Vanzella <pedro@pedrovanzella.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] HID: hid-logitech-hidpp: subscribe to battery voltage change events
-Date:   Tue,  4 Jun 2019 19:28:27 -0400
-Message-Id: <20190604232827.26008-2-pedro@pedrovanzella.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190604232827.26008-1-pedro@pedrovanzella.com>
-References: <20190604232827.26008-1-pedro@pedrovanzella.com>
+        Tue, 4 Jun 2019 19:31:02 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x54NSfYV119967;
+        Tue, 4 Jun 2019 23:30:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : from :
+ subject : message-id : date : mime-version : content-type :
+ content-transfer-encoding; s=corp-2018-07-02;
+ bh=PYnlYwcrqismRpkktUNEE7wpHvUCY2x+J4QeRuh9P6A=;
+ b=hI8t2IGipGArSITl/hZ8ilGOQA3SwfM5OFN5CTLViC6D7NnOh8xBuFffelsP3dEI+RMH
+ Hdb/7hAU/AjL4ogfjWmXKJ5wJKtn4x7jxQK8G0NAZQKLUlQdM128/bGuyEVtgB3xZ/De
+ G6zPw1OrSFKlAVP7XoMFbXi0hBeSswBSWOaAuuSHbFz9yLoTnKRKnJ/3muZD8rT8Vfxa
+ jOtDdPEnrPKmhjWQnjVzxw2c7BoSqKr8zeCUpyyZ3onUtqGKnTrNfKmWpYRvS0tR34mK
+ LsDzzKYDR3xGHuLMvbF1ag5wQAJ1biwk+nU2UxHV8MemR0+UxtjsYEYF8nA6YJDSSon6 yQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2sugstfy9q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 04 Jun 2019 23:30:52 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x54NUbbL004697;
+        Tue, 4 Jun 2019 23:30:51 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2swnhbvg30-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 04 Jun 2019 23:30:51 +0000
+Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x54NUm5x010464;
+        Tue, 4 Jun 2019 23:30:48 GMT
+Received: from [192.168.1.222] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 04 Jun 2019 16:30:48 -0700
+To:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Cc:     Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Subject: question: should_compact_retry limit
+Message-ID: <6377c199-2b9e-e30d-a068-c304d8a3f706@oracle.com>
+Date:   Tue, 4 Jun 2019 16:30:47 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9278 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906040149
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9278 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906040149
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Same as with the other ways of reporting battery status,
-fetch the battery voltage on raw hidpp events.
+While looking at some really long hugetlb page allocation times, I noticed
+instances where should_compact_retry() was returning true more often that
+I expected.  In one allocation attempt, it returned true 765668 times in a
+row.  To me, this was unexpected because of the following:
 
-Signed-off-by: Pedro Vanzella <pedro@pedrovanzella.com>
----
- drivers/hid/hid-logitech-hidpp.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+#define MAX_COMPACT_RETRIES 16
+int max_retries = MAX_COMPACT_RETRIES;
 
-diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
-index e68ea44b0d24..1eee206a0aed 100644
---- a/drivers/hid/hid-logitech-hidpp.c
-+++ b/drivers/hid/hid-logitech-hidpp.c
-@@ -1313,6 +1313,35 @@ static int hidpp20_query_battery_voltage_info(struct hidpp_device *hidpp)
- 	return 0;
- }
- 
-+static int hidpp20_battery_voltage_event(struct hidpp_device *hidpp,
-+					 u8 *data, int size)
-+{
-+	struct hidpp_report *report = (struct hidpp_report *)data;
-+	int status, voltage;
-+	bool changed;
-+
-+	if (report->fap.feature_index != hidpp->battery.voltage_feature_index ||
-+	    report->fap.funcindex_clientid !=
-+		    EVENT_BATTERY_LEVEL_STATUS_BROADCAST)
-+		return 0;
-+
-+	status = hidpp20_battery_map_status_voltage(report->fap.params,
-+						    &voltage);
-+
-+	hidpp->battery.online = status != POWER_SUPPLY_STATUS_NOT_CHARGING;
-+
-+	changed = voltage != hidpp->battery.voltage ||
-+		  status != hidpp->battery.status;
-+
-+	if (changed) {
-+		hidpp->battery.voltage = voltage;
-+		hidpp->battery.status = status;
-+		if (hidpp->battery.ps)
-+			power_supply_changed(hidpp->battery.ps);
-+	}
-+	return 0;
-+}
-+
- static enum power_supply_property hidpp_battery_props[] = {
- 	POWER_SUPPLY_PROP_ONLINE,
- 	POWER_SUPPLY_PROP_STATUS,
-@@ -3181,6 +3210,9 @@ static int hidpp_raw_hidpp_event(struct hidpp_device *hidpp, u8 *data,
- 		ret = hidpp_solar_battery_event(hidpp, data, size);
- 		if (ret != 0)
- 			return ret;
-+		ret = hidpp20_battery_voltage_event(hidpp, data, size);
-+		if (ret != 0)
-+			return ret;
- 	}
- 
- 	if (hidpp->capabilities & HIDPP_CAPABILITY_HIDPP10_BATTERY) {
+However, if should_compact_retry() returns true via the following path we
+do not increase the retry count.
+
+	/*
+	 * make sure the compaction wasn't deferred or didn't bail out early
+	 * due to locks contention before we declare that we should give up.
+	 * But do not retry if the given zonelist is not suitable for
+	 * compaction.
+	 */
+	if (compaction_withdrawn(compact_result)) {
+		ret = compaction_zonelist_suitable(ac, order, alloc_flags);
+		goto out;
+	}
+
+Just curious, is this intentional?
 -- 
-2.21.0
-
+Mike Kravetz
