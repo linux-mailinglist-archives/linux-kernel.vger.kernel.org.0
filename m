@@ -2,228 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB08534786
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 15:02:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 375AE3476E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 15:00:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbfFDNCd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 09:02:33 -0400
-Received: from mga07.intel.com ([134.134.136.100]:5114 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727729AbfFDNCX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 09:02:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jun 2019 06:02:22 -0700
-X-ExtLoop1: 1
-Received: from ahunter-desktop.fi.intel.com ([10.237.72.198])
-  by fmsmga005.fm.intel.com with ESMTP; 04 Jun 2019 06:02:21 -0700
-From:   Adrian Hunter <adrian.hunter@intel.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Jin Yao <yao.jin@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 19/19] perf time-utils: Add support for multiple explicit time intervals
-Date:   Tue,  4 Jun 2019 16:00:17 +0300
-Message-Id: <20190604130017.31207-20-adrian.hunter@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190604130017.31207-1-adrian.hunter@intel.com>
-References: <20190604130017.31207-1-adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+        id S1727137AbfFDNAy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 09:00:54 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:42050 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727033AbfFDNAy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 09:00:54 -0400
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 68F96281ED8;
+        Tue,  4 Jun 2019 14:00:51 +0100 (BST)
+Date:   Tue, 4 Jun 2019 15:00:47 +0200
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     "Shivamurthy Shastri (sshivamurthy)" <sshivamurthy@micron.com>
+Cc:     Lucas Stach <dev@lynxeye.de>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Richard Weinberger <richard@nod.at>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Chuanhong Guo <gch981213@gmail.com>,
+        Stefan Agner <stefan@agner.ch>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "Bean Huo \(beanhuo\)" <beanhuo@micron.com>
+Subject: Re: [EXT] Re: [PATCH v3 04/12] mtd: rawnand: introduce struct
+ onfi_helper
+Message-ID: <20190604150047.063395ab@collabora.com>
+In-Reply-To: <MN2PR08MB595131826D34BFD773DF1251B8150@MN2PR08MB5951.namprd08.prod.outlook.com>
+References: <MN2PR08MB5951E35FED92DD502F57B590B8140@MN2PR08MB5951.namprd08.prod.outlook.com>
+        <20190603150537.3ca5ca8a@collabora.com>
+        <MN2PR08MB595131826D34BFD773DF1251B8150@MN2PR08MB5951.namprd08.prod.outlook.com>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently only a single explicit time range is accepted. Add support for
-multiple ranges separated by spaces, which requires the string to be
-quoted. Update the time utils test accordingly.
+On Tue, 4 Jun 2019 12:02:28 +0000
+"Shivamurthy Shastri (sshivamurthy)" <sshivamurthy@micron.com> wrote:
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
----
- tools/perf/Documentation/perf-diff.txt   |  8 ++-
- tools/perf/Documentation/perf-report.txt |  3 +-
- tools/perf/Documentation/perf-script.txt |  3 +-
- tools/perf/tests/time-utils-test.c       | 17 ++++++
- tools/perf/util/time-utils.c             | 74 ++++++++++++++++++++++--
- 5 files changed, 94 insertions(+), 11 deletions(-)
+> Hi Boris,
+> 
+> > > Create onfi_helper object. This is base to turn ONFI code to generic.
+> > >
+> > > Signed-off-by: Shivamurthy Shastri <sshivamurthy@micron.com>
+> > > ---
+> > >  include/linux/mtd/nand.h | 21 +++++++++++++++++++++
+> > >  1 file changed, 21 insertions(+)
+> > >
+> > > diff --git a/include/linux/mtd/nand.h b/include/linux/mtd/nand.h
+> > > index 3cdf06cae8b6..645dde4c5797 100644
+> > > --- a/include/linux/mtd/nand.h
+> > > +++ b/include/linux/mtd/nand.h
+> > > @@ -11,6 +11,7 @@
+> > >  #define __LINUX_MTD_NAND_H
+> > >
+> > >  #include <linux/mtd/mtd.h>
+> > > +#include <linux/mtd/onfi.h>
+> > >
+> > >  /**
+> > >   * struct nand_memory_organization - Memory organization structure
+> > > @@ -157,6 +158,24 @@ struct nand_ops {
+> > >  	bool (*isbad)(struct nand_device *nand, const struct nand_pos  
+> > *pos);  
+> > >  };
+> > >
+> > > +/**
+> > > + * struct onfi_helper - ONFI helper functions that should be implemented  
+> > by  
+> > > + * specialized layers (raw NAND, SPI NAND, etc.)
+> > > + * @page: Page number for ONFI parameter table
+> > > + * @check_revision: Check ONFI revision number
+> > > + * @parameter_page_read: Function to read parameter pages
+> > > + * @init_intf_data: Initialize interface specific data or fixups
+> > > + */
+> > > +struct onfi_helper {
+> > > +	u8 page;
+> > > +	int (*check_revision)(struct nand_device *base,
+> > > +			      struct nand_onfi_params *p, int *onfi_version);
+> > > +	int (*parameter_page_read)(struct nand_device *base, u8 page,
+> > > +				   void *buf, unsigned int len);
+> > > +	int (*init_intf_data)(struct nand_device *base,
+> > > +			      struct nand_onfi_params *p);
+> > > +};
+> > > +
+> > >  /**
+> > >   * struct nand_device - NAND device
+> > >   * @mtd: MTD instance attached to the NAND device
+> > > @@ -165,6 +184,7 @@ struct nand_ops {
+> > >   * @rowconv: position to row address converter
+> > >   * @bbt: bad block table info
+> > >   * @ops: NAND operations attached to the NAND device
+> > > + * @helper: Helper functions to detect and initialize ONFI NAND
+> > >   *
+> > >   * Generic NAND object. Specialized NAND layers (raw NAND, SPI NAND,  
+> > OneNAND)  
+> > >   * should declare their own NAND object embedding a nand_device struct  
+> > (that's  
+> > > @@ -183,6 +203,7 @@ struct nand_device {
+> > >  	struct nand_row_converter rowconv;
+> > >  	struct nand_bbt bbt;
+> > >  	const struct nand_ops *ops;
+> > > +	struct onfi_helper helper;  
+> > 
+> > Sorry, but I don't think that's the right solution. When I said we
+> > should have ONFI code shared I was thinking about the code that parses
+> > the ONFI struct/data to extract nand_memory_organization bits or other
+> > generic info, not something that would abstract how to retrieve the
+> > ONFI param page. Clearly, the generic NAND layer is not supposed to
+> > handle such protocol/low-level details.
+> >   
+> 
+> In that case, I am thinking to design as follows, which splits into generic independent code.
+> Let me know, if you have any concerns or inputs.
+> 
+> I will parsing code from nand_onfi_detect function and move it to mtd/nand/onfi.c.
+> Also, I will move functions like sanitize_string, nand_bit_wise_majority, onfi_crc16, and 
+> any other generic info to mtd/nand/onfi.c.
 
-diff --git a/tools/perf/Documentation/perf-diff.txt b/tools/perf/Documentation/perf-diff.txt
-index 5732f69580ab..facd91e4e945 100644
---- a/tools/perf/Documentation/perf-diff.txt
-+++ b/tools/perf/Documentation/perf-diff.txt
-@@ -145,9 +145,11 @@ OPTIONS
- 	<start>,<stop>. Times have the format seconds.nanoseconds. If 'start'
- 	is not given (i.e. time string is ',x.y') then analysis starts at
- 	the beginning of the file. If stop time is not given (i.e. time
--	string is 'x.y,') then analysis goes to the end of the file. Time string is
--	'a1.b1,c1.d1:a2.b2,c2.d2'. Use ':' to separate timestamps for different
--	perf.data files.
-+	string is 'x.y,') then analysis goes to the end of the file.
-+	Multiple ranges can be separated by spaces, which requires the argument
-+	to be quoted e.g. --time "1234.567,1234.789 1235,"
-+	Time string is'a1.b1,c1.d1:a2.b2,c2.d2'. Use ':' to separate timestamps
-+	for different perf.data files.
- 
- 	For example, we get the timestamp information from 'perf script'.
- 
-diff --git a/tools/perf/Documentation/perf-report.txt b/tools/perf/Documentation/perf-report.txt
-index 3de029f6881d..8c4372819e11 100644
---- a/tools/perf/Documentation/perf-report.txt
-+++ b/tools/perf/Documentation/perf-report.txt
-@@ -415,7 +415,8 @@ OPTIONS
- 	have the format seconds.nanoseconds. If start is not given (i.e. time
- 	string is ',x.y') then analysis starts at the beginning of the file. If
- 	stop time is not given (i.e. time string is 'x.y,') then analysis goes
--	to end of file.
-+	to end of file. Multiple ranges can be separated by spaces, which
-+	requires the argument to be quoted e.g. --time "1234.567,1234.789 1235,"
- 
- 	Also support time percent with multiple time ranges. Time string is
- 	'a%/n,b%/m,...' or 'a%-b%,c%-%d,...'.
-diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
-index 878349cce968..d4e2e18a5881 100644
---- a/tools/perf/Documentation/perf-script.txt
-+++ b/tools/perf/Documentation/perf-script.txt
-@@ -364,7 +364,8 @@ include::itrace.txt[]
- 	have the format seconds.nanoseconds. If start is not given (i.e. time
- 	string is ',x.y') then analysis starts at the beginning of the file. If
- 	stop time is not given (i.e. time string is 'x.y,') then analysis goes
--	to end of file.
-+	to end of file. Multiple ranges can be separated by spaces, which
-+	requires the argument to be quoted e.g. --time "1234.567,1234.789 1235,"
- 
- 	Also support time percent with multiple time ranges. Time string is
- 	'a%/n,b%/m,...' or 'a%-b%,c%-%d,...'.
-diff --git a/tools/perf/tests/time-utils-test.c b/tools/perf/tests/time-utils-test.c
-index 7504046b111c..4f53006233a1 100644
---- a/tools/perf/tests/time-utils-test.c
-+++ b/tools/perf/tests/time-utils-test.c
-@@ -168,6 +168,23 @@ int test__time_utils(struct test *t __maybe_unused, int subtest __maybe_unused)
- 		pass &= test__perf_time__parse_for_ranges(&d);
- 	}
- 
-+	{
-+		u64 b = 1234567123456789ULL;
-+		u64 c = 7654321987654321ULL;
-+		u64 e = 8000000000000000ULL;
-+		struct test_data d = {
-+			.str   = "1234567.123456789,1234567.123456790 "
-+				 "7654321.987654321,7654321.987654444 "
-+				 "8000000,8000000.000000005",
-+			.ptime = { {b, b + 1}, {c, c + 123}, {e, e + 5}, },
-+			.num = 3,
-+			.skip = { b - 1, b + 2, c - 1, c + 124, e - 1, e + 6 },
-+			.noskip = { b, b + 1, c, c + 123, e, e + 5 },
-+		};
-+
-+		pass &= test__perf_time__parse_for_ranges(&d);
-+	}
-+
- 	{
- 		u64 b = 7654321ULL * NSEC_PER_SEC;
- 		struct test_data d = {
-diff --git a/tools/perf/util/time-utils.c b/tools/perf/util/time-utils.c
-index d942840356e3..2b48816a2d2e 100644
---- a/tools/perf/util/time-utils.c
-+++ b/tools/perf/util/time-utils.c
-@@ -7,6 +7,7 @@
- #include <errno.h>
- #include <inttypes.h>
- #include <math.h>
-+#include <ctype.h>
- 
- #include "perf.h"
- #include "debug.h"
-@@ -116,6 +117,69 @@ int perf_time__parse_str(struct perf_time_interval *ptime, const char *ostr)
- 	return rc;
- }
- 
-+static int perf_time__parse_strs(struct perf_time_interval *ptime,
-+				 const char *ostr, int size)
-+{
-+	const char *cp;
-+	char *str, *arg, *p;
-+	int i, num = 0, rc = 0;
-+
-+	/* Count the commas */
-+	for (cp = ostr; *cp; cp++)
-+		num += !!(*cp == ',');
-+
-+	if (!num)
-+		return -EINVAL;
-+
-+	BUG_ON(num > size);
-+
-+	str = strdup(ostr);
-+	if (!str)
-+		return -ENOMEM;
-+
-+	/* Split the string and parse each piece, except the last */
-+	for (i = 0, p = str; i < num - 1; i++) {
-+		arg = p;
-+		/* Find next comma, there must be one */
-+		p = strchr(p, ',') + 1;
-+		/* Skip white space */
-+		while (isspace(*p))
-+			p++;
-+		/* Skip the value, must not contain space or comma */
-+		while (*p && !isspace(*p)) {
-+			if (*p++ == ',') {
-+				rc = -EINVAL;
-+				goto out;
-+			}
-+		}
-+		/* Split and parse */
-+		if (*p)
-+			*p++ = 0;
-+		rc = perf_time__parse_str(ptime + i, arg);
-+		if (rc < 0)
-+			goto out;
-+	}
-+
-+	/* Parse the last piece */
-+	rc = perf_time__parse_str(ptime + i, p);
-+	if (rc < 0)
-+		goto out;
-+
-+	/* Check there is no overlap */
-+	for (i = 0; i < num - 1; i++) {
-+		if (ptime[i].end >= ptime[i + 1].start) {
-+			rc = -EINVAL;
-+			goto out;
-+		}
-+	}
-+
-+	rc = num;
-+out:
-+	free(str);
-+
-+	return rc;
-+}
-+
- static int parse_percent(double *pcnt, char *str)
- {
- 	char *c, *endptr;
-@@ -424,15 +488,13 @@ int perf_time__parse_for_ranges(const char *time_str,
- 				time_str,
- 				session->evlist->first_sample_time,
- 				session->evlist->last_sample_time);
--
--		if (num < 0)
--			goto error_invalid;
- 	} else {
--		if (perf_time__parse_str(ptime_range, time_str))
--			goto error_invalid;
--		num = 1;
-+		num = perf_time__parse_strs(ptime_range, time_str, size);
- 	}
- 
-+	if (num < 0)
-+		goto error_invalid;
-+
- 	*range_size = size;
- 	*range_num = num;
- 	*ranges = ptime_range;
--- 
-2.17.1
-
+Sounds good.
