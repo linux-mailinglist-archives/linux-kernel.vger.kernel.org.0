@@ -2,93 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51D00341E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 10:34:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF6F2341F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 10:35:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbfFDIe0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 04:34:26 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:40682 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726735AbfFDIe0 (ORCPT
+        id S1727061AbfFDIfZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 04:35:25 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:32787 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726642AbfFDIfY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 04:34:26 -0400
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 843A228527C;
-        Tue,  4 Jun 2019 09:34:24 +0100 (BST)
-Date:   Tue, 4 Jun 2019 10:34:22 +0200
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     Helen Koike <helen.koike@collabora.com>
-Cc:     dri-devel@lists.freedesktop.org, nicholas.kazlauskas@amd.com,
-        andrey.grodzovsky@amd.com, daniel.vetter@ffwll.ch,
-        linux-kernel@vger.kernel.org, Tomasz Figa <tfiga@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        Sean Paul <seanpaul@google.com>, kernel@collabora.com,
-        harry.wentland@amd.com,
-        =?UTF-8?B?U3TDqXBoYW5l?= Marchesin <marcheu@google.com>,
-        Sandy Huang <hjc@rock-chips.com>,
-        linux-rockchip@lists.infradead.org,
-        Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v4 1/5] drm/rockchip: fix fb references in async update
-Message-ID: <20190604103422.63a61f46@collabora.com>
-In-Reply-To: <aecadca2-f67b-5d9d-550e-f90cbca5fd3f@collabora.com>
-References: <20190603165610.24614-1-helen.koike@collabora.com>
-        <20190603165610.24614-2-helen.koike@collabora.com>
-        <aecadca2-f67b-5d9d-550e-f90cbca5fd3f@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Tue, 4 Jun 2019 04:35:24 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id D334E802FD; Tue,  4 Jun 2019 10:35:12 +0200 (CEST)
+Date:   Tue, 4 Jun 2019 10:35:22 +0200
+From:   Pavel Machek <pavel@denx.de>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        rafael@kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
+Subject: Re: [RFC PATCH 30/57] drivers: leds: Use class_find_device_by_name()
+ helper
+Message-ID: <20190604083522.GA28987@amd>
+References: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
+ <1559577023-558-31-git-send-email-suzuki.poulose@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="qDbXVdCdHGoSgWSk"
+Content-Disposition: inline
+In-Reply-To: <1559577023-558-31-git-send-email-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 3 Jun 2019 17:13:34 -0300
-Helen Koike <helen.koike@collabora.com> wrote:
 
-> On 6/3/19 1:56 PM, Helen Koike wrote:
-> > In the case of async update, modifications are done in place, i.e. in the
-> > current plane state, so the new_state is prepared and the new_state is
-> > cleaned up (instead of the old_state, unlike what happens in a
-> > normal sync update).
-> > To cleanup the old_fb properly, it needs to be placed in the new_state
-> > in the end of async_update, so cleanup call will unreference the old_fb
-> > correctly.
-> > 
-> > Also, the previous code had a:
-> > 
-> > 	plane_state = plane->funcs->atomic_duplicate_state(plane);
-> > 	...
-> > 	swap(plane_state, plane->state);
-> > 
-> > 	if (plane->state->fb && plane->state->fb != new_state->fb) {
-> > 	...
-> > 	}
-> > 
-> > Which was wrong, as the fb were just assigned to be equal, so this if
-> > statement nevers evaluates to true.
-> > 
-> > Another details is that the function drm_crtc_vblank_get() can only be
-> > called when vop->is_enabled is true, otherwise it has no effect and
-> > trows a WARN_ON().
-> > 
-> > Calling drm_atomic_set_fb_for_plane() (which get a referent of the new
-> > fb and pus the old fb) is not required, as it is taken care by
-> > drm_mode_cursor_universal() when calling
-> > drm_atomic_helper_update_plane().
-> > 
-> > Signed-off-by: Helen Koike <helen.koike@collabora.com>  
-> 
-> Cc: <stable@vger.kernel.org> # v4.20+
-> Fixes: 15609559a834 ("drm/rockchip: update cursors asynchronously
-> through atomic.")
+--qDbXVdCdHGoSgWSk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-One comment for next time you have to add such tags after the fact:
-please try to keep lines unwrapped, otherwise patchwork only gets what's
-on the first line.
+On Mon 2019-06-03 16:49:56, Suzuki K Poulose wrote:
+> Use the new class_find_device_by_name() helper.
+>=20
+> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> Cc: Pavel Machek <pavel@ucw.cz>
+
+Acked-by: Pavel Machek <pavel@ucw.cz>
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--qDbXVdCdHGoSgWSk
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlz2LUoACgkQMOfwapXb+vLp9ACcDcme+AbZouXw4a1gi6jwhyRX
+ucoAoKE+aKeO7ztisZmtMV5RxLQJH/Nx
+=CrDk
+-----END PGP SIGNATURE-----
+
+--qDbXVdCdHGoSgWSk--
