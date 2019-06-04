@@ -2,87 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02BB434705
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:39:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DCE43471A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:41:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727827AbfFDMix (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 08:38:53 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42651 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727358AbfFDMiw (ORCPT
+        id S1727805AbfFDMlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 08:41:24 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:15574 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727394AbfFDMlY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 08:38:52 -0400
-Received: by mail-pl1-f194.google.com with SMTP id go2so8291974plb.9;
-        Tue, 04 Jun 2019 05:38:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=t6p3O8G7Bhczja2EaMiJrgzvF31T1unkuQeJqUj7zZA=;
-        b=eaVexESDvZrLu/1v6BuXlFfkx0129P5nzVs0O9AffAVZWEda/NHSdnAlPxceUBy/hu
-         dMFzOPxP6WR+T/gc/gujVrBOoaTcQrxzN+ZoPtfyw/8DnISUKLpMOIwphPXE/wX5fEEz
-         KzFlMKlAb/jbfTb7cl6tTctiVacZ/SeB8UZR0zvJcb2ETx9CzAyA1enXue4tDmoi/vIo
-         mrIb2OW6DZLQb5pTTl2zpm/1CQqK4W/sXxFJKL9p/BvdLSWM467Q7qcreCvwBagpG6rD
-         R2nxaEqX5meOhVIzj+Ur248oX2QZoAAzchOl6oqxjEPHVGBYsj+YaAAukSiaxURFhFyA
-         0oSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=t6p3O8G7Bhczja2EaMiJrgzvF31T1unkuQeJqUj7zZA=;
-        b=t1uylnTnKrrMHR2klZtjSZl36Dh+aPXjzU8ot9SQgBI4/AaVqkvgwass6xx1+qxN4w
-         1I20JnhsuwBWB8C1Mq5EhmhV8ZYNf8pNkO/IZbiwwQSRuNQCpIyW6FacAezszqDTMjtQ
-         zGmRo75S1HSaF6vIUFhweiTEOigOzETEsbqs8HHIRBOl2izJeeujr+U+fYFm9mS/NFAt
-         OQGX6IHfz8t7aE9q+FEY9jAZTMKFLrCwMQYiyxBkm6cAR+wi8isA3wZIcKGXATDxmqxe
-         OZKO2UAI96M9zIvqJbx1oSOf1FtlAkBlE69vIzuSpsUB30UOOjoUPYmJUsR5IRv7gmda
-         oumA==
-X-Gm-Message-State: APjAAAUhEh8bjUSQljS/EAzN5eSA/Novmj86ARoxVIV5zkHq857r+h2B
-        LkV7om5Vh7cXCjLD+K9pp5M=
-X-Google-Smtp-Source: APXvYqwZ834hkYLv69+lDOPH+CsgYwM71HGit6MDC9WMWVBREye+TMlrP2lkbO/tbWAM14IMoxXV3g==
-X-Received: by 2002:a17:902:2924:: with SMTP id g33mr36941909plb.57.1559651932044;
-        Tue, 04 Jun 2019 05:38:52 -0700 (PDT)
-Received: from xy-data.openstacklocal (ecs-159-138-22-150.compute.hwclouds-dns.com. [159.138.22.150])
-        by smtp.gmail.com with ESMTPSA id d24sm15086660pjv.24.2019.06.04.05.38.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 04 Jun 2019 05:38:51 -0700 (PDT)
-From:   Young Xiao <92siuyang@gmail.com>
-To:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Young Xiao <92siuyang@gmail.com>
-Subject: [PATCH] iio:core: Fix bug in length of event info_mask and catch unhandled bits set in masks.
-Date:   Tue,  4 Jun 2019 20:40:00 +0800
-Message-Id: <1559652000-18333-1-git-send-email-92siuyang@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 4 Jun 2019 08:41:24 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cf666e60000>; Tue, 04 Jun 2019 05:41:10 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 04 Jun 2019 05:41:23 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 04 Jun 2019 05:41:23 -0700
+Received: from tbergstrom-lnx.Nvidia.com (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 4 Jun
+ 2019 12:41:22 +0000
+Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
+        id 5CB9740609; Tue,  4 Jun 2019 15:41:20 +0300 (EEST)
+Date:   Tue, 4 Jun 2019 15:41:20 +0300
+From:   Peter De Schrijver <pdeschrijver@nvidia.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
+        <stefan@agner.ch>, <mark.rutland@arm.com>, <pgaikwad@nvidia.com>,
+        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
+        <josephl@nvidia.com>, <talho@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH V2 06/12] clk: tegra: add suspend resume support for DFLL
+ clock
+Message-ID: <20190604124120.GD29894@pdeschrijver-desktop.Nvidia.com>
+References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
+ <1559084936-4610-7-git-send-email-skomatineni@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1559084936-4610-7-git-send-email-skomatineni@nvidia.com>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1559652070; bh=eYlU/EiszkB9G/gXKiyqydlxvhzbz9Z6m/D0NdsuBOk=;
+        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
+         MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+         X-NVConfidentiality:User-Agent:X-Originating-IP:X-ClientProxiedBy;
+        b=esUE5NN/po/BVVuGgXZj6/xY8iQFNYfEOb8bOaIfgqDg7+xR5PSCikiNVn22FYDuE
+         p1+7DJQUheTr5EkYYqL2NyeXrCyncRGRZhXe1jGDl63d7hFLjGWFxVtpmsQzFDk4PE
+         yWr2NmC3oSdqPZOkJqOTaD1+vv02ASYmqOOnLs6cgfBJBoEm+BabGSTnrv2BrXmACP
+         XrJ++f/Kp7mLLxVDO/gz1QOFscuSUJo/H2zgiPpCO/vNF3h3VDWSUVmODpmgwShoV9
+         i0G/wo0avsjzadfiIXVRNB6admgk7KcyKPj53CWF7oZxukhfPjsrIGWaIsWgb22gZo
+         hEU26H/y00CRg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The incorrect limit for the for_each_set_bit loop was noticed whilst fixing
-this other case.  Note that as we only have 3 possible entries a the moment
-and the value was set to 4, the bug would not have any effect currently.
-It will bite fairly soon though, so best fix it now.
+On Tue, May 28, 2019 at 04:08:50PM -0700, Sowjanya Komatineni wrote:
+> This patch adds support for suspend and resume for DFLL clock.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-dfll.c | 82 ++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/tegra/clk-dfll.h |  2 ++
+>  2 files changed, 84 insertions(+)
+> 
+> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+> index 1fc71baae13b..d92a5a05fbbc 100644
+> --- a/drivers/clk/tegra/clk-dfll.c
+> +++ b/drivers/clk/tegra/clk-dfll.c
+> @@ -286,6 +286,7 @@ struct tegra_dfll {
+>  	unsigned long			dvco_rate_min;
+>  
+>  	enum dfll_ctrl_mode		mode;
+> +	enum dfll_ctrl_mode		resume_mode;
+>  	enum dfll_tune_range		tune_range;
+>  	struct dentry			*debugfs_dir;
+>  	struct clk_hw			dfll_clk_hw;
+> @@ -1873,6 +1874,87 @@ static int dfll_fetch_common_params(struct tegra_dfll *td)
+>  }
+>  
+>  /*
+> + * tegra_dfll_suspend
+> + * @pdev: DFLL instance
+> + *
+> + * dfll controls clock/voltage to other devices, including CPU. Therefore,
+> + * dfll driver pm suspend callback does not stop cl-dvfs operations. It is
+> + * only used to enforce cold voltage limit, since SoC may cool down during
+> + * suspend without waking up. The correct temperature zone after suspend will
+> + * be updated via dfll cooling device interface during resume of temperature
+> + * sensor.
 
-See commit ef4b4856593f ("iio:core: Fix bug in length of event info_mask and
-catch unhandled bits set in masks.") for details.
+Temperature dependent cl-dvfs is not yet implemented in upstream, so
+leave out the part about cold voltage limits and temperature zones.
 
-Signed-off-by: Young Xiao <92siuyang@gmail.com>
----
- drivers/iio/industrialio-core.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-index f5a4581..dd8873a 100644
---- a/drivers/iio/industrialio-core.c
-+++ b/drivers/iio/industrialio-core.c
-@@ -1107,6 +1107,8 @@ static int iio_device_add_info_mask_type_avail(struct iio_dev *indio_dev,
- 	char *avail_postfix;
- 
- 	for_each_set_bit(i, infomask, sizeof(*infomask) * 8) {
-+		if (i >= ARRAY_SIZE(iio_chan_info_postfix))
-+			return -EINVAL;
- 		avail_postfix = kasprintf(GFP_KERNEL,
- 					  "%s_available",
- 					  iio_chan_info_postfix[i]);
--- 
-2.7.4
-
+Peter.
