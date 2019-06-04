@@ -2,114 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04F9C34758
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:53:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2B5E3474B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:50:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727852AbfFDMxr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 08:53:47 -0400
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.82]:18309 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727567AbfFDMxq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 08:53:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1559652823;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=OPxHWZ0Yqa8jx7PmQiTW3yC8b4PfhAE9TVHtEW0aA74=;
-        b=gefcyfqxcb/7JlcyOwuPl5fGjIZyTKfwVRFEBNgLtz9BIODOrxadnIvgw+kq58c5AJ
-        Tj6QjXGG/xDogSjx0OfJMUoeFmxYDql8Qxgu7LMK9w+M89rdyNyJE0cv+6rWTvWhhM42
-        zqtdCvs4wDYXV26CG+FQniTpRGXkuSdhl1PTlhd8dFNChOs0HkuC5AJ4OGfijF8PMRna
-        jQtyXHRCXRq1Wf3Jftdc3fbqEPL+WfRrz0ZxCSI42RhZBbIicnoyeixE2rIRf8jeHkVU
-        u4HJ/ZoNVAhkEkW3Oy+saCYWgJ63mqkrbcoOoNybeqYBqOTbdJJ+fhaktohTvqI19iH7
-        6PoA==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0pAzTh/eDM="
-X-RZG-CLASS-ID: mo00
-Received: from iMac.fritz.box
-        by smtp.strato.de (RZmta 44.22 DYNA|AUTH)
-        with ESMTPSA id i01b98v54Cra7YC
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Tue, 4 Jun 2019 14:53:36 +0200 (CEST)
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, tomi.valkeinen@ti.com,
-        marek.belisko@gmail.com
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org,
-        "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH 2/2] drm/panel: simple: Add Ortustech COM37H3M panel support
-Date:   Tue,  4 Jun 2019 14:53:34 +0200
-Message-Id: <de4649e5beb7a0b18357314cca11739699405c85.1559652814.git.hns@goldelico.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <cover.1559652814.git.hns@goldelico.com>
-References: <cover.1559652814.git.hns@goldelico.com>
+        id S1727839AbfFDMux (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 08:50:53 -0400
+Received: from mga17.intel.com ([192.55.52.151]:46426 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727567AbfFDMux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 08:50:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jun 2019 05:50:53 -0700
+X-ExtLoop1: 1
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
+  by fmsmga001.fm.intel.com with ESMTP; 04 Jun 2019 05:50:50 -0700
+From:   Jani Nikula <jani.nikula@intel.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 14/15] fixup: kbuild: add support for ensuring headers are self-contained
+In-Reply-To: <20190604101409.2078-15-yamada.masahiro@socionext.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20190604101409.2078-1-yamada.masahiro@socionext.com> <20190604101409.2078-15-yamada.masahiro@socionext.com>
+Date:   Tue, 04 Jun 2019 15:53:57 +0300
+Message-ID: <871s094il6.fsf@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The change adds support for the Ortustech COM37H3M05DTC/99DTC 3.7" TFT LCD panel.
+On Tue, 04 Jun 2019, Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+> This is needed to avoid regeneration of header-test C files.
+>
+> This will go away when Jani send v2.
 
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
----
- drivers/gpu/drm/panel/panel-simple.c | 33 ++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+Done, in reply to patch 13.
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 5b27829c5a78..1892d00be16d 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -2007,6 +2007,33 @@ static const struct panel_desc ontat_yx700wv03 = {
- 	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
- };
- 
-+static const struct drm_display_mode ortustech_com37h3m_mode  = {
-+	.clock = 22153,
-+	.hdisplay = 480,
-+	.hsync_start = 480 + 8,
-+	.hsync_end = 480 + 8 + 10,
-+	.htotal = 480 + 8 + 10 + 10,
-+	.vdisplay = 640,
-+	.vsync_start = 640 + 4,
-+	.vsync_end = 640 + 4 + 3,
-+	.vtotal = 640 + 4 + 3 + 4,
-+	.vrefresh = 60,
-+	.flags = DRM_MODE_FLAG_NVSYNC | DRM_MODE_FLAG_NHSYNC,
-+};
-+
-+static const struct panel_desc ortustech_com37h3m = {
-+	.modes = &ortustech_com37h3m_mode,
-+	.num_modes = 1,
-+	.bpc = 8,
-+	.size = {
-+		.width = 56,	/* 56.16mm */
-+		.height = 75,	/* 74.88mm */
-+	},
-+	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
-+	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_POSEDGE |
-+		     DRM_BUS_FLAG_SYNC_DRIVE_POSEDGE,
-+};
-+
- static const struct drm_display_mode ortustech_com43h4m85ulc_mode  = {
- 	.clock = 25000,
- 	.hdisplay = 480,
-@@ -2786,6 +2813,12 @@ static const struct of_device_id platform_of_match[] = {
- 	}, {
- 		.compatible = "ontat,yx700wv03",
- 		.data = &ontat_yx700wv03,
-+	}, {
-+		.compatible = "ortustech,com37h3m05dtc",
-+		.data = &ortustech_com37h3m,
-+	}, {
-+		.compatible = "ortustech,com37h3m099dtc",
-+		.data = &ortustech_com37h3m,
- 	}, {
- 		.compatible = "ortustech,com43h4m85ulc",
- 		.data = &ortustech_com43h4m85ulc,
+Thanks,
+Jani.
+
+
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+>
+>  scripts/Makefile.build | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+> index 2b4d56483c2e..067e98628664 100644
+> --- a/scripts/Makefile.build
+> +++ b/scripts/Makefile.build
+> @@ -298,10 +298,9 @@ $(obj)/%.lst: $(src)/%.c FORCE
+>  # ---------------------------------------------------------------------------
+>  
+>  quiet_cmd_header_test = HDRTEST $@
+> -      cmd_header_test = echo "\#include \"$(<F)\"" > $@
+> +      cmd_header_test = echo "\#include \"$*.h\"" > $@
+>  
+> -# FIXME: would be nice to be able to limit this implicit rule to header-test-y
+> -$(obj)/%.header_test.c: $(src)/%.h FORCE
+> +$(obj)/%.header_test.c:
+>  	$(call if_changed,header_test)
+>  
+>  # Compile assembler sources (.S)
+
 -- 
-2.19.1
-
+Jani Nikula, Intel Open Source Graphics Center
