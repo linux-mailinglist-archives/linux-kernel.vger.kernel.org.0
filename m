@@ -2,81 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C21973464D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:10:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3557B3463D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:08:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727695AbfFDMKm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 08:10:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40368 "EHLO mail.kernel.org"
+        id S1727619AbfFDMIk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 08:08:40 -0400
+Received: from foss.arm.com ([217.140.101.70]:41574 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726847AbfFDMKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 08:10:41 -0400
-Received: from localhost (unknown [117.99.94.117])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 328D124A02;
-        Tue,  4 Jun 2019 12:10:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559650240;
-        bh=bx10crper5s5AYw/kBlidhtOiBbuZXbSa+8Uxao2YZU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=afx9V+aIVbqwBiSR3kTsnxskJZ0D90hjgaW18j81v/vZ4eO0q+t2nn+PZULSBPNY8
-         uG54BzSzpIvaKaQLY2ld2MzeMbjT4O+JwmcVfJW56c3YEZVkuvsczGGlkG+BwVFgKO
-         7YimuA7USP+Hp1SruKbCgzO8FFSIY0WZD+je0MrE=
-Date:   Tue, 4 Jun 2019 17:37:33 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Peng Ma <peng.ma@nxp.com>
-Cc:     dan.j.williams@intel.com, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [V3 2/2] dmaengine: fsl-qdma: Add improvement
-Message-ID: <20190604120733.GV15118@vkoul-mobl>
-References: <20190522032103.13713-1-peng.ma@nxp.com>
- <20190522032103.13713-2-peng.ma@nxp.com>
+        id S1727358AbfFDMIk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 08:08:40 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8922880D;
+        Tue,  4 Jun 2019 05:08:39 -0700 (PDT)
+Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7A4FF3F690;
+        Tue,  4 Jun 2019 05:08:36 -0700 (PDT)
+Subject: Re: [PATCH v6 02/19] kernel: Define gettimeofday vdso common code
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mips@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Peter Collingbourne <pcc@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Huw Davies <huw@codeweavers.com>
+References: <20190530141531.43462-1-vincenzo.frascino@arm.com>
+ <20190530141531.43462-3-vincenzo.frascino@arm.com>
+ <CAK8P3a3Sr+MNbGQiMYt3RrE6SaYFPO-rXNoNvtOC7=qKE1kuYQ@mail.gmail.com>
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+Message-ID: <d0ffed27-01eb-c382-a381-975edd021a30@arm.com>
+Date:   Tue, 4 Jun 2019 13:08:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190522032103.13713-2-peng.ma@nxp.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <CAK8P3a3Sr+MNbGQiMYt3RrE6SaYFPO-rXNoNvtOC7=qKE1kuYQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22-05-19, 03:21, Peng Ma wrote:
-> When an error occurs we should clean the error register then to return
-
-The patch title is supposed to tell us about the change. "Add
-improvement: is a very generic term!
-
-I have change title to "Continue to clear register on error" and applied
-
+On 31/05/2019 09:19, Arnd Bergmann wrote:
+> On Thu, May 30, 2019 at 4:15 PM Vincenzo Frascino
+> <vincenzo.frascino@arm.com> wrote:
 > 
-> Signed-off-by: Peng Ma <peng.ma@nxp.com>
-> ---
-> changed for V3:
-> 	- no changed.
+>> +
+>> +static __always_inline notrace void vdso_write_end(struct vdso_data *vd)
+>> +{
 > 
->  drivers/dma/fsl-qdma.c |    4 +---
->  1 files changed, 1 insertions(+), 3 deletions(-)
+> Rather than marking every single function in here as "notrace",I think it
+> would be more robust to remove the '-pg' flag in the CFLAGS used for
+> compiling the vdso files.
 > 
-> diff --git a/drivers/dma/fsl-qdma.c b/drivers/dma/fsl-qdma.c
-> index da8fdf5..8e341c0 100644
-> --- a/drivers/dma/fsl-qdma.c
-> +++ b/drivers/dma/fsl-qdma.c
-> @@ -703,10 +703,8 @@ static irqreturn_t fsl_qdma_error_handler(int irq, void *dev_id)
->  
->  	intr = qdma_readl(fsl_qdma, status + FSL_QDMA_DEDR);
->  
-> -	if (intr) {
-> +	if (intr)
->  		dev_err(fsl_qdma->dma_dev.dev, "DMA transaction error!\n");
-> -		return IRQ_NONE;
-> -	}
->  
->  	qdma_writel(fsl_qdma, FSL_QDMA_DEDR_CLEAR, status + FSL_QDMA_DEDR);
->  	return IRQ_HANDLED;
-> -- 
-> 1.7.1
+
+All the architectures that I added to this patchset are already compiled with
+$(CC_FLAGS_FTRACE), hence I think I just forgot to remove the "notrace" around
+the code. Will fix in v7.
+
+>        Arnd
+> 
 
 -- 
-~Vinod
+Regards,
+Vincenzo
