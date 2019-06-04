@@ -2,48 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C32B33EBB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 08:06:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E14F33DA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 06:02:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726697AbfFDGGX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 02:06:23 -0400
-Received: from verein.lst.de ([213.95.11.211]:33266 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726136AbfFDGGW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 02:06:22 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id EF17568B02; Tue,  4 Jun 2019 08:05:54 +0200 (CEST)
-Date:   Tue, 4 Jun 2019 08:05:54 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Christoph Hellwig <hch@lst.de>, Joerg Roedel <joro@8bytes.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 07/26] iommu/dma: move the arm64 wrappers to common code
-Message-ID: <20190604060554.GA14536@lst.de>
-References: <20190422175942.18788-1-hch@lst.de> <20190422175942.18788-8-hch@lst.de> <06b331f0-7df7-a6cd-954c-789f89a0836d@arm.com> <acb46c7f-0855-de30-485f-a6242968f947@nvidia.com>
+        id S1726465AbfFDECf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 00:02:35 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:18076 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725267AbfFDECe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 00:02:34 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 3943AF26C5A7EC46D866;
+        Tue,  4 Jun 2019 12:02:32 +0800 (CST)
+Received: from huawei.com (10.175.100.202) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Tue, 4 Jun 2019
+ 12:02:23 +0800
+From:   Miaohe Lin <linmiaohe@huawei.com>
+To:     <davem@davemloft.net>, <idosch@mellanox.com>,
+        <daniel@iogearbox.net>, <petrm@mellanox.com>, <jiri@mellanox.com>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <mingfangsen@huawei.com>, <wangxiaogang3@huawei.com>,
+        <linmiaohe@huawei.com>
+Subject: [PATCH] net: ipvlan: Fix ipvlan device tso disabled while NETIF_F_IP_CSUM is set
+Date:   Tue, 4 Jun 2019 06:07:34 +0000
+Message-ID: <1559628454-138692-1-git-send-email-linmiaohe@huawei.com>
+X-Mailer: git-send-email 1.8.3.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <acb46c7f-0855-de30-485f-a6242968f947@nvidia.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain
+X-Originating-IP: [10.175.100.202]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 03, 2019 at 08:47:57PM +0100, Jon Hunter wrote:
-> Since next-20190529 one of our tests for MMC has started failing, where
-> the symptom is that the data written to the MMC does not match the
-> source. Bisecting this is pointing to this commit. Unfortunately, I am
-> not able to cleanly revert this on top of -next, but wanted to report
-> this if case you have any ideas.
+There's some NICs, such as hinic, with NETIF_F_IP_CSUM and NETIF_F_TSO
+on but NETIF_F_HW_CSUM off. And ipvlan device features will be
+NETIF_F_TSO on with NETIF_F_IP_CSUM and NETIF_F_IP_CSUM both off as
+IPVLAN_FEATURES only care about NETIF_F_HW_CSUM. So TSO will be
+disabled in netdev_fix_features.
+For example:
+Features for enp129s0f0:
+rx-checksumming: on
+tx-checksumming: on
+        tx-checksum-ipv4: on
+        tx-checksum-ip-generic: off [fixed]
+        tx-checksum-ipv6: on
 
-Does this fix your problem?
+Fixes: a188222b6ed2 ("net: Rename NETIF_F_ALL_CSUM to NETIF_F_CSUM_MASK")
+Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+---
+ drivers/net/ipvlan/ipvlan_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-https://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git/commit/?h=generic-dma-ops&id=1b961423158caaae49d3900b7c9c37477bbfa9b3
+diff --git a/drivers/net/ipvlan/ipvlan_main.c b/drivers/net/ipvlan/ipvlan_main.c
+index bbeb1623e2d5..717fce6edeb7 100644
+--- a/drivers/net/ipvlan/ipvlan_main.c
++++ b/drivers/net/ipvlan/ipvlan_main.c
+@@ -112,7 +112,7 @@ static void ipvlan_port_destroy(struct net_device *dev)
+ }
+ 
+ #define IPVLAN_FEATURES \
+-	(NETIF_F_SG | NETIF_F_HW_CSUM | NETIF_F_HIGHDMA | NETIF_F_FRAGLIST | \
++	(NETIF_F_SG | NETIF_F_CSUM_MASK | NETIF_F_HIGHDMA | NETIF_F_FRAGLIST | \
+ 	 NETIF_F_GSO | NETIF_F_TSO | NETIF_F_GSO_ROBUST | \
+ 	 NETIF_F_TSO_ECN | NETIF_F_TSO6 | NETIF_F_GRO | NETIF_F_RXCSUM | \
+ 	 NETIF_F_HW_VLAN_CTAG_FILTER | NETIF_F_HW_VLAN_STAG_FILTER)
+-- 
+2.21.GIT
+
