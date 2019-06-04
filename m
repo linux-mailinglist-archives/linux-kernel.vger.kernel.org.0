@@ -2,168 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE85B34FCD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 20:24:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9375034F96
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 20:10:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726566AbfFDSYs convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 4 Jun 2019 14:24:48 -0400
-Received: from server907e.appriver.com ([204.232.250.40]:60590 "EHLO
-        server907.appriver.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726352AbfFDSYs (ORCPT
+        id S1726535AbfFDSKQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 14:10:16 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36737 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbfFDSKQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 14:24:48 -0400
-X-Greylist: delayed 900 seconds by postgrey-1.27 at vger.kernel.org; Tue, 04 Jun 2019 14:24:47 EDT
-X-Note: This Email was scanned by AppRiver SecureTide
-X-Note-AR-ScanTimeLocal: 06/04/2019 2:09:47 PM
-X-Note: SecureTide Build: 6/3/2019 7:34:16 PM UTC (2.7.9.1)
-X-Note: Filtered by 10.246.0.224
-X-Note-AR-Scan: None - PIPE
-Received: by server907.appriver.com (CommuniGate Pro PIPE 6.2.4)
-  with PIPE id 272567096; Tue, 04 Jun 2019 14:09:47 -0400
-Received: from [10.246.0.39] (HELO smtp.us.exg7.exghost.com)
-  by server907.appriver.com (CommuniGate Pro SMTP 6.2.4)
-  with ESMTPS id 272567073; Tue, 04 Jun 2019 14:09:46 -0400
-Received: from E16DN29A-S1E7.exg7.exghost.local (192.168.244.206) by
- E16DN06C-S1E7.exg7.exghost.local (192.168.244.109) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Tue, 4 Jun 2019 14:09:45 -0400
-Received: from E16DN29A-S1E7.exg7.exghost.local ([fe80::a19c:46b5:a8a0:4aba])
- by E16DN29A-S1E7.exg7.exghost.local ([fe80::a19c:46b5:a8a0:4aba%21]) with
- mapi id 15.01.1779.000; Tue, 4 Jun 2019 14:09:46 -0400
-From:   Justin Sanders <justin@coraid.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Ed L. Cashin" <ed.cashin@acm.org>, Jens Axboe <axboe@kernel.dk>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Subject: Re: [PATCH v3] block: aoe: no need to check return value of
- debugfs_create functions
-Thread-Topic: [PATCH v3] block: aoe: no need to check return value of
- debugfs_create functions
-Thread-Index: AQHVGkVIjKqm4AaW+k6RowxiyHwjOaaMD9+A
-Date:   Tue, 4 Jun 2019 18:09:42 +0000
-Message-ID: <B606EE6D-38A5-41BA-8544-163B949EAB5A@coraid.com>
-References: <20190122152151.16139-5-gregkh@linuxfoundation.org>
- <20190603194754.GB21877@kroah.com>
-In-Reply-To: <20190603194754.GB21877@kroah.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [208.71.233.237]
-x-rerouted-by-exchange: 
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <5AC85A9BEEBD6D4FA432B24773C0A97B@fwd7.exghost.com>
-Content-Transfer-Encoding: 8BIT
+        Tue, 4 Jun 2019 14:10:16 -0400
+Received: by mail-wr1-f65.google.com with SMTP id n4so13792524wrs.3;
+        Tue, 04 Jun 2019 11:10:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lLFJn8hfJB0bfYBQ2rEhUXIcdzRXExeNARfQE/rlETg=;
+        b=vUjBWTaBQcbMO0GWKgSI7xMK2QKr+0vX8zwG8ghZF85C1ae5KmMhS2KIgThcOqJ/rJ
+         TRzn+Njtqf/0JHaJzVdZt9V7KWSyWOqkiA8DTFHnfvw3BdAJ+5thsRwTgcBjaI83+gSy
+         1hqQpkUvlZY9LLtaUdp0L0TbBtBClqlkMuM23UiANzcvbBI1FcreHSUVrHBV7XpeZXy/
+         c/3hlvOFu3ruXyFBa/cYv0/K+X+brPVFx7HdrNG+e9RHJoe6JQGdrUhPb3s3UbmnQtj7
+         xAP75dTJ9fanBvBRUykQrrsmL713koEcbQjGcZlZrzMHPpJoeARIzNYJz0zD+hhPd2qG
+         cCsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lLFJn8hfJB0bfYBQ2rEhUXIcdzRXExeNARfQE/rlETg=;
+        b=YpAzXpiSCnZZZgDLLm5GwaMTx66Obdj9eczSHMi/u9GtquusEeWSVGYgAAODnS6PUk
+         IG4+uDwbO1gvv8nLobomnQbvolJ/sRoGT8gtzcLKXOtK5N+EBx2m17kEonD9b3fG2+Jh
+         QeY7WhYUzL8N72bnKUdUZr25y1qxnUTb9ZJ3UICk4+CHnZiZc0rXLrIi/OPV2QFsCmVa
+         WdA+5RbmA+RzVusV8DjE8D+rRXWewOqvfS9Yey8ZeoGxzX1JgARTi6FknB/ozo2844i+
+         VN1qN1D0/BwE9pECw6F5NLKlJDur+O4MVEc6iEQwsSVI/OiXrta3Fvq+2lHLGS+fgSiK
+         pQbA==
+X-Gm-Message-State: APjAAAUltmqSAyvTtaujeOiK43AKTZJ8IBctsIjM+I47AFBOCCiiV8oZ
+        FKQstiwMSFFSLylWqqaQecqKGKZQcluz0pabexs=
+X-Google-Smtp-Source: APXvYqxrnaWRBKNjOZJP0zWlO2DmEFkaazI6Z+tkInzQvHcCwD+PxOjOGa8Jm+4UyZqJvTfz1hmYWCIZQQV23Cv8CnY=
+X-Received: by 2002:a5d:4992:: with SMTP id r18mr7697528wrq.107.1559671814077;
+ Tue, 04 Jun 2019 11:10:14 -0700 (PDT)
 MIME-Version: 1.0
-X-Note: This Email was scanned by AppRiver SecureTide
-X-Note-AR-ScanTimeLocal: 06/04/2019 2:09:46 PM
-X-Note: SecureTide Build: 6/3/2019 7:34:16 PM UTC (2.7.9.1)
-X-Note: Filtered by 10.246.0.224
-X-Policy: GLOBAL
-X-Primary: GLOBAL@coraid.com
-X-Virus-Scan: V-
-X-Note-SnifferID: 0
-X-GBUdb-Analysis: Unknown
-X-Signature-Violations: 0-0-0-5861-c
-X-Note-419: 15.6269 ms. Fail:0 Chk:1358 of 1358 total
-X-Note: VSCH-CT/SI: 0-1358/SG:1 6/4/2019 2:09:38 PM
-X-Note: Spam Tests Failed: 
-X-Country-Path: PRIVATE->
-X-Note-Sending-IP: 10.246.0.39
-X-Note-Reverse-DNS: 
-X-Note-Return-Path: justin@coraid.com
-X-Note: User Rule Hits: 
-X-Note: Global Rule Hits: G586 G587 G588 G589 G607 G608 G756 
-X-Note: Encrypt Rule Hits: 
-X-Note: Mail Class: VALID
-X-Note-ECS-IP: 
-X-Note-ECS-Recip: gregkh@linuxfoundation.org
-X-Note-ECS-IP: 
-X-Note-ECS-Recip: linux-kernel@vger.kernel.org
-X-Note-ECS-IP: 
-X-Note-ECS-Recip: ed.cashin@acm.org
-X-Note-ECS-IP: 
-X-Note-ECS-Recip: axboe@kernel.dk
-X-Note-ECS-IP: 
-X-Note-ECS-Recip: linux-block@vger.kernel.org
+References: <20190604072001.9288-1-bjorn.andersson@linaro.org>
+ <20190604072001.9288-3-bjorn.andersson@linaro.org> <BN7PR08MB568450B1EC51ABAA2E426AC0DB150@BN7PR08MB5684.namprd08.prod.outlook.com>
+In-Reply-To: <BN7PR08MB568450B1EC51ABAA2E426AC0DB150@BN7PR08MB5684.namprd08.prod.outlook.com>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Tue, 4 Jun 2019 11:10:01 -0700
+Message-ID: <CANcMJZB+bg9LWzo=EaL-QnWiL49=MzyBJy8qsBiSMu8HZeWRxw@mail.gmail.com>
+Subject: Re: [EXT] [PATCH 2/3] scsi: ufs: Allow resetting the UFS device
+To:     "Bean Huo (beanhuo)" <beanhuo@micron.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Andy Gross <agross@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        Subhash Jadavani <subhashj@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, Jun 4, 2019 at 1:14 AM Bean Huo (beanhuo) <beanhuo@micron.com> wrote:
+>
+> Hi, Bjorn
+>
+> >Acquire the device-reset GPIO and toggle this to reset the UFS device during
+> >initialization and host reset.
+> >
+> >+/**
+> >+ ufshcd_device_reset() - toggle the (optional) device reset line
+> >+ * @hba: per-adapter instance
+> >+ *
+> >+ * Toggles the (optional) reset line to reset the attached device.
+> >+ */
+> >+static void ufshcd_device_reset(struct ufs_hba *hba) {
+> >+      /*
+> >+       * The USB device shall detect reset pulses of 1us, sleep for 10us to
+> >+       * be on the safe side.
+> >+       */
+> >+      gpiod_set_value_cansleep(hba->device_reset, 1);
+> >+      usleep_range(10, 15);
+> >+
+> >+      gpiod_set_value_cansleep(hba->device_reset, 0);
+> >+      usleep_range(10, 15);
+> >+}
+> >+
+> > /**
+> >  * ufshcd_host_reset_and_restore - reset and restore host controller
+> >  * @hba: per-adapter instance
+> >@@ -6159,6 +6179,9 @@ static int ufshcd_reset_and_restore(struct ufs_hba
+> >*hba)
+> >       int retries = MAX_HOST_RESET_RETRIES;
+> >
+> >       do {
+> >+              /* Reset the attached device */
+> >+              ufshcd_device_reset(hba);
+> >+
+>
+> what's problem you met, and you should reset UFS device here? could you give more info?
 
-> On Jun 3, 2019, at 3:47 PM, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> 
-> When calling debugfs functions, there is no need to ever check the
-> return value.  The function can work or not, but the code logic should
-> never do something different based on this.
-> 
-> Cc: "Ed L. Cashin" <ed.cashin@acm.org>
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: linux-block@vger.kernel.org
-> Cc: Omar Sandoval <osandov@osandov.com>
-> Cc: Justin Sanders <justin@coraid.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
-> v3: Justin is now the maintainer of this driver, properly send it to
->    him.
-> v2: fix uninitialized entry issue found by Omar Sandoval
-> 
-> drivers/block/aoe/aoeblk.c | 16 ++--------------
-> 1 file changed, 2 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/block/aoe/aoeblk.c b/drivers/block/aoe/aoeblk.c
-> index e2c6aae2d636..bd19f8af950b 100644
-> --- a/drivers/block/aoe/aoeblk.c
-> +++ b/drivers/block/aoe/aoeblk.c
-> @@ -196,7 +196,6 @@ static const struct file_operations aoe_debugfs_fops = {
-> static void
-> aoedisk_add_debugfs(struct aoedev *d)
-> {
-> -	struct dentry *entry;
-> 	char *p;
-> 
-> 	if (aoe_debugfs_dir == NULL)
-> @@ -207,15 +206,8 @@ aoedisk_add_debugfs(struct aoedev *d)
-> 	else
-> 		p++;
-> 	BUG_ON(*p == '\0');
-> -	entry = debugfs_create_file(p, 0444, aoe_debugfs_dir, d,
-> -				    &aoe_debugfs_fops);
-> -	if (IS_ERR_OR_NULL(entry)) {
-> -		pr_info("aoe: cannot create debugfs file for %s\n",
-> -			d->gd->disk_name);
-> -		return;
-> -	}
-> -	BUG_ON(d->debugfs);
-> -	d->debugfs = entry;
-> +	d->debugfs = debugfs_create_file(p, 0444, aoe_debugfs_dir, d,
-> +					 &aoe_debugfs_fops);
-> }
-> void
-> aoedisk_rm_debugfs(struct aoedev *d)
-> @@ -472,10 +464,6 @@ aoeblk_init(void)
-> 	if (buf_pool_cache == NULL)
-> 		return -ENOMEM;
-> 	aoe_debugfs_dir = debugfs_create_dir("aoe", NULL);
-> -	if (IS_ERR_OR_NULL(aoe_debugfs_dir)) {
-> -		pr_info("aoe: cannot create debugfs directory\n");
-> -		aoe_debugfs_dir = NULL;
-> -	}
-> 	return 0;
-> }
-> 
-> -- 
-> 2.21.0
-> 
-> 
+On the pixel3, devices with micron UFS chips won't boot upstream
+kernels without this patch, which is a rewrite of an earlier patch:
+  https://git.linaro.org/people/john.stultz/android-dev.git/commit/?h=dev/p3&id=99f3dd8519a848b752679584451c45f42c326a17
 
-This looks good to me, thanks.
+Which was pulled from the downstream tree from here:
+  https://android.googlesource.com/kernel/msm.git/+/9c8077087e818017%5E%21/
 
-Acked-by: Justin Sanders <justin@coraid.com>
+CCing Subhash as he may have additional context.
 
-Cheers,
-Justin
-
-
+thanks
+-john
