@@ -2,333 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7A9B34CB8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 17:58:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BCA834CBC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 17:59:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728248AbfFDP5y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 11:57:54 -0400
-Received: from mail.efficios.com ([167.114.142.138]:45566 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728141AbfFDP5y (ORCPT
+        id S1728216AbfFDP7l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 11:59:41 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:39169 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727422AbfFDP7k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 11:57:54 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 4C4CB234FD7;
-        Tue,  4 Jun 2019 11:57:51 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id Zp6BZiNExbXZ; Tue,  4 Jun 2019 11:57:50 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 3EC9E234FC7;
-        Tue,  4 Jun 2019 11:57:50 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 3EC9E234FC7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1559663870;
-        bh=W2jdImb6kIMUSLl7hFGPg77zIGSS8POEJyXEdDpjCn8=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=nOlg5MsL+VlB9bLqn+88PkSIMr1Zs+aFQZ1Ta9ibMUJ02YB8XQxhL5YKaVDkh5u9M
-         NdT++QkxVHCDJ2Q3sYSvMzohv1QvDgRqd4J/qXkN5ah+AnyTC7lhzYyOWR+QBG/oP4
-         9AErFY+kv029DhIuXETZaVhRGGRY12V+wrkyQkn7P/XngJAKHCk9pmVXO6t9hwboqP
-         9SjF1a92k3XRyzF5Z0FyLpLbXItxbQqbnuTXg6hDmQ1dSh96yVa/+fJk3v0H+I/tE5
-         E7tcsn6Tkkem4drZIDadIVUF11iPXBCysM1BtYeicq5qdHpMoucypLz+0YDOf30x0r
-         V6SulU3F2wHHg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id 3ZrLWlYrLBqf; Tue,  4 Jun 2019 11:57:50 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 22D49234FBF;
-        Tue,  4 Jun 2019 11:57:50 -0400 (EDT)
-Date:   Tue, 4 Jun 2019 11:57:50 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     carlos <carlos@redhat.com>, Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Rich Felker <dalias@libc.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Message-ID: <117220011.27079.1559663870037.JavaMail.zimbra@efficios.com>
-In-Reply-To: <87o93d4lqb.fsf@oldenburg2.str.redhat.com>
-References: <20190503184219.19266-1-mathieu.desnoyers@efficios.com> <140718133.18261.1559144710554.JavaMail.zimbra@efficios.com> <2022553041.20966.1559249801435.JavaMail.zimbra@efficios.com> <875zprm4jo.fsf@oldenburg2.str.redhat.com> <732661684.21584.1559314109886.JavaMail.zimbra@efficios.com> <87muj2k4ov.fsf@oldenburg2.str.redhat.com> <1528929896.22217.1559326257155.JavaMail.zimbra@efficios.com> <87o93d4lqb.fsf@oldenburg2.str.redhat.com>
-Subject: Re: [PATCH 1/5] glibc: Perform rseq(2) registration at C startup
- and thread creation (v10)
+        Tue, 4 Jun 2019 11:59:40 -0400
+Received: by mail-vs1-f66.google.com with SMTP id n2so5432779vso.6
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 08:59:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=posk.io; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pNSmlxy+hHS9DdorXvCYVqoqTtmJb7A32aLQZ8rGLog=;
+        b=RfsnL1Cbm3++1fTT2oGbQiSR45EERV453FCrAn8rOCd28WFS7LG/EAeJ2yCFN2XybD
+         XI8/icvh2H2QI6+HRCPUlTjo4pZVdlgKgMQGLdWd/jG/oLKHWp2/lZGEBzUGqtLQRxh3
+         FG0t4K2f7GbVj8ORugI7RNhutqiBPT3PXLsLWQwdWj7jSwutVlADqPYeWTb39h6z689z
+         5XoNsGqZZAlEMLOLskrBAOx+0Zj06NIaRHTlXl+WEmjPcnO/K3p+oa7Me394MngtPSjm
+         QWTSLWFF7YZmdOGLaJzrQf6c6T/n//nr51idY2+OMa4CUH5fYUxP7EPaptsRdVt6c1j1
+         5hMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pNSmlxy+hHS9DdorXvCYVqoqTtmJb7A32aLQZ8rGLog=;
+        b=lCEVnSVq5frlRMx55l+ubU7f/j1VKCVViGU8ho/VwX6IUbogcWjOxkiFjOlfv0MZ9i
+         2l5SM2z/t3e1xMcjWNYUtUXqPYSkYmaUBsvYR6UIcDwdDgzQCIaZhot+Uv7PtR5uUjNJ
+         YgdVQuMcer5F7z5HOj0tIgIHgRrfSxm8hpNIhv1hFvhT8S96/6AmrF5vPf6mWPjstCgU
+         SlqZBzP2bXHsOt5JRaj0x1o0WpK6b6q/0sGXvDO1LRhHtf8C7CgEgSBZA/+0m4wZRPHE
+         UxjOx3G+m1Ih6t/izkGky0EQsQYC5pA7RChF+3mxK6Pss2k3TUAg6WJXGL7k/OYg04oM
+         FXSQ==
+X-Gm-Message-State: APjAAAVtru1ri+LfYV1KO2ihQIFKT65csj868BTlc9SuWjcJ3oZooAZY
+        jKirJq82qiF5BYkn6jTFuYTEdXfeXP3XyuMr6gooxQ==
+X-Google-Smtp-Source: APXvYqzmEbcEQLzsKI5Mr/6AhhWgZhi9tfoIoQbe0F5ZUEaJn8TCq8CL+QBWe3VBgS7UmzAm/55bL9ZC3B5I5usQkPs=
+X-Received: by 2002:a67:ea58:: with SMTP id r24mr16770160vso.60.1559663979613;
+ Tue, 04 Jun 2019 08:59:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.12_GA_3803 (ZimbraWebClient - FF67 (Linux)/8.8.12_GA_3794)
-Thread-Topic: glibc: Perform rseq(2) registration at C startup and thread creation (v10)
-Thread-Index: qOC3WlaZbEwJZoJXLOv6rJz7GkQdxA==
+References: <b477ac75a2b163048bdaeb37f57b4c3f04f75a31.1559631700.git.viresh.kumar@linaro.org>
+In-Reply-To: <b477ac75a2b163048bdaeb37f57b4c3f04f75a31.1559631700.git.viresh.kumar@linaro.org>
+From:   Peter Oskolkov <posk@posk.io>
+Date:   Tue, 4 Jun 2019 08:59:28 -0700
+Message-ID: <CAFTs51WUXwJbgsFCRbOwdUWnv55Mbt55-hmoMyETPGC5yMDSCQ@mail.gmail.com>
+Subject: Re: [PATCH] sched/fair: Introduce fits_capacity()
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jun 4, 2019, at 7:46 AM, Florian Weimer fweimer@redhat.com wrote:
+On Tue, Jun 4, 2019 at 12:02 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> The same formula to check utilization against capacity (after
+> considering capacity_margin) is already used at 5 different locations.
+>
+> This patch creates a new macro, fits_capacity(), which can be used from
+> all these locations without exposing the details of it and hence
+> simplify code.
+>
+> All the 5 code locations are updated as well to use it..
+>
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+>  kernel/sched/fair.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 7f8d477f90fe..db3a218b7928 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -102,6 +102,8 @@ int __weak arch_asym_cpu_priority(int cpu)
+>   * (default: ~20%)
+>   */
+>  static unsigned int capacity_margin                    = 1280;
+> +
+> +#define fits_capacity(cap, max)        ((cap) * capacity_margin < (max) * 1024)
 
-> * Mathieu Desnoyers:
->=20
->> ----- On May 31, 2019, at 11:46 AM, Florian Weimer fweimer@redhat.com wr=
-ote:
->>
->>> * Mathieu Desnoyers:
->>>=20
->>>> Let's break this down into the various sub-issues involved:
->>>>
->>>> 1) How early do we need to setup rseq ? Should it be setup before:
->>>>    - LD_PRELOAD .so constructors ?
->>>>      - Without circular dependency,
->>>>      - With circular dependency,
->>>>    - audit libraries initialization ?
->>>>    - IFUNC resolvers ?
->>>>    - other callbacks ?
->>>>    - memory allocator calls ?
->>>>
->>>> We may end up in a situation where we need memory allocation to be set=
-up
->>>> in order to initialize TLS before rseq can be registered for the main
->>>> thread. I suspect we will end up needing a fallbacks which always work
->>>> for the few cases that would try to use rseq too early in dl/libc star=
-tup.
->>>=20
->>> I think the answer to that depends on whether it's okay to have an
->>> observable transition from =E2=80=9Cno rseq kernel support=E2=80=9D to =
-=E2=80=9Ckernel supports
->>> rseq=E2=80=9D.
->>
->> As far as my own use-cases are concerned, I only care that rseq is initi=
-alized
->> before LD_PRELOAD .so constructors are executed.
->=20
-> <https://sourceware.org/bugzilla/show_bug.cgi?id=3D14379> is relevant in
-> this context.  It requests the opposite behavior from LD_PRELOAD.
+Any reason to have this as a macro and not as an inline function?
 
-This link is very interesting. It sheds some light into how a LD_PRELOAD us=
-er
-wants to override malloc.
-
-Should we plan ahead for such scheme to override which library "owns" rseq
-registration from a LD_PRELOAD library ? If so, then we would want glibc to
-set __rseq_handled _after_ LD_PRELOAD ctors are executed.
-
-However, this brings the following situation: lttng-ust can be LD_PRELOADed
-into applications, and I intend to make it provide rseq registration *only =
-if*
-the glibc does not provide it.
-
-As a brainstorm idea, one way around this would be to turn __rseq_handled i=
-nto
-a 4-states variable:
-
-RSEQ_REG_UNSET =3D 0, -> no library handles rseq
-RSEQ_REG_PREINIT =3D 1, -> libc supports RSEQ, initialization not done yet,
-RSEQ_REG_LIBC =3D 2, -> libc supports RSEQ, owns registration,
-RSEQ_REG_OVERRIDE =3D 3, -> LD_PRELOAD library owns registration.
-
-So a lttng-ust LD_PRELOAD could manage rseq registration by setting
-__rseq_handled =3D RSEQ_REG_OVERRIDE only after observing the state
-RSEQ_REG_UNSET.
-
-A LD_PRELOAD library wishing to override the libc rseq management should se=
-t
-__rseq_handled to RSEQ_REG_OVERRIDE after observing either UNSET or PREINIT=
-.
-
->=20
->> There appears to be some amount of documented limitations for what can b=
-e
->> done by the IFUNC resolvers. It might be acceptable to document that rse=
-q
->> might not be initialized yet when those are executed.
->=20
-> The only obstacle is that there are so many places where we could put
-> this information.
-
-If we postpone the actual rseq registration by glibc after LD_PRELOAD ctors
-execution, I think it makes it clear that we have a part of the startup
-which executes without rseq being registered:
-
-(please let me know if I'm getting some things wrong in the following seque=
-nces)
-
-A) Startup sequence (glibc owns rseq):
-
-                                  __rseq_handled          __rseq_abi (TLS)
-                                  --------------          -----------------=
------
-                                  RSEQ_REG_UNSET          no TLS available
-                                  RSEQ_REG_PREINIT
-IFUNC resolvers,
-audit libraries...
-                                                          TLS becomes avail=
-able
-LD_PRELOAD ctors
-glibc initialization              RSEQ_REG_LIBC
-                                                          registered to ker=
-nel by sys_rseq.
-
-
-B) Startup sequence (LD_PRELOAD lttng-ust owns rseq, old glibc):
-
-                                  __rseq_handled          __rseq_abi (TLS)
-                                  --------------          -----------------=
------
-                                  RSEQ_REG_UNSET          no TLS available
-IFUNC resolvers,
-audit libraries...
-                                                          TLS becomes avail=
-able
-LD_PRELOAD ctors                  RSEQ_REG_OVERRIDE
-                                                          registered to ker=
-nel by sys_rseq.
-
-
-C) Startup sequence (LD_PRELOAD rseq override library owning rseq):
-
-                                  __rseq_handled          __rseq_abi (TLS)
-                                  --------------          -----------------=
------
-                                  RSEQ_REG_UNSET          no TLS available
-                                  RSEQ_REG_PREINIT
-IFUNC resolvers,
-audit libraries...
-                                                          TLS becomes avail=
-able
-LD_PRELOAD ctors                  RSEQ_REG_OVERRIDE
-                                                          registered to ker=
-nel by sys_rseq.
-glibc initialization
-
->=20
->> I'd like to hear what others think about whether we should care about IF=
-UNC
->> resolvers and audit libraries using restartable sequences TLS ?
->=20
-> In audit libraries (and after dlmopen), the inner libc will have
-> duplicated TLS values, so it will look as if the TLS area is not active
-> (but a registration has happened with the kernel).  If we move
-> __rseq_handled into the dynamic linker, its value will be shared along
-> with ld.so with the inner objects.  However, the inner libc still has to
-> ensure that its registration attempt does not succeed because that would
-> activate the wrong rseq area.
-
-Having an intermediate RSEQ_REG_PREINIT state covering the entire
-duration where the inner libc is in use should do the trick to ensure
-the duplicated TLS area is not used at that point.
-
-The covered use-cases would be to override rseq registration ownership
-from LD_PRELOADed libraries, but disallow it from IFUNC resolvers and
-audit libraries.
-
-As a consequence of this, rseq critical sections should be prepared
-to use a fall-back mechanism (e.g. the cpu_opv system call I have been
-trying to upstream) when they notice rseq is not yet initialized
-for a rseq c.s. executed within a preinit stage, or very early/late
-in a thread's lifetime. This is a requirement I have seen coming for
-a while now. Testing for non-registered rseq is very straightforward
-and fast to do on a fast-path through the __rseq_abi.cpu_id field:
-it has a negative value if rseq is not registered for the current
-thread.
-
->=20
-> The final remaining case is static dlopen.  There is a copy of ld.so on
-> the dynamic side, but it is completely inactive and has never run.  I do
-> not think we need to support that because multi-threading does not work
-> reliably in this scenario, either.  However, we should skip rseq
-> registration in a nested libc (see the rtld_active function).
-
-So for SHARED, if (!rtld_active ()), we should indeed leave the state of
-__rseq_handled as it is, because we are within a nested inactive ld.so.
-
->=20
->>>> 4) Inability to touch a TLS variable (__rseq_abi) from ld-linux-*.so.2
->>>>    - Should we extend the dynamic linker to allow such TLS variable to=
- be
->>>>      accessed ? If so, how much effort is required ?
->>>>    - Can we find an alternative way to initialize rseq early during
->>>>      dl init stages while still performing the TLS access from a funct=
-ion
->>>>      implemented within libc.so ?
->>>=20
->>> This is again related to the answer for (1).  There are various hacks w=
-e
->>> could implement to make the initialization invisible (e.g., computing
->>> the address of the variable using the equivalent of dlsym, after loadin=
-g
->>> all the initial objects and before starting relocation).  If it's not
->>> too hard to add TLS support to ld.so, we can consider that as well.
->>> (The allocation side should be pretty easy, relocation support it could
->>> be more tricky.)
->>>=20
->>>> So far, I got rseq to be initialized before LD_PRELOADed library
->>>> constructors by doing the initialization in a constructor within
->>>> libc.so. I don't particularly like this approach, because the
->>>> constructor order is not guaranteed.
->>>=20
->>> Right.
->>
->> One question related to use of constructors: AFAIU, if a library depends
->> on glibc, ELF guarantees that the glibc constructor will be executed fir=
-st,
->> before the other library.
->=20
-> There are some exceptions, like DT_PREINIT_ARRAY functions and
-> DF_1_INITFIRST.  Some of these mechanisms we use in the implementation
-> itself, so they are not really usable to end users.  Cycles should not
-> come into play here.
->=20
-> By default, an object that uses the rseq area will have to link against
-> libc (perhaps indirectly), and therefore the libc constructor runs
-> first.
-
-If we agree on postponing the actual TLS registration _after_ LD_PRELOAD
-ctors are executed, the problem becomes easier. We then only need to
-move __rseq_handled to ld.so, and set it to a PREINIT state until we
-eventually perform the TLS registration (after LD_PRELOAD ctors).
-
->=20
->> Which leaves us with the execution order of constructors within libc.so,
->> which is not guaranteed if we just use __attribute__ ((constructor)).
->> However, all gcc versions that are required to build recent glibc
->> seem to support a constructor with a "priority" value (lower gets
->> executed first, and those are executed before constructors without
->> priority).
->=20
-> I'm not sure that's the right way to do it.  If we want to happen
-> execution in a specific order, we should write a single constructor
-> function which is called from _init.  For the time being, we can add the
-> call to an appropriately defined inline function early in _init in
-> elf/init-first.c (which is shared with Hurd, so Hurd will need some sort
-> of stub function).
-
-In my attempts, there were some cases where _init was not invoked before
-LD_PRELOAD ctors, but I cannot remember which at this point. Anyhow, if
-we choose to postpone the actual TLS registration after LD_PRELOAD ctors,
-this becomes a non-issue.
-
-We might want to rename the __rseq_handled symbol to a better name if
-it becomes a 4-states variable, e.g. __rseq_reg_owner.
-
-Thoughts ?
-
-Thanks,
-
-Mathieu
-
-
->=20
-> Thanks,
-> Florian
-
---=20
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+>  #endif
+>
+>  #ifdef CONFIG_CFS_BANDWIDTH
+> @@ -3727,7 +3729,7 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
+>
+>  static inline int task_fits_capacity(struct task_struct *p, long capacity)
+>  {
+> -       return capacity * 1024 > task_util_est(p) * capacity_margin;
+> +       return fits_capacity(task_util_est(p), capacity);
+>  }
+>
+>  static inline void update_misfit_status(struct task_struct *p, struct rq *rq)
+> @@ -5143,7 +5145,7 @@ static inline unsigned long cpu_util(int cpu);
+>
+>  static inline bool cpu_overutilized(int cpu)
+>  {
+> -       return (capacity_of(cpu) * 1024) < (cpu_util(cpu) * capacity_margin);
+> +       return !fits_capacity(cpu_util(cpu), capacity_of(cpu));
+>  }
+>
+>  static inline void update_overutilized_status(struct rq *rq)
+> @@ -6304,7 +6306,7 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
+>                         /* Skip CPUs that will be overutilized. */
+>                         util = cpu_util_next(cpu, p, cpu);
+>                         cpu_cap = capacity_of(cpu);
+> -                       if (cpu_cap * 1024 < util * capacity_margin)
+> +                       if (!fits_capacity(util, cpu_cap))
+>                                 continue;
+>
+>                         /* Always use prev_cpu as a candidate. */
+> @@ -7853,8 +7855,7 @@ group_is_overloaded(struct lb_env *env, struct sg_lb_stats *sgs)
+>  static inline bool
+>  group_smaller_min_cpu_capacity(struct sched_group *sg, struct sched_group *ref)
+>  {
+> -       return sg->sgc->min_capacity * capacity_margin <
+> -                                               ref->sgc->min_capacity * 1024;
+> +       return fits_capacity(sg->sgc->min_capacity, ref->sgc->min_capacity);
+>  }
+>
+>  /*
+> @@ -7864,8 +7865,7 @@ group_smaller_min_cpu_capacity(struct sched_group *sg, struct sched_group *ref)
+>  static inline bool
+>  group_smaller_max_cpu_capacity(struct sched_group *sg, struct sched_group *ref)
+>  {
+> -       return sg->sgc->max_capacity * capacity_margin <
+> -                                               ref->sgc->max_capacity * 1024;
+> +       return fits_capacity(sg->sgc->max_capacity, ref->sgc->max_capacity);
+>  }
+>
+>  static inline enum
+> --
+> 2.21.0.rc0.269.g1a574e7a288b
+>
