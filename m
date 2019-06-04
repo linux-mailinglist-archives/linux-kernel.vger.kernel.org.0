@@ -2,144 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D453340AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 09:49:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F2F8340A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 09:49:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbfFDHtt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 03:49:49 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:55043 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726637AbfFDHtt (ORCPT
+        id S1726935AbfFDHtV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 03:49:21 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:32778 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726637AbfFDHtV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 03:49:49 -0400
-Received: from localhost (aaubervilliers-681-1-24-139.w90-88.abo.wanadoo.fr [90.88.144.139])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id B8E6B10000A;
-        Tue,  4 Jun 2019 07:49:40 +0000 (UTC)
-Date:   Tue, 4 Jun 2019 09:49:40 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     codekipper@gmail.com
-Cc:     wens@csie.org, linux-sunxi@googlegroups.com,
-        linux-arm-kernel@lists.infradead.org, lgirdwood@gmail.com,
-        broonie@kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, be17068@iperbole.bo.it
-Subject: Re: [PATCH v4 5/9] ASoC: sun4i-i2s: Add set_tdm_slot functionality
-Message-ID: <20190604074940.pwzggjluksv7xxel@flea>
-References: <20190603174735.21002-1-codekipper@gmail.com>
- <20190603174735.21002-6-codekipper@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ld4z4b6632jtjjwn"
-Content-Disposition: inline
-In-Reply-To: <20190603174735.21002-6-codekipper@gmail.com>
-User-Agent: NeoMutt/20180716
+        Tue, 4 Jun 2019 03:49:21 -0400
+Received: by mail-pg1-f195.google.com with SMTP id h17so9878416pgv.0;
+        Tue, 04 Jun 2019 00:49:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=0dEnqFti2YXtQ+SGgrU+y7p7F1e1QKCL0JuN/nDle0w=;
+        b=qSCSBO5hjq1MTvWRs5IECdL+RaYyVZZK5WEvA8gtf507w9V/gD+djPDx0Bb7yzkmwi
+         7HWCxiU34gdirN5WdQ98l/EXRPGUps3qIU9sKbSyqcDjyW2BD+JDHkmWS/J8bGm2qA1v
+         ttV7DEz0WSkjCehneiEdPcqui56qirv0dwO/YUtnOyyx5yKSyZSX1W0LUMtrou+hxSpC
+         fcMXMHEvzxpIGXJnJVfn+ytewEHf++JB4trsh1AhC4Yd5YlC5egUroZ527xeloTAByE3
+         pFPq3kHjLpE/LYsOjx5ZDYQvluWsRURFezTClwcCqPdS9phcsodNgfGa24Ucy786FB96
+         r/aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=0dEnqFti2YXtQ+SGgrU+y7p7F1e1QKCL0JuN/nDle0w=;
+        b=EktE6kc9z6wM3LnTrXArnImN8r2mg6f/NeT3cxgJmcciozlysDIKq45UAdycTAz/HM
+         4Ih1AAej1s37z7WYyeOAkLkPf9tHAY2M5LtXQC4ZjQf42m6/AVppf88uYhjrVb30P9AA
+         +A1j220tJi+oR8UOCBlAhRQqxsb0CBhfm7diZqjRofqdz1gpfLEn8IhpD3mOhjGhUr+9
+         IROta4sth4Xh2AzOvbCOVIXs/y/5aEMJRZyddZAs9b76wBMuiiZsXAubTljwo8OupPNS
+         vYM1L8WMZKaDkb38ZAI19tFX/hCrjufLR/8/neGJrT/VWjQ1Rxcg7oyn+bS0DHmT+ver
+         IR2A==
+X-Gm-Message-State: APjAAAUuQDjnsL9hOsmnsCxKdkrR7NqHqf4COLGWz6xXen2wMxWgzc97
+        cbzYHt4Pb0MfKdo4ymQA+0E=
+X-Google-Smtp-Source: APXvYqwR3/qqkUWtVuOpkE4cdTOdma9vsrICt+qC+uUBUW3eIyK8DNzACK3QdRsdpQK6LD5qFtSMOQ==
+X-Received: by 2002:a17:90a:2e87:: with SMTP id r7mr33960547pjd.112.1559634560323;
+        Tue, 04 Jun 2019 00:49:20 -0700 (PDT)
+Received: from xy-data.openstacklocal (ecs-159-138-22-150.compute.hwclouds-dns.com. [159.138.22.150])
+        by smtp.gmail.com with ESMTPSA id k13sm9829540pgq.45.2019.06.04.00.49.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 04 Jun 2019 00:49:19 -0700 (PDT)
+From:   Young Xiao <92siuyang@gmail.com>
+To:     prabhakar.csengg@gmail.com, mchehab@kernel.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hverkuil@xs4all.nl
+Cc:     Young Xiao <92siuyang@gmail.com>
+Subject: [PATCH] media: davinci: vpif_capture: fix memory leak in vpif_probe()
+Date:   Tue,  4 Jun 2019 15:50:17 +0800
+Message-Id: <1559634617-16264-1-git-send-email-92siuyang@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+If vpif_probe() fails on v4l2_device_register() and vpif_probe_complete(),
+then memory allocated at initialize_vpif() for global vpif_obj.dev[i]
+become unreleased.
 
---ld4z4b6632jtjjwn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The patch adds deallocation of vpif_obj.dev[i] on the error path.
 
-On Mon, Jun 03, 2019 at 07:47:31PM +0200, codekipper@gmail.com wrote:
-> From: Marcus Cooper <codekipper@gmail.com>
->
-> Some codecs require a different amount of a bit clocks per frame than
+Signed-off-by: Young Xiao <92siuyang@gmail.com>
+---
+ drivers/media/platform/davinci/vpif_capture.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
-Which codec? And what are the actual requirements?
+diff --git a/drivers/media/platform/davinci/vpif_capture.c b/drivers/media/platform/davinci/vpif_capture.c
+index b5aacb0..277d500 100644
+--- a/drivers/media/platform/davinci/vpif_capture.c
++++ b/drivers/media/platform/davinci/vpif_capture.c
+@@ -1385,6 +1385,14 @@ static int initialize_vpif(void)
+ 	return err;
+ }
+ 
++static void free_vpif_objs(void)
++{
++	int i;
++
++	for (i = 0; i < VPIF_DISPLAY_MAX_DEVICES; i++)
++		kfree(vpif_obj.dev[i]);
++}
++
+ static int vpif_async_bound(struct v4l2_async_notifier *notifier,
+ 			    struct v4l2_subdev *subdev,
+ 			    struct v4l2_async_subdev *asd)
+@@ -1654,7 +1662,7 @@ static __init int vpif_probe(struct platform_device *pdev)
+ 	err = v4l2_device_register(vpif_dev, &vpif_obj.v4l2_dev);
+ 	if (err) {
+ 		v4l2_err(vpif_dev->driver, "Error registering v4l2 device\n");
+-		goto cleanup;
++		goto vpif_free;
+ 	}
+ 
+ 	while ((res = platform_get_resource(pdev, IORESOURCE_IRQ, res_idx))) {
+@@ -1701,7 +1709,10 @@ static __init int vpif_probe(struct platform_device *pdev)
+ 				  "registered sub device %s\n",
+ 				   subdevdata->name);
+ 		}
+-		vpif_probe_complete();
++		err = vpif_probe_complete();
++		if (err) {
++			goto probe_subdev_out;
++		}
+ 	} else {
+ 		vpif_obj.notifier.ops = &vpif_async_ops;
+ 		err = v4l2_async_notifier_register(&vpif_obj.v4l2_dev,
+@@ -1720,6 +1731,8 @@ static __init int vpif_probe(struct platform_device *pdev)
+ 	kfree(vpif_obj.sd);
+ vpif_unregister:
+ 	v4l2_device_unregister(&vpif_obj.v4l2_dev);
++vpif_free:
++	free_vpif_objs();
+ cleanup:
+ 	v4l2_async_notifier_cleanup(&vpif_obj.notifier);
+ 
+@@ -1748,8 +1761,8 @@ static int vpif_remove(struct platform_device *device)
+ 		ch = vpif_obj.dev[i];
+ 		/* Unregister video device */
+ 		video_unregister_device(&ch->video_dev);
+-		kfree(vpif_obj.dev[i]);
+ 	}
++	free_vpif_objs();
+ 	return 0;
+ }
+ 
+-- 
+2.7.4
 
-> what is calculated by the sample width. Use the tdm slot bindings to
-> provide this mechanism.
->
-> Signed-off-by: Marcus Cooper <codekipper@gmail.com>
-> ---
->  sound/soc/sunxi/sun4i-i2s.c | 22 ++++++++++++++++++++--
->  1 file changed, 20 insertions(+), 2 deletions(-)
->
-> diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-> index 329883750d6f..bca73b3c0d74 100644
-> --- a/sound/soc/sunxi/sun4i-i2s.c
-> +++ b/sound/soc/sunxi/sun4i-i2s.c
-> @@ -186,6 +186,9 @@ struct sun4i_i2s {
->  	struct regmap_field	*field_rxchansel;
->
->  	const struct sun4i_i2s_quirks	*variant;
-> +
-> +	unsigned int	tdm_slots;
-> +	unsigned int	slot_width;
->  };
->
->  struct sun4i_i2s_clk_div {
-> @@ -337,7 +340,7 @@ static int sun4i_i2s_set_clk_rate(struct snd_soc_dai *dai,
->  	if (i2s->variant->is_h3_i2s_based)
->  		regmap_update_bits(i2s->regmap, SUN4I_I2S_FMT0_REG,
->  				   SUN8I_I2S_FMT0_LRCK_PERIOD_MASK,
-> -				   SUN8I_I2S_FMT0_LRCK_PERIOD(32));
-> +				   SUN8I_I2S_FMT0_LRCK_PERIOD(word_size));
-
-This is an unrelated change, it should be in a separate patch.
-
->
->  	/* Set sign extension to pad out LSB with 0 */
->  	regmap_field_write(i2s->field_fmt_sext, 0);
-> @@ -414,7 +417,8 @@ static int sun4i_i2s_hw_params(struct snd_pcm_substream *substream,
->  			   sr + i2s->variant->fmt_offset);
->
->  	return sun4i_i2s_set_clk_rate(dai, params_rate(params),
-> -				      params_width(params));
-> +				      i2s->tdm_slots ?
-> +				      i2s->slot_width : params_width(params));
->  }
->
->  static int sun4i_i2s_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
-> @@ -657,11 +661,25 @@ static int sun4i_i2s_set_sysclk(struct snd_soc_dai *dai, int clk_id,
->  	return 0;
->  }
->
-> +static int sun4i_i2s_set_dai_tdm_slot(struct snd_soc_dai *dai,
-> +	unsigned int tx_mask, unsigned int rx_mask,
-> +	int slots, int width)
-
-The alignment after the wraping should be at the opening parenthesis.
-
-> +{
-> +	struct sun4i_i2s *i2s = snd_soc_dai_get_drvdata(dai);
-> +
-> +	i2s->tdm_slots = slots;
-> +
-> +	i2s->slot_width = width;
-> +
-> +	return 0;
-> +}
-> +
->  static const struct snd_soc_dai_ops sun4i_i2s_dai_ops = {
->  	.hw_params	= sun4i_i2s_hw_params,
->  	.set_fmt	= sun4i_i2s_set_fmt,
->  	.set_sysclk	= sun4i_i2s_set_sysclk,
->  	.trigger	= sun4i_i2s_trigger,
-> +	.set_tdm_slot	= sun4i_i2s_set_dai_tdm_slot,
-
-Please sort them by alphabetical order.
-
-Thanks!
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---ld4z4b6632jtjjwn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXPYilAAKCRDj7w1vZxhR
-xYXiAP0bXRYymU/3+ZTKYuLhieHKCw+su1ZTlL8VmZhDNotmdQD+PVY0AsWtlw/f
-1o88nw8RTpP0U6hdQ3I6QSx5EAHp6Ao=
-=vM/5
------END PGP SIGNATURE-----
-
---ld4z4b6632jtjjwn--
