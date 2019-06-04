@@ -2,116 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47E7033F64
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 08:58:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6F4533F6B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 08:59:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726828AbfFDG6u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 02:58:50 -0400
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:26585 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726547AbfFDG6t (ORCPT
+        id S1726937AbfFDG7q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 02:59:46 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:35633 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726603AbfFDG7p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 02:58:49 -0400
-Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Mon, 3 Jun 2019 23:58:46 -0700
-Received: from ubuntu.eng.vmware.com (unknown [10.33.74.142])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 59ABA4132E;
-        Mon,  3 Jun 2019 23:58:48 -0700 (PDT)
-From:   Ronak Doshi <doshir@vmware.com>
-To:     <netdev@vger.kernel.org>
-CC:     Ronak Doshi <doshir@vmware.com>,
-        "VMware, Inc." <pv-drivers@vmware.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH net-next] vmxnet3: turn off lro when rxcsum is disabled
-Date:   Mon, 3 Jun 2019 23:58:38 -0700
-Message-ID: <20190604065838.22243-1-doshir@vmware.com>
-X-Mailer: git-send-email 2.11.0
+        Tue, 4 Jun 2019 02:59:45 -0400
+Received: by mail-vs1-f65.google.com with SMTP id u124so2285802vsu.2;
+        Mon, 03 Jun 2019 23:59:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ct+dj+TeFGYPRbN7w+7PHPvII+8/Y2dGCES2KKtAHHo=;
+        b=pWLna89WZn7dcM0S/wyEszhw9i4En1+7H46YYKuAiZsyrpQSF3o4COvb5+H5bhIAd1
+         iP2bgFXKrjjs6yPXlyiZ6okRoSYPpvJdYwTuH2wdCNjvwocfgtk9ZMGfEvAnDiP1VFNW
+         /O2yw5GZdYrQmUE5cpUO4BKBzVXtVf9uM+dUwXPEXBT/8lo+MDLC3PalDHY+31PqGNDz
+         e0/czIl1cLqZHj13obzr6w0y+qwTFF22q8Vd7jkfIqL6xofNIwo2dN+XZU25J+Dd/M7F
+         a4IVa2eiXOoPkjj/5f6P4tClh4yMiMNRL8+TW8wLUFV7Txe0vC4S9qNjTW3UOVsjLG+g
+         GX7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ct+dj+TeFGYPRbN7w+7PHPvII+8/Y2dGCES2KKtAHHo=;
+        b=qoqp4sv0/j0x2tokI4Zo1RSP6tF5jy4MwfXo6QScca1WszbcuJGVQKw5qcZMJ5oYKO
+         kNdWyId+b/R1rF1tC3hXziCqI9NrBd87jHoiGasFIwlh5k6+7qPTV1zAhOCqxjNiOhNV
+         xdEmncMntXLj99Czi3mSu0wWJIt0lmp+BL97trIFs/0rsLjn6dLPCQYrurufE69nMHHB
+         Y0JubO3v9hPWPga1OVXQGn3dkFe5Nfa4gX6vCTesaI3VC0LrIcWrdEUfH6MyP72UIl02
+         xZ690q5veSzIseXg1NkAsHclwVjsFXSi93emIgx0EJixyUmRCxnf83D8tXsA0Iundbl6
+         iaOA==
+X-Gm-Message-State: APjAAAVIWSdMVxdZm5yPnr7Jy/B0H0Ucy2vwZ7Km4NzMuIvVM+Ao6zxe
+        +JP3IsN/l2Mgb8V5H7PofOEylu4eM5/e83o39veqPjrVBC0xfA==
+X-Google-Smtp-Source: APXvYqxa/N1nMMBMS9cabavZ6JMxqjs1SSh6Vq4tbZKCgVAu/WWNEdbNxTR+bMGuY3wG6/Yu5dot4rhSHeeMb8IL4ns=
+X-Received: by 2002:a67:ce10:: with SMTP id s16mr4055803vsl.74.1559631584400;
+ Mon, 03 Jun 2019 23:59:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: doshir@vmware.com does not
- designate permitted sender hosts)
+References: <1559230098-1543-1-git-send-email-92siuyang@gmail.com>
+ <c83f8777-f6be-029b-980d-9f974b4e28ce@gmail.com> <CAKgHYH1=aqmOEsbH-OuSjK4CJ=9FmocjuOg6tsyJNPLEOWVB-g@mail.gmail.com>
+ <a0f08b20-41ef-db53-48df-4d8f5333b6af@gmail.com>
+In-Reply-To: <a0f08b20-41ef-db53-48df-4d8f5333b6af@gmail.com>
+From:   Yang Xiao <92siuyang@gmail.com>
+Date:   Tue, 4 Jun 2019 14:59:03 +0800
+Message-ID: <CAKgHYH0pH3Otj2izYwdcGKhJhjfovi1C-Ez1g2f7P5ahzQEfyw@mail.gmail.com>
+Subject: Re: [PATCH] ipv6: Prevent overrun when parsing v6 header options
+To:     Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     David Miller <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, when rx csum is disabled, vmxnet3 driver does not turn
-off lro, which can cause performance issues if user does not turn off
-lro explicitly. This patch adds fix_features support which is used to
-turn off LRO whenever RXCSUM is disabled.
+Sorry, I don't get your point. Why is xfrm6_transport_output() buggy?
+The point is that there would be out-of-bound access in
+mip6_destopt_offset() and mip6_destopt_offset(), since there is no
+sanity check for offset.
 
-Signed-off-by: Ronak Doshi <doshir@vmware.com>
-Acked-by: Rishi Mehta <rmehta@vmware.com>
----
- drivers/net/vmxnet3/vmxnet3_drv.c     |  1 +
- drivers/net/vmxnet3/vmxnet3_ethtool.c | 10 ++++++++++
- drivers/net/vmxnet3/vmxnet3_int.h     |  7 +++++--
- 3 files changed, 16 insertions(+), 2 deletions(-)
+There is chance that offset + sizeof(struct ipv6_opt_hdr) > packet_len.
 
-diff --git a/drivers/net/vmxnet3/vmxnet3_drv.c b/drivers/net/vmxnet3/vmxnet3_drv.c
-index 1b2a18ea855c..3f48f05dd2a6 100644
---- a/drivers/net/vmxnet3/vmxnet3_drv.c
-+++ b/drivers/net/vmxnet3/vmxnet3_drv.c
-@@ -3247,6 +3247,7 @@ vmxnet3_probe_device(struct pci_dev *pdev,
- 		.ndo_start_xmit = vmxnet3_xmit_frame,
- 		.ndo_set_mac_address = vmxnet3_set_mac_addr,
- 		.ndo_change_mtu = vmxnet3_change_mtu,
-+		.ndo_fix_features = vmxnet3_fix_features,
- 		.ndo_set_features = vmxnet3_set_features,
- 		.ndo_get_stats64 = vmxnet3_get_stats64,
- 		.ndo_tx_timeout = vmxnet3_tx_timeout,
-diff --git a/drivers/net/vmxnet3/vmxnet3_ethtool.c b/drivers/net/vmxnet3/vmxnet3_ethtool.c
-index 559db051a500..0a38c76688ab 100644
---- a/drivers/net/vmxnet3/vmxnet3_ethtool.c
-+++ b/drivers/net/vmxnet3/vmxnet3_ethtool.c
-@@ -257,6 +257,16 @@ vmxnet3_get_strings(struct net_device *netdev, u32 stringset, u8 *buf)
- 	}
- }
- 
-+netdev_features_t vmxnet3_fix_features(struct net_device *netdev,
-+				       netdev_features_t features)
-+{
-+	/* If Rx checksum is disabled, then LRO should also be disabled */
-+	if (!(features & NETIF_F_RXCSUM))
-+		features &= ~NETIF_F_LRO;
-+
-+	return features;
-+}
-+
- int vmxnet3_set_features(struct net_device *netdev, netdev_features_t features)
- {
- 	struct vmxnet3_adapter *adapter = netdev_priv(netdev);
-diff --git a/drivers/net/vmxnet3/vmxnet3_int.h b/drivers/net/vmxnet3/vmxnet3_int.h
-index a2c554f8a61b..1cc1cd4aaa59 100644
---- a/drivers/net/vmxnet3/vmxnet3_int.h
-+++ b/drivers/net/vmxnet3/vmxnet3_int.h
-@@ -69,12 +69,12 @@
- /*
-  * Version numbers
-  */
--#define VMXNET3_DRIVER_VERSION_STRING   "1.4.16.0-k"
-+#define VMXNET3_DRIVER_VERSION_STRING   "1.4.17.0-k"
- 
- /* Each byte of this 32-bit integer encodes a version number in
-  * VMXNET3_DRIVER_VERSION_STRING.
-  */
--#define VMXNET3_DRIVER_VERSION_NUM      0x01041000
-+#define VMXNET3_DRIVER_VERSION_NUM      0x01041100
- 
- #if defined(CONFIG_PCI_MSI)
- 	/* RSS only makes sense if MSI-X is supported. */
-@@ -454,6 +454,9 @@ vmxnet3_tq_destroy_all(struct vmxnet3_adapter *adapter);
- void
- vmxnet3_rq_destroy_all(struct vmxnet3_adapter *adapter);
- 
-+netdev_features_t
-+vmxnet3_fix_features(struct net_device *netdev, netdev_features_t features);
-+
- int
- vmxnet3_set_features(struct net_device *netdev, netdev_features_t features);
- 
+As described in CVE-2017-9074:  "The IPv6 fragmentation implementation
+in the Linux kernel through 4.11.1 does not consider that the nexthdr
+field may be associated with an invalid option, which allows local
+users to cause a denial of service (out-of-bounds read and BUG)".
+
+At the same time, there are bugs in  mip6_destopt_offset() and
+mip6_destopt_offset(), which is similar to CVE-2017-7542.
+
+On Sat, Jun 1, 2019 at 1:35 AM Eric Dumazet <eric.dumazet@gmail.com> wrote:
+>
+>
+>
+> On 5/30/19 8:04 PM, Yang Xiao wrote:
+> > On Fri, May 31, 2019 at 1:17 AM Eric Dumazet <eric.dumazet@gmail.com> wrote:
+> >>
+> >>
+> >>
+> >> On 5/30/19 8:28 AM, Young Xiao wrote:
+> >>> The fragmentation code tries to parse the header options in order
+> >>> to figure out where to insert the fragment option.  Since nexthdr points
+> >>> to an invalid option, the calculation of the size of the network header
+> >>> can made to be much larger than the linear section of the skb and data
+> >>> is read outside of it.
+> >>>
+> >>> This vulnerability is similar to CVE-2017-9074.
+> >>>
+> >>> Signed-off-by: Young Xiao <92siuyang@gmail.com>
+> >>> ---
+> >>>  net/ipv6/mip6.c | 24 ++++++++++++++----------
+> >>>  1 file changed, 14 insertions(+), 10 deletions(-)
+> >>>
+> >>> diff --git a/net/ipv6/mip6.c b/net/ipv6/mip6.c
+> >>> index 64f0f7b..30ed1c5 100644
+> >>> --- a/net/ipv6/mip6.c
+> >>> +++ b/net/ipv6/mip6.c
+> >>> @@ -263,8 +263,6 @@ static int mip6_destopt_offset(struct xfrm_state *x, struct sk_buff *skb,
+> >>>                              u8 **nexthdr)
+> >>>  {
+> >>>       u16 offset = sizeof(struct ipv6hdr);
+> >>> -     struct ipv6_opt_hdr *exthdr =
+> >>> -                                (struct ipv6_opt_hdr *)(ipv6_hdr(skb) + 1);
+> >>>       const unsigned char *nh = skb_network_header(skb);
+> >>>       unsigned int packet_len = skb_tail_pointer(skb) -
+> >>>               skb_network_header(skb);
+> >>> @@ -272,7 +270,8 @@ static int mip6_destopt_offset(struct xfrm_state *x, struct sk_buff *skb,
+> >>>
+> >>>       *nexthdr = &ipv6_hdr(skb)->nexthdr;
+> >>>
+> >>> -     while (offset + 1 <= packet_len) {
+> >>> +     while (offset <= packet_len) {
+> >>> +             struct ipv6_opt_hdr *exthdr;
+> >>>
+> >>>               switch (**nexthdr) {
+> >>>               case NEXTHDR_HOP:
+> >>> @@ -299,12 +298,15 @@ static int mip6_destopt_offset(struct xfrm_state *x, struct sk_buff *skb,
+> >>>                       return offset;
+> >>>               }
+> >>>
+> >>> +             if (offset + sizeof(struct ipv6_opt_hdr) > packet_len)
+> >>> +                     return -EINVAL;
+> >>> +
+> >>> +             exthdr = (struct ipv6_opt_hdr *)(nh + offset);
+> >>>               offset += ipv6_optlen(exthdr);
+> >>>               *nexthdr = &exthdr->nexthdr;
+> >>> -             exthdr = (struct ipv6_opt_hdr *)(nh + offset);
+> >>>       }
+> >>>
+> >>> -     return offset;
+> >>> +     return -EINVAL;
+> >>>  }
+> >>>
+> >>
+> >>
+> >> Ok, but have you checked that callers have been fixed ?
+> >
+> > I've checked the callers. There are two callers:
+> > xfrm6_transport_output() and xfrm6_ro_output(). There are checks in
+> > both function.
+> >
+> > ------------------------------------------------------------------------------
+> >         hdr_len = x->type->hdr_offset(x, skb, &prevhdr);
+> >         if (hdr_len < 0)
+> >                 return hdr_len;
+> > ------------------------------------------------------------------------------
+> >>
+> >> xfrm6_transport_output() seems buggy as well,
+> >> unless the skbs are linearized before entering these functions ?
+> > I can not understand what you mean about this comment.
+> > Could you explain it in more detail.
+>
+>
+> If we had a problem, then the memmove(ipv6_hdr(skb), iph, hdr_len);
+>  in xfrm6_transport_output() would be buggy, since iph could also point to freed memory.
+>
+>
+>
+
+
 -- 
-2.11.0
+Best regards!
 
+Young
+-----------------------------------------------------------
