@@ -2,97 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41D8D35006
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 20:54:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBF9F344EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 12:59:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbfFDSyB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 14:54:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54174 "EHLO mail.kernel.org"
+        id S1727392AbfFDK6d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 06:58:33 -0400
+Received: from mga07.intel.com ([134.134.136.100]:62569 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726261AbfFDSyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 14:54:00 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1E782075C;
-        Tue,  4 Jun 2019 18:53:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559674440;
-        bh=Cp6VeCqZCzW+nl+JJJp4Ag83997W0UrXA7j/yyUXqCw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Hz4F5IAWX5K7ns5/iauYd6ztC2uFH45l1oTRY+3CZ9LVNjvf+Wc4JueKy6VVfTQzD
-         mnlH5aQ8RPlnFpo1TAQeptBSMvVYdAvE1MxukfkctfinBCwhR7iI+5A4OtOts4fTDD
-         8nJ2aS2GQoARjwQdpfnL9rkq56s1TjtwvCiG7vaI=
-Date:   Tue, 4 Jun 2019 11:53:58 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Borislav Petkov <bp@suse.de>, Dave Hansen <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jann Horn <jannh@google.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        kvm ML <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Rik van Riel <riel@surriel.com>, x86-ml <x86@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [5.2 regression] copy_fpstate_to_sigframe() change causing crash in
- 32-bit process
-Message-ID: <20190604185358.GA820@sol.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.0 (2019-05-25)
+        id S1726877AbfFDK6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 06:58:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jun 2019 03:58:32 -0700
+X-ExtLoop1: 1
+Received: from wvoon-ilbpg2.png.intel.com ([10.88.227.88])
+  by orsmga008.jf.intel.com with ESMTP; 04 Jun 2019 03:58:29 -0700
+From:   Voon Weifeng <weifeng.voon@intel.com>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jose Abreu <joabreu@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        biao huang <biao.huang@mediatek.com>,
+        Ong Boon Leong <boon.leong.ong@intel.com>,
+        Kweh Hock Leong <hock.leong.kweh@intel.com>,
+        Voon Weifeng <weifeng.voon@intel.com>
+Subject: [PATCH net-next v6 0/5] net: stmmac: enable EHL SGMII
+Date:   Wed,  5 Jun 2019 02:58:51 +0800
+Message-Id: <1559674736-2190-1-git-send-email-weifeng.voon@intel.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On latest Linus' tree I'm getting a crash in a 32-bit Wine process.
+This patch-set is to enable Ethernet controller
+(DW Ethernet QoS and DW Ethernet PCS) with SGMII interface in Elkhart Lake.
+The DW Ethernet PCS is the Physical Coding Sublayer that is between Ethernet
+MAC and PHY and uses MDIO Clause-45 as Communication.
 
-I bisected it to the following commit:
+Selttests results:
+root@intel-corei7-64:~# ethtool -t eth0
+The test result is PASS
+The test extra info:
+ 1. MAC Loopback                 0
+ 2. PHY Loopback                 -95
+ 3. MMC Counters                 0
+ 4. EEE                          -95
+ 5. Hash Filter MC               0
+ 6. Perfect Filter UC            0
+ 7. MC Filter                    0
+ 8. UC Filter                    0
+ 9. Flow Control                 0
 
-commit 39388e80f9b0c3788bfb6efe3054bdce0c3ead45
-Author: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Date:   Wed Apr 3 18:41:35 2019 +0200
+Kweh Hock Leong (1):
+  net: stmmac: enable clause 45 mdio support
 
-    x86/fpu: Don't save fxregs for ia32 frames in copy_fpstate_to_sigframe()
+Ong Boon Leong (3):
+  net: stmmac: introducing support for DWC xPCS logics
+  net: stmmac: add xpcs function hooks into main driver and ethtool
+  net: stmmac: add xPCS functions for device with DWMACv5.1
 
-Reverting the commit by applying the following diff makes the problem go away.
+Voon Weifeng (1):
+  net: stmmac: add EHL SGMII 1Gbps PCI info and PCI ID
 
-diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
-index 5a8d118bc423e..ed16a24aab497 100644
---- a/arch/x86/kernel/fpu/signal.c
-+++ b/arch/x86/kernel/fpu/signal.c
-@@ -157,6 +157,7 @@ static inline int copy_fpregs_to_sigframe(struct xregs_state __user *buf)
-  */
- int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
- {
-+	struct fpu *fpu = &current->thread.fpu;
- 	struct task_struct *tsk = current;
- 	int ia32_fxstate = (buf != buf_fx);
- 	int ret;
-@@ -202,6 +203,10 @@ int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
- 		return -EFAULT;
- 	}
- 
-+	/* Update the thread's fxstate to save the fsave header. */
-+	if (ia32_fxstate)
-+		copy_fxregs_to_kernel(fpu);
-+
- 	/* Save the fsave header for the 32-bit frames. */
- 	if ((ia32_fxstate || !use_fxsr()) && save_fsave_header(tsk, buf))
- 		return -1;
+ drivers/net/ethernet/stmicro/stmmac/Makefile       |   2 +-
+ drivers/net/ethernet/stmicro/stmmac/common.h       |   1 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c  |  34 ++++
+ drivers/net/ethernet/stmicro/stmmac/dwxpcs.c       | 208 +++++++++++++++++++++
+ drivers/net/ethernet/stmicro/stmmac/dwxpcs.h       |  51 +++++
+ drivers/net/ethernet/stmicro/stmmac/hwif.c         |  42 ++++-
+ drivers/net/ethernet/stmicro/stmmac/hwif.h         |  21 +++
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h       |   2 +
+ .../net/ethernet/stmicro/stmmac/stmmac_ethtool.c   |  50 +++--
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 139 ++++++++++----
+ drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c  |  40 +++-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c   | 111 +++++++++++
+ include/linux/phy.h                                |   2 +
+ include/linux/stmmac.h                             |   3 +
+ 14 files changed, 648 insertions(+), 58 deletions(-)
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwxpcs.c
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwxpcs.h
 
-Apparently the problem is that save_fsave_header() assumes the registers have
-been saved to fpu->state.fxsave, yet the code that does so was removed.
+-- 
+Changelog v6:
+*Added missing selftests entry in dwmac510_xpcs_ops
+*Applied more reversed christmas tree
+Changelog v5:
+*Cosmetic touch up
+*Change axi_wr_osr_lmt and axi_rd_osr_lmt value to 1 since the register
+ has a default value of 1
+Changelog v4:
+*Rebased to latest net-next
+Changelog v3:
+*Applied reversed christmas tree
+Changelog v2:
+*Added support for the C37 AN for 1000BASE-X and SGMII (MAC side SGMII only)
+*removed and submitted the fix patch to net
+ "net: stmmac: dma channel control register need to be init first"
+*Squash the following 2 patches and move it to the end of the patch set:
+ "net: stmmac: add EHL SGMII 1Gbps platform data and PCI ID"
+ "net: stmmac: add xPCS platform data for EHL"
+1.9.1
 
-Note, bisection was not straightforward because there was another bug also
-causing a crash temporarily introduced during the FPU code rework: commit
-39ea9baffda9 ("x86/fpu: Remove fpu->initialized usage in __fpu__restore_sig()")
-forgot to call fpstate_init() on the temporary 'state' buffer, so
-XCOMP_BV_COMPACTED_FORMAT was never set, causing xrstors to fail.  But that bug
-went away in later commits.
-
-- Eric
