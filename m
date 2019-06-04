@@ -2,75 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BE2C345D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 13:47:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70C04345DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 13:47:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727614AbfFDLrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 07:47:06 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:36108 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727433AbfFDLrG (ORCPT
+        id S1727502AbfFDLrh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 07:47:37 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:46666 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727250AbfFDLrg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 07:47:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=9wuTa603w+SqStPamvP3MUdukRk8xI2CxDP7Kut8vY0=; b=jRytlmPG1KD1jUNei/lIj+aVy
-        0iVLl7FLtEYXL4AFb8/rF1RnkD5pn0ucGDVaH1a2rvvEzfiS8UkBLX4wDMEet88gjZ2xOp7YX8z87
-        iJjkRgx4Y3hnHpZMW7OFgDSX+ckdsN/0YVE+HvPXWoJE6ekz1m+1dmNqnyGwrEdCAb4QB8+EdLreW
-        bL/kO0RkQuj+vdtyqDo2LlhhP26U4qxRV4TsKd1tILh/hAG6f/jOuZJnyBqRoCW0TmfPSE4W5csJB
-        OTF1dkNtU8SjWKv/hC4NBYvj4NeMZpDg0dRW/3JXxpLDTF/9CwOm9ZpyF3LHYr/5+SyIoz7E84ztX
-        269eLr9gQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hY7uB-0004ZW-24; Tue, 04 Jun 2019 11:47:03 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 754BD20114D6C; Tue,  4 Jun 2019 13:47:01 +0200 (CEST)
-Date:   Tue, 4 Jun 2019 13:47:01 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     x86@kernel.org, Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] x86/fpu: Simplify kernel_fpu_begin
-Message-ID: <20190604114701.GM3402@hirez.programming.kicks-ass.net>
-References: <20190604071524.12835-1-hch@lst.de>
- <20190604071524.12835-3-hch@lst.de>
+        Tue, 4 Jun 2019 07:47:36 -0400
+Received: by mail-qk1-f196.google.com with SMTP id a132so2546723qkb.13
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 04:47:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tHJKK/e2WXQfGPq6JPvdmsZx/GKDlBLCBewwqbRa8t0=;
+        b=mRTXNZDrg0ccXje7rLOf/v1JwqliCqZyexwqSesoU6lBE38JNDicI89K581EVjleqf
+         3TimPptz33rqSWsBDiRYehbZUgrU++ZaNLJfrxkAN4I7nSm7C/Dg4gS1/D4icSLdeKW4
+         pe5nfpZ4u9y/FqkJjdVp3YrbAaUUbl1M2Nhwxqrz/afXK0kQUPXpDzXs8h1xsqP6TA2P
+         dLyA7zQjCrb2+o6FE6dsDTmzhb7LJtVXjTwaUMj7N757HbuuU6z58FF+bGhN7zh1acxg
+         qpLQ87saJi72ZdiuHHrruxud+Tc4rEG7Z8fHnhIlaX6gI4ils0ThCbJr0dI7y40pZQSb
+         kLaw==
+X-Gm-Message-State: APjAAAXC/k2iE20jn0uL0yItjdYryyLXAYrUJmBrhAdbGVZrj0SjkNc1
+        IM+UisndEZXsfsETLlsRCA8BNNIgReK6ixCcec+moFA31+g=
+X-Google-Smtp-Source: APXvYqz26FtG/SH7XiAsK7EtNGdeNSlNJbMOl+fdyYLLgTPiH1vCfPqC9Be/usikzvB6Rd8DYozJAXMz99g2s4ugwpI=
+X-Received: by 2002:a05:620a:16c1:: with SMTP id a1mr26496328qkn.269.1559648855749;
+ Tue, 04 Jun 2019 04:47:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190604071524.12835-3-hch@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
+ <1559577023-558-48-git-send-email-suzuki.poulose@arm.com> <CAK8P3a22Uo9mLh7cLpZQQpxRFd=XJ1uKu66eu1c6_AMNzW8etg@mail.gmail.com>
+ <ae7c07c5-f223-dec4-b8e4-c49d08a76fd7@arm.com>
+In-Reply-To: <ae7c07c5-f223-dec4-b8e4-c49d08a76fd7@arm.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 4 Jun 2019 13:47:19 +0200
+Message-ID: <CAK8P3a3Wc44JtMhrMSqFy3d5CiESm6iO64kGDdhGygXN9AvowQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 47/57] drivers: mfd: Use driver_find_device_by_name helper
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 04, 2019 at 09:15:23AM +0200, Christoph Hellwig wrote:
-> +void kernel_fpu_begin(void)
->  {
-> +	preempt_disable();
->  
->  	WARN_ON_FPU(!irq_fpu_usable());
-> +	WARN_ON_FPU(this_cpu_read(in_kernel_fpu));
->  
-> +	this_cpu_write(in_kernel_fpu, true);
->  
-> +	if (current->mm && !test_thread_flag(TIF_NEED_FPU_LOAD)) {
+On Tue, Jun 4, 2019 at 1:42 PM Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+> On 04/06/2019 10:45, Arnd Bergmann wrote:
+> > On Mon, Jun 3, 2019 at 5:52 PM Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+> >>
+> >> Use the new driver_find_device_by_name() helper.
+> >>
+> >> Cc: Lee Jones <lee.jones@linaro.org>
+> >> Cc: Arnd Bergmann <arnd@arndb.de>
+> >> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> >
+> > I see that there are currently no callers of this function, and I never
+> > liked the interface anyway, so how about just removing
+> > syscon_regmap_lookup_by_pdevname instead?
+>
+> If that works for you, sure. I can send in a patch separately
+> and hopefully I can remove this patch depending when the said
+> change lands.
 
-Did that want to be: !(current->flags & PF_KTHREAD), instead?
+Sounds good, thanks.
 
-Because I'm thinking that kernel_fpu_begin() on a kthread that has
-use_mm() employed shouldn't be doing this..
-
-> +		set_thread_flag(TIF_NEED_FPU_LOAD);
-> +		/*
-> +		 * Ignore return value -- we don't care if reg state
-> +		 * is clobbered.
-> +		 */
-> +		copy_fpregs_to_fpstate(&current->thread.fpu);
->  	}
->  	__cpu_invalidate_fpregs_state();
->  }
+      Arnd
