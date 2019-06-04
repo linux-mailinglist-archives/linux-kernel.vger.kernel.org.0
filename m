@@ -2,84 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4E93346BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:30:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B818346D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:32:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727787AbfFDMaj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 08:30:39 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:44339 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726994AbfFDMag (ORCPT
+        id S1727890AbfFDMcG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 08:32:06 -0400
+Received: from mail-it1-f172.google.com ([209.85.166.172]:37412 "EHLO
+        mail-it1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727403AbfFDMcF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 08:30:36 -0400
-Received: by mail-pf1-f194.google.com with SMTP id t16so3779705pfe.11;
-        Tue, 04 Jun 2019 05:30:36 -0700 (PDT)
+        Tue, 4 Jun 2019 08:32:05 -0400
+Received: by mail-it1-f172.google.com with SMTP id s16so32006591ita.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 05:32:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=digidescorp.com; s=google;
         h=from:to:cc:subject:date:message-id;
-        bh=6HDzC7R+RL6DjYFySUs1ztmYGpeRF4flURMQGfgz8ek=;
-        b=WoQIZydCeh0fjhw/TBqjgdAJFJ96KSB7ecnpoTGfCGUFFp6p0gFO/2EHv5Y2kolD+Q
-         lDco3Su5Wue2nWstBr/2r+eJW3tn1R1JY2QGvq8qExTzsZIFPhYSkrILFlr5Hd/0PXUx
-         8KfrWiaa+Zlr6zYs3Am+KCtcQknBt6bFUGhFfwri77WfemH+ofLLqRet2GVUpgCl+Sv1
-         BCAe+LRvB7hEOVK1UdZ0NufKGKr/V9m88LANh+GaRsVU88aYtwpm8Qf+bAiyI3EfFq6i
-         4IoBqjleCPWP5Uz7HwYsPwr8tU/Ny3j+Djv7Cd9OLJmSY/oARV6zsR0WmXbyP+4qpcrV
-         6WIw==
+        bh=ovmd66lgWZvQORGh1WsP5wWQPg/Z2pj6TQPWmqDhDYs=;
+        b=bQCds7/XyIkhexUA0r8bUn1l0f9K1nldG1N/AP8RQIoXPt0IvaxEw1VqGjNvbfxkC9
+         rquYd4XEy55VT4RskM9o0AByweInUDw99htQt5XlCy/m1DLUtu4PlfLW5akAFvUFiuq6
+         3lUP3hU5QWsFt6bd2NsGYNu4P3bZHgJNEQ+eM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=6HDzC7R+RL6DjYFySUs1ztmYGpeRF4flURMQGfgz8ek=;
-        b=KYbDH5YTCv50NCiGVkglKy98hnZCZ+iFe39bkL2jVmctlMA1MMa12QrXY3Lfaf/POZ
-         g7Udv7ts3cW+MiI6aUl/ViSBw/dNoebd8j1V9cF1MrDIZwXUlihiFdLIg5yEPqXrhRke
-         Pv57G9QW0edF5/+eiCxDLoVYhSfhIuv/9E0oe+rU2iWYuT6cy3Zei5AdBuAi72xdfP7z
-         fd7pXPIu2L8GJCmdYll5cF2fdCAdOmS+7Y+OxfCOxAGXWP8Ul6VW2y3alOnnkq7PZKIG
-         1RDw7nAjPRWNSPzSg9aFHtwxN9zxH9e78n1/4mCuIb5GNbwu/wjoEYzyyAHgeZCXeqYe
-         wJZQ==
-X-Gm-Message-State: APjAAAUq4GbTQrQUyiiJOhcnhrWK/JMEfukV8c1jyYHbZtv8VaMDOHjw
-        Ga++/NQhoggqrLv/OygkdK0650gG0Y1wpQ==
-X-Google-Smtp-Source: APXvYqzHSIHm/1koK1BcMvII16jWLBiHbG3UWezHUTm0cJw0OrhwD/SCv+JPrmVq8uQLxhzJgORt1w==
-X-Received: by 2002:a17:90a:35c:: with SMTP id 28mr35237599pjf.110.1559651435842;
-        Tue, 04 Jun 2019 05:30:35 -0700 (PDT)
-Received: from xy-data.openstacklocal (ecs-159-138-22-150.compute.hwclouds-dns.com. [159.138.22.150])
-        by smtp.gmail.com with ESMTPSA id f10sm23734078pgo.14.2019.06.04.05.30.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 04 Jun 2019 05:30:35 -0700 (PDT)
-From:   Young Xiao <92siuyang@gmail.com>
-To:     davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Young Xiao <92siuyang@gmail.com>
-Subject: [PATCH] net: compat: fix msg_controllen overflow in scm_detach_fds_compat()
-Date:   Tue,  4 Jun 2019 20:31:45 +0800
-Message-Id: <1559651505-18137-1-git-send-email-92siuyang@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        bh=ovmd66lgWZvQORGh1WsP5wWQPg/Z2pj6TQPWmqDhDYs=;
+        b=N3u2lqGDqZehfwG7WAnbItFU9dPr6mbxciQa2ABrrUNPgoif5Bm95MsNSiVIuXP9Ut
+         qLlycoL78xNewwPGbb1jzLrSYB1bf22jNpKZKZfiA0gZXv08H3bEjjvUNLEuJDDWCz81
+         VzKqbdtryNawxAZ3FPD3J5HRVhOl+rD9WzhvuscxZkRxJ2tI/yK1xqE6TCfdc+GnRU0n
+         s5bdUC1rNiZ95VWyeHsWSk3BCZp8UUTNPacKw3ojDRE4tbFyd/QOQQpFNkYFfzUc3Qd6
+         I4sc7pXAZRQBvl/shbZ1EDMF3OjxNZoCahQySZl+QIJ0k/bA0xaFT9+IZcJbqt/cAJny
+         fyWA==
+X-Gm-Message-State: APjAAAXi20utrvdY46qlxXeZPnPhAsOjfUpzPdw+KduSruhZ4TPmA84q
+        71LtKtqQX8BY1tMW3pu6BZ0hYGCzndE=
+X-Google-Smtp-Source: APXvYqyUDybO0LnFkI8TFXnpStf5ay7cciKSsMQzM0YdVRuYU308q92RGIotWja0NRG6uUdpechC7A==
+X-Received: by 2002:a24:64c5:: with SMTP id t188mr20671874itc.83.1559651524019;
+        Tue, 04 Jun 2019 05:32:04 -0700 (PDT)
+Received: from iscandar.digidescorp.com (104-51-28-62.lightspeed.cicril.sbcglobal.net. [104.51.28.62])
+        by smtp.googlemail.com with ESMTPSA id c91sm871827itd.4.2019.06.04.05.32.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Jun 2019 05:32:03 -0700 (PDT)
+From:   Steve Magnani <steve.magnani@digidescorp.com>
+X-Google-Original-From: Steve Magnani <steve@digidescorp.com>
+To:     Jan Kara <jack@suse.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH 0/1] udf: Incorrect final NOT_ALLOCATED (hole) extent length
+Date:   Tue,  4 Jun 2019 07:31:57 -0500
+Message-Id: <20190604123158.12741-1-steve@digidescorp.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a missing check between kmsg->msg_controllen and cmlen,
-which can possibly lead to overflow.
+The following script reveals some errors in the final
+NOT_RECORDED_NOT_ALLOCATED extent of a file following use of truncate(1)
+to extend the file by adding or manipulating a hole at the end.
 
-This bug is similar to vulnerability that was fixed in commit 6900317f5eff
-("net, scm: fix PaX detected msg_controllen overflow in scm_detach_fds").
+The script produces the following output:
 
-Signed-off-by: Young Xiao <92siuyang@gmail.com>
----
- net/compat.c | 2 ++
- 1 file changed, 2 insertions(+)
+ Now testing NOT ALLOCATED extent.
+ Testing    0 -->  300 : FAILED - bad extent type/length: expected 8000012C, actual 80000200
+ Testing  300 -->  301 : PASSED
+ Testing  301 -->  302 : FAILED - bad extent type/length: expected 8000012E, actual 8000012D
+ Testing  302 -->  511 : FAILED - bad extent type/length: expected 800001FF, actual 8000012D
+ Testing  511 -->  512 : FAILED - bad extent type/length: expected 80000200, actual 8000012D
+ Testing  512 -->  513 : FAILED - bad extent type/length: expected 80000201, actual 80000400
+ Testing  513 -->  514 : PASSED
+ Testing  514 --> 1023 : FAILED - bad extent type/length: expected 800003FF, actual 80000202
+ Testing 1023 --> 1024 : FAILED - bad extent type/length: expected 80000400, actual 80000202
+ Testing 1024 --> 1026 : FAILED - bad extent type/length: expected 80000402, actual 80000600
+ Testing 1026 --> 1538 : FAILED - bad extent type/length: expected 80000602, actual 80000800
+ Testing 1538 --> 4096 : PASSED
+ Testing 4096 -->    0 : PASSED
+ Testing    0 --> 4096 : PASSED
+ Testing 4096 -->    0 : PASSED
+ Testing    0 --> 4097 : FAILED - bad extent type/length: expected 80001001, actual 80001200
+ Testing 4097 -->    0 : PASSED
 
-diff --git a/net/compat.c b/net/compat.c
-index a031bd3..8e74dfb 100644
---- a/net/compat.c
-+++ b/net/compat.c
-@@ -301,6 +301,8 @@ void scm_detach_fds_compat(struct msghdr *kmsg, struct scm_cookie *scm)
- 			err = put_user(cmlen, &cm->cmsg_len);
- 		if (!err) {
- 			cmlen = CMSG_COMPAT_SPACE(i * sizeof(int));
-+			if (kmsg->msg_controllen < cmlen)
-+				cmlen = kmsg->msg_controllen;
- 			kmsg->msg_control += cmlen;
- 			kmsg->msg_controllen -= cmlen;
- 		}
--- 
-2.7.4
+ Now testing RECORDED extent.
+ Testing  512 -->  512 : PASSED
+ Testing  512 -->  511 : PASSED
+ Testing  511 -->  300 : PASSED
+ Testing  300 -->  512 : FAILED - bad extent type/length: expected 00000200, actual 0000012C
 
+ Now testing NOT ALLOCATED beyond RECORDED.
+ Testing  512 -->  513 : FAILED - bad extent type/length: expected 00000200 80000001, actual 00000200 80000200
+ Testing  513 -->  512 : PASSED
+ Testing  512 -->  300 : PASSED
+ Testing  300 -->  513 : FAILED - bad extent type/length: expected 00000200 80000001, actual 00000200 80000200
+ Testing  513 -->  300 : PASSED
+ Testing  300 --> 1538 : FAILED - bad extent type/length: expected 00000200 80000402, actual 00000200 80000600
+ Testing 1538 -->    0 : PASSED
+
+ Now testing multiple NOT ALLOCATED.
+ Testing    0 --> 1073741312 : PASSED
+ Testing 1073741312 -->    0 : PASSED
+ Testing    0 --> 1073741313 : FAILED - bad extent type/length: expected BFFFFE00 80000001, actual BFFFFE00 80000200
+ Testing 1073741313 -->    0 : PASSED
+ Testing    0 --> 1073741824 : PASSED
+
+#!/bin/bash
+
+FS_SIZE=256K
+FS_FILE=/tmp/test.udf
+MNT=/mnt
+ICB_LSN=261
+XXD=/usr/bin/xxd
+
+truncate_test()
+{
+    local prev_size=`ls -l ${MNT}/truncate.test | cut -d' ' -f5`
+    printf "Testing %4u --> %4u : " $prev_size $1 
+    truncate --size=$1 ${MNT}/truncate.test
+    sync
+    local new_size=`ls -l ${MNT}/truncate.test | cut -d' ' -f5`
+
+    if [ $new_size -ne $1 ] ; then
+        echo FAILED - bad information length
+    else
+        local ext_type_and_len=`dd if=${FS_FILE} skip=${ICB_LSN} count=1 2> /dev/null | dd bs=1 skip=216 count=4 2> /dev/null | ${XXD} -g4 -e -u | cut -c11-18`
+        if [ "$ext_type_and_len" = "$2" ] ; then
+            if [ -z "$3" ] ; then
+                echo PASSED
+            else
+                ext_type_and_len=`dd if=${FS_FILE} skip=${ICB_LSN} count=1 2> /dev/null | dd bs=1 skip=232 count=4 2> /dev/null | ${XXD} -g4 -e -u | cut -c11-18`
+                if [ "$ext_type_and_len" = "$3" ] ; then
+                    echo PASSED
+                else
+                    echo FAILED - bad extent type/length: expected $2 $3, actual $2 $ext_type_and_len
+                fi
+            fi
+        else
+            echo FAILED - bad extent type/length: expected $2, actual $ext_type_and_len
+        fi
+    fi
+}
+
+
+### MAIN
+
+rm -f $FS_FILE
+
+truncate --size=${FS_SIZE} $FS_FILE
+mkudffs --label=TRUNCATE --media-type=hd --uid=1000 --gid=1000 $FS_FILE > /dev/null
+echo -n Mounting test filesystem...
+sudo mount $FS_FILE $MNT -o loop
+echo
+touch ${MNT}/truncate.test
+
+echo
+echo Now testing NOT ALLOCATED extent.
+truncate_test 300  8000012C
+truncate_test 301  8000012D
+truncate_test 302  8000012E
+truncate_test 511  800001FF
+truncate_test 512  80000200
+truncate_test 513  80000201
+truncate_test 514  80000202
+truncate_test 1023 800003FF
+truncate_test 1024 80000400
+truncate_test 1026 80000402
+truncate_test 1538 80000602
+truncate_test 4096 80001000
+truncate_test 0    00000000
+truncate_test 4096 80001000
+truncate_test 0    00000000
+truncate_test 4097 80001001
+truncate_test 0    00000000
+
+dd if=/dev/zero of=${MNT}/truncate.test bs=512 count=1 2> /dev/null
+echo
+echo Now testing RECORDED extent.
+truncate_test 512  00000200
+truncate_test 511  000001FF
+truncate_test 300  0000012C
+truncate_test 512  00000200
+echo
+echo Now testing NOT ALLOCATED beyond RECORDED.
+truncate_test 513  00000200 80000001
+truncate_test 512  00000200 00000000
+truncate_test 300  0000012C
+truncate_test 513  00000200 80000001
+truncate_test 300  0000012C 00000000
+truncate_test 1538 00000200 80000402
+truncate_test 0    00000000
+
+echo
+echo Now testing multiple NOT ALLOCATED.
+truncate_test 1073741312 BFFFFE00
+truncate_test 0    00000000
+truncate_test 1073741313 BFFFFE00 80000001
+truncate_test 0    00000000
+truncate_test 1073741824 BFFFFE00 80000200
+
+sudo umount $FS_FILE
+
+------------------------------------------------------------------------
+ Steven J. Magnani               "I claim this network for MARS!
+ www.digidescorp.com              Earthling, return my space modulator!"
+
+ #include <standard.disclaimer>
