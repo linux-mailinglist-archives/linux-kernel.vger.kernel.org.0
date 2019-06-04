@@ -2,112 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5705341F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 10:36:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10017341F9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 10:37:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbfFDIgb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 04:36:31 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:43780 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726872AbfFDIga (ORCPT
+        id S1727148AbfFDIhH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 04:37:07 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:43857 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727079AbfFDIhH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 04:36:30 -0400
-Received: by mail-ed1-f65.google.com with SMTP id w33so30789535edb.10
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 01:36:29 -0700 (PDT)
+        Tue, 4 Jun 2019 04:37:07 -0400
+Received: by mail-lf1-f66.google.com with SMTP id j29so1866224lfk.10;
+        Tue, 04 Jun 2019 01:37:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0AsC3ilwHmdxFF7yJyfpqnmQ/JMg+U2f+pGfnwNxLI4=;
-        b=keDcV7Se4pU/MJpNAKW9MEdrs5wVOy/lR368xgA5OAsD5NeKhg14uc7dD4hXBWsmR4
-         3e5DWKUDpF7YFcuK47b6aHkr2PbdU4sOMUuZ6FOvSpEgBOmAtAdPoP+Q0faindHiCIDD
-         mzgvzu8rFZHAycQf5NdencsMq88pT2PzUuUMDj0R0hLcaZytLanwJJ3+ArBGPD/PajjB
-         2eTjfrshLezHk1ySrE8o1UWGr849eRLtFM3YXNnhwZL0G562XwDRkZpVM7aynese6r/l
-         42Dut6UTO1anM8bQJDcA/8WUsZB3l94rUw7bSTQW1WtzK3XYPJRBwo2U8hUze6o5gcZK
-         iEmg==
-X-Gm-Message-State: APjAAAV/O4Z49KwlfftnXwYyqypwKEkrOXWNhSlOLyzAPjf66DUi+nQ7
-        6/eF4xD+2R7QC871eQAc3VxDTAgwIpY=
-X-Google-Smtp-Source: APXvYqyakQfdNKtHn1Kxax1xeVppcqd8SvB43SpKuhONd3xNwnNFFr8uJq0P1JIBMJrrbknl1KTn5Q==
-X-Received: by 2002:a17:906:5159:: with SMTP id s25mr7939368ejl.16.1559637388807;
-        Tue, 04 Jun 2019 01:36:28 -0700 (PDT)
-Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id n8sm3030495ejk.45.2019.06.04.01.36.27
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Jun 2019 01:36:27 -0700 (PDT)
-Subject: Re: hid-related 5.2-rc1 boot hang
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <2c1684f6-9def-93dc-54ab-888142fd5e71@intel.com>
- <nycvar.YFH.7.76.1905281913140.1962@cbobk.fhfr.pm>
- <CAO-hwJJzNAuFbdMVFZ4+h7J=bh6QHr_MioyK2yTV=M5R6CTm=A@mail.gmail.com>
- <8a17e6e2-b468-28fd-5b40-0c258ca7efa9@intel.com>
- <4689a737-6c40-b4ae-cc38-5df60318adce@redhat.com>
- <a349dfac-be58-93bd-e44c-080ed935ab06@intel.com>
- <nycvar.YFH.7.76.1906010014150.1962@cbobk.fhfr.pm>
- <e158d983-1e7e-4c49-aaab-ff2092d36438@redhat.com>
- <5471f010-cb42-c548-37e2-2b9c9eba1184@redhat.com>
- <CAO-hwJKRRpsShw6B-YLmsEnjQ+iYtz+VmZK+VSRcDmiBwnS+oA@mail.gmail.com>
- <e431dafc-0fb4-4be3-ac29-dcf125929090@redhat.com>
- <CAO-hwJ+5UYJMnuCS0UL4g45Xc181LraAzc-CMuYB2rcqKGe_Sw@mail.gmail.com>
- <4548d196-b75f-c4d0-8f3c-3e734b9a758c@redhat.com>
-Message-ID: <c05929f4-00b6-e098-cd69-cd6539ccd3f1@redhat.com>
-Date:   Tue, 4 Jun 2019 10:36:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=u9Nt6qozBUK6drcpof1+TwMEXL9WmUd9V+VggpiZn+A=;
+        b=b4t7+vEPm6PyZobMBTmOmavH1qaqFNhNaBRfCMWIPZTWJKaAusuid15TRfclF4McCW
+         cMh6/aYtWY73HFJtk6O5dXx3pEmoSs7286hlfbtLztQ1yLhL9xBlymsf+kDwUPB1VahY
+         6BJUQtXdHd/yBvuOV7H9XmY2nHGPBQ+2HDZdhopHf8b7DXXgRZPsnY641VWOxOqTcCqh
+         4YuTSVEHpMNg/em6k2FtsUiOWOVY1eC9PswIt0lvIsYHYuHnSoySG1PFBSfqf9Gu/vX3
+         PgUm06CU3f4hdL3mVP6Zh7/S6ETGVbBw+O2lTGWBNKST7/K2RXJgJTG3Sg1spjsagjTo
+         i7yA==
+X-Gm-Message-State: APjAAAVpX8nQv3jYiCWvwy7fFdzz8FgvAIWbzjbrckG2uIQ6O5m49t8e
+        sq+PixXQkV/fAOZKcjNvFH3bFvJipAvUxekyHfg=
+X-Google-Smtp-Source: APXvYqw93iUlXYu8dPqQcx+f3tfXZ72Q5ZS8GVxBMq0ItikCpS0IsuP0YnKL3t97ZoLH9sUbcmA4K/rRcZzJe16lhLU=
+X-Received: by 2002:ac2:5467:: with SMTP id e7mr15738576lfn.23.1559637424910;
+ Tue, 04 Jun 2019 01:37:04 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <4548d196-b75f-c4d0-8f3c-3e734b9a758c@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190520143647.2503-1-narmstrong@baylibre.com> <CAPDyKFoOHnYiYogjogRr=7PBjqHOseDDS6L0eirTo7Y+F449ow@mail.gmail.com>
+In-Reply-To: <CAPDyKFoOHnYiYogjogRr=7PBjqHOseDDS6L0eirTo7Y+F449ow@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 4 Jun 2019 10:36:53 +0200
+Message-ID: <CAMuHMdWHnyTWMToXU_DSezwYs_Lkxj+v0BC8PKXHZgX=e1N3ww@mail.gmail.com>
+Subject: Re: [PATCH 0/2] mmc: meson: update with SPDX Licence identifier
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg KH <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Ulf, Neil,
 
-On 04-06-19 10:05, Hans de Goede wrote:
+On Tue, May 28, 2019 at 10:53 AM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On Mon, 20 May 2019 at 16:36, Neil Armstrong <narmstrong@baylibre.com> wrote:
+> > Update the SPDX Licence identifier for the Amlogic MMC drivers.
+> >
+> > Neil Armstrong (2):
+> >   mmc: meson-gx-mmc: update with SPDX Licence identifier
+> >   mmc: meson-mx-sdio: update with SPDX Licence identifier
+> >
+> >  drivers/mmc/host/meson-gx-mmc.c  | 15 +--------------
+> >  drivers/mmc/host/meson-mx-sdio.c |  6 +-----
+> >  2 files changed, 2 insertions(+), 19 deletions(-)
+>
+> Applied for next, thanks!
 
-<snip>
+Please note this conflicts with commit 2874c5fd28426836 ("treewide:
+Replace GPLv2 boilerplate/reference with SPDX - rule 152") upstream,
+which added (different) tags.
 
->>>> We should likely just remove c52f from the list of supported devices.
->>>> C52f receivers seem to have a different firmware as they are meant to
->>>> work with different devices than C534. So I guess it is safer to not
->>>> handle those right now and get the code in when it is ready.
->>>
->>> Ack. Can you prepare a patch to drop the c52f id?
->>
->> Yes. I have an other revert never submitted that I need to push, so I
->> guess I can do a revert session today.
->>
->> I think I'll also buy one device with hopefully the C52F receiver as
->> the report descriptors attached in
->> https://bugzilla.kernel.org/show_bug.cgi?id=203619 seems different to
->> what I would have expected.
-> 
-> They are actually what I expected :)
-> 
-> The first USB interface is a mouse boot class device, since this is a mouse
-> only receiver. This means that the mouse report is unnumbered and we need to
-> extend the unnumbered mouse-report handling to handle this case. Also the
-> device is using the same highres mouse-reports as the gaming receiver is.
-> 
-> I'm actually preparing a patch right now which should fix this. Still might
-> be better to do the revert for 5.2 and get proper support for the c52f
-> receiver into 5.3.
+Gr{oetje,eeting}s,
 
-I've attached a patch to the bug:
-https://bugzilla.kernel.org/show_bug.cgi?id=203619
+                        Geert
 
-Which should fix this. It is quite simple and safe, so if we get testing
-feedback relatively soon, we could go with the fix instead of dropping the
-product-id, your call.
 
-Regards,
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Hans
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
