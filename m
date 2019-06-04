@@ -2,91 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8F3D3417B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 10:15:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C1BC34189
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 10:16:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727280AbfFDIPk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 04:15:40 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:35809 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726957AbfFDIPg (ORCPT
+        id S1727318AbfFDIP4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 04:15:56 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:42840 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727184AbfFDIPw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 04:15:36 -0400
-Received: by mail-lj1-f194.google.com with SMTP id h11so18821399ljb.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 01:15:34 -0700 (PDT)
+        Tue, 4 Jun 2019 04:15:52 -0400
+Received: by mail-oi1-f195.google.com with SMTP id s184so3889488oie.9;
+        Tue, 04 Jun 2019 01:15:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=dLlcBHBLLtHstGlRzl9TA6x38HKIxAAJAQ+NO6ZQeWw=;
-        b=gg5NaBQkvVlyEjdj76PxCTZ1E9NORC9Uvd2TwtPXwamT631BYBINpO1n7lK40xKlDO
-         YF75M03YPHv++3XvpBenhsCevE5QP7jrqgBlPPpsxQf51yLY6i1cDVealPzeWuUeOETM
-         Ln8JFOLHaVnUBWlqWtttsyLypGE2AUK6dJbQPwWb8IaMS2uov9Ribb9tr0Px/NPd77BZ
-         Vq/ZUbvc7w1hd3O2czGTLEIl+HviRJodECXWHyuwPhv+2YED4WlErKwRwgz0j/FSpbNQ
-         BTyOuHsVjmHZEuUOPLjDQWOR3mp4KfA/QHcX/64K8vTFTQx8TqPMWoAJLp6RCAYNkKyw
-         5Liw==
+        bh=0P8XfByoZm6wKL9UI7hjVSwllit04FWD2v61aqDNCsk=;
+        b=QYYfbrVDHfyi4+hEVQ1HJudI8csHpDdfwoBUhZn+mkEtYtDFRbnTMN41mguZKHRST4
+         lIAZ0wCvOXIp4tyw8iqrB5scRQxvrl82Iu64YPGEEYTgEVrNxWUZdpwZnxugqlysi5nL
+         djZv9bZKtJf1PxjQqNKmBHT+7J8ZIlyFxzx7zt/6dkFJCN3NtU5zTQ2BgZYCoU2pTWNT
+         dbIJSBST3vVA8GBgXFr0XJPhnbC58lFsn7hhpRn3d30t+PtXRDpiRYgdvBhYz3ZhxnJB
+         q01kj33P4n7A1/7oXHJL18v9AiUT0KNx8tcYH3JPYhfxciR0p2T4X2f+D4WxjQuyeIRn
+         L5Dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=dLlcBHBLLtHstGlRzl9TA6x38HKIxAAJAQ+NO6ZQeWw=;
-        b=TtmJhqfoYTMZLFGUcSS8EYAS59E6eHPsrZc9rM8rdCG2yNUZNnKOLgn+3w9vtVN2Rs
-         aFEud32JBBBAxggkRCO4R1e0TS+8Hn14j2Dg/6Jxhmo1eOdn1PhlF3jypyDNoUMLqozA
-         1nKXDUTzmfKPM/0Q7+vP07+B0PE+9Yx6zJgZKihDRK98ADAXhjG09nasGkDLO5g4WR1d
-         QMbK/YEywtKw8NEHY/coDxcon0XzAZx4mbzav2v4tt76bnUzRM02KUggXROngrTCVHVY
-         daX4CuRGNRAsJD4ZKeeX0ndheJPNkW13u40bYCE+xVgqkEGkTt7jGZq8xAfPxlGw23iM
-         UZEg==
-X-Gm-Message-State: APjAAAWtWcobVIEzCPP+x/6kfuXltubHRSuD6Lzixu7cVunmTEQKAz/m
-        Hg1RmrZLwoQb1Fua8cyT+frFPJHdjsy8RoQCU1fQyfXN
-X-Google-Smtp-Source: APXvYqzP1NG5gWwqUWs2RU4TEYclgqRL9GlvmJKeApSsoDlNeSku/Zjez2PSP00HTB0NSoYWsCg5La13x7bHF3bdJrY=
-X-Received: by 2002:a2e:91c3:: with SMTP id u3mr16042008ljg.130.1559636134081;
- Tue, 04 Jun 2019 01:15:34 -0700 (PDT)
+        bh=0P8XfByoZm6wKL9UI7hjVSwllit04FWD2v61aqDNCsk=;
+        b=KwchwimQ0oh1sjuUoCQfaRtiu7xx1Y+Jqu6CKOgyAsJcNnFERUI2F0IZHOcOCqtiuP
+         EbpV6cfztzgSfYsZj3HmHs/zazpJtSmZ7IabRk/P+zUvyovymtGYdJUQ0MY0s7UhKrlR
+         H67RMO4zOq5ZFSS5ySdCR0QL24i25b9SC2cFZ8emWfL+z9DD2xOh3ysCR2fwTuUJr8+A
+         jcrvyjV+PcORLdToHK6QhSlMPeKGjj/zBPl53gjEPZgF6i6ZyK+ncWBvuZhDzilTIPr3
+         YudZEGD8IMSUMLJxLS3JdjZyxGWKqF68rUngXRCcTaEtEips2r2o4jmSoEe5Tm1TapgG
+         aZPQ==
+X-Gm-Message-State: APjAAAUj+g7Nhi1yztBG3jsWbmS9d6XN01MYuXMugNQKRoL/jdxrihKM
+        NF9c83tWoYDNTMpofh7JU6fa8nzINyxKrUnQTFQ=
+X-Google-Smtp-Source: APXvYqya//7vchAjhVldZPFjCL0IlI3+tfkaf79Di3+SNlnlqeW8B5hzF24LDj31owGDdRMnM7Tlb29sy7d3yadqxnA=
+X-Received: by 2002:aca:b606:: with SMTP id g6mr1605787oif.101.1559636151980;
+ Tue, 04 Jun 2019 01:15:51 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190603174735.21002-1-codekipper@gmail.com> <20190603174735.21002-2-codekipper@gmail.com>
- <20190604073443.cnnqd7ucbaehxdvj@flea> <CAGb2v64T5MypDD9A5FNfyikB9vFJZf9+TiQaXi_o2K53QmfaQg@mail.gmail.com>
-In-Reply-To: <CAGb2v64T5MypDD9A5FNfyikB9vFJZf9+TiQaXi_o2K53QmfaQg@mail.gmail.com>
-From:   Code Kipper <codekipper@gmail.com>
-Date:   Tue, 4 Jun 2019 10:15:22 +0200
-Message-ID: <CAEKpxBn-XX+GRrMuCccwcC9TFKXGYV4S2ZwX+jBV==33RsW-aQ@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v4 1/9] ASoC: sun4i-i2s: Fix sun8i tx
- channel offset mask
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        "Andrea Venturi (pers)" <be17068@iperbole.bo.it>
+References: <1559634617-16264-1-git-send-email-92siuyang@gmail.com>
+In-Reply-To: <1559634617-16264-1-git-send-email-92siuyang@gmail.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Tue, 4 Jun 2019 09:15:25 +0100
+Message-ID: <CA+V-a8sBe53iZASaT+uJH0kMvJKNJOHYJLbTfEF+9FOVz3H=Rg@mail.gmail.com>
+Subject: Re: [PATCH] media: davinci: vpif_capture: fix memory leak in vpif_probe()
+To:     Young Xiao <92siuyang@gmail.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 4 Jun 2019 at 09:39, Chen-Yu Tsai <wens@csie.org> wrote:
+Hi Young,
+
+Thanks for the patch.
+
+On Tue, Jun 4, 2019 at 8:49 AM Young Xiao <92siuyang@gmail.com> wrote:
 >
-> On Tue, Jun 4, 2019 at 3:34 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> >
-> > On Mon, Jun 03, 2019 at 07:47:27PM +0200, codekipper@gmail.com wrote:
-> > > From: Marcus Cooper <codekipper@gmail.com>
-> > >
-> > > Although not causing any noticeable issues, the mask for the
-> > > channel offset is covering too many bits.
-> > >
-> > > Signed-off-by: Marcus Cooper <codekipper@gmail.com>
-> >
-> > Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> If vpif_probe() fails on v4l2_device_register() and vpif_probe_complete(),
+> then memory allocated at initialize_vpif() for global vpif_obj.dev[i]
+> become unreleased.
 >
-> Would be nice to have
+> The patch adds deallocation of vpif_obj.dev[i] on the error path.
 >
-> Fixes: 7d2993811a1e ("ASoC: sun4i-i2s: Add support for H3")
-Thanks....I'll keep this in mind for future reference as jernej also
-mention this to me.
-BR,
-CK
+> Signed-off-by: Young Xiao <92siuyang@gmail.com>
+> ---
+>  drivers/media/platform/davinci/vpif_capture.c | 19 ++++++++++++++++---
+>  1 file changed, 16 insertions(+), 3 deletions(-)
 >
-> But otherwise,
+> diff --git a/drivers/media/platform/davinci/vpif_capture.c b/drivers/media/platform/davinci/vpif_capture.c
+> index b5aacb0..277d500 100644
+> --- a/drivers/media/platform/davinci/vpif_capture.c
+> +++ b/drivers/media/platform/davinci/vpif_capture.c
+> @@ -1385,6 +1385,14 @@ static int initialize_vpif(void)
+>         return err;
+>  }
 >
-> Acked-by: Chen-Yu Tsai <wens@csie.org>
+> +static void free_vpif_objs(void)
+> +{
+function could be made inline.
+
+> +       int i;
+> +
+> +       for (i = 0; i < VPIF_DISPLAY_MAX_DEVICES; i++)
+
+VPIF_DISPLAY_MAX_DEVICES ? this should be  VPIF_CAPTURE_MAX_DEVICES
+
+> +               kfree(vpif_obj.dev[i]);
+> +}
+> +
+>  static int vpif_async_bound(struct v4l2_async_notifier *notifier,
+>                             struct v4l2_subdev *subdev,
+>                             struct v4l2_async_subdev *asd)
+> @@ -1654,7 +1662,7 @@ static __init int vpif_probe(struct platform_device *pdev)
+>         err = v4l2_device_register(vpif_dev, &vpif_obj.v4l2_dev);
+>         if (err) {
+>                 v4l2_err(vpif_dev->driver, "Error registering v4l2 device\n");
+> -               goto cleanup;
+> +               goto vpif_free;
+>         }
+>
+>         while ((res = platform_get_resource(pdev, IORESOURCE_IRQ, res_idx))) {
+> @@ -1701,7 +1709,10 @@ static __init int vpif_probe(struct platform_device *pdev)
+>                                   "registered sub device %s\n",
+>                                    subdevdata->name);
+>                 }
+> -               vpif_probe_complete();
+> +               err = vpif_probe_complete();
+> +               if (err) {
+> +                       goto probe_subdev_out;
+> +               }
+
+No need for { and } as per kernel coding style.
+
+>         } else {
+>                 vpif_obj.notifier.ops = &vpif_async_ops;
+>                 err = v4l2_async_notifier_register(&vpif_obj.v4l2_dev,
+> @@ -1720,6 +1731,8 @@ static __init int vpif_probe(struct platform_device *pdev)
+>         kfree(vpif_obj.sd);
+>  vpif_unregister:
+>         v4l2_device_unregister(&vpif_obj.v4l2_dev);
+> +vpif_free:
+> +       free_vpif_objs();
+>  cleanup:
+>         v4l2_async_notifier_cleanup(&vpif_obj.notifier);
+>
+> @@ -1748,8 +1761,8 @@ static int vpif_remove(struct platform_device *device)
+>                 ch = vpif_obj.dev[i];
+>                 /* Unregister video device */
+>                 video_unregister_device(&ch->video_dev);
+> -               kfree(vpif_obj.dev[i]);
+>         }
+> +       free_vpif_objs();
+
+no need for this change, leave it as it is.
+
+Cheers,
+Prabhakar Lad
