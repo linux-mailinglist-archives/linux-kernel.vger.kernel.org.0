@@ -2,128 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44A023417A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 10:15:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A073A341F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 10:37:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727269AbfFDIPh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 04:15:37 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42233 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727226AbfFDIPa (ORCPT
+        id S1727129AbfFDIg6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 04:36:58 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36788 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726793AbfFDIg5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 04:15:30 -0400
-Received: by mail-pf1-f194.google.com with SMTP id q10so1997161pff.9
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 01:15:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=dER5z7AUiZqvyewGFEgnTI66kajUzFaGGa3MWKBcALw=;
-        b=vB+Hs12ydRRg7xKl2y5pq42c9TjetjyW0KPP4CLQt1K5QD8u1082ngypqoz/11y6pf
-         HsTDlpjOvwfLUalvg4uG96nQ2MLMmkyHNeAodvBKqe1k6KliNxZtqwgdUPx1nRVCDaLS
-         d/gpsoMpSCfGI5CUCM+4zoY7lZ6mNNLD4jXkaJ21sHDJsdpjn0SIxSCt9tqmtkfOofB7
-         RqQpd+nyHy8bd1NIy3azycy35bMkxl7stgprnj3dhXBUQy7smuGvkPvmCPP9+IRlqzDl
-         nw7NJ48xznSFJhLrRThp2Bn4mrOl4dcFT4lxs6ckloBL3l1TfCRU8gfHKoeqhcD/oe+G
-         fhMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=dER5z7AUiZqvyewGFEgnTI66kajUzFaGGa3MWKBcALw=;
-        b=YIuYy51o04Ru63Uo7cO8z4MULsI2N48Te97vAqhDuERaooB2TpDyHmoT0S/qPzvkXU
-         YDEOX6BR5R/14VUdEL4ks3Ly1+w3JtaAjgxmeQldcwg0BaC4oKrtzW3Ag2ItK9KwTduB
-         nEpabvPcXXgG5IIkWBdSFukD7OHz2zsZc2prxfYQ420uKD6qZj9ZTRE2vLtFtFg6ifWz
-         GtNxBfUP45wtvyYcNfz/0FyP5NetDgxf2+TxsPeRHNAIZp2EJR2mmy1km9LBhQbPAWuJ
-         Ci0tLvQyAmScha31G4+tCkCZ5/cZLvKY63eN36ZuaWjzZPIexQZb+7yOEfspI6koyiHc
-         tqXg==
-X-Gm-Message-State: APjAAAURfs7BCXxN3XpExHnXBjJUITBfyofEgdyM9O+ebLdhkh69PHFk
-        zUqJl+dmN9Qsy9Q43KALeK7f0Q==
-X-Google-Smtp-Source: APXvYqwm5O/KPp7XNf1fWqY832/e4ZO4cZ+12EaAKnp9jkR2KI4E6QiX8CcY/sQ9R+DjpbaetygTiw==
-X-Received: by 2002:a17:90a:1a84:: with SMTP id p4mr35971999pjp.15.1559636129484;
-        Tue, 04 Jun 2019 01:15:29 -0700 (PDT)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id j4sm14818804pgc.56.2019.06.04.01.15.25
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 04 Jun 2019 01:15:29 -0700 (PDT)
-From:   Baolin Wang <baolin.wang@linaro.org>
-To:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
-        zhang.lyra@gmail.com, orsonzhai@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, arnd@arndb.de, olof@lixom.net
-Cc:     baolin.wang@linaro.org, vincent.guittot@linaro.org, arm@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v2 9/9] arm64: dts: sprd: Add Spreadtrum SD host controller support
-Date:   Tue,  4 Jun 2019 16:14:29 +0800
-Message-Id: <3ca273e341f2f5f66b121d411428c60afd412586.1559635435.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1559635435.git.baolin.wang@linaro.org>
-References: <cover.1559635435.git.baolin.wang@linaro.org>
-In-Reply-To: <cover.1559635435.git.baolin.wang@linaro.org>
-References: <cover.1559635435.git.baolin.wang@linaro.org>
+        Tue, 4 Jun 2019 04:36:57 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x548XDXT134515;
+        Tue, 4 Jun 2019 04:36:30 -0400
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2swkssuyua-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 04 Jun 2019 04:36:30 -0400
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x542cumf012105;
+        Tue, 4 Jun 2019 02:41:32 GMT
+Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
+        by ppma01dal.us.ibm.com with ESMTP id 2suh097dk5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 04 Jun 2019 02:41:32 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x548aSf339452998
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 4 Jun 2019 08:36:28 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B47C7B205F;
+        Tue,  4 Jun 2019 08:36:28 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5EC86B2066;
+        Tue,  4 Jun 2019 08:36:28 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.171.86])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue,  4 Jun 2019 08:36:28 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 2E81416C63E5; Tue,  4 Jun 2019 01:14:35 -0700 (PDT)
+Date:   Tue, 4 Jun 2019 01:14:35 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     tglx@linutronix.de, mingo@kernel.org, jpoimboe@redhat.com,
+        mojha@codeaurora.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH HACK RFC] cpu: Prevent late-arriving interrupts from
+ disrupting offline
+Message-ID: <20190604081435.GQ28207@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <20190602011253.GA6167@linux.ibm.com>
+ <20190603083848.GB3436@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190603083848.GB3436@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-04_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906040058
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add one Spreadtrum SD host controller to support eMMC card for Spreadtrum
-SC9860 platform.
+On Mon, Jun 03, 2019 at 10:38:48AM +0200, Peter Zijlstra wrote:
+> On Sat, Jun 01, 2019 at 06:12:53PM -0700, Paul E. McKenney wrote:
+> > Scheduling-clock interrupts can arrive late in the CPU-offline process,
+> > after idle entry and the subsequent call to cpuhp_report_idle_dead().
+> > Once execution passes the call to rcu_report_dead(), RCU is ignoring
+> > the CPU, which results in lockdep complaints when the interrupt handler
+> > uses RCU:
+> 
+> > diff --git a/kernel/cpu.c b/kernel/cpu.c
+> > index 448efc06bb2d..3b33d83b793d 100644
+> > --- a/kernel/cpu.c
+> > +++ b/kernel/cpu.c
+> > @@ -930,6 +930,7 @@ void cpuhp_report_idle_dead(void)
+> >  	struct cpuhp_cpu_state *st = this_cpu_ptr(&cpuhp_state);
+> >  
+> >  	BUG_ON(st->state != CPUHP_AP_OFFLINE);
+> > +	local_irq_disable();
+> >  	rcu_report_dead(smp_processor_id());
+> >  	st->state = CPUHP_AP_IDLE_DEAD;
+> >  	udelay(1000);
+> 
+> Urgh... I'd almost suggest we do something like the below.
+> 
+> 
+> But then I started looking at the various arch_cpu_idle_dead()
+> implementations and ran into arm's implementation, which is calling
+> complete() where generic code already established this isn't possible
+> (see for example cpuhp_report_idle_dead()).
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- arch/arm64/boot/dts/sprd/whale2.dtsi |   35 ++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+Yeah, my patch that would have changed that never was acked or taken
+by the maintainer, as discussed later in this thread.
 
-diff --git a/arch/arm64/boot/dts/sprd/whale2.dtsi b/arch/arm64/boot/dts/sprd/whale2.dtsi
-index 4bb862c..79b9591c 100644
---- a/arch/arm64/boot/dts/sprd/whale2.dtsi
-+++ b/arch/arm64/boot/dts/sprd/whale2.dtsi
-@@ -130,6 +130,34 @@
- 				clock-names = "enable";
- 				clocks = <&apahb_gate CLK_DMA_EB>;
- 			};
-+
-+			sdio3: sdio@50430000 {
-+				compatible  = "sprd,sdhci-r11";
-+				reg = <0 0x50430000 0 0x1000>;
-+				interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
-+
-+				clock-names = "sdio", "enable", "2x_enable";
-+				clocks = <&aon_prediv CLK_EMMC_2X>,
-+				       <&apahb_gate CLK_EMMC_EB>,
-+				       <&aon_gate CLK_EMMC_2X_EN>;
-+				assigned-clocks = <&aon_prediv CLK_EMMC_2X>;
-+				assigned-clock-parents = <&clk_l0_409m6>;
-+
-+				sprd,phy-delay-mmc-hs400 = <0x44 0x7f 0x2e 0x2e>;
-+				sprd,phy-delay-mmc-hs200 = <0x0 0x8c 0x8c 0x8c>;
-+				sprd,phy-delay-mmc-ddr52 = <0x3f 0x75 0x14 0x14>;
-+				sprd,phy-delay-mmc-hs400es = <0x3f 0x3f 0x2e 0x2e>;
-+				vmmc-supply = <&vddemmccore>;
-+				bus-width = <8>;
-+				non-removable;
-+				no-sdio;
-+				no-sd;
-+				cap-mmc-hw-reset;
-+				mmc-hs400-enhanced-strobe;
-+				mmc-hs400-1_8v;
-+				mmc-hs200-1_8v;
-+				mmc-ddr-1_8v;
-+			};
- 		};
- 
- 		aon {
-@@ -272,4 +300,11 @@
- 		clock-frequency = <100000000>;
- 		clock-output-names = "ext-rco-100m";
- 	};
-+
-+	clk_l0_409m6: clk_l0_409m6 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <409600000>;
-+		clock-output-names = "ext-409m6";
-+	};
- };
--- 
-1.7.9.5
+> And then there's powerpc which for some obscure reason thinks it needs
+> to enable preemption when dying ?! pseries_cpu_die() actually calls
+> msleep() ?!?!
 
+Isn't pseries_cpu_die() invoked via the smp_ops->cpu_die() function
+pointer, whch is invoked from __cpu_die() in arch/powerpc/kernel/smp.c?
+Then, if I am reading the code correctly, __cpu_die() is invoked from
+takedown_cpu(), which is invoked not from the dying CPU but rather from
+a surviving CPU.  Or am I misreading the code?
+
+> Sparc64 agains things it should enable preemption when playing dead.
+> 
+> So clearly this isn't going to work well :/
+
+Well, it looks like it will work at least as well as my patch.  I will
+test it out this evening, ten timezones east of my usual location.  ;-)
+
+							Thanx, Paul
+
+> ---
+>  include/linux/tick.h | 10 ----------
+>  kernel/sched/idle.c  |  5 +++--
+>  2 files changed, 3 insertions(+), 12 deletions(-)
+> 
+> diff --git a/include/linux/tick.h b/include/linux/tick.h
+> index f92a10b5e112..196a0a7bfc4f 100644
+> --- a/include/linux/tick.h
+> +++ b/include/linux/tick.h
+> @@ -134,14 +134,6 @@ extern unsigned long tick_nohz_get_idle_calls(void);
+>  extern unsigned long tick_nohz_get_idle_calls_cpu(int cpu);
+>  extern u64 get_cpu_idle_time_us(int cpu, u64 *last_update_time);
+>  extern u64 get_cpu_iowait_time_us(int cpu, u64 *last_update_time);
+> -
+> -static inline void tick_nohz_idle_stop_tick_protected(void)
+> -{
+> -	local_irq_disable();
+> -	tick_nohz_idle_stop_tick();
+> -	local_irq_enable();
+> -}
+> -
+>  #else /* !CONFIG_NO_HZ_COMMON */
+>  #define tick_nohz_enabled (0)
+>  static inline int tick_nohz_tick_stopped(void) { return 0; }
+> @@ -164,8 +156,6 @@ static inline ktime_t tick_nohz_get_sleep_length(ktime_t *delta_next)
+>  }
+>  static inline u64 get_cpu_idle_time_us(int cpu, u64 *unused) { return -1; }
+>  static inline u64 get_cpu_iowait_time_us(int cpu, u64 *unused) { return -1; }
+> -
+> -static inline void tick_nohz_idle_stop_tick_protected(void) { }
+>  #endif /* !CONFIG_NO_HZ_COMMON */
+>  
+>  #ifdef CONFIG_NO_HZ_FULL
+> diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
+> index 80940939b733..e4bc4aa739b8 100644
+> --- a/kernel/sched/idle.c
+> +++ b/kernel/sched/idle.c
+> @@ -241,13 +241,14 @@ static void do_idle(void)
+>  		check_pgt_cache();
+>  		rmb();
+>  
+> +		local_irq_disable();
+> +
+>  		if (cpu_is_offline(cpu)) {
+> -			tick_nohz_idle_stop_tick_protected();
+> +			tick_nohz_idle_stop_tick();
+>  			cpuhp_report_idle_dead();
+>  			arch_cpu_idle_dead();
+>  		}
+>  
+> -		local_irq_disable();
+>  		arch_cpu_idle_enter();
+>  
+>  		/*
+> 
