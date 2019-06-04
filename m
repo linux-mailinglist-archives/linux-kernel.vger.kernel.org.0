@@ -2,135 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C05934FC6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 20:21:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B59134FC3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 20:20:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726652AbfFDSUu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 14:20:50 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:39028 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbfFDSUs (ORCPT
+        id S1726559AbfFDSUr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 14:20:47 -0400
+Received: from mail-pf1-f180.google.com ([209.85.210.180]:34507 "EHLO
+        mail-pf1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbfFDSUq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 14:20:48 -0400
-Received: by mail-qk1-f193.google.com with SMTP id i125so3473388qkd.6;
-        Tue, 04 Jun 2019 11:20:47 -0700 (PDT)
+        Tue, 4 Jun 2019 14:20:46 -0400
+Received: by mail-pf1-f180.google.com with SMTP id c85so4390908pfc.1;
+        Tue, 04 Jun 2019 11:20:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=rkSwU71K73scZ+gaddkeCEXxdBDgv49bmVU1xExpRSo=;
+        b=jKkRKM8ez3ciBU6QKJC1DXaqmvggOmTW8dQdy1/qcEUfgjn3+AIObJrmSlYoboTCir
+         p2v/Kv9PkrhSLr4BxjJMxQSLllOOMTM2ln98cG1mU8O5zPE19LoWziUyDTTVuGcRR7wW
+         M0Bs9GQD4FrgIzx/gf2hGl9ohJxr0407NBMwbXoPBw0yHNvxfoqWgPCC9ljSFyYgOGPZ
+         gCL9UiaKv8rv6tu0nkfsIw0UctBZ1cP5xXC7JZAwLr4tjoiZFQtOQtIaU9W0gSgY2CsL
+         7m1EG36hk7Dysvsul+kO4UDebsQXxtP2RppzV3+4GUZ3IiejT0UdwMq1gaEbzQP7yy0K
+         f+Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fQhpQeHfjr7pr+7f8qd7u/ZaT6BtUjv/QYyj8bAPAzE=;
-        b=gkae9fyqxlKdK2zhmiq1R3vKkMIGG4+8Goz7dmSheLbpNKRrfKou8VnKZFLJERxtPz
-         YN3vDosPUPEONnEasvyKe4AOUqHBvPWZg1JD0ohjkREjMt+y5hpT6nTnyoUYkjHhhlkx
-         BPI0365uS3t+mYIy7W1X/Zrj+GpaaI5UDgbvz98cjStwxB5M/KwSsQ+QXkj2LrjEAwap
-         98TWaX0khFyYtOoAqKImLdvO3IKEFD4jEOj3GZ2Xtl6wstnEEfwRHDe83gHrTf7fUzUL
-         O5o4KVJTaLq6ufdxtHPkbrfYz9VuRItQ2i5+j6F3emvFPCMuHCCeranPSzHVax2BISbq
-         upkA==
-X-Gm-Message-State: APjAAAXimky9AHvK4ZWRKZYdsY2D8csHRXnZfosWHO/quMQfnydy/8H1
-        V/HSnG8ntpQ+SFeDTPZe8qs0lCZ4UpxVSvg8f77rhsQF
-X-Google-Smtp-Source: APXvYqxPjPBgDsgzeBtCCa9fhlWMow8VQw4843sOSqGqDdUUeqUxZWI9r6CcQc/jbpBMS/IxKaTsN47H9K44JoQVz98=
-X-Received: by 2002:a05:620a:16c1:: with SMTP id a1mr28229029qkn.269.1559672447021;
- Tue, 04 Jun 2019 11:20:47 -0700 (PDT)
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=rkSwU71K73scZ+gaddkeCEXxdBDgv49bmVU1xExpRSo=;
+        b=T1IdOGm8zD9aMTNnjNyxQsalIL5PqhGN0ZwwJBoFPvGaDtqmWrNtoqQJzamusd64TC
+         9Z1nKntZEuWztGLhbE/WKPakIxdzVsAQrgq1jQ5j/h7P5XcFAyArMYuuQZfuvtTMhwaG
+         y2b4eTKQKlNLB5HDrzvNA7bO6yvdvYn00mEjdgUdKKNNF0+6tlZjBGYMrcTljZt7thiw
+         5bPQoqfE7my9sYAr3HBWgaJ8HtaNz6CWfzEytPMjliBvl8D/C3v9p5IbrtCnIJQ8puq/
+         oz8qpUYPSU6hQank9Bzj4PNTb5CYKyVG+zCwXJU1FFYovKipXUzkaWcHBV3borhnmO4G
+         e/Lg==
+X-Gm-Message-State: APjAAAW5A52dPQj5ISTj4ahPIkMjl6GR6Z+5shN2P5SLmfmweXMg0TRR
+        J3BIGaemedWhUprWWxRX6reBDMmA
+X-Google-Smtp-Source: APXvYqwiSebMkHd42axWHMY4tve11l/QHgRBaJ2adjNS8DZHLvZUGcXQzFwWBosw4EzQ2VzE3rEysw==
+X-Received: by 2002:a63:f54c:: with SMTP id e12mr33695pgk.62.1559672445760;
+        Tue, 04 Jun 2019 11:20:45 -0700 (PDT)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id s42sm22991062pjc.5.2019.06.04.11.20.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Jun 2019 11:20:45 -0700 (PDT)
+Subject: Re: Dynamic overlay failure in 4.19 & 4.20
+To:     Phil Elwell <phil@raspberrypi.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <c5af11eb-afe5-08c4-8597-3195c25ba1d5@raspberrypi.org>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <4d5b9fba-3879-0729-119a-f7d585a74cc1@gmail.com>
+Date:   Tue, 4 Jun 2019 11:20:43 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190604111334.22182-1-yamada.masahiro@socionext.com>
- <8cf48e20064eabdfe150795365e6ca6f36032e9f.camel@perches.com>
- <CAK8P3a1oDfNF_T+NCoPsXkJAY2x4_uCWSwrDXHi7dDSaMqfnfA@mail.gmail.com>
- <CAK7LNAS0Ph2Z6x0-UPSkJUC31NvPi09BmFrve+YJcXMrop-BGA@mail.gmail.com>
- <20190604134213.GA26263@kroah.com> <CAK7LNARyqW3q6_46e-aYjmF8c0jUNDLdyB28zNaBEXqTV+5QSA@mail.gmail.com>
-In-Reply-To: <CAK7LNARyqW3q6_46e-aYjmF8c0jUNDLdyB28zNaBEXqTV+5QSA@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 4 Jun 2019 20:20:30 +0200
-Message-ID: <CAK8P3a0bz8XYJOsmND2=CT_oTDmGMJGaRo9+QMroEhpekSMEaQ@mail.gmail.com>
-Subject: Re: [PATCH] media: do not use C++ style comments in uapi headers
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Joe Perches <joe@perches.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <c5af11eb-afe5-08c4-8597-3195c25ba1d5@raspberrypi.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 4, 2019 at 5:28 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> On Tue, Jun 4, 2019 at 10:44 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > On Tue, Jun 04, 2019 at 09:48:12PM +0900, Masahiro Yamada wrote:
-> > > On Tue, Jun 4, 2019 at 8:55 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > > > # Unlike the kernel space, uapi headers are written in more strict C.
-> > > > # -std=c90 (equivalent to -ansi) catches the violation of those.
-> > > > # We cannot go as far as adding -Wpedantic since it emits too many warnings.
+Hi Phil,
 
-At least with clang, we might be able to be more specific about which
-warnings to add or not to add.
+On 6/4/19 5:15 AM, Phil Elwell wrote:
+> Hi,
+> 
+> In the downstream Raspberry Pi kernel we are using configfs to apply overlays at
+> runtime, using a patchset from Pantelis that hasn't been accepted upstream yet.
+> Apart from the occasional need to adapt to upstream changes, this has been working
+> well for us.
+> 
+> A Raspberry Pi user recently noticed that this mechanism was failing for an overlay in
+> 4.19. Although the overlay appeared to be applied successfully, pinctrl was reporting
+> that one of the two fragments contained an invalid phandle, and an examination of the
+> live DT agreed - the target of the reference, which was in the other fragment, was
+> missing the phandle property.
+> 
+> 5.0 added two patches - [1] to stop blindly copying properties from the overlay fragments
+> into the live tree, and [2] to explicitly copy across the name and phandle properties.
+> These two commits should be treated as a pair; the former requires the properties that
+> are legitimately defined by an overlay to be added via a changeset, but this mechanism
+> deliberately skips the name and phandle; the latter addresses this shortcoming. However,
+> [1] was back-ported to 4.19 and 4.20 but [2] wasn't, hence the problem.
 
-> > >
-> > > There are two ways to define fixed-width type.
-> > >
-> > > [1] #include <linux/types.h>, __u8, __u16, __u32, __u64
-> > >
-> > >       vs
-> > >
-> > > [2] #include <stdint.h>, uint8_t, uint16_t, uint32_t, uint64_t
-> > >
-> > >
-> > > Both are used in UAPI headers.
-> > > IIRC, <stdint.h> was standardized by C99.
-> > >
-> > > So, we have already relied on C99 in user-space too.
+I have relied upon Greg's statement that he would handle the stable kernels, and that
+the process of doing so would not impact (or would minimally impact) maintainers.  If
+I think something should go into stable, I will tag it as such, but otherwise I ignore
+the stable branches.  For overlay related code specifically, my base standard is that
+overlay support is an under development, not yet ready for prime time feature and thus
+I do not tag my overlay patches for stable.
 
-A related problem is that using the stdint.h types requires
-including stdint.h first, but the C library requires that including
-one standard header does not include another one recursively.
+Your research and analysis above sound like there are on target (thanks for providing
+the clear and detailed explanation!), so if you want the stable branches to work for
+overlays (out of tree, as you mentioned) I would suggest you email Greg, asking that
+the second patch be added to the stable branches.  Since the two patches you pointed
+out are put of a larger series, you might also want to check which of the other
+patches in that series were included in stable or left out from stable.  My suggestion
+that you request Greg add the second patch continues to rely on the concept that
+stable does not add to my workload, so I have not carefully analyzed whether adding
+the patch actually is the correct and full fix, but instead am relying on your good
+judgment that it is.
 
-So if sys/socket.h includes linux/socket.h, that must not include
-stdint.h or any other header file that does so.
+To give you some context on the patch series, I started with 144552c78692 ("of: overlay:
+add tests to validate kfrees from overlay removal") due to my concerns with how
+memory is allocated and freed for overlays.  The added tests exposed issues, and
+the rest of the patches in the series were dealing with the issues that were
+exposed.
 
-> > Just because we have relied on it in the past, does not mean we need to
-> > keep relying on it.  I have had numerous complaints over the years from
-> > libc authors that our uapi headers are _NOT_ able to be directly
-> > consumed by them.  They all end up having to fix things up and include
-> > local "sanitized" copies.
+You can see the full series (with maybe an extra patch or so) with
+git log --oneline 144552c78692^..eeb07c573ec3
 
-Yes, and this is getting worse with 64-bit time_t as we now get conflicting
-definitions of timespec, timeval and derived types. We probably need to
-change a lot of the common headers that conflict with libc definitions
-and come up with a better way of exposing the interfaces there.
 
-Similarly, a header that may get included by libc should not define any
-data structures with members that may conflict with a user space macro
-name. E.g.
+> The effect can be seen in the "overlay" overlay in the unittest data. Although the
+> overlay appears to apply correctly, the hvac-large-1 node is lacking the phandle it
+> should have as a result of the hvac_2 label, and that leaves the hvac-provider property
+> of ride@200 with an unresolved phandle.
+> 
+> The obvious fix is to also back-port [2] to 4.19, but that leaves open the question of
+> whether either the overlay application mechanism or the unit test framework should have
+> detected the missing phandle.
 
-struct foo {
-      __u32 bar;
-};
+Yes, unittest showed the missing phandle, as you described in the /proc view of
+overlay.dts above.  That portion of unittest depends on someone looking at the
+result of what is in /proc/device-tree and is not automated and is not documented.
+I intend to automate that check someday, but the task is still languishing on my
+todo list.
 
-uses the correct type, but if an application contains
+> 
+> Phil
+> 
+> [1] 8814dc46bd9e ("of: overlay: do not duplicate properties from overlay for new nodes")
+> [2] f96278810150 ("of: overlay: set node fields from properties when add new overlay node")
+> 
 
-#define bar __read_bar()
-#include <linux/foo.h>
-
-then it will get a compile failure. Not sure what we can do about this,
-but we might need a form of classification of headers into those
-that can be included by libc and must follow very strict rules,
-as opposed to those headers that are specific to a driver or subsystem
-that will not be included unless some application specifically needs the
-symbols in that header to talk to the kernel.
-
-> > So any work we can do here to make them more sane and work properly
-> > everywhere is a good thing, as right now, they are broken.
->
->
-> Maybe, we should document UAPI header coding guideline.
->
-> Without To-Don't list,
-> people will do anything.
-
-This also came up recently with the discussion on how to define
-data structures in a portable way that avoids not only the identifier
-conflicts but also differences in size or alignment of member types.
-
-        Arnd
