@@ -2,133 +2,259 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DFEB34D8B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 18:34:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9029234D90
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 18:35:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727792AbfFDQdl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 12:33:41 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:45286 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727463AbfFDQdk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 12:33:40 -0400
-Received: by mail-io1-f67.google.com with SMTP id e3so17825356ioc.12;
-        Tue, 04 Jun 2019 09:33:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NFDCs9ixPwmop20pIDVV+hNZcExzVIIYIAvpTPqNIqM=;
-        b=cx9qF2XoM0ItvPLKYrfQK/oiAqbik/wsSMBvAMrHL8fu8Fx/K523FWLP62Taq5dCW+
-         GeVE1uM0MXw54dG4FfQpsBSSfIqJt+BeDwEtP+TaTJsYOGWnVZaxK6WHMMZEiIQCr7c1
-         29YRdE5YPlokMDEIYL8ZBSnQ9QFPiJckpS2Wm8iIFdCBR0HfTI2T0TOimv6v4CP1imSF
-         sOro/P3hwPspStkLZljA33Ma0X+9ae5JeNqKCeX5SHWY6K1oJDWZaC3n5E0+gY6UeDRI
-         PFhuNkiD8tQcLaUt1Hocggi8IY4A2cYLgXOSolXgPJu2RHVtQPEIXlj/1p468yO7GvqA
-         grtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NFDCs9ixPwmop20pIDVV+hNZcExzVIIYIAvpTPqNIqM=;
-        b=RjSBrSLlWd71CTKBLx1tRwJ2fZPW9aCCvTqr7pGXc0UTy/VP72CPSfww569TTD5TKg
-         UJUULe+2cDWBb5tZNvlQAxZwg4eK4UhDhZbc5liiZUTTTThzOfOcYB5cVA/9p87xAhTe
-         0aFebzWmVwp0XmESznMQEEcZICnGCfHTcnSbCVpMBI2SyCGLQbzSWoaS5Ou/etXCTaNB
-         OEULfdJPkiBwttK05xzcnASUs+XqEI8A0sNJgWWoeR62S1m8bNVXqOxUA8VZkJFYudJo
-         C0E+jSIQ8Ve3nfWEwZQaDirCBMEfMGdm2sTGbF2mTLEmKj/6M2nl2vfwIBISFRNkRjeT
-         i18g==
-X-Gm-Message-State: APjAAAVWjSZ2YqbDrD+kfrFlb/4g9vGh6xVrrR8kyUXnSzb6s9g4ULMj
-        8ndliXqGjYm9lFIfO9pIl+z8GcvZ3Pb9u3CCOrA=
-X-Google-Smtp-Source: APXvYqwJ2HUxS4FKK1XU93wJyd+x/7qURmSpYcNyYnkbHrNeudxQf8vE6jo+0sLFKE/Co6I3WhWb6ZA1CNw3cpjacA4=
-X-Received: by 2002:a6b:901:: with SMTP id t1mr14703305ioi.42.1559666019686;
- Tue, 04 Jun 2019 09:33:39 -0700 (PDT)
+        id S1727741AbfFDQfO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 12:35:14 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41896 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727451AbfFDQfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 12:35:14 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1B79D30C1AFD;
+        Tue,  4 Jun 2019 16:35:05 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B7AC35D705;
+        Tue,  4 Jun 2019 16:35:00 +0000 (UTC)
+Subject: [RFC][PATCH 0/8] Mount, FS,
+ Block and Keyrings notifications [ver #2]
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     Casey Schaufler <casey@schaufler-ca.com>, dhowells@redhat.com,
+        raven@themaw.net, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-block@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 04 Jun 2019 17:34:59 +0100
+Message-ID: <155966609977.17449.5624614375035334363.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-References: <20190603170306.49099-1-nitesh@redhat.com> <20190603170306.49099-3-nitesh@redhat.com>
-In-Reply-To: <20190603170306.49099-3-nitesh@redhat.com>
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-Date:   Tue, 4 Jun 2019 09:33:28 -0700
-Message-ID: <CAKgT0UeRkG0FyESjjQQWeOs3x2O=BUzFYZAdDkjjLyXRiJMnCQ@mail.gmail.com>
-Subject: Re: [RFC][Patch v10 2/2] virtio-balloon: page_hinting: reporting to
- the host
-To:     Nitesh Narayan Lal <nitesh@redhat.com>
-Cc:     kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
-        pagupta@redhat.com, wei.w.wang@intel.com,
-        Yang Zhang <yang.zhang.wz@gmail.com>,
-        Rik van Riel <riel@surriel.com>,
-        David Hildenbrand <david@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>, dodgen@google.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 04 Jun 2019 16:35:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 3, 2019 at 10:04 AM Nitesh Narayan Lal <nitesh@redhat.com> wrote:
->
-> Enables the kernel to negotiate VIRTIO_BALLOON_F_HINTING feature with the
-> host. If it is available and page_hinting_flag is set to true, page_hinting
-> is enabled and its callbacks are configured along with the max_pages count
-> which indicates the maximum number of pages that can be isolated and hinted
-> at a time. Currently, only free pages of order >= (MAX_ORDER - 2) are
-> reported. To prevent any false OOM max_pages count is set to 16.
->
-> By default page_hinting feature is enabled and gets loaded as soon
-> as the virtio-balloon driver is loaded. However, it could be disabled
-> by writing the page_hinting_flag which is a virtio-balloon parameter.
->
-> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>
-> ---
->  drivers/virtio/virtio_balloon.c     | 112 +++++++++++++++++++++++++++-
->  include/uapi/linux/virtio_balloon.h |  14 ++++
->  2 files changed, 125 insertions(+), 1 deletion(-)
 
-<snip>
+Hi Al,
 
-> diff --git a/include/uapi/linux/virtio_balloon.h b/include/uapi/linux/virtio_balloon.h
-> index a1966cd7b677..25e4f817c660 100644
-> --- a/include/uapi/linux/virtio_balloon.h
-> +++ b/include/uapi/linux/virtio_balloon.h
-> @@ -29,6 +29,7 @@
->  #include <linux/virtio_types.h>
->  #include <linux/virtio_ids.h>
->  #include <linux/virtio_config.h>
-> +#include <linux/page_hinting.h>
+Here's a set of patches to add a general variable-length notification queue
+concept and to add sources of events for:
 
-So this include breaks the build and from what I can tell it isn't
-really needed. I deleted it in order to be able to build without
-warnings about the file not being included in UAPI.
+ (1) Mount topology events, such as mounting, unmounting, mount expiry,
+     mount reconfiguration.
 
->  /* The feature bitmap for virtio balloon */
->  #define VIRTIO_BALLOON_F_MUST_TELL_HOST        0 /* Tell before reclaiming pages */
-> @@ -36,6 +37,7 @@
->  #define VIRTIO_BALLOON_F_DEFLATE_ON_OOM        2 /* Deflate balloon on OOM */
->  #define VIRTIO_BALLOON_F_FREE_PAGE_HINT        3 /* VQ to report free pages */
->  #define VIRTIO_BALLOON_F_PAGE_POISON   4 /* Guest is using page poisoning */
-> +#define VIRTIO_BALLOON_F_HINTING       5 /* Page hinting virtqueue */
->
->  /* Size of a PFN in the balloon interface. */
->  #define VIRTIO_BALLOON_PFN_SHIFT 12
-> @@ -108,4 +110,16 @@ struct virtio_balloon_stat {
->         __virtio64 val;
->  } __attribute__((packed));
->
-> +#ifdef CONFIG_PAGE_HINTING
-> +/*
-> + * struct hinting_data- holds the information associated with hinting.
-> + * @phys_add:  physical address associated with a page or the array holding
-> + *             the array of isolated pages.
-> + * @size:      total size associated with the phys_addr.
-> + */
-> +struct hinting_data {
-> +       __virtio64 phys_addr;
-> +       __virtio32 size;
-> +};
-> +#endif
->  #endif /* _LINUX_VIRTIO_BALLOON_H */
-> --
-> 2.21.0
->
+ (2) Superblock events, such as R/W<->R/O changes, quota overrun and I/O
+     errors (not complete yet).
+
+ (3) Block layer events, such as I/O errors.
+
+ (4) Key/keyring events, such as creating, linking and removal of keys.
+
+One of the reasons for this is so that we can remove the issue of processes
+having to repeatedly and regularly scan /proc/mounts, which has proven to
+be a system performance problem.  To further aid this, the fsinfo() syscall
+on which this patch series depends, provides a way to access superblock and
+mount information in binary form without the need to parse /proc/mounts.
+
+
+LSM support is included:
+
+ (1) The creds of the process that did the fput() that reduced the refcount
+     to zero are cached in the file struct.
+
+ (2) __fput() overrides the current creds with the creds from (1) whilst
+     doing the cleanup, thereby making sure that the creds seen by the
+     destruction notification generated by mntput() appears to come from
+     the last fputter.
+
+ (3) security_post_notification() is called for each queue that we might
+     want to post a notification into, thereby allowing the LSM to prevent
+     covert communications.
+
+ (?) Do I need to add security_set_watch(), say, to rule on whether a watch
+     may be set in the first place?  I might need to add a variant per
+     watch-type.
+
+ (?) Do I really need to keep track of the process creds in which an
+     implicit object destruction happened?  For example, imagine you create
+     an fd with fsopen()/fsmount().  It is marked to dissolve the mount it
+     refers to on close unless move_mount() clears that flag.  Now, imagine
+     someone looking at that fd through procfs at the same time as you exit
+     due to an error.  The LSM sees the destruction notification come from
+     the looker if they happen to do their fput() after yours.
+
+
+Design decisions:
+
+ (1) A misc chardev is used to create and open a ring buffer:
+
+	fd = open("/dev/watch_queue", O_RDWR);
+
+     which is then configured and mmap'd into userspace:
+
+	ioctl(fd, IOC_WATCH_QUEUE_SET_SIZE, BUF_SIZE);
+	ioctl(fd, IOC_WATCH_QUEUE_SET_FILTER, &filter);
+	buf = mmap(NULL, BUF_SIZE * page_size, PROT_READ | PROT_WRITE,
+		   MAP_SHARED, fd, 0);
+
+     The fd cannot be read or written (though there is a facility to use
+     write to inject records for debugging) and userspace just pulls data
+     directly out of the buffer.
+
+ (2) The ring index pointers are stored inside the ring and are thus
+     accessible to userspace.  Userspace should only update the tail
+     pointer and never the head pointer or risk breaking the buffer.  The
+     kernel checks that the pointers appear valid before trying to use
+     them.  A 'skip' record is maintained around the pointers.
+
+ (3) poll() can be used to wait for data to appear in the buffer.
+
+ (4) Records in the buffer are binary, typed and have a length so that they
+     can be of varying size.
+
+     This means that multiple heterogeneous sources can share a common
+     buffer.  Tags may be specified when a watchpoint is created to help
+     distinguish the sources.
+
+ (5) The queue is reusable as there are 16 million types available, of
+     which I've used 4, so there is scope for others to be used.
+
+ (6) Records are filterable as types have up to 256 subtypes that can be
+     individually filtered.  Other filtration is also available.
+
+ (7) Each time the buffer is opened, a new buffer is created - this means
+     that there's no interference between watchers.
+
+ (8) When recording a notification, the kernel will not sleep, but will
+     rather mark a queue as overrun if there's insufficient space, thereby
+     avoiding userspace causing the kernel to hang.
+
+ (9) The 'watchpoint' should be specific where possible, meaning that you
+     specify the object that you want to watch.
+
+(10) The buffer is created and then watchpoints are attached to it, using
+     one of:
+
+	keyctl_watch_key(KEY_SPEC_SESSION_KEYRING, fd, 0x01);
+	mount_notify(AT_FDCWD, "/", 0, fd, 0x02);
+	sb_notify(AT_FDCWD, "/mnt", 0, fd, 0x03);
+
+     where in all three cases, fd indicates the queue and the number after
+     is a tag between 0 and 255.
+
+(11) The watch must be removed if either the watch buffer is destroyed or
+     the watched object is destroyed.
+
+
+Things I want to avoid:
+
+ (1) Introducing features that make the core VFS dependent on the network
+     stack or networking namespaces (ie. usage of netlink).
+
+ (2) Dumping all this stuff into dmesg and having a daemon that sits there
+     parsing the output and distributing it as this then puts the
+     responsibility for security into userspace and makes handling
+     namespaces tricky.  Further, dmesg might not exist or might be
+     inaccessible inside a container.
+
+ (3) Letting users see events they shouldn't be able to see.
+
+
+Further things that could be considered:
+
+ (1) Adding a keyctl call to allow a watch on a keyring to be extended to
+     "children" of that keyring, such that the watch is removed from the
+     child if it is unlinked from the keyring.
+
+ (2) Adding global superblock event queue.
+
+ (3) Propagating watches to child superblock over automounts.
+
+
+The patches can be found here also:
+
+	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=notifications
+
+Changes:
+
+ v2: I've fixed various issues raised by Jann Horn and GregKH and moved to
+     krefs for refcounting.  I've added some security features to try and
+     give Casey Schaufler the LSM control he wants.
+
+David
+---
+David Howells (8):
+      security: Override creds in __fput() with last fputter's creds
+      General notification queue with user mmap()'able ring buffer
+      keys: Add a notification facility
+      vfs: Add a mount-notification facility
+      vfs: Add superblock notifications
+      fsinfo: Export superblock notification counter
+      block: Add block layer notifications
+      Add sample notification program
+
+
+ Documentation/security/keys/core.rst   |   58 ++
+ Documentation/watch_queue.rst          |  328 ++++++++++++
+ arch/x86/entry/syscalls/syscall_32.tbl |    3 
+ arch/x86/entry/syscalls/syscall_64.tbl |    3 
+ block/Kconfig                          |    9 
+ block/Makefile                         |    1 
+ block/blk-core.c                       |   29 +
+ block/blk-notify.c                     |   83 +++
+ drivers/misc/Kconfig                   |   13 
+ drivers/misc/Makefile                  |    1 
+ drivers/misc/watch_queue.c             |  895 ++++++++++++++++++++++++++++++++
+ fs/Kconfig                             |   21 +
+ fs/Makefile                            |    1 
+ fs/file_table.c                        |   12 
+ fs/fsinfo.c                            |   12 
+ fs/mount.h                             |   33 +
+ fs/mount_notify.c                      |  186 +++++++
+ fs/namespace.c                         |    9 
+ fs/super.c                             |  117 ++++
+ include/linux/blkdev.h                 |   10 
+ include/linux/dcache.h                 |    1 
+ include/linux/fs.h                     |   79 +++
+ include/linux/key.h                    |    4 
+ include/linux/lsm_hooks.h              |   15 +
+ include/linux/security.h               |   14 +
+ include/linux/syscalls.h               |    5 
+ include/linux/watch_queue.h            |   87 +++
+ include/uapi/linux/fsinfo.h            |   10 
+ include/uapi/linux/keyctl.h            |    1 
+ include/uapi/linux/watch_queue.h       |  185 +++++++
+ kernel/sys_ni.c                        |    7 
+ mm/interval_tree.c                     |    2 
+ mm/memory.c                            |    1 
+ samples/Kconfig                        |    6 
+ samples/Makefile                       |    1 
+ samples/vfs/test-fsinfo.c              |   13 
+ samples/watch_queue/Makefile           |    9 
+ samples/watch_queue/watch_test.c       |  284 ++++++++++
+ security/keys/Kconfig                  |   10 
+ security/keys/compat.c                 |    2 
+ security/keys/gc.c                     |    5 
+ security/keys/internal.h               |   30 +
+ security/keys/key.c                    |   37 +
+ security/keys/keyctl.c                 |   89 +++
+ security/keys/keyring.c                |   17 -
+ security/keys/request_key.c            |    4 
+ security/security.c                    |    9 
+ 47 files changed, 2713 insertions(+), 38 deletions(-)
+ create mode 100644 Documentation/watch_queue.rst
+ create mode 100644 block/blk-notify.c
+ create mode 100644 drivers/misc/watch_queue.c
+ create mode 100644 fs/mount_notify.c
+ create mode 100644 include/linux/watch_queue.h
+ create mode 100644 include/uapi/linux/watch_queue.h
+ create mode 100644 samples/watch_queue/Makefile
+ create mode 100644 samples/watch_queue/watch_test.c
+
