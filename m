@@ -2,51 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A84634CEF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 18:11:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4834E34D02
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 18:14:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728257AbfFDQLn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 12:11:43 -0400
-Received: from mga03.intel.com ([134.134.136.65]:16001 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728178AbfFDQLm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 12:11:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jun 2019 09:11:42 -0700
-X-ExtLoop1: 1
-Received: from tthayer-hp-z620.an.intel.com (HELO [10.122.105.146]) ([10.122.105.146])
-  by orsmga007.jf.intel.com with ESMTP; 04 Jun 2019 09:11:41 -0700
-Reply-To: thor.thayer@linux.intel.com
-Subject: Re: [RFC PATCH 49/57] drivers: mfd: altera: Use
- driver_find_device_by_of_node() helper
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-kernel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        Lee Jones <lee.jones@linaro.org>
-References: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
- <1559577023-558-50-git-send-email-suzuki.poulose@arm.com>
-From:   Thor Thayer <thor.thayer@linux.intel.com>
-Message-ID: <7d7e2a77-a7c9-fe62-5432-0e730e548bbb@linux.intel.com>
-Date:   Tue, 4 Jun 2019 11:13:46 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1728285AbfFDQO2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 12:14:28 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:41837 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728166AbfFDQO1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 12:14:27 -0400
+Received: by mail-yb1-f195.google.com with SMTP id d2so8161052ybh.8;
+        Tue, 04 Jun 2019 09:14:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=D5MMPFwZPDwoVwg0CH5FVocMqyoaqr3N1YLjVthTqt4=;
+        b=NCvPEi3qdm1deNg6XsWqtja84SJO+KiT+rTr3MlLL3XFiYwiQvc/HI/hZDcfQ3Z/Ez
+         pxzrKO5PfbWQMrNhJp53c++0irTblLw1lUnIuEKx1lCty7aUKdb+Zthwv3NGIsEHYKFQ
+         esNBrW/yze0vVonksP6Tt+RNh+dS8qmXPMckX03vDzPVUITBN2L+KyES+Wf6UJvpBSMZ
+         DtjKtPgAKadZDNr++L7eW0sS9LrCZn74Wm81D8b3t1laW82mTPZEEU+W+xO/1S23w4cE
+         tvfTJp9IFpYSrxiqVb0StJR9A0uEjUaKQE+NQ30SOA9AKZmJjwD4YaV/ydHG4xlS45Yg
+         eBPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=D5MMPFwZPDwoVwg0CH5FVocMqyoaqr3N1YLjVthTqt4=;
+        b=Wd94CnivV+3E4+DVIC+0s8zKWJAcyb8KiofiJDx6+BvDOHa7kiejguuwDY3oZd+vUV
+         hN7JELKlxwKiAjiKX0DSDbxEutV55Yju45eKvhoHVJ1H0y13Jx5X0M17VXED/o2BhA9n
+         5VKikpOQKbFA/7KJtaSOW0k36C1QlBz/EIfcDJfbXdcZuLHoJ5v6mSrVYOD+vYc3CBwk
+         qewhz6nJmhhWk8+Assa1H6qmuCHsHN7a91c6NiornF493+OcNIZPEhWv99g7XFAysY3w
+         F0R4tXB8e0ahwkureRW/qbOSOuPZTAIrElib5hQQHUP9Cd5PahxE/hGMGhMM5kmYa3ek
+         L0SQ==
+X-Gm-Message-State: APjAAAUAhDH+l1mp3B1AZKaUuJuq/0b7cpF0tub/L+CYcvPuRLLpalCg
+        pDXtYTqhk3uy5MbtDhQzW01BPoPP52s/SxnsLsk=
+X-Google-Smtp-Source: APXvYqy65LooPH+1bjcdVqPkjkn1bHuRgJ3PaSVfYkPX8MorTnFlcnNjWXyHFpfD6bfMSX8neQCHQL/2nWA9e1z26tU=
+X-Received: by 2002:a25:6148:: with SMTP id v69mr13871252ybb.401.1559664866416;
+ Tue, 04 Jun 2019 09:14:26 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1559577023-558-50-git-send-email-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190604154036.23211-1-megous@megous.com>
+In-Reply-To: <20190604154036.23211-1-megous@megous.com>
+From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Date:   Tue, 4 Jun 2019 18:14:15 +0200
+Message-ID: <CAJiuCcda0ZDDrbdOF7TpTeoUOgt7GeS6wcgy45DRCo_U2XX6bQ@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v2] clk: sunxi-ng: sun50i-h6-r: Fix
+ incorrect W1 clock gate register
+To:     megous@megous.com
+Cc:     linux-sunxi <linux-sunxi@googlegroups.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "moderated list:ARM/Allwinner sunXi SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/3/19 10:50 AM, Suzuki K Poulose wrote:
-> Use the new helper to find device by of_node.
-> 
-> Cc: Thor Thayer <thor.thayer@linux.intel.com>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Hi Ondrej,
 
-Acked-by: Thor Thayer <thor.thayer@linux.intel.com>
+On Tue, 4 Jun 2019 at 17:40, megous via linux-sunxi
+<linux-sunxi@googlegroups.com> wrote:
+>
+> From: Ondrej Jirman <megous@megous.com>
+>
+> The current code defines W1 clock gate to be at 0x1cc, overlaying it
+> with the IR gate.
+>
+> Clock gate for r-apb1-w1 is at 0x1ec. This fixes issues with IR receiver
+> causing interrupt floods on H6 (because interrupt flags can't be cleared,
+> due to IR module's bus being disabled).
+>
+> Signed-off-by: Ondrej Jirman <megous@megous.com>
+> Fixes: b7c7b05065aa77ae ("clk: sunxi-ng: add support for H6 PRCM CCU")
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c b/drivers/clk/sunxi-n=
+g/ccu-sun50i-h6-r.c
+> index 27554eaf6929..8d05d4f1f8a1 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+> @@ -104,7 +104,7 @@ static SUNXI_CCU_GATE(r_apb2_i2c_clk,       "r-apb2-i=
+2c",   "r-apb2",
+>  static SUNXI_CCU_GATE(r_apb1_ir_clk,   "r-apb1-ir",    "r-apb1",
+>                       0x1cc, BIT(0), 0);
+>  static SUNXI_CCU_GATE(r_apb1_w1_clk,   "r-apb1-w1",    "r-apb1",
+> -                     0x1cc, BIT(0), 0);
+> +                     0x1ec, BIT(0), 0);
+Just for information where did you find this information?
+Using the vendor kernel or user manual?
+
+Thanks,
+Cl=C3=A9ment
+
+>
+>  /* Information of IR(RX) mod clock is gathered from BSP source code */
+>  static const char * const r_mod0_default_parents[] =3D { "osc32k", "osc2=
+4M" };
+> --
+> 2.21.0
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to linux-sunxi+unsubscribe@googlegroups.com.
+> To view this discussion on the web, visit https://groups.google.com/d/msg=
+id/linux-sunxi/20190604154036.23211-1-megous%40megous.com.
+> For more options, visit https://groups.google.com/d/optout.
