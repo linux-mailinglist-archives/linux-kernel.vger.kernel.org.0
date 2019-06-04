@@ -2,215 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDDF834C0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 17:21:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73E1234C12
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 17:21:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728200AbfFDPU7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 11:20:59 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:43088 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728145AbfFDPUs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 11:20:48 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 5E08D28536B
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     gwendal@chromium.org, Guenter Roeck <groeck@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Lee Jones <lee.jones@linaro.org>, kernel@collabora.com,
-        dtor@chromium.org
-Subject: [PATCH 10/10] mfd: cros_ec: Add convenience struct to define autodetectable CrOS EC subdevices
-Date:   Tue,  4 Jun 2019 17:20:19 +0200
-Message-Id: <20190604152019.16100-11-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190604152019.16100-1-enric.balletbo@collabora.com>
-References: <20190604152019.16100-1-enric.balletbo@collabora.com>
+        id S1728217AbfFDPVw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 11:21:52 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56478 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727857AbfFDPVw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 11:21:52 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 87F6D2F8BC8;
+        Tue,  4 Jun 2019 15:21:46 +0000 (UTC)
+Received: from ovpn-112-67.rdu2.redhat.com (ovpn-112-67.rdu2.redhat.com [10.10.112.67])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 23E621001947;
+        Tue,  4 Jun 2019 15:21:41 +0000 (UTC)
+Message-ID: <feb3d23718ea462d304369d718c6ed37da8a8f15.camel@redhat.com>
+Subject: Re: [PATCH v2 00/17] net: introduce Qualcomm IPA driver
+From:   Dan Williams <dcbw@redhat.com>
+To:     Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
+Cc:     Alex Elder <elder@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+        David Miller <davem@davemloft.net>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        evgreen@chromium.org, Ben Chan <benchan@google.com>,
+        Eric Caruso <ejcaruso@google.com>, cpratapa@codeaurora.org,
+        syadagir@codeaurora.org, abhishek.esse@gmail.com,
+        Networking <netdev@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-soc@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm@vger.kernel.org
+Date:   Tue, 04 Jun 2019 10:21:41 -0500
+In-Reply-To: <c200581b8fc167f3a0c09ef6233b8d81@codeaurora.org>
+References: <20190531035348.7194-1-elder@linaro.org>
+         <e75cd1c111233fdc05f47017046a6b0f0c97673a.camel@redhat.com>
+         <065c95a8-7b17-495d-f225-36c46faccdd7@linaro.org>
+         <CAK8P3a05CevRBV3ym+pnKmxv+A0_T+AtURW2L4doPAFzu3QcJw@mail.gmail.com>
+         <a28c5e13-59bc-144d-4153-9d104cfa9188@linaro.org>
+         <3b1e12b145a273dd3ded2864d976bdc5fa90e68a.camel@redhat.com>
+         <87f98f81-8f77-3bc5-374c-f498e07cb1bd@linaro.org>
+         <0fc29577a5c69530145b6095fa1ac1a51949ba8e.camel@redhat.com>
+         <c200581b8fc167f3a0c09ef6233b8d81@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 04 Jun 2019 15:21:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The CrOS EC is gaining lots of subdevices that are autodetectable by
-sending the EC_FEATURE_GET_CMD, it takes fair amount of boiler plate
-code to add those devices. So, add a struct that can be used to quickly
-add new subdevices without having to duplicate code.
+On Mon, 2019-06-03 at 13:04 -0600, Subash Abhinov Kasiviswanathan
+wrote:
+> > > I can't (or won't) comment right now on whether IPA needs its own
+> > > netdev for rmnet to use.  The IPA endpoints used for the modem
+> > > network interfaces are enabled when the netdev is opened and
+> > > disabled when closed.  Outside of that, TX and RX are pretty
+> > > much immediately passed through to the layer below or above.
+> > > IPA currently has no other net device operations.
+> > 
+> > I don't really have issues with the patchset underneath the netdev
+> > layer. I'm interested in how the various bits present themselves to
+> > userspace, which is why I am trying to tie this in with Johannes'
+> > conversation about WWAN devices, netdevs, channels, and how the
+> > various
+> > drivers present API for creating data channels that map to
+> > different
+> > modem contexts.
+> > 
+> > So let me rephrase. If the control plane has set up the default
+> > context
+> > and sent a QMI Start Network message (or the network attached the
+> > default one) and the resulting IP details are applied to the IPA
+> > netdev
+> > can things just start sending data? Or do we need to create an
+> > rmnet on
+> > top to get that working?
+> > 
+> > Dan
+> 
+> Hi Dan
+> 
+> All data from the hardware will have the MAP headers.
+> We still need to create rmnet devs over the IPA netdev and use it
+> for 
+> the
+> data path.
+> The IPA netdev will pass on the packets which it receives from the 
+> hardware
+> and queue it to network stack where it will be intercepted by the
+> rmnet rx handler.
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
+Ok, so IPA only needs a netdev so that rmnet has something to
+send/receive packets to/from? This gets even closer to the discussion
+in "cellular modem driver APIs - take 2" from last week.
 
- drivers/mfd/cros_ec_dev.c | 132 +++++++++++++++++++++-----------------
- 1 file changed, 74 insertions(+), 58 deletions(-)
-
-diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-index 6fcfc8f17e03..49e4ab7ebb71 100644
---- a/drivers/mfd/cros_ec_dev.c
-+++ b/drivers/mfd/cros_ec_dev.c
-@@ -34,6 +34,18 @@ struct cros_feature_to_name {
- 	const char *desc;
- };
- 
-+/**
-+ * cros_feature_to_cells - CrOS feature id to mfd cells association.
-+ * @id: The feature identifier.
-+ * @mfd_cells: Pointer to the array of mfd cells that needs to be added.
-+ * @num_cells: Number of mfd cells into the array.
-+ */
-+struct cros_feature_to_cells {
-+	unsigned int id;
-+	const struct mfd_cell *mfd_cells;
-+	unsigned int num_cells;
-+};
-+
- static const struct cros_feature_to_name cros_mcu_devices[] = {
- 	{
- 		.id	= EC_FEATURE_FINGERPRINT,
-@@ -52,6 +64,48 @@ static const struct cros_feature_to_name cros_mcu_devices[] = {
- 	},
- };
- 
-+static const struct mfd_cell cros_ec_cec_cells[] = {
-+	{ .name = "cros-ec-cec", },
-+};
-+
-+static const struct mfd_cell cros_ec_rtc_cells[] = {
-+	{ .name = "cros-ec-rtc", },
-+};
-+
-+static const struct mfd_cell cros_usbpd_charger_cells[] = {
-+	{ .name = "cros-usbpd-charger", },
-+	{ .name = "cros-usbpd-logger", },
-+};
-+
-+static const struct cros_feature_to_cells cros_subdevices[] = {
-+	{
-+		.id		= EC_FEATURE_CEC,
-+		.mfd_cells	= cros_ec_cec_cells,
-+		.num_cells	= ARRAY_SIZE(cros_ec_cec_cells),
-+	},
-+	{
-+		.id		= EC_FEATURE_RTC,
-+		.mfd_cells	= cros_ec_rtc_cells,
-+		.num_cells	= ARRAY_SIZE(cros_ec_rtc_cells),
-+	},
-+	{
-+		.id		= EC_FEATURE_USB_PD,
-+		.mfd_cells	= cros_usbpd_charger_cells,
-+		.num_cells	= ARRAY_SIZE(cros_usbpd_charger_cells),
-+	},
-+};
-+
-+static const struct mfd_cell cros_ec_platform_cells[] = {
-+	{ .name = "cros-ec-chardev", },
-+	{ .name = "cros-ec-debugfs", },
-+	{ .name = "cros-ec-lightbar", },
-+	{ .name = "cros-ec-sysfs", },
-+};
-+
-+static const struct mfd_cell cros_ec_vbc_cells[] = {
-+	{ .name = "cros-ec-vbc", }
-+};
-+
- static int cros_ec_check_features(struct cros_ec_dev *ec, int feature)
- {
- 	struct cros_ec_command *msg;
-@@ -211,30 +265,6 @@ static void cros_ec_sensors_register(struct cros_ec_dev *ec)
- 	kfree(msg);
- }
- 
--static const struct mfd_cell cros_ec_cec_cells[] = {
--	{ .name = "cros-ec-cec" }
--};
--
--static const struct mfd_cell cros_ec_rtc_cells[] = {
--	{ .name = "cros-ec-rtc" }
--};
--
--static const struct mfd_cell cros_usbpd_charger_cells[] = {
--	{ .name = "cros-usbpd-charger" },
--	{ .name = "cros-usbpd-logger" },
--};
--
--static const struct mfd_cell cros_ec_platform_cells[] = {
--	{ .name = "cros-ec-chardev" },
--	{ .name = "cros-ec-debugfs" },
--	{ .name = "cros-ec-lightbar" },
--	{ .name = "cros-ec-sysfs" },
--};
--
--static const struct mfd_cell cros_ec_vbc_cells[] = {
--	{ .name = "cros-ec-vbc" }
--};
--
- static int ec_device_probe(struct platform_device *pdev)
- {
- 	int retval = -ENOMEM;
-@@ -292,42 +322,28 @@ static int ec_device_probe(struct platform_device *pdev)
- 	if (cros_ec_check_features(ec, EC_FEATURE_MOTION_SENSE))
- 		cros_ec_sensors_register(ec);
- 
--	/* Check whether this EC instance has CEC host command support */
--	if (cros_ec_check_features(ec, EC_FEATURE_CEC)) {
--		retval = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
--					 cros_ec_cec_cells,
--					 ARRAY_SIZE(cros_ec_cec_cells),
--					 NULL, 0, NULL);
--		if (retval)
--			dev_err(ec->dev,
--				"failed to add cros-ec-cec device: %d\n",
--				retval);
--	}
--
--	/* Check whether this EC instance has RTC host command support */
--	if (cros_ec_check_features(ec, EC_FEATURE_RTC)) {
--		retval = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
--					 cros_ec_rtc_cells,
--					 ARRAY_SIZE(cros_ec_rtc_cells),
--					 NULL, 0, NULL);
--		if (retval)
--			dev_err(ec->dev,
--				"failed to add cros-ec-rtc device: %d\n",
--				retval);
--	}
--
--	/* Check whether this EC instance has the PD charge manager */
--	if (cros_ec_check_features(ec, EC_FEATURE_USB_PD)) {
--		retval = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
--					 cros_usbpd_charger_cells,
--					 ARRAY_SIZE(cros_usbpd_charger_cells),
--					 NULL, 0, NULL);
--		if (retval)
--			dev_err(ec->dev,
--				"failed to add cros-usbpd-charger device: %d\n",
--				retval);
-+	/*
-+	 * The following subdevices can be detected by sending the
-+	 * EC_FEATURE_GET_CMD Embedded Controller device.
-+	 */
-+	for (i = 0; i < ARRAY_SIZE(cros_subdevices); i++) {
-+		if (cros_ec_check_features(ec, cros_subdevices[i].id)) {
-+			retval = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
-+						 cros_subdevices[i].mfd_cells,
-+						 cros_subdevices[i].num_cells,
-+						 NULL, 0, NULL);
-+			if (retval)
-+				dev_err(ec->dev,
-+					"failed to add %s subdevice: %d\n",
-+					cros_subdevices[i].mfd_cells->name,
-+					retval);
-+		}
- 	}
- 
-+	/*
-+	 * The following subdevices cannot be detected by sending the
-+	 * EC_FEATURE_GET_CMD to the Embedded Controller device.
-+	 */
- 	retval = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
- 				 cros_ec_platform_cells,
- 				 ARRAY_SIZE(cros_ec_platform_cells),
--- 
-2.20.1
+Dan
 
