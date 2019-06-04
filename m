@@ -2,112 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91E57346B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:30:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E76ED34637
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:06:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbfFDMaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 08:30:14 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:34879 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727394AbfFDMaO (ORCPT
+        id S1727705AbfFDMGa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 08:06:30 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:44957 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727380AbfFDMG3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 08:30:14 -0400
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190604123011epoutp034923011a1ea7c3cd9a7819d13c96abdd~k-rHztXpQ0448704487epoutp03F
-        for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2019 12:30:11 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190604123011epoutp034923011a1ea7c3cd9a7819d13c96abdd~k-rHztXpQ0448704487epoutp03F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1559651411;
-        bh=kmF2T/PAVQuwoEHZhBFuwtSSbS8VE1iD9MRWghRfsFI=;
-        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-        b=fHogesG76Rr5mXCpPSTuODgzvXKaBhhXyZNchRiFvFcbt6o8WJsbCrnAIC2qAuwvZ
-         6ao9uUmoNdbk2kd6gvI5SDvgOJcXz42453ViJuZzf7i/TUH9GJ+fv2xMPMuE37BX5N
-         aCxEYjoYXPxLruUW5sJ6rS600pKQkK5Rqe6V0PME=
-Received: from epsmges5p1new.samsung.com (unknown [182.195.40.195]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-        20190604123008epcas5p26455592843801a04196d8fd161f1400e~k-rFRwsi40160501605epcas5p2D;
-        Tue,  4 Jun 2019 12:30:08 +0000 (GMT)
-X-AuditID: b6c32a49-5b7ff70000000fe7-f9-5cf66450b68f
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        90.8C.04071.05466FC5; Tue,  4 Jun 2019 21:30:08 +0900 (KST)
-Mime-Version: 1.0
-Subject: RE:(2) [PATCH 0/4] zstd: reduce stack usage
-Reply-To: v.narang@samsung.com
-From:   Vaneet Narang <v.narang@samsung.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Maninder Singh <maninder1.s@samsung.com>
-CC:     "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "gustavo@embeddedor.com" <gustavo@embeddedor.com>,
-        "joe@perches.com" <joe@perches.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        AMIT SAHRAWAT <a.sahrawat@samsung.com>,
-        PANKAJ MISHRA <pankaj.m@samsung.com>,
-        Vaneet Narang <v.narang@samsung.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <20190603144912.34e1414376e07c7b1af53205@linux-foundation.org>
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20190604120623epcms5p3fc13e98047e7b44d6da144425213b4fe@epcms5p3>
-Date:   Tue, 04 Jun 2019 17:36:23 +0530
-X-CMS-MailID: 20190604120623epcms5p3fc13e98047e7b44d6da144425213b4fe
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJJsWRmVeSWpSXmKPExsWy7bCmhm5AyrcYg2NrpSwu7k61mLN+DZvF
-        nPMtLBZb96hadL+SsZh9/zGLxZnuXIv7934yWVzeNYfN4vD8NhaLe2+2MlkcOjmX0YHHY3bD
-        RRaPLStvMnmsO6jqse2AqseJGb9ZPL6susbs0bdlFaPH501yARxROTYZqYkpqUUKqXnJ+SmZ
-        eem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QIcqKZQl5pQChQISi4uV9O1sivJL
-        S1IVMvKLS2yVUgtScgoMjQr0ihNzi0vz0vWS83OtDA0MjEyBKhNyMnYd3MtWsIWtYu6yj4wN
-        jFNZuxg5OCQETCTeP7fsYuTiEBLYzSjRfuIWG0icV0BQ4u8O4S5GTg5hoJIVm88ygdhCAnIS
-        x2/sZoSI60icmLeGEaScTUBL4mNLOIgpIhApcWuVOshEZoHPzBLtZz6BlUsI8ErMaH/KAmFL
-        S2xfvhUszingLbFu62uouKjEzdVv2WHs98fmQ/WKSLTeO8sMYQtKPPi5mxHiehmJXW/FQXZJ
-        CHQzSkw4t5wVwpnBKHGq9w1Ug7nE+ZPzwWxeAV+Je49ngC1jEVCV+HPwMCtEjYvE5Y+vwRYz
-        C2hLLFv4mhlkAbOApsT6XfoQJbISU0+tY4Io4ZPo/f2ECeavHfNgbCWJcwd3skHYEhJPOmdC
-        neAh8WTrSkZIMJ9nlFh06Aj7BEaFWYiQnoVk8yyEzQsYmVcxSqYWFOempxabFhjmpZYjR+8m
-        RnCy1fLcwTjrnM8hRgEORiUe3hnx32KEWBPLiitzDzFKcDArifAm3v4SI8SbklhZlVqUH19U
-        mpNafIjRFBgGE5mlRJPzgZkgryTe0NTIzMzA0sDU2MLMUEmcdxLr1RghgfTEktTs1NSC1CKY
-        PiYOTqkGRomzCvYV6s/DTxoneDdOK+Y8VsWfr7WjqWH33MBdc0Qs4ryP781/H8iXPs9LVWzO
-        qZLLS2ed0sn8m/HZy//xRO7ykKTyp07xBroqN9kF3nSunN7/JOzJu6MfzCq4lr+Yue6k29kJ
-        avfMom+pzpxbvf2VlIGO4v/CHVNnfi+euE/24p/7P5o7nyixFGckGmoxFxUnAgA5QNF2zAMA
-        AA==
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190603090227epcas5p348327061a3facbb9dfcf662bf2bc196e
-References: <20190603144912.34e1414376e07c7b1af53205@linux-foundation.org>
-        <1559552526-4317-1-git-send-email-maninder1.s@samsung.com>
-        <CGME20190603090227epcas5p348327061a3facbb9dfcf662bf2bc196e@epcms5p3>
+        Tue, 4 Jun 2019 08:06:29 -0400
+Received: by mail-qt1-f194.google.com with SMTP id x47so13309670qtk.11
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 05:06:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CSGvUx9GojQFsA0lbdZ+SFaekbPmlUjrQKgejokKg+k=;
+        b=jObHag2Re1OQBRiPMD98LKrbSNXBg6U1V1ih7Z8e/sxI0KtTI0tlLleyPBg6b6FPuO
+         4YXwRYrtOUdO4UAhu79DSk/AxeS5fDUnFzQ0vy/akFx/lrL6FcLkBvQZGnwMlQxnhht4
+         2dHeiTo01NzbeHT09DkNC5BoCsfuAVLi/FWfVcl41TSQYyN0IQoDOxRfutLoa6xczt5s
+         PuyuQAjPEbDZ6j0gBzX1DbBrWXUA30LxltDBBKb7rf+VP1I91vFD8byta9GSVgC9zQtS
+         ti259Z2ipr20LdJJEmD3lLEQgQvhTFr3QlySJCsBJlA34Jk+eeVrKR7peB1o5cd18wq5
+         jJ9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CSGvUx9GojQFsA0lbdZ+SFaekbPmlUjrQKgejokKg+k=;
+        b=cwBrLH/Oz0ihKyJDrlxkgAesKrEM42qdXZW5H/RUtFTRZtydlj3i7/RZkvSo9Cqmrx
+         WPnY7sS09mMK87atj0PagkEmN39DLlY1Du60dvbzFskQ6u+Yz4WxuR4vtzS29SOboYMu
+         AYBEZpp7dNQkhgC6D9ZGDh++mGEizwIVWX8ZahJ8BCzhzGOWFigLRisH49nY4QOMIUK5
+         eJuAOY12G32ipBGqCTEtWCT3piURloUEXvbo6EBs1uG6ICWCqdbQXSRvzWlIf3BLJd1d
+         e89C2h+7i2maPDs8xuPbHpbxOEVPeSd007QGgO/HHb656e1JHSwNPOpOI1+BoMi8+g+L
+         J/7w==
+X-Gm-Message-State: APjAAAVZtEPpkJixxlBOIM21gdQuQzuj+NaaiG38IAuhTBdAujBDDv6N
+        69Wv3Xvpl+0p20IQKUuwZn+ubQ34Fww=
+X-Google-Smtp-Source: APXvYqzREUMVRw04rOCmkwg6WVeALFec0tCWaO0n3ko0P3uVHl4IzYBAnV0CskTwR8PG+uweBo7Y9w==
+X-Received: by 2002:ac8:2a63:: with SMTP id l32mr8071637qtl.117.1559649988572;
+        Tue, 04 Jun 2019 05:06:28 -0700 (PDT)
+Received: from localhost (pool-108-27-252-85.nycmny.fios.verizon.net. [108.27.252.85])
+        by smtp.gmail.com with ESMTPSA id t189sm615951qkd.54.2019.06.04.05.06.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Jun 2019 05:06:27 -0700 (PDT)
+Date:   Tue, 4 Jun 2019 08:06:26 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>, jannh@google.com,
+        oleg@redhat.com, christian@brauner.io, oleksandr@redhat.com,
+        hdanton@sina.com
+Subject: Re: [RFCv2 1/6] mm: introduce MADV_COLD
+Message-ID: <20190604120626.GB18545@cmpxchg.org>
+References: <20190531064313.193437-2-minchan@kernel.org>
+ <20190531084752.GI6896@dhcp22.suse.cz>
+ <20190531133904.GC195463@google.com>
+ <20190531140332.GT6896@dhcp22.suse.cz>
+ <20190531143407.GB216592@google.com>
+ <20190603071607.GB4531@dhcp22.suse.cz>
+ <20190603172717.GA30363@cmpxchg.org>
+ <20190603203230.GB22799@dhcp22.suse.cz>
+ <20190603215059.GA16824@cmpxchg.org>
+ <20190603230205.GA43390@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190603230205.GA43390@google.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
+On Tue, Jun 04, 2019 at 08:02:05AM +0900, Minchan Kim wrote:
+> Hi Johannes,
+> 
+> On Mon, Jun 03, 2019 at 05:50:59PM -0400, Johannes Weiner wrote:
+> > On Mon, Jun 03, 2019 at 10:32:30PM +0200, Michal Hocko wrote:
+> > > On Mon 03-06-19 13:27:17, Johannes Weiner wrote:
+> > > > On Mon, Jun 03, 2019 at 09:16:07AM +0200, Michal Hocko wrote:
+> > > > > On Fri 31-05-19 23:34:07, Minchan Kim wrote:
+> > > > > > On Fri, May 31, 2019 at 04:03:32PM +0200, Michal Hocko wrote:
+> > > > > > > On Fri 31-05-19 22:39:04, Minchan Kim wrote:
+> > > > > > > > On Fri, May 31, 2019 at 10:47:52AM +0200, Michal Hocko wrote:
+> > > > > > > > > On Fri 31-05-19 15:43:08, Minchan Kim wrote:
+> > > > > > > > > > When a process expects no accesses to a certain memory range, it could
+> > > > > > > > > > give a hint to kernel that the pages can be reclaimed when memory pressure
+> > > > > > > > > > happens but data should be preserved for future use.  This could reduce
+> > > > > > > > > > workingset eviction so it ends up increasing performance.
+> > > > > > > > > > 
+> > > > > > > > > > This patch introduces the new MADV_COLD hint to madvise(2) syscall.
+> > > > > > > > > > MADV_COLD can be used by a process to mark a memory range as not expected
+> > > > > > > > > > to be used in the near future. The hint can help kernel in deciding which
+> > > > > > > > > > pages to evict early during memory pressure.
+> > > > > > > > > > 
+> > > > > > > > > > Internally, it works via deactivating pages from active list to inactive's
+> > > > > > > > > > head if the page is private because inactive list could be full of
+> > > > > > > > > > used-once pages which are first candidate for the reclaiming and that's a
+> > > > > > > > > > reason why MADV_FREE move pages to head of inactive LRU list. Therefore,
+> > > > > > > > > > if the memory pressure happens, they will be reclaimed earlier than other
+> > > > > > > > > > active pages unless there is no access until the time.
+> > > > > > > > > 
+> > > > > > > > > [I am intentionally not looking at the implementation because below
+> > > > > > > > > points should be clear from the changelog - sorry about nagging ;)]
+> > > > > > > > > 
+> > > > > > > > > What kind of pages can be deactivated? Anonymous/File backed.
+> > > > > > > > > Private/shared? If shared, are there any restrictions?
+> > > > > > > > 
+> > > > > > > > Both file and private pages could be deactived from each active LRU
+> > > > > > > > to each inactive LRU if the page has one map_count. In other words,
+> > > > > > > > 
+> > > > > > > >     if (page_mapcount(page) <= 1)
+> > > > > > > >         deactivate_page(page);
+> > > > > > > 
+> > > > > > > Why do we restrict to pages that are single mapped?
+> > > > > > 
+> > > > > > Because page table in one of process shared the page would have access bit
+> > > > > > so finally we couldn't reclaim the page. The more process it is shared,
+> > > > > > the more fail to reclaim.
+> > > > > 
+> > > > > So what? In other words why should it be restricted solely based on the
+> > > > > map count. I can see a reason to restrict based on the access
+> > > > > permissions because we do not want to simplify all sorts of side channel
+> > > > > attacks but memory reclaim is capable of reclaiming shared pages and so
+> > > > > far I haven't heard any sound argument why madvise should skip those.
+> > > > > Again if there are any reasons, then document them in the changelog.
+> > > > 
+> > > > I think it makes sense. It could be explained, but it also follows
+> > > > established madvise semantics, and I'm not sure it's necessarily
+> > > > Minchan's job to re-iterate those.
+> > > > 
+> > > > Sharing isn't exactly transparent to userspace. The kernel does COW,
+> > > > ksm etc. When you madvise, you can really only speak for your own
+> > > > reference to that memory - "*I* am not using this."
+> > > > 
+> > > > This is in line with other madvise calls: MADV_DONTNEED clears the
+> > > > local page table entries and drops the corresponding references, so
+> > > > shared pages won't get freed. MADV_FREE clears the pte dirty bit and
+> > > > also has explicit mapcount checks before clearing PG_dirty, so again
+> > > > shared pages don't get freed.
+> > > 
+> > > Right, being consistent with other madvise syscalls is certainly a way
+> > > to go. And I am not pushing one way or another, I just want this to be
+> > > documented with a reasoning behind. Consistency is certainly an argument
+> > > to use.
+> > > 
+> > > On the other hand these non-destructive madvise operations are quite
+> > > different and the shared policy might differ as a result as well. We are
+> > > aging objects rather than destroying them after all. Being able to age
+> > > a pagecache with a sufficient privileges sounds like a useful usecase to
+> > > me. In other words you are able to cause the same effect indirectly
+> > > without the madvise operation so it kinda makes sense to allow it in a
+> > > more sophisticated way.
+> > 
+> > Right, I don't think it's about permission - as you say, you can do
+> > this indirectly. Page reclaim is all about relative page order, so if
+> > we thwarted you from demoting some pages, you could instead promote
+> > other pages to cause a similar end result.
+> > 
+> > I think it's about intent. You're advising the kernel that *you're*
+> > not using this memory and would like to have it cleared out based on
+> > that knowledge. You could do the same by simply allocating the new
+> > pages and have the kernel sort it out. However, if the kernel sorts it
+> > out, it *will* look at other users of the page, and it might decide
+> > that other pages are actually colder when considering all users.
+> > 
+> > When you ignore shared state, on the other hand, the pages you advise
+> > out could refault right after. And then, not only did you not free up
+> > the memory, but you also caused IO that may interfere with bringing in
+> > the new data for which you tried to create room in the first place.
+> > 
+> > So I don't think it ever makes sense to override it.
+> > 
+> > But it might be better to drop the explicit mapcount check and instead
+> > make the local pte young and call shrink_page_list() without the
+>                      ^
+>                      old?
 
->> This patch set reduces stack usage for zstd code, because target like AR=
-M has
->> limited 8KB kernel stack, which is getting overflowed due to hight stack=
- usage
->> of zstd code with call flow like:
-=20
->That's rather bad behaviour.  I assume the patchset actually fixes this?
+Ah yes, of course. Clear the reference bit.
 
-Yes, patchset tries to reduce around 300 bytes of stack usage of zstd compr=
-ession path.=20
-We faced high stack usage issue on switching compression algo from LZO/LZ4 =
-to zstd algo.
-zstd compression uses around 1200 bytes of stack which is huge as compared=
-=20
-to LZO/LZ4 which uses negligible stack (< 200 bytes).
+> > TTU_IGNORE_ACCESS, ignore_references flags - leave it to reclaim code
+> > to handle references and shared pages exactly the same way it would if
+> > those pages came fresh off the LRU tail, excluding only the reference
+> > from the mapping that we're madvising.
+> 
+> You are confused from the name change. Here, MADV_COLD is deactivating
+> , not pageing out. Therefore, shrink_page_list doesn't matter.
+> And madvise_cold_pte_range already makes the local pte *old*(I guess
+> your saying was typo).
+> I guess that's exactly what Michal wanted: just removing page_mapcount
+> check and defers to decision on normal page reclaim policy:
+> If I didn't miss your intention, it seems you and Michal are on same page.
+> (Please correct me if you want to say something other)
+> I could drop the page_mapcount check at next revision.
 
-=20
->I think I'll schedule the patchset for 5.2-rcX so that zstd is actually
->usable on arm in 5.2.  Does that sound OK?=C2=A0=0D=0AOK=0D=0A=0D=0ARegard=
-s,=0D=0AVaneet=20Narang=0D=0A
+Sorry, I was actually talking about the MADV_PAGEOUT patch in this
+case, since this turned into a general discussion about how shared
+pages should be handled, which applies to both operations.
+
+My argument was for removing the check in both patches, yes, but to
+additionally change the pageout patch to 1) make the advised pte old
+and then 2) call shrink_page_list() WITHOUT ignore_access/references
+so that it respects references from other mappings, if any.
