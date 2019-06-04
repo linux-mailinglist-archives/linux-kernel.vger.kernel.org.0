@@ -2,129 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B34CC350E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 22:31:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 335DE35107
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 22:33:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726638AbfFDUbk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 16:31:40 -0400
-Received: from mga12.intel.com ([192.55.52.136]:3131 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726343AbfFDUbi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 16:31:38 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jun 2019 13:31:38 -0700
-X-ExtLoop1: 1
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga004.jf.intel.com with ESMTP; 04 Jun 2019 13:31:37 -0700
-Date:   Tue, 4 Jun 2019 13:32:47 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>
-Subject: Re: [PATCH v3] mm/swap: Fix release_pages() when releasing devmap
- pages
-Message-ID: <20190604203247.GB3980@iweiny-DESK2.sc.intel.com>
-References: <20190604164813.31514-1-ira.weiny@intel.com>
- <cfd74a0f-71b5-1ece-80af-7f415321d5c1@nvidia.com>
- <CAPcyv4hmN7M3Y1HzVGSi9JuYKUUmvBRgxmkdYdi_6+H+eZAyHA@mail.gmail.com>
- <4d97645c-0e55-37c0-1a16-8649706b9e78@nvidia.com>
+        id S1726528AbfFDUdw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 16:33:52 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39638 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726033AbfFDUdw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 16:33:52 -0400
+Received: by mail-pg1-f196.google.com with SMTP id 196so11021812pgc.6;
+        Tue, 04 Jun 2019 13:33:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=hXC/2/MzxNes+DPxbYu8rbPijB+wJo91rnKEeiN64qk=;
+        b=jZ16VgBpozscYLlEYideku+hB2+dcvvqT6XGssHSIMyc59YrL5efsBqsG9o/QEkvhX
+         mtqzboXa6Z3zBHMrXPZqyemXpN2lvS7+OKt0gXtDZ/c3VlwH4x0CrvjNrdoPPmX9RZqS
+         cIH/JTbRmemcxAfKkBAkcr0aC2a2JJQBNuTWi50YT5CrPb49N7ywI5nmxNYXCSw8f1CU
+         2jy1EPsM+EiFqGeB/WPnBAbxpfjb7N7jjNfnOQ+WhitHU3kH+S1sycBqD4kggB4GM4rO
+         jE/xU32dSVzvJhZHxeP6N+8H1YbP04ADvoagpyeZNf0NqZMO61GgG1iL6c0JDTcDwf/+
+         JRdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=hXC/2/MzxNes+DPxbYu8rbPijB+wJo91rnKEeiN64qk=;
+        b=QOdBmPItKLZPRqquw1MCiJAvSqfE6Z/rGIo7a1VKlMM+AJqeMjzGGkmmPOoX8M8T6r
+         6rhSSwzrOPp8fq5705ea1lMzWnz/yiVKRacGB67bLlHeVot7RTjNLWDk25W1shFJcERF
+         JIzRKHqWRIR/0JVQC60aXDLwmlm0N+WoQ5FWkkmYjrGp7WmWNJZ3nxxalxEq/Wds39bK
+         CyicFg1twNPriUWEGCBMjIhHEE2fbJITsSlZ/70oc8vHl/RSOKQD9E47nNgO6k+gVPlH
+         rwW4o3JLuWe75V8FTvkXXQAyTYv4n8pP7/Q+rkdi743dAXvLgKhWsRLa1mId/67sFs9u
+         ze0g==
+X-Gm-Message-State: APjAAAUV1ACKbAg21n/6weGaq5mnAjoNw20wBkQzeGdFk4/0NzoWYe8M
+        7MidmUlLMPB79/sxzrWgkjoZwhh1
+X-Google-Smtp-Source: APXvYqxaRIpajJebtbtLZuYPKStcI0FB7V8SRd7LI07Zm7jwcSGFPcTThJ8EMI7zM1D+TPoryWNngw==
+X-Received: by 2002:a17:90a:9f90:: with SMTP id o16mr40136106pjp.72.1559680431122;
+        Tue, 04 Jun 2019 13:33:51 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-101-123-102.oc.oc.cox.net. [68.101.123.102])
+        by smtp.gmail.com with ESMTPSA id m6sm20717993pgr.18.2019.06.04.13.33.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Jun 2019 13:33:50 -0700 (PDT)
+Subject: Re: [PATCH v3 net-next 05/17] net: dsa: sja1105: Reverse TPID and
+ TPID2
+To:     Vladimir Oltean <olteanv@gmail.com>, vivien.didelot@gmail.com,
+        andrew@lunn.ch, davem@davemloft.net, richardcochran@gmail.com,
+        john.stultz@linaro.org, tglx@linutronix.de, sboyd@kernel.org
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+References: <20190604170756.14338-1-olteanv@gmail.com>
+ <20190604170756.14338-6-olteanv@gmail.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <d063b199-f807-330b-90ff-46240221bf30@gmail.com>
+Date:   Tue, 4 Jun 2019 13:33:49 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4d97645c-0e55-37c0-1a16-8649706b9e78@nvidia.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20190604170756.14338-6-olteanv@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 04, 2019 at 01:17:42PM -0700, John Hubbard wrote:
-> On 6/4/19 1:11 PM, Dan Williams wrote:
-> > On Tue, Jun 4, 2019 at 12:48 PM John Hubbard <jhubbard@nvidia.com> wrote:
-> >>
-> >> On 6/4/19 9:48 AM, ira.weiny@intel.com wrote:
-> >>> From: Ira Weiny <ira.weiny@intel.com>
-> >>>
-> ...
-> >>> diff --git a/mm/swap.c b/mm/swap.c
-> >>> index 7ede3eddc12a..6d153ce4cb8c 100644
-> >>> --- a/mm/swap.c
-> >>> +++ b/mm/swap.c
-> >>> @@ -740,15 +740,20 @@ void release_pages(struct page **pages, int nr)
-> >>>               if (is_huge_zero_page(page))
-> >>>                       continue;
-> >>>
-> >>> -             /* Device public page can not be huge page */
-> >>> -             if (is_device_public_page(page)) {
-> >>> +             if (is_zone_device_page(page)) {
-> >>>                       if (locked_pgdat) {
-> >>>                               spin_unlock_irqrestore(&locked_pgdat->lru_lock,
-> >>>                                                      flags);
-> >>>                               locked_pgdat = NULL;
-> >>>                       }
-> >>> -                     put_devmap_managed_page(page);
-> >>> -                     continue;
-> >>> +                     /*
-> >>> +                      * Not all zone-device-pages require special
-> >>> +                      * processing.  Those pages return 'false' from
-> >>> +                      * put_devmap_managed_page() expecting a call to
-> >>> +                      * put_page_testzero()
-> >>> +                      */
-> >>
-> >> Just a documentation tweak: how about:
-> >>
-> >>                         /*
-> >>                          * ZONE_DEVICE pages that return 'false' from
-> >>                          * put_devmap_managed_page() do not require special
-> >>                          * processing, and instead, expect a call to
-> >>                          * put_page_testzero().
-> >>                          */
-> > 
-> > Looks better to me, but maybe just go ahead and list those
-> > expectations explicitly. Something like:
-> > 
-> >                         /*
-> >                          * put_devmap_managed_page() only handles
-> >                          * ZONE_DEVICE (struct dev_pagemap managed)
-> >                          * pages when the hosting dev_pagemap has the
-> >                          * ->free() or ->fault() callback handlers
-> >                          *  implemented as indicated by
-> >                          *  dev_pagemap.type. Otherwise the expectation
-> >                          *  is to fall back to a plain decrement /
-> >                          *  put_page_testzero().
-> >                          */
-> 
-> I like it--but not here, because it's too much internal detail in a
-> call site that doesn't use that level of detail. The call site looks
-> at the return value, only.
-> 
-> Let's instead put that blurb above (or in) the put_devmap_managed_page() 
-> routine itself. And leave the blurb that I wrote where it is. And then I
-> think everything will have an appropriate level of detail in the right places.
 
-I agree.  This leaves it open that this handles any special processing which is
-required.
 
-FWIW the same call is made in put_page() and has no comment so perhaps we are
-getting wrapped around the axle for no reason?
-
-Frankly I questioned myself when I mentioned put_page_testzero() as well.  But
-I'm ok with Johns suggestion.  My wording was a bit "rushed".  Sorry about
-that.  I wanted to remove the word 'fail' from the comment because I think it
-is what caught Michal's eye.
-
-Ira
-
+On 6/4/2019 10:07 AM, Vladimir Oltean wrote:
+> From reading the P/Q/R/S user manual, it appears that TPID is used by
+> the switch for detecting S-tags and TPID2 for C-tags.  Their meaning is
+> not clear from the E/T manual.
 > 
-> 
-> thanks,
-> -- 
-> John Hubbard
-> NVIDIA
-> 
+> Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
+
+
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+-- 
+Florian
