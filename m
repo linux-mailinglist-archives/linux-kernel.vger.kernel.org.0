@@ -2,181 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4DA933F60
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 08:57:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11E3333F66
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 08:58:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726961AbfFDG5B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 02:57:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48394 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726547AbfFDG5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 02:57:00 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7767FAD69;
-        Tue,  4 Jun 2019 06:56:58 +0000 (UTC)
-Date:   Tue, 4 Jun 2019 08:56:57 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Minchan Kim <minchan@kernel.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
-        Tim Murray <timmurray@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Daniel Colascione <dancol@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Brian Geffon <bgeffon@google.com>, jannh@google.com,
-        oleg@redhat.com, christian@brauner.io, oleksandr@redhat.com,
-        hdanton@sina.com
-Subject: Re: [RFCv2 1/6] mm: introduce MADV_COLD
-Message-ID: <20190604065657.GC4669@dhcp22.suse.cz>
-References: <20190531064313.193437-2-minchan@kernel.org>
- <20190531084752.GI6896@dhcp22.suse.cz>
- <20190531133904.GC195463@google.com>
- <20190531140332.GT6896@dhcp22.suse.cz>
- <20190531143407.GB216592@google.com>
- <20190603071607.GB4531@dhcp22.suse.cz>
- <20190603172717.GA30363@cmpxchg.org>
- <20190603203230.GB22799@dhcp22.suse.cz>
- <20190603215059.GA16824@cmpxchg.org>
- <20190603230205.GA43390@google.com>
+        id S1726880AbfFDG6z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 02:58:55 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:37259 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726837AbfFDG6x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 02:58:53 -0400
+Received: by mail-lj1-f193.google.com with SMTP id 131so6039843ljf.4
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Jun 2019 23:58:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=miy+F0UoMi0lHDhsda5tGypnZkgAe9GPxZhd/GwR4u4=;
+        b=mVr5fzjsLR1nkrv+kdyuXyQZYPVgVYh780mkZNBtzql5tdvV6xYIXziep7mAHvlpgr
+         wgVyucCn9Q+gRs9xdpx5DDJBkgsWgpVO758qfmyjDY+nq/AGEVHSIj6TD8fqoVO6NuB2
+         gmN9XNCHZemMWo7MBLZf9LlwZdrVYmZpT4HX/YhK8tgItVFx1+9PVUn4axVECn2cPbiR
+         xaZ9JlI8wU4yhQ5NKlasEhRA9N5TlsYY08c9dTH9lwSnisaGNESI7RSrQuR+URHoqolU
+         7sWzDFpg5l+yS+IUyV3P5ZwDTQ9RdxIoM9FShhqodspBm7i0OQ2BQQ+n7YVmD1emI5gi
+         c3RA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=miy+F0UoMi0lHDhsda5tGypnZkgAe9GPxZhd/GwR4u4=;
+        b=cYnIHcX3bDD5TB9nbvCaZbJHO/scJvmzjlpx4WHdTlcJcmlH0TjG90atOosmF/vK3r
+         uJblnkGl4ACqNqfoJ4BK/4fYy4WeiD5/txhqhZYEEJ0Gv0CWx46MgmXb9kX9ni0ZN1Ju
+         uS2ferPFOsZl8zA8E7lGxMa1mbyFw+DKhsQF1FaY9ZaUBUIxsHAnExKGJkyWgq9r6jPk
+         SxM7RFbggbmG78aNgipi7gwERLlfJ66KMuim5UuODx0fQhixJeceCJJVl4uQ+Ymrmt0U
+         91THeEKSAatFLJ+pUfYXefVuZPHXvXJsmA7LKwvP4e5a0Sh38dXFF0wksNQzzZPrWKxB
+         rSog==
+X-Gm-Message-State: APjAAAUFiHTnVmepLUJTJHkVLWMwy/38+s6JcI1hTIBrD9lW8XWo6ruM
+        ftevDhaI22usT7OAR7CE1SPaqg==
+X-Google-Smtp-Source: APXvYqzs6Jwh4UF70YPDT+9ZM8x2yVImFgcqBfuOAwxH86MX/JoTCM2AAKQTK0oKPr9S/2mco/Dh9Q==
+X-Received: by 2002:a2e:9654:: with SMTP id z20mr3491108ljh.52.1559631531818;
+        Mon, 03 Jun 2019 23:58:51 -0700 (PDT)
+Received: from localhost (c-1c3670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.28])
+        by smtp.gmail.com with ESMTPSA id r11sm2978344ljh.90.2019.06.03.23.58.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Jun 2019 23:58:51 -0700 (PDT)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     minchan@kernel.org, ngupta@vflare.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] zsmalloc: remove unused variable
+Date:   Tue,  4 Jun 2019 08:58:26 +0200
+Message-Id: <20190604065826.26064-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190603230205.GA43390@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 04-06-19 08:02:05, Minchan Kim wrote:
-> Hi Johannes,
-> 
-> On Mon, Jun 03, 2019 at 05:50:59PM -0400, Johannes Weiner wrote:
-> > On Mon, Jun 03, 2019 at 10:32:30PM +0200, Michal Hocko wrote:
-> > > On Mon 03-06-19 13:27:17, Johannes Weiner wrote:
-> > > > On Mon, Jun 03, 2019 at 09:16:07AM +0200, Michal Hocko wrote:
-> > > > > On Fri 31-05-19 23:34:07, Minchan Kim wrote:
-> > > > > > On Fri, May 31, 2019 at 04:03:32PM +0200, Michal Hocko wrote:
-> > > > > > > On Fri 31-05-19 22:39:04, Minchan Kim wrote:
-> > > > > > > > On Fri, May 31, 2019 at 10:47:52AM +0200, Michal Hocko wrote:
-> > > > > > > > > On Fri 31-05-19 15:43:08, Minchan Kim wrote:
-> > > > > > > > > > When a process expects no accesses to a certain memory range, it could
-> > > > > > > > > > give a hint to kernel that the pages can be reclaimed when memory pressure
-> > > > > > > > > > happens but data should be preserved for future use.  This could reduce
-> > > > > > > > > > workingset eviction so it ends up increasing performance.
-> > > > > > > > > > 
-> > > > > > > > > > This patch introduces the new MADV_COLD hint to madvise(2) syscall.
-> > > > > > > > > > MADV_COLD can be used by a process to mark a memory range as not expected
-> > > > > > > > > > to be used in the near future. The hint can help kernel in deciding which
-> > > > > > > > > > pages to evict early during memory pressure.
-> > > > > > > > > > 
-> > > > > > > > > > Internally, it works via deactivating pages from active list to inactive's
-> > > > > > > > > > head if the page is private because inactive list could be full of
-> > > > > > > > > > used-once pages which are first candidate for the reclaiming and that's a
-> > > > > > > > > > reason why MADV_FREE move pages to head of inactive LRU list. Therefore,
-> > > > > > > > > > if the memory pressure happens, they will be reclaimed earlier than other
-> > > > > > > > > > active pages unless there is no access until the time.
-> > > > > > > > > 
-> > > > > > > > > [I am intentionally not looking at the implementation because below
-> > > > > > > > > points should be clear from the changelog - sorry about nagging ;)]
-> > > > > > > > > 
-> > > > > > > > > What kind of pages can be deactivated? Anonymous/File backed.
-> > > > > > > > > Private/shared? If shared, are there any restrictions?
-> > > > > > > > 
-> > > > > > > > Both file and private pages could be deactived from each active LRU
-> > > > > > > > to each inactive LRU if the page has one map_count. In other words,
-> > > > > > > > 
-> > > > > > > >     if (page_mapcount(page) <= 1)
-> > > > > > > >         deactivate_page(page);
-> > > > > > > 
-> > > > > > > Why do we restrict to pages that are single mapped?
-> > > > > > 
-> > > > > > Because page table in one of process shared the page would have access bit
-> > > > > > so finally we couldn't reclaim the page. The more process it is shared,
-> > > > > > the more fail to reclaim.
-> > > > > 
-> > > > > So what? In other words why should it be restricted solely based on the
-> > > > > map count. I can see a reason to restrict based on the access
-> > > > > permissions because we do not want to simplify all sorts of side channel
-> > > > > attacks but memory reclaim is capable of reclaiming shared pages and so
-> > > > > far I haven't heard any sound argument why madvise should skip those.
-> > > > > Again if there are any reasons, then document them in the changelog.
-> > > > 
-> > > > I think it makes sense. It could be explained, but it also follows
-> > > > established madvise semantics, and I'm not sure it's necessarily
-> > > > Minchan's job to re-iterate those.
-> > > > 
-> > > > Sharing isn't exactly transparent to userspace. The kernel does COW,
-> > > > ksm etc. When you madvise, you can really only speak for your own
-> > > > reference to that memory - "*I* am not using this."
-> > > > 
-> > > > This is in line with other madvise calls: MADV_DONTNEED clears the
-> > > > local page table entries and drops the corresponding references, so
-> > > > shared pages won't get freed. MADV_FREE clears the pte dirty bit and
-> > > > also has explicit mapcount checks before clearing PG_dirty, so again
-> > > > shared pages don't get freed.
-> > > 
-> > > Right, being consistent with other madvise syscalls is certainly a way
-> > > to go. And I am not pushing one way or another, I just want this to be
-> > > documented with a reasoning behind. Consistency is certainly an argument
-> > > to use.
-> > > 
-> > > On the other hand these non-destructive madvise operations are quite
-> > > different and the shared policy might differ as a result as well. We are
-> > > aging objects rather than destroying them after all. Being able to age
-> > > a pagecache with a sufficient privileges sounds like a useful usecase to
-> > > me. In other words you are able to cause the same effect indirectly
-> > > without the madvise operation so it kinda makes sense to allow it in a
-> > > more sophisticated way.
-> > 
-> > Right, I don't think it's about permission - as you say, you can do
-> > this indirectly. Page reclaim is all about relative page order, so if
-> > we thwarted you from demoting some pages, you could instead promote
-> > other pages to cause a similar end result.
-> > 
-> > I think it's about intent. You're advising the kernel that *you're*
-> > not using this memory and would like to have it cleared out based on
-> > that knowledge. You could do the same by simply allocating the new
-> > pages and have the kernel sort it out. However, if the kernel sorts it
-> > out, it *will* look at other users of the page, and it might decide
-> > that other pages are actually colder when considering all users.
-> > 
-> > When you ignore shared state, on the other hand, the pages you advise
-> > out could refault right after. And then, not only did you not free up
-> > the memory, but you also caused IO that may interfere with bringing in
-> > the new data for which you tried to create room in the first place.
-> > 
-> > So I don't think it ever makes sense to override it.
-> > 
-> > But it might be better to drop the explicit mapcount check and instead
-> > make the local pte young and call shrink_page_list() without the
->                      ^
->                      old?
-> 
-> > TTU_IGNORE_ACCESS, ignore_references flags - leave it to reclaim code
-> > to handle references and shared pages exactly the same way it would if
-> > those pages came fresh off the LRU tail, excluding only the reference
-> > from the mapping that we're madvising.
-> 
-> You are confused from the name change. Here, MADV_COLD is deactivating
-> , not pageing out. Therefore, shrink_page_list doesn't matter.
-> And madvise_cold_pte_range already makes the local pte *old*(I guess
-> your saying was typo).
-> I guess that's exactly what Michal wanted: just removing page_mapcount
-> check and defers to decision on normal page reclaim policy:
-> If I didn't miss your intention, it seems you and Michal are on same page.
-> (Please correct me if you want to say something other)
+The variable 'entry' is no longer used and the compiler rightly
+complains that it should be removed.
 
-Indeed.
+../mm/zsmalloc.c: In function ‘zs_pool_stat_create’:
+../mm/zsmalloc.c:648:17: warning: unused variable ‘entry’ [-Wunused-variable]
+  struct dentry *entry;
+                 ^~~~~
 
-> I could drop the page_mapcount check at next revision.
+Rework to remove the unused variable.
 
-Yes please.
+Fixes: 4268509a36a7 ("zsmalloc: no need to check return value of debugfs_create functions")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ mm/zsmalloc.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+index 1347d7922ea2..db09eb3669c5 100644
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -645,8 +645,6 @@ DEFINE_SHOW_ATTRIBUTE(zs_stats_size);
+ 
+ static void zs_pool_stat_create(struct zs_pool *pool, const char *name)
+ {
+-	struct dentry *entry;
+-
+ 	if (!zs_stat_root) {
+ 		pr_warn("no root stat dir, not creating <%s> stat dir\n", name);
+ 		return;
 -- 
-Michal Hocko
-SUSE Labs
+2.20.1
+
