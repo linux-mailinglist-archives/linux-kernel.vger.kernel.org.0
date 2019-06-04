@@ -2,68 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AD5E344C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 12:52:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EE9D344CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 12:54:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727343AbfFDKwp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 06:52:45 -0400
-Received: from foss.arm.com ([217.140.101.70]:40206 "EHLO foss.arm.com"
+        id S1727434AbfFDKyL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 06:54:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727107AbfFDKwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 06:52:44 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6ADBC80D;
-        Tue,  4 Jun 2019 03:52:44 -0700 (PDT)
-Received: from [10.1.196.129] (ostrya.cambridge.arm.com [10.1.196.129])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B3D9C3F5AF;
-        Tue,  4 Jun 2019 03:52:41 -0700 (PDT)
-Subject: Re: [PATCH v8 05/29] iommu: Add a timeout parameter for PRQ response
-To:     Alex Williamson <alex.williamson@redhat.com>,
-        Eric Auger <eric.auger@redhat.com>
-Cc:     "eric.auger.pro@gmail.com" <eric.auger.pro@gmail.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
-        "yi.l.liu@intel.com" <yi.l.liu@intel.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Robin Murphy <Robin.Murphy@arm.com>,
-        "kevin.tian@intel.com" <kevin.tian@intel.com>,
-        "ashok.raj@intel.com" <ashok.raj@intel.com>,
-        Marc Zyngier <Marc.Zyngier@arm.com>,
-        "peter.maydell@linaro.org" <peter.maydell@linaro.org>,
-        Vincent Stehle <Vincent.Stehle@arm.com>
-References: <20190526161004.25232-1-eric.auger@redhat.com>
- <20190526161004.25232-6-eric.auger@redhat.com>
- <20190603163214.483884a7@x1.home>
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Message-ID: <13428eef-9b95-0f79-bebf-317a2205673a@arm.com>
-Date:   Tue, 4 Jun 2019 11:52:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1727088AbfFDKyL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 06:54:11 -0400
+Received: from oasis.local.home (unknown [146.247.46.6])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A53624986;
+        Tue,  4 Jun 2019 10:54:03 +0000 (UTC)
+Date:   Tue, 4 Jun 2019 06:53:58 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "David S. Miller" <davem@davemloft.net>, edumazet@google.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>, keescook@chromium.org,
+        kernel-hardening@lists.openwall.com,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        neilb@suse.com, netdev@vger.kernel.org, oleg@redhat.com,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, rcu@vger.kernel.org,
+        Tejun Heo <tj@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>
+Subject: Re: [RFC 1/6] rcu: Add support for consolidated-RCU reader checking
+Message-ID: <20190604065358.73347ced@oasis.local.home>
+In-Reply-To: <20190603141847.GA94186@google.com>
+References: <20190601222738.6856-1-joel@joelfernandes.org>
+        <20190601222738.6856-2-joel@joelfernandes.org>
+        <20190603080128.GA3436@hirez.programming.kicks-ass.net>
+        <20190603141847.GA94186@google.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20190603163214.483884a7@x1.home>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/06/2019 23:32, Alex Williamson wrote:
-> It doesn't seem to make much sense to include this patch without also
-> including "iommu: handle page response timeout".  Was that one lost?
-> Dropped?  Lives elsewhere?
+On Mon, 3 Jun 2019 10:18:47 -0400
+Joel Fernandes <joel@joelfernandes.org> wrote:
 
-The first 7 patches come from my sva/api branch, where I had forgotten
-to add the "handle page response timeout" patch. I added it back,
-probably after Eric sent this version. But I don't think the patch is
-ready for upstream, as we still haven't decided how to proceed with
-timeouts. Patches 6 and 7 are for debugging, I don't know if they should
-go upstream.
+> On Mon, Jun 03, 2019 at 10:01:28AM +0200, Peter Zijlstra wrote:
+> > On Sat, Jun 01, 2019 at 06:27:33PM -0400, Joel Fernandes (Google) wrote:  
+> > > +#define list_for_each_entry_rcu(pos, head, member, cond...)		\
+> > > +	if (COUNT_VARGS(cond) != 0) {					\
+> > > +		__list_check_rcu_cond(0, ## cond);			\
+> > > +	} else {							\
+> > > +		__list_check_rcu();					\
+> > > +	}								\
+> > > +	for (pos = list_entry_rcu((head)->next, typeof(*pos), member);	\
+> > > +		&pos->member != (head);					\
+> > >  		pos = list_entry_rcu(pos->member.next, typeof(*pos), member))
+> > >  
+> > >  /**
+> > > @@ -621,7 +648,12 @@ static inline void hlist_add_behind_rcu(struct hlist_node *n,
+> > >   * the _rcu list-mutation primitives such as hlist_add_head_rcu()
+> > >   * as long as the traversal is guarded by rcu_read_lock().
+> > >   */
+> > > +#define hlist_for_each_entry_rcu(pos, head, member, cond...)		\
+> > > +	if (COUNT_VARGS(cond) != 0) {					\
+> > > +		__list_check_rcu_cond(0, ## cond);			\
+> > > +	} else {							\
+> > > +		__list_check_rcu();					\
+> > > +	}								\
+> > >  	for (pos = hlist_entry_safe (rcu_dereference_raw(hlist_first_rcu(head)),\
+> > >  			typeof(*(pos)), member);			\
+> > >  		pos;							\  
+> > 
+> > 
+> > This breaks code like:
+> > 
+> > 	if (...)
+> > 		list_for_each_entry_rcu(...);
+> > 
+> > as they are no longer a single statement. You'll have to frob it into
+> > the initializer part of the for statement.  
+> 
+> Thanks a lot for that. I fixed it as below (diff is on top of the patch):
+> 
+> If not for that '##' , I could have abstracted the whole if/else
+> expression into its own macro and called it from list_for_each_entry_rcu() to
+> keep it more clean.
+> 
+> ---8<-----------------------
+> 
+> diff --git a/include/linux/rculist.h b/include/linux/rculist.h
+> index b641fdd9f1a2..cc742d294bb0 100644
+> --- a/include/linux/rculist.h
+> +++ b/include/linux/rculist.h
+> @@ -371,12 +372,15 @@ static inline void list_splice_tail_init_rcu(struct list_head *list,
+>   * as long as the traversal is guarded by rcu_read_lock().
+>   */
+>  #define list_for_each_entry_rcu(pos, head, member, cond...)		\
+> -	if (COUNT_VARGS(cond) != 0) {					\
+> -		__list_check_rcu_cond(0, ## cond);			\
+> -	} else {							\
+> -		__list_check_rcu();					\
+> -	}								\
+> -	for (pos = list_entry_rcu((head)->next, typeof(*pos), member);	\
+> +	for (								\
+> +	     ({								\
+> +		if (COUNT_VARGS(cond) != 0) {				\
+> +			__list_check_rcu_cond(0, ## cond);		\
+> +		} else {						\
+> +			__list_check_rcu_nocond();			\
+> +		}							\
+> +	      }),							\
 
-Thanks,
-Jean
+For easier to read I would do something like this:
+
+#define check_rcu_list(cond)						\
+	({								\
+		if (COUNT_VARGS(cond) != 0)				\
+			__list_check_rcu_cond(0, ## cond);		\
+		else							\
+			__list_check_rcu_nocond();			\
+	})
+
+#define list_for_each_entry_rcu(pos, head, member, cond...)		\
+	for (check_rcu_list(cond),					\
+
+
+-- Steve
+
+> +	     pos = list_entry_rcu((head)->next, typeof(*pos), member);	\
+>  		&pos->member != (head);					\
+>  		pos = list_entry_rcu(pos->member.next, typeof(*pos), member))
+>  
+> @@ -649,12 +653,15 @@ static inline void hlist_add_behind_rcu(struct hlist_node *n,
+>   * as long as the traversal is guarded by rcu_read_lock().
+>   */
+>  #define hlist_for_each_entry_rcu(pos, head, member, cond...)		\
+> -	if (COUNT_VARGS(cond) != 0) {					\
+> -		__list_check_rcu_cond(0, ## cond);			\
+> -	} else {							\
+> -		__list_check_rcu();					\
+> -	}								\
+> -	for (pos = hlist_entry_safe (rcu_dereference_raw(hlist_first_rcu(head)),\
+> +	for (								\
+> +	     ({								\
+> +		if (COUNT_VARGS(cond) != 0) {				\
+> +			__list_check_rcu_cond(0, ## cond);		\
+> +		} else {						\
+> +			__list_check_rcu_nocond();			\
+> +		}							\
+> +	     }),							\
+> +	     pos = hlist_entry_safe (rcu_dereference_raw(hlist_first_rcu(head)),\
+>  			typeof(*(pos)), member);			\
+>  		pos;							\
+>  		pos = hlist_entry_safe(rcu_dereference_raw(hlist_next_rcu(\
+
