@@ -2,169 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8149534A5F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:28:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7793C34A66
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:28:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727557AbfFDO2H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 10:28:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42474 "EHLO mail.kernel.org"
+        id S1727772AbfFDO2l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 10:28:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727137AbfFDO2H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 10:28:07 -0400
+        id S1727169AbfFDO2k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 10:28:40 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B6DA2498E;
-        Tue,  4 Jun 2019 14:28:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E4AD2498F;
+        Tue,  4 Jun 2019 14:28:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559658485;
-        bh=VZDkaCpq87rFDadSl7tAiidtaZ9rcdhfskXh2iVq79k=;
+        s=default; t=1559658520;
+        bh=O7gbnZkk6GvrbVTl6bI9UPon+W+udWxZvh/zYblS/1E=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=spxq2pb53AEdkC5g0+XB74dFiWVIpa8fFUsatgTCPt1qrCmojmTXutVBb2hK2uxUg
-         w3Eyi8dg9BfQ+Mu9z8dnKlr2d4POJAGycNqhdS2B02hZHJIgbzBArEPf7rWVpzs0SI
-         JmkREcfeSkLHp9GQ2nTS+QhcILT2gVbiZOlYl9QE=
-Date:   Tue, 4 Jun 2019 16:28:03 +0200
+        b=mGq/RcvUMLPKU/cWsDJ4IfF8EVqouENT3sn2nQ+9c7sYPAiCQmC0RxTwbc/mjHy5d
+         83v105+qfyjymk+w+8cgUQ1eZuSbkvJHDCja+sAdzS+Dn8gRWNndYNjSvj0jOlm0HG
+         emi4ss3C/xcI9UBK1CIYD1M/pARhXG19y7/N8KP4=
+Date:   Tue, 4 Jun 2019 16:28:37 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Romain Izard <romain.izard.pro@gmail.com>
-Cc:     Richard Gong <richard.gong@linux.intel.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, dinguyen@kernel.org, atull@kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        sen.li@intel.com, Richard Gong <richard.gong@intel.com>
+To:     Richard Gong <richard.gong@linux.intel.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, dinguyen@kernel.org,
+        atull@kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, sen.li@intel.com,
+        Richard Gong <richard.gong@intel.com>
 Subject: Re: A potential broken at platform driver?
-Message-ID: <20190604142803.GA28355@kroah.com>
+Message-ID: <20190604142837.GB28355@kroah.com>
 References: <1559074833-1325-1-git-send-email-richard.gong@linux.intel.com>
  <1559074833-1325-3-git-send-email-richard.gong@linux.intel.com>
  <20190528232224.GA29225@kroah.com>
  <1e3b5447-b776-f929-bca6-306f90ac0856@linux.intel.com>
  <b608d657-9d8c-9307-9290-2f6b052a71a9@linux.intel.com>
  <20190603180255.GA18054@kroah.com>
- <20190604103241.GA4097@5WDYG62>
+ <b3dd022b-b585-3dfb-5fe6-9c9f5498bc77@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190604103241.GA4097@5WDYG62>
+In-Reply-To: <b3dd022b-b585-3dfb-5fe6-9c9f5498bc77@linux.intel.com>
 User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 04, 2019 at 12:33:03PM +0200, Romain Izard wrote:
-> On Mon, Jun 03, 2019 at 08:02:55PM +0200, Greg KH wrote:
-> > > @@ -394,7 +432,7 @@ static struct platform_driver stratix10_rsu_driver = {
-> > >  	.remove = stratix10_rsu_remove,
-> > >  	.driver = {
-> > >  		.name = "stratix10-rsu",
-> > > -		.groups = rsu_groups,
-> > > +//		.groups = rsu_groups,
+On Mon, Jun 03, 2019 at 06:08:37PM -0500, Richard Gong wrote:
+> Hi Greg,
+> 
+> On 6/3/19 1:02 PM, Greg KH wrote:
+> > On Mon, Jun 03, 2019 at 10:57:18AM -0500, Richard Gong wrote:
+> > > 
+> > > Hi Greg,
+> > > 
+> > > Following your suggestion, I replaced devm_device_add_groups() with .group =
+> > > rus_groups in my version #4 submission. But I found out that RSU driver
+> > > outputs the garbage data if I use .group = rsu_groups.
 > > 
-> > Are you sure this is the correct pointer?  I think that might be
-> > pointing to the driver's attributes, not the device's attributes.
+> > What is "garbage"?
+> I mean incorrect status info.
+> 
 > > 
-> > If platform drivers do not have a way to register groups properly, then
-> > that really needs to be fixed, as trying to register it by yourself as
-> > you are doing, is ripe for racing with userspace.
->  
-> This is a very common issue with platform drivers, and it seems to me that
-> it is not possible to add device attributes when binding a device to a
-> driver without entering the race condition.
+> > > To make RSU driver work properly, I have to revert the change at version #4
+> > > and use devm_device_add_groups() again. Sorry, I didn't catch this problem
+> > > early.
+> > > 
+> > > I did some debug & below are captured log, you can see priv pointer get
+> > > messed at current_image_show(). I am not sure if something related to
+> > > platform driver work properly. I attach my debug patch in this mail.
+> > > 
+> > > 1. Using .groups = rsu_groups,
+> > > 
+> > > [    1.191115] *** rsu_status_callback:
+> > > [    1.194782] res->a1=2000000
+> > > [    1.197588] res->a1=0
+> > > [    1.199865] res->a2=0
+> > > [    1.202150] res->a3=0
+> > > [    1.204433] priv=0xffff80007aa28e80
+> > > [    1.207933] version=0, state=0, current_image=2000000, fail_image=0,
+> > > error_location=0, error_details=0
+> > > [    1.217249] *** stratix10_rsu_probe: priv=0xffff80007aa28e80
+> > > root@stratix10:/sys/bus/platform/drivers/stratix10-rsu# cat current_image
+> > > [   38.849341] *** current_image_show: priv=0xffff80007aa28d00
+> > > ... output garbage data
+> > > priv pointer got changed
+> > 
+> > I don't understand this, sorry.  Are you sure you are actually using the
+> > correct pointer to your device?
+> > 
+> I think so.
 > 
-> My understanding is the following one:
-> 
-> The root cause is that the device has already been created and reported
-> to the userspace with a KOBJ_ADD uevent before the device and the driver
-> are bound together. On receiving this event, userspace will react, and
-> it will try to read the device's attributes. In parallel the kernel will
-> try to find a matching driver. If a driver is found, the kernel will
-> call the probe function from the driver with the device as a parameter,
-> and if successful a KOBJ_BIND uevent will be sent to userspace, but this
-> is a recent addition.
-> 
-> Unfortunately, not all created devices will be bound to a driver, and the
-> existing udev code relies on KOBJ_ADD uevents rather than KOBJ_BIND uevents.
-> If new per-device attributes have been added to the device during the
-> binding stage userspace may or may not see them, depending on when userspace
-> tries to read the device's attributes.
-> 
-> I have this possible workaround, but I do not know if it is a good solution:
-> 
-> When binding the device and the driver together, create a new device as a
-> child to the current device, and fill its "groups" member to point to the
-> per-device attributes' group. As the device will be created with all the
-> attributes, it will not be affected by the race issues. The functions
-> handling the attributes will need to be modified to use the parents of their
-> "device" parameter, instead of the device itself. Additionnaly, the sysfs
-> location of the attributes will be different, as the child device will show
-> up in the sysfs path. But for a newly introduced device this will not be
-> a problem.
-> 
-> Is this a good compromise ?
+> The dev pointer at current_image_show() should points to RSU device, but it
+> seems point to driver_private if I use .group = rsU_groups. As a result I
+> can't get the priv pointer properly at current_image_show().
 
-Not really.  You just want the attributes on the platform device itself.
-
-Given the horrible hack that platform devices are today, what's one more
-hack!
-
-Here's a patch below of what should probably be done here.  Richard, can
-you change your code to use the new dev_groups pointer in the struct
-platform_driver and this patch and let me know if that works or not?
-
-Note, I've only compiled this code, not tested it...
+It points to the driver kobject, not the device kobject.  So that's the
+issue here.  See the patch that I just posted for a potential fix for
+this.
 
 thanks,
 
 greg k-h
-
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index 4d1729853d1a..3dd4b73a9b30 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -598,6 +598,7 @@ struct platform_device *platform_device_register_full(
- }
- EXPORT_SYMBOL_GPL(platform_device_register_full);
- 
-+static int platform_drv_remove(struct device *_dev);
- static int platform_drv_probe(struct device *_dev)
- {
- 	struct platform_driver *drv = to_platform_driver(_dev->driver);
-@@ -614,8 +615,18 @@ static int platform_drv_probe(struct device *_dev)
- 
- 	if (drv->probe) {
- 		ret = drv->probe(dev);
--		if (ret)
-+		if (ret) {
- 			dev_pm_domain_detach(_dev, true);
-+			goto out;
-+		}
-+	}
-+	if (drv->dev_groups) {
-+		ret = device_add_groups(_dev, drv->dev_groups);
-+		if (ret) {
-+			platform_drv_remove(_dev);
-+			return ret;
-+		}
-+		kobject_uevent(&_dev->kobj, KOBJ_CHANGE);
- 	}
- 
- out:
-@@ -640,6 +651,8 @@ static int platform_drv_remove(struct device *_dev)
- 
- 	if (drv->remove)
- 		ret = drv->remove(dev);
-+	if (drv->dev_groups)
-+		device_remove_groups(_dev, drv->dev_groups);
- 	dev_pm_domain_detach(_dev, true);
- 
- 	return ret;
-diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
-index cc464850b71e..027f1e1d7af8 100644
---- a/include/linux/platform_device.h
-+++ b/include/linux/platform_device.h
-@@ -190,6 +190,7 @@ struct platform_driver {
- 	int (*resume)(struct platform_device *);
- 	struct device_driver driver;
- 	const struct platform_device_id *id_table;
-+	const struct attribute_group **dev_groups;
- 	bool prevent_deferred_probe;
- };
- 
