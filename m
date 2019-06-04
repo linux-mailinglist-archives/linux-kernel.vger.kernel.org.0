@@ -2,128 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1FF534DEF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 18:47:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B984934DF5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 18:48:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727827AbfFDQrJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 12:47:09 -0400
-Received: from mail-eopbgr750048.outbound.protection.outlook.com ([40.107.75.48]:64900
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727451AbfFDQrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 12:47:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sK3mpPUYXtVpu4apHXC2ek85k5gR0Lw6yCXcJTSUVYk=;
- b=W5977cxykXK4eK5kpTRiyHxXysvKXp7Fhb4H3jdZSbSqlVC66fR13ODom8E5Jr5A+tgs5p/RCvpo1fATQdD41hpwJO8oFTGZ7P7AqArQUo5AG7yIm8saAU6zY6gE9HbYO7YGvQcn97jMHpt7NywiVqqS6tA6uqgSsaK0MKt9Irs=
-Received: from DM5PR12MB1449.namprd12.prod.outlook.com (10.172.40.14) by
- DM5PR12MB1164.namprd12.prod.outlook.com (10.168.238.144) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1943.22; Tue, 4 Jun 2019 16:47:05 +0000
-Received: from DM5PR12MB1449.namprd12.prod.outlook.com
- ([fe80::34ed:dc98:e87d:50c4]) by DM5PR12MB1449.namprd12.prod.outlook.com
- ([fe80::34ed:dc98:e87d:50c4%7]) with mapi id 15.20.1943.018; Tue, 4 Jun 2019
- 16:47:05 +0000
-From:   Gary R Hook <ghook@amd.com>
-To:     Vinod Koul <vkoul@kernel.org>, "Hook, Gary" <Gary.Hook@amd.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] dmaengine: dmatest: timeout value of -1 should specify
- infinite wait
-Thread-Topic: [PATCH] dmaengine: dmatest: timeout value of -1 should specify
- infinite wait
-Thread-Index: AQHVF+ku9NvxfnAiEUWf7KotYW4OlKaLcO8AgABJgYA=
-Date:   Tue, 4 Jun 2019 16:47:05 +0000
-Message-ID: <010db7bb-dee2-4ba8-a085-4154735b98db@amd.com>
-References: <155933183362.4916.15727271006977576552.stgit@sosrh3.amd.com>
- <20190604122356.GY15118@vkoul-mobl>
-In-Reply-To: <20190604122356.GY15118@vkoul-mobl>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BYAPR21CA0003.namprd21.prod.outlook.com
- (2603:10b6:a03:114::13) To DM5PR12MB1449.namprd12.prod.outlook.com
- (2603:10b6:4:10::14)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Gary.Hook@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [47.220.187.91]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b100444b-8b67-493b-de9b-08d6e90c4668
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM5PR12MB1164;
-x-ms-traffictypediagnostic: DM5PR12MB1164:
-x-microsoft-antispam-prvs: <DM5PR12MB11641AFA1FBE3C2632BB6FC4FD150@DM5PR12MB1164.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-forefront-prvs: 0058ABBBC7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(136003)(396003)(366004)(39860400002)(189003)(199004)(3846002)(6116002)(99286004)(316002)(26005)(71190400001)(256004)(14444005)(186003)(6486002)(71200400001)(476003)(76176011)(81166006)(81156014)(2616005)(52116002)(7736002)(305945005)(6636002)(110136005)(8936002)(6512007)(31696002)(8676002)(229853002)(6246003)(102836004)(6436002)(486006)(25786009)(6506007)(14454004)(72206003)(73956011)(11346002)(446003)(64756008)(31686004)(66446008)(66556008)(66066001)(36756003)(66946007)(66476007)(4326008)(68736007)(53546011)(5660300002)(478600001)(2906002)(386003)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1164;H:DM5PR12MB1449.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Sy8kk6Y/GSjWXmOPOX86gJ0PQVbzFy0MkpNPF/C5sZ+HgrnUHAAiv+gp6LXxFpqJXZK3zLPQd72S8A2O2mJlbBmEHRsun+4fjYoR8yknA4pOFTS9mtUdKUAqu55oBj9vdUmCrI6329xGqxBBPMkPNCX+moIoVYrd82ceZ8HwYlxpR2uKGC2ycZgos37W+sRLlIMjbTuK7Knx31ftGyUDUmxqPZO4xpjkg5jIsr9FJSrLzPNEHN2Z2nFrQFCOaMU6OZcj/uSbU0KwgsqVAsd4ut5qqNduMBZrKz47P4rJOm0v7ux7Q7AAdFmE6I42ej0FgsCI8SyuyLDY8pni3nc0dLXQSKqp4Snp1+FfcS2WyZBU7t3910tItq3XcVNjqUoRZ6ZBQigE8QOOQ51fiNOt9q8m1/ZpPqknQnrQnZ90kPo=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <EA0B927900943241BBB241559D21321E@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1727938AbfFDQsh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 12:48:37 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33018 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727809AbfFDQsg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 12:48:36 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E07753087944;
+        Tue,  4 Jun 2019 16:48:35 +0000 (UTC)
+Received: from [10.40.205.182] (unknown [10.40.205.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1E296611D6;
+        Tue,  4 Jun 2019 16:48:15 +0000 (UTC)
+Subject: Re: [QEMU PATCH] KVM: Support for page hinting
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
+        pagupta@redhat.com, wei.w.wang@intel.com,
+        Yang Zhang <yang.zhang.wz@gmail.com>,
+        Rik van Riel <riel@surriel.com>,
+        David Hildenbrand <david@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>, dodgen@google.com,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>
+References: <20190603170306.49099-1-nitesh@redhat.com>
+ <20190603170432.1195-1-nitesh@redhat.com>
+ <CAKgT0UeRzF24WeVkTN2WW41iKSUpXpZbpD55-g=MBHf814RV+A@mail.gmail.com>
+From:   Nitesh Narayan Lal <nitesh@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nitesh@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ VujM7c/b4pps
+Organization: Red Hat Inc,
+Message-ID: <0194ca6a-ec00-2a43-545d-aee6459a7582@redhat.com>
+Date:   Tue, 4 Jun 2019 12:48:13 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b100444b-8b67-493b-de9b-08d6e90c4668
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jun 2019 16:47:05.3854
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ghook@amd.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1164
+In-Reply-To: <CAKgT0UeRzF24WeVkTN2WW41iKSUpXpZbpD55-g=MBHf814RV+A@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="TLcRB331klf72kYiAgAoPavq6ytwUZyUY"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Tue, 04 Jun 2019 16:48:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gNi80LzE5IDc6MjMgQU0sIFZpbm9kIEtvdWwgd3JvdGU6DQo+IFtDQVVUSU9OOiBFeHRlcm5h
-bCBFbWFpbF0NCj4gDQo+IE9uIDMxLTA1LTE5LCAxOTo0MywgSG9vaywgR2FyeSB3cm90ZToNCj4+
-IFRoZSBkbWF0ZXN0IG1vZHVsZSBwYXJhbWV0ZXIgJ3RpbWVvdXQnIGlzIGRvY3VtZW50ZWQgYXMg
-YWNjZXB0aW5nIGENCj4+IC0xIHRvIG1lYW4gImluZmluaXRlIHRpbWVvdXQiLiBDaGFuZ2UgdGhl
-IHBhcmFtZXRlciB0byB0byBzaWduZWQNCj4+IGludGVnZXIsIGFuZCBjaGVjayB0aGUgdmFsdWUg
-dG8gY2FsbCB0aGUgYXBwcm9wcmlhdGUgd2FpdF9ldmVudCgpDQo+PiBmdW5jdGlvbi4NCj4+DQo+
-PiBTaWduZWQtb2ZmLWJ5OiBHYXJ5IFIgSG9vayA8Z2FyeS5ob29rQGFtZC5jb20+DQo+PiAtLS0N
-Cj4+ICAgZHJpdmVycy9kbWEvZG1hdGVzdC5jIHwgICAxMSArKysrKysrKy0tLQ0KPj4gICAxIGZp
-bGUgY2hhbmdlZCwgOCBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQ0KPj4NCj4+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL2RtYS9kbWF0ZXN0LmMgYi9kcml2ZXJzL2RtYS9kbWF0ZXN0LmMNCj4+
-IGluZGV4IGI5NjgxNGE3ZGNlYi4uMjhhMjM3Njg2NTc4IDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVy
-cy9kbWEvZG1hdGVzdC5jDQo+PiArKysgYi9kcml2ZXJzL2RtYS9kbWF0ZXN0LmMNCj4+IEBAIC02
-Myw3ICs2Myw3IEBAIE1PRFVMRV9QQVJNX0RFU0MocHFfc291cmNlcywNCj4+ICAgICAgICAgICAg
-ICAgICJOdW1iZXIgb2YgcCtxIHNvdXJjZSBidWZmZXJzIChkZWZhdWx0OiAzKSIpOw0KPj4NCj4+
-ICAgc3RhdGljIGludCB0aW1lb3V0ID0gMzAwMDsNCj4+IC1tb2R1bGVfcGFyYW0odGltZW91dCwg
-dWludCwgU19JUlVHTyB8IFNfSVdVU1IpOw0KPj4gK21vZHVsZV9wYXJhbSh0aW1lb3V0LCBpbnQs
-IFNfSVJVR08gfCBTX0lXVVNSKTsNCj4+ICAgTU9EVUxFX1BBUk1fREVTQyh0aW1lb3V0LCAiVHJh
-bnNmZXIgVGltZW91dCBpbiBtc2VjIChkZWZhdWx0OiAzMDAwKSwgIg0KPj4gICAgICAgICAgICAg
-ICAgICJQYXNzIC0xIGZvciBpbmZpbml0ZSB0aW1lb3V0Iik7DQo+Pg0KPj4gQEAgLTc5NSw4ICs3
-OTUsMTMgQEAgc3RhdGljIGludCBkbWF0ZXN0X2Z1bmModm9pZCAqZGF0YSkNCj4+ICAgICAgICAg
-ICAgICAgIH0NCj4+ICAgICAgICAgICAgICAgIGRtYV9hc3luY19pc3N1ZV9wZW5kaW5nKGNoYW4p
-Ow0KPj4NCj4+IC0gICAgICAgICAgICAgd2FpdF9ldmVudF9mcmVlemFibGVfdGltZW91dCh0aHJl
-YWQtPmRvbmVfd2FpdCwgZG9uZS0+ZG9uZSwNCj4+IC0gICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICBtc2Vjc190b19qaWZmaWVzKHBhcmFtcy0+dGltZW91dCkpOw0KPj4g
-KyAgICAgICAgICAgICAvKiBBIHRpbWVvdXQgdmFsdWUgb2YgLTEgbWVhbnMgaW5maW5pdGUgd2Fp
-dCAqLw0KPj4gKyAgICAgICAgICAgICBpZiAodGltZW91dCA9PSAtMSkNCj4+ICsgICAgICAgICAg
-ICAgICAgICAgICB3YWl0X2V2ZW50X2ZyZWV6YWJsZSh0aHJlYWQtPmRvbmVfd2FpdCwgZG9uZS0+
-ZG9uZSk7DQo+IA0KPiB3ZWxsIGkgYW0gbm90IHRvbyBoYXBweSB0aGF0IHdlIGhhdmUgYSBpbmZp
-bml0ZSB3YWl0IGFuZCBubyB3YXkgdG8NCj4gY2FuY2VsLCBtYXliZSByZW1vdmUgdGhpcyBjYXNl
-Pw0KDQpXZWxsLCBJIHdhcyB1bmNvbWZvcnRhYmxlIHdpdGggZG9jdW1lbnRhdGlvbiB0aGF0IGRp
-ZG4ndCBtYXRjaCBiZWhhdmlvci4NCg0KSSBzZWUgdHdvIGNob2ljZXMgKGFuZCBJIGp1c3QgY2hv
-c2Ugb25lIHRvIHN0YXJ0IGEgY29udmVyc2F0aW9uKToNCg0KMSkgQWNjZXB0IHRoaXMgcGF0Y2gs
-IHdpdGggYW4gaW5maW5pdGUgdGltZW91dCwgb3INCjIpIExlYXZlIHRoZSBkYXRhIHR5cGUgYWxv
-bmUsIGJ1dCBjaGFuZ2UgdGhlIGRlc2NyaXB0aW9uIHRvIHN0YXRlIHRoYXQgDQp0aW1lb3V0IHZh
-bHVlcyB1cCB0byBoZXggMHhGRkZGRkZGRiAvIGRlY2ltYWwgNDI5NDk2NzI5NSBjYW4gYmUgdXNl
-ZCwgDQplbXVsYXRpbmcgYW4gImluZmluaXRlIiB3YWl0LiBBIHZlcnkgbG9uZyB3YWl0IHRoYXQg
-ZXZlbnR1YWxseSBwb3BzIGEgDQp0aW1lciBpcyBwcm9iYWJseSBwcmVmZXJhYmxlLiBJIGRvbid0
-IHRoaW5rIHRoZXJlIGFyZSBhbnkgY29udmVyc2lvbiANCmlzc3VlcyBzaW5jZSB0aGUgamlmZnkg
-cGFyYW1ldGVyIHRvIHdhaXRfZXZlbnRfZnJlZXphYmxlX3RpbWVvdXQoKSBpcyANCmNvbnZlcnRl
-ZCB0byBhIGxvbmcuIEkgY291bGQgYmUgd3JvbmcgYWJvdXQgdGhhdC4NCg0KSSdtIGhhcHB5IHRv
-IGdvIHdpdGggb3B0aW9uICgyKS4gUGxlYXNlIHN1Z2dlc3QgYSBjb3Vyc2Ugb2YgYWN0aW9uLg0K
-DQpncmgNCg0KPiANCj4+ICsgICAgICAgICAgICAgZWxzZQ0KPj4gKyAgICAgICAgICAgICAgICAg
-ICAgIHdhaXRfZXZlbnRfZnJlZXphYmxlX3RpbWVvdXQodGhyZWFkLT5kb25lX3dhaXQsDQo+PiAr
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGRvbmUtPmRvbmUsDQo+PiArICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG1zZWNzX3RvX2ppZmZpZXMocGFyYW1z
-LT50aW1lb3V0KSk7DQo+Pg0KPj4gICAgICAgICAgICAgICAgc3RhdHVzID0gZG1hX2FzeW5jX2lz
-X3R4X2NvbXBsZXRlKGNoYW4sIGNvb2tpZSwgTlVMTCwgTlVMTCk7DQo=
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--TLcRB331klf72kYiAgAoPavq6ytwUZyUY
+Content-Type: multipart/mixed; boundary="4e4kVK3A45X5fOFtNPeg6Nk226eTMC0od";
+ protected-headers="v1"
+From: Nitesh Narayan Lal <nitesh@redhat.com>
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: kvm list <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ linux-mm <linux-mm@kvack.org>, Paolo Bonzini <pbonzini@redhat.com>,
+ lcapitulino@redhat.com, pagupta@redhat.com, wei.w.wang@intel.com,
+ Yang Zhang <yang.zhang.wz@gmail.com>, Rik van Riel <riel@surriel.com>,
+ David Hildenbrand <david@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+ dodgen@google.com, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+ dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>
+Message-ID: <0194ca6a-ec00-2a43-545d-aee6459a7582@redhat.com>
+Subject: Re: [QEMU PATCH] KVM: Support for page hinting
+References: <20190603170306.49099-1-nitesh@redhat.com>
+ <20190603170432.1195-1-nitesh@redhat.com>
+ <CAKgT0UeRzF24WeVkTN2WW41iKSUpXpZbpD55-g=MBHf814RV+A@mail.gmail.com>
+In-Reply-To: <CAKgT0UeRzF24WeVkTN2WW41iKSUpXpZbpD55-g=MBHf814RV+A@mail.gmail.com>
+
+--4e4kVK3A45X5fOFtNPeg6Nk226eTMC0od
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+
+
+On 6/4/19 12:41 PM, Alexander Duyck wrote:
+> On Mon, Jun 3, 2019 at 10:04 AM Nitesh Narayan Lal <nitesh@redhat.com> =
+wrote:
+>> Enables QEMU to call madvise on the pages which are reported
+>> by the guest kernel.
+>>
+>> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>
+>> ---
+>>  hw/virtio/trace-events                        |  1 +
+>>  hw/virtio/virtio-balloon.c                    | 85 ++++++++++++++++++=
++
+>>  include/hw/virtio/virtio-balloon.h            |  2 +-
+>>  include/qemu/osdep.h                          |  7 ++
+>>  .../standard-headers/linux/virtio_balloon.h   |  1 +
+>>  5 files changed, 95 insertions(+), 1 deletion(-)
+> <snip>
+>
+>> diff --git a/include/qemu/osdep.h b/include/qemu/osdep.h
+>> index 840af09cb0..4d632933a9 100644
+>> --- a/include/qemu/osdep.h
+>> +++ b/include/qemu/osdep.h
+>> @@ -360,6 +360,11 @@ void qemu_anon_ram_free(void *ptr, size_t size);
+>>  #else
+>>  #define QEMU_MADV_REMOVE QEMU_MADV_INVALID
+>>  #endif
+>> +#ifdef MADV_FREE
+>> +#define QEMU_MADV_FREE MADV_FREE
+>> +#else
+>> +#define QEMU_MADV_FREE QEMU_MADV_INVALID
+>> +#endif
+> Is there a specific reason for making this default to INVALID instead
+> of just using DONTNEED?
+No specific reason.
+>  I ran into some issues as my host kernel
+> didn't have support for MADV_FREE in the exported kernel headers
+> apparently so I was getting no effect. It seems like it would be
+> better to fall back to doing DONTNEED instead of just disabling the
+> functionality all together.
+Possibly, I will further look into it.
+>>  #elif defined(CONFIG_POSIX_MADVISE)
+>>
+>> @@ -373,6 +378,7 @@ void qemu_anon_ram_free(void *ptr, size_t size);
+>>  #define QEMU_MADV_HUGEPAGE  QEMU_MADV_INVALID
+>>  #define QEMU_MADV_NOHUGEPAGE  QEMU_MADV_INVALID
+>>  #define QEMU_MADV_REMOVE QEMU_MADV_INVALID
+>> +#define QEMU_MADV_FREE QEMU_MADV_INVALID
+> Same here. If you already have MADV_DONTNEED you could just use that
+> instead of disabling the functionality.
+>
+>>  #else /* no-op */
+>>
+>> @@ -386,6 +392,7 @@ void qemu_anon_ram_free(void *ptr, size_t size);
+>>  #define QEMU_MADV_HUGEPAGE  QEMU_MADV_INVALID
+>>  #define QEMU_MADV_NOHUGEPAGE  QEMU_MADV_INVALID
+>>  #define QEMU_MADV_REMOVE QEMU_MADV_INVALID
+>> +#define QEMU_MADV_FREE QEMU_MADV_INVALID
+>>
+>>  #endif
+>>
+--=20
+Regards
+Nitesh
+
+
+--4e4kVK3A45X5fOFtNPeg6Nk226eTMC0od--
+
+--TLcRB331klf72kYiAgAoPavq6ytwUZyUY
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEkXcoRVGaqvbHPuAGo4ZA3AYyozkFAlz2oM0ACgkQo4ZA3AYy
+ozkA/Q//ZRIMGLMXhxoYzE4ppch83oeD+378YExYsIKrUaWCfG8x6PaEjZ/mfSiF
+YmKSq9CHK8MhELTPPwbba/9/SHGtWa0rD3LL1RHR2GO7QtpcF3YbUR74GipuGbNM
+WlLicfK0xAupX8iYaTntB9FWO4GOfadQOAfWO5bLT0C2PcYA6ChKQMmVBGDnKtiI
+wORJjlYLfW5NQ2Yqe8UjI5+GeqIiDsT32T41vbdV7g4LC1HCQhhsXrSYnq7AgLpj
+e7DtZP1KAse3hN7Wdya4QONN4yqDcUgCZHH/H6Eq60hOjE7vIWO5JP8+kDIae/I1
+sAzobLZi1SF7ZrwaT9C41jUkKojjnb7/rm/YjAX1W1fgbxQOaTV2j/ipSnguBMC+
+jx6KQdS2ybiikGLb9jaT/vxkQHuSMwPU7+9rmAlkd//H3zA966yh84ZSGUku7jeI
+I/ONAtGzd5u+CyPg/2wfFKEZHYa7336ts8yIXIUbQisvgt21nfDR6y9V8WZEHLul
+aQJeGYrJPHeAaaBFdV0O8JD4nWoct5X7jbnWXIFf6h8FepV5aVjxtGKnH7JyAQmQ
+KMx72W2gEqUKGf33iAWh/4IzmpPdefNzFkucKe/KpTMOCHiTvx1qZ9KKBzq5gXUp
+E1WPdIoxrWxi7KOtRzYmGZimN0zqo4oAjbCxHG4ogFtWu/nPUIQ=
+=4/9C
+-----END PGP SIGNATURE-----
+
+--TLcRB331klf72kYiAgAoPavq6ytwUZyUY--
