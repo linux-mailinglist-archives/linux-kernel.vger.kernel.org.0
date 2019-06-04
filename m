@@ -2,187 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D684B34CB9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 17:58:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F33A734CAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 17:56:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728255AbfFDP6E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 11:58:04 -0400
-Received: from mail-eopbgr770040.outbound.protection.outlook.com ([40.107.77.40]:9539
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727422AbfFDP6E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 11:58:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4jBKXr+/OasCKHUWnkQcHw5ZzynnvwLr8ZgCYtc2sgA=;
- b=FYzxb29GNmi0CnuWptP1aXHhXHQUbEhBm6/HG7yIgfW9nSyLpfzbsJN8Y8LPHT4syd4JRXq9MkfEu3q/xUuV+msnmf5CTrbNZ+vbITD8leNNPii2y5omZQbdb81m6Y2bF+0hl/i4yKrs8g3qr0NPJF9lvAfpCOAiB24KsUVspZM=
-Received: from DM6PR12MB3163.namprd12.prod.outlook.com (20.179.104.150) by
- DM6PR12MB2746.namprd12.prod.outlook.com (20.176.118.88) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1943.22; Tue, 4 Jun 2019 15:56:14 +0000
-Received: from DM6PR12MB3163.namprd12.prod.outlook.com
- ([fe80::bcaf:86d4:677f:9555]) by DM6PR12MB3163.namprd12.prod.outlook.com
- ([fe80::bcaf:86d4:677f:9555%6]) with mapi id 15.20.1943.018; Tue, 4 Jun 2019
- 15:56:14 +0000
-From:   "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
-To:     Baoquan He <bhe@redhat.com>
-CC:     "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: The current SME implementation fails kexec/kdump kernel booting.
-Thread-Topic: The current SME implementation fails kexec/kdump kernel booting.
-Thread-Index: AQHVGtxpl7Okj5q6IUu+1zsUud1soaaLplcA
-Date:   Tue, 4 Jun 2019 15:56:14 +0000
-Message-ID: <508c2853-dc4f-70a6-6fa8-97c950dc31c6@amd.com>
-References: <20190604134952.GC26891@MiWiFi-R3L-srv>
-In-Reply-To: <20190604134952.GC26891@MiWiFi-R3L-srv>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN4PR0201CA0050.namprd02.prod.outlook.com
- (2603:10b6:803:20::12) To DM6PR12MB3163.namprd12.prod.outlook.com
- (2603:10b6:5:182::22)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Thomas.Lendacky@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.77.1]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 858a807c-ca9a-4963-4bcf-08d6e9052c25
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:DM6PR12MB2746;
-x-ms-traffictypediagnostic: DM6PR12MB2746:
-x-microsoft-antispam-prvs: <DM6PR12MB27463E5CC03B3A2995BEDE8DEC150@DM6PR12MB2746.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 0058ABBBC7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(346002)(136003)(39860400002)(396003)(189003)(199004)(14444005)(256004)(31696002)(64756008)(73956011)(66946007)(66476007)(66556008)(36756003)(54906003)(6116002)(3846002)(86362001)(11346002)(476003)(102836004)(446003)(26005)(2906002)(81156014)(6246003)(2616005)(68736007)(66066001)(81166006)(25786009)(53936002)(186003)(7736002)(305945005)(8676002)(4326008)(8936002)(66446008)(229853002)(6512007)(31686004)(71190400001)(52116002)(486006)(76176011)(5660300002)(6486002)(316002)(72206003)(6436002)(6506007)(386003)(53546011)(99286004)(71200400001)(478600001)(6916009)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB2746;H:DM6PR12MB3163.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: IW0ZyDsOez+RkEtH82npNt4nPCKymOPbYw0WbX1cteoWXZCA9488q6QOM+2c3U2pjnyVeVHZggi6CVxMS4XlV8j7rrmir8tS2Z2J1ewuQPJfhr9a+TmyFkzcWPaVYuHy8OrmtGjlClkOerSDI4K1ILA1xj2ITQWOAUABu9diWspjKdmgFZ42juLK7yWsmNFfgZp2gPYmmUtXKIym3WV7Uc11msF+c11RDwVciW9cfe9lcjLEjrHw862wGHHASnQuQXlxbnY3AMQmDKj/qOaoJRYWjwKTHodB1QB7Fh3xV4z0z8bj0ACFnzrzHbiUwMrxsvU3MubDO+rTz0Z86xaGR8C/8nJw9WUq/D4nYzSGuLXji8f9hgiHaTJ79U6A0Q/WRi88Dojb8A/yvM5CInVQaCn5TkA24x4H0APTB197X6I=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D13757902CD10A43859E451C8DC1BB6A@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 858a807c-ca9a-4963-4bcf-08d6e9052c25
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jun 2019 15:56:14.7711
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: tlendack@amd.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2746
+        id S1728203AbfFDP43 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 11:56:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41578 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728126AbfFDP42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 11:56:28 -0400
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 879C52053B;
+        Tue,  4 Jun 2019 15:56:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559663788;
+        bh=SAUy3ZL5gC5Eqdsf2dnzfyQ0sm9EqUOhkGszRoE8N2s=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=SNrU9CWDdsR2vFXgFOHzqxWCRkOtOBGwWetmPqygLdpfs0eYkGpyMhqyPWfHmM9pI
+         Bbe6waamcUTTuV58DLPOZ0mZ3eKHWUkOVJJzuV6gkc3cpIBD2KticmXiwPevJ3BOkP
+         JVtOrKnxoqcQ+ui2Wd3/I4YFM7NBUWLfxysRSmnI=
+Date:   Wed, 5 Jun 2019 00:56:23 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kprobes: Fix to init kprobes in subsys_initcall
+Message-Id: <20190605005623.80198859f1f1e6695b3d3976@kernel.org>
+In-Reply-To: <20190604050629.11c7ef12@oasis.local.home>
+References: <20190603214105.715a4072472ef4946123dc20@kernel.org>
+        <155956708268.12228.10363800793132214198.stgit@devnote2>
+        <20190604050629.11c7ef12@oasis.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gNi80LzE5IDg6NDkgQU0sIEJhb3F1YW4gSGUgd3JvdGU6DQo+IEhpIFRvbSwNCj4gDQo+IExp
-YW5ibyByZXBvcnRlZCBrZHVtcCBrZXJuZWwgY2FuJ3QgYm9vdCB3ZWxsIHdpdGggJ25va2FzbHIn
-IGFkZGVkLCBhbmQNCj4gaGF2ZSB0byBlbmFibGUgS0FTTFIgaW4ga2R1bXAga2VybmVsIHRvIG1h
-a2UgaXQgYm9vdCBzdWNjZXNzZnVsbHkuIFRoaXMNCj4gYmxvY2tlZCBoaXMgd29yayBvbiBlbmFi
-bGluZyBzbWUgZm9yIGtleGVjL2tkdW1wLiBBbmQgb24gc29tZSBtYWNoaW5lcw0KPiBTTUUga2Vy
-bmVsIGNhbid0IGJvb3QgaW4gMXN0IGtlcm5lbC4NCj4gDQo+IEkgY2hlY2tlZCBjb2RlIG9mIFNN
-RSBpbXBsZW1lbnRhdGlvbiwgYW5kIGZvdW5kIG91dCB0aGUgcm9vdCBjYXVzZS4gVGhlDQo+IGFi
-b3ZlIGZhaWx1cmVzIGFyZSBjYXVzZWQgYnkgU01FIGNvZGUsIHNtZV9lbmNyeXB0X2tlcm5lbCgp
-LiBJbg0KPiBzbWVfZW5jcnlwdF9rZXJuZWwoKSwgeW91IGdldCBhIDJNIG9mIGVuY3J5cHRpb24g
-d29yayBhcmVhIGFzIGludGVybWVkaWF0ZQ0KPiBidWZmZXIgdG8gZW5jcnlwdCBrZXJuZWwgaW4t
-cGxhY2UuIEFuZCB0aGUgd29yayBhcmVhIGlzIGp1c3QgYWZ0ZXIgX2VuZCBvZg0KPiBrZXJuZWwu
-DQoNCkkgcmVtZW1iZXIgd29ycnlpbmcgYWJvdXQgc29tZXRoaW5nIGxpa2UgdGhpcyBiYWNrIHdo
-ZW4gSSB3YXMgdGVzdGluZyB0aGUNCmtleGVjIHN1cHBvcnQuIEkgaGFkIGNvbWUgdXAgd2l0aCBh
-IHBhdGNoIHRvIGFkZHJlc3MgaXQsIGJ1dCBuZXZlciBnb3QgdGhlDQp0aW1lIHRvIHRlc3QgYW5k
-IHN1Ym1pdCBpdC4gIEkndmUgaW5jbHVkZWQgaXQgaGVyZSBpZiB5b3UnZCBsaWtlIHRvIHRlc3QN
-Cml0IChJIGhhdmVuJ3QgZG9uZSBydW4gdGhpcyBwYXRjaCBpbiBxdWl0ZSBzb21lIHRpbWUpLiBJ
-ZiBpdCB3b3Jrcywgd2UgY2FuDQp0aGluayBhYm91dCBzdWJtaXR0aW5nIGl0Lg0KDQpUaGFua3Ms
-DQpUb20NCg0KLS0tDQp4ODYvbW06IENyZWF0ZSBhbiBTTUUgd29ya2FyZWEgaW4gdGhlIGtlcm5l
-bCBmb3IgZWFybHkgZW5jcnlwdGlvbg0KDQpGcm9tOiBUb20gTGVuZGFja3kgPHRob21hcy5sZW5k
-YWNreUBhbWQuY29tPg0KDQpUaGUgU01FIHdvcmthcmVhIHVzZWQgZHVyaW5nIGVhcmx5IGVuY3J5
-cHRpb24gb2YgdGhlIGtlcm5lbCBkdXJpbmcgYm9vdA0KaXMgc2l0dWF0ZWQgb24gYSAyTUIgYm91
-bmRhcnkgYWZ0ZXIgdGhlIGVuZCBvZiB0aGUga2VybmVsIHRleHQsIGRhdGEsDQpldGMuIHNlY3Rp
-b25zIChfZW5kKS4gIFRoaXMgd29ya3Mgd2VsbCBkdXJpbmcgaW5pdGlhbCBib290IG9mIGEgY29t
-cHJlc3NlZA0Ka2VybmVsIGJlY2F1c2Ugb2YgdGhlIHJlbG9jYXRpb24gdXNlZCBmb3IgZGVjb21w
-cmVzc2lvbiBvZiB0aGUga2VybmVsLg0KQnV0IHdoZW4gcGVyZm9ybWluZyBhIGtleGVjIGJvb3Qs
-IHRoZXJlJ3MgYSBjaGFuY2UgdGhhdCB0aGUgU01FIHdvcmthcmVhDQptYXkgbm90IGJlIG1hcHBl
-ZCBieSB0aGUga2V4ZWMgcGFnZXRhYmxlcyBvciB0aGF0IHNvbWUgb2YgdGhlIG90aGVyIGRhdGEN
-CnVzZWQgYnkga2V4ZWMgY291bGQgZXhpc3QgaW4gdGhpcyByYW5nZS4NCg0KQ3JlYXRlIGEgc2Vj
-dGlvbiBmb3IgU01FIGluIHRoZSB2bWxpbnV4Lmxkcy5TLiAgUG9zaXRpb24gaXQgYWZ0ZXIgIl9l
-bmQiDQpzbyB0aGF0IHRoZSBtZW1vcnkgd2lsbCBiZSByZWNsYWltZWQgZHVyaW5nIGJvb3QgYW5k
-IHNpbmNlIGl0IGlzIGFsbA0KemVyb2VzIGl0IGNvbXByZXNzZXMgd2VsbC4gIFNpbmNlIHRoaXMg
-bmV3IHNlY3Rpb24gd2lsbCBiZSBwYXJ0IG9mIHRoZQ0Ka2VybmVsLCBrZXhlYyB3aWxsIGFjY291
-bnQgZm9yIGl0IGluIHBhZ2V0YWJsZSBtYXBwaW5ncyBhbmQgcGxhY2VtZW50IG9mDQpkYXRhIGFm
-dGVyIHRoZSBrZXJuZWwuDQoNCkhlcmUncyBhbiBleGFtcGxlIG9mIGEga2VybmVsIHNpemUgd2l0
-aG91dCBhbmQgd2l0aCB0aGUgU01FIHNlY3Rpb246DQoJd2l0aG91dDoNCgkJdm1saW51eDoJMzYs
-NTAxLDYxNg0KCQliekltYWdlOgkgNiw0OTcsMzQ0DQoNCgkJMTAwMDAwMDAwLTQ3ZjM3ZmZmZiA6
-IFN5c3RlbSBSQU0NCgkJICAxZTQwMDAwMDAtMWU0NzY3N2Q0IDogS2VybmVsIGNvZGUJKDB4NzY3
-N2Q0KQ0KCQkgIDFlNDc2NzdkNS0xZTRlMmUwYmYgOiBLZXJuZWwgZGF0YQkoMHg2YzY4ZWEpDQoJ
-CSAgMWU1MDc0MDAwLTFlNTM3MmZmZiA6IEtlcm5lbCBic3MJKDB4MmZlZmZmKQ0KDQoJd2l0aDoN
-CgkJdm1saW51eDoJNDQsNDE5LDQwOA0KCQliekltYWdlOgkgNiw1MDMsMTM2DQoNCgkJODgwMDAw
-MDAwLWM3ZmY3ZmZmZiA6IFN5c3RlbSBSQU0NCgkJICA4Y2YwMDAwMDAtOGNmNzY3N2Q0IDogS2Vy
-bmVsIGNvZGUJKDB4NzY3N2Q0KQ0KCQkgIDhjZjc2NzdkNS04Y2ZlMmUwYmYgOiBLZXJuZWwgZGF0
-YQkoMHg2YzY4ZWEpDQoJCSAgOGQwMDc0MDAwLThkMDM3MmZmZiA6IEtlcm5lbCBic3MJKDB4MmZl
-ZmZmKQ0KDQpTaWduZWQtb2ZmLWJ5OiBUb20gTGVuZGFja3kgPHRob21hcy5sZW5kYWNreUBhbWQu
-Y29tPg0KLS0tDQogYXJjaC94ODYva2VybmVsL3ZtbGludXgubGRzLlMgICAgICB8ICAgMTYgKysr
-KysrKysrKysrKysrKw0KIGFyY2gveDg2L21tL21lbV9lbmNyeXB0X2lkZW50aXR5LmMgfCAgIDIy
-ICsrKysrKysrKysrKysrKysrKysrLS0NCiAyIGZpbGVzIGNoYW5nZWQsIDM2IGluc2VydGlvbnMo
-KyksIDIgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9hcmNoL3g4Ni9rZXJuZWwvdm1saW51
-eC5sZHMuUyBiL2FyY2gveDg2L2tlcm5lbC92bWxpbnV4Lmxkcy5TDQppbmRleCAwODUwYjUxNDkz
-NDUuLjhjNDM3Nzk4M2U1NCAxMDA2NDQNCi0tLSBhL2FyY2gveDg2L2tlcm5lbC92bWxpbnV4Lmxk
-cy5TDQorKysgYi9hcmNoL3g4Ni9rZXJuZWwvdm1saW51eC5sZHMuUw0KQEAgLTM3OSw2ICszNzks
-MjIgQEAgU0VDVElPTlMNCiAJLiA9IEFMSUdOKFBBR0VfU0laRSk7CQkvKiBrZWVwIFZPX0lOSVRf
-U0laRSBwYWdlIGFsaWduZWQgKi8NCiAJX2VuZCA9IC47DQogDQorI2lmZGVmIENPTkZJR19BTURf
-TUVNX0VOQ1JZUFQNCisJLyoNCisJICogU01FIHdvcmthcmVhIHNlY3Rpb246IExpdmVzIG91dHNp
-ZGUgb2YgdGhlIGtlcm5lbCBwcm9wZXINCisJICogKF90ZXh0IC0gX2VuZCkgZm9yIHBlcmZvcm1p
-bmcgaW4tcGxhY2UgZW5jcnlwdGlvbi4gUmVzaWRlcw0KKwkgKiBvbiBhIDJNQiBib3VuZGFyeSB0
-byBzaW1wbGlmeSB0aGUgcGFnZXRhYmxlIHNldHVwIHVzZWQgZm9yDQorCSAqIHRoZSBlbmNyeXB0
-aW9uLg0KKwkgKi8NCisJLiA9IEFMSUdOKEhQQUdFX1NJWkUpOw0KKwkuc21lIDogQVQoQUREUigu
-c21lKSAtIExPQURfT0ZGU0VUKSB7DQorCQlfX3NtZV9iZWdpbiA9IC47DQorCQkqKC5zbWUpDQor
-CQkuID0gQUxJR04oSFBBR0VfU0laRSk7DQorCQlfX3NtZV9lbmQgPSAuOw0KKwl9DQorI2VuZGlm
-DQorDQogCVNUQUJTX0RFQlVHDQogCURXQVJGX0RFQlVHDQogDQpkaWZmIC0tZ2l0IGEvYXJjaC94
-ODYvbW0vbWVtX2VuY3J5cHRfaWRlbnRpdHkuYyBiL2FyY2gveDg2L21tL21lbV9lbmNyeXB0X2lk
-ZW50aXR5LmMNCmluZGV4IDRhYTliMTQ4MDg2Ni4uYzU1YzJlYzhmYjEyIDEwMDY0NA0KLS0tIGEv
-YXJjaC94ODYvbW0vbWVtX2VuY3J5cHRfaWRlbnRpdHkuYw0KKysrIGIvYXJjaC94ODYvbW0vbWVt
-X2VuY3J5cHRfaWRlbnRpdHkuYw0KQEAgLTczLDYgKzczLDE5IEBAIHN0cnVjdCBzbWVfcG9wdWxh
-dGVfcGdkX2RhdGEgew0KIAl1bnNpZ25lZCBsb25nIHZhZGRyX2VuZDsNCiB9Ow0KIA0KKy8qDQor
-ICogVGhpcyB3b3JrIGFyZWEgbGl2ZXMgaW4gdGhlIC5zbWUgc2VjdGlvbiwgd2hpY2ggbGl2ZXMg
-b3V0c2lkZSBvZg0KKyAqIHRoZSBrZXJuZWwgcHJvcGVyLiBJdCBpcyBzaXplZCB0byBob2xkIHRo
-ZSBpbnRlcm1lZGlhdGUgY29weSBidWZmZXINCisgKiBhbmQgbW9yZSB0aGFuIGVub3VnaCBwYWdl
-dGFibGUgcGFnZXMuDQorICoNCisgKiBCeSB1c2luZyB0aGlzIHNlY3Rpb24sIHRoZSBrZXJuZWwg
-Y2FuIGJlIGVuY3J5cHRlZCBpbiBwbGFjZSBhbmQgd2UNCisgKiBhdm9pZCBhbnkgcG9zc2liaWxp
-dHkgb2YgYm9vdCBwYXJhbWV0ZXJzIG9yIGluaXRyYW1mcyBpbWFnZXMgYmVpbmcNCisgKiBwbGFj
-ZWQgc3VjaCB0aGF0IHRoZSBpbi1wbGFjZSBlbmNyeXB0aW9uIGxvZ2ljIG92ZXJ3cml0ZXMgdGhl
-bS4gIFRoaXMNCisgKiBzZWN0aW9uIGlzIDJNQiBhbGlnbmVkIHRvIGFsbG93IGZvciBzaW1wbGUg
-cGFnZXRhYmxlIHNldHVwIHVzaW5nIG9ubHkNCisgKiBQTUQgZW50cmllcyAoc2VlIHZtbGludXgu
-bGRzLlMpLg0KKyAqLw0KK3N0YXRpYyBjaGFyIHNtZV93b3JrYXJlYVsyICogUE1EX1BBR0VfU0la
-RV0gX19zZWN0aW9uKC5zbWUpOw0KKw0KIHN0YXRpYyBjaGFyIHNtZV9jbWRsaW5lX2FyZ1tdIF9f
-aW5pdGRhdGEgPSAibWVtX2VuY3J5cHQiOw0KIHN0YXRpYyBjaGFyIHNtZV9jbWRsaW5lX29uW10g
-IF9faW5pdGRhdGEgPSAib24iOw0KIHN0YXRpYyBjaGFyIHNtZV9jbWRsaW5lX29mZltdIF9faW5p
-dGRhdGEgPSAib2ZmIjsNCkBAIC0zMTQsOCArMzI3LDEzIEBAIHZvaWQgX19pbml0IHNtZV9lbmNy
-eXB0X2tlcm5lbChzdHJ1Y3QgYm9vdF9wYXJhbXMgKmJwKQ0KIAl9DQogI2VuZGlmDQogDQotCS8q
-IFNldCB0aGUgZW5jcnlwdGlvbiB3b3JrYXJlYSB0byBiZSBpbW1lZGlhdGVseSBhZnRlciB0aGUg
-a2VybmVsICovDQotCXdvcmthcmVhX3N0YXJ0ID0ga2VybmVsX2VuZDsNCisJLyoNCisJICogV2Un
-cmUgcnVubmluZyBpZGVudGl0eSBtYXBwZWQsIHNvIHdlIG11c3Qgb2J0YWluIHRoZSBhZGRyZXNz
-IHRvIHRoZQ0KKwkgKiBTTUUgZW5jcnlwdGlvbiB3b3JrYXJlYSB1c2luZyByaXAtcmVsYXRpdmUg
-YWRkcmVzc2luZy4NCisJICovDQorCWFzbSAoImxlYSBzbWVfd29ya2FyZWEoJSVyaXApLCAlMCIN
-CisJICAgICA6ICI9ciIgKHdvcmthcmVhX3N0YXJ0KQ0KKwkgICAgIDogInAiIChzbWVfd29ya2Fy
-ZWEpKTsNCiANCiAJLyoNCiAJICogQ2FsY3VsYXRlIHJlcXVpcmVkIG51bWJlciBvZiB3b3JrYXJl
-YSBieXRlcyBuZWVkZWQ6DQoNCg0KPiANCj4gVGhpcyBoYXBwZW5zIHRvIHdvcmsgaW4gMXN0IGtl
-cm5lbC4gQnV0IGl0IHdpbGwgZmFpbCBrZXhlYy9rZHVtcCBrZXJuZWwNCj4gYWJzb2x1dGVseS4g
-QmVjYXVzZSB3ZSBsb2FkIHJlYWxtb2RlL2tlcm5lbC9pbml0cmQgaW4ga2V4ZWMtdG9vbHMgZnJv
-bQ0KPiB0b3AgdG8gZG93bi4gSW4ga2V4ZWMtdG9vbHMsIHJlYWxtb2RlIGlzIHB1dCBqdXN0IGFm
-dGVyIGtlcm5lbCBpbWFnZS4gSWYNCj4gS0FTTFIgZW5hYmxlZCwga2VybmVsIG1heSBiZSByYW5k
-b21pemVkIHRvIG90aGVyIHBvc2l0aW9uLCB0aGVuIGtkdW1wDQo+IGtlcm5lbCBjYW4gYm9vdC4g
-SG93ZXZlciwgaWYgbm9rYXNsciBzcGVjaWZpZWQsIHRoZSAyTSBpbnRlcm1lZGlhdGUNCj4gZW5j
-cnlwdGlvbiB3b3JrYXJlYSB3aWxsIGRlZmluaXRlbHkgc3R1bXAgaW50byB0aGUgZm9sbG93aW5n
-IHJlYWxtb2RlLA0KPiBhbmQgZmFpbCBrZXhlYy9rZHVtcCBrZXJuZWwgYm9vdGluZy4NCj4gDQo+
-IEkgaGF2ZSBoYWNrZWQga2V4ZWMtdG9vbHMgY29kZSB0byBwdXQgcmVhbCBtb2RlIGFyZWEgNE0g
-YXdheSBmcm9tIHRoZQ0KPiBrZXJuZWwgaW1hZ2UgZW5kLCBpdCB3b3JrcyBhbmQgY29uZmlybSBt
-eSBmaW5kaW5nLiBTbyB0aGUgY3VycmVudCBTTUUNCj4gaW4tcGxhY2UgZW5jcnlwdGlvbiB3YXkg
-aXMgbm90IG9ubHkgYSBrZXhlYy9rZHVtcCBpc3N1ZSwgYnV0IGFsc28gYW4NCj4gaXNzdWUgaW4g
-MXN0IGtlcm5lbC4gQmVjYXVzZSBLQVNMUiBjb3VsZCBwdXQga2VybmVsIGF0IHRoZSBlbmQgb2Yg
-YW4NCj4gYXZhaWxhYmxlIG1lbW9yeSByZWdpb24sIGhvdyB0byBtYWtlIHN1cmUgdGhlIG5leHQg
-Mk0gaW50ZXJtZWRpYXRlDQo+IHdvcmthcmVhIG11c3QgZXhpc3Q7IGlmIEtBU0xSIHB1dCBrZXJu
-ZWwgdG8gYmUgY2xvc2UgdG8gc3RhcnRpbmcgYWRkcmVzcw0KPiBvZiBhbnkgY21kbGluZS9pbml0
-cmQvc2V0dXBfZGF0YSwgaG93IHRvIG1ha2Ugc3VyZSB0aGUgZ2FwIGJldHdlZW4gdGhlbQ0KPiBt
-dXN0IGJlIGxhcmdlciB0aGFuIDJNLg0KPiANCj4gVGhhbmtzDQo+IEJhb3F1YW4NCj4gDQo=
+On Tue, 4 Jun 2019 05:06:29 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> On Mon,  3 Jun 2019 22:04:42 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > Since arm64 kernel initializes breakpoint trap vector in arch_initcall(),
+> > initializing kprobe (and run smoke test) in postcore_initcall() causes
+> > a kernel panic.
+> > 
+> > To fix this issue, move the kprobe initialization in subsys_initcall()
+> > (which is called right afer the arch_initcall).
+> > 
+> > In-kernel kprobe users (ftrace and bpf) are using fs_initcall() which is
+> > called after subsys_initcall(), so this shouldn't cause more problem.
+> > 
+> > Reported-by: Anders Roxell <anders.roxell@linaro.org>
+> > Fixes: b5f8b32c93b2 ("kprobes: Initialize kprobes at postcore_initcall")
+> 
+> Hi Masami,
+> 
+> Is this really a fix, or is this just needed to add kprobes to the command line?
+
+Hi Steve,
+
+Yes, this is a real fix, not related to the kprobes command line feature.
+
+First of all, the problem was that kprobes(module_init) was initialized
+later than trace_kprobe(fs_initcall). the commit b5f8b32c93b2 is to solve
+it. But I missed that the break-point hander initialization can be done 
+in arch_initcall on some archs. This is fixing that bug.
+
+Thank you,
+
+
+> 
+> -- Steve
+> 
+> 
+> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > ---
+> >  kernel/kprobes.c |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+> > index 54aaaad00a47..5471efbeb937 100644
+> > --- a/kernel/kprobes.c
+> > +++ b/kernel/kprobes.c
+> > @@ -2289,7 +2289,7 @@ static int __init init_kprobes(void)
+> >  		init_test_probes();
+> >  	return err;
+> >  }
+> > -postcore_initcall(init_kprobes);
+> > +subsys_initcall(init_kprobes);
+> >  
+> >  #ifdef CONFIG_DEBUG_FS
+> >  static void report_probe(struct seq_file *pi, struct kprobe *p,
+> 
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
