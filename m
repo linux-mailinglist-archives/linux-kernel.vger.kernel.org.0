@@ -2,73 +2,428 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE1EE34C8E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 17:47:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A306134CA1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 17:52:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728165AbfFDPrW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 11:47:22 -0400
-Received: from mga07.intel.com ([134.134.136.100]:16173 "EHLO mga07.intel.com"
+        id S1728175AbfFDPwd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 11:52:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728019AbfFDPrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 11:47:21 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jun 2019 08:47:20 -0700
-X-ExtLoop1: 1
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by fmsmga004.fm.intel.com with ESMTP; 04 Jun 2019 08:47:19 -0700
-Date:   Tue, 4 Jun 2019 08:50:24 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Cc:     Alex Williamson <alex.williamson@redhat.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        "eric.auger.pro@gmail.com" <eric.auger.pro@gmail.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "yi.l.liu@intel.com" <yi.l.liu@intel.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Robin Murphy <Robin.Murphy@arm.com>,
-        "kevin.tian@intel.com" <kevin.tian@intel.com>,
-        "ashok.raj@intel.com" <ashok.raj@intel.com>,
-        Marc Zyngier <Marc.Zyngier@arm.com>,
-        "peter.maydell@linaro.org" <peter.maydell@linaro.org>,
-        Vincent Stehle <Vincent.Stehle@arm.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v8 05/29] iommu: Add a timeout parameter for PRQ
- response
-Message-ID: <20190604085024.596696c3@jacob-builder>
-In-Reply-To: <13428eef-9b95-0f79-bebf-317a2205673a@arm.com>
-References: <20190526161004.25232-1-eric.auger@redhat.com>
-        <20190526161004.25232-6-eric.auger@redhat.com>
-        <20190603163214.483884a7@x1.home>
-        <13428eef-9b95-0f79-bebf-317a2205673a@arm.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1728030AbfFDPwd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 11:52:33 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF4D42053B;
+        Tue,  4 Jun 2019 15:52:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559663551;
+        bh=QfvCKDJp8Es7MYRcaMIXsgUghIeWtwKUC27RbPRUb4s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ul36q5bDJsxC6Yivv3gZtQVCJTzUKvrhMlsokJxZQJsPWcuTc6FqYHCUOtgFGgREt
+         J0CZ+jpVtCDhM1MXss7PahI6QMhFqhSRIVdAKn/v/ygFvrX/a3zK/DPJhB99jJYo48
+         oSnA7ZyD1ydo05Adflo7my89W5k75zPpijD3Kbgc=
+Date:   Tue, 4 Jun 2019 17:52:28 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-kernel@vger.kernel.org, gwendal@chromium.org,
+        Guenter Roeck <groeck@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
+        Lee Jones <lee.jones@linaro.org>, kernel@collabora.com,
+        dtor@chromium.org,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-doc@vger.kernel.org, Enno Luebbers <enno.luebbers@intel.com>,
+        Guido Kiener <guido@kiener-muenchen.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Jonathan Corbet <corbet@lwn.net>, Wu Hao <hao.wu@intel.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Jilayne Lovejoy <opensource@jilayne.com>
+Subject: Re: [PATCH 03/10] mfd / platform: cros_ec: Miscellaneous character
+ device to talk with the EC
+Message-ID: <20190604155228.GB9981@kroah.com>
+References: <20190604152019.16100-1-enric.balletbo@collabora.com>
+ <20190604152019.16100-4-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190604152019.16100-4-enric.balletbo@collabora.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 4 Jun 2019 11:52:18 +0100
-Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
-
-> On 03/06/2019 23:32, Alex Williamson wrote:
-> > It doesn't seem to make much sense to include this patch without
-> > also including "iommu: handle page response timeout".  Was that one
-> > lost? Dropped?  Lives elsewhere?  
+On Tue, Jun 04, 2019 at 05:20:12PM +0200, Enric Balletbo i Serra wrote:
+> That's a driver to talk with the ChromeOS Embedded Controller via a
+> miscellaneous character device, it creates an entry in /dev for every
+> instance and implements basic file operations for communicating with the
+> Embedded Controller with an userspace application. The API is moved to
+> the uapi folder, which is supposed to contain the user space API of the
+> kernel.
 > 
-> The first 7 patches come from my sva/api branch, where I had forgotten
-> to add the "handle page response timeout" patch. I added it back,
-> probably after Eric sent this version. But I don't think the patch is
-> ready for upstream, as we still haven't decided how to proceed with
-> timeouts. Patches 6 and 7 are for debugging, I don't know if they
-> should go upstream.
-Yeah, we can wait until we all agree on timeouts. It was introduced for
-a basic safeguard against unresponsive guests.
+> Note that this will replace current character device interface
+> implemented in the cros-ec-dev driver in the MFD subsystem. The idea is
+> to move all the functionality that extends the bounds of what MFD was
+> designed to platform/chrome subsystem.
+> 
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
+> 
+>  Documentation/ioctl/ioctl-number.txt          |   2 +-
+>  drivers/mfd/cros_ec_dev.c                     |   2 +-
+>  drivers/platform/chrome/Kconfig               |  11 +
+>  drivers/platform/chrome/Makefile              |   1 +
+>  drivers/platform/chrome/cros_ec_chardev.c     | 279 ++++++++++++++++++
+>  .../uapi/linux/cros_ec_chardev.h              |  18 +-
+>  6 files changed, 302 insertions(+), 11 deletions(-)
+>  create mode 100644 drivers/platform/chrome/cros_ec_chardev.c
+>  rename drivers/mfd/cros_ec_dev.h => include/uapi/linux/cros_ec_chardev.h (70%)
+> 
+> diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
+> index c9558146ac58..8bd7907ee36d 100644
+> --- a/Documentation/ioctl/ioctl-number.txt
+> +++ b/Documentation/ioctl/ioctl-number.txt
+> @@ -340,7 +340,7 @@ Code  Seq#(hex)	Include File		Comments
+>  0xDD	00-3F	ZFCP device driver	see drivers/s390/scsi/
+>  					<mailto:aherrman@de.ibm.com>
+>  0xE5	00-3F	linux/fuse.h
+> -0xEC	00-01	drivers/platform/chrome/cros_ec_dev.h	ChromeOS EC driver
+> +0xEC	00-01	include/uapi/linux/cros_ec_chardev.h	ChromeOS EC driver
+>  0xF3	00-3F	drivers/usb/misc/sisusbvga/sisusb.h	sisfb (in development)
+>  					<mailto:thomas@winischhofer.net>
+>  0xF4	00-1F	video/mbxfb.h		mbxfb
+> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+> index 607383b67cf1..11b791c28f84 100644
+> --- a/drivers/mfd/cros_ec_dev.c
+> +++ b/drivers/mfd/cros_ec_dev.c
+> @@ -15,7 +15,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/uaccess.h>
+>  
+> -#include "cros_ec_dev.h"
+> +#include <uapi/linux/cros_ec_chardev.h>
+>  
+>  #define DRV_NAME "cros-ec-dev"
+>  
+> diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
+> index 9417b982ad92..3a9ad001838a 100644
+> --- a/drivers/platform/chrome/Kconfig
+> +++ b/drivers/platform/chrome/Kconfig
+> @@ -147,6 +147,17 @@ config CROS_KBD_LED_BACKLIGHT
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called cros_kbd_led_backlight.
+>  
+> +config CROS_EC_CHARDEV
+> +	tristate "ChromeOS EC miscdevice"
+> +	depends on MFD_CROS_EC_CHARDEV
+> +	default MFD_CROS_EC_CHARDEV
+> +	help
+> +	  This driver adds file operations support to talk with the
+> +	  ChromeOS EC from userspace via a character device.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called cros_ec_chardev.
+> +
+>  config CROS_EC_LIGHTBAR
+>  	tristate "Chromebook Pixel's lightbar support"
+>  	depends on MFD_CROS_EC_CHARDEV
+> diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
+> index ebb57e21923b..d47a7e1097ee 100644
+> --- a/drivers/platform/chrome/Makefile
+> +++ b/drivers/platform/chrome/Makefile
+> @@ -16,6 +16,7 @@ cros_ec_lpcs-$(CONFIG_CROS_EC_LPC_MEC)	+= cros_ec_lpc_mec.o
+>  obj-$(CONFIG_CROS_EC_LPC)		+= cros_ec_lpcs.o
+>  obj-$(CONFIG_CROS_EC_PROTO)		+= cros_ec_proto.o cros_ec_trace.o
+>  obj-$(CONFIG_CROS_KBD_LED_BACKLIGHT)	+= cros_kbd_led_backlight.o
+> +obj-$(CONFIG_CROS_EC_CHARDEV)		+= cros_ec_chardev.o
+>  obj-$(CONFIG_CROS_EC_LIGHTBAR)		+= cros_ec_lightbar.o
+>  obj-$(CONFIG_CROS_EC_VBC)		+= cros_ec_vbc.o
+>  obj-$(CONFIG_CROS_EC_DEBUGFS)		+= cros_ec_debugfs.o
+> diff --git a/drivers/platform/chrome/cros_ec_chardev.c b/drivers/platform/chrome/cros_ec_chardev.c
+> new file mode 100644
+> index 000000000000..1a0a27080026
+> --- /dev/null
+> +++ b/drivers/platform/chrome/cros_ec_chardev.c
+> @@ -0,0 +1,279 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Miscellaneous character driver for ChromeOS Embedded Controller
+> + *
+> + * Copyright 2019 Google LLC
+> + */
+> +
+> +#include <linux/init.h>
+> +#include <linux/device.h>
+> +#include <linux/fs.h>
+> +#include <linux/list.h>
+> +#include <linux/mfd/cros_ec.h>
+> +#include <linux/mfd/cros_ec_commands.h>
+> +#include <linux/miscdevice.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/types.h>
+> +#include <linux/uaccess.h>
+> +
+> +#include <uapi/linux/cros_ec_chardev.h>
+> +
+> +#define DRV_NAME	"cros-ec-chardev"
+> +
+> +static LIST_HEAD(chardev_devices);
+> +static DEFINE_SPINLOCK(chardev_lock);
+> +
+> +struct chardev_data {
+> +	struct list_head list;
+> +	struct cros_ec_dev *ec_dev;
+> +	struct miscdevice misc;
+> +};
+> +
+> +static int ec_get_version(struct cros_ec_dev *ec, char *str, int maxlen)
+> +{
+> +	static const char * const current_image_name[] = {
+> +		"unknown", "read-only", "read-write", "invalid",
+> +	};
+> +	struct ec_response_get_version *resp;
+> +	struct cros_ec_command *msg;
+> +	int ret;
+> +
+> +	msg = kzalloc(sizeof(*msg) + sizeof(*resp), GFP_KERNEL);
+> +	if (!msg)
+> +		return -ENOMEM;
+> +
+> +	msg->command = EC_CMD_GET_VERSION + ec->cmd_offset;
+> +	msg->insize = sizeof(*resp);
+> +
+> +	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
+> +	if (ret < 0) {
+> +		snprintf(str, maxlen,
+> +			 "Unknown EC version, returned error: %d\n",
+> +			 msg->result);
+> +		goto exit;
+> +	}
+> +
+> +	resp = (struct ec_response_get_version *)msg->data;
+> +	if (resp->current_image >= ARRAY_SIZE(current_image_name))
+> +		resp->current_image = 3; /* invalid */
+> +
+> +	snprintf(str, maxlen, "%s\n%s\n%s\n",
+> +		 resp->version_string_ro,
+> +		 resp->version_string_rw,
+> +		 current_image_name[resp->current_image]);
+> +
+> +	ret = 0;
+> +exit:
+> +	kfree(msg);
+> +	return ret;
+> +}
+> +
+> +/*
+> + * Device file ops
+> + */
+> +static int cros_ec_chardev_open(struct inode *inode, struct file *filp)
+> +{
+> +	struct miscdevice *mdev = filp->private_data;
+> +	struct cros_ec_dev *ec_dev = dev_get_drvdata(mdev->parent);
+> +
+> +	filp->private_data = ec_dev;
+> +	nonseekable_open(inode, filp);
+> +
+> +	return 0;
+> +}
+> +
+> +static ssize_t cros_ec_chardev_read(struct file *filp, char __user *buffer,
+> +				     size_t length, loff_t *offset)
+> +{
+> +	char msg[sizeof(struct ec_response_get_version) +
+> +		 sizeof(CROS_EC_DEV_VERSION)];
+> +	struct cros_ec_dev *ec = filp->private_data;
+> +	size_t count;
+> +	int ret;
+> +
+> +	if (*offset != 0)
+> +		return 0;
+> +
+> +	ret = ec_get_version(ec, msg, sizeof(msg));
+> +	if (ret)
+> +		return ret;
+> +
+> +	count = min(length, strlen(msg));
+> +
+> +	if (copy_to_user(buffer, msg, count))
+> +		return -EFAULT;
+> +
+> +	*offset = count;
+> +	return count;
+> +}
+> +
+> +/*
+> + * Ioctls
+> + */
+> +static long cros_ec_chardev_ioctl_xcmd(struct cros_ec_dev *ec, void __user *arg)
+> +{
+> +	struct cros_ec_command *s_cmd;
+> +	struct cros_ec_command u_cmd;
+> +	long ret;
+> +
+> +	if (copy_from_user(&u_cmd, arg, sizeof(u_cmd)))
+> +		return -EFAULT;
+> +
+> +	if (u_cmd.outsize > EC_MAX_MSG_BYTES ||
+> +	    u_cmd.insize > EC_MAX_MSG_BYTES)
+> +		return -EINVAL;
+> +
+> +	s_cmd = kmalloc(sizeof(*s_cmd) + max(u_cmd.outsize, u_cmd.insize),
+> +			GFP_KERNEL);
+> +	if (!s_cmd)
+> +		return -ENOMEM;
+> +
+> +	if (copy_from_user(s_cmd, arg, sizeof(*s_cmd) + u_cmd.outsize)) {
+> +		ret = -EFAULT;
+> +		goto exit;
+> +	}
+> +
+> +	if (u_cmd.outsize != s_cmd->outsize ||
+> +	    u_cmd.insize != s_cmd->insize) {
+> +		ret = -EINVAL;
+> +		goto exit;
+> +	}
+> +
+> +	s_cmd->command += ec->cmd_offset;
+> +	ret = cros_ec_cmd_xfer(ec->ec_dev, s_cmd);
+> +	/* Only copy data to userland if data was received. */
+> +	if (ret < 0)
+> +		goto exit;
+> +
+> +	if (copy_to_user(arg, s_cmd, sizeof(*s_cmd) + s_cmd->insize))
+> +		ret = -EFAULT;
+> +exit:
+> +	kfree(s_cmd);
+> +	return ret;
+> +}
+> +
+> +static long cros_ec_chardev_ioctl_readmem(struct cros_ec_dev *ec,
+> +					   void __user *arg)
+> +{
+> +	struct cros_ec_device *ec_dev = ec->ec_dev;
+> +	struct cros_ec_readmem s_mem = { };
+> +	long num;
+> +
+> +	/* Not every platform supports direct reads */
+> +	if (!ec_dev->cmd_readmem)
+> +		return -ENOTTY;
+> +
+> +	if (copy_from_user(&s_mem, arg, sizeof(s_mem)))
+> +		return -EFAULT;
+> +
+> +	num = ec_dev->cmd_readmem(ec_dev, s_mem.offset, s_mem.bytes,
+> +				  s_mem.buffer);
+> +	if (num <= 0)
+> +		return num;
+> +
+> +	if (copy_to_user((void __user *)arg, &s_mem, sizeof(s_mem)))
+> +		return -EFAULT;
+> +
+> +	return num;
+> +}
+> +
+> +static long cros_ec_chardev_ioctl(struct file *filp, unsigned int cmd,
+> +				   unsigned long arg)
+> +{
+> +	struct cros_ec_dev *ec = filp->private_data;
+> +
+> +	if (_IOC_TYPE(cmd) != CROS_EC_DEV_IOC)
+> +		return -ENOTTY;
+> +
+> +	switch (cmd) {
+> +	case CROS_EC_DEV_IOCXCMD:
+> +		return cros_ec_chardev_ioctl_xcmd(ec, (void __user *)arg);
+> +	case CROS_EC_DEV_IOCRDMEM:
+> +		return cros_ec_chardev_ioctl_readmem(ec, (void __user *)arg);
+> +	}
+> +
+> +	return -ENOTTY;
+> +}
+> +
+> +static const struct file_operations chardev_fops = {
+> +	.open		= cros_ec_chardev_open,
+> +	.read		= cros_ec_chardev_read,
+> +	.unlocked_ioctl	= cros_ec_chardev_ioctl,
+> +#ifdef CONFIG_COMPAT
+> +	.compat_ioctl	= cros_ec_chardev_ioctl,
+> +#endif
+> +};
+> +
+> +static int cros_ec_chardev_probe(struct platform_device *pdev)
+> +{
+> +	struct cros_ec_dev *ec_dev = dev_get_drvdata(pdev->dev.parent);
+> +	struct cros_ec_platform *ec_platform = dev_get_platdata(ec_dev->dev);
+> +	struct chardev_data *data;
+> +	int ret;
+> +
+> +	/* Create a char device: we want to create it anew */
+> +	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	data->ec_dev = ec_dev;
+> +	data->misc.minor = MISC_DYNAMIC_MINOR;
+> +	data->misc.fops = &chardev_fops;
+> +	data->misc.name = ec_platform->ec_name;
+> +	data->misc.parent = pdev->dev.parent;
+> +
+> +	ret = misc_register(&data->misc);
+> +	if (ret)
+> +		return ret;
+> +
+> +	spin_lock(&chardev_lock);
+> +	list_add(&data->list, &chardev_devices);
+> +	spin_unlock(&chardev_lock);
+> +
+> +	dev_info(&pdev->dev, "Created misc device /dev/%s\n",
+> +		 data->misc.name);
+
+No need to be noisy, if all goes well, your code should be quiet.
+
+> +
+> +	return 0;
+> +}
+> +
+> +static int cros_ec_chardev_remove(struct platform_device *pdev)
+> +{
+> +	struct cros_ec_dev *ec_dev = dev_get_drvdata(pdev->dev.parent);
+> +	struct chardev_data *data;
+> +
+> +	list_for_each_entry(data, &chardev_devices, list)
+> +		if (data->ec_dev == ec_dev)
+> +			break;
+> +
+> +	if (data->ec_dev != ec_dev) {
+> +		dev_err(&pdev->dev,
+> +			"remove called but miscdevice %s not found\n",
+> +			data->misc.name);
+> +		return -ENODEV;
+> +	}
+
+Why do you have this separate list of devices?  You don't seem to need
+it, you only iterate over it, why is it needed?
+
+> +	spin_lock(&chardev_lock);
+> +	list_del(&data->list);
+> +	spin_unlock(&chardev_lock);
+> +	misc_deregister(&data->misc);
+> +
+> +	return 0;
+> +}
+
+You also iterate over the list without the lock, so why even have the
+lock?  Are you sure the list, and the lock, is even needed?
+
+thanks,
+
+greg k-h
