@@ -2,78 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FEF933EEB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 08:20:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B293B33EF3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 08:24:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbfFDGUs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 02:20:48 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:35619 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726595AbfFDGUs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 02:20:48 -0400
-X-Originating-IP: 79.86.19.127
-Received: from [192.168.0.12] (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 49FAD1C0009;
-        Tue,  4 Jun 2019 06:20:38 +0000 (UTC)
-Subject: Re: [PATCH v4 05/14] arm64, mm: Make randomization selected by
- generic topdown mmap layout
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Albert Ou <aou@eecs.berkeley.edu>,
-        Kees Cook <keescook@chromium.org>,
-        James Hogan <jhogan@kernel.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Paul Burton <paul.burton@mips.com>,
-        linux-riscv@lists.infradead.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mips@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Luis Chamberlain <mcgrof@kernel.org>
-References: <20190526134746.9315-1-alex@ghiti.fr>
- <20190526134746.9315-6-alex@ghiti.fr>
- <20190603174001.GL63283@arrakis.emea.arm.com>
-From:   Alex Ghiti <alex@ghiti.fr>
-Message-ID: <e8dab94d-679e-8898-033e-3b5dbf0cc044@ghiti.fr>
-Date:   Tue, 4 Jun 2019 02:20:38 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1726713AbfFDGYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 02:24:44 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:13319 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726595AbfFDGYo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 02:24:44 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 45J22c6Rwqz9vDbl;
+        Tue,  4 Jun 2019 08:24:40 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id bLXlcgVXjjBG; Tue,  4 Jun 2019 08:24:40 +0200 (CEST)
+Received: from vm-hermes.si.c-s.fr (vm-hermes.si.c-s.fr [192.168.25.253])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 45J22c5XHVz9vDbk;
+        Tue,  4 Jun 2019 08:24:40 +0200 (CEST)
+Received: by vm-hermes.si.c-s.fr (Postfix, from userid 33)
+        id B90D1843; Tue,  4 Jun 2019 08:24:39 +0200 (CEST)
+Received: from 37-165-91-81.coucou-networks.fr
+ (37-165-91-81.coucou-networks.fr [37.165.91.81]) by messagerie.c-s.fr (Horde
+ Framework) with HTTP; Tue, 04 Jun 2019 08:24:39 +0200
+Date:   Tue, 04 Jun 2019 08:24:39 +0200
+Message-ID: <20190604082439.Horde.tWsSNlWiTjwbZIMIFhnFcQ5@messagerie.c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Tyrel Datwyler <tyreld@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] PCI: rpaphp: Avoid a sometimes-uninitialized warning
+In-Reply-To: <20190603174323.48251-1-natechancellor@gmail.com>
+User-Agent: Internet Messaging Program (IMP) H5 (6.2.3)
+Content-Type: text/plain; charset=UTF-8; format=flowed; DelSp=Yes
 MIME-Version: 1.0
-In-Reply-To: <20190603174001.GL63283@arrakis.emea.arm.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: sv-FI
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/3/19 1:40 PM, Catalin Marinas wrote:
-> On Sun, May 26, 2019 at 09:47:37AM -0400, Alexandre Ghiti wrote:
->> This commits selects ARCH_HAS_ELF_RANDOMIZE when an arch uses the generic
->> topdown mmap layout functions so that this security feature is on by
->> default.
->> Note that this commit also removes the possibility for arm64 to have elf
->> randomization and no MMU: without MMU, the security added by randomization
->> is worth nothing.
-> Not planning on this anytime soon ;).
 
+Quoting Nathan Chancellor <natechancellor@gmail.com>:
 
-Great :) Thanks for your time,
+> When building with -Wsometimes-uninitialized, clang warns:
+>
+> drivers/pci/hotplug/rpaphp_core.c:243:14: warning: variable 'fndit' is
+> used uninitialized whenever 'for' loop exits because its condition is
+> false [-Wsometimes-uninitialized]
+>         for (j = 0; j < entries; j++) {
+>                     ^~~~~~~~~~~
+> drivers/pci/hotplug/rpaphp_core.c:256:6: note: uninitialized use occurs
+> here
+>         if (fndit)
+>             ^~~~~
+> drivers/pci/hotplug/rpaphp_core.c:243:14: note: remove the condition if
+> it is always true
+>         for (j = 0; j < entries; j++) {
+>                     ^~~~~~~~~~~
+> drivers/pci/hotplug/rpaphp_core.c:233:14: note: initialize the variable
+> 'fndit' to silence this warning
+>         int j, fndit;
+>                     ^
+>                      = 0
+>
+> Looking at the loop in a vacuum as clang would, fndit could be
+> uninitialized if entries was ever zero or the if statement was
+> always true within the loop. Regardless of whether or not this
+> warning is a problem in practice, "found" variables should always
+> be initialized to false so that there is no possibility of
+> undefined behavior.
+>
+> Link: https://github.com/ClangBuiltLinux/linux/issues/504
+> Fixes: 2fcf3ae508c2 ("hotplug/drc-info: Add code to search  
+> ibm,drc-info property")
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>  drivers/pci/hotplug/rpaphp_core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pci/hotplug/rpaphp_core.c  
+> b/drivers/pci/hotplug/rpaphp_core.c
+> index bcd5d357ca23..07b56bf2886f 100644
+> --- a/drivers/pci/hotplug/rpaphp_core.c
+> +++ b/drivers/pci/hotplug/rpaphp_core.c
+> @@ -230,7 +230,7 @@ static int rpaphp_check_drc_props_v2(struct  
+> device_node *dn, char *drc_name,
+>  	struct of_drc_info drc;
+>  	const __be32 *value;
+>  	char cell_drc_name[MAX_DRC_NAME_LEN];
+> -	int j, fndit;
+> +	int j, fndit = 0;
 
-Alex
+Not sure fndit is needed at all. Looking into the full function code,  
+fndit only serves as doing a single action. That action could be done  
+in the loop directly, see below
 
+And while you are at it, I guess you should also handle the  
+initialisation of cell_drc_name.
+In the current code, it looks like content of cell_drc_name is  
+undefined when doing the strcmp when fndit is not 1.
 
 >
-> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+>  	info = of_find_property(dn->parent, "ibm,drc-info", NULL);
+>  	if (info == NULL)
+> --
+> 2.22.0.rc2
+
+diff --git a/drivers/pci/hotplug/rpaphp_core.c  
+b/drivers/pci/hotplug/rpaphp_core.c
+index bcd5d357ca23..87113419a44f 100644
+--- a/drivers/pci/hotplug/rpaphp_core.c
++++ b/drivers/pci/hotplug/rpaphp_core.c
+@@ -230,7 +230,7 @@ static int rpaphp_check_drc_props_v2(struct  
+device_node *dn, char *drc_name,
+  	struct of_drc_info drc;
+  	const __be32 *value;
+  	char cell_drc_name[MAX_DRC_NAME_LEN];
+-	int j, fndit;
++	int j;
+
+  	info = of_find_property(dn->parent, "ibm,drc-info", NULL);
+  	if (info == NULL)
+@@ -248,14 +248,10 @@ static int rpaphp_check_drc_props_v2(struct  
+device_node *dn, char *drc_name,
+  		if (my_index > drc.last_drc_index)
+  			continue;
+
+-		fndit = 1;
++		/* Found it */
++		sprintf(cell_drc_name, "%s%d", drc.drc_name_prefix, my_index);
+  		break;
+  	}
+-	/* Found it */
+-
+-	if (fndit)
+-		sprintf(cell_drc_name, "%s%d", drc.drc_name_prefix,
+-			my_index);
+
+  	if (((drc_name == NULL) ||
+  	     (drc_name && !strcmp(drc_name, cell_drc_name))) &&
+
+Christophe
