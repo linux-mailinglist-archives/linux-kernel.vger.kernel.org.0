@@ -2,155 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0C8734681
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:23:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14657346A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:27:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727786AbfFDMXg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 08:23:36 -0400
-Received: from verein.lst.de ([213.95.11.211]:35883 "EHLO newverein.lst.de"
+        id S1727800AbfFDM1F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 08:27:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727766AbfFDMXe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 08:23:34 -0400
-Received: by newverein.lst.de (Postfix, from userid 2005)
-        id 98D4868B20; Tue,  4 Jun 2019 14:23:08 +0200 (CEST)
-From:   Torsten Duwe <duwe@lst.de>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Sean Paul <seanpaul@chromium.org>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Harald Geyer <harald@ccbib.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 7/7] arm64: dts: allwinner: a64: enable ANX6345 bridge on Teres-I
-References: <20190604122150.29D6468B05@newverein.lst.de>
-Message-Id: <20190604122308.98D4868B20@newverein.lst.de>
-Date:   Tue,  4 Jun 2019 14:23:08 +0200 (CEST)
+        id S1726994AbfFDM1F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 08:27:05 -0400
+Received: from localhost (unknown [117.99.94.117])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 250F420665;
+        Tue,  4 Jun 2019 12:27:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559651224;
+        bh=iaMFRIk0Y0W/DnigZZek04DJjtoqETqrBE8Yb9t2yls=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=O9748DDEH8P8t3FQitaeEc2OO+rCZXtahQC0U5bCHPWevGAQWCTFjH5frdl6hyWsv
+         aw+dOC7KcxPplabgvltFxlX6ku2NvJjo6flv4/x1gPM4wB4JhnSzSIave4FmcLqrmi
+         0RNkc7stgEXdCq1GCLR+2atcJgVlG7Ewr963Ofy4=
+Date:   Tue, 4 Jun 2019 17:53:56 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     "Hook, Gary" <Gary.Hook@amd.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dmaengine: dmatest: timeout value of -1 should specify
+ infinite wait
+Message-ID: <20190604122356.GY15118@vkoul-mobl>
+References: <155933183362.4916.15727271006977576552.stgit@sosrh3.amd.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <155933183362.4916.15727271006977576552.stgit@sosrh3.amd.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Teres-I has an anx6345 bridge connected to the RGB666 LCD output, and
-the I2C controlling signals are connected to I2C0 bus. eDP output goes
-to an Innolux N116BGE panel.
+On 31-05-19, 19:43, Hook, Gary wrote:
+> The dmatest module parameter 'timeout' is documented as accepting a
+> -1 to mean "infinite timeout". Change the parameter to to signed
+> integer, and check the value to call the appropriate wait_event()
+> function.
+> 
+> Signed-off-by: Gary R Hook <gary.hook@amd.com>
+> ---
+>  drivers/dma/dmatest.c |   11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/dma/dmatest.c b/drivers/dma/dmatest.c
+> index b96814a7dceb..28a237686578 100644
+> --- a/drivers/dma/dmatest.c
+> +++ b/drivers/dma/dmatest.c
+> @@ -63,7 +63,7 @@ MODULE_PARM_DESC(pq_sources,
+>  		"Number of p+q source buffers (default: 3)");
+>  
+>  static int timeout = 3000;
+> -module_param(timeout, uint, S_IRUGO | S_IWUSR);
+> +module_param(timeout, int, S_IRUGO | S_IWUSR);
+>  MODULE_PARM_DESC(timeout, "Transfer Timeout in msec (default: 3000), "
+>  		 "Pass -1 for infinite timeout");
+>  
+> @@ -795,8 +795,13 @@ static int dmatest_func(void *data)
+>  		}
+>  		dma_async_issue_pending(chan);
+>  
+> -		wait_event_freezable_timeout(thread->done_wait, done->done,
+> -					     msecs_to_jiffies(params->timeout));
+> +		/* A timeout value of -1 means infinite wait */
+> +		if (timeout == -1)
+> +			wait_event_freezable(thread->done_wait, done->done);
 
-Enable it in the device tree.
+well i am not too happy that we have a infinite wait and no way to
+cancel, maybe remove this case?
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Signed-off-by: Torsten Duwe <duwe@suse.de>
----
- .../boot/dts/allwinner/sun50i-a64-teres-i.dts      | 65 ++++++++++++++++++++--
- 1 file changed, 61 insertions(+), 4 deletions(-)
+> +		else
+> +			wait_event_freezable_timeout(thread->done_wait,
+> +					done->done,
+> +					msecs_to_jiffies(params->timeout));
+>  
+>  		status = dma_async_is_tx_complete(chan, cookie, NULL, NULL);
+>  
+> 
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
-index 0ec46b969a75..a0ad438b037f 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
-@@ -65,6 +65,21 @@
- 		};
- 	};
- 
-+	panel: panel {
-+		compatible ="innolux,n116bge", "simple-panel";
-+		status = "okay";
-+		power-supply = <&reg_dcdc1>;
-+		backlight = <&backlight>;
-+
-+		ports {
-+			panel_in: port {
-+				panel_in_edp: endpoint {
-+					remote-endpoint = <&anx6345_out>;
-+				};
-+			};
-+		};
-+	};
-+
- 	reg_usb1_vbus: usb1-vbus {
- 		compatible = "regulator-fixed";
- 		regulator-name = "usb1-vbus";
-@@ -81,20 +96,48 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci1 {
- 	status = "okay";
- };
- 
- 
--/* The ANX6345 eDP-bridge is on i2c0. There is no linux (mainline)
-- * driver for this chip at the moment, the bootloader initializes it.
-- * However it can be accessed with the i2c-dev driver from user space.
-- */
- &i2c0 {
- 	clock-frequency = <100000>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c0_pins>;
- 	status = "okay";
-+
-+	anx6345: anx6345@38 {
-+		compatible = "analogix,anx6345";
-+		reg = <0x38>;
-+		reset-gpios = <&pio 3 24 GPIO_ACTIVE_LOW>; /* PD24 */
-+		dvdd25-supply = <&reg_dldo2>;
-+		dvdd12-supply = <&reg_dldo3>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				anx6345_in: endpoint {
-+					remote-endpoint = <&tcon0_out_anx6345>;
-+				};
-+			};
-+			port@1 {
-+				anx6345_out: endpoint {
-+					remote-endpoint = <&panel_in_edp>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&mixer0 {
-+	status = "okay";
- };
- 
- &mmc0 {
-@@ -279,6 +322,20 @@
- 	vcc-hdmi-supply = <&reg_dldo1>;
- };
- 
-+&tcon0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&lcd_rgb666_pins>;
-+
-+	status = "okay";
-+};
-+
-+&tcon0_out {
-+	tcon0_out_anx6345: endpoint@0 {
-+		reg = <0>;
-+		remote-endpoint = <&anx6345_in>;
-+	};
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pb_pins>;
 -- 
-2.16.4
-
+~Vinod
