@@ -2,59 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE95134775
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 15:01:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6117B3477F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 15:02:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727289AbfFDNBW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 09:01:22 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:33818 "EHLO
+        id S1727616AbfFDNCO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 09:02:14 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:41882 "EHLO
         mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727068AbfFDNBV (ORCPT
+        with ESMTP id S1727551AbfFDNCK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 09:01:21 -0400
-Received: by mail-qt1-f194.google.com with SMTP id m29so8329640qtu.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 06:01:20 -0700 (PDT)
+        Tue, 4 Jun 2019 09:02:10 -0400
+Received: by mail-qt1-f194.google.com with SMTP id s57so6434077qte.8
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 06:02:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ziepe.ca; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=JItJDb1hCe3PXbM5CDMidmb7xSzfnBwGQJaUWCGmqxo=;
-        b=Y9IUVHZGqeU0HCJUHFiWu6pa9R1aTN7kulR/wN6MqxmpXYzOa0TiCqua5LiZ4hEwEz
-         ev2Sj3xyes2144LjjuyOexSqeqSKWlt3WMK6cSGZPGD8HxNjX+Gtgr2VjY2syXYm24yv
-         pNhVi+7lsS8CkaA6Ue3uMV/Vv79a8q0c7Bx2ZKe0zrhNUNw+dh1aaTgg9nVjtt2pPP8J
-         SZ03QiW2V5U/FSunjX+Di4eqhrmayy4bvd9nBAYIILU6Dw1ILE8JJqykvWw/nYFx66N/
-         59mJF6D5Asld4XY9Y52qmbOm2vh94w3cf4KMuiWIudfxgAyJaXKJUsg9rxdyQ86kjKce
-         JSuA==
+        bh=ROjiC3s0siagx/fi+MGJXNVgc6kDjODdOY/lcLdmBIY=;
+        b=Yjg83FKmLcCoTK1qNZRWt/34Ia4Vlgl4OzEswRBoqTA1q96rWHjxDfVIh6O7xWTGYS
+         eTwCJcntFH46Tx+/cfSa7gWeHuAwOuGBn+X1jMdn5S6DRrFvNPM6afZ9JtFGwDFoFWKd
+         IItwYcOZFv/0waUdBmD+9vX5g+lauIFC8gWQwZqeWZqiLI8MWTWgKqH10ZguaFNyDwaJ
+         a6BouIbR+z5GvWPUxO/910/OPmm0It1HqckTeip+hRX/UhVQAxatTT7lXUHm0zw2yFJW
+         DkwJjMsTV0HME+BgheyUHlaQClPbcE8mHooI7fCmf534f4AYixHfdR0GOmoGClDBYuEf
+         l/5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JItJDb1hCe3PXbM5CDMidmb7xSzfnBwGQJaUWCGmqxo=;
-        b=G7eVO8box6xTrB4z3D5LBr6A6HJMEWools9XRxZRODXWqaltdTu8ytKPJ7hMDKVqc3
-         2AGhsF8nhjzRB81s1cfraH9mbiuL6TKkgCsjk41vznIiNeUskaXOdZwZUhoRrTmvXtsF
-         aPuiRlqs2sduirWuJSBER4VRb6ugmXduHKQMYoWeoGqYEUWSRVMTs6WsOpONc3k0T4Aw
-         +jTGA5G8tmQPTJ7Hip8PQYND2z7JecSKCSSgCWxMLrlDf1/QUHRwl5PHP4IxY6XorNx3
-         LJ2I9ZkeZ+jNtOXbWPpSFKzT/ZyjmBj4CwOnixnXLnqUO7rY/XhBEFBdzaxHVeHjW9fH
-         PCxg==
-X-Gm-Message-State: APjAAAWDSsz7a7E9bi+BI/HUPkQdd4XGu/X5vBqcTHOneAByOtEbFl7R
-        UGGa/Gnf7+6uLq7z6Qp+Np4i5Q==
-X-Google-Smtp-Source: APXvYqzAG+mI1DPv2W+11pupnoGWNGycht5g/63Z32TRX8qAmaRQdBGY8y7MK6ZcgElkWgzp2dHDfw==
-X-Received: by 2002:ac8:7c7:: with SMTP id m7mr25441539qth.28.1559653280236;
-        Tue, 04 Jun 2019 06:01:20 -0700 (PDT)
+        bh=ROjiC3s0siagx/fi+MGJXNVgc6kDjODdOY/lcLdmBIY=;
+        b=M6G0uGNbJvXdfxKmYfpex2cfUQCtvHNnTKjHIcwhjHtEJEowIJe70v6OKkxQVSQESg
+         es2aa67+hxrtAue0TN1rTbpd2iWewq4DXP9gxt/rj/zWd1jsf4w1Gag4AJWWwkhIFR4w
+         /29kDek8ktJyxuD6davhpDkyHQgyuoo8zTeZuMgxBk1FRxFipp6+r/h208Iz7JQY7rU3
+         ywubwc5CVQQguQQFwV3Jo8JHZiwE5RDKuR+i4WYXUqYA+Qj0iCqZaVn2zvc8qZi+saCw
+         RI/Mw32yRgkUgCm9mvAUroc9Zui8XKVHkWrNkPRDeP7pG0tJ6pLlcefMmYQJcbd20qzZ
+         TpUg==
+X-Gm-Message-State: APjAAAW5dZI33IpxVkaT8CjbtgNUbAYAKchrQoyXxBqrXEOQJlSBU2u9
+        IHwdidolmmIkFN84+AaJk8Rg1Q==
+X-Google-Smtp-Source: APXvYqz5RimUEjNtxNzzaaY0SoKGmFHRAnKhf0PPTePbHdJhsA1MCZNciExOvF95WwVoO+r2X/Sqlw==
+X-Received: by 2002:a0c:c94d:: with SMTP id v13mr706065qvj.211.1559653328976;
+        Tue, 04 Jun 2019 06:02:08 -0700 (PDT)
 Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id a7sm7509135qke.88.2019.06.04.06.01.19
+        by smtp.gmail.com with ESMTPSA id m5sm10984580qke.25.2019.06.04.06.02.08
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Jun 2019 06:01:19 -0700 (PDT)
+        Tue, 04 Jun 2019 06:02:08 -0700 (PDT)
 Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
         (envelope-from <jgg@ziepe.ca>)
-        id 1hY942-0004Su-LN; Tue, 04 Jun 2019 10:01:18 -0300
-Date:   Tue, 4 Jun 2019 10:01:18 -0300
+        id 1hY94p-0004U3-JD; Tue, 04 Jun 2019 10:02:07 -0300
+Date:   Tue, 4 Jun 2019 10:02:07 -0300
 From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Andrey Konovalov <andreyknvl@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-arm-kernel@lists.infradead.org, sparclinux@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        kvm@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Vincenzo Frascino <vincenzo.frascino@arm.com>,
         Will Deacon <will.deacon@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -83,99 +88,79 @@ Cc:     Andrey Konovalov <andreyknvl@google.com>,
         Robin Murphy <robin.murphy@arm.com>,
         Kevin Brodsky <kevin.brodsky@arm.com>,
         Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-Subject: Re: [PATCH v2] uaccess: add noop untagged_addr definition
-Message-ID: <20190604130118.GC15385@ziepe.ca>
-References: <c8311f9b759e254308a8e57d9f6eb17728a686a7.1559649879.git.andreyknvl@google.com>
- <20190604122841.GB15385@ziepe.ca>
- <20190604123759.GA6610@arrakis.emea.arm.com>
+Subject: Re: [PATCH v16 12/16] IB, arm64: untag user pointers in
+ ib_uverbs_(re)reg_mr()
+Message-ID: <20190604130207.GD15385@ziepe.ca>
+References: <cover.1559580831.git.andreyknvl@google.com>
+ <c829f93b19ad6af1b13be8935ce29baa8e58518f.1559580831.git.andreyknvl@google.com>
+ <20190603174619.GC11474@ziepe.ca>
+ <CAAeHK+xy-dx4dLDLLj9dRzRNSVG9H5nDPPnjpYF38qKZNNCh_g@mail.gmail.com>
+ <20190604122714.GA15385@ziepe.ca>
+ <CAAeHK+xyqwuJyviGhvU7L1wPZQF7Mf9g2vgKSsYmML3fV6NrXg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190604123759.GA6610@arrakis.emea.arm.com>
+In-Reply-To: <CAAeHK+xyqwuJyviGhvU7L1wPZQF7Mf9g2vgKSsYmML3fV6NrXg@mail.gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 04, 2019 at 01:38:00PM +0100, Catalin Marinas wrote:
-> On Tue, Jun 04, 2019 at 09:28:41AM -0300, Jason Gunthorpe wrote:
-> > On Tue, Jun 04, 2019 at 02:04:47PM +0200, Andrey Konovalov wrote:
-> > > Architectures that support memory tagging have a need to perform untagging
-> > > (stripping the tag) in various parts of the kernel. This patch adds an
-> > > untagged_addr() macro, which is defined as noop for architectures that do
-> > > not support memory tagging. The oncoming patch series will define it at
-> > > least for sparc64 and arm64.
-> > > 
-> > > Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-> > > Reviewed-by: Khalid Aziz <khalid.aziz@oracle.com>
-> > > Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-> > >  include/linux/mm.h | 11 +++++++++++
-> > >  1 file changed, 11 insertions(+)
-> > > 
-> > > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > > index 0e8834ac32b7..dd0b5f4e1e45 100644
-> > > +++ b/include/linux/mm.h
-> > > @@ -99,6 +99,17 @@ extern int mmap_rnd_compat_bits __read_mostly;
-> > >  #include <asm/pgtable.h>
-> > >  #include <asm/processor.h>
-> > >  
-> > > +/*
-> > > + * Architectures that support memory tagging (assigning tags to memory regions,
-> > > + * embedding these tags into addresses that point to these memory regions, and
-> > > + * checking that the memory and the pointer tags match on memory accesses)
-> > > + * redefine this macro to strip tags from pointers.
-> > > + * It's defined as noop for arcitectures that don't support memory tagging.
-> > > + */
-> > > +#ifndef untagged_addr
-> > > +#define untagged_addr(addr) (addr)
-> > 
-> > Can you please make this a static inline instead of this macro? Then
-> > we can actually know what the input/output types are supposed to be.
-> > 
-> > Is it
-> > 
-> > static inline unsigned long untagged_addr(void __user *ptr) {return ptr;}
-> > 
-> > ?
-> > 
-> > Which would sort of make sense to me.
+On Tue, Jun 04, 2019 at 02:45:32PM +0200, Andrey Konovalov wrote:
+> On Tue, Jun 4, 2019 at 2:27 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> >
+> > On Tue, Jun 04, 2019 at 02:18:19PM +0200, Andrey Konovalov wrote:
+> > > On Mon, Jun 3, 2019 at 7:46 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> > > >
+> > > > On Mon, Jun 03, 2019 at 06:55:14PM +0200, Andrey Konovalov wrote:
+> > > > > This patch is a part of a series that extends arm64 kernel ABI to allow to
+> > > > > pass tagged user pointers (with the top byte set to something else other
+> > > > > than 0x00) as syscall arguments.
+> > > > >
+> > > > > ib_uverbs_(re)reg_mr() use provided user pointers for vma lookups (through
+> > > > > e.g. mlx4_get_umem_mr()), which can only by done with untagged pointers.
+> > > > >
+> > > > > Untag user pointers in these functions.
+> > > > >
+> > > > > Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+> > > > >  drivers/infiniband/core/uverbs_cmd.c | 4 ++++
+> > > > >  1 file changed, 4 insertions(+)
+> > > > >
+> > > > > diff --git a/drivers/infiniband/core/uverbs_cmd.c b/drivers/infiniband/core/uverbs_cmd.c
+> > > > > index 5a3a1780ceea..f88ee733e617 100644
+> > > > > +++ b/drivers/infiniband/core/uverbs_cmd.c
+> > > > > @@ -709,6 +709,8 @@ static int ib_uverbs_reg_mr(struct uverbs_attr_bundle *attrs)
+> > > > >       if (ret)
+> > > > >               return ret;
+> > > > >
+> > > > > +     cmd.start = untagged_addr(cmd.start);
+> > > > > +
+> > > > >       if ((cmd.start & ~PAGE_MASK) != (cmd.hca_va & ~PAGE_MASK))
+> > > > >               return -EINVAL;
+> > > >
+> > > > I feel like we shouldn't thave to do this here, surely the cmd.start
+> > > > should flow unmodified to get_user_pages, and gup should untag it?
+> > > >
+> > > > ie, this sort of direction for the IB code (this would be a giant
+> > > > patch, so I didn't have time to write it all, but I think it is much
+> > > > saner):
+> > >
+> > > Hi Jason,
+> > >
+> > > ib_uverbs_reg_mr() passes cmd.start to mlx4_get_umem_mr(), which calls
+> > > find_vma(), which only accepts untagged addresses. Could you explain
+> > > how your patch helps?
+> >
+> > That mlx4 is just a 'weird duck', it is not the normal flow, and I
+> > don't think the core code should be making special consideration for
+> > it.
 > 
-> This macro is used mostly on unsigned long since for __user ptr we can
-> deference them in the kernel even if tagged. 
+> How do you think we should do untagging (or something else) to deal
+> with this 'weird duck' case?
 
-What does that mean? Do all kernel apis that accept 'void __user *'
-already untag due to other patches?
-
-> So if we are to use types here, I'd rather have:
-> 
-> static inline unsigned long untagged_addr(unsigned long addr);
-> 
-> In addition I'd like to avoid the explicit casting to (unsigned long)
-> and use some userptr_to_ulong() or something. 
-
-Personally I think it is a very bad habit we have in the kernel to
-store a 'void __user *' as a u64 or an unsigned long all over the
-place.
-
-AFAIK a u64 passed in from userpace is supposed to be converted to the
-'void __user *' via u64_to_user_ptr() before it can be used. (IIRC
-Some arches require this..)
-
-So, if I have a ioctl that takes a user pointer as a u64, and I want
-to pass it to find_vma, then I do need to write:
-
-    find_vma(untagged_addr(u64_to_user_ptr(ioctl_u64)))
-
-Right?
-
-So, IMHO, not accepting a 'void __user *' is just encouraging drivers
-to skip the needed u64_to_user_ptr() step.
-
-At the very worst we should have at least a 2nd function, but, IMHO,
-it would be better to do a bit more work on adding missing
-u64_to_user_ptr() calls to get the 'void __user *', and maybe a bit
-more work on swapping unsigned long for 'void __user *' in various
-places.
+mlx4 should handle it around the call to find_vma like other patches
+do, ideally as part of the cast from a void __user * to the unsigned
+long that find_vma needs
 
 Jason
