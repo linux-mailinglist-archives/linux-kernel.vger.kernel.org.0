@@ -2,55 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11FF635027
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 21:08:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88C8235030
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 21:21:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726312AbfFDTIj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 15:08:39 -0400
-Received: from ms.lwn.net ([45.79.88.28]:56986 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725933AbfFDTIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 15:08:39 -0400
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id EFEA07DE;
-        Tue,  4 Jun 2019 19:08:38 +0000 (UTC)
-Date:   Tue, 4 Jun 2019 13:08:37 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     "Theodore Ts'o" <tytso@mit.edu>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org
-Subject: Re: [PATCH RFC] Rough draft document on merging and rebasing
-Message-ID: <20190604130837.24ea1d7b@lwn.net>
-In-Reply-To: <20190601154248.GA17800@mit.edu>
-References: <20190530135317.3c8d0d7b@lwn.net>
-        <20190601154248.GA17800@mit.edu>
-Organization: LWN.net
+        id S1726416AbfFDTVX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 15:21:23 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:44130 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbfFDTVX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 15:21:23 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id 7052C281D9F
+Message-ID: <9460817290d5846a34b81470b15ac36d88a08aad.camel@collabora.com>
+Subject: Re: [PATCH v12] dm: add support to directly boot to a mapped device
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     Helen Koike <helen.koike@collabora.com>,
+        Stephen Boyd <swboyd@chromium.org>, dm-devel@redhat.com
+Cc:     wad@chromium.org, keescook@chromium.org, snitzer@redhat.com,
+        linux-doc@vger.kernel.org, richard.weinberger@gmail.com,
+        linux-kernel@vger.kernel.org, linux-lvm@redhat.com,
+        enric.balletbo@collabora.com, kernel@collabora.com, agk@redhat.com
+Date:   Tue, 04 Jun 2019 16:21:10 -0300
+In-Reply-To: <d6b4fb26-9a1b-0acd-ce4a-e48322a17e7d@collabora.com>
+References: <20190221203334.24504-1-helen.koike@collabora.com>
+         <5cf5a724.1c69fb81.1e8f0.08fb@mx.google.com>
+         <d6b4fb26-9a1b-0acd-ce4a-e48322a17e7d@collabora.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 1 Jun 2019 11:42:48 -0400
-"Theodore Ts'o" <tytso@mit.edu> wrote:
+Hi Stephen,
 
-> Finally, I'm bit concerned about anything which states absolutes,
-> because there are people who tend to be real stickler for the rules,
-> and if they see something stated in absolute terms, they fail to
-> understand that there are exceptions that are well understood, and in
-> use for years before the existence of the document which is trying to
-> codify best practices.
+On Tue, 2019-06-04 at 14:38 -0300, Helen Koike wrote:
+> Hi Stephen,
+> 
+> On 6/3/19 8:02 PM, Stephen Boyd wrote:
+> > Quoting Helen Koike (2019-02-21 12:33:34)
+> > > Add a "create" module parameter, which allows device-mapper targets to be
+> > > configured at boot time. This enables early use of dm targets in the boot
+> > > process (as the root device or otherwise) without the need of an initramfs.
+> > > 
+> > > The syntax used in the boot param is based on the concise format from the
+> > > dmsetup tool to follow the rule of least surprise:
+> > > 
+> > >         sudo dmsetup table --concise /dev/mapper/lroot
+> > > 
+> > > Which is:
+> > >         dm-mod.create=<name>,<uuid>,<minor>,<flags>,<table>[,<table>+][;<name>,<uuid>,<minor>,<flags>,<table>[,<table>+]+]
+> > > 
+> > > Where,
+> > >         <name>          ::= The device name.
+> > >         <uuid>          ::= xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx | ""
+> > >         <minor>         ::= The device minor number | ""
+> > >         <flags>         ::= "ro" | "rw"
+> > >         <table>         ::= <start_sector> <num_sectors> <target_type> <target_args>
+> > >         <target_type>   ::= "verity" | "linear" | ...
+> > > 
+> > > For example, the following could be added in the boot parameters:
+> > > dm-mod.create="lroot,,,rw, 0 4096 linear 98:16 0, 4096 4096 linear 98:32 0" root=/dev/dm-0
+> > > 
+> > > Only the targets that were tested are allowed and the ones that doesn't
+> > > change any block device when the dm is create as read-only. For example,
+> > > mirror and cache targets are not allowed. The rationale behind this is
+> > > that if the user makes a mistake, choosing the wrong device to be the
+> > > mirror or the cache can corrupt data.
+> > > 
+> > > The only targets allowed are:
+> > > * crypt
+> > > * delay
+> > > * linear
+> > > * snapshot-origin
+> > > * striped
+> > > * verity
+> > > 
+> > > Co-developed-by: Will Drewry <wad@chromium.org>
+> > > Co-developed-by: Kees Cook <keescook@chromium.org>
+> > > Co-developed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> > > Signed-off-by: Helen Koike <helen.koike@collabora.com>
+> > > 
+> > > ---
+> > > 
+> > 
+> > I'm trying to boot a mainline linux kernel on a chromeos device with dm
+> > verity and a USB stick but it's not working for me even with this patch.
+> > I've had to hack around two problems:
+> > 
+> >  1) rootwait isn't considered
+> > 
+> >  2) verity doesn't seem to accept UUID for <hash_dev> or <dev>
+> > 
+> > For the first problem, it happens every boot for me because I'm trying
+> > to boot off of a USB stick and it's behind a hub that takes a few
+> > seconds to enumerate. If I hack up the code to call dm_init_init() after
+> > the 'rootdelay' cmdline parameter is used then I can make this work. It
+> > would be much nicer if the whole mechanism didn't use a late initcall
+> > though. If it used a hook from prepare_namespace() and then looped
+> > waiting for devices to create when rootwait was specified it would work.
+> 
+> The patch was implemented with late initcall partially to be contained
+> in drivers/md/*, but to support rootwait, adding a hook from
+> prepare_namespace seems the way to go indeed.
+> 
 
-Hence the "there are exceptions" text at the bottom of the document :)
+Thanks for bringing this up.
 
-Anyway, I'll rework it to try to take your comments into account.  Maybe
-we should consistently say "rebasing" for changing the parent commit of a
-patch set, and "history modification" for the other tricks...?
+Helen and I have been looking at this code, and we think it's possible
+to move things around and add some helpers, so we can implement rootwait
+behavior, without actually cluttering init/do_mounts.c.
 
-Thanks for taking a look,
+And along the way, we might get the chance to clean-up this code even
+further.
 
-jon
+Regards,
+Eze
+
