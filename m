@@ -2,132 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB79E34645
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:10:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27AF93464F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:12:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbfFDMKb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 08:10:31 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44643 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726847AbfFDMKa (ORCPT
+        id S1727589AbfFDMMI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 08:12:08 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37619 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726847AbfFDMMI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 08:10:30 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n2so10237829pgp.11;
-        Tue, 04 Jun 2019 05:10:30 -0700 (PDT)
+        Tue, 4 Jun 2019 08:12:08 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 22so6239290wmg.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 05:12:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=EwJYsf92ydp+RtKiuVnWST5ck78zmLqyjDy58wjkNzk=;
-        b=ALgMXYShkAFuscaf0G46Fe8IyL9l9sUJz35RiyTWOUtl+VQsGb3VE5G+kAFvWHJ989
-         PzhD5ZvYnLcVx7VNy5G7ZxMWsPJ/EA4GdjGBTj1eyxgm7wi0fDim3GgYKIWP/UAlIHcK
-         by1KonlJQhDWsjNTw4RJeeVd5uhcc9sFoTQe7jao13cWC/Lt2s6+rj4QdFK+EsLmCjsh
-         Q9+fhsv77zWy4VweL+38l6VUado93b+f40sn8S2SE7dd8s1QPImSyoLhsooGIbYugyVS
-         NNWrMuWwmz/yqigNzN2eRjfMiBv82P35nWrrgwBObfCb4jilxaFSQvDH0Pq3pLG/mElZ
-         1hDw==
+        h=from:to:subject:date:message-id;
+        bh=l1HJmrQmWKCAnhFgY8RNTPFwWIICyDqiUtlEU3TzEm0=;
+        b=OA+l1Q+vsX1G6ty+80aE1nRJRRtkrgqnM1NdZLlU16BKvJrEL4G1sIqnyWU/zvSB//
+         giW55c7OEF9H+30xTo2LMCwceV3z+ExsFQkJ38as0IICNykUFb0pyAX3reVtH+7iIPhO
+         yTFJXzoR6VMVSz+DiAR059TrQ8zFBfMUcKoDArjANWO0yA2eWgNrttYBpFQbvXYtywQY
+         onwQq6mg0Ik6f0pkroqkUppB+4/9v13NX9C/N+DfarerDOK83Uy83MOuiiuWCswyI2Jv
+         b4WbbSt8DGFRi1NbnNHxqlr24j/g/nQls6N6tTY1ZMckcIQoMYot7Ysw0ivUBv9lewaA
+         jUBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=EwJYsf92ydp+RtKiuVnWST5ck78zmLqyjDy58wjkNzk=;
-        b=fEvvYOCdPKfih0B/zLavoAx9/khF/4apjKuFyimkfam3BTSFJF4vgAIx9JklsOdeP5
-         TJ0LxnNbhwhmmX1rrvnd+rfAwGA4+15opld29ChdLrQCikHgniapZHplDRz3RU+r55VC
-         T5YUcP9ZD4r0oHMMxmdAjqNuh/vxc2PoecV9MCPgOtGvDCK+z09k2/j0hv9fENa+e5F7
-         LXDsmdxoCcub0PoL9E0SnsSEJ6OvvrZJwhKkYkCGSg78iwNCd3dGjVMpELpiuTbid7rJ
-         Ym+iq7olOUFHcfHWNM2YV/arYPZAJjWN+Z0lBhk+yeYpN51UDvN4GWG/CpDFjfXdR9j4
-         JuJA==
-X-Gm-Message-State: APjAAAUOGZHtEtpRMshMYS0L5Et3/29BxeSo3jUYxBuWzBO6xQ7ierYl
-        I8pKliTYgtRbLb133dM494BIuIdSf1asFQ==
-X-Google-Smtp-Source: APXvYqw5pE1KuL3N0NnrEDYlsEeAPn8xPJJRq+laPDZyZTkLXt4pZDqinvcFRcOBNQeq0UQqQktwtQ==
-X-Received: by 2002:a63:5d45:: with SMTP id o5mr35305514pgm.40.1559650229927;
-        Tue, 04 Jun 2019 05:10:29 -0700 (PDT)
-Received: from xy-data.openstacklocal (ecs-159-138-22-150.compute.hwclouds-dns.com. [159.138.22.150])
-        by smtp.gmail.com with ESMTPSA id s1sm14168708pgp.94.2019.06.04.05.10.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 04 Jun 2019 05:10:28 -0700 (PDT)
-From:   Young Xiao <92siuyang@gmail.com>
-To:     ralf@linux-mips.org, davem@davemloft.net,
-        linux-hams@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Young Xiao <92siuyang@gmail.com>
-Subject: [PATCH] rose: af_rose: avoid overflows in rose_setsockopt()
-Date:   Tue,  4 Jun 2019 20:11:30 +0800
-Message-Id: <1559650290-17054-1-git-send-email-92siuyang@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=l1HJmrQmWKCAnhFgY8RNTPFwWIICyDqiUtlEU3TzEm0=;
+        b=EuoTHjChx6C1MFb4esFoLo9cijrMEenWJuqAQKSuryvmgKaeaEtWbmPZJ6rVjKUEWp
+         /2F4eQalTQixZI75TJZ00QhfCi3OXI5zVoq5q/Kqqq/87eBqYC9//lM+DkwzfxQWm+WT
+         Kayk+jNxKm/GfGOpy/kR4aaZMWR4Y2Ubm1GZuMWM2+8LQNGb6fAoOGsTO5wGJDJ3C0ZE
+         0PsQ64rEkyjVzaqKsU0qWJzbCXUuFKx1ZYySNyYmx6MHOC236uIXnTCTF1EWExrwBbgS
+         UzNkkNNwM7yfsBorX4GsHoOwleqIgKR0yDUdJAyVqs/tjP70tKQvZrKcUXB7ID2Uijim
+         12Ew==
+X-Gm-Message-State: APjAAAXaU9Jqds+28a5glhRN68mKp53p+POAkVniXvxvVuKgO/eUzUQB
+        jXt1DRYocJHDF3wjeQHAEEqdB3nBRh4=
+X-Google-Smtp-Source: APXvYqz0KHGqpaM4X55ahVDU+FzieilUsj2cYy0jzrHa8Ujk/PQg1NzZmi6JBn1bEMFBGdk64HpQ7A==
+X-Received: by 2002:a1c:b706:: with SMTP id h6mr17441009wmf.119.1559650325250;
+        Tue, 04 Jun 2019 05:12:05 -0700 (PDT)
+Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
+        by smtp.gmail.com with ESMTPSA id c24sm13775914wmb.21.2019.06.04.05.12.04
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Jun 2019 05:12:04 -0700 (PDT)
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Subject: [PATCH] habanalabs: remove simulator dedicated code
+Date:   Tue,  4 Jun 2019 15:12:02 +0300
+Message-Id: <20190604121202.13588-1-oded.gabbay@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check setsockopt arguments to avoid overflows and return -EINVAL for
-too large arguments.
+This patch removes two code sections in the common code that contain code
+which is only relevant for simulator support (which is not upstreamed).
 
-See commit 32288eb4d940 ("netrom: avoid overflows in nr_setsockopt()")
-for details.
+This removal saves the need to update this code upstream, which is not
+needed anyway.
 
-Signed-off-by: Young Xiao <92siuyang@gmail.com>
+Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
 ---
- net/rose/af_rose.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/misc/habanalabs/device.c | 7 -------
+ drivers/misc/habanalabs/sysfs.c  | 4 ----
+ 2 files changed, 11 deletions(-)
 
-diff --git a/net/rose/af_rose.c b/net/rose/af_rose.c
-index e274bc6..af831ee9 100644
---- a/net/rose/af_rose.c
-+++ b/net/rose/af_rose.c
-@@ -372,15 +372,15 @@ static int rose_setsockopt(struct socket *sock, int level, int optname,
+diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
+index feedf4810430..843f0b6547b5 100644
+--- a/drivers/misc/habanalabs/device.c
++++ b/drivers/misc/habanalabs/device.c
+@@ -693,13 +693,6 @@ int hl_device_reset(struct hl_device *hdev, bool hard_reset,
+ 
+ 		hdev->hard_reset_pending = true;
+ 
+-		if (!hdev->pdev) {
+-			dev_err(hdev->dev,
+-				"Reset action is NOT supported in simulator\n");
+-			rc = -EINVAL;
+-			goto out_err;
+-		}
+-
+ 		device_reset_work = kzalloc(sizeof(*device_reset_work),
+ 						GFP_ATOMIC);
+ 		if (!device_reset_work) {
+diff --git a/drivers/misc/habanalabs/sysfs.c b/drivers/misc/habanalabs/sysfs.c
+index c900ab15cceb..25eb46d29d88 100644
+--- a/drivers/misc/habanalabs/sysfs.c
++++ b/drivers/misc/habanalabs/sysfs.c
+@@ -328,10 +328,6 @@ static ssize_t pci_addr_show(struct device *dev, struct device_attribute *attr,
  {
- 	struct sock *sk = sock->sk;
- 	struct rose_sock *rose = rose_sk(sk);
--	int opt;
-+	unsigned long opt;
+ 	struct hl_device *hdev = dev_get_drvdata(dev);
  
- 	if (level != SOL_ROSE)
- 		return -ENOPROTOOPT;
- 
--	if (optlen < sizeof(int))
-+	if (optlen < sizeof(unsigned int))
- 		return -EINVAL;
- 
--	if (get_user(opt, (int __user *)optval))
-+	if (get_user(opt, (unsigned int __user *)optval))
- 		return -EFAULT;
- 
- 	switch (optname) {
-@@ -389,31 +389,31 @@ static int rose_setsockopt(struct socket *sock, int level, int optname,
- 		return 0;
- 
- 	case ROSE_T1:
--		if (opt < 1)
-+		if (opt < 1 || opt > ULONG_MAX / HZ)
- 			return -EINVAL;
- 		rose->t1 = opt * HZ;
- 		return 0;
- 
- 	case ROSE_T2:
--		if (opt < 1)
-+		if (opt < 1 || opt > ULONG_MAX / HZ)
- 			return -EINVAL;
- 		rose->t2 = opt * HZ;
- 		return 0;
- 
- 	case ROSE_T3:
--		if (opt < 1)
-+		if (opt < 1 || opt > ULONG_MAX / HZ)
- 			return -EINVAL;
- 		rose->t3 = opt * HZ;
- 		return 0;
- 
- 	case ROSE_HOLDBACK:
--		if (opt < 1)
-+		if (opt < 1 || opt > ULONG_MAX / HZ)
- 			return -EINVAL;
- 		rose->hb = opt * HZ;
- 		return 0;
- 
- 	case ROSE_IDLE:
--		if (opt < 0)
-+		if (opt < 0 || opt > ULONG_MAX / HZ)
- 			return -EINVAL;
- 		rose->idle = opt * 60 * HZ;
- 		return 0;
+-	/* Use dummy, fixed address for simulator */
+-	if (!hdev->pdev)
+-		return sprintf(buf, "0000:%02d:00.0\n", hdev->id);
+-
+ 	return sprintf(buf, "%04x:%02x:%02x.%x\n",
+ 			pci_domain_nr(hdev->pdev->bus),
+ 			hdev->pdev->bus->number,
 -- 
-2.7.4
+2.17.1
 
