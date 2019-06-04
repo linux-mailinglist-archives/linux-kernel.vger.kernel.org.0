@@ -2,86 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0ECE34A27
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:20:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E202349E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 16:17:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728094AbfFDOTk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 10:19:40 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52480 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727348AbfFDOSC (ORCPT
+        id S1727705AbfFDORr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 10:17:47 -0400
+Received: from gateway24.websitewelcome.com ([192.185.51.228]:28967 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727458AbfFDORq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 10:18:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=1DGih5hxjM3hCpgxfZAZGkcczMEB+Oahf4kiHIhmR2E=; b=Ky//m2eXiJBcCs/2J4EtdOqc2w
-        E7LN8KMX95AIf83ZbgtbzdveDzOcaUOEShWQFXddiizhsOc8d7pbHZgUR4fFS48MjaZiahOK+bfPa
-        axk6lD9bs79iH8MxysZSUA0/mzDHS8cw1XqQGIuJcs1bzNPzWGgdEXcsJr+K7f85thoN3WBE0W6CA
-        +GNpNC5/WHwQSZ7nYepHqDm4AmlLt5FL0MhKOVne1Z+WDCYbO/enFEjEy/6i30jxkGAhUMRtyST7g
-        ve79K78v6SHa9ej8KzZfMyQsKtf/Dzyu6oKpyp0XRmQqgZ8DLK0tqN6jYfwVrf7x/9trBY9e8gILc
-        6r3qtJ5g==;
-Received: from [179.182.172.34] (helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hYAGH-0001Rf-Th; Tue, 04 Jun 2019 14:18:01 +0000
-Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
-        (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hYAGE-0002kj-Hw; Tue, 04 Jun 2019 11:17:58 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Karsten Keil <isdn@linux-pingi.de>, netdev@vger.kernel.org
-Subject: [PATCH v2 02/22] isdn: mISDN: remove a bogus reference to a non-existing doc
-Date:   Tue,  4 Jun 2019 11:17:36 -0300
-Message-Id: <be9340261bfd0d36c256a4ded49f67a68abaa4af.1559656538.git.mchehab+samsung@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1559656538.git.mchehab+samsung@kernel.org>
-References: <cover.1559656538.git.mchehab+samsung@kernel.org>
+        Tue, 4 Jun 2019 10:17:46 -0400
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id A8BFA25919
+        for <linux-kernel@vger.kernel.org>; Tue,  4 Jun 2019 09:17:45 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id YAG1hfdxl90onYAG1hhYQY; Tue, 04 Jun 2019 09:17:45 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.127.120] (port=33416 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hYAFz-0006u9-So; Tue, 04 Jun 2019 09:17:44 -0500
+Date:   Tue, 4 Jun 2019 09:17:37 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Kyungmin Park <kyungmin.park@samsung.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Jonathan Bakker <xc-racer2@live.ca>
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] mtd: onenand_base: Mark expected switch fall-through
+Message-ID: <20190604141737.GA1064@embeddedor>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.127.120
+X-Source-L: No
+X-Exim-ID: 1hYAFz-0006u9-So
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.127.120]:33416
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mISDN driver was added on those commits:
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-	960366cf8dbb ("Add mISDN DSP")
-	1b2b03f8e514 ("Add mISDN core files")
-	04578dd330f1 ("Define AF_ISDN and PF_ISDN")
-	e4ac9bc1f668 ("Add mISDN driver")
+This patch fixes the following warning:
 
-None of them added a Documentation/isdn/mISDN.cert file.
-Also, whatever were supposed to be written there on that time,
-probably doesn't make any sense nowadays, as I doubt isdn would
-have any massive changes.
+drivers/mtd/nand/onenand/onenand_base.c: In function ‘onenand_check_features’:
+drivers/mtd/nand/onenand/onenand_base.c:3264:17: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   this->options |= ONENAND_HAS_NOP_1;
+drivers/mtd/nand/onenand/onenand_base.c:3265:2: note: here
+  case ONENAND_DEVICE_DENSITY_4Gb:
+  ^~~~
 
-So, let's just get rid of the broken reference, in order to
-shut up a warning produced by ./scripts/documentation-file-ref-check.
+Warning level 3 was used: -Wimplicit-fallthrough=3
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+This patch is part of the ongoing efforts to enable
+-Wimplicit-fallthrough.
+
+Cc: Jonathan Bakker <xc-racer2@live.ca>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/isdn/mISDN/dsp_core.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/mtd/nand/onenand/onenand_base.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/isdn/mISDN/dsp_core.c b/drivers/isdn/mISDN/dsp_core.c
-index cd036e87335a..038e72a84b33 100644
---- a/drivers/isdn/mISDN/dsp_core.c
-+++ b/drivers/isdn/mISDN/dsp_core.c
-@@ -4,8 +4,6 @@
-  *		Karsten Keil (keil@isdn4linux.de)
-  *
-  *		This file is (c) under GNU PUBLIC LICENSE
-- *		For changes and modifications please read
-- *		../../../Documentation/isdn/mISDN.cert
-  *
-  * Thanks to    Karsten Keil (great drivers)
-  *              Cologne Chip (great chips)
+diff --git a/drivers/mtd/nand/onenand/onenand_base.c b/drivers/mtd/nand/onenand/onenand_base.c
+index ba46d0cf60a1..bdb5f4733d28 100644
+--- a/drivers/mtd/nand/onenand/onenand_base.c
++++ b/drivers/mtd/nand/onenand/onenand_base.c
+@@ -3262,6 +3262,7 @@ static void onenand_check_features(struct mtd_info *mtd)
+ 	switch (density) {
+ 	case ONENAND_DEVICE_DENSITY_8Gb:
+ 		this->options |= ONENAND_HAS_NOP_1;
++		/* fall through */
+ 	case ONENAND_DEVICE_DENSITY_4Gb:
+ 		if (ONENAND_IS_DDP(this))
+ 			this->options |= ONENAND_HAS_2PLANE;
 -- 
 2.21.0
 
