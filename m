@@ -2,97 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA43234DE9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 18:46:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1FF534DEF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 18:47:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727866AbfFDQqC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 12:46:02 -0400
-Received: from mga07.intel.com ([134.134.136.100]:20093 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727451AbfFDQqC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 12:46:02 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jun 2019 09:46:01 -0700
-X-ExtLoop1: 1
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
-  by orsmga004.jf.intel.com with ESMTP; 04 Jun 2019 09:45:58 -0700
-Received: from andy by smile with local (Exim 4.92)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1hYCZS-00015a-5N; Tue, 04 Jun 2019 19:45:58 +0300
-Date:   Tue, 4 Jun 2019 19:45:58 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Stefan Roese <sr@denx.de>
-Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Yegor Yefremov <yegorslists@googlemail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH 1/2 v4] serial: mctrl_gpio: Check if GPIO property
- exisits before requesting it
-Message-ID: <20190604164558.GO9224@smile.fi.intel.com>
-References: <20190603083332.12480-1-sr@denx.de>
+        id S1727827AbfFDQrJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 12:47:09 -0400
+Received: from mail-eopbgr750048.outbound.protection.outlook.com ([40.107.75.48]:64900
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727451AbfFDQrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 4 Jun 2019 12:47:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sK3mpPUYXtVpu4apHXC2ek85k5gR0Lw6yCXcJTSUVYk=;
+ b=W5977cxykXK4eK5kpTRiyHxXysvKXp7Fhb4H3jdZSbSqlVC66fR13ODom8E5Jr5A+tgs5p/RCvpo1fATQdD41hpwJO8oFTGZ7P7AqArQUo5AG7yIm8saAU6zY6gE9HbYO7YGvQcn97jMHpt7NywiVqqS6tA6uqgSsaK0MKt9Irs=
+Received: from DM5PR12MB1449.namprd12.prod.outlook.com (10.172.40.14) by
+ DM5PR12MB1164.namprd12.prod.outlook.com (10.168.238.144) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1943.22; Tue, 4 Jun 2019 16:47:05 +0000
+Received: from DM5PR12MB1449.namprd12.prod.outlook.com
+ ([fe80::34ed:dc98:e87d:50c4]) by DM5PR12MB1449.namprd12.prod.outlook.com
+ ([fe80::34ed:dc98:e87d:50c4%7]) with mapi id 15.20.1943.018; Tue, 4 Jun 2019
+ 16:47:05 +0000
+From:   Gary R Hook <ghook@amd.com>
+To:     Vinod Koul <vkoul@kernel.org>, "Hook, Gary" <Gary.Hook@amd.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dmaengine: dmatest: timeout value of -1 should specify
+ infinite wait
+Thread-Topic: [PATCH] dmaengine: dmatest: timeout value of -1 should specify
+ infinite wait
+Thread-Index: AQHVF+ku9NvxfnAiEUWf7KotYW4OlKaLcO8AgABJgYA=
+Date:   Tue, 4 Jun 2019 16:47:05 +0000
+Message-ID: <010db7bb-dee2-4ba8-a085-4154735b98db@amd.com>
+References: <155933183362.4916.15727271006977576552.stgit@sosrh3.amd.com>
+ <20190604122356.GY15118@vkoul-mobl>
+In-Reply-To: <20190604122356.GY15118@vkoul-mobl>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BYAPR21CA0003.namprd21.prod.outlook.com
+ (2603:10b6:a03:114::13) To DM5PR12MB1449.namprd12.prod.outlook.com
+ (2603:10b6:4:10::14)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Gary.Hook@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [47.220.187.91]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: b100444b-8b67-493b-de9b-08d6e90c4668
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM5PR12MB1164;
+x-ms-traffictypediagnostic: DM5PR12MB1164:
+x-microsoft-antispam-prvs: <DM5PR12MB11641AFA1FBE3C2632BB6FC4FD150@DM5PR12MB1164.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 0058ABBBC7
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(136003)(396003)(366004)(39860400002)(189003)(199004)(3846002)(6116002)(99286004)(316002)(26005)(71190400001)(256004)(14444005)(186003)(6486002)(71200400001)(476003)(76176011)(81166006)(81156014)(2616005)(52116002)(7736002)(305945005)(6636002)(110136005)(8936002)(6512007)(31696002)(8676002)(229853002)(6246003)(102836004)(6436002)(486006)(25786009)(6506007)(14454004)(72206003)(73956011)(11346002)(446003)(64756008)(31686004)(66446008)(66556008)(66066001)(36756003)(66946007)(66476007)(4326008)(68736007)(53546011)(5660300002)(478600001)(2906002)(386003)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1164;H:DM5PR12MB1449.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: Sy8kk6Y/GSjWXmOPOX86gJ0PQVbzFy0MkpNPF/C5sZ+HgrnUHAAiv+gp6LXxFpqJXZK3zLPQd72S8A2O2mJlbBmEHRsun+4fjYoR8yknA4pOFTS9mtUdKUAqu55oBj9vdUmCrI6329xGqxBBPMkPNCX+moIoVYrd82ceZ8HwYlxpR2uKGC2ycZgos37W+sRLlIMjbTuK7Knx31ftGyUDUmxqPZO4xpjkg5jIsr9FJSrLzPNEHN2Z2nFrQFCOaMU6OZcj/uSbU0KwgsqVAsd4ut5qqNduMBZrKz47P4rJOm0v7ux7Q7AAdFmE6I42ej0FgsCI8SyuyLDY8pni3nc0dLXQSKqp4Snp1+FfcS2WyZBU7t3910tItq3XcVNjqUoRZ6ZBQigE8QOOQ51fiNOt9q8m1/ZpPqknQnrQnZ90kPo=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <EA0B927900943241BBB241559D21321E@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190603083332.12480-1-sr@denx.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b100444b-8b67-493b-de9b-08d6e90c4668
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jun 2019 16:47:05.3854
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ghook@amd.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1164
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 03, 2019 at 10:33:31AM +0200, Stefan Roese wrote:
-> This patch adds a check for the GPIOs property existence, before the
-> GPIO is requested. This fixes an issue seen when the 8250 mctrl_gpio
-> support is added (2nd patch in this patch series) on x86 platforms using
-> ACPI.
-
->  	for (i = 0; i < UART_GPIO_MAX; i++) {
->  		enum gpiod_flags flags;
-> +		char *gpio_str;
-> +
-> +		/* Check if GPIO property exists and continue if not */
-> +		gpio_str = kasprintf(GFP_KERNEL, "%s-gpios",
-> +				     mctrl_gpios_desc[i].name);
-> +		if (!device_property_present(dev, gpio_str)) {
-> +			kfree(gpio_str);
-> +			continue;
-> +		}
-> +		kfree(gpio_str);
-
-Can we rather do something like
-
-	bool present;
-
-
-	... = kasprintf(...);
-// (1)
-	present = device_property_present(...);
-	kfree(...);
-	if (!present)
-		continue;
-
-?
-
-On top of this, if gpio_str is NULL, we will have KABOOM.
-
-Something like
-
-	if (!gpio_str)
-		continue;
-
-in (1).
-
->  
->  		if (mctrl_gpios_desc[i].dir_out)
->  			flags = GPIOD_OUT_LOW;
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+T24gNi80LzE5IDc6MjMgQU0sIFZpbm9kIEtvdWwgd3JvdGU6DQo+IFtDQVVUSU9OOiBFeHRlcm5h
+bCBFbWFpbF0NCj4gDQo+IE9uIDMxLTA1LTE5LCAxOTo0MywgSG9vaywgR2FyeSB3cm90ZToNCj4+
+IFRoZSBkbWF0ZXN0IG1vZHVsZSBwYXJhbWV0ZXIgJ3RpbWVvdXQnIGlzIGRvY3VtZW50ZWQgYXMg
+YWNjZXB0aW5nIGENCj4+IC0xIHRvIG1lYW4gImluZmluaXRlIHRpbWVvdXQiLiBDaGFuZ2UgdGhl
+IHBhcmFtZXRlciB0byB0byBzaWduZWQNCj4+IGludGVnZXIsIGFuZCBjaGVjayB0aGUgdmFsdWUg
+dG8gY2FsbCB0aGUgYXBwcm9wcmlhdGUgd2FpdF9ldmVudCgpDQo+PiBmdW5jdGlvbi4NCj4+DQo+
+PiBTaWduZWQtb2ZmLWJ5OiBHYXJ5IFIgSG9vayA8Z2FyeS5ob29rQGFtZC5jb20+DQo+PiAtLS0N
+Cj4+ICAgZHJpdmVycy9kbWEvZG1hdGVzdC5jIHwgICAxMSArKysrKysrKy0tLQ0KPj4gICAxIGZp
+bGUgY2hhbmdlZCwgOCBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQ0KPj4NCj4+IGRpZmYg
+LS1naXQgYS9kcml2ZXJzL2RtYS9kbWF0ZXN0LmMgYi9kcml2ZXJzL2RtYS9kbWF0ZXN0LmMNCj4+
+IGluZGV4IGI5NjgxNGE3ZGNlYi4uMjhhMjM3Njg2NTc4IDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVy
+cy9kbWEvZG1hdGVzdC5jDQo+PiArKysgYi9kcml2ZXJzL2RtYS9kbWF0ZXN0LmMNCj4+IEBAIC02
+Myw3ICs2Myw3IEBAIE1PRFVMRV9QQVJNX0RFU0MocHFfc291cmNlcywNCj4+ICAgICAgICAgICAg
+ICAgICJOdW1iZXIgb2YgcCtxIHNvdXJjZSBidWZmZXJzIChkZWZhdWx0OiAzKSIpOw0KPj4NCj4+
+ICAgc3RhdGljIGludCB0aW1lb3V0ID0gMzAwMDsNCj4+IC1tb2R1bGVfcGFyYW0odGltZW91dCwg
+dWludCwgU19JUlVHTyB8IFNfSVdVU1IpOw0KPj4gK21vZHVsZV9wYXJhbSh0aW1lb3V0LCBpbnQs
+IFNfSVJVR08gfCBTX0lXVVNSKTsNCj4+ICAgTU9EVUxFX1BBUk1fREVTQyh0aW1lb3V0LCAiVHJh
+bnNmZXIgVGltZW91dCBpbiBtc2VjIChkZWZhdWx0OiAzMDAwKSwgIg0KPj4gICAgICAgICAgICAg
+ICAgICJQYXNzIC0xIGZvciBpbmZpbml0ZSB0aW1lb3V0Iik7DQo+Pg0KPj4gQEAgLTc5NSw4ICs3
+OTUsMTMgQEAgc3RhdGljIGludCBkbWF0ZXN0X2Z1bmModm9pZCAqZGF0YSkNCj4+ICAgICAgICAg
+ICAgICAgIH0NCj4+ICAgICAgICAgICAgICAgIGRtYV9hc3luY19pc3N1ZV9wZW5kaW5nKGNoYW4p
+Ow0KPj4NCj4+IC0gICAgICAgICAgICAgd2FpdF9ldmVudF9mcmVlemFibGVfdGltZW91dCh0aHJl
+YWQtPmRvbmVfd2FpdCwgZG9uZS0+ZG9uZSwNCj4+IC0gICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICBtc2Vjc190b19qaWZmaWVzKHBhcmFtcy0+dGltZW91dCkpOw0KPj4g
+KyAgICAgICAgICAgICAvKiBBIHRpbWVvdXQgdmFsdWUgb2YgLTEgbWVhbnMgaW5maW5pdGUgd2Fp
+dCAqLw0KPj4gKyAgICAgICAgICAgICBpZiAodGltZW91dCA9PSAtMSkNCj4+ICsgICAgICAgICAg
+ICAgICAgICAgICB3YWl0X2V2ZW50X2ZyZWV6YWJsZSh0aHJlYWQtPmRvbmVfd2FpdCwgZG9uZS0+
+ZG9uZSk7DQo+IA0KPiB3ZWxsIGkgYW0gbm90IHRvbyBoYXBweSB0aGF0IHdlIGhhdmUgYSBpbmZp
+bml0ZSB3YWl0IGFuZCBubyB3YXkgdG8NCj4gY2FuY2VsLCBtYXliZSByZW1vdmUgdGhpcyBjYXNl
+Pw0KDQpXZWxsLCBJIHdhcyB1bmNvbWZvcnRhYmxlIHdpdGggZG9jdW1lbnRhdGlvbiB0aGF0IGRp
+ZG4ndCBtYXRjaCBiZWhhdmlvci4NCg0KSSBzZWUgdHdvIGNob2ljZXMgKGFuZCBJIGp1c3QgY2hv
+c2Ugb25lIHRvIHN0YXJ0IGEgY29udmVyc2F0aW9uKToNCg0KMSkgQWNjZXB0IHRoaXMgcGF0Y2gs
+IHdpdGggYW4gaW5maW5pdGUgdGltZW91dCwgb3INCjIpIExlYXZlIHRoZSBkYXRhIHR5cGUgYWxv
+bmUsIGJ1dCBjaGFuZ2UgdGhlIGRlc2NyaXB0aW9uIHRvIHN0YXRlIHRoYXQgDQp0aW1lb3V0IHZh
+bHVlcyB1cCB0byBoZXggMHhGRkZGRkZGRiAvIGRlY2ltYWwgNDI5NDk2NzI5NSBjYW4gYmUgdXNl
+ZCwgDQplbXVsYXRpbmcgYW4gImluZmluaXRlIiB3YWl0LiBBIHZlcnkgbG9uZyB3YWl0IHRoYXQg
+ZXZlbnR1YWxseSBwb3BzIGEgDQp0aW1lciBpcyBwcm9iYWJseSBwcmVmZXJhYmxlLiBJIGRvbid0
+IHRoaW5rIHRoZXJlIGFyZSBhbnkgY29udmVyc2lvbiANCmlzc3VlcyBzaW5jZSB0aGUgamlmZnkg
+cGFyYW1ldGVyIHRvIHdhaXRfZXZlbnRfZnJlZXphYmxlX3RpbWVvdXQoKSBpcyANCmNvbnZlcnRl
+ZCB0byBhIGxvbmcuIEkgY291bGQgYmUgd3JvbmcgYWJvdXQgdGhhdC4NCg0KSSdtIGhhcHB5IHRv
+IGdvIHdpdGggb3B0aW9uICgyKS4gUGxlYXNlIHN1Z2dlc3QgYSBjb3Vyc2Ugb2YgYWN0aW9uLg0K
+DQpncmgNCg0KPiANCj4+ICsgICAgICAgICAgICAgZWxzZQ0KPj4gKyAgICAgICAgICAgICAgICAg
+ICAgIHdhaXRfZXZlbnRfZnJlZXphYmxlX3RpbWVvdXQodGhyZWFkLT5kb25lX3dhaXQsDQo+PiAr
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGRvbmUtPmRvbmUsDQo+PiArICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG1zZWNzX3RvX2ppZmZpZXMocGFyYW1z
+LT50aW1lb3V0KSk7DQo+Pg0KPj4gICAgICAgICAgICAgICAgc3RhdHVzID0gZG1hX2FzeW5jX2lz
+X3R4X2NvbXBsZXRlKGNoYW4sIGNvb2tpZSwgTlVMTCwgTlVMTCk7DQo=
