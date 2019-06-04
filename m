@@ -2,98 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0ACBE346B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:29:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4E93346BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 14:30:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727707AbfFDM3h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 08:29:37 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34634 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727398AbfFDM3h (ORCPT
+        id S1727787AbfFDMaj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 08:30:39 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44339 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726994AbfFDMag (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 08:29:37 -0400
-Received: by mail-lj1-f194.google.com with SMTP id j24so19510889ljg.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 05:29:36 -0700 (PDT)
+        Tue, 4 Jun 2019 08:30:36 -0400
+Received: by mail-pf1-f194.google.com with SMTP id t16so3779705pfe.11;
+        Tue, 04 Jun 2019 05:30:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MEMpjywarvEIBpqLOs0vJ3c4H0FioFO5FH41QQdLsTU=;
-        b=l31B3A5DK5yaDaUiuO+4HGcagdn0NkvHuppeEAbpodeU9ctKE/fsIFO4+B2QfE/e7+
-         G4cnqbrtvFi9AdL7LGafgtKNNbtaQH6MQLkvq7mvfC8wtRHAr4Sv62e9MbAURw95Sb1u
-         FqCRGz7XfbCA0quCluQSn7QJlMLjuDlQdrlNEF2mMN1qJU2TFZAwQauDB92Oqd7rwz9u
-         0Gyet5i9HEFB/jdW2Raxdn7K/E91xo2e9nhjWC+uuyhTE8vxwD5WAjwSsRPoCAgcICsm
-         nJj2IlOT8k03uRjO3xFSFcG5ntXYi3dTqwH+UiVY8aHQJ1BPRGguknNx1ot+0vZC4PHP
-         /rhA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=6HDzC7R+RL6DjYFySUs1ztmYGpeRF4flURMQGfgz8ek=;
+        b=WoQIZydCeh0fjhw/TBqjgdAJFJ96KSB7ecnpoTGfCGUFFp6p0gFO/2EHv5Y2kolD+Q
+         lDco3Su5Wue2nWstBr/2r+eJW3tn1R1JY2QGvq8qExTzsZIFPhYSkrILFlr5Hd/0PXUx
+         8KfrWiaa+Zlr6zYs3Am+KCtcQknBt6bFUGhFfwri77WfemH+ofLLqRet2GVUpgCl+Sv1
+         BCAe+LRvB7hEOVK1UdZ0NufKGKr/V9m88LANh+GaRsVU88aYtwpm8Qf+bAiyI3EfFq6i
+         4IoBqjleCPWP5Uz7HwYsPwr8tU/Ny3j+Djv7Cd9OLJmSY/oARV6zsR0WmXbyP+4qpcrV
+         6WIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MEMpjywarvEIBpqLOs0vJ3c4H0FioFO5FH41QQdLsTU=;
-        b=hX2xvdfnpuEaJtb8Q5m6007MGlhwI7CP8cZvwxFB5MMN56tO6mmAnLRXsZhWaAbteF
-         4uK6L1EfMqD85lpn+sSD57AZ0mmbjy2aeLG8VaGK1lNXUgrPCC0XukmgrEy+yeU1MZ5R
-         BmdFL11DhHTff4tp62CWNmkSxl3TA3BOiDqfk1iDLjX3PKw9pUfaaLRft/I9I73ySCcJ
-         3cPNFClOWej3jxhgVxx1QXLHoS6Jbla/9CjP1Dw66QSn1ZXxD0Dmb12Q/Tbxg5RV7tl7
-         8uWrn+M+HPyLSEgDKmvUJCZ8Rbp5F5cnA+OMrBYSXap6NA+uw0uJsOv21QoUNQt475Qw
-         AUTg==
-X-Gm-Message-State: APjAAAUXQIQ7oYODMVb8oVhHIeHdOl6yUP3z7fDF9x6pmmeff5I0XOi/
-        zmH3LdmPXiTtoAud4gQ+gKgrIg==
-X-Google-Smtp-Source: APXvYqwV+FwOVL156Jwgxn4HfmhR4c4RJUEji+CigP/7IgjPiauVSOU7vsxfGGhUtHXXXb6eAGi7BA==
-X-Received: by 2002:a2e:890c:: with SMTP id d12mr16520655lji.107.1559651375370;
-        Tue, 04 Jun 2019 05:29:35 -0700 (PDT)
-Received: from centauri.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id l15sm3754389lji.5.2019.06.04.05.29.34
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 04 Jun 2019 05:29:34 -0700 (PDT)
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     amit.kucheria@linaro.org, bjorn.andersson@linaro.org,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=6HDzC7R+RL6DjYFySUs1ztmYGpeRF4flURMQGfgz8ek=;
+        b=KYbDH5YTCv50NCiGVkglKy98hnZCZ+iFe39bkL2jVmctlMA1MMa12QrXY3Lfaf/POZ
+         g7Udv7ts3cW+MiI6aUl/ViSBw/dNoebd8j1V9cF1MrDIZwXUlihiFdLIg5yEPqXrhRke
+         Pv57G9QW0edF5/+eiCxDLoVYhSfhIuv/9E0oe+rU2iWYuT6cy3Zei5AdBuAi72xdfP7z
+         fd7pXPIu2L8GJCmdYll5cF2fdCAdOmS+7Y+OxfCOxAGXWP8Ul6VW2y3alOnnkq7PZKIG
+         1RDw7nAjPRWNSPzSg9aFHtwxN9zxH9e78n1/4mCuIb5GNbwu/wjoEYzyyAHgeZCXeqYe
+         wJZQ==
+X-Gm-Message-State: APjAAAUq4GbTQrQUyiiJOhcnhrWK/JMEfukV8c1jyYHbZtv8VaMDOHjw
+        Ga++/NQhoggqrLv/OygkdK0650gG0Y1wpQ==
+X-Google-Smtp-Source: APXvYqzHSIHm/1koK1BcMvII16jWLBiHbG3UWezHUTm0cJw0OrhwD/SCv+JPrmVq8uQLxhzJgORt1w==
+X-Received: by 2002:a17:90a:35c:: with SMTP id 28mr35237599pjf.110.1559651435842;
+        Tue, 04 Jun 2019 05:30:35 -0700 (PDT)
+Received: from xy-data.openstacklocal (ecs-159-138-22-150.compute.hwclouds-dns.com. [159.138.22.150])
+        by smtp.gmail.com with ESMTPSA id f10sm23734078pgo.14.2019.06.04.05.30.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 04 Jun 2019 05:30:35 -0700 (PDT)
+From:   Young Xiao <92siuyang@gmail.com>
+To:     davem@davemloft.net, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: msm8996: fix PSCI entry-latency-us
-Date:   Tue,  4 Jun 2019 14:29:31 +0200
-Message-Id: <20190604122931.22235-1-niklas.cassel@linaro.org>
-X-Mailer: git-send-email 2.21.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Cc:     Young Xiao <92siuyang@gmail.com>
+Subject: [PATCH] net: compat: fix msg_controllen overflow in scm_detach_fds_compat()
+Date:   Tue,  4 Jun 2019 20:31:45 +0800
+Message-Id: <1559651505-18137-1-git-send-email-92siuyang@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current entry-latency-us is too short.
-The proper way to convert between the device tree properties
-from the vendor tree to the upstream PSCI device tree properties is:
+There is a missing check between kmsg->msg_controllen and cmlen,
+which can possibly lead to overflow.
 
-entry-latency-us = qcom,time-overhead - qcom,latency-us
+This bug is similar to vulnerability that was fixed in commit 6900317f5eff
+("net, scm: fix PaX detected msg_controllen overflow in scm_detach_fds").
 
-which gives
-
-entry-latency-us = 210 - 80 = 130
-
-Fixes: f6aee7af59b6 ("arm64: dts: qcom: msm8996: Add PSCI cpuidle low power states")
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+Signed-off-by: Young Xiao <92siuyang@gmail.com>
 ---
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/compat.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index b7cf2a17dcb5..e8c03b5c8990 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -174,7 +174,7 @@
- 				compatible = "arm,idle-state";
- 				idle-state-name = "standalone-power-collapse";
- 				arm,psci-suspend-param = <0x00000004>;
--				entry-latency-us = <40>;
-+				entry-latency-us = <130>;
- 				exit-latency-us = <80>;
- 				min-residency-us = <300>;
- 			};
+diff --git a/net/compat.c b/net/compat.c
+index a031bd3..8e74dfb 100644
+--- a/net/compat.c
++++ b/net/compat.c
+@@ -301,6 +301,8 @@ void scm_detach_fds_compat(struct msghdr *kmsg, struct scm_cookie *scm)
+ 			err = put_user(cmlen, &cm->cmsg_len);
+ 		if (!err) {
+ 			cmlen = CMSG_COMPAT_SPACE(i * sizeof(int));
++			if (kmsg->msg_controllen < cmlen)
++				cmlen = kmsg->msg_controllen;
+ 			kmsg->msg_control += cmlen;
+ 			kmsg->msg_controllen -= cmlen;
+ 		}
 -- 
-2.21.0
+2.7.4
 
