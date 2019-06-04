@@ -2,94 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E9BA34F94
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 20:07:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE85B34FCD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Jun 2019 20:24:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726642AbfFDSHh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 14:07:37 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:32818 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbfFDSHg (ORCPT
+        id S1726566AbfFDSYs convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 4 Jun 2019 14:24:48 -0400
+Received: from server907e.appriver.com ([204.232.250.40]:60590 "EHLO
+        server907.appriver.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726352AbfFDSYs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 14:07:36 -0400
-Received: by mail-qt1-f194.google.com with SMTP id 14so14912145qtf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 11:07:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:date:in-reply-to
-         :references:organization:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=73fBt14f3pUCJec+S60pIUDJLnv+MtJaME4OItITl6A=;
-        b=jp8RT/FMpSMJK0nSUNPqKCJH5bnxjxUGfH32dHhvGajGHICHEWvCL8gEV2jFwTXL6k
-         bUCIvcg8G3QPvSWdJnLuDL9WmHeCfbdPd96Q9Ld0NdtlU+pg7t0DTdNzb8LBKDipZNwN
-         DfnEEROJAaoyK0ESzAymfSOsPSg4s6FMgZTxucvFTekfwydRByg33gFIsU7y9hVVErRc
-         ddBjMihHaAFzGNWtmoFkFBdnFA5Rpvu9MQhi4bY+53pjr5hFt7StGBeQP0OYtiYGhyMr
-         HdDXJnBflcBHmiuTW2ToheVmRxHIVxjRl4CaVlmybNwNZvc+JwDHI10Xd2YRUqMReoC5
-         xjiw==
-X-Gm-Message-State: APjAAAXEmYqby9jqTp2P8AIdL2TmKVdqdapyX43/JPIrdR23Ap+cIgpD
-        sWbzdozJ1bFQ6rx42b5BY3fWXA==
-X-Google-Smtp-Source: APXvYqyxgf1WmSBazer4xd3OsrXTZLsp3jGSP0eU0YMEKNXF2LEaE0JS9J1WAW9vN/UrYUOkS2RmQw==
-X-Received: by 2002:ac8:2b10:: with SMTP id 16mr11593422qtu.351.1559671655999;
-        Tue, 04 Jun 2019 11:07:35 -0700 (PDT)
-Received: from dhcp-10-20-1-11.bss.redhat.com ([144.121.20.162])
-        by smtp.gmail.com with ESMTPSA id q29sm342103qkq.77.2019.06.04.11.07.34
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 04 Jun 2019 11:07:35 -0700 (PDT)
-Message-ID: <47b602c0a07ad5e945ab4bc706b2bf3154ea3196.camel@redhat.com>
-Subject: Re: [PATCH] drm/nouveau/bios: downgrade absence of tmds table to
- info from an error
-From:   Lyude Paul <lyude@redhat.com>
-To:     Rhys Kidd <rhyskidd@gmail.com>, Ben Skeggs <bskeggs@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Karol Herbst <kherbst@redhat.com>,
-        Ilia Mirkin <imirkin@alum.mit.edu>
-Date:   Tue, 04 Jun 2019 14:07:33 -0400
-In-Reply-To: <20190602120727.4001-1-rhyskidd@gmail.com>
-References: <20190602120727.4001-1-rhyskidd@gmail.com>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
+        Tue, 4 Jun 2019 14:24:48 -0400
+X-Greylist: delayed 900 seconds by postgrey-1.27 at vger.kernel.org; Tue, 04 Jun 2019 14:24:47 EDT
+X-Note: This Email was scanned by AppRiver SecureTide
+X-Note-AR-ScanTimeLocal: 06/04/2019 2:09:47 PM
+X-Note: SecureTide Build: 6/3/2019 7:34:16 PM UTC (2.7.9.1)
+X-Note: Filtered by 10.246.0.224
+X-Note-AR-Scan: None - PIPE
+Received: by server907.appriver.com (CommuniGate Pro PIPE 6.2.4)
+  with PIPE id 272567096; Tue, 04 Jun 2019 14:09:47 -0400
+Received: from [10.246.0.39] (HELO smtp.us.exg7.exghost.com)
+  by server907.appriver.com (CommuniGate Pro SMTP 6.2.4)
+  with ESMTPS id 272567073; Tue, 04 Jun 2019 14:09:46 -0400
+Received: from E16DN29A-S1E7.exg7.exghost.local (192.168.244.206) by
+ E16DN06C-S1E7.exg7.exghost.local (192.168.244.109) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1713.5; Tue, 4 Jun 2019 14:09:45 -0400
+Received: from E16DN29A-S1E7.exg7.exghost.local ([fe80::a19c:46b5:a8a0:4aba])
+ by E16DN29A-S1E7.exg7.exghost.local ([fe80::a19c:46b5:a8a0:4aba%21]) with
+ mapi id 15.01.1779.000; Tue, 4 Jun 2019 14:09:46 -0400
+From:   Justin Sanders <justin@coraid.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Ed L. Cashin" <ed.cashin@acm.org>, Jens Axboe <axboe@kernel.dk>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: [PATCH v3] block: aoe: no need to check return value of
+ debugfs_create functions
+Thread-Topic: [PATCH v3] block: aoe: no need to check return value of
+ debugfs_create functions
+Thread-Index: AQHVGkVIjKqm4AaW+k6RowxiyHwjOaaMD9+A
+Date:   Tue, 4 Jun 2019 18:09:42 +0000
+Message-ID: <B606EE6D-38A5-41BA-8544-163B949EAB5A@coraid.com>
+References: <20190122152151.16139-5-gregkh@linuxfoundation.org>
+ <20190603194754.GB21877@kroah.com>
+In-Reply-To: <20190603194754.GB21877@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [208.71.233.237]
+x-rerouted-by-exchange: 
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <5AC85A9BEEBD6D4FA432B24773C0A97B@fwd7.exghost.com>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-Note: This Email was scanned by AppRiver SecureTide
+X-Note-AR-ScanTimeLocal: 06/04/2019 2:09:46 PM
+X-Note: SecureTide Build: 6/3/2019 7:34:16 PM UTC (2.7.9.1)
+X-Note: Filtered by 10.246.0.224
+X-Policy: GLOBAL
+X-Primary: GLOBAL@coraid.com
+X-Virus-Scan: V-
+X-Note-SnifferID: 0
+X-GBUdb-Analysis: Unknown
+X-Signature-Violations: 0-0-0-5861-c
+X-Note-419: 15.6269 ms. Fail:0 Chk:1358 of 1358 total
+X-Note: VSCH-CT/SI: 0-1358/SG:1 6/4/2019 2:09:38 PM
+X-Note: Spam Tests Failed: 
+X-Country-Path: PRIVATE->
+X-Note-Sending-IP: 10.246.0.39
+X-Note-Reverse-DNS: 
+X-Note-Return-Path: justin@coraid.com
+X-Note: User Rule Hits: 
+X-Note: Global Rule Hits: G586 G587 G588 G589 G607 G608 G756 
+X-Note: Encrypt Rule Hits: 
+X-Note: Mail Class: VALID
+X-Note-ECS-IP: 
+X-Note-ECS-Recip: gregkh@linuxfoundation.org
+X-Note-ECS-IP: 
+X-Note-ECS-Recip: linux-kernel@vger.kernel.org
+X-Note-ECS-IP: 
+X-Note-ECS-Recip: ed.cashin@acm.org
+X-Note-ECS-IP: 
+X-Note-ECS-Recip: axboe@kernel.dk
+X-Note-ECS-IP: 
+X-Note-ECS-Recip: linux-block@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Lyude Paul <lyude@redhat.com>
+Hi,
 
-On Sun, 2019-06-02 at 22:07 +1000, Rhys Kidd wrote:
-> Absence of a TMDS Info Table is common on Optimus setups where the NVIDIA
-> gpu is not connected directly to any outputs.
+> On Jun 3, 2019, at 3:47 PM, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 > 
-> Reporting an error in this scenario is too harsh. Accordingly, change the
-> error message to an info message.
+> When calling debugfs functions, there is no need to ever check the
+> return value.  The function can work or not, but the code logic should
+> never do something different based on this.
 > 
-> By default the error message also causes a boot flicker for these sytems.
-> 
-> Signed-off-by: Rhys Kidd <rhyskidd@gmail.com>
+> Cc: "Ed L. Cashin" <ed.cashin@acm.org>
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Cc: linux-block@vger.kernel.org
+> Cc: Omar Sandoval <osandov@osandov.com>
+> Cc: Justin Sanders <justin@coraid.com>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 > ---
->  drivers/gpu/drm/nouveau/nouveau_bios.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> v3: Justin is now the maintainer of this driver, properly send it to
+>    him.
+> v2: fix uninitialized entry issue found by Omar Sandoval
 > 
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_bios.c
-> b/drivers/gpu/drm/nouveau/nouveau_bios.c
-> index 66bf2aff4a3e..bdfadc63204a 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_bios.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_bios.c
-> @@ -935,7 +935,7 @@ static int parse_bit_tmds_tbl_entry(struct drm_device
-> *dev, struct nvbios *bios,
->  
->  	tmdstableptr = ROM16(bios->data[bitentry->offset]);
->  	if (!tmdstableptr) {
-> -		NV_ERROR(drm, "Pointer to TMDS table invalid\n");
-> +		NV_INFO(drm, "Pointer to TMDS table not found\n");
->  		return -EINVAL;
->  	}
->  
--- 
+> drivers/block/aoe/aoeblk.c | 16 ++--------------
+> 1 file changed, 2 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/block/aoe/aoeblk.c b/drivers/block/aoe/aoeblk.c
+> index e2c6aae2d636..bd19f8af950b 100644
+> --- a/drivers/block/aoe/aoeblk.c
+> +++ b/drivers/block/aoe/aoeblk.c
+> @@ -196,7 +196,6 @@ static const struct file_operations aoe_debugfs_fops = {
+> static void
+> aoedisk_add_debugfs(struct aoedev *d)
+> {
+> -	struct dentry *entry;
+> 	char *p;
+> 
+> 	if (aoe_debugfs_dir == NULL)
+> @@ -207,15 +206,8 @@ aoedisk_add_debugfs(struct aoedev *d)
+> 	else
+> 		p++;
+> 	BUG_ON(*p == '\0');
+> -	entry = debugfs_create_file(p, 0444, aoe_debugfs_dir, d,
+> -				    &aoe_debugfs_fops);
+> -	if (IS_ERR_OR_NULL(entry)) {
+> -		pr_info("aoe: cannot create debugfs file for %s\n",
+> -			d->gd->disk_name);
+> -		return;
+> -	}
+> -	BUG_ON(d->debugfs);
+> -	d->debugfs = entry;
+> +	d->debugfs = debugfs_create_file(p, 0444, aoe_debugfs_dir, d,
+> +					 &aoe_debugfs_fops);
+> }
+> void
+> aoedisk_rm_debugfs(struct aoedev *d)
+> @@ -472,10 +464,6 @@ aoeblk_init(void)
+> 	if (buf_pool_cache == NULL)
+> 		return -ENOMEM;
+> 	aoe_debugfs_dir = debugfs_create_dir("aoe", NULL);
+> -	if (IS_ERR_OR_NULL(aoe_debugfs_dir)) {
+> -		pr_info("aoe: cannot create debugfs directory\n");
+> -		aoe_debugfs_dir = NULL;
+> -	}
+> 	return 0;
+> }
+> 
+> -- 
+> 2.21.0
+> 
+> 
+
+This looks good to me, thanks.
+
+Acked-by: Justin Sanders <justin@coraid.com>
+
 Cheers,
-	Lyude Paul
+Justin
+
 
