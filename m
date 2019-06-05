@@ -2,104 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54E7F3598E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 11:19:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A17235990
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 11:20:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727040AbfFEJTq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 05:19:46 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:36082 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726862AbfFEJTq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 05:19:46 -0400
-X-UUID: cc3ab885d0cd4c82959726a3cc53dfe9-20190605
-X-UUID: cc3ab885d0cd4c82959726a3cc53dfe9-20190605
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
-        (envelope-from <sean.wang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 476848323; Wed, 05 Jun 2019 17:19:30 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs05n2.mediatek.inc (172.21.101.140) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 5 Jun 2019 17:19:29 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 5 Jun 2019 17:19:29 +0800
-Message-ID: <1559726369.9003.4.camel@mtkswgap22>
-Subject: Re: [PATCH -next] net: ethernet: mediatek: fix mtk_eth_soc build
- errors & warnings
-From:   Sean Wang <sean.wang@mediatek.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        "John Crispin" <blogic@openwrt.org>,
-        Felix Fietkau <nbd@openwrt.org>,
-        Nelson Chang <nelson.chang@mediatek.com>,
-        kbuild test robot <lkp@intel.com>
-Date:   Wed, 5 Jun 2019 17:19:29 +0800
-In-Reply-To: <85d9fdd9-4b7f-6a51-b885-b3a43f199ec9@infradead.org>
-References: <85d9fdd9-4b7f-6a51-b885-b3a43f199ec9@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        id S1727063AbfFEJUA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 05:20:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38958 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726973AbfFEJUA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 05:20:00 -0400
+Received: from dragon (li1264-180.members.linode.com [45.79.165.180])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59A5E2075B;
+        Wed,  5 Jun 2019 09:19:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559726399;
+        bh=FZid3iZIC4Rv5X+erq0U81RMe3PNMwfiFD1mq2Y047A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jJBnlb9OnMtwF7KEkX4mRIJ3lu/ZzZitk7k4ZxZ6UqCOtaRX5psjR9ihBFO/iySqW
+         xBwm1h9fTD4Sb2DmeQfavdYll0DKEsyD6RU5N7KkvAackLWQwWExUyhYEjbqC3voWx
+         /34xIx6OjmaoIj/vBpFoMl0YSf8pqK40nLY6jk38=
+Date:   Wed, 5 Jun 2019 17:19:44 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     linux-usb@vger.kernel.org, Chris Healy <cphealy@gmail.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: phy: mxs: Disable external charger detect in
+ mxs_phy_hw_init()
+Message-ID: <20190605091943.GN29853@dragon>
+References: <20190529065948.5492-1-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190529065948.5492-1-andrew.smirnov@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Randy, 
+On Tue, May 28, 2019 at 11:59:48PM -0700, Andrey Smirnov wrote:
+> Since this driver already handles changer detction state, copy the
+> workaround code currently residing in arch/arm/mach-imx/anatop.c into
+> this drier to consolidate the places modifying it.
+> 
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Felipe Balbi <balbi@kernel.org>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: NXP Linux Team <linux-imx@nxp.com>
+> Cc: linux-usb@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
 
-Thanks for your help.  But it seems I've already made the same fixup for the problem in http://lists.infradead.org/pipermail/linux-mediatek/2019-June/020301.html
-as soon as the kbuild test robot reported this.
+Acked-by: Shawn Guo <shawnguo@kernel.org>
 
-	Sean
-
-On Tue, 2019-06-04 at 22:52 -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
-> 
-> Fix build errors in Mediatek mtk_eth_soc driver.
-> 
-> It looks like these 3 source files were meant to be linked together
-> since 2 of them are library-like functions,
-> but they are currently being built as 3 loadable modules.
-> 
-> Fixes these build errors:
-> 
->   WARNING: modpost: missing MODULE_LICENSE() in drivers/net/ethernet/mediatek/mtk_eth_path.o
->   WARNING: modpost: missing MODULE_LICENSE() in drivers/net/ethernet/mediatek/mtk_sgmii.o
->   ERROR: "mtk_sgmii_init" [drivers/net/ethernet/mediatek/mtk_eth_soc.ko] undefined!
->   ERROR: "mtk_setup_hw_path" [drivers/net/ethernet/mediatek/mtk_eth_soc.ko] undefined!
->   ERROR: "mtk_sgmii_setup_mode_force" [drivers/net/ethernet/mediatek/mtk_eth_soc.ko] undefined!
->   ERROR: "mtk_sgmii_setup_mode_an" [drivers/net/ethernet/mediatek/mtk_eth_soc.ko] undefined!
->   ERROR: "mtk_w32" [drivers/net/ethernet/mediatek/mtk_eth_path.ko] undefined!
->   ERROR: "mtk_r32" [drivers/net/ethernet/mediatek/mtk_eth_path.ko] undefined!
-> 
-> This changes the loadable module name from mtk_eth_soc to mtk_eth.
-> I didn't see a way to leave it as mtk_eth_soc.
-> 
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Sean Wang <sean.wang@mediatek.com>
-> Cc: John Crispin <blogic@openwrt.org>
-> Cc: Felix Fietkau <nbd@openwrt.org>
-> Cc: Nelson Chang <nelson.chang@mediatek.com>
 > ---
->  drivers/net/ethernet/mediatek/Makefile |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> --- linux-next-20190604.orig/drivers/net/ethernet/mediatek/Makefile
-> +++ linux-next-20190604/drivers/net/ethernet/mediatek/Makefile
-> @@ -3,5 +3,5 @@
->  # Makefile for the Mediatek SoCs built-in ethernet macs
->  #
+> The intent of this patch is to consolidate all of the code maipulating
+> charge detection state to a signle place and if this patch is agreed
+> upon I plan to follow it up with this change:
+> 
+> https://github.com/ndreys/linux/commit/7248f2b85b4706760fd33d2ff970e2ea12d3bea7
+> 
+> Thanks,
+> Andrey Smirnov
+> 
+>  drivers/usb/phy/phy-mxs-usb.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/drivers/usb/phy/phy-mxs-usb.c b/drivers/usb/phy/phy-mxs-usb.c
+> index 1b1bb0ad40c3..6fa16ab31e2e 100644
+> --- a/drivers/usb/phy/phy-mxs-usb.c
+> +++ b/drivers/usb/phy/phy-mxs-usb.c
+> @@ -63,6 +63,7 @@
 >  
-> -obj-$(CONFIG_NET_MEDIATEK_SOC)                 += mtk_eth_soc.o mtk_sgmii.o \
-> -						  mtk_eth_path.o
-> +obj-$(CONFIG_NET_MEDIATEK_SOC)                 += mtk_eth.o
-> +mtk_eth-y := mtk_eth_soc.o mtk_sgmii.o mtk_eth_path.o
+>  #define ANADIG_USB1_CHRG_DETECT_SET		0x1b4
+>  #define ANADIG_USB1_CHRG_DETECT_CLR		0x1b8
+> +#define ANADIG_USB2_CHRG_DETECT_SET		0x214
+>  #define ANADIG_USB1_CHRG_DETECT_EN_B		BIT(20)
+>  #define ANADIG_USB1_CHRG_DETECT_CHK_CHRG_B	BIT(19)
+>  #define ANADIG_USB1_CHRG_DETECT_CHK_CONTACT	BIT(18)
+> @@ -250,6 +251,19 @@ static int mxs_phy_hw_init(struct mxs_phy *mxs_phy)
+>  	if (mxs_phy->data->flags & MXS_PHY_NEED_IP_FIX)
+>  		writel(BM_USBPHY_IP_FIX, base + HW_USBPHY_IP_SET);
+>  
+> +	if (mxs_phy->regmap_anatop) {
+> +		unsigned int reg = mxs_phy->port_id ?
+> +			ANADIG_USB1_CHRG_DETECT_SET :
+> +			ANADIG_USB2_CHRG_DETECT_SET;
+> +		/*
+> +		 * The external charger detector needs to be disabled,
+> +		 * or the signal at DP will be poor
+> +		 */
+> +		regmap_write(mxs_phy->regmap_anatop, reg,
+> +			     ANADIG_USB1_CHRG_DETECT_EN_B |
+> +			     ANADIG_USB1_CHRG_DETECT_CHK_CHRG_B);
+> +	}
+> +
+>  	mxs_phy_tx_init(mxs_phy);
+>  
+>  	return 0;
+> -- 
+> 2.21.0
 > 
-> 
-
-
