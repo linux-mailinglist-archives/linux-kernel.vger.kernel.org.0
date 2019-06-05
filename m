@@ -2,93 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 399F3359B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 11:32:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF5DC359BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 11:38:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727034AbfFEJcE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 05:32:04 -0400
-Received: from mga11.intel.com ([192.55.52.93]:61614 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726785AbfFEJcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 05:32:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 02:32:03 -0700
-X-ExtLoop1: 1
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
-  by fmsmga001.fm.intel.com with ESMTP; 05 Jun 2019 02:31:59 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 08/22] gpu: i915.rst: Fix references to renamed files
-In-Reply-To: <bd7dd29b9fb2101c954c8cfb2c3b4efc7d277045.1559656538.git.mchehab+samsung@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <cover.1559656538.git.mchehab+samsung@kernel.org> <bd7dd29b9fb2101c954c8cfb2c3b4efc7d277045.1559656538.git.mchehab+samsung@kernel.org>
-Date:   Wed, 05 Jun 2019 12:35:05 +0300
-Message-ID: <87woi02x4m.fsf@intel.com>
+        id S1727020AbfFEJiw convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 5 Jun 2019 05:38:52 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:40805 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726690AbfFEJiw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 05:38:52 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-140-obHVVIjyNKmcrmatuEDzRA-1; Wed, 05 Jun 2019 10:38:49 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 5 Jun 2019 10:38:48 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 5 Jun 2019 10:38:48 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: sched_setaffinity() with > 1024 cpus on gcc-9
+Thread-Topic: sched_setaffinity() with > 1024 cpus on gcc-9
+Thread-Index: AdUbgnpEuljvuI+IR8mR//XAM+iBRw==
+Date:   Wed, 5 Jun 2019 09:38:48 +0000
+Message-ID: <6b42c210ba704118b00d0f44742efddf@AcuMS.aculab.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MC-Unique: obHVVIjyNKmcrmatuEDzRA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 04 Jun 2019, Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
-> WARNING: kernel-doc './scripts/kernel-doc -rst -enable-lineno -function Hardware workarounds ./drivers/gpu/drm/i915/intel_workarounds.c' failed with return code 1
-> WARNING: kernel-doc './scripts/kernel-doc -rst -enable-lineno -function Logical Rings, Logical Ring Contexts and Execlists ./drivers/gpu/drm/i915/intel_lrc.c' failed with return code 1
-> WARNING: kernel-doc './scripts/kernel-doc -rst -enable-lineno -internal ./drivers/gpu/drm/i915/intel_lrc.c' failed with return code 2
->
-> Fixes: 112ed2d31a46 ("drm/i915: Move GraphicsTechnology files under gt/")
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+I suspect that if I compile the following using gcc-9 It'll bleat
+about going beyond the end of the array:
 
-Thanks for the patch, I picked this via drm-intel because the commit
-being fixed is not in Linus' tree yet.
+#define _GNU_SOURCE
+#include <sched.h>
 
-BR,
-Jani.
+#define MAX_CPU 2048
 
+int fubar(void)
+{
+        cpu_set_t *set = CPU_ALLOC(MAX_CPU);
+        CPU_SET_S(MAX_CPU - 2, CPU_ALLOC_SIZE(MAX_CPU), set);
+        return CPU_COUNT_S(CPU_ALLOC_SIZE(MAX_CPU), set);
+}
 
-> ---
->  Documentation/gpu/i915.rst | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/Documentation/gpu/i915.rst b/Documentation/gpu/i915.rst
-> index 055df45596c1..6c75380b2928 100644
-> --- a/Documentation/gpu/i915.rst
-> +++ b/Documentation/gpu/i915.rst
-> @@ -61,7 +61,7 @@ Intel GVT-g Host Support(vGPU device model)
->  Workarounds
->  -----------
->  
-> -.. kernel-doc:: drivers/gpu/drm/i915/intel_workarounds.c
-> +.. kernel-doc:: drivers/gpu/drm/i915/gt/intel_workarounds.c
->     :doc: Hardware workarounds
->  
->  Display Hardware Handling
-> @@ -379,10 +379,10 @@ User Batchbuffer Execution
->  Logical Rings, Logical Ring Contexts and Execlists
->  --------------------------------------------------
->  
-> -.. kernel-doc:: drivers/gpu/drm/i915/intel_lrc.c
-> +.. kernel-doc:: drivers/gpu/drm/i915/gt/intel_lrc.c
->     :doc: Logical Rings, Logical Ring Contexts and Execlists
->  
-> -.. kernel-doc:: drivers/gpu/drm/i915/intel_lrc.c
-> +.. kernel-doc:: drivers/gpu/drm/i915/gt/intel_lrc.c
->     :internal:
->  
->  Global GTT views
+I can't test since I don't have a copy of gcc-9.
 
--- 
-Jani Nikula, Intel Open Source Graphics Center
+The whole interface for > 1024 cpus looks horrid though.
+Reading version 5.01 on the man page.
+I'd have thought that if the application provided a short mask
+to sched_setaffinity() the rest would be deemed to be zeros.
+And that if an overlong mask is passed to sched_getaffinity()
+the extra bytes/longs would either be zerod or unchanged.
+
+       Be aware that CPU_ALLOC(3) may allocate a slightly larger CPU set
+       than requested (because CPU sets are implemented as bit masks
+       allocated in units of sizeof(long)).  Consequently,
+       sched_getaffinity() can set bits beyond the requested allocation
+       size, because the kernel sees a few additional bits.  Therefore, the
+       caller should iterate over the bits in the returned set, counting
+       those which are set, and stop upon reaching the value returned by
+       CPU_COUNT(3) (rather than iterating over the number of bits requested
+       to be allocated).
+
+A short mask to sched_getaffinity() should also do something
+more sensible than just returning an error.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
