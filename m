@@ -2,98 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4150F35E59
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 15:50:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEFB535E5E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 15:52:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728188AbfFENup (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 09:50:45 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:39288 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727992AbfFENup (ORCPT
+        id S1728210AbfFENvn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 09:51:43 -0400
+Received: from forwardcorp1j.mail.yandex.net ([5.45.199.163]:46542 "EHLO
+        forwardcorp1j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727992AbfFENvn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 09:50:45 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x55DmsGb143872;
-        Wed, 5 Jun 2019 13:50:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=l4vcql0vdBgv0fylul1rOHFitrdqfzP4NKQKG4JIh34=;
- b=iK5NC6428xrP1Ri7RuLHiwgYZXygi7BRUlSaWM5et6euuMT4dnOYZAqhYH1j23q+Glzb
- B/lyDEysgJ0+PGbUhMGbFp4ili2fFbyDWxs0DtgW1p4VlNQv/WEReJbxaKiEkzppv9KT
- 6TgjTdVVjnezKKuaHLxVcP3/7y5nhtu1GNHLZNqvwBLb6auPA9cdrxJKA0OcmX13nYpT
- SkJv5PMD328yYFmV459wqU7a4Mdf2IQJrg/vK91I/ZfpOHAa4VxhijIKVF9wrsixv4Zt
- FchEsp43i3mflV1/Xcj30B0+BqQ1AvADuJMwJpgViTLIXLFcjPYYZD6Xmyz3LXYTmCcH BQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2suj0qjm4y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 05 Jun 2019 13:50:38 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x55DoceR064243;
-        Wed, 5 Jun 2019 13:50:38 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2swnhc54q8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 05 Jun 2019 13:50:37 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x55DoaSU031971;
-        Wed, 5 Jun 2019 13:50:37 GMT
-Received: from tomti.i.net-space.pl (/10.175.215.173)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 05 Jun 2019 06:50:35 -0700
-Date:   Wed, 5 Jun 2019 15:50:31 +0200
-From:   Daniel Kiper <daniel.kiper@oracle.com>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org
-Cc:     dpsmith@apertussolutions.com, eric.snowberg@oracle.com,
-        hpa@zytor.com, kanth.ghatraju@oracle.com, konrad.wilk@oracle.com,
-        ross.philipson@oracle.com
-Subject: Re: [PATCH RFC 0/2] x86/boot: Introduce the setup_header2
-Message-ID: <20190605135031.62grhhxn2pfbkcdg@tomti.i.net-space.pl>
-References: <20190524095504.12894-1-daniel.kiper@oracle.com>
+        Wed, 5 Jun 2019 09:51:43 -0400
+Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
+        by forwardcorp1j.mail.yandex.net (Yandex) with ESMTP id C8A582E14BE;
+        Wed,  5 Jun 2019 16:51:39 +0300 (MSK)
+Received: from smtpcorp1j.mail.yandex.net (smtpcorp1j.mail.yandex.net [2a02:6b8:0:1619::137])
+        by mxbackcorp1g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id MwaVXp0t7H-pdl8LjvU;
+        Wed, 05 Jun 2019 16:51:39 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1559742699; bh=IrflhE8QTVLvAUZbNa4CJKo6kCQj/0hU43yCa3MGsqM=;
+        h=Date:Message-ID:Subject:From:To;
+        b=1kvyh/lhpIH0gxPMrRkJpnhWUOwZBiojX8U+j69t+cCp3UXkowDoCB+3Yi7BTZR/K
+         hKRewCaT53bZ5JJnNKzVBI3Ur4nI1X7KYbNo9PNZtq0ETBxEu9QRf5LSPB642Qy9g1
+         Wt4od409KQVY9xVTJaIq6WiIyV02Pb6cbibgD2yY=
+Authentication-Results: mxbackcorp1g.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:b19a:10ab:8629:85d9])
+        by smtpcorp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id YZ0kbb9Zza-pde0J8Sd;
+        Wed, 05 Jun 2019 16:51:39 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+X-Mozilla-News-Host: news://news.gmane.org:119
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Subject: [BUG?] without memory pressure negative dentries overpopulate dcache
+To:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-mm <linux-mm@kvack.org>
+Message-ID: <ff0993a2-9825-304c-6a5b-2e9d4b940032@yandex-team.ru>
+Date:   Wed, 5 Jun 2019 16:51:38 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190524095504.12894-1-daniel.kiper@oracle.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9278 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=643
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906050088
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9278 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=674 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906050088
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 24, 2019 at 11:55:02AM +0200, Daniel Kiper wrote:
-> Hi,
->
-> This change is needed to properly start the Linux kernel in Intel TXT mode and
-> is a part of the TrenchBoot project (https://github.com/TrenchBoot).
->
-> Daniel
->
->  Documentation/x86/boot.txt               | 55 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  arch/x86/Kconfig                         |  7 +++++++
->  arch/x86/boot/Makefile                   |  2 +-
->  arch/x86/boot/compressed/Makefile        |  5 +++--
->  arch/x86/boot/compressed/setup_header2.S | 18 ++++++++++++++++++
->  arch/x86/boot/compressed/sl_stub.S       | 28 ++++++++++++++++++++++++++++
->  arch/x86/boot/header.S                   |  3 ++-
->  arch/x86/boot/tools/build.c              |  8 ++++++++
->  arch/x86/include/uapi/asm/bootparam.h    |  1 +
->  9 files changed, 123 insertions(+), 4 deletions(-)
->
-> Daniel Kiper (2):
->       x86/boot: Introduce the setup_header2
->       x86/boot: Introduce dummy MLE header
+I've seen problem on large server where horde of negative dentries
+slowed down all lookups significantly:
 
-Ping?
+watchdog: BUG: soft lockup - CPU#25 stuck for 22s! [atop:968884] at __d_lookup_rcu+0x6f/0x190
 
-Daniel
+slabtop:
+
+   OBJS ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME
+85118166 85116916   0%    0.19K 2026623       42  16212984K dentry
+16577106 16371723   0%    0.10K 425054       39   1700216K buffer_head
+935850 934379   0%    1.05K  31195       30    998240K ext4_inode_cache
+663740 654967   0%    0.57K  23705       28    379280K radix_tree_node
+399987 380055   0%    0.65K   8163       49    261216K proc_inode_cache
+226380 168813   0%    0.19K   5390       42     43120K cred_jar
+  70345  65721   0%    0.58K   1279       55     40928K inode_cache
+105927  43314   0%    0.31K   2077       51     33232K filp
+630972 601503   0%    0.04K   6186      102     24744K ext4_extent_status
+   5848   4269   0%    3.56K    731        8     23392K task_struct
+  16224  11531   0%    1.00K    507       32     16224K kmalloc-1024
+   6752   5833   0%    2.00K    422       16     13504K kmalloc-2048
+199680 158086   0%    0.06K   3120       64     12480K anon_vma_chain
+156128 154751   0%    0.07K   2788       56     11152K Acpi-Operand
+
+Total RAM is 256 GB
+
+These dentries came from temporary files created and deleted by postgres.
+But this could be easily reproduced by lookup of non-existent files.
+
+Of course, memory pressure easily washes them away.
+
+Similar problem happened before around proc sysctl entries:
+https://lkml.org/lkml/2017/2/10/47
+
+This one does not concentrate in one bucket and needs much more memory.
+
+Looks like dcache needs some kind of background shrinker started
+when dcache size or fraction of negative dentries exceeds some threshold.
