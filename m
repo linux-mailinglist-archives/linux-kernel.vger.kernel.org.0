@@ -2,94 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06A3C362D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 19:37:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D4C4362C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 19:35:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726626AbfFERhA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 13:37:00 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:33347 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726421AbfFERhA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 13:37:00 -0400
-Received: by mail-pf1-f194.google.com with SMTP id x15so5453172pfq.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 10:37:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:subject:in-reply-to:references:date:message-id:mime-version;
-        bh=/updNbVAXDRpwIEN7mxRzjn7O5DNwkaGNW0XCgNkty0=;
-        b=UW304hnUawBvIhjTZZ77gkYQxhciqbhVs6H7uhZYjC3wM4CCIPIKUtB4itcDzxycrK
-         XM9m8Zs/UuaeYIVybKePE1SpMQo/kOCPO3GfH8Q2OSh/sZGRpPkVrTbPdeOkm01RaGrk
-         3m8bMzKhpSUcDYPEz+ifQ0IIqvokUZ2iFvZaVkNDtBRlTc7UYDIfrTxqzsOdgsWd0l2Z
-         OTTFj82yQ9s0e8zRFmhTJN+OHgv+4vSrAKkeLyEeBgF5qDhpa624FFyVmoAEGeIU0WLx
-         0MO7K9RbTNexgAlMJoeVD9u5aqaDWZkZF/pW3FgKn6NE0F4DwjeDOACyV3QIV1VfXOUN
-         MxkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=/updNbVAXDRpwIEN7mxRzjn7O5DNwkaGNW0XCgNkty0=;
-        b=eylkINd16qNhgTS5upcoSkIrXqCDtosrNmgJMlZmlCEA5hnloXJzTJK0iqO+POKfQc
-         tUDO3GKBDRxVi5yMBD3mMyrHRpPbkZSPjJ8tbTlswalk3g1PSXbxYLpZv9Q8Lj20ddM+
-         cHuiEYamvrfnHg74K+nFqdDD6OSK1hEws3/Aghv15ovQfw1ujm8Mbczlu3C6h4wXTIMt
-         TVntXVlQdjYazCX0544SrZOvFOoi7fKnsn83EkFyAgXwSQsovDyCY0adDl124ioYooT9
-         xXVQjsiGxwDDyBQCyyZ3sjPqPbwoOlD231npEbCKZiKZNq7bXlTDOIefrK6sDiBagusC
-         Bj4w==
-X-Gm-Message-State: APjAAAUf2azmDubWPuOFNqngttxGyB/WBEIhWmurN5pu9egGbkxsfk9N
-        2Z8V3yP4Z4mGKZEX2yngjTV7dQ==
-X-Google-Smtp-Source: APXvYqyk3K4EqN15Job2mwtC6F0AWmOqpL3rIbmhXdwLidwXBLjenjtBYFFXGMyDk8TJGTw6Bmkhkw==
-X-Received: by 2002:a63:6cc3:: with SMTP id h186mr5988401pgc.292.1559756219480;
-        Wed, 05 Jun 2019 10:36:59 -0700 (PDT)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.googlemail.com with ESMTPSA id u20sm10101223pga.82.2019.06.05.10.36.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Jun 2019 10:36:58 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Paul Walmsley <paul.walmsley@sifive.com>,
-        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v3 0/5] arch: riscv: add board and SoC DT file support
-In-Reply-To: <20190602080500.31700-1-paul.walmsley@sifive.com>
-References: <20190602080500.31700-1-paul.walmsley@sifive.com>
-Date:   Wed, 05 Jun 2019 10:36:58 -0700
-Message-ID: <7h36kogchx.fsf@baylibre.com>
+        id S1726606AbfFERev (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 13:34:51 -0400
+Received: from mga11.intel.com ([192.55.52.93]:27814 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726240AbfFEReu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 13:34:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 10:34:50 -0700
+X-ExtLoop1: 1
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga001.jf.intel.com with ESMTP; 05 Jun 2019 10:34:49 -0700
+Date:   Wed, 5 Jun 2019 10:37:54 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     "Tian, Kevin" <kevin.tian@intel.com>
+Cc:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v2 2/4] iommu: Introduce device fault data
+Message-ID: <20190605103754.6d8830d7@jacob-builder>
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19CA6A9EE@SHSMSX104.ccr.corp.intel.com>
+References: <20190603145749.46347-1-jean-philippe.brucker@arm.com>
+        <20190603145749.46347-3-jean-philippe.brucker@arm.com>
+        <20190603150842.11070cfd@jacob-builder>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19CA6A9EE@SHSMSX104.ccr.corp.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
+On Wed, 5 Jun 2019 08:51:45 +0000
+"Tian, Kevin" <kevin.tian@intel.com> wrote:
 
-Paul Walmsley <paul.walmsley@sifive.com> writes:
+> > From: Jacob Pan
+> > Sent: Tuesday, June 4, 2019 6:09 AM
+> > 
+> > On Mon,  3 Jun 2019 15:57:47 +0100
+> > Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
+> >   
+> > > +/**
+> > > + * struct iommu_fault_page_request - Page Request data
+> > > + * @flags: encodes whether the corresponding fields are valid and
+> > > whether this
+> > > + *         is the last page in group (IOMMU_FAULT_PAGE_REQUEST_*
+> > > values)
+> > > + * @pasid: Process Address Space ID
+> > > + * @grpid: Page Request Group Index
+> > > + * @perm: requested page permissions (IOMMU_FAULT_PERM_* values)
+> > > + * @addr: page address
+> > > + * @private_data: device-specific private information
+> > > + */
+> > > +struct iommu_fault_page_request {
+> > > +#define IOMMU_FAULT_PAGE_REQUEST_PASID_VALID	(1 << 0)
+> > > +#define IOMMU_FAULT_PAGE_REQUEST_LAST_PAGE	(1 << 1)
+> > > +#define IOMMU_FAULT_PAGE_REQUEST_PRIV_DATA	(1 << 2)
+> > > +	__u32	flags;
+> > > +	__u32	pasid;
+> > > +	__u32	grpid;
+> > > +	__u32	perm;
+> > > +	__u64	addr;
+> > > +	__u64	private_data[2];
+> > > +};
+> > > +  
+> > 
+> > Just a thought, for non-identity G-H PASID management. We could
+> > pass on guest PASID in PRQ to save a lookup in QEMU. In this case,
+> > QEMU allocate a GPASID for vIOMMU then a host PASID for pIOMMU.
+> > QEMU has a G->H lookup. When PRQ comes in to the pIOMMU with
+> > HPASID, IOMMU driver
+> > can retrieve GPASID from the bind data then report to the guest via
+> > VFIO. In this case QEMU does not need to do a H->G PASID lookup.
+> > 
+> > Should we add a gpasid field here? or we can add a flag and field
+> > later, up to you.
+> >   
+> 
+> Can private_data serve this purpose? It's better not introducing
+> gpasid awareness within host IOMMU driver. It is just a user-level
+> data associated with a PASID when binding happens. Kernel doesn't
+> care the actual meaning, simply record it and then return back to
+> user space later upon device fault. Qemu interprets the meaning as
+> gpasid in its own context. otherwise usages may use it for other
+> purpose.
+> 
+private_data was intended for device PRQ with private data, part of the
+VT-d PRQ descriptor. For vSVA, we can withhold private_data in the host
+then respond back when page response from the guest matches pending PRQ
+with the data withheld. But for in-kernel PRQ reporting, private data
+still might be passed on to any driver who wants to process the PRQ. So
+we can't re-purpose it.
 
-> Add support for building flattened DT files from DT source files under
-> arch/riscv/boot/dts.  Follow existing kernel precedent from other SoC
-> architectures.  Start our board support by adding initial support for
-> the SiFive FU540 SoC and the first development board that uses it, the
-> SiFive HiFive Unleashed A00.
->
-> This third version of the patch set adds I2C data for the chip,
-> incorporates all remaining changes that riscv-pk was making
-> automatically, and addresses a comment from Rob Herring
-> <robh@kernel.org>.
->
-> Boot-tested on v5.2-rc1 on a HiFive Unleashed A00 board, using the
-> BBL and open-source FSBL, with modifications to pass in the DTB
-> file generated by these patches.
+But for in-kernel VDCM driver, it needs a lookup from guest PASID to
+host PASID. I thought you wanted to have IOMMU driver provide such
+service since the knowledge of H-G pasid can be established during
+bind_gpasid time. In that sense, we _do_ have gpasid awareness.
+ 
+> Thanks
+> Kevin
 
-Tested this series on top of v5.2-rc3 on HiFive Unleashed board using
-OpenSBI + mainline u-boot (master branch as of today).
-
-Tested-by: Kevin Hilman <khilman@baylibre.com>
-
-> This patch series can be found, along with the PRCI patch set
-> and the DT macro prerequisite patch, at:
->
-> https://github.com/sifive/riscv-linux/tree/dev/paulw/dts-v5.2-rc1
-
-nit: I only see this series in that branch, not any of the prerequisite
-patches you mentioned, which made me assume I could this series alone on
-top of v5.2-rc3, which worked just fine.
-
-Kevin
+[Jacob Pan]
