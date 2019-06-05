@@ -2,143 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D46B3359BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 11:35:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 399F3359B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 11:32:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727035AbfFEJfJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 05:35:09 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:59686 "EHLO mx2.mailbox.org"
+        id S1727034AbfFEJcE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 05:32:04 -0400
+Received: from mga11.intel.com ([192.55.52.93]:61614 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726690AbfFEJfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 05:35:09 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id 7734AA0191;
-        Wed,  5 Jun 2019 11:35:06 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
-        with ESMTP id zXe4_JImFazw; Wed,  5 Jun 2019 11:35:02 +0200 (CEST)
-Subject: Re: [PATCH 2/2 v4] tty/serial/8250: use mctrl_gpio helpers
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yegor Yefremov <yegorslists@googlemail.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Johan Hovold <johan@kernel.org>
-References: <20190603083332.12480-1-sr@denx.de>
- <20190603083332.12480-2-sr@denx.de>
- <20190604165224.GP9224@smile.fi.intel.com>
-From:   Stefan Roese <sr@denx.de>
-Message-ID: <115804ab-7d7c-a656-e6f4-ad61b3e02705@denx.de>
-Date:   Wed, 5 Jun 2019 11:35:01 +0200
+        id S1726785AbfFEJcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 05:32:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 02:32:03 -0700
+X-ExtLoop1: 1
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
+  by fmsmga001.fm.intel.com with ESMTP; 05 Jun 2019 02:31:59 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2 08/22] gpu: i915.rst: Fix references to renamed files
+In-Reply-To: <bd7dd29b9fb2101c954c8cfb2c3b4efc7d277045.1559656538.git.mchehab+samsung@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <cover.1559656538.git.mchehab+samsung@kernel.org> <bd7dd29b9fb2101c954c8cfb2c3b4efc7d277045.1559656538.git.mchehab+samsung@kernel.org>
+Date:   Wed, 05 Jun 2019 12:35:05 +0300
+Message-ID: <87woi02x4m.fsf@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190604165224.GP9224@smile.fi.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04.06.19 18:52, Andy Shevchenko wrote:
-> On Mon, Jun 03, 2019 at 10:33:32AM +0200, Stefan Roese wrote:
->> From: Yegor Yefremov <yegorslists@googlemail.com>
->>
->> This patch permits the usage for GPIOs to control
->> the CTS/RTS/DTR/DSR/DCD/RI signals.
-> 
->> +	if (up->gpios) {
-> 
->> +		mctrl_gpio_set(up->gpios, mctrl_gpio);
->> +	}
-> 
-> ...
-> 
->> +	if (up->gpios) {
-> 
->> +		mctrl_gpio = mctrl_gpio_get_outputs(up->gpios, &mctrl_gpio);
-> 
->> +	}
-> 
-> ...
-> 
->> +			gpios = mctrl_gpio_init(&uart->port, 0);
->> +			if (IS_ERR(gpios)) {
->> +				if (PTR_ERR(gpios) != -ENOSYS)
->> +					return PTR_ERR(gpios);
->> +			}
-> 
-> ...
-> 
->> +	if (IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(up->gpios,
->> +						UART_GPIO_RTS))) {
-> 
->> +	}
-> 
-> ...
-> 
->> -	if (termios->c_cflag & CRTSCTS && up->port.flags & UPF_HARD_FLOW) {
->> +	if (termios->c_cflag & CRTSCTS && up->port.flags & UPF_HARD_FLOW
->> +		&& IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(up->gpios,
->> +							UART_GPIO_RTS))) {
-> 
->> }
-> 
-> ...
-> 
->> +	if (up->gpios)
->> +		mctrl_gpio_disable_ms(up->gpios);
-> 
-> ...
-> 
->> +	if (up->gpios)
->> +		mctrl_gpio_enable_ms(up->gpios);
-> 
-> ...
-> 
->> +	if (up->gpios)
->> +		return mctrl_gpio_get(up->gpios, &ret);
-> 
-> 
-> Can we rather make this mimic the gpiod_get_optional() API?
-> 
-> So, if we get an error, it's an error, otherwise with NULL pointer the
-> operations goes to be no-op.
-> 
-> [IS_ERR_OR_NULL() -> IS_ERR(), if (up->gpios) -> /dev/null, etc]
+On Tue, 04 Jun 2019, Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
+> WARNING: kernel-doc './scripts/kernel-doc -rst -enable-lineno -function Hardware workarounds ./drivers/gpu/drm/i915/intel_workarounds.c' failed with return code 1
+> WARNING: kernel-doc './scripts/kernel-doc -rst -enable-lineno -function Logical Rings, Logical Ring Contexts and Execlists ./drivers/gpu/drm/i915/intel_lrc.c' failed with return code 1
+> WARNING: kernel-doc './scripts/kernel-doc -rst -enable-lineno -internal ./drivers/gpu/drm/i915/intel_lrc.c' failed with return code 2
+>
+> Fixes: 112ed2d31a46 ("drm/i915: Move GraphicsTechnology files under gt/")
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-So you want me to drop all "if (up->gpios)" checks? I can do this in
-some cases (e.g. serial8250_disable_ms()). But I would like to keep
-it in other cases, like serial8250_out_MCR(), where this check prevents
-some unnecessary code execution in the "non-gpios mode" (and vice-versa).
+Thanks for the patch, I picked this via drm-intel because the commit
+being fixed is not in Linus' tree yet.
 
-Would this be acceptable?
+BR,
+Jani.
 
-BTW: Regarding the OMAP specific code: I'm not the author of this code
-and I don't have access to such hardware to do some tests here. But
-changing IS_ERR_OR_NULL() -> IS_ERR() in this OMAP code does not
-seem correct. IIUTC, these "if" clauses are extended here by
-IS_ERR_OR_NULL(mctrl_gpio_to_gpiod()) to check if the GPIO's are not
-enabled / used. Currently this will probably break, since when called
-with "gpios == NULL", mctrl_gpio_to_gpiod() will crash [1].
 
-If you don't object (or have other suggestions), I'll change this to
-use "up->gpios == 0" instead. This seems to be what the original author
-wanted to achieve.
+> ---
+>  Documentation/gpu/i915.rst | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/Documentation/gpu/i915.rst b/Documentation/gpu/i915.rst
+> index 055df45596c1..6c75380b2928 100644
+> --- a/Documentation/gpu/i915.rst
+> +++ b/Documentation/gpu/i915.rst
+> @@ -61,7 +61,7 @@ Intel GVT-g Host Support(vGPU device model)
+>  Workarounds
+>  -----------
+>  
+> -.. kernel-doc:: drivers/gpu/drm/i915/intel_workarounds.c
+> +.. kernel-doc:: drivers/gpu/drm/i915/gt/intel_workarounds.c
+>     :doc: Hardware workarounds
+>  
+>  Display Hardware Handling
+> @@ -379,10 +379,10 @@ User Batchbuffer Execution
+>  Logical Rings, Logical Ring Contexts and Execlists
+>  --------------------------------------------------
+>  
+> -.. kernel-doc:: drivers/gpu/drm/i915/intel_lrc.c
+> +.. kernel-doc:: drivers/gpu/drm/i915/gt/intel_lrc.c
+>     :doc: Logical Rings, Logical Ring Contexts and Execlists
+>  
+> -.. kernel-doc:: drivers/gpu/drm/i915/intel_lrc.c
+> +.. kernel-doc:: drivers/gpu/drm/i915/gt/intel_lrc.c
+>     :internal:
+>  
+>  Global GTT views
 
-Okay?
-
-Thanks,
-Stefan
-
-[1]
-
-struct gpio_desc *mctrl_gpio_to_gpiod(struct mctrl_gpios *gpios,
-				      enum mctrl_gpio_idx gidx)
-{
-	return gpios->gpio[gidx];
-}
+-- 
+Jani Nikula, Intel Open Source Graphics Center
