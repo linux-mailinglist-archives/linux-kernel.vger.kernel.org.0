@@ -2,65 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEE8D36704
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 23:52:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86FCE3670C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 23:53:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726684AbfFEVwF convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 5 Jun 2019 17:52:05 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:32818 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726541AbfFEVwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 17:52:05 -0400
-Received: from ip5f5a6320.dynamic.kabel-deutschland.de ([95.90.99.32] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1hYdpB-0000oI-ED; Wed, 05 Jun 2019 23:52:01 +0200
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Brian Norris <briannorris@chromium.org>
-Subject: Re: [PATCH 2/2] ARM: dts: rockchip: Configure BT_HOST_WAKE as wake-up signal on veyron
-Date:   Wed, 05 Jun 2019 23:52:00 +0200
-Message-ID: <2828678.vPWIEPrON5@diego>
-In-Reply-To: <20190605212427.GP40515@google.com>
-References: <20190605204320.22343-1-mka@chromium.org> <3079472.D8Re4Zsj2W@diego> <20190605212427.GP40515@google.com>
+        id S1726726AbfFEVwn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 17:52:43 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46271 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726541AbfFEVwm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 17:52:42 -0400
+Received: by mail-pf1-f196.google.com with SMTP id y11so111503pfm.13;
+        Wed, 05 Jun 2019 14:52:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pcjlD80KxqjkrJpLh0zg0y8IPXMG4YKyEPyNxaKimzE=;
+        b=o0onlU0z+qsTXYziIZn66NQ2jsSX0MO6KYoQXm0fIF79bfEs+9YKw8o6seNpgADsOe
+         VN8QCmTR4+lGIVXmTw0UbHjnRZQQ4Mqj/fw2JcMB4KRzyZd0+dIL/4lfIqXIWMJWzZYW
+         gnRifZJTd+FZ+ao2kvpDb7/Lwxp7fPB9VKthhkYC/2rr1dKeDOVHf9jbCFwwMjBZTwSD
+         VNi3VnXQJus9WpKtF+iHqSfZmYHB3dg/ypFqCYrdemCOKb03FjwmJTUtbpBLHJcUJQvS
+         0W0azfecf8jx+6LzLHeY40SG+61o66fsnf4bnoM/CJ6ao07c9tQcQMS8a8t0MG5jAT9s
+         50Xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pcjlD80KxqjkrJpLh0zg0y8IPXMG4YKyEPyNxaKimzE=;
+        b=qg1oWxD8qvDm2ieIWGbUygLVkvZjFIvCfe8k3ONWNmR06t5zGuNQoArI/UKe7VC4+E
+         GXP7r6tefXvDyM++mXFQWrLmCIxXXH5MUcOkntxHODI2PsuUCcihFs7n9GO9t/ZOupTr
+         KLmIcGktnJG6WlHG5ryAUn4dKi7W9ULIU47RLbamePwH3Z8If5oN9yFadvA34r6S6qZE
+         UVxhhD1H3YTr8HUfb6lQiNMNkNYPVZi/frXQCLrc0GjWT9RSTu+F1AJiCIH0ohHjw7ji
+         2A5/eQPA7Cx68VFfFm3qNIZnyR86XD/89ifSyqPmdTvO25YILWmlmmlL+AKLQJia4++X
+         YBfw==
+X-Gm-Message-State: APjAAAWCbu/xdy4LtPjQmlsIiqBGJ7Rlfw1IYvJ8fNESZWC3nJTCfeTt
+        Phw+UbHOY4JJdOdNpbDwU/HDTOMTcpJeiRlks4Q=
+X-Google-Smtp-Source: APXvYqx80No/1styLEMcrYrPQiNeCLl7fYi2qEaBpkNmgIzsNFA6azr7O+9NlgEXZmfEf3tLVZbhUfZyH7jzwBj0RUM=
+X-Received: by 2002:a62:7552:: with SMTP id q79mr29394127pfc.71.1559771561768;
+ Wed, 05 Jun 2019 14:52:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+References: <1559769249-22011-1-git-send-email-info@metux.net>
+In-Reply-To: <1559769249-22011-1-git-send-email-info@metux.net>
+From:   Steve French <smfrench@gmail.com>
+Date:   Wed, 5 Jun 2019 16:52:30 -0500
+Message-ID: <CAH2r5mvzEPj2NXMJW5fOfq0+bbh-pZFnJnL1jEnyFYDt1HJi1A@mail.gmail.com>
+Subject: Re: [PATCH] fs: cifs: drop unneeded likely() call around IS_ERR()
+To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mittwoch, 5. Juni 2019, 23:24:27 CEST schrieb Matthias Kaehlcke:
-> On Wed, Jun 05, 2019 at 11:11:12PM +0200, Heiko Stübner wrote:
-> > Am Mittwoch, 5. Juni 2019, 22:43:20 CEST schrieb Matthias Kaehlcke:
-> > > This enables wake up on Bluetooth activity when the device is
-> > > suspended. The BT_HOST_WAKE signal is only connected on devices
-> > > with BT module that are connected through UART.
-> > > 
-> > > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > 
-> > Housekeeping question, with the two Signed-off-by lines, is Doug the
-> > original author, or was this Co-developer-by?
-> 
-> Good question, it's derived from Doug's patch for CrOS 3.14 and
-> https://crrev.com/c/1575556 also from Doug. Let's say I did the
-> porting to upstream, but I'm pretty sure Doug spent more time on it.
-> 
-> Maybe I should resend it with Doug as author and include the original
-> commit message, which has more information.
+This duplicates a patch submitted earlier by Kefeng Wang
+<wangkefeng.wang@huawei.com> which I plan to merge later today into
+cifs-2.6.git for-next
 
-It's just that the first Signed-off should be from the original author.
-(And the sender the second)
-In the co-developed-by case (see Kernel documentation) the order
-doesn't matter.
+On Wed, Jun 5, 2019 at 4:14 PM Enrico Weigelt, metux IT consult
+<info@metux.net> wrote:
+>
+> From: Enrico Weigelt <info@metux.net>
+>
+> IS_ERR() already calls unlikely(), so this extra unlikely() call
+> around IS_ERR() is not needed.
+>
+> Signed-off-by: Enrico Weigelt <info@metux.net>
+> ---
+>  fs/cifs/dfs_cache.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/cifs/dfs_cache.c b/fs/cifs/dfs_cache.c
+> index e3e1c13..1692c0c 100644
+> --- a/fs/cifs/dfs_cache.c
+> +++ b/fs/cifs/dfs_cache.c
+> @@ -492,7 +492,7 @@ static struct dfs_cache_entry *__find_cache_entry(unsigned int hash,
+>  #ifdef CONFIG_CIFS_DEBUG2
+>                         char *name = get_tgt_name(ce);
+>
+> -                       if (unlikely(IS_ERR(name))) {
+> +                       if (IS_ERR(name)) {
+>                                 rcu_read_unlock();
+>                                 return ERR_CAST(name);
+>                         }
+> --
+> 1.9.1
+>
 
 
+-- 
+Thanks,
+
+Steve
