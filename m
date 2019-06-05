@@ -2,72 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCB9235A3D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 12:09:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E53AD35A4B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 12:13:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbfFEKJr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 06:09:47 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48506 "EHLO mx1.redhat.com"
+        id S1727274AbfFEKNp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 06:13:45 -0400
+Received: from verein.lst.de ([213.95.11.211]:41960 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727348AbfFEKJp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 06:09:45 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B95A53001463;
-        Wed,  5 Jun 2019 10:09:45 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-117-131.ams2.redhat.com [10.36.117.131])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4E8BE1001DD2;
-        Wed,  5 Jun 2019 10:09:43 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 8B2FC17523; Wed,  5 Jun 2019 12:09:42 +0200 (CEST)
-Date:   Wed, 5 Jun 2019 12:09:42 +0200
-From:   "kraxel@redhat.com" <kraxel@redhat.com>
-To:     "Zhang, Tina" <tina.zhang@intel.com>
-Cc:     Zhenyu Wang <zhenyuw@linux.intel.com>,
-        "intel-gvt-dev@lists.freedesktop.org" 
-        <intel-gvt-dev@lists.freedesktop.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Lv, Zhiyuan" <zhiyuan.lv@intel.com>,
-        "Wang, Zhi A" <zhi.a.wang@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "Yuan, Hang" <hang.yuan@intel.com>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>
-Subject: Re: [RFC PATCH v2 1/3] vfio: Use capability chains to handle device
- specific irq
-Message-ID: <20190605100942.bceke6yqjynuwk3z@sirius.home.kraxel.org>
-References: <20190604095534.10337-1-tina.zhang@intel.com>
- <20190604095534.10337-2-tina.zhang@intel.com>
- <20190605040446.GW9684@zhen-hp.sh.intel.com>
- <237F54289DF84E4997F34151298ABEBC87646B5C@SHSMSX101.ccr.corp.intel.com>
+        id S1726988AbfFEKNo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 06:13:44 -0400
+Received: by newverein.lst.de (Postfix, from userid 2005)
+        id 5F8F468B05; Wed,  5 Jun 2019 12:13:17 +0200 (CEST)
+Date:   Wed, 5 Jun 2019 12:13:17 +0200
+From:   Torsten Duwe <duwe@lst.de>
+To:     Vasily Khoruzhick <anarsoul@gmail.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Sean Paul <seanpaul@chromium.org>,
+        Harald Geyer <harald@ccbib.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        arm-linux <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 7/7] arm64: dts: allwinner: a64: enable ANX6345
+ bridge on Teres-I
+Message-ID: <20190605101317.GA9345@lst.de>
+References: <20190604122150.29D6468B05@newverein.lst.de> <20190604122308.98D4868B20@newverein.lst.de> <CA+E=qVckHLqRngsfK=AcvstrD0ymEfRkYyhS_kBtZ3YWdE3L=g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <237F54289DF84E4997F34151298ABEBC87646B5C@SHSMSX101.ccr.corp.intel.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Wed, 05 Jun 2019 10:09:45 +0000 (UTC)
+In-Reply-To: <CA+E=qVckHLqRngsfK=AcvstrD0ymEfRkYyhS_kBtZ3YWdE3L=g@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  Hi,
+On Tue, Jun 04, 2019 at 08:08:40AM -0700, Vasily Khoruzhick wrote:
+> On Tue, Jun 4, 2019 at 5:23 AM Torsten Duwe <duwe@lst.de> wrote:
+> >
+> > Teres-I has an anx6345 bridge connected to the RGB666 LCD output, and
+> > the I2C controlling signals are connected to I2C0 bus. eDP output goes
+> > to an Innolux N116BGE panel.
+> >
+> > Enable it in the device tree.
+> >
+> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> > Signed-off-by: Torsten Duwe <duwe@suse.de>
+> > ---
+> >  .../boot/dts/allwinner/sun50i-a64-teres-i.dts      | 65 ++++++++++++++++++++--
+> >  1 file changed, 61 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+> > index 0ec46b969a75..a0ad438b037f 100644
+> > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+> > @@ -65,6 +65,21 @@
+> >                 };
+> >         };
+> >
+> > +       panel: panel {
+> > +               compatible ="innolux,n116bge", "simple-panel";
+> 
+> It's still "simple-panel". I believe I already mentioned that Rob
+> asked it to be edp-connector.
+> 
+For which there are neither bindings nor drivers.
 
-> > Really need to split for different planes? I'd like a
-> > VFIO_IRQ_SUBTYPE_GFX_DISPLAY_EVENT
-> > so user space can probe change for all.
+Is anybody seriously proposing to hold back support for existing
+(open source!) hardware in favour of an *imaginable* *possibly* better
+solution? Especially when this exact line is already used in some other places?
+(there's a space missing btw...)
 
-> User space can choose to user different handlers according to the
-> specific event. For example, user space might not want to handle every
-> cursor event due to performance consideration. Besides, it can reduce
-> the probe times, as we don't need to probe twice to make sure if both
-> cursor plane and primary plane have been updated.
+I'm more than glad to follow any constructive improvements towards better
+modularity. However there were none so far, and on top of that, it's a laptop.
+I see little advantage in mentioning an internal connector when the panel
+connected is always the same.
 
-I'd suggest to use the value passed via eventfd for that, i.e. instead
-of sending "1" unconditionally send a mask of changed planes.
+FWIW, Rob should also have received these patches.
 
-cheers,
-  Gerd
+	Torsten
 
