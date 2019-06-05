@@ -2,138 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4ACC93601D
+	by mail.lfdr.de (Postfix) with ESMTP id BFD0B3601E
 	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 17:16:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728663AbfFEPPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 11:15:03 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33624 "EHLO
+        id S1728675AbfFEPPE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 11:15:04 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33644 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728650AbfFEPPA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 11:15:00 -0400
+        id S1728510AbfFEPPC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 11:15:02 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E2DBC15BF;
-        Wed,  5 Jun 2019 08:14:59 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD78F1682;
+        Wed,  5 Jun 2019 08:15:01 -0700 (PDT)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CA9913F246;
-        Wed,  5 Jun 2019 08:14:57 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2BD483F246;
+        Wed,  5 Jun 2019 08:15:00 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        suzuki.poulose@arm.com, Arnd Bergmann <arnd@arndb.de>,
-        Joerg Roedel <joro@8bytes.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thor Thayer <thor.thayer@linux.intel.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 12/13] drivers: Introduce variants of driver_find_device()
-Date:   Wed,  5 Jun 2019 16:13:49 +0100
-Message-Id: <1559747630-28065-13-git-send-email-suzuki.poulose@arm.com>
+        suzuki.poulose@arm.com, Eric Anholt <eric@anholt.net>,
+        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+        Inki Dae <inki.dae@samsung.com>,
+        Sandy Huang <hjc@rock-chips.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>
+Subject: [PATCH 13/13] platform: Add platform_find_device_by_driver() helper
+Date:   Wed,  5 Jun 2019 16:13:50 +0100
+Message-Id: <1559747630-28065-14-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1559747630-28065-1-git-send-email-suzuki.poulose@arm.com>
 References: <1559747630-28065-1-git-send-email-suzuki.poulose@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Similar to the other device lookup helpers, introduce
-variants of driver_find_device() to automatically lookup
-devices by their generic properties to avoid proliferation
-of custom match functions. We add :
+Provide a helper to lookup platform devices by matching device
+driver in order to avoid drivers trying to use platform bus
+internals.
 
-	driver_find_device_by_name
-	driver_find_device_by_of_node
-	driver_find_device_by_fwnode
-	driver_find_device_by_devt
-	driver_find_next_device
-
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thor Thayer <thor.thayer@linux.intel.com>
-Cc: Will Deacon <will.deacon@arm.com>
+Cc: Eric Anholt <eric@anholt.net>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Heiko Stübner" <heiko@sntech.de>
+Cc: Inki Dae <inki.dae@samsung.com>
 Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Sandy Huang <hjc@rock-chips.com>
+Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- include/linux/device.h | 58 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
+ drivers/base/platform.c         | 14 ++++++++++++++
+ include/linux/platform_device.h |  3 +++
+ 2 files changed, 17 insertions(+)
 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 10de79d..2c05e60 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -404,6 +404,64 @@ struct device *driver_find_device(struct device_driver *drv,
- 				  struct device *start, const void *data,
- 				  int (*match)(struct device *dev, const void *data));
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 4d17298..158ac24 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -1197,6 +1197,20 @@ struct bus_type platform_bus_type = {
+ };
+ EXPORT_SYMBOL_GPL(platform_bus_type);
  
 +/**
-+ * driver_find_device_by_name - device iterator for locating a particular device
-+ * of a specific name.
-+ * @driver: the driver we're iterating
-+ * @name: name of the device to match
++ * platform_find_device_by_driver - Find a platform device with a given
++ * driver.
++ * @start: The device to start the search from.
++ * @drv: The device driver to look for.
 + */
-+static inline struct device *driver_find_device_by_name(struct device_driver *drv,
-+							const char *name)
++struct device *platform_find_device_by_driver(struct device *start,
++					      const struct device_driver *drv)
 +{
-+	return driver_find_device(drv, NULL, name, device_match_name);
++	return bus_find_device(&platform_bus_type, start, drv,
++			       (void *)platform_match);
 +}
++EXPORT_SYMBOL_GPL(platform_find_device_by_driver);
 +
-+/**
-+ * driver_find_device_by_of_node- device iterator for locating a particular device
-+ * by of_node pointer.
-+ * @driver: the driver we're iterating
-+ * @np: of_node pointer to match.
-+ */
-+static inline struct device *
-+driver_find_device_by_of_node(struct device_driver *drv,
-+			      const struct device_node *np)
-+{
-+	return driver_find_device(drv, NULL, np, device_match_of_node);
-+}
-+
-+/**
-+ * driver_find_device_by_fwnode- device iterator for locating a particular device
-+ * by fwnode pointer.
-+ * @driver: the driver we're iterating
-+ * @fwnode: fwnode pointer to match.
-+ */
-+static inline struct device *
-+driver_find_device_by_fwnode(struct device_driver *drv,
-+			     const struct fwnode_handle *fwnode)
-+{
-+	return driver_find_device(drv, NULL, fwnode, device_match_fwnode);
-+}
-+
-+/**
-+ * driver_find_device_by_devt- device iterator for locating a particular device
-+ * by devt.
-+ * @driver: the driver we're iterating
-+ * @start: device to start search from
-+ * @devt: devt pointer to match.
-+ */
-+static inline struct device *driver_find_device_by_devt(struct device_driver *drv,
-+							struct device *start,
-+							dev_t devt)
-+{
-+	return driver_find_device(drv, start, &devt, device_match_devt);
-+}
-+
-+static inline struct device *driver_find_next_device(struct device_driver *drv,
-+						     struct device *start)
-+{
-+	return driver_find_device(drv, start, NULL, device_match_any);
-+}
-+
- void driver_deferred_probe_add(struct device *dev);
- int driver_deferred_probe_check_state(struct device *dev);
- 
+ int __init platform_bus_init(void)
+ {
+ 	int error;
+diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
+index cc46485..36aa775 100644
+--- a/include/linux/platform_device.h
++++ b/include/linux/platform_device.h
+@@ -52,6 +52,9 @@ extern struct device platform_bus;
+ extern void arch_setup_pdev_archdata(struct platform_device *);
+ extern struct resource *platform_get_resource(struct platform_device *,
+ 					      unsigned int, unsigned int);
++extern struct device *
++platform_find_device_by_driver(struct device * dev,
++			       const struct device_driver *drv);
+ extern void __iomem *
+ devm_platform_ioremap_resource(struct platform_device *pdev,
+ 			       unsigned int index);
 -- 
 2.7.4
 
