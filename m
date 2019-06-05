@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64A5B35DDD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 15:24:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B97835DE1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 15:24:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728242AbfFENX4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 09:23:56 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:50948 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728181AbfFENXd (ORCPT
+        id S1728043AbfFENYb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 09:24:31 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40778 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727917AbfFENXQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 09:23:33 -0400
+        Wed, 5 Jun 2019 09:23:16 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=zgqwSxf3cFqg7sS7YYuXo6uC9XLJ8kJM9DmwUlw85p0=; b=H/GUjC20+gJA0G7HX/SbpQofme
-        ub/zNGSrV++xqvU/y55A+LOIXunZtbrPzfgAsdHN9WGRX4fap6GlpBPotPN230WHXmKoZx+yQpsyF
-        jo2jqKHWi1L9XceqXECDnrCpK/4bZYcXQXngzgoWCUk/p+8J1qt+mVI66NIrYIGHM3hl+djIxhhlS
-        Q12Y89yPnn3/PmdruHupJq7X0chS7wQ2H4hqx5So76Ugjt/d3SkTf7XzWIN2ULJTjQ/ISFwgatnS2
-        gTpfKpipWV7g7+pn1YIz6D4nWj+atIqgFlvrIks6TWMl5Rv5xTgND0q7tU0sQWt6I+xrLh/FRwK5y
-        3abKSusA==;
+        bh=oXhu2RnmN1bjxijZ/YxDd0PUyqgLkr/tTV2k0tXNHQY=; b=OWAd2dqn3JTpdIxLX067SQYUf9
+        PZ56BBilq2YrfIyn67nOwVAkBK+nqtum30JYfw2rgDcGwKI29tme2AmwygnPeAEfvQxB4N1J5HwIr
+        dSIFwLocNtbk+68la/Svz+fOXYc2MOqRcA97NP7KSF2/38gzY5VAjzrbZok0gDJjGm3GCXnJZbVZF
+        Yo7CdUJQ8wvPFVbnAbY0TZ0vMqpb6XDV22htemyXZuX+GVDikYvsKK1od9AttHr9sRYV1euL/2w8I
+        0m+e/wjBR6W/foS0FzJxpttQRP932VyJzAZ6UC69RrPrGiJJcWRjWnjGm8OL7dx7y2GoDudBbff2h
+        lKlPg4yQ==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hYVsJ-0006rN-2u; Wed, 05 Jun 2019 13:22:43 +0000
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hYVsH-0004qN-Bw; Wed, 05 Jun 2019 13:22:41 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 738C1202674D6; Wed,  5 Jun 2019 15:22:39 +0200 (CEST)
-Message-Id: <20190605131944.652366009@infradead.org>
+        id 782F8203C05D7; Wed,  5 Jun 2019 15:22:39 +0200 (CEST)
+Message-Id: <20190605131944.711054227@infradead.org>
 User-Agent: quilt/0.65
-Date:   Wed, 05 Jun 2019 15:07:55 +0200
+Date:   Wed, 05 Jun 2019 15:07:56 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     x86@kernel.org
 Cc:     linux-kernel@vger.kernel.org,
@@ -51,7 +51,7 @@ Cc:     linux-kernel@vger.kernel.org,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         Edward Cree <ecree@solarflare.com>,
         Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: [PATCH 02/15] x86: Move ENCODE_FRAME_POINTER to asm/frame.h
+Subject: [PATCH 03/15] x86/kprobes: Fix frame pointer annotations
 References: <20190605130753.327195108@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -60,138 +60,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for wider use, move the ENCODE_FRAME_POINTER macros to
-a common header and provide inline asm versions.
+The kprobe trampolines have a FRAME_POINTER annotation that makes no
+sense. It marks the frame in the middle of pt_regs, at the place of
+saving BP.
 
-These macros are used to encode a pt_regs frame for the unwinder; see
-unwind_frame.c:decode_frame_pointer().
+Change it to mark the pt_regs frame as per the ENCODE_FRAME_POINTER
+from the respective entry_*.S.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/x86/entry/calling.h     |   15 -------------
- arch/x86/entry/entry_32.S    |   16 --------------
- arch/x86/include/asm/frame.h |   49 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 49 insertions(+), 31 deletions(-)
+ arch/x86/kernel/kprobes/common.h |   24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
---- a/arch/x86/entry/calling.h
-+++ b/arch/x86/entry/calling.h
-@@ -172,21 +172,6 @@ For 32-bit we have the following convent
- 	.endif
- .endm
+--- a/arch/x86/kernel/kprobes/common.h
++++ b/arch/x86/kernel/kprobes/common.h
+@@ -5,15 +5,10 @@
+ /* Kprobes and Optprobes common header */
  
--/*
-- * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
-- * frame pointer is replaced with an encoded pointer to pt_regs.  The encoding
-- * is just setting the LSB, which makes it an invalid stack address and is also
-- * a signal to the unwinder that it's a pt_regs pointer in disguise.
-- *
-- * NOTE: This macro must be used *after* PUSH_AND_CLEAR_REGS because it corrupts
-- * the original rbp.
-- */
--.macro ENCODE_FRAME_POINTER ptregs_offset=0
--#ifdef CONFIG_FRAME_POINTER
--	leaq 1+\ptregs_offset(%rsp), %rbp
--#endif
--.endm
+ #include <asm/asm.h>
 -
- #ifdef CONFIG_PAGE_TABLE_ISOLATION
- 
- /*
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -246,22 +246,6 @@
- .Lend_\@:
- .endm
- 
--/*
-- * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
-- * frame pointer is replaced with an encoded pointer to pt_regs.  The encoding
-- * is just clearing the MSB, which makes it an invalid stack address and is also
-- * a signal to the unwinder that it's a pt_regs pointer in disguise.
-- *
-- * NOTE: This macro must be used *after* SAVE_ALL because it corrupts the
-- * original rbp.
-- */
--.macro ENCODE_FRAME_POINTER
 -#ifdef CONFIG_FRAME_POINTER
--	mov %esp, %ebp
--	andl $0x7fffffff, %ebp
+-# define SAVE_RBP_STRING "	push %" _ASM_BP "\n" \
+-			 "	mov  %" _ASM_SP ", %" _ASM_BP "\n"
+-#else
+-# define SAVE_RBP_STRING "	push %" _ASM_BP "\n"
 -#endif
--.endm
--
- .macro RESTORE_INT_REGS
- 	popl	%ebx
- 	popl	%ecx
---- a/arch/x86/include/asm/frame.h
-+++ b/arch/x86/include/asm/frame.h
-@@ -22,6 +22,35 @@
- 	pop %_ASM_BP
- .endm
++#include <asm/frame.h>
  
-+#ifdef CONFIG_X86_64
-+/*
-+ * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
-+ * frame pointer is replaced with an encoded pointer to pt_regs.  The encoding
-+ * is just setting the LSB, which makes it an invalid stack address and is also
-+ * a signal to the unwinder that it's a pt_regs pointer in disguise.
-+ *
-+ * NOTE: This macro must be used *after* PUSH_AND_CLEAR_REGS because it corrupts
-+ * the original rbp.
-+ */
-+.macro ENCODE_FRAME_POINTER ptregs_offset=0
-+	leaq 1+\ptregs_offset(%rsp), %rbp
-+.endm
-+#else /* !CONFIG_X86_64 */
-+/*
-+ * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
-+ * frame pointer is replaced with an encoded pointer to pt_regs.  The encoding
-+ * is just clearing the MSB, which makes it an invalid stack address and is also
-+ * a signal to the unwinder that it's a pt_regs pointer in disguise.
-+ *
-+ * NOTE: This macro must be used *after* SAVE_ALL because it corrupts the
-+ * original ebp.
-+ */
-+.macro ENCODE_FRAME_POINTER
-+	mov %esp, %ebp
-+	andl $0x7fffffff, %ebp
-+.endm
-+#endif /* CONFIG_X86_64 */
+ #ifdef CONFIG_X86_64
 +
- #else /* !__ASSEMBLY__ */
- 
- #define FRAME_BEGIN				\
-@@ -30,12 +59,32 @@
- 
- #define FRAME_END "pop %" _ASM_BP "\n"
- 
-+#ifdef CONFIG_X86_64
-+#define ENCODE_FRAME_POINTER			\
-+	"lea 1(%rsp), %rbp\n\t"
-+#else /* !CONFIG_X86_64 */
-+#define ENCODE_FRAME_POINTER			\
-+	"movl %esp, %ebp\n\t"			\
-+	"andl $0x7fffffff, %ebp\n\t"
-+#endif /* CONFIG_X86_64 */
+ #define SAVE_REGS_STRING			\
+ 	/* Skip cs, ip, orig_ax. */		\
+ 	"	subq $24, %rsp\n"		\
+@@ -27,11 +22,13 @@
+ 	"	pushq %r10\n"			\
+ 	"	pushq %r11\n"			\
+ 	"	pushq %rbx\n"			\
+-	SAVE_RBP_STRING				\
++	"	pushq %rbp\n"			\
+ 	"	pushq %r12\n"			\
+ 	"	pushq %r13\n"			\
+ 	"	pushq %r14\n"			\
+-	"	pushq %r15\n"
++	"	pushq %r15\n"			\
++	ENCODE_FRAME_POINTER
 +
- #endif /* __ASSEMBLY__ */
- 
- #define FRAME_OFFSET __ASM_SEL(4, 8)
- 
- #else /* !CONFIG_FRAME_POINTER */
- 
-+#ifdef __ASSEMBLY__
+ #define RESTORE_REGS_STRING			\
+ 	"	popq %r15\n"			\
+ 	"	popq %r14\n"			\
+@@ -51,19 +48,22 @@
+ 	/* Skip orig_ax, ip, cs */		\
+ 	"	addq $24, %rsp\n"
+ #else
 +
-+.macro ENCODE_FRAME_POINTER ptregs_offset=0
-+.endm
+ #define SAVE_REGS_STRING			\
+ 	/* Skip cs, ip, orig_ax and gs. */	\
+-	"	subl $16, %esp\n"		\
++	"	subl $4*4, %esp\n"		\
+ 	"	pushl %fs\n"			\
+ 	"	pushl %es\n"			\
+ 	"	pushl %ds\n"			\
+ 	"	pushl %eax\n"			\
+-	SAVE_RBP_STRING				\
++	"	pushl %ebp\n"			\
+ 	"	pushl %edi\n"			\
+ 	"	pushl %esi\n"			\
+ 	"	pushl %edx\n"			\
+ 	"	pushl %ecx\n"			\
+-	"	pushl %ebx\n"
++	"	pushl %ebx\n"			\
++	ENCODE_FRAME_POINTER
 +
-+#else /* !__ASSEMBLY */
-+
-+#define ENCODE_FRAME_POINTER
-+
-+#endif
-+
- #define FRAME_BEGIN
- #define FRAME_END
- #define FRAME_OFFSET 0
+ #define RESTORE_REGS_STRING			\
+ 	"	popl %ebx\n"			\
+ 	"	popl %ecx\n"			\
 
 
