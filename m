@@ -2,123 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E195358F4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 10:49:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A000F35907
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 10:53:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726844AbfFEIt0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 04:49:26 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42232 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726741AbfFEItZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 04:49:25 -0400
-Received: by mail-wr1-f65.google.com with SMTP id x17so530695wrl.9
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 01:49:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=47X4zT30GaadHJDaOJJAh/DnRfU8HKGu6t7RX9pL/1E=;
-        b=nRR+/O1w2hpos8U3WuMiH/3+BN6lTgWYnsbBoN6gkVLrZ1RHMizsu+4ZO9EuzH4TaB
-         JaodAlZK3Kx2Q2WmB+EnEIN4wEJCqbyWdIq3GrjNrF/eMlNvvhbGv1T3/iQg83ufteRt
-         Ty7tf9D0F1yh4O5vWOF1XlO7xgunN2POXJD12fUH+Orf9E4jk0Jg5oSY9sKLt7hLAeMU
-         8vwQ3faYAIOoLM5uZ1OAR9oHHJzWu0gZIUKOZNV4CWV3ujufMGwZx8Gei7yNZu6lnFos
-         xpv7J1856IHDdO5sl9kIutepdd1VmglvBLZeIjZyX1J4L0DgbnVEE6f9z8GHgItLDDJu
-         Krrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=47X4zT30GaadHJDaOJJAh/DnRfU8HKGu6t7RX9pL/1E=;
-        b=X2EkVhH4g6+7kRswIgvPsThNqVyKZRTCeA32dParbP2fYGsU+UbHZifB7wzFh9HyOF
-         3manaAfYt8e8xT64INj5cQuxq5pVMqngLt+lv/KagNsmcbHYT7Z+g5uh7vt1x42s3S96
-         c1BeDCFIyQ50xAVSuJFHte01WFhyWvGTy+S1XEV+Rh3DSDfErs5hHx1cG3dsqLRWXoKZ
-         cVP8+N8VnHvOUAx9HJYjFB4xnBdCf4aUI2AwLXvQYV625dk305jdSZkQsIQBoNQJNBFS
-         ZvG5K5pGajLa3HA0Za3yYhgSVXMyOa0b7ZxokBpPNp7d/BtniTGmsf4LN/hmOBw7vbII
-         3YkQ==
-X-Gm-Message-State: APjAAAULGP4nn/bo2HIEcjcseVdiVSinEUM9Q90G8Wn6mFhGx18ne9YU
-        ffH7GGqp9ixtrF9rI01+hHi1HA==
-X-Google-Smtp-Source: APXvYqxKnUroo208CFyjzxg0auBl2QoUOj9T6CN3+LaoIlDzgTwijaRuwxToGpm9u7DR/bSrMEMWdA==
-X-Received: by 2002:adf:ab11:: with SMTP id q17mr10398482wrc.182.1559724563960;
-        Wed, 05 Jun 2019 01:49:23 -0700 (PDT)
-Received: from dell ([2.27.167.43])
-        by smtp.gmail.com with ESMTPSA id y2sm32449365wra.58.2019.06.05.01.49.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Jun 2019 01:49:23 -0700 (PDT)
-Date:   Wed, 5 Jun 2019 09:49:21 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>, balbi@kernel.org,
-        wsa+renesas@sang-engineering.com, gregkh@linuxfoundation.org,
-        linus.walleij@linaro.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, david.brown@linaro.org,
-        alokc@codeaurora.org, kramasub@codeaurora.org,
-        linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, andy.gross@linaro.org,
-        jlhugo@gmail.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/8] i2c: i2c-qcom-geni: Signify successful driver probe
-Message-ID: <20190605084921.GQ4797@dell>
-References: <20190604104455.8877-1-lee.jones@linaro.org>
- <20190604104455.8877-2-lee.jones@linaro.org>
- <20190605062020.GL22737@tuxbook-pro>
- <20190605071625.GK4797@dell>
- <20190605075656.GC29637@localhost>
- <20190605082047.GM4797@dell>
- <20190605083353.GD29637@localhost>
+        id S1726917AbfFEIw7 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 5 Jun 2019 04:52:59 -0400
+Received: from mga06.intel.com ([134.134.136.31]:5302 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726502AbfFEIw6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 04:52:58 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 01:52:57 -0700
+X-ExtLoop1: 1
+Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
+  by orsmga002.jf.intel.com with ESMTP; 05 Jun 2019 01:52:57 -0700
+Received: from shsmsx105.ccr.corp.intel.com (10.239.4.158) by
+ FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 5 Jun 2019 01:51:47 -0700
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.137]) by
+ SHSMSX105.ccr.corp.intel.com ([169.254.11.153]) with mapi id 14.03.0415.000;
+ Wed, 5 Jun 2019 16:51:45 +0800
+From:   "Tian, Kevin" <kevin.tian@intel.com>
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+CC:     "Raj, Ashok" <ashok.raj@intel.com>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>
+Subject: RE: [PATCH v2 2/4] iommu: Introduce device fault data
+Thread-Topic: [PATCH v2 2/4] iommu: Introduce device fault data
+Thread-Index: AQHVGhzpdp8RFw2/OU64MEW+KDLfp6aJ93gAgALLAvA=
+Date:   Wed, 5 Jun 2019 08:51:45 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D19CA6A9EE@SHSMSX104.ccr.corp.intel.com>
+References: <20190603145749.46347-1-jean-philippe.brucker@arm.com>
+        <20190603145749.46347-3-jean-philippe.brucker@arm.com>
+ <20190603150842.11070cfd@jacob-builder>
+In-Reply-To: <20190603150842.11070cfd@jacob-builder>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNWQ0ODQxZDgtOWQ2Ni00NTkxLThlZmItZTgyMzM0MTliZTNiIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiZWJVU25wanM3dHNndlwvK2pnS3RUQmdhcUQ1eFdERDZCXC9SVXhRY1V0bGZnRFlyakNsR01cL3NiSThVWHlWa0RLSSJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190605083353.GD29637@localhost>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 05 Jun 2019, Johan Hovold wrote:
+> From: Jacob Pan
+> Sent: Tuesday, June 4, 2019 6:09 AM
+> 
+> On Mon,  3 Jun 2019 15:57:47 +0100
+> Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
+> 
+> > +/**
+> > + * struct iommu_fault_page_request - Page Request data
+> > + * @flags: encodes whether the corresponding fields are valid and
+> > whether this
+> > + *         is the last page in group (IOMMU_FAULT_PAGE_REQUEST_*
+> > values)
+> > + * @pasid: Process Address Space ID
+> > + * @grpid: Page Request Group Index
+> > + * @perm: requested page permissions (IOMMU_FAULT_PERM_* values)
+> > + * @addr: page address
+> > + * @private_data: device-specific private information
+> > + */
+> > +struct iommu_fault_page_request {
+> > +#define IOMMU_FAULT_PAGE_REQUEST_PASID_VALID	(1 << 0)
+> > +#define IOMMU_FAULT_PAGE_REQUEST_LAST_PAGE	(1 << 1)
+> > +#define IOMMU_FAULT_PAGE_REQUEST_PRIV_DATA	(1 << 2)
+> > +	__u32	flags;
+> > +	__u32	pasid;
+> > +	__u32	grpid;
+> > +	__u32	perm;
+> > +	__u64	addr;
+> > +	__u64	private_data[2];
+> > +};
+> > +
+> 
+> Just a thought, for non-identity G-H PASID management. We could pass on
+> guest PASID in PRQ to save a lookup in QEMU. In this case, QEMU
+> allocate a GPASID for vIOMMU then a host PASID for pIOMMU. QEMU has a
+> G->H lookup. When PRQ comes in to the pIOMMU with HPASID, IOMMU
+> driver
+> can retrieve GPASID from the bind data then report to the guest via
+> VFIO. In this case QEMU does not need to do a H->G PASID lookup.
+> 
+> Should we add a gpasid field here? or we can add a flag and field
+> later, up to you.
+> 
 
-> On Wed, Jun 05, 2019 at 09:20:47AM +0100, Lee Jones wrote:
-> > On Wed, 05 Jun 2019, Johan Hovold wrote:
-> 
-> > > No, we don't add noise like this to the logs just because it may be
-> > > useful while debugging. Even one-liners add up.
-> > 
-> > One line per device is should not cause an issue.
-> > 
-> > Problems occur when developers try to print all kinds of device
-> > specifics to the boot log.  A simple, single line for such an
-> > important device/controller has more benefits than drawbacks.
-> 
-> What about the thousands of probe functions which do not currently spam
-> the logs? If you want to see all successful probes reliably, you tell
-> driver core to print it.
-> 
-> > > There are plenty of options for debugging already ranging from adding a
-> > > temporary dev_info() to the probe function in question to using dynamic
-> > > debugging to have driver core log every successful probe.
-> > 
-> > This is what I ended up doing.  It was time consuming to parse though
-> > a log of that size when you have no paging or keyboard.
-> 
-> With the right command-line option to enable dynamic debugging you get
-> one line per successful probe, just like you wanted. Or are you now
-> saying that one-line per device is too much after all? ;)
+Can private_data serve this purpose? It's better not introducing
+gpasid awareness within host IOMMU driver. It is just a user-level
+data associated with a PASID when binding happens. Kernel doesn't
+care the actual meaning, simply record it and then return back to user 
+space later upon device fault. Qemu interprets the meaning as gpasid
+in its own context. otherwise usages may use it for other purpose.
 
-Which command line option are you pertaining to?
-
-> > > And in this case you say the driver was in fact already bound; that can
-> > > easily be verified through sysfs too in case things aren't behaving the
-> > > way you expect.
-> > 
-> > Not in a non-booting system with no keyboard you can't. ;)
-> 
-> Fair enough, but the above would still work.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Thanks
+Kevin
