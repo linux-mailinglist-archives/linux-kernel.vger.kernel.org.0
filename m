@@ -2,66 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AED4535D67
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 15:00:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E26E35D89
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 15:10:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727882AbfFENAe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 09:00:34 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:18084 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727601AbfFENAe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 09:00:34 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 5444C141E15664E96DBB;
-        Wed,  5 Jun 2019 21:00:31 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 5 Jun 2019 21:00:21 +0800
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-To:     Mike Isely <isely@pobox.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        <linux-media@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH] media: pvrusb2: fix null-ptr-deref in class_unregister()
-Date:   Wed, 5 Jun 2019 21:08:20 +0800
-Message-ID: <20190605130820.19306-1-wangkefeng.wang@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727913AbfFENKq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 09:10:46 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:34798 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727749AbfFENKp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 09:10:45 -0400
+Received: by mail-oi1-f194.google.com with SMTP id u64so18136793oib.1;
+        Wed, 05 Jun 2019 06:10:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3f5m422kvL0u9Kf0/muHVokQ+2t6+FHah80qokLVsnY=;
+        b=FmqrRta1t/7cOyn9VqCJaDbHn4YVd2OftBV7eHNkachVXJw6FvemotYVv+s5Dc4hJg
+         R3ZgCb1yppXHojtymcHyL8oe40aEpAgISlojLkFID2/zAjhC62uT9U6JIjO4JI+s+7ny
+         5baTEgojrVTGD7WL2M6sNdGEvEkvmbOnY3/ZneKur+aLOsECBPdo48GXz/CjjCYI2zhZ
+         1R1No348TAGsZqDF2C9hBKizUTZ3UQ7d3nlcP3VswO6O9bhFy7VjsxhRRh5+8JB5ujti
+         77zBdYN+q6PnXV1cTF8zELdIw2v3+oXZgnOKhWVhmmHK5gqizRjrH5IXF7EQlA2KQH8f
+         NHjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3f5m422kvL0u9Kf0/muHVokQ+2t6+FHah80qokLVsnY=;
+        b=RAc4uNG4CMXRRFzGQKwlZ3rZ4S/9KTlmiBkKtJO4MRVrZju8P+MJAqtUktcVmxj6ay
+         5e8KW+RG6JR34Adss74sswHlFytnRJWksoBTLnk9+0eNxU13nT3VpAKmXJqqL9IgieUZ
+         kogSy/RlsDFnhXP0kWnKjcCE5cmhGdWJ+pC/v0W1szsx6r26Qr8tKjEB1Dbrct/aHKzz
+         KgGuvcgSlYkSAj6BA1KalV5nd7fMmkflKrTng08MVqz/A67FxX4h1VgcTC/rwWtFw7cI
+         aynfJqCTrNI8SPLQbGfEZK0s9HGv40gGO6h/BJkMEOK+Rg7TQFyUVlE224TFAI+JbGGb
+         1iog==
+X-Gm-Message-State: APjAAAViLWrsFwJiOmDC8y2WZKzdPoX2nVkAcSSH2Z60gHgc+au6MVHh
+        i7II6WC/cLEyN8BpfmnWXVZFuVtUgKGOfKOW9+8=
+X-Google-Smtp-Source: APXvYqyVN+421plTp7nk+YEo+BpgA213pkYMjcMVIhLkgyKM1ssokXoH86WjU5Wk/iR4Z8YTfoyZRWk8woeCNiKZ9Q8=
+X-Received: by 2002:aca:cf0f:: with SMTP id f15mr4331358oig.169.1559740244927;
+ Wed, 05 Jun 2019 06:10:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+References: <20190604181345.9107-1-TheSven73@gmail.com> <20190605125356.GI2781@lahna.fi.intel.com>
+In-Reply-To: <20190605125356.GI2781@lahna.fi.intel.com>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Wed, 5 Jun 2019 09:10:33 -0400
+Message-ID: <CAGngYiVX=-UtMpvkYKrL+f5s_PZdLNx+VRA7tSCsN1UJWaSzLA@mail.gmail.com>
+Subject: Re: [PATCH v2] pwm: pca9685: fix pwm/gpio inter-operation
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        linux-pwm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        YueHaibing <yuehaibing@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The class_ptr will be NULL if pvr2_sysfs_class_create() fails
-in pvr_init(), when call pvr2_sysfs_class_destroy(), it will
-lead to null-ptr-deref, fix it.
+On Wed, Jun 5, 2019 at 8:54 AM Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+>
+> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
----
- drivers/media/usb/pvrusb2/pvrusb2-sysfs.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Thank you. The next step for this patch is to test it on actual hardware
+(which I no longer have).
 
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-sysfs.c b/drivers/media/usb/pvrusb2/pvrusb2-sysfs.c
-index 7bc6d090358e..b6c6b314fadc 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-sysfs.c
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-sysfs.c
-@@ -802,7 +802,8 @@ struct pvr2_sysfs_class *pvr2_sysfs_class_create(void)
- void pvr2_sysfs_class_destroy(struct pvr2_sysfs_class *clp)
- {
- 	pvr2_sysfs_trace("Unregistering pvr2_sysfs_class id=%p", clp);
--	class_unregister(&clp->class);
-+	if (clp)
-+		class_unregister(&clp->class);
- }
- 
- 
--- 
-2.20.1
-
+Is there anyone in the thread willing to volunteer?
