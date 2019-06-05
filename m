@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AF3B35DD7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 15:24:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEE7E35DDA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 15:24:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728178AbfFENXb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 09:23:31 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:50914 "EHLO
+        id S1728214AbfFENXk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 09:23:40 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:50920 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727966AbfFENX3 (ORCPT
+        with ESMTP id S1728068AbfFENXb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 09:23:29 -0400
+        Wed, 5 Jun 2019 09:23:31 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=6vcpd/Yrl9598aZ1kT1YSLwwTRxt5Xg91scKOkavI0E=; b=WaZgcoceQDoG8x4MRnr/wmaQ4w
-        YW0NogyHLAJbcu+UwLiuKz6BwIn+2m9ehMf9zvY2nCO5X+eE7r3MunHDyRXTUhnZy9zkT0bq/JEsO
-        o2ZkRkEIIS1zFz610iab/DzB6IaI2COfZ1Ha2wznL550TEIl0ZbgnAj+2G4vnf7d/KsjvVX9epvPy
-        qmERb9gJ8yCHWd5IgZTkx6c+xwnbvNpvTBLCes8JvJmKCJJ487N3BChp6aIUro9W6Xg5y0jf7NM9k
-        EElzkgVMuj5PYyKop76NE+SkA0Aug7/gkeLRqWttNU1/vktv0v5yDBEemCfZaprAKRLxRpb7NykVV
-        th1MaCfQ==;
+        bh=8x3gGSrMTszEyeuuObzdSDHeiglefgxadgIzng9uQ5U=; b=mKS2OkpjTJ2MGrRQnPp42D80Tt
+        aPls5KhUcTdbI/yXGyJUBClBXvcE7vp3FUu88CyHR8nY9yE0Q5evgaYSQkqVYZ+3hH6HgwALgu4Ss
+        EtPuPLOigetdt/nfej0joUEoLdPe3yLS01lUsmZcm5fD9C/NNRLwjxc3d0xcu2eC2Eqfv9RnKapLU
+        LHIK8Fiukuf7y5brqJhp848oXY0qzHsvrWqDc+N0SRJY12LGdcFHIXMPAe9CZOWwwxCGr7YLzAnul
+        uoBSHAv+LIPzrJcf4KLWBmft5+ZTtaH7XTx3JHh+M9j3eCn1/RTcujpq45L0AWz3cf4EKfbp3/hFD
+        SJAmlWhw==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
         by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hYVsJ-0006rQ-2J; Wed, 05 Jun 2019 13:22:43 +0000
+        id 1hYVsJ-0006rS-2e; Wed, 05 Jun 2019 13:22:43 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 88F672073F418; Wed,  5 Jun 2019 15:22:39 +0200 (CEST)
-Message-Id: <20190605131944.946978563@infradead.org>
+        id 8CE692075075B; Wed,  5 Jun 2019 15:22:39 +0200 (CEST)
+Message-Id: <20190605131945.005681046@infradead.org>
 User-Agent: quilt/0.65
-Date:   Wed, 05 Jun 2019 15:08:00 +0200
+Date:   Wed, 05 Jun 2019 15:08:01 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     x86@kernel.org
 Cc:     linux-kernel@vger.kernel.org,
@@ -51,7 +51,7 @@ Cc:     linux-kernel@vger.kernel.org,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         Edward Cree <ecree@solarflare.com>,
         Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: [PATCH 07/15] x86: Add int3_emulate_call() selftest
+Subject: [PATCH 08/15] x86/alternatives: Teach text_poke_bp() to emulate instructions
 References: <20190605130753.327195108@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -60,117 +60,179 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Given that the entry_*.S changes for this functionality are somewhat
-tricky, make sure the paths are tested every boot, instead of on the
-rare occasion when we trip an INT3 while rewriting text.
+In preparation for static_call support, teach text_poke_bp() to
+emulate instructions, including CALL.
 
-Requested-by: Andy Lutomirski <luto@kernel.org>
+The current text_poke_bp() takes a @handler argument which is used as
+a jump target when the temporary INT3 is hit by a different CPU.
+
+When patching CALL instructions, this doesn't work because we'd miss
+the PUSH of the return address. Instead, teach poke_int3_handler() to
+emulate an instruction, typically the instruction we're patching in.
+
+This fits almost all text_poke_bp() users, except
+arch_unoptimize_kprobe() which restores random text, and for that site
+we have to build an explicit emulate instruction.
+
+Cc: Daniel Bristot de Oliveira <bristot@redhat.com>
+Cc: Nadav Amit <namit@vmware.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/x86/kernel/alternative.c |   81 +++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 77 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/text-patching.h |    2 -
+ arch/x86/kernel/alternative.c        |   47 ++++++++++++++++++++++++++---------
+ arch/x86/kernel/jump_label.c         |    3 --
+ arch/x86/kernel/kprobes/opt.c        |   11 +++++---
+ 4 files changed, 46 insertions(+), 17 deletions(-)
 
+--- a/arch/x86/include/asm/text-patching.h
++++ b/arch/x86/include/asm/text-patching.h
+@@ -37,7 +37,7 @@ extern void text_poke_early(void *addr,
+ extern void *text_poke(void *addr, const void *opcode, size_t len);
+ extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
+ extern int poke_int3_handler(struct pt_regs *regs);
+-extern void text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
++extern void text_poke_bp(void *addr, const void *opcode, size_t len, const void *emulate);
+ extern int after_bootmem;
+ extern __ro_after_init struct mm_struct *poking_mm;
+ extern __ro_after_init unsigned long poking_addr;
 --- a/arch/x86/kernel/alternative.c
 +++ b/arch/x86/kernel/alternative.c
-@@ -614,11 +614,83 @@ extern struct paravirt_patch_site __star
- 	__stop_parainstructions[];
- #endif	/* CONFIG_PARAVIRT */
+@@ -921,19 +921,25 @@ static void do_sync_core(void *info)
+ }
  
-+/*
-+ * Self-test for the INT3 based CALL emulation code.
-+ *
-+ * This exercises int3_emulate_call() to make sure INT3 pt_regs are set up
-+ * properly and that there is a stack gap between the INT3 frame and the
-+ * previous context. Without this gap doing a virtual PUSH on the interrupted
-+ * stack would corrupt the INT3 IRET frame.
-+ *
-+ * See entry_{32,64}.S for more details.
-+ */
-+static void __init int3_magic(unsigned int *ptr)
-+{
-+	*ptr = 1;
-+}
-+
-+extern __initdata unsigned long int3_selftest_ip; /* defined in asm below */
-+
-+static int __init
-+int3_exception_notify(struct notifier_block *self, unsigned long val, void *data)
-+{
-+	struct die_args *args = data;
-+	struct pt_regs *regs = args->regs;
-+
-+	if (!regs || user_mode(regs))
-+		return NOTIFY_DONE;
-+
-+	if (val != DIE_INT3)
-+		return NOTIFY_DONE;
-+
-+	if (regs->ip - INT3_INSN_SIZE != int3_selftest_ip)
-+		return NOTIFY_DONE;
-+
-+	int3_emulate_call(regs, (unsigned long)&int3_magic);
-+	return NOTIFY_STOP;
-+}
-+
-+static void __init int3_selftest(void)
-+{
-+	static __initdata struct notifier_block int3_exception_nb = {
-+		.notifier_call	= int3_exception_notify,
-+		.priority	= INT_MAX-1, /* last */
-+	};
-+	unsigned int val = 0;
-+
-+	BUG_ON(register_die_notifier(&int3_exception_nb));
-+
-+	/*
-+	 * Basically: int3_magic(&val); but really complicated :-)
-+	 *
-+	 * Stick the address of the INT3 instruction into int3_selftest_ip,
-+	 * then trigger the INT3, padded with NOPs to match a CALL instruction
-+	 * length.
-+	 */
-+	asm volatile ("1: int3; nop; nop; nop; nop\n\t"
-+		      ".pushsection .init.data,\"aw\"\n\t"
-+		      ".align " __ASM_SEL(4, 8) "\n\t"
-+		      ".type int3_selftest_ip, @object\n\t"
-+		      ".size int3_selftest_ip, " __ASM_SEL(4, 8) "\n\t"
-+		      "int3_selftest_ip:\n\t"
-+		      __ASM_SEL(.long, .quad) " 1b\n\t"
-+		      ".popsection\n\t"
-+		      : : __ASM_SEL_RAW(a, D) (&val) : "memory");
-+
-+	BUG_ON(val != 1);
-+
-+	unregister_die_notifier(&int3_exception_nb);
-+}
-+
- void __init alternative_instructions(void)
+ static bool bp_patching_in_progress;
+-static void *bp_int3_handler, *bp_int3_addr;
++static const void *bp_int3_opcode, *bp_int3_addr;
+ 
+ int poke_int3_handler(struct pt_regs *regs)
  {
--	/* The patching is not fully atomic, so try to avoid local interruptions
--	   that might execute the to be patched code.
--	   Other CPUs are not running. */
-+	int3_selftest();
++	long ip = regs->ip - INT3_INSN_SIZE + CALL_INSN_SIZE;
++	struct opcode {
++		u8 insn;
++		s32 rel;
++	} __packed opcode;
 +
-+	/*
-+	 * The patching is not fully atomic, so try to avoid local
-+	 * interruptions that might execute the to be patched code.
-+	 * Other CPUs are not running.
-+	 */
- 	stop_nmi();
+ 	/*
+ 	 * Having observed our INT3 instruction, we now must observe
+ 	 * bp_patching_in_progress.
+ 	 *
+-	 * 	in_progress = TRUE		INT3
+-	 * 	WMB				RMB
+-	 * 	write INT3			if (in_progress)
++	 *	in_progress = TRUE		INT3
++	 *	WMB				RMB
++	 *	write INT3			if (in_progress)
+ 	 *
+-	 * Idem for bp_int3_handler.
++	 * Idem for bp_int3_opcode.
+ 	 */
+ 	smp_rmb();
+ 
+@@ -943,8 +949,21 @@ int poke_int3_handler(struct pt_regs *re
+ 	if (user_mode(regs) || regs->ip != (unsigned long)bp_int3_addr)
+ 		return 0;
+ 
+-	/* set up the specified breakpoint handler */
+-	regs->ip = (unsigned long) bp_int3_handler;
++	opcode = *(struct opcode *)bp_int3_opcode;
++
++	switch (opcode.insn) {
++	case 0xE8: /* CALL */
++		int3_emulate_call(regs, ip + opcode.rel);
++		break;
++
++	case 0xE9: /* JMP */
++		int3_emulate_jmp(regs, ip + opcode.rel);
++		break;
++
++	default: /* assume NOP */
++		int3_emulate_jmp(regs, ip);
++		break;
++	}
+ 
+ 	return 1;
+ }
+@@ -955,7 +974,7 @@ NOKPROBE_SYMBOL(poke_int3_handler);
+  * @addr:	address to patch
+  * @opcode:	opcode of new instruction
+  * @len:	length to copy
+- * @handler:	address to jump to when the temporary breakpoint is hit
++ * @emulate:	opcode to emulate, when NULL use @opcode
+  *
+  * Modify multi-byte instruction by using int3 breakpoint on SMP.
+  * We completely avoid stop_machine() here, and achieve the
+@@ -970,19 +989,25 @@ NOKPROBE_SYMBOL(poke_int3_handler);
+  *	  replacing opcode
+  *	- sync cores
+  */
+-void text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
++void text_poke_bp(void *addr, const void *opcode, size_t len, const void *emulate)
+ {
+ 	unsigned char int3 = 0xcc;
+ 
+-	bp_int3_handler = handler;
++	bp_int3_opcode = emulate ?: opcode;
+ 	bp_int3_addr = (u8 *)addr + sizeof(int3);
+ 	bp_patching_in_progress = true;
+ 
+ 	lockdep_assert_held(&text_mutex);
  
  	/*
-@@ -643,10 +715,11 @@ void __init alternative_instructions(voi
- 					    _text, _etext);
++	 * poke_int3_handler() relies on @opcode being a 5 byte instruction;
++	 * notably a JMP, CALL or NOP5_ATOMIC.
++	 */
++	BUG_ON(len != 5);
++
++	/*
+ 	 * Corresponding read barrier in int3 notifier for making sure the
+-	 * in_progress and handler are correctly ordered wrt. patching.
++	 * in_progress and opcode are correctly ordered wrt. patching.
+ 	 */
+ 	smp_wmb();
+ 
+--- a/arch/x86/kernel/jump_label.c
++++ b/arch/x86/kernel/jump_label.c
+@@ -87,8 +87,7 @@ static void __ref __jump_label_transform
+ 		return;
  	}
  
--	if (!uniproc_patched || num_possible_cpus() == 1)
-+	if (!uniproc_patched || num_possible_cpus() == 1) {
- 		free_init_pages("SMP alternatives",
- 				(unsigned long)__smp_locks,
- 				(unsigned long)__smp_locks_end);
-+	}
- #endif
+-	text_poke_bp((void *)jump_entry_code(entry), code, JUMP_LABEL_NOP_SIZE,
+-		     (void *)jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
++	text_poke_bp((void *)jump_entry_code(entry), code, JUMP_LABEL_NOP_SIZE, NULL);
+ }
  
- 	apply_paravirt(__parainstructions, __parainstructions_end);
+ void arch_jump_label_transform(struct jump_entry *entry,
+--- a/arch/x86/kernel/kprobes/opt.c
++++ b/arch/x86/kernel/kprobes/opt.c
+@@ -437,8 +437,7 @@ void arch_optimize_kprobes(struct list_h
+ 		insn_buff[0] = RELATIVEJUMP_OPCODE;
+ 		*(s32 *)(&insn_buff[1]) = rel;
+ 
+-		text_poke_bp(op->kp.addr, insn_buff, RELATIVEJUMP_SIZE,
+-			     op->optinsn.insn);
++		text_poke_bp(op->kp.addr, insn_buff, RELATIVEJUMP_SIZE, NULL);
+ 
+ 		list_del_init(&op->list);
+ 	}
+@@ -448,12 +447,18 @@ void arch_optimize_kprobes(struct list_h
+ void arch_unoptimize_kprobe(struct optimized_kprobe *op)
+ {
+ 	u8 insn_buff[RELATIVEJUMP_SIZE];
++	u8 emulate_buff[RELATIVEJUMP_SIZE];
+ 
+ 	/* Set int3 to first byte for kprobes */
+ 	insn_buff[0] = BREAKPOINT_INSTRUCTION;
+ 	memcpy(insn_buff + 1, op->optinsn.copied_insn, RELATIVE_ADDR_SIZE);
++
++	emulate_buff[0] = RELATIVEJUMP_OPCODE;
++	*(s32 *)(&emulate_buff[1]) = (s32)((long)op->optinsn.insn -
++			((long)op->kp.addr + RELATIVEJUMP_SIZE));
++
+ 	text_poke_bp(op->kp.addr, insn_buff, RELATIVEJUMP_SIZE,
+-		     op->optinsn.insn);
++		     emulate_buff);
+ }
+ 
+ /*
 
 
