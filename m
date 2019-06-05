@@ -2,110 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E26FB3584C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 10:03:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00583358BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 10:39:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbfFEIDs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 04:03:48 -0400
-Received: from mga11.intel.com ([192.55.52.93]:56934 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726263AbfFEIDs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 04:03:48 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 01:03:47 -0700
-X-ExtLoop1: 1
-Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
-  by fmsmga006.fm.intel.com with ESMTP; 05 Jun 2019 01:03:46 -0700
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        v.anuragkumar@gmail.com,
-        Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
-Subject: Re: [PATCH] usb: dwc3: gadget: Correct the logic for finding last SG entry
-In-Reply-To: <1559141985-17104-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
-References: <1559141985-17104-1-git-send-email-anurag.kumar.vulisha@xilinx.com>
-Date:   Wed, 05 Jun 2019 11:03:42 +0300
-Message-ID: <87y32gcvc1.fsf@linux.intel.com>
+        id S1726765AbfFEIjG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 04:39:06 -0400
+Received: from mx.cs.msu.ru ([188.44.42.42]:50334 "EHLO mail.cs.msu.ru"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726554AbfFEIjF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 04:39:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cs.msu.ru;
+         s=dkim; h=Subject:Content-Transfer-Encoding:Content-Type:MIME-Version:
+        Message-Id:Date:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=Px/uehKk6pJuFy+aIZjSZmKKKoFS+/3im61p33sMu30=; b=h4Eh3owQAMheBMo2vdna3mYbww
+        qUnB4wwLd8cv78+2tpdWfund7vMNdBm1qqzs4C7LgiIOF4XGRCnHfOwCHFlFgqmJLAbTM9ORocQV0
+        /OaVYWxMK+Djp/E64u4Ii+zHz6jJ9ctvLz1YwG1J7gTSrJmgoCpCnQtayeKhp+aSAzTYZwx6svqyK
+        r/GjocoDVzlqzBN0JFAQ1/o7TzsLBuuxSj59bmV56qy9yT6qMXo2vIh/5vk5aKe6EMwnxWji+Fddg
+        DJWim0OQuzdJA6HUDI+61tlrbkjRPbDlznPeC+y9OgGa1KQ0RY5NE4NWqyvJV4Kl8cTv4z/EmeIiV
+        EfLOKeGw==;
+Received: from [37.204.119.143] (port=55354 helo=localhost.localdomain)
+        by mail.cs.msu.ru with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92 (FreeBSD))
+        (envelope-from <ar@cs.msu.ru>)
+        id 1hYR9H-0008s7-ME; Wed, 05 Jun 2019 11:19:57 +0300
+From:   Arseny Maslennikov <ar@cs.msu.ru>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org
+Cc:     "Vladimir D . Seleznev" <vseleznv@altlinux.org>,
+        Arseny Maslennikov <ar@cs.msu.ru>
+Date:   Wed,  5 Jun 2019 11:18:59 +0300
+Message-Id: <20190605081906.28938-1-ar@cs.msu.ru>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 37.204.119.143
+X-SA-Exim-Mail-From: ar@cs.msu.ru
+Subject: [PATCH 0/7] TTY Keyboard Status Request
+X-SA-Exim-Version: 4.2
+X-SA-Exim-Scanned: No (on mail.cs.msu.ru); Unknown failure
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+This patch series introduces TTY keyboard status request, a feature of
+the n_tty line discipline that reserves a character in struct termios
+(^T by default) and reacts to it by printing a short informational line
+to the terminal and sending a Unix signal to the tty's foreground
+process group. The processes may, in response to the signal, output a
+textual description of what they're doing.
 
+The feature has been present in a similar form at least in
+Free/Open/NetBSD; it would be nice to have something like this in Linux
+as well. There is an LKML thread[1] where users have previously
+expressed the rationale for this.
 
-Hi,
+The current implementation does not break existing kernel API in any
+way, since, fortunately, all the architectures supported by the kernel
+happen to have at least 1 free byte in the termios control character
+array.
 
-Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com> writes:
-> As a process of preparing TRBs usb_gadget_map_request_by_dev() is
-> called from dwc3_prepare_trbs() for mapping the request. This will
-> call dma_map_sg() if req->num_sgs are greater than 0. dma_map_sg()
-> will map the sg entries in sglist and return the number of mapped SGs.
-> As a part of mapping, some sg entries having contigous memory may be
-> merged together into a single sg (when IOMMU used). So, the number of
-> mapped sg entries may not be equal to the number of orginal sg entries
-> in the request (req->num_sgs).
->
-> As a part of preparing the TRBs, dwc3_prepare_one_trb_sg() iterates over
-> the sg entries present in the sglist and calls sg_is_last() to identify
-> whether the sg entry is last and set IOC bit for the last sg entry. The
-> sg_is_last() determines last sg if SG_END is set in sg->page_link. When
-> IOMMU used, dma_map_sg() merges 2 or more sgs into a single sg and it
-> doesn't retain the page_link properties. Because of this reason the
-> sg_is_last() may not find SG_END and thus resulting in IOC bit never
-> getting set.
->
-> For example:
->
-> Consider a request having 8 sg entries with each entry having a length of
-> 4096 bytes. Assume that sg1 & sg2, sg3 & sg4, sg5 & sg6, sg7 & sg8 are
-> having contigous memory regions.
->
-> Before calling dma_map_sg():
->             sg1-->sg2-->sg3-->sg4-->sg6-->sg7-->sg8
-> dma_length: 4K    4K    4K    4K    4K    4K    4K
-> SG_END:     False False False False False False True
-> num_sgs =3D 8
-> num_mapped_sgs =3D 0
->
-> The dma_map_sg() merges sg1 & sg2 memory regions into sg1->dma_address.
-> Similarly sg3 & sg4 into sg2->dma_address, sg5 & sg6 into the
-> sg3->dma_address and sg6 & sg8 into sg4->dma_address. Here the memory
-> regions are merged but the page_link properties like SG_END are not
-> retained into the merged sgs.
+The series should cleanly apply to tty-next.
 
-isn't this a bug in the scatterlist mapping code? Why doesn't it keep
-SG_END?
+To thoroughly test these, one might need at least a patched stty among
+other tools, so I've brought up a simple initrd generator[2] which can
+be used to create a lightweight environment to boot up in a VM and to
+fiddle with.
 
-=2D-=20
-balbi
+[1] https://lore.kernel.org/lkml/1415200663.3247743.187387481.75CE9317@webmail.messagingengine.com/
+[2] https://github.com/porrided/tty-kb-status-userspace
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+Arseny Maslennikov (7):
+  signal.h: Define SIGINFO on all architectures
+  tty: termios: Reserve space for VSTATUS in .c_cc
+  n_tty: Send SIGINFO to fg pgrp on status request character
+  linux/signal.h: Ignore SIGINFO by default in new tasks
+  tty: Add NOKERNINFO lflag to termios
+  n_tty: ->ops->write: Cut core logic out to a separate function
+  n_tty: Provide an informational line on VSTATUS receipt
 
------BEGIN PGP SIGNATURE-----
+ arch/alpha/include/asm/termios.h         |   4 +-
+ arch/alpha/include/uapi/asm/termbits.h   |   2 +
+ arch/arm/include/uapi/asm/signal.h       |   1 +
+ arch/h8300/include/uapi/asm/signal.h     |   1 +
+ arch/ia64/include/asm/termios.h          |   4 +-
+ arch/ia64/include/uapi/asm/signal.h      |   1 +
+ arch/ia64/include/uapi/asm/termbits.h    |   2 +
+ arch/m68k/include/uapi/asm/signal.h      |   1 +
+ arch/mips/include/asm/termios.h          |   4 +-
+ arch/mips/include/uapi/asm/signal.h      |   1 +
+ arch/mips/include/uapi/asm/termbits.h    |   2 +
+ arch/parisc/include/asm/termios.h        |   4 +-
+ arch/parisc/include/uapi/asm/signal.h    |   1 +
+ arch/parisc/include/uapi/asm/termbits.h  |   2 +
+ arch/powerpc/include/asm/termios.h       |   4 +-
+ arch/powerpc/include/uapi/asm/signal.h   |   1 +
+ arch/powerpc/include/uapi/asm/termbits.h |   2 +
+ arch/s390/include/asm/termios.h          |   4 +-
+ arch/s390/include/uapi/asm/signal.h      |   1 +
+ arch/sparc/include/asm/termios.h         |   4 +-
+ arch/sparc/include/uapi/asm/signal.h     |   2 +
+ arch/sparc/include/uapi/asm/termbits.h   |   2 +
+ arch/x86/include/uapi/asm/signal.h       |   1 +
+ arch/xtensa/include/uapi/asm/signal.h    |   1 +
+ arch/xtensa/include/uapi/asm/termbits.h  |   2 +
+ drivers/tty/Makefile                     |   3 +-
+ drivers/tty/n_tty.c                      |  69 ++++-
+ drivers/tty/n_tty_status.c               | 363 +++++++++++++++++++++++
+ include/asm-generic/termios.h            |   4 +-
+ include/linux/signal.h                   |   5 +-
+ include/linux/tty.h                      |   7 +-
+ include/uapi/asm-generic/signal.h        |   1 +
+ include/uapi/asm-generic/termbits.h      |   2 +
+ 33 files changed, 475 insertions(+), 33 deletions(-)
+ create mode 100644 drivers/tty/n_tty_status.c
 
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlz3d14ACgkQzL64meEa
-mQbIKA/+Ii2ChJ8pGwu2ghUPIQnqcxUB7blHV78JMz1exJzlZJ1nJa+LicAky5rJ
-k2h0k2Ieaxqj/BExNkC6Q/NtDLSOKPIf7BHjZrjE60JnXexPFUuZiaupVVzVK356
-5Y+VDvWVYW8q3DH4g4x7v3Z+ceY6cZiNYLnpKShdnsSyBJTrveTgMR375eYmgMZP
-vSc9eqDtN4goT2uqx3uBF6ZvT1r5Cwx1snmqSQiWGg+iDkVJbBC52IxS7mS5S85G
-cLQuIrMrJTwk/QS0xlrQjk5uJCZekruiRD5GsktWx+iUb0J2WAbaD3QYU/Hba/xQ
-qOdGkj/VPDfo4a0y2nVQIJd5ck6KEV1iOaAN0jx78PR0459nhQeZY19yGdkvTU9L
-wW2q7idyaiEDiZUMpaDyq6M+lfBCQUcYjJ5bCUluQEXwJy7srsuQlIh4s+XCCAVM
-puN3zV6f8FD+xJLCqQ0alw2JjbjZn53mW0W8eMTD2CSTFSl9GcCAdfblgmhciDBZ
-Yqrk8a7s0wDd7fA+/hGYUbJt5efLWHiPYY5Rqeh3GbOVEOP1LTN9/Ipsi6hM+Dxd
-FIkH2BjBD99TpIUQlrE+U6iaIUiy8b9pBPiORyjPcHGfdNK/7ITxQ7WWRZJznZRS
-MuQ0WAC2u60k8xwzouNwbXL/jcoUP6974/MDeOF5iK4di2YLogg=
-=uzJL
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+2.20.1
+
