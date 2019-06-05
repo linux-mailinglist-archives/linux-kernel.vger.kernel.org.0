@@ -2,101 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6989354E6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 03:10:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 752E4354EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 03:16:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726682AbfFEBKR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 21:10:17 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:35423 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726341AbfFEBKL (ORCPT
+        id S1726501AbfFEBQB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 21:16:01 -0400
+Received: from mail-it1-f200.google.com ([209.85.166.200]:40036 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbfFEBQB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 21:10:11 -0400
-Received: by mail-qt1-f196.google.com with SMTP id d23so16197272qto.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 18:10:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=VlHxMBMSfeEvLUylf2B3zOxUXUQHYZ4p3EWUpLSdpOU=;
-        b=ST94zn4fENWmSqKcu/gQgcIVE9zAdBriCQX2zGUJSwk0C7O+5PbAsWtzJCLX7xKdBL
-         jrPAGArOVsdsrgTV7odUJ0kbosYG/UUaYTrGW3oMstkM9jLO524ZBYjq5Zy06sq4R8h4
-         yT+B+8iL3Glz8ktqMAM8Q2vq1ke5XeC3nwDEDHsAS3lNqszkxVeOabFm8RvJdwXbyvuI
-         ImiDA9uy3cYHmVKtXJH1OKVeOgZNsoQVOp1qCN6meDeVxwH79K4qYnY5c0VXXlzEVdgR
-         zuzE7TXlgCe/WvIbo2cHZ7DL4t242LHkioV666WPo7jY3DHs6wJ+FWjj7gxYyZNhsckz
-         pqUw==
+        Tue, 4 Jun 2019 21:16:01 -0400
+Received: by mail-it1-f200.google.com with SMTP id u10so591453itb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 18:16:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=VlHxMBMSfeEvLUylf2B3zOxUXUQHYZ4p3EWUpLSdpOU=;
-        b=dzEl/Hj5aSauAcSddQIQSkXm2uiJfcePHXRSFYmWFJdzi5j9UPCYN1PxFLCZENbEi8
-         nZmZhdcO7Jd0BIHR9gg/zQeACVWYi6yzqpbPLDAcXvGvqpyGwmB9pHHNIrGcQuBZl8Nm
-         7Qie98IziLKb0rs4aVrLk2ZQ/8ZZ2DodllLTXTiZAyTG6M57HU2cLJUK8XBLcFy8Blg8
-         3TCOt9ifAVV+Z5QPEX8iMQRFwXmVzSPWjfOQIvoQmB8Qlcvl2N/nudKhQHEL91HXx8ED
-         t+lvLoa+WEDSyn17u2sKBtGbm3PS/3/tc7ieAk39Y4ZEQvoasa++XJnHydpBDaAFcWuQ
-         J+sw==
-X-Gm-Message-State: APjAAAV71bKm7vQCOddEohEUNuO8bj2AZv6yaNOQvcwjH8gPsftXCggr
-        uDJIt/Y+aC3jSS7XNvOVT3g=
-X-Google-Smtp-Source: APXvYqzplwYfbrveGGdc41Cn+cXNTkIaqn8/G6QpmVKJvO/KV1g/L9F+8xljTJs4ZA749Pnt0Cs3PQ==
-X-Received: by 2002:a0c:fde5:: with SMTP id m5mr10497044qvu.192.1559697010532;
-        Tue, 04 Jun 2019 18:10:10 -0700 (PDT)
-Received: from arch-01.home (c-73-132-202-198.hsd1.md.comcast.net. [73.132.202.198])
-        by smtp.gmail.com with ESMTPSA id v41sm7169401qta.78.2019.06.04.18.10.09
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 04 Jun 2019 18:10:10 -0700 (PDT)
-From:   Geordan Neukum <gneukum1@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Geordan Neukum <gneukum1@gmail.com>,
-        Mao Wenan <maowenan@huawei.com>,
-        Jeremy Sowden <jeremy@azazel.net>, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] staging: kpc2000: kpc_spi: remove unnecessary cast in [read|write]_reg()
-Date:   Wed,  5 Jun 2019 01:09:13 +0000
-Message-Id: <243b8c78084e46606e78bed26a575181648099fd.1559696611.git.gneukum1@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1559696611.git.gneukum1@gmail.com>
-References: <cover.1559696611.git.gneukum1@gmail.com>
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=tq94hQ5Or5MBqoFOhglGdojFAqBC1MTKP/WSj5YIV/8=;
+        b=ul3h1ARL6gd8EQU+e1NzyWursTH+hoI+a2DR+w2Qzy2jnYp4d7L9uWPTII8E6nugFW
+         z5ip2pPdpDN8hR+7V84G+E3Mc6kJ70uYnDOB8ndzkP2+bNxPa+7R+M1XqDI8kZ2fFKzO
+         jUSTk4OKx18bTMzaw2Y4L0GkDMZjVjf9Y1KIBTq0gwHDAVlL4G/ifzzPyo8UvX5/8oxn
+         +yCUVQEFqjpy+y1y6B6/LnCSjfSzUFACjwJjSVo+i/H7Mb4DNaYDatOYoalYXY0atVpS
+         ChLhTlYerlv25cob3cyO9ogdLwAmODaYzyuX1v2ii2n+Rpktyoj75lzi/1Ot1JawTPbK
+         qX6w==
+X-Gm-Message-State: APjAAAXwJaD0v+8ktSBUmO2yxv0mn3HwUB+TVTN7+Poy/52OnWqQ2ox0
+        atObkAy6s6mzwUux00I1CgV0eq+5zvsQqPVgtlmZuuxDjri5
+X-Google-Smtp-Source: APXvYqyZ29aiETxQGapPeY5BBEdXLC0rlE3NJCR2G4dNoGSX9gBRxgTLHXrDZB5y+iumqWQ8OcygrjVAkKZaPDKVOogeeEOvOhLK
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a6b:e00b:: with SMTP id z11mr6761741iog.27.1559697360239;
+ Tue, 04 Jun 2019 18:16:00 -0700 (PDT)
+Date:   Tue, 04 Jun 2019 18:16:00 -0700
+In-Reply-To: <000000000000543e45058a3cf40b@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001d42b5058a895703@google.com>
+Subject: Re: possible deadlock in get_user_pages_unlocked (2)
+From:   syzbot <syzbot+e1374b2ec8f6a25ab2e5@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, aneesh.kumar@linux.ibm.com,
+        dan.j.williams@intel.com, ira.weiny@intel.com, jack@suse.cz,
+        jhubbard@nvidia.com, jmorris@namei.org, keith.busch@intel.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org, richard.weiyang@gmail.com,
+        rppt@linux.ibm.com, serge@hallyn.com, sfr@canb.auug.org.au,
+        syzkaller-bugs@googlegroups.com, willy@infradead.org,
+        zohar@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kpc_spi driver unnecessarily casts from a (u64 __iomem *) to a (void
-*) when invoking readq and writeq which both take a (void __iomem *) arg.
-There is no need for this cast, and it actually harms us by discarding
-the sparse cookie, __iomem. Make the driver stop performing this casting
-operation.
+syzbot has bisected this bug to:
 
-Signed-off-by: Geordan Neukum <gneukum1@gmail.com>
----
- drivers/staging/kpc2000/kpc2000_spi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+commit 69d61f577d147b396be0991b2ac6f65057f7d445
+Author: Mimi Zohar <zohar@linux.ibm.com>
+Date:   Wed Apr 3 21:47:46 2019 +0000
 
-diff --git a/drivers/staging/kpc2000/kpc2000_spi.c b/drivers/staging/kpc2000/kpc2000_spi.c
-index 4f517afc6239..28132e9e260d 100644
---- a/drivers/staging/kpc2000/kpc2000_spi.c
-+++ b/drivers/staging/kpc2000/kpc2000_spi.c
-@@ -167,7 +167,7 @@ kp_spi_read_reg(struct kp_spi_controller_state *cs, int idx)
- 	if ((idx == KP_SPI_REG_CONFIG) && (cs->conf_cache >= 0)){
- 		return cs->conf_cache;
- 	}
--	val = readq((void*)addr);
-+	val = readq(addr);
- 	return val;
- }
- 
-@@ -176,7 +176,7 @@ kp_spi_write_reg(struct kp_spi_controller_state *cs, int idx, u64 val)
- {
- 	u64 __iomem *addr = cs->base;
- 	addr += idx;
--	writeq(val, (void*)addr);
-+	writeq(val, addr);
- 	if (idx == KP_SPI_REG_CONFIG)
- 		cs->conf_cache = val;
- }
--- 
-2.21.0
+     ima: verify mprotect change is consistent with mmap policy
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1055a2f2a00000
+start commit:   56b697c6 Add linux-next specific files for 20190604
+git tree:       linux-next
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=1255a2f2a00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1455a2f2a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4248d6bc70076f7d
+dashboard link: https://syzkaller.appspot.com/bug?extid=e1374b2ec8f6a25ab2e5
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=165757eea00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10dd3e86a00000
+
+Reported-by: syzbot+e1374b2ec8f6a25ab2e5@syzkaller.appspotmail.com
+Fixes: 69d61f577d14 ("ima: verify mprotect change is consistent with mmap  
+policy")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
