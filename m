@@ -2,76 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9AED36545
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 22:19:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C446C36558
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 22:23:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726635AbfFEUTY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 16:19:24 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:55380 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726464AbfFEUTX (ORCPT
+        id S1726711AbfFEUWy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 16:22:54 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:46799 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726561AbfFEUWy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 16:19:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=g+z8rl+Xnk+hyJFTOmEaUyUD6LMuuoZuScd2+zmF/k4=; b=0RyEuNggsxAYEPYnWLRJDg0KV
-        /1Losu3NqHqPKcVN1gPdr/SezAkavzJvVPNwXWFF8DqrtP1m7ryACy70yAbTQOcYuUa6nsqROLms7
-        XD3mafLSmR57hUZYLm3v2t+uXGRqNWVzln2ViJsYprgVhvbqBo4hmLeLniUaMMycuiuPi55N81g/+
-        n/V5/1HuEyx8kSA+G9jDwmVvPH4AH7xyYl+fZmPk0D3EobDz4NwgqLe52qyZWizjtlDeB185Zu80l
-        KkscESH2Utrs7qvOtPrsGCpzYSdEUTuWJqamn0YFsOXEsm+DGUvuLnGXnLq/5MwCIKqp8s15kqymz
-        F2B1moiSA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hYcND-00011A-Sy; Wed, 05 Jun 2019 20:19:04 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 0A681207A2CF3; Wed,  5 Jun 2019 22:19:01 +0200 (CEST)
-Date:   Wed, 5 Jun 2019 22:19:01 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        huang ying <huang.ying.caritas@gmail.com>
-Subject: Re: [PATCH v8 15/19] locking/rwsem: Adaptive disabling of reader
- optimistic spinning
-Message-ID: <20190605201901.GB3402@hirez.programming.kicks-ass.net>
-References: <20190520205918.22251-1-longman@redhat.com>
- <20190520205918.22251-16-longman@redhat.com>
- <20190604092008.GJ3402@hirez.programming.kicks-ass.net>
- <8e7d19ea-f2e6-f441-6ab9-cbff6d96589c@redhat.com>
- <20190604173853.GG3419@hirez.programming.kicks-ass.net>
- <f7f9b778-4f1a-7460-a7ae-1d4e3dd37181@redhat.com>
- <20190604181426.GH3419@hirez.programming.kicks-ass.net>
- <db89a086-3719-cea5-e24e-339085728c29@redhat.com>
- <46e44f43-87fd-251b-3b83-89a8bb3b407f@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <46e44f43-87fd-251b-3b83-89a8bb3b407f@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 5 Jun 2019 16:22:54 -0400
+Received: by mail-qt1-f196.google.com with SMTP id z19so10249qtz.13
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 13:22:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=marek-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=QJQbMka1MXUwYIt/ZO5sWq6DO1jrK8MhlctrAEsYl7o=;
+        b=z/jx0n6rsGTbQSFzvt5ikx9wlxvOJwDIcrBdGcbuAJ/vYaJszYqgNGBH/ysXQVLZ9V
+         8Oq41zXAr8lov85dQndkojs6gARfWDm/dnN46Kzi/+47f94ktklVlvO4lfn/4dmqBz6e
+         415MTiIZ57QU/NAdAz5Ty0gXI4jQN05qF/kQ0Fe8rrLAbBZTkI1695u8eh4+qjhq41j2
+         5UsawJrak9nMB1MHo45kAXNfidWNFXSeTpuUu36BkKQIi3JimeYc4To6UromjR6erZsJ
+         s8pVmhGSRnZazsg41G6BxAv3om6f5TdgWuHTSmOP1j93bQX9FetCg9b3PNZq4cyxclpl
+         ZrrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=QJQbMka1MXUwYIt/ZO5sWq6DO1jrK8MhlctrAEsYl7o=;
+        b=gVVZW2HYcl4OBm6LlcQIhwSeF7OVCo98Hvw0xzXr6JptmDVCnl3XlCjOQubHijooxI
+         +fTGKQtb+wIhO4ytMovVn/XF2zAOrPH42JHAtLpwZQFleNgGNLOR4P2jYgqH+k6p53Et
+         E29/Tg5LTl/0qxjGIZzi7fpFR7TQLsT4Vuma0WCweyySm31HY6hym7ZIdQsI2iHqYTvQ
+         WMY58xonUrK7vJqB2gy/YU1SLkflAVVvxEwCzjXjfPQFc5MqF4+QK2RLnWDC30Aj/sME
+         /yUvGrZ1MVf5A24SKiOZDO7zqt3atjOan63xOdfV6wyjZwNpjW76Ds67Eqz7R9U1AJwE
+         l28Q==
+X-Gm-Message-State: APjAAAUVXTjuAZLAkC0zVLz0kwM2nbRKXXe564CMsTAaOzany58WmnKa
+        AT7fUdb2JGNn5SkULB+DuOEijw==
+X-Google-Smtp-Source: APXvYqz/pc+6CZnS6Ffj6aSGLxLVCXIV4qPrJdrKC4gzOOijyHDtYguQjYVphUllVM9vfHQKIaUIMA==
+X-Received: by 2002:aed:378a:: with SMTP id j10mr37083052qtb.6.1559766173362;
+        Wed, 05 Jun 2019 13:22:53 -0700 (PDT)
+Received: from localhost.localdomain ([147.253.86.153])
+        by smtp.gmail.com with ESMTPSA id d38sm7565318qtb.95.2019.06.05.13.22.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Jun 2019 13:22:52 -0700 (PDT)
+From:   Jonathan Marek <jonathan@marek.ca>
+Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org (open list:QUALCOMM VENUS VIDEO ACCELERATOR
+        DRIVER),
+        linux-arm-msm@vger.kernel.org (open list:QUALCOMM VENUS VIDEO
+        ACCELERATOR DRIVER), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] Revert "media: hfi_parser: don't trick gcc with a wrong expected size"
+Date:   Wed,  5 Jun 2019 16:19:40 -0400
+Message-Id: <20190605201941.4150-1-jonathan@marek.ca>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 05, 2019 at 02:13:27PM -0400, Waiman Long wrote:
+This reverts commit ded716267196862809e5926072adc962a611a1e3.
 
-> Using cmpxchg_double is actually more risky than I thought. I have been
-> trying to try to use cmpxchg_double for down_write, but I kept getting
-> kernel panics because the rwsem wasn't 16b-aligned. As rwsem is embedded
-> in quite a large number of structures, they all have to align properly
-> to make that work or the kernel will panic. That does seem too risky to
-> me. So I am dropping the idea of trying to use it.
+This change doesn't make any sense and breaks the driver.
 
-Urgh, that's another things that's been on the TODO list for a long long
-time, write code to verify the alignment of allocations :/ I'm
-suspecting quite a lot of that goes wrong all over the place.
+Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+---
+ drivers/media/platform/qcom/venus/hfi_helper.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/platform/qcom/venus/hfi_helper.h b/drivers/media/platform/qcom/venus/hfi_helper.h
+index 34ea503a9842..15804ad7e65d 100644
+--- a/drivers/media/platform/qcom/venus/hfi_helper.h
++++ b/drivers/media/platform/qcom/venus/hfi_helper.h
+@@ -569,7 +569,7 @@ struct hfi_capability {
+ 
+ struct hfi_capabilities {
+ 	u32 num_capabilities;
+-	struct hfi_capability *data;
++	struct hfi_capability data[1];
+ };
+ 
+ #define HFI_DEBUG_MSG_LOW	0x01
+@@ -726,7 +726,7 @@ struct hfi_profile_level {
+ 
+ struct hfi_profile_level_supported {
+ 	u32 profile_count;
+-	struct hfi_profile_level *profile_level;
++	struct hfi_profile_level profile_level[1];
+ };
+ 
+ struct hfi_quality_vs_speed {
+-- 
+2.17.1
 
