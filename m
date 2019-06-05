@@ -2,81 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8AD4361E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 18:58:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50827361EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 18:58:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729019AbfFEQz2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 12:55:28 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38250 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728752AbfFEQz1 (ORCPT
+        id S1729039AbfFEQzq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 12:55:46 -0400
+Received: from smtp1.de.adit-jv.com ([93.241.18.167]:53358 "EHLO
+        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728753AbfFEQzp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 12:55:27 -0400
-Received: by mail-wm1-f67.google.com with SMTP id t5so3042986wmh.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 09:55:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=IK0GyUMMzaY1SH7H2AwbEA3bGJpZXL0LLtPICxDDdqk=;
-        b=L6iZibdO2eyrgAPTmVEL2E1FnUtXzVrlVNqsTgxxovGuPlEImBtwC1AXfW7dbeZTJx
-         G0Ml8LJCH1/zTCm8bYPTgyCfG480y8smdEhxRNV4hJY/CRDa3HcLvhMtfnOz2Lt28sMu
-         jHY3vMNFSSldjAPgLpEQCnLvCJ7QlLJkqlXjbP9kFvVrODYcLZ4keMnin8Iwl40leUWk
-         wIPk2BeSl5GeqceyQ94LsV6reLSF9VjM89jEPWSX17+2ktnIfTWHtlvnogOtLbbTwU+8
-         fyP7SVC0RdhaqfGR3E5svoN052lGayDWhPAG+ppBqLLrfDPKymCBRDKeaU/CzPEbhSb3
-         crfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=IK0GyUMMzaY1SH7H2AwbEA3bGJpZXL0LLtPICxDDdqk=;
-        b=L7+q6xPtwYWWMnQXvjYiofMXZTnDduxxU7//SYCIBpW3RDujDxuYPKhoRAj+nsY7aa
-         AIPOMDs8xQvJB4gAIpi6Tf42y61WxKVMYdpLROyTbcBCpdIBSii+83RwvkL04nFWelPx
-         w8UHMuMW46YjfQMlQZR9C1jya3GKAMkzOL4vffYglK1pBJ3lAI1Yj6ODgf4aMGbOICIL
-         oEPECvIemixDj4Ld6iWrRv3LWqmz0YwD6Wyum0Xg4HGZ9kmZJn44DL7pq4wfaAPyIp13
-         u2gSPmHu32TTHmmBHmPNS3IxDl7B0KTbPG3c4I9BXag65cdMuN0TzAuX84125DyreU4O
-         aW/w==
-X-Gm-Message-State: APjAAAUZIsW4xLwHjtd/Y5u0IlMR0uyHBdfeYDv8c9P0/X0sYRCFr5Ap
-        f1XtjjUTJMLbLc0RtTC+IKTfcI8B
-X-Google-Smtp-Source: APXvYqw8KASEExDoI4ZSJf9u0NtHcudJahZlzODCmfoghfC4hvcT/v7HxRytPDYiOBPIYAnOAqko5Q==
-X-Received: by 2002:a1c:9c4d:: with SMTP id f74mr11057587wme.156.1559753725305;
-        Wed, 05 Jun 2019 09:55:25 -0700 (PDT)
-Received: from localhost.localdomain (host228-128-static.243-194-b.business.telecomitalia.it. [194.243.128.228])
-        by smtp.googlemail.com with ESMTPSA id b69sm17060610wme.44.2019.06.05.09.55.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Jun 2019 09:55:24 -0700 (PDT)
-From:   Valerio Genovese <valerio.click@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] staging: staging: kpc2000: kpc_dma: fix symbol 'kpc_dma_add_device' was not declared.
-Date:   Wed,  5 Jun 2019 18:55:16 +0200
-Message-Id: <20190605165516.22183-1-valerio.click@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 5 Jun 2019 12:55:45 -0400
+Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
+        by smtp1.de.adit-jv.com (Postfix) with ESMTP id EFE583C00DD;
+        Wed,  5 Jun 2019 18:55:42 +0200 (CEST)
+Received: from smtp1.de.adit-jv.com ([127.0.0.1])
+        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 4PIzeykYxjEW; Wed,  5 Jun 2019 18:55:34 +0200 (CEST)
+Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 4C9EC3C00D1;
+        Wed,  5 Jun 2019 18:55:34 +0200 (CEST)
+Received: from vmlxhi-102.adit-jv.com (10.72.93.184) by HI2EXCH01.adit-jv.com
+ (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 5 Jun 2019
+ 18:55:34 +0200
+Date:   Wed, 5 Jun 2019 18:55:30 +0200
+From:   Eugeniu Rosca <erosca@de.adit-jv.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     David Howells <dhowells@redhat.com>, <linux-usb@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Mathias Payer <mathias.payer@nebelwelt.net>,
+        Kento Kobayashi <Kento.A.Kobayashi@sony.com>,
+        Hui Peng <benquike@gmail.com>,
+        Raul E Rangel <rrangel@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Jan-Marek Glogowski <glogow@fbihome.de>,
+        Bin Liu <b-liu@ti.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Jon Flatley <jflat@chromium.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Spyridon Papageorgiou <spapageorgiou@de.adit-jv.com>,
+        Joshua Frkuska <joshua_frkuska@mentor.com>,
+        "George G . Davis" <george_davis@mentor.com>,
+        <yuichi.kusakabe@denso-ten.com>, <yohhei.fukui@denso-ten.com>,
+        <natsumi.kamei@denso-ten.com>, <yasano@jp.adit-jv.com>,
+        <sliu@de.adit-jv.com>, Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>
+Subject: Re: [PATCH] usb: hub: report failure to enumerate uevent to userspace
+Message-ID: <20190605165530.GA15790@vmlxhi-102.adit-jv.com>
+References: <20190605090556.17792-1-erosca@de.adit-jv.com>
+ <20190605100337.GA9350@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190605100337.GA9350@kroah.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.72.93.184]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This was reported by sparse:
-drivers/staging/kpc2000/kpc_dma/kpc_dma_driver.c:39:7: warning: symbol 'kpc_dma_add_device
-' was not declared. Should it be static?
+Hi Greg,
 
-Signed-off-by: Valerio Genovese <valerio.click@gmail.com>
----
- drivers/staging/kpc2000/kpc_dma/kpc_dma_driver.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+We really appreciate your feedback.
 
-diff --git a/drivers/staging/kpc2000/kpc_dma/kpc_dma_driver.c b/drivers/staging/kpc2000/kpc_dma/kpc_dma_driver.c
-index cda057569163..bc208bb6777f 100644
---- a/drivers/staging/kpc2000/kpc_dma/kpc_dma_driver.c
-+++ b/drivers/staging/kpc2000/kpc_dma/kpc_dma_driver.c
-@@ -36,7 +36,7 @@ struct kpc_dma_device *kpc_dma_lookup_device(int minor)
- 	return c;
- }
- 
--void  kpc_dma_add_device(struct kpc_dma_device *ldev)
-+static void  kpc_dma_add_device(struct kpc_dma_device *ldev)
- {
- 	mutex_lock(&kpc_dma_mtx);
- 	list_add(&ldev->list, &kpc_dma_list);
+On Wed, Jun 05, 2019 at 12:03:37PM +0200, Greg Kroah-Hartman wrote:
+> On Wed, Jun 05, 2019 at 11:05:56AM +0200, Eugeniu Rosca wrote:
+> > From: Spyridon Papageorgiou <spapageorgiou@de.adit-jv.com>
+> > 
+> > When a USB device fails to enumerate, only a kernel message is printed.
+> > With this patch, a uevent is also generated to notify userspace.
+> > Services can monitor for the event through udev and handle failures
+> > accordingly.
+> > 
+> > The "port_enumerate_fail_notify()" function name follows the syntax of
+> > "port_over_current_notify()" used in v4.20-rc1
+> > commit 201af55da8a398 ("usb: core: added uevent for over-current").
+> > 
+> > Signed-off-by: Spyridon Papageorgiou <spapageorgiou@de.adit-jv.com>
+> > Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+> 
+> All we need is one special notifier!  ...
+> 
+> {grumble}
+> 
+> This can end up causing loads of new kobject change events to be added,
+> overloading what uevents were supposed to be in the first place
+> (add/remove of sysfs objects).
+
+I guess that's the case for every other kobject_uevent*(*, KOBJ_CHANGE)
+call in the USB subsystem (in case of either HW or code misbehavior).
+JFTR, there are around 120 such calls in the entire v5.2-rc3 kernel.
+
+> 
+> I just talked with David Howells, and this type of thing really should
+> be tied into the new "notifier" interface/api.  That way you can
+> register for any specific type of event and just get notified of them
+> when they happen.  No need to mess with uevents.
+> 
+> See his posts on linux-api starting with:
+> 	Subject: [RFC][PATCH 0/8] Mount, FS, Block and Keyrings notifications [ver #2]
+> for the proposal.
+> 
+> If we added USB (or really any hardware events) to that interface, would
+> it solve the issue you are trying to solve here?
+
+I checked this patch series in linux-fs.git [3], as well as shared my
+thoughts with our security and RFS experts, and we came up with the
+following questions/remarks:
+
+ - Looking at commit [4], it seems that the new "notifier" interface/api
+   forces userspace applications to link against -lkeyutils [5].
+   Assuming the latter is designed for ("Kernel key management") [6],
+   it may look like the keyutils library is being abused to handle
+   the "USB (or really any hardware events)". Do you really plan to
+   extend the scope of the library to handle these new tasks?
+
+ - Currently, to be able to get kobject uevent notifications, our
+   applications must include "libudev.h" and must link against -ludev.
+   By using the feature implemented in [3], we would significantly
+   increase the complexity of those applications, particularly because
+   they would need to arbitrate between two different categories of
+   events received via two different APIs.
+
+ - It is also my assumption that the existing KOBJ_CHANGE events cannot
+   be easily converted to the new API, since this would hurt a dozen of
+   userland applications relying on them.
+
+Overall, I am quite clueless how to proceed with this patch, except to
+keep it in our internal tree, most likely forever. Any
+comments/recommendations would be appreciated.
+
+> 
+> thanks,
+> 
+> greg k-h
+
+[1] linux (v5.2-rc3) git grep KOBJ_CHANGE -- drivers/usb/
+drivers/usb/core/hub.c:	kobject_uevent_env(&hub_dev->kobj, KOBJ_CHANGE, envp);
+drivers/usb/gadget/udc/core.c:	kobject_uevent(&udc->dev.kobj, KOBJ_CHANGE);
+drivers/usb/gadget/udc/core.c:	kobject_uevent(&udc->dev.kobj, KOBJ_CHANGE);
+drivers/usb/phy/phy.c:	kobject_uevent_env(&usb_phy->dev->kobj, KOBJ_CHANGE, envp);
+drivers/usb/typec/class.c:	kobject_uevent(&adev->dev.kobj, KOBJ_CHANGE);
+drivers/usb/typec/class.c:	kobject_uevent(&port->dev.kobj, KOBJ_CHANGE);
+drivers/usb/typec/class.c:	kobject_uevent(&port->dev.kobj, KOBJ_CHANGE);
+drivers/usb/typec/class.c:	kobject_uevent(&port->dev.kobj, KOBJ_CHANGE);
+drivers/usb/typec/class.c:	kobject_uevent(&port->dev.kobj, KOBJ_CHANGE);
+
+[2] git grep -w KOBJ_CHANGE -- ":\!Documentation" ":\!include" | wc -l
+122
+
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=notifications
+[4] https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=16a8aad951990
+[5] https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git
+[6] https://lwn.net/Articles/210502/ ("Kernel key management")
+
 -- 
-2.17.1
-
+Best Regards,
+Eugeniu.
