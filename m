@@ -2,107 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E7CF35DCE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 15:22:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF06635DE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 15:27:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728081AbfFENWC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 09:22:02 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33424 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726442AbfFENWB (ORCPT
+        id S1727981AbfFEN1d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 09:27:33 -0400
+Received: from mail-wr1-f42.google.com ([209.85.221.42]:36378 "EHLO
+        mail-wr1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726722AbfFEN1c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 09:22:01 -0400
-Received: by mail-pl1-f196.google.com with SMTP id g21so9695475plq.0;
-        Wed, 05 Jun 2019 06:22:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=hXsQr/OkSzH/u4JLYwMI74MVQvCM/DsvMDlyfR8YPSs=;
-        b=vAcs7pC2kqhFsFdLMdboV71PC8Al8p5Fqgrp92x24xcLKrspdV3OUmr94JSM7zHNWH
-         UJpI+hKMpr1bC7hxlNuwVIn3NFxeqATaHm3lbTVOYLA3KMw4fZol2lRcwDxqSi07FKOJ
-         jsn4zOPQ/EbGXeqm9Ze1nw49PjZAyG6azwChEvZ09uXbvyAGipkJioxdlPyENZ2WdlMG
-         Mw7JB+4kDzjCo4VdSGO3Qj6l2ODva8Dh2YwWpK7WkIlgX/Ufd4Wek6h9PRUuFO5LlSqo
-         +CvOsEHO4LCeLTIOsDmZlUVOeIwcUJEqfvJ9RzaX0QaGmggeWQe4KxWOSo0Zm/ZPsVn3
-         XpCg==
+        Wed, 5 Jun 2019 09:27:32 -0400
+Received: by mail-wr1-f42.google.com with SMTP id n4so16432535wrs.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 06:27:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=hXsQr/OkSzH/u4JLYwMI74MVQvCM/DsvMDlyfR8YPSs=;
-        b=KqfT+a+n1jGa9S+D19z7LKdrgu+Bwff+VJPZsG+1utfegFvGkHZdsNY9/d76C6Xh44
-         QybgSugm3ThM5VL5HoPjHxEaKq/Mp1XRKZmdo3+up8GfPNR2jEkF0xZU+iXlhFiWBhYl
-         bj4pxHAHKmmzCZnTdxH5lmY8qRNSHBzWw9gl8k7Tf+y6lzSthpd1eG5NVwwRKN4A9BeA
-         s9egZakqlvXDw7OX9qPTQRRJx43S4e072QvLUm8mc6bkIY9xGIt2LzvrEkmE8qDSQbRc
-         hECD80WcWqefxBaxGEQJL9g+rnScJ0QsdgdGxM75aUu5lhR3g5hF9EwTJ/1WXTVNC1j5
-         p5qw==
-X-Gm-Message-State: APjAAAWGXxz2SGrISB/pgFCVnCX5e+8anmUqLSR6yTuu+ZaBg8pRWoqm
-        trOtaT6E8l2+maOHPNJwACk=
-X-Google-Smtp-Source: APXvYqy3yOZ8VjiWRMUeMtJatt8B5MqTPmZEf84WUyyqZ00JqPIqt8WpUbID9fsep+oJRJqxX4KoJA==
-X-Received: by 2002:a17:902:28c9:: with SMTP id f67mr43935186plb.19.1559740921154;
-        Wed, 05 Jun 2019 06:22:01 -0700 (PDT)
-Received: from nishad (p3261240-ipngn21201hodogaya.kanagawa.ocn.ne.jp. [153.202.122.240])
-        by smtp.gmail.com with ESMTPSA id i3sm22254201pfa.175.2019.06.05.06.21.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Jun 2019 06:22:00 -0700 (PDT)
-Date:   Wed, 5 Jun 2019 18:51:53 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joe Perches <joe@perches.com>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] crypto: cavium/nitrox - Use the correct style for SPDX
- License Identifier
-Message-ID: <20190605132149.GA5589@nishad>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8UF6IKh1oi+AJKntkp2Avzsj99+2nJ602b//xWwwYMo=;
+        b=QHTmMCwRqtNXgLDmHNKcy+wofeiiuWQHl484tB5mimcpMieslspQ2JuGNzD0dkgE9c
+         0kWEbceOWwP5PemJiGZwObFFjv+hV8GbJyz21piGd8OWokZc2CVV7vDQh79Fbn9XepnJ
+         Pp2UDIlOqwzfn8oxqHMNIetuY/evyHV4CcN0bG2LJhAOkFjiITSVhxywwW5EEcdrKdYS
+         FbFIApCMtze8K8bFyBG8/uFVeU8OsDMVaYYGbbpCNdMkjo3Ojsz85qnqUkK4fqB/23NJ
+         aNqvBI3yTmkUN3b/7aU7H4xHNocNqrDjzypD699+YOqxGsmIYfAD/r9NH6a7HSUyzMW6
+         fjiA==
+X-Gm-Message-State: APjAAAXpESttmlwaZOvgbuDFi0hgMMBW7eusXwoR5xEhZZhRqbot8g2/
+        E57/G9ljYOzwBcEkcSMJ07lSrw==
+X-Google-Smtp-Source: APXvYqzO7CgrYTcvyVtelP3nLeZ+Ekw3IsfgEuQ6as9WNjO7Znl9iRR9QfVOYT+MaOhBlZ3QYIBaSg==
+X-Received: by 2002:adf:e4d2:: with SMTP id v18mr10605225wrm.189.1559741250343;
+        Wed, 05 Jun 2019 06:27:30 -0700 (PDT)
+Received: from localhost (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id u205sm24193031wmu.47.2019.06.05.06.27.29
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 05 Jun 2019 06:27:29 -0700 (PDT)
+Date:   Wed, 5 Jun 2019 15:27:28 +0200
+From:   Oleksandr Natalenko <oleksandr@redhat.com>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>, jannh@google.com,
+        oleg@redhat.com, christian@brauner.io, hdanton@sina.com
+Subject: Re: [RFCv2 4/6] mm: factor out madvise's core functionality
+Message-ID: <20190605132728.mihzzw7galqjf5uz@butterfly.localdomain>
+References: <20190531064313.193437-1-minchan@kernel.org>
+ <20190531064313.193437-5-minchan@kernel.org>
+ <20190531070420.m7sxybbzzayig44o@butterfly.localdomain>
+ <20190531131226.GA195463@google.com>
+ <20190531143545.jwmgzaigd4rbw2wy@butterfly.localdomain>
+ <20190531232959.GC248371@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190531232959.GC248371@google.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch corrects the SPDX License Identifier style
-in header files related to Crypto Drivers for Cavium Nitrox
-family CNN55XX devices.
-For C header files Documentation/process/license-rules.rst
-mandates C-like comments (opposed to C source files where
-C++ style should be used)
+Hi.
 
-Changes made by using a script provided by Joe Perches here:
-https://lkml.org/lkml/2019/2/7/46
+On Sat, Jun 01, 2019 at 08:29:59AM +0900, Minchan Kim wrote:
+> > > > > /* snip a lot */
+> > > > >
+> > > > >  #ifdef CONFIG_MEMORY_FAILURE
+> > > > >  	if (behavior == MADV_HWPOISON || behavior == MADV_SOFT_OFFLINE)
+> > > > > -		return madvise_inject_error(behavior, start, start + len_in);
+> > > > > +		return madvise_inject_error(behavior,
+> > > > > +					start, start + len_in);
+> > > > 
+> > > > Not sure what this change is about except changing the line length.
+> > > > Note, madvise_inject_error() still operates on "current" through
+> > > > get_user_pages_fast() and gup_pgd_range(), but that was not changed
+> > > > here. I Know you've filtered out this hint later, so technically this
+> > > > is not an issue, but, maybe, this needs some attention too since we've
+> > > > already spotted it?
+> > > 
+> > > It is leftover I had done. I actually modified it to handle remote
+> > > task but changed my mind not to fix it because process_madvise
+> > > will not support it at this moment. I'm not sure it's a good idea
+> > > to change it for *might-be-done-in-future* at this moment even though
+> > > we have spotted.
+> > 
+> > I'd expect to have at least some comments in code on why other hints
+> > are disabled, so if we already know some shortcomings, this information
+> > would not be lost.
+> 
+> Okay, I will add some comment but do not want to fix code piece until
+> someone want to expose the poisoning to external process.
 
-Suggested-by: Joe Perches <joe@perches.com>
-Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
----
- drivers/crypto/cavium/nitrox/nitrox_debugfs.h | 2 +-
- drivers/crypto/cavium/nitrox/nitrox_mbx.h     | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Fair enough.
 
-diff --git a/drivers/crypto/cavium/nitrox/nitrox_debugfs.h b/drivers/crypto/cavium/nitrox/nitrox_debugfs.h
-index f177b79bbab0..09c4cf2513fb 100644
---- a/drivers/crypto/cavium/nitrox/nitrox_debugfs.h
-+++ b/drivers/crypto/cavium/nitrox/nitrox_debugfs.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- #ifndef __NITROX_DEBUGFS_H
- #define __NITROX_DEBUGFS_H
- 
-diff --git a/drivers/crypto/cavium/nitrox/nitrox_mbx.h b/drivers/crypto/cavium/nitrox/nitrox_mbx.h
-index 5008399775a9..7c93d0282174 100644
---- a/drivers/crypto/cavium/nitrox/nitrox_mbx.h
-+++ b/drivers/crypto/cavium/nitrox/nitrox_mbx.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- #ifndef __NITROX_MBX_H
- #define __NITROX_MBX_H
- 
+> > > > >  	write = madvise_need_mmap_write(behavior);
+> > > > >  	if (write) {
+> > > > > -		if (down_write_killable(&current->mm->mmap_sem))
+> > > > > +		if (down_write_killable(&mm->mmap_sem))
+> > > > >  			return -EINTR;
+> > > > 
+> > > > Do you still need that trick with mmget_still_valid() here?
+> > > > Something like:
+> > > 
+> > > Since MADV_COLD|PAGEOUT doesn't change address space layout or
+> > > vma->vm_flags, technically, we don't need it if I understand
+> > > correctly. Right?
+> > 
+> > I'd expect so, yes. But.
+> > 
+> > Since we want this interface to be universal and to be able to cover
+> > various needs, and since my initial intention with working in this
+> > direction involved KSM, I'd ask you to enable KSM hints too, and once
+> > (and if) that happens, the work there is done under write lock, and
+> > you'll need this trick to be applied.
+> > 
+> > Of course, I can do that myself later in a subsequent patch series once
+> > (and, again, if) your series is merged, but, maybe, we can cover this
+> > already especially given the fact that KSM hinting is a relatively easy
+> > task in this pile. I did some preliminary tests with it, and so far no
+> > dragons have started to roar.
+> 
+> Then, do you mind sending a patch based upon this series to expose
+> MADV_MERGEABLE to process_madvise? It will have the right description
+> why you want to have such feature which I couldn't provide since I don't
+> have enough material to write the motivation. And the patch also could
+> include the logic to prevent coredump race, which is more proper since
+> finally we need to hold mmap_sem write-side lock, finally.
+> I will pick it up and will rebase since then.
+
+Sure, I can. Would you really like to have it being based on this exact
+revision, or I should wait till you deal with MADV_COLD & Co and re-iterate
+this part again?
+
+Thanks.
+
 -- 
-2.17.1
-
+  Best regards,
+    Oleksandr Natalenko (post-factum)
+    Senior Software Maintenance Engineer
