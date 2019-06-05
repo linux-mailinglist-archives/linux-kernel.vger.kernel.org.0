@@ -2,137 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA670364F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 21:47:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54BAC364F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 21:47:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbfFETqQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 15:46:16 -0400
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:35313 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726421AbfFETqH (ORCPT
+        id S1726726AbfFETqn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 15:46:43 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41708 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726421AbfFETqm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 15:46:07 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id F056322540;
-        Wed,  5 Jun 2019 15:46:05 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Wed, 05 Jun 2019 15:46:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        pedrovanzella.com; h=from:to:cc:subject:date:message-id
-        :in-reply-to:references:mime-version:content-transfer-encoding;
-         s=fm3; bh=QFKxJy5PGENCCn9dVCrpJ+BMRLGxrV0Lyoq85TRWT9g=; b=fUGgS
-        27WDhC9RPGqb4wZD5aIu6hoiDxQF6NMV/upY2BmZMYF2wVYuhxEQoEFEbLu/Vmf/
-        U29SNYEYre4aEwTwaaXBMHycRdS5HDBHC0QSjjC3EF3U6cweTvjulQ5YVz7/mEje
-        ZezahuPK+ESaqAiUhIgVZ0xNLrDQSOEbE2WmFqrAvpEEaFJNiWeCfTSrewnsTl0f
-        BlLbJdG1EvvU3wjsfwomVYpS71oTHXRbEW0ClAiBRnd7++GvkAMKFCp1lYmp/GUD
-        JnL3RxJNLSAhk1VSDYjZmk34c6cEI89OwgYjpJ9dUTPdOVeDjvnaltRlWb7ChkEz
-        36hceT1B6u5qV9TBw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=QFKxJy5PGENCCn9dVCrpJ+BMRLGxrV0Lyoq85TRWT9g=; b=cn7j8e5Z
-        LbNxZo/n6HbuNLitZg5m1LEKZNWu73aX30/wbMMMHqAQkgL2eoPgJyQY10MEK9s/
-        2qMelfvTijdmoF6iJWLHFEtOudHVZ1JCZawROsasLxdV+jkVOT15hRi5FU4a1B59
-        O1i/bnKZDPpsybQCyoxuxp8NhMY2PMxRADmwwV0o5Qr0hWvOYkVt75WpbD6F6Ntm
-        H8j8CNklzNN08c5DmjJwgUHwtd+r/DlL/ubAyaxNBvenv0ymhXtBdujmQVpmJkoZ
-        JwA9drwKc4HhcfjdegCOIMSkEf7+AuQyLC1jq2iqB6eyb7TTetyMNYyr2ap1WPVc
-        OG+hxhnVDiXs4g==
-X-ME-Sender: <xms:_Rv4XMCIfixlKcrNYXJN7rLTOH8KodXtuc0UI87ajMdBzB9sUbx3aw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrudegvddgudeggecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomheprfgvughr
-    ohcugggrnhiivghllhgruceophgvughrohesphgvughrohhvrghniigvlhhlrgdrtghomh
-    eqnecukfhppeejtddrvdejrddvjedrudegleenucfrrghrrghmpehmrghilhhfrhhomhep
-    phgvughrohesphgvughrohhvrghniigvlhhlrgdrtghomhenucevlhhushhtvghrufhiii
-    gvpedt
-X-ME-Proxy: <xmx:_Rv4XOs-ZvqLH05SVXxSfPkJ6DAFd-Opy61ZMCYBIqDr7H7gFryN0w>
-    <xmx:_Rv4XJFVU3F-3vbkO5wsL2SKzp2OM7StN0CzF_R7qT73tEals-AiVQ>
-    <xmx:_Rv4XB1q3_TK4fyKJToOcaakZOUuiPgZGiH1YGr2KOKn31M2GEaALA>
-    <xmx:_Rv4XD2qMYzpm1DUBsZkHuml_SHcwgKjPgYJoN3KlUVk8uqB0rRtHw>
-Received: from localhost (toroon020aw-lp130-02-70-27-27-149.dsl.bell.ca [70.27.27.149])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 848FC38008A;
-        Wed,  5 Jun 2019 15:46:05 -0400 (EDT)
-From:   Pedro Vanzella <pedro@pedrovanzella.com>
-To:     linux-input@vger.kernel.org
-Cc:     Pedro Vanzella <pedro@pedrovanzella.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/4] HID: hid-logitech-hidpp: subscribe to battery voltage events
-Date:   Wed,  5 Jun 2019 15:45:33 -0400
-Message-Id: <20190605194533.18717-5-pedro@pedrovanzella.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190605194533.18717-1-pedro@pedrovanzella.com>
-References: <20190605194533.18717-1-pedro@pedrovanzella.com>
+        Wed, 5 Jun 2019 15:46:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=kZOzUUZ1da7mPtdEIr5pBNywzNIi07uBPLrGLgK0d5Q=; b=tVdH1grPqhyZ6eMQy0JywOyu1
+        oxuYOmt0jEzsT+tK0qeH10zU3cNaGmrJe9/RmXC0bVgr5rzNqd6iFqx1GoPFdnw6JU0tK4+LzkWzF
+        1Zm1xvMIrZgOmSwzrlW/wQPpWqgEPR/TMWNQ1uvGsUjK48q/dMuyAMe5CjZ3aQkMsHudE=;
+Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hYbrp-0001PF-B6; Wed, 05 Jun 2019 19:46:37 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id 9A9B0440046; Wed,  5 Jun 2019 20:46:36 +0100 (BST)
+Date:   Wed, 5 Jun 2019 20:46:36 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Cristian Marussi <cristian.marussi@arm.com>
+Subject: Re: [PATCH 0/6] mailbox: arm_mhu: add support to use in doorbell mode
+Message-ID: <20190605194636.GW2456@sirena.org.uk>
+References: <20190531143320.8895-1-sudeep.holla@arm.com>
+ <CABb+yY1u5zdocgV=HhQcHWQa_R7ArtFqndU5_T=NsPHJ=jwseA@mail.gmail.com>
+ <20190531165326.GA18115@e107155-lin>
+ <20190603193946.GC2456@sirena.org.uk>
+ <20190604093827.GA31069@e107533-lin.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="O/1O6NUaCrlCPhw5"
+Content-Disposition: inline
+In-Reply-To: <20190604093827.GA31069@e107533-lin.cambridge.arm.com>
+X-Cookie: The other line moves faster.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Like we do for other ways of interacting with the battery for other
-devices, refresh the battery status and notify the power supply
-subsystem of the changes in voltage and status.
 
-Signed-off-by: Pedro Vanzella <pedro@pedrovanzella.com>
----
- drivers/hid/hid-logitech-hidpp.c | 33 ++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+--O/1O6NUaCrlCPhw5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
-index d6c59b11b9d2..a37bd0834335 100644
---- a/drivers/hid/hid-logitech-hidpp.c
-+++ b/drivers/hid/hid-logitech-hidpp.c
-@@ -1313,6 +1313,36 @@ static int hidpp20_query_battery_voltage_info(struct hidpp_device *hidpp)
- 
- 	return 0;
- }
-+
-+static int hidpp20_battery_voltage_event(struct hidpp_device *hidpp,
-+					 u8 *data, int size)
-+{
-+	struct hidpp_report *report = (struct hidpp_report *)data;
-+	int status, voltage;
-+	bool changed;
-+
-+	if (report->fap.feature_index != hidpp->battery.voltage_feature_index ||
-+	    report->fap.funcindex_clientid !=
-+		    EVENT_BATTERY_LEVEL_STATUS_BROADCAST)
-+		return 0;
-+
-+	status = hidpp20_battery_map_status_voltage(report->fap.params,
-+						    &voltage);
-+
-+	hidpp->battery.online = status != POWER_SUPPLY_STATUS_NOT_CHARGING;
-+
-+	changed = voltage != hidpp->battery.voltage ||
-+		  status != hidpp->battery.status;
-+
-+	if (changed) {
-+		hidpp->battery.voltage = voltage;
-+		hidpp->battery.status = status;
-+		if (hidpp->battery.ps)
-+			power_supply_changed(hidpp->battery.ps);
-+	}
-+	return 0;
-+}
-+
- static enum power_supply_property hidpp_battery_props[] = {
- 	POWER_SUPPLY_PROP_ONLINE,
- 	POWER_SUPPLY_PROP_STATUS,
-@@ -3181,6 +3211,9 @@ static int hidpp_raw_hidpp_event(struct hidpp_device *hidpp, u8 *data,
- 		ret = hidpp_solar_battery_event(hidpp, data, size);
- 		if (ret != 0)
- 			return ret;
-+		ret = hidpp20_battery_voltage_event(hidpp, data, size);
-+		if (ret != 0)
-+			return ret;
- 	}
- 
- 	if (hidpp->capabilities & HIDPP_CAPABILITY_HIDPP10_BATTERY) {
--- 
-2.21.0
+On Tue, Jun 04, 2019 at 10:44:24AM +0100, Sudeep Holla wrote:
+> On Mon, Jun 03, 2019 at 08:39:46PM +0100, Mark Brown wrote:
 
+>=20
+> > It feels like the issues with sharing access to the hardware and with t=
+he
+> > API for talking to doorbell hardware are getting tied together and
+> > confusing things.  But like I say I might be missing something here.
+
+=2E..
+
+> So what I am trying to convey here is MHU controller hardware can be
+> used choosing one of the  different transport protocols available and
+> that's platform choice based on the use-case.
+
+> The driver in the kernel should identify the same from the firmware/DT
+> and configure it appropriately.
+
+> It may get inefficient and sometime impossible to address all use-case
+> if we stick to one transport protocol in the driver and try to build
+> an abstraction on top to use in different transport mode.
+
+Right, what I was trying to get at was that it feels like the discussion
+is getting wrapped up in the specifics of the MHU rather than
+representing this sort of controller with multiple modes in the
+framework.  It's important for establishing the use case but ultimately
+a separate issue.
+
+--O/1O6NUaCrlCPhw5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlz4HBsACgkQJNaLcl1U
+h9ByUgf/UsJL7ity8FKfFJ8RCFQnmEJwwqTPF2rr5baP6c9jYRf2nJx1ZEL8CBQQ
+NbUfRcVcpQG2901CsRWwzKGEQ6ISkphLyaissRoh2FVJEJkeZkMkt89BD0O5h3/G
+NRuofyB0qDaX2uMC81S+EQgpu/oB8uFgIOQ0Hp7tpz116b50qf7tb0c+ww6OYlTD
+CQJK8XRRLfA+eQ1NgF6mLYiWWda6+xSs79QsrFsypRLgAChputP3NkM4lDFQPYeH
+X2zMWOqPnQ0S8y5Nc8uIxkUMaQ8v4rN8xYjLjE8dTNjn62omGAo6wJFavlozdn6X
+vC4syRan227VJQuJ+YZ83T29+f5TUQ==
+=POCs
+-----END PGP SIGNATURE-----
+
+--O/1O6NUaCrlCPhw5--
