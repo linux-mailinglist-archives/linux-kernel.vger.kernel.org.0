@@ -2,79 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3720035755
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 09:03:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EAC535750
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 09:02:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726649AbfFEHDP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 03:03:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37936 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726407AbfFEHDP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 03:03:15 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0D4C8ADE0;
-        Wed,  5 Jun 2019 07:03:14 +0000 (UTC)
-Date:   Wed, 5 Jun 2019 09:03:12 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Bharath Vedartham <linux.bhar@gmail.com>
-Cc:     akpm@linux-foundation.org, vbabka@suse.cz, rientjes@google.com,
-        khalid.aziz@oracle.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: Remove VM_BUG_ON in __alloc_pages_node
-Message-ID: <20190605070312.GB15685@dhcp22.suse.cz>
-References: <20190605060229.GA9468@bharath12345-Inspiron-5559>
+        id S1726593AbfFEHCr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 03:02:47 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46768 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726502AbfFEHCq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 03:02:46 -0400
+Received: by mail-pf1-f193.google.com with SMTP id y11so14266622pfm.13
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 00:02:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=uz4rW4hom4PNyImhqoO7mrnt+7yVJFQ+a19gRd/J1UQ=;
+        b=k2mgUNFS8mlgZJLWSI2R4t0x6v3cRS5Cibzq9KsQeI9KAoK6H7pBodfPO0qs0J/hBF
+         UnokjKUh6mu48Jv152LXpaxAIemY3F4zfzFSo9NysiwGnJDt8ax3RxYRET3ra0TkQP/i
+         GPnwx+W3Hhu5yRpNgUdOJGq+0KClDNJKtGTSYKeDaXwRrQBMN/34vs9cIw762gGL2S2X
+         aCq0lADu9jfpEF0rmoDeGo70ZA4BURwaE5YhZ1GEYO/HYwHMaLZ9hL3hbjNuPqnF1VEN
+         qBKuQPkKiY/bWef19eOPrZkK5kuzU+JYYp1dQcFzU8F63bw09h+yuZibsYe9AOcoI0tB
+         VAcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uz4rW4hom4PNyImhqoO7mrnt+7yVJFQ+a19gRd/J1UQ=;
+        b=eKnl8PE3fuw5theCCLtPOOhlFqD9LQd6MZtHWeLDkPzxsxoOhn/Mbq2iTEtdDIHeRm
+         VnjrOqvounRsF07ew5vP8yrApsrl011p+VmABQxX01Oj2ws8Fm5ArjNqetcPRW02LzXp
+         fCIjW/ot46QN4LGuMZZF0JqPs3TJYoBAFT+J+EgVw1NPbM6o7wm11sPpMwXzXgpqsNGj
+         6hpLAZcOZZHD3aKrNRRlj5UTBCnpOFNs2pqX3QftPzl1QxfAaDV2+U3y0xjGtKj95Xkw
+         /4IzIO+/xkoXD+qQHOjMWtAWOpySIpqRYUj0Aoc0ZqQ/3aZDadVBv6Ajiv7mApgocGnD
+         WNRQ==
+X-Gm-Message-State: APjAAAW6NaxfeLOrcnpHxIccuiadGiiGoLuYCO5me06wzwz91iMvh2Ti
+        zqObebBRLKTpxuo7dOrqZGvMOQ==
+X-Google-Smtp-Source: APXvYqxbp1TM7o6DxILTBx5tTuqENvUDU+OcxxTSnQwTp/YO/ccBSoR/xNWDWoB8WKd14PCiX3fHZQ==
+X-Received: by 2002:a63:fa16:: with SMTP id y22mr2444462pgh.15.1559718165590;
+        Wed, 05 Jun 2019 00:02:45 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id w62sm7765452pfw.132.2019.06.05.00.02.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Jun 2019 00:02:45 -0700 (PDT)
+Date:   Wed, 5 Jun 2019 00:03:30 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     alokc@codeaurora.org, kramasub@codeaurora.org,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        wsa+renesas@sang-engineering.com, linus.walleij@linaro.org,
+        balbi@kernel.org, gregkh@linuxfoundation.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        jlhugo@gmail.com, linux-i2c@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH 8/8] usb: dwc3: qcom: Improve error handling
+Message-ID: <20190605070330.GO22737@tuxbook-pro>
+References: <20190604104455.8877-1-lee.jones@linaro.org>
+ <20190604104455.8877-8-lee.jones@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190605060229.GA9468@bharath12345-Inspiron-5559>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190604104455.8877-8-lee.jones@linaro.org>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 05-06-19 11:32:29, Bharath Vedartham wrote:
-> In __alloc_pages_node, there is a VM_BUG_ON on the condition (nid < 0 ||
-> nid >= MAX_NUMNODES). Remove this VM_BUG_ON and add a VM_WARN_ON, if the
-> condition fails and fail the allocation if an invalid NUMA node id is
-> passed to __alloc_pages_node.
+On Tue 04 Jun 03:44 PDT 2019, Lee Jones wrote:
 
-What is the motivation of the patch? VM_BUG_ON is not enabled by default
-and your patch adds a branch to a really hot path. Why is this an
-improvement for something that shouldn't happen in the first place?
+> dwc3_qcom_clk_init() is called with of_count_phandle_with_args() as an
+> argument.  If of_count_phandle_with_args() returns an error, the number
+> of clocks will be a negative value and will lead to undefined behaviour.
+> 
+> Ensure we check for an error before attempting to blindly use the value.
+> 
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
 
-> 
-> The check (nid < 0 || nid >= MAX_NUMNODES) also considers NUMA_NO_NODE
-> as an invalid nid, but the caller of __alloc_pages_node is assumed to
-> have checked for the case where nid == NUMA_NO_NODE.
-> 
-> Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
 > ---
->  include/linux/gfp.h | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+>  drivers/usb/dwc3/dwc3-qcom.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-> index 5f5e25f..075bdaf 100644
-> --- a/include/linux/gfp.h
-> +++ b/include/linux/gfp.h
-> @@ -480,7 +480,11 @@ __alloc_pages(gfp_t gfp_mask, unsigned int order, int preferred_nid)
->  static inline struct page *
->  __alloc_pages_node(int nid, gfp_t gfp_mask, unsigned int order)
->  {
-> -	VM_BUG_ON(nid < 0 || nid >= MAX_NUMNODES);
-> +	if (nid < 0 || nid >= MAX_NUMNODES) {
-> +		VM_WARN_ON(nid < 0 || nid >= MAX_NUMNODES);
-> +		return NULL; 
-> +	}
-> +
->  	VM_WARN_ON((gfp_mask & __GFP_THISNODE) && !node_online(nid));
+> diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
+> index f21fdd6cdd1a..633482926497 100644
+> --- a/drivers/usb/dwc3/dwc3-qcom.c
+> +++ b/drivers/usb/dwc3/dwc3-qcom.c
+> @@ -419,6 +419,9 @@ static int dwc3_qcom_clk_init(struct dwc3_qcom *qcom, int count)
+>  	if (!count || ACPI_HANDLE(dev))
+>  		return 0;
 >  
->  	return __alloc_pages(gfp_mask, order, nid);
+> +	if (count < 0)
+> +		return count;
+> +
+>  	qcom->clks = devm_kcalloc(dev, qcom->num_clocks,
+>  				  sizeof(struct clk *), GFP_KERNEL);
+>  	if (!qcom->clks)
 > -- 
-> 2.7.4
+> 2.17.1
 > 
-
--- 
-Michal Hocko
-SUSE Labs
