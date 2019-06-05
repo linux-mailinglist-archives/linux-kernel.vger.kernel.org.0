@@ -2,102 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0562B3654D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 22:21:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C4B736509
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 22:00:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726670AbfFEUVl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 16:21:41 -0400
-Received: from gateway34.websitewelcome.com ([192.185.148.164]:20754 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726501AbfFEUVk (ORCPT
+        id S1726589AbfFEUAc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 16:00:32 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:38191 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726510AbfFEUAb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 16:21:40 -0400
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id ABDD9C7B01
-        for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2019 15:00:08 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id Yc4uh2vtu90onYc4uh4cOL; Wed, 05 Jun 2019 15:00:08 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.127.120] (port=32980 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hYc4t-003gcA-Jz; Wed, 05 Jun 2019 15:00:07 -0500
-Date:   Wed, 5 Jun 2019 15:00:02 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Kamil Debski <kamil@wypas.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] phy: samsung: Use struct_size() in devm_kzalloc()
-Message-ID: <20190605200002.GA18640@embeddedor>
+        Wed, 5 Jun 2019 16:00:31 -0400
+X-Originating-IP: 90.89.68.76
+Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id EA63FC0006;
+        Wed,  5 Jun 2019 20:00:21 +0000 (UTC)
+Date:   Wed, 5 Jun 2019 22:00:20 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-media@vger.kernel.org,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH v4 04/13] media: rc: sunxi: Add RXSTA bits definition
+Message-ID: <20190605200020.tmyom3lg3inu6vvf@flea>
+References: <20190604162959.29199-1-peron.clem@gmail.com>
+ <20190604162959.29199-5-peron.clem@gmail.com>
+ <20190605095141.psrq6mhk63zto77s@flea>
+ <CAJiuCceZa=WEiF8_LK+jDdiXOn1i8+z8Smr6YKCpo9_XftgueQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.127.120
-X-Source-L: No
-X-Exim-ID: 1hYc4t-003gcA-Jz
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.127.120]:32980
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJiuCceZa=WEiF8_LK+jDdiXOn1i8+z8Smr6YKCpo9_XftgueQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+On Wed, Jun 05, 2019 at 02:44:06PM +0200, Clément Péron wrote:
+> Hi Maxime,
+>
+> On Wed, 5 Jun 2019 at 11:51, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> >
+> > On Tue, Jun 04, 2019 at 06:29:50PM +0200, Clément Péron wrote:
+> > > We are using RXINT bits definition when looking at RXSTA register.
+> > >
+> > > These bits are equal but it's not really proper.
+> > >
+> > > Introduce the RXSTA bits and use them to have coherency.
+> > >
+> > > Signed-off-by: Clément Péron <peron.clem@gmail.com>
+> > > ---
+> > >  drivers/media/rc/sunxi-cir.c | 18 ++++++++++++------
+> > >  1 file changed, 12 insertions(+), 6 deletions(-)
+> > >
+> > > diff --git a/drivers/media/rc/sunxi-cir.c b/drivers/media/rc/sunxi-cir.c
+> > > index 0504ebfc831f..572bd2257d35 100644
+> > > --- a/drivers/media/rc/sunxi-cir.c
+> > > +++ b/drivers/media/rc/sunxi-cir.c
+> > > @@ -48,11 +48,11 @@
+> > >
+> > >  /* Rx Interrupt Enable */
+> > >  #define SUNXI_IR_RXINT_REG    0x2C
+> > > -/* Rx FIFO Overflow */
+> > > +/* Rx FIFO Overflow Interrupt Enable */
+> > >  #define REG_RXINT_ROI_EN             BIT(0)
+> > > -/* Rx Packet End */
+> > > +/* Rx Packet End Interrupt Enable */
+> > >  #define REG_RXINT_RPEI_EN            BIT(1)
+> > > -/* Rx FIFO Data Available */
+> > > +/* Rx FIFO Data Available Interrupt Enable */
+> > >  #define REG_RXINT_RAI_EN             BIT(4)
+> > >
+> > >  /* Rx FIFO available byte level */
+> > > @@ -60,6 +60,12 @@
+> > >
+> > >  /* Rx Interrupt Status */
+> > >  #define SUNXI_IR_RXSTA_REG    0x30
+> > > +/* Rx FIFO Overflow */
+> > > +#define REG_RXSTA_ROI                        BIT(0)
+> > > +/* Rx Packet End */
+> > > +#define REG_RXSTA_RPE                        BIT(1)
+> > > +/* Rx FIFO Data Available */
+> > > +#define REG_RXSTA_RA                 BIT(4)
+> >
+> > I'm fine with it on principle, but if the consistency needs to be
+> > maintained then we could just reuse the above defines
+>
+> There is no comment why we can reuse them, they can also be some wrong
+> case for example the RXINT_DRQ_EN bit is not present in RXSTA and same
+> for STAT bit present in RXSTA and not present in RXINT.
+>
+> I have discover and read this code a month ago and this logic is
+> really not obvious nor explain.
+>
+> Maybe this hack could be done when we will introduce a quirks, but for
+> the moment I really think that it's more proper and readable to
+> introduce them properly.
 
-struct samsung_usb2_phy_driver {
-	...
-        struct samsung_usb2_phy_instance instances[0];
-};
+I don't think we understood each other :)
 
-instance = devm_kzalloc(dev, sizeof(struct samsung_usb2_phy_driver) + count *
-			sizeof(struct samsung_usb2_phy_instance), GFP_KERNEL);
+I was talking about having something like
 
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
+#define REG_RXSTA_ROI  REG_RXINT_ROI_EN
 
-instance = devm_kzalloc(dev, struct_size(instance, instances, count), GFP_KERNEL);
+Maxime
 
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/phy/samsung/phy-samsung-usb2.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/phy/samsung/phy-samsung-usb2.c b/drivers/phy/samsung/phy-samsung-usb2.c
-index ea818866985a..4616ec829900 100644
---- a/drivers/phy/samsung/phy-samsung-usb2.c
-+++ b/drivers/phy/samsung/phy-samsung-usb2.c
-@@ -159,9 +159,8 @@ static int samsung_usb2_phy_probe(struct platform_device *pdev)
- 	if (!cfg)
- 		return -EINVAL;
- 
--	drv = devm_kzalloc(dev, sizeof(struct samsung_usb2_phy_driver) +
--		cfg->num_phys * sizeof(struct samsung_usb2_phy_instance),
--								GFP_KERNEL);
-+	drv = devm_kzalloc(dev, struct_size(drv, instances, cfg->num_phys),
-+			   GFP_KERNEL);
- 	if (!drv)
- 		return -ENOMEM;
- 
--- 
-2.21.0
-
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
