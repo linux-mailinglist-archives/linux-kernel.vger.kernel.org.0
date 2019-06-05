@@ -2,92 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD58A35F2A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 16:26:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91D6735F38
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 16:27:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728147AbfFEO0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 10:26:37 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:34748 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728127AbfFEO0h (ORCPT
+        id S1728416AbfFEO1G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 10:27:06 -0400
+Received: from casper.infradead.org ([85.118.1.10]:35550 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727961AbfFEO1F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 10:26:37 -0400
-Received: by mail-ot1-f65.google.com with SMTP id z24so898158oto.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 07:26:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=kL4eMTZZT/wE0hkK6FB5FP6G9IkYTdMLMu0xfJfFr7U=;
-        b=hPtw3Y2E/pyB1XksMc4M9rKgdTFSwDoAiNpq17NbygQ4SdKgCaa47EOQAjcHTYcAKM
-         IfYPvJCb6gfPNiZyLRemhD3EvfH+m8QxJi2ap0FmTZ3g7j4p1Ptza2VCOdWBC72AcVhR
-         hvCUjIvTt8mEYQXDq5fSTuOwuP68R9N0DdKrTWbkv+zYR/5jYq7gMGkAgRiTHY4OZ1TM
-         kjGraZRqrdmV8g2jGWNX9tdZ38yodTXxaDHkIQdI/F+L2T1qM7f8L4o0kTPXxqyZDLyV
-         zlRnw7m0GS9IdXnaEZP5yMIy5OnR0jDbPACnZCiiZJwQH1qyDiNGTMLE+7MHeOs3fDt8
-         VZPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=kL4eMTZZT/wE0hkK6FB5FP6G9IkYTdMLMu0xfJfFr7U=;
-        b=sbm1wQg15JnzneB/v5MO3iGA50G++lZ1tQlDl6xuZUBU3thkLEBMI3pQMhpqlyVaBF
-         n7wFTYevOMwzORnhF9U+LkTgeAzu6535GG8HrYn5WrzRTAboWFxRq1s+VxUIZweJwM6Z
-         /xDNMhcW5ZNIrua57zoKQyeW8eEdCDuP4rwg8R4s1x28BQuvhytJxDw3JtXQ/XT7m6Rd
-         vaDLYiOqowCu0nz+IuXxCq5b3VHdBBYokdhIRAGdUS8fU8ifF0CJK3yV26lSeJmp7yNg
-         JEs9Mt8YeQtDctWycVTq0sHtftX4r4O5cAMDLVkZYE6e7p/K6FY8FXXBODElmfwJDiD4
-         7ofA==
-X-Gm-Message-State: APjAAAWcLTY3VZq2WCIN+3CUNntQnlCRluA2gID0lqU1Xvw9Ne0QRQNI
-        mqSUzU3A5NpYnYskxg21qXF4x7xxkTczBD4T6n/lPY5E
-X-Google-Smtp-Source: APXvYqw0kmvusudeqy9V/YEc9PQOJ92G0SUc1WeRY1/0tv+zokrX949p13XS9w+Bkx+NZCHWYyFvZUgH6PJ3gksG+9I=
-X-Received: by 2002:a9d:6c5a:: with SMTP id g26mr10316423otq.194.1559744796485;
- Wed, 05 Jun 2019 07:26:36 -0700 (PDT)
+        Wed, 5 Jun 2019 10:27:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=lTJZ7yvx2GJn/5Ucl0IpHbkLAJMz/sLGSpI28ny4Qgc=; b=FHC+epX7Epn/9PMwVZpDGE2gYh
+        9bs1PVFxV3ddPcqxWbVbtVC9OvlXVaEiKv7KY+VxKkSrmsSsDkzj5tmUjb8EDKG8oWktusbeahEJ5
+        FssgsPLunzGe9XEtRZSi2BN5xyscJyO5DT53Ckr5gmpQA/jNeap7pVsE2s+NGqS3/u+C4Lh2y+5UV
+        I5zbYGpJnOYqJuDMjEJ6EQ1Eydk7ocvjOoR4FJzl8d0Cq0E6oi6ptgdgGh+ae2j49nUnzwfKBCYsY
+        s5kdPlghAB5sehdD5+zOGJ9trAFcZkO1kaKYvY6mRU10ueKpF2KKukOhKDCj5KAIQ5PTDwdB9p+8S
+        H759F1ug==;
+Received: from [179.182.172.34] (helo=coco.lan)
+        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hYWsO-0002Er-6a; Wed, 05 Jun 2019 14:26:52 +0000
+Date:   Wed, 5 Jun 2019 11:26:45 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Hans Verkuil <hansverk@cisco.com>,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        od@zcrc.me
+Subject: Re: [PATCH v4 2/3] media: uapi: Add RGB bus format for the
+ GiantPlus GPM940B0 panel
+Message-ID: <20190605112645.5b357630@coco.lan>
+In-Reply-To: <20190603153511.24384-2-paul@crapouillou.net>
+References: <20190603153511.24384-1-paul@crapouillou.net>
+        <20190603153511.24384-2-paul@crapouillou.net>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-References: <20190605080259.2462-1-j-keerthy@ti.com> <20190605080259.2462-3-j-keerthy@ti.com>
-In-Reply-To: <20190605080259.2462-3-j-keerthy@ti.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Wed, 5 Jun 2019 16:26:25 +0200
-Message-ID: <CAMpxmJXjMX20TAEsfEa7pqZx5-aW_rMKwS+6g9NTvRNEfuAyeA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] gpio: davinci: Add new compatible for K3 AM654 SoCs
-To:     Keerthy <j-keerthy@ti.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>, lokeshvutla@ti.com,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        Tero Kristo <t-kristo@ti.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=C5=9Br., 5 cze 2019 o 10:02 Keerthy <j-keerthy@ti.com> napisa=C5=82(a):
->
-> Add new compatible for K3 AM654 SoCs.
->
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
+Em Mon,  3 Jun 2019 17:35:10 +0200
+Paul Cercueil <paul@crapouillou.net> escreveu:
+
+> The GiantPlus GPM940B0 is a 24-bit TFT panel where the RGB components
+> are transferred sequentially on a 8-bit bus.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 > ---
->  drivers/gpio/gpio-davinci.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-> index 0977590eb996..fc494a84a29d 100644
-> --- a/drivers/gpio/gpio-davinci.c
-> +++ b/drivers/gpio/gpio-davinci.c
-> @@ -632,6 +632,7 @@ static int davinci_gpio_irq_setup(struct platform_dev=
-ice *pdev)
->
->  static const struct of_device_id davinci_gpio_ids[] =3D {
->         { .compatible =3D "ti,keystone-gpio", keystone_gpio_get_irq_chip}=
-,
-> +       { .compatible =3D "ti,am654-gpio", keystone_gpio_get_irq_chip},
+> 
+> Notes:
+>     v2: New patch
+>     
+>     v3: No change
+>     
+>     v4: Add only MEDIA_BUS_FMT_RGB888_3X8, as we don't have to care about
+>         endianness
 
-Please add a patch adding this compatible to the binding document as well.
+Same comment as on version 3:
 
-Bart
+You should also patch the documentation text at:
 
->         { .compatible =3D "ti,dm6441-gpio", davinci_gpio_get_irq_chip},
->         { /* sentinel */ },
->  };
-> --
-> 2.17.1
->
+	Documentation/media/uapi/v4l/subdev-formats.rst
+
+In order to describe the new format that will be included.
+
+
+> 
+>  include/uapi/linux/media-bus-format.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/uapi/linux/media-bus-format.h b/include/uapi/linux/media-bus-format.h
+> index 2a6b253cfb05..16c1fa2d89a4 100644
+> --- a/include/uapi/linux/media-bus-format.h
+> +++ b/include/uapi/linux/media-bus-format.h
+> @@ -34,7 +34,7 @@
+>  
+>  #define MEDIA_BUS_FMT_FIXED			0x0001
+>  
+> -/* RGB - next is	0x101c */
+> +/* RGB - next is	0x101d */
+>  #define MEDIA_BUS_FMT_RGB444_1X12		0x1016
+>  #define MEDIA_BUS_FMT_RGB444_2X8_PADHI_BE	0x1001
+>  #define MEDIA_BUS_FMT_RGB444_2X8_PADHI_LE	0x1002
+> @@ -55,6 +55,7 @@
+>  #define MEDIA_BUS_FMT_RGB888_1X24		0x100a
+>  #define MEDIA_BUS_FMT_RGB888_2X12_BE		0x100b
+>  #define MEDIA_BUS_FMT_RGB888_2X12_LE		0x100c
+> +#define MEDIA_BUS_FMT_RGB888_3X8		0x101c
+>  #define MEDIA_BUS_FMT_RGB888_1X7X4_SPWG		0x1011
+>  #define MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA	0x1012
+>  #define MEDIA_BUS_FMT_ARGB8888_1X32		0x100d
+
+
+
+Thanks,
+Mauro
