@@ -2,373 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B89AF3676C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 00:25:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A27C36789
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 00:33:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbfFEWYz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 18:24:55 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:52907 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726535AbfFEWYz (ORCPT
+        id S1726638AbfFEWdm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 18:33:42 -0400
+Received: from orion.archlinux.org ([88.198.91.70]:59074 "EHLO
+        orion.archlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726502AbfFEWdm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 18:24:55 -0400
-Received: by mail-it1-f195.google.com with SMTP id l21so101447ita.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 15:24:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=odoeP/BjINP3wlyL49o1rnGAQy6Tmg1UVowEtwULrQE=;
-        b=OsAj46a0j9FU7Z011BphGZ4uI70hUKIEyqchE0BykKBKcb3eybvsAUG8k+C1PxWZBF
-         /F/X9oX2pM1sSWeWeJlOg/v4fBZ1fSRSobjRIJM3WmXoTPceAVnxRY6YqJEQoNqp7/XG
-         wglT5/px2NfRg+12cAQ60uU2V3DbSPnDDhOrY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=odoeP/BjINP3wlyL49o1rnGAQy6Tmg1UVowEtwULrQE=;
-        b=A8UOnVk9a7+PsPSIab9IEYML0+h26b/x9UH6HkUWN/KxWBXx0ZZNAInuXmko7dMVmL
-         t5apXi3NBXBKk+33gOtEtTZFqWz8Vrb6TGeF3oBuqOzBOwIshTeWCCM+aynmIEr52lA+
-         dD82KOLTESS5vlL/ZOeIYs3Lgo0HRtVCZ62eRgRvUXlPRMnBGq9USP2ALgLtEL1OJJ8Y
-         i4QL78lKDVpXeNASGgVUgImC0oLeoYQSfoF/Dh1SbqVMLbxGxjX2ynoGET59+8VGrRwU
-         ZCr6zIL6ZQLrR866onTdW0L1FYf0WVjZlY3Jd409kdR7tFesVcIVsg6tOMOViHL3IQBU
-         C3rg==
-X-Gm-Message-State: APjAAAUsM5O2rtA8FDtJdeTELFhrv4GEr5MS3aEqKpJlHCi2MFE4PM3s
-        5NuUV1WGASW0vmQqFbu8f1I8W/6CCj3zAg==
-X-Google-Smtp-Source: APXvYqwJz7Tq6nI12ZNsMPauTgQV9pXop1cWIzRpTc8nHBJX2IQD5bEbC4U+ZoZW74ZAjka3/dVHGA==
-X-Received: by 2002:a24:80d0:: with SMTP id g199mr28149357itd.67.1559773493249;
-        Wed, 05 Jun 2019 15:24:53 -0700 (PDT)
-Received: from localhost ([2620:15c:183:200:33ce:f5cf:f863:d3a6])
-        by smtp.gmail.com with ESMTPSA id o189sm87759itg.5.2019.06.05.15.24.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Jun 2019 15:24:52 -0700 (PDT)
-From:   Fletcher Woodruff <fletcherw@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ben Zhang <benzh@chromium.org>, Jaroslav Kysela <perex@perex.cz>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Curtis Malainey <cujomalainey@chromium.org>,
-        Ross Zwisler <zwisler@chromium.org>,
-        alsa-devel@alsa-project.org,
-        Fletcher Woodruff <fletcherw@chromium.org>
-Subject: [PATCH v6 3/4] ASoC: rt5677: clear interrupts by polarity flip
-Date:   Wed,  5 Jun 2019 16:24:18 -0600
-Message-Id: <20190605222419.54479-4-fletcherw@chromium.org>
-X-Mailer: git-send-email 2.22.0.rc1.311.g5d7573a151-goog
-In-Reply-To: <20190605222419.54479-1-fletcherw@chromium.org>
-References: <20190507220115.90395-1-fletcherw@chromium.org>
- <20190605222419.54479-1-fletcherw@chromium.org>
+        Wed, 5 Jun 2019 18:33:42 -0400
+X-Greylist: delayed 317 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Jun 2019 18:33:40 EDT
+Received: from orion.archlinux.org (localhost [127.0.0.1])
+        by orion.archlinux.org (Postfix) with ESMTP id EB9D51321F5F3B;
+        Wed,  5 Jun 2019 22:28:21 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on orion
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.7 required=5.0 tests=ALL_TRUSTED=-1,BAYES_00=-1,
+        DMARC_FAIL_NONE=0.25,T_DMARC_POLICY_NONE=0.01,T_DMARC_TESTS_FAIL=0.01
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-BL-Results: 
+Received: from genesis (unknown [IPv6:2001:8a0:f24a:5600:a9ad:74ef:9537:685])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: ffy00)
+        by orion.archlinux.org (Postfix) with ESMTPSA;
+        Wed,  5 Jun 2019 22:28:21 +0000 (UTC)
+Message-ID: <0d998fe0ff4473be2a9341c1f5ddf55957d18ad8.camel@archlinux.org>
+Subject: Re: [PATCH v2 0/4] Read battery voltage from G403 and G900 mice
+From:   Filipe =?ISO-8859-1?Q?La=EDns?= <lains@archlinux.org>
+To:     Pedro Vanzella <pedro@pedrovanzella.com>,
+        linux-input@vger.kernel.org
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20190605194533.18717-1-pedro@pedrovanzella.com>
+References: <20190605194533.18717-1-pedro@pedrovanzella.com>
+Organization: Archlinux
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-b2wSQK5XfwPnbBz+78jy"
+Date:   Wed, 05 Jun 2019 23:24:18 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Evolution 3.32.2 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Zhang <benzh@chromium.org>
 
-The rt5677 jack detection function has a requirement that the polarity
-of an interrupt be flipped after it fires in order to clear the
-interrupt.
+--=-b2wSQK5XfwPnbBz+78jy
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch implements an irq_chip with irq_domain directly instead of
-using regmap-irq, so that interrupt source line polarities can be
-flipped in the irq handler.
+On Wed, 2019-06-05 at 15:45 -0400, Pedro Vanzella wrote:
+> The gaming line of Logitech devices doesn't use the old hidpp20
+> feature
+> for battery level reporting. Instead, they report the current voltage
+> of the battery, in millivolts.
+>=20
+> This patch set handles this case by adding a quirk to the devices we
+> know
+> to have this new feature, in both wired and wireless mode.
+>=20
+> This version of the patch set is better split, as well as adding the
+> quirk to make sure we don't needlessly probe every device connected.
+>=20
+> Pedro Vanzella (4):
+>   HID: hid-logitech-hidpp: add quirk to handle battery voltage
+>   HID: hid-logitech-hidpp: add function to query battery voltage
+>   HID: hid-logitech-hidpp: report battery voltage to the power supply
+>   HID: hid-logitech-hidpp: subscribe to battery voltage events
+>=20
+>  drivers/hid/hid-logitech-hidpp.c | 150
+> ++++++++++++++++++++++++++++++-
+>  1 file changed, 147 insertions(+), 3 deletions(-)
+>=20
 
-The reason that this patch does not add this feature within regmap-irq
-is that future patches will add hotword detection support to this irq
-handler. Those patches will require adding additional logic that would
-not make sense to have in regmap-irq.
+Hello,
 
-Signed-off-by: Ben Zhang <benzh@chromium.org>
-Signed-off-by: Fletcher Woodruff <fletcherw@chromium.org>
----
- sound/soc/codecs/rt5677.c | 169 ++++++++++++++++++++++++++++++--------
- sound/soc/codecs/rt5677.h |   7 +-
- 2 files changed, 142 insertions(+), 34 deletions(-)
+Why using quirks? 0x1001 is a feature, it should be discoverable in
+IFeatureSet (0x0001). I don't understand the need to hardcode the
+supported devices, HID++ exists specifically to prevent that.
 
-diff --git a/sound/soc/codecs/rt5677.c b/sound/soc/codecs/rt5677.c
-index 65bef50ded1151..86555d7ec9ea8d 100644
---- a/sound/soc/codecs/rt5677.c
-+++ b/sound/soc/codecs/rt5677.c
-@@ -23,6 +23,10 @@
- #include <linux/firmware.h>
- #include <linux/of_device.h>
- #include <linux/property.h>
-+#include <linux/irq.h>
-+#include <linux/interrupt.h>
-+#include <linux/irqdomain.h>
-+#include <linux/workqueue.h>
- #include <sound/core.h>
- #include <sound/pcm.h>
- #include <sound/pcm_params.h>
-@@ -4620,7 +4624,6 @@ static void rt5677_gpio_config(struct rt5677_priv *rt5677, unsigned offset,
- static int rt5677_to_irq(struct gpio_chip *chip, unsigned offset)
- {
- 	struct rt5677_priv *rt5677 = gpiochip_get_data(chip);
--	struct regmap_irq_chip_data *data = rt5677->irq_data;
- 	int irq;
- 
- 	if ((rt5677->pdata.jd1_gpio == 1 && offset == RT5677_GPIO1) ||
-@@ -4646,7 +4649,7 @@ static int rt5677_to_irq(struct gpio_chip *chip, unsigned offset)
- 		return -ENXIO;
- 	}
- 
--	return regmap_irq_get_virq(data, irq);
-+	return irq_create_mapping(rt5677->domain, irq);
- }
- 
- static const struct gpio_chip rt5677_template_chip = {
-@@ -5041,30 +5044,129 @@ static void rt5677_read_device_properties(struct rt5677_priv *rt5677,
- 		rt5677->pdata.jd3_gpio = val;
- }
- 
--static struct regmap_irq rt5677_irqs[] = {
-+struct rt5677_irq_desc {
-+	unsigned int enable_mask;
-+	unsigned int status_mask;
-+	unsigned int polarity_mask;
-+};
-+
-+static const struct rt5677_irq_desc rt5677_irq_descs[] = {
- 	[RT5677_IRQ_JD1] = {
--		.reg_offset = 0,
--		.mask = RT5677_EN_IRQ_GPIO_JD1,
-+		.enable_mask = RT5677_EN_IRQ_GPIO_JD1,
-+		.status_mask = RT5677_STA_GPIO_JD1,
-+		.polarity_mask = RT5677_INV_GPIO_JD1,
- 	},
- 	[RT5677_IRQ_JD2] = {
--		.reg_offset = 0,
--		.mask = RT5677_EN_IRQ_GPIO_JD2,
-+		.enable_mask = RT5677_EN_IRQ_GPIO_JD2,
-+		.status_mask = RT5677_STA_GPIO_JD2,
-+		.polarity_mask = RT5677_INV_GPIO_JD2,
- 	},
- 	[RT5677_IRQ_JD3] = {
--		.reg_offset = 0,
--		.mask = RT5677_EN_IRQ_GPIO_JD3,
-+		.enable_mask = RT5677_EN_IRQ_GPIO_JD3,
-+		.status_mask = RT5677_STA_GPIO_JD3,
-+		.polarity_mask = RT5677_INV_GPIO_JD3,
- 	},
- };
- 
--static struct regmap_irq_chip rt5677_irq_chip = {
--	.name = "rt5677",
--	.irqs = rt5677_irqs,
--	.num_irqs = ARRAY_SIZE(rt5677_irqs),
-+static irqreturn_t rt5677_irq(int unused, void *data)
-+{
-+	struct rt5677_priv *rt5677 = data;
-+	int ret = 0, i, reg_irq, virq;
-+	bool irq_fired = false;
-+
-+	mutex_lock(&rt5677->irq_lock);
-+	/* Read interrupt status */
-+	ret = regmap_read(rt5677->regmap, RT5677_IRQ_CTRL1, &reg_irq);
-+	if (ret) {
-+		pr_err("rt5677: failed reading IRQ status: %d\n", ret);
-+		goto exit;
-+	}
-+
-+	for (i = 0; i < RT5677_IRQ_NUM; i++) {
-+		if (reg_irq & rt5677_irq_descs[i].status_mask) {
-+			irq_fired = true;
-+			virq = irq_find_mapping(rt5677->domain, i);
-+			if (virq)
-+				handle_nested_irq(virq);
-+
-+			/* Clear the interrupt by flipping the polarity of the
-+			 * interrupt source line that fired
-+			 */
-+			reg_irq ^= rt5677_irq_descs[i].polarity_mask;
-+		}
-+	}
-+
-+	if (!irq_fired)
-+		goto exit;
-+
-+	ret = regmap_write(rt5677->regmap, RT5677_IRQ_CTRL1, reg_irq);
-+	if (ret) {
-+		pr_err("rt5677: failed updating IRQ status: %d\n", ret);
-+		goto exit;
-+	}
-+exit:
-+	mutex_unlock(&rt5677->irq_lock);
-+	if (irq_fired)
-+		return IRQ_HANDLED;
-+	else
-+		return IRQ_NONE;
-+}
-+
-+static void rt5677_irq_bus_lock(struct irq_data *data)
-+{
-+	struct rt5677_priv *rt5677 = irq_data_get_irq_chip_data(data);
-+
-+	mutex_lock(&rt5677->irq_lock);
-+}
-+
-+static void rt5677_irq_bus_sync_unlock(struct irq_data *data)
-+{
-+	struct rt5677_priv *rt5677 = irq_data_get_irq_chip_data(data);
-+
-+	// Set the enable/disable bits for the jack detect IRQs.
-+	regmap_update_bits(rt5677->regmap, RT5677_IRQ_CTRL1,
-+			RT5677_EN_IRQ_GPIO_JD1 | RT5677_EN_IRQ_GPIO_JD2 |
-+			RT5677_EN_IRQ_GPIO_JD3, rt5677->irq_en);
-+	mutex_unlock(&rt5677->irq_lock);
-+}
-+
-+static void rt5677_irq_enable(struct irq_data *data)
-+{
-+	struct rt5677_priv *rt5677 = irq_data_get_irq_chip_data(data);
-+
-+	rt5677->irq_en |= rt5677_irq_descs[data->hwirq].enable_mask;
-+}
-+
-+static void rt5677_irq_disable(struct irq_data *data)
-+{
-+	struct rt5677_priv *rt5677 = irq_data_get_irq_chip_data(data);
-+
-+	rt5677->irq_en &= ~rt5677_irq_descs[data->hwirq].enable_mask;
-+}
-+
-+static struct irq_chip rt5677_irq_chip = {
-+	.name			= "rt5677_irq_chip",
-+	.irq_bus_lock		= rt5677_irq_bus_lock,
-+	.irq_bus_sync_unlock	= rt5677_irq_bus_sync_unlock,
-+	.irq_disable		= rt5677_irq_disable,
-+	.irq_enable		= rt5677_irq_enable,
-+};
-+
-+static int rt5677_irq_map(struct irq_domain *h, unsigned int virq,
-+			  irq_hw_number_t hw)
-+{
-+	struct rt5677_priv *rt5677 = h->host_data;
-+
-+	irq_set_chip_data(virq, rt5677);
-+	irq_set_chip(virq, &rt5677_irq_chip);
-+	irq_set_nested_thread(virq, 1);
-+	irq_set_noprobe(virq);
-+	return 0;
-+}
-+
- 
--	.num_regs = 1,
--	.status_base = RT5677_IRQ_CTRL1,
--	.mask_base = RT5677_IRQ_CTRL1,
--	.mask_invert = 1,
-+static const struct irq_domain_ops rt5677_domain_ops = {
-+	.map	= rt5677_irq_map,
-+	.xlate	= irq_domain_xlate_twocell,
- };
- 
- static int rt5677_init_irq(struct i2c_client *i2c)
-@@ -5083,6 +5185,8 @@ static int rt5677_init_irq(struct i2c_client *i2c)
- 		return -EINVAL;
- 	}
- 
-+	mutex_init(&rt5677->irq_lock);
-+
- 	/*
- 	 * Select RC as the debounce clock so that GPIO works even when
- 	 * MCLK is gated which happens when there is no audio stream
-@@ -5091,7 +5195,6 @@ static int rt5677_init_irq(struct i2c_client *i2c)
- 	regmap_update_bits(rt5677->regmap, RT5677_DIG_MISC,
- 			RT5677_IRQ_DEBOUNCE_SEL_MASK,
- 			RT5677_IRQ_DEBOUNCE_SEL_RC);
--
- 	/* Enable auto power on RC when GPIO states are changed */
- 	regmap_update_bits(rt5677->regmap, RT5677_GEN_CTRL1, 0xff, 0xff);
- 
-@@ -5114,26 +5217,25 @@ static int rt5677_init_irq(struct i2c_client *i2c)
- 	regmap_update_bits(rt5677->regmap, RT5677_GPIO_CTRL1,
- 			RT5677_GPIO1_PIN_MASK, RT5677_GPIO1_PIN_IRQ);
- 
--	ret = regmap_add_irq_chip(rt5677->regmap, i2c->irq,
--		IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING | IRQF_ONESHOT, 0,
--		&rt5677_irq_chip, &rt5677->irq_data);
-+	/* Ready to listen for interrupts */
-+	rt5677->domain = irq_domain_add_linear(i2c->dev.of_node,
-+			RT5677_IRQ_NUM, &rt5677_domain_ops, rt5677);
-+	if (!rt5677->domain) {
-+		dev_err(&i2c->dev, "Failed to create IRQ domain\n");
-+		return -ENOMEM;
-+	}
- 
--	if (ret != 0) {
--		dev_err(&i2c->dev, "Failed to register IRQ chip: %d\n", ret);
-+	ret = devm_request_threaded_irq(&i2c->dev, i2c->irq, NULL, rt5677_irq,
-+			IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-+			"rt5677", rt5677);
-+	if (ret) {
-+		dev_err(&i2c->dev, "Failed to request IRQ: %d\n", ret);
- 		return ret;
- 	}
- 
- 	return 0;
- }
- 
--static void rt5677_free_irq(struct i2c_client *i2c)
--{
--	struct rt5677_priv *rt5677 = i2c_get_clientdata(i2c);
--
--	if (rt5677->irq_data)
--		regmap_del_irq_chip(i2c->irq, rt5677->irq_data);
--}
--
- static int rt5677_i2c_probe(struct i2c_client *i2c)
- {
- 	struct rt5677_priv *rt5677;
-@@ -5258,7 +5360,9 @@ static int rt5677_i2c_probe(struct i2c_client *i2c)
- 			RT5677_MICBIAS1_CTRL_VDD_3_3V);
- 
- 	rt5677_init_gpio(i2c);
--	rt5677_init_irq(i2c);
-+	ret = rt5677_init_irq(i2c);
-+	if (ret)
-+		dev_err(&i2c->dev, "Failed to initialize irq: %d\n", ret);
- 
- 	return devm_snd_soc_register_component(&i2c->dev,
- 				      &soc_component_dev_rt5677,
-@@ -5267,7 +5371,6 @@ static int rt5677_i2c_probe(struct i2c_client *i2c)
- 
- static int rt5677_i2c_remove(struct i2c_client *i2c)
- {
--	rt5677_free_irq(i2c);
- 	rt5677_free_gpio(i2c);
- 
- 	return 0;
-diff --git a/sound/soc/codecs/rt5677.h b/sound/soc/codecs/rt5677.h
-index 7a89bfa95dc0bf..a891a9b9eba3e6 100644
---- a/sound/soc/codecs/rt5677.h
-+++ b/sound/soc/codecs/rt5677.h
-@@ -1719,6 +1719,7 @@ enum {
- 	RT5677_IRQ_JD1,
- 	RT5677_IRQ_JD2,
- 	RT5677_IRQ_JD3,
-+	RT5677_IRQ_NUM,
- };
- 
- enum rt5677_type {
-@@ -1817,9 +1818,13 @@ struct rt5677_priv {
- 	struct gpio_chip gpio_chip;
- #endif
- 	bool dsp_vad_en;
--	struct regmap_irq_chip_data *irq_data;
- 	bool is_dsp_mode;
- 	bool is_vref_slow;
-+
-+	/* Interrupt handling */
-+	struct irq_domain *domain;
-+	struct mutex irq_lock;
-+	unsigned int irq_en;
- };
- 
- int rt5677_sel_asrc_clk_src(struct snd_soc_component *component,
--- 
-2.22.0.rc1.311.g5d7573a151-goog
+Wasn't this what you started in your previous patch? Why move away from
+it?
 
+Thank you,
+Filipe La=C3=ADns
+3DCE 51D6 0930 EBA4 7858 BA41 46F6 33CB B0EB 4BF2
+
+--=-b2wSQK5XfwPnbBz+78jy
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0jW0leqs33gyftiw+JPGdIFqqV0FAlz4QQkACgkQ+JPGdIFq
+qV2ohA//ZGUDKIds/DIp+6rdJeuW7H8UQ2th2gXAir3NclnfH+CaDpjpmxJs5Noi
+VHXI0ML8sakz8e0uOMbl6cY+0oxZyn6F754fb0FAY301ZhZz/L09SzzuPZI9eyNC
+Wpb+UWuf5K1trq5pmfJbE9Pw49s6K4i0G/rtut1R3lDF+QTxz1f0wohipKApk/Om
+IRMbWBli2hEI+FbXFtH8vdKrLYT884gbp/EooVBY8T3mJDIhxzQdFG7OpIAFYMJk
+QB5Aprw9nraCLHDnYOIxbmLvFU+yMKJFJxi43mHLR7FocVD3+uroxlIiRVYANHVs
++Q43YdZfLgO6hXkAYVsCWtSXS1XgeZDaXiCFA+CZIqq+XkTBtXE3X2rE6Dg3nCgI
+TJdnQFZvCWLTtNaBHQSAE2iS38o24W+x7Go5Uj9UMIfDIoxoZigoCUQbk+VbaVxe
+WuprtmdZVhPPo2JzlhwWjMWOgzNeeMgceQnc8DHQyQGDAIPlJ4iX+23MFFAcRG1I
+48rX3ssO20e4H9+MDgxCFV6f27/yCAf/qSOXP5cgWFRt9LyeKzvr0aAEC4urx1Iq
+Kqrf6WLcypVJNpEBeP70J7ZEsJUkT75b4tYWzyRGnwA/1LhtMIunAFK7IexASkZk
+qzN9etW89nWgZb/XKLcJQ9Y3l8/4cCONbj6l7tVyIpzzKi94i04=
+=M0oI
+-----END PGP SIGNATURE-----
+
+--=-b2wSQK5XfwPnbBz+78jy--
