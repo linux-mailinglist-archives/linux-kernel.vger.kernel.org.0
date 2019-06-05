@@ -2,295 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FBCB35B62
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 13:36:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EBD635B79
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 13:43:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727590AbfFELgk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 07:36:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39240 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727172AbfFELgj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 07:36:39 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9210020870;
-        Wed,  5 Jun 2019 11:36:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559734598;
-        bh=m8c0rm4F3uazk0L8c6E/Tcx9AM0URnZdbNcFIVOUE5s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=A2eCgYPmd7VQCslnd6IbrMwVC11AKaFYwXSSX2dw+2E/UQLE8/UiuctT7PFJYBZ3v
-         +TD1yewV2nqHssyZACaCy/su3Q3QC4Q9MNgQHqftK+IAenSyQwLuhd8G602IHm8ZM+
-         ynlz1wvSB7ZD3VtpWbegWFFMsodXqIeMri0Yg3uM=
-Date:   Wed, 5 Jun 2019 06:36:35 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Linux PCI <linux-pci@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] PCI: PM: Avoid resuming devices in D3hot during system
- suspend
-Message-ID: <20190605113635.GD84290@google.com>
-References: <4561083.VtDMOnK5Me@kreacher>
- <20190531211648.GB58810@google.com>
- <1855172.0PEGphScmv@kreacher>
+        id S1727650AbfFELn3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 07:43:29 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:20858 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727624AbfFELn2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 07:43:28 -0400
+X-UUID: 51816b59e12a44a795963106a2bc9b79-20190605
+X-UUID: 51816b59e12a44a795963106a2bc9b79-20190605
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <yongqiang.niu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1953206414; Wed, 05 Jun 2019 19:43:22 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 5 Jun 2019 19:43:21 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 5 Jun 2019 19:43:20 +0800
+From:   <yongqiang.niu@mediatek.com>
+To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Yongqiang Niu <yongqiang.niu@mediatek.com>
+Subject: [PATCH v3, 00/27] add drm support for MT8183
+Date:   Wed, 5 Jun 2019 19:42:39 +0800
+Message-ID: <1559734986-7379-1-git-send-email-yongqiang.niu@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1855172.0PEGphScmv@kreacher>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 03, 2019 at 12:10:28PM +0200, Rafael J. Wysocki wrote:
-> On Friday, May 31, 2019 11:16:48 PM CEST Bjorn Helgaas wrote:
-> > On Fri, May 31, 2019 at 11:49:30AM +0200, Rafael J. Wysocki wrote:
-> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > 
-> > > The current code resumes devices in D3hot during system suspend if
-> > > the target power state for them is D3cold, but that is not necessary
-> > > in general.  It only is necessary to do that if the platform firmware
-> > > requires the device to be resumed, but that should be covered by
-> > > the platform_pci_need_resume() check anyway, so rework
-> > > pci_dev_keep_suspended() to avoid returning 'false' for devices
-> > > in D3hot which need not be resumed due to platform firmware
-> > > requirements.
-> > > 
-> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > ---
-> > >  drivers/pci/pci.c |   15 ++++++++++++---
-> > >  1 file changed, 12 insertions(+), 3 deletions(-)
-> > > 
-> > > Index: linux-pm/drivers/pci/pci.c
-> > > ===================================================================
-> > > --- linux-pm.orig/drivers/pci/pci.c
-> > > +++ linux-pm/drivers/pci/pci.c
-> > > @@ -2474,10 +2474,19 @@ bool pci_dev_keep_suspended(struct pci_d
-> > >  {
-> > >  	struct device *dev = &pci_dev->dev;
-> > >  	bool wakeup = device_may_wakeup(dev);
-> > > +	pci_power_t target_state;
-> > >  
-> > > -	if (!pm_runtime_suspended(dev)
-> > > -	    || pci_target_state(pci_dev, wakeup) != pci_dev->current_state
-> > > -	    || platform_pci_need_resume(pci_dev))
-> > > +	if (!pm_runtime_suspended(dev) || platform_pci_need_resume(pci_dev))
-> > > +		return false;
-> > > +
-> > > +	target_state = pci_target_state(pci_dev, wakeup);
-> > 
-> > Nit, add a blank line here.
-> 
-> OK
-> 
-> > > +	/*
-> > > +	 * If the earlier platform check has not triggered, D3cold is just power
-> > > +	 * removal on top of D3hot, so no need to resume the device in that
-> > > +	 * case.
-> > > +	 */
-> > > +	if (target_state != pci_dev->current_state &&
-> > > +	    target_state != PCI_D3cold && pci_dev->current_state != PCI_D3hot)
-> > >  		return false;
-> > 
-> > This is more a comment on the existing code than on this particular
-> > patch, but I find this whole function hard to understand, and I think
-> > one reason is that there are a lot of negative conditions, both in
-> > this function and in its callers.  This "target_state != ... &&
-> > target_state != ...  && current_state != ..." is one example.  Another
-> > is the function name itself.  It might be easier to read as something
-> > like this:
-> > 
-> >   bool pci_dev_need_resume(...)
-> >   {
-> >     if (!pm_runtime_suspended(...))
-> >       return true;
-> > 
-> >     if (platform_pci_need_resume(...))
-> >       return true;
-> > 
-> >     if (target_state != current_state)
-> >       return true;
-> 
-> Please see the appended (untested) patch on top of the $subject one.
+From: Yongqiang Niu <yongqiang.niu@mediatek.com>
 
-I like it a lot, thanks!  I think it makes it a lot more readable.
+This series are based on 5.2-rc1 and provid 27 patch
+to support mediatek SOC MT8183
 
-> > Another reason I think it's hard to read is that
-> > "pci_dev_keep_suspended" suggests that this is a pure boolean function
-> > without side-effects, but in fact it also fiddles with the PME state
-> > in some cases.  I don't have any ideas for that part.
-> 
-> Well, I can only propose to put the PME adjustment part into a separate function like
-> in the patch below.
-> 
-> ---
->  drivers/pci/pci-driver.c |   21 ++++++++++++++++---
->  drivers/pci/pci.c        |   50 ++++++++++++++++++++++++-----------------------
->  drivers/pci/pci.h        |    3 +-
->  3 files changed, 46 insertions(+), 28 deletions(-)
-> 
-> Index: linux-pm/drivers/pci/pci.c
-> ===================================================================
-> --- linux-pm.orig/drivers/pci/pci.c
-> +++ linux-pm/drivers/pci/pci.c
-> @@ -2459,54 +2459,56 @@ bool pci_dev_run_wake(struct pci_dev *de
->  EXPORT_SYMBOL_GPL(pci_dev_run_wake);
->  
->  /**
-> - * pci_dev_keep_suspended - Check if the device can stay in the suspended state.
-> + * pci_dev_need_resume - Check if the device can stay in the suspended state.
->   * @pci_dev: Device to check.
->   *
-> - * Return 'true' if the device is runtime-suspended, it doesn't have to be
-> + * Return 'false' if the device is runtime-suspended, it doesn't have to be
->   * reconfigured due to wakeup settings difference between system and runtime
->   * suspend and the current power state of it is suitable for the upcoming
->   * (system) transition.
-> - *
-> - * If the device is not configured for system wakeup, disable PME for it before
-> - * returning 'true' to prevent it from waking up the system unnecessarily.
->   */
-> -bool pci_dev_keep_suspended(struct pci_dev *pci_dev)
-> +bool pci_dev_need_resume(struct pci_dev *pci_dev)
->  {
->  	struct device *dev = &pci_dev->dev;
-> -	bool wakeup = device_may_wakeup(dev);
->  	pci_power_t target_state;
->  
->  	if (!pm_runtime_suspended(dev) || platform_pci_need_resume(pci_dev))
-> -		return false;
-> +		return true;
->  
-> -	target_state = pci_target_state(pci_dev, wakeup);
-> +	target_state = pci_target_state(pci_dev, device_may_wakeup(dev));
->  	/*
->  	 * If the earlier platform check has not triggered, D3cold is just power
->  	 * removal on top of D3hot, so no need to resume the device in that
->  	 * case.
->  	 */
-> -	if (target_state != pci_dev->current_state &&
-> -	    target_state != PCI_D3cold && pci_dev->current_state != PCI_D3hot)
-> -		return false;
-> +	return target_state != pci_dev->current_state &&
-> +		target_state != PCI_D3cold &&
-> +		pci_dev->current_state != PCI_D3hot;
-> +}
-> +
-> +/**
-> + * pci_dev_adjust_pme - Adjust PME setting for a suspended device.
-> + * @pci_dev: Device to check.
-> + *
-> + * If the device is not configured for system wakeup, disable PME for it to
-> + * prevent it from waking up the system unnecessarily.
-> + */
-> +void pci_dev_adjust_pme(struct pci_dev *pci_dev)
-> +{
-> +	struct device *dev = &pci_dev->dev;
->  
-> -	/*
-> -	 * At this point the device is good to go unless it's been configured
-> -	 * to generate PME at the runtime suspend time, but it is not supposed
-> -	 * to wake up the system.  In that case, simply disable PME for it
-> -	 * (it will have to be re-enabled on exit from system resume).
-> -	 *
-> -	 * If the device's power state is D3cold and the platform check above
-> -	 * hasn't triggered, the device's configuration is suitable and we don't
-> -	 * need to manipulate it at all.
-> -	 */
->  	spin_lock_irq(&dev->power.lock);
->  
-> +	/*
-> +	 * If the device's power state is D3cold and the platform check in
-> +	 * pci_dev_need_resume() hasn't triggered, the device's configuration is
-> +	 * suitable and it need not be touched.
+Change since v2
+- fix reviewed issue in v2
+- add mutex node into dts file
 
-I guess "it need not be touched" == "we don't need to disable PME"?
+Yongqiang Niu (27):
+  dt-bindings: mediatek: add binding for mt8183 display
+  dt-bindings: mediatek: add ovl_2l description for mt8183 display
+  dt-bindings: mediatek: add ccorr description for mt8183 display
+  dt-bindings: mediatek: add dither description for mt8183 display
+  arm64: dts: add display nodes for mt8183
+  drm/mediatek: add mutex mod into ddp private data
+  drm/mediatek: add mutex mod register offset into ddp private data
+  drm/mediatek: add mutex sof into ddp private data
+  drm/mediatek: add mutex sof register offset into ddp private data
+  drm/mediatek: split DISP_REG_CONFIG_DSI_SEL setting into another use
+    case
+  drm/mediatek: add mmsys private data for ddp path config
+  drm/mediatek: move rdma sout from mtk_ddp_mout_en into
+    mtk_ddp_sout_sel
+  drm/mediatek: add ddp component CCORR
+  drm/mediatek: add commponent OVL_2L0
+  drm/mediatek: add component OVL_2L1
+  drm/mediatek: add component DITHER
+  drm/mediatek: add gmc_bits for ovl private data
+  drm/medaitek: add layer_nr for ovl private data
+  drm/mediatek: add function to background color input select for
+    ovl/ovl_2l direct link
+  drm/mediatek: add background color input select function for
+    ovl/ovl_2l
+  drm/mediatek: add ovl0/ovl_2l0 usecase
+  drm/mediatek: distinguish ovl and ovl_2l by layer_nr
+  drm/mediatek: add connection from ovl0 to ovl_2l0
+  drm/mediatek: add connection from RDMA0 to COLOR0
+  drm/mediatek: add connection from RDMA1 to DSI0
+  drm/mediatek: add clock property check before get it
+  drm/mediatek: add support for mediatek SOC MT8183
 
-> +	 */
->  	if (pm_runtime_suspended(dev) && pci_dev->current_state < PCI_D3cold &&
-> -	    !wakeup)
-> +	    !device_may_wakeup(dev))
->  		__pci_pme_active(pci_dev, false);
->  
->  	spin_unlock_irq(&dev->power.lock);
-> -	return true;
->  }
->  
->  /**
-> Index: linux-pm/drivers/pci/pci-driver.c
-> ===================================================================
-> --- linux-pm.orig/drivers/pci/pci-driver.c
-> +++ linux-pm/drivers/pci/pci-driver.c
-> @@ -679,6 +679,7 @@ static bool pci_has_legacy_pm_support(st
->  static int pci_pm_prepare(struct device *dev)
->  {
->  	struct device_driver *drv = dev->driver;
-> +	struct pci_dev *pci_dev = to_pci_dev(dev);
->  
->  	if (drv && drv->pm && drv->pm->prepare) {
->  		int error = drv->pm->prepare(dev);
-> @@ -688,7 +689,15 @@ static int pci_pm_prepare(struct device
->  		if (!error && dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_PREPARE))
->  			return 0;
->  	}
-> -	return pci_dev_keep_suspended(to_pci_dev(dev));
-> +	if (pci_dev_need_resume(pci_dev))
-> +		return 0;
-> +
-> +	/*
-> +	 * The PME setting needs to be adjusted here in case the direct-complete
-> +	 * optimization is used with respect to this device.
-> +	 */
-> +	pci_dev_adjust_pme(pci_dev);
-> +	return 1;
->  }
->  
->  static void pci_pm_complete(struct device *dev)
-> @@ -758,9 +767,11 @@ static int pci_pm_suspend(struct device
->  	 * better to resume the device from runtime suspend here.
->  	 */
->  	if (!dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND) ||
-> -	    !pci_dev_keep_suspended(pci_dev)) {
-> +	    pci_dev_need_resume(pci_dev)) {
->  		pm_runtime_resume(dev);
->  		pci_dev->state_saved = false;
-> +	} else {
-> +		pci_dev_adjust_pme(pci_dev);
->  	}
->  
->  	if (pm->suspend) {
-> @@ -1108,8 +1119,12 @@ static int pci_pm_poweroff(struct device
->  
->  	/* The reason to do that is the same as in pci_pm_suspend(). */
->  	if (!dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND) ||
-> -	    !pci_dev_keep_suspended(pci_dev))
-> +	    pci_dev_need_resume(pci_dev)) {
->  		pm_runtime_resume(dev);
-> +		pci_dev->state_saved = false;
-> +	} else {
-> +		pci_dev_adjust_pme(pci_dev);
-> +	}
->  
->  	pci_dev->state_saved = false;
->  	if (pm->poweroff) {
-> Index: linux-pm/drivers/pci/pci.h
-> ===================================================================
-> --- linux-pm.orig/drivers/pci/pci.h
-> +++ linux-pm/drivers/pci/pci.h
-> @@ -82,7 +82,8 @@ int pci_finish_runtime_suspend(struct pc
->  void pcie_clear_root_pme_status(struct pci_dev *dev);
->  int __pci_pme_wakeup(struct pci_dev *dev, void *ign);
->  void pci_pme_restore(struct pci_dev *dev);
-> -bool pci_dev_keep_suspended(struct pci_dev *dev);
-> +bool pci_dev_need_resume(struct pci_dev *dev);
-> +void pci_dev_adjust_pme(struct pci_dev *dev);
->  void pci_dev_complete_resume(struct pci_dev *pci_dev);
->  void pci_config_pm_runtime_get(struct pci_dev *dev);
->  void pci_config_pm_runtime_put(struct pci_dev *dev);
-> 
-> 
-> 
+ .../bindings/display/mediatek/mediatek,disp.txt    |  37 +-
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi           | 114 ++++++
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c            |  80 +++-
+ drivers/gpu/drm/mediatek/mtk_disp_rdma.c           |  12 +
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c            |  42 +-
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c             | 429 ++++++++++++++++-----
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.h             |   6 +
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c        |  68 ++++
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h        |  23 ++
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c             |  52 +++
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h             |   4 +
+ 11 files changed, 745 insertions(+), 122 deletions(-)
+
+-- 
+1.8.1.1.dirty
+
