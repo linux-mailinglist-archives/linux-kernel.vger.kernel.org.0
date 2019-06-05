@@ -2,172 +2,280 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 841753573B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 08:55:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 136F335743
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 08:58:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbfFEGzM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 02:55:12 -0400
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:60934 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726086AbfFEGzK (ORCPT
+        id S1726555AbfFEG6M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 02:58:12 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:37894 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726501AbfFEG6M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 02:55:10 -0400
+        Wed, 5 Jun 2019 02:58:12 -0400
+Received: by mail-ed1-f67.google.com with SMTP id g13so4217067edu.5
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 23:58:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1559717709; x=1591253709;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=+jzu3rfqIEsHpAlKj+HQyzKuayZFNSN++n05AsZi5qA=;
-  b=AQWjnzxaymypqVRPlG1VzrCvk8hsU/OUllxCS/Ue95ubmvRkv7jpldDY
-   nuPof28zxQiG5e5yQAf0P/VAddta/QqSkKt60P3pq8CnnzERURshUhVnO
-   de+Ce3ZSU9YN1mPQdWm1ddUs1XJVSuCWXWFpwQfnIdR9jS9N7RWnc9+7i
-   Q=;
-X-IronPort-AV: E=Sophos;i="5.60,550,1549929600"; 
-   d="scan'208";a="803662369"
-Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-1d-38ae4ad2.us-east-1.amazon.com) ([10.47.22.34])
-  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP; 05 Jun 2019 06:55:08 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1d-38ae4ad2.us-east-1.amazon.com (Postfix) with ESMTPS id D8B7EA26C1;
-        Wed,  5 Jun 2019 06:55:04 +0000 (UTC)
-Received: from EX13D01EUB001.ant.amazon.com (10.43.166.194) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Wed, 5 Jun 2019 06:55:04 +0000
-Received: from udc4a3e82dbc15a031435.hfa15.amazon.com (10.43.160.91) by
- EX13D01EUB001.ant.amazon.com (10.43.166.194) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Wed, 5 Jun 2019 06:54:54 +0000
-From:   Talel Shenhar <talel@amazon.com>
-To:     <nicolas.ferre@microchip.com>, <jason@lakedaemon.net>,
-        <marc.zyngier@arm.com>, <mark.rutland@arm.com>,
-        <mchehab+samsung@kernel.org>, <robh+dt@kernel.org>,
-        <davem@davemloft.net>, <shawn.lin@rock-chips.com>,
-        <tglx@linutronix.de>, <devicetree@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>
-CC:     <dwmw@amazon.co.uk>, <benh@kernel.crashing.org>,
-        <jonnyc@amazon.com>, <hhhawa@amazon.com>, <ronenk@amazon.com>,
-        <hanochu@amazon.com>, <barakw@amazon.com>,
-        Talel Shenhar <talel@amazon.com>
-Subject: [PATCH 3/3] irqchip: al-fic: Introducing support for MSI-X
-Date:   Wed, 5 Jun 2019 09:54:13 +0300
-Message-ID: <1559717653-11258-4-git-send-email-talel@amazon.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1559717653-11258-1-git-send-email-talel@amazon.com>
-References: <1559717653-11258-1-git-send-email-talel@amazon.com>
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=K+YOPXuoNozKFUTKk70ZiSIcIZboUSDaXdA3+gInvFc=;
+        b=H1lcY9ELylwWULa5oY99DYK17q2E6yChBaVBJwb63R2VEamRSvABDjmu7YF3IomDRG
+         T5hl5VdOKAL8g0oLxpXdKDgE7etrGOqh6IZQih7xGBkWnfhGz9b9WpFyIlsySAt/ZRjB
+         55wJGdHApc1a/GtDMQfQeeNXqgB1dcZ/w/XyM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=K+YOPXuoNozKFUTKk70ZiSIcIZboUSDaXdA3+gInvFc=;
+        b=KD1SgelvmDuGzU9m85Z6INX+Bqpas+74evLhx2Qeiq28nYt+aFh8KOsvSpC7N/O/jq
+         1u02KGABmMydsN1KprIY3K1rVJvD4JsZy7Zowp0XoLUualr95uUAytuJSbLs4VeQdlnh
+         U0fv2NDnIMGcJUW3AAm3oZVNfTMWgQz/nSUj6iNyg31iA3Focfst9nC9ms3IUC4knkRx
+         fkb5OTqv1XfJBERKv/seGPBS5Lkg3cVH6SzVkGiO1Bkw4AYtkP4twbzma5SpFcpFcRus
+         e/nyS3ZGLgZ6S4Z7SIyIA6KYE8YQDFhD/o5pMIyPemUXS5VNmWGnzR1MRh/QBrWBxXLX
+         W9Tg==
+X-Gm-Message-State: APjAAAUiPsAXQiYrCu/gDlU02uiSuBLYGf+Lf096zNhyOOHazgJVo+NH
+        8GaMCspfmv7g9Ny7HkZrRIlX4F/aFqKddw==
+X-Google-Smtp-Source: APXvYqxLa6ksX5J8W6W/Bbq1Y+1Mr3a6eQ3VFPoUqILQfXL/pW9wm0vW82BC9SgP2MgiMy/d6ISVCw==
+X-Received: by 2002:a17:906:30c3:: with SMTP id b3mr33848924ejb.153.1559717889166;
+        Tue, 04 Jun 2019 23:58:09 -0700 (PDT)
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com. [209.85.221.43])
+        by smtp.gmail.com with ESMTPSA id k9sm2713836eja.72.2019.06.04.23.58.07
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Jun 2019 23:58:08 -0700 (PDT)
+Received: by mail-wr1-f43.google.com with SMTP id n4so15205498wrs.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 23:58:07 -0700 (PDT)
+X-Received: by 2002:a5d:514d:: with SMTP id u13mr6897622wrt.77.1559717886336;
+ Tue, 04 Jun 2019 23:58:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.43.160.91]
-X-ClientProxiedBy: EX13d09UWC001.ant.amazon.com (10.43.162.60) To
- EX13D01EUB001.ant.amazon.com (10.43.166.194)
+References: <20181201165348.24140-1-robdclark@gmail.com> <CAL_JsqJmPqis46Un91QyhXgdrVtfATMP_hTp6wSeSAfc8MLFfw@mail.gmail.com>
+ <CAF6AEGs9Nsft8ofZkGz_yWBPBC+prh8dBSkJ4PJr8yk2c5FMdQ@mail.gmail.com>
+ <CAF6AEGt-dhbQS5zZCNVTLT57OiUwO0RiP5bawTSu2RKZ-7W-aw@mail.gmail.com>
+ <CAAFQd5BdrJFL5LKK8O5NPDKWfFgkTX_JU-jU3giEz33tj-jwCA@mail.gmail.com> <CAF6AEGtj+kyXqKeJK2-0e1jw_A4wz-yBEyv5zhf5Vfoi2_p2CA@mail.gmail.com>
+In-Reply-To: <CAF6AEGtj+kyXqKeJK2-0e1jw_A4wz-yBEyv5zhf5Vfoi2_p2CA@mail.gmail.com>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Wed, 5 Jun 2019 15:57:54 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5Dmr+xyd4dyc_44vJFpNpwK6+MgG+ensoey59HgbxXV6g@mail.gmail.com>
+Message-ID: <CAAFQd5Dmr+xyd4dyc_44vJFpNpwK6+MgG+ensoey59HgbxXV6g@mail.gmail.com>
+Subject: Re: [PATCH] of/device: add blacklist for iommu dma_ops
+To:     Rob Clark <robdclark@gmail.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The FIC supports either a (single) wired output, or generation of an MSI-X
-interrupt per input (for cases where it is embedded in a PCIe device,
-hence, allowing the PCIe drivers to call this API).
-This patch introduces the support for allowing the configuration of MSI-X
-instead of a wire interrupt.
+On Mon, Jun 3, 2019 at 7:48 PM Rob Clark <robdclark@gmail.com> wrote:
+>
+> On Sun, Jun 2, 2019 at 11:25 PM Tomasz Figa <tfiga@chromium.org> wrote:
+> >
+> > On Mon, Jun 3, 2019 at 4:40 AM Rob Clark <robdclark@gmail.com> wrote:
+> > >
+> > > On Fri, May 10, 2019 at 7:35 AM Rob Clark <robdclark@gmail.com> wrote:
+> > > >
+> > > > On Tue, Dec 4, 2018 at 2:29 PM Rob Herring <robh+dt@kernel.org> wrote:
+> > > > >
+> > > > > On Sat, Dec 1, 2018 at 10:54 AM Rob Clark <robdclark@gmail.com> wrote:
+> > > > > >
+> > > > > > This solves a problem we see with drm/msm, caused by getting
+> > > > > > iommu_dma_ops while we attach our own domain and manage it directly at
+> > > > > > the iommu API level:
+> > > > > >
+> > > > > >   [0000000000000038] user address but active_mm is swapper
+> > > > > >   Internal error: Oops: 96000005 [#1] PREEMPT SMP
+> > > > > >   Modules linked in:
+> > > > > >   CPU: 7 PID: 70 Comm: kworker/7:1 Tainted: G        W         4.19.3 #90
+> > > > > >   Hardware name: xxx (DT)
+> > > > > >   Workqueue: events deferred_probe_work_func
+> > > > > >   pstate: 80c00009 (Nzcv daif +PAN +UAO)
+> > > > > >   pc : iommu_dma_map_sg+0x7c/0x2c8
+> > > > > >   lr : iommu_dma_map_sg+0x40/0x2c8
+> > > > > >   sp : ffffff80095eb4f0
+> > > > > >   x29: ffffff80095eb4f0 x28: 0000000000000000
+> > > > > >   x27: ffffffc0f9431578 x26: 0000000000000000
+> > > > > >   x25: 00000000ffffffff x24: 0000000000000003
+> > > > > >   x23: 0000000000000001 x22: ffffffc0fa9ac010
+> > > > > >   x21: 0000000000000000 x20: ffffffc0fab40980
+> > > > > >   x19: ffffffc0fab40980 x18: 0000000000000003
+> > > > > >   x17: 00000000000001c4 x16: 0000000000000007
+> > > > > >   x15: 000000000000000e x14: ffffffffffffffff
+> > > > > >   x13: ffff000000000000 x12: 0000000000000028
+> > > > > >   x11: 0101010101010101 x10: 7f7f7f7f7f7f7f7f
+> > > > > >   x9 : 0000000000000000 x8 : ffffffc0fab409a0
+> > > > > >   x7 : 0000000000000000 x6 : 0000000000000002
+> > > > > >   x5 : 0000000100000000 x4 : 0000000000000000
+> > > > > >   x3 : 0000000000000001 x2 : 0000000000000002
+> > > > > >   x1 : ffffffc0f9431578 x0 : 0000000000000000
+> > > > > >   Process kworker/7:1 (pid: 70, stack limit = 0x0000000017d08ffb)
+> > > > > >   Call trace:
+> > > > > >    iommu_dma_map_sg+0x7c/0x2c8
+> > > > > >    __iommu_map_sg_attrs+0x70/0x84
+> > > > > >    get_pages+0x170/0x1e8
+> > > > > >    msm_gem_get_iova+0x8c/0x128
+> > > > > >    _msm_gem_kernel_new+0x6c/0xc8
+> > > > > >    msm_gem_kernel_new+0x4c/0x58
+> > > > > >    dsi_tx_buf_alloc_6g+0x4c/0x8c
+> > > > > >    msm_dsi_host_modeset_init+0xc8/0x108
+> > > > > >    msm_dsi_modeset_init+0x54/0x18c
+> > > > > >    _dpu_kms_drm_obj_init+0x430/0x474
+> > > > > >    dpu_kms_hw_init+0x5f8/0x6b4
+> > > > > >    msm_drm_bind+0x360/0x6c8
+> > > > > >    try_to_bring_up_master.part.7+0x28/0x70
+> > > > > >    component_master_add_with_match+0xe8/0x124
+> > > > > >    msm_pdev_probe+0x294/0x2b4
+> > > > > >    platform_drv_probe+0x58/0xa4
+> > > > > >    really_probe+0x150/0x294
+> > > > > >    driver_probe_device+0xac/0xe8
+> > > > > >    __device_attach_driver+0xa4/0xb4
+> > > > > >    bus_for_each_drv+0x98/0xc8
+> > > > > >    __device_attach+0xac/0x12c
+> > > > > >    device_initial_probe+0x24/0x30
+> > > > > >    bus_probe_device+0x38/0x98
+> > > > > >    deferred_probe_work_func+0x78/0xa4
+> > > > > >    process_one_work+0x24c/0x3dc
+> > > > > >    worker_thread+0x280/0x360
+> > > > > >    kthread+0x134/0x13c
+> > > > > >    ret_from_fork+0x10/0x18
+> > > > > >   Code: d2800004 91000725 6b17039f 5400048a (f9401f40)
+> > > > > >   ---[ end trace f22dda57f3648e2c ]---
+> > > > > >   Kernel panic - not syncing: Fatal exception
+> > > > > >   SMP: stopping secondary CPUs
+> > > > > >   Kernel Offset: disabled
+> > > > > >   CPU features: 0x0,22802a18
+> > > > > >   Memory Limit: none
+> > > > > >
+> > > > > > The problem is that when drm/msm does it's own iommu_attach_device(),
+> > > > > > now the domain returned by iommu_get_domain_for_dev() is drm/msm's
+> > > > > > domain, and it doesn't have domain->iova_cookie.
+> > > > > >
+> > > > > > We kind of avoided this problem prior to sdm845/dpu because the iommu
+> > > > > > was attached to the mdp node in dt, which is a child of the toplevel
+> > > > > > mdss node (which corresponds to the dev passed in dma_map_sg()).  But
+> > > > > > with sdm845, now the iommu is attached at the mdss level so we hit the
+> > > > > > iommu_dma_ops in dma_map_sg().
+> > > > > >
+> > > > > > But auto allocating/attaching a domain before the driver is probed was
+> > > > > > already a blocking problem for enabling per-context pagetables for the
+> > > > > > GPU.  This problem is also now solved with this patch.
+> > > > > >
+> > > > > > Fixes: 97890ba9289c dma-mapping: detect and configure IOMMU in of_dma_configure
+> > > > > > Tested-by: Douglas Anderson <dianders@chromium.org>
+> > > > > > Signed-off-by: Rob Clark <robdclark@gmail.com>
+> > > > > > ---
+> > > > > > This is an alternative/replacement for [1].  What it lacks in elegance
+> > > > > > it makes up for in practicality ;-)
+> > > > > >
+> > > > > > [1] https://patchwork.freedesktop.org/patch/264930/
+> > > > > >
+> > > > > >  drivers/of/device.c | 22 ++++++++++++++++++++++
+> > > > > >  1 file changed, 22 insertions(+)
+> > > > > >
+> > > > > > diff --git a/drivers/of/device.c b/drivers/of/device.c
+> > > > > > index 5957cd4fa262..15ffee00fb22 100644
+> > > > > > --- a/drivers/of/device.c
+> > > > > > +++ b/drivers/of/device.c
+> > > > > > @@ -72,6 +72,14 @@ int of_device_add(struct platform_device *ofdev)
+> > > > > >         return device_add(&ofdev->dev);
+> > > > > >  }
+> > > > > >
+> > > > > > +static const struct of_device_id iommu_blacklist[] = {
+> > > > > > +       { .compatible = "qcom,mdp4" },
+> > > > > > +       { .compatible = "qcom,mdss" },
+> > > > > > +       { .compatible = "qcom,sdm845-mdss" },
+> > > > > > +       { .compatible = "qcom,adreno" },
+> > > > > > +       {}
+> > > > > > +};
+> > > > >
+> > > > > Not completely clear to whether this is still needed or not, but this
+> > > > > really won't scale. Why can't the driver for these devices override
+> > > > > whatever has been setup by default?
+> > > > >
+> > > >
+> > > > fwiw, at the moment it is not needed, but it will become needed again
+> > > > to implement per-context pagetables (although I suppose for this we
+> > > > only need to blacklist qcom,adreno and not also the display nodes).
+> > >
+> > > So, another case I've come across, on the display side.. I'm working
+> > > on handling the case where bootloader enables display (and takes iommu
+> > > out of reset).. as soon as DMA domain gets attached we get iommu
+> > > faults, because bootloader has already configured display for scanout.
+> > > Unfortunately this all happens before actual driver is probed and has
+> > > a chance to intervene.
+> > >
+> > > It's rather unfortunate that we tried to be clever rather than just
+> > > making drivers call some function to opt-in to the hookup of dma iommu
+> > > ops :-(
+> >
+> > I think it still works for the 90% of cases and if 10% needs some
+> > explicit work in the drivers, that's better than requiring 100% of the
+> > drivers to do things manually.
+> >
+> > Adding Marek who had the same problem on Exynos.
+>
+> I do wonder how many drivers need to iommu_map in their ->probe()?
 
-Signed-off-by: Talel Shenhar <talel@amazon.com>
----
- drivers/irqchip/irq-al-fic.c   | 48 +++++++++++++++++++++++++++++++++++++++---
- include/linux/irqchip/al-fic.h |  2 ++
- 2 files changed, 47 insertions(+), 3 deletions(-)
+Any driver that allocates some internal buffers using DMA API.
 
-diff --git a/drivers/irqchip/irq-al-fic.c b/drivers/irqchip/irq-al-fic.c
-index d881d42..e49b912 100644
---- a/drivers/irqchip/irq-al-fic.c
-+++ b/drivers/irqchip/irq-al-fic.c
-@@ -19,6 +19,7 @@
- #define AL_FIC_MASK		0x10
- #define AL_FIC_CONTROL		0x28
- 
-+#define CONTROL_AUTO_CLEAR	BIT(2)
- #define CONTROL_TRIGGER_RISING	BIT(3)
- #define CONTROL_MASK_MSI_X	BIT(5)
- 
-@@ -193,9 +194,11 @@ struct irq_domain *al_fic_wire_get_domain(struct al_fic *fic)
- }
- EXPORT_SYMBOL_GPL(al_fic_wire_get_domain);
- 
--static void al_fic_hw_init(struct al_fic *fic)
-+static void al_fic_hw_init(struct al_fic *fic,
-+			   int use_msi)
- {
--	u32 control = CONTROL_MASK_MSI_X;
-+	u32 control = (use_msi ? (CONTROL_AUTO_CLEAR | CONTROL_TRIGGER_RISING) :
-+		       CONTROL_MASK_MSI_X);
- 
- 	/* mask out all interrupts */
- 	writel(0xFFFFFFFF, fic->base + AL_FIC_MASK);
-@@ -240,7 +243,7 @@ struct al_fic *al_fic_wire_init(struct device_node *node,
- 	fic->parent_irq = parent_irq;
- 	fic->name = (name ?: "al-fic-wire");
- 
--	al_fic_hw_init(fic);
-+	al_fic_hw_init(fic, false);
- 
- 	ret = al_fic_register(node, fic);
- 	if (ret) {
-@@ -260,6 +263,45 @@ struct al_fic *al_fic_wire_init(struct device_node *node,
- EXPORT_SYMBOL_GPL(al_fic_wire_init);
- 
- /**
-+ * al_fic_msi_x_init() - initialize and configure fic in msi-x mode
-+ * @base: mmio to fic register
-+ * @name: name of the fic
-+ *
-+ * This API will configure the fic hardware to to work in msi-x mode.
-+ * msi-x fic is to be configured for fics that are embedded inside AL PCIE EP.
-+ * Those kind of fic are aware of the fact that they live inside PCIE and
-+ * familiar with the MSI-X table which is configured as part of
-+ * pci_enable_msix_range() and friends.
-+ * Interrupt can be generated based on a positive edge or level - configuration
-+ * is to be determined based on connected hardware to this fic.
-+ *
-+ * Returns pointer to fic context or ERR_PTR in case of error.
-+ */
-+struct al_fic *al_fic_msi_x_init(void __iomem *base,
-+				 const char *name)
-+{
-+	struct al_fic *fic;
-+
-+	if (!base)
-+		return ERR_PTR(-EINVAL);
-+
-+	fic = kzalloc(sizeof(*fic), GFP_KERNEL);
-+	if (!fic)
-+		return ERR_PTR(-ENOMEM);
-+
-+	fic->base = base;
-+	fic->name = (name ?: "al-fic-full-fledged");
-+
-+	al_fic_hw_init(fic, true);
-+
-+	pr_debug("%s initialized successfully in Full-Fledged mode\n",
-+		 fic->name);
-+
-+	return fic;
-+}
-+EXPORT_SYMBOL_GPL(al_fic_msi_x_init);
-+
-+/**
-  * al_fic_cleanup() - free all resources allocated by fic
-  * @fic: pointer to fic context
-  *
-diff --git a/include/linux/irqchip/al-fic.h b/include/linux/irqchip/al-fic.h
-index 0833749..a2e89ff 100644
---- a/include/linux/irqchip/al-fic.h
-+++ b/include/linux/irqchip/al-fic.h
-@@ -16,6 +16,8 @@ struct al_fic *al_fic_wire_init(struct device_node *node,
- 				void __iomem *base,
- 				const char *name,
- 				unsigned int parent_irq);
-+struct al_fic *al_fic_msi_x_init(void __iomem *base,
-+				 const char *name);
- int al_fic_cleanup(struct al_fic *fic);
- 
- #endif
--- 
-2.7.4
+Also all V4L2 drivers would need it, because as soon as they call
+register_video_device() the userspace can open the video node and do
+buffer allocations, which in turn requires the DMA API to be all set.
 
+> I'm thinking moving the auto-hookup to after a successful probe(),
+> with some function a driver could call if they need mapping in probe,
+> might be a way to eventually get rid of the blacklist.  But I've no
+> idea how to find the subset of drivers that would be broken without a
+> dma_setup_iommu_stuff() call in their probe.
+
+Most of the drivers that call dma_alloc_() or dma_map_() from probe
+(or could have it called asynchronously before the probe returns).
+
+But first of all, I remember Marek already submitted some patches long
+ago that extended struct driver with some flag that means that the
+driver doesn't want the IOMMU to be attached before probe. Why
+wouldn't that work? Sounds like a perfect opt-out solution.
+
+>
+> BR,
+> -R
+>
+> > Best regards,
+> > Tomasz
+> >
+> > >
+> > > BR,
+> > > -R
+> > >
+> > > >
+> > > > The reason is that in the current state the core code creates the
+> > > > first domain before the driver has a chance to intervene and tell it
+> > > > not to.  And this results that driver ends up using a different
+> > > > context bank on the iommu than what the firmware expects.
+> > > >
+> > > > I guess the alternative is to put some property in DT.. but that
+> > > > doesn't really feel right.  I guess there aren't really many (or any?)
+> > > > other drivers that have this specific problem, so I don't really
+> > > > expect it to be a scaling problem.
+> > > >
+> > > > Yeah, it's a bit ugly, but I'll take a small ugly working hack, over
+> > > > elegant but non-working any day ;-)... but if someone has a better
+> > > > idea then I'm all ears.
+> > > >
+> > > > BR,
+> > > > -R
