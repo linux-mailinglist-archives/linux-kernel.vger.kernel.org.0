@@ -2,76 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8CD835DED
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 15:30:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D582F35DF2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 15:31:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728031AbfFENad (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 09:30:33 -0400
-Received: from verein.lst.de ([213.95.11.211]:43006 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727601AbfFENab (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 09:30:31 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 43E3E227A81; Wed,  5 Jun 2019 15:30:03 +0200 (CEST)
-Date:   Wed, 5 Jun 2019 15:30:02 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Sebastian Ott <sebott@linux.ibm.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Ming Lei <ming.lei@redhat.com>,
-        Hannes Reinecke <hare@suse.com>, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: too large sg segments with commit 09324d32d2a08
-Message-ID: <20190605133002.GA13368@lst.de>
-References: <alpine.LFD.2.21.1906051057200.2118@schleppi> <20190605100928.GA9828@lst.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190605100928.GA9828@lst.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        id S1728078AbfFENan (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 09:30:43 -0400
+Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:44108 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727936AbfFENal (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 09:30:41 -0400
+Received: from mailhost.synopsys.com (unknown [10.225.0.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id BEFD6C00D5;
+        Wed,  5 Jun 2019 13:30:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1559741451; bh=UhTawoCdKVO1mzPVVGAymhkIq1eb9QymySNnrhn2TNI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=RoF9qG4c4kadyU3NLa1zb5OZ4T800SHI489ZNakns+wGbwBjbtWGT90n1wg8BDMYr
+         LTRgSbF565MeC5bsMZRKI/N6/n0VAPeuseodT8j89/GZ7gMyOrTMFomg3YcbN5Ux3d
+         dPJ28FmBlQKpyOBLf0bdPiNTT8yGQfPxutcLISFmtBlm8ThpNXicbJly3nO+rPHb8e
+         LNhvF2uf+aVnpRre6OtRCAVtW6Jjaor9m5NcJTUctvqXOCEbi35rJVfQtjeMQqqF3e
+         6UQTKEMGOAeAjPBRXFkyGn5JgegwSWm1MZ7XgBb998Ev2p5FJThluQJHwBbMWddPf4
+         b3WIX1MDnxkZw==
+Received: from de02.synopsys.com (de02.internal.synopsys.com [10.225.17.21])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 3DDD6A0232;
+        Wed,  5 Jun 2019 13:30:39 +0000 (UTC)
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by de02.synopsys.com (Postfix) with ESMTP id DD7783FEC6;
+        Wed,  5 Jun 2019 15:30:38 +0200 (CEST)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Cc:     Jose Abreu <Jose.Abreu@synopsys.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Subject: [RFC net-next 0/2] net: stmmac: Convert to phylink
+Date:   Wed,  5 Jun 2019 15:30:27 +0200
+Message-Id: <cover.1559741195.git.joabreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Actually, it looks like something completely general isn't
-easily doable, not without some major dma API work.  Here is what
-should fix nvme, but a few other drivers will need fixes as well:
+For review and testing only.
 
----
-From 745541130409bc837a3416300f529b16eded8513 Mon Sep 17 00:00:00 2001
-From: Christoph Hellwig <hch@lst.de>
-Date: Wed, 5 Jun 2019 14:55:26 +0200
-Subject: nvme-pci: don't limit DMA segement size
+This converts stmmac to use phylink. Besides the code redution this will
+allow to gain more flexibility.
 
-NVMe uses PRPs (or optionally unlimited SGLs) for data transfers and
-has no specific limit for a single DMA segement.  Limiting the size
-will cause problems because the block layer assumes PRP-ish devices
-using a virt boundary mask don't have a segment limit.  And while this
-is true, we also really need to tell the DMA mapping layer about it,
-otherwise dma-debug will trip over it.
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reported-by: Sebastian Ott <sebott@linux.ibm.com>
----
- drivers/nvme/host/pci.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Jose Abreu (2):
+  net: stmmac: Prepare to convert to phylink
+  net: stmmac: Convert to phylink
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index f562154551ce..524d6bd6d095 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -2513,6 +2513,12 @@ static void nvme_reset_work(struct work_struct *work)
- 	 */
- 	dev->ctrl.max_hw_sectors = NVME_MAX_KB_SZ << 1;
- 	dev->ctrl.max_segments = NVME_MAX_SEGS;
-+
-+	/*
-+	 * Don't limit the IOMMU merged segment size.
-+	 */
-+	dma_set_max_seg_size(dev->dev, 0xffffffff);
-+
- 	mutex_unlock(&dev->shutdown_lock);
- 
- 	/*
+ drivers/net/ethernet/stmicro/stmmac/Kconfig        |   3 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h       |   4 +-
+ .../net/ethernet/stmicro/stmmac/stmmac_ethtool.c   |  72 +---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 389 +++++++++------------
+ .../net/ethernet/stmicro/stmmac/stmmac_platform.c  |  21 +-
+ 5 files changed, 189 insertions(+), 300 deletions(-)
+
 -- 
-2.20.1
+2.7.4
 
