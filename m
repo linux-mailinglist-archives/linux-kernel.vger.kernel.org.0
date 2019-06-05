@@ -2,183 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB85D3614A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 18:30:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4CB636155
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 18:31:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728700AbfFEQaA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 12:30:00 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34562 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726421AbfFEQaA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 12:30:00 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 90C74374;
-        Wed,  5 Jun 2019 09:29:59 -0700 (PDT)
-Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A90FC3F5AF;
-        Wed,  5 Jun 2019 09:29:56 -0700 (PDT)
-Subject: Re: [PATCH 2/4] arm64: kdump: support reserving crashkernel above 4G
-To:     Chen Zhou <chenzhou10@huawei.com>
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com,
-        akpm@linux-foundation.org, ard.biesheuvel@linaro.org,
-        rppt@linux.ibm.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, ebiederm@xmission.com, horms@verge.net.au,
-        takahiro.akashi@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        linux-mm@kvack.org, wangkefeng.wang@huawei.com
-References: <20190507035058.63992-1-chenzhou10@huawei.com>
- <20190507035058.63992-3-chenzhou10@huawei.com>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <df2b659d-7406-fbfd-597d-be3a3f69abcb@arm.com>
-Date:   Wed, 5 Jun 2019 17:29:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1728736AbfFEQb0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 12:31:26 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52354 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728574AbfFEQbZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 12:31:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=0gkwr/F7+Rrmms8V/ILU7byci3uqX6ktmxQ4kbGefNU=; b=GwINskzBFe5/BFRa7R9Im1GXK
+        Ehxf1W4hvXZQBy0lDPUgVF7rHRrXjX2+jlVIUm6i4aD3eqzBsRUfHnpuTF3ONQCi6DYTGITDUsW6+
+        Gepa/EE3TovjkAeYyzaNtzTwHQ7JwiQYGeW8dv7Vrlj336J45UxGyO4f64URlKRqFjJYU=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hYYos-0000xK-4z; Wed, 05 Jun 2019 16:31:22 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id D0DFC440046; Wed,  5 Jun 2019 17:31:20 +0100 (BST)
+Date:   Wed, 5 Jun 2019 17:31:20 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     jacek.anaszewski@gmail.com, pavel@ucw.cz, lgirdwood@gmail.com,
+        lee.jones@linaro.org, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/6] regulator: lm363x: Make the gpio register enable
+ flexible
+Message-ID: <20190605163120.GR2456@sirena.org.uk>
+References: <20190604174345.14841-1-dmurphy@ti.com>
+ <20190604174345.14841-2-dmurphy@ti.com>
+ <20190605100132.GL2456@sirena.org.uk>
+ <7ba7a633-1a39-adcc-e942-12c0eb7c3b16@ti.com>
+ <054c3715-e85f-e052-faf1-057bf3a67d45@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20190507035058.63992-3-chenzhou10@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="8+74qwmUvVX309i6"
+Content-Disposition: inline
+In-Reply-To: <054c3715-e85f-e052-faf1-057bf3a67d45@ti.com>
+X-Cookie: The other line moves faster.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-On 07/05/2019 04:50, Chen Zhou wrote:
-> When crashkernel is reserved above 4G in memory, kernel should
-> reserve some amount of low memory for swiotlb and some DMA buffers.
+--8+74qwmUvVX309i6
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Meanwhile, support crashkernel=X,[high,low] in arm64. When use
-> crashkernel=X parameter, try low memory first and fall back to high
-> memory unless "crashkernel=X,high" is specified.
+On Wed, Jun 05, 2019 at 07:47:50AM -0500, Dan Murphy wrote:
+> On 6/5/19 7:02 AM, Dan Murphy wrote:
 
-What is the 'unless crashkernel=...,high' for? I think it would be simpler to relax the
-ARCH_LOW_ADDRESS_LIMIT if reserve_crashkernel_low() allocated something.
+> > I can squash patch 1 into 4.
 
-This way "crashkernel=1G" tries to allocate 1G below 4G, but fails if there isn't enough
-memory. "crashkernel=1G crashkernel=16M,low" allocates 16M below 4G, which is more likely
-to succeed, if it does it can then place the 1G block anywhere.
+> > Also not sure what you mean by new validation.
 
+> Disregard I understand.=A0 The patch is missing the validation code.
 
-> diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
-> index 413d566..82cd9a0 100644
-> --- a/arch/arm64/kernel/setup.c
-> +++ b/arch/arm64/kernel/setup.c
-> @@ -243,6 +243,9 @@ static void __init request_standard_resources(void)
->  			request_resource(res, &kernel_data);
->  #ifdef CONFIG_KEXEC_CORE
->  		/* Userspace will find "Crash kernel" region in /proc/iomem. */
-> +		if (crashk_low_res.end && crashk_low_res.start >= res->start &&
-> +		    crashk_low_res.end <= res->end)
-> +			request_resource(res, &crashk_low_res);
->  		if (crashk_res.end && crashk_res.start >= res->start &&
->  		    crashk_res.end <= res->end)
->  			request_resource(res, &crashk_res);
+Ah, some git add issues I guess :)  Squashing would help but it's not
+essential I think.
 
-With both crashk_low_res and crashk_res, we end up with two entries in /proc/iomem called
-"Crash kernel". Because its sorted by address, and kexec-tools stops searching when it
-find "Crash kernel", you are always going to get the kernel placed in the lower portion.
+--8+74qwmUvVX309i6
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I suspect this isn't what you want, can we rename crashk_low_res for arm64 so that
-existing kexec-tools doesn't use it?
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlz37lYACgkQJNaLcl1U
+h9D24Qf+LRTcByTN28sK2Y77cBUVbJQhwJeOJMTaOFPF2SDpJRBmU2oQZncg72xA
+iMwJgZcDDd1gjQuyDsxRL23e8guALeRL3rQ/MyHT22BhFEGUFJd7Ka0hyOgOpxwv
+R9Y7Gn8jo+Qt3AEcxn4HvHvq6zF/3FjUxUDbSquNchsjrv/flOp0uTbCuc1RQrcZ
+d7I/uj3KhYIWmzN8w/E3wLzLYqfVFoZZ/9/FuSXMXS6BdTsaOwzoQ/VJmQ0IxEhe
+FhFF2TWmvf84nAxKD6rYesFiuMXpM0Ok+v+5E2aI9/odBwHir8mcrMBWdOn3TDBT
+eEUXC5JLELCEeXJdm8Ep+dsNdaSOEw==
+=9Dl3
+-----END PGP SIGNATURE-----
 
-> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> index d2adffb..3fcd739 100644
-> --- a/arch/arm64/mm/init.c
-> +++ b/arch/arm64/mm/init.c
-> @@ -74,20 +74,37 @@ phys_addr_t arm64_dma_phys_limit __ro_after_init;
->  static void __init reserve_crashkernel(void)
->  {
->  	unsigned long long crash_base, crash_size;
-> +	bool high = false;
->  	int ret;
->  
->  	ret = parse_crashkernel(boot_command_line, memblock_phys_mem_size(),
->  				&crash_size, &crash_base);
->  	/* no crashkernel= or invalid value specified */
-> -	if (ret || !crash_size)
-> -		return;
-> +	if (ret || !crash_size) {
-> +		/* crashkernel=X,high */
-> +		ret = parse_crashkernel_high(boot_command_line,
-> +				memblock_phys_mem_size(),
-> +				&crash_size, &crash_base);
-> +		if (ret || !crash_size)
-> +			return;
-> +		high = true;
-> +	}
->  
->  	crash_size = PAGE_ALIGN(crash_size);
->  
->  	if (crash_base == 0) {
-> -		/* Current arm64 boot protocol requires 2MB alignment */
-> -		crash_base = memblock_find_in_range(0, ARCH_LOW_ADDRESS_LIMIT,
-> -				crash_size, SZ_2M);
-> +		/*
-> +		 * Try low memory first and fall back to high memory
-> +		 * unless "crashkernel=size[KMG],high" is specified.
-> +		 */
-> +		if (!high)
-> +			crash_base = memblock_find_in_range(0,
-> +					ARCH_LOW_ADDRESS_LIMIT,
-> +					crash_size, CRASH_ALIGN);
-> +		if (!crash_base)
-> +			crash_base = memblock_find_in_range(0,
-> +					memblock_end_of_DRAM(),
-> +					crash_size, CRASH_ALIGN);
->  		if (crash_base == 0) {
->  			pr_warn("cannot allocate crashkernel (size:0x%llx)\n",
->  				crash_size);
-> @@ -105,13 +122,18 @@ static void __init reserve_crashkernel(void)
->  			return;
->  		}
->  
-> -		if (!IS_ALIGNED(crash_base, SZ_2M)) {
-> +		if (!IS_ALIGNED(crash_base, CRASH_ALIGN)) {
->  			pr_warn("cannot reserve crashkernel: base address is not 2MB aligned\n");
->  			return;
->  		}
->  	}
->  	memblock_reserve(crash_base, crash_size);
->  
-> +	if (crash_base >= SZ_4G && reserve_crashkernel_low()) {
-> +		memblock_free(crash_base, crash_size);
-> +		return;
-
-This is going to be annoying on platforms that don't have, and don't need memory below 4G.
-A "crashkernel=...,low" on these system will break crashdump. I don't think we should
-expect users to know the memory layout. (I'm assuming distro's are going to add a low
-reservation everywhere, just in case)
-
-I think the 'low' region should be a small optional/best-effort extra, that kexec-tools
-can't touch.
-
-
-I'm afraid you've missed the ugly bit of the crashkernel reservation...
-
-arch/arm64/mm/mmu.c::map_mem() marks the crashkernel as 'nomap' during the first pass of
-page-table generation. This means it isn't mapped in the linear map. It then maps it with
-page-size mappings, and removes the nomap flag.
-
-This is done so that arch_kexec_protect_crashkres() and
-arch_kexec_unprotect_crashkres() can remove the valid bits of the crashkernel mapping.
-This way the old-kernel can't accidentally overwrite the crashkernel. It also saves us if
-the old-kernel and the crashkernel use different memory attributes for the mapping.
-
-As your low-memory reservation is intended to be used for devices, having it mapped by the
-old-kernel as cacheable memory is going to cause problems if those CPUs aren't taken
-offline and go corrupting this memory. (we did crash for a reason after all)
-
-
-I think the simplest thing to do is mark the low region as 'nomap' in
-reserve_crashkernel() and always leave it unmapped. We can then describe it via a
-different string in /proc/iomem, something like "Crash kernel (low)". Older kexec-tools
-shouldn't use it, (I assume its not using strncmp() in a way that would do this by
-accident), and newer kexec-tools can know to describe it in the DT, but it can't write to it.
-
-
-Thanks,
-
-James
+--8+74qwmUvVX309i6--
