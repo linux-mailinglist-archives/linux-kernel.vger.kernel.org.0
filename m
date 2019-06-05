@@ -2,155 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB83C35BBC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 13:45:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFD1C35BE5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 13:46:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728061AbfFELpR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 07:45:17 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:61386 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727828AbfFELoE (ORCPT
+        id S1728118AbfFELq2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 07:46:28 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54146 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727330AbfFELnK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 07:44:04 -0400
-X-UUID: 6d200aacf16c447ab6972f4aa6cd1ce9-20190605
-X-UUID: 6d200aacf16c447ab6972f4aa6cd1ce9-20190605
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <yongqiang.niu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 40155994; Wed, 05 Jun 2019 19:43:52 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 5 Jun 2019 19:43:50 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 5 Jun 2019 19:43:50 +0800
-From:   <yongqiang.niu@mediatek.com>
-To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Yongqiang Niu <yongqiang.niu@mediatek.com>
-Subject: [PATCH v3, 16/27] drm/mediatek: add component DITHER
-Date:   Wed, 5 Jun 2019 19:42:55 +0800
-Message-ID: <1559734986-7379-17-git-send-email-yongqiang.niu@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-In-Reply-To: <1559734986-7379-1-git-send-email-yongqiang.niu@mediatek.com>
-References: <1559734986-7379-1-git-send-email-yongqiang.niu@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: CD49CE50A184C606E5AEA14F62A2282F4FF7AFCC3D738B27A6837DBF255A4BAC2000:8
-X-MTK:  N
+        Wed, 5 Jun 2019 07:43:10 -0400
+Received: by mail-wm1-f66.google.com with SMTP id d17so1924512wmb.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 04:43:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=jzlILgVOq+qa8QnWXtHWObcbjxta0J+JIjopEg5uUuk=;
+        b=Phzisd+Tdhfzrf2cnfJc7/3YsGZ48Ro4ChpgCOPMYGdsND4hfBtzYRbIro3IyIF/ok
+         d2VoAM0CSoZqsLeb7daN/0gWZRf5oYOfyq6HbGajovhrFh9+ylcx1OfSnJPxDyboNKNr
+         HMsHNOxcL/twPctqJndkmBghg6/cgcpivviP8tG3X6yJFC/6J1FDnX8ZMfAdcOoCwEOE
+         wYt3lEugdF3bWe3lo3j+YIfzADWTggVyqZI8qjFBFYZq7yYU/hEkxsZURtN7iMzbDiKy
+         SDGdToE7A6QwBNbr1y/nGX+1OFl/mOFABzdOKeAYX/+AtInl2tcDDgusYUFJjEOXiceF
+         NJYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=jzlILgVOq+qa8QnWXtHWObcbjxta0J+JIjopEg5uUuk=;
+        b=rUn263LMUJjN0r9zKMB+LcDQSvnuzk9heBpbVF1TtIuW+oYwKtD0PZnCqoHkZA9DYj
+         3wbaA/H96zuREzMJmaY0AgG35V4739LGmpmylGlr6D8JMGVBlfxTkfiDYiW3a9TGswxz
+         XxSAV7Rb+ZKXdwLRmdbeanfc3ATszbBH2GahsZfVRGoIsomUHxo2581ECZbRpe/YO4jL
+         7cCl6kmewcnOwif7dRoj0OJ0vb2XCHZzNpG4vTBQcTgsxeHefExufYznvLwZ8NOI0CCH
+         Ci6ltD9PhsfGZfY1CH/vCxtVWHUEXyQ5twBbbS3IY9wrR+foXGqiEHzQ3iUKqcgZhH7l
+         mGAw==
+X-Gm-Message-State: APjAAAUq9kxV8JUvh+76zRlpQxBBh5mJAQvEPyssMgOkD8sm5pDuglba
+        mFA+VChOnzvWqUFnhCP4eAVV7A==
+X-Google-Smtp-Source: APXvYqyIKCzRjK5C2cfGwWv0aa6X+yD0CtMUNDQac+1g9TUKp+wHCO+xwEod0nMcftdvvIOKCPSkVg==
+X-Received: by 2002:a1c:acc8:: with SMTP id v191mr22806026wme.177.1559734988581;
+        Wed, 05 Jun 2019 04:43:08 -0700 (PDT)
+Received: from localhost.localdomain ([2.27.167.43])
+        by smtp.gmail.com with ESMTPSA id 34sm27718740wre.32.2019.06.05.04.43.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Jun 2019 04:43:08 -0700 (PDT)
+From:   Lee Jones <lee.jones@linaro.org>
+To:     alokc@codeaurora.org, andy.gross@linaro.org,
+        david.brown@linaro.org, wsa+renesas@sang-engineering.com,
+        bjorn.andersson@linaro.org, linus.walleij@linaro.org,
+        balbi@kernel.org, gregkh@linuxfoundation.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        jlhugo@gmail.com, linux-i2c@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-usb@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 2/8] i2c: i2c-qcom-geni: Signify successful driver probe
+Date:   Wed,  5 Jun 2019 12:42:56 +0100
+Message-Id: <20190605114302.22509-2-lee.jones@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190605114302.22509-1-lee.jones@linaro.org>
+References: <20190605114302.22509-1-lee.jones@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yongqiang Niu <yongqiang.niu@mediatek.com>
+The Qualcomm Geni I2C driver currently probes silently which can be
+confusing when debugging potential issues.  Add a low level (INFO)
+print when each I2C controller is successfully initially set-up.
 
-This patch add component DITHER
-
-Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 32 +++++++++++++++++++++++++++++
- drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h |  2 ++
- 2 files changed, 34 insertions(+)
+ drivers/i2c/busses/i2c-qcom-geni.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-index 5a0ec0f..989024d 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-@@ -47,6 +47,12 @@
- #define CCORR_RELAY_MODE			BIT(0)
- #define DISP_CCORR_SIZE				0x0030
+diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
+index 0fa93b448e8d..720131c40fe0 100644
+--- a/drivers/i2c/busses/i2c-qcom-geni.c
++++ b/drivers/i2c/busses/i2c-qcom-geni.c
+@@ -598,6 +598,8 @@ static int geni_i2c_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
  
-+#define DISP_DITHER_EN				0x0000
-+#define DITHER_EN				BIT(0)
-+#define DISP_DITHER_CFG				0x0020
-+#define DITHER_RELAY_MODE			BIT(0)
-+#define DISP_DITHER_SIZE			0x0030
++	dev_dbg(&pdev->dev, "Geni-I2C adaptor successfully added\n");
 +
- #define DISP_GAMMA_EN				0x0000
- #define DISP_GAMMA_CFG				0x0020
- #define DISP_GAMMA_SIZE				0x0030
-@@ -155,6 +161,24 @@ static void mtk_ccorr_stop(struct mtk_ddp_comp *comp)
- 	writel_relaxed(0x0, comp->regs + DISP_CCORR_EN);
+ 	return 0;
  }
  
-+static void mtk_dither_config(struct mtk_ddp_comp *comp, unsigned int w,
-+			      unsigned int h, unsigned int vrefresh,
-+			      unsigned int bpc)
-+{
-+	writel(h << 16 | w, comp->regs + DISP_DITHER_SIZE);
-+	writel(DITHER_RELAY_MODE, comp->regs + DISP_DITHER_CFG);
-+}
-+
-+static void mtk_dither_start(struct mtk_ddp_comp *comp)
-+{
-+	writel(DITHER_EN, comp->regs + DISP_DITHER_EN);
-+}
-+
-+static void mtk_dither_stop(struct mtk_ddp_comp *comp)
-+{
-+	writel_relaxed(0x0, comp->regs + DISP_DITHER_EN);
-+}
-+
- static void mtk_gamma_config(struct mtk_ddp_comp *comp, unsigned int w,
- 			     unsigned int h, unsigned int vrefresh,
- 			     unsigned int bpc)
-@@ -209,6 +233,12 @@ static void mtk_gamma_set(struct mtk_ddp_comp *comp,
- 	.stop = mtk_ccorr_stop,
- };
- 
-+static const struct mtk_ddp_comp_funcs ddp_dither = {
-+	.config = mtk_dither_config,
-+	.start = mtk_dither_start,
-+	.stop = mtk_dither_stop,
-+};
-+
- static const struct mtk_ddp_comp_funcs ddp_gamma = {
- 	.gamma_set = mtk_gamma_set,
- 	.config = mtk_gamma_config,
-@@ -234,6 +264,7 @@ static void mtk_gamma_set(struct mtk_ddp_comp *comp,
- 	[MTK_DISP_CCORR] = "ccorr",
- 	[MTK_DISP_AAL] = "aal",
- 	[MTK_DISP_GAMMA] = "gamma",
-+	[MTK_DISP_DITHER] = "dither",
- 	[MTK_DISP_UFOE] = "ufoe",
- 	[MTK_DSI] = "dsi",
- 	[MTK_DPI] = "dpi",
-@@ -256,6 +287,7 @@ struct mtk_ddp_comp_match {
- 	[DDP_COMPONENT_CCORR]	= { MTK_DISP_CCORR,	0, &ddp_ccorr },
- 	[DDP_COMPONENT_COLOR0]	= { MTK_DISP_COLOR,	0, NULL },
- 	[DDP_COMPONENT_COLOR1]	= { MTK_DISP_COLOR,	1, NULL },
-+	[DDP_COMPONENT_DITHER]	= { MTK_DISP_DITHER,	0, &ddp_dither },
- 	[DDP_COMPONENT_DPI0]	= { MTK_DPI,		0, NULL },
- 	[DDP_COMPONENT_DPI1]	= { MTK_DPI,		1, NULL },
- 	[DDP_COMPONENT_DSI0]	= { MTK_DSI,		0, NULL },
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-index d7ef480..158c1e5 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-@@ -30,6 +30,7 @@ enum mtk_ddp_comp_type {
- 	MTK_DISP_WDMA,
- 	MTK_DISP_COLOR,
- 	MTK_DISP_CCORR,
-+	MTK_DISP_DITHER,
- 	MTK_DISP_AAL,
- 	MTK_DISP_GAMMA,
- 	MTK_DISP_UFOE,
-@@ -49,6 +50,7 @@ enum mtk_ddp_comp_id {
- 	DDP_COMPONENT_CCORR,
- 	DDP_COMPONENT_COLOR0,
- 	DDP_COMPONENT_COLOR1,
-+	DDP_COMPONENT_DITHER,
- 	DDP_COMPONENT_DPI0,
- 	DDP_COMPONENT_DPI1,
- 	DDP_COMPONENT_DSI0,
 -- 
-1.8.1.1.dirty
+2.17.1
 
