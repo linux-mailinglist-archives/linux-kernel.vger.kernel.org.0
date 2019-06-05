@@ -2,112 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A000F35907
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 10:53:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38FD4358FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 10:52:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbfFEIw7 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 5 Jun 2019 04:52:59 -0400
-Received: from mga06.intel.com ([134.134.136.31]:5302 "EHLO mga06.intel.com"
+        id S1726807AbfFEIwT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 04:52:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726502AbfFEIw6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 04:52:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 01:52:57 -0700
-X-ExtLoop1: 1
-Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
-  by orsmga002.jf.intel.com with ESMTP; 05 Jun 2019 01:52:57 -0700
-Received: from shsmsx105.ccr.corp.intel.com (10.239.4.158) by
- FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Wed, 5 Jun 2019 01:51:47 -0700
-Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.137]) by
- SHSMSX105.ccr.corp.intel.com ([169.254.11.153]) with mapi id 14.03.0415.000;
- Wed, 5 Jun 2019 16:51:45 +0800
-From:   "Tian, Kevin" <kevin.tian@intel.com>
-To:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-CC:     "Raj, Ashok" <ashok.raj@intel.com>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>
-Subject: RE: [PATCH v2 2/4] iommu: Introduce device fault data
-Thread-Topic: [PATCH v2 2/4] iommu: Introduce device fault data
-Thread-Index: AQHVGhzpdp8RFw2/OU64MEW+KDLfp6aJ93gAgALLAvA=
-Date:   Wed, 5 Jun 2019 08:51:45 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D19CA6A9EE@SHSMSX104.ccr.corp.intel.com>
-References: <20190603145749.46347-1-jean-philippe.brucker@arm.com>
-        <20190603145749.46347-3-jean-philippe.brucker@arm.com>
- <20190603150842.11070cfd@jacob-builder>
-In-Reply-To: <20190603150842.11070cfd@jacob-builder>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNWQ0ODQxZDgtOWQ2Ni00NTkxLThlZmItZTgyMzM0MTliZTNiIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiZWJVU25wanM3dHNndlwvK2pnS3RUQmdhcUQ1eFdERDZCXC9SVXhRY1V0bGZnRFlyakNsR01cL3NiSThVWHlWa0RLSSJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1726690AbfFEIwT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 04:52:19 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01A322075C;
+        Wed,  5 Jun 2019 08:52:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559724738;
+        bh=33U2EKfjRS7h+XMGkmD3adAxfr6fGPYO5U7ZjaS/GaY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Jg8LNDdI0PoUYPg/zVrHza4ANwwsNV4xpyvG90wnOrXz6LjtnDwRiaa5W+ti7SflB
+         7ATBvjKJU2WdvbuNwRTWRQPx0hbf1OrcQiHrmNoWTdDl+jVvYwWMzvNGvfBN/4HMx2
+         44ObQkLWTyjt8JccrcHrk/wdy3CfHRaHp+UMDTTo=
+Date:   Wed, 5 Jun 2019 10:52:16 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Chunfeng Yun <chunfeng.yun@mediatek.com>
+Cc:     Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] USB: move usb debugfs directory creation to the usb
+ common core
+Message-ID: <20190605085216.GB26984@kroah.com>
+References: <20190604093258.GB30054@kroah.com>
+ <20190604115919.GA24346@kroah.com>
+ <1559721031.8487.99.camel@mhfsdcap03>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1559721031.8487.99.camel@mhfsdcap03>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Jacob Pan
-> Sent: Tuesday, June 4, 2019 6:09 AM
+On Wed, Jun 05, 2019 at 03:50:31PM +0800, Chunfeng Yun wrote:
+> On Tue, 2019-06-04 at 13:59 +0200, Greg Kroah-Hartman wrote:
+> > On Tue, Jun 04, 2019 at 11:32:58AM +0200, Greg Kroah-Hartman wrote:
+> > > The USB gadget subsystem wants to use the USB debugfs root directory, so
+> > > move it to the common "core" USB code so that it is properly initialized
+> > > and removed as needed.
+> > > 
+> > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > 
+> > > ---
+> > > 
+> > > This should be the "correct" version of this, Chunfeng, can you test
+> > > this to verify it works for you?
+> > > 
+> > > 
+> > > diff --git a/drivers/usb/common/common.c b/drivers/usb/common/common.c
+> > > index 18f5dcf58b0d..3b5e4263ffef 100644
+> > > --- a/drivers/usb/common/common.c
+> > > +++ b/drivers/usb/common/common.c
+> > > @@ -15,6 +15,7 @@
+> > >  #include <linux/usb/of.h>
+> > >  #include <linux/usb/otg.h>
+> > >  #include <linux/of_platform.h>
+> > > +#include <linux/debugfs.h>
+> > >  
+> > >  static const char *const ep_type_names[] = {
+> > >  	[USB_ENDPOINT_XFER_CONTROL] = "ctrl",
+> > > @@ -291,4 +292,21 @@ struct device *usb_of_get_companion_dev(struct device *dev)
+> > >  EXPORT_SYMBOL_GPL(usb_of_get_companion_dev);
+> > >  #endif
+> > >  
+> > > +struct dentry *usb_debug_root;
+> > > +EXPORT_SYMBOL_GPL(usb_debug_root);
+> > > +
+> > > +static int usb_common_init(void)
+> > > +{
+> > > +	usb_debug_root = debugfs_create_dir("usb", NULL);
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static void usb_common_exit(void)
+> > > +{
+> > > +	debugfs_remove_recursive(usb_debug_root);
+> > > +}
+> > > +
+> > > +module_init(usb_common_init);
+> I tested this patch.
 > 
-> On Mon,  3 Jun 2019 15:57:47 +0100
-> Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
-> 
-> > +/**
-> > + * struct iommu_fault_page_request - Page Request data
-> > + * @flags: encodes whether the corresponding fields are valid and
-> > whether this
-> > + *         is the last page in group (IOMMU_FAULT_PAGE_REQUEST_*
-> > values)
-> > + * @pasid: Process Address Space ID
-> > + * @grpid: Page Request Group Index
-> > + * @perm: requested page permissions (IOMMU_FAULT_PERM_* values)
-> > + * @addr: page address
-> > + * @private_data: device-specific private information
-> > + */
-> > +struct iommu_fault_page_request {
-> > +#define IOMMU_FAULT_PAGE_REQUEST_PASID_VALID	(1 << 0)
-> > +#define IOMMU_FAULT_PAGE_REQUEST_LAST_PAGE	(1 << 1)
-> > +#define IOMMU_FAULT_PAGE_REQUEST_PRIV_DATA	(1 << 2)
-> > +	__u32	flags;
-> > +	__u32	pasid;
-> > +	__u32	grpid;
-> > +	__u32	perm;
-> > +	__u64	addr;
-> > +	__u64	private_data[2];
-> > +};
-> > +
-> 
-> Just a thought, for non-identity G-H PASID management. We could pass on
-> guest PASID in PRQ to save a lookup in QEMU. In this case, QEMU
-> allocate a GPASID for vIOMMU then a host PASID for pIOMMU. QEMU has a
-> G->H lookup. When PRQ comes in to the pIOMMU with HPASID, IOMMU
-> driver
-> can retrieve GPASID from the bind data then report to the guest via
-> VFIO. In this case QEMU does not need to do a H->G PASID lookup.
-> 
-> Should we add a gpasid field here? or we can add a flag and field
-> later, up to you.
-> 
+> Here use module_init() indeed have a race as Felipe said before.
+> usbcore uses subsys_initcall(), and have a higher priority than
+> module_init(), so when usbcore tries to create "devices" file,
+> usb_debug_root is not created.
 
-Can private_data serve this purpose? It's better not introducing
-gpasid awareness within host IOMMU driver. It is just a user-level
-data associated with a PASID when binding happens. Kernel doesn't
-care the actual meaning, simply record it and then return back to user 
-space later upon device fault. Qemu interprets the meaning as gpasid
-in its own context. otherwise usages may use it for other purpose.
+Ah, let me fix that, it should have the same init level and I'll ensure
+it comes first in the linking.
 
-Thanks
-Kevin
+> after I replace it by postcore_initcall() (debugfs uses
+> core_initcall()), test two cases:
+> 
+> 1. buildin usbcore/udc-core
+> 
+>     "usb" directory is created, and usb/devices file is also created by
+> usbcore
+> 
+> 2. build both usbcore and gadget as ko
+> 
+>     usbcore.ko, udc-core.ko and usb-common.ko are created. 
+> 
+>    2.1 
+>        insmod usb-common.ko   // "usb" directory is created
+>        insmod usb-core.ko   // usb/devices file is created
+> 
+>    2.2
+>        rmmod usb-common.ko  // failed, usb_common is in use by usb-core
+> 
+>    2.3 
+>        rmmod usb-core.ko   // usb/devices file is destroyed
+>        rmmod usb-common.ko  // usb directory is destroyed
+> 
+>    2.4 
+>        insmod usb-common.ko   // "usb" directory is created
+>        insmod udc-core.ko
+> 
+>    2.5
+>        rmmod usb-common.ko  // failed, usb_common is in use by udc-core
+> 
+>    2.6 
+>        rmmod udc-core.ko
+>        rmmod usb-common.ko  // usb directory is destroyed
+> 
+> they are all in line with expectations
+
+Wonderful!
+
+Let me fix up the init level, and the build issue tha kbuild found, and
+post a v2 patch.
+
+thanks,
+
+greg k-h
