@@ -2,113 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFF8635D83
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 15:08:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AED4535D67
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 15:00:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727973AbfFENIZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 09:08:25 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44539 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727601AbfFENIY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 09:08:24 -0400
-Received: by mail-lj1-f195.google.com with SMTP id k18so1338776ljc.11;
-        Wed, 05 Jun 2019 06:08:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yz9OuL+nLEMu3OpVhLYOUZixMuQM2Gz1jkl0HwzACWc=;
-        b=M9/2g71pWTCuGuO91O3KBaZXKeMFozaH+pL3v52JU7CZl/CyC67SgvFwj8xX/SWJZe
-         F63FI8EV3UBAyy152hEXZwjMglIG9BpxmaZYX0SwgzKfhtCE8U/+DaUA3DFqUlDvmBPD
-         cxelXlDFcO04WcmceEtwE12hvuW7UmBA0t1rzFkY8BNFUq2W3S2kgJrG9q0tEtnv2kmP
-         1lxYrqtwz54QLILRrzt1lnempNlwYvsJ6JKLjAXdV8wAHfCZtrcwvz4NnQdd49cZZ7jb
-         yzU+OwKf6YOFvkx2nKvaIwzKsM1SUjxFLZyFmUv1JBfIXSvQglJdRE8DD9U2CDUI6Qzx
-         xdKQ==
-X-Gm-Message-State: APjAAAWS2RxpI6KkKgbTuYKPOFznzZCnLiVauisMCiWd9GIBl7lilqEK
-        3XLyqd9IeKn5Su3+m1VFX9EB7Y/CwwDeQVRB91d/NQ==
-X-Google-Smtp-Source: APXvYqyHzb7fPX9GJKdP7LOu6W54B5uLKXCFgoqcuAX2lZKLhMTm7841KLlt2nzYN5ukIGykWmmzlWhtO8xEHwRCOdI=
-X-Received: by 2002:a2e:7f15:: with SMTP id a21mr3214097ljd.51.1559740102651;
- Wed, 05 Jun 2019 06:08:22 -0700 (PDT)
+        id S1727882AbfFENAe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 09:00:34 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:18084 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727601AbfFENAe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 09:00:34 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 5444C141E15664E96DBB;
+        Wed,  5 Jun 2019 21:00:31 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 5 Jun 2019 21:00:21 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     Mike Isely <isely@pobox.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        <linux-media@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH] media: pvrusb2: fix null-ptr-deref in class_unregister()
+Date:   Wed, 5 Jun 2019 21:08:20 +0800
+Message-ID: <20190605130820.19306-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <1559710142-29161-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdUqajM2yR72AYE5ppp-RJumfoG2+YArEzLiJvt55_1k4g@mail.gmail.com> <OSAPR01MB30897161EF40942B1E561232D8160@OSAPR01MB3089.jpnprd01.prod.outlook.com>
-In-Reply-To: <OSAPR01MB30897161EF40942B1E561232D8160@OSAPR01MB3089.jpnprd01.prod.outlook.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 5 Jun 2019 15:08:10 +0200
-Message-ID: <CAMuHMdVHpOULpusZeOJvRs8OMoC2JopOqrK9Q8KeCxtyEbz0qA@mail.gmail.com>
-Subject: Re: [PATCH] phy: renesas: rcar-gen3-usb2: fix imbalance powered flag
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: multipart/mixed; boundary="000000000000c2cf90058a934a75"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---000000000000c2cf90058a934a75
-Content-Type: text/plain; charset="UTF-8"
+The class_ptr will be NULL if pvr2_sysfs_class_create() fails
+in pvr_init(), when call pvr2_sysfs_class_destroy(), it will
+lead to null-ptr-deref, fix it.
 
-Hi Shimoda-san,
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+---
+ drivers/media/usb/pvrusb2/pvrusb2-sysfs.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-On Wed, Jun 5, 2019 at 2:12 PM Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> > From: Geert Uytterhoeven, Sent: Wednesday, June 5, 2019 6:25 PM
-> <snip>
-> > Thank you, this seems to fix the warning, so
-> > Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Thank you for the testing!
->
-> > However, the other imbalance (phy-ee080200.usb-phy.6 enabling its
-> > regulator during each system resume phase, but never touching it
-> > otherwise) is still present.
->
-> Umm, since I'd like to investigate this,
-> would you share your debug print patch?
-
-Attached.
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/media/usb/pvrusb2/pvrusb2-sysfs.c b/drivers/media/usb/pvrusb2/pvrusb2-sysfs.c
+index 7bc6d090358e..b6c6b314fadc 100644
+--- a/drivers/media/usb/pvrusb2/pvrusb2-sysfs.c
++++ b/drivers/media/usb/pvrusb2/pvrusb2-sysfs.c
+@@ -802,7 +802,8 @@ struct pvr2_sysfs_class *pvr2_sysfs_class_create(void)
+ void pvr2_sysfs_class_destroy(struct pvr2_sysfs_class *clp)
+ {
+ 	pvr2_sysfs_trace("Unregistering pvr2_sysfs_class id=%p", clp);
+-	class_unregister(&clp->class);
++	if (clp)
++		class_unregister(&clp->class);
+ }
+ 
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.20.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
-
---000000000000c2cf90058a934a75
-Content-Type: text/x-patch; charset="US-ASCII"; name="phy-rcar-gen3-usb2-debug.patch"
-Content-Disposition: attachment; filename="phy-rcar-gen3-usb2-debug.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_jwj8z49l0>
-X-Attachment-Id: f_jwj8z49l0
-
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGh5L3JlbmVzYXMvcGh5LXJjYXItZ2VuMy11c2IyLmMgYi9k
-cml2ZXJzL3BoeS9yZW5lc2FzL3BoeS1yY2FyLWdlbjMtdXNiMi5jCmluZGV4IGRkMmQ3MjkwY2Zh
-ZGUyOGQuLjFkN2QyOGNmMGE3NzMwZTIgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvcGh5L3JlbmVzYXMv
-cGh5LXJjYXItZ2VuMy11c2IyLmMKKysrIGIvZHJpdmVycy9waHkvcmVuZXNhcy9waHktcmNhci1n
-ZW4zLXVzYjIuYwpAQCAtNDQzLDEwICs0NDMsMTMgQEAgc3RhdGljIGludCByY2FyX2dlbjNfcGh5
-X3VzYjJfcG93ZXJfb24oc3RydWN0IHBoeSAqcCkKIAkJZ290byBvdXQ7CiAKIAlpZiAoY2hhbm5l
-bC0+dmJ1cykgeworZGV2X2luZm8oJnAtPmRldiwgIiVzOiBFbmFibGluZyByZWd1bGF0b3JcbiIs
-IF9fZnVuY19fKTsKIAkJcmV0ID0gcmVndWxhdG9yX2VuYWJsZShjaGFubmVsLT52YnVzKTsKK2Rl
-dl9pbmZvKCZwLT5kZXYsICIlczogcmVndWxhdG9yX2VuYWJsZSgpIHJldHVybmVkICVkXG4iLCBf
-X2Z1bmNfXywgcmV0KTsKIAkJaWYgKHJldCkKIAkJCWdvdG8gb3V0OwogCX0KK2Vsc2UgZGV2X2lu
-Zm8oJnAtPmRldiwgIiVzOiBOb3QgZW5hYmxpbmcgcmVndWxhdG9yXG4iLCBfX2Z1bmNfXyk7CiAK
-IAl2YWwgPSByZWFkbCh1c2IyX2Jhc2UgKyBVU0IyX1VTQkNUUik7CiAJdmFsIHw9IFVTQjJfVVNC
-Q1RSX1BMTF9SU1Q7CkBAIC00NzMsNyArNDc2LDEyIEBAIHN0YXRpYyBpbnQgcmNhcl9nZW4zX3Bo
-eV91c2IyX3Bvd2VyX29mZihzdHJ1Y3QgcGh5ICpwKQogCQlyZXR1cm4gMDsKIAogCWlmIChjaGFu
-bmVsLT52YnVzKQoreworZGV2X2luZm8oJnAtPmRldiwgIiVzOiBEaXNhYmxpbmcgcmVndWxhdG9y
-XG4iLCBfX2Z1bmNfXyk7CiAJCXJldCA9IHJlZ3VsYXRvcl9kaXNhYmxlKGNoYW5uZWwtPnZidXMp
-OworZGV2X2luZm8oJnAtPmRldiwgIiVzOiByZWd1bGF0b3JfZGlzYWJsZSgpIHJldHVybmVkICVk
-XG4iLCBfX2Z1bmNfXywgcmV0KTsKK30KK2Vsc2UgZGV2X2luZm8oJnAtPmRldiwgIiVzOiBOb3Qg
-ZGlzYWJsaW5nIHJlZ3VsYXRvclxuIiwgX19mdW5jX18pOwogCiAJcmV0dXJuIHJldDsKIH0K
---000000000000c2cf90058a934a75--
