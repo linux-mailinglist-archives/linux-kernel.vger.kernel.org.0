@@ -2,97 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C446C36558
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 22:23:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF72D365D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 22:44:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726711AbfFEUWy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 16:22:54 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:46799 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726561AbfFEUWy (ORCPT
+        id S1726844AbfFEUnZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 16:43:25 -0400
+Received: from gateway36.websitewelcome.com ([192.185.184.18]:11927 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726723AbfFEUnT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 16:22:54 -0400
-Received: by mail-qt1-f196.google.com with SMTP id z19so10249qtz.13
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 13:22:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=marek-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=QJQbMka1MXUwYIt/ZO5sWq6DO1jrK8MhlctrAEsYl7o=;
-        b=z/jx0n6rsGTbQSFzvt5ikx9wlxvOJwDIcrBdGcbuAJ/vYaJszYqgNGBH/ysXQVLZ9V
-         8Oq41zXAr8lov85dQndkojs6gARfWDm/dnN46Kzi/+47f94ktklVlvO4lfn/4dmqBz6e
-         415MTiIZ57QU/NAdAz5Ty0gXI4jQN05qF/kQ0Fe8rrLAbBZTkI1695u8eh4+qjhq41j2
-         5UsawJrak9nMB1MHo45kAXNfidWNFXSeTpuUu36BkKQIi3JimeYc4To6UromjR6erZsJ
-         s8pVmhGSRnZazsg41G6BxAv3om6f5TdgWuHTSmOP1j93bQX9FetCg9b3PNZq4cyxclpl
-         ZrrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=QJQbMka1MXUwYIt/ZO5sWq6DO1jrK8MhlctrAEsYl7o=;
-        b=gVVZW2HYcl4OBm6LlcQIhwSeF7OVCo98Hvw0xzXr6JptmDVCnl3XlCjOQubHijooxI
-         +fTGKQtb+wIhO4ytMovVn/XF2zAOrPH42JHAtLpwZQFleNgGNLOR4P2jYgqH+k6p53Et
-         E29/Tg5LTl/0qxjGIZzi7fpFR7TQLsT4Vuma0WCweyySm31HY6hym7ZIdQsI2iHqYTvQ
-         WMY58xonUrK7vJqB2gy/YU1SLkflAVVvxEwCzjXjfPQFc5MqF4+QK2RLnWDC30Aj/sME
-         /yUvGrZ1MVf5A24SKiOZDO7zqt3atjOan63xOdfV6wyjZwNpjW76Ds67Eqz7R9U1AJwE
-         l28Q==
-X-Gm-Message-State: APjAAAUVXTjuAZLAkC0zVLz0kwM2nbRKXXe564CMsTAaOzany58WmnKa
-        AT7fUdb2JGNn5SkULB+DuOEijw==
-X-Google-Smtp-Source: APXvYqz/pc+6CZnS6Ffj6aSGLxLVCXIV4qPrJdrKC4gzOOijyHDtYguQjYVphUllVM9vfHQKIaUIMA==
-X-Received: by 2002:aed:378a:: with SMTP id j10mr37083052qtb.6.1559766173362;
-        Wed, 05 Jun 2019 13:22:53 -0700 (PDT)
-Received: from localhost.localdomain ([147.253.86.153])
-        by smtp.gmail.com with ESMTPSA id d38sm7565318qtb.95.2019.06.05.13.22.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Jun 2019 13:22:52 -0700 (PDT)
-From:   Jonathan Marek <jonathan@marek.ca>
-Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org (open list:QUALCOMM VENUS VIDEO ACCELERATOR
-        DRIVER),
-        linux-arm-msm@vger.kernel.org (open list:QUALCOMM VENUS VIDEO
-        ACCELERATOR DRIVER), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] Revert "media: hfi_parser: don't trick gcc with a wrong expected size"
-Date:   Wed,  5 Jun 2019 16:19:40 -0400
-Message-Id: <20190605201941.4150-1-jonathan@marek.ca>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        Wed, 5 Jun 2019 16:43:19 -0400
+X-Greylist: delayed 1372 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Jun 2019 16:43:19 EDT
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 1B6BE400F3A02
+        for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2019 14:41:20 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id YcOYhYv8biQerYcOYh83JT; Wed, 05 Jun 2019 15:20:26 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.127.120] (port=33986 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hYcOW-003sAf-OK; Wed, 05 Jun 2019 15:20:25 -0500
+Date:   Wed, 5 Jun 2019 15:20:24 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Robert Moore <robert.moore@intel.com>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Len Brown <lenb@kernel.org>
+Cc:     linux-acpi@vger.kernel.org, devel@acpica.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] ACPICA: utids: Use struct_size() helper
+Message-ID: <20190605202024.GA20848@embeddedor>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.127.120
+X-Source-L: No
+X-Exim-ID: 1hYcOW-003sAf-OK
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.127.120]:33986
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 11
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit ded716267196862809e5926072adc962a611a1e3.
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-This change doesn't make any sense and breaks the driver.
+struct acpi_pnp_device_id_list {
+	...
+        struct acpi_pnp_device_id ids[1];       /* ID array */
+};
 
-Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+Make use of the struct_size() helper instead of an open-coded version
+in order to avoid any potential type mistakes.
+
+So, replace the following form:
+
+sizeof(struct acpi_pnp_device_id_list) + ((count - 1) * sizeof(struct acpi_pnp_device_id))
+
+with:
+
+struct_size(cid_list, ids, count - 1)
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/media/platform/qcom/venus/hfi_helper.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Notice that checkpatch reports the following warning:
 
-diff --git a/drivers/media/platform/qcom/venus/hfi_helper.h b/drivers/media/platform/qcom/venus/hfi_helper.h
-index 34ea503a9842..15804ad7e65d 100644
---- a/drivers/media/platform/qcom/venus/hfi_helper.h
-+++ b/drivers/media/platform/qcom/venus/hfi_helper.h
-@@ -569,7 +569,7 @@ struct hfi_capability {
- 
- struct hfi_capabilities {
- 	u32 num_capabilities;
--	struct hfi_capability *data;
-+	struct hfi_capability data[1];
- };
- 
- #define HFI_DEBUG_MSG_LOW	0x01
-@@ -726,7 +726,7 @@ struct hfi_profile_level {
- 
- struct hfi_profile_level_supported {
- 	u32 profile_count;
--	struct hfi_profile_level *profile_level;
-+	struct hfi_profile_level profile_level[1];
- };
- 
- struct hfi_quality_vs_speed {
+WARNING: line over 80 characters
+#54: FILE: drivers/acpi/acpica/utids.c:265:
++	cid_list_size = struct_size(cid_list, ids, count - 1) + string_area_size;
+
+The line above is 81-character long. So, I think we should be fine
+with that, instead of split it into two lines.
+
+Thanks
+
+ Gustavo
+
+ drivers/acpi/acpica/utids.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/acpi/acpica/utids.c b/drivers/acpi/acpica/utids.c
+index e805abdd95b8..737aa6a8f362 100644
+--- a/drivers/acpi/acpica/utids.c
++++ b/drivers/acpi/acpica/utids.c
+@@ -202,7 +202,7 @@ acpi_ut_execute_CID(struct acpi_namespace_node *device_node,
+ 	char *next_id_string;
+ 	u32 string_area_size;
+ 	u32 length;
+-	u32 cid_list_size;
++	size_t cid_list_size;
+ 	acpi_status status;
+ 	u32 count;
+ 	u32 i;
+@@ -262,10 +262,7 @@ acpi_ut_execute_CID(struct acpi_namespace_node *device_node,
+ 	 * 2) Size of the CID PNP_DEVICE_ID array +
+ 	 * 3) Size of the actual CID strings
+ 	 */
+-	cid_list_size = sizeof(struct acpi_pnp_device_id_list) +
+-	    ((count - 1) * sizeof(struct acpi_pnp_device_id)) +
+-	    string_area_size;
+-
++	cid_list_size = struct_size(cid_list, ids, count - 1) + string_area_size;
+ 	cid_list = ACPI_ALLOCATE_ZEROED(cid_list_size);
+ 	if (!cid_list) {
+ 		status = AE_NO_MEMORY;
 -- 
-2.17.1
+2.21.0
 
