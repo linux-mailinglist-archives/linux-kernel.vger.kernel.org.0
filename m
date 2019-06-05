@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D4CC35768
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 09:06:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33BD13575F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 09:05:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726824AbfFEHFk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 03:05:40 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:39282 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726777AbfFEHFg (ORCPT
+        id S1726817AbfFEHFm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 03:05:42 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46621 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726809AbfFEHFj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 03:05:36 -0400
-Received: by mail-pg1-f195.google.com with SMTP id 196so11881194pgc.6
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 00:05:36 -0700 (PDT)
+        Wed, 5 Jun 2019 03:05:39 -0400
+Received: by mail-pl1-f193.google.com with SMTP id e5so7608257pls.13
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 00:05:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=QQDXy+HnUfgnkG61CQzmVPka5AA3kE5ajdtEw9kTzGA=;
-        b=OVPIYke/b/AIKAzyPux8I7yZ7ovCGIn+2LxvLJt9s/ISoCcFERqZq3sO3IP56UsOKN
-         32Kv5LyNimcOqysNm/VvAy1lvohHuI9wnd1Ag9QdqzJbxy4G1msJDx/z+r6t3UOMKZTS
-         byGyg1/N40tuVrl/IgqUahQXHjQ/JYxZU9EV1yz5iY7AjUJt0qvnpfstKDNZKCIFaVcK
-         Mr078IyHi3Q50uvBDFu4F4rZeXw19PjqtoSxByzV4NxEKEwBlF/hIj3tIzAQTglMjYQW
-         O8lW0mBBRysyn4RW4RtgTV1ihhMPC2wLQtfdSZlDiN5gDhF/nNrePEL4PConR1Fagd5D
-         Dd6A==
+        bh=lnLLdVOlusYEYXI+itkoU5Jat5K5TT8w7N1F2rwe390=;
+        b=XUdmC/bvWolT7eI9YQ2cUFGxT2x+UR40fKEvKzQytbCtCbLnVXn60ri7ZaGHoMx0GJ
+         gHZMwaJ6ULtsNFeV3IRzhIAMLH9gi897sX3lZoyKqf1NqL389JgUcjcA938NcnXuyQxg
+         zyy2gu9IBni0w5Y1sX4HSUvJxt+UaZK+svntZSnv0eWIgJyzhbx0Om8SL83kUCQ4dQlM
+         Up5MZamVlHETacU8vcyB6GOrmyLuxwUD4XYMv1fgLBVVM04j8B1RDH1WDRYwyAhFuFo/
+         SWhV8WXS23ZWu4J6clcwGKBzcCm7bZxM8l3G94IId7hQL6GyPWPH7tOkpvtmA06S5xok
+         yZ4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=QQDXy+HnUfgnkG61CQzmVPka5AA3kE5ajdtEw9kTzGA=;
-        b=XNkILTYZnryeuJaeUUwuQqI8bV8Rn+TjV9SNcTtOwvUMW0qJ3ufaec8wYx8eUtV/sZ
-         Lx7ayHpNoAo8o/ufvlAkoJuxXhZN2qGQVAAfbkuvMHQcHdOodKqJAp3hdkGgcpfwCLJv
-         rI3O4Xd5EabW0LzOg6WrFk18bh87rpUhROqPWbPo1bLAG7R8yefq3r2zkLQVUWZilUZp
-         Yue/k8NxwaTf5T+oxdk/GG7qOYmEhvbUCns90kTleF/1iOlKh+J0RW8RAHB+wVX7YKP4
-         IA8QlSyj7De9fPf70ky7Dflz3AK5IBj8IOs2eWI4wgZXK9NL2BqDELUWdNL+uWljjsWf
-         C4OQ==
-X-Gm-Message-State: APjAAAX6LJlC3T1+N0ZN2KRs+hfHR6nYbNnnRvdEuylg/e1x5ChtO+bN
-        PGyKS96A3E2DsXEtvHmpyCQ=
-X-Google-Smtp-Source: APXvYqyPa/jIWF9TiK5toybcTHSLUzjMSrkUQDGpCbglp7r6fxWNk69jO+RmimgwTrVUa+33h6ONNw==
-X-Received: by 2002:a63:6111:: with SMTP id v17mr2444359pgb.206.1559718335807;
-        Wed, 05 Jun 2019 00:05:35 -0700 (PDT)
+        bh=lnLLdVOlusYEYXI+itkoU5Jat5K5TT8w7N1F2rwe390=;
+        b=s3XfI9oiNNQewZFWgkjZjNYbAvF6h/zcX/5I+Na64FO7FGdQjLKS/TMGRBaeqklyPe
+         Zl39YUBWgg9iUL3hHhUZbxt3hQkJ1Hv39KyA/9zysqBimDAR/xxQ4WBayrnwOL/y7hQ6
+         U0JWRSEHJGtndEaspdCAsFQeCIe7Au7kL2CU3ocYL7JxQ+ZZTmc07zG9yjuXXlAtbOmq
+         0kCq5UhV46pY2dodWYNDMqrCUIRYngQWkmXhdrB4pjJMjxx9tatyPrFcUdAtt7dG0Gze
+         tJcEWk6w960LWlJmFLH4bHksq73JBWTtGVNIaErp1n4u+tIz7HWLbE6sih0qUtT98oop
+         sT4Q==
+X-Gm-Message-State: APjAAAVQb+/KyyAP4e4INcy9ybLuY3Hjty9eRRzRriuaICBbF/P5iPJC
+        2RipCUXolTXXRG8csitVgHQ=
+X-Google-Smtp-Source: APXvYqxosOSGK/X48hpPYA1EtlqllcZl4FXcITFWzaZyuWAPxItNSho0urmjq/AA02M7XKgLnhenPQ==
+X-Received: by 2002:a17:902:988b:: with SMTP id s11mr14564567plp.216.1559718337640;
+        Wed, 05 Jun 2019 00:05:37 -0700 (PDT)
 Received: from localhost.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id d132sm6527348pfd.61.2019.06.05.00.05.34
+        by smtp.gmail.com with ESMTPSA id d132sm6527348pfd.61.2019.06.05.00.05.35
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Jun 2019 00:05:35 -0700 (PDT)
+        Wed, 05 Jun 2019 00:05:37 -0700 (PDT)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -58,9 +58,9 @@ Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
         Chris Healy <cphealy@gmail.com>,
         Lucas Stach <l.stach@pengutronix.de>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 09/15] drm/bridge: tc358767: Use reported AUX transfer size
-Date:   Wed,  5 Jun 2019 00:05:01 -0700
-Message-Id: <20190605070507.11417-10-andrew.smirnov@gmail.com>
+Subject: [PATCH v3 10/15] drm/bridge: tc358767: Add support for address-only I2C transfers
+Date:   Wed,  5 Jun 2019 00:05:02 -0700
+Message-Id: <20190605070507.11417-11-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190605070507.11417-1-andrew.smirnov@gmail.com>
 References: <20190605070507.11417-1-andrew.smirnov@gmail.com>
@@ -71,14 +71,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Don't assume that requested data transfer size is the same as amount
-of data that was transferred. Change the code to get that information
-from DP0_AUXSTATUS instead.
-
-Since the check for AUX_BUSY in tc_aux_get_status() is pointless (it
-will always called after tc_aux_wait_busy()) and there's only one user
-of it, inline its code into tc_aux_transfer() instead of trying to
-accommodate the change above.
+Transfer size of zero means a request to do an address-only
+transfer. Since the HW support this, we probably shouldn't be just
+ignoring such requests. While at it allow DP_AUX_I2C_MOT flag to pass
+through, since it is supported by the HW as well.
 
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Cc: Archit Taneja <architt@codeaurora.org>
@@ -93,84 +89,78 @@ Cc: Lucas Stach <l.stach@pengutronix.de>
 Cc: dri-devel@lists.freedesktop.org
 Cc: linux-kernel@vger.kernel.org
 ---
- drivers/gpu/drm/bridge/tc358767.c | 40 ++++++++++---------------------
- 1 file changed, 12 insertions(+), 28 deletions(-)
+ drivers/gpu/drm/bridge/tc358767.c | 30 +++++++++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
-index 0125e2f7e076..90ec33caacbc 100644
+index 90ec33caacbc..7b84fbb72973 100644
 --- a/drivers/gpu/drm/bridge/tc358767.c
 +++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -152,10 +152,10 @@
- #define DP0_AUXWDATA(i)		(0x066c + (i) * 4)
- #define DP0_AUXRDATA(i)		(0x067c + (i) * 4)
- #define DP0_AUXSTATUS		0x068c
--#define AUX_STATUS_MASK			0xf0
--#define AUX_STATUS_SHIFT		4
--#define AUX_TIMEOUT			BIT(1)
--#define AUX_BUSY			BIT(0)
-+#define AUX_BYTES		GENMASK(15, 8)
-+#define AUX_STATUS		GENMASK(7, 4)
-+#define AUX_TIMEOUT		BIT(1)
-+#define AUX_BUSY		BIT(0)
- #define DP0_AUXI2CADR		0x0698
+@@ -145,6 +145,8 @@
  
- /* Link Training */
-@@ -298,29 +298,6 @@ static int tc_aux_wait_busy(struct tc_data *tc, unsigned int timeout_ms)
- 			       1000, 1000 * timeout_ms);
+ /* AUX channel */
+ #define DP0_AUXCFG0		0x0660
++#define DP0_AUXCFG0_BSIZE	GENMASK(11, 8)
++#define DP0_AUXCFG0_ADDR_ONLY	BIT(4)
+ #define DP0_AUXCFG1		0x0664
+ #define AUX_RX_FILTER_EN		BIT(16)
+ 
+@@ -347,6 +349,18 @@ static int tc_aux_read_data(struct tc_data *tc, void *data, size_t size)
+ 	return size;
  }
  
--static int tc_aux_get_status(struct tc_data *tc, u8 *reply)
--{
--	int ret;
--	u32 value;
--
--	ret = regmap_read(tc->regmap, DP0_AUXSTATUS, &value);
--	if (ret < 0)
--		return ret;
--
--	if (value & AUX_BUSY) {
--		dev_err(tc->dev, "aux busy!\n");
--		return -EBUSY;
--	}
--
--	if (value & AUX_TIMEOUT) {
--		dev_err(tc->dev, "aux access timeout!\n");
--		return -ETIMEDOUT;
--	}
--
--	*reply = (value & AUX_STATUS_MASK) >> AUX_STATUS_SHIFT;
--	return 0;
--}
--
- static int tc_aux_write_data(struct tc_data *tc, const void *data,
- 			     size_t size)
++static u32 tc_auxcfg0(struct drm_dp_aux_msg *msg, size_t size)
++{
++	u32 auxcfg0 = msg->request;
++
++	if (size)
++		auxcfg0 |= FIELD_PREP(DP0_AUXCFG0_BSIZE, size - 1);
++	else
++		auxcfg0 |= DP0_AUXCFG0_ADDR_ONLY;
++
++	return auxcfg0;
++}
++
+ static ssize_t tc_aux_transfer(struct drm_dp_aux *aux,
+ 			       struct drm_dp_aux_msg *msg)
  {
-@@ -376,6 +353,7 @@ static ssize_t tc_aux_transfer(struct drm_dp_aux *aux,
- 	struct tc_data *tc = aux_to_tc(aux);
- 	size_t size = min_t(size_t, DP_AUX_MAX_PAYLOAD_BYTES - 1, msg->size);
- 	u8 request = msg->request & ~DP_AUX_I2C_MOT;
-+	u32 auxstatus;
+@@ -356,9 +370,6 @@ static ssize_t tc_aux_transfer(struct drm_dp_aux *aux,
+ 	u32 auxstatus;
  	int ret;
  
- 	if (size == 0)
-@@ -413,10 +391,16 @@ static ssize_t tc_aux_transfer(struct drm_dp_aux *aux,
+-	if (size == 0)
+-		return 0;
+-
+ 	ret = tc_aux_wait_busy(tc, 100);
+ 	if (ret)
+ 		return ret;
+@@ -382,8 +393,7 @@ static ssize_t tc_aux_transfer(struct drm_dp_aux *aux,
+ 	if (ret)
+ 		return ret;
+ 	/* Start transfer */
+-	ret = regmap_write(tc->regmap, DP0_AUXCFG0,
+-			   ((size - 1) << 8) | request);
++	ret = regmap_write(tc->regmap, DP0_AUXCFG0, tc_auxcfg0(msg, size));
  	if (ret)
  		return ret;
  
--	ret = tc_aux_get_status(tc, &msg->reply);
-+	ret = regmap_read(tc->regmap, DP0_AUXSTATUS, &auxstatus);
- 	if (ret)
- 		return ret;
+@@ -397,8 +407,14 @@ static ssize_t tc_aux_transfer(struct drm_dp_aux *aux,
  
-+	if (auxstatus & AUX_TIMEOUT)
-+		return -ETIMEDOUT;
-+
-+	size = FIELD_GET(AUX_BYTES, auxstatus);
-+	msg->reply = FIELD_GET(AUX_STATUS, auxstatus);
-+
+ 	if (auxstatus & AUX_TIMEOUT)
+ 		return -ETIMEDOUT;
+-
+-	size = FIELD_GET(AUX_BYTES, auxstatus);
++	/*
++	 * For some reason address-only DP_AUX_I2C_WRITE (MOT), still
++	 * reports 1 byte transferred in its status. To deal we that
++	 * we ignore aux_bytes field if we know that this was an
++	 * address-only transfer
++	 */
++	if (size)
++		size = FIELD_GET(AUX_BYTES, auxstatus);
+ 	msg->reply = FIELD_GET(AUX_STATUS, auxstatus);
+ 
  	switch (request) {
- 	case DP_AUX_NATIVE_READ:
- 	case DP_AUX_I2C_READ:
 -- 
 2.21.0
 
