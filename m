@@ -2,127 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D72D35B93
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 13:44:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E98535B6F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 13:43:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727456AbfFELoI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 07:44:08 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:10666 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727791AbfFELoD (ORCPT
+        id S1727511AbfFELnO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 07:43:14 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40607 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727398AbfFELnL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 07:44:03 -0400
-X-UUID: 9c66013344c54c2493c645a8995303be-20190605
-X-UUID: 9c66013344c54c2493c645a8995303be-20190605
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <yongqiang.niu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 755208871; Wed, 05 Jun 2019 19:43:53 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 5 Jun 2019 19:43:51 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 5 Jun 2019 19:43:50 +0800
-From:   <yongqiang.niu@mediatek.com>
-To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Yongqiang Niu <yongqiang.niu@mediatek.com>
-Subject: [PATCH v3, 17/27] drm/mediatek: add gmc_bits for ovl private data
-Date:   Wed, 5 Jun 2019 19:42:56 +0800
-Message-ID: <1559734986-7379-18-git-send-email-yongqiang.niu@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-In-Reply-To: <1559734986-7379-1-git-send-email-yongqiang.niu@mediatek.com>
-References: <1559734986-7379-1-git-send-email-yongqiang.niu@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+        Wed, 5 Jun 2019 07:43:11 -0400
+Received: by mail-wm1-f67.google.com with SMTP id v19so1920593wmj.5
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 04:43:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=slZHnEyI/3MoxuWJDHsmJjpXD82N/IlcEekyL2S9VGE=;
+        b=j2KSLfxvw6LpCJS/q1Nf891vaquUjMnjhjHXaXKoNlaNzIsTXGlKgIESq9y0v20BQr
+         ZrA//WM6B3HdAGlJ81JT9BHzbVGmBgirG05tlCUS9ecIsCh3FKd+KD9NlgCEok9awU0Z
+         Im1qfaKG6HeX/aXkgj5tg/rDIXO8cYV+PgRRyHkM/ELMWg3Msw5/a0JLuq1sYrG7Lqe6
+         qUQQCD4zZGB8cnfGOv0LIkW0y4ZT3RPbUPMMtH+MveZSRCaTP2svASVC6GvSh25s1oLW
+         3R4BK00UPLvxseS4xz8nb8pLNI7pAGEE1H7j+sTuvYEJWeC9wYe3recdfqkXnR2JG4rA
+         Zjig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=slZHnEyI/3MoxuWJDHsmJjpXD82N/IlcEekyL2S9VGE=;
+        b=Hx6hMLcPvYrK/kJsYE3yTst6v4sCcmuq5eBs6WnCIjEKZzVcZ+DGT2Am8j8Iy9+sWi
+         YTfnKJbzu+XdAMAzpWsVbLLvr4qQBOAPWfik10WuuhLHzJ49rCEZqXqN5YWWJI2aXZkk
+         8+jDox1tFsl2aYCuTtdMMAN4dFUFsHToxVi2kT0Fgky3CSeWGNNh4WutWMVCbLXbwKv3
+         7uX+0IIrlBHsSaeLB2d+1QYV+g7HxR+CqMEuTnAYrUItoPQCJFrmiS4yedU6PfPHX3Vm
+         8GW8cksLN4xhXZzC7z49uWT9+l2lTabWl8AOrWv8LSBm9odisQCLRx+YmaWY0Ht1ynHW
+         uVog==
+X-Gm-Message-State: APjAAAXgAEN0vz5n37N5FWTkLvDPSiLGuhl26TeTwkWeRhesD/Qg6PP9
+        GHqjtkc5SODXZu/GOGKYdnZ1sw==
+X-Google-Smtp-Source: APXvYqxVTptCcX2uGixf0N44Kl5OHSxzgZYUvfvy2V4qwpWpSrfBEjEmKdSrH6pQUVJdJFXxKpsnzw==
+X-Received: by 2002:a1c:3d82:: with SMTP id k124mr21709121wma.162.1559734989668;
+        Wed, 05 Jun 2019 04:43:09 -0700 (PDT)
+Received: from localhost.localdomain ([2.27.167.43])
+        by smtp.gmail.com with ESMTPSA id 34sm27718740wre.32.2019.06.05.04.43.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Jun 2019 04:43:09 -0700 (PDT)
+From:   Lee Jones <lee.jones@linaro.org>
+To:     alokc@codeaurora.org, andy.gross@linaro.org,
+        david.brown@linaro.org, wsa+renesas@sang-engineering.com,
+        bjorn.andersson@linaro.org, linus.walleij@linaro.org,
+        balbi@kernel.org, gregkh@linuxfoundation.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        jlhugo@gmail.com, linux-i2c@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-usb@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 3/8] pinctrl: msm: Add ability for drivers to supply a reserved GPIO list
+Date:   Wed,  5 Jun 2019 12:42:57 +0100
+Message-Id: <20190605114302.22509-3-lee.jones@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190605114302.22509-1-lee.jones@linaro.org>
+References: <20190605114302.22509-1-lee.jones@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yongqiang Niu <yongqiang.niu@mediatek.com>
+When booting MSM based platforms with Device Tree or some ACPI
+implementations, it is possible to provide a list of reserved pins
+via the 'gpio-reserved-ranges' and 'gpios' properties respectively.
+However some ACPI tables are not populated with this information,
+thus it has to come from a knowledgable device driver instead.
 
-This patch add gmc_bits for ovl private data
-GMC register was set RDMA ultra and pre-ultra threshold.
-10bit GMC register define is different with other SOC, gmc_thrshd_l not
-used.
+Here we provide the MSM common driver with additional support to
+parse this informtion and correctly populate the widely used
+'valid_mask'.
 
-Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+ drivers/pinctrl/qcom/pinctrl-msm.c | 18 ++++++++++++++++++
+ drivers/pinctrl/qcom/pinctrl-msm.h |  1 +
+ 2 files changed, 19 insertions(+)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-index 28d1911..afb313c 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-@@ -39,7 +39,9 @@
- #define DISP_REG_OVL_ADDR_MT8173		0x0f40
- #define DISP_REG_OVL_ADDR(ovl, n)		((ovl)->data->addr + 0x20 * (n))
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index ee8119879c4c..3ac740b36508 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -607,8 +607,23 @@ static int msm_gpio_init_valid_mask(struct gpio_chip *chip)
+ 	int ret;
+ 	unsigned int len, i;
+ 	unsigned int max_gpios = pctrl->soc->ngpios;
++	const int *reserved = pctrl->soc->reserved_gpios;
+ 	u16 *tmp;
  
--#define	OVL_RDMA_MEM_GMC	0x40402020
-+#define GMC_THRESHOLD_BITS	16
-+#define GMC_THRESHOLD_HIGH	((1 << GMC_THRESHOLD_BITS) / 4)
-+#define GMC_THRESHOLD_LOW	((1 << GMC_THRESHOLD_BITS) / 8)
- 
- #define OVL_CON_BYTE_SWAP	BIT(24)
- #define OVL_CON_MTX_YUV_TO_RGB	(6 << 16)
-@@ -57,6 +59,7 @@
- 
- struct mtk_disp_ovl_data {
- 	unsigned int addr;
-+	unsigned int gmc_bits;
- 	bool fmt_rgb565_is_0;
- };
- 
-@@ -140,9 +143,23 @@ static unsigned int mtk_ovl_layer_nr(struct mtk_ddp_comp *comp)
- static void mtk_ovl_layer_on(struct mtk_ddp_comp *comp, unsigned int idx)
- {
- 	unsigned int reg;
-+	unsigned int gmc_thrshd_l;
-+	unsigned int gmc_thrshd_h;
-+	unsigned int gmc_value;
-+	struct mtk_disp_ovl *ovl = comp_to_ovl(comp);
- 
- 	writel(0x1, comp->regs + DISP_REG_OVL_RDMA_CTRL(idx));
--	writel(OVL_RDMA_MEM_GMC, comp->regs + DISP_REG_OVL_RDMA_GMC(idx));
++	/* Driver provided reserved list overrides DT and ACPI */
++	if (reserved) {
++		bitmap_fill(chip->valid_mask, max_gpios);
++		for (i = 0; reserved[i] >= 0; i++) {
++			if (i >= max_gpios || reserved[i] >= max_gpios) {
++				dev_err(pctrl->dev, "invalid list of reserved GPIOs\n");
++				return -EINVAL;
++			}
++			clear_bit(reserved[i], chip->valid_mask);
++		}
 +
-+	gmc_thrshd_l = GMC_THRESHOLD_LOW >>
-+		      (GMC_THRESHOLD_BITS - ovl->data->gmc_bits);
-+	gmc_thrshd_h = GMC_THRESHOLD_HIGH >>
-+		      (GMC_THRESHOLD_BITS - ovl->data->gmc_bits);
-+	if (ovl->data->gmc_bits == 10)
-+		gmc_value = gmc_thrshd_h | gmc_thrshd_h << 16;
-+	else
-+		gmc_value = gmc_thrshd_l | gmc_thrshd_l << 8 |
-+			    gmc_thrshd_h << 16 | gmc_thrshd_h << 24;
-+	writel(gmc_value, comp->regs + DISP_REG_OVL_RDMA_GMC(idx));
++		return 0;
++	}
++
+ 	/* The number of GPIOs in the ACPI tables */
+ 	len = ret = device_property_read_u16_array(pctrl->dev, "gpios", NULL,
+ 						   0);
+@@ -964,6 +979,9 @@ static void msm_gpio_irq_handler(struct irq_desc *desc)
  
- 	reg = readl(comp->regs + DISP_REG_OVL_SRC_CON);
- 	reg = reg | BIT(idx);
-@@ -324,11 +341,13 @@ static int mtk_disp_ovl_remove(struct platform_device *pdev)
+ static bool msm_gpio_needs_valid_mask(struct msm_pinctrl *pctrl)
+ {
++	if (pctrl->soc->reserved_gpios)
++		return true;
++
+ 	return device_property_read_u16_array(pctrl->dev, "gpios", NULL, 0) > 0;
+ }
  
- static const struct mtk_disp_ovl_data mt2701_ovl_driver_data = {
- 	.addr = DISP_REG_OVL_ADDR_MT2701,
-+	.gmc_bits = 8,
- 	.fmt_rgb565_is_0 = false,
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.h b/drivers/pinctrl/qcom/pinctrl-msm.h
+index c12048e54a6f..23b93ae92269 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.h
++++ b/drivers/pinctrl/qcom/pinctrl-msm.h
+@@ -121,6 +121,7 @@ struct msm_pinctrl_soc_data {
+ 	bool pull_no_keeper;
+ 	const char *const *tiles;
+ 	unsigned int ntiles;
++	const int *reserved_gpios;
  };
  
- static const struct mtk_disp_ovl_data mt8173_ovl_driver_data = {
- 	.addr = DISP_REG_OVL_ADDR_MT8173,
-+	.gmc_bits = 8,
- 	.fmt_rgb565_is_0 = true,
- };
- 
+ extern const struct dev_pm_ops msm_pinctrl_dev_pm_ops;
 -- 
-1.8.1.1.dirty
+2.17.1
 
