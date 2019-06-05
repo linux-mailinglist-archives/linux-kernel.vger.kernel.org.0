@@ -2,124 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E75EB35848
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 10:02:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E93BB35840
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 10:02:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726789AbfFEICs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 04:02:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34236 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726667AbfFEICq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 04:02:46 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6ECA32083E;
-        Wed,  5 Jun 2019 08:02:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559721764;
-        bh=LwRQOHtpKX9zl3Ma2xTZzw3nDRco9+SY8EUjzp0UTD0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Pp9JlNNoqPiFdhiBlFUz5dnRgyoXrk+c8wyx1obeuoH6pzd0+ewihSrjy2sOv3sa1
-         VvxARSlxSFMe1IktEnbPDGsOVeBtRzqHunGXXITMPPTQDHGLuFEChS9rGoPPr2WICQ
-         O3aSI4V50URh+N/hfjgB8Gsp+p3w166yoc4IjX/0=
-Date:   Wed, 5 Jun 2019 10:02:41 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Guenter Roeck <groeck@google.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Benson Leung <bleung@chromium.org>, kernel@collabora.com,
-        Dmitry Torokhov <dtor@chromium.org>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-doc@vger.kernel.org, Enno Luebbers <enno.luebbers@intel.com>,
-        Guido Kiener <guido@kiener-muenchen.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Jonathan Corbet <corbet@lwn.net>, Wu Hao <hao.wu@intel.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Jilayne Lovejoy <opensource@jilayne.com>
-Subject: Re: [PATCH 03/10] mfd / platform: cros_ec: Miscellaneous character
- device to talk with the EC
-Message-ID: <20190605080241.GC9693@kroah.com>
-References: <20190604152019.16100-1-enric.balletbo@collabora.com>
- <20190604152019.16100-4-enric.balletbo@collabora.com>
- <20190604155228.GB9981@kroah.com>
- <beaf3554bb85974eb118d7722ca55f1823b1850c.camel@collabora.com>
- <20190604183527.GA20098@kroah.com>
- <CABXOdTfU9KaBDhQcwvBGWCmVfnd02_ZFmPGtJsCtGQ-iO9A3Qw@mail.gmail.com>
- <20190604185953.GA2061@kroah.com>
- <20190605064839.GH4797@dell>
+        id S1726572AbfFEIC3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 04:02:29 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:53702 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726501AbfFEIC3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 04:02:29 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5582RwT002059;
+        Wed, 5 Jun 2019 03:02:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1559721747;
+        bh=tlK8C79UaFoXksJbR8g2bq/rPB82+KKuSQCR5rMiw1s=;
+        h=From:To:CC:Subject:Date;
+        b=lF3W0RoixtPXJN5J32p8vKFZvxwt3z56x2fqBlh/x1mZP5T46iubO+lDB+bLVGE7v
+         fF6dNMTO5FwkJw4T8hGkTKNc86tXY/avEkM50SgH2HxJbcrnnTLWztZYw1aGhGUENO
+         Nn/H8qcPq3kqgTacuymkNKz9KI7OtphWJtm6eDsc=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5582R2j128351
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 5 Jun 2019 03:02:27 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 5 Jun
+ 2019 03:02:26 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 5 Jun 2019 03:02:26 -0500
+Received: from a0393675ula.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5582N7l041815;
+        Wed, 5 Jun 2019 03:02:24 -0500
+From:   Keerthy <j-keerthy@ti.com>
+To:     <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>
+CC:     <lokeshvutla@ti.com>, <linux-gpio@vger.kernel.org>,
+        <t-kristo@ti.com>, <j-keerthy@ti.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 0/3] gpio: davinci: Add support for TI K3 AM6 platform
+Date:   Wed, 5 Jun 2019 13:32:56 +0530
+Message-ID: <20190605080259.2462-1-j-keerthy@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190605064839.GH4797@dell>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 05, 2019 at 07:48:39AM +0100, Lee Jones wrote:
-> On Tue, 04 Jun 2019, Greg Kroah-Hartman wrote:
-> > On Tue, Jun 04, 2019 at 11:39:21AM -0700, Guenter Roeck wrote:
-> > > On Tue, Jun 4, 2019 at 11:35 AM Greg Kroah-Hartman
-> > > <gregkh@linuxfoundation.org> wrote:
-> > > >
-> > > > On Tue, Jun 04, 2019 at 01:58:38PM -0300, Ezequiel Garcia wrote:
-> > > > > Hey Greg,
-> > > > >
-> > > > > > > + dev_info(&pdev->dev, "Created misc device /dev/%s\n",
-> > > > > > > +          data->misc.name);
-> > > > > >
-> > > > > > No need to be noisy, if all goes well, your code should be quiet.
-> > > > > >
-> > > > >
-> > > > > I sometimes wonder about this being noise or not, so I will slightly
-> > > > > hijack this thread for this discussion.
-> > > > >
-> > > > > >From a kernel developer point-of-view, or even from a platform
-> > > > > developer or user with a debugging hat point-of-view, having
-> > > > > a "device created" or "device registered" message is often very useful.
-> > > >
-> > > > For you, yes.  For someone with 30000 devices attached to their system,
-> > > > it is not, and causes booting to take longer than it should be.
-> 
-> Who has 30,000 devices attached to their systems?
+K3 AM6 platform has 2 instances of gpio banks on main domain
+and 1 instance on wakeup domin. All are capable of generating
+banked interrupts.
 
-More than you might imagine.
+Changes in v2:
 
-> I would argue that
-> in these special corner-cases, they should knock the log-level *down*
-> a notch.  For the rest of us who run normal platforms, an extra second
-> of boot time renders a more forthcoming/useful system than if each of
-> our devices initialised silently.
-> 
-> Personally I like to know what devices I have on my system, and the
-> kernel log is the first place I look.  As far as I'm concerned, for
-> the most part, if it's not in the kernel log, I don't have it.
+  * Introduced a separate compatible for am654. 
 
-Then you "do not have" lots of devices, as we have been removing these
-messages for a number of years now :)
+Documentation patch link: https://patchwork.kernel.org/patch/10976445/
 
->  "Oh wow, I didn't know I had XXX functionality on this platform."
-> 
-> In my real job, I am currently enabling some newly released AArch64
-> based laptops for booting with ACPI.  I must have wasted a day whilst
-> enabling some of the devices the system relies upon, just to find
-> out that 90% of them were actually probing semi-fine (at least probe()
-> was succeeding), just silently. *grumble*
+Keerthy (3):
+  gpio: davinci: Fix the compiler warning with ARM64 config enabled
+  gpio: davinci: Add new compatible for K3 AM654 SoCs
+  gpio: Davinci: Add K3 dependencies
 
-Yup, that's normal.  If you want to see what devices are in the system,
-look in /sys/devices/ as that is what it is for, not the kernel log.
+ drivers/gpio/Kconfig        | 2 +-
+ drivers/gpio/gpio-davinci.c | 7 ++++---
+ 2 files changed, 5 insertions(+), 4 deletions(-)
 
-thanks,
+-- 
+2.17.1
 
-greg k-h
