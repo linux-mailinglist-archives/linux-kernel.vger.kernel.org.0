@@ -2,159 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 400F9358C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 10:40:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EA28358CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 10:41:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726978AbfFEIkI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 04:40:08 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42235 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726732AbfFEIkH (ORCPT
+        id S1726873AbfFEIlI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 04:41:08 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:13934 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726636AbfFEIlI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 04:40:07 -0400
-Received: by mail-wr1-f66.google.com with SMTP id x17so501024wrl.9
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 01:40:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=7sYE2J+nNG7NcVyj1SpqdIcPNhqdKRKxo+uFloEUcYA=;
-        b=LCtqBMObpnEJUzXhUa2KBDhhGtP6Z0Je9IZDWPItajoEPZckstJr8HVAGpXh74zze7
-         0U2lov6PpWF2ZgX4m9OiDIkaqFMXirtnwusgz3HFK2Po0H1w5ZbljIi/thGgvdmpWJnC
-         dRANufgc3l16wDWa/fliGfphJD8xHnPpdS7D7k5zrj+LbYrowjiPFvm5n9YWjAqTShL7
-         S4gVW0qZR6Sqce4NauGzvT70h7Xm7Tus3o91Ka/RDLAshZTBNtDYvOfUuadbqiHrNW8V
-         Dc7cJFhnVjzkiLxR7XTBBGKldcYHajIdTpXj4fl1wC3ThKzZW0RekwieUFH+6/d8vBKN
-         g/SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=7sYE2J+nNG7NcVyj1SpqdIcPNhqdKRKxo+uFloEUcYA=;
-        b=Crv+oFP/lBA/5VUDKPWKNhTWMao2/speLOgoHSBMOK7pyjR7e0bYomMJwY0eNJ1uQH
-         rCloqwhNvax33bP9qevq7MISnCJz2Grw2K133RgL3KI6zFmUc94NNGdnxW92kMNx9Eka
-         5JFQslZSG1bhxFd8ts6VMmcFpDR3+c/TCwULjJq74TvJx8jAMdhgYBmNjp5fIlgIUu0S
-         Fr4RDIEikYDdZ9G92k2miNde3bqBIwt+YfOPu3zLabzMswWhrT/VC+BsPDxo9/PIM3Ar
-         cgequVg8iFwTdk0NLUL9XjFjEFEuzMuzA69gJK755fuRPfqsJdQ4fjLiGRIEUR8wrTdG
-         th2Q==
-X-Gm-Message-State: APjAAAVFaNvrYyulUGENlLtGCgC2NHkpBgELXxtlfb/MOCfoH3AZ55eo
-        t2TmmHlCVesO8V5bLPk1L0aLTw==
-X-Google-Smtp-Source: APXvYqy94j6MN0e6x+n+ChvdKkGrhMwtb/gKXV7dL/W7PkJmOaG67CUKgq6B2PCEi6giA03uyBSxvg==
-X-Received: by 2002:a5d:4e4d:: with SMTP id r13mr12760599wrt.295.1559724005609;
-        Wed, 05 Jun 2019 01:40:05 -0700 (PDT)
-Received: from dell ([2.27.167.43])
-        by smtp.gmail.com with ESMTPSA id j66sm24368884wmb.24.2019.06.05.01.40.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Jun 2019 01:40:04 -0700 (PDT)
-Date:   Wed, 5 Jun 2019 09:40:02 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Guenter Roeck <groeck@google.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Benson Leung <bleung@chromium.org>, kernel@collabora.com,
-        Dmitry Torokhov <dtor@chromium.org>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-doc@vger.kernel.org, Enno Luebbers <enno.luebbers@intel.com>,
-        Guido Kiener <guido@kiener-muenchen.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Jonathan Corbet <corbet@lwn.net>, Wu Hao <hao.wu@intel.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Jilayne Lovejoy <opensource@jilayne.com>
-Subject: Re: [PATCH 03/10] mfd / platform: cros_ec: Miscellaneous character
- device to talk with the EC
-Message-ID: <20190605084002.GP4797@dell>
-References: <20190604152019.16100-1-enric.balletbo@collabora.com>
- <20190604152019.16100-4-enric.balletbo@collabora.com>
- <20190604155228.GB9981@kroah.com>
- <beaf3554bb85974eb118d7722ca55f1823b1850c.camel@collabora.com>
- <20190604183527.GA20098@kroah.com>
- <CABXOdTfU9KaBDhQcwvBGWCmVfnd02_ZFmPGtJsCtGQ-iO9A3Qw@mail.gmail.com>
- <20190604185953.GA2061@kroah.com>
- <20190605064839.GH4797@dell>
- <20190605080241.GC9693@kroah.com>
+        Wed, 5 Jun 2019 04:41:08 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cf780210006>; Wed, 05 Jun 2019 01:41:05 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 05 Jun 2019 01:41:07 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 05 Jun 2019 01:41:07 -0700
+Received: from [10.21.132.148] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 5 Jun
+ 2019 08:40:32 +0000
+To:     Trond Myklebust <trondmy@hammerspace.com>
+CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Subject: [REGRESSION v5.2-rc] SUNRPC: Declare RPC timers as TIMER_DEFERRABLE
+ (431235818bc3)
+Message-ID: <c54db63b-0d5d-2012-162a-cb08cf32245a@nvidia.com>
+Date:   Wed, 5 Jun 2019 09:40:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190605080241.GC9693@kroah.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1559724065; bh=AIuJqCcqbmoKjuvUB+D3xWpbfEEAbUrVWqGYxh7A6ug=;
+        h=X-PGP-Universal:To:CC:From:Subject:Message-ID:Date:User-Agent:
+         MIME-Version:X-Originating-IP:X-ClientProxiedBy:Content-Type:
+         Content-Language:Content-Transfer-Encoding;
+        b=UOPqHF5IysgiyQWNntAV8ouXo9RL/4MxkYeGphb3Uuxog9u4/ETf0mRoZK8IvhFUh
+         9p9NCWJJVHhLJYNdRMNP5b58cf3yFtLlJLMSoTv8QOUXkFuRdv1jpc8OkIoYYkP64a
+         fp1hrDV5IeXvEFiymGAnlsXQYjo4bwCMIjj/l3IJAdwhH5M2VtYMFHN5MlyJHrdc2F
+         dpGraaIyGuyZdhX61O960e9ElAX7lvtjvU+lhrLuwCbjiTbUpAC08W4+ZxAR0axe1+
+         oeUEV6C/9gorHMK2hJ1JAGc4P+Jj3bWx3ZkDYnP9J0eEjCIIuijUYe2ETlaK/tYps9
+         dTL2EVvnyeL4w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 05 Jun 2019, Greg Kroah-Hartman wrote:
+Hi Trond,
 
-> On Wed, Jun 05, 2019 at 07:48:39AM +0100, Lee Jones wrote:
-> > On Tue, 04 Jun 2019, Greg Kroah-Hartman wrote:
-> > > On Tue, Jun 04, 2019 at 11:39:21AM -0700, Guenter Roeck wrote:
-> > > > On Tue, Jun 4, 2019 at 11:35 AM Greg Kroah-Hartman
-> > > > <gregkh@linuxfoundation.org> wrote:
-> > > > >
-> > > > > On Tue, Jun 04, 2019 at 01:58:38PM -0300, Ezequiel Garcia wrote:
-> > > > > > Hey Greg,
-> > > > > >
-> > > > > > > > + dev_info(&pdev->dev, "Created misc device /dev/%s\n",
-> > > > > > > > +          data->misc.name);
-> > > > > > >
-> > > > > > > No need to be noisy, if all goes well, your code should be quiet.
-> > > > > > >
-> > > > > >
-> > > > > > I sometimes wonder about this being noise or not, so I will slightly
-> > > > > > hijack this thread for this discussion.
-> > > > > >
-> > > > > > >From a kernel developer point-of-view, or even from a platform
-> > > > > > developer or user with a debugging hat point-of-view, having
-> > > > > > a "device created" or "device registered" message is often very useful.
-> > > > >
-> > > > > For you, yes.  For someone with 30000 devices attached to their system,
-> > > > > it is not, and causes booting to take longer than it should be.
-> > 
-> > Who has 30,000 devices attached to their systems?
-> 
-> More than you might imagine.
-> 
-> > I would argue that
-> > in these special corner-cases, they should knock the log-level *down*
-> > a notch.  For the rest of us who run normal platforms, an extra second
-> > of boot time renders a more forthcoming/useful system than if each of
-> > our devices initialised silently.
-> > 
-> > Personally I like to know what devices I have on my system, and the
-> > kernel log is the first place I look.  As far as I'm concerned, for
-> > the most part, if it's not in the kernel log, I don't have it.
-> 
-> Then you "do not have" lots of devices, as we have been removing these
-> messages for a number of years now :)
-> 
-> >  "Oh wow, I didn't know I had XXX functionality on this platform."
-> > 
-> > In my real job, I am currently enabling some newly released AArch64
-> > based laptops for booting with ACPI.  I must have wasted a day whilst
-> > enabling some of the devices the system relies upon, just to find
-> > out that 90% of them were actually probing semi-fine (at least probe()
-> > was succeeding), just silently. *grumble*
-> 
-> Yup, that's normal.  If you want to see what devices are in the system,
-> look in /sys/devices/ as that is what it is for, not the kernel log.
+I have been noticing intermittent failures with a system suspend test on
+some of our machines that have a NFS mounted root file-system. Bisecting
+this issue points to your commit 431235818bc3 ("SUNRPC: Declare RPC
+timers as TIMER_DEFERRABLE") and reverting this on top of v5.2-rc3 does
+appear to resolve the problem.
 
-My guess is that less than 1% of Linux users use /sys/devices in this
-way.  It's a very unfriendly interface.  Besides, when enabling a new
-platform, access to sysfs comes too far down the line to be useful in
-the majority of cases.
+The cause of the suspend failure appears to be a long delay observed
+sometimes when resuming from suspend, and this is causing our test to
+timeout. For example, in a failing case I see something like the
+following ...
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+[   69.667385] PM: suspend entry (deep)
+
+[   69.675642] Filesystems sync: 0.000 seconds
+
+[   69.684983] Freezing user space processes ... (elapsed 0.001 seconds) done.
+
+[   69.697880] OOM killer disabled.
+
+[   69.705670] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
+
+[   69.719043] printk: Suspending console(s) (use no_console_suspend to debug)
+
+[   69.758911] Disabling non-boot CPUs ...
+
+[   69.761875] IRQ 17: no longer affine to CPU3
+
+[   69.762609] Entering suspend state LP1
+
+[   69.762636] Enabling non-boot CPUs ...
+
+[   69.763600] CPU1 is up
+
+[   69.764517] CPU2 is up
+
+[   69.765532] CPU3 is up
+
+[   69.845832] mmc1: queuing unknown CIS tuple 0x80 (50 bytes)
+
+[   69.854223] mmc1: queuing unknown CIS tuple 0x80 (7 bytes)
+
+[   69.857238] mmc1: queuing unknown CIS tuple 0x80 (7 bytes)
+
+[   69.892700] mmc1: queuing unknown CIS tuple 0x02 (1 bytes)
+
+[   70.407286] OOM killer enabled.
+
+[   70.414674] Restarting tasks ... done.
+
+[   70.423232] PM: suspend exit
+
+[   73.533252] asix 1-1:1.0 eth0: link up, 100Mbps, full-duplex, lpa 0xCDE1
+
+[  105.461852] nfs: server 192.168.99.1 not responding, still trying
+
+[  105.462347] nfs: server 192.168.99.1 not responding, still trying
+
+[  105.484809] nfs: server 192.168.99.1 OK
+
+[  105.486454] nfs: server 192.168.99.1 OK
+
+
+So it would appear that making these timers deferrable is having an impact
+when resuming from suspend. Do you have any thoughts on this?
+
+Thanks
+Jon
