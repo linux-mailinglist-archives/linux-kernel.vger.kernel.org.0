@@ -2,225 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04DF436837
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 01:42:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 793BB3682E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 01:42:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726761AbfFEXmM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 19:42:12 -0400
-Received: from casper.infradead.org ([85.118.1.10]:48604 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726532AbfFEXmJ (ORCPT
+        id S1726608AbfFEXmC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 19:42:02 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:59665 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726532AbfFEXmC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 19:42:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=IllZgL/Tvx6ZdOkE8cT0VBvSJHPyC9Kw4E2FxJB9wHw=; b=bm2K2e36Q7ozSQDpAX71FjdUg5
-        t45M9rkJZI5xIcP2xoJLYpzZUzxXj5u12tnAWWX/54JMNifGsA3V/jP6Zrl1YcjUW2xd2uoS2797t
-        rWjOKTkQkRR2q3GJokt0uftfimyVD9gZj99nAn+sKuqn/Lz+4J14aO/TTgBXbwebFpm1HG5ZbQc5r
-        r+lJ//XEq817K3pBD3daHKUeJc6792qKmE1ORtKU5Pw6mhY47ZxiYcbQKWIuiC2FZ1ZTi/l3mQy7p
-        JLKVZGXWt/OZJe8s1MBs5i/bBZYZEHgeKBqh22giDHB2znPppochw2XIRxntaEgnxgoiOUv181hH9
-        ff7H7oiQ==;
-Received: from [179.182.172.34] (helo=coco.lan)
-        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hYfXa-0004Gc-V0; Wed, 05 Jun 2019 23:41:59 +0000
-Date:   Wed, 5 Jun 2019 20:41:52 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        od@zcrc.me
-Subject: Re: [PATCH v5 2/3] media: uapi: Add MEDIA_BUS_FMT_RGB888_3X8 media
- bus format
-Message-ID: <20190605204152.36f81ebd@coco.lan>
-In-Reply-To: <20190605222247.25657-2-paul@crapouillou.net>
-References: <20190605222247.25657-1-paul@crapouillou.net>
-        <20190605222247.25657-2-paul@crapouillou.net>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 5 Jun 2019 19:42:02 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id CC21022220;
+        Wed,  5 Jun 2019 19:41:58 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Wed, 05 Jun 2019 19:41:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        pedrovanzella.com; h=content-type:mime-version:subject:from
+        :in-reply-to:date:cc:content-transfer-encoding:message-id
+        :references:to; s=fm3; bh=EZbhrfK1JpnzKGEc0M0CscFfmH3oWhxRjJB5iY
+        MW6yU=; b=TXsLmCAL7fVbwBMJ5dEKxOJDmOUMBJf5jfF8iOXdXDsIGUTm3pDDOi
+        eNSm5xLv9RsEvpYvwGzBRJDwhtEl2A4smnt7vtTt9Jnytlye2Memz17UFfTfC8OC
+        LygO8cfyQmzuA/zQONM3vH8XkPdKUWgeLz0PxjLwKqQZDN2MK+Zpo6ZnhiWa2zm8
+        6x6jJ51JdCA9hToaeKhcc8pWT+WoCXQFIAj6lPYYM47aSIMhiRviXxaczNTJeWe9
+        TQNfMTJW0oa7AtbnmSltSfZDdo9L5dCOkF+x1z21g5X7pQuDLrgxuUdpIFjmSHfg
+        MjfCyM+NMAqMbVLcTOWv+k3yQAgo1sYg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=EZbhrfK1JpnzKGEc0M0CscFfmH3oWhxRjJB5iYMW6
+        yU=; b=KHwOWwIfSEM8VhNSd/NaE6ERaqiHXmzoRPzwVJULFLZBPvzeg89XdygkU
+        hp5H0o1+yG196mMCG8U7fX5EjUVwV1mLdiVPNKE5fnfoMSKx+BsH6+2mT2EGmzIL
+        2n4lb5k/KmrM3RT6VxNnh3CXqEkKIHR5HRf8Uwdg4ZP3hz20RT9dfAB8zi6+A3We
+        m/3LD3vIkG/MNeYHFIJOCaYfQkedcQDteEkZG9Klvp+sR26T9HM+BRxv58oKR35E
+        mXS9xvlCGMlTNiTUFACFpmyWRgcIhfe6VAGNGtQpkmcdZhZfM2gncv1o1d9W7IU2
+        Mx9ZrgD0ToI8ouy558PomeGxxOYyA==
+X-ME-Sender: <xms:RVP4XEQIfqIvge0X2bA6tA-H2IEGLKZh7KD8OOoyNatI8gSkhbXxag>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrudegfedgvdehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurheptggguffhofgjfffgkfhfvfesthhqmhdthhdtjeenucfhrhhomheprfgvughr
+    ohcugggrnhiivghllhgruceophgvughrohesphgvughrohhvrghniigvlhhlrgdrtghomh
+    eqnecukfhppeduleelrdejrdduheejrddvgeenucfrrghrrghmpehmrghilhhfrhhomhep
+    phgvughrohesphgvughrohhvrghniigvlhhlrgdrtghomhenucevlhhushhtvghrufhiii
+    gvpedt
+X-ME-Proxy: <xmx:RVP4XNk8ja6SubDyGnbQauppK7iCKClG2xfMJXVLg0yrORpYvJgXnQ>
+    <xmx:RVP4XIQCQZj78vYL9kOPgZitH02GXdYyXusNTOcNhUtNpdviRWSvcg>
+    <xmx:RVP4XEuvy5nTv9nNcC3UxIYMjGSU3XFXElWAWB960XqhrgvDGKShBg>
+    <xmx:RlP4XGNrOlhtOIGoIYk5oA_XdiRyzLAVr4wCEF2_RldwpMgIKsZfTg>
+Received: from [10.155.24.203] (199-7-157-24.eng.wind.ca [199.7.157.24])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 9EDDF380089;
+        Wed,  5 Jun 2019 19:41:57 -0400 (EDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v2 0/4] Read battery voltage from G403 and G900 mice
+From:   Pedro Vanzella <pedro@pedrovanzella.com>
+X-Mailer: iPhone Mail (16E227)
+In-Reply-To: <0d998fe0ff4473be2a9341c1f5ddf55957d18ad8.camel@archlinux.org>
+Date:   Wed, 5 Jun 2019 19:41:56 -0400
+Cc:     linux-input@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <EEC01F32-27A7-4C05-B82C-27ADD6591F3E@pedrovanzella.com>
+References: <20190605194533.18717-1-pedro@pedrovanzella.com> <0d998fe0ff4473be2a9341c1f5ddf55957d18ad8.camel@archlinux.org>
+To:     =?utf-8?Q?Filipe_La=C3=ADns?= <lains@archlinux.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu,  6 Jun 2019 00:22:46 +0200
-Paul Cercueil <paul@crapouillou.net> escreveu:
 
-> This patch adds MEDIA_BUS_FMT_RGB888_3X8, used for the GiantPlus
-> GPM940B0 24-bit TFT panel, where the RGB components are transferred
-> sequentially on a 8-bit bus.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> On Jun 5, 2019, at 6:24 PM, Filipe La=C3=ADns <lains@archlinux.org> wrote:=
 
-Looks ok to me. Feel free to apply via DRM tree.
+>=20
+>> On Wed, 2019-06-05 at 15:45 -0400, Pedro Vanzella wrote:
+>> The gaming line of Logitech devices doesn't use the old hidpp20
+>> feature
+>> for battery level reporting. Instead, they report the current voltage
+>> of the battery, in millivolts.
+>>=20
+>> This patch set handles this case by adding a quirk to the devices we
+>> know
+>> to have this new feature, in both wired and wireless mode.
+>>=20
+>> This version of the patch set is better split, as well as adding the
+>> quirk to make sure we don't needlessly probe every device connected.
+>>=20
+>> Pedro Vanzella (4):
+>>  HID: hid-logitech-hidpp: add quirk to handle battery voltage
+>>  HID: hid-logitech-hidpp: add function to query battery voltage
+>>  HID: hid-logitech-hidpp: report battery voltage to the power supply
+>>  HID: hid-logitech-hidpp: subscribe to battery voltage events
+>>=20
+>> drivers/hid/hid-logitech-hidpp.c | 150
+>> ++++++++++++++++++++++++++++++-
+>> 1 file changed, 147 insertions(+), 3 deletions(-)
+>>=20
+>=20
+> Hello,
+>=20
+> Why using quirks? 0x1001 is a feature, it should be discoverable in
+> IFeatureSet (0x0001). I don't understand the need to hardcode the
+> supported devices, HID++ exists specifically to prevent that.
+>=20
+> Wasn't this what you started in your previous patch? Why move away from
+> it?
 
-Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+I was asked to change to conform to the way the other features were handled.=
+ I=E2=80=99ll let the maintainers decide, but I agree with you that the othe=
+r way was better.
 
-> ---
-> 
-> Notes:
->     v2: New patch
->     
->     v3: No change
->     
->     v4: Add only MEDIA_BUS_FMT_RGB888_3X8, as we don't have to care about
->         endianness
->     
->     v5: Also update Documentation/media/uapi/v4l/subdev-formats.rst
-> 
->  .../media/uapi/v4l/subdev-formats.rst         | 107 ++++++++++++++++++
->  include/uapi/linux/media-bus-format.h         |   3 +-
->  2 files changed, 109 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/media/uapi/v4l/subdev-formats.rst b/Documentation/media/uapi/v4l/subdev-formats.rst
-> index ab1a48a5ae80..f4f8de31ac63 100644
-> --- a/Documentation/media/uapi/v4l/subdev-formats.rst
-> +++ b/Documentation/media/uapi/v4l/subdev-formats.rst
-> @@ -1305,6 +1305,113 @@ The following tables list existing packed RGB formats.
->        - g\ :sub:`6`
->        - g\ :sub:`5`
->        - g\ :sub:`4`
-> +    * .. _MEDIA-BUS-FMT-RGB888-3X8:
-> +
-> +      - MEDIA_BUS_FMT_RGB888_3X8
-> +      - 0x101c
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      - r\ :sub:`7`
-> +      - r\ :sub:`6`
-> +      - r\ :sub:`5`
-> +      - r\ :sub:`4`
-> +      - r\ :sub:`3`
-> +      - r\ :sub:`2`
-> +      - r\ :sub:`1`
-> +      - r\ :sub:`0`
-> +    * -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      - g\ :sub:`7`
-> +      - g\ :sub:`6`
-> +      - g\ :sub:`5`
-> +      - g\ :sub:`4`
-> +      - g\ :sub:`3`
-> +      - g\ :sub:`2`
-> +      - g\ :sub:`1`
-> +      - g\ :sub:`0`
-> +    * -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      - b\ :sub:`7`
-> +      - b\ :sub:`6`
-> +      - b\ :sub:`5`
-> +      - b\ :sub:`4`
-> +      - b\ :sub:`3`
-> +      - b\ :sub:`2`
-> +      - b\ :sub:`1`
-> +      - b\ :sub:`0`
->      * .. _MEDIA-BUS-FMT-ARGB888-1X32:
->  
->        - MEDIA_BUS_FMT_ARGB888_1X32
-> diff --git a/include/uapi/linux/media-bus-format.h b/include/uapi/linux/media-bus-format.h
-> index 2a6b253cfb05..16c1fa2d89a4 100644
-> --- a/include/uapi/linux/media-bus-format.h
-> +++ b/include/uapi/linux/media-bus-format.h
-> @@ -34,7 +34,7 @@
->  
->  #define MEDIA_BUS_FMT_FIXED			0x0001
->  
-> -/* RGB - next is	0x101c */
-> +/* RGB - next is	0x101d */
->  #define MEDIA_BUS_FMT_RGB444_1X12		0x1016
->  #define MEDIA_BUS_FMT_RGB444_2X8_PADHI_BE	0x1001
->  #define MEDIA_BUS_FMT_RGB444_2X8_PADHI_LE	0x1002
-> @@ -55,6 +55,7 @@
->  #define MEDIA_BUS_FMT_RGB888_1X24		0x100a
->  #define MEDIA_BUS_FMT_RGB888_2X12_BE		0x100b
->  #define MEDIA_BUS_FMT_RGB888_2X12_LE		0x100c
-> +#define MEDIA_BUS_FMT_RGB888_3X8		0x101c
->  #define MEDIA_BUS_FMT_RGB888_1X7X4_SPWG		0x1011
->  #define MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA	0x1012
->  #define MEDIA_BUS_FMT_ARGB8888_1X32		0x100d
+In fact, since the kernel only needs to support about half a dozen features,=
+ we could refactor the probe function to, well, probe the device for those f=
+eatures and set the capability flags. It looks to me like that would be clea=
+ner and easier to extend (and would make it easier to support future devices=
+).
 
+> Thank you,
+> Filipe La=C3=ADns
+> 3DCE 51D6 0930 EBA4 7858 BA41 46F6 33CB B0EB 4BF2
 
-
-Thanks,
-Mauro
