@@ -2,102 +2,335 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FD6235A1C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 12:03:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFFD835A91
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 12:38:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727251AbfFEKDk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 06:03:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60684 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727161AbfFEKDk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 06:03:40 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B70C4206B8;
-        Wed,  5 Jun 2019 10:03:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559729019;
-        bh=DZ0Ukqzk/PtCUYtEt5E60AbhRwkMO2p2nJdi/gL5qyk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PwtRstst/Wwsr3Uyq+uM3EesHwq3Yz4mQE5nc0kzZ4kVbLeOOvNfukcxh5c48vAte
-         4+ItiIhv5M2VQACAb/95rwCg+Vuqj0fcyfvlVxP1nazYisiT7eGv2wx51aDkcD27a2
-         ymDCoaYdP7bueKLRUOYni0tLUGekqTmZjTChEN9g=
-Date:   Wed, 5 Jun 2019 12:03:37 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Eugeniu Rosca <erosca@de.adit-jv.com>
-Cc:     David Howells <dhowells@redhat.com>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Mathias Payer <mathias.payer@nebelwelt.net>,
-        Kento Kobayashi <Kento.A.Kobayashi@sony.com>,
-        Hui Peng <benquike@gmail.com>,
-        Raul E Rangel <rrangel@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Jan-Marek Glogowski <glogow@fbihome.de>,
-        Bin Liu <b-liu@ti.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Jon Flatley <jflat@chromium.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Spyridon Papageorgiou <spapageorgiou@de.adit-jv.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        Joshua Frkuska <joshua_frkuska@mentor.com>,
-        "George G . Davis" <george_davis@mentor.com>,
-        yuichi.kusakabe@denso-ten.com, yohhei.fukui@denso-ten.com,
-        natsumi.kamei@denso-ten.com, yasano@jp.adit-jv.com
-Subject: Re: [PATCH] usb: hub: report failure to enumerate uevent to userspace
-Message-ID: <20190605100337.GA9350@kroah.com>
-References: <20190605090556.17792-1-erosca@de.adit-jv.com>
+        id S1727249AbfFEKip (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 06:38:45 -0400
+Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:33950 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727148AbfFEKip (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 06:38:45 -0400
+Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
+        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x559uwtq008605;
+        Wed, 5 Jun 2019 03:04:21 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=proofpoint;
+ bh=BfsrO1XLDBZeQv69uGXyDoQszPYAWrIzZJs6Orhyf7Q=;
+ b=RvonUDdMDL7PFxWS+/0blXkWuheMiQAIWgBp8N0iTJbZBsgA6ucUsyMQBZUm0Cs5RfAf
+ gauIW5ZnQJ56B7hUIgeCEVa1h3w8SZ0mv726VuZmp8vEEQcsmnz2/A5GzWk+/HnEshr4
+ wZUvtEFhJbRyPMUe8vYSQW7a8/dHtv/SxyIe8dciNuW5kyVkOYDhx0FicTioTA1t9F5f
+ 8JbSIeXkeJmTSw924ltU9+BmXd6zIg0ypKrqTMkVIiFmMGDN4TaQqzuX+K9KuqjXsSro
+ Rl3UCTgPL14J8kZ14+yZMnaaklDF6yiU2/1mSxVvHrB9tn1gc8LMSibfDf/DAxmrtYvn UQ== 
+Authentication-Results: cadence.com;
+        spf=pass smtp.mailfrom=pawell@cadence.com
+Received: from nam03-dm3-obe.outbound.protection.outlook.com (mail-dm3nam03lp2054.outbound.protection.outlook.com [104.47.41.54])
+        by mx0a-0014ca01.pphosted.com with ESMTP id 2sunwry5m5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 05 Jun 2019 03:04:21 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BfsrO1XLDBZeQv69uGXyDoQszPYAWrIzZJs6Orhyf7Q=;
+ b=sgvHuoNqhbEhqDze488EKXi2hfht7FyXBaA68vH1IKajj90usHCnpRV6bjciOQp9rjFtX8brZRoy3yN9RzQyQV76dD0Kvgacl7Jk1zEvCA6qnQl4Kd8SID48iFXCs+D5VBGqHK1315Zxh/RLXPbklgavP+6/slopNzUCjq0YuLo=
+Received: from BYAPR07CA0108.namprd07.prod.outlook.com (2603:10b6:a03:12b::49)
+ by MN2PR07MB6830.namprd07.prod.outlook.com (2603:10b6:208:11d::33) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1943.22; Wed, 5 Jun
+ 2019 10:04:17 +0000
+Received: from BY2NAM05FT042.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e52::208) by BYAPR07CA0108.outlook.office365.com
+ (2603:10b6:a03:12b::49) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1943.18 via Frontend
+ Transport; Wed, 5 Jun 2019 10:04:17 +0000
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ cadence.com discourages use of 158.140.1.28 as permitted sender)
+Received: from sjmaillnx1.cadence.com (158.140.1.28) by
+ BY2NAM05FT042.mail.protection.outlook.com (10.152.100.179) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1965.10 via Frontend Transport; Wed, 5 Jun 2019 10:04:16 +0000
+Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
+        by sjmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id x55A4Dqp028887
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Wed, 5 Jun 2019 03:04:15 -0700
+X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
+Received: from maileu3.global.cadence.com (10.160.88.99) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3; Wed, 5 Jun 2019 12:04:12 +0200
+Received: from lvlogina.cadence.com (10.165.176.102) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3 via Frontend Transport; Wed, 5 Jun 2019 12:04:12 +0200
+Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
+        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id x55A4CBk017279;
+        Wed, 5 Jun 2019 11:04:12 +0100
+Received: (from pawell@localhost)
+        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id x55A49bO017143;
+        Wed, 5 Jun 2019 11:04:09 +0100
+From:   Pawel Laszczak <pawell@cadence.com>
+To:     <devicetree@vger.kernel.org>
+CC:     <gregkh@linuxfoundation.org>, <felipe.balbi@linux.intel.com>,
+        <linux-usb@vger.kernel.org>, <hdegoede@redhat.com>,
+        <heikki.krogerus@linux.intel.com>, <robh+dt@kernel.org>,
+        <rogerq@ti.com>, <linux-kernel@vger.kernel.org>,
+        <jbergsagel@ti.com>, <nsekhar@ti.com>, <nm@ti.com>,
+        <sureshp@cadence.com>, <peter.chen@nxp.com>, <jpawar@cadence.com>,
+        <kurahul@cadence.com>, Pawel Laszczak <pawell@cadence.com>
+Subject: [PATCH v7 0/6] Introduced new Cadence USBSS DRD Driver.
+Date:   Wed, 5 Jun 2019 11:03:44 +0100
+Message-ID: <1559729030-16390-1-git-send-email-pawell@cadence.com>
+X-Mailer: git-send-email 1.7.11.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190605090556.17792-1-erosca@de.adit-jv.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Type: text/plain
+X-OrganizationHeadersPreserved: maileu3.global.cadence.com
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(136003)(39860400002)(346002)(396003)(2980300002)(36092001)(199004)(189003)(126002)(50466002)(70206006)(476003)(70586007)(305945005)(86362001)(966005)(87636003)(316002)(7636002)(6306002)(7416002)(478600001)(48376002)(26826003)(51416003)(76130400001)(486006)(50226002)(2351001)(8936002)(2616005)(426003)(4326008)(2906002)(246002)(336012)(8676002)(26005)(14444005)(47776003)(54906003)(4720700003)(186003)(36756003)(107886003)(5660300002)(6666004)(16586007)(42186006)(356004)(30864003)(6916009);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR07MB6830;H:sjmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.Cadence.COM;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: cc85bac9-b1fc-43bf-5b11-08d6e99d2b8c
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328);SRVR:MN2PR07MB6830;
+X-MS-TrafficTypeDiagnostic: MN2PR07MB6830:
+X-MS-Exchange-PUrlCount: 1
+X-Microsoft-Antispam-PRVS: <MN2PR07MB68306C69DB5A8A2AF7A3CDB0DD160@MN2PR07MB6830.namprd07.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-Forefront-PRVS: 00594E8DBA
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: HrtPTLhcSYHqcs8AHPm4eZyUP2jE2urUgCl1XOoUih/XShq7duqoa57egAuMduXSLGS8KYIbLVhN/LBftf8/E4Lm2ce2vUy7IZMTLVMg3tFRNN3BcQ5j/9DZiSV2XqWpVgK9hQv10hzdla9nGbRudOrHmV7+72YPMQzagAYymNEuw00MNPFx2XIq0FPTdUoVtXdCxYIp0jaYv8szco0kdfVKYsODNJP39byrV4wh3hi/poorX/7JWgznmEDiHHyTCpN0+/7TQjq7RoQ7h6B9afqSbOG3rhxz7yWtwfz1hwfqpV61QMefK0Rf4Cdck0OuV+euNox6R+3FuxFKVkmhFikh638/attwBsy9k9pl5QiXvlQPfO83/BwwUO+OT5VdzJfZ/stKec4xqYn/Itin1gcecbkU5itNLHoQsZWvR/E=
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2019 10:04:16.8569
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cc85bac9-b1fc-43bf-5b11-08d6e99d2b8c
+X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx1.cadence.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR07MB6830
+X-Proofpoint-SPF-Result: pass
+X-Proofpoint-SPF-Record: v=spf1 include:spf.smktg.jp include:_spf.salesforce.com
+ include:mktomail.com include:spf-0014ca01.pphosted.com
+ include:spf.protection.outlook.com include:auth.msgapp.com
+ include:spf.mandrillapp.com ~all
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-05_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906050063
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 05, 2019 at 11:05:56AM +0200, Eugeniu Rosca wrote:
-> From: Spyridon Papageorgiou <spapageorgiou@de.adit-jv.com>
-> 
-> When a USB device fails to enumerate, only a kernel message is printed.
-> With this patch, a uevent is also generated to notify userspace.
-> Services can monitor for the event through udev and handle failures
-> accordingly.
-> 
-> The "port_enumerate_fail_notify()" function name follows the syntax of
-> "port_over_current_notify()" used in v4.20-rc1
-> commit 201af55da8a398 ("usb: core: added uevent for over-current").
-> 
-> Signed-off-by: Spyridon Papageorgiou <spapageorgiou@de.adit-jv.com>
-> Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+This patch introduces new Cadence USBSS DRD driver to Linux kernel.
 
-All we need is one special notifier!  ...
+The Cadence USBSS DRD Driver is a highly configurable IP Core which
+can be instantiated as Dual-Role Device (DRD), Peripheral Only and
+Host Only (XHCI)configurations.
 
-{grumble}
+The current driver has been validated with FPGA burned. We have support
+for PCIe bus, which is used on FPGA prototyping.
 
-This can end up causing loads of new kobject change events to be added,
-overloading what uevents were supposed to be in the first place
-(add/remove of sysfs objects).
+The host side of USBSS-DRD controller is compliance with XHCI
+specification, so it works with standard XHCI Linux driver.
 
-I just talked with David Howells, and this type of thing really should
-be tied into the new "notifier" interface/api.  That way you can
-register for any specific type of event and just get notified of them
-when they happen.  No need to mess with uevents.
+Change since v6:
+- Fixed issue with L1 support. Controller has issue with hardware 
+  resuming from L1 state. It was fixed in software. 
+- Fixed issues related with Transfer Ring Size equal 2. 
+- Fixed issue with removing cdns3.ko module. Issue appeared on the latest 
+  version of kernel.
+- Added separate interrupt resources for host, device and otg. It was 
+  added mainly for compatibility with TI J721e platforms. 
+- Added enabling ISO OUT just before arming endpoint. It's recommended by 
+  controller specification.
+- Added support for 0x0002450d controller version. This version allows to set 
+  DMULT mode per endpoint. It also fixes WA1 issue.
+- Added support for separate interrupt line for Device and OTG/DRD.
+- Removed drd_update_mode from drd_init, 'desired_dr_mode' is not yet correctly
+  set based on enabled drivers and dr_mode in DT.
+- Added phy power on/off.
+- Added setting dma and coherent mask to 32-bits, because controller can do
+  only 32-bit access.
+- Added Idle state for Type-C for platform TI J721e as suggested by Roger. 
+- Improved the flow according with Figure 24 from Software OTG Control user
+  guide as sugested by Roger.
 
-See his posts on linux-api starting with:
-	Subject: [RFC][PATCH 0/8] Mount, FS, Block and Keyrings notifications [ver #2]
-for the proposal.
+Change since v5:
+- Fixed controller issue with handling SETUP that has occurred on 0x0002450C
+  controller version. In some case EP_STS_SETUP is reported but SETUP
+  packet has not been copied yet to system memory. This bug caused that
+  driver started handling the previous SETUP packet.
+- Added handling ZLP for EP0.
+- Removed unused cdns3_gadget_ep0_giveback function.
+- Fixed issue with disabling endpoint. Added waiting for clearing EP_STS_DBUSY
+  bit between disabling endpoint and calling EP_CMD_EPRST command.
+  EP_CMD_EPRST command can be called only when DMA is stopped.
+- Fixed issue: EP_CFG_TDL_CHK is currently supported only for OUT direction,
+  It was enabled for both IN/OUT direction.
+- Improved resetting of interrupt in cdns3_device_irq_handler.
+- Fixed issue with ISOC IN transfer in cdns3_ep_run_transfer function. In some
+  cases driver set incorrect Cycle Bit in TRBs.
+- Fixed issue in function cdns3_ep_onchip_buffer_reserve. Driver assigned 
+  incorrect value to priv_dev->out_mem_is_allocated field.
 
-If we added USB (or really any hardware events) to that interface, would
-it solve the issue you are trying to solve here?
+Change since v5:
+- fixed compilation error.
 
-thanks,
+Changes since v4:
+- fixed issue: with choosing incorrect dr_mode in cdns3_core_init_role.
+- speed up DRD timings by adding an appropriate entry to OTGSIMULATE
+  register in cdns3_drd_init function.
+- added detecting transition to DEV_IDLE/H_IDLE state instead using
+  usleep_range in cdns3_drd_switch_gadget and cdns3_drd_switch_host functions.
+- fixed issue with setting incorrect burst and mult field during endpoint
+  configuration. 
+- fixed issue in WA1 algorithm. The previous one could not work correct with
+  slow CPU or in case the access to AXI bus would be blocked for some time.
+- fixed issue with compilation driver occurred when driver was configured
+  as build in. This fix required to move cdns3_handshake function from
+  gadget.c to core.c file.
+- added missing pci_disable_device in cdns3-pci-wrap.c file.
+- fixed issue with pm_runtime_get_sync in cdns3_role_switch function.
+- fixed incorrect condition in cdns3_decode_usb_irq function.
+- removed cdns3_data_flush function - is no longer used.
+- fixed issue in cdns3_descmissing_packet function - fixed incorrect condition
+- added missed callback informing upper layer about reset event.
+- added resetting endpoint in cdns3_gadget_ep_disable function.
+- fixed issue: added statement removing request from descmiss_req_list in
+  cdns3_gadget_ep_disable function.
+- fixed issue in cdns3_ep_onchip_buffer_reserve.
+- fixed issue with incorrect calculation the number of required on-chip buffer 
+  for OUT endpoints cdns3_ep_onchip_buffer_reserve.
+- fixed issue in __cdns3_gadget_init function: pm_runtime_get_sync was in
+  incorrect place in.
+- removed some typos and improved comments as suggested by reviewers.
+- made some other minor changes as suggested by revivers.
 
-greg k-h
+Changes since v3:
+- updated dt-binding as suggested by Rob Herring
+- updated patch 002, 003 and 004 according with patch:
+  https://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git/commit/
+  ?h=next&id=7790b3556fccc555ae422f1576e97bf34c8ab8b6 posted by Felipe Balbi.
+- fixed issues related to isochronous transfers.
+- improved algorithm calculating number of on-chip buffers required
+  by endpoints.
+- fixed incorrect macro EP_CFG_MULT in gadget.h file.
+- fixed potential issue with incorrect order of instruction - added wmb().
+- made some minor changes suggested by reviewers.
+
+*Changes since v2:
+- made some text correction in Kconfig file as suggested by Randy Dunlap.
+- simplified Makefile as suggested by Peter Chan.
+- removed phy-names from dt-binding as suggested Rob Herring.
+- changed cdns3-usb.txt to cdns3-usb3.txt as suggested by Rob Herring.
+- added checking error code in some function in drd.c file 
+  as suggested by Peter Chan.
+- added reg-names to dt-binding documentation as suggested by Chunfeng Yun.
+- replaced platform_get_resource with platform_get_resource_byname.
+- made other changes suggested by Chunfeng Yun.
+- fixed bug in cdns3_get_id. Now function return id instead 1.
+- added trace_cdns3_log trace event.
+- simplify cdns3_disable_write function.
+- create separate patch for work around related with blocking endpoint 
+  issue.
+- Fixed issue related with stale data address in TRB. 
+  Issue: At some situations, the controller may get stale data address
+  in TRB at below sequences:
+  1. Controller read TRB includes data address.
+  2. Software updates TRBs includes data address and Cycle bit.
+  3. Controller read TRB which includes Cycle bit.
+  4. DMA run with stale data address.
+- Fixed issue without transfer. In some cases not all interrupts
+  disabled in Hard IRQ was enabled in Soft Irq.
+- Modified LFPS minimal U1 Exit time for controller revision 0x00024505.
+- Fixed issue - in some case selected endpoint was unexpectedly changed.
+- Fixed issue - after clearing halted endpoint transfer was not started.
+- Fixed issue - in some case driver send ACK instead STALL in status phase.
+- Fixed issues related to dequeue request.
+- Fixed incorrect operator in cdns3_ep_run_transfer function.
+
+Changes since v1:
+ - Removed not implemented Suspend/Resume functions.
+ - Fixed some issues in debugging related functions.
+ - Added trace_cdns3_request_handled marker.
+ - Added support for Isochronous transfer. 
+ - Added some additional descriptions.
+ - Fixed compilation error in cdns3_gadget_ep_disable.
+ - Added detection of device controller version at runtime.
+ - Upgraded dt-binding documentation.
+ - Deleted ENOSYS from phy initialization section. It should be also removed
+   from generic PHY driver.
+ - added ep0_stage flag used during enumeration process.
+ - Fixed issue with TEST MODE.
+ - Added one common function for finish control transfer.
+ - Separated some decoding function from dwc3 driver to common library file,
+   and removed equivalents function from debug.h file as suggested  by Felipe.
+ - replaced function name cdns3_gadget_unconfig with cdns3_hw_reset_eps_config.
+ - Improved algorithm fixing hardware issue related to blocking endpoints.
+   This issue is related to on-chip shared FIFO buffers for OUT packets. 
+   Problem was reported by Peter Chan.
+ - Changed organization of endpoint array in cdns3_device object.  
+      - added ep0 to common eps array
+      - removed cdns3_free_trb_pool and cdns3_ep_addr_to_bit_pos macros.
+      - removed ep0_trb_dma, ep0_trb fields from cdns3_device.
+ - Removed ep0_request and ep_nums fields from cdns3_device.
+ - Other minor changes according with Felipe suggestion.
+
+---
+
+Pawel Laszczak (6):
+  dt-bindings: add binding for USBSS-DRD controller.
+  usb:common Separated decoding functions from dwc3 driver.
+  usb:common Patch simplify usb_decode_set_clear_feature function.
+  usb:common Simplify usb_decode_get_set_descriptor function.
+  usb:cdns3 Add Cadence USB3 DRD Driver
+  usb:cdns3 Fix for stuck packets in on-chip OUT buffer.
+
+ .../devicetree/bindings/usb/cdns-usb3.txt     |   30 +
+ drivers/usb/Kconfig                           |    2 +
+ drivers/usb/Makefile                          |    2 +
+ drivers/usb/cdns3/Kconfig                     |   44 +
+ drivers/usb/cdns3/Makefile                    |   14 +
+ drivers/usb/cdns3/cdns3-pci-wrap.c            |  157 +
+ drivers/usb/cdns3/core.c                      |  529 ++++
+ drivers/usb/cdns3/core.h                      |  121 +
+ drivers/usb/cdns3/debug.h                     |  173 ++
+ drivers/usb/cdns3/debugfs.c                   |  173 ++
+ drivers/usb/cdns3/drd.c                       |  379 +++
+ drivers/usb/cdns3/drd.h                       |  166 ++
+ drivers/usb/cdns3/ep0.c                       |  915 ++++++
+ drivers/usb/cdns3/gadget-export.h             |   28 +
+ drivers/usb/cdns3/gadget.c                    | 2616 +++++++++++++++++
+ drivers/usb/cdns3/gadget.h                    | 1326 +++++++++
+ drivers/usb/cdns3/host-export.h               |   28 +
+ drivers/usb/cdns3/host.c                      |   76 +
+ drivers/usb/cdns3/trace.c                     |   23 +
+ drivers/usb/cdns3/trace.h                     |  447 +++
+ drivers/usb/common/Makefile                   |    2 +-
+ drivers/usb/common/debug.c                    |  273 ++
+ drivers/usb/dwc3/debug.h                      |  252 --
+ drivers/usb/dwc3/trace.h                      |    2 +-
+ include/linux/usb/ch9.h                       |   25 +
+ 25 files changed, 7549 insertions(+), 254 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/usb/cdns-usb3.txt
+ create mode 100644 drivers/usb/cdns3/Kconfig
+ create mode 100644 drivers/usb/cdns3/Makefile
+ create mode 100644 drivers/usb/cdns3/cdns3-pci-wrap.c
+ create mode 100644 drivers/usb/cdns3/core.c
+ create mode 100644 drivers/usb/cdns3/core.h
+ create mode 100644 drivers/usb/cdns3/debug.h
+ create mode 100644 drivers/usb/cdns3/debugfs.c
+ create mode 100644 drivers/usb/cdns3/drd.c
+ create mode 100644 drivers/usb/cdns3/drd.h
+ create mode 100644 drivers/usb/cdns3/ep0.c
+ create mode 100644 drivers/usb/cdns3/gadget-export.h
+ create mode 100644 drivers/usb/cdns3/gadget.c
+ create mode 100644 drivers/usb/cdns3/gadget.h
+ create mode 100644 drivers/usb/cdns3/host-export.h
+ create mode 100644 drivers/usb/cdns3/host.c
+ create mode 100644 drivers/usb/cdns3/trace.c
+ create mode 100644 drivers/usb/cdns3/trace.h
+ create mode 100644 drivers/usb/common/debug.c
+
+-- 
+2.17.1
+
