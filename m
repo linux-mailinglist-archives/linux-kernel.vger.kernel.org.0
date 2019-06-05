@@ -2,185 +2,422 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D059E3671B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 23:55:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 157A836750
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 00:13:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726637AbfFEVzh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 17:55:37 -0400
-Received: from mga06.intel.com ([134.134.136.31]:51548 "EHLO mga06.intel.com"
+        id S1726819AbfFEWNB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 18:13:01 -0400
+Received: from mga03.intel.com ([134.134.136.65]:25093 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726537AbfFEVzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 17:55:36 -0400
+        id S1726532AbfFEWNA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 18:13:00 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 14:55:35 -0700
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 15:12:59 -0700
 X-ExtLoop1: 1
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga001.jf.intel.com with ESMTP; 05 Jun 2019 14:55:36 -0700
-Date:   Wed, 5 Jun 2019 14:58:41 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "eric.auger@redhat.com" <eric.auger@redhat.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v2 2/4] iommu: Introduce device fault data
-Message-ID: <20190605145841.55cf9667@jacob-builder>
-In-Reply-To: <50dc3cc5-6019-ad42-6aba-d84fab4020f9@arm.com>
-References: <20190603145749.46347-1-jean-philippe.brucker@arm.com>
-        <20190603145749.46347-3-jean-philippe.brucker@arm.com>
-        <20190603150842.11070cfd@jacob-builder>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19CA6A9EE@SHSMSX104.ccr.corp.intel.com>
-        <50dc3cc5-6019-ad42-6aba-d84fab4020f9@arm.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga003.jf.intel.com with ESMTP; 05 Jun 2019 15:12:59 -0700
+Subject: [PATCH v9 08/12] mm/sparsemem: Support sub-section hotplug
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     akpm@linux-foundation.org
+Cc:     Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>, linux-mm@kvack.org,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
+        osalvador@suse.de, mhocko@suse.com
+Date:   Wed, 05 Jun 2019 14:58:42 -0700
+Message-ID: <155977192280.2443951.13941265207662462739.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <155977186863.2443951.9036044808311959913.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <155977186863.2443951.9036044808311959913.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 5 Jun 2019 12:24:09 +0100
-Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
+The libnvdimm sub-system has suffered a series of hacks and broken
+workarounds for the memory-hotplug implementation's awkward
+section-aligned (128MB) granularity. For example the following backtrace
+is emitted when attempting arch_add_memory() with physical address
+ranges that intersect 'System RAM' (RAM) with 'Persistent Memory' (PMEM)
+within a given section:
 
-> On 05/06/2019 09:51, Tian, Kevin wrote:
-> >> From: Jacob Pan
-> >> Sent: Tuesday, June 4, 2019 6:09 AM
-> >>
-> >> On Mon,  3 Jun 2019 15:57:47 +0100
-> >> Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
-> >>  
-> >>> +/**
-> >>> + * struct iommu_fault_page_request - Page Request data
-> >>> + * @flags: encodes whether the corresponding fields are valid and
-> >>> whether this
-> >>> + *         is the last page in group (IOMMU_FAULT_PAGE_REQUEST_*
-> >>> values)
-> >>> + * @pasid: Process Address Space ID
-> >>> + * @grpid: Page Request Group Index
-> >>> + * @perm: requested page permissions (IOMMU_FAULT_PERM_* values)
-> >>> + * @addr: page address
-> >>> + * @private_data: device-specific private information
-> >>> + */
-> >>> +struct iommu_fault_page_request {
-> >>> +#define IOMMU_FAULT_PAGE_REQUEST_PASID_VALID	(1 << 0)
-> >>> +#define IOMMU_FAULT_PAGE_REQUEST_LAST_PAGE	(1 << 1)
-> >>> +#define IOMMU_FAULT_PAGE_REQUEST_PRIV_DATA	(1 << 2)
-> >>> +	__u32	flags;
-> >>> +	__u32	pasid;
-> >>> +	__u32	grpid;
-> >>> +	__u32	perm;
-> >>> +	__u64	addr;
-> >>> +	__u64	private_data[2];
-> >>> +};
-> >>> +  
-> >>
-> >> Just a thought, for non-identity G-H PASID management. We could
-> >> pass on guest PASID in PRQ to save a lookup in QEMU. In this case,
-> >> QEMU allocate a GPASID for vIOMMU then a host PASID for pIOMMU.
-> >> QEMU has a G->H lookup. When PRQ comes in to the pIOMMU with
-> >> HPASID, IOMMU driver
-> >> can retrieve GPASID from the bind data then report to the guest via
-> >> VFIO. In this case QEMU does not need to do a H->G PASID lookup.
-> >>
-> >> Should we add a gpasid field here? or we can add a flag and field
-> >> later, up to you.
-> >>  
-> > 
-> > Can private_data serve this purpose?  
-> 
-> Isn't private_data already used for VT-d's Private Data field?
-> 
-yes, as part of the PRQ. please see my explanation in the previous
-email.
-> > It's better not introducing
-> > gpasid awareness within host IOMMU driver. It is just a user-level
-> > data associated with a PASID when binding happens. Kernel doesn't
-> > care the actual meaning, simply record it and then return back to
-> > user space later upon device fault. Qemu interprets the meaning as
-> > gpasid in its own context. otherwise usages may use it for other
-> > purpose.  
-> 
-> Regarding a gpasid field I don't mind either way, but extending the
-> iommu_fault structure later won't be completely straightforward so we
-> could add some padding now.
-> 
-> Userspace negotiate the iommu_fault struct format with VFIO, before
-> allocating a circular buffer of N fault structures
-> ().
-> So adding new fields requires introducing a new ABI version and a
-> struct iommu_fault_v2. That may be OK for disruptive changes, but
-> just adding a new field indicated by a flag shouldn't have to be that
-> complicated.
-> 
-> How about setting the iommu_fault structure to 128 bytes?
-> 
-> struct iommu_fault {
-> 	__u32   type;
-> 	__u32   padding;
-> 	union {
-> 		struct iommu_fault_unrecoverable event;
-> 		struct iommu_fault_page_request prm;
-> 		__u8 padding2[120];
-> 	};
-> };
-> 
-> Given that @prm is currently 40 bytes and @event 32 bytes, the padding
-> allows either of them to grow 10 new 64-bit fields (or 20 new 32-bit
-> fields, which is still representable with new flags) before we have to
-> upgrade the ABI version.
-> 
-> A 4kB and a 64kB queue can hold respectively:
-> 
-> * 85 and 1365 records when iommu_fault is 48 bytes (current format).
-> * 64 and 1024 records when iommu_fault is 64 bytes (but allows to grow
-> only 2 new 64-bit fields).
-> * 32 and 512 records when iommu_fault is 128 bytes.
-> 
-> In comparison,
-> * the SMMU even queue can hold 128 and 2048 events respectively at
-> those sizes (and is allowed to grow up to 524k entries)
-> * the SMMU PRI queue can hold 256 and 4096 PR.
-> 
-> But the SMMU queues have to be physically contiguous, whereas our
-> fault queues are in userspace memory which is less expensive. So
-> 128-byte records might be reasonable. What do you think?
-> 
-I think though 128-byte is large enough for any future extension but
-64B might be good enough and it is a cache line. PCI page request msg
-is only 16B :)
+ WARNING: CPU: 0 PID: 558 at kernel/memremap.c:300 devm_memremap_pages+0x3b5/0x4c0
+ devm_memremap_pages attempted on mixed region [mem 0x200000000-0x2fbffffff flags 0x200]
+ [..]
+ Call Trace:
+   dump_stack+0x86/0xc3
+   __warn+0xcb/0xf0
+   warn_slowpath_fmt+0x5f/0x80
+   devm_memremap_pages+0x3b5/0x4c0
+   __wrap_devm_memremap_pages+0x58/0x70 [nfit_test_iomap]
+   pmem_attach_disk+0x19a/0x440 [nd_pmem]
 
-VT-d currently uses one 4K page for PRQ, holds 128 records of PRQ
-descriptors. This can grow to 16K entries per spec. That is per IOMMU.
-The user fault queue here is per device. So we do have to be frugal
-about it since it will support mdev at per PASID level at some point?
+Recently it was discovered that the problem goes beyond RAM vs PMEM
+collisions as some platform produce PMEM vs PMEM collisions within a
+given section. The libnvdimm workaround for that case revealed that the
+libnvdimm section-alignment-padding implementation has been broken for a
+long while. A fix for that long-standing breakage introduces as many
+problems as it solves as it would require a backward-incompatible change
+to the namespace metadata interpretation. Instead of that dubious route
+[1], address the root problem in the memory-hotplug implementation.
 
-I have to look into Eric's patchset on how he handles queue full in the
-producer. If we go with 128B size in iommu_fault and 4KB size queue
-(32 entries as in your table), VT-d PRQ size of 128 entries can
-potentially cause queue full. We have to handle this VFIO queue full
-differently than the IOMMU queue full in that we only need to discard
-PRQ for one device. (Whereas IOMMU queue full has to clear out all).
+[1]: https://lore.kernel.org/r/155000671719.348031.2347363160141119237.stgit@dwillia2-desk3.amr.corp.intel.com
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Logan Gunthorpe <logang@deltatee.com>
+Cc: Oscar Salvador <osalvador@suse.de>
+Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ include/linux/memory_hotplug.h |    2 
+ mm/memory_hotplug.c            |    7 -
+ mm/page_alloc.c                |    2 
+ mm/sparse.c                    |  225 +++++++++++++++++++++++++++-------------
+ 4 files changed, 155 insertions(+), 81 deletions(-)
 
-Anyway, I think 64B should be enough but 128B is fine too. We have to
-deal with queue full anyway. But queue full is expensive so we should
-try to avoid.
+diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+index 3ab0282b4fe5..0b8a5e5ef2da 100644
+--- a/include/linux/memory_hotplug.h
++++ b/include/linux/memory_hotplug.h
+@@ -350,7 +350,7 @@ extern void move_pfn_range_to_zone(struct zone *zone, unsigned long start_pfn,
+ extern bool is_memblock_offlined(struct memory_block *mem);
+ extern int sparse_add_section(int nid, unsigned long pfn,
+ 		unsigned long nr_pages, struct vmem_altmap *altmap);
+-extern void sparse_remove_one_section(struct mem_section *ms,
++extern void sparse_remove_section(struct mem_section *ms,
+ 		unsigned long pfn, unsigned long nr_pages,
+ 		unsigned long map_offset, struct vmem_altmap *altmap);
+ extern struct page *sparse_decode_mem_map(unsigned long coded_mem_map,
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 399bf78bccc5..8188be7a9edb 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -255,13 +255,10 @@ void __init register_page_bootmem_info_node(struct pglist_data *pgdat)
+ static int __meminit __add_section(int nid, unsigned long pfn,
+ 		unsigned long nr_pages,	struct vmem_altmap *altmap)
+ {
+-	int ret;
+-
+ 	if (pfn_valid(pfn))
+ 		return -EEXIST;
+ 
+-	ret = sparse_add_section(nid, pfn, nr_pages, altmap);
+-	return ret < 0 ? ret : 0;
++	return sparse_add_section(nid, pfn, nr_pages, altmap);
+ }
+ 
+ static int check_pfn_span(unsigned long pfn, unsigned long nr_pages,
+@@ -541,7 +538,7 @@ static void __remove_section(struct zone *zone, unsigned long pfn,
+ 		return;
+ 
+ 	__remove_zone(zone, pfn, nr_pages);
+-	sparse_remove_one_section(ms, pfn, nr_pages, map_offset, altmap);
++	sparse_remove_section(ms, pfn, nr_pages, map_offset, altmap);
+ }
+ 
+ /**
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 5dff3f49a372..af260cc469cd 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -5915,7 +5915,7 @@ void __ref memmap_init_zone_device(struct zone *zone,
+ 		 * pfn out of zone.
+ 		 *
+ 		 * Please note that MEMMAP_HOTPLUG path doesn't clear memmap
+-		 * because this is done early in sparse_add_one_section
++		 * because this is done early in section_activate()
+ 		 */
+ 		if (!(pfn & (pageblock_nr_pages - 1))) {
+ 			set_pageblock_migratetype(page, MIGRATE_MOVABLE);
+diff --git a/mm/sparse.c b/mm/sparse.c
+index f65206deaf49..d83bac5d1324 100644
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -83,8 +83,15 @@ static int __meminit sparse_index_init(unsigned long section_nr, int nid)
+ 	unsigned long root = SECTION_NR_TO_ROOT(section_nr);
+ 	struct mem_section *section;
+ 
++	/*
++	 * An existing section is possible in the sub-section hotplug
++	 * case. First hot-add instantiates, follow-on hot-add reuses
++	 * the existing section.
++	 *
++	 * The mem_hotplug_lock resolves the apparent race below.
++	 */
+ 	if (mem_section[root])
+-		return -EEXIST;
++		return 0;
+ 
+ 	section = sparse_index_alloc(nid);
+ 	if (!section)
+@@ -325,6 +332,15 @@ static void __meminit sparse_init_one_section(struct mem_section *ms,
+ 		unsigned long pnum, struct page *mem_map,
+ 		struct mem_section_usage *usage)
+ {
++	/*
++	 * Given that SPARSEMEM_VMEMMAP=y supports sub-section hotplug,
++	 * ->section_mem_map can not be guaranteed to point to a full
++	 *  section's worth of memory.  The field is only valid / used
++	 *  in the SPARSEMEM_VMEMMAP=n case.
++	 */
++	if (IS_ENABLED(CONFIG_SPARSEMEM_VMEMMAP))
++		mem_map = NULL;
++
+ 	ms->section_mem_map &= ~SECTION_MAP_MASK;
+ 	ms->section_mem_map |= sparse_encode_mem_map(mem_map, pnum) |
+ 							SECTION_HAS_MEM_MAP;
+@@ -726,10 +742,131 @@ static void free_map_bootmem(struct page *memmap)
+ }
+ #endif /* CONFIG_SPARSEMEM_VMEMMAP */
+ 
++static bool is_early_section(struct mem_section *ms)
++{
++	struct page *usage_page;
++
++	usage_page = virt_to_page(ms->usage);
++	if (PageSlab(usage_page) || PageCompound(usage_page))
++		return false;
++	else
++		return true;
++}
++
++static void section_deactivate(unsigned long pfn, unsigned long nr_pages,
++		struct vmem_altmap *altmap)
++{
++	DECLARE_BITMAP(map, SUBSECTIONS_PER_SECTION) = { 0 };
++	DECLARE_BITMAP(tmp, SUBSECTIONS_PER_SECTION) = { 0 };
++	struct mem_section *ms = __pfn_to_section(pfn);
++	bool early_section = is_early_section(ms);
++	struct page *memmap = NULL;
++	unsigned long *subsection_map = ms->usage
++		? &ms->usage->subsection_map[0] : NULL;
++
++	subsection_mask_set(map, pfn, nr_pages);
++	if (subsection_map)
++		bitmap_and(tmp, map, subsection_map, SUBSECTIONS_PER_SECTION);
++
++	if (WARN(!subsection_map || !bitmap_equal(tmp, map, SUBSECTIONS_PER_SECTION),
++				"section already deactivated (%#lx + %ld)\n",
++				pfn, nr_pages))
++		return;
++
++	/*
++	 * There are 3 cases to handle across two configurations
++	 * (SPARSEMEM_VMEMMAP={y,n}):
++	 *
++	 * 1/ deactivation of a partial hot-added section (only possible
++	 * in the SPARSEMEM_VMEMMAP=y case).
++	 *    a/ section was present at memory init
++	 *    b/ section was hot-added post memory init
++	 * 2/ deactivation of a complete hot-added section
++	 * 3/ deactivation of a complete section from memory init
++	 *
++	 * For 1/, when subsection_map does not empty we will not be
++	 * freeing the usage map, but still need to free the vmemmap
++	 * range.
++	 *
++	 * For 2/ and 3/ the SPARSEMEM_VMEMMAP={y,n} cases are unified
++	 */
++	bitmap_xor(subsection_map, map, subsection_map, SUBSECTIONS_PER_SECTION);
++	if (bitmap_empty(subsection_map, SUBSECTIONS_PER_SECTION)) {
++		unsigned long section_nr = pfn_to_section_nr(pfn);
++
++		if (!early_section) {
++			kfree(ms->usage);
++			ms->usage = NULL;
++		}
++		memmap = sparse_decode_mem_map(ms->section_mem_map, section_nr);
++		ms->section_mem_map = sparse_encode_mem_map(NULL, section_nr);
++	}
++
++	if (early_section && memmap)
++		free_map_bootmem(memmap);
++	else
++		depopulate_section_memmap(pfn, nr_pages, altmap);
++}
++
++static struct page * __meminit section_activate(int nid, unsigned long pfn,
++		unsigned long nr_pages, struct vmem_altmap *altmap)
++{
++	DECLARE_BITMAP(map, SUBSECTIONS_PER_SECTION) = { 0 };
++	struct mem_section *ms = __pfn_to_section(pfn);
++	struct mem_section_usage *usage = NULL;
++	unsigned long *subsection_map;
++	struct page *memmap;
++	int rc = 0;
++
++	subsection_mask_set(map, pfn, nr_pages);
++
++	if (!ms->usage) {
++		usage = kzalloc(mem_section_usage_size(), GFP_KERNEL);
++		if (!usage)
++			return ERR_PTR(-ENOMEM);
++		ms->usage = usage;
++	}
++	subsection_map = &ms->usage->subsection_map[0];
++
++	if (bitmap_empty(map, SUBSECTIONS_PER_SECTION))
++		rc = -EINVAL;
++	else if (bitmap_intersects(map, subsection_map, SUBSECTIONS_PER_SECTION))
++		rc = -EEXIST;
++	else
++		bitmap_or(subsection_map, map, subsection_map,
++				SUBSECTIONS_PER_SECTION);
++
++	if (rc) {
++		if (usage)
++			ms->usage = NULL;
++		kfree(usage);
++		return ERR_PTR(rc);
++	}
++
++	/*
++	 * The early init code does not consider partially populated
++	 * initial sections, it simply assumes that memory will never be
++	 * referenced.  If we hot-add memory into such a section then we
++	 * do not need to populate the memmap and can simply reuse what
++	 * is already there.
++	 */
++	if (nr_pages < PAGES_PER_SECTION && is_early_section(ms))
++		return pfn_to_page(pfn);
++
++	memmap = populate_section_memmap(pfn, nr_pages, nid, altmap);
++	if (!memmap) {
++		section_deactivate(pfn, nr_pages, altmap);
++		return ERR_PTR(-ENOMEM);
++	}
++
++	return memmap;
++}
++
+ /**
+- * sparse_add_one_section - add a memory section
++ * sparse_add_section - add a memory section, or populate an existing one
+  * @nid: The node to add section on
+  * @start_pfn: start pfn of the memory range
++ * @nr_pages: number of pfns to add in the section
+  * @altmap: device page map
+  *
+  * This is only intended for hotplug.
+@@ -743,50 +880,29 @@ int __meminit sparse_add_section(int nid, unsigned long start_pfn,
+ 		unsigned long nr_pages, struct vmem_altmap *altmap)
+ {
+ 	unsigned long section_nr = pfn_to_section_nr(start_pfn);
+-	struct mem_section_usage *usage;
+ 	struct mem_section *ms;
+ 	struct page *memmap;
+ 	int ret;
+ 
+-	/*
+-	 * no locking for this, because it does its own
+-	 * plus, it does a kmalloc
+-	 */
+ 	ret = sparse_index_init(section_nr, nid);
+-	if (ret < 0 && ret != -EEXIST)
++	if (ret < 0)
+ 		return ret;
+-	ret = 0;
+-	memmap = populate_section_memmap(start_pfn, PAGES_PER_SECTION, nid,
+-			altmap);
+-	if (!memmap)
+-		return -ENOMEM;
+-	usage = kzalloc(mem_section_usage_size(), GFP_KERNEL);
+-	if (!usage) {
+-		depopulate_section_memmap(start_pfn, PAGES_PER_SECTION, altmap);
+-		return -ENOMEM;
+-	}
+ 
+-	ms = __pfn_to_section(start_pfn);
+-	if (ms->section_mem_map & SECTION_MARKED_PRESENT) {
+-		ret = -EEXIST;
+-		goto out;
+-	}
++	memmap = section_activate(nid, start_pfn, nr_pages, altmap);
++	if (IS_ERR(memmap))
++		return PTR_ERR(memmap);
+ 
+ 	/*
+ 	 * Poison uninitialized struct pages in order to catch invalid flags
+ 	 * combinations.
+ 	 */
+-	page_init_poison(memmap, sizeof(struct page) * PAGES_PER_SECTION);
++	page_init_poison(pfn_to_page(start_pfn), sizeof(struct page) * nr_pages);
+ 
++	ms = __pfn_to_section(start_pfn);
+ 	section_mark_present(ms);
+-	sparse_init_one_section(ms, section_nr, memmap, usage);
++	sparse_init_one_section(ms, section_nr, memmap, ms->usage);
+ 
+-out:
+-	if (ret < 0) {
+-		kfree(usage);
+-		depopulate_section_memmap(start_pfn, PAGES_PER_SECTION, altmap);
+-	}
+-	return ret;
++	return 0;
+ }
+ 
+ #ifdef CONFIG_MEMORY_FAILURE
+@@ -819,51 +935,12 @@ static inline void clear_hwpoisoned_pages(struct page *memmap, int nr_pages)
+ }
+ #endif
+ 
+-static void free_section_usage(struct page *memmap,
+-		struct mem_section_usage *usage, unsigned long pfn,
+-		unsigned long nr_pages, struct vmem_altmap *altmap)
+-{
+-	struct page *usage_page;
+-
+-	if (!usage)
+-		return;
+-
+-	usage_page = virt_to_page(usage);
+-	/*
+-	 * Check to see if allocation came from hot-plug-add
+-	 */
+-	if (PageSlab(usage_page) || PageCompound(usage_page)) {
+-		kfree(usage);
+-		if (memmap)
+-			depopulate_section_memmap(pfn, nr_pages, altmap);
+-		return;
+-	}
+-
+-	/*
+-	 * The usemap came from bootmem. This is packed with other usemaps
+-	 * on the section which has pgdat at boot time. Just keep it as is now.
+-	 */
+-
+-	if (memmap)
+-		free_map_bootmem(memmap);
+-}
+-
+-void sparse_remove_one_section(struct mem_section *ms, unsigned long pfn,
++void sparse_remove_section(struct mem_section *ms, unsigned long pfn,
+ 		unsigned long nr_pages, unsigned long map_offset,
+ 		struct vmem_altmap *altmap)
+ {
+-	struct page *memmap = NULL;
+-	struct mem_section_usage *usage = NULL;
+-
+-	if (ms->section_mem_map) {
+-		usage = ms->usage;
+-		memmap = sparse_decode_mem_map(ms->section_mem_map,
+-						__section_nr(ms));
+-		ms->section_mem_map = 0;
+-		ms->usage = NULL;
+-	}
+-
+-	clear_hwpoisoned_pages(memmap + map_offset, nr_pages - map_offset);
+-	free_section_usage(memmap, usage, pfn, nr_pages, altmap);
++	clear_hwpoisoned_pages(pfn_to_page(pfn) + map_offset,
++			nr_pages - map_offset);
++	section_deactivate(pfn, nr_pages, altmap);
+ }
+ #endif /* CONFIG_MEMORY_HOTPLUG */
 
-> 
-> The iommu_fault_response (patch 4/4) is a bit easier to extend because
-> it's userspace->kernel and userspace can just declare the size it's
-> using. I did add a version field in case we run out of flags or want
-> to change the whole thing, but I think I was being overly cautious
-> and it might just be a waste of space.
-> 
-> Thanks,
-> Jean
-
-[Jacob Pan]
