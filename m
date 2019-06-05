@@ -2,107 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54FCD35764
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 09:06:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E84EB35771
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 09:09:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbfFEHFy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 03:05:54 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:33179 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726885AbfFEHFq (ORCPT
+        id S1726638AbfFEHJc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 03:09:32 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45320 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726510AbfFEHJc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 03:05:46 -0400
-Received: by mail-pl1-f195.google.com with SMTP id g21so9362654plq.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 00:05:46 -0700 (PDT)
+        Wed, 5 Jun 2019 03:09:32 -0400
+Received: by mail-wr1-f66.google.com with SMTP id f9so3546889wre.12
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 00:09:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=rbPIQS9Fmw5oTtgndIQLG4f4C7zxyYTux8kyKub57FA=;
-        b=rV/FZ2k5ROTiwaU+QXmT18Q1X1XIfCyR4CuDNLomAL9GmG0K/H7k/bXUWOVlmzuxqr
-         be68f1Qm8zwGc69LlLEY8vyoyGxmNKq55wQVgKt/VXliZaiPk3mV99UE1jVCCM/B4cPI
-         /asHO2RFXQmPBlhXRY1iQpScW0QI69rG+4BevPUvNLGUIghl/BgY3M/rh1h2aFLGD26y
-         Bs7o/6pdZ6XOABeOEynE65OpxMzLv1sFJd9kv0B8TCA770G1lPRQLoTCyzumG331Alzb
-         0TSoxYTi5nJSmy51QGVkT8NUpMW7xCNmhtz+ulFHyySALZYnIobgPOCHzNk7YNdEOqoM
-         Vudg==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=k36dAzNmgaqwmQvMa36IwjM04BTSr/wOoDP6exbi8UY=;
+        b=x1WvdiqHLGUEpygoU7klJUijn/C602Fe/bjAvlUTzjx+mANGu6SbHM0cNO6C1aYO70
+         cgE5M3tcJMZUb4aa2iNdpqyoRySDK3DOzLY5GYYBvnlXRAbERMKwJvO6PChqSsf1grbr
+         lM1cAbcqFEloQ76z4a+rOMaDqeqlFIZ1AcQA3BufSn6WYNLsTeUUh8XbSM7MMI7XnGbm
+         IVRpU1osdykJhxWGwjYopNceGQeWq6Q1TJ+qnbrzaa5Wi+9jNVJQEWI2/ZhWPwjdPNQJ
+         UxEOQm5H4edvFoHK1Wk8x3DbaytJZIvDr+N0+Ck0k1WO/AkT3w1uc00d0s0YfgenW7AP
+         Nw/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rbPIQS9Fmw5oTtgndIQLG4f4C7zxyYTux8kyKub57FA=;
-        b=XuTfQu0YrA3ShkFVqr760F4AE1y2PX3moPGGiGVRsSQPJ6uoNvb7v43yIcLOer3Ctk
-         HuQuyGn5tSbAFhiTwm0ZYhYdzDMXmNy45Y4+b8B4mYRPdTamuOBNXzscy4FZrKkoMxiJ
-         I/bRk9hhw0+/iuvvYK1qMNticG1eCDuoYgYM+zsBbpUKkrJXYQXpTHVYbBTEUKjkmGN0
-         1IwLkK5mnvh8FLBYOC+NEADrtRC051n4Odi4rBAK659ZcwFQgxXfBPKPRsIEPLdSuV3O
-         8eeHcqlAgcYnLAPw6/S7Yu7x93Yo9dEq8M3tl5NeKF+3qo+f//efloEJEU1aKAublztQ
-         1Qrg==
-X-Gm-Message-State: APjAAAXe2Mib3gx270dz3JxS68cLO0Fy87kGl5RqWcxO31M1jIN9Qqt1
-        pjwztvbnbSt+XRdJLYzJZZWOzluoeTc=
-X-Google-Smtp-Source: APXvYqwwtx7cLpi6/3SbzLxsfe67iwSRMqCZtxpzZk6fJB29m0FN0KYAyk+OHByP79AIhNJLX7RDzw==
-X-Received: by 2002:a17:902:542:: with SMTP id 60mr19568359plf.68.1559718346021;
-        Wed, 05 Jun 2019 00:05:46 -0700 (PDT)
-Received: from localhost.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id d132sm6527348pfd.61.2019.06.05.00.05.44
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=k36dAzNmgaqwmQvMa36IwjM04BTSr/wOoDP6exbi8UY=;
+        b=cu5XiQT1tUyxePZgxMjbiPfyYF2EG3YT7fR7+VRfhBopnqpi4XfcHMB2c1V4ncU2HS
+         HOe3YDFc50nX+mCe9zIuPCipJ2mBiO1SqQ6CPkEsUsgf9jtxQwsZfl9Yi1zhYBZPtwmV
+         WqCn0qsxOpgsNjKwLqW3VZ+W9Yr5s77NGMm2LOYB2boA/TXa1PAHzgv8uLSOj9mT+CDV
+         fHuzEWH537Agn4QlpmzFtp7/mZHqOisJMN4vVUYxFxJn4mro5qCh7hGD7lAmz8N/Lvqi
+         W/7QCwub5zEMcVyv72N5yYKYAIoPydesvOnEt1b/WhNHl3V8i8d1LBzngNIWBUnc9YEc
+         tbJg==
+X-Gm-Message-State: APjAAAW9Qn1YJh9CD5h/3uuqM42q3IV5yWCr5N0mrNHConn4/KmQQUl0
+        4XysJixvw442ZXk0MDeTIanMhw==
+X-Google-Smtp-Source: APXvYqxh5AFxtIbzQZRmSAlo9FC/qrjqBKRgVLtmMT2NgG+CeZHe6g4bUCTSorRYhPeYfhTb5pZX+w==
+X-Received: by 2002:a5d:690d:: with SMTP id t13mr6579006wru.93.1559718570730;
+        Wed, 05 Jun 2019 00:09:30 -0700 (PDT)
+Received: from dell ([2.27.167.43])
+        by smtp.gmail.com with ESMTPSA id c129sm2405930wma.27.2019.06.05.00.09.29
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Jun 2019 00:05:45 -0700 (PDT)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Cory Tusar <cory.tusar@zii.aero>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 15/15] drm/bridge: tc358767: Replace magic number in tc_main_link_enable()
-Date:   Wed,  5 Jun 2019 00:05:07 -0700
-Message-Id: <20190605070507.11417-16-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190605070507.11417-1-andrew.smirnov@gmail.com>
-References: <20190605070507.11417-1-andrew.smirnov@gmail.com>
+        Wed, 05 Jun 2019 00:09:30 -0700 (PDT)
+Date:   Wed, 5 Jun 2019 08:09:28 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     alokc@codeaurora.org, kramasub@codeaurora.org,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        wsa+renesas@sang-engineering.com, linus.walleij@linaro.org,
+        balbi@kernel.org, gregkh@linuxfoundation.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        jlhugo@gmail.com, linux-i2c@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH 6/8] usb: dwc3: qcom: Add support for booting with ACPI
+Message-ID: <20190605070928.GJ4797@dell>
+References: <20190604104455.8877-1-lee.jones@linaro.org>
+ <20190604104455.8877-6-lee.jones@linaro.org>
+ <20190605063507.GM22737@tuxbook-pro>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190605063507.GM22737@tuxbook-pro>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We don't need 8 byte array, DP_LINK_STATUS_SIZE (6) should be
-enough. This also gets rid of a magic number as a bonus.
+On Tue, 04 Jun 2019, Bjorn Andersson wrote:
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Archit Taneja <architt@codeaurora.org>
-Cc: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Cory Tusar <cory.tusar@zii.aero>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/gpu/drm/bridge/tc358767.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On Tue 04 Jun 03:44 PDT 2019, Lee Jones wrote:
+> > diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
+> [..]
+> > @@ -373,7 +416,7 @@ static int dwc3_qcom_clk_init(struct dwc3_qcom *qcom, int count)
+> >  
+> >  	qcom->num_clocks = count;
+> >  
+> > -	if (!count)
+> > +	if (!count || ACPI_HANDLE(dev))
+> >  		return 0;
+> 
+> Afaict you call this with count = of_count_phandle_with_args(), which
+> should be 0. But why not skip calling this at all?
 
-diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
-index 41a976dff13b..cf38f943e656 100644
---- a/drivers/gpu/drm/bridge/tc358767.c
-+++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -893,7 +893,7 @@ static int tc_main_link_enable(struct tc_data *tc)
- 	u32 dp_phy_ctrl;
- 	u32 value;
- 	int ret;
--	u8 tmp[8];
-+	u8 tmp[DP_LINK_STATUS_SIZE];
- 
- 	dev_dbg(tc->dev, "link enable\n");
- 
+Actually count can be <0, which is why I must have needed it at the
+beginning.  There is another patch in this set which checks for
+errors, thus the ACPI_HANDLE() call should now be superfluous.  I
+will test and remove it.
+
+> >  	qcom->clks = devm_kcalloc(dev, qcom->num_clocks,
+> > @@ -409,12 +452,28 @@ static int dwc3_qcom_clk_init(struct dwc3_qcom *qcom, int count)
+> >  	return 0;
+> >  }
+> >  
+> > +static const struct dwc3_acpi_pdata sdm845_acpi_pdata = {
+> > +	.qscratch_base_offset = SDM845_QSCRATCH_BASE_OFFSET,
+> > +	.qscratch_base_size = SDM845_QSCRATCH_SIZE,
+> > +	.dwc3_core_base_size = SDM845_DWC3_CORE_SIZE,
+> > +	.hs_phy_irq_index = 1,
+> > +	.dp_hs_phy_irq_index = 4,
+> > +	.dm_hs_phy_irq_index = 3,
+> > +	.ss_phy_irq_index = 2
+> > +};
+> > +
+> > +static const struct acpi_device_id dwc3_qcom_acpi_match[] = {
+> > +	{ "QCOM2430", (unsigned long)&sdm845_acpi_pdata },
+> > +	{ },
+> > +};
+> > +MODULE_DEVICE_TABLE(acpi, dwc3_qcom_acpi_match);
+> 
+> Analog to of_device_get_match_data() there seems to be a
+> acpi_device_get_match_data(), if you use this you should be able to
+> have you acpi_device_id array next to the of_device_id.
+
+Do you mean "Analogous"?
+
+I will try to group them, thanks.
+
+> > +
+> >  static int dwc3_qcom_probe(struct platform_device *pdev)
+> 
+> It seems that all that's left unconditional on ACPI_HANDLE() in this
+> function are the optional pieces and the tail. Wouldn't it be cleaner to
+> split it out in different functions?
+
+There are ~50 lines of shared code in dwc3_qcom_probe(), most of it is
+interspersed between the configuration table (DT, ACPI) pieces, which
+is why it's formatted in the current way.
+
+I can split a few things out into separate functions if you think
+it'll help.
+
 -- 
-2.21.0
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
