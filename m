@@ -2,174 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CC0436047
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 17:27:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C3663604E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 17:28:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728299AbfFEP1a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 11:27:30 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39950 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728032AbfFEP1a (ORCPT
+        id S1728441AbfFEP17 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 11:27:59 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:40175 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728390AbfFEP17 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 11:27:30 -0400
-Received: by mail-pf1-f196.google.com with SMTP id u17so15036478pfn.7
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 08:27:29 -0700 (PDT)
+        Wed, 5 Jun 2019 11:27:59 -0400
+Received: by mail-qt1-f194.google.com with SMTP id a15so3928922qtn.7;
+        Wed, 05 Jun 2019 08:27:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=bL2F5Kk1z37B/CBGiBHXHDAe9BGsJSubIxd5oJ6N+xU=;
-        b=JnC5PSzF0dpVQw69G+2XoZLocnP6x7N9rI2cPtusWE/fddvUWozGnzbtsHQ2aa8sEc
-         7+0hwpN5WyoALO0EsgvzKntrblkMdk0/sW12SHCR7LZ8K8nWV6dXF4D04VcDXdFkiaEs
-         DeDPXmnOTqWiBMwAIc5QHaf1qxJWZKPOd4klLL55TrsDgbNPdpDgHZZNeykfn2x4qRM4
-         fFYSAEoqNusLd1hI7+7/sni8dz8hIFVhCU3trmdSIRGDT0w/lgpjvchYlnqu1xp+VC80
-         pSuouA8DqO+cclu+xPvSvbXH0tpMoihTHKnJPE6KzV0ls3lrGQjY7BBh6vCNP4V9Asce
-         9Myg==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=DoYP3SXq/F69tuFAtMw8bYjy0iDS2z1aQ6oaElaTXL8=;
+        b=pEDdS/Gt9MDlY9k11wK/L3izJSlmNQGxdN8DnF2v/gdBy7xtXb8UJdX42bIYBBI5QB
+         n9Rvr5rOrDrn95t6jDQVNX+JfdWUG6xp3BKnPO/rTE/dbe3Rv0wAn/83itq3kpa4EcBP
+         bTiwnt/LzUYaJhSwJFtJmggS1qHOJNzW3aVWcRMtPpLRFfwufoBSk/8XPc4DXnqxMBGc
+         4zzOq7uygtQ88uNtCZ9Wt+L+qFGKjI5oSOwnBpGUIuaRP3dgDaznJxn3tS97HjrFQxrG
+         2wBAx5OaG2PFz1XAFeDHxdMc5aqKtBJIugmoFREvlnuULQVEZUEc/qw8p5z/7jjQ8MxC
+         H2Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=bL2F5Kk1z37B/CBGiBHXHDAe9BGsJSubIxd5oJ6N+xU=;
-        b=q/umv6ui9K1oKCVE/zmxYN2abgjk4honLrNq8gd5bovjj3OqWwiEr6kuF5I2qaRRJ4
-         ZaGM+H8/336dbVyL28txxfpJpZdpxw1GsTsBs50ymHeJlxGe2c6ehePXneLg8DJhSxc4
-         UhKZeHBc1Mn3NpezIVJhDc4UHc6dH5ZHd+0nyfxJR+BfLxmGFD3GhPjk2whgt97psUkc
-         y7q7ogWrj1Dev3Y6Cie9ADlgsc95P6v9KkoTcsbG+OB6b4+nTMkNLBt1acqJBKyJJ2D1
-         Sfw7v4I4xYiG4J3+9jH6KggBG0xLLdH4iVyIg2dOmBq5KA1uawQHriNbQ+TzqMKVAoFJ
-         NqKA==
-X-Gm-Message-State: APjAAAXHk8vBnJTlW0iiv5UgPgKbx4tl7Puoe8CT/EbXPFRvn63/7WXu
-        S8vf1LW5OFn6uE6dsRFkPwWPsw==
-X-Google-Smtp-Source: APXvYqz2e4+YAz3gMkVuEi5gyTiboR8jSeUJlxflVDvvuuaQofZK4swW8J85VuYxCm33g15kXEUd8w==
-X-Received: by 2002:a65:484d:: with SMTP id i13mr5108450pgs.27.1559748448854;
-        Wed, 05 Jun 2019 08:27:28 -0700 (PDT)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.googlemail.com with ESMTPSA id y10sm23446768pfm.68.2019.06.05.08.27.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Jun 2019 08:27:27 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Anand Moon <linux.amoon@gmail.com>
-Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v5 3/3] arm64: dts: meson: Add minimal support for Odroid-N2
-In-Reply-To: <f1013078-5964-640e-de7a-4ad8b91ed005@baylibre.com>
-References: <20190603091008.2382-1-narmstrong@baylibre.com> <20190603091008.2382-4-narmstrong@baylibre.com> <CANAwSgT964PY6OMkS-hoqBf39Np99-tzfGbpXGdLtxF600eDtQ@mail.gmail.com> <f1013078-5964-640e-de7a-4ad8b91ed005@baylibre.com>
-Date:   Wed, 05 Jun 2019 08:27:27 -0700
-Message-ID: <7hr288gihs.fsf@baylibre.com>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DoYP3SXq/F69tuFAtMw8bYjy0iDS2z1aQ6oaElaTXL8=;
+        b=emGzmP3oQxGesGWu132xIrSO/FX/OgV6RxXR0EHgBgodtJfG9P0rbjIqRKAtg18prt
+         1JRGs/e5CrqQDkPtRh1VVueagjFkejgvznsThpEcEslYIzUUu+wxrm9rGHjRFZMxv3LM
+         RWWIAOg7Bjgemjh1b4VMPs0rEQnPkgL2LFp44jlTpeMYNugIRodEYmS98MJF6WHoHkUl
+         N/GuzQtz5U9lxgL1vHNq90pWPoESXOz1amU3MYYlvHYD56B0eVguTOl1cZq/2679HPct
+         BZuQAY4qOWsHVnzYPT/ubSKRxjtHmMJCQneSuPWo+RE3UVJViPQQHyIJCzMSqCEiHq5G
+         1ysg==
+X-Gm-Message-State: APjAAAVaxq+XMMnWFXhUtZrbbugMQfDDKgRrVYW6jqaaVovwDbBv1n9M
+        9eNgl49K/avirE8lVfGAi44=
+X-Google-Smtp-Source: APXvYqxGSPbzamSX1tRyVLk9HFMCpuOKya9aHxwl9uQDtiW/Cl9yo+PicBLUpAo4n+Pj3Kry+APbrQ==
+X-Received: by 2002:a0c:95b3:: with SMTP id s48mr17429642qvs.84.1559748477813;
+        Wed, 05 Jun 2019 08:27:57 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::1:c027])
+        by smtp.gmail.com with ESMTPSA id t197sm6390498qke.2.2019.06.05.08.27.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Jun 2019 08:27:56 -0700 (PDT)
+Date:   Wed, 5 Jun 2019 08:27:54 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v9 12/16] sched/core: uclamp: Extend CPU's cgroup
+ controller
+Message-ID: <20190605152754.GO374014@devbig004.ftw2.facebook.com>
+References: <20190515094459.10317-1-patrick.bellasi@arm.com>
+ <20190515094459.10317-13-patrick.bellasi@arm.com>
+ <20190531153545.GE374014@devbig004.ftw2.facebook.com>
+ <20190603122929.GC19426@darkstar>
+ <20190605140943.GM374014@devbig004.ftw2.facebook.com>
+ <20190605150630.vh5pyfpd6y3mfcaa@e110439-lin>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190605150630.vh5pyfpd6y3mfcaa@e110439-lin>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Neil Armstrong <narmstrong@baylibre.com> writes:
+Hello, Patrick.
 
-> On 03/06/2019 14:00, Anand Moon wrote:
->> Hi Niel,
->> 
->> On Mon, 3 Jun 2019 at 14:41, Neil Armstrong <narmstrong@baylibre.com> wrote:
->>>
->>> This patch adds basic support for :
->>> - Amlogic G12B, which is very similar to G12A
->>> - The HardKernel Odroid-N2 based on the S922X SoC
->>>
->>> The Amlogic G12B SoC is very similar with the G12A SoC, sharing
->>> most of the features and architecture, but with these differences :
->>> - The first CPU cluster only has 2xCortex-A53 instead of 4
->>> - G12B has a second cluster of 4xCortex-A73
->>> - Both cluster can achieve 2GHz instead of 1,8GHz for G12A
->>> - CPU Clock architecture is difference, thus needing a different
->>>   compatible to handle this slight difference
->>> - Supports a MIPI CSI input
->>> - Embeds a Mali-G52 instead of a Mali-G31, but integration is the same
->>>
->>> Actual support is done in the same way as for the GXM support, including
->>> the G12A dtsi and redefining the CPU clusters.
->>> Unlike GXM, the first cluster is different, thus needing to remove
->>> the last 2 cpu nodes of the first cluster.
->>>
->>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->>> Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
->>> ---
->>>  arch/arm64/boot/dts/amlogic/Makefile          |   1 +
->>>  .../boot/dts/amlogic/meson-g12b-odroid-n2.dts | 289 ++++++++++++++++++
->>>  arch/arm64/boot/dts/amlogic/meson-g12b.dtsi   |  82 +++++
->>>  3 files changed, 372 insertions(+)
->>>  create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
->>>  create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12b.dtsi
->>>
->>> diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
->>> index e129c03ced14..07b861fe5fa5 100644
->>> --- a/arch/arm64/boot/dts/amlogic/Makefile
->>> +++ b/arch/arm64/boot/dts/amlogic/Makefile
->>> @@ -3,6 +3,7 @@ dtb-$(CONFIG_ARCH_MESON) += meson-axg-s400.dtb
->>>  dtb-$(CONFIG_ARCH_MESON) += meson-g12a-sei510.dtb
->>>  dtb-$(CONFIG_ARCH_MESON) += meson-g12a-u200.dtb
->>>  dtb-$(CONFIG_ARCH_MESON) += meson-g12a-x96-max.dtb
->>> +dtb-$(CONFIG_ARCH_MESON) += meson-g12b-odroid-n2.dtb
->>>  dtb-$(CONFIG_ARCH_MESON) += meson-gxbb-nanopi-k2.dtb
->>>  dtb-$(CONFIG_ARCH_MESON) += meson-gxbb-nexbox-a95x.dtb
->>>  dtb-$(CONFIG_ARCH_MESON) += meson-gxbb-odroidc2.dtb
->>> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
->>> new file mode 100644
->>> index 000000000000..161d8f0ff4f3
->>> --- /dev/null
->>> +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
->>> @@ -0,0 +1,289 @@
->>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->>> +/*
->>> + * Copyright (c) 2019 BayLibre, SAS
->>> + * Author: Neil Armstrong <narmstrong@baylibre.com>
->>> + */
->>> +
->>> +/dts-v1/;
->>> +
->>> +#include "meson-g12b.dtsi"
->>> +#include <dt-bindings/input/input.h>
->>> +#include <dt-bindings/gpio/meson-g12a-gpio.h>
->>> +
->>> +/ {
->>> +       compatible = "hardkernel,odroid-n2", "amlogic,g12b";
->>> +       model = "Hardkernel ODROID-N2";
->>> +
->>> +       aliases {
->>> +               serial0 = &uart_AO;
->>> +               ethernet0 = &ethmac;
->>> +       };
->>> +
->
-> [...]
->
->>> +
->>> +       main_12v: regulator-main_12v {
->>> +               compatible = "regulator-fixed";
->>> +               regulator-name = "12V";
->>> +               regulator-min-microvolt = <12000000>;
->>> +               regulator-max-microvolt = <12000000>;
->>> +               regulator-always-on;
->>> +       };
->>> +
->>> +       vcc_5v: regulator-vcc_5v {
->>> +               compatible = "regulator-fixed";
->>> +               regulator-name = "5V";
->>> +               regulator-min-microvolt = <5000000>;
->>> +               regulator-max-microvolt = <5000000>;
->>> +               regulator-always-on;
->> 
->> As per odroid-n2_rev0.4_20190307 schematic its missing.
->>                   vin-supply =  <&main_12v>;
->> 
->> With this please add my.
->> Tested-by: Anand Moon <linux.amoon@gmail.com>
->
-> Good catch, thanks Anand.
->
-> @Kevin, should I resend ?
+On Wed, Jun 05, 2019 at 04:06:30PM +0100, Patrick Bellasi wrote:
+> The only additional point I can think about as a (slightly) stronger
+> reason is that I guess we would like to have the same API for cgroups
+> as well as for the task specific and the system wide settings.
+> 
+> The task specific values comes in via the sched_setattr() syscall:
+> 
+>    [PATCH v9 06/16] sched/core: uclamp: Extend sched_setattr() to support utilization clamping
+>    https://lore.kernel.org/lkml/20190515094459.10317-7-patrick.bellasi@arm.com/
+> 
+> where we need to encode each clamp into a __u32 value.
+> 
+> System wide settings are expose similarly to these:
+> 
+>    grep '' /proc/sys/kernel/sched_*
+> 
+> where we have always integer numbers.
+> 
+> AFAIU your proposal will require to use a "scaled percentage" - e.g.
+> 3844 for 38.44% which however it's still not quite the same as writing
+> the string "38.44".
+> 
+> Not sure that's a strong enough argument, is it?
 
-No need, I've fixed it up locally,
+It definitely is an argument but the thing is that the units we use in
+kernel API are all over the place anyway.  Even for something as
+simple as sizes, we use bytes, 512 byte sectors, kilobytes and pages
+all over the place.  Some for good reasons (as you mentioned above)
+and others for historical / random ones.
 
-Thanks,
+So, I'm generally not too concerned about units differing between
+cgroup interface and, say, syscall interface.  That ship has sailed a
+long while ago and we have to deal with it everywhere anyway (in many
+cases there isn't even a good unit to pick for compatibility because
+the existing interfaces are already mixing units heavily).  As long as
+the translation is trivial, it isn't a big issue.  Note that some
+translations are not trivial.  For example, the sched nice value
+mapping to weight has a separate unit matching knob for that reason.
 
-Kevin
+> > We can go into the weeds with the semantics but how about us using
+> > an alternative adjective "misleading" for the cpu.util.min/max names
+> > to short-circuit that?
+> 
+> Not quite sure to get what you mean here. Are you pointing out that
+> with clamps we don't strictly enforce a bandwidth but we just set a
+> bias?
+
+It's just that "util" is already used a lot and cpu.util.max reads
+like it should cap cpu utilization (wallclock based) to 80% and it's
+likely that it'd read seem way to many other folks too.  A more
+distinctive name signals that it isn't something that obvious.
+
+Thanks.
+
+-- 
+tejun
