@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B97835DE1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 15:24:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0272035DD1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 15:23:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728043AbfFENYb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 09:24:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40778 "EHLO
+        id S1728100AbfFENXT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 09:23:19 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40796 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727917AbfFENXQ (ORCPT
+        with ESMTP id S1728062AbfFENXR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 09:23:16 -0400
+        Wed, 5 Jun 2019 09:23:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=oXhu2RnmN1bjxijZ/YxDd0PUyqgLkr/tTV2k0tXNHQY=; b=OWAd2dqn3JTpdIxLX067SQYUf9
-        PZ56BBilq2YrfIyn67nOwVAkBK+nqtum30JYfw2rgDcGwKI29tme2AmwygnPeAEfvQxB4N1J5HwIr
-        dSIFwLocNtbk+68la/Svz+fOXYc2MOqRcA97NP7KSF2/38gzY5VAjzrbZok0gDJjGm3GCXnJZbVZF
-        Yo7CdUJQ8wvPFVbnAbY0TZ0vMqpb6XDV22htemyXZuX+GVDikYvsKK1od9AttHr9sRYV1euL/2w8I
-        0m+e/wjBR6W/foS0FzJxpttQRP932VyJzAZ6UC69RrPrGiJJcWRjWnjGm8OL7dx7y2GoDudBbff2h
-        lKlPg4yQ==;
+        bh=5bqcevd3/vd3K9kcANMub1p7PmIO2FY3TmZar48KLsQ=; b=DSrots28hWrcs8cOLDaIVe+mWk
+        eqqgwt2jE58mqhfnzpspifGwYaoaOXai1AH6S4y8L9jQaT97dGVEjdMfiQJpEEF4SLf7r6bfy3kit
+        j3PJqydR1Co28Chc6oUJFh1o/tPJ9w/532KB0FB/rUywPvGucVLAdkeZ/uFaddGGHkAuTHm5v4OM1
+        EOZpKpOOMIypymlT7Qm9qlhm9bBsw1cX21xwILLJuk7w5UoKn+Ql70VTCVT2dJHlIvvE2NdTVllvq
+        pbkK2N6Gk6ENQpPD0jBQ/Hr0ROTd6flCLmon0J+/34YnebqlF874sG+mKRPxdx2CokSnPLmBfD5nR
+        0uWGmegw==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hYVsH-0004qN-Bw; Wed, 05 Jun 2019 13:22:41 +0000
+        id 1hYVsH-0004qM-Cb; Wed, 05 Jun 2019 13:22:41 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 782F8203C05D7; Wed,  5 Jun 2019 15:22:39 +0200 (CEST)
-Message-Id: <20190605131944.711054227@infradead.org>
+        id 7C08C200DCF2B; Wed,  5 Jun 2019 15:22:39 +0200 (CEST)
+Message-Id: <20190605131944.770117090@infradead.org>
 User-Agent: quilt/0.65
-Date:   Wed, 05 Jun 2019 15:07:56 +0200
+Date:   Wed, 05 Jun 2019 15:07:57 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     x86@kernel.org
 Cc:     linux-kernel@vger.kernel.org,
@@ -51,7 +51,7 @@ Cc:     linux-kernel@vger.kernel.org,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         Edward Cree <ecree@solarflare.com>,
         Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: [PATCH 03/15] x86/kprobes: Fix frame pointer annotations
+Subject: [PATCH 04/15] x86/ftrace: Add pt_regs frame annotations
 References: <20190605130753.327195108@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -60,79 +60,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kprobe trampolines have a FRAME_POINTER annotation that makes no
-sense. It marks the frame in the middle of pt_regs, at the place of
-saving BP.
-
-Change it to mark the pt_regs frame as per the ENCODE_FRAME_POINTER
-from the respective entry_*.S.
+When CONFIG_FRAME_POINTER, we should mark pt_regs frames.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/x86/kernel/kprobes/common.h |   24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ arch/x86/kernel/ftrace_32.S |    3 +++
+ arch/x86/kernel/ftrace_64.S |    3 +++
+ 2 files changed, 6 insertions(+)
 
---- a/arch/x86/kernel/kprobes/common.h
-+++ b/arch/x86/kernel/kprobes/common.h
-@@ -5,15 +5,10 @@
- /* Kprobes and Optprobes common header */
- 
- #include <asm/asm.h>
--
--#ifdef CONFIG_FRAME_POINTER
--# define SAVE_RBP_STRING "	push %" _ASM_BP "\n" \
--			 "	mov  %" _ASM_SP ", %" _ASM_BP "\n"
--#else
--# define SAVE_RBP_STRING "	push %" _ASM_BP "\n"
--#endif
+--- a/arch/x86/kernel/ftrace_32.S
++++ b/arch/x86/kernel/ftrace_32.S
+@@ -9,6 +9,7 @@
+ #include <asm/export.h>
+ #include <asm/ftrace.h>
+ #include <asm/nospec-branch.h>
 +#include <asm/frame.h>
  
- #ifdef CONFIG_X86_64
-+
- #define SAVE_REGS_STRING			\
- 	/* Skip cs, ip, orig_ax. */		\
- 	"	subq $24, %rsp\n"		\
-@@ -27,11 +22,13 @@
- 	"	pushq %r10\n"			\
- 	"	pushq %r11\n"			\
- 	"	pushq %rbx\n"			\
--	SAVE_RBP_STRING				\
-+	"	pushq %rbp\n"			\
- 	"	pushq %r12\n"			\
- 	"	pushq %r13\n"			\
- 	"	pushq %r14\n"			\
--	"	pushq %r15\n"
-+	"	pushq %r15\n"			\
+ # define function_hook	__fentry__
+ EXPORT_SYMBOL(__fentry__)
+@@ -116,6 +117,8 @@ ENTRY(ftrace_regs_caller)
+ 	pushl	%ecx
+ 	pushl	%ebx
+ 
 +	ENCODE_FRAME_POINTER
 +
- #define RESTORE_REGS_STRING			\
- 	"	popq %r15\n"			\
- 	"	popq %r14\n"			\
-@@ -51,19 +48,22 @@
- 	/* Skip orig_ax, ip, cs */		\
- 	"	addq $24, %rsp\n"
- #else
-+
- #define SAVE_REGS_STRING			\
- 	/* Skip cs, ip, orig_ax and gs. */	\
--	"	subl $16, %esp\n"		\
-+	"	subl $4*4, %esp\n"		\
- 	"	pushl %fs\n"			\
- 	"	pushl %es\n"			\
- 	"	pushl %ds\n"			\
- 	"	pushl %eax\n"			\
--	SAVE_RBP_STRING				\
-+	"	pushl %ebp\n"			\
- 	"	pushl %edi\n"			\
- 	"	pushl %esi\n"			\
- 	"	pushl %edx\n"			\
- 	"	pushl %ecx\n"			\
--	"	pushl %ebx\n"
-+	"	pushl %ebx\n"			\
+ 	movl	12*4(%esp), %eax		/* Load ip (1st parameter) */
+ 	subl	$MCOUNT_INSN_SIZE, %eax		/* Adjust ip */
+ 	movl	15*4(%esp), %edx		/* Load parent ip (2nd parameter) */
+--- a/arch/x86/kernel/ftrace_64.S
++++ b/arch/x86/kernel/ftrace_64.S
+@@ -9,6 +9,7 @@
+ #include <asm/export.h>
+ #include <asm/nospec-branch.h>
+ #include <asm/unwind_hints.h>
++#include <asm/frame.h>
+ 
+ 	.code64
+ 	.section .entry.text, "ax"
+@@ -203,6 +204,8 @@ GLOBAL(ftrace_regs_caller_op_ptr)
+ 	leaq MCOUNT_REG_SIZE+8*2(%rsp), %rcx
+ 	movq %rcx, RSP(%rsp)
+ 
 +	ENCODE_FRAME_POINTER
 +
- #define RESTORE_REGS_STRING			\
- 	"	popl %ebx\n"			\
- 	"	popl %ecx\n"			\
+ 	/* regs go into 4th parameter */
+ 	leaq (%rsp), %rcx
+ 
 
 
