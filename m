@@ -2,72 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68E8E3630F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 20:00:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A7CE36310
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 20:01:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726554AbfFER7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 13:59:54 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:36723 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726421AbfFER7y (ORCPT
+        id S1726631AbfFESAr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 14:00:47 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53512 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726572AbfFESAr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 13:59:54 -0400
-Received: by mail-yw1-f68.google.com with SMTP id t126so681704ywf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 10:59:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=fHW5pGXKTatp9hoPMp9eqaY7d695KRq5NdVXCZ+scCg=;
-        b=ZvCGXGRksRSXt6h5tQC9BQqt5mfyjkEeoPIsvyh9htpXVz9MC4BGg0/Lospk4YfYsW
-         CmXhbspy2plC26j+BulUJ/hppBJCkga5Mvtsh5bLze6w7nLopTWwgCcRTN2j2/VhcFid
-         XVWScaZmstr85yTVdgoTTQutwxLQDQwBQKdOGa6+Evd842aYTsMnsJuRgQLOicCgXKA9
-         tvs44MHeCU5DXtYyvT/1E0n7ZEKTO6CEiLEKchnt7k7ZSdOlyoGJt5mLhX4JXZuXvY9y
-         0dRGJxRBHPCbi7CbaOlb8lPJ/WPxHhM7Sm3WrbOTanrW/58n8IZtRVBeHB0YiES/JKTM
-         X5fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=fHW5pGXKTatp9hoPMp9eqaY7d695KRq5NdVXCZ+scCg=;
-        b=GHX887EsNo+98Iujvr3lzrYhr2nagcXi4OzCaz1EdKM6tcSMcNndza37zI7JwwAPsr
-         M8vhwre2DuAkV2lhWJ1G2yZh4Q1RDlc1pgRyIc1e4WekA69jI4KaSCJTTpJ6gLIFvQDe
-         1GU44oiahKyP+hwA7Byk+vmohYS7LUCu9i30mjPT40eHOtIOLYlpx+9CZmmU8LaZOU67
-         6anX+j77XFBJzncXjsBvY1ZY5ogK3eiY9tRcL7Ku9rd+qElMYVAgGCKa7SJhjRYnN4eY
-         wlJxlae/VBnIwyhYyY62qmjwt74w4g5hNYgpP07bw5djbtjwBii6vXm4S1D/ipMPLccA
-         XSoA==
-X-Gm-Message-State: APjAAAUf4HVGzF+2YirlJC5synknJ4zOjA5cN2Bk1cUeDIUp1tcMYMnh
-        YfBnSn3MaFrRU8Dx1hd+IfCI1LfyiVLD1A4Xo4k=
-X-Google-Smtp-Source: APXvYqztZiUMRbv04cIsW6Li7DNV9GDJkYUGjMXi6eOYKitKHC3QSwApJskrusFCU48tN3DzznrQaKChB5Zjnk/ZREc=
-X-Received: by 2002:a81:480f:: with SMTP id v15mr8244825ywa.144.1559757593290;
- Wed, 05 Jun 2019 10:59:53 -0700 (PDT)
+        Wed, 5 Jun 2019 14:00:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Wn6hbzD6Cf/LprvMetYQYPui1bmuJTeex+C2j3IFqVU=; b=HL94Of1QKtkxZTpCwABGGooa2
+        XVtrsEMGwalwBX4XvOYCkNFLP/qupgDioPE+hDpSpdN204B2YSqRktmqd72nW74hbAm5TnqQ6Tvly
+        4DMFCm8MQ9/jxMLEFiQdbsZ9XDbnlZQ5lHvcdDgr90MzrpPpRK9vX4nyN2tALYuk6XH2l8aD9TrQZ
+        yHes24OdR1TEGKiIjZpy8nqCk12U/IJdvKQkUGdQKqv5+1b0FI1ifdQfTED6SqVZGZKxaM8Qbf4bL
+        jSy7yomC6xbFtFkoggx752leMhrLyGqlQgWR31onRoREpKtj87gwwqUucSQHTQCXuRDEQKEVD2w72
+        WS3kzOndw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hYaDG-0001Km-5b; Wed, 05 Jun 2019 18:00:38 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id F242220757B40; Wed,  5 Jun 2019 20:00:35 +0200 (CEST)
+Date:   Wed, 5 Jun 2019 20:00:35 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Matt Fleming <matt@codeblueprint.co.uk>
+Cc:     linux-kernel@vger.kernel.org,
+        "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [PATCH] sched/topology: Improve load balancing on AMD EPYC
+Message-ID: <20190605180035.GA3402@hirez.programming.kicks-ass.net>
+References: <20190605155922.17153-1-matt@codeblueprint.co.uk>
 MIME-Version: 1.0
-Received: by 2002:a25:ad16:0:0:0:0:0 with HTTP; Wed, 5 Jun 2019 10:59:52 -0700 (PDT)
-Reply-To: eddywilliam0003@gmail.com
-From:   eddy william <bbruce539@gmail.com>
-Date:   Wed, 5 Jun 2019 19:59:52 +0200
-Message-ID: <CADiB6YmEwE=6WrFfQibmerubyfpDj87JckjAw_Dy5Rwb8tQSxg@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190605155922.17153-1-matt@codeblueprint.co.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mijn naam is Eddy William. Ik ben van beroep advocaat. Ik wil je aanbieden
-nabestaanden van mijn cli=C3=ABnt. Je ervaart de som van ($ 14,2 miljoen)
-dollars die mijn cli=C3=ABnt voor zijn overlijden op de bank heeft achterge=
-laten.
+On Wed, Jun 05, 2019 at 04:59:22PM +0100, Matt Fleming wrote:
+> SD_BALANCE_{FORK,EXEC} and SD_WAKE_AFFINE are stripped in sd_init()
+> for any sched domains with a NUMA distance greater than 2 hops
+> (RECLAIM_DISTANCE). The idea being that it's expensive to balance
+> across domains that far apart.
+> 
+> However, as is rather unfortunately explained in
+> 
+>   commit 32e45ff43eaf ("mm: increase RECLAIM_DISTANCE to 30")
+> 
+> the value for RECLAIM_DISTANCE is based on node distance tables from
+> 2011-era hardware.
+> 
+> Current AMD EPYC machines have the following NUMA node distances:
+> 
+> node distances:
+> node   0   1   2   3   4   5   6   7
+>   0:  10  16  16  16  32  32  32  32
+>   1:  16  10  16  16  32  32  32  32
+>   2:  16  16  10  16  32  32  32  32
+>   3:  16  16  16  10  32  32  32  32
+>   4:  32  32  32  32  10  16  16  16
+>   5:  32  32  32  32  16  10  16  16
+>   6:  32  32  32  32  16  16  10  16
+>   7:  32  32  32  32  16  16  16  10
+> 
+> where 2 hops is 32.
+> 
+> The result is that the scheduler fails to load balance properly across
+> NUMA nodes on different sockets -- 2 hops apart.
+> 
 
-Mijn klant is een burger van jouw land die stierf in auto-ongeluk met zijn =
-vrouw
-en alleen zoon. Ik krijg 50% van het totale fonds en 50% wel
-voor jou zijn.
+> Update the code in sd_init() to account for modern node distances, and
+> maintaining backward-compatible behaviour by respecting
+> RECLAIM_DISTANCE for distances more than 2 hops.
 
-Neem hier voor meer informatie contact op met mijn priv=C3=A9mail:
-eddywilliam0003@gmail.com
+And then we had two magic values :/
 
-Bij voorbaat hartelijk dank,
-Eddy William,
+Should we not 'fix' RECLAIM_DISTANCE for EPYC or something? Because
+surely, if we want to load-balance agressively over 30, then so too
+should we do node_reclaim() I'm thikning.
