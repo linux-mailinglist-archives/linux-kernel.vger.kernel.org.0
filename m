@@ -2,166 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25BEB36502
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 21:56:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0562B3654D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 22:21:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbfFET4s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 15:56:48 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:36768 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726305AbfFET4s (ORCPT
+        id S1726670AbfFEUVl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 16:21:41 -0400
+Received: from gateway34.websitewelcome.com ([192.185.148.164]:20754 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726501AbfFEUVk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 15:56:48 -0400
-Received: by mail-yw1-f66.google.com with SMTP id t126so814963ywf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 12:56:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9q4+At4yxP0TO9XKtv623886ZmeIrCw2KxtQ8rIVE+c=;
-        b=ONPOG0criwRaERkMrKHfVu+FHkSVoaWJAe/3Qcz/W7LCrH5/GIScT4HA/6GrL0+9r8
-         o6co8aqwlNSEl7NCQ5sS9tePoeHt4h9GPb68IhajREN/xrsWKcvK3qyMit8mTn0Syc/A
-         7iA0JHtcd+FIK9ODp7RhnjbF13bEpwhQGYCei3mrBE/QI6K5gsvChkA/hORMbZ9/NFwj
-         fOz5k6FisPTLo3cnO2KlMHYBKGSLayATbBhmtiVl0hlN7FVFEeyjwZxp9QJDFViYJ9Fr
-         /8tGYfzZZKKv+lqP9TGaDdXxFpWTov0D05vVZG6KZ2JgmhFAjsoiImnW6hbJ2aiQ0DFz
-         doOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9q4+At4yxP0TO9XKtv623886ZmeIrCw2KxtQ8rIVE+c=;
-        b=gG6+UG7MhEuhOdyvlZsWr9KeajwfJNx31hztEbaBvJ7hsP92CePFjbY5eGKeHwhDaI
-         Op46ttdhHSoiNPtLypdFYLQ+LEQ4o7oje088hIadxjVQscz3224iVGy5x/tm9+5ocyfc
-         9jfZqRfc26lo3sVgM60wZV2ZUxcOmdoqhFfDaIawfvuCaFM7q3ftvz0VRlY7USX5bt7V
-         Kc8dJZ++OkoiTeMZNUy5Kkjduv2DG7qihhuupc+Q50BmJKLCFFdiG19ukGuCKWfTmBiC
-         11LCHOGA5zunj4PxvM3o8HaKMfHE4rVkm1wl0N0l4RWXvQMPguwOq2FnQithVX/e9PPB
-         MfWg==
-X-Gm-Message-State: APjAAAUL6ZOCNMhkUqcmfUpfDjDo/374pvLn2XsyiG+xap4his978FOa
-        1fSPG1fIXUqTSvhGdsmlibb58tIW55+YgtXmdwVX0g==
-X-Google-Smtp-Source: APXvYqyT6u3oJyZE6NCw9GM4C6IEV7j7fkZPEOKpEM78DGOX/BwgTrn0eHFIXgvbs4TMZ9Ae/bo4AwJhPu/gx1keGo4=
-X-Received: by 2002:a81:a6d5:: with SMTP id d204mr22361086ywh.205.1559764607325;
- Wed, 05 Jun 2019 12:56:47 -0700 (PDT)
+        Wed, 5 Jun 2019 16:21:40 -0400
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id ABDD9C7B01
+        for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2019 15:00:08 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id Yc4uh2vtu90onYc4uh4cOL; Wed, 05 Jun 2019 15:00:08 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.127.120] (port=32980 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hYc4t-003gcA-Jz; Wed, 05 Jun 2019 15:00:07 -0500
+Date:   Wed, 5 Jun 2019 15:00:02 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Kamil Debski <kamil@wypas.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] phy: samsung: Use struct_size() in devm_kzalloc()
+Message-ID: <20190605200002.GA18640@embeddedor>
 MIME-Version: 1.0
-References: <20190605100630.13293-1-teawaterz@linux.alibaba.com>
-In-Reply-To: <20190605100630.13293-1-teawaterz@linux.alibaba.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Wed, 5 Jun 2019 12:56:36 -0700
-Message-ID: <CALvZod7Ya=mPKryiCxKVguGV-hPEjXD_6gBOFs9zJWc_NQMMBQ@mail.gmail.com>
-Subject: Re: [PATCH V3 1/2] zpool: Add malloc_support_movable to zpool_driver
-To:     Hui Zhu <teawaterz@linux.alibaba.com>
-Cc:     Dan Streetman <ddstreet@ieee.org>,
-        Minchan Kim <minchan@kernel.org>, ngupta@vflare.org,
-        sergey.senozhatsky.work@gmail.com,
-        Seth Jennings <sjenning@redhat.com>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.127.120
+X-Source-L: No
+X-Exim-ID: 1hYc4t-003gcA-Jz
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.127.120]:32980
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 5, 2019 at 3:06 AM Hui Zhu <teawaterz@linux.alibaba.com> wrote:
->
-> As a zpool_driver, zsmalloc can allocate movable memory because it
-> support migate pages.
-> But zbud and z3fold cannot allocate movable memory.
->
-> This commit adds malloc_support_movable to zpool_driver.
-> If a zpool_driver support allocate movable memory, set it to true.
-> And add zpool_malloc_support_movable check malloc_support_movable
-> to make sure if a zpool support allocate movable memory.
->
-> Signed-off-by: Hui Zhu <teawaterz@linux.alibaba.com>
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-Reviewed-by: Shakeel Butt <shakeelb@google.com>
+struct samsung_usb2_phy_driver {
+	...
+        struct samsung_usb2_phy_instance instances[0];
+};
 
-IMHO no need to block this series on z3fold query.
+instance = devm_kzalloc(dev, sizeof(struct samsung_usb2_phy_driver) + count *
+			sizeof(struct samsung_usb2_phy_instance), GFP_KERNEL);
 
-> ---
->  include/linux/zpool.h |  3 +++
->  mm/zpool.c            | 16 ++++++++++++++++
->  mm/zsmalloc.c         | 19 ++++++++++---------
->  3 files changed, 29 insertions(+), 9 deletions(-)
->
-> diff --git a/include/linux/zpool.h b/include/linux/zpool.h
-> index 7238865e75b0..51bf43076165 100644
-> --- a/include/linux/zpool.h
-> +++ b/include/linux/zpool.h
-> @@ -46,6 +46,8 @@ const char *zpool_get_type(struct zpool *pool);
->
->  void zpool_destroy_pool(struct zpool *pool);
->
-> +bool zpool_malloc_support_movable(struct zpool *pool);
-> +
->  int zpool_malloc(struct zpool *pool, size_t size, gfp_t gfp,
->                         unsigned long *handle);
->
-> @@ -90,6 +92,7 @@ struct zpool_driver {
->                         struct zpool *zpool);
->         void (*destroy)(void *pool);
->
-> +       bool malloc_support_movable;
->         int (*malloc)(void *pool, size_t size, gfp_t gfp,
->                                 unsigned long *handle);
->         void (*free)(void *pool, unsigned long handle);
-> diff --git a/mm/zpool.c b/mm/zpool.c
-> index a2dd9107857d..863669212070 100644
-> --- a/mm/zpool.c
-> +++ b/mm/zpool.c
-> @@ -238,6 +238,22 @@ const char *zpool_get_type(struct zpool *zpool)
->         return zpool->driver->type;
->  }
->
-> +/**
-> + * zpool_malloc_support_movable() - Check if the zpool support
-> + * allocate movable memory
-> + * @zpool:     The zpool to check
-> + *
-> + * This returns if the zpool support allocate movable memory.
-> + *
-> + * Implementations must guarantee this to be thread-safe.
-> + *
-> + * Returns: true if if the zpool support allocate movable memory, false if not
-> + */
-> +bool zpool_malloc_support_movable(struct zpool *zpool)
-> +{
-> +       return zpool->driver->malloc_support_movable;
-> +}
-> +
->  /**
->   * zpool_malloc() - Allocate memory
->   * @zpool:     The zpool to allocate from.
-> diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-> index 0787d33b80d8..8f3d9a4d46f4 100644
-> --- a/mm/zsmalloc.c
-> +++ b/mm/zsmalloc.c
-> @@ -437,15 +437,16 @@ static u64 zs_zpool_total_size(void *pool)
->  }
->
->  static struct zpool_driver zs_zpool_driver = {
-> -       .type =         "zsmalloc",
-> -       .owner =        THIS_MODULE,
-> -       .create =       zs_zpool_create,
-> -       .destroy =      zs_zpool_destroy,
-> -       .malloc =       zs_zpool_malloc,
-> -       .free =         zs_zpool_free,
-> -       .map =          zs_zpool_map,
-> -       .unmap =        zs_zpool_unmap,
-> -       .total_size =   zs_zpool_total_size,
-> +       .type =                   "zsmalloc",
-> +       .owner =                  THIS_MODULE,
-> +       .create =                 zs_zpool_create,
-> +       .destroy =                zs_zpool_destroy,
-> +       .malloc_support_movable = true,
-> +       .malloc =                 zs_zpool_malloc,
-> +       .free =                   zs_zpool_free,
-> +       .map =                    zs_zpool_map,
-> +       .unmap =                  zs_zpool_unmap,
-> +       .total_size =             zs_zpool_total_size,
->  };
->
->  MODULE_ALIAS("zpool-zsmalloc");
-> --
-> 2.21.0 (Apple Git-120)
->
+Instead of leaving these open-coded and prone to type mistakes, we can
+now use the new struct_size() helper:
+
+instance = devm_kzalloc(dev, struct_size(instance, instances, count), GFP_KERNEL);
+
+This code was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/phy/samsung/phy-samsung-usb2.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/phy/samsung/phy-samsung-usb2.c b/drivers/phy/samsung/phy-samsung-usb2.c
+index ea818866985a..4616ec829900 100644
+--- a/drivers/phy/samsung/phy-samsung-usb2.c
++++ b/drivers/phy/samsung/phy-samsung-usb2.c
+@@ -159,9 +159,8 @@ static int samsung_usb2_phy_probe(struct platform_device *pdev)
+ 	if (!cfg)
+ 		return -EINVAL;
+ 
+-	drv = devm_kzalloc(dev, sizeof(struct samsung_usb2_phy_driver) +
+-		cfg->num_phys * sizeof(struct samsung_usb2_phy_instance),
+-								GFP_KERNEL);
++	drv = devm_kzalloc(dev, struct_size(drv, instances, cfg->num_phys),
++			   GFP_KERNEL);
+ 	if (!drv)
+ 		return -ENOMEM;
+ 
+-- 
+2.21.0
+
