@@ -2,109 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4233536482
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 21:17:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2D6236494
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 21:23:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726707AbfFETRV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 15:17:21 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40758 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726599AbfFETRV (ORCPT
+        id S1726543AbfFETXV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 15:23:21 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37962 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726280AbfFETXV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 15:17:21 -0400
-Received: by mail-pg1-f196.google.com with SMTP id d30so12924593pgm.7
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 12:17:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dhmtJ4+79vRolYDJuB/HeVo2S5DNUc8fMTsNT6fH0i0=;
-        b=F8KuVE0d725JnKlMiv02aZ4rRXlJ9I/vn2LLG24+latMd3LSnG12/jfOXWJD2X/jbk
-         8EdRhgr60Iuw8SjKl0AcQ13JsEHBrxj05xHTT75dj0l/Qu1fciOl/d+HNkuaCYIOEq13
-         lBNXbfnPXZLCgLmFsP+8hO/H4KiCwGHx4gIx38xJEczDJiLNWrsm4gesIV6ahHpEzfhp
-         mdILtmy3Y7HsrggqjBb76Igji2tadfBj7NYuEudnwLCAtianakhgRweW/ElIbbDCWhxN
-         yNwCXa7Nx2JSf+Fefqd4KOAtFk5ThZt/ABiV5ORlNiCi2oyx1dsh3Gm0xthYrz8l5mFt
-         6B3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dhmtJ4+79vRolYDJuB/HeVo2S5DNUc8fMTsNT6fH0i0=;
-        b=VD6L8g7BNo2EUG7MGDb90MZL+ENTAPT+nmruPZz15KKvaZmrUhdo3kHknhoONrDnTr
-         caGe4OoUtKTMqryfu7nxwdd9N61WKm39Ppj5FImVDEL/hTTzYH/Rrr/Nt94Q4R54uvRP
-         gAnN7s2bviXWt75pIgfabfDZ9VaTU1Liob+pxA2uafygzhkT2BC09VJIS93wQcOtH4nP
-         RNrM0s9xuSoe53ebh0sGCN62lUbhherB3wCz/SSuheY+uLCIyLBKcghV9LagMFrVyiZL
-         Mwh1fd84UGO7CWwHpnl6ELDHLHu7/52JZS9weV2xmRRBaXaD1W+eiYUp5A8Mcr3Lqfn8
-         oI/w==
-X-Gm-Message-State: APjAAAXDpjSw/zHq2Et3wlqA3pbzUQRTkHOnEZhaRaqCfBILkEIDEAWX
-        qiuSC1o9aW+9UJY/dZvU1mA6ei7XPj+wDg==
-X-Google-Smtp-Source: APXvYqztVaS1ibhclO02O+1c0xMIScuc0JduY91PsnnTXTwPY5JG40sHE+S7Y/qw2jdWh3mAfk9cAw==
-X-Received: by 2002:a17:90a:480d:: with SMTP id a13mr45087965pjh.40.1559762240246;
-        Wed, 05 Jun 2019 12:17:20 -0700 (PDT)
-Received: from [192.168.1.121] (66.29.164.166.static.utbb.net. [66.29.164.166])
-        by smtp.gmail.com with ESMTPSA id u7sm10218273pgl.64.2019.06.05.12.17.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Jun 2019 12:17:19 -0700 (PDT)
-Subject: Re: properly communicate queue limits to the DMA layer
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Sebastian Ott <sebott@linux.ibm.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Oliver Neukum <oneukum@suse.com>, linux-block@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
-        megaraidlinux.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com,
-        linux-hyperv@vger.kernel.org, linux-usb@vger.kernel.org,
-        usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org
-References: <20190605190836.32354-1-hch@lst.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <591cfa1e-fecb-7d00-c855-3b9eb8eb8a2a@kernel.dk>
-Date:   Wed, 5 Jun 2019 13:17:15 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Wed, 5 Jun 2019 15:23:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=tZ9ZadoCz7DSrgUvJ5eeUOdNPpiiRhukmDh9GBYfjTo=; b=QoJj07bKgs+DMmAwe+jfZH52X
+        /vWJH+TpDgOVKYxITKHSVtgzOCm1QVOiTfEBFqLlcMyWyYNNvAF5vg1FkSWnmQ1JuhZlfBp3KbOfG
+        yz6lxEA73PgiXdIH/4Sw1ZFl/AGe/Woyz5uRPU84eig90+KlHywG8y0iJnj3Ta4PWbP9AGsc4GkMB
+        gAqyD4pd8P3W+0VL7rgCNvV0Q4hm9MByQ29UDN86poGQj+T1nZB+G6SDxVDKuedB9WNuO80+MSPki
+        AJGIhAK64clKbKlrAiiG3bdQrzL1TR/RCrHlEuJCvgOZjQGzjPkz4kOiT1Orog1xkFO5rXKxbHiTZ
+        hIPaRrMKA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hYbVI-0004jg-Qu; Wed, 05 Jun 2019 19:23:20 +0000
+Date:   Wed, 5 Jun 2019 12:23:20 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
+Cc:     linux-kernel@vger.kernel.org, axboe@kernel.dk,
+        linux-ide@vger.kernel.org
+Subject: Re: libata: sysctl knob for enabling tpm/opal at runtime
+Message-ID: <20190605192320.GA16831@infradead.org>
+References: <1559734587-32596-1-git-send-email-info@metux.net>
 MIME-Version: 1.0
-In-Reply-To: <20190605190836.32354-1-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1559734587-32596-1-git-send-email-info@metux.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/5/19 1:08 PM, Christoph Hellwig wrote:
-> Hi Jens,
+On Wed, Jun 05, 2019 at 01:36:25PM +0200, Enrico Weigelt, metux IT consult wrote:
+> Hello folks,
 > 
-> we've always had a bit of a problem communicating the block layer
-> queue limits to the DMA layer, which needs to respect them when
-> an IOMMU that could merge segments is used.  Unfortunately most
-> drivers don't get this right.  Oddly enough we've been mostly
-> getting away with it, although lately dma-debug has been catching
-> a few of those issues.
 > 
-> The segment merging fix for devices with PRP-like structures seems
-> to have escalated this a bit.  The first patch fixes the actual
-> report from Sebastian, while the rest fix every drivers that appears
-> to have the problem based on a code audit looking for drivers using
-> blk_queue_max_segment_size, blk_queue_segment_boundary or
-> blk_queue_virt_boundary and calling dma_map_sg eventually.  Note
-> that for SCSI drivers I've taken the blk_queue_virt_boundary setting
-> to the SCSI core, similar to how we did it for the other two settings
-> a while ago.  This also deals with the fact that the DMA layer
-> settings are on a per-device granularity, so the per-device settings
-> in a few SCSI drivers can't actually work in an IOMMU environment.
-> 
-> It would be nice to eventually pass these limits as arguments to
-> dma_map_sg, but that is a far too big series for the 5.2 merge
-> window.
+> here's a patchset that allows enabling libata's tpm features (opal)
+> at runtime. Until now we need to boot with special kernel parameter,
+> in order to use OPAL - this patch also adds a sysctl knob for that.
 
-Since I'm heading out shortly and since I think this should make
-the next -rc, I'll tentatively queue this up.
+Or you can use the block/sed-opal.c code which doesn't require the
+tweak, and really is the proper way forward to use OPAL.
 
--- 
-Jens Axboe
+> The first patch just introduces a systcl subdir for libata, the
+> second one adds the actual knob. I had already sent these patches,
+> few weeks ago, along with some general build fixes. The latter
+> meanwhile went mainline, but haven't received any comments on
+> the two opal related ones yet.
 
+Independent of that new sysctls are deprecated.
