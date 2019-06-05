@@ -2,176 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 562CF35BDE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 13:46:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 501FD35B98
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 13:44:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727948AbfFELqQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 07:46:16 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43964 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727495AbfFELnN (ORCPT
+        id S1727959AbfFELoU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 07:44:20 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:12287 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727912AbfFELoN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 07:43:13 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r18so10118271wrm.10
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 04:43:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=nmWKh7PwMWUSmXx8hL09I0aV6DcSJSwvr9bLIGJ3tMI=;
-        b=SgtCbgZWn+iyD+TREQ41swHeI1GDlVUfH980YLfnSjYgcyagCPeaJWpcd2Jv8qZS6E
-         A852cUGqauHT/kNRq3k2YvtwgJJ/+3BX0NswYhwvizWDIirfnmC9wVs+93wOOLztsJr9
-         qnTLQ0zw6htFYjGQbrdOu48/hO3kfXrALbf8DLL/r5qxUoSIjfNn225cWEvOmLd1b1I5
-         6wISaGry68nhRWJ/eTmSICdaDW2BR3uwbHUJjH0I/MLwNU0Nx6Tf93ihLjZN21zKwBfn
-         NejYAOAY8pW5bKYMdxXwrcHlTTpzNAYcxmyAOtzTjoFK2ylDvzYHFK35UTTbsdXFsAp2
-         7BSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=nmWKh7PwMWUSmXx8hL09I0aV6DcSJSwvr9bLIGJ3tMI=;
-        b=dDbcNBtYE/L+mjHDUWjIYWiQnrylh47G6i+7EmTCFt1gWaKpYz7byoCaErVjQAjM4I
-         yXU+tmO72uMAxD3THggMp9UX4AzxKHmDl6SjF8VWNS0EvmHB1Y/SP7PxSwrH9auTW0/0
-         mEgHUb3cUDVW4SXhLNjnM5LZZHTBS22Lfo2UAztgPpRbhbqqlpz8puE9CEzZzdCoyw+h
-         cqIIrTUohdDxYwH0dyWk4Hgz+FD/JOelftL+WKIIwlQa2zFY6VRGWxVvdqk7L57EeWI+
-         2SpMz5PWc5yUrQ1JHA0dUyvuz1xO7Jssi5vEGFacaYBjbRN8RuCMiC9X9xcAYdwveAdc
-         gLMw==
-X-Gm-Message-State: APjAAAXphWX7PJOMS9XxQ4bcPADIX9r0af4MDOA0VrkuOJawsl16k8k+
-        U4xHHtwLOpqveZ+wGImHpbm2lw==
-X-Google-Smtp-Source: APXvYqyPMmLvKJCSCbvOHxYOc49TsFqScPeN8qfrlKdaILVUtgPT5NujbI2M6w+g8sdOD6nidZ4ILw==
-X-Received: by 2002:a5d:5552:: with SMTP id g18mr7592538wrw.254.1559734990576;
-        Wed, 05 Jun 2019 04:43:10 -0700 (PDT)
-Received: from localhost.localdomain ([2.27.167.43])
-        by smtp.gmail.com with ESMTPSA id 34sm27718740wre.32.2019.06.05.04.43.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Jun 2019 04:43:10 -0700 (PDT)
-From:   Lee Jones <lee.jones@linaro.org>
-To:     alokc@codeaurora.org, andy.gross@linaro.org,
-        david.brown@linaro.org, wsa+renesas@sang-engineering.com,
-        bjorn.andersson@linaro.org, linus.walleij@linaro.org,
-        balbi@kernel.org, gregkh@linuxfoundation.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        jlhugo@gmail.com, linux-i2c@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-usb@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 4/8] pinctrl: qcom: sdm845: Provide ACPI support
-Date:   Wed,  5 Jun 2019 12:42:58 +0100
-Message-Id: <20190605114302.22509-4-lee.jones@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190605114302.22509-1-lee.jones@linaro.org>
-References: <20190605114302.22509-1-lee.jones@linaro.org>
+        Wed, 5 Jun 2019 07:44:13 -0400
+X-UUID: c4b9b2a11e0c4243a921f6d91478fe0e-20190605
+X-UUID: c4b9b2a11e0c4243a921f6d91478fe0e-20190605
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <yongqiang.niu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1305159411; Wed, 05 Jun 2019 19:43:54 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 5 Jun 2019 19:43:54 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 5 Jun 2019 19:43:53 +0800
+From:   <yongqiang.niu@mediatek.com>
+To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Yongqiang Niu <yongqiang.niu@mediatek.com>
+Subject: [PATCH v3, 20/27] drm/mediatek: add background color input select function for ovl/ovl_2l
+Date:   Wed, 5 Jun 2019 19:42:59 +0800
+Message-ID: <1559734986-7379-21-git-send-email-yongqiang.niu@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
+In-Reply-To: <1559734986-7379-1-git-send-email-yongqiang.niu@mediatek.com>
+References: <1559734986-7379-1-git-send-email-yongqiang.niu@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch provides basic support for booting with ACPI instead
-of the currently supported Device Tree.  When doing so there are a
-couple of differences which we need to taken into consideration.
+From: Yongqiang Niu <yongqiang.niu@mediatek.com>
 
-Firstly, the SDM850 ACPI tables omit information pertaining to the
-4 reserved GPIOs on the platform.  If Linux attempts to touch/
-initialise any of these lines, the firmware will restart the
-platform.
+This patch add background color input select function for ovl/ovl_2l
 
-Secondly, when booting with ACPI, it is expected that the firmware
-will set-up things like; Regulators, Clocks, Pin Functions, etc in
-their ideal configuration.  Thus, the possible Pin Functions
-available to this platform are not advertised when providing the
-higher GPIOD/Pinctrl APIs with pin information.
+ovl include 4 DRAM layer and 1 background color layer
+ovl_2l include 4 DRAM layer and 1 background color layer
+DRAM layer frame buffer data from render hardware, GPU for example.
+backgournd color layer is embed in ovl/ovl_2l, we can only set
+it color, but not support DRAM frame buffer.
 
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+for ovl0->ovl0_2l direct link usecase,
+we need set ovl0_2l background color intput select from ovl0
+if render send DRAM buffer layer number <=4, all these layer read
+by ovl.
+layer0 is at the bottom of all layers.
+layer3 is at the top of all layers.
+if render send DRAM buffer layer numbfer >=4 && <=6
+ovl0 read layer0~3
+ovl0_2l read layer4~5
+layer5 is at the top ot all these layers.
+
+the decision of how to setting ovl0/ovl0_2l read these layer data
+is controlled in mtk crtc, which will be another patch
+
+Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
 ---
- drivers/pinctrl/qcom/Kconfig          |  2 +-
- drivers/pinctrl/qcom/pinctrl-sdm845.c | 35 ++++++++++++++++++++++++++-
- 2 files changed, 35 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
-index 2e66ab72c10b..aafbe932424f 100644
---- a/drivers/pinctrl/qcom/Kconfig
-+++ b/drivers/pinctrl/qcom/Kconfig
-@@ -168,7 +168,7 @@ config PINCTRL_SDM660
- 
- config PINCTRL_SDM845
-        tristate "Qualcomm Technologies Inc SDM845 pin controller driver"
--       depends on GPIOLIB && OF
-+       depends on GPIOLIB && (OF || ACPI)
-        select PINCTRL_MSM
-        help
-          This is the pinctrl, pinmux, pinconf and gpiolib driver for the
-diff --git a/drivers/pinctrl/qcom/pinctrl-sdm845.c b/drivers/pinctrl/qcom/pinctrl-sdm845.c
-index c97f20fca5fd..7188bee3cf3e 100644
---- a/drivers/pinctrl/qcom/pinctrl-sdm845.c
-+++ b/drivers/pinctrl/qcom/pinctrl-sdm845.c
-@@ -3,6 +3,7 @@
-  * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
-  */
- 
-+#include <linux/acpi.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-@@ -1277,6 +1278,10 @@ static const struct msm_pingroup sdm845_groups[] = {
- 	UFS_RESET(ufs_reset, 0x99f000),
- };
- 
-+static const int sdm845_acpi_reserved_gpios[] = {
-+	0, 1, 2, 3, 81, 82, 83, 84, -1
-+};
-+
- static const struct msm_pinctrl_soc_data sdm845_pinctrl = {
- 	.pins = sdm845_pins,
- 	.npins = ARRAY_SIZE(sdm845_pins),
-@@ -1284,14 +1289,41 @@ static const struct msm_pinctrl_soc_data sdm845_pinctrl = {
- 	.nfunctions = ARRAY_SIZE(sdm845_functions),
- 	.groups = sdm845_groups,
- 	.ngroups = ARRAY_SIZE(sdm845_groups),
-+	.reserved_gpios = sdm845_acpi_reserved_gpios,
-+	.ngpios = 150,
-+};
-+
-+static const struct msm_pinctrl_soc_data sdm845_acpi_pinctrl = {
-+	.pins = sdm845_pins,
-+	.npins = ARRAY_SIZE(sdm845_pins),
-+	.groups = sdm845_groups,
-+	.ngroups = ARRAY_SIZE(sdm845_groups),
-+	.reserved_gpios = sdm845_acpi_reserved_gpios,
- 	.ngpios = 150,
- };
- 
- static int sdm845_pinctrl_probe(struct platform_device *pdev)
- {
--	return msm_pinctrl_probe(pdev, &sdm845_pinctrl);
-+	int ret;
-+
-+	if (pdev->dev.of_node) {
-+		ret = msm_pinctrl_probe(pdev, &sdm845_pinctrl);
-+	} else if (ACPI_HANDLE(&pdev->dev)) {
-+		ret = msm_pinctrl_probe(pdev, &sdm845_acpi_pinctrl);
-+	} else {
-+		dev_err(&pdev->dev, "DT and ACPI disabled\n");
-+		return -EINVAL;
-+	}
-+
-+	return ret;
+diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+index a0ab760..b5a9907 100644
+--- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
++++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+@@ -27,6 +27,8 @@
+ #define DISP_REG_OVL_EN				0x000c
+ #define DISP_REG_OVL_RST			0x0014
+ #define DISP_REG_OVL_ROI_SIZE			0x0020
++#define DISP_REG_OVL_DATAPATH_CON		0x0024
++#define OVL_BGCLR_SEL_IN				BIT(2)
+ #define DISP_REG_OVL_ROI_BGCLR			0x0028
+ #define DISP_REG_OVL_SRC_CON			0x002c
+ #define DISP_REG_OVL_CON(n)			(0x0030 + 0x20 * (n))
+@@ -245,6 +247,25 @@ static void mtk_ovl_layer_config(struct mtk_ddp_comp *comp, unsigned int idx,
+ 		mtk_ovl_layer_on(comp, idx);
  }
  
-+static const struct acpi_device_id sdm845_pinctrl_acpi_match[] = {
-+	{ "QCOM0217"},
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(acpi, sdm845_pinctrl_acpi_match);
++static void mtk_ovl_bgclr_in_on(struct mtk_ddp_comp *comp,
++				enum mtk_ddp_comp_id prev)
++{
++	unsigned int reg;
 +
- static const struct of_device_id sdm845_pinctrl_of_match[] = {
- 	{ .compatible = "qcom,sdm845-pinctrl", },
- 	{ },
-@@ -1302,6 +1334,7 @@ static struct platform_driver sdm845_pinctrl_driver = {
- 		.name = "sdm845-pinctrl",
- 		.pm = &msm_pinctrl_dev_pm_ops,
- 		.of_match_table = sdm845_pinctrl_of_match,
-+		.acpi_match_table = ACPI_PTR(sdm845_pinctrl_acpi_match),
- 	},
- 	.probe = sdm845_pinctrl_probe,
- 	.remove = msm_pinctrl_remove,
++	reg = readl(comp->regs + DISP_REG_OVL_DATAPATH_CON);
++	reg = reg | OVL_BGCLR_SEL_IN;
++	writel(reg, comp->regs + DISP_REG_OVL_DATAPATH_CON);
++}
++
++static void mtk_ovl_bgclr_in_off(struct mtk_ddp_comp *comp)
++{
++	unsigned int reg;
++
++	reg = readl(comp->regs + DISP_REG_OVL_DATAPATH_CON);
++	reg = reg & ~OVL_BGCLR_SEL_IN;
++	writel(reg, comp->regs + DISP_REG_OVL_DATAPATH_CON);
++}
++
+ static const struct mtk_ddp_comp_funcs mtk_disp_ovl_funcs = {
+ 	.config = mtk_ovl_config,
+ 	.start = mtk_ovl_start,
+@@ -255,6 +276,8 @@ static void mtk_ovl_layer_config(struct mtk_ddp_comp *comp, unsigned int idx,
+ 	.layer_on = mtk_ovl_layer_on,
+ 	.layer_off = mtk_ovl_layer_off,
+ 	.layer_config = mtk_ovl_layer_config,
++	.bgclr_in_on = mtk_ovl_bgclr_in_on,
++	.bgclr_in_off = mtk_ovl_bgclr_in_off,
+ };
+ 
+ static int mtk_disp_ovl_bind(struct device *dev, struct device *master,
 -- 
-2.17.1
+1.8.1.1.dirty
 
