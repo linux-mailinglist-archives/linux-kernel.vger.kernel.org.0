@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E17F35BB0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 13:45:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3846A35BD7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 13:46:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727825AbfFELoC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 07:44:02 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:3903 "EHLO
+        id S1728105AbfFELps (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 07:45:48 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:16490 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727763AbfFELn7 (ORCPT
+        with ESMTP id S1727715AbfFELnu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 07:43:59 -0400
-X-UUID: 1821765d9ed045aebf01f57ddda453c0-20190605
-X-UUID: 1821765d9ed045aebf01f57ddda453c0-20190605
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        Wed, 5 Jun 2019 07:43:50 -0400
+X-UUID: 02075f6d0d7b48138ad09371e4e00a38-20190605
+X-UUID: 02075f6d0d7b48138ad09371e4e00a38-20190605
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
         (envelope-from <yongqiang.niu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 985871829; Wed, 05 Jun 2019 19:43:45 +0800
+        with ESMTP id 98960488; Wed, 05 Jun 2019 19:43:45 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Wed, 5 Jun 2019 19:43:43 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 5 Jun 2019 19:43:42 +0800
+ Transport; Wed, 5 Jun 2019 19:43:43 +0800
 From:   <yongqiang.niu@mediatek.com>
 To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
@@ -35,15 +35,14 @@ CC:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         Yongqiang Niu <yongqiang.niu@mediatek.com>
-Subject: [PATCH v3, 07/27] drm/mediatek: add mutex mod register offset into ddp private data
-Date:   Wed, 5 Jun 2019 19:42:46 +0800
-Message-ID: <1559734986-7379-8-git-send-email-yongqiang.niu@mediatek.com>
+Subject: [PATCH v3, 08/27] drm/mediatek: add mutex sof into ddp private data
+Date:   Wed, 5 Jun 2019 19:42:47 +0800
+Message-ID: <1559734986-7379-9-git-send-email-yongqiang.niu@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1559734986-7379-1-git-send-email-yongqiang.niu@mediatek.com>
 References: <1559734986-7379-1-git-send-email-yongqiang.niu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 48601DB269F65FAEFC1C49303F9239FAB7DC8461D5EECD2BC6C07EF2F365449E2000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -52,77 +51,126 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yongqiang Niu <yongqiang.niu@mediatek.com>
 
-mutex mod register offset will be private data of ddp.
+mutex sof will be ddp private data
 
 Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 44 +++++++++++++++++++++++++++-------
+ 1 file changed, 36 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-index ae94d44..8bde2cf 100644
+index 8bde2cf..e1a510f 100644
 --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
 +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-@@ -41,10 +41,12 @@
- #define DISP_REG_CONFIG_DSI_SEL			0x050
- #define DISP_REG_CONFIG_DPI_SEL			0x064
- 
-+#define MT2701_DISP_MUTEX0_MOD0			0x2c
-+
- #define DISP_REG_MUTEX_EN(n)			(0x20 + 0x20 * (n))
- #define DISP_REG_MUTEX(n)			(0x24 + 0x20 * (n))
- #define DISP_REG_MUTEX_RST(n)			(0x28 + 0x20 * (n))
--#define DISP_REG_MUTEX_MOD(n)			(0x2c + 0x20 * (n))
-+#define DISP_REG_MUTEX_MOD(mutex_mod_reg, n)	(mutex_mod_reg + 0x20 * (n))
- #define DISP_REG_MUTEX_SOF(n)			(0x30 + 0x20 * (n))
- #define DISP_REG_MUTEX_MOD2(n)			(0x34 + 0x20 * (n))
- 
-@@ -149,6 +151,7 @@ struct mtk_disp_mutex {
- 
- struct mtk_ddp_data {
- 	const unsigned int *mutex_mod;
-+	const unsigned int mutex_mod_reg;
+@@ -149,8 +149,20 @@ struct mtk_disp_mutex {
+ 	bool claimed;
  };
  
- struct mtk_ddp {
-@@ -208,14 +211,17 @@ struct mtk_ddp {
++enum mtk_ddp_mutex_sof_id {
++	DDP_MUTEX_SOF_SINGLE_MODE,
++	DDP_MUTEX_SOF_DSI0,
++	DDP_MUTEX_SOF_DSI1,
++	DDP_MUTEX_SOF_DPI0,
++	DDP_MUTEX_SOF_DPI1,
++	DDP_MUTEX_SOF_DSI2,
++	DDP_MUTEX_SOF_DSI3,
++	DDP_MUTEX_SOF_MAX,
++};
++
+ struct mtk_ddp_data {
+ 	const unsigned int *mutex_mod;
++	const unsigned int *mutex_sof;
+ 	const unsigned int mutex_mod_reg;
+ };
  
+@@ -209,18 +221,31 @@ struct mtk_ddp {
+ 	[DDP_COMPONENT_WDMA1] = MT8173_MUTEX_MOD_DISP_WDMA1,
+ };
+ 
++static const unsigned int mt2712_mutex_sof[DDP_MUTEX_SOF_MAX] = {
++	[DDP_MUTEX_SOF_SINGLE_MODE] = MUTEX_SOF_SINGLE_MODE,
++	[DDP_MUTEX_SOF_DSI0] = MUTEX_SOF_DSI0,
++	[DDP_MUTEX_SOF_DSI1] = MUTEX_SOF_DSI1,
++	[DDP_MUTEX_SOF_DPI0] = MUTEX_SOF_DPI0,
++	[DDP_MUTEX_SOF_DPI1] = MUTEX_SOF_DPI1,
++	[DDP_MUTEX_SOF_DSI2] = MUTEX_SOF_DSI2,
++	[DDP_MUTEX_SOF_DSI3] = MUTEX_SOF_DSI3,
++};
++
  static const struct mtk_ddp_data mt2701_ddp_driver_data = {
  	.mutex_mod = mt2701_mutex_mod,
-+	.mutex_mod_reg = MT2701_DISP_MUTEX0_MOD0,
++	.mutex_sof = mt2712_mutex_sof,
+ 	.mutex_mod_reg = MT2701_DISP_MUTEX0_MOD0,
  };
  
  static const struct mtk_ddp_data mt2712_ddp_driver_data = {
  	.mutex_mod = mt2712_mutex_mod,
-+	.mutex_mod_reg = MT2701_DISP_MUTEX0_MOD0,
++	.mutex_sof = mt2712_mutex_sof,
+ 	.mutex_mod_reg = MT2701_DISP_MUTEX0_MOD0,
  };
  
  static const struct mtk_ddp_data mt8173_ddp_driver_data = {
  	.mutex_mod = mt8173_mutex_mod,
-+	.mutex_mod_reg = MT2701_DISP_MUTEX0_MOD0,
++	.mutex_sof = mt2712_mutex_sof,
+ 	.mutex_mod_reg = MT2701_DISP_MUTEX0_MOD0,
  };
  
- static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
-@@ -481,7 +487,8 @@ void mtk_disp_mutex_add_comp(struct mtk_disp_mutex *mutex,
+@@ -462,28 +487,29 @@ void mtk_disp_mutex_add_comp(struct mtk_disp_mutex *mutex,
+ 	struct mtk_ddp *ddp = container_of(mutex, struct mtk_ddp,
+ 					   mutex[mutex->id]);
+ 	unsigned int reg;
++	unsigned int sof_id;
+ 	unsigned int offset;
+ 
+ 	WARN_ON(&ddp->mutex[mutex->id] != mutex);
+ 
+ 	switch (id) {
+ 	case DDP_COMPONENT_DSI0:
+-		reg = MUTEX_SOF_DSI0;
++		sof_id = DDP_MUTEX_SOF_DSI0;
+ 		break;
+ 	case DDP_COMPONENT_DSI1:
+-		reg = MUTEX_SOF_DSI0;
++		sof_id = DDP_MUTEX_SOF_DSI0;
+ 		break;
+ 	case DDP_COMPONENT_DSI2:
+-		reg = MUTEX_SOF_DSI2;
++		sof_id = DDP_MUTEX_SOF_DSI2;
+ 		break;
+ 	case DDP_COMPONENT_DSI3:
+-		reg = MUTEX_SOF_DSI3;
++		sof_id = DDP_MUTEX_SOF_DSI3;
+ 		break;
+ 	case DDP_COMPONENT_DPI0:
+-		reg = MUTEX_SOF_DPI0;
++		sof_id = DDP_MUTEX_SOF_DPI0;
+ 		break;
+ 	case DDP_COMPONENT_DPI1:
+-		reg = MUTEX_SOF_DPI1;
++		sof_id = DDP_MUTEX_SOF_DPI1;
  		break;
  	default:
  		if (ddp->data->mutex_mod[id] < 32) {
--			offset = DISP_REG_MUTEX_MOD(mutex->id);
-+			offset = DISP_REG_MUTEX_MOD(ddp->data->mutex_mod_reg,
-+						    mutex->id);
- 			reg = readl_relaxed(ddp->regs + offset);
- 			reg |= 1 << ddp->data->mutex_mod[id];
- 			writel_relaxed(reg, ddp->regs + offset);
-@@ -519,7 +526,8 @@ void mtk_disp_mutex_remove_comp(struct mtk_disp_mutex *mutex,
+@@ -501,7 +527,8 @@ void mtk_disp_mutex_add_comp(struct mtk_disp_mutex *mutex,
+ 		return;
+ 	}
+ 
+-	writel_relaxed(reg, ddp->regs + DISP_REG_MUTEX_SOF(mutex->id));
++	writel_relaxed(ddp->data->mutex_sof[sof_id],
++		       ddp->regs + DISP_REG_MUTEX_SOF(mutex->id));
+ }
+ 
+ void mtk_disp_mutex_remove_comp(struct mtk_disp_mutex *mutex,
+@@ -522,7 +549,8 @@ void mtk_disp_mutex_remove_comp(struct mtk_disp_mutex *mutex,
+ 	case DDP_COMPONENT_DPI0:
+ 	case DDP_COMPONENT_DPI1:
+ 		writel_relaxed(MUTEX_SOF_SINGLE_MODE,
+-			       ddp->regs + DISP_REG_MUTEX_SOF(mutex->id));
++			       ddp->regs +
++			       DISP_REG_MUTEX_SOF(mutex->id));
  		break;
  	default:
  		if (ddp->data->mutex_mod[id] < 32) {
--			offset = DISP_REG_MUTEX_MOD(mutex->id);
-+			offset = DISP_REG_MUTEX_MOD(ddp->data->mutex_mod_reg,
-+						    mutex->id);
- 			reg = readl_relaxed(ddp->regs + offset);
- 			reg &= ~(1 << ddp->data->mutex_mod[id]);
- 			writel_relaxed(reg, ddp->regs + offset);
 -- 
 1.8.1.1.dirty
 
