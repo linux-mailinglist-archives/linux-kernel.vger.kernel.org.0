@@ -2,106 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C9E1356DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 08:19:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC875356E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 08:21:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726606AbfFEGTh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 02:19:37 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39381 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726528AbfFEGTg (ORCPT
+        id S1726648AbfFEGU5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 02:20:57 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:54782 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726050AbfFEGU5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 02:19:36 -0400
-Received: by mail-pl1-f195.google.com with SMTP id g9so9303957plm.6
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 23:19:36 -0700 (PDT)
+        Wed, 5 Jun 2019 02:20:57 -0400
+Received: by mail-it1-f195.google.com with SMTP id h20so1821770itk.4
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 23:20:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8NDvqSiCIKv+/i60Ynslx6ipNYtxvNjYvkZ3l5Jrxiw=;
-        b=Jv+ylw+eYYUmtx1uLMAE5WfRGbPZcDvoOmC1qqQkMmVoWISm6X+KqDoG/xkKlfZp1M
-         O6gSWIh+Sh12hcQ1RTa4KsSVZBTgRrVifmZUjlC3+RENnfGGKqgwZIjqDpBIZG7ZZ0o9
-         cgt6l84qKjCge1D0+WNYLBz4yjubpHHQLrQE/uGjorTP8Bo6TcuCatE17fGGRYUdhLHa
-         YrMCziHY1qjVIkTMkhNdM+sEuMQR9wqYTzegHOCf/2dCREgk/m0XHsyumJ/GOC18x5+a
-         DQ6HMN7Cc1c/9R7EJYu5f/Ojspos4AX5jlFgJbN4m2txeCi4CRZW+ZO99kX+jPvezxjt
-         KgqQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AtqHgH8AzfqBusRXColLPq524pdyprOlKwBMhdGimOs=;
+        b=fd/jFlYC3NKCnlc10GNS/xXh9Mu8jhirQNjNqRwQ/3oWrENyNxUUvb7jukL+cJ8nOr
+         0PeUOMwn3wjpv/MP5l8IeFEc0KjgSwJV3wmT9pj+2q3d2pK7p9SB/8qyp96wR2qKgU4Q
+         lHisNH/bC4oxyGBh7finpaMpQbGtUd6Pj1Ta8jwitm8bDl/sz7aKwT8U1p4pVBLDuIy6
+         GtLWeIUC6V+BH2bVSMY2thRJoBHSUgRdwNFSTaoagBpYEVDTR/BNQTG2E4hodA0SCwrA
+         xYQJuqb7vjP3YuWW8Xz7JUeWts1b5tamD2b2r8o+XYdXTBEnmgL6TFu04xyJuea0hTPt
+         i/vA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8NDvqSiCIKv+/i60Ynslx6ipNYtxvNjYvkZ3l5Jrxiw=;
-        b=ajV8A0PzLJM+Yr06y6oee5BtxvK7gyRlWnXpY+pgOLUPLLr1lldK+IRjWoer634PZx
-         e5doH1eAI66zxJDeAEgJmGnND5epRoV5e8TxeMi3dF1l8DPhwra0buDinWUj1+FxUud/
-         I1hlNOdNJLSfXJ972+cwD4k/ikpLzG+9gqV+nxbK5EhjvS8nuhQsJIuteYYULqJoNGPD
-         GcGTYxhsLU3d1TE8dnvbx2ohugndXnKCaeoaE0Oi4IhMZH/QxVPiQMWZMTPMYyeq7BGw
-         SDhyrb4BFcnoHL0cK52ekgdzJjnbbZjKSJkmmTTmVAVjyBZI9jGDCkJm5VPWtW48lLTb
-         EQAA==
-X-Gm-Message-State: APjAAAXN5vDTg3znbPCUTqTnRCfo5aXl5cpfF7AgKgjKOuURh4AkJUas
-        M8TVrCzAiiD/Vo78KiRCoxfL+g==
-X-Google-Smtp-Source: APXvYqwh+STN/4aMELzC9REIaRk3yfuoyfOR7lNLNz7fdt88CIQ5SzfZxE21KW+S3BxQ6DpLT5kMqQ==
-X-Received: by 2002:a17:902:a708:: with SMTP id w8mr39377169plq.162.1559715575910;
-        Tue, 04 Jun 2019 23:19:35 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id t25sm15044103pgv.30.2019.06.04.23.19.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Jun 2019 23:19:35 -0700 (PDT)
-Date:   Tue, 4 Jun 2019 23:20:20 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     alokc@codeaurora.org, kramasub@codeaurora.org,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        wsa+renesas@sang-engineering.com, linus.walleij@linaro.org,
-        balbi@kernel.org, gregkh@linuxfoundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        jlhugo@gmail.com, linux-i2c@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH 2/8] i2c: i2c-qcom-geni: Signify successful driver probe
-Message-ID: <20190605062020.GL22737@tuxbook-pro>
-References: <20190604104455.8877-1-lee.jones@linaro.org>
- <20190604104455.8877-2-lee.jones@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AtqHgH8AzfqBusRXColLPq524pdyprOlKwBMhdGimOs=;
+        b=EO+pwaXWUBZZu2kkNOlKRovex+vleJCtIZ5GMhh+Q5V3T+BenpDMWZmxD1Wl3HO4Pg
+         QI6PXucE357ntD77SS16UOqzU05/GEUhjXI675+GcSAkS7NQUxfeuNYzY6Tf68WfzXWI
+         fDCUSRYC/q3JoC5bMYt4g24sPOpOz1lpwfCaDw3yRVH9MKT3Fhun2y+gTV3tI9XHC+Pp
+         ++cOY8xKxxjwOGCCbEZWNG/WMRHPplutbAfyZmO5XWRY7PR0MTAiNCwz8ym+9yBseNpX
+         EtHJ89N9UFqcpQvnIi5Z5HVukNEs89kDZOg++rNbq40dA2z3HRbWV2aTHcHFoGPllI0c
+         BlQw==
+X-Gm-Message-State: APjAAAWDXleNS0VY7l+rMOSa/8txpyqX7qLjdCG0qDYfSvUtCET3b3Ps
+        46Q0aSZrPUnO03chma2zG7ZUsFqI60JbqPFY8Hjdug==
+X-Google-Smtp-Source: APXvYqzlkR0mSGTo4qj6zCzfKyaEQVD5KunaL/j2L2/jGoUBjIoSTeh8jGEtvNNxjrzNn8XcY+RumpVbcR/wbdYMgp0=
+X-Received: by 2002:a24:6b86:: with SMTP id v128mr18073861itc.104.1559715656168;
+ Tue, 04 Jun 2019 23:20:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190604104455.8877-2-lee.jones@linaro.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+References: <201906042224.42A2CCB2BE@keescook>
+In-Reply-To: <201906042224.42A2CCB2BE@keescook>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Wed, 5 Jun 2019 08:20:44 +0200
+Message-ID: <CAKv+Gu8m=6BgqfjrvrGEjX1Z3=W-YJhv-jrDXhC5+EoRuOG3qA@mail.gmail.com>
+Subject: Re: [PATCH] lib/test_stackinit: Handle Clang auto-initialization pattern
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexander Potapenko <glider@google.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 04 Jun 03:44 PDT 2019, Lee Jones wrote:
+On Wed, 5 Jun 2019 at 07:25, Kees Cook <keescook@chromium.org> wrote:
+>
+> While the gcc plugin for automatic stack variable initialization (i.e.
+> CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL) performs initialization with
+> 0x00 bytes, the Clang automatic stack variable initialization (i.e.
+> CONFIG_INIT_STACK_ALL) uses various type-specific patterns that are
+> typically 0xAA. Therefore the stackinit selftest has been fixed to check
+> that bytes are no longer the test fill pattern of 0xFF (instead of looking
+> for bytes that have become 0x00). This retains the test coverage for the
+> 0x00 pattern of the gcc plugin while adding coverage for the mostly 0xAA
+> pattern of Clang.
+>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-> The Qualcomm Geni I2C driver currently probes silently which can be
-> confusing when debugging potential issues.  Add a low level (INFO)
-> print when each I2C controller is successfully initially set-up.
-> 
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+
 > ---
->  drivers/i2c/busses/i2c-qcom-geni.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
-> index 0fa93b448e8d..e27466d77767 100644
-> --- a/drivers/i2c/busses/i2c-qcom-geni.c
-> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
-> @@ -598,6 +598,8 @@ static int geni_i2c_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> +	dev_info(&pdev->dev, "Geni-I2C adaptor successfully added\n");
-> +
-
-I would prefer that we do not add such prints, as it would be to accept
-the downstream behaviour of spamming the log to the point where no one
-will ever look through it.
-
-Regards,
-Bjorn
-
->  	return 0;
->  }
->  
-> -- 
+>  lib/test_stackinit.c | 21 +++++++++++++++------
+>  1 file changed, 15 insertions(+), 6 deletions(-)
+>
+> diff --git a/lib/test_stackinit.c b/lib/test_stackinit.c
+> index e97dc54b4fdf..2d7d257a430e 100644
+> --- a/lib/test_stackinit.c
+> +++ b/lib/test_stackinit.c
+> @@ -12,7 +12,7 @@
+>
+>  /* Exfiltration buffer. */
+>  #define MAX_VAR_SIZE   128
+> -static char check_buf[MAX_VAR_SIZE];
+> +static u8 check_buf[MAX_VAR_SIZE];
+>
+>  /* Character array to trigger stack protector in all functions. */
+>  #define VAR_BUFFER      32
+> @@ -106,9 +106,18 @@ static noinline __init int test_ ## name (void)                    \
+>                                                                 \
+>         /* Fill clone type with zero for per-field init. */     \
+>         memset(&zero, 0x00, sizeof(zero));                      \
+> +       /* Clear entire check buffer for 0xFF overlap test. */  \
+> +       memset(check_buf, 0x00, sizeof(check_buf));             \
+>         /* Fill stack with 0xFF. */                             \
+>         ignored = leaf_ ##name((unsigned long)&ignored, 1,      \
+>                                 FETCH_ARG_ ## which(zero));     \
+> +       /* Verify all bytes overwritten with 0xFF. */           \
+> +       for (sum = 0, i = 0; i < target_size; i++)              \
+> +               sum += (check_buf[i] != 0xFF);                  \
+> +       if (sum) {                                              \
+> +               pr_err(#name ": leaf fill was not 0xFF!?\n");   \
+> +               return 1;                                       \
+> +       }                                                       \
+>         /* Clear entire check buffer for later bit tests. */    \
+>         memset(check_buf, 0x00, sizeof(check_buf));             \
+>         /* Extract stack-defined variable contents. */          \
+> @@ -126,9 +135,9 @@ static noinline __init int test_ ## name (void)                     \
+>                 return 1;                                       \
+>         }                                                       \
+>                                                                 \
+> -       /* Look for any set bits in the check region. */        \
+> -       for (i = 0; i < sizeof(check_buf); i++)                 \
+> -               sum += (check_buf[i] != 0);                     \
+> +       /* Look for any bytes still 0xFF in check region. */    \
+> +       for (sum = 0, i = 0; i < target_size; i++)              \
+> +               sum += (check_buf[i] == 0xFF);                  \
+>                                                                 \
+>         if (sum == 0)                                           \
+>                 pr_info(#name " ok\n");                         \
+> @@ -162,13 +171,13 @@ static noinline __init int leaf_ ## name(unsigned long sp,        \
+>          * Keep this buffer around to make sure we've got a     \
+>          * stack frame of SOME kind...                          \
+>          */                                                     \
+> -       memset(buf, (char)(sp && 0xff), sizeof(buf));           \
+> +       memset(buf, (char)(sp & 0xff), sizeof(buf));            \
+>         /* Fill variable with 0xFF. */                          \
+>         if (fill) {                                             \
+>                 fill_start = &var;                              \
+>                 fill_size = sizeof(var);                        \
+>                 memset(fill_start,                              \
+> -                      (char)((sp && 0xff) | forced_mask),      \
+> +                      (char)((sp & 0xff) | forced_mask),       \
+>                        fill_size);                              \
+>         }                                                       \
+>                                                                 \
+> --
 > 2.17.1
-> 
+>
+>
+> --
+> Kees Cook
