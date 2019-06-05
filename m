@@ -2,108 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A9D5365F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 22:48:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8A0336663
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 23:10:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbfFEUso (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 16:48:44 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:40396 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726477AbfFEUso (ORCPT
+        id S1726785AbfFEVJl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 17:09:41 -0400
+Received: from gateway20.websitewelcome.com ([192.185.59.4]:17298 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726528AbfFEVJk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 16:48:44 -0400
-Received: by mail-pf1-f196.google.com with SMTP id u17so35137pfn.7
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 13:48:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Gf36/FJbmvcIKQB71SoUxqFxDnsf/YtRh42eY1Za4A8=;
-        b=WVI7T+qZtVEnyq5ZQtNNc6p8ErkwczAYREEK8DBsct2+ctCli/t1y+PGIeTMbkm3fo
-         SstGkCzPWEb+Cx6li46d+n9sAQMufEh3WYdaLmWqU9b6lyPJ8lYKCCjcUzoMeJxfosx2
-         drDkUF7J+5+mqVVkquXPaNaVMItINGIoMemq93eMTsMaVY0U6ACrdh9NtYefm357B5PH
-         3w/wOk/4Y9PkD62xH7O573/32c2sugfS5y/ofkpiwKOgU2wPekGDUGQ64Sg8etaLiSGV
-         IAXvSYStLoGg1BznpPh3rJcDmObUGqtNviYlYyljrGyrN2EyPxXuS6RaFg7JmQf0gZh5
-         aqcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Gf36/FJbmvcIKQB71SoUxqFxDnsf/YtRh42eY1Za4A8=;
-        b=meiW4OpcdOcuTtP7L0+vEpvxiKuuk9UHvzBfoFX4fs76iFuq7bhOwjlvocGIcFBQ0G
-         bTjHgKIV/lzPFxzqJz2YMGqwUY6yHsnc+GsTR9/KO2pKApleCKbjn81nlpnqwqMjPEkp
-         slF6B8AlDIjYKm+pztRB1zrFuaNhW82Gi/NMqb2WgYLrEUnX2hNyEd8DIPXwHqikn8AT
-         fE1BB90wo05qTrVfsqoBEZ8OuOj5PpQgr/sp8diFr3KmCubdTbjD1x/Sj/zyAfzCa2aU
-         T8bTBy3uKw5TIOHpH+H9/9+OeqfAjctAWs59LqoT/4o2wVP2QlSQm5lpMF4Dzw6EPifM
-         MwkQ==
-X-Gm-Message-State: APjAAAVuDJUoyOEq1QVOET9IYoVj2BmF22jr9l/ha4Ykm+ECiVFvFAIl
-        m4lENO9dn24Cy6D5ItG5AuYFPNATzclmh06itT2rlA==
-X-Google-Smtp-Source: APXvYqw04eb//flZxwX52rlKUE9uC5FQrN/EPO3Y+b+R/m9mxJBjNW8wJAFNaE/R9u6bPF2yyHx+uo26PEQ6Qbdgmds=
-X-Received: by 2002:a63:52:: with SMTP id 79mr829652pga.381.1559767722964;
- Wed, 05 Jun 2019 13:48:42 -0700 (PDT)
+        Wed, 5 Jun 2019 17:09:40 -0400
+X-Greylist: delayed 1210 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Jun 2019 17:09:40 EDT
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id B16BC400CCA3D
+        for <linux-kernel@vger.kernel.org>; Wed,  5 Jun 2019 14:48:46 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id Ycqfh3i8y90onYcqfh5OHF; Wed, 05 Jun 2019 15:49:29 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.127.120] (port=34964 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hYcqe-0046eo-D3; Wed, 05 Jun 2019 15:49:28 -0500
+Date:   Wed, 5 Jun 2019 15:49:26 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc:     ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] ocfs2/dlm: use struct_size() helper
+Message-ID: <20190605204926.GA24467@embeddedor>
 MIME-Version: 1.0
-References: <779905244.a0lJJiZRjM@devpool35> <20190605162626.GA31164@kroah.com>
- <CAKv+Gu9QkKwNVpfpQP7uDd2-66jU=qkeA7=0RAoO4TNaSbG+tg@mail.gmail.com>
-In-Reply-To: <CAKv+Gu9QkKwNVpfpQP7uDd2-66jU=qkeA7=0RAoO4TNaSbG+tg@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 5 Jun 2019 13:48:31 -0700
-Message-ID: <CAKwvOdnPcjESFrQRR_=cCVag3ZSnC0nBqF7+LFHrcDArT_segA@mail.gmail.com>
-Subject: Re: Building arm64 EFI stub with -fpie breaks build of 4.9.x
- (undefined reference to `__efistub__GLOBAL_OFFSET_TABLE_')
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Rolf Eike Beer <eb@emlix.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.127.120
+X-Source-L: No
+X-Exim-ID: 1hYcqe-0046eo-D3
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.127.120]:34964
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 21
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 5, 2019 at 11:42 AM Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
-> For the record, this is an example of why I think backporting those
-> clang enablement patches is a bad idea.
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-There's always a risk involved with backports of any kind; more CI
-coverage can help us mitigate some of these risks in an automated
-fashion before we get user reports like this.  I meet with the
-KernelCI folks weekly, so I'll double check on the coverage of the
-stable tree's branches.  The 0day folks are also very responsive and
-I've spoken with them a few times, so I'll try to get to the bottom of
-why this wasn't reported by either of those.
+struct dlm_migratable_lockres 
+{
+i	...
+        struct dlm_migratable_lock ml[0];  // 16 bytes each, begins at byte 112
+};
 
-Also, these patches help keep Android, CrOS, and Google internal
-production kernels closer to their upstream sources.
+Make use of the struct_size() helper instead of an open-coded version
+in order to avoid any potential type mistakes.
 
-> We can't actually build those
-> kernels with clang, can we? So what is the point? </grumpy>
+So, replace the following form:
 
-Here's last night's build:
-https://travis-ci.com/ClangBuiltLinux/continuous-integration/builds/114388434
+sizeof(struct dlm_migratable_lockres) + (mres->num_locks * sizeof(struct dlm_migratable_lock))
 
-Also, Android and CrOS have shipped X million devices w/ 4.9 kernels
-built with Clang.  I think this number will grow at least one order of
-magnitude imminently.
+with:
 
-> Alternatively, we can just revert this patch from 4.9
+struct_size(mres, ml, mres->num_locks)
 
-That would break at least the above devices next time Android and CrOS
-pulled from stable.
+Notice that, in this case, variable sz is not necessary, hence it
+is removed.
 
-> It would be helpful to get a relocation dump (objdump -r) of
-> arm64-stub.o to figure out which symbol needs a 'hidden' annotation to
-> prevent GCC from emitting it as a PIC reference requiring a GOT.
+This code was detected with the help of Coccinelle.
 
-Sounds like the best way forward, as well as having more info on which
-config/toolchain reliably reproduces the issue.
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ fs/ocfs2/dlm/dlmrecovery.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/fs/ocfs2/dlm/dlmrecovery.c b/fs/ocfs2/dlm/dlmrecovery.c
+index e22d6a115220..064ce5bbc3f6 100644
+--- a/fs/ocfs2/dlm/dlmrecovery.c
++++ b/fs/ocfs2/dlm/dlmrecovery.c
+@@ -1109,7 +1109,7 @@ static int dlm_send_mig_lockres_msg(struct dlm_ctxt *dlm,
+ {
+ 	u64 mig_cookie = be64_to_cpu(mres->mig_cookie);
+ 	int mres_total_locks = be32_to_cpu(mres->total_locks);
+-	int sz, ret = 0, status = 0;
++	int ret = 0, status = 0;
+ 	u8 orig_flags = mres->flags,
+ 	   orig_master = mres->master;
+ 
+@@ -1117,9 +1117,6 @@ static int dlm_send_mig_lockres_msg(struct dlm_ctxt *dlm,
+ 	if (!mres->num_locks)
+ 		return 0;
+ 
+-	sz = sizeof(struct dlm_migratable_lockres) +
+-		(mres->num_locks * sizeof(struct dlm_migratable_lock));
+-
+ 	/* add an all-done flag if we reached the last lock */
+ 	orig_flags = mres->flags;
+ 	BUG_ON(total_locks > mres_total_locks);
+@@ -1133,7 +1130,8 @@ static int dlm_send_mig_lockres_msg(struct dlm_ctxt *dlm,
+ 
+ 	/* send it */
+ 	ret = o2net_send_message(DLM_MIG_LOCKRES_MSG, dlm->key, mres,
+-				 sz, send_to, &status);
++				 struct_size(mres, ml, mres->num_locks),
++				 send_to, &status);
+ 	if (ret < 0) {
+ 		/* XXX: negative status is not handled.
+ 		 * this will end up killing this node. */
 -- 
-Thanks,
-~Nick Desaulniers
+2.21.0
+
