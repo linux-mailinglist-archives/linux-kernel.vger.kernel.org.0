@@ -2,195 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF1B7356BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 08:16:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D613356D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 08:17:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbfFEGQk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 02:16:40 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43880 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726608AbfFEGQh (ORCPT
+        id S1726741AbfFEGRx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 02:17:53 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44744 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726427AbfFEGRx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 02:16:37 -0400
-Received: by mail-pg1-f196.google.com with SMTP id f25so11803601pgv.10
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 23:16:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=yPLGcJboWqTS41OXT0YPS9mFDLi+KIswrNZ4xj5RMzE=;
-        b=a2p19VFRYfiN+slwv4mz43rBb2yISQyrLkTJcMwSA/WWx9l79OZvNlzb0McxQjlz1q
-         V0H85qKfEr5ZtprV5QK9qBTKSV8I1gF9ndrBiqTp2IS+Bz1UAF4xjzJ5ovK8Dbv9obd/
-         E4MAUdbc473B8+RS4fi0cnV5jtQ/pttN9wdLEjbGLZPKISnutmqS1RoLvLUmatV7Sxj4
-         1YpTj26Z25oIhkuyqe73xgLobBxUTtBRWPzTU80HA6shTFVU+iFMdg7A/LeV1fBVQ54j
-         iipbbvvwaXrxFxqY26USW52xFqh7PwiURi/plOK8dz92vePi2swKlawieFKqGfDli8E8
-         zFfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yPLGcJboWqTS41OXT0YPS9mFDLi+KIswrNZ4xj5RMzE=;
-        b=n8ueAmDHyMX0qf2CJZlr1VQ5vVsoiQuzUYnv1AtV2cdTU2LhFCy1Veag9MNVSnEgJM
-         X3BBMK3kC0lXxF9iHfS574raISwh9liiQY4sJF4eSQhbl05lShccaTx+KPRjAK7/kmYs
-         qfOWBfBgD3ofeOu5I9z1o6qHuCEHr0lUCxUKVaATNS9WYs1n/fJQnjmz7DNRXRV/dEr+
-         iP9z9X5D9h+qS0qzhdvmNZ0UBcBwWypkKpOZrW6olBySOaooLAw9wYsY6Rf2w8ALBObw
-         fakCaLCtC6v5lYszYQSprSaXG7e+zo8WVzLaANqd4rKYYg7ri0bSc9TWhw0QydRwnL7U
-         jY7A==
-X-Gm-Message-State: APjAAAWfsJloSC6xXQtCHgRCgY7o0sWKvKoTeO5K+u3zJX9QFeLdr4DJ
-        QVLQBiYdrM3EwSU+4vTagFp98A==
-X-Google-Smtp-Source: APXvYqwEJhIs8QubYN0avnbvfixWjIzhGaRnp7YPaFTgZ2Z2O0BG2WDaO37plKfU2MMrMOlw9tyzHw==
-X-Received: by 2002:a62:ea0a:: with SMTP id t10mr43421341pfh.236.1559715396814;
-        Tue, 04 Jun 2019 23:16:36 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id z18sm8987858pgh.88.2019.06.04.23.16.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Jun 2019 23:16:36 -0700 (PDT)
-Date:   Tue, 4 Jun 2019 23:17:21 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     alokc@codeaurora.org, kramasub@codeaurora.org,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        wsa+renesas@sang-engineering.com, linus.walleij@linaro.org,
-        balbi@kernel.org, gregkh@linuxfoundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        jlhugo@gmail.com, linux-i2c@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH 4/8] pinctrl: qcom: sdm845: Provide ACPI support
-Message-ID: <20190605061721.GK22737@tuxbook-pro>
-References: <20190604104455.8877-1-lee.jones@linaro.org>
- <20190604104455.8877-4-lee.jones@linaro.org>
+        Wed, 5 Jun 2019 02:17:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8MOKfPDZiHvrtm5mx7wXDojKN0NUKE9GkL6OvbIkYfk=; b=ZDJ2fJwcq5zM4+WFIIwMSc+Wl
+        AhQTcFyhKkrl5ssuEyrnkRfSEBF8uBP2s+h6UP3vC/zDbUJYGZ48NKk2MWLe1J8B9+WiGJXCRdhhX
+        Aq3nagWNZWdFHIJqlemTN3Mbq7/gkTM6uUfAAdva3O3iB5zunDic/JjH8VIx1UKWw/N89OVIIGWNB
+        1I6XTw3upAWMD1ggLV9QYQk6Kj7tZpESseTLUwBNP5qzIH9V1dlX/pOX26PCzHCf8qBwgPJhzhLAU
+        8MTHiJjzG5oU9bvAfFDYKdgd8MS9e1S1+AgKu/WWPA3E0ZFoXUHP1ffweEMWRFob1cbz9FXrMHgrg
+        3uTxt/oQQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hYPF6-0007g4-AF; Wed, 05 Jun 2019 06:17:48 +0000
+Date:   Tue, 4 Jun 2019 23:17:48 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org,
+        Pavankumar Kondeti <pkondeti@codeaurora.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>
+Subject: Re: [PATCH v3 0/6] sched: Add new tracepoints required for EAS
+ testing
+Message-ID: <20190605061748.GA20661@infradead.org>
+References: <20190604111459.2862-1-qais.yousef@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190604104455.8877-4-lee.jones@linaro.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190604111459.2862-1-qais.yousef@arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 04 Jun 03:44 PDT 2019, Lee Jones wrote:
+> The following patches add the bare minimum tracepoints required to perform EAS
+> testing in Lisa[1].
 
-> This patch provides basic support for booting with ACPI instead
-> of the currently supported Device Tree.  When doing so there are a
-> couple of differences which we need to taken into consideration.
-> 
-> Firstly, the SDM850 ACPI tables omit information pertaining to the
-> 4 reserved GPIOs on the platform.  If Linux attempts to touch/
-> initialise any of these lines, the firmware will restart the
-> platform.
-> 
-> Secondly, when booting with ACPI, it is expected that the firmware
-> will set-up things like; Regulators, Clocks, Pin Functions, etc in
-> their ideal configuration.  Thus, the possible Pin Functions
-> available to this platform are not advertised when providing the
-> higher GPIOD/Pinctrl APIs with pin information.
-> 
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> ---
->  drivers/pinctrl/qcom/Kconfig          |  2 +-
->  drivers/pinctrl/qcom/pinctrl-sdm845.c | 35 ++++++++++++++++++++++++++-
->  2 files changed, 35 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
-> index 2e66ab72c10b..aafbe932424f 100644
-> --- a/drivers/pinctrl/qcom/Kconfig
-> +++ b/drivers/pinctrl/qcom/Kconfig
-> @@ -168,7 +168,7 @@ config PINCTRL_SDM660
->  
->  config PINCTRL_SDM845
->         tristate "Qualcomm Technologies Inc SDM845 pin controller driver"
-> -       depends on GPIOLIB && OF
-> +       depends on GPIOLIB && (OF || ACPI)
->         select PINCTRL_MSM
->         help
->           This is the pinctrl, pinmux, pinconf and gpiolib driver for the
-> diff --git a/drivers/pinctrl/qcom/pinctrl-sdm845.c b/drivers/pinctrl/qcom/pinctrl-sdm845.c
-> index c97f20fca5fd..7188bee3cf3e 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-sdm845.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-sdm845.c
-> @@ -3,6 +3,7 @@
->   * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
->   */
->  
-> +#include <linux/acpi.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
-> @@ -1277,6 +1278,10 @@ static const struct msm_pingroup sdm845_groups[] = {
->  	UFS_RESET(ufs_reset, 0x99f000),
->  };
->  
-> +static const int sdm845_acpi_reserved_gpios[] = {
-> +	0, 1, 2, 3, 81, 82, 83, 84, -1
-> +};
-> +
->  static const struct msm_pinctrl_soc_data sdm845_pinctrl = {
->  	.pins = sdm845_pins,
->  	.npins = ARRAY_SIZE(sdm845_pins),
-> @@ -1284,14 +1289,41 @@ static const struct msm_pinctrl_soc_data sdm845_pinctrl = {
->  	.nfunctions = ARRAY_SIZE(sdm845_functions),
->  	.groups = sdm845_groups,
->  	.ngroups = ARRAY_SIZE(sdm845_groups),
-> +	.reserved_gpios = sdm845_acpi_reserved_gpios,
+What is EAS?  Whhy is "Lisa" not part of the patch submission?
+submission.
 
-The reason why put these in DT is because the list is board/firmware
-dependent. E.g. the firmware on db845c does not support the peripherals
-that sits on these 8 pins and as such these are not reserved.
+> It is done in this way because adding new TRACE_EVENTS() is no longer accepted
+> AFAIU.
 
-But given that the two structs looks identical now, did you perhaps not
-intend to add.reserved_gpios for the non-ACPI case?
+Huh?  We keep adding trace events all the time.  And they actually
+are useful because they are testable.
 
-Regards,
-Bjorn
-
-> +	.ngpios = 150,
-> +};
-> +
-> +static const struct msm_pinctrl_soc_data sdm845_acpi_pinctrl = {
-> +	.pins = sdm845_pins,
-> +	.npins = ARRAY_SIZE(sdm845_pins),
-> +	.groups = sdm845_groups,
-> +	.ngroups = ARRAY_SIZE(sdm845_groups),
-> +	.reserved_gpios = sdm845_acpi_reserved_gpios,
->  	.ngpios = 150,
->  };
->  
->  static int sdm845_pinctrl_probe(struct platform_device *pdev)
->  {
-> -	return msm_pinctrl_probe(pdev, &sdm845_pinctrl);
-> +	int ret;
-> +
-> +	if (pdev->dev.of_node) {
-> +		ret = msm_pinctrl_probe(pdev, &sdm845_pinctrl);
-> +	} else if (ACPI_HANDLE(&pdev->dev)) {
-> +		ret = msm_pinctrl_probe(pdev, &sdm845_acpi_pinctrl);
-> +	} else {
-> +		dev_err(&pdev->dev, "DT and ACPI disabled\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	return ret;
->  }
->  
-> +static const struct acpi_device_id sdm845_pinctrl_acpi_match[] = {
-> +	{ "QCOM0217"},
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(acpi, sdm845_pinctrl_acpi_match);
-> +
->  static const struct of_device_id sdm845_pinctrl_of_match[] = {
->  	{ .compatible = "qcom,sdm845-pinctrl", },
->  	{ },
-> @@ -1302,6 +1334,7 @@ static struct platform_driver sdm845_pinctrl_driver = {
->  		.name = "sdm845-pinctrl",
->  		.pm = &msm_pinctrl_dev_pm_ops,
->  		.of_match_table = sdm845_pinctrl_of_match,
-> +		.acpi_match_table = ACPI_PTR(sdm845_pinctrl_acpi_match),
->  	},
->  	.probe = sdm845_pinctrl_probe,
->  	.remove = msm_pinctrl_remove,
-> -- 
-> 2.17.1
-> 
+This series on the other hand adds exports not used in tree, which is
+a big no-go.
