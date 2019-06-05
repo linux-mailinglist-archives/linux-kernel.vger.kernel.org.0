@@ -2,102 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 460E735FF2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 17:12:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72AF535FF8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 17:13:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728215AbfFEPMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 11:12:49 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:48864 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727971AbfFEPMs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 11:12:48 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x55FCk3g110054;
-        Wed, 5 Jun 2019 10:12:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1559747566;
-        bh=Inienvm9gOICy/UB/TwfBQ4GevAD5jXz3rtnGwbNT90=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=KDcC91zaBAjY/jDaPnJQ0EoR31zRKscNxb/XRkXrPYvL8s2RBdRidzoQNzzifAyCM
-         d3kRjmo41zmEUCGoYYdXtQnNWvPGKQYFHD65e6EnbKLPToph+3UpdUisGFJauJxUCh
-         +FVT7kaeRH8zHJrm81GfgDqDUettVt0Z7kFWtJhY=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x55FCkS1051136
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 5 Jun 2019 10:12:46 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 5 Jun
- 2019 10:12:46 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 5 Jun 2019 10:12:46 -0500
-Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x55FChC3053628;
-        Wed, 5 Jun 2019 10:12:44 -0500
-Subject: Re: [PATCH v2 2/3] gpio: davinci: Add new compatible for K3 AM654
- SoCs
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-CC:     Linus Walleij <linus.walleij@linaro.org>, <lokeshvutla@ti.com>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        Tero Kristo <t-kristo@ti.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20190605080259.2462-1-j-keerthy@ti.com>
- <20190605080259.2462-3-j-keerthy@ti.com>
- <CAMpxmJXjMX20TAEsfEa7pqZx5-aW_rMKwS+6g9NTvRNEfuAyeA@mail.gmail.com>
-From:   Keerthy <j-keerthy@ti.com>
-Message-ID: <96dbfd50-2a45-e3dc-3928-47fbc52f9269@ti.com>
-Date:   Wed, 5 Jun 2019 20:43:26 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1728356AbfFEPNf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 11:13:35 -0400
+Received: from mga05.intel.com ([192.55.52.43]:58338 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728322AbfFEPNf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 11:13:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 08:13:34 -0700
+X-ExtLoop1: 1
+Received: from linux.intel.com ([10.54.29.200])
+  by FMSMGA003.fm.intel.com with ESMTP; 05 Jun 2019 08:13:34 -0700
+Received: from kwong4-mobl.amr.corp.intel.com (unknown [10.252.203.122])
+        by linux.intel.com (Postfix) with ESMTP id 3C2B75800BD;
+        Wed,  5 Jun 2019 08:13:33 -0700 (PDT)
+Subject: Re: [alsa-devel] [PATCH 03/14] ALSA: hdac: Fix codec name after
+ machine driver is unloaded and reloaded
+To:     =?UTF-8?Q?Amadeusz_S=c5=82awi=c5=84ski?= 
+        <amadeuszx.slawinski@linux.intel.com>, alsa-devel@alsa-project.org
+Cc:     Cezary Rojewski <cezary.rojewski@intel.com>,
+        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        =?UTF-8?Q?Amadeusz_S=c5=82awi=c5=84ski?= 
+        <amadeuszx.slawinski@intel.com>
+References: <20190605134556.10322-1-amadeuszx.slawinski@linux.intel.com>
+ <20190605134556.10322-4-amadeuszx.slawinski@linux.intel.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <a171f010-6901-d256-4cfe-201cbed58970@linux.intel.com>
+Date:   Wed, 5 Jun 2019 10:13:34 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAMpxmJXjMX20TAEsfEa7pqZx5-aW_rMKwS+6g9NTvRNEfuAyeA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20190605134556.10322-4-amadeuszx.slawinski@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 05/06/19 7:56 PM, Bartosz Golaszewski wrote:
-> śr., 5 cze 2019 o 10:02 Keerthy <j-keerthy@ti.com> napisał(a):
->>
->> Add new compatible for K3 AM654 SoCs.
->>
->> Signed-off-by: Keerthy <j-keerthy@ti.com>
->> ---
->>   drivers/gpio/gpio-davinci.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
->> index 0977590eb996..fc494a84a29d 100644
->> --- a/drivers/gpio/gpio-davinci.c
->> +++ b/drivers/gpio/gpio-davinci.c
->> @@ -632,6 +632,7 @@ static int davinci_gpio_irq_setup(struct platform_device *pdev)
->>
->>   static const struct of_device_id davinci_gpio_ids[] = {
->>          { .compatible = "ti,keystone-gpio", keystone_gpio_get_irq_chip},
->> +       { .compatible = "ti,am654-gpio", keystone_gpio_get_irq_chip},
+On 6/5/19 8:45 AM, Amadeusz Sławiński wrote:
+> From: Amadeusz Sławiński <amadeuszx.slawinski@intel.com>
 > 
-> Please add a patch adding this compatible to the binding document as well.
-
-https://patchwork.kernel.org/patch/10976445/
-
-Posted but did not add you in Cc. Sorry about that.
-
-- Keerthy
+> This resets internal index used for enumarating codecs. This will only
+> work on assumption that platform has one codec. Anyway if there is more,
+> it won't work with current machine drivers, because we can't guarantee
+> order in which they are enumerated. This workarounds the fact that most
+> intel machine drivers have the following defined:
+> .codec_name = "ehdaudio0D2",
+> However when we unload and reload machine driver idx gets incremented,
+> so .codec_name would've needed to be set to ehdaudio1D2 on first reload
+> and so on.
 > 
-> Bart
+> Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@intel.com>
+> ---
+>   sound/hda/ext/hdac_ext_bus.c | 11 ++++++++++-
+>   1 file changed, 10 insertions(+), 1 deletion(-)
 > 
->>          { .compatible = "ti,dm6441-gpio", davinci_gpio_get_irq_chip},
->>          { /* sentinel */ },
->>   };
->> --
->> 2.17.1
->>
+> diff --git a/sound/hda/ext/hdac_ext_bus.c b/sound/hda/ext/hdac_ext_bus.c
+> index f33ba58b753c..c84d69c2eba4 100644
+> --- a/sound/hda/ext/hdac_ext_bus.c
+> +++ b/sound/hda/ext/hdac_ext_bus.c
+> @@ -77,6 +77,8 @@ static const struct hdac_io_ops hdac_ext_default_io = {
+>   	.dma_free_pages = hdac_ext_dma_free_pages,
+>   };
+>   
+> +static int idx;
+> +
+>   /**
+>    * snd_hdac_ext_bus_init - initialize a HD-audio extended bus
+>    * @ebus: the pointer to extended bus object
+> @@ -93,7 +95,6 @@ int snd_hdac_ext_bus_init(struct hdac_bus *bus, struct device *dev,
+>   			const struct hdac_ext_bus_ops *ext_ops)
+>   {
+>   	int ret;
+> -	static int idx;
+>   
+>   	/* check if io ops are provided, if not load the defaults */
+>   	if (io_ops == NULL)
+> @@ -118,6 +119,14 @@ EXPORT_SYMBOL_GPL(snd_hdac_ext_bus_init);
+>   void snd_hdac_ext_bus_exit(struct hdac_bus *bus)
+>   {
+>   	snd_hdac_bus_exit(bus);
+> +	/* FIXME: this is workaround
+> +	 * reset index used for bus->idx, because machine drivers expect
+> +	 * the codec name to be ehdaudio0D2, where 0 is bus->idx
+> +	 * we only perform reset if there is one used device, if there is more
+> +	 * all bets are off
+> +	 */
+> +	if (idx == 1)
+> +		idx = 0;
+
+The real fix would be to stop incrementing idx in snd_hdac_ext_bus_init, 
+which would make sense only if we had multiple controllers. SOF pegged 
+bus->idx to zero.
+
+
+>   	WARN_ON(!list_empty(&bus->hlink_list));
+>   }
+>   EXPORT_SYMBOL_GPL(snd_hdac_ext_bus_exit);
+> 
+
