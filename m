@@ -2,57 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DFA9356A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 08:10:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15400356AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 08:13:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726561AbfFEGKC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 02:10:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53696 "EHLO mail.kernel.org"
+        id S1726537AbfFEGM6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 02:12:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726086AbfFEGKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 02:10:02 -0400
+        id S1726086AbfFEGM5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 02:12:57 -0400
 Received: from dragon (li1264-180.members.linode.com [45.79.165.180])
         (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9D3D2075C;
-        Wed,  5 Jun 2019 06:09:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 011DB20673;
+        Wed,  5 Jun 2019 06:12:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559715001;
-        bh=wTYwhYyVAwH/37258YCULY4b/DDUHUmOmKJEh2hkUE4=;
+        s=default; t=1559715177;
+        bh=irDCUXbnBDlPlmhz5zcjcndvEsXZZZcUc47h1fBL7fw=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=twASdHOlRFsxs4nkKKw8rd0OyYEdxLC4gTqsSzQ0mLPfAHk84ARn1oy0XSQwuw4H8
-         Jq+QAgMrqoIaTG1d4aBHc2zX/R4SADoWn50kWf3ZapEh6vmoqqzAuDeXtEgOdiZsYq
-         XLbgypHFHC7Bq+d9YTWOuGC+4tHDU3ZkfMquJAkY=
-Date:   Wed, 5 Jun 2019 14:09:45 +0800
+        b=KcHfwmcFrho2SGrruB5UjX2fRIX46+0x6zffq3Mxh5vseEXNEnJwSVsrpDkRT7rhF
+         VYxCR9TKKAyGC4DA7FpPKO5/9y7A86CcFkmTxYzVBVcUoVDrwK2pyUE7hLj3L5Nw82
+         73CquITgGh7XLFlN5CxOh4ohzeEOOSL/zxOR7mys=
+Date:   Wed, 5 Jun 2019 14:12:40 +0800
 From:   Shawn Guo <shawnguo@kernel.org>
-To:     Anson.Huang@nxp.com
-Cc:     s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        leonard.crestez@nxp.com, abel.vesa@nxp.com,
-        viresh.kumar@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, hyc.nju@gmail.com, Linux-imx@nxp.com
-Subject: Re: [PATCH RESEND 1/2] soc: imx: soc-imx8: Avoid unnecessary
- of_node_put() in error handling
-Message-ID: <20190605060944.GB29853@dragon>
-References: <20190524055101.3424-1-Anson.Huang@nxp.com>
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH RESEND V4 2/3] arm64: dts: imx8qxp: Move watchdog node
+ into scu node
+Message-ID: <20190605061238.GC29853@dragon>
+References: <1557655528-12816-1-git-send-email-Anson.Huang@nxp.com>
+ <1557655528-12816-2-git-send-email-Anson.Huang@nxp.com>
+ <DB3PR0402MB39162F3811484D90546B4CC2F5150@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <20190605060000.GA29853@dragon>
+ <DB3PR0402MB39161D679A11B05ADCA8A28BF5160@DB3PR0402MB3916.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190524055101.3424-1-Anson.Huang@nxp.com>
+In-Reply-To: <DB3PR0402MB39161D679A11B05ADCA8A28BF5160@DB3PR0402MB3916.eurprd04.prod.outlook.com>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 24, 2019 at 01:51:00PM +0800, Anson.Huang@nxp.com wrote:
-> From: Anson Huang <Anson.Huang@nxp.com>
+On Wed, Jun 05, 2019 at 06:09:12AM +0000, Anson Huang wrote:
+> Hi, Shawn
 > 
-> of_node_put() is called after of_match_node() successfully called,
-> then in the following error handling, of_node_put() is called again
-> which is unnecessary, this patch adjusts the location of of_node_put()
-> to avoid such scenario.
+> > -----Original Message-----
+> > From: Shawn Guo <shawnguo@kernel.org>
+> > Sent: Wednesday, June 5, 2019 2:00 PM
+> > To: Anson Huang <anson.huang@nxp.com>
+> > Cc: robh+dt@kernel.org; mark.rutland@arm.com; wim@linux-watchdog.org;
+> > linux@roeck-us.net; s.hauer@pengutronix.de; kernel@pengutronix.de;
+> > festevam@gmail.com; Aisheng Dong <aisheng.dong@nxp.com>;
+> > ulf.hansson@linaro.org; Daniel Baluta <daniel.baluta@nxp.com>; Peng Fan
+> > <peng.fan@nxp.com>; devicetree@vger.kernel.org; linux-
+> > kernel@vger.kernel.org; linux-watchdog@vger.kernel.org; linux-arm-
+> > kernel@lists.infradead.org; dl-linux-imx <linux-imx@nxp.com>
+> > Subject: Re: [PATCH RESEND V4 2/3] arm64: dts: imx8qxp: Move watchdog
+> > node into scu node
+> > 
+> > On Tue, Jun 04, 2019 at 09:06:28AM +0000, Anson Huang wrote:
+> > > Hi, Shawn
+> > > 	The driver and binding doc are already reviewed and waiting for DT
+> > patch, will you help review this DT patch?
+> > 
+> > I'm fine with it.  Should I just pick this patch up, or is there any dependency
+> > we need to handle?
 > 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
+> No dependency, it just makes more sense to move the node into SCU node as it is NOW depending on SCU
+> driver. Once you pick up this patch
 
-Applied both, thanks.
+Just applied.
+
+> (and maybe the dt-binding patch as well?),
+
+It makes more sense to have it go through watchdog tree.
+
+Shawn
+
+> I will notify the watchdog
+> maintainer to pick up the watchdog patch in this series.
+
