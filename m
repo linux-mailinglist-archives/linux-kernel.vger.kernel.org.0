@@ -2,82 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2B2D36634
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 23:03:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC81F3663A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 23:05:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726660AbfFEVDp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 17:03:45 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:35409 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726305AbfFEVDo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 17:03:44 -0400
-Received: from orion.localdomain ([77.2.1.21]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MAOa3-1hOPWF3A4Z-00Bt1P; Wed, 05 Jun 2019 23:03:36 +0200
-From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     vyasevich@gmail.com, nhorman@tuxdriver.com,
-        marcelo.leitner@gmail.com, davem@davemloft.net,
-        linux-sctp@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH] net: sctp: drop unneeded likely() call around IS_ERR()
-Date:   Wed,  5 Jun 2019 23:03:27 +0200
-Message-Id: <1559768607-17439-1-git-send-email-info@metux.net>
-X-Mailer: git-send-email 1.9.1
-X-Provags-ID: V03:K1:RDhO0c91eGQhuPk7OHIf4MDNfPy3l+iTaNUx9a50PPTwDQpqrjO
- 55dpkrt7kgxoqVnayYCOjOUfNg+9htcpuYwvkAJR9gslNxD/RqsECCRyiL0zteRLcDlns2e
- TRJRVVhzG9ZWaDjd658fE9Q9zcXTW7xd1x3hAKD3RUzVVTvWFGb5PSGvbwLELA9oXMcRZu7
- vP60tsLC8L+Zk/om8bEdQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:sKdrp2sgGcQ=:pvV0FiTPX8gMA1+4M/9k2f
- SQZ9FRTN2nzdQjrrAiIwDQOcMvGS5UU5GpALTkIm7l6gT0UQVvAiwdlCxbriciOLFLP+f5f/2
- oZWRx/CznID8gGaxEI15X3hIsZXjy9tMTjdddXkzcxMBc/p5/vKi49OhaPfsAWjenWlCt9tgt
- iFnody6EFvOsVzFubjoajOtU18IYuDLeI1cbWzK+RQamOhCz5Q3Ucs54k1cOAZoLLSKXNB89z
- Hw6h1jEaUMmnJwmcYuEYU2mZpzNluZFgMIWZwwqLgOsvE1222DP8YQbWSFNdk0P5MOb8Uq68E
- 75r+C4X580HDQsiMeW3jf+CZh9YzoXm+e2BJ9xwq3mTc2mfHr7JSxNxU9lNXdU0qe7zsoHzWn
- 04vH9A3hHD1We9M9LetXZ6aR/nbJ8ZfMs9CBkQasEqeXO/QpeEnAR3y37IswHJMerxPq7RVVr
- cEnMVDCRkkaHhZFvt3nuBf5ErYyFWF+X9SU7HNSMPDiXmV+9z+ir2pFhWExZC0AXLhEp1TCdo
- l4+HnWs/VERXoq1B7akgU2p3FjDY5iOtSUAcNBYPZiYbIbGq99bs0XxYDDarvjbkvALVXKw7G
- G9LBNWTvwuj4HefRDvTkEyALCwu+Xp0Xu49/fQ40x2J72yiwtMgqrWLjumSYSUMHopj9e4hcw
- kxGqIAWCzjzkV/Sk7PulRGphC/K1hyvKNeP1ZYok78CMw4lpDu53G8A/NxQeJM4WYRW4HxBeu
- V3QXqsxzIa4IGcun/P35h1OYvJ5+krxd2gWC7SxDAIPWoXvQPraqY3zIoig=
+        id S1726608AbfFEVFL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 17:05:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34088 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726464AbfFEVFL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 17:05:11 -0400
+Subject: Re: [GIT PULL] pstore fixes for v5.2-rc4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559768711;
+        bh=cyQH3GYnfeiQJO/PytW37b9r+gkZcksyIemUtq3gam4=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=c0r9KV9DPXyc7zmK7wCcDa3t3CRRuWXRdOBRcil7p4IdBU51piXtEatOsUYpuHzQk
+         vFDBFwjwuxaa4YM0ODWA1JzY4TrJbCgjSiK+VoJw9fuag+rZONWPTtXT0ddHqTjh/J
+         kfZGRUme+3uge00DBFDzHU/TpcV4a2g4fntZItC8=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <201906042018.72255CAF94@keescook>
+References: <201906042018.72255CAF94@keescook>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <201906042018.72255CAF94@keescook>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git
+ tags/pstore-v5.2-rc4
+X-PR-Tracked-Commit-Id: 8880fa32c557600f5f624084152668ed3c2ea51e
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 47358b647550d99d68b0d6c546355ea96e010efa
+Message-Id: <155976871093.18999.4118784503291051346.pr-tracker-bot@kernel.org>
+Date:   Wed, 05 Jun 2019 21:05:10 +0000
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Pi-Hsun Shih <pihsun@chromium.org>, stable@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Enrico Weigelt <info@metux.net>
+The pull request you sent on Tue, 4 Jun 2019 20:20:21 -0700:
 
-IS_ERR() already calls unlikely(), so this extra unlikely() call
-around IS_ERR() is not needed.
+> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/pstore-v5.2-rc4
 
-Signed-off-by: Enrico Weigelt <info@metux.net>
----
- net/sctp/socket.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/47358b647550d99d68b0d6c546355ea96e010efa
 
-diff --git a/net/sctp/socket.c b/net/sctp/socket.c
-index 39ea0a3..c7b0f51 100644
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -985,7 +985,7 @@ static int sctp_setsockopt_bindx(struct sock *sk,
- 		return -EINVAL;
- 
- 	kaddrs = memdup_user(addrs, addrs_size);
--	if (unlikely(IS_ERR(kaddrs)))
-+	if (IS_ERR(kaddrs))
- 		return PTR_ERR(kaddrs);
- 
- 	/* Walk through the addrs buffer and count the number of addresses. */
-@@ -1315,7 +1315,7 @@ static int __sctp_setsockopt_connectx(struct sock *sk,
- 		return -EINVAL;
- 
- 	kaddrs = memdup_user(addrs, addrs_size);
--	if (unlikely(IS_ERR(kaddrs)))
-+	if (IS_ERR(kaddrs))
- 		return PTR_ERR(kaddrs);
- 
- 	/* Allow security module to validate connectx addresses. */
+Thank you!
+
 -- 
-1.9.1
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
