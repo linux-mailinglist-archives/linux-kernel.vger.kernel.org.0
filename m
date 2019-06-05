@@ -2,69 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99FBA360E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 18:13:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16D81360F0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 18:14:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728672AbfFEQNV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 12:13:21 -0400
-Received: from mga18.intel.com ([134.134.136.126]:52241 "EHLO mga18.intel.com"
+        id S1728697AbfFEQOn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 12:14:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728421AbfFEQNV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 12:13:21 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 09:13:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,550,1549958400"; 
-   d="scan'208";a="181987363"
-Received: from unknown (HELO localhost) ([10.241.225.31])
-  by fmsmga002.fm.intel.com with ESMTP; 05 Jun 2019 09:13:20 -0700
-Date:   Wed, 5 Jun 2019 09:13:19 -0700
-From:   Jesse Brandeburg <jesse.brandeburg@intel.com>
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc:     <linux-kernel@vger.kernel.org>,
+        id S1728263AbfFEQOn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 12:14:43 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C17902075C;
+        Wed,  5 Jun 2019 16:14:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559751282;
+        bh=QYqVWfMWIB0tPswuWSBtKDQovqoyFIkrZ9uvkouGR8c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PY+yqkfPvixJgkCNeiT5YlkgobDTwArN2zzuz3iQQBii8p/3xfMZmtV8a0NpUVRZB
+         Bb4N3urjGJcRQXDZ9akEg378+onIYObDVBtUNZ85z1gHG2omihcRFca/B5/4W5bbrX
+         GHdFlgKCAk+SM7YnkIVMMuGdpDXRQorAXWUE4kfM=
+Date:   Wed, 5 Jun 2019 18:14:39 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-kernel@vger.kernel.org, rafael@kernel.org,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexander Aring <alex.aring@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>, Arnd Bergmann <arnd@arndb.de>,
+        Dan Murphy <dmurphy@ti.com>,
         "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        "Hideaki YOSHIFUJI" <yoshfuji@linux-ipv6.org>,
-        Vlad Yasevich <vyasevich@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        <netdev@vger.kernel.org>, <linux-sctp@vger.kernel.org>,
-        jesse.brandeburg@intel.com
-Subject: Re: [PATCH net-next] net: Drop unlikely before IS_ERR(_OR_NULL)
-Message-ID: <20190605091319.000054e9@intel.com>
-In-Reply-To: <20190605142428.84784-3-wangkefeng.wang@huawei.com>
-References: <20190605142428.84784-1-wangkefeng.wang@huawei.com>
-        <20190605142428.84784-3-wangkefeng.wang@huawei.com>
-X-Mailer: Claws Mail 3.14.0 (GTK+ 2.24.30; i686-w64-mingw32)
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-leds@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-wpan@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Peter Rosin <peda@axentia.se>,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH 10/13] drivers: Introduce variants of class_find_device()
+Message-ID: <20190605161439.GB17272@kroah.com>
+References: <1559747630-28065-1-git-send-email-suzuki.poulose@arm.com>
+ <1559747630-28065-11-git-send-email-suzuki.poulose@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1559747630-28065-11-git-send-email-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 5 Jun 2019 22:24:26 +0800 Kefeng wrote:
-> IS_ERR(_OR_NULL) already contain an 'unlikely' compiler flag,
-> so no need to do that again from its callers. Drop it.
-> 
+On Wed, Jun 05, 2019 at 04:13:47PM +0100, Suzuki K Poulose wrote:
+> +/**
+> + * class_find_device_by_devt : device iterator for locating a particular device
+> + * matching the device type.
+> + * @class: class type
+> + * @start: device to start search from
+> + * @devt: device type of the device to match.
+> + */
+> +static inline struct device *class_find_device_by_devt(struct class *class,
+> +						       struct device *start,
+> +						       dev_t devt)
+> +{
+> +	return class_find_device(class, start, &devt, device_match_devt);
+> +}
 
-<snip>
-
->  	segs = __skb_gso_segment(skb, features, false);
-> -	if (unlikely(IS_ERR_OR_NULL(segs))) {
-> +	if (IS_ERR_OR_NULL(segs)) {
->  		int segs_nr = skb_shinfo(skb)->gso_segs;
->  
-
-The change itself seems reasonable, but did you check to see if the
-paths changed are faster/slower with your fix?  Did you look at any
-assembly output to see if the compiler actually generated different
-code?  Is there a set of similar changes somewhere else in the kernel
-we can refer to?
-
-I'm not sure in the end that the change is worth it, so would like you
-to prove it is, unless davem overrides me. :-)
+Still has the start parameter, despite the changelog saying it would not
+:(
 
