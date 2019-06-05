@@ -2,47 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A747A35BB3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 13:45:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42FDC35B9C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 13:44:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727862AbfFELoH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 07:44:07 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:61386 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727812AbfFELoC (ORCPT
+        id S1727929AbfFELoQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 07:44:16 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:55056 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727902AbfFELoN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 07:44:02 -0400
-X-UUID: d69711e99d064e749ae2c045e0c638e2-20190605
-X-UUID: d69711e99d064e749ae2c045e0c638e2-20190605
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
+        Wed, 5 Jun 2019 07:44:13 -0400
+X-UUID: 7d3d3c32a6974ecaba8ed0b3e3d30f1e-20190605
+X-UUID: 7d3d3c32a6974ecaba8ed0b3e3d30f1e-20190605
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
         (envelope-from <yongqiang.niu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1321504457; Wed, 05 Jun 2019 19:43:57 +0800
+        with ESMTP id 794206093; Wed, 05 Jun 2019 19:43:59 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 5 Jun 2019 19:43:56 +0800
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 5 Jun 2019 19:43:57 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 5 Jun 2019 19:43:56 +0800
+ Transport; Wed, 5 Jun 2019 19:43:57 +0800
 From:   <yongqiang.niu@mediatek.com>
 To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-        "Rob Herring" <robh+dt@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Matthias Brugger <matthias.bgg@gmail.com>
 CC:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        "Mark Rutland" <mark.rutland@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
         <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         Yongqiang Niu <yongqiang.niu@mediatek.com>
-Subject: [PATCH v3, 23/27] drm/mediatek: add connection from ovl0 to ovl_2l0
-Date:   Wed, 5 Jun 2019 19:43:02 +0800
-Message-ID: <1559734986-7379-24-git-send-email-yongqiang.niu@mediatek.com>
+Subject: [PATCH v3, 24/27] drm/mediatek: add connection from RDMA0 to COLOR0
+Date:   Wed, 5 Jun 2019 19:43:03 +0800
+Message-ID: <1559734986-7379-25-git-send-email-yongqiang.niu@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1559734986-7379-1-git-send-email-yongqiang.niu@mediatek.com>
 References: <1559734986-7379-1-git-send-email-yongqiang.niu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-TM-SNTS-SMTP: 717D9759EF384F207F34662BAC61A623A0D163772F5D90CAACA60FEA58BAFD452000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -51,7 +52,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yongqiang Niu <yongqiang.niu@mediatek.com>
 
-This patch add connection from ovl0 to ovl_2l0
+This patch add connection from RDMA0 to COLOR0
 
 Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
 ---
@@ -59,16 +60,16 @@ Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
  1 file changed, 3 insertions(+)
 
 diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-index 872c744..f980826 100644
+index f980826..adafa41 100644
 --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
 +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-@@ -322,6 +322,9 @@ static unsigned int mtk_ddp_mout_en(const struct mtk_mmsys_reg_data *data,
- 	} else if (cur == DDP_COMPONENT_OD1 && next == DDP_COMPONENT_RDMA1) {
- 		*addr = DISP_REG_CONFIG_DISP_OD_MOUT_EN;
- 		value = OD1_MOUT_EN_RDMA1;
-+	} else if (cur == DDP_COMPONENT_OVL0 && next == DDP_COMPONENT_OVL_2L0) {
-+		*addr = DISP_REG_OVL0_MOUT_EN(data);
-+		value = OVL0_MOUT_EN_OVL0_2L;
+@@ -449,6 +449,9 @@ static unsigned int mtk_ddp_sout_sel(const struct mtk_mmsys_reg_data *data,
+ 	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI3) {
+ 		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
+ 		value = RDMA2_SOUT_DSI3;
++	} else if (cur == DDP_COMPONENT_RDMA0 && next == DDP_COMPONENT_COLOR0) {
++		*addr = DISP_REG_RDMA0_SOUT_SEL_IN(data);
++		value = DISP_REG_RDMA0_SOUT_COLOR0(data);
  	} else {
  		value = 0;
  	}
