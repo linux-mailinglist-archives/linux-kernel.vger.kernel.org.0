@@ -2,130 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 501FD35B98
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 13:44:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8791035B85
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 13:43:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727959AbfFELoU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 07:44:20 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:12287 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727912AbfFELoN (ORCPT
+        id S1727672AbfFELnl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 07:43:41 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54667 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727411AbfFELnN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 07:44:13 -0400
-X-UUID: c4b9b2a11e0c4243a921f6d91478fe0e-20190605
-X-UUID: c4b9b2a11e0c4243a921f6d91478fe0e-20190605
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <yongqiang.niu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1305159411; Wed, 05 Jun 2019 19:43:54 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 5 Jun 2019 19:43:54 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 5 Jun 2019 19:43:53 +0800
-From:   <yongqiang.niu@mediatek.com>
-To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Yongqiang Niu <yongqiang.niu@mediatek.com>
-Subject: [PATCH v3, 20/27] drm/mediatek: add background color input select function for ovl/ovl_2l
-Date:   Wed, 5 Jun 2019 19:42:59 +0800
-Message-ID: <1559734986-7379-21-git-send-email-yongqiang.niu@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-In-Reply-To: <1559734986-7379-1-git-send-email-yongqiang.niu@mediatek.com>
-References: <1559734986-7379-1-git-send-email-yongqiang.niu@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+        Wed, 5 Jun 2019 07:43:13 -0400
+Received: by mail-wm1-f67.google.com with SMTP id g135so1922168wme.4
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 04:43:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Ixa6PZM7Qd3yNTQ1/2lb9UJukHzNBYD4+3OM8ec4OSs=;
+        b=Jp/JdV2yn/wqzzWfOfRwb4FDVYCujOYkpzb+HCTUS8NJcsoL4RrGPGuKPM8+By8ldP
+         jPZZn5cDvQZM4hPjpBYEHrh/IeOX0Z7r4dvWciU3vsimgp8YD0BNAI+Gw25gu1z4Gz8Y
+         D3ui/SE5BXLU3wep3K6tbv585rzPvuk4KGIyNY5pTZ73EYHFKqL0ETq7VHveP0ik1XbP
+         vRjdeVso0R3Qf3fg30cUV1JGbZ9rPnx5URfNBjQnyBqMB1vL7SrpnuPWfhxvEodve6a9
+         nxKo++m195buCgkzC5hyYHqa6Y2fqKDvoQRgatziZq1/c9ycvazbtDPQschW4lFDaiTC
+         3eXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Ixa6PZM7Qd3yNTQ1/2lb9UJukHzNBYD4+3OM8ec4OSs=;
+        b=E0VrYRsnTg3wQ5CjxRm5aiV31ACNnUgIWKV0/hUXmHL3nY0envy2VPbM+pgz9uJQ6t
+         UInWgzhRSkZDKakOrENKykc/04MtFstrRr3n1n4/Y1hkFe5CGCt4Jaugvqa5ziUTzI02
+         dvNFyUaqrGl3BTmKQoMSlKTZgQOGTVcigAvF8cKAzZWTS7fTvX/u1DlZuz6nxMI+flzU
+         5D6NdZPxB8zphbfthkkXvfBTdWowjDoPRnEqEpGSG6idsgpEarHBe46rzybutcE2O23a
+         M0W9Md4DkLsjIGvPTr1cxL5k9I46a0zoPLxw4ztrMErFIqlTSXiQCvjQFNtP1Q71EKWn
+         XwAA==
+X-Gm-Message-State: APjAAAUuCHUxj689VBXzofn3BMNOA7s9YP+/53VkEk2bilXYV74DuM1f
+        R2HbvKCglDbAyvtJ+NATzdVmPA==
+X-Google-Smtp-Source: APXvYqyl2gwOWbUGVEnYEh9X8OzB/jrJfkYNgjV/h4onDE5kOB10EdAyUcgxHPRB9QKTfy4UfkQugg==
+X-Received: by 2002:a1c:e3c1:: with SMTP id a184mr1175742wmh.24.1559734991651;
+        Wed, 05 Jun 2019 04:43:11 -0700 (PDT)
+Received: from localhost.localdomain ([2.27.167.43])
+        by smtp.gmail.com with ESMTPSA id 34sm27718740wre.32.2019.06.05.04.43.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Jun 2019 04:43:11 -0700 (PDT)
+From:   Lee Jones <lee.jones@linaro.org>
+To:     alokc@codeaurora.org, andy.gross@linaro.org,
+        david.brown@linaro.org, wsa+renesas@sang-engineering.com,
+        bjorn.andersson@linaro.org, linus.walleij@linaro.org,
+        balbi@kernel.org, gregkh@linuxfoundation.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        jlhugo@gmail.com, linux-i2c@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-usb@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 5/8] soc: qcom: geni: Add support for ACPI
+Date:   Wed,  5 Jun 2019 12:42:59 +0100
+Message-Id: <20190605114302.22509-5-lee.jones@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190605114302.22509-1-lee.jones@linaro.org>
+References: <20190605114302.22509-1-lee.jones@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yongqiang Niu <yongqiang.niu@mediatek.com>
+When booting with ACPI as the active set of configuration tables,
+all; clocks, regulators, pin functions ect are expected to be at
+their ideal values/levels/rates, thus the associated frameworks
+are unavailable.  Ensure calls to these APIs are shielded when
+ACPI is enabled.
 
-This patch add background color input select function for ovl/ovl_2l
-
-ovl include 4 DRAM layer and 1 background color layer
-ovl_2l include 4 DRAM layer and 1 background color layer
-DRAM layer frame buffer data from render hardware, GPU for example.
-backgournd color layer is embed in ovl/ovl_2l, we can only set
-it color, but not support DRAM frame buffer.
-
-for ovl0->ovl0_2l direct link usecase,
-we need set ovl0_2l background color intput select from ovl0
-if render send DRAM buffer layer number <=4, all these layer read
-by ovl.
-layer0 is at the bottom of all layers.
-layer3 is at the top of all layers.
-if render send DRAM buffer layer numbfer >=4 && <=6
-ovl0 read layer0~3
-ovl0_2l read layer4~5
-layer5 is at the top ot all these layers.
-
-the decision of how to setting ovl0/ovl0_2l read these layer data
-is controlled in mtk crtc, which will be another patch
-
-Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ drivers/soc/qcom/qcom-geni-se.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-index a0ab760..b5a9907 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-@@ -27,6 +27,8 @@
- #define DISP_REG_OVL_EN				0x000c
- #define DISP_REG_OVL_RST			0x0014
- #define DISP_REG_OVL_ROI_SIZE			0x0020
-+#define DISP_REG_OVL_DATAPATH_CON		0x0024
-+#define OVL_BGCLR_SEL_IN				BIT(2)
- #define DISP_REG_OVL_ROI_BGCLR			0x0028
- #define DISP_REG_OVL_SRC_CON			0x002c
- #define DISP_REG_OVL_CON(n)			(0x0030 + 0x20 * (n))
-@@ -245,6 +247,25 @@ static void mtk_ovl_layer_config(struct mtk_ddp_comp *comp, unsigned int idx,
- 		mtk_ovl_layer_on(comp, idx);
- }
+diff --git a/drivers/soc/qcom/qcom-geni-se.c b/drivers/soc/qcom/qcom-geni-se.c
+index 6b8ef01472e9..cff0a413e59a 100644
+--- a/drivers/soc/qcom/qcom-geni-se.c
++++ b/drivers/soc/qcom/qcom-geni-se.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ // Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
  
-+static void mtk_ovl_bgclr_in_on(struct mtk_ddp_comp *comp,
-+				enum mtk_ddp_comp_id prev)
-+{
-+	unsigned int reg;
-+
-+	reg = readl(comp->regs + DISP_REG_OVL_DATAPATH_CON);
-+	reg = reg | OVL_BGCLR_SEL_IN;
-+	writel(reg, comp->regs + DISP_REG_OVL_DATAPATH_CON);
-+}
-+
-+static void mtk_ovl_bgclr_in_off(struct mtk_ddp_comp *comp)
-+{
-+	unsigned int reg;
-+
-+	reg = readl(comp->regs + DISP_REG_OVL_DATAPATH_CON);
-+	reg = reg & ~OVL_BGCLR_SEL_IN;
-+	writel(reg, comp->regs + DISP_REG_OVL_DATAPATH_CON);
-+}
-+
- static const struct mtk_ddp_comp_funcs mtk_disp_ovl_funcs = {
- 	.config = mtk_ovl_config,
- 	.start = mtk_ovl_start,
-@@ -255,6 +276,8 @@ static void mtk_ovl_layer_config(struct mtk_ddp_comp *comp, unsigned int idx,
- 	.layer_on = mtk_ovl_layer_on,
- 	.layer_off = mtk_ovl_layer_off,
- 	.layer_config = mtk_ovl_layer_config,
-+	.bgclr_in_on = mtk_ovl_bgclr_in_on,
-+	.bgclr_in_off = mtk_ovl_bgclr_in_off,
- };
++#include <linux/acpi.h>
+ #include <linux/clk.h>
+ #include <linux/slab.h>
+ #include <linux/dma-mapping.h>
+@@ -450,6 +451,9 @@ int geni_se_resources_off(struct geni_se *se)
+ {
+ 	int ret;
  
- static int mtk_disp_ovl_bind(struct device *dev, struct device *master,
++	if (ACPI_HANDLE(se->dev))
++		return 0;
++
+ 	ret = pinctrl_pm_select_sleep_state(se->dev);
+ 	if (ret)
+ 		return ret;
+@@ -487,6 +491,9 @@ int geni_se_resources_on(struct geni_se *se)
+ {
+ 	int ret;
+ 
++	if (ACPI_HANDLE(se->dev))
++		return 0;
++
+ 	ret = geni_se_clks_on(se);
+ 	if (ret)
+ 		return ret;
+@@ -724,12 +731,14 @@ static int geni_se_probe(struct platform_device *pdev)
+ 	if (IS_ERR(wrapper->base))
+ 		return PTR_ERR(wrapper->base);
+ 
+-	wrapper->ahb_clks[0].id = "m-ahb";
+-	wrapper->ahb_clks[1].id = "s-ahb";
+-	ret = devm_clk_bulk_get(dev, NUM_AHB_CLKS, wrapper->ahb_clks);
+-	if (ret) {
+-		dev_err(dev, "Err getting AHB clks %d\n", ret);
+-		return ret;
++	if (!ACPI_HANDLE(&pdev->dev)) {
++		wrapper->ahb_clks[0].id = "m-ahb";
++		wrapper->ahb_clks[1].id = "s-ahb";
++		ret = devm_clk_bulk_get(dev, NUM_AHB_CLKS, wrapper->ahb_clks);
++		if (ret) {
++			dev_err(dev, "Err getting AHB clks %d\n", ret);
++			return ret;
++		}
+ 	}
+ 
+ 	dev_set_drvdata(dev, wrapper);
 -- 
-1.8.1.1.dirty
+2.17.1
 
