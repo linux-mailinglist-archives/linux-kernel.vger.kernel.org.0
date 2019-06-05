@@ -2,79 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBDB436157
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 18:31:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D5CE3615A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 18:32:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728756AbfFEQbt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 12:31:49 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:38117 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726421AbfFEQbt (ORCPT
+        id S1728781AbfFEQcL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 12:32:11 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:60800 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728581AbfFEQcJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 12:31:49 -0400
-Received: by mail-yw1-f68.google.com with SMTP id r128so4649476ywe.5
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 09:31:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Y1OYtud6ynRddkkX+/uoFR8oepImmq49z7SkEsX+oO8=;
-        b=fsssAC2jxc6N9VdT89cO2W5eloOCThusSzDuCWrmX8rL3p6SjRfShWT9Ro4szdGWzg
-         /OwLlE2zuZq1k+E8NKL6Xu/Yc3B7S/ZovUxRpqbTsCHZMOXnmF0hs/zz2rhKakBnZLfC
-         WxRN7X8xH5uToK3wDHNPnz1yMhJO9l9jPaHQxME5Hqv5eEaBJCkkjhdrboGh8/CUCNm0
-         2W34/DSB6kwzLbcW2AZIaxX8tiZzKXecdR3H9p8CJGlR6wsHg/fnJ0rJFoxBzBmjc5od
-         5u3Xyb8WSMOKFxSX+mkDCMW7LSojKD32zNQwJHPpEcsoz//DqbhhpWOo7EN8uXo3Fc5s
-         GYEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Y1OYtud6ynRddkkX+/uoFR8oepImmq49z7SkEsX+oO8=;
-        b=eUId4A5bNi+Xu80p1x9xac2xlpFE2Vu2wgZ3WUmEQdhfDeu7Mj/CseH9y9XP2WSsk0
-         awTxhqWNAc/97oUWwQn5EiUcPgfYrGYfp4massGU3zkIkeJ5DJk0aH+elhV9FSgjgwK5
-         68jLXL7twvArZNla2DaUae8vKBj4FDXoW4eh4qhpO83QOYqeJ7yiruz/2nifpVQT+5t5
-         jjT/+Zme0obi52FpUfNw9hD8NXIbaUZghLN5c0w+VgbQRQcU4X9D6KVXlXEsClwMmS+T
-         AYrktgCO/1LPGii96z4duyruXD0dtPpBmnU26WKUZx5hNCb5mdXVLi9urzy4N/BaoPBh
-         6NCw==
-X-Gm-Message-State: APjAAAV+yNmR2fgYcbyWVT/XKd1Z9w9RrYH1G1T1vG12/9bwnRMSa6zr
-        GqNNOiOQkQ7LsTCsIEdyGWibvOgWucSZ+PtacmNA6w==
-X-Google-Smtp-Source: APXvYqwxp/w9I6RVMYzDSCXTuAeWq+uS/Kgz+ePstY0WG1Azd+0j00estnaPcFznlN81K3EH8wYJ8SzOBLDgFkoIAME=
-X-Received: by 2002:a81:4e94:: with SMTP id c142mr7970493ywb.398.1559752308314;
- Wed, 05 Jun 2019 09:31:48 -0700 (PDT)
+        Wed, 5 Jun 2019 12:32:09 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x55GW4UZ023032;
+        Wed, 5 Jun 2019 11:32:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1559752324;
+        bh=qIDUYTxE6wv44Y20SI9fIey5LVY7ECHQwKd7D9Y/+m0=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=wq8tGL5n45RFAD1NADQqY/YSJnLPPUvSZBkclCZRk12mcNMFoPh6+SvXFYcBFIvgk
+         t4If8qUyiWtxCUVb655m1Fu5sPrymI2XeLclwINtRWaMzo12hFeTbv/27R0or646l0
+         qus4XywF9srz3/+UfAp3BeSCjsOzDFs1wu1UPzHE=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x55GW3eL078024
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 5 Jun 2019 11:32:04 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 5 Jun
+ 2019 11:32:03 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 5 Jun 2019 11:32:03 -0500
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x55GW2gX094600;
+        Wed, 5 Jun 2019 11:32:03 -0500
+Subject: Re: [PATCH v5 1/6] regulator: lm363x: Make the gpio register enable
+ flexible
+To:     Mark Brown <broonie@kernel.org>
+CC:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
+        <lgirdwood@gmail.com>, <lee.jones@linaro.org>,
+        <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20190604174345.14841-1-dmurphy@ti.com>
+ <20190604174345.14841-2-dmurphy@ti.com> <20190605100132.GL2456@sirena.org.uk>
+ <7ba7a633-1a39-adcc-e942-12c0eb7c3b16@ti.com>
+ <054c3715-e85f-e052-faf1-057bf3a67d45@ti.com>
+ <20190605163120.GR2456@sirena.org.uk>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <c01c0177-6f28-dc2a-bae7-a5d18c30ce5d@ti.com>
+Date:   Wed, 5 Jun 2019 11:32:02 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-References: <20190605100630.13293-1-teawaterz@linux.alibaba.com>
-In-Reply-To: <20190605100630.13293-1-teawaterz@linux.alibaba.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Wed, 5 Jun 2019 09:31:37 -0700
-Message-ID: <CALvZod7w+HaG3NKdeTsk93HjJ=sQ=6wQAYAfi9y5F34-9w6V3Q@mail.gmail.com>
-Subject: Re: [PATCH V3 1/2] zpool: Add malloc_support_movable to zpool_driver
-To:     Hui Zhu <teawaterz@linux.alibaba.com>,
-        Vitaly Wool <vitalywool@gmail.com>
-Cc:     Dan Streetman <ddstreet@ieee.org>,
-        Minchan Kim <minchan@kernel.org>, ngupta@vflare.org,
-        sergey.senozhatsky.work@gmail.com,
-        Seth Jennings <sjenning@redhat.com>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190605163120.GR2456@sirena.org.uk>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 5, 2019 at 3:06 AM Hui Zhu <teawaterz@linux.alibaba.com> wrote:
->
-> As a zpool_driver, zsmalloc can allocate movable memory because it
-> support migate pages.
-> But zbud and z3fold cannot allocate movable memory.
->
+Mark
 
-Cc: Vitaly
+On 6/5/19 11:31 AM, Mark Brown wrote:
+> On Wed, Jun 05, 2019 at 07:47:50AM -0500, Dan Murphy wrote:
+>> On 6/5/19 7:02 AM, Dan Murphy wrote:
+>>> I can squash patch 1 into 4.
+>>> Also not sure what you mean by new validation.
+>> Disregard I understand.  The patch is missing the validation code.
+> Ah, some git add issues I guess :)  Squashing would help but it's not
+> essential I think.
 
-It seems like z3fold does support page migration but z3fold's malloc
-is rejecting __GFP_HIGHMEM. Vitaly, is there a reason to keep
-rejecting __GFP_HIGHMEM after 1f862989b04a ("mm/z3fold.c: support page
-migration").
 
-thanks,
-Shakeel
+More like PEBKAC on this one
+
+
+Dan
+
