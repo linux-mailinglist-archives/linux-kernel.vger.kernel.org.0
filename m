@@ -2,182 +2,255 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F9C535FF0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 17:12:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6116235FF7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 17:13:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728154AbfFEPMi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 11:12:38 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33150 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727971AbfFEPMh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 11:12:37 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0B476374;
-        Wed,  5 Jun 2019 08:12:37 -0700 (PDT)
-Received: from [10.1.197.61] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EE09C3F246;
-        Wed,  5 Jun 2019 08:12:33 -0700 (PDT)
-Subject: Re: [PATCH v2 2/2] irqchip: al-fic: Introduce Amazon's Annapurna Labs
- Fabric Interrupt Controller Driver
-To:     "Shenhar, Talel" <talel@amazon.com>, nicolas.ferre@microchip.com,
-        jason@lakedaemon.net, mark.rutland@arm.com,
-        mchehab+samsung@kernel.org, robh+dt@kernel.org,
-        davem@davemloft.net, shawn.lin@rock-chips.com, tglx@linutronix.de,
-        devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-Cc:     dwmw@amazon.co.uk, benh@kernel.crashing.org, jonnyc@amazon.com,
-        hhhawa@amazon.com, ronenk@amazon.com, hanochu@amazon.com,
-        barakw@amazon.com
-References: <1559731921-14023-1-git-send-email-talel@amazon.com>
- <1559731921-14023-3-git-send-email-talel@amazon.com>
- <fa6e5a95-d9dd-19f6-43e3-3046e0898bda@arm.com>
- <553d06a4-a6b6-816f-b110-6ef7f300dde4@amazon.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <0915892c-0e53-8f53-e858-b1c3298a4d35@arm.com>
-Date:   Wed, 5 Jun 2019 16:12:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1728316AbfFEPNO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 11:13:14 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:35660 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727971AbfFEPNN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 11:13:13 -0400
+Received: by mail-oi1-f194.google.com with SMTP id y6so14826490oix.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 08:13:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zMGVfzPtfY60vPUog1d+79YBY1k9yw26ur4Nhxw9kn4=;
+        b=YOQf+6tkLUeembw/E9yLq0uz7iQuOXAwASoFhx0iirho7O5tSWjylX7zJMN2LqbATY
+         1OiP/FYuUnbEIVmcTXr56i6f7jkoL50ivkwwqgcIJ15IbVz3PhmlL8HdrtHYYS68GXVV
+         qyNRiXx/93QPiSlOfnbKKf5d9IiznfBldTAac=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zMGVfzPtfY60vPUog1d+79YBY1k9yw26ur4Nhxw9kn4=;
+        b=bFZmbwDrHgO1ZnEzjZtmvQDY1x6qwFcIBNQdiMnOw89SU+fGChN1m29JAo7BtbyjPk
+         5xV6mAsH0ezGJgfM8Ti/Foj/6nWhKt0X3plc9/AL0jU4CRHI0S9Hxo2E86qGm4imcqFW
+         Ew+Ko1SkGOVV1tBSW4JeYuYcEExyRgvfbqgJun2FYKJPxpZBIAoARCUz+caBqXOF5tX8
+         jnXwUhUxDMTagC+uKpZPA7oiaR+kpyhWOn0WdQ4S1kiRkhuvosyv05kNRfIqm7Wa3bC7
+         qyVCsdy8ZI+vfSxp+5wi/aKst0FMsKfDevlWzTfgkcx76upx+MA3VWXRfFdqyIJV68uY
+         SkiQ==
+X-Gm-Message-State: APjAAAW88JG9VwyAqnNutX8h/GP2vb2N+aT/54N40VLvK4LA2DJpBQhU
+        5al1Ckak8iHnsSnqjzPjWwP3CHt0wz8=
+X-Google-Smtp-Source: APXvYqzJyO5GTovmLemCisi04z3cXkYoJUcurZrogNS6mt9WVq3zRS5DRlQo8PRwZTlswWCo94fzNA==
+X-Received: by 2002:aca:45c3:: with SMTP id s186mr3863620oia.89.1559747592076;
+        Wed, 05 Jun 2019 08:13:12 -0700 (PDT)
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com. [209.85.167.172])
+        by smtp.gmail.com with ESMTPSA id f186sm7639642oia.52.2019.06.05.08.13.10
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Jun 2019 08:13:10 -0700 (PDT)
+Received: by mail-oi1-f172.google.com with SMTP id t76so3395846oih.4
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 08:13:10 -0700 (PDT)
+X-Received: by 2002:aca:ef42:: with SMTP id n63mr8793398oih.177.1559747589837;
+ Wed, 05 Jun 2019 08:13:09 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <553d06a4-a6b6-816f-b110-6ef7f300dde4@amazon.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190603181649.143640-1-rrangel@chromium.org> <073e1600-18fe-84ea-03df-7b53b9b7c690@collabora.com>
+In-Reply-To: <073e1600-18fe-84ea-03df-7b53b9b7c690@collabora.com>
+From:   Nick Crews <ncrews@chromium.org>
+Date:   Wed, 5 Jun 2019 09:12:57 -0600
+X-Gmail-Original-Message-ID: <CAHX4x8558sa8WX2n9ar94bJn6YsejqNgFFouY+3piT4jExF1DA@mail.gmail.com>
+Message-ID: <CAHX4x8558sa8WX2n9ar94bJn6YsejqNgFFouY+3piT4jExF1DA@mail.gmail.com>
+Subject: Re: [PATCH v2] platform/chrome: wilco_ec: Add version sysfs entries
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     Raul E Rangel <rrangel@chromium.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Benson Leung <bleung@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/06/2019 15:38, Shenhar, Talel wrote:
-> Thanks, will publish the fixes on v3.
-> 
-> On 6/5/2019 3:22 PM, Marc Zyngier wrote:
->> Talel,
->>
->> On 05/06/2019 11:52, Talel Shenhar wrote:
->>> The Amazon's Annapurna Labs Fabric Interrupt Controller has 32 inputs
->>> lines. A FIC (Fabric Interrupt Controller) may be cascaded into another FIC
->> Really? :-(
-> 
-> Cascading is used for control path events. For data path the HW is not 
-> cascaded (and usually even configured in MSI-X instead of wire interrupts)
-> 
-> 
->>
->> +}
->> +
->> +static int al_fic_irq_set_type(struct irq_data *data, unsigned int flow_type)
->> +{
->> +	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(data);
->> +	struct al_fic *fic = gc->private;
->> +	enum al_fic_state new_state;
->> +	int ret = 0;
->> +
->> +	irq_gc_lock(gc);
->> +
->> +	if (!(flow_type & IRQ_TYPE_LEVEL_HIGH) &&
->> +	    !(flow_type & IRQ_TYPE_EDGE_RISING)) {
->> And what if this gets passed EDGE_BOTH?
-> 
-> FIC only support two sensing modes, rising-edge and level.
+Thanks Raul and Enric, this looks good to me.
 
-Yes, I can tell. Yet, this code will let EDGE_BOTH pass through, even if
-it cannot handle it.
+On Mon, Jun 3, 2019 at 2:40 PM Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
+>
+> Nick,
+>
+> On 3/6/19 20:16, Raul E Rangel wrote:
+> > Add the ability to extract version information from the EC.
+> >
+> > Example Output:
+> > $ cd /sys/bus/platform/devices/GOOG000C:00
+> > $ tail build_date build_revision version model_number
+> > ==> build_date <==
+> > 04/25/19
+> >
+> > ==> build_revision <==
+> > d2592cae0
+> >
+> > ==> version <==
+> > 00.00.14
+> >
+> > ==> model_number <==
+> > 08B6
+> >
+> > Signed-off-by: Raul E Rangel <rrangel@chromium.org>
 
-> 
->>
->>> +	 * This is generally fixed depending on what pieces of HW it's wired up
->>> +	 * to.
->>> +	 *
->>> +	 * We configure it based on the sensitivity of the first source
->>> +	 * being setup, and reject any subsequent attempt at configuring it in a
->>> +	 * different way.
->> Is that a reliable guess? It also strikes me that the DT binding doesn't
->> allow for the trigger type to be passed, meaning the individual drivers
->> have to request the trigger as part of their request_irq() call. I'd
->> rather you have a complete interrupt specifier in DT, and document the
->> various limitations of the HW.
-> 
-> Indeed we use interrupt specifier that has the level type in it 
-> (dt-binding: "#interrupt-cells: must be 2.") which in turns causes to 
-> this irq_set_type callback.
+Reviewed-by: Nick Crews <ncrews@chromium.org>
 
-Well, this isn't what the example in your DT binding shows.
-
-> 
-> Part of the FICs are connected to hws that generate pulse (for those, 
-> FIC shall be configured to rising-edge-triggered) and the others to hws 
-> that keep the line up (for those the FIC shall be configured to 
-> level-triggered).
-> 
->>
->>> +	 */
->>> +	if (fic->state == AL_FIC_CLEAN) {
->>> +		al_fic_set_trigger(fic, gc, new_state);
->>> +	} else if (fic->state != new_state) {
->>> +		pr_err("fic %s state already configured to %d\n",
->>> +		       fic->name, fic->state);
->>> +		ret = -EPERM;
->> Same as above.
-> 
-> Those error messages are control path messages. if we return the same 
-> error value from here and from the previous error, how can we 
-> differentiate between the two error cases by looking at the log?
-> 
-> Having informative printouts seems like a good idea for bad 
-> configuration cases as such, wouldn't you agree?
-
-I completely disagree. The kernel log isn't a dumping ground for this
-kind of pretty useless information. Furthermore, the irq subsystem will
-also shout at you when it gets an error, so no need to add insult to injury.
-
-If you really want to keep them around, turn them into pr_debug.
-
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+>
+> Can I get your rb here?
+>
+> Thanks,
+>  Enric
+>
+> > ---
+> > This patch is rebased on chromeos-platform/for-next. It was originally
+> > developed on the chromiumos 4.19 kernel which has the following patch
+> > applied: https://lore.kernel.org/patchwork/patch/1062995/. That patch is
+> > not currently upstream.
+> >
+> > Changes in v2:
+> > - Removed version directory
+> > - Renamed label to version
+> > - Sorted documentation
+> >
+> >  .../ABI/testing/sysfs-platform-wilco-ec       | 31 ++++++++
+> >  drivers/platform/chrome/wilco_ec/sysfs.c      | 79 +++++++++++++++++++
+> >  2 files changed, 110 insertions(+)
+> >
+> > diff --git a/Documentation/ABI/testing/sysfs-platform-wilco-ec b/Documentation/ABI/testing/sysfs-platform-wilco-ec
+> > index 8e5d6eee44db2..8827a734f9331 100644
+> > --- a/Documentation/ABI/testing/sysfs-platform-wilco-ec
+> > +++ b/Documentation/ABI/testing/sysfs-platform-wilco-ec
+> > @@ -7,3 +7,34 @@ Description:
+> >               want to run their device headless or with a dock.
+> >
+> >               Input should be parseable by kstrtou8() to 0 or 1.
+> > +
+> > +What:          /sys/bus/platform/devices/GOOG000C\:00/build_date
+> > +Date:          May 2019
+> > +KernelVersion: 5.3
+> > +Description:
+> > +               Display Wilco Embedded Controller firmware build date.
+> > +               Output will a MM/DD/YY string.
+> > +
+> > +What:          /sys/bus/platform/devices/GOOG000C\:00/build_revision
+> > +Date:          May 2019
+> > +KernelVersion: 5.3
+> > +Description:
+> > +               Display Wilco Embedded Controller build revision.
+> > +               Output will a version string be similar to the example below:
+> > +               d2592cae0
+> > +
+> > +What:          /sys/bus/platform/devices/GOOG000C\:00/model_number
+> > +Date:          May 2019
+> > +KernelVersion: 5.3
+> > +Description:
+> > +               Display Wilco Embedded Controller model number.
+> > +               Output will a version string be similar to the example below:
+> > +               08B6
+> > +
+> > +What:          /sys/bus/platform/devices/GOOG000C\:00/version
+> > +Date:          May 2019
+> > +KernelVersion: 5.3
+> > +Description:
+> > +               Display Wilco Embedded Controller firmware version.
+> > +               The format of the string is x.y.z. Where x is major, y is minor
+> > +               and z is the build number. For example: 95.00.06
+> > diff --git a/drivers/platform/chrome/wilco_ec/sysfs.c b/drivers/platform/chrome/wilco_ec/sysfs.c
+> > index f84f0480460ae..3b86a21005d3e 100644
+> > --- a/drivers/platform/chrome/wilco_ec/sysfs.c
+> > +++ b/drivers/platform/chrome/wilco_ec/sysfs.c
+> > @@ -23,6 +23,25 @@ struct boot_on_ac_request {
+> >       u8 reserved7;
+> >  } __packed;
+> >
+> > +#define CMD_EC_INFO                  0x38
+> > +enum get_ec_info_op {
+> > +     CMD_GET_EC_LABEL        = 0,
+> > +     CMD_GET_EC_REV          = 1,
+> > +     CMD_GET_EC_MODEL        = 2,
+> > +     CMD_GET_EC_BUILD_DATE   = 3,
+> > +};
+> > +
+> > +struct get_ec_info_req {
+> > +     u8 cmd;                 /* Always CMD_EC_INFO */
+> > +     u8 reserved;
+> > +     u8 op;                  /* One of enum get_ec_info_op */
+> > +} __packed;
+> > +
+> > +struct get_ec_info_resp {
+> > +     u8 reserved[2];
+> > +     char value[9]; /* __nonstring: might not be null terminated */
+> > +} __packed;
+> > +
+> >  static ssize_t boot_on_ac_store(struct device *dev,
+> >                               struct device_attribute *attr,
+> >                               const char *buf, size_t count)
+> > @@ -57,8 +76,68 @@ static ssize_t boot_on_ac_store(struct device *dev,
+> >
+> >  static DEVICE_ATTR_WO(boot_on_ac);
+> >
+> > +static ssize_t get_info(struct device *dev, char *buf, enum get_ec_info_op op)
+> > +{
+> > +     struct wilco_ec_device *ec = dev_get_drvdata(dev);
+> > +     struct get_ec_info_req req = { .cmd = CMD_EC_INFO, .op = op };
+> > +     struct get_ec_info_resp resp;
+> > +     int ret;
+> > +
+> > +     struct wilco_ec_message msg = {
+> > +             .type = WILCO_EC_MSG_LEGACY,
+> > +             .request_data = &req,
+> > +             .request_size = sizeof(req),
+> > +             .response_data = &resp,
+> > +             .response_size = sizeof(resp),
+> > +     };
+> > +
+> > +     ret = wilco_ec_mailbox(ec, &msg);
+> > +     if (ret < 0)
+> > +             return ret;
+> > +
+> > +     return scnprintf(buf, PAGE_SIZE, "%.*s\n", (int)sizeof(resp.value),
+> > +                      (char *)&resp.value);
+> > +}
+> > +
+> > +static ssize_t version_show(struct device *dev, struct device_attribute *attr,
+> > +                       char *buf)
+> > +{
+> > +     return get_info(dev, buf, CMD_GET_EC_LABEL);
+> > +}
+> > +
+> > +static DEVICE_ATTR_RO(version);
+> > +
+> > +static ssize_t build_revision_show(struct device *dev,
+> > +                                struct device_attribute *attr, char *buf)
+> > +{
+> > +     return get_info(dev, buf, CMD_GET_EC_REV);
+> > +}
+> > +
+> > +static DEVICE_ATTR_RO(build_revision);
+> > +
+> > +static ssize_t build_date_show(struct device *dev,
+> > +                            struct device_attribute *attr, char *buf)
+> > +{
+> > +     return get_info(dev, buf, CMD_GET_EC_BUILD_DATE);
+> > +}
+> > +
+> > +static DEVICE_ATTR_RO(build_date);
+> > +
+> > +static ssize_t model_number_show(struct device *dev,
+> > +                              struct device_attribute *attr, char *buf)
+> > +{
+> > +     return get_info(dev, buf, CMD_GET_EC_MODEL);
+> > +}
+> > +
+> > +static DEVICE_ATTR_RO(model_number);
+> > +
+> > +
+> >  static struct attribute *wilco_dev_attrs[] = {
+> >       &dev_attr_boot_on_ac.attr,
+> > +     &dev_attr_build_date.attr,
+> > +     &dev_attr_build_revision.attr,
+> > +     &dev_attr_model_number.attr,
+> > +     &dev_attr_version.attr,
+> >       NULL,
+> >  };
+> >
+> >
