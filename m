@@ -2,128 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D88B3356F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 08:27:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66A37356FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 08:31:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726543AbfFEG1I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 02:27:08 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54153 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726341AbfFEG1I (ORCPT
+        id S1726605AbfFEGbM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 02:31:12 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:33003 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726086AbfFEGbM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 02:27:08 -0400
-Received: by mail-wm1-f67.google.com with SMTP id d17so967494wmb.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 23:27:06 -0700 (PDT)
+        Wed, 5 Jun 2019 02:31:12 -0400
+Received: by mail-wm1-f68.google.com with SMTP id v19so994496wmh.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 23:31:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=kPABpBdEc3JTnMjfzo8eSt1KXnISiocMAZR6O03BAgU=;
+        b=HzLY+lLsLj3qaaJ+D2CLUzYc+xbV0JyaiioPbo7bzkOvittl+obBRocrPoRx0ERV/Z
+         Sv0jkq6H5Hx8Xv08saYNFTLr9ZSQpwzgLrmrRag/F5JbXHuABntsAg3OD2MJaQY7Tsi/
+         t8Sy0/hcpQJu+bYKKzQmxEGCR7CEX1qpOgV3PYW5fyQeF0D7p2qrz+jDM5v/IHOnFYJv
+         sIcVHF4dEN47FR7WMSfUQIBOYn7ZBxs0qnSQ+IES3riUsrbczTaunflqF8LDH3BZpUVx
+         MinLGEvkZH3GBuw95K85e9L+effbdRnLQCb8BlvVjnfyaTmgnkOysOis9qYjZdoxgS65
+         /OIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=/U7gCaM27g91TlIwrBZwu7yX6OYmORgg7yud1ZYf6HA=;
-        b=Cm4G4hQ73baJiPt5Jm5jflybVlxJW3FsbFtw1C8Vog9EckdXLD5eDdkiy/UIuBzfTe
-         aeDURpCp5BrfJIoIvip2f6aBC/pAz4ZBBzdzWy5rvUiqN448FU8bgEpD0JNJzQAzFu3Z
-         hXmk64oZ7+WE4QuM0VTthAt5S/gC44HboI69OEJ6wrB0JsQH4KAz2scaXJ/JLpcvQLX/
-         IUDIzNxkArrS80OxaIIaQZ07d1l/OlIAvb4OgXtee/j1zjNuaM5JA7He1hS9ZbgPWzFC
-         B/Q4YVCPYt/9tmxk8x6g0022f/FJlt4ag8im3gO3Be9plkd2TCZ6w88/eucZQ6xVEyiy
-         +X5g==
-X-Gm-Message-State: APjAAAWziILsExy4E38l29AwUlUcjgSEuETtvluAwE87bvQk+BXOjQ1o
-        I5WtT4remfPweDF63uu3dvU=
-X-Google-Smtp-Source: APXvYqw48nXwCbeh41t1rAnLwZVFaumwcbXXSBYNgxm0V5eB55RQea9zCHcH6tPOww+Hz3jih6jIFw==
-X-Received: by 2002:a1c:2bc7:: with SMTP id r190mr13159077wmr.174.1559716025780;
-        Tue, 04 Jun 2019 23:27:05 -0700 (PDT)
-Received: from ?IPv6:2a0b:e7c0:0:107::49? ([2a0b:e7c0:0:107::49])
-        by smtp.gmail.com with ESMTPSA id b5sm9221611wru.69.2019.06.04.23.27.04
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Jun 2019 23:27:04 -0700 (PDT)
-Subject: Re: [devm_kfree() usage] When should devm_kfree() be used?
-To:     Gen Zhang <blackgod016574@gmail.com>, rafael@kernel.org,
-        gregkh@linuxfoundation.org
-Cc:     jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
-        luojiaxing@huawei.com
-References: <20190525020305.GA10933@zhanggen-UX430UQ>
-From:   Jiri Slaby <jslaby@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <afd7b226-0847-92f1-8e5b-f7a0d796c51a@suse.cz>
-Date:   Wed, 5 Jun 2019 08:27:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=kPABpBdEc3JTnMjfzo8eSt1KXnISiocMAZR6O03BAgU=;
+        b=qPxQwm+2VvrkKnovN1JEUmtdmsUYjMRiK6Ke9Z72epD3rq67aAAJswSKVZDzKdLzTw
+         x/gnISR9yt0b8crb42fvgsstyojoUDgxaglaW842I9va6ff9pHaZ8Wlhjt/Ncv9y+QbK
+         zrzXa1QFUyPOVtOhgWKvQLCW5KNw8w0Nzyk075q54/e/jdmGm6Dwzl2GCKM6SmgxOm1F
+         Ycrl9rdd01P8ROcP3LDa5LYCK0zBPpLK+MI9XznvhPdzCbKXBOXvDIVa0yzzkxLA7bD6
+         fLvaNOYm/HL+Z1S6u7u9F8w7Hbf0s5dWW3ERvAxTXN3o8BZENEfh32kq4mXMVLGscIz1
+         3Utw==
+X-Gm-Message-State: APjAAAU5eyJDrCEYyGhciuSiKM2XruPOkP23Dz0RsGCjILpDCb7bY9bl
+        Jm6juhgQk99q8nnWisclUpJPDYgqzYE=
+X-Google-Smtp-Source: APXvYqykg+6bOQSvazbg0ZZqzdfyZZcBKzc90ulbBm9/kykgr8fehEsw7mfEFIov1bRDI1aH+DVIMA==
+X-Received: by 2002:a1c:a648:: with SMTP id p69mr8769189wme.155.1559716269969;
+        Tue, 04 Jun 2019 23:31:09 -0700 (PDT)
+Received: from dell ([2.27.167.43])
+        by smtp.gmail.com with ESMTPSA id s11sm14946978wro.17.2019.06.04.23.31.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Jun 2019 23:31:09 -0700 (PDT)
+Date:   Wed, 5 Jun 2019 07:31:08 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Robert Hancock <hancock@sedsystems.ca>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] mfd: core: Support multiple OF child devices of the
+ same type
+Message-ID: <20190605063108.GF4797@dell>
+References: <1559687743-31879-1-git-send-email-hancock@sedsystems.ca>
+ <1559687743-31879-2-git-send-email-hancock@sedsystems.ca>
 MIME-Version: 1.0
-In-Reply-To: <20190525020305.GA10933@zhanggen-UX430UQ>
-Content-Type: text/plain; charset=iso-8859-2
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1559687743-31879-2-git-send-email-hancock@sedsystems.ca>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25. 05. 19, 4:03, Gen Zhang wrote:
-> devm_kmalloc() is used to allocate memory for a driver dev. Comments
-> above the definition and doc 
-> (https://www.kernel.org/doc/Documentation/driver-model/devres.txt) all
-> imply that allocated the memory is automatically freed on driver attach,
-> no matter allocation fail or not. However, I examined the code, and
-> there are many sites that devm_kfree() is used to free devm_kmalloc().
-> e.g. hisi_sas_debugfs_init() in drivers/scsi/hisi_sas/hisi_sas_main.c.
+On Tue, 04 Jun 2019, Robert Hancock wrote:
 
-The guy who added the code in:
-commit eb1c2b72b7694c984d520300c901f5fc1fa8ea9e
-Author: Luo Jiaxing <luojiaxing@huawei.com>
-Date:   Wed Dec 19 23:56:40 2018 +0800
+> Previously the MFD core supported assigning OF nodes to created MFD
+> devices, but relied solely on matching the of_compatible string. This
+> would result in devices being potentially assigned the wrong node if
+> there are multiple devices with the same compatible string within a
+> multifunction device.
+> 
+> Add support for matching the full name of the node in the MFD cell
+> definition, so that we can match against a specific instance of a
+> device. If this is not specified, we match just based on the
+> compatible string, as before.
+> 
+> Signed-off-by: Robert Hancock <hancock@sedsystems.ca>
+> ---
+>  drivers/mfd/mfd-core.c   | 5 ++++-
+>  include/linux/mfd/core.h | 3 +++
+>  2 files changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
+> index 1ade4c8..74bc895 100644
+> --- a/drivers/mfd/mfd-core.c
+> +++ b/drivers/mfd/mfd-core.c
+> @@ -177,7 +177,10 @@ static int mfd_add_device(struct device *parent, int id,
+>  
+>  	if (parent->of_node && cell->of_compatible) {
+>  		for_each_child_of_node(parent->of_node, np) {
+> -			if (of_device_is_compatible(np, cell->of_compatible)) {
+> +			if (of_device_is_compatible(np, cell->of_compatible) &&
+> +			    (!cell->of_full_name ||
+> +			     !strcmp(cell->of_full_name,
+> +				     of_node_full_name(np)))) {
+>  				pdev->dev.of_node = np;
+>  				break;
 
-    scsi: hisi_sas: Alloc debugfs snapshot buffer memory for all registers
+That is some ugly, squashed up code.
 
-seems to be as confused as you are.
+If we end up accepting this, I suggest flattening this out a bit.
 
-> So I am totally confused about this issue. Can anybody give me some
-> guidance? When should we use devm_kfree()?
+... but we'll cross that bridge when we come to it.
 
-Whenever you want to free the memory earlier than on ->remove or failed
-->probe. For whatever reason.
+> diff --git a/include/linux/mfd/core.h b/include/linux/mfd/core.h
+> index 99c0395..470f6cb 100644
+> --- a/include/linux/mfd/core.h
+> +++ b/include/linux/mfd/core.h
+> @@ -55,6 +55,9 @@ struct mfd_cell {
+>  	 */
+>  	const char		*of_compatible;
+>  
+> +	/* Optionally match against a specific device of a given type */
+> +	const char		*of_full_name;
+> +
 
-thanks,
+Can you give me an example for when this might be useful?
+
+>  	/* Matches ACPI */
+>  	const struct mfd_cell_acpi_match	*acpi_match;
+>  
+
 -- 
-js
-suse labs
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
