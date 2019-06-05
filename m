@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CC6435761
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 09:05:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFADC35765
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 09:06:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbfFEHFs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 03:05:48 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36887 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726857AbfFEHFo (ORCPT
+        id S1726956AbfFEHF4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 03:05:56 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:44860 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726876AbfFEHFp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 03:05:44 -0400
-Received: by mail-pg1-f194.google.com with SMTP id 20so11881729pgr.4
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 00:05:43 -0700 (PDT)
+        Wed, 5 Jun 2019 03:05:45 -0400
+Received: by mail-pg1-f195.google.com with SMTP id n2so11864411pgp.11
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 00:05:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=d2izPr39F3F0VHRMOQwIEoQfvTiBqRIbKynBXN0NUa0=;
-        b=BySmcBdri3W99nnsQSAV43VhgYjxYbf/4s1H2Ffq8FJOzXMN069qRgTdjBnaBeXkKe
-         hyOQGqkICDAwG9O/U+MqLX3sX8C5cWdggkkH5I5PUYi6ALpkAfYnyKBwfMuSGHE03tGV
-         +4eS3liPY8ScJWNsOwZbtepvi9X8H/xWmeApo+/0QzjdkD2LicPI/WhnFLM5HcyS1Usd
-         VEwauu6vJt8efqTX3u8HgwaXCBX2GCwjNmbwJK9jBF/7fbz6sMOz4uKZPDOAckDiw9Nc
-         vCe3jvE+6mHuL+l/IW7M29zfaLOGvuWh2ajB2HcMfXGRFeXi5KKlPFWFfYAb2AZYQJdx
-         8nQQ==
+        bh=hrkvpzIdMBYR+6B1XOi5qDamesEvOXiYhYzlfg/ShYA=;
+        b=cEQU5N1uQTnf8WgA53Bsfw4aItgE0b7ohuBZXIsACGEzWjpuZOA5nXhdaE12lTADC0
+         nFtadpYhSPGFC61TAqneAppwg7sTOPYLwBuKHiV5mqs9Lr3LxXf5EkN/0OHAf4MMlROP
+         hZPX/I50VIJVyuxT9PhVStp1EQRwc1YXciLzlcbRcejHKp3m6vVBAq7cLLzfU5GZkXg+
+         QicBleD9b18ww0oIO6S/xb5zW0jELkZa/YZhcKDYOFTarQnFP8F4chPj4vo3+iBCl8vt
+         ycPPgbRgLI/s7KdZRiNaat80Z2i4Hu/m0x3kTu7KkdMcsE2gaG5R9FyyxFFOXroLDxgC
+         m8aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=d2izPr39F3F0VHRMOQwIEoQfvTiBqRIbKynBXN0NUa0=;
-        b=p/Oz57xSMOfTn8wcCldx02ZlITMD0qQCwRh41cXndBmKCNEnhtMByl9BfP1XXNALVO
-         HUkOlNhbahtgAW4xqPRnb4kwBYcpzJxe7uUVYOAZLH+1Z14fqpgTemxsgzoBJ0w6XJA6
-         4TKZ0qNFLGwMfRTz0nAef8EeG2BVhiqdX5LR4lfy8zcXfZyjz+KRxutf1HQye2Er5K9I
-         IN4nFXx2MyWlBNe0LITqQA8cmYgaDqm1Fh/4hxRSYC/wcaWfNC+uotqxcAtqDQFvArFI
-         /RM24lXgpHm3iuPVgbAznsElIU4AppKr95TOeCOYTPYW8zIQDbztII2raSIRtSC7k8rl
-         B2eg==
-X-Gm-Message-State: APjAAAVZeSXJkESz0Z+9iIdr8idKuOEyHL59hHR96JuJ0oJ8MhXdHlXI
-        CuXBa791nStiAsWSdXPHXoQ=
-X-Google-Smtp-Source: APXvYqxifsh8LBT0sk9LAzZyDwQ07jHD8F1USZwx/MC+2mwHbldjh1VnrJKg1q3DGXF67e3q25xX8w==
-X-Received: by 2002:a63:a449:: with SMTP id c9mr2466787pgp.149.1559718343138;
-        Wed, 05 Jun 2019 00:05:43 -0700 (PDT)
+        bh=hrkvpzIdMBYR+6B1XOi5qDamesEvOXiYhYzlfg/ShYA=;
+        b=CNbafwPogX+bFg4Z/K+cZweGoNAtOyRt286J5/tvN+BRBeynBsO9PdOeg1u1z0HBLc
+         kRG/2NW/77bcDbdzM4bSNqFpa42aJoMGKrcQEJLCdSwlqvUyBQDJ9yvnQOwU/QgB7SUv
+         hnpYUdV749E1inXxgYucd7Nm2B551EuH6fIaZBmrw1+SLNO99dzOJBTHs1i6Br4e7E+i
+         micoPvCZeE+IP7Uvdfgyre0uPXF62g8WeLkS7+dyJOmx3rWRdC7wD7TtgdvB/gANElgU
+         pPt69iY9xX1oxB7r4MTj2R5O48p/mec/9M2cLe0KjZ2/IRD5af5sNUxRISYNP9eUkbB0
+         UPlw==
+X-Gm-Message-State: APjAAAVtzcZ9gQXFhT7m5rog6R2JoC5ii9z+BhNhVPwaOHGt4iNb8KnW
+        S7iLJ/jW/cArSRxokT0dqAg=
+X-Google-Smtp-Source: APXvYqw+xZC+7hjXfGk20eLYBK8EepIKcBqrCE4j8N3tZILC9uyzNyadULeyQv+RW/cmUlTSO7NPbw==
+X-Received: by 2002:a63:1d5c:: with SMTP id d28mr2428121pgm.10.1559718344605;
+        Wed, 05 Jun 2019 00:05:44 -0700 (PDT)
 Received: from localhost.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id d132sm6527348pfd.61.2019.06.05.00.05.41
+        by smtp.gmail.com with ESMTPSA id d132sm6527348pfd.61.2019.06.05.00.05.43
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Jun 2019 00:05:42 -0700 (PDT)
+        Wed, 05 Jun 2019 00:05:43 -0700 (PDT)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -58,9 +58,9 @@ Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
         Chris Healy <cphealy@gmail.com>,
         Lucas Stach <l.stach@pengutronix.de>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 13/15] drm/bridge: tc358767: Simplify tc_aux_wait_busy()
-Date:   Wed,  5 Jun 2019 00:05:05 -0700
-Message-Id: <20190605070507.11417-14-andrew.smirnov@gmail.com>
+Subject: [PATCH v3 14/15] drm/bridge: tc358767: Drop unnecessary 8 byte buffer
+Date:   Wed,  5 Jun 2019 00:05:06 -0700
+Message-Id: <20190605070507.11417-15-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190605070507.11417-1-andrew.smirnov@gmail.com>
 References: <20190605070507.11417-1-andrew.smirnov@gmail.com>
@@ -71,8 +71,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We never pass anything but 100 as timeout_ms to tc_aux_wait_busy(), so
-we may as well hardcode that value and simplify function's signature.
+tc_get_display_props() never reads more than a byte via AUX, so
+there's no need to reserve 8 for that purpose. No function change
+intended.
 
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Cc: Archit Taneja <architt@codeaurora.org>
@@ -87,44 +88,50 @@ Cc: Lucas Stach <l.stach@pengutronix.de>
 Cc: dri-devel@lists.freedesktop.org
 Cc: linux-kernel@vger.kernel.org
 ---
- drivers/gpu/drm/bridge/tc358767.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/bridge/tc358767.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
-index a04401cf2a92..4fe7641f84ee 100644
+index 4fe7641f84ee..41a976dff13b 100644
 --- a/drivers/gpu/drm/bridge/tc358767.c
 +++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -294,10 +294,9 @@ static inline int tc_poll_timeout(struct tc_data *tc, unsigned int addr,
- 					sleep_us, timeout_us);
- }
- 
--static int tc_aux_wait_busy(struct tc_data *tc, unsigned int timeout_ms)
-+static int tc_aux_wait_busy(struct tc_data *tc)
+@@ -680,8 +680,7 @@ static int tc_aux_link_setup(struct tc_data *tc)
+ static int tc_get_display_props(struct tc_data *tc)
  {
--	return tc_poll_timeout(tc, DP0_AUXSTATUS, AUX_BUSY, 0,
--			       1000, 1000 * timeout_ms);
-+	return tc_poll_timeout(tc, DP0_AUXSTATUS, AUX_BUSY, 0, 1000, 100000);
- }
- 
- static int tc_aux_write_data(struct tc_data *tc, const void *data,
-@@ -370,7 +369,7 @@ static ssize_t tc_aux_transfer(struct drm_dp_aux *aux,
- 	u32 auxstatus;
  	int ret;
+-	/* temp buffer */
+-	u8 tmp[8];
++	u8 reg;
  
--	ret = tc_aux_wait_busy(tc, 100);
-+	ret = tc_aux_wait_busy(tc);
- 	if (ret)
- 		return ret;
+ 	/* Read DP Rx Link Capability */
+ 	ret = drm_dp_link_probe(&tc->aux, &tc->link.base);
+@@ -697,21 +696,21 @@ static int tc_get_display_props(struct tc_data *tc)
+ 		tc->link.base.num_lanes = 2;
+ 	}
  
-@@ -397,7 +396,7 @@ static ssize_t tc_aux_transfer(struct drm_dp_aux *aux,
- 	if (ret)
- 		return ret;
+-	ret = drm_dp_dpcd_readb(&tc->aux, DP_MAX_DOWNSPREAD, tmp);
++	ret = drm_dp_dpcd_readb(&tc->aux, DP_MAX_DOWNSPREAD, &reg);
+ 	if (ret < 0)
+ 		goto err_dpcd_read;
+-	tc->link.spread = tmp[0] & DP_MAX_DOWNSPREAD_0_5;
++	tc->link.spread = reg & DP_MAX_DOWNSPREAD_0_5;
  
--	ret = tc_aux_wait_busy(tc, 100);
-+	ret = tc_aux_wait_busy(tc);
- 	if (ret)
- 		return ret;
+-	ret = drm_dp_dpcd_readb(&tc->aux, DP_MAIN_LINK_CHANNEL_CODING, tmp);
++	ret = drm_dp_dpcd_readb(&tc->aux, DP_MAIN_LINK_CHANNEL_CODING, &reg);
+ 	if (ret < 0)
+ 		goto err_dpcd_read;
  
+ 	tc->link.scrambler_dis = false;
+ 	/* read assr */
+-	ret = drm_dp_dpcd_readb(&tc->aux, DP_EDP_CONFIGURATION_SET, tmp);
++	ret = drm_dp_dpcd_readb(&tc->aux, DP_EDP_CONFIGURATION_SET, &reg);
+ 	if (ret < 0)
+ 		goto err_dpcd_read;
+-	tc->link.assr = tmp[0] & DP_ALTERNATE_SCRAMBLER_RESET_ENABLE;
++	tc->link.assr = reg & DP_ALTERNATE_SCRAMBLER_RESET_ENABLE;
+ 
+ 	dev_dbg(tc->dev, "DPCD rev: %d.%d, rate: %s, lanes: %d, framing: %s\n",
+ 		tc->link.base.revision >> 4, tc->link.base.revision & 0x0f,
 -- 
 2.21.0
 
