@@ -2,108 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1364C35914
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 10:56:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 731813590B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 10:55:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbfFEI4U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 04:56:20 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60380 "EHLO mx1.redhat.com"
+        id S1726939AbfFEIze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 04:55:34 -0400
+Received: from mga14.intel.com ([192.55.52.115]:34499 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726708AbfFEI4U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 04:56:20 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1C53788307;
-        Wed,  5 Jun 2019 08:56:14 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 76A465D705;
-        Wed,  5 Jun 2019 08:56:06 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Wed,  5 Jun 2019 10:56:12 +0200 (CEST)
-Date:   Wed, 5 Jun 2019 10:56:04 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Davidlohr Bueso <dbueso@suse.de>, Jens Axboe <axboe@kernel.dk>,
-        Davidlohr Bueso <dave@stgolabs.net>, e@80x24.org,
-        Jason Baron <jbaron@akamai.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-aio@kvack.org, omar.kilani@gmail.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        stable <stable@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        David Laight <David.Laight@aculab.com>
-Subject: Re: [PATCH] signal: remove the wrong signal_pending() check in
- restore_user_sigmask()
-Message-ID: <20190605085604.GA32406@redhat.com>
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190529161157.GA27659@redhat.com>
- <20190604134117.GA29963@redhat.com>
- <CAHk-=wjSOh5zmApq2qsNjmY-GMn4CWe9YwdcKPjT+nVoGiDKOQ@mail.gmail.com>
+        id S1726708AbfFEIzd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 04:55:33 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 01:55:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,550,1549958400"; 
+   d="scan'208";a="181860607"
+Received: from pl-dbox.sh.intel.com (HELO intel.com) ([10.239.13.128])
+  by fmsmga002.fm.intel.com with ESMTP; 05 Jun 2019 01:55:32 -0700
+Date:   Wed, 5 Jun 2019 16:57:23 +0800
+From:   Philip Li <philip.li@intel.com>
+To:     LKML <linux-kernel@vger.kernel.org>, kbuild-all@01.org
+Subject: [0-Day CI notification] the service will be paused during Jun 6 to
+ Jun 11 for lab construction
+Message-ID: <20190605085723.GA28929@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wjSOh5zmApq2qsNjmY-GMn4CWe9YwdcKPjT+nVoGiDKOQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 05 Jun 2019 08:56:19 +0000 (UTC)
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/04, Linus Torvalds wrote:
->
-> On Tue, Jun 4, 2019 at 6:41 AM Oleg Nesterov <oleg@redhat.com> wrote:
-> >
-> > This is the minimal fix for stable, I'll send cleanups later.
->
-> Ugh. I htink this is correct, but I wish we had a better and more
-> intuitive interface.
+Hi all, this is Philip who maintains the 0-Day CI test service.
+Thanks for anyone who subscribing to the service. We will have a
+major lab construction during next few days, thus need to pause
+the service until Jun 11. Sorry for any inconvenience caused by
+this, we will try our best to have it online as early as possible.
 
-Yes,
-
-> In particular, since restore_user_sigmask() basically wants to check
-> for "signal_pending()" anyway
-
-No, the caller should check signal_pending() anyway and this is enough.
-
-> > -       restore_user_sigmask(ksig.sigmask, &sigsaved);
-> > -       if (signal_pending(current) && !ret)
-> > +
-> > +       interrupted = signal_pending(current);
-> > +       restore_user_sigmask(ksig.sigmask, &sigsaved, interrupted);
-> > +       if (interrupted && !ret)
-> >                 ret = -ERESTARTNOHAND;
->
-> are wrong to begin with,
-
-This is fs/aio.c and I have already mentioned that this code doesn't look
-right anyway.
-
-> IOW, I think the above could become
->
->         ret = restore_user_sigmask(ksig.sigmask, &sigsaved, ret, -ERESTARTHAND);
->
-> instead if we just made the right interface decision.
-
-I think this particular code should simply do
-
-		ret = do_io_getevents(...);
-
-		if (ret == -ERESTARTSYS)
-			ret = -EINTR;
-
-		restore_user_sigmask(ret == -EINTR);
-
-However I agree that another helper(s) which takes/returns the error code makes
-sense and I was going to do this. Lets do this step by step, I think we should
-kill sigmask/sigsaved first.
-
-Oleg.
-
+Thanks
