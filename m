@@ -2,104 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EAC535750
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 09:02:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 280BA3575A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 09:05:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726593AbfFEHCr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 03:02:47 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46768 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726502AbfFEHCq (ORCPT
+        id S1726568AbfFEHFX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 03:05:23 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:39626 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726427AbfFEHFW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 03:02:46 -0400
-Received: by mail-pf1-f193.google.com with SMTP id y11so14266622pfm.13
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 00:02:46 -0700 (PDT)
+        Wed, 5 Jun 2019 03:05:22 -0400
+Received: by mail-pf1-f195.google.com with SMTP id j2so14293506pfe.6
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 00:05:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=uz4rW4hom4PNyImhqoO7mrnt+7yVJFQ+a19gRd/J1UQ=;
-        b=k2mgUNFS8mlgZJLWSI2R4t0x6v3cRS5Cibzq9KsQeI9KAoK6H7pBodfPO0qs0J/hBF
-         UnokjKUh6mu48Jv152LXpaxAIemY3F4zfzFSo9NysiwGnJDt8ax3RxYRET3ra0TkQP/i
-         GPnwx+W3Hhu5yRpNgUdOJGq+0KClDNJKtGTSYKeDaXwRrQBMN/34vs9cIw762gGL2S2X
-         aCq0lADu9jfpEF0rmoDeGo70ZA4BURwaE5YhZ1GEYO/HYwHMaLZ9hL3hbjNuPqnF1VEN
-         qBKuQPkKiY/bWef19eOPrZkK5kuzU+JYYp1dQcFzU8F63bw09h+yuZibsYe9AOcoI0tB
-         VAcA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LnB/qPlcBVS1MiWf1Hu4nd4BnRwaadmudJ8+dogX3yE=;
+        b=RMx/P5RtZ+Kl66yQ52r1XgqEli3o9Rs7lILVOMVTCEPCdSkIp4K9237cxsJcgu5xQk
+         5LcryYeX386IS5I7mdPCRMMYgAu/4+wSur+T5ziRnBZ/GRpsKdA9n5wSEE05CbDJszX7
+         daC81Dev6VZ6kAH1/8N1esEpcVQK+45xBaXFYujYwgNWAjRbFOPH8I4PgAPZJ7vk7M+2
+         vyxX/UcnL42bBGS2b9xYsfPvajuKIJPbK/ArUp9iLZR9nV6Zl7s/tuVElKfhG2GIod7K
+         YMDYSnS/ZClOnXJ6r1wpHJvQfKLVIBtZcuA25Es/hplWU+7RTAq+Vt68I+a4zvXrsplP
+         HZUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uz4rW4hom4PNyImhqoO7mrnt+7yVJFQ+a19gRd/J1UQ=;
-        b=eKnl8PE3fuw5theCCLtPOOhlFqD9LQd6MZtHWeLDkPzxsxoOhn/Mbq2iTEtdDIHeRm
-         VnjrOqvounRsF07ew5vP8yrApsrl011p+VmABQxX01Oj2ws8Fm5ArjNqetcPRW02LzXp
-         fCIjW/ot46QN4LGuMZZF0JqPs3TJYoBAFT+J+EgVw1NPbM6o7wm11sPpMwXzXgpqsNGj
-         6hpLAZcOZZHD3aKrNRRlj5UTBCnpOFNs2pqX3QftPzl1QxfAaDV2+U3y0xjGtKj95Xkw
-         /4IzIO+/xkoXD+qQHOjMWtAWOpySIpqRYUj0Aoc0ZqQ/3aZDadVBv6Ajiv7mApgocGnD
-         WNRQ==
-X-Gm-Message-State: APjAAAW6NaxfeLOrcnpHxIccuiadGiiGoLuYCO5me06wzwz91iMvh2Ti
-        zqObebBRLKTpxuo7dOrqZGvMOQ==
-X-Google-Smtp-Source: APXvYqxbp1TM7o6DxILTBx5tTuqENvUDU+OcxxTSnQwTp/YO/ccBSoR/xNWDWoB8WKd14PCiX3fHZQ==
-X-Received: by 2002:a63:fa16:: with SMTP id y22mr2444462pgh.15.1559718165590;
-        Wed, 05 Jun 2019 00:02:45 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id w62sm7765452pfw.132.2019.06.05.00.02.44
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LnB/qPlcBVS1MiWf1Hu4nd4BnRwaadmudJ8+dogX3yE=;
+        b=XK/roSqrgkOI2xiKSprmAWU1GQFvPm+En002de5+qlFlFahCnYoNbR56KMnoep2gK1
+         y8ua/YDxeY1EAkiXVwvnj1p75kBss1YyG9afAAk/RMPDLtr8FhwVtvzfI6j2d5LIJJze
+         aY2jhuICJ6x1t4kTLvsOQlYmV5zNr+CdOgcLBKRblUaJAsVyOxb0/GYKrnnuJv0D7G9B
+         WZaenUXgX9u1MevEXPP/deNV6MZPrUWcT5BxCU+awehsbhM4Z633gY+Xp8+mwi/QrBS3
+         iCiPtNueUpLpAIybMqGLAHKeuJ7enEeYMrJJeKO1Va49DrrMyh6EmPPX1NczAwgxZamD
+         JxRQ==
+X-Gm-Message-State: APjAAAVE/YP5eINkMa45Bt/Xl93zGxoO/rYJx/RFSG4CcYaPj393NUb/
+        rVF8zlIx4Tpk+EoC4/1dA2g=
+X-Google-Smtp-Source: APXvYqxAyrt1q/R4SqiAji7XsTO61D4Lt92UY1lYf8hWESYxYph2ZgQKB++u5GJd3c4+kK09f2fGwA==
+X-Received: by 2002:a63:eb0a:: with SMTP id t10mr2202889pgh.99.1559718321838;
+        Wed, 05 Jun 2019 00:05:21 -0700 (PDT)
+Received: from localhost.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
+        by smtp.gmail.com with ESMTPSA id d132sm6527348pfd.61.2019.06.05.00.05.19
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Jun 2019 00:02:45 -0700 (PDT)
-Date:   Wed, 5 Jun 2019 00:03:30 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     alokc@codeaurora.org, kramasub@codeaurora.org,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        wsa+renesas@sang-engineering.com, linus.walleij@linaro.org,
-        balbi@kernel.org, gregkh@linuxfoundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        jlhugo@gmail.com, linux-i2c@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH 8/8] usb: dwc3: qcom: Improve error handling
-Message-ID: <20190605070330.GO22737@tuxbook-pro>
-References: <20190604104455.8877-1-lee.jones@linaro.org>
- <20190604104455.8877-8-lee.jones@linaro.org>
+        Wed, 05 Jun 2019 00:05:20 -0700 (PDT)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Cory Tusar <cory.tusar@zii.aero>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 00/15] tc358767 driver improvements
+Date:   Wed,  5 Jun 2019 00:04:52 -0700
+Message-Id: <20190605070507.11417-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190604104455.8877-8-lee.jones@linaro.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 04 Jun 03:44 PDT 2019, Lee Jones wrote:
+Everyone:
 
-> dwc3_qcom_clk_init() is called with of_count_phandle_with_args() as an
-> argument.  If of_count_phandle_with_args() returns an error, the number
-> of clocks will be a negative value and will lead to undefined behaviour.
-> 
-> Ensure we check for an error before attempting to blindly use the value.
-> 
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+This series contains various improvements (at least in my mind) and
+fixes that I made to tc358767 while working with the code of the
+driver. Hopefuly each patch is self explanatory.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Feedback is welcome!
 
-> ---
->  drivers/usb/dwc3/dwc3-qcom.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
-> index f21fdd6cdd1a..633482926497 100644
-> --- a/drivers/usb/dwc3/dwc3-qcom.c
-> +++ b/drivers/usb/dwc3/dwc3-qcom.c
-> @@ -419,6 +419,9 @@ static int dwc3_qcom_clk_init(struct dwc3_qcom *qcom, int count)
->  	if (!count || ACPI_HANDLE(dev))
->  		return 0;
->  
-> +	if (count < 0)
-> +		return count;
-> +
->  	qcom->clks = devm_kcalloc(dev, qcom->num_clocks,
->  				  sizeof(struct clk *), GFP_KERNEL);
->  	if (!qcom->clks)
-> -- 
-> 2.17.1
-> 
+Thanks,
+Andrey Smirnov
+
+Changes since [v2]:
+
+    - Patchset rebased on top of v4 of Tomi's series that recently
+      went in (https://patchwork.freedesktop.org/series/58176/#rev5)
+      
+   - AUX transfer code converted to user regmap_bulk_read(),
+     regmap_bulk_write()
+
+Changes since [v1]:
+
+    - Patchset rebased on top of
+      https://patchwork.freedesktop.org/series/58176/
+      
+    - Patches to remove both tc_write() and tc_read() helpers added
+
+    - Patches to rework AUX transfer code added
+
+    - Both "drm/bridge: tc358767: Simplify polling in
+      tc_main_link_setup()" and "drm/bridge: tc358767: Simplify
+      polling in tc_link_training()" changed to use tc_poll_timeout()
+      instead of regmap_read_poll_timeout()
+
+[v2] lkml.kernel.org/r/20190322032901.12045-1-andrew.smirnov@gmail.com
+[v1] lkml.kernel.org/r/20190226193609.9862-1-andrew.smirnov@gmail.com
+
+
+Andrey Smirnov (15):
+  drm/bridge: tc358767: Simplify tc_poll_timeout()
+  drm/bridge: tc358767: Simplify polling in tc_main_link_setup()
+  drm/bridge: tc358767: Simplify polling in tc_link_training()
+  drm/bridge: tc358767: Simplify tc_set_video_mode()
+  drm/bridge: tc358767: Drop custom tc_write()/tc_read() accessors
+  drm/bridge: tc358767: Simplify AUX data read
+  drm/bridge: tc358767: Simplify AUX data write
+  drm/bridge: tc358767: Increase AUX transfer length limit
+  drm/bridge: tc358767: Use reported AUX transfer size
+  drm/bridge: tc358767: Add support for address-only I2C transfers
+  drm/bridge: tc358767: Introduce tc_set_syspllparam()
+  drm/bridge: tc358767: Introduce tc_pllupdate_pllen()
+  drm/bridge: tc358767: Simplify tc_aux_wait_busy()
+  drm/bridge: tc358767: Drop unnecessary 8 byte buffer
+  drm/bridge: tc358767: Replace magic number in tc_main_link_enable()
+
+ drivers/gpu/drm/bridge/tc358767.c | 668 ++++++++++++++++++------------
+ 1 file changed, 392 insertions(+), 276 deletions(-)
+
+-- 
+2.21.0
+
