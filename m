@@ -2,116 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFCA13561D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 07:07:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2DA935625
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 07:10:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726573AbfFEFHP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 01:07:15 -0400
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.80]:26065 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbfFEFHP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 01:07:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1559711232;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=Vi8XPkzvs3rsYu99yfQYh/pogLXeP+Q04MJbkT2ESyM=;
-        b=XR47Q+0+US67RLuEE55YWEx0PNlgMKTn7ifN6Wbe90e8qdDqU23RGZAJx8H+6x7+w1
-        9Ll4AOZUqe/3fZd7+brkaHkG/bUE44UsGa5H37peA7uwiSnCrYv5qc3PYOgNhMOCrpHP
-        AIlH+rjwE9oWXr2nM/0LVo+sKUnQBpNSqyPfY69yEDlaDKMmsZ0GPsdXkaWEGUYw0miL
-        nOXKt4rUnwyZ6qi0OqH1ZJg7RmZJtaLsF+7sC1zRgQ2KALmg6FGAHpRdaQf/N/PGk2nK
-        qzsux1vhr97Exj360ZsywlXsJnJQDYlpkjhng79d5JbzEzTODjr6lqD8uf9I0KuVsfpt
-        f6zA==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1OAA2UNf2MzN9Qq6uM="
-X-RZG-CLASS-ID: mo00
-Received: from iMac.fritz.box
-        by smtp.strato.de (RZmta 44.22 DYNA|AUTH)
-        with ESMTPSA id i01b98v55575A1C
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Wed, 5 Jun 2019 07:07:05 +0200 (CEST)
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, tomi.valkeinen@ti.com,
-        imirkin@alum.mit.edu, marek.belisko@gmail.com
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, letux-kernel@openphoenux.org,
-        "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v2 2/2] drm/panel: simple: Add Ortustech COM37H3M panel support
-Date:   Wed,  5 Jun 2019 07:07:03 +0200
-Message-Id: <43b47034b618cff26cea0484591c6deafb7f0685.1559711222.git.hns@goldelico.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <cover.1559711222.git.hns@goldelico.com>
-References: <cover.1559711222.git.hns@goldelico.com>
+        id S1726538AbfFEFKn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 01:10:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48596 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725268AbfFEFKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 01:10:43 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2E0420717;
+        Wed,  5 Jun 2019 05:10:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559711442;
+        bh=V8DlWgZqXstcCmPiURrcVjF20aQb86vskPSHAO9ICAw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UlpBaFX6E6NIFPydKcc1ZcpMS2IYp9Q2DeXASDRP6E/m654Sf2lEg5/E3ZZaK7URY
+         HZTqE+vusc3jRFjsxl74c1FAm0yQ6mmnuL77NCieSa6jiEVxSviIlPUSKJ1FKqt0sf
+         st71bQrr/F4ISxOEEYPn9wBrDacByOOlapKvOXpo=
+Date:   Wed, 5 Jun 2019 07:10:40 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Joe Perches <joe@perches.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] media: do not use C++ style comments in uapi headers
+Message-ID: <20190605051040.GA22760@kroah.com>
+References: <20190604111334.22182-1-yamada.masahiro@socionext.com>
+ <8cf48e20064eabdfe150795365e6ca6f36032e9f.camel@perches.com>
+ <CAK8P3a1oDfNF_T+NCoPsXkJAY2x4_uCWSwrDXHi7dDSaMqfnfA@mail.gmail.com>
+ <CAK7LNAS0Ph2Z6x0-UPSkJUC31NvPi09BmFrve+YJcXMrop-BGA@mail.gmail.com>
+ <20190604134213.GA26263@kroah.com>
+ <CAK7LNARyqW3q6_46e-aYjmF8c0jUNDLdyB28zNaBEXqTV+5QSA@mail.gmail.com>
+ <CAK8P3a0bz8XYJOsmND2=CT_oTDmGMJGaRo9+QMroEhpekSMEaQ@mail.gmail.com>
+ <CAK7LNARU+uT0aUBh5niwEafL8+Ok7=sOZYukptpDH1w7Cii3hQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNARU+uT0aUBh5niwEafL8+Ok7=sOZYukptpDH1w7Cii3hQ@mail.gmail.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The change adds support for the Ortustech COM37H3M05DTC/99DTC 3.7" TFT LCD panel.
+On Wed, Jun 05, 2019 at 01:10:41PM +0900, Masahiro Yamada wrote:
+> On Wed, Jun 5, 2019 at 3:21 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> > > > >
+> > > > > There are two ways to define fixed-width type.
+> > > > >
+> > > > > [1] #include <linux/types.h>, __u8, __u16, __u32, __u64
+> > > > >
+> > > > >       vs
+> > > > >
+> > > > > [2] #include <stdint.h>, uint8_t, uint16_t, uint32_t, uint64_t
+> > > > >
+> > > > >
+> > > > > Both are used in UAPI headers.
+> > > > > IIRC, <stdint.h> was standardized by C99.
+> > > > >
+> > > > > So, we have already relied on C99 in user-space too.
+> >
+> > A related problem is that using the stdint.h types requires
+> > including stdint.h first, but the C library requires that including
+> > one standard header does not include another one recursively.
+> >
+> > So if sys/socket.h includes linux/socket.h, that must not include
+> > stdint.h or any other header file that does so.
+> 
+> 
+> This means we cannot reliably use uint{8,16,32,64}_t in UAPI headers.
 
-Tested on Letux3704.
+We should not be doing that as they are in the userspace "namespace" of
+variables, not in the kernel namespace.  We've been over this many times
+in the past :(
 
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
----
- drivers/gpu/drm/panel/panel-simple.c | 33 ++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+> [1] If we include <stdint.h> from linux/foo.h
+> 
+>     If sys/foo.h includes <linux/foo.h> and <stdint.h>,
+>     it violates the C library requirement.
+> 
+> 
+> [2] If we do not include <stdint.h> from linux/foo.h
+> 
+>     If sys/foo.h includes <linux/foo.h>, but not <stdint.h>,
+>     we get 'unknown type name' errors.
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 5b27829c5a78..1fb74908a269 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -2007,6 +2007,33 @@ static const struct panel_desc ontat_yx700wv03 = {
- 	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
- };
- 
-+static const struct drm_display_mode ortustech_com37h3m_mode  = {
-+	.clock = 22153,
-+	.hdisplay = 480,
-+	.hsync_start = 480 + 8,
-+	.hsync_end = 480 + 8 + 10,
-+	.htotal = 480 + 8 + 10 + 10,
-+	.vdisplay = 640,
-+	.vsync_start = 640 + 4,
-+	.vsync_end = 640 + 4 + 3,
-+	.vtotal = 640 + 4 + 3 + 4,
-+	.vrefresh = 60,
-+	.flags = DRM_MODE_FLAG_NVSYNC | DRM_MODE_FLAG_NHSYNC,
-+};
-+
-+static const struct panel_desc ortustech_com37h3m = {
-+	.modes = &ortustech_com37h3m_mode,
-+	.num_modes = 1,
-+	.bpc = 8,
-+	.size = {
-+		.width = 56,	/* 56.16mm */
-+		.height = 75,	/* 74.88mm */
-+	},
-+	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
-+	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_POSEDGE |
-+		     DRM_BUS_FLAG_SYNC_DRIVE_POSEDGE,
-+};
-+
- static const struct drm_display_mode ortustech_com43h4m85ulc_mode  = {
- 	.clock = 25000,
- 	.hdisplay = 480,
-@@ -2786,6 +2813,12 @@ static const struct of_device_id platform_of_match[] = {
- 	}, {
- 		.compatible = "ontat,yx700wv03",
- 		.data = &ontat_yx700wv03,
-+	}, {
-+		.compatible = "ortustech,com37h3m05dtc",
-+		.data = &ortustech_com37h3m,
-+	}, {
-+		.compatible = "ortustech,com37h3m99dtc",
-+		.data = &ortustech_com37h3m,
- 	}, {
- 		.compatible = "ortustech,com43h4m85ulc",
- 		.data = &ortustech_com43h4m85ulc,
--- 
-2.19.1
+We need to just use the proper __u{8,16,32,64} variable types instead,
+that is exactly what they are there for.
 
+thanks,
+
+greg k-h
