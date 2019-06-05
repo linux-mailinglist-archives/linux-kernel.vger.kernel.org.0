@@ -2,115 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 502C035A15
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 12:03:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FD6235A1C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 12:03:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727233AbfFEKD2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 06:03:28 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50280 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726690AbfFEKD1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 06:03:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=u3C13c87086hMiV9w85rPm7zIsQPWFDde0xcEZuXQO4=; b=dorjVI3a+BwPR4KW5H82UKRlg
-        Q9KqAanswJa5R2Wb689KlEmobdDfNHeCIoIrmt5I/PSgctZsHRi60Lg3gnFmHSNLPuQAliaq0R9s2
-        vaYe1Hr5IKUF5PPoEbYIxmcmqmsGkWm/Qs6VhqrIEdJ0/Z6P1uHRVEgDVNJ/doyVFZ37k=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hYSkO-0008Uv-UU; Wed, 05 Jun 2019 10:02:21 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 7EA0A440046; Wed,  5 Jun 2019 11:02:20 +0100 (BST)
-Date:   Wed, 5 Jun 2019 11:02:20 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     linux-kernel@vger.kernel.org, gwendal@chromium.org,
-        Guenter Roeck <groeck@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Lee Jones <lee.jones@linaro.org>, kernel@collabora.com,
-        dtor@chromium.org, Mauro Carvalho Chehab <mchehab@kernel.org>,
-        alsa-devel@alsa-project.org,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-iio@vger.kernel.org,
-        Fabien Lahoudere <fabien.lahoudere@collabora.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-i2c@vger.kernel.org, linux-rtc@vger.kernel.org,
-        Heiko Stuebner <heiko@sntech.de>,
-        Brian Norris <briannorris@chromium.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Rushikesh S Kadam <rushikesh.s.kadam@intel.com>,
-        linux-input@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-media@vger.kernel.org, linux-pwm@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
-        linux-pm@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Evan Green <evgreen@chromium.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Cheng-Yi Chiang <cychiang@chromium.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Kees Cook <keescook@chromium.org>,
+        id S1727251AbfFEKDk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 06:03:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60684 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727161AbfFEKDk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 06:03:40 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B70C4206B8;
+        Wed,  5 Jun 2019 10:03:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559729019;
+        bh=DZ0Ukqzk/PtCUYtEt5E60AbhRwkMO2p2nJdi/gL5qyk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PwtRstst/Wwsr3Uyq+uM3EesHwq3Yz4mQE5nc0kzZ4kVbLeOOvNfukcxh5c48vAte
+         4+ItiIhv5M2VQACAb/95rwCg+Vuqj0fcyfvlVxP1nazYisiT7eGv2wx51aDkcD27a2
+         ymDCoaYdP7bueKLRUOYni0tLUGekqTmZjTChEN9g=
+Date:   Wed, 5 Jun 2019 12:03:37 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Eugeniu Rosca <erosca@de.adit-jv.com>
+Cc:     David Howells <dhowells@redhat.com>, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Mathias Payer <mathias.payer@nebelwelt.net>,
+        Kento Kobayashi <Kento.A.Kobayashi@sony.com>,
+        Hui Peng <benquike@gmail.com>,
+        Raul E Rangel <rrangel@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Jan-Marek Glogowski <glogow@fbihome.de>,
+        Bin Liu <b-liu@ti.com>,
         Colin Ian King <colin.king@canonical.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Jiri Kosina <jikos@kernel.org>
-Subject: Re: [PATCH 06/10] mfd / platform: cros_ec: Reorganize platform and
- mfd includes
-Message-ID: <20190605100220.GN2456@sirena.org.uk>
-References: <20190604152019.16100-1-enric.balletbo@collabora.com>
- <20190604152019.16100-7-enric.balletbo@collabora.com>
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Jon Flatley <jflat@chromium.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Spyridon Papageorgiou <spapageorgiou@de.adit-jv.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Joshua Frkuska <joshua_frkuska@mentor.com>,
+        "George G . Davis" <george_davis@mentor.com>,
+        yuichi.kusakabe@denso-ten.com, yohhei.fukui@denso-ten.com,
+        natsumi.kamei@denso-ten.com, yasano@jp.adit-jv.com
+Subject: Re: [PATCH] usb: hub: report failure to enumerate uevent to userspace
+Message-ID: <20190605100337.GA9350@kroah.com>
+References: <20190605090556.17792-1-erosca@de.adit-jv.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="RnxXMyWEPIZsopkG"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190604152019.16100-7-enric.balletbo@collabora.com>
-X-Cookie: The other line moves faster.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190605090556.17792-1-erosca@de.adit-jv.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jun 05, 2019 at 11:05:56AM +0200, Eugeniu Rosca wrote:
+> From: Spyridon Papageorgiou <spapageorgiou@de.adit-jv.com>
+> 
+> When a USB device fails to enumerate, only a kernel message is printed.
+> With this patch, a uevent is also generated to notify userspace.
+> Services can monitor for the event through udev and handle failures
+> accordingly.
+> 
+> The "port_enumerate_fail_notify()" function name follows the syntax of
+> "port_over_current_notify()" used in v4.20-rc1
+> commit 201af55da8a398 ("usb: core: added uevent for over-current").
+> 
+> Signed-off-by: Spyridon Papageorgiou <spapageorgiou@de.adit-jv.com>
+> Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
 
---RnxXMyWEPIZsopkG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+All we need is one special notifier!  ...
 
-On Tue, Jun 04, 2019 at 05:20:15PM +0200, Enric Balletbo i Serra wrote:
-> There is a bit of mess between cros-ec mfd includes and platform
-> includes. For example, we have a linux/mfd/cros_ec.h include that
-> exports the interface implemented in platform/chrome/cros_ec_proto.c. Or
+{grumble}
 
-Acked-by: Mark Brown <broonie@kernel.org>
+This can end up causing loads of new kobject change events to be added,
+overloading what uevents were supposed to be in the first place
+(add/remove of sysfs objects).
 
---RnxXMyWEPIZsopkG
-Content-Type: application/pgp-signature; name="signature.asc"
+I just talked with David Howells, and this type of thing really should
+be tied into the new "notifier" interface/api.  That way you can
+register for any specific type of event and just get notified of them
+when they happen.  No need to mess with uevents.
 
------BEGIN PGP SIGNATURE-----
+See his posts on linux-api starting with:
+	Subject: [RFC][PATCH 0/8] Mount, FS, Block and Keyrings notifications [ver #2]
+for the proposal.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlz3kysACgkQJNaLcl1U
-h9BVMAf+I/I3bNW13EZ789wBAFxmn5KXFbH0t6CdJDgbILW9HMsGSKGbJXJRTRDG
-GGeIfMEYK0lv5boeQbArMfoX/kkuVYHVj/71aQVsgC53JIBFFxHS2zEfzrFzgN+R
-sNsvROQYmO1T5gOySrMN+AsqPwnu3CR2LgMPRqsvguCPduIfXzEM3afJQuRh2lAW
-a5Im4U6GQX5cez1MGDHB3/Mk8fH194coSUTUtH134gpeA5LWemALrlDCRsfdSbw2
-G2oeM++LQIDx2VcKfRKWfqvKhC1Ajp5FdiZw6Z7lo6+BXFHKSVupSjKAhtIdT4gj
-RVhPy7IzR78PM8sLvDnqD6CyTHtuXQ==
-=7p/R
------END PGP SIGNATURE-----
+If we added USB (or really any hardware events) to that interface, would
+it solve the issue you are trying to solve here?
 
---RnxXMyWEPIZsopkG--
+thanks,
+
+greg k-h
