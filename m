@@ -2,77 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D33F335F1A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 16:22:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1806235F1D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 16:23:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728382AbfFEOWj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 10:22:39 -0400
-Received: from mail-pg1-f182.google.com ([209.85.215.182]:34139 "EHLO
-        mail-pg1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728190AbfFEOWj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 10:22:39 -0400
-Received: by mail-pg1-f182.google.com with SMTP id h2so9240963pgg.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 07:22:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=o+IcDP8xywihziIgb7p/GLXZhp4cLmigR0A3EK7XJW0=;
-        b=yyD4roMK8IUzMUzyYYIle4EboYZB9IzE6GPQGoQtFvfggOvviH/3vpHFMwjPy6yMS3
-         WxYPl11RTtZxvEJUCaC/UF43bEUALvX5Jk2kEr+il/5OgV4GM+OFmk9/m42A9JOpmE6t
-         X693rS571KV6xsvo170fRaAsVnujNlNuVARoPovwK38pFU0LPWSWkSb0t7tvlC3EJMIN
-         eDpNXXsudC8vHx1QCZRIKcbDBuaPLij83tVhhdPWlQlSMuoQH3MGwO0CZCn+9E76qPum
-         wesb7zyj/jsBaJCnnLkw77Pw1DmaVxfI/cQMUYdV9YXCeSCdZlgInhZJ+2eM2++wOOzr
-         dRXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=o+IcDP8xywihziIgb7p/GLXZhp4cLmigR0A3EK7XJW0=;
-        b=pXlVD3Sr2raQqb8rXvHprh3CjKlRxinOKLSqAQpYZUeC6dN5eCxop1FCtncCOFqV7q
-         BL1H+q9vHCc5gEbQSjLTICVd2EYF7Spr2EzxTR9YQovIEc/oGW2YghdxkunatIhsJhbT
-         KL16XnwEs0GxlqaEyDUMdc2jGNzleUmRXTRCw5Z3+0ddY97oETuh3CA4NQUg4kuCqtWm
-         Gci2li5W/FUS9z7DjHFD8GILllshbPvIlP5a+sZPkAFQ0dincv/QInpw0QwpDhKU27Y6
-         UWqyAOXeznacEd+Us1SkN2CukK4qrcTSKbMJzSSKdYeKbE0rQpJceUkQKdQq8sPbWBJa
-         uLkg==
-X-Gm-Message-State: APjAAAX2tOVfrg5wu65MOwasW0LLokIvN+gMOKKzA5F9wu7F7siNtMrZ
-        w4GaI1cswQwOx+r4hIbsIbiPKw==
-X-Google-Smtp-Source: APXvYqzeH4OGyObX0kyEFIyVLA5zY2ImKmCvMnoXbBNx09B0/gTQWHMF/IVXvqQWeh4fp7YF5zmshg==
-X-Received: by 2002:a62:6d47:: with SMTP id i68mr46913713pfc.189.1559744557582;
-        Wed, 05 Jun 2019 07:22:37 -0700 (PDT)
-Received: from [192.168.1.158] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id d9sm17865159pgl.20.2019.06.05.07.22.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Jun 2019 07:22:36 -0700 (PDT)
-Subject: Re: [PATCH] block: Drop unlikely before IS_ERR(_OR_NULL)
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>,
+        id S1728420AbfFEOWt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 10:22:49 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38254 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728369AbfFEOWs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 10:22:48 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B6684AFC7;
+        Wed,  5 Jun 2019 14:22:47 +0000 (UTC)
+Date:   Wed, 5 Jun 2019 16:22:46 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Bharath Vedartham <linux.bhar@gmail.com>
+Cc:     akpm@linux-foundation.org, vbabka@suse.cz, rientjes@google.com,
+        khalid.aziz@oracle.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Cc:     linux-block@vger.kernel.org
-References: <20190605142428.84784-1-wangkefeng.wang@huawei.com>
- <20190605142428.84784-4-wangkefeng.wang@huawei.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <5142de36-e834-1514-a63c-4addea773c41@kernel.dk>
-Date:   Wed, 5 Jun 2019 08:22:35 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+Subject: Re: [PATCH] mm: Remove VM_BUG_ON in __alloc_pages_node
+Message-ID: <20190605142246.GH15685@dhcp22.suse.cz>
+References: <20190605060229.GA9468@bharath12345-Inspiron-5559>
+ <20190605070312.GB15685@dhcp22.suse.cz>
+ <20190605130727.GA25529@bharath12345-Inspiron-5559>
 MIME-Version: 1.0
-In-Reply-To: <20190605142428.84784-4-wangkefeng.wang@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190605130727.GA25529@bharath12345-Inspiron-5559>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/5/19 8:24 AM, Kefeng Wang wrote:
-> IS_ERR(_OR_NULL) already contain an 'unlikely' compiler flag,
-> so no need to do that again from its callers. Drop it.
+On Wed 05-06-19 18:37:28, Bharath Vedartham wrote:
+> [Not replying inline as my mail is bouncing back]
+> 
+> This patch is based on reading the code rather than a kernel crash. My
+> thought process was that if an invalid node id was passed to
+> __alloc_pages_node, it would be better to add a VM_WARN_ON and fail the
+> allocation rather than crashing the kernel. 
 
-Applied, thanks.
+This makes some sense to me because BUG_ONs are usually a wrong way to
+handle wrong usage of the API. On the other hand VM_BUG_ON is special in
+the way that production although some distributions enable it by default
+IIRC.
 
+> I feel it would be better to fail the allocation early in the hot path
+> if an invalid node id is passed. This is irrespective of whether the
+> VM_[BUG|WARN]_*s are enabled or not. I do not see any checks in the hot
+> path for the node id, which in turn may cause NODE_DATA(nid) to fail to
+> get the pglist_data pointer for the node id. 
+> We can optimise the branch by wrapping it around in unlikely(), if
+> performance is the issue?
+
+unlikely will just move the return NULL ouside of the main code flow.
+The check will still be done.
+
+> What are your thoughts on this? 
+
+I don't know. I would leave the code as it is now or remove the
+VM_BUG_ON. I do not remember this would be catching any real issues in
+the past.
 -- 
-Jens Axboe
-
+Michal Hocko
+SUSE Labs
