@@ -2,112 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BA7535EE4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 16:16:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7328135EF5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 16:17:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728359AbfFEOQb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 10:16:31 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:43952 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728171AbfFEOQa (ORCPT
+        id S1728459AbfFEORJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 10:17:09 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:36272 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728083AbfFEORI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 10:16:30 -0400
-Received: by mail-pl1-f195.google.com with SMTP id cl9so4633813plb.10;
-        Wed, 05 Jun 2019 07:16:29 -0700 (PDT)
+        Wed, 5 Jun 2019 10:17:08 -0400
+Received: by mail-ed1-f65.google.com with SMTP id a8so6059239edx.3;
+        Wed, 05 Jun 2019 07:17:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=v3XLypKZbOE7b5olH8wFcYwlI02ktNrldwBXglURa3w=;
-        b=SRyDZBKfR6VLuQOeonUrKfw8C7A4yF0d3XMQJwjtp0LfMXI4HiCjx0WQ8U62jWYFsZ
-         DVqV5Sc2DTx+3Zj9dFFodnSBWUmQP3kobhSvtrvVU105g/az29yBBuIEUz3T9B/8WRA+
-         qLJyDidJIDRzrFEqrVi1UDMg+KRFLUbUnzGhXSnKQAOdIyuk7h7qVSmBBLitwr2vJI6x
-         KioMQaxD5g6qwJkzEALSAZrmbyf/bpxBIRfKJDpa9Ax1xNbjtNNYhM08XxoIi+syxAjP
-         NxHFkvcKZUSEF3ojvBkbCy/aOd3CiusdDnKW3y+IKuTQeEnmPpomVHvCvRTcSFJF1PML
-         b97g==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DYFO74imdmleJLw5lYkuA6kO6lk6BDNzHYqBpZMjZ8s=;
+        b=kvxtMTCZdYLS36jfstozpuwwHILmf0b2bvAMNZXohkogm+c2hPkV+4Z95BmSa+Iqxh
+         ZVGQ9C767Mwx8Ubqg7OXp4cc5CZA5jSH642GgtyyWORUHyEr1yHfT+o5w1ktS+0B1E2k
+         VE4Q8MtKaqiEo8ZAclw5warQKFbLbRryMg6MMwGAZdzZ0/aXkoolO6+F5v/FVE8PgoRz
+         wjDdu3SfUhW1O6EVCML5GIKEDN1vkOd1YFIkqUl0szkdzv18oI0Pfv/hKcA64SRN4QKq
+         RO1JzS9ecXpXP+8nLy05iP+IsEluRraqXvXeKhUhfZOANq+Kntu5MISL4uAXjrVMgbTe
+         +6EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=v3XLypKZbOE7b5olH8wFcYwlI02ktNrldwBXglURa3w=;
-        b=iLN6D/D1z3dzEgQeda7/UXGazxbNxlRF+bzI7hLcOWVbm/+37bDlIQn36P29FHaNb5
-         ppQI0FCbT5EENzPhHg41HT9XtmzOTHk9hB8OkJNaSz4T/tFSbFMsK5ENLptp9qJSGq6e
-         HuSnzOIIIyVIIaULXaynq2dlxy9vPmBjzDOy/kFMKMu5+R+8TOE0N8pLKbzvl2HUbRdl
-         LZ2vziheFKWLzY9Yp7ipG66VJjbOCzfUlzFRTXiacfxaL/aJOY7PQjXxZIqBB9NJhTwq
-         uHLk1SskzfLCZsSdDEsMIR1JN2HM67q965I7QaFk/2QO7XVb7mBEcHpha1C58Qr/UgKk
-         F+3A==
-X-Gm-Message-State: APjAAAXI0tWE0eAjlM6H5eclRLrcmGpZ91QSmfagJqDgTDtjWXK/c6AD
-        rqXFDYxb9rXXlR+hFtztE+fZTAnl
-X-Google-Smtp-Source: APXvYqz3yeokdSf0SMdH/IVvBAh8QltwCxeaCvedVcmCsDQdM6ywLVcbm5pG9vifCmcBDxYN2Ihpcg==
-X-Received: by 2002:a17:902:b18c:: with SMTP id s12mr42363782plr.181.1559744189242;
-        Wed, 05 Jun 2019 07:16:29 -0700 (PDT)
-Received: from george-Quanta.com.com (220-135-135-179.HINET-IP.hinet.net. [220.135.135.179])
-        by smtp.gmail.com with ESMTPSA id 24sm22376443pgn.32.2019.06.05.07.16.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 05 Jun 2019 07:16:28 -0700 (PDT)
-From:   George Hung <ghung.quanta@gmail.com>
-To:     linux-edac <linux-edac@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Cc:     benjaminfair@google.com, wak@google.com, Avi.Fishman@nuvoton.com,
-        tomer.maimon@nuvoton.com, openbmc@lists.ozlabs.org,
-        Joel Stanley <joel@jms.id.au>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        James Morse <james.morse@arm.com>, davem@davemloft.net,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        paulmck@linux.ibm.com, devicetree@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 5.2 v2 2/2] dt-binding: edac: add NPCM ECC documentation
-Date:   Wed,  5 Jun 2019 22:12:53 +0800
-Message-Id: <20190605141253.38554-2-ghung.quanta@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190605141253.38554-1-ghung.quanta@gmail.com>
-References: <20190605141253.38554-1-ghung.quanta@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DYFO74imdmleJLw5lYkuA6kO6lk6BDNzHYqBpZMjZ8s=;
+        b=gMLwK+UtnG3D0YHfkoAawmZ0YnqD0oJSZGb4hoeJeVFC+EJbDApMRcTCeXXlNA+HBX
+         oPrcqed6BjydKk/mjvxn/IvpwJcfIzAOGn0TBDSVd2l2gqmlwb463OAri8aT6gkW+yhp
+         mdhTKs+UTE7UNGr7fCKhVe/xXCx7l+MJkP6ElDCsz30OoQZbN8/G/HGo0Blh0VocQZws
+         MOx0ffD16YRv7wgbW132hIU/cRBruvPcbigQP/YwatgoxdYYcn8ttUe3x7kOsA5WfM/f
+         M88c/6aW6jJuRcnJL6czYPZvl3JBzEg7KOr+oeBpRkN5kOM21fNbwEjhXnhNmTb5oc4D
+         h3vw==
+X-Gm-Message-State: APjAAAWUUIyfuzaSX62gkF9w30Ur9n35aQvW/oBmlLWdsif/Y0/NEW89
+        WDSumJJuL0aykQ67twmNOwmKjP9QOZIdUW/G//k=
+X-Google-Smtp-Source: APXvYqz++haK8phyFHbXw+7xx+j+S+xiNW3yfgGMolbWak16tppAeVvpIviRn0GFGAEATK3z185Rfr0/uCa7tvr7S5E=
+X-Received: by 2002:a17:906:2ada:: with SMTP id m26mr8080786eje.265.1559744226214;
+ Wed, 05 Jun 2019 07:17:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181201165348.24140-1-robdclark@gmail.com> <CAL_JsqJmPqis46Un91QyhXgdrVtfATMP_hTp6wSeSAfc8MLFfw@mail.gmail.com>
+ <CAF6AEGs9Nsft8ofZkGz_yWBPBC+prh8dBSkJ4PJr8yk2c5FMdQ@mail.gmail.com>
+ <CAF6AEGt-dhbQS5zZCNVTLT57OiUwO0RiP5bawTSu2RKZ-7W-aw@mail.gmail.com>
+ <CAAFQd5BdrJFL5LKK8O5NPDKWfFgkTX_JU-jU3giEz33tj-jwCA@mail.gmail.com>
+ <CAF6AEGtj+kyXqKeJK2-0e1jw_A4wz-yBEyv5zhf5Vfoi2_p2CA@mail.gmail.com>
+ <CAAFQd5Dmr+xyd4dyc_44vJFpNpwK6+MgG+ensoey59HgbxXV6g@mail.gmail.com>
+ <CGME20190605125734epcas1p43b15cc8c556d917ca71b561791861cec@epcas1p4.samsung.com>
+ <CAF6AEGuj=QmEWZVzHMtoDgO0M0t-W9+tay5F4AKYThZqy=nkdA@mail.gmail.com> <95d6e963-7f30-1d9c-99d7-0f6cc1589997@samsung.com>
+In-Reply-To: <95d6e963-7f30-1d9c-99d7-0f6cc1589997@samsung.com>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Wed, 5 Jun 2019 07:16:51 -0700
+Message-ID: <CAF6AEGtb1t4oRXCVvZq_cq1vZCJhgok-Ha+FXrruOOCq4APY_Q@mail.gmail.com>
+Subject: Re: [Freedreno] [PATCH] of/device: add blacklist for iommu dma_ops
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Tomasz Figa <tfiga@chromium.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Doug Anderson <dianders@chromium.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add device tree documentation for Nuvoton BMC ECC
+On Wed, Jun 5, 2019 at 6:18 AM Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+>
+> Hi Rob,
+>
+> On 2019-06-05 14:57, Rob Clark wrote:
+> > On Tue, Jun 4, 2019 at 11:58 PM Tomasz Figa <tfiga@chromium.org> wrote:
+> >> But first of all, I remember Marek already submitted some patches long
+> >> ago that extended struct driver with some flag that means that the
+> >> driver doesn't want the IOMMU to be attached before probe. Why
+> >> wouldn't that work? Sounds like a perfect opt-out solution.
+> > Actually, yeah.. we should do that.  That is the simplest solution.
+>
+> Tomasz has very good memory. It took me a while to find that old patches:
+>
+> https://patchwork.kernel.org/patch/4677251/
+> https://patchwork.kernel.org/patch/4677941/
+> https://patchwork.kernel.org/patch/4677401/
+>
+> It looks that my idea was a bit ahead of its time ;)
+>
 
-Signed-off-by: George Hung <ghung.quanta@gmail.com>
----
- .../bindings/edac/npcm7xx-sdram-edac.txt        | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/edac/npcm7xx-sdram-edac.txt
+if I re-spin this, was their a reason not to just use bitfields, ie:
 
-diff --git a/Documentation/devicetree/bindings/edac/npcm7xx-sdram-edac.txt b/Documentation/devicetree/bindings/edac/npcm7xx-sdram-edac.txt
-new file mode 100644
-index 000000000000..dd4dac59a5bd
---- /dev/null
-+++ b/Documentation/devicetree/bindings/edac/npcm7xx-sdram-edac.txt
-@@ -0,0 +1,17 @@
-+Nuvoton NPCM7xx SoC EDAC device driver
-+
-+The Nuvoton NPCM7xx SoC supports DDR4 memory with/without ECC and the driver
-+uses the EDAC framework to implement the ECC detection and corrtection.
-+
-+Required properties:
-+- compatible:	should be "nuvoton,npcm7xx-sdram-edac"
-+- reg:		Memory controller register set should be <0xf0824000 0x1000>
-+- interrupts:	should be MC interrupt #25
-+
-+Example:
-+
-+	mc: memory-controller@f0824000 {
-+		compatible = "nuvoton,npcm7xx-sdram-edac";
-+		reg = <0xf0824000 0x1000>;
-+		interrupts = <0 25 4>;
-+	};
--- 
-2.21.0
+-    bool suppress_bind_attrs;    /* disables bind/unbind via sysfs */
++    bool suppress_bind_attrs : 1;    /* disables bind/unbind via sysfs */
++    bool has_own_iommu_manager : 1;  /* driver explictly manages IOMMU */
 
+That seems like it would have been a bit less churn and a bit nicer
+looking (IMO at least)
+
+BR,
+-R
