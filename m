@@ -2,86 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0687356FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 08:31:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0063356FC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 08:31:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726645AbfFEGb2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 02:31:28 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34479 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726086AbfFEGb2 (ORCPT
+        id S1726556AbfFEGbA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 02:31:00 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:49444 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726086AbfFEGa7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 02:31:28 -0400
-Received: by mail-wm1-f65.google.com with SMTP id w9so992781wmd.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 23:31:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=LYO7MZjMjAOwuDjHwHbiHY3lR1loAWbw3IgSWOarNtM=;
-        b=F1D/jvTOeMHzbjUZYhcZIgu1OyEAhnj2spdsQPZ7gfv5le5MkJOnPIA/ukHiyyHRzW
-         oAyAoO77XpE3IM7sLavxYRIMyhuxcEfR40F6KV+rS72mNbPdIOLMriDkH9MpAy3GbLZp
-         D8938DAs/4j9Fed3vOBEXXniiQoU1aI6k49Iynmsf31HFvBw1bkSQgS9ZT/qZtfStkh+
-         AdaAkqHYykCegTvpNG4gTMrlH52Uc792rwsSk7winJTxDMrKWXGMJG7ZXjWiTBcm1VhO
-         6md8TsG5LOom/yaMhrktQuHqHKc6E9XRVbE4pdUqV70k9BAGPbxIbT8JR/j7lcNA/0Rf
-         spRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=LYO7MZjMjAOwuDjHwHbiHY3lR1loAWbw3IgSWOarNtM=;
-        b=Xbwx5yIXUiddCVUMcF4EkSk49ImNd3v3AkYte++pXdvRVBoa186JgnMwMIG/R2lFo+
-         SUDzF/u28TYtjL5pdBlvRqRcqoHIZ+At0hWD3PQacM9Ns1hiz3dZSD9Hu6YJonVUzqnY
-         huWyh6bqVJrfReDfe+39uM4xCcMQrxp8XDTzGIXLlGMQHFrA/UlFeyJdQbawLlk4IbSR
-         cTuBryRQt8xzC1M4gqStBW+DyMPC+l88VIE6cVl30J+BFUZlWcatJaEDm/ZLpQkiTEvx
-         mLEi5HKH3rNu6k+ki5Zy2Z1Tl/Ai3h6VYrZCXGz0cNrR/dq29BFRSp973D0gsBeprKWh
-         o7wg==
-X-Gm-Message-State: APjAAAXqKYiSYNlZ5E1VKGvvfJGg9SAnxm17tcNZrqBKXLiGA08Ilebz
-        NqYbtIfSkl1+9nTkWu8l/Zi4+w==
-X-Google-Smtp-Source: APXvYqxcHPukmA+z8kbMll6EBCZARAaqtDMDqH950r9rqNsTur5E47T+wxXQKZlJVBBbeKYnlqJW3A==
-X-Received: by 2002:a1c:4956:: with SMTP id w83mr8848452wma.67.1559716286692;
-        Tue, 04 Jun 2019 23:31:26 -0700 (PDT)
-Received: from dell ([2.27.167.43])
-        by smtp.gmail.com with ESMTPSA id t6sm12178782wmb.29.2019.06.04.23.31.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Jun 2019 23:31:26 -0700 (PDT)
-Date:   Wed, 5 Jun 2019 07:31:25 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Robert Hancock <hancock@sedsystems.ca>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] mfd: core: Set fwnode for created devices
-Message-ID: <20190605063125.GG4797@dell>
-References: <1559687743-31879-1-git-send-email-hancock@sedsystems.ca>
- <1559687743-31879-3-git-send-email-hancock@sedsystems.ca>
+        Wed, 5 Jun 2019 02:30:59 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x556Uuiw065580;
+        Wed, 5 Jun 2019 01:30:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1559716256;
+        bh=xufq4zsgyRLrZo2MfHTNUdK52WNJg8XUlkPMm4NwCMU=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=bJNL66q1skwWEDasM7A23VSi9/FGgddAKlsLfy+RLQbx52465XFfLWiAlv45qsdMN
+         WH5Uo7Mky2HUuxGYMe1KVkiej4K0vTRmJqwlGohxQ4tCatCXt47XMtq04cuQKDVOLu
+         6+L80wogACHV2GEBOyLWdVta9v5SCYgB46WemDRU=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x556Uu09089926
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 5 Jun 2019 01:30:56 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 5 Jun
+ 2019 01:30:55 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 5 Jun 2019 01:30:55 -0500
+Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x556UqLj110256;
+        Wed, 5 Jun 2019 01:30:53 -0500
+Subject: Re: [RFC PATCH 1/3] arm64: dts: ti: am6-wakeup: Add gpio node
+To:     Lokesh Vutla <lokeshvutla@ti.com>, <t-kristo@ti.com>, <nm@ti.com>,
+        <robh+dt@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20190605060846.25314-1-j-keerthy@ti.com>
+ <20190605060846.25314-2-j-keerthy@ti.com>
+ <e6ec3894-4e3d-e721-c1bc-791263b2d309@ti.com>
+From:   Keerthy <j-keerthy@ti.com>
+Message-ID: <bac5737a-3924-b59f-1d90-a2a9b3a390f1@ti.com>
+Date:   Wed, 5 Jun 2019 12:01:35 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1559687743-31879-3-git-send-email-hancock@sedsystems.ca>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <e6ec3894-4e3d-e721-c1bc-791263b2d309@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 04 Jun 2019, Robert Hancock wrote:
 
-> The logic for setting the of_node on devices created by mfd did not set
-> the fwnode pointer to match, which caused fwnode-based APIs to
-> malfunction on these devices since the fwnode pointer was null. Fix
-> this.
+
+On 05/06/19 11:46 AM, Lokesh Vutla wrote:
 > 
-> Signed-off-by: Robert Hancock <hancock@sedsystems.ca>
-> ---
->  drivers/mfd/mfd-core.c | 1 +
->  1 file changed, 1 insertion(+)
+> 
+> On 05/06/19 11:38 AM, Keerthy wrote:
+>> Add gpio0 node under wakeup domain. This has 56 gpios
+>> and all are capable of generating banked interrupts.
+>>
+>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>> ---
+>>   arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi | 15 +++++++++++++++
+>>   1 file changed, 15 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
+>> index f1ca171abdf8..8c6c99e7c6ed 100644
+>> --- a/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
+>> +++ b/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
+>> @@ -74,4 +74,19 @@
+>>   		ti,sci-dst-id = <56>;
+>>   		ti,sci-rm-range-girq = <0x4>;
+>>   	};
+>> +
+>> +	wkup_gpio0: wkup_gpio0@42110000 {
+>> +		compatible = "ti,k2g-gpio", "ti,keystone-gpio";
+> 
+> This is not k2g. Can you either create a am6 specific compatible or just use
+> ti,keystone-gpio.
 
-Applied, thanks.
+It seems practice is now to have separate compatible. I will add am6 
+specific compatible.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> 
+> Thanks and regards,
+> Lokesh
+> 
+>> +		reg = <0x42110000 0x100>;
+>> +		gpio-controller;
+>> +		#gpio-cells = <2>;
+>> +		interrupt-parent = <&intr_wkup_gpio>;
+>> +		interrupts = <59 128>, <59 129>, <59 130>, <59 131>;
+>> +		interrupt-controller;
+>> +		#interrupt-cells = <2>;
+>> +		ti,ngpio = <56>;
+>> +		ti,davinci-gpio-unbanked = <0>;
+>> +		clocks = <&k3_clks 59 0>;
+>> +		clock-names = "gpio";
+>> +	};
+>>   };
+>>
