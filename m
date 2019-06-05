@@ -2,92 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2348336247
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 19:17:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AB3136255
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 19:19:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726742AbfFERQl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 13:16:41 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59908 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726240AbfFERQi (ORCPT
+        id S1726538AbfFERTN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 13:19:13 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:43941 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725950AbfFERTN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 13:16:38 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E89246156F; Wed,  5 Jun 2019 17:16:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1559754997;
-        bh=c95mWIKY1tNSkuZhQIVCkq9LrewgA9o6Cw9pqYMpaQE=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=imqxBvOQ9WhzWWO+bTw9i87gG/BYGhJS6Q+rJjv0RPXTIP+k4flnlS7W6rujHsbsB
-         q8RnruQfZJGvYY6cJVXytjsaAtll9T1LzEQqflqvVVYcB6fERt8446kjnkb9tt3Ih5
-         5dSNVsPEjZuT3kNkuVSATnhK99WeZ1oClKl/Zir0=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from srichara-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sricharan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9C4306132B;
-        Wed,  5 Jun 2019 17:16:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1559754993;
-        bh=c95mWIKY1tNSkuZhQIVCkq9LrewgA9o6Cw9pqYMpaQE=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=SiTRJ/4TaIBe+c6PwFnwnmYnqyDRbQ5BvXXoMn/3dbnKLRNLLd+YjwQYVhB2y/SNn
-         pkeGEy2NB8HRsBS0p6mOTdn/XdrBzfRN6KCop6fWgGO+QdQvkpF4C2rIGKh1VqcXnl
-         dtdvxwu1Y12vgwFK7ABBg8cuyqXLUK6nyYIcy9S0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9C4306132B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-From:   Sricharan R <sricharan@codeaurora.org>
-To:     robh+dt@kernel.org, sboyd@codeaurora.org, linus.walleij@linaro.org,
-        agross@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 6/6] arm64: defconfig: Enable qcom ipq6018 clock and pinctrl
-Date:   Wed,  5 Jun 2019 22:46:01 +0530
-Message-Id: <1559754961-26783-7-git-send-email-sricharan@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org>
-References: <1559754961-26783-1-git-send-email-sricharan@codeaurora.org>
+        Wed, 5 Jun 2019 13:19:13 -0400
+Received: by mail-pl1-f193.google.com with SMTP id cl9so4821455plb.10;
+        Wed, 05 Jun 2019 10:19:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=B/JvG0ZRDNEBNEcUAraBTtC7NdvBq6Iubs4NTtSOxek=;
+        b=rDfdgNbauu7tZFEVYV7kQxLNvFyCSUWQ7UC3QM6R5p6bIgKreqMVDBgwWMaOEBxIDL
+         96Uh5qcTkghNicBFnqtttNQKz/o2k3mU6z84h0Oz8cblIIdVoG0MosNevlA4Jx/dccUn
+         DLanrfnDs7gqgu9LLefN9tkfsB1JV/0QpmvJ8TjifvOTwig5xwzpcpbNLheZ8phjhZA+
+         4DIZfCocPAF0IKLy9yaO475MMkN09W9CnUFoZmI3JTuEyEnZXbOJQq81JxngkEQwOD3C
+         qnz3lPZpMfku2xZ6OyZOUmgjFXFXQRN2laDJffcS0VDypmBhrIMZ1KkVL6Ah4gRSX6sc
+         /QRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=B/JvG0ZRDNEBNEcUAraBTtC7NdvBq6Iubs4NTtSOxek=;
+        b=L/0xB1s45OjNOkc2yBszik/gD0jq7sIId7E49gIVe7GKY+bz4UzrG6kcp3bcBkaCIG
+         klzyyhO7LVD5cRbyTLDEqzJWo2tamzELVPsH2aq5DBMELzywXYjsTBVPA402nYCjAVHz
+         J3JtibS03WUgzHebNhIJ3z6IXZHZCGudkqXJWbaAZR9jxiBDtwXntYzCXKz6+Bc5PfM+
+         DsURo3cXyJJ9VOZOM8OzKNoEUxvhnbI5bfhycw+iq86gKsG1fjnZW9qosXX0R3fQGW5Q
+         Jz9X99UwrPLHYT9aCZjcbvQHmwNpwTEEnfAmdEC0BNHhIws7AVf7wJWxejD9olRFA5oL
+         rVAw==
+X-Gm-Message-State: APjAAAV93I77x+/QWU7fVhdoCbpTpT+R9jznwFGaX5kIBrY6GilTs26j
+        5QGFhMCroyQeR31ZzUW6w+A=
+X-Google-Smtp-Source: APXvYqzg6UsjNE80K0klM5VcBmYR/EAMwGMU1qa/8PwHFBWS3R8yC4dfX12VduefFKMCfQ0mxDsjkg==
+X-Received: by 2002:a17:902:2aa9:: with SMTP id j38mr8317370plb.206.1559755152756;
+        Wed, 05 Jun 2019 10:19:12 -0700 (PDT)
+Received: from hari-Inspiron-1545 ([183.83.89.153])
+        by smtp.gmail.com with ESMTPSA id n13sm17135548pgh.6.2019.06.05.10.19.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Jun 2019 10:19:11 -0700 (PDT)
+Date:   Wed, 5 Jun 2019 22:49:08 +0530
+From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
+To:     Thomas Winischhofer <thomas@winischhofer.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] USB: sisusbvga: Remove unneeded variable
+Message-ID: <20190605171908.GA10444@hari-Inspiron-1545>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These configs are required for booting kernel in qcom
-ipq6018 boards.
+fix below warning reported by coccicheck
 
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+drivers/usb/misc/sisusbvga/sisusb.c:1753:5-8: Unneeded variable: "ret".
+Return "0" on line 1877
+
+Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
 ---
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/usb/misc/sisusbvga/sisusb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 4d58351..abf64ee 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -373,6 +373,7 @@ CONFIG_PINCTRL_MAX77620=y
- CONFIG_PINCTRL_IMX8MQ=y
- CONFIG_PINCTRL_IMX8QXP=y
- CONFIG_PINCTRL_IPQ8074=y
-+CONFIG_PINCTRL_IPQ6018=y
- CONFIG_PINCTRL_MSM8916=y
- CONFIG_PINCTRL_MSM8994=y
- CONFIG_PINCTRL_MSM8996=y
-@@ -646,6 +647,7 @@ CONFIG_COMMON_CLK_QCOM=y
- CONFIG_QCOM_CLK_SMD_RPM=y
- CONFIG_QCOM_CLK_RPMH=y
- CONFIG_IPQ_GCC_8074=y
-+CONFIG_IPQ_GCC_6018=y
- CONFIG_MSM_GCC_8916=y
- CONFIG_MSM_GCC_8994=y
- CONFIG_MSM_MMCC_8996=y
+diff --git a/drivers/usb/misc/sisusbvga/sisusb.c b/drivers/usb/misc/sisusbvga/sisusb.c
+index ea06f1f..dfe2ed1 100644
+--- a/drivers/usb/misc/sisusbvga/sisusb.c
++++ b/drivers/usb/misc/sisusbvga/sisusb.c
+@@ -1750,7 +1750,7 @@ static int sisusb_setup_screen(struct sisusb_usb_data *sisusb,
+ static int sisusb_set_default_mode(struct sisusb_usb_data *sisusb,
+ 		int touchengines)
+ {
+-	int ret = 0, i, j, modex, bpp, du;
++	int i, j, modex, bpp, du;
+ 	u8 sr31, cr63, tmp8;
+ 	static const char attrdata[] = {
+ 		0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+@@ -1874,7 +1874,7 @@ static int sisusb_set_default_mode(struct sisusb_usb_data *sisusb,
+ 
+ 	SETIREG(SISCR, 0x34, 0x44);	/* we just set std mode #44 */
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static int sisusb_init_gfxcore(struct sisusb_usb_data *sisusb)
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.7.4
 
