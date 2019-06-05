@@ -2,122 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5DEA35B71
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 13:43:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D58C535BBA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 13:45:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727603AbfFELnR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 07:43:17 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39030 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727574AbfFELnP (ORCPT
+        id S1727856AbfFELpO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 07:45:14 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:7123 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727816AbfFELoE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 07:43:15 -0400
-Received: by mail-wr1-f68.google.com with SMTP id x4so19129204wrt.6
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 04:43:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=D1YI3KbYi08Gt53137zQUvYaTjAlj5pAkcVwiE+DyoM=;
-        b=VJ9UZTvA3X5aVsLc1syf0WgRbb9hveDRMQ0o4bi7e3TWI3hu59qIVIWzNCnCLFPvcV
-         BkmcBpcged+/ot/AjzaUn3vAPGguN1YUdBFOzAr9oExAYw7Ep1MDcXzgyTSVLD+1X0rx
-         dxbz6b7aPBKYIzI6Q1tMn3Dff1B4Exaufc7li5HGHTsp16jBRrpm1KtLBM7Ot+Khe9ek
-         OmNNy9J2Aw++vb6P1uGKXA9fGZfpgpj3ZXvK+9jGl6YEkkQB52v5yTZQzOdLLxO7ZoSu
-         0K8ZIZ5JaRhv8PVqmLoQ8VfacQZ9B5Xr/NDf4obTBbtgpXFwiD8d097j0nFr2ss+TE6B
-         pv5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=D1YI3KbYi08Gt53137zQUvYaTjAlj5pAkcVwiE+DyoM=;
-        b=M5ykgmnjCbWrNhHb1M/ODu8EaO/1LjXLrI9aWzfNuYiIjvMJZYhBDZajnZgXDhccTA
-         0rKDFEskxKvlrGpfGKa4y+QXxt8C+wcZVa4e+6AadDmhuXkZx+cxPyU23Q5iMpo+r25m
-         1P0D6wDlieOf5kzkqarSsdQtZwYjSyCfg1vIJTrT8FlU5xhdoV0d6uqRcUQeWX010MHX
-         03+Ou95lmgVVtM7kAOr8PJ1X7gicPNZrpdkd2J30uGHJekjra3MomACx0h/2q6Nb+AmY
-         N689ZBsFVPLbkOL47ULPKtNjQKoRAZhoQVdESnwOK80F9QJf/boWB8l92LmEWXV24toH
-         f5Dw==
-X-Gm-Message-State: APjAAAWbAMYkiuCHWC8nWtq/IKslV0yOa4t4Dwn/MsvjzF/dnH2631k4
-        aToyZee2BCVGHnUaNrKuoNk+2A==
-X-Google-Smtp-Source: APXvYqyDNkp4LO8LlugyAFDuaUSw4Fq1u6qPmEeYYKPm5xZjcHbKt/hoS3r2pxN8/6BYd5JeN6NYtw==
-X-Received: by 2002:a5d:684c:: with SMTP id o12mr11703656wrw.305.1559734993874;
-        Wed, 05 Jun 2019 04:43:13 -0700 (PDT)
-Received: from localhost.localdomain ([2.27.167.43])
-        by smtp.gmail.com with ESMTPSA id 34sm27718740wre.32.2019.06.05.04.43.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Jun 2019 04:43:13 -0700 (PDT)
-From:   Lee Jones <lee.jones@linaro.org>
-To:     alokc@codeaurora.org, andy.gross@linaro.org,
-        david.brown@linaro.org, wsa+renesas@sang-engineering.com,
-        bjorn.andersson@linaro.org, linus.walleij@linaro.org,
-        balbi@kernel.org, gregkh@linuxfoundation.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        jlhugo@gmail.com, linux-i2c@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-usb@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 7/8] usb: dwc3: qcom: Start USB in 'host mode' on the SDM845
-Date:   Wed,  5 Jun 2019 12:43:01 +0100
-Message-Id: <20190605114302.22509-7-lee.jones@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190605114302.22509-1-lee.jones@linaro.org>
-References: <20190605114302.22509-1-lee.jones@linaro.org>
+        Wed, 5 Jun 2019 07:44:04 -0400
+X-UUID: 0e95e89091ce4746a67411bab00b16fb-20190605
+X-UUID: 0e95e89091ce4746a67411bab00b16fb-20190605
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
+        (envelope-from <yongqiang.niu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 530520526; Wed, 05 Jun 2019 19:43:57 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 5 Jun 2019 19:43:55 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 5 Jun 2019 19:43:55 +0800
+From:   <yongqiang.niu@mediatek.com>
+To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Yongqiang Niu <yongqiang.niu@mediatek.com>
+Subject: [PATCH v3, 22/27] drm/mediatek: distinguish ovl and ovl_2l by layer_nr
+Date:   Wed, 5 Jun 2019 19:43:01 +0800
+Message-ID: <1559734986-7379-23-git-send-email-yongqiang.niu@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
+In-Reply-To: <1559734986-7379-1-git-send-email-yongqiang.niu@mediatek.com>
+References: <1559734986-7379-1-git-send-email-yongqiang.niu@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When booting with Device Tree, the current default boot configuration
-table option, the request to boot via 'host mode' comes from the
-'dr_mode' property.  A property of the same name can be used inside
-ACPI tables too.  However it is missing from the SDM845's ACPI tables
-so we have to supply this information using Platform Device Properties
-instead.
+From: Yongqiang Niu <yongqiang.niu@mediatek.com>
 
-This does not change the behaviour of any currently supported devices.
-The property is only set on ACPI enabled platforms, thus for H/W
-booting DT, unless a 'dr_mode' property is present, the default is
-still OTG (On-The-Go) as per [0].  Any new ACPI devices added will
-also be able to over-ride this implementation by providing a 'dr_mode'
-property in their ACPI tables.  In cases where 'dr_mode' is omitted
-from the tables AND 'host mode' should not be the default (very
-unlikely), then we will have to add some way of choosing between them
-at run time - most likely by ACPI HID.
+distinguish ovl and ovl_2l by layer_nr when get comp
+id
 
-[0] Documentation/devicetree/bindings/usb/generic.txt
-
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
 ---
- drivers/usb/dwc3/dwc3-qcom.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
-index 1e1f12b7991d..55ba04254e38 100644
---- a/drivers/usb/dwc3/dwc3-qcom.c
-+++ b/drivers/usb/dwc3/dwc3-qcom.c
-@@ -444,6 +444,11 @@ static int dwc3_qcom_clk_init(struct dwc3_qcom *qcom, int count)
- 	return 0;
- }
+diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+index b5a9907..63072d1 100644
+--- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
++++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+@@ -327,7 +327,12 @@ static int mtk_disp_ovl_probe(struct platform_device *pdev)
+ 	if (irq < 0)
+ 		return irq;
  
-+static const struct property_entry dwc3_qcom_acpi_properties[] = {
-+	PROPERTY_ENTRY_STRING("dr_mode", "host"),
-+	{}
-+};
+-	comp_id = mtk_ddp_comp_get_id(dev->of_node, MTK_DISP_OVL);
++	priv->data = of_device_get_match_data(dev);
 +
- static int dwc3_qcom_acpi_register_core(struct platform_device *pdev)
- {
- 	struct dwc3_qcom 	*qcom = platform_get_drvdata(pdev);
-@@ -488,6 +493,13 @@ static int dwc3_qcom_acpi_register_core(struct platform_device *pdev)
- 		goto out;
++	comp_id = mtk_ddp_comp_get_id(dev->of_node,
++				      priv->data->layer_nr == 4 ?
++				      MTK_DISP_OVL :
++				      MTK_DISP_OVL_2L);
+ 	if (comp_id < 0) {
+ 		dev_err(dev, "Failed to identify by alias: %d\n", comp_id);
+ 		return comp_id;
+@@ -340,8 +345,6 @@ static int mtk_disp_ovl_probe(struct platform_device *pdev)
+ 		return ret;
  	}
  
-+	ret = platform_device_add_properties(qcom->dwc3,
-+					     dwc3_qcom_acpi_properties);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "failed to add properties\n");
-+		goto out;
-+	}
-+
- 	ret = platform_device_add(qcom->dwc3);
- 	if (ret)
- 		dev_err(&pdev->dev, "failed to add device\n");
+-	priv->data = of_device_get_match_data(dev);
+-
+ 	platform_set_drvdata(pdev, priv);
+ 
+ 	ret = devm_request_irq(dev, irq, mtk_disp_ovl_irq_handler,
 -- 
-2.17.1
+1.8.1.1.dirty
 
