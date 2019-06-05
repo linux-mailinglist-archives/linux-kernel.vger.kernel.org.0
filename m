@@ -2,41 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B1D836057
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 17:32:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A48F83607B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 17:43:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728395AbfFEPcz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 11:32:55 -0400
-Received: from smtp1.ono.com ([62.42.230.162]:43768 "EHLO smtp1.ono.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726829AbfFEPcy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 11:32:54 -0400
-X-Junkmail-Premium-Raw: score=35/50,refid=2.7.2:2019.6.5.144216:17:35.434,ip=62.42.230.131,rules=__HAS_MSGID,
- __SANE_MSGID, MSGID_JMAIL_DEFAULT, INVALID_MSGID_NO_FQDN, __HAS_FROM,
- FROM_NAME_PHRASE, __HAS_REPLYTO, __FRAUD_WEBMAIL_REPLYTO,
- __PHISH_SPEAR_SUBJ_ALERT, __MIME_VERSION, __CT, __CT_TEXT_PLAIN, __CTE,
- MISSING_HEADERS, __ANY_URI, __FRAUD_BODY_WEBMAIL, __URI_NO_WWW,
- __FRAUD_INTRO, __STOCK_PHRASE_7, __FRAUD_MONEY_BIG_COIN_DIG, __OEM_PRICE,
- __FRAUD_MONEY_CURRENCY_DOLLAR, __NO_HTML_TAG_RAW, BODYTEXTP_SIZE_400_LESS,
- BODYTEXTP_SIZE_3000_LESS, BODY_SIZE_300_399, __MIME_TEXT_P1,
- __MIME_TEXT_ONLY, __URI_NS, HTML_00_01, HTML_00_10, __FRAUD_MONEY_CURRENCY,
- __FRAUD_MONEY_BIG_COIN, __FRAUD_MONEY_VALUE, __PHISH_SPEAR_GREETING,
- __FRAUD_MONEY, FRAUD_X3, BODY_SIZE_5000_LESS, __FRAUD_WEBMAIL,
- WEBMAIL_REPLYTO_NOT_FROM, FRAUD_WEBMAIL_R_NOT_F, __MIME_TEXT_P,
- FRAUD_LITTLE_BODY, __PHISH_SPEAR_STRUCTURE_1, BODY_SIZE_1000_LESS,
- BODY_SIZE_2000_LESS, __PHISH_SPEAR_STRUCTURE_2, REPLYTO_FROM_DIFF_ADDY,
- NO_URI_HTTPS, BODY_SIZE_7000_LESS, TO_MALFORMED
-Received: from resprs01 (62.42.230.131) by smtp1.ono.com (9.0.019.09-1)
-        id 5C12554F08AAF9E4; Wed, 5 Jun 2019 17:32:48 +0200
-Received: from (149.126.75.15) by webmailcpr01n.ono.com;  Wed, 5 Jun 2019 17:32:47 +0200
-Message-ID: <28855191.96811559748767952.JavaMail.defaultUser@defaultHost>
-Date:   Wed, 5 Jun 2019 17:32:47 +0200 (CEST)
-From:   Mrs Alice Johnson <oposicionesayudantes@ono.com>
-Reply-To: mrsalicejohnson4@gmail.com
-Subject: Dear Friend,
+        id S1728453AbfFEPnh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 11:43:37 -0400
+Received: from mail.trigana-air.com ([117.54.2.131]:33961 "EHLO
+        mail.trigana-air.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726421AbfFEPnh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 11:43:37 -0400
+X-Greylist: delayed 499 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Jun 2019 11:43:35 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by mail.trigana-air.com (Postfix) with ESMTP id D6AF17610F8;
+        Wed,  5 Jun 2019 22:35:08 +0700 (WIB)
+Received: from mail.trigana-air.com ([127.0.0.1])
+        by localhost (mail.trigana-air.com [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id wRqw8NfgHN9Q; Wed,  5 Jun 2019 22:35:08 +0700 (WIB)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.trigana-air.com (Postfix) with ESMTP id E596A76145D;
+        Wed,  5 Jun 2019 22:35:07 +0700 (WIB)
+X-Virus-Scanned: amavisd-new at trigana-air.com
+Received: from mail.trigana-air.com ([127.0.0.1])
+        by localhost (mail.trigana-air.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 76MPSQRKWAaa; Wed,  5 Jun 2019 22:35:07 +0700 (WIB)
+Received: from mail.trigana-air.com (mail.trigana-air.com [117.54.2.131])
+        by mail.trigana-air.com (Postfix) with ESMTP id 7B96A760EA8;
+        Wed,  5 Jun 2019 22:35:03 +0700 (WIB)
+Date:   Wed, 5 Jun 2019 22:35:02 +0700 (WIB)
+From:   Tayeb Souami <tiketing.wmx@trigana-air.com>
+Reply-To: Tayeb Souami <tayeb.souami@hotmail.com>
+Message-ID: <669753987.2593182.1559748902313.JavaMail.zimbra@trigana-air.com>
+Subject: Ik heb gewonnen en zo heb je - Gefeliciteerd
 MIME-Version: 1.0
-Content-Type: text/plain;charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [194.36.111.59]
+X-Mailer: Zimbra 8.0.7_GA_6021 (ZimbraWebClient - GC74 (Mac)/8.0.7_GA_6021)
+Thread-Topic: Ik heb gewonnen en zo heb je - Gefeliciteerd
+Thread-Index: pVFzawDwEmsICPlnBrf4HUPr0e/LgQ==
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -45,16 +49,5 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
---
-Dear Friend,
-
-I am Mrs Alice Johnson.am sending you this brief letter to solicit your
-partnership to transfer $18.5 million US Dollars.I shall send you more
-information and procedures when I receive positive response from you.
-please send me a message in my Email box (mrsalicejohnson4@gmail.com)
-as i wait to hear from you.
-
-Best regard
-Mrs Alice Johnson
---
+Hallo, ik ben Tayeb Souami, heb je een donatie van $3.600.000. Ik won de Powerball loterij ter waarde van $315.300.000 op 19 mei 2018. Uw e-mail kwam uit Victorious van een willekeurige oogst. Contacteer me dringend via tayeb.souami@outlook.com voor claims.
 
