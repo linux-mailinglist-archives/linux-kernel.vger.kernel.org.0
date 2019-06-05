@@ -2,64 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE8C83592C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 11:01:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A3753592E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 11:02:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726963AbfFEJBL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 05:01:11 -0400
-Received: from smtprelay0193.hostedemail.com ([216.40.44.193]:47647 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726690AbfFEJBK (ORCPT
+        id S1726969AbfFEJCB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 05:02:01 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:33750 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726690AbfFEJCA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 05:01:10 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id A54AA7584;
-        Wed,  5 Jun 2019 09:01:09 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1567:1593:1594:1711:1714:1730:1747:1777:1792:1801:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3867:3872:4321:4605:5007:7514:7875:8660:10004:10400:10848:11232:11658:11914:12296:12438:12740:12760:12895:13069:13141:13148:13230:13311:13357:13439:14181:14659:14721:21080:21627:30054:30060:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
-X-HE-Tag: noise93_270f2bb399346
-X-Filterd-Recvd-Size: 1649
-Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf12.hostedemail.com (Postfix) with ESMTPA;
-        Wed,  5 Jun 2019 09:01:08 +0000 (UTC)
-Message-ID: <fee93f8714deec96657e5b6df2a987960de4473f.camel@perches.com>
-Subject: Re: [PATCH] pci: hotplug: ibmphp: Fix 'line over 80 characters'
- Warning
-From:   Joe Perches <joe@perches.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        benniciemanuel78@gmail.com
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Sebastian Ott <sebott@linux.ibm.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 05 Jun 2019 02:01:07 -0700
-In-Reply-To: <CAHp75VfEREXJTr_QpADTsqBr10t16SaJqeM+tbxp6QZgc8Gfjg@mail.gmail.com>
-References: <20190602162546.3470-1-benniciemanuel78@gmail.com>
-         <CAHp75VfEREXJTr_QpADTsqBr10t16SaJqeM+tbxp6QZgc8Gfjg@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        Wed, 5 Jun 2019 05:02:00 -0400
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id x5591lT9005012
+        for <linux-kernel@vger.kernel.org>; Wed, 5 Jun 2019 18:01:47 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x5591lT9005012
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1559725310;
+        bh=4heQMOeUYxMT3vJUuhyF+RiSNQYhKDyB7w/dctvl+6E=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=SeI7bF0L1HMB9F7KCilotuNHnv6pAioBe2+XH9Wot6g3YTSYtxcXsgGs9wTnofC7F
+         6X82w/+oQEUy/Pw9qRwu425DyqOkivFKHjcmREbVm5h4r4uHFMVqCH6fn0brIwQZ1s
+         TcRUCieJT+TcxLo557uJHEFg4ZLxi0KChwSxPMc9522Jquf0Rn8shMN8/Pq454faGc
+         5PpP0oj43dLvVfzYn2z2s7cUBDoYTq3ULOyqQdXezk2cI/iujdYj0s6LeXuaqmRijV
+         9qoGOFEFHPMx3eDyddYtimoLAHMBjitMuFmkoS3WjYHUSRarVtQE4YcEXZQma1vFpo
+         BKzGifODKgDZA==
+X-Nifty-SrcIP: [209.85.217.41]
+Received: by mail-vs1-f41.google.com with SMTP id d128so15227850vsc.10
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 02:01:47 -0700 (PDT)
+X-Gm-Message-State: APjAAAWVOUhk2kXtGlWUyxH1IMv6kKW32Tz7AKmJf7sgqRYZK3S51dEk
+        YcHidyxDmUcRqeXAe1nKqPuMhlSUojbxPw7h+P4=
+X-Google-Smtp-Source: APXvYqzeIRg6colne+y2aqfBRfPeHx02Mun1CpteDFhWzEa2w0ohGhvri+gUFERzTepayGbUr6HKEcJgKfnX9xi06VY=
+X-Received: by 2002:a67:7fcc:: with SMTP id a195mr443645vsd.181.1559725306637;
+ Wed, 05 Jun 2019 02:01:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20190527083412.26651-1-yamada.masahiro@socionext.com> <20190605073406.geesp3rbrxajmac6@mbp>
+In-Reply-To: <20190605073406.geesp3rbrxajmac6@mbp>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 5 Jun 2019 18:01:10 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQJPMsRtNRYUH+dib0ZMAPqOe5HO0UcAW7zRdjyWWyQWQ@mail.gmail.com>
+Message-ID: <CAK7LNAQJPMsRtNRYUH+dib0ZMAPqOe5HO0UcAW7zRdjyWWyQWQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Allow assembly code to use BIT(), GENMASK(), etc. and
+ clean-up arm64 header
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-06-05 at 11:41 +0300, Andy Shevchenko wrote:
-> On Sun, Jun 2, 2019 at 7:25 PM Emanuel Bennici
-> <benniciemanuel78@gmail.com> wrote:
-[]
-> > +                               debug("%s - call process_changeinstatus for"
-> > +                                     "slot[%d]\n", __func__, i);
-> 
-> Do not split string literals like this.
+On Wed, Jun 5, 2019 at 4:36 PM Catalin Marinas <catalin.marinas@arm.com> wrote:
+>
+> On Mon, May 27, 2019 at 05:34:10PM +0900, Masahiro Yamada wrote:
+> > Some in-kernel headers use _BITUL() instead of BIT().
+> >
+> >  arch/arm64/include/asm/sysreg.h
+> >  arch/s390/include/asm/*.h
+> >
+> > I think the reason is because BIT() is currently not available
+> > in assembly. It hard-codes 1UL, which is not available in assembly.
+> [...]
+> > Masahiro Yamada (2):
+> >   linux/bits.h: make BIT(), GENMASK(), and friends available in assembly
+> >   arm64: replace _BITUL() with BIT()
+> >
+> >  arch/arm64/include/asm/sysreg.h | 82 ++++++++++++++++-----------------
+> >  include/linux/bits.h            | 17 ++++---
+>
+> I'm not sure it's worth the hassle. It's nice to have the same BIT macro
+> but a quick grep shows arc, arm64, s390 and x86 using _BITUL. Maybe a
+> tree-wide clean-up would be more appropriate.
 
-Especially because it's common to miss the
-space required between words when the
-compiler coalesces the string fragments.
 
-Like here.
+I am happy to clean-up the others
+in the next development cycle
+once 1/2 lands in the mainline.
 
+
+Since there is no subsystem that
+takes care of include/linux/bits.h,
+I just asked Will to pick up both.
+I planed per-arch patch submission
+to reduce the possibility of merge conflict.
+
+
+If you guys are not willing to pick up them,
+is it better to send treewide conversion to Andrew?
+
+
+-- 
+Best Regards
+Masahiro Yamada
