@@ -2,143 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64D0036832
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 01:42:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6966F36842
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 01:44:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbfFEXmH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 19:42:07 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:53449 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726532AbfFEXmG (ORCPT
+        id S1726668AbfFEXo2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 19:44:28 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42090 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726554AbfFEXo1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 19:42:06 -0400
-Received: by mail-io1-f72.google.com with SMTP id h3so212678iob.20
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 16:42:05 -0700 (PDT)
+        Wed, 5 Jun 2019 19:44:27 -0400
+Received: by mail-pg1-f195.google.com with SMTP id e6so208155pgd.9
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 16:44:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vyHkbOEMkgWVI1yREjgkQjgyvZb+xK4A4sfaT0UjXqc=;
+        b=MRxSI6zkTMXESmwtjNnyGJHwIuyYXxr3GsKIJLzp62KNe+JF4RahnVj735T5TQpjTJ
+         1DmcVhwU5wSDdCbOUqKVzxah/TfKcYHnfXJmIwd7rFo3xD1LU0upA51lJQo8prBDT1uc
+         7d7/Hz8UYsm1aD8AnuYU3GESzf2NT38q94dOE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=If8zYrfgMvREoNxOF+APhy3YFYkcq8XTmIhwfd8Qif4=;
-        b=CCRLBA55SoFjWgWSb/Qs0FamZwDmKn1SVwi4TMSG7EvLWHEvYhG/oIP5+wmnPIjf4n
-         aQDGGzac/fRYyT1OWyKwY+e8f0KPI0JR8VWv0SRQC4sw6IjmYwhq9DZ0flw2XeUC41dd
-         z2oXfCCQpyxwW6L6mQyHG64Y00PgbsTf5XYt8YzCwK+wBiUdvzjLyYJ8u0qHTWAFAckG
-         2+ECUNL3YkV8HHvHzd9NOHByUf0z/34KgitVvB64eNWGRFPnISfIlASwNtmDpzE5yJfx
-         10loXP2j/WDp15OYMWiuoE/cPHQgp9+5ZTG5CNyxO+Zs7N8apx19wy9gLJ7vlVLbMPqO
-         NeCg==
-X-Gm-Message-State: APjAAAVisT3pQaNSnuY3Y1W/HkYBkC5HSf44ls2CVYTaE5sAWIs+EGFg
-        4i45mogo6ml7uhgWeeMaI/t6s3NfQ4x7KFanpJqzOTlKnYrL
-X-Google-Smtp-Source: APXvYqyv7nsvHNrQ68UBjoE3uareCjq/xghIfL2qvARCjcEuGCVrReipnpbeK7ASMfANvkONy2j3ewcak6QZD9ptXz7gkQVpxpQw
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vyHkbOEMkgWVI1yREjgkQjgyvZb+xK4A4sfaT0UjXqc=;
+        b=JlqVrMnThft1mnUbXTKyL+DRx8l0KtSu5+8R3tTZiA31PZUxSoePLUTygyo+k2e+Zv
+         aUePMZAE6fCHImoeuiEIRAsxUOGSMh4afste61yCifpAYLXNcye2Vz8QQare+qgbjGSM
+         AmXKdZOpzPQ4k80JMkBwFxN+KleD8bMDHiXHyxLnDoFmH2Mm5Z3Ecf2dayE4s3zYgl81
+         0/rdZzTp8sFIe49B1gWrYvN7HuZU8OiLtlx5HmI0ifr2UDG0hHanv8BvIG9dVN6yD151
+         Gpb0Fh44sZgdA1Bgm+zOrH2QzjxRSdNhxKWF1PiqFSrqFyyTQSeuLqxk0leNQeLO6ua8
+         Nlpw==
+X-Gm-Message-State: APjAAAVyvhsF8/rJLlNDpeHESMXMWjvzYvZDx0FzzPrmK8O2etPaGbhl
+        Nnw14PIjrlB65lpP8j4BcEPU1w==
+X-Google-Smtp-Source: APXvYqxR2BZjwTQAkG75ysAdGk8mlHNMgXAGJfJSmgUvu6H+vcz7IhZJ5J9HpwEQabmlAAHkJhMbVg==
+X-Received: by 2002:a63:5ca:: with SMTP id 193mr446060pgf.232.1559778266823;
+        Wed, 05 Jun 2019 16:44:26 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:e9ae:bd45:1bd9:e60d])
+        by smtp.gmail.com with ESMTPSA id y185sm68596pfy.110.2019.06.05.16.44.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Jun 2019 16:44:26 -0700 (PDT)
+From:   davidriley@chromium.org
+To:     dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org
+Cc:     David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org,
+        David Riley <davidriley@chromium.org>
+Subject: [PATCH 1/4] drm/virtio: Ensure cached capset entries are valid before copying.
+Date:   Wed,  5 Jun 2019 16:44:20 -0700
+Message-Id: <20190605234423.11348-1-davidriley@chromium.org>
+X-Mailer: git-send-email 2.22.0.rc1.311.g5d7573a151-goog
 MIME-Version: 1.0
-X-Received: by 2002:a24:7c45:: with SMTP id a66mr8223766itd.139.1559778125448;
- Wed, 05 Jun 2019 16:42:05 -0700 (PDT)
-Date:   Wed, 05 Jun 2019 16:42:05 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000188da1058a9c25e3@google.com>
-Subject: memory leak in vhost_net_ioctl
-From:   syzbot <syzbot+0789f0c7e45efd7bb643@syzkaller.appspotmail.com>
-To:     ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
-        davem@davemloft.net, hawk@kernel.org, jakub.kicinski@netronome.com,
-        jasowang@redhat.com, john.fastabend@gmail.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mst@redhat.com,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        virtualization@lists.linux-foundation.org,
-        xdp-newbies@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+From: David Riley <davidriley@chromium.org>
 
-syzbot found the following crash on:
+virtio_gpu_get_caps_ioctl could return success with invalid data if a
+second caller to the function occurred after the entry was created in
+virtio_gpu_cmd_get_capset but prior to the virtio_gpu_cmd_capset_cb
+callback being called.  This could leak contents of memory as well
+since the caps_cache allocation is done without zeroing.
 
-HEAD commit:    788a0249 Merge tag 'arc-5.2-rc4' of git://git.kernel.org/p..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15dc9ea6a00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d5c73825cbdc7326
-dashboard link: https://syzkaller.appspot.com/bug?extid=0789f0c7e45efd7bb643
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10b31761a00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=124892c1a00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+0789f0c7e45efd7bb643@syzkaller.appspotmail.com
-
-udit: type=1400 audit(1559768703.229:36): avc:  denied  { map } for   
-pid=7116 comm="syz-executor330" path="/root/syz-executor330334897"  
-dev="sda1" ino=16461 scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023  
-tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=1
-executing program
-executing program
-BUG: memory leak
-unreferenced object 0xffff88812421fe40 (size 64):
-   comm "syz-executor330", pid 7117, jiffies 4294949245 (age 13.030s)
-   hex dump (first 32 bytes):
-     01 00 00 00 20 69 6f 63 00 00 00 00 64 65 76 2f  .... ioc....dev/
-     50 fe 21 24 81 88 ff ff 50 fe 21 24 81 88 ff ff  P.!$....P.!$....
-   backtrace:
-     [<00000000ae0c4ae0>] kmemleak_alloc_recursive  
-include/linux/kmemleak.h:55 [inline]
-     [<00000000ae0c4ae0>] slab_post_alloc_hook mm/slab.h:439 [inline]
-     [<00000000ae0c4ae0>] slab_alloc mm/slab.c:3326 [inline]
-     [<00000000ae0c4ae0>] kmem_cache_alloc_trace+0x13d/0x280 mm/slab.c:3553
-     [<0000000079ebab38>] kmalloc include/linux/slab.h:547 [inline]
-     [<0000000079ebab38>] vhost_net_ubuf_alloc drivers/vhost/net.c:241  
-[inline]
-     [<0000000079ebab38>] vhost_net_set_backend drivers/vhost/net.c:1534  
-[inline]
-     [<0000000079ebab38>] vhost_net_ioctl+0xb43/0xc10  
-drivers/vhost/net.c:1716
-     [<000000009f6204a2>] vfs_ioctl fs/ioctl.c:46 [inline]
-     [<000000009f6204a2>] file_ioctl fs/ioctl.c:509 [inline]
-     [<000000009f6204a2>] do_vfs_ioctl+0x62a/0x810 fs/ioctl.c:696
-     [<00000000b45866de>] ksys_ioctl+0x86/0xb0 fs/ioctl.c:713
-     [<00000000dfb41eb8>] __do_sys_ioctl fs/ioctl.c:720 [inline]
-     [<00000000dfb41eb8>] __se_sys_ioctl fs/ioctl.c:718 [inline]
-     [<00000000dfb41eb8>] __x64_sys_ioctl+0x1e/0x30 fs/ioctl.c:718
-     [<0000000049c1f547>] do_syscall_64+0x76/0x1a0  
-arch/x86/entry/common.c:301
-     [<0000000029cc8ca7>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-BUG: memory leak
-unreferenced object 0xffff88812421fa80 (size 64):
-   comm "syz-executor330", pid 7130, jiffies 4294949755 (age 7.930s)
-   hex dump (first 32 bytes):
-     01 00 00 00 01 00 00 00 00 00 00 00 2f 76 69 72  ............/vir
-     90 fa 21 24 81 88 ff ff 90 fa 21 24 81 88 ff ff  ..!$......!$....
-   backtrace:
-     [<00000000ae0c4ae0>] kmemleak_alloc_recursive  
-include/linux/kmemleak.h:55 [inline]
-     [<00000000ae0c4ae0>] slab_post_alloc_hook mm/slab.h:439 [inline]
-     [<00000000ae0c4ae0>] slab_alloc mm/slab.c:3326 [inline]
-     [<00000000ae0c4ae0>] kmem_cache_alloc_trace+0x13d/0x280 mm/slab.c:3553
-     [<0000000079ebab38>] kmalloc include/linux/slab.h:547 [inline]
-     [<0000000079ebab38>] vhost_net_ubuf_alloc drivers/vhost/net.c:241  
-[inline]
-     [<0000000079ebab38>] vhost_net_set_backend drivers/vhost/net.c:1534  
-[inline]
-     [<0000000079ebab38>] vhost_net_ioctl+0xb43/0xc10  
-drivers/vhost/net.c:1716
-     [<000000009f6204a2>] vfs_ioctl fs/ioctl.c:46 [inline]
-     [<000000009f6204a2>] file_ioctl fs/ioctl.c:509 [inline]
-     [<000000009f6204a2>] do_vfs_ioctl+0x62a/0x810 fs/ioctl.c:696
-     [<00000000b45866de>] ksys_ioctl+0x86/0xb0 fs/ioctl.c:713
-     [<00000000dfb41eb8>] __do_sys_ioctl fs/ioctl.c:720 [inline]
-     [<00000000dfb41eb8>] __se_sys_ioctl fs/ioctl.c:718 [inline]
-     [<00000000dfb41eb8>] __x64_sys_ioctl+0x1e/0x30 fs/ioctl.c:718
-     [<0000000049c1f547>] do_syscall_64+0x76/0x1a0  
-arch/x86/entry/common.c:301
-     [<0000000029cc8ca7>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-
-
+Signed-off-by: David Riley <davidriley@chromium.org>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/gpu/drm/virtio/virtgpu_ioctl.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
+index 949a264985fc..88c1ed57a3c5 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
++++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
+@@ -526,7 +526,6 @@ static int virtio_gpu_get_caps_ioctl(struct drm_device *dev,
+ 	list_for_each_entry(cache_ent, &vgdev->cap_cache, head) {
+ 		if (cache_ent->id == args->cap_set_id &&
+ 		    cache_ent->version == args->cap_set_ver) {
+-			ptr = cache_ent->caps_cache;
+ 			spin_unlock(&vgdev->display_info_lock);
+ 			goto copy_exit;
+ 		}
+@@ -537,6 +536,7 @@ static int virtio_gpu_get_caps_ioctl(struct drm_device *dev,
+ 	virtio_gpu_cmd_get_capset(vgdev, found_valid, args->cap_set_ver,
+ 				  &cache_ent);
+ 
++copy_exit:
+ 	ret = wait_event_timeout(vgdev->resp_wq,
+ 				 atomic_read(&cache_ent->is_valid), 5 * HZ);
+ 	if (!ret)
+@@ -544,7 +544,6 @@ static int virtio_gpu_get_caps_ioctl(struct drm_device *dev,
+ 
+ 	ptr = cache_ent->caps_cache;
+ 
+-copy_exit:
+ 	if (copy_to_user((void __user *)(unsigned long)args->addr, ptr, size))
+ 		return -EFAULT;
+ 
+-- 
+2.22.0.rc1.311.g5d7573a151-goog
+
