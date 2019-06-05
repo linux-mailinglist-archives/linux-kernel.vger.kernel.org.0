@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5826335564
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 04:45:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D302935567
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 04:45:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbfFECpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 22:45:10 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:52296 "EHLO
+        id S1726531AbfFECpC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 22:45:02 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:52266 "EHLO
         mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726711AbfFECpG (ORCPT
+        by vger.kernel.org with ESMTP id S1726293AbfFECpB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 22:45:06 -0400
+        Tue, 4 Jun 2019 22:45:01 -0400
 Received: from pps.filterd (m0044008.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x552iAP9001299
-        for <linux-kernel@vger.kernel.org>; Tue, 4 Jun 2019 19:45:05 -0700
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x552iAeu001296
+        for <linux-kernel@vger.kernel.org>; Tue, 4 Jun 2019 19:45:00 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=oKYQ1N3o2byC0i/b69CpGwU+m8Lkbxo7avMVOowYKjc=;
- b=VOPrQ0JAg/nra9uRdO5LxJgcMWkDfH3HsL+8GNCOyljMjWWb+C2yk+MorV/9zb3xGOAL
- 7tN5UbvmTPnm5qvU2F/JS/9cmffrnu/PfF1YXdYQiVzSnxQEQ86jRc+BlsvuiP66dkFp
- noFLBbFEQ3fwQ+DTun+q7mTraroNGCyvOls= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2swq1tjy3t-8
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 19:45:05 -0700
-Received: from mx-out.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:82::d) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Tue, 4 Jun 2019 19:44:59 -0700
+ content-type; s=facebook; bh=RAtQP8kdt+P/ff/UupI77hj0Bc++zM2YWzYBwAXPM6o=;
+ b=N1ORyrtCMpqM8ArTqyLILrOwr/rNYmMHMW9zOhG/NRyrlupsDadIRbH+Gt2zpNdLeTHX
+ 6UchQ5coq6wyjYdFSjdBnNAWvDe9iDo/95rKavvBdoQXJ/GeLh+EHLugjQxPcLLLU5BB
+ wHHKtT2bs17nxlMXfdM9vV2V0bZEmZnb0uA= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2swq1tjy3n-5
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 19:45:00 -0700
+Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
+ mail.thefacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1713.5;
+ Tue, 4 Jun 2019 19:44:59 -0700
 Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
-        id 8BB2312C7FDCC; Tue,  4 Jun 2019 19:44:58 -0700 (PDT)
+        id 8FE2012C7FDCE; Tue,  4 Jun 2019 19:44:58 -0700 (PDT)
 Smtp-Origin-Hostprefix: devvm
 From:   Roman Gushchin <guro@fb.com>
 Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
@@ -41,9 +41,9 @@ CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
         Vladimir Davydov <vdavydov.dev@gmail.com>,
         Waiman Long <longman@redhat.com>, Roman Gushchin <guro@fb.com>
 Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH v6 06/10] mm: unify SLAB and SLUB page accounting
-Date:   Tue, 4 Jun 2019 19:44:50 -0700
-Message-ID: <20190605024454.1393507-7-guro@fb.com>
+Subject: [PATCH v6 07/10] mm: synchronize access to kmem_cache dying flag using a spinlock
+Date:   Tue, 4 Jun 2019 19:44:51 -0700
+Message-ID: <20190605024454.1393507-8-guro@fb.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190605024454.1393507-1-guro@fb.com>
 References: <20190605024454.1393507-1-guro@fb.com>
@@ -53,9 +53,9 @@ Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-05_02:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=758 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1906050015
 X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
@@ -63,166 +63,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the page accounting code is duplicated in SLAB and SLUB
-internals. Let's move it into new (un)charge_slab_page helpers
-in the slab_common.c file. These helpers will be responsible
-for statistics (global and memcg-aware) and memcg charging.
-So they are replacing direct memcg_(un)charge_slab() calls.
+Currently the memcg_params.dying flag and the corresponding
+workqueue used for the asynchronous deactivation of kmem_caches
+is synchronized using the slab_mutex.
+
+It makes impossible to check this flag from the irq context,
+which will be required in order to implement asynchronous release
+of kmem_caches.
+
+So let's switch over to the irq-save flavor of the spinlock-based
+synchronization.
 
 Signed-off-by: Roman Gushchin <guro@fb.com>
-Reviewed-by: Shakeel Butt <shakeelb@google.com>
-Acked-by: Christoph Lameter <cl@linux.com>
-Acked-by: Vladimir Davydov <vdavydov.dev@gmail.com>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 ---
- mm/slab.c | 19 +++----------------
- mm/slab.h | 25 +++++++++++++++++++++++++
- mm/slub.c | 14 ++------------
- 3 files changed, 30 insertions(+), 28 deletions(-)
+ mm/slab_common.c | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/mm/slab.c b/mm/slab.c
-index 4b865393ebb4..b417824a9b15 100644
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -1360,7 +1360,6 @@ static struct page *kmem_getpages(struct kmem_cache *cachep, gfp_t flags,
- 								int nodeid)
- {
- 	struct page *page;
--	int nr_pages;
- 
- 	flags |= cachep->allocflags;
- 
-@@ -1370,17 +1369,11 @@ static struct page *kmem_getpages(struct kmem_cache *cachep, gfp_t flags,
- 		return NULL;
- 	}
- 
--	if (memcg_charge_slab(page, flags, cachep->gfporder, cachep)) {
-+	if (charge_slab_page(page, flags, cachep->gfporder, cachep)) {
- 		__free_pages(page, cachep->gfporder);
- 		return NULL;
- 	}
- 
--	nr_pages = (1 << cachep->gfporder);
--	if (cachep->flags & SLAB_RECLAIM_ACCOUNT)
--		mod_lruvec_page_state(page, NR_SLAB_RECLAIMABLE, nr_pages);
--	else
--		mod_lruvec_page_state(page, NR_SLAB_UNRECLAIMABLE, nr_pages);
--
- 	__SetPageSlab(page);
- 	/* Record if ALLOC_NO_WATERMARKS was set when allocating the slab */
- 	if (sk_memalloc_socks() && page_is_pfmemalloc(page))
-@@ -1395,12 +1388,6 @@ static struct page *kmem_getpages(struct kmem_cache *cachep, gfp_t flags,
- static void kmem_freepages(struct kmem_cache *cachep, struct page *page)
- {
- 	int order = cachep->gfporder;
--	unsigned long nr_freed = (1 << order);
--
--	if (cachep->flags & SLAB_RECLAIM_ACCOUNT)
--		mod_lruvec_page_state(page, NR_SLAB_RECLAIMABLE, -nr_freed);
--	else
--		mod_lruvec_page_state(page, NR_SLAB_UNRECLAIMABLE, -nr_freed);
- 
- 	BUG_ON(!PageSlab(page));
- 	__ClearPageSlabPfmemalloc(page);
-@@ -1409,8 +1396,8 @@ static void kmem_freepages(struct kmem_cache *cachep, struct page *page)
- 	page->mapping = NULL;
- 
- 	if (current->reclaim_state)
--		current->reclaim_state->reclaimed_slab += nr_freed;
--	memcg_uncharge_slab(page, order, cachep);
-+		current->reclaim_state->reclaimed_slab += 1 << order;
-+	uncharge_slab_page(page, order, cachep);
- 	__free_pages(page, order);
- }
- 
-diff --git a/mm/slab.h b/mm/slab.h
-index d35d85794247..345fb59afb8f 100644
---- a/mm/slab.h
-+++ b/mm/slab.h
-@@ -205,6 +205,12 @@ ssize_t slabinfo_write(struct file *file, const char __user *buffer,
- void __kmem_cache_free_bulk(struct kmem_cache *, size_t, void **);
- int __kmem_cache_alloc_bulk(struct kmem_cache *, gfp_t, size_t, void **);
- 
-+static inline int cache_vmstat_idx(struct kmem_cache *s)
-+{
-+	return (s->flags & SLAB_RECLAIM_ACCOUNT) ?
-+		NR_SLAB_RECLAIMABLE : NR_SLAB_UNRECLAIMABLE;
-+}
-+
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index 09b26673b63f..2914a8f0aa85 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -130,6 +130,7 @@ int __kmem_cache_alloc_bulk(struct kmem_cache *s, gfp_t flags, size_t nr,
  #ifdef CONFIG_MEMCG_KMEM
  
- /* List of all root caches. */
-@@ -362,6 +368,25 @@ static inline struct kmem_cache *virt_to_cache(const void *obj)
- 	return page->slab_cache;
- }
+ LIST_HEAD(slab_root_caches);
++static DEFINE_SPINLOCK(memcg_kmem_wq_lock);
  
-+static __always_inline int charge_slab_page(struct page *page,
-+					    gfp_t gfp, int order,
-+					    struct kmem_cache *s)
-+{
-+	int ret = memcg_charge_slab(page, gfp, order, s);
-+
-+	if (!ret)
-+		mod_lruvec_page_state(page, cache_vmstat_idx(s), 1 << order);
-+
-+	return ret;
-+}
-+
-+static __always_inline void uncharge_slab_page(struct page *page, int order,
-+					       struct kmem_cache *s)
-+{
-+	mod_lruvec_page_state(page, cache_vmstat_idx(s), -(1 << order));
-+	memcg_uncharge_slab(page, order, s);
-+}
-+
- static inline struct kmem_cache *cache_from_obj(struct kmem_cache *s, void *x)
+ void slab_init_memcg_params(struct kmem_cache *s)
  {
- 	struct kmem_cache *cachep;
-diff --git a/mm/slub.c b/mm/slub.c
-index ae3b1e49ecec..6a5174b51cd6 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -1488,7 +1488,7 @@ static inline struct page *alloc_slab_page(struct kmem_cache *s,
- 	else
- 		page = __alloc_pages_node(node, flags, order);
+@@ -629,6 +630,7 @@ void memcg_create_kmem_cache(struct mem_cgroup *memcg,
+ 	struct memcg_cache_array *arr;
+ 	struct kmem_cache *s = NULL;
+ 	char *cache_name;
++	bool dying;
+ 	int idx;
  
--	if (page && memcg_charge_slab(page, flags, order, s)) {
-+	if (page && charge_slab_page(page, flags, order, s)) {
- 		__free_pages(page, order);
- 		page = NULL;
- 	}
-@@ -1681,11 +1681,6 @@ static struct page *allocate_slab(struct kmem_cache *s, gfp_t flags, int node)
- 	if (!page)
- 		return NULL;
+ 	get_online_cpus();
+@@ -640,7 +642,13 @@ void memcg_create_kmem_cache(struct mem_cgroup *memcg,
+ 	 * The memory cgroup could have been offlined while the cache
+ 	 * creation work was pending.
+ 	 */
+-	if (memcg->kmem_state != KMEM_ONLINE || root_cache->memcg_params.dying)
++	if (memcg->kmem_state != KMEM_ONLINE)
++		goto out_unlock;
++
++	spin_lock_irq(&memcg_kmem_wq_lock);
++	dying = root_cache->memcg_params.dying;
++	spin_unlock_irq(&memcg_kmem_wq_lock);
++	if (dying)
+ 		goto out_unlock;
  
--	mod_lruvec_page_state(page,
--		(s->flags & SLAB_RECLAIM_ACCOUNT) ?
--		NR_SLAB_RECLAIMABLE : NR_SLAB_UNRECLAIMABLE,
--		1 << oo_order(oo));
--
- 	inc_slabs_node(s, page_to_nid(page), page->objects);
+ 	idx = memcg_cache_id(memcg);
+@@ -735,14 +743,17 @@ static void kmemcg_cache_deactivate(struct kmem_cache *s)
  
- 	return page;
-@@ -1719,18 +1714,13 @@ static void __free_slab(struct kmem_cache *s, struct page *page)
- 			check_object(s, page, p, SLUB_RED_INACTIVE);
- 	}
+ 	__kmemcg_cache_deactivate(s);
  
--	mod_lruvec_page_state(page,
--		(s->flags & SLAB_RECLAIM_ACCOUNT) ?
--		NR_SLAB_RECLAIMABLE : NR_SLAB_UNRECLAIMABLE,
--		-pages);
--
- 	__ClearPageSlabPfmemalloc(page);
- 	__ClearPageSlab(page);
++	spin_lock_irq(&memcg_kmem_wq_lock);
+ 	if (s->memcg_params.root_cache->memcg_params.dying)
+-		return;
++		goto unlock;
  
- 	page->mapping = NULL;
- 	if (current->reclaim_state)
- 		current->reclaim_state->reclaimed_slab += pages;
--	memcg_uncharge_slab(page, order, s);
-+	uncharge_slab_page(page, order, s);
- 	__free_pages(page, order);
+ 	/* pin memcg so that @s doesn't get destroyed in the middle */
+ 	css_get(&s->memcg_params.memcg->css);
+ 
+ 	s->memcg_params.work_fn = __kmemcg_cache_deactivate_after_rcu;
+ 	call_rcu(&s->memcg_params.rcu_head, kmemcg_rcufn);
++unlock:
++	spin_unlock_irq(&memcg_kmem_wq_lock);
  }
  
+ void memcg_deactivate_kmem_caches(struct mem_cgroup *memcg)
+@@ -852,9 +863,9 @@ static int shutdown_memcg_caches(struct kmem_cache *s)
+ 
+ static void flush_memcg_workqueue(struct kmem_cache *s)
+ {
+-	mutex_lock(&slab_mutex);
++	spin_lock_irq(&memcg_kmem_wq_lock);
+ 	s->memcg_params.dying = true;
+-	mutex_unlock(&slab_mutex);
++	spin_unlock_irq(&memcg_kmem_wq_lock);
+ 
+ 	/*
+ 	 * SLAB and SLUB deactivate the kmem_caches through call_rcu. Make
 -- 
 2.20.1
 
