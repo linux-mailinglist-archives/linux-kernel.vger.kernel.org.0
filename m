@@ -2,324 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E4113674F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 00:13:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D059E3671B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 23:55:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726797AbfFEWMz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 18:12:55 -0400
-Received: from mga07.intel.com ([134.134.136.100]:54517 "EHLO mga07.intel.com"
+        id S1726637AbfFEVzh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 17:55:37 -0400
+Received: from mga06.intel.com ([134.134.136.31]:51548 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726532AbfFEWMy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 18:12:54 -0400
+        id S1726537AbfFEVzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 17:55:36 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 15:12:54 -0700
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 14:55:35 -0700
 X-ExtLoop1: 1
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga007.jf.intel.com with ESMTP; 05 Jun 2019 15:12:54 -0700
-Subject: [PATCH v9 07/12] mm/sparsemem: Prepare for sub-section ranges
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     akpm@linux-foundation.org
-Cc:     Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>, linux-mm@kvack.org,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        osalvador@suse.de, mhocko@suse.com
-Date:   Wed, 05 Jun 2019 14:58:37 -0700
-Message-ID: <155977191770.2443951.1506588644989416699.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <155977186863.2443951.9036044808311959913.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <155977186863.2443951.9036044808311959913.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga001.jf.intel.com with ESMTP; 05 Jun 2019 14:55:36 -0700
+Date:   Wed, 5 Jun 2019 14:58:41 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "eric.auger@redhat.com" <eric.auger@redhat.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v2 2/4] iommu: Introduce device fault data
+Message-ID: <20190605145841.55cf9667@jacob-builder>
+In-Reply-To: <50dc3cc5-6019-ad42-6aba-d84fab4020f9@arm.com>
+References: <20190603145749.46347-1-jean-philippe.brucker@arm.com>
+        <20190603145749.46347-3-jean-philippe.brucker@arm.com>
+        <20190603150842.11070cfd@jacob-builder>
+        <AADFC41AFE54684AB9EE6CBC0274A5D19CA6A9EE@SHSMSX104.ccr.corp.intel.com>
+        <50dc3cc5-6019-ad42-6aba-d84fab4020f9@arm.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Prepare the memory hot-{add,remove} paths for handling sub-section
-ranges by plumbing the starting page frame and number of pages being
-handled through arch_{add,remove}_memory() to
-sparse_{add,remove}_one_section().
+On Wed, 5 Jun 2019 12:24:09 +0100
+Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
 
-This is simply plumbing, small cleanups, and some identifier renames. No
-intended functional changes.
+> On 05/06/2019 09:51, Tian, Kevin wrote:
+> >> From: Jacob Pan
+> >> Sent: Tuesday, June 4, 2019 6:09 AM
+> >>
+> >> On Mon,  3 Jun 2019 15:57:47 +0100
+> >> Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
+> >>  
+> >>> +/**
+> >>> + * struct iommu_fault_page_request - Page Request data
+> >>> + * @flags: encodes whether the corresponding fields are valid and
+> >>> whether this
+> >>> + *         is the last page in group (IOMMU_FAULT_PAGE_REQUEST_*
+> >>> values)
+> >>> + * @pasid: Process Address Space ID
+> >>> + * @grpid: Page Request Group Index
+> >>> + * @perm: requested page permissions (IOMMU_FAULT_PERM_* values)
+> >>> + * @addr: page address
+> >>> + * @private_data: device-specific private information
+> >>> + */
+> >>> +struct iommu_fault_page_request {
+> >>> +#define IOMMU_FAULT_PAGE_REQUEST_PASID_VALID	(1 << 0)
+> >>> +#define IOMMU_FAULT_PAGE_REQUEST_LAST_PAGE	(1 << 1)
+> >>> +#define IOMMU_FAULT_PAGE_REQUEST_PRIV_DATA	(1 << 2)
+> >>> +	__u32	flags;
+> >>> +	__u32	pasid;
+> >>> +	__u32	grpid;
+> >>> +	__u32	perm;
+> >>> +	__u64	addr;
+> >>> +	__u64	private_data[2];
+> >>> +};
+> >>> +  
+> >>
+> >> Just a thought, for non-identity G-H PASID management. We could
+> >> pass on guest PASID in PRQ to save a lookup in QEMU. In this case,
+> >> QEMU allocate a GPASID for vIOMMU then a host PASID for pIOMMU.
+> >> QEMU has a G->H lookup. When PRQ comes in to the pIOMMU with
+> >> HPASID, IOMMU driver
+> >> can retrieve GPASID from the bind data then report to the guest via
+> >> VFIO. In this case QEMU does not need to do a H->G PASID lookup.
+> >>
+> >> Should we add a gpasid field here? or we can add a flag and field
+> >> later, up to you.
+> >>  
+> > 
+> > Can private_data serve this purpose?  
+> 
+> Isn't private_data already used for VT-d's Private Data field?
+> 
+yes, as part of the PRQ. please see my explanation in the previous
+email.
+> > It's better not introducing
+> > gpasid awareness within host IOMMU driver. It is just a user-level
+> > data associated with a PASID when binding happens. Kernel doesn't
+> > care the actual meaning, simply record it and then return back to
+> > user space later upon device fault. Qemu interprets the meaning as
+> > gpasid in its own context. otherwise usages may use it for other
+> > purpose.  
+> 
+> Regarding a gpasid field I don't mind either way, but extending the
+> iommu_fault structure later won't be completely straightforward so we
+> could add some padding now.
+> 
+> Userspace negotiate the iommu_fault struct format with VFIO, before
+> allocating a circular buffer of N fault structures
+> ().
+> So adding new fields requires introducing a new ABI version and a
+> struct iommu_fault_v2. That may be OK for disruptive changes, but
+> just adding a new field indicated by a flag shouldn't have to be that
+> complicated.
+> 
+> How about setting the iommu_fault structure to 128 bytes?
+> 
+> struct iommu_fault {
+> 	__u32   type;
+> 	__u32   padding;
+> 	union {
+> 		struct iommu_fault_unrecoverable event;
+> 		struct iommu_fault_page_request prm;
+> 		__u8 padding2[120];
+> 	};
+> };
+> 
+> Given that @prm is currently 40 bytes and @event 32 bytes, the padding
+> allows either of them to grow 10 new 64-bit fields (or 20 new 32-bit
+> fields, which is still representable with new flags) before we have to
+> upgrade the ABI version.
+> 
+> A 4kB and a 64kB queue can hold respectively:
+> 
+> * 85 and 1365 records when iommu_fault is 48 bytes (current format).
+> * 64 and 1024 records when iommu_fault is 64 bytes (but allows to grow
+> only 2 new 64-bit fields).
+> * 32 and 512 records when iommu_fault is 128 bytes.
+> 
+> In comparison,
+> * the SMMU even queue can hold 128 and 2048 events respectively at
+> those sizes (and is allowed to grow up to 524k entries)
+> * the SMMU PRI queue can hold 256 and 4096 PR.
+> 
+> But the SMMU queues have to be physically contiguous, whereas our
+> fault queues are in userspace memory which is less expensive. So
+> 128-byte records might be reasonable. What do you think?
+> 
+I think though 128-byte is large enough for any future extension but
+64B might be good enough and it is a cache line. PCI page request msg
+is only 16B :)
 
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Logan Gunthorpe <logang@deltatee.com>
-Cc: Oscar Salvador <osalvador@suse.de>
-Reviewed-by: Pavel Tatashin <pasha.tatashin@soleen.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- include/linux/memory_hotplug.h |    5 +-
- mm/memory_hotplug.c            |  114 +++++++++++++++++++++++++---------------
- mm/sparse.c                    |   15 ++---
- 3 files changed, 81 insertions(+), 53 deletions(-)
+VT-d currently uses one 4K page for PRQ, holds 128 records of PRQ
+descriptors. This can grow to 16K entries per spec. That is per IOMMU.
+The user fault queue here is per device. So we do have to be frugal
+about it since it will support mdev at per PASID level at some point?
 
-diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-index 79e0add6a597..3ab0282b4fe5 100644
---- a/include/linux/memory_hotplug.h
-+++ b/include/linux/memory_hotplug.h
-@@ -348,9 +348,10 @@ extern int add_memory_resource(int nid, struct resource *resource);
- extern void move_pfn_range_to_zone(struct zone *zone, unsigned long start_pfn,
- 		unsigned long nr_pages, struct vmem_altmap *altmap);
- extern bool is_memblock_offlined(struct memory_block *mem);
--extern int sparse_add_one_section(int nid, unsigned long start_pfn,
--				  struct vmem_altmap *altmap);
-+extern int sparse_add_section(int nid, unsigned long pfn,
-+		unsigned long nr_pages, struct vmem_altmap *altmap);
- extern void sparse_remove_one_section(struct mem_section *ms,
-+		unsigned long pfn, unsigned long nr_pages,
- 		unsigned long map_offset, struct vmem_altmap *altmap);
- extern struct page *sparse_decode_mem_map(unsigned long coded_mem_map,
- 					  unsigned long pnum);
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 4b882c57781a..399bf78bccc5 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -252,51 +252,84 @@ void __init register_page_bootmem_info_node(struct pglist_data *pgdat)
- }
- #endif /* CONFIG_HAVE_BOOTMEM_INFO_NODE */
- 
--static int __meminit __add_section(int nid, unsigned long phys_start_pfn,
--				   struct vmem_altmap *altmap)
-+static int __meminit __add_section(int nid, unsigned long pfn,
-+		unsigned long nr_pages,	struct vmem_altmap *altmap)
- {
- 	int ret;
- 
--	if (pfn_valid(phys_start_pfn))
-+	if (pfn_valid(pfn))
- 		return -EEXIST;
- 
--	ret = sparse_add_one_section(nid, phys_start_pfn, altmap);
-+	ret = sparse_add_section(nid, pfn, nr_pages, altmap);
- 	return ret < 0 ? ret : 0;
- }
- 
-+static int check_pfn_span(unsigned long pfn, unsigned long nr_pages,
-+		const char *reason)
-+{
-+	/*
-+	 * Disallow all operations smaller than a sub-section and only
-+	 * allow operations smaller than a section for
-+	 * SPARSEMEM_VMEMMAP. Note that check_hotplug_memory_range()
-+	 * enforces a larger memory_block_size_bytes() granularity for
-+	 * memory that will be marked online, so this check should only
-+	 * fire for direct arch_{add,remove}_memory() users outside of
-+	 * add_memory_resource().
-+	 */
-+	unsigned long min_align;
-+
-+	if (IS_ENABLED(CONFIG_SPARSEMEM_VMEMMAP))
-+		min_align = PAGES_PER_SUBSECTION;
-+	else
-+		min_align = PAGES_PER_SECTION;
-+	if (!IS_ALIGNED(pfn, min_align)
-+			|| !IS_ALIGNED(nr_pages, min_align)) {
-+		WARN(1, "Misaligned __%s_pages start: %#lx end: #%lx\n",
-+				reason, pfn, pfn + nr_pages - 1);
-+		return -EINVAL;
-+	}
-+	return 0;
-+}
-+
- /*
-  * Reasonably generic function for adding memory.  It is
-  * expected that archs that support memory hotplug will
-  * call this function after deciding the zone to which to
-  * add the new pages.
-  */
--int __ref __add_pages(int nid, unsigned long phys_start_pfn,
--		unsigned long nr_pages, struct mhp_restrictions *restrictions)
-+int __ref __add_pages(int nid, unsigned long pfn, unsigned long nr_pages,
-+		struct mhp_restrictions *restrictions)
- {
- 	unsigned long i;
--	int err = 0;
--	int start_sec, end_sec;
-+	int start_sec, end_sec, err;
- 	struct vmem_altmap *altmap = restrictions->altmap;
- 
--	/* during initialize mem_map, align hot-added range to section */
--	start_sec = pfn_to_section_nr(phys_start_pfn);
--	end_sec = pfn_to_section_nr(phys_start_pfn + nr_pages - 1);
--
- 	if (altmap) {
- 		/*
- 		 * Validate altmap is within bounds of the total request
- 		 */
--		if (altmap->base_pfn != phys_start_pfn
-+		if (altmap->base_pfn != pfn
- 				|| vmem_altmap_offset(altmap) > nr_pages) {
- 			pr_warn_once("memory add fail, invalid altmap\n");
--			err = -EINVAL;
--			goto out;
-+			return -EINVAL;
- 		}
- 		altmap->alloc = 0;
- 	}
- 
-+	err = check_pfn_span(pfn, nr_pages, "add");
-+	if (err)
-+		return err;
-+
-+	start_sec = pfn_to_section_nr(pfn);
-+	end_sec = pfn_to_section_nr(pfn + nr_pages - 1);
- 	for (i = start_sec; i <= end_sec; i++) {
--		err = __add_section(nid, section_nr_to_pfn(i), altmap);
-+		unsigned long pfns;
-+
-+		pfns = min(nr_pages, PAGES_PER_SECTION
-+				- (pfn & ~PAGE_SECTION_MASK));
-+		err = __add_section(nid, pfn, pfns, altmap);
-+		pfn += pfns;
-+		nr_pages -= pfns;
- 
- 		/*
- 		 * EEXIST is finally dealt with by ioresource collision
-@@ -309,7 +342,6 @@ int __ref __add_pages(int nid, unsigned long phys_start_pfn,
- 		cond_resched();
- 	}
- 	vmemmap_populate_print_last();
--out:
- 	return err;
- }
- 
-@@ -487,10 +519,10 @@ static void shrink_pgdat_span(struct pglist_data *pgdat,
- 	pgdat->node_spanned_pages = 0;
- }
- 
--static void __remove_zone(struct zone *zone, unsigned long start_pfn)
-+static void __remove_zone(struct zone *zone, unsigned long start_pfn,
-+		unsigned long nr_pages)
- {
- 	struct pglist_data *pgdat = zone->zone_pgdat;
--	int nr_pages = PAGES_PER_SECTION;
- 	unsigned long flags;
- 
- 	pgdat_resize_lock(zone->zone_pgdat, &flags);
-@@ -499,27 +531,23 @@ static void __remove_zone(struct zone *zone, unsigned long start_pfn)
- 	pgdat_resize_unlock(zone->zone_pgdat, &flags);
- }
- 
--static void __remove_section(struct zone *zone, struct mem_section *ms,
--			     unsigned long map_offset,
--			     struct vmem_altmap *altmap)
-+static void __remove_section(struct zone *zone, unsigned long pfn,
-+		unsigned long nr_pages, unsigned long map_offset,
-+		struct vmem_altmap *altmap)
- {
--	unsigned long start_pfn;
--	int scn_nr;
-+	struct mem_section *ms = __nr_to_section(pfn_to_section_nr(pfn));
- 
- 	if (WARN_ON_ONCE(!valid_section(ms)))
- 		return;
- 
--	scn_nr = __section_nr(ms);
--	start_pfn = section_nr_to_pfn((unsigned long)scn_nr);
--	__remove_zone(zone, start_pfn);
--
--	sparse_remove_one_section(ms, map_offset, altmap);
-+	__remove_zone(zone, pfn, nr_pages);
-+	sparse_remove_one_section(ms, pfn, nr_pages, map_offset, altmap);
- }
- 
- /**
-  * __remove_pages() - remove sections of pages from a zone
-  * @zone: zone from which pages need to be removed
-- * @phys_start_pfn: starting pageframe (must be aligned to start of a section)
-+ * @pfn: starting pageframe (must be aligned to start of a section)
-  * @nr_pages: number of pages to remove (must be multiple of section size)
-  * @altmap: alternative device page map or %NULL if default memmap is used
-  *
-@@ -528,31 +556,31 @@ static void __remove_section(struct zone *zone, struct mem_section *ms,
-  * sure that pages are marked reserved and zones are adjust properly by
-  * calling offline_pages().
-  */
--void __remove_pages(struct zone *zone, unsigned long phys_start_pfn,
-+void __remove_pages(struct zone *zone, unsigned long pfn,
- 		    unsigned long nr_pages, struct vmem_altmap *altmap)
- {
--	unsigned long i;
- 	unsigned long map_offset = 0;
--	int sections_to_remove;
-+	int i, start_sec, end_sec;
- 
- 	if (altmap)
- 		map_offset = vmem_altmap_offset(altmap);
- 
- 	clear_zone_contiguous(zone);
- 
--	/*
--	 * We can only remove entire sections
--	 */
--	BUG_ON(phys_start_pfn & ~PAGE_SECTION_MASK);
--	BUG_ON(nr_pages % PAGES_PER_SECTION);
-+	if (check_pfn_span(pfn, nr_pages, "remove"))
-+		return;
- 
--	sections_to_remove = nr_pages / PAGES_PER_SECTION;
--	for (i = 0; i < sections_to_remove; i++) {
--		unsigned long pfn = phys_start_pfn + i*PAGES_PER_SECTION;
-+	start_sec = pfn_to_section_nr(pfn);
-+	end_sec = pfn_to_section_nr(pfn + nr_pages - 1);
-+	for (i = start_sec; i <= end_sec; i++) {
-+		unsigned long pfns;
- 
- 		cond_resched();
--		__remove_section(zone, __pfn_to_section(pfn), map_offset,
--				 altmap);
-+		pfns = min(nr_pages, PAGES_PER_SECTION
-+				- (pfn & ~PAGE_SECTION_MASK));
-+		__remove_section(zone, pfn, pfns, map_offset, altmap);
-+		pfn += pfns;
-+		nr_pages -= pfns;
- 		map_offset = 0;
- 	}
- 
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 2093c662a5f7..f65206deaf49 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -739,8 +739,8 @@ static void free_map_bootmem(struct page *memmap)
-  * * -EEXIST	- Section has been present.
-  * * -ENOMEM	- Out of memory.
-  */
--int __meminit sparse_add_one_section(int nid, unsigned long start_pfn,
--				     struct vmem_altmap *altmap)
-+int __meminit sparse_add_section(int nid, unsigned long start_pfn,
-+		unsigned long nr_pages, struct vmem_altmap *altmap)
- {
- 	unsigned long section_nr = pfn_to_section_nr(start_pfn);
- 	struct mem_section_usage *usage;
-@@ -848,8 +848,9 @@ static void free_section_usage(struct page *memmap,
- 		free_map_bootmem(memmap);
- }
- 
--void sparse_remove_one_section(struct mem_section *ms, unsigned long map_offset,
--			       struct vmem_altmap *altmap)
-+void sparse_remove_one_section(struct mem_section *ms, unsigned long pfn,
-+		unsigned long nr_pages, unsigned long map_offset,
-+		struct vmem_altmap *altmap)
- {
- 	struct page *memmap = NULL;
- 	struct mem_section_usage *usage = NULL;
-@@ -862,9 +863,7 @@ void sparse_remove_one_section(struct mem_section *ms, unsigned long map_offset,
- 		ms->usage = NULL;
- 	}
- 
--	clear_hwpoisoned_pages(memmap + map_offset,
--			PAGES_PER_SECTION - map_offset);
--	free_section_usage(memmap, usage, section_nr_to_pfn(__section_nr(ms)),
--			PAGES_PER_SECTION, altmap);
-+	clear_hwpoisoned_pages(memmap + map_offset, nr_pages - map_offset);
-+	free_section_usage(memmap, usage, pfn, nr_pages, altmap);
- }
- #endif /* CONFIG_MEMORY_HOTPLUG */
+I have to look into Eric's patchset on how he handles queue full in the
+producer. If we go with 128B size in iommu_fault and 4KB size queue
+(32 entries as in your table), VT-d PRQ size of 128 entries can
+potentially cause queue full. We have to handle this VFIO queue full
+differently than the IOMMU queue full in that we only need to discard
+PRQ for one device. (Whereas IOMMU queue full has to clear out all).
 
+Anyway, I think 64B should be enough but 128B is fine too. We have to
+deal with queue full anyway. But queue full is expensive so we should
+try to avoid.
+
+> 
+> The iommu_fault_response (patch 4/4) is a bit easier to extend because
+> it's userspace->kernel and userspace can just declare the size it's
+> using. I did add a version field in case we run out of flags or want
+> to change the whole thing, but I think I was being overly cautious
+> and it might just be a waste of space.
+> 
+> Thanks,
+> Jean
+
+[Jacob Pan]
