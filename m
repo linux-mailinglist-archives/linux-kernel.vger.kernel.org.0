@@ -2,72 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 972FF35D3A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 14:51:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E40F635D3C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 14:53:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727810AbfFEMu7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 08:50:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50034 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727642AbfFEMu7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 08:50:59 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 36165206BB;
-        Wed,  5 Jun 2019 12:50:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559739058;
-        bh=JSeIBq6ZiFjaRzjEJ70TfUzwWmolhL4j4abxIjOCx5Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WdbKkJEi+iPLE58t7c0yL9UBKb932TnYaxj8GoFsQJ0wUFA4UlkWbtV1MMkgtp9R7
-         bbFNT8ayYVlSjGF4MK6hmIKXPYnceTVQ4JnCb26vhqb+q2Q4TweZnyYO4aZr8n3FR9
-         1WgksYAJifGBJLs49go7Rd/H2gjfZQ9aJuT0FlHk=
-Date:   Wed, 5 Jun 2019 14:50:55 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Talel Shenhar <talel@amazon.com>
-Cc:     nicolas.ferre@microchip.com, jason@lakedaemon.net,
-        marc.zyngier@arm.com, mark.rutland@arm.com,
-        mchehab+samsung@kernel.org, robh+dt@kernel.org,
-        davem@davemloft.net, shawn.lin@rock-chips.com, tglx@linutronix.de,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dwmw@amazon.co.uk, benh@kernel.crashing.org, jonnyc@amazon.com,
-        hhhawa@amazon.com, ronenk@amazon.com, hanochu@amazon.com,
-        barakw@amazon.com
-Subject: Re: [PATCH v2 2/2] irqchip: al-fic: Introduce Amazon's Annapurna
- Labs Fabric Interrupt Controller Driver
-Message-ID: <20190605125055.GA3184@kroah.com>
-References: <1559731921-14023-1-git-send-email-talel@amazon.com>
- <1559731921-14023-3-git-send-email-talel@amazon.com>
+        id S1727816AbfFEMxC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 08:53:02 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33466 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727670AbfFEMxB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 08:53:01 -0400
+Received: by mail-pf1-f196.google.com with SMTP id x15so4990881pfq.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 05:53:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8OO5de15CKFr8wHCwMW+y7NtSPgZuAg+fbs0S4ZOD4Q=;
+        b=i5Kr8noEdSNioZn7W1oY8BIV8RpAglWLDKr42IaJOjk6FK6VMipuk4CGufa8xW5jfI
+         ZrDrSxMcPS9QaNWioDIKpXxLyunhXcUcl1h2vFIH2qnHtcFCXI0cHCHvf+lUbp5XvZI0
+         S/Wph6YKBYI/+crFDWak1n/bWiGC+MGt3iRlAY8JrH2dPdRbXd9R0AFyoLItjUrQ6DrE
+         aWDgjqHXRE0BhjJzCp851LJST/hcb16uJmL8tl9W1nJbT+S4cp3c7ClW/CFZwmg829Fp
+         Yk2j6SGhWamYleoWjjfuGGpAYbP5qF7ihvsCoN/SPwF05744+6MPZeU1fB9h4H+F+7tC
+         zcRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8OO5de15CKFr8wHCwMW+y7NtSPgZuAg+fbs0S4ZOD4Q=;
+        b=FibW4SHkz5hqx2uPwFLFD8amLTON7Bi7U6u1Kps31kGUODuZhZvyKVNoVHBcXhY28x
+         95WYVQ4TnkAQU1eef4J8RdbActZ+o6zS0HMGKdO98INd76+UhE9S7i2ZkIO0fveht0fi
+         tFfeJCzQU8sxtSA3dEqp9rC5/8NCdY/x32PWHEjN1P2jPYApHlo6MX4B/zSsiU1EW3eL
+         zdJmn69cSszHO2CxeUk3h1V0MW+XNYYBaRX7Clz9u1rvT/KCJA31ABw8GVvXvNXXpvnj
+         3bG2kEPpAUe/hXR9b95rDEE3iMh6hsi3KkMT1lx2ZoSul5PFTn407uZ6mlafslKEe/J+
+         wcUg==
+X-Gm-Message-State: APjAAAVTyx+L5QZ1nVi4lAoMlq42N15RkDzgvoJ6eZQdea8V4HQWtYJp
+        Yu4aioz/XykUv9mzcNeFxi3NMlwD
+X-Google-Smtp-Source: APXvYqwcqApiGCTxpaxAAnU91R4amjEo/dzeMf2KNPOdiUs7zunJNsapZ2Mr5NHnI2I+7T3kmE1Q4A==
+X-Received: by 2002:a63:d504:: with SMTP id c4mr4132889pgg.20.1559739180549;
+        Wed, 05 Jun 2019 05:53:00 -0700 (PDT)
+Received: from [10.44.0.192] ([103.48.210.53])
+        by smtp.gmail.com with ESMTPSA id o66sm16898206pje.8.2019.06.05.05.52.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Jun 2019 05:52:58 -0700 (PDT)
+From:   Greg Ungerer <gregungerer00@gmail.com>
+X-Google-Original-From: Greg Ungerer <gerg@linux-m68k.org>
+Subject: Re: [PATCH] m68k: io: Fix io{read,write}{16,32}be() for Coldfire
+ peripherals
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Angelo Dureghello <angelo@sysam.it>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190429081937.7544-1-geert@linux-m68k.org>
+ <20190603122608.GA21347@jerusalem>
+ <d474e366-cf5f-bbf3-9521-c5ea29bb9c19@linux-m68k.org>
+ <CAMuHMdVTOO13Y49D82r5YgTFGwvgB0UdCZ3o1VAXHWzYof05xA@mail.gmail.com>
+Message-ID: <f5e30b21-3c88-c134-d2bb-dabd191c6122@linux-m68k.org>
+Date:   Wed, 5 Jun 2019 22:52:51 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1559731921-14023-3-git-send-email-talel@amazon.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <CAMuHMdVTOO13Y49D82r5YgTFGwvgB0UdCZ3o1VAXHWzYof05xA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 05, 2019 at 01:52:01PM +0300, Talel Shenhar wrote:
-> --- /dev/null
-> +++ b/drivers/irqchip/irq-al-fic.c
-> @@ -0,0 +1,289 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/**
+Hi Geert,
 
-No need for kernel-doc format style here.
+On 4/6/19 5:34 pm, Geert Uytterhoeven wrote:
+> On Tue, Jun 4, 2019 at 9:18 AM Greg Ungerer <gerg@linux-m68k.org> wrote:
+>> On 3/6/19 10:26 pm, Angelo Dureghello wrote:
+>>> couldn't seen any follow up on this patch. I tested it and at least
+>>> for mcf5441x it works properly and solves all issues.
+>>>
+>>> Do you think it may be accepted as an initial fix ?
+>>
+>> I'll add it to the m68knommu git tree.
+>> Seeing as you wrote it Geert I assume you have no problem with that?  :-)
+> 
+> Actually I wanted to look into the issues pointed out by Arnd, but didn't
+> get to that yet...
 
-> + * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+Ok, no worries. I won't do anything with this right now then.
 
-"or its affiliates"?  You know the answer to this, don't keep us in
-suspense.  Put the proper copyright holder here please, otherwise this
-is totally useless.
+Regards
+Greg
 
-Well, copyright notices are technically useless anyway, but lawyers like
-to cargo-cult with the best of them, so it should be correct at the
-least.
 
-thanks,
-
-greg k-h
