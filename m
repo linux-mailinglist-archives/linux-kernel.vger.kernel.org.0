@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 272FD35DD5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 15:24:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7885235DD9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 15:24:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728138AbfFENXZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 09:23:25 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40798 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728066AbfFENXR (ORCPT
+        id S1728202AbfFENXj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 09:23:39 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:50932 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728173AbfFENXb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 09:23:17 -0400
+        Wed, 5 Jun 2019 09:23:31 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Subject:Cc:To:From:Date:Message-Id:
-        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
+        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=rzGWy/MVsBs4DNmwRKH5mWhkT+aXVKs8NMOAKIyQd/E=; b=XLhVfNhdyceJ7d7wDKrLMTo3o
-        gQlCqX4HL0BnaAW0CK+l3wQHNex3dM43YX2UXBRV8nxnaOjwBtJ1C4ML3x1q42PkUNOCiSbND2aC6
-        k1em+m+EUBKOa9cWRHl/NI8KgqFaWTjFITHfty+c/GUJIT+bArQDpDmrSUb1NVRHasfJcvnkRPGx3
-        0YzDtoA1XaGAY9hy9ZPPWwGku1GxlWIw0qURAuPseCTYkjn5b6aD2qMjrI5pRk9EBqWeU7uQi94Qn
-        Q8lZY7WycrSp+RQ2n1qJpUl1VTidYjzaSkxXM8bGgwa67SqEHc2t943libtyCz6uBxaFt2VVc3fh/
-        Uv37nPJ8g==;
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=N+L4hncPrLT3YUw3a9VAy36wpeglIBN4ooUYuEyD+Zg=; b=sU7AoaR6XP70/tJhp2u/GbFRde
+        RTKU51MaT9Cng0tVNUUKO/Ws4K4pO3OYm09DKcxV3clxcQFDMKW3xuSE/AFdouNIHTJgS6Sl45H2n
+        QcCJl2Aua9sR+9uA1L+WZnjDJ9huFWsf4F9tERmWgNmwr9hw1Rz+3Q9SPfBQiXOpJVjBUZVgoktKH
+        ijnIwToxQNsCpppxzUwFAJdt2ccAbJ9AtqKaoOnRY9vL77dyIdAcHI57noOy3kIPsIGk/EyyPy220
+        ErMmxIx8RIXErC8p4GtvbNJF6fPs2mDUKY0rArA6doGIOfG183I5FpR0ORHZf2dhIsgccteXK/+/u
+        b9TFoEqw==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hYVsH-0004qL-Ca; Wed, 05 Jun 2019 13:22:41 +0000
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hYVsJ-0006rO-2f; Wed, 05 Jun 2019 13:22:43 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 6CE4C202D0BA4; Wed,  5 Jun 2019 15:22:39 +0200 (CEST)
-Message-Id: <20190605130753.327195108@infradead.org>
+        id 7158B202D0BA0; Wed,  5 Jun 2019 15:22:39 +0200 (CEST)
+Message-Id: <20190605131944.591902815@infradead.org>
 User-Agent: quilt/0.65
-Date:   Wed, 05 Jun 2019 15:07:53 +0200
+Date:   Wed, 05 Jun 2019 15:07:54 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     x86@kernel.org
 Cc:     linux-kernel@vger.kernel.org,
@@ -51,25 +51,80 @@ Cc:     linux-kernel@vger.kernel.org,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         Edward Cree <ecree@solarflare.com>,
         Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: [PATCH 00/15] x86 cleanups and static_call()
+Subject: [PATCH 01/15] x86/entry/32: Clean up return from interrupt preemption path
+References: <20190605130753.327195108@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+The code flow around the return from interrupt preemption point seems
+needlesly complicated.
 
-Now that all the x86_64 int3_emulate_call() stuff is upstream, here are the
-i386 patches and all the rest of the cleanups that resulted from that
-discussion.
+There is only one site jumping to resume_kernel, and none (outside of
+resume_kernel) jumping to restore_all_kernel. Inline resume_kernel
+in restore_all_kernel and avoid the CONFIG_PREEMPT dependent label.
 
-And I figured I should have a go at making that static_call() thing working now
-that we have the prerequisites sorted.  This is mostly a combination of the v2
-and v3 static_call() patches done on top of an 'enhanced' text_poke_bp().
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ arch/x86/entry/entry_32.S |   24 ++++++++++--------------
+ 1 file changed, 10 insertions(+), 14 deletions(-)
 
-I wrote a little self-test and added Steve's ftrace convertion on top for
-testing, and suspicously I've not had it explode, so I'm sure this is going to
-set all your computers on fire.
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -67,7 +67,6 @@
+ # define preempt_stop(clobbers)	DISABLE_INTERRUPTS(clobbers); TRACE_IRQS_OFF
+ #else
+ # define preempt_stop(clobbers)
+-# define resume_kernel		restore_all_kernel
+ #endif
+ 
+ .macro TRACE_IRQS_IRET
+@@ -755,7 +754,7 @@ END(ret_from_fork)
+ 	andl	$SEGMENT_RPL_MASK, %eax
+ #endif
+ 	cmpl	$USER_RPL, %eax
+-	jb	resume_kernel			# not returning to v8086 or userspace
++	jb	restore_all_kernel		# not returning to v8086 or userspace
+ 
+ ENTRY(resume_userspace)
+ 	DISABLE_INTERRUPTS(CLBR_ANY)
+@@ -765,18 +764,6 @@ ENTRY(resume_userspace)
+ 	jmp	restore_all
+ END(ret_from_exception)
+ 
+-#ifdef CONFIG_PREEMPT
+-ENTRY(resume_kernel)
+-	DISABLE_INTERRUPTS(CLBR_ANY)
+-	cmpl	$0, PER_CPU_VAR(__preempt_count)
+-	jnz	restore_all_kernel
+-	testl	$X86_EFLAGS_IF, PT_EFLAGS(%esp)	# interrupts off (exception path) ?
+-	jz	restore_all_kernel
+-	call	preempt_schedule_irq
+-	jmp	restore_all_kernel
+-END(resume_kernel)
+-#endif
+-
+ GLOBAL(__begin_SYSENTER_singlestep_region)
+ /*
+  * All code from here through __end_SYSENTER_singlestep_region is subject
+@@ -1027,6 +1014,15 @@ ENTRY(entry_INT80_32)
+ 	INTERRUPT_RETURN
+ 
+ restore_all_kernel:
++#ifdef CONFIG_PREEMPT
++	DISABLE_INTERRUPTS(CLBR_ANY)
++	cmpl	$0, PER_CPU_VAR(__preempt_count)
++	jnz	.Lno_preempt
++	testl	$X86_EFLAGS_IF, PT_EFLAGS(%esp)	# interrupts off (exception path) ?
++	jz	.Lno_preempt
++	call	preempt_schedule_irq
++.Lno_preempt:
++#endif
+ 	TRACE_IRQS_IRET
+ 	PARANOID_EXIT_TO_KERNEL_MODE
+ 	BUG_IF_WRONG_CR3
 
-Enjoy!
 
