@@ -2,61 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4266D354C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 02:42:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BE42354C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 02:43:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726635AbfFEAms (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1726573AbfFEAms (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Tue, 4 Jun 2019 20:42:48 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:35928 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbfFEAms (ORCPT
+Received: from userp2130.oracle.com ([156.151.31.86]:53806 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbfFEAms (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 4 Jun 2019 20:42:48 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x550YVLj169502;
-        Wed, 5 Jun 2019 00:42:17 GMT
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x550Z1OG162050;
+        Wed, 5 Jun 2019 00:42:19 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=2jG9iwigPRzzzQOoYAjs0CPAiPKopiiGwTpAa90JsUg=;
- b=Ne8s69nYB1yGka7zesaxSW7bZ+gl+EXxRZS6w3ek5JEoexVSWnk8qcPXhgoacvQfsLwx
- mCaALcKa00+LI4whTL3nAOBAAzM67lu4oXZcPsl8523cZrGhhslDIPDGQEMygSYPTDz3
- 6sbRArKHWUFCKcDt1zWH5AS+l2dbMouLmqXnthrXb2ChQQ8LLz3tNkSfM0MUdvO8psKP
- AF10PQDvoM/JEhbFBV3p9BKhJ3diUYUXiYwrE08eZ6hhey5j7ehBsVpQndSZCG5b2PVk
- jKfTd6vpQpkjyd87L7OMIJ8uIqrXE4u29tNC/NJygrNazmoMt+UMZtoTML2Ij0R1bC3B Fw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2suj0qg13j-1
+ subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
+ bh=c5azvVfPt2xcmajcePerZc/MJE/6GZzmboOOmBWkC0U=;
+ b=uuxW5KfrYE4znBKzbl1GZqOHHb/Sv6IrNFPWNbCq2BIG9FILol8XxNaflFsPc6eKVED1
+ 8EGaAizgFV1kNDk7sLE01VLkCrdleauaHcQ0fzDdO4bOWcsSthDmiT42wg52Y56USEA9
+ QCNwlsEZydp/Bh0lC1dkvG9DQkTTwux9Tfw3+AQNMMtU13zLeX7BaOlWIKgpa3gWfZth
+ lK5ZSQ8loURTYOvhUm6AsxGoIwYGyPEk+4MbPUn9l4Zz07hbuVL6YZgyZusxKNOiPzED
+ An1OomtHbs1NjKIK4hkts6y6pCBhljE4HkKS2cZ7eXndhYDfDt5+2++X3JxhOow8G2/w 9w== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2sugstg46f-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 05 Jun 2019 00:42:17 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x550fqel153338;
-        Wed, 5 Jun 2019 00:42:16 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 2swnghn48f-1
+        Wed, 05 Jun 2019 00:42:19 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x550ebh5116348;
+        Wed, 5 Jun 2019 00:42:18 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2swnhbw1em-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 05 Jun 2019 00:42:16 +0000
+        Wed, 05 Jun 2019 00:42:18 +0000
 Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x550gFkx027460;
-        Wed, 5 Jun 2019 00:42:15 GMT
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x550gHm5014121;
+        Wed, 5 Jun 2019 00:42:17 GMT
 Received: from ca-common-hq.us.oracle.com (/10.211.9.209)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 04 Jun 2019 17:42:14 -0700
+        with ESMTP ; Tue, 04 Jun 2019 17:42:16 -0700
 From:   Divya Indi <divya.indi@oracle.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Srinivas Eeda <srinivas.eeda@oracle.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [RFC] Kernel Access to Ftrace instances. 
-Date:   Tue,  4 Jun 2019 17:42:02 -0700
-Message-Id: <1559695325-17155-1-git-send-email-divya.indi@oracle.com>
+        Steven Rostedt <rostedt@goodmis.org>,
+        Divya Indi <divya.indi@oracle.com>
+Subject: [PATCH 1/3] tracing: Relevant changes for kernel access to Ftrace instances.
+Date:   Tue,  4 Jun 2019 17:42:03 -0700
+Message-Id: <1559695325-17155-2-git-send-email-divya.indi@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1559695325-17155-1-git-send-email-divya.indi@oracle.com>
+References: <1559695325-17155-1-git-send-email-divya.indi@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9278 signatures=668687
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=695
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1810050000 definitions=main-1906050001
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9278 signatures=668687
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
  suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=741 adultscore=0
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
  definitions=main-1906050001
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,16 +67,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, 
-Please Review the patches that follow. These include -
+For commit (f45d122): tracing: Kernel access to Ftrace instances.
+We need the following additional changes to ensure other kernel components can
+use these functions -
+1) Remove static keyword for newly exported fn - ftrace_set_clr_event.
+2) Add the req functions to header file include/linux/trace_events.h.
 
-[PATCH 1/3] tracing: Relevant changes for kernel access to Ftrace instances.
-[PATCH 2/3] tracing: Adding additional NULL checks.
-[PATCH 3/3] tracing: Add 2 new funcs. for kernel access to Ftrace instances.
+Signed-off-by: Divya Indi <divya.indi@oracle.com>
+---
+ include/linux/trace_events.h | 6 ++++++
+ kernel/trace/trace_events.c  | 2 +-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-Let me know if you have any concerns or questions. 
+diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+index 8a62731..d7b7d85 100644
+--- a/include/linux/trace_events.h
++++ b/include/linux/trace_events.h
+@@ -539,6 +539,12 @@ extern int trace_define_field(struct trace_event_call *call, const char *type,
+ 
+ #define is_signed_type(type)	(((type)(-1)) < (type)1)
+ 
++void trace_printk_init_buffers(void);
++int trace_array_printk(struct trace_array *tr, unsigned long ip,
++		const char *fmt, ...);
++struct trace_array *trace_array_create(const char *name);
++int trace_array_destroy(struct trace_array *tr);
++int ftrace_set_clr_event(struct trace_array *tr, char *buf, int set);
+ int trace_set_clr_event(const char *system, const char *event, int set);
+ 
+ /*
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index 0ce3db6..b6b4618 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -795,7 +795,7 @@ static int __ftrace_set_clr_event(struct trace_array *tr, const char *match,
+ 	return ret;
+ }
+ 
+-static int ftrace_set_clr_event(struct trace_array *tr, char *buf, int set)
++int ftrace_set_clr_event(struct trace_array *tr, char *buf, int set)
+ {
+ 	char *event = NULL, *sub = NULL, *match;
+ 	int ret;
+-- 
+1.8.3.1
 
-A sample module demonstrating the use of the above functions will follow soon. 
-
-Thanks,
-Divya
