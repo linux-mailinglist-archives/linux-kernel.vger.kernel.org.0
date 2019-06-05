@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F0AE35E22
+	by mail.lfdr.de (Postfix) with ESMTP id 84A3135E23
 	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 15:42:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728101AbfFENmZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 09:42:25 -0400
+        id S1728133AbfFENm2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 09:42:28 -0400
 Received: from mga14.intel.com ([192.55.52.115]:51941 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728033AbfFENmU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 09:42:20 -0400
+        id S1728074AbfFENmX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 09:42:23 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 06:42:19 -0700
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 06:42:22 -0700
 X-ExtLoop1: 1
 Received: from xxx.igk.intel.com ([10.237.93.170])
-  by orsmga004.jf.intel.com with ESMTP; 05 Jun 2019 06:42:17 -0700
+  by orsmga004.jf.intel.com with ESMTP; 05 Jun 2019 06:42:20 -0700
 From:   =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
         <amadeuszx.slawinski@linux.intel.com>
 To:     alsa-devel@alsa-project.org
@@ -30,9 +30,9 @@ Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
         linux-kernel@vger.kernel.org,
         =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
         <amadeuszx.slawinski@linux.intel.com>
-Subject: [PATCH 01/14] ASoC: Intel: Skylake: Initialize lists before access so they are safe to use
-Date:   Wed,  5 Jun 2019 15:45:43 +0200
-Message-Id: <20190605134556.10322-2-amadeuszx.slawinski@linux.intel.com>
+Subject: [PATCH 02/14] ALSA: hdac: fix memory release for SST and SOF drivers
+Date:   Wed,  5 Jun 2019 15:45:44 +0200
+Message-Id: <20190605134556.10322-3-amadeuszx.slawinski@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190605134556.10322-1-amadeuszx.slawinski@linux.intel.com>
 References: <20190605134556.10322-1-amadeuszx.slawinski@linux.intel.com>
@@ -44,67 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If skl_probe_work() was not run driver ends up dereferencing NULL
-pointer when operating on lists in skl_platform_unregister().
-To fix this initialize lists in skl_create(). Also run
-cancel_work_sync() before all cleanup functions, so we don't end up
-unnecessarily running probe work.
+During the integration of HDaudio support, we changed the way in which
+we get hdev in snd_hdac_ext_bus_device_init() to use one preallocated
+with devm_kzalloc(), however it still left kfree(hdev) in
+snd_hdac_ext_bus_device_exit(). It leads to oopses when trying to
+rmmod and modprobe. Fix it, by just removing kfree call.
 
-Easily reproducible with:
-while true; do modprobe snd_soc_skl; rmmod snd_soc_skl; done
-(with the assumption that relevant drivers are added to blacklist on
-system boot)
+SOF also uses some of the snd_hdac_ functions for HDAudio support but
+allocated the memory with kzalloc. A matching fix is provided
+separately to align all users of the snd_hdac_ library.
 
+Fixes: 6298542fa33b ("ALSA: hdac: remove memory allocation from snd_hdac_ext_bus_device_init")
+Reviewed-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- sound/soc/intel/skylake/skl-pcm.c | 3 ---
- sound/soc/intel/skylake/skl.c     | 5 ++++-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ sound/hda/ext/hdac_ext_bus.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/sound/soc/intel/skylake/skl-pcm.c b/sound/soc/intel/skylake/skl-pcm.c
-index 9735e2412251..2a0ba40d8098 100644
---- a/sound/soc/intel/skylake/skl-pcm.c
-+++ b/sound/soc/intel/skylake/skl-pcm.c
-@@ -1486,9 +1486,6 @@ int skl_platform_register(struct device *dev)
- 	struct hdac_bus *bus = dev_get_drvdata(dev);
- 	struct skl *skl = bus_to_skl(bus);
+diff --git a/sound/hda/ext/hdac_ext_bus.c b/sound/hda/ext/hdac_ext_bus.c
+index c203af71a099..f33ba58b753c 100644
+--- a/sound/hda/ext/hdac_ext_bus.c
++++ b/sound/hda/ext/hdac_ext_bus.c
+@@ -170,7 +170,6 @@ EXPORT_SYMBOL_GPL(snd_hdac_ext_bus_device_init);
+ void snd_hdac_ext_bus_device_exit(struct hdac_device *hdev)
+ {
+ 	snd_hdac_device_exit(hdev);
+-	kfree(hdev);
+ }
+ EXPORT_SYMBOL_GPL(snd_hdac_ext_bus_device_exit);
  
--	INIT_LIST_HEAD(&skl->ppl_list);
--	INIT_LIST_HEAD(&skl->bind_list);
--
- 	skl->dais = kmemdup(skl_platform_dai, sizeof(skl_platform_dai),
- 			    GFP_KERNEL);
- 	if (!skl->dais) {
-diff --git a/sound/soc/intel/skylake/skl.c b/sound/soc/intel/skylake/skl.c
-index f864f7b3df3a..6d6401410250 100644
---- a/sound/soc/intel/skylake/skl.c
-+++ b/sound/soc/intel/skylake/skl.c
-@@ -438,7 +438,6 @@ static int skl_free(struct hdac_bus *bus)
- 
- 	snd_hdac_ext_bus_exit(bus);
- 
--	cancel_work_sync(&skl->probe_work);
- 	if (IS_ENABLED(CONFIG_SND_SOC_HDAC_HDMI)) {
- 		snd_hdac_display_power(bus, HDA_CODEC_IDX_CONTROLLER, false);
- 		snd_hdac_i915_exit(bus);
-@@ -867,6 +866,9 @@ static int skl_create(struct pci_dev *pci,
- 	hbus = skl_to_hbus(skl);
- 	bus = skl_to_bus(skl);
- 
-+	INIT_LIST_HEAD(&skl->ppl_list);
-+	INIT_LIST_HEAD(&skl->bind_list);
-+
- #if IS_ENABLED(CONFIG_SND_SOC_INTEL_SKYLAKE_HDAUDIO_CODEC)
- 	ext_ops = snd_soc_hdac_hda_get_ops();
- #endif
-@@ -1116,6 +1118,7 @@ static void skl_remove(struct pci_dev *pci)
- 	struct hdac_bus *bus = pci_get_drvdata(pci);
- 	struct skl *skl = bus_to_skl(bus);
- 
-+	cancel_work_sync(&skl->probe_work);
- 	release_firmware(skl->tplg);
- 
- 	pm_runtime_get_noresume(&pci->dev);
 -- 
 2.17.1
 
