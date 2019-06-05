@@ -2,85 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E3DD36320
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 20:10:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2C1D36331
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 20:13:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726658AbfFESKo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 14:10:44 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35778 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726421AbfFESKo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 14:10:44 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 80482374;
-        Wed,  5 Jun 2019 11:10:43 -0700 (PDT)
-Received: from [10.37.8.36] (unknown [10.37.8.36])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9984F3F5AF;
-        Wed,  5 Jun 2019 11:10:37 -0700 (PDT)
-Subject: Re: [PATCH 10/13] drivers: Introduce variants of class_find_device()
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, rafael@kernel.org,
-        a.zummo@towertech.it, alex.aring@gmail.com,
-        alexander.shishkin@linux.intel.com, alexandre.belloni@bootlin.com,
-        andrew@lunn.ch, arnd@arndb.de, dmurphy@ti.com, davem@davemloft.net,
-        f.fainelli@gmail.com, freude@linux.ibm.com,
-        heikki.krogerus@linux.intel.com, heiko.carstens@de.ibm.com,
-        hkallweit1@gmail.com, jacek.anaszewski@gmail.com, jslaby@suse.com,
-        lgirdwood@gmail.com, linux-leds@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-wpan@vger.kernel.org, broonie@kernel.org,
-        mcoquelin.stm32@gmail.com, pavel@ucw.cz, peda@axentia.se,
-        stefan@datenfreihafen.org, tomas.winkler@intel.com,
-        rafael.j.wysocki@intel.com
-References: <1559747630-28065-1-git-send-email-suzuki.poulose@arm.com>
- <1559747630-28065-11-git-send-email-suzuki.poulose@arm.com>
- <20190605161439.GB17272@kroah.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <24e8617f-2e15-bb6c-a6bb-bc9e6b32aa56@arm.com>
-Date:   Wed, 5 Jun 2019 19:13:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1726606AbfFESNt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 14:13:49 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:46030 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726280AbfFESNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 14:13:48 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0807330C1205;
+        Wed,  5 Jun 2019 18:13:33 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-85.bos.redhat.com [10.18.17.85])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5ACEF2B3CC;
+        Wed,  5 Jun 2019 18:13:28 +0000 (UTC)
+Subject: Re: [PATCH v8 15/19] locking/rwsem: Adaptive disabling of reader
+ optimistic spinning
+From:   Waiman Long <longman@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        huang ying <huang.ying.caritas@gmail.com>
+References: <20190520205918.22251-1-longman@redhat.com>
+ <20190520205918.22251-16-longman@redhat.com>
+ <20190604092008.GJ3402@hirez.programming.kicks-ass.net>
+ <8e7d19ea-f2e6-f441-6ab9-cbff6d96589c@redhat.com>
+ <20190604173853.GG3419@hirez.programming.kicks-ass.net>
+ <f7f9b778-4f1a-7460-a7ae-1d4e3dd37181@redhat.com>
+ <20190604181426.GH3419@hirez.programming.kicks-ass.net>
+ <db89a086-3719-cea5-e24e-339085728c29@redhat.com>
+Organization: Red Hat
+Message-ID: <46e44f43-87fd-251b-3b83-89a8bb3b407f@redhat.com>
+Date:   Wed, 5 Jun 2019 14:13:27 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190605161439.GB17272@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <db89a086-3719-cea5-e24e-339085728c29@redhat.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Wed, 05 Jun 2019 18:13:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+On 6/4/19 2:21 PM, Waiman Long wrote:
+> On 6/4/19 2:14 PM, Peter Zijlstra wrote:
+>>> I worked on this owner merging patch mainly to alleviate the need to use
+>>> cmpxchg for reader lock. cmpxchg_double() is certainly one possible
+>>> solution though it won't work on older CPUs. We can have a config option
+>>> to use cmpxchg_double as it may increase the size of other structures
+>>> that embedded rwsem and impose additional alignment constraint.
+>> cmpxchg8b was introduced with the Pentium (for PAE IIRC, it enabled
+>> atomic 64bit PTEs, but Linux never used it for that) and every Intel/AMD
+>> thereafter has had it. AFAIK there's no x86_64 chip without cmpxchg16b.
+> Thank for the clarification. I actually didn't check when cmpxch8b was
+> introduced. I know it is a bit slower than regular cmpxchg. So we may
+> still need to do some performance analysis to see how it compares with
+> my current approach.
 
-On 06/05/2019 05:14 PM, Greg KH wrote:
-> On Wed, Jun 05, 2019 at 04:13:47PM +0100, Suzuki K Poulose wrote:
->> +/**
->> + * class_find_device_by_devt : device iterator for locating a particular device
->> + * matching the device type.
->> + * @class: class type
->> + * @start: device to start search from
->> + * @devt: device type of the device to match.
->> + */
->> +static inline struct device *class_find_device_by_devt(struct class *class,
->> +						       struct device *start,
->> +						       dev_t devt)
->> +{
->> +	return class_find_device(class, start, &devt, device_match_devt);
->> +}
-> 
-> Still has the start parameter, despite the changelog saying it would not
-> :(
-> 
+Using cmpxchg_double is actually more risky than I thought. I have been
+trying to try to use cmpxchg_double for down_write, but I kept getting
+kernel panics because the rwsem wasn't 16b-aligned. As rwsem is embedded
+in quite a large number of structures, they all have to align properly
+to make that work or the kernel will panic. That does seem too risky to
+me. So I am dropping the idea of trying to use it.
 
-Well, I kept the start parameter just for the _devt variants, as
-mentioned in the changelog:
+Cheers,
+Longman
 
-" The new wrappers except the lookup by devt, drops the "start" device 
-pointer as none of the existing users need it and the attributes are 
-usually unique. The idea is to stop the proliferation of custom match.."
-
-Somehow I thought the dev_t may be duplicate for devices, which is why
-I didn't change that alone. But that was silly of me to ignore the minor
-number part. I will respin it fixing that.
-
-Suzuki
