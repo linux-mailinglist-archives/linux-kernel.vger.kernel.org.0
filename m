@@ -2,132 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88B26354B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 02:19:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4266D354C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 02:42:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726691AbfFEATn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 20:19:43 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40109 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726566AbfFEATm (ORCPT
+        id S1726635AbfFEAms (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 20:42:48 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:35928 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726536AbfFEAms (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 20:19:42 -0400
-Received: by mail-lj1-f193.google.com with SMTP id a21so6256194ljh.7
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 17:19:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wdmJ9l6dKN/M8KJKaReWlFRx3EElIyLoR59kmGQ0ajY=;
-        b=mWp51IFY9ldz1n3pj1fKrjbn8ZSGPWgwyelkcW6/s7v+y0e0DR/V8GR1ZxM1BsBeAX
-         mqVaa/tfXDd/6MEO1OGM22zX0t4jPSi2d71oCngZuhbWkZxio6+sFzeQvWqDrIYIpJuw
-         nH2s7y3MrUSzM3dAVIORTn4j8f2hTE4FKXFXiB6vbyOyWM+8sm7qnuJAdZe0dYu2FmQB
-         G/4Hd50+HcTF52V70z6ii5Z+BoWQp+0M49tLLSAs+EJ/ROKxeK9GHDSjTGCoNxZTB406
-         eMV8PQsiA3EH2MFRRpS50GYwQWxdJ7xN9x1Gd1qekPsZCFSmXsLb0mvz92xMWF6zHTLn
-         it2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wdmJ9l6dKN/M8KJKaReWlFRx3EElIyLoR59kmGQ0ajY=;
-        b=hyg58QQGJB1xJVFpSEOj0igvJyy6RWpGDCeBFxmlLGQWJQh33ti3cS+y3gp9hDDqiI
-         D1eIRYH8350b3FMemsa4S6X06wOONvk4ZjLCC+567LxOjmL9U3Jl+tuOTMwwbBYaF5v9
-         YiXQMFkGudgAIhLP/8UC6Ogg+9/RTcjed4wFApxjqSk+WOZbPqIOecuMKbYTkfISqFHj
-         TcZXbUZspCvWw3yIh7BPLMCIG9ez8WDggxU37cnSz73ubYBMwK4NJPG+VI3dVn4YmCCR
-         M2jzeZ8DHHkdpYLDBfVSGFwvVBT/mIYrKS5v2DK6zUqXN/JYbPryKY8Ev3ahzU/34uiK
-         p5rw==
-X-Gm-Message-State: APjAAAVNLwOSACr6Mkv842JHEwlKg5oNQpTkzq8KldY7jTdpntfLEOms
-        phpVPSQnD2BMUkdPoEnMU+OUe0EXUj/L6uGWODmbqg==
-X-Google-Smtp-Source: APXvYqz12ZqA7QhRnSs7NCGRounbiJim0N2d6mvCnGBaDXvxAiRpIwE1RpZWUzCT4YdYhAmjp6wliW9IQj3YJNSuaRI=
-X-Received: by 2002:a2e:9e8e:: with SMTP id f14mr3500ljk.120.1559693980056;
- Tue, 04 Jun 2019 17:19:40 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190514221711.248228-1-brendanhiggins@google.com>
- <20190514221711.248228-4-brendanhiggins@google.com> <20190517174300.7949F20848@mail.kernel.org>
-In-Reply-To: <20190517174300.7949F20848@mail.kernel.org>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Tue, 4 Jun 2019 17:19:28 -0700
-Message-ID: <CAFd5g45WrARi7eXsVKyq2eJH5j+wSrCCaHHSHrMptG7+MnNiTg@mail.gmail.com>
-Subject: Re: [PATCH v4 03/18] kunit: test: add string_stream a std::stream
- like string builder
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Frank Rowand <frowand.list@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Kees Cook <keescook@google.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>, shuah <shuah@kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        kunit-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-um@lists.infradead.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Petr Mladek <pmladek@suse.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Rientjes <rientjes@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 4 Jun 2019 20:42:48 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x550YVLj169502;
+        Wed, 5 Jun 2019 00:42:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=2jG9iwigPRzzzQOoYAjs0CPAiPKopiiGwTpAa90JsUg=;
+ b=Ne8s69nYB1yGka7zesaxSW7bZ+gl+EXxRZS6w3ek5JEoexVSWnk8qcPXhgoacvQfsLwx
+ mCaALcKa00+LI4whTL3nAOBAAzM67lu4oXZcPsl8523cZrGhhslDIPDGQEMygSYPTDz3
+ 6sbRArKHWUFCKcDt1zWH5AS+l2dbMouLmqXnthrXb2ChQQ8LLz3tNkSfM0MUdvO8psKP
+ AF10PQDvoM/JEhbFBV3p9BKhJ3diUYUXiYwrE08eZ6hhey5j7ehBsVpQndSZCG5b2PVk
+ jKfTd6vpQpkjyd87L7OMIJ8uIqrXE4u29tNC/NJygrNazmoMt+UMZtoTML2Ij0R1bC3B Fw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2suj0qg13j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 05 Jun 2019 00:42:17 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x550fqel153338;
+        Wed, 5 Jun 2019 00:42:16 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2swnghn48f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 05 Jun 2019 00:42:16 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x550gFkx027460;
+        Wed, 5 Jun 2019 00:42:15 GMT
+Received: from ca-common-hq.us.oracle.com (/10.211.9.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 04 Jun 2019 17:42:14 -0700
+From:   Divya Indi <divya.indi@oracle.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Srinivas Eeda <srinivas.eeda@oracle.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [RFC] Kernel Access to Ftrace instances. 
+Date:   Tue,  4 Jun 2019 17:42:02 -0700
+Message-Id: <1559695325-17155-1-git-send-email-divya.indi@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9278 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=695
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906050001
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9278 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=741 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906050001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 17, 2019 at 10:43 AM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Brendan Higgins (2019-05-14 15:16:56)
-> > A number of test features need to do pretty complicated string printing
-> > where it may not be possible to rely on a single preallocated string
-> > with parameters.
-> >
-> > So provide a library for constructing the string as you go similar to
-> > C++'s std::string.
-> >
-> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
->
-> Is there any reason why we can't use the seqfile API for this? These
-> both share a similar goal, formatting strings into a buffer to be read
-> later. Maybe some new APIs would be needed to extract the buffer
-> differently, but I hope we could share the code.
+Hi, 
+Please Review the patches that follow. These include -
 
-I can see why you are asking. It seems as though they are trying to do
-*similar* things, and it seems possible that we might be able to
-extract some common functionality out of seq_file that could replace
-this; however, it looks like it would be require a significant
-refactoring of seq_file to separate out the file system specific bits
-from the more general stringbuilder functionality.
+[PATCH 1/3] tracing: Relevant changes for kernel access to Ftrace instances.
+[PATCH 2/3] tracing: Adding additional NULL checks.
+[PATCH 3/3] tracing: Add 2 new funcs. for kernel access to Ftrace instances.
 
-In my opinion, a refactoring like this makes no sense in this
-patchset; it probably belongs in its own patchset (preferably as a
-follow on). I also am not sure if the FS people would appreciate
-indirection that serves them no benefit, but I can ask if you like.
+Let me know if you have any concerns or questions. 
 
-> If it can't be used, can you please add the reasoning to the commit text
-> here?
+A sample module demonstrating the use of the above functions will follow soon. 
 
-Will do.
-
-Thanks!
+Thanks,
+Divya
