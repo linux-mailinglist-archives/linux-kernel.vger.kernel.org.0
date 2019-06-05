@@ -2,69 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1474B358B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 10:37:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A663C358C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 10:40:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726927AbfFEIhj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 04:37:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52566 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726885AbfFEIhi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 04:37:38 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B76D4AB87;
-        Wed,  5 Jun 2019 08:37:37 +0000 (UTC)
-Subject: Re: [PATCH v2 3/3] xen/swiotlb: remember having called
- xen_create_contiguous_region()
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        xen-devel@lists.xenproject.org
-References: <20190529090407.1225-1-jgross@suse.com>
- <20190529090407.1225-4-jgross@suse.com>
- <20190530090409.GB30428@infradead.org>
- <eebb0275-9418-717f-97d7-5e55917f46fd@oracle.com>
- <2fbfc6a7-572c-1ce2-3323-802f9a77500e@suse.com>
-From:   Juergen Gross <jgross@suse.com>
-Message-ID: <0fcd8b61-7714-2278-e552-f0b72d9c5d1a@suse.com>
-Date:   Wed, 5 Jun 2019 10:37:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726937AbfFEIkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 04:40:01 -0400
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:32776 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726757AbfFEIkA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 04:40:00 -0400
+Received-SPF: Pass (esa4.microchip.iphmx.com: domain of
+  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="Claudiu.Beznea@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa4.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa4.microchip.iphmx.com; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
+X-IronPort-AV: E=Sophos;i="5.60,550,1549954800"; 
+   d="scan'208";a="35658394"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 05 Jun 2019 01:40:00 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex03.mchp-main.com (10.10.87.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Wed, 5 Jun 2019 01:39:59 -0700
+Received: from NAM02-BL2-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.87.72) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5 via Frontend
+ Transport; Wed, 5 Jun 2019 01:39:59 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sZ4kuQTYUGt9Re2dSCz1OsSrPeQ3KrZk3vR8EDZGnjs=;
+ b=mk3PlU3jHSkNsBs5aaz5xzCuVum11zhv3rE6OW/yeE+lGR5LzkjSaY2cUhU4ZOC0gngXYIpYmi1Je2xJjtwjfSc0PmugPcauYGF7Y0If92Te6ipv2WHnY4Pvk/D/XivfBGA+7OrPSRoTW9DURikH+vfopjVMdCNYyJbpW1UvXtM=
+Received: from MWHPR11MB1549.namprd11.prod.outlook.com (10.172.54.17) by
+ MWHPR11MB1326.namprd11.prod.outlook.com (10.169.232.135) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1965.12; Wed, 5 Jun 2019 08:39:54 +0000
+Received: from MWHPR11MB1549.namprd11.prod.outlook.com
+ ([fe80::316b:7774:8db6:30ec]) by MWHPR11MB1549.namprd11.prod.outlook.com
+ ([fe80::316b:7774:8db6:30ec%7]) with mapi id 15.20.1943.018; Wed, 5 Jun 2019
+ 08:39:54 +0000
+From:   <Claudiu.Beznea@microchip.com>
+To:     <sam@ravnborg.org>
+CC:     <thierry.reding@gmail.com>, <linux-pwm@vger.kernel.org>,
+        <alexandre.belloni@bootlin.com>, <bbrezillon@kernel.org>,
+        <airlied@linux.ie>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <Ludovic.Desroches@microchip.com>,
+        <daniel@ffwll.ch>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [RESEND][PATCH v3 0/6] add LCD support for SAM9X60
+Thread-Topic: [RESEND][PATCH v3 0/6] add LCD support for SAM9X60
+Thread-Index: AQHU+2NzxFOsw6p3b0iYuTBfPVB4RaZgDjOAgCvdRQCAAF3mAIAAtEsA
+Date:   Wed, 5 Jun 2019 08:39:54 +0000
+Message-ID: <b0c867a3-4bb1-4e3d-cfa1-803c5a8bd607@microchip.com>
+References: <1556195748-11106-1-git-send-email-claudiu.beznea@microchip.com>
+ <20190507182713.GA16862@ravnborg.org>
+ <c361b013-2d98-76e3-d30f-cec83000933c@microchip.com>
+ <20190604215424.GA1959@ravnborg.org>
+In-Reply-To: <20190604215424.GA1959@ravnborg.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR0701CA0035.eurprd07.prod.outlook.com
+ (2603:10a6:800:90::21) To MWHPR11MB1549.namprd11.prod.outlook.com
+ (2603:10b6:301:c::17)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tagtoolbar-keys: D20190605113942134
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: c743e925-6302-4e2f-aa4a-08d6e991616f
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:MWHPR11MB1326;
+x-ms-traffictypediagnostic: MWHPR11MB1326:
+x-microsoft-antispam-prvs: <MWHPR11MB1326D74F8A03D2FC0CDC7CFE87160@MWHPR11MB1326.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 00594E8DBA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(136003)(39860400002)(376002)(366004)(199004)(189003)(51914003)(54534003)(99286004)(72206003)(25786009)(76176011)(102836004)(52116002)(53936002)(6246003)(54906003)(6436002)(386003)(3846002)(6506007)(53546011)(14454004)(86362001)(6116002)(4326008)(478600001)(31686004)(68736007)(6512007)(8676002)(81156014)(316002)(4744005)(5660300002)(2906002)(8936002)(229853002)(6916009)(81166006)(305945005)(7416002)(6486002)(7736002)(31696002)(66946007)(66556008)(476003)(66446008)(64756008)(486006)(11346002)(446003)(2616005)(26005)(186003)(71190400001)(71200400001)(66066001)(256004)(36756003)(14444005)(73956011)(66476007);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR11MB1326;H:MWHPR11MB1549.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: M1yxJD/fVKbJnYeHu3n+jVJgevYSam8IO4vG78CJ0uyYzDrupTg6oAmq73fJLejTzF5egI/R9hVx1fSB5WT5VMLaHBlFkereLI+/UmDzzyojkRn1SchKRyRb/ILXKWHnH74TiZoAy5fJDdnu9puYunoYDpjSE/v9ixLO9gtOCMJEK/xBKi+eUXJAFSa1bqqOp2RpRSGdrBiEdcgubzyK9IeB/WtaZ9SbjhKBpCFIdjEMrCxJgzZth5vZGDiTfGgn0ao1mx3mI3Bpj4IQzNyaCzO3Ni1OQt8XTUQvayzpzuJTak0A3UlBUtn204guwj7GEI8y9ZmoMPw0lPzsZz0xCn1rKgwnAt1w+n26lxHyTxmm7fnTp3SikuQJbOn2WWvQDhJQCxCUD5fQXTetKSUVXtWd18T/G0dWDmMzafJDQik=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <FEB6224F58D15849822188E05B50093F@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <2fbfc6a7-572c-1ce2-3323-802f9a77500e@suse.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: c743e925-6302-4e2f-aa4a-08d6e991616f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jun 2019 08:39:54.1417
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: claudiu.beznea@microchip.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1326
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31.05.19 13:38, Juergen Gross wrote:
-> On 30/05/2019 14:46, Boris Ostrovsky wrote:
->> On 5/30/19 5:04 AM, Christoph Hellwig wrote:
->>> Please don't add your private flag to page-flags.h.  The whole point of
->>> the private flag is that you can use it in any way you want withou
->>> touching the common code.
->>
->>
->> There is already a bunch of aliases for various sub-components
->> (including Xen) in page-flags.h for private flags, which is why I
->> suggested we do the same for the new use case. Adding this new alias
->> will keep flag usage consistent.
-> 
-> What about me adding another patch moving those Xen private aliases
-> into arch/x86/include/asm/xen/page.h ?
-
-This is becoming difficult.
-
-I'd need to remove the "#undef PF_NO_COMPOUND" from page-flags.h or to
-#include a (new) xen/page-flags.h from page-flags.h after all the
-defines are ready. Is that really worth the effort given that other
-components (e.g. file systems) are doing the same?
-
-
-Juergen
+DQoNCk9uIDA1LjA2LjIwMTkgMDA6NTQsIFNhbSBSYXZuYm9yZyB3cm90ZToNCj4gSGkgQ2xhdWRp
+dS4NCj4gDQo+IE9uIFR1ZSwgSnVuIDA0LCAyMDE5IGF0IDA0OjE4OjMzUE0gKzAwMDAsIENsYXVk
+aXUuQmV6bmVhQG1pY3JvY2hpcC5jb20gd3JvdGU6DQo+PiBIaSBTYW0sDQo+Pg0KPj4gT24gMDcu
+MDUuMjAxOSAyMToyNywgU2FtIFJhdm5ib3JnIHdyb3RlOg0KPj4+IEV4dGVybmFsIEUtTWFpbA0K
+Pj4+DQo+Pj4NCj4+PiBIaSBUaGllcnJ5Lg0KPj4+DQo+Pj4+ICAgcHdtOiBhdG1lbC1obGNkYzog
+YWRkIGNvbXBhdGlibGUgZm9yIFNBTTlYNjAgSExDREMncyBQV00NCj4+PiBPSyB0byBhZGQgdGhl
+ICJwd206IGF0bWVsLWhsY2RjOiBhZGQgY29tcGF0aWJsZSBmb3IgU0FNOVg2MCBITENEQydzIFBX
+TSINCj4+PiBwYXRjaCB2aWEgZHJtLW1pc2M/DQo+Pj4gVGhlbiB3ZSBjYW4gYWRkIGFsbCA2IHBh
+dGNoZXMgaW4gb25lIGdvLg0KPj4NCj4+IFNpbmNlIHdlIGRvbid0IGhhdmUgYW4gYW5zd2VyIGZy
+b20gVGhpZXJyeSB0aWxsIG5vdywgZG8geW91IHRoaW5rIGl0IGNvdWxkDQo+PiBiZSBmZWFzaWJs
+ZSB0byB0YWtlIHRoZSByZXN0IG9mIHRoZSBwYXRjaGVzIGluIHRoaXMgc2VyaWVzPyBBZnRlciB0
+aGF0IEkNCj4+IHdpbGwgcmUtc2VuZCB0aGUgUFdNIHBhdGNoIHRvIFBXTSBsaXN0Lg0KPiANCj4g
+VGhhbmtzIGZvciB0aGUgcmVtaW5kZXIuDQo+IA0KPiBQYXRjaGVzIDEsMiBhbmQgNCw1LDYgYXBw
+bGllZCB0byBkcm0tbWlzYy1uZXh0Lg0KPiANCj4gUmV3b3JkZWQgY2hhbmdlbG9nIGEgYml0IGlu
+IHBhdGNoIDYuDQoNClRoYW5rIHlvdSwNCkNsYXVkaXUNCg0KPiANCj4gCVNhbQ0KPiANCg==
