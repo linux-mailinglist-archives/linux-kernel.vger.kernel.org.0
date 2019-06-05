@@ -2,94 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DF3F35613
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 06:58:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 267D33561E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 07:07:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726608AbfFEE6u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 00:58:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42216 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725268AbfFEE6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 00:58:50 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4EC602083E;
-        Wed,  5 Jun 2019 04:58:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559710729;
-        bh=DEf0Y+bhQL478Uky0AAR8FzgVDMCNOv8h9CVgUfkA2k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=q2gD34iPnsroQVtI3ep7Kp1IB2RIVemKkGlksaJ8CwIFffKNJJrcDJv1XxCjjzsm9
-         UyMmf3AVftsNzK5xwXyJJPsdq5LdJFK6EodMpMcWtsCbPYJMF8/tpLs1wBxamavn4S
-         ITJQs9/VPmEfj5n1r6VjGdgTcln2yaJHpBg18FyA=
-Date:   Wed, 5 Jun 2019 06:58:46 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-Subject: Re: [PATCH AUTOSEL 5.1 06/60] driver core: platform: Fix the usage
- of platform device name(pdev->name)
-Message-ID: <20190605045846.GA21363@kroah.com>
-References: <20190604232212.6753-1-sashal@kernel.org>
- <20190604232212.6753-6-sashal@kernel.org>
+        id S1726536AbfFEFHP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 01:07:15 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.50]:11915 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725950AbfFEFHP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 01:07:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1559711232;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=9HrfA+nGUIofb4uzcr10lyOFJZGIK/MX9HZYtnlp2N0=;
+        b=m1jS+/qWgsAcKqHLEUoAdRIA0CDHZE3XbS3WSzimXKBSrXaj0dAvnyhz3OFspYAK17
+        jyEgCbMPDTbMg8ksF1tR+45y3k7IaC3YFr48KoPUu5+Y8wASbxgTFPbXGLhOfyM8vZ2O
+        0WZjzF4xM0F5ZaDFaHHU0TF7HuD8mX9bUbZBzx6/2WjnKnctHwvgwLEPWxoho541symj
+        +2uiyzASZ2GLyOLk3HMomN+Ecfq/dI/jqsNQXMLQVPmihiseL4SIqpXbHIHebqz4Ho40
+        U2OPD2pSsOgLslZwlfDguD6aWGJfzCGm5v3qMNAO0h0y23pXW8MfxziDiGTuBpxM0vQa
+        f+ew==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1OAA2UNf2MzN9Qq6uM="
+X-RZG-CLASS-ID: mo00
+Received: from iMac.fritz.box
+        by smtp.strato.de (RZmta 44.22 DYNA|AUTH)
+        with ESMTPSA id i01b98v55573A1A
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Wed, 5 Jun 2019 07:07:03 +0200 (CEST)
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, tomi.valkeinen@ti.com,
+        imirkin@alum.mit.edu, marek.belisko@gmail.com
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, letux-kernel@openphoenux.org,
+        "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: [PATCH v2 0/2] drm/panel-simple: Add panel parameters for ortustech-com37h3m05dtc/99dtc and sharp-lq070y3dg3b
+Date:   Wed,  5 Jun 2019 07:07:01 +0200
+Message-Id: <cover.1559711222.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190604232212.6753-6-sashal@kernel.org>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 04, 2019 at 07:21:16PM -0400, Sasha Levin wrote:
-> From: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-> 
-> [ Upstream commit edb16da34b084c66763f29bee42b4e6bb33c3d66 ]
-> 
-> Platform core is using pdev->name as the platform device name to do
-> the binding of the devices with the drivers. But, when the platform
-> driver overrides the platform device name with dev_set_name(),
-> the pdev->name is pointing to a location which is freed and becomes
-> an invalid parameter to do the binding match.
-> 
-> use-after-free instance:
-> 
-> [   33.325013] BUG: KASAN: use-after-free in strcmp+0x8c/0xb0
-> [   33.330646] Read of size 1 at addr ffffffc10beae600 by task modprobe
-> [   33.339068] CPU: 5 PID: 518 Comm: modprobe Tainted:
-> 			G S      W  O      4.19.30+ #3
-> [   33.346835] Hardware name: MTP (DT)
-> [   33.350419] Call trace:
-> [   33.352941]  dump_backtrace+0x0/0x3b8
-> [   33.356713]  show_stack+0x24/0x30
-> [   33.360119]  dump_stack+0x160/0x1d8
-> [   33.363709]  print_address_description+0x84/0x2e0
-> [   33.368549]  kasan_report+0x26c/0x2d0
-> [   33.372322]  __asan_report_load1_noabort+0x2c/0x38
-> [   33.377248]  strcmp+0x8c/0xb0
-> [   33.380306]  platform_match+0x70/0x1f8
-> [   33.384168]  __driver_attach+0x78/0x3a0
-> [   33.388111]  bus_for_each_dev+0x13c/0x1b8
-> [   33.392237]  driver_attach+0x4c/0x58
-> [   33.395910]  bus_add_driver+0x350/0x560
-> [   33.399854]  driver_register+0x23c/0x328
-> [   33.403886]  __platform_driver_register+0xd0/0xe0
-> 
-> So, use dev_name(&pdev->dev), which fetches the platform device name from
-> the kobject(dev->kobj->name) of the device instead of the pdev->name.
-> 
-> Signed-off-by: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  drivers/base/platform.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+V2:
+* fix typo in 99dtc panel compatible string (reported by imirkin@alum.mit.edu)
 
-Please drop this from everywhere as it was reverted from Linus's tree
-because it causes big problems.
+V1:
 
-thanks,
+Since v5.2-rc1 OMAP is no longer using a special display driver architecture
+for DPI panels, but uses the general drm/panel/panel-simple.
 
-greg k-h
+So we finally can add SoC independent panel definitions for two panel models
+which we already had worked on quite a while ago (before device tree was
+introduced):
+
+	https://patchwork.kernel.org/patch/2851295/
+
+
+
+H. Nikolaus Schaller (2):
+  drm/panel: simple: Add Sharp LQ070Y3DG3B panel support
+  drm/panel: simple: Add Ortustech COM37H3M panel support
+
+ drivers/gpu/drm/panel/panel-simple.c | 63 ++++++++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
+
+-- 
+2.19.1
+
