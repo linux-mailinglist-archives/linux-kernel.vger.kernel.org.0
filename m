@@ -2,99 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFD0B3601E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 17:16:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B57FF36020
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 17:16:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728675AbfFEPPE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 11:15:04 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33644 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728510AbfFEPPC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 11:15:02 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD78F1682;
-        Wed,  5 Jun 2019 08:15:01 -0700 (PDT)
-Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2BD483F246;
-        Wed,  5 Jun 2019 08:15:00 -0700 (PDT)
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        suzuki.poulose@arm.com, Eric Anholt <eric@anholt.net>,
-        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-        Inki Dae <inki.dae@samsung.com>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>
-Subject: [PATCH 13/13] platform: Add platform_find_device_by_driver() helper
-Date:   Wed,  5 Jun 2019 16:13:50 +0100
-Message-Id: <1559747630-28065-14-git-send-email-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1559747630-28065-1-git-send-email-suzuki.poulose@arm.com>
-References: <1559747630-28065-1-git-send-email-suzuki.poulose@arm.com>
+        id S1728688AbfFEPPl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 11:15:41 -0400
+Received: from mga12.intel.com ([192.55.52.136]:43679 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728132AbfFEPPl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 11:15:41 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 08:15:40 -0700
+X-ExtLoop1: 1
+Received: from araresx-wtg1.ger.corp.intel.com (HELO localhost) ([10.252.46.102])
+  by fmsmga001.fm.intel.com with ESMTP; 05 Jun 2019 08:15:30 -0700
+Date:   Wed, 5 Jun 2019 18:15:24 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Cedric Xing <cedric.xing@intel.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-sgx@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, Serge Ayoun <serge.ayoun@intel.com>,
+        Shay Katz-zamir <shay.katz-zamir@intel.com>,
+        Haitao Huang <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kai Svahn <kai.svahn@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Kai Huang <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        William Roberts <william.c.roberts@intel.com>,
+        Philip Tricca <philip.b.tricca@intel.com>
+Subject: Re: [RFC PATCH 2/9] x86/sgx: Do not naturally align MAP_FIXED address
+Message-ID: <20190605151524.GJ11331@linux.intel.com>
+References: <20190531233159.30992-1-sean.j.christopherson@intel.com>
+ <20190531233159.30992-3-sean.j.christopherson@intel.com>
+ <20190604114951.GC30594@linux.intel.com>
+ <CALCETrVe0jhAWAFmx+NFEjJcijSJv2LDVC7cUXi0w99kNKjh_g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrVe0jhAWAFmx+NFEjJcijSJv2LDVC7cUXi0w99kNKjh_g@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide a helper to lookup platform devices by matching device
-driver in order to avoid drivers trying to use platform bus
-internals.
+On Tue, Jun 04, 2019 at 01:16:04PM -0700, Andy Lutomirski wrote:
+> On Tue, Jun 4, 2019 at 4:50 AM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > On Fri, May 31, 2019 at 04:31:52PM -0700, Sean Christopherson wrote:
+> > > SGX enclaves have an associated Enclave Linear Range (ELRANGE) that is
+> > > tracked and enforced by the CPU using a base+mask approach, similar to
+> > > how hardware range registers such as the variable MTRRs.  As a result,
+> > > the ELRANGE must be naturally sized and aligned.
+> > >
+> > > To reduce boilerplate code that would be needed in every userspace
+> > > enclave loader, the SGX driver naturally aligns the mmap() address and
+> > > also requires the range to be naturally sized.  Unfortunately, SGX fails
+> > > to grant a waiver to the MAP_FIXED case, e.g. incorrectly rejects mmap()
+> > > if userspace is attempting to map a small slice of an existing enclave.
+> > >
+> > > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> >
+> > Why you want to allow mmap() to be called multiple times? mmap() could
+> > be allowed only once with PROT_NONE and denied afterwards. Is this for
+> > sending fd to another process that would map already existing enclave?
+> >
+> > I don't see any checks for whether the is enclave underneath. Also, I
+> > think that in all cases mmap() callback should allow only PROT_NONE
+> > as permissions for clarity even if it could called multiple times.
+> >
+> 
+> What's the advantage to only allowing PROT_NONE?  The idea here is to
+> allow a PROT_NONE map followed by some replacemets that overlay it for
+> the individual segments.  Admittedly, mprotect() can do the same
+> thing, but disallowing mmap() seems at least a bit surprising.
 
-Cc: Eric Anholt <eric@anholt.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Heiko Stübner" <heiko@sntech.de>
-Cc: Inki Dae <inki.dae@samsung.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Sandy Huang <hjc@rock-chips.com>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- drivers/base/platform.c         | 14 ++++++++++++++
- include/linux/platform_device.h |  3 +++
- 2 files changed, 17 insertions(+)
+I was merely wondering if it is specifically for the application where a
+client process would mmap(MAP_FIXED) an enclave created by a server
+process.
 
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index 4d17298..158ac24 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -1197,6 +1197,20 @@ struct bus_type platform_bus_type = {
- };
- EXPORT_SYMBOL_GPL(platform_bus_type);
- 
-+/**
-+ * platform_find_device_by_driver - Find a platform device with a given
-+ * driver.
-+ * @start: The device to start the search from.
-+ * @drv: The device driver to look for.
-+ */
-+struct device *platform_find_device_by_driver(struct device *start,
-+					      const struct device_driver *drv)
-+{
-+	return bus_find_device(&platform_bus_type, start, drv,
-+			       (void *)platform_match);
-+}
-+EXPORT_SYMBOL_GPL(platform_find_device_by_driver);
-+
- int __init platform_bus_init(void)
- {
- 	int error;
-diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
-index cc46485..36aa775 100644
---- a/include/linux/platform_device.h
-+++ b/include/linux/platform_device.h
-@@ -52,6 +52,9 @@ extern struct device platform_bus;
- extern void arch_setup_pdev_archdata(struct platform_device *);
- extern struct resource *platform_get_resource(struct platform_device *,
- 					      unsigned int, unsigned int);
-+extern struct device *
-+platform_find_device_by_driver(struct device * dev,
-+			       const struct device_driver *drv);
- extern void __iomem *
- devm_platform_ioremap_resource(struct platform_device *pdev,
- 			       unsigned int index);
--- 
-2.7.4
-
+/Jarkko
