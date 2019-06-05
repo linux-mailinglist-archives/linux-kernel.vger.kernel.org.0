@@ -2,188 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B0FD3645C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 21:15:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 946943648C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 21:18:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726700AbfFETO7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 15:14:59 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:46847 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726645AbfFETO5 (ORCPT
+        id S1726747AbfFETSG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 15:18:06 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43056 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726530AbfFETSG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 15:14:57 -0400
-Received: by mail-pl1-f196.google.com with SMTP id e5so8304562pls.13
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 12:14:56 -0700 (PDT)
+        Wed, 5 Jun 2019 15:18:06 -0400
+Received: by mail-wr1-f67.google.com with SMTP id r18so11615192wrm.10
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 12:18:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3Rc60lsJ3z1zOjfi7ksD28e6ywcaQlCBCKfGl8ThP5g=;
-        b=wl9zOlVGzsak3W0n9srNqt6xTicaVMXyvuV62ylpgplp0YgPU7AxCF2aoOl4RB2iC5
-         6cPYPEmWEcxRkhSQT57mRJKRMLXCedtcqKwMwsOGUFlinvg03O+6j6DGB/fUMSIL09V+
-         wbvrFegoqrdRMWReviAaArKT1XKDv7Q3UdZInx0oUItNDGwcSfHj0y3P/XbhDxVRBZ0D
-         1yCB6OValT1P7bMoLKXsiTopYfc7JTB1ixy+cTPwWdKa2YzQE2Wk+wXa6s4NUj8y8Dfc
-         D9FBIWE1C6kkbzPxlvNmqGmNa6Z9G3Xpa+E2YU9W+JqS/kkBUZJxb5rYvg85KIW0DsTX
-         h0Mw==
+        d=kinvolk.io; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZHKa8UUAI/1Pj5REqATA4zW8nm5JTzi55W6sOf5RHPs=;
+        b=Sys2i/MD9135pbUQm2IA2lulB160+0KHKQmb/RLaKMSPNR5ERUFqkNZqBd6ZHpJhmd
+         e4Cg+lnMWo4nsbbYIFn2iR36b7Enhy1CkpsuystlmGOc59GIDGdHSEUq6PDd+a7Yp3k3
+         IHAz9M3GbBgTv/AYPQ3sB4sFR0R4UHc5u3F/4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3Rc60lsJ3z1zOjfi7ksD28e6ywcaQlCBCKfGl8ThP5g=;
-        b=IxEXvSFll1syvFA1uiaAcVW/GleimKJ8w4M8ZiSXOjTmAFI65Y7IuJu/Z8YQRBpq/m
-         dhFS4tJpHlG312WMH+RSL5xhHUTg7SCYF7yqjb3LhBnCEO3aBM0jB2oVDFPKDqmGrWmT
-         UxUGdN9VVA+iCldtbvVb0DZSQTNhP/zG3+hWwCieuhU9AxNFp3WZC9x5gWpvzjtMkDGI
-         wV6kFqpJvzaPwDo21ZsYwqlnEW9IuRQFk1ZfM05yxVzbghLUTI8xUR6dGGQ5gXNFM4AM
-         l2SNX6M0woESJ+lAsjB7OAjvTuxo6aeglpD6+2MSod7RiTdTIDFJ04ACjKAWFLqBDncp
-         kRCg==
-X-Gm-Message-State: APjAAAUTUL5biA/k4g5cPjdseww0xVdj9VJYS5kP5YuSNYTMdIGif9G/
-        HzTko3qODY8B0buytgYEQYbkZw==
-X-Google-Smtp-Source: APXvYqz+h4aRHxX//DbbKSqnGBRk+YbQMFSEIS2PAURYu4NSWDUnLwqSRo+mFseHlHHDfgCMaf9Iyw==
-X-Received: by 2002:a17:902:2ba7:: with SMTP id l36mr45371487plb.334.1559762096439;
-        Wed, 05 Jun 2019 12:14:56 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id t15sm21182517pjb.6.2019.06.05.12.14.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Jun 2019 12:14:55 -0700 (PDT)
-Date:   Wed, 5 Jun 2019 12:14:53 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     alokc@codeaurora.org, kramasub@codeaurora.org,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        wsa+renesas@sang-engineering.com, linus.walleij@linaro.org,
-        balbi@kernel.org, gregkh@linuxfoundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        jlhugo@gmail.com, linux-i2c@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH 7/8] usb: dwc3: qcom: Start USB in 'host mode' on the
- SDM845
-Message-ID: <20190605191453.GJ4814@minitux>
-References: <20190604104455.8877-1-lee.jones@linaro.org>
- <20190604104455.8877-7-lee.jones@linaro.org>
- <20190605070029.GN22737@tuxbook-pro>
- <20190605083454.GO4797@dell>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZHKa8UUAI/1Pj5REqATA4zW8nm5JTzi55W6sOf5RHPs=;
+        b=VmUK2D6ttDcEQiNAopLWfE1ZHosV1npgRb3BVKbijadsB8+NV/FH8KTQy3R/E68UvD
+         oTINMO9wtf7bLL/OtCOCal+J/+nFuQe8iyazLMt3vfIm7eViFJz6eJ6It3cpBJ6BYtzj
+         YmG/elMDSDOPGO3bqpC+I7ikvHKvmVBuWV7PTHT0I+37YJBjZf2Mc/5SLYb5l4MBpB/e
+         N1T19ZEQAgQF1Qn5YWHAtLdSHszD7z1vhi3cJZLkDNF5sIG4B03tRQD3GbaWNRLR2hVT
+         MQhGvk8RZhvgNtinLg9f1k++oj/AOVuDOI489ILoqBLNJwo3eNY3PuXdnay5HslfsQiU
+         kw4A==
+X-Gm-Message-State: APjAAAXWr3NIqvi6n7ffoissOt2M3frbTtNttbZZJuiXmcdLBNsGvmRk
+        45rQb9nL5mgZReXPaHSxPXP0Ng==
+X-Google-Smtp-Source: APXvYqzZiBuE8ulYjDrJz20818uUQcpSe7jdJE8UZeRzu0L0qCG2gg7pP0YrWgV1LTK80w8SAuJXvg==
+X-Received: by 2002:a5d:680a:: with SMTP id w10mr5115453wru.42.1559762284615;
+        Wed, 05 Jun 2019 12:18:04 -0700 (PDT)
+Received: from localhost.localdomain (ip5f5aebaf.dynamic.kabel-deutschland.de. [95.90.235.175])
+        by smtp.gmail.com with ESMTPSA id h23sm13781580wmb.25.2019.06.05.12.18.02
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 05 Jun 2019 12:18:03 -0700 (PDT)
+From:   Krzesimir Nowak <krzesimir@kinvolk.io>
+To:     bpf@vger.kernel.org
+Cc:     Alban Crequy <alban@kinvolk.io>,
+        =?UTF-8?q?Iago=20L=C3=B3pez=20Galeiras?= <iago@kinvolk.io>,
+        Krzesimir Nowak <krzesimir@kinvolk.io>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Stanislav Fomichev <sdf@google.com>,
+        Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>,
+        Okash Khawaja <osk@fb.com>,
+        David Calavera <david.calavera@gmail.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [BPF v1] tools: bpftool: Fix JSON output when lookup fails
+Date:   Wed,  5 Jun 2019 21:17:06 +0200
+Message-Id: <20190605191707.24429-1-krzesimir@kinvolk.io>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190605083454.GO4797@dell>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 05 Jun 01:34 PDT 2019, Lee Jones wrote:
+In commit 9a5ab8bf1d6d ("tools: bpftool: turn err() and info() macros
+into functions") one case of error reporting was special cased, so it
+could report a lookup error for a specific key when dumping the map
+element. What the code forgot to do is to wrap the key and value keys
+into a JSON object, so an example output of pretty JSON dump of a
+sockhash map (which does not support looking up its values) is:
 
-> On Wed, 05 Jun 2019, Bjorn Andersson wrote:
-> 
-> > On Tue 04 Jun 03:44 PDT 2019, Lee Jones wrote:
-> > 
-> > > When booting with Device Tree, the current default boot configuration
-> > > table option, the request to boot via 'host mode' comes from the
-> > > "dr_mode" property.
-> > 
-> > This has been the default on the MTP, but this is changing as this is
-> > causing issues when connected downstream from a hub (the typical
-> > development case for the primary USB port of a phone like device) and
-> > more importantly we don't have support for the PMIC blocks that control
-> > VBUS.
-> 
-> My point is not about which mode is currently chosen.  It's more about
-> the capability of choosing which mode is appropriate for a given
-> system via DT.
-> 
-> > Once these issues are resolved the dr_mode would be "otg".
-> 
-> OTG doesn't work on this H/W, so we need to specify "host" mode.
-> 
+[
+    "key": ["0x0a","0x41","0x00","0x02","0x1f","0x78","0x00","0x00"
+    ],
+    "value": {
+        "error": "Operation not supported"
+    },
+    "key": ["0x0a","0x41","0x00","0x02","0x1f","0x78","0x00","0x01"
+    ],
+    "value": {
+        "error": "Operation not supported"
+    }
+]
 
-My objection is that when you say "this H/W" you mean a particular
-product, but you're making this decision for all SDM845 based products
-using ACPI.
+Note the key-value pairs inside the toplevel array. They should be
+wrapped inside a JSON object, otherwise it is an invalid JSON. This
+commit fixes this, so the output now is:
 
-I don't know if there is a Windows phone based on SDM845, but if there
-is then I don't think forcing it to host would be correct.
+[{
+        "key": ["0x0a","0x41","0x00","0x02","0x1f","0x78","0x00","0x00"
+        ],
+        "value": {
+            "error": "Operation not supported"
+        }
+    },{
+        "key": ["0x0a","0x41","0x00","0x02","0x1f","0x78","0x00","0x01"
+        ],
+        "value": {
+            "error": "Operation not supported"
+        }
+    }
+]
 
-> > > A property of the same name can be used inside
-> > > ACPI tables too.  However it is missing from the SDM845's ACPI tables
-> > > so we have to supply this information using Platform Device Properites
-> > > instead.
-> > > 
-> > 
-> > Afaict this would install a fall-back property, so in the case that we
-> > have specified dr_mode in DT (or ACPI) that would take precedence. So
-> 
-> That's correct.
-> 
-> > the commit message should reflect that this redefines the default choice
-> > to be "host", rather than "otg".
-> 
-> No problem.
-> 
-> > Which is in conflict with what's described for dr_mode in
-> > Documentation/devicetree/bindings/usb/generic.txt
-> 
-> This implementation only affects ACPI based platforms.  When booting
-> with DT, the description in that DT related document is still
-> accurate.
-> 
+Fixes: 9a5ab8bf1d6d ("tools: bpftool: turn err() and info() macros into functions")
+Cc: Quentin Monnet <quentin.monnet@netronome.com>
+Signed-off-by: Krzesimir Nowak <krzesimir@kinvolk.io>
+---
+ tools/bpf/bpftool/map.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-You're right, I got lost between the patches and the sprinkled if
-(ACPI_HANDLE()) in the probe. This is only added for ACPI.
+diff --git a/tools/bpf/bpftool/map.c b/tools/bpf/bpftool/map.c
+index 3ec82904ccec..5da5a7311f13 100644
+--- a/tools/bpf/bpftool/map.c
++++ b/tools/bpf/bpftool/map.c
+@@ -716,12 +716,14 @@ static int dump_map_elem(int fd, void *key, void *value,
+ 		return 0;
+ 
+ 	if (json_output) {
++		jsonw_start_object(json_wtr);
+ 		jsonw_name(json_wtr, "key");
+ 		print_hex_data_json(key, map_info->key_size);
+ 		jsonw_name(json_wtr, "value");
+ 		jsonw_start_object(json_wtr);
+ 		jsonw_string_field(json_wtr, "error", strerror(lookup_errno));
+ 		jsonw_end_object(json_wtr);
++		jsonw_end_object(json_wtr);
+ 	} else {
+ 		const char *msg = NULL;
+ 
+-- 
+2.20.1
 
-> > And this driver is used on a range of different Qualcomm platforms, so I
-> > don't think this is SDM845 specific.
-> 
-> ACPI based platforms?
-> 
-> All the ones I've seen use the XHCI USB driver directly ("PNP0D10").
->  
-
-MSM8998 (835) has the same controller, so this should affect those
-laptops as well.
-
-Regards,
-Bjorn
-
-> > > Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> > > ---
-> > >  drivers/usb/dwc3/dwc3-qcom.c | 12 ++++++++++++
-> > >  1 file changed, 12 insertions(+)
-> > > 
-> > > diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
-> > > index 349bf549ee44..f21fdd6cdd1a 100644
-> > > --- a/drivers/usb/dwc3/dwc3-qcom.c
-> > > +++ b/drivers/usb/dwc3/dwc3-qcom.c
-> > > @@ -468,6 +468,11 @@ static const struct acpi_device_id dwc3_qcom_acpi_match[] = {
-> > >  };
-> > >  MODULE_DEVICE_TABLE(acpi, dwc3_qcom_acpi_match);
-> > >  
-> > > +static const struct property_entry dwc3_qcom_acpi_properties[] = {
-> > > +	PROPERTY_ENTRY_STRING("dr_mode", "host"),
-> > > +	{}
-> > > +};
-> > > +
-> > >  static int dwc3_qcom_probe(struct platform_device *pdev)
-> > >  {
-> > >  	struct device_node	*np = pdev->dev.of_node, *dwc3_np;
-> > > @@ -603,6 +608,13 @@ static int dwc3_qcom_probe(struct platform_device *pdev)
-> > >  			goto platform_unalloc;
-> > >  		}
-> > >  
-> > > +		ret = platform_device_add_properties(qcom->dwc3,
-> > > +						     dwc3_qcom_acpi_properties);
-> > > +		if (ret < 0) {
-> > > +			dev_err(&pdev->dev, "failed to add properties\n");
-> > > +			goto platform_unalloc;
-> > > +		}
-> > > +
-> > >  		ret = platform_device_add(qcom->dwc3);
-> > >  		if (ret) {
-> > >  			dev_err(&pdev->dev, "failed to add device\n");
-> 
-> -- 
-> Lee Jones [?????????]
-> Linaro Services Technical Lead
-> Linaro.org ??? Open source software for ARM SoCs
-> Follow Linaro: Facebook | Twitter | Blog
