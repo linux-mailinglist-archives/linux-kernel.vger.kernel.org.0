@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 026EC35E30
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 15:43:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E92B35E24
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 15:42:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728302AbfFENnZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 09:43:25 -0400
+        id S1728160AbfFENmd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 09:42:33 -0400
 Received: from mga14.intel.com ([192.55.52.115]:51941 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728103AbfFENmZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 09:42:25 -0400
+        id S1728127AbfFENm2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 09:42:28 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 06:42:25 -0700
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 06:42:28 -0700
 X-ExtLoop1: 1
 Received: from xxx.igk.intel.com ([10.237.93.170])
-  by orsmga004.jf.intel.com with ESMTP; 05 Jun 2019 06:42:22 -0700
+  by orsmga004.jf.intel.com with ESMTP; 05 Jun 2019 06:42:25 -0700
 From:   =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
         <amadeuszx.slawinski@linux.intel.com>
 To:     alsa-devel@alsa-project.org
@@ -29,10 +29,11 @@ Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
         Cezary Rojewski <cezary.rojewski@intel.com>,
         linux-kernel@vger.kernel.org,
         =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
-        <amadeuszx.slawinski@intel.com>
-Subject: [PATCH 03/14] ALSA: hdac: Fix codec name after machine driver is unloaded and reloaded
-Date:   Wed,  5 Jun 2019 15:45:45 +0200
-Message-Id: <20190605134556.10322-4-amadeuszx.slawinski@linux.intel.com>
+        <amadeuszx.slawinski@linux.intel.com>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH 04/14] ASoC: compress: Fix memory leak from snd_soc_new_compress
+Date:   Wed,  5 Jun 2019 15:45:46 +0200
+Message-Id: <20190605134556.10322-5-amadeuszx.slawinski@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190605134556.10322-1-amadeuszx.slawinski@linux.intel.com>
 References: <20190605134556.10322-1-amadeuszx.slawinski@linux.intel.com>
@@ -44,59 +45,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amadeusz Sławiński <amadeuszx.slawinski@intel.com>
+Change kzalloc to devm_kzalloc, so compr gets automatically freed when
+it's no longer needed.
 
-This resets internal index used for enumarating codecs. This will only
-work on assumption that platform has one codec. Anyway if there is more,
-it won't work with current machine drivers, because we can't guarantee
-order in which they are enumerated. This workarounds the fact that most
-intel machine drivers have the following defined:
-.codec_name = "ehdaudio0D2",
-However when we unload and reload machine driver idx gets incremented,
-so .codec_name would've needed to be set to ehdaudio1D2 on first reload
-and so on.
-
-Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@intel.com>
+Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
 ---
- sound/hda/ext/hdac_ext_bus.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ sound/soc/soc-compress.c | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
 
-diff --git a/sound/hda/ext/hdac_ext_bus.c b/sound/hda/ext/hdac_ext_bus.c
-index f33ba58b753c..c84d69c2eba4 100644
---- a/sound/hda/ext/hdac_ext_bus.c
-+++ b/sound/hda/ext/hdac_ext_bus.c
-@@ -77,6 +77,8 @@ static const struct hdac_io_ops hdac_ext_default_io = {
- 	.dma_free_pages = hdac_ext_dma_free_pages,
- };
+diff --git a/sound/soc/soc-compress.c b/sound/soc/soc-compress.c
+index 03d5b9ccd3fc..ddef4ff677ce 100644
+--- a/sound/soc/soc-compress.c
++++ b/sound/soc/soc-compress.c
+@@ -896,16 +896,14 @@ int snd_soc_new_compress(struct snd_soc_pcm_runtime *rtd, int num)
+ 	else
+ 		direction = SND_COMPRESS_CAPTURE;
  
-+static int idx;
-+
- /**
-  * snd_hdac_ext_bus_init - initialize a HD-audio extended bus
-  * @ebus: the pointer to extended bus object
-@@ -93,7 +95,6 @@ int snd_hdac_ext_bus_init(struct hdac_bus *bus, struct device *dev,
- 			const struct hdac_ext_bus_ops *ext_ops)
- {
- 	int ret;
--	static int idx;
+-	compr = kzalloc(sizeof(*compr), GFP_KERNEL);
++	compr = devm_kzalloc(rtd->card->dev, sizeof(*compr), GFP_KERNEL);
+ 	if (!compr)
+ 		return -ENOMEM;
  
- 	/* check if io ops are provided, if not load the defaults */
- 	if (io_ops == NULL)
-@@ -118,6 +119,14 @@ EXPORT_SYMBOL_GPL(snd_hdac_ext_bus_init);
- void snd_hdac_ext_bus_exit(struct hdac_bus *bus)
- {
- 	snd_hdac_bus_exit(bus);
-+	/* FIXME: this is workaround
-+	 * reset index used for bus->idx, because machine drivers expect
-+	 * the codec name to be ehdaudio0D2, where 0 is bus->idx
-+	 * we only perform reset if there is one used device, if there is more
-+	 * all bets are off
-+	 */
-+	if (idx == 1)
-+		idx = 0;
- 	WARN_ON(!list_empty(&bus->hlink_list));
+ 	compr->ops = devm_kzalloc(rtd->card->dev, sizeof(soc_compr_ops),
+ 				  GFP_KERNEL);
+-	if (!compr->ops) {
+-		ret = -ENOMEM;
+-		goto compr_err;
+-	}
++	if (!compr->ops)
++		return -ENOMEM;
+ 
+ 	if (rtd->dai_link->dynamic) {
+ 		snprintf(new_name, sizeof(new_name), "(%s)",
+@@ -918,7 +916,7 @@ int snd_soc_new_compress(struct snd_soc_pcm_runtime *rtd, int num)
+ 			dev_err(rtd->card->dev,
+ 				"Compress ASoC: can't create compressed for %s: %d\n",
+ 				rtd->dai_link->name, ret);
+-			goto compr_err;
++			return ret;
+ 		}
+ 
+ 		rtd->pcm = be_pcm;
+@@ -954,7 +952,7 @@ int snd_soc_new_compress(struct snd_soc_pcm_runtime *rtd, int num)
+ 		dev_err(component->dev,
+ 			"Compress ASoC: can't create compress for codec %s: %d\n",
+ 			component->name, ret);
+-		goto compr_err;
++		return ret;
+ 	}
+ 
+ 	/* DAPM dai link stream work */
+@@ -965,10 +963,7 @@ int snd_soc_new_compress(struct snd_soc_pcm_runtime *rtd, int num)
+ 
+ 	dev_info(rtd->card->dev, "Compress ASoC: %s <-> %s mapping ok\n",
+ 		 codec_dai->name, cpu_dai->name);
+-	return ret;
+ 
+-compr_err:
+-	kfree(compr);
+-	return ret;
++	return 0;
  }
- EXPORT_SYMBOL_GPL(snd_hdac_ext_bus_exit);
+ EXPORT_SYMBOL_GPL(snd_soc_new_compress);
 -- 
 2.17.1
 
