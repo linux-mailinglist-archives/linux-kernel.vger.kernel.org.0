@@ -2,52 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34FB435F10
+	by mail.lfdr.de (Postfix) with ESMTP id A774C35F11
 	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 16:20:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728381AbfFEOUI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 10:20:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37964 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727893AbfFEOUG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 10:20:06 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 18EDEAF03;
-        Wed,  5 Jun 2019 14:20:05 +0000 (UTC)
-Date:   Wed, 5 Jun 2019 16:20:03 +0200
-From:   Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-To:     Juri Lelli <juri.lelli@redhat.com>
-Cc:     peterz@infradead.org, mingo@redhat.com, rostedt@goodmis.org,
-        lizefan@huawei.com, tj@kernel.org, bristot@redhat.com,
-        luca.abeni@santannapisa.it, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched/core: Fix cpu controller for !RT_GROUP_SCHED
-Message-ID: <20190605142003.GD4255@blackbody.suse.cz>
-References: <20190605114935.7683-1-juri.lelli@redhat.com>
+        id S1728405AbfFEOUi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 10:20:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38084 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727893AbfFEOUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 10:20:38 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26DEC20866;
+        Wed,  5 Jun 2019 14:20:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559744437;
+        bh=YJFidk1qyJXgXZTyC/dTIMXQADIcivIer6UuGe9JjpM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zbLd49e+BEyXdJ+c7KiopZLS7bK9yg9A2KM+0FiFY41iSSwyu87sNZ/SUaAac9tjR
+         NasvIBbrnm5oc6ncTm37edz8CNuB1fOojYHgTQYIm+tv6tarUVzI0KFSSnrC+WOdre
+         3o/aoLWgUYuZGTkXJMCbpx4gkH4ZKJQulhgL90sg=
+Date:   Wed, 5 Jun 2019 16:20:34 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Valerio Genovese <valerio.click@gmail.com>
+Cc:     isdn@linux-pingi.de, netdev@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: isdn: hysdn: fix symbol 'hysdn_proc_entry' was
+ not declared.
+Message-ID: <20190605142034.GA8803@kroah.com>
+References: <20190605135349.6840-1-valerio.click@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190605114935.7683-1-juri.lelli@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190605135349.6840-1-valerio.click@gmail.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 05, 2019 at 01:49:35PM +0200, Juri Lelli <juri.lelli@redhat.com> wrote:
-> Existing code comes with a comment saying the "we don't support RT-tasks
-> being in separate groups".
-I'm also inclined to this check not being completely correct.
+On Wed, Jun 05, 2019 at 03:53:49PM +0200, Valerio Genovese wrote:
+> This was reported by sparse:
+> drivers/staging/isdn/hysdn/hysdn_procconf.c:352:23: warning: symbol 'hysdn_proc_entry' was not declared. Should it be static?
+> 
+> Signed-off-by: Valerio Genovese <valerio.click@gmail.com>
+> ---
+>  drivers/staging/isdn/hysdn/hysdn_defs.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/isdn/hysdn/hysdn_defs.h b/drivers/staging/isdn/hysdn/hysdn_defs.h
+> index cdac46a21692..a651686b1787 100644
+> --- a/drivers/staging/isdn/hysdn/hysdn_defs.h
+> +++ b/drivers/staging/isdn/hysdn/hysdn_defs.h
+> @@ -221,7 +221,7 @@ typedef struct hycapictrl_info hycapictrl_info;
+>  /* exported vars */
+>  /*****************/
+>  extern hysdn_card *card_root;	/* pointer to first card */
+> -
+> +extern struct proc_dir_entry *hysdn_proc_entry; /* hysdn subdir in /proc/net
+>  
+>  
+>  /*************************/
 
-This guard also prevents enabling cpu controller on unified hierarchy
-with !CONFIG_RT_GROUP_SCHED. (If there are any kernel RT threads in root
-cgroup, they can't be migrated to the newly create cpu controller's root
-in cgroup_update_dfl_csses().)
+Shouldn't you also remove it from the place it was devlared as extern?
 
-I considered relaxing the check to non-root cgroups only, however, as
-your example shows, it doesn't prevent reaching the avoided state by
-other paths. I'm not that familiar with RT sched to tell whether
-RT-priority tasks in different task_groups break any assumptions.
+Also, this is code on its way out of the kernel, not a big deal to leave
+it alone for now.
 
-Michal
+thanks,
+
+greg k-h
