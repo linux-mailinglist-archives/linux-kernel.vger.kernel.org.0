@@ -2,115 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A27C36789
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 00:33:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFBFE3676E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 00:25:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726638AbfFEWdm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 18:33:42 -0400
-Received: from orion.archlinux.org ([88.198.91.70]:59074 "EHLO
-        orion.archlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726502AbfFEWdm (ORCPT
+        id S1726816AbfFEWZA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 18:25:00 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:46871 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726535AbfFEWY5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 18:33:42 -0400
-X-Greylist: delayed 317 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Jun 2019 18:33:40 EDT
-Received: from orion.archlinux.org (localhost [127.0.0.1])
-        by orion.archlinux.org (Postfix) with ESMTP id EB9D51321F5F3B;
-        Wed,  5 Jun 2019 22:28:21 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on orion
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.7 required=5.0 tests=ALL_TRUSTED=-1,BAYES_00=-1,
-        DMARC_FAIL_NONE=0.25,T_DMARC_POLICY_NONE=0.01,T_DMARC_TESTS_FAIL=0.01
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-BL-Results: 
-Received: from genesis (unknown [IPv6:2001:8a0:f24a:5600:a9ad:74ef:9537:685])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: ffy00)
-        by orion.archlinux.org (Postfix) with ESMTPSA;
-        Wed,  5 Jun 2019 22:28:21 +0000 (UTC)
-Message-ID: <0d998fe0ff4473be2a9341c1f5ddf55957d18ad8.camel@archlinux.org>
-Subject: Re: [PATCH v2 0/4] Read battery voltage from G403 and G900 mice
-From:   Filipe =?ISO-8859-1?Q?La=EDns?= <lains@archlinux.org>
-To:     Pedro Vanzella <pedro@pedrovanzella.com>,
-        linux-input@vger.kernel.org
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20190605194533.18717-1-pedro@pedrovanzella.com>
-References: <20190605194533.18717-1-pedro@pedrovanzella.com>
-Organization: Archlinux
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-b2wSQK5XfwPnbBz+78jy"
-Date:   Wed, 05 Jun 2019 23:24:18 +0100
+        Wed, 5 Jun 2019 18:24:57 -0400
+Received: by mail-io1-f68.google.com with SMTP id i10so229818iol.13
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 15:24:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=ENEfQXnBKgsiB2d36L6+P4CJJ9i3migBmA1QXIq3dJc=;
+        b=PH7N9pU/PcBPixEKjGT9dOemu7GSJnSM5tyYxvbdDhRJejXacgwteNTBAACtytrbZP
+         weVzwsXbz/aCam4SwCAzGMilMDQnThHw0SaOYdk8yU11bL11E1rJPMz91S58rggIkF5j
+         oaoYF+qjcdjYhWtebt8cZhNeV4F7XrOYpnaNE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ENEfQXnBKgsiB2d36L6+P4CJJ9i3migBmA1QXIq3dJc=;
+        b=ABhqnJDucpVPNpUJVEEAvi616Mt2hRaxF/OD9/U1paKbEMwgcNCXK7Ra3MytSDphky
+         o4pT7/O9Qm25JbDcaFUw5W6azTMCbPTOmg6lDUoxF45GMDPWVsjNlLp54tqsrcr+O1YX
+         i74CmDRzY14OeDJuEfM0a3aoC4mojxA41QuymLu67lRi0LTdS5WlAmVspQ9LIhbGAwWe
+         OWreH0yAZlhuz6xifc5zCCMUP0wKU3wT0gzVBCI5M81tKiuWIyoj10AscvY1PNMaLZdl
+         FiSOAgICOYbh4HA4RoTLLWmZO/kOV1TdenMDFRXXj8rN27iC5l2ovc1qQGIH+U/WcDaT
+         jsMg==
+X-Gm-Message-State: APjAAAWlFmTz+uLcAitPtYx0M9vzHlJo3TJHuPNGmdjalQKJ53rVU8NI
+        wlh8IYOXN2isJAlH+ZmkqWhKxe8iM0k/ig==
+X-Google-Smtp-Source: APXvYqwRcLhms5KzGFYcR9J+QtVNHLs9QmL3/RVh5ejTxlCMOAxyTHOOr/FR6F0PlBk41XT1AnPjsg==
+X-Received: by 2002:a6b:b602:: with SMTP id g2mr12815416iof.54.1559773496152;
+        Wed, 05 Jun 2019 15:24:56 -0700 (PDT)
+Received: from localhost ([2620:15c:183:200:33ce:f5cf:f863:d3a6])
+        by smtp.gmail.com with ESMTPSA id e3sm81783ith.18.2019.06.05.15.24.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Jun 2019 15:24:55 -0700 (PDT)
+From:   Fletcher Woodruff <fletcherw@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ben Zhang <benzh@chromium.org>, Jaroslav Kysela <perex@perex.cz>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Oder Chiou <oder_chiou@realtek.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Curtis Malainey <cujomalainey@chromium.org>,
+        Ross Zwisler <zwisler@chromium.org>,
+        alsa-devel@alsa-project.org,
+        Fletcher Woodruff <fletcherw@chromium.org>
+Subject: [PATCH v6 4/4] ASoC: rt5677: handle concurrent interrupts
+Date:   Wed,  5 Jun 2019 16:24:19 -0600
+Message-Id: <20190605222419.54479-5-fletcherw@chromium.org>
+X-Mailer: git-send-email 2.22.0.rc1.311.g5d7573a151-goog
+In-Reply-To: <20190605222419.54479-1-fletcherw@chromium.org>
+References: <20190507220115.90395-1-fletcherw@chromium.org>
+ <20190605222419.54479-1-fletcherw@chromium.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.32.2 
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Ben Zhang <benzh@chromium.org>
 
---=-b2wSQK5XfwPnbBz+78jy
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+The rt5677 driver writes to the IRQ control register within the IRQ
+handler in order to flip the polarity of the interrupts that have been
+signalled.  If an interrupt fires in the interval between the
+regmap_read and the regmap_write, it will not trigger a new call to
+rt5677_irq.
 
-On Wed, 2019-06-05 at 15:45 -0400, Pedro Vanzella wrote:
-> The gaming line of Logitech devices doesn't use the old hidpp20
-> feature
-> for battery level reporting. Instead, they report the current voltage
-> of the battery, in millivolts.
->=20
-> This patch set handles this case by adding a quirk to the devices we
-> know
-> to have this new feature, in both wired and wireless mode.
->=20
-> This version of the patch set is better split, as well as adding the
-> quirk to make sure we don't needlessly probe every device connected.
->=20
-> Pedro Vanzella (4):
->   HID: hid-logitech-hidpp: add quirk to handle battery voltage
->   HID: hid-logitech-hidpp: add function to query battery voltage
->   HID: hid-logitech-hidpp: report battery voltage to the power supply
->   HID: hid-logitech-hidpp: subscribe to battery voltage events
->=20
->  drivers/hid/hid-logitech-hidpp.c | 150
-> ++++++++++++++++++++++++++++++-
->  1 file changed, 147 insertions(+), 3 deletions(-)
->=20
+Add a bounded loop to rt5677_irq that keeps checking interrupts until
+none are seen, so that any interrupts that are signalled in that
+interval are correctly handled.
 
-Hello,
+Signed-off-by: Ben Zhang <benzh@chromium.org>
+Signed-off-by: Fletcher Woodruff <fletcherw@chromium.org>
+---
+ sound/soc/codecs/rt5677.c | 67 ++++++++++++++++++++++++---------------
+ 1 file changed, 42 insertions(+), 25 deletions(-)
 
-Why using quirks? 0x1001 is a feature, it should be discoverable in
-IFeatureSet (0x0001). I don't understand the need to hardcode the
-supported devices, HID++ exists specifically to prevent that.
+diff --git a/sound/soc/codecs/rt5677.c b/sound/soc/codecs/rt5677.c
+index 86555d7ec9ea8d..7f7e60aceb49d3 100644
+--- a/sound/soc/codecs/rt5677.c
++++ b/sound/soc/codecs/rt5677.c
+@@ -5071,38 +5071,55 @@ static const struct rt5677_irq_desc rt5677_irq_descs[] = {
+ static irqreturn_t rt5677_irq(int unused, void *data)
+ {
+ 	struct rt5677_priv *rt5677 = data;
+-	int ret = 0, i, reg_irq, virq;
++	int ret = 0, loop, i, reg_irq, virq;
+ 	bool irq_fired = false;
+ 
+ 	mutex_lock(&rt5677->irq_lock);
+-	/* Read interrupt status */
+-	ret = regmap_read(rt5677->regmap, RT5677_IRQ_CTRL1, &reg_irq);
+-	if (ret) {
+-		pr_err("rt5677: failed reading IRQ status: %d\n", ret);
+-		goto exit;
+-	}
+ 
+-	for (i = 0; i < RT5677_IRQ_NUM; i++) {
+-		if (reg_irq & rt5677_irq_descs[i].status_mask) {
+-			irq_fired = true;
+-			virq = irq_find_mapping(rt5677->domain, i);
+-			if (virq)
+-				handle_nested_irq(virq);
+-
+-			/* Clear the interrupt by flipping the polarity of the
+-			 * interrupt source line that fired
+-			 */
+-			reg_irq ^= rt5677_irq_descs[i].polarity_mask;
++	/*
++	 * Loop to handle interrupts until the last i2c read shows no pending
++	 * irqs. The interrupt line is shared by multiple interrupt sources.
++	 * After the regmap_read() below, a new interrupt source line may
++	 * become high before the regmap_write() finishes, so there isn't a
++	 * rising edge on the shared interrupt line for the new interrupt. Thus,
++	 * the loop is needed to avoid missing irqs.
++	 *
++	 * A safeguard of 20 loops is used to avoid hanging in the irq handler
++	 * if there is something wrong with the interrupt status update. The
++	 * interrupt sources here are audio jack plug/unplug events which
++	 * shouldn't happen at a high frequency for a long period of time.
++	 * Empirically, more than 3 loops have never been seen.
++	 */
++	for (loop = 0; loop < 20; loop++) {
++		/* Read interrupt status */
++		ret = regmap_read(rt5677->regmap, RT5677_IRQ_CTRL1, &reg_irq);
++		if (ret) {
++			pr_err("rt5677: failed reading IRQ status: %d\n", ret);
++			goto exit;
+ 		}
+-	}
+ 
+-	if (!irq_fired)
+-		goto exit;
++		irq_fired = false;
++		for (i = 0; i < RT5677_IRQ_NUM; i++) {
++			if (reg_irq & rt5677_irq_descs[i].status_mask) {
++				irq_fired = true;
++				virq = irq_find_mapping(rt5677->domain, i);
++				if (virq)
++					handle_nested_irq(virq);
++
++				/* Clear the interrupt by flipping the polarity
++				 * of the interrupt source line that fired
++				 */
++				reg_irq ^= rt5677_irq_descs[i].polarity_mask;
++			}
++		}
++		if (!irq_fired)
++			goto exit;
+ 
+-	ret = regmap_write(rt5677->regmap, RT5677_IRQ_CTRL1, reg_irq);
+-	if (ret) {
+-		pr_err("rt5677: failed updating IRQ status: %d\n", ret);
+-		goto exit;
++		ret = regmap_write(rt5677->regmap, RT5677_IRQ_CTRL1, reg_irq);
++		if (ret) {
++			pr_err("rt5677: failed updating IRQ status: %d\n", ret);
++			goto exit;
++		}
+ 	}
+ exit:
+ 	mutex_unlock(&rt5677->irq_lock);
+-- 
+2.22.0.rc1.311.g5d7573a151-goog
 
-Wasn't this what you started in your previous patch? Why move away from
-it?
-
-Thank you,
-Filipe La=C3=ADns
-3DCE 51D6 0930 EBA4 7858 BA41 46F6 33CB B0EB 4BF2
-
---=-b2wSQK5XfwPnbBz+78jy
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0jW0leqs33gyftiw+JPGdIFqqV0FAlz4QQkACgkQ+JPGdIFq
-qV2ohA//ZGUDKIds/DIp+6rdJeuW7H8UQ2th2gXAir3NclnfH+CaDpjpmxJs5Noi
-VHXI0ML8sakz8e0uOMbl6cY+0oxZyn6F754fb0FAY301ZhZz/L09SzzuPZI9eyNC
-Wpb+UWuf5K1trq5pmfJbE9Pw49s6K4i0G/rtut1R3lDF+QTxz1f0wohipKApk/Om
-IRMbWBli2hEI+FbXFtH8vdKrLYT884gbp/EooVBY8T3mJDIhxzQdFG7OpIAFYMJk
-QB5Aprw9nraCLHDnYOIxbmLvFU+yMKJFJxi43mHLR7FocVD3+uroxlIiRVYANHVs
-+Q43YdZfLgO6hXkAYVsCWtSXS1XgeZDaXiCFA+CZIqq+XkTBtXE3X2rE6Dg3nCgI
-TJdnQFZvCWLTtNaBHQSAE2iS38o24W+x7Go5Uj9UMIfDIoxoZigoCUQbk+VbaVxe
-WuprtmdZVhPPo2JzlhwWjMWOgzNeeMgceQnc8DHQyQGDAIPlJ4iX+23MFFAcRG1I
-48rX3ssO20e4H9+MDgxCFV6f27/yCAf/qSOXP5cgWFRt9LyeKzvr0aAEC4urx1Iq
-Kqrf6WLcypVJNpEBeP70J7ZEsJUkT75b4tYWzyRGnwA/1LhtMIunAFK7IexASkZk
-qzN9etW89nWgZb/XKLcJQ9Y3l8/4cCONbj6l7tVyIpzzKi94i04=
-=M0oI
------END PGP SIGNATURE-----
-
---=-b2wSQK5XfwPnbBz+78jy--
