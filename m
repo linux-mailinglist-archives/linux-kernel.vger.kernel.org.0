@@ -2,325 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6358535562
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 04:45:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D8AA3556A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 04:46:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbfFECpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 22:45:09 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:42794 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726708AbfFECpG (ORCPT
+        id S1726876AbfFECpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 22:45:50 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:40611 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726463AbfFECpu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 22:45:06 -0400
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x552j05H031912
-        for <linux-kernel@vger.kernel.org>; Tue, 4 Jun 2019 19:45:05 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=0SHoOhFKuZcfsmJPpk99bY607h8QTF2wVdFhMuuvmaA=;
- b=B02auHbMGsowHj38Qm/IrhmwYpylRytVXJfuYYIB91fIK2dMBX9909eUYyEbzVKeDIzC
- Vy6cIv4IjBwS2DveCpUnjIS2iNrjz+t2TIJPO1Tol5Yzr/b9YK7hXFbQ9ibkyKwG8igm
- 2TLMUF9dPEzcaBnQxf2MA19BrdAZaL1u3FQ= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2swx191ck2-9
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 19:45:05 -0700
-Received: from mx-out.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::6) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Tue, 4 Jun 2019 19:45:00 -0700
-Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
-        id 9C91612C7FDD4; Tue,  4 Jun 2019 19:44:58 -0700 (PDT)
-Smtp-Origin-Hostprefix: devvm
-From:   Roman Gushchin <guro@fb.com>
-Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-team@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Waiman Long <longman@redhat.com>, Roman Gushchin <guro@fb.com>
-Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH v6 10/10] mm: reparent slab memory on cgroup removal
-Date:   Tue, 4 Jun 2019 19:44:54 -0700
-Message-ID: <20190605024454.1393507-11-guro@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190605024454.1393507-1-guro@fb.com>
-References: <20190605024454.1393507-1-guro@fb.com>
-X-FB-Internal: Safe
+        Tue, 4 Jun 2019 22:45:50 -0400
+Received: by mail-qt1-f194.google.com with SMTP id a15so1871664qtn.7
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 19:45:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=BQfBVOtXcs0qzMIh6nmcxcUOcBUU3ej7Z8jgcon5kpQ=;
+        b=DGd6ZJMuCw4wWZb+/hxWOpe9FC4seEzDtRiNche1kXONtQmbx5I/TVyogo3MR8MUWg
+         HX6XrIaLRKq5qnBeAO1kziZycNh11yLibk5y5Z6zxNAz8FpGMDO4W8zjHpTOY48uxwh0
+         2yKqYIbwCADSDGxIwSiX7e67IIgsaFx29/f9EbgczyWWZ1017hDufsviKY6l9RCB28BB
+         yg10iQ1Zs85d6jclpSeI8s7DyqFvT0MEh22tb5XTElf2lZM+Z4VU2FdRWd5Q/dP15QjI
+         6AN1fOJ8cyAqtPqmjBSFFa2+GQ1DFLGRfKssCxSb3x/3Sz8OmAip2ggLGaejoPGMjZ3G
+         HksA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=BQfBVOtXcs0qzMIh6nmcxcUOcBUU3ej7Z8jgcon5kpQ=;
+        b=dR6M5dLV4hZ2BWdszf/CcSAHXEqPQTnmRfEQ0SKsnqEoGR3/yDnfFWMM+ZuwFSYE5Z
+         H7ZxT0SEYSTv91zNsrGjiIcIFz28uS8Jb8StfnEAL5YdxVnVkExgLpfcrcYbLTVEJdQw
+         gvxNkjzr6zUbN3Z6TY+1b9X65HlzdIPqQuzo6wr775vz4+7WNMJ2VPPGeRmOaMfMP0UJ
+         iLynGgEidsX/+xb129gwk5elUqrvedXN4zdJli9A57Hdvda0uYiSVzFUOlrjPuKJArYd
+         hP21kA21QPawS9IqvR3vPhc7Hptgme5gUoOBJu++ijEQoWgNx8GNj0hfbhU+z++dnoDH
+         gvWg==
+X-Gm-Message-State: APjAAAXeNb4PQgttlgkbdQuQFnlVFubwisfYAayrOp3ZemaPV+LNr34B
+        tXviXS+yUNhpMgJCRhD1JoqCia9JML4=
+X-Google-Smtp-Source: APXvYqyUU6pz3RkTE8SZvZU5kZk+A62iNXn5Zu4YkGvXgB2qdg6ofbFKPeKy+4/S47uUiSpQ815bRQ==
+X-Received: by 2002:aed:3804:: with SMTP id j4mr31335025qte.361.1559702748899;
+        Tue, 04 Jun 2019 19:45:48 -0700 (PDT)
+Received: from smtp.gmail.com ([187.121.151.146])
+        by smtp.gmail.com with ESMTPSA id k40sm9325569qta.50.2019.06.04.19.45.44
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 04 Jun 2019 19:45:48 -0700 (PDT)
+Date:   Tue, 4 Jun 2019 23:45:43 -0300
+From:   Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+To:     Simon Ser <simon.ser@intel.com>,
+        Ville Syrjala <ville.syrjala@linux.intel.com>,
+        Shayenne Moura <shayenneluzmoura@gmail.com>,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        18oliveira.charles@gmail.com
+Subject: [PATCH V2] drm/vkms: Avoid extra discount in the timestamp value
+Message-ID: <20190605024543.pcsnkf74mmgfhtuh@smtp.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-05_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906050015
-X-FB-Internal: deliver
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="fjpgzm34khffs6b6"
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's reparent memcg slab memory on memcg offlining. This allows us
-to release the memory cgroup without waiting for the last outstanding
-kernel object (e.g. dentry used by another application).
 
-So instead of reparenting all accounted slab pages, let's do reparent
-a relatively small amount of kmem_caches. Reparenting is performed as
-a part of the deactivation process.
+--fjpgzm34khffs6b6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Since the parent cgroup is already charged, everything we need to do
-is to splice the list of kmem_caches to the parent's kmem_caches list,
-swap the memcg pointer and drop the css refcounter for each kmem_cache
-and adjust the parent's css refcounter. Quite simple.
+After the commit def35e7c5926 ("drm/vkms: Bugfix extra vblank frame")
+some of the crc tests started to fail in the vkms with the following
+error:
 
-Please, note that kmem_cache->memcg_params.memcg isn't a stable
-pointer anymore. It's safe to read it under rcu_read_lock() or
-with slab_mutex held.
+ [drm:drm_crtc_add_crc_entry [drm]] *ERROR* Overflow of CRC buffer,
+    userspace reads too slow.
+ [drm] failed to queue vkms_crc_work_handle
+ ...
 
-We can race with the slab allocation and deallocation paths. It's not
-a big problem: parent's charge and slab global stats are always
-correct, and we don't care anymore about the child usage and global
-stats. The child cgroup is already offline, so we don't use or show it
-anywhere.
+The aforementioned commit fixed the extra vblank added by
+`drm_crtc_arm_vblank_event()` which is invoked inside
+`vkms_crtc_atomic_flush()` if the vblank event count was zero, otherwise
+`drm_crtc_send_vblank_event()` is invoked. The fix was implemented in
+`vkms_get_vblank_timestamp()` by subtracting one period from the current
+timestamp, as the code snippet below illustrates:
 
-Local slab stats (NR_SLAB_RECLAIMABLE and NR_SLAB_UNRECLAIMABLE)
-aren't used anywhere except count_shadow_nodes(). But even there it
-won't break anything: after reparenting "nodes" will be 0 on child
-level (because we're already reparenting shrinker lists), and on
-parent level page stats always were 0, and this patch won't change
-anything.
+ if (!in_vblank_irq)
+  *vblank_time -=3D output->period_ns;
 
-Signed-off-by: Roman Gushchin <guro@fb.com>
+The above fix works well when `drm_crtc_arm_vblank_event()` is invoked.
+However, it does not properly work when `drm_crtc_send_vblank_event()`
+executes since it subtracts the correct timestamp, which it shouldn't.
+In this case, the `drm_crtc_accurate_vblank_count()` function will
+returns the wrong frame number, which generates the aforementioned
+error. Such decrease in `get_vblank_timestamp()` produce a negative
+number in the following calculation within `drm_update_vblank_count()`:
+
+ u64 diff_ns =3D ktime_to_ns(ktime_sub(t_vblank, vblank->time));
+
+After this operation, the DIV_ROUND_CLOSEST_ULL macro is invoked using
+diff_ns with a negative number, which generates an undefined result;
+therefore, the returned frame is a huge and incorrect number. Finally,
+the code below is part of the `vkms_crc_work_handle()`, note that the
+while loop depends on the returned value from
+`drm_crtc_accurate_vblank_count()` which may cause the loop to take a
+long time to finish in case of huge value.
+
+ frame_end =3D drm_crtc_accurate_vblank_count(crtc);
+ while (frame_start <=3D frame_end)
+   drm_crtc_add_crc_entry(crtc, true, frame_start++, &crc32);
+
+This commit fixes this issue by checking if the vblank timestamp
+corresponding to the current software vblank counter is equal to the
+current vblank; if they are equal, it means that
+`drm_crtc_send_vblank_event()` was invoked and vkms does not need to
+discount the extra vblank, otherwise, `drm_crtc_arm_vblank_event()` was
+executed and vkms have to discount the extra vblank. This fix made the
+CRC tests work again whereas keep all tests from kms_flip working as
+well.
+
+V2: Update commit message
+
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Signed-off-by: Shayenne Moura <shayenneluzmoura@gmail.com>
 ---
- include/linux/slab.h |  4 ++--
- mm/list_lru.c        |  8 +++++++-
- mm/memcontrol.c      | 14 ++++++++------
- mm/slab.h            | 23 +++++++++++++++++------
- mm/slab_common.c     | 22 +++++++++++++++++++---
- 5 files changed, 53 insertions(+), 18 deletions(-)
+ drivers/gpu/drm/vkms/vkms_crtc.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/include/linux/slab.h b/include/linux/slab.h
-index 1b54e5f83342..109cab2ad9b4 100644
---- a/include/linux/slab.h
-+++ b/include/linux/slab.h
-@@ -152,7 +152,7 @@ void kmem_cache_destroy(struct kmem_cache *);
- int kmem_cache_shrink(struct kmem_cache *);
- 
- void memcg_create_kmem_cache(struct mem_cgroup *, struct kmem_cache *);
--void memcg_deactivate_kmem_caches(struct mem_cgroup *);
-+void memcg_deactivate_kmem_caches(struct mem_cgroup *, struct mem_cgroup *);
- 
- /*
-  * Please use this macro to create slab caches. Simply specify the
-@@ -638,7 +638,7 @@ struct memcg_cache_params {
- 			bool dying;
- 		};
- 		struct {
--			struct mem_cgroup *memcg;
-+			struct mem_cgroup __rcu *memcg;
- 			struct list_head children_node;
- 			struct list_head kmem_caches_node;
- 			struct percpu_ref refcnt;
-diff --git a/mm/list_lru.c b/mm/list_lru.c
-index 0f1f6b06b7f3..0b2319897e86 100644
---- a/mm/list_lru.c
-+++ b/mm/list_lru.c
-@@ -77,11 +77,15 @@ list_lru_from_kmem(struct list_lru_node *nlru, void *ptr,
- 	if (!nlru->memcg_lrus)
- 		goto out;
- 
-+	rcu_read_lock();
- 	memcg = mem_cgroup_from_kmem(ptr);
--	if (!memcg)
-+	if (!memcg) {
-+		rcu_read_unlock();
- 		goto out;
-+	}
- 
- 	l = list_lru_from_memcg_idx(nlru, memcg_cache_id(memcg));
-+	rcu_read_unlock();
- out:
- 	if (memcg_ptr)
- 		*memcg_ptr = memcg;
-@@ -131,12 +135,14 @@ bool list_lru_add(struct list_lru *lru, struct list_head *item)
- 
- 	spin_lock(&nlru->lock);
- 	if (list_empty(item)) {
-+		rcu_read_lock();
- 		l = list_lru_from_kmem(nlru, item, &memcg);
- 		list_add_tail(item, &l->list);
- 		/* Set shrinker bit if the first element was added */
- 		if (!l->nr_items++)
- 			memcg_set_shrinker_bit(memcg, nid,
- 					       lru_shrinker_id(lru));
-+		rcu_read_unlock();
- 		nlru->nr_items++;
- 		spin_unlock(&nlru->lock);
- 		return true;
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index c097b1fc74ec..0f64a2c06803 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -3209,15 +3209,15 @@ static void memcg_offline_kmem(struct mem_cgroup *memcg)
- 	 */
- 	memcg->kmem_state = KMEM_ALLOCATED;
- 
--	memcg_deactivate_kmem_caches(memcg);
--
--	kmemcg_id = memcg->kmemcg_id;
--	BUG_ON(kmemcg_id < 0);
--
- 	parent = parent_mem_cgroup(memcg);
- 	if (!parent)
- 		parent = root_mem_cgroup;
- 
-+	memcg_deactivate_kmem_caches(memcg, parent);
-+
-+	kmemcg_id = memcg->kmemcg_id;
-+	BUG_ON(kmemcg_id < 0);
-+
- 	/*
- 	 * Change kmemcg_id of this cgroup and all its descendants to the
- 	 * parent's id, and then move all entries from this cgroup's list_lrus
-@@ -3250,7 +3250,6 @@ static void memcg_free_kmem(struct mem_cgroup *memcg)
- 	if (memcg->kmem_state == KMEM_ALLOCATED) {
- 		WARN_ON(!list_empty(&memcg->kmem_caches));
- 		static_branch_dec(&memcg_kmem_enabled_key);
--		WARN_ON(page_counter_read(&memcg->kmem));
- 	}
- }
- #else
-@@ -4675,6 +4674,9 @@ mem_cgroup_css_alloc(struct cgroup_subsys_state *parent_css)
- 
- 	/* The following stuff does not apply to the root */
- 	if (!parent) {
-+#ifdef CONFIG_MEMCG_KMEM
-+		INIT_LIST_HEAD(&memcg->kmem_caches);
-+#endif
- 		root_mem_cgroup = memcg;
- 		return &memcg->css;
- 	}
-diff --git a/mm/slab.h b/mm/slab.h
-index 7ead47cb9338..34bf92382ecd 100644
---- a/mm/slab.h
-+++ b/mm/slab.h
-@@ -268,7 +268,7 @@ static inline struct mem_cgroup *memcg_from_slab_page(struct page *page)
- 
- 	s = READ_ONCE(page->slab_cache);
- 	if (s && !is_root_cache(s))
--		return s->memcg_params.memcg;
-+		return rcu_dereference(s->memcg_params.memcg);
- 
- 	return NULL;
- }
-@@ -285,10 +285,18 @@ static __always_inline int memcg_charge_slab(struct page *page,
- 	struct lruvec *lruvec;
- 	int ret;
- 
--	memcg = s->memcg_params.memcg;
-+	rcu_read_lock();
-+	memcg = rcu_dereference(s->memcg_params.memcg);
-+	while (memcg && !css_tryget_online(&memcg->css))
-+		memcg = parent_mem_cgroup(memcg);
-+	rcu_read_unlock();
-+
-+	if (unlikely(!memcg))
+diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms_c=
+rtc.c
+index 7508815fac11..3ce60e66673e 100644
+--- a/drivers/gpu/drm/vkms/vkms_crtc.c
++++ b/drivers/gpu/drm/vkms/vkms_crtc.c
+@@ -74,9 +74,13 @@ bool vkms_get_vblank_timestamp(struct drm_device *dev, u=
+nsigned int pipe,
+ {
+ 	struct vkms_device *vkmsdev =3D drm_device_to_vkms_device(dev);
+ 	struct vkms_output *output =3D &vkmsdev->output;
++	struct drm_vblank_crtc *vblank =3D &dev->vblank[pipe];
+=20
+ 	*vblank_time =3D output->vblank_hrtimer.node.expires;
+=20
++	if (*vblank_time =3D=3D vblank->time)
 +		return true;
 +
- 	ret = memcg_kmem_charge_memcg(page, gfp, order, memcg);
- 	if (ret)
--		return ret;
-+		goto out;
- 
- 	lruvec = mem_cgroup_lruvec(page_pgdat(page), memcg);
- 	mod_lruvec_state(lruvec, cache_vmstat_idx(s), 1 << order);
-@@ -296,8 +304,9 @@ static __always_inline int memcg_charge_slab(struct page *page,
- 	/* transer try_charge() page references to kmem_cache */
- 	percpu_ref_get_many(&s->memcg_params.refcnt, 1 << order);
- 	css_put_many(&memcg->css, 1 << order);
--
--	return 0;
-+out:
-+	css_put(&memcg->css);
-+	return ret;
- }
- 
- /*
-@@ -310,10 +319,12 @@ static __always_inline void memcg_uncharge_slab(struct page *page, int order,
- 	struct mem_cgroup *memcg;
- 	struct lruvec *lruvec;
- 
--	memcg = s->memcg_params.memcg;
-+	rcu_read_lock();
-+	memcg = rcu_dereference(s->memcg_params.memcg);
- 	lruvec = mem_cgroup_lruvec(page_pgdat(page), memcg);
- 	mod_lruvec_state(lruvec, cache_vmstat_idx(s), -(1 << order));
- 	memcg_kmem_uncharge_memcg(page, order, memcg);
-+	rcu_read_unlock();
- 
- 	percpu_ref_put_many(&s->memcg_params.refcnt, 1 << order);
- }
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 8255283025e3..00b380f5d467 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -237,7 +237,7 @@ void memcg_link_cache(struct kmem_cache *s, struct mem_cgroup *memcg)
- 		list_add(&s->root_caches_node, &slab_root_caches);
- 	} else {
- 		css_get(&memcg->css);
--		s->memcg_params.memcg = memcg;
-+		rcu_assign_pointer(s->memcg_params.memcg, memcg);
- 		list_add(&s->memcg_params.children_node,
- 			 &s->memcg_params.root_cache->memcg_params.children);
- 		list_add(&s->memcg_params.kmem_caches_node,
-@@ -252,7 +252,9 @@ static void memcg_unlink_cache(struct kmem_cache *s)
- 	} else {
- 		list_del(&s->memcg_params.children_node);
- 		list_del(&s->memcg_params.kmem_caches_node);
--		css_put(&s->memcg_params.memcg->css);
-+		mem_cgroup_put(rcu_dereference_protected(s->memcg_params.memcg,
-+			lockdep_is_held(&slab_mutex)));
-+		rcu_assign_pointer(s->memcg_params.memcg, NULL);
- 	}
- }
- #else
-@@ -793,11 +795,13 @@ static void kmemcg_cache_deactivate(struct kmem_cache *s)
- 	spin_unlock_irq(&memcg_kmem_wq_lock);
- }
- 
--void memcg_deactivate_kmem_caches(struct mem_cgroup *memcg)
-+void memcg_deactivate_kmem_caches(struct mem_cgroup *memcg,
-+				  struct mem_cgroup *parent)
- {
- 	int idx;
- 	struct memcg_cache_array *arr;
- 	struct kmem_cache *s, *c;
-+	unsigned int nr_reparented;
- 
- 	idx = memcg_cache_id(memcg);
- 
-@@ -815,6 +819,18 @@ void memcg_deactivate_kmem_caches(struct mem_cgroup *memcg)
- 		kmemcg_cache_deactivate(c);
- 		arr->entries[idx] = NULL;
- 	}
-+	nr_reparented = 0;
-+	list_for_each_entry(s, &memcg->kmem_caches,
-+			    memcg_params.kmem_caches_node) {
-+		rcu_assign_pointer(s->memcg_params.memcg, parent);
-+		css_put(&memcg->css);
-+		nr_reparented++;
-+	}
-+	if (nr_reparented) {
-+		list_splice_init(&memcg->kmem_caches,
-+				 &parent->kmem_caches);
-+		css_get_many(&parent->css, nr_reparented);
-+	}
- 	mutex_unlock(&slab_mutex);
- 
- 	put_online_mems();
--- 
-2.20.1
+ 	if (!in_vblank_irq)
+ 		*vblank_time -=3D output->period_ns;
+=20
+--=20
+2.21.0
 
+
+--fjpgzm34khffs6b6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE4tZ+ii1mjMCMQbfkWJzP/comvP8FAlz3LNcACgkQWJzP/com
+vP/X4hAApcr5/bEnDAvsOsV2xeueMBVUxkCOy5jyP804U41fgrRvvSmSXL9r4Aha
+6gaKPXNYjxTX/q6NiVLJ0eKd/ghuyjdWEygnVKzslqkdlZPMGLsXW+eh9CVEPpdS
+3ntASLzK+X8SEK0ghEqwIBjibvigKl7m9/Me/5dcF9omezMDYUgdCuip2Bl12S7u
+snxH/0kfZZ4FbpvkzNg19rK7Jy3gQaJhJ2NVokdY3tNsqwRlRC2o25oISFXZCC+T
+/GDKvUs2MlV24b8l+IOECZrAyXa3627IoKGhirNXbNdPipU5/lel5c5uy0u38zVO
+2yH7veHOs45SNrFKayY0M8CsEorBtg4BuYZdLToYZz6+MwuRODj758nVb3zTqPPS
+EpUg1kya5bV9WujDz9oVodf7AwWa+/7G98VSwDCa5ffc6NLODLSwiRzCa380GdS+
+UZGAt6nEMXXwBkYPgLsQuZ/2tZ3ASRdgRbZN7zDCWmGi/ataX1/psdFpDAfTtsVU
+2lJY665DmPvtT1QPNyfZKV+A76RYfdxXYk6ANd65cWFPyQ+15oYYejo8cfBt3gO0
+FayQJzWXgMXkeOkUJJLaeNsQIth1wamo4AYKNrM3cf9bCKG8lQaObkvufjpWbnAF
+XUCj3wDLKxkc0zOpA0nsXI9N5ZagdqHadTFnFlW9IKkBJHEuKzk=
+=5usR
+-----END PGP SIGNATURE-----
+
+--fjpgzm34khffs6b6--
