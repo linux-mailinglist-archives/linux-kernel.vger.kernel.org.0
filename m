@@ -2,92 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CBD2362AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 19:30:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BB1F362B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 19:32:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726857AbfFER3p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 13:29:45 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41000 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726599AbfFER3n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 13:29:43 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6F28C6141B; Wed,  5 Jun 2019 17:29:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1559755781;
-        bh=c95mWIKY1tNSkuZhQIVCkq9LrewgA9o6Cw9pqYMpaQE=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=Ifu3JZ/7uT6jOn6sqSJY5+ndrGSTg0FeDtnQxX3sCYl/6Utqi9/D81hOX4genj8l1
-         SUsBfqOCOBgVdGRZsP8k5xFyu/JHyqjo87uw8+wLoNvj4QS7ZnGkPMNCWE5/jc85Yx
-         alTCpB52iqcc0afEaCr8vbJXGfmDGSKZa0aK3ngk=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from srichara-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1726599AbfFERcX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 13:32:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54448 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725950AbfFERcW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 13:32:22 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: sricharan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E85EB61242;
-        Wed,  5 Jun 2019 17:29:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1559755775;
-        bh=c95mWIKY1tNSkuZhQIVCkq9LrewgA9o6Cw9pqYMpaQE=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=a6RJMWMahVE4KqiMFcralimPhGQPGxHXRkuEHSVpG5QzbahmZi+qnDFZ4vUW4tUfh
-         kCo+P8ktG3oSRfKf4x0XxZeIh/5XECHWm+uxNAygifOLpAEh5Ys6e7d+K+BiUHubf8
-         pXMZY2Hy0tzNzTFMQGUsWhzEmEy9D9K8QQx6zphA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E85EB61242
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-From:   Sricharan R <sricharan@codeaurora.org>
-To:     robh+dt@kernel.org, sboyd@kernel.org, linus.walleij@linaro.org,
-        agross@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 6/6] arm64: defconfig: Enable qcom ipq6018 clock and pinctrl
-Date:   Wed,  5 Jun 2019 22:58:58 +0530
-Message-Id: <1559755738-28643-7-git-send-email-sricharan@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1559755738-28643-1-git-send-email-sricharan@codeaurora.org>
-References: <1559755738-28643-1-git-send-email-sricharan@codeaurora.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id C4F8020866;
+        Wed,  5 Jun 2019 17:32:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559755942;
+        bh=3OiQHIkBj5obYDAp408SvCaE7dajk3tP3v7IaTQD8NM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=K05P9hZ/zbQOih6+VIAtmv54MVb00m0mVCk6ICAh53KoDtFLyQRde0VVPjP3Am+Zx
+         frkol9unQ7LlQMuO5WDQ2N+mpkEyld1lltMfotgu8QSP6unXm4Hbz13Ap8w66a9CyS
+         supbIfeQkaymcOPYPAg2dycl1TrvYXtR8QEBjd7c=
+Date:   Wed, 5 Jun 2019 19:32:19 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Hariprasad Kelam <hariprasad.kelam@gmail.com>
+Cc:     Thomas Winischhofer <thomas@winischhofer.net>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] USB: sisusbvga: Remove unneeded variable
+Message-ID: <20190605173219.GC27700@kroah.com>
+References: <20190605171908.GA10444@hari-Inspiron-1545>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190605171908.GA10444@hari-Inspiron-1545>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These configs are required for booting kernel in qcom
-ipq6018 boards.
+On Wed, Jun 05, 2019 at 10:49:08PM +0530, Hariprasad Kelam wrote:
+> fix below warning reported by coccicheck
+> 
+> drivers/usb/misc/sisusbvga/sisusb.c:1753:5-8: Unneeded variable: "ret".
+> Return "0" on line 1877
+> 
+> Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+> ---
+>  drivers/usb/misc/sisusbvga/sisusb.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/misc/sisusbvga/sisusb.c b/drivers/usb/misc/sisusbvga/sisusb.c
+> index ea06f1f..dfe2ed1 100644
+> --- a/drivers/usb/misc/sisusbvga/sisusb.c
+> +++ b/drivers/usb/misc/sisusbvga/sisusb.c
+> @@ -1750,7 +1750,7 @@ static int sisusb_setup_screen(struct sisusb_usb_data *sisusb,
+>  static int sisusb_set_default_mode(struct sisusb_usb_data *sisusb,
+>  		int touchengines)
+>  {
+> -	int ret = 0, i, j, modex, bpp, du;
+> +	int i, j, modex, bpp, du;
+>  	u8 sr31, cr63, tmp8;
+>  	static const char attrdata[] = {
+>  		0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+> @@ -1874,7 +1874,7 @@ static int sisusb_set_default_mode(struct sisusb_usb_data *sisusb,
+>  
+>  	SETIREG(SISCR, 0x34, 0x44);	/* we just set std mode #44 */
+>  
+> -	return ret;
+> +	return 0;
 
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+If this function can not fail, why is it returning anything at all?
+Please fix that up at the same time.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 4d58351..abf64ee 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -373,6 +373,7 @@ CONFIG_PINCTRL_MAX77620=y
- CONFIG_PINCTRL_IMX8MQ=y
- CONFIG_PINCTRL_IMX8QXP=y
- CONFIG_PINCTRL_IPQ8074=y
-+CONFIG_PINCTRL_IPQ6018=y
- CONFIG_PINCTRL_MSM8916=y
- CONFIG_PINCTRL_MSM8994=y
- CONFIG_PINCTRL_MSM8996=y
-@@ -646,6 +647,7 @@ CONFIG_COMMON_CLK_QCOM=y
- CONFIG_QCOM_CLK_SMD_RPM=y
- CONFIG_QCOM_CLK_RPMH=y
- CONFIG_IPQ_GCC_8074=y
-+CONFIG_IPQ_GCC_6018=y
- CONFIG_MSM_GCC_8916=y
- CONFIG_MSM_GCC_8994=y
- CONFIG_MSM_MMCC_8996=y
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+thanks,
 
+greg k-h
