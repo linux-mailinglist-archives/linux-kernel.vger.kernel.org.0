@@ -2,90 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFD1C35BE5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 13:46:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D72D35B93
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 13:44:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728118AbfFELq2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 07:46:28 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54146 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727330AbfFELnK (ORCPT
+        id S1727456AbfFELoI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 07:44:08 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:10666 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727791AbfFELoD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 07:43:10 -0400
-Received: by mail-wm1-f66.google.com with SMTP id d17so1924512wmb.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 04:43:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=jzlILgVOq+qa8QnWXtHWObcbjxta0J+JIjopEg5uUuk=;
-        b=Phzisd+Tdhfzrf2cnfJc7/3YsGZ48Ro4ChpgCOPMYGdsND4hfBtzYRbIro3IyIF/ok
-         d2VoAM0CSoZqsLeb7daN/0gWZRf5oYOfyq6HbGajovhrFh9+ylcx1OfSnJPxDyboNKNr
-         HMsHNOxcL/twPctqJndkmBghg6/cgcpivviP8tG3X6yJFC/6J1FDnX8ZMfAdcOoCwEOE
-         wYt3lEugdF3bWe3lo3j+YIfzADWTggVyqZI8qjFBFYZq7yYU/hEkxsZURtN7iMzbDiKy
-         SDGdToE7A6QwBNbr1y/nGX+1OFl/mOFABzdOKeAYX/+AtInl2tcDDgusYUFJjEOXiceF
-         NJYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=jzlILgVOq+qa8QnWXtHWObcbjxta0J+JIjopEg5uUuk=;
-        b=rUn263LMUJjN0r9zKMB+LcDQSvnuzk9heBpbVF1TtIuW+oYwKtD0PZnCqoHkZA9DYj
-         3wbaA/H96zuREzMJmaY0AgG35V4739LGmpmylGlr6D8JMGVBlfxTkfiDYiW3a9TGswxz
-         XxSAV7Rb+ZKXdwLRmdbeanfc3ATszbBH2GahsZfVRGoIsomUHxo2581ECZbRpe/YO4jL
-         7cCl6kmewcnOwif7dRoj0OJ0vb2XCHZzNpG4vTBQcTgsxeHefExufYznvLwZ8NOI0CCH
-         Ci6ltD9PhsfGZfY1CH/vCxtVWHUEXyQ5twBbbS3IY9wrR+foXGqiEHzQ3iUKqcgZhH7l
-         mGAw==
-X-Gm-Message-State: APjAAAUq9kxV8JUvh+76zRlpQxBBh5mJAQvEPyssMgOkD8sm5pDuglba
-        mFA+VChOnzvWqUFnhCP4eAVV7A==
-X-Google-Smtp-Source: APXvYqyIKCzRjK5C2cfGwWv0aa6X+yD0CtMUNDQac+1g9TUKp+wHCO+xwEod0nMcftdvvIOKCPSkVg==
-X-Received: by 2002:a1c:acc8:: with SMTP id v191mr22806026wme.177.1559734988581;
-        Wed, 05 Jun 2019 04:43:08 -0700 (PDT)
-Received: from localhost.localdomain ([2.27.167.43])
-        by smtp.gmail.com with ESMTPSA id 34sm27718740wre.32.2019.06.05.04.43.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Jun 2019 04:43:08 -0700 (PDT)
-From:   Lee Jones <lee.jones@linaro.org>
-To:     alokc@codeaurora.org, andy.gross@linaro.org,
-        david.brown@linaro.org, wsa+renesas@sang-engineering.com,
-        bjorn.andersson@linaro.org, linus.walleij@linaro.org,
-        balbi@kernel.org, gregkh@linuxfoundation.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        jlhugo@gmail.com, linux-i2c@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-usb@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 2/8] i2c: i2c-qcom-geni: Signify successful driver probe
-Date:   Wed,  5 Jun 2019 12:42:56 +0100
-Message-Id: <20190605114302.22509-2-lee.jones@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190605114302.22509-1-lee.jones@linaro.org>
-References: <20190605114302.22509-1-lee.jones@linaro.org>
+        Wed, 5 Jun 2019 07:44:03 -0400
+X-UUID: 9c66013344c54c2493c645a8995303be-20190605
+X-UUID: 9c66013344c54c2493c645a8995303be-20190605
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        (envelope-from <yongqiang.niu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 755208871; Wed, 05 Jun 2019 19:43:53 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 5 Jun 2019 19:43:51 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 5 Jun 2019 19:43:50 +0800
+From:   <yongqiang.niu@mediatek.com>
+To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Yongqiang Niu <yongqiang.niu@mediatek.com>
+Subject: [PATCH v3, 17/27] drm/mediatek: add gmc_bits for ovl private data
+Date:   Wed, 5 Jun 2019 19:42:56 +0800
+Message-ID: <1559734986-7379-18-git-send-email-yongqiang.niu@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
+In-Reply-To: <1559734986-7379-1-git-send-email-yongqiang.niu@mediatek.com>
+References: <1559734986-7379-1-git-send-email-yongqiang.niu@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Qualcomm Geni I2C driver currently probes silently which can be
-confusing when debugging potential issues.  Add a low level (INFO)
-print when each I2C controller is successfully initially set-up.
+From: Yongqiang Niu <yongqiang.niu@mediatek.com>
 
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+This patch add gmc_bits for ovl private data
+GMC register was set RDMA ultra and pre-ultra threshold.
+10bit GMC register define is different with other SOC, gmc_thrshd_l not
+used.
+
+Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
 ---
- drivers/i2c/busses/i2c-qcom-geni.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
-index 0fa93b448e8d..720131c40fe0 100644
---- a/drivers/i2c/busses/i2c-qcom-geni.c
-+++ b/drivers/i2c/busses/i2c-qcom-geni.c
-@@ -598,6 +598,8 @@ static int geni_i2c_probe(struct platform_device *pdev)
- 		return ret;
- 	}
+diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+index 28d1911..afb313c 100644
+--- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
++++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+@@ -39,7 +39,9 @@
+ #define DISP_REG_OVL_ADDR_MT8173		0x0f40
+ #define DISP_REG_OVL_ADDR(ovl, n)		((ovl)->data->addr + 0x20 * (n))
  
-+	dev_dbg(&pdev->dev, "Geni-I2C adaptor successfully added\n");
+-#define	OVL_RDMA_MEM_GMC	0x40402020
++#define GMC_THRESHOLD_BITS	16
++#define GMC_THRESHOLD_HIGH	((1 << GMC_THRESHOLD_BITS) / 4)
++#define GMC_THRESHOLD_LOW	((1 << GMC_THRESHOLD_BITS) / 8)
+ 
+ #define OVL_CON_BYTE_SWAP	BIT(24)
+ #define OVL_CON_MTX_YUV_TO_RGB	(6 << 16)
+@@ -57,6 +59,7 @@
+ 
+ struct mtk_disp_ovl_data {
+ 	unsigned int addr;
++	unsigned int gmc_bits;
+ 	bool fmt_rgb565_is_0;
+ };
+ 
+@@ -140,9 +143,23 @@ static unsigned int mtk_ovl_layer_nr(struct mtk_ddp_comp *comp)
+ static void mtk_ovl_layer_on(struct mtk_ddp_comp *comp, unsigned int idx)
+ {
+ 	unsigned int reg;
++	unsigned int gmc_thrshd_l;
++	unsigned int gmc_thrshd_h;
++	unsigned int gmc_value;
++	struct mtk_disp_ovl *ovl = comp_to_ovl(comp);
+ 
+ 	writel(0x1, comp->regs + DISP_REG_OVL_RDMA_CTRL(idx));
+-	writel(OVL_RDMA_MEM_GMC, comp->regs + DISP_REG_OVL_RDMA_GMC(idx));
 +
- 	return 0;
- }
++	gmc_thrshd_l = GMC_THRESHOLD_LOW >>
++		      (GMC_THRESHOLD_BITS - ovl->data->gmc_bits);
++	gmc_thrshd_h = GMC_THRESHOLD_HIGH >>
++		      (GMC_THRESHOLD_BITS - ovl->data->gmc_bits);
++	if (ovl->data->gmc_bits == 10)
++		gmc_value = gmc_thrshd_h | gmc_thrshd_h << 16;
++	else
++		gmc_value = gmc_thrshd_l | gmc_thrshd_l << 8 |
++			    gmc_thrshd_h << 16 | gmc_thrshd_h << 24;
++	writel(gmc_value, comp->regs + DISP_REG_OVL_RDMA_GMC(idx));
+ 
+ 	reg = readl(comp->regs + DISP_REG_OVL_SRC_CON);
+ 	reg = reg | BIT(idx);
+@@ -324,11 +341,13 @@ static int mtk_disp_ovl_remove(struct platform_device *pdev)
+ 
+ static const struct mtk_disp_ovl_data mt2701_ovl_driver_data = {
+ 	.addr = DISP_REG_OVL_ADDR_MT2701,
++	.gmc_bits = 8,
+ 	.fmt_rgb565_is_0 = false,
+ };
+ 
+ static const struct mtk_disp_ovl_data mt8173_ovl_driver_data = {
+ 	.addr = DISP_REG_OVL_ADDR_MT8173,
++	.gmc_bits = 8,
+ 	.fmt_rgb565_is_0 = true,
+ };
  
 -- 
-2.17.1
+1.8.1.1.dirty
 
