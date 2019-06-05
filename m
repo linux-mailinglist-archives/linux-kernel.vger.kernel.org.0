@@ -2,174 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFBFE3676E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 00:25:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FE1B3677C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 00:30:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726816AbfFEWZA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 18:25:00 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:46871 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726535AbfFEWY5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 18:24:57 -0400
-Received: by mail-io1-f68.google.com with SMTP id i10so229818iol.13
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 15:24:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ENEfQXnBKgsiB2d36L6+P4CJJ9i3migBmA1QXIq3dJc=;
-        b=PH7N9pU/PcBPixEKjGT9dOemu7GSJnSM5tyYxvbdDhRJejXacgwteNTBAACtytrbZP
-         weVzwsXbz/aCam4SwCAzGMilMDQnThHw0SaOYdk8yU11bL11E1rJPMz91S58rggIkF5j
-         oaoYF+qjcdjYhWtebt8cZhNeV4F7XrOYpnaNE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ENEfQXnBKgsiB2d36L6+P4CJJ9i3migBmA1QXIq3dJc=;
-        b=ABhqnJDucpVPNpUJVEEAvi616Mt2hRaxF/OD9/U1paKbEMwgcNCXK7Ra3MytSDphky
-         o4pT7/O9Qm25JbDcaFUw5W6azTMCbPTOmg6lDUoxF45GMDPWVsjNlLp54tqsrcr+O1YX
-         i74CmDRzY14OeDJuEfM0a3aoC4mojxA41QuymLu67lRi0LTdS5WlAmVspQ9LIhbGAwWe
-         OWreH0yAZlhuz6xifc5zCCMUP0wKU3wT0gzVBCI5M81tKiuWIyoj10AscvY1PNMaLZdl
-         FiSOAgICOYbh4HA4RoTLLWmZO/kOV1TdenMDFRXXj8rN27iC5l2ovc1qQGIH+U/WcDaT
-         jsMg==
-X-Gm-Message-State: APjAAAWlFmTz+uLcAitPtYx0M9vzHlJo3TJHuPNGmdjalQKJ53rVU8NI
-        wlh8IYOXN2isJAlH+ZmkqWhKxe8iM0k/ig==
-X-Google-Smtp-Source: APXvYqwRcLhms5KzGFYcR9J+QtVNHLs9QmL3/RVh5ejTxlCMOAxyTHOOr/FR6F0PlBk41XT1AnPjsg==
-X-Received: by 2002:a6b:b602:: with SMTP id g2mr12815416iof.54.1559773496152;
-        Wed, 05 Jun 2019 15:24:56 -0700 (PDT)
-Received: from localhost ([2620:15c:183:200:33ce:f5cf:f863:d3a6])
-        by smtp.gmail.com with ESMTPSA id e3sm81783ith.18.2019.06.05.15.24.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Jun 2019 15:24:55 -0700 (PDT)
-From:   Fletcher Woodruff <fletcherw@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ben Zhang <benzh@chromium.org>, Jaroslav Kysela <perex@perex.cz>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Curtis Malainey <cujomalainey@chromium.org>,
-        Ross Zwisler <zwisler@chromium.org>,
-        alsa-devel@alsa-project.org,
-        Fletcher Woodruff <fletcherw@chromium.org>
-Subject: [PATCH v6 4/4] ASoC: rt5677: handle concurrent interrupts
-Date:   Wed,  5 Jun 2019 16:24:19 -0600
-Message-Id: <20190605222419.54479-5-fletcherw@chromium.org>
-X-Mailer: git-send-email 2.22.0.rc1.311.g5d7573a151-goog
-In-Reply-To: <20190605222419.54479-1-fletcherw@chromium.org>
-References: <20190507220115.90395-1-fletcherw@chromium.org>
- <20190605222419.54479-1-fletcherw@chromium.org>
+        id S1726608AbfFEWan (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 18:30:43 -0400
+Received: from ozlabs.org ([203.11.71.1]:35291 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726502AbfFEWam (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 18:30:42 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45K3Ql4H9Bz9s9y;
+        Thu,  6 Jun 2019 08:30:38 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1559773840;
+        bh=fVAWUh+vPwz016H2tMSV2aVqis7jv1k6eHlFiaW+ubY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=ExUde0tg6gOt71oZjQHBUrViKft1hEu1XV3k+Wg2Rz+VQkmjZB2DZlF1u5vFKspYf
+         RiYst/klMw02BdlQzb4FWrI/APL9xliHQyqomPs/mlXclrDIygjqPFp9zOagtwBWp9
+         vbY4Nxtcy4CU/ZQ9WG+JmJ+4eTKhcdfWf+S087jx7qqEBLTIlsO3SeOjx2+uyEw1kI
+         bMB5XCuaNIp0Q4LGKZ7IBPBZIqI2VY0TEivHphvoS/zBzYs1dZNIDABP8UJlLiKgVj
+         AEIrpRyGQHOkDDFgvI2zPmuffYPHEYHR6jU3n7fKWjKormFP7fUkRuILg3Tfkq8Jh0
+         O0M7yJZmHh/Jw==
+Date:   Thu, 6 Jun 2019 08:30:34 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Krzysztof Adamski <krzysztof.adamski@nokia.com>,
+        Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Subject: linux-next: build failure after merge of the hwmon-fixes tree
+Message-ID: <20190606083034.196219f0@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/m0o70mjk2qUo7JMK./TCke/"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Zhang <benzh@chromium.org>
+--Sig_/m0o70mjk2qUo7JMK./TCke/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The rt5677 driver writes to the IRQ control register within the IRQ
-handler in order to flip the polarity of the interrupts that have been
-signalled.  If an interrupt fires in the interval between the
-regmap_read and the regmap_write, it will not trigger a new call to
-rt5677_irq.
+Hi Guenter,
 
-Add a bounded loop to rt5677_irq that keeps checking interrupts until
-none are seen, so that any interrupts that are signalled in that
-interval are correctly handled.
+After merging the hwmon-fixes tree, today's linux-next build
+(x86_64 allmodconfig) failed like this:
 
-Signed-off-by: Ben Zhang <benzh@chromium.org>
-Signed-off-by: Fletcher Woodruff <fletcherw@chromium.org>
----
- sound/soc/codecs/rt5677.c | 67 ++++++++++++++++++++++++---------------
- 1 file changed, 42 insertions(+), 25 deletions(-)
+In file included from include/linux/notifier.h:14,
+                 from arch/x86/include/asm/uprobes.h:13,
+                 from include/linux/uprobes.h:49,
+                 from include/linux/mm_types.h:14,
+                 from include/linux/mmzone.h:21,
+                 from include/linux/gfp.h:6,
+                 from include/linux/xarray.h:14,
+                 from include/linux/radix-tree.h:18,
+                 from include/linux/fs.h:15,
+                 from include/linux/debugfs.h:15,
+                 from drivers/hwmon/pmbus/pmbus_core.c:9:
+drivers/hwmon/pmbus/pmbus_core.c: In function 'pmbus_set_samples':
+drivers/hwmon/pmbus/pmbus_core.c:1975:14: error: 'data' undeclared (first u=
+se in this function); did you mean '_data'?
+  mutex_lock(&data->update_lock);
+              ^~~~
+include/linux/mutex.h:166:44: note: in definition of macro 'mutex_lock'
+ #define mutex_lock(lock) mutex_lock_nested(lock, 0)
+                                            ^~~~
+drivers/hwmon/pmbus/pmbus_core.c:1975:14: note: each undeclared identifier =
+is reported only once for each function it appears in
+  mutex_lock(&data->update_lock);
+              ^~~~
+include/linux/mutex.h:166:44: note: in definition of macro 'mutex_lock'
+ #define mutex_lock(lock) mutex_lock_nested(lock, 0)
+                                            ^~~~
 
-diff --git a/sound/soc/codecs/rt5677.c b/sound/soc/codecs/rt5677.c
-index 86555d7ec9ea8d..7f7e60aceb49d3 100644
---- a/sound/soc/codecs/rt5677.c
-+++ b/sound/soc/codecs/rt5677.c
-@@ -5071,38 +5071,55 @@ static const struct rt5677_irq_desc rt5677_irq_descs[] = {
- static irqreturn_t rt5677_irq(int unused, void *data)
- {
- 	struct rt5677_priv *rt5677 = data;
--	int ret = 0, i, reg_irq, virq;
-+	int ret = 0, loop, i, reg_irq, virq;
- 	bool irq_fired = false;
- 
- 	mutex_lock(&rt5677->irq_lock);
--	/* Read interrupt status */
--	ret = regmap_read(rt5677->regmap, RT5677_IRQ_CTRL1, &reg_irq);
--	if (ret) {
--		pr_err("rt5677: failed reading IRQ status: %d\n", ret);
--		goto exit;
--	}
- 
--	for (i = 0; i < RT5677_IRQ_NUM; i++) {
--		if (reg_irq & rt5677_irq_descs[i].status_mask) {
--			irq_fired = true;
--			virq = irq_find_mapping(rt5677->domain, i);
--			if (virq)
--				handle_nested_irq(virq);
--
--			/* Clear the interrupt by flipping the polarity of the
--			 * interrupt source line that fired
--			 */
--			reg_irq ^= rt5677_irq_descs[i].polarity_mask;
-+	/*
-+	 * Loop to handle interrupts until the last i2c read shows no pending
-+	 * irqs. The interrupt line is shared by multiple interrupt sources.
-+	 * After the regmap_read() below, a new interrupt source line may
-+	 * become high before the regmap_write() finishes, so there isn't a
-+	 * rising edge on the shared interrupt line for the new interrupt. Thus,
-+	 * the loop is needed to avoid missing irqs.
-+	 *
-+	 * A safeguard of 20 loops is used to avoid hanging in the irq handler
-+	 * if there is something wrong with the interrupt status update. The
-+	 * interrupt sources here are audio jack plug/unplug events which
-+	 * shouldn't happen at a high frequency for a long period of time.
-+	 * Empirically, more than 3 loops have never been seen.
-+	 */
-+	for (loop = 0; loop < 20; loop++) {
-+		/* Read interrupt status */
-+		ret = regmap_read(rt5677->regmap, RT5677_IRQ_CTRL1, &reg_irq);
-+		if (ret) {
-+			pr_err("rt5677: failed reading IRQ status: %d\n", ret);
-+			goto exit;
- 		}
--	}
- 
--	if (!irq_fired)
--		goto exit;
-+		irq_fired = false;
-+		for (i = 0; i < RT5677_IRQ_NUM; i++) {
-+			if (reg_irq & rt5677_irq_descs[i].status_mask) {
-+				irq_fired = true;
-+				virq = irq_find_mapping(rt5677->domain, i);
-+				if (virq)
-+					handle_nested_irq(virq);
-+
-+				/* Clear the interrupt by flipping the polarity
-+				 * of the interrupt source line that fired
-+				 */
-+				reg_irq ^= rt5677_irq_descs[i].polarity_mask;
-+			}
-+		}
-+		if (!irq_fired)
-+			goto exit;
- 
--	ret = regmap_write(rt5677->regmap, RT5677_IRQ_CTRL1, reg_irq);
--	if (ret) {
--		pr_err("rt5677: failed updating IRQ status: %d\n", ret);
--		goto exit;
-+		ret = regmap_write(rt5677->regmap, RT5677_IRQ_CTRL1, reg_irq);
-+		if (ret) {
-+			pr_err("rt5677: failed updating IRQ status: %d\n", ret);
-+			goto exit;
-+		}
- 	}
- exit:
- 	mutex_unlock(&rt5677->irq_lock);
--- 
-2.22.0.rc1.311.g5d7573a151-goog
+Caused by commit
 
+  8d719d6f3e97 ("hwmon: (pmbus/core) mutex_lock write in pmbus_set_samples")
+
+I have reverted that commit for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/m0o70mjk2qUo7JMK./TCke/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz4QooACgkQAVBC80lX
+0GySfQgAkiwS8dok8dNR3tdhI222YRvfJ+hSHENnT7bHokekA14PlpW6Nskfb13B
+1uRx31U7RUHssowIB+PueZyaBnfJuPx1DpI0wwyhB+I5NRFoL9ixsRmJNUmLoxDf
+rtWmTNIY+J8S8nCd5Qt573kXNMG6i1uUISe/RVVnNJ/lCEtsoX/Nwlx2FRYGjSjI
+kj7QgToOYRPd/D44HHEXVO+GdRCn0JEhsL7NevmqJ67o3iBwL4x8SwN6ZIgHTIFS
+FPMcdahwLGgA9eF20ISRbilYS8TnUrxNy9Rjhi+hN47V9E59XZhUCrTR6gwTRGkh
+7Ic6tgWDCTJuqmKPV/VPW8WhzFWu0g==
+=hq3o
+-----END PGP SIGNATURE-----
+
+--Sig_/m0o70mjk2qUo7JMK./TCke/--
