@@ -2,218 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0309359A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 11:28:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 660FD359B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 11:32:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727038AbfFEJ2U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 05:28:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42446 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726862AbfFEJ2U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 05:28:20 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1F8A20717;
-        Wed,  5 Jun 2019 09:28:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559726899;
-        bh=O8jFUaIHNHhFCwSgoimMNeuJKeLFh5boOF6WLICbEpQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=FiXrtfdl7Ez5iV/gHP9vjJGmvSqImAYHTPZMEwXuX9HgOC/7EXQ808E925fUEXosr
-         iOb5iAspD+AXB3OFxxpTeLoITqiwdnamIjK7cQO3haA6ZcV5k4vUZpJ+fvUTFBm9k5
-         FjZG1lzSn/o1kMfIytjRy87EU7xcqMFEKWY8rP2k=
-Date:   Wed, 5 Jun 2019 11:28:16 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH v2] USB: move usb debugfs directory creation to the usb
- common core
-Message-ID: <20190605092816.GA23758@kroah.com>
+        id S1727066AbfFEJch (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 05:32:37 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:42221 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726690AbfFEJcg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 05:32:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1559727155; x=1591263155;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=S49ZGvfsCAGzg2w+MHzrtpp8i/bDvCsOhxlrQNWnA/I=;
+  b=EDEDrpkjHtJFixb21VPMv2InI2x3CRn31D9Lv+SFj84/uWaGTgO+R3yt
+   u4x8RwzWlZcRy/BXsfW//KS8R7icL8ALrRBp7Ab50aQaUil9ULWbTI7S2
+   5k3jF4SKVjyAE9NmXH1XkqODTNOYBXDMuBt3avTUdXNNKsH+B1oh58t2A
+   FNA3e4maIv+oMaoeSn3U03IqyLs/O0Vm/CIbTogaZ1G57GqATw7e1TSS6
+   VvhgcrNNCNRMBCwUFQeGu1J9OnbBK606hJIcGMOOQAVVjP4nGwRoxisfn
+   qFOtFGekQZucZPU8kDRMg8eS89NaTszoVA+U70CFNoBNKoXhKtoETSo/L
+   w==;
+X-IronPort-AV: E=Sophos;i="5.60,550,1549900800"; 
+   d="scan'208";a="216132224"
+Received: from mail-sn1nam01lp2054.outbound.protection.outlook.com (HELO NAM01-SN1-obe.outbound.protection.outlook.com) ([104.47.32.54])
+  by ob1.hgst.iphmx.com with ESMTP; 05 Jun 2019 17:32:34 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WEUrWHG8922XedlBsx6DMByA3HjDnspJK8W4joX3FxY=;
+ b=mn+uNOg1BWvWoUziHR2uf9Al8auprUPi+CAHCMvLzHGxH5ywH0/mVbs6lRq35fKf/i9HC6qnhPpSCKDTIjjXxnSlf+SjsNQMSF3msyHxp6J7FHAoiIMnszaG2hxkim9WWc0ZjIusIaPAOD64C0cxK2oAgvepBN7ZrvaMt+orRXc=
+Received: from SN6PR04MB4925.namprd04.prod.outlook.com (52.135.114.82) by
+ SN6PR04MB4207.namprd04.prod.outlook.com (52.135.71.145) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1943.22; Wed, 5 Jun 2019 09:32:32 +0000
+Received: from SN6PR04MB4925.namprd04.prod.outlook.com
+ ([fe80::6d99:14d9:3fa:f530]) by SN6PR04MB4925.namprd04.prod.outlook.com
+ ([fe80::6d99:14d9:3fa:f530%6]) with mapi id 15.20.1943.018; Wed, 5 Jun 2019
+ 09:32:32 +0000
+From:   Avri Altman <Avri.Altman@wdc.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     John Stultz <john.stultz@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+Subject: RE: [PATCH 0/3] (Qualcomm) UFS device reset support
+Thread-Topic: [PATCH 0/3] (Qualcomm) UFS device reset support
+Thread-Index: AQHVGqYAlQFsNx0blUeatbYnjFKLiqaMDImAgACCvoCAAAPGAIAAOZng
+Date:   Wed, 5 Jun 2019 09:32:32 +0000
+Message-ID: <SN6PR04MB492521B7D2DB6F3462EDB7D9FC160@SN6PR04MB4925.namprd04.prod.outlook.com>
+References: <20190604072001.9288-1-bjorn.andersson@linaro.org>
+ <CANcMJZBmgWMZu7Y53Lnx_x3L2UpCmEbFRHVW0SFCXfW=Yw9uYg@mail.gmail.com>
+ <SN6PR04MB4925530F216E86F6404FE14CFC160@SN6PR04MB4925.namprd04.prod.outlook.com>
+ <20190605060154.GJ22737@tuxbook-pro>
+In-Reply-To: <20190605060154.GJ22737@tuxbook-pro>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Avri.Altman@wdc.com; 
+x-originating-ip: [212.25.79.133]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7aafd65c-ff12-49ab-493c-08d6e998bc83
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:SN6PR04MB4207;
+x-ms-traffictypediagnostic: SN6PR04MB4207:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <SN6PR04MB4207B2ACBAB61DAF6543CCEBFC160@SN6PR04MB4207.namprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 00594E8DBA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(136003)(396003)(366004)(346002)(39860400002)(189003)(199004)(11346002)(446003)(71200400001)(7416002)(71190400001)(305945005)(66476007)(73956011)(66446008)(64756008)(476003)(66556008)(9686003)(66946007)(76116006)(25786009)(6436002)(486006)(33656002)(186003)(256004)(74316002)(6246003)(81156014)(2906002)(8936002)(26005)(14454004)(81166006)(7736002)(8676002)(54906003)(52536014)(14444005)(86362001)(53936002)(7696005)(6506007)(76176011)(5660300002)(53546011)(66066001)(55016002)(68736007)(4326008)(229853002)(72206003)(478600001)(316002)(3846002)(6116002)(102836004)(6916009)(99286004);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR04MB4207;H:SN6PR04MB4925.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: h8LDwK5Ny093YImRAW46u2TjaG5YvBWArvn0zDMyBGu0y6hSobMv44WdK5MZeFdW519pCCIPkmj0+aXtV1PPRCZQwTGjXLpjUTzDbdcfFVl2uC35nrsxHSoqgS8kEeQ9pZ6KJZS+9NxK+bV1lbKq2gAu/L755vRIx81pedn1CLI7TLJYTPU5lY9U40GT/Gfb0hwrBnCcevp8O0ggV04OYzRHfYG8U9n2Muvpad6gKrO7BB+4TSZijzS8LfCvjSLTrnrjpwOwew8nHioQoeSO628scn3Z9sMWmEISQbJa5DEVrS+Wd9ygXqbQ6Sm4qJyOgsnVIkHHxpjRZAzXmNKXW7UV2X+gFWJf3nTFsJj5clGhoacdxSi9wxZ2ts8sUX9y1Cxet8cPjsmOrPaaFhtUTVRTQ9WsTwu4s9fyEMy1Xi4=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.0 (2019-05-25)
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7aafd65c-ff12-49ab-493c-08d6e998bc83
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jun 2019 09:32:32.5156
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Avri.Altman@wdc.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB4207
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The USB gadget subsystem wants to use the USB debugfs root directory, so
-move it to the common "core" USB code so that it is properly initialized
-and removed as needed.
+>=20
+> On Tue 04 Jun 22:50 PDT 2019, Avri Altman wrote:
+>=20
+> > Hi,
+> >
+> > >
+> > > On Tue, Jun 4, 2019 at 12:22 AM Bjorn Andersson
+> > > <bjorn.andersson@linaro.org> wrote:
+> > > >
+> > > > This series exposes the ufs_reset line as a gpio, adds support for =
+ufshcd to
+> > > > acquire and toggle this and then adds this to SDM845 MTP.
+> > > >
+> > > > Bjorn Andersson (3):
+> > > >   pinctrl: qcom: sdm845: Expose ufs_reset as gpio
+> > > >   scsi: ufs: Allow resetting the UFS device
+> > > >   arm64: dts: qcom: sdm845-mtp: Specify UFS device-reset GPIO
+> > >
+> > > Adding similar change as in sdm845-mtp to the not yet upstream
+> > > blueline dts, I validated this allows my micron UFS pixel3 to boot.
+> > >
+> > > Tested-by: John Stultz <john.stultz@linaro.org>
+> > Maybe ufs_hba_variant_ops would be the proper place to add this?
+> >
+>=20
+> Are you saying that these memories only need a reset when they are
+> paired with the Qualcomm host controller?
+ufs_hba_variant_ops is for vendors to implement their own vops,
+and as you can see, many of them do.
+Adding hw_reset to that template seems like the proper way
+to do what you are doing.
 
-In order to properly do this, we need to load the common code before the
-usb core code, when everything is linked into the kernel, so reorder the
-link order of the code.
-
-Also as the usb common code has the possibility of the led trigger logic
-to be merged into it, handle the build option properly by only having
-one module init/exit function and have the common code initialize the
-led trigger if needed.
-
-Reported-by: From: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Cc: Felipe Balbi <felipe.balbi@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
-
-Chunfeng, can you test this version to verify it works for you when
-building the code into the kernel?
-
-v2: handle led common code link error reported by kbuild
-    handle subsys_initcall issue pointed out by Chunfeng
-
- drivers/usb/Makefile        |  3 +--
- drivers/usb/common/common.c | 21 +++++++++++++++++++++
- drivers/usb/common/common.h | 14 ++++++++++++++
- drivers/usb/common/led.c    |  9 +++------
- drivers/usb/core/usb.c      | 10 ++++------
- 5 files changed, 43 insertions(+), 14 deletions(-)
- create mode 100644 drivers/usb/common/common.h
-
-diff --git a/drivers/usb/Makefile b/drivers/usb/Makefile
-index 7d1b8c82b208..ecc2de1ffaae 100644
---- a/drivers/usb/Makefile
-+++ b/drivers/usb/Makefile
-@@ -5,6 +5,7 @@
- 
- # Object files in subdirectories
- 
-+obj-$(CONFIG_USB_COMMON)	+= common/
- obj-$(CONFIG_USB)		+= core/
- obj-$(CONFIG_USB_SUPPORT)	+= phy/
- 
-@@ -60,8 +61,6 @@ obj-$(CONFIG_USB_CHIPIDEA)	+= chipidea/
- obj-$(CONFIG_USB_RENESAS_USBHS)	+= renesas_usbhs/
- obj-$(CONFIG_USB_GADGET)	+= gadget/
- 
--obj-$(CONFIG_USB_COMMON)	+= common/
--
- obj-$(CONFIG_USBIP_CORE)	+= usbip/
- 
- obj-$(CONFIG_TYPEC)		+= typec/
-diff --git a/drivers/usb/common/common.c b/drivers/usb/common/common.c
-index 18f5dcf58b0d..84a4423aaddf 100644
---- a/drivers/usb/common/common.c
-+++ b/drivers/usb/common/common.c
-@@ -15,6 +15,8 @@
- #include <linux/usb/of.h>
- #include <linux/usb/otg.h>
- #include <linux/of_platform.h>
-+#include <linux/debugfs.h>
-+#include "common.h"
- 
- static const char *const ep_type_names[] = {
- 	[USB_ENDPOINT_XFER_CONTROL] = "ctrl",
-@@ -291,4 +293,23 @@ struct device *usb_of_get_companion_dev(struct device *dev)
- EXPORT_SYMBOL_GPL(usb_of_get_companion_dev);
- #endif
- 
-+struct dentry *usb_debug_root;
-+EXPORT_SYMBOL_GPL(usb_debug_root);
-+
-+static int usb_common_init(void)
-+{
-+	usb_debug_root = debugfs_create_dir("usb", NULL);
-+	ledtrig_usb_init();
-+	return 0;
-+}
-+
-+static void usb_common_exit(void)
-+{
-+	ledtrig_usb_exit();
-+	debugfs_remove_recursive(usb_debug_root);
-+}
-+
-+subsys_initcall(usb_common_init);
-+module_exit(usb_common_exit);
-+
- MODULE_LICENSE("GPL");
-diff --git a/drivers/usb/common/common.h b/drivers/usb/common/common.h
-new file mode 100644
-index 000000000000..424a91316a4b
---- /dev/null
-+++ b/drivers/usb/common/common.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef __LINUX_USB_COMMON_H
-+#define __LINUX_USB_COMMON_H
-+
-+#if defined(CONFIG_USB_LED_TRIG)
-+void ledtrig_usb_init(void);
-+void ledtrig_usb_exit(void);
-+#else
-+static inline void ledtrig_usb_init(void) { }
-+static inline void ledtrig_usb_exit(void) { }
-+#endif
-+
-+#endif	/* __LINUX_USB_COMMON_H */
-diff --git a/drivers/usb/common/led.c b/drivers/usb/common/led.c
-index 7bd81166b77d..0865dd44a80a 100644
---- a/drivers/usb/common/led.c
-+++ b/drivers/usb/common/led.c
-@@ -10,6 +10,7 @@
- #include <linux/init.h>
- #include <linux/leds.h>
- #include <linux/usb.h>
-+#include "common.h"
- 
- #define BLINK_DELAY 30
- 
-@@ -36,18 +37,14 @@ void usb_led_activity(enum usb_led_event ev)
- EXPORT_SYMBOL_GPL(usb_led_activity);
- 
- 
--static int __init ledtrig_usb_init(void)
-+void __init ledtrig_usb_init(void)
- {
- 	led_trigger_register_simple("usb-gadget", &ledtrig_usb_gadget);
- 	led_trigger_register_simple("usb-host", &ledtrig_usb_host);
--	return 0;
- }
- 
--static void __exit ledtrig_usb_exit(void)
-+void __exit ledtrig_usb_exit(void)
- {
- 	led_trigger_unregister_simple(ledtrig_usb_gadget);
- 	led_trigger_unregister_simple(ledtrig_usb_host);
- }
--
--module_init(ledtrig_usb_init);
--module_exit(ledtrig_usb_exit);
-diff --git a/drivers/usb/core/usb.c b/drivers/usb/core/usb.c
-index 7fcb9f782931..5a0df527a8ca 100644
---- a/drivers/usb/core/usb.c
-+++ b/drivers/usb/core/usb.c
-@@ -1185,19 +1185,17 @@ static struct notifier_block usb_bus_nb = {
- 	.notifier_call = usb_bus_notify,
- };
- 
--struct dentry *usb_debug_root;
--EXPORT_SYMBOL_GPL(usb_debug_root);
-+static struct dentry *usb_devices_root;
- 
- static void usb_debugfs_init(void)
- {
--	usb_debug_root = debugfs_create_dir("usb", NULL);
--	debugfs_create_file("devices", 0444, usb_debug_root, NULL,
--			    &usbfs_devices_fops);
-+	usb_devices_root = debugfs_create_file("devices", 0444, usb_debug_root,
-+					       NULL, &usbfs_devices_fops);
- }
- 
- static void usb_debugfs_cleanup(void)
- {
--	debugfs_remove_recursive(usb_debug_root);
-+	debugfs_remove(usb_devices_root);
- }
- 
- /*
--- 
-2.21.0
-
+Thanks,
+Avri
+>=20
+> The way it's implemented it here is that the device-reset GPIO is
+> optional and only if you specify it we'll toggle the reset. So if your
+> board design has a UFS memory that requires a reset pulse during
+> initialization you specify this, regardless of which vendor your SoC
+> comes from.
+>=20
+> Regards,
+> Bjorn
