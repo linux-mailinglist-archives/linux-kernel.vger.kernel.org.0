@@ -2,47 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C145354E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 03:10:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26377354E0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Jun 2019 03:10:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726700AbfFEBKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 4 Jun 2019 21:10:24 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:39470 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726554AbfFEBKJ (ORCPT
+        id S1726649AbfFEBKM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 4 Jun 2019 21:10:12 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:44107 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726606AbfFEBKK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 4 Jun 2019 21:10:09 -0400
-Received: by mail-qk1-f193.google.com with SMTP id i125so4146407qkd.6
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 18:10:08 -0700 (PDT)
+        Tue, 4 Jun 2019 21:10:10 -0400
+Received: by mail-qk1-f196.google.com with SMTP id w187so4125465qkb.11
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Jun 2019 18:10:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=uYuZk3WfkaKX49xvAd+SIaFxKGOozQxDXCkeJBh9dxI=;
-        b=g9JKg/oNEjc8gCZny9L+JKTZ8IXlkOb51oA5UCsAk79uHj9HxL0oJj2T093uVL7U3W
-         tZaNJOL1EEnXV4E8dyhLzfNhkFSjmBojQG3rfhszbSwx9mFqXkbAjQBh+j4MewBbn8HD
-         VbMUwl99PQ/FRT6A/sMFPO9v6vzSKa2DEDi1bHidQjB2cRAgQE9yvrMtx0BIkYBsm796
-         vD9qFJ3339QGhxRMCDVCLQYo0AEIljJOqawv29YvvpQMeSIZdDvW2uWPNcJLT01MZduy
-         Tw+3DH+cPK5FlS8H4d9VovuS9XKhN1vAjbL9yTiTiGRduStKYceXbbvXqciOqY8LWyEG
-         d7tw==
+        bh=m1CgGNmT41gdKkbcLTzL9G1FcUp7/mgA73pnl43Phi8=;
+        b=GcR+MIOLnaiQUoIFQyd1aL+z7yikowSZrJfCvqygTTLiXhVXCI3+icoPLO485FJz1d
+         hb423kZ5oSQGYUy6Xs8ZnjkUMd9v80POPPTGN68seD7ncR9JilCIuAa5meto+y+oF1N/
+         MdrnoSHzTsztIT6IX606D5OpEHT5sEZcK3nu/shIXvPZnjOaxUkP/Y4u6T5LsomMGF2j
+         HiZnE4eh8RzcH2HP04Ra3X1etIOAdWTqv/SYCW1E+WsEyrBediC+crAXKTCQy/KI8hGn
+         9XvVu2fy5FuLP+Gxfgu3Mj+kvjtXW/A/hEOjy4jNtxzPbKqEsYssxJ8VAsnSPGWUk0YE
+         9/oA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=uYuZk3WfkaKX49xvAd+SIaFxKGOozQxDXCkeJBh9dxI=;
-        b=QEDnZijeciCGX8j2bx2uZc6elBwcMq95IRWA5C61RObz6BtzDrg/FsRdtb1fITf7ka
-         LCubVwksMbdmVr3v4vJ1Pdj1Cc1aTdCdho0DA/THB4suZHTOSBp3RxnSUkXk5CVw7w07
-         fdFCYXhTxBxayJLiYRiWLLFnZh6e1Esy+oQSVxxljWZULXzEzaxgPRhT8yh7MIhDVq5z
-         tB1AUed/kAMMzzIHIH7ARujLEy2cki3RtIZjEmuvZ4vy8c+bYq84ONvgz6Eg3TJZrDD8
-         j2PPMlZm0KlTXJge6loVk1VOmxWM8397QYhZVN99Q517iZWPHRbp0fvsyP7b6OnqZ6EY
-         qQeg==
-X-Gm-Message-State: APjAAAX9J8pIOgjvunxY15hB2VPu/MEn2/WNWdtB59cL1ayBKjEhE/gX
-        gNhaLj11EdXHZ7optHeWP58=
-X-Google-Smtp-Source: APXvYqxaaBOsP/tJ5p9FEY7HcHhhanA8z99jbfvf4pfydxtj/y3fVkTaELzh94+xa25rVwaoUK5JMA==
-X-Received: by 2002:ae9:f20c:: with SMTP id m12mr29856938qkg.58.1559697008489;
-        Tue, 04 Jun 2019 18:10:08 -0700 (PDT)
+        bh=m1CgGNmT41gdKkbcLTzL9G1FcUp7/mgA73pnl43Phi8=;
+        b=pRFPPryv2kt+waW7/0HmQzUerwSqrkKDLJgdGT5RgDzfoFUaoF5Z91wsJ+blvtPDcr
+         kv7Lf0vTVHERqCwigzKoqqOUb3fNHwkaIU/beXlXxTHBAdVcNNV6XpAKTJGIStcgmlbY
+         lPOKC2Vz0wPy47sFtlhH74gWZ/GCD19KtOuj4+GPQQAZNSdYctJR+NWCa94jv6bCkmRJ
+         DQZMaslNm4i4MeQOm/bZRjpESK7JVIyIt2/ysjhYS27kZju+XFmH02KVI2OWr6ugd5VT
+         Kj1UlRUeRWxZmcFvrKqTVVbrtAdbLcG51m5R5qaFB6znnxZvcz0Hw0gJHrN7zb97gCin
+         PNzQ==
+X-Gm-Message-State: APjAAAUOFIAyzqDxnaZx0B2qx+VOygeNU0PcxGXeqhCRoTZZj4wLoHH2
+        /0L9CvpZSgZb5sFHr0yOLd8=
+X-Google-Smtp-Source: APXvYqyW7sJM4G+Uq1TE53I7+IRyPcKZECBTQFnNF5AsXY3c1kDZs+NamfZ99VCjGuKcKmcv57dIag==
+X-Received: by 2002:a37:505:: with SMTP id 5mr13022676qkf.277.1559697009537;
+        Tue, 04 Jun 2019 18:10:09 -0700 (PDT)
 Received: from arch-01.home (c-73-132-202-198.hsd1.md.comcast.net. [73.132.202.198])
-        by smtp.gmail.com with ESMTPSA id v41sm7169401qta.78.2019.06.04.18.10.07
+        by smtp.gmail.com with ESMTPSA id v41sm7169401qta.78.2019.06.04.18.10.08
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
         Tue, 04 Jun 2019 18:10:08 -0700 (PDT)
 From:   Geordan Neukum <gneukum1@gmail.com>
@@ -51,9 +51,9 @@ Cc:     Geordan Neukum <gneukum1@gmail.com>,
         Mao Wenan <maowenan@huawei.com>,
         Jeremy Sowden <jeremy@azazel.net>, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 4/6] staging: kpc2000: kpc_spi: remove unnecessary struct member chip_select
-Date:   Wed,  5 Jun 2019 01:09:11 +0000
-Message-Id: <1980fe831f6444a6bf47928bdc9e09c8fe3b6da1.1559696611.git.gneukum1@gmail.com>
+Subject: [PATCH 5/6] staging: kpc2000: kpc_spi: remove unnecessary ulong repr of i/o addr
+Date:   Wed,  5 Jun 2019 01:09:12 +0000
+Message-Id: <15f12ed247c7911619adb3445579ce13394a5ddd.1559696611.git.gneukum1@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1559696611.git.gneukum1@gmail.com>
 References: <cover.1559696611.git.gneukum1@gmail.com>
@@ -64,35 +64,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The structure kp_spi_controller_state, defined in the kpc2000_spi
-driver, contains a member named chip_select which is never used after
-initialization. Therefore, it should be removed for simplicity's sake.
+The kpc_spi driver stashes off an unsigned long representation of the
+i/o mapping returned by devm_ioremap_nocache(). This is unnecessary, as
+the only use of the unsigned long repr is to eventually be re-cast to
+an (u64 __iomem *). Instead of casting the (void __iomem *) to an
+(unsigned long) then a (u64 __iomem *), just remove this intermediate
+step. As this intermediary is no longer used, also remove it from its
+structure.
 
 Signed-off-by: Geordan Neukum <gneukum1@gmail.com>
 ---
- drivers/staging/kpc2000/kpc2000_spi.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/staging/kpc2000/kpc2000_spi.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/staging/kpc2000/kpc2000_spi.c b/drivers/staging/kpc2000/kpc2000_spi.c
-index 61296335313b..07b0327d8bef 100644
+index 07b0327d8bef..4f517afc6239 100644
 --- a/drivers/staging/kpc2000/kpc2000_spi.c
 +++ b/drivers/staging/kpc2000/kpc2000_spi.c
-@@ -109,7 +109,6 @@ struct kp_spi {
- 
- struct kp_spi_controller_state {
- 	void __iomem   *base;
--	unsigned char   chip_select;
- 	s64             conf_cache;
+@@ -103,7 +103,6 @@ static struct spi_board_info p2kr0_board_info[] = {
+ struct kp_spi {
+ 	struct spi_master  *master;
+ 	u64 __iomem        *base;
+-	unsigned long       phys;
+ 	struct device      *dev;
  };
  
-@@ -267,7 +266,6 @@ kp_spi_setup(struct spi_device *spidev)
- 			return -ENOMEM;
- 		}
- 		cs->base = kpspi->base;
--		cs->chip_select = spidev->chip_select;
- 		cs->conf_cache = -1;
- 		spidev->controller_state = cs;
+@@ -462,9 +461,8 @@ kp_spi_probe(struct platform_device *pldev)
+ 		goto free_master;
  	}
+ 
+-	kpspi->phys = (unsigned long)devm_ioremap_nocache(&pldev->dev, r->start,
+-							  resource_size(r));
+-	kpspi->base = (u64 __iomem *)kpspi->phys;
++	kpspi->base = devm_ioremap_nocache(&pldev->dev, r->start,
++					   resource_size(r));
+ 
+ 	status = spi_register_master(master);
+ 	if (status < 0) {
 -- 
 2.21.0
 
