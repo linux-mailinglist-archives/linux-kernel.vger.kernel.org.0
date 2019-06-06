@@ -2,239 +2,326 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC2E836F9A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 11:12:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ABEB36F8D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 11:10:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727735AbfFFJMw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 05:12:52 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:43940 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727602AbfFFJMw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 05:12:52 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190606091249euoutp02b215365e30955764b390ecec03025836~lkRXzvl1D1007910079euoutp02Y
-        for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2019 09:12:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190606091249euoutp02b215365e30955764b390ecec03025836~lkRXzvl1D1007910079euoutp02Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1559812369;
-        bh=HEmcpuFKrlX42jr9EnXs0W9md6lip+SgUuLTGKhZXdc=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=b38IMxoc6oesinkXIzvl8axJ/2s8nW1USAGa7zWpCYEorDmQhpBrHIOZnBriC1zn5
-         ujI+BdNQqUUNrle9LbNYs5hzurBKo1zgHOAGjxxSpBtxxXB1aj1tPaJ5ceYp2B2+yz
-         r3M2HgGhja88A8cj2c0Tvia26e1P54voIbJAWwF8=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190606091248eucas1p19558471c8054bc64a08b57235446f2e2~lkRXCquU70849908499eucas1p1J;
-        Thu,  6 Jun 2019 09:12:48 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 20.BF.04377.019D8FC5; Thu,  6
-        Jun 2019 10:12:48 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190606091247eucas1p26f3eb1e36a2158b0eaec65c1458f1538~lkRWL-KGY1607916079eucas1p2r;
-        Thu,  6 Jun 2019 09:12:47 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190606091247eusmtrp1f4bcfd88a368d5e5c77e3289a54a24a0~lkRV57HtK2813428134eusmtrp1F;
-        Thu,  6 Jun 2019 09:12:47 +0000 (GMT)
-X-AuditID: cbfec7f4-113ff70000001119-a3-5cf8d910f6c9
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id BF.BB.04140.F09D8FC5; Thu,  6
-        Jun 2019 10:12:47 +0100 (BST)
-Received: from [106.120.51.20] (unknown [106.120.51.20]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190606091246eusmtip107aceb603f30cfc18a800939f2e27bc2~lkRU8mCLe0434904349eusmtip1G;
-        Thu,  6 Jun 2019 09:12:46 +0000 (GMT)
-Subject: Re: [PATCH v8 02/13] clk: samsung: add new clocks for DMC for
- Exynos5422 SoC
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?= 
-        <b.zolnierkie@samsung.com>, kgene@kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        kyungmin.park@samsung.com,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
-        keescook@chromium.org, tony@atomide.com, jroedel@suse.de,
-        treding@nvidia.com, digetx@gmail.com, willy.mh.wolff.ml@gmail.com
-From:   Lukasz Luba <l.luba@partner.samsung.com>
-Message-ID: <d0bbb864-5803-fe5e-0673-f05654d31099@partner.samsung.com>
-Date:   Thu, 6 Jun 2019 11:12:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.6.1
+        id S1727707AbfFFJJp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 05:09:45 -0400
+Received: from mga02.intel.com ([134.134.136.20]:29087 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727458AbfFFJJo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 05:09:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 02:09:41 -0700
+X-ExtLoop1: 1
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
+  by fmsmga001.fm.intel.com with ESMTP; 06 Jun 2019 02:09:40 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: [PATCH v2] Add a document on rebasing and merging
+In-Reply-To: <20190604134835.16fc6bfa@lwn.net>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20190604134835.16fc6bfa@lwn.net>
+Date:   Thu, 06 Jun 2019 12:12:45 +0300
+Message-ID: <87imtj13hu.fsf@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAJKOXPfW3QUH+6+g3NXPuogNxtr_uOtWKOwbgPwBVdqn4Y7a_Q@mail.gmail.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFKsWRmVeSWpSXmKPExsWy7djP87oCN3/EGFzdKGSxccZ6VovrX56z
-        Wsw/co7VYvXHx4wWk0/NZbI4051r0f/4NbPF+fMb2C3ONr1ht7i8aw6bxefeI4wWM87vY7JY
-        e+Quu8XtxhVsFofftLNa7L/iZXH7N5/FtxOPGB2EPL59ncTiMbvhIovHzll32T02repk8+ht
-        fsfm0bdlFaPH5tPVHp83yQVwRHHZpKTmZJalFunbJXBlzDjRxlrQZ1Ax7e4dlgbGrSpdjJwc
-        EgImEo1HNrJ1MXJxCAmsYJRYsLyJFcL5wigxc95nqMxnRontD7cyw7TMWvGeBcQWEljOKPGz
-        yxyi6C2jxPqeWWAJYYFwiRP9bYwgtoiApsT1v9/BxjILbGSR2L5jF3sXIwcHm4CexI5VhSAm
-        r4CbxJotYSDlLAIqEhc+7mUFsUUFIiTuH9sAZvMKCEqcnPkEbDynQKDEweMfwO5hFhCXuPVk
-        PhOELS+x/e0cZpBVEgJTOSS23dnHAnG0i8S65qfsELawxKvjW6BsGYnTk3ugaoolGnoXMkLY
-        NRKP++dC1VhLHD5+kRXkTmagX9bv0ocIO0qsudjICBKWEOCTuPFWEOIEPolJ26YzQ4R5JTra
-        hCCqNSS29FxggrDFJJavmcY+gVFpFpLHZiF5ZhaSZ2Yh7F3AyLKKUTy1tDg3PbXYKC+1XK84
-        Mbe4NC9dLzk/dxMjMAWe/nf8yw7GXX+SDjEKcDAq8fBKbPweI8SaWFZcmXuIUYKDWUmEt+zC
-        jxgh3pTEyqrUovz4otKc1OJDjNIcLErivNUMD6KFBNITS1KzU1MLUotgskwcnFINjCrf6oKK
-        X8n4+nNNnB57+tOrupRV6a0qZSHXam39I1e8mhVyKCXJfvX+/zM+c792i3pafZzz9klDtgV2
-        aQciPsQdOcyw84DyRKUsp6IJ8tFCvNrqr1oFt9VsvKSZ1KbeNPPA7zih9w1zo5Y5Xfvw4FeC
-        TOj3t6FhRQHiuff4s17wt4ucY1aUVWIpzkg01GIuKk4EACcfxUh9AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrPIsWRmVeSWpSXmKPExsVy+t/xu7r8N3/EGFxrEbTYOGM9q8X1L89Z
-        LeYfOcdqsfrjY0aLyafmMlmc6c616H/8mtni/PkN7BZnm96wW1zeNYfN4nPvEUaLGef3MVms
-        PXKX3eJ24wo2i8Nv2lkt9l/xsrj9m8/i24lHjA5CHt++TmLxmN1wkcVj56y77B6bVnWyefQ2
-        v2Pz6NuyitFj8+lqj8+b5AI4ovRsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV
-        9O1sUlJzMstSi/TtEvQyZpxoYy3oM6iYdvcOSwPjVpUuRk4OCQETiVkr3rN0MXJxCAksZZR4
-        tfU1M0RCTGLSvu3sELawxJ9rXWwQRa8ZJdZf/QCWEBYIlzjR38YIYosIaEpc//udFaSIWWAj
-        i8TFV71MEB0TmCTaZlwFGsvBwSagJ7FjVSGIySvgJrFmSxhIL4uAisSFj3tZQWxRgQiJM+9X
-        sIDYvAKCEidnPgGzOQUCJQ4e/wB2HLOAmcS8zQ+hbHGJW0/mM0HY8hLb385hnsAoNAtJ+ywk
-        LbOQtMxC0rKAkWUVo0hqaXFuem6xkV5xYm5xaV66XnJ+7iZGYORvO/Zzyw7GrnfBhxgFOBiV
-        eHglNn6PEWJNLCuuzD3EKMHBrCTCW3bhR4wQb0piZVVqUX58UWlOavEhRlOg5yYyS4km5wOT
-        Ul5JvKGpobmFpaG5sbmxmYWSOG+HwMEYIYH0xJLU7NTUgtQimD4mDk6pBsaq7brOl4LuCS/i
-        cNfO2vHkXUHBy+ryjr1Vcx65ubvOZT1zsZ7hgmvAJQv7eTWyNxZ3T1m+WvNziyWbiN5779Uv
-        901iWGrFfrdC49vkpaXl1UD//2Y8sNP6Z9OhyB0REo/PVC4qaBR3vzBjsVjN8q1cPww7/X+c
-        exmqExzgLxh0I2HvV/caJSWW4oxEQy3mouJEAC2Pp7ESAwAA
-X-CMS-MailID: 20190606091247eucas1p26f3eb1e36a2158b0eaec65c1458f1538
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190605165428eucas1p11849754e0d0aa8f8d445ceb0cd6c2f61
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190605165428eucas1p11849754e0d0aa8f8d445ceb0cd6c2f61
-References: <CGME20190605165428eucas1p11849754e0d0aa8f8d445ceb0cd6c2f61@eucas1p1.samsung.com>
-        <20190605165410.14606-1-l.luba@partner.samsung.com>
-        <20190605165410.14606-3-l.luba@partner.samsung.com>
-        <CAJKOXPfW3QUH+6+g3NXPuogNxtr_uOtWKOwbgPwBVdqn4Y7a_Q@mail.gmail.com>
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Krzysztof,
+On Tue, 04 Jun 2019, Jonathan Corbet <corbet@lwn.net> wrote:
+> Every merge window seems to involve at least one episode where subsystem
+> maintainers don't manage their trees as Linus would like.  Document the
+> expectations so that at least he has something to point people to.
 
-On 6/6/19 10:34 AM, Krzysztof Kozlowski wrote:
-> On Wed, 5 Jun 2019 at 18:54, Lukasz Luba <l.luba@partner.samsung.com> wrote:
->>
->> This patch provides support for clocks needed for Dynamic Memory Controller
->> in Exynos5422 SoC. It adds CDREX base register addresses, new DIV, MUX and
->> GATE entries.
->>
->> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
->> ---
->>   drivers/clk/samsung/clk-exynos5420.c | 57 ++++++++++++++++++++++++++--
->>   1 file changed, 53 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
->> index 34cce3c5898f..eecbfcc6b3cf 100644
->> --- a/drivers/clk/samsung/clk-exynos5420.c
->> +++ b/drivers/clk/samsung/clk-exynos5420.c
->> @@ -134,6 +134,8 @@
->>   #define SRC_CDREX              0x20200
->>   #define DIV_CDREX0             0x20500
->>   #define DIV_CDREX1             0x20504
->> +#define GATE_BUS_CDREX0                0x20700
->> +#define GATE_BUS_CDREX1                0x20704
->>   #define KPLL_LOCK              0x28000
->>   #define KPLL_CON0              0x28100
->>   #define SRC_KFC                        0x28200
->> @@ -248,6 +250,8 @@ static const unsigned long exynos5x_clk_regs[] __initconst = {
->>          DIV_CDREX1,
->>          SRC_KFC,
->>          DIV_KFC0,
->> +       GATE_BUS_CDREX0,
->> +       GATE_BUS_CDREX1,
->>   };
->>
->>   static const unsigned long exynos5800_clk_regs[] __initconst = {
->> @@ -425,6 +429,9 @@ PNAME(mout_group13_5800_p)  = { "dout_osc_div", "mout_sw_aclkfl1_550_cam" };
->>   PNAME(mout_group14_5800_p)     = { "dout_aclk550_cam", "dout_sclk_sw" };
->>   PNAME(mout_group15_5800_p)     = { "dout_osc_div", "mout_sw_aclk550_cam" };
->>   PNAME(mout_group16_5800_p)     = { "dout_osc_div", "mout_mau_epll_clk" };
->> +PNAME(mout_mx_mspll_ccore_phy_p) = { "sclk_bpll", "mout_sclk_dpll",
->> +                                       "mout_sclk_mpll", "ff_dout_spll2",
->> +                                       "mout_sclk_spll", "mout_sclk_epll"};
->>
->>   /* fixed rate clocks generated outside the soc */
->>   static struct samsung_fixed_rate_clock
->> @@ -450,7 +457,7 @@ static const struct samsung_fixed_factor_clock
->>   static const struct samsung_fixed_factor_clock
->>                  exynos5800_fixed_factor_clks[] __initconst = {
->>          FFACTOR(0, "ff_dout_epll2", "mout_sclk_epll", 1, 2, 0),
->> -       FFACTOR(0, "ff_dout_spll2", "mout_sclk_spll", 1, 2, 0),
->> +       FFACTOR(CLK_FF_DOUT_SPLL2, "ff_dout_spll2", "mout_sclk_spll", 1, 2, 0),
->>   };
->>
->>   static const struct samsung_mux_clock exynos5800_mux_clks[] __initconst = {
->> @@ -472,11 +479,14 @@ static const struct samsung_mux_clock exynos5800_mux_clks[] __initconst = {
->>          MUX(0, "mout_aclk300_disp1", mout_group5_5800_p, SRC_TOP2, 24, 2),
->>          MUX(0, "mout_aclk300_gscl", mout_group5_5800_p, SRC_TOP2, 28, 2),
->>
->> +       MUX(CLK_MOUT_MX_MSPLL_CCORE_PHY, "mout_mx_mspll_ccore_phy",
->> +               mout_mx_mspll_ccore_phy_p, SRC_TOP7, 0, 3),
->> +
->>          MUX(CLK_MOUT_MX_MSPLL_CCORE, "mout_mx_mspll_ccore",
->> -                       mout_mx_mspll_ccore_p, SRC_TOP7, 16, 2),
->> +                       mout_mx_mspll_ccore_p, SRC_TOP7, 16, 3),
->>          MUX_F(CLK_MOUT_MAU_EPLL, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p,
->>                          SRC_TOP7, 20, 2, CLK_SET_RATE_PARENT, 0),
->> -       MUX(0, "sclk_bpll", mout_bpll_p, SRC_TOP7, 24, 1),
->> +       MUX(CLK_SCLK_BPLL, "sclk_bpll", mout_bpll_p, SRC_TOP7, 24, 1),
->>          MUX(0, "mout_epll2", mout_epll2_5800_p, SRC_TOP7, 28, 1),
->>
->>          MUX(0, "mout_aclk550_cam", mout_group3_5800_p, SRC_TOP8, 16, 3),
->> @@ -648,7 +658,7 @@ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
->>
->>          MUX(0, "mout_sclk_mpll", mout_mpll_p, SRC_TOP6, 0, 1),
->>          MUX(CLK_MOUT_VPLL, "mout_sclk_vpll", mout_vpll_p, SRC_TOP6, 4, 1),
->> -       MUX(0, "mout_sclk_spll", mout_spll_p, SRC_TOP6, 8, 1),
->> +       MUX(CLK_MOUT_SCLK_SPLL, "mout_sclk_spll", mout_spll_p, SRC_TOP6, 8, 1),
->>          MUX(0, "mout_sclk_ipll", mout_ipll_p, SRC_TOP6, 12, 1),
->>          MUX(0, "mout_sclk_rpll", mout_rpll_p, SRC_TOP6, 16, 1),
->>          MUX_F(CLK_MOUT_EPLL, "mout_sclk_epll", mout_epll_p, SRC_TOP6, 20, 1,
->> @@ -806,8 +816,21 @@ static const struct samsung_div_clock exynos5x_div_clks[] __initconst = {
->>                          "mout_aclk400_disp1", DIV_TOP2, 4, 3),
->>
->>          /* CDREX Block */
->> +       /*
->> +        * The three clocks below are controlled using the same register and
->> +        * bits. They are put into one because there is a need of
->> +        * synchronization between the BUS and DREXs (two external memory
->> +        * interfaces).
->> +        * They are put here to show this HW assumption and for clock
->> +        * information summary completeness.
->> +        */
->>          DIV(CLK_DOUT_PCLK_CDREX, "dout_pclk_cdrex", "dout_aclk_cdrex1",
->>                          DIV_CDREX0, 28, 3),
->> +       DIV(CLK_DOUT_PCLK_DREX0, "dout_pclk_drex0", "dout_cclk_drex0",
->> +                       DIV_CDREX0, 28, 3),
->> +       DIV(CLK_DOUT_PCLK_DREX1, "dout_pclk_drex1", "dout_cclk_drex0",
->> +                       DIV_CDREX0, 28, 3),
-> 
-> Offline discussion with Marek and Sylwester suggested to add NOCACHE
-> for the two clocks using the same bits. Otherwise I am fine:
-Indeed, I have changed it and run some tests of these three clocks with:
------------8<-------------------------
-DIV_F(CLK_DOUT_PCLK_CDREX, "dout_pclk_cdrex", "dout_aclk_cdrex1",
-	DIV_CDREX0, 28, 3, CLK_GET_RATE_NOCACHE, 0),
-DIV_F(CLK_DOUT_PCLK_DREX0, "dout_pclk_drex0", "dout_cclk_drex0",
-	DIV_CDREX0, 28, 3, CLK_GET_RATE_NOCACHE, 0),
-DIV_F(CLK_DOUT_PCLK_DREX1, "dout_pclk_drex1", "dout_cclk_drex0",
-	DIV_CDREX0, 28, 3, CLK_GET_RATE_NOCACHE, 0),
---------------->8---------------------
-> 
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-Thank you for the review and ACK.
+Good stuff. Some notes inline.
 
-Regards,
-Lukasz
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
+BR,
+Jani.
+
+>
+> Acked-by: David Rientjes <rientjes@google.com>
+> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+> ---
+> Changes in v2:
+>   - Try to clear up "reparenting" v. "history modification"
+>   - Make the "don't rebase public branches" rule into more of a guideline
+>   - Fix typos noted by Geert
+>   - Rename the document to better reflect its contents
+>
+>  Documentation/maintainer/index.rst            |   1 +
+>  .../maintainer/rebasing-and-merging.rst       | 216 ++++++++++++++++++
+>  2 files changed, 217 insertions(+)
+>  create mode 100644 Documentation/maintainer/rebasing-and-merging.rst
+>
+> diff --git a/Documentation/maintainer/index.rst
+> b/Documentation/maintainer/index.rst index 2a14916930cb..56e2c09dfa39
+> 100644 --- a/Documentation/maintainer/index.rst
+> +++ b/Documentation/maintainer/index.rst
+> @@ -10,5 +10,6 @@ additions to this manual.
+>     :maxdepth: 2
+>  
+>     configure-git
+> +   rebasing-and-merging
+>     pull-requests
+>  
+> diff --git a/Documentation/maintainer/rebasing-and-merging.rst
+> b/Documentation/maintainer/rebasing-and-merging.rst new file mode 100644
+> index 000000000000..2987bd45dfb2
+> --- /dev/null
+> +++ b/Documentation/maintainer/rebasing-and-merging.rst
+> @@ -0,0 +1,216 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +====================
+> +Rebasing and merging
+> +====================
+> +
+> +Maintaining a subsystem, as a general rule, requires a familiarity with
+> the +Git source-code management system.  Git is a powerful tool with a lot
+> of +features; as is often the case with such tools, there are right and
+> wrong +ways to use those features.  This document looks in particular at
+> the use +of rebasing and merging.  Maintainers often get in trouble when
+> they use +those tools incorrectly, but avoiding problems is not actually
+> all that +hard.
+> +
+> +One thing to be aware of in general is that, unlike many other projects,
+> +the kernel community is not scared by seeing merge commits in its
+> +development history.  Indeed, given the scale of the project, avoiding
+> +merges would be nearly impossible.  Some problems encountered by
+> +maintainers result from a desire to avoid merges, while others come from
+> +merging a little too often.
+> +
+> +Rebasing
+> +========
+> +
+> +"Rebasing" is the process of changing the history of a series of commits
+> +within a repository.  There are two different types of operations that are
+> +referred to as rebasing since both are done with the ``git rebase``
+> +command, but there are significant differences between them:
+> +
+> + - Rebasing can change the parent (starting) commit upon which a series of
+> +   patches is built.  For example, a rebase operation could take a patch
+> +   set built on the previous kernel release and base it, instead, on the
+> +   current release.  We'll call this operation "reparenting" in the
+> +   discussion below.
+> +
+> + - Changing the history of a set of patches by fixing (or deleting) broken
+> +   commits, adding patches, adding tags to commit changelogs, or changing
+> +   the order in which commits are applied.  In the following text, this
+> +   type of operation will be referred to as "history modification"
+> +
+> +The term "rebasing" will be used to refer to both of the above operations.
+> +Used properly, rebasing can yield a cleaner and clearer development
+> +history; used improperly, it can obscure that history and introduce bugs.
+> +
+> +There are a few rules of thumb that can help developers to avoid the worst
+> +perils of rebasing:
+> +
+> + - History that has been exposed to the world beyond your private system
+> +   should usually not be changed.  Others may have pulled a copy of your
+> +   tree and built on it; modifying your tree will create pain for them.
+> If
+> +   work is in need of rebasing, that is usually a sign that it is not yet
+> +   ready to be committed to a public repository.
+> +
+> +   That said, there are always exceptions.  Some trees (linux-next being
+> +   a significant example) are frequently rebased by their nature, and
+> +   developers know not to base work on them.  Developers will sometimes
+> +   expose an unstable branch for others to test with or for automated
+> +   testing services.  If you do expose a branch that may be unstable in
+> +   this way, be sure that prospective users know not to base work on it.
+> +
+> + - Do not rebase a branch that contains history created by others.  If you
+> +   have pulled changes from another developer's repository, you are now a
+> +   custodian of their history.  You should not change it.  With few
+> +   exceptions, for example, a broken commit in a tree like this should be
+> +   explicitly reverted rather than disappeared via history modification.
+> +
+> + - Do not reparent a tree without a good reason to do so.  Just being on a
+> +   newer base or avoiding a merge with an upstream repository is not
+> +   generally a good reason.
+> +
+> + - If you must reparent a repository, do not pick some random kernel
+> commit
+> +   as the new base.  The kernel is often in a relatively unstable state
+> +   between release points; basing development on one of those points
+> +   increases the chances of running into surprising bugs.  When a patch
+> +   series must move to a new base, pick a stable point (such as one of
+> +   the -rc releases) to move to.
+> +
+> + - Realize that the rebasing a patch series changes the environment in
+> +   which it was developed and, likely, invalidates much of the testing
+> that
+> +   was done.  A rebased patch series should, as a general rule, be treated
+> +   like new code and retested from the beginning.
+> +
+> +A frequent cause of merge-window trouble is when Linus is presented with a
+> +patch series that has clearly been reparented, often to a random commit,
+> +shortly before the pull request was sent.  The chances of such a series
+> +having been adequately tested are relatively low - as are the chances of
+> +the pull request being acted upon.
+> +
+> +If, instead, rebasing is limited to private trees, commits are based on a
+> +well-known starting point, and they are well tested, the potential for
+> +trouble is low.
+> +
+> +Merging
+> +=======
+> +
+> +Merging is a common operation in the kernel development process; the 5.1
+> +development cycle included 1,126 merge commits - nearly 9% of the total.
+> +Kernel work is accumulated in over 100 different subsystem trees, each of
+> +which may contain multiple topic branches; each branch is usually
+> developed +independently of the others.  So naturally, at least merge will
+> be required +before any given branch finds its way into an upstream
+> repository. +
+> +Many projects require that branches in pull requests be based on the
+> +current trunk so that no merge commits appear in the history.  The kernel
+> +is not such a project; any rebasing of branches to avoid merges will, as
+> +described above, lead to certain trouble.
+> +
+> +Subsystem maintainers find themselves having to do two types of merges:
+> +from lower-level subsystem trees and from others, either sibling trees or
+> +the mainline.  The best practices to follow differ in those two
+> situations. +
+> +Merging from lower-level trees
+> +------------------------------
+> +
+> +Larger subsystems tend to have multiple levels of maintainers, with the
+> +lower-level maintainers sending pull requests to the higher levels.
+> Acting +on such a pull request will almost certainly generate a merge
+> commit; that +is as it should be.  In fact, subsystem maintainers may want
+> to use +the --no-ff flag to force the addition of a merge commit in the
+> rare cases +where one would not normally be created so that the reasons
+> for the merge +can be recorded.  The changelog for the merge should, for
+> any kind of +merge, say *why* the merge is being done.  For a lower-level
+> tree, "why" is +usually a summary of the changes that will come with that
+> pull. +
+> +Maintainers at all levels should be using signed tags on their pull
+> +requests, and upstream maintainers should verify the tags when pulling
+> +branches.  Failure to do so threatens the security of the development
+> +process as a whole.
+> +
+> +As per the rules outlined above, once you have merged somebody else's
+> +history into your tree, you cannot rebase that branch, even if you
+> +otherwise would be able to.
+> +
+> +Merging from sibling or upstream trees
+> +--------------------------------------
+> +
+> +While merges from downstream are common and unremarkable, merges from
+> other +trees tend to be a red flag when it comes time to push a branch
+> upstream. +Such merges need to be carefully thought about and well
+> justified, or +there's a good chance that a subsequent pull request will
+> be rejected. +
+> +It is natural to want to merge the master branch into a repository; it can
+> +help to make sure that there are no conflicts with parallel development
+> and +generally gives a warm, fuzzy feeling of being up-to-date.  But this
+> +temptation should be avoided almost all of the time.
+> +
+> +Why is that?  Merges with upstream will muddy the development history of
+> +your own branch.  They will significantly increase your chances of
+> +encountering bugs from elsewhere in the community and make it hard to
+> +ensure that the work you are managing is stable and ready for upstream.
+> +Frequent merges can also obscure problems with the development process in
+> +your tree; they can hide interactions with other trees that should not be
+> +happening (often) in a well-managed branch.
+> +
+> +One of the most frequent causes of merge-related trouble is when a
+> +maintainer merges with the upstream in order to resolve merge conflicts
+> +before sending a pull request.  Again, this temptation is easy enough to
+> +understand, but it should absolutely be avoided.  This is especially true
+> +for the final pull request: Linus is adamant that he would much rather see
+> +merge conflicts than unnecessary back merges.  Seeing the conflicts lets
+
+I think "backmerge" as a term deserves to be highlighted in the heading
+or first paragraph of the section.
+
+Occasionally backmerges are required. As a rule of thumb, it might be
+worth mentioning you probably shouldn't do such merges across subsystem
+hierarchies, i.e. ask the level above you to do a backmerge first, and
+then backmerge from them. And that when backmerging from Linus' tree,
+the merge point should be a tag.
+
+> +him know where potential problem areas are.  He does a lot of merges (382
+> +in the 5.1 development cycle) and has gotten quite good at conflict
+> +resolution - often better than the developers involved.
+> +
+> +So what should a maintainer do when there is a conflict between their
+> +subsystem branch and the mainline?  The most important step is to warn
+> +Linus in the pull request that the conflict will happen; if nothing else,
+> +that demonstrates an awareness of how your branch fits into the whole.
+> For +especially difficult conflicts, create and push a *separate* branch
+> to show +how you would resolve things.  Mention that branch in your pull
+> request, +but the pull request itself should be for the unmerged branch.
+> +
+> +Even in the absence of known conflicts, doing a test merge before sending
+> a +pull request is a good idea.  It may alert you to problems that you
+> somehow +didn't see from linux-next and helps to understand exactly what
+> you are +asking upstream to do.
+> +
+> +Another reason for doing merges of upstream or another subsystem tree is
+> to +resolve dependencies.  These dependency issues do happen at times, and
+> +sometimes a cross-merge with another tree is the best way to resolve them;
+> +as always, in such situations, the merge commit should explain why the
+> +merge has been done.  Take a moment to do it right; people will read those
+> +changelogs.
+> +
+> +Often, though, dependency issues indicate that a change of approach is
+> +needed.  Merging another subsystem tree to resolve a dependency risks
+> +bringing in other bugs.  If that subsystem tree fails to be pulled
+> +upstream, whatever problems it had will block the merging of your tree as
+> +well.  Possible alternatives include agreeing with the maintainer to carry
+> +both sets of changes in one of the trees or creating a special branch
+> +dedicated to the dependent commits.  If the dependency is related to major
+> +infrastructural changes, the right solution might be to hold the dependent
+> +commits for one development cycle so that those changes have time to
+> +stabilize in the mainline.
+
+Is it not a common convention to call these special branches "topic
+branches"?
+
+FWIW, I don't think I've ever done a cross-merge or a direct merge from
+a sibling tree. I've always solved the cases either by topic branches
+merged to both trees or by having both trees merged to the first common
+upstream tree, and then backmerging. From my POV feels like these
+solutions should be presented more prominently than cross-merges.
+
+> +
+> +Finally
+> +=======
+> +
+> +It is relatively common to merge with the mainline toward the beginning of
+> +the development cycle in order to pick up changes and fixes done elsewhere
+> +in the tree.  As always, such a merge should pick a well-known release
+> +point rather than some random spot.  If your upstream-bound branch has
+> +emptied entirely into the mainline during the merge window, you can pull
+> it +forward with a command like::
+> +
+> +  git merge v5.2-rc1^0
+> +
+> +The "^0" will cause Git to do a fast-forward merge (which should be
+> +possible in this situation), thus avoiding the addition of a spurious
+> merge +commit.
+> +
+> +The guidelines laid out above are just that: guidelines.  There will
+> always +be situations that call out for a different solution, and these
+> guidelines +should not prevent developers from doing the right thing when
+> the need +arises.  But one should always think about whether the need has
+> truly +arisen and be prepared to explain why something abnormal needs to
+> be done. -- 
+> 2.21.0
+>
+
+-- 
+Jani Nikula, Intel Open Source Graphics Center
