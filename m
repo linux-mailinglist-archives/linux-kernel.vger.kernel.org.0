@@ -2,87 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CD6238026
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 00:01:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDF8B38031
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 00:02:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728885AbfFFWBX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 18:01:23 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:46887 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726554AbfFFWBX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 18:01:23 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45KfkS0hbkz9s00;
-        Fri,  7 Jun 2019 08:01:19 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1559858480;
-        bh=nRYnLt1pP0T6LPIL1a/hHDJC3kNRn4Tgk5aqtjLRJYw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=VUxfHXDaMcUXUlbUb8ChZrHRfN9LepGudS6K8NsBWOAS+pagHBLcjziBbPo2AAHIr
-         4Iskz0qamvYxt+C9rtohiihx6OLTyWNnJHUXN/yHmjwNERFxR1KyEwLOL0boJ95EIN
-         zbEkt3NNgnQh0x5YzMyBJBuqDR8OmKhj+fOc6as8QnMeZEbsNk3NCckXA4tw+bseLW
-         lj2VGp/0XcIseHr1wZo5ncQu1xQQFNKKzPzCxN+6MbcaiiL4GVPFIj0IzkEOI/qPfw
-         l2C3mrNlwQ+2trFpgEmHkoFSkKO918nBN+blJPmuLCOAjIL4kRxJeDNkDQEqLAYrh5
-         Spt3GQNoVz/nw==
-Date:   Fri, 7 Jun 2019 08:01:15 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Zhu Yingjiang <yingjiang.zhu@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: linux-next: Fixes tag needs some work in the sound-asoc-fixes tree
-Message-ID: <20190607080115.15a14726@canb.auug.org.au>
+        id S1728940AbfFFWCo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 18:02:44 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:55612 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726554AbfFFWCo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 18:02:44 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x56LsQKi098174;
+        Thu, 6 Jun 2019 22:02:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=8VdDFbqHussZfRli7/Ekq+VSSWAZRQe4ch9vBJOAbCg=;
+ b=TiuKhcgQGIeZ6Q8j04RBHFzib+klmcOpCPiw7y0TVbH6qww1avRuXAl16W4Ds4DxOrko
+ MJz/AtGd79kSsHvl6MyefahqRb5tXi0snhJCdhJKMv2Xh9fVsEs+BWUPDuHFwsRdzT+y
+ u9CYgaG3WheNyiARdFthJq4pijv4ia5oUVWqeUfVcy5Hr3nbBkwx1yFx+kjL8IFD8zyD
+ XUDlP5O6UR3bWJr0g99EnrOCx0tNpqM/Exuxmx0YXk23cH4MLEuDRDwnnDEnBDtdoSi0
+ BUaNSdL4kyPMzxVeYZlAQbobdPgcXI2tAqdTEEW6xm2p3HDkWeBr5hFU0NywOSrIFvyw eQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2130.oracle.com with ESMTP id 2suevdudp0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 06 Jun 2019 22:02:26 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x56M2L6t166587;
+        Thu, 6 Jun 2019 22:02:25 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2swngmrr15-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 06 Jun 2019 22:02:25 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x56M2H2A012404;
+        Thu, 6 Jun 2019 22:02:18 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 06 Jun 2019 15:02:17 -0700
+To:     John Garry <john.garry@huawei.com>
+Cc:     <jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
+        <intel-linux-scu@intel.com>, <artur.paszkiewicz@intel.com>,
+        <jinpu.wang@profitbricks.com>, <lindar_liu@usish.com>,
+        <yanaijie@huawei.com>, <linux-scsi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <hare@suse.de>
+Subject: Re: [PATCH] scsi: libsas, lldds: Use dev_is_expander()
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1559751143-168560-1-git-send-email-john.garry@huawei.com>
+Date:   Thu, 06 Jun 2019 18:02:14 -0400
+In-Reply-To: <1559751143-168560-1-git-send-email-john.garry@huawei.com> (John
+        Garry's message of "Thu, 6 Jun 2019 00:12:23 +0800")
+Message-ID: <yq1k1dymkyh.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/90WHSYWzN0mFhY3z42dsM8D"; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9280 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=625
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906060149
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9280 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=685 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906060148
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/90WHSYWzN0mFhY3z42dsM8D
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+John,
 
-In commit
+> Many times in libsas, and in LLDDs which use libsas, the check for an
+> expander device is re-implemented or open coded.
 
-  1f5253b08e06 ("ASoC: SOF: Intel: hda: use the defined ppcap functions")
+Applied to 5.3/scsi-queue, thanks.
 
-Fixes tag
-
-  Fixes: 8a300c8fb17 ("ASoC: SOF: Intel: Add HDA controller for Intel DSP")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/90WHSYWzN0mFhY3z42dsM8D
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz5jSsACgkQAVBC80lX
-0GxccAgAnxNwSxEsPS7kcP0hkUA4FyQ0jgEJiYZTjv/Cw5mguVtBFbBWFYqvnzro
-unC4PR+6rYZNsYqqGURfrgBA1B16fxKRaOs0XxUIIChe2k+wCGOM8V+OViZWHUIN
-2QGJ1Ok4+ZOc0S8YMwHazkQu3JLjYTUczV+BN8j5CaKBzIX1rEDZQI6x0Vawg2wk
-4K0ymXnnHiL9Ay3NRTrK599fULyS0VlXMLhzCtwMSTuKWLcprvZZxTKiuo/xLudE
-4xaT0vGl/qfqhDfCYjwshG+ajHqwsBW+uNxpzBsmWDKdbqwO0FAFV7LcNshxdJ5e
-YQW9EH/4Ur60k6Ro/4/YmumubVV7fA==
-=knvX
------END PGP SIGNATURE-----
-
---Sig_/90WHSYWzN0mFhY3z42dsM8D--
+-- 
+Martin K. Petersen	Oracle Linux Engineering
