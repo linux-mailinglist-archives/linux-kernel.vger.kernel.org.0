@@ -2,105 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C326737C29
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 20:23:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D145137C23
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 20:22:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730573AbfFFSXW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 14:23:22 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.178]:20075 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729519AbfFFSXW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 14:23:22 -0400
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id D043088AA9
-        for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2019 13:23:21 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id Yx2nhYj6CYTGMYx2nhWeWH; Thu, 06 Jun 2019 13:23:21 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.127.120] (port=48372 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hYwyU-002JXr-Mg; Thu, 06 Jun 2019 13:23:21 -0500
-Date:   Thu, 6 Jun 2019 13:18:53 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH v2] kernel: module: Use struct_size() helper
-Message-ID: <20190606181853.GA29960@embeddedor>
+        id S1730542AbfFFSWO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 14:22:14 -0400
+Received: from mail-eopbgr810045.outbound.protection.outlook.com ([40.107.81.45]:38592
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727559AbfFFSWO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 14:22:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sonYqcdLrVVZs4jxWz2LM04hL11uBXmDup0Q2BRmOQQ=;
+ b=LpcH017pBJhBfHTppKchmLvpbJbhyDGDO9Q4PpexaMxtISqrRvdXMCaQVPw1Hrsa22KM4wYDoBfDBTJGa837FNP471u5pO7S5yAUTBQWorRsPJz8SU+EvlwViuqF9R7H7k+U97YAwXj34frhLpzVDBpbcTy5kq5wkLhUU1yw0qk=
+Received: from CH2PR02MB6359.namprd02.prod.outlook.com (52.132.231.93) by
+ CH2PR02MB6021.namprd02.prod.outlook.com (10.255.156.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1965.12; Thu, 6 Jun 2019 18:22:08 +0000
+Received: from CH2PR02MB6359.namprd02.prod.outlook.com
+ ([fe80::b9dd:11e0:7fca:ba55]) by CH2PR02MB6359.namprd02.prod.outlook.com
+ ([fe80::b9dd:11e0:7fca:ba55%5]) with mapi id 15.20.1943.018; Thu, 6 Jun 2019
+ 18:22:07 +0000
+From:   Dragan Cvetic <draganc@xilinx.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+CC:     "arnd@arndb.de" <arnd@arndb.de>, Michal Simek <michals@xilinx.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Derek Kiernan <dkiernan@xilinx.com>
+Subject: RE: [PATCH V4 04/12] misc: xilinx_sdfec: Add open, close and ioctl
+Thread-Topic: [PATCH V4 04/12] misc: xilinx_sdfec: Add open, close and ioctl
+Thread-Index: AQHVEu5GErREaULonk+tvtDvF1CkjaaOsacAgABQ8tA=
+Date:   Thu, 6 Jun 2019 18:22:07 +0000
+Message-ID: <CH2PR02MB63591C650DB8C7E15D9D3CCDCB170@CH2PR02MB6359.namprd02.prod.outlook.com>
+References: <1558784245-108751-1-git-send-email-dragan.cvetic@xilinx.com>
+ <1558784245-108751-5-git-send-email-dragan.cvetic@xilinx.com>
+ <20190606132842.GC7943@kroah.com>
+In-Reply-To: <20190606132842.GC7943@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=draganc@xilinx.com; 
+x-originating-ip: [149.199.80.133]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: b334be30-de8b-4607-eec9-08d6eaabe27c
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:CH2PR02MB6021;
+x-ms-traffictypediagnostic: CH2PR02MB6021:
+x-microsoft-antispam-prvs: <CH2PR02MB60210AAA2FE44B9F6F38A457CB170@CH2PR02MB6021.namprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 00603B7EEF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(366004)(396003)(346002)(376002)(189003)(13464003)(199004)(99286004)(26005)(52536014)(6116002)(3846002)(6436002)(66066001)(74316002)(4326008)(7696005)(14454004)(5660300002)(9686003)(55016002)(25786009)(2906002)(76176011)(478600001)(229853002)(53546011)(6506007)(102836004)(107886003)(8936002)(7736002)(6916009)(76116006)(73956011)(66946007)(486006)(14444005)(446003)(33656002)(256004)(81156014)(71190400001)(316002)(53936002)(71200400001)(66446008)(68736007)(54906003)(476003)(86362001)(6246003)(81166006)(8676002)(66556008)(186003)(305945005)(11346002)(64756008)(66476007);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR02MB6021;H:CH2PR02MB6359.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 5MzkTd5FzxfzGWuPlrUp6S3DdKpeFq+Um9/YzIEaYsyB8dE22WKTbbpqyocHyEFQ0sH4kHTlGuQnSA/H+9PymvLd/gHPaeEr2TtpwFaQdb5f+gcIpPviltAdVqNYYYigYQG3RNKDay2xXFj+Oh5XGIOE8fglIcgz7lLCBSbz0/oeluhCjyfa1jHUjLrSVQk46T77jvwVccFUrX0ibm6rRhM3/bvKxpApPd/6PoLyToc0IM38yHhRiuhTvUqQDviav2duH5nK29fIk5RTa/pdsGFNcMU+yJ+YcAWK+2JVzf3vX+32H88vr6IFg8dL/8n0oVItNY2Qp1MM6t3nVCQRBhAI+Aoa0KKaPa5j1JHyoHcq3EOzeBDVC0b+gUoEidS0w02wc1iog6zxAl7ba6zZotFuWr8CU0k9jYe9zbxuJ5I=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.127.120
-X-Source-L: No
-X-Exim-ID: 1hYwyU-002JXr-Mg
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.127.120]:48372
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b334be30-de8b-4607-eec9-08d6eaabe27c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2019 18:22:07.7990
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: draganc@xilinx.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR02MB6021
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
 
-struct module_sect_attrs {
-	...
-        struct module_sect_attr attrs[0];
-};
 
-Make use of the struct_size() helper instead of an open-coded version
-in order to avoid any potential type mistakes.
+> -----Original Message-----
+> From: Greg KH [mailto:gregkh@linuxfoundation.org]
+> Sent: Thursday 6 June 2019 14:29
+> To: Dragan Cvetic <draganc@xilinx.com>
+> Cc: arnd@arndb.de; Michal Simek <michals@xilinx.com>; linux-arm-kernel@li=
+sts.infradead.org; robh+dt@kernel.org;
+> mark.rutland@arm.com; devicetree@vger.kernel.org; linux-kernel@vger.kerne=
+l.org; Derek Kiernan <dkiernan@xilinx.com>
+> Subject: Re: [PATCH V4 04/12] misc: xilinx_sdfec: Add open, close and ioc=
+tl
+>=20
+> On Sat, May 25, 2019 at 12:37:17PM +0100, Dragan Cvetic wrote:
+> > +static int xsdfec_dev_open(struct inode *iptr, struct file *fptr)
+> > +{
+> > +	return 0;
+> > +}
+> > +
+> > +static int xsdfec_dev_release(struct inode *iptr, struct file *fptr)
+> > +{
+> > +	return 0;
+> > +}
+>=20
+> empty open/close functions are never needed, just drop them.
 
-So, replace the following form:
+Accepted.
+Will remove them.
 
-sizeof(*sect_attrs) + nloaded * sizeof(sect_attrs->attrs[0]
+>=20
+> > +
+> > +static long xsdfec_dev_ioctl(struct file *fptr, unsigned int cmd,
+> > +			     unsigned long data)
+> > +{
+> > +	struct xsdfec_dev *xsdfec;
+> > +	void __user *arg =3D NULL;
+> > +	int rval =3D -EINVAL;
+> > +
+> > +	xsdfec =3D container_of(fptr->private_data, struct xsdfec_dev, miscde=
+v);
+> > +	if (!xsdfec)
+> > +		return rval;
+>=20
+> It is impossible for container_of() to return NULL, unless something
+> very magical and rare just happened.  It's just doing pointer math, you
+> can never check the return value of it.
 
-with:
+Accepted.
+Will remove if statement.
 
-struct_size(sect_attrs, attrs, nloaded)
+>=20
+> > +
+> > +	if (_IOC_TYPE(cmd) !=3D XSDFEC_MAGIC)
+> > +		return -ENOTTY;
+>=20
+> How can this happen?
 
-This code was detected with the help of Coccinelle.
+Accepted.
+Will be removed.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
-Changes in v2:
- - Update changelog text by adding a better description for
-   the motivation and usage of the struct_size() helper.
+>=20
+> > +
+> > +	/* check if ioctl argument is present and valid */
+> > +	if (_IOC_DIR(cmd) !=3D _IOC_NONE) {
+> > +		arg =3D (void __user *)data;
+> > +		if (!arg)
+> > +			return rval;
+> > +	}
+> > +
+> > +	switch (cmd) {
+> > +	default:
+> > +		/* Should not get here */
+> > +		dev_warn(xsdfec->dev, "Undefined SDFEC IOCTL");
+>=20
+> Nice that userspace has a way to fill up the kernel log :(
+>=20
+> Just return the correct error here, don't log it.
 
- kernel/module.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Accepted.
+Will remove log.
 
-diff --git a/kernel/module.c b/kernel/module.c
-index 80c7c09584cf..3f3bb090fbf4 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -1492,8 +1492,7 @@ static void add_sect_attrs(struct module *mod, const struct load_info *info)
- 	for (i = 0; i < info->hdr->e_shnum; i++)
- 		if (!sect_empty(&info->sechdrs[i]))
- 			nloaded++;
--	size[0] = ALIGN(sizeof(*sect_attrs)
--			+ nloaded * sizeof(sect_attrs->attrs[0]),
-+	size[0] = ALIGN(struct_size(sect_attrs, attrs, nloaded),
- 			sizeof(sect_attrs->grp.attrs[0]));
- 	size[1] = (nloaded + 1) * sizeof(sect_attrs->grp.attrs[0]);
- 	sect_attrs = kzalloc(size[0] + size[1], GFP_KERNEL);
--- 
-2.21.0
-
+>=20
+> thanks,
+>=20
+> greg k-h
