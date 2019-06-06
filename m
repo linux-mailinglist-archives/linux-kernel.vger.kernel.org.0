@@ -2,121 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EA88370CE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 11:50:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 706AF370C8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 11:50:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728313AbfFFJti (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 05:49:38 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:42279 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727540AbfFFJth (ORCPT
+        id S1728281AbfFFJta (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 05:49:30 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:45277 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727734AbfFFJt3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 05:49:37 -0400
-Received: by mail-yb1-f193.google.com with SMTP id c7so694492ybs.9
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 02:49:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=dIuWqahxwYfa+gg7zLducBqFVlvQ5xNUBiX7691YYJI=;
-        b=qq8fspWRrqRd4zZSm3WIi14g0uJacA6l8DkDjMrJY/bMSxeY2EIj0GoZzMXUXP8QoU
-         6C86B8kbB9ZhEK+PAtWX+isJfxsQkWKmYjFAWqO2JDQ/dYLMAI5BGZGx0S19LVPeJq94
-         QU+u2HEv9nrLxTpshbbh99HmPOGIlkROXPehcUXk3Anb14Fgh+r5nRzdLVI77v4wPQYT
-         lz9s1ZSBkQqVp9DESR3lTtAkU2NR9z+JrxvZoUFHHBtlUVtpS6jgAIhpojIJ+QwVddHF
-         y3w7m6xGqYbkZNDokLtGCWDLAH1d8xn3AdHjCmzen9xdJbYGz97LCv8PHHauBFIWYsik
-         IXAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=dIuWqahxwYfa+gg7zLducBqFVlvQ5xNUBiX7691YYJI=;
-        b=tjzs+OnZDETodOqJuWNMIpgpo2wPJRnzvMJjJxzuMP/FcmvePtwQ8gEAoRhj8PlJnO
-         A0V9fvIKQBZAG68KYjN/x9Tu1kEBqG8UmyimvNtyFx3EMwqsJ1/xTdbhS8np5LXnXhg6
-         6kftT58CBJnVe6UsYCzcWAUYdrxex8cmjymAo8555rVlvEJlkCrHSXWguYUC2Cw5Sorp
-         dHEQbAgG5ZE9Esi/4sDyD+xcK9XtmKDSilzwYr92udD8l1d3JL5obr2qI7nEL7IcGB1g
-         JiOAVbEwd6KhIgegElvbOSo2HSSvjYn77lAeTthQszbYnqC/8bLNc09rCWG5OldoGFAI
-         G29g==
-X-Gm-Message-State: APjAAAUovw8oAPGVMm+CuyZmKbk98bethcmxWehT16iIktlJS49xcAkd
-        VqnqAkYIPS43VIMI3LpyiFUDmw==
-X-Google-Smtp-Source: APXvYqwrJDTIobkNOyLW8fbKSaKsQtwcXguk6M+HLUwD9mhc6kEqLYUvnDMOljy2J5eLgh4IlkezEQ==
-X-Received: by 2002:a25:84c5:: with SMTP id x5mr13331854ybm.78.1559814576552;
-        Thu, 06 Jun 2019 02:49:36 -0700 (PDT)
-Received: from localhost.localdomain (li1322-146.members.linode.com. [45.79.223.146])
-        by smtp.gmail.com with ESMTPSA id 85sm357652ywm.64.2019.06.06.02.49.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Jun 2019 02:49:36 -0700 (PDT)
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Mike Leach <mike.leach@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Cc:     Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v2 4/4] perf augmented_raw_syscalls: Document clang configuration
-Date:   Thu,  6 Jun 2019 17:48:45 +0800
-Message-Id: <20190606094845.4800-5-leo.yan@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190606094845.4800-1-leo.yan@linaro.org>
-References: <20190606094845.4800-1-leo.yan@linaro.org>
+        Thu, 6 Jun 2019 05:49:29 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id BF86280379; Thu,  6 Jun 2019 11:49:17 +0200 (CEST)
+Date:   Thu, 6 Jun 2019 11:49:27 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     jacek.anaszewski@gmail.com, broonie@kernel.org,
+        lgirdwood@gmail.com, lee.jones@linaro.org,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v5 2/6] dt-bindings: mfd: Add lm36274 bindings to ti-lmu
+Message-ID: <20190606094926.GC975@amd>
+References: <20190604174345.14841-1-dmurphy@ti.com>
+ <20190604174345.14841-3-dmurphy@ti.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="XWOWbaMNXpFDWE00"
+Content-Disposition: inline
+In-Reply-To: <20190604174345.14841-3-dmurphy@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To build this program successfully with clang, there have three
-compiler options need to be specified:
 
-  - Header file path: tools/perf/include/bpf;
-  - Specify architecture;
-  - Define macro __NR_CPUS__.
+--XWOWbaMNXpFDWE00
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This patch add comments to explain the reasons for building failure and
-give two examples for llvm.clang-opt variable, one is for x86_64
-architecture and another is for aarch64 architecture.
+On Tue 2019-06-04 12:43:41, Dan Murphy wrote:
+> Add the LM36274 backlight driver with regulator support.
+> This is a multi-function device for backlight applications.
+>=20
+> Backlight properties will be documented in it's a supplemental
+> bindings document.
+>=20
+> Regulator support is documented in the regulator/lm363x-regulator.txt
+>=20
+> http://www.ti.com/lit/ds/symlink/lm36274.pdf
+>=20
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Acked-by: Lee Jones <lee.jones@linaro.org>
+> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- .../examples/bpf/augmented_raw_syscalls.c     | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
-diff --git a/tools/perf/examples/bpf/augmented_raw_syscalls.c b/tools/perf/examples/bpf/augmented_raw_syscalls.c
-index a3701a4daf2e..fb6987edab2c 100644
---- a/tools/perf/examples/bpf/augmented_raw_syscalls.c
-+++ b/tools/perf/examples/bpf/augmented_raw_syscalls.c
-@@ -6,6 +6,25 @@
-  *
-  * perf trace -e tools/perf/examples/bpf/augmented_raw_syscalls.c cat /etc/passwd > /dev/null
-  *
-+ * This program include two header files 'unistd.h' and 'pid_filter.h', which
-+ * are placed in the folder tools/perf/include/bpf, but this folder is not
-+ * included in env $KERNEL_INC_OPTIONS and it leads to compilation failure.
-+ * For building this code, we also need to specify architecture and define macro
-+ * __NR_CPUS__.  To resolve these issues, variable llvm.clang-opt can be set in
-+ * the file ~/.perfconfig:
-+ *
-+ * E.g. Test on a platform with 8 CPUs with x86_64 architecture:
-+ *
-+ *   [llvm]
-+ *		clang-opt = "-D__NR_CPUS__=8 -D__x86_64__ \
-+ *			     -I./tools/perf/include/bpf"
-+ *
-+ * E.g. Test on a platform with 5 CPUs with aarch64 architecture:
-+ *
-+ *   [llvm]
-+ *		clang-opt = "-D__NR_CPUS__=5 -D__aarch64__ \
-+ *			     -I./tools/perf/include/bpf"
-+
-  * This exactly matches what is marshalled into the raw_syscall:sys_enter
-  * payload expected by the 'perf trace' beautifiers.
-  *
--- 
-2.17.1
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
+--XWOWbaMNXpFDWE00
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlz44aYACgkQMOfwapXb+vK9sgCgtdTs0CxoahksYCg/Lkvf+yNm
+8pMAoKKYUhNBsxGT/bUFKhbiaFQupr4Y
+=XMMM
+-----END PGP SIGNATURE-----
+
+--XWOWbaMNXpFDWE00--
