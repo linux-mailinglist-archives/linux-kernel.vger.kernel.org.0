@@ -2,57 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE17A36D59
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 09:31:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9770136D6B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 09:38:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726773AbfFFHbP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 03:31:15 -0400
-Received: from mga05.intel.com ([192.55.52.43]:48979 "EHLO mga05.intel.com"
+        id S1726685AbfFFHiG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 03:38:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35704 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726014AbfFFHbP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 03:31:15 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 00:31:09 -0700
-X-ExtLoop1: 1
-Received: from unknown (HELO [10.239.13.7]) ([10.239.13.7])
-  by fmsmga007.fm.intel.com with ESMTP; 06 Jun 2019 00:31:08 -0700
-Message-ID: <5CF8C272.7050808@intel.com>
-Date:   Thu, 06 Jun 2019 15:36:18 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
-MIME-Version: 1.0
-To:     Eric Hankland <ehankland@google.com>
-CC:     Cfir Cohen <cfir@google.com>, Paolo Bonzini <pbonzini@redhat.com>,
-        rkrcmar@redhat.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH v1] KVM: x86: PMU Whitelist
-References: <CAOyeoRWfPNmaWY6Lifdkdj3KPPM654vzDO+s3oduEMCJP+Asow@mail.gmail.com> <5CEC9667.30100@intel.com> <CAOyeoRWhfyuuYdguE6Wrzd7GOdow9qRE4MZ4OKkMc5cdhDT53g@mail.gmail.com> <5CEE3AC4.3020904@intel.com> <CAOyeoRW85jV=TW_xwSj0ZYwPj_L+G9wu+QPGEF3nBmPbWGX4_g@mail.gmail.com> <5CF07D37.9090805@intel.com> <CAOyeoRXWQaVYZSVL_LTTdAwJOEr+eCzhp1=_JcOX3i6_CJiD_g@mail.gmail.com> <5CF2599B.3030001@intel.com> <CAOyeoRWuHyhoy6NB=O+ekQMhBFngozKoanWzArxgBk4DH2hdtg@mail.gmail.com> <5CF5F6AE.90706@intel.com> <CAOyeoRW5wx0F=9B24h29KkhUrbaORXVSoJufb4d-XzKiAsz+NQ@mail.gmail.com> <CAEU=KTHsVmrAHXUKdHu_OwcrZoy-hgV7pk4UymtchGE5bGdUGA@mail.gmail.com> <CAOyeoRXFAQNNWRiHNtK3n17V0owBVNyKdv75xjt08Q_pC+XOXg@mail.gmail.com>
-In-Reply-To: <CAOyeoRXFAQNNWRiHNtK3n17V0owBVNyKdv75xjt08Q_pC+XOXg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        id S1725769AbfFFHiG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 03:38:06 -0400
+Received: from localhost.localdomain (unknown [223.93.147.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00890207E0;
+        Thu,  6 Jun 2019 07:38:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559806685;
+        bh=kUhxb6y9/x7K/KEBo2rYjsmRiInlugkMcXaHDaMG5jE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ykQxP54n53i4lIc5K1Cpz3oe+oxrNvwwljXXmG3lBM8FQDN3uB/OyatN5vf95X/Nu
+         cDPF8BUXAhQH3LL5wiQ6j0wvUVJqh7CzdhhZG03g5HPFmeSGUwH2tMYKuQdDa3tGCL
+         D/jCFhjhyRhR/HGjyU1a/D4WxpngLsSQZ5Lx7btk=
+From:   guoren@kernel.org
+To:     marc.zyngier@arm.com, mark.rutland@arm.com, tglx@linutronix.de
+Cc:     linux-kernel@vger.kernel.org, jason@lakedaemon.net,
+        guoren@kernel.org, linux-csky@vger.kernel.org,
+        Guo Ren <ren_guo@c-sky.com>
+Subject: [PATCH V5 0/3] irqchip/irq-csky-mpintc: Update some features
+Date:   Thu,  6 Jun 2019 15:37:30 +0800
+Message-Id: <1559806653-11249-1-git-send-email-guoren@kernel.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/06/2019 05:35 AM, Eric Hankland wrote:
->>> Right - I'm aware there are other ways of detecting this - it's still
->>> a class of events that some people don't want to surface. I'll ask if
->>> there are any better examples.
-> I asked and it sounds like we are treating all events as potentially
-> insecure until they've been reviewed. If Intel were to publish
-> official (reasonably substantiated) guidance stating that the PMU is
-> secure, then I think we'd be happy without such a safeguard in place,
-> but short of that I think we want to err on the side of caution.
->
+From: Guo Ren <ren_guo@c-sky.com>
 
-I'm not aware of any vendors who'd published statements like that.
+Here are some patches for irq-csky-mpintc. Any feedback is welcome.
 
-Anyway, are you ready to share your QEMU patches or the events you want 
-to be on the whitelists?
+Changes for V5:
+ - Remove "auto irq deliver patch" in this patchset, because it has been
+   queued as a fix already.
+ - Move "remove INTCL_HPPIR define" into remove-unnecessary-loop.patch
+   to make patch's sequence better.
 
+Changes for V4:
+ - Remove priority setting
+ - Add remove loop in csky_mpintc_handler in a seperate patch
+ - Add auto irq deliver fixup patch
+ - Add include file for devicetree document's example
+ - Add --cover-letter
 
-Best,
-Wei
+Changes for V3:
+ - Use IRQ_TYPE_LEVEL_HIGH as default instead of IRQ_TYPE_NONE
+ - Remove unnecessary loop in csky_mpintc_handler
+ - Update commit log msg
+
+Changes for V2:
+ - Fixup this_cpu_read() preempted problem
+ - Optimize the coding style
+ - Optimize #interrupt-cells to one style
+
+Guo Ren (3):
+  irqchip/irq-csky-mpintc: Add triger type
+  dt-bindings: interrupt-controller: Update csky mpintc
+  irqchip/irq-csky-mpintc: Remove unnecessary loop in interrupt handler
+
+ .../bindings/interrupt-controller/csky,mpintc.txt  | 20 ++++-
+ drivers/irqchip/irq-csky-mpintc.c                  | 86 ++++++++++++++++++++--
+ 2 files changed, 95 insertions(+), 11 deletions(-)
+
+-- 
+2.7.4
+
