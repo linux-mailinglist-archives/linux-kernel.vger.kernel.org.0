@@ -2,90 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45FB437BB1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:58:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E12D637BBA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 20:01:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730331AbfFFR6V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 13:58:21 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:35611 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728762AbfFFR6U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 13:58:20 -0400
-Received: by mail-oi1-f194.google.com with SMTP id y6so2244241oix.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 10:58:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=SAoSdsefzzCmPOTzwU+Ovh/O9jS+esAN3o944dSuqEw=;
-        b=HSoGQ9oBJbpQVFMq6qw/Gznzx2dsC1Fj1J8fJOb6uIjOxnsHh0cvPfQGE6lJY/SCqH
-         Lp9PwwdWeY3E7gk4loDyXTryAoKwQSKzzgwrEpVGoPg5dP4Ck8fl2bLDFem7soBZPpeZ
-         IwcgC5DbcmVpcFKDOQkyUjm061GSWy73weQnAbZWXCdH94nB5A3U8OSBKiHYEFR7MPRS
-         WG3+WcslpfNgLS+XD/bYa0BzEkdI1hWhYY1m3CIlJs6hz4kziyfr6S3a7gBcmETiQXms
-         mhcPw5lREw5rAq6rM0Mao+NzxGs+mOTlzfN8bOtANULeRI+9wgRE1mxjS5RUYEx0Gm3P
-         dT9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=SAoSdsefzzCmPOTzwU+Ovh/O9jS+esAN3o944dSuqEw=;
-        b=A9QcAbcoA+Sgz++TcWvyjO+F4AzjpWPdiYvoeSDc844kaGMBf2NkK6mO6OVE36Ldex
-         LsOuw07Rg3SFa+GLcJwSCj8suSH6cESbZd/HqvxaCnR1ZrDqk4dG7/3RPyqdN3zjC81x
-         izJy/mJJYDa8p+v+eTKheUUErJPiKV8W5Yln9Ah60HM9+RwqefOr/guEHFrBI6mzCieA
-         z9U5tjzVpTkuH1FwzshHEmsWWCT4p3hZ0WJl09uotl18VgUVmQ3HA3jzzE1yBZurqJdF
-         XuPBAgV4ZzojZZnYknCTimhA6ciYCYNUNIWulxvVThDJxv2JgZ1a0RrvrztjIC98EBhi
-         meuQ==
-X-Gm-Message-State: APjAAAWitbHC1lcr3HpSyaGwkKUC0OImbw6zWjAd6JRe6Q8vXAYYrQ4i
-        rNU1fKLq7+R+fPRWl8mAQt8ukAuuzO3kpq/FBjk=
-X-Google-Smtp-Source: APXvYqz4p8Ar5DqB+yirw+d2JX+xhbT3lJgfe/uEtzZxQGloQDNBMSFBolp8uAFWWDNsdOxf3yV1/1F1277+0q/WACw=
-X-Received: by 2002:aca:da54:: with SMTP id r81mr850902oig.89.1559843900253;
- Thu, 06 Jun 2019 10:58:20 -0700 (PDT)
+        id S1730347AbfFFSBg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 14:01:36 -0400
+Received: from sauhun.de ([88.99.104.3]:36032 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727559AbfFFSBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 14:01:36 -0400
+Received: from localhost (p5486CDEB.dip0.t-ipconnect.de [84.134.205.235])
+        by pokefinder.org (Postfix) with ESMTPSA id 89B1D2C35BF;
+        Thu,  6 Jun 2019 20:01:33 +0200 (CEST)
+Date:   Thu, 6 Jun 2019 20:01:33 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Vitor Soares <Vitor.Soares@synopsys.com>
+Cc:     "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "lorenzo.bianconi83@gmail.com" <lorenzo.bianconi83@gmail.com>
+Subject: Re: [PATCH v2 0/3] Add ST lsm6dso i3c support
+Message-ID: <20190606180133.GB3782@kunai>
+References: <cover.1559831663.git.vitor.soares@synopsys.com>
+ <20190606162522.GA3782@kunai>
+ <13D59CF9CEBAF94592A12E8AE55501350AABE7B3@DE02WEMBXB.internal.synopsys.com>
 MIME-Version: 1.0
-Received: by 2002:a4a:6b09:0:0:0:0:0 with HTTP; Thu, 6 Jun 2019 10:58:19 -0700 (PDT)
-Reply-To: eddywilliam0003@gmail.com
-From:   eddy william <fiacregnansa@gmail.com>
-Date:   Thu, 6 Jun 2019 19:58:19 +0200
-Message-ID: <CANUG11-a5WqDi+2gOF2PpN98tuqsDXpo+P5sfy46=2x7QUvaFg@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="LpQ9ahxlCli8rRTG"
+Content-Disposition: inline
+In-Reply-To: <13D59CF9CEBAF94592A12E8AE55501350AABE7B3@DE02WEMBXB.internal.synopsys.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mijn naam is Eddy William. Ik ben van beroep advocaat. Ik wil je aanbieden
-nabestaanden van mijn cli=C3=ABnt. Je ervaart de som van ($ 14,2 miljoen)
-dollars die mijn cli=C3=ABnt voor zijn overlijden op de bank heeft achterge=
-laten.
 
-Mijn klant is een burger van jouw land die stierf in auto-ongeluk met zijn =
-vrouw
-en alleen zoon. Ik krijg 50% van het totale fonds en 50% wel
-voor jou zijn.
+--LpQ9ahxlCli8rRTG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Neem hier voor meer informatie contact op met mijn priv=C3=A9mail:
-eddywilliam0002@gmail.com
+Hi,
 
-Bij voorbaat hartelijk dank,
-Eddy William,
+> I think I2C ecosystem is also part interested in I3C due the=20
+> compatibility and maybe they can provide some feedback.
+> If you think differently, sorry I will remove I2C list next time.
+
+No worries, but please do remove next time, for two reasons:
+
+a) even for I2C clients, the i2c-list is usually not added if the client
+   only uses standard I2C communication. If there is something which
+   needw special attention, OK. But most of the time, the list is for the
+   I2C core and bus master drivers, and not clients.
+
+  (That might be different for I3C, though...)
+
+b) if the patch in question is "self-contained" in the I3C world and not
+   affecting I2C, I think there is no need to add I2C. Interested
+   parties can subscribe to the I3C list.
+
+Yes, that was a good occasion to write this publicly.
+
+Thanks,
+
+   Wolfram
 
 
+--LpQ9ahxlCli8rRTG
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Hello
+-----BEGIN PGP SIGNATURE-----
 
-My name is Eddy William I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($14.2 Million)
-dollars my client left in the bank before his death.
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlz5VPgACgkQFA3kzBSg
+Kbak4w//QNYKgfXtT0eQ+1cxXqpk+Kp3HUNCapn0Lm87sidQL1KJZp8EeQfv4RmG
+PBFwx3+y2E5zSpOrlHAc5q2UYhIuQYaXNZjF4ZkHI//mhyuH8z9R/auU2Sc6Nqcb
+F42untEqzImhr5wIDrnQSkQiDYT7ewJS03yXxHEGNS6GEmSEeJkRZ/KcbhoGoboo
+mNYbJyY9EGfn14/TSoIaSu+cO4VivS0YXpVGr7KbIPViWCGBPexW5XafShvsWz4H
+3w0KXk69/rdWAJkw+o+9nBgD8HX3EgEK6Xd3/c6t/BwcupEVC2k5yQHAPFZP0cw0
+Lx1NAOdOBHjpY9wQKyDC3K7aClRhrkIvI4lFWlmEi7XZyBSH8MJwZ8sneNadlgsr
+qFguhSJlULggJJuacbmWFnbrpB14TqqAkTYpLuBrtWbi/jr+xGoTft78lU5X3GjC
+ZPdHvodYAKJxk6Unk6y/z6yZHX9B9ymvfl6STiImu01jpaFuC1mEbs4BVAHi9Nng
+QDUcwoL/Fwa71jnJKXh24dqjh1xvYWSvE7HT0HdiwoWAx/m+5aAyHSkG8I4dX7zl
+M6TNjN1Zvw43cbYQbzUEH/pTsRUdl3vb/R4MYIKOvbXFEjOHOqypuFxSKQ2nF2Uw
+PHEDhX4gYl0t2tkquHWTA9nPxbDXIDVQXChux7VQdkja0+eBEfA=
+=ZB1I
+-----END PGP SIGNATURE-----
 
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
-
-Please contact my private email here for more details:eddywilliam0002@gmail=
-.com
-
-Many thanks in advance,
-Mr.Eddy William,
+--LpQ9ahxlCli8rRTG--
