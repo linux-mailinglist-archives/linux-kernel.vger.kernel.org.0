@@ -2,113 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DBB936E3F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 10:13:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D374A36E43
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 10:15:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbfFFINx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 04:13:53 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42701 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726717AbfFFINw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 04:13:52 -0400
-Received: by mail-wr1-f67.google.com with SMTP id x17so1363695wrl.9
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 01:13:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=UnQLiliA9hI58ulfyIL2yz7hhigga6zrAzxyol2dLNE=;
-        b=z4hzjFCbFqwFKL09Hre/pqSOd1NHQo1UJPD/QW2XoBU76xxZ8Gu0H7eDrg80J8rxbX
-         cTvior4wLNVKmgN81/I1SRGJn1ggF59jF79CYFN6ZcPhbyHoqGEglfvedTdHhvZAQqF2
-         kttDD+8IwvsbmpHP+5hUxTOYp/r2K0V682hwgholcAoufCG+wrADMF3tru9LESqyp0xx
-         9wpKgJM4f1X74lIl7uejXt0H/cf5by50ds5IHPt5tojJn+6IG9BejQLT9FQB2d7q6S/t
-         N8/pVarA1+tJ7X7pWW1+ZdRYGEGmm7S3/48sdje+rbRBJijhUC/POaB/+OMPbPd7HqIg
-         JAaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=UnQLiliA9hI58ulfyIL2yz7hhigga6zrAzxyol2dLNE=;
-        b=cXNy+1S8JZBkYXjfl2UfkBkKAggqMNbNfogscruRMEnR1naSTcJQMj3+QxsDlyFBkG
-         qC9HBX4RzlpwhohEt/ZPc4Ghct9otSbsQXTDAaqsRSa2pe8rkYgNPVsnXaWDxNeM7H6H
-         1F1H0kYtBx5hYoDJfhoH7IBj4QvKVxVXcaAAJdahDjY8NNlpyAWYG7FJvBtEJjnYVvWN
-         19Qs+gwalb/FfDQJEMRNEfDYwQq125Tq8czLDjrotDbG/6RwsKwInDsHkPgP2V1I/QQ0
-         kXgoYKYrPPNokiW4GoGqjreokdFEoYK6qhd0surp4v1EecLjl0lqQWs+Qw5P7UpzxHMe
-         dG5g==
-X-Gm-Message-State: APjAAAVcWQawHnhqwmcmKFCA9i8+z83bQAzX9eNpPNGv+xkkIh3LomkN
-        iSfMrDDBvGT3nPjMuz/MSVSBcQ==
-X-Google-Smtp-Source: APXvYqwGcntH0CmW8TUnbK2LoTFyM+Ubibw+J5+wzkcPqiSEriQIeC1GyMpDNyAPD5L10m+wu5id0A==
-X-Received: by 2002:a5d:6644:: with SMTP id f4mr11942866wrw.51.1559808830905;
-        Thu, 06 Jun 2019 01:13:50 -0700 (PDT)
-Received: from dell ([2.31.167.229])
-        by smtp.gmail.com with ESMTPSA id r9sm1195097wrq.0.2019.06.06.01.13.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Jun 2019 01:13:50 -0700 (PDT)
-Date:   Thu, 6 Jun 2019 09:13:48 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, agross@kernel.org, david.brown@linaro.org,
-        dmitry.torokhov@gmail.com, jikos@kernel.org,
-        benjamin.tissoires@redhat.com, hdegoede@redhat.com,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] arm64: dts: qcom: Add Lenovo Miix 630
-Message-ID: <20190606081348.GB4797@dell>
-References: <20190423160543.9922-1-jeffrey.l.hugo@gmail.com>
- <20190423160616.10017-1-jeffrey.l.hugo@gmail.com>
- <20190606055034.GA4797@dell>
- <20190606072601.GT22737@tuxbook-pro>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190606072601.GT22737@tuxbook-pro>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1727091AbfFFIPA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 04:15:00 -0400
+Received: from mx1.tq-group.com ([62.157.118.193]:53222 "EHLO mx1.tq-group.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726924AbfFFIO5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 04:14:57 -0400
+X-IronPort-AV: E=Sophos;i="5.60,558,1549926000"; 
+   d="scan'208";a="7719743"
+Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
+  by mx1-pgp.tq-group.com with ESMTP; 06 Jun 2019 10:14:55 +0200
+Received: from mx1.tq-group.com ([192.168.6.7])
+  by tq-pgp-pr1.tq-net.de (PGP Universal service);
+  Thu, 06 Jun 2019 10:14:55 +0200
+X-PGP-Universal: processed;
+        by tq-pgp-pr1.tq-net.de on Thu, 06 Jun 2019 10:14:55 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1559808895; x=1591344895;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=gidmcEXWd6Fs9Jm1YrLEtSu1pDj6rxSgxAoUC5x632M=;
+  b=Zf957eeRwDVqFX58P4ouQ+lHOtr5F0uv+gAZpioj0rzkycSca9xzfIfv
+   qHpfpUq+bjV/HpJ1JtvAG8riB7JQql2EBVGc3o4qNXwn3Zs3+NCYhVJ+0
+   lPF9us9u+JD5RL1xCY860HkUIa9HI5RxWbYWODoWSez3hJ+nQvTHr8QHa
+   HUfoeamWPtbDjHvC7fywDx77ERXMfrnD7q2tEaihI4nWV/IbvUpVJXA9N
+   DEBOKU7FnisGp9yUiKV5tOsd9VmEq+bxEz8SDYR5rUUvwELpfVdCpQf1z
+   bIRAcKu/byIfTXKZJA1w0pg6YgGTLJL8ZbJwlliIT1GXfhgNlpyrPo9Y8
+   w==;
+X-IronPort-AV: E=Sophos;i="5.60,558,1549926000"; 
+   d="scan'208";a="7719742"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 06 Jun 2019 10:14:55 +0200
+Received: from schifferm-ubuntu4.tq-net.de (schifferm-ubuntu4.tq-net.de [10.117.49.26])
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPA id 9F20E280074;
+        Thu,  6 Jun 2019 10:15:01 +0200 (CEST)
+Message-ID: <61f233518ba863f9d5783dd10e468ee5bf22b69a.camel@ew.tq-group.com>
+Subject: Re: [PATCH modules 0/2] Fix handling of exit unwinding sections (on
+ ARM)
+From:   Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To:     Russell King <linux@armlinux.org.uk>, Jessica Yu <jeyu@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-ia64@vger.kernel.org
+Date:   Thu, 06 Jun 2019 10:14:44 +0200
+In-Reply-To: <20190603105726.22436-1-matthias.schiffer@ew.tq-group.com>
+References: <20190603105726.22436-1-matthias.schiffer@ew.tq-group.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 06 Jun 2019, Bjorn Andersson wrote:
-
-> On Wed 05 Jun 22:50 PDT 2019, Lee Jones wrote:
+On Mon, 2019-06-03 at 12:57 +0200, Matthias Schiffer wrote:
+> For some time (050d18d1c651 "ARM: 8650/1: module: handle negative
+> R_ARM_PREL31 addends correctly", v4.11+), building a kernel without
+> CONFIG_MODULE_UNLOAD would lead to module loads failing on ARM
+> systems with
+> certain memory layouts, with messages like:
 > 
-> > On Tue, 23 Apr 2019, Jeffrey Hugo wrote:
-> > 
-> > > This adds the initial DT for the Lenovo Miix 630 laptop.  Supported
-> > > functionality includes USB (host), microSD-card, keyboard, and trackpad.
-> > > 
-> > > Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-> > > ---
-> > >  arch/arm64/boot/dts/qcom/Makefile             |   1 +
-> > >  .../boot/dts/qcom/msm8998-clamshell.dtsi      | 278 ++++++++++++++++++
-> > >  .../boot/dts/qcom/msm8998-lenovo-miix-630.dts |  30 ++
-> > 
-> > What's happening with this patch?
-> > 
+>   imx_sdma: section 16 reloc 0 sym '': relocation 42 out of range
+>   (0x7f015260 -> 0xc0f5a5e8)
 > 
-> The thermal-zones are wrong, but I'm okay with an incremental patch for
-> that...
-
-I guess it would take you about 10 seconds to whip those out when
-merging?
-
-> > It's been on the list a while now.  I'm waiting for it to be accepted,
-> > since there are patches I wish to submit which are based on it.
-> > 
-> > Who is responsible for merging these?
+> (0x7f015260 is in the module load area, 0xc0f5a5e8 a regular vmalloc
+> address; relocation 42 is R_ARM_PREL31)
 > 
-> ...so I've just been waiting for a conclusion on the HID patch before I
-> could pick this up.
+> This is caused by relocatiosn in the .ARM.extab.exit.text and
+> .ARM.exidx.exit.text sections referencing the .exit.text section. As
+> the
+> module loader will omit loading .exit.text without
+> CONFIG_MODULE_UNLOAD,
+> there will be relocations from loaded to unloaded sections; the
+> resulting
+> huge offsets trigger the sanity checks added in 050d18d1c651.
+> 
+> IA64 might be affected by a similar issue - sections with names like
+> .IA_64.unwind.exit.text and .IA_64.unwind_info.exit.text appear in
+> the ld
+> script - but I don't know much about that arch.
+> 
+> Also, I'm not sure if this is stable-worthy - just enabling
+> CONFIG_MODULE_UNLOAD should be a viable workaround on affected
+> kernels.
+> 
+> 
+> Kind regards,
+> Matthias
 
-Aren't they orthogonal? 
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Hi,
+any comments on these patches? If not, who is going to take them in
+their tree?
+
+Note that I'll be out of office for the next week, and I won't be able
+to read my mail during this period.
+
+
+Kind regards,
+Matthias
+
+
+
+
+> 
+> 
+> Matthias Schiffer (2):
+>   module: allow arch overrides for .exit section names
+>   ARM: module: recognize unwind exit sections
+> 
+>  arch/arm/include/asm/module.h | 11 +++++++++++
+>  include/linux/moduleloader.h  |  8 ++++++++
+>  kernel/module.c               |  2 +-
+>  3 files changed, 20 insertions(+), 1 deletion(-)
+> 
+
