@@ -2,229 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D506737D32
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 21:26:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E428937D2A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 21:23:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729329AbfFFTXc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 15:23:32 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:50801 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729053AbfFFTXb (ORCPT
+        id S1729246AbfFFTXB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 15:23:01 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42935 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728504AbfFFTXB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 15:23:31 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x56JMDPp2102928
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 6 Jun 2019 12:22:14 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x56JMDPp2102928
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1559848934;
-        bh=B9H4CNnwxmfVdYMXYG4y49g0B29mcFnXNGsdvhYtCvA=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=TuvpXNtL/hgp3bfk7h1qNIBbqYctJ2aEmY/KydNewBwwmHsc/7lp7Ofqf1A83rBOY
-         kKr5MiK01i/77FH4c6pTj9fH/PkQ/6Qokh7fGOSOKY0oqcgL2ISzvda9AcPjdE684I
-         iTVZ7qlpVcMgUz7jVfRdPL+dlDbj6RZCpQUiiGAlcynlp3CUffKWgGuzQqWhUqRPVj
-         272Dslgc8YCADDUkqPGCb0yJFN+6g19eybwNVhAhwhTQvEMGP/Re7SdFw5e3G8fdGu
-         QdyRig2jPIIwsjr5K5QlJWqT/e/A6pMA2snqbJdTR6qzzblliJ5hQ0l++SJhhNIoNF
-         1YgfSPG9Cm5Pw==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x56JMCWL2102925;
-        Thu, 6 Jun 2019 12:22:12 -0700
-Date:   Thu, 6 Jun 2019 12:22:12 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Kairui Song <tipbot@zytor.com>
-Message-ID: <tip-6bbeb276b71f06c5267bfd154629b1bec82e7136@git.kernel.org>
-Cc:     mingo@redhat.com, lijiang@redhat.com,
-        penguin-kernel@I-love.SAKURA.ne.jp, dirk.vandermerwe@netronome.com,
-        x86@kernel.org, bhe@redhat.com, bp@suse.de, hpa@zytor.com,
-        tglx@linutronix.de, kasong@redhat.com,
-        linux-kernel@vger.kernel.org, kirill.shutemov@linux.intel.com,
-        mingo@kernel.org
-Reply-To: kirill.shutemov@linux.intel.com, lijiang@redhat.com,
-          mingo@redhat.com, linux-kernel@vger.kernel.org,
-          kasong@redhat.com, bp@suse.de, tglx@linutronix.de, hpa@zytor.com,
-          mingo@kernel.org, bhe@redhat.com, dirk.vandermerwe@netronome.com,
-          x86@kernel.org, penguin-kernel@I-love.SAKURA.ne.jp
-In-Reply-To: <20190429002318.GA25400@MiWiFi-R3L-srv>
-References: <20190429002318.GA25400@MiWiFi-R3L-srv>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/boot] x86/kexec: Add the EFI system tables and ACPI tables
- to the ident map
-Git-Commit-ID: 6bbeb276b71f06c5267bfd154629b1bec82e7136
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 6 Jun 2019 15:23:01 -0400
+Received: by mail-pg1-f196.google.com with SMTP id e6so1886435pgd.9
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 12:23:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=+S0wcX87X5waHh8++2TADiUtaixAR2MJn95+UMpUzAk=;
+        b=hbOr96z/lV1V2iEqt9jxbsE6ILd7Bs3hopfYNeYNzpr452iz+JGuknFUGvylLoGbf6
+         PaKmhDAXZZzR+RiA8JzSZtuPTOTt8ZLSVVYCnw5gxbH5RSfZMBUb7NZXKdzNd2qEggev
+         A7ULi3KbHZ+irfw1cDar/VzedEmemzkFTTeGM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=+S0wcX87X5waHh8++2TADiUtaixAR2MJn95+UMpUzAk=;
+        b=KOXjPqzRAp8LBrbdUauiD5zdQrXR+zB1ElvFd6p8jebUIHF9pJk5nlxbq9i6ZXmueN
+         xvkZbGZ9oNNWE3tpMcHeD2QUNZjD7DkYBjuIdl+iWH+q3XK+kNYL0PxmLvDKArzXPT0+
+         zBH3TZoxFyKhc3EZTN4SCPY0lxpXT4uwIIsHsY9L1xhWqGZH05TyMG+AyaYaH7zi672p
+         njYOVcILqCw0Vdteqc7RoV+Q3RITfxcE7yceDKAnUeIdeXFVgtpAl2onKaTSPJ64WBdf
+         PQrYwlR1HuBtBCxWkp9tNgGkDpUXXveiUnLaTFtD4Vtb5okKNLLG0cSB7sQ+wlB9RTzM
+         4rkw==
+X-Gm-Message-State: APjAAAVHaakKbe4p2cSdZvelSPmhUlK61L9G2iv+6oTQSUHQ0hEcGI6F
+        R/ggElvmSTJk6Llio8VAWEjK7w==
+X-Google-Smtp-Source: APXvYqw6/H0bTzmD1NtNFdjKXRgiTyCLyusI7VLYczAQnMPAF5yw1qPTSosMoYo5kE9VEEJioyBovw==
+X-Received: by 2002:a63:2ad2:: with SMTP id q201mr139088pgq.94.1559848980654;
+        Thu, 06 Jun 2019 12:23:00 -0700 (PDT)
+Received: from [10.69.37.149] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id j13sm3262132pfh.13.2019.06.06.12.22.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Jun 2019 12:23:00 -0700 (PDT)
+Subject: Re: [PATCH] scsi: lpfc: Fix backport of faf5a744f4f8 ("scsi: lpfc:
+ avoid uninitialized variable warning")
+To:     Nathan Chancellor <natechancellor@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Pavel Machek <pavel@denx.de>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+References: <20190606165346.GB3249@kroah.com>
+ <20190606174125.4277-1-natechancellor@gmail.com>
+From:   James Smart <james.smart@broadcom.com>
+Message-ID: <de9bab03-437f-d4ab-df93-5f36b4216f03@broadcom.com>
+Date:   Thu, 6 Jun 2019 12:22:55 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        T_DATE_IN_FUTURE_96_Q autolearn=ham autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+In-Reply-To: <20190606174125.4277-1-natechancellor@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6bbeb276b71f06c5267bfd154629b1bec82e7136
-Gitweb:     https://git.kernel.org/tip/6bbeb276b71f06c5267bfd154629b1bec82e7136
-Author:     Kairui Song <kasong@redhat.com>
-AuthorDate: Mon, 29 Apr 2019 08:23:18 +0800
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Thu, 6 Jun 2019 20:13:48 +0200
+On 6/6/2019 10:41 AM, Nathan Chancellor wrote:
+> Prior to commit 4c47efc140fa ("scsi: lpfc: Move SCSI and NVME Stats to
+> hardware queue structures") upstream, we allocated a cstat structure in
+> lpfc_nvme_create_localport. When commit faf5a744f4f8 ("scsi: lpfc: avoid
+> uninitialized variable warning") was backported, it was placed after the
+> allocation so we leaked memory whenever this function was called and
+> that conditional was true (so whenever CONFIG_NVME_FC is disabled).
+>
+> Move the IS_ENABLED if statement above the allocation since it is not
+> needed when the condition is true.
+>
+> Reported-by: Pavel Machek <pavel@denx.de>
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>   drivers/scsi/lpfc/lpfc_nvme.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/scsi/lpfc/lpfc_nvme.c b/drivers/scsi/lpfc/lpfc_nvme.c
+> index 099f70798fdd..645ffb5332b4 100644
+> --- a/drivers/scsi/lpfc/lpfc_nvme.c
+> +++ b/drivers/scsi/lpfc/lpfc_nvme.c
+> @@ -2477,14 +2477,14 @@ lpfc_nvme_create_localport(struct lpfc_vport *vport)
+>   	lpfc_nvme_template.max_sgl_segments = phba->cfg_nvme_seg_cnt + 1;
+>   	lpfc_nvme_template.max_hw_queues = phba->cfg_nvme_io_channel;
+>   
+> +	if (!IS_ENABLED(CONFIG_NVME_FC))
+> +		return ret;
+> +
+>   	cstat = kmalloc((sizeof(struct lpfc_nvme_ctrl_stat) *
+>   			phba->cfg_nvme_io_channel), GFP_KERNEL);
+>   	if (!cstat)
+>   		return -ENOMEM;
+>   
+> -	if (!IS_ENABLED(CONFIG_NVME_FC))
+> -		return ret;
+> -
+>   	/* localport is allocated from the stack, but the registration
+>   	 * call allocates heap memory as well as the private area.
+>   	 */
 
-x86/kexec: Add the EFI system tables and ACPI tables to the ident map
+Reviewed-by: James Smart <james.smart@broadcom.com>
 
-Currently, only the whole physical memory is identity-mapped for the
-kexec kernel and the regions reserved by firmware are ignored.
 
-However, the recent addition of RSDP parsing in the decompression stage
-and especially:
-
-  33f0df8d843d ("x86/boot: Search for RSDP in the EFI tables")
-
-which tries to access EFI system tables and to dig out the RDSP address
-from there, becomes a problem because in certain configurations, they
-might not be mapped in the kexec'ed kernel's address space.
-
-What is more, this problem doesn't appear on all systems because the
-kexec kernel uses gigabyte pages to build the identity mapping. And
-the EFI system tables and ACPI tables can, depending on the system
-configuration, end up being mapped as part of all physical memory, if
-they share the same 1 GB area with the physical memory.
-
-Therefore, make sure they're always mapped.
-
- [ bp: productize half-baked patch:
-   - rewrite commit message.
-   - correct the map_acpi_tables() function name in the !ACPI case. ]
-
-Signed-off-by: Kairui Song <kasong@redhat.com>
-Signed-off-by: Baoquan He <bhe@redhat.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Tested-by: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
-Cc: dyoung@redhat.com
-Cc: fanc.fnst@cn.fujitsu.com
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: j-nomura@ce.jp.nec.com
-Cc: kexec@lists.infradead.org
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Lianbo Jiang <lijiang@redhat.com>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20190429002318.GA25400@MiWiFi-R3L-srv
----
- arch/x86/kernel/machine_kexec_64.c | 75 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
-
-diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
-index ceba408ea982..3c77bdf7b32a 100644
---- a/arch/x86/kernel/machine_kexec_64.c
-+++ b/arch/x86/kernel/machine_kexec_64.c
-@@ -18,6 +18,7 @@
- #include <linux/io.h>
- #include <linux/suspend.h>
- #include <linux/vmalloc.h>
-+#include <linux/efi.h>
- 
- #include <asm/init.h>
- #include <asm/pgtable.h>
-@@ -29,6 +30,43 @@
- #include <asm/setup.h>
- #include <asm/set_memory.h>
- 
-+#ifdef CONFIG_ACPI
-+/*
-+ * Used while adding mapping for ACPI tables.
-+ * Can be reused when other iomem regions need be mapped
-+ */
-+struct init_pgtable_data {
-+	struct x86_mapping_info *info;
-+	pgd_t *level4p;
-+};
-+
-+static int mem_region_callback(struct resource *res, void *arg)
-+{
-+	struct init_pgtable_data *data = arg;
-+	unsigned long mstart, mend;
-+
-+	mstart = res->start;
-+	mend = mstart + resource_size(res) - 1;
-+
-+	return kernel_ident_mapping_init(data->info, data->level4p, mstart, mend);
-+}
-+
-+static int
-+map_acpi_tables(struct x86_mapping_info *info, pgd_t *level4p)
-+{
-+	unsigned long flags = IORESOURCE_MEM | IORESOURCE_BUSY;
-+	struct init_pgtable_data data;
-+
-+	data.info = info;
-+	data.level4p = level4p;
-+	flags = IORESOURCE_MEM | IORESOURCE_BUSY;
-+	return walk_iomem_res_desc(IORES_DESC_ACPI_TABLES, flags, 0, -1,
-+				   &data, mem_region_callback);
-+}
-+#else
-+static int map_acpi_tables(struct x86_mapping_info *info, pgd_t *level4p) { return 0; }
-+#endif
-+
- #ifdef CONFIG_KEXEC_FILE
- const struct kexec_file_ops * const kexec_file_loaders[] = {
- 		&kexec_bzImage64_ops,
-@@ -36,6 +74,31 @@ const struct kexec_file_ops * const kexec_file_loaders[] = {
- };
- #endif
- 
-+static int
-+map_efi_systab(struct x86_mapping_info *info, pgd_t *level4p)
-+{
-+#ifdef CONFIG_EFI
-+	unsigned long mstart, mend;
-+
-+	if (!efi_enabled(EFI_BOOT))
-+		return 0;
-+
-+	mstart = (boot_params.efi_info.efi_systab |
-+			((u64)boot_params.efi_info.efi_systab_hi<<32));
-+
-+	if (efi_enabled(EFI_64BIT))
-+		mend = mstart + sizeof(efi_system_table_64_t);
-+	else
-+		mend = mstart + sizeof(efi_system_table_32_t);
-+
-+	if (!mstart)
-+		return 0;
-+
-+	return kernel_ident_mapping_init(info, level4p, mstart, mend);
-+#endif
-+	return 0;
-+}
-+
- static void free_transition_pgtable(struct kimage *image)
- {
- 	free_page((unsigned long)image->arch.p4d);
-@@ -159,6 +222,18 @@ static int init_pgtable(struct kimage *image, unsigned long start_pgtable)
- 			return result;
- 	}
- 
-+	/*
-+	 * Prepare EFI systab and ACPI tables for kexec kernel since they are
-+	 * not covered by pfn_mapped.
-+	 */
-+	result = map_efi_systab(&info, level4p);
-+	if (result)
-+		return result;
-+
-+	result = map_acpi_tables(&info, level4p);
-+	if (result)
-+		return result;
-+
- 	return init_transition_pgtable(image, level4p);
- }
- 
