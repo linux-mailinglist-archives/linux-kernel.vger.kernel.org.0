@@ -2,85 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D522C377D7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 17:28:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05B3B377E8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 17:31:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729341AbfFFP2t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 11:28:49 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60084 "EHLO mx1.redhat.com"
+        id S1729456AbfFFPaG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 11:30:06 -0400
+Received: from mga01.intel.com ([192.55.52.88]:53940 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728565AbfFFP2t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 11:28:49 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2268685A04;
-        Thu,  6 Jun 2019 15:28:44 +0000 (UTC)
-Received: from amt.cnet (ovpn-112-18.gru2.redhat.com [10.97.112.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 06B9559158;
-        Thu,  6 Jun 2019 15:28:37 +0000 (UTC)
-Received: from amt.cnet (localhost [127.0.0.1])
-        by amt.cnet (Postfix) with ESMTP id 42D3710514E;
-        Thu,  6 Jun 2019 12:28:13 -0300 (BRT)
-Received: (from marcelo@localhost)
-        by amt.cnet (8.14.7/8.14.7/Submit) id x56FS96m003840;
-        Thu, 6 Jun 2019 12:28:09 -0300
-Date:   Thu, 6 Jun 2019 12:28:08 -0300
-From:   Marcelo Tosatti <mtosatti@redhat.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <john.stultz@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Luiz Capitulino <lcapitulino@redhat.com>
-Subject: Re: [PATCH] timers: Fix up get_target_base() to use old base properly
-Message-ID: <20190606152805.GA3652@amt.cnet>
-References: <20190603132944.9726-1-peterx@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190603132944.9726-1-peterx@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 06 Jun 2019 15:28:49 +0000 (UTC)
+        id S1729424AbfFFPaE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 11:30:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 08:30:02 -0700
+X-ExtLoop1: 1
+Received: from unknown (HELO local-michael-cet-test.sh.intel.com) ([10.239.159.128])
+  by fmsmga007.fm.intel.com with ESMTP; 06 Jun 2019 08:30:00 -0700
+From:   Yang Weijiang <weijiang.yang@intel.com>
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pbonzini@redhat.com, mst@redhat.com, rkrcmar@redhat.com,
+        jmattson@google.com, yu.c.zhang@intel.com
+Cc:     Yang Weijiang <weijiang.yang@intel.com>
+Subject: [PATCH v3 6/9] KVM: VMX: Introduce SPP user-space IOCTLs
+Date:   Thu,  6 Jun 2019 23:28:09 +0800
+Message-Id: <20190606152812.13141-7-weijiang.yang@intel.com>
+X-Mailer: git-send-email 2.17.2
+In-Reply-To: <20190606152812.13141-1-weijiang.yang@intel.com>
+References: <20190606152812.13141-1-weijiang.yang@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 03, 2019 at 09:29:44PM +0800, Peter Xu wrote:
-> get_target_base() in the timer code is not using the "base" parameter
-> at all.  My gut feeling is that instead of removing that extra
-> parameter, what we really want to do is "return the old base if it
-> does not suite for a new one".
+User application, e.g., QEMU or VMI, must initialize SPP
+before gets/sets SPP subpages, the dynamic initialization is to
+reduce the extra storage cost if the SPP feature is not not used.
 
-Hi Peter,
+Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+---
+ arch/x86/kvm/x86.c       | 90 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/kvm_host.h |  4 ++
+ include/uapi/linux/kvm.h |  3 ++
+ 3 files changed, 97 insertions(+)
 
-I think its a dead parameter: you always want to use the local base
-if the timer is not pinned.
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index c7cb17941344..54a1d2423a17 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -4589,6 +4589,23 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
+ 	return r;
+ }
+ 
++static int kvm_vm_ioctl_get_subpages(struct kvm *kvm,
++				     struct kvm_subpage *spp_info)
++{
++	return kvm_arch_get_subpages(kvm, spp_info);
++}
++
++static int kvm_vm_ioctl_set_subpages(struct kvm *kvm,
++				     struct kvm_subpage *spp_info)
++{
++	return kvm_arch_set_subpages(kvm, spp_info);
++}
++
++static int kvm_vm_ioctl_init_spp(struct kvm *kvm)
++{
++	return kvm_arch_init_spp(kvm);
++}
++
+ int kvm_get_subpages(struct kvm *kvm,
+ 		     struct kvm_subpage *spp_info)
+ {
+@@ -4922,8 +4939,55 @@ long kvm_arch_vm_ioctl(struct file *filp,
+ 		if (copy_from_user(&hvevfd, argp, sizeof(hvevfd)))
+ 			goto out;
+ 		r = kvm_vm_ioctl_hv_eventfd(kvm, &hvevfd);
++	}
++	case KVM_SUBPAGES_GET_ACCESS: {
++		struct kvm_subpage spp_info;
++
++		if (!kvm->arch.spp_active) {
++			r = -ENODEV;
++			goto out;
++		}
++
++		r = -EFAULT;
++		if (copy_from_user(&spp_info, argp, sizeof(spp_info)))
++			goto out;
++
++		r = -EINVAL;
++		if (spp_info.npages == 0 ||
++		    spp_info.npages > SUBPAGE_MAX_BITMAP)
++			goto out;
++
++		r = kvm_vm_ioctl_get_subpages(kvm, &spp_info);
++		if (copy_to_user(argp, &spp_info, sizeof(spp_info))) {
++			r = -EFAULT;
++			goto out;
++		}
++		break;
++	}
++	case KVM_SUBPAGES_SET_ACCESS: {
++		struct kvm_subpage spp_info;
++
++		if (!kvm->arch.spp_active) {
++			r = -ENODEV;
++			goto out;
++		}
++
++		r = -EFAULT;
++		if (copy_from_user(&spp_info, argp, sizeof(spp_info)))
++			goto out;
++
++		r = -EINVAL;
++		if (spp_info.npages == 0 ||
++		    spp_info.npages > SUBPAGE_MAX_BITMAP)
++			goto out;
++
++		r = kvm_vm_ioctl_set_subpages(kvm, &spp_info);
+ 		break;
+ 	}
++	case KVM_INIT_SPP: {
++		r = kvm_vm_ioctl_init_spp(kvm);
++		break;
++	 }
+ 	default:
+ 		r = -ENOTTY;
+ 	}
+@@ -9925,6 +9989,32 @@ int kvm_arch_update_irqfd_routing(struct kvm *kvm, unsigned int host_irq,
+ 	return kvm_x86_ops->update_pi_irte(kvm, host_irq, guest_irq, set);
+ }
+ 
++int kvm_arch_get_subpages(struct kvm *kvm,
++			  struct kvm_subpage *spp_info)
++{
++	if (!kvm_x86_ops->get_subpages)
++		return -EINVAL;
++
++	return kvm_x86_ops->get_subpages(kvm, spp_info);
++}
++
++int kvm_arch_set_subpages(struct kvm *kvm,
++			  struct kvm_subpage *spp_info)
++{
++	if (!kvm_x86_ops->set_subpages)
++		return -EINVAL;
++
++	return kvm_x86_ops->set_subpages(kvm, spp_info);
++}
++
++int kvm_arch_init_spp(struct kvm *kvm)
++{
++	if (!kvm_x86_ops->init_spp)
++		return -EINVAL;
++
++	return kvm_x86_ops->init_spp(kvm);
++}
++
+ bool kvm_vector_hashing_enabled(void)
+ {
+ 	return vector_hashing;
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index da30fcbb2727..b5ae112f209f 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -852,6 +852,10 @@ struct kvm_mmu_page *kvm_mmu_get_spp_page(struct kvm_vcpu *vcpu,
+ int kvm_get_subpages(struct kvm *kvm, struct kvm_subpage *spp_info);
+ int kvm_set_subpages(struct kvm *kvm, struct kvm_subpage *spp_info);
+ int kvm_init_spp(struct kvm *kvm);
++int kvm_arch_get_subpages(struct kvm *kvm, struct kvm_subpage *spp_info);
++int kvm_arch_set_subpages(struct kvm *kvm, struct kvm_subpage *spp_info);
++int kvm_arch_init_spp(struct kvm *kvm);
++
+ #ifndef __KVM_HAVE_ARCH_VM_ALLOC
+ /*
+  * All architectures that want to use vzalloc currently also
+diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+index 2c75a87ab3b5..5754f8d21e7d 100644
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@ -1246,6 +1246,9 @@ struct kvm_vfio_spapr_tce {
+ 					struct kvm_userspace_memory_region)
+ #define KVM_SET_TSS_ADDR          _IO(KVMIO,   0x47)
+ #define KVM_SET_IDENTITY_MAP_ADDR _IOW(KVMIO,  0x48, __u64)
++#define KVM_SUBPAGES_GET_ACCESS   _IOR(KVMIO,  0x49, __u64)
++#define KVM_SUBPAGES_SET_ACCESS   _IOW(KVMIO,  0x4a, __u64)
++#define KVM_INIT_SPP              _IOW(KVMIO,  0x4b, __u64)
+ 
+ /* enable ucontrol for s390 */
+ struct kvm_s390_ucas_mapping {
+-- 
+2.17.2
 
-> CC: Thomas Gleixner <tglx@linutronix.de>
-> CC: John Stultz <john.stultz@linaro.org>
-> CC: Stephen Boyd <sboyd@kernel.org>
-> CC: Luiz Capitulino <lcapitulino@redhat.com>
-> CC: Marcelo Tosatti <mtosatti@redhat.com>
-> CC: linux-kernel@vger.kernel.org
-> Signed-off-by: Peter Xu <peterx@redhat.com>
-> ---
->  kernel/time/timer.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-> index 343c7ba33b1c..6ff6ffd2c719 100644
-> --- a/kernel/time/timer.c
-> +++ b/kernel/time/timer.c
-> @@ -868,7 +868,7 @@ get_target_base(struct timer_base *base, unsigned tflags)
->  	    !(tflags & TIMER_PINNED))
->  		return get_timer_cpu_base(tflags, get_nohz_timer_target());
->  #endif
-> -	return get_timer_this_cpu_base(tflags);
-> +	return base;
->  }
->  
->  static inline void forward_timer_base(struct timer_base *base)
-> -- 
-> 2.17.1
