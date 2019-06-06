@@ -2,105 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 944C136FAC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 11:17:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 850EA36FB4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 11:21:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727755AbfFFJRx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 05:17:53 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38168 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727540AbfFFJRx (ORCPT
+        id S1727791AbfFFJVC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 05:21:02 -0400
+Received: from mail-it1-f199.google.com ([209.85.166.199]:50363 "EHLO
+        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727540AbfFFJVB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 05:17:53 -0400
-Received: by mail-ot1-f68.google.com with SMTP id d17so1295315oth.5;
-        Thu, 06 Jun 2019 02:17:52 -0700 (PDT)
+        Thu, 6 Jun 2019 05:21:01 -0400
+Received: by mail-it1-f199.google.com with SMTP id o128so1289494ita.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 02:21:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yENjbVk39/wwzHKltPutprMF9DY/I7doCf7SfJRKgi8=;
-        b=It0+PNjNfu9hf2ysUWEID6Ddo/m/1ROgFUoYE1BzrlLq1DJ5ICLUptAs/Pvj/erwj+
-         UqPr/gflG5rGdX7/0PPxU2RFl1kwNKHDppX43EErtLJR+qVApumfyK/udXI3KAejv1TW
-         8C0nI32rC54+RrXSCPswTrHerCC2U/nxouNXmtaekQpDOqNfQZI3aHpdAYlTgwBYaXzH
-         8AoEaxdW5Ahpgl//1QP0UsZ2ErEf0QqVejAl4bbzUxGZA68TvulAPqvnJ4uHUHeaM1Ur
-         TqoT3tevRVuMPx9VPnuDnwgy4OX5itVymAiFKe3i/m22zfoon8vWi0ZPphDO0LHq0H4N
-         dqOQ==
-X-Gm-Message-State: APjAAAUSvZfFIX3ZzKGjUi8A+mKzOUI+WVogM3tf8JjbojLj+lOoNmWV
-        16qm9v0ICsVT54R+gBWM0mdYtVpOf4o9ZlO/BCs=
-X-Google-Smtp-Source: APXvYqwpqt4Y2D/ykZ/hJu7b0Xpsn+y8x9Q8fDqgKz20jFQNzEUdq+RPWEe2mZF6bzoomXq7tP+vR0+dQ/lk+sV4jGk=
-X-Received: by 2002:a05:6830:150:: with SMTP id j16mr14282814otp.262.1559812672475;
- Thu, 06 Jun 2019 02:17:52 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=56G2RzBG0guHoTpwxKynlW+PNBbvgl4GPrCoRWxxM0U=;
+        b=nx+Ng0Snx3NLslssHscKEHP+6cr5o/Q6Fw13OKdpPJ63Vo5T9xjUb5bvxT/P6h2fWa
+         KE327G6tU70qJO7J+5ywLPf4U7fnZ8pKduQEGlbGR1Ae18nIJRUM22mXmFhAeqeKS9r+
+         QEQzhc/aSp0ZNDkddhYMtJZx5eBlmNC+UneWlrr981NWTg6ySvP+sZlEKNwn0DUQIPcS
+         /pwA/8SUjY1GWMQajQClqcn0oPxGQUugEKZhXVwS9EXeS671Eei02O9nlEjcbK7jmtAv
+         MQFsN/YJcYE2U5YY+eK5MHh0p0BXzwK0XT2yeHmNURbeg/N26iUNfR3/hjP2QMuTYZqM
+         2eiQ==
+X-Gm-Message-State: APjAAAX+rccDd3+bTwRxMu5RbyK29nSvNBEr3Xyzwwp+GWJyFkIXzoAR
+        /YCjGLiW5CPYnE18IBFhPtaAp5iq0WCt9B+M5F0bE59ytu8e
+X-Google-Smtp-Source: APXvYqxIJibzbNxy8GOtzypAF+Oyb4w4yoUX0G2vgElVjB5zG1mUDMCfNHgGUYHjHFguEhuY8+0K3Y3HNEzzqU8WyYf5rcCq0vxQ
 MIME-Version: 1.0
-References: <1559747630-28065-1-git-send-email-suzuki.poulose@arm.com> <1559747630-28065-8-git-send-email-suzuki.poulose@arm.com>
-In-Reply-To: <1559747630-28065-8-git-send-email-suzuki.poulose@arm.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 6 Jun 2019 11:17:41 +0200
-Message-ID: <CAJZ5v0h+maPj-ijKV_vvQBpHD7N-VMiAqSeyztAkiUR9E2WdmQ@mail.gmail.com>
-Subject: Re: [PATCH 07/13] drivers: Add generic match helper by ACPI_COMPANION device
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a24:9f86:: with SMTP id c128mr22407371ite.161.1559812861164;
+ Thu, 06 Jun 2019 02:21:01 -0700 (PDT)
+Date:   Thu, 06 Jun 2019 02:21:01 -0700
+In-Reply-To: <0000000000008ab3c0057e8b747f@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008181cc058aa43b82@google.com>
+Subject: Re: general protection fault in rb_erase (2)
+From:   syzbot <syzbot+e8c40862180d8949d624@syzkaller.appspotmail.com>
+To:     ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 5, 2019 at 5:14 PM Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
->
-> Add a generic helper to match a device by the acpi device.
+syzbot has bisected this bug to:
 
-"by its ACPI companion device object", please.
+commit e9db4ef6bf4ca9894bb324c76e01b8f1a16b2650
+Author: John Fastabend <john.fastabend@gmail.com>
+Date:   Sat Jun 30 13:17:47 2018 +0000
 
-Also, it would be good to combine this patch with the patch(es) that
-cause device_match_acpi_dev() to be actually used.
+     bpf: sockhash fix omitted bucket lock in sock_close
 
-Helpers without any users are arguably not useful.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1644ea92a00000
+start commit:   156c0591 Merge tag 'linux-kselftest-5.2-rc4' of git://git...
+git tree:       upstream
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=1544ea92a00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1144ea92a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=60564cb52ab29d5b
+dashboard link: https://syzkaller.appspot.com/bug?extid=e8c40862180d8949d624
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11f031fea00000
 
->
-> Cc: Len Brown <lenb@kernel.org>
-> Cc: linux-acpi@vger.kernel.org
-> Cc: linux-spi@vger.kernel.org
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->  drivers/base/core.c    | 6 ++++++
->  include/linux/device.h | 1 +
->  2 files changed, 7 insertions(+)
->
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index b827ca1..597095b 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -3346,3 +3346,9 @@ int device_match_devt(struct device *dev, const void *pdevt)
->         return dev->devt == *(dev_t *)pdevt;
->  }
->  EXPORT_SYMBOL_GPL(device_match_devt);
-> +
-> +int device_match_acpi_dev(struct device *dev, const void *adev)
-> +{
-> +       return ACPI_COMPANION(dev) == adev;
-> +}
-> +EXPORT_SYMBOL(device_match_acpi_dev);
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index f315692..a03b50d 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -166,6 +166,7 @@ void subsys_dev_iter_exit(struct subsys_dev_iter *iter);
->  int device_match_of_node(struct device *dev, const void *np);
->  int device_match_fwnode(struct device *dev, const void *fwnode);
->  int device_match_devt(struct device *dev, const void *pdevt);
-> +int device_match_acpi_dev(struct device *dev, const void *adev);
->
->  int bus_for_each_dev(struct bus_type *bus, struct device *start, void *data,
->                      int (*fn)(struct device *dev, void *data));
-> --
-> 2.7.4
->
+Reported-by: syzbot+e8c40862180d8949d624@syzkaller.appspotmail.com
+Fixes: e9db4ef6bf4c ("bpf: sockhash fix omitted bucket lock in sock_close")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
