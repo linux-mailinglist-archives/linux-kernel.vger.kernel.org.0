@@ -2,99 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D666A37B15
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:31:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 333FA37B0E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:29:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728801AbfFFRbB convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 6 Jun 2019 13:31:01 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:47542 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726924AbfFFRbA (ORCPT
+        id S1728203AbfFFR3a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 13:29:30 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:52902 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726762AbfFFR33 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 13:31:00 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1hYwDn-0003iG-8I; Thu, 06 Jun 2019 19:30:39 +0200
-Date:   Thu, 6 Jun 2019 19:30:39 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Borislav Petkov <bp@suse.de>, Dave Hansen <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jann Horn <jannh@google.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        kvm ML <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Rik van Riel <riel@surriel.com>, x86-ml <x86@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [5.2 regression] copy_fpstate_to_sigframe() change causing crash
- in 32-bit process
-Message-ID: <20190606173026.ty7c4cvftrvfrwy3@linutronix.de>
-References: <20190604185358.GA820@sol.localdomain>
- <20190605140405.2nnpqslnjpfe2ig2@linutronix.de>
- <20190605173256.GA86462@gmail.com>
+        Thu, 6 Jun 2019 13:29:29 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x56HOuSi079163;
+        Thu, 6 Jun 2019 17:29:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=TDbZF773jSoChjtiU4YTRwsZq9wLcLVh4IoX023ZDqI=;
+ b=qlYdtrGtNkq/DGUy1Fy3cE4F0JRT0pOjWdfM8BHHilOnc5DY5/X9rfnKM49nW5kQFteu
+ GFiEcgizfyig8KGU+oQpIam15N7jiieMQWzwZ6a6UfacUBZDVSrVAc7QppkbZeXwAvMb
+ xNZpbZZ1HZRtZDfKfRRIdtyzCUzgDF9zPea5IGl4UdvQJ5Hbn9fa9uIFo5Iq3CtZupKr
+ Jpmw83HtEHf/OcRaVL6deHde9JZhTt1TU+rkW5A+jYhyyNXQYCNf7nZmF/nKdw93sF3q
+ PHsmqEEksyw814FM9w7R3BqBMCsY/eNlJtmApp4T37nMOFwu8WP4ZHeyLi9pvJsqOBop dw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2130.oracle.com with ESMTP id 2suevdt5eq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 06 Jun 2019 17:29:24 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x56HS4eo085739;
+        Thu, 6 Jun 2019 17:29:24 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2swngjju6b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 06 Jun 2019 17:29:24 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x56HTMoW005092;
+        Thu, 6 Jun 2019 17:29:22 GMT
+Received: from char.us.oracle.com (/10.152.32.25)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 06 Jun 2019 10:29:22 -0700
+Received: by char.us.oracle.com (Postfix, from userid 1000)
+        id 6EC486A0125; Thu,  6 Jun 2019 13:30:46 -0400 (EDT)
+Date:   Thu, 6 Jun 2019 13:30:46 -0400
+From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To:     Daniel Kiper <daniel.kiper@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        dpsmith@apertussolutions.com, eric.snowberg@oracle.com,
+        hpa@zytor.com, kanth.ghatraju@oracle.com, ross.philipson@oracle.com
+Subject: Re: [PATCH RFC 0/2] x86/boot: Introduce the setup_header2
+Message-ID: <20190606173046.GI3252@char.us.oracle.com>
+References: <20190524095504.12894-1-daniel.kiper@oracle.com>
+ <20190605135031.62grhhxn2pfbkcdg@tomti.i.net-space.pl>
+ <20190605140117.GA32106@char.us.oracle.com>
+ <20190606115108.sfp2bnu3qzdby4h7@tomti.i.net-space.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20190605173256.GA86462@gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190606115108.sfp2bnu3qzdby4h7@tomti.i.net-space.pl>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9280 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=723
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906060117
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9280 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=817 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906060117
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-06-05 10:32:57 [-0700], Eric Biggers wrote:
-> As I said, the commit looks broken to me.  save_fsave_header() reads from
-> tsk->thread.fpu.state.fxsave, which due to that commit isn't being updated with
-> the latest registers.  Am I missing something?  Note the comment you deleted:
+On Thu, Jun 06, 2019 at 01:51:08PM +0200, Daniel Kiper wrote:
+> On Wed, Jun 05, 2019 at 10:01:17AM -0400, Konrad Rzeszutek Wilk wrote:
+> > On Wed, Jun 05, 2019 at 03:50:31PM +0200, Daniel Kiper wrote:
+> > > On Fri, May 24, 2019 at 11:55:02AM +0200, Daniel Kiper wrote:
+> > > > Hi,
+> > > >
+> > > > This change is needed to properly start the Linux kernel in Intel TXT mode and
+> > > > is a part of the TrenchBoot project (https://github.com/TrenchBoot).
+> >
+> > Can you please expand more on this?
+> >
+> > Nice explanation of why, other alternative solutions that didn't work, and so on.
+> 
+> OK.
+> 
+> > > > Daniel
+> > > >
+> > > >  Documentation/x86/boot.txt               | 55 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+> > > >  arch/x86/Kconfig                         |  7 +++++++
+> > > >  arch/x86/boot/Makefile                   |  2 +-
+> > > >  arch/x86/boot/compressed/Makefile        |  5 +++--
+> > > >  arch/x86/boot/compressed/setup_header2.S | 18 ++++++++++++++++++
+> > > >  arch/x86/boot/compressed/sl_stub.S       | 28 ++++++++++++++++++++++++++++
+> > > >  arch/x86/boot/header.S                   |  3 ++-
+> > > >  arch/x86/boot/tools/build.c              |  8 ++++++++
+> > > >  arch/x86/include/uapi/asm/bootparam.h    |  1 +
+> > > >  9 files changed, 123 insertions(+), 4 deletions(-)
+> > > >
+> > > > Daniel Kiper (2):
+> > > >       x86/boot: Introduce the setup_header2
+> > > >       x86/boot: Introduce dummy MLE header
+> > >
+> > > Ping?
+> >
+> > Can you add Ingo and Thomas to the To: next time please?
+> 
+> OK.
+> 
+> > Also please drop the second patch.
+> 
+> Why? This is an example how to use the setup_header2.
 
-So if your system uses fxsr() then that function shouldn't matter. If
-your system uses xsave() (which I believe it does) then the first
-section is the "fxregs state" which is the same as in fxsr's case (see
-struct xregs_state). So it shouldn't make a difference and that is why I
-strongly assumed it is a miss-merge. However it makes a difference…
+If you are going to post it as non-RFC (which I suspect you will
+for the next), then why post a patch that is not to be checked in?
 
-So the hunk at the end should make things work again (my FPU test case
-passes). I don't know why we convert things forth and back in the signal
-handler but I think something here is different for xsave's legacy area
-vs fxsave.
+It just takes people time up.
 
-diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
-index 060d6188b4533..c653c9920c5e0 100644
---- a/arch/x86/kernel/fpu/signal.c
-+++ b/arch/x86/kernel/fpu/signal.c
-@@ -62,16 +62,7 @@ static inline int save_fsave_header(struct task_struct *tsk, void __user *buf)
- 		struct user_i387_ia32_struct env;
- 		struct _fpstate_32 __user *fp = buf;
- 
--		convert_from_fxsr(&env, tsk);
--
--		if (__copy_to_user(buf, &env, sizeof(env)) ||
--		    __put_user(xsave->i387.swd, &fp->status) ||
--		    __put_user(X86_FXSR_MAGIC, &fp->magic))
--			return -1;
--	} else {
--		struct fregs_state __user *fp = buf;
--		u32 swd;
--		if (__get_user(swd, &fp->swd) || __put_user(swd, &fp->status))
-+		if (__put_user(X86_FXSR_MAGIC, &fp->magic))
- 			return -1;
- 	}
- 
-@@ -236,9 +227,6 @@ sanitize_restored_xstate(union fpregs_state *state,
- 		 * reasons.
- 		 */
- 		xsave->i387.mxcsr &= mxcsr_feature_mask;
--
--		if (ia32_env)
--			convert_to_fxsr(&state->fxsave, ia32_env);
- 	}
- }
- 
 
-> - Eric
-
-Sebastian
+> 
+> Daniel
