@@ -2,147 +2,221 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ADD137AE0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:21:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3308637AE9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:21:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730098AbfFFRVP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 13:21:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60334 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725782AbfFFRVO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 13:21:14 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id ADFCEABD0;
-        Thu,  6 Jun 2019 17:21:12 +0000 (UTC)
-Date:   Thu, 6 Jun 2019 19:21:10 +0200
-From:   Oscar Salvador <osalvador@suse.de>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     akpm@linux-foundation.org, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>, linux-mm@kvack.org,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 07/12] mm/sparsemem: Prepare for sub-section ranges
-Message-ID: <20190606172110.GC31194@linux>
-References: <155977186863.2443951.9036044808311959913.stgit@dwillia2-desk3.amr.corp.intel.com>
- <155977191770.2443951.1506588644989416699.stgit@dwillia2-desk3.amr.corp.intel.com>
+        id S1730116AbfFFRVj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 13:21:39 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:59694 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727009AbfFFRVi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 13:21:38 -0400
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 1043A263B33;
+        Thu,  6 Jun 2019 18:21:35 +0100 (BST)
+Date:   Thu, 6 Jun 2019 19:21:31 +0200
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     Vitor Soares <Vitor.Soares@synopsys.com>
+Cc:     linux-iio@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
+        bbrezillon@kernel.org, Joao.Pinto@synopsys.com,
+        lorenzo.bianconi83@gmail.com
+Subject: Re: [PATCH v2 3/3] iio: imu: st_lsm6dsx: add i3c basic support for
+ LSM6DSO and LSM6DSR
+Message-ID: <20190606192131.355c9556@collabora.com>
+In-Reply-To: <6195f3cd21636a5f85c0107b5c3b217be868a4b9.1559831663.git.vitor.soares@synopsys.com>
+References: <cover.1559831663.git.vitor.soares@synopsys.com>
+        <6195f3cd21636a5f85c0107b5c3b217be868a4b9.1559831663.git.vitor.soares@synopsys.com>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <155977191770.2443951.1506588644989416699.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 05, 2019 at 02:58:37PM -0700, Dan Williams wrote:
-> Prepare the memory hot-{add,remove} paths for handling sub-section
-> ranges by plumbing the starting page frame and number of pages being
-> handled through arch_{add,remove}_memory() to
-> sparse_{add,remove}_one_section().
+On Thu,  6 Jun 2019 17:12:04 +0200
+Vitor Soares <Vitor.Soares@synopsys.com> wrote:
+
+> For today the st_lsm6dsx driver support LSM6DSO and LSM6DSR sensor only in
+> spi and i2c mode.
 > 
-> This is simply plumbing, small cleanups, and some identifier renames. No
-> intended functional changes.
+> The LSM6DSO and LSM6DSR are also i3c capable so lets give i3c support to
+> them.
 > 
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Logan Gunthorpe <logang@deltatee.com>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Reviewed-by: Pavel Tatashin <pasha.tatashin@soleen.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Vitor Soares <vitor.soares@synopsys.com>
 > ---
->  include/linux/memory_hotplug.h |    5 +-
->  mm/memory_hotplug.c            |  114 +++++++++++++++++++++++++---------------
->  mm/sparse.c                    |   15 ++---
->  3 files changed, 81 insertions(+), 53 deletions(-)
+> Changes in v2:
+>   Add support for LSM6DSR
+>   Set pm_ops to st_lsm6dsx_pm_ops
 > 
-> diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-> index 79e0add6a597..3ab0282b4fe5 100644
-> --- a/include/linux/memory_hotplug.h
-> +++ b/include/linux/memory_hotplug.h
-> @@ -348,9 +348,10 @@ extern int add_memory_resource(int nid, struct resource *resource);
->  extern void move_pfn_range_to_zone(struct zone *zone, unsigned long start_pfn,
->  		unsigned long nr_pages, struct vmem_altmap *altmap);
->  extern bool is_memblock_offlined(struct memory_block *mem);
-> -extern int sparse_add_one_section(int nid, unsigned long start_pfn,
-> -				  struct vmem_altmap *altmap);
-> +extern int sparse_add_section(int nid, unsigned long pfn,
-> +		unsigned long nr_pages, struct vmem_altmap *altmap);
->  extern void sparse_remove_one_section(struct mem_section *ms,
-> +		unsigned long pfn, unsigned long nr_pages,
->  		unsigned long map_offset, struct vmem_altmap *altmap);
->  extern struct page *sparse_decode_mem_map(unsigned long coded_mem_map,
->  					  unsigned long pnum);
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index 4b882c57781a..399bf78bccc5 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -252,51 +252,84 @@ void __init register_page_bootmem_info_node(struct pglist_data *pgdat)
->  }
->  #endif /* CONFIG_HAVE_BOOTMEM_INFO_NODE */
+>  drivers/iio/imu/st_lsm6dsx/Kconfig          |  8 ++-
+>  drivers/iio/imu/st_lsm6dsx/Makefile         |  1 +
+>  drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_i3c.c | 76 +++++++++++++++++++++++++++++
+>  3 files changed, 84 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_i3c.c
+> 
+> diff --git a/drivers/iio/imu/st_lsm6dsx/Kconfig b/drivers/iio/imu/st_lsm6dsx/Kconfig
+> index 002a423..8115936 100644
+> --- a/drivers/iio/imu/st_lsm6dsx/Kconfig
+> +++ b/drivers/iio/imu/st_lsm6dsx/Kconfig
+> @@ -2,11 +2,12 @@
 >  
-> -static int __meminit __add_section(int nid, unsigned long phys_start_pfn,
-> -				   struct vmem_altmap *altmap)
-> +static int __meminit __add_section(int nid, unsigned long pfn,
-> +		unsigned long nr_pages,	struct vmem_altmap *altmap)
->  {
->  	int ret;
->  
-> -	if (pfn_valid(phys_start_pfn))
-> +	if (pfn_valid(pfn))
->  		return -EEXIST;
->  
-> -	ret = sparse_add_one_section(nid, phys_start_pfn, altmap);
-> +	ret = sparse_add_section(nid, pfn, nr_pages, altmap);
->  	return ret < 0 ? ret : 0;
->  }
->  
-> +static int check_pfn_span(unsigned long pfn, unsigned long nr_pages,
-> +		const char *reason)
-> +{
-> +	/*
-> +	 * Disallow all operations smaller than a sub-section and only
-> +	 * allow operations smaller than a section for
-> +	 * SPARSEMEM_VMEMMAP. Note that check_hotplug_memory_range()
-> +	 * enforces a larger memory_block_size_bytes() granularity for
-> +	 * memory that will be marked online, so this check should only
-> +	 * fire for direct arch_{add,remove}_memory() users outside of
-> +	 * add_memory_resource().
-> +	 */
-> +	unsigned long min_align;
+>  config IIO_ST_LSM6DSX
+>  	tristate "ST_LSM6DSx driver for STM 6-axis IMU MEMS sensors"
+> -	depends on (I2C || SPI)
+> +	depends on (I2C || SPI || I3C)
+>  	select IIO_BUFFER
+>  	select IIO_KFIFO_BUF
+>  	select IIO_ST_LSM6DSX_I2C if (I2C)
+>  	select IIO_ST_LSM6DSX_SPI if (SPI_MASTER)
+> +	select IIO_ST_LSM6DSX_I3C if (I3C)
+>  	help
+>  	  Say yes here to build support for STMicroelectronics LSM6DSx imu
+>  	  sensor. Supported devices: lsm6ds3, lsm6ds3h, lsm6dsl, lsm6dsm,
+> @@ -24,3 +25,8 @@ config IIO_ST_LSM6DSX_SPI
+>  	tristate
+>  	depends on IIO_ST_LSM6DSX
+>  	select REGMAP_SPI
 > +
-> +	if (IS_ENABLED(CONFIG_SPARSEMEM_VMEMMAP))
-> +		min_align = PAGES_PER_SUBSECTION;
-> +	else
-> +		min_align = PAGES_PER_SECTION;
-> +	if (!IS_ALIGNED(pfn, min_align)
-> +			|| !IS_ALIGNED(nr_pages, min_align)) {
-> +		WARN(1, "Misaligned __%s_pages start: %#lx end: #%lx\n",
-> +				reason, pfn, pfn + nr_pages - 1);
-> +		return -EINVAL;
+> +config IIO_ST_LSM6DSX_I3C
+> +	tristate
+> +	depends on IIO_ST_LSM6DSX
+> +	select REGMAP_I3C
+> diff --git a/drivers/iio/imu/st_lsm6dsx/Makefile b/drivers/iio/imu/st_lsm6dsx/Makefile
+> index 28cc673..57cbcd6 100644
+> --- a/drivers/iio/imu/st_lsm6dsx/Makefile
+> +++ b/drivers/iio/imu/st_lsm6dsx/Makefile
+> @@ -5,3 +5,4 @@ st_lsm6dsx-y := st_lsm6dsx_core.o st_lsm6dsx_buffer.o \
+>  obj-$(CONFIG_IIO_ST_LSM6DSX) += st_lsm6dsx.o
+>  obj-$(CONFIG_IIO_ST_LSM6DSX_I2C) += st_lsm6dsx_i2c.o
+>  obj-$(CONFIG_IIO_ST_LSM6DSX_SPI) += st_lsm6dsx_spi.o
+> +obj-$(CONFIG_IIO_ST_LSM6DSX_I3C) += st_lsm6dsx_i3c.o
+> diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_i3c.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_i3c.c
+> new file mode 100644
+> index 0000000..70b70d1
+> --- /dev/null
+> +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_i3c.c
+> @@ -0,0 +1,76 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018 Synopsys, Inc. and/or its affiliates.
+> + *
+> + * Author: Vitor Soares <vitor.soares@synopsys.com>
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/i3c/device.h>
+> +#include <linux/i3c/master.h>
+> +#include <linux/slab.h>
+> +#include <linux/of.h>
+> +#include <linux/regmap.h>
+> +
+> +#include "st_lsm6dsx.h"
+> +
+> +#define NAME_SIZE	32
+> +
+> +struct st_lsm6dsx_i3c_data {
+> +	const char name[NAME_SIZE];
+
+I think I mentioned already that you can simply have
+
+	const char *name;
+
+> +	enum st_lsm6dsx_hw_id id;
+> +};
+> +
+> +enum st_lsm6dsx_i3c_data_id {
+> +	ST_LSM6DSO_I3C_DATA_ID,
+> +	ST_LSM6DSR_I3C_DATA_ID,
+> +};
+> +
+> +static const struct st_lsm6dsx_i3c_data hw_data[] = {
+> +	{ ST_LSM6DSO_DEV_NAME, ST_LSM6DSO_ID },
+> +	{ ST_LSM6DSR_DEV_NAME, ST_LSM6DSR_ID },
+> +};
+> +
+> +static const struct regmap_config st_lsm6dsx_i3c_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +};
+> +
+> +static int st_lsm6dsx_i3c_probe(struct i3c_device *i3cdev)
+> +{
+> +	const struct i3c_device_id *id = i3c_get_device_id(i3cdev);
+> +	const struct st_lsm6dsx_i3c_data *hw_data = id->data;
+> +	struct regmap *regmap;
+> +
+> +	regmap = devm_regmap_init_i3c(i3cdev, &st_lsm6dsx_i3c_regmap_config);
+> +	if (IS_ERR(regmap)) {
+> +		dev_err(&i3cdev->dev, "Failed to register i3c regmap %d\n",
+> +			(int)PTR_ERR(regmap));
+> +		return PTR_ERR(regmap);
 > +	}
-> +	return 0;
+> +
+> +	return st_lsm6dsx_probe(&i3cdev->dev, 0, hw_data->id,
+> +				hw_data->name, regmap);
 > +}
+> +
+> +static const struct i3c_device_id st_lsm6dsx_i3c_ids[] = {
+> +	I3C_DEVICE(0x0104, 0x006C, &hw_data[ST_LSM6DSO_I3C_DATA_ID]),
+> +	I3C_DEVICE(0x0104, 0x006B, &hw_data[ST_LSM6DSR_I3C_DATA_ID]),
 
+Still find that form counter-intuitive since you'd have to first go
+look at what's the value of ST_LSM6DSO_I3C_DATA_ID, then go check the
+entry in hw_data to find what's in there. Too many ways to get things
+wrong IMHO.
 
-This caught my eye.
-Back in patch#4 "Convert kmalloc_section_memmap() to populate_section_memmap()",
-you placed a mis-usage check for !CONFIG_SPARSEMEM_VMEMMAP in
-populate_section_memmap().
+The following form would make it much more obvious/easy to follow:
 
-populate_section_memmap() gets called from sparse_add_one_section(), which means
-that we should have passed this check, otherwise we cannot go further and call
-__add_section().
+static const st_lsm6dsx_i3c_data st_lsm6dso_i3c_data = {
+	ST_LSM6DSO_DEV_NAME, ST_LSM6DSO_ID,
+};
 
-So, unless I am missing something it seems to me that the check from patch#4 could go?
-And I think the same applies to depopulate_section_memmap()?
+static const st_lsm6dsx_i3c_data st_lsm6dsr_i3c_data = {
+	ST_LSM6DSR_DEV_NAME, ST_LSM6DSR_ID,
+};
 
-Besides that, it looks good to me:
+static const struct i3c_device_id st_lsm6dsx_i3c_ids[] = {
+	I3C_DEVICE(0x0104, 0x006C, &st_lsm6dso_i3c_data),
+	I3C_DEVICE(0x0104, 0x006B, &st_lsm6dsr_i3c_data),
+};
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Note that I don't see why we need to pass both the name and the ID to
+st_lsm6dsx_probe(). I'd expect the name to be easily deducible from the
+ID (using a name table whose index would match the ST_XXX_ID).
 
--- 
-Oscar Salvador
-SUSE L3
+If you do this change you would actually get rid of the
+st_lsm6dsx_i3c_data struct and instead have:
+
+static const struct i3c_device_id st_lsm6dsx_i3c_ids[] = {
+	I3C_DEVICE(0x0104, 0x006C, (void *)ST_LSM6DSO_ID),
+	I3C_DEVICE(0x0104, 0x006B, (void *)ST_LSM6DSR_ID),
+};
+
+> +	{ /* sentinel */ },
+> +};
+> +MODULE_DEVICE_TABLE(i3c, st_lsm6dsx_i3c_ids);
+> +
+> +static struct i3c_driver st_lsm6dsx_driver = {
+> +	.driver = {
+> +		.name = "st_lsm6dsx_i3c",
+> +		.pm = &st_lsm6dsx_pm_ops,
+> +	},
+> +	.probe = st_lsm6dsx_i3c_probe,
+> +	.id_table = st_lsm6dsx_i3c_ids,
+> +};
+> +module_i3c_driver(st_lsm6dsx_driver);
+> +
+> +MODULE_AUTHOR("Vitor Soares <vitor.soares@synopsys.com>");
+> +MODULE_DESCRIPTION("STMicroelectronics st_lsm6dsx i3c driver");
+> +MODULE_LICENSE("GPL v2");
+
