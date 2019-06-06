@@ -2,76 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 370E93792E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 18:09:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8A9D3793A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 18:12:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729570AbfFFQJf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 12:09:35 -0400
-Received: from mga14.intel.com ([192.55.52.115]:33754 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729191AbfFFQJe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 12:09:34 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 09:09:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,559,1557212400"; 
-   d="scan'208";a="182358981"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga002.fm.intel.com with ESMTP; 06 Jun 2019 09:09:34 -0700
-Date:   Thu, 6 Jun 2019 09:10:46 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jeff Layton <jlayton@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH RFC 03/10] mm/gup: Pass flags down to __gup_device_huge*
- calls
-Message-ID: <20190606161045.GA11331@iweiny-DESK2.sc.intel.com>
-References: <20190606014544.8339-1-ira.weiny@intel.com>
- <20190606014544.8339-4-ira.weiny@intel.com>
- <20190606061819.GA20520@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190606061819.GA20520@infradead.org>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+        id S1729593AbfFFQMW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 12:12:22 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45715 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729191AbfFFQMW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 12:12:22 -0400
+Received: by mail-pf1-f193.google.com with SMTP id s11so1780990pfm.12;
+        Thu, 06 Jun 2019 09:12:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=8Zc8qJqb674XuWLoPig1e9WRoBoqYfsMdfDerD1Y84I=;
+        b=hWozMkV01JYUjz28wuRy7Z0qFH8zGaqnld1tOMo+U4GaOm5s4ac3WzIF/yF105TzXu
+         Ncfw0a2ed1CzP+sss6HMA8UGTJ+1o7CLg+4MTNqiD7oktPdu+/HjiXy40N9eNqn6lOwW
+         +1BIiK1/D43/k73x2S6wUGm+q5MTVV/Ygb33OXVlEhbMgxq86cFfJ4vCxborERCA5dlr
+         Lttm/Pi2itibF6CZJbzgNj9wdh3SOc9yphBA2GC6N1Zizr4/7/7MT724OCmEztigcPZb
+         995iBzTfECIadcZtlG9jnaAeieC2KLU4hhUsSxvQBWTXsLyYFaeuWxCChDbrduBbBZH/
+         /gYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8Zc8qJqb674XuWLoPig1e9WRoBoqYfsMdfDerD1Y84I=;
+        b=KoMBEyruTb2KHIR4Sw1ze5bzMpsbhFONopYQKbioB5WYGb0BSw2skZFQllCM7BNzNN
+         i/9kzkVndJYevLOwqH5rGHhYN+/CXIeb8NvWGV8KnqEo4Pf5gzX91oacySgslZia1Ffb
+         GP2WJoUI/C9EPE/J6eaqcvst8DiBTCTAIZAjn0RExPJME5PgiFtTduCSS3ymH5cQkPrd
+         Zl9xU3LVqTSK4b1Jld1oX5AkJxIaBC5CwjSv8vtkV0Pv+Vk3cPbES/dPxYsZSYRgULzE
+         vl0VkZYFLabn013MRh74SoUNc0vA0Qa/69+dbs9EmeZexoeLUTSzH13SPRxkjuEo6+pY
+         SRoA==
+X-Gm-Message-State: APjAAAU2BluWHW+8tT8Em6CS9uCkijv2XmTe4EHyZPKFHPmj5UB8ocMy
+        VL+MUbqx3qmZ4DDgVYPtLDE=
+X-Google-Smtp-Source: APXvYqyd/bWJhSZ+sgeAGgA3nldsQkOQqnMaAuK5ExRbXjQLzAVGgeJlCiL1GYX6yDfSKPPWtURJog==
+X-Received: by 2002:a63:cc43:: with SMTP id q3mr4037399pgi.438.1559837541829;
+        Thu, 06 Jun 2019 09:12:21 -0700 (PDT)
+Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id j7sm7894239pjb.26.2019.06.06.09.12.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Jun 2019 09:12:21 -0700 (PDT)
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     bjorn.andersson@linaro.org, benjamin.tissoires@redhat.com,
+        dmitry.torokhov@gmail.com, jikos@kernel.org, lee.jones@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, agross@kernel.org,
+        david.brown@linaro.org, hdegoede@redhat.com,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Subject: [PATCH v5 0/3] Basic DT support for Lenovo Miix 630
+Date:   Thu,  6 Jun 2019 09:10:55 -0700
+Message-Id: <20190606161055.47089-1-jeffrey.l.hugo@gmail.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 05, 2019 at 11:18:19PM -0700, Christoph Hellwig wrote:
-> On Wed, Jun 05, 2019 at 06:45:36PM -0700, ira.weiny@intel.com wrote:
-> > From: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > In order to support checking for a layout lease on a FS DAX inode these
-> > calls need to know if FOLL_LONGTERM was specified.
-> > 
-> > Prepare for this with this patch.
-> 
-> The GUP fast argument passing is a mess.  That is why I've come up
-> with this as part of the (not ready) get_user_pages_fast_bvec
-> implementation:
-> 
-> http://git.infradead.org/users/hch/misc.git/commitdiff/c3d019802dbde5a4cc4160e7ec8ccba479b19f97
+The Lenovo Miix 630 is one of three ARM based (specifically Qualcomm
+MSM8998) laptops that comes with Windows, and seems to have a dedicated
+following of folks intrested to get Linux up and running on it.
 
-Agreed that looks better.
+This series adds support for the basic functionality this is validated
+towork using devicetree.  Although the laptops do feed ACPI to Windows,
+the existing MSM8998 support in mainline is DT based, so DT provides a
+quick path to functionality while ACPI support is investigated.
 
-And I'm sure I will have to re-roll this to deal with conflicts with this set.
-But for now I needed this for the follow ons and having a nice separate little
-patch like this means I can just drop it after I get your clean up!  :-D
+The three devices are very similar, but do have differences in the set
+of peripherals supported, so the idea is that the vast majority of the
+support for all three can live in a common include, which should reduce
+overall duplication.  Adding support for the other two devices as a
+follow on should involve minimal work.
 
-Ira
+The bleeding edge work for these laptops and work in progress can be
+found at https://github.com/aarch64-laptops/prebuilt
+
+v5:
+-Split out elan_i2c changes into their own patch
+-Use a static list of strings to match
+-Fixed typo of "whitelist"
+-Dropped incorrect thermal zones
+-Dropped tags from Bjorn and Lee since the functional should be
+identical, but the code is structured different
+
+v4:
+-Changed the hid-quirks ELAN handling around per Benjamin Tissoires
+-Dropped new DT binding
+
+v3:
+-Changed "clam" to "clamshell"
+-Defined a dt binding for the combo Elan keyboard + touchpad device
+-Adjusted the HID quirk to be correct for dt boot
+-Removed extranious comment in board dts
+-Fixed board level compatible
+
+v2:
+-Changed "cls" to "clam" since feedback indicated "cls" is too opaque,
+but
+"clamshell" is a mouthfull.  "clam" seems to be a happy medium.
+
+Jeffrey Hugo (3):
+  Input: elan_i2c: Add comment about link between elan_i2c and
+    hid-quirks
+  HID: quirks: Refactor ELAN 400 and 401 handling
+  arm64: dts: qcom: Add Lenovo Miix 630
+
+ arch/arm64/boot/dts/qcom/Makefile             |   1 +
+ .../boot/dts/qcom/msm8998-clamshell.dtsi      | 240 ++++++++++++++++++
+ .../boot/dts/qcom/msm8998-lenovo-miix-630.dts |  30 +++
+ drivers/hid/hid-quirks.c                      |  78 +++++-
+ drivers/input/mouse/elan_i2c_core.c           |   4 +
+ 5 files changed, 342 insertions(+), 11 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi
+ create mode 100644 arch/arm64/boot/dts/qcom/msm8998-lenovo-miix-630.dts
+
+-- 
+2.17.1
 
