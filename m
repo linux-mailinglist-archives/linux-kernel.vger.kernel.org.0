@@ -2,329 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C325836A3D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 04:55:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8CD736A2B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 04:52:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726884AbfFFCy4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 22:54:56 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39130 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726855AbfFFCyw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 22:54:52 -0400
-Received: by mail-pg1-f194.google.com with SMTP id 196so451730pgc.6;
-        Wed, 05 Jun 2019 19:54:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=9qzxTtSrBQ5yiYZWANHKeD1gxX9yGCs4JtFgEEpNmLc=;
-        b=NFHl48wdu8H54gDe3MgtK+zK2XtWsCKvwwV4Z+4p726sGav4e8v8zMWQwVrl1cRGb9
-         S7uALOI2m3zWMVTxlKjFikWCCqtFYOWDsJeLI80Y2Tt21PAdXLJ8/8RmiVQnlmfHTTfK
-         8oYbbIakk0wEep88Dui7DYGOGxIGJBRtGZ4zmKeFKsVtvMV+b+cPpaDXpSxYefBkQ7SQ
-         UZITjleVI2SJoFqkTRHUR6ROdY1vEn26K/w71xDpwgqH71LE6ui+33E1A4awEkXZ8pu0
-         rWv5GsuZ3u82xTjIH8jQk1g+dOKMeGhxfx7SDyEPTx7fY9qJQ02nhfEnCLSbtj8Fx2Ad
-         WW0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=9qzxTtSrBQ5yiYZWANHKeD1gxX9yGCs4JtFgEEpNmLc=;
-        b=YlXQyJoc95fuHK8Cz/3jhWBOFK/HOptdtb4FoRHkdF2yaarzphazFFhi5yPlaKxlru
-         ZsUlsiLtdOMi6Yu9bIsMH2Yh+c5bXro+D+Rki01xkISls1kuUNLIIlKDzxbxoQZJUMNg
-         qA6X+X8VjsYhNGk3zkC4FRgSO6i+yQdGtZhEe0um91eheg1v1+FPCH4otabv7p5zhpUE
-         L7ZApYvaZDq545QZdG72bKegDhhgsFgI6wtzLqQ4qfwouBOXnv4DhPzW0A18XVtH3z6U
-         2Zwvzbz4bOtXzIWPEawm184kYAlSJLogZa6LKBnJxL6xO6qDpAhffUeDoS3shVl8wwII
-         8B5A==
-X-Gm-Message-State: APjAAAW2wqc2QmGwf0YNeHvrIYRyoWLjwRdcOk02CWdIGnmBTg9PwvEb
-        PXbebgg8BvjXYeLAgNoyC9E=
-X-Google-Smtp-Source: APXvYqyvH2xV0j/BKNa3c3je66CbNvcNM+2U5qvxAcIIW8NMYNcHuH5hfA7X7p8VPs7YkggkXMn98Q==
-X-Received: by 2002:a62:3006:: with SMTP id w6mr48521974pfw.159.1559789691779;
-        Wed, 05 Jun 2019 19:54:51 -0700 (PDT)
-Received: from localhost (59-120-186-245.HINET-IP.hinet.net. [59.120.186.245])
-        by smtp.gmail.com with ESMTPSA id j14sm304049pfe.10.2019.06.05.19.54.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Jun 2019 19:54:51 -0700 (PDT)
-From:   "Ji-Ze Hong (Peter Hong)" <hpeter@gmail.com>
-X-Google-Original-From: "Ji-Ze Hong (Peter Hong)" <hpeter+linux_kernel@gmail.com>
-To:     johan@kernel.org
-Cc:     gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peter_hong@fintek.com.tw,
-        "Ji-Ze Hong (Peter Hong)" <hpeter+linux_kernel@gmail.com>
-Subject: [PATCH V1 6/6] USB: serial: f81232: Add gpiolib to GPIO device
-Date:   Thu,  6 Jun 2019 10:54:16 +0800
-Message-Id: <1559789656-15847-7-git-send-email-hpeter+linux_kernel@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1559789656-15847-1-git-send-email-hpeter+linux_kernel@gmail.com>
-References: <1559789656-15847-1-git-send-email-hpeter+linux_kernel@gmail.com>
+        id S1726721AbfFFCwl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 22:52:41 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:54880 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726427AbfFFCwl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 22:52:41 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7FADB200997;
+        Thu,  6 Jun 2019 04:52:38 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6058B20098C;
+        Thu,  6 Jun 2019 04:52:34 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 01B76402A6;
+        Thu,  6 Jun 2019 10:52:28 +0800 (SGT)
+From:   Ran Wang <ran.wang_1@nxp.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Felipe Balbi <balbi@kernel.org>, Yang Li <pku.leo@gmail.com>
+Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ran Wang <ran.wang_1@nxp.com>
+Subject: [RESEND][PATCH v3 1/2] usb: dwc3: Add avoiding vbus glitch happen during xhci reset
+Date:   Thu,  6 Jun 2019 10:54:17 +0800
+Message-Id: <20190606025418.26313-1-ran.wang_1@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Fintek F81534A series contains 3 GPIOs per UART and The max GPIOs
-is 12x3 = 36 GPIOs.
+When DWC3 is set to host mode by programming register DWC3_GCTL, VBUS
+(or its control signal) will turn on immediately on related Root Hub
+ports. Then the VBUS will be de-asserted for a little while during xhci
+reset (conducted by xhci driver) for a little while and back to normal.
 
-Signed-off-by: Ji-Ze Hong (Peter Hong) <hpeter+linux_kernel@gmail.com>
+This VBUS glitch might cause some USB devices emuration fail if kernel
+boot with them connected. One SW workaround which can fix this is to
+program all PORTSC[PP] to 0 to turn off VBUS immediately after setting
+host mode in DWC3 driver(per signal measurement result, it will be too
+late to do it in xhci-plat.c or xhci.c).
+
+Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/usb/serial/f81232.c | 210 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 210 insertions(+)
+Changes in v3:
+  - None
 
-diff --git a/drivers/usb/serial/f81232.c b/drivers/usb/serial/f81232.c
-index 708d85c7d822..a53240bc164a 100644
---- a/drivers/usb/serial/f81232.c
-+++ b/drivers/usb/serial/f81232.c
-@@ -18,6 +18,7 @@
- #include <linux/moduleparam.h>
- #include <linux/mutex.h>
- #include <linux/uaccess.h>
-+#include <linux/gpio.h>
- #include <linux/usb.h>
- #include <linux/usb/serial.h>
- #include <linux/serial_reg.h>
-@@ -132,6 +133,7 @@ struct f81232_private {
+Changes in v2:
+  - Correct typos
+  - Shorten the name to snps,host-vbus-glitches
+
+ Documentation/devicetree/bindings/usb/dwc3.txt |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/usb/dwc3.txt b/Documentation/devicetree/bindings/usb/dwc3.txt
+index 8e5265e..453f562 100644
+--- a/Documentation/devicetree/bindings/usb/dwc3.txt
++++ b/Documentation/devicetree/bindings/usb/dwc3.txt
+@@ -106,6 +106,9 @@ Optional properties:
+ 			When just one value, which means INCRX burst mode enabled. When
+ 			more than one value, which means undefined length INCR burst type
+ 			enabled. The values can be 1, 4, 8, 16, 32, 64, 128 and 256.
++ - snps,host-vbus-glitches: Power off all Root Hub ports immediately after
++			setting host mode to avoid vbus (negative) glitch happen in later
++			xhci reset. And the vbus will back to 5V automatically when reset done.
  
- struct f81534a_ctrl_private {
- 	struct usb_interface *intf;
-+	struct gpio_chip chip;
- 	struct mutex lock;
- 	int device_idx;
- };
-@@ -1007,6 +1009,204 @@ static int f81534a_ctrl_set_register(struct usb_device *dev, u16 reg, u16 size,
- 	return status;
- }
- 
-+static int f81534a_ctrl_set_mask_register(struct usb_device *dev, u16 reg,
-+		u8 mask, u8 val)
-+{
-+	int status;
-+	u8 tmp;
-+
-+	status = f81534a_ctrl_get_register(dev, reg, 1, &tmp);
-+	if (status)
-+		return status;
-+
-+
-+	tmp = (tmp & ~mask) | (val & mask);
-+
-+	status = f81534a_ctrl_set_register(dev, reg, 1, &tmp);
-+	if (status)
-+		return status;
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_GPIOLIB
-+static int f81534a_gpio_get(struct gpio_chip *chip, unsigned int gpio_num)
-+{
-+	struct f81534a_ctrl_private *priv = gpiochip_get_data(chip);
-+	struct usb_interface *intf = priv->intf;
-+	struct usb_device *dev = interface_to_usbdev(intf);
-+	int status;
-+	u8 tmp[2];
-+	int set;
-+	int idx;
-+
-+	set = gpio_num / F81534A_CTRL_GPIO_MAX_PIN;
-+	idx = gpio_num % F81534A_CTRL_GPIO_MAX_PIN;
-+
-+	status = mutex_lock_interruptible(&priv->lock);
-+	if (status)
-+		return -EINTR;
-+
-+	status = f81534a_ctrl_get_register(dev, F81534A_CTRL_GPIO_REG + set,
-+							sizeof(tmp), tmp);
-+	if (status) {
-+		mutex_unlock(&priv->lock);
-+		return status;
-+	}
-+
-+	mutex_unlock(&priv->lock);
-+
-+	return !!(tmp[1] & BIT(idx));
-+}
-+
-+static int f81534a_gpio_direction_in(struct gpio_chip *chip,
-+					unsigned int gpio_num)
-+{
-+	struct f81534a_ctrl_private *priv = gpiochip_get_data(chip);
-+	struct usb_interface *intf = priv->intf;
-+	struct usb_device *dev = interface_to_usbdev(intf);
-+	int status;
-+	int set;
-+	int idx;
-+	u8 mask;
-+
-+	set = gpio_num / F81534A_CTRL_GPIO_MAX_PIN;
-+	idx = gpio_num % F81534A_CTRL_GPIO_MAX_PIN;
-+	mask = F81534A_GPIO_MODE0_DIR << idx;
-+
-+	status = mutex_lock_interruptible(&priv->lock);
-+	if (status)
-+		return -EINTR;
-+
-+	status = f81534a_ctrl_set_mask_register(dev, F81534A_CTRL_GPIO_REG +
-+				set, mask, mask);
-+	if (status) {
-+		mutex_unlock(&priv->lock);
-+		return status;
-+	}
-+
-+	mutex_unlock(&priv->lock);
-+
-+	return 0;
-+}
-+
-+static int f81534a_gpio_direction_out(struct gpio_chip *chip,
-+				     unsigned int gpio_num, int val)
-+{
-+	struct f81534a_ctrl_private *priv = gpiochip_get_data(chip);
-+	struct usb_interface *intf = priv->intf;
-+	struct usb_device *dev = interface_to_usbdev(intf);
-+	int status;
-+	int set;
-+	int idx;
-+	u8 mask;
-+	u8 data;
-+
-+	set = gpio_num / F81534A_CTRL_GPIO_MAX_PIN;
-+	idx = gpio_num % F81534A_CTRL_GPIO_MAX_PIN;
-+	mask = (F81534A_GPIO_MODE0_DIR << idx) | BIT(idx);
-+	data = val ? BIT(idx) : 0;
-+
-+	status = mutex_lock_interruptible(&priv->lock);
-+	if (status)
-+		return -EINTR;
-+
-+	status = f81534a_ctrl_set_mask_register(dev, F81534A_CTRL_GPIO_REG +
-+				set, mask, data);
-+	if (status) {
-+		mutex_unlock(&priv->lock);
-+		return status;
-+	}
-+
-+	mutex_unlock(&priv->lock);
-+
-+	return 0;
-+}
-+
-+static void f81534a_gpio_set(struct gpio_chip *chip, unsigned int gpio_num,
-+				int val)
-+{
-+	f81534a_gpio_direction_out(chip, gpio_num, val);
-+}
-+
-+static int f81534a_gpio_get_direction(struct gpio_chip *chip,
-+				unsigned int gpio_num)
-+{
-+	struct f81534a_ctrl_private *priv = gpiochip_get_data(chip);
-+	struct usb_interface *intf = priv->intf;
-+	struct usb_device *dev = interface_to_usbdev(intf);
-+	int status;
-+	u8 tmp[2];
-+	int set;
-+	int idx;
-+	u8 mask;
-+
-+	set = gpio_num / F81534A_CTRL_GPIO_MAX_PIN;
-+	idx = gpio_num % F81534A_CTRL_GPIO_MAX_PIN;
-+	mask = F81534A_GPIO_MODE0_DIR << idx;
-+
-+	status = mutex_lock_interruptible(&priv->lock);
-+	if (status)
-+		return -EINTR;
-+
-+	status = f81534a_ctrl_get_register(dev, F81534A_CTRL_GPIO_REG + set,
-+							sizeof(tmp), tmp);
-+	if (status) {
-+		mutex_unlock(&priv->lock);
-+		return status;
-+	}
-+
-+	mutex_unlock(&priv->lock);
-+
-+	if (tmp[0] & mask)
-+		return GPIOF_DIR_IN;
-+
-+	return GPIOF_DIR_OUT;
-+}
-+
-+static int f81534a_prepare_gpio(struct usb_interface *intf)
-+{
-+	struct f81534a_ctrl_private *priv = usb_get_intfdata(intf);
-+	int status;
-+
-+	priv->chip.parent = &intf->dev;
-+	priv->chip.owner = THIS_MODULE;
-+	priv->chip.get_direction = f81534a_gpio_get_direction,
-+	priv->chip.get = f81534a_gpio_get;
-+	priv->chip.direction_input = f81534a_gpio_direction_in;
-+	priv->chip.set = f81534a_gpio_set;
-+	priv->chip.direction_output = f81534a_gpio_direction_out;
-+	priv->chip.label = "f81534a";
-+	/* M0(SD)/M1/M2 */
-+	priv->chip.ngpio = F81534A_CTRL_GPIO_MAX_PIN * F81534A_MAX_PORT;
-+	priv->chip.base = -1;
-+
-+	priv->intf = intf;
-+	mutex_init(&priv->lock);
-+
-+	status = devm_gpiochip_add_data(&intf->dev, &priv->chip, priv);
-+	if (status) {
-+		dev_err(&intf->dev, "%s: failed: %d\n", __func__, status);
-+		return status;
-+	}
-+
-+	return 0;
-+}
-+#else
-+static int f81534a_prepare_gpio(struct usb_interface *intf)
-+{
-+	dev_warn(&intf->dev, "CONFIG_GPIOLIB is not enabled\n");
-+	dev_warn(&intf->dev, "The GPIOLIB interface will not register\n");
-+
-+	return 0;
-+}
-+#endif
-+
-+static int f81534a_release_gpio(struct usb_interface *intf)
-+{
-+	return 0;
-+}
-+
- static int f81534a_ctrl_generate_ports(struct usb_interface *intf,
- 					struct f81534a_device *device)
- {
-@@ -1118,6 +1318,7 @@ static int f81534a_ctrl_probe(struct usb_interface *intf,
- 	struct usb_device *dev = interface_to_usbdev(intf);
- 	struct f81534a_ctrl_private *priv;
- 	struct f81534a_device *device;
-+	int status;
- 
- 	priv = devm_kzalloc(&intf->dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
-@@ -1130,6 +1331,10 @@ static int f81534a_ctrl_probe(struct usb_interface *intf,
- 	mutex_init(&priv->lock);
- 	usb_set_intfdata(intf, priv);
- 
-+	status = f81534a_prepare_gpio(intf);
-+	if (status)
-+		return status;
-+
- 	INIT_LIST_HEAD(&device->list);
- 	device->intf = intf;
- 
-@@ -1158,6 +1363,11 @@ static void f81534a_ctrl_disconnect(struct usb_interface *intf)
- 
- 			priv = usb_get_intfdata(intf);
- 			dev = interface_to_usbdev(intf);
-+
-+			mutex_lock(&priv->lock);
-+			f81534a_release_gpio(intf);
-+			mutex_unlock(&priv->lock);
-+
- 			usb_put_dev(dev);
- 			break;
- 		}
+  - in addition all properties from usb-xhci.txt from the current directory are
+    supported as well
 -- 
-2.7.4
+1.7.1
 
