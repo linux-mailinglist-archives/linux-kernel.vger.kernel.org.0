@@ -2,118 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7642372C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 13:25:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2039372D8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 13:29:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728342AbfFFLZx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 07:25:53 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:45185 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726961AbfFFLZx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 07:25:53 -0400
-Received: by mail-qt1-f194.google.com with SMTP id j19so2087590qtr.12;
-        Thu, 06 Jun 2019 04:25:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=5dNsy9b7wSo0PojyEFmG8hPYvRxvl4pE0j/UUGtnkT4=;
-        b=PfJA17hV5DxfAedjpGZ9hI2xgFiAXw5rZ2cDbI2LVufOOBGUWNCzM9PTOgW38P91bX
-         Hhd+Z1cV3gDc61Vn0HObvmU5cRH13KhcUe+YRqDR3SVM2MQWSfiKxZYRy/uhJEvdabg2
-         FPbzUW8FX8oKwH86dsxSySwjPkeDO08FFqXPNIDdceu7+Mzzxkp5gvMRebpB9fVHPUYB
-         Gt4Ur2wu4pxXwF3qTEGZh2VRlsOWpQtwFzWQiQsOmfvWlwMoC4X59eBPca9s69or1aNs
-         1wkM3xuSIZizUSxijaHtZgxJCcpqBm/Ec+EJzJFQPaWIhxqR8a13wrwkZrjTy74DXFaK
-         cT6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=5dNsy9b7wSo0PojyEFmG8hPYvRxvl4pE0j/UUGtnkT4=;
-        b=IHQIU82yHMGm9OiELgWnemarEn1P1quLtC1lF0ciFphZFmpXchzqo6WhivlGztBO4A
-         Wo3MogH2gs696ziMxO7XEdRwogGwRtqDcYtbJPlGs/cKW+C7E7jdERjk91fTSW6JtZ+X
-         okMLs+w4uxZ785O1Mw1zUCfuuc7ZjX3pjp44gUS2cFx3SSK9dcL/zMG26z5CGX4n7GT/
-         uhgud0noVnULKH43pOyYR3/ymkko6Ox2k3m7b6D8H9n5ElduNnxufYeE+c/wz5IiTce1
-         LmycAE+YrzEyWp1Qa8Tjj1ttMoyhQNANlNEXvjNufdU9d7SJHDiK9RUEfKOvaDQZ8pF5
-         x5CA==
-X-Gm-Message-State: APjAAAXJPq3ZRZFrZR5a37SbzfYqlHqTwhIMHnm3SLkw67qnlvb/Sbc4
-        WVaNC3sqmwuEQbO+4FE/V4pvKhgCRdkwHxtGCu4=
-X-Google-Smtp-Source: APXvYqxI4DVrPMjWmEMhMewy/0MU4rt1SR7d41hBlwI1sK4buOiQ0PwUYfkjIRaPn7qU9VQJcA8j/66jTPavg7CNUJs=
-X-Received: by 2002:a0c:d163:: with SMTP id c32mr39262393qvh.139.1559820352349;
- Thu, 06 Jun 2019 04:25:52 -0700 (PDT)
+        id S1727454AbfFFL3f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 07:29:35 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32987 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727034AbfFFL3f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 07:29:35 -0400
+Received: from lhreml705-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id BDD6AA80612E5B3DBD10;
+        Thu,  6 Jun 2019 12:29:32 +0100 (IST)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
+ by smtpsuk.huawei.com (10.201.108.46) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Thu, 6 Jun 2019 12:29:23 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
+        <mjg59@google.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <stable@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v3 0/2] ima/evm fixes for v5.2
+Date:   Thu, 6 Jun 2019 13:26:18 +0200
+Message-ID: <20190606112620.26488-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20190603183401.151408-1-gwendal@chromium.org> <20190604055908.GA4797@dell>
-In-Reply-To: <20190604055908.GA4797@dell>
-From:   Enric Balletbo Serra <eballetbo@gmail.com>
-Date:   Thu, 6 Jun 2019 13:25:40 +0200
-Message-ID: <CAFqH_51gMu81f=VFQaF4u9-tAWDMocGAwM_fOPT3Cctv6KWniw@mail.gmail.com>
-Subject: Re: [alsa-devel] [RESEND PATCH v3 00/30] Update cros_ec_commands.h
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Gwendal Grignou <gwendal@chromium.org>,
-        alsa-devel@alsa-project.org, linux-iio@vger.kernel.org,
-        fabien.lahoudere@collabora.com, Takashi Iwai <tiwai@suse.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Mark Brown <broonie@kernel.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Benson Leung <bleung@chromium.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Cheng-Yi Chiang <cychiang@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.154]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lee,
+Previous versions included the patch 'ima: don't ignore INTEGRITY_UNKNOWN
+EVM status'. However, I realized that this patch cannot be accepted alone
+because IMA-Appraisal would deny access to new files created during the
+boot. With the current behavior, those files are accessible because they
+have a valid security.ima (not protected by EVM) created after the first
+write.
 
-Missatge de Lee Jones <lee.jones@linaro.org> del dia dt., 4 de juny
-2019 a les 8:00:
->
-> On Mon, 03 Jun 2019, Gwendal Grignou wrote:
->
-> > The interface between CrosEC embedded controller and the host,
-> > described by cros_ec_commands.h, as diverged from what the embedded
-> > controller really support.
-> >
-> > The source of thruth is at
-> > https://chromium.googlesource.com/chromiumos/platform/ec/+/master/inclu=
-de/ec_commands.h
-> >
-> > That include file is converted to remove ACPI and Embedded only code.
-> >
-> > From now on, cros_ec_commands.h will be automatically generated from
-> > the file above, do not modify directly.
-> >
-> > Fell free to squash the commits below.
-> >
-> > v3 resent: Add Fabien's ack.
->
-> Thanks for doing that.
->
-> In future, please ensure *-bys tags are in chronological order with
-> the first one either being a Suggested-by or your SoB.  Reviews, tests
-> etc usually come *after* first submission.
->
-> I've changed this for you this time, yes in all 30 patches!  :)
->
-> Anyway, all applied, thanks.
->
+A solution for this problem is to initialize EVM very early with a random
+key. Access to created files will be granted, even with the strict
+appraisal, because after the first write those files will have both
+security.ima and security.evm (HMAC calculated with the random key).
 
-Could you do an immutable branch with those? I've few patches that
-depends on those changes and probably I'll have more. Otherwise, I'll
-wait for those to land.
+Strict appraisal will work only if it is done with signatures until the
+persistent HMAC key is loaded.
 
-Thanks,
- Enric
 
-> --
-> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
-> Linaro Services Technical Lead
-> Linaro.org =E2=94=82 Open source software for ARM SoCs
-> Follow Linaro: Facebook | Twitter | Blog
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> https://mailman.alsa-project.org/mailman/listinfo/alsa-devel
+Roberto Sassu (2):
+  evm: add option to set a random HMAC key at early boot
+  ima: add enforce-evm and log-evm modes to strictly check EVM status
+
+ .../admin-guide/kernel-parameters.txt         | 11 ++--
+ security/integrity/evm/evm.h                  | 10 +++-
+ security/integrity/evm/evm_crypto.c           | 57 ++++++++++++++++---
+ security/integrity/evm/evm_main.c             | 41 ++++++++++---
+ security/integrity/ima/ima_appraise.c         |  8 +++
+ security/integrity/integrity.h                |  1 +
+ 6 files changed, 106 insertions(+), 22 deletions(-)
+
+-- 
+2.17.1
+
