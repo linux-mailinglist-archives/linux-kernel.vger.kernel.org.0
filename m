@@ -2,77 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 176B236D7B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 09:41:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26CD336D84
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 09:42:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726173AbfFFHlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 03:41:24 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54228 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725267AbfFFHlX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 03:41:23 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 73A11C04FFF1;
-        Thu,  6 Jun 2019 07:41:23 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-117-131.ams2.redhat.com [10.36.117.131])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 233192E040;
-        Thu,  6 Jun 2019 07:41:23 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 637F511AAF; Thu,  6 Jun 2019 09:41:22 +0200 (CEST)
-Date:   Thu, 6 Jun 2019 09:41:22 +0200
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     davidriley@chromium.org
-Cc:     dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] drm/virtio: Add memory barriers for capset cache.
-Message-ID: <20190606074122.csocqu6g3in7dgbj@sirius.home.kraxel.org>
-References: <20190605234423.11348-1-davidriley@chromium.org>
- <20190605234423.11348-4-davidriley@chromium.org>
+        id S1726797AbfFFHmP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 03:42:15 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:40310 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725267AbfFFHmP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 03:42:15 -0400
+Received: by mail-io1-f67.google.com with SMTP id n5so560489ioc.7;
+        Thu, 06 Jun 2019 00:42:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=J2P7+9BrsV7BFobAF6Gcf5hOBXDyVsf7Cw11pqeBfG0=;
+        b=lhHIkf2p/bhc9lWToqafMcafzKV+1jJqbUCG7KNnGqFyzeGt/DTmAF2+xs4d33W5/v
+         7iBI9jnRJGEJ4oFuU42IfmcB1VjOoRLb86BoiUrqPN5UlJ+h1zk5dVfF8Htjh3rcE2yv
+         A89dNT+HybPHVCM0z+ynLI1HEYDQ3s4ZlPXi3gzGp3y+kFW3SKAkMaMtmrxXWbZQbXaB
+         qEDcCsrPo8rcVxCEbcxqpYw5gyTNNnfjI46gezgvpGnRj0lhgO2iQLJjbz2T6Qhyjg/a
+         xtjIzO6o4JywE81qxr5HEgraSdy2BM5Ko6Gx3GzaV6FndQOGynmNEy4negaMR6caGjel
+         24QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=J2P7+9BrsV7BFobAF6Gcf5hOBXDyVsf7Cw11pqeBfG0=;
+        b=Bccff4a02kI+fsnSgs544EzMSxo6ipGBq9abL5sc+qL2JqCSjg/+Q+TI3yy6wCOP0m
+         QcuJkQ8V2kazbC/a8JlHzobKFO4Q9OMGp5Yn4K9vlNrayunGLc3CgiL2PEgpO1o4/UCJ
+         2OHGznYFlA6Dtzng7coVsaZzSPFj1MEUnTz/4SINSzWS1GEZjRbZ7NLTD+WhkthktDDz
+         NsA90fwEj3VD8O89XzxOCpAqFmITk8tfBD0IIdzjea1Okjz6JydpG0oRBmtzyWQ3AVXn
+         PQ7ypcnIbdjYXfueBrWH48sd49snCCR8n/gdEpwIw/mwIXO3U7xJ3cY6XX59N2IDBc8r
+         aBHA==
+X-Gm-Message-State: APjAAAV7f0zdp6AD6FoNmhCMi68jhFr9nc+9aa1iSNz3uiCaJMYA5CTN
+        nnM7ngChwULADBagZAbIYqilILF3w7rdhgZ1Uw==
+X-Google-Smtp-Source: APXvYqy6Ko9syXmU0XkEyDc/Q2Tk12TRz8+zmvPobBbovp2+NfN8I44+rRcRfj31jwt3e23eYV98CO+eDjREb/FXK1w=
+X-Received: by 2002:a5d:9251:: with SMTP id e17mr8467626iol.21.1559806934290;
+ Thu, 06 Jun 2019 00:42:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190605234423.11348-4-davidriley@chromium.org>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 06 Jun 2019 07:41:23 +0000 (UTC)
+References: <20190605141253.38554-1-ghung.quanta@gmail.com> <20190605141253.38554-2-ghung.quanta@gmail.com>
+In-Reply-To: <20190605141253.38554-2-ghung.quanta@gmail.com>
+From:   Avi Fishman <avifishman70@gmail.com>
+Date:   Thu, 6 Jun 2019 10:41:46 +0300
+Message-ID: <CAKKbWA71P+afSiWPoth90-Ydq4DBmxSK_yTRWSN+FPw10CqFAQ@mail.gmail.com>
+Subject: Re: [PATCH 5.2 v2 2/2] dt-binding: edac: add NPCM ECC documentation
+To:     George Hung <ghung.quanta@gmail.com>
+Cc:     linux-edac <linux-edac@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Benjamin Fair <benjaminfair@google.com>, paulmck@linux.ibm.com,
+        Patrick Venture <venture@google.com>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        James Morse <james.morse@arm.com>,
+        "William A. Kennington III" <wak@google.com>, davem@davemloft.net,
+        Tomer Maimon <tomer.maimon@nuvoton.com>,
+        Avi Fishman <Avi.Fishman@nuvoton.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 05, 2019 at 04:44:23PM -0700, davidriley@chromium.org wrote:
-> From: David Riley <davidriley@chromium.org>
-> 
-> After data is copied to the cache entry, atomic_set is used indicate
-> that the data is the entry is valid without appropriate memory barriers.
-> Similarly the read side was missing the same memory barries.
-> 
-> Signed-off-by: David Riley <davidriley@chromium.org>
+On Wed, Jun 5, 2019 at 5:19 PM George Hung <ghung.quanta@gmail.com> wrote:
+>
+> Add device tree documentation for Nuvoton BMC ECC
+>
+> Signed-off-by: George Hung <ghung.quanta@gmail.com>
+
+Reviewed-by: Avi Fishman <avifishman70@gmail.com>
+
 > ---
->  drivers/gpu/drm/virtio/virtgpu_ioctl.c | 3 +++
->  drivers/gpu/drm/virtio/virtgpu_vq.c    | 2 ++
->  2 files changed, 5 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> index 88c1ed57a3c5..502f5f7c2298 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> @@ -542,6 +542,9 @@ static int virtio_gpu_get_caps_ioctl(struct drm_device *dev,
->  	if (!ret)
->  		return -EBUSY;
->  
-> +	/* is_valid check must proceed before copy of the cache entry. */
-> +	virt_rmb();
+>  .../bindings/edac/npcm7xx-sdram-edac.txt        | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/edac/npcm7xx-sdram-edac.txt
+>
+> diff --git a/Documentation/devicetree/bindings/edac/npcm7xx-sdram-edac.txt b/Documentation/devicetree/bindings/edac/npcm7xx-sdram-edac.txt
+> new file mode 100644
+> index 000000000000..dd4dac59a5bd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/edac/npcm7xx-sdram-edac.txt
+> @@ -0,0 +1,17 @@
+> +Nuvoton NPCM7xx SoC EDAC device driver
+> +
+> +The Nuvoton NPCM7xx SoC supports DDR4 memory with/without ECC and the driver
+> +uses the EDAC framework to implement the ECC detection and corrtection.
+> +
+> +Required properties:
+> +- compatible:  should be "nuvoton,npcm7xx-sdram-edac"
+> +- reg:         Memory controller register set should be <0xf0824000 0x1000>
+> +- interrupts:  should be MC interrupt #25
+> +
+> +Example:
+> +
+> +       mc: memory-controller@f0824000 {
+> +               compatible = "nuvoton,npcm7xx-sdram-edac";
+> +               reg = <0xf0824000 0x1000>;
+> +               interrupts = <0 25 4>;
+> +       };
+> --
+> 2.21.0
+>
 
-I don't think you need virt_rmb() here.  This isn't guest <=> host
-communication, so a normal barrier should do.
 
-The other three fixes are queued up for drm-misc-next.
-
-cheers,
-  Gerd
-
+-- 
+Regards,
+Avi
