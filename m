@@ -2,102 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76C2937A4D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 18:56:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E96037A54
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 18:57:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729863AbfFFQz6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 12:55:58 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40092 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725267AbfFFQz6 (ORCPT
+        id S1727470AbfFFQ5V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 12:57:21 -0400
+Received: from gateway22.websitewelcome.com ([192.185.47.125]:11849 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726551AbfFFQ5U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 12:55:58 -0400
-Received: by mail-pl1-f194.google.com with SMTP id a93so1159280pla.7;
-        Thu, 06 Jun 2019 09:55:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=u6Y+cqrYVOxVvx9PJQvJzOmV48wnJDsYZSMNZJzXapE=;
-        b=KqIZgrneAkfId4BXzJlJ/Ba8ZWCyfARfJKryBHIwJpFOUWjvAFIhrMepKB/WdmaJCW
-         +Q80K/fqEwYpYM9kk/LC4dVD2ffjBQhjIlpa6xmKPFYunh8O9gYd56CtjXDBwr5UhYX6
-         uhvj7YSiUsR2Txa/kz6rPS4nTfow4cH/wA73R6mnZxQtz1ELmkKUURkHP1Ho0flF+Tgx
-         QVzbpjAAcaVuL5DWYrX+exTgeFmY61JZuMYPfF/xqAMkOIj4SPQ+T787MdhgLcFBWZc/
-         FMivxtwW7WooFzXWErEAvPQ9y+MNrWGFbjU4zl3Fd15Qs3FJT1CjMA5HYrl6nwB7sSNP
-         v/aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=u6Y+cqrYVOxVvx9PJQvJzOmV48wnJDsYZSMNZJzXapE=;
-        b=Jg5jDJvQ9DpP4pKDENeRFgUIhWnWjmOGjXkND78TZcD34GXDHX/5kGsPXhBZMsiQm8
-         Ynvo5Sh7YupUEEJ1knIYFJGZg/wROKJWjT0LfXOXRp2xCliDGzvEk/8x/99DWhtiGdtQ
-         S8Au84JgebV0Z2+VZ5Wu47ihLs84Q6Bn5A56PoZM1LQQqXdPlkMQktKw+m7MwjNCVsK9
-         WoySHS2KjCRTwt3BlvOgB54oLu+cjK1d3YHTRBdTnZt3/rDhFSg3MU7MUu5wEXC15V6i
-         HmTAF/tKtM9mAQLPvDEYDJcUR9mejaLdRiVNfpnnk8LK8Mdi3apNHFX9BBLw+lDPT4iN
-         5r+w==
-X-Gm-Message-State: APjAAAX1a7aTtmwCpbA8ZL//U58IXgVUPvqhQnRNkebuhcbKkCeg+3db
-        P0aXAQUXjO4svopeRQllzNxOHm82
-X-Google-Smtp-Source: APXvYqwHF6yRaqzqDbC6gurFQGmA6lvnuMqzvtLNElTfoD8vZ9MYpXIJJZthS6U1heSqJXe4EB/EMA==
-X-Received: by 2002:a17:902:9305:: with SMTP id bc5mr50809503plb.193.1559840157877;
-        Thu, 06 Jun 2019 09:55:57 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id l21sm2257286pff.40.2019.06.06.09.55.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Jun 2019 09:55:57 -0700 (PDT)
-Date:   Thu, 6 Jun 2019 09:55:55 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Eduardo Valentin <eduval@amazon.com>
-Cc:     Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 2/2] hwmon: core: fix potential memory leak in
- *hwmon_device_register*
-Message-ID: <20190606165555.GA32130@roeck-us.net>
-References: <20190530025605.3698-1-eduval@amazon.com>
- <20190530025605.3698-3-eduval@amazon.com>
- <20190605203837.GA30238@roeck-us.net>
- <20190606143509.GF1534@u40b0340c692b58f6553c.ant.amazon.com>
+        Thu, 6 Jun 2019 12:57:20 -0400
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id 968468156
+        for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2019 11:57:19 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id YvhXhXJvUYTGMYvhXhVFxg; Thu, 06 Jun 2019 11:57:19 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.127.120] (port=37080 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hYvhT-001Sel-Iz; Thu, 06 Jun 2019 11:57:19 -0500
+Subject: Re: [PATCH] md: raid10: Use struct_size() in kmalloc()
+To:     Song Liu <liu.song.a23@gmail.com>
+Cc:     Shaohua Li <shli@kernel.org>,
+        linux-raid <linux-raid@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20190604224418.GA23187@embeddedor>
+ <CAPhsuW5cBSsQemfBOyJ_kPLFbaiES8Koh2cvpy9AV4dMB68OJA@mail.gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ mQINBFssHAwBEADIy3ZoPq3z5UpsUknd2v+IQud4TMJnJLTeXgTf4biSDSrXn73JQgsISBwG
+ 2Pm4wnOyEgYUyJd5tRWcIbsURAgei918mck3tugT7AQiTUN3/5aAzqe/4ApDUC+uWNkpNnSV
+ tjOx1hBpla0ifywy4bvFobwSh5/I3qohxDx+c1obd8Bp/B/iaOtnq0inli/8rlvKO9hp6Z4e
+ DXL3PlD0QsLSc27AkwzLEc/D3ZaqBq7ItvT9Pyg0z3Q+2dtLF00f9+663HVC2EUgP25J3xDd
+ 496SIeYDTkEgbJ7WYR0HYm9uirSET3lDqOVh1xPqoy+U9zTtuA9NQHVGk+hPcoazSqEtLGBk
+ YE2mm2wzX5q2uoyptseSNceJ+HE9L+z1KlWW63HhddgtRGhbP8pj42bKaUSrrfDUsicfeJf6
+ m1iJRu0SXYVlMruGUB1PvZQ3O7TsVfAGCv85pFipdgk8KQnlRFkYhUjLft0u7CL1rDGZWDDr
+ NaNj54q2CX9zuSxBn9XDXvGKyzKEZ4NY1Jfw+TAMPCp4buawuOsjONi2X0DfivFY+ZsjAIcx
+ qQMglPtKk/wBs7q2lvJ+pHpgvLhLZyGqzAvKM1sVtRJ5j+ARKA0w4pYs5a5ufqcfT7dN6TBk
+ LXZeD9xlVic93Ju08JSUx2ozlcfxq+BVNyA+dtv7elXUZ2DrYwARAQABtCxHdXN0YXZvIEEu
+ IFIuIFNpbHZhIDxndXN0YXZvQGVtYmVkZGVkb3IuY29tPokCPQQTAQgAJwUCWywcDAIbIwUJ
+ CWYBgAULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRBHBbTLRwbbMZ6tEACk0hmmZ2FWL1Xi
+ l/bPqDGFhzzexrdkXSfTTZjBV3a+4hIOe+jl6Rci/CvRicNW4H9yJHKBrqwwWm9fvKqOBAg9
+ obq753jydVmLwlXO7xjcfyfcMWyx9QdYLERTeQfDAfRqxir3xMeOiZwgQ6dzX3JjOXs6jHBP
+ cgry90aWbaMpQRRhaAKeAS14EEe9TSIly5JepaHoVdASuxklvOC0VB0OwNblVSR2S5i5hSsh
+ ewbOJtwSlonsYEj4EW1noQNSxnN/vKuvUNegMe+LTtnbbocFQ7dGMsT3kbYNIyIsp42B5eCu
+ JXnyKLih7rSGBtPgJ540CjoPBkw2mCfhj2p5fElRJn1tcX2McsjzLFY5jK9RYFDavez5w3lx
+ JFgFkla6sQHcrxH62gTkb9sUtNfXKucAfjjCMJ0iuQIHRbMYCa9v2YEymc0k0RvYr43GkA3N
+ PJYd/vf9vU7VtZXaY4a/dz1d9dwIpyQARFQpSyvt++R74S78eY/+lX8wEznQdmRQ27kq7BJS
+ R20KI/8knhUNUJR3epJu2YFT/JwHbRYC4BoIqWl+uNvDf+lUlI/D1wP+lCBSGr2LTkQRoU8U
+ 64iK28BmjJh2K3WHmInC1hbUucWT7Swz/+6+FCuHzap/cjuzRN04Z3Fdj084oeUNpP6+b9yW
+ e5YnLxF8ctRAp7K4yVlvA7kCDQRbLBwMARAAsHCE31Ffrm6uig1BQplxMV8WnRBiZqbbsVJB
+ H1AAh8tq2ULl7udfQo1bsPLGGQboJSVN9rckQQNahvHAIK8ZGfU4Qj8+CER+fYPp/MDZj+t0
+ DbnWSOrG7z9HIZo6PR9z4JZza3Hn/35jFggaqBtuydHwwBANZ7A6DVY+W0COEU4of7CAahQo
+ 5NwYiwS0lGisLTqks5R0Vh+QpvDVfuaF6I8LUgQR/cSgLkR//V1uCEQYzhsoiJ3zc1HSRyOP
+ otJTApqGBq80X0aCVj1LOiOF4rrdvQnj6iIlXQssdb+WhSYHeuJj1wD0ZlC7ds5zovXh+FfF
+ l5qH5RFY/qVn3mNIVxeO987WSF0jh+T5ZlvUNdhedGndRmwFTxq2Li6GNMaolgnpO/CPcFpD
+ jKxY/HBUSmaE9rNdAa1fCd4RsKLlhXda+IWpJZMHlmIKY8dlUybP+2qDzP2lY7kdFgPZRU+e
+ zS/pzC/YTzAvCWM3tDgwoSl17vnZCr8wn2/1rKkcLvTDgiJLPCevqpTb6KFtZosQ02EGMuHQ
+ I6Zk91jbx96nrdsSdBLGH3hbvLvjZm3C+fNlVb9uvWbdznObqcJxSH3SGOZ7kCHuVmXUcqoz
+ ol6ioMHMb+InrHPP16aVDTBTPEGwgxXI38f7SUEn+NpbizWdLNz2hc907DvoPm6HEGCanpcA
+ EQEAAYkCJQQYAQgADwUCWywcDAIbDAUJCWYBgAAKCRBHBbTLRwbbMdsZEACUjmsJx2CAY+QS
+ UMebQRFjKavwXB/xE7fTt2ahuhHT8qQ/lWuRQedg4baInw9nhoPE+VenOzhGeGlsJ0Ys52sd
+ XvUjUocKgUQq6ekOHbcw919nO5L9J2ejMf/VC/quN3r3xijgRtmuuwZjmmi8ct24TpGeoBK4
+ WrZGh/1hAYw4ieARvKvgjXRstcEqM5thUNkOOIheud/VpY+48QcccPKbngy//zNJWKbRbeVn
+ imua0OpqRXhCrEVm/xomeOvl1WK1BVO7z8DjSdEBGzbV76sPDJb/fw+y+VWrkEiddD/9CSfg
+ fBNOb1p1jVnT2mFgGneIWbU0zdDGhleI9UoQTr0e0b/7TU+Jo6TqwosP9nbk5hXw6uR5k5PF
+ 8ieyHVq3qatJ9K1jPkBr8YWtI5uNwJJjTKIA1jHlj8McROroxMdI6qZ/wZ1ImuylpJuJwCDC
+ ORYf5kW61fcrHEDlIvGc371OOvw6ejF8ksX5+L2zwh43l/pKkSVGFpxtMV6d6J3eqwTafL86
+ YJWH93PN+ZUh6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9eh
+ GZEO3+gCDFmKrjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrS
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <03101042-c490-09fd-be81-dc76b4e364eb@embeddedor.com>
+Date:   Thu, 6 Jun 2019 11:57:12 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190606143509.GF1534@u40b0340c692b58f6553c.ant.amazon.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAPhsuW5cBSsQemfBOyJ_kPLFbaiES8Koh2cvpy9AV4dMB68OJA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.127.120
+X-Source-L: No
+X-Exim-ID: 1hYvhT-001Sel-Iz
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.127.120]:37080
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 07:35:44AM -0700, Eduardo Valentin wrote:
-> On Wed, Jun 05, 2019 at 01:38:38PM -0700, Guenter Roeck wrote:
-> > On Wed, May 29, 2019 at 07:56:05PM -0700, Eduardo Valentin wrote:
-> > > When registering a hwmon device with HWMON_C_REGISTER_TZ flag
-> > > in place, the hwmon subsystem will attempt to register the device
-> > > also with the thermal subsystem. When the of-thermal registration
-> > > fails, __hwmon_device_register jumps to ida_remove, leaving
-> > > the locally allocated hwdev pointer.
-> > > 
-> > > This patch fixes the leak by jumping to a new label that
-> > > will first unregister hdev and then fall into the kfree of hwdev
-> > > to finally remove the idas and propagate the error code.
-> > > 
-> > 
-> > Hah, actually this is wrong. hwdev is freed indirectly with the
-> > device_unregister() call. See commit 74e3512731bd ("hwmon: (core)
-> > Fix double-free in __hwmon_device_register()").
+
+
+On 6/6/19 11:51 AM, Song Liu wrote:
+
 > 
-> heh.. I see it now. Well, it is not a straight catch though. 
-> 
-> > 
-> > It may make sense to add a respective comment to the code, though.
-> > 
-> 
-> I agree. Or a simple comment saying "dont worry about freeing hwdev
-> because hwmon_dev_release() takes care of it".
-> 
-> Are you patching it ?
+> Applied to my md-next tree.
 > 
 
-Will do. I'll send a patch in a minute.
+Great. :)
 
-Thanks,
-Guenter
+Thanks, Song.
+--
+Gustavo
