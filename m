@@ -2,120 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 992A438075
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 00:21:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8F063808B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 00:24:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729136AbfFFWVS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 18:21:18 -0400
-Received: from mga03.intel.com ([134.134.136.65]:65321 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726066AbfFFWVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 18:21:17 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 15:21:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,560,1557212400"; 
-   d="scan'208";a="182472132"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga002.fm.intel.com with ESMTP; 06 Jun 2019 15:21:16 -0700
-Date:   Thu, 6 Jun 2019 15:22:28 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Jan Kara <jack@suse.cz>, Dan Williams <dan.j.williams@intel.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jeff Layton <jlayton@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
-Message-ID: <20190606222228.GB11698@iweiny-DESK2.sc.intel.com>
-References: <20190606014544.8339-1-ira.weiny@intel.com>
- <20190606104203.GF7433@quack2.suse.cz>
- <20190606195114.GA30714@ziepe.ca>
+        id S1727013AbfFFWYX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 18:24:23 -0400
+Received: from mail-eopbgr680070.outbound.protection.outlook.com ([40.107.68.70]:15342
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726599AbfFFWYW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 18:24:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pZVFPUeUa9e328to5DK/H3iwy0oMcHKEuHMJCgBaPiw=;
+ b=Yr87OYLAcX3ojZgO/NIDqoOqug8eLCG5N11v/YzQ0ZAqeMCXVU+IjyLc8drNS+kAH4KVxxSWHhLKQgmFHPNfWpjA09kr1RTJuMxRSF1aUkPk+oF6/qeqfUb1zlr3IpScX/Yc+cS2yx5xcMUY15uDaqYDwn/t1tO6K2Pgc8vw94U=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
+ BYAPR05MB4901.namprd05.prod.outlook.com (52.135.235.155) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1987.3; Thu, 6 Jun 2019 22:24:17 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::2cb6:a3d1:f675:ced8]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::2cb6:a3d1:f675:ced8%3]) with mapi id 15.20.1965.011; Thu, 6 Jun 2019
+ 22:24:17 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+CC:     the arch/x86 maintainers <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Edward Cree <ecree@solarflare.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: [PATCH 11/15] static_call: Add inline static call infrastructure
+Thread-Topic: [PATCH 11/15] static_call: Add inline static call infrastructure
+Thread-Index: AQHVG6HczY7CfFoeek66Q905fEQkc6aPNeMA
+Date:   Thu, 6 Jun 2019 22:24:17 +0000
+Message-ID: <37CFAEC1-6D36-4A6D-8C44-F85FCFA053AA@vmware.com>
+References: <20190605130753.327195108@infradead.org>
+ <20190605131945.193241464@infradead.org>
+In-Reply-To: <20190605131945.193241464@infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-originating-ip: [66.170.99.2]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 0317d6cb-7ae7-48a9-9a38-08d6eacdb6c1
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR05MB4901;
+x-ms-traffictypediagnostic: BYAPR05MB4901:
+x-microsoft-antispam-prvs: <BYAPR05MB4901199F749E630159D96D02D0170@BYAPR05MB4901.namprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-forefront-prvs: 00603B7EEF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(396003)(39860400002)(366004)(346002)(199004)(189003)(51444003)(102836004)(86362001)(99286004)(14454004)(5660300002)(36756003)(64756008)(53546011)(6506007)(8676002)(66446008)(186003)(81156014)(76176011)(446003)(486006)(66476007)(66066001)(478600001)(26005)(82746002)(11346002)(33656002)(91956017)(73956011)(66946007)(2616005)(76116006)(71190400001)(7416002)(8936002)(6246003)(6436002)(68736007)(476003)(54906003)(3846002)(316002)(81166006)(66556008)(53936002)(2906002)(6512007)(256004)(14444005)(7736002)(25786009)(4326008)(305945005)(229853002)(6486002)(6916009)(83716004)(71200400001)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4901;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: rDUGqols91Ji6RaYKuG0+UEsykaf2Zss1pqV/S8shNikS1iHLTSnjpreJBlwU/LA0PS/xicUaZ8ZYGqJs9e2u5fcY5Wb2fDasutPcrszhSbZf7iiM9jweqMi329RAnLJdKdCdlQLUrvSBsVyC+0GFIBaMqlvMDUi3SRbjvIS0IIAYRCiY4sEoLDl2s7bpqnUrYpwpQuY1QfVONOeulckA24kmR89Eq0b27EibPcMQbBLub6LLI0BefvgMeD/0yCjYjB+En9+v81Wuh7QWUsUVVRhyK0CTomTNyUhwdVj17HxnISjzqL8q2vPof/AcyWF0nGYGw6QPP1jbB7cxTqQ68MF2sE0eKDlOrmZbozJPAgtcqhlMZUzyktQJo8JBT5QMYvi4WahJRush8CojpJot98WUcrpD/fHf3SHIL704Aw=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2871A09574065941B49A643C022B13CD@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190606195114.GA30714@ziepe.ca>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0317d6cb-7ae7-48a9-9a38-08d6eacdb6c1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2019 22:24:17.3151
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: namit@vmware.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4901
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 04:51:15PM -0300, Jason Gunthorpe wrote:
-> On Thu, Jun 06, 2019 at 12:42:03PM +0200, Jan Kara wrote:
-> 
-> > So I'd like to actually mandate that you *must* hold the file lease until
-> > you unpin all pages in the given range (not just that you have an option to
-> > hold a lease). And I believe the kernel should actually enforce this. That
-> > way we maintain a sane state that if someone uses a physical location of
-> > logical file offset on disk, he has a layout lease. Also once this is done,
-> > sysadmin has a reasonably easy way to discover run-away RDMA application
-> > and kill it if he wishes so.
-> > 
-> > The question is on how to exactly enforce that lease is taken until all
-> > pages are unpinned. I belive it could be done by tracking number of
-> > long-term pinned pages within a lease. Gup_longterm could easily increment
-> > the count when verifying the lease exists, gup_longterm users will somehow
-> > need to propagate corresponding 'filp' (struct file pointer) to
-> > put_user_pages_longterm() callsites so that they can look up appropriate
-> > lease to drop reference - probably I'd just transition all gup_longterm()
-> > users to a saner API similar to the one we have in mm/frame_vector.c where
-> > we don't hand out page pointers but an encapsulating structure that does
-> > all the necessary tracking. Removing a lease would need to block until all
-> > pins are released - this is probably the most hairy part since we need to
-> > handle a case if application just closes the file descriptor which
-> > would
-> 
-> I think if you are going to do this then the 'struct filp' that
-> represents the lease should be held in the kernel (ie inside the RDMA
-> umem) until the kernel is done with it.
-
-Yea there seems merit to this.  I'm still not resolving how this helps track
-who has the pin across a fork.
-
-> 
-> Actually does someone have a pointer to this userspace lease API, I'm
-> not at all familiar with it, thanks
-
-man fcntl
-	search for SETLEASE
-
-But I had to add the F_LAYOUT lease type.  (Personally I'm for calling it
-F_LONGTERM at this point.  I don't think LAYOUT is compatible with what we are
-proposing here.)
-
-Anyway, yea would be a libc change at lease for man page etc...  But again I
-want to get some buy in before going through all that.
-
-> 
-> And yes, a better output format from GUP would be great..
-> 
-> > Maybe we could block only on explicit lease unlock and just drop the layout
-> > lease on file close and if there are still pinned pages, send SIGKILL to an
-> > application as a reminder it did something stupid...
-> 
-> Which process would you SIGKILL? At least for the rdma case a FD is
-> holding the GUP, so to do the put_user_pages() the kernel needs to
-> close the FD. I guess it would have to kill every process that has the
-> FD open? Seems complicated...
-
-Tending to agree...  But I'm still not opposed to killing bad actors...  ;-)
-
-NOTE: Jason I think you need to be more clear about the FD you are speaking of.
-I believe you mean the FD which refers to the RMDA context.  That is what I
-called it in my other email.
-
-Ira
-
-> 
-> Regards,
-> Jason
+PiBPbiBKdW4gNSwgMjAxOSwgYXQgNjowOCBBTSwgUGV0ZXIgWmlqbHN0cmEgPHBldGVyekBpbmZy
+YWRlYWQub3JnPiB3cm90ZToNCj4gDQo+IEZyb206IEpvc2ggUG9pbWJvZXVmIDxqcG9pbWJvZUBy
+ZWRoYXQuY29tPg0KPiANCj4gQWRkIGluZnJhc3RydWN0dXJlIGZvciBhbiBhcmNoLXNwZWNpZmlj
+IENPTkZJR19IQVZFX1NUQVRJQ19DQUxMX0lOTElORQ0KPiBvcHRpb24sIHdoaWNoIGlzIGEgZmFz
+dGVyIHZlcnNpb24gb2YgQ09ORklHX0hBVkVfU1RBVElDX0NBTEwuICBBdA0KPiBydW50aW1lLCB0
+aGUgc3RhdGljIGNhbGwgc2l0ZXMgYXJlIHBhdGNoZWQgZGlyZWN0bHksIHJhdGhlciB0aGFuIHVz
+aW5nDQo+IHRoZSBvdXQtb2YtbGluZSB0cmFtcG9saW5lcy4NCj4gDQo+IENvbXBhcmVkIHRvIG91
+dC1vZi1saW5lIHN0YXRpYyBjYWxscywgdGhlIHBlcmZvcm1hbmNlIGJlbmVmaXRzIGFyZSBtb3Jl
+DQo+IG1vZGVzdCwgYnV0IHN0aWxsIG1lYXN1cmFibGUuICBTdGV2ZW4gUm9zdGVkdCBkaWQgc29t
+ZSB0cmFjZXBvaW50DQo+IG1lYXN1cmVtZW50czoNCg0KWyBzbmlwIF0NCg0KPiArc3RhdGljIHZv
+aWQgc3RhdGljX2NhbGxfZGVsX21vZHVsZShzdHJ1Y3QgbW9kdWxlICptb2QpDQo+ICt7DQo+ICsJ
+c3RydWN0IHN0YXRpY19jYWxsX3NpdGUgKnN0YXJ0ID0gbW9kLT5zdGF0aWNfY2FsbF9zaXRlczsN
+Cj4gKwlzdHJ1Y3Qgc3RhdGljX2NhbGxfc2l0ZSAqc3RvcCA9IG1vZC0+c3RhdGljX2NhbGxfc2l0
+ZXMgKw0KPiArCQkJCQltb2QtPm51bV9zdGF0aWNfY2FsbF9zaXRlczsNCj4gKwlzdHJ1Y3Qgc3Rh
+dGljX2NhbGxfc2l0ZSAqc2l0ZTsNCj4gKwlzdHJ1Y3Qgc3RhdGljX2NhbGxfa2V5ICprZXksICpw
+cmV2X2tleSA9IE5VTEw7DQo+ICsJc3RydWN0IHN0YXRpY19jYWxsX21vZCAqc2l0ZV9tb2Q7DQo+
+ICsNCj4gKwlmb3IgKHNpdGUgPSBzdGFydDsgc2l0ZSA8IHN0b3A7IHNpdGUrKykgew0KPiArCQlr
+ZXkgPSBzdGF0aWNfY2FsbF9rZXkoc2l0ZSk7DQo+ICsJCWlmIChrZXkgPT0gcHJldl9rZXkpDQo+
+ICsJCQljb250aW51ZTsNCj4gKwkJcHJldl9rZXkgPSBrZXk7DQo+ICsNCj4gKwkJbGlzdF9mb3Jf
+ZWFjaF9lbnRyeShzaXRlX21vZCwgJmtleS0+c2l0ZV9tb2RzLCBsaXN0KSB7DQo+ICsJCQlpZiAo
+c2l0ZV9tb2QtPm1vZCA9PSBtb2QpIHsNCj4gKwkJCQlsaXN0X2RlbCgmc2l0ZV9tb2QtPmxpc3Qp
+Ow0KPiArCQkJCWtmcmVlKHNpdGVfbW9kKTsNCj4gKwkJCQlicmVhazsNCj4gKwkJCX0NCj4gKwkJ
+fQ0KPiArCX0NCg0KSSB0aGluayB0aGF0IGZvciBzYWZldHksIHdoZW4gYSBtb2R1bGUgaXMgcmVt
+b3ZlZCwgYWxsIHRoZSBzdGF0aWMtY2FsbHMNCnNob3VsZCBiZSB0cmF2ZXJzZWQgdG8gY2hlY2sg
+dGhhdCBub25lIG9mIHRoZW0gY2FsbHMgYW55IGZ1bmN0aW9uIGluIHRoZQ0KcmVtb3ZlZCBtb2R1
+bGUuIElmIHRoYXQgaGFwcGVucywgcGVyaGFwcyBpdCBzaG91bGQgYmUgcG9pc29uZWQuDQoNCj4g
+K30NCj4gKw0KPiArc3RhdGljIGludCBzdGF0aWNfY2FsbF9tb2R1bGVfbm90aWZ5KHN0cnVjdCBu
+b3RpZmllcl9ibG9jayAqbmIsDQo+ICsJCQkJICAgICB1bnNpZ25lZCBsb25nIHZhbCwgdm9pZCAq
+ZGF0YSkNCj4gK3sNCj4gKwlzdHJ1Y3QgbW9kdWxlICptb2QgPSBkYXRhOw0KPiArCWludCByZXQg
+PSAwOw0KPiArDQo+ICsJY3B1c19yZWFkX2xvY2soKTsNCj4gKwlzdGF0aWNfY2FsbF9sb2NrKCk7
+DQo+ICsNCj4gKwlzd2l0Y2ggKHZhbCkgew0KPiArCWNhc2UgTU9EVUxFX1NUQVRFX0NPTUlORzoN
+Cj4gKwkJbW9kdWxlX2Rpc2FibGVfcm8obW9kKTsNCj4gKwkJcmV0ID0gc3RhdGljX2NhbGxfYWRk
+X21vZHVsZShtb2QpOw0KPiArCQltb2R1bGVfZW5hYmxlX3JvKG1vZCwgZmFsc2UpOw0KDQpEb2Vz
+buKAmXQgaXQgY2F1c2Ugc29tZSBwYWdlcyB0byBiZSBXK1ggPyBDYW4gaXQgYmUgYXZvaWRlZD8N
+Cg0KPiArCQlpZiAocmV0KSB7DQo+ICsJCQlXQVJOKDEsICJGYWlsZWQgdG8gYWxsb2NhdGUgbWVt
+b3J5IGZvciBzdGF0aWMgY2FsbHMiKTsNCj4gKwkJCXN0YXRpY19jYWxsX2RlbF9tb2R1bGUobW9k
+KTsNCg0KSWYgc3RhdGljX2NhbGxfYWRkX21vZHVsZSgpIHN1Y2NlZWRlZCBpbiBjaGFuZ2luZyBz
+b21lIG9mIHRoZSBjYWxscywgYnV0IG5vdA0KYWxsLCBJIGRvbuKAmXQgdGhpbmsgdGhhdCBzdGF0
+aWNfY2FsbF9kZWxfbW9kdWxlKCkgd2lsbCBjb3JyZWN0bHkgdW5kbw0Kc3RhdGljX2NhbGxfYWRk
+X21vZHVsZSgpLiBUaGUgY29kZSB0cmFuc2Zvcm1hdGlvbnMsIEkgdGhpbmssIHdpbGwgcmVtYWlu
+Lg0KDQo=
