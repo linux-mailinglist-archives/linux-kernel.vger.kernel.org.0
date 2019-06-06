@@ -2,103 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7192A37174
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 12:18:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 375123718B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 12:23:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728193AbfFFKR4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 06:17:56 -0400
-Received: from mga01.intel.com ([192.55.52.88]:33754 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727469AbfFFKRz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 06:17:55 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 03:17:55 -0700
-X-ExtLoop1: 1
-Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
-  by orsmga007.jf.intel.com with ESMTP; 06 Jun 2019 03:17:54 -0700
-Received: from fmsmsx117.amr.corp.intel.com (10.18.116.17) by
- FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Thu, 6 Jun 2019 03:17:54 -0700
-Received: from shsmsx152.ccr.corp.intel.com (10.239.6.52) by
- fmsmsx117.amr.corp.intel.com (10.18.116.17) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Thu, 6 Jun 2019 03:17:53 -0700
-Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.10]) by
- SHSMSX152.ccr.corp.intel.com ([169.254.6.187]) with mapi id 14.03.0415.000;
- Thu, 6 Jun 2019 18:17:52 +0800
-From:   "Zhang, Tina" <tina.zhang@intel.com>
-To:     "kraxel@redhat.com" <kraxel@redhat.com>
-CC:     "Tian, Kevin" <kevin.tian@intel.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Zhenyu Wang <zhenyuw@linux.intel.com>,
-        "Yuan, Hang" <hang.yuan@intel.com>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "Lv, Zhiyuan" <zhiyuan.lv@intel.com>,
-        "intel-gvt-dev@lists.freedesktop.org" 
-        <intel-gvt-dev@lists.freedesktop.org>,
-        "Wang, Zhi A" <zhi.a.wang@intel.com>
-Subject: RE: [RFC PATCH v2 1/3] vfio: Use capability chains to handle device
- specific irq
-Thread-Topic: [RFC PATCH v2 1/3] vfio: Use capability chains to handle
- device specific irq
-Thread-Index: AQHVGrx1sbtkzcdtCkGKiqXjrLufOqaL7AoAgADZGxD//4zbAIAB2aBQ
-Date:   Thu, 6 Jun 2019 10:17:51 +0000
-Message-ID: <237F54289DF84E4997F34151298ABEBC8764837E@SHSMSX101.ccr.corp.intel.com>
-References: <20190604095534.10337-1-tina.zhang@intel.com>
- <20190604095534.10337-2-tina.zhang@intel.com>
- <20190605040446.GW9684@zhen-hp.sh.intel.com>
- <237F54289DF84E4997F34151298ABEBC87646B5C@SHSMSX101.ccr.corp.intel.com>
- <20190605100942.bceke6yqjynuwk3z@sirius.home.kraxel.org>
-In-Reply-To: <20190605100942.bceke6yqjynuwk3z@sirius.home.kraxel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMWY5MDgyNjMtZTFlMS00NzU5LTljYTItYzAxNDcyYmYwODg1IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiRmoxeWpBOXVaeUxJaU02TUVzcTZ0bXBzdnlnZVpYQjZjMnU5WHZDRmk3eVJRSXB2MDIrakZCNVpkaUJhRXJDZCJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.600.7
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        id S1728382AbfFFKXn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 06:23:43 -0400
+Received: from smtp-good-out-2.t-2.net ([84.255.208.44]:35976 "EHLO
+        smtp-good-out-2.t-2.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727857AbfFFKXn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 06:23:43 -0400
+Received: from smtp-2.t-2.si (smtp-2.t-2.si [IPv6:2a01:260:1:4::1f])
+        by smtp-good-out-2.t-2.net (Postfix) with ESMTP id 45KMFS5byrzZG5;
+        Thu,  6 Jun 2019 12:23:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-2.net;
+        s=smtp-out-2; t=1559816620;
+        bh=be0m1mh0IVu6WZqXXkKj2KT0971wDCJEPqmo2Z4Dqlo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=bXJMBBKOyGPE1Iz/ZgOJhixqj2KKwSy7W1bc6vy5iOJHevymr6kDdic8i1NsuiVBj
+         jp2tILAneZmB1LUHRd2ypE8pWnmnzK3IV0+iFCFlL4gMov7ysc9RUcpZtHCeKfQkHf
+         17Y5eOxM61h8IjQIcAPX9qMQ5wVwKlC6+mR2lgTo=
+Received: from localhost (localhost [127.0.0.1])
+        by smtp-2.t-2.si (Postfix) with ESMTP id 45KMFS5MwzzMsJFD;
+        Thu,  6 Jun 2019 12:23:40 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at t-2.si
+Received: from smtp-2.t-2.si ([127.0.0.1])
+        by localhost (smtp-2.t-2.si [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id oGAyOBO-3v3y; Thu,  6 Jun 2019 12:23:40 +0200 (CEST)
+Received: from localhost.localdomain (unknown [89.212.35.59])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: borut_seljak@t-2.net)
+        by smtp-2.t-2.si (Postfix) with ESMTPSA;
+        Thu,  6 Jun 2019 12:23:11 +0200 (CEST)
+From:   Borut Seljak <borut.seljak@t-2.net>
+To:     erwan.leray@st.com
+Cc:     borut.seljak@t-2.net,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        linux-serial@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3] serial: stm32: fix a recursive locking in stm32_config_rs485
+Date:   Thu,  6 Jun 2019 12:19:01 +0200
+Message-Id: <20190606101901.31151-1-borut.seljak@t-2.net>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <erwan.leray@st.com>
+References: <erwan.leray@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogaW50ZWwtZ3Z0LWRldiBb
-bWFpbHRvOmludGVsLWd2dC1kZXYtYm91bmNlc0BsaXN0cy5mcmVlZGVza3RvcC5vcmddIE9uDQo+
-IEJlaGFsZiBPZiBrcmF4ZWxAcmVkaGF0LmNvbQ0KPiBTZW50OiBXZWRuZXNkYXksIEp1bmUgNSwg
-MjAxOSA2OjEwIFBNDQo+IFRvOiBaaGFuZywgVGluYSA8dGluYS56aGFuZ0BpbnRlbC5jb20+DQo+
-IENjOiBUaWFuLCBLZXZpbiA8a2V2aW4udGlhbkBpbnRlbC5jb20+OyBrdm1Admdlci5rZXJuZWwu
-b3JnOyBsaW51eC0NCj4ga2VybmVsQHZnZXIua2VybmVsLm9yZzsgWmhlbnl1IFdhbmcgPHpoZW55
-dXdAbGludXguaW50ZWwuY29tPjsgWXVhbiwNCj4gSGFuZyA8aGFuZy55dWFuQGludGVsLmNvbT47
-IGFsZXgud2lsbGlhbXNvbkByZWRoYXQuY29tOyBMdiwgWmhpeXVhbg0KPiA8emhpeXVhbi5sdkBp
-bnRlbC5jb20+OyBpbnRlbC1ndnQtZGV2QGxpc3RzLmZyZWVkZXNrdG9wLm9yZzsgV2FuZywgWmhp
-IEENCj4gPHpoaS5hLndhbmdAaW50ZWwuY29tPg0KPiBTdWJqZWN0OiBSZTogW1JGQyBQQVRDSCB2
-MiAxLzNdIHZmaW86IFVzZSBjYXBhYmlsaXR5IGNoYWlucyB0byBoYW5kbGUgZGV2aWNlDQo+IHNw
-ZWNpZmljIGlycQ0KPiANCj4gICBIaSwNCj4gDQo+ID4gPiBSZWFsbHkgbmVlZCB0byBzcGxpdCBm
-b3IgZGlmZmVyZW50IHBsYW5lcz8gSSdkIGxpa2UgYQ0KPiA+ID4gVkZJT19JUlFfU1VCVFlQRV9H
-RlhfRElTUExBWV9FVkVOVA0KPiA+ID4gc28gdXNlciBzcGFjZSBjYW4gcHJvYmUgY2hhbmdlIGZv
-ciBhbGwuDQo+IA0KPiA+IFVzZXIgc3BhY2UgY2FuIGNob29zZSB0byB1c2VyIGRpZmZlcmVudCBo
-YW5kbGVycyBhY2NvcmRpbmcgdG8gdGhlDQo+ID4gc3BlY2lmaWMgZXZlbnQuIEZvciBleGFtcGxl
-LCB1c2VyIHNwYWNlIG1pZ2h0IG5vdCB3YW50IHRvIGhhbmRsZSBldmVyeQ0KPiA+IGN1cnNvciBl
-dmVudCBkdWUgdG8gcGVyZm9ybWFuY2UgY29uc2lkZXJhdGlvbi4gQmVzaWRlcywgaXQgY2FuIHJl
-ZHVjZQ0KPiA+IHRoZSBwcm9iZSB0aW1lcywgYXMgd2UgZG9uJ3QgbmVlZCB0byBwcm9iZSB0d2lj
-ZSB0byBtYWtlIHN1cmUgaWYgYm90aA0KPiA+IGN1cnNvciBwbGFuZSBhbmQgcHJpbWFyeSBwbGFu
-ZSBoYXZlIGJlZW4gdXBkYXRlZC4NCj4gDQo+IEknZCBzdWdnZXN0IHRvIHVzZSB0aGUgdmFsdWUg
-cGFzc2VkIHZpYSBldmVudGZkIGZvciB0aGF0LCBpLmUuIGluc3RlYWQgb2YNCj4gc2VuZGluZyAi
-MSIgdW5jb25kaXRpb25hbGx5IHNlbmQgYSBtYXNrIG9mIGNoYW5nZWQgcGxhbmVzLg0KSWYgdGhl
-cmUgaXMgb25seSBvbmUgZXZlbnRmZCB3b3JraW5nIGZvciBHRlhfRElTUExBWSwgc2hvdWxkIGl0
-IGJlICBWRklPX0lSUV9JTkZPX0VWRU5URkQgYW5kIFZGSU9fSVJRX0lORk9fQVVUT01BU0tFRD8g
-aS5lLiBhZnRlciBzaWduYWxpbmcsIHRoZSBpbnRlcnJ1cHQgaXMgYXV0b21hdGljYWxseSBtYXNr
-ZWQgYW5kIHRoZSB1c2VyIHNwYWNlIG5lZWRzIHRvIHVubWFzayB0aGUgbGluZSB0byByZWNlaXZl
-IG5ldyBpcnEgZXZlbnQuDQoNCkJSLA0KVGluYQ0KDQoNCj4gDQo+IGNoZWVycywNCj4gICBHZXJk
-DQo+IA0KPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXw0K
-PiBpbnRlbC1ndnQtZGV2IG1haWxpbmcgbGlzdA0KPiBpbnRlbC1ndnQtZGV2QGxpc3RzLmZyZWVk
-ZXNrdG9wLm9yZw0KPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2ludGVsLWd2dC1kZXYNCg==
+Remove spin_lock_irqsave in stm32_config_rs485, it cause recursive locking.
+Already locked in uart_set_rs485_config.
+
+fixes: 1bcda09d291081 ("serial: stm32: add support for RS485 hardware control mode")
+
+Signed-off-by: Borut Seljak <borut.seljak@t-2.net>
+---
+ drivers/tty/serial/stm32-usart.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/tty/serial/stm32-usart.c b/drivers/tty/serial/stm32-usart.c
+index e8d7a7bb4339..5d072ec61071 100644
+--- a/drivers/tty/serial/stm32-usart.c
++++ b/drivers/tty/serial/stm32-usart.c
+@@ -105,9 +105,7 @@ static int stm32_config_rs485(struct uart_port *port,
+ 	struct stm32_usart_config *cfg = &stm32_port->info->cfg;
+ 	u32 usartdiv, baud, cr1, cr3;
+ 	bool over8;
+-	unsigned long flags;
+ 
+-	spin_lock_irqsave(&port->lock, flags);
+ 	stm32_clr_bits(port, ofs->cr1, BIT(cfg->uart_enable_bit));
+ 
+ 	port->rs485 = *rs485conf;
+@@ -147,7 +145,6 @@ static int stm32_config_rs485(struct uart_port *port,
+ 	}
+ 
+ 	stm32_set_bits(port, ofs->cr1, BIT(cfg->uart_enable_bit));
+-	spin_unlock_irqrestore(&port->lock, flags);
+ 
+ 	return 0;
+ }
+-- 
+2.17.1
+
