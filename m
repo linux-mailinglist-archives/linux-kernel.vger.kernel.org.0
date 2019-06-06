@@ -2,77 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56E0D37D24
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 21:20:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BF133814E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 00:53:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729147AbfFFTUN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 15:20:13 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:35286 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728504AbfFFTUM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 15:20:12 -0400
-Received: from zn.tnic (p200300EC2F1EFA00985DCAE74D76316F.dip0.t-ipconnect.de [IPv6:2003:ec:2f1e:fa00:985d:cae7:4d76:316f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BAC1C1EC01AD;
-        Thu,  6 Jun 2019 21:20:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1559848810;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=yCNTMXZUE49/fLG5ZTMFnNHLY3mz38m+7qEFZfj0H2E=;
-        b=TO/Bj+VSjGd7aN55WYzQsAVoI0w1RWmtV/Y3Oca5Ee5Bo5CYMyuw1/RTjCbvmPTiS5C/+m
-        50n9PcQVLNmtYaN0vA+TogvG2TGeUoSl74biq77mKb+44bm2BU5PaQ0KLQNrtY3MKL9e3h
-        KR/O+rKKNvNaZp3BemDaMJmU3y+WjIQ=
-Date:   Thu, 6 Jun 2019 21:20:10 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Kairui Song <kasong@redhat.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Junichi Nomura <j-nomura@ce.jp.nec.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Baoquan He <bhe@redhat.com>,
-        "dyoung@redhat.com" <dyoung@redhat.com>,
-        "fanc.fnst@cn.fujitsu.com" <fanc.fnst@cn.fujitsu.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>
-Subject: Re: [PATCH v6 1/2] x86/kexec: Build identity mapping for EFI systab
- and ACPI tables
-Message-ID: <20190606192010.GJ26146@zn.tnic>
-References: <20190513070725.GA20105@zn.tnic>
- <20190513073254.GB16774@MiWiFi-R3L-srv>
- <20190513075006.GB20105@zn.tnic>
- <20190513080210.GC16774@MiWiFi-R3L-srv>
- <20190515051717.GA13703@jeru.linux.bs1.fc.nec.co.jp>
- <20190515065843.GA24212@zn.tnic>
- <20190515070942.GA17154@jeru.linux.bs1.fc.nec.co.jp>
- <CACPcB9cyiPc8JYmt1QhYNipSsJ5z3wTOJ90LS5LTx4YqwaG8rA@mail.gmail.com>
- <20190521180855.GA7793@cz.tnic>
- <CACPcB9fg5RGXcBbESNnn9rV0DSoh4jYkVWZrdcRWay5KKAjLww@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CACPcB9fg5RGXcBbESNnn9rV0DSoh4jYkVWZrdcRWay5KKAjLww@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727620AbfFFWxB convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 6 Jun 2019 18:53:01 -0400
+Received: from mail.fleetmanagement.ae ([103.97.164.178]:14059 "EHLO
+        mail.fleetmanagement.ae" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726352AbfFFWxA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 18:53:00 -0400
+X-Greylist: delayed 5540 seconds by postgrey-1.27 at vger.kernel.org; Thu, 06 Jun 2019 18:52:59 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by mail.fleetmanagement.ae (Postfix) with ESMTP id 3C6CE2FA5A48;
+        Fri,  7 Jun 2019 02:10:38 +0530 (IST)
+Received: from mail.fleetmanagement.ae ([127.0.0.1])
+        by localhost (mail.fleetmanagement.ae [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id s8ftcpfjdqYQ; Fri,  7 Jun 2019 02:10:27 +0530 (IST)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.fleetmanagement.ae (Postfix) with ESMTP id 07AC526DA66F;
+        Fri,  7 Jun 2019 01:22:07 +0530 (IST)
+X-Virus-Scanned: amavisd-new at fleetmanagement.ae
+Received: from mail.fleetmanagement.ae ([127.0.0.1])
+        by localhost (mail.fleetmanagement.ae [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id Erqz40DQoi9Q; Fri,  7 Jun 2019 01:22:07 +0530 (IST)
+Received: from mail.redbytes.in (unknown [47.15.190.14])
+        by mail.fleetmanagement.ae (Postfix) with ESMTPSA id B8C572A3BD5A;
+        Fri,  7 Jun 2019 00:47:27 +0530 (IST)
+From:   Soyoung Park <sparks_330@redbytes.in>
+Content-Type: text/plain;
+        charset=us-ascii
+Content-Transfer-Encoding: 8BIT
+Mime-Version: 1.0 (1.0)
+Subject: Hello linux
+Message-Id: <4E04B933-1D6E-4B52-B8C6-D7447E092D7E@redbytes.in>
+Date:   Thu, 6 Jun 2019 09:21:58 -1000
+To:     "linux kernel" <linux-kernel@vger.kernel.org>,
+        "Liz" <lizkao@yahoo.com>, "Magnus" <magnus.damm@gmail.com>,
+        "Marcy" <marcyhome@gmail.com>, "matt" <mattlogush@gmail.com>,
+        "Matthew J" <mlogush@apexsystemsinc.com>,
+        "matthieu123" <matthieu123@yahoo.com>,
+        "melissa" <md_milleman@yahoo.com>, "Micah" <silver7@gmail.com>,
+        "Michael" <michaelldawson@gmail.com>,
+        "Molly" <Molly.Hastings@opco.com>
+X-Mailer: iPhone Mail (14A456)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 28, 2019 at 10:49:54AM +0800, Kairui Song wrote:
-> Hi, by now, I still didn't see any tip branch pick up this patch yet,
-> any update?
+Salutations linux
 
-Ok, stuff is queued in tip:x86/boot now. Please test it as much as you
-can and send all fixes ontop.
+http://punjabcoach.com/criticize.php?dtfvz=LUH8801
 
-Thx.
 
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Soyoung Park
