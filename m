@@ -2,122 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44342372E6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 13:31:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50F02372C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 13:27:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728477AbfFFLak (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 07:30:40 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32989 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727296AbfFFLak (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 07:30:40 -0400
-Received: from lhreml705-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id A3EEDA022841E334D138;
-        Thu,  6 Jun 2019 12:30:38 +0100 (IST)
-Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
- by smtpsuk.huawei.com (10.201.108.46) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Thu, 6 Jun 2019 12:30:30 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
-        <mjg59@google.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <stable@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v3 2/2] ima: add enforce-evm and log-evm modes to strictly check EVM status
-Date:   Thu, 6 Jun 2019 13:26:20 +0200
-Message-ID: <20190606112620.26488-3-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190606112620.26488-1-roberto.sassu@huawei.com>
-References: <20190606112620.26488-1-roberto.sassu@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.204.65.154]
-X-CFilter-Loop: Reflected
+        id S1728377AbfFFL06 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 07:26:58 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:60812 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726961AbfFFL06 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 07:26:58 -0400
+Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 7E3F8C0B66;
+        Thu,  6 Jun 2019 11:27:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1559820429; bh=LYlsmuhYso763N/RO39um+ScxW0aMyDOSjQIC78SHBQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=iFLGbuSjEvG5FT0C04tHTBa3IbPDhVG0rW4E+2tKwEUu9NCL/0C6LP2WvrQT2x4nh
+         8VL4aFFxBHLG353m89erGIIUiRcexRD+tPX1HG+XkPGEqJTIgXz5m0NzM672oo3I4P
+         +TWiB5UVRpIH5yVWYX+qqPfAWzPl87pFMQ5I7kqA08t/XGt2ePZ6Thea/m9ZpB6La4
+         gPu0k1rnHm9+8Az+mwbYkjIoCiNK00p9G+AXTo/0o/JWPTdT9rJpNwrPzM71UA2wDs
+         dq4aFn25X+cWftdVq4Ay4DTWLxYV9aykKyVXfKcQWVmfzc9RV16nxXxoZj8umPbLez
+         JU1nOqYo9Q5QA==
+Received: from de02.synopsys.com (germany.internal.synopsys.com [10.225.17.21])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 54354A005D;
+        Thu,  6 Jun 2019 11:26:54 +0000 (UTC)
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by de02.synopsys.com (Postfix) with ESMTP id 1DDD43E9E1;
+        Thu,  6 Jun 2019 13:26:54 +0200 (CEST)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Cc:     Jose Abreu <Jose.Abreu@synopsys.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>
+Subject: [RFC net-next 0/2] net: stmmac: Convert to phylink
+Date:   Thu,  6 Jun 2019 13:26:49 +0200
+Message-Id: <cover.1559741195.git.joabreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IMA and EVM have been designed as two independent subsystems: the first for
-checking the integrity of file data; the second for checking file metadata.
-Making them independent allows users to adopt them incrementally.
+[ Resending with PHYLIB maintainer (Russell) in cc plus some PHY experts ]
 
-The point of intersection is in IMA-Appraisal, which calls
-evm_verifyxattr() to ensure that security.ima wasn't modified during an
-offline attack. The design choice, to ensure incremental adoption, was to
-continue appraisal verification if evm_verifyxattr() returns
-INTEGRITY_UNKNOWN. This value is returned when EVM is not enabled in the
-kernel configuration, or if the HMAC key has not been loaded yet.
+For review and testing only.
 
-Although this choice appears legitimate, it might not be suitable for
-hardened systems, where the administrator expects that access is denied if
-there is any error. An attacker could intentionally delete the EVM keys
-from the system and set the file digest in security.ima to the actual file
-digest so that the final appraisal status is INTEGRITY_PASS.
+This converts stmmac to use phylink. Besides the code redution this will
+allow to gain more flexibility.
 
-This patch allows such hardened systems to strictly enforce an access
-control policy based on the validity of signatures/HMACs, by introducing
-two new values for the ima_appraise= kernel option: enforce-evm and
-log-evm.
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>
 
-Fixes: 2fe5d6def1672 ("ima: integrity appraisal extension")
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Cc: stable@vger.kernel.org
----
- Documentation/admin-guide/kernel-parameters.txt | 3 ++-
- security/integrity/ima/ima_appraise.c           | 8 ++++++++
- 2 files changed, 10 insertions(+), 1 deletion(-)
+Jose Abreu (2):
+  net: stmmac: Prepare to convert to phylink
+  net: stmmac: Convert to phylink
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index fe5cde58c11b..0585194ca736 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1587,7 +1587,8 @@
- 			Set number of hash buckets for inode cache.
- 
- 	ima_appraise=	[IMA] appraise integrity measurements
--			Format: { "off" | "enforce" | "fix" | "log" }
-+			Format: { "off" | "enforce" | "fix" | "log" |
-+				  "enforce-evm" | "log-evm" }
- 			default: "enforce"
- 
- 	ima_appraise_tcb [IMA] Deprecated.  Use ima_policy= instead.
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 5fb7127bbe68..afef06e10fb9 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -18,6 +18,7 @@
- 
- #include "ima.h"
- 
-+static bool ima_appraise_req_evm __ro_after_init;
- static int __init default_appraise_setup(char *str)
- {
- #ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
-@@ -28,6 +29,9 @@ static int __init default_appraise_setup(char *str)
- 	else if (strncmp(str, "fix", 3) == 0)
- 		ima_appraise = IMA_APPRAISE_FIX;
- #endif
-+	if (strcmp(str, "enforce-evm") == 0 ||
-+	    strcmp(str, "log-evm") == 0)
-+		ima_appraise_req_evm = true;
- 	return 1;
- }
- 
-@@ -245,7 +249,11 @@ int ima_appraise_measurement(enum ima_hooks func,
- 	switch (status) {
- 	case INTEGRITY_PASS:
- 	case INTEGRITY_PASS_IMMUTABLE:
-+		break;
- 	case INTEGRITY_UNKNOWN:
-+		if (ima_appraise_req_evm &&
-+		    xattr_value->type != EVM_IMA_XATTR_DIGSIG)
-+			goto out;
- 		break;
- 	case INTEGRITY_NOXATTRS:	/* No EVM protected xattrs. */
- 	case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
+ drivers/net/ethernet/stmicro/stmmac/Kconfig        |   3 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h       |   4 +-
+ .../net/ethernet/stmicro/stmmac/stmmac_ethtool.c   |  72 +---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 389 +++++++++------------
+ .../net/ethernet/stmicro/stmmac/stmmac_platform.c  |  21 +-
+ 5 files changed, 189 insertions(+), 300 deletions(-)
+
 -- 
-2.17.1
+2.7.4
 
