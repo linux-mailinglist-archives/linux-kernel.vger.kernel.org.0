@@ -2,108 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB97B36A42
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 04:55:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D40C36A47
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 04:57:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbfFFCyt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 22:54:49 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46783 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726806AbfFFCys (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 22:54:48 -0400
-Received: by mail-pf1-f194.google.com with SMTP id y11so517796pfm.13
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 19:54:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7zLWmYl/+X2He6Ch7i6FSYueJhM5f4AH0Fhf/uNr4es=;
-        b=DFulL/R680YF6KTZlZwzyLgEOuX5oX3pNweBw5PzqDFAKvuanRCLvVnv1F4/bjc41P
-         vR49GnfeZgv+Tb1QEPvIQE78hQ6XwJmwCVAqlgvbyjTtgLAQxcpnBJGoD1uGTGvfi+B+
-         hoWhgfkNA5d3TaZpi8f4qiYkFVgSnPPOF7DgdfkVQnzF5T3OS0vFERVdB5BqBhsJSBFl
-         386Vn5XX4dObSbEDu/WSg3xU7D4NzGGyvaBIKdalcBl+p2Uj0BDKJYiVjditjL/FbShx
-         Et1ReY0azsehYO8aUaH0bfRZViGiV7uD8AwDfBmu1CR5VHisjtQypVv/6cKMPdde6sC9
-         fe0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7zLWmYl/+X2He6Ch7i6FSYueJhM5f4AH0Fhf/uNr4es=;
-        b=iBuBfuMbr59GjU2eyCbYXl0JcMqS/tfdZE9/xvHc39a46kJgTWsF1auxp+mcLLFE+6
-         IuSBGr5cQUFtMw8R2hpj0GvZy16msBKqlmiYCBE+NYCwuXNblkXoZB0rPffZ764aTQqN
-         0KA1T3ro0OmhNg9iZsK3xMLTQ5SJ3WQr7uFtLmvM7+ceKXnoif9i9KhfYrqb85//KxMv
-         IpUb8QJjEpDELmmhPigCkLlOmrMgDhWR9D5V52bKDnx+4En+wNT0Qeo11vuPA3YtYHUE
-         qD4ERkyU1/cW2x6gBCkrUyJhW90OzroEGxV8QyM5ktzOuONFN3HfBOgS1E0/go5xfmmH
-         ONcA==
-X-Gm-Message-State: APjAAAUAR8z3hWIArqyweKHt3KgSb1eZqj41RzTLYXdpasyfy05rIp2o
-        eLhgqMZcqL5ttmsahFVAZ7pITQ==
-X-Google-Smtp-Source: APXvYqw35UCA++Fz18xwkZJJIBYs2VbmoRQHiXcRfYXAmhiE703auWDyDi7ZlVIM4qFsqAz3jyc86g==
-X-Received: by 2002:a62:750c:: with SMTP id q12mr29747379pfc.59.1559789687470;
-        Wed, 05 Jun 2019 19:54:47 -0700 (PDT)
-Received: from localhost ([122.172.66.84])
-        by smtp.gmail.com with ESMTPSA id p7sm232322pgb.92.2019.06.05.19.54.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Jun 2019 19:54:46 -0700 (PDT)
-Date:   Thu, 6 Jun 2019 08:24:44 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Peter Oskolkov <posk@posk.io>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH] sched/fair: Introduce fits_capacity()
-Message-ID: <20190606025444.etxgxny6hosoa74z@vireshk-i7>
-References: <b477ac75a2b163048bdaeb37f57b4c3f04f75a31.1559631700.git.viresh.kumar@linaro.org>
- <CAFTs51WUXwJbgsFCRbOwdUWnv55Mbt55-hmoMyETPGC5yMDSCQ@mail.gmail.com>
+        id S1726671AbfFFC5n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 22:57:43 -0400
+Received: from mga14.intel.com ([192.55.52.115]:52297 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726427AbfFFC5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 22:57:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 19:57:42 -0700
+X-ExtLoop1: 1
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by orsmga003.jf.intel.com with ESMTP; 05 Jun 2019 19:57:41 -0700
+Received: from fmsmsx153.amr.corp.intel.com (10.18.125.6) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 5 Jun 2019 19:57:41 -0700
+Received: from shsmsx101.ccr.corp.intel.com (10.239.4.153) by
+ FMSMSX153.amr.corp.intel.com (10.18.125.6) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 5 Jun 2019 19:57:41 -0700
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.137]) by
+ SHSMSX101.ccr.corp.intel.com ([169.254.1.10]) with mapi id 14.03.0415.000;
+ Thu, 6 Jun 2019 10:57:39 +0800
+From:   "Tian, Kevin" <kevin.tian@intel.com>
+To:     "kraxel@redhat.com" <kraxel@redhat.com>,
+        "Zhang, Tina" <tina.zhang@intel.com>
+CC:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Zhenyu Wang <zhenyuw@linux.intel.com>,
+        "Yuan, Hang" <hang.yuan@intel.com>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "Lv, Zhiyuan" <zhiyuan.lv@intel.com>,
+        "intel-gvt-dev@lists.freedesktop.org" 
+        <intel-gvt-dev@lists.freedesktop.org>,
+        "Wang, Zhi A" <zhi.a.wang@intel.com>
+Subject: RE: [RFC PATCH v2 1/3] vfio: Use capability chains to handle device
+ specific irq
+Thread-Topic: [RFC PATCH v2 1/3] vfio: Use capability chains to handle
+ device specific irq
+Thread-Index: AQHVGrx1ebYylKGK4UKyy6MOQKDPAaaL7AoAgABXwgCAAA40AIABn6Bw
+Date:   Thu, 6 Jun 2019 02:57:38 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D19CA6BA5F@SHSMSX104.ccr.corp.intel.com>
+References: <20190604095534.10337-1-tina.zhang@intel.com>
+ <20190604095534.10337-2-tina.zhang@intel.com>
+ <20190605040446.GW9684@zhen-hp.sh.intel.com>
+ <237F54289DF84E4997F34151298ABEBC87646B5C@SHSMSX101.ccr.corp.intel.com>
+ <20190605100942.bceke6yqjynuwk3z@sirius.home.kraxel.org>
+In-Reply-To: <20190605100942.bceke6yqjynuwk3z@sirius.home.kraxel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNTA5YmFhMzItZDY3My00NDFmLWE1ZjEtYTVhZWE4MmZjZDA4IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiaSt2cXc2ZVFzOWNxUXE3VlJlNnlwaExza1Z2RWs5dmY1YnlFd1VxS0JGaGIweEtpSWxPOEttXC9PdVY4dFp5M1MifQ==
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFTs51WUXwJbgsFCRbOwdUWnv55Mbt55-hmoMyETPGC5yMDSCQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04-06-19, 08:59, Peter Oskolkov wrote:
-> On Tue, Jun 4, 2019 at 12:02 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> >
-> > The same formula to check utilization against capacity (after
-> > considering capacity_margin) is already used at 5 different locations.
-> >
-> > This patch creates a new macro, fits_capacity(), which can be used from
-> > all these locations without exposing the details of it and hence
-> > simplify code.
-> >
-> > All the 5 code locations are updated as well to use it..
-> >
-> > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > ---
-> >  kernel/sched/fair.c | 14 +++++++-------
-> >  1 file changed, 7 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index 7f8d477f90fe..db3a218b7928 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -102,6 +102,8 @@ int __weak arch_asym_cpu_priority(int cpu)
-> >   * (default: ~20%)
-> >   */
-> >  static unsigned int capacity_margin                    = 1280;
-> > +
-> > +#define fits_capacity(cap, max)        ((cap) * capacity_margin < (max) * 1024)
-> 
-> Any reason to have this as a macro and not as an inline function?
-
-I don't have any strong preference here, I used a macro as I didn't
-feel that type-checking is really required on the parameters and
-eventually this will get open coded anyway.
-
-Though I would be fine to make it a routine if maintainers want it
-that way.
-
-Thanks Peter.
-
--- 
-viresh
+PiBGcm9tOiBrcmF4ZWxAcmVkaGF0LmNvbQ0KPiBTZW50OiBXZWRuZXNkYXksIEp1bmUgNSwgMjAx
+OSA2OjEwIFBNDQo+IA0KPiAgIEhpLA0KPiANCj4gPiA+IFJlYWxseSBuZWVkIHRvIHNwbGl0IGZv
+ciBkaWZmZXJlbnQgcGxhbmVzPyBJJ2QgbGlrZSBhDQo+ID4gPiBWRklPX0lSUV9TVUJUWVBFX0dG
+WF9ESVNQTEFZX0VWRU5UDQo+ID4gPiBzbyB1c2VyIHNwYWNlIGNhbiBwcm9iZSBjaGFuZ2UgZm9y
+IGFsbC4NCj4gDQo+ID4gVXNlciBzcGFjZSBjYW4gY2hvb3NlIHRvIHVzZXIgZGlmZmVyZW50IGhh
+bmRsZXJzIGFjY29yZGluZyB0byB0aGUNCj4gPiBzcGVjaWZpYyBldmVudC4gRm9yIGV4YW1wbGUs
+IHVzZXIgc3BhY2UgbWlnaHQgbm90IHdhbnQgdG8gaGFuZGxlIGV2ZXJ5DQo+ID4gY3Vyc29yIGV2
+ZW50IGR1ZSB0byBwZXJmb3JtYW5jZSBjb25zaWRlcmF0aW9uLiBCZXNpZGVzLCBpdCBjYW4gcmVk
+dWNlDQo+ID4gdGhlIHByb2JlIHRpbWVzLCBhcyB3ZSBkb24ndCBuZWVkIHRvIHByb2JlIHR3aWNl
+IHRvIG1ha2Ugc3VyZSBpZiBib3RoDQo+ID4gY3Vyc29yIHBsYW5lIGFuZCBwcmltYXJ5IHBsYW5l
+IGhhdmUgYmVlbiB1cGRhdGVkLg0KPiANCj4gSSdkIHN1Z2dlc3QgdG8gdXNlIHRoZSB2YWx1ZSBw
+YXNzZWQgdmlhIGV2ZW50ZmQgZm9yIHRoYXQsIGkuZS4gaW5zdGVhZA0KPiBvZiBzZW5kaW5nICIx
+IiB1bmNvbmRpdGlvbmFsbHkgc2VuZCBhIG1hc2sgb2YgY2hhbmdlZCBwbGFuZXMuDQo+IA0KDQpz
+b3VuZHMgcmVhc29uYWJsZS4NCg==
