@@ -2,95 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 057D636BA1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 07:31:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91A6936BAD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 07:33:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726694AbfFFFbk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 01:31:40 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43107 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726659AbfFFFbi (ORCPT
+        id S1726700AbfFFFdH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 01:33:07 -0400
+Received: from mail-it1-f197.google.com ([209.85.166.197]:51133 "EHLO
+        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726103AbfFFFdG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 01:31:38 -0400
-Received: by mail-pg1-f194.google.com with SMTP id f25so657142pgv.10;
-        Wed, 05 Jun 2019 22:31:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=M575u1eEZiHgk8vf92wKCesexTtETUM7ILi53nI5aSw=;
-        b=tXLkVxE75I/Dg6A5M1s3iC1S+UNHngqctctCTLnOpxu04C9k2gDC0npfpoB5CcZMjl
-         ei+y145DdJi3QC0PBVBavH4+wSEyT8zYzoyOiWcpmvXFArudqX0ye/ch7rjzgOsXkVvM
-         g6qPuHwwa6a2qyNQuWLi9PNPG533RbwMaaQVDOMfVZ99SYc+rl2DmESu1tFK3vzXp/8m
-         3272vo5++i3d7EoKmN47MoN9pcDdQlfBhm7u+CF+JokYCeeJlJ5BAEXVQPSzeVlfbRBb
-         dPTwpLzrQfHFpnv/n6tDAdUPdAz7LbhSv3VLANQSxvSy82kT81F1HcoNk/dCfjyN+Nf/
-         dlHQ==
+        Thu, 6 Jun 2019 01:33:06 -0400
+Received: by mail-it1-f197.google.com with SMTP id o128so889207ita.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 22:33:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=M575u1eEZiHgk8vf92wKCesexTtETUM7ILi53nI5aSw=;
-        b=GaI7n1tBLW7PA0WIndeRtsS7iEFgk181XXUTEN4iw67n/moYP1y0iQgnFvr3RHAvWI
-         otFMuR9u+c3o+4HQbR4ZfVciqPL4XY4P0ocPViacGHqVTFGVKnN2QBYbfBzlGPBoeA4h
-         MoVMnjMzWhLUm7ARksw/vtuPRN5XbHQGPY36Tx+60cNbWm2ls9ILf2w0NLWcVInUdjTI
-         6vM762eaGIIXyYojXorpfITGXwuHfqZxefWo29R/fQ9tfUYiS0YlaMo/faLqBBNRdtBK
-         K5KcvhL/TPCY2NJKSZrs5QplAnYhY9z2WatdgX1VLrPMQ8LPSuw44GDPxRa2wHQOQufh
-         7m5A==
-X-Gm-Message-State: APjAAAUQhzYY61mM9ecswy1zG9hXjuEPH2kcUtIhAB/VrLvyV6dHLlVg
-        dtYwlZzQT5HBsmJe30co7HPR6JIf
-X-Google-Smtp-Source: APXvYqw5pCfWWq2g3n2NXM5I+Vuv+PvV176R/aGOGPxgJ1qjKkoihkZ9ARH0UkaGBcF9d2wRRTQ8vw==
-X-Received: by 2002:aa7:8b0b:: with SMTP id f11mr52405509pfd.142.1559799098021;
-        Wed, 05 Jun 2019 22:31:38 -0700 (PDT)
-Received: from localhost.localdomain ([203.205.141.123])
-        by smtp.googlemail.com with ESMTPSA id f11sm721547pjg.1.2019.06.05.22.31.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 05 Jun 2019 22:31:37 -0700 (PDT)
-From:   Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH v2 3/3] KVM: LAPIC: Ignore timer migration when lapic timer is injected by posted-interrupt
-Date:   Thu,  6 Jun 2019 13:31:26 +0800
-Message-Id: <1559799086-13912-4-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1559799086-13912-1-git-send-email-wanpengli@tencent.com>
-References: <1559799086-13912-1-git-send-email-wanpengli@tencent.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=W5FF42zVDo3trtwvrjbtAnVcsXKoMkINuTi+BPyFgek=;
+        b=Hwbx1Axf2UOy6b5pAO7XjQyS4DJjBpGhPMi8vMy+LX6XquuTb3kadne32O5q3Xu6VS
+         I3fOzZEFC1Ot6ClikDuo7jP0Zr+z6Uc+a0fVBpdbtcExW+H2PdIaZRveRD79fUvsx3OR
+         NxGlSjMG2V3u+LyIHEBfrQGGtTWwT51EicmhTBEVelw3g4b8VlBUOsOEHYTNfYqpaAYL
+         EyFRr8oqeyi9LQORUYMgQ+WFC6mapkIpHrf9pHOx6cbge1K45UxJeQ5n8l2O8NphX/Tt
+         ly6fXdOgK7nIO7/AdJwv7cstIS/46NNUGE8qpePzrBrX2r+Bey95QxDgUWeWjuDxFdS8
+         VahA==
+X-Gm-Message-State: APjAAAWCHjhx48WkhEKMRhwprW2f+tLSqBaxwdPJFuSjwQynSm168IyL
+        H6oRqO0ypLNlQ+iVvJQj3V402wWxYwkglGRTLs/6OcrFCW3W
+X-Google-Smtp-Source: APXvYqz9VSUc/8eq6b84tHBQ+U7qjz624v0EGp0dlfT+6ewmxPMDHxVvliMgENV/TnWGADV2fbh3yhNDyGIqQ+am2toYAWdTda+c
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:660c:887:: with SMTP id o7mr5081314itk.159.1559799186165;
+ Wed, 05 Jun 2019 22:33:06 -0700 (PDT)
+Date:   Wed, 05 Jun 2019 22:33:06 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006994aa058aa10cb8@google.com>
+Subject: WARNING: refcount bug in css_task_iter_next
+From:   syzbot <syzbot+644dc16442b3a35f3629@syzkaller.appspotmail.com>
+To:     ast@kernel.org, bpf@vger.kernel.org, cgroups@vger.kernel.org,
+        daniel@iogearbox.net, hannes@cmpxchg.org, kafai@fb.com,
+        linux-kernel@vger.kernel.org, lizefan@huawei.com,
+        netdev@vger.kernel.org, songliubraving@fb.com,
+        syzkaller-bugs@googlegroups.com, tj@kernel.org, yhs@fb.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
+Hello,
 
-When lapic timer is injected by posted-interrupt, the emulated timer is
-offload to the housekeeping cpu. The timer interrupt will be delivered
-properly, no need to migrate timer.
+syzbot found the following crash on:
 
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+HEAD commit:    b2924447 Add linux-next specific files for 20190605
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11c492d2a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4248d6bc70076f7d
+dashboard link: https://syzkaller.appspot.com/bug?extid=644dc16442b3a35f3629
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+644dc16442b3a35f3629@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+refcount_t: increment on 0; use-after-free.
+WARNING: CPU: 0 PID: 4184 at lib/refcount.c:156 refcount_inc_checked  
+lib/refcount.c:156 [inline]
+WARNING: CPU: 0 PID: 4184 at lib/refcount.c:156  
+refcount_inc_checked+0x61/0x70 lib/refcount.c:154
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 4184 Comm: syz-executor.3 Not tainted 5.2.0-rc3-next-20190605 #9
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  panic+0x2cb/0x744 kernel/panic.c:219
+  __warn.cold+0x20/0x4d kernel/panic.c:576
+  report_bug+0x263/0x2b0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:179 [inline]
+  fixup_bug arch/x86/kernel/traps.c:174 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:272
+  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:291
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:986
+RIP: 0010:refcount_inc_checked lib/refcount.c:156 [inline]
+RIP: 0010:refcount_inc_checked+0x61/0x70 lib/refcount.c:154
+Code: 1d db 0e 68 06 31 ff 89 de e8 1b c4 3b fe 84 db 75 dd e8 d2 c2 3b fe  
+48 c7 c7 e0 b6 c4 87 c6 05 bb 0e 68 06 01 e8 dd db 0d fe <0f> 0b eb c1 90  
+90 90 90 90 90 90 90 90 90 90 55 48 89 e5 41 57 41
+RSP: 0018:ffff8882000ef290 EFLAGS: 00010082
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000040000 RSI: ffffffff815b04b6 RDI: ffffed104001de44
+RBP: ffff8882000ef2a0 R08: ffff8882035744c0 R09: ffffed1015d040f1
+R10: ffffed1015d040f0 R11: ffff8880ae820787 R12: ffff88804436a660
+R13: ffff8882000ef368 R14: ffff88804436a640 R15: 1ffff1104001de5d
+  css_task_iter_next+0xf9/0x190 kernel/cgroup/cgroup.c:4568
+  mem_cgroup_scan_tasks+0xbb/0x180 mm/memcontrol.c:1168
+  select_bad_process mm/oom_kill.c:374 [inline]
+  out_of_memory mm/oom_kill.c:1088 [inline]
+  out_of_memory+0x6b2/0x1280 mm/oom_kill.c:1035
+  mem_cgroup_out_of_memory+0x1ca/0x230 mm/memcontrol.c:1573
+  mem_cgroup_oom mm/memcontrol.c:1905 [inline]
+  try_charge+0xfbe/0x1480 mm/memcontrol.c:2468
+  mem_cgroup_try_charge+0x24d/0x5e0 mm/memcontrol.c:6073
+  __add_to_page_cache_locked+0x425/0xe70 mm/filemap.c:839
+  add_to_page_cache_lru+0x1cb/0x760 mm/filemap.c:916
+  pagecache_get_page+0x357/0x850 mm/filemap.c:1655
+  grab_cache_page_write_begin+0x75/0xb0 mm/filemap.c:3157
+  simple_write_begin+0x36/0x2c0 fs/libfs.c:438
+  generic_perform_write+0x22a/0x520 mm/filemap.c:3207
+  __generic_file_write_iter+0x25e/0x630 mm/filemap.c:3336
+  generic_file_write_iter+0x360/0x610 mm/filemap.c:3368
+  call_write_iter include/linux/fs.h:1870 [inline]
+  new_sync_write+0x4d3/0x770 fs/read_write.c:483
+  __vfs_write+0xe1/0x110 fs/read_write.c:496
+  vfs_write+0x268/0x5d0 fs/read_write.c:558
+  ksys_write+0x14f/0x290 fs/read_write.c:611
+  __do_sys_write fs/read_write.c:623 [inline]
+  __se_sys_write fs/read_write.c:620 [inline]
+  __x64_sys_write+0x73/0xb0 fs/read_write.c:620
+  do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x459279
+Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f9a334d9c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000459279
+RDX: 0000000003d3427e RSI: 0000000020000180 RDI: 0000000000000004
+RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f9a334da6d4
+R13: 00000000004c8ee8 R14: 00000000004dfbb0 R15: 00000000ffffffff
+Shutting down cpus with NMI
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
 ---
- arch/x86/kvm/lapic.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index c08e5a8..a3e4ca8 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -2532,7 +2532,8 @@ void __kvm_migrate_apic_timer(struct kvm_vcpu *vcpu)
- {
- 	struct hrtimer *timer;
- 
--	if (!lapic_in_kernel(vcpu))
-+	if (!lapic_in_kernel(vcpu) ||
-+		posted_interrupt_inject_timer_enabled(vcpu))
- 		return;
- 
- 	timer = &vcpu->arch.apic->lapic_timer.timer;
--- 
-2.7.4
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
