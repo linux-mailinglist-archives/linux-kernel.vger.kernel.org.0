@@ -2,50 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EED737AEC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:22:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E17B037AD8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:20:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730118AbfFFRW2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 13:22:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52992 "EHLO mail.kernel.org"
+        id S1730072AbfFFRUf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 13:20:35 -0400
+Received: from mga04.intel.com ([192.55.52.120]:40558 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726092AbfFFRW1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 13:22:27 -0400
-Received: from localhost (unknown [106.200.230.232])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72BD4206BB;
-        Thu,  6 Jun 2019 17:22:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559841747;
-        bh=E8GVDj8jZE9ZEb/ZBfEk+g3I/3sRmQxNRSfSky732xI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hsRfXDNJpiokqV0wIXjGvkYOs1hjY/Ed2GRNadr2ixmtxhDa+tNiuWPkczANgXbhk
-         6nIrrby24diROrNhr3zdla26hFwFr6t01BEOm/Zf/jYmDv4S6sDN2VZACyQXvGvKSu
-         p31prIJ9UgISoccSrbnBn0QvPxJJRzx/M6nsBILs=
-Date:   Thu, 6 Jun 2019 22:49:18 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     pierre-louis.bossart@linux.intel.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] soundwire: intel: set dai min and max channels correctly
-Message-ID: <20190606171918.GC9160@vkoul-mobl.Dlink>
-References: <20190606112304.16560-1-srinivas.kandagatla@linaro.org>
+        id S1726693AbfFFRUf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 13:20:35 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 10:20:34 -0700
+X-ExtLoop1: 1
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
+  by orsmga001.jf.intel.com with ESMTP; 06 Jun 2019 10:20:34 -0700
+Date:   Thu, 6 Jun 2019 10:20:34 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [PATCH] KVM: x86: introduce is_pae_paging
+Message-ID: <20190606172033.GD23169@linux.intel.com>
+References: <1559839972-124144-1-git-send-email-pbonzini@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190606112304.16560-1-srinivas.kandagatla@linaro.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <1559839972-124144-1-git-send-email-pbonzini@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06-06-19, 12:23, Srinivas Kandagatla wrote:
-> Looks like there is a copy paste error.
-> This patch fixes it!
+On Thu, Jun 06, 2019 at 06:52:52PM +0200, Paolo Bonzini wrote:
+> Checking for 32-bit PAE is quite common around code that fiddles with
+> the PDPTRs.  Add a function to compress all checks into a single
+> invocation.
+> 
+> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 
-Applied, thanks
+I considered adding this helper as well, but shied away because I thought
+it might lead to incorrect code, e.g. using is_pae_paging() when is_pae()
+is needed.  But, looking at the patch, it's definitely cleaner, so:
 
--- 
-~Vinod
+Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
