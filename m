@@ -2,110 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 221E437623
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 16:12:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05B7537629
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 16:13:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728699AbfFFOMr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 10:12:47 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:39613 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728010AbfFFOMq (ORCPT
+        id S1728764AbfFFONH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 10:13:07 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39765 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727559AbfFFONH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 10:12:46 -0400
-Received: by mail-qk1-f194.google.com with SMTP id i125so1515612qkd.6
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 07:12:46 -0700 (PDT)
+        Thu, 6 Jun 2019 10:13:07 -0400
+Received: by mail-pl1-f196.google.com with SMTP id g9so982638plm.6
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 07:13:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KsiUn6UsyR6iRYKgGuT3vtVzQmJqP/05UQ9EDQmxkYE=;
-        b=owFu3Fk/e7jEjijt33GbOdLU7wrt+TBcjiaCyjlULB6hkiy37D5u8Aju1N4vIMmoR/
-         n5NNr4lh6bp84cVFjyMjN0Mw4Z8vmrSHB3RBSg3NJ7aT8zaNh3oUNg39ODvxBNtPEclE
-         LAxd0xxXerPHSrujz8tT82p5tHypH+0T2p4T3TIx2r0N5Jr3ZO0DVKXj6xaxtEHgtmSG
-         KA0PzqakNaf7Mdsc79p3uDLqNVpqsVa6S+UatKlpgwkNFC1Hixrq7VX7SYxiV9sIoxv0
-         ulDl1jgrzItWa/yKQGAxt1/UNIs87mZCf4d8Uaef13YMMnSyeBWI5bjyb622xwikzjvW
-         amnw==
+        d=arista.com; s=googlenew;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2YcQi322gU65udmxZ663ZZ4Wmd0vpO9jY2pkneP18U8=;
+        b=dPVis3pyGrHlNapFxyZ1x9FyS9jHmd9LaTMqq9zxLdzeQq73zejEUwtK4x5P95VHCi
+         WbnjrcVTw0kkko56uuK+VX/DWBgM1VpJFCd01k6qoXzQQtq5xVio6DKcJm6ewlYcOpur
+         4SZVbac3X8ApQkp/ZMqoc/JPST/Xr+gZGXi8VKa5d133BKihAWW0jSubtK9BEMlwopWe
+         7L860vq3MXyqIsj+4++leoIvxTpF8yJnIP2AiZFrB6iLZeBX8MQWEC+C0Lp2378pgD1f
+         bFvIhFlWxE9Cx7pYCOPUTs9+JHwiZYModJGX45diPPvUZXpA4lIYB4iXdVnR1cgeoluJ
+         4tKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KsiUn6UsyR6iRYKgGuT3vtVzQmJqP/05UQ9EDQmxkYE=;
-        b=IT5KdL+4V16UJzN7fNrcS4/bSzr3iK4j6tPSHfENGugIE0JF8SsF+MxFAX2JBhuFrY
-         WX9fDPXzglxoRumUuoVFj4xhdQJm6uCd94GtoyeWVDrJhSwaDuHVkKvtmhgVYCUslisk
-         AYVOEJJdaOhEchCb5wbxx8v3TElN2n6I8fCYPb/BfuNr95qeLiqG53l70Pcd/OsWnqhQ
-         jGpfbvZAkUPR0eLFNVIy488Oq2iISBRZHr5pUyfBTL7u3zTflJRVTgtqL3kHK0NZMgDi
-         qGhgZGvLSu3CupJ7E6PWGQ5L6PTwkUQjc4lMDdeXcBTiGaey77588TeeBIU9anIMndu5
-         Yo6Q==
-X-Gm-Message-State: APjAAAVSO8BviNjX3Vap1q3FHHHExZ3rf/ybTgqSV0MTBkuwOOPlxB4J
-        iodStnlWTYtj898FMJ22/c1+VQ==
-X-Google-Smtp-Source: APXvYqzgywbaiNWm+kvMN3tdGnjUsKuDiMR1/OIQeKYq2OvUeH9rJad4z7QbVGO/S7K3ecfUNlGn4g==
-X-Received: by 2002:a37:68ca:: with SMTP id d193mr28018788qkc.240.1559830365868;
-        Thu, 06 Jun 2019 07:12:45 -0700 (PDT)
-Received: from leoy-ThinkPad-X240s (li1322-146.members.linode.com. [45.79.223.146])
-        by smtp.gmail.com with ESMTPSA id e4sm765192qtc.3.2019.06.06.07.12.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Jun 2019 07:12:45 -0700 (PDT)
-Date:   Thu, 6 Jun 2019 22:12:31 +0800
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Mike Leach <mike.leach@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] perf augmented_raw_syscalls: Support arm64 raw
- syscalls
-Message-ID: <20190606141231.GC5970@leoy-ThinkPad-X240s>
-References: <20190606094845.4800-1-leo.yan@linaro.org>
- <20190606094845.4800-4-leo.yan@linaro.org>
- <20190606133838.GC30166@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2YcQi322gU65udmxZ663ZZ4Wmd0vpO9jY2pkneP18U8=;
+        b=RuksFNxZD6A/3aNsWoNT+ou+ngJjts6253MZjMUbd9hwnUXx+hhBZ5H6r9L7CPmdNl
+         EqgX2iZW3AkgWg7O0tU384CZjTiQyetp1WYZXTMPTz2ROf/P6wWbunzCvY2cZoH0ogNs
+         l0Su0qqd2THEk3etbOyxWeKmYWHYm35EHVO3ZYv0HmbwoHm/G7woGx+Y64vYstzcaVpa
+         hpCTbJRopkipTR6NTfKQGQeRJ1ZIMEzRjtPMF90Rn/fg+2U2zn4cwZ91bb+XZGIAJZj3
+         VhG3YV9JNL4P03yMZ3iZiA2cFtkhbwI54QARrN7FxECmhan2EJW31ZB+RhqNXuFNEj0I
+         zviA==
+X-Gm-Message-State: APjAAAWOJVH/MxGIegaKCxuZw/BqAKlOBafMi54ByQQzSc6FQXXB50gI
+        Sc7J0R3D1oOvnnFRsgzpcyRb01neuc8tyYdX/aRf5TCa
+X-Google-Smtp-Source: APXvYqyCYbjRIpjwEeSGolukiCOTXNw8C4SSP9ycOgfXGLinPd8wUGSRHSVfBirA48MFR9Ix1En/stGzGz8j5P5LvTo=
+X-Received: by 2002:a17:902:4c:: with SMTP id 70mr26034435pla.308.1559830386509;
+ Thu, 06 Jun 2019 07:13:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190606133838.GC30166@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190506164440.37399-1-cai@lca.pw> <20190507073901.GC3486@suse.de>
+In-Reply-To: <20190507073901.GC3486@suse.de>
+From:   Tom Murphy <tmurphy@arista.com>
+Date:   Thu, 6 Jun 2019 15:12:54 +0100
+Message-ID: <CAPL0++5g+VVGkTJexCn+=ALOgzsfmB2JgE4OJjWsgJ1DUwT3-Q@mail.gmail.com>
+Subject: Re: [PATCH -next v2] iommu/amd: fix a null-ptr-deref in map_sg()
+To:     Joerg Roedel <jroedel@suse.de>
+Cc:     Qian Cai <cai@lca.pw>, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnaldo,
+Hi Joerg,
 
-On Thu, Jun 06, 2019 at 10:38:38AM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Thu, Jun 06, 2019 at 05:48:44PM +0800, Leo Yan escreveu:
-> > This patch adds support for arm64 raw syscall numbers so that we can use
-> > it on arm64 platform.
-> > 
-> > After applied this patch, we need to specify macro -D__aarch64__ or
-> > -D__x86_64__ in compilation option so Clang can use the corresponding
-> > syscall numbers for arm64 or x86_64 respectively, other architectures
-> > will report failure when compilation.
-> 
-> So, please check what I have in my perf/core branch, I've completely
-> removed arch specific stuff from augmented_raw_syscalls.c.
-> 
-> What is done now is use a map to specify what to copy, that same map
-> that is used to state which syscalls should be traced.
-> 
-> It uses that tools/perf/arch/arm64/entry/syscalls/mksyscalltbl to figure
-> out the mapping of syscall names to ids, just like is done for x86_64
-> and other arches, falling back to audit-libs when that syscalltbl thing
-> is not present.
-
-Actually I have noticed mksyscalltbl has been enabled for arm64, and
-had to say your approach is much better :)
-
-Thanks for the info and I will try your patch at my side.
-
-[...]
+Is there anything I need to do to get this patch into linux-next? My
+patch to convert the amd iommu driver to use the dma-iommu ops depends
+on this patch.
 
 Thanks,
-Leo Yan
+Tom
+
+On Tue, May 7, 2019 at 8:39 AM Joerg Roedel <jroedel@suse.de> wrote:
+>
+> Hi Qian,
+>
+> On Mon, May 06, 2019 at 12:44:40PM -0400, Qian Cai wrote:
+> > The commit 1a1079011da3 ("iommu/amd: Flush not present cache in
+> > iommu_map_page") added domain_flush_np_cache() in map_sg() which
+> > triggered a crash below during boot. sg_next() could return NULL if
+> > sg_is_last() is true, so after for_each_sg(sglist, s, nelems, i), "s"
+> > could be NULL which ends up deferencing a NULL pointer later here,
+> >
+> > domain_flush_np_cache(domain, s->dma_address, s->dma_length);
+> >
+> > so move domain_flush_np_cache() call inside for_each_sg() to loop over
+> > each sg element.
+>
+> Thanks for the fix, but it is too late to merge it into the tree. I am
+> going to revert commit 1a1079011da3 for now and we can try again in the
+> next cycle.
+>
+>
+> Thanks,
+>
+>         Joerg
+>
