@@ -2,104 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11F2437760
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 17:04:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1169A37762
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 17:05:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729081AbfFFPEu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 11:04:50 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:35789 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727309AbfFFPEt (ORCPT
+        id S1729131AbfFFPFz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 11:05:55 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:42281 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727309AbfFFPFz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 11:04:49 -0400
-Received: from orion.localdomain ([77.9.2.22]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1M6EKU-1hSJJ61Tya-006hc6; Thu, 06 Jun 2019 17:04:36 +0200
-From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     khalid@gonehiking.org, jejb@linux.ibm.com,
-        martin.petersen@oracle.com, aacraid@microsemi.com,
-        linux-scsi@vger.kernel.org
-Subject: [PATCH v2] drivers: scsi: remove unnecessary #ifdef MODULE
-Date:   Thu,  6 Jun 2019 17:04:31 +0200
-Message-Id: <1559833471-30534-1-git-send-email-info@metux.net>
-X-Mailer: git-send-email 1.9.1
-X-Provags-ID: V03:K1:S05UD3svuTQRSQq5A0hsQ3kyRKPt3nPXhYfj+2dEeHyTV1PbUr5
- Nbq41ct24TRxMO8CYAr1oBuZg3I7xf6gwBoWthbAu+Y1oMnCLxpjuS6I75VXG9utqw9NGmd
- suEB8slTZtPvt12iW75IFe5hglpOHH2AmI+DjRV9LaKfTBIQxIqGdQu3/tPvrilEgsaSO9o
- mnqExZjL1l59RwRdKPsTg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:eIv+RsL1Bog=:vH344YMgr+N0/OansCbK4u
- 9zGAL55HxDTthVLbjdZWfpKyYsga4pkHOMrYtj2q11Mqwu4UsqGR1K71oXeKhE69e/v8bIprG
- f4jUYkWbqD8jfiqgNubRXpn8YF/xBCijJxIZJ7+ldugK3j9TnWSagHsAoNOXRagRUiVOO5WyU
- fSGvWIGmNa/pZqSZ225yy/6G0SXb85ZKq6+cUNhKo13qPZJschCJ3NEumXMJU9jfBWXtZZ+Ty
- 1UqV2dDdaA0NiaSr1bGIABpcj3rG/FVA/gFAQ+toyhvbUGPnuHOVT+eg7VlDZXYqW1GXuwRhb
- NUg6eJIxgqnsv8I3+p7/T+UAH9uxjhDf0RDtK9OmWGOnT7Kj5NE4GGesKPlFnCGmY3ZXGUow6
- pNT/2DMI1htcZsF/bW5qd5GPRl/RV/13iIDCIAg6PeKk3hXHJdkpGNwK7vIJaPFcGSycmMWz9
- 4FwLzj/TiOR/3qhbbPNhWNzXVQzhq8wpVaxNqPQRefbJv2mm04IW7DxZzm22AZ9QYzvC5aZy9
- 3gGTgdQazHcfaBJ2mHctTRIQ4MMiM58LJs9JGtimuKKQhVG7ikjKF4cCYAwGOu7HE0Y0hkvcH
- gQGgvdVT4koUihW7Moo/oTNqHJaAi8Gqy1CZ6rdvYlUnEtNsz85Jo2HgWLUX3ke3uba0uCzs1
- V3pZCadxMv2clZkJg1oNyaTUkL2kQihc4lF5RbA+7OHN3kWowqJCwMlJnWIR4qPvKaVdax179
- poRu/ygzn0HKhghMeLIbUgV5qb2c9TZlZl0gVzHA3XFoiGCe5TJ44aCkaDs=
+        Thu, 6 Jun 2019 11:05:55 -0400
+Received: by mail-io1-f67.google.com with SMTP id u19so438982ior.9
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 08:05:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=fz4b8xVm+MLGz9QhKTE2cIO7UJQE8Nygzjf+6DgAFpk=;
+        b=RFc5AA1QTwUT2LofagjQV+2cMSoYL6wlP2pDEajjqZgD9iroRV2FDX7bUAX7JEl5Gf
+         hrPlH5Y384vXQnL8nFgy4H1PK65IPL+dNWhxAIclZIYMFfKRrfaYv/mJFlcuh4suce3c
+         hrXW7CDqR3yYBVPIg5pmOl5IqaU+uNaded6PSttCrytmtxHbWrr9Q5CdKLNUGHflOO8u
+         Wl5YRExpIUeucdT81l4YTBha4rScjZTTXuRd5FVHBAnhaYbfhS9Y09YmXbzYXhwDFsw6
+         l2bYhQQvEjkJvXvW9P01I2B+yDhFxvXdBEVHsZ91TInjkY5Tkj7B9te6WIHku3qThSNN
+         9eVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=fz4b8xVm+MLGz9QhKTE2cIO7UJQE8Nygzjf+6DgAFpk=;
+        b=DU37O/8FSLcCDgTrAdsczNp1hm4mBAVsOM9Q2eoRFGWbxYjX7/KJdKzfx8GhnCPfSS
+         GTlVG+zwlP37PIP1pPFHZh7eNhaxlBfaadQKjju2ItQWhvIHvmG8wXzoUeDzBS8VYILM
+         Mhz+7zDeyU7x5w+z540WitWSOX+JQO234kpEvlLWH+85utuO4zKV6j4enVChnsVakO34
+         wkasSrzccK9l376UPUDBwOBuyCFrvKSzE/Hg8FxGI6zGKT894D9d1U7WaOe9Txai03w1
+         XrnR9OG+F/Vg7zHdlZ/DcKK4uwGTJQbVIvpkqEVSaUCYu4fpkXGo8S3+InkLhLL7+x7T
+         T2kg==
+X-Gm-Message-State: APjAAAWDWMwEngle2bG1LcCT8l+pe64H7hWCJECPlyFUbtDxoxHVP4qw
+        zJsPbAkwgfKZv3ZqntKtpai2fshRACk3MVeXGvs=
+X-Google-Smtp-Source: APXvYqxt4IYaFuZMEEREZcdqnO8NJ3pyKOyS4VMdTEWTuKThv/913I4UoFyspJcMj2jxmQ/Jz5iEgp1KgCBA47NldBE=
+X-Received: by 2002:a5d:9d58:: with SMTP id k24mr14682788iok.116.1559833554833;
+ Thu, 06 Jun 2019 08:05:54 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a5d:9ec9:0:0:0:0:0 with HTTP; Thu, 6 Jun 2019 08:05:54 -0700 (PDT)
+Reply-To: sgt.hester33@gmail.com
+From:   Ann Hester <kalueke287@gmail.com>
+Date:   Thu, 6 Jun 2019 15:05:54 +0000
+Message-ID: <CAAe6BizHWyXWLCBMKbTjZGrYMsh7Pc7a2fBMH6ugMq+-Xm-swA@mail.gmail.com>
+Subject: Greetings
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Enrico Weigelt <info@metux.net>
-
-The MODULE_DEVICE_TABLE() macro already checks for MODULE defined,
-so the extra check here is not necessary.
-
-Changes v2:
-    * make dptids const to fix warning on unused variable
-
-Signed-off-by: Enrico Weigelt <info@metux.net>
----
- drivers/scsi/BusLogic.c | 2 --
- drivers/scsi/dpt_i2o.c  | 5 +----
- 2 files changed, 1 insertion(+), 6 deletions(-)
-
-diff --git a/drivers/scsi/BusLogic.c b/drivers/scsi/BusLogic.c
-index e41e51f..68cc68b 100644
---- a/drivers/scsi/BusLogic.c
-+++ b/drivers/scsi/BusLogic.c
-@@ -3893,7 +3893,6 @@ static void __exit blogic_exit(void)
- 
- __setup("BusLogic=", blogic_setup);
- 
--#ifdef MODULE
- /*static struct pci_device_id blogic_pci_tbl[] = {
- 	{ PCI_VENDOR_ID_BUSLOGIC, PCI_DEVICE_ID_BUSLOGIC_MULTIMASTER,
- 	  PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
-@@ -3909,7 +3908,6 @@ static void __exit blogic_exit(void)
- 	{PCI_DEVICE(PCI_VENDOR_ID_BUSLOGIC, PCI_DEVICE_ID_BUSLOGIC_FLASHPOINT)},
- 	{0, },
- };
--#endif
- MODULE_DEVICE_TABLE(pci, blogic_pci_tbl);
- 
- module_init(blogic_init);
-diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
-index abc74fd..162d56a 100644
---- a/drivers/scsi/dpt_i2o.c
-+++ b/drivers/scsi/dpt_i2o.c
-@@ -177,14 +177,11 @@ static u8 adpt_read_blink_led(adpt_hba* host)
-  *============================================================================
-  */
- 
--#ifdef MODULE
--static struct pci_device_id dptids[] = {
-+static const struct pci_device_id dptids[] = {
- 	{ PCI_DPT_VENDOR_ID, PCI_DPT_DEVICE_ID, PCI_ANY_ID, PCI_ANY_ID,},
- 	{ PCI_DPT_VENDOR_ID, PCI_DPT_RAPTOR_DEVICE_ID, PCI_ANY_ID, PCI_ANY_ID,},
- 	{ 0, }
- };
--#endif
--
- MODULE_DEVICE_TABLE(pci,dptids);
- 
- static int adpt_detect(struct scsi_host_template* sht)
--- 
-1.9.1
-
+My name is Ann Hester, please reply me.
