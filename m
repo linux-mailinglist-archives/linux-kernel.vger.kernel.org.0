@@ -2,167 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2F1B37788
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 17:13:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B0B037795
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 17:15:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729224AbfFFPNE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 11:13:04 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:58822 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728812AbfFFPNE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 11:13:04 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: ezequiel)
-        with ESMTPSA id 8B4DD260D74
-Message-ID: <1cfc4bfab8d9d8a47e5dacaca88a7fe30ae83076.camel@collabora.com>
-Subject: Re: [PATCH 03/10] mfd / platform: cros_ec: Miscellaneous character
- device to talk with the EC
-From:   Ezequiel Garcia <ezequiel@collabora.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Guenter Roeck <groeck@google.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Lee Jones <lee.jones@linaro.org>, kernel@collabora.com,
-        Dmitry Torokhov <dtor@chromium.org>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-doc@vger.kernel.org, Enno Luebbers <enno.luebbers@intel.com>,
-        Guido Kiener <guido@kiener-muenchen.de>,
+        id S1729232AbfFFPP0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 11:15:26 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36828 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728797AbfFFPP0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 11:15:26 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9EE6430F1BC7;
+        Thu,  6 Jun 2019 15:15:25 +0000 (UTC)
+Received: from amt.cnet (ovpn-112-18.gru2.redhat.com [10.97.112.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9D4AC10ABD8D;
+        Thu,  6 Jun 2019 15:15:01 +0000 (UTC)
+Received: from amt.cnet (localhost [127.0.0.1])
+        by amt.cnet (Postfix) with ESMTP id 0679E10514E;
+        Thu,  6 Jun 2019 12:14:40 -0300 (BRT)
+Received: (from marcelo@localhost)
+        by amt.cnet (8.14.7/8.14.7/Submit) id x56FEaSG003248;
+        Thu, 6 Jun 2019 12:14:36 -0300
+Date:   Thu, 6 Jun 2019 12:14:35 -0300
+From:   Marcelo Tosatti <mtosatti@redhat.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Jonathan Corbet <corbet@lwn.net>, Wu Hao <hao.wu@intel.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Jilayne Lovejoy <opensource@jilayne.com>
-Date:   Thu, 06 Jun 2019 12:12:50 -0300
-In-Reply-To: <20190606145121.GA13048@kroah.com>
-References: <20190604152019.16100-1-enric.balletbo@collabora.com>
-         <20190604152019.16100-4-enric.balletbo@collabora.com>
-         <20190604155228.GB9981@kroah.com>
-         <beaf3554bb85974eb118d7722ca55f1823b1850c.camel@collabora.com>
-         <20190604183527.GA20098@kroah.com>
-         <CABXOdTfU9KaBDhQcwvBGWCmVfnd02_ZFmPGtJsCtGQ-iO9A3Qw@mail.gmail.com>
-         <20190604185953.GA2061@kroah.com>
-         <bda48bf80add26153e531912fbfca25071934c94.camel@collabora.com>
-         <20190606145121.GA13048@kroah.com>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1 
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Luiz Capitulino <lcapitulino@redhat.com>,
+        Haris Okanovic <haris.okanovic@ni.com>
+Subject: Re: [patch 2/3] timers: do not raise softirq unconditionally
+ (spinlockless version)
+Message-ID: <20190606151433.GA3199@amt.cnet>
+References: <20190415201213.600254019@amt.cnet>
+ <20190415201429.427759476@amt.cnet>
+ <20190604062931.GC15459@xz-x1>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190604062931.GC15459@xz-x1>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 06 Jun 2019 15:15:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-06-06 at 16:51 +0200, Greg Kroah-Hartman wrote:
-> On Thu, Jun 06, 2019 at 11:01:17AM -0300, Ezequiel Garcia wrote:
-> > On Tue, 2019-06-04 at 20:59 +0200, Greg Kroah-Hartman wrote:
-> > > On Tue, Jun 04, 2019 at 11:39:21AM -0700, Guenter Roeck wrote:
-> > > > On Tue, Jun 4, 2019 at 11:35 AM Greg Kroah-Hartman
-> > > > <gregkh@linuxfoundation.org> wrote:
-> > > > > On Tue, Jun 04, 2019 at 01:58:38PM -0300, Ezequiel Garcia wrote:
-> > > > > > Hey Greg,
-> > > > > > 
-> > > > > > > > + dev_info(&pdev->dev, "Created misc device /dev/%s\n",
-> > > > > > > > +          data->misc.name);
-> > > > > > > 
-> > > > > > > No need to be noisy, if all goes well, your code should be quiet.
-> > > > > > > 
-> > > > > > 
-> > > > > > I sometimes wonder about this being noise or not, so I will slightly
-> > > > > > hijack this thread for this discussion.
-> > > > > > 
-> > > > > > > From a kernel developer point-of-view, or even from a platform
-> > > > > > developer or user with a debugging hat point-of-view, having
-> > > > > > a "device created" or "device registered" message is often very useful.
-> > > > > 
-> > > > > For you, yes.  For someone with 30000 devices attached to their system,
-> > > > > it is not, and causes booting to take longer than it should be.
-> > > > > 
-> > > > > > In fact, I wish people would do this more often, so I don't have to
-> > > > > > deal with dynamic debug, or hack my way:
-> > > > > > 
-> > > > > > diff --git a/drivers/media/i2c/ov5647.c b/drivers/media/i2c/ov5647.c
-> > > > > > index 4589631798c9..473549b26bb2 100644
-> > > > > > --- a/drivers/media/i2c/ov5647.c
-> > > > > > +++ b/drivers/media/i2c/ov5647.c
-> > > > > > @@ -603,7 +603,7 @@ static int ov5647_probe(struct i2c_client *client,
-> > > > > >         if (ret < 0)
-> > > > > >                 goto error;
-> > > > > > 
-> > > > > > -       dev_dbg(dev, "OmniVision OV5647 camera driver probed\n");
-> > > > > > +       dev_info(dev, "OmniVision OV5647 camera driver probed\n");
-> > > > > >         return 0;
-> > > > > >  error:
-> > > > > >         media_entity_cleanup(&sd->entity);
-> > > > > > 
-> > > > > > In some subsystems, it's even a behavior I'm more or less relying on:
-> > > > > > 
-> > > > > > $ git grep v4l2_info.*registered drivers/media/ | wc -l
-> > > > > > 26
-> > > > > > 
-> > > > > > And on the downsides, I can't find much. It's just one little line,
-> > > > > > that is not even noticed unless you have logging turned on.
-> > > > > 
-> > > > > Its better to be quiet, which is why the "default driver registration"
-> > > > > macros do not have any printk messages in them.  When converting drivers
-> > > > > over to it, we made the boot process much more sane, don't try to go and
-> > > > > add messages for no good reason back in please.
-> > > > > 
-> > > > > dynamic debugging can be enabled on a module and line-by-line basis,
-> > > > > even from the boot command line.  So if you need debugging, you can
-> > > > > always ask someone to just reboot or unload/load the module and get the
-> > > > > message that way.
-> > > > > 
-> > > > 
-> > > > Can we by any chance make this an official policy ? I am kind of tired
-> > > > having to argue about this over and over again.
-> > > 
-> > > Sure, but how does anyone make any "official policy" in the kernel?  :)
-> > > 
-> > > I could just go through and delete all "look ma, a new driver/device!"
-> > > messages, but that might be annoying...
-> > > 
+On Tue, Jun 04, 2019 at 02:29:31PM +0800, Peter Xu wrote:
+> On Mon, Apr 15, 2019 at 05:12:15PM -0300, Marcelo Tosatti wrote:
+> > Check base->pending_map locklessly and skip raising timer softirq 
+> > if empty.
 > > 
-> > Well, I really need to task.
+> > What allows the lockless (and potentially racy against mod_timer) 
+> > check is that mod_timer will raise another timer softirq after
+> > modifying base->pending_map.
+> > 
+> > Signed-off-by: Marcelo Tosatti <mtosatti@redhat.com>
+> > 
+> > ---
+> >  kernel/time/timer.c |   18 ++++++++++++++++++
+> >  1 file changed, 18 insertions(+)
+> > 
+> > Index: linux-rt-devel/kernel/time/timer.c
+> > ===================================================================
+> > --- linux-rt-devel.orig/kernel/time/timer.c	2019-04-15 14:21:02.788704354 -0300
+> > +++ linux-rt-devel/kernel/time/timer.c	2019-04-15 14:22:56.755047354 -0300
+> > @@ -1776,6 +1776,24 @@
+> >  		if (time_before(jiffies, base->clk))
+> >  			return;
+> >  	}
+> > +
+> > +#ifdef CONFIG_PREEMPT_RT_FULL
+> > +/* On RT, irq work runs from softirq */
+> > +	if (irq_work_needs_cpu())
+> > +		goto raise;
+> > +#endif
+> > +	base = this_cpu_ptr(&timer_bases[BASE_STD]);
+> > +	if (!housekeeping_cpu(base->cpu, HK_FLAG_TIMER)) {
+> > +		if (!bitmap_empty(base->pending_map, WHEEL_SIZE))
+> > +			goto raise;
+> > +		base++;
 > 
-> ???
+> Shall we check against CONFIG_NO_HZ_COMMON?  Otherwise the base could
+> point to something else rather tha the deferred base (NR_BASES==1 if
+> without nohz-common).
 > 
-
-Oops, typo: s/task/ask :-)
-
-> > If it's not an official policy (and won't be anytime soon?),
+> I see that run_local_timers() has similar pattern, actually I'm
+> thinking whether we can put things like "base++" to be inside some
+> "if"s of CONFIG_NO_HZ_COMMON to be clear.
 > 
-> The ":)" there was that we really have very few "official" policies,
-> only things that we all strongly encourage to happen.  And get grumpy if
-> we see them in code reviews.  Like I did here.
+> Thanks,
 > 
+> -- 
+> Peter Xu
 
-Well, not everyone gets grumpy. As I pointed out, we use this "registered"
-messages (messages or noise, seems this lie in the eye of the beholder),
-consistently across entire subsystems.
+Hi Peter,
 
-> > then what's preventing Enric from pushing this print on this driver,
-> > given he is the one maintaining the code?
-> 
-> Given that he wants people to review his code, why would you tell him to
-> ignore what people are trying to tell him?
-> 
+Yes, that is a good point and needs fixing. 
 
-I'm not suggesting to ignore anyone, rather to consider all voices
-involved in each review comment.
-
-> Again, don't be noisy, it's not hard, and is how things have been
-> trending for many years now.
-> 
-
-Thanks,
-Eze
+I'll wait for Anna's comments before posting -v2.
 
