@@ -2,100 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23D313709E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 11:47:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D508370B4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 11:48:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728137AbfFFJrb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 05:47:31 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:38225 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728106AbfFFJr2 (ORCPT
+        id S1728260AbfFFJsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 05:48:00 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:45244 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728071AbfFFJrY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 05:47:28 -0400
-Received: by mail-lf1-f66.google.com with SMTP id b11so1070609lfa.5
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 02:47:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7nW3mZt+9ZnxuAFL1+ZAaurMAqAqlQaogmKT12Q9bkc=;
-        b=CzwkPpSR7JxGv5fTN1QNy7x2oHDM4EE8O4QEeZBUh+hN0z2w54ETNmPLmP8r76XLto
-         0t2kV0IsL0DtZ2SDzJ+pWYFnxocbxNTPMpf8NM/nEingkJX16quxgrdNYsaygv8MPFeP
-         T6YjtAE91PsFnmwPSI61gDl+JP5ex5/7e2lk/zMJqwzzT+zn5JfQptytp+gdMp0WbXK2
-         +Tb9akU37mhth+Ae11wWtu1UJB/ifvxQuDvtpN55ghdIfW1yoDCZimq1r3mopfO2mRuk
-         GwgyTcqRHiAxJJdsqlYjM4kjEgnzoKo5ZFhnQqZ6s1WgSTyFViIFBRK7V3Lo4Vr9wIRD
-         F/GQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7nW3mZt+9ZnxuAFL1+ZAaurMAqAqlQaogmKT12Q9bkc=;
-        b=fGzAF6fwgEpBmnexy5e2quE+w/JI+VWJ5MpfkmQaP2l+Ru6doceZ/o4tMUyeTtVMkj
-         0nDUv5lSQH+VuQJpT9BMvwjqg7S5tzn2iwEHUaBMKwLclIDCiJB0t+zqNbTFl6b6/8J2
-         eDQfSfrCs/Y9qsKDQ1kMdsu7qoXYxI9lqESlaMEYMguCacqjejEHS0gdOmmQiH7lcu6Y
-         /4+2Hb8MtH5pYw+uqft8zciYlPtbYmVhUgN00rN661lIHtEVWqronrkr3CN0f7vXJaAL
-         mTRSBttI1+5+febjZtAL1ItMn6nh4v4wJ20veGFPBh350Ur2G9iZv51K1ZLqoiPfmkhs
-         Ob5w==
-X-Gm-Message-State: APjAAAU1yZN02MyYr3lu4alxtS07JDuUh2Dvrmrx2n7fOJ4zI8nWOmtk
-        702WuUX0vBwFN7kHvCeY9v75iw==
-X-Google-Smtp-Source: APXvYqx/DDTeaN+7wcBnH7SJY8W7bd3Q5Vdb+xcU4CnRCqt72c8lJvk4A3phFKwb3KZM6axwL3tiRQ==
-X-Received: by 2002:ac2:5938:: with SMTP id v24mr12708910lfi.161.1559814446768;
-        Thu, 06 Jun 2019 02:47:26 -0700 (PDT)
-Received: from localhost (c-1c3670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.28])
-        by smtp.gmail.com with ESMTPSA id k7sm250518ljc.92.2019.06.06.02.47.25
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 06 Jun 2019 02:47:25 -0700 (PDT)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     mchehab@kernel.org, p.zabel@pengutronix.de
-Cc:     andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com,
-        marex@denx.de, stefan@agner.ch, airlied@linux.ie, daniel@ffwll.ch,
-        shawnguo@kernel.org, s.hauer@pengutronix.de,
-        b.zolnierkie@samsung.com, a.hajda@samsung.com,
-        hkallweit1@gmail.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-        broonie@kernel.org, davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-fbdev@vger.kernel.org,
-        linux-media@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH 5/8] drivers: media: coda: fix warning same module names
-Date:   Thu,  6 Jun 2019 11:47:22 +0200
-Message-Id: <20190606094722.23816-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.20.1
+        Thu, 6 Jun 2019 05:47:24 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 30A3B8022D; Thu,  6 Jun 2019 11:47:13 +0200 (CEST)
+Date:   Thu, 6 Jun 2019 11:47:22 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     jacek.anaszewski@gmail.com, broonie@kernel.org,
+        lgirdwood@gmail.com, lee.jones@linaro.org,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/6] regulator: lm363x: Make the gpio register enable
+ flexible
+Message-ID: <20190606094722.GB975@amd>
+References: <20190604174345.14841-1-dmurphy@ti.com>
+ <20190604174345.14841-2-dmurphy@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="/WwmFnJnmDyWGHa4"
+Content-Disposition: inline
+In-Reply-To: <20190604174345.14841-2-dmurphy@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When building with CONFIG_VIDEO_CODA and CONFIG_CODA_FS enabled as
-loadable modules, we see the following warning:
 
-warning: same module names found:
-  fs/coda/coda.ko
-  drivers/media/platform/coda/coda.ko
+--/WwmFnJnmDyWGHa4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Rework so media coda matches the config fragment. Leaving CODA_FS as is
-since thats a well known module.
+On Tue 2019-06-04 12:43:40, Dan Murphy wrote:
+> The use of and enablement of the GPIO can be used across devices.
+> Use the enable_reg in the regulator descriptor for the register to
+> write.
+>=20
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- drivers/media/platform/coda/Makefile | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
-diff --git a/drivers/media/platform/coda/Makefile b/drivers/media/platform/coda/Makefile
-index 54e9a73a92ab..588e6bf7c190 100644
---- a/drivers/media/platform/coda/Makefile
-+++ b/drivers/media/platform/coda/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0-only
- 
--coda-objs := coda-common.o coda-bit.o coda-gdi.o coda-h264.o coda-mpeg2.o coda-mpeg4.o coda-jpeg.o
-+video-coda-objs := coda-common.o coda-bit.o coda-gdi.o coda-h264.o coda-mpeg2.o coda-mpeg4.o coda-jpeg.o
- 
--obj-$(CONFIG_VIDEO_CODA) += coda.o
-+obj-$(CONFIG_VIDEO_CODA) += video-coda.o
- obj-$(CONFIG_VIDEO_IMX_VDOA) += imx-vdoa.o
--- 
-2.20.1
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
+--/WwmFnJnmDyWGHa4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlz44SoACgkQMOfwapXb+vIHfwCfUZT2w7SnucaM0DOjb1LaqCRI
+dr4AniRbTE2uOxeYZbZnlHn+KZhk0W+F
+=/H5H
+-----END PGP SIGNATURE-----
+
+--/WwmFnJnmDyWGHa4--
