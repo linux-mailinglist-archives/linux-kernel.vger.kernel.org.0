@@ -2,87 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BC8737DC8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 22:01:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0599137DCE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 22:03:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728225AbfFFUAr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 16:00:47 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39235 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727082AbfFFUAr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 16:00:47 -0400
-Received: by mail-pf1-f196.google.com with SMTP id j2so2147825pfe.6
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 13:00:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=+S2za5E2ysBthBJN8nhvqwmLKKW4lZ4JrfmGBXCW9Do=;
-        b=azjuJOvh9vVcco4+dB9mpQHAleMSqSKTlia7Zb76u47A8WR6wIsrbR4J2n43c40KV3
-         GSF+MLvTz9qnbY1ZNCfHMS21210wyHO4i+xzLdxCaCXd1mqZv1OoUtxKv+L372BLP+Ke
-         hSgFngB1ugHgmfjgMO4YVokX3nADOSAvdKDp8nXZGwELJfVRwMkyWU6ziWl6KmY+mVLH
-         GL9PKZVR/LAbYRo85ihbUQFiVjdQsxDrYRVOHfJhSQu7qJd7CAq1Zahsbo6caUycZcJg
-         UGHPpkAn55D+E3ujXQGW/Xn2CqdL4L/fipYX8WkD+sBQufCxM3D3sgGC1udlwoZ+MJWT
-         40vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=+S2za5E2ysBthBJN8nhvqwmLKKW4lZ4JrfmGBXCW9Do=;
-        b=lnUoBibJzSPteMOIMRU9Q61bsB3W8jTvBHLIS7e02ACSyYOlsA9CZE7eeo3hKbeX+1
-         Yufty7l9YyXMsmjayo1JZP8oqB2GEnDh7qmTnauXXUPckqU3LFI1WMxj4TbF4t2txvBD
-         fUBuNkM8TzjleUWvcbrEZfdQN/hbydfZzs9AWsf8pDfbK3ZlSjA5deuSnUpAb7BRokBw
-         0aZdyHLLhijILN47EKIQH8tvKxYjJKTMIPjoCAl8iZzbA/GI+iODPJ6zjgJk5iEKmFcz
-         5Lg2qjkBjOcyaHespVcnVVIfQDIJQ2Pd74hzyMz7NQZ/zKH0WctnJFrhW35pBLMYnudB
-         8arA==
-X-Gm-Message-State: APjAAAVL9EmO3CTDX6m+oV/gr41FaOz+/R7E/CStrHPnOS4OwPDnqrge
-        CbcJyyYNEWPljG6oD1QYqcrfOQ==
-X-Google-Smtp-Source: APXvYqydS8Cff5YUUoLMVkPtd/Z9+fZKmczr/F25Y/oh1KKo7VIe1z4GFo73+LucbRJ/GmjyBOa0zA==
-X-Received: by 2002:a63:fb01:: with SMTP id o1mr251166pgh.410.1559851246224;
-        Thu, 06 Jun 2019 13:00:46 -0700 (PDT)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.googlemail.com with ESMTPSA id s42sm3271040pjc.5.2019.06.06.13.00.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Jun 2019 13:00:45 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Christian Hewitt <christianshewitt@gmail.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH 01/10] arm64: dts: meson-gxm-khadas-vim2: fix gpio-keys-polled node
-In-Reply-To: <20190527132200.17377-2-narmstrong@baylibre.com>
-References: <20190527132200.17377-1-narmstrong@baylibre.com> <20190527132200.17377-2-narmstrong@baylibre.com>
-Date:   Thu, 06 Jun 2019 13:00:45 -0700
-Message-ID: <7hy32ecwlu.fsf@baylibre.com>
+        id S1728297AbfFFUDk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 16:03:40 -0400
+Received: from sauhun.de ([88.99.104.3]:36742 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727082AbfFFUDk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 16:03:40 -0400
+Received: from localhost (p5486CDEB.dip0.t-ipconnect.de [84.134.205.235])
+        by pokefinder.org (Postfix) with ESMTPSA id 4ED692C35BF;
+        Thu,  6 Jun 2019 22:03:38 +0200 (CEST)
+Date:   Thu, 6 Jun 2019 22:03:37 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        rafael@kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-i2c@vger.kernel.org
+Subject: Re: [RFC PATCH 22/57] drivers: i2c: Use generic helper to match
+ device by acpi_dev
+Message-ID: <20190606200337.GA8739@kunai>
+References: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
+ <1559577023-558-23-git-send-email-suzuki.poulose@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Nq2Wo0NMKNjxTN9z"
+Content-Disposition: inline
+In-Reply-To: <1559577023-558-23-git-send-email-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Neil Armstrong <narmstrong@baylibre.com> writes:
 
-> From: Christian Hewitt <christianshewitt@gmail.com>
->
-> Fix DTC warnings:
->
-> meson-gxm-khadas-vim2.dtb: Warning (avoid_unnecessary_addr_size):
->    /gpio-keys-polled: unnecessary #address-cells/#size-cells
-> 	without "ranges" or child "reg" property
->
-> Fixes: b8b74dda3908 ("ARM64: dts: meson-gxm: Add support for Khadas VIM2")
-> Suggested-by: Christian Hewitt <christianshewitt@gmail.com>
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+--Nq2Wo0NMKNjxTN9z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This patch is missing a S-o-B from the author (Christian?)
 
-The From, Suggested-by and Signed-off-by send mixed messages.  Please
-clarify if if this is missing a signoff from Christian or if the author
-is Neil.
+> -	dev = bus_find_device(&i2c_bus_type, NULL, adev,
+> -			      i2c_acpi_find_match_device);
+> +	dev = bus_find_device(&i2c_bus_type, NULL, adev, device_match_acpi_dev);
 
-Thanks,
+In general, this looks like a nice cleanup which I am in favour of.
+However, I didn't understand why ACPI uses bus_find_device() but OF has
+a seperate helper bus_find_device_by_of_node(). Why this inconsistency
+of having a seperate helper here and not there?
 
-Kevin
+
+--Nq2Wo0NMKNjxTN9z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlz5cZQACgkQFA3kzBSg
+KbYI6RAAmuWimkzjk/bPvsyMSJT3Pdc1H0CMg9BNC6Bd2OqG7K4a1PfRpVueZddY
+5OVWpmoHhEjXBFHDqI7inEhQ61ecuwlOeM0qIJEq5uU7CQKrEjgOc2BWp1AeiEr0
++5YvEVnIdSikPDL6M+W2fWGiyAt1hgxM+Dg9M4qmuQhU9EvJnvTuA3bw5/ld4Jtb
+tx9MaBAwvuzXwIwHN+95neWe7uTB5jrB3Asiuj3F2R48aOytMQgFLVKL+bLAziJM
+JJabLD0K7L91r1hSPnNBpHmcHGL/MfaUFoEA/Ne2l4bucK6c1ni9y42UF8owI51u
+y8UT3l+1iANReVlZZ6Wqc3tQtNV4R+8uUq6sA/so3Uq/tO3FPLLoXNbv/Vq5HZU/
+UKWeAUkLGdBJ+9kL8XheUPVFL7OxHlab61DmvRDKnrQwZI0Q0FuVFhWEXdeAXI0c
+wnBcPzhTVb05mmym6z59aMcLWEQVo+uZzlNPAWpm2NMUaHWtGji1/tXdWJWKSU4H
+zucPjBz4Co0DAr4h/kLfmaLhvuV3dlxLtbMyZxytTPmERbXJu1kVJJURG8fxUviK
+QZvGDKbuRpHvyU7bzV/qvtSgBFjKkt9cpnMBe1x0OylV3R7hB5dInbuwfOQcEa6v
+loX4SLD9M8rMN4Z9c5CYd0BnR8Fe3DiVqU1IVO2CEh/5lkmvT0U=
+=7meo
+-----END PGP SIGNATURE-----
+
+--Nq2Wo0NMKNjxTN9z--
