@@ -2,257 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63C7937DD9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 22:11:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FBCC37DE0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 22:12:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728522AbfFFULC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 16:11:02 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:37430 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727082AbfFFULC (ORCPT
+        id S1728596AbfFFUMD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 16:12:03 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:41667 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727082AbfFFUMC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 16:11:02 -0400
-Received: by mail-qt1-f195.google.com with SMTP id y57so4251398qtk.4
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 13:11:01 -0700 (PDT)
+        Thu, 6 Jun 2019 16:12:02 -0400
+Received: by mail-ot1-f66.google.com with SMTP id 107so3173852otj.8;
+        Thu, 06 Jun 2019 13:12:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=duYNpd7u6NCsl3zgH8XpP5ZaEHzH4usCoWirRor+tVo=;
-        b=iMh24P/PiV0DTM7z521pzfS8+NG96xrFL3rQZpoIf5KLXR7ZI/zKx+hGb3j/LDr30n
-         NKrUGRSnS/eqlnl8MpzOf2DBGandEFROt/qwYa+tzXX3sa19K7LyfLWLG1zfT/Qp9cJH
-         fVKcJaHjFjaLKjkXlKaOqO6W3ql3jBEE/iy4x4Jw4vReZrFCtomtf8mt2O85InQ1Zvyo
-         aTJQ8wNcUi7SyMdzwiSkTbZkmH+Csl9ha87rRKWbr3ullN7OC7GNa/UJ8GgN6JTE6QPB
-         l87qAzUEFv/CzDy7GT6dtTVuQmoA3I7o2SPnHHVT/gASe+mMa2ztqmuasBCKnn+MNFvP
-         ZdXA==
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ZplH1ueYIFTxbhcNaq6d9TNtLXhmYa3vn9NLw27k9Lg=;
+        b=stIiNeN9hdh/mk6PIsJUOcTV5NamnY+Y+K3zQGA/YUbAsxjwv51CGIsZSrrY1ygC5u
+         Ndjv8UvipwdJcvPnTGbXklxessOCWoR2PVsRgn7tauT5lgtngZvoq0M5wzWL7bpi+g9N
+         XdwMm8VvjAqoO3mCTAqphKPLlYiLz7IABHFHrfYUGnBPM8P1Wd0eWhQJWHzUz4Z2bgQq
+         2DwHS6Z2slz5m7Tq6KXezIEwPtYEhG/fj5ic/eCici/bSdauJ1rFG44EgZ55tfYqAAfr
+         Bspd6Y2TT//5MgX+Hb8pqXXVcU7WnLCRyajfW6952doLGSTff8CYoBhTEP+0DjqoAG8E
+         bXtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=duYNpd7u6NCsl3zgH8XpP5ZaEHzH4usCoWirRor+tVo=;
-        b=aokNYJS+UxNfZKyl3Z+hCiELqzcdlNuV53L3J7vQygG1bioeWcPX1LNUfI+06tR/17
-         tMCF2yet2nFcnhUGz9vVXoWkuZWO85yAAPdGpzoIDpFIcuWIetiH2EHgzuxbkQT28Jd2
-         9T6RQBA2/WzoLaYxvgxqOBDqeyHE8o/opKgc8SMedZ8TjXh1JNtXjgmGHZMOOajEP77K
-         WjoFjSDlR+335GLMehzlsccWVGXULO9Bslrvxwt9N2sy3EWSlymHG6SWTQDrMa9LRjMu
-         S5PqvGC20wftaQdaG7am5HzmJMS+9lzBTyauZDFGngtxm/qzkPk7HXrsc757wyLgmZiK
-         6XVw==
-X-Gm-Message-State: APjAAAXAekFrsiASFr76z7nk2XAly0e8vc1kfDOCoJxCFEBm66F1IMji
-        sZpuLw6mcOwaKDmmSfIUrR4=
-X-Google-Smtp-Source: APXvYqxotMrVYYKPrBuddtUruaaEgPOYMdyXx7CBvk6Ynad31TzuMnZ6HqfKTIG73wPrO+NhBkhRBw==
-X-Received: by 2002:a0c:ad02:: with SMTP id u2mr40321031qvc.90.1559851860829;
-        Thu, 06 Jun 2019 13:11:00 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([190.15.121.82])
-        by smtp.gmail.com with ESMTPSA id q36sm2118602qtc.12.2019.06.06.13.10.59
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 06 Jun 2019 13:11:00 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 0A63E41149; Thu,  6 Jun 2019 17:10:57 -0300 (-03)
-Date:   Thu, 6 Jun 2019 17:10:56 -0300
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     suzuki.poulose@arm.com, leo.yan@linaro.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, linux-arm-kernel@lists.infradead.org,
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ZplH1ueYIFTxbhcNaq6d9TNtLXhmYa3vn9NLw27k9Lg=;
+        b=Cl3oEWk1xcCSVjdvqwMw/NaC3j9M6bZQUhJuYaPFMdGfs0LR0pQVHXkHgJoDwNT8zK
+         KYxVQtptksJCd8bq2WgrHNWUPrvH7iQquPxwmG5sNafz5FvQzx8tddYC+uPM11HjCYyH
+         xVINBhSwaHdJxSHG7VFFkVxDOgsSomZPLe8Sj1Um7Bp65rKfVgBtOyMC/G+rUq/PmAgE
+         WFnJPj044z+/qzd7EUf1u9B/ILdSNF8TQUO3eP+ugnlSRbsW4IawRXK8RojQjSBQG7/4
+         eYSuNN3fITJKBQrMYJWxTsQW8g+8fjU0c+4y2CyRDcV1gcB8O5ZYLgrEH5Xq1W+yPTe9
+         jzcQ==
+X-Gm-Message-State: APjAAAUXT2CxGlwuMuZuyuwGZFBMjLlW+xmoz2e5u7MjPwQK0ZE/nYJY
+        1pF2DR6ptTqkz5yqJfgN9ocypUUm
+X-Google-Smtp-Source: APXvYqz5aiOuHakWTOD3QUBMVJRMbspstMuG5nak7/mBIuhot/sBvNQAywuKuD4N3fv4rPTfgxvGyA==
+X-Received: by 2002:a9d:2f69:: with SMTP id h96mr15834204otb.366.1559851921100;
+        Thu, 06 Jun 2019 13:12:01 -0700 (PDT)
+Received: from [192.168.1.112] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
+        by smtp.gmail.com with ESMTPSA id a15sm2187otl.20.2019.06.06.13.11.56
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Jun 2019 13:11:56 -0700 (PDT)
+Subject: Re: [BISECTED REGRESSION] b43legacy broken on G4 PowerBook
+To:     Christoph Hellwig <hch@lst.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Christian Zigotzky <chzigotzky@xenosoft.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org, linux-wireless@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf tools: Properly set the value of 'old' and 'head'
- in snapshot mode
-Message-ID: <20190606201056.GJ21245@kernel.org>
-References: <20190605161633.12245-1-mathieu.poirier@linaro.org>
+References: <20190605225059.GA9953@darkstar.musicnaut.iki.fi>
+ <dfe6451c93574b61d4bdde4a05c5f8ccf86b31a0.camel@kernel.crashing.org>
+ <20190606093149.GA11598@darkstar.musicnaut.iki.fi>
+ <d87ac9a7faac0d5522cb496d74afc586410fed9c.camel@kernel.crashing.org>
+ <f8df19ffe5b75537045119037459ae9ad4a1de39.camel@kernel.crashing.org>
+ <20190606114325.GA7497@lst.de>
+From:   Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <1a9e2b2f-b388-bc13-3b90-9d6b4038073b@lwfinger.net>
+Date:   Thu, 6 Jun 2019 15:11:55 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190605161633.12245-1-mathieu.poirier@linaro.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190606114325.GA7497@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Jun 05, 2019 at 10:16:33AM -0600, Mathieu Poirier escreveu:
-> This patch adds the necessay intelligence to properly compute the value
-> of 'old' and 'head' when operating in snapshot mode.  That way we can get
-> the latest information in the AUX buffer and be compatible with the
-> generic AUX ring buffer mechanic.
-
-Leo, have you had the chance to test/review this one? Suzuki?
-
-I also changed the subject to:
-
-  [PATCH] perf cs-etm: Properly set the value of 'old' and 'head' in snapshot mode
-
-So that when looking at a 'git log --oneline' one can have the proper
-context and know that its about cs-etm.
-
-- Arnaldo
- 
-> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> ---
->  tools/perf/arch/arm/util/cs-etm.c | 127 +++++++++++++++++++++++++++++-
->  1 file changed, 123 insertions(+), 4 deletions(-)
+On 6/6/19 6:43 AM, Christoph Hellwig wrote:
+> On Thu, Jun 06, 2019 at 08:57:49PM +1000, Benjamin Herrenschmidt wrote:
+>>> Wow... that's an odd amount. One thing we could possibly do is add code
+>>> to limit the amount of RAM when we detect that device....
+>>
+>> Sent too quickly... I mean that *or* force swiotlb at 30-bits on those systems based
+>> on detecting the presence of that device in the device-tree.
 > 
-> diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
-> index 911426721170..0a278bbcaba6 100644
-> --- a/tools/perf/arch/arm/util/cs-etm.c
-> +++ b/tools/perf/arch/arm/util/cs-etm.c
-> @@ -31,6 +31,8 @@ struct cs_etm_recording {
->  	struct auxtrace_record	itr;
->  	struct perf_pmu		*cs_etm_pmu;
->  	struct perf_evlist	*evlist;
-> +	int			wrapped_cnt;
-> +	bool			*wrapped;
->  	bool			snapshot_mode;
->  	size_t			snapshot_size;
->  };
-> @@ -536,16 +538,131 @@ static int cs_etm_info_fill(struct auxtrace_record *itr,
->  	return 0;
->  }
->  
-> -static int cs_etm_find_snapshot(struct auxtrace_record *itr __maybe_unused,
-> +static int cs_etm_alloc_wrapped_array(struct cs_etm_recording *ptr, int idx)
-> +{
-> +	bool *wrapped;
-> +	int cnt = ptr->wrapped_cnt;
-> +
-> +	/* Make @ptr->wrapped as big as @idx */
-> +	while (cnt <= idx)
-> +		cnt++;
-> +
-> +	/*
-> +	 * Free'ed in cs_etm_recording_free().  Using realloc() to avoid
-> +	 * cross compilation problems where the host's system supports
-> +	 * reallocarray() but not the target.
-> +	 */
-> +	wrapped = realloc(ptr->wrapped, cnt * sizeof(bool));
-> +	if (!wrapped)
-> +		return -ENOMEM;
-> +
-> +	wrapped[cnt - 1] = false;
-> +	ptr->wrapped_cnt = cnt;
-> +	ptr->wrapped = wrapped;
-> +
-> +	return 0;
-> +}
-> +
-> +static bool cs_etm_buffer_has_wrapped(unsigned char *buffer,
-> +				      size_t buffer_size, u64 head)
-> +{
-> +	u64 i, watermark;
-> +	u64 *buf = (u64 *)buffer;
-> +	size_t buf_size = buffer_size;
-> +
-> +	/*
-> +	 * We want to look the very last 512 byte (chosen arbitrarily) in
-> +	 * the ring buffer.
-> +	 */
-> +	watermark = buf_size - 512;
-> +
-> +	/*
-> +	 * @head is continuously increasing - if its value is equal or greater
-> +	 * than the size of the ring buffer, it has wrapped around.
-> +	 */
-> +	if (head >= buffer_size)
-> +		return true;
-> +
-> +	/*
-> +	 * The value of @head is somewhere within the size of the ring buffer.
-> +	 * This can be that there hasn't been enough data to fill the ring
-> +	 * buffer yet or the trace time was so long that @head has numerically
-> +	 * wrapped around.  To find we need to check if we have data at the very
-> +	 * end of the ring buffer.  We can reliably do this because mmap'ed
-> +	 * pages are zeroed out and there is a fresh mapping with every new
-> +	 * session.
-> +	 */
-> +
-> +	/* @head is less than 512 byte from the end of the ring buffer */
-> +	if (head > watermark)
-> +		watermark = head;
-> +
-> +	/*
-> +	 * Speed things up by using 64 bit transactions (see "u64 *buf" above)
-> +	 */
-> +	watermark >>= 3;
-> +	buf_size >>= 3;
-> +
-> +	/*
-> +	 * If we find trace data at the end of the ring buffer, @head has
-> +	 * been there and has numerically wrapped around at least once.
-> +	 */
-> +	for (i = watermark; i < buf_size; i++)
-> +		if (buf[i])
-> +			return true;
-> +
-> +	return false;
-> +}
-> +
-> +static int cs_etm_find_snapshot(struct auxtrace_record *itr,
->  				int idx, struct auxtrace_mmap *mm,
-> -				unsigned char *data __maybe_unused,
-> +				unsigned char *data,
->  				u64 *head, u64 *old)
->  {
-> +	int err;
-> +	bool wrapped;
-> +	struct cs_etm_recording *ptr =
-> +			container_of(itr, struct cs_etm_recording, itr);
-> +
-> +	/*
-> +	 * Allocate memory to keep track of wrapping if this is the first
-> +	 * time we deal with this *mm.
-> +	 */
-> +	if (idx >= ptr->wrapped_cnt) {
-> +		err = cs_etm_alloc_wrapped_array(ptr, idx);
-> +		if (err)
-> +			return err;
-> +	}
-> +
-> +	/*
-> +	 * Check to see if *head has wrapped around.  If it hasn't only the
-> +	 * amount of data between *head and *old is snapshot'ed to avoid
-> +	 * bloating the perf.data file with zeros.  But as soon as *head has
-> +	 * wrapped around the entire size of the AUX ring buffer it taken.
-> +	 */
-> +	wrapped = ptr->wrapped[idx];
-> +	if (!wrapped && cs_etm_buffer_has_wrapped(data, mm->len, *head)) {
-> +		wrapped = true;
-> +		ptr->wrapped[idx] = true;
-> +	}
-> +
->  	pr_debug3("%s: mmap index %d old head %zu new head %zu size %zu\n",
->  		  __func__, idx, (size_t)*old, (size_t)*head, mm->len);
->  
-> -	*old = *head;
-> -	*head += mm->len;
-> +	/* No wrap has occurred, we can just use *head and *old. */
-> +	if (!wrapped)
-> +		return 0;
-> +
-> +	/*
-> +	 * *head has wrapped around - adjust *head and *old to pickup the
-> +	 * entire content of the AUX buffer.
-> +	 */
-> +	if (*head >= mm->len) {
-> +		*old = *head - mm->len;
-> +	} else {
-> +		*head += mm->len;
-> +		*old = *head - mm->len;
-> +	}
->  
->  	return 0;
->  }
-> @@ -586,6 +703,8 @@ static void cs_etm_recording_free(struct auxtrace_record *itr)
->  {
->  	struct cs_etm_recording *ptr =
->  			container_of(itr, struct cs_etm_recording, itr);
-> +
-> +	zfree(&ptr->wrapped);
->  	free(ptr);
->  }
->  
-> -- 
-> 2.17.1
+> swiotlb doesn't really help you, as these days swiotlb on matters for
+> the dma_map* case.  What would help is a ZONE_DMA that covers these
+> devices.  No need to do the 24-bit x86 does, but 30-bit would do it.
+> 
+> WIP patch for testing below:
+> 
+> diff --git a/arch/powerpc/include/asm/page.h b/arch/powerpc/include/asm/page.h
+> index b8286a2013b4..7a367ce87c41 100644
+> --- a/arch/powerpc/include/asm/page.h
+> +++ b/arch/powerpc/include/asm/page.h
+> @@ -319,6 +319,10 @@ struct vm_area_struct;
+>   #endif /* __ASSEMBLY__ */
+>   #include <asm/slice.h>
+>   
+> +#if 1 /* XXX: pmac?  dynamic discovery? */
+> +#define ARCH_ZONE_DMA_BITS 30
+> +#else
+>   #define ARCH_ZONE_DMA_BITS 31
+> +#endif
+>   
+>   #endif /* _ASM_POWERPC_PAGE_H */
+> diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
+> index cba29131bccc..2540d3b2588c 100644
+> --- a/arch/powerpc/mm/mem.c
+> +++ b/arch/powerpc/mm/mem.c
+> @@ -248,7 +248,8 @@ void __init paging_init(void)
+>   	       (long int)((top_of_ram - total_ram) >> 20));
+>   
+>   #ifdef CONFIG_ZONE_DMA
+> -	max_zone_pfns[ZONE_DMA]	= min(max_low_pfn, 0x7fffffffUL >> PAGE_SHIFT);
+> +	max_zone_pfns[ZONE_DMA]	= min(max_low_pfn,
+> +			((1UL << ARCH_ZONE_DMA_BITS) - 1) >> PAGE_SHIFT);
+>   #endif
+>   	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
+>   #ifdef CONFIG_HIGHMEM
+> 
 
--- 
+This trial patch failed.
 
-- Arnaldo
+Larry
+
