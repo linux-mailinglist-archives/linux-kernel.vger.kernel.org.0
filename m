@@ -2,64 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ADCC37739
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 16:55:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1200137743
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 16:57:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729087AbfFFOzZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 10:55:25 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:52012 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1728792AbfFFOzZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 10:55:25 -0400
-Received: (qmail 3851 invoked by uid 2102); 6 Jun 2019 10:55:24 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 6 Jun 2019 10:55:24 -0400
-Date:   Thu, 6 Jun 2019 10:55:24 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-cc:     David Howells <dhowells@redhat.com>, <viro@zeniv.linux.org.uk>,
-        <linux-usb@vger.kernel.org>, <raven@themaw.net>,
-        <linux-fsdevel@vger.kernel.org>, <linux-api@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <keyrings@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 09/10] usb: Add USB subsystem notifications [ver #3]
-In-Reply-To: <20190606143306.GA11294@kroah.com>
-Message-ID: <Pine.LNX.4.44L0.1906061051310.1641-100000@iolanthe.rowland.org>
+        id S1728978AbfFFO4y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 10:56:54 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:18095 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728011AbfFFO4y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 10:56:54 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 664D46298DBADB926477;
+        Thu,  6 Jun 2019 22:56:51 +0800 (CST)
+Received: from localhost (10.202.226.61) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Thu, 6 Jun 2019
+ 22:56:46 +0800
+Date:   Thu, 6 Jun 2019 15:56:37 +0100
+From:   Jonathan Cameron <jonathan.cameron@huawei.com>
+To:     Pavel Machek <pavel@ucw.cz>
+CC:     <linux-kernel@vger.kernel.org>,
+        Justin Chen <justinpopo6@gmail.com>,
+        "Sasha Levin" <sashal@kernel.org>
+Subject: Re: [PATCH 4.19 189/276] iio: adc: ti-ads7950: Fix improper use of
+ mlock
+Message-ID: <20190606155637.00002b4f@huawei.com>
+In-Reply-To: <20190606131300.GE27432@amd>
+References: <20190530030523.133519668@linuxfoundation.org>
+        <20190530030537.017297326@linuxfoundation.org>
+        <20190606131300.GE27432@amd>
+Organization: Huawei
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.61]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Jun 2019, Greg Kroah-Hartman wrote:
+On Thu, 6 Jun 2019 15:13:00 +0200
+Pavel Machek <pavel@ucw.cz> wrote:
 
-> On Thu, Jun 06, 2019 at 10:24:18AM -0400, Alan Stern wrote:
-> > On Thu, 6 Jun 2019, David Howells wrote:
-> > 
-> > > Add a USB subsystem notification mechanism whereby notifications about
-> > > hardware events such as device connection, disconnection, reset and I/O
-> > > errors, can be reported to a monitoring process asynchronously.
-> > 
-> > USB I/O errors covers an awfully large and vague field.  Do we really
-> > want to include them?  I'm doubtful.
+> (stable removed from cc list)
 > 
-> See the other patch on the linux-usb list that wanted to start adding
-> KOBJ_CHANGE notifications about USB "i/o errors".
+> > Indio->mlock is used for protecting the different iio device modes.
+> > It is currently not being used in this way. Replace the lock with
+> > an internal lock specifically used for protecting the SPI transfer
+> > buffer.
+> > 
+> > Signed-off-by: Justin Chen <justinpopo6@gmail.com>
+> > Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > Signed-off-by: Sasha Levin <sashal@kernel.org>
+> > ---
+> >  drivers/iio/adc/ti-ads7950.c | 19 +++++++++++++++----
+> >  1 file changed, 15 insertions(+), 4 deletions(-)
+> >   
+> 
+> > @@ -277,6 +280,7 @@ static irqreturn_t ti_ads7950_trigger_handler(int irq, void *p)
+> >  	struct ti_ads7950_state *st = iio_priv(indio_dev);
+> >  	int ret;
+> >  
+> > +	mutex_lock(&st->slock);
+> >  	ret = spi_sync(st->spi, &st->ring_msg);
+> >  	if (ret < 0)
+> >  		goto out;
+> > @@ -285,6 +289,7 @@ static irqreturn_t ti_ads7950_trigger_handler(int irq, void *p)
+> >  					   iio_get_time_ns(indio_dev));
+> >  
+> >  out:
+> > +	mutex_unlock(&st->slock);
+> >  	iio_trigger_notify_done(indio_dev->trig);
+> >  
+> >  	return IRQ_HANDLED;  
+> 
+> Does trigger_handler run from interrupt context? Prototype suggests
+> so... If so, it can not really take mutexes...
 
-That patch wanted to add notifications only for enumeration failures
-(assuming you're talking about the patch from Eugeniu Rosca), not I/O
-errors in general.
+It's an interrupt thread so taking mutexes should be fine.
+For this particular case there is no 'top half' provided to
+the call to iio_triggered_buffer_setup so nothing runs in interrupt context.
 
-> So for "severe" issues, yes, we should do this, but perhaps not for all
-> of the "normal" things we see when a device is yanked out of the system
-> and the like.
+The spi_sync call can sleep anyway so this code can only run where
+sleeping is fine.
 
-Then what counts as a "severe" issue?  Anything besides enumeration 
-failure?
+Thanks,
 
-Alan Stern
+Jonathan
+
+
+> 
+> Best regards,
+> 								Pavel
+> 								
+
 
