@@ -2,76 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B80A836C1D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 08:18:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7365636C29
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 08:22:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726697AbfFFGS3 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 6 Jun 2019 02:18:29 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:33515 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725267AbfFFGS1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 02:18:27 -0400
-Received: from marcel-macpro.fritz.box (p5B3D2A37.dip0.t-ipconnect.de [91.61.42.55])
-        by mail.holtmann.org (Postfix) with ESMTPSA id F2632CF2B3;
-        Thu,  6 Jun 2019 08:26:48 +0200 (CEST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: [5.2.0-rcx] Bluetooth: hci0: unexpected event for opcode
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <CADDKRnDWhX25QPFNXA-uPcM_tD3Bep2ui=D5A2A8A5cZvrbJtA@mail.gmail.com>
-Date:   Thu, 6 Jun 2019 08:18:25 +0200
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <F99C3F13-D705-4214-ADE8-30676E29360D@holtmann.org>
-References: <CADDKRnDWhX25QPFNXA-uPcM_tD3Bep2ui=D5A2A8A5cZvrbJtA@mail.gmail.com>
-To:     =?utf-8?Q?J=C3=B6rg_Otte?= <jrg.otte@gmail.com>
-X-Mailer: Apple Mail (2.3445.104.11)
+        id S1726701AbfFFGWG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 02:22:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50540 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726014AbfFFGWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 02:22:06 -0400
+Received: from localhost (unknown [106.200.230.232])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AACE52083D;
+        Thu,  6 Jun 2019 06:22:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559802125;
+        bh=APfyBG2fyrPz68QqYZ1pqp6URdwzAiGlAVa4nP58yZw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AgIZqJBcKNmUDG+OlyFyWa6p1X88k6vww3vudl+DfBf72LOMikPCA+kmsldhxbB7c
+         JAT6lwaI0LqnJf0YpTAmdmX6mL44JNHhGxv76MEu80S9FKKk/7zm+BngWqh2aWYLgk
+         nqg8WY9RctYK0zcY6J2zgfvVzgkcYE+jXrFYfZMk=
+Date:   Thu, 6 Jun 2019 11:48:57 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: qcom: Add Dragonboard 845c
+Message-ID: <20190606061857.GA9160@vkoul-mobl.Dlink>
+References: <20190606043851.18050-1-bjorn.andersson@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190606043851.18050-1-bjorn.andersson@linaro.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joerg,
-
-> In 5.2.0-rcx I see a new error message on startup probably after
-> loading the Bluetooth firmware:
-> [    1.609460] Bluetooth: hci0: unexpected event for opcode 0xfc2f
+On 05-06-19, 21:38, Bjorn Andersson wrote:
+> This adds an initial dts for the Dragonboard 845. Supported
+> functionality includes Debug UART, UFS, USB-C (peripheral), USB-A
+> (host), microSD-card and Bluetooth.
 > 
->> dmesg | grep Bluetooth
-> [    0.130969] Bluetooth: Core ver 2.22
-> [    0.130973] Bluetooth: HCI device and connection manager initialized
-> [    0.130974] Bluetooth: HCI socket layer initialized
-> [    0.130975] Bluetooth: L2CAP socket layer initialized
-> [    0.130976] Bluetooth: SCO socket layer initialized
-> [    0.374716] Bluetooth: RFCOMM TTY layer initialized
-> [    0.374718] Bluetooth: RFCOMM socket layer initialized
-> [    0.374718] Bluetooth: RFCOMM ver 1.11
-> [    0.374719] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
-> [    0.374720] Bluetooth: BNEP socket layer initialized
-> [    0.374721] Bluetooth: HIDP (Human Interface Emulation) ver 1.2
-> [    0.374722] Bluetooth: HIDP socket layer initialized
-> [    1.422530] Bluetooth: hci0: read Intel version: 370710018002030d00
-> [    1.422533] Bluetooth: hci0: Intel Bluetooth firmware file:
-> intel/ibt-hw-37.7.10-fw-1.80.2.3.d.bseq
-> [    1.609460] Bluetooth: hci0: unexpected event for opcode 0xfc2f
-> [    1.625557] Bluetooth: hci0: Intel firmware patch completed and activated
-> [   21.986125] input: BluetoothMouse3600 Mouse as
-> /devices/virtual/misc/uhid/0005:045E:0916.0004/input/input15
-> [   21.986329] input: BluetoothMouse3600 Consumer Control as
-> /devices/virtual/misc/uhid/0005:045E:0916.0004/input/input16
-> [   21.986408] hid-generic 0005:045E:0916.0004: input,hidraw3:
-> BLUETOOTH HID v1.10 Mouse [BluetoothMouse3600] on 80:19:34:4D:31:44
+> Initializing the SMMU is clearing the mapping used for the splash screen
+> framebuffer, which causes the board to reboot. This can be worked around
+> using:
 > 
-> 
-> The error message goes away if I revert following patch:
-> f80c5dad7b64 Bluetooth: Ignore CC events not matching the last HCI command
+>   fastboot oem select-display-panel none
 
-if you can send btmon trace (or better btmon -w trace.log) for this event triggering it, then we can look if this is a hardware issue. We have only seen this with Atheros hardware so far, but it might happen for others as well. It indicates that this is an unexpected event. Normally you can ignore this warning since it just indicates an existing issue that we just papered over before. So if everything works as before, just ignore it, but send me the trace and I can look if the event is erroneous or if we can silence the warning for the Intel hardware.
+I was able to boot db845c on v5.2-rc1 with this patch :)
+ 
+I found some nits, nevertheless this looks good, so:
+ 
+Tested-by: Vinod Koul <vkoul@kernel.org>
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
 
-Regards
+> +++ b/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
+> @@ -0,0 +1,556 @@
+> +// SPDX-License-Identifier: GPL-2.0
 
-Marcel
+No copyright?
 
+> +	pcie0_3p3v_dual: vldo-3v3-regulator {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "VLDO_3V3";
+> +
+> +		vin-supply = <&vbat>;
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +
+> +		gpio = <&tlmm 90 GPIO_ACTIVE_HIGH>;
+> +		enable-active-high;
+> +
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pcie0_pwren_state>;
+> +	};
+> +
+> +	gpio_keys {
+
+Rest of this file is sorted but this isn't, so this should be after dc12v
+
+> +		compatible = "gpio-keys";
+> +		#address-cells = <1>;
+
+does this require address cell, we don't have range property here?
+
+> +		#size-cells = <0>;
+> +		autorepeat;
+> +
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&vol_up_pin_a>;
+> +
+> +		vol-up {
+> +			label = "Volume Up";
+> +			linux,code = <KEY_VOLUMEUP>;
+> +			gpios = <&pm8998_gpio 6 GPIO_ACTIVE_LOW>;
+> +		};
+> +	};
+> +
+> +	leds {
+
+This one as well..
+
+-- 
+~Vinod
