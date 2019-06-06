@@ -2,106 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5421837C95
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 20:50:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7178837C8F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 20:49:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728162AbfFFSuM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 14:50:12 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39854 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727163AbfFFSuM (ORCPT
+        id S1727795AbfFFSty (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 14:49:54 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:56828 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727255AbfFFStx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 14:50:12 -0400
-Received: by mail-pl1-f195.google.com with SMTP id g9so1273088plm.6;
-        Thu, 06 Jun 2019 11:50:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=mtDz93Y1TuKw4yabSIG15GQuxtlGSwCV0Vd7oPRbGU8=;
-        b=tV5NEkK5Vkx3jlMPQ8U1HYCBlORe1msZGEUTOk3KdWKam1BQA2wPawKlAxsPMrwpfV
-         I2n97g+/Wl4YkrerEiVkG8pO/0oG09EqTxUpvDgeObGckju45xi6DBHJyIx95V082691
-         rDAnJTKF1G0FapFCJOq7RSt+Mz5707JPgG7o2WWD3vCsFlm9obL1RZ1+4j5a93MvR8sj
-         HjnWeBDuYfWqew71uxicPKt+xu18/KW0PzLEnhKLq3KY449AS5AR1zpcRX8d4mm0oIv9
-         YxCWYlx4sv0ds+eVfCyflaV9fb1gBc6eYsKoGausVVJI5P7GUmNfIC7Xi08wI9QoD+uR
-         bgpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=mtDz93Y1TuKw4yabSIG15GQuxtlGSwCV0Vd7oPRbGU8=;
-        b=BqYXa4iXkFHSml7rQxsnWXYBQ6ej8hrxDCEBXWZAQxTa4Dof9ErlsOOH0VAm9lEv6I
-         6K2r5G0wQU2avDZW8x20SI7bKIqhqorSRuj4AqbroI9rYjuAk0gE2uL9IG45lsTZWQiK
-         Dc6zZUw0G/facSfw6/zASqrvE5kc7G5spVhUXFZlrabs7+7buW6ID43L6BDO4K3cwCZD
-         J1C2M/TArb1tcw4eT0mFHX9PeoHDadCsVkyaYWvjB1Np9FFeq3/OlURDip7q0M2kVjjK
-         xa4YWUptNlMDnUwABRIsdGERXdFMVFs+ybqqVz/OUinDIxhySkLFUmfSjx7WnM0XMQNH
-         YzdA==
-X-Gm-Message-State: APjAAAWjGnFPv40ucCcTsKL5WWVww3asgFWzICrPdcVMTzS+I0S1pz7K
-        eqeLh635saK1DMhJACxwe5k=
-X-Google-Smtp-Source: APXvYqyWePVzgK8bieSmAYEq53trRloEm5KEWW8F8570TMuxUWlRRIC+myDXrQ+R6OVze6JBbsgybg==
-X-Received: by 2002:a17:902:f01:: with SMTP id 1mr51442182ply.170.1559847011599;
-        Thu, 06 Jun 2019 11:50:11 -0700 (PDT)
-Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id 26sm2543917pfi.147.2019.06.06.11.50.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Jun 2019 11:50:11 -0700 (PDT)
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc:     agross@kernel.org, david.brown@linaro.org,
-        bjorn.andersson@linaro.org, lgirdwood@gmail.com,
-        broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        jorge.ramirez-ortiz@linaro.org, niklas.cassel@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Subject: [PATCH v2 0/7] PM8005 and PMS405 regulator support
-Date:   Thu,  6 Jun 2019 11:48:42 -0700
-Message-Id: <20190606184842.39484-1-jeffrey.l.hugo@gmail.com>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        Thu, 6 Jun 2019 14:49:53 -0400
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x56ImYMT006422;
+        Thu, 6 Jun 2019 11:49:13 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=vMFe5i/SrFXIWMGeeB3ZoIy1NfZHjlQEJE5nkdTkgt4=;
+ b=FUYycRgpRjhKDfNp7YiNt/awcHVRe2R3Did16ySi9HL6t/8c0nfEx7aiPFqv+kUGgUMg
+ Ziraokxndqy7mzKuIF62IF9jmm+kZgJoVnUyLOJOcOwoVTeHyWrmA5rTPrf/YVZ7tkqH
+ bSjizGnOXxpx8QEnndTqdbng58pXogXDDZc= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 2sy1quhm7h-3
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Thu, 06 Jun 2019 11:49:13 -0700
+Received: from ash-exopmbx101.TheFacebook.com (2620:10d:c0a8:82::b) by
+ ash-exhub203.TheFacebook.com (2620:10d:c0a8:83::5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 6 Jun 2019 11:49:11 -0700
+Received: from ash-exhub101.TheFacebook.com (2620:10d:c0a8:82::e) by
+ ash-exopmbx101.TheFacebook.com (2620:10d:c0a8:82::b) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 6 Jun 2019 11:49:11 -0700
+Received: from NAM04-SN1-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.35.173) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
+ via Frontend Transport; Thu, 6 Jun 2019 11:49:11 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vMFe5i/SrFXIWMGeeB3ZoIy1NfZHjlQEJE5nkdTkgt4=;
+ b=LrkyqAHPs7gT53Jg7oVKm/HXAqjGOZlO1csWWyjzdFucLJ0y5r5Uy2CehWm/tQD9hCuIL41sEz12AiZVIRv0wZYLAJ5T1Jt0f2KX8RahQJ/fKgIQVP76Dwzw8Q1MplrllbZitxgrMF0jiAu9e7Vs9tiL/olo7BQyMgzDtjRvTZY=
+Received: from CY4PR15MB1269.namprd15.prod.outlook.com (10.172.177.11) by
+ CY4PR15MB1815.namprd15.prod.outlook.com (10.174.54.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1965.14; Thu, 6 Jun 2019 18:49:10 +0000
+Received: from CY4PR15MB1269.namprd15.prod.outlook.com
+ ([fe80::c026:bca5:3f4e:9b1f]) by CY4PR15MB1269.namprd15.prod.outlook.com
+ ([fe80::c026:bca5:3f4e:9b1f%3]) with mapi id 15.20.1943.018; Thu, 6 Jun 2019
+ 18:49:10 +0000
+From:   Vijay Khemka <vijaykhemka@fb.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+CC:     Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "joel@jms.id.au" <joel@jms.id.au>,
+        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+        Sai Dasari <sdasari@fb.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v2 2/2] Docs: hwmon: pmbus: Add PXE1610 driver
+Thread-Topic: [PATCH v2 2/2] Docs: hwmon: pmbus: Add PXE1610 driver
+Thread-Index: AQHVFz02+Et6V6j2BECLwxLL8LkLiqaNkX+AgAD7uoA=
+Date:   Thu, 6 Jun 2019 18:49:09 +0000
+Message-ID: <27BD2580-6ADD-4389-A891-AE4AE9010E62@fb.com>
+References: <20190530231159.222188-1-vijaykhemka@fb.com>
+ <20190530231159.222188-2-vijaykhemka@fb.com>
+ <20190605204811.GA32379@roeck-us.net>
+In-Reply-To: <20190605204811.GA32379@roeck-us.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [2620:10d:c090:200::3607]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 6ce91b56-9132-4c0b-90fa-08d6eaafa94d
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:CY4PR15MB1815;
+x-ms-traffictypediagnostic: CY4PR15MB1815:
+x-microsoft-antispam-prvs: <CY4PR15MB1815416C3717B05D67063AF3DD170@CY4PR15MB1815.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2958;
+x-forefront-prvs: 00603B7EEF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(396003)(346002)(366004)(376002)(199004)(189003)(66556008)(5660300002)(478600001)(54906003)(66446008)(66476007)(64756008)(486006)(76176011)(6436002)(102836004)(6506007)(99286004)(6486002)(8676002)(91956017)(305945005)(76116006)(73956011)(46003)(7736002)(66946007)(81166006)(81156014)(68736007)(316002)(8936002)(14454004)(229853002)(11346002)(82746002)(36756003)(71200400001)(71190400001)(83716004)(476003)(86362001)(256004)(186003)(6512007)(4326008)(6116002)(25786009)(33656002)(2616005)(446003)(53936002)(6246003)(2906002)(6916009);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR15MB1815;H:CY4PR15MB1269.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: ipAm27EsBJGVZ9oR/mWYGY95IwpOpUKQkyfprAnEW9Mflui6sDiiRjn8cR8PCwJfcl4KexAs0HsRGnegWp1mYvNA8Ns9+GeDnVNDUSwOwZNOFLXC5lT+ko9/so4r7z8TovjJBvw1e70Qo/CW3Wh63Ky6wmLkxcFxvj3/IBb1iIEJpHRWJvsWEQpvYbGIHIS85ARgGR9rbB9UgXb7aAiqUe4pcCwDMsDSarBMjqdFP58poHoU7esJX1cf5D8k4h3jOc69hqOvHt0K3WqjmfjfqPcmNqJcx8vpqj/Vcd9DTnjjB0tNfuQazKWgVZmyPhmkatcVu8teX+7zSh5SGitewcHZU4NrKS3gIw83IZm3VSiobSUNv1oHwHPNBStZOONWZPd6rL8+xlkbucepmQwwDIhRs0dpmgkyJzwk171hbzo=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <287AF5658E53AA4AB309BCB69E7C0105@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6ce91b56-9132-4c0b-90fa-08d6eaafa94d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2019 18:49:09.8641
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: vijaykhemka@fb.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR15MB1815
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-06_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906060127
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The MSM8998 MTP reference platform supplies VDD_GFX from s1 of the
-pm8005 PMIC.  VDD_GFX is needed to turn on the GPU.  As we are looking
-to bring up the GPU, add the support for pm8005 and wire up s1 in a
-basic manner so that we have this dependency out of the way and can
-focus on enabling the GPU driver.
-
-The s3 regulator of PMS405 is used for voltage scaling of the CPU on
-QCS404.
-
-Both PMICs are very similar in deisgn, so add the base support with one,
-and trivially add the support for the other on top.
-
-The PMS405 work has only been compile tested as I don't have the proper
-platform.  A tested-by from Jorge or someone with the platform would be
-great.
-
-v2:
--Perform if statement cleanups per review discussion
--Pull in linear range support since its related, and simple
--Rework the PM8005 to minimize special cases in the driver
--"common2" is now ftsmps426 since that design first implemented it
--Reworked the PMS405 changes on top, since they are related to pm8005 and
-trivial
-
-Jeffrey Hugo (4):
-  drivers: regulator: qcom_spmi: Refactor get_mode/set_mode
-  dt-bindings: qcom_spmi: Document PM8005 regulators
-  regulator: qcom_spmi: Add support for PM8005
-  arm64: dts: msm8998-mtp: Add pm8005_s1 regulator
-
-Jorge Ramirez (2):
-  dt-bindings: qcom_spmi: Document pms405 support
-  drivers: regulator: qcom: add PMS405 SPMI regulator
-
-Jorge Ramirez-Ortiz (1):
-  drivers: regulator: qcom_spmi: enable linear range info
-
- .../regulator/qcom,spmi-regulator.txt         |  28 +++
- arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi     |  17 ++
- drivers/regulator/qcom_spmi-regulator.c       | 233 +++++++++++++++++-
- 3 files changed, 271 insertions(+), 7 deletions(-)
-
--- 
-2.17.1
-
+DQoNCu+7v09uIDYvNS8xOSwgMTo0OCBQTSwgIkd1ZW50ZXIgUm9lY2siIDxncm9lY2s3QGdtYWls
+LmNvbSBvbiBiZWhhbGYgb2YgbGludXhAcm9lY2stdXMubmV0PiB3cm90ZToNCg0KICAgIE9uIFRo
+dSwgTWF5IDMwLCAyMDE5IGF0IDA0OjExOjU3UE0gLTA3MDAsIFZpamF5IEtoZW1rYSB3cm90ZToN
+CiAgICA+IEFkZGVkIHN1cHBvcnQgZm9yIEluZmVuaW9uIFBYRTE2MTAgZHJpdmVyDQogICAgPiAN
+CiAgICBBcHBsaWVkLCBhZnRlciBmaXhpbmcNCiAgICAJcy9JbmZlbmlvbi9JbmZpbmVvbi8NCiAg
+ICAJcy9JbmZpbmlvbi9JbmZpbmVvbi8NClRoYW5rcw0KICAgIA0KICAgIEd1ZW50ZXINCiAgICAN
+CiAgICA+IFNpZ25lZC1vZmYtYnk6IFZpamF5IEtoZW1rYSA8dmlqYXlraGVta2FAZmIuY29tPg0K
+ICAgID4gLS0tDQogICAgPiBDaGFuZ2VzIGluIHYyOg0KICAgID4gaW5jb3Jwb3JhdGVkIGFsbCB0
+aGUgZmVlZGJhY2sgZnJvbSBHdWVudGVyIFJvZWNrIDxsaW51eEByb2Vjay11cy5uZXQ+DQogICAg
+PiANCiAgICA+ICBEb2N1bWVudGF0aW9uL2h3bW9uL3B4ZTE2MTAgfCA5MCArKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrDQogICAgPiAgMSBmaWxlIGNoYW5nZWQsIDkwIGluc2Vy
+dGlvbnMoKykNCiAgICA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9od21vbi9w
+eGUxNjEwDQogICAgPiANCiAgICA+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2h3bW9uL3B4
+ZTE2MTAgYi9Eb2N1bWVudGF0aW9uL2h3bW9uL3B4ZTE2MTANCiAgICA+IG5ldyBmaWxlIG1vZGUg
+MTAwNjQ0DQogICAgPiBpbmRleCAwMDAwMDAwMDAwMDAuLjI0ODI1ZGI4NzM2Zg0KICAgID4gLS0t
+IC9kZXYvbnVsbA0KICAgID4gKysrIGIvRG9jdW1lbnRhdGlvbi9od21vbi9weGUxNjEwDQogICAg
+PiBAQCAtMCwwICsxLDkwIEBADQogICAgPiArS2VybmVsIGRyaXZlciBweGUxNjEwDQogICAgPiAr
+PT09PT09PT09PT09PT09PT09PT09DQogICAgPiArDQogICAgPiArU3VwcG9ydGVkIGNoaXBzOg0K
+ICAgID4gKyAgKiBJbmZpbmlvbiBQWEUxNjEwDQogICAgPiArICAgIFByZWZpeDogJ3B4ZTE2MTAn
+DQogICAgPiArICAgIEFkZHJlc3NlcyBzY2FubmVkOiAtDQogICAgPiArICAgIERhdGFzaGVldDog
+RGF0YXNoZWV0IGlzIG5vdCBwdWJsaWNseSBhdmFpbGFibGUuDQogICAgPiArDQogICAgPiArICAq
+IEluZmluaW9uIFBYRTExMTANCiAgICA+ICsgICAgUHJlZml4OiAncHhlMTExMCcNCiAgICA+ICsg
+ICAgQWRkcmVzc2VzIHNjYW5uZWQ6IC0NCiAgICA+ICsgICAgRGF0YXNoZWV0OiBEYXRhc2hlZXQg
+aXMgbm90IHB1YmxpY2x5IGF2YWlsYWJsZS4NCiAgICA+ICsNCiAgICA+ICsgICogSW5maW5pb24g
+UFhNMTMxMA0KICAgID4gKyAgICBQcmVmaXg6ICdweG0xMzEwJw0KICAgID4gKyAgICBBZGRyZXNz
+ZXMgc2Nhbm5lZDogLQ0KICAgID4gKyAgICBEYXRhc2hlZXQ6IERhdGFzaGVldCBpcyBub3QgcHVi
+bGljbHkgYXZhaWxhYmxlLg0KICAgID4gKw0KICAgID4gK0F1dGhvcjogVmlqYXkgS2hlbWthIDx2
+aWpheWtoZW1rYUBmYi5jb20+DQogICAgPiArDQogICAgPiArDQogICAgPiArRGVzY3JpcHRpb24N
+CiAgICA+ICstLS0tLS0tLS0tLQ0KICAgID4gKw0KICAgID4gK1BYRTE2MTAvUFhFMTExMCBhcmUg
+TXVsdGktcmFpbC9NdWx0aXBoYXNlIERpZ2l0YWwgQ29udHJvbGxlcnMNCiAgICA+ICthbmQgY29t
+cGxpYW50IHRvDQogICAgPiArCS0tIEludGVsIFZSMTMgREMtREMgY29udmVydGVyIHNwZWNpZmlj
+YXRpb25zLg0KICAgID4gKwktLSBJbnRlbCBTVklEIHByb3RvY29sLg0KICAgID4gK1VzZWQgZm9y
+IFZjb3JlIHBvd2VyIHJlZ3VsYXRpb24gZm9yIEludGVsIFZSMTMgYmFzZWQgbWljcm9wcm9jZXNz
+b3JzDQogICAgPiArCS0tIFNlcnZlcnMsIFdvcmtzdGF0aW9ucywgYW5kIEhpZ2gtZW5kIGRlc2t0
+b3BzDQogICAgPiArDQogICAgPiArUFhNMTMxMCBpcyBhIE11bHRpLXJhaWwgQ29udHJvbGxlcnMg
+YW5kIGl0IGlzIGNvbXBsaWFudCB0bw0KICAgID4gKwktLSBJbnRlbCBWUjEzIERDLURDIGNvbnZl
+cnRlciBzcGVjaWZpY2F0aW9ucy4NCiAgICA+ICsJLS0gSW50ZWwgU1ZJRCBwcm90b2NvbC4NCiAg
+ICA+ICtVc2VkIGZvciBERFIzL0REUjQgTWVtb3J5IHBvd2VyIHJlZ3VsYXRpb24gZm9yIEludGVs
+IFZSMTMgYW5kDQogICAgPiArSU1WUDggYmFzZWQgc3lzdGVtcw0KICAgID4gKw0KICAgID4gKw0K
+ICAgID4gK1VzYWdlIE5vdGVzDQogICAgPiArLS0tLS0tLS0tLS0NCiAgICA+ICsNCiAgICA+ICtU
+aGlzIGRyaXZlciBkb2VzIG5vdCBwcm9iZSBmb3IgUE1CdXMgZGV2aWNlcy4gWW91IHdpbGwgaGF2
+ZQ0KICAgID4gK3RvIGluc3RhbnRpYXRlIGRldmljZXMgZXhwbGljaXRseS4NCiAgICA+ICsNCiAg
+ICA+ICtFeGFtcGxlOiB0aGUgZm9sbG93aW5nIGNvbW1hbmRzIHdpbGwgbG9hZCB0aGUgZHJpdmVy
+IGZvciBhbiBQWEUxNjEwDQogICAgPiArYXQgYWRkcmVzcyAweDcwIG9uIEkyQyBidXMgIzQ6DQog
+ICAgPiArDQogICAgPiArIyBtb2Rwcm9iZSBweGUxNjEwDQogICAgPiArIyBlY2hvIHB4ZTE2MTAg
+MHg3MCA+IC9zeXMvYnVzL2kyYy9kZXZpY2VzL2kyYy00L25ld19kZXZpY2UNCiAgICA+ICsNCiAg
+ICA+ICtJdCBjYW4gYWxzbyBiZSBpbnN0YW50aWF0ZWQgYnkgZGVjbGFyaW5nIGluIGRldmljZSB0
+cmVlDQogICAgPiArDQogICAgPiArDQogICAgPiArU3lzZnMgYXR0cmlidXRlcw0KICAgID4gKy0t
+LS0tLS0tLS0tLS0tLS0NCiAgICA+ICsNCiAgICA+ICtjdXJyMV9sYWJlbAkJImlpbiINCiAgICA+
+ICtjdXJyMV9pbnB1dAkJTWVhc3VyZWQgaW5wdXQgY3VycmVudA0KICAgID4gK2N1cnIxX2FsYXJt
+CQlDdXJyZW50IGhpZ2ggYWxhcm0NCiAgICA+ICsNCiAgICA+ICtjdXJyWzItNF1fbGFiZWwJCSJp
+b3V0WzEtM10iDQogICAgPiArY3VyclsyLTRdX2lucHV0CQlNZWFzdXJlZCBvdXRwdXQgY3VycmVu
+dA0KICAgID4gK2N1cnJbMi00XV9jcml0CQlDcml0aWNhbCBtYXhpbXVtIGN1cnJlbnQNCiAgICA+
+ICtjdXJyWzItNF1fY3JpdF9hbGFybQlDdXJyZW50IGNyaXRpY2FsIGhpZ2ggYWxhcm0NCiAgICA+
+ICsNCiAgICA+ICtpbjFfbGFiZWwJCSJ2aW4iDQogICAgPiAraW4xX2lucHV0CQlNZWFzdXJlZCBp
+bnB1dCB2b2x0YWdlDQogICAgPiAraW4xX2NyaXQJCUNyaXRpY2FsIG1heGltdW0gaW5wdXQgdm9s
+dGFnZQ0KICAgID4gK2luMV9jcml0X2FsYXJtCQlJbnB1dCB2b2x0YWdlIGNyaXRpY2FsIGhpZ2gg
+YWxhcm0NCiAgICA+ICsNCiAgICA+ICtpblsyLTRdX2xhYmVsCQkidm91dFsxLTNdIg0KICAgID4g
+K2luWzItNF1faW5wdXQJCU1lYXN1cmVkIG91dHB1dCB2b2x0YWdlDQogICAgPiAraW5bMi00XV9s
+Y3JpdAkJQ3JpdGljYWwgbWluaW11bSBvdXRwdXQgdm9sdGFnZQ0KICAgID4gK2luWzItNF1fbGNy
+aXRfYWxhcm0JT3V0cHV0IHZvbHRhZ2UgY3JpdGljYWwgbG93IGFsYXJtDQogICAgPiAraW5bMi00
+XV9jcml0CQlDcml0aWNhbCBtYXhpbXVtIG91dHB1dCB2b2x0YWdlDQogICAgPiAraW5bMi00XV9j
+cml0X2FsYXJtCU91dHB1dCB2b2x0YWdlIGNyaXRpY2FsIGhpZ2ggYWxhcm0NCiAgICA+ICsNCiAg
+ICA+ICtwb3dlcjFfbGFiZWwJCSJwaW4iDQogICAgPiArcG93ZXIxX2lucHV0CQlNZWFzdXJlZCBp
+bnB1dCBwb3dlcg0KICAgID4gK3Bvd2VyMV9hbGFybQkJSW5wdXQgcG93ZXIgaGlnaCBhbGFybQ0K
+ICAgID4gKw0KICAgID4gK3Bvd2VyWzItNF1fbGFiZWwJInBvdXRbMS0zXSINCiAgICA+ICtwb3dl
+clsyLTRdX2lucHV0CU1lYXN1cmVkIG91dHB1dCBwb3dlcg0KICAgID4gKw0KICAgID4gK3RlbXBb
+MS0zXV9pbnB1dAkJTWVhc3VyZWQgdGVtcGVyYXR1cmUNCiAgICA+ICt0ZW1wWzEtM11fY3JpdAkJ
+Q3JpdGljYWwgaGlnaCB0ZW1wZXJhdHVyZQ0KICAgID4gK3RlbXBbMS0zXV9jcml0X2FsYXJtCUNo
+aXAgdGVtcGVyYXR1cmUgY3JpdGljYWwgaGlnaCBhbGFybQ0KICAgID4gK3RlbXBbMS0zXV9tYXgJ
+CU1heGltdW0gdGVtcGVyYXR1cmUNCiAgICA+ICt0ZW1wWzEtM11fbWF4X2FsYXJtCUNoaXAgdGVt
+cGVyYXR1cmUgaGlnaCBhbGFybQ0KICAgIA0KDQo=
