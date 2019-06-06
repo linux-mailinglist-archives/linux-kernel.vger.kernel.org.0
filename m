@@ -2,54 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0F9B36E9E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 10:29:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07D1336EB5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 10:33:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbfFFI3P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 04:29:15 -0400
-Received: from mga14.intel.com ([192.55.52.115]:4563 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726805AbfFFI3P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 04:29:15 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 01:29:14 -0700
-X-ExtLoop1: 1
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
-  by fmsmga001.fm.intel.com with ESMTP; 06 Jun 2019 01:29:12 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Pavel Machek <pavel@ucw.cz>, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, intel-gfx@lists.freedesktop.org,
-        kernel list <linux-kernel@vger.kernel.org>
-Subject: Re: 5.2: display corruption on X60, X220
-In-Reply-To: <20190603074004.GA15821@amd>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20190603074004.GA15821@amd>
-Date:   Thu, 06 Jun 2019 11:32:18 +0300
-Message-ID: <87v9xj15d9.fsf@intel.com>
+        id S1727216AbfFFIdU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 04:33:20 -0400
+Received: from relay11.mail.gandi.net ([217.70.178.231]:42799 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726092AbfFFIdU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 04:33:20 -0400
+Received: from localhost (aaubervilliers-681-1-24-139.w90-88.abo.wanadoo.fr [90.88.144.139])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 6C6F510001B;
+        Thu,  6 Jun 2019 08:33:08 +0000 (UTC)
+Date:   Thu, 6 Jun 2019 10:33:07 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
+Cc:     paul.kocialkowski@bootlin.com, wens@csie.org, mchehab@kernel.org,
+        gregkh@linuxfoundation.org, linux-media@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] media: cedrus: Add infra for extra buffers connected
+ to capture buffers
+Message-ID: <20190606083307.b5zpk4n6x3w6mtmb@flea>
+References: <20190530211516.1891-1-jernej.skrabec@siol.net>
+ <20190530211516.1891-7-jernej.skrabec@siol.net>
+ <20190603121859.sbphcjy75kmed6oc@flea>
+ <3029072.frl2UAsRGt@jernej-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="llwlg2xtnnijika2"
+Content-Disposition: inline
+In-Reply-To: <3029072.frl2UAsRGt@jernej-laptop>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 03 Jun 2019, Pavel Machek <pavel@ucw.cz> wrote:
-> In recent kernels (5.2.0-rc1-next-20190522, 5.2-rc2) I'm getting
-> display corruption in X. Usually in terminals, but also in title bars
-> etc. Black areas with white lines in them, usually...
+
+--llwlg2xtnnijika2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jun 03, 2019 at 05:48:25PM +0200, Jernej =C5=A0krabec wrote:
+> Dne ponedeljek, 03. junij 2019 ob 14:18:59 CEST je Maxime Ripard napisal(=
+a):
+> > > +static void cedrus_buf_cleanup(struct vb2_buffer *vb)
+> > > +{
+> > > +	struct vb2_queue *vq =3D vb->vb2_queue;
+> > > +
+> > > +	if (!V4L2_TYPE_IS_OUTPUT(vq->type)) {
+> > > +		struct cedrus_ctx *ctx =3D vb2_get_drv_priv(vq);
+> > > +		struct cedrus_buffer *cedrus_buf;
+> > > +
+> > > +		cedrus_buf =3D vb2_to_cedrus_buffer(vq->bufs[vb->index]);
+> > > +
+> > > +		if (cedrus_buf->extra_buf_size)
+> > > +			dma_free_coherent(ctx->dev->dev,
+> > > +					  cedrus_buf-
+> >extra_buf_size,
+> > > +					  cedrus_buf-
+> >extra_buf,
+> > > +					  cedrus_buf-
+> >extra_buf_dma);
+> > > +	}
+> > > +}
+> > > +
+> >
+> > I'm really not a fan of allocating something somewhere, and freeing it
+> > somewhere else. Making sure you don't leak something is hard enough to
+> > not have some non-trivial allocation scheme.
 >
-> Same configuration worked properly in ... probably 4.19? Then I got
-> some graphics-crashes on X220 that prevented me from testing :-(.
+> Ok, what about introducing two new optional methods in engine callbacks,
+> buffer_init and buffer_destroy, which would be called from cedrus_buf_ini=
+t() and
+> cedrus_buf_cleanup(), respectively. That way all (de)allocation logic sta=
+ys
+> within the same engine.
 
-It's pretty hard to say anything based on the above.
+Yep, that would work for me.
 
-Anything in the logs with drm.debug=14 added?
+Thanks!
+Maxime
 
-BR,
-Jani.
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
+--llwlg2xtnnijika2
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Jani Nikula, Intel Open Source Graphics Center
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXPjPwwAKCRDj7w1vZxhR
+xfVpAQCOr8fs3rk1qqMT7K32xwhOKrfkpEzeOlKL8hYuHFgkPQEA+ZYtxUfOTSQu
+8EDER1DVGqjSGhBpL356m0j1JSeHNgM=
+=Hz+3
+-----END PGP SIGNATURE-----
+
+--llwlg2xtnnijika2--
