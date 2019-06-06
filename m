@@ -2,106 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1337737951
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 18:15:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A69637965
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 18:19:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729670AbfFFQPw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 12:15:52 -0400
-Received: from mga02.intel.com ([134.134.136.20]:55622 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729165AbfFFQPv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 12:15:51 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 09:15:50 -0700
-X-ExtLoop1: 1
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga006.fm.intel.com with ESMTP; 06 Jun 2019 09:15:50 -0700
-Date:   Thu, 6 Jun 2019 09:17:02 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jeff Layton <jlayton@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH RFC 07/10] fs/ext4: Fail truncate if pages are GUP pinned
-Message-ID: <20190606161702.GA11374@iweiny-DESK2.sc.intel.com>
-References: <20190606014544.8339-1-ira.weiny@intel.com>
- <20190606014544.8339-8-ira.weiny@intel.com>
- <20190606105855.GG7433@quack2.suse.cz>
+        id S1729604AbfFFQTt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 12:19:49 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:35303 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729434AbfFFQTt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 12:19:49 -0400
+Received: by mail-io1-f66.google.com with SMTP id m24so677753ioo.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 09:19:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7AZryVPm9WEZf89lWXbEGTDn4y+TgVuIZXrDppDnWmE=;
+        b=Aaq3vayud6trE+rJ7BBRvi2bON4DWHlnX5L7StL4lgKSQ55mBgBWGPlb8ckaOxquY2
+         4FXe175RxOGGlpfg301hmiQfimfTmsYK03y8NdRGDHOazivc9fTDVDOQBuN0kFMnG0aR
+         mYbMfjhG0Gt6GGse4MAdKgWeukXcMPJxe6tvMXkp9XtY51eVzgbmjGYofQK0kPBXQ/Cx
+         JFRzWDpARIEqaYUR4DJnukrTTGacr5Oa5rFIyp9dR1xpbUc659ZOt7zIKbJmPzu4n6dR
+         ch3+NC+zQAIXQSzZjzz06qFQnB5YS7LQEAi/+q1VbfADQataOi4JOIsoL9TPYt0S7/fM
+         xPMg==
+X-Gm-Message-State: APjAAAUIFtQVY0OeDdNK5IcAQxRTwKLa6Z90nF0HPu0j6TJUjx8l0gCl
+        KYkopXH6xsHrzzt9y+FaYkOGm4+C+tFbqXWF8Witjg==
+X-Google-Smtp-Source: APXvYqyyfL36sLDzC3fGZJuckRuKrOR5/eaCW6vfPOwmumzPutA8k5DseFsUoso4bYVBykjNSQSZmm46G3WbB60v7fA=
+X-Received: by 2002:a05:6602:2006:: with SMTP id y6mr28202284iod.218.1559837988226;
+ Thu, 06 Jun 2019 09:19:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190606105855.GG7433@quack2.suse.cz>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+References: <a1ff446dfc06e2443552e7ec2d754099aacce7df.1559541944.git.ryder.lee@mediatek.com>
+ <ade7ef01-8b06-ec7d-4caf-e581f4033819@newmedia-net.de>
+In-Reply-To: <ade7ef01-8b06-ec7d-4caf-e581f4033819@newmedia-net.de>
+From:   Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Date:   Thu, 6 Jun 2019 18:19:37 +0200
+Message-ID: <CAJ0CqmVBogQrqf4Gckr5gQ6tCrdZG=p60ZiC+-WW-yxt93+40Q@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] mt76: mt7615: enable support for mesh
+To:     Sebastian Gottschall <s.gottschall@newmedia-net.de>
+Cc:     Ryder Lee <ryder.lee@mediatek.com>, Felix Fietkau <nbd@nbd.name>,
+        Roy Luo <royluo@google.com>, YF Luo <yf.luo@mediatek.com>,
+        Yiwei Chung <yiwei.chung@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Chih-Min Chen <chih-min.Chen@mediatek.com>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        linux-mediatek@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 12:58:55PM +0200, Jan Kara wrote:
-> On Wed 05-06-19 18:45:40, ira.weiny@intel.com wrote:
-> > From: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > If pages are actively gup pinned fail the truncate operation.
-> > 
-> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> > ---
-> >  fs/ext4/inode.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> > index 75f543f384e4..1ded83ec08c0 100644
-> > --- a/fs/ext4/inode.c
-> > +++ b/fs/ext4/inode.c
-> > @@ -4250,6 +4250,9 @@ int ext4_break_layouts(struct inode *inode, loff_t offset, loff_t len)
-> >  		if (!page)
-> >  			return 0;
-> >  
-> > +		if (page_gup_pinned(page))
-> > +			return -ETXTBSY;
-> > +
-> >  		error = ___wait_var_event(&page->_refcount,
-> >  				atomic_read(&page->_refcount) == 1,
-> >  				TASK_INTERRUPTIBLE, 0, 0,
-> 
-> This caught my eye. Does this mean that now truncate for a file which has
-> temporary gup users (such buffers for DIO) can fail with ETXTBUSY?
+>
+> i tested your patch against a qca 9984 chipset using SAE and without
+> encryption. both did not work. the devices are connecting, but no data
+> connection is possible
 
-I thought about that before and I _thought_ I had accounted for it.  But I
-think you are right...
+Hi Sebastian,
+
+I tested Ryder's patch using mt76x2 as mesh peer and it works fine for me.
+Could you please provide some more info?
+
+Regards,
+Lorenzo
 
 >
-> That
-> doesn't look desirable.
-
-No not desirable at all...  Ah it just dawned on my why I thought it was ok...
-I was wrong.  :-/
-
-> If we would mandate layout lease while pages are
-> pinned as I suggested, this could be dealt with by checking for leases with
-> pins (breaking such lease would return error and not break it) and if
-> breaking leases succeeds (i.e., there are no long-term pinned pages), we'd
-> just wait for the remaining references as we do now.
-
-Agreed.
-
-But I'm going to respond with some of the challenges of this (and ideas I had)
-when replying to your other email.
-
-Ira
-
-> 
-> 								Honza
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+>
+> Sebastian
+>
+> Am 03.06.2019 um 08:08 schrieb Ryder Lee:
+> > Enable NL80211_IFTYPE_MESH_POINT and update its path.
+> >
+> > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> > ---
+> > Changes since v3 - fix a wrong expression
+> > Changes since v2 - remove unused definitions
+> > ---
+> >   drivers/net/wireless/mediatek/mt76/mt7615/init.c | 6 ++++++
+> >   drivers/net/wireless/mediatek/mt76/mt7615/main.c | 1 +
+> >   drivers/net/wireless/mediatek/mt76/mt7615/mcu.c  | 4 +++-
+> >   drivers/net/wireless/mediatek/mt76/mt7615/mcu.h  | 6 ------
+> >   4 files changed, 10 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/init.c b/drivers/net/wireless/mediatek/mt76/mt7615/init.c
+> > index 59f604f3161f..f860af6a42da 100644
+> > --- a/drivers/net/wireless/mediatek/mt76/mt7615/init.c
+> > +++ b/drivers/net/wireless/mediatek/mt76/mt7615/init.c
+> > @@ -133,6 +133,9 @@ static const struct ieee80211_iface_limit if_limits[] = {
+> >       {
+> >               .max = MT7615_MAX_INTERFACES,
+> >               .types = BIT(NL80211_IFTYPE_AP) |
+> > +#ifdef CONFIG_MAC80211_MESH
+> > +                      BIT(NL80211_IFTYPE_MESH_POINT) |
+> > +#endif
+> >                        BIT(NL80211_IFTYPE_STATION)
+> >       }
+> >   };
+> > @@ -195,6 +198,9 @@ int mt7615_register_device(struct mt7615_dev *dev)
+> >       dev->mt76.antenna_mask = 0xf;
+> >
+> >       wiphy->interface_modes = BIT(NL80211_IFTYPE_STATION) |
+> > +#ifdef CONFIG_MAC80211_MESH
+> > +                              BIT(NL80211_IFTYPE_MESH_POINT) |
+> > +#endif
+> >                                BIT(NL80211_IFTYPE_AP);
+> >
+> >       ret = mt76_register_device(&dev->mt76, true, mt7615_rates,
+> > diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/main.c b/drivers/net/wireless/mediatek/mt76/mt7615/main.c
+> > index b0bb7cc12385..585e67fa2728 100644
+> > --- a/drivers/net/wireless/mediatek/mt76/mt7615/main.c
+> > +++ b/drivers/net/wireless/mediatek/mt76/mt7615/main.c
+> > @@ -37,6 +37,7 @@ static int get_omac_idx(enum nl80211_iftype type, u32 mask)
+> >
+> >       switch (type) {
+> >       case NL80211_IFTYPE_AP:
+> > +     case NL80211_IFTYPE_MESH_POINT:
+> >               /* ap use hw bssid 0 and ext bssid */
+> >               if (~mask & BIT(HW_BSSID_0))
+> >                       return HW_BSSID_0;
+> > diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
+> > index 43f70195244c..e82297048449 100644
+> > --- a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
+> > +++ b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
+> > @@ -754,6 +754,7 @@ int mt7615_mcu_set_bss_info(struct mt7615_dev *dev,
+> >
+> >       switch (vif->type) {
+> >       case NL80211_IFTYPE_AP:
+> > +     case NL80211_IFTYPE_MESH_POINT:
+> >               tx_wlan_idx = mvif->sta.wcid.idx;
+> >               conn_type = CONNECTION_INFRA_AP;
+> >               break;
+> > @@ -968,7 +969,7 @@ int mt7615_mcu_add_wtbl(struct mt7615_dev *dev, struct ieee80211_vif *vif,
+> >               .rx_wtbl = {
+> >                       .tag = cpu_to_le16(WTBL_RX),
+> >                       .len = cpu_to_le16(sizeof(struct wtbl_rx)),
+> > -                     .rca1 = vif->type != NL80211_IFTYPE_AP,
+> > +                     .rca1 = vif->type == NL80211_IFTYPE_STATION,
+> >                       .rca2 = 1,
+> >                       .rv = 1,
+> >               },
+> > @@ -1042,6 +1043,7 @@ static void sta_rec_convert_vif_type(enum nl80211_iftype type, u32 *conn_type)
+> >   {
+> >       switch (type) {
+> >       case NL80211_IFTYPE_AP:
+> > +     case NL80211_IFTYPE_MESH_POINT:
+> >               if (conn_type)
+> >                       *conn_type = CONNECTION_INFRA_STA;
+> >               break;
+> > diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.h b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.h
+> > index e96efb13fa4d..0915cb735699 100644
+> > --- a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.h
+> > +++ b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.h
+> > @@ -105,25 +105,19 @@ enum {
+> >   #define STA_TYPE_STA                BIT(0)
+> >   #define STA_TYPE_AP         BIT(1)
+> >   #define STA_TYPE_ADHOC              BIT(2)
+> > -#define STA_TYPE_TDLS                BIT(3)
+> >   #define STA_TYPE_WDS                BIT(4)
+> >   #define STA_TYPE_BC         BIT(5)
+> >
+> >   #define NETWORK_INFRA               BIT(16)
+> >   #define NETWORK_P2P         BIT(17)
+> >   #define NETWORK_IBSS                BIT(18)
+> > -#define NETWORK_MESH         BIT(19)
+> > -#define NETWORK_BOW          BIT(20)
+> >   #define NETWORK_WDS         BIT(21)
+> >
+> >   #define CONNECTION_INFRA_STA        (STA_TYPE_STA | NETWORK_INFRA)
+> >   #define CONNECTION_INFRA_AP (STA_TYPE_AP | NETWORK_INFRA)
+> >   #define CONNECTION_P2P_GC   (STA_TYPE_STA | NETWORK_P2P)
+> >   #define CONNECTION_P2P_GO   (STA_TYPE_AP | NETWORK_P2P)
+> > -#define CONNECTION_MESH_STA  (STA_TYPE_STA | NETWORK_MESH)
+> > -#define CONNECTION_MESH_AP   (STA_TYPE_AP | NETWORK_MESH)
+> >   #define CONNECTION_IBSS_ADHOC       (STA_TYPE_ADHOC | NETWORK_IBSS)
+> > -#define CONNECTION_TDLS              (STA_TYPE_STA | NETWORK_INFRA | STA_TYPE_TDLS)
+> >   #define CONNECTION_WDS              (STA_TYPE_WDS | NETWORK_WDS)
+> >   #define CONNECTION_INFRA_BC (STA_TYPE_BC | NETWORK_INFRA)
+> >
