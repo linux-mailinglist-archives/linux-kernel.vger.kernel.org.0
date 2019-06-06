@@ -2,95 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 502EF37BD1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 20:06:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA19337BD6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 20:06:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729027AbfFFSGC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 14:06:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50456 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727559AbfFFSGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 14:06:02 -0400
-Received: from linux-8ccs (ip5f5ade8c.dynamic.kabel-deutschland.de [95.90.222.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 475B920868;
-        Thu,  6 Jun 2019 18:06:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559844362;
-        bh=bMlplyiH+PKr+bX7ZgbQvU1nviSGlkJZkRJ8OqOqy/o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ceO0L12vc87mtQrwEEUDdAGEHtNt3f5ie5LUMzPUn/paO6ytZXNyCfaNl7OdHSAdS
-         mgojHde4I0uhLmkXypwuy8LC4MA8MpkW2dIJAIwyTju20Q1pNgWll0C3QTynwiw6YO
-         ywCud39RrIz3zfYK8JwrS0evskkxT0qBxkL+6Dh4=
-Date:   Thu, 6 Jun 2019 20:05:57 +0200
-From:   Jessica Yu <jeyu@kernel.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kernel: module: Use struct_size() helper
-Message-ID: <20190606180557.GA4690@linux-8ccs>
-References: <20190604232343.GA2475@embeddedor>
+        id S1730424AbfFFSGn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 14:06:43 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:40556 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727559AbfFFSGm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 14:06:42 -0400
+Received: by mail-lf1-f66.google.com with SMTP id a9so837592lff.7;
+        Thu, 06 Jun 2019 11:06:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UEd66WheiI8yyTRsEa+z8oLhtOyljtbH2T2dZCHUna8=;
+        b=s5Wv1Fb7WHdpwRtST/K+oqN85JaYjOiLZAeQI5877b1aZeORAslVYsdZssg9Y4HYjN
+         lszdFGdIlpTUzV4NGuRrHUfUzog4ZdkwYI8S8CwV76roAly5envW3I4LMm+Lg5iWznEA
+         blYhmeQp1O7kZaGZBwyO2dZSnLN3tCpss8JsEbG95rWWNeeGz/JhCE0mUgscizXrZJG7
+         GArP1emPG2QI96blnaErB7qBkj8XSARSpy4pUTJr3YbpfCPRLyz8ciHXqHg8XZKiXi6Z
+         SpW/EqxpJ0mksibx0bZNSsKjsG+1YccnltFpDBOwtLmZf0RaTt3LFzz+7naU/OQdKuJD
+         OWmQ==
+X-Gm-Message-State: APjAAAWaAi+2IZcQYKktRk3ZflY/7imRVmdYQK+DEHEoofXhzDUoBOgV
+        u5Vpus1+7ijdJOjGkvkDqp2l1+NfQgKnG8Y2yuo=
+X-Google-Smtp-Source: APXvYqw2DQ1hkk9NGbrMoCpxPWvvSrGluX46vvZioEEIXVAu80TMiNPQs4dgaO2PEUOJN7DoCJlk4qvMl+vqvSMGZvQ=
+X-Received: by 2002:ac2:597c:: with SMTP id h28mr414494lfp.90.1559844400270;
+ Thu, 06 Jun 2019 11:06:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190604232343.GA2475@embeddedor>
-X-OS:   Linux linux-8ccs 5.1.0-rc1-lp150.12.28-default+ x86_64
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190606142220.1392-1-jacopo+renesas@jmondi.org> <20190606142220.1392-2-jacopo+renesas@jmondi.org>
+In-Reply-To: <20190606142220.1392-2-jacopo+renesas@jmondi.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 6 Jun 2019 20:06:28 +0200
+Message-ID: <CAMuHMdXcsxnqxpQLundZq9rCTHBTN4bP4gSpUrYBCOP8NN7TXQ@mail.gmail.com>
+Subject: Re: [PATCH 01/20] dt-bindings: display: renesas,cmm: Add R-Car CMM documentation
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Koji Matsuoka <koji.matsuoka.xm@renesas.com>, muroya@ksk.co.jp,
+        VenkataRajesh.Kalakodima@in.bosch.com,
+        Harsha.ManjulaMallikarjun@in.bosch.com,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+++ Gustavo A. R. Silva [04/06/19 18:23 -0500]:
->Make use of the struct_size() helper instead of an open-coded version
->in order to avoid any potential type mistakes, in particular in the
->context in which this code is being used.
->
->So, replace the following form:
->
->sizeof(*sect_attrs) + nloaded * sizeof(sect_attrs->attrs[0]
->
->with:
->
->struct_size(sect_attrs, attrs, nloaded)
->
->This code was detected with the help of Coccinelle.
->
->Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Hi Jacopo,
 
-Hi Gustavo!
-
-I see you've sent similar cleanup patches elsewhere, do you think you
-could reword your commit message to be more similar to your patch here
-for instance:
-
-	https://lkml.org/lkml/2019/6/5/856
-
-It does a *much* better job of explaining the motivation and usage of
-struct_size().
-
-Thank you!
-
-Jessica
-
->---
-> kernel/module.c | 3 +--
-> 1 file changed, 1 insertion(+), 2 deletions(-)
+On Thu, Jun 6, 2019 at 4:21 PM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> Add device tree bindings documentation for the Renesas R-Car Display
+> Unit Color Management Module.
 >
->diff --git a/kernel/module.c b/kernel/module.c
->index 80c7c09584cf..3f3bb090fbf4 100644
->--- a/kernel/module.c
->+++ b/kernel/module.c
->@@ -1492,8 +1492,7 @@ static void add_sect_attrs(struct module *mod, const struct load_info *info)
-> 	for (i = 0; i < info->hdr->e_shnum; i++)
-> 		if (!sect_empty(&info->sechdrs[i]))
-> 			nloaded++;
->-	size[0] = ALIGN(sizeof(*sect_attrs)
->-			+ nloaded * sizeof(sect_attrs->attrs[0]),
->+	size[0] = ALIGN(struct_size(sect_attrs, attrs, nloaded),
-> 			sizeof(sect_attrs->grp.attrs[0]));
-> 	size[1] = (nloaded + 1) * sizeof(sect_attrs->grp.attrs[0]);
-> 	sect_attrs = kzalloc(size[0] + size[1], GFP_KERNEL);
->-- 
->2.21.0
->
+> CMM is the image enhancement module available on each R-Car DU video
+> channel on Gen2 and Gen3 SoCs (V3H and V3M excluded).
+
+R-Car Gen2 ...
+
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+
+Thanks for your patch!
+
+> index 000000000000..d8d3cf9ce2ce
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/renesas,cmm.txt
+> @@ -0,0 +1,25 @@
+> +* Renesas R-Car Color Management Module (CMM)
+> +
+> +Renesas R-Car image enhancement module connected to R-Car DU video channels.
+> +
+> +Required properties:
+> + - compatible: shall be one of:
+> +   - "renesas,cmm-gen3"
+> +   - "renesas,cmm-gen2"
+
+"gen3" and "gen2" don't carry much meaning on their own (SH2 is gen2 of
+SuperH?). Furthermore, revision info should immediately follow the comma.
+
+"renesas,rcar-gen3-cmm" and "renesas,rcar-gen2-cmm"?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
