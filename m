@@ -2,340 +2,236 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32616375B9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 15:52:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50981375C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 15:55:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728654AbfFFNwZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 09:52:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40334 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728631AbfFFNwY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 09:52:24 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 75330AF85;
-        Thu,  6 Jun 2019 13:52:22 +0000 (UTC)
-From:   Nikolay Borisov <nborisov@suse.com>
-To:     linux-btrfs@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, andrea.parri@amarulasolutions.com,
-        peterz@infradead.org, paulmck@linux.ibm.com,
-        Nikolay Borisov <nborisov@suse.com>
-Subject: [PATCH 2/2] btrfs: convert snapshot/nocow exlcusion to drw lock
-Date:   Thu,  6 Jun 2019 16:52:19 +0300
-Message-Id: <20190606135219.1086-3-nborisov@suse.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190606135219.1086-1-nborisov@suse.com>
-References: <20190606135219.1086-1-nborisov@suse.com>
+        id S1728153AbfFFNzW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 09:55:22 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:40574 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726693AbfFFNzW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 09:55:22 -0400
+Received: by mail-lj1-f193.google.com with SMTP id a21so2112131ljh.7;
+        Thu, 06 Jun 2019 06:55:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=CGoxdLwbU1DKw0cBZ5dECytgAjdbKzc3O395e3fylMw=;
+        b=Mozm+4tFeMf2cYNJ2tsUo4LC8N+dYvztYPOpjFczQLqy3SltxYYebMcTxEqsuOvG57
+         VsILQIaP1O3kdb/ilUMeqQXEjwmbItIyIDFYWOhgk3hgFfAFW1JhvtXwHPUlW51aWZuh
+         e8ETzq9bvbzsi6yxjD9IWJtacwHUDs4gmnuprvkTA0v47kgrq4Bz2R4YjA9RaxX5uYZm
+         GRb6EWMjJ5xbmIOTcQAlAlEgm7c/6u0rLulSBgODyg/NI3MJ08zvDE8Zp+Ba4qJhQnNe
+         w09s/y37UgWNz6C9GJDLriqRtm1q5GqkQYzsO7gvaflUfsri6py0NXSyrqYmm/0BngHM
+         +TFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=CGoxdLwbU1DKw0cBZ5dECytgAjdbKzc3O395e3fylMw=;
+        b=FyT3WGngZlXVIyfc/3/Eb0CUrlFxusjpGILM4z+/Zlh70jiC4PRoWH08NVDGM0yxGt
+         JpYzAkT3mPLY1slr5PhNyzBT8PG8mEsLsHnk+h1KIjuZPB10Jj7HYRJT/nSrUAugoWoy
+         pEgLIhPtLWZ4g9KXQP/p0FudUyU69ebPpuHSRSa0GyfdGFGZbcFZjCHfjhYgqE4pUJjN
+         Qoq0vsrHV/WtoqDG+ewDNZ82npDM0g2zpO/itEhyXdW94zwfuLFhsukFWzrCdckMjkX/
+         NsQ0z1JM4vT1+3JMdomTmhi94e6wGjzZbMY1lerG80tKFrdJSkUJCMBg61cbiQk8VfRJ
+         qGqg==
+X-Gm-Message-State: APjAAAVDEKBXg0ycSlnt6VhnKyILR24dclYEgTt4KVFwCOkGt/v9Mmw9
+        egQfx85pLI8rWetJxd3ZarS8l4bp
+X-Google-Smtp-Source: APXvYqwWlkawKi3y4f0NWBoHKY3H6H0v7Re/WBLN9bKHxxpzbp6ExiSiFvFaMUucpptNuG/8308QkA==
+X-Received: by 2002:a2e:8793:: with SMTP id n19mr757668lji.174.1559829318714;
+        Thu, 06 Jun 2019 06:55:18 -0700 (PDT)
+Received: from [192.168.2.145] ([94.29.35.141])
+        by smtp.googlemail.com with ESMTPSA id p10sm367406ljh.50.2019.06.06.06.55.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Jun 2019 06:55:17 -0700 (PDT)
+Subject: Re: [PATCH] [RFC] dmaengine: add fifo_size member
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Sameer Pujar <spujar@nvidia.com>, Vinod Koul <vkoul@kernel.org>
+Cc:     dan.j.williams@intel.com, tiwai@suse.com,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sharadg@nvidia.com, rlokhande@nvidia.com, dramesh@nvidia.com,
+        mkumard@nvidia.com, linux-tegra <linux-tegra@vger.kernel.org>
+References: <1556623828-21577-1-git-send-email-spujar@nvidia.com>
+ <20190502060446.GI3845@vkoul-mobl.Dlink>
+ <e852d576-9cc2-ed42-1a1a-d696112c88bf@nvidia.com>
+ <20190502122506.GP3845@vkoul-mobl.Dlink>
+ <3368d1e1-0d7f-f602-5b96-a978fcf4d91b@nvidia.com>
+ <20190504102304.GZ3845@vkoul-mobl.Dlink>
+ <ce0e9c0b-b909-54ae-9086-a1f0f6be903c@nvidia.com>
+ <20190506155046.GH3845@vkoul-mobl.Dlink>
+ <b7e28e73-7214-f1dc-866f-102410c88323@nvidia.com>
+ <ed95f03a-bbe7-ad62-f2e1-9bfe22ec733a@ti.com>
+ <4cab47d0-41c3-5a87-48e1-d7f085c2e091@nvidia.com>
+ <8a5b84db-c00b-fff4-543f-69d90c245660@nvidia.com>
+ <3f836a10-eaf3-f59b-7170-6fe937cf2e43@ti.com>
+ <a36302fc-3173-070b-5c97-7d2c55d5e2cc@nvidia.com>
+ <a08bec36-b375-6520-eff4-3d847ddfe07d@ti.com>
+ <4593f37c-5e89-8559-4e80-99dbfe4235de@nvidia.com>
+ <deae510a-f6ae-6a51-2875-a7463cac9169@gmail.com>
+Message-ID: <71795bb0-2b8f-2b58-281c-e7e15bca3164@gmail.com>
+Date:   Thu, 6 Jun 2019 16:55:16 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <deae510a-f6ae-6a51-2875-a7463cac9169@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes all haphazard code implementing nocow writers
-exclusion from pending snapshot creation and switches to using the drw
-lock to ensure this invariant still holds. "Readers" are snapshot
-creators from create_snapshot and 'writers' are nocow writers from
-buffered write path or btrfs_setsize. This locking scheme allows for
-multiple snapshots to happen while any nocow writers are blocked, since
-writes to page cache in the nocow path will make snapshots inconsistent.
+06.06.2019 16:45, Dmitry Osipenko пишет:
+> 06.06.2019 15:37, Jon Hunter пишет:
+>>
+>> On 06/06/2019 12:54, Peter Ujfalusi wrote:
+>>>
+>>>
+>>> On 06/06/2019 13.49, Jon Hunter wrote:
+>>>>
+>>>> On 06/06/2019 11:22, Peter Ujfalusi wrote:
+>>>>
+>>>> ...
+>>>>
+>>>>>>>> It does sounds like that FIFO_SIZE == src/dst_maxburst in your case as
+>>>>>>>> well.
+>>>>>>> Not exactly equal.
+>>>>>>> ADMA burst_size can range from 1(WORD) to 16(WORDS)
+>>>>>>> FIFO_SIZE can be adjusted from 16(WORDS) to 1024(WORDS) [can vary in
+>>>>>>> multiples of 16]
+>>>>>>
+>>>>>> So I think that the key thing to highlight here, is that the as Sameer
+>>>>>> highlighted above for the Tegra ADMA there are two values that need to
+>>>>>> be programmed; the DMA client FIFO size and the max burst size. The ADMA
+>>>>>> has register fields for both of these.
+>>>>>
+>>>>> How does the ADMA uses the 'client FIFO size' and 'max burst size'
+>>>>> values and what is the relation of these values to the peripheral side
+>>>>> (ADMAIF)?
+>>>>
+>>>> Per Sameer's previous comment, the FIFO size is used by the ADMA to
+>>>> determine how much space is available in the FIFO. I assume the burst
+>>>> size just limits how much data is transferred per transaction.
+>>>>
+>>>>>> As you can see from the above the FIFO size can be much greater than the
+>>>>>> burst size and so ideally both of these values would be passed to the DMA.
+>>>>>>
+>>>>>> We could get by with just passing the FIFO size (as the max burst size)
+>>>>>> and then have the DMA driver set the max burst size depending on this,
+>>>>>> but this does feel quite correct for this DMA. Hence, ideally, we would
+>>>>>> like to pass both.
+>>>>>>
+>>>>>> We are also open to other ideas.
+>>>>>
+>>>>> I can not find public documentation (I think they are walled off by
+>>>>> registration), but correct me if I'm wrong:
+>>>>
+>>>> No unfortunately, you are not wrong here :-(
+>>>>
+>>>>> ADMAIF - peripheral side
+>>>>>  - kind of a small DMA for audio preipheral(s)?
+>>>>
+>>>> Yes this is the interface to the APE (audio processing engine) and data
+>>>> sent to the ADMAIF is then sent across a crossbar to one of many
+>>>> devices/interfaces (I2S, DMIC, etc). Basically a large mux that is user
+>>>> configurable depending on the use-case.
+>>>>
+>>>>>  - Variable FIFO size
+>>>>
+>>>> Yes.
+>>>>
+>>>>>  - sends DMA request to ADMA per words
+>>>>
+>>>> From Sameer's notes it says the ADMAIF send a signal to the ADMA per
+>>>> word, yes.
+>>>>
+>>>>> ADMA - system DMA
+>>>>>  - receives the DMA requests from ADMAIF
+>>>>>  - counts the requests
+>>>>>  - based on some threshold of the counter it will send/read from ADMAIF?
+>>>>>   - maxburst number of words probably?
+>>>>
+>>>> Sounds about right to me.
+>>>>
+>>>>> ADMA needs to know the ADMAIF's FIFO size because, it is the one who is
+>>>>> managing that FIFO from the outside, making sure that it does not over
+>>>>> or underrun?
+>>>>
+>>>> Yes.
+>>>>
+>>>>> And it is the one who sets the pace (in effect the DMA burst size - how
+>>>>> many bytes the DMA jumps between refills) of refills to the ADMAIF's FIFO?
+>>>>
+>>>> Yes.
+>>>>
+>>>> So currently, if you look at the ADMA driver
+>>>> (drivers/dma/tegra210-adma.c) you will see we use the src/dst_maxburst
+>>>> for the burst, but the FIFO size is hard-coded (see the
+>>>> TEGRA210_FIFO_CTRL_DEFAULT and TEGRA186_FIFO_CTRL_DEFAULT definitions).
+>>>> Ideally, we should not hard-code this but pass it.
+>>>
+>>> Sure, hardcoding is never good ;)
+>>>
+>>>> Given that there are no current users of the ADMA upstream, we could
+>>>> change the usage of the src/dst_maxburst, but being able to set the FIFO
+>>>> size as well would be ideal.
+>>>
+>>> Looking at the drivers/dma/tegra210-adma.c for the
+>>> TEGRA*_FIFO_CTRL_DEFAULT definition it is still not clear where the
+>>> remote FIFO size would fit.
+>>> There are fields for overflow and starvation(?) thresholds and TX/RX
+>>> size (assuming word length, 3 == 32bits?).
+>>
+>> The TX/RX size are the FIFO size. So 3 equates to a FIFO size of 3 * 64
+>> bytes.
+>>
+>>> Both threshold is set to one, so I assume currently ADMA is
+>>> pushing/pulling data word by word.
+>>
+>> That's different. That indicates thresholds when transfers start.
+>>
+>>> Not sure what the burst size is used for, my guess would be that it is
+>>> used on the memory (DDR) side for optimized, more efficient accesses?
+>>
+>> That is the actual burst size.
+>>
+>>> My guess is that the threshold values are the counter limits, if the DMA
+>>> request counter reaches it then ADMA would do a threshold limit worth of
+>>> push/pull to ADMAIF.
+>>> Or there is another register where the remote FIFO size can be written
+>>> and ADMA is counting back from there until it reaches the threshold (and
+>>> pushes/pulling again threshold amount of data) so it keeps the FIFO
+>>> filled with at least threshold amount of data?
+>>>
+>>> I think in both cases the threshold would be the maxburst.
+>>>
+>>> I suppose you have the patch for adma on how to use the fifo_size
+>>> parameter? That would help understand what you are trying to achieve better.
+>>
+>> Its quite simple, we would just use the FIFO size to set the fields
+>> TEGRAXXX_ADMA_CH_FIFO_CTRL_TXSIZE/RXSIZE in the
+>> TEGRAXXX_ADMA_CH_FIFO_CTRL register. That's all.
+>>
+>> Jon
+>>
+> 
+> Hi,
+> 
+> If I understood everything correctly, the FIFO buffer is shared among
+> all of the ADMA clients and hence it should be up to the ADMA driver to
+> manage the quotas of the clients. So if there is only one client that
+> uses ADMA at a time, then this client will get a whole FIFO buffer, but
+> once another client starts to use ADMA, then the ADMA driver will have
+> to reconfigure hardware to split the quotas.
+> 
 
-So for performance reasons we'd like to have the ability to run multiple
-concurrent snapshots and also favors readers in this case. And in case
-there aren't pending snapshots (which will be the majority of the cases)
-we rely on the percpu's writers counter to avoid cacheline contention.
+You could also simply hardcode the quotas per client in the ADMA driver
+if the quotas are going to be static anyway.
 
-The main gain from using the drw is it's now a lot easier to reason about
-the guarantees of the locking scheme and whether there is some silent
-breakage lurking.
-
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
----
- fs/btrfs/ctree.h       | 10 +++-------
- fs/btrfs/disk-io.c     | 39 +++------------------------------------
- fs/btrfs/extent-tree.c | 35 -----------------------------------
- fs/btrfs/file.c        | 12 ++++++------
- fs/btrfs/inode.c       |  8 ++++----
- fs/btrfs/ioctl.c       | 10 +++-------
- 6 files changed, 19 insertions(+), 95 deletions(-)
-
-diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-index a66ed58058d9..fa8a2e15c77c 100644
---- a/fs/btrfs/ctree.h
-+++ b/fs/btrfs/ctree.h
-@@ -32,6 +32,7 @@
- #include "extent_io.h"
- #include "extent_map.h"
- #include "async-thread.h"
-+#include "drw_lock.h"
- 
- struct btrfs_trans_handle;
- struct btrfs_transaction;
-@@ -1174,11 +1175,6 @@ static inline struct btrfs_fs_info *btrfs_sb(struct super_block *sb)
- 	return sb->s_fs_info;
- }
- 
--struct btrfs_subvolume_writers {
--	struct percpu_counter	counter;
--	wait_queue_head_t	wait;
--};
--
- /*
-  * The state of btrfs root
-  */
-@@ -1350,8 +1346,8 @@ struct btrfs_root {
- 	 * root_item_lock.
- 	 */
- 	int dedupe_in_progress;
--	struct btrfs_subvolume_writers *subv_writers;
--	atomic_t will_be_snapshotted;
-+	struct btrfs_drw_lock snapshot_lock;
-+
- 	atomic_t snapshot_force_cow;
- 
- 	/* For qgroup metadata reserved space */
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index 05f215b4d060..ece45e606846 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -1125,32 +1125,6 @@ void btrfs_clean_tree_block(struct extent_buffer *buf)
- 	}
- }
- 
--static struct btrfs_subvolume_writers *btrfs_alloc_subvolume_writers(void)
--{
--	struct btrfs_subvolume_writers *writers;
--	int ret;
--
--	writers = kmalloc(sizeof(*writers), GFP_NOFS);
--	if (!writers)
--		return ERR_PTR(-ENOMEM);
--
--	ret = percpu_counter_init(&writers->counter, 0, GFP_NOFS);
--	if (ret < 0) {
--		kfree(writers);
--		return ERR_PTR(ret);
--	}
--
--	init_waitqueue_head(&writers->wait);
--	return writers;
--}
--
--static void
--btrfs_free_subvolume_writers(struct btrfs_subvolume_writers *writers)
--{
--	percpu_counter_destroy(&writers->counter);
--	kfree(writers);
--}
--
- static void __setup_root(struct btrfs_root *root, struct btrfs_fs_info *fs_info,
- 			 u64 objectid)
- {
-@@ -1198,7 +1172,6 @@ static void __setup_root(struct btrfs_root *root, struct btrfs_fs_info *fs_info,
- 	atomic_set(&root->log_writers, 0);
- 	atomic_set(&root->log_batch, 0);
- 	refcount_set(&root->refs, 1);
--	atomic_set(&root->will_be_snapshotted, 0);
- 	atomic_set(&root->snapshot_force_cow, 0);
- 	atomic_set(&root->nr_swapfiles, 0);
- 	root->log_transid = 0;
-@@ -1487,7 +1460,6 @@ struct btrfs_root *btrfs_read_fs_root(struct btrfs_root *tree_root,
- int btrfs_init_fs_root(struct btrfs_root *root)
- {
- 	int ret;
--	struct btrfs_subvolume_writers *writers;
- 
- 	root->free_ino_ctl = kzalloc(sizeof(*root->free_ino_ctl), GFP_NOFS);
- 	root->free_ino_pinned = kzalloc(sizeof(*root->free_ino_pinned),
-@@ -1497,12 +1469,8 @@ int btrfs_init_fs_root(struct btrfs_root *root)
- 		goto fail;
- 	}
- 
--	writers = btrfs_alloc_subvolume_writers();
--	if (IS_ERR(writers)) {
--		ret = PTR_ERR(writers);
--		goto fail;
--	}
--	root->subv_writers = writers;
-+
-+	btrfs_drw_lock_init(&root->snapshot_lock);
- 
- 	btrfs_init_free_ino_ctl(root);
- 	spin_lock_init(&root->ino_cache_lock);
-@@ -3873,8 +3841,7 @@ void btrfs_free_fs_root(struct btrfs_root *root)
- 	WARN_ON(!RB_EMPTY_ROOT(&root->inode_tree));
- 	if (root->anon_dev)
- 		free_anon_bdev(root->anon_dev);
--	if (root->subv_writers)
--		btrfs_free_subvolume_writers(root->subv_writers);
-+	btrfs_drw_lock_destroy(&root->snapshot_lock);
- 	free_extent_buffer(root->node);
- 	free_extent_buffer(root->commit_root);
- 	kfree(root->free_ino_ctl);
-diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
-index 5a11e4988243..3564bae0434d 100644
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -11322,41 +11322,6 @@ int btrfs_trim_fs(struct btrfs_fs_info *fs_info, struct fstrim_range *range)
-  * operations while snapshotting is ongoing and that cause the snapshot to be
-  * inconsistent (writes followed by expanding truncates for example).
-  */
--void btrfs_end_write_no_snapshotting(struct btrfs_root *root)
--{
--	percpu_counter_dec(&root->subv_writers->counter);
--	cond_wake_up(&root->subv_writers->wait);
--}
--
--int btrfs_start_write_no_snapshotting(struct btrfs_root *root)
--{
--	if (atomic_read(&root->will_be_snapshotted))
--		return 0;
--
--	percpu_counter_inc(&root->subv_writers->counter);
--	/*
--	 * Make sure counter is updated before we check for snapshot creation.
--	 */
--	smp_mb();
--	if (atomic_read(&root->will_be_snapshotted)) {
--		btrfs_end_write_no_snapshotting(root);
--		return 0;
--	}
--	return 1;
--}
--
--void btrfs_wait_for_snapshot_creation(struct btrfs_root *root)
--{
--	while (true) {
--		int ret;
--
--		ret = btrfs_start_write_no_snapshotting(root);
--		if (ret)
--			break;
--		wait_var_event(&root->will_be_snapshotted,
--			       !atomic_read(&root->will_be_snapshotted));
--	}
--}
- 
- void btrfs_mark_bg_unused(struct btrfs_block_group_cache *bg)
- {
-diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-index 5370152ea7e3..b9f01efff276 100644
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -26,6 +26,7 @@
- #include "volumes.h"
- #include "qgroup.h"
- #include "compression.h"
-+#include "drw_lock.h"
- 
- static struct kmem_cache *btrfs_inode_defrag_cachep;
- /*
-@@ -1554,8 +1555,7 @@ static noinline int check_can_nocow(struct btrfs_inode *inode, loff_t pos,
- 	u64 num_bytes;
- 	int ret;
- 
--	ret = btrfs_start_write_no_snapshotting(root);
--	if (!ret)
-+	if (!btrfs_drw_try_write_lock(&root->snapshot_lock))
- 		return -EAGAIN;
- 
- 	lockstart = round_down(pos, fs_info->sectorsize);
-@@ -1570,7 +1570,7 @@ static noinline int check_can_nocow(struct btrfs_inode *inode, loff_t pos,
- 			NULL, NULL, NULL);
- 	if (ret <= 0) {
- 		ret = 0;
--		btrfs_end_write_no_snapshotting(root);
-+		btrfs_drw_write_unlock(&root->snapshot_lock);
- 	} else {
- 		*write_bytes = min_t(size_t, *write_bytes ,
- 				     num_bytes - pos + lockstart);
-@@ -1675,7 +1675,7 @@ static noinline ssize_t btrfs_buffered_write(struct kiocb *iocb,
- 						data_reserved, pos,
- 						write_bytes);
- 			else
--				btrfs_end_write_no_snapshotting(root);
-+				btrfs_drw_write_unlock(&root->snapshot_lock);
- 			break;
- 		}
- 
-@@ -1769,7 +1769,7 @@ static noinline ssize_t btrfs_buffered_write(struct kiocb *iocb,
- 
- 		release_bytes = 0;
- 		if (only_release_metadata)
--			btrfs_end_write_no_snapshotting(root);
-+			btrfs_drw_write_unlock(&root->snapshot_lock);
- 
- 		if (only_release_metadata && copied > 0) {
- 			lockstart = round_down(pos,
-@@ -1799,7 +1799,7 @@ static noinline ssize_t btrfs_buffered_write(struct kiocb *iocb,
- 
- 	if (release_bytes) {
- 		if (only_release_metadata) {
--			btrfs_end_write_no_snapshotting(root);
-+			btrfs_drw_write_unlock(&root->snapshot_lock);
- 			btrfs_delalloc_release_metadata(BTRFS_I(inode),
- 					release_bytes, true);
- 		} else {
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index f5e19ba27bdc..00118805ef00 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -5102,16 +5102,16 @@ static int btrfs_setsize(struct inode *inode, struct iattr *attr)
- 		 * truncation, it must capture all writes that happened before
- 		 * this truncation.
- 		 */
--		btrfs_wait_for_snapshot_creation(root);
-+		btrfs_drw_write_lock(&root->snapshot_lock);
- 		ret = btrfs_cont_expand(inode, oldsize, newsize);
- 		if (ret) {
--			btrfs_end_write_no_snapshotting(root);
-+			btrfs_drw_write_unlock(&root->snapshot_lock);
- 			return ret;
- 		}
- 
- 		trans = btrfs_start_transaction(root, 1);
- 		if (IS_ERR(trans)) {
--			btrfs_end_write_no_snapshotting(root);
-+			btrfs_drw_write_unlock(&root->snapshot_lock);
- 			return PTR_ERR(trans);
- 		}
- 
-@@ -5119,7 +5119,7 @@ static int btrfs_setsize(struct inode *inode, struct iattr *attr)
- 		btrfs_ordered_update_i_size(inode, i_size_read(inode), NULL);
- 		pagecache_isize_extended(inode, oldsize, newsize);
- 		ret = btrfs_update_inode(trans, root, inode);
--		btrfs_end_write_no_snapshotting(root);
-+		btrfs_drw_write_unlock(&root->snapshot_lock);
- 		btrfs_end_transaction(trans);
- 	} else {
- 
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index 803577d42518..e35f1b14d772 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -791,11 +791,7 @@ static int create_snapshot(struct btrfs_root *root, struct inode *dir,
- 	 * possible. This is to avoid later writeback (running dealloc) to
- 	 * fallback to COW mode and unexpectedly fail with ENOSPC.
- 	 */
--	atomic_inc(&root->will_be_snapshotted);
--	smp_mb__after_atomic();
--	/* wait for no snapshot writes */
--	wait_event(root->subv_writers->wait,
--		   percpu_counter_sum(&root->subv_writers->counter) == 0);
-+	btrfs_drw_read_lock(&root->snapshot_lock);
- 
- 	ret = btrfs_start_delalloc_snapshot(root);
- 	if (ret)
-@@ -875,8 +871,8 @@ static int create_snapshot(struct btrfs_root *root, struct inode *dir,
- dec_and_free:
- 	if (snapshot_force_cow)
- 		atomic_dec(&root->snapshot_force_cow);
--	if (atomic_dec_and_test(&root->will_be_snapshotted))
--		wake_up_var(&root->will_be_snapshotted);
-+	btrfs_drw_read_unlock(&root->snapshot_lock);
-+
- free_pending:
- 	kfree(pending_snapshot->root_item);
- 	btrfs_free_path(pending_snapshot->path);
 -- 
-2.17.1
-
+Dmitry
