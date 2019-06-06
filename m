@@ -2,127 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 333FA37B0E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:29:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67BF737B19
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:32:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728203AbfFFR3a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 13:29:30 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:52902 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726762AbfFFR33 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 13:29:29 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x56HOuSi079163;
-        Thu, 6 Jun 2019 17:29:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=TDbZF773jSoChjtiU4YTRwsZq9wLcLVh4IoX023ZDqI=;
- b=qlYdtrGtNkq/DGUy1Fy3cE4F0JRT0pOjWdfM8BHHilOnc5DY5/X9rfnKM49nW5kQFteu
- GFiEcgizfyig8KGU+oQpIam15N7jiieMQWzwZ6a6UfacUBZDVSrVAc7QppkbZeXwAvMb
- xNZpbZZ1HZRtZDfKfRRIdtyzCUzgDF9zPea5IGl4UdvQJ5Hbn9fa9uIFo5Iq3CtZupKr
- Jpmw83HtEHf/OcRaVL6deHde9JZhTt1TU+rkW5A+jYhyyNXQYCNf7nZmF/nKdw93sF3q
- PHsmqEEksyw814FM9w7R3BqBMCsY/eNlJtmApp4T37nMOFwu8WP4ZHeyLi9pvJsqOBop dw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2130.oracle.com with ESMTP id 2suevdt5eq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Jun 2019 17:29:24 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x56HS4eo085739;
-        Thu, 6 Jun 2019 17:29:24 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2swngjju6b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Jun 2019 17:29:24 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x56HTMoW005092;
-        Thu, 6 Jun 2019 17:29:22 GMT
-Received: from char.us.oracle.com (/10.152.32.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 06 Jun 2019 10:29:22 -0700
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id 6EC486A0125; Thu,  6 Jun 2019 13:30:46 -0400 (EDT)
-Date:   Thu, 6 Jun 2019 13:30:46 -0400
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     Daniel Kiper <daniel.kiper@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        dpsmith@apertussolutions.com, eric.snowberg@oracle.com,
-        hpa@zytor.com, kanth.ghatraju@oracle.com, ross.philipson@oracle.com
-Subject: Re: [PATCH RFC 0/2] x86/boot: Introduce the setup_header2
-Message-ID: <20190606173046.GI3252@char.us.oracle.com>
-References: <20190524095504.12894-1-daniel.kiper@oracle.com>
- <20190605135031.62grhhxn2pfbkcdg@tomti.i.net-space.pl>
- <20190605140117.GA32106@char.us.oracle.com>
- <20190606115108.sfp2bnu3qzdby4h7@tomti.i.net-space.pl>
+        id S1730162AbfFFRcc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 13:32:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57892 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726924AbfFFRcc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 13:32:32 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C64192083D;
+        Thu,  6 Jun 2019 17:32:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559842351;
+        bh=6Bj6NJLiqPYiupjoKhEXTA+eM9B1Ma8fK74v78tg4IQ=;
+        h=In-Reply-To:References:To:Subject:From:Cc:Date:From;
+        b=Gc5mJ30rK4+KTjujOJr4Un4VN1suuSTTE/l+Gg5brBl7cMnaba3IbDkkiTAx6IN45
+         VytCZ5mWi5eWL0nzGzWrOUQoVEJOp9LkltE1Mz3IzNXk40SHGJWeurDW15Gb16/m+t
+         FEeeBUS4puzIk3Y8N8OvKtWsP67HYCQ9pU9SCxBU=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190606115108.sfp2bnu3qzdby4h7@tomti.i.net-space.pl>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9280 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=723
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906060117
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9280 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=817 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906060117
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <VI1PR07MB4432BB9A401E0202C4D7D948FD070@VI1PR07MB4432.eurprd07.prod.outlook.com>
+References: <VI1PR07MB4432BB9A401E0202C4D7D948FD070@VI1PR07MB4432.eurprd07.prod.outlook.com>
+To:     Philippe Mazenauer <philippe.mazenauer@outlook.de>
+Subject: Re: [PATCH] clk: qcom: clk-rpm: Removed unused macros/variable
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Philippe Mazenauer <philippe.mazenauer@outlook.de>,
+        Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+User-Agent: alot/0.8.1
+Date:   Thu, 06 Jun 2019 10:32:30 -0700
+Message-Id: <20190606173231.C64192083D@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 01:51:08PM +0200, Daniel Kiper wrote:
-> On Wed, Jun 05, 2019 at 10:01:17AM -0400, Konrad Rzeszutek Wilk wrote:
-> > On Wed, Jun 05, 2019 at 03:50:31PM +0200, Daniel Kiper wrote:
-> > > On Fri, May 24, 2019 at 11:55:02AM +0200, Daniel Kiper wrote:
-> > > > Hi,
-> > > >
-> > > > This change is needed to properly start the Linux kernel in Intel TXT mode and
-> > > > is a part of the TrenchBoot project (https://github.com/TrenchBoot).
-> >
-> > Can you please expand more on this?
-> >
-> > Nice explanation of why, other alternative solutions that didn't work, and so on.
-> 
-> OK.
-> 
-> > > > Daniel
-> > > >
-> > > >  Documentation/x86/boot.txt               | 55 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
-> > > >  arch/x86/Kconfig                         |  7 +++++++
-> > > >  arch/x86/boot/Makefile                   |  2 +-
-> > > >  arch/x86/boot/compressed/Makefile        |  5 +++--
-> > > >  arch/x86/boot/compressed/setup_header2.S | 18 ++++++++++++++++++
-> > > >  arch/x86/boot/compressed/sl_stub.S       | 28 ++++++++++++++++++++++++++++
-> > > >  arch/x86/boot/header.S                   |  3 ++-
-> > > >  arch/x86/boot/tools/build.c              |  8 ++++++++
-> > > >  arch/x86/include/uapi/asm/bootparam.h    |  1 +
-> > > >  9 files changed, 123 insertions(+), 4 deletions(-)
-> > > >
-> > > > Daniel Kiper (2):
-> > > >       x86/boot: Introduce the setup_header2
-> > > >       x86/boot: Introduce dummy MLE header
-> > >
-> > > Ping?
-> >
-> > Can you add Ingo and Thomas to the To: next time please?
-> 
-> OK.
-> 
-> > Also please drop the second patch.
-> 
-> Why? This is an example how to use the setup_header2.
+Quoting Philippe Mazenauer (2019-05-21 02:45:25)
+> Removed macros DEFINE_CLK_RPM_PXO_BRANCH, DEFINE_CLK_RPM_CXO_BRANCH and
+> variable 'clk_rpm_branch_ops'. The macros and variable are not used in the
+> file.
+>=20
+> As the variable, which is used by the macros, is declared static, the
+> macros can't be used outside the file, are unused.
+>=20
+> ../drivers/clk/qcom/clk-rpm.c:461:29: warning: =E2=80=98clk_rpm_branch_op=
+s=E2=80=99 defined but not used [-Wunused-const-variable=3D]
+>  static const struct clk_ops clk_rpm_branch_ops =3D {
+>                              ^~~~~~~~~~~~~~~~~~
+>=20
+> Signed-off-by: Philippe Mazenauer <philippe.mazenauer@outlook.de>
 
-If you are going to post it as non-RFC (which I suspect you will
-for the next), then why post a patch that is not to be checked in?
+Yeah it's dead code but the qcom folks wanted to manage the crystal with
+this code so maybe we should just leave it around for them. Or they
+could dig it out of the git history.
 
-It just takes people time up.
-
-
-> 
-> Daniel
