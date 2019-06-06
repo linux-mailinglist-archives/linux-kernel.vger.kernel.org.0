@@ -2,286 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5A2837714
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 16:47:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B32E37721
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 16:50:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728936AbfFFOrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 10:47:08 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:11200 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727961AbfFFOrI (ORCPT
+        id S1728867AbfFFOuR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 10:50:17 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58130 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728667AbfFFOuR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 10:47:08 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cf927690000>; Thu, 06 Jun 2019 07:47:05 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 06 Jun 2019 07:47:05 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 06 Jun 2019 07:47:05 -0700
-Received: from [10.21.132.148] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 6 Jun
- 2019 14:47:02 +0000
-Subject: Re: [PATCH] [RFC] dmaengine: add fifo_size member
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Sameer Pujar <spujar@nvidia.com>, Vinod Koul <vkoul@kernel.org>
-CC:     <dan.j.williams@intel.com>, <tiwai@suse.com>,
-        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <sharadg@nvidia.com>, <rlokhande@nvidia.com>, <dramesh@nvidia.com>,
-        <mkumard@nvidia.com>, linux-tegra <linux-tegra@vger.kernel.org>
-References: <1556623828-21577-1-git-send-email-spujar@nvidia.com>
- <20190502060446.GI3845@vkoul-mobl.Dlink>
- <e852d576-9cc2-ed42-1a1a-d696112c88bf@nvidia.com>
- <20190502122506.GP3845@vkoul-mobl.Dlink>
- <3368d1e1-0d7f-f602-5b96-a978fcf4d91b@nvidia.com>
- <20190504102304.GZ3845@vkoul-mobl.Dlink>
- <ce0e9c0b-b909-54ae-9086-a1f0f6be903c@nvidia.com>
- <20190506155046.GH3845@vkoul-mobl.Dlink>
- <b7e28e73-7214-f1dc-866f-102410c88323@nvidia.com>
- <ed95f03a-bbe7-ad62-f2e1-9bfe22ec733a@ti.com>
- <4cab47d0-41c3-5a87-48e1-d7f085c2e091@nvidia.com>
- <8a5b84db-c00b-fff4-543f-69d90c245660@nvidia.com>
- <3f836a10-eaf3-f59b-7170-6fe937cf2e43@ti.com>
- <a36302fc-3173-070b-5c97-7d2c55d5e2cc@nvidia.com>
- <a08bec36-b375-6520-eff4-3d847ddfe07d@ti.com>
- <4593f37c-5e89-8559-4e80-99dbfe4235de@nvidia.com>
- <deae510a-f6ae-6a51-2875-a7463cac9169@gmail.com>
- <71795bb0-2b8f-2b58-281c-e7e15bca3164@gmail.com>
- <2eab4777-79b8-0aea-c22f-ac9d11284889@nvidia.com>
- <26a8e261-4872-78df-3620-ee4a1e843fa4@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <70afc624-0f6f-3dea-50e6-608806cc2cf5@nvidia.com>
-Date:   Thu, 6 Jun 2019 15:47:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <26a8e261-4872-78df-3620-ee4a1e843fa4@gmail.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1559832425; bh=MZLUnNkyZ6NZfAaIFWa+6v/eSKInpCrAyeNLOan4g3I=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=ZjbRl+U8GEqIOzsI85ObAuedwIQJ1/7cdPlpPGG67yH9CjW+0w2Ftp/9iZMmVPO9T
-         wX8Vp0j+Iq3VDC4sECG9hlJGfE3V31l2cv2OTvFYpGD1f8JeyBWXflt2CnlJAmkvuA
-         5HN380S7mbOHbcePY0DEwC3GPXf159crPLNyQPwjYE/QjjJjvVLMOfXOXY7Suu+SMR
-         iO7Hq/LobLrJhnot8l6OF7rKWGcY8TUIUhMNDQWkII84IoM6XGwHiDFxi9Uo4rz+pR
-         pB/BFN2aIyRZGqhDf1wbrZXHe52NEFgmtu4rlUVkzVGzVFN+BF/xd8iUHLn8IVhZbm
-         j/MPi76s1XxUQ==
+        Thu, 6 Jun 2019 10:50:17 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x56EZgWn143386
+        for <linux-kernel@vger.kernel.org>; Thu, 6 Jun 2019 10:50:16 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2sy2spfa62-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 10:50:15 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 6 Jun 2019 15:50:13 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 6 Jun 2019 15:50:09 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x56Eo82q45809782
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 6 Jun 2019 14:50:08 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 765A94C058;
+        Thu,  6 Jun 2019 14:50:08 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4AAF74C044;
+        Thu,  6 Jun 2019 14:50:07 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.80.30])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  6 Jun 2019 14:50:07 +0000 (GMT)
+Subject: Re: [PATCH v3 0/2] ima/evm fixes for v5.2
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        dmitry.kasatkin@huawei.com, mjg59@google.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+        stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+        silviu.vlasceanu@huawei.com
+Date:   Thu, 06 Jun 2019 10:49:56 -0400
+In-Reply-To: <3711f387-3aef-9fbb-1bb4-dded6807b033@huawei.com>
+References: <20190606112620.26488-1-roberto.sassu@huawei.com>
+         <3711f387-3aef-9fbb-1bb4-dded6807b033@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19060614-0012-0000-0000-00000325A790
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19060614-0013-0000-0000-0000215E8FBB
+Message-Id: <1559832596.4278.124.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-06_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906060102
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 2019-06-06 at 13:43 +0200, Roberto Sassu wrote:
+> On 6/6/2019 1:26 PM, Roberto Sassu wrote:
+> > Previous versions included the patch 'ima: don't ignore INTEGRITY_UNKNOWN
+> > EVM status'. However, I realized that this patch cannot be accepted alone
+> > because IMA-Appraisal would deny access to new files created during the
+> > boot. With the current behavior, those files are accessible because they
+> > have a valid security.ima (not protected by EVM) created after the first
+> > write.
+> > 
+> > A solution for this problem is to initialize EVM very early with a random
+> > key. Access to created files will be granted, even with the strict
+> > appraisal, because after the first write those files will have both
+> > security.ima and security.evm (HMAC calculated with the random key).
+> > 
+> > Strict appraisal will work only if it is done with signatures until the
+> > persistent HMAC key is loaded.
+> 
+> Changelog
+> 
+> v2:
+> - remove patch 1/3 (evm: check hash algorithm passed to init_desc());
+>    already accepted
+> - remove patch 3/3 (ima: show rules with IMA_INMASK correctly);
+>    already accepted
+> - add new patch (evm: add option to set a random HMAC key at early boot)
+> - patch 2/3: modify patch description
 
-On 06/06/2019 15:36, Dmitry Osipenko wrote:
-> 06.06.2019 17:26, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>
->> On 06/06/2019 14:55, Dmitry Osipenko wrote:
->>> 06.06.2019 16:45, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>> 06.06.2019 15:37, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>>
->>>>> On 06/06/2019 12:54, Peter Ujfalusi wrote:
->>>>>>
->>>>>>
->>>>>> On 06/06/2019 13.49, Jon Hunter wrote:
->>>>>>>
->>>>>>> On 06/06/2019 11:22, Peter Ujfalusi wrote:
->>>>>>>
->>>>>>> ...
->>>>>>>
->>>>>>>>>>> It does sounds like that FIFO_SIZE =3D=3D src/dst_maxburst in y=
-our case as
->>>>>>>>>>> well.
->>>>>>>>>> Not exactly equal.
->>>>>>>>>> ADMA burst_size can range from 1(WORD) to 16(WORDS)
->>>>>>>>>> FIFO_SIZE can be adjusted from 16(WORDS) to 1024(WORDS) [can var=
-y in
->>>>>>>>>> multiples of 16]
->>>>>>>>>
->>>>>>>>> So I think that the key thing to highlight here, is that the as S=
-ameer
->>>>>>>>> highlighted above for the Tegra ADMA there are two values that ne=
-ed to
->>>>>>>>> be programmed; the DMA client FIFO size and the max burst size. T=
-he ADMA
->>>>>>>>> has register fields for both of these.
->>>>>>>>
->>>>>>>> How does the ADMA uses the 'client FIFO size' and 'max burst size'
->>>>>>>> values and what is the relation of these values to the peripheral =
-side
->>>>>>>> (ADMAIF)?
->>>>>>>
->>>>>>> Per Sameer's previous comment, the FIFO size is used by the ADMA to
->>>>>>> determine how much space is available in the FIFO. I assume the bur=
-st
->>>>>>> size just limits how much data is transferred per transaction.
->>>>>>>
->>>>>>>>> As you can see from the above the FIFO size can be much greater t=
-han the
->>>>>>>>> burst size and so ideally both of these values would be passed to=
- the DMA.
->>>>>>>>>
->>>>>>>>> We could get by with just passing the FIFO size (as the max burst=
- size)
->>>>>>>>> and then have the DMA driver set the max burst size depending on =
-this,
->>>>>>>>> but this does feel quite correct for this DMA. Hence, ideally, we=
- would
->>>>>>>>> like to pass both.
->>>>>>>>>
->>>>>>>>> We are also open to other ideas.
->>>>>>>>
->>>>>>>> I can not find public documentation (I think they are walled off b=
-y
->>>>>>>> registration), but correct me if I'm wrong:
->>>>>>>
->>>>>>> No unfortunately, you are not wrong here :-(
->>>>>>>
->>>>>>>> ADMAIF - peripheral side
->>>>>>>>  - kind of a small DMA for audio preipheral(s)?
->>>>>>>
->>>>>>> Yes this is the interface to the APE (audio processing engine) and =
-data
->>>>>>> sent to the ADMAIF is then sent across a crossbar to one of many
->>>>>>> devices/interfaces (I2S, DMIC, etc). Basically a large mux that is =
-user
->>>>>>> configurable depending on the use-case.
->>>>>>>
->>>>>>>>  - Variable FIFO size
->>>>>>>
->>>>>>> Yes.
->>>>>>>
->>>>>>>>  - sends DMA request to ADMA per words
->>>>>>>
->>>>>>> From Sameer's notes it says the ADMAIF send a signal to the ADMA pe=
-r
->>>>>>> word, yes.
->>>>>>>
->>>>>>>> ADMA - system DMA
->>>>>>>>  - receives the DMA requests from ADMAIF
->>>>>>>>  - counts the requests
->>>>>>>>  - based on some threshold of the counter it will send/read from A=
-DMAIF?
->>>>>>>>   - maxburst number of words probably?
->>>>>>>
->>>>>>> Sounds about right to me.
->>>>>>>
->>>>>>>> ADMA needs to know the ADMAIF's FIFO size because, it is the one w=
-ho is
->>>>>>>> managing that FIFO from the outside, making sure that it does not =
-over
->>>>>>>> or underrun?
->>>>>>>
->>>>>>> Yes.
->>>>>>>
->>>>>>>> And it is the one who sets the pace (in effect the DMA burst size =
-- how
->>>>>>>> many bytes the DMA jumps between refills) of refills to the ADMAIF=
-'s FIFO?
->>>>>>>
->>>>>>> Yes.
->>>>>>>
->>>>>>> So currently, if you look at the ADMA driver
->>>>>>> (drivers/dma/tegra210-adma.c) you will see we use the src/dst_maxbu=
-rst
->>>>>>> for the burst, but the FIFO size is hard-coded (see the
->>>>>>> TEGRA210_FIFO_CTRL_DEFAULT and TEGRA186_FIFO_CTRL_DEFAULT definitio=
-ns).
->>>>>>> Ideally, we should not hard-code this but pass it.
->>>>>>
->>>>>> Sure, hardcoding is never good ;)
->>>>>>
->>>>>>> Given that there are no current users of the ADMA upstream, we coul=
-d
->>>>>>> change the usage of the src/dst_maxburst, but being able to set the=
- FIFO
->>>>>>> size as well would be ideal.
->>>>>>
->>>>>> Looking at the drivers/dma/tegra210-adma.c for the
->>>>>> TEGRA*_FIFO_CTRL_DEFAULT definition it is still not clear where the
->>>>>> remote FIFO size would fit.
->>>>>> There are fields for overflow and starvation(?) thresholds and TX/RX
->>>>>> size (assuming word length, 3 =3D=3D 32bits?).
->>>>>
->>>>> The TX/RX size are the FIFO size. So 3 equates to a FIFO size of 3 * =
-64
->>>>> bytes.
->>>>>
->>>>>> Both threshold is set to one, so I assume currently ADMA is
->>>>>> pushing/pulling data word by word.
->>>>>
->>>>> That's different. That indicates thresholds when transfers start.
->>>>>
->>>>>> Not sure what the burst size is used for, my guess would be that it =
-is
->>>>>> used on the memory (DDR) side for optimized, more efficient accesses=
-?
->>>>>
->>>>> That is the actual burst size.
->>>>>
->>>>>> My guess is that the threshold values are the counter limits, if the=
- DMA
->>>>>> request counter reaches it then ADMA would do a threshold limit wort=
-h of
->>>>>> push/pull to ADMAIF.
->>>>>> Or there is another register where the remote FIFO size can be writt=
-en
->>>>>> and ADMA is counting back from there until it reaches the threshold =
-(and
->>>>>> pushes/pulling again threshold amount of data) so it keeps the FIFO
->>>>>> filled with at least threshold amount of data?
->>>>>>
->>>>>> I think in both cases the threshold would be the maxburst.
->>>>>>
->>>>>> I suppose you have the patch for adma on how to use the fifo_size
->>>>>> parameter? That would help understand what you are trying to achieve=
- better.
->>>>>
->>>>> Its quite simple, we would just use the FIFO size to set the fields
->>>>> TEGRAXXX_ADMA_CH_FIFO_CTRL_TXSIZE/RXSIZE in the
->>>>> TEGRAXXX_ADMA_CH_FIFO_CTRL register. That's all.
->>>>>
->>>>> Jon
->>>>>
->>>>
->>>> Hi,
->>>>
->>>> If I understood everything correctly, the FIFO buffer is shared among
->>>> all of the ADMA clients and hence it should be up to the ADMA driver t=
-o
->>>> manage the quotas of the clients. So if there is only one client that
->>>> uses ADMA at a time, then this client will get a whole FIFO buffer, bu=
-t
->>>> once another client starts to use ADMA, then the ADMA driver will have
->>>> to reconfigure hardware to split the quotas.
->>>>
->>>
->>> You could also simply hardcode the quotas per client in the ADMA driver
->>> if the quotas are going to be static anyway.
->>
->> Essentially this is what we have done so far, but Sameer is looking for
->> a way to make this more programmable/flexible. We can always do that if
->> there is no other option indeed. However, seems like a good time to see
->> if there is a better way.
->=20
-> If the default values are good enough, then why bother? Otherwise it
-> looks like you'll need some kind of "quotas manager", please try to
-> figure out if it's really needed. It's always better to avoid
-> over-engineering.
+Roberto, as I tried explaining previously, this feature is not a
+simple bug fix.  These patches, if upstreamed, will be upstreamed the
+normal way, during an open window.  Whether they are classified as a
+bug fix has yet to be decided.
 
-We are proposing to add one variable. Hardly seems like over-engineering
-to me. Again we are just looking to see if this would be acceptable or not.
+Please stop Cc'ing stable.  If I don't Cc stable before sending the pull request, then Greg and Sasha have been really good about deciding which patches should be backported.  (Please refer to the comment on "Cc'ing stable" in section "5) Select the recipients for your patch" in Documentation/process/submitting-patches.rst.)
 
-Jon
+I'll review these patches, but in the future please use an appropriate patch set cover letter title in the subject line.
+
+thanks,
+
+Mimi
 
 
---=20
-nvpublic
+> 
+> v1:
+> - remove patch 2/4 (evm: reset status in evm_inode_post_setattr()); file
+>    attributes cannot be set if the signature is portable and immutable
+> - patch 3/4: add __ro_after_init to ima_appraise_req_evm variable
+>    declaration
+> - patch 3/4: remove ima_appraise_req_evm kernel option and introduce
+>    'enforce-evm' and 'log-evm' as possible values for ima_appraise=
+> - remove patch 4/4 (ima: only audit failed appraisal verifications)
+> - add new patch (ima: show rules with IMA_INMASK correctly)
+> 
+> 
+> > Roberto Sassu (2):
+> >    evm: add option to set a random HMAC key at early boot
+> >    ima: add enforce-evm and log-evm modes to strictly check EVM status
+> > 
+> >   .../admin-guide/kernel-parameters.txt         | 11 ++--
+> >   security/integrity/evm/evm.h                  | 10 +++-
+> >   security/integrity/evm/evm_crypto.c           | 57 ++++++++++++++++---
+> >   security/integrity/evm/evm_main.c             | 41 ++++++++++---
+> >   security/integrity/ima/ima_appraise.c         |  8 +++
+> >   security/integrity/integrity.h                |  1 +
+> >   6 files changed, 106 insertions(+), 22 deletions(-)
+> > 
+> 
+
