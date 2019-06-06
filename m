@@ -2,103 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B824C37A14
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 18:52:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1476C37A16
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 18:53:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728219AbfFFQwX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 12:52:23 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:44896 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726820AbfFFQwX (ORCPT
+        id S1728285AbfFFQw4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 12:52:56 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35129 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726820AbfFFQw4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 12:52:23 -0400
-Received: from pendragon.ideasonboard.com (unknown [109.132.30.162])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9EE7033B;
-        Thu,  6 Jun 2019 18:52:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1559839940;
-        bh=4mgK5rlkC0Kg4xqsp46YeuIphWIE4WWfImrJeArJBQs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bKlQSfkhFOtrbVAQU8MUF0RcPAgnXc92KmqC4bk2Qmmr4qVnwO9rrGX6Bhm+XSWIG
-         HQRBQAruWLH7dlCZsnK7AMcZamw/ReQKKmTFtBL7fQybco5o5k5OyuYIq1+h7R4Pgs
-         BMh4WJXTY/3OTCipIi8YA8HET2AamsmE4UK0e9NE=
-Date:   Thu, 6 Jun 2019 19:52:06 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc:     kieran.bingham+renesas@ideasonboard.com, airlied@linux.ie,
-        daniel@ffwll.ch, koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
-        VenkataRajesh.Kalakodima@in.bosch.com,
-        Harsha.ManjulaMallikarjun@in.bosch.com,
-        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/20] dt-bindings: display: renesas,cmm: Add R-Car CMM
- documentation
-Message-ID: <20190606165206.GI12825@pendragon.ideasonboard.com>
-References: <20190606142220.1392-1-jacopo+renesas@jmondi.org>
- <20190606142220.1392-2-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190606142220.1392-2-jacopo+renesas@jmondi.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 6 Jun 2019 12:52:56 -0400
+Received: by mail-wr1-f67.google.com with SMTP id m3so3196889wrv.2;
+        Thu, 06 Jun 2019 09:52:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:subject:date:message-id;
+        bh=NwazYYvakpD56nDBj7gStsrC67VjeBH73pfOomqk8lA=;
+        b=ZGaUetw87vqubmmWUiUtavsWOuhKwptVHKcsquvX1Kj4P97MNbjJMlbui9xg5xTjaj
+         zgRm7dDxRaVWIk7x3h3mNsViiER1bxs2NCdi8Y+vsZ8C3Coa8PafMRAlezkt4dt/JZA9
+         ji3ydLReyZCPoy2VkIlBEnBBoSr0oR0JIWUJ2rfMLxaLotRzU9atEw7mGnJEYI/8iO6W
+         jATFexQK/wHcCvtI5Ows6m/IlOFeezx/eLzZSz18ZUlUxD8MZk35xqDhPvZoYosQqY0D
+         LtN5Yipwy/0waTatg+BpAeS2Q5B2P/HpOpROKLGQjPx8sdYFwfWbvadfiP7ZYW8cQgHI
+         vXWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:subject:date:message-id;
+        bh=NwazYYvakpD56nDBj7gStsrC67VjeBH73pfOomqk8lA=;
+        b=kzh2bnOw75IuUq9FYuezUKNyZS+TDZ/M8d8EWyDM4CRHiNqOLYZzM4zrOtevfe5xQC
+         2v2gC3Tu0/rPRYf6PHi/8k21k4WWNFBfDccW2PEg8Gc+b5IS8Mg2CaT2WnrgHEntbgAs
+         Cv7K09nVwlF6vOl29Znw5obqEM1dcj+xrzZ97TVFvbwqsGm7AF0EJ3xxDnP1vD7LieWJ
+         umH7BxGYAiLR4jn7UAKZUBQuJsUeVZMCvFGPWuEGQrH+Y6bGSCHInWw/ROi5LDoXYDjm
+         wtXLQvJVAsVV5KELqNLc5MDoWDUUn7r1ot94yQ8WsUzcw9pXyqEiMyw2rdd5tvvzDIAo
+         yvaA==
+X-Gm-Message-State: APjAAAWBfpzD6p/vd0FfBVOOpSuvis/eWsr5YahA/GfNIDGabWINJzhW
+        I5fKLtvV1TKMf97a8QVa3FRfAPoO
+X-Google-Smtp-Source: APXvYqy6GNjkK/MlmeTuBC3pzhw8KIOl96r1qD1P6auyKICoMNZoLN9bpEDEAM/YH7o7hnrDlHFC0A==
+X-Received: by 2002:adf:f083:: with SMTP id n3mr2283517wro.316.1559839973844;
+        Thu, 06 Jun 2019 09:52:53 -0700 (PDT)
+Received: from 640k.lan ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id f8sm3075900wrx.11.2019.06.06.09.52.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Jun 2019 09:52:53 -0700 (PDT)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: [PATCH] KVM: x86: introduce is_pae_paging
+Date:   Thu,  6 Jun 2019 18:52:52 +0200
+Message-Id: <1559839972-124144-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+Checking for 32-bit PAE is quite common around code that fiddles with
+the PDPTRs.  Add a function to compress all checks into a single
+invocation.
 
-Thank you for the patch.
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ arch/x86/kvm/vmx/nested.c | 3 +--
+ arch/x86/kvm/vmx/vmx.c    | 4 ++--
+ arch/x86/kvm/x86.c        | 8 ++++----
+ arch/x86/kvm/x86.h        | 5 +++++
+ 4 files changed, 12 insertions(+), 8 deletions(-)
 
-On Thu, Jun 06, 2019 at 04:22:01PM +0200, Jacopo Mondi wrote:
-> Add device tree bindings documentation for the Renesas R-Car Display
-> Unit Color Management Module.
-> 
-> CMM is the image enhancement module available on each R-Car DU video
-> channel on Gen2 and Gen3 SoCs (V3H and V3M excluded).
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  .../bindings/display/renesas,cmm.txt          | 25 +++++++++++++++++++
->  1 file changed, 25 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/renesas,cmm.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/display/renesas,cmm.txt b/Documentation/devicetree/bindings/display/renesas,cmm.txt
-> new file mode 100644
-> index 000000000000..d8d3cf9ce2ce
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/renesas,cmm.txt
-> @@ -0,0 +1,25 @@
-> +* Renesas R-Car Color Management Module (CMM)
-> +
-> +Renesas R-Car image enhancement module connected to R-Car DU video channels.
-> +
-> +Required properties:
-> + - compatible: shall be one of:
-> +   - "renesas,cmm-gen3"
-> +   - "renesas,cmm-gen2"
-> +
-> + - reg: the address base and length of the memory area where CMM control
-> +   registers are mapped to.
-> +
-> + - clocks: phandle and clock-specifier pair to the CMM functional clock
-> +   supplier.
-> +
-> +Example:
-> +--------
-> +
-> +	cmm0: cmm@fea40000 {
-> +		compatible = "renesas,cmm";
-> +		reg = <0 0xfea40000 0 0x1000>;
-> +		power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-> +		clocks = <&cpg CPG_MOD 711>;
-> +		resets = <&cpg 711>;
-> +	};
-
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index be8afec29f68..33b2c0570419 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -962,8 +962,7 @@ static int nested_vmx_load_cr3(struct kvm_vcpu *vcpu, unsigned long cr3, bool ne
+ 		 * If PAE paging and EPT are both on, CR3 is not used by the CPU and
+ 		 * must not be dereferenced.
+ 		 */
+-		if (!is_long_mode(vcpu) && is_pae(vcpu) && is_paging(vcpu) &&
+-		    !nested_ept) {
++		if (is_pae_paging(vcpu) && !nested_ept) {
+ 			if (!load_pdptrs(vcpu, vcpu->arch.walk_mmu, cr3)) {
+ 				*entry_failure_code = ENTRY_FAIL_PDPTE;
+ 				return -EINVAL;
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index c03396525e3b..70bcfbd1a4b0 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -2768,7 +2768,7 @@ static void ept_load_pdptrs(struct kvm_vcpu *vcpu)
+ 		      (unsigned long *)&vcpu->arch.regs_dirty))
+ 		return;
+ 
+-	if (is_paging(vcpu) && is_pae(vcpu) && !is_long_mode(vcpu)) {
++	if (is_pae_paging(vcpu)) {
+ 		vmcs_write64(GUEST_PDPTR0, mmu->pdptrs[0]);
+ 		vmcs_write64(GUEST_PDPTR1, mmu->pdptrs[1]);
+ 		vmcs_write64(GUEST_PDPTR2, mmu->pdptrs[2]);
+@@ -2780,7 +2780,7 @@ void ept_save_pdptrs(struct kvm_vcpu *vcpu)
+ {
+ 	struct kvm_mmu *mmu = vcpu->arch.walk_mmu;
+ 
+-	if (is_paging(vcpu) && is_pae(vcpu) && !is_long_mode(vcpu)) {
++	if (is_pae_paging(vcpu)) {
+ 		mmu->pdptrs[0] = vmcs_read64(GUEST_PDPTR0);
+ 		mmu->pdptrs[1] = vmcs_read64(GUEST_PDPTR1);
+ 		mmu->pdptrs[2] = vmcs_read64(GUEST_PDPTR2);
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 88489af13e96..2da741329f6d 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -719,7 +719,7 @@ bool pdptrs_changed(struct kvm_vcpu *vcpu)
+ 	gfn_t gfn;
+ 	int r;
+ 
+-	if (is_long_mode(vcpu) || !is_pae(vcpu) || !is_paging(vcpu))
++	if (!is_pae_paging(vcpu))
+ 		return false;
+ 
+ 	if (!test_bit(VCPU_EXREG_PDPTR,
+@@ -962,8 +962,8 @@ int kvm_set_cr3(struct kvm_vcpu *vcpu, unsigned long cr3)
+ 	if (is_long_mode(vcpu) &&
+ 	    (cr3 & rsvd_bits(cpuid_maxphyaddr(vcpu), 63)))
+ 		return 1;
+-	else if (is_pae(vcpu) && is_paging(vcpu) &&
+-		   !load_pdptrs(vcpu, vcpu->arch.walk_mmu, cr3))
++	else if (is_pae_paging(vcpu) &&
++		 !load_pdptrs(vcpu, vcpu->arch.walk_mmu, cr3))
+ 		return 1;
+ 
+ 	kvm_mmu_new_cr3(vcpu, cr3, skip_tlb_flush);
+@@ -8596,7 +8596,7 @@ static int __set_sregs(struct kvm_vcpu *vcpu, struct kvm_sregs *sregs)
+ 		kvm_update_cpuid(vcpu);
+ 
+ 	idx = srcu_read_lock(&vcpu->kvm->srcu);
+-	if (!is_long_mode(vcpu) && is_pae(vcpu) && is_paging(vcpu)) {
++	if (is_pae_paging(vcpu)) {
+ 		load_pdptrs(vcpu, vcpu->arch.walk_mmu, kvm_read_cr3(vcpu));
+ 		mmu_reset_needed = 1;
+ 	}
+diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+index 275b3b646023..e08a12892e8b 100644
+--- a/arch/x86/kvm/x86.h
++++ b/arch/x86/kvm/x86.h
+@@ -139,6 +139,11 @@ static inline int is_paging(struct kvm_vcpu *vcpu)
+ 	return likely(kvm_read_cr0_bits(vcpu, X86_CR0_PG));
+ }
+ 
++static inline bool is_pae_paging(struct kvm_vcpu *vcpu)
++{
++	return !is_long_mode(vcpu) && is_pae(vcpu) && is_paging(vcpu);
++}
++
+ static inline u32 bit(int bitno)
+ {
+ 	return 1 << (bitno & 31);
 -- 
-Regards,
+1.8.3.1
 
-Laurent Pinchart
