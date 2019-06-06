@@ -2,216 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE8CC37CC0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 20:53:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7433F37CB3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 20:52:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729535AbfFFSxO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 14:53:14 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34938 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726867AbfFFSxO (ORCPT
+        id S1728756AbfFFSwJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 14:52:09 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:56322 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726893AbfFFSwJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 14:53:14 -0400
-Received: by mail-pg1-f196.google.com with SMTP id s27so1865130pgl.2;
-        Thu, 06 Jun 2019 11:53:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2ro+lP/FA6+DcoZSPcQtKQmHJBN8Sm7FF/ObqevYH60=;
-        b=Eewjw3Ol2a+LEZf//XS2vKDBvTdcWff7Q7JQR8xBYqZEwvq1t/j4Q43lJmm2Z9/EWa
-         93x9KQ9LB/e5KZnUE+hvv4zyEj3AutBqjl/sZIzInUpzZSlk6t8GKA/vZh3a7/8kcUw7
-         l1FeSX6uy8MUgsx3X48tBNi9M57IFpXzY5GXZgGnI0uQ2FrwCUNKVIA8ExHQ2b30aUdy
-         WAK+Up8iCgcmq1ATz9fP+Brc+jnrMg24X5vyen+CY5MdJWFMd9FbqdSKZilWUkp3o1Ix
-         TDrtYLMWASDawz27BASogxgMhRYcC49Wj/xWWipaSw0NAhmWoW0v34vUOt5AuVp9/Gzo
-         AeEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=2ro+lP/FA6+DcoZSPcQtKQmHJBN8Sm7FF/ObqevYH60=;
-        b=nEQkDWr+fbNHiwYMebJn91kOkcNJxAJo0+oUL4yaSV4GhB9LpwXhceWHg47L+BNcUD
-         f4vAFaj48IfJMBdQQVhUtqt1EsP2f6PTCxqt8RytFvX9RgEzuXgiNXLeXmVSsHXKb0C3
-         fGLGN8DDuZBvEuEM+MhKSBOagIyKav80TfgER4HGTTyItIi9j19tu2F6YyuhVQBN3gD/
-         7KbuoeOU8ilwjphmWpceW2L/ytH8IsxEoygCo5xwI6CaFfDKX9rS+0jxE6ft8WIFlmaT
-         +4UJJxPqB5G7/K/e3+J/i8hrWO0ZeEHTgI23oxT2UFlTSFgLyN+9Nhkzjm474XMWGApM
-         6qkw==
-X-Gm-Message-State: APjAAAVkfn5V7+uxKn7OW8BaiVTigJXB/AUWWWdZOup1E+q0YB3T0gLH
-        8GlsgQDm2ltMpf2zY27NOvT4+Dpl
-X-Google-Smtp-Source: APXvYqyv47+M4mRYCRrl3AG1NtAoIbGfbUEbtEJYpA6xtbiYnPpqIQeshnwrz/JKfxcwahwDvihk1g==
-X-Received: by 2002:a63:1d53:: with SMTP id d19mr32590pgm.152.1559847193090;
-        Thu, 06 Jun 2019 11:53:13 -0700 (PDT)
-Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id j23sm2642925pgb.63.2019.06.06.11.53.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Jun 2019 11:53:12 -0700 (PDT)
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-To:     lgirdwood@gmail.com, broonie@kernel.org
-Cc:     agross@kernel.org, david.brown@linaro.org,
-        bjorn.andersson@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, jorge.ramirez-ortiz@linaro.org,
-        niklas.cassel@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Subject: [PATCH v2 7/7] drivers: regulator: qcom: add PMS405 SPMI regulator
-Date:   Thu,  6 Jun 2019 11:51:46 -0700
-Message-Id: <20190606185146.39890-1-jeffrey.l.hugo@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190606184842.39484-1-jeffrey.l.hugo@gmail.com>
-References: <20190606184842.39484-1-jeffrey.l.hugo@gmail.com>
+        Thu, 6 Jun 2019 14:52:09 -0400
+Received: from pps.filterd (m0001255.ppops.net [127.0.0.1])
+        by mx0b-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x56Ig4Nj002242;
+        Thu, 6 Jun 2019 11:51:50 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=vwnN4waA6d9z0fR5Swwuze6K8grcaiUuUp3q+pVflak=;
+ b=Mh4ZtBsAGPpumOq2QC6ZhaBSi8TLvWTxfNPqd75INoTBiVVTVL+TXpwzZpNYwxRGUqrS
+ x9M7Cs4kg2nqvV4CnV97+qWGy1/0GW/u0ZksEtI83pVFNuOCMR+HdXdXmGPneg3cpRr4
+ /sjAsbGSAWvOhInkL9UL/Koo14D72GeNUmY= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0b-00082601.pphosted.com with ESMTP id 2sy2kp9fmv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Thu, 06 Jun 2019 11:51:49 -0700
+Received: from ash-exopmbx101.TheFacebook.com (2620:10d:c0a8:82::b) by
+ ash-exhub203.TheFacebook.com (2620:10d:c0a8:83::5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 6 Jun 2019 11:51:49 -0700
+Received: from ash-exhub104.TheFacebook.com (2620:10d:c0a8:82::d) by
+ ash-exopmbx101.TheFacebook.com (2620:10d:c0a8:82::b) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 6 Jun 2019 11:51:49 -0700
+Received: from NAM05-DM3-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.35.175) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
+ via Frontend Transport; Thu, 6 Jun 2019 11:51:49 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vwnN4waA6d9z0fR5Swwuze6K8grcaiUuUp3q+pVflak=;
+ b=MWce6kgmPuEMghPok4IIEHztNiqoWFjOamIMwkxhegHkQSRgWKk9v6SsE+I8ocqRLTLBkiwpPi6XlBPDG/hZtHgcNp4XGJVWqIV2SJlugd1ZDg0tmk3ZaSz6Ji3RJhcJWwHy2SoWi2Ks04fg/dRMfcDvRnwEspX9NV/x7dh9DRI=
+Received: from CY4PR15MB1269.namprd15.prod.outlook.com (10.172.177.11) by
+ CY4PR15MB1207.namprd15.prod.outlook.com (10.172.180.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1965.14; Thu, 6 Jun 2019 18:51:47 +0000
+Received: from CY4PR15MB1269.namprd15.prod.outlook.com
+ ([fe80::c026:bca5:3f4e:9b1f]) by CY4PR15MB1269.namprd15.prod.outlook.com
+ ([fe80::c026:bca5:3f4e:9b1f%3]) with mapi id 15.20.1943.018; Thu, 6 Jun 2019
+ 18:51:47 +0000
+From:   Vijay Khemka <vijaykhemka@fb.com>
+To:     Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>,
+        "Patrick Venture" <venture@google.com>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Sai Dasari <sdasari@fb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v2] soc: aspeed: lpc-ctrl: make parameter optional
+Thread-Topic: [PATCH v2] soc: aspeed: lpc-ctrl: make parameter optional
+Thread-Index: AQHVFyd5zp8/qoe22EyZTW+8ecZdUKaOjh8A
+Date:   Thu, 6 Jun 2019 18:51:47 +0000
+Message-ID: <6828A39D-8950-4C07-8340-7AE9E2DD3EC0@fb.com>
+References: <20190530203654.3860925-1-vijaykhemka@fb.com>
+In-Reply-To: <20190530203654.3860925-1-vijaykhemka@fb.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [2620:10d:c090:200::3607]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: a4c7f357-635b-4072-2b0b-08d6eab00732
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:CY4PR15MB1207;
+x-ms-traffictypediagnostic: CY4PR15MB1207:
+x-microsoft-antispam-prvs: <CY4PR15MB1207693BA475CF5A0FFF5915DD170@CY4PR15MB1207.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6430;
+x-forefront-prvs: 00603B7EEF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(376002)(136003)(39860400002)(346002)(189003)(199004)(102836004)(73956011)(36756003)(2906002)(7736002)(186003)(316002)(14444005)(6116002)(110136005)(6506007)(76176011)(66556008)(64756008)(66446008)(66476007)(476003)(66946007)(91956017)(305945005)(54906003)(486006)(25786009)(99286004)(2501003)(33656002)(71200400001)(71190400001)(53936002)(83716004)(8936002)(76116006)(6512007)(6436002)(5660300002)(4326008)(6246003)(2201001)(14454004)(478600001)(2616005)(46003)(446003)(68736007)(229853002)(256004)(82746002)(8676002)(86362001)(81156014)(81166006)(6486002)(11346002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR15MB1207;H:CY4PR15MB1269.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: FbwDXVzsDQ9IGoxc6C8huFS5wl4KfTwKIOnsx8+OROYiRII9RZeJo03eDx5afthABddogyavIdm3iR8YQLE62xFXogYXgIBh+H8dLgiZwFYTIz/iTjAvcT5NAXcmzOPpIdfhl6P2NfzgHLzsJJ1NJrOtxzPhe4a2q+hW2DCr6un8zHWWR5VE+3L0dOI6f4MDsLoQJV2xJkMNwpuLPsfsSQqeMy1EF0sndeDPgnBswM6zqygjPeR4XruyXylZb79Tf0cHYswyylkazn6fjE/I1gMXFBlmNCysXwlpeloGs5wIPcGoRQAKJfL9ju1WiUteM6kw2Fgsd8x5UeCDX2uY/h4sn0I6hpaMFsuxbqPyVP5wB/NNCGNeHqjvHfz+FAVQyxx/0pM+UtNIEopK2+pdPyHGrPpQDsH6DhiRIW2ruP4=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <31BCCE25AE06874084F27F2CF4428710@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: a4c7f357-635b-4072-2b0b-08d6eab00732
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2019 18:51:47.4285
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: vijaykhemka@fb.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR15MB1207
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-06_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=914 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906060126
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
-
-The PMS405 has 5 HFSMPS and 13 LDO regulators,
-
-This commit adds support for one of the 5 HFSMPS regulators (s3) to
-the spmi regulator driver.
-
-The PMIC HFSMPS 430 regulators have 8 mV step size and a voltage
-control scheme consisting of two  8-bit registers defining a 16-bit
-voltage set point in units of millivolts
-
-S3 controls the cpu voltages (s3 is a buck regulator of type HFS430);
-it is therefore required so we can enable voltage scaling for safely
-running cpufreq.
-
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
----
- drivers/regulator/qcom_spmi-regulator.c | 41 +++++++++++++++++++++++--
- 1 file changed, 38 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/regulator/qcom_spmi-regulator.c b/drivers/regulator/qcom_spmi-regulator.c
-index c7880c1d4bcd..975655e787fe 100644
---- a/drivers/regulator/qcom_spmi-regulator.c
-+++ b/drivers/regulator/qcom_spmi-regulator.c
-@@ -105,6 +105,7 @@ enum spmi_regulator_logical_type {
- 	SPMI_REGULATOR_LOGICAL_TYPE_ULT_HO_SMPS,
- 	SPMI_REGULATOR_LOGICAL_TYPE_ULT_LDO,
- 	SPMI_REGULATOR_LOGICAL_TYPE_FTSMPS426,
-+	SPMI_REGULATOR_LOGICAL_TYPE_HFS430,
- };
- 
- enum spmi_regulator_type {
-@@ -157,6 +158,7 @@ enum spmi_regulator_subtype {
- 	SPMI_REGULATOR_SUBTYPE_ULT_HF_CTL2	= 0x0e,
- 	SPMI_REGULATOR_SUBTYPE_ULT_HF_CTL3	= 0x0f,
- 	SPMI_REGULATOR_SUBTYPE_ULT_HF_CTL4	= 0x10,
-+	SPMI_REGULATOR_SUBTYPE_HFS430		= 0x0a,
- };
- 
- enum spmi_common_regulator_registers {
-@@ -302,6 +304,8 @@ enum spmi_common_control_register_index {
- /* Clock rate in kHz of the FTSMPS426 regulator reference clock. */
- #define SPMI_FTSMPS426_CLOCK_RATE		4800
- 
-+#define SPMI_HFS430_CLOCK_RATE			1600
-+
- /* Minimum voltage stepper delay for each step. */
- #define SPMI_FTSMPS426_STEP_DELAY		2
- 
-@@ -515,6 +519,10 @@ static struct spmi_voltage_range ult_pldo_ranges[] = {
- 	SPMI_VOLTAGE_RANGE(0, 1750000, 1750000, 3337500, 3337500, 12500),
- };
- 
-+static struct spmi_voltage_range hfs430_ranges[] = {
-+	SPMI_VOLTAGE_RANGE(0, 320000, 320000, 2040000, 2040000, 8000),
-+};
-+
- static DEFINE_SPMI_SET_POINTS(pldo);
- static DEFINE_SPMI_SET_POINTS(nldo1);
- static DEFINE_SPMI_SET_POINTS(nldo2);
-@@ -530,6 +538,7 @@ static DEFINE_SPMI_SET_POINTS(ult_lo_smps);
- static DEFINE_SPMI_SET_POINTS(ult_ho_smps);
- static DEFINE_SPMI_SET_POINTS(ult_nldo);
- static DEFINE_SPMI_SET_POINTS(ult_pldo);
-+static DEFINE_SPMI_SET_POINTS(hfs430);
- 
- static inline int spmi_vreg_read(struct spmi_regulator *vreg, u16 addr, u8 *buf,
- 				 int len)
-@@ -1397,12 +1406,24 @@ static struct regulator_ops spmi_ftsmps426_ops = {
- 	.set_pull_down		= spmi_regulator_common_set_pull_down,
- };
- 
-+static struct regulator_ops spmi_hfs430_ops = {
-+	/* always on regulators */
-+	.set_voltage_sel	= spmi_regulator_ftsmps426_set_voltage,
-+	.set_voltage_time_sel	= spmi_regulator_set_voltage_time_sel,
-+	.get_voltage		= spmi_regulator_ftsmps426_get_voltage,
-+	.map_voltage		= spmi_regulator_single_map_voltage,
-+	.list_voltage		= spmi_regulator_common_list_voltage,
-+	.set_mode		= spmi_regulator_ftsmps426_set_mode,
-+	.get_mode		= spmi_regulator_ftsmps426_get_mode,
-+};
-+
- /* Maximum possible digital major revision value */
- #define INF 0xFF
- 
- static const struct spmi_regulator_mapping supported_regulators[] = {
- 	/*           type subtype dig_min dig_max ltype ops setpoints hpm_min */
- 	SPMI_VREG(BUCK,  GP_CTL,   0, INF, SMPS,   smps,   smps,   100000),
-+	SPMI_VREG(BUCK,  HFS430,   0, INF, HFS430, hfs430, hfs430,  10000),
- 	SPMI_VREG(LDO,   N300,     0, INF, LDO,    ldo,    nldo1,   10000),
- 	SPMI_VREG(LDO,   N600,     0,   0, LDO,    ldo,    nldo2,   10000),
- 	SPMI_VREG(LDO,   N1200,    0,   0, LDO,    ldo,    nldo2,   10000),
-@@ -1570,7 +1591,8 @@ static int spmi_regulator_init_slew_rate(struct spmi_regulator *vreg)
- 	return ret;
- }
- 
--static int spmi_regulator_init_slew_rate_ftsmps426(struct spmi_regulator *vreg)
-+static int spmi_regulator_init_slew_rate_ftsmps426(struct spmi_regulator *vreg,
-+						   int clock_rate)
- {
- 	int ret;
- 	u8 reg = 0;
-@@ -1587,7 +1609,7 @@ static int spmi_regulator_init_slew_rate_ftsmps426(struct spmi_regulator *vreg)
- 	delay >>= SPMI_FTSMPS426_STEP_CTRL_DELAY_SHIFT;
- 
- 	/* slew_rate has units of uV/us */
--	slew_rate = SPMI_FTSMPS426_CLOCK_RATE * range->step_uV;
-+	slew_rate = clock_rate * range->step_uV;
- 	slew_rate /= 1000 * (SPMI_FTSMPS426_STEP_DELAY << delay);
- 	slew_rate *= SPMI_FTSMPS426_STEP_MARGIN_NUM;
- 	slew_rate /= SPMI_FTSMPS426_STEP_MARGIN_DEN;
-@@ -1739,7 +1761,14 @@ static int spmi_regulator_of_parse(struct device_node *node,
- 			return ret;
- 		break;
- 	case SPMI_REGULATOR_LOGICAL_TYPE_FTSMPS426:
--		ret = spmi_regulator_init_slew_rate_ftsmps426(vreg);
-+		ret = spmi_regulator_init_slew_rate_ftsmps426(vreg,
-+						SPMI_FTSMPS426_CLOCK_RATE);
-+		if (ret)
-+			return ret;
-+		break;
-+	case SPMI_REGULATOR_LOGICAL_TYPE_HFS430:
-+		ret = spmi_regulator_init_slew_rate_ftsmps426(vreg,
-+							SPMI_HFS430_CLOCK_RATE);
- 		if (ret)
- 			return ret;
- 		break;
-@@ -1907,6 +1936,11 @@ static const struct spmi_regulator_data pm8005_regulators[] = {
- 	{ }
- };
- 
-+static const struct spmi_regulator_data pms405_regulators[] = {
-+	{ "s3", 0x1a00, }, /* supply name in the dts only */
-+	{ }
-+};
-+
- static const struct of_device_id qcom_spmi_regulator_match[] = {
- 	{ .compatible = "qcom,pm8005-regulators", .data = &pm8005_regulators },
- 	{ .compatible = "qcom,pm8841-regulators", .data = &pm8841_regulators },
-@@ -1914,6 +1948,7 @@ static const struct of_device_id qcom_spmi_regulator_match[] = {
- 	{ .compatible = "qcom,pm8941-regulators", .data = &pm8941_regulators },
- 	{ .compatible = "qcom,pm8994-regulators", .data = &pm8994_regulators },
- 	{ .compatible = "qcom,pmi8994-regulators", .data = &pmi8994_regulators },
-+	{ .compatible = "qcom,pms405-regulators", .data = &pms405_regulators },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, qcom_spmi_regulator_match);
--- 
-2.17.1
-
+UGxlYXNlIHVwZGF0ZSBvbiB0aGlzIHBhdGNoLg0KDQrvu79PbiA1LzMwLzE5LCAxOjM3IFBNLCAi
+VmlqYXkgS2hlbWthIiA8dmlqYXlraGVta2FAZmIuY29tPiB3cm90ZToNCg0KICAgIE1ha2luZyBt
+ZW1vcnktcmVnaW9uIGFuZCBmbGFzaCBhcyBvcHRpb25hbCBwYXJhbWV0ZXIgaW4gZGV2aWNlDQog
+ICAgdHJlZSBpZiB1c2VyIG5lZWRzIHRvIHVzZSB0aGVzZSBwYXJhbWV0ZXIgdGhyb3VnaCBpb2N0
+bCB0aGVuDQogICAgbmVlZCB0byBkZWZpbmUgaW4gZGV2aWNldHJlZS4NCiAgICANCiAgICBTaWdu
+ZWQtb2ZmLWJ5OiBWaWpheSBLaGVta2EgPHZpamF5a2hlbWthQGZiLmNvbT4NCiAgICBSZXZpZXdl
+ZC1ieTogQW5kcmV3IEplZmZlcnkgPGFuZHJld0Bhai5pZC5hdT4NCiAgICAtLS0NCiAgICAgZHJp
+dmVycy9zb2MvYXNwZWVkL2FzcGVlZC1scGMtY3RybC5jIHwgNTggKysrKysrKysrKysrKysrKyst
+LS0tLS0tLS0tLQ0KICAgICAxIGZpbGUgY2hhbmdlZCwgMzYgaW5zZXJ0aW9ucygrKSwgMjIgZGVs
+ZXRpb25zKC0pDQogICAgDQogICAgZGlmZiAtLWdpdCBhL2RyaXZlcnMvc29jL2FzcGVlZC9hc3Bl
+ZWQtbHBjLWN0cmwuYyBiL2RyaXZlcnMvc29jL2FzcGVlZC9hc3BlZWQtbHBjLWN0cmwuYw0KICAg
+IGluZGV4IGEwMjRmODA0MjI1OS4uYWNhMTM3Nzk3NjRhIDEwMDY0NA0KICAgIC0tLSBhL2RyaXZl
+cnMvc29jL2FzcGVlZC9hc3BlZWQtbHBjLWN0cmwuYw0KICAgICsrKyBiL2RyaXZlcnMvc29jL2Fz
+cGVlZC9hc3BlZWQtbHBjLWN0cmwuYw0KICAgIEBAIC02OCw2ICs2OCw3IEBAIHN0YXRpYyBsb25n
+IGFzcGVlZF9scGNfY3RybF9pb2N0bChzdHJ1Y3QgZmlsZSAqZmlsZSwgdW5zaWduZWQgaW50IGNt
+ZCwNCiAgICAgCQl1bnNpZ25lZCBsb25nIHBhcmFtKQ0KICAgICB7DQogICAgIAlzdHJ1Y3QgYXNw
+ZWVkX2xwY19jdHJsICpscGNfY3RybCA9IGZpbGVfYXNwZWVkX2xwY19jdHJsKGZpbGUpOw0KICAg
+ICsJc3RydWN0IGRldmljZSAqZGV2ID0gZmlsZS0+cHJpdmF0ZV9kYXRhOw0KICAgICAJdm9pZCBf
+X3VzZXIgKnAgPSAodm9pZCBfX3VzZXIgKilwYXJhbTsNCiAgICAgCXN0cnVjdCBhc3BlZWRfbHBj
+X2N0cmxfbWFwcGluZyBtYXA7DQogICAgIAl1MzIgYWRkcjsNCiAgICBAQCAtOTAsNiArOTEsMTIg
+QEAgc3RhdGljIGxvbmcgYXNwZWVkX2xwY19jdHJsX2lvY3RsKHN0cnVjdCBmaWxlICpmaWxlLCB1
+bnNpZ25lZCBpbnQgY21kLA0KICAgICAJCWlmIChtYXAud2luZG93X2lkICE9IDApDQogICAgIAkJ
+CXJldHVybiAtRUlOVkFMOw0KICAgICANCiAgICArCQkvKiBJZiBtZW1vcnktcmVnaW9uIGlzIG5v
+dCBkZXNjcmliZWQgaW4gZGV2aWNlIHRyZWUgKi8NCiAgICArCQlpZiAoIWxwY19jdHJsLT5tZW1f
+c2l6ZSkgew0KICAgICsJCQlkZXZfZGJnKGRldiwgIkRpZG4ndCBmaW5kIHJlc2VydmVkIG1lbW9y
+eVxuIik7DQogICAgKwkJCXJldHVybiAtRU5YSU87DQogICAgKwkJfQ0KICAgICsNCiAgICAgCQlt
+YXAuc2l6ZSA9IGxwY19jdHJsLT5tZW1fc2l6ZTsNCiAgICAgDQogICAgIAkJcmV0dXJuIGNvcHlf
+dG9fdXNlcihwLCAmbWFwLCBzaXplb2YobWFwKSkgPyAtRUZBVUxUIDogMDsNCiAgICBAQCAtMTI2
+LDkgKzEzMywxOCBAQCBzdGF0aWMgbG9uZyBhc3BlZWRfbHBjX2N0cmxfaW9jdGwoc3RydWN0IGZp
+bGUgKmZpbGUsIHVuc2lnbmVkIGludCBjbWQsDQogICAgIAkJCXJldHVybiAtRUlOVkFMOw0KICAg
+ICANCiAgICAgCQlpZiAobWFwLndpbmRvd190eXBlID09IEFTUEVFRF9MUENfQ1RSTF9XSU5ET1df
+RkxBU0gpIHsNCiAgICArCQkJaWYgKCFscGNfY3RybC0+cG5vcl9zaXplKSB7DQogICAgKwkJCQlk
+ZXZfZGJnKGRldiwgIkRpZG4ndCBmaW5kIGhvc3QgcG5vciBmbGFzaFxuIik7DQogICAgKwkJCQly
+ZXR1cm4gLUVOWElPOw0KICAgICsJCQl9DQogICAgIAkJCWFkZHIgPSBscGNfY3RybC0+cG5vcl9i
+YXNlOw0KICAgICAJCQlzaXplID0gbHBjX2N0cmwtPnBub3Jfc2l6ZTsNCiAgICAgCQl9IGVsc2Ug
+aWYgKG1hcC53aW5kb3dfdHlwZSA9PSBBU1BFRURfTFBDX0NUUkxfV0lORE9XX01FTU9SWSkgew0K
+ICAgICsJCQkvKiBJZiBtZW1vcnktcmVnaW9uIGlzIG5vdCBkZXNjcmliZWQgaW4gZGV2aWNlIHRy
+ZWUgKi8NCiAgICArCQkJaWYgKCFscGNfY3RybC0+bWVtX3NpemUpIHsNCiAgICArCQkJCWRldl9k
+YmcoZGV2LCAiRGlkbid0IGZpbmQgcmVzZXJ2ZWQgbWVtb3J5XG4iKTsNCiAgICArCQkJCXJldHVy
+biAtRU5YSU87DQogICAgKwkJCX0NCiAgICAgCQkJYWRkciA9IGxwY19jdHJsLT5tZW1fYmFzZTsN
+CiAgICAgCQkJc2l6ZSA9IGxwY19jdHJsLT5tZW1fc2l6ZTsNCiAgICAgCQl9IGVsc2Ugew0KICAg
+IEBAIC0xOTYsMTcgKzIxMiwxNyBAQCBzdGF0aWMgaW50IGFzcGVlZF9scGNfY3RybF9wcm9iZShz
+dHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KICAgICAJaWYgKCFscGNfY3RybCkNCiAgICAg
+CQlyZXR1cm4gLUVOT01FTTsNCiAgICAgDQogICAgKwkvKiBJZiBmbGFzaCBpcyBkZXNjcmliZWQg
+aW4gZGV2aWNlIHRyZWUgdGhlbiBzdG9yZSAqLw0KICAgICAJbm9kZSA9IG9mX3BhcnNlX3BoYW5k
+bGUoZGV2LT5vZl9ub2RlLCAiZmxhc2giLCAwKTsNCiAgICAgCWlmICghbm9kZSkgew0KICAgIC0J
+CWRldl9lcnIoZGV2LCAiRGlkbid0IGZpbmQgaG9zdCBwbm9yIGZsYXNoIG5vZGVcbiIpOw0KICAg
+IC0JCXJldHVybiAtRU5PREVWOw0KICAgIC0JfQ0KICAgIC0NCiAgICAtCXJjID0gb2ZfYWRkcmVz
+c190b19yZXNvdXJjZShub2RlLCAxLCAmcmVzbSk7DQogICAgLQlvZl9ub2RlX3B1dChub2RlKTsN
+CiAgICAtCWlmIChyYykgew0KICAgIC0JCWRldl9lcnIoZGV2LCAiQ291bGRuJ3QgYWRkcmVzcyB0
+byByZXNvdXJjZSBmb3IgZmxhc2hcbiIpOw0KICAgIC0JCXJldHVybiByYzsNCiAgICArCQlkZXZf
+ZGJnKGRldiwgIkRpZG4ndCBmaW5kIGhvc3QgcG5vciBmbGFzaCBub2RlXG4iKTsNCiAgICArCX0g
+ZWxzZSB7DQogICAgKwkJcmMgPSBvZl9hZGRyZXNzX3RvX3Jlc291cmNlKG5vZGUsIDEsICZyZXNt
+KTsNCiAgICArCQlvZl9ub2RlX3B1dChub2RlKTsNCiAgICArCQlpZiAocmMpIHsNCiAgICArCQkJ
+ZGV2X2VycihkZXYsICJDb3VsZG4ndCBhZGRyZXNzIHRvIHJlc291cmNlIGZvciBmbGFzaFxuIik7
+DQogICAgKwkJCXJldHVybiByYzsNCiAgICArCQl9DQogICAgIAl9DQogICAgIA0KICAgICAJbHBj
+X2N0cmwtPnBub3Jfc2l6ZSA9IHJlc291cmNlX3NpemUoJnJlc20pOw0KICAgIEBAIC0yMTQsMjIg
+KzIzMCwyMiBAQCBzdGF0aWMgaW50IGFzcGVlZF9scGNfY3RybF9wcm9iZShzdHJ1Y3QgcGxhdGZv
+cm1fZGV2aWNlICpwZGV2KQ0KICAgICANCiAgICAgCWRldl9zZXRfZHJ2ZGF0YSgmcGRldi0+ZGV2
+LCBscGNfY3RybCk7DQogICAgIA0KICAgICsJLyogSWYgbWVtb3J5LXJlZ2lvbiBpcyBkZXNjcmli
+ZWQgaW4gZGV2aWNlIHRyZWUgdGhlbiBzdG9yZSAqLw0KICAgICAJbm9kZSA9IG9mX3BhcnNlX3Bo
+YW5kbGUoZGV2LT5vZl9ub2RlLCAibWVtb3J5LXJlZ2lvbiIsIDApOw0KICAgICAJaWYgKCFub2Rl
+KSB7DQogICAgLQkJZGV2X2VycihkZXYsICJEaWRuJ3QgZmluZCByZXNlcnZlZCBtZW1vcnlcbiIp
+Ow0KICAgIC0JCXJldHVybiAtRUlOVkFMOw0KICAgIC0JfQ0KICAgICsJCWRldl9kYmcoZGV2LCAi
+RGlkbid0IGZpbmQgcmVzZXJ2ZWQgbWVtb3J5XG4iKTsNCiAgICArCX0gZWxzZSB7DQogICAgKwkJ
+cmMgPSBvZl9hZGRyZXNzX3RvX3Jlc291cmNlKG5vZGUsIDAsICZyZXNtKTsNCiAgICArCQlvZl9u
+b2RlX3B1dChub2RlKTsNCiAgICArCQlpZiAocmMpIHsNCiAgICArCQkJZGV2X2VycihkZXYsICJD
+b3VsZG4ndCBhZGRyZXNzIHRvIHJlc291cmNlIGZvciByZXNlcnZlZCBtZW1vcnlcbiIpOw0KICAg
+ICsJCQlyZXR1cm4gLUVOWElPOw0KICAgICsJCX0NCiAgICAgDQogICAgLQlyYyA9IG9mX2FkZHJl
+c3NfdG9fcmVzb3VyY2Uobm9kZSwgMCwgJnJlc20pOw0KICAgIC0Jb2Zfbm9kZV9wdXQobm9kZSk7
+DQogICAgLQlpZiAocmMpIHsNCiAgICAtCQlkZXZfZXJyKGRldiwgIkNvdWxkbid0IGFkZHJlc3Mg
+dG8gcmVzb3VyY2UgZm9yIHJlc2VydmVkIG1lbW9yeVxuIik7DQogICAgLQkJcmV0dXJuIC1FTk9N
+RU07DQogICAgKwkJbHBjX2N0cmwtPm1lbV9zaXplID0gcmVzb3VyY2Vfc2l6ZSgmcmVzbSk7DQog
+ICAgKwkJbHBjX2N0cmwtPm1lbV9iYXNlID0gcmVzbS5zdGFydDsNCiAgICAgCX0NCiAgICAgDQog
+ICAgLQlscGNfY3RybC0+bWVtX3NpemUgPSByZXNvdXJjZV9zaXplKCZyZXNtKTsNCiAgICAtCWxw
+Y19jdHJsLT5tZW1fYmFzZSA9IHJlc20uc3RhcnQ7DQogICAgLQ0KICAgICAJbHBjX2N0cmwtPnJl
+Z21hcCA9IHN5c2Nvbl9ub2RlX3RvX3JlZ21hcCgNCiAgICAgCQkJcGRldi0+ZGV2LnBhcmVudC0+
+b2Zfbm9kZSk7DQogICAgIAlpZiAoSVNfRVJSKGxwY19jdHJsLT5yZWdtYXApKSB7DQogICAgQEAg
+LTI1OCw4ICsyNzQsNiBAQCBzdGF0aWMgaW50IGFzcGVlZF9scGNfY3RybF9wcm9iZShzdHJ1Y3Qg
+cGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KICAgICAJCWdvdG8gZXJyOw0KICAgICAJfQ0KICAgICAN
+CiAgICAtCWRldl9pbmZvKGRldiwgIkxvYWRlZCBhdCAlcHJcbiIsICZyZXNtKTsNCiAgICAtDQog
+ICAgIAlyZXR1cm4gMDsNCiAgICAgDQogICAgIGVycjoNCiAgICAtLSANCiAgICAyLjE3LjENCiAg
+ICANCiAgICANCg0K
