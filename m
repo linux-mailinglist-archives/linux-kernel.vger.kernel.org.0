@@ -2,242 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E4E9371E7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 12:42:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84478371F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 12:45:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727215AbfFFKmH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 06:42:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57984 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726935AbfFFKmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 06:42:06 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 00FC1AEF3;
-        Thu,  6 Jun 2019 10:42:03 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 464A01E3F51; Thu,  6 Jun 2019 12:42:03 +0200 (CEST)
-Date:   Thu, 6 Jun 2019 12:42:03 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     ira.weiny@intel.com
-Cc:     Dan Williams <dan.j.williams@intel.com>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jeff Layton <jlayton@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
-Message-ID: <20190606104203.GF7433@quack2.suse.cz>
-References: <20190606014544.8339-1-ira.weiny@intel.com>
+        id S1727228AbfFFKpQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 06:45:16 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:44654 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725784AbfFFKpQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 06:45:16 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x56AdBIo121846;
+        Thu, 6 Jun 2019 10:44:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=rlTNItZ+vRzH1C5J9n3DIzZYXoQt0JFY3F5NEZCvtS8=;
+ b=oWdP9WZFGCHw1qxWUhunX2JomZIVQPQhXJ2qwjvgRnbfY6feGLqv4FAbh8QZTqO9x2Lv
+ GnyEYOdVNPpZYKVuC18tIW66GsQL6erL2HQrQj7ewltvSjVh93QhEEWh+D+N1Cxm/Qd5
+ okGibrOrohrLg+bAMOd7POOERxAJ818UIs8/sQ5GYRMgtcU98fkMWnDBfFKQQmYfP/dQ
+ AM+PnfG0Wzru10foVzr8RFpORFxWERTa8rIpEmYfwG+8Fad3tpZUYMme6iheDeaS3Gud
+ eJJOotZ8HZcAh8A7NNppd9IllLw/YGG2GNSN2eflBbPmoizY+KDlF7SfhC/NpoeFVOmk Tg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2130.oracle.com with ESMTP id 2suevdqw7u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 06 Jun 2019 10:44:42 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x56Aifb8006245;
+        Thu, 6 Jun 2019 10:44:42 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2swnhcmdqm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 06 Jun 2019 10:44:41 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x56AidWx000959;
+        Thu, 6 Jun 2019 10:44:39 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 06 Jun 2019 03:44:38 -0700
+Date:   Thu, 6 Jun 2019 13:44:28 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        netdev@vger.kernel.org, xdp-newbies@vger.kernel.org,
+        bpf@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] bpf: remove redundant assignment to err
+Message-ID: <20190606104428.GK31203@kadam>
+References: <20190603170247.9951-1-colin.king@canonical.com>
+ <20190603102140.70fee157@cakuba.netronome.com>
+ <276525bd-dd79-052e-7663-9acc92621853@canonical.com>
+ <20190603104930.466a306b@cakuba.netronome.com>
+ <e351d18c-21cd-6617-2a59-31a48be54b7e@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190606014544.8339-1-ira.weiny@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <e351d18c-21cd-6617-2a59-31a48be54b7e@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9279 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906060078
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9279 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906060078
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 05-06-19 18:45:33, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
+On Mon, Jun 03, 2019 at 07:07:20PM +0100, Colin Ian King wrote:
+> On 03/06/2019 18:49, Jakub Kicinski wrote:
+> > On Mon, 3 Jun 2019 18:39:16 +0100, Colin Ian King wrote:
+> >> On 03/06/2019 18:21, Jakub Kicinski wrote:
+> >>> On Mon,  3 Jun 2019 18:02:47 +0100, Colin King wrote:  
+> >>>> From: Colin Ian King <colin.king@canonical.com>
+> >>>>
+> >>>> The variable err is assigned with the value -EINVAL that is never
+> >>>> read and it is re-assigned a new value later on.  The assignment is
+> >>>> redundant and can be removed.
+> >>>>
+> >>>> Addresses-Coverity: ("Unused value")
+> >>>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> >>>> ---
+> >>>>  kernel/bpf/devmap.c | 2 +-
+> >>>>  kernel/bpf/xskmap.c | 2 +-
+> >>>>  2 files changed, 2 insertions(+), 2 deletions(-)
+> >>>>
+> >>>> diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
+> >>>> index 5ae7cce5ef16..a76cc6412fc4 100644
+> >>>> --- a/kernel/bpf/devmap.c
+> >>>> +++ b/kernel/bpf/devmap.c
+> >>>> @@ -88,7 +88,7 @@ static u64 dev_map_bitmap_size(const union bpf_attr *attr)
+> >>>>  static struct bpf_map *dev_map_alloc(union bpf_attr *attr)
+> >>>>  {
+> >>>>  	struct bpf_dtab *dtab;
+> >>>> -	int err = -EINVAL;
+> >>>> +	int err;
+> >>>>  	u64 cost;  
+> >>>
+> >>> Perhaps keep the variables ordered longest to shortest?  
+> >>
+> >> Is that a required coding standard?
+> > 
+> > For networking code, yes.  Just look around the files you're changing
+> > and see for yourself.
 > 
-> ... V1,000,000   ;-)
-> 
-> Pre-requisites:
-> 	John Hubbard's put_user_pages() patch series.[1]
-> 	Jan Kara's ext4_break_layouts() fixes[2]
-> 
-> Based on the feedback from LSFmm and the LWN article which resulted.  I've
-> decided to take a slightly different tack on this problem.
-> 
-> The real issue is that there is no use case for a user to have RDMA pinn'ed
-> memory which is then truncated.  So really any solution we present which:
-> 
-> A) Prevents file system corruption or data leaks
-> ...and...
-> B) Informs the user that they did something wrong
-> 
-> Should be an acceptable solution.
-> 
-> Because this is slightly new behavior.  And because this is gonig to be
-> specific to DAX (because of the lack of a page cache) we have made the user
-> "opt in" to this behavior.
-> 
-> The following patches implement the following solution.
-> 
-> 1) The user has to opt in to allowing GUP pins on a file with a layout lease
->    (now made visible).
-> 2) GUP will fail (EPERM) if a layout lease is not taken
-> 3) Any truncate or hole punch operation on a GUP'ed DAX page will fail.
-> 4) The user has the option of holding the layout lease to receive a SIGIO for
->    notification to the original thread that another thread has tried to delete
->    their data.  Furthermore this indicates that if the user needs to GUP the
->    file again they will need to retake the Layout lease before doing so.
-> 
-> 
-> NOTE: If the user releases the layout lease or if it has been broken by
-> another operation further GUP operations on the file will fail without
-> re-taking the lease.  This means that if a user would like to register
-> pieces of a file and continue to register other pieces later they would
-> be advised to keep the layout lease, get a SIGIO notification, and retake
-> the lease.
-> 
-> NOTE2: Truncation of pages which are not actively pinned will succeed.
-> Similar to accessing an mmap to this area GUP pins of that memory may
-> fail.
+> Ah, informal coding standards. Great. Won't this end up with more diff
+> churn?
 
-So after some through I'm willing accept the fact that pinned DAX pages
-will just make truncate / hole punch fail and shove it into a same bucket
-of situations like "user can open a file and unlink won't delete it" or
-"ETXTBUSY when user is executing a file being truncated".  The problem I
-have with this proposal is a lack of visibility from sysadmin POV. For
-ETXTBUSY or "unlinked but open file" sysadmin can just do lsof, find the
-problematic process and kill it. There's nothing like that with your
-proposal since currently once you hold page reference, you can unmap the
-file, drop layout lease, close the file, and there's no trace that you're
-responsible for the pinned page anymore.
+Everyone knows that netdev uses reverse Christmas tree declarations...
 
-So I'd like to actually mandate that you *must* hold the file lease until
-you unpin all pages in the given range (not just that you have an option to
-hold a lease). And I believe the kernel should actually enforce this. That
-way we maintain a sane state that if someone uses a physical location of
-logical file offset on disk, he has a layout lease. Also once this is done,
-sysadmin has a reasonably easy way to discover run-away RDMA application
-and kill it if he wishes so.
+regards,
+dan carpenter
 
-The question is on how to exactly enforce that lease is taken until all
-pages are unpinned. I belive it could be done by tracking number of
-long-term pinned pages within a lease. Gup_longterm could easily increment
-the count when verifying the lease exists, gup_longterm users will somehow
-need to propagate corresponding 'filp' (struct file pointer) to
-put_user_pages_longterm() callsites so that they can look up appropriate
-lease to drop reference - probably I'd just transition all gup_longterm()
-users to a saner API similar to the one we have in mm/frame_vector.c where
-we don't hand out page pointers but an encapsulating structure that does
-all the necessary tracking. Removing a lease would need to block until all
-pins are released - this is probably the most hairy part since we need to
-handle a case if application just closes the file descriptor which would
-release the lease but OTOH we need to make sure task exit does not deadlock.
-Maybe we could block only on explicit lease unlock and just drop the layout
-lease on file close and if there are still pinned pages, send SIGKILL to an
-application as a reminder it did something stupid...
-
-What do people think about this?
-
-								Honza
-> 
-> 
-> A general overview follows for background.
-> 
-> It should be noted that one solution for this problem is to use RDMA's On
-> Demand Paging (ODP).  There are 2 big reasons this may not work.
-> 
-> 	1) The hardware being used for RDMA may not support ODP
-> 	2) ODP may be detrimental to the over all network (cluster or cloud)
-> 	   performance
-> 
-> Therefore, in order to support RDMA to File system pages without On Demand
-> Paging (ODP) a number of things need to be done.
-> 
-> 1) GUP "longterm" users need to inform the other subsystems that they have
->    taken a pin on a page which may remain pinned for a very "long time".[3]
-> 
-> 2) Any page which is "controlled" by a file system needs to have special
->    handling.  The details of the handling depends on if the page is page cache
->    fronted or not.
-> 
->    2a) A page cache fronted page which has been pinned by GUP long term can use a
->    bounce buffer to allow the file system to write back snap shots of the page.
->    This is handled by the FS recognizing the GUP long term pin and making a copy
->    of the page to be written back.
-> 	NOTE: this patch set does not address this path.
-> 
->    2b) A FS "controlled" page which is not page cache fronted is either easier
->    to deal with or harder depending on the operation the filesystem is trying
->    to do.
-> 
-> 	2ba) [Hard case] If the FS operation _is_ a truncate or hole punch the
-> 	FS can no longer use the pages in question until the pin has been
-> 	removed.  This patch set presents a solution to this by introducing
-> 	some reasonable restrictions on user space applications.
-> 
-> 	2bb) [Easy case] If the FS operation is _not_ a truncate or hole punch
-> 	then there is nothing which need be done.  Data is Read or Written
-> 	directly to the page.  This is an easy case which would currently work
-> 	if not for GUP long term pins being disabled.  Therefore this patch set
-> 	need not change access to the file data but does allow for GUP pins
-> 	after 2ba above is dealt with.
-> 
-> 
-> This patch series and presents a solution for problem 2ba)
-> 
-> [1] https://github.com/johnhubbard/linux/tree/gup_dma_core
-> 
-> [2] ext4/dev branch:
-> 
-> - https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git/log/?h=dev
-> 
-> 	Specific patches:
-> 
-> 	[2a] ext4: wait for outstanding dio during truncate in nojournal mode
-> 
-> 	- https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git/commit/?h=dev&id=82a25b027ca48d7ef197295846b352345853dfa8
-> 
-> 	[2b] ext4: do not delete unlinked inode from orphan list on failed truncate
-> 
-> 	- https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git/commit/?h=dev&id=ee0ed02ca93ef1ecf8963ad96638795d55af2c14
-> 
-> 	[2c] ext4: gracefully handle ext4_break_layouts() failure during truncate
-> 
-> 	- https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git/commit/?h=dev&id=b9c1c26739ec2d4b4fb70207a0a9ad6747e43f4c
-> 
-> [3] The definition of long time is debatable but it has been established
-> that RDMAs use of pages, minutes or hours after the pin is the extreme case
-> which makes this problem most severe.
-> 
-> 
-> Ira Weiny (10):
->   fs/locks: Add trace_leases_conflict
->   fs/locks: Export F_LAYOUT lease to user space
->   mm/gup: Pass flags down to __gup_device_huge* calls
->   mm/gup: Ensure F_LAYOUT lease is held prior to GUP'ing pages
->   fs/ext4: Teach ext4 to break layout leases
->   fs/ext4: Teach dax_layout_busy_page() to operate on a sub-range
->   fs/ext4: Fail truncate if pages are GUP pinned
->   fs/xfs: Teach xfs to use new dax_layout_busy_page()
->   fs/xfs: Fail truncate if pages are GUP pinned
->   mm/gup: Remove FOLL_LONGTERM DAX exclusion
-> 
->  fs/Kconfig                       |   1 +
->  fs/dax.c                         |  38 ++++++---
->  fs/ext4/ext4.h                   |   2 +-
->  fs/ext4/extents.c                |   6 +-
->  fs/ext4/inode.c                  |  26 +++++--
->  fs/locks.c                       |  97 ++++++++++++++++++++---
->  fs/xfs/xfs_file.c                |  24 ++++--
->  fs/xfs/xfs_inode.h               |   5 +-
->  fs/xfs/xfs_ioctl.c               |  15 +++-
->  fs/xfs/xfs_iops.c                |  14 +++-
->  fs/xfs/xfs_pnfs.c                |  14 ++--
->  include/linux/dax.h              |   9 ++-
->  include/linux/fs.h               |   2 +-
->  include/linux/mm.h               |   2 +
->  include/trace/events/filelock.h  |  35 +++++++++
->  include/uapi/asm-generic/fcntl.h |   3 +
->  mm/gup.c                         | 129 ++++++++++++-------------------
->  mm/huge_memory.c                 |  12 +++
->  18 files changed, 299 insertions(+), 135 deletions(-)
-> 
-> -- 
-> 2.20.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
