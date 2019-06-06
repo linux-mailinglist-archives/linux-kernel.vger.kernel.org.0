@@ -2,87 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 059C0379B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 18:32:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 189E13798B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 18:31:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729851AbfFFQcd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 12:32:33 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:54348 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbfFFQca (ORCPT
+        id S1729669AbfFFQaz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 12:30:55 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38314 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727552AbfFFQaz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 12:32:30 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x56GW32H064811;
-        Thu, 6 Jun 2019 11:32:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1559838723;
-        bh=vve9U+wzc4vCwKL4B0UU+JLqKTIC0YBQuBU2TPamO4Y=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=dJwaayArfJ8bsC3MRaRqoyl0uJugrygIEQ9F6wehuBIPzmW6hDLAQR7xRGHlYYhDA
-         DVT90EdiDCF3yV3ydP5kc8Fu3uYa+FeHScZoRmb00AvSSLNDuGQCVlV35tMusCIZTe
-         2OlD906SZgbUVU5xWiBmZcPVx8h8d/xXomt/i1fE=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x56GW305083755
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 6 Jun 2019 11:32:03 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 6 Jun
- 2019 11:32:03 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 6 Jun 2019 11:32:03 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x56GW2J6056400;
-        Thu, 6 Jun 2019 11:32:03 -0500
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Sekhar Nori <nsekhar@ti.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Wingman Kwok <w-kwok2@ti.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH net-next v2 10/10] ARM: configs: keystone: enable cpts
-Date:   Thu, 6 Jun 2019 19:30:47 +0300
-Message-ID: <20190606163047.31199-11-grygorii.strashko@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190606163047.31199-1-grygorii.strashko@ti.com>
-References: <20190606163047.31199-1-grygorii.strashko@ti.com>
+        Thu, 6 Jun 2019 12:30:55 -0400
+Received: by mail-pg1-f193.google.com with SMTP id v11so1655289pgl.5
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 09:30:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=HUlzUdoZEuwBcIsFcfZEEwizXh8qoMoVTwGXgk651gw=;
+        b=qETdpu1fq3YKAf+PIZM1StDrgV04HFfNxDbOwFwICih/0OGyExQlCsDvVUOYGpik2Y
+         2gjJfDYHyR1f73PJKlKkPLUz0l0GTn/HYutjpmDgQis3C/fLVHDiMPAHQWe5abO1CxR5
+         gzEYFYbOrID4vQAzWHjf9Km7CDWQ+YgyDk6XU59IjAjlriBoJDBeFpD1qYriONA0b96g
+         as+fClyo/e/mPDsvW3CinLUXehamtCIGCz+GWe39ZTYfBfsTJCpXWi5sbo6KcpZH4vfU
+         65XNfvzv4dThucKEFN8kGfxpVv32WFy2ilzisbYA6jRwPLAp4Ty+WQbW+p7s0mzzxyfP
+         PCOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=HUlzUdoZEuwBcIsFcfZEEwizXh8qoMoVTwGXgk651gw=;
+        b=stFt/BA650tMARcfM5U4Q0stSxNNxn82segxLPm+YX6uFN1U3IZWdyamkTcCFLPxJA
+         wtiW8NaOI07gZRg4pdOMsZ6KjpLH8C/43T6X25h4DFdv81KgvLdvmQ/4OfHTxlNL9jNC
+         kF1PC+ztQeabULJKhvGGu+3AJTjfnuknsLtoFhJc1daSjww5Kv3SOPy4g3beXlfRdquK
+         ZXoXgwZIiSJUnTMFZAYFMzKVilSkzdj6rdStIGgm/BygCrAd2sQ9wY1diaX0emwDLSy/
+         jiOH9JdYvrXifGlTEGxmxlVReeUrdrmo2sy3LSSFhiBYTnqSPOS2cqJbFZWI9kvHgwgD
+         8Ang==
+X-Gm-Message-State: APjAAAWKEQMqYyZiSZQcUnU4epMdZmCqZjBSKn0JL32G7av3gtttqS1+
+        cR1eSkHAMperKIq161RSNuvfhg==
+X-Google-Smtp-Source: APXvYqwWK98UYLF0wDJKBybt9Rv8pjx46kTpnSnQ3dBiL60FgKPLRXlPXhLbIuisO9V+PN/eTZZzkQ==
+X-Received: by 2002:a62:2983:: with SMTP id p125mr13170922pfp.154.1559838654627;
+        Thu, 06 Jun 2019 09:30:54 -0700 (PDT)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.googlemail.com with ESMTPSA id g8sm2370035pgd.29.2019.06.06.09.30.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Jun 2019 09:30:53 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        dri-devel@lists.freedesktop.org
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/meson: fix G12A HDMI PLL settings for 4K60 1000/1001 variations
+In-Reply-To: <20190605125320.8708-1-narmstrong@baylibre.com>
+References: <20190605125320.8708-1-narmstrong@baylibre.com>
+Date:   Thu, 06 Jun 2019 09:30:52 -0700
+Message-ID: <7hh892fzgj.fsf@baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable CPTS support which is present in Network Coprocessor Gigabit
-Ethernet (GbE) Switch Subsystem.
+Neil Armstrong <narmstrong@baylibre.com> writes:
 
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Acked-by: Richard Cochran <richardcochran@gmail.com>
----
- arch/arm/configs/keystone_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+> The Amlogic G12A HDMI PLL needs some specific settings to lock with
+> different fractional values for the 5,4GHz mode.
+>
+> Handle the 1000/1001 variation fractional case here to avoid having
+> the PLL in an non lockable state.
+>
+> Fixes: 202b9808f8ed ("drm/meson: Add G12A Video Clock setup")
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  drivers/gpu/drm/meson/meson_vclk.c | 13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/meson/meson_vclk.c b/drivers/gpu/drm/meson/meson_vclk.c
+> index 44250eff8a3f..83fc2fc82001 100644
+> --- a/drivers/gpu/drm/meson/meson_vclk.c
+> +++ b/drivers/gpu/drm/meson/meson_vclk.c
+> @@ -553,8 +553,17 @@ void meson_hdmi_pll_set_params(struct meson_drm *priv, unsigned int m,
+>  
+>  		/* G12A HDMI PLL Needs specific parameters for 5.4GHz */
+>  		if (m >= 0xf7) {
+> -			regmap_write(priv->hhi, HHI_HDMI_PLL_CNTL4, 0xea68dc00);
+> -			regmap_write(priv->hhi, HHI_HDMI_PLL_CNTL5, 0x65771290);
+> +			if (frac < 0x10000) {
+> +				regmap_write(priv->hhi, HHI_HDMI_PLL_CNTL4,
+> +							0x6a685c00);
+> +				regmap_write(priv->hhi, HHI_HDMI_PLL_CNTL5,
+> +							0x11551293);
+> +			} else {
+> +				regmap_write(priv->hhi, HHI_HDMI_PLL_CNTL4,
+> +							0xea68dc00);
+> +				regmap_write(priv->hhi, HHI_HDMI_PLL_CNTL5,
+> +							0x65771290);
+> +			}
+>  			regmap_write(priv->hhi, HHI_HDMI_PLL_CNTL6, 0x39272000);
+>  			regmap_write(priv->hhi, HHI_HDMI_PLL_CNTL7, 0x55540000);
+>  		} else {
 
-diff --git a/arch/arm/configs/keystone_defconfig b/arch/arm/configs/keystone_defconfig
-index 72fee57aad2f..0b2281407ecf 100644
---- a/arch/arm/configs/keystone_defconfig
-+++ b/arch/arm/configs/keystone_defconfig
-@@ -136,6 +136,7 @@ CONFIG_BLK_DEV_SD=y
- CONFIG_NETDEVICES=y
- CONFIG_TI_KEYSTONE_NETCP=y
- CONFIG_TI_KEYSTONE_NETCP_ETHSS=y
-+CONFIG_TI_CPTS=y
- CONFIG_MARVELL_PHY=y
- CONFIG_SERIAL_8250=y
- CONFIG_SERIAL_8250_CONSOLE=y
--- 
-2.17.1
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
 
+nit: this is continuing with more magic constants, and it would be nice
+to have them converted to #define'd bitfields.  But since that isn't a
+new problem in this patch, it's fine to cleanup later.
+
+Kevin
