@@ -2,96 +2,397 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B079F3710E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 11:57:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BB2637148
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 12:08:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728173AbfFFJ5q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 05:57:46 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:41783 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727846AbfFFJ5p (ORCPT
+        id S1728246AbfFFKIG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 06:08:06 -0400
+Received: from regular1.263xmail.com ([211.150.70.196]:41064 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728058AbfFFKIE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 05:57:45 -0400
-Received: by mail-ot1-f66.google.com with SMTP id 107so1370732otj.8;
-        Thu, 06 Jun 2019 02:57:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XH+qyuLG3h1Zuv0+YbIDecMVGDK3Yf4lc2GyNXDmgCk=;
-        b=G7VrrbtpCxh/rN1JAhQrEvmREQYuCw3NR5KRlDQ7GRse0x1joem1ncsm764VVo2r9h
-         IwVIWi9AOseuQ5tqTkH0G4nQGZsolIMHZhW07QsrZjWsKaUi7/2L71LXExdv5XrWFyv8
-         VboxH9tM9U3k85DA8puxNAm85EaOUGbGLEQ+KoTLjuIhznA7uvC2WLyfEVPXgTnvAyPV
-         1duwsDrhlMYcXpmOhPoTifhX/L5JpOXVEOCyW0/D0ouXj4Xhn4iFRz4t6M4Wubautshl
-         aK82DCBJu/juTLxMdKKzxcWX9CgnbAcu41Ak6Qlp5Uk5inI8ZBJrK7ehwBvzLpsPcxym
-         r7Cw==
-X-Gm-Message-State: APjAAAWBWgKpnAbfrJ3xvUFEt2fDCCI/dTA/MzDKLHhtKzBe3pVYSGXh
-        DwrB1OfLeZIWU2H3FMRNCK5HyXc6JmipdmBIbQI=
-X-Google-Smtp-Source: APXvYqy5nqB0n3eU73l8b059KjjRZ1IWKzGCTX8XEy5gMjkUWBhjcYRq934pC1uevpc9TibD4eCiQLkvJ8Ih4I4t1Ik=
-X-Received: by 2002:a9d:6b98:: with SMTP id b24mr13628927otq.189.1559815065036;
- Thu, 06 Jun 2019 02:57:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <1559747630-28065-1-git-send-email-suzuki.poulose@arm.com>
- <1559747630-28065-8-git-send-email-suzuki.poulose@arm.com>
- <CAJZ5v0h+maPj-ijKV_vvQBpHD7N-VMiAqSeyztAkiUR9E2WdmQ@mail.gmail.com> <1f230eb7-f4e3-ed4e-960d-c3bbb60f0a18@arm.com>
-In-Reply-To: <1f230eb7-f4e3-ed4e-960d-c3bbb60f0a18@arm.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 6 Jun 2019 11:57:33 +0200
-Message-ID: <CAJZ5v0i0WP88+vTEheSTfAoSi5nEdjaLs4KOGxXK3_AoPhPrhg@mail.gmail.com>
-Subject: Re: [PATCH 07/13] drivers: Add generic match helper by ACPI_COMPANION device
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 6 Jun 2019 06:08:04 -0400
+X-Greylist: delayed 481 seconds by postgrey-1.27 at vger.kernel.org; Thu, 06 Jun 2019 06:08:02 EDT
+Received: from jiaolitao?raisecom.com (unknown [192.168.167.231])
+        by regular1.263xmail.com (Postfix) with ESMTP id A2C1381E;
+        Thu,  6 Jun 2019 17:59:51 +0800 (CST)
+X-263anti-spam: KSV:0;BIG:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ADDR-CHECKED: 0
+X-ABS-CHECKED: 1
+X-SKE-CHECKED: 1
+X-ANTISPAM-LEVEL: 2
+Received: from localhost.localdomain (194.195.37.106.static.bjtelecom.net [106.37.195.194])
+        by smtp.263.net (postfix) whith ESMTP id P11377T140226221557504S1559815148043212_;
+        Thu, 06 Jun 2019 17:59:49 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <461dc0c530c87eed0f1ca3db33067cfe>
+X-RL-SENDER: jiaolitao@raisecom.com
+X-SENDER: 006714@raisecom.com
+X-LOGIN-NAME: jiaolitao@raisecom.com
+X-FST-TO: davem@davemloft.net
+X-SENDER-IP: 106.37.195.194
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 5
+From:   Litao jiao <jiaolitao@raisecom.com>
+To:     davem@davemloft.net
+Cc:     petrm@mellanox.com, idosch@mellanox.com, roopa@cumulusnetworks.com,
+        sd@queasysnail.net, sbrivio@redhat.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jiaolitao@raisecom.com
+Subject: [PATCH] vxlan: Use FDB_HASH_SIZE hash_locks to reduce contention
+Date:   Thu,  6 Jun 2019 17:57:58 +0800
+Message-Id: <1559815078-5901-1-git-send-email-jiaolitao@raisecom.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 6, 2019 at 11:28 AM Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
->
->
->
-> On 06/06/2019 10:17, Rafael J. Wysocki wrote:
-> > On Wed, Jun 5, 2019 at 5:14 PM Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
-> >>
-> >> Add a generic helper to match a device by the acpi device.
-> >
-> > "by its ACPI companion device object", please.
->
-> Sure.
->
-> >
-> > Also, it would be good to combine this patch with the patch(es) that
-> > cause device_match_acpi_dev() to be actually used.
-> >
-> > Helpers without any users are arguably not useful.
->
-> Sure, the helpers will be part of the part2 of the whole series,
-> which will actually have the individual subsystems consuming the
-> new helpers. For your reference, it is available here :
->
-> http://linux-arm.org/git?p=linux-skp.git;a=shortlog;h=refs/heads/driver-cleanup/v2
->
-> e.g:
-> http://linux-arm.org/git?p=linux-skp.git;a=commit;h=59534e843e2f214f1f29659993f6e423bef16b28
->
-> I could simply pull those patches into this part, if you prefer that.
+The monolithic hash_lock could cause huge contention when
+inserting/deletiing vxlan_fdbs into the fdb_head.
 
-Not really.
+Use FDB_HASH_SIZE hash_locks to protect insertions/deletions
+of vxlan_fdbs into the fdb_head hash table.
 
-I'd rather do it the other way around: push the introduction of the
-helpers to part 2.
+Suggested-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Litao jiao <jiaolitao@raisecom.com>
+---
+ drivers/net/vxlan.c | 92 ++++++++++++++++++++++++++++++++++-------------------
+ include/net/vxlan.h |  2 +-
+ 2 files changed, 60 insertions(+), 34 deletions(-)
 
-> However, that would be true for the other patches in the part2.
-> I am open to suggestions, on how to split the series.
+diff --git a/drivers/net/vxlan.c b/drivers/net/vxlan.c
+index 5994d54..9f93c5e 100644
+--- a/drivers/net/vxlan.c
++++ b/drivers/net/vxlan.c
+@@ -471,14 +471,19 @@ static u32 eth_vni_hash(const unsigned char *addr, __be32 vni)
+ 	return jhash_2words(key, vni, vxlan_salt) & (FDB_HASH_SIZE - 1);
+ }
+ 
++static u32 fdb_head_index(struct vxlan_dev *vxlan, const u8 *mac, __be32 vni)
++{
++	if (vxlan->cfg.flags & VXLAN_F_COLLECT_METADATA)
++		return eth_vni_hash(mac, vni);
++	else
++		return eth_hash(mac);
++}
++
+ /* Hash chain to use given mac address */
+ static inline struct hlist_head *vxlan_fdb_head(struct vxlan_dev *vxlan,
+ 						const u8 *mac, __be32 vni)
+ {
+-	if (vxlan->cfg.flags & VXLAN_F_COLLECT_METADATA)
+-		return &vxlan->fdb_head[eth_vni_hash(mac, vni)];
+-	else
+-		return &vxlan->fdb_head[eth_hash(mac)];
++	return &vxlan->fdb_head[fdb_head_index(vxlan, mac, vni)];
+ }
+ 
+ /* Look up Ethernet address in forwarding table */
+@@ -593,8 +598,8 @@ int vxlan_fdb_replay(const struct net_device *dev, __be32 vni,
+ 		return -EINVAL;
+ 	vxlan = netdev_priv(dev);
+ 
+-	spin_lock_bh(&vxlan->hash_lock);
+ 	for (h = 0; h < FDB_HASH_SIZE; ++h) {
++		spin_lock_bh(&vxlan->hash_lock[h]);
+ 		hlist_for_each_entry(f, &vxlan->fdb_head[h], hlist) {
+ 			if (f->vni == vni) {
+ 				list_for_each_entry(rdst, &f->remotes, list) {
+@@ -602,14 +607,16 @@ int vxlan_fdb_replay(const struct net_device *dev, __be32 vni,
+ 								  f, rdst,
+ 								  extack);
+ 					if (rc)
+-						goto out;
++						goto unlock;
+ 				}
+ 			}
+ 		}
++		spin_unlock_bh(&vxlan->hash_lock[h]);
+ 	}
++	return 0;
+ 
+-out:
+-	spin_unlock_bh(&vxlan->hash_lock);
++unlock:
++	spin_unlock_bh(&vxlan->hash_lock[h]);
+ 	return rc;
+ }
+ EXPORT_SYMBOL_GPL(vxlan_fdb_replay);
+@@ -625,14 +632,15 @@ void vxlan_fdb_clear_offload(const struct net_device *dev, __be32 vni)
+ 		return;
+ 	vxlan = netdev_priv(dev);
+ 
+-	spin_lock_bh(&vxlan->hash_lock);
+ 	for (h = 0; h < FDB_HASH_SIZE; ++h) {
++		spin_lock_bh(&vxlan->hash_lock[h]);
+ 		hlist_for_each_entry(f, &vxlan->fdb_head[h], hlist)
+ 			if (f->vni == vni)
+ 				list_for_each_entry(rdst, &f->remotes, list)
+ 					rdst->offloaded = false;
++		spin_unlock_bh(&vxlan->hash_lock[h]);
+ 	}
+-	spin_unlock_bh(&vxlan->hash_lock);
++
+ }
+ EXPORT_SYMBOL_GPL(vxlan_fdb_clear_offload);
+ 
+@@ -1108,6 +1116,7 @@ static int vxlan_fdb_add(struct ndmsg *ndm, struct nlattr *tb[],
+ 	__be16 port;
+ 	__be32 src_vni, vni;
+ 	u32 ifindex;
++	u32 hash_index;
+ 	int err;
+ 
+ 	if (!(ndm->ndm_state & (NUD_PERMANENT|NUD_REACHABLE))) {
+@@ -1126,12 +1135,13 @@ static int vxlan_fdb_add(struct ndmsg *ndm, struct nlattr *tb[],
+ 	if (vxlan->default_dst.remote_ip.sa.sa_family != ip.sa.sa_family)
+ 		return -EAFNOSUPPORT;
+ 
+-	spin_lock_bh(&vxlan->hash_lock);
++	hash_index = fdb_head_index(vxlan, addr, src_vni);
++	spin_lock_bh(&vxlan->hash_lock[hash_index]);
+ 	err = vxlan_fdb_update(vxlan, addr, &ip, ndm->ndm_state, flags,
+ 			       port, src_vni, vni, ifindex,
+ 			       ndm->ndm_flags | NTF_VXLAN_ADDED_BY_USER,
+ 			       true, extack);
+-	spin_unlock_bh(&vxlan->hash_lock);
++	spin_unlock_bh(&vxlan->hash_lock[hash_index]);
+ 
+ 	return err;
+ }
+@@ -1179,16 +1189,18 @@ static int vxlan_fdb_delete(struct ndmsg *ndm, struct nlattr *tb[],
+ 	__be32 src_vni, vni;
+ 	__be16 port;
+ 	u32 ifindex;
++	u32 hash_index;
+ 	int err;
+ 
+ 	err = vxlan_fdb_parse(tb, vxlan, &ip, &port, &src_vni, &vni, &ifindex);
+ 	if (err)
+ 		return err;
+ 
+-	spin_lock_bh(&vxlan->hash_lock);
++	hash_index = fdb_head_index(vxlan, addr, src_vni);
++	spin_lock_bh(&vxlan->hash_lock[hash_index]);
+ 	err = __vxlan_fdb_delete(vxlan, addr, ip, port, src_vni, vni, ifindex,
+ 				 true);
+-	spin_unlock_bh(&vxlan->hash_lock);
++	spin_unlock_bh(&vxlan->hash_lock[hash_index]);
+ 
+ 	return err;
+ }
+@@ -1300,8 +1312,10 @@ static bool vxlan_snoop(struct net_device *dev,
+ 		f->updated = jiffies;
+ 		vxlan_fdb_notify(vxlan, f, rdst, RTM_NEWNEIGH, true, NULL);
+ 	} else {
++		u32 hash_index = fdb_head_index(vxlan, src_mac, vni);
++
+ 		/* learned new entry */
+-		spin_lock(&vxlan->hash_lock);
++		spin_lock(&vxlan->hash_lock[hash_index]);
+ 
+ 		/* close off race between vxlan_flush and incoming packets */
+ 		if (netif_running(dev))
+@@ -1312,7 +1326,7 @@ static bool vxlan_snoop(struct net_device *dev,
+ 					 vni,
+ 					 vxlan->default_dst.remote_vni,
+ 					 ifindex, NTF_SELF, true, NULL);
+-		spin_unlock(&vxlan->hash_lock);
++		spin_unlock(&vxlan->hash_lock[hash_index]);
+ 	}
+ 
+ 	return false;
+@@ -2702,7 +2716,7 @@ static void vxlan_cleanup(struct timer_list *t)
+ 	for (h = 0; h < FDB_HASH_SIZE; ++h) {
+ 		struct hlist_node *p, *n;
+ 
+-		spin_lock(&vxlan->hash_lock);
++		spin_lock(&vxlan->hash_lock[h]);
+ 		hlist_for_each_safe(p, n, &vxlan->fdb_head[h]) {
+ 			struct vxlan_fdb *f
+ 				= container_of(p, struct vxlan_fdb, hlist);
+@@ -2724,7 +2738,7 @@ static void vxlan_cleanup(struct timer_list *t)
+ 			} else if (time_before(timeout, next_timer))
+ 				next_timer = timeout;
+ 		}
+-		spin_unlock(&vxlan->hash_lock);
++		spin_unlock(&vxlan->hash_lock[h]);
+ 	}
+ 
+ 	mod_timer(&vxlan->age_timer, next_timer);
+@@ -2767,12 +2781,13 @@ static int vxlan_init(struct net_device *dev)
+ static void vxlan_fdb_delete_default(struct vxlan_dev *vxlan, __be32 vni)
+ {
+ 	struct vxlan_fdb *f;
++	u32 hash_index = fdb_head_index(vxlan, all_zeros_mac, vni);
+ 
+-	spin_lock_bh(&vxlan->hash_lock);
++	spin_lock_bh(&vxlan->hash_lock[hash_index]);
+ 	f = __vxlan_find_mac(vxlan, all_zeros_mac, vni);
+ 	if (f)
+ 		vxlan_fdb_destroy(vxlan, f, true, true);
+-	spin_unlock_bh(&vxlan->hash_lock);
++	spin_unlock_bh(&vxlan->hash_lock[hash_index]);
+ }
+ 
+ static void vxlan_uninit(struct net_device *dev)
+@@ -2817,9 +2832,10 @@ static void vxlan_flush(struct vxlan_dev *vxlan, bool do_all)
+ {
+ 	unsigned int h;
+ 
+-	spin_lock_bh(&vxlan->hash_lock);
+ 	for (h = 0; h < FDB_HASH_SIZE; ++h) {
+ 		struct hlist_node *p, *n;
++
++		spin_lock_bh(&vxlan->hash_lock[h]);
+ 		hlist_for_each_safe(p, n, &vxlan->fdb_head[h]) {
+ 			struct vxlan_fdb *f
+ 				= container_of(p, struct vxlan_fdb, hlist);
+@@ -2829,8 +2845,8 @@ static void vxlan_flush(struct vxlan_dev *vxlan, bool do_all)
+ 			if (!is_zero_ether_addr(f->eth_addr))
+ 				vxlan_fdb_destroy(vxlan, f, true, true);
+ 		}
++		spin_unlock_bh(&vxlan->hash_lock[h]);
+ 	}
+-	spin_unlock_bh(&vxlan->hash_lock);
+ }
+ 
+ /* Cleanup timer and forwarding table on shutdown */
+@@ -3014,7 +3030,6 @@ static void vxlan_setup(struct net_device *dev)
+ 	dev->max_mtu = ETH_MAX_MTU;
+ 
+ 	INIT_LIST_HEAD(&vxlan->next);
+-	spin_lock_init(&vxlan->hash_lock);
+ 
+ 	timer_setup(&vxlan->age_timer, vxlan_cleanup, TIMER_DEFERRABLE);
+ 
+@@ -3022,8 +3037,10 @@ static void vxlan_setup(struct net_device *dev)
+ 
+ 	gro_cells_init(&vxlan->gro_cells, dev);
+ 
+-	for (h = 0; h < FDB_HASH_SIZE; ++h)
++	for (h = 0; h < FDB_HASH_SIZE; ++h) {
++		spin_lock_init(&vxlan->hash_lock[h]);
+ 		INIT_HLIST_HEAD(&vxlan->fdb_head[h]);
++	}
+ }
+ 
+ static void vxlan_ether_setup(struct net_device *dev)
+@@ -3917,7 +3934,9 @@ static int vxlan_changelink(struct net_device *dev, struct nlattr *tb[],
+ 
+ 	/* handle default dst entry */
+ 	if (!vxlan_addr_equal(&conf.remote_ip, &dst->remote_ip)) {
+-		spin_lock_bh(&vxlan->hash_lock);
++		u32 hash_index = fdb_head_index(vxlan, all_zeros_mac, conf.vni);
++
++		spin_lock_bh(&vxlan->hash_lock[hash_index]);
+ 		if (!vxlan_addr_any(&conf.remote_ip)) {
+ 			err = vxlan_fdb_update(vxlan, all_zeros_mac,
+ 					       &conf.remote_ip,
+@@ -3928,7 +3947,7 @@ static int vxlan_changelink(struct net_device *dev, struct nlattr *tb[],
+ 					       conf.remote_ifindex,
+ 					       NTF_SELF, true, extack);
+ 			if (err) {
+-				spin_unlock_bh(&vxlan->hash_lock);
++				spin_unlock_bh(&vxlan->hash_lock[hash_index]);
+ 				return err;
+ 			}
+ 		}
+@@ -3940,7 +3959,7 @@ static int vxlan_changelink(struct net_device *dev, struct nlattr *tb[],
+ 					   dst->remote_vni,
+ 					   dst->remote_ifindex,
+ 					   true);
+-		spin_unlock_bh(&vxlan->hash_lock);
++		spin_unlock_bh(&vxlan->hash_lock[hash_index]);
+ 	}
+ 
+ 	if (conf.age_interval != vxlan->cfg.age_interval)
+@@ -4195,8 +4214,11 @@ vxlan_fdb_offloaded_set(struct net_device *dev,
+ 	struct vxlan_dev *vxlan = netdev_priv(dev);
+ 	struct vxlan_rdst *rdst;
+ 	struct vxlan_fdb *f;
++	u32 hash_index;
++
++	hash_index = fdb_head_index(vxlan, fdb_info->eth_addr, fdb_info->vni);
+ 
+-	spin_lock_bh(&vxlan->hash_lock);
++	spin_lock_bh(&vxlan->hash_lock[hash_index]);
+ 
+ 	f = vxlan_find_mac(vxlan, fdb_info->eth_addr, fdb_info->vni);
+ 	if (!f)
+@@ -4212,7 +4234,7 @@ vxlan_fdb_offloaded_set(struct net_device *dev,
+ 	rdst->offloaded = fdb_info->offloaded;
+ 
+ out:
+-	spin_unlock_bh(&vxlan->hash_lock);
++	spin_unlock_bh(&vxlan->hash_lock[hash_index]);
+ }
+ 
+ static int
+@@ -4221,11 +4243,13 @@ vxlan_fdb_external_learn_add(struct net_device *dev,
+ {
+ 	struct vxlan_dev *vxlan = netdev_priv(dev);
+ 	struct netlink_ext_ack *extack;
++	u32 hash_index;
+ 	int err;
+ 
++	hash_index = fdb_head_index(vxlan, fdb_info->eth_addr, fdb_info->vni);
+ 	extack = switchdev_notifier_info_to_extack(&fdb_info->info);
+ 
+-	spin_lock_bh(&vxlan->hash_lock);
++	spin_lock_bh(&vxlan->hash_lock[hash_index]);
+ 	err = vxlan_fdb_update(vxlan, fdb_info->eth_addr, &fdb_info->remote_ip,
+ 			       NUD_REACHABLE,
+ 			       NLM_F_CREATE | NLM_F_REPLACE,
+@@ -4235,7 +4259,7 @@ vxlan_fdb_external_learn_add(struct net_device *dev,
+ 			       fdb_info->remote_ifindex,
+ 			       NTF_USE | NTF_SELF | NTF_EXT_LEARNED,
+ 			       false, extack);
+-	spin_unlock_bh(&vxlan->hash_lock);
++	spin_unlock_bh(&vxlan->hash_lock[hash_index]);
+ 
+ 	return err;
+ }
+@@ -4246,9 +4270,11 @@ vxlan_fdb_external_learn_del(struct net_device *dev,
+ {
+ 	struct vxlan_dev *vxlan = netdev_priv(dev);
+ 	struct vxlan_fdb *f;
++	u32 hash_index;
+ 	int err = 0;
+ 
+-	spin_lock_bh(&vxlan->hash_lock);
++	hash_index = fdb_head_index(vxlan, fdb_info->eth_addr, fdb_info->vni);
++	spin_lock_bh(&vxlan->hash_lock[hash_index]);
+ 
+ 	f = vxlan_find_mac(vxlan, fdb_info->eth_addr, fdb_info->vni);
+ 	if (!f)
+@@ -4262,7 +4288,7 @@ vxlan_fdb_external_learn_del(struct net_device *dev,
+ 					 fdb_info->remote_ifindex,
+ 					 false);
+ 
+-	spin_unlock_bh(&vxlan->hash_lock);
++	spin_unlock_bh(&vxlan->hash_lock[hash_index]);
+ 
+ 	return err;
+ }
+diff --git a/include/net/vxlan.h b/include/net/vxlan.h
+index 83b5999..dc1583a 100644
+--- a/include/net/vxlan.h
++++ b/include/net/vxlan.h
+@@ -242,7 +242,7 @@ struct vxlan_dev {
+ 	struct vxlan_rdst default_dst;	/* default destination */
+ 
+ 	struct timer_list age_timer;
+-	spinlock_t	  hash_lock;
++	spinlock_t	  hash_lock[FDB_HASH_SIZE];
+ 	unsigned int	  addrcnt;
+ 	struct gro_cells  gro_cells;
+ 
+-- 
+2.7.4
 
-You can introduce each helper along with its users in one patch.
 
-This way the total number of patches will be reduced and they will be
-easier to review IMO.
+
