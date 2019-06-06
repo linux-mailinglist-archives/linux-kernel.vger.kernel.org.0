@@ -2,141 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C897F375EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 16:00:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E5A737605
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 16:07:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728738AbfFFOAj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 10:00:39 -0400
-Received: from mga05.intel.com ([192.55.52.43]:6023 "EHLO mga05.intel.com"
+        id S1728247AbfFFOHD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 10:07:03 -0400
+Received: from h1.radempa.de ([176.9.142.194]:35084 "EHLO mail.cosmopool.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726924AbfFFOAj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 10:00:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 07:00:38 -0700
-X-ExtLoop1: 1
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.198]) ([10.237.72.198])
-  by fmsmga005.fm.intel.com with ESMTP; 06 Jun 2019 07:00:30 -0700
-Subject: Re: [PATCH v2 3/3] brcmfmac: sdio: Disable auto-tuning around
- commands expected to fail
-To:     Douglas Anderson <dianders@chromium.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc:     brcm80211-dev-list.pdl@broadcom.com,
-        linux-rockchip@lists.infradead.org,
-        Double Lo <double.lo@cypress.com>, briannorris@chromium.org,
-        linux-wireless@vger.kernel.org,
-        Naveen Gupta <naveen.gupta@cypress.com>,
-        Madhan Mohan R <madhanmohan.r@cypress.com>, mka@chromium.org,
-        Wright Feng <wright.feng@cypress.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        netdev@vger.kernel.org, brcm80211-dev-list@cypress.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Franky Lin <franky.lin@broadcom.com>,
-        linux-kernel@vger.kernel.org,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>
-References: <20190603183740.239031-1-dianders@chromium.org>
- <20190603183740.239031-4-dianders@chromium.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <42fc30b1-adab-7fa8-104c-cbb7855f2032@intel.com>
-Date:   Thu, 6 Jun 2019 16:59:17 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1727068AbfFFOHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 10:07:03 -0400
+X-Greylist: delayed 446 seconds by postgrey-1.27 at vger.kernel.org; Thu, 06 Jun 2019 10:07:00 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by mail.cosmopool.net (Postfix) with ESMTP id 0B80890FE45;
+        Thu,  6 Jun 2019 15:59:33 +0200 (CEST)
+Received: from mail.cosmopool.net ([127.0.0.1])
+        by localhost (mail.b.radempa.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id t6ScGfx02b-c; Thu,  6 Jun 2019 15:59:32 +0200 (CEST)
+Received: from stardust.g4.wien.funkfeuer.at (77.117.149.20.wireless.dyn.drei.com [77.117.149.20])
+        by mail.cosmopool.net (Postfix) with ESMTPSA id 513A190213F;
+        Thu,  6 Jun 2019 15:59:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ccbib.org; s=201902;
+        t=1559829572; bh=yRX2r+1exJu+xt6035zadTL1ALZUnRaTg/CjqI7wAzk=;
+        h=From:To:cc:Subject:In-reply-to:References:Date:From;
+        b=Xfkl4O7wX3W5m8UlC0jDHhFkqAU2BvG0QxydrPbS9pMTSjHknn5s/c1SBTbtruCcq
+         coWAmuJr1yuOJaqZowoulZ4CcLBNmsNeCqUBUAZ7PircVahSQsVhWKIyeT5tBQ5436
+         fIYEpSYrT8cO2D3AnUl0hF34wAuI64BKWaKomt8Y=
+Received: from lambda by stardust.g4.wien.funkfeuer.at with local (Exim 4.89)
+        (envelope-from <harald@ccbib.org>)
+        id 1hYsvP-0000PY-Pz; Thu, 06 Jun 2019 15:59:27 +0200
+From:   Harald Geyer <harald@ccbib.org>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+cc:     Torsten Duwe <duwe@lst.de>, Vasily Khoruzhick <anarsoul@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Sean Paul <seanpaul@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        arm-linux <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 7/7] arm64: dts: allwinner: a64: enable ANX6345 bridge on Teres-I
+In-reply-to: <20190605120237.ekmytfxcwbjaqy3x@flea>
+References: <20190604122150.29D6468B05@newverein.lst.de> <20190604122308.98D4868B20@newverein.lst.de> <CA+E=qVckHLqRngsfK=AcvstrD0ymEfRkYyhS_kBtZ3YWdE3L=g@mail.gmail.com> <20190605101317.GA9345@lst.de> <20190605120237.ekmytfxcwbjaqy3x@flea>
+Comments: In-reply-to Maxime Ripard <maxime.ripard@bootlin.com>
+   message dated "Wed, 05 Jun 2019 14:02:37 +0200."
 MIME-Version: 1.0
-In-Reply-To: <20190603183740.239031-4-dianders@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1582.1559829566.1@stardust.g4.wien.funkfeuer.at>
+Content-Transfer-Encoding: quoted-printable
+Date:   Thu, 06 Jun 2019 15:59:27 +0200
+Message-Id: <E1hYsvP-0000PY-Pz@stardust.g4.wien.funkfeuer.at>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/06/19 9:37 PM, Douglas Anderson wrote:
-> There are certain cases, notably when transitioning between sleep and
-> active state, when Broadcom SDIO WiFi cards will produce errors on the
-> SDIO bus.  This is evident from the source code where you can see that
-> we try commands in a loop until we either get success or we've tried
-> too many times.  The comment in the code reinforces this by saying
-> "just one write attempt may fail"
-> 
-> Unfortunately these failures sometimes end up causing an "-EILSEQ"
-> back to the core which triggers a retuning of the SDIO card and that
-> blocks all traffic to the card until it's done.
-> 
-> Let's disable retuning around the commands we expect might fail.
+Guys, this discussion is getting heated for no reason. Let's put
+personal frustrations aside and discuss the issue on its merits:
 
-It seems to me that re-tuning needs to be prevented before the
-first access otherwise it might be attempted there, and it needs
-to continue to be prevented during the transition when it might
-reasonably be expected to fail.
+Maxime Ripard writes:
+> On Wed, Jun 05, 2019 at 12:13:17PM +0200, Torsten Duwe wrote:
+> > On Tue, Jun 04, 2019 at 08:08:40AM -0700, Vasily Khoruzhick wrote:
+> > > On Tue, Jun 4, 2019 at 5:23 AM Torsten Duwe <duwe@lst.de> wrote:
+> > > >
+> > > > Teres-I has an anx6345 bridge connected to the RGB666 LCD output, =
+and
+> > > > the I2C controlling signals are connected to I2C0 bus. eDP output =
+goes
+> > > > to an Innolux N116BGE panel.
+> > > >
+> > > > Enable it in the device tree.
+> > > >
+> > > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> > > > Signed-off-by: Torsten Duwe <duwe@suse.de>
+> > > > ---
+> > > >  .../boot/dts/allwinner/sun50i-a64-teres-i.dts      | 65 +++++++++=
++++++++++++--
+> > > >  1 file changed, 61 insertions(+), 4 deletions(-)
+> > > >
+> > > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts =
+b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+> > > > index 0ec46b969a75..a0ad438b037f 100644
+> > > > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+> > > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+> > > > @@ -65,6 +65,21 @@
+> > > >                 };
+> > > >         };
+> > > >
+> > > > +       panel: panel {
+> > > > +               compatible =3D"innolux,n116bge", "simple-panel";
+> > >
+> > > It's still "simple-panel". I believe I already mentioned that Rob
+> > > asked it to be edp-connector.
 
-What about something along these lines:
+Actually just dropping the "simple-panel" compatible would be a poor
+choice. Even if "edp-connector" is specified as binding and implemented in=
+ a
+driver, there are older kernel versions and other operating systems to
+keep in mind. If the HW works with "simple-panel" driver satisfactorily,
+we should definitely keep the compatible as a fall back for cases where
+the edp-connector driver is unavailable.
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-index 4e15ea57d4f5..d932780ef56e 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-@@ -664,9 +664,18 @@ brcmf_sdio_kso_control(struct brcmf_sdio *bus, bool on)
- 	int err = 0;
- 	int err_cnt = 0;
- 	int try_cnt = 0;
-+	int need_retune = 0;
-+	bool retune_release = false;
- 
- 	brcmf_dbg(TRACE, "Enter: on=%d\n", on);
- 
-+	/* Cannot re-tune if device is asleep */
-+	if (on) {
-+		need_retune = sdio_retune_get_needed(bus->sdiodev->func1); // TODO: host->can_retune ? host->need_retune : 0
-+		sdio_retune_hold_now(bus->sdiodev->func1); // TODO: add sdio_retune_hold_now()
-+		retune_release = true;
-+	}
-+
- 	wr_val = (on << SBSDIO_FUNC1_SLEEPCSR_KSO_SHIFT);
- 	/* 1st KSO write goes to AOS wake up core if device is asleep  */
- 	brcmf_sdiod_writeb(bus->sdiodev, SBSDIO_FUNC1_SLEEPCSR, wr_val, &err);
-@@ -711,8 +720,16 @@ brcmf_sdio_kso_control(struct brcmf_sdio *bus, bool on)
- 			err_cnt = 0;
- 		}
- 		/* bail out upon subsequent access errors */
--		if (err && (err_cnt++ > BRCMF_SDIO_MAX_ACCESS_ERRORS))
--			break;
-+		if (err && (err_cnt++ > BRCMF_SDIO_MAX_ACCESS_ERRORS)) {
-+			if (!retune_release)
-+				break;
-+			/*
-+			 * Allow one more retry with re-tuning released in case
-+			 * it helps.
-+			 */
-+			sdio_retune_release(bus->sdiodev->func1);
-+			retune_release = false;
-+		}
- 
- 		udelay(KSO_WAIT_US);
- 		brcmf_sdiod_writeb(bus->sdiodev, SBSDIO_FUNC1_SLEEPCSR, wr_val,
-@@ -727,6 +744,18 @@ brcmf_sdio_kso_control(struct brcmf_sdio *bus, bool on)
- 	if (try_cnt > MAX_KSO_ATTEMPTS)
- 		brcmf_err("max tries: rd_val=0x%x err=%d\n", rd_val, err);
- 
-+	if (retune_release) {
-+		/*
-+		 * CRC errors are not unexpected during the transition but they
-+		 * also trigger re-tuning. Clear that here to avoid an
-+		 * unnecessary re-tune if it wasn't already triggered to start
-+		 * with.
-+		 */
-+		if (!need_retune)
-+			sdio_retune_clear_needed(bus->sdiodev->func1); // TODO: host->need_retune = 0
-+		sdio_retune_release(bus->sdiodev->func1); // TODO: add sdio_retune_release()
-+	}
-+
- 	return err;
- }
- 
+If think valid compatible properties would be:
+compatible =3D "innolux,n116bge", "simple-panel";
+compatible =3D "edp-connector", "simple-panel";
+compatible =3D "innolux,n116bge", "edp-connector", "simple-panel";
+compatible =3D "edp-connector", "innolux,n116bge", "simple-panel";
+
+I can't make up my mind which one I prefere. However neither of these
+variants requires actually implmenting an edp-connector driver. And each
+of these variants is clearly preferable to shipping DTs without
+description of the panel at all and complies with bindings after adding
+a stub for "edp-connector".
+
+> And the DT is considered an ABI, so yeah, we will witheld everything
+> that doesn't fit what we would like.
+
+I fail to see how the patch in discussion adds new ABI. While I understand
+the need to pester contributors for more work, outright blocking DTs, that
+properly describe the HW and comply with existing bindings, seems a
+bit unreasonable. (Assuming there are no other issues of course.)
+
+Also note that the innolux,n116bge binding suggestes using simple-panel
+as fallback.
+
+HTH,
+Harald
+
+-- =
+
+If you want to support my work:
+see http://friends.ccbib.org/harald/supporting/
+or donate via CLAM to xASPBtezLNqj4cUe8MT5nZjthRSEjrRQXN
+or via peercoin to P98LRdhit3gZbHDBe7ta5jtXrMJUms4p7w
