@@ -2,159 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DE9E37154
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 12:11:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE5E73715B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 12:11:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728252AbfFFKLV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 06:11:21 -0400
-Received: from casper.infradead.org ([85.118.1.10]:53770 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727469AbfFFKLU (ORCPT
+        id S1728332AbfFFKLv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 06:11:51 -0400
+Received: from webmail.newmedia-net.de ([185.84.6.166]:57188 "EHLO
+        webmail.newmedia-net.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726972AbfFFKLv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 06:11:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=ntYG98vIw8SBks2+iwma4fYIuw+qJBNTLrhwVKHXBpE=; b=WzStA+HhR1uA1MUXet6UrpqTpy
-        6OWCYEZ2rzB7yeao3BJZlP9JARMqc03xXe16Pze/mZN+VfJDR3l+j6MblckY71dbh01iCmrk6hyEp
-        +TZ6ORl3qXfMGqCUwdk35jbb0lL+KzwQjxxYAbqa0MIXMzsvMKc2SB5RkSyLfPl64EbpLBN3FGBkH
-        06sOh9Ey2LlY65ZqrAjIDR7ZftncTdYx/5Dbv+f96ihOwBj+QMA+48U3ZdNDs1AsSN5zrKAhrJxS6
-        itveatFisKOxU6ltd2vsRJlfF2MzVklRTyxpj4f2ZXJhq7R6aNn1BeD4lVtW/gyLKbnNjMo9edQBO
-        edOlIAVA==;
-Received: from [179.182.172.34] (helo=coco.lan)
-        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hYpMM-0005DZ-4y; Thu, 06 Jun 2019 10:11:02 +0000
-Date:   Thu, 6 Jun 2019 07:10:52 -0300
-From:   Mauro Carvalho Chehab <mchehab@kernel.org>
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com,
-        marex@denx.de, stefan@agner.ch, airlied@linux.ie, daniel@ffwll.ch,
-        shawnguo@kernel.org, s.hauer@pengutronix.de,
-        b.zolnierkie@samsung.com, a.hajda@samsung.com,
-        p.zabel@pengutronix.de, hkallweit1@gmail.com, lee.jones@linaro.org,
-        lgirdwood@gmail.com, broonie@kernel.org, davem@davemloft.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-fbdev@vger.kernel.org,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH 0/8] fix warnings for same module names
-Message-ID: <20190606071052.412a766d@coco.lan>
-In-Reply-To: <20190606094657.23612-1-anders.roxell@linaro.org>
-References: <20190606094657.23612-1-anders.roxell@linaro.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Thu, 6 Jun 2019 06:11:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=newmedia-net.de; s=mikd;
+        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=C1z1MYsrx/SRpP1spyHjHQ4JV3+0P+ksX3PAEqJ8gyc=;
+        b=MPv2IOnZsk2mcrlJALBQw+A8TAB5jgJ8qv4vR6tKeNRKyDNElgEd8iqCVd7g1c9jo9f7/vyesj+lKiEHuT7ibb4ySmLx3fHTPdonTCCZDf68pJ0xDH+A/CrlIcQ31dK9ekplGRaOzQumLbrjlgtvAQ9eiQ9ewBxaqQlMEUCcwCk=;
+Subject: Re: [PATCH v3 1/2] mt76: mt7615: enable support for mesh
+To:     Ryder Lee <ryder.lee@mediatek.com>, Felix Fietkau <nbd@nbd.name>,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Cc:     Roy Luo <royluo@google.com>, YF Luo <yf.luo@mediatek.com>,
+        Yiwei Chung <yiwei.chung@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Chih-Min Chen <chih-min.Chen@mediatek.com>,
+        linux-wireless@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <a1ff446dfc06e2443552e7ec2d754099aacce7df.1559541944.git.ryder.lee@mediatek.com>
+From:   Sebastian Gottschall <s.gottschall@newmedia-net.de>
+Message-ID: <ade7ef01-8b06-ec7d-4caf-e581f4033819@newmedia-net.de>
+Date:   Thu, 6 Jun 2019 12:11:09 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <a1ff446dfc06e2443552e7ec2d754099aacce7df.1559541944.git.ryder.lee@mediatek.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Received:  from [212.111.244.1] (helo=[172.29.0.186])
+        by webmail.newmedia-net.de with esmtpsa (TLSv1:AES128-SHA:128)
+        (Exim 4.72)
+        (envelope-from <s.gottschall@newmedia-net.de>)
+        id 1hYpN9-000859-8L; Thu, 06 Jun 2019 12:11:51 +0200
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu,  6 Jun 2019 11:46:57 +0200
-Anders Roxell <anders.roxell@linaro.org> escreveu:
-
-> Hi,
-> 
-> This patch set addresses warnings that module names are named the
-> same, this may lead to a problem that wrong module gets loaded or if one
-> of the two same-name modules exports a symbol, this can confuse the
-> dependency resolution. and the build may fail.
-> 
-> 
-> Patch "drivers: net: dsa: realtek: fix warning same module names" and
-> "drivers: net: phy: realtek: fix warning same module names" resolves the
-> name clatch realtek.ko.
-> 
-> warning: same module names found:
->   drivers/net/phy/realtek.ko
->   drivers/net/dsa/realtek.ko
-> 
-> 
-> Patch  "drivers: (video|gpu): fix warning same module names" resolves
-> the name clatch mxsfb.ko.
-> 
-> warning: same module names found:
->   drivers/video/fbdev/mxsfb.ko
->   drivers/gpu/drm/mxsfb/mxsfb.ko
-> 
-> Patch "drivers: media: i2c: fix warning same module names" resolves the
-> name clatch adv7511.ko however, it seams to refer to the same device
-> name in i2c_device_id, does anyone have any guidance how that should be
-> solved?
-> 
-> warning: same module names found:
->   drivers/gpu/drm/bridge/adv7511/adv7511.ko
->   drivers/media/i2c/adv7511.ko
-> 
-> 
-> Patch "drivers: media: coda: fix warning same module names" resolves the
-> name clatch coda.ko.
-> 
-> warning: same module names found:
->   fs/coda/coda.ko
->   drivers/media/platform/coda/coda.ko
-
-Media change look ok, and probably the other patches too, but the
-problem here is: who will apply it and when.
-
-The way you grouped the changes makes harder for subsystem maintainers
-to pick, as the same patch touches multiple subsystems.
-
-On the other hand, if this gets picked by someone else, it has the
-potential to cause conflicts between linux-next and the maintainer's
-tree.
-
-So, the best would be if you re-arrange this series to submit one
-patch per subsystem.
+i tested your patch against a qca 9984 chipset using SAE and without 
+encryption. both did not work. the devices are connecting, but no data 
+connection is possible
 
 
-> 
-> 
-> Patch "drivers: net: phy: fix warning same module names" resolves the
-> name clatch asix.ko.
-> 
-> warning: same module names found:
->   drivers/net/phy/asix.ko
->   drivers/net/usb/asix.ko
-> 
-> Patch "drivers: mfd: 88pm800: fix warning same module names" and
-> "drivers: regulator: 88pm800: fix warning same module names" resolves
-> the name clatch 88pm800.ko.
-> 
-> warning: same module names found:
->   drivers/regulator/88pm800.ko
->   drivers/mfd/88pm800.ko
-> 
-> 
-> Cheers,
-> Anders
-> 
-> Anders Roxell (8):
->   drivers: net: dsa: realtek: fix warning same module names
->   drivers: net: phy: realtek: fix warning same module names
->   drivers: (video|gpu): fix warning same module names
->   drivers: media: i2c: fix warning same module names
->   drivers: media: coda: fix warning same module names
->   drivers: net: phy: fix warning same module names
->   drivers: mfd: 88pm800: fix warning same module names
->   drivers: regulator: 88pm800: fix warning same module names
-> 
->  drivers/gpu/drm/bridge/adv7511/Makefile | 10 +++++-----
->  drivers/gpu/drm/mxsfb/Makefile          |  4 ++--
->  drivers/media/i2c/Makefile              |  3 ++-
->  drivers/media/platform/coda/Makefile    |  4 ++--
->  drivers/mfd/Makefile                    |  7 +++++--
->  drivers/net/dsa/Makefile                |  4 ++--
->  drivers/net/phy/Makefile                |  6 ++++--
->  drivers/regulator/Makefile              |  3 ++-
->  drivers/video/fbdev/Makefile            |  3 ++-
->  9 files changed, 26 insertions(+), 18 deletions(-)
-> 
+Sebastian
 
-
-
-Thanks,
-Mauro
+Am 03.06.2019 um 08:08 schrieb Ryder Lee:
+> Enable NL80211_IFTYPE_MESH_POINT and update its path.
+>
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> ---
+> Changes since v3 - fix a wrong expression
+> Changes since v2 - remove unused definitions
+> ---
+>   drivers/net/wireless/mediatek/mt76/mt7615/init.c | 6 ++++++
+>   drivers/net/wireless/mediatek/mt76/mt7615/main.c | 1 +
+>   drivers/net/wireless/mediatek/mt76/mt7615/mcu.c  | 4 +++-
+>   drivers/net/wireless/mediatek/mt76/mt7615/mcu.h  | 6 ------
+>   4 files changed, 10 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/init.c b/drivers/net/wireless/mediatek/mt76/mt7615/init.c
+> index 59f604f3161f..f860af6a42da 100644
+> --- a/drivers/net/wireless/mediatek/mt76/mt7615/init.c
+> +++ b/drivers/net/wireless/mediatek/mt76/mt7615/init.c
+> @@ -133,6 +133,9 @@ static const struct ieee80211_iface_limit if_limits[] = {
+>   	{
+>   		.max = MT7615_MAX_INTERFACES,
+>   		.types = BIT(NL80211_IFTYPE_AP) |
+> +#ifdef CONFIG_MAC80211_MESH
+> +			 BIT(NL80211_IFTYPE_MESH_POINT) |
+> +#endif
+>   			 BIT(NL80211_IFTYPE_STATION)
+>   	}
+>   };
+> @@ -195,6 +198,9 @@ int mt7615_register_device(struct mt7615_dev *dev)
+>   	dev->mt76.antenna_mask = 0xf;
+>   
+>   	wiphy->interface_modes = BIT(NL80211_IFTYPE_STATION) |
+> +#ifdef CONFIG_MAC80211_MESH
+> +				 BIT(NL80211_IFTYPE_MESH_POINT) |
+> +#endif
+>   				 BIT(NL80211_IFTYPE_AP);
+>   
+>   	ret = mt76_register_device(&dev->mt76, true, mt7615_rates,
+> diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/main.c b/drivers/net/wireless/mediatek/mt76/mt7615/main.c
+> index b0bb7cc12385..585e67fa2728 100644
+> --- a/drivers/net/wireless/mediatek/mt76/mt7615/main.c
+> +++ b/drivers/net/wireless/mediatek/mt76/mt7615/main.c
+> @@ -37,6 +37,7 @@ static int get_omac_idx(enum nl80211_iftype type, u32 mask)
+>   
+>   	switch (type) {
+>   	case NL80211_IFTYPE_AP:
+> +	case NL80211_IFTYPE_MESH_POINT:
+>   		/* ap use hw bssid 0 and ext bssid */
+>   		if (~mask & BIT(HW_BSSID_0))
+>   			return HW_BSSID_0;
+> diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
+> index 43f70195244c..e82297048449 100644
+> --- a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
+> +++ b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
+> @@ -754,6 +754,7 @@ int mt7615_mcu_set_bss_info(struct mt7615_dev *dev,
+>   
+>   	switch (vif->type) {
+>   	case NL80211_IFTYPE_AP:
+> +	case NL80211_IFTYPE_MESH_POINT:
+>   		tx_wlan_idx = mvif->sta.wcid.idx;
+>   		conn_type = CONNECTION_INFRA_AP;
+>   		break;
+> @@ -968,7 +969,7 @@ int mt7615_mcu_add_wtbl(struct mt7615_dev *dev, struct ieee80211_vif *vif,
+>   		.rx_wtbl = {
+>   			.tag = cpu_to_le16(WTBL_RX),
+>   			.len = cpu_to_le16(sizeof(struct wtbl_rx)),
+> -			.rca1 = vif->type != NL80211_IFTYPE_AP,
+> +			.rca1 = vif->type == NL80211_IFTYPE_STATION,
+>   			.rca2 = 1,
+>   			.rv = 1,
+>   		},
+> @@ -1042,6 +1043,7 @@ static void sta_rec_convert_vif_type(enum nl80211_iftype type, u32 *conn_type)
+>   {
+>   	switch (type) {
+>   	case NL80211_IFTYPE_AP:
+> +	case NL80211_IFTYPE_MESH_POINT:
+>   		if (conn_type)
+>   			*conn_type = CONNECTION_INFRA_STA;
+>   		break;
+> diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.h b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.h
+> index e96efb13fa4d..0915cb735699 100644
+> --- a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.h
+> +++ b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.h
+> @@ -105,25 +105,19 @@ enum {
+>   #define STA_TYPE_STA		BIT(0)
+>   #define STA_TYPE_AP		BIT(1)
+>   #define STA_TYPE_ADHOC		BIT(2)
+> -#define STA_TYPE_TDLS		BIT(3)
+>   #define STA_TYPE_WDS		BIT(4)
+>   #define STA_TYPE_BC		BIT(5)
+>   
+>   #define NETWORK_INFRA		BIT(16)
+>   #define NETWORK_P2P		BIT(17)
+>   #define NETWORK_IBSS		BIT(18)
+> -#define NETWORK_MESH		BIT(19)
+> -#define NETWORK_BOW		BIT(20)
+>   #define NETWORK_WDS		BIT(21)
+>   
+>   #define CONNECTION_INFRA_STA	(STA_TYPE_STA | NETWORK_INFRA)
+>   #define CONNECTION_INFRA_AP	(STA_TYPE_AP | NETWORK_INFRA)
+>   #define CONNECTION_P2P_GC	(STA_TYPE_STA | NETWORK_P2P)
+>   #define CONNECTION_P2P_GO	(STA_TYPE_AP | NETWORK_P2P)
+> -#define CONNECTION_MESH_STA	(STA_TYPE_STA | NETWORK_MESH)
+> -#define CONNECTION_MESH_AP	(STA_TYPE_AP | NETWORK_MESH)
+>   #define CONNECTION_IBSS_ADHOC	(STA_TYPE_ADHOC | NETWORK_IBSS)
+> -#define CONNECTION_TDLS		(STA_TYPE_STA | NETWORK_INFRA | STA_TYPE_TDLS)
+>   #define CONNECTION_WDS		(STA_TYPE_WDS | NETWORK_WDS)
+>   #define CONNECTION_INFRA_BC	(STA_TYPE_BC | NETWORK_INFRA)
+>   
