@@ -2,122 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61D1936E68
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 10:21:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A7DA36E77
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 10:23:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727151AbfFFIV3 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 6 Jun 2019 04:21:29 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33276 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725267AbfFFIV3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 04:21:29 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x568Idka111736
-        for <linux-kernel@vger.kernel.org>; Thu, 6 Jun 2019 04:21:27 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2sxx14usm7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 04:21:27 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <naveen.n.rao@linux.ibm.com>;
-        Thu, 6 Jun 2019 09:21:25 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 6 Jun 2019 09:21:22 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x568LLRj63045844
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Jun 2019 08:21:21 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B92C6A405B;
-        Thu,  6 Jun 2019 08:21:21 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6B507A4054;
-        Thu,  6 Jun 2019 08:21:21 +0000 (GMT)
-Received: from localhost (unknown [9.122.211.182])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  6 Jun 2019 08:21:21 +0000 (GMT)
-Date:   Thu, 06 Jun 2019 13:51:20 +0530
-From:   "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
-Subject: Re: [PATCH] Powerpc/Watchpoint: Restore nvgprs while returning from
- exception
-To:     mpe@ellerman.id.au, Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        mahesh@linux.vnet.ibm.com, mikey@neuling.org, npiggin@gmail.com,
-        paulus@samba.org
-References: <20190606072951.32116-1-ravi.bangoria@linux.ibm.com>
-In-Reply-To: <20190606072951.32116-1-ravi.bangoria@linux.ibm.com>
-User-Agent: astroid/0.14.0 (https://github.com/astroidmail/astroid)
+        id S1727367AbfFFIXA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 04:23:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59408 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727109AbfFFIW7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 04:22:59 -0400
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4446020866;
+        Thu,  6 Jun 2019 08:22:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559809378;
+        bh=gKzN6z2+9cSG7vi6DKtDlhAy7Iw5t3nBvZYXPHQIj1c=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ngnHK3kNT6Ik+jknuJxz4usImOs/0J8Gk+RBc8GNl0AG2gjt4wv6RbT8zFJntNpXK
+         eoEwFyqomKLEQZvuseLDDyPFqnRcSCi/wQ33maV+kohnGEdLOugSVFujy2X6Te0Vq8
+         s8fceHyGR5sW63mBr6zWSlZ9uOgGck9w5ZO+UZfQ=
+Received: by mail-lf1-f41.google.com with SMTP id a25so902750lfg.2;
+        Thu, 06 Jun 2019 01:22:58 -0700 (PDT)
+X-Gm-Message-State: APjAAAW8WFdIRwRt9SDiHMGc5P0mqL/ansGdDRxaq7J6LJJaSYjPgE8T
+        NyM66RSuOGKbNIF5OR0khiInXgSB7qzy+z//7VA=
+X-Google-Smtp-Source: APXvYqxpSKprvvtB2rb8p/kAr5+gW8AhO5iZBE7iucDogxLrho5mwGpIFgmnHkQoZ9aRJKhbX6ibXh991STqtmR31zU=
+X-Received: by 2002:ac2:4d1c:: with SMTP id r28mr8401245lfi.159.1559809376572;
+ Thu, 06 Jun 2019 01:22:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-X-TM-AS-GCONF: 00
-x-cbid: 19060608-4275-0000-0000-0000033F4CA3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19060608-4276-0000-0000-0000384F5055
-Message-Id: <1559809100.x2v1my2997.naveen@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-06_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906060061
+References: <CGME20190605165427eucas1p27610c38c96313dd80ab445472735a242@eucas1p2.samsung.com>
+ <20190605165410.14606-1-l.luba@partner.samsung.com> <20190605165410.14606-2-l.luba@partner.samsung.com>
+In-Reply-To: <20190605165410.14606-2-l.luba@partner.samsung.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Thu, 6 Jun 2019 10:22:45 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPdm3FG1KE+JmKx=P+7CK6NBWY3fOiO4OvTxibGsrUxWBg@mail.gmail.com>
+Message-ID: <CAJKOXPdm3FG1KE+JmKx=P+7CK6NBWY3fOiO4OvTxibGsrUxWBg@mail.gmail.com>
+Subject: Re: [PATCH v8 01/13] clk: samsung: add needed IDs for DMC clocks in Exynos5420
+To:     Lukasz Luba <l.luba@partner.samsung.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
+        <b.zolnierkie@samsung.com>, kgene@kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        kyungmin.park@samsung.com,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
+        keescook@chromium.org, tony@atomide.com, jroedel@suse.de,
+        treding@nvidia.com, digetx@gmail.com, willy.mh.wolff.ml@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ravi Bangoria wrote:
-> Powerpc hw triggers watchpoint before executing the instruction.
-> To make trigger-after-execute behavior, kernel emulates the
-> instruction. If the instruction is 'load something into non-
-> volatile register', exception handler should restore emulated
-> register state while returning back, otherwise there will be
-> register state corruption. Ex, Adding a watchpoint on a list
-> can corrput the list:
-> 
->   # cat /proc/kallsyms | grep kthread_create_list
->   c00000000121c8b8 d kthread_create_list
-> 
-> Add watchpoint on kthread_create_list->next:
-> 
->   # perf record -e mem:0xc00000000121c8c0
-> 
-> Run some workload such that new kthread gets invoked. Ex, I
-> just logged out from console:
-> 
->   list_add corruption. next->prev should be prev (c000000001214e00), \
-> 	but was c00000000121c8b8. (next=c00000000121c8b8).
->   WARNING: CPU: 59 PID: 309 at lib/list_debug.c:25 __list_add_valid+0xb4/0xc0
->   CPU: 59 PID: 309 Comm: kworker/59:0 Kdump: loaded Not tainted 5.1.0-rc7+ #69
->   ...
->   NIP __list_add_valid+0xb4/0xc0
->   LR __list_add_valid+0xb0/0xc0
->   Call Trace:
->   __list_add_valid+0xb0/0xc0 (unreliable)
->   __kthread_create_on_node+0xe0/0x260
->   kthread_create_on_node+0x34/0x50
->   create_worker+0xe8/0x260
->   worker_thread+0x444/0x560
->   kthread+0x160/0x1a0
->   ret_from_kernel_thread+0x5c/0x70
-> 
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+On Wed, 5 Jun 2019 at 18:54, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+>
+> Define new IDs for clocks used by Dynamic Memory Controller in
+> Exynos5422 SoC.
+>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 > ---
->  arch/powerpc/kernel/exceptions-64s.S | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+>  include/dt-bindings/clock/exynos5420.h | 18 +++++++++++++++++-
+>  1 file changed, 17 insertions(+), 1 deletion(-)
 
-Awesome catch - this one has had a glorious run...
-Fixes: 5aae8a5370802 ("powerpc, hw_breakpoints: Implement hw_breakpoints for 64-bit server processors")
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Reviewed-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-
-
-- Naveen
-
-
+Best regards,
+Krzysztof
