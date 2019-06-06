@@ -2,123 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A0E7375B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 15:52:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD69B375B6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 15:52:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727709AbfFFNv7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 09:51:59 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60164 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726014AbfFFNv7 (ORCPT
+        id S1728375AbfFFNwM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 09:52:12 -0400
+Received: from mail-it1-f199.google.com ([209.85.166.199]:39518 "EHLO
+        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbfFFNwL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 09:51:59 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x56Di7u6111614
-        for <linux-kernel@vger.kernel.org>; Thu, 6 Jun 2019 09:51:58 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2sy2spcjv4-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 09:51:57 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 6 Jun 2019 14:51:56 +0100
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 6 Jun 2019 14:51:50 +0100
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x56Dpn7V34013514
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Jun 2019 13:51:49 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D9604B2064;
-        Thu,  6 Jun 2019 13:51:49 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A79A0B205F;
-        Thu,  6 Jun 2019 13:51:49 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.80.209.205])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  6 Jun 2019 13:51:49 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 279D516C5DA1; Thu,  6 Jun 2019 06:51:49 -0700 (PDT)
-Date:   Thu, 6 Jun 2019 06:51:49 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        torvalds@linux-foundation.org
-Subject: Re: [PATCH RFC tip/core/rcu] Restore barrier() to rcu_read_lock()
- and rcu_read_unlock()
-Reply-To: paulmck@linux.ibm.com
-References: <20190606131933.GA12576@linux.ibm.com>
- <20190606134233.saqa3insjv75xu6o@gondor.apana.org.au>
+        Thu, 6 Jun 2019 09:52:11 -0400
+Received: by mail-it1-f199.google.com with SMTP id a62so11922itd.4
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 06:52:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=o0RJU0d7tS36/GBK6WaDEPEeObqvBB53uJC4wjI9+rE=;
+        b=jgCLlwcI9wpRqXKxpdqDFvyFtY8g9el+12QX/BD7+uYcJM4apIJ0zZiRw3+P844eqm
+         vNN9tFLUEoJTmzzihINfcSOzp5SAiS5L2x7YLP0SxYDGofhZhPd9q9RgvUqdW/NB189C
+         PjHyYNhjldCi6gUVtjHVAEwEi2d3Y9Om0CVbFtj5+s0/ZH1wwq36iFUtM6C0LLYLc07G
+         YpKE7jWVotkEZusHGs9ovbc6zH2okSERoMaBXKjT3kqH8BPlii5dSsDW2/aJ74WMnDoM
+         qMsAPmwAkBe3XUA0YF3x8FFmd3XGf8Jx3CC9uJ9CFT4njuzA4x2FPy+/Wfy1Z9OQs+si
+         4B3Q==
+X-Gm-Message-State: APjAAAWAbxDNOFuloQWpiVHU6uWHaJX6+EVNQIhrzawQ7YqMeJPAbQOT
+        wTOL6fWDf9CCVKDmwZDNdpi/eA/7nV0v79VJGsm90ZAlhQC3
+X-Google-Smtp-Source: APXvYqxVwo54TufnpHAFfpFhBdeK3HzxTn+CVRm0HOfD5CVWXOzrEYA63Z6H1/aHl1GJqijhZAHB6MUIXBwjrIrIgGXeaNOQNSkS
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190606134233.saqa3insjv75xu6o@gondor.apana.org.au>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19060613-0052-0000-0000-000003CC3CE1
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011223; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01214074; UDB=6.00638159; IPR=6.00995154;
- MB=3.00027206; MTD=3.00000008; XFM=3.00000015; UTC=2019-06-06 13:51:55
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19060613-0053-0000-0000-00006135288C
-Message-Id: <20190606135149.GM28207@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-06_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906060099
+X-Received: by 2002:a02:c90d:: with SMTP id t13mr11180876jao.62.1559829130866;
+ Thu, 06 Jun 2019 06:52:10 -0700 (PDT)
+Date:   Thu, 06 Jun 2019 06:52:10 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000417702058aa80506@google.com>
+Subject: KMSAN: uninit-value in r871xu_drv_init
+From:   syzbot <syzbot+6f5ecd144854c0d8580b@syzkaller.appspotmail.com>
+To:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
+        florian.c.schilhabel@googlemail.com, glider@google.com,
+        gregkh@linuxfoundation.org, kai.heng.feng@canonical.com,
+        linux-kernel@vger.kernel.org, straube.linux@gmail.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 09:42:33PM +0800, Herbert Xu wrote:
-> On Thu, Jun 06, 2019 at 06:19:33AM -0700, Paul E. McKenney wrote:
-> > Commit bb73c52bad36 ("rcu: Don't disable preemption for Tiny and Tree
-> > RCU readers") removed the barrier() calls from rcu_read_lock() and
-> > rcu_write_lock() in CONFIG_PREEMPT=n&&CONFIG_PREEMPT_COUNT=n kernels.
-> > Within RCU, this commit was OK, but it failed to account for things like
-> > get_user() that can pagefault and that can be reordered by the compiler.
-> > Lack of the barrier() calls in rcu_read_lock() and rcu_read_unlock()
-> > can cause these page faults to migrate into RCU read-side critical
-> > sections, which in CONFIG_PREEMPT=n kernels could result in too-short
-> > grace periods and arbitrary misbehavior.  Please see commit 386afc91144b
-> > ("spinlocks and preemption points need to be at least compiler barriers")
-> > for more details.
-> > 
-> > This commit therefore restores the barrier() call to both rcu_read_lock()
-> > and rcu_read_unlock().  It also removes them from places in the RCU update
-> > machinery that used to need compensatory barrier() calls, effectively
-> > reverting commit bb73c52bad36 ("rcu: Don't disable preemption for Tiny
-> > and Tree RCU readers").
-> > 
-> > Reported-by: Herbert Xu <herbert@gondor.apana.org.au>
-> > Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-> > Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-> 
-> Paul, Linus has already commited his patch:
-> 
-> commit 66be4e66a7f422128748e3c3ef6ee72b20a6197b
-> Author: Linus Torvalds <torvalds@linux-foundation.org>
-> Date:   Mon Jun 3 13:26:20 2019 -0700
-> 
->     rcu: locking and unlocking need to always be at least barriers
-> 
-> So you'll need to rebase this.
+Hello,
 
-Thank you for letting me know.  Easy enough to do, just remove those
-two hunks from my patch.
+syzbot found the following crash on:
 
-							Thanx, Paul
+HEAD commit:    f75e4cfe kmsan: use kmsan_handle_urb() in urb.c
+git tree:       kmsan
+console output: https://syzkaller.appspot.com/x/log.txt?x=153453dea00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=602468164ccdc30a
+dashboard link: https://syzkaller.appspot.com/bug?extid=6f5ecd144854c0d8580b
+compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
+06d00afa61eef8f7f501ebdb4e8612ea43ec2d78)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=161892c1a00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11b20986a00000
 
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+6f5ecd144854c0d8580b@syzkaller.appspotmail.com
+
+usb 1-1: config 0 has no interface number 0
+usb 1-1: New USB device found, idVendor=050d, idProduct=945a,  
+bcdDevice=f1.a1
+usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+usb 1-1: config 0 descriptor??
+r8712u: register rtl8712_netdev_ops to netdev_ops
+usb 1-1: r8712u: USB_SPEED_LOW with 0 endpoints
+usb 1-1: r8712u: Boot from EFUSE: Autoload Failed
+==================================================================
+BUG: KMSAN: uninit-value in r871xu_drv_init+0x17c6/0x2ad0  
+drivers/staging/rtl8712/usb_intf.c:409
+CPU: 1 PID: 17 Comm: kworker/1:0 Not tainted 5.1.0+ #1
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x191/0x1f0 lib/dump_stack.c:113
+  kmsan_report+0x130/0x2a0 mm/kmsan/kmsan.c:622
+  __msan_warning+0x75/0xe0 mm/kmsan/kmsan_instr.c:310
+  r871xu_drv_init+0x17c6/0x2ad0 drivers/staging/rtl8712/usb_intf.c:409
+  usb_probe_interface+0xd66/0x1320 drivers/usb/core/driver.c:361
+  really_probe+0xdae/0x1d80 drivers/base/dd.c:513
+  driver_probe_device+0x1b3/0x4f0 drivers/base/dd.c:671
+  __device_attach_driver+0x5b8/0x790 drivers/base/dd.c:778
+  bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:454
+  __device_attach+0x454/0x730 drivers/base/dd.c:844
+  device_initial_probe+0x4a/0x60 drivers/base/dd.c:891
+  bus_probe_device+0x137/0x390 drivers/base/bus.c:514
+  device_add+0x288d/0x30e0 drivers/base/core.c:2106
+  usb_set_configuration+0x30dc/0x3750 drivers/usb/core/message.c:2027
+  generic_probe+0xe7/0x280 drivers/usb/core/generic.c:210
+  usb_probe_device+0x14c/0x200 drivers/usb/core/driver.c:266
+  really_probe+0xdae/0x1d80 drivers/base/dd.c:513
+  driver_probe_device+0x1b3/0x4f0 drivers/base/dd.c:671
+  __device_attach_driver+0x5b8/0x790 drivers/base/dd.c:778
+  bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:454
+  __device_attach+0x454/0x730 drivers/base/dd.c:844
+  device_initial_probe+0x4a/0x60 drivers/base/dd.c:891
+  bus_probe_device+0x137/0x390 drivers/base/bus.c:514
+  device_add+0x288d/0x30e0 drivers/base/core.c:2106
+  usb_new_device+0x23e5/0x2ff0 drivers/usb/core/hub.c:2534
+  hub_port_connect drivers/usb/core/hub.c:5089 [inline]
+  hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
+  port_event drivers/usb/core/hub.c:5350 [inline]
+  hub_event+0x48d1/0x7290 drivers/usb/core/hub.c:5432
+  process_one_work+0x1572/0x1f00 kernel/workqueue.c:2269
+  worker_thread+0x111b/0x2460 kernel/workqueue.c:2415
+  kthread+0x4b5/0x4f0 kernel/kthread.c:254
+  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:355
+
+Local variable description: ----data@usb_read8
+Variable was created at:
+  usb_read8+0x5d/0x130 drivers/staging/rtl8712/usb_ops.c:33
+  r8712_read8+0xaa/0xd0 drivers/staging/rtl8712/rtl8712_io.c:29
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
