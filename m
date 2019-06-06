@@ -2,85 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84BE737D49
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 21:34:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3834837D6A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 21:43:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726658AbfFFTeQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 15:34:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55070 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726633AbfFFTeO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 15:34:14 -0400
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B790E20B7C
-        for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2019 19:34:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559849654;
-        bh=Bp9xchL8n3xgevCioLqnZ63AUKcEYYQAzSzsygrBl6U=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=HO604baqNXqdV732MJGVIuAhse5+ZFoSM5Cc0+2Fn/Ht+x4OWlMx5PGxpQjuhnWoS
-         +5SGAibaql+Dy5Y2lXYd+TCXM2PP/XUh2keaEDA+zVknERXfBQhrqM5U8gIKyqt0mE
-         /xX8R4yDLByF0tIfKTWY8lYeF4L8I6C1xdq0ZN7E=
-Received: by mail-wr1-f45.google.com with SMTP id n4so3633046wrs.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 12:34:13 -0700 (PDT)
-X-Gm-Message-State: APjAAAU1jfFzOdsw3fB6hoofMxhRsZ6FVtH8kbxc6MALkL198uYD0UQ7
-        DHt3CmwRYZDy0SSy6z8JdJVYVvgjHLwUu+sNWw+ZqQ==
-X-Google-Smtp-Source: APXvYqyO0ntp0Z78do7NHqcK5WkwMIKd2ggjzZIlWltFYH5IsItDZMYnUyFRT0pbmOUPFNCMQaXV3mrI0CbuFbD87wc=
-X-Received: by 2002:adf:ef48:: with SMTP id c8mr9349668wrp.352.1559849652241;
- Thu, 06 Jun 2019 12:34:12 -0700 (PDT)
+        id S1726865AbfFFTnK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 15:43:10 -0400
+Received: from www62.your-server.de ([213.133.104.62]:48902 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726697AbfFFTnK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 15:43:10 -0400
+Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1hYyEa-0002Jo-GE; Thu, 06 Jun 2019 21:39:36 +0200
+Received: from [178.197.249.21] (helo=linux.home)
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1hYyEa-000LVN-A7; Thu, 06 Jun 2019 21:39:36 +0200
+Subject: Re: [PATCH bpf-next] bpf: allow CGROUP_SKB programs to use
+ bpf_get_current_cgroup_id() helper
+To:     Roman Gushchin <guro@fb.com>, Alexei Starovoitov <ast@kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>
+Cc:     Kernel Team <Kernel-team@fb.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Yonghong Song <yhs@fb.com>
+References: <20190606185911.4089151-1-guro@fb.com>
+ <20190606190752.GA28743@tower.DHCP.thefacebook.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <a604b9eb-4e39-c4ec-0868-bac360bc2fb4@iogearbox.net>
+Date:   Thu, 6 Jun 2019 21:39:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-References: <155981411940.17513.7137844619951358374.stgit@warthog.procyon.org.uk>
- <155981413016.17513.10540579988392555403.stgit@warthog.procyon.org.uk>
- <176F8189-3BE9-4B8C-A4D5-8915436338FB@amacapital.net> <11031.1559833574@warthog.procyon.org.uk>
- <CALCETrUukxNNhbBAifxz1EADzLOvYKoh9oqqZFJteU+MMhh1ig@mail.gmail.com> <e434a62a-d92a-c6e2-cda1-309ac99d4d5c@schaufler-ca.com>
-In-Reply-To: <e434a62a-d92a-c6e2-cda1-309ac99d4d5c@schaufler-ca.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 6 Jun 2019 12:34:00 -0700
-X-Gmail-Original-Message-ID: <CALCETrVc=PpCjSC-pjcjr0WMKtgVXWijwB3FX+tSp5VOH2bCpg@mail.gmail.com>
-Message-ID: <CALCETrVc=PpCjSC-pjcjr0WMKtgVXWijwB3FX+tSp5VOH2bCpg@mail.gmail.com>
-Subject: Re: [PATCH 01/10] security: Override creds in __fput() with last
- fputter's creds [ver #3]
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, Jann Horn <jannh@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190606190752.GA28743@tower.DHCP.thefacebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.3/25472/Thu Jun  6 10:09:59 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 6, 2019 at 12:09 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-> On 6/6/2019 10:18 AM, Andy Lutomirski wrote:
-> > On Thu, Jun 6, 2019 at 8:06 AM David Howells <dhowells@redhat.com> wrote:
-> >> Andy Lutomirski <luto@amacapital.net> wrote:
+On 06/06/2019 09:08 PM, Roman Gushchin wrote:
+> On Thu, Jun 06, 2019 at 11:59:11AM -0700, Roman Gushchin wrote:
+>> Currently bpf_get_current_cgroup_id() is not supported for
+>> CGROUP_SKB programs. An attempt to load such a program generates an
+>> error like this:
+>>     libbpf:
+>>     0: (b7) r6 = 0
+>>     ...
+>>     8: (63) *(u32 *)(r10 -28) = r6
+>>     9: (85) call bpf_get_current_cgroup_id#80
+>>     unknown func bpf_get_current_cgroup_id#80
+>>
+>> There are no particular reasons for denying it,
+>> and we have some use cases where it might be useful.
+> 
+> Ah, sorry, it's not so simple, as we probably need to take
+> the cgroup pointer from the socket, not from current.
+> 
+> So the implementation of the helper should be different
+> for this type of programs.
+> 
+> So I wonder if it's better to introduce a new helper
+> bpf_get_sock_cgroup_id()?
+> 
+> What do you think?
 
-> > Casey, I think you need to state your requirement in a way that's well
-> > defined, and I think you need to make a compelling case that your
-> > requirement is indeed worth dictating the design of parts of the
-> > kernel outside LSM.
->
-> Err, no, I don't believe so. There's a whole lot more
-> going on in this discussion than just what's going on
-> within the LSMs. Using examples from the LSMs makes it
-> easier, because their policies are better defined than
-> the "legacy" policies are. The most important part of the
-> discussion is about ensuring that the event mechanism
-> doesn't circumvent the legacy policies. Yes, I understand
-> that you don't know what that means, or has to do with
-> anything.
->
->
+We do have bpf_skb_cgroup_id(), did you give that a try?
 
-Indeed, I do not know what you have in mind about making sure this
-mechanism doesn't circumvent legacy policies.  Can you elaborate?
-
---Andy
+Thanks,
+Daniel
