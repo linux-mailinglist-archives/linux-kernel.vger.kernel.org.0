@@ -2,110 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF09936E07
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 10:03:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D63936E0E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 10:03:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbfFFIDK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 04:03:10 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:40144 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbfFFIDK (ORCPT
+        id S1726957AbfFFIDg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 04:03:36 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:60762 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725769AbfFFIDf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 04:03:10 -0400
-Received: by mail-pf1-f194.google.com with SMTP id u17so1009155pfn.7;
-        Thu, 06 Jun 2019 01:03:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=X+5omg05moGUnjvkNUDj9Btx23ZMSVNZ5vRwilYMMMk=;
-        b=urtLIIiM4dS/SYQwVI9wQ9V4pSgfsvjnoe6/bX4wDa2norsn1R2D4hpDPqZrg5HxIJ
-         ErcVeSXJWr6LzbDzeshcwkHWkmR750fVFeTfk789u/uJ6k7C9anP0ZRAGJSo+4/k1Yen
-         UyckRxNAReyjVqVHbaV0nJw/NSVvE36305SKjCY06mFhMYqYtXIzTX81dR4sJSp2eS1/
-         x/WfIKg9H0MNcjXYlmgCoUZIlakfXhYNKMTqGYfIzlB6y0lSyKbhUMu7mRAulBmXhpw3
-         z9rhQu2KQdXj/AWzEgAYz3q/0X/At7fXhljFuuMR8DqncmmuNlTrwfHCQIKl6gCYS/5k
-         cnjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=X+5omg05moGUnjvkNUDj9Btx23ZMSVNZ5vRwilYMMMk=;
-        b=DlK4y2eQgEjQ/MN4/xfKfotcS21R6GSHYEWYw0eSnkWKTmzSmZk5C3wnEg6i0PTYkB
-         Ld2iXmPzMH1mccxYRhhKn68VtQw9xkt7G1tMZWWBqf+RDRkpeUPUwchl8OXMipGcNgZL
-         CwD/kcoUQNyvhNH9FMt8W/H2DBItpcfTazFp0KmKD90F1aKWVwt4oDx53Ln3xz7eeI90
-         iJ+WiEPit9hi53sAcwbhrlhMEFgs8hxCg1qr6T9hFp+ubZRad+xq9w06XgCY+PgtlpIj
-         Z9rQ9K0rruXKvVONGCuSfKQazMbqnKGiQXcbfkpvLtXguoGwIlsh9LbOsHlXiQ/jxHsT
-         dmBw==
-X-Gm-Message-State: APjAAAWPcDJiTMfvh5WBVKwqUJxsDpQovNLhtzEN/eV+oKsDxbqB++dZ
-        /pjsA1cmdcYny2fAYlZfSXTlpk8rQgA=
-X-Google-Smtp-Source: APXvYqxziP1v2PbMyUtQ+mBSMis1QKL3RVW3cJVbZhDUi+1NO/xQ/XpXiv1dTvGTg9haWKI/sgUsVQ==
-X-Received: by 2002:a17:90a:cb12:: with SMTP id z18mr20415578pjt.82.1559808189181;
-        Thu, 06 Jun 2019 01:03:09 -0700 (PDT)
-Received: from maya190131 ([13.66.160.195])
-        by smtp.gmail.com with ESMTPSA id n66sm1349991pfn.52.2019.06.06.01.03.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Jun 2019 01:03:09 -0700 (PDT)
-Date:   Thu, 6 Jun 2019 08:03:08 +0000
-From:   Maya Nakamura <m.maya.nakamura@gmail.com>
-To:     mikelley@microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
-        sthemmin@microsoft.com, sashal@kernel.org
-Cc:     x86@kernel.org, linux-hyperv@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/5] x86: hv: hyperv-tlfs.h: Create and use Hyper-V page
- definitions
-Message-ID: <67be3e283c0f28326f9c31a64f399fe659ad5690.1559807514.git.m.maya.nakamura@gmail.com>
-References: <cover.1559807514.git.m.maya.nakamura@gmail.com>
+        Thu, 6 Jun 2019 04:03:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=QSKGyxx9Q9AJKtpqgKbGwuoacV8z0/sDEo2YsWMHixs=; b=m0s9DUtYOds2uc7WJfqzS3t14
+        e1a5PkDuo5Rqai36yA9Mgw6v6lF3VcsB2M1Dv1lByAzNdVYKCEsWX1lnMSU5eLt6yiYW3hpUZFJgO
+        bGS7gSojJwwHho6LqPC11dMXzwEIXW7rd+W6oMJYc6HRqY0tSOSgs7UXnvR/AwOBMCgvT+7jHBoeR
+        w8jgEeCZ2z5aBB36HYzOVX9XfAzNK/7FNR2BWYi75RH/qQlbJd9XEl5rd2it+yiqx8zojxZMdHv+9
+        6VIwFddYcsWycurAijzWZsa0Q1cyjYR2KETj/0RFrHuIywSo2o0RiwpPxgb3fbPD4Dsf48t2o48S5
+        BVjmpnp0w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hYnMj-0006gX-Gc; Thu, 06 Jun 2019 08:03:17 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 35B18203AA6FD; Thu,  6 Jun 2019 10:03:15 +0200 (CEST)
+Date:   Thu, 6 Jun 2019 10:03:15 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        huang ying <huang.ying.caritas@gmail.com>, dvyukov@google.com,
+        glider@google.com, aryabinin@virtuozzo.com
+Subject: Re: [PATCH v8 15/19] locking/rwsem: Adaptive disabling of reader
+ optimistic spinning
+Message-ID: <20190606080315.GE3402@hirez.programming.kicks-ass.net>
+References: <20190520205918.22251-16-longman@redhat.com>
+ <20190604092008.GJ3402@hirez.programming.kicks-ass.net>
+ <8e7d19ea-f2e6-f441-6ab9-cbff6d96589c@redhat.com>
+ <20190604173853.GG3419@hirez.programming.kicks-ass.net>
+ <f7f9b778-4f1a-7460-a7ae-1d4e3dd37181@redhat.com>
+ <20190604181426.GH3419@hirez.programming.kicks-ass.net>
+ <db89a086-3719-cea5-e24e-339085728c29@redhat.com>
+ <46e44f43-87fd-251b-3b83-89a8bb3b407f@redhat.com>
+ <20190605201901.GB3402@hirez.programming.kicks-ass.net>
+ <CAHk-=wgqfXUeKkjT-TJRubxU5KNt9CLi88QSXhXT0H=3v4uF3g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1559807514.git.m.maya.nakamura@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAHk-=wgqfXUeKkjT-TJRubxU5KNt9CLi88QSXhXT0H=3v4uF3g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Define HV_HYP_PAGE_SHIFT, HV_HYP_PAGE_SIZE, and HV_HYP_PAGE_MASK because
-the Linux guest page size and hypervisor page size concepts are
-different, even though they happen to be the same value on x86.
+On Wed, Jun 05, 2019 at 01:52:15PM -0700, Linus Torvalds wrote:
+> On Wed, Jun 5, 2019 at 1:19 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > Urgh, that's another things that's been on the TODO list for a long long
+> > time, write code to verify the alignment of allocations :/ I'm
+> > suspecting quite a lot of that goes wrong all over the place.
+> 
+> On x86, we only guarantee 8-byte alignment from things like kmalloc(), iirc.
 
-Also, replace PAGE_SIZE with HV_HYP_PAGE_SIZE.
+Oh sure, and I'm not proposing to change that. I was more thinking of
+having a GCC plugin that verifies, for every ptr assignment:
 
-Signed-off-by: Maya Nakamura <m.maya.nakamura@gmail.com>
----
- arch/x86/include/asm/hyperv-tlfs.h | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+	ptr = foo;
 
-diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
-index cdf44aa9a501..44bd68aefd00 100644
---- a/arch/x86/include/asm/hyperv-tlfs.h
-+++ b/arch/x86/include/asm/hyperv-tlfs.h
-@@ -12,6 +12,16 @@
- #include <linux/types.h>
- #include <asm/page.h>
- 
-+/*
-+ * While not explicitly listed in the TLFS, Hyper-V always runs with a page size
-+ * of 4096. These definitions are used when communicating with Hyper-V using
-+ * guest physical pages and guest physical page addresses, since the guest page
-+ * size may not be 4096 on all architectures.
-+ */
-+#define HV_HYP_PAGE_SHIFT	12
-+#define HV_HYP_PAGE_SIZE	BIT(HV_HYP_PAGE_SHIFT)
-+#define HV_HYP_PAGE_MASK	(~(HV_HYP_PAGE_SIZE - 1))
-+
- /*
-  * The below CPUID leaves are present if VersionAndFeatures.HypervisorPresent
-  * is set by CPUID(HvCpuIdFunctionVersionAndFeatures).
-@@ -841,7 +851,7 @@ union hv_gpa_page_range {
-  * count is equal with how many entries of union hv_gpa_page_range can
-  * be populated into the input parameter page.
-  */
--#define HV_MAX_FLUSH_REP_COUNT ((PAGE_SIZE - 2 * sizeof(u64)) /	\
-+#define HV_MAX_FLUSH_REP_COUNT ((HV_HYP_PAGE_SIZE - 2 * sizeof(u64)) /	\
- 				sizeof(union hv_gpa_page_range))
- 
- struct hv_guest_mapping_flush_list {
--- 
-2.17.1
+that the actual alignment maches:
+
+	assert(!(uintptr_t)ptr % __alignof(*ptr));
+
+That would catch bugs like:
+
+struct bar {
+	int ponies;
+	int peaches __smp_cacheline_aligned;
+};
+
+	struct bar *barp = kmalloc(sizeof(barp, GFP_KERNEL);
+
+Blatantly violating alignment can't be right; either the alignment
+constraints put on the data structures are not important and they should
+be fixed, or we should respect them and fix the allocation, either way,
+we should not silently violate things like we do today.
+
 
