@@ -2,83 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BB5937558
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 15:37:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 548963755F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 15:38:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbfFFNg7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 09:36:59 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41630 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727009AbfFFNg7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 09:36:59 -0400
-Received: by mail-wr1-f68.google.com with SMTP id c2so2460637wrm.8
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 06:36:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=dMQoje3A+0QuY6d03qdojH8LCBsthMNo+3SlZkjo5Dg=;
-        b=JcFFeyYh1751+B47UcZHbFJZ+QYlZUmSkfkKyepILPP91d69zlPjfNw4NUshuxLjuv
-         c6+f+6AJ4xxxwgIl2CbkBXFQZEpDWxbTvGrRoV1RKknqD1mmRiYzylSYYDu8gRRQi2W5
-         Spbo8ckjPSBHizQyNoOlm7DULD9gs7T+7S030=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=dMQoje3A+0QuY6d03qdojH8LCBsthMNo+3SlZkjo5Dg=;
-        b=MhIS3eY/njF6t9yQQRov5VBnKCiqpEm6V8yt7fHWw+HCLdsLZe5iiRr3l3lC/uX3ui
-         x/scIrUDxGvohCPBsOlnL1r2YOCejrXYchwUsbp/1Er212wMFBBvFH0yAqAM7gKTCJI2
-         TlW/9oyjhEhT+K+AZ8bVAhFbOsN6qCAH+RnYX8Tpxqm6hagTxfTQUN5f05Z8xZIc2Ad8
-         Cr0cEUpnIbXjgxNcn2D/a+Z1aTzZUT4yEypEpmrgVvYoUTGMn3Mbb8rlI1n2QEzMxNVR
-         GiJ/NjlT2YmAuekXoYHGF4J6sXor+H6qUlqXUqAKGu72Rs9shL5uiKqTF9VGiABTQR45
-         hirA==
-X-Gm-Message-State: APjAAAUkwdl+83hZAmZHwBn3j84f6Dwh0CohVgqcVPhy7m+LVzRXCAPj
-        jK7MzfMst38q6WVK2JKsJDbkIC5ci4E=
-X-Google-Smtp-Source: APXvYqx74mqUhMOOqkkyB7ZGXf3YbkwFJ8aN77g/VlWrPdi+A4qCmByDgKoJoXVqxagoPQdNO9l/Sw==
-X-Received: by 2002:a5d:684c:: with SMTP id o12mr16899507wrw.305.1559828217675;
-        Thu, 06 Jun 2019 06:36:57 -0700 (PDT)
-Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id s9sm1809917wmc.1.2019.06.06.06.36.56
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 06 Jun 2019 06:36:56 -0700 (PDT)
-Date:   Thu, 6 Jun 2019 15:36:50 +0200
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL] fuse fixes for 5.2-rc4
-Message-ID: <20190606133650.GA26408@miu.piliscsaba.redhat.com>
+        id S1728263AbfFFNim (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 09:38:42 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:40800 "EHLO deadmen.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726014AbfFFNik (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 09:38:40 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1hYsbB-0006rm-BN; Thu, 06 Jun 2019 21:38:33 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1hYsb2-0007Ot-8l; Thu, 06 Jun 2019 21:38:24 +0800
+Date:   Thu, 6 Jun 2019 21:38:24 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Fengguang Wu <fengguang.wu@intel.com>, LKP <lkp@01.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Jade Alglave <j.alglave@ucl.ac.uk>
+Subject: Re: rcu_read_lock lost its compiler barrier
+Message-ID: <20190606133824.aibysezb5qdo3x27@gondor.apana.org.au>
+References: <20190603200301.GM28207@linux.ibm.com>
+ <Pine.LNX.4.44L0.1906041026570.1731-100000@iolanthe.rowland.org>
+ <20190606045109.zjfxxbkzq4wb64bj@gondor.apana.org.au>
+ <20190606060511.GA28207@linux.ibm.com>
+ <20190606061438.nyzaeppdbqjt3jbp@gondor.apana.org.au>
+ <20190606090619.GC28207@linux.ibm.com>
+ <20190606092855.dfeuvyk5lbvm4zbf@gondor.apana.org.au>
+ <20190606105817.GE28207@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190606105817.GE28207@linux.ibm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Thu, Jun 06, 2019 at 03:58:17AM -0700, Paul E. McKenney wrote:
+>
+> I cannot immediately think of a way that the compiler could get this
+> wrong even in theory, but similar code sequences can be messed up.
+> The reason for this is that in theory, the compiler could use the
+> stored-to location as temporary storage, like this:
+> 
+> 	a = whatever;	// Compiler uses "a" as a temporary
+> 	do_something();
+> 	whatever = a;
+> 	a = 1;		// Intended store
 
-Please pull from:
+Well if the compiler is going to do this then surely it would
+continue to do this even if you used WRITE_ONCE.  Remember a is
+not volatile, only the access of a through WRITE_ONCE is volatile.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-fixes-5.2-rc4
-
-This fixes a leaked inode lock in an error cleanup path and a data
-consistency issue with copy_file_range().  It also adds a new flag for the
-WRITE request that allows userspace filesystems to clear suid/sgid bits on
-the file if necessary.
-
-Thanks,
-Miklos
-
-----------------------------------------------------------------
-Miklos Szeredi (4):
-      fuse: fallocate: fix return with locked inode
-      fuse: add FUSE_WRITE_KILL_PRIV
-      fuse: fix copy_file_range() in the writeback case
-      fuse: extract helper for range writeback
-
----
- fs/fuse/file.c            | 43 ++++++++++++++++++++++++++++++++-----------
- include/uapi/linux/fuse.h |  7 ++++++-
- 2 files changed, 38 insertions(+), 12 deletions(-)
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
