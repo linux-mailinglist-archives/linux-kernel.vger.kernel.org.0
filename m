@@ -2,98 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 478C237CE2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 20:59:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3FF537CE4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 20:59:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727897AbfFFS7H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 14:59:07 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:51985 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726762AbfFFS7H (ORCPT
+        id S1728207AbfFFS7R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 14:59:17 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:59534 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726762AbfFFS7Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 14:59:07 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id D481F21B74;
-        Thu,  6 Jun 2019 14:59:03 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Thu, 06 Jun 2019 14:59:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=lfVVPYYE1zv8TPS6RZylhPPQeAB
-        r/4SHxam1e1BQ+X4=; b=iCmlnLrgVPO1ZUWYo3Ggic1AWJmeSjmpEGe7KnI/8T4
-        +tXaunSDf/9OiKqK8g/Z6/yDAG/wjs4RzzCzLw+hOWHdeEhKggV1Tgam4xZQ27QL
-        qtZpMCu4u2RMYchy06qJ+j/2gHirVYlzfDx7kLE46fExO6SlYcwGoNgsyZmwNu9C
-        6hyFYPeKMGQNLU5+nCwI47sb5NGnUaFM1ZLEW6+i6UzDDKzwsH2vmfHJT8BBrOf9
-        YnvbntTMw304XleX32Dwd8U7p0yHA7aAYYMF7SiOPf9S/EYw1B7zWmjr7kTIMjvb
-        yu4vx5ebdrMzEINmsL+7hwhpp/CyuwtOmJDEk4zOm5Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=lfVVPY
-        YE1zv8TPS6RZylhPPQeABr/4SHxam1e1BQ+X4=; b=194SDOaqYobC0CsuIt+2jK
-        Wj0HWqAJxIviRefNsECqxnxvSnlwHaQogNAGsV/bWwlLBo1OCmKNAYX2ffiPDlez
-        tuCNTmhewFvVvDKBerMQgIndZzNazJeqSMnGgBQIin/tT2lgmakSn2JDC3+TLnvU
-        Z+T43/cJ5ztKx8MXQLLXWRlMzlBlGIsFIq9+aK2NaYzzWKiBw0mum0fY/3L1KG9x
-        95urwGUWd9zhtRNgr68YXHqVh+IcJTc3nNzZcA6xTGnn0WTp4OWMxWcE3HJM8Xl4
-        EyPcMaQEyUAG282eutxbQpihxkJciATNF1ve4LL3/SmggvKnM65yFFUcU+kVvXyg
-        ==
-X-ME-Sender: <xms:d2L5XBfeMwlYGwz9hC2V3EKRYt4ivOZdCxhM0k4fKRtwmRKYIM_Qfw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrudeggedgudeffecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgv
-    ghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrkeelrd
-    dutdejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhen
-    ucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:d2L5XPJ6MzNiHPBBKqPSXV_858uT_Vc3K3Iy4AP6WSE1AjND0NA0oA>
-    <xmx:d2L5XGHjeVAU-PkMgr82QdI4UeOLF4SxOiKgG1hfKNSmMsgq5XroXA>
-    <xmx:d2L5XP5KY94tsqMRwicGkSf9-4d4AQn04KL7IUHRbar-6l0yQsEQqA>
-    <xmx:d2L5XLzNQCU5xjN2HXb9B8EOyZhr1mM6Cn3pcWg4jx_0vC94E7CgBw>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id E28EB80060;
-        Thu,  6 Jun 2019 14:59:02 -0400 (EDT)
-Date:   Thu, 6 Jun 2019 20:59:00 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Rolf Eike Beer <eb@emlix.com>, stable@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: Linux 4.9.180 build fails =?utf-8?Q?wi?=
- =?utf-8?Q?th_gcc_9_and_'cleanup=5Fmodule'_specifies_less_restrictive_attr?=
- =?utf-8?Q?ibute_than_its_target_=E2=80=A6?=
-Message-ID: <20190606185900.GA19937@kroah.com>
-References: <259986242.BvXPX32bHu@devpool35>
- <20190606152746.GB21921@kroah.com>
- <20190606152902.GC21921@kroah.com>
- <CANiq72nfFqYkiYgKJ1UZV3Mx2C3wzu_7TRtXFn=iafNt+Oc_2g@mail.gmail.com>
+        Thu, 6 Jun 2019 14:59:16 -0400
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x56ImXUo006416
+        for <linux-kernel@vger.kernel.org>; Thu, 6 Jun 2019 11:59:15 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=bYqo/eKrf3Ocv2LivjDpADlZygx+fChjmeNZSWE8V/Y=;
+ b=V/UdCPxNihvBEPMt56NRxdzPLBD9jMDWjKtcp8VLxCvBwyeQTU8l6nxBT9e2z7oVjv0v
+ 865pXeUDpCL3mB5TJ4LJptONdUgoNwUjqnKvdKL0HCR4TjdFxU51LvOey4n/JNPwlVLj
+ 2ml3IXysA1l9X/9UgaWMHgcBwRfQRJ7zQ9o= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 2sy1quhngn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 11:59:15 -0700
+Received: from mx-out.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::c) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 6 Jun 2019 11:59:14 -0700
+Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
+        id 821D412D781C4; Thu,  6 Jun 2019 11:59:12 -0700 (PDT)
+Smtp-Origin-Hostprefix: devvm
+From:   Roman Gushchin <guro@fb.com>
+Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
+To:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, <bpf@vger.kernel.org>
+CC:     <kernel-team@fb.com>, <linux-kernel@vger.kernel.org>,
+        Roman Gushchin <guro@fb.com>, Yonghong Song <yhs@fb.com>
+Smtp-Origin-Cluster: prn2c23
+Subject: [PATCH bpf-next] bpf: allow CGROUP_SKB programs to use bpf_get_current_cgroup_id() helper
+Date:   Thu, 6 Jun 2019 11:59:11 -0700
+Message-ID: <20190606185911.4089151-1-guro@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANiq72nfFqYkiYgKJ1UZV3Mx2C3wzu_7TRtXFn=iafNt+Oc_2g@mail.gmail.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-06_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906060127
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 08:25:28PM +0200, Miguel Ojeda wrote:
-> On Thu, Jun 6, 2019 at 5:29 PM Greg KH <greg@kroah.com> wrote:
-> >
-> > And if you want this, you should look at how the backports to 4.14.y
-> > worked, they did not include a3f8a30f3f00 ("Compiler Attributes: use
-> > feature checks instead of version checks"), as that gets really messy...
-> 
-> I am confused -- I interpreted Rolf's message as reporting that he
-> already successfully built 4.9 by applying a6e60d84989f
-> ("include/linux/module.h: copy __init/__exit attrs to
-> init/cleanup_module") and manually fixing it up. But maybe I am
-> completely wrong... :-)
+Currently bpf_get_current_cgroup_id() is not supported for
+CGROUP_SKB programs. An attempt to load such a program generates an
+error like this:
+    libbpf:
+    0: (b7) r6 = 0
+    ...
+    8: (63) *(u32 *)(r10 -28) = r6
+    9: (85) call bpf_get_current_cgroup_id#80
+    unknown func bpf_get_current_cgroup_id#80
 
-"manually fixing it up" means "hacked it to pieces" to me, I have no
-idea what the end result really was :)
+There are no particular reasons for denying it,
+and we have some use cases where it might be useful.
 
-If someone wants to send me some patches I can actually apply, that
-would be best...
+So let's add it to the list of allowed helpers.
 
-thanks,
+Signed-off-by: Roman Gushchin <guro@fb.com>
+Cc: Yonghong Song <yhs@fb.com>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+---
+ net/core/filter.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-greg k-h
+diff --git a/net/core/filter.c b/net/core/filter.c
+index 55bfc941d17a..19724bb1860d 100644
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -5919,6 +5919,10 @@ cg_skb_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ 		return &bpf_sk_storage_get_proto;
+ 	case BPF_FUNC_sk_storage_delete:
+ 		return &bpf_sk_storage_delete_proto;
++#ifdef CONFIG_CGROUPS
++	case BPF_FUNC_get_current_cgroup_id:
++		return &bpf_get_current_cgroup_id_proto;
++#endif
+ #ifdef CONFIG_INET
+ 	case BPF_FUNC_tcp_sock:
+ 		return &bpf_tcp_sock_proto;
+-- 
+2.20.1
+
