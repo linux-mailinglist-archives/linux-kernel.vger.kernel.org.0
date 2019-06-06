@@ -2,79 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 706AF370C8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 11:50:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5735E370D8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 11:52:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728281AbfFFJta (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 05:49:30 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:45277 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727734AbfFFJt3 (ORCPT
+        id S1728035AbfFFJwN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 05:52:13 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:36857 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727829AbfFFJwM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 05:49:29 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id BF86280379; Thu,  6 Jun 2019 11:49:17 +0200 (CEST)
-Date:   Thu, 6 Jun 2019 11:49:27 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     jacek.anaszewski@gmail.com, broonie@kernel.org,
-        lgirdwood@gmail.com, lee.jones@linaro.org,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v5 2/6] dt-bindings: mfd: Add lm36274 bindings to ti-lmu
-Message-ID: <20190606094926.GC975@amd>
-References: <20190604174345.14841-1-dmurphy@ti.com>
- <20190604174345.14841-3-dmurphy@ti.com>
+        Thu, 6 Jun 2019 05:52:12 -0400
+Received: by mail-yw1-f68.google.com with SMTP id t126so624931ywf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 02:52:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=OF/6ZkMdc/RdYDV51lRDRPrAIYbV+QfL4/gwTFmX58o=;
+        b=i4GhBjo22XTIEoTVFapUwK6vtxHp2srk589bcFqG7zA6h9A7QlQy8wk4zcip8ufPkv
+         Wom0pmtc9P0E8pgBGK2uZpFBOvYSULfziXMHjdcl2Cqwha/EgKFSEi4wp8WmHk1I2Cb3
+         HtHBbhoFiPMDqajIz628DOwFKJGvxum1mBMnXEsHvtKHPpkzxvUQ3d8fhUgn6/yuggHV
+         xvbBzu511lKlcEysVXWtNjVoVsDU98d2JSgux2auBYwS09gi962zYd2O47DG5dwMFJd+
+         88wKOuQfDn7OyXbJb2Tjq6RDVaqOKSU2yZq285mMJN49Wyb+wHXed//7aLWqRp+iHQwH
+         M/9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OF/6ZkMdc/RdYDV51lRDRPrAIYbV+QfL4/gwTFmX58o=;
+        b=FmVzF+gcWz1PwdUV0q9j4UdHeXoZHhXeTU2DDaf9eaJjE7w7ywvTOCWyicSlTfCQG0
+         xIix+16cJzxu7pkLceT5C6LDTHOpW75KIv+XhHlYStqP4iiuYDcUJ6S0PMcKwe90E2g8
+         66Fzww3xl5Xh6udg7YLyKEtLiA1f1N3dGtuTyL9u0lDCKYRK9EuhEeML5APlkzxM7JLb
+         QS8g0QgEBNx90/wncQReGUaX3Ij1iu82lpJEbx5ehtf0T4qqBuWVCQgXM63vuXJ/P1y9
+         LCp0d4ylSwCestsHcMLbmNnU3LxDy9haMlSNUc8OojkHkKEIXYBjWnKJl8hcwS7bmIqv
+         bwBw==
+X-Gm-Message-State: APjAAAXmnWUT29TSeEjgFRdz2En6R6+gzdHcgf27X6DqxW3gDPWQZp8F
+        dl2kqCwhblghEL5L4feDNudshQ==
+X-Google-Smtp-Source: APXvYqzIj6mHr6vIMB/M2RU7ehBrhqLjyy5K3mdgCBcs8U4OXzN7ueQNfKWSr3JXx53EPAHS6jc2aw==
+X-Received: by 2002:a0d:c5c4:: with SMTP id h187mr22411029ywd.450.1559814731356;
+        Thu, 06 Jun 2019 02:52:11 -0700 (PDT)
+Received: from leoy-ThinkPad-X240s (li1322-146.members.linode.com. [45.79.223.146])
+        by smtp.gmail.com with ESMTPSA id r6sm359910ywd.47.2019.06.06.02.52.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Jun 2019 02:52:10 -0700 (PDT)
+Date:   Thu, 6 Jun 2019 17:52:02 +0800
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: Re: [PATCH v1 0/4] perf augmented_raw_syscalls: Support for arm64
+Message-ID: <20190606095202.GA5970@leoy-ThinkPad-X240s>
+References: <20190606075617.14327-1-leo.yan@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="XWOWbaMNXpFDWE00"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190604174345.14841-3-dmurphy@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20190606075617.14327-1-leo.yan@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi all,
 
---XWOWbaMNXpFDWE00
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jun 06, 2019 at 03:56:13PM +0800, Leo Yan wrote:
+> When I tried to run the trace on arm64 platform with eBPF program
+> augmented_raw_syscalls, it reports several failures for eBPF program
+> compilation.  So tried to resolve these issues and this patch set is
+> the working result.
+> 
+> 0001 patch lets perf command to exit directly if find eBPF program
+> building failure.
+> 
+> 0002 patch is minor refactoring code to remove duplicate macro.
+> 
+> 0003 patch is to add support arm64 raw syscalls numbers.
 
-On Tue 2019-06-04 12:43:41, Dan Murphy wrote:
-> Add the LM36274 backlight driver with regulator support.
-> This is a multi-function device for backlight applications.
->=20
-> Backlight properties will be documented in it's a supplemental
-> bindings document.
->=20
-> Regulator support is documented in the regulator/lm363x-regulator.txt
->=20
-> http://www.ti.com/lit/ds/symlink/lm36274.pdf
->=20
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Acked-by: Lee Jones <lee.jones@linaro.org>
-> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+I found minor issues in patch 0003, so sent out v2 for reviewing.
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+Sorry for spamming.
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Thanks,
+Leo Yan
 
---XWOWbaMNXpFDWE00
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlz44aYACgkQMOfwapXb+vK9sgCgtdTs0CxoahksYCg/Lkvf+yNm
-8pMAoKKYUhNBsxGT/bUFKhbiaFQupr4Y
-=XMMM
------END PGP SIGNATURE-----
-
---XWOWbaMNXpFDWE00--
+> 0004 patch is to document clang configuration so that can easily use
+> this program on both x86_64 and aarch64 platforms.
+> 
+> 
+> Leo Yan (4):
+>   perf trace: Exit when build eBPF program failure
+>   perf augmented_raw_syscalls: Remove duplicate macros
+>   perf augmented_raw_syscalls: Support arm64 raw syscalls
+>   perf augmented_raw_syscalls: Document clang configuration
+> 
+>  tools/perf/builtin-trace.c                    |   8 ++
+>  .../examples/bpf/augmented_raw_syscalls.c     | 102 +++++++++++++++++-
+>  2 files changed, 109 insertions(+), 1 deletion(-)
+> 
+> -- 
+> 2.17.1
+> 
