@@ -2,363 +2,362 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AF5237C98
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 20:50:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABFFF37CAD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 20:52:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729749AbfFFSum (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 14:50:42 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:42247 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728243AbfFFSul (ORCPT
+        id S1728589AbfFFSwA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 14:52:00 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:37741 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726893AbfFFSv7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 14:50:41 -0400
-Received: by mail-qt1-f193.google.com with SMTP id s15so3900976qtk.9
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 11:50:41 -0700 (PDT)
+        Thu, 6 Jun 2019 14:51:59 -0400
+Received: by mail-pl1-f193.google.com with SMTP id bh12so1276490plb.4;
+        Thu, 06 Jun 2019 11:51:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=uPjIDaSr6FkA7bqc7rZDNYmItArE1JLkVlpY4cmTAkA=;
-        b=na8SMkumgsCGR2JK3U8mr4k0O63d4h0Ssmx10pw5PTxRcU3CAAtTLpZAWYwlW8IcKT
-         uOVsQd7NmhyU15+qW7CMieNLGGJlOpSBesTOEmozLOpavoTSnjo2QNV+vlHlaS0YxbOY
-         4WJxsxeC3lLP/QBUrQSmy13ecpcuuVoCRiUq4vmsSIr1D9Lhs5FfuK3rzmiXYl8wpXOC
-         tvMppHEdl+WuD0Xj9EsKdEQkpVNIBxXSuGYpsQQQkVRe/aQBwfpPE2xGv+RtcDW03AFm
-         5IuR41pS43IMWOJZio87fVAoS9XIcD03fpJwN7HkgXbD4jAI4yJ8UyvmhgZ1iutYqJkI
-         6JPg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=M+q9IkEvMa1ugH4Z90COwPltcgmi60eQUpBc+vf1TU0=;
+        b=H+oRI8keTBaYgPI64GhFnhQZ0s/WM4PsLv7uo3+UQ1iDdlnuliG6tVt0Ck0Tfa4+py
+         6o2E8XPExbNCPl/VXsAt2lhm2XU3//S44N3sDwybqL6nOtCAfCbvy2grOo74PWM7vXcW
+         oO3tlk0xcXteGa6utzjwoBvzx7RVHAv8+Yhb/JDuWN5wvJGPyJppzcFQnY39iaZX8xz8
+         wYkQCZIzvGNA9AEZ3ABOQqqIgJohDGmj8q7tWBrBK9wsJpA3ac1ENnn+0lbkpygJigPN
+         yBBgoMdZOs5AisD6wmDDPfkGOI1BrRm/N7QHstRH/FloKoPtGbKlr7mJpvzvtVI/5xlO
+         d9Qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uPjIDaSr6FkA7bqc7rZDNYmItArE1JLkVlpY4cmTAkA=;
-        b=dJbukshjtI8mJ9eS9DsFt+aZjDww+SQNsbeSC3ZXbhb26lpSrcPBIfgvUAAyDS56aY
-         Ff51FO5DKjtGhWfmCEBxmcFau9nKjLDWWu2GKYFyHAQ9bv+xT9J/OQOxNiUO6NFxtrqx
-         EvwAh+rZPYfOh47I8Kv9I/4MICChZwGV7pqqcqv/XXaEtyaF4waUiftxwiLtVnCtt/xl
-         3GQ/QAW9bTk3za2Xdr0UNN9XXvE0uouMaTLhrGPvzSlFhGzl0RP42XPDQEHuPFvFmxrd
-         C/pgD+R1g0TL5N7kgG5R5/RZoq2i+Rh2JbJCgTm1GUl5Jx3fX97aa1WeLNznGvCV25Lt
-         siww==
-X-Gm-Message-State: APjAAAWHIvZF+Hf0fPNQaJJSuyWLe3I/5+M6Wt3pTiIHwfT4sF7eEUOW
-        lK61ZKMN8J9QTZG4xBGaFLI=
-X-Google-Smtp-Source: APXvYqxEd/gKGrAO7AJBX28cYvPIk+h4rrhWpxU6HFbtOydmBD48nkMsSjbOKFoEX0KVJf3cK9t1ZA==
-X-Received: by 2002:ac8:2c6a:: with SMTP id e39mr43314506qta.179.1559847040459;
-        Thu, 06 Jun 2019 11:50:40 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([177.195.209.167])
-        by smtp.gmail.com with ESMTPSA id q37sm1649431qtj.94.2019.06.06.11.50.34
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 06 Jun 2019 11:50:39 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 12FBB41149; Thu,  6 Jun 2019 15:50:28 -0300 (-03)
-Date:   Thu, 6 Jun 2019 15:50:27 -0300
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, suzuki.poulose@arm.com, leo.yan@linaro.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        coresight@lists.linaro.org
-Subject: Re: [PATCH v2 16/17] perf tools: Add notion of time to decoding code
-Message-ID: <20190606185027.GF21245@kernel.org>
-References: <20190524173508.29044-1-mathieu.poirier@linaro.org>
- <20190524173508.29044-17-mathieu.poirier@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190524173508.29044-17-mathieu.poirier@linaro.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=M+q9IkEvMa1ugH4Z90COwPltcgmi60eQUpBc+vf1TU0=;
+        b=WWgAReA3n92D1vs9/QISB7Xkh56Hgz7lpRCQCdRDUg99BH4COUrZdO++cpyeLgxsMW
+         kJtsR2vRvOuoM+jIoL06sX21qygYxTpRVfmdQ1u5Xz6iCPz7cSo16YLG2zRpB15YJa7v
+         0nQ4E8mnc64MubC8Ky1v3uqeOn+SjXSYhMW07cAxsHhezSnUpDDFsfhWT+5vC4knnQPP
+         HpmS1q+JuDHWv2ce34+jy9SLJ3P4Bm4axPuyvq7sIbxd/E0XSNMCy266rKjhMvGiyfpE
+         FHSdS0VjsckZhri0jbeghAb7+RSAP1OT/Qy8HRVTtK5708QjXZSIzmy96TVip1yO4BSN
+         t0DA==
+X-Gm-Message-State: APjAAAXGYwv81gOYCmcRAKtKddC76uz+iZIWC4fqP2rt3A+51rEee3AQ
+        V5Aewd84CiNgmDRbu1aVWtbkmxUe
+X-Google-Smtp-Source: APXvYqx4OTjfnMp1ITEOdvFFCuFrePcMAFkfnDpApvRJZZumjKUUwd/fYFoRNZuXHEb0f/y3wuzGtw==
+X-Received: by 2002:a17:902:aa88:: with SMTP id d8mr44461794plr.73.1559847118869;
+        Thu, 06 Jun 2019 11:51:58 -0700 (PDT)
+Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id q12sm2187613pjp.17.2019.06.06.11.51.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Jun 2019 11:51:58 -0700 (PDT)
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+To:     lgirdwood@gmail.com, broonie@kernel.org
+Cc:     agross@kernel.org, david.brown@linaro.org,
+        bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, jorge.ramirez-ortiz@linaro.org,
+        niklas.cassel@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Subject: [PATCH v2 4/7] regulator: qcom_spmi: Add support for PM8005
+Date:   Thu,  6 Jun 2019 11:50:33 -0700
+Message-Id: <20190606185033.39736-1-jeffrey.l.hugo@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190606184842.39484-1-jeffrey.l.hugo@gmail.com>
+References: <20190606184842.39484-1-jeffrey.l.hugo@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, May 24, 2019 at 11:35:07AM -0600, Mathieu Poirier escreveu:
-> This patch deals with timestamp packets received from the decoding library
-> in order to give the front end packet processing loop a handle on the time
-> instruction conveyed by range packets have been executed at.
-> 
-> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> ---
->  .../perf/util/cs-etm-decoder/cs-etm-decoder.c | 112 +++++++++++++++++-
->  tools/perf/util/cs-etm.c                      |  19 +++
->  tools/perf/util/cs-etm.h                      |  17 +++
->  3 files changed, 144 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-> index ce85e52f989c..33e975c8d11b 100644
-> --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-> +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-> @@ -269,6 +269,76 @@ cs_etm_decoder__create_etm_packet_printer(struct cs_etm_trace_params *t_params,
->  						     trace_config);
->  }
->  
-> +static ocsd_datapath_resp_t
-> +cs_etm_decoder__do_soft_timestamp(struct cs_etm_queue *etmq,
-> +				  struct cs_etm_packet_queue *packet_queue,
-> +				  const uint8_t trace_chan_id)
-> +{
-> +	/* No timestamp packet has been received, nothing to do */
-> +	if (!packet_queue->timestamp)
-> +		return OCSD_RESP_CONT;
-> +
-> +	packet_queue->timestamp = packet_queue->next_timestamp;
-> +
-> +	/* Estimate the timestamp for the next range packet */
-> +	packet_queue->next_timestamp += packet_queue->instr_count;
-> +	packet_queue->instr_count = 0;
-> +
-> +	/* Tell the front end which traceid_queue needs attention */
-> +	cs_etm__etmq_set_traceid_queue_timestamp(etmq, trace_chan_id);
-> +
-> +	return OCSD_RESP_WAIT;
-> +}
-> +
-> +static ocsd_datapath_resp_t
-> +cs_etm_decoder__do_hard_timestamp(struct cs_etm_queue *etmq,
-> +				  const ocsd_generic_trace_elem *elem,
-> +				  const uint8_t trace_chan_id)
-> +{
-> +	struct cs_etm_packet_queue *packet_queue;
-> +
-> +	/* First get the packet queue for this traceID */
-> +	packet_queue = cs_etm__etmq_get_packet_queue(etmq, trace_chan_id);
-> +	if (!packet_queue)
-> +		return OCSD_RESP_FATAL_SYS_ERR;
-> +
-> +	/*
-> +	 * We've seen a timestamp packet before - simply record the new value.
-> +	 * Function do_soft_timestamp() will report the value to the front end,
-> +	 * hence asking the decoder to keep decoding rather than stopping.
-> +	 */
-> +	if (packet_queue->timestamp) {
-> +		packet_queue->next_timestamp = elem->timestamp;
-> +		return OCSD_RESP_CONT;
-> +	}
-> +
-> +	/*
-> +	 * This is the first timestamp we've seen since the beginning of traces
-> +	 * or a discontinuity.  Since timestamps packets are generated *after*
-> +	 * range packets have been generated, we need to estimate the time at
-> +	 * which instructions started by substracting the number of instructions
-> +	 * executed to the timestamp.
-> +	 */
-> +	packet_queue->timestamp = elem->timestamp -
-> +						packet_queue->instr_count;
+The PM8005 is used on the msm8998 MTP.  The S1 regulator is VDD_GFX, ie
+it needs to be on and controlled inorder to use the GPU.  Add support to
+drive the PM8005 regulators so that we can bring up the GPU on msm8998.
 
-No need to break lines like that, in this case it even wouldn't pass the
-width used for the comments right above it :-)
+Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+---
+ drivers/regulator/qcom_spmi-regulator.c | 169 ++++++++++++++++++++++++
+ 1 file changed, 169 insertions(+)
 
-I'm fixing it up this time.
-
-Something else, all the patches in this series, so far, needed to have
-as the subject prefix "perf cs-etm: ...", not the generic one "perf
-tools: ...". I'm fixing it up as well, no need to resend.
-
-- Arnaldo
-
-> +	packet_queue->next_timestamp = elem->timestamp;
-> +	packet_queue->instr_count = 0;
-> +
-> +	/* Tell the front end which traceid_queue needs attention */
-> +	cs_etm__etmq_set_traceid_queue_timestamp(etmq, trace_chan_id);
-> +
-> +	/* Halt processing until we are being told to proceed */
-> +	return OCSD_RESP_WAIT;
-> +}
-> +
-> +static void
-> +cs_etm_decoder__reset_timestamp(struct cs_etm_packet_queue *packet_queue)
-> +{
-> +	packet_queue->timestamp = 0;
-> +	packet_queue->next_timestamp = 0;
-> +	packet_queue->instr_count = 0;
-> +}
-> +
->  static ocsd_datapath_resp_t
->  cs_etm_decoder__buffer_packet(struct cs_etm_packet_queue *packet_queue,
->  			      const u8 trace_chan_id,
-> @@ -310,7 +380,8 @@ cs_etm_decoder__buffer_packet(struct cs_etm_packet_queue *packet_queue,
->  }
->  
->  static ocsd_datapath_resp_t
-> -cs_etm_decoder__buffer_range(struct cs_etm_packet_queue *packet_queue,
-> +cs_etm_decoder__buffer_range(struct cs_etm_queue *etmq,
-> +			     struct cs_etm_packet_queue *packet_queue,
->  			     const ocsd_generic_trace_elem *elem,
->  			     const uint8_t trace_chan_id)
->  {
-> @@ -365,6 +436,23 @@ cs_etm_decoder__buffer_range(struct cs_etm_packet_queue *packet_queue,
->  
->  	packet->last_instr_size = elem->last_instr_sz;
->  
-> +	/* per-thread scenario, no need to generate a timestamp */
-> +	if (cs_etm__etmq_is_timeless(etmq))
-> +		goto out;
-> +
-> +	/*
-> +	 * The packet queue is full and we haven't seen a timestamp (had we
-> +	 * seen one the packet queue wouldn't be full).  Let the front end
-> +	 * deal with it.
-> +	 */
-> +	if (ret == OCSD_RESP_WAIT)
-> +		goto out;
-> +
-> +	packet_queue->instr_count += elem->num_instr_range;
-> +	/* Tell the front end we have a new timestamp to process */
-> +	ret = cs_etm_decoder__do_soft_timestamp(etmq, packet_queue,
-> +						trace_chan_id);
-> +out:
->  	return ret;
->  }
->  
-> @@ -372,6 +460,11 @@ static ocsd_datapath_resp_t
->  cs_etm_decoder__buffer_discontinuity(struct cs_etm_packet_queue *queue,
->  				     const uint8_t trace_chan_id)
->  {
-> +	/*
-> +	 * Something happened and who knows when we'll get new traces so
-> +	 * reset time statistics.
-> +	 */
-> +	cs_etm_decoder__reset_timestamp(queue);
->  	return cs_etm_decoder__buffer_packet(queue, trace_chan_id,
->  					     CS_ETM_DISCONTINUITY);
->  }
-> @@ -404,6 +497,7 @@ cs_etm_decoder__buffer_exception_ret(struct cs_etm_packet_queue *queue,
->  
->  static ocsd_datapath_resp_t
->  cs_etm_decoder__set_tid(struct cs_etm_queue *etmq,
-> +			struct cs_etm_packet_queue *packet_queue,
->  			const ocsd_generic_trace_elem *elem,
->  			const uint8_t trace_chan_id)
->  {
-> @@ -417,6 +511,12 @@ cs_etm_decoder__set_tid(struct cs_etm_queue *etmq,
->  	if (cs_etm__etmq_set_tid(etmq, tid, trace_chan_id))
->  		return OCSD_RESP_FATAL_SYS_ERR;
->  
-> +	/*
-> +	 * A timestamp is generated after a PE_CONTEXT element so make sure
-> +	 * to rely on that coming one.
-> +	 */
-> +	cs_etm_decoder__reset_timestamp(packet_queue);
-> +
->  	return OCSD_RESP_CONT;
->  }
->  
-> @@ -446,7 +546,7 @@ static ocsd_datapath_resp_t cs_etm_decoder__gen_trace_elem_printer(
->  							    trace_chan_id);
->  		break;
->  	case OCSD_GEN_TRC_ELEM_INSTR_RANGE:
-> -		resp = cs_etm_decoder__buffer_range(packet_queue, elem,
-> +		resp = cs_etm_decoder__buffer_range(etmq, packet_queue, elem,
->  						    trace_chan_id);
->  		break;
->  	case OCSD_GEN_TRC_ELEM_EXCEPTION:
-> @@ -457,11 +557,15 @@ static ocsd_datapath_resp_t cs_etm_decoder__gen_trace_elem_printer(
->  		resp = cs_etm_decoder__buffer_exception_ret(packet_queue,
->  							    trace_chan_id);
->  		break;
-> +	case OCSD_GEN_TRC_ELEM_TIMESTAMP:
-> +		resp = cs_etm_decoder__do_hard_timestamp(etmq, elem,
-> +							 trace_chan_id);
-> +		break;
->  	case OCSD_GEN_TRC_ELEM_PE_CONTEXT:
-> -		resp = cs_etm_decoder__set_tid(etmq, elem, trace_chan_id);
-> +		resp = cs_etm_decoder__set_tid(etmq, packet_queue,
-> +					       elem, trace_chan_id);
->  		break;
->  	case OCSD_GEN_TRC_ELEM_ADDR_NACC:
-> -	case OCSD_GEN_TRC_ELEM_TIMESTAMP:
->  	case OCSD_GEN_TRC_ELEM_CYCLE_COUNT:
->  	case OCSD_GEN_TRC_ELEM_ADDR_UNKNOWN:
->  	case OCSD_GEN_TRC_ELEM_EVENT:
-> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-> index 17adf554b679..91496a3a2209 100644
-> --- a/tools/perf/util/cs-etm.c
-> +++ b/tools/perf/util/cs-etm.c
-> @@ -80,6 +80,7 @@ struct cs_etm_queue {
->  	struct cs_etm_decoder *decoder;
->  	struct auxtrace_buffer *buffer;
->  	unsigned int queue_nr;
-> +	u8 pending_timestamp;
->  	u64 offset;
->  	const unsigned char *buf;
->  	size_t buf_len, buf_used;
-> @@ -133,6 +134,19 @@ int cs_etm__get_cpu(u8 trace_chan_id, int *cpu)
->  	return 0;
->  }
->  
-> +void cs_etm__etmq_set_traceid_queue_timestamp(struct cs_etm_queue *etmq,
-> +					      u8 trace_chan_id)
-> +{
-> +	/*
-> +	 * Wnen a timestamp packet is encountered the backend code
-> +	 * is stopped so that the front end has time to process packets
-> +	 * that were accumulated in the traceID queue.  Since there can
-> +	 * be more than one channel per cs_etm_queue, we need to specify
-> +	 * what traceID queue needs servicing.
-> +	 */
-> +	etmq->pending_timestamp = trace_chan_id;
-> +}
-> +
->  static void cs_etm__clear_packet_queue(struct cs_etm_packet_queue *queue)
->  {
->  	int i;
-> @@ -942,6 +956,11 @@ int cs_etm__etmq_set_tid(struct cs_etm_queue *etmq,
->  	return 0;
->  }
->  
-> +bool cs_etm__etmq_is_timeless(struct cs_etm_queue *etmq)
-> +{
-> +	return !!etmq->etm->timeless_decoding;
-> +}
-> +
->  static int cs_etm__synth_instruction_sample(struct cs_etm_queue *etmq,
->  					    struct cs_etm_traceid_queue *tidq,
->  					    u64 addr, u64 period)
-> diff --git a/tools/perf/util/cs-etm.h b/tools/perf/util/cs-etm.h
-> index b2a7628620bf..33b57e748c3d 100644
-> --- a/tools/perf/util/cs-etm.h
-> +++ b/tools/perf/util/cs-etm.h
-> @@ -150,6 +150,9 @@ struct cs_etm_packet_queue {
->  	u32 packet_count;
->  	u32 head;
->  	u32 tail;
-> +	u32 instr_count;
-> +	u64 timestamp;
-> +	u64 next_timestamp;
->  	struct cs_etm_packet packet_buffer[CS_ETM_PACKET_MAX_BUFFER];
->  };
->  
-> @@ -183,6 +186,9 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
->  int cs_etm__get_cpu(u8 trace_chan_id, int *cpu);
->  int cs_etm__etmq_set_tid(struct cs_etm_queue *etmq,
->  			 pid_t tid, u8 trace_chan_id);
-> +bool cs_etm__etmq_is_timeless(struct cs_etm_queue *etmq);
-> +void cs_etm__etmq_set_traceid_queue_timestamp(struct cs_etm_queue *etmq,
-> +					      u8 trace_chan_id);
->  struct cs_etm_packet_queue
->  *cs_etm__etmq_get_packet_queue(struct cs_etm_queue *etmq, u8 trace_chan_id);
->  #else
-> @@ -207,6 +213,17 @@ static inline int cs_etm__etmq_set_tid(
->  	return -1;
->  }
->  
-> +static inline bool cs_etm__etmq_is_timeless(
-> +				struct cs_etm_queue *etmq __maybe_unused)
-> +{
-> +	/* What else to return? */
-> +	return true;
-> +}
-> +
-> +static inline void cs_etm__etmq_set_traceid_queue_timestamp(
-> +				struct cs_etm_queue *etmq __maybe_unused,
-> +				u8 trace_chan_id __maybe_unused) {}
-> +
->  static inline struct cs_etm_packet_queue *cs_etm__etmq_get_packet_queue(
->  				struct cs_etm_queue *etmq __maybe_unused,
->  				u8 trace_chan_id __maybe_unused)
-> -- 
-> 2.17.1
-
+diff --git a/drivers/regulator/qcom_spmi-regulator.c b/drivers/regulator/qcom_spmi-regulator.c
+index 1c18fe5969b5..c7880c1d4bcd 100644
+--- a/drivers/regulator/qcom_spmi-regulator.c
++++ b/drivers/regulator/qcom_spmi-regulator.c
+@@ -104,6 +104,7 @@ enum spmi_regulator_logical_type {
+ 	SPMI_REGULATOR_LOGICAL_TYPE_ULT_LO_SMPS,
+ 	SPMI_REGULATOR_LOGICAL_TYPE_ULT_HO_SMPS,
+ 	SPMI_REGULATOR_LOGICAL_TYPE_ULT_LDO,
++	SPMI_REGULATOR_LOGICAL_TYPE_FTSMPS426,
+ };
+ 
+ enum spmi_regulator_type {
+@@ -150,6 +151,7 @@ enum spmi_regulator_subtype {
+ 	SPMI_REGULATOR_SUBTYPE_5V_BOOST		= 0x01,
+ 	SPMI_REGULATOR_SUBTYPE_FTS_CTL		= 0x08,
+ 	SPMI_REGULATOR_SUBTYPE_FTS2p5_CTL	= 0x09,
++	SPMI_REGULATOR_SUBTYPE_FTS426_CTL	= 0x0a,
+ 	SPMI_REGULATOR_SUBTYPE_BB_2A		= 0x01,
+ 	SPMI_REGULATOR_SUBTYPE_ULT_HF_CTL1	= 0x0d,
+ 	SPMI_REGULATOR_SUBTYPE_ULT_HF_CTL2	= 0x0e,
+@@ -170,6 +172,18 @@ enum spmi_common_regulator_registers {
+ 	SPMI_COMMON_REG_STEP_CTRL		= 0x61,
+ };
+ 
++/*
++ * Second common register layout used by newer devices starting with ftsmps426
++ * Note that some of the registers from the first common layout remain
++ * unchanged and their definition is not duplicated.
++ */
++enum spmi_ftsmps426_regulator_registers {
++	SPMI_FTSMPS426_REG_VOLTAGE_LSB		= 0x40,
++	SPMI_FTSMPS426_REG_VOLTAGE_MSB		= 0x41,
++	SPMI_FTSMPS426_REG_VOLTAGE_ULS_LSB	= 0x68,
++	SPMI_FTSMPS426_REG_VOLTAGE_ULS_MSB	= 0x69,
++};
++
+ enum spmi_vs_registers {
+ 	SPMI_VS_REG_OCP				= 0x4a,
+ 	SPMI_VS_REG_SOFT_START			= 0x4c,
+@@ -229,6 +243,14 @@ enum spmi_common_control_register_index {
+ #define SPMI_COMMON_MODE_FOLLOW_HW_EN0_MASK	0x01
+ #define SPMI_COMMON_MODE_FOLLOW_ALL_MASK	0x1f
+ 
++#define SPMI_FTSMPS426_MODE_BYPASS_MASK		3
++#define SPMI_FTSMPS426_MODE_RETENTION_MASK	4
++#define SPMI_FTSMPS426_MODE_LPM_MASK		5
++#define SPMI_FTSMPS426_MODE_AUTO_MASK		6
++#define SPMI_FTSMPS426_MODE_HPM_MASK		7
++
++#define SPMI_FTSMPS426_MODE_MASK		0x07
++
+ /* Common regulator pull down control register layout */
+ #define SPMI_COMMON_PULL_DOWN_ENABLE_MASK	0x80
+ 
+@@ -274,6 +296,23 @@ enum spmi_common_control_register_index {
+ #define SPMI_FTSMPS_STEP_MARGIN_NUM	4
+ #define SPMI_FTSMPS_STEP_MARGIN_DEN	5
+ 
++#define SPMI_FTSMPS426_STEP_CTRL_DELAY_MASK	0x03
++#define SPMI_FTSMPS426_STEP_CTRL_DELAY_SHIFT	0
++
++/* Clock rate in kHz of the FTSMPS426 regulator reference clock. */
++#define SPMI_FTSMPS426_CLOCK_RATE		4800
++
++/* Minimum voltage stepper delay for each step. */
++#define SPMI_FTSMPS426_STEP_DELAY		2
++
++/*
++ * The ratio SPMI_FTSMPS426_STEP_MARGIN_NUM/SPMI_FTSMPS426_STEP_MARGIN_DEN is
++ * used to adjust the step rate in order to account for oscillator variance.
++ */
++#define SPMI_FTSMPS426_STEP_MARGIN_NUM	10
++#define SPMI_FTSMPS426_STEP_MARGIN_DEN	11
++
++
+ /* VSET value to decide the range of ULT SMPS */
+ #define ULT_SMPS_RANGE_SPLIT 0x60
+ 
+@@ -447,6 +486,10 @@ static struct spmi_voltage_range ftsmps2p5_ranges[] = {
+ 	SPMI_VOLTAGE_RANGE(1,  160000, 1360000, 2200000, 2200000, 10000),
+ };
+ 
++static struct spmi_voltage_range ftsmps426_ranges[] = {
++	SPMI_VOLTAGE_RANGE(0,       0,  320000, 1352000, 1352000,  4000),
++};
++
+ static struct spmi_voltage_range boost_ranges[] = {
+ 	SPMI_VOLTAGE_RANGE(0, 4000000, 4000000, 5550000, 5550000, 50000),
+ };
+@@ -480,6 +523,7 @@ static DEFINE_SPMI_SET_POINTS(ln_ldo);
+ static DEFINE_SPMI_SET_POINTS(smps);
+ static DEFINE_SPMI_SET_POINTS(ftsmps);
+ static DEFINE_SPMI_SET_POINTS(ftsmps2p5);
++static DEFINE_SPMI_SET_POINTS(ftsmps426);
+ static DEFINE_SPMI_SET_POINTS(boost);
+ static DEFINE_SPMI_SET_POINTS(boost_byp);
+ static DEFINE_SPMI_SET_POINTS(ult_lo_smps);
+@@ -747,6 +791,23 @@ spmi_regulator_common_set_voltage(struct regulator_dev *rdev, unsigned selector)
+ 	return spmi_vreg_write(vreg, SPMI_COMMON_REG_VOLTAGE_RANGE, buf, 2);
+ }
+ 
++static int spmi_regulator_common_list_voltage(struct regulator_dev *rdev,
++					      unsigned selector);
++
++static int spmi_regulator_ftsmps426_set_voltage(struct regulator_dev *rdev,
++					      unsigned selector)
++{
++	struct spmi_regulator *vreg = rdev_get_drvdata(rdev);
++	u8 buf[2];
++	int mV;
++
++	mV = spmi_regulator_common_list_voltage(rdev, selector) / 1000;
++
++	buf[0] = mV & 0xff;
++	buf[1] = mV >> 8;
++	return spmi_vreg_write(vreg, SPMI_FTSMPS426_REG_VOLTAGE_LSB, buf, 2);
++}
++
+ static int spmi_regulator_set_voltage_time_sel(struct regulator_dev *rdev,
+ 		unsigned int old_selector, unsigned int new_selector)
+ {
+@@ -778,6 +839,16 @@ static int spmi_regulator_common_get_voltage(struct regulator_dev *rdev)
+ 	return spmi_hw_selector_to_sw(vreg, voltage_sel, range);
+ }
+ 
++static int spmi_regulator_ftsmps426_get_voltage(struct regulator_dev *rdev)
++{
++	struct spmi_regulator *vreg = rdev_get_drvdata(rdev);
++	u8 buf[2];
++
++	spmi_vreg_read(vreg, SPMI_FTSMPS426_REG_VOLTAGE_LSB, buf, 2);
++
++	return (((unsigned int)buf[1] << 8) | (unsigned int)buf[0]) * 1000;
++}
++
+ static int spmi_regulator_single_map_voltage(struct regulator_dev *rdev,
+ 		int min_uV, int max_uV)
+ {
+@@ -921,6 +992,23 @@ static unsigned int spmi_regulator_common_get_mode(struct regulator_dev *rdev)
+ 	}
+ }
+ 
++static unsigned int spmi_regulator_ftsmps426_get_mode(struct regulator_dev *rdev)
++{
++	struct spmi_regulator *vreg = rdev_get_drvdata(rdev);
++	u8 reg;
++
++	spmi_vreg_read(vreg, SPMI_COMMON_REG_MODE, &reg, 1);
++
++	switch (reg) {
++	case SPMI_FTSMPS426_MODE_HPM_MASK:
++		return REGULATOR_MODE_NORMAL;
++	case SPMI_FTSMPS426_MODE_AUTO_MASK:
++		return REGULATOR_MODE_FAST;
++	default:
++		return REGULATOR_MODE_IDLE;
++	}
++}
++
+ static int
+ spmi_regulator_common_set_mode(struct regulator_dev *rdev, unsigned int mode)
+ {
+@@ -943,6 +1031,28 @@ spmi_regulator_common_set_mode(struct regulator_dev *rdev, unsigned int mode)
+ 	return spmi_vreg_update_bits(vreg, SPMI_COMMON_REG_MODE, val, mask);
+ }
+ 
++static int
++spmi_regulator_ftsmps426_set_mode(struct regulator_dev *rdev, unsigned int mode)
++{
++	struct spmi_regulator *vreg = rdev_get_drvdata(rdev);
++	u8 mask = SPMI_FTSMPS426_MODE_MASK;
++	u8 val;
++
++	switch (mode) {
++	case REGULATOR_MODE_NORMAL:
++		val = SPMI_FTSMPS426_MODE_HPM_MASK;
++		break;
++	case REGULATOR_MODE_FAST:
++		val = SPMI_FTSMPS426_MODE_AUTO_MASK;
++		break;
++	default:
++		val = SPMI_FTSMPS426_MODE_LPM_MASK;
++		break;
++	}
++
++	return spmi_vreg_update_bits(vreg, SPMI_COMMON_REG_MODE, val, mask);
++}
++
+ static int
+ spmi_regulator_common_set_load(struct regulator_dev *rdev, int load_uA)
+ {
+@@ -1272,6 +1382,21 @@ static struct regulator_ops spmi_ult_ldo_ops = {
+ 	.set_soft_start		= spmi_regulator_common_set_soft_start,
+ };
+ 
++static struct regulator_ops spmi_ftsmps426_ops = {
++	.enable			= regulator_enable_regmap,
++	.disable		= regulator_disable_regmap,
++	.is_enabled		= regulator_is_enabled_regmap,
++	.set_voltage_sel	= spmi_regulator_ftsmps426_set_voltage,
++	.set_voltage_time_sel	= spmi_regulator_set_voltage_time_sel,
++	.get_voltage		= spmi_regulator_ftsmps426_get_voltage,
++	.map_voltage		= spmi_regulator_single_map_voltage,
++	.list_voltage		= spmi_regulator_common_list_voltage,
++	.set_mode		= spmi_regulator_ftsmps426_set_mode,
++	.get_mode		= spmi_regulator_ftsmps426_get_mode,
++	.set_load		= spmi_regulator_common_set_load,
++	.set_pull_down		= spmi_regulator_common_set_pull_down,
++};
++
+ /* Maximum possible digital major revision value */
+ #define INF 0xFF
+ 
+@@ -1307,6 +1432,7 @@ static const struct spmi_regulator_mapping supported_regulators[] = {
+ 	SPMI_VREG(BOOST, 5V_BOOST, 0, INF, BOOST,  boost,  boost,       0),
+ 	SPMI_VREG(FTS,   FTS_CTL,  0, INF, FTSMPS, ftsmps, ftsmps, 100000),
+ 	SPMI_VREG(FTS, FTS2p5_CTL, 0, INF, FTSMPS, ftsmps, ftsmps2p5, 100000),
++	SPMI_VREG(FTS, FTS426_CTL, 0, INF, FTSMPS426, ftsmps426, ftsmps426, 100000),
+ 	SPMI_VREG(BOOST_BYP, BB_2A, 0, INF, BOOST_BYP, boost, boost_byp, 0),
+ 	SPMI_VREG(ULT_BUCK, ULT_HF_CTL1, 0, INF, ULT_LO_SMPS, ult_lo_smps,
+ 						ult_lo_smps,   100000),
+@@ -1444,6 +1570,34 @@ static int spmi_regulator_init_slew_rate(struct spmi_regulator *vreg)
+ 	return ret;
+ }
+ 
++static int spmi_regulator_init_slew_rate_ftsmps426(struct spmi_regulator *vreg)
++{
++	int ret;
++	u8 reg = 0;
++	int delay, slew_rate;
++	const struct spmi_voltage_range *range = &vreg->set_points->range[0];
++
++	ret = spmi_vreg_read(vreg, SPMI_COMMON_REG_STEP_CTRL, &reg, 1);
++	if (ret) {
++		dev_err(vreg->dev, "spmi read failed, ret=%d\n", ret);
++		return ret;
++	}
++
++	delay = reg & SPMI_FTSMPS426_STEP_CTRL_DELAY_MASK;
++	delay >>= SPMI_FTSMPS426_STEP_CTRL_DELAY_SHIFT;
++
++	/* slew_rate has units of uV/us */
++	slew_rate = SPMI_FTSMPS426_CLOCK_RATE * range->step_uV;
++	slew_rate /= 1000 * (SPMI_FTSMPS426_STEP_DELAY << delay);
++	slew_rate *= SPMI_FTSMPS426_STEP_MARGIN_NUM;
++	slew_rate /= SPMI_FTSMPS426_STEP_MARGIN_DEN;
++
++	/* Ensure that the slew rate is greater than 0 */
++	vreg->slew_rate = max(slew_rate, 1);
++
++	return ret;
++}
++
+ static int spmi_regulator_init_registers(struct spmi_regulator *vreg,
+ 				const struct spmi_regulator_init_data *data)
+ {
+@@ -1583,6 +1737,12 @@ static int spmi_regulator_of_parse(struct device_node *node,
+ 		ret = spmi_regulator_init_slew_rate(vreg);
+ 		if (ret)
+ 			return ret;
++		break;
++	case SPMI_REGULATOR_LOGICAL_TYPE_FTSMPS426:
++		ret = spmi_regulator_init_slew_rate_ftsmps426(vreg);
++		if (ret)
++			return ret;
++		break;
+ 	default:
+ 		break;
+ 	}
+@@ -1739,7 +1899,16 @@ static const struct spmi_regulator_data pmi8994_regulators[] = {
+ 	{ }
+ };
+ 
++static const struct spmi_regulator_data pm8005_regulators[] = {
++	{ "s1", 0x1400, "vdd_s1", },
++	{ "s2", 0x1700, "vdd_s2", },
++	{ "s3", 0x1a00, "vdd_s3", },
++	{ "s4", 0x1d00, "vdd_s4", },
++	{ }
++};
++
+ static const struct of_device_id qcom_spmi_regulator_match[] = {
++	{ .compatible = "qcom,pm8005-regulators", .data = &pm8005_regulators },
+ 	{ .compatible = "qcom,pm8841-regulators", .data = &pm8841_regulators },
+ 	{ .compatible = "qcom,pm8916-regulators", .data = &pm8916_regulators },
+ 	{ .compatible = "qcom,pm8941-regulators", .data = &pm8941_regulators },
 -- 
+2.17.1
 
-- Arnaldo
