@@ -2,63 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7E84371DD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 12:41:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B3D7371DF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 12:41:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726967AbfFFKk7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 06:40:59 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36558 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726040AbfFFKk7 (ORCPT
+        id S1727117AbfFFKlc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 06:41:32 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:35115 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726935AbfFFKlb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 06:40:59 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n4so1891341wrs.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 03:40:58 -0700 (PDT)
+        Thu, 6 Jun 2019 06:41:31 -0400
+Received: by mail-io1-f65.google.com with SMTP id m24so267635ioo.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 03:41:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=X15+ANHHAQ325XrPqv3kbx6y+ELh+uxzzzl/XqTNzjk=;
-        b=laNYzApm8cAk9EEPw6OvfprMQDZAicoYhuCA1fKvUDBrq7EnX5UY1xrX6IoUDUzx4R
-         HANbhKjjHz875dihvmaJG3vtSu6M3p+61fDqh1OJ4DIX6uta3/KlFSp2EAiJVrWMoa+2
-         xmW7AWDSSuUrUZDAkoQ0oFAlvQEzyMDswRcOW/ozRcfVASd5C1yAfx2oa80P/w/OLEgx
-         UXyXUpTBg640OYTPLxyTeJQfoLgqw69TB3OfpS18GX+woALv2RsDwm/P6K2bXNPUet08
-         yxsoZrMoTV0MaAeBZajZFVG38qrDTqGVS3g/0Nu1Jzto1ZbD9KwerdKE/GHLl+rnKBvK
-         la8g==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YZz9VH+++n/ml8QwihoeTjKhf7ccky00th8eHkY3Vfc=;
+        b=oot9uwD2GIpRoIuiprplBae2RMkW7KHHuPXHbgBj1Zt1IPLHAzmAkeTV2A8L3H6kbE
+         VMITsJ3j1aP5tPlEBV5gwgwKMPxdeZziwToVkctXyoxGl+yY0AkPbnIWvUYup80/H0NX
+         HFoxUK484DU5KeF4HHdJL4D9xn0wDWMZaZ67j3I91i/b5sOYSmRAxdvpR7Be07dZftDk
+         IahAOMUqupe11t5rWpUgRweVeJ2OZQAzrW1KnW7Nk/R4ZcGRq9MY3VbhmMg1r82MfFHZ
+         9rCjSz5txBMtwphptFvApsmk9GG73EU0SgZk56kRNPbypGjefr5xI3xEwJwvhjetPsUx
+         Uamw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=X15+ANHHAQ325XrPqv3kbx6y+ELh+uxzzzl/XqTNzjk=;
-        b=llxTDB1FUVtkdaJEZ4Y/KoNBgBGl3tfpNnjRffcmPd6xzDJOcD3Z+jMRk99cnQWHf7
-         NJlOwaXvBgVrOR1BSOAjOXbGQ8YKyFkrF839oxwpQLYaaKqf/21NAamXnrDFUrzJ3zIS
-         U+41g7twmojxe3VN/AH2yvGUALvQ6IYkG99OFPZqBIw9rBiG2ZFPuKMrgEvyfo5FNVyM
-         3qwzEZHzLILA0cfL7ca4c+grc/Hmjwotcm+C/2rJvOGbK7DtDgtpV8Wvvkh2Sbgf4svz
-         4XuBDP38ABxMDdXFeKx8a9LNpoKxsHpBrr6VDzXEz1dfP5TEQZBLR36Xd70T0C1mTPfr
-         qgyw==
-X-Gm-Message-State: APjAAAXQxSBG3iKoOce1GYoGu+Kw59WvqPo1nMfHIXcrmaX3goQeZc2m
-        xFoIyEgW2BobUp6ITkfKHWFlboQnVCX0KKv7nqV3MiDQr8iN/hUZ
-X-Google-Smtp-Source: APXvYqybK8+VNOrgjj0HYtd6rw/QcJqobjx0YddDgRf84OttLN6Gdd2KGAIhgVZKJbgJDlWVmJEHZwWQEkbbwtQmPxk=
-X-Received: by 2002:a5d:6583:: with SMTP id q3mr31313003wru.184.1559817657328;
- Thu, 06 Jun 2019 03:40:57 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YZz9VH+++n/ml8QwihoeTjKhf7ccky00th8eHkY3Vfc=;
+        b=dN2h6/7C8PqWxZIn0oecrLynW8eBzeUNz6Q6OhgiN14oe6Pw88Gt9olqsgcRQFWGKX
+         NaXWysdiBYPVoH9YrI4QBsaSIB0xYbsH5QKMReegKzpiFNihTx9K5JtQIpBBQV6Rvm9g
+         cbUBTca4CIDC6exnIYYYcB0tOcYpdfiSL7GMqNUC1wgnj1DBLDaBr3oQEbGvAxoMhXB9
+         MP/4um91Env89D13H728HTUHtWRFcqoQedU1haOW1ptnFm63T3yv8nZj7NQ8fkautIKf
+         Lv9NDaNKc0jHzr18DCPEuJHPOYCll9eh5qN7FkHwKxC/Ec6WrXwCte85TLXUZuPgbYNH
+         Eumw==
+X-Gm-Message-State: APjAAAXBnP655KIqtRmwXbYT7i2V+25phNmbpBDX5n3CfNY9B86C76e7
+        grDz9+jUAZMS7p/02xgHkS3R04LISNoqhUz9WvDvxA==
+X-Google-Smtp-Source: APXvYqwaJmD1w0iqf+JJabWNMhpH1dQz4fhXhzeUXTh/S05TOrPkTAmbtOEly66HV1vfKvkRhB1R5D3CqSbES520EyU=
+X-Received: by 2002:a5d:9d83:: with SMTP id 3mr25670814ion.65.1559817690897;
+ Thu, 06 Jun 2019 03:41:30 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a5d:4cce:0:0:0:0:0 with HTTP; Thu, 6 Jun 2019 03:40:56 -0700 (PDT)
-Reply-To: katiehiggin24@gmail.com
-From:   Katie Higgins <rodicajones@gmail.com>
-Date:   Thu, 6 Jun 2019 11:40:56 +0100
-Message-ID: <CAALYDU6wJAHQLobx1dfH16nzYHVrZ5Lc-BruypbayUgYhjrH+Q@mail.gmail.com>
-Subject: Hi dear,
-To:     undisclosed-recipients:;
+References: <20190604233434.nx5tXmlsH%akpm@linux-foundation.org> <a4bfdf4c-de88-31a2-8f8d-f32c1ebdbd02@infradead.org>
+In-Reply-To: <a4bfdf4c-de88-31a2-8f8d-f32c1ebdbd02@infradead.org>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 6 Jun 2019 12:41:17 +0200
+Message-ID: <CAKv+Gu9=b1ewM8p9y8T7zCiQi=qYEA-webkFns-hg5rhu6=26g@mail.gmail.com>
+Subject: Re: mmotm 2019-06-04-16-33 uploaded (drivers/crypto/atmel)
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Mark Brown <broonie@kernel.org>, linux-fsdevel@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        mhocko@suse.cz, mm-commits@vger.kernel.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi dear,
+On Wed, 5 Jun 2019 at 20:56, Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+> On 6/4/19 4:34 PM, akpm@linux-foundation.org wrote:
+> > The mm-of-the-moment snapshot 2019-06-04-16-33 has been uploaded to
+> >
+> >    http://www.ozlabs.org/~akpm/mmotm/
+> >
+> > mmotm-readme.txt says
+> >
+> > README for mm-of-the-moment:
+> >
+> > http://www.ozlabs.org/~akpm/mmotm/
+> >
+> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> > more than once a week.
+> >
+>
+> (problem seen in mmotm, but this is not an mmotm patch; it's from linux-next)
+>
+> on x86_64:
+>
+> ld: drivers/crypto/atmel-i2c.o: in function `atmel_i2c_checksum':
+> atmel-i2c.c:(.text+0x1b): undefined reference to `crc16'
+>
+> because CONFIG_CRC16=m and CONFIG_CRYPTO_DEV_ATMEL_I2C=y.
+> The latter selects the former.
+> I don't know how to make CRC16 be builtin in this case. ???
+> I changed the 'select' to 'imply' but that didn't make any difference.
+>
+> Full randconfig file is attached.
+>
 
-I am still waiting for your Email response, you did receive my first
-email to you????
-
-Respectfully Yours,
-
-Capt Katie Higgins
+CONFIG_CRYPTO_DEV_ATMEL_I2C was lacking the 'select' entirely, but it
+has now been added (as a fix to the crypto tree)
