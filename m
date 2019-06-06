@@ -2,97 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9258637DBC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 21:55:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FA6F37DBE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 21:57:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728088AbfFFTzO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 15:55:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56808 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727512AbfFFTzN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 15:55:13 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DACD6AD8A;
-        Thu,  6 Jun 2019 19:55:11 +0000 (UTC)
-Date:   Thu, 6 Jun 2019 21:55:05 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Ajay Kaher <akaher@vmware.com>
-Cc:     Stable tree <stable@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
-        Peter Xu <peterx@redhat.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Srivatsa Bhat <srivatsab@vmware.com>
-Subject: Re: [RFC PATCH stable-4.4] coredump: fix race condition between
- mmget_not_zero()/get_task_mm() and core dumping
-Message-ID: <20190606195505.GA7047@dhcp22.suse.cz>
-References: <5756B041-C0A8-4178-9F5B-7CBF7A554E31@vmware.com>
+        id S1728119AbfFFT5H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 15:57:07 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:35159 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727082AbfFFT5G (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 15:57:06 -0400
+Received: by mail-ot1-f65.google.com with SMTP id j19so3169709otq.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 12:57:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=M3lsHhmjhpNKOZxIxhHlrNdlPeU2n5HAjTzLl7Wh06g=;
+        b=SD1fhWauXkc9V9EOEpK6A+zOyK9nmCipJqTTSXXhCfXaNOCmq5QX716zkpJacPJ7tm
+         uxS76fdR2z0Gm0kjFYP4+v5tSPc9Ft1WPb/CD/7p1Ajri1LT5gs/O2Vo0mZPkERnLScx
+         LcS/5Gjv6UkmVa5cOAGui+89+iyzltsgtEcYv0R+EWwi/4WB65eiIgk6ufajiKInfBn2
+         nNjDf20yFe07Yc7JvUN6XWw467ZkIxAH9R/xUfPeqagPIYWbgbFDaj1D4ecy+kYiLl0Y
+         FyKqNQx1exHR9kIiHUHbX5tu0tpnyD1zobxuUom11uGEY1KbADSrPIGzDdyteOKdW7Fk
+         CsCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=M3lsHhmjhpNKOZxIxhHlrNdlPeU2n5HAjTzLl7Wh06g=;
+        b=PFMuNmMIZu/CffKngK3Y5wb6Oz4E7Y8x1J4dST7/QDHfTlr0h+UFcDHm2KYLWCl3/M
+         GUIasM/2g7FR7gpOTGyNzpqOny9ns619YtnywD3WcQ049EIy7PwvrqdN+KsJ0If1qpnV
+         GWkBHmQk1ntEKcEKgD6FMMuJu35LX97tZmmcZZDSR1ZbBqYknk+g6S+UAYhLlmD6NNxE
+         CPhWipBJxILT6clkz+ZOA71+B83tqxnPqojJ0daMw//QtfUPnjBdNUef96i7aTgBVS5E
+         TlLk/kw9u/h6tMaN4d8AHTokjXEF4fJvvLOw7XFN9Edqos6JL5JOturmfaZa78mW32dR
+         AEGA==
+X-Gm-Message-State: APjAAAW4QkKtGoDz7HfXJgvzCubEg3Ucyr+5x7FXZ78ADVFb+BirrmIT
+        +4bt+YkIs+vb0gaU3XG4zkyJ5X7ICRLoEkV8Fahyaw4f
+X-Google-Smtp-Source: APXvYqxlFxwKjyzQ3FMcMwqoXbCExfbLfeX6ekhBTjoxZ58lba6psbc/9xJJ4+PN7DvuxdCB9t/KgYhNVtrP5cb/2Po=
+X-Received: by 2002:a9d:32a6:: with SMTP id u35mr16585007otb.81.1559851026166;
+ Thu, 06 Jun 2019 12:57:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5756B041-C0A8-4178-9F5B-7CBF7A554E31@vmware.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190603100357.16799-1-narmstrong@baylibre.com> <20190603100357.16799-3-narmstrong@baylibre.com>
+In-Reply-To: <20190603100357.16799-3-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Thu, 6 Jun 2019 21:56:55 +0200
+Message-ID: <CAFBinCC66zaf2KhSbgDdTxynOVeOOVajoOqk0GxiQW0MSXiG_A@mail.gmail.com>
+Subject: Re: [PATCH 2/4] arm64: dts: meson-g12a-x96-max: add support for
+ sdcard and emmc
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     khilman@baylibre.com, linux-amlogic@lists.infradead.org,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 06-06-19 19:42:20, Ajay Kaher wrote:
-> 
-> > From: Andrea Arcangeli <aarcange@redhat.com>
-> >
-> > Upstream 04f5866e41fb70690e28397487d8bd8eea7d712a commit.
-> >
-> >
-> > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > ---
-> > Hi,
-> > this is based on the backport I have done for out 4.4 based distribution
-> > kernel. Please double check that I haven't missed anything before
-> > applying to the stable tree. I have also CCed Joel for the binder part
-> > which is not in the current upstream anymore but I believe it needs the
-> > check as well.
-> >
-> > Review feedback welcome.
-> >
-> > drivers/android/binder.c |  6 ++++++
-> > fs/proc/task_mmu.c       | 18 ++++++++++++++++++
-> > fs/userfaultfd.c         | 10 ++++++++--
-> > include/linux/mm.h       | 21 +++++++++++++++++++++
-> > mm/huge_memory.c         |  2 +-
-> > mm/mmap.c                |  7 ++++++-
-> > 6 files changed, 60 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-> > index 260ce0e60187..1fb1cddbd19a 100644
-> > --- a/drivers/android/binder.c
-> > +++ b/drivers/android/binder.c
-> > @@ -570,6 +570,12 @@ static int binder_update_page_range(struct binder_proc *proc, int allocate,
-> > 
-> > 	if (mm) {
-> > 		down_write(&mm->mmap_sem);
-> > +		if (!mmget_still_valid(mm)) {
-> > +			if (allocate == 0)
-> > +				goto free_range;
-> 
-> Please cross check, free_range: should not end-up with modifications in vma.
-
-A review from a binder expert is definitely due but this function
-clearly modifies the vma. Maybe the mapping is not really that important
-because the coredump would simply not see the new mapping and therefore
-"only" generate an incomplete/corrupted dump rather than leak an
-information. I went with a "just to be sure" approach and add the check
-to all locations which might be operating on a remote mm and modify the
-address space.
-
--- 
-Michal Hocko
-SUSE Labs
+On Mon, Jun 3, 2019 at 12:04 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> From: Guillaume La Roque <glaroque@baylibre.com>
+>
+> Add nodes to support SDCard and onboard eMMC on the X96 Max.
+>
+> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
