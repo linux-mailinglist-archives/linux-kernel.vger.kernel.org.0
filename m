@@ -2,171 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36C3637DD4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 22:08:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17A7937E5C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 22:18:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728407AbfFFUId (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 16:08:33 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:42004 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727082AbfFFUIc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 16:08:32 -0400
-Received: by mail-qt1-f195.google.com with SMTP id s15so4193471qtk.9
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 13:08:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=jwTK+3qegEhCDQurHdthlAfm2HEBzC8AuSyBQLKd0wk=;
-        b=H8L4iSF+E2yUjaostn80V+PTJwCs4985ILG/iUE8G8MAQFgutoft9xTOgmh3LkgoZg
-         MxeHzjh74gwAxDs+kaIdTf7lPHIsCFVG/WFx9Lj9+1hwH1hrbcTpgowl4QjggfKJSPWo
-         IFF4gUt1kRTBBjLvk1335FeW3GY+w5U8xPFfLCCQesUe8N7qoeK2TMMhOrYSV35+VkgF
-         eM1xNesr6om0gKoxHrzBllUzxHou16EOyjEn/DvWf18w6hYZKqyXt+1Yncg0ratARY7+
-         ezIrnQD3XpAbv5GGpRxffJhtbcdSGlXVn2AQEwD+FYu/sbi+Y/Ka7us873+xFx+NlEla
-         I6ZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jwTK+3qegEhCDQurHdthlAfm2HEBzC8AuSyBQLKd0wk=;
-        b=jnmTWHPeJCd4or0A4jCoOEQjmUMPf0EhvgS/Kr3r++Q24sLKdkrX2W9xxhF7neR5bi
-         xsPkWlBR8RfMpE0wAtPHfCOkgkPQ/FxJHfjYhVEDPoZBW58YeHvcR20Rb6sQ1KlqrgHt
-         5H02qeL4DGXeb+d1uKW5ljIg8lSB2fbIxyhexZ76h76ZqBUGCeJ6hg37OnQ7KvNBBmQz
-         sWlOHw8mmtEWQJ0pnHu7pjn6WNJgCvhDzpbaCq732YR6vpww3h2rvP4u9pB5h8ZssTdx
-         DCvy6ol2Z1ehQbv2MhSWIRn/C2FE5OvLdCdWqa+I6Rs6aOS0jFyeEAU8vhgPJcyjgcNF
-         x8XQ==
-X-Gm-Message-State: APjAAAXJ36D8FLj8yFxvEm7v44ioch9yMoTnjzUOjhVaHGu/8Alrq8gq
-        20QbVM/3RZ6vtthVxKZ+JBaFT1zQ
-X-Google-Smtp-Source: APXvYqzbYDHqOqfJ82EpXUuPmNBKsleJduxlFIXw/9ogHPCdjHAyz7ghvCMgcsoIEzWUhBv6akg5gg==
-X-Received: by 2002:aed:39e5:: with SMTP id m92mr42823372qte.106.1559851711219;
-        Thu, 06 Jun 2019 13:08:31 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([190.15.121.82])
-        by smtp.gmail.com with ESMTPSA id a139sm1375648qkb.48.2019.06.06.13.08.29
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 06 Jun 2019 13:08:30 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 87B6C41149; Thu,  6 Jun 2019 17:08:26 -0300 (-03)
-Date:   Thu, 6 Jun 2019 17:08:26 -0300
-To:     kan.liang@linux.intel.com
-Cc:     jolsa@kernel.org, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        ak@linux.intel.com
-Subject: Re: [PATCH V3 2/5] perf header: Add die information in CPU topology
-Message-ID: <20190606200826.GI21245@kernel.org>
-References: <1559688644-106558-1-git-send-email-kan.liang@linux.intel.com>
- <1559688644-106558-2-git-send-email-kan.liang@linux.intel.com>
- <20190606191210.GG21245@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190606191210.GG21245@kernel.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        id S1729750AbfFFURn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 16:17:43 -0400
+Received: from mga07.intel.com ([134.134.136.100]:42894 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729512AbfFFURj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 16:17:39 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 13:17:30 -0700
+X-ExtLoop1: 1
+Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
+  by fmsmga001.fm.intel.com with ESMTP; 06 Jun 2019 13:17:29 -0700
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>
+Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Subject: [PATCH v7 00/14] Control-flow Enforcement: Branch Tracking, PTRACE
+Date:   Thu,  6 Jun 2019 13:09:12 -0700
+Message-Id: <20190606200926.4029-1-yu-cheng.yu@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Jun 06, 2019 at 04:12:10PM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Tue, Jun 04, 2019 at 03:50:41PM -0700, kan.liang@linux.intel.com escreveu:
-> > From: Kan Liang <kan.liang@linux.intel.com>
-> > 
-> > With the new CPUID.1F, a new level type of CPU topology, 'die', is
-> > introduced. The 'die' information in CPU topology should be added in
-> > perf header.
-> > 
-> > To be compatible with old perf.data, the patch checks the section size
-> > before reading the die information. The new info is added at the end of
-> > the cpu_topology section, the old perf tool ignores the extra data.
-> > It never reads data crossing the section boundary.
-> > 
-> > The new perf tool with the patch can be used on legacy kernel. Add a
-> > new function has_die_topology() to check if die topology information is
-> > supported by kernel. The function only check X86 and CPU 0. Assuming
-> > other CPUs have same topology.
-> 
-> You're changing the header, how would a new tool handle an old perf.data
-> where this 'die_id' is not present? What about an old tool dealing with
-> a perf.data with this die_id?
-> 
-> I couldn't see any provision for that, am I missing something?
-> 
-> /me goes to read tools/perf/util/cputopo.c ...
-> 
-> Yeah, its just the description on the perf.data doc file that confused
-> me, I'll clarify that after finishing reviewing/applying this patchkit.
+The previous version of CET Branch Tracking/PTRACE patches is here:
 
-So I have this on top, please check.
+  https://lkml.org/lkml/2018/11/20/203
 
-- Arnaldo
+Summary of changes from v6:
 
-commit a9396a70fc7101c108e1c91fa1771557bbbb57a1
-Author: Arnaldo Carvalho de Melo <acme@redhat.com>
-Date:   Thu Jun 6 17:03:18 2019 -0300
+  Rebase to v5.2-rc3.
 
-    perf data: Fix perf.data documentation for HEADER_CPU_TOPOLOGY
-    
-    The 'die' info isn't in the same array as core and socket ids, and we
-    missed the 'dies' string list, that comes right after the 'core' +
-    'socket' id variable length array, followed by the VLA for the dies.
-    
-    Cc: Adrian Hunter <adrian.hunter@intel.com>
-    Cc: Andi Kleen <ak@linux.intel.com>
-    Cc: Jiri Olsa <jolsa@kernel.org>
-    Cc: Kan Liang <kan.liang@linux.intel.com>
-    Cc: Namhyung Kim <namhyung@kernel.org>
-    Cc: Peter Zijlstra <peterz@infradead.org>
-    Fixes: c9cb12c5ba08 ("perf header: Add die information in CPU topology")
-    Link: https://lkml.kernel.org/n/tip-nubi6mxp2n8ofvlx7ph6k3h6@git.kernel.org
-    Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+  Add Branch Tracking in the signal handling routines.
 
-diff --git a/tools/perf/Documentation/perf.data-file-format.txt b/tools/perf/Documentation/perf.data-file-format.txt
-index de78183f6881..5f54feb19977 100644
---- a/tools/perf/Documentation/perf.data-file-format.txt
-+++ b/tools/perf/Documentation/perf.data-file-format.txt
-@@ -151,20 +151,35 @@ struct {
- 
- 	HEADER_CPU_TOPOLOGY = 13,
- 
--String lists defining the core and CPU threads topology.
--The string lists are followed by a variable length array
--which contains core_id, die_id (for x86) and socket_id of each cpu.
--The number of entries can be determined by the size of the
--section minus the sizes of both string lists.
--
- struct {
-+	/*
-+	 * First revision of HEADER_CPU_TOPOLOGY
-+	 *
-+	 * See 'struct perf_header_string_list' definition earlier
-+	 * in this file.
-+	 */
-+
-        struct perf_header_string_list cores; /* Variable length */
-        struct perf_header_string_list threads; /* Variable length */
-+
-+       /*
-+        * Second revision of HEADER_CPU_TOPOLOGY, older tools
-+        * will not consider what comes next
-+        */
-+
-        struct {
- 	      uint32_t core_id;
--	      uint32_t die_id;
- 	      uint32_t socket_id;
-        } cpus[nr]; /* Variable length records */
-+       /* 'nr' comes from previously processed HEADER_NRCPUS's nr_cpu_avail */
-+
-+        /*
-+	 * Third revision of HEADER_CPU_TOPOLOGY, older tools
-+	 * will not consider what comes next
-+	 */
-+
-+	struct perf_header_string_list dies; /* Variable length */
-+	uint32_t die_id[nr_cpus_avail]; /* from previously processed HEADER_NR_CPUS, VLA */
- };
- 
- Example:
+  Fix Branch Tracking (and Shadow Stack) for vsyscall (patch #12):
+    This patch can be dropped if we expect CET blocking vsyscall.
+
+  Include H.J. Lu's patch to discard .note.gnu.property in the kernel.
+
+H.J. Lu (4):
+  x86/vdso: Insert endbr32/endbr64 to vDSO
+  x86/vdso/32: Add ENDBR32 to __kernel_vsyscall entry point
+  x86/vsyscall/64: Add ENDBR64 to vsyscall entry points
+  x86: Discard .note.gnu.property sections
+
+Yu-cheng Yu (10):
+  x86/cet/ibt: Add Kconfig option for user-mode Indirect Branch Tracking
+  x86/cet/ibt: User-mode indirect branch tracking support
+  x86/cet/ibt: Add IBT legacy code bitmap setup function
+  x86/cet/ibt: Handle signals for IBT
+  mm/mmap: Add IBT bitmap size to address space limit check
+  x86/cet/ibt: ELF header parsing for IBT
+  x86/cet/ibt: Add arch_prctl functions for IBT
+  x86/cet/ibt: Add ENDBR to op-code-map
+  x86/vsyscall/64: Fixup shadow stack and branch tracking for vsyscall
+  x86/cet: Add PTRACE interface for CET
+
+ arch/x86/Kconfig                              | 16 ++++
+ arch/x86/Makefile                             |  7 ++
+ arch/x86/entry/vdso/Makefile                  | 12 ++-
+ arch/x86/entry/vdso/vdso-layout.lds.S         |  1 +
+ arch/x86/entry/vdso/vdso32/system_call.S      |  3 +
+ arch/x86/entry/vsyscall/vsyscall_64.c         | 28 +++++++
+ arch/x86/entry/vsyscall/vsyscall_emu_64.S     |  9 +++
+ arch/x86/include/asm/cet.h                    |  8 ++
+ arch/x86/include/asm/disabled-features.h      |  8 +-
+ arch/x86/include/asm/fpu/regset.h             |  7 +-
+ arch/x86/include/asm/mmu_context.h            | 10 +++
+ arch/x86/include/uapi/asm/prctl.h             |  2 +
+ arch/x86/kernel/cet.c                         | 80 +++++++++++++++++++
+ arch/x86/kernel/cet_prctl.c                   | 21 +++++
+ arch/x86/kernel/cpu/common.c                  | 17 ++++
+ arch/x86/kernel/fpu/regset.c                  | 41 ++++++++++
+ arch/x86/kernel/process_64.c                  |  6 ++
+ arch/x86/kernel/ptrace.c                      | 16 ++++
+ arch/x86/kernel/vmlinux.lds.S                 | 11 ++-
+ arch/x86/lib/x86-opcode-map.txt               | 13 ++-
+ include/uapi/linux/elf.h                      |  1 +
+ mm/mmap.c                                     | 19 ++++-
+ .../arch/x86/include/asm/disabled-features.h  |  8 +-
+ tools/objtool/arch/x86/lib/x86-opcode-map.txt | 13 ++-
+ 24 files changed, 345 insertions(+), 12 deletions(-)
+
+-- 
+2.17.1
+
