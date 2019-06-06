@@ -2,85 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF41337A73
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:04:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EA7137A7C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:05:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727584AbfFFRED (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 13:04:03 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:38986 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726140AbfFFRED (ORCPT
+        id S1728060AbfFFRFQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 13:05:16 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:45168 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725267AbfFFRFP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 13:04:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=nuCiH7vt3Q92Rwmy7C7c/3Ld69OjA8cidRQEKNLNiEw=; b=C0XtFCHsc8M6vzDTzFa76F4I5P
-        0T6k57QI7ay8qLNDvHhGl7tTESoFa/ab3BSi88Iyux4VyrnZMUlXX8CqvDGKEO5fKKaIlgRWSFIqF
-        aIaBdW45oznA7Em0xqL+uBqMJb1gRDhw7sNX/jLQ4+REij5D9EQ8wnsGZ8Hn7ANTHLmnJVgW5TzPH
-        U6n7h6tQYU7Ea4alyZITuRMzPME6okr7XZSE1Cfls8mO48TKqmVbOg+AIiGCFaos2e9IbPRpE9otw
-        d/Dk9LqYm4ASuK2/6A1vv7knbv9uiEmGi/t/9KJUydrFpq8CSX2yKURwqt1C7ZbxZIJHgjpNvnXkR
-        Jx8d6Z6A==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hYvns-00047Q-LV; Thu, 06 Jun 2019 17:03:52 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 1AEBA2022711B; Thu,  6 Jun 2019 19:03:50 +0200 (CEST)
-Date:   Thu, 6 Jun 2019 19:03:50 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Jorgen Hansen <jhansen@vmware.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "arnd@arndb.de" <arnd@arndb.de>, Vishnu DASA <vdasa@vmware.com>,
-        Adit Ranadive <aditr@vmware.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH] VMCI: Fixup atomic64_t abuse
-Message-ID: <20190606170350.GL3419@hirez.programming.kicks-ass.net>
-References: <20190606093428.GF3402@hirez.programming.kicks-ass.net>
- <BC2D213B-89E4-4C14-A093-AC61EAB56830@vmware.com>
+        Thu, 6 Jun 2019 13:05:15 -0400
+Received: from pendragon.ideasonboard.com (unknown [IPv6:2a02:a03f:44f0:8500:ca05:8177:199c:fed4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id EEB0333B;
+        Thu,  6 Jun 2019 19:05:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1559840714;
+        bh=CVBp/IEh5vhwWYspt56rtYg6AI6x08afKyjXhCh6rY0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sfE6alK/3GMjn1/8cjiAuGj3QPlcibWcDobcOFwCRqgDelqvyoohMySGecYgxNmQO
+         iPhTHx7tQnCZO0Q4sj6Q0NL+SIMTlKQgVK9aWG9Kb090OdUuhFSHCq2Ch6Qj4DVcJz
+         c3rxvD59HbczAdda50K4chnkVolcIU/dFnj2hDhQ=
+Date:   Thu, 6 Jun 2019 20:04:59 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc:     kieran.bingham+renesas@ideasonboard.com, airlied@linux.ie,
+        daniel@ffwll.ch, koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
+        VenkataRajesh.Kalakodima@in.bosch.com,
+        Harsha.ManjulaMallikarjun@in.bosch.com,
+        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/20] arm64: dts: renesas: r8a7796: Add CMM units
+Message-ID: <20190606170459.GP12825@pendragon.ideasonboard.com>
+References: <20190606142220.1392-1-jacopo+renesas@jmondi.org>
+ <20190606142220.1392-10-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <BC2D213B-89E4-4C14-A093-AC61EAB56830@vmware.com>
+In-Reply-To: <20190606142220.1392-10-jacopo+renesas@jmondi.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 03:54:24PM +0000, Jorgen Hansen wrote:
-> 
-> 
-> > On 6 Jun 2019, at 11:34, Peter Zijlstra <peterz@infradead.org> wrote:
-> > 
-> > 
-> > The VMCI driver is abusing atomic64_t and atomic_t, there is no actual
-> > atomic RmW operations around.
-> > 
-> > Rewrite the code to use a regular u64 with READ_ONCE() and
-> > WRITE_ONCE() and a cast to 'unsigned long'. This fully preserves
-> > whatever broken there was (it's not endian-safe for starters, and also
-> > looks to be missing ordering).
-> 
-> Thanks for the cleanup.
-> 
-> This code is only intended for use with the vmci device driver, and
-> that is X86 only, so during the original upstreaming no effort was
-> made to make this work correctly on anything else.
+Hi Jacopo,
 
-Even x86 needs compiler barriers to ensure the compiler emits the
-instructions in the expected order.
+Thank you for the patch.
 
-> We’ll be updating the vmci device driver to work on other
-> architectures soonish, so will be adding barriers to enforce ordering
-> as well at that point. If you want to leave your patch as is, we can
-> address the type casting then.
+On Thu, Jun 06, 2019 at 04:22:09PM +0200, Jacopo Mondi wrote:
+> Add CMM units to Renesas R-Car M3-W device tree and reference them from
+> the Display Unit they are connected to.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-You might want to have a look at smp_store_release() and
-smp_load_acquire() I suppose.
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  arch/arm64/boot/dts/renesas/r8a7796.dtsi | 25 ++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> index cdf784899cf8..2e1891d9d322 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+> @@ -2610,6 +2610,30 @@
+>  			renesas,fcp = <&fcpvi0>;
+>  		};
+>  
+> +		cmm0: cmm@fea40000 {
+> +			compatible = "renesas,cmm-gen3";
+> +			reg = <0 0xfea40000 0 0x1000>;
+> +			clocks = <&cpg CPG_MOD 711>;
+> +			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+> +			resets = <&cpg 711>;
+> +		};
+> +
+> +		cmm1: cmm@fea50000 {
+> +			compatible = "renesas,cmm-gen3";
+> +			reg = <0 0xfea50000 0 0x1000>;
+> +			clocks = <&cpg CPG_MOD 710>;
+> +			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+> +			resets = <&cpg 710>;
+> +		};
+> +
+> +		cmm2: cmm@fea60000 {
+> +			compatible = "renesas,cmm-gen3";
+> +			reg = <0 0xfea60000 0 0x1000>;
+> +			clocks = <&cpg CPG_MOD 709>;
+> +			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
+> +			resets = <&cpg 709>;
+> +		};
+> +
+>  		csi20: csi2@fea80000 {
+>  			compatible = "renesas,r8a7796-csi2";
+>  			reg = <0 0xfea80000 0 0x10000>;
+> @@ -2763,6 +2787,7 @@
+>  			status = "disabled";
+>  
+>  			vsps = <&vspd0 &vspd1 &vspd2>;
+> +			cmms = <&cmm0 &cmm1 &cmm2>;
+>  
+>  			ports {
+>  				#address-cells = <1>;
+
+-- 
+Regards,
+
+Laurent Pinchart
