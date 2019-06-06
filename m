@@ -2,133 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA07C37DA5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 21:53:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 662A137DAA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 21:54:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727714AbfFFTxl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 15:53:41 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:50910 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727240AbfFFTxl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 15:53:41 -0400
-Received: by mail-it1-f194.google.com with SMTP id a186so1973993itg.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 12:53:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QvRzAt8oUa+QOs8oktnGNElZis2955KPPjFl8TJj1Sc=;
-        b=N+cqBcIV8wCw3ILXUCLZHVe/s4oVuQ8zay6aGrYPCg/Q0/LfbnGZ3xrbjVNC2YrE+E
-         gSa1nR+/Nq1cCJ7Jznj/Mh+Brk11hVeOkfmo7Mu9L8hig5pyoGV3hzJCKKy15b2Ux4YT
-         zAAWOLCfUwPmGNGUKX5hvU8UhLJUAuxnsWIb0vjJMTLwE9WVVid8S/axVQwSWwX/zwPe
-         y0b8JzAyRKGSbTtq2I4s4PrRaPLbKrmGieixcUCvQN3oCK9J8zhbUjhFim3HibPIkckH
-         W6ktf0tSNKqYlGcNECmzAZgznIdXds66vzYJebSmZfwWa8gCf3MmmOyqUZ2k3M+KpybO
-         +vOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QvRzAt8oUa+QOs8oktnGNElZis2955KPPjFl8TJj1Sc=;
-        b=pp6YcxNZVaV+BE4ayY1rCFEW5rc6onGvuTSAfODd6VwcJSD9m/bRnShZKtKQ8PREtd
-         5kFsAcioJggYnHTu1kP66z1LtyHawUEJ97YhO8dOo7KMSSlsfuZ+sLeiSGnPcyuwutdu
-         1HE5bD81ZvuzcHLMQEphboBbc+hdVfXAFTL66ovgt7Reo1cCLSoUag3wUoP7gFZRV2pi
-         gqg1WxEkPGzRkiFdhWatFshPiBLh1ZqYRBUlsbiGoiPlJaDcMFP3P6OBVD/38i0ludPN
-         r1WQaUtzfq2XJVBgOiIFQUX0TKSLCcMVdsHi+9adbIFP1Sa2WD29xtDrmirVVCXyNb8+
-         a56w==
-X-Gm-Message-State: APjAAAUwWkNjbcwQVfN2pVgrEBHyI/q74k494hqdcPUjryNRN1M5FuPg
-        zuZDIia3l7cShObn9EPrcfXgEzM+i11LQ3IbSQg=
-X-Google-Smtp-Source: APXvYqy7pWNl4Q+X7LS21yrTMp4Kqd7zvq75fu/BksKKF+n8OdJGBkq6cgEp1ESBftQ0uehnGbsNv9eC+vjhoHPBetU=
-X-Received: by 2002:a24:97d2:: with SMTP id k201mr1379721ite.151.1559850820180;
- Thu, 06 Jun 2019 12:53:40 -0700 (PDT)
+        id S1727828AbfFFTxx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 15:53:53 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:45627 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727240AbfFFTxu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 15:53:50 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45KbvF48Xvz9sDX;
+        Fri,  7 Jun 2019 05:53:45 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1559850827;
+        bh=d6SJxU0/ScjlRTFzNoaL9FcILbaOOHmHAty3CZ/Vh/M=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=BjNv3BPoFFPjmA7YQV4rHasyQ0759LKCjrVwNHart/HO5uj6qphC7gz5KmZdB56+B
+         +HwcAvXphavYyjktKp2nK/jcsCuzQMXr5tqUTMfnT+ev0DFZx39i29fZZF8dgmZc/X
+         +9wCz+J4sHwuFLYcUDhILzckHTzdJn0r+exASPB5apFMQMHzlQXGO7rv4vH9K294gK
+         DO22P0PGbGBiNs9bXbMEll8eNKCkiScDLyAPZh+OSYddhH9pzQnsx+RyjoatvzPYzs
+         e6q3RHbjuSYXsBnUkV4GqSVVxHyycbvDTvvdYsR/a32WxXzAqT9enp//v76sEKQZFE
+         jQf8GDy1+/pRA==
+Date:   Fri, 7 Jun 2019 05:53:34 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Airlie <airlied@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Jerome Glisse <jglisse@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Artemy Kovalyov <artemyko@mellanox.com>,
+        Moni Shoua <monis@mellanox.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Kaike Wan <kaike.wan@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Subject: Re: RFC: Run a dedicated hmm.git for 5.3
+Message-ID: <20190607055334.2bdea125@canb.auug.org.au>
+In-Reply-To: <20190606152543.GE17392@mellanox.com>
+References: <20190523155207.GC5104@redhat.com>
+        <20190523163429.GC12159@ziepe.ca>
+        <20190523173302.GD5104@redhat.com>
+        <20190523175546.GE12159@ziepe.ca>
+        <20190523182458.GA3571@redhat.com>
+        <20190523191038.GG12159@ziepe.ca>
+        <20190524064051.GA28855@infradead.org>
+        <20190524124455.GB16845@ziepe.ca>
+        <20190525155210.8a9a66385ac8169d0e144225@linux-foundation.org>
+        <20190527191247.GA12540@ziepe.ca>
+        <20190606152543.GE17392@mellanox.com>
 MIME-Version: 1.0
-References: <20190605070507.11417-1-andrew.smirnov@gmail.com>
- <CGME20190605070535epcas2p36fee13315966e45d425c073162aa1aae@epcas2p3.samsung.com>
- <20190605070507.11417-7-andrew.smirnov@gmail.com> <28ddfb42-db9a-f095-9230-d324db5ee483@samsung.com>
-In-Reply-To: <28ddfb42-db9a-f095-9230-d324db5ee483@samsung.com>
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-Date:   Thu, 6 Jun 2019 12:53:28 -0700
-Message-ID: <CAHQ1cqGEe9cT18UNtjkRDACrwYr8YRJ3Ec6eGaR8Qp+-QgqTdQ@mail.gmail.com>
-Subject: Re: [PATCH v3 06/15] drm/bridge: tc358767: Simplify AUX data read
-To:     Andrzej Hajda <a.hajda@samsung.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        Archit Taneja <architt@codeaurora.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Cory Tusar <cory.tusar@zii.aero>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/l+KwJlP++eQB4BpW/9k.220"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 6, 2019 at 3:59 AM Andrzej Hajda <a.hajda@samsung.com> wrote:
->
-> On 05.06.2019 09:04, Andrey Smirnov wrote:
-> > Simplify AUX data read by removing index arithmetic and shifting with
-> > a helper functions that does three things:
-> >
-> >     1. Fetch data from up to 4 32-bit registers from the chip
-> >     2. Optionally fix data endianness (not needed on LE hosts)
-> >     3. Copy read data into user provided array.
-> >
-> > Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> > Cc: Archit Taneja <architt@codeaurora.org>
-> > Cc: Andrzej Hajda <a.hajda@samsung.com>
-> > Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-> > Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> > Cc: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
-> > Cc: Philipp Zabel <p.zabel@pengutronix.de>
-> > Cc: Cory Tusar <cory.tusar@zii.aero>
-> > Cc: Chris Healy <cphealy@gmail.com>
-> > Cc: Lucas Stach <l.stach@pengutronix.de>
-> > Cc: dri-devel@lists.freedesktop.org
-> > Cc: linux-kernel@vger.kernel.org
-> > ---
-> >  drivers/gpu/drm/bridge/tc358767.c | 40 +++++++++++++++++++++----------
-> >  1 file changed, 27 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
-> > index e197ce0fb166..da47d81e7109 100644
-> > --- a/drivers/gpu/drm/bridge/tc358767.c
-> > +++ b/drivers/gpu/drm/bridge/tc358767.c
-> > @@ -321,6 +321,29 @@ static int tc_aux_get_status(struct tc_data *tc, u8 *reply)
-> >       return 0;
-> >  }
-> >
-> > +static int tc_aux_read_data(struct tc_data *tc, void *data, size_t size)
-> > +{
-> > +     u32 auxrdata[DP_AUX_MAX_PAYLOAD_BYTES / sizeof(u32)];
-> > +     int ret, i, count = DIV_ROUND_UP(size, sizeof(u32));
-> > +
-> > +     ret = regmap_bulk_read(tc->regmap, DP0_AUXRDATA(0), auxrdata, count);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     for (i = 0; i < count; i++) {
-> > +             /*
-> > +              * Our regmap is configured as LE for register data,
-> > +              * so we need undo any byte swapping that might have
-> > +              * happened to preserve original byte order.
-> > +              */
-> > +             le32_to_cpus(&auxrdata[i]);
-> > +     }
-> > +
-> > +     memcpy(data, auxrdata, size);
-> > +
-> > +     return size;
-> > +}
-> > +
->
->
-> Hmm, cannot we just use regmap_raw_read?
+--Sig_/l+KwJlP++eQB4BpW/9k.220
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I'll give it a try in v4.
+Hi Jason,
 
-Thanks,
-Andrey Smirnov
+On Thu, 6 Jun 2019 15:25:49 +0000 Jason Gunthorpe <jgg@mellanox.com> wrote:
+>
+> On Mon, May 27, 2019 at 04:12:47PM -0300, Jason Gunthorpe wrote:
+> > On Sat, May 25, 2019 at 03:52:10PM -0700, Andrew Morton wrote: =20
+> > > On Fri, 24 May 2019 09:44:55 -0300 Jason Gunthorpe <jgg@ziepe.ca> wro=
+te:
+> > >  =20
+> > > > Now that -mm merged the basic hmm API skeleton I think running like
+> > > > this would get us quickly to the place we all want: comprehensive i=
+n tree
+> > > > users of hmm.
+> > > >=20
+> > > > Andrew, would this be acceptable to you? =20
+> > >=20
+> > > Sure.  Please take care not to permit this to reduce the amount of
+> > > exposure and review which the core HMM pieces get. =20
+> >=20
+> > Certainly, thanks all
+> >=20
+> > Jerome: I started a HMM branch on v5.2-rc2 in the rdma.git here:
+> >=20
+> > git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git
+> > https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git/log/?h=3D=
+hmm =20
+>=20
+> I did a first round of collecting patches for hmm.git
+>=20
+> Andrew, I'm checking linux-next and to stay co-ordinated, I see the
+> patches below are in your tree and now also in hmm.git. Can you please
+> drop them from your tree?=20
+>=20
+> 5b693741de2ace mm/hmm.c: suppress compilation warnings when CONFIG_HUGETL=
+B_PAGE is not set
+> b2870fb882599a mm/hmm.c: only set FAULT_FLAG_ALLOW_RETRY for non-blocking
+> dff7babf8ae9f1 mm/hmm.c: support automatic NUMA balancing
+>=20
+> I checked that the other two patches in -next also touching hmm.c are
+> best suited to go through your tree:
+>=20
+> a76b9b318a7180 mm/devm_memremap_pages: fix final page put race
+> fc64c058d01b98 mm/memremap: rename and consolidate SECTION_SIZE
+>=20
+> StephenR: Can you pick up the hmm branch from rdma.git for linux-next for
+> this cycle? As above we are moving the patches from -mm to hmm.git, so
+> there will be a conflict in -next until Andrew adjusts his tree,
+> thanks!
+
+I have added the hmm branch from today with currently just you as the
+contact.  I also removed the three commits above from Andrew's tree.
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+--Sig_/l+KwJlP++eQB4BpW/9k.220
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlz5bz4ACgkQAVBC80lX
+0Gz42ggAjd2XdELh29gxYaa3AGGZx68tH5E3qcBVYvxP3IEAfi0bUSvxNXFhstk6
+YaxWX9oxbApTS2Uj3++jezF4Xjj2Y73HGUjGLQ3Otw3Mnqcf6jXCMx8Z++gM7yyC
+VCZzpR+3xAuAY21M7Ov9ZplyOO2h0UgAm8zaMi5hxEyGVAKjncUBDg4Y0qrh0UAl
+AnZKxV4zQyp4/PvVuYFQa+g8igqB+cGfBLY36wP0k2p3f7btC0m1JSgADRiqg0lA
+reZ+53oVo8c90IhdJp2lysklnxwDvfGMcl5S93eBGYfT0TdJ0XWriIgIy+uwt6mx
+VsgPHJUvyidpJbGyRC/m2LJnhvk19w==
+=dJb7
+-----END PGP SIGNATURE-----
+
+--Sig_/l+KwJlP++eQB4BpW/9k.220--
