@@ -2,95 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 976A5372DC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 13:31:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAFB4372EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 13:31:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728448AbfFFL3y convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 6 Jun 2019 07:29:54 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:23501 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726926AbfFFL3y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 07:29:54 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-55-JlKKsqqGP-m_DvJJhUs1bQ-1; Thu, 06 Jun 2019 12:29:50 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Thu, 6 Jun 2019 12:29:49 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 6 Jun 2019 12:29:49 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Oleg Nesterov' <oleg@redhat.com>
-CC:     'Linus Torvalds' <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        "Linux List Kernel Mailing" <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Davidlohr Bueso <dbueso@suse.de>, Jens Axboe <axboe@kernel.dk>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "e@80x24.org" <e@80x24.org>, Jason Baron <jbaron@akamai.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "omar.kilani@gmail.com" <omar.kilani@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        stable <stable@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: RE: [PATCH -mm 0/1] signal: simplify
- set_user_sigmask/restore_user_sigmask
-Thread-Topic: [PATCH -mm 0/1] signal: simplify
- set_user_sigmask/restore_user_sigmask
-Thread-Index: AQHVG8OiWeMKMn2zNEeA0y96arbBsKaOUFtAgAAW0gCAABcWoA==
-Date:   Thu, 6 Jun 2019 11:29:49 +0000
-Message-ID: <6e3eeb101a30431eb111ad739ab5d2b0@AcuMS.aculab.com>
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190529161157.GA27659@redhat.com> <20190604134117.GA29963@redhat.com>
- <20190605155801.GA25165@redhat.com>
- <CAHk-=wjkNx8u4Mcm5dfSQKYQmLQAv1Z1yGLDZvty7BVSj4eqBA@mail.gmail.com>
- <1285a2e60e3748d8825b9b0e3500cd28@AcuMS.aculab.com>
- <20190606110522.GA4691@redhat.com>
-In-Reply-To: <20190606110522.GA4691@redhat.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S1728482AbfFFLbW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 07:31:22 -0400
+Received: from foss.arm.com ([217.140.101.70]:45846 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727296AbfFFLbV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 07:31:21 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 61922A78;
+        Thu,  6 Jun 2019 04:31:21 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DA95C3F246;
+        Thu,  6 Jun 2019 04:31:19 -0700 (PDT)
+Date:   Thu, 6 Jun 2019 12:31:17 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Will Deacon <will.deacon@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH V2 4/4] arm64/mm: Drop local variable vm_fault_t from
+ __do_page_fault()
+Message-ID: <20190606113117.GC37821@lakrids.cambridge.arm.com>
+References: <1559544085-7502-1-git-send-email-anshuman.khandual@arm.com>
+ <1559544085-7502-5-git-send-email-anshuman.khandual@arm.com>
+ <20190604145612.GM6610@arrakis.emea.arm.com>
+ <1d89177a-e7af-ac4e-1a04-e8b750c2c768@arm.com>
+ <20190606112739.GB56860@arrakis.emea.arm.com>
 MIME-Version: 1.0
-X-MC-Unique: JlKKsqqGP-m_DvJJhUs1bQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190606112739.GB56860@arrakis.emea.arm.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleg Nesterov
-> Sent: 06 June 2019 12:05
-> On 06/06, David Laight wrote:
-> >
-> > If a signal handler is called, I presume that the trampoline
-> > calls back into the kernel to get further handlers called
-> > and to finally restore the original signal mask?
+On Thu, Jun 06, 2019 at 12:27:40PM +0100, Catalin Marinas wrote:
+> On Thu, Jun 06, 2019 at 10:24:01AM +0530, Anshuman Khandual wrote:
+> > On 06/04/2019 08:26 PM, Catalin Marinas wrote:
+> > > On Mon, Jun 03, 2019 at 12:11:25PM +0530, Anshuman Khandual wrote:
+> > >> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+> > >> index 4bb65f3..41fa905 100644
+> > >> --- a/arch/arm64/mm/fault.c
+> > >> +++ b/arch/arm64/mm/fault.c
+> > >> @@ -397,37 +397,29 @@ static void do_bad_area(unsigned long addr, unsigned int esr, struct pt_regs *re
+> > >>  static vm_fault_t __do_page_fault(struct mm_struct *mm, unsigned long addr,
+> > >>  			   unsigned int mm_flags, unsigned long vm_flags)
+> > >>  {
+> > >> -	struct vm_area_struct *vma;
+> > >> -	vm_fault_t fault;
+> > >> +	struct vm_area_struct *vma = find_vma(mm, addr);
+> > >>  
+> > >> -	vma = find_vma(mm, addr);
+> > >> -	fault = VM_FAULT_BADMAP;
+> > >>  	if (unlikely(!vma))
+> > >> -		goto out;
+> > >> -	if (unlikely(vma->vm_start > addr))
+> > >> -		goto check_stack;
+> > >> +		return VM_FAULT_BADMAP;
+> > >>  
+> > >>  	/*
+> > >>  	 * Ok, we have a good vm_area for this memory access, so we can handle
+> > >>  	 * it.
+> > >>  	 */
+> > >> -good_area:
+> > >> +	if (unlikely(vma->vm_start > addr)) {
+> > >> +		if (!(vma->vm_flags & VM_GROWSDOWN))
+> > >> +			return VM_FAULT_BADMAP;
+> > >> +		if (expand_stack(vma, addr))
+> > >> +			return VM_FAULT_BADMAP;
+> > >> +	}
+> > > 
+> > > You could have a single return here:
+> > > 
+> > > 	if (unlikely(vma->vm_start > addr) &&
+> > > 	    (!(vma->vm_flags & VM_GROWSDOWN) || expand_stack(vma, addr)))
+> > > 		return VM_FAULT_BADMAP;
+> > > 
+> > > Not sure it's any clearer though.
+> > 
+> > TBH the proposed one seems clearer as it separates effect (vma->vm_start > addr)
+> > from required permission check (vma->vm_flags & VM_GROWSDOWN) and required action
+> > (expand_stack(vma, addr)). But I am happy to change as you have mentioned if that
+> > is preferred.
 > 
-> See sigmask_to_save(), this is what the kernel records in uc.uc_sigmask
-> before the signal handler runs, after that current->saved_sigmask has no
-> meaning.
+> Not bothered really. You can leave them as in your proposal (I was just
+> seeing the VM_GROWSDOWN check tightly coupled with the expand_stack(),
+> it's fine either way).
 
-Some of this code is hard to grep through :-)
+Personally, I find it clearer as separate statements, so I'd suggest
+keeping it as per Anshuman's proposal.
 
-> When signal handler returns it does sys_rt_sigreturn() which restores
-> the original mask saved in uc_sigmask.
-
-Does that mean that if 2 signals interrupt epoll_wait() only
-one of the signal handlers is run?
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+Thanks,
+Mark.
