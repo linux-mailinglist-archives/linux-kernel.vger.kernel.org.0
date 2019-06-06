@@ -2,76 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECA1236C64
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 08:37:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CE7236C68
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 08:40:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726691AbfFFGho (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 02:37:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57008 "EHLO mail.kernel.org"
+        id S1726454AbfFFGkn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 02:40:43 -0400
+Received: from verein.lst.de ([213.95.11.211]:47405 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725267AbfFFGho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 02:37:44 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6493820673;
-        Thu,  6 Jun 2019 06:37:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559803063;
-        bh=PZclXto95zQCnAw7+RqvTMceiBAgvFgp7tWzFU0lQ7U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PaF9zKniU6nz+hpZYk8sIfBvycyGZXZUtrcuDhaITxaiz5LG2nCh0JS0S5FvvNyC9
-         S8cOJlblvb92R4pTjv0XRtItw/uMxdk6ya3j3pVfpahog89GnUzrxaOHFIH5v1uyK1
-         OOfd2N6+JPXmoN/BRUTgBLi3v/26cJgJpjKvOT0I=
-Date:   Thu, 6 Jun 2019 08:37:41 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     Talel Shenhar <talel@amazon.com>, nicolas.ferre@microchip.com,
-        jason@lakedaemon.net, marc.zyngier@arm.com, mark.rutland@arm.com,
-        mchehab+samsung@kernel.org, robh+dt@kernel.org,
-        davem@davemloft.net, shawn.lin@rock-chips.com, tglx@linutronix.de,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dwmw@amazon.co.uk, jonnyc@amazon.com, hhhawa@amazon.com,
-        ronenk@amazon.com, hanochu@amazon.com, barakw@amazon.com
-Subject: Re: [PATCH 2/3] irqchip: al-fic: Introduce Amazon's Annapurna Labs
- Fabric Interrupt Controller Driver
-Message-ID: <20190606063741.GA23305@kroah.com>
-References: <1559717653-11258-1-git-send-email-talel@amazon.com>
- <1559717653-11258-3-git-send-email-talel@amazon.com>
- <20190605075927.GA9693@kroah.com>
- <a81a46ef13273aa8c6ea87c8d3550e33650e27b6.camel@kernel.crashing.org>
+        id S1725267AbfFFGkn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 02:40:43 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id CEE9668B05; Thu,  6 Jun 2019 08:40:15 +0200 (CEST)
+Date:   Thu, 6 Jun 2019 08:40:15 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Larry Finger <Larry.Finger@lwfinger.net>
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Christoph Hellwig <hch@lst.de>,
+        Christian Zigotzky <chzigotzky@xenosoft.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [BISECTED REGRESSION] b43legacy broken on G4 PowerBook
+Message-ID: <20190606064015.GC27033@lst.de>
+References: <20190605225059.GA9953@darkstar.musicnaut.iki.fi> <35b3f09b-b371-e2cc-4436-120c67e2f1fb@lwfinger.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a81a46ef13273aa8c6ea87c8d3550e33650e27b6.camel@kernel.crashing.org>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <35b3f09b-b371-e2cc-4436-120c67e2f1fb@lwfinger.net>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 07:55:43AM +1000, Benjamin Herrenschmidt wrote:
-> On Wed, 2019-06-05 at 09:59 +0200, Greg KH wrote:
-> > 
-> > > +struct irq_domain *al_fic_wire_get_domain(struct al_fic *fic);
-> > > +
-> > > +struct al_fic *al_fic_wire_init(struct device_node *node,
-> > > +				void __iomem *base,
-> > > +				const char *name,
-> > > +				unsigned int parent_irq);
-> > > +int al_fic_cleanup(struct al_fic *fic);
-> > 
-> > Who is using these new functions?  We don't add new apis that no one
-> > uses :(
-> 
-> They will be used by subsequent driver submissions but those aren't
-> quite ready yet, so we can hold onto patch 3 for now until they are.
+On Wed, Jun 05, 2019 at 10:06:18PM -0500, Larry Finger wrote:
+> First of all, you have my sympathy for the laborious bisection on a 
+> PowerBook G4. I have done several myself. Thank you.
+>
+> I confirm your results.
+>
+> The ppc code has a maximum DMA size of 31 bits, thus a 32-bit request will 
+> fail. Why the 30-bit fallback fails in b43legacy fails while it works in 
+> b43 is a mystery.
+>
+> Although dma_nommu_dma_supported() may be "largely identical" to 
+> dma_direct_supported(), they obviously differ. Routine 
+> dma_nommu_dma_supported() returns 1 for 32-bit systems, but I do not know 
+> what dma_direct_supported() returns.
+>
+> I am trying to find a patch.
 
-Patch 2 also should have these removed :)
+	if (IS_ENABLED(CONFIG_ZONE_DMA))
+		min_mask = DMA_BIT_MASK(ARCH_ZONE_DMA_BITS);
+	else
+		min_mask = DMA_BIT_MASK(32);
 
-You know we don't add new apis until we have a real, in-kernel user for
-them...
+	min_mask = min_t(u64, min_mask, (max_pfn - 1) << PAGE_SHIFT);
+	return mask >= __phys_to_dma(dev, min_mask);
 
-thanks,
+So the smaller or:
 
-greg k-h
+ (1) 32-bit
+ (2) ARCH_ZONE_DMA_BITS
+ (3) the actual amount of memory in the system
+
+modolo any DMA offsets that come into play.
+
+No offsets should exists on pmac, and ARCH_ZONE_DMA_BITS is 31 on
+powerpc.  So unless the system has 1GB or less memory it will probably
+return false for b43, because it can't actually guarantee reliable
+allocation.  It will work fine on x86 with the smaller ZONE_DMA.
