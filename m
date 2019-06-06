@@ -2,143 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E5A737605
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 16:07:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77872375E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 16:00:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728247AbfFFOHD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 10:07:03 -0400
-Received: from h1.radempa.de ([176.9.142.194]:35084 "EHLO mail.cosmopool.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727068AbfFFOHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 10:07:03 -0400
-X-Greylist: delayed 446 seconds by postgrey-1.27 at vger.kernel.org; Thu, 06 Jun 2019 10:07:00 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by mail.cosmopool.net (Postfix) with ESMTP id 0B80890FE45;
-        Thu,  6 Jun 2019 15:59:33 +0200 (CEST)
-Received: from mail.cosmopool.net ([127.0.0.1])
-        by localhost (mail.b.radempa.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id t6ScGfx02b-c; Thu,  6 Jun 2019 15:59:32 +0200 (CEST)
-Received: from stardust.g4.wien.funkfeuer.at (77.117.149.20.wireless.dyn.drei.com [77.117.149.20])
-        by mail.cosmopool.net (Postfix) with ESMTPSA id 513A190213F;
-        Thu,  6 Jun 2019 15:59:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ccbib.org; s=201902;
-        t=1559829572; bh=yRX2r+1exJu+xt6035zadTL1ALZUnRaTg/CjqI7wAzk=;
-        h=From:To:cc:Subject:In-reply-to:References:Date:From;
-        b=Xfkl4O7wX3W5m8UlC0jDHhFkqAU2BvG0QxydrPbS9pMTSjHknn5s/c1SBTbtruCcq
-         coWAmuJr1yuOJaqZowoulZ4CcLBNmsNeCqUBUAZ7PircVahSQsVhWKIyeT5tBQ5436
-         fIYEpSYrT8cO2D3AnUl0hF34wAuI64BKWaKomt8Y=
-Received: from lambda by stardust.g4.wien.funkfeuer.at with local (Exim 4.89)
-        (envelope-from <harald@ccbib.org>)
-        id 1hYsvP-0000PY-Pz; Thu, 06 Jun 2019 15:59:27 +0200
-From:   Harald Geyer <harald@ccbib.org>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-cc:     Torsten Duwe <duwe@lst.de>, Vasily Khoruzhick <anarsoul@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Sean Paul <seanpaul@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        arm-linux <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 7/7] arm64: dts: allwinner: a64: enable ANX6345 bridge on Teres-I
-In-reply-to: <20190605120237.ekmytfxcwbjaqy3x@flea>
-References: <20190604122150.29D6468B05@newverein.lst.de> <20190604122308.98D4868B20@newverein.lst.de> <CA+E=qVckHLqRngsfK=AcvstrD0ymEfRkYyhS_kBtZ3YWdE3L=g@mail.gmail.com> <20190605101317.GA9345@lst.de> <20190605120237.ekmytfxcwbjaqy3x@flea>
-Comments: In-reply-to Maxime Ripard <maxime.ripard@bootlin.com>
-   message dated "Wed, 05 Jun 2019 14:02:37 +0200."
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1582.1559829566.1@stardust.g4.wien.funkfeuer.at>
-Content-Transfer-Encoding: quoted-printable
-Date:   Thu, 06 Jun 2019 15:59:27 +0200
-Message-Id: <E1hYsvP-0000PY-Pz@stardust.g4.wien.funkfeuer.at>
+        id S1728681AbfFFOAM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 10:00:12 -0400
+Received: from dc2-smtprelay2.synopsys.com ([198.182.61.142]:48084 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727009AbfFFOAK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 10:00:10 -0400
+Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 7339FC0B9B;
+        Thu,  6 Jun 2019 13:59:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1559829588; bh=D7GbiPqmdrQeotVDa2DBsWTpcWpA9vK3PAnxRN5AHO8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
+         References:From;
+        b=MjN9hDKAQ96DypJ9rgePcFO8rwvlc2m0ahCK99zWvUnwzJ5y01oF7h6jySnThAEFS
+         RmXbfXKOeY4E2RlBHxE3wUyFH37Go0Nvyb1uothYjRerj+7Z/LEJ6OHLbEHS/8dVRh
+         AZhzPsL4KD6ApN5Nu3FJQFkg4dDPRgRYik2GNj9YOQgqTRIFxkkDKKzCMsCMdJQ/G4
+         4bkMz1KNeEy3sQbcd1wKvnlteR7a0+NUrN3qS5V0QP9eSyzPRh80zqkTLBPY2qjorU
+         SF+M0UtMCtAqiMe4jQgnCW+OkhxZvQGHK7D7fnpHRvac0n+ketw3UJwjlhIKmWE01l
+         OMEWmUTGXKK1g==
+Received: from de02.synopsys.com (de02.internal.synopsys.com [10.225.17.21])
+        by mailhost.synopsys.com (Postfix) with ESMTP id EC7F4A005C;
+        Thu,  6 Jun 2019 14:00:07 +0000 (UTC)
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by de02.synopsys.com (Postfix) with ESMTP id D51793F6CE;
+        Thu,  6 Jun 2019 16:00:07 +0200 (CEST)
+From:   Vitor Soares <Vitor.Soares@synopsys.com>
+To:     linux-i3c@lists.infradead.org
+Cc:     Joao.Pinto@synopsys.com, Vitor Soares <Vitor.Soares@synopsys.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/3] i3c: fix i2c and i3c scl rate by bus mode
+Date:   Thu,  6 Jun 2019 16:00:01 +0200
+Message-Id: <47de89f2335930df0ed6903be9afe6de4f46e503.1559821228.git.vitor.soares@synopsys.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1559821227.git.vitor.soares@synopsys.com>
+References: <cover.1559821227.git.vitor.soares@synopsys.com>
+In-Reply-To: <cover.1559821227.git.vitor.soares@synopsys.com>
+References: <cover.1559821227.git.vitor.soares@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Guys, this discussion is getting heated for no reason. Let's put
-personal frustrations aside and discuss the issue on its merits:
+Currently the I3C framework limits SCL frequency to FM speed when
+dealing with a mixed slow bus, even if all I2C devices are FM+ capable.
 
-Maxime Ripard writes:
-> On Wed, Jun 05, 2019 at 12:13:17PM +0200, Torsten Duwe wrote:
-> > On Tue, Jun 04, 2019 at 08:08:40AM -0700, Vasily Khoruzhick wrote:
-> > > On Tue, Jun 4, 2019 at 5:23 AM Torsten Duwe <duwe@lst.de> wrote:
-> > > >
-> > > > Teres-I has an anx6345 bridge connected to the RGB666 LCD output, =
-and
-> > > > the I2C controlling signals are connected to I2C0 bus. eDP output =
-goes
-> > > > to an Innolux N116BGE panel.
-> > > >
-> > > > Enable it in the device tree.
-> > > >
-> > > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> > > > Signed-off-by: Torsten Duwe <duwe@suse.de>
-> > > > ---
-> > > >  .../boot/dts/allwinner/sun50i-a64-teres-i.dts      | 65 +++++++++=
-+++++++++++--
-> > > >  1 file changed, 61 insertions(+), 4 deletions(-)
-> > > >
-> > > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts =
-b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
-> > > > index 0ec46b969a75..a0ad438b037f 100644
-> > > > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
-> > > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
-> > > > @@ -65,6 +65,21 @@
-> > > >                 };
-> > > >         };
-> > > >
-> > > > +       panel: panel {
-> > > > +               compatible =3D"innolux,n116bge", "simple-panel";
-> > >
-> > > It's still "simple-panel". I believe I already mentioned that Rob
-> > > asked it to be edp-connector.
+The core was also not accounting for I3C speed limitations when
+operating in mixed slow mode and was erroneously using FM+ speed as the
+max I2C speed when operating in mixed fast mode.
 
-Actually just dropping the "simple-panel" compatible would be a poor
-choice. Even if "edp-connector" is specified as binding and implemented in=
- a
-driver, there are older kernel versions and other operating systems to
-keep in mind. If the HW works with "simple-panel" driver satisfactorily,
-we should definitely keep the compatible as a fall back for cases where
-the edp-connector driver is unavailable.
+Fixes: 3a379bbcea0a ("i3c: Add core I3C infrastructure")
+Signed-off-by: Vitor Soares <vitor.soares@synopsys.com>
+Cc: Boris Brezillon <bbrezillon@kernel.org>
+Cc: <stable@vger.kernel.org>
+Cc: <linux-kernel@vger.kernel.org>
+---
+Changes in v2:
+  Enhance commit message
+  Add dev_warn() in case user-defined i2c rate doesn't match LVR constraint
+  Add dev_warn() in case user-defined i3c rate lower than i2c rate.
 
-If think valid compatible properties would be:
-compatible =3D "innolux,n116bge", "simple-panel";
-compatible =3D "edp-connector", "simple-panel";
-compatible =3D "innolux,n116bge", "edp-connector", "simple-panel";
-compatible =3D "edp-connector", "innolux,n116bge", "simple-panel";
+ drivers/i3c/master.c | 61 +++++++++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 48 insertions(+), 13 deletions(-)
 
-I can't make up my mind which one I prefere. However neither of these
-variants requires actually implmenting an edp-connector driver. And each
-of these variants is clearly preferable to shipping DTs without
-description of the panel at all and complies with bindings after adding
-a stub for "edp-connector".
+diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+index 5f4bd52..8cd5824 100644
+--- a/drivers/i3c/master.c
++++ b/drivers/i3c/master.c
+@@ -91,6 +91,12 @@ void i3c_bus_normaluse_unlock(struct i3c_bus *bus)
+ 	up_read(&bus->lock);
+ }
+ 
++static struct i3c_master_controller *
++i3c_bus_to_i3c_master(struct i3c_bus *i3cbus)
++{
++	return container_of(i3cbus, struct i3c_master_controller, bus);
++}
++
+ static struct i3c_master_controller *dev_to_i3cmaster(struct device *dev)
+ {
+ 	return container_of(dev, struct i3c_master_controller, dev);
+@@ -565,20 +571,48 @@ static const struct device_type i3c_masterdev_type = {
+ 	.groups	= i3c_masterdev_groups,
+ };
+ 
+-int i3c_bus_set_mode(struct i3c_bus *i3cbus, enum i3c_bus_mode mode)
++int i3c_bus_set_mode(struct i3c_bus *i3cbus, enum i3c_bus_mode mode,
++		     unsigned long max_i2c_scl_rate)
+ {
+-	i3cbus->mode = mode;
+ 
+-	if (!i3cbus->scl_rate.i3c)
+-		i3cbus->scl_rate.i3c = I3C_BUS_TYP_I3C_SCL_RATE;
++	struct i3c_master_controller *master = i3c_bus_to_i3c_master(i3cbus);
+ 
+-	if (!i3cbus->scl_rate.i2c) {
+-		if (i3cbus->mode == I3C_BUS_MODE_MIXED_SLOW)
+-			i3cbus->scl_rate.i2c = I3C_BUS_I2C_FM_SCL_RATE;
+-		else
+-			i3cbus->scl_rate.i2c = I3C_BUS_I2C_FM_PLUS_SCL_RATE;
++	i3cbus->mode = mode;
++
++	switch (i3cbus->mode) {
++	case I3C_BUS_MODE_PURE:
++		if (!i3cbus->scl_rate.i3c)
++			i3cbus->scl_rate.i3c = I3C_BUS_TYP_I3C_SCL_RATE;
++		break;
++	case I3C_BUS_MODE_MIXED_FAST:
++		if (!i3cbus->scl_rate.i3c)
++			i3cbus->scl_rate.i3c = I3C_BUS_TYP_I3C_SCL_RATE;
++		if (!i3cbus->scl_rate.i2c)
++			i3cbus->scl_rate.i2c = max_i2c_scl_rate;
++		break;
++	case I3C_BUS_MODE_MIXED_SLOW:
++		if (!i3cbus->scl_rate.i2c)
++			i3cbus->scl_rate.i2c = max_i2c_scl_rate;
++		if (!i3cbus->scl_rate.i3c ||
++		    i3cbus->scl_rate.i3c > i3cbus->scl_rate.i2c)
++			i3cbus->scl_rate.i3c = i3cbus->scl_rate.i2c;
++		break;
++	default:
++		return -EINVAL;
+ 	}
+ 
++	if (i3cbus->scl_rate.i3c < i3cbus->scl_rate.i2c)
++		dev_warn(&master->dev,
++			 "i3c-scl-hz=%ld lower than i2c-scl-hz=%ld\n",
++			 i3cbus->scl_rate.i3c, i3cbus->scl_rate.i2c);
++
++	if (i3cbus->scl_rate.i2c != I3C_BUS_I2C_FM_SCL_RATE &&
++	    i3cbus->scl_rate.i2c != I3C_BUS_I2C_FM_PLUS_SCL_RATE &&
++	    i3cbus->mode != I3C_BUS_MODE_PURE)
++		dev_warn(&master->dev,
++			 "i2c-scl-hz=%ld not defined according MIPI I3C spec\n"
++			 , i3cbus->scl_rate.i2c);
++
+ 	/*
+ 	 * I3C/I2C frequency may have been overridden, check that user-provided
+ 	 * values are not exceeding max possible frequency.
+@@ -1966,9 +2000,6 @@ of_i3c_master_add_i2c_boardinfo(struct i3c_master_controller *master,
+ 	/* LVR is encoded in reg[2]. */
+ 	boardinfo->lvr = reg[2];
+ 
+-	if (boardinfo->lvr & I3C_LVR_I2C_FM_MODE)
+-		master->bus.scl_rate.i2c = I3C_BUS_I2C_FM_SCL_RATE;
+-
+ 	list_add_tail(&boardinfo->node, &master->boardinfo.i2c);
+ 	of_node_get(node);
+ 
+@@ -2417,6 +2448,7 @@ int i3c_master_register(struct i3c_master_controller *master,
+ 			const struct i3c_master_controller_ops *ops,
+ 			bool secondary)
+ {
++	unsigned long i2c_scl_rate = I3C_BUS_I2C_FM_PLUS_SCL_RATE;
+ 	struct i3c_bus *i3cbus = i3c_master_get_bus(master);
+ 	enum i3c_bus_mode mode = I3C_BUS_MODE_PURE;
+ 	struct i2c_dev_boardinfo *i2cbi;
+@@ -2466,9 +2498,12 @@ int i3c_master_register(struct i3c_master_controller *master,
+ 			ret = -EINVAL;
+ 			goto err_put_dev;
+ 		}
++
++		if (i2cbi->lvr & I3C_LVR_I2C_FM_MODE)
++			i2c_scl_rate = I3C_BUS_I2C_FM_SCL_RATE;
+ 	}
+ 
+-	ret = i3c_bus_set_mode(i3cbus, mode);
++	ret = i3c_bus_set_mode(i3cbus, mode, i2c_scl_rate);
+ 	if (ret)
+ 		goto err_put_dev;
+ 
+-- 
+2.7.4
 
-> And the DT is considered an ABI, so yeah, we will witheld everything
-> that doesn't fit what we would like.
-
-I fail to see how the patch in discussion adds new ABI. While I understand
-the need to pester contributors for more work, outright blocking DTs, that
-properly describe the HW and comply with existing bindings, seems a
-bit unreasonable. (Assuming there are no other issues of course.)
-
-Also note that the innolux,n116bge binding suggestes using simple-panel
-as fallback.
-
-HTH,
-Harald
-
--- =
-
-If you want to support my work:
-see http://friends.ccbib.org/harald/supporting/
-or donate via CLAM to xASPBtezLNqj4cUe8MT5nZjthRSEjrRQXN
-or via peercoin to P98LRdhit3gZbHDBe7ta5jtXrMJUms4p7w
