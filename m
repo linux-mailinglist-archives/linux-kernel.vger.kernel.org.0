@@ -2,96 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AE8636D30
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 09:18:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D70AF36D2E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 09:17:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726724AbfFFHSc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 03:18:32 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41660 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726066AbfFFHSc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 03:18:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A6F5F374;
-        Thu,  6 Jun 2019 00:18:31 -0700 (PDT)
-Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C25143F246;
-        Thu,  6 Jun 2019 00:18:28 -0700 (PDT)
-Date:   Thu, 06 Jun 2019 08:18:25 +0100
-Message-ID: <86lfyfgp1a.wl-marc.zyngier@arm.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-To:     Bharat Kumar Gogada <bharatku@xilinx.com>
-Cc:     "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
+        id S1726633AbfFFHRo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 03:17:44 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:41713 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726066AbfFFHRn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 03:17:43 -0400
+Received: by mail-pf1-f195.google.com with SMTP id q17so929463pfq.8
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 00:17:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hcWZk37MluweMWQW5kURRUWLOOrFjT2oPnVPPLPHyMo=;
+        b=O3e+gR3QjxlY+TukOifhxUhwrU3NQR9N60NyUoUy2uHUzeQ5KzKmm22cgKDvq9AaJa
+         HBGqpO0VEYMp0+DsxlKagVVxBG5mngX5vhbyuBCbFEc64bWcpGSZDbONnglt4HCdyMTT
+         gAHr9JUL56oourAFBSHRUZ9hJubAKsm7DjmHYvMrHhbisgdNMH1KQPc6GjAxwEudVouO
+         pIGF8m/RYSGkUtvnQN1fVj/L+5Vo8t7aUAykze+iK61/eKcNXTCaWI9ACCLz8IPMvXGu
+         RYrFpq+7LQ5/u4AA76LNdgSRPpHxDsxfDMtgnN3FfsGb5M9viJKACY2o0B8cEH2hfUAa
+         rbWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hcWZk37MluweMWQW5kURRUWLOOrFjT2oPnVPPLPHyMo=;
+        b=NwiAnbGLBlOuhTwNUUJ4izX/p4kULQUUIyojaBTSYlSzorWmo+auclaGzM8Qo8gHyG
+         dEi5F0fyBM4eu2pypsQkggylvJenoFFM1g9XRJC4nIift7IJAhcVHWEM+3g6ZxlrDdUT
+         HKWSdEJurt+6svMTTh2QP69NsnACCPSOL8o4qiAnAUoc8iXGSYdFa3wXr0na9NKb32Xy
+         uI/Esaj2MLcsnPzVVhxmUnoDWkXVCDQUvsWTZruOQ9JKvwSzfVRZu4RA/NF0hBrut3Rw
+         PVrFMxG46Ktz+KrIlMNt3Kg8qiDkaiOtaN6f8dQzhFkui5iuQkrBsgxgos+Br1jBdlQr
+         fYhA==
+X-Gm-Message-State: APjAAAWY7UstHuyU1M6cvLq3oNVDNx4UYr2BfIKAJInXGSFmOe0eF7g7
+        KEgLQXtv31iR9xo0mJY4VQrxhA==
+X-Google-Smtp-Source: APXvYqwJj7EcN4AJ9SENmqHf4hWfVQH6OLhC5JBuOCIoK19YSarjdumJo7ny/lpvNb23GM0WxHXIZg==
+X-Received: by 2002:a17:90a:3ae8:: with SMTP id b95mr13710133pjc.68.1559805462753;
+        Thu, 06 Jun 2019 00:17:42 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id b4sm1058689pfd.120.2019.06.06.00.17.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Jun 2019 00:17:42 -0700 (PDT)
+Date:   Thu, 6 Jun 2019 00:18:28 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Avri Altman <Avri.Altman@wdc.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Andy Gross <agross@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Ravikiran Gummaluri <rgummal@xilinx.com>
-Subject: Re: [PATCH v3] PCI: xilinx-nwl: Fix Multi MSI data programming
-In-Reply-To: <CH2PR02MB6453666163FAF313746EC9C4A5170@CH2PR02MB6453.namprd02.prod.outlook.com>
-References: <1559133469-11981-1-git-send-email-bharat.kumar.gogada@xilinx.com>
-        <20190531160956.GB9356@redmoon>
-        <5de53585-e90f-77d2-bd96-025e1b39a573@arm.com>
-        <CH2PR02MB6453666163FAF313746EC9C4A5170@CH2PR02MB6453.namprd02.prod.outlook.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/26
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
-Organization: ARM Ltd
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+Subject: Re: [PATCH v2 2/3] scsi: ufs: Allow resetting the UFS device
+Message-ID: <20190606071828.GS22737@tuxbook-pro>
+References: <20190606010249.3538-1-bjorn.andersson@linaro.org>
+ <20190606010249.3538-3-bjorn.andersson@linaro.org>
+ <SN6PR04MB4925FC3F1001326AA218DF21FC170@SN6PR04MB4925.namprd04.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SN6PR04MB4925FC3F1001326AA218DF21FC170@SN6PR04MB4925.namprd04.prod.outlook.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 06 Jun 2019 05:49:45 +0100,
-Bharat Kumar Gogada <bharatku@xilinx.com> wrote:
+On Wed 05 Jun 23:36 PDT 2019, Avri Altman wrote:
+
 > 
-> > On 31/05/2019 17:09, Lorenzo Pieralisi wrote:
-> > > [+Marc]
-> > >
-> > > On Wed, May 29, 2019 at 06:07:49PM +0530, Bharat Kumar Gogada wrote:
-> > >> The current Multi MSI data programming fails if multiple end points
-> > >> requesting MSI and multi MSI are connected with switch, i.e the
-> > >> current multi MSI data being given is not considering the number of
-> > >> vectors being requested in case of multi MSI.
-> > >> Ex: Two EP's connected via switch, EP1 requesting single MSI first,
-> > >> EP2 requesting Multi MSI of count four. The current code gives MSI
-> > >> data 0x0 to EP1 and 0x1 to EP2, but EP2 can modify lower two bits due
-> > >> to which EP2 also sends interrupt with MSI data 0x0 which results in
-> > >> always invoking virq of EP1 due to which EP2 MSI interrupt never gets
-> > >> handled.
-> > >
-> > > If this is a problem it is not the only driver where it should be
-> > > fixed it seems. CC'ed Marc in case I have missed something in relation
-> > > to MSI IRQs but AFAIU it looks like HW is allowed to toggled bits
-> > > (according to bits[6:4] in Message Control for MSI) in the MSI data,
-> > > given that the data written is the hwirq number (in this specific MSI
-> > > controller) it ought to be fixed.
+> >  static int ufshcd_hba_init(struct ufs_hba *hba)
+> >  {
+> >  	int err;
+> > @@ -7425,9 +7460,15 @@ static int ufshcd_hba_init(struct ufs_hba *hba)
+> >  	if (err)
+> >  		goto out_disable_vreg;
 > > 
-> > Yeah, it looks like a number of MSI controllers could be quite broken in this
-> > particular area.
+> > +	err = ufshcd_init_device_reset(hba);
+> > +	if (err)
+> > +		goto out_disable_variant;
+> > +
+> >  	hba->is_powered = true;
+> >  	goto out;
 > > 
-> > >
-> > > The commit log and patch should be rewritten (I will do that) but
-> > > first I would like to understand if there are more drivers to be
-> > > updated.
-> > >
-> > > 
-> Hi Lorenzo and Marc, thanks for your time.
-> Marc, I'm yet to test the below suggested solution,
-> GIC v2m and GIC v3 supports multi MSI, do we see above issue in
-> these MSI controllers ?
+> > +out_disable_variant:
+> > +	ufshcd_vops_setup_regulators(hba, false);
+> Is this necessary?
+> ufshcd_vops_setup_regulators() was just called as part of ufshcd_variant_hba_init
+> 
 
-To the best of my knowledge, these drivers do support MultiMSI
-correctly. GICv2m actually gained the support pretty recently (see
-de337ee30142). The GICv3 ITS never ha an issue with that, given that
-per device EventIDs are always 0-based.
+Yes, so my attempt here is to reverse the enablement of the vops
+regulators (hence passing false). But looking at it again I see that we
+should also do ufshcd_vops_exit(), so the right thing to call here is
+ufshcd_variant_hba_exit().
 
-Thanks,
+PS. This initialization sequence should really be rewritten to first
+acquire all resources and then turn them on. This mixes init/setup
+sequence is really hard to reason about.
 
-	M.
-
--- 
-Jazz is not dead, it just smells funny.
+Regards,
+Bjorn
