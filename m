@@ -2,142 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D180E37416
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 14:27:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32EF437244
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 12:59:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728302AbfFFM1f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 08:27:35 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50124 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728210AbfFFM1e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 08:27:34 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x56CNr84025760
-        for <linux-kernel@vger.kernel.org>; Thu, 6 Jun 2019 08:27:33 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2sy0bm81t8-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 08:27:32 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 6 Jun 2019 13:27:31 +0100
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 6 Jun 2019 13:27:28 +0100
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x56CRR8220840842
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Jun 2019 12:27:27 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2D9EBB206A;
-        Thu,  6 Jun 2019 12:27:27 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F0A31B205F;
-        Thu,  6 Jun 2019 12:27:26 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.80.209.205])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  6 Jun 2019 12:27:26 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id BE67916C5D9E; Thu,  6 Jun 2019 03:58:17 -0700 (PDT)
-Date:   Thu, 6 Jun 2019 03:58:17 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Fengguang Wu <fengguang.wu@intel.com>, LKP <lkp@01.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Jade Alglave <j.alglave@ucl.ac.uk>
-Subject: Re: rcu_read_lock lost its compiler barrier
-Reply-To: paulmck@linux.ibm.com
-References: <20190603200301.GM28207@linux.ibm.com>
- <Pine.LNX.4.44L0.1906041026570.1731-100000@iolanthe.rowland.org>
- <20190606045109.zjfxxbkzq4wb64bj@gondor.apana.org.au>
- <20190606060511.GA28207@linux.ibm.com>
- <20190606061438.nyzaeppdbqjt3jbp@gondor.apana.org.au>
- <20190606090619.GC28207@linux.ibm.com>
- <20190606092855.dfeuvyk5lbvm4zbf@gondor.apana.org.au>
+        id S1727720AbfFFK66 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 06:58:58 -0400
+Received: from mx2.suse.de ([195.135.220.15]:32798 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727324AbfFFK66 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 06:58:58 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7F9F6AF21;
+        Thu,  6 Jun 2019 10:58:56 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id ED0EC1E3F51; Thu,  6 Jun 2019 12:58:55 +0200 (CEST)
+Date:   Thu, 6 Jun 2019 12:58:55 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     ira.weiny@intel.com
+Cc:     Dan Williams <dan.j.williams@intel.com>, Jan Kara <jack@suse.cz>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jeff Layton <jlayton@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH RFC 07/10] fs/ext4: Fail truncate if pages are GUP pinned
+Message-ID: <20190606105855.GG7433@quack2.suse.cz>
+References: <20190606014544.8339-1-ira.weiny@intel.com>
+ <20190606014544.8339-8-ira.weiny@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190606092855.dfeuvyk5lbvm4zbf@gondor.apana.org.au>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19060612-2213-0000-0000-0000039AFC7C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011223; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01214047; UDB=6.00638142; IPR=6.00995126;
- MB=3.00027206; MTD=3.00000008; XFM=3.00000015; UTC=2019-06-06 12:27:31
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19060612-2214-0000-0000-00005EBDB038
-Message-Id: <20190606105817.GE28207@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-06_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=958 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906060089
+In-Reply-To: <20190606014544.8339-8-ira.weiny@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 05:28:55PM +0800, Herbert Xu wrote:
-> On Thu, Jun 06, 2019 at 02:06:19AM -0700, Paul E. McKenney wrote:
-> >
-> > Or is your point instead that given the initial value of "a" being
-> > zero and the value stored to "a" being one, there is no way that
-> > any possible load and store tearing (your slicing and dicing) could
-> > possibly mess up the test of the value loaded from "a"?
+On Wed 05-06-19 18:45:40, ira.weiny@intel.com wrote:
+> From: Ira Weiny <ira.weiny@intel.com>
 > 
-> Exactly.  If you can dream up of a scenario where the compiler can
-> get this wrong I'm all ears.
-
-I believe that this is safe in practice, as long as you exercise
-constant vigilance.  (OK, OK, I might be overdramatizing...)
-
-I cannot immediately think of a way that the compiler could get this
-wrong even in theory, but similar code sequences can be messed up.
-The reason for this is that in theory, the compiler could use the
-stored-to location as temporary storage, like this:
-
-	a = whatever;	// Compiler uses "a" as a temporary
-	do_something();
-	whatever = a;
-	a = 1;		// Intended store
-
-The compiler is allowed to do this (again, in theory and according to a
-strict interpretation of the standard) because you haven't told it that
-anything else is paying attention to variable "a".  As a result, the
-compiler is within its rights to use "a" as temporary storage immediately
-prior to any plain C-language store to "a".  
-
-In practice, I don't know of any compilers that actually do this, nor
-have I heard anyone suggesting that they might soon actually do this.
-
-And even if they could, your example would still work because your example
-doesn't care about anything other than zero and non-zero, so wouldn't
-get confused by the compiler storing a temporary value of 42 or whatever.
-
-> > > But I do concede that in the general RCU case you must have the
-> > > READ_ONCE/WRITE_ONCE calls for rcu_dereference/rcu_assign_pointer.
-> > 
-> > OK, good that we are in agreement on this part, at least!  ;-)
+> If pages are actively gup pinned fail the truncate operation.
 > 
-> Well only because we're allowing crazy compilers that can turn
-> a simple word-aligned word assignment (a = b) into two stores.
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> ---
+>  fs/ext4/inode.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 75f543f384e4..1ded83ec08c0 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -4250,6 +4250,9 @@ int ext4_break_layouts(struct inode *inode, loff_t offset, loff_t len)
+>  		if (!page)
+>  			return 0;
+>  
+> +		if (page_gup_pinned(page))
+> +			return -ETXTBSY;
+> +
+>  		error = ___wait_var_event(&page->_refcount,
+>  				atomic_read(&page->_refcount) == 1,
+>  				TASK_INTERRUPTIBLE, 0, 0,
 
-In my experience, the insanity of compilers increases with time,
-but yes.
+This caught my eye. Does this mean that now truncate for a file which has
+temporary gup users (such buffers for DIO) can fail with ETXTBUSY? That
+doesn't look desirable. If we would mandate layout lease while pages are
+pinned as I suggested, this could be dealt with by checking for leases with
+pins (breaking such lease would return error and not break it) and if
+breaking leases succeeds (i.e., there are no long-term pinned pages), we'd
+just wait for the remaining references as we do now.
 
-							Thanx, Paul
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
