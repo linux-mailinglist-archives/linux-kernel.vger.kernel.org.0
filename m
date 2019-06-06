@@ -2,579 +2,360 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 871AB37929
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 18:06:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A450D37913
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 18:05:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729649AbfFFQGv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 12:06:51 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:51230 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729547AbfFFQGu (ORCPT
+        id S1729569AbfFFQF0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 12:05:26 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33332 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729173AbfFFQFZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 12:06:50 -0400
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x56G3ogJ025889;
-        Thu, 6 Jun 2019 09:05:18 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=cIGmWU9qScH0a3K6crM38GOKqqmstjqdb77S68MYp4s=;
- b=HD2upiB+Iapns1DK4Em+If0UMjV44GyoNZXuktV1HCKWkSCO6aaOAWXudj61Z/nT/HXp
- ZKFjJaVQKgq3Vv/qECLYwN64Xa4nNLbkxj31Q06OlNcA4UjXCDbBixL443Nd/o70ctLB
- nrEhhHsGIqP4UTi2p/xgPJhL6ivER4aZmrY= 
-Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2sxsmr2fc4-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Thu, 06 Jun 2019 09:05:17 -0700
-Received: from prn-hub02.TheFacebook.com (2620:10d:c081:35::126) by
- prn-hub04.TheFacebook.com (2620:10d:c081:35::128) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1713.5; Thu, 6 Jun 2019 09:04:51 -0700
-Received: from NAM04-BN3-obe.outbound.protection.outlook.com (192.168.54.28)
- by o365-in.thefacebook.com (192.168.16.26) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
- via Frontend Transport; Thu, 6 Jun 2019 09:04:51 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cIGmWU9qScH0a3K6crM38GOKqqmstjqdb77S68MYp4s=;
- b=KlZXW1l97+z3A7zC+7zFB5VAVqoT00NDxYLxGUKZQyQ15He8i/UrR656j9zv8PEgl+TijG4H6vUYhvR2qRgmFbgu89ZmL6aRl4n7BI5ayL0VZhRdd8H63rS3sp9bO+j19Ham5/G5LomE2EwnLzvQYW6bBl1Vr5J/ECL28Eze/po=
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.3.22) by
- MWHPR15MB1549.namprd15.prod.outlook.com (10.173.235.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1943.22; Thu, 6 Jun 2019 16:04:49 +0000
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::400e:e329:ea98:aa0d]) by MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::400e:e329:ea98:aa0d%6]) with mapi id 15.20.1965.011; Thu, 6 Jun 2019
- 16:04:49 +0000
-From:   Song Liu <songliubraving@fb.com>
-To:     Kairui Song <kasong@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-CC:     Alexei Starovoitov <ast@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "Alexei Starovoitov" <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>
-Subject: Re: Getting empty callchain from perf_callchain_kernel() 
-Thread-Topic: Getting empty callchain from perf_callchain_kernel() 
-Thread-Index: AQHVDEJXbyjc1nknl06FlgTGlvLrzKZu8J8AgAAG+ICAAAFQgIAAD2QAgAO6dwCABHK6gIAADQKAgAAxOYCAAGTygIAAdcuAgABxE4CAABWoAIAACXOAgAAVuoCAAAylAIAAlRgAgAFgsQCAA/dzAIAP/F6A
-Date:   Thu, 6 Jun 2019 16:04:48 +0000
-Message-ID: <145B7F65-2E06-4266-A816-A3445FE47638@fb.com>
-References: <ab047883-69f6-1175-153f-5ad9462c6389@fb.com>
- <20190522174517.pbdopvookggen3d7@treble>
- <20190522234635.a47bettklcf5gt7c@treble>
- <CACPcB9dRJ89YAMDQdKoDMU=vFfpb5AaY0mWC_Xzw1ZMTFBf6ng@mail.gmail.com>
- <20190523133253.tad6ywzzexks6hrp@treble>
- <CACPcB9fQKg7xhzhCZaF4UGi=EQs1HLTFgg-C_xJQaUfho3yMyA@mail.gmail.com>
- <20190523152413.m2pbnamihu3s2c5s@treble>
- <CACPcB9e0mL6jdNWfH-2K-rkvmQiz=G6mtLiZ+AEmp3-V0x+Z8A@mail.gmail.com>
- <20190523172714.6fkzknfsuv2t44se@treble>
- <CACPcB9dHzht9v9G9_z6oe5AAwgxCTuswRLxTB29vhWphqBO5Ng@mail.gmail.com>
- <20190524232312.upjixcrnidlibikd@treble>
- <CACPcB9cFGQ6OU7Zk=q_c8V8ob6vg3HMaaXGaNjaKn8rvS-wg-g@mail.gmail.com>
-In-Reply-To: <CACPcB9cFGQ6OU7Zk=q_c8V8ob6vg3HMaaXGaNjaKn8rvS-wg-g@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3445.104.11)
-x-originating-ip: [2620:10d:c090:200::3:bed9]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: acd80779-bdbe-4c20-a380-08d6ea98b3ba
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR15MB1549;
-x-ms-traffictypediagnostic: MWHPR15MB1549:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <MWHPR15MB15496BE81B8514FC14008599B3170@MWHPR15MB1549.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3383;
-x-forefront-prvs: 00603B7EEF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(376002)(396003)(39860400002)(136003)(199004)(189003)(53546011)(6306002)(5660300002)(30864003)(6506007)(102836004)(4326008)(478600001)(6436002)(11346002)(71200400001)(6486002)(5024004)(4743002)(71190400001)(6246003)(68736007)(53946003)(966005)(54906003)(99286004)(6512007)(86362001)(110136005)(14444005)(76176011)(316002)(53936002)(229853002)(256004)(50226002)(81166006)(7736002)(36756003)(305945005)(66446008)(486006)(66476007)(8936002)(64756008)(46003)(2616005)(73956011)(57306001)(83716004)(6116002)(14454004)(66946007)(476003)(2906002)(66556008)(33656002)(81156014)(76116006)(82746002)(8676002)(446003)(25786009)(186003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1549;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: xLF5l8MKYDun3oQ2mLqJnWSXxg75YjLRrv0NYE5T7Yao2PJ65lL+g4sgPBpRrUPcwf9ERslOnzQhqOU8/FoPyQJKdVt9ZlUz8+8fu8CsDupFqqeU8UstebUzxMjkIP0+egBVxjK/yXFzWAqbTkwojyoEZ0bMwRgclRO77pxEIKSqzBMYmDSB1e/mnPWcpNP36JSk1rh1buKW8KGRylMSJbIb/s37JkQ+wK7sHXRm1Qt4qalhppxnf4H6SYVylwkdFMqx6IUtyiYD1HvJfAyvxeMUGd6a/B0O9DE9O7koa6eZVx7r7lFcPyfWGa8A5R8OulC9NUlE5BURRHaEImoHFkwQhkWxqXz86JFkYvSQn37WRPuYFzUqm91RgEms5BHgAtwLivOfDV3XbNHZXeilW9jMEuMTdKu6DHPtO8PEvcs=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <0DCD9E610647B04F844097380A168886@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Thu, 6 Jun 2019 12:05:25 -0400
+Received: by mail-wr1-f68.google.com with SMTP id n9so3047223wru.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 09:05:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=27ciJfpFc+FjyxgfWMZIvbmGa9QD9ZvJWq9PIPeBegA=;
+        b=Ozz8owAkN9q/HPaonhVsAYsHyQINBWVkTR1ogMrjU9QiEMADGqj8QtfjMRvdudqKM3
+         Ya+AZBb1Yf7VMBnDqHGuj6eOHSYV8fBfuTBYdZXkx1udIJK5bjX819YpXN+hdqK6/1/S
+         btICLtxez3+6LZT8V5P/lvK7qRBwCHqch1G0rcIB6gIzRmMPCeA6PngrL4osyGIedbif
+         ISdh+ecI7CUq2UyIuRpwJrYC9N350KxrAGBf1r5yiXFlb0dwGwJFmk26KEXYeqyy44rj
+         6dT4lgsq5ljcC0bbJ/Eoak6BWQNUJhlb6gYxgRg6u/k2tUeKBOv9C7SVm9mtJZN9wZWW
+         Rn4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=27ciJfpFc+FjyxgfWMZIvbmGa9QD9ZvJWq9PIPeBegA=;
+        b=saZtagrDEKvxz1/0QzOPbE8zJA0rccV1uSdXq47jA1GatmlU1DEP8Tepp0pG7d0/iQ
+         sSqnFGxeDK9aBoZmeC+fHOCK2v+7V7H+/81WwQANTnOJIW6rRMyZfMksuSzEjpm/pvSI
+         AIl7um6zKWzi0Tt0/vR1VXjjs3892O3Rp/Gib9kiKCI4bf4b7CvQe9CiueY+RvTkwuFy
+         LUuSaoL/0rPZbaW9LeN7tfiYF9TFsng3wniEmZOivs8Vsj+opOxKs4DZPsK9JpjCz35L
+         fc6MuwoqxXpo7DHNBhxIzF1HKY3ZcnFh9CgGRCrMvv6N9YlWlNHMiM0HUmsggGZ/VYjs
+         drpg==
+X-Gm-Message-State: APjAAAVqYDkVjUQmCQAIC4DZrYXsi4+8akzLcaTpfFo6rDJnLnPGYkUt
+        fEWIksnyyymIdFvcw/hTnkPW1A==
+X-Google-Smtp-Source: APXvYqx3sIXIZTj1tt2eQKGWKLGFC+txXeTkK8s/lphXBmUwv0WwwWMY+tkRAahQaN93qqqe7y6SJA==
+X-Received: by 2002:a5d:4087:: with SMTP id o7mr16664387wrp.277.1559837122663;
+        Thu, 06 Jun 2019 09:05:22 -0700 (PDT)
+Received: from mjourdan-pc.numericable.fr (abo-99-183-68.mtp.modulonet.fr. [85.68.183.99])
+        by smtp.gmail.com with ESMTPSA id t140sm2180901wmt.0.2019.06.06.09.05.21
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 06 Jun 2019 09:05:21 -0700 (PDT)
+From:   Maxime Jourdan <mjourdan@baylibre.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org
+Subject: [PATCH v10 0/3] Add Amlogic video decoder driver
+Date:   Thu,  6 Jun 2019 18:05:09 +0200
+Message-Id: <20190606160512.26211-1-mjourdan@baylibre.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: acd80779-bdbe-4c20-a380-08d6ea98b3ba
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2019 16:04:48.9214
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: songliubraving@fb.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1549
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-06_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906060109
-X-FB-Internal: deliver
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi everyone,
+
+[V7] The Driver was moved to staging until it can pass future
+specification & compliance tools.
+
+[V6] Good news, the firmware situation is resolved. We have received a
+redistributable license from Amlogic and the firmwares have been merged
+in linux-firmware[5].
+
+[V5] It's been a while since the last patch series regarding the Amlogic
+video decoder. Unfortunately, the firmware licensing situation is still
+on hold as we await communication from Amlogic. As such, we do not have
+the firmwares in linux-firmware yet.
+I decided to push the V5 anyway, as changes were starting to pile up.
+
+This patch series adds support for the Amlogic video decoder,
+as well as the corresponding dt bindings for GXBB/GXL/GXM chips.
+
+It features decoding for the following formats:
+- MPEG 1
+- MPEG 2
+
+The following formats will be added in future patches:
+- MJPEG
+- MPEG 4 (incl. Xvid, H.263)
+- H.264
+- HEVC (incl. 10-bit)
+- VP9 (incl. 10-bit)
+
+The code was made in such a way to allow easy inclusion of those formats
+in the future.
+
+The decoder is single instance.
+
+Files:
+ - vdec.c handles the V4L2 M2M logic
+ - esparser.c manages the hardware bitstream parser
+ - vdec_helpers.c provides helpers to DONE the dst buffers as well as
+ various common code used by the codecs
+ - vdec_1.c manages the VDEC_1 block of the vdec IP
+ - codec_mpeg12.c enables decoding for MPEG 1/2.
+ - vdec_platform.c links codec units with vdec units
+ (e.g vdec_1 with codec_mpeg12) and lists all the available
+ src/dst formats and requirements (max width/height, etc.),
+ per compatible chip.
+
+It was tested primarily with ffmpeg's v4l2-m2m implementation. For instance:
+$ ffmpeg -c:v mpeg2_v4l2m2m -i sample_mpeg2.mkv -f rawvideo out.nv12
+
+The v4l2-compliance results are available below the patch diff.
+Tests start failing when v4l2-compliance tries to dequeue the
+V4L2_EVENT_SOURCE_CHANGE event, which is not supported for MPEG2.
+
+Changes since v9 [9]:
+ - Removed vdec_ctrls.* and moved the code to vdec.c
+
+Changes since v8 [8]:
+ - Fixed checkpatch & sparse issues
+
+Changes since v7 [7]:
+ - Removed the patch with V4L2_FMT_FLAG_FIXED_RESOLUTION from the serie.
+ It will be dealt in another manner in the near future.
+ - use the new v4l2_m2m_ioctl_try_decoder_cmd helper
+ - Rebased against media/master
+
+Changes since v6 [6]:
+ - Rebased against v5.2-rc2 (fixed build issue with missing interrupt include)
+ - Moved to staging - added TODO file
+ - Don't declare V4L2_CID_MIN_BUFFERS_FOR_CAPTURE as volatile. Use
+ v4l2_ctrl_s_ctrl() instead.
+ - Fix compliance issues with V4L2_DEC_CMD_STOP, V4L2_DEC_CMD_START and
+ vbuf->field not prepared to V4L2_FIELD_NONE.
+ - Fixed coccinelle issue (unneeded semicolon)
+ - Fixed smatch issue (PTR_ERR() could be called with 0)
+
+Changes since v5 [4]:
+ - Rebased against media_tree (fixes conflict with platform/meson/Makefile
+ following the meson CEC driver updates)
+
+Changes since v4 [3]:
+ - Updated for 5.1: 
+  - cropcap -> g_pixelaspect
+  - dma_zalloc_coherent -> dma_alloc_coherent
+ - enum_framesizes: changed from STEPWISE to CONTINUOUS, as suggested by Hans
+ - Reintroduced support for CREATE_BUFS. It was a driver bug where I wasn't
+ accounting for the amount of buffers created this way (only buffers created
+ via REQBUFS were).
+ - Added the patch introducing V4L2_FMT_FLAG_FIXED_RESOLUTION to the V4L2
+ framework, needed as MPEG2 on Amlogic hardware only supports a fixed
+ resolution during a decode session.
+ - Added support for events and V4L2_EVENT_SOURCE_CHANGE, as it is now checked
+ by v4l2-compliance for stateful decoders. I was planning on introducing this
+ for codecs that actually use it (H264, HEVC..), but it doesn't hurt to have
+ this in the initial commit.
+ - Added support for controls, mainly V4L2_CID_MIN_BUFFERS_FOR_CAPTURE
+
+Changes since v3 [2]:
+ - strlcpy -> strscpy
+ - queue_setup: account for existing buffers when clamping *num_buffers
+ - removed support for CREATE_BUFS. This caused issues with gstreamer and allowed
+ userspace to alloc more buffers than the decoder can handle in its fixed list.
+ So for now we just disable it and only allow allocating via REQBUFS.
+ - rebased & tested with 4.20-rc1
+
+Changes since v2 [1]:
+ - Override capture queue's min_buffers_needed in queue_setup
+ The HW needs the full buffer list to be available when doing start_streaming
+ - Fix the draining sequence
+ The blob that we write to the ESPARSER to trigger drain is codec-dependent.
+ The one that was sent in v1 is specific to H.264 and isn't guaranteed to
+ trigger drain for MPEG2. For the latter, a simple MPEG2 EOS code
+ should be sent to the ESPARSER instead.
+ - Slight enhancements to the way we do vififo offset<=>timestamp matching
+
+Changes since v1 [0]:
+ - use named interrupts in the bindings
+ - rewrite description in the bindings doc
+ - don't include the dts changes in the patch series
+ - fill the vb2 queues locks
+ - fill the video_device lock
+ - use helpers for wait_prepare and wait_finish vb2_ops
+ - remove unnecessary usleep in between esparser writes.
+ Extensive testing of every codec on GXBB/GXL didn't reveal
+ any fails without it, so just remove it.
+ - compile v4l2_compliance inside the git repo
+ - Check for plane number/plane size to pass the latest v4l2-compliance test
+ - Moved the single instance check (returning -EBUSY) to start/stop streaming
+ The check was previously in queue_setup but there was no great location to
+ clear it except for .close().
+ - Slight rework of the way CAPTURE frames are timestamped for better accuracy
+ - Implement PAR reporting via VIDIOC_CROPCAP
+
+[9] https://patchwork.kernel.org/cover/10979559/
+[8] https://patchwork.kernel.org/cover/10977259/
+[7] https://patchwork.kernel.org/cover/10969815/
+[6] https://patchwork.kernel.org/cover/10943029/
+[5] https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/commit/?id=e04cc56d0e6b6ff05924ff88fdba1a438ee7d3c8
+[4] https://patchwork.kernel.org/cover/10879959/
+[3] https://patchwork.kernel.org/cover/10669875/
+[2] https://lore.kernel.org/patchwork/cover/993093/
+[1] https://patchwork.kernel.org/cover/10595803/
+[0] https://patchwork.kernel.org/cover/10583391/
+
+Maxime Jourdan (3):
+  dt-bindings: media: add Amlogic Video Decoder Bindings
+  media: meson: add v4l2 m2m video decoder driver
+  MAINTAINERS: Add meson video decoder
+
+ .../bindings/media/amlogic,vdec.txt           |   71 ++
+ MAINTAINERS                                   |    8 +
+ drivers/staging/media/Kconfig                 |    2 +
+ drivers/staging/media/Makefile                |    1 +
+ drivers/staging/media/meson/vdec/Kconfig      |   11 +
+ drivers/staging/media/meson/vdec/Makefile     |    8 +
+ drivers/staging/media/meson/vdec/TODO         |    8 +
+ .../staging/media/meson/vdec/codec_mpeg12.c   |  210 ++++
+ .../staging/media/meson/vdec/codec_mpeg12.h   |   14 +
+ drivers/staging/media/meson/vdec/dos_regs.h   |   98 ++
+ drivers/staging/media/meson/vdec/esparser.c   |  324 +++++
+ drivers/staging/media/meson/vdec/esparser.h   |   32 +
+ drivers/staging/media/meson/vdec/vdec.c       | 1098 +++++++++++++++++
+ drivers/staging/media/meson/vdec/vdec.h       |  267 ++++
+ drivers/staging/media/meson/vdec/vdec_1.c     |  230 ++++
+ drivers/staging/media/meson/vdec/vdec_1.h     |   14 +
+ .../staging/media/meson/vdec/vdec_helpers.c   |  449 +++++++
+ .../staging/media/meson/vdec/vdec_helpers.h   |   83 ++
+ .../staging/media/meson/vdec/vdec_platform.c  |  101 ++
+ .../staging/media/meson/vdec/vdec_platform.h  |   30 +
+ 20 files changed, 3059 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/amlogic,vdec.txt
+ create mode 100644 drivers/staging/media/meson/vdec/Kconfig
+ create mode 100644 drivers/staging/media/meson/vdec/Makefile
+ create mode 100644 drivers/staging/media/meson/vdec/TODO
+ create mode 100644 drivers/staging/media/meson/vdec/codec_mpeg12.c
+ create mode 100644 drivers/staging/media/meson/vdec/codec_mpeg12.h
+ create mode 100644 drivers/staging/media/meson/vdec/dos_regs.h
+ create mode 100644 drivers/staging/media/meson/vdec/esparser.c
+ create mode 100644 drivers/staging/media/meson/vdec/esparser.h
+ create mode 100644 drivers/staging/media/meson/vdec/vdec.c
+ create mode 100644 drivers/staging/media/meson/vdec/vdec.h
+ create mode 100644 drivers/staging/media/meson/vdec/vdec_1.c
+ create mode 100644 drivers/staging/media/meson/vdec/vdec_1.h
+ create mode 100644 drivers/staging/media/meson/vdec/vdec_helpers.c
+ create mode 100644 drivers/staging/media/meson/vdec/vdec_helpers.h
+ create mode 100644 drivers/staging/media/meson/vdec/vdec_platform.c
+ create mode 100644 drivers/staging/media/meson/vdec/vdec_platform.h
 
 
-> On May 27, 2019, at 4:57 AM, Kairui Song <kasong@redhat.com> wrote:
->=20
-> On Sat, May 25, 2019 at 7:23 AM Josh Poimboeuf <jpoimboe@redhat.com> wrot=
-e:
->>=20
->> On Fri, May 24, 2019 at 10:20:52AM +0800, Kairui Song wrote:
->>> On Fri, May 24, 2019 at 1:27 AM Josh Poimboeuf <jpoimboe@redhat.com> wr=
-ote:
->>>>=20
->>>> On Fri, May 24, 2019 at 12:41:59AM +0800, Kairui Song wrote:
->>>>> On Thu, May 23, 2019 at 11:24 PM Josh Poimboeuf <jpoimboe@redhat.com>=
- wrote:
->>>>>>=20
->>>>>> On Thu, May 23, 2019 at 10:50:24PM +0800, Kairui Song wrote:
->>>>>>>>> Hi Josh, this still won't fix the problem.
->>>>>>>>>=20
->>>>>>>>> Problem is not (or not only) with ___bpf_prog_run, what actually =
-went
->>>>>>>>> wrong is with the JITed bpf code.
->>>>>>>>=20
->>>>>>>> There seem to be a bunch of issues.  My patch at least fixes the f=
-ailing
->>>>>>>> selftest reported by Alexei for ORC.
->>>>>>>>=20
->>>>>>>> How can I recreate your issue?
->>>>>>>=20
->>>>>>> Hmm, I used bcc's example to attach bpf to trace point, and with th=
-at
->>>>>>> fix stack trace is still invalid.
->>>>>>>=20
->>>>>>> CMD I used with bcc:
->>>>>>> python3 ./tools/stackcount.py t:sched:sched_fork
->>>>>>=20
->>>>>> I've had problems in the past getting bcc to build, so I was hoping =
-it
->>>>>> was reproducible with a standalone selftest.
->>>>>>=20
->>>>>>> And I just had another try applying your patch, self test is also f=
-ailing.
->>>>>>=20
->>>>>> Is it the same selftest reported by Alexei?
->>>>>>=20
->>>>>>  test_stacktrace_map:FAIL:compare_map_keys stackid_hmap vs. stackmap=
- err -1 errno 2
->>>>>>=20
->>>>>>> I'm applying on my local master branch, a few days older than
->>>>>>> upstream, I can update and try again, am I missing anything?
->>>>>>=20
->>>>>> The above patch had some issues, so with some configs you might see =
-an
->>>>>> objtool warning for ___bpf_prog_run(), in which case the patch doesn=
-'t
->>>>>> fix the test_stacktrace_map selftest.
->>>>>>=20
->>>>>> Here's the latest version which should fix it in all cases (based on
->>>>>> tip/master):
->>>>>>=20
->>>>>>  https://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git/=
-commit/?h=3Dbpf-orc-fix
->>>>>=20
->>>>> Hmm, I still get the failure:
->>>>> test_stacktrace_map:FAIL:compare_map_keys stackid_hmap vs. stackmap
->>>>> err -1 errno 2
->>>>>=20
->>>>> And I didn't see how this will fix the issue. As long as ORC need to
->>>>> unwind through the JITed code it will fail. And that will happen
->>>>> before reaching ___bpf_prog_run.
->>>>=20
->>>> Ok, I was able to recreate by doing
->>>>=20
->>>>  echo 1 > /proc/sys/net/core/bpf_jit_enable
->>>>=20
->>>> first.  I'm guessing you have CONFIG_BPF_JIT_ALWAYS_ON.
->>>>=20
->>>=20
->>> Yes, with JIT off it will be fixed. I can confirm that.
->>=20
->> Here's a tentative BPF fix for the JIT frame pointer issue.  It was a
->> bit harder than I expected.  Encoding r12 as a base register requires a
->> SIB byte, so I had to add support for encoding that.  I also simplified
->> the prologue to resemble a GCC prologue, which decreases the prologue
->> size quite a bit.
->>=20
->> Next week I can work on the corresponding ORC change.  Then I can clean
->> all the patches up and submit them properly.
+root@hardkernel-odroidc2:~# v4l2-compliance -s --stream-from=hst_2.mpg 
+v4l2-compliance SHA: a162244d47d4bb01d0692da879dce5a070f118e7, 64 bits
 
-Hi Josh,=20
+Compliance test for meson-vdec device /dev/video0:
 
-Have you got luck fixing the ORC side?
+Driver Info:
+        Driver name      : meson-vdec
+        Card type        : Amlogic Video Decoder
+        Bus info         : platform:meson-vdec
+        Driver version   : 5.2.0
+        Capabilities     : 0x84204000
+                Video Memory-to-Memory Multiplanar
+                Streaming
+                Extended Pix Format
+                Device Capabilities
+        Device Caps      : 0x04204000
+                Video Memory-to-Memory Multiplanar
+                Streaming
+                Extended Pix Format
+        Detected Stateful Decoder
 
-Thanks,
-Song
+Required ioctls:
+        test VIDIOC_QUERYCAP: OK
 
->>=20
->> diff --git a/arch/x86/net/bpf_jit_comp.c b/arch/x86/net/bpf_jit_comp.c
->> index afabf597c855..c9b4503558c9 100644
->> --- a/arch/x86/net/bpf_jit_comp.c
->> +++ b/arch/x86/net/bpf_jit_comp.c
->> @@ -104,9 +104,8 @@ static int bpf_size_to_x86_bytes(int bpf_size)
->> /*
->>  * The following table maps BPF registers to x86-64 registers.
->>  *
->> - * x86-64 register R12 is unused, since if used as base address
->> - * register in load/store instructions, it always needs an
->> - * extra byte of encoding and is callee saved.
->> + * RBP isn't used; it needs to be preserved to allow the unwinder to mo=
-ve
->> + * through generated code stacks.
->>  *
->>  * Also x86-64 register R9 is unused. x86-64 register R10 is
->>  * used for blinding (if enabled).
->> @@ -122,7 +121,7 @@ static const int reg2hex[] =3D {
->>        [BPF_REG_7] =3D 5,  /* R13 callee saved */
->>        [BPF_REG_8] =3D 6,  /* R14 callee saved */
->>        [BPF_REG_9] =3D 7,  /* R15 callee saved */
->> -       [BPF_REG_FP] =3D 5, /* RBP readonly */
->> +       [BPF_REG_FP] =3D 4, /* R12 readonly */
->>        [BPF_REG_AX] =3D 2, /* R10 temp register */
->>        [AUX_REG] =3D 3,    /* R11 temp register */
->> };
->> @@ -139,6 +138,7 @@ static bool is_ereg(u32 reg)
->>                             BIT(BPF_REG_7) |
->>                             BIT(BPF_REG_8) |
->>                             BIT(BPF_REG_9) |
->> +                            BIT(BPF_REG_FP) |
->>                             BIT(BPF_REG_AX));
->> }
->>=20
->> @@ -147,6 +147,11 @@ static bool is_axreg(u32 reg)
->>        return reg =3D=3D BPF_REG_0;
->> }
->>=20
->> +static bool is_sib_reg(u32 reg)
->> +{
->> +       return reg =3D=3D BPF_REG_FP;
->> +}
->> +
->> /* Add modifiers if 'reg' maps to x86-64 registers R8..R15 */
->> static u8 add_1mod(u8 byte, u32 reg)
->> {
->> @@ -190,15 +195,13 @@ struct jit_context {
->> #define BPF_MAX_INSN_SIZE      128
->> #define BPF_INSN_SAFETY                64
->>=20
->> -#define AUX_STACK_SPACE                40 /* Space for RBX, R13, R14, R=
-15, tailcnt */
->> -
->> -#define PROLOGUE_SIZE          37
->> +#define PROLOGUE_SIZE          25
->>=20
->> /*
->>  * Emit x86-64 prologue code for BPF program and check its size.
->>  * bpf_tail_call helper will skip it while jumping into another program
->>  */
->> -static void emit_prologue(u8 **pprog, u32 stack_depth, bool ebpf_from_c=
-bpf)
->> +static void emit_prologue(u8 **pprog, u32 stack_depth)
->> {
->>        u8 *prog =3D *pprog;
->>        int cnt =3D 0;
->> @@ -206,40 +209,67 @@ static void emit_prologue(u8 **pprog, u32 stack_de=
-pth, bool ebpf_from_cbpf)
->>        /* push rbp */
->>        EMIT1(0x55);
->>=20
->> -       /* mov rbp,rsp */
->> +       /* mov rbp, rsp */
->>        EMIT3(0x48, 0x89, 0xE5);
->>=20
->> -       /* sub rsp, rounded_stack_depth + AUX_STACK_SPACE */
->> -       EMIT3_off32(0x48, 0x81, 0xEC,
->> -                   round_up(stack_depth, 8) + AUX_STACK_SPACE);
->> +       /* push r15 */
->> +       EMIT2(0x41, 0x57);
->> +       /* push r14 */
->> +       EMIT2(0x41, 0x56);
->> +       /* push r13 */
->> +       EMIT2(0x41, 0x55);
->> +       /* push r12 */
->> +       EMIT2(0x41, 0x54);
->> +       /* push rbx */
->> +       EMIT1(0x53);
->>=20
->> -       /* sub rbp, AUX_STACK_SPACE */
->> -       EMIT4(0x48, 0x83, 0xED, AUX_STACK_SPACE);
->> +       /*
->> +        * Push the tail call counter (tail_call_cnt) for eBPF tail call=
-s.
->> +        * Initialized to zero.
->> +        *
->> +        * push $0
->> +        */
->> +       EMIT2(0x6a, 0x00);
->>=20
->> -       /* mov qword ptr [rbp+0],rbx */
->> -       EMIT4(0x48, 0x89, 0x5D, 0);
->> -       /* mov qword ptr [rbp+8],r13 */
->> -       EMIT4(0x4C, 0x89, 0x6D, 8);
->> -       /* mov qword ptr [rbp+16],r14 */
->> -       EMIT4(0x4C, 0x89, 0x75, 16);
->> -       /* mov qword ptr [rbp+24],r15 */
->> -       EMIT4(0x4C, 0x89, 0x7D, 24);
->> +       /*
->> +        * R12 is used for the BPF program's FP register.  It points to =
-the end
->> +        * of the program's stack area.
->> +        *
->> +        * mov r12, rsp
->> +        */
->> +       EMIT3(0x49, 0x89, 0xE4);
->>=20
->> -       if (!ebpf_from_cbpf) {
->> -               /*
->> -                * Clear the tail call counter (tail_call_cnt): for eBPF=
- tail
->> -                * calls we need to reset the counter to 0. It's done in=
- two
->> -                * instructions, resetting RAX register to 0, and moving=
- it
->> -                * to the counter location.
->> -                */
->> +       /* sub rsp, rounded_stack_depth */
->> +       EMIT3_off32(0x48, 0x81, 0xEC, round_up(stack_depth, 8));
->>=20
->> -               /* xor eax, eax */
->> -               EMIT2(0x31, 0xc0);
->> -               /* mov qword ptr [rbp+32], rax */
->> -               EMIT4(0x48, 0x89, 0x45, 32);
->> +       BUILD_BUG_ON(cnt !=3D PROLOGUE_SIZE);
->>=20
->> -               BUILD_BUG_ON(cnt !=3D PROLOGUE_SIZE);
->> -       }
->> +       *pprog =3D prog;
->> +}
->> +
->> +static void emit_epilogue(u8 **pprog)
->> +{
->> +       u8 *prog =3D *pprog;
->> +       int cnt =3D 0;
->> +
->> +       /* lea rsp, [rbp-0x28] */
->> +       EMIT4(0x48, 0x8D, 0x65, 0xD8);
->> +
->> +       /* pop rbx */
->> +       EMIT1(0x5B);
->> +       /* pop r12 */
->> +       EMIT2(0x41, 0x5C);
->> +       /* pop r13 */
->> +       EMIT2(0x41, 0x5D);
->> +       /* pop r14 */
->> +       EMIT2(0x41, 0x5E);
->> +       /* pop r15 */
->> +       EMIT2(0x41, 0x5F);
->> +       /* pop rbp */
->> +       EMIT1(0x5D);
->> +
->> +       /* ret */
->> +       EMIT1(0xC3);
->>=20
->>        *pprog =3D prog;
->> }
->> @@ -277,7 +307,7 @@ static void emit_bpf_tail_call(u8 **pprog)
->>        EMIT2(0x89, 0xD2);                        /* mov edx, edx */
->>        EMIT3(0x39, 0x56,                         /* cmp dword ptr [rsi +=
- 16], edx */
->>              offsetof(struct bpf_array, map.max_entries));
->> -#define OFFSET1 (41 + RETPOLINE_RAX_BPF_JIT_SIZE) /* Number of bytes to=
- jump */
->> +#define OFFSET1 (35 + RETPOLINE_RAX_BPF_JIT_SIZE) /* Number of bytes to=
- jump */
->>        EMIT2(X86_JBE, OFFSET1);                  /* jbe out */
->>        label1 =3D cnt;
->>=20
->> @@ -285,13 +315,13 @@ static void emit_bpf_tail_call(u8 **pprog)
->>         * if (tail_call_cnt > MAX_TAIL_CALL_CNT)
->>         *      goto out;
->>         */
->> -       EMIT2_off32(0x8B, 0x85, 36);              /* mov eax, dword ptr =
-[rbp + 36] */
->> +       EMIT3(0x8B, 0x45, 0xD4);                  /* mov eax, dword ptr =
-[rbp - 44] */
->>        EMIT3(0x83, 0xF8, MAX_TAIL_CALL_CNT);     /* cmp eax, MAX_TAIL_CA=
-LL_CNT */
->> -#define OFFSET2 (30 + RETPOLINE_RAX_BPF_JIT_SIZE)
->> +#define OFFSET2 (27 + RETPOLINE_RAX_BPF_JIT_SIZE)
->>        EMIT2(X86_JA, OFFSET2);                   /* ja out */
->>        label2 =3D cnt;
->>        EMIT3(0x83, 0xC0, 0x01);                  /* add eax, 1 */
->> -       EMIT2_off32(0x89, 0x85, 36);              /* mov dword ptr [rbp =
-+ 36], eax */
->> +       EMIT3(0x89, 0x45, 0xD4);                  /* mov dword ptr [rbp =
-- 44], eax */
->>=20
->>        /* prog =3D array->ptrs[index]; */
->>        EMIT4_off32(0x48, 0x8B, 0x84, 0xD6,       /* mov rax, [rsi + rdx =
-* 8 + offsetof(...)] */
->> @@ -419,8 +449,7 @@ static int do_jit(struct bpf_prog *bpf_prog, int *ad=
-drs, u8 *image,
->>        int proglen =3D 0;
->>        u8 *prog =3D temp;
->>=20
->> -       emit_prologue(&prog, bpf_prog->aux->stack_depth,
->> -                     bpf_prog_was_classic(bpf_prog));
->> +       emit_prologue(&prog, bpf_prog->aux->stack_depth);
->>=20
->>        for (i =3D 0; i < insn_cnt; i++, insn++) {
->>                const s32 imm32 =3D insn->imm;
->> @@ -767,10 +796,19 @@ static int do_jit(struct bpf_prog *bpf_prog, int *=
-addrs, u8 *image,
->>                case BPF_ST | BPF_MEM | BPF_DW:
->>                        EMIT2(add_1mod(0x48, dst_reg), 0xC7);
->>=20
->> -st:                    if (is_imm8(insn->off))
->> -                               EMIT2(add_1reg(0x40, dst_reg), insn->off=
-);
->> +st:
->> +                       if (is_imm8(insn->off))
->> +                               EMIT1(add_1reg(0x40, dst_reg));
->>                        else
->> -                               EMIT1_off32(add_1reg(0x80, dst_reg), ins=
-n->off);
->> +                               EMIT1(add_1reg(0x80, dst_reg));
->> +
->> +                       if (is_sib_reg(dst_reg))
->> +                               EMIT1(add_1reg(0x20, dst_reg));
->> +
->> +                       if (is_imm8(insn->off))
->> +                               EMIT1(insn->off);
->> +                       else
->> +                               EMIT(insn->off, 4);
->>=20
->>                        EMIT(imm32, bpf_size_to_x86_bytes(BPF_SIZE(insn->=
-code)));
->>                        break;
->> @@ -799,11 +837,19 @@ st:                       if (is_imm8(insn->off))
->>                        goto stx;
->>                case BPF_STX | BPF_MEM | BPF_DW:
->>                        EMIT2(add_2mod(0x48, dst_reg, src_reg), 0x89);
->> -stx:                   if (is_imm8(insn->off))
->> -                               EMIT2(add_2reg(0x40, dst_reg, src_reg), =
-insn->off);
->> +stx:
->> +                       if (is_imm8(insn->off))
->> +                               EMIT1(add_2reg(0x40, dst_reg, src_reg));
->> +                       else
->> +                               EMIT1(add_2reg(0x80, dst_reg, src_reg));
->> +
->> +                       if (is_sib_reg(dst_reg))
->> +                               EMIT1(add_1reg(0x20, dst_reg));
->> +
->> +                       if (is_imm8(insn->off))
->> +                               EMIT1(insn->off);
->>                        else
->> -                               EMIT1_off32(add_2reg(0x80, dst_reg, src_=
-reg),
->> -                                           insn->off);
->> +                               EMIT(insn->off, 4);
->>                        break;
->>=20
->>                        /* LDX: dst_reg =3D *(u8*)(src_reg + off) */
->> @@ -825,16 +871,24 @@ stx:                      if (is_imm8(insn->off))
->>                case BPF_LDX | BPF_MEM | BPF_DW:
->>                        /* Emit 'mov rax, qword ptr [rax+0x14]' */
->>                        EMIT2(add_2mod(0x48, src_reg, dst_reg), 0x8B);
->> -ldx:                   /*
->> +ldx:
->> +                       /*
->>                         * If insn->off =3D=3D 0 we can save one extra by=
-te, but
->>                         * special case of x86 R13 which always needs an =
-offset
->>                         * is not worth the hassle
->>                         */
->>                        if (is_imm8(insn->off))
->> -                               EMIT2(add_2reg(0x40, src_reg, dst_reg), =
-insn->off);
->> +                               EMIT1(add_2reg(0x40, src_reg, dst_reg));
->>                        else
->> -                               EMIT1_off32(add_2reg(0x80, src_reg, dst_=
-reg),
->> -                                           insn->off);
->> +                               EMIT1(add_2reg(0x80, src_reg, dst_reg));
->> +
->> +                       if (is_sib_reg(src_reg))
->> +                               EMIT1(add_1reg(0x20, src_reg));
->> +
->> +                       if (is_imm8(insn->off))
->> +                               EMIT1(insn->off);
->> +                       else
->> +                               EMIT(insn->off, 4);
->>                        break;
->>=20
->>                        /* STX XADD: lock *(u32*)(dst_reg + off) +=3D src=
-_reg */
->> @@ -847,11 +901,19 @@ stx:                      if (is_imm8(insn->off))
->>                        goto xadd;
->>                case BPF_STX | BPF_XADD | BPF_DW:
->>                        EMIT3(0xF0, add_2mod(0x48, dst_reg, src_reg), 0x0=
-1);
->> -xadd:                  if (is_imm8(insn->off))
->> -                               EMIT2(add_2reg(0x40, dst_reg, src_reg), =
-insn->off);
->> +xadd:
->> +                       if (is_imm8(insn->off))
->> +                               EMIT1(add_2reg(0x40, dst_reg, src_reg));
->>                        else
->> -                               EMIT1_off32(add_2reg(0x80, dst_reg, src_=
-reg),
->> -                                           insn->off);
->> +                               EMIT1(add_2reg(0x80, dst_reg, src_reg));
->> +
->> +                       if (is_sib_reg(dst_reg))
->> +                               EMIT1(add_1reg(0x20, dst_reg));
->> +
->> +                       if (is_imm8(insn->off))
->> +                               EMIT1(insn->off);
->> +                       else
->> +                               EMIT(insn->off, 4);
->>                        break;
->>=20
->>                        /* call */
->> @@ -1040,19 +1102,8 @@ xadd:                    if (is_imm8(insn->off))
->>                        seen_exit =3D true;
->>                        /* Update cleanup_addr */
->>                        ctx->cleanup_addr =3D proglen;
->> -                       /* mov rbx, qword ptr [rbp+0] */
->> -                       EMIT4(0x48, 0x8B, 0x5D, 0);
->> -                       /* mov r13, qword ptr [rbp+8] */
->> -                       EMIT4(0x4C, 0x8B, 0x6D, 8);
->> -                       /* mov r14, qword ptr [rbp+16] */
->> -                       EMIT4(0x4C, 0x8B, 0x75, 16);
->> -                       /* mov r15, qword ptr [rbp+24] */
->> -                       EMIT4(0x4C, 0x8B, 0x7D, 24);
->> -
->> -                       /* add rbp, AUX_STACK_SPACE */
->> -                       EMIT4(0x48, 0x83, 0xC5, AUX_STACK_SPACE);
->> -                       EMIT1(0xC9); /* leave */
->> -                       EMIT1(0xC3); /* ret */
->> +
->> +                       emit_epilogue(&prog);
->>                        break;
->>=20
->>                default:
->=20
-> Thanks! This looks good to me and passed the self test and bcc test
-> (with frame pointer unwinder, and JIT enabled):
-> With bcc's tools/stackcount.py I got the valid stack trace, and the
-> self test says:
-> test_stacktrace_map:PASS:compare_map_keys stackid_hmap vs. stackmap 0 nse=
-c
->=20
-> --=20
-> Best Regards,
-> Kairui Song
+Allow for multiple opens:
+        test second /dev/video0 open: OK
+        test VIDIOC_QUERYCAP: OK
+        test VIDIOC_G/S_PRIORITY: OK
+        test for unlimited opens: OK
 
+Debug ioctls:
+        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls:
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+        test VIDIOC_QUERYCTRL: OK
+        test VIDIOC_G/S_CTRL: OK
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 2 Private Controls: 0
+
+Format ioctls:
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+        test VIDIOC_G/S_PARM: OK (Not Supported)
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK
+        test VIDIOC_TRY_FMT: OK
+        test VIDIOC_S_FMT: OK
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK
+
+Codec ioctls:
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK
+
+Buffer ioctls:
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+        test VIDIOC_EXPBUF: OK
+        test Requests: OK (Not Supported)
+
+Test input 0:
+
+Streaming ioctls:
+        test read/write: OK (Not Supported)
+        test blocking wait: OK
+                fail: v4l2-test-buffers.cpp(1324): node->dqevent(ev)
+        test MMAP (select): FAIL
+                fail: v4l2-test-buffers.cpp(1324): node->dqevent(ev)
+        test MMAP (epoll): FAIL
+        test USERPTR (select): OK (Not Supported)
+        test DMABUF: Cannot test, specify --expbuf-device
+
+Total for meson-vdec device /dev/video0: 49, Succeeded: 47, Failed: 2, Warnings: 0
+
+-- 
+2.21.0
 
