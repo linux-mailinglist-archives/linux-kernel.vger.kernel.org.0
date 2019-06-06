@@ -2,117 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69AF737F62
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 23:18:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D90B437F65
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 23:18:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728213AbfFFVR7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 17:17:59 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:33731 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727187AbfFFVR7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 17:17:59 -0400
-Received: by mail-pl1-f193.google.com with SMTP id g21so1425152plq.0;
-        Thu, 06 Jun 2019 14:17:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mP7r3Ph0TJUeY2QgBywLa5kKt0/iqIMTXJw+IqZdG5c=;
-        b=QQAZ7N8H8c+5Ltu+ZGIdxyDkMMoKCiVPm/qiYn/zzSn25b2uU7hCOD6mZNfokt2ms8
-         YPclSKzjHC4oTggIKEBy7liIzJ04zM7X6ylCESyJWmj6kvjTetXr0izfzYGs9T3OdGuG
-         5/r0CZuH/W6Na2nPhB0DgbFu3RKGQYdtrzrevm6dBW2/B9RDKldxsPDT4+/uNnWQM5c9
-         T/hYcfAxmIGyGWtoGYpE+gzQyQmZ11Bxzpe6wKvXrby9WYbLcRM52p0fbB29e42EC2jO
-         2fc/xkACsf/zHoKWsbrpkH7JL5oQgyvTDJoZYUx+gZaHfljmNquU5eIBL5+FSjfx2pca
-         hGVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mP7r3Ph0TJUeY2QgBywLa5kKt0/iqIMTXJw+IqZdG5c=;
-        b=cWZDXvfEyiNXr4BcSkb40Buh0QFCnzhuuSvishqJC3H5yeMHUN9LWlOK8GxMjtaa+w
-         +JOyN4R2vO1AkdIu4gP7u9FPe4K8N9/qxvauruIifsoFvfZ6ynkhfNsYBRIODxlljGco
-         eoGMo+48A9zSqPbp3jsPcuE2fEf1J6z17gjheDMslnwVlo2r4IjeRWgmexSJUPmh2c2e
-         k2iTjCr2C3+hfGPAoa4Bw7ZSJex5+7pW0ToR234awn10RT5CiIIsxspsAx1B/U3w7uqS
-         ld5WKmM2PjKc7iuoneRqGYcwaOEBbpmyFgfJZ7sWro3/WZPPSgnEwScuLaNufmp57nb9
-         IJbA==
-X-Gm-Message-State: APjAAAXlKRG7JIFggIspXexge8i7u186yRmQGTCsjlp5U0OBmHI2x/Pk
-        k3DHp6T0EwR+GSWAHzkfqTKZQmxw
-X-Google-Smtp-Source: APXvYqwlJWejDjPLp4Du0ku4Rl3EB2/0dNED2aE2CibduvXmMGSH6zDuhXMYSg0oMeJbJgkKe1ZfCg==
-X-Received: by 2002:a17:902:b18f:: with SMTP id s15mr53750306plr.44.1559855878548;
-        Thu, 06 Jun 2019 14:17:58 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id v23sm61897pff.185.2019.06.06.14.17.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Jun 2019 14:17:58 -0700 (PDT)
-Date:   Thu, 6 Jun 2019 14:17:57 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Jerry Hoemann <jerry.hoemann@hpe.com>
-Cc:     wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mironov.ivan@gmail.com,
-        rasmus.villemoes@prevas.dk
-Subject: Re: [PATCH 2/6] watchdog/hpwdt: Advertize max_hw_heartbeat_ms
-Message-ID: <20190606211757.GA1299@roeck-us.net>
-References: <1558126783-4877-1-git-send-email-jerry.hoemann@hpe.com>
- <1558126783-4877-3-git-send-email-jerry.hoemann@hpe.com>
+        id S1728247AbfFFVSg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 17:18:36 -0400
+Received: from mga11.intel.com ([192.55.52.93]:43323 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726961AbfFFVSd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 17:18:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 14:18:32 -0700
+X-ExtLoop1: 1
+Received: from ray.jf.intel.com (HELO [10.7.198.156]) ([10.7.198.156])
+  by orsmga006.jf.intel.com with ESMTP; 06 Jun 2019 14:18:31 -0700
+Subject: Re: [PATCH v7 04/27] x86/fpu/xstate: Introduce XSAVES system states
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>
+References: <20190606200646.3951-1-yu-cheng.yu@intel.com>
+ <20190606200646.3951-5-yu-cheng.yu@intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ mQINBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABtEVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT6JAjgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lcuQINBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABiQIfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+Message-ID: <0a2f8b9b-b96b-06c8-bae0-b78b2ca3b727@intel.com>
+Date:   Thu, 6 Jun 2019 14:18:29 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1558126783-4877-3-git-send-email-jerry.hoemann@hpe.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190606200646.3951-5-yu-cheng.yu@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 17, 2019 at 02:59:39PM -0600, Jerry Hoemann wrote:
-> Set max_hw_heartbeat_ms instead of max_timeout so that user client can
-> set timeout range in excess of what the underlying hardware supports.
-> 
-> Signed-off-by: Jerry Hoemann <jerry.hoemann@hpe.com>
+> +/*
+> + * Helpers for changing XSAVES system states.
+> + */
+> +static inline void modify_fpu_regs_begin(void)
+> +{
+> +	fpregs_lock();
+> +	if (test_thread_flag(TIF_NEED_FPU_LOAD))
+> +		__fpregs_load_activate();
+> +}
+> +
+> +static inline void modify_fpu_regs_end(void)
+> +{
+> +	fpregs_unlock();
+> +}
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+These are massively under-commented and under-changelogged.  This looks
+like it's intended to ensure that we have supervisor FPU state for this
+task loaded before we go and run the MSRs that might be modifying it.
 
-> ---
->  drivers/watchdog/hpwdt.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/watchdog/hpwdt.c b/drivers/watchdog/hpwdt.c
-> index 8c49f13..9f7a370 100644
-> --- a/drivers/watchdog/hpwdt.c
-> +++ b/drivers/watchdog/hpwdt.c
-> @@ -62,9 +62,9 @@
->  static int hpwdt_start(struct watchdog_device *wdd)
->  {
->  	int control = 0x81 | (pretimeout ? 0x4 : 0);
-> -	int reload = SECS_TO_TICKS(wdd->timeout);
-> +	int reload = SECS_TO_TICKS(min(wdd->timeout, wdd->max_hw_heartbeat_ms/1000));
->  
-> -	dev_dbg(wdd->parent, "start watchdog 0x%08x:0x%02x\n", reload, control);
-> +	dev_dbg(wdd->parent, "start watchdog 0x%08x:0x%08x:0x%02x\n", wdd->timeout, reload, control);
->  	iowrite16(reload, hpwdt_timer_reg);
->  	iowrite8(control, hpwdt_timer_con);
->  
-> @@ -91,9 +91,9 @@ static int hpwdt_stop_core(struct watchdog_device *wdd)
->  
->  static int hpwdt_ping(struct watchdog_device *wdd)
->  {
-> -	int reload = SECS_TO_TICKS(wdd->timeout);
-> +	int reload = SECS_TO_TICKS(min(wdd->timeout, wdd->max_hw_heartbeat_ms/1000));
->  
-> -	dev_dbg(wdd->parent, "ping  watchdog 0x%08x\n", reload);
-> +	dev_dbg(wdd->parent, "ping  watchdog 0x%08x:0x%08x\n", wdd->timeout, reload);
->  	iowrite16(reload, hpwdt_timer_reg);
->  
->  	return 0;
-> @@ -208,9 +208,9 @@ static int hpwdt_pretimeout(unsigned int ulReason, struct pt_regs *regs)
->  	.info		= &ident,
->  	.ops		= &hpwdt_ops,
->  	.min_timeout	= 1,
-> -	.max_timeout	= HPWDT_MAX_TIMER,
->  	.timeout	= DEFAULT_MARGIN,
->  	.pretimeout	= PRETIMEOUT_SEC,
-> +	.max_hw_heartbeat_ms	= HPWDT_MAX_TIMER * 1000,
->  };
->  
->  
+But, that seems broken.  If we have supervisor state, we can't always
+defer the load until return to userspace, so we'll never?? have
+TIF_NEED_FPU_LOAD.  That would certainly be true for cet_kernel_state.
+
+It seems like we actually need three classes of XSAVE states:
+1. User state
+2. Supervisor state that affects user mode
+3. Supervisor state that affects kernel mode
+
+We can delay the load of 1 and 2, but not 3.
+
+But I don't see any infrastructure for this.
