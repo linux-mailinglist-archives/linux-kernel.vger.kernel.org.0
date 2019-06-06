@@ -2,208 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BD6F37C06
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 20:17:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC53637C10
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 20:18:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730486AbfFFSRO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 14:17:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55988 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727559AbfFFSRN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 14:17:13 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 744502083D;
-        Thu,  6 Jun 2019 18:17:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559845031;
-        bh=IZaxa10bAX0fTd5ai/JE91vM5GqtEaR8JsnsK21q+rQ=;
-        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=mSshB7oTeQVUtdrxOdlaNvgUOi5c69iz71IfpIe+XHfD3rhdmI/tahbtMLQyAGkUW
-         6lrYHXxxVjUyDY+KeXXR/+3nkeV7b+jyhBC1yCUKL/MYzo6Jwa2PODUW4wAqVeU0mv
-         g/JXG7Q14eObcSshhQcyo+GzXvquHUYZxonW44pk=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+        id S1730509AbfFFSSV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 14:18:21 -0400
+Received: from mail-eopbgr800041.outbound.protection.outlook.com ([40.107.80.41]:32559
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727559AbfFFSSV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 14:18:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KxU+Y6sPuN5ogKfRaNb78JHNEqdY2yNol8PMQilUZ14=;
+ b=bPZhVJUG/zrBM3M8YVuHN1tMxKiP+kXYjIt/QMOALaFthu+E+73q9ajBb3VxD2wfu1OUTp/sjxsUhXX/fQz1NL+qVkKEu+lSEEYh1AmQVrGTuEFbcaUsU1uZNWL3m1QoJvzL88HxwmyKoHSDk8q3DpUUiJx9Gcdi/4l8y0EiGEI=
+Received: from CH2PR02MB6359.namprd02.prod.outlook.com (52.132.231.93) by
+ CH2PR02MB6183.namprd02.prod.outlook.com (52.132.229.205) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1943.22; Thu, 6 Jun 2019 18:18:17 +0000
+Received: from CH2PR02MB6359.namprd02.prod.outlook.com
+ ([fe80::b9dd:11e0:7fca:ba55]) by CH2PR02MB6359.namprd02.prod.outlook.com
+ ([fe80::b9dd:11e0:7fca:ba55%5]) with mapi id 15.20.1943.018; Thu, 6 Jun 2019
+ 18:18:17 +0000
+From:   Dragan Cvetic <draganc@xilinx.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+CC:     "arnd@arndb.de" <arnd@arndb.de>, Michal Simek <michals@xilinx.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Derek Kiernan <dkiernan@xilinx.com>
+Subject: RE: [PATCH V4 04/12] misc: xilinx_sdfec: Add open, close and ioctl
+Thread-Topic: [PATCH V4 04/12] misc: xilinx_sdfec: Add open, close and ioctl
+Thread-Index: AQHVEu5GErREaULonk+tvtDvF1CkjaaOsQmAgABRNPA=
+Date:   Thu, 6 Jun 2019 18:18:16 +0000
+Message-ID: <CH2PR02MB6359A547C69E6E674CB3C7D0CB170@CH2PR02MB6359.namprd02.prod.outlook.com>
+References: <1558784245-108751-1-git-send-email-dragan.cvetic@xilinx.com>
+ <1558784245-108751-5-git-send-email-dragan.cvetic@xilinx.com>
+ <20190606132629.GB7943@kroah.com>
+In-Reply-To: <20190606132629.GB7943@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=draganc@xilinx.com; 
+x-originating-ip: [149.199.80.133]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: b49cb14e-6617-4b87-0658-08d6eaab5903
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:CH2PR02MB6183;
+x-ms-traffictypediagnostic: CH2PR02MB6183:
+x-microsoft-antispam-prvs: <CH2PR02MB618315AE620C37C67A8751ECCB170@CH2PR02MB6183.namprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4125;
+x-forefront-prvs: 00603B7EEF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(346002)(136003)(376002)(396003)(189003)(13464003)(199004)(66476007)(66556008)(6116002)(64756008)(74316002)(3846002)(66946007)(68736007)(186003)(66066001)(73956011)(478600001)(8936002)(6246003)(76176011)(81156014)(52536014)(66446008)(7696005)(53546011)(76116006)(102836004)(25786009)(6506007)(81166006)(99286004)(4326008)(26005)(5660300002)(107886003)(8676002)(53936002)(316002)(11346002)(55016002)(9686003)(6916009)(71200400001)(2906002)(71190400001)(14454004)(86362001)(14444005)(256004)(486006)(33656002)(54906003)(305945005)(476003)(7736002)(446003)(6436002)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR02MB6183;H:CH2PR02MB6359.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: /vNvoFU03VmoX8tDDivfb70QZK4OxiLYRcGcu2G+3dO0ql3+WPCx3cUveF2y50f2XBYdlJ3uDTdquOvY1I69L/edDjIWxs1vEryzBe21mIRA9azg69kouxdFf/WBIGsZSFd7/HkefeoTh7RRYgApnZ2/sNsP6JWS3FM1ingjsGMB1xPhsVNA5VtgSRjJr68YyCittKIyBXsj4Awu6FM0u3YVknuXIQPXieOtG5hwdsQXs9W6g9CByC1S+iR4fSnYpINvkFOqbneP6m0iBuC9PlfqhH4LiIYM5Y6GMWldWmpo0uHz2Gn8aP9uLcDibqMjiRg/1Egwbr/1s9yn2ae5NoVheME85C/BBw9tuZBH5EFsVdVXbL6MMgqSJGQRFPPgABEloLHP3dn91FAiF5Id8wEFhb2PsMx9/3B8mkRucKc=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1559084936-4610-8-git-send-email-skomatineni@nvidia.com>
-References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com> <1559084936-4610-8-git-send-email-skomatineni@nvidia.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>, jason@lakedaemon.net,
-        jonathanh@nvidia.com, linus.walleij@linaro.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, stefan@agner.ch,
-        tglx@linutronix.de, thierry.reding@gmail.com
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH V2 07/12] clk: tegra: support for Tegra210 clocks suspend-resume
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
-        skomatineni@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mperttunen@nvidia.com,
-        spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
-User-Agent: alot/0.8.1
-Date:   Thu, 06 Jun 2019 11:17:10 -0700
-Message-Id: <20190606181711.744502083D@mail.kernel.org>
+MIME-Version: 1.0
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b49cb14e-6617-4b87-0658-08d6eaab5903
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2019 18:18:17.1392
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: draganc@xilinx.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR02MB6183
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Sowjanya Komatineni (2019-05-28 16:08:51)
-> @@ -3381,6 +3398,367 @@ static struct tegra_clk_init_table init_table[] _=
-_initdata =3D {
->         { TEGRA210_CLK_CLK_MAX, TEGRA210_CLK_CLK_MAX, 0, 0 },
->  };
-> =20
-> +#ifdef CONFIG_PM_SLEEP
-> +static unsigned long pll_c_rate, pll_c2_rate, pll_c3_rate, pll_x_rate;
-> +static unsigned long pll_c4_rate, pll_d2_rate, pll_dp_rate;
-> +static unsigned long pll_re_vco_rate, pll_d_rate, pll_a_rate, pll_a1_rat=
-e;
-> +static unsigned long pll_c_out1_rate;
-> +static unsigned long pll_a_out0_rate, pll_c4_out3_rate;
-> +static unsigned long pll_p_out_rate[5];
-> +static unsigned long pll_u_out1_rate, pll_u_out2_rate;
-> +static unsigned long pll_mb_rate;
-> +static u32 pll_m_v;
-> +static u32 pll_p_outa, pll_p_outb;
-> +static u32 pll_re_out_div, pll_re_out_1;
-> +static u32 cpu_softrst_ctx[3];
-> +static u32 cclkg_burst_policy_ctx[2];
-> +static u32 cclklp_burst_policy_ctx[2];
-> +static u32 sclk_burst_policy_ctx[3];
-> +static u32 sclk_ctx, spare_ctx, misc_clk_enb_ctx, clk_arm_ctx;
 
-This is a lot of state to maintain globally. Can it go into a container
-struct so we can get docs and understand what's going on a little
-better?
 
-> +
-> +static struct platform_device *dfll_pdev;
-> +#define car_readl(_base, _off) \
-> +       readl_relaxed(clk_base + (_base) + ((_off) * 4))
-> +#define car_writel(_val, _base, _off) \
-> +       writel_relaxed(_val, clk_base + (_base) + ((_off) * 4))
-> +
-> +static u32 *periph_clk_src_ctx;
-> +struct periph_source_bank {
-> +       u32 start;
-> +       u32 end;
+> -----Original Message-----
+> From: Greg KH [mailto:gregkh@linuxfoundation.org]
+> Sent: Thursday 6 June 2019 14:26
+> To: Dragan Cvetic <draganc@xilinx.com>
+> Cc: arnd@arndb.de; Michal Simek <michals@xilinx.com>; linux-arm-kernel@li=
+sts.infradead.org; robh+dt@kernel.org;
+> mark.rutland@arm.com; devicetree@vger.kernel.org; linux-kernel@vger.kerne=
+l.org; Derek Kiernan <dkiernan@xilinx.com>
+> Subject: Re: [PATCH V4 04/12] misc: xilinx_sdfec: Add open, close and ioc=
+tl
+>=20
+> On Sat, May 25, 2019 at 12:37:17PM +0100, Dragan Cvetic wrote:
+> > Add char device interface per DT node present and support
+> > file operations:
+> > - open(),
+> > - close(),
+> > - unlocked_ioctl(),
+> > - compat_ioctl().
+> >
+> > Tested-by: Dragan Cvetic <dragan.cvetic@xilinx.com>
+> > Signed-off-by: Derek Kiernan <derek.kiernan@xilinx.com>
+> > Signed-off-by: Dragan Cvetic <dragan.cvetic@xilinx.com>
+> > ---
+> >  drivers/misc/xilinx_sdfec.c      | 57 ++++++++++++++++++++++++++++++++=
++++++---
+> >  include/uapi/misc/xilinx_sdfec.h |  4 +++
+> >  2 files changed, 58 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/misc/xilinx_sdfec.c b/drivers/misc/xilinx_sdfec.c
+> > index ff32d29..740b487 100644
+> > --- a/drivers/misc/xilinx_sdfec.c
+> > +++ b/drivers/misc/xilinx_sdfec.c
+> > @@ -51,7 +51,6 @@ struct xsdfec_clks {
+> >   * @regs: device physical base address
+> >   * @dev: pointer to device struct
+> >   * @config: Configuration of the SDFEC device
+> > - * @open_count: Count of char device being opened
+>=20
+> Why is this removed here?  You don't add something in one patch and then
+> remove it in a later one if it's never needed :)
 
-Do these need to be u32 or could they be u16?
+Accepted.
+Will be removed from previous patches.
 
-> +};
-> +
-> +static struct periph_source_bank periph_srcs[] =3D {
-
-Can this be const?
-
-> +       [0] =3D {
-> +               .start =3D 0x100,
-> +               .end =3D 0x198,
-> +       },
-> +       [1] =3D {
-> +               .start =3D 0x1a0,
-> +               .end =3D 0x1f8,
-> +       },
-> +       [2] =3D {
-> +               .start =3D 0x3b4,
-> +               .end =3D 0x42c,
-> +       },
-> +       [3] =3D {
-> +               .start =3D 0x49c,
-> +               .end =3D 0x4b4,
-> +       },
-> +       [4] =3D {
-> +               .start =3D 0x560,
-> +               .end =3D 0x564,
-> +       },
-> +       [5] =3D {
-> +               .start =3D 0x600,
-> +               .end =3D 0x678,
-> +       },
-> +       [6] =3D {
-> +               .start =3D 0x694,
-> +               .end =3D 0x6a0,
-> +       },
-> +       [7] =3D {
-> +               .start =3D 0x6b8,
-> +               .end =3D 0x718,
-> +       },
-> +};
-> +
-> +/* This array lists the valid clocks for each periph clk bank */
-> +static u32 periph_clks_on[] =3D {
-
-const?
-
-> +       0xdcd7dff9,
-> +       0x87d1f3e7,
-> +       0xf3fed3fa,
-> +       0xffc18cfb,
-> +       0x793fb7ff,
-> +       0x3fe66fff,
-> +       0xfc1fc7ff,
-
-What are these magic numbers?
-
-> +};
-> +
-> +static inline unsigned long clk_get_rate_nolock(struct clk *clk)
-> +{
-> +       if (IS_ERR_OR_NULL(clk)) {
-
-NULL is a valid clk pointer. Typically usage of IS_ERR_OR_NULL() is
-wrong.
-
-> +               WARN_ON(1);
-> +               return 0;
-> +       }
-> +
-> +       return clk_hw_get_rate(__clk_get_hw(clk));
-> +}
-> +
-> +static inline struct clk *pll_p_clk(unsigned int x)
-> +{
-> +       if (x < 4) {
-
-What is magic value 4?
-
-> +               return clks[TEGRA210_CLK_PLL_P_OUT1 + x];
-> +       } else if (x !=3D 4) {
-> +               WARN_ON(1);
-> +               return NULL;
-> +       } else {
-> +               return clks[TEGRA210_CLK_PLL_P_OUT5];
-> +       }
-> +}
-> +
-[..]
-> +
-> +static void tegra210_clk_resume(void)
-> +{
-[..]
-> +       fence_udelay(2, clk_base);
-> +       for (i =3D 0; i < BURST_POLICY_REG_SIZE; i++) {
-> +               car_writel(cclklp_burst_policy_ctx[i], CCLKLP_BURST_POLIC=
-Y, i);
-> +               car_writel(sclk_burst_policy_ctx[i], SCLK_BURST_POLICY, i=
-);
-> +       }
-> +       car_writel(sclk_burst_policy_ctx[i], SYS_CLK_DIV, 0);
-> +
-> +       car_writel(sclk_ctx, SYSTEM_CLK_RATE, 0);
-> +       car_writel(spare_ctx, SPARE_REG0, 0);
-> +       car_writel(misc_clk_enb_ctx, MISC_CLK_ENB, 0);
-> +       car_writel(clk_arm_ctx, CLK_MASK_ARM, 0);
-> +
-> +       /* enable all clocks before configuring clock sources */
-> +       tegra_clk_periph_force_on(periph_clks_on, ARRAY_SIZE(periph_clks_=
-on),
-> +                                 clk_base);
-> +
-> +       wmb();
-
-Please add a comment before barriers so we know what they're for.
-
-> +       fence_udelay(2, clk_base);
-> +
+>=20
+> thanks,
+>=20
+> greg k-h
