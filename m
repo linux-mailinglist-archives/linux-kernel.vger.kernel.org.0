@@ -2,92 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05B7537629
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 16:13:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 634EC37627
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 16:13:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728764AbfFFONH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 10:13:07 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:39765 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727559AbfFFONH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 10:13:07 -0400
-Received: by mail-pl1-f196.google.com with SMTP id g9so982638plm.6
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 07:13:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2YcQi322gU65udmxZ663ZZ4Wmd0vpO9jY2pkneP18U8=;
-        b=dPVis3pyGrHlNapFxyZ1x9FyS9jHmd9LaTMqq9zxLdzeQq73zejEUwtK4x5P95VHCi
-         WbnjrcVTw0kkko56uuK+VX/DWBgM1VpJFCd01k6qoXzQQtq5xVio6DKcJm6ewlYcOpur
-         4SZVbac3X8ApQkp/ZMqoc/JPST/Xr+gZGXi8VKa5d133BKihAWW0jSubtK9BEMlwopWe
-         7L860vq3MXyqIsj+4++leoIvxTpF8yJnIP2AiZFrB6iLZeBX8MQWEC+C0Lp2378pgD1f
-         bFvIhFlWxE9Cx7pYCOPUTs9+JHwiZYModJGX45diPPvUZXpA4lIYB4iXdVnR1cgeoluJ
-         4tKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2YcQi322gU65udmxZ663ZZ4Wmd0vpO9jY2pkneP18U8=;
-        b=RuksFNxZD6A/3aNsWoNT+ou+ngJjts6253MZjMUbd9hwnUXx+hhBZ5H6r9L7CPmdNl
-         EqgX2iZW3AkgWg7O0tU384CZjTiQyetp1WYZXTMPTz2ROf/P6wWbunzCvY2cZoH0ogNs
-         l0Su0qqd2THEk3etbOyxWeKmYWHYm35EHVO3ZYv0HmbwoHm/G7woGx+Y64vYstzcaVpa
-         hpCTbJRopkipTR6NTfKQGQeRJ1ZIMEzRjtPMF90Rn/fg+2U2zn4cwZ91bb+XZGIAJZj3
-         VhG3YV9JNL4P03yMZ3iZiA2cFtkhbwI54QARrN7FxECmhan2EJW31ZB+RhqNXuFNEj0I
-         zviA==
-X-Gm-Message-State: APjAAAWOJVH/MxGIegaKCxuZw/BqAKlOBafMi54ByQQzSc6FQXXB50gI
-        Sc7J0R3D1oOvnnFRsgzpcyRb01neuc8tyYdX/aRf5TCa
-X-Google-Smtp-Source: APXvYqyCYbjRIpjwEeSGolukiCOTXNw8C4SSP9ycOgfXGLinPd8wUGSRHSVfBirA48MFR9Ix1En/stGzGz8j5P5LvTo=
-X-Received: by 2002:a17:902:4c:: with SMTP id 70mr26034435pla.308.1559830386509;
- Thu, 06 Jun 2019 07:13:06 -0700 (PDT)
+        id S1728740AbfFFOM6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 10:12:58 -0400
+Received: from ns.iliad.fr ([212.27.33.1]:53966 "EHLO ns.iliad.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727559AbfFFOM5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 10:12:57 -0400
+Received: from ns.iliad.fr (localhost [127.0.0.1])
+        by ns.iliad.fr (Postfix) with ESMTP id 1FC4E20F58;
+        Thu,  6 Jun 2019 16:12:56 +0200 (CEST)
+Received: from [192.168.108.49] (freebox.vlq16.iliad.fr [213.36.7.13])
+        by ns.iliad.fr (Postfix) with ESMTP id 0DF1220ECD;
+        Thu,  6 Jun 2019 16:12:56 +0200 (CEST)
+Subject: Re: [PATCH] arm64: dts: sdm845: Add iommus property to qup1
+To:     Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>
+References: <20190604222939.195471-1-swboyd@chromium.org>
+ <20190604223700.GE4814@minitux> <5cf6f4bb.1c69fb81.c39da.5496@mx.google.com>
+ <CAFp+6iHZeawnz7Vfk3=Oox-GN_y6c-E9wMwc-qdp1bTOXgqjFQ@mail.gmail.com>
+ <5cf82c6f.1c69fb81.9e342.dbda@mx.google.com>
+ <CAFp+6iE8FUXxexKbYy=ak+se-pj1XXUZxTu5o=hJvg66V6+Rzw@mail.gmail.com>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <66a4a987-ac89-609f-1496-895765f9b1f2@free.fr>
+Date:   Thu, 6 Jun 2019 16:12:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190506164440.37399-1-cai@lca.pw> <20190507073901.GC3486@suse.de>
-In-Reply-To: <20190507073901.GC3486@suse.de>
-From:   Tom Murphy <tmurphy@arista.com>
-Date:   Thu, 6 Jun 2019 15:12:54 +0100
-Message-ID: <CAPL0++5g+VVGkTJexCn+=ALOgzsfmB2JgE4OJjWsgJ1DUwT3-Q@mail.gmail.com>
-Subject: Re: [PATCH -next v2] iommu/amd: fix a null-ptr-deref in map_sg()
-To:     Joerg Roedel <jroedel@suse.de>
-Cc:     Qian Cai <cai@lca.pw>, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAFp+6iE8FUXxexKbYy=ak+se-pj1XXUZxTu5o=hJvg66V6+Rzw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Thu Jun  6 16:12:56 2019 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joerg,
+On 06/06/2019 13:17, Vivek Gautam wrote:
 
-Is there anything I need to do to get this patch into linux-next? My
-patch to convert the amd iommu driver to use the dma-iommu ops depends
-on this patch.
+> <&apps_smmu 0x6c0 0x3>   // for both 0x6c0 (TZ) and 0x6c3 (HLOS)
 
-Thanks,
-Tom
+Another possibility is to list both:
 
-On Tue, May 7, 2019 at 8:39 AM Joerg Roedel <jroedel@suse.de> wrote:
->
-> Hi Qian,
->
-> On Mon, May 06, 2019 at 12:44:40PM -0400, Qian Cai wrote:
-> > The commit 1a1079011da3 ("iommu/amd: Flush not present cache in
-> > iommu_map_page") added domain_flush_np_cache() in map_sg() which
-> > triggered a crash below during boot. sg_next() could return NULL if
-> > sg_is_last() is true, so after for_each_sg(sglist, s, nelems, i), "s"
-> > could be NULL which ends up deferencing a NULL pointer later here,
-> >
-> > domain_flush_np_cache(domain, s->dma_address, s->dma_length);
-> >
-> > so move domain_flush_np_cache() call inside for_each_sg() to loop over
-> > each sg element.
->
-> Thanks for the fix, but it is too late to merge it into the tree. I am
-> going to revert commit 1a1079011da3 for now and we can try again in the
-> next cycle.
->
->
-> Thanks,
->
->         Joerg
->
+	<&apps_smmu 0x6c0 0x0>
+	<&apps_smmu 0x6c3 0x0>
+
+which leaves 0x6c1 and 0x6c2 out of the picture, and makes 0x6c3
+appear explicitly (for anyone checking the documentation).
+
+Regards.
