@@ -2,191 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C227C3769B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 16:27:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10EC7376A3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 16:27:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728995AbfFFO0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 10:26:53 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:35708 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727133AbfFFO0v (ORCPT
+        id S1729037AbfFFO1i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 10:27:38 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:42810 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727133AbfFFO1h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 10:26:51 -0400
-Received: by mail-qk1-f195.google.com with SMTP id l128so1574658qke.2;
-        Thu, 06 Jun 2019 07:26:51 -0700 (PDT)
+        Thu, 6 Jun 2019 10:27:37 -0400
+Received: by mail-io1-f66.google.com with SMTP id u19so328850ior.9;
+        Thu, 06 Jun 2019 07:27:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=EL6fST0IEpAe23eXRoL7mRwGg6/fGrUhHmYwHhthu0A=;
-        b=UVapb+43wGvvCsc+kG4MG5kvonn8uO8rWUpbPmU6fIjW2vSoOgb0J5h7znCgcwDsv5
-         UHS9vO28OYZV2cr9XhX1GGACiFq7Owue+3Btmm6YLVSvDzEpinA+v3M6zdjg9ZEupcgu
-         9YAE6o9NvWi7+CHQpjyzyGazp+dcKfytut55QLNQpuIOcsq03ShbOgCrjO2FTTgURpMj
-         hfgN2zC0AUWR3UvQ9qdrhvbpwXEcdW7Y44ZSHl9uwYJh+dUJpGd1H8+P8kJEXcBzL4r5
-         PUwL7hzyHCq7QGF13TvXgaMgZpXMDfuARYo9s3z/PaVPNmekOuULwLgEoG2AsaKx2oqf
-         LY6Q==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kqRYhMLHdJKsiR7IXq7x/aBj9J6gbazdWxFz4rly5JY=;
+        b=Afuf3vVl1Yw3e3iWFdNmwdMG1bgYu9ugpciggz7kqvbNCHscejJQA+BSvukD1dz59p
+         x46sHTym/8ElPPfrxO/wsVPavjfyzxFHWfZMpP2RgDQiXNJLaBCTkNwJxxm7vGg6EZrR
+         8QY0Uo4XwZwAu1K4esgr25Oz48AgBHGK0j/I+tgDlhFQE5TIv0yBaR5U889KRFMfvamq
+         Kl79A8VH81bmJgY54TPnNgq6K5HbduQw9rI3At3xrG2cQ2d7pvAYvdeXkkXPitUeS1U0
+         WIuyhVTZfvN5E5JHNMc5C1Qj9Yz0gP24eaitbc10fjtLuRe/NrxBIvg6bDT/cKGoi6D+
+         c6Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EL6fST0IEpAe23eXRoL7mRwGg6/fGrUhHmYwHhthu0A=;
-        b=QRYb4ta2/GW35wtPhmf2ar61FCFuivQPvrxmeZ8oToItZ3yVjmmMHhFiAeHnL7KmgI
-         dETerjmxpB3cSupGDZ3sI8V2E8RZa9iBysG63gsVimwSfiv/3fnf8TBywCTLaRLya4di
-         nOzkrYQMWYW/mGgZaFFfWa2KgxxAfIY7giSKyAONyidyphjtdTriQsfCSizDDzHyKHvI
-         mILYHAcNdVCkVG9gTEj71RmZDbx7LNLV5Tl50JCPeieuWJmzhdPaxB/ifGioJZEXnOQB
-         H+CJYfle5PfAZZGGvzT5cHnOXMejI0rmwXgwhsNrXKvCElA7uuyPA4AFuzU12lv+BkOs
-         mAGw==
-X-Gm-Message-State: APjAAAX1AJCW9O17Lg/mt/b7e8nMALH4IjAcGMQ0WAccKvBiDpm80KR0
-        b2r6heW8NTDV27yzov+5q2w=
-X-Google-Smtp-Source: APXvYqxHO5HmDbCJvO4EJIBAH9+TzwduXojXt1Wznd7ngmH0tFUkeQTP+EroYO8ELjc4Pwc+yx2MaA==
-X-Received: by 2002:a37:634f:: with SMTP id x76mr37966820qkb.205.1559831210047;
-        Thu, 06 Jun 2019 07:26:50 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([177.195.208.82])
-        by smtp.gmail.com with ESMTPSA id p62sm902920qkc.42.2019.06.06.07.26.48
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 06 Jun 2019 07:26:48 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 96BEA41149; Thu,  6 Jun 2019 11:26:44 -0300 (-03)
-Date:   Thu, 6 Jun 2019 11:26:44 -0300
-To:     ufo19890607 <ufo19890607@gmail.com>
-Cc:     peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        dsahern@gmail.com, namhyung@kernel.org, milian.wolff@kdab.com,
-        arnaldo.melo@gmail.com, yuzhoujian@didichuxing.com,
-        adrian.hunter@intel.com, wangnan0@huawei.com,
-        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        acme@redhat.com
-Subject: Re: [PATCH] perf record: Add support to collect callchains from
- kernel or user space only.
-Message-ID: <20190606142644.GA21245@kernel.org>
-References: <1559222962-22891-1-git-send-email-ufo19890607@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kqRYhMLHdJKsiR7IXq7x/aBj9J6gbazdWxFz4rly5JY=;
+        b=mDh31a+z3f4HEj4OMkBMvkoFzvYV8wmfy0n6EYulJtlrAVBo7/sPfovPhqEafQZ8t0
+         LWo9ioAnM63urjCjlIRD7Rrzs2hr3TaqRKU1IwY1kFSWYrMyVdqZHmIA4CgDw5TRdcma
+         vBEuPOydlv8TcT3DeIrq4lzlai/reN1kbmK7IusoJsGgoELRo+RGOYhY1xCwEN9vha/9
+         8lz41Qk9lbW1kmlINgaOnfHV6LzJkrZREyQjMsz9o0r+M3MxXAx3FwagEBZi+uaHwOo1
+         Myb0uQ0L1htwvaMdVvMWEivlT9pg7Dn+1/kAk6T4kr0qnnFdikmb16wLBcemaqwNt/io
+         xyOg==
+X-Gm-Message-State: APjAAAVIBXshrkUzvzHo6W4tppcKhQLZxncbrzpAQiiLOsXtGU3tjm1F
+        RRnwNPrbNMgtqAxJyUOnih+4v0N/73uG39Qh3dE=
+X-Google-Smtp-Source: APXvYqztIhXnUUpmSDCiWqF1d+JigmC8q5yzRd2tPYEIqnZ4z+ovWDJeyvStPeBRdVheDOeHPBukjv5tcLECRleDV9E=
+X-Received: by 2002:a05:6602:2001:: with SMTP id y1mr11874863iod.166.1559831256203;
+ Thu, 06 Jun 2019 07:27:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1559222962-22891-1-git-send-email-ufo19890607@gmail.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <20190423160543.9922-1-jeffrey.l.hugo@gmail.com>
+ <20190423160616.10017-1-jeffrey.l.hugo@gmail.com> <20190606055034.GA4797@dell>
+ <20190606072601.GT22737@tuxbook-pro> <20190606081348.GB4797@dell>
+In-Reply-To: <20190606081348.GB4797@dell>
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Date:   Thu, 6 Jun 2019 08:27:24 -0600
+Message-ID: <CAOCk7Nrt+vWG6c9uYWunbKdUN4XcukbvyKDO1NdmYvFMfOYNhA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] arm64: dts: qcom: Add Lenovo Miix 630
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        devicetree@vger.kernel.org, MSM <linux-arm-msm@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, May 30, 2019 at 02:29:22PM +0100, ufo19890607 escreveu:
-> From: yuzhoujian <yuzhoujian@didichuxing.com>
-> 
-> One can just record callchains in the kernel or user space with
-> this new options. We can use it together with "--all-kernel" options.
-> This two options is used just like print_stack(sys) or print_ustack(usr)
-> for systemtap.
-> 
-> Show below is the usage of this new option combined with "--all-kernel"
-> options.
-> 	1. Configure all used events to run in kernel space and just
-> collect kernel callchains.
-> 	$ perf record -a -g --all-kernel --kernel-callchains
-> 	2. Configure all used events to run in kernel space and just
-> collect user callchains.
-> 	$ perf record -a -g --all-kernel --user-callchains
-> 
-> Signed-off-by: yuzhoujian <yuzhoujian@didichuxing.com>
-> ---
->  tools/perf/Documentation/perf-record.txt | 6 ++++++
->  tools/perf/builtin-record.c              | 4 ++++
->  tools/perf/perf.h                        | 2 ++
->  tools/perf/util/evsel.c                  | 4 ++++
->  4 files changed, 16 insertions(+)
-> 
-> diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
-> index de269430720a..b647eb3db0c6 100644
-> --- a/tools/perf/Documentation/perf-record.txt
-> +++ b/tools/perf/Documentation/perf-record.txt
-> @@ -490,6 +490,12 @@ Configure all used events to run in kernel space.
->  --all-user::
->  Configure all used events to run in user space.
->  
-> +--kernel-callchains::
-> +Collect callchains from kernel space.
+On Thu, Jun 6, 2019 at 2:13 AM Lee Jones <lee.jones@linaro.org> wrote:
+>
+> On Thu, 06 Jun 2019, Bjorn Andersson wrote:
+>
+> > On Wed 05 Jun 22:50 PDT 2019, Lee Jones wrote:
+> >
+> > > On Tue, 23 Apr 2019, Jeffrey Hugo wrote:
+> > >
+> > > > This adds the initial DT for the Lenovo Miix 630 laptop.  Supported
+> > > > functionality includes USB (host), microSD-card, keyboard, and trackpad.
+> > > >
+> > > > Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+> > > > ---
+> > > >  arch/arm64/boot/dts/qcom/Makefile             |   1 +
+> > > >  .../boot/dts/qcom/msm8998-clamshell.dtsi      | 278 ++++++++++++++++++
+> > > >  .../boot/dts/qcom/msm8998-lenovo-miix-630.dts |  30 ++
+> > >
+> > > What's happening with this patch?
+> > >
+> >
+> > The thermal-zones are wrong, but I'm okay with an incremental patch for
+> > that...
+>
+> I guess it would take you about 10 seconds to whip those out when
+> merging?
+>
+> > > It's been on the list a while now.  I'm waiting for it to be accepted,
+> > > since there are patches I wish to submit which are based on it.
+> > >
+> > > Who is responsible for merging these?
+> >
+> > ...so I've just been waiting for a conclusion on the HID patch before I
+> > could pick this up.
+>
+> Aren't they orthogonal?
 
-Ok, changing this to:
+Eh, if the HID stuff changes, we'll probably have to change the DT.
+Which isn't great.
 
-Collect callchains only from kernel space. I.e. this option sets
-perf_event_attr.exclude_callchain_user to 1,
-perf_event_attr.exclude_callchain_kernel to 0.
-
-> +
-> +--user-callchains::
-> +Collect callchains from user space.
-
-And this one to:
-Collect callchains only from user space. I.e. this option sets
-
-perf_event_attr.exclude_callchain_kernel to 1,
-perf_event_attr.exclude_callchain_user to 0.
-
-
-So that the user don't try using:
-
-    pref record --user-callchains --kernel-callchains
-
-expecting to get both user and kernel callchains and instead gets
-nothing.
-
-Ok?
-
-- Arnaldo
-
-> +
->  --timestamp-filename
->  Append timestamp to output file name.
->  
-> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-> index e2c3a585a61e..dca55997934e 100644
-> --- a/tools/perf/builtin-record.c
-> +++ b/tools/perf/builtin-record.c
-> @@ -2191,6 +2191,10 @@ static struct option __record_options[] = {
->  	OPT_BOOLEAN_FLAG(0, "all-user", &record.opts.all_user,
->  			 "Configure all used events to run in user space.",
->  			 PARSE_OPT_EXCLUSIVE),
-> +	OPT_BOOLEAN(0, "kernel-callchains", &record.opts.kernel_callchains,
-> +		    "collect kernel callchains"),
-> +	OPT_BOOLEAN(0, "user-callchains", &record.opts.user_callchains,
-> +		    "collect user callchains"),
->  	OPT_STRING(0, "clang-path", &llvm_param.clang_path, "clang path",
->  		   "clang binary to use for compiling BPF scriptlets"),
->  	OPT_STRING(0, "clang-opt", &llvm_param.clang_opt, "clang options",
-> diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-> index d59dee61b64d..711e009381ec 100644
-> --- a/tools/perf/perf.h
-> +++ b/tools/perf/perf.h
-> @@ -61,6 +61,8 @@ struct record_opts {
->  	bool	     record_switch_events;
->  	bool	     all_kernel;
->  	bool	     all_user;
-> +	bool	     kernel_callchains;
-> +	bool	     user_callchains;
->  	bool	     tail_synthesize;
->  	bool	     overwrite;
->  	bool	     ignore_missing_thread;
-> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> index a6f572a40deb..a606b2833e27 100644
-> --- a/tools/perf/util/evsel.c
-> +++ b/tools/perf/util/evsel.c
-> @@ -680,6 +680,10 @@ static void __perf_evsel__config_callchain(struct perf_evsel *evsel,
->  
->  	attr->sample_max_stack = param->max_stack;
->  
-> +	if (opts->kernel_callchains)
-> +		attr->exclude_callchain_user = 1;
-> +	if (opts->user_callchains)
-> +		attr->exclude_callchain_kernel = 1;
->  	if (param->record_mode == CALLCHAIN_LBR) {
->  		if (!opts->branch_stack) {
->  			if (attr->exclude_user) {
-> -- 
-> 2.14.1
-
--- 
-
-- Arnaldo
+I guess we could also merge this, and fix it up as necessary if there
+is fall out from the HID stuff.
