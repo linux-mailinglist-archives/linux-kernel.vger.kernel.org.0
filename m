@@ -2,84 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3AF837B1E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:34:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62A6D37B4C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:42:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730161AbfFFReZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 13:34:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33886 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726924AbfFFReZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 13:34:25 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5384EAE4D;
-        Thu,  6 Jun 2019 17:34:24 +0000 (UTC)
-Date:   Thu, 6 Jun 2019 19:34:21 +0200
-From:   Oscar Salvador <osalvador@suse.de>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     akpm@linux-foundation.org, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, linux-mm@kvack.org,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 01/12] mm/sparsemem: Introduce struct mem_section_usage
-Message-ID: <20190606173421.GD31194@linux>
-References: <155977186863.2443951.9036044808311959913.stgit@dwillia2-desk3.amr.corp.intel.com>
- <155977187407.2443951.16503493275720588454.stgit@dwillia2-desk3.amr.corp.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <155977187407.2443951.16503493275720588454.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1730279AbfFFRmY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 13:42:24 -0400
+Received: from mga17.intel.com ([192.55.52.151]:37402 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729080AbfFFRmY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 13:42:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 10:42:23 -0700
+X-ExtLoop1: 1
+Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
+  by orsmga001.jf.intel.com with ESMTP; 06 Jun 2019 10:42:22 -0700
+Message-ID: <5f92e89a5823a3265fa0b389a19452ba995e9406.camel@intel.com>
+Subject: Re: [PATCH 4/8] arm64: Basic Branch Target Identification support
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Dave Martin <Dave.Martin@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>, linux-arch@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Paul Elliott <paul.elliott@arm.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Kristina =?UTF-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
+        linux-kernel@vger.kernel.org, Sudakshina Das <sudi.das@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Date:   Thu, 06 Jun 2019 10:34:22 -0700
+In-Reply-To: <20190606172345.GD28398@e103592.cambridge.arm.com>
+References: <1558693533-13465-1-git-send-email-Dave.Martin@arm.com>
+         <1558693533-13465-5-git-send-email-Dave.Martin@arm.com>
+         <20190524130217.GA15566@lakrids.cambridge.arm.com>
+         <20190524145306.GZ28398@e103592.cambridge.arm.com>
+         <20190606171155.GI56860@arrakis.emea.arm.com>
+         <20190606172345.GD28398@e103592.cambridge.arm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 05, 2019 at 02:57:54PM -0700, Dan Williams wrote:
-> Towards enabling memory hotplug to track partial population of a
-> section, introduce 'struct mem_section_usage'.
+On Thu, 2019-06-06 at 18:23 +0100, Dave Martin wrote:
+> On Thu, Jun 06, 2019 at 06:11:56PM +0100, Catalin Marinas wrote:
+> > On Fri, May 24, 2019 at 03:53:06PM +0100, Dave P Martin wrote:
+> > > On Fri, May 24, 2019 at 02:02:17PM +0100, Mark Rutland wrote:
+> > > > On Fri, May 24, 2019 at 11:25:29AM +0100, Dave Martin wrote:
+> > > > >  #endif /* _UAPI__ASM_HWCAP_H */
+> > > > > diff --git a/arch/arm64/include/uapi/asm/mman.h
+> > > > > b/arch/arm64/include/uapi/asm/mman.h
+> > > > > new file mode 100644
+> > > > > index 0000000..4776b43
+> > > > > --- /dev/null
+> > > > > +++ b/arch/arm64/include/uapi/asm/mman.h
+> > > > > @@ -0,0 +1,9 @@
+> > > > > +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> > > > > +#ifndef _UAPI__ASM_MMAN_H
+> > > > > +#define _UAPI__ASM_MMAN_H
+> > > > > +
+> > > > > +#include <asm-generic/mman.h>
+> > > > > +
+> > > > > +#define PROT_BTI_GUARDED	0x10		/* BTI guarded
+> > > > > page */
+> > > > 
+> > > > From prior discussions, I thought this would be PROT_BTI, without the
+> > > > _GUARDED suffix. Do we really need that?
+> > > > 
+> > > > AFAICT, all other PROT_* definitions only have a single underscore, and
+> > > > the existing arch-specific flags are PROT_ADI on sparc, and PROT_SAO on
+> > > > powerpc.
+> > > 
+> > > No strong opinon.  I was trying to make the name less obscure, but I'm
+> > > equally happy with PROT_BTI if people prefer that.
+> > 
+> > I prefer PROT_BTI as well. We are going to add a PROT_MTE at some point
+> > (and a VM_ARM64_MTE in the high VMA flag bits).
 > 
-> A pointer to a 'struct mem_section_usage' instance replaces the existing
-> pointer to a 'pageblock_flags' bitmap. Effectively it adds one more
-> 'unsigned long' beyond the 'pageblock_flags' (usemap) allocation to
-> house a new 'subsection_map' bitmap.  The new bitmap enables the memory
-> hot{plug,remove} implementation to act on incremental sub-divisions of a
-> section.
+> Ack.
 > 
-> The default SUBSECTION_SHIFT is chosen to keep the 'subsection_map' no
-> larger than a single 'unsigned long' on the major architectures.
-> Alternatively an architecture can define ARCH_SUBSECTION_SHIFT to
-> override the default PMD_SHIFT. Note that PowerPC needs to use
-> ARCH_SUBSECTION_SHIFT to workaround PMD_SHIFT being a non-constant
-> expression on PowerPC.
+> Some things need attention, so I need to respin this series anyway.
 > 
-> The primary motivation for this functionality is to support platforms
-> that mix "System RAM" and "Persistent Memory" within a single section,
-> or multiple PMEM ranges with different mapping lifetimes within a single
-> section. The section restriction for hotplug has caused an ongoing saga
-> of hacks and bugs for devm_memremap_pages() users.
-> 
-> Beyond the fixups to teach existing paths how to retrieve the 'usemap'
-> from a section, and updates to usemap allocation path, there are no
-> expected behavior changes.
-> 
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Logan Gunthorpe <logang@deltatee.com>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> skip_faulting_instruction() and kprobes/uprobes may need looking at,
+> plus I want to simply the ELF parsing (at least to skip some cost for
+> arm64).
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Can we add a case in the 'consistency checks for the interpreter' (right above
+where you add arch_parse_property()) for PT_NOTE?  That way you can still use
+part of the same parser.
 
--- 
-Oscar Salvador
-SUSE L3
+Yu-cheng
+
