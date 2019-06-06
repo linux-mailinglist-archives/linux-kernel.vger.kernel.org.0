@@ -2,116 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 892053806C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 00:19:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4434D38059
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 00:12:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729110AbfFFWS6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 18:18:58 -0400
-Received: from mga18.intel.com ([134.134.136.126]:41329 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726837AbfFFWS6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 18:18:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 15:18:57 -0700
-X-ExtLoop1: 1
-Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
-  by orsmga004.jf.intel.com with ESMTP; 06 Jun 2019 15:18:56 -0700
-Message-ID: <93ee5b103b8261d2b50de89f8658d133639a9af5.camel@intel.com>
-Subject: Re: [PATCH v7 04/27] x86/fpu/xstate: Introduce XSAVES system states
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Andy Lutomirski <luto@amacapital.net>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>
-Date:   Thu, 06 Jun 2019 15:10:55 -0700
-In-Reply-To: <4effb749-0cdc-6a49-6352-7b2d4aa7d866@intel.com>
-References: <20190606200646.3951-1-yu-cheng.yu@intel.com>
-         <20190606200646.3951-5-yu-cheng.yu@intel.com>
-         <0a2f8b9b-b96b-06c8-bae0-b78b2ca3b727@intel.com>
-         <5EE146A8-6C8C-4C5D-B7C0-AB8AD1012F1E@amacapital.net>
-         <4effb749-0cdc-6a49-6352-7b2d4aa7d866@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1729044AbfFFWMp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 18:12:45 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34370 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726837AbfFFWMo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 18:12:44 -0400
+Received: by mail-pg1-f196.google.com with SMTP id h2so12964pgg.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 15:12:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=I1d4jIEuRlGZxg1GucXllJmBFZyMym/U3WNCfHVcLJQ=;
+        b=mouT5fX9PGtJtroNBzXumdz4FHH4ysx4UiwDXX9RCT9ZI3lMJ0dTVWDhkhLgW3ap12
+         yFzqZyKUc9zy3b/vCzYL1ERNGlywnytPiP48/2c9D5amdBMrK6O1KpFPlVpWrmaBmJbH
+         1wEurHk3gdYBVqupABQu7ZW8gdEASp7obEPFyZ8QC3hhj3sKKFwKNONMjyIQDzSjt7yt
+         bbpLFqKtu2/duZmtdL+o91cVCsWb88L+Okv3evlKYHC/zW+YP67ke1dso3WO8FHLLkj6
+         cuTq8TpWl4B2V8XMOukRykCXTalM33NB14xrrhS0YBlEpHmdg9DrBtk9Lua/6YqZUnJf
+         Zcnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=I1d4jIEuRlGZxg1GucXllJmBFZyMym/U3WNCfHVcLJQ=;
+        b=OEIbBs1mGgzfuH15V3ayCwKUaApng6mMGYw/FkuRPotIQGZ/B0CmbsQavYpfzTQo7T
+         JzkaCs7qbu68n4G4N2t9cXsOjmL4Y953Jekf0pm1kchpwCLhgAvaLKdfdET18NcG0I7T
+         CVv3Wh/qZezY1m8k63MMuiQCzioFyomiUuM7r/r8RWQv+GuURj4fRYOkvHfA9TUC0gz6
+         Mcqz+ubwH3iJh8I+AOtDwwHhlvFtMqDQ1yQT3RptVBcEh3/LjBP0vqKFq7imhJMNKtCf
+         lW5rtrYL6CKs6MPUbLQVsO0F9idqrFP5IY6ZMZyt9g7vgyafLPbcerdHW6/VHV6txOGP
+         Xd+w==
+X-Gm-Message-State: APjAAAX+KiX0u9rqyqwKRh1TdiVXhlJByrUzy/QUprrKQ5ZOy6M+0pSh
+        Pr0JuBz2/UQo6FDQ3qfpRbOsAA==
+X-Google-Smtp-Source: APXvYqwQnBorcRjflE1meuxbdMbSQ3Lv7HK4SDilnevNLs4xGX0Evf4QJigqDA0NP8G5rzuR40fmOA==
+X-Received: by 2002:aa7:8b12:: with SMTP id f18mr54779859pfd.178.1559859162875;
+        Thu, 06 Jun 2019 15:12:42 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id c6sm148687pfm.163.2019.06.06.15.12.41
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 06 Jun 2019 15:12:41 -0700 (PDT)
+Date:   Thu, 6 Jun 2019 15:12:40 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Michal Hocko <mhocko@kernel.org>
+cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] Revert "mm, thp: restore node-local hugepage
+ allocations"
+In-Reply-To: <20190605093257.GC15685@dhcp22.suse.cz>
+Message-ID: <alpine.DEB.2.21.1906061451001.121338@chino.kir.corp.google.com>
+References: <20190503223146.2312-1-aarcange@redhat.com> <20190503223146.2312-3-aarcange@redhat.com> <alpine.DEB.2.21.1905151304190.203145@chino.kir.corp.google.com> <20190520153621.GL18914@techsingularity.net> <alpine.DEB.2.21.1905201018480.96074@chino.kir.corp.google.com>
+ <20190523175737.2fb5b997df85b5d117092b5b@linux-foundation.org> <alpine.DEB.2.21.1905281907060.86034@chino.kir.corp.google.com> <20190531092236.GM6896@dhcp22.suse.cz> <alpine.DEB.2.21.1905311430120.92278@chino.kir.corp.google.com>
+ <20190605093257.GC15685@dhcp22.suse.cz>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-06-06 at 15:08 -0700, Dave Hansen wrote:
-> 
-> On 6/6/19 3:04 PM, Andy Lutomirski wrote:
-> > > But, that seems broken.  If we have supervisor state, we can't 
-> > > always defer the load until return to userspace, so we'll never?? 
-> > > have TIF_NEED_FPU_LOAD.  That would certainly be true for 
-> > > cet_kernel_state.
-> > 
-> > Ugh. I was sort of imagining that we would treat supervisor state
-> 
->  completely separately from user state.  But can you maybe give
-> examples of exactly what you mean?
-> > 
-> > > It seems like we actually need three classes of XSAVE states: 1. 
-> > > User state
-> > 
-> > This is FPU, XMM, etc, right?
-> 
-> Yep.
-> 
-> > > 2. Supervisor state that affects user mode
-> > 
-> > User CET?
-> 
-> Yep.
-> 
-> > > 3. Supervisor state that affects kernel mode
-> > 
-> > Like supervisor CET?  If we start doing supervisor shadow stack, the 
-> > context switches will be real fun.  We may need to handle this in 
-> > asm.
-> 
-> Yeah, that's what I was thinking.
-> 
-> I have the feeling Yu-cheng's patches don't comprehend this since
-> Sebastian's patches went in after he started working on shadow stacks.
-> 
-> > Where does PKRU fit in?  Maybe we can treat it as #3?
-> 
-> I thought Sebastian added specific PKRU handling to make it always
-> eager.  It's actually user state that affect kernel mode. :)
+On Wed, 5 Jun 2019, Michal Hocko wrote:
 
-For CET user states, we need to restore before making changes.  If they are not
-being changed (i.e. signal handling and syscalls), then they are restored only
-before going back to user-mode.
+> > That's fine, but we also must be mindful of users who have used 
+> > MADV_HUGEPAGE over the past four years based on its hard-coded behavior 
+> > that would now regress as a result.
+> 
+> Absolutely, I am all for helping those usecases. First of all we need to
+> understand what those usecases are though. So far we have only seen very
+> vague claims about artificial worst case examples when a remote access
+> dominates the overall cost but that doesn't seem to be the case in real
+> life in my experience (e.g. numa balancing will correct things or the
+> over aggressive node reclaim tends to cause problems elsewhere etc.).
+> 
 
-For CET kernel states, we only need to make small changes in the way similar to
-the PKRU handling, right?  We'll address it when sending CET kernel-mode
-patches.
+The usecase is a remap of a binary's text segment to transparent hugepages 
+by doing mmap() -> madvise(MADV_HUGEPAGE) -> mremap() and when this 
+happens on a locally fragmented node.  This happens at startup when we 
+aren't concerned about allocation latency: we want to compact.  We are 
+concerned with access latency thereafter as long as the process is 
+running.
 
-I will put in more comments as suggested by Dave in earlier emails.
+MADV_HUGEPAGE has worked great for this and we have a large userspace 
+stack built upon that because it's been the long-standing behavior.  This 
+gets back to the point of MADV_HUGEPAGE being overloaded for four 
+different purposes.  I argue that processes that fit within a single node 
+are in the majority.
 
-Yu-cheng
+> > Thus far, I haven't seen anybody engage in discussion on how to address 
+> > the issue other than proposed reverts that readily acknowledge they cause 
+> > other users to regress.  If all nodes are fragmented, the swap storms that 
+> > are currently reported for the local node would be made worse by the 
+> > revert -- if remote hugepages cannot be faulted quickly then it's only 
+> > compounded the problem.
+> 
+> Andrea has outline the strategy to go IIRC. There also has been a
+> general agreement that we shouldn't be over eager to fall back to remote
+> nodes if the base page size allocation could be satisfied from a local node.
+
+Sorry, I haven't seen patches for this, I can certainly test them if 
+there's a link.  If we have the ability to tune how eager the page 
+allocator is to fallback and have the option to say "never" as part of 
+that eagerness, it may work.
+
+The idea that I had was snipped from this, however, and it would be nice 
+to get some feedback on it: I've suggested that direct reclaim for the 
+purposes of hugepage allocation on the local node is never worthwhile 
+unless and until memory compaction can both capture that page to use (not 
+rely on the freeing scanner to find it) and that migration of a number of 
+pages would eventually result in the ability to free a pageblock.
+
+I'm hoping that we can all agree to that because otherwise it leads us 
+down a bad road if reclaim is doing pointless work (freeing scanner can't 
+find it or it gets allocated again before it can find it) or compaction 
+can't make progress as a result of it (even though we can migrate, it 
+still won't free a pageblock).
+
+In the interim, I think we should suppress direct reclaim entirely for 
+thp allocations, regardless of enabled=always or MADV_HUGEPAGE because it 
+cannot be proven that the reclaim work is beneficial and I believe it 
+results in the swap storms that are being reported.
+
+Any disagreements so far?
+
+Furthermore, if we can agree to that, memory compaction when allocating a 
+transparent hugepage fails for different reasons, one of which is because 
+we fail watermark checks because we lack migration targets.  This is 
+normally what leads to direct reclaim.  Compaction is *supposed* to return 
+COMPACT_SKIPPED for this but that's overloaded as well: it happens when we 
+fail extfrag_threshold checks and wheng gfp flags doesn't allow it.  The 
+former matters for thp.
+
+So my proposed change would be:
+ - give the page allocator a consistent indicator that compaction failed
+   because we are low on memory (make COMPACT_SKIPPED really mean this),
+ - if we get this in the page allocator and we are allocating thp, fail,
+   reclaim is unlikely to help here and is much more likely to be
+   disruptive
+     - we could retry compaction if we haven't scanned all memory and
+       were contended,
+ - if the hugepage allocation fails, have thp check watermarks for order-0 
+   pages without any padding,
+ - if watermarks succeed, fail the thp allocation: we can't allocate
+   because of fragmentation and it's better to return node local memory,
+ - if watermarks fail, a follow up allocation of the pte will likely also
+   fail, so thp retries the allocation with a cleared  __GFP_THISNODE.
+
+This doesn't sound very invasive and I'll code it up if it will be tested.
