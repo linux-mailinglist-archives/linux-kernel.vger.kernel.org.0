@@ -2,112 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A10D537DD5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 22:09:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E89F137E9B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 22:21:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728436AbfFFUJX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 16:09:23 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:33713 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727082AbfFFUJX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 16:09:23 -0400
-Received: by mail-ed1-f66.google.com with SMTP id h9so5122077edr.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 13:09:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=24yjnYL7s987Wr60j8RAvSz9t8n51a5eyXvTdKBP2FI=;
-        b=T+TVZGGQQa96vI+6EVP32cJl1tCHal/pZDVbtAIrkuyFS0zd9i8L+qEhJCLo1ayG6n
-         4tNcAxwlQe+aGhP0B1VaMiTRVAzqCuAi2x5Fq4U+Be2KKsdH8VKpixdx/kC4vBMSR8ON
-         CW3HRyVODO/dFOKOrrZShUvHnZpOGeyVt3/QP94UVsOqnzhgR3tHwOGYvY9TDrQ8Ereu
-         NQcl7V6jLDdqdBIvE32ySfeLOEhRCxUgX0hEvPIw26Sg6osJp6Vgrt516zRguEOnjLIt
-         R23XeOGVkJ6UaZt4Iwk5H1TNn10EjP3bInaqK/ZnBfU2kSMOJrmNRzNs+lyt3lctP5jB
-         BfGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=24yjnYL7s987Wr60j8RAvSz9t8n51a5eyXvTdKBP2FI=;
-        b=BEu4XD/oPgAsGIS1xQZhcipHzlycjV7QYCXozW1mDuFPndEaRjIxSjj2J/zi4O7CW1
-         XMjTs3eJvDUTfgPMa0aCTUAvsc2xTu1ICNZBQMXLy6Sdqeqr6t5ctY5StroVZ+OBWUVI
-         3ues2XGZ7yp1g1+AhZcc4Kgk3dVdmYlbWJK/kOnoOiPa7XGlYZpHPiim8Sa+zTUHCQ60
-         plx8SmMsPfGpEJcEvFEk9q5Cp66t6aHlZDxX4995AMWGmcEMjcn4z09YLlG9feU4wE16
-         42rKoWusCTC7hLfD016DKoU+7guDEfiK/zOtvNpPczL6x5doYcHWWvliW7g0v2WLwe9E
-         0Ksg==
-X-Gm-Message-State: APjAAAWU0e31iB/qFLbo6KlexqhZu3B1MFTJ/KZO+SvtTiDj/InCgOyp
-        uj47o+bXcTLGT+IjiNHzCOc=
-X-Google-Smtp-Source: APXvYqzWlxmyZ/jtHCXySQJRlFAhkEFP/2YRxDB1KWJ4k66130Er8s8obknRMLzrvd7WFOq0+gRcLg==
-X-Received: by 2002:a17:906:66c5:: with SMTP id k5mr43809059ejp.146.1559851761929;
-        Thu, 06 Jun 2019 13:09:21 -0700 (PDT)
-Received: from archlinux-epyc ([2a01:4f9:2b:2b15::2])
-        by smtp.gmail.com with ESMTPSA id p23sm682711edx.61.2019.06.06.13.09.20
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 06 Jun 2019 13:09:21 -0700 (PDT)
-Date:   Thu, 6 Jun 2019 13:09:19 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Shuming Fan <shumingf@realtek.com>,
-        Mark Brown <broonie@kernel.org>,
-        Bard Liao <bardliao@realtek.com>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Subject: Re: [PATCH] ASoC: rt1011: Mark format integer literals as unsigned
-Message-ID: <20190606200919.GA12912@archlinux-epyc>
-References: <20190606051227.90944-1-natechancellor@gmail.com>
- <CAKwvOdnswiifrvSrBcAnc4Br8nhxJRUAL0yNM6T6=4xScHXf5g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKwvOdnswiifrvSrBcAnc4Br8nhxJRUAL0yNM6T6=4xScHXf5g@mail.gmail.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+        id S1726800AbfFFUTC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 16:19:02 -0400
+Received: from mga14.intel.com ([192.55.52.115]:51133 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726744AbfFFURd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 16:17:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 13:17:31 -0700
+X-ExtLoop1: 1
+Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
+  by fmsmga001.fm.intel.com with ESMTP; 06 Jun 2019 13:17:31 -0700
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>
+Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Subject: [PATCH v7 08/14] x86/cet/ibt: Add ENDBR to op-code-map
+Date:   Thu,  6 Jun 2019 13:09:20 -0700
+Message-Id: <20190606200926.4029-9-yu-cheng.yu@intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190606200926.4029-1-yu-cheng.yu@intel.com>
+References: <20190606200926.4029-1-yu-cheng.yu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 11:50:10AM -0700, Nick Desaulniers wrote:
-> On Wed, Jun 5, 2019 at 10:13 PM Nathan Chancellor
-> <natechancellor@gmail.com> wrote:
-> >
-> > Clang warns:
-> >
-> > sound/soc/codecs/rt1011.c:1291:12: warning: integer literal is too large
-> > to be represented in type 'long', interpreting as 'unsigned long' per
-> > C89; this literal will have type 'long long' in C99 onwards
-> > [-Wc99-compat]
-> >                 format = 2147483648; /* 2^24 * 128 */
-> 
-> This number's bitpattern is a leading one followed by 31 zeros.
-> `format` is declared as `unsigned int`, and literals in C are signed
-> unless suffixed, so this patch LGTM.  Maybe a macro declaring such a
-> bitpattern would improve readability over the existing magic constant
-> and comment?
+Add control transfer terminating instructions:
 
-I thought about it but that is ultimately up to the maintainer I think.
+ENDBR64/ENDBR32:
+    Mark a valid 64/32-bit control transfer endpoint.
 
-> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-> 
-> >                          ^
-> > sound/soc/codecs/rt1011.c:2123:13: warning: integer literal is too large
-> > to be represented in type 'long', interpreting as 'unsigned long' per
-> > C89; this literal will have type 'long long' in C99 onwards
-> > [-Wc99-compat]
-> >                         format = 2147483648; /* 2^24 * 128 */
-> >                                  ^
-> > 2 warnings generated.
-> >
-> > Mark the integer literals as unsigned explicitly so that if the kernel
-> > does ever bump the C standard it uses, the behavior is consitent.
-> 
-> s/consitent/consistent/
-> 
-> :set spell
+Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+---
+ arch/x86/lib/x86-opcode-map.txt               | 13 +++++++++++--
+ tools/objtool/arch/x86/lib/x86-opcode-map.txt | 13 +++++++++++--
+ 2 files changed, 22 insertions(+), 4 deletions(-)
 
-Grr... I can send a v2 unless the maintainer wants to manually fix it
-up. Thank you for the review as always.
+diff --git a/arch/x86/lib/x86-opcode-map.txt b/arch/x86/lib/x86-opcode-map.txt
+index c5e825d44766..fbc53481bc59 100644
+--- a/arch/x86/lib/x86-opcode-map.txt
++++ b/arch/x86/lib/x86-opcode-map.txt
+@@ -620,7 +620,16 @@ ea: SAVEPREVSSP (f3)
+ # Skip 0xeb-0xff
+ EndTable
+ 
+-Table: 3-byte opcode 2 (0x0f 0x38)
++Table: 3-byte opcode 2 (0x0f 0x1e)
++Referrer:
++AVXcode:
++# Skip 0x00-0xf9
++fa: ENDBR64 (f3)
++fb: ENDBR32 (f3)
++#skip 0xfc-0xff
++EndTable
++
++Table: 3-byte opcode 3 (0x0f 0x38)
+ Referrer: 3-byte escape 1
+ AVXcode: 2
+ # 0x0f 0x38 0x00-0x0f
+@@ -804,7 +813,7 @@ f6: ADCX Gy,Ey (66) | ADOX Gy,Ey (F3) | MULX By,Gy,rDX,Ey (F2),(v) | WRSS Pq,Qq
+ f7: BEXTR Gy,Ey,By (v) | SHLX Gy,Ey,By (66),(v) | SARX Gy,Ey,By (F3),(v) | SHRX Gy,Ey,By (F2),(v)
+ EndTable
+ 
+-Table: 3-byte opcode 3 (0x0f 0x3a)
++Table: 3-byte opcode 4 (0x0f 0x3a)
+ Referrer: 3-byte escape 2
+ AVXcode: 3
+ # 0x0f 0x3a 0x00-0xff
+diff --git a/tools/objtool/arch/x86/lib/x86-opcode-map.txt b/tools/objtool/arch/x86/lib/x86-opcode-map.txt
+index c5e825d44766..fbc53481bc59 100644
+--- a/tools/objtool/arch/x86/lib/x86-opcode-map.txt
++++ b/tools/objtool/arch/x86/lib/x86-opcode-map.txt
+@@ -620,7 +620,16 @@ ea: SAVEPREVSSP (f3)
+ # Skip 0xeb-0xff
+ EndTable
+ 
+-Table: 3-byte opcode 2 (0x0f 0x38)
++Table: 3-byte opcode 2 (0x0f 0x1e)
++Referrer:
++AVXcode:
++# Skip 0x00-0xf9
++fa: ENDBR64 (f3)
++fb: ENDBR32 (f3)
++#skip 0xfc-0xff
++EndTable
++
++Table: 3-byte opcode 3 (0x0f 0x38)
+ Referrer: 3-byte escape 1
+ AVXcode: 2
+ # 0x0f 0x38 0x00-0x0f
+@@ -804,7 +813,7 @@ f6: ADCX Gy,Ey (66) | ADOX Gy,Ey (F3) | MULX By,Gy,rDX,Ey (F2),(v) | WRSS Pq,Qq
+ f7: BEXTR Gy,Ey,By (v) | SHLX Gy,Ey,By (66),(v) | SARX Gy,Ey,By (F3),(v) | SHRX Gy,Ey,By (F2),(v)
+ EndTable
+ 
+-Table: 3-byte opcode 3 (0x0f 0x3a)
++Table: 3-byte opcode 4 (0x0f 0x3a)
+ Referrer: 3-byte escape 2
+ AVXcode: 3
+ # 0x0f 0x3a 0x00-0xff
+-- 
+2.17.1
 
-Nathan
