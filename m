@@ -2,115 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 389DE369B9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 04:03:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 946C0369BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 04:04:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726754AbfFFCDr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 22:03:47 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39658 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726593AbfFFCDr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 22:03:47 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F1A9D80D;
-        Wed,  5 Jun 2019 19:03:45 -0700 (PDT)
-Received: from [10.162.43.122] (p8cg001049571a15.blr.arm.com [10.162.43.122])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 519F83F246;
-        Wed,  5 Jun 2019 19:03:37 -0700 (PDT)
-Subject: Re: [RFC V2] mm: Generalize notify_page_fault()
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        x86@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        "David S. Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-References: <1559630046-12940-1-git-send-email-anshuman.khandual@arm.com>
- <20190604215325.GA2025@bombadil.infradead.org>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <016a4808-527d-7164-b8a0-3173a4ecfa25@arm.com>
-Date:   Thu, 6 Jun 2019 07:33:52 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20190604215325.GA2025@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        id S1726818AbfFFCD4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 22:03:56 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:44224 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726593AbfFFCDz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 22:03:55 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 52AD8144EB8B8;
+        Wed,  5 Jun 2019 19:03:55 -0700 (PDT)
+Date:   Wed, 05 Jun 2019 19:03:53 -0700 (PDT)
+Message-Id: <20190605.190353.1269004280892262456.davem@davemloft.net>
+To:     gustavo@embeddedor.com
+Cc:     jiri@mellanox.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] lib: objagg: Use struct_size() in kzalloc()
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190605144516.GA3383@embeddedor>
+References: <20190605144516.GA3383@embeddedor>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 05 Jun 2019 19:03:55 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Date: Wed, 5 Jun 2019 09:45:16 -0500
 
-
-On 06/05/2019 03:23 AM, Matthew Wilcox wrote:
-> On Tue, Jun 04, 2019 at 12:04:06PM +0530, Anshuman Khandual wrote:
->> +++ b/arch/x86/mm/fault.c
->> @@ -46,23 +46,6 @@ kmmio_fault(struct pt_regs *regs, unsigned long addr)
->>  	return 0;
->>  }
->>  
->> -static nokprobe_inline int kprobes_fault(struct pt_regs *regs)
->> -{
-> ...
->> -}
+> One of the more common cases of allocation size calculations is finding
+> the size of a structure that has a zero-sized array at the end, along
+> with memory for some number of elements for that array. For example:
 > 
->> diff --git a/include/linux/mm.h b/include/linux/mm.h
->> index 0e8834a..c5a8dcf 100644
->> --- a/include/linux/mm.h
->> +++ b/include/linux/mm.h
->> @@ -1778,6 +1778,7 @@ static inline int pte_devmap(pte_t pte)
->>  }
->>  #endif
->>  
->> +int notify_page_fault(struct pt_regs *regs, unsigned int trap);
+> struct objagg_stats {
+> 	...
+>         struct objagg_obj_stats_info stats_info[];
+> };
 > 
-> Why is it now out-of-line?  
-
-Did not get it. AFAICS it is the same from last version and does not cross
-80 characters limit on that line.
-
+> size = sizeof(*objagg_stats) + sizeof(objagg_stats->stats_info[0]) * count;
+> instance = kzalloc(size, GFP_KERNEL);
 > 
->> +++ b/mm/memory.c
->> +int __kprobes notify_page_fault(struct pt_regs *regs, unsigned int trap)
->> +{
->> +	int ret = 0;
->> +
->> +	/*
->> +	 * To be potentially processing a kprobe fault and to be allowed
->> +	 * to call kprobe_running(), we have to be non-preemptible.
->> +	 */
->> +	if (kprobes_built_in() && !preemptible() && !user_mode(regs)) {
->> +		if (kprobe_running() && kprobe_fault_handler(regs, trap))
->> +			ret = 1;
->> +	}
->> +	return ret;
->> +}
->> +
+> Instead of leaving these open-coded and prone to type mistakes, we can
+> now use the new struct_size() helper:
 > 
-> I would argue this should be in kprobes.h as a static nokprobe_inline.
+> instance = kzalloc(struct_size(instance, stats_info, count), GFP_KERNEL);
+> 
+> Notice that, in this case, variable alloc_size is not necessary, hence it
+> is removed.
+> 
+> This code was detected with the help of Coccinelle.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-We can do that. Though it will be a stand alone (not inside #ifdef) as it
-already takes care of CONFIG_KPROBES via kprobes_built_in(). Will change
-it and in which case the above declaration in mm.h would not be required.
+Applied.
