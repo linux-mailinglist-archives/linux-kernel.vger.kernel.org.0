@@ -2,99 +2,392 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17B7B368F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 03:03:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 162E1368FE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 03:04:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbfFFBC7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 21:02:59 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40117 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726694AbfFFBC5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 21:02:57 -0400
-Received: by mail-pl1-f196.google.com with SMTP id a93so198014pla.7
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 18:02:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=JrcbvKOldgWkH50kiW0a4HfpMKXomzEmet187F9e9WI=;
-        b=Qd9d1msbSQb53Iq2KqsHsAFxY5JW7/DojKA2+N32CgI93O94JHubPZWVlC4T3bAMJr
-         ZrvFCj/RzF+FbICJpj5JCH4CSTEAarhBE+BW5cjaT/fhsuBRzHh4R4kg+eUsJkXcmelb
-         aJRZaXGTdAXba/9Zyk31ploH6ku4OjM3HOI4G79WyWiadhcA/+hLyoyLuNP/7hmImK4s
-         yj7Wm+GpGOxYDWvhRDlGg18PZFunPptfjzeUCnWdgmaLkwE47/RuxkhrxK4Na8bGlHe6
-         qFcEbErPiIJsSTnCUmMVu7jomRuNUC1mBrKGUgXmeBtTMd8nZ9ibn65B24CxyjbksXiS
-         yxlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=JrcbvKOldgWkH50kiW0a4HfpMKXomzEmet187F9e9WI=;
-        b=UKsI9dXIh/cRrc0gW9mgEZx+07f9nQXR795BlPTrHa36ban6EQ1DPas0yDselANM1d
-         3HkbhOECVaEE0JHaQo8zs6/5w2hk+3gxUswxET8IQeGTLlwVz4/GfY+P0EqDx/y1V+II
-         TkgbFjFY3iVqMIiMcmtgbb2lurAKZovR/86lXEpbslFWtn5c4NGbJjjK6tOrPmGkDq1N
-         sAhgHf/bCxXZxVPaiLTOCFrstswCvwfCqCBCS7PSpxbxCP2oAiVhnTV0KKvwU5OeKqq9
-         kCzk2PNRsD0dhW9ksX0EVzhNCefZhMiQn6jJyXVijtrptT9291VxttJvtTjHSJ1BDKYe
-         YeXQ==
-X-Gm-Message-State: APjAAAXTkv0WrktgqJFldlXhTaSy7b7WcGaIXU+OnsBhCi7epr+5vAkv
-        DGjRmri4HekhhRIW0B9iBIsbqw==
-X-Google-Smtp-Source: APXvYqzxPgy34UUwtKp+qsxEzAqNHyHrYFZnGo1PhXfMwMDzdB7H5vaW7x7ustTZPxvF+bd24ZmJYA==
-X-Received: by 2002:a17:902:a716:: with SMTP id w22mr47239553plq.270.1559782976660;
-        Wed, 05 Jun 2019 18:02:56 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 144sm170856pfy.54.2019.06.05.18.02.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Jun 2019 18:02:56 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <agross@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Evan Green <evgreen@chromium.org>,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org
-Subject: [PATCH v2 3/3] arm64: dts: qcom: sdm845-mtp: Specify UFS device-reset GPIO
-Date:   Wed,  5 Jun 2019 18:02:49 -0700
-Message-Id: <20190606010249.3538-4-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20190606010249.3538-1-bjorn.andersson@linaro.org>
-References: <20190606010249.3538-1-bjorn.andersson@linaro.org>
+        id S1726713AbfFFBEu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 21:04:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59368 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726581AbfFFBEu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 21:04:50 -0400
+Received: from dragon (li1264-180.members.linode.com [45.79.165.180])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6E4C20872;
+        Thu,  6 Jun 2019 01:04:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559783088;
+        bh=y9Y0nBtkXWOsuZydgoYTvSFfbBFosYnVEbiVlseLM8g=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=p31hObTrXcg6hWOauZjRUqsNHUY3x8RpYwXE80eyhKsmjbwDSMshcjY5iLZO52jZh
+         ijE5QnTtbZH0NcmOC3ih2M2UjVHhM1ZwYBXV6/Kitupdfg82xufJEGudb7gpvsx2pC
+         2bIt+2F0W6eqxa00vNo3ud44TnUY5Hx6tS/uce88=
+Date:   Thu, 6 Jun 2019 09:04:31 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Vladimir Oltean <olteanv@gmail.com>
+Cc:     leoyang.li@nxp.com, robh+dt@kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v2] ARM: dts: Introduce the NXP LS1021A-TSN board
+Message-ID: <20190606010429.GP29853@dragon>
+References: <20190529221222.19276-1-olteanv@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190529221222.19276-1-olteanv@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Specify the UFS device-reset gpio, so that the controller will issue a
-reset of the UFS device.
+On Thu, May 30, 2019 at 01:12:22AM +0300, Vladimir Oltean wrote:
+> The LS1021A-TSN is a development board built by VVDN/Argonboards in
+> partnership with NXP.
+> 
+> It features the LS1021A SoC and the first-generation SJA1105T Ethernet
+> switch for prototyping implementations of a subset of IEEE 802.1 TSN
+> standards.
+> 
+> It has two regular Ethernet ports and four switched, TSN-capable ports.
+> 
+> It also features:
+> - One Arduino header
+> - One expansion header
+> - Two USB 3.0 ports
+> - One mini PCIe slot
+> - One SATA interface
+> - Accelerometer, gyroscope, temperature sensors
+> 
+> Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
+> ---
+> Changes from v1:
+> - Applied Shawn's feedback
+> - Introduced QSPI flash node
+> 
+> v1 patch available at:
+> https://patchwork.kernel.org/patch/10930451/
+> 
+>  arch/arm/boot/dts/Makefile        |   1 +
+>  arch/arm/boot/dts/ls1021a-tsn.dts | 288 ++++++++++++++++++++++++++++++
+>  2 files changed, 289 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/ls1021a-tsn.dts
+> 
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index dab2914fa293..a4eb4ca5e148 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -602,6 +602,7 @@ dtb-$(CONFIG_SOC_IMX7ULP) += \
+>  dtb-$(CONFIG_SOC_LS1021A) += \
+>  	ls1021a-moxa-uc-8410a.dtb \
+>  	ls1021a-qds.dtb \
+> +	ls1021a-tsn.dtb \
+>  	ls1021a-twr.dtb
+>  dtb-$(CONFIG_SOC_VF610) += \
+>  	vf500-colibri-eval-v3.dtb \
+> diff --git a/arch/arm/boot/dts/ls1021a-tsn.dts b/arch/arm/boot/dts/ls1021a-tsn.dts
+> new file mode 100644
+> index 000000000000..b05774eac92e
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/ls1021a-tsn.dts
+> @@ -0,0 +1,288 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Copyright 2016-2018 NXP Semiconductors
+> + * Copyright 2019 Vladimir Oltean <olteanv@gmail.com>
+> + */
+> +
+> +/dts-v1/;
+> +#include "ls1021a.dtsi"
+> +
+> +/ {
+> +	model = "NXP LS1021A-TSN Board";
+> +
+> +	sys_mclk: clock-mclk {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <24576000>;
+> +	};
+> +
+> +	reg_vdda_codec: regulator-3V3 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "3P3V";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		regulator-always-on;
+> +	};
+> +
+> +	reg_vddio_codec: regulator-2V5 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "2P5V";
+> +		regulator-min-microvolt = <2500000>;
+> +		regulator-max-microvolt = <2500000>;
+> +		regulator-always-on;
+> +	};
+> +};
+> +
+> +&enet0 {
+> +	tbi-handle = <&tbi0>;
+> +	phy-handle = <&sgmii_phy2>;
+> +	phy-mode = "sgmii";
+> +	status = "okay";
+> +};
+> +
+> +&enet1 {
+> +	tbi-handle = <&tbi1>;
+> +	phy-handle = <&sgmii_phy1>;
+> +	phy-mode = "sgmii";
+> +	status = "okay";
+> +};
+> +
+> +/* RGMII delays added via PCB traces */
+> +&enet2 {
+> +	phy-mode = "rgmii";
+> +	status = "okay";
+> +
+> +	fixed-link {
+> +		speed = <1000>;
+> +		full-duplex;
+> +	};
+> +};
+> +
+> +&dspi0 {
+> +	bus-num = <0>;
+> +	status = "okay";
+> +
+> +	/* ADG704BRMZ 1:4 mux/demux */
+> +	sja1105: ethernet-switch@1 {
+> +		reg = <0x1>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		compatible = "nxp,sja1105t";
+> +		/* 12 MHz */
+> +		spi-max-frequency = <12000000>;
+> +		/* Sample data on trailing clock edge */
+> +		spi-cpha;
+> +		fsl,spi-cs-sck-delay = <1000>;
+> +		fsl,spi-sck-cs-delay = <1000>;
+> +
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				/* ETH5 written on chassis */
+> +				label = "swp5";
+> +				phy-handle = <&rgmii_phy6>;
+> +				phy-mode = "rgmii-id";
+> +				reg = <0>;
+> +			};
+> +
+> +			port@1 {
+> +				/* ETH2 written on chassis */
+> +				label = "swp2";
+> +				phy-handle = <&rgmii_phy3>;
+> +				phy-mode = "rgmii-id";
+> +				reg = <1>;
+> +			};
+> +
+> +			port@2 {
+> +				/* ETH3 written on chassis */
+> +				label = "swp3";
+> +				phy-handle = <&rgmii_phy4>;
+> +				phy-mode = "rgmii-id";
+> +				reg = <2>;
+> +			};
+> +
+> +			port@3 {
+> +				/* ETH4 written on chassis */
+> +				label = "swp4";
+> +				phy-handle = <&rgmii_phy5>;
+> +				phy-mode = "rgmii-id";
+> +				reg = <3>;
+> +			};
+> +
+> +			port@4 {
+> +				/* Internal port connected to eth2 */
+> +				ethernet = <&enet2>;
+> +				phy-mode = "rgmii";
+> +				reg = <4>;
+> +
+> +				fixed-link {
+> +					speed = <1000>;
+> +					full-duplex;
+> +				};
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&mdio0 {
+> +	/* AR8031 */
+> +	sgmii_phy1: ethernet-phy@1 {
+> +		reg = <0x1>;
+> +	};
+> +
+> +	/* AR8031 */
+> +	sgmii_phy2: ethernet-phy@2 {
+> +		reg = <0x2>;
+> +	};
+> +
+> +	/* BCM5464 quad PHY */
+> +	rgmii_phy3: ethernet-phy@3 {
+> +		reg = <0x3>;
+> +	};
+> +
+> +	rgmii_phy4: ethernet-phy@4 {
+> +		reg = <0x4>;
+> +	};
+> +
+> +	rgmii_phy5: ethernet-phy@5 {
+> +		reg = <0x5>;
+> +	};
+> +
+> +	rgmii_phy6: ethernet-phy@6 {
+> +		reg = <0x6>;
+> +	};
+> +
+> +	/* SGMII PCS for enet0 */
+> +	tbi0: tbi-phy@1f {
+> +		reg = <0x1f>;
+> +		device_type = "tbi-phy";
+> +	};
+> +};
+> +
+> +&mdio1 {
+> +	/* SGMII PCS for enet1 */
+> +	tbi1: tbi-phy@1f {
+> +		reg = <0x1f>;
+> +		device_type = "tbi-phy";
+> +	};
+> +};
+> +
+> +&i2c0 {
+> +	status = "okay";
+> +
+> +	/* 3 axis accelerometer */
+> +	accelerometer@1e {
+> +		compatible = "fsl,fxls8471";
+> +		position = <0>;
+> +		reg = <0x1e>;
+> +	};
+> +
+> +	/* Audio codec (SAI2) */
+> +	codec@2a {
 
-Tested-by: John Stultz <john.stultz@linaro.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+audio-codec for node name.
 
-Changes since v1:
-- None
+> +		compatible = "fsl,sgtl5000";
+> +		VDDIO-supply = <&reg_vddio_codec>;
+> +		VDDA-supply = <&reg_vdda_codec>;
+> +		#sound-dai-cells = <0>;
+> +		clocks = <&sys_mclk>;
+> +		reg = <0x2a>;
+> +	};
+> +
+> +	/* Current sensing circuit for 1V VDDCORE PMIC rail */
+> +	current-sensor@44 {
+> +		compatible = "ti,ina220";
+> +		shunt-resistor = <1000>;
+> +		reg = <0x44>;
+> +	};
+> +
+> +	/* Current sensing circuit for 12V VCC rail */
+> +	current-sensor@45 {
+> +		compatible = "ti,ina220";
+> +		shunt-resistor = <1000>;
+> +		reg = <0x45>;
+> +	};
+> +
+> +	/* Thermal monitor - case */
+> +	temperature-sensor@48 {
+> +		compatible = "national,lm75";
+> +		reg = <0x48>;
+> +	};
+> +
+> +	/* Thermal monitor - chip */
+> +	temperature-sensor@4c {
+> +		compatible = "ti,tmp451";
+> +		reg = <0x4c>;
+> +	};
+> +
+> +	eeprom@51 {
+> +		compatible = "atmel,24c32";
+> +		reg = <0x51>;
+> +	};
+> +
+> +	/* Unsupported devices:
+> +	 * - FXAS21002C Gyroscope at 0x20
+> +	 * - TI ADS7924 4-channel ADC at 0x49
+> +	 */
+> +};
+> +
+> +&qspi {
+> +	status = "okay";
+> +
+> +	flash@0 {
+> +		/* Rev. A uses 64MB flash, Rev. B & C use 32MB flash */
+> +		compatible = "jedec,spi-nor", "s25fl256s1", "s25fl512s";
+> +		spi-max-frequency = <20000000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		reg = <0>;
+> +
+> +		partitions {
+> +			compatible = "fixed-partitions";
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +
+> +			partition@0 {
+> +				label = "RCW";
+> +				reg = <0x0 0x40000>;
+> +			};
+> +
+> +			partition@40000 {
+> +				label = "U-Boot";
+> +				reg = <0x40000 0x300000>;
+> +			};
+> +
+> +			partition@340000 {
+> +				label = "U-Boot Env";
+> +				reg = <0x340000 0x100000>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&ifc {
 
- arch/arm64/boot/dts/qcom/sdm845-mtp.dts | 2 ++
- 1 file changed, 2 insertions(+)
+Please sort all these labelling nodes alphabetically.
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-index 2e78638eb73b..d116a0956a9c 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-@@ -388,6 +388,8 @@
- &ufs_mem_hc {
- 	status = "okay";
- 
-+	device-reset-gpios = <&tlmm 150 GPIO_ACTIVE_LOW>;
-+
- 	vcc-supply = <&vreg_l20a_2p95>;
- 	vcc-max-microamp = <600000>;
- };
--- 
-2.18.0
+Shawn
 
+> +	status = "disabled";
+> +};
+> +
+> +&esdhc {
+> +	status = "okay";
+> +};
+> +
+> +&uart0 {
+> +	status = "okay";
+> +};
+> +
+> +&lpuart0 {
+> +	status = "okay";
+> +};
+> +
+> +&lpuart3 {
+> +	status = "okay";
+> +};
+> +
+> +&sai2 {
+> +	status = "okay";
+> +};
+> +
+> +&sata {
+> +	status = "okay";
+> +};
+> -- 
+> 2.17.1
+> 
