@@ -2,160 +2,277 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 688AC374FD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 15:17:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD0B637505
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 15:20:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727770AbfFFNRA convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 6 Jun 2019 09:17:00 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49902 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726877AbfFFNQ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 09:16:59 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2AC1F85546;
-        Thu,  6 Jun 2019 13:16:54 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E50DF108427E;
-        Thu,  6 Jun 2019 13:16:43 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <b91710d8-cd2d-6b93-8619-130b9d15983d@tycho.nsa.gov>
-References: <b91710d8-cd2d-6b93-8619-130b9d15983d@tycho.nsa.gov> <155981411940.17513.7137844619951358374.stgit@warthog.procyon.org.uk>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-usb@vger.kernel.org, raven@themaw.net,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paul Moore <paul@paul-moore.com>
-Subject: Re: [RFC][PATCH 00/10] Mount, FS, Block and Keyrings notifications [ver #3]
+        id S1727166AbfFFNU0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 09:20:26 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33554 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725782AbfFFNU0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 09:20:26 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x56DJ5Kr004301
+        for <linux-kernel@vger.kernel.org>; Thu, 6 Jun 2019 09:20:25 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2sy13ng4fa-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 09:20:03 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 6 Jun 2019 14:19:41 +0100
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 6 Jun 2019 14:19:35 +0100
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x56DJY6F17760646
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 6 Jun 2019 13:19:34 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id ADF01B206A;
+        Thu,  6 Jun 2019 13:19:34 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 64458B2067;
+        Thu,  6 Jun 2019 13:19:34 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.80.209.205])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  6 Jun 2019 13:19:34 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id D487816C5DEA; Thu,  6 Jun 2019 06:19:33 -0700 (PDT)
+Date:   Thu, 6 Jun 2019 06:19:33 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     rcu@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
+        herbert@gondor.apana.org.au, torvalds@linux-foundation.org
+Subject: [PATCH RFC tip/core/rcu] Restore barrier() to rcu_read_lock() and
+ rcu_read_unlock()
+Reply-To: paulmck@linux.ibm.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3812.1559827003.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Thu, 06 Jun 2019 14:16:43 +0100
-Message-ID: <3813.1559827003@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 06 Jun 2019 13:16:59 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19060613-0060-0000-0000-0000034D0301
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011223; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000286; SDB=6.01214064; UDB=6.00638153; IPR=6.00995143;
+ MB=3.00027206; MTD=3.00000008; XFM=3.00000015; UTC=2019-06-06 13:19:40
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19060613-0061-0000-0000-000049A8C8CC
+Message-Id: <20190606131933.GA12576@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-06_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906060095
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stephen Smalley <sds@tycho.nsa.gov> wrote:
+Commit bb73c52bad36 ("rcu: Don't disable preemption for Tiny and Tree
+RCU readers") removed the barrier() calls from rcu_read_lock() and
+rcu_write_lock() in CONFIG_PREEMPT=n&&CONFIG_PREEMPT_COUNT=n kernels.
+Within RCU, this commit was OK, but it failed to account for things like
+get_user() that can pagefault and that can be reordered by the compiler.
+Lack of the barrier() calls in rcu_read_lock() and rcu_read_unlock()
+can cause these page faults to migrate into RCU read-side critical
+sections, which in CONFIG_PREEMPT=n kernels could result in too-short
+grace periods and arbitrary misbehavior.  Please see commit 386afc91144b
+("spinlocks and preemption points need to be at least compiler barriers")
+for more details.
 
-This might be easier to discuss if you can reply to:
+This commit therefore restores the barrier() call to both rcu_read_lock()
+and rcu_read_unlock().  It also removes them from places in the RCU update
+machinery that used to need compensatory barrier() calls, effectively
+reverting commit bb73c52bad36 ("rcu: Don't disable preemption for Tiny
+and Tree RCU readers").
 
-	https://lore.kernel.org/lkml/5393.1559768763@warthog.procyon.org.uk/
+Reported-by: Herbert Xu <herbert@gondor.apana.org.au>
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 
-which is on the ver #2 posting of this patchset.
+diff --git a/Documentation/RCU/Design/Requirements/Requirements.html b/Documentation/RCU/Design/Requirements/Requirements.html
+index 5a9238a2883c..080b39cc1dbb 100644
+--- a/Documentation/RCU/Design/Requirements/Requirements.html
++++ b/Documentation/RCU/Design/Requirements/Requirements.html
+@@ -2129,6 +2129,8 @@ Some of the relevant points of interest are as follows:
+ <li>	<a href="#Hotplug CPU">Hotplug CPU</a>.
+ <li>	<a href="#Scheduler and RCU">Scheduler and RCU</a>.
+ <li>	<a href="#Tracing and RCU">Tracing and RCU</a>.
++<li>	<a href="#Accesses to User Mamory and RCU">
++Accesses to User Mamory and RCU</a>.
+ <li>	<a href="#Energy Efficiency">Energy Efficiency</a>.
+ <li>	<a href="#Scheduling-Clock Interrupts and RCU">
+ 	Scheduling-Clock Interrupts and RCU</a>.
+@@ -2521,6 +2523,75 @@ cannot be used.
+ The tracing folks both located the requirement and provided the
+ needed fix, so this surprise requirement was relatively painless.
+ 
++<h3><a name="Accesses to User Mamory and RCU">
++Accesses to User Mamory and RCU</a></h3>
++
++<p>
++The kernel needs to access user-space memory, for example, to access
++data referenced by system-call parameters.
++The <tt>get_user()</tt> macro does this job.
++
++<p>
++However, user-space memory might well be paged out, which means
++that <tt>get_user()</tt> might well page-fault and thus block while
++waiting for the resulting I/O to complete.
++It would be a very bad thing for the compiler to reorder
++a <tt>get_user()</tt> invocation into an RCU read-side critical
++section.
++For example, suppose that the source code looked like this:
++
++<blockquote>
++<pre>
++ 1 rcu_read_lock();
++ 2 p = rcu_dereference(gp);
++ 3 v = p-&gt;value;
++ 4 rcu_read_unlock();
++ 5 get_user(user_v, user_p);
++ 6 do_something_with(v, user_v);
++</pre>
++</blockquote>
++
++<p>
++The compiler must not be permitted to transform this source code into
++the following:
++
++<blockquote>
++<pre>
++ 1 rcu_read_lock();
++ 2 p = rcu_dereference(gp);
++ 3 get_user(user_v, user_p); // BUG: POSSIBLE PAGE FAULT!!!
++ 4 v = p-&gt;value;
++ 5 rcu_read_unlock();
++ 6 do_something_with(v, user_v);
++</pre>
++</blockquote>
++
++<p>
++If the compiler did make this transformation in a
++<tt>CONFIG_PREEMPT=n</tt> kernel build, and if <tt>get_user()</tt> did
++page fault, the result would be a quiescent state in the middle
++of an RCU read-side critical section.
++This misplaced quiescent state could result in line&nbsp;4 being
++a use-after-free access, which could be bad for your kernel's
++actuarial statistics.
++Similar examples can be constructed with the call to <tt>get_user()</tt>
++preceding the <tt>rcu_read_lock()</tt>.
++
++<p>
++Unfortunately, <tt>get_user()</tt> doesn't have any particular
++ordering properties, and in some architectures the underlying <tt>asm</tt>
++isn't even marked <tt>volatile</tt>.
++And even if it was marked <tt>volatile</tt>, the above access to
++<tt>p-&gt;value</tt> is not volatile, so the compiler would not have any
++reason to keep those two accesses in order.
++
++<p>
++Therefore, the Linux-kernel definitions of <tt>rcu_read_lock()</tt>
++and <tt>rcu_read_unlock()</tt> must act as compiler barriers,
++at least for outermost instances of <tt>rcu_read_lock()</tt> and
++<tt>rcu_read_unlock()</tt> within a nested set of RCU read-side critical
++sections.
++
+ <h3><a name="Energy Efficiency">Energy Efficiency</a></h3>
+ 
+ <p>
+diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+index 0c9b92799abc..8f7167478c1d 100644
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -56,14 +56,12 @@ void __rcu_read_unlock(void);
+ 
+ static inline void __rcu_read_lock(void)
+ {
+-	if (IS_ENABLED(CONFIG_PREEMPT_COUNT))
+-		preempt_disable();
++	preempt_disable();
+ }
+ 
+ static inline void __rcu_read_unlock(void)
+ {
+-	if (IS_ENABLED(CONFIG_PREEMPT_COUNT))
+-		preempt_enable();
++	preempt_enable();
+ }
+ 
+ static inline int rcu_preempt_depth(void)
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index acb225023ed1..3f1b5041de9b 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -288,7 +288,6 @@ void rcu_note_context_switch(bool preempt)
+ 	struct rcu_data *rdp = this_cpu_ptr(&rcu_data);
+ 	struct rcu_node *rnp;
+ 
+-	barrier(); /* Avoid RCU read-side critical sections leaking down. */
+ 	trace_rcu_utilization(TPS("Start context switch"));
+ 	lockdep_assert_irqs_disabled();
+ 	WARN_ON_ONCE(!preempt && t->rcu_read_lock_nesting > 0);
+@@ -340,7 +339,6 @@ void rcu_note_context_switch(bool preempt)
+ 	if (rdp->exp_deferred_qs)
+ 		rcu_report_exp_rdp(rdp);
+ 	trace_rcu_utilization(TPS("End context switch"));
+-	barrier(); /* Avoid RCU read-side critical sections leaking up. */
+ }
+ EXPORT_SYMBOL_GPL(rcu_note_context_switch);
+ 
+@@ -828,11 +826,6 @@ static void rcu_qs(void)
+  * dyntick-idle quiescent state visible to other CPUs, which will in
+  * some cases serve for expedited as well as normal grace periods.
+  * Either way, register a lightweight quiescent state.
+- *
+- * The barrier() calls are redundant in the common case when this is
+- * called externally, but just in case this is called from within this
+- * file.
+- *
+  */
+ void rcu_all_qs(void)
+ {
+@@ -847,14 +840,12 @@ void rcu_all_qs(void)
+ 		return;
+ 	}
+ 	this_cpu_write(rcu_data.rcu_urgent_qs, false);
+-	barrier(); /* Avoid RCU read-side critical sections leaking down. */
+ 	if (unlikely(raw_cpu_read(rcu_data.rcu_need_heavy_qs))) {
+ 		local_irq_save(flags);
+ 		rcu_momentary_dyntick_idle();
+ 		local_irq_restore(flags);
+ 	}
+ 	rcu_qs();
+-	barrier(); /* Avoid RCU read-side critical sections leaking up. */
+ 	preempt_enable();
+ }
+ EXPORT_SYMBOL_GPL(rcu_all_qs);
+@@ -864,7 +855,6 @@ EXPORT_SYMBOL_GPL(rcu_all_qs);
+  */
+ void rcu_note_context_switch(bool preempt)
+ {
+-	barrier(); /* Avoid RCU read-side critical sections leaking down. */
+ 	trace_rcu_utilization(TPS("Start context switch"));
+ 	rcu_qs();
+ 	/* Load rcu_urgent_qs before other flags. */
+@@ -877,7 +867,6 @@ void rcu_note_context_switch(bool preempt)
+ 		rcu_tasks_qs(current);
+ out:
+ 	trace_rcu_utilization(TPS("End context switch"));
+-	barrier(); /* Avoid RCU read-side critical sections leaking up. */
+ }
+ EXPORT_SYMBOL_GPL(rcu_note_context_switch);
+ 
 
-> > LSM support is included, but controversial:
-> >
-> >   (1) The creds of the process that did the fput() that reduced the refcount
-> >       to zero are cached in the file struct.
-> >
-> >   (2) __fput() overrides the current creds with the creds from (1) whilst
-> >       doing the cleanup, thereby making sure that the creds seen by the
-> >       destruction notification generated by mntput() appears to come from
-> >       the last fputter.
-> >
-> >   (3) security_post_notification() is called for each queue that we might
-> >       want to post a notification into, thereby allowing the LSM to prevent
-> >       covert communications.
-> >
-> >   (?) Do I need to add security_set_watch(), say, to rule on whether a watch
-> >       may be set in the first place?  I might need to add a variant per
-> >       watch-type.
-> >
-> >   (?) Do I really need to keep track of the process creds in which an
-> >       implicit object destruction happened?  For example, imagine you create
-> >       an fd with fsopen()/fsmount().  It is marked to dissolve the mount it
-> >       refers to on close unless move_mount() clears that flag.  Now, imagine
-> >       someone looking at that fd through procfs at the same time as you exit
-> >       due to an error.  The LSM sees the destruction notification come from
-> >       the looker if they happen to do their fput() after yours.
-> 
-> 
-> I'm not in favor of this approach.
-
-Which bit?  The last point?  Keeping track of the process creds after an
-implicit object destruction.
-
-> Can we check permission to the object being watched when a watch is set
-> (read-like access),
-
-Yes, and I need to do that.  I think it's likely to require an extra hook for
-each entry point added because the objects are different:
-
-	int security_watch_key(struct watch *watch, struct key *key);
-	int security_watch_sb(struct watch *watch, struct path *path);
-	int security_watch_mount(struct watch *watch, struct path *path);
-	int security_watch_devices(struct watch *watch);
-
-> make sure every access that can trigger a notification requires a
-> (write-like) permission to the accessed object,
-
-"write-like permssion" for whom?  The triggerer or the watcher?
-
-There are various 'classes' of events:
-
- (1) System events (eg. hardware I/O errors, automount points expiring).
-
- (2) Direct events (eg. automounts, manual mounts, EDQUOT, key linkage).
-
- (3) Indirect events (eg. exit/close doing the last fput and causing an
-     unmount).
-
-Class (1) are uncaused by a process, so I use init_cred for them.  One could
-argue that the automount point expiry should perhaps take place under the
-creds of whoever triggered it in the first place, but we need to be careful
-about long-term cred pinning.
-
-Class (2) the causing process must've had permission to cause them - otherwise
-we wouldn't have got the event.
-
-Class (3) is interesting since it's currently entirely cleanup events and the
-process may have the right to do them (close, dup2, exit, but also execve)
-whether the LSM thinks it should be able to cause the object to be destroyed
-or not.
-
-It gets more complicated than that, though: multiple processes with different
-security attributes can all have fds pointing to a common file object - and
-the last one to close carries the can as far as the LSM is concerned.
-
-And yet more complicated when you throw in unix sockets with partially passed
-fds still in their queues.  That's what patch 01 is designed to try and cope
-with.
-
-> and make sure there is some sane way to control the relationship between the
-> accessed object and the watched object (write-like)?
-
-This is the trick.  Keys and superblocks have object labels of their own and
-don't - for now - propagate their watches.  With these, the watch is on the
-object you initially assign it to and it goes no further than that.
-
-mount_notify() is the interesting case since we want to be able to detect
-mount topology change events from within the vfs subtree rooted at the watched
-directory without having to manually put a watch on every directory in that
-subtree - or even just every mount object.
-
-Or, maybe, that's what I'll have to do: make it mount_notify() can only apply
-to the subtree within its superblock, and the caller must call mount_notify()
-for every mount object it wants to monitor.  That would at least ensure that
-the caller can, at that point, reach all those mount points.
-
-> For cases where we have no object per se or at least no security
-> structure/label associated with it, we may have to fall back to a
-> coarse-grained "Can the watcher get this kind of notification in general?".
-
-Agreed - and we should probably have that anyway.
-
-David
