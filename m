@@ -2,84 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67B52378FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 17:55:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 058863783D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 17:38:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729555AbfFFPzu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 11:55:50 -0400
-Received: from 6.mo2.mail-out.ovh.net ([87.98.165.38]:60478 "EHLO
-        6.mo2.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728871AbfFFPzt (ORCPT
+        id S1729353AbfFFPiu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 11:38:50 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:47922 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729137AbfFFPit (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 11:55:49 -0400
-X-Greylist: delayed 598 seconds by postgrey-1.27 at vger.kernel.org; Thu, 06 Jun 2019 11:55:48 EDT
-Received: from player697.ha.ovh.net (unknown [10.108.57.49])
-        by mo2.mail-out.ovh.net (Postfix) with ESMTP id BCCE719E396
-        for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2019 17:39:41 +0200 (CEST)
-Received: from armadeus.com (lfbn-1-7591-179.w90-126.abo.wanadoo.fr [90.126.248.179])
-        (Authenticated sender: sebastien.szymanski@armadeus.com)
-        by player697.ha.ovh.net (Postfix) with ESMTPSA id 20984697A803;
-        Thu,  6 Jun 2019 15:39:22 +0000 (UTC)
-From:   =?UTF-8?q?S=C3=A9bastien=20Szymanski?= 
-        <sebastien.szymanski@armadeus.com>
-To:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-media@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        =?UTF-8?q?S=C3=A9bastien=20Szymanski?= 
-        <sebastien.szymanski@armadeus.com>
-Subject: [PATCH v2 3/3] media: dt-bindings: imx7-csi: add i.MX6UL/L support
-Date:   Thu,  6 Jun 2019 17:38:25 +0200
-Message-Id: <20190606153825.8183-3-sebastien.szymanski@armadeus.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190606153825.8183-1-sebastien.szymanski@armadeus.com>
-References: <20190606153825.8183-1-sebastien.szymanski@armadeus.com>
+        Thu, 6 Jun 2019 11:38:49 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x56FVgpD018120;
+        Thu, 6 Jun 2019 17:38:47 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=0pAtotSJEz0Oq/4HijmUh/DcrMTc2nG2Sv62SxAD2VI=;
+ b=LwP8SIjFnyThM2xV6pxcguKkhdQw8+gNWiDZqb1wkpIKecKY5aRfxv/brHabnorZwefm
+ CE0aM4SWpdEaX3ayjsQ+3HQW/AnSuL8APjwtK3immLwl2cDmDeqwNA7Eg5FYKFCYZlHu
+ nqfv/ns/BTlMZSghUVRqj4RhrSDM5szN8A/a/CkOffU+kvp8FLvjtAPA3txZ7S4LyRWA
+ nT60t89Cd9W3eRtHEHUIeO6VJ9tm2aB03B87STrwQzioiv17+hWfcZjwpbb3d9IBvgRj
+ dUQd5EFVNBuQnhBrjrhOJcQ2OGlozfDCegkOA2GKf4xRGeJotUyQSDxv580a7ilDhAr6 QQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2sxqycv5v8-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 06 Jun 2019 17:38:47 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A8BF23A;
+        Thu,  6 Jun 2019 15:38:46 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8160D2A49;
+        Thu,  6 Jun 2019 15:38:46 +0000 (GMT)
+Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 6 Jun 2019
+ 17:38:46 +0200
+Received: from localhost (10.48.0.131) by webmail-ga.st.com (10.75.90.48) with
+ Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 6 Jun 2019 17:38:45 +0200
+From:   Arnaud Pouliquen <arnaud.pouliquen@st.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <arnaud.pouliquen@st.com>
+Subject: [PATCH] remoteproc: debug: fix va dump format in carveout list
+Date:   Thu, 6 Jun 2019 17:38:39 +0200
+Message-ID: <1559835519-8165-1-git-send-email-arnaud.pouliquen@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 3728136069398615236
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduuddrudeggedgledvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
+Content-Type: text/plain
+X-Originating-IP: [10.48.0.131]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-06_11:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document "fsl,imx6ul-csi" entry.
+Standardize dump presentation for va, dma and da dumps by adding
+"0x" prefix for virtual address.
 
-Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
+Fixes: 276ec9934231("remoteproc: replace "%p" with "%pK"")
+
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 ---
-
-Changes for v2:
- - New patch to document new "fsl,imx6ul-csi" entry.
-
- Documentation/devicetree/bindings/media/imx7-csi.txt | 2 +-
+ drivers/remoteproc/remoteproc_debugfs.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/media/imx7-csi.txt b/Documentation/devicetree/bindings/media/imx7-csi.txt
-index 3c07bc676bc3..49e9af19b3ea 100644
---- a/Documentation/devicetree/bindings/media/imx7-csi.txt
-+++ b/Documentation/devicetree/bindings/media/imx7-csi.txt
-@@ -9,7 +9,7 @@ to connect directly to external CMOS image sensors.
- 
- Required properties:
- 
--- compatible    : "fsl,imx7-csi";
-+- compatible    : "fsl,imx7-csi" or "fsl,imx6ul-csi";
- - reg           : base address and length of the register set for the device;
- - interrupts    : should contain CSI interrupt;
- - clocks        : list of clock specifiers, see
+diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
+index 6da934b8dc4b..91d3a75f0b41 100644
+--- a/drivers/remoteproc/remoteproc_debugfs.c
++++ b/drivers/remoteproc/remoteproc_debugfs.c
+@@ -298,7 +298,7 @@ static int rproc_carveouts_show(struct seq_file *seq, void *p)
+ 	list_for_each_entry(carveout, &rproc->carveouts, node) {
+ 		seq_puts(seq, "Carveout memory entry:\n");
+ 		seq_printf(seq, "\tName: %s\n", carveout->name);
+-		seq_printf(seq, "\tVirtual address: %pK\n", carveout->va);
++		seq_printf(seq, "\tVirtual address: 0x%pK\n", carveout->va);
+ 		seq_printf(seq, "\tDMA address: %pad\n", &carveout->dma);
+ 		seq_printf(seq, "\tDevice address: 0x%x\n", carveout->da);
+ 		seq_printf(seq, "\tLength: 0x%x Bytes\n\n", carveout->len);
 -- 
-2.19.2
+2.7.4
 
