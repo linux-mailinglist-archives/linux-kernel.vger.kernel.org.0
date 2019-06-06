@@ -2,56 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56E2437D7B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 21:45:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25DCB37D82
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 21:46:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbfFFTpN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 15:45:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57552 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727117AbfFFTpM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 15:45:12 -0400
-Subject: Re: [GIT PULL] xfs: fixes for 5.2-rc4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559850311;
-        bh=MGVN98ES0XDXA/KBEwERZEzrN8168ByWPidENysnfnI=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=PD6LEGKZejjpwn4ghSKjDoGxmmh+pzsuXmsHkWL4ocVBISJ8J7gov9X638rsm4OF9
-         PTy8+WAXz07I8R+iVM+fxP0dLx1peeFzo8pJepZAb++kPQ0uyiqSsbhpoMt5bGW6oJ
-         atA385mDY1aRX0efBdnWAGkMNDd1AD5GyA6CMjYg=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190606151727.GH1200785@magnolia>
-References: <20190606151727.GH1200785@magnolia>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190606151727.GH1200785@magnolia>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
- tags/xfs-5.2-fixes-2
-X-PR-Tracked-Commit-Id: 025197ebb08a77eea702011c479ece1229a9525b
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 01047631df813f6247185547c3778c80af088a20
-Message-Id: <155985031169.29170.10646509990041822216.pr-tracker-bot@kernel.org>
-Date:   Thu, 06 Jun 2019 19:45:11 +0000
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     torvalds@linux-foundation.org,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de
+        id S1727378AbfFFTpm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 15:45:42 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:40254 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726715AbfFFTpm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 15:45:42 -0400
+Received: by mail-oi1-f193.google.com with SMTP id w196so2463629oie.7
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 12:45:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HvsZS4bOWzh/rxJ7Vbhm+IleDBXmUoCFx+NzSXIR57o=;
+        b=dMA1DpS4lVQzF3ZNO1J8lBPXw7HRf3KPEBh1nnzkpwHzS+JnIlc6I1WhERrDHbG3n6
+         ZZMXV2U73oxBby1z/sJfZS2dxWu0uSLZb5L1SaobDKr1D9R1EP2mnsAUNjBCpgTX9637
+         PaI1fAwxsKymUjv0iwjOkUUzxkGrmTUFQTpo3IqVi2PRDDtcRWWIOzNeDSzyYApA/YIs
+         Iz3P+UD24H7N3ATUYFD71EFh+UsU6bkXcXSU0/dkIV0Yq8MDvXAhEMSRdhbJoB3VOh/s
+         n/R2RIS309HBRdorUaO9BWvnXZdtPYPQd0tb1ZTLKhJE7Gj3eTTzvVAjHU8P/KmrdiBd
+         zD9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HvsZS4bOWzh/rxJ7Vbhm+IleDBXmUoCFx+NzSXIR57o=;
+        b=pQKwxzhjFCjpexz/VigppHciGHSjogzwpPMuUccAlk8XKMPMpu/j6MxKdSjPfbmptQ
+         /qcOq+JUUprP4QFrGwSdIOiqxaLd56P2NUQXWq6cFn39TgJhPC3luY9mAHVuskHwJS4x
+         NMOraU5zx0IaLSNdxczQuYBHBtiw1r4Q1F6bFE53UBBxYgizkDKZpygjzxmUMmpc1u5g
+         Fo5HyeKeRj9ikgVix3FNWlNQ+RRgIwDo9DZjRwk18KXLPF+8Y1uEdlBBnOHKQxk1VACo
+         8hdcsFMHoZi1uc1ohfvZMDCvZBI9kGfvGblklHcH1PaBRNTFl7pUPYgyaVDvHJo/Rebk
+         SUjg==
+X-Gm-Message-State: APjAAAUj32C9yNy+YCOOHva8q2rKx3mTN3I7oxZ8TiLTx1HWCg/N2qWn
+        r7tq2wwyOhnGNkCLbY9Mwxch1r0gzr3xWI5G4RKj6Bmm
+X-Google-Smtp-Source: APXvYqzwNJzMn8BxHcmZMP8ExVHZkbQto4huDPJ4ia1CxvIjvKtYeqqbd10DSX8Ulxk42tGLcO6UqDoPI3VIjCXSj58=
+X-Received: by 2002:aca:4341:: with SMTP id q62mr1300541oia.140.1559850341244;
+ Thu, 06 Jun 2019 12:45:41 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190603100357.16799-1-narmstrong@baylibre.com> <20190603100357.16799-4-narmstrong@baylibre.com>
+In-Reply-To: <20190603100357.16799-4-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Thu, 6 Jun 2019 21:45:30 +0200
+Message-ID: <CAFBinCD5y4rVO7AU7iDcrJXK7nj1uHowVnQOQT2wMSwL3EjuWw@mail.gmail.com>
+Subject: Re: [PATCH 3/4] arm64: dts: meson-g12a-x96-max: Enable Wifi SDIO Module
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     khilman@baylibre.com, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 6 Jun 2019 08:17:27 -0700:
+Hi Neil,
 
-> git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.2-fixes-2
+On Mon, Jun 3, 2019 at 12:04 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> The X96 Max embeds an AP6398S SDIO module, let's add the
+> corresponding SDIO, PWM clock and mmc-pwrseq nodes.
+>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+with the comment below addressed:
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/01047631df813f6247185547c3778c80af088a20
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+[...]
+> @@ -155,6 +169,12 @@
+>         pinctrl-names = "default";
+>  };
+>
+> +&pwm_ef {
+> +       status = "okay";
+> +       pinctrl-0 = <&pwm_e_pins>;
+> +       pinctrl-names = "default";
+on the other boards we list the input clock explicitly here (I assume
+to avoid jitter due to a less precise parent which may be the chip
+default or set by the bootloader)
