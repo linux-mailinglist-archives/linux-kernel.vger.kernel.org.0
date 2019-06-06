@@ -2,224 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF1B6380D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 00:33:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CA2D380DE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 00:33:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727471AbfFFWdS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 18:33:18 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:43193 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726711AbfFFWdP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 18:33:15 -0400
-Received: from 79.184.253.190.ipv4.supernova.orange.pl (79.184.253.190) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.213)
- id 315b2b5f6b35bdd6; Fri, 7 Jun 2019 00:33:11 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PCI <linux-pci@vger.kernel.org>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] PCI: PM: Replace pci_dev_keep_suspended() with two functions
-Date:   Fri, 07 Jun 2019 00:32:31 +0200
-Message-ID: <3991282.doQj0dWKJp@kreacher>
-In-Reply-To: <2958812.87Qy2A3tJo@kreacher>
-References: <2958812.87Qy2A3tJo@kreacher>
+        id S1727702AbfFFWde (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 18:33:34 -0400
+Received: from mail-eopbgr20073.outbound.protection.outlook.com ([40.107.2.73]:53294
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726873AbfFFWdd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 18:33:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x5ghpEB51pcsHDyuCVH3nzaGcKb+YTllL1QjNBnVDVQ=;
+ b=UOfEk2a/T4tZs3/FWdApBmSlIVimK8QCEVKq5moDXsHygT8pNfcv01QfkYRref6o6HsUguuA4NcF+J1S8U3EW0RS/OT2ekZNGJtom+pQljbxeeXaOze84rbYjQ4xlWLiTYGJZv0d34qC6pT9m/oBsa6wusgqdeCYI7j0qd/HUns=
+Received: from AM0PR04MB4961.eurprd04.prod.outlook.com (20.176.215.222) by
+ AM0PR04MB4147.eurprd04.prod.outlook.com (52.134.125.157) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1965.14; Thu, 6 Jun 2019 22:33:29 +0000
+Received: from AM0PR04MB4961.eurprd04.prod.outlook.com
+ ([fe80::e046:3c99:88be:90a1]) by AM0PR04MB4961.eurprd04.prod.outlook.com
+ ([fe80::e046:3c99:88be:90a1%3]) with mapi id 15.20.1943.018; Thu, 6 Jun 2019
+ 22:33:29 +0000
+From:   Han Xu <han.xu@nxp.com>
+To:     "Tudor.Ambarus@microchip.com" <Tudor.Ambarus@microchip.com>,
+        "cyrille.pitchen@wedev4u.fr" <cyrille.pitchen@wedev4u.fr>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>
+CC:     "boris.brezillon@free-electrons.com" 
+        <boris.brezillon@free-electrons.com>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "kdasu.kdev@gmail.com" <kdasu.kdev@gmail.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>
+Subject: RE: [EXT] Re: [PATCH] mtd: spi-nor: Add prep/unprep for
+ spi_nor_resume
+Thread-Topic: [EXT] Re: [PATCH] mtd: spi-nor: Add prep/unprep for
+ spi_nor_resume
+Thread-Index: AQHU+uHfbtBiSaKzx0CN/OQDDONR1qaOYFKAgAEUgBA=
+Date:   Thu, 6 Jun 2019 22:33:29 +0000
+Message-ID: <AM0PR04MB4961A2E7620DF5BD346C94D097170@AM0PR04MB4961.eurprd04.prod.outlook.com>
+References: <20190424210818.25205-1-han.xu@nxp.com>
+ <ae82d8ea-dd85-0bc3-ff2d-0ba57f635030@microchip.com>
+In-Reply-To: <ae82d8ea-dd85-0bc3-ff2d-0ba57f635030@microchip.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is ) smtp.mailfrom=han.xu@nxp.com; 
+x-originating-ip: [70.112.23.252]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 8e34549a-a82b-4d7c-73ec-08d6eaceff9b
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB4147;
+x-ms-traffictypediagnostic: AM0PR04MB4147:
+x-microsoft-antispam-prvs: <AM0PR04MB414736BC36F094656F937F3497170@AM0PR04MB4147.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 00603B7EEF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(136003)(39860400002)(346002)(396003)(366004)(13464003)(189003)(199004)(3846002)(7416002)(8936002)(6116002)(81166006)(81156014)(8676002)(9686003)(256004)(66946007)(55016002)(305945005)(74316002)(7736002)(14444005)(6506007)(73956011)(76116006)(5660300002)(76176011)(7696005)(99286004)(53546011)(66556008)(66476007)(64756008)(66446008)(102836004)(186003)(2501003)(26005)(52536014)(54906003)(44832011)(33656002)(11346002)(446003)(316002)(476003)(486006)(2906002)(478600001)(14454004)(86362001)(6436002)(2201001)(71190400001)(71200400001)(66066001)(68736007)(229853002)(53936002)(25786009)(4326008)(110136005)(6246003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4147;H:AM0PR04MB4961.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: FvXYM2CjLLgb99bmsMvplCzcJIggPMDMhTai+7kCuvf7NjORFMECtevfqXQ3Mb9l/RfGySA2d8AgqzkFcLJFochrWYpSi8tl2ZFsKBqll9aw8PNuAdesCj8r7hebvLNjpfsq/phk8JI2W4FX40SAuCFl9DNR7GoCqu5P5LhNX5EfR1yGqptMGFBtXkw2PZYDgQjeePbeOzAMZ70Y4s6xHm4Fcg3zgoI9hUULjh2j+1fHhUvoTZF5+Dsg1UiHSiQ4Je8hxvcU7m/dt8h+iIv5jO26mFtAEfk8AF6TOgtodhdC1fETWIIi6mALJYb2dYajyPdYAhGsM+ttbJNt4jv7YIaTKT8XBnSEH801ArIJhZmA4en6L6kBfsHQzhK+hhvoyAkMPgw1ZK8KHjxMv7x0I5WpjIhJ4cReaWYOpbdC9IE=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e34549a-a82b-4d7c-73ec-08d6eaceff9b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2019 22:33:29.0824
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: han.xu@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4147
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-The code in pci_dev_keep_suspended() is relatively hard to follow due
-to the negative checks in it and in its callers and the function has
-a possible side-effect (disabling the PME) which doesn't really match
-its role.
-
-For this reason, move the PME disablig from pci_dev_keep_suspended()
-to a separate function and change the semantics (and name) of the
-rest of it, so that 'true' is returned when the device needs to be
-resumed (and not the other way around).  Change the callers of
-pci_dev_keep_suspended() accordingly.
-
-While at it, make the code flow in pci_pm_poweroff() reflect the
-pci_pm_suspend() more closely to avoid arbitrary differences between
-them.
-
-This is a cosmetic change with no intention to alter behavior.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/pci/pci-driver.c |   22 +++++++++++++++---
- drivers/pci/pci.c        |   55 +++++++++++++++++++++++------------------------
- drivers/pci/pci.h        |    3 +-
- 3 files changed, 48 insertions(+), 32 deletions(-)
-
-Index: linux-pm/drivers/pci/pci.c
-===================================================================
---- linux-pm.orig/drivers/pci/pci.c
-+++ linux-pm/drivers/pci/pci.c
-@@ -2459,55 +2459,56 @@ bool pci_dev_run_wake(struct pci_dev *de
- EXPORT_SYMBOL_GPL(pci_dev_run_wake);
- 
- /**
-- * pci_dev_keep_suspended - Check if the device can stay in the suspended state.
-+ * pci_dev_need_resume - Check if it is necessary to resume the device.
-  * @pci_dev: Device to check.
-  *
-- * Return 'true' if the device is runtime-suspended, it doesn't have to be
-+ * Return 'true' if the device is not runtime-suspended or it has to be
-  * reconfigured due to wakeup settings difference between system and runtime
-- * suspend and the current power state of it is suitable for the upcoming
-- * (system) transition.
-- *
-- * If the device is not configured for system wakeup, disable PME for it before
-- * returning 'true' to prevent it from waking up the system unnecessarily.
-+ * suspend, or the current power state of it is not suitable for the upcoming
-+ * (system-wide) transition.
-  */
--bool pci_dev_keep_suspended(struct pci_dev *pci_dev)
-+bool pci_dev_need_resume(struct pci_dev *pci_dev)
- {
- 	struct device *dev = &pci_dev->dev;
--	bool wakeup = device_may_wakeup(dev);
- 	pci_power_t target_state;
- 
- 	if (!pm_runtime_suspended(dev) || platform_pci_need_resume(pci_dev))
--		return false;
-+		return true;
- 
--	target_state = pci_target_state(pci_dev, wakeup);
-+	target_state = pci_target_state(pci_dev, device_may_wakeup(dev));
- 
- 	/*
- 	 * If the earlier platform check has not triggered, D3cold is just power
- 	 * removal on top of D3hot, so no need to resume the device in that
- 	 * case.
- 	 */
--	if (target_state != pci_dev->current_state &&
--	    target_state != PCI_D3cold && pci_dev->current_state != PCI_D3hot)
--		return false;
-+	return target_state != pci_dev->current_state &&
-+		target_state != PCI_D3cold &&
-+		pci_dev->current_state != PCI_D3hot;
-+}
-+
-+/**
-+ * pci_dev_adjust_pme - Adjust PME setting for a suspended device.
-+ * @pci_dev: Device to check.
-+ *
-+ * If the device is suspended and it is not configured for system wakeup,
-+ * disable PME for it to prevent it from waking up the system unnecessarily.
-+ *
-+ * Note that if the device's power state is D3cold and the platform check in
-+ * pci_dev_need_resume() has not triggered, the device's configuration need not
-+ * be changed.
-+ */
-+void pci_dev_adjust_pme(struct pci_dev *pci_dev)
-+{
-+	struct device *dev = &pci_dev->dev;
- 
--	/*
--	 * At this point the device is good to go unless it's been configured
--	 * to generate PME at the runtime suspend time, but it is not supposed
--	 * to wake up the system.  In that case, simply disable PME for it
--	 * (it will have to be re-enabled on exit from system resume).
--	 *
--	 * If the device's power state is D3cold and the platform check above
--	 * hasn't triggered, the device's configuration is suitable and we don't
--	 * need to manipulate it at all.
--	 */
- 	spin_lock_irq(&dev->power.lock);
- 
--	if (pm_runtime_suspended(dev) && pci_dev->current_state < PCI_D3cold &&
--	    !wakeup)
-+	if (pm_runtime_suspended(dev) && !device_may_wakeup(dev) &&
-+	    pci_dev->current_state < PCI_D3cold)
- 		__pci_pme_active(pci_dev, false);
- 
- 	spin_unlock_irq(&dev->power.lock);
--	return true;
- }
- 
- /**
-Index: linux-pm/drivers/pci/pci-driver.c
-===================================================================
---- linux-pm.orig/drivers/pci/pci-driver.c
-+++ linux-pm/drivers/pci/pci-driver.c
-@@ -679,6 +679,7 @@ static bool pci_has_legacy_pm_support(st
- static int pci_pm_prepare(struct device *dev)
- {
- 	struct device_driver *drv = dev->driver;
-+	struct pci_dev *pci_dev = to_pci_dev(dev);
- 
- 	if (drv && drv->pm && drv->pm->prepare) {
- 		int error = drv->pm->prepare(dev);
-@@ -688,7 +689,15 @@ static int pci_pm_prepare(struct device
- 		if (!error && dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_PREPARE))
- 			return 0;
- 	}
--	return pci_dev_keep_suspended(to_pci_dev(dev));
-+	if (pci_dev_need_resume(pci_dev))
-+		return 0;
-+
-+	/*
-+	 * The PME setting needs to be adjusted here in case the direct-complete
-+	 * optimization is used with respect to this device.
-+	 */
-+	pci_dev_adjust_pme(pci_dev);
-+	return 1;
- }
- 
- static void pci_pm_complete(struct device *dev)
-@@ -758,9 +767,11 @@ static int pci_pm_suspend(struct device
- 	 * better to resume the device from runtime suspend here.
- 	 */
- 	if (!dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND) ||
--	    !pci_dev_keep_suspended(pci_dev)) {
-+	    pci_dev_need_resume(pci_dev)) {
- 		pm_runtime_resume(dev);
- 		pci_dev->state_saved = false;
-+	} else {
-+		pci_dev_adjust_pme(pci_dev);
- 	}
- 
- 	if (pm->suspend) {
-@@ -1108,10 +1119,13 @@ static int pci_pm_poweroff(struct device
- 
- 	/* The reason to do that is the same as in pci_pm_suspend(). */
- 	if (!dev_pm_test_driver_flags(dev, DPM_FLAG_SMART_SUSPEND) ||
--	    !pci_dev_keep_suspended(pci_dev))
-+	    pci_dev_need_resume(pci_dev)) {
- 		pm_runtime_resume(dev);
-+		pci_dev->state_saved = false;
-+	} else {
-+		pci_dev_adjust_pme(pci_dev);
-+	}
- 
--	pci_dev->state_saved = false;
- 	if (pm->poweroff) {
- 		int error;
- 
-Index: linux-pm/drivers/pci/pci.h
-===================================================================
---- linux-pm.orig/drivers/pci/pci.h
-+++ linux-pm/drivers/pci/pci.h
-@@ -82,7 +82,8 @@ int pci_finish_runtime_suspend(struct pc
- void pcie_clear_root_pme_status(struct pci_dev *dev);
- int __pci_pme_wakeup(struct pci_dev *dev, void *ign);
- void pci_pme_restore(struct pci_dev *dev);
--bool pci_dev_keep_suspended(struct pci_dev *dev);
-+bool pci_dev_need_resume(struct pci_dev *dev);
-+void pci_dev_adjust_pme(struct pci_dev *dev);
- void pci_dev_complete_resume(struct pci_dev *pci_dev);
- void pci_config_pm_runtime_get(struct pci_dev *dev);
- void pci_config_pm_runtime_put(struct pci_dev *dev);
-
-
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogVHVkb3IuQW1iYXJ1c0Bt
+aWNyb2NoaXAuY29tIDxUdWRvci5BbWJhcnVzQG1pY3JvY2hpcC5jb20+DQo+IFNlbnQ6IFRodXJz
+ZGF5LCBKdW5lIDYsIDIwMTkgMTI6NDYgQU0NCj4gVG86IEhhbiBYdSA8aGFuLnh1QG54cC5jb20+
+OyBjeXJpbGxlLnBpdGNoZW5Ad2VkZXY0dS5mcjsNCj4gbWFyZWsudmFzdXRAZ21haWwuY29tDQo+
+IENjOiBib3Jpcy5icmV6aWxsb25AZnJlZS1lbGVjdHJvbnMuY29tOyBmLmZhaW5lbGxpQGdtYWls
+LmNvbTsNCj4ga2Rhc3Uua2RldkBnbWFpbC5jb207IHJpY2hhcmRAbm9kLmF0OyBsaW51eC1rZXJu
+ZWxAdmdlci5rZXJuZWwub3JnOw0KPiBsaW51eC1tdGRAbGlzdHMuaW5mcmFkZWFkLm9yZzsgZGwt
+bGludXgtaW14IDxsaW51eC1pbXhAbnhwLmNvbT47DQo+IGNvbXB1dGVyc2ZvcnBlYWNlQGdtYWls
+LmNvbQ0KPiBTdWJqZWN0OiBbRVhUXSBSZTogW1BBVENIXSBtdGQ6IHNwaS1ub3I6IEFkZCBwcmVw
+L3VucHJlcCBmb3INCj4gc3BpX25vcl9yZXN1bWUNCj4gDQo+IENhdXRpb246IEVYVCBFbWFpbA0K
+PiANCj4gSGksIEhhbiwNCj4gDQo+IE9uIDA0LzI1LzIwMTkgMTI6MDggQU0sIEhhbiBYdSB3cm90
+ZToNCj4gPiBFeHRlcm5hbCBFLU1haWwNCj4gPg0KPiA+DQo+ID4gSW4gdGhlIG5ldyBpbXBsZW1l
+bnRlZCBzcGlfbm9yX3Jlc3VtZSBmdW5jdGlvbiwgdGhlIHNwaV9ub3JfaW5pdCgpDQo+ID4gc2hv
+dWxkIGJlIGJyYWNlZCBieSBwcmVwL3VucHJlcCBmdW5jdGlvbnMuXw0KPiA+DQo+IA0KPiBXb3Vs
+ZCB5b3UgcGxlYXNlIGV4cGxhaW4gd2h5IHRoaXMgaXMgbmVlZGVkPyBIYXZlIHlvdSB0cmllZCBh
+DQo+IHN1c3BlbmQvcmVzdW1lIGN5Y2xlIHdoaWxlIGEgd3JpdGUgd2FzIGluIHByb2dyZXNzIGFu
+ZCBpdCBmYWlsZWQ/DQoNClNhbWUgYXMgYWxsIG90aGVyIGZ1bmN0aW9ucyB0aGF0IGhvb2tlZCB1
+cCB3aXRoIG10ZCBvcHMsIHN1Y2ggYXMNCl9yZWFkL193cml0ZS9fbG9jay9fdW5sb2NrLCB0aGUg
+X3Jlc3VtZSBmdW5jdGlvbiBhbHNvIG5lZWQgdG8gY2FsbCB0aGUNCmxvd2VyIGxldmVsIGNvbnRy
+b2xsZXIncyBwcmVwL3VucHJlcCBmdW5jdGlvbnMgdG8gcHJvcGVybHkgaGFuZGxlIHJ1bnRpbWUN
+CnBtIGFuZCBtdXRleC4NCg0KSSBkaWRuJ3QgdHJ5IHN1c3BlbmQvcmVzdW1lIGR1cmluZyB3cml0
+aW5nLCBidXQgZm91bmQgYWNjZXNzaW5nIHJlZ2lzdGVycw0Kd2l0aG91dCBlbmFibGluZyBjbG9j
+ayB3aGVuIHN5c3RlbSByZXN1bWVkLg0KDQo+IA0KPiBUaGFua3MsDQo+IHRhDQo=
