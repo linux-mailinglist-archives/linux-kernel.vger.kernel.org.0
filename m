@@ -2,134 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5FB737001
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 11:35:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0E323701D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 11:38:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727928AbfFFJfQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 05:35:16 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:40624 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727816AbfFFJfQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 05:35:16 -0400
-Received: by mail-io1-f65.google.com with SMTP id n5so138529ioc.7
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 02:35:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HHp49uQlU5yIys64xH4zvS9Cue2SVr3RQK/YgKDpiRc=;
-        b=AN2CNz7CPqZzivrS99g5nvwP/o/SgLHBsg/4sHt3Gs4l8ZE8woyNIea7FNZ+ZLVBs9
-         10My5n58np8Mog6V4seZA5WseaRXJL42mH3XFJho3fx5KAEGrLvh/B3CRxP75+hoXCZs
-         yutgAOz6DZfYnD+C1SCiox4cawVPPNLBMCf9t8dwKI04O4kGiCd7c2Jjr/n8fqgzSIiS
-         H1/AVWlWmtVtxOGX+Qm4cp0uMl8cAUWzNzyeVJwTJsegYoFIkG0U2hJ8qyVYHuOjZlDV
-         WqbmmgQgR4GOiTE/hNEAD0H0E1uqB+MqNjm+3CN5fKeF1BIthAwuYe+Q8cxB4XWQ0DyS
-         PWVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HHp49uQlU5yIys64xH4zvS9Cue2SVr3RQK/YgKDpiRc=;
-        b=DBlfNdRUQRrkM9TgYxkwdptbJTYFN5XZKbyNsBOHnSJuEe8tySF4q3df3v2bgy+50x
-         u1LxLYf8GBVNvbUwRnASN+OEWm7GpxIPCx/1zDUFfFe1Kr+PtZuFVZvKhYW4qwUiteJX
-         v2ggUFuXfRVwcweT/PWpk5nquymPzA/M3mZPhiGtxe7VOLFI6nBzIN6RIeHv47jE1iVz
-         bVmy51hpxue5sk43EzBGHMO1W99K23+99+1D2yx19HPkr/45nKX1wCy02VSOvgdKI+ZN
-         AiILPYBG6bDomPCDnb9dHvZV6SG/vqx1pe0g5CzC3gf0hqpBsXrrILrddbRgLj64GZen
-         0YSQ==
-X-Gm-Message-State: APjAAAU32IYQoQwTuLUj62Hk7R28AVgFy0SOmpEDLdYFshZ4UtR+BSDp
-        iJ8dGYAzOvtuXjyXYingrU63141+Si3KuyFfv385e/j5EBeaRw==
-X-Google-Smtp-Source: APXvYqwYiF7FPCLPAO+cIFA18Sip3ZuB6prYvOwBxGiLac3826Dt6ufVgilOW70nYctUeU+5al9/Hx5B739dM7xe0tI=
-X-Received: by 2002:a6b:e608:: with SMTP id g8mr5429025ioh.88.1559813714855;
- Thu, 06 Jun 2019 02:35:14 -0700 (PDT)
+        id S1727879AbfFFJif (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 05:38:35 -0400
+Received: from foss.arm.com ([217.140.101.70]:43918 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727359AbfFFJif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 05:38:35 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BCFA4341;
+        Thu,  6 Jun 2019 02:38:34 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 659FD3F690;
+        Thu,  6 Jun 2019 02:38:33 -0700 (PDT)
+Date:   Thu, 6 Jun 2019 10:38:11 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Will Deacon <will.deacon@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Andrey Konovalov <andreyknvl@google.com>
+Subject: Re: [PATCH V2 3/4] arm64/mm: Consolidate page fault information
+ capture
+Message-ID: <20190606093811.GA37430@lakrids.cambridge.arm.com>
+References: <1559544085-7502-1-git-send-email-anshuman.khandual@arm.com>
+ <1559544085-7502-4-git-send-email-anshuman.khandual@arm.com>
+ <20190604144209.GJ6610@arrakis.emea.arm.com>
 MIME-Version: 1.0
-References: <779905244.a0lJJiZRjM@devpool35> <20190605162626.GA31164@kroah.com>
- <CAKv+Gu9QkKwNVpfpQP7uDd2-66jU=qkeA7=0RAoO4TNaSbG+tg@mail.gmail.com>
- <CAKwvOdnPcjESFrQRR_=cCVag3ZSnC0nBqF7+LFHrcDArT_segA@mail.gmail.com>
- <CAKv+Gu9Leaq_s2kVNzHx+zkdKFXgQVkouN3M56u5nou5WX=cKg@mail.gmail.com>
- <20190606070807.GA17985@kroah.com> <CAKv+Gu_=aUmN76Wzy5kokgP6hcZPWAwW_7=ekqOawkfg7LPE3g@mail.gmail.com>
-In-Reply-To: <CAKv+Gu_=aUmN76Wzy5kokgP6hcZPWAwW_7=ekqOawkfg7LPE3g@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 6 Jun 2019 11:34:54 +0200
-Message-ID: <CAKv+Gu9qg0K44hWtKH9vycxhUF4e2zB87kLqw33Jt+Shc1+9HQ@mail.gmail.com>
-Subject: Re: Building arm64 EFI stub with -fpie breaks build of 4.9.x
- (undefined reference to `__efistub__GLOBAL_OFFSET_TABLE_')
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Rolf Eike Beer <eb@emlix.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190604144209.GJ6610@arrakis.emea.arm.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Jun 2019 at 10:58, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->
-> On Thu, 6 Jun 2019 at 09:08, Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Thu, Jun 06, 2019 at 08:55:29AM +0200, Ard Biesheuvel wrote:
-> > > On Wed, 5 Jun 2019 at 22:48, Nick Desaulniers <ndesaulniers@google.com> wrote:
-> > > >
-> > > > On Wed, Jun 5, 2019 at 11:42 AM Ard Biesheuvel
-> > > > <ard.biesheuvel@linaro.org> wrote:
-> > > > > For the record, this is an example of why I think backporting those
-> > > > > clang enablement patches is a bad idea.
-> > > >
-> > > > There's always a risk involved with backports of any kind; more CI
-> > > > coverage can help us mitigate some of these risks in an automated
-> > > > fashion before we get user reports like this.  I meet with the
-> > > > KernelCI folks weekly, so I'll double check on the coverage of the
-> > > > stable tree's branches.  The 0day folks are also very responsive and
-> > > > I've spoken with them a few times, so I'll try to get to the bottom of
-> > > > why this wasn't reported by either of those.
-> > > >
-> > > > Also, these patches help keep Android, CrOS, and Google internal
-> > > > production kernels closer to their upstream sources.
-> > > >
-> > > > > We can't actually build those
-> > > > > kernels with clang, can we? So what is the point? </grumpy>
-> > > >
-> > > > Here's last night's build:
-> > > > https://travis-ci.com/ClangBuiltLinux/continuous-integration/builds/114388434
-> > > >
-> > >
-> > > If you are saying that plain upstream 4.9-stable defconfig can be
-> > > built with Clang, then I am pleasantly surprised.
-> >
-> > I know some specific configs can, there's no rule that I know of that
-> > 'defconfig' support is required.  But then again, it might also work,
-> > try it and see :)
-> >
->
-> Well, it is the rule that the arm64 maintainers use.
->
-> > > > Also, Android and CrOS have shipped X million devices w/ 4.9 kernels
-> > > > built with Clang.  I think this number will grow at least one order of
-> > > > magnitude imminently.
-> > > >
-> > >
-> > > I know that (since you keep reminding me :-)), but obviously, Google
-> > > does not care about changes that regress GCC support.
-> >
-> > What are you talking about?  Bugs happen all the time, what specifically
-> > did "Google" do to break gcc support?  If you are referring to this
-> > patch, and it is a regression, of course I will revert it.  But note
-> > that gcc and 4.9 works just fine for all of the other users right now,
-> > remember we do do a lot of testing of these releases.
-> >
->
-> Don't get me wrong: I am not blaming Google for this. But having
-> strict Documented/ stable-rules, violating them by backporting patches
-> that are clearly not bug fixes, and *then* saying 'bugs happen all the
-> time' makes no sense to me at all.
+On Tue, Jun 04, 2019 at 03:42:09PM +0100, Catalin Marinas wrote:
+> On Mon, Jun 03, 2019 at 12:11:24PM +0530, Anshuman Khandual wrote:
+> > diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+> > index da02678..4bb65f3 100644
+> > --- a/arch/arm64/mm/fault.c
+> > +++ b/arch/arm64/mm/fault.c
+> > @@ -435,6 +435,14 @@ static bool is_el0_instruction_abort(unsigned int esr)
+> >  	return ESR_ELx_EC(esr) == ESR_ELx_EC_IABT_LOW;
+> >  }
+> >  
+> > +/*
+> > + * This is applicable only for EL0 write aborts.
+> > + */
+> > +static bool is_el0_write_abort(unsigned int esr)
+> > +{
+> > +	return (esr & ESR_ELx_WNR) && !(esr & ESR_ELx_CM);
+> > +}
+> 
+> What makes this EL0 only?
 
-BTW I hit the same issue immediately building 4.9.180 defconfig +
-CONFIG_RANDOMIZE_BASE=y, using my distro GCC (6.3.0), so I'd say the
-testing coverage is not sufficient.
+It returns false for EL1 faults caused by DC IVAC, where write
+permission is required. EL0 can only issue maintenance that requires
+read permission.
+
+For whatever reason, the architecture says that WnR is always 1b1, even
+if read permission was sufficient.
+
+How about:
+
+/*
+ * Note: not valid for EL1 DC IVAC, but we never use that such that it
+ * should fault.
+ */
+static bool is_write_abort(unsigned int esr)
+{
+	return (esr & ESR_ELx_WNR) && !(esr & ESR_ELx_CM);
+}
+
+... which would also address your concern about EL1 writes to a user
+mapping.
+
+Thanks,
+Mark.
