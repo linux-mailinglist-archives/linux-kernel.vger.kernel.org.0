@@ -2,240 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70D6C37EAE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 22:26:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C03EB37ED5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 22:30:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726716AbfFFUZ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 16:25:59 -0400
-Received: from mga14.intel.com ([192.55.52.115]:51641 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726292AbfFFUZ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 16:25:59 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 13:25:58 -0700
-X-ExtLoop1: 1
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga007.jf.intel.com with ESMTP; 06 Jun 2019 13:25:57 -0700
-Date:   Thu, 6 Jun 2019 13:29:03 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Cc:     Auger Eric <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "eric.auger.pro@gmail.com" <eric.auger.pro@gmail.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "yi.l.liu@intel.com" <yi.l.liu@intel.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Robin Murphy <Robin.Murphy@arm.com>,
-        "kevin.tian@intel.com" <kevin.tian@intel.com>,
-        "ashok.raj@intel.com" <ashok.raj@intel.com>,
-        Marc Zyngier <Marc.Zyngier@arm.com>,
-        "peter.maydell@linaro.org" <peter.maydell@linaro.org>,
-        Vincent Stehle <Vincent.Stehle@arm.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v8 26/29] vfio-pci: Register an iommu fault handler
-Message-ID: <20190606132903.064f7ac4@jacob-builder>
-In-Reply-To: <2753d192-1c46-d78e-c425-0c828e48cde2@arm.com>
-References: <20190526161004.25232-1-eric.auger@redhat.com>
-        <20190526161004.25232-27-eric.auger@redhat.com>
-        <20190603163139.70fe8839@x1.home>
-        <10dd60d9-4af0-c0eb-08c9-a0db7ee1925e@redhat.com>
-        <20190605154553.0d00ad8d@jacob-builder>
-        <2753d192-1c46-d78e-c425-0c828e48cde2@arm.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1727343AbfFFUaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 16:30:13 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:51858 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727110AbfFFUaN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 16:30:13 -0400
+Received: by mail-it1-f193.google.com with SMTP id m3so2135158itl.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 13:30:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CMffxpzzNeHPnyHxq1DkhRwOhkIOW8SKyDW+whl/MBM=;
+        b=LNCjE7ZroqyYbWBkBxyLftTFqv8ooPNexUhuVqcbnGoXeZEiuGJCy2CHT+FaQUdCC0
+         dguO9W4gajtKWHjb+/8VUG+FCuzfUNrp9Tui6irD9ewHiMbldRFGJ6YhQESbPw1ioV0P
+         2iecLE6raDsvrflU0W8WA1tJ+W1+nokkS0N4M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CMffxpzzNeHPnyHxq1DkhRwOhkIOW8SKyDW+whl/MBM=;
+        b=pUBpnFQ6jcXEKpliast2dufDuFaY9jDkguhsazDquQ230CAr4vaTGeMKn5nRq/VdLK
+         GhN37PSH2WHHc8a1yapkKIHjaiHE3uxJFnAUFmpXjGpSDsuoQwJ7DF4gHokoyL8Eb7NL
+         tBVB+LVyLV1lh8+YesW75RhotFxbggP7edpkv9xus1LMkoIzMXKOy492FXrcLpyLgngS
+         uxh5bPiCCHWVSm//HRc5Z4LicwK16emBTpec7HKqZNJCB+TNKoz+LAbmzFa1/zRk02rK
+         iBBzoTr40ebMijaWccDguUkTBbe6BmwYB7xNBOlhLryIb/vNio8WDOQocuYfOKknTi2r
+         wi1A==
+X-Gm-Message-State: APjAAAUWdbYEvqXKmgVrLbHpC/puzVWwrAP4hyaWJNTEyJ0cyOGxnOYF
+        xEg4+VHiTX5eaQtsu0mt6xO4VQ==
+X-Google-Smtp-Source: APXvYqwLM54vHHQKeM7hNiAZxdj6iSn3l/ZcdXxvNkqtY7eYrBYhgAUkxItdVGznXuRPoCHUUgeEVA==
+X-Received: by 2002:a24:5710:: with SMTP id u16mr1536035ita.67.1559853012190;
+        Thu, 06 Jun 2019 13:30:12 -0700 (PDT)
+Received: from localhost ([2620:15c:183:0:20b8:dee7:5447:d05])
+        by smtp.gmail.com with ESMTPSA id j23sm1039331ioo.6.2019.06.06.13.30.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Jun 2019 13:30:11 -0700 (PDT)
+From:   Raul E Rangel <rrangel@chromium.org>
+To:     yamada.masahiro@socionext.com
+Cc:     mka@chromium.org, ndesaulniers@google.com, zwisler@chromium.org,
+        Raul E Rangel <rrangel@chromium.org>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kbuild@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
+        linux-kernel@vger.kernel.org,
+        Michal Marek <michal.lkml@markovi.net>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Changbin Du <changbin.du@intel.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Sri Krishna chowdary <schowdary@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [RFC PATCH] kbuild: Add option to generate a Compilation Database
+Date:   Thu,  6 Jun 2019 14:30:03 -0600
+Message-Id: <20190606203003.112040-1-rrangel@chromium.org>
+X-Mailer: git-send-email 2.22.0.rc1.311.g5d7573a151-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Jun 2019 19:54:05 +0100
-Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
+Clang tooling requires a compilation database to figure out the build
+options for each file. This enables tools like clang-tidy and
+clang-check.
 
-> On 05/06/2019 23:45, Jacob Pan wrote:
-> > On Tue, 4 Jun 2019 18:11:08 +0200
-> > Auger Eric <eric.auger@redhat.com> wrote:
-> >   
-> >> Hi Alex,
-> >>
-> >> On 6/4/19 12:31 AM, Alex Williamson wrote:  
-> >>> On Sun, 26 May 2019 18:10:01 +0200
-> >>> Eric Auger <eric.auger@redhat.com> wrote:
-> >>>     
-> >>>> This patch registers a fault handler which records faults in
-> >>>> a circular buffer and then signals an eventfd. This buffer is
-> >>>> exposed within the fault region.
-> >>>>
-> >>>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
-> >>>>
-> >>>> ---
-> >>>>
-> >>>> v3 -> v4:
-> >>>> - move iommu_unregister_device_fault_handler to vfio_pci_release
-> >>>> ---
-> >>>>  drivers/vfio/pci/vfio_pci.c         | 49
-> >>>> +++++++++++++++++++++++++++++ drivers/vfio/pci/vfio_pci_private.h
-> >>>> |  1 + 2 files changed, 50 insertions(+)
-> >>>>
-> >>>> diff --git a/drivers/vfio/pci/vfio_pci.c
-> >>>> b/drivers/vfio/pci/vfio_pci.c index f75f61127277..520999994ba8
-> >>>> 100644 --- a/drivers/vfio/pci/vfio_pci.c
-> >>>> +++ b/drivers/vfio/pci/vfio_pci.c
-> >>>> @@ -30,6 +30,7 @@
-> >>>>  #include <linux/vfio.h>
-> >>>>  #include <linux/vgaarb.h>
-> >>>>  #include <linux/nospec.h>
-> >>>> +#include <linux/circ_buf.h>
-> >>>>  
-> >>>>  #include "vfio_pci_private.h"
-> >>>>  
-> >>>> @@ -296,6 +297,46 @@ static const struct vfio_pci_regops
-> >>>> vfio_pci_fault_prod_regops = { .add_capability =
-> >>>> vfio_pci_fault_prod_add_capability, };
-> >>>>  
-> >>>> +int vfio_pci_iommu_dev_fault_handler(struct iommu_fault_event
-> >>>> *evt, void *data) +{
-> >>>> +	struct vfio_pci_device *vdev = (struct vfio_pci_device
-> >>>> *) data;
-> >>>> +	struct vfio_region_fault_prod *prod_region =
-> >>>> +		(struct vfio_region_fault_prod
-> >>>> *)vdev->fault_pages;
-> >>>> +	struct vfio_region_fault_cons *cons_region =
-> >>>> +		(struct vfio_region_fault_cons
-> >>>> *)(vdev->fault_pages + 2 * PAGE_SIZE);
-> >>>> +	struct iommu_fault *new =
-> >>>> +		(struct iommu_fault *)(vdev->fault_pages +
-> >>>> prod_region->offset +
-> >>>> +			prod_region->prod *
-> >>>> prod_region->entry_size);
-> >>>> +	int prod, cons, size;
-> >>>> +
-> >>>> +	mutex_lock(&vdev->fault_queue_lock);
-> >>>> +
-> >>>> +	if (!vdev->fault_abi)
-> >>>> +		goto unlock;
-> >>>> +
-> >>>> +	prod = prod_region->prod;
-> >>>> +	cons = cons_region->cons;
-> >>>> +	size = prod_region->nb_entries;
-> >>>> +
-> >>>> +	if (CIRC_SPACE(prod, cons, size) < 1)
-> >>>> +		goto unlock;
-> >>>> +
-> >>>> +	*new = evt->fault;
-> >>>> +	prod = (prod + 1) % size;
-> >>>> +	prod_region->prod = prod;
-> >>>> +	mutex_unlock(&vdev->fault_queue_lock);
-> >>>> +
-> >>>> +	mutex_lock(&vdev->igate);
-> >>>> +	if (vdev->dma_fault_trigger)
-> >>>> +		eventfd_signal(vdev->dma_fault_trigger, 1);
-> >>>> +	mutex_unlock(&vdev->igate);
-> >>>> +	return 0;
-> >>>> +
-> >>>> +unlock:
-> >>>> +	mutex_unlock(&vdev->fault_queue_lock);
-> >>>> +	return -EINVAL;
-> >>>> +}
-> >>>> +
-> >>>>  static int vfio_pci_init_fault_region(struct vfio_pci_device
-> >>>> *vdev) {
-> >>>>  	struct vfio_region_fault_prod *header;
-> >>>> @@ -328,6 +369,13 @@ static int vfio_pci_init_fault_region(struct
-> >>>> vfio_pci_device *vdev) header = (struct vfio_region_fault_prod
-> >>>> *)vdev->fault_pages; header->version = -1;
-> >>>>  	header->offset = PAGE_SIZE;
-> >>>> +
-> >>>> +	ret =
-> >>>> iommu_register_device_fault_handler(&vdev->pdev->dev,
-> >>>> +
-> >>>> vfio_pci_iommu_dev_fault_handler,
-> >>>> +					vdev);
-> >>>> +	if (ret)
-> >>>> +		goto out;
-> >>>> +
-> >>>>  	return 0;
-> >>>>  out:
-> >>>>  	kfree(vdev->fault_pages);
-> >>>> @@ -570,6 +618,7 @@ static void vfio_pci_release(void
-> >>>> *device_data) if (!(--vdev->refcnt)) {
-> >>>>  		vfio_spapr_pci_eeh_release(vdev->pdev);
-> >>>>  		vfio_pci_disable(vdev);
-> >>>> +
-> >>>> iommu_unregister_device_fault_handler(&vdev->pdev->dev);    
-> >>>
-> >>>
-> >>> But this can fail if there are pending faults which leaves a
-> >>> device reference and then the system is broken :(    
-> >> This series only features unrecoverable errors and for those the
-> >> unregistration cannot fail. Now unrecoverable errors were added I
-> >> admit this is confusing. We need to sort this out or clean the
-> >> dependencies.  
-> > As Alex pointed out in 4/29, we can make
-> > iommu_unregister_device_fault_handler() never fail and clean up all
-> > the pending faults in the host IOMMU belong to that device. But the
-> > problem is that if a fault, such as PRQ, has already been injected
-> > into the guest, the page response may come back after handler is
-> > unregistered and registered again.  
-> 
-> I'm trying to figure out if that would be harmful in any way. I guess
-> it can be a bit nasty if we handle the page response right after
-> having injected a new page request that uses the same PRGI. In any
-> other case we discard the page response, but here we forward it to
-> the endpoint and:
-> 
-> * If the response status is success, endpoint retries the
-> translation. The guest probably hasn't had time to handle the new
-> page request and translation will fail, which may lead the endpoint
-> to give up (two unsuccessful translation requests). Or send a new
-> request
-> 
-Good point, there shouldn't be any harm if the page response is a
-"fake" success. In fact it could happen in the normal operation when
-PRQs to two devices share the same non-leaf translation structure. The
-worst case is just a retry. I am not aware of the retry limit, is it in
-the PCIe spec? I cannot find it.
+See https://clang.llvm.org/docs/HowToSetupToolingForLLVM.html for more
+information.
 
-I think we should just document it, similar to having a spurious
-interrupt. The PRQ trace event should capture that as well.
+Normally cmake is used to generate the compilation database, but the
+linux kernel uses make. Another option is using
+[BEAR](https://github.com/rizsotto/Bear) which instruments
+exec to find clang invocations and generate the database that way.
 
-> * otherwise the endpoint won't retry the access, and could also
-> disable PRI if the status is failure.
-> 
-That would be true regardless this race condition with handler
-registration. So should be fine.
+Clang 4.0.0 added the -MJ option to generate the json for each
+compilation unit. https://reviews.llvm.org/D27140
 
-> > We need a way to reject such page response belong
-> > to the previous life of the handler. Perhaps a sync call to the
-> > guest with your fault queue eventfd? I am not sure.  
-> 
-> We could simply expect the device driver not to send any page response
-> after unregistering the fault handler. Is there any reason VFIO would
-> need to unregister and re-register the fault handler on a live guest?
-> 
-There is no reason for VFIO to unregister and register again, I was
-just thinking from security perspective. Someone could write a VFIO app
-do this attack. But I agree the damage is within the device, may get
-PRI disabled as a result.
+This patch takes advantage of the -MJ option. So it only works for
+Clang.
 
-So it seems we agree on the following:
-- iommu_unregister_device_fault_handler() will never fail
-- iommu driver cleans up all pending faults when handler is unregistered
-- assume device driver or guest not sending more page response _after_
-  handler is unregistered.
-- system will tolerate rare spurious response
+Signed-off-by: Raul E Rangel <rrangel@chromium.org>
+---
+I have a couple TODOs in the code that I would like some feedback on.
+Specifically why extra-y doesn't seem to work in the root Makefile.
+Also, is there a way to add the correct list of prerequisites to the
+compile_commands.json target?
 
-Sounds right?
+Thanks,
+Raul
 
-> Thanks,
-> Jean
 
-[Jacob Pan]
+ Makefile               | 20 ++++++++++++++++++++
+ lib/Kconfig.debug      |  7 +++++++
+ scripts/Makefile.build |  9 ++++++++-
+ 3 files changed, 35 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index a61a95b6b38f7..06067ee18ff64 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1663,6 +1663,26 @@ quiet_cmd_tags = GEN     $@
+ tags TAGS cscope gtags: FORCE
+ 	$(call cmd,tags)
+ 
++# Compilation Database
++# ---------------------------------------------------------------------------
++# Generates a compilation database that can be used with the LLVM tools
++ifdef CONFIG_COMPILATION_DATABASE
++
++quiet_cmd_compilation_db = GEN   $@
++cmd_compilation_db = (echo '['; \
++	find "$(@D)" -mindepth 2 -iname '*.json' -print0 | xargs -0 cat; \
++	echo ']') > "$(@D)/$(@F)"
++
++# Make sure the database is built when calling `make` without a target.
++# TODO: Using extra-y doesn't seem to work.
++_all: $(obj)/compile_commands.json
++
++# TODO: Is there a variable that contains all the object files created by
++# cmd_cc_o_c? Depending on `all` is kind of a hack
++$(obj)/compile_commands.json: all FORCE
++	$(call if_changed,compilation_db)
++endif
++
+ # Scripts to check various things for consistency
+ # ---------------------------------------------------------------------------
+ 
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index eae43952902eb..46fceb1fff3d9 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -238,6 +238,13 @@ config GDB_SCRIPTS
+ 	  instance. See Documentation/dev-tools/gdb-kernel-debugging.rst
+ 	  for further details.
+ 
++config COMPILATION_DATABASE
++	bool "Generate a compilation database"
++	depends on CLANG_VERSION >= 40000
++	help
++	  This creates a JSON Compilation Database (compile_commands.json)
++	  that is used by the clang tooling (clang-tidy, clang-check, etc).
++
+ config ENABLE_MUST_CHECK
+ 	bool "Enable __must_check logic"
+ 	default y
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index ae9cf740633e1..0017bf397292d 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -145,8 +145,15 @@ $(obj)/%.ll: $(src)/%.c FORCE
+ # The C file is compiled and updated dependency information is generated.
+ # (See cmd_cc_o_c + relevant part of rule_cc_o_c)
+ 
++ifdef CONFIG_COMPILATION_DATABASE
++# TODO: Should we store the json in a temp variable and only copy it to the
++# final name when the content is different? In theory we could avoid having to
++# generate the compilation db if the json did not change.
++compdb_flags = -MJ $(@D)/.$(@F).json
++endif
++
+ quiet_cmd_cc_o_c = CC $(quiet_modtag)  $@
+-      cmd_cc_o_c = $(CC) $(c_flags) -c -o $@ $<
++      cmd_cc_o_c = $(CC) $(c_flags) $(compdb_flags) -c -o $@ $<
+ 
+ ifdef CONFIG_MODVERSIONS
+ # When module versioning is enabled the following steps are executed:
+-- 
+2.22.0.rc1.311.g5d7573a151-goog
+
