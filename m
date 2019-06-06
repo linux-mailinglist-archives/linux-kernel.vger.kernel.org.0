@@ -2,207 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C41DA37807
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 17:33:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1A983780D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 17:34:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729472AbfFFPdW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 11:33:22 -0400
-Received: from sed198n136.SEDSystems.ca ([198.169.180.136]:41308 "EHLO
-        sed198n136.sedsystems.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729165AbfFFPdW (ORCPT
+        id S1729371AbfFFPeO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 11:34:14 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51807 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729156AbfFFPeO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 11:33:22 -0400
-Received: from barney.sedsystems.ca (barney [198.169.180.121])
-        by sed198n136.sedsystems.ca  with ESMTP id x56FXK5X001625
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 6 Jun 2019 09:33:20 -0600 (CST)
-Received: from eng1n65.eng.sedsystems.ca (eng1n65.eng.sedsystems.ca [172.21.1.65])
-        by barney.sedsystems.ca (8.14.7/8.14.4) with ESMTP id x56FXK3X017798
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Thu, 6 Jun 2019 09:33:20 -0600
-Subject: Re: [PATCH 1/2] mfd: core: Support multiple OF child devices of the
- same type
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org
-References: <1559687743-31879-1-git-send-email-hancock@sedsystems.ca>
- <1559687743-31879-2-git-send-email-hancock@sedsystems.ca>
- <20190605063108.GF4797@dell>
- <7561b2af-52b4-af78-f854-00ba0b86c822@sedsystems.ca>
- <20190605184505.GT4797@dell>
- <3a961f58-05d0-95ab-95e1-6d336336193c@sedsystems.ca>
- <20190606052700.GZ4797@dell>
-From:   Robert Hancock <hancock@sedsystems.ca>
-Openpgp: preference=signencrypt
-Autocrypt: addr=hancock@sedsystems.ca; prefer-encrypt=mutual; keydata=
- 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
-Organization: SED Systems
-Message-ID: <bf3b9399-39c9-effb-8406-4eac2403da5c@sedsystems.ca>
-Date:   Thu, 6 Jun 2019 09:33:20 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Thu, 6 Jun 2019 11:34:14 -0400
+Received: by mail-wm1-f67.google.com with SMTP id f10so409737wmb.1;
+        Thu, 06 Jun 2019 08:34:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YNCZH4cwmzPfukjIuLRGuMkntmVdByW0qbXhUjyBVJI=;
+        b=qkTuWFTlw3+q8iegPcKQi5pHRkjycGloiIIztCCnol8eUIPokPCXP4YRVghDXDiwSK
+         G9p8cvDaWEVxt0dCZ2CKExTIKqIRnqOCq4ZK8EXYWbTi5aSHF2+AoESLcZWuHMykQ/dq
+         gXx+aq/LsdL2uFtqWoT98mHJ6HtH+LbosxYY6Fr4QFD3rim+dI2jxLb0+oQpCav0+/kQ
+         z368AmjqFNen6gnMfrduuUo3a6Xf5Tln7SofOb8EEom1KHuTY5vwQiFKOHqAxgELqdtB
+         w9/xd0qp+1/wr2nya+0+ra7AX4cW9pMKhrDgGlu+xegVxxWiw/yQL+6CxNgCvBBg9exk
+         Ws6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YNCZH4cwmzPfukjIuLRGuMkntmVdByW0qbXhUjyBVJI=;
+        b=b30l//SlwmLh30Xk+29HTEFGOvwyBskPVfWmaXPHv4jYFLkxGNE+YEj/MxsYl+R//Z
+         ijuCOnvJC6FpxvunSW4v1b3DqmbmtscLrGIxZZbf87BbMMr9bbcwMJb7IMwz+am6fkGx
+         FGrn7urZX8alC+hk3FJoSKlVyvgs4TglwLBC73tuxciZ1wbLn700NVd86fYVj9Co4PwG
+         0R6lIZzn2RlXHKTbwbX1FY6eR4p+jh/scFpszB6htFMb/0jPFsV7u3gP8dPrB/jOsuQb
+         e29ArEx6YvyflL9qox6f9S6+1czHJAyCGhF/OTGQo9aWYcTNGW6eR8SXdu/bwA0WQMDT
+         YWaA==
+X-Gm-Message-State: APjAAAWnWrU0lr3qN4uL5N5M+88WcVzK7X2ChyvSqnH0oylTRCw9iHcn
+        Wy/RYlB3VXVQ0my+xhSkpzs=
+X-Google-Smtp-Source: APXvYqwlmKS/iYNpwXsxb3o95trjpJEbEMQt25ZZsFm3shcsDu2hQJZ+WVxjYH8Lt0OMyySB6KY5wQ==
+X-Received: by 2002:a1c:5546:: with SMTP id j67mr503162wmb.80.1559835251398;
+        Thu, 06 Jun 2019 08:34:11 -0700 (PDT)
+Received: from localhost (p2E5BEF36.dip0.t-ipconnect.de. [46.91.239.54])
+        by smtp.gmail.com with ESMTPSA id u13sm2173183wrq.62.2019.06.06.08.34.10
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 06 Jun 2019 08:34:10 -0700 (PDT)
+Date:   Thu, 6 Jun 2019 17:34:09 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com,
+        catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com,
+        gustavo.pimentel@synopsys.com, mperttunen@nvidia.com,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kthota@nvidia.com,
+        mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH V8 09/15] dt-bindings: PCI: tegra: Add device tree
+ support for Tegra194
+Message-ID: <20190606153409.GB3338@ulmo>
+References: <20190526043751.12729-1-vidyas@nvidia.com>
+ <20190526043751.12729-10-vidyas@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20190606052700.GZ4797@dell>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.64 on 198.169.180.136
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="jho1yZJdad60DJr+"
+Content-Disposition: inline
+In-Reply-To: <20190526043751.12729-10-vidyas@nvidia.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-06-05 11:27 p.m., Lee Jones wrote:
->>>> Without having the .of_full_name support, both MFD cells ended up
->>>> wrongly matching against the i2c@c0000 device tree node since we just
->>>> picked the first one where of_compatible matched.
->>>
->>> What is contained in each of their resources?
->>
->> These are the resource entries for those two devices:
->>
->> static const struct resource dbe_i2c1_resources[] = {
->> {
->> 	.start		= 0xc0000,
->> 	.end		= 0xcffff,
->> 	.name		= "xi2c1_regs",
->> 	.flags		= IORESOURCE_MEM,
->> 	.desc		= IORES_DESC_NONE
->> },
->> };
->>
->> static const struct resource dbe_i2c2_resources[] = {
->> {
->> 	.start		= 0xd0000,
->> 	.end		= 0xdffff,
->> 	.name		= "xi2c2_regs",
->> 	.flags		= IORESOURCE_MEM,
->> 	.desc		= IORES_DESC_NONE
->> },
->> };
-> 
-> This is your problem.  You are providing the memory resources through
-> *both* DT and MFD.  I don't believe I've seen your MFD driver, but it
-> looks like it's probably not required at all.  Just allow DT to probe
-> each of your child devices.  You can obtain the IO memory from there
-> directly using the usual platform_get_resource() calls.
 
-As far as I can tell, the DT child devices underneath a PCIe device
-don't get probed and drivers loaded automatically - possibly for valid
-reasons. The MFD driver appears to be required in order to actually get
-drivers attached to those DT nodes.
+--jho1yZJdad60DJr+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Right now those devices are ending up with no memory resources unless
-they are injected through the MFD cells. It would be handy if the memory
-resources were mapped automatically from the PCIe BARs to the
-sub-devices, to avoid duplicating information in the DT and the driver,
-but even if that was solved it wouldn't avoid the need for this patch,
-as the devices would still end up attached to the wrong DT node and pick
-up the wrong properties.
+On Sun, May 26, 2019 at 10:07:45AM +0530, Vidya Sagar wrote:
+> Add support for Tegra194 PCIe controllers. These controllers are based
+> on Synopsys DesignWare core IP.
+>=20
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-The other reason we need the MFD driver is we are implementing an IRQ
-domain to map the interrupts from the PCIe device to the child nodes,
-and using some of those callbacks to poke other registers on the PCIe to
-assist with converting the level-triggered AXI interrupts to
-edge-triggered MSIs.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-This is what the outer DT leading up to what I showed earlier looks like.
+--jho1yZJdad60DJr+
+Content-Type: application/pgp-signature; name="signature.asc"
 
-&pcie {
-    pinctrl-names = "default";
-    pinctrl-0 = <&pinctrl_pcie>;
-    reset-gpio = <&gpio7 12 GPIO_ACTIVE_LOW>;
-    status = "okay";
+-----BEGIN PGP SIGNATURE-----
 
-    pci_rootport: pcie@0,0 {
-        reg = <0x83000000 0 0 0 0>;
-        #address-cells = <3>;
-        #size-cells = <2>;
-        ranges;
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlz5MnEACgkQ3SOs138+
+s6EZuRAArnRIwdHFGGw7PRPo7CkDJeVM+eTKg/JkJJmI9FfY5NbdVm7wwEXJJg4b
+jkzRaxcDKtL/8WkfptcnjrtRiz+GY5oz4+FvkIqaAXVy2pYQChgfecQ5fTgf8R5b
+U/cyR75uLNk7VTyOjHsn8s16NsvTEe4eVgxQzt9OF/AiR0OPeT2Fnu/wvUO5MJmA
+zeyr/MaJ8vkm6qOmkntugy0cTjx+o0/7kOd7Oi7FEOOvrKUsgbuW3k31pvykYIbE
+qzDwL+R7Ay9h3dM+OAbRgrK7K/sHZFJQxGtIRn8jq5iTIJcPs8jIK+B5v8d8ahlC
+aSlUS1gouB7Fp0zSJEdD25wGtZh8MV80kM9wSC/R/4CnY1VqX+/o5sDbL0X8ir1v
+cd9h+XKLY5ZgSRsz1EHdbilB+uu5LNtDYBdkBWcEY7oLM/ACom2JSI4vtJs0w7nJ
+yBWq1Qxw/9Gy8pOc3YfUuNx2yjdlK1c9QwLJd585/aKExzYJfrlOCvljY4nl75DD
+1bw4mDI7uWdBWUhgsdMugW2sVz5RgkVPjen2sx+tIgBPCmR8JInAEROvIpALG5hC
+9VHz2Yc2GGSM6tHiVUD5lBmNmhdh1PS38nEw4KUEuDFlc26S7S9Vf/tqHlwZ0G4f
+JaFf4UTs1U7Z+PtXw13of7OpxYVFfdMlswoI6y1ottPBuBFhLU0=
+=M5MQ
+-----END PGP SIGNATURE-----
 
-        fpga_pcie: pcie@1,0 {
-            reg = <0x2010000 0 0 0 0>;
-            #address-cells = <1>;
-            #size-cells = <1>;
-            interrupt-controller;
-            #interrupt-cells = <1>;
-
-            ...
-
-            axi_iic_0: i2c@c0000 {
-                compatible = "xlnx,xps-iic-2.00.a";
-                clocks = <&axi_clk>;
-                clock-frequency = <100000>;
-                interrupts = <7>;
-                #size-cells = <0>;
-                #address-cells = <1>;
-            };
-
-            axi_iic_1: i2c@d0000 {
-                compatible = "xlnx,xps-iic-2.00.a";
-                clocks = <&axi_clk>;
-                clock-frequency = <100000>;
-                interrupts = <8>;
-                #size-cells = <0>;
-                #address-cells = <1>;
-            };
-        };
-    };
-};
-
-
-
-> 
->> Ideally the IO memory resource entries would be picked up and mapped
->> through the device tree as well, as they are with the interrupts, but I
->> haven't yet found the device tree magic that would allow that to happen
->> yet, if it's possible. The setup we have has a number of peripherals on
->> an AXI bus which are behind a PCIe to AXI bridge, and we're using mfd to
->> instantiate each of those AXI devices under the PCIe device.
->>
-> 
-
--- 
-Robert Hancock
-Senior Software Developer
-SED Systems, a division of Calian Ltd.
-Email: hancock@sedsystems.ca
+--jho1yZJdad60DJr+--
