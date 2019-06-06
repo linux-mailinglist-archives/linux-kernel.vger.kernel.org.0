@@ -2,101 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DD8737489
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 14:53:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37ACA37491
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 14:55:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728102AbfFFMx0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 08:53:26 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:50137 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726822AbfFFMx0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 08:53:26 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id E1AF980262; Thu,  6 Jun 2019 14:53:13 +0200 (CEST)
-Date:   Thu, 6 Jun 2019 14:53:23 +0200
-From:   Pavel Machek <pavel@denx.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        James Smart <james.smart@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 237/276] scsi: lpfc: avoid uninitialized variable
- warning
-Message-ID: <20190606125323.GC27432@amd>
-References: <20190530030523.133519668@linuxfoundation.org>
- <20190530030539.944220603@linuxfoundation.org>
+        id S1727668AbfFFMzx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 08:55:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36110 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726040AbfFFMzx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 08:55:53 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41CF12070B;
+        Thu,  6 Jun 2019 12:55:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559825752;
+        bh=1hbBwnqN56Y/JMha8383D60Ivnk7r8lWw9qY3990Jx8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kQpFEkxj1lVEGqH1VbTPjTunTeW0nCtQANi+nuicZUsJauqdNJ6LrfBOvY7TIppIY
+         0eCdtd/Z5WQjDDJRHCCBROkGkflZjOXduAveM+IdB/jZIqUSAzd2U2Hr64J1rhzKo1
+         vqvI2Y6bl8KdcfE2ZsuiXyq89F78+22vSWcLE70k=
+Date:   Thu, 6 Jun 2019 14:55:50 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Simon =?iso-8859-1?Q?Sandstr=F6m?= <simon@nikanor.nu>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/7] staging: kpc2000: use __func__ in debug messages in
+ core.c
+Message-ID: <20190606125550.GA11929@kroah.com>
+References: <20190603222916.20698-1-simon@nikanor.nu>
+ <20190603222916.20698-5-simon@nikanor.nu>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="adJ1OR3c6QgCpb/j"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190530030539.944220603@linuxfoundation.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190603222916.20698-5-simon@nikanor.nu>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jun 04, 2019 at 12:29:13AM +0200, Simon Sandström wrote:
+> Fixes checkpatch.pl warning "Prefer using '"%s...", __func__' to using
+> '<function name>', this function's name, in a string".
+> 
+> Signed-off-by: Simon Sandström <simon@nikanor.nu>
+> ---
+>  drivers/staging/kpc2000/kpc2000/core.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/staging/kpc2000/kpc2000/core.c b/drivers/staging/kpc2000/kpc2000/core.c
+> index a70665a202c3..6d4fc1f37c9f 100644
+> --- a/drivers/staging/kpc2000/kpc2000/core.c
+> +++ b/drivers/staging/kpc2000/kpc2000/core.c
+> @@ -312,8 +312,8 @@ static int kp2000_pcie_probe(struct pci_dev *pdev,
+>  	unsigned long dma_bar_phys_len;
+>  	u16 regval;
+>  
+> -	dev_dbg(&pdev->dev, "kp2000_pcie_probe(pdev = [%p], id = [%p])\n",
+> -		pdev, id);
+> +	dev_dbg(&pdev->dev, "%s(pdev = [%p], id = [%p])\n",
+> +		__func__, pdev, id);
 
---adJ1OR3c6QgCpb/j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+debugging lines that say "called this function!" can all be removed, as
+we have ftrace in the kernel tree, we can use that instead.  I'll take
+this, but feel free to clean them up as follow-on patches.
 
-Hi!
+thanks,
 
-> [ Upstream commit faf5a744f4f8d76e7c03912b5cd381ac8045f6ec ]
->=20
-> clang -Wuninitialized incorrectly sees a variable being used without
-> initialization:
->=20
-> drivers/scsi/lpfc/lpfc_nvme.c:2102:37: error: variable 'localport' is uni=
-nitialized when used here
->       [-Werror,-Wuninitialized]
->                 lport =3D (struct lpfc_nvme_lport *)localport->private;
->                                                   ^~~~~~~~~
-> drivers/scsi/lpfc/lpfc_nvme.c:2059:38: note: initialize the variable 'loc=
-alport' to silence this warning
->         struct nvme_fc_local_port *localport;
->                                             ^
->                                              =3D NULL
-> 1 error generated.
->=20
-> This is clearly in dead code, as the condition leading up to it is always
-> false when CONFIG_NVME_FC is disabled, and the variable is always
-> initialized when nvme_fc_register_localport() got called successfully.
->=20
-> Change the preprocessor conditional to the equivalent C construct, which
-> makes the code more readable and gets rid of the warning.
-
-Unfortunately, this missed "else" branch where the code was freeing
-the memory with kfree(cstat)... so this introduces a memory leak.
-
-Best regards,
-									Pavel
-
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Acked-by: James Smart <james.smart@broadcom.com>
-> Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---adJ1OR3c6QgCpb/j
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlz5DMMACgkQMOfwapXb+vL9mgCfWykgy5M4WHThY/CXqMxs9B8y
-7BcAnikxGH2w2GgBe5Ox/uWDPPO4yA9q
-=n/8A
------END PGP SIGNATURE-----
-
---adJ1OR3c6QgCpb/j--
+greg k-h
