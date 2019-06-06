@@ -2,68 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 187CC37A02
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 18:50:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F3FB37A0A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 18:51:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbfFFQuf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 12:50:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35462 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726379AbfFFQuf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 12:50:35 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81755206BB;
-        Thu,  6 Jun 2019 16:50:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559839834;
-        bh=+qRKZuurwyHw2Y9SndA0cCjnZtTW9RpgmwmM7kR60ZQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LXj/6cSo4n7syKeTiNS4CVaH9RCcruu3Dvhk+8ucah14QkDsga0vpeb4kTvyhDk9p
-         gq7ANtnYzxEr3ycFrM6eQoNmWRXcq33RrLoaeo2XvWoIjS5rqXxtSqbY0zrFXsPeD6
-         EaP/2g0040mkp1CPNodCZdcauQvCOcD/kLOMaCGc=
-Date:   Thu, 6 Jun 2019 12:50:33 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Michael Kelley <mikelley@microsoft.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        "apw@canonical.com" <apw@canonical.com>,
-        vkuznets <vkuznets@redhat.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>,
-        Sunil Muthuswamy <sunilmut@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>
-Subject: Re: [PATCH v2 1/1] Drivers: hv: vmbus: Break out ISA independent
- parts of mshyperv.h
-Message-ID: <20190606165033.GM29739@sasha-vm>
-References: <1559175219-17823-1-git-send-email-mikelley@microsoft.com>
+        id S1728098AbfFFQvV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 12:51:21 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:40678 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726379AbfFFQvV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 12:51:21 -0400
+Received: by mail-qk1-f193.google.com with SMTP id c70so1877041qkg.7;
+        Thu, 06 Jun 2019 09:51:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=i8kfH/p9w5fOEVub+27JCS8Z7PNh8HtMqCoYVK0Nmwk=;
+        b=q/nIJ9XVwRlmf4TxaES13DvVRJsdhh4JoYAu+xzhVKv/px2vmX3KXcOr2vYbAUH8cP
+         7+Zw25Z2eIjA1YOs1de8Ow8+V5aIUr3f4sO7iH3VghgvFe/IlvuprDPAeJY/dAt/QQGb
+         e3PBt0/tEgtMKI7XW0gqlWO0jTXOjBUN9bNAvNXd5CTBW1GCAJXHkh46hL4WTIkw1YAR
+         izuNLA69UWi0sBqryFkJqu1qR+W+uS8EyNKJqw7R206wLT9OPCzmzXS6/7FEmo+bD7Yi
+         tAdUvNj/E36uuf1VYvI8VZ9es6mQoi5s/KjmnJplp+MUE4fJD2wVzNwImVDVgwMRF7Uq
+         tl1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=i8kfH/p9w5fOEVub+27JCS8Z7PNh8HtMqCoYVK0Nmwk=;
+        b=fK6Il0FHPIttMZosat/1eCKWhvaJjqXu8UZZlrKZ3wIjLgjyeazJJQM4ovKB8S7O5I
+         PzbuEwY9zvdht4CaRwLXI1QGeDdzsr8JxMEdvuYlBg57nYoF1GrsTd6O2gpl/PAS/PF4
+         YZD2p/rzaW85TVRUkhea20eMjyxeyljq1b/UGNcRzRQ4nJ/Xt9RdZAsHwZO9vYtpkFbN
+         AbkIiH22o0oRqnsoE4WH72goSIuHCQlAyhbITBEk9DYwDGrMe+h8rY69mvDNG/V/u9+8
+         xDMELbQXIcOVXEgJZFaQ0wkJ4hZsnmm9ZLUKpPp4iqQFxhxdLbaWOJ5Abn3wby6Y/dQ6
+         ZjHg==
+X-Gm-Message-State: APjAAAWUI2AgOi0repse1enCBzLIBARqnw2Q5tWnUN5QRSVK1y29fD4Z
+        AJ5Jp8c+lkw2se6SMtX7/zBzK9UzXOr2lspZq9ZDRQ==
+X-Google-Smtp-Source: APXvYqy73a2R1Ge9q/w+QOUBx9Dq/x++7WAcMxkT+efJfMMjzYXz/0Wbx+FacrHn9liJVIqdmiNB8DwCM5wSt6CKlBo=
+X-Received: by 2002:a05:620a:12f8:: with SMTP id f24mr20131508qkl.202.1559839880644;
+ Thu, 06 Jun 2019 09:51:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <1559175219-17823-1-git-send-email-mikelley@microsoft.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190604224418.GA23187@embeddedor>
+In-Reply-To: <20190604224418.GA23187@embeddedor>
+From:   Song Liu <liu.song.a23@gmail.com>
+Date:   Thu, 6 Jun 2019 09:51:09 -0700
+Message-ID: <CAPhsuW5cBSsQemfBOyJ_kPLFbaiES8Koh2cvpy9AV4dMB68OJA@mail.gmail.com>
+Subject: Re: [PATCH] md: raid10: Use struct_size() in kmalloc()
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Shaohua Li <shli@kernel.org>,
+        linux-raid <linux-raid@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 12:14:00AM +0000, Michael Kelley wrote:
->Break out parts of mshyperv.h that are ISA independent into a
->separate file in include/asm-generic. This move facilitates
->ARM64 code reusing these definitions and avoids code
->duplication. No functionality or behavior is changed.
+On Tue, Jun 4, 2019 at 3:47 PM Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
 >
->Signed-off-by: Michael Kelley <mikelley@microsoft.com>
->Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
->---
->Changes in v2:
->* Removed unneeded #includes in asm-generic/mshyperv.h;
->added two #includes that are needed. [Vitaly Kuznetsov]
+> One of the more common cases of allocation size calculations is finding
+> the size of a structure that has a zero-sized array at the end, along
+> with memory for some number of elements for that array. For example:
+>
+> struct foo {
+>    int stuff;
+>    struct boo entry[];
+> };
+>
+> instance = kmalloc(size, GFP_KERNEL);
+>
+> Instead of leaving these open-coded and prone to type mistakes, we can
+> now use the new struct_size() helper:
+>
+> instance = kmalloc(struct_size(instance, entry, count), GFP_KERNEL);
+>
+> This code was detected with the help of Coccinelle.
+>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Queued for hyperv-next, thanks!
+Applied to my md-next tree.
 
---
 Thanks,
-Sasha
+Song
+
+> ---
+>  drivers/md/raid10.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+> index aea11476fee6..3caafd433163 100644
+> --- a/drivers/md/raid10.c
+> +++ b/drivers/md/raid10.c
+> @@ -4780,8 +4780,7 @@ static int handle_reshape_read_error(struct mddev *mddev,
+>         int idx = 0;
+>         struct page **pages;
+>
+> -       r10b = kmalloc(sizeof(*r10b) +
+> -              sizeof(struct r10dev) * conf->copies, GFP_NOIO);
+> +       r10b = kmalloc(struct_size(r10b, devs, conf->copies), GFP_NOIO);
+>         if (!r10b) {
+>                 set_bit(MD_RECOVERY_INTR, &mddev->recovery);
+>                 return -ENOMEM;
+> --
+> 2.21.0
+>
