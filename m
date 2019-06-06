@@ -2,205 +2,247 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 484BD37CC4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 20:54:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 866E837CD5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 20:55:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727839AbfFFSyN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 14:54:13 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52414 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726757AbfFFSyN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 14:54:13 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A289EA78;
-        Thu,  6 Jun 2019 11:54:12 -0700 (PDT)
-Received: from [10.37.10.101] (unknown [10.37.10.101])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DC8583F5AF;
-        Thu,  6 Jun 2019 11:54:07 -0700 (PDT)
-Subject: Re: [PATCH v8 26/29] vfio-pci: Register an iommu fault handler
-To:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Auger Eric <eric.auger@redhat.com>
-Cc:     Alex Williamson <alex.williamson@redhat.com>,
-        "eric.auger.pro@gmail.com" <eric.auger.pro@gmail.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "yi.l.liu@intel.com" <yi.l.liu@intel.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Robin Murphy <Robin.Murphy@arm.com>,
-        "kevin.tian@intel.com" <kevin.tian@intel.com>,
-        "ashok.raj@intel.com" <ashok.raj@intel.com>,
-        Marc Zyngier <Marc.Zyngier@arm.com>,
-        "peter.maydell@linaro.org" <peter.maydell@linaro.org>,
-        Vincent Stehle <Vincent.Stehle@arm.com>
-References: <20190526161004.25232-1-eric.auger@redhat.com>
- <20190526161004.25232-27-eric.auger@redhat.com>
- <20190603163139.70fe8839@x1.home>
- <10dd60d9-4af0-c0eb-08c9-a0db7ee1925e@redhat.com>
- <20190605154553.0d00ad8d@jacob-builder>
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Message-ID: <2753d192-1c46-d78e-c425-0c828e48cde2@arm.com>
-Date:   Thu, 6 Jun 2019 19:54:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1728629AbfFFSzt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 14:55:49 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:46678 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726379AbfFFSzt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 14:55:49 -0400
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x56IlpQW010083;
+        Thu, 6 Jun 2019 11:54:36 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=facebook; bh=bLomYIHuVcipbAMZ+czyy/4GoLUzdwyUq/qjc/WfjVo=;
+ b=WQJq3JGKk3R/Si9GwrJ6Qbu3Jy+NhqaGmtVszRPwms2MFKLymga6M3XjXGJl/rWL88WQ
+ Rvylfyi0XqDBtiEm66akD0J1t5gk68vthtafZ0JZHVk9ARKqZ4e63MpbM+V+qt4RMUFf
+ qPvmuGFtnxWc5Cu24CkudqYfrhY/aXtFWfU= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2sy7pu87gm-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Thu, 06 Jun 2019 11:54:36 -0700
+Received: from mmullins-1.thefacebook.com (2620:10d:c081:10::13) by
+ mail.thefacebook.com (2620:10d:c081:35::129) with Microsoft SMTP Server id
+ 15.1.1713.5; Thu, 6 Jun 2019 11:54:34 -0700
+From:   Matt Mullins <mmullins@fb.com>
+To:     <hall@fb.com>, <mmullins@fb.com>, <ast@kernel.org>,
+        <daniel@iogearbox.net>, <bpf@vger.kernel.org>,
+        <netdev@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Ingo Molnar" <mingo@redhat.com>, Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>
+Subject: [PATCH bpf] bpf: fix nested bpf tracepoints with per-cpu data
+Date:   Thu, 6 Jun 2019 11:54:27 -0700
+Message-ID: <20190606185427.7558-1-mmullins@fb.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <a6a31da39debb8bde6ca5085b0f4e43a96a88ea5.camel@fb.com>
+References: <a6a31da39debb8bde6ca5085b0f4e43a96a88ea5.camel@fb.com>
 MIME-Version: 1.0
-In-Reply-To: <20190605154553.0d00ad8d@jacob-builder>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [2620:10d:c081:10::13]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-06_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906060127
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/06/2019 23:45, Jacob Pan wrote:
-> On Tue, 4 Jun 2019 18:11:08 +0200
-> Auger Eric <eric.auger@redhat.com> wrote:
-> 
->> Hi Alex,
->>
->> On 6/4/19 12:31 AM, Alex Williamson wrote:
->>> On Sun, 26 May 2019 18:10:01 +0200
->>> Eric Auger <eric.auger@redhat.com> wrote:
->>>   
->>>> This patch registers a fault handler which records faults in
->>>> a circular buffer and then signals an eventfd. This buffer is
->>>> exposed within the fault region.
->>>>
->>>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
->>>>
->>>> ---
->>>>
->>>> v3 -> v4:
->>>> - move iommu_unregister_device_fault_handler to vfio_pci_release
->>>> ---
->>>>  drivers/vfio/pci/vfio_pci.c         | 49
->>>> +++++++++++++++++++++++++++++ drivers/vfio/pci/vfio_pci_private.h
->>>> |  1 + 2 files changed, 50 insertions(+)
->>>>
->>>> diff --git a/drivers/vfio/pci/vfio_pci.c
->>>> b/drivers/vfio/pci/vfio_pci.c index f75f61127277..520999994ba8
->>>> 100644 --- a/drivers/vfio/pci/vfio_pci.c
->>>> +++ b/drivers/vfio/pci/vfio_pci.c
->>>> @@ -30,6 +30,7 @@
->>>>  #include <linux/vfio.h>
->>>>  #include <linux/vgaarb.h>
->>>>  #include <linux/nospec.h>
->>>> +#include <linux/circ_buf.h>
->>>>  
->>>>  #include "vfio_pci_private.h"
->>>>  
->>>> @@ -296,6 +297,46 @@ static const struct vfio_pci_regops
->>>> vfio_pci_fault_prod_regops = { .add_capability =
->>>> vfio_pci_fault_prod_add_capability, };
->>>>  
->>>> +int vfio_pci_iommu_dev_fault_handler(struct iommu_fault_event
->>>> *evt, void *data) +{
->>>> +	struct vfio_pci_device *vdev = (struct vfio_pci_device *)
->>>> data;
->>>> +	struct vfio_region_fault_prod *prod_region =
->>>> +		(struct vfio_region_fault_prod
->>>> *)vdev->fault_pages;
->>>> +	struct vfio_region_fault_cons *cons_region =
->>>> +		(struct vfio_region_fault_cons
->>>> *)(vdev->fault_pages + 2 * PAGE_SIZE);
->>>> +	struct iommu_fault *new =
->>>> +		(struct iommu_fault *)(vdev->fault_pages +
->>>> prod_region->offset +
->>>> +			prod_region->prod *
->>>> prod_region->entry_size);
->>>> +	int prod, cons, size;
->>>> +
->>>> +	mutex_lock(&vdev->fault_queue_lock);
->>>> +
->>>> +	if (!vdev->fault_abi)
->>>> +		goto unlock;
->>>> +
->>>> +	prod = prod_region->prod;
->>>> +	cons = cons_region->cons;
->>>> +	size = prod_region->nb_entries;
->>>> +
->>>> +	if (CIRC_SPACE(prod, cons, size) < 1)
->>>> +		goto unlock;
->>>> +
->>>> +	*new = evt->fault;
->>>> +	prod = (prod + 1) % size;
->>>> +	prod_region->prod = prod;
->>>> +	mutex_unlock(&vdev->fault_queue_lock);
->>>> +
->>>> +	mutex_lock(&vdev->igate);
->>>> +	if (vdev->dma_fault_trigger)
->>>> +		eventfd_signal(vdev->dma_fault_trigger, 1);
->>>> +	mutex_unlock(&vdev->igate);
->>>> +	return 0;
->>>> +
->>>> +unlock:
->>>> +	mutex_unlock(&vdev->fault_queue_lock);
->>>> +	return -EINVAL;
->>>> +}
->>>> +
->>>>  static int vfio_pci_init_fault_region(struct vfio_pci_device
->>>> *vdev) {
->>>>  	struct vfio_region_fault_prod *header;
->>>> @@ -328,6 +369,13 @@ static int vfio_pci_init_fault_region(struct
->>>> vfio_pci_device *vdev) header = (struct vfio_region_fault_prod
->>>> *)vdev->fault_pages; header->version = -1;
->>>>  	header->offset = PAGE_SIZE;
->>>> +
->>>> +	ret =
->>>> iommu_register_device_fault_handler(&vdev->pdev->dev,
->>>> +
->>>> vfio_pci_iommu_dev_fault_handler,
->>>> +					vdev);
->>>> +	if (ret)
->>>> +		goto out;
->>>> +
->>>>  	return 0;
->>>>  out:
->>>>  	kfree(vdev->fault_pages);
->>>> @@ -570,6 +618,7 @@ static void vfio_pci_release(void *device_data)
->>>>  	if (!(--vdev->refcnt)) {
->>>>  		vfio_spapr_pci_eeh_release(vdev->pdev);
->>>>  		vfio_pci_disable(vdev);
->>>> +
->>>> iommu_unregister_device_fault_handler(&vdev->pdev->dev);  
->>>
->>>
->>> But this can fail if there are pending faults which leaves a device
->>> reference and then the system is broken :(  
->> This series only features unrecoverable errors and for those the
->> unregistration cannot fail. Now unrecoverable errors were added I
->> admit this is confusing. We need to sort this out or clean the
->> dependencies.
-> As Alex pointed out in 4/29, we can make
-> iommu_unregister_device_fault_handler() never fail and clean up all the
-> pending faults in the host IOMMU belong to that device. But the problem
-> is that if a fault, such as PRQ, has already been injected into the
-> guest, the page response may come back after handler is unregistered
-> and registered again.
+BPF_PROG_TYPE_RAW_TRACEPOINTs can be executed nested on the same CPU, as
+they do not increment bpf_prog_active while executing.
 
-I'm trying to figure out if that would be harmful in any way. I guess it
-can be a bit nasty if we handle the page response right after having
-injected a new page request that uses the same PRGI. In any other case we
-discard the page response, but here we forward it to the endpoint and:
+This enables three levels of nesting, to support
+  - a kprobe or raw tp or perf event,
+  - another one of the above that irq context happens to call, and
+  - another one in nmi context
+(at most one of which may be a kprobe or perf event).
 
-* If the response status is success, endpoint retries the translation. The
-guest probably hasn't had time to handle the new page request and
-translation will fail, which may lead the endpoint to give up (two
-unsuccessful translation requests). Or send a new request
+Fixes: 20b9d7ac4852 ("bpf: avoid excessive stack usage for perf_sample_data")
+---
+This is more lines of code, but possibly less intrusive than the
+per-array-element approach.
 
-* otherwise the endpoint won't retry the access, and could also disable
-PRI if the status is failure.
+I don't necessarily like that I duplicated the nest_level logic in two
+places, but I don't see a way to unify them:
+  - kprobes' bpf_perf_event_output doesn't use bpf_raw_tp_regs, and does
+    use the perf_sample_data,
+  - raw tracepoints' bpf_get_stackid uses bpf_raw_tp_regs, but not
+    the perf_sample_data, and
+  - raw tracepoints' bpf_perf_event_output uses both...
 
-> We need a way to reject such page response belong
-> to the previous life of the handler. Perhaps a sync call to the guest
-> with your fault queue eventfd? I am not sure.
+ kernel/trace/bpf_trace.c | 95 +++++++++++++++++++++++++++++++++-------
+ 1 file changed, 80 insertions(+), 15 deletions(-)
 
-We could simply expect the device driver not to send any page response
-after unregistering the fault handler. Is there any reason VFIO would need
-to unregister and re-register the fault handler on a live guest?
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index f92d6ad5e080..4f5419837ddd 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -410,8 +410,6 @@ static const struct bpf_func_proto bpf_perf_event_read_value_proto = {
+ 	.arg4_type	= ARG_CONST_SIZE,
+ };
+ 
+-static DEFINE_PER_CPU(struct perf_sample_data, bpf_trace_sd);
+-
+ static __always_inline u64
+ __bpf_perf_event_output(struct pt_regs *regs, struct bpf_map *map,
+ 			u64 flags, struct perf_sample_data *sd)
+@@ -442,24 +440,47 @@ __bpf_perf_event_output(struct pt_regs *regs, struct bpf_map *map,
+ 	return perf_event_output(event, sd, regs);
+ }
+ 
++/*
++ * Support executing tracepoints in normal, irq, and nmi context that each call
++ * bpf_perf_event_output
++ */
++struct bpf_trace_sample_data {
++	struct perf_sample_data sds[3];
++};
++
++static DEFINE_PER_CPU(struct bpf_trace_sample_data, bpf_trace_sds);
++static DEFINE_PER_CPU(int, bpf_trace_nest_level);
+ BPF_CALL_5(bpf_perf_event_output, struct pt_regs *, regs, struct bpf_map *, map,
+ 	   u64, flags, void *, data, u64, size)
+ {
+-	struct perf_sample_data *sd = this_cpu_ptr(&bpf_trace_sd);
++	struct bpf_trace_sample_data *sds = this_cpu_ptr(&bpf_trace_sds);
++	struct perf_sample_data *sd;
++	int nest_level = this_cpu_inc_return(bpf_trace_nest_level);
+ 	struct perf_raw_record raw = {
+ 		.frag = {
+ 			.size = size,
+ 			.data = data,
+ 		},
+ 	};
++	int err = -EBUSY;
+ 
++	if (WARN_ON_ONCE(nest_level > ARRAY_SIZE(sds->sds)))
++		goto out;
++
++	sd = &sds->sds[nest_level - 1];
++
++	err = -EINVAL;
+ 	if (unlikely(flags & ~(BPF_F_INDEX_MASK)))
+-		return -EINVAL;
++		goto out;
+ 
+ 	perf_sample_data_init(sd, 0, 0);
+ 	sd->raw = &raw;
+ 
+-	return __bpf_perf_event_output(regs, map, flags, sd);
++	err = __bpf_perf_event_output(regs, map, flags, sd);
++
++out:
++	this_cpu_dec(bpf_trace_nest_level);
++	return err;
+ }
+ 
+ static const struct bpf_func_proto bpf_perf_event_output_proto = {
+@@ -822,16 +843,48 @@ pe_prog_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ /*
+  * bpf_raw_tp_regs are separate from bpf_pt_regs used from skb/xdp
+  * to avoid potential recursive reuse issue when/if tracepoints are added
+- * inside bpf_*_event_output, bpf_get_stackid and/or bpf_get_stack
++ * inside bpf_*_event_output, bpf_get_stackid and/or bpf_get_stack.
++ *
++ * Since raw tracepoints run despite bpf_prog_active, support concurrent usage
++ * in normal, irq, and nmi context.
+  */
+-static DEFINE_PER_CPU(struct pt_regs, bpf_raw_tp_regs);
++struct bpf_raw_tp_regs {
++	struct pt_regs regs[3];
++};
++static DEFINE_PER_CPU(struct bpf_raw_tp_regs, bpf_raw_tp_regs);
++static DEFINE_PER_CPU(int, bpf_raw_tp_nest_level);
++static struct pt_regs *get_bpf_raw_tp_regs(void)
++{
++	struct bpf_raw_tp_regs *tp_regs = this_cpu_ptr(&bpf_raw_tp_regs);
++	int nest_level = this_cpu_inc_return(bpf_raw_tp_nest_level);
++
++	if (WARN_ON_ONCE(nest_level > ARRAY_SIZE(tp_regs->regs))) {
++		this_cpu_dec(bpf_raw_tp_nest_level);
++		return ERR_PTR(-EBUSY);
++	}
++
++	return &tp_regs->regs[nest_level - 1];
++}
++
++static void put_bpf_raw_tp_regs(void)
++{
++	this_cpu_dec(bpf_raw_tp_nest_level);
++}
++
+ BPF_CALL_5(bpf_perf_event_output_raw_tp, struct bpf_raw_tracepoint_args *, args,
+ 	   struct bpf_map *, map, u64, flags, void *, data, u64, size)
+ {
+-	struct pt_regs *regs = this_cpu_ptr(&bpf_raw_tp_regs);
++	struct pt_regs *regs = get_bpf_raw_tp_regs();
++	int ret;
++
++	if (IS_ERR(regs))
++		return PTR_ERR(regs);
+ 
+ 	perf_fetch_caller_regs(regs);
+-	return ____bpf_perf_event_output(regs, map, flags, data, size);
++	ret = ____bpf_perf_event_output(regs, map, flags, data, size);
++
++	put_bpf_raw_tp_regs();
++	return ret;
+ }
+ 
+ static const struct bpf_func_proto bpf_perf_event_output_proto_raw_tp = {
+@@ -848,12 +901,18 @@ static const struct bpf_func_proto bpf_perf_event_output_proto_raw_tp = {
+ BPF_CALL_3(bpf_get_stackid_raw_tp, struct bpf_raw_tracepoint_args *, args,
+ 	   struct bpf_map *, map, u64, flags)
+ {
+-	struct pt_regs *regs = this_cpu_ptr(&bpf_raw_tp_regs);
++	struct pt_regs *regs = get_bpf_raw_tp_regs();
++	int ret;
++
++	if (IS_ERR(regs))
++		return PTR_ERR(regs);
+ 
+ 	perf_fetch_caller_regs(regs);
+ 	/* similar to bpf_perf_event_output_tp, but pt_regs fetched differently */
+-	return bpf_get_stackid((unsigned long) regs, (unsigned long) map,
+-			       flags, 0, 0);
++	ret = bpf_get_stackid((unsigned long) regs, (unsigned long) map,
++			      flags, 0, 0);
++	put_bpf_raw_tp_regs();
++	return ret;
+ }
+ 
+ static const struct bpf_func_proto bpf_get_stackid_proto_raw_tp = {
+@@ -868,11 +927,17 @@ static const struct bpf_func_proto bpf_get_stackid_proto_raw_tp = {
+ BPF_CALL_4(bpf_get_stack_raw_tp, struct bpf_raw_tracepoint_args *, args,
+ 	   void *, buf, u32, size, u64, flags)
+ {
+-	struct pt_regs *regs = this_cpu_ptr(&bpf_raw_tp_regs);
++	struct pt_regs *regs = get_bpf_raw_tp_regs();
++	int ret;
++
++	if (IS_ERR(regs))
++		return PTR_ERR(regs);
+ 
+ 	perf_fetch_caller_regs(regs);
+-	return bpf_get_stack((unsigned long) regs, (unsigned long) buf,
+-			     (unsigned long) size, flags, 0);
++	ret = bpf_get_stack((unsigned long) regs, (unsigned long) buf,
++			    (unsigned long) size, flags, 0);
++	put_bpf_raw_tp_regs();
++	return ret;
+ }
+ 
+ static const struct bpf_func_proto bpf_get_stack_proto_raw_tp = {
+-- 
+2.17.1
 
-Thanks,
-Jean
