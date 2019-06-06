@@ -2,101 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62A6D37B4C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:42:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBC7137B22
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:35:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730279AbfFFRmY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 13:42:24 -0400
-Received: from mga17.intel.com ([192.55.52.151]:37402 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729080AbfFFRmY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 13:42:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 10:42:23 -0700
-X-ExtLoop1: 1
-Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
-  by orsmga001.jf.intel.com with ESMTP; 06 Jun 2019 10:42:22 -0700
-Message-ID: <5f92e89a5823a3265fa0b389a19452ba995e9406.camel@intel.com>
-Subject: Re: [PATCH 4/8] arm64: Basic Branch Target Identification support
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Dave Martin <Dave.Martin@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>, linux-arch@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Paul Elliott <paul.elliott@arm.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Kristina =?UTF-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
-        linux-kernel@vger.kernel.org, Sudakshina Das <sudi.das@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Date:   Thu, 06 Jun 2019 10:34:22 -0700
-In-Reply-To: <20190606172345.GD28398@e103592.cambridge.arm.com>
-References: <1558693533-13465-1-git-send-email-Dave.Martin@arm.com>
-         <1558693533-13465-5-git-send-email-Dave.Martin@arm.com>
-         <20190524130217.GA15566@lakrids.cambridge.arm.com>
-         <20190524145306.GZ28398@e103592.cambridge.arm.com>
-         <20190606171155.GI56860@arrakis.emea.arm.com>
-         <20190606172345.GD28398@e103592.cambridge.arm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        id S1728823AbfFFRfq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 13:35:46 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:59740 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726863AbfFFRfq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 13:35:46 -0400
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id E47C82605F9;
+        Thu,  6 Jun 2019 18:35:43 +0100 (BST)
+Date:   Thu, 6 Jun 2019 19:35:40 +0200
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     Vitor Soares <Vitor.Soares@synopsys.com>
+Cc:     "linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH v2 1/3] i3c: fix i2c and i3c scl rate by bus mode
+Message-ID: <20190606193540.680d391b@collabora.com>
+In-Reply-To: <13D59CF9CEBAF94592A12E8AE55501350AABE7FC@DE02WEMBXB.internal.synopsys.com>
+References: <cover.1559821227.git.vitor.soares@synopsys.com>
+        <47de89f2335930df0ed6903be9afe6de4f46e503.1559821228.git.vitor.soares@synopsys.com>
+        <20190606161844.4a6b759c@collabora.com>
+        <13D59CF9CEBAF94592A12E8AE55501350AABE7FC@DE02WEMBXB.internal.synopsys.com>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-06-06 at 18:23 +0100, Dave Martin wrote:
-> On Thu, Jun 06, 2019 at 06:11:56PM +0100, Catalin Marinas wrote:
-> > On Fri, May 24, 2019 at 03:53:06PM +0100, Dave P Martin wrote:
-> > > On Fri, May 24, 2019 at 02:02:17PM +0100, Mark Rutland wrote:
-> > > > On Fri, May 24, 2019 at 11:25:29AM +0100, Dave Martin wrote:
-> > > > >  #endif /* _UAPI__ASM_HWCAP_H */
-> > > > > diff --git a/arch/arm64/include/uapi/asm/mman.h
-> > > > > b/arch/arm64/include/uapi/asm/mman.h
-> > > > > new file mode 100644
-> > > > > index 0000000..4776b43
-> > > > > --- /dev/null
-> > > > > +++ b/arch/arm64/include/uapi/asm/mman.h
-> > > > > @@ -0,0 +1,9 @@
-> > > > > +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> > > > > +#ifndef _UAPI__ASM_MMAN_H
-> > > > > +#define _UAPI__ASM_MMAN_H
-> > > > > +
-> > > > > +#include <asm-generic/mman.h>
-> > > > > +
-> > > > > +#define PROT_BTI_GUARDED	0x10		/* BTI guarded
-> > > > > page */
-> > > > 
-> > > > From prior discussions, I thought this would be PROT_BTI, without the
-> > > > _GUARDED suffix. Do we really need that?
-> > > > 
-> > > > AFAICT, all other PROT_* definitions only have a single underscore, and
-> > > > the existing arch-specific flags are PROT_ADI on sparc, and PROT_SAO on
-> > > > powerpc.
+On Thu, 6 Jun 2019 17:16:55 +0000
+Vitor Soares <Vitor.Soares@synopsys.com> wrote:
+
+> From: Boris Brezillon <boris.brezillon@collabora.com>
+> Date: Thu, Jun 06, 2019 at 15:18:44
+> 
+> > On Thu,  6 Jun 2019 16:00:01 +0200
+> > Vitor Soares <Vitor.Soares@synopsys.com> wrote:
+> >   
+> > > Currently the I3C framework limits SCL frequency to FM speed when
+> > > dealing with a mixed slow bus, even if all I2C devices are FM+ capable.
 > > > 
-> > > No strong opinon.  I was trying to make the name less obscure, but I'm
-> > > equally happy with PROT_BTI if people prefer that.
+> > > The core was also not accounting for I3C speed limitations when
+> > > operating in mixed slow mode and was erroneously using FM+ speed as the
+> > > max I2C speed when operating in mixed fast mode.
+> > > 
+> > > Fixes: 3a379bbcea0a ("i3c: Add core I3C infrastructure")
+> > > Signed-off-by: Vitor Soares <vitor.soares@synopsys.com>
+> > > Cc: Boris Brezillon <bbrezillon@kernel.org>
+> > > Cc: <stable@vger.kernel.org>
+> > > Cc: <linux-kernel@vger.kernel.org>
+> > > ---
+> > > Changes in v2:
+> > >   Enhance commit message
+> > >   Add dev_warn() in case user-defined i2c rate doesn't match LVR constraint
+> > >   Add dev_warn() in case user-defined i3c rate lower than i2c rate.
+> > > 
+> > >  drivers/i3c/master.c | 61 +++++++++++++++++++++++++++++++++++++++++-----------
+> > >  1 file changed, 48 insertions(+), 13 deletions(-)
+> > > 
+> > > diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+> > > index 5f4bd52..8cd5824 100644
+> > > --- a/drivers/i3c/master.c
+> > > +++ b/drivers/i3c/master.c
+> > > @@ -91,6 +91,12 @@ void i3c_bus_normaluse_unlock(struct i3c_bus *bus)
+> > >  	up_read(&bus->lock);
+> > >  }
+> > >  
+> > > +static struct i3c_master_controller *
+> > > +i3c_bus_to_i3c_master(struct i3c_bus *i3cbus)
+> > > +{
+> > > +	return container_of(i3cbus, struct i3c_master_controller, bus);
+> > > +}
+> > > +
+> > >  static struct i3c_master_controller *dev_to_i3cmaster(struct device *dev)
+> > >  {
+> > >  	return container_of(dev, struct i3c_master_controller, dev);
+> > > @@ -565,20 +571,48 @@ static const struct device_type i3c_masterdev_type = {
+> > >  	.groups	= i3c_masterdev_groups,
+> > >  };
+> > >  
+> > > -int i3c_bus_set_mode(struct i3c_bus *i3cbus, enum i3c_bus_mode mode)
+> > > +int i3c_bus_set_mode(struct i3c_bus *i3cbus, enum i3c_bus_mode mode,
+> > > +		     unsigned long max_i2c_scl_rate)
+> > >  {
+> > > -	i3cbus->mode = mode;
+> > >  
+> > > -	if (!i3cbus->scl_rate.i3c)
+> > > -		i3cbus->scl_rate.i3c = I3C_BUS_TYP_I3C_SCL_RATE;
+> > > +	struct i3c_master_controller *master = i3c_bus_to_i3c_master(i3cbus);
+> > >  
+> > > -	if (!i3cbus->scl_rate.i2c) {
+> > > -		if (i3cbus->mode == I3C_BUS_MODE_MIXED_SLOW)
+> > > -			i3cbus->scl_rate.i2c = I3C_BUS_I2C_FM_SCL_RATE;
+> > > -		else
+> > > -			i3cbus->scl_rate.i2c = I3C_BUS_I2C_FM_PLUS_SCL_RATE;
+> > > +	i3cbus->mode = mode;
+> > > +
+> > > +	switch (i3cbus->mode) {
+> > > +	case I3C_BUS_MODE_PURE:
+> > > +		if (!i3cbus->scl_rate.i3c)
+> > > +			i3cbus->scl_rate.i3c = I3C_BUS_TYP_I3C_SCL_RATE;
+> > > +		break;
+> > > +	case I3C_BUS_MODE_MIXED_FAST:
+> > > +		if (!i3cbus->scl_rate.i3c)
+> > > +			i3cbus->scl_rate.i3c = I3C_BUS_TYP_I3C_SCL_RATE;
+> > > +		if (!i3cbus->scl_rate.i2c)
+> > > +			i3cbus->scl_rate.i2c = max_i2c_scl_rate;
+> > > +		break;
+> > > +	case I3C_BUS_MODE_MIXED_SLOW:
+> > > +		if (!i3cbus->scl_rate.i2c)
+> > > +			i3cbus->scl_rate.i2c = max_i2c_scl_rate;
+> > > +		if (!i3cbus->scl_rate.i3c ||
+> > > +		    i3cbus->scl_rate.i3c > i3cbus->scl_rate.i2c)
+> > > +			i3cbus->scl_rate.i3c = i3cbus->scl_rate.i2c;
+> > > +		break;
+> > > +	default:
+> > > +		return -EINVAL;
+> > >  	}
+> > >  
+> > > +	if (i3cbus->scl_rate.i3c < i3cbus->scl_rate.i2c)
+> > > +		dev_warn(&master->dev,
+> > > +			 "i3c-scl-hz=%ld lower than i2c-scl-hz=%ld\n",
+> > > +			 i3cbus->scl_rate.i3c, i3cbus->scl_rate.i2c);
+> > > +
+> > > +	if (i3cbus->scl_rate.i2c != I3C_BUS_I2C_FM_SCL_RATE &&
+> > > +	    i3cbus->scl_rate.i2c != I3C_BUS_I2C_FM_PLUS_SCL_RATE &&
+> > > +	    i3cbus->mode != I3C_BUS_MODE_PURE)  
 > > 
-> > I prefer PROT_BTI as well. We are going to add a PROT_MTE at some point
-> > (and a VM_ARM64_MTE in the high VMA flag bits).
+> > If you are so strict, there's clearly no point exposing an i2c-scl-hz
+> > property. I'm still not convinced having an i2c rate that's slower than
+> > what the I2C/I3C spec defines as the *typical* rate is a bad thing,   
 > 
-> Ack.
+> I'm not been strictive, I just inform the user about that case.
+
+Then use dev_debug() and don't make the trace conditional on
+i2c_rate != typical_rate. The only case where we should warn users
+is i2c_rate > typical_rate, because that might lead to malfunctions.
+
 > 
-> Some things need attention, so I need to respin this series anyway.
+> > just
+> > like I'm not convinced having an I3C rate that's slower than the I2C
+> > one is a problem (it's definitely a weird situation, but there's nothing
+> > preventing that in the spec).  
 > 
-> skip_faulting_instruction() and kprobes/uprobes may need looking at,
-> plus I want to simply the ELF parsing (at least to skip some cost for
-> arm64).
+> You agree that there is no point for case where i3c rate < i2c rate yet 
+> you are not convinced.
 
-Can we add a case in the 'consistency checks for the interpreter' (right above
-where you add arch_parse_property()) for PT_NOTE?  That way you can still use
-part of the same parser.
+I didn't say that, there might be use cases where one wants to slow
+down the I3C bus to be able to probe it or use a slower rate when
+things do not work properly. It's rather unlikely to happen, but I
+don't think it deserves a warning message when that's the case.
 
-Yu-cheng
+> Do you thing that will be users for this case?
+> 
+> Anyway, this isn't a high requirement for me. The all point of this patch 
+> is to introduce the limited bus configuration.
 
+And yet, you keep insisting (and ignoring my feedback) on that point :P.
