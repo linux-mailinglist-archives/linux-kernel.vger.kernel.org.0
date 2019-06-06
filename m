@@ -2,139 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3271D37AFB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:25:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1427B37B04
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:26:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730090AbfFFRZT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 13:25:19 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:38967 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726092AbfFFRZT (ORCPT
+        id S1730143AbfFFR0V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 13:26:21 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:49491 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730055AbfFFR0U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 13:25:19 -0400
-Received: by mail-it1-f196.google.com with SMTP id j204so1197823ite.4;
-        Thu, 06 Jun 2019 10:25:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=5UhDa0AD+hNx+soQiRSfN1XuRnS+p8xtIL3X+iKjgJo=;
-        b=uEV0kjXOCCHMRDkIr4YZCymggD4KNON6JhvdK0MAGhChgmmNtFozn69cAiCJzoqq79
-         JMP7XNnrNpnfCwYZsPn7IGYc5+ZcIUGOtqKixbpcyQDgTmsuGEYYIX51p2jmG1cF650x
-         Y/o4A7C2lsPrTGMIrnqNXaDIARQLtlXwSL/PNALcPT8AkRGtN0SVKVdhFelNyjtQwKjd
-         cbxyJGtEg9OnEkusQO8z6nPiCFktcMrTFMTfHsh/v7/tc7RIBWMdfHuiCEHqkLcROAVh
-         ZVfBhZY8M0fhfASF8BzGsC27+ZFWYcdIDNjtamwN+fMuwUjcQo2D6Az8g4XLDj6IDt8L
-         eyzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5UhDa0AD+hNx+soQiRSfN1XuRnS+p8xtIL3X+iKjgJo=;
-        b=DwrdUq8gOJt9jAM01qNkFPMz5ypwdlUaGmjZCCoKrT+43AkqzuR7r452hUvn+Sn9e3
-         0V2GAi19JLtM09wM9g0pfcjVIfKPeIjMpFR45b14yWsPJq6dmv+eqc99qJxMwBlYoxwF
-         TMNSa3LzZE5gndQthcBRaZnyLRsblfz6eAxY+ytMnC5eoNr8kiAhiAfKbhnwOqsL1zD8
-         WsfMmvhj2L9RA7WOWcDXdMkl0ye4x/C2rV0P6HYqO9P1IgOyzs/VtHZXnQKI8r65lBdl
-         t1pvVm28JrOUPdGML7O3haXpRlsqTx3UZxbKWAx4ZdQny1uckXDYiZXEvrpRzqQu8tpp
-         ZkWA==
-X-Gm-Message-State: APjAAAWU83aJ9T2Li2pePHKiCUa66I/trxyk4k8DePuM3ZRFvb9FVskp
-        s9eAJoRc5v8KopJICGiiYtFcZM0d
-X-Google-Smtp-Source: APXvYqxCCwMXpknPLc0TvRm7wEEujjH14GVCmWU+SRSU9ATjTmTE7IfVeTSbnfWF3QcrsWrEJsN5Og==
-X-Received: by 2002:a24:5cce:: with SMTP id q197mr954675itb.127.1559841918324;
-        Thu, 06 Jun 2019 10:25:18 -0700 (PDT)
-Received: from [192.168.2.145] ([94.29.35.141])
-        by smtp.googlemail.com with ESMTPSA id q15sm828207ioi.15.2019.06.06.10.25.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Jun 2019 10:25:17 -0700 (PDT)
-Subject: Re: [PATCH] [RFC] dmaengine: add fifo_size member
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Sameer Pujar <spujar@nvidia.com>, Vinod Koul <vkoul@kernel.org>
-Cc:     dan.j.williams@intel.com, tiwai@suse.com,
-        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sharadg@nvidia.com, rlokhande@nvidia.com, dramesh@nvidia.com,
-        mkumard@nvidia.com, linux-tegra <linux-tegra@vger.kernel.org>
-References: <1556623828-21577-1-git-send-email-spujar@nvidia.com>
- <20190502122506.GP3845@vkoul-mobl.Dlink>
- <3368d1e1-0d7f-f602-5b96-a978fcf4d91b@nvidia.com>
- <20190504102304.GZ3845@vkoul-mobl.Dlink>
- <ce0e9c0b-b909-54ae-9086-a1f0f6be903c@nvidia.com>
- <20190506155046.GH3845@vkoul-mobl.Dlink>
- <b7e28e73-7214-f1dc-866f-102410c88323@nvidia.com>
- <ed95f03a-bbe7-ad62-f2e1-9bfe22ec733a@ti.com>
- <4cab47d0-41c3-5a87-48e1-d7f085c2e091@nvidia.com>
- <8a5b84db-c00b-fff4-543f-69d90c245660@nvidia.com>
- <3f836a10-eaf3-f59b-7170-6fe937cf2e43@ti.com>
- <a36302fc-3173-070b-5c97-7d2c55d5e2cc@nvidia.com>
- <a08bec36-b375-6520-eff4-3d847ddfe07d@ti.com>
- <4593f37c-5e89-8559-4e80-99dbfe4235de@nvidia.com>
- <deae510a-f6ae-6a51-2875-a7463cac9169@gmail.com>
- <ac9a965d-0166-3d80-5ac4-ae841d7ae726@nvidia.com>
- <50e1f9ed-1ea0-38f6-1a77-febd6a3a0848@gmail.com>
- <4b098fb6-1a5b-1100-ae16-978a887c9535@nvidia.com>
- <e6741e07-be0c-d16b-36d7-77a3288f0500@gmail.com>
- <a652b103-979d-7910-5e3f-ec4bca3a3a3b@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <457eb5e1-40cc-8c0f-e21c-3881c3c04de2@gmail.com>
-Date:   Thu, 6 Jun 2019 20:25:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 6 Jun 2019 13:26:20 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x56HPK5g2066843
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 6 Jun 2019 10:25:20 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x56HPK5g2066843
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1559841921;
+        bh=m4AlyVwXpZA6r6w7UbdCGAzUMcLMnUoq15ImttvhGn8=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=lE5PJjM03xymRMzb4SFs9dmPHVkLeLDwE8aU2fwwzRIRovPRyqCcriJesZ8sJEsPs
+         QLNoteQwH1Oqj3o7hebpAnA3PqZlO3iyvsCiGarHCZx31hdvv59JghyVIYw+OsqHY+
+         dfbtCRm16POpRwZyHLw/nqkxzExkhLZ8/XQnh9k55P/5iqh1g/wwtCgaROYqvk1xQ9
+         wObSupDEoL6bpJfkkOmHCvNF6XObZ3eDm0bMPF5vzB9tX9upaXgS9NhU3K/sdGnn3W
+         sQGMp5dBlDB/QRW59jfQblAdj6HFFFlKniwwqUND12hdAcGViBGVlgJvjfFBVruwQ+
+         3dofqJyVe0kHg==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x56HPI5t2066840;
+        Thu, 6 Jun 2019 10:25:18 -0700
+Date:   Thu, 6 Jun 2019 10:25:18 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Hugh Dickins <tipbot@zytor.com>
+Message-ID: <tip-b81ff1013eb8eef2934ca7e8cf53d553c1029e84@git.kernel.org>
+Cc:     akpm@linux-foundation.org, pavel@ucw.cz, jannh@google.com,
+        hughd@google.com, dave.hansen@linux.intel.com, x86@kernel.org,
+        mingo@redhat.com, rppt@linux.ibm.com, tglx@linutronix.de,
+        linux-mm@kvack.org, bp@suse.de, mingo@kernel.org,
+        chris@chris-wilson.co.uk, linux-kernel@vger.kernel.org,
+        riel@surriel.com, hpa@zytor.com, bigeasy@linutronix.de,
+        aarcange@redhat.com
+Reply-To: hughd@google.com, jannh@google.com, pavel@ucw.cz,
+          akpm@linux-foundation.org, mingo@redhat.com,
+          dave.hansen@linux.intel.com, x86@kernel.org,
+          chris@chris-wilson.co.uk, mingo@kernel.org, bp@suse.de,
+          tglx@linutronix.de, rppt@linux.ibm.com, linux-mm@kvack.org,
+          bigeasy@linutronix.de, aarcange@redhat.com, hpa@zytor.com,
+          riel@surriel.com, linux-kernel@vger.kernel.org
+In-Reply-To: <1557844195-18882-1-git-send-email-rppt@linux.ibm.com>
+References: <20190529072540.g46j4kfeae37a3iu@linutronix.de>
+        <1557844195-18882-1-git-send-email-rppt@linux.ibm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/fpu: Use fault_in_pages_writeable() for
+ pre-faulting
+Git-Commit-ID: b81ff1013eb8eef2934ca7e8cf53d553c1029e84
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <a652b103-979d-7910-5e3f-ec4bca3a3a3b@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        T_DATE_IN_FUTURE_96_Q autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-06.06.2019 19:53, Jon Hunter пишет:
-> 
-> On 06/06/2019 17:44, Dmitry Osipenko wrote:
->> 06.06.2019 19:32, Jon Hunter пишет:
->>>
->>> On 06/06/2019 16:18, Dmitry Osipenko wrote:
->>>
->>> ...
->>>
->>>>>> If I understood everything correctly, the FIFO buffer is shared among
->>>>>> all of the ADMA clients and hence it should be up to the ADMA driver to
->>>>>> manage the quotas of the clients. So if there is only one client that
->>>>>> uses ADMA at a time, then this client will get a whole FIFO buffer, but
->>>>>> once another client starts to use ADMA, then the ADMA driver will have
->>>>>> to reconfigure hardware to split the quotas.
->>>>>
->>>>> The FIFO quotas are managed by the ADMAIF driver (does not exist in
->>>>> mainline currently but we are working to upstream this) because it is
->>>>> this device that owns and needs to configure the FIFOs. So it is really
->>>>> a means to pass the information from the ADMAIF to the ADMA.
->>>>
->>>> So you'd want to reserve a larger FIFO for an audio channel that has a
->>>> higher audio rate since it will perform reads more often. You could also
->>>> prioritize one channel over the others, like in a case of audio call for
->>>> example.
->>>>
->>>> Is the shared buffer smaller than may be needed by clients in a worst
->>>> case scenario? If you could split the quotas statically such that each
->>>> client won't ever starve, then seems there is no much need in the
->>>> dynamic configuration.
->>>
->>> Actually, this is still very much relevant for the static case. Even if
->>> we defined a static configuration of the FIFO mapping in the ADMAIF
->>> driver we still need to pass this information to the ADMA. I don't
->>> really like the idea of having it statically defined in two different
->>> drivers.
->>
->> Ah, so you need to apply the same configuration in two places. Correct?
->>
->> Are ADMAIF and ADMA really two different hardware blocks? Or you
->> artificially decoupled the ADMA driver?
-> 
-> These are two different hardware modules with their own register sets.
-> Yes otherwise, it would be a lot simpler!
+Commit-ID:  b81ff1013eb8eef2934ca7e8cf53d553c1029e84
+Gitweb:     https://git.kernel.org/tip/b81ff1013eb8eef2934ca7e8cf53d553c1029e84
+Author:     Hugh Dickins <hughd@google.com>
+AuthorDate: Wed, 29 May 2019 09:25:40 +0200
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Thu, 6 Jun 2019 19:15:17 +0200
 
-The register sets are indeed separated, but it looks like that ADMAIF is
-really a part of ADMA that is facing to Audio Crossbar. No? What is the
-purpose of ADMAIF? Maybe you could amend the ADMA hardware description
-with the ADMAIF addition until it's too late.
+x86/fpu: Use fault_in_pages_writeable() for pre-faulting
+
+Since commit
+
+   d9c9ce34ed5c8 ("x86/fpu: Fault-in user stack if copy_fpstate_to_sigframe() fails")
+
+get_user_pages_unlocked() pre-faults user's memory if a write generates
+a page fault while the handler is disabled.
+
+This works in general and uncovered a bug as reported by Mike
+Rapoport¹. It has been pointed out that this function may be fragile
+and a simple pre-fault as in fault_in_pages_writeable() would be a
+better solution. Better as in taste and simplicity: that write (as
+performed by the alternative function) performs exactly the same
+faulting of memory as before. This was suggested by Hugh Dickins and
+Andrew Morton.
+
+Use fault_in_pages_writeable() for pre-faulting user's stack.
+
+  [ bigeasy: Write commit message. ]
+  [ bp: Massage some. ]
+
+¹ https://lkml.kernel.org/r/1557844195-18882-1-git-send-email-rppt@linux.ibm.com
+
+Fixes: d9c9ce34ed5c8 ("x86/fpu: Fault-in user stack if copy_fpstate_to_sigframe() fails")
+Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Hugh Dickins <hughd@google.com>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Tested-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: linux-mm <linux-mm@kvack.org>
+Cc: Mike Rapoport <rppt@linux.ibm.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20190529072540.g46j4kfeae37a3iu@linutronix.de
+Link: https://lkml.kernel.org/r/1557844195-18882-1-git-send-email-rppt@linux.ibm.com
+---
+ arch/x86/kernel/fpu/signal.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
+
+diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+index 5a8d118bc423..060d6188b453 100644
+--- a/arch/x86/kernel/fpu/signal.c
++++ b/arch/x86/kernel/fpu/signal.c
+@@ -5,6 +5,7 @@
+ 
+ #include <linux/compat.h>
+ #include <linux/cpu.h>
++#include <linux/pagemap.h>
+ 
+ #include <asm/fpu/internal.h>
+ #include <asm/fpu/signal.h>
+@@ -189,15 +190,7 @@ retry:
+ 	fpregs_unlock();
+ 
+ 	if (ret) {
+-		int aligned_size;
+-		int nr_pages;
+-
+-		aligned_size = offset_in_page(buf_fx) + fpu_user_xstate_size;
+-		nr_pages = DIV_ROUND_UP(aligned_size, PAGE_SIZE);
+-
+-		ret = get_user_pages_unlocked((unsigned long)buf_fx, nr_pages,
+-					      NULL, FOLL_WRITE);
+-		if (ret == nr_pages)
++		if (!fault_in_pages_writeable(buf_fx, fpu_user_xstate_size))
+ 			goto retry;
+ 		return -EFAULT;
+ 	}
