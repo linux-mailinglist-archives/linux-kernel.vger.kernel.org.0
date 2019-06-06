@@ -2,180 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EC2736A29
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 04:52:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C11F36A31
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 04:54:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726688AbfFFCwJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 22:52:09 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41490 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726427AbfFFCwJ (ORCPT
+        id S1726726AbfFFCyD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 22:54:03 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:5362 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726568AbfFFCyC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 22:52:09 -0400
-Received: by mail-pf1-f194.google.com with SMTP id q17so530388pfq.8
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 19:52:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MuJrLKq3f8R6SA2gbKnAdIV2BIlVwoZY7490xsEPP08=;
-        b=uYmVkKuhwcbANYnBr6B2uIgMzAVRUGKggE3YuQOteX9cRZ3/MYu2dsdKF3jnwQDUYm
-         D+ukL0++ZQEVfZy4gM0IjEYrZrifZmJvcNMbU3tK3dEvzSXxMNpBtyZlO4nEAWkG5nuD
-         qoK0F8AdpfAgM+wjubvszGA6KPry2IJ8qZ7+Nv9l96u4aaL9OLcRffpgFdtVxXp4GfFD
-         5zuSDNCrtcbsPIYnnfH1gFc5YfoPcxm67FU1rSWJJXJyEhcmiU54BIS8geWtNPC2keZH
-         SeDFTERBIkaUif4psQfyAKfKrF+YhA8N8UK/lVc05iCGCpUkUVQ62nSLM3Qrdn9U/8Ig
-         6g+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MuJrLKq3f8R6SA2gbKnAdIV2BIlVwoZY7490xsEPP08=;
-        b=Dk3ReKSdVamOORHq3LSDwXFgTZmk7nRpfCQmJ4MIvK6UZj9HurZGpRnvihZyzOOCJz
-         ZwtN5pZcAC0gav1+/yblWFqWXckNWQ/62ys/LmDxqU19IALNQflYiYAsf+ogQ3P83bTo
-         3R1JvSF3ZbiKfPrjeJblQOlSjygx6H6Ye7AqzI2ZvMSETOpM0fkjphkNjk+iexOfCkmJ
-         P31aT2YPZDua7RTNJU+QqIrt3csXJVXfBh4l96ylKqd+Ci0xjd30ozUq+7ySBr05wbWn
-         GrGUT7oHDlAj5i9kIdJXSzoo3mRZQsObcwUEOapGS3f7qFRaOrBh6hsgx8YakPcryxmM
-         So1A==
-X-Gm-Message-State: APjAAAUy0oraCX2VZX9Cs70AlYm+z26zPiMmQDsMMMPu9J+59IOAzZGQ
-        Hz/A1Ov9lWjVjf0lp8pTiDcL/Cf+ElM=
-X-Google-Smtp-Source: APXvYqxma+G6RG+3HIzgQjjFHpzIJCpFBl5+/wmtP6ArQg9sdUJ1dTJk5T80TXEuQCCd+DYc8J3DYA==
-X-Received: by 2002:a17:90a:ba81:: with SMTP id t1mr42998175pjr.139.1559789528005;
-        Wed, 05 Jun 2019 19:52:08 -0700 (PDT)
-Received: from localhost ([122.172.66.84])
-        by smtp.gmail.com with ESMTPSA id j37sm245914pgj.58.2019.06.05.19.52.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Jun 2019 19:52:07 -0700 (PDT)
-Date:   Thu, 6 Jun 2019 08:22:04 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH] sched/fair: Introduce fits_capacity()
-Message-ID: <20190606025204.qe5v7j6fysjkgxc6@vireshk-i7>
-References: <b477ac75a2b163048bdaeb37f57b4c3f04f75a31.1559631700.git.viresh.kumar@linaro.org>
- <20190605091644.w3g7hc7r3eiscz4f@queper01-lin>
+        Wed, 5 Jun 2019 22:54:02 -0400
+X-UUID: d5af71d09e6b485c88b28e506c4167fe-20190606
+X-UUID: d5af71d09e6b485c88b28e506c4167fe-20190606
+Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 395981444; Thu, 06 Jun 2019 10:53:53 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31N1.mediatek.inc
+ (172.27.4.69) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 6 Jun
+ 2019 10:53:51 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 6 Jun 2019 10:53:51 +0800
+Message-ID: <1559789630.8487.111.camel@mhfsdcap03>
+Subject: Re: [PATCH v6 09/10] usb: roles: add USB Type-B GPIO connector
+ driver
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        Li Jun <jun.li@nxp.com>,
+        "Badhri Jagan Sridharan" <badhri@google.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Min Guo <min.guo@mediatek.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        USB <linux-usb@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Yu Chen" <chenyu56@huawei.com>
+Date:   Thu, 6 Jun 2019 10:53:51 +0800
+In-Reply-To: <CAHp75VcbZwd0e6r38C2x7HLEHLr4oR7TjwdDXnDxRPRs3anwgA@mail.gmail.com>
+References: <1559115828-19146-1-git-send-email-chunfeng.yun@mediatek.com>
+         <1559115828-19146-10-git-send-email-chunfeng.yun@mediatek.com>
+         <CAHp75VcbZwd0e6r38C2x7HLEHLr4oR7TjwdDXnDxRPRs3anwgA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190605091644.w3g7hc7r3eiscz4f@queper01-lin>
-User-Agent: NeoMutt/20180716-391-311a52
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05-06-19, 10:16, Quentin Perret wrote:
-> Hi Viresh,
+On Wed, 2019-06-05 at 11:45 +0300, Andy Shevchenko wrote:
+> On Wed, May 29, 2019 at 10:44 AM Chunfeng Yun <chunfeng.yun@mediatek.com> wrote:
+> >
+> > Due to the requirement of usb-connector.txt binding, the old way
+> > using extcon to support USB Dual-Role switch is now deprecated
+> > when use Type-B connector.
+> > This patch introduces a driver of Type-B connector which typically
+> > uses an input GPIO to detect USB ID pin, and try to replace the
+> > function provided by extcon-usb-gpio driver
 > 
-> On Tuesday 04 Jun 2019 at 12:31:52 (+0530), Viresh Kumar wrote:
-> > The same formula to check utilization against capacity (after
-> > considering capacity_margin) is already used at 5 different locations.
-> > 
-> > This patch creates a new macro, fits_capacity(), which can be used from
-> > all these locations without exposing the details of it and hence
-> > simplify code.
-> > 
-> > All the 5 code locations are updated as well to use it..
-> > 
-> > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > ---
-> >  kernel/sched/fair.c | 14 +++++++-------
-> >  1 file changed, 7 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index 7f8d477f90fe..db3a218b7928 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -102,6 +102,8 @@ int __weak arch_asym_cpu_priority(int cpu)
-> >   * (default: ~20%)
-> >   */
-> >  static unsigned int capacity_margin			= 1280;
+> > +static SIMPLE_DEV_PM_OPS(usb_conn_pm_ops,
+> > +                        usb_conn_suspend, usb_conn_resume);
 > > +
-> > +#define fits_capacity(cap, max)	((cap) * capacity_margin < (max) * 1024)
-> >  #endif
-> >  
-> >  #ifdef CONFIG_CFS_BANDWIDTH
-> > @@ -3727,7 +3729,7 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
-> >  
-> >  static inline int task_fits_capacity(struct task_struct *p, long capacity)
-> >  {
-> > -	return capacity * 1024 > task_util_est(p) * capacity_margin;
-> > +	return fits_capacity(task_util_est(p), capacity);
-> >  }
-> >  
-> >  static inline void update_misfit_status(struct task_struct *p, struct rq *rq)
-> > @@ -5143,7 +5145,7 @@ static inline unsigned long cpu_util(int cpu);
-> >  
-> >  static inline bool cpu_overutilized(int cpu)
-> >  {
-> > -	return (capacity_of(cpu) * 1024) < (cpu_util(cpu) * capacity_margin);
-> > +	return !fits_capacity(cpu_util(cpu), capacity_of(cpu));
+> > +#define DEV_PMS_OPS (IS_ENABLED(CONFIG_PM_SLEEP) ? &usb_conn_pm_ops : NULL)
 > 
-> This ...
-> 
-> >  }
-> >  
-> >  static inline void update_overutilized_status(struct rq *rq)
-> > @@ -6304,7 +6306,7 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
-> >  			/* Skip CPUs that will be overutilized. */
-> >  			util = cpu_util_next(cpu, p, cpu);
-> >  			cpu_cap = capacity_of(cpu);
-> > -			if (cpu_cap * 1024 < util * capacity_margin)
-> > +			if (!fits_capacity(util, cpu_cap))
-> 
-> ... and this isn't _strictly_ equivalent to the existing code but I
-> guess we can live with the difference :-)
+> Why this macro is needed?
+Want to set .pm as NULL when CONFIG_PM_SLEEP is not enabled.
 
-Yes, I missed the == part it seems. Good catch. Though as you said,
-maybe we don't need to take that into account and can live with the
-new macro :)
-
+Thanks
 > 
-> >  				continue;
-> >  
-> >  			/* Always use prev_cpu as a candidate. */
-> > @@ -7853,8 +7855,7 @@ group_is_overloaded(struct lb_env *env, struct sg_lb_stats *sgs)
-> >  static inline bool
-> >  group_smaller_min_cpu_capacity(struct sched_group *sg, struct sched_group *ref)
-> >  {
-> > -	return sg->sgc->min_capacity * capacity_margin <
-> > -						ref->sgc->min_capacity * 1024;
-> > +	return fits_capacity(sg->sgc->min_capacity, ref->sgc->min_capacity);
-> >  }
-> >  
-> >  /*
-> > @@ -7864,8 +7865,7 @@ group_smaller_min_cpu_capacity(struct sched_group *sg, struct sched_group *ref)
-> >  static inline bool
-> >  group_smaller_max_cpu_capacity(struct sched_group *sg, struct sched_group *ref)
-> >  {
-> > -	return sg->sgc->max_capacity * capacity_margin <
-> > -						ref->sgc->max_capacity * 1024;
-> > +	return fits_capacity(sg->sgc->max_capacity, ref->sgc->max_capacity);
-> >  }
-> >  
-> >  static inline enum
-> > -- 
-> > 2.21.0.rc0.269.g1a574e7a288b
-> > 
-> 
-> Also, since we're talking about making the capacity_margin code more
-> consistent, one small thing I had in mind: we have a capacity margin
-> in sugov too, which happens to be 1.25 has well (see map_util_freq()).
-> Conceptually, capacity_margin in fair.c and the sugov margin are both
-> about answering: "do I have enough CPU capacity to serve X of util, or
-> do I need more ?"
-> 
-> So perhaps we should factorize the capacity_margin code some more to use
-> it in both places in a consistent way ? This could be done in a separate
-> patch, though.
 
-Hmm, even if the values are same currently I am not sure if we want
-the same for ever. I will write a patch for it though, if Peter/Rafael
-feel the same as you.
 
-Thanks Quentin.
-
--- 
-viresh
