@@ -2,140 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 413E83774B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 16:58:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D80137751
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 17:01:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729061AbfFFO6h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 10:58:37 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43628 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727309AbfFFO6g (ORCPT
+        id S1729076AbfFFPBY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 11:01:24 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:59649 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727309AbfFFPBY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 10:58:36 -0400
-Received: by mail-wr1-f68.google.com with SMTP id r18so2758199wrm.10
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 07:58:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=QujUueqFUx2/VSrL+HZmRN292Qq0Dhoh8CSUM41nf2A=;
-        b=ZCo7O2C8yP4nwdUG6GBa7j3UmhQfPthiEWab3oypsGCItJN5tuZZ11EJ9UiZiiFdnG
-         x96ys34BGhcW3sNOsQ+lWZMOb12EMkuf3pSGBDJYQbwmNyfKoGfI80RFTli7u2DGBg/9
-         XJ80NBhRd+O0no3dkGRaqslAStOx+NFMDbunqpAnSqal3hJj2KsoYOlp91q6PmT2NqvE
-         3/JXvNTUENLYhCoaZasLzE6P99EByMOe86MhrtudILbtxuWaXYU0By8UwXKHDuZaXg3X
-         HXny8/I/wPSsTthKpSupdSaz4scGB6yuXsSsiAeQepzVx1uf+XTkuUlOcYAqE1NOimjJ
-         BXwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=QujUueqFUx2/VSrL+HZmRN292Qq0Dhoh8CSUM41nf2A=;
-        b=RLTVJl8HDQDw4EOdknNpmkhySNh10jQDAcpn7/JaCU32mistdGtnweoEuT1fQRanRA
-         ebg4+N8B+qc/AoVcpfj4psgAyqPprbVuTIRKqYfxRzM3FGJNj3T11vZUHr6etAhF+b77
-         XrJsqJYkGCjTxOlKoz9TxOlfC3WC+bcexBgdkx+tBIOUxeHbj5yHkyV7sSIHK8Hegalm
-         FAIMQbBoCGbuYPMdlSUijEJ+KZVGuFQXF7qTRBjHUeI01fmAWU0Bbig0rOxylGqY3a/m
-         i5PTdV+yo04rCpDFG7lS/6CfQjGNcy8wTs8iXgX9aDmy/McrlnyiVZnYIxzNh7yQ0Wct
-         XLxQ==
-X-Gm-Message-State: APjAAAVcVpaRtPhD1IB3AuoHeLUvp2BkAwZzTV/NcbeNBs3FlTpsyZZe
-        yPV1Swso0XMXnORkSO+g9GYnD5vziFB4ww==
-X-Google-Smtp-Source: APXvYqzZxEOJPWQeIL+UsyHAq9cz1Yc6pAWJ9MgF/JfNneHwBH0kgD+JhRh8xYlf8ptsNnwIVBVw6Q==
-X-Received: by 2002:a5d:518c:: with SMTP id k12mr30386901wrv.322.1559833114696;
-        Thu, 06 Jun 2019 07:58:34 -0700 (PDT)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id z17sm1983993wru.21.2019.06.06.07.58.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Jun 2019 07:58:34 -0700 (PDT)
-Subject: Re: [alsa-devel] [PATCH v2] soundwire: stream: fix bad unlock balance
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        vkoul@kernel.org
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-References: <20190606112222.16502-1-srinivas.kandagatla@linaro.org>
- <9427a73a-e09a-4a9c-7690-271d2e2e1024@linux.intel.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <f13c82d2-94a4-9517-bcf6-95aa40c6a42f@linaro.org>
-Date:   Thu, 6 Jun 2019 15:58:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <9427a73a-e09a-4a9c-7690-271d2e2e1024@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Thu, 6 Jun 2019 11:01:24 -0400
+Received: from orion.localdomain ([77.9.2.22]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MTR6K-1h7QsW1L8m-00TomO; Thu, 06 Jun 2019 17:00:40 +0200
+From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     jdelvare@suse.com, linux@roeck-us.net, linux-hwmon@vger.kernel.org
+Subject: drivers: hwmon: i5k_amb: simplify probing / device
+Date:   Thu,  6 Jun 2019 17:00:32 +0200
+Message-Id: <1559833233-25723-1-git-send-email-info@metux.net>
+X-Mailer: git-send-email 1.9.1
+X-Provags-ID: V03:K1:IKbxlQPaqwU1YSjaQw5qI+1zFaJ1ESxY5CHkeOHtz5uDKXf1518
+ qgDaREwZEi0AN/a78NUG/eyU4aky4EqWUOU+opfuZTX5E+0n2yRcWdYtQ9sCcqFxLsQZi9d
+ g/B4bnG+EB5c8P8M8y5kx4+KsFF8Ulnu3XIiG5culpc4HImzA0el9jaAkkSo3Q2nyP9rSN+
+ v5zLdMz9RRwCnXXwemesw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:hVU4RXuAmJQ=:RnMLN81v2+wSmFuObCxbP0
+ W4+UOzWcFK8GxJpTtF2b1RD/i3lii4Wd9OyNH95ZpM3tVC/7n/plODKf1MLN0Ej1idf684DTh
+ 5v5PjgsxRHqcrP8SozTb7fRU8ADO2I9cxGC0my1gjooPQnWvphmMn4o2nSiwZMjwB9LUo5tyt
+ QB0mrJDu12AZerE3ZqFrz33dINuKw76HpCAFFJnOA4JEu9cjeCNeFijiSnzMjHrr4cFX2eS5E
+ MHoEQQCZmKzD8H3HRApL4jQiTVxJBDqZoMQycTPOU6fUu5z+X+ZDJcgTEJPbqweccVF/cZBWG
+ ml6X3ZPUdiyzQKs5OujyAXIAV2Oq3NlgSnYi8Bylr6FzdPVK1wCgxmilczoRuy5btfbmfBbwK
+ gdrXZIzV8T7kg1Ruf2SGE1CGsx01gL7LRrSSWo7nrP/kT1hkp0hqD7hQMEA6W2S9dMu5LGa3k
+ CwN1jhyTk7YY8i/JAhMDfg280/w/CrE4YMzI7MeRGJ9l5eXz1tifd3Z1bmUw8sje44wbSvIyp
+ MOZ4lb6geaeUVX0Wp3RdWlMBdYDdc5fjwYL4ttS/t0HLLbGHagmdncrGVFAo2AzsjZdrwU1Ym
+ V4jQ5YwR4nW7lye1rOaYG6si49+2m3lT1D6TP1GcZ7fyAqxJHHdkYcE1VeR2gdayyONNmLnH/
+ xEiOKiYzl3zh1J7Eo/exB9/kb8lRnGTWDKMEI8qHKXptfFRcNFYKZ6Mddp6FnQq+gC1iMvTCd
+ QIzky/q5k7i9aFLVGuXU+P2IAKx2Kw07UqI53w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi folks,
+
+the current way of device probing looks a bit strange and
+uses two redundant tables - one only for the module loading
+and another for the actual probing.
+
+Simplifying it by putting everything into the pci match table.
 
 
-On 06/06/2019 15:28, Pierre-Louis Bossart wrote:
-> On 6/6/19 6:22 AM, Srinivas Kandagatla wrote:
->> multi bank switching code takes lock on condition but releases without
->> any check resulting in below warning.
->> This patch fixes this.
-> 
-> 
-> Question to make sure we are talking about the same thing: multi-link 
-> bank switching is a capability beyond the scope of the SoundWire spec 
-> which requires hardware support to synchronize links and as Sanyog 
-> hinted at in a previous email follow a different flow for bank switches.
-> 
-> You would not use the multi-link mode if you have different links that 
-> can operate independently and have no synchronization requirement. You 
-> would conversely use the multi-link mode if you have two devices on the 
-> same type on different links and want audio to be rendered at the same 
-> time.
-> 
-> Can you clarify if indeed you were using the full-blown multi-link mode 
-> with hardware synchronization or a regular single-link operation? I am 
-> not asking for details of your test hardware, just trying to reconstruct 
-> the program flow leading to this problem.
-> 
+--mtx
 
-Am testing on a regular single link, which hits this path.
 
-> It could also be that your commit message was meant to say:
-> "the msg lock is taken for multi-link cases only but released 
-> unconditionally, leading to an unlock balance warning for single-link 
-> usages"?
-Yes.
-Vinod can update comment while applying this patch?
-If not I can respin with correct log.
-
-thanks,
-srini
-
-> 
-> Thanks!
-> 
->>
->>   =====================================
->>   WARNING: bad unlock balance detected!
->>   5.1.0-16506-gc1c383a6f0a2-dirty #1523 Tainted: G        W
->>   -------------------------------------
->>   aplay/2954 is trying to release lock (&bus->msg_lock) at:
->>   do_bank_switch+0x21c/0x480
->>   but there are no more locks to release!
->>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->> ---
->>   drivers/soundwire/stream.c | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
->> index ce9cb7fa4724..73c52cd4fec8 100644
->> --- a/drivers/soundwire/stream.c
->> +++ b/drivers/soundwire/stream.c
->> @@ -814,7 +814,8 @@ static int do_bank_switch(struct 
->> sdw_stream_runtime *stream)
->>               goto error;
->>           }
->> -        mutex_unlock(&bus->msg_lock);
->> +        if (bus->multi_link)
->> +            mutex_unlock(&bus->msg_lock);
->>       }
->>       return ret;
->>
-> 
