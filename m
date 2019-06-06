@@ -2,53 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0ED7D37C5D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 20:37:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0815837C60
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 20:38:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729725AbfFFShF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 14:37:05 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:55598 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726719AbfFFShF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 14:37:05 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7648014DE4E27;
-        Thu,  6 Jun 2019 11:37:04 -0700 (PDT)
-Date:   Thu, 06 Jun 2019 11:37:04 -0700 (PDT)
-Message-Id: <20190606.113704.124662408950162788.davem@davemloft.net>
-To:     yuehaibing@huawei.com
-Cc:     alexandre.belloni@bootlin.com, UNGLinuxDriver@microchip.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH net-next] net: mscc: ocelot: remove unused variable
- 'vcap_data_t'
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190606144649.21368-1-yuehaibing@huawei.com>
-References: <20190606144649.21368-1-yuehaibing@huawei.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 06 Jun 2019 11:37:04 -0700 (PDT)
+        id S1729679AbfFFSiu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 14:38:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34630 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726103AbfFFSiu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 14:38:50 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E21820868;
+        Thu,  6 Jun 2019 18:38:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559846329;
+        bh=JzQqaRmZwOMurAoy8+YC4u2pY20QAdiwZNKgQAQJ5qA=;
+        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
+        b=ONAhlg/bWC/qFxfVmTMoY8G9PmitxBKXNxTwC93OxNUxSAp8fML2unVAMoptK4qCB
+         nP+Vgmb+UO1v+7YgHgYjYBd22FzvGzEgDYzwoxcuFLE6aMsCWwalgECwn4/dC+h5O0
+         UcDQsq4R81eiPA2wmaC5dmWIGqam6hMEFzC9/gm4=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190525184253.3088-2-martin.blumenstingl@googlemail.com>
+References: <20190525184253.3088-1-martin.blumenstingl@googlemail.com> <20190525184253.3088-2-martin.blumenstingl@googlemail.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-clk@vger.kernel.org, mturquette@baylibre.com
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 1/1] clk: pwm: implement the .get_duty_cycle callback
+Cc:     linux-kernel@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+User-Agent: alot/0.8.1
+Date:   Thu, 06 Jun 2019 11:38:48 -0700
+Message-Id: <20190606183849.9E21820868@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 6 Jun 2019 22:46:49 +0800
+Quoting Martin Blumenstingl (2019-05-25 11:42:53)
+> Commit 9fba738a53dda2 ("clk: add duty cycle support") added support for
+> getting and setting the duty cycle of a clock. This implements the
+> get_duty_cycle callback for PWM based clocks so the duty cycle is shown
+> in the debugfs output (/sys/kernel/debug/clk/clk_summary).
+>=20
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
 
-> Fix sparse warning:
-> 
-> drivers/net/ethernet/mscc/ocelot_ace.c:96:3:
->  warning: symbol 'vcap_data_t' was not declared. Should it be static?
-> 
-> 'vcap_data_t' never used so can be removed
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Seems ok to me. I'm not sure how useful it will be if pwm has debugfs
+that can be read too, but I'm not too worried about it.
 
-Applied.  I am pretty sure this was meant to be a typedef.
+Applied to clk-next
+
