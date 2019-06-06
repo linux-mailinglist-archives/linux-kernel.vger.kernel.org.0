@@ -2,133 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1B7C369AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 04:01:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45CF2369A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 04:00:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726779AbfFFCBI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 22:01:08 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42743 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbfFFCBH (ORCPT
+        id S1726688AbfFFB74 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 21:59:56 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:41182 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726593AbfFFB74 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 22:01:07 -0400
-Received: by mail-pl1-f194.google.com with SMTP id go2so247114plb.9;
-        Wed, 05 Jun 2019 19:01:07 -0700 (PDT)
+        Wed, 5 Jun 2019 21:59:56 -0400
+Received: by mail-pl1-f195.google.com with SMTP id s24so248903plr.8
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 18:59:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=hl7Qw6TV0ASyprnMWnpIzwz2Nh0SP6ZozbsZ5FdFVys=;
-        b=H0k5UvaxvoCI50EAcHDJDxKJiqPALNdhcZOr8eEA7gVjCtmKlSz0krZHgfOkkp7+mT
-         mQZjsMFRXdOkRVdmESmy71jsa/D4dFb5WyU9Tnt61rUn/+b+mV+dJAoC9of6ekK+S8JI
-         f7NFg9RICEMvg5h23hNFtZse6Eg/1ldR++y8RqxBBwHJT/xw69U9MREv5u4Y1l02NT3n
-         /ES3O02YP6HuqFXVsaDKWltsUsG2SBdk4VmWETzqatY5JvGpA3lMVDIgaEHV0P7OR9Fj
-         A5VFUnMFJtVm+fGa8mksgKLQCrfOzvXoJyvDuly354CxnjGsrfv6TC/1bjRjVJleP8tO
-         599Q==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=ihuU9o0Zl2KI3nbD0zaYT33XRxk7WVqlzlc7x/X37f0=;
+        b=vfQngJAF7ezWRAJlfy24nqd/+e++EjO3IKe084/HH7pctHknHL0wX1i/6pJKF/XDeN
+         yVrhbpBGpPYGND6QMbCXQfNj09Ua4603AIr6Ip7soE5YAPZPBaU2srxWXuYKs+Fru33b
+         UnuYSQRwgBhP6bPowozYPQihg2tsOSmBvQoKjhleWHoV8KZEks9eO1dizEgjeAWAsF7S
+         /PWbyPfk5yLX7Ix2jZA3eZHasDSIcy4M4kfgW1sDqzHTYuihV41Aj+4AlBPJ7hs/U5Un
+         czldH6ozd2y0FxciEff8fS+IxBEua+gTob2Vfu1EGf5g1OAEf2MWcPFgmpiHT3BSF64f
+         8i6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=hl7Qw6TV0ASyprnMWnpIzwz2Nh0SP6ZozbsZ5FdFVys=;
-        b=Oosww+8oVAwDw2zXdLp++jiTT1B1Uod/Gv5qGm/fZaUH/4XcMtyNm33qH0mYk89Dby
-         sAJJplcNfS9Ai6WdAbtOP4YMaNDsihNT924q+X0jGRJ1Y2eslC1KjHXrYqCaHay6vuaJ
-         hX4+zQ13Zs+WPez+bJlXZ9sNZF8rtHyKxu6DOZSOZSYWR74iDrK1tiJXEgPzI5v1LO/d
-         L1/a73YuHJhNIy9o9XgO5IIw5//iBzbm0vSqelVB4gmYTswuPsRz91hthyHU0jR74vBg
-         fYF4sOQh9PGaGSdiZXJA/uVSu02nPZohipROPk8PDlRrQwDQA97o5t+H0OlvmXgkh2P0
-         wjEQ==
-X-Gm-Message-State: APjAAAWmMRbRuDp2gROJHAAur0tOlg6vH7tgNYTY3fJxzBEpGcQIl/W0
-        uvEiWxVIsE3RMC56MnW51xg=
-X-Google-Smtp-Source: APXvYqyMYndp+Uyq2J7tCVNgbiVo5mec/xiEJ7usFR3KQl0MMLdJT9wum0Dz60prHwMGJJc8YZuCOg==
-X-Received: by 2002:a17:902:bb89:: with SMTP id m9mr44474933pls.188.1559786466660;
-        Wed, 05 Jun 2019 19:01:06 -0700 (PDT)
-Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id b15sm248746pff.31.2019.06.05.19.01.04
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=ihuU9o0Zl2KI3nbD0zaYT33XRxk7WVqlzlc7x/X37f0=;
+        b=GL5QRn/hOJ0wlJGBNGkzxVJ5M/fxI3P+upFvtfh8kjOG9sjk88yMA5iRpLbHNqlmbJ
+         OyyKnoe5GmkMT4B0VsNTyDTvGgwVuauqu0jr9D6x2sKBqzw3ofcMRIiCqMEE6V2/s59Q
+         TresMAt0L8OjOZT9DIsjNfoN+TFRrk+So8J821uzopyC3/3nXZt8PtG4j7H/SlXMHYGO
+         y0HlbmKdT7PECdIYqJ9V3bB9/kxnwooxRMIo9vWarKZzMQlobIHKPehunKA5t+S1WAOw
+         YssWqOTmo3wEMEkoe34wjxQ4gBsWjts/1u/9l52DNxEcEPA/2MDLrdKKFi6G0EZFdcsv
+         LnMQ==
+X-Gm-Message-State: APjAAAWGrD0yrejl9VZAtWU7cX9vqxaFpvR5bsmXnLwkWgZEMNr5Hp2j
+        FohR5mojG2TtFa//48tHX/4=
+X-Google-Smtp-Source: APXvYqz6iL57SOstwByQJwB7G/p/Z2547VWkonZ7YBzhPg2Y5xw2MOGiFbEyuyFw3gZrwv3kL58WyQ==
+X-Received: by 2002:a17:902:7e0e:: with SMTP id b14mr22529317plm.257.1559786395303;
+        Wed, 05 Jun 2019 18:59:55 -0700 (PDT)
+Received: from t-1000 (c-98-210-58-162.hsd1.ca.comcast.net. [98.210.58.162])
+        by smtp.gmail.com with ESMTPSA id u2sm253814pjv.9.2019.06.05.18.59.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Jun 2019 19:01:06 -0700 (PDT)
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     agross@kernel.org, david.brown@linaro.org,
-        bjorn.andersson@linaro.org, marc.w.gonzalez@free.fr,
-        jcrouse@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Subject: [PATCH v2 1/3] dt-bindings: clock: Document gpucc for msm8998
-Date:   Wed,  5 Jun 2019 18:59:37 -0700
-Message-Id: <20190606015937.2337-1-jeffrey.l.hugo@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190606015844.2285-1-jeffrey.l.hugo@gmail.com>
-References: <20190606015844.2285-1-jeffrey.l.hugo@gmail.com>
+        Wed, 05 Jun 2019 18:59:54 -0700 (PDT)
+Date:   Wed, 5 Jun 2019 18:59:52 -0700
+From:   Shobhit Kukreti <shobhitkukreti@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        hadess@hadess.net, hdegoede@redhat.com, Larry.Finger@lwfinger.net
+Cc:     shobhitkukreti@gmail.com
+Subject: [PATCH] staging: rtl8723bs: CleanUp to remove the error reported by
+ checkpatch
+Message-ID: <20190606015949.GA2275@t-1000>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The GPU for msm8998 has its own clock controller.  Document it.
+Cleaned up the code to remove the error "(foo*)" should be "(foo *)"
+reported by checkpatch from the file rtl8723bs/os_dep/ioctl_linux.c
 
-Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Signed-off-by: Shobhit Kukreti <shobhitkukreti@gmail.com>
 ---
- .../devicetree/bindings/clock/qcom,gpucc.txt  |  4 ++-
- .../dt-bindings/clock/qcom,gpucc-msm8998.h    | 29 +++++++++++++++++++
- 2 files changed, 32 insertions(+), 1 deletion(-)
- create mode 100644 include/dt-bindings/clock/qcom,gpucc-msm8998.h
+ drivers/staging/rtl8723bs/os_dep/ioctl_linux.c | 32 +++++++++++++-------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.txt b/Documentation/devicetree/bindings/clock/qcom,gpucc.txt
-index 4e5215ef1acd..269afe8a757e 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gpucc.txt
-+++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.txt
-@@ -2,13 +2,15 @@ Qualcomm Graphics Clock & Reset Controller Binding
- --------------------------------------------------
+diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+index 236a462..0be8288 100644
+--- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
++++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+@@ -55,7 +55,7 @@ void rtw_indicate_wx_assoc_event(struct adapter *padapter)
+ 	struct	mlme_priv *pmlmepriv = &padapter->mlmepriv;
+ 	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
+ 	struct mlme_ext_info *pmlmeinfo = &(pmlmeext->mlmext_info);
+-	struct wlan_bssid_ex		*pnetwork = (struct wlan_bssid_ex*)(&(pmlmeinfo->network));
++	struct wlan_bssid_ex		*pnetwork = (struct wlan_bssid_ex *)(&(pmlmeinfo->network));
  
- Required properties :
--- compatible : shall contain "qcom,sdm845-gpucc"
-+- compatible : shall contain "qcom,sdm845-gpucc" or "qcom,msm8998-gpucc"
- - reg : shall contain base register location and length
- - #clock-cells : from common clock binding, shall contain 1
- - #reset-cells : from common reset binding, shall contain 1
- - #power-domain-cells : from generic power domain binding, shall contain 1
- - clocks : shall contain the XO clock
-+	   shall contain the gpll0 out main clock (msm8998)
- - clock-names : shall be "xo"
-+		shall be "gpll0" (msm8998)
+ 	memset(&wrqu, 0, sizeof(union iwreq_data));
  
- Example:
- 	gpucc: clock-controller@5090000 {
-diff --git a/include/dt-bindings/clock/qcom,gpucc-msm8998.h b/include/dt-bindings/clock/qcom,gpucc-msm8998.h
-new file mode 100644
-index 000000000000..2623570ee974
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,gpucc-msm8998.h
-@@ -0,0 +1,29 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2019, Jeffrey Hugo
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_MSM_GPUCC_8998_H
-+#define _DT_BINDINGS_CLK_MSM_GPUCC_8998_H
-+
-+#define GPUPLL0						0
-+#define GPUPLL0_OUT_EVEN				1
-+#define RBCPR_CLK_SRC					2
-+#define GFX3D_CLK_SRC					3
-+#define RBBMTIMER_CLK_SRC				4
-+#define GFX3D_ISENSE_CLK_SRC				5
-+#define RBCPR_CLK					6
-+#define GFX3D_CLK					7
-+#define RBBMTIMER_CLK					8
-+#define GFX3D_ISENSE_CLK				9
-+#define GPUCC_CXO_CLK					10
-+
-+#define GPU_CX_BCR					0
-+#define RBCPR_BCR					1
-+#define GPU_GX_BCR					2
-+#define GPU_ISENSE_BCR					3
-+
-+#define GPU_CX_GDSC					1
-+#define GPU_GX_GDSC					2
-+
-+#endif
+@@ -946,7 +946,7 @@ static int rtw_wx_set_pmkid(struct net_device *dev,
+ 	u8          j, blInserted = false;
+ 	int         intReturn = false;
+ 	struct security_priv *psecuritypriv = &padapter->securitypriv;
+-        struct iw_pmksa*  pPMK = (struct iw_pmksa*)extra;
++        struct iw_pmksa*  pPMK = (struct iw_pmksa *)extra;
+         u8     strZeroMacAddress[ ETH_ALEN ] = { 0x00 };
+         u8     strIssueBssid[ ETH_ALEN ] = { 0x00 };
+ 
+@@ -2054,7 +2054,7 @@ static int rtw_wx_set_auth(struct net_device *dev,
+ 			   union iwreq_data *wrqu, char *extra)
+ {
+ 	struct adapter *padapter = (struct adapter *)rtw_netdev_priv(dev);
+-	struct iw_param *param = (struct iw_param*)&(wrqu->param);
++	struct iw_param *param = (struct iw_param *)&(wrqu->param);
+ 	int ret = 0;
+ 
+ 	switch (param->flags & IW_AUTH_INDEX) {
+@@ -2337,8 +2337,8 @@ static int rtw_wx_read_rf(struct net_device *dev,
+ 	u32 path, addr, data32;
+ 
+ 
+-	path = *(u32*)extra;
+-	addr = *((u32*)extra + 1);
++	path = *(u32 *)extra;
++	addr = *((u32 *)extra + 1);
+ 	data32 = rtw_hal_read_rfreg(padapter, path, addr, 0xFFFFF);
+ 	/*
+ 	 * IMPORTANT!!
+@@ -2358,9 +2358,9 @@ static int rtw_wx_write_rf(struct net_device *dev,
+ 	u32 path, addr, data32;
+ 
+ 
+-	path = *(u32*)extra;
+-	addr = *((u32*)extra + 1);
+-	data32 = *((u32*)extra + 2);
++	path = *(u32 *)extra;
++	addr = *((u32 *)extra + 1);
++	data32 = *((u32 *)extra + 2);
+ /* 	DBG_871X("%s: path =%d addr = 0x%02x data = 0x%05x\n", __func__, path, addr, data32); */
+ 	rtw_hal_write_rfreg(padapter, path, addr, 0xFFFFF, data32);
+ 
+@@ -2584,7 +2584,7 @@ static int rtw_wps_start(struct net_device *dev,
+ 		goto exit;
+ 	}
+ 
+-	uintRet = copy_from_user((void*)&u32wps_start, pdata->pointer, 4);
++	uintRet = copy_from_user((void *)&u32wps_start, pdata->pointer, 4);
+ 	if (u32wps_start == 0)
+ 		u32wps_start = *extra;
+ 
+@@ -2694,7 +2694,7 @@ static int rtw_dbg_port(struct net_device *dev,
+ 	struct sta_priv *pstapriv = &padapter->stapriv;
+ 
+ 
+-	pdata = (u32*)&wrqu->data;
++	pdata = (u32 *)&wrqu->data;
+ 
+ 	val32 = *pdata;
+ 	arg = (u16)(val32&0x0000ffff);
+@@ -3420,7 +3420,7 @@ static int wpa_supplicant_ioctl(struct net_device *dev, struct iw_point *p)
+ 
+ 	case IEEE_CMD_SET_WPA_IE:
+ 		/* ret = wpa_set_wpa_ie(dev, param, p->length); */
+-		ret =  rtw_set_wpa_ie((struct adapter *)rtw_netdev_priv(dev), (char*)param->u.wpa_ie.data, (u16)param->u.wpa_ie.len);
++		ret =  rtw_set_wpa_ie((struct adapter *)rtw_netdev_priv(dev), (char *)param->u.wpa_ie.data, (u16)param->u.wpa_ie.len);
+ 		break;
+ 
+ 	case IEEE_CMD_SET_ENCRYPTION:
+@@ -3824,7 +3824,7 @@ static int rtw_add_sta(struct net_device *dev, struct ieee_param *param)
+ 		if (WLAN_STA_HT&flags) {
+ 			psta->htpriv.ht_option = true;
+ 			psta->qos_option = 1;
+-			memcpy((void*)&psta->htpriv.ht_cap, (void*)&param->u.add_sta.ht_cap, sizeof(struct rtw_ieee80211_ht_cap));
++			memcpy((void *)&psta->htpriv.ht_cap, (void *)&param->u.add_sta.ht_cap, sizeof(struct rtw_ieee80211_ht_cap));
+ 		} else {
+ 			psta->htpriv.ht_option = false;
+ 		}
+@@ -4368,7 +4368,7 @@ static int rtw_wx_set_priv(struct net_device *dev,
+ 	char *ext;
+ 
+ 	struct adapter *padapter = (struct adapter *)rtw_netdev_priv(dev);
+-	struct iw_point *dwrq = (struct iw_point*)awrq;
++	struct iw_point *dwrq = (struct iw_point *)awrq;
+ 
+ 	/* RT_TRACE(_module_rtl871x_ioctl_os_c, _drv_notice_, ("+rtw_wx_set_priv\n")); */
+ 	if (dwrq->length == 0)
+@@ -4540,7 +4540,7 @@ static int rtw_test(
+ 	}
+ 	DBG_871X("%s: string =\"%s\"\n", __func__, pbuf);
+ 
+-	ptmp = (char*)pbuf;
++	ptmp = (char *)pbuf;
+ 	pch = strsep(&ptmp, delim);
+ 	if ((pch == NULL) || (strlen(pch) == 0)) {
+ 		kfree(pbuf);
+@@ -5038,7 +5038,7 @@ static int rtw_ioctl_wext_private(struct net_device *dev, union iwreq_data *wrq_
+ 				str = strsep(&ptr, delim);
+ 				if (NULL == str) break;
+ 				sscanf(str, "%i", &temp);
+-				((s32*)buffer)[count++] = (s32)temp;
++				((s32 *)buffer)[count++] = (s32)temp;
+ 			} while (1);
+ 			buffer_len = count * sizeof(s32);
+ 
+@@ -5177,7 +5177,7 @@ static int rtw_ioctl_wext_private(struct net_device *dev, union iwreq_data *wrq_
+ 		case IW_PRIV_TYPE_INT:
+ 			/* Display args */
+ 			for (j = 0; j < n; j++) {
+-				sprintf(str, "%d  ", ((__s32*)extra)[j]);
++				sprintf(str, "%d  ", ((__s32 *)extra)[j]);
+ 				len = strlen(str);
+ 				output_len = strlen(output);
+ 				if ((output_len + len + 1) > 4096) {
 -- 
-2.17.1
+2.7.4
 
