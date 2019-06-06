@@ -2,113 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6775736F4B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 11:00:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7275F36F56
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 11:01:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727576AbfFFJAN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 05:00:13 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:51498 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727279AbfFFJAM (ORCPT
+        id S1727656AbfFFJBA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 05:01:00 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:60762 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727450AbfFFJBA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 05:00:12 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x568xMrV019923;
-        Thu, 6 Jun 2019 04:00:06 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail2.cirrus.com (mail2.cirrus.com [141.131.128.20])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2sups16ekr-1;
-        Thu, 06 Jun 2019 04:00:06 -0500
-Received: from EDIEX02.ad.cirrus.com (unknown [198.61.84.81])
-        by mail2.cirrus.com (Postfix) with ESMTP id A9E38605A6B8;
-        Thu,  6 Jun 2019 04:00:05 -0500 (CDT)
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Thu, 6 Jun
- 2019 10:00:05 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
- Transport; Thu, 6 Jun 2019 10:00:05 +0100
-Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 04A3045;
-        Thu,  6 Jun 2019 10:00:05 +0100 (BST)
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     <lee.jones@linaro.org>
-CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-Subject: [PATCH v2 1/4] mfd: madera: Update DT bindings to add additional CODECs
-Date:   Thu, 6 Jun 2019 10:00:01 +0100
-Message-ID: <20190606090004.12748-1-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.11.0
+        Thu, 6 Jun 2019 05:01:00 -0400
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id x5690csu027438
+        for <linux-kernel@vger.kernel.org>; Thu, 6 Jun 2019 18:00:39 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x5690csu027438
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1559811640;
+        bh=TBwtdfm16uGyBAXSj/TNuY/KhFKFlouLYXyh5UH4Y40=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=FB10sAGBQSJIApf3wQAOgtgLqwKuP4kG5Ac7dNBDlaJ7+1tNGZBp1UUpf0A0bsFHF
+         b7QEqa9u5vvp/olgm9EW295zjBuLLa3auQ8qsUk5y+KFTB6S2On/Ww/A2VzxpG0FyR
+         C2ljWxkfeDk926BSSi0iskGazGgnrzL09vJEc9triKWx3GQg3O7jkX4gb5Ecp/4YNS
+         RCV2qIdkXJvRG1mL0wd6Q+zeLe7JUt65zm8XxPenZ/6DTfiNrFTTiiPpXgRpVPjau0
+         5Kgs46dpqtYsQlQ46yEhvFTAhcatPAH2zZqgrb2/ZcHjhQmM3WYi2JkZ9cjhNY9DA6
+         6ZAmgR6b7VVoQ==
+X-Nifty-SrcIP: [209.85.217.50]
+Received: by mail-vs1-f50.google.com with SMTP id n21so739527vsp.12
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 02:00:39 -0700 (PDT)
+X-Gm-Message-State: APjAAAW2j+c3bzUL5AjdQ0bXaNaAgJtaILEo4nv6WBAl5eaZZqRilCm7
+        y9LMKHE9h8cw+dN2V/UYaQdVduq0R04i2i/AyYg=
+X-Google-Smtp-Source: APXvYqwb6RbzmXpl729o6DP9QlUu6snm+nAvBpVaX/mpqeH8Au7h14UR5ZfnVhlceWVEmWYfPAR6PjkdLjEHX/TcxMU=
+X-Received: by 2002:a67:ed04:: with SMTP id l4mr6217862vsp.179.1559811638421;
+ Thu, 06 Jun 2019 02:00:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=960 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906060066
+References: <20190604111632.22479-1-yamada.masahiro@socionext.com>
+ <90aa6d91-7592-17b0-17fd-e33676bd0a46@linux.ibm.com> <CAK7LNASV9Chjd+o3+2ZbA0WHu=dVBFf2AC1dT=eLSf3_2pe12Q@mail.gmail.com>
+ <ab22b27e-dd07-1c83-af60-19403c98c6a2@linux.ibm.com>
+In-Reply-To: <ab22b27e-dd07-1c83-af60-19403c98c6a2@linux.ibm.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 6 Jun 2019 18:00:02 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ2eurVdK=uu=ysExjpbXPY+SaPatad-SGv8T4JfDmXew@mail.gmail.com>
+Message-ID: <CAK7LNAQ2eurVdK=uu=ysExjpbXPY+SaPatad-SGv8T4JfDmXew@mail.gmail.com>
+Subject: Re: [PATCH] ocxl: do not use C++ style comments in uapi header
+To:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Frederic Barrat <fbarrat@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Joe Perches <joe@perches.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Donnellan <ajd@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
+Hi Michael,
 
-This adds the cs47l15, cs42l92, cs47l92 and cs47l93 to the list of
-compatible strings and updates some properties that need to note
-the new CODECs.
+On Wed, Jun 5, 2019 at 3:18 PM Andrew Donnellan <ajd@linux.ibm.com> wrote:
+>
+> On 4/6/19 10:12 pm, Masahiro Yamada wrote:
+> > On Tue, Jun 4, 2019 at 8:54 PM Frederic Barrat <fbarrat@linux.ibm.com> =
+wrote:
+> >>
+> >>
+> >>
+> >> Le 04/06/2019 =C3=A0 13:16, Masahiro Yamada a =C3=A9crit :
+> >>> Linux kernel tolerates C++ style comments these days. Actually, the
+> >>> SPDX License tags for .c files start with //.
+> >>>
+> >>> On the other hand, uapi headers are written in more strict C, where
+> >>> the C++ comment style is forbidden.
+> >>>
+> >>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> >>> ---
+> >>
+> >> Thanks!
+> >> Acked-by: Frederic Barrat <fbarrat@linux.ibm.com>
+> >>
+> >
+> > Please hold on this patch until
+> > we get consensus about the C++ comment style.
+> >
+> > Discussion just started here:
+> > https://lore.kernel.org/patchwork/patch/1083801/
+>
+> If you choose to proceed with this patch:
+>
+> Acked-by: Andrew Donnellan <ajd@linux.ibm.com>
 
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
+After some discussion,
+the other one was applied to the media subsystem.
 
-No change since v1.
+Please pick up this one with Frederic and Andrew's Ack.
 
-Thanks,
-Charles
+Thanks.
 
- Documentation/devicetree/bindings/mfd/madera.txt | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/madera.txt b/Documentation/devicetree/bindings/mfd/madera.txt
-index db3266088386a..cad0f28005027 100644
---- a/Documentation/devicetree/bindings/mfd/madera.txt
-+++ b/Documentation/devicetree/bindings/mfd/madera.txt
-@@ -11,10 +11,14 @@ bindings/sound/madera.txt
- Required properties:
- 
-   - compatible : One of the following chip-specific strings:
-+        "cirrus,cs47l15"
-         "cirrus,cs47l35"
-         "cirrus,cs47l85"
-         "cirrus,cs47l90"
-         "cirrus,cs47l91"
-+        "cirrus,cs42l92"
-+        "cirrus,cs47l92"
-+        "cirrus,cs47l93"
-         "cirrus,wm1840"
- 
-   - reg : I2C slave address when connected using I2C, chip select number when
-@@ -22,7 +26,7 @@ Required properties:
- 
-   - DCVDD-supply : Power supply for the device as defined in
-     bindings/regulator/regulator.txt
--    Mandatory on CS47L35, CS47L90, CS47L91
-+    Mandatory on CS47L15, CS47L35, CS47L90, CS47L91, CS42L92, CS47L92, CS47L93
-     Optional on CS47L85, WM1840
- 
-   - AVDD-supply, DBVDD1-supply, DBVDD2-supply, CPVDD1-supply, CPVDD2-supply :
-@@ -35,7 +39,7 @@ Required properties:
-     (CS47L85, WM1840)
- 
-   - SPKVDD-supply : Power supply for the device
--    (CS47L35)
-+    (CS47L15, CS47L35)
- 
-   - interrupt-controller : Indicates that this device is an interrupt controller
- 
--- 
-2.11.0
 
+--=20
+Best Regards
+Masahiro Yamada
