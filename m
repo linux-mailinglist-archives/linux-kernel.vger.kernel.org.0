@@ -2,81 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC5B336CB1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 08:58:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8851536D99
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 09:44:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbfFFG60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 02:58:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38186 "EHLO mail.kernel.org"
+        id S1726891AbfFFHoY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 03:44:24 -0400
+Received: from mga01.intel.com ([192.55.52.88]:24992 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725267AbfFFG6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 02:58:25 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8752207E0;
-        Thu,  6 Jun 2019 06:58:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559804305;
-        bh=/AotUYAn81Yvabr0QOuYw3tgELf9Sx7jAvd3vMMU3kY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=loi3rC5hpwqc/ItwOijTJjtZsZuRbo9pg0ZFutYYR/BfAfq7OxiyuXfyiod69OYcM
-         ykyNP7GpIsHdSWwKHqY4ppeG7Kya1j5n+9jllVJz6BFPiB17yIxD5L300a0TaTn8Sz
-         ijLeZZ+AGRzmaXxhGzDwgga8F1Q3++6lFMxc6ZqI=
-Date:   Thu, 6 Jun 2019 08:58:22 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Chunfeng Yun <chunfeng.yun@mediatek.com>
-Cc:     Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v3] USB: move usb debugfs directory creation to the usb
- common core
-Message-ID: <20190606065822.GA29436@kroah.com>
-References: <20190605092816.GA23758@kroah.com>
- <20190605124440.GD17558@kroah.com>
- <1559788368.8487.109.camel@mhfsdcap03>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1559788368.8487.109.camel@mhfsdcap03>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+        id S1725267AbfFFHoY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 03:44:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 00:44:24 -0700
+X-ExtLoop1: 1
+Received: from devel-ww.sh.intel.com ([10.239.48.128])
+  by orsmga005.jf.intel.com with ESMTP; 06 Jun 2019 00:44:21 -0700
+From:   Wei Wang <wei.w.wang@intel.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        pbonzini@redhat.com, ak@linux.intel.com, peterz@infradead.org
+Cc:     kan.liang@intel.com, mingo@redhat.com, rkrcmar@redhat.com,
+        like.xu@intel.com, wei.w.wang@intel.com, jannh@google.com,
+        arei.gonglei@huawei.com, jmattson@google.com
+Subject: [PATCH v6 00/12] Guest LBR Enabling
+Date:   Thu,  6 Jun 2019 15:02:19 +0800
+Message-Id: <1559804551-42271-1-git-send-email-wei.w.wang@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 10:32:48AM +0800, Chunfeng Yun wrote:
-> On Wed, 2019-06-05 at 14:44 +0200, Greg Kroah-Hartman wrote:
-> > The USB gadget subsystem wants to use the USB debugfs root directory, so
-> > move it to the common "core" USB code so that it is properly initialized
-> > and removed as needed.
-> > 
-> > In order to properly do this, we need to load the common code before the
-> > usb core code, when everything is linked into the kernel, so reorder the
-> > link order of the code.
-> > 
-> > Also as the usb common code has the possibility of the led trigger logic
-> > to be merged into it, handle the build option properly by only having
-> > one module init/exit function and have the common code initialize the
-> > led trigger if needed.
-> > 
-> > Reported-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-> > Cc: Felipe Balbi <felipe.balbi@linux.intel.com>
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > ---
-> > Chunfeng, can you try testing this again?
-> 
-> Tested-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-> 
-> Thank you, Greg, Felipe
+Last Branch Recording (LBR) is a performance monitor unit (PMU) feature
+on Intel CPUs that captures branch related info. This patch series enables
+this feature to KVM guests.
 
-Thanks for the review, and all of the different iterations for this.
-For something so "simple" it sure took us all a number of tries :)
+Here is a conclusion of the fundamental methods that we use:
+1) the LBR feature is enabled per guest via QEMU setting of
+   KVM_CAP_X86_GUEST_LBR;
+2) the LBR stack is passed through to the guest for direct accesses after
+   the guest's first access to any of the lbr related MSRs;
+3) the host will help save/resotre the LBR stack when the vCPU is
+   scheduled out/in.
 
-I'll go queue it up now so that your future work can rely on it.
+ChangeLog:
+    - perf/x86:
+        - Patch 7:
+                - define "no counter" as a new PERF_EV cap and keep it
+                  used in the kernel, instead of esposing it in the user
+                  ABI (if defined in perf_event_attr)
+                - add a new API, perf_event_create, which can be used to
+                  create a perf event without counter assignment (e.g.
+                  a perf event simply to get the perf core's help of
+                  switching lbr stack on thread switching, please see
+                  patch 8)
+    - KVM/vPMU:
+	- Patch 8: use perf_event_create to create a perf event without
+                   the need of a perf counter
+	- Patch 12: set the GLOBAL_STATUS_COUNTERS_FROZEN bit when
+                   injecting a vPMI.
+previous:
+	https://lkml.org/lkml/2019/2/14/210
 
-thanks,
+Like Xu (1):
+  KVM/x86/vPMU: Add APIs to support host save/restore the guest lbr
+    stack
 
-greg k-h
+Wei Wang (11):
+  perf/x86: fix the variable type of the LBR MSRs
+  perf/x86: add a function to get the lbr stack
+  KVM/x86: KVM_CAP_X86_GUEST_LBR
+  KVM/x86: intel_pmu_lbr_enable
+  KVM/x86/vPMU: tweak kvm_pmu_get_msr
+  KVM/x86: expose MSR_IA32_PERF_CAPABILITIES to the guest
+  perf/x86: no counter allocation support
+  perf/x86: save/restore LBR_SELECT on vCPU switching
+  KVM/x86/lbr: lazy save the guest lbr stack
+  KVM/x86: remove the common handling of the debugctl msr
+  KVM/VMX/vPMU: support to report GLOBAL_STATUS_LBRS_FROZEN
+
+ arch/x86/events/core.c            |  12 ++
+ arch/x86/events/intel/lbr.c       |  43 ++++-
+ arch/x86/events/perf_event.h      |   6 +-
+ arch/x86/include/asm/kvm_host.h   |   5 +
+ arch/x86/include/asm/perf_event.h |  16 ++
+ arch/x86/kvm/cpuid.c              |   2 +-
+ arch/x86/kvm/cpuid.h              |   8 +
+ arch/x86/kvm/pmu.c                |  29 ++-
+ arch/x86/kvm/pmu.h                |  12 +-
+ arch/x86/kvm/pmu_amd.c            |   7 +-
+ arch/x86/kvm/vmx/pmu_intel.c      | 397 +++++++++++++++++++++++++++++++++++++-
+ arch/x86/kvm/vmx/vmx.c            |   4 +-
+ arch/x86/kvm/vmx/vmx.h            |   2 +
+ arch/x86/kvm/x86.c                |  32 +--
+ include/linux/perf_event.h        |  13 ++
+ include/uapi/linux/kvm.h          |   1 +
+ kernel/events/core.c              |  37 ++--
+ 17 files changed, 574 insertions(+), 52 deletions(-)
+
+-- 
+2.7.4
+
