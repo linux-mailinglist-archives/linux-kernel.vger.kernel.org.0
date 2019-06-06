@@ -2,113 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BE3537D67
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 21:42:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2D2537D74
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 21:44:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726819AbfFFTm0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 15:42:26 -0400
-Received: from mail-eopbgr710041.outbound.protection.outlook.com ([40.107.71.41]:58368
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726697AbfFFTmZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 15:42:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ptGQkAb4bWbtSN8BP3oURGNkwJaEs2OAxlwtlFfplkQ=;
- b=ZRmSoUY4mz8+F9AD8oQX0pYiQ75tRI5doVUDsD256Uy0wm/Z8au91iuie1vdZ07f5wXmBD4D7Y1hPtbqkWCdCPPYZ1xenLM/WkW4QFybzWOALBqnjhdmL0lhMIBhEAGvtnTpCWlUcWbD6HpGzB6FJbtyop9AJJj+y03Z+GRFAos=
-Received: from MN2PR05MB6208.namprd05.prod.outlook.com (20.178.241.91) by
- MN2PR05MB6703.namprd05.prod.outlook.com (20.178.249.91) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1965.12; Thu, 6 Jun 2019 19:42:21 +0000
-Received: from MN2PR05MB6208.namprd05.prod.outlook.com
- ([fe80::fc2c:24b8:4047:a9a0]) by MN2PR05MB6208.namprd05.prod.outlook.com
- ([fe80::fc2c:24b8:4047:a9a0%2]) with mapi id 15.20.1965.011; Thu, 6 Jun 2019
- 19:42:21 +0000
-From:   Ajay Kaher <akaher@vmware.com>
-To:     Michal Hocko <mhocko@kernel.org>
-CC:     Stable tree <stable@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
-        Peter Xu <peterx@redhat.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Srivatsa Bhat <srivatsab@vmware.com>
-Subject: Re: [RFC PATCH stable-4.4] coredump: fix race condition between
- mmget_not_zero()/get_task_mm() and core dumping
-Thread-Topic: [RFC PATCH stable-4.4] coredump: fix race condition between
- mmget_not_zero()/get_task_mm() and core dumping
-Thread-Index: AQHVHJ/0ITirHCq2DkaXsMkoZ1TuYw==
-Date:   Thu, 6 Jun 2019 19:42:20 +0000
-Message-ID: <5756B041-C0A8-4178-9F5B-7CBF7A554E31@vmware.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=akaher@vmware.com; 
-x-originating-ip: [2401:4900:3311:e32e:40b3:dd71:b60:71c9]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 11c9e4b0-efc3-4dea-e448-08d6eab7174f
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MN2PR05MB6703;
-x-ms-traffictypediagnostic: MN2PR05MB6703:
-x-microsoft-antispam-prvs: <MN2PR05MB6703BA1F73E6460BFB7E2FCFBB170@MN2PR05MB6703.namprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2887;
-x-forefront-prvs: 00603B7EEF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(396003)(136003)(366004)(39860400002)(199004)(189003)(478600001)(486006)(4326008)(66946007)(46003)(316002)(476003)(186003)(14444005)(6116002)(6916009)(102836004)(53936002)(256004)(14454004)(25786009)(86362001)(83716004)(2906002)(6506007)(7416002)(54906003)(71200400001)(71190400001)(81156014)(33656002)(99286004)(2616005)(6512007)(68736007)(8676002)(73956011)(64756008)(76116006)(66446008)(305945005)(36756003)(66556008)(7736002)(5660300002)(66476007)(229853002)(107886003)(6486002)(82746002)(6246003)(81166006)(8936002)(6436002)(91956017);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR05MB6703;H:MN2PR05MB6208.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: SosFWyNtuQTqWPRcXv+U7rmCfdaX8rqjjuLPoH0J/CCHP5RZMh5ge8QQYtCbsAe2tgZtqFRDXE+Izpce0GxgWKuM/BWn7GP/3Yj04cL5LiUxbfcO65t3SG/b0/k8wv1q0j7yMiwawHTIYiBksgQWe2jap5JazchZMin3Txs1fYYU215Tn8k6i3d1ZiSXSGznD2GI9I46zmycIO3o9h1n+dJ/0jl+Eh0c7vsrpVDE+ZzXYjJKU6BHR5Cu39RNip/EqvjPCHmQIscdFHyZ7yh6hib2X27MfL6IDeQbdb2QDB/iLn35pvGBaRG6Lis2meTIfimNJQxtM7QSfHsMd9yDeBQJF+XLi9ZGa5hR4Ds/QGyDWXrfavFNykR0dUd6mtSsqr5s3hM5JHEWR+Ai1O/VzxQd1tH5MtZohIDK2GEIQ3A=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D37DEB9F3DAB484E8D5A6904E695BC12@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1727106AbfFFTok (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 15:44:40 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:15392 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726927AbfFFToj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 15:44:39 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cf96d160000>; Thu, 06 Jun 2019 12:44:23 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 06 Jun 2019 12:44:37 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 06 Jun 2019 12:44:37 -0700
+Received: from rcampbell-dev.nvidia.com (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 6 Jun
+ 2019 19:44:37 +0000
+Subject: Re: [PATCH 4/5] mm/hmm: hmm_vma_fault() doesn't always call
+ hmm_range_unregister()
+To:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Philip Yang <Philip.Yang@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "Matthew Wilcox" <willy@infradead.org>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        "Andrew Morton" <akpm@linux-foundation.org>
+References: <20190506232942.12623-1-rcampbell@nvidia.com>
+ <20190506232942.12623-5-rcampbell@nvidia.com>
+ <20190606145018.GA3658@ziepe.ca>
+X-Nvconfidentiality: public
+From:   Ralph Campbell <rcampbell@nvidia.com>
+Message-ID: <45c7f8ae-36b2-60cc-7d1d-d13ddd402d4b@nvidia.com>
+Date:   Thu, 6 Jun 2019 12:44:36 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.0
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 11c9e4b0-efc3-4dea-e448-08d6eab7174f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2019 19:42:20.9101
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: akaher@vmware.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR05MB6703
+In-Reply-To: <20190606145018.GA3658@ziepe.ca>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1559850263; bh=j7qw8yaJlMItDoUW9mqi7NQ3FwWbMzSl1ubyYbCL544=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=pi08h/+XAGl+N0KfG4S6NeLMF9IgvrbGk+Msp9DLxzN+zbsrNiL85NUt/VIxgmufe
+         lzM7/3IGRrOm/3I9mLAcHJkGhX8jWo3iUSuJv6KpgaRsYwWqED0WWo6cGfbyzJM6RD
+         tsVFm4FyjWfT26i0GZJHwiwu/Usaf7RMw29kyWmdkqbdL/s7rart8NhnWVjIoTMBVC
+         tG493ORHTpzSpSxRMnJtgwtHIDB91QK5iw0IPMGMespwNkkH/YTKFy77cMQwswN1VC
+         /3S4mbDXVNtz1tnDhDsdoB1ivUMiFrPMb7bbmYrVd8DmfS5kyqnDxYsGZmn1ZyNVnQ
+         bhGgaHaZNhFKA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQo+IEZyb206IEFuZHJlYSBBcmNhbmdlbGkgPGFhcmNhbmdlQHJlZGhhdC5jb20+DQo+DQo+IFVw
-c3RyZWFtIDA0ZjU4NjZlNDFmYjcwNjkwZTI4Mzk3NDg3ZDhiZDhlZWE3ZDcxMmEgY29tbWl0Lg0K
-Pg0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBNaWNoYWwgSG9ja28gPG1ob2Nrb0BzdXNlLmNvbT4NCj4g
-LS0tDQo+IEhpLA0KPiB0aGlzIGlzIGJhc2VkIG9uIHRoZSBiYWNrcG9ydCBJIGhhdmUgZG9uZSBm
-b3Igb3V0IDQuNCBiYXNlZCBkaXN0cmlidXRpb24NCj4ga2VybmVsLiBQbGVhc2UgZG91YmxlIGNo
-ZWNrIHRoYXQgSSBoYXZlbid0IG1pc3NlZCBhbnl0aGluZyBiZWZvcmUNCj4gYXBwbHlpbmcgdG8g
-dGhlIHN0YWJsZSB0cmVlLiBJIGhhdmUgYWxzbyBDQ2VkIEpvZWwgZm9yIHRoZSBiaW5kZXIgcGFy
-dA0KPiB3aGljaCBpcyBub3QgaW4gdGhlIGN1cnJlbnQgdXBzdHJlYW0gYW55bW9yZSBidXQgSSBi
-ZWxpZXZlIGl0IG5lZWRzIHRoZQ0KPiBjaGVjayBhcyB3ZWxsLg0KPg0KPiBSZXZpZXcgZmVlZGJh
-Y2sgd2VsY29tZS4NCj4NCj4gZHJpdmVycy9hbmRyb2lkL2JpbmRlci5jIHwgIDYgKysrKysrDQo+
-IGZzL3Byb2MvdGFza19tbXUuYyAgICAgICB8IDE4ICsrKysrKysrKysrKysrKysrKw0KPiBmcy91
-c2VyZmF1bHRmZC5jICAgICAgICAgfCAxMCArKysrKysrKy0tDQo+IGluY2x1ZGUvbGludXgvbW0u
-aCAgICAgICB8IDIxICsrKysrKysrKysrKysrKysrKysrKw0KPiBtbS9odWdlX21lbW9yeS5jICAg
-ICAgICAgfCAgMiArLQ0KPiBtbS9tbWFwLmMgICAgICAgICAgICAgICAgfCAgNyArKysrKystDQo+
-IDYgZmlsZXMgY2hhbmdlZCwgNjAgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkNCj4NCj4g
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvYW5kcm9pZC9iaW5kZXIuYyBiL2RyaXZlcnMvYW5kcm9pZC9i
-aW5kZXIuYw0KPiBpbmRleCAyNjBjZTBlNjAxODcuLjFmYjFjZGRiZDE5YSAxMDA2NDQNCj4gLS0t
-IGEvZHJpdmVycy9hbmRyb2lkL2JpbmRlci5jDQo+ICsrKyBiL2RyaXZlcnMvYW5kcm9pZC9iaW5k
-ZXIuYw0KPiBAQCAtNTcwLDYgKzU3MCwxMiBAQCBzdGF0aWMgaW50IGJpbmRlcl91cGRhdGVfcGFn
-ZV9yYW5nZShzdHJ1Y3QgYmluZGVyX3Byb2MgKnByb2MsIGludCBhbGxvY2F0ZSwNCj4gDQo+IAlp
-ZiAobW0pIHsNCj4gCQlkb3duX3dyaXRlKCZtbS0+bW1hcF9zZW0pOw0KPiArCQlpZiAoIW1tZ2V0
-X3N0aWxsX3ZhbGlkKG1tKSkgew0KPiArCQkJaWYgKGFsbG9jYXRlID09IDApDQo+ICsJCQkJZ290
-byBmcmVlX3JhbmdlOw0KDQpQbGVhc2UgY3Jvc3MgY2hlY2ssIGZyZWVfcmFuZ2U6IHNob3VsZCBu
-b3QgZW5kLXVwIHdpdGggbW9kaWZpY2F0aW9ucyBpbiB2bWEuDQogDQo+ICsJCQlnb3RvIGVycl9u
-b192bWE7DQo+ICsJCX0NCj4gKw0KPiAJCXZtYSA9IHByb2MtPnZtYTsNCj4gCQlpZiAodm1hICYm
-IG1tICE9IHByb2MtPnZtYV92bV9tbSkgew0KPiAJCQlwcl9lcnIoIiVkOiB2bWEgbW0gYW5kIHRh
-c2sgbW0gbWlzbWF0Y2hcbiIsDQoNCg0K
+
+On 6/6/19 7:50 AM, Jason Gunthorpe wrote:
+> On Mon, May 06, 2019 at 04:29:41PM -0700, rcampbell@nvidia.com wrote:
+>> From: Ralph Campbell <rcampbell@nvidia.com>
+>>
+>> The helper function hmm_vma_fault() calls hmm_range_register() but is
+>> missing a call to hmm_range_unregister() in one of the error paths.
+>> This leads to a reference count leak and ultimately a memory leak on
+>> struct hmm.
+>>
+>> Always call hmm_range_unregister() if hmm_range_register() succeeded.
+>>
+>> Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
+>> Signed-off-by: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+>> Cc: John Hubbard <jhubbard@nvidia.com>
+>> Cc: Ira Weiny <ira.weiny@intel.com>
+>> Cc: Dan Williams <dan.j.williams@intel.com>
+>> Cc: Arnd Bergmann <arnd@arndb.de>
+>> Cc: Balbir Singh <bsingharora@gmail.com>
+>> Cc: Dan Carpenter <dan.carpenter@oracle.com>
+>> Cc: Matthew Wilcox <willy@infradead.org>
+>> Cc: Souptick Joarder <jrdr.linux@gmail.com>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> ---
+>>   include/linux/hmm.h | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+>> diff --git a/include/linux/hmm.h b/include/linux/hmm.h
+>> index 35a429621e1e..fa0671d67269 100644
+>> --- a/include/linux/hmm.h
+>> +++ b/include/linux/hmm.h
+>> @@ -559,6 +559,7 @@ static inline int hmm_vma_fault(struct hmm_range *ra=
+nge, bool block)
+>>   		return (int)ret;
+>>  =20
+>>   	if (!hmm_range_wait_until_valid(range, HMM_RANGE_DEFAULT_TIMEOUT)) {
+>> +		hmm_range_unregister(range);
+>>   		/*
+>>   		 * The mmap_sem was taken by driver we release it here and
+>>   		 * returns -EAGAIN which correspond to mmap_sem have been
+>> @@ -570,13 +571,13 @@ static inline int hmm_vma_fault(struct hmm_range *=
+range, bool block)
+>>  =20
+>>   	ret =3D hmm_range_fault(range, block);
+>>   	if (ret <=3D 0) {
+>> +		hmm_range_unregister(range);
+>=20
+> While this seems to be a clear improvement, it seems there is still a
+> bug in nouveau_svm.c around here as I see it calls hmm_vma_fault() but
+> never calls hmm_range_unregister() for its on stack range - and
+> hmm_vma_fault() still returns with the range registered.
+>=20
+> As hmm_vma_fault() is only used by nouveau and is marked as
+> deprecated, I think we need to fix nouveau, either by dropping
+> hmm_range_fault(), or by adding the missing unregister to nouveau in
+> this patch.
+
+I will send a patch for nouveau to use hmm_range_register() and
+hmm_range_fault() and do some testing with OpenCL.
+I can also send a separate patch to then remove hmm_vma_fault()
+but I guess that should be after AMD's changes.
+
+> Also, I see in linux-next that amdgpu_ttm.c has wrongly copied use of
+> this deprecated API, including these bugs...
+>=20
+> amd folks: Can you please push a patch for your driver to stop using
+> hmm_vma_fault() and correct the use-after free? Ideally I'd like to
+> delete this function this merge cycle from hmm.git
+>=20
+> Also if you missed it, I'm running a clean hmm.git that you can pull
+> into the AMD tree, if necessary, to get the changes that will go into
+> 5.3 - if you need/wish to do this please consult with me before making a
+> merge commit, thanks. See:
+>=20
+>   https://lore.kernel.org/lkml/20190524124455.GB16845@ziepe.ca/
+>=20
+> So Ralph, you'll need to resend this.
+>=20
+> Thanks,
+> Jason
+>=20
