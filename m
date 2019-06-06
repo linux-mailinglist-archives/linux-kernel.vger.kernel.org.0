@@ -2,100 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 875EE36D44
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 09:25:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C6BD36D4F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 09:26:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbfFFHZR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 03:25:17 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:44039 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726040AbfFFHZR (ORCPT
+        id S1726786AbfFFH0p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 03:26:45 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39766 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725267AbfFFH0p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 03:25:17 -0400
-Received: by mail-pl1-f195.google.com with SMTP id c5so556466pll.11
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 00:25:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=HPvBPBVMaGSa/zB6ZJwA0LCVSOOo7DC2+M4V383+koE=;
-        b=YqYjs36xGAcQq6oProJyN99xewoE3Gp9dUzg5pvrKQgZWcmXMPyycjleWh6eJ0I3VM
-         6YwbWdPuIHoaW1cljaZDCqzRhri6ADFOnZ78uroxzrdwpZ4ut0oxPb2Ylw1SVnIiYJFn
-         7SMYhRQz/85vXnJoLBwwz26mrOxvHO0XG3T+MdCiRVQrvDOa+k5ZuS/Q8U/liWv0L1cz
-         iKeSua4sUqK326obz9Up6o2HwCqRiRAnxHJv/KP+keyali2BbIOOaVj5y9X3q/Usz6Au
-         aywDLpB6RcMyoBnUuKDfQi2y97cztibqZ9MXXPcXf8xiFfxfE58l+VGxG9J8IbbPT/sd
-         8LoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HPvBPBVMaGSa/zB6ZJwA0LCVSOOo7DC2+M4V383+koE=;
-        b=HfX2XdFG7Zoc8kZIMALdcADNU/f4Wv4hYAn7GpSyPUPgM9Z3W8wM/hwX575x+ReSZ+
-         o1qpyGLCbMV92qr9uxEL6c0h0OLMe1pAlNHAtg2UJKd2utN3ElYnXDgteuHDa+JbDk9w
-         YBJQVrtjbBPqq57mEhNVRABe+e2aM4Y6snnRYxPY/gJuGddSTHt/O6LgEzt5opSgXcCM
-         8vh8DbrHtOayemKPOVKnck7bNFqbEi7OP6z30GmPglWa62tBsm0X4M9BZIdmWRNL2/NW
-         +3J9837vCnt1L8NwWrzjNTFEtynRKjnlqrqG+dF1SLcRrSUG3z/E60LG1NuDZ61lujU7
-         sYjg==
-X-Gm-Message-State: APjAAAVXB4032xreJfZ7OBMIjROuJF8oNbT+5X2NTiGlUWmWLC7W7j/+
-        zGCOo4Yz+upUbbAyYMgQvYysSA==
-X-Google-Smtp-Source: APXvYqzfbpVJA69MZdz+/1GgtiWjtGcWwvPJtbzUDJzAbhae7fYlJ98zQNMenG1LomSBTtQg1H8vvw==
-X-Received: by 2002:a17:902:d70a:: with SMTP id w10mr41023406ply.251.1559805916729;
-        Thu, 06 Jun 2019 00:25:16 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id a25sm1053735pfo.112.2019.06.06.00.25.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Jun 2019 00:25:16 -0700 (PDT)
-Date:   Thu, 6 Jun 2019 00:26:01 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, agross@kernel.org, david.brown@linaro.org,
-        dmitry.torokhov@gmail.com, jikos@kernel.org,
-        benjamin.tissoires@redhat.com, hdegoede@redhat.com,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] arm64: dts: qcom: Add Lenovo Miix 630
-Message-ID: <20190606072601.GT22737@tuxbook-pro>
-References: <20190423160543.9922-1-jeffrey.l.hugo@gmail.com>
- <20190423160616.10017-1-jeffrey.l.hugo@gmail.com>
- <20190606055034.GA4797@dell>
+        Thu, 6 Jun 2019 03:26:45 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4DEEE60A50; Thu,  6 Jun 2019 07:26:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1559806004;
+        bh=NDsCQMTGQ/205TvP8GN/bfYntCpZX3vSnLmqhd7phZU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=FJuXAdBCAyIr6a5dicjbm+9nCUzJ5rZ5rs1MuZXE8IGOyXz6d6Ton4CdUGm5a9mGB
+         AxV0HgLck2MWvIMlNRzziMbk9D72DaD+804BKZAqwigTq57KMNnICh6KmQRBIQkLRo
+         ZQ2s3q/7XYNrf92bdOBV9hXWPnR4Lz0LwTYfwqX4=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B47026030E;
+        Thu,  6 Jun 2019 07:26:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1559806004;
+        bh=NDsCQMTGQ/205TvP8GN/bfYntCpZX3vSnLmqhd7phZU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=FJuXAdBCAyIr6a5dicjbm+9nCUzJ5rZ5rs1MuZXE8IGOyXz6d6Ton4CdUGm5a9mGB
+         AxV0HgLck2MWvIMlNRzziMbk9D72DaD+804BKZAqwigTq57KMNnICh6KmQRBIQkLRo
+         ZQ2s3q/7XYNrf92bdOBV9hXWPnR4Lz0LwTYfwqX4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B47026030E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Received: by mail-ed1-f47.google.com with SMTP id h9so1893626edr.0;
+        Thu, 06 Jun 2019 00:26:43 -0700 (PDT)
+X-Gm-Message-State: APjAAAV9gH1y+zWVyrLixCxkRgFPUzaQRdW9p3UTkjB55vY6iRVbP5rQ
+        ZDkw4a7yIDhZaP6/hIbforLxWorT7SkWThcB6Yc=
+X-Google-Smtp-Source: APXvYqyMq3bs4ifWOpS2YPWjKkNYwVf2WG4sbHxz909RdciIk0qvBUaCxk6b4HbsrDV2PXnemFBIcDPA2cuVtPEjle0=
+X-Received: by 2002:a17:906:3fc8:: with SMTP id k8mr1736996ejj.2.1559806002530;
+ Thu, 06 Jun 2019 00:26:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190606055034.GA4797@dell>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+References: <20190606043851.18050-1-bjorn.andersson@linaro.org>
+In-Reply-To: <20190606043851.18050-1-bjorn.andersson@linaro.org>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Date:   Thu, 6 Jun 2019 12:56:31 +0530
+X-Gmail-Original-Message-ID: <CAFp+6iG66C-6ySw81bVsxbWqP+qCza0+QxuQ4Z-MXqB6DV2KZg@mail.gmail.com>
+Message-ID: <CAFp+6iG66C-6ySw81bVsxbWqP+qCza0+QxuQ4Z-MXqB6DV2KZg@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: qcom: Add Dragonboard 845c
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 05 Jun 22:50 PDT 2019, Lee Jones wrote:
+Hi Bjorn,
 
-> On Tue, 23 Apr 2019, Jeffrey Hugo wrote:
-> 
-> > This adds the initial DT for the Lenovo Miix 630 laptop.  Supported
-> > functionality includes USB (host), microSD-card, keyboard, and trackpad.
-> > 
-> > Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-> > ---
-> >  arch/arm64/boot/dts/qcom/Makefile             |   1 +
-> >  .../boot/dts/qcom/msm8998-clamshell.dtsi      | 278 ++++++++++++++++++
-> >  .../boot/dts/qcom/msm8998-lenovo-miix-630.dts |  30 ++
-> 
-> What's happening with this patch?
-> 
+On Thu, Jun 6, 2019 at 10:10 AM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> This adds an initial dts for the Dragonboard 845. Supported
+> functionality includes Debug UART, UFS, USB-C (peripheral), USB-A
+> (host), microSD-card and Bluetooth.
+>
+> Initializing the SMMU is clearing the mapping used for the splash screen
+> framebuffer, which causes the board to reboot. This can be worked around
+> using:
+>
+>   fastboot oem select-display-panel none
 
-The thermal-zones are wrong, but I'm okay with an incremental patch for
-that...
+This works well with your SMR handoff RFC series too?
 
-> It's been on the list a while now.  I'm waiting for it to be accepted,
-> since there are patches I wish to submit which are based on it.
-> 
-> Who is responsible for merging these?
-> 
+>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
 
-...so I've just been waiting for a conclusion on the HID patch before I
-could pick this up.
+Patch looks good, so
+Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
 
-Regards,
-Bjorn
+Best Regards
+Vivek
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
