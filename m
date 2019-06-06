@@ -2,111 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B495C36ED1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 10:36:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D4B936F07
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 10:47:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727226AbfFFIg5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 04:36:57 -0400
-Received: from mail-eopbgr130072.outbound.protection.outlook.com ([40.107.13.72]:22658
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725769AbfFFIg5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 04:36:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=l7h5SvArmkf8QqPyEV6TGpf7kya+Md+9ykMPuufAV80=;
- b=Q4g5/q+zFoMJCjVQ26vqFOxNIUR3f2TRRTIZUTA5w8Rs8lTSwlLIuvRaQPt/T57nefXUCV/vewKiNTFQTu/cBImMlLSa0wzX9/T0wKodCoH0ECyAPAzZpiOnCPBYbiFiDsdgdDb03x73U0jMeTl9OejHlBYDoq9PZFDsQEIFaAk=
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
- VI1PR0402MB3549.eurprd04.prod.outlook.com (52.134.4.30) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1965.12; Thu, 6 Jun 2019 08:36:52 +0000
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::ccaf:f4a1:704a:e745]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::ccaf:f4a1:704a:e745%4]) with mapi id 15.20.1943.023; Thu, 6 Jun 2019
- 08:36:52 +0000
-From:   Horia Geanta <horia.geanta@nxp.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-CC:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH] crypto: gcm - fix cacheline sharing
-Thread-Topic: [PATCH] crypto: gcm - fix cacheline sharing
-Thread-Index: AQHVHDJUFTzexZfnZkK5jYnCMHmb4A==
-Date:   Thu, 6 Jun 2019 08:36:52 +0000
-Message-ID: <VI1PR0402MB3485A46E17D52EAA8A26984698170@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-References: <CAKv+Gu9JoC+GKJ6mMAE25mr_k2gbznh-83jApT4=FZsAW=jd8w@mail.gmail.com>
- <20190530142734.qlhgzeal22zxfhk5@gondor.apana.org.au>
- <CAKv+Gu8jJQCZwiHFORUJUzRaAizWzBQ95EAgYe36sFrcvzb6vg@mail.gmail.com>
- <CAKv+Gu-KBgiyNY2Dypx6vqtmpTXNfOxxWxJf50BTiF2rCOFqnw@mail.gmail.com>
- <20190606063724.n77z7gaf32tmyxng@gondor.apana.org.au>
- <CAKv+Gu-YtKRsUYMMD_PNoFvrPpmwTD7fJNs64Q-34L8-TvucqA@mail.gmail.com>
- <20190606064603.lvde6dproqi3vwcq@gondor.apana.org.au>
- <CAKv+Gu-DokZ179_Gx8_20v_pQ3w_CARKdO0xdsO8CRZJG1uOqA@mail.gmail.com>
- <20190606065757.4agqd4poer4rexri@gondor.apana.org.au>
- <VI1PR0402MB3485A016A2E5FDEE57EBF48198170@VI1PR0402MB3485.eurprd04.prod.outlook.com>
- <20190606071548.5dacz7dnpt2lyrtv@gondor.apana.org.au>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=horia.geanta@nxp.com; 
-x-originating-ip: [78.96.98.22]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: cfafcc17-2d70-4987-65d3-08d6ea5a204b
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB3549;
-x-ms-traffictypediagnostic: VI1PR0402MB3549:
-x-microsoft-antispam-prvs: <VI1PR0402MB35492D77277632FBF5BAB22A98170@VI1PR0402MB3549.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4941;
-x-forefront-prvs: 00603B7EEF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(39860400002)(396003)(376002)(366004)(199004)(189003)(3846002)(6116002)(256004)(14444005)(305945005)(6246003)(14454004)(478600001)(4326008)(54906003)(66446008)(53936002)(25786009)(66066001)(8936002)(33656002)(7736002)(52536014)(81166006)(2906002)(71200400001)(76116006)(91956017)(68736007)(86362001)(66946007)(73956011)(7696005)(76176011)(99286004)(66556008)(476003)(64756008)(102836004)(53546011)(6506007)(66476007)(8676002)(81156014)(6916009)(229853002)(186003)(446003)(9686003)(316002)(6436002)(26005)(55016002)(5660300002)(44832011)(74316002)(4744005)(486006)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3549;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: dTzWD6XjsYcRLj7a7jNfEcV8wvUeYngR2RdKIw9zwoPLQpi+UnNuYV5c3i/2mCtl54Ni5lHdM1niiL7bBYL6GcHzBWz2d7revIgmsLH2ELmS00HCUASZRHGbvY+QwgK94g0S3Ctp24kF4c5Y/IVOrUtWGGdweOmQVYkUD6HJIAKLhL+6kYQ5b9VuV32RKY4dejWkGH5ve65S7R9QZmf7arDSOY6wMRO1XPorJqAWweK6eVVQYSFRZs9sOsa0XQxtJfTRsfXm+Z/hxB/ZJBVJ8/Ue7SgIx3iavLWwHHRDmVkwLhXBnplB5TXILDhazuOOztIElqujmpF7IiNTQa7gKx2mD/6PWs5B1GQPzVNWtxWH5IRcnehQra38ZGURBVMnWXMB/qpHF3Ur8RIzKmgndlU+X77sCI4uLMQXhW9Mc5k=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cfafcc17-2d70-4987-65d3-08d6ea5a204b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2019 08:36:52.8382
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: horia.geanta@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3549
+        id S1727434AbfFFIrJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 04:47:09 -0400
+Received: from 96-92-233-220-static.hfc.comcastbusiness.net ([96.92.233.220]:55749
+        "EHLO dcr0.decred.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726926AbfFFIrJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 04:47:09 -0400
+X-Greylist: delayed 592 seconds by postgrey-1.27 at vger.kernel.org; Thu, 06 Jun 2019 04:47:08 EDT
+Received: from marcos-macbook.home (a95-94-160-35.cpe.netcabo.pt [95.94.160.35])
+        (using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dcr0.decred.org (Postfix) with ESMTPSA id 459FB18B407F;
+        Thu,  6 Jun 2019 08:37:14 +0000 (UTC)
+From:   Marco Peereboom <marco@decred.org>
+Message-Id: <8630ED8D-03D4-4BDB-A4A4-6C33325BFA88@decred.org>
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_45A4FB4B-0652-4B92-B0EB-03726583BE22";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha512
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: Re: [PATCH] RISC-V: Break load reservations during switch_to
+Date:   Thu, 6 Jun 2019 09:37:13 +0100
+In-Reply-To: <20190605231735.26581-1-palmer@sifive.com>
+Cc:     linux-riscv@lists.infradead.org,
+        Paul Walmsley <paul.walmsley@sifive.com>, me@carlosedp.com,
+        joel@sing.id.au, linux-kernel@vger.kernel.org
+To:     Palmer Dabbelt <palmer@sifive.com>
+References: <20190605231735.26581-1-palmer@sifive.com>
+X-Mailer: Apple Mail (2.3445.104.11)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/6/2019 10:16 AM, Herbert Xu wrote:=0A=
-> On Thu, Jun 06, 2019 at 07:10:06AM +0000, Horia Geanta wrote:=0A=
->>=0A=
->> Not really.=0A=
->> I am in favor of using the HW to update the IV, which would work for all=
-=0A=
->> skcipher algorithms.=0A=
->> I have the fix ready, will send it in a couple of days.=0A=
-> =0A=
-> OK that would be interesting to see.  But I presume you are still=0A=
-> going to do a copy after the DMA unmap since you can't do DMA to=0A=
-> req->iv?=0A=
-> =0A=
-Yes, an internally kmalloc-ed buffer is used for storing the IV (both input=
- and=0A=
-output IV).=0A=
-Once HW finishes the job, area is DMA unmapped and then output IV is copied=
- into=0A=
-req->iv.=0A=
-=0A=
-Regards,=0A=
-Horia=0A=
+
+--Apple-Mail=_45A4FB4B-0652-4B92-B0EB-03726583BE22
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
+
+Ah that=E2=80=99s sneaky!!
+
+> On Jun 6, 2019, at 12:17 AM, Palmer Dabbelt <palmer@sifive.com> wrote:
+>=20
+> The comment describes why in detail.  This was found because QEMU =
+never
+> gives up load reservations, the issue is unlikely to manifest on real
+> hardware.
+>=20
+> Thanks to Carlos Eduardo for finding the bug!
+>=20
+> Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+> ---
+> arch/riscv/kernel/entry.S | 18 ++++++++++++++++++
+> 1 file changed, 18 insertions(+)
+>=20
+> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+> index 1c1ecc238cfa..e9fc3480e6b4 100644
+> --- a/arch/riscv/kernel/entry.S
+> +++ b/arch/riscv/kernel/entry.S
+> @@ -330,6 +330,24 @@ ENTRY(__switch_to)
+> 	add   a3, a0, a4
+> 	add   a4, a1, a4
+> 	REG_S ra,  TASK_THREAD_RA_RA(a3)
+> +	/*
+> +	 * The Linux ABI allows programs to depend on load reservations =
+being
+> +	 * broken on context switches, but the ISA doesn't require that =
+the
+> +	 * hardware ever breaks a load reservation.  The only way to =
+break a
+> +	 * load reservation is with a store conditional, so we emit one =
+here.
+> +	 * Since nothing ever takes a load reservation on =
+TASK_THREAD_RA_RA we
+> +	 * know this will always fail, but just to be on the safe side =
+this
+> +	 * writes the same value that was unconditionally written by the
+> +	 * previous instruction.
+> +	 */
+> +#if (TASK_THREAD_RA_RA !=3D 0)
+> +# error "The offset between ra and ra is non-zero"
+> +#endif
+> +#if (__riscv_xlen =3D=3D 64)
+> +	sc.d  x0, ra, 0(a3)
+> +#else
+> +	sc.w  x0, ra, 0(a3)
+> +#endif
+> 	REG_S sp,  TASK_THREAD_SP_RA(a3)
+> 	REG_S s0,  TASK_THREAD_S0_RA(a3)
+> 	REG_S s1,  TASK_THREAD_S1_RA(a3)
+> --
+> 2.21.0
+>=20
+
+
+--Apple-Mail=_45A4FB4B-0652-4B92-B0EB-03726583BE22
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE8htVBWYODFIPzwuljM0W459K7ykFAlz40LkACgkQjM0W459K
+7ykrsw//XiqwGdn/KPK7L2tSCRVBqNVpY4M2p2FYzHr6CK4Hy9C9WdWVazpkG/8D
+YaBuFzw9J2UIMeaf7os4bHrMtOErjN7R/Zs6i/PpJVKjK/zuxtKs+mrF/nNhFose
+JRSBpeGNFu2rR0+RgEj0h9whdg+Re0rASnS8bKnnYj/x+irZ+VZiN/7+W9aHnP7O
+mv9sjl/EZWGcw5PuTze/QjfU/BDeZFXvQjehItOy/r+1MyrSgi+vkYuGw0D+XZ/4
+yTXk9GOn18YNOUv4CBCYWKuS3SFsrq/PyR3ziIUnlvN9kcY6enjQMoO1q3lGDdN/
+sWjxHnA+9htiSfLr/cBfCAa/hebVr3H3F1Vep4ubX5s9bbPf7gF6CA5dhZBpfH7v
+qw0bs/TQlM39BZebbl0qDfvRI8P9zunrKDO/RgfJjy2XjbBpeAw9IQ74kb/U2ymR
+yK6CLEbsXkEpCAOh+iMrWyDB/7RTGgDBqkWOnh3f3ZgqBh4FDjp7es1+qU0iNuwi
+JwSGFzrWoUsgQFWwud1H9mqRLFzLtqn8id6oRGwHhoekmWnFhx8dr4Hr3s3/rfq7
+5GTEbblV7Vb8dw9M4mOPepxPtg3iB4liuzIADywHhFlY3n5SxgzJCKU5l1DiDjuz
+/VM18jQ2V8UdrThNr37d72n1Z75IoUHIWBXSChdUf3aPN6uwxOs=
+=v92O
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_45A4FB4B-0652-4B92-B0EB-03726583BE22--
