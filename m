@@ -2,141 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76C4637921
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 18:06:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADF9037933
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 18:09:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729639AbfFFQFt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 12:05:49 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37905 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729595AbfFFQFn (ORCPT
+        id S1729587AbfFFQJu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 12:09:50 -0400
+Received: from mail-qt1-f172.google.com ([209.85.160.172]:44876 "EHLO
+        mail-qt1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729191AbfFFQJu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 12:05:43 -0400
-Received: by mail-pf1-f193.google.com with SMTP id a186so1789594pfa.5;
-        Thu, 06 Jun 2019 09:05:42 -0700 (PDT)
+        Thu, 6 Jun 2019 12:09:50 -0400
+Received: by mail-qt1-f172.google.com with SMTP id x47so3261850qtk.11
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 09:09:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=RsUBXGCWWwX7lyjcxWY8cLlq71Ab4rZ0DW+0q/5EnKk=;
-        b=kQZ2NgMq7OSik7fMh83uJyEoEcPZwmwHs1jR+D94vMj/RCdGcG1yt2mmdwY5yPfcao
-         Ot1F6nQZK+rcWU+pxiTV6KtEPDmZStHTiRWdyhFH0dedPlaWe2luEsEZjcexAthRYoYc
-         eHZ8a2GpOFBo0YksDkQQbwNPrG5Y8Amf567FrDk0mFEu0/QX+2vwqW05c8/XDnrDHjof
-         jPuZYPEalDmfN+ZaNKMQJEC28TDALHmFoCEsMzkF8/WoJyAjVH4A7FGK8PI5scAY+KZ2
-         PTAlfDPluWNm8DKWnfR+kJSe9jUp7UbvX/MF10HeI+0Qj03keyaE6YCxropzR2680R2B
-         Gppw==
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Zzx0oR9OY2SLT9LrHv5yPWqxvZv/4fKN+OQR2sv3RI4=;
+        b=gswcG7PtRkOK37NsX5KHMpecpcBG9Tm20jWxK3Y7Rs0EXkeZ2aw0WI86bELqzxX8Hi
+         IZzE+dwoHd1YoQk2eVOH2+W3aeAQBJskhPmrlBT8CwcNJYY74I0iuqVIcsgAwtBTN3Mj
+         j4o6aW1a9lf4/8RhOwcx5ByRmoPh8FRedCnDtI9N/NPf3LQUAcO7RkqCXqbuzYDT6mrk
+         CHx1plfwOidOzfSEvTYYWSExNUOGIv++iw16x6Qe2IM2n0nfWxp/oyl4ffL6PhwTA16+
+         dpAqMH6RhK8VTXnDhwN+A2OZ/crNsRjt6YO0dOPVVz263Yz0noRfAt0G1iRVfIsjA5xx
+         ceHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RsUBXGCWWwX7lyjcxWY8cLlq71Ab4rZ0DW+0q/5EnKk=;
-        b=Si2o6YmwjWmgyrvqOI05iaxa6LUe3+RhOYvy1/DswCupec/8uSbTLQE4ESCNNMeYIC
-         Uv5WAmyrtZurrmsQWHbuZcEHaqFDKNhfh3MplIE2IP5QhzjXJB57muXJ9Y6Itwa/bMru
-         tu/W5aviHUuoHr3EqJtWrt664rxJ+FdKJyY+5hAUCqoewuftgefSZUFTzUPvw5DciDXj
-         ZT/gM3V8I0JlqpQqHDiMWF6xXVDpDB8Utnvy/VAoPoY0o6h3PMzLGfusQOKT8+dbBHxr
-         Fyty24w/dDYEJIWkkT5VKcpzua4HJ7xnhn5ckQX8XqJmS+WxP+wIzH5h5M6fOplOYFjj
-         YPdg==
-X-Gm-Message-State: APjAAAU4u5e22M0NGzXtL74+6+TQoWThG5sKZOe1/xp/yboMTxIhiRLS
-        lG9Sx2+JnLeajzhU8gRu5i8=
-X-Google-Smtp-Source: APXvYqxdYZT7ZicCPTapEFHqm9bYk5t5/iR2qqdEFJmqcjLLy7yFRYBTEByjzh/AWIwb0ncE8f9F5g==
-X-Received: by 2002:a17:90a:2627:: with SMTP id l36mr612651pje.71.1559837142266;
-        Thu, 06 Jun 2019 09:05:42 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 188sm6099699pfe.30.2019.06.06.09.05.39
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Zzx0oR9OY2SLT9LrHv5yPWqxvZv/4fKN+OQR2sv3RI4=;
+        b=cJLs3JqjB3kyAeC0IB5DnFNYlfDFqszTWMG0c13b5nZ+Hb2qq2d6ZW2ywnCtuggJWU
+         nxQlIbzf6UIZFGdlVsiJLQXbeORaOtbXFpo+2p4fGdqzO5oEQ1pzl32dgY1p6MpWxPzy
+         8bXzUWVTL3YIIOJwcOiP74Yv5+ewEueSs11oGvqz6yXqXvO3mO/HKLRy5csSaDu9c1E9
+         CYFj7b9DKkByfMiBrPN5CeO/CBlp+3x9cUCORHPO6tiqww2gVzc8op8NnmNG5QanI+38
+         FmoyFpO6luB55J6CRBiS8L1SmD25IYbTPWNv2vqlEXpOWxgnut2F6eD+8MDErT4Dw/TE
+         kxyA==
+X-Gm-Message-State: APjAAAXXXGWPiIrRaeh6/Y8d2xZNc35lGtYXAz/9lX8Jm4l1zW1HU9HD
+        sRgPXFK1jdnpUi7wYwedyph6zQ==
+X-Google-Smtp-Source: APXvYqx7ymgh8MwFfR2ocpfKbYzrgD59R+18cSNmqg+2pNcoAEXqK4wEp9A3wsSjaPa4Y5g9m1E/YA==
+X-Received: by 2002:a0c:bd18:: with SMTP id m24mr17509137qvg.118.1559837388722;
+        Thu, 06 Jun 2019 09:09:48 -0700 (PDT)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id g65sm1057444qkb.1.2019.06.06.09.09.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Jun 2019 09:05:40 -0700 (PDT)
-Date:   Thu, 6 Jun 2019 09:05:38 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Jean Delvare <jdelvare@suse.com>,
-        "amy.shih" <amy.shih@advantech.com.tw>,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] hwmon: (nct7904) Avoid fall-through warnings
-Message-ID: <20190606160538.GA29430@roeck-us.net>
-References: <20190606140659.GA2970@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190606140659.GA2970@embeddedor>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Thu, 06 Jun 2019 09:09:48 -0700 (PDT)
+Message-ID: <1559837386.6132.47.camel@lca.pw>
+Subject: Re: "lib: rework bitmap_parse()" triggers invalid access errors
+From:   Qian Cai <cai@lca.pw>
+To:     Yuri Norov <ynorov@marvell.com>
+Cc:     Andrey Konovalov <andreyknvl@google.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Yury Norov <yury.norov@gmail.com>
+Date:   Thu, 06 Jun 2019 12:09:46 -0400
+In-Reply-To: <BN6PR1801MB20655CFFEA0CEA242C088C25CB160@BN6PR1801MB2065.namprd18.prod.outlook.com>
+References: <1559242868.6132.35.camel@lca.pw>
+        ,<1559672593.6132.44.camel@lca.pw>
+         <BN6PR1801MB20655CFFEA0CEA242C088C25CB160@BN6PR1801MB2065.namprd18.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
+On Wed, 2019-06-05 at 08:01 +0000, Yuri Norov wrote:
+> (Sorry for top-posting)
+> 
+> I can reproduce this on next-20190604. Is it new trace, or like one you've
+> posted before?
 
-On Thu, Jun 06, 2019 at 09:06:59AM -0500, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, this patch silences
-> the following warnings:
-> 
+Same thing, "nbits" causes an invalid access.
 
-Thanks a lot for the patch. I pulled the patch introducing the problem
-due to other issues with it.
+# ./scripts/faddr2line vmlinux bitmap_parse+0x20c/0x2d8
+bitmap_parse+0x20c/0x2d8:
+__bitmap_clear at lib/bitmap.c:280
+(inlined by) bitmap_clear at include/linux/bitmap.h:390
+(inlined by) bitmap_parse at lib/bitmap.c:662
 
-Guenter
+This line,
 
-> drivers/hwmon/nct7904.c: In function 'nct7904_in_is_visible':
-> drivers/hwmon/nct7904.c:313:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    if (channel > 0 && (data->vsen_mask & BIT(index)))
->       ^
-> drivers/hwmon/nct7904.c:315:2: note: here
->   case hwmon_in_min:
->   ^~~~
-> drivers/hwmon/nct7904.c: In function 'nct7904_fan_is_visible':
-> drivers/hwmon/nct7904.c:230:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    if (data->fanin_mask & (1 << channel))
->       ^
-> drivers/hwmon/nct7904.c:232:2: note: here
->   case hwmon_fan_min:
->   ^~~~
-> drivers/hwmon/nct7904.c: In function 'nct7904_temp_is_visible':
-> drivers/hwmon/nct7904.c:443:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    if (channel < 5) {
->       ^
-> drivers/hwmon/nct7904.c:450:2: note: here
->   case hwmon_temp_max:
->   ^~~~
-> 
-> Warning level 3 was used: -Wimplicit-fallthrough=3
-> 
-> This patch is part of the ongoing efforts to enable
-> -Wimplicit-fallthrough.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/hwmon/nct7904.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/hwmon/nct7904.c b/drivers/hwmon/nct7904.c
-> index dd450dd29ac7..bf35dfd2d3a7 100644
-> --- a/drivers/hwmon/nct7904.c
-> +++ b/drivers/hwmon/nct7904.c
-> @@ -229,6 +229,7 @@ static umode_t nct7904_fan_is_visible(const void *_data, u32 attr, int channel)
->  	case hwmon_fan_alarm:
->  		if (data->fanin_mask & (1 << channel))
->  			return 0444;
-> +		break;
->  	case hwmon_fan_min:
->  		if (data->fanin_mask & (1 << channel))
->  			return 0644;
-> @@ -312,6 +313,7 @@ static umode_t nct7904_in_is_visible(const void *_data, u32 attr, int channel)
->  	case hwmon_in_alarm:
->  		if (channel > 0 && (data->vsen_mask & BIT(index)))
->  			return 0444;
-> +		break;
->  	case hwmon_in_min:
->  	case hwmon_in_max:
->  		if (channel > 0 && (data->vsen_mask & BIT(index)))
-> @@ -447,6 +449,7 @@ static umode_t nct7904_temp_is_visible(const void *_data, u32 attr, int channel)
->  			if (data->has_dts & BIT(channel - 5))
->  				return 0444;
->  		}
-> +		break;
->  	case hwmon_temp_max:
->  	case hwmon_temp_max_hyst:
->  	case hwmon_temp_emergency:
-> -- 
-> 2.21.0
-> 
+while (len - bits_to_clear >= 0) {
+
+[  151.025490][ T3745]
+==================================================================
+[  151.033437][ T3745] BUG: KASAN: invalid-access in bitmap_parse+0x20c/0x2d8
+[  151.040313][ T3745] Write of size 8 at addr 88ff80961f5637a0 by task
+irqbalance/3745
+[  151.048052][ T3745] Pointer tag: [88], memory tag: [fe]
+[  151.053272][ T3745] 
+[  151.055462][ T3745] CPU: 191 PID: 3745 Comm: irqbalance Tainted:
+G        W         5.2.0-rc3-next-20190606+ #2
+[  151.065548][ T3745] Hardware name: HPE Apollo
+70             /C01_APACHE_MB         , BIOS L50_5.13_1.0.9 03/01/2019
+[  151.076064][ T3745] Call trace:
+[  151.079218][ T3745]  dump_backtrace+0x0/0x268
+[  151.083574][ T3745]  show_stack+0x20/0x2c
+[  151.087589][ T3745]  dump_stack+0xb4/0x108
+[  151.091691][ T3745]  print_address_description+0x7c/0x330
+[  151.097088][ T3745]  __kasan_report+0x194/0x1dc
+[  151.101616][ T3745]  kasan_report+0x10/0x18
+[  151.105799][ T3745]  __hwasan_store8_noabort+0x74/0x7c
+[  151.110935][ T3745]  bitmap_parse+0x20c/0x2d8
+[  151.115291][ T3745]  bitmap_parse_user+0x40/0x64
+[  151.119910][ T3745]  write_irq_affinity+0x118/0x1a8
+[  151.124786][ T3745]  irq_affinity_proc_write+0x34/0x44
+[  151.129925][ T3745]  proc_reg_write+0xf4/0x130
+[  151.134376][ T3745]  __vfs_write+0x88/0x33c
+[  151.138561][ T3745]  vfs_write+0x118/0x208
+[  151.142656][ T3745]  ksys_write+0xa0/0x110
+[  151.146752][ T3745]  __arm64_sys_write+0x54/0x88
+[  151.151377][ T3745]  el0_svc_handler+0x198/0x260
+[  151.155992][ T3745]  el0_svc+0x8/0xc
+[  151.159566][ T3745] 
+[  151.161751][ T3745] Allocated by task 3745:
+[  151.165933][ T3745]  __kasan_kmalloc+0x114/0x1d0
+[  151.170553][ T3745]  kasan_kmalloc+0x10/0x18
+[  151.174830][ T3745]  __kmalloc_node+0x1e0/0x788
+[  151.179358][ T3745]  alloc_cpumask_var_node+0x48/0x94
+[  151.184407][ T3745]  alloc_cpumask_var+0x10/0x1c
+[  151.189022][ T3745]  write_irq_affinity+0xa8/0x1a8
+[  151.193811][ T3745]  irq_affinity_proc_write+0x34/0x44
+[  151.198947][ T3745]  proc_reg_write+0xf4/0x130
+[  151.203389][ T3745]  __vfs_write+0x88/0x33c
+[  151.207573][ T3745]  vfs_write+0x118/0x208
+[  151.211668][ T3745]  ksys_write+0xa0/0x110
+[  151.215764][ T3745]  __arm64_sys_write+0x54/0x88
+[  151.220380][ T3745]  el0_svc_handler+0x198/0x260
+[  151.224996][ T3745]  el0_svc+0x8/0xc
+[  151.228566][ T3745] 
+[  151.230749][ T3745] Freed by task 3745:
+[  151.234585][ T3745]  __kasan_slab_free+0x154/0x228
+[  151.239374][ T3745]  kasan_slab_free+0xc/0x18
+[  151.243729][ T3745]  kfree+0x268/0xb70
+[  151.247484][ T3745]  free_cpumask_var+0xc/0x14
+[  151.251932][ T3745]  write_irq_affinity+0x19c/0x1a8
+[  151.256807][ T3745]  irq_affinity_proc_write+0x34/0x44
+[  151.261943][ T3745]  proc_reg_write+0xf4/0x130
+[  151.266386][ T3745]  __vfs_write+0x88/0x33c
+[  151.270567][ T3745]  vfs_write+0x118/0x208
+[  151.274661][ T3745]  ksys_write+0xa0/0x110
+[  151.278756][ T3745]  __arm64_sys_write+0x54/0x88
+[  151.283371][ T3745]  el0_svc_handler+0x198/0x260
+[  151.287986][ T3745]  el0_svc+0x8/0xc
+[  151.291556][ T3745] 
+[  151.293742][ T3745] The buggy address belongs to the object at
+ffff80961f563780
+[  151.293742][ T3745]  which belongs to the cache kmalloc-128 of size 128
+[  151.307647][ T3745] The buggy address is located 32 bytes inside of
+[  151.307647][ T3745]  128-byte region [ffff80961f563780, ffff80961f563800)
+[  151.320681][ T3745] The buggy address belongs to the page:
+[  151.326167][ T3745] page:ffff7fe02587d580 refcount:1 mapcount:0
+mapping:fdff800800010480 index:0x8aff80961f56dc80
+[  151.336429][ T3745] flags: 0x17ffffffc000200(slab)
+[  151.341222][ T3745] raw: 017ffffffc000200 ffff7fe025843788 e3ff808b7d00fd40
+fdff800800010480
+[  151.349659][ T3745] raw: 8aff80961f56dc80 000000000066001d 00000001ffffffff
+0000000000000000
+[  151.358092][ T3745] page dumped because: kasan: bad access detected
+[  151.364361][ T3745] page allocated via order 0, migratetype Unmovable,
+gfp_mask 0x12800(GFP_NOWAIT|__GFP_NOWARN|__GFP_NORETRY)
+[  151.375757][ T3745]  prep_new_page+0x2f4/0x378
+[  151.380201][ T3745]  get_page_from_freelist+0x253c/0x2868
+[  151.385598][ T3745]  __alloc_pages_nodemask+0x360/0x1c60
+[  151.390908][ T3745]  alloc_pages_current+0xd0/0xe0
+[  151.395699][ T3745]  new_slab+0x15c/0x9d4
+[  151.399707][ T3745]  ___slab_alloc+0x57c/0x9e4
+[  151.404148][ T3745]  __kmalloc+0x58c/0x5e0
+[  151.408247][ T3745]  memcg_kmem_get_cache+0x150/0x65c
+[  151.413296][ T3745]  kmem_cache_alloc+0x208/0x568
+[  151.418010][ T3745]  __anon_vma_prepare+0x60/0x210
+[  151.422799][ T3745]  do_fault+0xc64/0xf80
+[  151.426807][ T3745]  handle_pte_fault+0x4e4/0x15e8
+[  151.431597][ T3745]  handle_mm_fault+0x6a4/0x95c
+[  151.436216][ T3745]  do_page_fault+0x4a0/0x770
+[  151.440657][ T3745]  do_translation_fault+0x60/0xa0
+[  151.445537][ T3745]  do_mem_abort+0x58/0xf4
+[  151.449715][ T3745] 
+[  151.451897][ T3745] Memory state around the buggy address:
+[  151.457381][ T3745]  ffff80961f563500: 93 93 93 93 93 93 93 93 fe fe fe fe fe
+fe fe fe
+[  151.465295][ T3745]  ffff80961f563600: fe fe fe fe fe fe fe fe fe fe fe fe fe
+fe fe fe
+[  151.473209][ T3745] >ffff80961f563700: fe fe fe fe fe fe fe fe 88 88 fe fe fe
+fe fe fe
+[  151.481120][ T3745]                                                  ^
+[  151.487645][ T3745]  ffff80961f563800: fe fe fe fe fe fe fe fe fe fe fe fe fe
+fe fe fe
+[  151.495562][ T3745]  ffff80961f563900: fe fe fe fe fe fe fe fe fe fe fe fe fe
+fe fe fe
+[  151.503481][ T3745]
+==================================================================
+[  151.511399][ T3745] Disabling lock debugging due to kernel taint
+
