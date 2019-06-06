@@ -2,150 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AB8836D01
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 09:09:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEA6736D14
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 09:10:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726709AbfFFHJM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 03:09:12 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37872 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725782AbfFFHJL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 03:09:11 -0400
-Received: by mail-pg1-f195.google.com with SMTP id 20so820739pgr.4
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 00:09:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=puIXzR2Own0cbDgtZ/rESXOOL8scU6F9mL+QrFjp0g8=;
-        b=cVgCr6vnkGfjbhGXEObW1I3eyaTZzs4e6YbdY6IpyHvoRC/cyQjHSlt0gxIth7Hdeu
-         eN5d1Xq7g1lwpP9OqdHss8u059osQZKuNhLLZQDMfVeXEnwdfWXX/9x5wMPNmTf8vdMp
-         edojQQ/rLLAz+Ma+B+VExLG44vHl79i9L+21ZSA3+/M+XhdLiyrhJh7bfmceA5yyn+O5
-         F5U1b3PO/PE12bohPtUqnSdgMu8VX6VQP1ZbADi89a+bsmYX1ZeVg1c7YZy4XHTXQyR+
-         K85N7Y+nqqCSKG8JWtn16z8k9ZHBXM5Z3X6Q26+9a4Pz7Z+zIOWyj13pD8cU9hReymQe
-         EVpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=puIXzR2Own0cbDgtZ/rESXOOL8scU6F9mL+QrFjp0g8=;
-        b=KP8/rYX7yu3TOWbUQlLbPOydExiSKS4udInbELtvwpGR5VOuwFVOIiYP5L7+OMxqAx
-         nkM9YINImBAAZ2lgX1MbBL+LwKlYNs0GK9OoYgyChygWsVtCZ4m/NbRkA0Pp/PclRPwh
-         wLYezN95yycLzDPWf1G+H0v8FtP/uKzfY5AmjL9IAu9LqulLaDE1iYCOKUQL/J4D9MQ6
-         8naZ/rxK7FvEPm9O3kWuWCu7R1j1DF+eZPM7RSq054mMf1aV7KMIgYFiYgtke0y7Lw9H
-         48+URPEAZsupPagMXgU1pq+fRqX682gkaIzzVe4AbHdNCTatJE+G++V+x5xqU56+h1Hp
-         SPFw==
-X-Gm-Message-State: APjAAAWHwuvRDSh/KUPvJuvnjcinpFQeVKW70YsVbJZ8qNMirOc3oqyJ
-        /pgimpQeqj8nlsMDI5PMb4UX8Q==
-X-Google-Smtp-Source: APXvYqx349qBmplwQGOq+Bk/EBJps0gB+WxTpibAF0E4c9G3e41oIpAGmhaSWsAhZzds2x83VVRXrg==
-X-Received: by 2002:a62:63c6:: with SMTP id x189mr39479895pfb.31.1559804950625;
-        Thu, 06 Jun 2019 00:09:10 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id x128sm1376557pfd.186.2019.06.06.00.09.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Jun 2019 00:09:10 -0700 (PDT)
-Date:   Thu, 6 Jun 2019 00:09:55 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Avri Altman <Avri.Altman@wdc.com>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        id S1726847AbfFFHKK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 03:10:10 -0400
+Received: from mail-eopbgr50076.outbound.protection.outlook.com ([40.107.5.76]:35297
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725782AbfFFHKK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 03:10:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5A2Yp4IQbJFiax/+usUSdkY0IdyO9D6rI74ULukINbs=;
+ b=qOHNq0OJF+2rPmIKUT37c/1TFCadbB1Ynxx9QjKLUkZuJY7wwnYCcxtf6TCse06n3l2Kj/P6gV/TR+Loa4emxcyhgI3oOVPjssBk7tGsUr8j+4vRv/MpjxU1BI91KYi9xbR8Yq49j2NruyJqda4ubeuOz2C1fm9RJ0UoutNbwuo=
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
+ VI1PR0402MB3821.eurprd04.prod.outlook.com (52.134.16.30) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1965.12; Thu, 6 Jun 2019 07:10:06 +0000
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::ccaf:f4a1:704a:e745]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::ccaf:f4a1:704a:e745%4]) with mapi id 15.20.1943.023; Thu, 6 Jun 2019
+ 07:10:06 +0000
+From:   Horia Geanta <horia.geanta@nxp.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+CC:     Iuliana Prodan <iuliana.prodan@nxp.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
-Subject: Re: [PATCH 0/3] (Qualcomm) UFS device reset support
-Message-ID: <20190606070955.GR22737@tuxbook-pro>
-References: <20190604072001.9288-1-bjorn.andersson@linaro.org>
- <CANcMJZBmgWMZu7Y53Lnx_x3L2UpCmEbFRHVW0SFCXfW=Yw9uYg@mail.gmail.com>
- <SN6PR04MB4925530F216E86F6404FE14CFC160@SN6PR04MB4925.namprd04.prod.outlook.com>
- <20190605060154.GJ22737@tuxbook-pro>
- <SN6PR04MB492521B7D2DB6F3462EDB7D9FC160@SN6PR04MB4925.namprd04.prod.outlook.com>
- <20190606003959.GM4814@minitux>
- <SN6PR04MB49255AF3D92E655E1BBD75AEFC170@SN6PR04MB4925.namprd04.prod.outlook.com>
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH] crypto: gcm - fix cacheline sharing
+Thread-Topic: [PATCH] crypto: gcm - fix cacheline sharing
+Thread-Index: AQHVHDJUFTzexZfnZkK5jYnCMHmb4A==
+Date:   Thu, 6 Jun 2019 07:10:06 +0000
+Message-ID: <VI1PR0402MB3485A016A2E5FDEE57EBF48198170@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+References: <VI1PR04MB444562A2352FE4BAD7F681258C180@VI1PR04MB4445.eurprd04.prod.outlook.com>
+ <CAKv+Gu-jTWQP0Zp=QpuzX41v8Eb5Bvd0O9ajwSnFkDO-ijBf_A@mail.gmail.com>
+ <CAKv+Gu9JoC+GKJ6mMAE25mr_k2gbznh-83jApT4=FZsAW=jd8w@mail.gmail.com>
+ <20190530142734.qlhgzeal22zxfhk5@gondor.apana.org.au>
+ <CAKv+Gu8jJQCZwiHFORUJUzRaAizWzBQ95EAgYe36sFrcvzb6vg@mail.gmail.com>
+ <CAKv+Gu-KBgiyNY2Dypx6vqtmpTXNfOxxWxJf50BTiF2rCOFqnw@mail.gmail.com>
+ <20190606063724.n77z7gaf32tmyxng@gondor.apana.org.au>
+ <CAKv+Gu-YtKRsUYMMD_PNoFvrPpmwTD7fJNs64Q-34L8-TvucqA@mail.gmail.com>
+ <20190606064603.lvde6dproqi3vwcq@gondor.apana.org.au>
+ <CAKv+Gu-DokZ179_Gx8_20v_pQ3w_CARKdO0xdsO8CRZJG1uOqA@mail.gmail.com>
+ <20190606065757.4agqd4poer4rexri@gondor.apana.org.au>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=horia.geanta@nxp.com; 
+x-originating-ip: [78.96.98.22]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f0f05391-8976-4a4e-246a-08d6ea4e00ff
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB3821;
+x-ms-traffictypediagnostic: VI1PR0402MB3821:
+x-microsoft-antispam-prvs: <VI1PR0402MB38216E7292CD69CB4982095298170@VI1PR0402MB3821.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 00603B7EEF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(346002)(366004)(396003)(376002)(189003)(199004)(25786009)(6436002)(81166006)(99286004)(4326008)(66476007)(2906002)(8676002)(81156014)(64756008)(66556008)(8936002)(66446008)(52536014)(54906003)(476003)(7696005)(5660300002)(446003)(256004)(73956011)(76116006)(91956017)(66946007)(71200400001)(14444005)(71190400001)(66066001)(7736002)(305945005)(86362001)(186003)(6246003)(26005)(33656002)(68736007)(53546011)(55016002)(6506007)(110136005)(9686003)(102836004)(486006)(3846002)(6116002)(76176011)(53936002)(74316002)(229853002)(478600001)(44832011)(316002)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3821;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: /uNQQeDFRAPWMU3ZRN6uylGKi/BfzRyFRy6Eo3PPeC9ryoX8LRkCDqMMGwahks4rW8uhI50+WIrzpzoLBMy7JEzpogKVB90UM0ao4jTaa3js+B3Zy/Bu8IuUr/thFxKEpkfJBq+gEuF7OKAX09i0LfHBGcpU7oJUwayQV+zDq5JIyKLtvI/z71gnj5V4qy6cFuDDtJcDni3fsIcVkDG8tuyC9HSKWCdTVWaHuPooYLFwtyY6Ot9o4E9xuXWv6j40KK7pGnvQMiLRudlGXRQsJN1/eOSXmw8/6wVlV7RESOKIkb0DynB0DwjHNBELSIWKqypgqir0sV8R7rooxG8U0+oFWBN+n8RWGrv3ai8Vx/t5ZWBlrhIvywIN/c072O+/IoP+wjWUVs4O+XSvzm6e2e1VoPF4O8FXyLmumrnPEhc=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR04MB49255AF3D92E655E1BBD75AEFC170@SN6PR04MB4925.namprd04.prod.outlook.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f0f05391-8976-4a4e-246a-08d6ea4e00ff
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2019 07:10:06.2384
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: horia.geanta@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3821
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 05 Jun 23:32 PDT 2019, Avri Altman wrote:
-
-> > 
-> > On Wed 05 Jun 02:32 PDT 2019, Avri Altman wrote:
-> > 
-> > > >
-> > > > On Tue 04 Jun 22:50 PDT 2019, Avri Altman wrote:
-> > > >
-> > > > > Hi,
-> > > > >
-> > > > > >
-> > > > > > On Tue, Jun 4, 2019 at 12:22 AM Bjorn Andersson
-> > > > > > <bjorn.andersson@linaro.org> wrote:
-> > > > > > >
-> > > > > > > This series exposes the ufs_reset line as a gpio, adds support for ufshcd
-> > to
-> > > > > > > acquire and toggle this and then adds this to SDM845 MTP.
-> > > > > > >
-> > > > > > > Bjorn Andersson (3):
-> > > > > > >   pinctrl: qcom: sdm845: Expose ufs_reset as gpio
-> > > > > > >   scsi: ufs: Allow resetting the UFS device
-> > > > > > >   arm64: dts: qcom: sdm845-mtp: Specify UFS device-reset GPIO
-> > > > > >
-> > > > > > Adding similar change as in sdm845-mtp to the not yet upstream
-> > > > > > blueline dts, I validated this allows my micron UFS pixel3 to boot.
-> > > > > >
-> > > > > > Tested-by: John Stultz <john.stultz@linaro.org>
-> > > > > Maybe ufs_hba_variant_ops would be the proper place to add this?
-> > > > >
-> > > >
-> > > > Are you saying that these memories only need a reset when they are
-> > > > paired with the Qualcomm host controller?
-> > > ufs_hba_variant_ops is for vendors to implement their own vops,
-> > > and as you can see, many of them do.
-> > > Adding hw_reset to that template seems like the proper way
-> > > to do what you are doing.
-> > >
-> > 
-> > Right, but the vops is operations related to the UFS controller, this
-> > property relates to the memory connected.
-> This is not entirely accurate. Those are vendor/board specific,
-> As the original commit log indicates:
-> " vendor/board specific and hence determined with
->  the help of compatible property in device tree."
-> 
-> I would rather have this new vop:
-> void    (*device_reset)(struct ufs_hba *), Or whatever, 
-> actively set in ufs_hba_variant_ops, rather than ufshcd_init_device_reset
-> failing as part of the default init flow.
-> 
-
-But such an vops would allow me to provide a Qualcomm-specific way of
-toggling the GPIO that is connected to the UFS_RESET pin on the
-Hynix/Micron memory.
-
-But acquiring and toggling GPIOs is not a Qualcomm thing, it's a
-completely generic thing, and as it's not a chip-internal line it is a
-GPIO and not a reset - regardless of SoC vendor.
-Further more, it's optional so boards that does not have this pin
-connected will just omit the property in their hardware description
-(DeviceTree).
-
-
-So I think the halting part here is that we don't have a representation
-of the memory device's resources, because this is really a matter of
-toggling the reset pin on the memory device.
-
-Regards,
-Bjorn
+On 6/6/2019 9:58 AM, Herbert Xu wrote:=0A=
+> On Thu, Jun 06, 2019 at 08:53:10AM +0200, Ard Biesheuvel wrote:=0A=
+>>=0A=
+>> That same patch 'fixes' CBC, since CBC was never broken to begin with.=
+=0A=
+>> The CTS driver does not have something like the auth_tag sharing the=0A=
+>> same cacheline with the IV, so CBC has always worked fine.=0A=
+> =0A=
+> CBC is broken.  Any crypto API user is allowed to place the IV=0A=
+> in the same position relative to the src/dst buffer.  So the driver=0A=
+> must deal with it.=0A=
+> =0A=
+That's the theory.=0A=
+In practice we haven't encountered any issue so far, but yes this case has =
+to be=0A=
+handled properly.=0A=
+=0A=
+> It's just that the CTR/ghash combo happened to expose this first.=0A=
+> =0A=
+Yes, and that's what the patch is fixing.=0A=
+=0A=
+>> So I guess what you are after is a patch that, instead of dodging the=0A=
+>> issue by limiting the copy to CBC, does not perform the copy at all=0A=
+>> while anything is mapped for DMA? Then we can leave it up to the NXP=0A=
+>> engineers to fix CTR mode.=0A=
+> =0A=
+> Right, we definitely need to fix it for CBC, probably in the way that=0A=
+> you suggested.=0A=
+> =0A=
+Not really.=0A=
+I am in favor of using the HW to update the IV, which would work for all=0A=
+skcipher algorithms.=0A=
+I have the fix ready, will send it in a couple of days.=0A=
+=0A=
+Thanks,=0A=
+Horia=0A=
