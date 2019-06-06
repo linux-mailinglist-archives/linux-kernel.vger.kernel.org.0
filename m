@@ -2,202 +2,471 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45CF2369A1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 04:00:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5D7B369AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 04:01:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726688AbfFFB74 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 21:59:56 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41182 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbfFFB74 (ORCPT
+        id S1726798AbfFFCBc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 22:01:32 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40853 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726593AbfFFCBb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 21:59:56 -0400
-Received: by mail-pl1-f195.google.com with SMTP id s24so248903plr.8
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Jun 2019 18:59:55 -0700 (PDT)
+        Wed, 5 Jun 2019 22:01:31 -0400
+Received: by mail-pg1-f196.google.com with SMTP id d30so382997pgm.7;
+        Wed, 05 Jun 2019 19:01:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=ihuU9o0Zl2KI3nbD0zaYT33XRxk7WVqlzlc7x/X37f0=;
-        b=vfQngJAF7ezWRAJlfy24nqd/+e++EjO3IKe084/HH7pctHknHL0wX1i/6pJKF/XDeN
-         yVrhbpBGpPYGND6QMbCXQfNj09Ua4603AIr6Ip7soE5YAPZPBaU2srxWXuYKs+Fru33b
-         UnuYSQRwgBhP6bPowozYPQihg2tsOSmBvQoKjhleWHoV8KZEks9eO1dizEgjeAWAsF7S
-         /PWbyPfk5yLX7Ix2jZA3eZHasDSIcy4M4kfgW1sDqzHTYuihV41Aj+4AlBPJ7hs/U5Un
-         czldH6ozd2y0FxciEff8fS+IxBEua+gTob2Vfu1EGf5g1OAEf2MWcPFgmpiHT3BSF64f
-         8i6w==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=dmdXonrn+3fYhxv/lhvJF0ciqnmeM1dEg3rQhAqbvAM=;
+        b=o2Vd3ZT6d1ydE6nbyPFPJQIs7dZRmMXhaxGh+hkdM2f6boYDHy90KFxX22mYp3NUtC
+         Jlnk6D/S175eUdrAUfnFokxBco+Qa29CpYZUG79BzcGMgYjhMarpXYVGCJUMSyKlBmIn
+         9rcsjkH7rO/ukT88rJEZjuQdiJE7+FFGsT/GSTtcFny0D/4uk4J7eOvCdGwEMD+IdaHu
+         xffi5MQKY+CrgStjraIzAEWCWjpMTOuy8Fi+MDUZ5S67t7lWEoCtPHMx6T1n9/i3CaOD
+         SglYijk45QslayOqbq6aSE7fWqeSSJw4R9BZU6dUYo4EeWBSSaNZRVSP6+H9xGMSRiVg
+         zpGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=ihuU9o0Zl2KI3nbD0zaYT33XRxk7WVqlzlc7x/X37f0=;
-        b=GL5QRn/hOJ0wlJGBNGkzxVJ5M/fxI3P+upFvtfh8kjOG9sjk88yMA5iRpLbHNqlmbJ
-         OyyKnoe5GmkMT4B0VsNTyDTvGgwVuauqu0jr9D6x2sKBqzw3ofcMRIiCqMEE6V2/s59Q
-         TresMAt0L8OjOZT9DIsjNfoN+TFRrk+So8J821uzopyC3/3nXZt8PtG4j7H/SlXMHYGO
-         y0HlbmKdT7PECdIYqJ9V3bB9/kxnwooxRMIo9vWarKZzMQlobIHKPehunKA5t+S1WAOw
-         YssWqOTmo3wEMEkoe34wjxQ4gBsWjts/1u/9l52DNxEcEPA/2MDLrdKKFi6G0EZFdcsv
-         LnMQ==
-X-Gm-Message-State: APjAAAWGrD0yrejl9VZAtWU7cX9vqxaFpvR5bsmXnLwkWgZEMNr5Hp2j
-        FohR5mojG2TtFa//48tHX/4=
-X-Google-Smtp-Source: APXvYqz6iL57SOstwByQJwB7G/p/Z2547VWkonZ7YBzhPg2Y5xw2MOGiFbEyuyFw3gZrwv3kL58WyQ==
-X-Received: by 2002:a17:902:7e0e:: with SMTP id b14mr22529317plm.257.1559786395303;
-        Wed, 05 Jun 2019 18:59:55 -0700 (PDT)
-Received: from t-1000 (c-98-210-58-162.hsd1.ca.comcast.net. [98.210.58.162])
-        by smtp.gmail.com with ESMTPSA id u2sm253814pjv.9.2019.06.05.18.59.53
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=dmdXonrn+3fYhxv/lhvJF0ciqnmeM1dEg3rQhAqbvAM=;
+        b=iDiDueqBe98lDQEYwT4UREcCYpIbIm4cAhS34NHLETCvOdCDVdnEQYrzv0k0bt4bSQ
+         yR2pIjEavpEBQQwLf14r1fnN+Oz8p7oqealFxxCrPHy8ZpKh/awsCvpb92mYLKfVUjMf
+         I+P/AAFLrgRLAXpbBvjqoU3DehcS0pWbhG8Dzy64uDQc4mFRakoPneClQ6VoAwGb0mZT
+         6WqOSOOg3ce3gGS6f8m2sAxSduCYkIhVof9cc5TKtNfpeOSUEWe5tuut7wmQZArakYQ5
+         dXNiJ12+hJd7hLtRsFbSZnTqs0OvF/1PliJjyqMhBH2mtCeDv83HFahjYGNC+fMOPgbr
+         9vWw==
+X-Gm-Message-State: APjAAAX/xyibn2TqNvIsxmKE3LWK0BHSt/CXBK44uZKkMRjvylhEwpeN
+        4gtxwmlAbMFHcSoUdpLCct0=
+X-Google-Smtp-Source: APXvYqyPjB4gCxPFZ3lUApkEn/BwQVrCE6eFdytgW90MLyt2yRy2p4nZqQcRI0r/rgkRBuJXGrJP1w==
+X-Received: by 2002:a63:1723:: with SMTP id x35mr848790pgl.233.1559786490164;
+        Wed, 05 Jun 2019 19:01:30 -0700 (PDT)
+Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id c76sm236271pfc.43.2019.06.05.19.01.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Jun 2019 18:59:54 -0700 (PDT)
-Date:   Wed, 5 Jun 2019 18:59:52 -0700
-From:   Shobhit Kukreti <shobhitkukreti@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        hadess@hadess.net, hdegoede@redhat.com, Larry.Finger@lwfinger.net
-Cc:     shobhitkukreti@gmail.com
-Subject: [PATCH] staging: rtl8723bs: CleanUp to remove the error reported by
- checkpatch
-Message-ID: <20190606015949.GA2275@t-1000>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Wed, 05 Jun 2019 19:01:29 -0700 (PDT)
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org
+Cc:     agross@kernel.org, david.brown@linaro.org,
+        bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, marc.w.gonzalez@free.fr,
+        jcrouse@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Subject: [PATCH v2 2/3] clk: qcom: Add MSM8998 GPU Clock Controller (GPUCC) driver
+Date:   Wed,  5 Jun 2019 19:00:01 -0700
+Message-Id: <20190606020001.2389-1-jeffrey.l.hugo@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190606015844.2285-1-jeffrey.l.hugo@gmail.com>
+References: <20190606015844.2285-1-jeffrey.l.hugo@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cleaned up the code to remove the error "(foo*)" should be "(foo *)"
-reported by checkpatch from the file rtl8723bs/os_dep/ioctl_linux.c
+The GPUCC manages the clocks for the Adreno GPU found on MSM8998.
 
-Signed-off-by: Shobhit Kukreti <shobhitkukreti@gmail.com>
+Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
 ---
- drivers/staging/rtl8723bs/os_dep/ioctl_linux.c | 32 +++++++++++++-------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ drivers/clk/qcom/Kconfig         |   8 +
+ drivers/clk/qcom/Makefile        |   1 +
+ drivers/clk/qcom/gpucc-msm8998.c | 356 +++++++++++++++++++++++++++++++
+ 3 files changed, 365 insertions(+)
+ create mode 100644 drivers/clk/qcom/gpucc-msm8998.c
 
-diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-index 236a462..0be8288 100644
---- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-+++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-@@ -55,7 +55,7 @@ void rtw_indicate_wx_assoc_event(struct adapter *padapter)
- 	struct	mlme_priv *pmlmepriv = &padapter->mlmepriv;
- 	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
- 	struct mlme_ext_info *pmlmeinfo = &(pmlmeext->mlmext_info);
--	struct wlan_bssid_ex		*pnetwork = (struct wlan_bssid_ex*)(&(pmlmeinfo->network));
-+	struct wlan_bssid_ex		*pnetwork = (struct wlan_bssid_ex *)(&(pmlmeinfo->network));
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index e1ff83cc361e..e992682fb9eb 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -222,6 +222,14 @@ config MSM_GCC_8998
+ 	  Say Y if you want to use peripheral devices such as UART, SPI,
+ 	  i2c, USB, UFS, SD/eMMC, PCIe, etc.
  
- 	memset(&wrqu, 0, sizeof(union iwreq_data));
- 
-@@ -946,7 +946,7 @@ static int rtw_wx_set_pmkid(struct net_device *dev,
- 	u8          j, blInserted = false;
- 	int         intReturn = false;
- 	struct security_priv *psecuritypriv = &padapter->securitypriv;
--        struct iw_pmksa*  pPMK = (struct iw_pmksa*)extra;
-+        struct iw_pmksa*  pPMK = (struct iw_pmksa *)extra;
-         u8     strZeroMacAddress[ ETH_ALEN ] = { 0x00 };
-         u8     strIssueBssid[ ETH_ALEN ] = { 0x00 };
- 
-@@ -2054,7 +2054,7 @@ static int rtw_wx_set_auth(struct net_device *dev,
- 			   union iwreq_data *wrqu, char *extra)
- {
- 	struct adapter *padapter = (struct adapter *)rtw_netdev_priv(dev);
--	struct iw_param *param = (struct iw_param*)&(wrqu->param);
-+	struct iw_param *param = (struct iw_param *)&(wrqu->param);
- 	int ret = 0;
- 
- 	switch (param->flags & IW_AUTH_INDEX) {
-@@ -2337,8 +2337,8 @@ static int rtw_wx_read_rf(struct net_device *dev,
- 	u32 path, addr, data32;
- 
- 
--	path = *(u32*)extra;
--	addr = *((u32*)extra + 1);
-+	path = *(u32 *)extra;
-+	addr = *((u32 *)extra + 1);
- 	data32 = rtw_hal_read_rfreg(padapter, path, addr, 0xFFFFF);
- 	/*
- 	 * IMPORTANT!!
-@@ -2358,9 +2358,9 @@ static int rtw_wx_write_rf(struct net_device *dev,
- 	u32 path, addr, data32;
- 
- 
--	path = *(u32*)extra;
--	addr = *((u32*)extra + 1);
--	data32 = *((u32*)extra + 2);
-+	path = *(u32 *)extra;
-+	addr = *((u32 *)extra + 1);
-+	data32 = *((u32 *)extra + 2);
- /* 	DBG_871X("%s: path =%d addr = 0x%02x data = 0x%05x\n", __func__, path, addr, data32); */
- 	rtw_hal_write_rfreg(padapter, path, addr, 0xFFFFF, data32);
- 
-@@ -2584,7 +2584,7 @@ static int rtw_wps_start(struct net_device *dev,
- 		goto exit;
- 	}
- 
--	uintRet = copy_from_user((void*)&u32wps_start, pdata->pointer, 4);
-+	uintRet = copy_from_user((void *)&u32wps_start, pdata->pointer, 4);
- 	if (u32wps_start == 0)
- 		u32wps_start = *extra;
- 
-@@ -2694,7 +2694,7 @@ static int rtw_dbg_port(struct net_device *dev,
- 	struct sta_priv *pstapriv = &padapter->stapriv;
- 
- 
--	pdata = (u32*)&wrqu->data;
-+	pdata = (u32 *)&wrqu->data;
- 
- 	val32 = *pdata;
- 	arg = (u16)(val32&0x0000ffff);
-@@ -3420,7 +3420,7 @@ static int wpa_supplicant_ioctl(struct net_device *dev, struct iw_point *p)
- 
- 	case IEEE_CMD_SET_WPA_IE:
- 		/* ret = wpa_set_wpa_ie(dev, param, p->length); */
--		ret =  rtw_set_wpa_ie((struct adapter *)rtw_netdev_priv(dev), (char*)param->u.wpa_ie.data, (u16)param->u.wpa_ie.len);
-+		ret =  rtw_set_wpa_ie((struct adapter *)rtw_netdev_priv(dev), (char *)param->u.wpa_ie.data, (u16)param->u.wpa_ie.len);
- 		break;
- 
- 	case IEEE_CMD_SET_ENCRYPTION:
-@@ -3824,7 +3824,7 @@ static int rtw_add_sta(struct net_device *dev, struct ieee_param *param)
- 		if (WLAN_STA_HT&flags) {
- 			psta->htpriv.ht_option = true;
- 			psta->qos_option = 1;
--			memcpy((void*)&psta->htpriv.ht_cap, (void*)&param->u.add_sta.ht_cap, sizeof(struct rtw_ieee80211_ht_cap));
-+			memcpy((void *)&psta->htpriv.ht_cap, (void *)&param->u.add_sta.ht_cap, sizeof(struct rtw_ieee80211_ht_cap));
- 		} else {
- 			psta->htpriv.ht_option = false;
- 		}
-@@ -4368,7 +4368,7 @@ static int rtw_wx_set_priv(struct net_device *dev,
- 	char *ext;
- 
- 	struct adapter *padapter = (struct adapter *)rtw_netdev_priv(dev);
--	struct iw_point *dwrq = (struct iw_point*)awrq;
-+	struct iw_point *dwrq = (struct iw_point *)awrq;
- 
- 	/* RT_TRACE(_module_rtl871x_ioctl_os_c, _drv_notice_, ("+rtw_wx_set_priv\n")); */
- 	if (dwrq->length == 0)
-@@ -4540,7 +4540,7 @@ static int rtw_test(
- 	}
- 	DBG_871X("%s: string =\"%s\"\n", __func__, pbuf);
- 
--	ptmp = (char*)pbuf;
-+	ptmp = (char *)pbuf;
- 	pch = strsep(&ptmp, delim);
- 	if ((pch == NULL) || (strlen(pch) == 0)) {
- 		kfree(pbuf);
-@@ -5038,7 +5038,7 @@ static int rtw_ioctl_wext_private(struct net_device *dev, union iwreq_data *wrq_
- 				str = strsep(&ptr, delim);
- 				if (NULL == str) break;
- 				sscanf(str, "%i", &temp);
--				((s32*)buffer)[count++] = (s32)temp;
-+				((s32 *)buffer)[count++] = (s32)temp;
- 			} while (1);
- 			buffer_len = count * sizeof(s32);
- 
-@@ -5177,7 +5177,7 @@ static int rtw_ioctl_wext_private(struct net_device *dev, union iwreq_data *wrq_
- 		case IW_PRIV_TYPE_INT:
- 			/* Display args */
- 			for (j = 0; j < n; j++) {
--				sprintf(str, "%d  ", ((__s32*)extra)[j]);
-+				sprintf(str, "%d  ", ((__s32 *)extra)[j]);
- 				len = strlen(str);
- 				output_len = strlen(output);
- 				if ((output_len + len + 1) > 4096) {
++config MSM_GPUCC_8998
++	tristate "MSM8998 Graphics Clock Controller"
++	select MSM_GCC_8998
++	help
++	  Support for the graphics clock controller on MSM8998 devices.
++	  Say Y if you want to support graphics controller devices and
++	  functionality such as 3D graphics.
++
+ config QCS_GCC_404
+ 	tristate "QCS404 Global Clock Controller"
+ 	help
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index f0768fb1f037..b8b6ffbdbd62 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -33,6 +33,7 @@ obj-$(CONFIG_MSM_GCC_8994) += gcc-msm8994.o
+ obj-$(CONFIG_MSM_GCC_8996) += gcc-msm8996.o
+ obj-$(CONFIG_MSM_LCC_8960) += lcc-msm8960.o
+ obj-$(CONFIG_MSM_GCC_8998) += gcc-msm8998.o
++obj-$(CONFIG_MSM_GPUCC_8998) += gpucc-msm8998.o
+ obj-$(CONFIG_MSM_MMCC_8960) += mmcc-msm8960.o
+ obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
+ obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
+diff --git a/drivers/clk/qcom/gpucc-msm8998.c b/drivers/clk/qcom/gpucc-msm8998.c
+new file mode 100644
+index 000000000000..34516b34710f
+--- /dev/null
++++ b/drivers/clk/qcom/gpucc-msm8998.c
+@@ -0,0 +1,356 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2019, Jeffrey Hugo
++ */
++
++#include <linux/kernel.h>
++#include <linux/bitops.h>
++#include <linux/err.h>
++#include <linux/platform_device.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/clk-provider.h>
++#include <linux/regmap.h>
++#include <linux/reset-controller.h>
++#include <linux/clk.h>
++
++#include <dt-bindings/clock/qcom,gpucc-msm8998.h>
++
++#include "common.h"
++#include "clk-regmap.h"
++#include "clk-regmap-divider.h"
++#include "clk-alpha-pll.h"
++#include "clk-rcg.h"
++#include "clk-branch.h"
++#include "reset.h"
++#include "gdsc.h"
++
++enum {
++	P_XO,
++	P_GPLL0,
++	P_GPUPLL0_OUT_EVEN,
++};
++
++/* Instead of going directly to the block, XO is routed through this branch */
++static struct clk_branch gpucc_cxo_clk = {
++	.halt_reg = 0x1020,
++	.clkr = {
++		.enable_reg = 0x1020,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gpucc_cxo_clk",
++			.parent_data = &(const struct clk_parent_data){
++				.fw_name = "xo",
++				.name = "xo"
++			},
++			.num_parents = 1,
++			.ops = &clk_branch2_ops,
++			.flags = CLK_IS_CRITICAL,
++		},
++	},
++};
++
++static const struct clk_div_table post_div_table_fabia_even[] = {
++	{ 0x0, 1 },
++	{ 0x1, 2 },
++	{ 0x3, 4 },
++	{ 0x7, 8 },
++	{ }
++};
++
++static struct clk_alpha_pll gpupll0 = {
++	.offset = 0x0,
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "gpupll0",
++		.parent_hws = (const struct clk_hw *[]){ &gpucc_cxo_clk.clkr.hw },
++		.num_parents = 1,
++		.ops = &clk_alpha_pll_fixed_fabia_ops,
++	},
++};
++
++static struct clk_alpha_pll_postdiv gpupll0_out_even = {
++	.offset = 0x0,
++	.post_div_shift = 8,
++	.post_div_table = post_div_table_fabia_even,
++	.num_post_div = ARRAY_SIZE(post_div_table_fabia_even),
++	.width = 4,
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "gpupll0_out_even",
++		.parent_hws = (const struct clk_hw *[]){ &gpupll0.clkr.hw },
++		.num_parents = 1,
++		.ops = &clk_alpha_pll_postdiv_fabia_ops,
++	},
++};
++
++static const struct parent_map gpu_xo_gpll0_map[] = {
++	{ P_XO, 0 },
++	{ P_GPLL0, 5 },
++};
++
++static const struct clk_parent_data gpu_xo_gpll0[] = {
++	{ .hw = &gpucc_cxo_clk.clkr.hw },
++	{ .fw_name = "gpll0", .name = "gpll0" },
++};
++
++static const struct parent_map gpu_xo_gpupll0_map[] = {
++	{ P_XO, 0 },
++	{ P_GPUPLL0_OUT_EVEN, 1 },
++};
++
++static const struct clk_parent_data gpu_xo_gpupll0[] = {
++	{ .hw = &gpucc_cxo_clk.clkr.hw },
++	{ .hw = &gpupll0_out_even.clkr.hw },
++};
++
++static const struct freq_tbl ftbl_rbcpr_clk_src[] = {
++	F(19200000, P_XO, 1, 0, 0),
++	F(50000000, P_GPLL0, 12, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 rbcpr_clk_src = {
++	.cmd_rcgr = 0x1030,
++	.hid_width = 5,
++	.parent_map = gpu_xo_gpll0_map,
++	.freq_tbl = ftbl_rbcpr_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "rbcpr_clk_src",
++		.parent_data = gpu_xo_gpll0,
++		.num_parents = 2,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static const struct freq_tbl ftbl_gfx3d_clk_src[] = {
++	F(180000000, P_GPUPLL0_OUT_EVEN, 2, 0, 0),
++	F(257000000, P_GPUPLL0_OUT_EVEN, 2, 0, 0),
++	F(342000000, P_GPUPLL0_OUT_EVEN, 2, 0, 0),
++	F(414000000, P_GPUPLL0_OUT_EVEN, 2, 0, 0),
++	F(515000000, P_GPUPLL0_OUT_EVEN, 2, 0, 0),
++	F(596000000, P_GPUPLL0_OUT_EVEN, 2, 0, 0),
++	F(670000000, P_GPUPLL0_OUT_EVEN, 2, 0, 0),
++	F(710000000, P_GPUPLL0_OUT_EVEN, 2, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 gfx3d_clk_src = {
++	.cmd_rcgr = 0x1070,
++	.hid_width = 5,
++	.parent_map = gpu_xo_gpupll0_map,
++	.freq_tbl = ftbl_gfx3d_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "gfx3d_clk_src",
++		.parent_data = gpu_xo_gpupll0,
++		.num_parents = 2,
++		.ops = &clk_rcg2_ops,
++		.flags = CLK_OPS_PARENT_ENABLE,
++	},
++};
++
++static const struct freq_tbl ftbl_rbbmtimer_clk_src[] = {
++	F(19200000, P_XO, 1, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 rbbmtimer_clk_src = {
++	.cmd_rcgr = 0x10b0,
++	.hid_width = 5,
++	.parent_map = gpu_xo_gpll0_map,
++	.freq_tbl = ftbl_rbbmtimer_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "rbbmtimer_clk_src",
++		.parent_data = gpu_xo_gpll0,
++		.num_parents = 2,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static const struct freq_tbl ftbl_gfx3d_isense_clk_src[] = {
++	F(19200000, P_XO, 1, 0, 0),
++	F(40000000, P_GPLL0, 15, 0, 0),
++	F(200000000, P_GPLL0, 3, 0, 0),
++	F(300000000, P_GPLL0, 2, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 gfx3d_isense_clk_src = {
++	.cmd_rcgr = 0x1100,
++	.hid_width = 5,
++	.parent_map = gpu_xo_gpll0_map,
++	.freq_tbl = ftbl_gfx3d_isense_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "gfx3d_isense_clk_src",
++		.parent_data = gpu_xo_gpll0,
++		.num_parents = 2,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static struct clk_branch rbcpr_clk = {
++	.halt_reg = 0x1054,
++	.clkr = {
++		.enable_reg = 0x1054,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "rbcpr_clk",
++			.parent_hws = (const struct clk_hw *[]){ &rbcpr_clk_src.clkr.hw },
++			.num_parents = 1,
++			.ops = &clk_branch2_ops,
++			.flags = CLK_SET_RATE_PARENT,
++		},
++	},
++};
++
++static struct clk_branch gfx3d_clk = {
++	.halt_reg = 0x1098,
++	.clkr = {
++		.enable_reg = 0x1098,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gfx3d_clk",
++			.parent_hws = (const struct clk_hw *[]){ &gfx3d_clk_src.clkr.hw },
++			.num_parents = 1,
++			.ops = &clk_branch2_ops,
++			.flags = CLK_SET_RATE_PARENT,
++		},
++	},
++};
++
++static struct clk_branch rbbmtimer_clk = {
++	.halt_reg = 0x10d0,
++	.clkr = {
++		.enable_reg = 0x10d0,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "rbbmtimer_clk",
++			.parent_hws = (const struct clk_hw *[]){ &rbbmtimer_clk_src.clkr.hw },
++			.num_parents = 1,
++			.ops = &clk_branch2_ops,
++			.flags = CLK_SET_RATE_PARENT,
++		},
++	},
++};
++
++static struct clk_branch gfx3d_isense_clk = {
++	.halt_reg = 0x1124,
++	.clkr = {
++		.enable_reg = 0x1124,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gfx3d_isense_clk",
++			.parent_hws = (const struct clk_hw *[]){ &gfx3d_isense_clk_src.clkr.hw },
++			.num_parents = 1,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct gdsc gpu_cx_gdsc = {
++	.gdscr = 0x1004,
++	.pd = {
++		.name = "gpu_cx",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++};
++
++static struct gdsc gpu_gx_gdsc = {
++	.gdscr = 0x1094,
++	.clamp_io_ctrl = 0x130,
++	.pd = {
++		.name = "gpu_gx",
++	},
++	.parent = &gpu_cx_gdsc.pd,
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = CLAMP_IO | AON_RESET,
++};
++
++static struct clk_regmap *gpucc_msm8998_clocks[] = {
++	[GPUPLL0] = &gpupll0.clkr,
++	[GPUPLL0_OUT_EVEN] = &gpupll0_out_even.clkr,
++	[RBCPR_CLK_SRC] = &rbcpr_clk_src.clkr,
++	[GFX3D_CLK_SRC] = &gfx3d_clk_src.clkr,
++	[RBBMTIMER_CLK_SRC] = &rbbmtimer_clk_src.clkr,
++	[GFX3D_ISENSE_CLK_SRC] = &gfx3d_isense_clk_src.clkr,
++	[RBCPR_CLK] = &rbcpr_clk.clkr,
++	[GFX3D_CLK] = &gfx3d_clk.clkr,
++	[RBBMTIMER_CLK] = &rbbmtimer_clk.clkr,
++	[GFX3D_ISENSE_CLK] = &gfx3d_isense_clk.clkr,
++	[GPUCC_CXO_CLK] = &gpucc_cxo_clk.clkr,
++};
++
++static struct gdsc *gpucc_msm8998_gdscs[] = {
++	[GPU_CX_GDSC] = &gpu_cx_gdsc,
++	[GPU_GX_GDSC] = &gpu_gx_gdsc,
++};
++
++static const struct qcom_reset_map gpucc_msm8998_resets[] = {
++	[GPU_CX_BCR] = { 0x1000 },
++	[RBCPR_BCR] = { 0x1050 },
++	[GPU_GX_BCR] = { 0x1090 },
++	[GPU_ISENSE_BCR] = { 0x1120 },
++};
++
++static const struct regmap_config gpucc_msm8998_regmap_config = {
++	.reg_bits	= 32,
++	.reg_stride	= 4,
++	.val_bits	= 32,
++	.max_register	= 0x9000,
++	.fast_io	= true,
++};
++
++static const struct qcom_cc_desc gpucc_msm8998_desc = {
++	.config = &gpucc_msm8998_regmap_config,
++	.clks = gpucc_msm8998_clocks,
++	.num_clks = ARRAY_SIZE(gpucc_msm8998_clocks),
++	.resets = gpucc_msm8998_resets,
++	.num_resets = ARRAY_SIZE(gpucc_msm8998_resets),
++	.gdscs = gpucc_msm8998_gdscs,
++	.num_gdscs = ARRAY_SIZE(gpucc_msm8998_gdscs),
++};
++
++static const struct of_device_id gpucc_msm8998_match_table[] = {
++	{ .compatible = "qcom,gpucc-msm8998" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, gpucc_msm8998_match_table);
++
++static int gpucc_msm8998_probe(struct platform_device *pdev)
++{
++	struct regmap *regmap;
++	struct clk *xo;
++
++	/*
++	 * We must have a valid XO to continue until orphan probe defer is
++	 * implemented.
++	 */
++	xo = clk_get(&pdev->dev, "xo");
++	if (IS_ERR(xo))
++		return PTR_ERR(xo);
++	clk_put(xo);
++
++	regmap = qcom_cc_map(pdev, &gpucc_msm8998_desc);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
++	/* force periph logic on to acoid perf counter corruption */
++	regmap_write_bits(regmap, gfx3d_clk.clkr.enable_reg, BIT(13), BIT(13));
++	/* tweak droop detector (GPUCC_GPU_DD_WRAP_CTRL) to reduce leakage */
++	regmap_write_bits(regmap, gfx3d_clk.clkr.enable_reg, BIT(0), BIT(0));
++
++	return qcom_cc_really_probe(pdev, &gpucc_msm8998_desc, regmap);
++}
++
++static struct platform_driver gpucc_msm8998_driver = {
++	.probe		= gpucc_msm8998_probe,
++	.driver		= {
++		.name	= "gpucc-msm8998",
++		.of_match_table = gpucc_msm8998_match_table,
++	},
++};
++module_platform_driver(gpucc_msm8998_driver);
++
++MODULE_DESCRIPTION("QCOM GPUCC MSM8998 Driver");
++MODULE_LICENSE("GPL v2");
 -- 
-2.7.4
+2.17.1
 
