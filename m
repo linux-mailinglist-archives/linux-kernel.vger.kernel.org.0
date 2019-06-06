@@ -2,119 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40F3B37A24
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 18:53:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69E1337A2B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 18:54:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728554AbfFFQxt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 12:53:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37562 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727445AbfFFQxt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 12:53:49 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9ECA20693;
-        Thu,  6 Jun 2019 16:53:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559840028;
-        bh=D4UJP80FAdK9LRFAqEia+BMLNszARCWS/F17g9KPeEA=;
+        id S1728627AbfFFQyK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 12:54:10 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:44962 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727445AbfFFQyI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 12:54:08 -0400
+Received: from pendragon.ideasonboard.com (unknown [IPv6:2a02:a03f:44f0:8500:ca05:8177:199c:fed4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 349BF33B;
+        Thu,  6 Jun 2019 18:54:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1559840046;
+        bh=KU7bynOWQxEsZF9wVZ4WjYDe60zWXjq617V0v2YLhFM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ab//aI0UBRKWWFG1qVkLjglYjKyNYj9h76GAgyyb9BUQ/+jS1T3mbziDlTHoIgK80
-         U/jIVlc9LXg53QiqnOPHH4RawJj1cXrlKBuifjOnuf2JYZj+tzR1960U+QkJg3NwZA
-         QRxTgrZCw/fCie41FCmSmyJm8hY8ddQFcwDOKbkE=
-Date:   Thu, 6 Jun 2019 18:53:46 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Pavel Machek <pavel@denx.de>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        James Smart <james.smart@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 237/276] scsi: lpfc: avoid uninitialized variable
- warning
-Message-ID: <20190606165346.GB3249@kroah.com>
-References: <20190530030523.133519668@linuxfoundation.org>
- <20190530030539.944220603@linuxfoundation.org>
- <20190606125323.GC27432@amd>
- <20190606160042.GA54183@archlinux-epyc>
+        b=INHNwSelSFh4Y1SFZvTpHkfgSSQEgu3FcYWWbske5+W9Bsp2Mng4FCL31uLPgKlxm
+         kT+x0kfvzqYOTCozj78CSliiv2JT1NpAlsJO1+mj9S8VIxNj9r+doIiLUs7mUh0l+r
+         SOhLOwmFYYKzSS5lJe7hCIanuqB4IWc0sNJKFx4k=
+Date:   Thu, 6 Jun 2019 19:53:52 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc:     kieran.bingham+renesas@ideasonboard.com, airlied@linux.ie,
+        daniel@ffwll.ch, koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
+        VenkataRajesh.Kalakodima@in.bosch.com,
+        Harsha.ManjulaMallikarjun@in.bosch.com,
+        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 03/20] dt-bindings: display, renesas,du: Update 'vsps' in
+ example
+Message-ID: <20190606165352.GK12825@pendragon.ideasonboard.com>
+References: <20190606142220.1392-1-jacopo+renesas@jmondi.org>
+ <20190606142220.1392-4-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190606160042.GA54183@archlinux-epyc>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <20190606142220.1392-4-jacopo+renesas@jmondi.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 09:00:42AM -0700, Nathan Chancellor wrote:
-> On Thu, Jun 06, 2019 at 02:53:23PM +0200, Pavel Machek wrote:
-> > Hi!
-> > 
-> > > [ Upstream commit faf5a744f4f8d76e7c03912b5cd381ac8045f6ec ]
-> > > 
-> > > clang -Wuninitialized incorrectly sees a variable being used without
-> > > initialization:
-> > > 
-> > > drivers/scsi/lpfc/lpfc_nvme.c:2102:37: error: variable 'localport' is uninitialized when used here
-> > >       [-Werror,-Wuninitialized]
-> > >                 lport = (struct lpfc_nvme_lport *)localport->private;
-> > >                                                   ^~~~~~~~~
-> > > drivers/scsi/lpfc/lpfc_nvme.c:2059:38: note: initialize the variable 'localport' to silence this warning
-> > >         struct nvme_fc_local_port *localport;
-> > >                                             ^
-> > >                                              = NULL
-> > > 1 error generated.
-> > > 
-> > > This is clearly in dead code, as the condition leading up to it is always
-> > > false when CONFIG_NVME_FC is disabled, and the variable is always
-> > > initialized when nvme_fc_register_localport() got called successfully.
-> > > 
-> > > Change the preprocessor conditional to the equivalent C construct, which
-> > > makes the code more readable and gets rid of the warning.
-> > 
-> > Unfortunately, this missed "else" branch where the code was freeing
-> > the memory with kfree(cstat)... so this introduces a memory leak.
-> > 
-> > Best regards,
-> > 									Pavel
+Hi Jacopo,
+
+Thank you for the patch.
+
+On Thu, Jun 06, 2019 at 04:22:03PM +0200, Jacopo Mondi wrote:
+> Update the 'vsps' property structure in the documentation example to
+> reflect what's actually implemented in the device tree sources.
 > 
-> For the record, this is not a problem with the upstream commit (not
-> saying you thought that or not, I just want to be clear).
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  Documentation/devicetree/bindings/display/renesas,du.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Looks like commit 4c47efc140fa ("scsi: lpfc: Move SCSI and NVME Stats to
-> hardware queue structures") "resolved" this by not making it an issue in
-> the first place. I think the simpler fix is this.
-> 
-> Thanks for pointing it out!
-> 
-> diff --git a/drivers/scsi/lpfc/lpfc_nvme.c b/drivers/scsi/lpfc/lpfc_nvme.c
-> index 099f70798fdd..645ffb5332b4 100644
-> --- a/drivers/scsi/lpfc/lpfc_nvme.c
-> +++ b/drivers/scsi/lpfc/lpfc_nvme.c
-> @@ -2477,14 +2477,14 @@ lpfc_nvme_create_localport(struct lpfc_vport *vport)
->         lpfc_nvme_template.max_sgl_segments = phba->cfg_nvme_seg_cnt + 1;
->         lpfc_nvme_template.max_hw_queues = phba->cfg_nvme_io_channel;
+> diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
+> index 100114ef11d5..262047053d31 100644
+> --- a/Documentation/devicetree/bindings/display/renesas,du.txt
+> +++ b/Documentation/devicetree/bindings/display/renesas,du.txt
+> @@ -92,7 +92,7 @@ Example: R8A7795 (R-Car H3) ES2.0 DU
+>  			 <&cpg CPG_MOD 722>,
+>  			 <&cpg CPG_MOD 721>;
+>  		clock-names = "du.0", "du.1", "du.2", "du.3";
+> -		vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
+> +		vsps = <&vspd0 0 &vspd1 0 &vspd2  &vspd0 1>;
+
+The former is simpler to read than the latter in my opinion. Shouldn't
+we update the .dtsi files instead ?
+
+>  		cmms = <&cmm0 &cmm1 &cmm2 &cmm3>;
 >  
-> +       if (!IS_ENABLED(CONFIG_NVME_FC))
-> +               return ret;
-> +
->         cstat = kmalloc((sizeof(struct lpfc_nvme_ctrl_stat) *
->                         phba->cfg_nvme_io_channel), GFP_KERNEL);
->         if (!cstat)
->                 return -ENOMEM;
->  
-> -       if (!IS_ENABLED(CONFIG_NVME_FC))
-> -               return ret;
-> -
->         /* localport is allocated from the stack, but the registration
->          * call allocates heap memory as well as the private area.
->          */
-> 
+>  		ports {
 
-Can you send this as a real patch that I can queue up?
+-- 
+Regards,
 
-thanks,
-
-greg k-h
+Laurent Pinchart
