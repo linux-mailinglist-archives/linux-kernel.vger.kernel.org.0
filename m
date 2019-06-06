@@ -2,107 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30E5736DFC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 10:00:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FFEF36E02
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 10:01:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726800AbfFFIAR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 04:00:17 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39471 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725769AbfFFIAR (ORCPT
+        id S1726918AbfFFIBR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 04:01:17 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:45550 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725769AbfFFIBQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 04:00:17 -0400
-Received: by mail-pf1-f196.google.com with SMTP id j2so1004558pfe.6;
-        Thu, 06 Jun 2019 01:00:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=7w8grN6Jf3tef1Ky0Ozizi80VlqAjKUQXZ1TYmC2bF4=;
-        b=JQbewRilIfujSoeqXSHpPlbYwRe56mt2fMQsJOKRBH8xkCHJ4kRlfVsUY6m61IAu4g
-         PBIUDG3SsSq7lKh/rujQvk/dCauQKEbkh+WuuMZyL44nSGdINuTpQFNXm4O3MKAoFXQ0
-         jhZW44hgQzFwzf8GEqcb7rAxs+/5dfxyygTq8T7rPrNt6rGIKrKP3rHa9WOMLN6eftR/
-         ItuA9eebbh2Xryy+ufP7figAzOHhb32zEB2CqKWi2N/TjQRinKktixLoGA/RXbVflyNd
-         vy72WDCALPvpOsbHI1PuV3BL/1B5oTC/6AvErZu7TihFVrOcNmoYCP0i1i56LTPs2SHG
-         BdYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=7w8grN6Jf3tef1Ky0Ozizi80VlqAjKUQXZ1TYmC2bF4=;
-        b=jW/Zaq0z7GAMunhgGIqlY8qX1v58cOCI3JtcnMWELYc0HGNxzb6seVmW010Ur5tFq4
-         e4ef4FvSnnC8iWHaXtfRUiSinZVv0BLgDuzOPlVJXAnTpv2ubMAbfDdHO3d09m7UsQbS
-         BApVYqXfuRukEraKkjKyJtsS3LBVtGTFyIB6qZsOavJY+BxOfeStuS/9+PECyiuD7tyz
-         RtpFGW14waA133vjMsCer8S4mfhke6gYiHW9MJkjO6j5u9NLDe41xGovZPr/+ynSCP7u
-         cXyrKDUTvD0yhf6EFErHa5L6fBzFJIK9TKN69ViXgqMVE/VdK+gxDHzp3L6E5HQiIIQ2
-         FcZQ==
-X-Gm-Message-State: APjAAAU6b5KkhB0mTKf8KL3rw4OeEMcqYf2uw2M3Pwp1AUEujlYYjYW0
-        DJGv7PR3cZWvaGXCkCIAAXwO+nmrSBQ=
-X-Google-Smtp-Source: APXvYqzWmcIYGfLSXfIy7t9xgDhYYUo+JJ7EIW+npf701Gjeu5zeVQQyC6kUmrlNMFDzKDe+nqQHDQ==
-X-Received: by 2002:a65:48c3:: with SMTP id o3mr2172233pgs.351.1559808016233;
-        Thu, 06 Jun 2019 01:00:16 -0700 (PDT)
-Received: from maya190131 ([13.66.160.195])
-        by smtp.gmail.com with ESMTPSA id i5sm977527pjj.8.2019.06.06.01.00.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Jun 2019 01:00:16 -0700 (PDT)
-Date:   Thu, 6 Jun 2019 08:00:15 +0000
-From:   Maya Nakamura <m.maya.nakamura@gmail.com>
-To:     mikelley@microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
-        sthemmin@microsoft.com, sashal@kernel.org
-Cc:     x86@kernel.org, linux-hyperv@vger.kernel.org,
+        Thu, 6 Jun 2019 04:01:16 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190606080114euoutp0278f89e0afc47fcfbd5c7875b22280497~ljS4I-VZg0297502975euoutp024
+        for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2019 08:01:14 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190606080114euoutp0278f89e0afc47fcfbd5c7875b22280497~ljS4I-VZg0297502975euoutp024
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1559808074;
+        bh=MAN58sTDz07tsLX8C4vgD27ti2cafy/nMvtO+uKybQw=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=J4dVqirl/Wr/Fh/zjEuv+l0vKC17E4O/vtvvE5hx9/WXHmA7m8gnxOMghjZ0r3vv4
+         h9CUAfMPXzr8ZcsYFqb4WPKuL+TZdKsq9KfWf6jkxYUm6eR2T0UQQsLEmwuz+d9hRd
+         Oq8k6FwBtmtD6IHP470DbJSFSS+FAtN1VnF9tft8=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190606080114eucas1p240801a4725f31c59eb76659d8820b91e~ljS3fcY9F0719807198eucas1p2L;
+        Thu,  6 Jun 2019 08:01:14 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 43.75.04377.948C8FC5; Thu,  6
+        Jun 2019 09:01:13 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190606080113eucas1p13327c9bf0596dd2c744f776097153856~ljS2qt3t21310413104eucas1p1x;
+        Thu,  6 Jun 2019 08:01:13 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190606080112eusmtrp149b65493e76b2ab5da42abc6b123dc11~ljS2a-qkd1821018210eusmtrp1e;
+        Thu,  6 Jun 2019 08:01:12 +0000 (GMT)
+X-AuditID: cbfec7f4-5632c9c000001119-b7-5cf8c84957ac
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id D2.B1.04140.848C8FC5; Thu,  6
+        Jun 2019 09:01:12 +0100 (BST)
+Received: from [106.120.51.74] (unknown [106.120.51.74]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190606080112eusmtip140c235a6cb15654cc48c0e0e95a858bc~ljS1oYSpx2518925189eusmtip1f;
+        Thu,  6 Jun 2019 08:01:11 +0000 (GMT)
+Subject: Re: [PATCH v3 02/15] drm/bridge: tc358767: Simplify polling in
+ tc_main_link_setup()
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        dri-devel@lists.freedesktop.org
+Cc:     Archit Taneja <architt@codeaurora.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Cory Tusar <cory.tusar@zii.aero>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/5] hv: Remove dependencies on guest page size
-Message-ID: <cover.1559807514.git.m.maya.nakamura@gmail.com>
+From:   Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <90e382a9-6613-64e8-1916-30000ef7654a@samsung.com>
+Date:   Thu, 6 Jun 2019 10:00:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190605070507.11417-3-andrew.smirnov@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHKsWRmVeSWpSXmKPExsWy7djPc7qeJ37EGLx6b2TR3GFr0XSogdWi
+        qeMtq8WPK4dZLA7uOc5kceXrezaLB3NvMll0TlzCbnF51xw2i7v3TrBYrJ9/i82B2+NyXy+T
+        x4Op/5k8ds66y+4xu2Mmq8f97uNMHv1/DTyO39jO5PF5k5zHualnmQI4o7hsUlJzMstSi/Tt
+        ErgyDrUkFjQJVLy/Gt/A2MPbxcjJISFgInH3RAdzFyMXh5DACkaJAz9eskE4Xxgl7jQcZwap
+        EhL4zCjx8FMyTMfeRe2sEEXLGSXufX7NDuG8ZZR4v/8vC0iVsECcxOmb+9hBbBGBAIlPTTvB
+        xjILfGWSOHBpIhNIgk1AU+Lv5ptsIDavgJ3E9YWLwOIsAioS614sBLNFBSIk7h/bwApRIyhx
+        cuYTsAWcQPXN39eCnccsIC/RvHU2lC0ucevJfCaQZRICj9gl9n25yQxxt4vEi45HbBC2sMSr
+        41vYIWwZidOTe1gg7HqJ+ytamCGaOxgltm7YCdVsLXH4+EWgKziANmhKrN+lD2JKCDhKbH/K
+        DWHySdx4KwhxAp/EpG3TmSHCvBIdbUIQMxQl7p/dCjVPXGLpha9sExiVZiF5bBaSZ2YheWYW
+        wtoFjCyrGMVTS4tz01OLjfJSy/WKE3OLS/PS9ZLzczcxAlPZ6X/Hv+xg3PUn6RCjAAejEg+v
+        xMbvMUKsiWXFlbmHGCU4mJVEeBNvf4kR4k1JrKxKLcqPLyrNSS0+xCjNwaIkzlvN8CBaSCA9
+        sSQ1OzW1ILUIJsvEwSnVwFj895DV0fzm3IIHuyNCLUuC7pQyZ/84/PeS2ASXQ2GnVtfME+zl
+        qDrGdv+v9seqUzsjDvf1XEjYYut4pG3L+/ptJVbVgQ3PpM9v8+I33Z7WNyusMnnx22VHj30N
+        iIxM0z03kXfpilAhjTWeIVU1v2yWr9xY9fVvtZPmG/vZ+aXvdLeq7l0YMkuJpTgj0VCLuag4
+        EQDboClrYQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMIsWRmVeSWpSXmKPExsVy+t/xu7oeJ37EGDzeY2bR3GFr0XSogdWi
+        qeMtq8WPK4dZLA7uOc5kceXrezaLB3NvMll0TlzCbnF51xw2i7v3TrBYrJ9/i82B2+NyXy+T
+        x4Op/5k8ds66y+4xu2Mmq8f97uNMHv1/DTyO39jO5PF5k5zHualnmQI4o/RsivJLS1IVMvKL
+        S2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQyDrUkFjQJVLy/Gt/A2MPb
+        xcjJISFgIrF3UTtrFyMXh5DAUkaJhf9+MEEkxCV2z3/LDGELS/y51sUGUfSaUWLG6WUsIAlh
+        gTiJ0zf3sYPYIgJ+El3zDjCBFDELfGeSmLh8LwtEx1FGiWPLZoFVsQloSvzdfJMNxOYVsJO4
+        vnAR2DoWARWJdS8WgtmiAhESZ96vYIGoEZQ4OfMJmM0JVN/8fS3YScwC6hJ/5l2CsuUlmrfO
+        hrLFJW49mc80gVFoFpL2WUhaZiFpmYWkZQEjyypGkdTS4tz03GIjveLE3OLSvHS95PzcTYzA
+        CN527OeWHYxd74IPMQpwMCrx8Eps/B4jxJpYVlyZe4hRgoNZSYQ38faXGCHelMTKqtSi/Pii
+        0pzU4kOMpkDPTWSWEk3OByaXvJJ4Q1NDcwtLQ3Njc2MzCyVx3g6BgzFCAumJJanZqakFqUUw
+        fUwcnFINjKU3OxlSWI43F1478PaZjunbUrUpVkEVf3YGP84V0rzhzGzry6ou/zCeb2JbqH6r
+        6r6tcftLY+b3iShy8QbmFd/zCD8kYPgstoA71LMtQWal3JqiA0+m5HhwHX940G5XhsTqO0Iv
+        87fUxRVeU/duiHtkErS4a+vRL6rVL3jUDNpVTs4/X66gxFKckWioxVxUnAgAPUXuD/YCAAA=
+X-CMS-MailID: 20190606080113eucas1p13327c9bf0596dd2c744f776097153856
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190605070527epcas1p36d630a4be138dd07791047c4d45a716f
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190605070527epcas1p36d630a4be138dd07791047c4d45a716f
+References: <20190605070507.11417-1-andrew.smirnov@gmail.com>
+        <CGME20190605070527epcas1p36d630a4be138dd07791047c4d45a716f@epcas1p3.samsung.com>
+        <20190605070507.11417-3-andrew.smirnov@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Linux guest page size and hypervisor page size concepts are
-different, even though they happen to be the same value on x86. Hyper-V
-code mixes up the two, so this patchset begins to address that by
-creating and using a set of Hyper-V specific page definitions.
+On 05.06.2019 09:04, Andrey Smirnov wrote:
+> Replace explicit polling loop with equivalent call to
+> tc_poll_timeout() for brevity. No functional change intended.
+>
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Cc: Archit Taneja <architt@codeaurora.org>
+> Cc: Andrzej Hajda <a.hajda@samsung.com>
+> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> Cc: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
+> Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> Cc: Cory Tusar <cory.tusar@zii.aero>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  drivers/gpu/drm/bridge/tc358767.c | 15 +++++----------
+>  1 file changed, 5 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
+> index fb8a1942ec54..5e1e73a91696 100644
+> --- a/drivers/gpu/drm/bridge/tc358767.c
+> +++ b/drivers/gpu/drm/bridge/tc358767.c
+> @@ -774,7 +774,6 @@ static int tc_main_link_enable(struct tc_data *tc)
+>  	struct device *dev = tc->dev;
+>  	unsigned int rate;
+>  	u32 dp_phy_ctrl;
+> -	int timeout;
+>  	u32 value;
+>  	int ret;
+>  	u8 tmp[8];
+> @@ -831,15 +830,11 @@ static int tc_main_link_enable(struct tc_data *tc)
+>  	dp_phy_ctrl &= ~(DP_PHY_RST | PHY_M1_RST | PHY_M0_RST);
+>  	tc_write(DP_PHY_CTRL, dp_phy_ctrl);
+>  
+> -	timeout = 1000;
+> -	do {
+> -		tc_read(DP_PHY_CTRL, &value);
+> -		udelay(1);
+> -	} while ((!(value & PHY_RDY)) && (--timeout));
+> -
+> -	if (timeout == 0) {
+> -		dev_err(dev, "timeout waiting for phy become ready");
+> -		return -ETIMEDOUT;
+> +	ret = tc_poll_timeout(tc, DP_PHY_CTRL, PHY_RDY, PHY_RDY, 1, 1000);
+> +	if (ret) {
+> +		if (ret == -ETIMEDOUT)
+> +			dev_err(dev, "timeout waiting for phy become ready");
+> +		return ret;
 
-A major benefit of those new definitions is that they support non-x86
-architectures, such as ARM64, that use different page sizes. On ARM64,
-the guest page size may not be 4096, and Hyper-V always runs with a page
-size of 4096.
 
-In this patchset, the first two patches lay the foundation for the
-others, creating definitions and preparing for allocation of memory with
-the size and alignment that Hyper-V expects as a page. Patch 3 applies
-the page size definition where the guest VM and Hyper-V communicate, and
-where the code intends to use the Hyper-V page size. The last two
-patches set the ring buffer size to a fixed value, removing the
-dependency on the guest page size.
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 
-This is the initial set of changes to the Hyper-V code, and future
-patches will make additional changes using the same foundation, for
-example, replace __vmalloc() and related functions when Hyper-V pages
-are intended.
+ --
+Regards
+Andrzej
 
-Changes in v2:
-- [PATCH 2/5] Replace with a new patch.
 
-Maya Nakamura (5):
-  x86: hv: hyperv-tlfs.h: Create and use Hyper-V page definitions
-  x86: hv: hv_init.c: Add functions to allocate/deallocate page for
-    Hyper-V
-  hv: vmbus: Replace page definition with Hyper-V specific one
-  HID: hv: Remove dependencies on PAGE_SIZE for ring buffer
-  Input: hv: Remove dependencies on PAGE_SIZE for ring buffer
+>  	}
+>  
+>  	/* Set misc: 8 bits per color */
 
- arch/x86/hyperv/hv_init.c             | 14 ++++++++++++++
- arch/x86/include/asm/hyperv-tlfs.h    | 12 +++++++++++-
- drivers/hid/hid-hyperv.c              |  4 ++--
- drivers/hv/hyperv_vmbus.h             |  8 ++++----
- drivers/input/serio/hyperv-keyboard.c |  4 ++--
- 5 files changed, 33 insertions(+), 9 deletions(-)
-
--- 
-2.17.1
 
