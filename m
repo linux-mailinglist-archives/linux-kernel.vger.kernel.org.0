@@ -2,99 +2,330 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F267636E41
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 10:15:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8257536E4D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 10:16:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbfFFIO5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 04:14:57 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:45830 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726223AbfFFIO4 (ORCPT
+        id S1727013AbfFFIQk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 04:16:40 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:51154 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725267AbfFFIQj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 04:14:56 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x568EmdQ109788;
-        Thu, 6 Jun 2019 03:14:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1559808888;
-        bh=9CGWmFPZFkM4haIpdXdnS/PW2KTAvEhGOsht3nl69aM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=y+l5C+N4UN7JgoiVx59rl13K3WiR027/sCRxaNhTaB7T9zYa7z/2W5NI0ZsOWYoIc
-         7gUcCAVrbcfm9+6fAvSUt2QMEFFt3Oa6wTRyGMtDSBG3DGYBsNSh/XsvkFTj/2l6I/
-         l1boUF1Q/ytOH3TdHNrPIR+ZSqSgIrW3oby9FFKk=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x568EmfC109386
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 6 Jun 2019 03:14:48 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 6 Jun
- 2019 03:14:47 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 6 Jun 2019 03:14:48 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x568Ejh5008241;
-        Thu, 6 Jun 2019 03:14:46 -0500
-Subject: Re: [PATCH -next] phy: ti: am654-serdes: Make serdes_am654_xlate()
- static
-To:     Yue Haibing <yuehaibing@huawei.com>, <kishon@ti.com>
-CC:     <linux-kernel@vger.kernel.org>, <hulkci@huawei.com>
-References: <20190418133633.3908-1-yuehaibing@huawei.com>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <659d9904-fa9a-a03b-b609-0ac053520c9a@ti.com>
-Date:   Thu, 6 Jun 2019 11:14:45 +0300
+        Thu, 6 Jun 2019 04:16:39 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190606081636euoutp02abf8536999f59527132a42988269e3f7~ljgSVxUyn1035010350euoutp02R
+        for <linux-kernel@vger.kernel.org>; Thu,  6 Jun 2019 08:16:36 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190606081636euoutp02abf8536999f59527132a42988269e3f7~ljgSVxUyn1035010350euoutp02R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1559808996;
+        bh=ema7D7hL/gimsUt+MjqT3jyUKG1qu0SX0tNtF6u23RQ=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=uLLq6Tq92mQsANJY+fgtgtaVuwq78aWITwJT6RRQmY1CE2D58fkfNbgO8BHYRTMJi
+         0h0uglVQzAmjezAIb2Ra2KXHa0xUfkdvJpUSjRT1jhkuRmCjTw04irt/0qPn+JHTXn
+         sFARHNihfkg0FB6WaXDNyoFoejpirw2q00ZH8/K4=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190606081635eucas1p2fc26b0056a8b87d2d5915de8f6ab5bba~ljgRqC6Pt2782827828eucas1p2j;
+        Thu,  6 Jun 2019 08:16:35 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id C3.11.04325.3EBC8FC5; Thu,  6
+        Jun 2019 09:16:35 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190606081634eucas1p216cc8c49612d299a305d488871dd56e6~ljgQ3Id7H0445004450eucas1p2e;
+        Thu,  6 Jun 2019 08:16:34 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190606081634eusmtrp2ee724d3e740dc6f9d564cbe17527c92f~ljgQnaqxY1010210102eusmtrp2J;
+        Thu,  6 Jun 2019 08:16:34 +0000 (GMT)
+X-AuditID: cbfec7f5-b8fff700000010e5-30-5cf8cbe3d905
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id B3.F8.04146.2EBC8FC5; Thu,  6
+        Jun 2019 09:16:34 +0100 (BST)
+Received: from [106.120.51.74] (unknown [106.120.51.74]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190606081633eusmtip1ac5b49157c844d13111287b92c233c3f~ljgPktkJI3153031530eusmtip1P;
+        Thu,  6 Jun 2019 08:16:33 +0000 (GMT)
+Subject: Re: [PATCH v3 04/15] drm/bridge: tc358767: Simplify
+ tc_set_video_mode()
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        dri-devel@lists.freedesktop.org
+Cc:     Archit Taneja <architt@codeaurora.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Cory Tusar <cory.tusar@zii.aero>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        linux-kernel@vger.kernel.org
+From:   Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <f34eee66-6fe0-2bae-4a07-f114bbcacf33@samsung.com>
+Date:   Thu, 6 Jun 2019 10:16:16 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190418133633.3908-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20190605070507.11417-5-andrew.smirnov@gmail.com>
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrEKsWRmVeSWpSXmKPExsWy7djPc7qPT/+IMfi4VsCiucPWoulQA6tF
+        U8dbVosfVw6zWBzcc5zJ4srX92wWD+beZLLonLiE3eLyrjlsFnfvnWCxWD//FpsDt8flvl4m
+        jwdT/zN57Jx1l91jdsdMVo/73ceZPPr/Gngcv7GdyePzJjmPc1PPMgVwRnHZpKTmZJalFunb
+        JXBlrN95mamg37ai+fVM9gbGfQZdjJwcEgImEi2fbrJ0MXJxCAmsYJR4+mIfI4TzhVHiyvOn
+        bBDOZ0aJqe83McG0vLnYBVW1nFHi89vfUFVvGSUOXVjKBlIlLBAk0bTiIiuILSIQIPGpaSdY
+        EbPAVyaJA5cmgo1iE9CU+Lv5JlgDr4CdxOa+F4wgNouAisTvNYvBakQFIiTuH9vAClEjKHFy
+        5hMWEJsTqP7cwytg9cwC8hLNW2czQ9jiEreezGcCWSYh8JZd4syRLlaIu10kpt2fAWULS7w6
+        voUdwpaR+L9zPtRv9RL3V7QwQzR3MEps3bCTGSJhLXH4OMg7HEAbNCXW79KHCDtKfN7RxQIS
+        lhDgk7jxVhDiBj6JSdumM0OEeSU62oQgqhUl7p/dCjVQXGLpha9sExiVZiH5bBaSb2Yh+WYW
+        wt4FjCyrGMVTS4tz01OLjfNSy/WKE3OLS/PS9ZLzczcxAlPa6X/Hv+5g3Pcn6RCjAAejEg+v
+        xMbvMUKsiWXFlbmHGCU4mJVEeBNvf4kR4k1JrKxKLcqPLyrNSS0+xCjNwaIkzlvN8CBaSCA9
+        sSQ1OzW1ILUIJsvEwSnVwMgRfct67irtBQq9kksidt1tEEqPrEkIPvP/0janZEX9SM2sIz+d
+        +N/e9Q85ZdkXc9/6ZN+Z/pzOdPfu1xLu7psuWF5JCRZeL1crq7qsZn2bxD6nSZfb/UU8G1dM
+        9NY79FdBOuSM6UImy+z2moPBExUqA4S2H2y/e1Iid2r2Ro8NNnWergEhSizFGYmGWsxFxYkA
+        DAxqQWUDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKIsWRmVeSWpSXmKPExsVy+t/xu7qPTv+IMbh2V9yiucPWoulQA6tF
+        U8dbVosfVw6zWBzcc5zJ4srX92wWD+beZLLonLiE3eLyrjlsFnfvnWCxWD//FpsDt8flvl4m
+        jwdT/zN57Jx1l91jdsdMVo/73ceZPPr/Gngcv7GdyePzJjmPc1PPMgVwRunZFOWXlqQqZOQX
+        l9gqRRtaGOkZWlroGZlY6hkam8daGZkq6dvZpKTmZJalFunbJehlrN95mamg37ai+fVM9gbG
+        fQZdjJwcEgImEm8udjF2MXJxCAksZZT4OecRE0RCXGL3/LfMELawxJ9rXWwQRa8ZJWZ/3cAG
+        khAWCJJoWnGRFcQWEfCT6Jp3gAmkiFngO5PExOV7WSA6jjJKzOm8xAJSxSagKfF3802wbl4B
+        O4nNfS8YQWwWARWJ32sWg60WFYiQOPN+BQtEjaDEyZlPwGxOoPpzD6+A1TMLqEv8mXeJGcKW
+        l2jeOhvKFpe49WQ+0wRGoVlI2mchaZmFpGUWkpYFjCyrGEVSS4tz03OLDfWKE3OLS/PS9ZLz
+        czcxAqN427Gfm3cwXtoYfIhRgINRiYdXYuP3GCHWxLLiytxDjBIczEoivIm3v8QI8aYkVlal
+        FuXHF5XmpBYfYjQFem4is5Rocj4wweSVxBuaGppbWBqaG5sbm1koifN2CByMERJITyxJzU5N
+        LUgtgulj4uCUamDkmFYh47hZLeXUAymXjyZWBfMPV1mtagtueiL2S2Fyls+f5briZyyFZos8
+        eDupqf129CYB7pm/f1dOMz1k1u1UIfHVlFvdyOy6ncPt1wtjWl89l+CNl1juW3bmmWp8nS5X
+        yPGADL+1PR/UzM57ut31Tt2Q8mrrb7HoCTc+rXVk9/mi9rBwabASS3FGoqEWc1FxIgAxXXlR
+        +AIAAA==
+X-CMS-MailID: 20190606081634eucas1p216cc8c49612d299a305d488871dd56e6
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190605070530epcas2p12c8dcf1906e71653a624d0f53b6cdf58
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190605070530epcas2p12c8dcf1906e71653a624d0f53b6cdf58
+References: <20190605070507.11417-1-andrew.smirnov@gmail.com>
+        <CGME20190605070530epcas2p12c8dcf1906e71653a624d0f53b6cdf58@epcas2p1.samsung.com>
+        <20190605070507.11417-5-andrew.smirnov@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 05.06.2019 09:04, Andrey Smirnov wrote:
+> Simplify tc_set_video_mode() by replacing explicit shifting using
+> macros from <linux/bitfield.h>. No functional change intended.
+>
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Cc: Archit Taneja <architt@codeaurora.org>
+> Cc: Andrzej Hajda <a.hajda@samsung.com>
+> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> Cc: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
+> Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> Cc: Cory Tusar <cory.tusar@zii.aero>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-kernel@vger.kernel.org
 
-On 18/04/2019 16:36, Yue Haibing wrote:
-> From: YueHaibing <yuehaibing@huawei.com>
-> 
-> Fix sparse warning:
-> 
-> drivers/phy/ti/phy-am654-serdes.c:250:12: warning:
->  symbol 'serdes_am654_xlate' was not declared. Should it be static?
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Acked-by: Roger Quadros <rogerq@ti.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+
+ --
+Regards
+Andrzej
+
 
 > ---
->  drivers/phy/ti/phy-am654-serdes.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/phy/ti/phy-am654-serdes.c b/drivers/phy/ti/phy-am654-serdes.c
-> index d376920..f8edd08 100644
-> --- a/drivers/phy/ti/phy-am654-serdes.c
-> +++ b/drivers/phy/ti/phy-am654-serdes.c
-> @@ -247,8 +247,8 @@ static void serdes_am654_release(struct phy *x)
->  	mux_control_deselect(phy->control);
->  }
+>  drivers/gpu/drm/bridge/tc358767.c | 106 ++++++++++++++++++++++--------
+>  1 file changed, 78 insertions(+), 28 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
+> index 115cffc55a96..c0fc686ce5ec 100644
+> --- a/drivers/gpu/drm/bridge/tc358767.c
+> +++ b/drivers/gpu/drm/bridge/tc358767.c
+> @@ -24,6 +24,7 @@
+>   * GNU General Public License for more details.
+>   */
 >  
-> -struct phy *serdes_am654_xlate(struct device *dev, struct of_phandle_args
-> -				 *args)
-> +static struct phy *serdes_am654_xlate(struct device *dev,
-> +				      struct of_phandle_args *args)
->  {
->  	struct serdes_am654 *am654_phy;
->  	struct phy *phy;
-> 
+> +#include <linux/bitfield.h>
+>  #include <linux/clk.h>
+>  #include <linux/device.h>
+>  #include <linux/gpio/consumer.h>
+> @@ -56,6 +57,7 @@
+>  
+>  /* Video Path */
+>  #define VPCTRL0			0x0450
+> +#define VSDELAY			GENMASK(31, 20)
+>  #define OPXLFMT_RGB666			(0 << 8)
+>  #define OPXLFMT_RGB888			(1 << 8)
+>  #define FRMSYNC_DISABLED		(0 << 4) /* Video Timing Gen Disabled */
+> @@ -63,9 +65,17 @@
+>  #define MSF_DISABLED			(0 << 0) /* Magic Square FRC disabled */
+>  #define MSF_ENABLED			(1 << 0) /* Magic Square FRC enabled */
+>  #define HTIM01			0x0454
+> +#define HPW			GENMASK(8, 0)
+> +#define HBPR			GENMASK(24, 16)
+>  #define HTIM02			0x0458
+> +#define HDISPR			GENMASK(10, 0)
+> +#define HFPR			GENMASK(24, 16)
+>  #define VTIM01			0x045c
+> +#define VSPR			GENMASK(7, 0)
+> +#define VBPR			GENMASK(23, 16)
+>  #define VTIM02			0x0460
+> +#define VFPR			GENMASK(23, 16)
+> +#define VDISPR			GENMASK(10, 0)
+>  #define VFUEN0			0x0464
+>  #define VFUEN				BIT(0)   /* Video Frame Timing Upload */
+>  
+> @@ -108,14 +118,28 @@
+>  /* Main Channel */
+>  #define DP0_SECSAMPLE		0x0640
+>  #define DP0_VIDSYNCDELAY	0x0644
+> +#define VID_SYNC_DLY		GENMASK(15, 0)
+> +#define THRESH_DLY		GENMASK(31, 16)
+> +
+>  #define DP0_TOTALVAL		0x0648
+> +#define H_TOTAL			GENMASK(15, 0)
+> +#define V_TOTAL			GENMASK(31, 16)
+>  #define DP0_STARTVAL		0x064c
+> +#define H_START			GENMASK(15, 0)
+> +#define V_START			GENMASK(31, 16)
+>  #define DP0_ACTIVEVAL		0x0650
+> +#define H_ACT			GENMASK(15, 0)
+> +#define V_ACT			GENMASK(31, 16)
+> +
+>  #define DP0_SYNCVAL		0x0654
+> +#define VS_WIDTH		GENMASK(30, 16)
+> +#define HS_WIDTH		GENMASK(14, 0)
+>  #define SYNCVAL_HS_POL_ACTIVE_LOW	(1 << 15)
+>  #define SYNCVAL_VS_POL_ACTIVE_LOW	(1 << 31)
+>  #define DP0_MISC		0x0658
+>  #define TU_SIZE_RECOMMENDED		(63) /* LSCLK cycles per TU */
+> +#define MAX_TU_SYMBOL		GENMASK(28, 23)
+> +#define TU_SIZE			GENMASK(21, 16)
+>  #define BPC_6				(0 << 5)
+>  #define BPC_8				(1 << 5)
+>  
+> @@ -192,6 +216,12 @@
+>  
+>  /* Test & Debug */
+>  #define TSTCTL			0x0a00
+> +#define COLOR_R			GENMASK(31, 24)
+> +#define COLOR_G			GENMASK(23, 16)
+> +#define COLOR_B			GENMASK(15, 8)
+> +#define ENI2CFILTER		BIT(4)
+> +#define COLOR_BAR_MODE		GENMASK(1, 0)
+> +#define COLOR_BAR_MODE_BARS	2
+>  #define PLL_DBG			0x0a04
+>  
+>  static bool tc_test_pattern;
+> @@ -672,6 +702,7 @@ static int tc_set_video_mode(struct tc_data *tc,
+>  	int upper_margin = mode->vtotal - mode->vsync_end;
+>  	int lower_margin = mode->vsync_start - mode->vdisplay;
+>  	int vsync_len = mode->vsync_end - mode->vsync_start;
+> +	u32 dp0_syncval;
+>  
+>  	/*
+>  	 * Recommended maximum number of symbols transferred in a transfer unit:
+> @@ -696,50 +727,69 @@ static int tc_set_video_mode(struct tc_data *tc,
+>  	 * assume we do not need any delay when DPI is a source of
+>  	 * sync signals
+>  	 */
+> -	tc_write(VPCTRL0, (0 << 20) /* VSDELAY */ |
+> +	tc_write(VPCTRL0,
+> +		 FIELD_PREP(VSDELAY, 0) |
+>  		 OPXLFMT_RGB888 | FRMSYNC_DISABLED | MSF_DISABLED);
+> -	tc_write(HTIM01, (ALIGN(left_margin, 2) << 16) | /* H back porch */
+> -			 (ALIGN(hsync_len, 2) << 0));	 /* Hsync */
+> -	tc_write(HTIM02, (ALIGN(right_margin, 2) << 16) |  /* H front porch */
+> -			 (ALIGN(mode->hdisplay, 2) << 0)); /* width */
+> -	tc_write(VTIM01, (upper_margin << 16) |		/* V back porch */
+> -			 (vsync_len << 0));		/* Vsync */
+> -	tc_write(VTIM02, (lower_margin << 16) |		/* V front porch */
+> -			 (mode->vdisplay << 0));	/* height */
+> +	tc_write(HTIM01,
+> +		 FIELD_PREP(HBPR, ALIGN(left_margin, 2)) |
+> +		 FIELD_PREP(HPW, ALIGN(hsync_len, 2)));
+> +	tc_write(HTIM02,
+> +		 FIELD_PREP(HDISPR, ALIGN(mode->hdisplay, 2)) |
+> +		 FIELD_PREP(HFPR, ALIGN(right_margin, 2)));
+> +	tc_write(VTIM01,
+> +		 FIELD_PREP(VBPR, upper_margin) |
+> +		 FIELD_PREP(VSPR, vsync_len));
+> +	tc_write(VTIM02,
+> +		 FIELD_PREP(VFPR, lower_margin) |
+> +		 FIELD_PREP(VDISPR, mode->vdisplay));
+>  	tc_write(VFUEN0, VFUEN);		/* update settings */
+>  
+>  	/* Test pattern settings */
+>  	tc_write(TSTCTL,
+> -		 (120 << 24) |	/* Red Color component value */
+> -		 (20 << 16) |	/* Green Color component value */
+> -		 (99 << 8) |	/* Blue Color component value */
+> -		 (1 << 4) |	/* Enable I2C Filter */
+> -		 (2 << 0) |	/* Color bar Mode */
+> -		 0);
+> +		 FIELD_PREP(COLOR_R, 120) |
+> +		 FIELD_PREP(COLOR_G, 20) |
+> +		 FIELD_PREP(COLOR_B, 99) |
+> +		 ENI2CFILTER |
+> +		 FIELD_PREP(COLOR_BAR_MODE, COLOR_BAR_MODE_BARS));
+>  
+>  	/* DP Main Stream Attributes */
+>  	vid_sync_dly = hsync_len + left_margin + mode->hdisplay;
+>  	tc_write(DP0_VIDSYNCDELAY,
+> -		 (max_tu_symbol << 16) |	/* thresh_dly */
+> -		 (vid_sync_dly << 0));
+> +		 FIELD_PREP(THRESH_DLY, max_tu_symbol) |
+> +		 FIELD_PREP(VID_SYNC_DLY, vid_sync_dly));
+>  
+> -	tc_write(DP0_TOTALVAL, (mode->vtotal << 16) | (mode->htotal));
+> +	tc_write(DP0_TOTALVAL,
+> +		 FIELD_PREP(H_TOTAL, mode->htotal) |
+> +		 FIELD_PREP(V_TOTAL, mode->vtotal));
+>  
+>  	tc_write(DP0_STARTVAL,
+> -		 ((upper_margin + vsync_len) << 16) |
+> -		 ((left_margin + hsync_len) << 0));
+> +		 FIELD_PREP(H_START, left_margin + hsync_len) |
+> +		 FIELD_PREP(V_START, upper_margin + vsync_len));
+> +
+> +	tc_write(DP0_ACTIVEVAL,
+> +		 FIELD_PREP(V_ACT, mode->vdisplay) |
+> +		 FIELD_PREP(H_ACT, mode->hdisplay));
+> +
+> +	dp0_syncval = FIELD_PREP(VS_WIDTH, vsync_len) |
+> +		      FIELD_PREP(HS_WIDTH, hsync_len);
+> +
+> +	if (mode->flags & DRM_MODE_FLAG_NVSYNC)
+> +		dp0_syncval |= SYNCVAL_VS_POL_ACTIVE_LOW;
+>  
+> -	tc_write(DP0_ACTIVEVAL, (mode->vdisplay << 16) | (mode->hdisplay));
+> +	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
+> +		dp0_syncval |= SYNCVAL_HS_POL_ACTIVE_LOW;
+>  
+> -	tc_write(DP0_SYNCVAL, (vsync_len << 16) | (hsync_len << 0) |
+> -		 ((mode->flags & DRM_MODE_FLAG_NHSYNC) ? SYNCVAL_HS_POL_ACTIVE_LOW : 0) |
+> -		 ((mode->flags & DRM_MODE_FLAG_NVSYNC) ? SYNCVAL_VS_POL_ACTIVE_LOW : 0));
+> +	tc_write(DP0_SYNCVAL, dp0_syncval);
+>  
+> -	tc_write(DPIPXLFMT, VS_POL_ACTIVE_LOW | HS_POL_ACTIVE_LOW |
+> -		 DE_POL_ACTIVE_HIGH | SUB_CFG_TYPE_CONFIG1 | DPI_BPP_RGB888);
+> +	tc_write(DPIPXLFMT,
+> +		 VS_POL_ACTIVE_LOW | HS_POL_ACTIVE_LOW |
+> +		 DE_POL_ACTIVE_HIGH | SUB_CFG_TYPE_CONFIG1 |
+> +		 DPI_BPP_RGB888);
+>  
+> -	tc_write(DP0_MISC, (max_tu_symbol << 23) | (TU_SIZE_RECOMMENDED << 16) |
+> -			   BPC_8);
+> +	tc_write(DP0_MISC,
+> +		 FIELD_PREP(MAX_TU_SYMBOL, max_tu_symbol) |
+> +		 FIELD_PREP(TU_SIZE, TU_SIZE_RECOMMENDED) |
+> +		 BPC_8);
+>  
+>  	return 0;
+>  err:
 
--- 
-cheers,
--roger
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+
