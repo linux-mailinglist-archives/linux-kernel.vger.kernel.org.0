@@ -2,95 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD4CB377C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 17:23:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A26D377C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 17:24:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729297AbfFFPXA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 11:23:00 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32991 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727309AbfFFPXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 11:23:00 -0400
-Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 2DBB8E100CBDDB9E06CD;
-        Thu,  6 Jun 2019 16:22:58 +0100 (IST)
-Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
- (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 6 Jun
- 2019 16:22:48 +0100
-Subject: Re: [PATCH v3 0/2] ima/evm fixes for v5.2
-To:     Mimi Zohar <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
-        <mjg59@google.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <stable@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
-References: <20190606112620.26488-1-roberto.sassu@huawei.com>
- <3711f387-3aef-9fbb-1bb4-dded6807b033@huawei.com>
- <1559832596.4278.124.camel@linux.ibm.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <e5bc45e0-dd61-c2ef-ba51-2bccb7a07676@huawei.com>
-Date:   Thu, 6 Jun 2019 17:22:56 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <1559832596.4278.124.camel@linux.ibm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.220.96.108]
-X-CFilter-Loop: Reflected
+        id S1729307AbfFFPYS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 11:24:18 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39920 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727309AbfFFPYR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 11:24:17 -0400
+Received: by mail-wr1-f66.google.com with SMTP id x4so2872856wrt.6;
+        Thu, 06 Jun 2019 08:24:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:subject:date:message-id;
+        bh=Dw7cSZKWSMHArIj0WE4OX73VU5F8NKFc8iS3jVX8wfA=;
+        b=JKAuMwAUtM3lwNbrNBHRPimCVUS7ar4ByI57V4EzbX/Yl+nxMc+cj4EW6kxdUNL0XZ
+         koDvgghquI7tWBrEXpkXr5BkMB48j7Mz5qjcW1y6Hhhyw9AIBphuIczkzVebcLGUKCyS
+         rOov1wQwEvqn/t8EpnmkRxgpT9/hijreNwX3ZPqH9yRv7SQnW3gIeepx7uDDLmzn6uRK
+         0ao42nX69iIc9qsm3Y3euGD5NRg1NsBccVjjG6uxeQ4xEWfKiIx3MZrLwz72/850tX4d
+         cg3Thxon0hTleGfB1bflvY/mmsYrhlq1rqj3XSBk+m36E9mK4d75S+qJMlf1NCnYDc6q
+         bhjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:subject:date:message-id;
+        bh=Dw7cSZKWSMHArIj0WE4OX73VU5F8NKFc8iS3jVX8wfA=;
+        b=ryaJ373XuayjGFgHr2Idk2OEoEMx/Ek+NEA936v+dtalPym3bIVjmI+cLKCf6ACgCh
+         EPmTUMSbXkc6weWGWw6wu3X8Em38Rqg76m4rZ9vMp42j6jz5nqLEhcU4dJo/WSZFDojQ
+         JiL0dB1SnOXTDT05PDg/p1/FPZYuQ+x5HIrUi4kAmXp3ET876pj3+aZpFSj3UYrEeDKF
+         20fy0/EAUjvOJo66pR1S09PNopr4LFZ2g3Yl0lyYMs+Ksz5Mf6ojwC3j6OfrpFPeNgV+
+         Fad2r27NmRJSE94gD4864uCu8jRFhyMv8evTySp8ms+qcNjHMRIWOcCTiyHiKIYuVhOi
+         7ERA==
+X-Gm-Message-State: APjAAAVfxxc/T/kqZJzuRsCKE73IadZFsAN9gv2P561yu5au4ZAZWMIj
+        dCvsgbJYKz1Wl2nJQi6TL5Z4MD2u
+X-Google-Smtp-Source: APXvYqzpZkC5OsC1ZQmgT2sTgOXps5WBuf7vaWyQ4c6fyFaFBRLWWCveFz57MNXev4TGtkn/W1/4Lg==
+X-Received: by 2002:a5d:518c:: with SMTP id k12mr30501567wrv.322.1559834655328;
+        Thu, 06 Jun 2019 08:24:15 -0700 (PDT)
+Received: from 640k.lan ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id j132sm2641937wmj.21.2019.06.06.08.24.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Jun 2019 08:24:13 -0700 (PDT)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: [PATCH] KVM: nVMX: Rename prepare_vmcs02_*_full to prepare_vmcs02_*_extra
+Date:   Thu,  6 Jun 2019 17:24:12 +0200
+Message-Id: <1559834652-105872-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/6/2019 4:49 PM, Mimi Zohar wrote:
-> On Thu, 2019-06-06 at 13:43 +0200, Roberto Sassu wrote:
->> On 6/6/2019 1:26 PM, Roberto Sassu wrote:
->>> Previous versions included the patch 'ima: don't ignore INTEGRITY_UNKNOWN
->>> EVM status'. However, I realized that this patch cannot be accepted alone
->>> because IMA-Appraisal would deny access to new files created during the
->>> boot. With the current behavior, those files are accessible because they
->>> have a valid security.ima (not protected by EVM) created after the first
->>> write.
->>>
->>> A solution for this problem is to initialize EVM very early with a random
->>> key. Access to created files will be granted, even with the strict
->>> appraisal, because after the first write those files will have both
->>> security.ima and security.evm (HMAC calculated with the random key).
->>>
->>> Strict appraisal will work only if it is done with signatures until the
->>> persistent HMAC key is loaded.
->>
->> Changelog
->>
->> v2:
->> - remove patch 1/3 (evm: check hash algorithm passed to init_desc());
->>     already accepted
->> - remove patch 3/3 (ima: show rules with IMA_INMASK correctly);
->>     already accepted
->> - add new patch (evm: add option to set a random HMAC key at early boot)
->> - patch 2/3: modify patch description
-> 
-> Roberto, as I tried explaining previously, this feature is not a
-> simple bug fix.  These patches, if upstreamed, will be upstreamed the
-> normal way, during an open window.  Whether they are classified as a
-> bug fix has yet to be decided.
+These function do not prepare the entire state of the vmcs02, only the
+rarely needed parts.  Rename them to make this clearer.
 
-Sorry, I understood that I can claim that there is a bug. I provided a
-motivation in patch 2/2.
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ arch/x86/kvm/vmx/nested.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-
-> Please stop Cc'ing stable.  If I don't Cc stable before sending the pull request, then Greg and Sasha have been really good about deciding which patches should be backported.  (Please refer to the comment on "Cc'ing stable" in section "5) Select the recipients for your patch" in Documentation/process/submitting-patches.rst.)
-> 
-> I'll review these patches, but in the future please use an appropriate patch set cover letter title in the subject line.
-
-Ok.
-
-Thanks
-
-Roberto
-
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index 84438cf23d37..fd8150ef6cce 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -1955,7 +1955,7 @@ static void prepare_vmcs02_constant_state(struct vcpu_vmx *vmx)
+ 	vmx_set_constant_host_state(vmx);
+ }
+ 
+-static void prepare_vmcs02_early_full(struct vcpu_vmx *vmx,
++static void prepare_vmcs02_early_extra(struct vcpu_vmx *vmx,
+ 				      struct vmcs12 *vmcs12)
+ {
+ 	prepare_vmcs02_constant_state(vmx);
+@@ -1976,7 +1976,7 @@ static void prepare_vmcs02_early(struct vcpu_vmx *vmx, struct vmcs12 *vmcs12)
+ 	u64 guest_efer = nested_vmx_calc_efer(vmx, vmcs12);
+ 
+ 	if (vmx->nested.dirty_vmcs12 || vmx->nested.hv_evmcs)
+-		prepare_vmcs02_early_full(vmx, vmcs12);
++		prepare_vmcs02_early_extra(vmx, vmcs12);
+ 
+ 	/*
+ 	 * PIN CONTROLS
+@@ -2130,7 +2130,7 @@ static void prepare_vmcs02_early(struct vcpu_vmx *vmx, struct vmcs12 *vmcs12)
+ 	}
+ }
+ 
+-static void prepare_vmcs02_full(struct vcpu_vmx *vmx, struct vmcs12 *vmcs12)
++static void prepare_vmcs02_extra(struct vcpu_vmx *vmx, struct vmcs12 *vmcs12)
+ {
+ 	struct hv_enlightened_vmcs *hv_evmcs = vmx->nested.hv_evmcs;
+ 
+@@ -2254,7 +2254,7 @@ static int prepare_vmcs02(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12,
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+ 
+ 	if (vmx->nested.dirty_vmcs12 || vmx->nested.hv_evmcs) {
+-		prepare_vmcs02_full(vmx, vmcs12);
++		prepare_vmcs02_extra(vmx, vmcs12);
+ 		vmx->nested.dirty_vmcs12 = false;
+ 	}
+ 
 -- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+1.8.3.1
+
