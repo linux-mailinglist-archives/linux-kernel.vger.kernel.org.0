@@ -2,133 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C706437B13
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:30:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3271D37AFB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:25:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727087AbfFFRac (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 13:30:32 -0400
-Received: from swift.blarg.de ([138.201.185.127]:37802 "EHLO swift.blarg.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726924AbfFFRab (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 13:30:31 -0400
-X-Greylist: delayed 348 seconds by postgrey-1.27 at vger.kernel.org; Thu, 06 Jun 2019 13:30:30 EDT
-Received: by swift.blarg.de (Postfix, from userid 1000)
-        id C92E14030F; Thu,  6 Jun 2019 19:24:40 +0200 (CEST)
-Date:   Thu, 6 Jun 2019 19:24:40 +0200
-From:   Max Kellermann <max@blarg.de>
-To:     Justin Piszcz <jpiszcz@lucidpixels.com>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: 5.1 kernel: khugepaged stuck at 100%
-Message-ID: <20190606172440.GA24838@swift.blarg.de>
-Mail-Followup-To: Justin Piszcz <jpiszcz@lucidpixels.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <002901d5064d$42355ea0$c6a01be0$@lucidpixels.com>
- <20190509111343.rvmy5noqlf4os3zk@box>
- <CAO9zADww2v2ckHsNDwRgiyMr9b3JH1xOOSiRJ0Uh2XZT5c=MEQ@mail.gmail.com>
+        id S1730090AbfFFRZT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 13:25:19 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:38967 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726092AbfFFRZT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 13:25:19 -0400
+Received: by mail-it1-f196.google.com with SMTP id j204so1197823ite.4;
+        Thu, 06 Jun 2019 10:25:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=5UhDa0AD+hNx+soQiRSfN1XuRnS+p8xtIL3X+iKjgJo=;
+        b=uEV0kjXOCCHMRDkIr4YZCymggD4KNON6JhvdK0MAGhChgmmNtFozn69cAiCJzoqq79
+         JMP7XNnrNpnfCwYZsPn7IGYc5+ZcIUGOtqKixbpcyQDgTmsuGEYYIX51p2jmG1cF650x
+         Y/o4A7C2lsPrTGMIrnqNXaDIARQLtlXwSL/PNALcPT8AkRGtN0SVKVdhFelNyjtQwKjd
+         cbxyJGtEg9OnEkusQO8z6nPiCFktcMrTFMTfHsh/v7/tc7RIBWMdfHuiCEHqkLcROAVh
+         ZVfBhZY8M0fhfASF8BzGsC27+ZFWYcdIDNjtamwN+fMuwUjcQo2D6Az8g4XLDj6IDt8L
+         eyzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5UhDa0AD+hNx+soQiRSfN1XuRnS+p8xtIL3X+iKjgJo=;
+        b=DwrdUq8gOJt9jAM01qNkFPMz5ypwdlUaGmjZCCoKrT+43AkqzuR7r452hUvn+Sn9e3
+         0V2GAi19JLtM09wM9g0pfcjVIfKPeIjMpFR45b14yWsPJq6dmv+eqc99qJxMwBlYoxwF
+         TMNSa3LzZE5gndQthcBRaZnyLRsblfz6eAxY+ytMnC5eoNr8kiAhiAfKbhnwOqsL1zD8
+         WsfMmvhj2L9RA7WOWcDXdMkl0ye4x/C2rV0P6HYqO9P1IgOyzs/VtHZXnQKI8r65lBdl
+         t1pvVm28JrOUPdGML7O3haXpRlsqTx3UZxbKWAx4ZdQny1uckXDYiZXEvrpRzqQu8tpp
+         ZkWA==
+X-Gm-Message-State: APjAAAWU83aJ9T2Li2pePHKiCUa66I/trxyk4k8DePuM3ZRFvb9FVskp
+        s9eAJoRc5v8KopJICGiiYtFcZM0d
+X-Google-Smtp-Source: APXvYqxCCwMXpknPLc0TvRm7wEEujjH14GVCmWU+SRSU9ATjTmTE7IfVeTSbnfWF3QcrsWrEJsN5Og==
+X-Received: by 2002:a24:5cce:: with SMTP id q197mr954675itb.127.1559841918324;
+        Thu, 06 Jun 2019 10:25:18 -0700 (PDT)
+Received: from [192.168.2.145] ([94.29.35.141])
+        by smtp.googlemail.com with ESMTPSA id q15sm828207ioi.15.2019.06.06.10.25.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Jun 2019 10:25:17 -0700 (PDT)
+Subject: Re: [PATCH] [RFC] dmaengine: add fifo_size member
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Sameer Pujar <spujar@nvidia.com>, Vinod Koul <vkoul@kernel.org>
+Cc:     dan.j.williams@intel.com, tiwai@suse.com,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sharadg@nvidia.com, rlokhande@nvidia.com, dramesh@nvidia.com,
+        mkumard@nvidia.com, linux-tegra <linux-tegra@vger.kernel.org>
+References: <1556623828-21577-1-git-send-email-spujar@nvidia.com>
+ <20190502122506.GP3845@vkoul-mobl.Dlink>
+ <3368d1e1-0d7f-f602-5b96-a978fcf4d91b@nvidia.com>
+ <20190504102304.GZ3845@vkoul-mobl.Dlink>
+ <ce0e9c0b-b909-54ae-9086-a1f0f6be903c@nvidia.com>
+ <20190506155046.GH3845@vkoul-mobl.Dlink>
+ <b7e28e73-7214-f1dc-866f-102410c88323@nvidia.com>
+ <ed95f03a-bbe7-ad62-f2e1-9bfe22ec733a@ti.com>
+ <4cab47d0-41c3-5a87-48e1-d7f085c2e091@nvidia.com>
+ <8a5b84db-c00b-fff4-543f-69d90c245660@nvidia.com>
+ <3f836a10-eaf3-f59b-7170-6fe937cf2e43@ti.com>
+ <a36302fc-3173-070b-5c97-7d2c55d5e2cc@nvidia.com>
+ <a08bec36-b375-6520-eff4-3d847ddfe07d@ti.com>
+ <4593f37c-5e89-8559-4e80-99dbfe4235de@nvidia.com>
+ <deae510a-f6ae-6a51-2875-a7463cac9169@gmail.com>
+ <ac9a965d-0166-3d80-5ac4-ae841d7ae726@nvidia.com>
+ <50e1f9ed-1ea0-38f6-1a77-febd6a3a0848@gmail.com>
+ <4b098fb6-1a5b-1100-ae16-978a887c9535@nvidia.com>
+ <e6741e07-be0c-d16b-36d7-77a3288f0500@gmail.com>
+ <a652b103-979d-7910-5e3f-ec4bca3a3a3b@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <457eb5e1-40cc-8c0f-e21c-3881c3c04de2@gmail.com>
+Date:   Thu, 6 Jun 2019 20:25:14 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAO9zADww2v2ckHsNDwRgiyMr9b3JH1xOOSiRJ0Uh2XZT5c=MEQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <a652b103-979d-7910-5e3f-ec4bca3a3a3b@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/05/16 16:14, Justin Piszcz <jpiszcz@lucidpixels.com> wrote:
-> Kernel: 5.1.2
+06.06.2019 19:53, Jon Hunter пишет:
 > 
-> $ sudo cat /proc/$(pidof khugepaged)/stack
-> [<0>] 0xffffffffffffffff
+> On 06/06/2019 17:44, Dmitry Osipenko wrote:
+>> 06.06.2019 19:32, Jon Hunter пишет:
+>>>
+>>> On 06/06/2019 16:18, Dmitry Osipenko wrote:
+>>>
+>>> ...
+>>>
+>>>>>> If I understood everything correctly, the FIFO buffer is shared among
+>>>>>> all of the ADMA clients and hence it should be up to the ADMA driver to
+>>>>>> manage the quotas of the clients. So if there is only one client that
+>>>>>> uses ADMA at a time, then this client will get a whole FIFO buffer, but
+>>>>>> once another client starts to use ADMA, then the ADMA driver will have
+>>>>>> to reconfigure hardware to split the quotas.
+>>>>>
+>>>>> The FIFO quotas are managed by the ADMAIF driver (does not exist in
+>>>>> mainline currently but we are working to upstream this) because it is
+>>>>> this device that owns and needs to configure the FIFOs. So it is really
+>>>>> a means to pass the information from the ADMAIF to the ADMA.
+>>>>
+>>>> So you'd want to reserve a larger FIFO for an audio channel that has a
+>>>> higher audio rate since it will perform reads more often. You could also
+>>>> prioritize one channel over the others, like in a case of audio call for
+>>>> example.
+>>>>
+>>>> Is the shared buffer smaller than may be needed by clients in a worst
+>>>> case scenario? If you could split the quotas statically such that each
+>>>> client won't ever starve, then seems there is no much need in the
+>>>> dynamic configuration.
+>>>
+>>> Actually, this is still very much relevant for the static case. Even if
+>>> we defined a static configuration of the FIFO mapping in the ADMAIF
+>>> driver we still need to pass this information to the ADMA. I don't
+>>> really like the idea of having it statically defined in two different
+>>> drivers.
+>>
+>> Ah, so you need to apply the same configuration in two places. Correct?
+>>
+>> Are ADMAIF and ADMA really two different hardware blocks? Or you
+>> artificially decoupled the ADMA driver?
 > 
-> $ perf top
-> 
->    PerfTop:    3716 irqs/sec  kernel:92.9%  exact: 99.1% lost: 68/68
-> drop: 0/0 [4000Hz cycles],  (all, 12 CPUs)
-> -------------------------------------------------------------------------------
-> 
->     47.53%  [kernel]                 [k] compaction_alloc
->     38.88%  [kernel]                 [k] __pageblock_pfn_to_page
->      6.68%  [kernel]                 [k] nmi
->      0.58%  [kernel]                 [k] __list_del_entry_valid
->      0.48%  [kernel]                 [k] format_decode
->      0.39%  [kernel]                 [k] __rb_insert_augmented
->      0.25%  libdbus-1.so.3.19.9      [.] _dbus_string_hex_decode
->      0.24%  [kernel]                 [k] entry_SYSCALL_64_after_hwframe
->      0.20%  perf                     [.] rb_next
->      0.19%  perf                     [.] __symbols__insert
+> These are two different hardware modules with their own register sets.
+> Yes otherwise, it would be a lot simpler!
 
-I have the same problem (kernel 5.1.7), but over here, it's a PHP
-process, not khugepaged, which is looping inside compaction_alloc.
-
-This is from "perf report":
-
-   100.00%     0.00%  php-cgi7.0  php-cgi7.0         [.] 0x000055d0e88bc5ee
-            |
-            ---0x55d0e88bc5ee
-               page_fault
-               __do_page_fault
-               handle_mm_fault
-               __handle_mm_fault
-               do_huge_pmd_anonymous_page
-               __alloc_pages_nodemask
-               __alloc_pages_slowpath
-               __alloc_pages_direct_compact
-               try_to_compact_pages
-               compact_zone_order
-               compact_zone
-               migrate_pages
-               compaction_alloc
-               |          
-               |--24.43%--__pageblock_pfn_to_page
-               |          
-                --2.22%--_cond_resched
-                          |          
-                           --0.89%--rcu_all_qs
-
-ftrace:
-
-           <...>-263514 [012] .... 109004.793009: rcu_all_qs <-_cond_resched
-           <...>-263514 [012] .... 109004.793009: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793009: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793009: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793009: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793009: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793009: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793009: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793010: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793010: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793010: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793010: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793010: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793010: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793010: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793010: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793010: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793010: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793010: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793010: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793010: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793011: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793011: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793011: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793011: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793011: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793011: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793011: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793011: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793011: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793011: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793011: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793011: __pageblock_pfn_to_page <-compaction_alloc
-           <...>-263514 [012] .... 109004.793011: _cond_resched <-compaction_alloc
-
-(Repeating this sequence over and over.)
-
-Nothing useful in /proc/263514/{stack,wchan,syscall}.
-
-What else can I do to collect more information to aid fix this?
-
-Max
+The register sets are indeed separated, but it looks like that ADMAIF is
+really a part of ADMA that is facing to Audio Crossbar. No? What is the
+purpose of ADMAIF? Maybe you could amend the ADMA hardware description
+with the ADMAIF addition until it's too late.
