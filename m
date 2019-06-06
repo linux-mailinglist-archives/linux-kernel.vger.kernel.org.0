@@ -2,66 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67BF737B19
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:32:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3AF837B1E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:34:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730162AbfFFRcc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 13:32:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57892 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726924AbfFFRcc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 13:32:32 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C64192083D;
-        Thu,  6 Jun 2019 17:32:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559842351;
-        bh=6Bj6NJLiqPYiupjoKhEXTA+eM9B1Ma8fK74v78tg4IQ=;
-        h=In-Reply-To:References:To:Subject:From:Cc:Date:From;
-        b=Gc5mJ30rK4+KTjujOJr4Un4VN1suuSTTE/l+Gg5brBl7cMnaba3IbDkkiTAx6IN45
-         VytCZ5mWi5eWL0nzGzWrOUQoVEJOp9LkltE1Mz3IzNXk40SHGJWeurDW15Gb16/m+t
-         FEeeBUS4puzIk3Y8N8OvKtWsP67HYCQ9pU9SCxBU=
-Content-Type: text/plain; charset="utf-8"
+        id S1730161AbfFFReZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 13:34:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33886 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726924AbfFFReZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 13:34:25 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5384EAE4D;
+        Thu,  6 Jun 2019 17:34:24 +0000 (UTC)
+Date:   Thu, 6 Jun 2019 19:34:21 +0200
+From:   Oscar Salvador <osalvador@suse.de>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     akpm@linux-foundation.org, Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, linux-mm@kvack.org,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 01/12] mm/sparsemem: Introduce struct mem_section_usage
+Message-ID: <20190606173421.GD31194@linux>
+References: <155977186863.2443951.9036044808311959913.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <155977187407.2443951.16503493275720588454.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <VI1PR07MB4432BB9A401E0202C4D7D948FD070@VI1PR07MB4432.eurprd07.prod.outlook.com>
-References: <VI1PR07MB4432BB9A401E0202C4D7D948FD070@VI1PR07MB4432.eurprd07.prod.outlook.com>
-To:     Philippe Mazenauer <philippe.mazenauer@outlook.de>
-Subject: Re: [PATCH] clk: qcom: clk-rpm: Removed unused macros/variable
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Philippe Mazenauer <philippe.mazenauer@outlook.de>,
-        Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-User-Agent: alot/0.8.1
-Date:   Thu, 06 Jun 2019 10:32:30 -0700
-Message-Id: <20190606173231.C64192083D@mail.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <155977187407.2443951.16503493275720588454.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Philippe Mazenauer (2019-05-21 02:45:25)
-> Removed macros DEFINE_CLK_RPM_PXO_BRANCH, DEFINE_CLK_RPM_CXO_BRANCH and
-> variable 'clk_rpm_branch_ops'. The macros and variable are not used in the
-> file.
->=20
-> As the variable, which is used by the macros, is declared static, the
-> macros can't be used outside the file, are unused.
->=20
-> ../drivers/clk/qcom/clk-rpm.c:461:29: warning: =E2=80=98clk_rpm_branch_op=
-s=E2=80=99 defined but not used [-Wunused-const-variable=3D]
->  static const struct clk_ops clk_rpm_branch_ops =3D {
->                              ^~~~~~~~~~~~~~~~~~
->=20
-> Signed-off-by: Philippe Mazenauer <philippe.mazenauer@outlook.de>
+On Wed, Jun 05, 2019 at 02:57:54PM -0700, Dan Williams wrote:
+> Towards enabling memory hotplug to track partial population of a
+> section, introduce 'struct mem_section_usage'.
+> 
+> A pointer to a 'struct mem_section_usage' instance replaces the existing
+> pointer to a 'pageblock_flags' bitmap. Effectively it adds one more
+> 'unsigned long' beyond the 'pageblock_flags' (usemap) allocation to
+> house a new 'subsection_map' bitmap.  The new bitmap enables the memory
+> hot{plug,remove} implementation to act on incremental sub-divisions of a
+> section.
+> 
+> The default SUBSECTION_SHIFT is chosen to keep the 'subsection_map' no
+> larger than a single 'unsigned long' on the major architectures.
+> Alternatively an architecture can define ARCH_SUBSECTION_SHIFT to
+> override the default PMD_SHIFT. Note that PowerPC needs to use
+> ARCH_SUBSECTION_SHIFT to workaround PMD_SHIFT being a non-constant
+> expression on PowerPC.
+> 
+> The primary motivation for this functionality is to support platforms
+> that mix "System RAM" and "Persistent Memory" within a single section,
+> or multiple PMEM ranges with different mapping lifetimes within a single
+> section. The section restriction for hotplug has caused an ongoing saga
+> of hacks and bugs for devm_memremap_pages() users.
+> 
+> Beyond the fixups to teach existing paths how to retrieve the 'usemap'
+> from a section, and updates to usemap allocation path, there are no
+> expected behavior changes.
+> 
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Logan Gunthorpe <logang@deltatee.com>
+> Cc: Oscar Salvador <osalvador@suse.de>
+> Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 
-Yeah it's dead code but the qcom folks wanted to manage the crystal with
-this code so maybe we should just leave it around for them. Or they
-could dig it out of the git history.
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
 
+-- 
+Oscar Salvador
+SUSE L3
