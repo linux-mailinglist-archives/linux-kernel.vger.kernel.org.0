@@ -2,87 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C497837B0F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:30:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D666A37B15
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:31:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730132AbfFFRaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 13:30:14 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44111 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726762AbfFFRaO (ORCPT
+        id S1728801AbfFFRbB convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 6 Jun 2019 13:31:01 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:47542 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726924AbfFFRbA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 13:30:14 -0400
-Received: by mail-pf1-f193.google.com with SMTP id t16so1910383pfe.11
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 10:30:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=Er5DZ+jmgl4pACBM9mSuCYlxA1ZXYVy+Ri46ksNsKNU=;
-        b=wm/5HuCV6OCqFPMj5n7IL5mdjhSWRNBQjjf7DDWELSUHyHSEkxAJJUzCUh5K1Q/PrT
-         1rU9XPLawCPwYK34YEcRmd16u3HynW0SaTlCWw1xW/8f0xJXLaJFv5Amj8aU+x3jBRGZ
-         OirbFJ6smfoYmqM4vpdeGuUA2Diiozc28Ql/BUymxNlyCnF3U3NuNesy19sKjTxlBCZ9
-         xYkQgCVNc212j+aq83vwctLQsFzBYDYeCb21vGVD1yCTxbTMQZP9cLHvVL8JSwKlQeP+
-         HhhL48FMk2LjvcQQ5bdf6g41dqIbXtWQEnc9Q7xerefNu0gaXl87goSWT899hImcaaCN
-         b4UQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=Er5DZ+jmgl4pACBM9mSuCYlxA1ZXYVy+Ri46ksNsKNU=;
-        b=UgtMgYoCuJEpNLWTZ1BTMw87NNIkJnEqYq+TyTNGuJNwwSW/VJnvh9ItuiTilizF7u
-         XgAPsOddBzqKXBXTFWlZMhg4kXPX9OH+OerJsa23yqllc/sACy88YbcnglQboeVAiQqq
-         2uzmBLPS2z5zbOoJP+LXh3iZl+dEPmolhGhB4dTdzqjU0vzio8huuTXWHZjVxMl/a9bb
-         RAgQ0NSOO9atk57gW8zpsC9FcpodZ+bBLpOKJG1Yc1Tb7XMwiaz9Cj2zG88/VTYsuoLd
-         SvU2NCZjuS1LaZ5n3Rkn/N7LOOgjpAfX1NZSYHMKt8/oJ/eotpqJD4mOT/dZTojbwTCf
-         SmYQ==
-X-Gm-Message-State: APjAAAU/N9YNwxl8lP/1vOZrF9XByPzxIGza5hz57DEM7U7UIqC8reWb
-        i5LoYz1giymdVxDQyqlJqVwQEA==
-X-Google-Smtp-Source: APXvYqxcHDkEaPOHT2K2CyUbipGrVEDze7r7eLCeuaNBURmbKlAo/gGUVa+qM337klyNBaUWwbt8aQ==
-X-Received: by 2002:a17:90a:6505:: with SMTP id i5mr924412pjj.13.1559842213424;
-        Thu, 06 Jun 2019 10:30:13 -0700 (PDT)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.googlemail.com with ESMTPSA id o70sm2769938pfo.33.2019.06.06.10.30.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Jun 2019 10:30:12 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        dri-devel@lists.freedesktop.org
-Cc:     linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH 2/2] drm/meson: fix G12A primary plane disabling
-In-Reply-To: <20190605141253.24165-3-narmstrong@baylibre.com>
-References: <20190605141253.24165-1-narmstrong@baylibre.com> <20190605141253.24165-3-narmstrong@baylibre.com>
-Date:   Thu, 06 Jun 2019 10:30:11 -0700
-Message-ID: <7h1s06ei58.fsf@baylibre.com>
+        Thu, 6 Jun 2019 13:31:00 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1hYwDn-0003iG-8I; Thu, 06 Jun 2019 19:30:39 +0200
+Date:   Thu, 6 Jun 2019 19:30:39 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Borislav Petkov <bp@suse.de>, Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jann Horn <jannh@google.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        kvm ML <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Rik van Riel <riel@surriel.com>, x86-ml <x86@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [5.2 regression] copy_fpstate_to_sigframe() change causing crash
+ in 32-bit process
+Message-ID: <20190606173026.ty7c4cvftrvfrwy3@linutronix.de>
+References: <20190604185358.GA820@sol.localdomain>
+ <20190605140405.2nnpqslnjpfe2ig2@linutronix.de>
+ <20190605173256.GA86462@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20190605173256.GA86462@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Neil Armstrong <narmstrong@baylibre.com> writes:
+On 2019-06-05 10:32:57 [-0700], Eric Biggers wrote:
+> As I said, the commit looks broken to me.  save_fsave_header() reads from
+> tsk->thread.fpu.state.fxsave, which due to that commit isn't being updated with
+> the latest registers.  Am I missing something?  Note the comment you deleted:
 
-> The G12A Primary plane was disabled by writing in the OSD1 configuration
-> registers, but this caused the plane blender to stall instead of continuing
-> blended only the overlay plane.
+So if your system uses fxsr() then that function shouldn't matter. If
+your system uses xsave() (which I believe it does) then the first
+section is the "fxregs state" which is the same as in fxsr's case (see
+struct xregs_state). So it shouldn't make a difference and that is why I
+strongly assumed it is a miss-merge. However it makes a difference…
 
-grammar nit: "...instead of continuing to blend only the overlay plane."
+So the hunk at the end should make things work again (my FPU test case
+passes). I don't know why we convert things forth and back in the signal
+handler but I think something here is different for xsave's legacy area
+vs fxsave.
 
-> Fix this by disabling the OSD1 plane in the blender registers, and also
-> enabling it back using the same register.
->
-> Fixes: 490f50c109d1 ("drm/meson: Add G12A support for OSD1 Plane")
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+index 060d6188b4533..c653c9920c5e0 100644
+--- a/arch/x86/kernel/fpu/signal.c
++++ b/arch/x86/kernel/fpu/signal.c
+@@ -62,16 +62,7 @@ static inline int save_fsave_header(struct task_struct *tsk, void __user *buf)
+ 		struct user_i387_ia32_struct env;
+ 		struct _fpstate_32 __user *fp = buf;
+ 
+-		convert_from_fxsr(&env, tsk);
+-
+-		if (__copy_to_user(buf, &env, sizeof(env)) ||
+-		    __put_user(xsave->i387.swd, &fp->status) ||
+-		    __put_user(X86_FXSR_MAGIC, &fp->magic))
+-			return -1;
+-	} else {
+-		struct fregs_state __user *fp = buf;
+-		u32 swd;
+-		if (__get_user(swd, &fp->swd) || __put_user(swd, &fp->status))
++		if (__put_user(X86_FXSR_MAGIC, &fp->magic))
+ 			return -1;
+ 	}
+ 
+@@ -236,9 +227,6 @@ sanitize_restored_xstate(union fpregs_state *state,
+ 		 * reasons.
+ 		 */
+ 		xsave->i387.mxcsr &= mxcsr_feature_mask;
+-
+-		if (ia32_env)
+-			convert_to_fxsr(&state->fxsave, ia32_env);
+ 	}
+ }
+ 
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+> - Eric
 
-As noted elsewhere, this driver is also full of magic constants used in
-register writes which makes reviewing this kind of change for
-correctness that much more difficult, but since that's already been
-pointed out elsewhere, and it's already on your TODO list, it should not
-block this important fix.
-
-Kevin
+Sebastian
