@@ -2,156 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C55803736F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 13:52:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 100BE37383
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 13:54:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727556AbfFFLw3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 07:52:29 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:36881 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727110AbfFFLw3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 07:52:29 -0400
-Received: by mail-lf1-f68.google.com with SMTP id m15so1325055lfh.4;
-        Thu, 06 Jun 2019 04:52:27 -0700 (PDT)
+        id S1728590AbfFFLyY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 07:54:24 -0400
+Received: from mail-eopbgr700081.outbound.protection.outlook.com ([40.107.70.81]:34497
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727537AbfFFLyX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 07:54:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=zPLkA/L+MT2tb0YKXYeABZbn8ju7XPPpKF8Cm5YcWwY=;
-        b=SMis4RP11BWLAtEAe/AcVwMHUFdHYhwm4lgqJj0zCFzDFTUR7sVzRouZ3qKXRmUYja
-         paWnrgCl3cj4x8z7kACumI+8hKt8DF/heg1hG78OwcUf+kh8PwF8tq1byYJX08dsJv3X
-         QntZqBkewrE/dYemVY1O7w4uzEcagcyrOvUwZXu8mO0PiIYvDkXzxMFXvQ9M8M/3+tTL
-         YtLrwo1tl9cfMvGORPD/ehP2dTXD5hz5SwwV4dFwNsGbK1ebEq4nRpeMhGzp3OVR7sLU
-         GRlSDfhjgCV53vo1/T5fuYezWkQAgNFknivUQoNm9rzG0kQ/jRPvIPnz6jvjNW+XGsgI
-         ukeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zPLkA/L+MT2tb0YKXYeABZbn8ju7XPPpKF8Cm5YcWwY=;
-        b=pK9tNXdSLK1mQf0p5OHLhoRf1SCRbl/UaVjeXkZ58rLV+HYrBuxjmlpBJ/KVw1esFp
-         VwSkIZgvzUOTeaBGb5D+p9751jxiqPx/iaT908yi/oqXGHMxV7Ne+ULCI/dS0auRoxHc
-         lQd6zEcyyGxAXIbB0AGwks4ObxhmELFu2JTfRjscYa00V7a0hTtzivzkclCKILCwOJcq
-         Fw9cjzzn/495eS42EbzNcAUSR7cVdHUERuVXz60g6g7JOlU2RBO9rU6uLmi6JKVJ5yx3
-         cdcDBT6dVSiDOuYnBBn5CKV4MW60wWJgi68lOrCzMDjp8TblMHBvryln9x+mreglvj+n
-         6CNQ==
-X-Gm-Message-State: APjAAAWPRLCM8iXqQeOVw4HLaXIhZFcY3XI5SNoEK/t+/Qea9UYy7RGQ
-        2cW4F41RKVyUHxb2OxfEOuQ=
-X-Google-Smtp-Source: APXvYqzmyOkZXWN5lfsLPAhrNTYEgiBO+5rUSrFZxFIShj+qXgIAvp9nzbLNM129xeNZKqbYHpi8hw==
-X-Received: by 2002:ac2:5922:: with SMTP id v2mr23366649lfi.180.1559821946588;
-        Thu, 06 Jun 2019 04:52:26 -0700 (PDT)
-Received: from [192.168.2.145] ([94.29.35.141])
-        by smtp.googlemail.com with ESMTPSA id e19sm309810ljj.62.2019.06.06.04.52.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Jun 2019 04:52:25 -0700 (PDT)
-Subject: Re: [PATCH V1] i2c: busses: tegra: Add suspend-resume support
-To:     Bitan Biswas <bbiswas@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Shardar Mohammed <smohammed@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>
-References: <1559195718-6693-1-git-send-email-bbiswas@nvidia.com>
- <c8bad04b-67ef-bcdf-04df-4aa61271e81c@gmail.com>
- <9142282b-ab76-53a0-13ce-c43b8adc575f@nvidia.com>
- <4f14a218-332c-0263-c6c5-73a13b2446f0@gmail.com>
- <caa17a53-6f29-411b-9a84-58ff019752ff@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <d5803f1d-0895-08b8-4851-cd8afad830c6@gmail.com>
-Date:   Thu, 6 Jun 2019 14:52:24 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <caa17a53-6f29-411b-9a84-58ff019752ff@nvidia.com>
-Content-Type: text/plain; charset=utf-8
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CigFtLuUQ9PMdS2H3K7Ugrp+Y6WbpJ0+5sJ2nBEWUME=;
+ b=vHtfpIDYYEBkZ4oCh9Iox8aFo1mUPgmSg1oZWFToWs6L4zfuirfBrFC1njLLdJWi5fqenYUOQBJ2UT1BTQmejPnlKj8wfS3avIo9TBlRsaZ6ikfw9K9SH0y8v2WypxdQA7QY896wk0w8cNvuHnpof3Lw8HiGpZ7Bw95UqCz/MNI=
+Received: from CH2PR02MB6088.namprd02.prod.outlook.com (52.132.228.94) by
+ CH2PR02MB6357.namprd02.prod.outlook.com (52.132.231.91) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1943.22; Thu, 6 Jun 2019 11:54:19 +0000
+Received: from CH2PR02MB6088.namprd02.prod.outlook.com
+ ([fe80::3cca:e795:ebe2:b366]) by CH2PR02MB6088.namprd02.prod.outlook.com
+ ([fe80::3cca:e795:ebe2:b366%6]) with mapi id 15.20.1943.018; Thu, 6 Jun 2019
+ 11:54:19 +0000
+From:   Vishal Sagar <vsagar@xilinx.com>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Vishal Sagar <vishal.sagar@xilinx.com>
+CC:     Hyun Kwon <hyunk@xilinx.com>,
+        "laurent.pinchart@ideasonboard.com" 
+        <laurent.pinchart@ideasonboard.com>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        Michal Simek <michals@xilinx.com>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "hans.verkuil@cisco.com" <hans.verkuil@cisco.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Dinesh Kumar <dineshk@xilinx.com>,
+        Sandip Kothari <sandipk@xilinx.com>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        Jacopo Mondi <jacopo@jmondi.org>
+Subject: RE: [PATCH v8 1/2] media: dt-bindings: media: xilinx: Add Xilinx MIPI
+ CSI-2 Rx Subsystem
+Thread-Topic: [PATCH v8 1/2] media: dt-bindings: media: xilinx: Add Xilinx
+ MIPI CSI-2 Rx Subsystem
+Thread-Index: AQHVGfMZOW4cFen74Uu6bLLV7F3ehaaL4iYAgAKizUA=
+Date:   Thu, 6 Jun 2019 11:54:19 +0000
+Message-ID: <CH2PR02MB60889B850DCAA810A772160DA7170@CH2PR02MB6088.namprd02.prod.outlook.com>
+References: <1559555971-193235-1-git-send-email-vishal.sagar@xilinx.com>
+ <1559555971-193235-2-git-send-email-vishal.sagar@xilinx.com>
+ <20190604192344.7tycwffjd3yeizxh@paasikivi.fi.intel.com>
+In-Reply-To: <20190604192344.7tycwffjd3yeizxh@paasikivi.fi.intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=vsagar@xilinx.com; 
+x-originating-ip: [149.199.50.133]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: fa2ca81c-14e9-431b-0358-08d6ea75b54b
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:CH2PR02MB6357;
+x-ms-traffictypediagnostic: CH2PR02MB6357:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <CH2PR02MB6357CDA0A231E4FF76B5F3D5A7170@CH2PR02MB6357.namprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 00603B7EEF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(396003)(346002)(39860400002)(376002)(13464003)(199004)(189003)(86362001)(4326008)(256004)(966005)(229853002)(2906002)(7416002)(76176011)(33656002)(305945005)(6116002)(66556008)(486006)(74316002)(9686003)(71200400001)(68736007)(5660300002)(53936002)(55016002)(6306002)(478600001)(3846002)(71190400001)(316002)(52536014)(14444005)(6636002)(476003)(66946007)(73956011)(76116006)(99286004)(66446008)(6506007)(64756008)(7736002)(7696005)(66476007)(81166006)(446003)(6246003)(66066001)(186003)(11346002)(8676002)(81156014)(26005)(110136005)(54906003)(14454004)(25786009)(6436002)(53546011)(8936002)(102836004);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR02MB6357;H:CH2PR02MB6088.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 3Nnk0tja/JXCddA6qkOASzHWTu2cIrisG1jWl3Ge7HdTdboox6VE7hRcTcwwq8okrY9FOgStG1EB79pb+gWVwRJi/INTqv+hBynDFzF+lHNR8ApsATDLyAHwdlrZ5hyjYu6Qq0Rtqyhp3CTZKNcFLHAEHhMvo8xE8fgoDwRvjerhnJ3NxmD/rzo3fxRD6BaKom3N51E649tcrt5jYptzr1LdWXhIxKlU4uA28HWNtdMQcaSsetNF0i9uDXcO7fPYxDJNLe+oA/O4Mig88Zt3tieB2A1O5KRfzUSUAbLmhJaNMq17MQmX3eRsztrBqMvhVsU/SO6ThmHuSRGlPgzt2xU4UFA8J9QP+hWlWHYuM3sYAxxv7b8cVYjlFfib8OPnplV6Qcc2rdS2MWwaoacBT3v7TXhJee4JxYdQmlyptD0=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fa2ca81c-14e9-431b-0358-08d6ea75b54b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2019 11:54:19.1969
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: vsagar@xilinx.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR02MB6357
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-06.06.2019 8:43, Bitan Biswas пишет:
-> 
-> 
-> On 5/31/19 5:43 AM, Dmitry Osipenko wrote:
->> 31.05.2019 11:50, Bitan Biswas пишет:
->>>
->>>
->>> On 5/30/19 4:27 AM, Dmitry Osipenko wrote:
->>>> 30.05.2019 8:55, Bitan Biswas пишет:
->>>>> Post suspend I2C registers have power on reset values. Before any
->>>>> transfer initialize I2C registers to prevent I2C transfer timeout
->>>>> and implement suspend and resume callbacks needed. Fix below errors
->>>>> post suspend:
->>>>>
->>>>> 1) Tegra I2C transfer timeout during jetson tx2 resume:
->>>>>
->>>>> [   27.520613] pca953x 1-0074: calling pca953x_resume+0x0/0x1b0 @
->>>>> 2939, parent: i2c-1
->>>>> [   27.633623] tegra-i2c 3160000.i2c: i2c transfer timed out
->>>>> [   27.639162] pca953x 1-0074: Unable to sync registers 0x3-0x5. -110
->>>>> [   27.645336] pca953x 1-0074: Failed to sync GPIO dir registers: -110
->>>>> [   27.651596] PM: dpm_run_callback(): pca953x_resume+0x0/0x1b0
->>>>> returns -110
->>>>> [   27.658375] pca953x 1-0074: pca953x_resume+0x0/0x1b0 returned -110
->>>>> after 127152 usecs
->>>>> [   27.666194] PM: Device 1-0074 failed to resume: error -110
->>>>>
->>>>> 2) Tegra I2C transfer timeout error on jetson Xavier post resume.
->>>>>
->>>>> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
->>>>> ---
->>>>>    drivers/i2c/busses/i2c-tegra.c | 24 ++++++++++++++++++++++++
->>>>>    1 file changed, 24 insertions(+)
->>>>>
->>>>> diff --git a/drivers/i2c/busses/i2c-tegra.c
->>>>> b/drivers/i2c/busses/i2c-tegra.c
->>>>> index ebaa78d..f6a377f 100644
->>>>> --- a/drivers/i2c/busses/i2c-tegra.c
->>>>> +++ b/drivers/i2c/busses/i2c-tegra.c
->>>>> @@ -1687,9 +1687,33 @@ static int tegra_i2c_remove(struct
->>>>> platform_device *pdev)
->>>>>    }
->>>>>      #ifdef CONFIG_PM_SLEEP
->>>>> +static int tegra_i2c_suspend(struct device *dev)
->>>>> +{
->>>>> +    struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
->>>>> +
->>>>> +    i2c_mark_adapter_suspended(&i2c_dev->adapter);
->>>>> +
->>>>> +    return 0;
->>>>> +}
->>>>> +
->>>>> +static int tegra_i2c_resume(struct device *dev)
->>>>> +{
->>>>> +    struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
->>>>> +    int ret;
->>>>> +
->>>>> +    i2c_lock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
->>>>> +    ret = tegra_i2c_init(i2c_dev, false);
->>>>> +    i2c_unlock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
->>>>
->>>> Why the locking is needed here?
->>>
->>> async resume could result in stress test issues if some client accesses
->>> the i2c instance. This ensures the i2c instance is locked till the
->>> initialization is complete.
->>
->> 1) This doesn't make much sense.. if client could access I2C during of
->> tegra_i2c_init execution, then what stops it to perform the access
->> before the lock is taken?
-> Client resumes will start after I2C instance resume because of driver
-> dependency. Since lock is the first call in i2c-tegra I believe I2C
-> calls of client will not start.
+Hi Sakari,
 
-You're incorrectly assuming that client can start resuming in the middle
-of the controller's resume process. I2C client's resume won't start
-until tegra_i2c_resume() is finished completely. That is because child
-drivers are resumed only after theirs parent is ready and this is
-guaranteed by the drivers core.
+> -----Original Message-----
+> From: Sakari Ailus [mailto:sakari.ailus@linux.intel.com]
+> Sent: Wednesday, June 05, 2019 12:54 AM
+> To: Vishal Sagar <vishal.sagar@xilinx.com>
+> Cc: Hyun Kwon <hyunk@xilinx.com>; laurent.pinchart@ideasonboard.com;
+> mchehab@kernel.org; robh+dt@kernel.org; mark.rutland@arm.com; Michal
+> Simek <michals@xilinx.com>; linux-media@vger.kernel.org;
+> devicetree@vger.kernel.org; hans.verkuil@cisco.com; linux-arm-
+> kernel@lists.infradead.org; linux-kernel@vger.kernel.org; Dinesh Kumar
+> <dineshk@xilinx.com>; Sandip Kothari <sandipk@xilinx.com>; Luca Ceresoli
+> <luca@lucaceresoli.net>; Jacopo Mondi <jacopo@jmondi.org>
+> Subject: Re: [PATCH v8 1/2] media: dt-bindings: media: xilinx: Add Xilinx=
+ MIPI
+> CSI-2 Rx Subsystem
+>=20
+> EXTERNAL EMAIL
+>=20
+> Hi Vishal,
+>=20
+> On Mon, Jun 03, 2019 at 03:29:30PM +0530, Vishal Sagar wrote:
+>=20
+> > +Optional properties:
+> > +--------------------
+> > +- xlnx,vfb: This is present when Video Format Bridge is enabled.
+> > +  Without this property the driver won't be loaded as IP won't be able=
+ to
+> generate
+> > +  media bus format compliant stream output.
+>=20
+> I think we previously concluded that the format will be just different in
+> this case. So the description appears incorrect.
+>=20
+
+Referring to your email https://lkml.org/lkml/2019/3/22/1823 in response to=
+ v6 patches,
+if the video format bridge is not enabled, then the way in which pixels are=
+ transported on
+the bus don't correspond to the existing media bus formats in Linux.
+
+If not loading the driver is incorrect way, is it ok for the driver to allo=
+w same media bus format
+for packed and unpacked data type on the sink pad?
+
+Or is it ok for the driver to not validate the media bus format set on the =
+sink pad?
+
+> --
+> Sakari Ailus
+> sakari.ailus@linux.intel.com
+
+Regards
+Vishal Sagar
+
