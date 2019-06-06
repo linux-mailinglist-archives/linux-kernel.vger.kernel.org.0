@@ -2,120 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A693E37BAB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:57:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45FB437BB1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:58:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730291AbfFFR44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 13:56:56 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:46448 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728762AbfFFR44 (ORCPT
+        id S1730331AbfFFR6V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 13:58:21 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:35611 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728762AbfFFR6U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 13:56:56 -0400
-Received: by mail-pl1-f196.google.com with SMTP id e5so1205627pls.13
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 10:56:55 -0700 (PDT)
+        Thu, 6 Jun 2019 13:58:20 -0400
+Received: by mail-oi1-f194.google.com with SMTP id y6so2244241oix.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 10:58:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=wg/L+X/jg6qit00t5YFiyAIPQXlMXYdfO4PWqxYv4KM=;
-        b=dA8vBvHVwB5tyIZL6HFsZQA+oM7gbRX2BD/7asX66sUe55DoUOmY3CcZ++I+fKFlFs
-         oRtoMCloCYkyyxraPI/r329rVZdvdMnaYRmrcMERLV9VjuzrrlGBvhJbHs2leafOmQKY
-         x7NgGEAgtwYwYd70a+G1XOdwp/unQ7R3QOhLk=
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=SAoSdsefzzCmPOTzwU+Ovh/O9jS+esAN3o944dSuqEw=;
+        b=HSoGQ9oBJbpQVFMq6qw/Gznzx2dsC1Fj1J8fJOb6uIjOxnsHh0cvPfQGE6lJY/SCqH
+         Lp9PwwdWeY3E7gk4loDyXTryAoKwQSKzzgwrEpVGoPg5dP4Ck8fl2bLDFem7soBZPpeZ
+         IwcgC5DbcmVpcFKDOQkyUjm061GSWy73weQnAbZWXCdH94nB5A3U8OSBKiHYEFR7MPRS
+         WG3+WcslpfNgLS+XD/bYa0BzEkdI1hWhYY1m3CIlJs6hz4kziyfr6S3a7gBcmETiQXms
+         mhcPw5lREw5rAq6rM0Mao+NzxGs+mOTlzfN8bOtANULeRI+9wgRE1mxjS5RUYEx0Gm3P
+         dT9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=wg/L+X/jg6qit00t5YFiyAIPQXlMXYdfO4PWqxYv4KM=;
-        b=HyUhlikbD7fKMbu5yqcRr91of+ekV7jiB7/P0g1FbsIX8+aV8Mzl63eewZ9rAOEQVL
-         pMK5EJg4jdtVauojUWvOzZEUFEAZxNYvUWbr6BGDnd7MTbR7hnP4HEeSRDPJXioBj5AT
-         fapsGsGjUC//B6f4xME3XGhfRQH7dAHFhL0H5shR6cBM0BaGWaxFGHPuBmDAhvxES1Uv
-         q+jcpnw7QsLqVYcjQfca3AHRqtJv1fXUxhkshJw/TeUWFqgOi0SJ/SN1i1VNhIwWSVJo
-         dHGGx1OGZf8qoT2+F5IpDfrJtQUs4uN1f0sUMGIA/etXG07XXku71RTW6R8ONf/X3Gy5
-         E3nA==
-X-Gm-Message-State: APjAAAV1DDtcdRgSC8SB+Pp+l0gCnt2dRhBOuJKEWAL1ITA2LWNITHXc
-        8Y2KPLNp4biNKTOhuAD2fNH5wA==
-X-Google-Smtp-Source: APXvYqwmDqEW/o38wEXDtX8dBjNG0P26I5CKLLWhjKj39nna/Xy2ryhansQqw0pXWqo/EvXbqhoqvg==
-X-Received: by 2002:a17:902:8a83:: with SMTP id p3mr52200787plo.88.1559843815549;
-        Thu, 06 Jun 2019 10:56:55 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id f13sm2645865pfa.182.2019.06.06.10.56.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Jun 2019 10:56:55 -0700 (PDT)
-Date:   Thu, 6 Jun 2019 10:56:54 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Brian Norris <briannorris@chromium.org>
-Subject: Re: [PATCH 2/2] ARM: dts: rockchip: Configure BT_HOST_WAKE as
- wake-up signal on veyron
-Message-ID: <20190606175654.GQ40515@google.com>
-References: <20190605204320.22343-1-mka@chromium.org>
- <20190605212427.GP40515@google.com>
- <2828678.vPWIEPrON5@diego>
- <3394571.WlNFeu2Orz@phil>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=SAoSdsefzzCmPOTzwU+Ovh/O9jS+esAN3o944dSuqEw=;
+        b=A9QcAbcoA+Sgz++TcWvyjO+F4AzjpWPdiYvoeSDc844kaGMBf2NkK6mO6OVE36Ldex
+         LsOuw07Rg3SFa+GLcJwSCj8suSH6cESbZd/HqvxaCnR1ZrDqk4dG7/3RPyqdN3zjC81x
+         izJy/mJJYDa8p+v+eTKheUUErJPiKV8W5Yln9Ah60HM9+RwqefOr/guEHFrBI6mzCieA
+         z9U5tjzVpTkuH1FwzshHEmsWWCT4p3hZ0WJl09uotl18VgUVmQ3HA3jzzE1yBZurqJdF
+         XuPBAgV4ZzojZZnYknCTimhA6ciYCYNUNIWulxvVThDJxv2JgZ1a0RrvrztjIC98EBhi
+         meuQ==
+X-Gm-Message-State: APjAAAWitbHC1lcr3HpSyaGwkKUC0OImbw6zWjAd6JRe6Q8vXAYYrQ4i
+        rNU1fKLq7+R+fPRWl8mAQt8ukAuuzO3kpq/FBjk=
+X-Google-Smtp-Source: APXvYqz4p8Ar5DqB+yirw+d2JX+xhbT3lJgfe/uEtzZxQGloQDNBMSFBolp8uAFWWDNsdOxf3yV1/1F1277+0q/WACw=
+X-Received: by 2002:aca:da54:: with SMTP id r81mr850902oig.89.1559843900253;
+ Thu, 06 Jun 2019 10:58:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3394571.WlNFeu2Orz@phil>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a4a:6b09:0:0:0:0:0 with HTTP; Thu, 6 Jun 2019 10:58:19 -0700 (PDT)
+Reply-To: eddywilliam0003@gmail.com
+From:   eddy william <fiacregnansa@gmail.com>
+Date:   Thu, 6 Jun 2019 19:58:19 +0200
+Message-ID: <CANUG11-a5WqDi+2gOF2PpN98tuqsDXpo+P5sfy46=2x7QUvaFg@mail.gmail.com>
+Subject: hello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 12:46:03PM +0200, Heiko Stuebner wrote:
-> Am Mittwoch, 5. Juni 2019, 23:52:00 CEST schrieb Heiko Stübner:
-> > Am Mittwoch, 5. Juni 2019, 23:24:27 CEST schrieb Matthias Kaehlcke:
-> > > On Wed, Jun 05, 2019 at 11:11:12PM +0200, Heiko Stübner wrote:
-> > > > Am Mittwoch, 5. Juni 2019, 22:43:20 CEST schrieb Matthias Kaehlcke:
-> > > > > This enables wake up on Bluetooth activity when the device is
-> > > > > suspended. The BT_HOST_WAKE signal is only connected on devices
-> > > > > with BT module that are connected through UART.
-> > > > > 
-> > > > > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > > > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > > > 
-> > > > Housekeeping question, with the two Signed-off-by lines, is Doug the
-> > > > original author, or was this Co-developer-by?
-> > > 
-> > > Good question, it's derived from Doug's patch for CrOS 3.14 and
-> > > https://crrev.com/c/1575556 also from Doug. Let's say I did the
-> > > porting to upstream, but I'm pretty sure Doug spent more time on it.
-> > > 
-> > > Maybe I should resend it with Doug as author and include the original
-> > > commit message, which has more information.
-> > 
-> > It's just that the first Signed-off should be from the original author.
-> > (And the sender the second)
-> > In the co-developed-by case (see Kernel documentation) the order
-> > doesn't matter.
-> 
-> Holding off on this patch till we could clarify the authorship.
+Mijn naam is Eddy William. Ik ben van beroep advocaat. Ik wil je aanbieden
+nabestaanden van mijn cli=C3=ABnt. Je ervaart de som van ($ 14,2 miljoen)
+dollars die mijn cli=C3=ABnt voor zijn overlijden op de bank heeft achterge=
+laten.
 
-I'd say let's attribute the authorship to Doug. FTR, the original
-downstream Chrome OS patch is https://crrev.com/c/278190.
+Mijn klant is een burger van jouw land die stierf in auto-ongeluk met zijn =
+vrouw
+en alleen zoon. Ik krijg 50% van het totale fonds en 50% wel
+voor jou zijn.
 
-Not sure if the information in the commit message of the original
-patch is relevant for the upstream version, in the end it seems LPM
-was never implemented, so it should be sufficient to say what is
-actually done today.
+Neem hier voor meer informatie contact op met mijn priv=C3=A9mail:
+eddywilliam0002@gmail.com
 
-In summary, I propose to take the patch with the current commit
-message, with Doug as the author. Heiko, can you change the authorship
-or should I send a new version?
+Bij voorbaat hartelijk dank,
+Eddy William,
 
-Doug if you have objections or want updates in the commit message
-(yours tend to be more verbose ;-), holler.
 
-Thanks
 
-Matthias
+Hello
+
+My name is Eddy William I am a lawyer by profession. I wish to offer you
+the next of kin to my client. You will inherit the sum of ($14.2 Million)
+dollars my client left in the bank before his death.
+
+My client is a citizen of your country who died in auto crash with his wife
+and only son. I will be entitled with 50% of the total fund while 50% will
+be for you.
+
+Please contact my private email here for more details:eddywilliam0002@gmail=
+.com
+
+Many thanks in advance,
+Mr.Eddy William,
