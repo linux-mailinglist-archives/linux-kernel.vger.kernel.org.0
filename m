@@ -2,105 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F3A136CFD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 09:08:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0690136D08
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 09:09:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726791AbfFFHIL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 03:08:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43036 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725782AbfFFHIK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 03:08:10 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3CDA2083D;
-        Thu,  6 Jun 2019 07:08:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559804889;
-        bh=sOq1aIPwoGF1dlKwf8g6qXJnPdLXODwo9qjIaiPRjr4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VmXsfdmVy+fYk40zwh0ypfxRSF+bHgzmqyKHAiM+pwFTnrkAYrmCy4z6OTf5t0zFp
-         +i6i3PMpxynsI4LQIarHQz/erzaloaH+NgO6vu4I8GL0Ug4OinVxnYitknMlGd1KDv
-         5OIG5iFXvxUcXdZFqCU1PpD43K9Fp16HZ8wVeVgo=
-Date:   Thu, 6 Jun 2019 09:08:07 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Rolf Eike Beer <eb@emlix.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Subject: Re: Building arm64 EFI stub with -fpie breaks build of 4.9.x
- (undefined reference to `__efistub__GLOBAL_OFFSET_TABLE_')
-Message-ID: <20190606070807.GA17985@kroah.com>
-References: <779905244.a0lJJiZRjM@devpool35>
- <20190605162626.GA31164@kroah.com>
- <CAKv+Gu9QkKwNVpfpQP7uDd2-66jU=qkeA7=0RAoO4TNaSbG+tg@mail.gmail.com>
- <CAKwvOdnPcjESFrQRR_=cCVag3ZSnC0nBqF7+LFHrcDArT_segA@mail.gmail.com>
- <CAKv+Gu9Leaq_s2kVNzHx+zkdKFXgQVkouN3M56u5nou5WX=cKg@mail.gmail.com>
+        id S1726743AbfFFHJu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 03:09:50 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:25138 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbfFFHJu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 03:09:50 -0400
+Received-SPF: SoftFail (esa6.microchip.iphmx.com: domain of
+  kelvin.cao@microchip.com is inclined to not designate
+  208.19.100.22 as permitted sender) identity=mailfrom;
+  client-ip=208.19.100.22; receiver=esa6.microchip.iphmx.com;
+  envelope-from="kelvin.cao@microchip.com";
+  x-sender="kelvin.cao@microchip.com"; x-conformance=spf_only;
+  x-record-type="v=spf1"; x-record-text="v=spf1 mx
+  a:ushub1.microchip.com a:smtpout.microchip.com
+  a:mx1.microchip.iphmx.com a:mx2.microchip.iphmx.com
+  include:servers.mcsv.net include:mktomail.com
+  include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa6.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@smtp.microsemi.com) identity=helo;
+  client-ip=208.19.100.22; receiver=esa6.microchip.iphmx.com;
+  envelope-from="kelvin.cao@microchip.com";
+  x-sender="postmaster@smtp.microsemi.com";
+  x-conformance=spf_only
+Authentication-Results: esa6.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=kelvin.cao@microchip.com; spf=None smtp.helo=postmaster@smtp.microsemi.com; dmarc=fail (p=none dis=none) d=microchip.com
+X-IronPort-AV: E=Sophos;i="5.63,558,1557212400"; 
+   d="scan'208";a="33318213"
+Received: from unknown (HELO smtp.microsemi.com) ([208.19.100.22])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 06 Jun 2019 00:09:49 -0700
+Received: from AVMBX3.microsemi.net (10.100.34.33) by AVMBX2.microsemi.net
+ (10.100.34.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Thu, 6 Jun 2019
+ 00:09:48 -0700
+Received: from AVMBX3.microsemi.net (10.100.34.33) by AVMBX3.microsemi.net
+ (10.100.34.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Thu, 6 Jun 2019
+ 00:09:48 -0700
+Received: from NTB-Peer.microsemi.net (10.188.116.183) by avmbx3.microsemi.net
+ (10.100.34.33) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
+ Transport; Thu, 6 Jun 2019 00:09:45 -0700
+From:   Kelvin Cao <kelvin.cao@microchip.com>
+To:     <kurt.schwemmer@microsemi.com>, <logang@deltatee.com>,
+        <jdmason@kudzu.us>, <dave.jiang@intel.com>, <allenbh@gmail.com>,
+        <linux-pci@vger.kernel.org>, <linux-ntb@googlegroups.com>,
+        <linux-kernel@vger.kernel.org>
+CC:     <kelvin.cao@microchip.com>, <kelvincao@outlook.com>
+Subject: [PATCH 0/3] Redundant steps removal and bug fix of ntb_hw_switchtec
+Date:   Thu, 6 Jun 2019 15:09:41 +0800
+Message-ID: <1559804984-24698-1-git-send-email-kelvin.cao@microchip.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu9Leaq_s2kVNzHx+zkdKFXgQVkouN3M56u5nou5WX=cKg@mail.gmail.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 08:55:29AM +0200, Ard Biesheuvel wrote:
-> On Wed, 5 Jun 2019 at 22:48, Nick Desaulniers <ndesaulniers@google.com> wrote:
-> >
-> > On Wed, Jun 5, 2019 at 11:42 AM Ard Biesheuvel
-> > <ard.biesheuvel@linaro.org> wrote:
-> > > For the record, this is an example of why I think backporting those
-> > > clang enablement patches is a bad idea.
-> >
-> > There's always a risk involved with backports of any kind; more CI
-> > coverage can help us mitigate some of these risks in an automated
-> > fashion before we get user reports like this.  I meet with the
-> > KernelCI folks weekly, so I'll double check on the coverage of the
-> > stable tree's branches.  The 0day folks are also very responsive and
-> > I've spoken with them a few times, so I'll try to get to the bottom of
-> > why this wasn't reported by either of those.
-> >
-> > Also, these patches help keep Android, CrOS, and Google internal
-> > production kernels closer to their upstream sources.
-> >
-> > > We can't actually build those
-> > > kernels with clang, can we? So what is the point? </grumpy>
-> >
-> > Here's last night's build:
-> > https://travis-ci.com/ClangBuiltLinux/continuous-integration/builds/114388434
-> >
-> 
-> If you are saying that plain upstream 4.9-stable defconfig can be
-> built with Clang, then I am pleasantly surprised.
+Hi, Everyone,
 
-I know some specific configs can, there's no rule that I know of that
-'defconfig' support is required.  But then again, it might also work,
-try it and see :)
+This patch series remove redundant steps and fix one bug of the 
+ntb_hw_switchtec module.
 
-> > Also, Android and CrOS have shipped X million devices w/ 4.9 kernels
-> > built with Clang.  I think this number will grow at least one order of
-> > magnitude imminently.
-> >
-> 
-> I know that (since you keep reminding me :-)), but obviously, Google
-> does not care about changes that regress GCC support.
+When a re-initialization is caused by a link event, the driver will
+re-setup the shared memory windows. But at that time, the shared memory
+is still valid, and it's unnecessary to free, reallocate and then
+initialize it again. Remove these redundant steps.
 
-What are you talking about?  Bugs happen all the time, what specifically
-did "Google" do to break gcc support?  If you are referring to this
-patch, and it is a regression, of course I will revert it.  But note
-that gcc and 4.9 works just fine for all of the other users right now,
-remember we do do a lot of testing of these releases.
+In case of NTB crosslink topology, the setting of shared memory window
+in the virtual partition doesn't reset on peer's reboot. So skip the
+re-setup of shared memory window for that case.
 
-thanks,
+Switchtec does not support setting multiple MWs simultaneously. However,
+there's a race condition when a re-initialization is caused by a link 
+event, the driver will re-setup the shared memory window asynchronously
+and this races with the client setting up its memory windows on the 
+link up event. Fix this by ensure do the entire initialization in a work
+queue and signal the client once it's done. 
 
-greg k-h
+Regard,
+Kelvin
+
+--
+
+Changed since v1:
+  - It's a second resend of v1
+
+--
+
+Joey Zhang (2):
+  ntb_hw_switchtec: Remove redundant steps of
+    switchtec_ntb_reinit_peer() function
+  ntb_hw_switchtec: Fix setup MW with failure bug
+
+Wesley Sheng (1):
+  ntb_hw_switchtec: Skip unnecessary re-setup of shared memory window
+    for crosslink case
+
+ drivers/ntb/hw/mscc/ntb_hw_switchtec.c | 80 +++++++++++++++++++++-------------
+ 1 file changed, 49 insertions(+), 31 deletions(-)
+
+-- 
+2.7.4
+
