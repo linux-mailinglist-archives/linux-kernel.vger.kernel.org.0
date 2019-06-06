@@ -2,91 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CEC936A1A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 04:40:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 070AD36A24
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 04:47:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726708AbfFFCkY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 22:40:24 -0400
-Received: from foss.arm.com ([217.140.101.70]:40040 "EHLO foss.arm.com"
+        id S1726604AbfFFCrz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 22:47:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725783AbfFFCkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 22:40:23 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B927480D;
-        Wed,  5 Jun 2019 19:40:22 -0700 (PDT)
-Received: from [10.162.43.122] (p8cg001049571a15.blr.arm.com [10.162.43.122])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 881D23F690;
-        Wed,  5 Jun 2019 19:40:12 -0700 (PDT)
-Subject: Re: [RFC V2] mm: Generalize notify_page_fault()
-To:     Matthew Wilcox <willy@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        x86@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        "David S. Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-References: <1559630046-12940-1-git-send-email-anshuman.khandual@arm.com>
- <87sgsomg91.fsf@concordia.ellerman.id.au>
- <20190605112328.GB2025@bombadil.infradead.org>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <bc89341a-a2b6-bd34-d342-b46f6e902a7c@arm.com>
-Date:   Thu, 6 Jun 2019 08:10:28 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726427AbfFFCrz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 22:47:55 -0400
+Received: from dragon (li1264-180.members.linode.com [45.79.165.180])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A600A20684;
+        Thu,  6 Jun 2019 02:47:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559789274;
+        bh=+MwTvxbeyR43AvjkDTTFN/CTZFvCYYxViVY1qhfn7gg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VnFq4myrIEwfsdgcKq8f7jMPDLWwi2QIWPzypddKAc8XmCbstWNFjlYAbiU3i4DQT
+         7rpVlOww+ecBDtJyuCXN0Gr0jGpkraG+Pyy+rdE9QjpBLkLlYpBRhreYxJ6oTeivwD
+         Vix7ivQFZd19t5/IYR1x32aCBJSuVw55pVh2Ox5Q=
+Date:   Thu, 6 Jun 2019 10:47:36 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson.Huang@nxp.com
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, leonard.crestez@nxp.com,
+        ping.bai@nxp.com, daniel.baluta@nxp.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
+Subject: Re: [PATCH RESEND] arm64: dts: imx8mm: Move gic node into soc node
+Message-ID: <20190606024735.GX29853@dragon>
+References: <20190606023936.25543-1-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <20190605112328.GB2025@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190606023936.25543-1-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 06/05/2019 04:53 PM, Matthew Wilcox wrote:
-> On Wed, Jun 05, 2019 at 09:19:22PM +1000, Michael Ellerman wrote:
->> Anshuman Khandual <anshuman.khandual@arm.com> writes:
->>> Similar notify_page_fault() definitions are being used by architectures
->>> duplicating much of the same code. This attempts to unify them into a
->>> single implementation, generalize it and then move it to a common place.
->>> kprobes_built_in() can detect CONFIG_KPROBES, hence notify_page_fault()
->>> need not be wrapped again within CONFIG_KPROBES. Trap number argument can
->>> now contain upto an 'unsigned int' accommodating all possible platforms.
->> ...
->>
->> You've changed several of the architectures from something like above,
->> where it disables preemption around the call into the below:
->>
->>
->> Which skips everything if we're preemptible. Is that an equivalent
->> change? If so can you please explain why in more detail.
+On Thu, Jun 06, 2019 at 10:39:36AM +0800, Anson.Huang@nxp.com wrote:
+> From: Anson Huang <Anson.Huang@nxp.com>
 > 
-> See the discussion in v1 of this patch, which you were cc'd on.
+> GIC is inside of SoC from architecture perspective, it should
+> be located inside of soc node in DT.
 > 
-> I agree the description here completely fails to mention why the change.
-> It should mention commit a980c0ef9f6d8c.
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-I will update the commit message to include an explanation for this new
-preempt behavior in the generic definition.
+Applied, thanks.
