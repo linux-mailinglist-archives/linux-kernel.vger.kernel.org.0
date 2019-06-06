@@ -2,116 +2,221 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 615EA36D70
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 09:38:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9048136E5B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 10:18:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbfFFHit (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 03:38:49 -0400
-Received: from mx1.emlix.com ([188.40.240.192]:35430 "EHLO mx1.emlix.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725769AbfFFHis (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 03:38:48 -0400
-Received: from mailer.emlix.com (unknown [81.20.119.6])
-        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx1.emlix.com (Postfix) with ESMTPS id 30E24602BA;
-        Thu,  6 Jun 2019 09:38:45 +0200 (CEST)
-From:   Rolf Eike Beer <eb@emlix.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org,
-        Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
-        stable@vger.kernel.org
-Subject: Re: Building arm64 EFI stub with -fpie breaks build of 4.9.x (undefined reference to `__efistub__GLOBAL_OFFSET_TABLE_')
-Date:   Thu, 06 Jun 2019 09:38:41 +0200
-Message-ID: <8696846.WsthzzWoxp@devpool35>
-Organization: emlix GmbH
-In-Reply-To: <20190605162626.GA31164@kroah.com>
-References: <779905244.a0lJJiZRjM@devpool35> <20190605162626.GA31164@kroah.com>
+        id S1727188AbfFFISH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 04:18:07 -0400
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:58092 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726952AbfFFISH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 04:18:07 -0400
+Received: from relay11.mail.gandi.net (unknown [217.70.178.231])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id AC74B3A136A;
+        Thu,  6 Jun 2019 07:40:53 +0000 (UTC)
+Received: from localhost (aaubervilliers-681-1-24-139.w90-88.abo.wanadoo.fr [90.88.144.139])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 17C8310000E;
+        Thu,  6 Jun 2019 07:40:36 +0000 (UTC)
+Date:   Thu, 6 Jun 2019 09:40:36 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Anson.Huang@nxp.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com,
+        will.deacon@arm.com, olof@lixom.net, jagan@amarulasolutions.com,
+        horms+renesas@verge.net.au, bjorn.andersson@linaro.org,
+        leonard.crestez@nxp.com, dinguyen@kernel.org,
+        enric.balletbo@collabora.com, aisheng.dong@nxp.com,
+        abel.vesa@nxp.com, ping.bai@nxp.com, l.stach@pengutronix.de,
+        peng.fan@nxp.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
+Subject: Re: [PATCH V4 1/4] dt-bindings: imx: Add clock binding doc for
+ i.MX8MN
+Message-ID: <20190606074036.vx2smtauiwxy6wzx@flea>
+References: <20190606013323.3392-1-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart6100540.dV2z5JSdMG"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="lbx5fpk47vlzcrms"
+Content-Disposition: inline
+In-Reply-To: <20190606013323.3392-1-Anson.Huang@nxp.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---nextPart6100540.dV2z5JSdMG
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
 
-Greg KH wrote:
-> On Wed, Jun 05, 2019 at 05:19:40PM +0200, Rolf Eike Beer wrote:
-> > I decided to dig out a toy project which uses a DragonBoard 410c. This =
-has
-> > been "running" with kernel 4.9, which I would keep this way for unrelat=
-ed
-> > reasons. The vanilla 4.9 kernel wasn't bootable back then, but it was
-> > buildable, which was good enough.
-> >=20
-> > Upgrading the kernel to 4.9.180 caused the boot to suddenly fail:
-> >=20
-> > aarch64-unknown-linux-gnueabi-ld:
-> > ./drivers/firmware/efi/libstub/lib.a(arm64- stub.stub.o): in function
-> > `handle_kernel_image':
-> > /tmp/e2/build/linux-4.9.139/drivers/firmware/efi/libstub/arm64-stub.c:6=
-3:
-> > undefined reference to `__efistub__GLOBAL_OFFSET_TABLE_'
-> > aarch64-unknown-linux-gnueabi-ld:
-> > ./drivers/firmware/efi/libstub/lib.a(arm64- stub.stub.o): relocation
-> > R_AARCH64_ADR_PREL_PG_HI21 against symbol
-> > `__efistub__GLOBAL_OFFSET_TABLE_' which may bind externally can not be
-> > used when making a shared object; recompile with -fPIC
-> > /tmp/e2/build/linux-4.9.139/drivers/firmware/efi/libstub/arm64-stub.c:6=
-3:
-> > (.init.text+0xc): dangerous relocation: unsupported relocation
-> > /tmp/e2/build/linux-4.9.139/Makefile:1001: recipe for target 'vmlinux'
-> > failed -make[1]: *** [vmlinux] Error 1
-> >=20
-> > This is caused by commit 27b5ebf61818749b3568354c64a8ec2d9cd5ecca from
-> > linux-4.9.y (which is 91ee5b21ee026c49e4e7483de69b55b8b47042be), revert=
-ing
-> > this commit fixes the build.
-> >=20
-> > This happens with vanilla binutils 2.32 and gcc 8.3.0 as well as 9.1.0.
-> > See
-> > the attached .config for reference.
-> >=20
-> > If you have questions or patches just ping me.
->=20
-> Does Linus's latest tree also fail for you (or 5.1)?
+--lbx5fpk47vlzcrms
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-5.1.7 with the same config as before and "make olddefconfig" builds for me.
+Hi,
 
-Eike
-=2D-=20
-Rolf Eike Beer, emlix GmbH, http://www.emlix.com
-=46on +49 551 30664-0, Fax +49 551 30664-11
-Gothaer Platz 3, 37083 G=C3=B6ttingen, Germany
-Sitz der Gesellschaft: G=C3=B6ttingen, Amtsgericht G=C3=B6ttingen HR B 3160
-Gesch=C3=A4ftsf=C3=BChrung: Heike Jordan, Dr. Uwe Kracke =E2=80=93 Ust-IdNr=
-=2E: DE 205 198 055
+On Thu, Jun 06, 2019 at 09:33:20AM +0800, Anson.Huang@nxp.com wrote:
+> From: Anson Huang <Anson.Huang@nxp.com>
+>
+> Add the clock binding doc for i.MX8MN.
+>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+> Changes since V3:
+> 	- switch binding doc from .txt to .yaml.
+> ---
+>  .../devicetree/bindings/clock/imx8mn-clock.yaml    | 115 +++++++++++
+>  include/dt-bindings/clock/imx8mn-clock.h           | 215 +++++++++++++++++++++
+>  2 files changed, 330 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
+>  create mode 100644 include/dt-bindings/clock/imx8mn-clock.h
+>
+> diff --git a/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml b/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
+> new file mode 100644
+> index 0000000..8cb8fcf
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
+> @@ -0,0 +1,115 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/bindings/clock/imx8mn-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP i.MX8M Nano Clock Control Module Binding
+> +
+> +maintainers:
+> +  - Anson Huang <Anson.Huang@nxp.com>
+> +
+> +description: |
+> +  NXP i.MX8M Nano clock control module is an integrated clock controller, which
+> +  generates and supplies to all modules.
+> +
+> +  This binding uses common clock bindings
+> +  [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
 
-emlix - smart embedded open source
---nextPart6100540.dV2z5JSdMG
+Which part exactly are you using?
+
+I'm not sure it's worth referring to. Any provider property should be
+listed here, and the consumer properties are already checked.
+
+> +properties:
+> +  compatible:
+> +    const: fsl,imx8mn-ccm
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: 32k osc
+> +      - description: 24m osc
+> +      - description: ext1 clock input
+> +      - description: ext2 clock input
+> +      - description: ext3 clock input
+> +      - description: ext4 clock input
+> +
+> +  clock-names:
+> +    items:
+> +      - const: osc_32k
+> +      - const: osc_24m
+> +      - const: clk_ext1
+> +      - const: clk_ext2
+> +      - const: clk_ext3
+> +      - const: clk_ext4
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+> +
+> +examples:
+> +  # Clock Control Module node:
+> +  - |
+> +    clk: clock-controller@30380000 {
+> +        compatible = "fsl,imx8mn-ccm";
+> +        reg = <0x0 0x30380000 0x0 0x10000>;
+> +        #clock-cells = <1>;
+> +        clocks = <&osc_32k>, <&osc_24m>, <&clk_ext1>,
+> +                 <&clk_ext2>, <&clk_ext3>, <&clk_ext4>;
+> +        clock-names = "osc_32k", "osc_24m", "clk_ext1",
+> +                      "clk_ext2", "clk_ext3", "clk_ext4";
+> +    };
+> +
+> +  # Required external clocks for Clock Control Module node:
+> +  - |
+> +    osc_32k: clock-osc-32k {
+> +        compatible = "fixed-clock";
+> +        #clock-cells = <0>;
+> +        clock-frequency = <32768>;
+> +	clock-output-names = "osc_32k";
+> +    };
+> +
+> +    osc_24m: clock-osc-24m {
+> +        compatible = "fixed-clock";
+> +        #clock-cells = <0>;
+> +        clock-frequency = <24000000>;
+> +        clock-output-names = "osc_24m";
+> +    };
+> +
+> +    clk_ext1: clock-ext1 {
+> +        compatible = "fixed-clock";
+> +        #clock-cells = <0>;
+> +        clock-frequency = <133000000>;
+> +        clock-output-names = "clk_ext1";
+> +    };
+> +
+> +    clk_ext2: clock-ext2 {
+> +        compatible = "fixed-clock";
+> +        #clock-cells = <0>;
+> +        clock-frequency = <133000000>;
+> +        clock-output-names = "clk_ext2";
+> +    };
+> +
+> +    clk_ext3: clock-ext3 {
+> +        compatible = "fixed-clock";
+> +        #clock-cells = <0>;
+> +        clock-frequency = <133000000>;
+> +        clock-output-names = "clk_ext3";
+> +    };
+> +
+> +    clk_ext4: clock-ext4 {
+> +        compatible = "fixed-clock";
+> +        #clock-cells = <0>;
+> +        clock-frequency= <133000000>;
+> +        clock-output-names = "clk_ext4";
+> +    };
+> +
+> +  # The clock consumer should specify the desired clock by having the clock
+> +  # ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx8mn-clock.h
+> +  # for the full list of i.MX8M Nano clock IDs.
+
+I guess this could be part of the clock-cells description.
+
+Once fixed,
+Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
+
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--lbx5fpk47vlzcrms
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iLMEAAEIAB0WIQQ/Uctzh31xzAxFCLur5FH7Xu2t/AUCXPjDAQAKCRCr5FH7Xu2t
-/Pl6BACfD5jQd+TumD4sWaBGoQsHiYGBBixaf/rbCWtituWSjO/lhxnHM7JNGGhU
-nwqqGrCEw9HpBR5bUXCTpgfF7C11ZD8nXYlDTwBIBWH7HKYFBaGrub8PXCyiZH9v
-cyC8ctpHj9k/PeZ+tLq+Aie9x4uIlKJVgfTHwAygDH4CD5j5mg==
-=WMEf
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXPjDdAAKCRDj7w1vZxhR
+xQf4AQDGmVlx49YWe4vIu1dehv4zttFw3oRaIsMiDSi4vzwyMQEA+e7hg+RgrL4i
+6aPykXgdE5sTJox+CRpk+KGv3Ovk3AU=
+=kpoe
 -----END PGP SIGNATURE-----
 
---nextPart6100540.dV2z5JSdMG--
-
-
-
+--lbx5fpk47vlzcrms--
