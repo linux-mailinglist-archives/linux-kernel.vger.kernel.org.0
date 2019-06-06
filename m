@@ -2,61 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E39136C33
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 08:25:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7663536C41
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 08:29:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbfFFGZJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 02:25:09 -0400
-Received: from verein.lst.de ([213.95.11.211]:47303 "EHLO newverein.lst.de"
+        id S1726554AbfFFG3H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 02:29:07 -0400
+Received: from verein.lst.de ([213.95.11.211]:47324 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725267AbfFFGZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 02:25:09 -0400
+        id S1725267AbfFFG3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 02:29:07 -0400
 Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 4448768B05; Thu,  6 Jun 2019 08:24:41 +0200 (CEST)
-Date:   Thu, 6 Jun 2019 08:24:41 +0200
+        id 9166C68B05; Thu,  6 Jun 2019 08:28:40 +0200 (CEST)
+Date:   Thu, 6 Jun 2019 08:28:40 +0200
 From:   Christoph Hellwig <hch@lst.de>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Sebastian Ott <sebott@linux.ibm.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Oliver Neukum <oneukum@suse.com>, linux-block@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
-        megaraidlinux.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com,
-        linux-hyperv@vger.kernel.org, linux-usb@vger.kernel.org,
-        usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/13] IB/iser: set virt_boundary_mask in the scsi host
-Message-ID: <20190606062441.GB26745@lst.de>
-References: <20190605190836.32354-1-hch@lst.de> <20190605190836.32354-9-hch@lst.de> <20190605202235.GC3273@ziepe.ca>
+To:     Nicolin Chen <nicoleotsuka@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>
+Cc:     joro@8bytes.org, hch@lst.de, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iommu/dma: Apply dma_{alloc,free}_contiguous functions
+Message-ID: <20190606062840.GD26745@lst.de>
+References: <20190603225259.21994-1-nicoleotsuka@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190605202235.GC3273@ziepe.ca>
+In-Reply-To: <20190603225259.21994-1-nicoleotsuka@gmail.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 05, 2019 at 05:22:35PM -0300, Jason Gunthorpe wrote:
-> On Wed, Jun 05, 2019 at 09:08:31PM +0200, Christoph Hellwig wrote:
-> > This ensures all proper DMA layer handling is taken care of by the
-> > SCSI midlayer.
-> 
-> Maybe not entirely related to this series, but it looks like the SCSI
-> layer is changing the device global dma_set_max_seg_size() - at least
-> in RDMA the dma device is being shared between many users, so we
-> really don't want SCSI to make this value smaller.
-> 
-> Can we do something about this?
+Looks fine to me.  Robin, any comments?
 
-We could do something about it as outlined in my mail - pass the
-dma_params explicitly to the dma_map_sg call.  But that isn't really
-suitable for a short term fix and will take a little more time.
-
-Until we've sorted that out the device paramter needs to be set to
-the smallest value supported.
+On Mon, Jun 03, 2019 at 03:52:59PM -0700, Nicolin Chen wrote:
+> This patch replaces dma_{alloc,release}_from_contiguous() with
+> dma_{alloc,free}_contiguous() to simplify those function calls.
+> 
+> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> ---
+>  drivers/iommu/dma-iommu.c | 14 ++++----------
+>  1 file changed, 4 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+> index 0cd49c2d3770..cc3d39dbbe1a 100644
+> --- a/drivers/iommu/dma-iommu.c
+> +++ b/drivers/iommu/dma-iommu.c
+> @@ -951,8 +951,8 @@ static void __iommu_dma_free(struct device *dev, size_t size, void *cpu_addr)
+>  
+>  	if (pages)
+>  		__iommu_dma_free_pages(pages, count);
+> -	if (page && !dma_release_from_contiguous(dev, page, count))
+> -		__free_pages(page, get_order(alloc_size));
+> +	if (page)
+> +		dma_free_contiguous(dev, page, alloc_size);
+>  }
+>  
+>  static void iommu_dma_free(struct device *dev, size_t size, void *cpu_addr,
+> @@ -970,12 +970,7 @@ static void *iommu_dma_alloc_pages(struct device *dev, size_t size,
+>  	struct page *page = NULL;
+>  	void *cpu_addr;
+>  
+> -	if (gfpflags_allow_blocking(gfp))
+> -		page = dma_alloc_from_contiguous(dev, alloc_size >> PAGE_SHIFT,
+> -						 get_order(alloc_size),
+> -						 gfp & __GFP_NOWARN);
+> -	if (!page)
+> -		page = alloc_pages(gfp, get_order(alloc_size));
+> +	page = dma_alloc_contiguous(dev, alloc_size, gfp);
+>  	if (!page)
+>  		return NULL;
+>  
+> @@ -997,8 +992,7 @@ static void *iommu_dma_alloc_pages(struct device *dev, size_t size,
+>  	memset(cpu_addr, 0, alloc_size);
+>  	return cpu_addr;
+>  out_free_pages:
+> -	if (!dma_release_from_contiguous(dev, page, alloc_size >> PAGE_SHIFT))
+> -		__free_pages(page, get_order(alloc_size));
+> +	dma_free_contiguous(dev, page, alloc_size);
+>  	return NULL;
+>  }
+>  
+> -- 
+> 2.17.1
+---end quoted text---
