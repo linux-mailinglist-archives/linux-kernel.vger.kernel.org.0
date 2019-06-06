@@ -2,61 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 634EC37627
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 16:13:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4919F3762E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 16:16:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728740AbfFFOM6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 10:12:58 -0400
-Received: from ns.iliad.fr ([212.27.33.1]:53966 "EHLO ns.iliad.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727559AbfFFOM5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 10:12:57 -0400
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-        by ns.iliad.fr (Postfix) with ESMTP id 1FC4E20F58;
-        Thu,  6 Jun 2019 16:12:56 +0200 (CEST)
-Received: from [192.168.108.49] (freebox.vlq16.iliad.fr [213.36.7.13])
-        by ns.iliad.fr (Postfix) with ESMTP id 0DF1220ECD;
-        Thu,  6 Jun 2019 16:12:56 +0200 (CEST)
-Subject: Re: [PATCH] arm64: dts: sdm845: Add iommus property to qup1
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>
-References: <20190604222939.195471-1-swboyd@chromium.org>
- <20190604223700.GE4814@minitux> <5cf6f4bb.1c69fb81.c39da.5496@mx.google.com>
- <CAFp+6iHZeawnz7Vfk3=Oox-GN_y6c-E9wMwc-qdp1bTOXgqjFQ@mail.gmail.com>
- <5cf82c6f.1c69fb81.9e342.dbda@mx.google.com>
- <CAFp+6iE8FUXxexKbYy=ak+se-pj1XXUZxTu5o=hJvg66V6+Rzw@mail.gmail.com>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <66a4a987-ac89-609f-1496-895765f9b1f2@free.fr>
-Date:   Thu, 6 Jun 2019 16:12:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1728788AbfFFOQq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 10:16:46 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:44807 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727168AbfFFOQq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 10:16:46 -0400
+Received: by mail-qt1-f196.google.com with SMTP id x47so2770301qtk.11
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 07:16:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=x2NtpsySZzA58TAtpw74/PYyujX/rnY3kx7DMxb/EUc=;
+        b=Nd8WTWlw6G8cHAWZuKjxZwj5zy6tEAcuyngG0C5pWS3Q64zshz9FFMmsw/wVABqHjx
+         /5XKwSWCvOkg9pIGKc0qS6JDn+H3ehfGrK3u0JCKeduZWtPM9OtjSjNzyXW2XKS2REji
+         xGHU/vfM1Yo68cA6FIVjlFGE47N8bKH21YZ40A8Fo27l6IlkPldOL8T8rIt5U5afEc3K
+         SgY1NGcQHj59crXbjdmKfZPslad6GKeDUHTwM3QpQfoAMbvF6Qk8LiiQJYzcABYNteXQ
+         CNr/hKnecVB0PmXLGj7TsxQgnMPaFUV4B86MKvKELTpiyGarIWaKHzp9fTNpplATL0s5
+         ggmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=x2NtpsySZzA58TAtpw74/PYyujX/rnY3kx7DMxb/EUc=;
+        b=eK50QHGsfAquZY8ZLeAG9jyfpjEK0WlXFL6U9mI8Pe3p71GXQzgPXENwWBE7l898Uq
+         Z6prMsaQVyy7YaOxZ7KJxoVYY3EDKUdNQhlm9clr9b6Af4bekMd4WA/dZJjvkfHGjSSj
+         XlWGRsNUehMtRrQxBhwPpbq4+AK40PzHTiIEI+0eJ5fO2U8WlQ1OZs/sq/ixv7DAP4Uy
+         PM85UrC1nYrzbs+3KrawE2Vt/o+ZawMnGizlx0B4P6qryS/w6prl5txVKfwBFVuKmk3Q
+         ZVNJCgPed22Oa2ASaH+/kuPH+WKLxdeR0ZWtZjo0ZFiPA+OoOvTMq3YkTtQ/aBrxDadY
+         zPmg==
+X-Gm-Message-State: APjAAAUzenGpOAoO4xcqpATpQIkkUWR4lvjWPDXBbBRoiqYtcm1RenP9
+        gTqZy6SMEgPZlbuUaPVSAuqAJg==
+X-Google-Smtp-Source: APXvYqy4Bg3zzTDW43K2iOXSRQidq0DVY1LfO6HtCYvj44blfzhGJ5iIlkfyINA3yHm65CSJF4pPEA==
+X-Received: by 2002:aed:22a9:: with SMTP id p38mr17862714qtc.188.1559830605359;
+        Thu, 06 Jun 2019 07:16:45 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id k40sm1507614qta.50.2019.06.06.07.16.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Jun 2019 07:16:45 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hYtC8-0000l9-Dz; Thu, 06 Jun 2019 11:16:44 -0300
+Date:   Thu, 6 Jun 2019 11:16:44 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     rcampbell@nvidia.com
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        John Hubbard <jhubbard@nvidia.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>
+Subject: Re: [PATCH 2/5] mm/hmm: Clean up some coding style and comments
+Message-ID: <20190606141644.GA2876@ziepe.ca>
+References: <20190506232942.12623-1-rcampbell@nvidia.com>
+ <20190506232942.12623-3-rcampbell@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <CAFp+6iE8FUXxexKbYy=ak+se-pj1XXUZxTu5o=hJvg66V6+Rzw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Thu Jun  6 16:12:56 2019 +0200 (CEST)
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190506232942.12623-3-rcampbell@nvidia.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/06/2019 13:17, Vivek Gautam wrote:
+On Mon, May 06, 2019 at 04:29:39PM -0700, rcampbell@nvidia.com wrote:
+> From: Ralph Campbell <rcampbell@nvidia.com>
+> 
+> There are no functional changes, just some coding style clean ups and
+> minor comment changes.
+> 
+> Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
+> Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Balbir Singh <bsingharora@gmail.com>
+> Cc: Dan Carpenter <dan.carpenter@oracle.com>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Souptick Joarder <jrdr.linux@gmail.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+>  include/linux/hmm.h | 71 +++++++++++++++++++++++----------------------
+>  mm/hmm.c            | 51 ++++++++++++++++----------------
+>  2 files changed, 62 insertions(+), 60 deletions(-)
 
-> <&apps_smmu 0x6c0 0x3>   // for both 0x6c0 (TZ) and 0x6c3 (HLOS)
+Applied to hmm.git, thanks
 
-Another possibility is to list both:
-
-	<&apps_smmu 0x6c0 0x0>
-	<&apps_smmu 0x6c3 0x0>
-
-which leaves 0x6c1 and 0x6c2 out of the picture, and makes 0x6c3
-appear explicitly (for anyone checking the documentation).
-
-Regards.
+Jason
