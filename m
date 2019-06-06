@@ -2,90 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CB8C37464
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 14:41:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BAF83746C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 14:42:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728432AbfFFMlc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 08:41:32 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58238 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727029AbfFFMlc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 08:41:32 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B79F93086273;
-        Thu,  6 Jun 2019 12:41:11 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
-        by smtp.corp.redhat.com (Postfix) with SMTP id A935E7D65A;
-        Thu,  6 Jun 2019 12:41:04 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Thu,  6 Jun 2019 14:41:11 +0200 (CEST)
-Date:   Thu, 6 Jun 2019 14:41:03 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     'Linus Torvalds' <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Davidlohr Bueso <dbueso@suse.de>, Jens Axboe <axboe@kernel.dk>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "e@80x24.org" <e@80x24.org>, Jason Baron <jbaron@akamai.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "omar.kilani@gmail.com" <omar.kilani@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        stable <stable@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: Re: [PATCH -mm 0/1] signal: simplify
- set_user_sigmask/restore_user_sigmask
-Message-ID: <20190606124103.GB4691@redhat.com>
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190529161157.GA27659@redhat.com>
- <20190604134117.GA29963@redhat.com>
- <20190605155801.GA25165@redhat.com>
- <CAHk-=wjkNx8u4Mcm5dfSQKYQmLQAv1Z1yGLDZvty7BVSj4eqBA@mail.gmail.com>
- <1285a2e60e3748d8825b9b0e3500cd28@AcuMS.aculab.com>
- <20190606110522.GA4691@redhat.com>
- <6e3eeb101a30431eb111ad739ab5d2b0@AcuMS.aculab.com>
+        id S1728502AbfFFMls (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 08:41:48 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:59916 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726870AbfFFMls (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 08:41:48 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x56CNvve189323;
+        Thu, 6 Jun 2019 12:41:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type : in-reply-to;
+ s=corp-2018-07-02; bh=msmH1U56crPbNRzTsdy2al8tC5H9vw5+sq8L4C2RUK4=;
+ b=CJ6xVfHkWbX33y5VWh0/BWBGQNvT7JHh3QbV3oeluLGYSgqO/q9sVDPNf6V+EkjAOPN0
+ MccSfZKZWDrbq1OXVvhi53r+hWTL2lJZs81RBesSv2z8fK9Xt8cFQG/9BV7lUdkZdinf
+ CyOHysAUR6gOPsYhfCr4A+FIW/vzkl8zudBuNHrC5K0GBaZHCvq4C4CZPuOTtBDHaIEt
+ GvgWkFIkS5J9WUzp5rYGYAFDVAtN5zkvpc+FRNbNdHoluEtpyHw+DtdpsJvbBAdp6pWX
+ DIOw0yb5dNU4BmCAUdmhL3LgmRLvDi022zwnu7GI5/s02O1YhxU+baXesjMNT85pI5oE 1g== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2suj0qr2x0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 06 Jun 2019 12:41:37 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x56CeZxp165567;
+        Thu, 6 Jun 2019 12:41:36 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2swnhaqv70-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 06 Jun 2019 12:41:36 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x56CfZP1023460;
+        Thu, 6 Jun 2019 12:41:35 GMT
+Received: from mwanda (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 06 Jun 2019 05:41:34 -0700
+Date:   Thu, 6 Jun 2019 15:41:27 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Lee Jones <lee.jones@linaro.org>,
+        Amelie DELAUNAY <amelie.delaunay@st.com>
+Cc:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH v2] mfd: stmfx: Uninitialized variable in stmfx_irq_handler()
+Message-ID: <20190606124127.GA17082@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6e3eeb101a30431eb111ad739ab5d2b0@AcuMS.aculab.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 06 Jun 2019 12:41:32 +0000 (UTC)
+In-Reply-To: <ccefbd0b-3397-a26e-95e7-059fcced9154@st.com>
+X-Mailer: git-send-email haha only kidding
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9279 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906060090
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9279 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906060090
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/06, David Laight wrote:
->
-> Some of this code is hard to grep through :-)
+The problem is that on 64bit systems then we don't clear the higher
+bits of the "pending" variable.  So when we do:
 
-I'd suggest to simply read the kernel code once and memorise it, after
-that you will not need to use grep.
+        ack = pending & ~BIT(STMFX_REG_IRQ_SRC_EN_GPIO);
+        if (ack) {
 
-> > When signal handler returns it does sys_rt_sigreturn() which restores
-> > the original mask saved in uc_sigmask.
->
-> Does that mean that if 2 signals interrupt epoll_wait() only
-> one of the signal handlers is run?
+the if (ack) condition relies on uninitialized data.  The fix it that
+I've changed "pending" from an unsigned long to a u32.  I changed "n" as
+well, because that's a number in the 0-10 range and it fits easily
+inside an int.  We do need to add a cast to "pending" when we use it in
+the for_each_set_bit() loop, but that doesn't cause a proble, it's
+fine.
 
-I'll assume that both signals were blocked before syscall and temporary
-unblocked by pselect.
+Fixes: 06252ade9156 ("mfd: Add ST Multi-Function eXpander (STMFX) core driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+v2: white space changes
 
-Quite contrary, they both will be delivered exactly because original mask
-won't be restored until the 1st handler returns.
+ drivers/mfd/stmfx.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-Unless, of course, the sigaction->sa_mask of the 1st signal blocks another
-one.
-
-Didn't I say you do not read my emails? I have already explained this to
-you in this thread ;)
-
-Oleg.
+diff --git a/drivers/mfd/stmfx.c b/drivers/mfd/stmfx.c
+index fe8efba2d45f..7c419c078688 100644
+--- a/drivers/mfd/stmfx.c
++++ b/drivers/mfd/stmfx.c
+@@ -204,12 +204,10 @@ static struct irq_chip stmfx_irq_chip = {
+ static irqreturn_t stmfx_irq_handler(int irq, void *data)
+ {
+ 	struct stmfx *stmfx = data;
+-	unsigned long n, pending;
+-	u32 ack;
+-	int ret;
++	u32 pending, ack;
++	int n, ret;
+ 
+-	ret = regmap_read(stmfx->map, STMFX_REG_IRQ_PENDING,
+-			  (u32 *)&pending);
++	ret = regmap_read(stmfx->map, STMFX_REG_IRQ_PENDING, &pending);
+ 	if (ret)
+ 		return IRQ_NONE;
+ 
+@@ -224,7 +222,7 @@ static irqreturn_t stmfx_irq_handler(int irq, void *data)
+ 			return IRQ_NONE;
+ 	}
+ 
+-	for_each_set_bit(n, &pending, STMFX_REG_IRQ_SRC_MAX)
++	for_each_set_bit(n, (unsigned long *)&pending, STMFX_REG_IRQ_SRC_MAX)
+ 		handle_nested_irq(irq_find_mapping(stmfx->irq_domain, n));
+ 
+ 	return IRQ_HANDLED;
+-- 
+2.20.1
 
