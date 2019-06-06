@@ -2,98 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8607E37E42
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 22:18:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C3B737E9E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 22:21:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728269AbfFFUQu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 16:16:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53506 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726816AbfFFUQr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 16:16:47 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4CC4206BB;
-        Thu,  6 Jun 2019 20:16:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559852206;
-        bh=dtO+5DakYD+OBjmih0j/tzf4TsEgQw8kAWSobV34pos=;
-        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=auni+q2MkEs6XpdIx4TVt3rGKVBpTISGYV2lWzplv/HgVbnBkbp+TWJaf1JO/ZbFh
-         sLQaF2cKycyi5+/vb5dOZUwEoYfrbPEXQ7I7HcjVaoqTg/hgvjcaoZi0B7cYf2mxbY
-         vAGlb05B3a4l5vjuwDPvHqrHs18xVWrZOxVNatf4=
-Content-Type: text/plain; charset="utf-8"
+        id S1727211AbfFFUTL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 16:19:11 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37491 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726636AbfFFUTH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 16:19:07 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 22so1212033wmg.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 13:19:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fAkfn85/lqdX0osdVxNuElygntohyc34l0gKSlhr3ag=;
+        b=QX4XuCyRyFsDNvSGtX0I2vOmyex3tE7F3UVU8bq3XVYWMLpe+T5ReFdNrE9Opcy6JS
+         isSG6SIwrW4zHdFcRrSAT3HvAJXb0mEKE4iAezloVHlp3oz4As7fsE5sjasXHkaU2mwf
+         C2D2DxzxJfppmhmRHTdLeJHvW3fmJ/8weuSqR361wIalS6spLy6K7ga2zP5IAvFqU8lg
+         lj6Q3ieFoEYQ66IxSdHfkcx2co3t1NDAgWdigpk5FjV7sAa79DW2oaYCr731JPQwfcWI
+         5sYW8M8QQa368EDTmBHv5eBlbSIFsAofh2fIXrdunKxBG0olxa1SXxyEZmeonpOhYP2P
+         WMyg==
+X-Gm-Message-State: APjAAAW6BQeqwqxG0CYtum7QhFXn8U5n7nWhX+EtgxRhah+Bx3tNvYTt
+        xAq54bUAobdLyu7Clw9Zu5129A==
+X-Google-Smtp-Source: APXvYqz48mChkyOODV0ajnbXZEGl5Ke1m19drYd50JUK+efjQXEu/HUD/f9LmnXacpx2Wf2aaiFrEA==
+X-Received: by 2002:a1c:dc45:: with SMTP id t66mr1201738wmg.63.1559852345364;
+        Thu, 06 Jun 2019 13:19:05 -0700 (PDT)
+Received: from [192.168.10.150] ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id c129sm2700570wma.27.2019.06.06.13.19.04
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Jun 2019 13:19:04 -0700 (PDT)
+Subject: Re: [PATCH] KVM: nVMX: Rename prepare_vmcs02_*_full to
+ prepare_vmcs02_*_extra
+To:     Krish Sadhukhan <krish.sadhukhan@oracle.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <1559834652-105872-1-git-send-email-pbonzini@redhat.com>
+ <20190606184117.GJ23169@linux.intel.com>
+ <89dd5d66-0d37-ea41-3f6d-72d5a8a9815d@oracle.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <cd3f30e2-32ed-4bba-0456-f7ab7e24d792@redhat.com>
+Date:   Thu, 6 Jun 2019 22:19:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190605160043.GA4351@zhanggen-UX430UQ>
-References: <20190531011424.GA4374@zhanggen-UX430UQ> <eb8e2d33-e8f7-93a5-c8bc-98731c0d63b6@suse.cz> <20190605160043.GA4351@zhanggen-UX430UQ>
-To:     Gen Zhang <blackgod016574@gmail.com>, Jiri Slaby <jslaby@suse.cz>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: fix a missing-free bug in clk_cpy_name()
-Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-User-Agent: alot/0.8.1
-Date:   Thu, 06 Jun 2019 13:16:45 -0700
-Message-Id: <20190606201646.B4CC4206BB@mail.kernel.org>
+In-Reply-To: <89dd5d66-0d37-ea41-3f6d-72d5a8a9815d@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Gen Zhang (2019-06-05 09:00:43)
-> On Wed, Jun 05, 2019 at 08:38:00AM +0200, Jiri Slaby wrote:
-> > On 31. 05. 19, 3:14, Gen Zhang wrote:
-> > > In clk_cpy_name(), '*dst_p'('parent->name'and 'parent->fw_name') and =
+On 06/06/19 21:19, Krish Sadhukhan wrote:
+> 
+> The big chunk of the work in this function is done via
+> prepare_vmcs02_constant_state(). It seems cleaner to get rid of
+> prepare_vmcs02_early_full(), call prepare_vmcs02_constant_state()
+> directly from prepare_vmcs02_early() and move the three vmcs_write16()
+> calls to prepare_vmcs02_early().
+> 
 
-> > > 'dst' are allcoted by kstrdup_const(). According to doc: "Strings=20
-> > > allocated by kstrdup_const should be freed by kfree_const". So=20
-> > > 'parent->name', 'parent->fw_name' and 'dst' should be freed.
-> > >=20
-> > > Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
-> > > ---
-> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > > index aa51756..85c4d3f 100644
-> > > --- a/drivers/clk/clk.c
-> > > +++ b/drivers/clk/clk.c
-> > > @@ -3435,6 +3435,7 @@ static int clk_cpy_name(const char **dst_p, con=
-st char *src, bool must_exist)
-> > >     if (!dst)
-> > >             return -ENOMEM;
-> > > =20
-> > > +   kfree_const(dst);
-> >=20
-> > So you are now returning a freed pointer in dst_p?
-> Thanks for your reply. I re-examined the code, and this kfree is=20
-> incorrect and it should be deleted.
-> >=20
-> > >     return 0;
-> > >  }
-> > > =20
-> > > @@ -3491,6 +3492,8 @@ static int clk_core_populate_parent_map(struct =
-clk_core *core)
-> > >                             kfree_const(parents[i].name);
-> > >                             kfree_const(parents[i].fw_name);
-> > >                     } while (--i >=3D 0);
-> > > +                   kfree_const(parent->name);
-> > > +                   kfree_const(parent->fw_name);
-> >=20
-> > Both of them were just freed in the loop above, no?
-> for (i =3D 0, parent =3D parents; i < num_parents; i++, parent++)
-> Is 'parent' the same as the one from the loop above?
+This is just a mechanical search and replace, you can send a patch on
+top to inline it in the caller.
 
-Yes. Did it change somehow?
-
->=20
-> Moreover, should 'parents[i].name' and 'parents[i].fw_name' be freed by
-> kfree_const()?
->=20
-
-Yes? They're allocated with kstrdup_const() in clk_cpy_name(), or
-they're NULL by virtue of the kcalloc and then kfree_const() does
-nothing.
-
-I'm having a hard time following what this patch is trying to fix. It
-looks unnecessary though so I'm going to drop it from the clk review
-queue.
-
+Paolo
