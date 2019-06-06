@@ -2,87 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49C3037820
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 17:36:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A0B637829
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 17:37:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729440AbfFFPgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 11:36:03 -0400
-Received: from mga05.intel.com ([192.55.52.43]:13501 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729192AbfFFPgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 11:36:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 08:36:00 -0700
-X-ExtLoop1: 1
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga006.jf.intel.com with ESMTP; 06 Jun 2019 08:36:00 -0700
-Received: from kwong4-mobl.amr.corp.intel.com (unknown [10.252.203.122])
-        by linux.intel.com (Postfix) with ESMTP id 11F5F580490;
-        Thu,  6 Jun 2019 08:35:59 -0700 (PDT)
-Subject: Re: [alsa-devel] [PATCH v2] soundwire: stream: fix bad unlock balance
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        vkoul@kernel.org
-Cc:     Sanyog Kale <sanyog.r.kale@intel.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-References: <20190606112222.16502-1-srinivas.kandagatla@linaro.org>
- <9427a73a-e09a-4a9c-7690-271d2e2e1024@linux.intel.com>
- <f13c82d2-94a4-9517-bcf6-95aa40c6a42f@linaro.org>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <43a381df-13d7-eaac-a1ae-704db5659cb9@linux.intel.com>
-Date:   Thu, 6 Jun 2019 10:36:02 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <f13c82d2-94a4-9517-bcf6-95aa40c6a42f@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1729395AbfFFPhH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 11:37:07 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:41242 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728871AbfFFPhG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 11:37:06 -0400
+Received: from mailhost.synopsys.com (unknown [10.225.0.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 7618FC0ABC;
+        Thu,  6 Jun 2019 15:37:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1559835437; bh=+h2vDYvKU/Eqz/lBSbkDj8osIUzT6k7dY1OtU9w00zg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=JLt9/6aX90m8lNFknwiXU4wrpB0GtIpIrg3Mk6NI1/5bXQBnjV8/x3O74h+CZmn38
+         9WvJE5Cw6f46gGm4bgp0yejC1gVtqrGw/vyuXWnRlslf0yvqhPCJzvaMOlRDghMTzr
+         aoXWXWdV4aqPe30tPcoKBEa4pETc85sW0fa05UKy6LJkQaDle+8VShsXMyJE7R2FcR
+         MZWwgBjeYErApdbZVFU7fIuXyT7MY6Kyw9qOxG5zFrHOKP1ToCcQy2C6MBkiSPKwI1
+         PcelzQ7K1gL1hwgu5nXnDajk+tK/RH0BEtm4c6Ca8omOW/CZq1ZvRpd/eBB2Qdcsgd
+         kJT7NPR7Wlt8w==
+Received: from de02.synopsys.com (de02.internal.synopsys.com [10.225.17.21])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 807D9A0234;
+        Thu,  6 Jun 2019 15:37:03 +0000 (UTC)
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by de02.synopsys.com (Postfix) with ESMTP id 613653F1FB;
+        Thu,  6 Jun 2019 17:37:03 +0200 (CEST)
+From:   Luis Oliveira <Luis.Oliveira@synopsys.com>
+To:     p.zabel@pengutronix.de, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     Joao.Pinto@synopsys.com, Luis Oliveira <Luis.Oliveira@synopsys.com>
+Subject: [PATCH V2 0/2] Add DesignWare IP support to simple reset
+Date:   Thu,  6 Jun 2019 17:36:26 +0200
+Message-Id: <1559835388-2578-1-git-send-email-luis.oliveira@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/6/19 9:58 AM, Srinivas Kandagatla wrote:
-> 
-> 
-> On 06/06/2019 15:28, Pierre-Louis Bossart wrote:
->> On 6/6/19 6:22 AM, Srinivas Kandagatla wrote:
->>> multi bank switching code takes lock on condition but releases without
->>> any check resulting in below warning.
->>> This patch fixes this.
->>
->>
->> Question to make sure we are talking about the same thing: multi-link 
->> bank switching is a capability beyond the scope of the SoundWire spec 
->> which requires hardware support to synchronize links and as Sanyog 
->> hinted at in a previous email follow a different flow for bank switches.
->>
->> You would not use the multi-link mode if you have different links that 
->> can operate independently and have no synchronization requirement. You 
->> would conversely use the multi-link mode if you have two devices on 
->> the same type on different links and want audio to be rendered at the 
->> same time.
->>
->> Can you clarify if indeed you were using the full-blown multi-link 
->> mode with hardware synchronization or a regular single-link operation? 
->> I am not asking for details of your test hardware, just trying to 
->> reconstruct the program flow leading to this problem.
->>
-> 
-> Am testing on a regular single link, which hits this path.
-> 
->> It could also be that your commit message was meant to say:
->> "the msg lock is taken for multi-link cases only but released 
->> unconditionally, leading to an unlock balance warning for single-link 
->> usages"?
-> Yes.
+This patch series adds a reset-simple compatible string for DesignWare
+IPs allowing active high and low resets inputs.
 
-Thanks for the precision. the change is legit so assuming the commit 
-message is reworded to mention single link usage please feel free to 
-take the following tag.
+Also adds the corresponding documentation.
 
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Gustavo Pimentel (1):
+  reset: Add DesignWare IP support to simple reset
 
-Thanks!
+Luis Oliveira (1):
+  dt-bindings: Document the DesignWare IP reset bindings
+
+ .../devicetree/bindings/reset/snps,dw-reset.txt    | 30 ++++++++++++++++++++++
+ drivers/reset/Kconfig                              |  2 +-
+ drivers/reset/reset-simple.c                       |  3 +++
+ 3 files changed, 34 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/reset/snps,dw-reset.txt
+
+-- 
+2.7.4
+
