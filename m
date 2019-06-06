@@ -2,57 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8A9537F8F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 23:28:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35DB237FA5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 23:34:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728521AbfFFV2N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 17:28:13 -0400
-Received: from smtp-out.xnet.cz ([178.217.244.18]:50046 "EHLO smtp-out.xnet.cz"
+        id S1728487AbfFFVeD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 17:34:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728490AbfFFV2M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 17:28:12 -0400
-Received: from meh.true.cz (meh.true.cz [108.61.167.218])
-        (Authenticated sender: petr@true.cz)
-        by smtp-out.xnet.cz (Postfix) with ESMTPSA id D9DDD4E5E;
-        Thu,  6 Jun 2019 23:28:09 +0200 (CEST)
-Received: by meh.true.cz (OpenSMTPD) with ESMTP id b2c764d9;
-        Thu, 6 Jun 2019 23:28:07 +0200 (CEST)
-From:   =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>
-To:     sashal@kernel.org
-Cc:     jason@lakedaemon.net, jhogan@kernel.org, john@phrozen.org,
-        ldir@darbyshire-bryant.me.uk, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, marc.zyngier@arm.com,
-        paul.burton@mips.com, ralf@linux-mips.org, stable@vger.kernel.org,
-        tglx@linutronix.de, ynezz@true.cz,
-        =?UTF-8?q?Karl=20P=C3=A1lsson?= <karlp@etactica.com>
-Subject: Re: [PATCH AUTOSEL 4.9 18/25] MIPS: perf: ath79: Fix perfcount IRQ assignment
-Date:   Thu,  6 Jun 2019 23:28:04 +0200
-Message-Id: <1559856484-8579-1-git-send-email-ynezz@true.cz>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <20190507054123.32514-18-sashal@kernel.org>
-References: <20190507054123.32514-18-sashal@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1727057AbfFFVeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 17:34:02 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 425B8206BB;
+        Thu,  6 Jun 2019 21:34:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559856841;
+        bh=IBMakSAmxp2Ih7MrARdyOGb6a4i5uA7woITej/AKKnI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ISqfp6hTYjffzsObhMCnRqPeZw2vZjXkA6IDcdwg+OzVRM3YolpZrfl4RaCgwI5BA
+         T0o1vRvAlJ0vf/QdrH7xmFdH+C5RuJ33pRryt9dNFpuGdMwVZ8KVK0xtL8GXLTGPOM
+         xRpZViqMDQt4lM4GTjfgdwHyXDcVIUzDR74jyWPs=
+Date:   Thu, 6 Jun 2019 14:34:00 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Aubrey Li <aubrey.li@linux.intel.com>
+Cc:     tglx@linutronix.de, mingo@redhat.com, peterz@infradead.org,
+        hpa@zytor.com, ak@linux.intel.com, tim.c.chen@linux.intel.com,
+        dave.hansen@intel.com, arjan@linux.intel.com, adobriyan@gmail.com,
+        aubrey.li@intel.com, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v19 1/3] proc: add /proc/<pid>/arch_status
+Message-Id: <20190606143400.9f4a584eb1dc640fdf334114@linux-foundation.org>
+In-Reply-To: <20190606012236.9391-1-aubrey.li@linux.intel.com>
+References: <20190606012236.9391-1-aubrey.li@linux.intel.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu,  6 Jun 2019 09:22:34 +0800 Aubrey Li <aubrey.li@linux.intel.com> wrote:
 
-Karl has reported to me today, that he's experiencing weird reboot hang on his
-devices with 4.9.180 kernel and that he has bisected it down to my backported
-patch.
+> The architecture specific information of the running processes
+> could be useful to the userland. Add /proc/<pid>/arch_status
+> interface support to examine process architecture specific
+> information externally.
 
-I would like to kindly ask you for removal of this patch.  This patch should
-be reverted from all stable kernels up to 5.1, because perf counters were not
-broken on those kernels, and this patch won't work on the ath79 legacy IRQ
-code anyway, it needs new irqchip driver which was enabled on ath79 with
-commit 51fa4f8912c0 ("MIPS: ath79: drop legacy IRQ code").
+I'll grab these for some testing.  I can merge them up if the x86
+maintainers are OK with it all.  However I think it's best that these
+be merged via an x86 tree, please.
 
-Thanks!
-
-Cheers,
-
-Petr
