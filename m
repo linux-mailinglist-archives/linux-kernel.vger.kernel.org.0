@@ -2,95 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD57F3805E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 00:14:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7A4838079
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 00:21:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729076AbfFFWOA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 18:14:00 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:45707 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729013AbfFFWOA (ORCPT
+        id S1729166AbfFFWVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 18:21:24 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45373 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726066AbfFFWVW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 18:14:00 -0400
-Received: by mail-qt1-f195.google.com with SMTP id j19so52385qtr.12
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 15:13:59 -0700 (PDT)
+        Thu, 6 Jun 2019 18:21:22 -0400
+Received: by mail-wr1-f68.google.com with SMTP id f9so166912wre.12;
+        Thu, 06 Jun 2019 15:21:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=wnCP9LHM/9q0T5YeodyvkG+3NIqd4AJlc0R/psluHCw=;
-        b=rkRXhFjoWZ55fC7yOH0kqTaTRrdB3k1BaYHKrXwOKlqO3Lj8E6y/3m1kxlPHJqvDuB
-         HNe1HZo/hCsDKBHtjOvQROjpjNuFhCqgVO7E1LX8Q5+Geiicmg9mBwYI+ORkSAoVoy4I
-         1ZkXqeaN2WWOdhlzsnngXpW4Ia72ASBbOYQfvxQ+rQFbMv+LQztxgzoK43w8G5eDI9fP
-         tucUOZ4RXAh9xTMuR0M2NH9GcDV14lib62h28GA9yhBw2zzDbJEnjjaB+5ihjRKTMKUe
-         cbO26PuTtbkDvEHYWS6DX3xlj4q6Ht1GFJ/IshA9ckkHTGXw9/wN9eD+chib8Npf95xN
-         9FZw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ufmMB5ErEfpuUwF9o0tfgTfas6AT+bcCUtCUyRAM3cY=;
+        b=mvQSFjoF6oPF46wTR2wnTsYh6uGL72BUuca1o56stYdQdppSJJRyz1NKzVpVi3afno
+         eH6eT0Aww7VjKyx/sU1oKYgMGNq4oGkORxKx+XKSPfoVnEm8hpWVKck8+L0SOnaPg5Fx
+         u18Ow3AsrCH8JNlga4HOypTSDr7zjqpw/seqpfGOcHmETgNPUm/10purOB1WKEbcQQN8
+         KHckGPLl1bsjms2sT+U28cQcdk8GayvMOrvwarTsFWKxIx4Oj1Na58hoGmtMbwVKCILs
+         PG07xMouj6JenBBbQopqZL+ffUo6MhbEl1C7WC7+V4ZgCFs9cDoZxuIitEBq4UVY+LEB
+         2d5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=wnCP9LHM/9q0T5YeodyvkG+3NIqd4AJlc0R/psluHCw=;
-        b=c0NJUT91YkfXclOfcNnAgJzBswI1dqd4S5l5yyQqyMMqlO54km4T3RtD677GV8/KrP
-         vHmN3vFsmofqbHC9wrZyC2+mDillxY8qXvYWdCZUIpSoE7pKyf3bfpNGRS8ChOYlLdrD
-         a15aKpSR0Rj65lKdA/a3euB22/ZdOo+A1Wq7rDrTAwEbLhXle1B1jiXp+xkNDR0m6n75
-         VdHA6OyVEmVSNZV69BhgQ2Gxk1eUTIuRtBffkeKOYopqVi34BTPLLCQbpZXdQE9pb7vQ
-         hoJUGMeVTvrmsEaaYTervBAcihGKdxzoLVxrmoW1XH2YbE4YCbcZ2U8GQ+Bca4u+2M3W
-         MSFA==
-X-Gm-Message-State: APjAAAWeKTO8s7uMj9cQfs/iqiVlOkMYkmL2rkUB8mLTU3dXN56hLAqI
-        7GnCpSeu3xkrpmLu4sjWkO+FwA==
-X-Google-Smtp-Source: APXvYqw1rzC6OTnpZ+39/hsG12pO3JpYun3yNbCTLHGF4Q6Fiw2lxqwEaCapVXUEIan7qToQI0uIKg==
-X-Received: by 2002:ac8:2e84:: with SMTP id h4mr42663472qta.267.1559859238493;
-        Thu, 06 Jun 2019 15:13:58 -0700 (PDT)
-Received: from cakuba.netronome.com ([66.60.152.14])
-        by smtp.gmail.com with ESMTPSA id s23sm187901qtj.56.2019.06.06.15.13.55
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 06 Jun 2019 15:13:58 -0700 (PDT)
-Date:   Thu, 6 Jun 2019 15:13:46 -0700
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Matt Mullins <mmullins@fb.com>
-Cc:     <hall@fb.com>, <ast@kernel.org>, <daniel@iogearbox.net>,
-        <bpf@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Ingo Molnar" <mingo@redhat.com>, Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>
-Subject: Re: [PATCH bpf] bpf: fix nested bpf tracepoints with per-cpu data
-Message-ID: <20190606151346.6a9ed27e@cakuba.netronome.com>
-In-Reply-To: <20190606185427.7558-1-mmullins@fb.com>
-References: <a6a31da39debb8bde6ca5085b0f4e43a96a88ea5.camel@fb.com>
-        <20190606185427.7558-1-mmullins@fb.com>
-Organization: Netronome Systems, Ltd.
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ufmMB5ErEfpuUwF9o0tfgTfas6AT+bcCUtCUyRAM3cY=;
+        b=EewgJi/st5N8EMqodIdGubjhhW/AmSGEYKftZJVTyhLhue/EB+8SGbJvzlJ/FbXnuX
+         3Km3072g2pBb8GqLnK81nOmbU2tCYi7KFbqWXcWkIJih+BQjahLc8Whl822Efci63HfI
+         omyKLg+x4munE3ddBKAsTXHyAHmBL5hQ55wMPipSmDHkLaC7dfZRjOD7PiRcfB7sj84N
+         gAsT9AnleMmkjeHE3qUOc4SLozkE/4E0R7Ey7ruKLZ/29Wx/bFjhXdgF0zzyy7Crtwo8
+         ceevHuVynfpgeuTLAHQUpdvE+NOTiNJv+3jghKzmpqE4qxw8vxYx2qIBlMVXizMLaxmB
+         pOmA==
+X-Gm-Message-State: APjAAAU4EKxkCDnUioRNr+8yZJ5ZXVtH0ysGS6aRcHxS3teACI6zs4os
+        4AkOgyH1C28S3dVfeBw7p83BfBFcd5rzAxoeC1m5zejv3zt2fQ==
+X-Google-Smtp-Source: APXvYqw/ElDLrJR78jU3eyOu9nATYBEKXMWGp8ivP6mrEEKxsrf3nhCGskWwIbLc0MS6C+6em3ysw0BH6pFKhGAyFoU=
+X-Received: by 2002:a5d:4603:: with SMTP id t3mr8315327wrq.315.1559859680646;
+ Thu, 06 Jun 2019 15:21:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <00000000000020e6b9058aac120b@google.com>
+In-Reply-To: <00000000000020e6b9058aac120b@google.com>
+From:   Ming Lei <tom.leiming@gmail.com>
+Date:   Fri, 7 Jun 2019 06:21:08 +0800
+Message-ID: <CACVXFVNp6gfYy9sH3Ek5u_9s2UxzMm8FVks_8kA4h28hpzCFdA@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in blk_mq_free_rqs
+To:     syzbot <syzbot+784281a934c3f71eb71a@syzkaller.appspotmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Jun 2019 11:54:27 -0700, Matt Mullins wrote:
-> BPF_PROG_TYPE_RAW_TRACEPOINTs can be executed nested on the same CPU, as
-> they do not increment bpf_prog_active while executing.
-> 
-> This enables three levels of nesting, to support
->   - a kprobe or raw tp or perf event,
->   - another one of the above that irq context happens to call, and
->   - another one in nmi context
-> (at most one of which may be a kprobe or perf event).
-> 
-> Fixes: 20b9d7ac4852 ("bpf: avoid excessive stack usage for perf_sample_data")
+Hello,
 
-No comment on the code, but you're definitely missing a sign-off.
+Thanks for your report!
 
-> ---
-> This is more lines of code, but possibly less intrusive than the
-> per-array-element approach.
-> 
-> I don't necessarily like that I duplicated the nest_level logic in two
-> places, but I don't see a way to unify them:
->   - kprobes' bpf_perf_event_output doesn't use bpf_raw_tp_regs, and does
->     use the perf_sample_data,
->   - raw tracepoints' bpf_get_stackid uses bpf_raw_tp_regs, but not
->     the perf_sample_data, and
->   - raw tracepoints' bpf_perf_event_output uses both...
+On Fri, Jun 7, 2019 at 4:16 AM syzbot
+<syzbot+784281a934c3f71eb71a@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    9221dced Merge tag 'for-linus-20190601' of git://git.kerne..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16b3b772a00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=1fa7e451a5cac069
+> dashboard link: https://syzkaller.appspot.com/bug?extid=784281a934c3f71eb71a
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=149089aaa00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11b24edea00000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+784281a934c3f71eb71a@syzkaller.appspotmail.com
+>
+> ==================================================================
+> BUG: KASAN: use-after-free in blk_mq_free_rqs+0x49f/0x4b0
+> block/blk-mq.c:2049
+> Read of size 8 at addr ffff88809b5c0b10 by task kworker/1:1/22
+>
+> CPU: 1 PID: 22 Comm: kworker/1:1 Not tainted 5.2.0-rc2+ #17
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Workqueue: events __blk_release_queue
+> Call Trace:
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+>   print_address_description.cold+0x7c/0x20d mm/kasan/report.c:188
+>   __kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+>   kasan_report+0x12/0x20 mm/kasan/common.c:614
+>   __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:132
+>   blk_mq_free_rqs+0x49f/0x4b0 block/blk-mq.c:2049
+>   blk_mq_sched_free_tags block/blk-mq-sched.c:453 [inline]
+>   blk_mq_sched_tags_teardown+0x126/0x210 block/blk-mq-sched.c:485
+>   blk_mq_exit_sched+0x1fa/0x2d0 block/blk-mq-sched.c:557
+>   elevator_exit+0x70/0xa0 block/elevator.c:185
+>   blk_exit_queue block/blk-sysfs.c:853 [inline]
+>   __blk_release_queue+0x127/0x330 block/blk-sysfs.c:895
+>   process_one_work+0x989/0x1790 kernel/workqueue.c:2269
+>   worker_thread+0x98/0xe40 kernel/workqueue.c:2415
+>   kthread+0x354/0x420 kernel/kthread.c:255
+>   ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+>
+> Allocated by task 8904:
+>   save_stack+0x23/0x90 mm/kasan/common.c:71
+>   set_track mm/kasan/common.c:79 [inline]
+>   __kasan_kmalloc mm/kasan/common.c:489 [inline]
+>   __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:462
+>   kasan_kmalloc+0x9/0x10 mm/kasan/common.c:503
+>   kmem_cache_alloc_trace+0x151/0x750 mm/slab.c:3555
+>   kmalloc include/linux/slab.h:547 [inline]
+>   kzalloc include/linux/slab.h:742 [inline]
+>   loop_add+0x51/0x8d0 drivers/block/loop.c:1973
+>   loop_control_ioctl drivers/block/loop.c:2157 [inline]
+>   loop_control_ioctl+0x165/0x360 drivers/block/loop.c:2139
+>   vfs_ioctl fs/ioctl.c:46 [inline]
+>   file_ioctl fs/ioctl.c:509 [inline]
+>   do_vfs_ioctl+0xd5f/0x1380 fs/ioctl.c:696
+>   ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
+>   __do_sys_ioctl fs/ioctl.c:720 [inline]
+>   __se_sys_ioctl fs/ioctl.c:718 [inline]
+>   __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+>   do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> Freed by task 8905:
+>   save_stack+0x23/0x90 mm/kasan/common.c:71
+>   set_track mm/kasan/common.c:79 [inline]
+>   __kasan_slab_free+0x102/0x150 mm/kasan/common.c:451
+>   kasan_slab_free+0xe/0x10 mm/kasan/common.c:459
+>   __cache_free mm/slab.c:3432 [inline]
+>   kfree+0xcf/0x220 mm/slab.c:3755
+>   loop_remove+0xa1/0xd0 drivers/block/loop.c:2078
+>   loop_control_ioctl drivers/block/loop.c:2173 [inline]
+>   loop_control_ioctl+0x320/0x360 drivers/block/loop.c:2139
+>   vfs_ioctl fs/ioctl.c:46 [inline]
+>   file_ioctl fs/ioctl.c:509 [inline]
+>   do_vfs_ioctl+0xd5f/0x1380 fs/ioctl.c:696
+>   ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
+>   __do_sys_ioctl fs/ioctl.c:720 [inline]
+>   __se_sys_ioctl fs/ioctl.c:718 [inline]
+>   __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+>   do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> The buggy address belongs to the object at ffff88809b5c0900
+>   which belongs to the cache kmalloc-1k of size 1024
+> The buggy address is located 528 bytes inside of
+>   1024-byte region [ffff88809b5c0900, ffff88809b5c0d00)
+> The buggy address belongs to the page:
+> page:ffffea00026d7000 refcount:1 mapcount:0 mapping:ffff8880aa400ac0
+> index:0x0 compound_mapcount: 0
+> flags: 0x1fffc0000010200(slab|head)
+> raw: 01fffc0000010200 ffffea0002411188 ffffea000290c088 ffff8880aa400ac0
+> raw: 0000000000000000 ffff88809b5c0000 0000000100000007 0000000000000000
+> page dumped because: kasan: bad access detected
+>
+> Memory state around the buggy address:
+>   ffff88809b5c0a00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>   ffff88809b5c0a80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > ffff88809b5c0b00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>                           ^
+>   ffff88809b5c0b80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>   ffff88809b5c0c00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ==================================================================
 
+It should be fixed by the following patch:
+
+https://lore.kernel.org/linux-block/20190606144714.GA6549@t480-pf1aa2c2/T/#m0a3d000613bcfd5271a0748ff230a4eccb2d65f1
+
+Thanks,
+Ming Lei
