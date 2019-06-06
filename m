@@ -2,215 +2,237 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 573553753B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 15:30:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE7E63757C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 15:42:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727564AbfFFNa1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 09:30:27 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:34344 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbfFFNa0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 09:30:26 -0400
-Received: by mail-qt1-f194.google.com with SMTP id m29so2644631qtu.1;
-        Thu, 06 Jun 2019 06:30:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=laXwKrCLDbQlZ5wqNW0JxArXs2q0tdfYtz3FSuxgpnw=;
-        b=oio9Cs4FcULACpYJdCfIrGZ5HmO1N1uOIpV9OTozuAF3AMBHbg+Lz4EYlMLV5z0wiu
-         gRn4F7mZ2YxzDQbtqe86OzrFsESB+x4iyTsbDdEz1cL6I/xltLeKZlyPXHsMylrBnthD
-         j6AI04HZm4Kh5fKztYnVY43d2bh3KwbUUnMZ5Hv6AjHs47t9wAx+dhIdaQusthDVClqY
-         SioYhGBBRB2Q1ZSg+jXZRjFgfuC1H0atwpwtUApCDVxmSR1mhmO4kR9dxhE3YH5So6rR
-         8T+ZCQXRefZYTokfOoX/MMWNIM9An2m3Ouqe2/6g3EqvTGDki+rfKLee9zulKE8xGjMD
-         YEwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=laXwKrCLDbQlZ5wqNW0JxArXs2q0tdfYtz3FSuxgpnw=;
-        b=A69zQSb4JQnXY8EfPe9l5HFlnHumgUfKGNkzlISZK+fxrxnKs+h/GDD0/vTk7PhvuO
-         G7OJ51ArovIhokDExcxt4itwT0mJq7T819/mrRzNqxhICX9biVLXH1h5DM/SYS/JEIfY
-         kn45cHIBk1DJDt27zHsawUQtvWEiJ+TuYO+T/BoDiKU4WgzVnE4TVo766+n1knGfS/Tt
-         YqKVbis1qYuK9QJCCTAlzTP3qqEDNeSZcyvQA/nxOKZEmfyRiOzxjHPqxKFjfTjztB1v
-         EOOx/4mW//OSm9mXLdFqgjSGx9JkQjhU+2uUfFXM09I82mFTV1MYimtl/BFMtWNXbPo2
-         d6wg==
-X-Gm-Message-State: APjAAAU31zY6Ht8ZJZ0nAoAuNc/aJth9rORWDcCH+LP+vUCQGPAQyYix
-        KrmrRXyYlXv3ncCqmXJ7SQI=
-X-Google-Smtp-Source: APXvYqye2Zer3v0375PJLsNnVEZWtnUFz3D+ewVQx6S/sIBYhEo9URgNjMzz04PV2w/aCgg5/MH/dg==
-X-Received: by 2002:ac8:525a:: with SMTP id y26mr41110270qtn.297.1559827824900;
-        Thu, 06 Jun 2019 06:30:24 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([177.195.208.82])
-        by smtp.gmail.com with ESMTPSA id e9sm905732qth.13.2019.06.06.06.30.22
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 06 Jun 2019 06:30:23 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 6FBC541149; Thu,  6 Jun 2019 10:30:19 -0300 (-03)
-Date:   Thu, 6 Jun 2019 10:30:19 -0300
-To:     Leo Yan <leo.yan@linaro.org>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Mike Leach <mike.leach@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] perf trace: Exit when build eBPF program failure
-Message-ID: <20190606133019.GA30166@kernel.org>
-References: <20190606094845.4800-1-leo.yan@linaro.org>
- <20190606094845.4800-2-leo.yan@linaro.org>
+        id S1728510AbfFFNlj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 09:41:39 -0400
+Received: from mga06.intel.com ([134.134.136.31]:13555 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728385AbfFFNlh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 09:41:37 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 06:41:36 -0700
+X-ExtLoop1: 1
+Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
+  by orsmga003.jf.intel.com with ESMTP; 06 Jun 2019 06:41:34 -0700
+From:   Tomas Winkler <tomas.winkler@intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-kernel@vger.kernel.org,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Subject: [char-misc-next 3/7 RESEND] mei: docs: update mei documentation
+Date:   Thu,  6 Jun 2019 16:31:08 +0300
+Message-Id: <20190606133108.26964-1-tomas.winkler@intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190606094845.4800-2-leo.yan@linaro.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Jun 06, 2019 at 05:48:42PM +0800, Leo Yan escreveu:
-> On my Juno board with ARM64 CPUs, perf trace command reports the eBPF
-> program building failure but the command will not exit and continue to
-> run.  If we define an eBPF event in config file, the event will be
-> parsed with below flow:
-> 
->   perf_config()
->     `> trace__config()
-> 	 `> parse_events_option()
-> 	      `> parse_events__scanner()
-> 	           `-> parse_events_parse()
-> 	                 `> parse_events_load_bpf()
-> 	                      `> llvm__compile_bpf()
-> 
-> Though the low level functions return back error values when detect eBPF
-> building failure, but parse_events_option() returns 1 for this case and
+The mei driver went via multiple changes, update
+the documentation and fix formatting.
 
-(gdb) n
-parse_events__scanner (str=0xb9d170 "/home/acme/git/perf/tools/perf/examples/bpf/augmented_raw_syscalls.o", parse_state=0x7fffffff7fa0,
-    start_token=258) at util/parse-events.c:1870
-1870		parse_events__delete_buffer(buffer, scanner);
-(gdb) n
-1871		parse_events_lex_destroy(scanner);
-(gdb) n
-1872		return ret;
-(gdb) p ret
-$53 = 1
-(gdb) bt
-#0  parse_events__scanner (str=0xb9d170 "/home/acme/git/perf/tools/perf/examples/bpf/augmented_raw_syscalls.o", parse_state=0x7fffffff7fa0,
-    start_token=258) at util/parse-events.c:1872
-#1  0x000000000050a926 in parse_events (evlist=0xb9e5d0, str=0xb9d170 "/home/acme/git/perf/tools/perf/examples/bpf/augmented_raw_syscalls.o",
-    err=0x7fffffff8020) at util/parse-events.c:1907
-#2  0x000000000050ad94 in parse_events_option (opt=0x7fffffff8080,
-    str=0xb9d170 "/home/acme/git/perf/tools/perf/examples/bpf/augmented_raw_syscalls.o", unset=0) at util/parse-events.c:2007
-#3  0x0000000000497fa8 in trace__config (var=0x7fffffff8150 "trace.add_events",
-    value=0xb9d170 "/home/acme/git/perf/tools/perf/examples/bpf/augmented_raw_syscalls.o", arg=0x7fffffffa1c0) at builtin-trace.c:3706
-#4  0x00000000004e9a79 in perf_config (fn=0x497ee4 <trace__config>, data=0x7fffffffa1c0) at util/config.c:738
-#5  0x0000000000498c97 in cmd_trace (argc=2, argv=0x7fffffffd690) at builtin-trace.c:3865
-#6  0x00000000004d8c17 in run_builtin (p=0xa0e600 <commands+576>, argc=2, argv=0x7fffffffd690) at perf.c:303
-#7  0x00000000004d8e84 in handle_internal_command (argc=2, argv=0x7fffffffd690) at perf.c:355
-#8  0x00000000004d8fd3 in run_argv (argcp=0x7fffffffd4ec, argv=0x7fffffffd4e0) at perf.c:399
-#9  0x00000000004d933f in main (argc=2, argv=0x7fffffffd690) at perf.c:521
-(gdb)
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+---
+ Documentation/driver-api/mei/mei.rst | 96 ++++++++++++++++++----------
+ 1 file changed, 61 insertions(+), 35 deletions(-)
 
-So its parse_events__scanner() that returns 1, parse_events() propagate
-that and:
-
-parse_events_option (opt=0x7fffffff8080, str=0xb9d170 "/home/acme/git/perf/tools/perf/examples/bpf/augmented_raw_syscalls.o", unset=0)
-    at util/parse-events.c:2009
-2009		if (ret) {
-(gdb) p ret
-$56 = 1
-(gdb) n
-2010			parse_events_print_error(&err, str);
-(gdb) n
-event syntax error: '/home/acme/git/perf/tools/perf/examples/bpf/augmented_raw_syscalls.o'
-                     \___ Kernel verifier blocks program loading
-
-(add -v to see detail)
-2011			fprintf(stderr, "Run 'perf list' for a list of valid events\n");
-(gdb)
-
-So the -4007 error is printed, and all we can say is that parsing events
-failed, but we end up not propagating that error back when we use
-parse_events_option(), we could use instead:
-
-        struct parse_events_error err = { .idx = 0, };
-        int ret = parse_events(evlist, str, &err);
-
-And make parse_events_error have the raw err, i.e. -4007 in this case:
-
-        [ERRCODE_OFFSET(VERIFY)]        = "Kernel verifier blocks program loading",
-
-In your case would be something else, I'm just trying to load the
-precompiled .o that does things the BPF kernel verifier doesn't like.
-
-So yeah, your patch looks ok, i.e. parse_events_option() returning !0
-should make trace__config() return -1.
-
-But see below:
-
-- Arnaldo
-
-> trace__config() passes 1 to perf_config(); perf_config() doesn't treat
-> the returned value 1 as failure and it continues to parse other
-> configurations.  Thus the perf command continues to run even without
-> enabling eBPF event successfully.
-> 
-> This patch changes error handling in trace__config(), when it detects
-> failure it will return -1 rather than directly pass error value (1);
-> finally, perf_config() will directly bail out and perf will exit for
-> this case.
-> 
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
->  tools/perf/builtin-trace.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> index 54b2d0fd0d02..4b5d004aab74 100644
-> --- a/tools/perf/builtin-trace.c
-> +++ b/tools/perf/builtin-trace.c
-> @@ -3664,6 +3664,14 @@ static int trace__config(const char *var, const char *value, void *arg)
->  					       "event selector. use 'perf list' to list available events",
->  					       parse_events_option);
->  		err = parse_events_option(&o, value, 0);
-> +
-> +		/*
-> +		 * When parse option successfully parse_events_option() will
-> +		 * return 0, otherwise means the paring failure.  And it
-> +		 * returns 1 for eBPF program building failure; so adjust the
-> +		 * err value to -1 for the failure.
-> +		 */
-> +		err = err ? -1 : 0;
-
-I'll rewrite the comment above to make it more succint and fix things
-like 'paring' (parsing):
-
-		/*
-		 * parse_events_option() returns !0 to indicate failure
-		 * while the perf_config code that calls trace__config()
-		 * expects < 0 returns to indicate error, so:
-		 */
-
-		 if (err)
-		 	err = -1;
->  	} else if (!strcmp(var, "trace.show_timestamp")) {
->  		trace->show_tstamp = perf_config_bool(var, value);
->  	} else if (!strcmp(var, "trace.show_duration")) {
-> -- 
-> 2.17.1
-
+diff --git a/Documentation/driver-api/mei/mei.rst b/Documentation/driver-api/mei/mei.rst
+index c7f10a4b46ff..c800d8e5f422 100644
+--- a/Documentation/driver-api/mei/mei.rst
++++ b/Documentation/driver-api/mei/mei.rst
+@@ -5,34 +5,32 @@ Introduction
+ 
+ The Intel Management Engine (Intel ME) is an isolated and protected computing
+ resource (Co-processor) residing inside certain Intel chipsets. The Intel ME
+-provides support for computer/IT management features. The feature set
+-depends on the Intel chipset SKU.
++provides support for computer/IT management and security features.
++The actual feature set depends on the Intel chipset SKU.
+ 
+ The Intel Management Engine Interface (Intel MEI, previously known as HECI)
+ is the interface between the Host and Intel ME. This interface is exposed
+-to the host as a PCI device. The Intel MEI Driver is in charge of the
+-communication channel between a host application and the Intel ME feature.
++to the host as a PCI device, actually multiple PCI devices might be exposed.
++The Intel MEI Driver is in charge of the communication channel between
++a host application and the Intel ME features.
+ 
+-Each Intel ME feature (Intel ME Client) is addressed by a GUID/UUID and
++Each Intel ME feature, or Intel ME Client is addressed by a unique GUID and
+ each client has its own protocol. The protocol is message-based with a
+-header and payload up to 512 bytes.
++header and payload up to maximal number of bytes advertised by the client,
++upon connection.
+ 
+ Intel MEI Driver
+ ================
+ 
+-The driver exposes a misc device called /dev/mei.
++The driver exposes a character device with device nodes /dev/meiX.
+ 
+ An application maintains communication with an Intel ME feature while
+-/dev/mei is open. The binding to a specific feature is performed by calling
+-MEI_CONNECT_CLIENT_IOCTL, which passes the desired UUID.
++/dev/meiX is open. The binding to a specific feature is performed by calling
++:c:macro:`MEI_CONNECT_CLIENT_IOCTL`, which passes the desired GUID.
+ The number of instances of an Intel ME feature that can be opened
+ at the same time depends on the Intel ME feature, but most of the
+ features allow only a single instance.
+ 
+-The Intel AMT Host Interface (Intel AMTHI) feature supports multiple
+-simultaneous user connected applications. The Intel MEI driver
+-handles this internally by maintaining request queues for the applications.
+-
+ The driver is transparent to data that are passed between firmware feature
+ and host application.
+ 
+@@ -40,6 +38,8 @@ Because some of the Intel ME features can change the system
+ configuration, the driver by default allows only a privileged
+ user to access it.
+ 
++The session is terminated calling :c:func:`close(int fd)`.
++
+ A code snippet for an application communicating with Intel AMTHI client:
+ 
+ .. code-block:: C
+@@ -47,13 +47,13 @@ A code snippet for an application communicating with Intel AMTHI client:
+ 	struct mei_connect_client_data data;
+ 	fd = open(MEI_DEVICE);
+ 
+-	data.d.in_client_uuid = AMTHI_UUID;
++	data.d.in_client_uuid = AMTHI_GUID;
+ 
+ 	ioctl(fd, IOCTL_MEI_CONNECT_CLIENT, &data);
+ 
+ 	printf("Ver=%d, MaxLen=%ld\n",
+-			data.d.in_client_uuid.protocol_version,
+-			data.d.in_client_uuid.max_msg_length);
++	       data.d.in_client_uuid.protocol_version,
++	       data.d.in_client_uuid.max_msg_length);
+ 
+ 	[...]
+ 
+@@ -67,60 +67,86 @@ A code snippet for an application communicating with Intel AMTHI client:
+ 	close(fd);
+ 
+ 
+-IOCTLs
+-======
++User space API
++
++IOCTLs:
++=======
+ 
+ The Intel MEI Driver supports the following IOCTL commands:
+-	IOCTL_MEI_CONNECT_CLIENT	Connect to firmware Feature (client).
+ 
+-	usage:
+-		struct mei_connect_client_data clientData;
+-		ioctl(fd, IOCTL_MEI_CONNECT_CLIENT, &clientData);
++IOCTL_MEI_CONNECT_CLIENT
++-------------------------
++Connect to firmware Feature/Client.
++
++.. code-block:: none
++
++	Usage:
+ 
+-	inputs:
+-		mei_connect_client_data struct contain the following
+-		input field:
++        struct mei_connect_client_data client_data;
+ 
+-		in_client_uuid -	UUID of the FW Feature that needs
++        ioctl(fd, IOCTL_MEI_CONNECT_CLIENT, &client_data);
++
++	Inputs:
++
++        struct mei_connect_client_data - contain the following
++	Input field:
++
++		in_client_uuid -	GUID of the FW Feature that needs
+ 					to connect to.
+-	outputs:
++         Outputs:
+ 		out_client_properties - Client Properties: MTU and Protocol Version.
+ 
+-	error returns:
++         Error returns:
++
++                ENOTTY  No such client (i.e. wrong GUID) or connection is not allowed.
+ 		EINVAL	Wrong IOCTL Number
+-		ENODEV	Device or Connection is not initialized or ready. (e.g. Wrong UUID)
++		ENODEV	Device or Connection is not initialized or ready.
+ 		ENOMEM	Unable to allocate memory to client internal data.
+ 		EFAULT	Fatal Error (e.g. Unable to access user input data)
+ 		EBUSY	Connection Already Open
+ 
+-	Notes:
++:Note:
+         max_msg_length (MTU) in client properties describes the maximum
+         data that can be sent or received. (e.g. if MTU=2K, can send
+         requests up to bytes 2k and received responses up to 2k bytes).
+ 
+-	IOCTL_MEI_NOTIFY_SET: enable or disable event notifications
++
++IOCTL_MEI_NOTIFY_SET
++---------------------
++Enable or disable event notifications.
++
++
++.. code-block:: none
+ 
+ 	Usage:
++
+ 		uint32_t enable;
++
+ 		ioctl(fd, IOCTL_MEI_NOTIFY_SET, &enable);
+ 
+-	Inputs:
++
+ 		uint32_t enable = 1;
+ 		or
+ 		uint32_t enable[disable] = 0;
+ 
+ 	Error returns:
++
++
+ 		EINVAL	Wrong IOCTL Number
+ 		ENODEV	Device  is not initialized or the client not connected
+ 		ENOMEM	Unable to allocate memory to client internal data.
+ 		EFAULT	Fatal Error (e.g. Unable to access user input data)
+ 		EOPNOTSUPP if the device doesn't support the feature
+ 
+-	Notes:
++:Note:
+ 	The client must be connected in order to enable notification events
+ 
+ 
+-	IOCTL_MEI_NOTIFY_GET : retrieve event
++IOCTL_MEI_NOTIFY_GET
++--------------------
++Retrieve event
++
++.. code-block:: none
+ 
+ 	Usage:
+ 		uint32_t event;
+@@ -137,7 +163,7 @@ The Intel MEI Driver supports the following IOCTL commands:
+ 		EFAULT	Fatal Error (e.g. Unable to access user input data)
+ 		EOPNOTSUPP if the device doesn't support the feature
+ 
+-	Notes:
++:Note:
+ 	The client must be connected and event notification has to be enabled
+ 	in order to receive an event
+ 
 -- 
+2.20.1
 
-- Arnaldo
