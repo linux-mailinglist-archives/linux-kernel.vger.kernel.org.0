@@ -2,71 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0A28376C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 16:31:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F243A37680
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 16:24:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729121AbfFFObW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 10:31:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49950 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727133AbfFFObQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 10:31:16 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CFB4CAFE0;
-        Thu,  6 Jun 2019 14:31:14 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     stefan.wahren@i2se.com, linux-kernel@vger.kernel.org
-Cc:     mbrugger@suse.de, viresh.kumar@linaro.org, rjw@rjwysocki.net,
-        sboyd@kernel.org, eric@anholt.net, f.fainelli@gmail.com,
-        bcm-kernel-feedback-list@broadcom.com, ptesarik@suse.com,
-        linux-rpi-kernel@lists.infradead.org, ssuloev@orpaltech.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        mturquette@baylibre.com, linux-pm@vger.kernel.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH v2 7/7] arm64: defconfig: enable cpufreq support for RPi3
-Date:   Thu,  6 Jun 2019 16:23:00 +0200
-Message-Id: <20190606142255.29454-8-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190606142255.29454-1-nsaenzjulienne@suse.de>
-References: <20190606142255.29454-1-nsaenzjulienne@suse.de>
+        id S1728921AbfFFOYT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 10:24:19 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:51868 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1727559AbfFFOYT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 10:24:19 -0400
+Received: (qmail 3059 invoked by uid 2102); 6 Jun 2019 10:24:18 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 6 Jun 2019 10:24:18 -0400
+Date:   Thu, 6 Jun 2019 10:24:18 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     David Howells <dhowells@redhat.com>
+cc:     viro@zeniv.linux.org.uk,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-usb@vger.kernel.org>, <raven@themaw.net>,
+        <linux-fsdevel@vger.kernel.org>, <linux-api@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <keyrings@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 09/10] usb: Add USB subsystem notifications [ver #3]
+In-Reply-To: <155981420247.17513.18371208824032389940.stgit@warthog.procyon.org.uk>
+Message-ID: <Pine.LNX.4.44L0.1906061020000.1641-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This enables both the new firmware clock driver and cpufreq driver
-available for the RPi3 family of boards.
+On Thu, 6 Jun 2019, David Howells wrote:
 
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+> Add a USB subsystem notification mechanism whereby notifications about
+> hardware events such as device connection, disconnection, reset and I/O
+> errors, can be reported to a monitoring process asynchronously.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 4d583514258c..3b7baffb3087 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -82,6 +82,7 @@ CONFIG_CPUFREQ_DT=y
- CONFIG_ACPI_CPPC_CPUFREQ=m
- CONFIG_ARM_ARMADA_37XX_CPUFREQ=y
- CONFIG_ARM_SCPI_CPUFREQ=y
-+CONFIG_ARM_RASPBERRYPI_CPUFREQ=y
- CONFIG_ARM_TEGRA186_CPUFREQ=y
- CONFIG_ARM_SCPI_PROTOCOL=y
- CONFIG_RASPBERRYPI_FIRMWARE=y
-@@ -639,6 +640,7 @@ CONFIG_COMMON_CLK_CS2000_CP=y
- CONFIG_COMMON_CLK_S2MPS11=y
- CONFIG_CLK_QORIQ=y
- CONFIG_COMMON_CLK_PWM=y
-+CONFIG_CLK_RASPBERRYPI=y
- CONFIG_CLK_IMX8MQ=y
- CONFIG_CLK_IMX8QXP=y
- CONFIG_TI_SCI_CLK=y
--- 
-2.21.0
+USB I/O errors covers an awfully large and vague field.  Do we really
+want to include them?  I'm doubtful.
+
+Alan Stern
 
