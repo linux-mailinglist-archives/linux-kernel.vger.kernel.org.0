@@ -2,56 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1169A37762
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 17:05:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7A6A37767
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 17:06:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729131AbfFFPFz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 11:05:55 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:42281 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727309AbfFFPFz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 11:05:55 -0400
-Received: by mail-io1-f67.google.com with SMTP id u19so438982ior.9
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 08:05:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=fz4b8xVm+MLGz9QhKTE2cIO7UJQE8Nygzjf+6DgAFpk=;
-        b=RFc5AA1QTwUT2LofagjQV+2cMSoYL6wlP2pDEajjqZgD9iroRV2FDX7bUAX7JEl5Gf
-         hrPlH5Y384vXQnL8nFgy4H1PK65IPL+dNWhxAIclZIYMFfKRrfaYv/mJFlcuh4suce3c
-         hrXW7CDqR3yYBVPIg5pmOl5IqaU+uNaded6PSttCrytmtxHbWrr9Q5CdKLNUGHflOO8u
-         Wl5YRExpIUeucdT81l4YTBha4rScjZTTXuRd5FVHBAnhaYbfhS9Y09YmXbzYXhwDFsw6
-         l2bYhQQvEjkJvXvW9P01I2B+yDhFxvXdBEVHsZ91TInjkY5Tkj7B9te6WIHku3qThSNN
-         9eVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=fz4b8xVm+MLGz9QhKTE2cIO7UJQE8Nygzjf+6DgAFpk=;
-        b=DU37O/8FSLcCDgTrAdsczNp1hm4mBAVsOM9Q2eoRFGWbxYjX7/KJdKzfx8GhnCPfSS
-         GTlVG+zwlP37PIP1pPFHZh7eNhaxlBfaadQKjju2ItQWhvIHvmG8wXzoUeDzBS8VYILM
-         Mhz+7zDeyU7x5w+z540WitWSOX+JQO234kpEvlLWH+85utuO4zKV6j4enVChnsVakO34
-         wkasSrzccK9l376UPUDBwOBuyCFrvKSzE/Hg8FxGI6zGKT894D9d1U7WaOe9Txai03w1
-         XrnR9OG+F/Vg7zHdlZ/DcKK4uwGTJQbVIvpkqEVSaUCYu4fpkXGo8S3+InkLhLL7+x7T
-         T2kg==
-X-Gm-Message-State: APjAAAWDWMwEngle2bG1LcCT8l+pe64H7hWCJECPlyFUbtDxoxHVP4qw
-        zJsPbAkwgfKZv3ZqntKtpai2fshRACk3MVeXGvs=
-X-Google-Smtp-Source: APXvYqxt4IYaFuZMEEREZcdqnO8NJ3pyKOyS4VMdTEWTuKThv/913I4UoFyspJcMj2jxmQ/Jz5iEgp1KgCBA47NldBE=
-X-Received: by 2002:a5d:9d58:: with SMTP id k24mr14682788iok.116.1559833554833;
- Thu, 06 Jun 2019 08:05:54 -0700 (PDT)
+        id S1729160AbfFFPGW convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 6 Jun 2019 11:06:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38322 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727309AbfFFPGU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 11:06:20 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0269B3086200;
+        Thu,  6 Jun 2019 15:06:20 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C86F810ABD60;
+        Thu,  6 Jun 2019 15:06:15 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <176F8189-3BE9-4B8C-A4D5-8915436338FB@amacapital.net>
+References: <176F8189-3BE9-4B8C-A4D5-8915436338FB@amacapital.net> <155981411940.17513.7137844619951358374.stgit@warthog.procyon.org.uk> <155981413016.17513.10540579988392555403.stgit@warthog.procyon.org.uk>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        Casey Schaufler <casey@schaufler-ca.com>, raven@themaw.net,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/10] security: Override creds in __fput() with last fputter's creds [ver #3]
 MIME-Version: 1.0
-Received: by 2002:a5d:9ec9:0:0:0:0:0 with HTTP; Thu, 6 Jun 2019 08:05:54 -0700 (PDT)
-Reply-To: sgt.hester33@gmail.com
-From:   Ann Hester <kalueke287@gmail.com>
-Date:   Thu, 6 Jun 2019 15:05:54 +0000
-Message-ID: <CAAe6BizHWyXWLCBMKbTjZGrYMsh7Pc7a2fBMH6ugMq+-Xm-swA@mail.gmail.com>
-Subject: Greetings
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <11030.1559833574.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Thu, 06 Jun 2019 16:06:14 +0100
+Message-ID: <11031.1559833574@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 06 Jun 2019 15:06:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-My name is Ann Hester, please reply me.
+Andy Lutomirski <luto@amacapital.net> wrote:
+
+> > So that the LSM can see the credentials of the last process to do an fput()
+> > on a file object when the file object is being dismantled, do the following
+> > steps:
+> > 
+> 
+> I still maintain that this is a giant design error.
+
+Yes, I know.  This was primarily a post so that Greg could play with the USB
+notifications stuff I added.  The LSM support isn't resolved and is unchanged.
+
+> Can someone at least come up with a single valid use case that isn't
+> entirely full of bugs?
+
+"Entirely full of bugs"?
+
+How would you propose I deal with Casey's requirement?  I'm getting the
+feeling you're going to nak it if I try to fulfil that and he's going to nak
+it if I don't.
+
+David
