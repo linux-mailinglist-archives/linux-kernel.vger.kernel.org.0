@@ -2,112 +2,290 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E428937D2A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 21:23:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38B6E37D31
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 21:26:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729246AbfFFTXB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 15:23:01 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42935 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728504AbfFFTXB (ORCPT
+        id S1729281AbfFFTXb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 15:23:31 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34167 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729151AbfFFTXb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 15:23:01 -0400
-Received: by mail-pg1-f196.google.com with SMTP id e6so1886435pgd.9
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 12:23:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=+S0wcX87X5waHh8++2TADiUtaixAR2MJn95+UMpUzAk=;
-        b=hbOr96z/lV1V2iEqt9jxbsE6ILd7Bs3hopfYNeYNzpr452iz+JGuknFUGvylLoGbf6
-         PaKmhDAXZZzR+RiA8JzSZtuPTOTt8ZLSVVYCnw5gxbH5RSfZMBUb7NZXKdzNd2qEggev
-         A7ULi3KbHZ+irfw1cDar/VzedEmemzkFTTeGM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=+S0wcX87X5waHh8++2TADiUtaixAR2MJn95+UMpUzAk=;
-        b=KOXjPqzRAp8LBrbdUauiD5zdQrXR+zB1ElvFd6p8jebUIHF9pJk5nlxbq9i6ZXmueN
-         xvkZbGZ9oNNWE3tpMcHeD2QUNZjD7DkYBjuIdl+iWH+q3XK+kNYL0PxmLvDKArzXPT0+
-         zBH3TZoxFyKhc3EZTN4SCPY0lxpXT4uwIIsHsY9L1xhWqGZH05TyMG+AyaYaH7zi672p
-         njYOVcILqCw0Vdteqc7RoV+Q3RITfxcE7yceDKAnUeIdeXFVgtpAl2onKaTSPJ64WBdf
-         PQrYwlR1HuBtBCxWkp9tNgGkDpUXXveiUnLaTFtD4Vtb5okKNLLG0cSB7sQ+wlB9RTzM
-         4rkw==
-X-Gm-Message-State: APjAAAVHaakKbe4p2cSdZvelSPmhUlK61L9G2iv+6oTQSUHQ0hEcGI6F
-        R/ggElvmSTJk6Llio8VAWEjK7w==
-X-Google-Smtp-Source: APXvYqw6/H0bTzmD1NtNFdjKXRgiTyCLyusI7VLYczAQnMPAF5yw1qPTSosMoYo5kE9VEEJioyBovw==
-X-Received: by 2002:a63:2ad2:: with SMTP id q201mr139088pgq.94.1559848980654;
-        Thu, 06 Jun 2019 12:23:00 -0700 (PDT)
-Received: from [10.69.37.149] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id j13sm3262132pfh.13.2019.06.06.12.22.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 06 Jun 2019 12:23:00 -0700 (PDT)
-Subject: Re: [PATCH] scsi: lpfc: Fix backport of faf5a744f4f8 ("scsi: lpfc:
- avoid uninitialized variable warning")
-To:     Nathan Chancellor <natechancellor@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Pavel Machek <pavel@denx.de>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-References: <20190606165346.GB3249@kroah.com>
- <20190606174125.4277-1-natechancellor@gmail.com>
-From:   James Smart <james.smart@broadcom.com>
-Message-ID: <de9bab03-437f-d4ab-df93-5f36b4216f03@broadcom.com>
-Date:   Thu, 6 Jun 2019 12:22:55 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Thu, 6 Jun 2019 15:23:31 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x56JMvjR2102984
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 6 Jun 2019 12:22:58 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x56JMvjR2102984
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1559848978;
+        bh=2A4oP0eOHallQcu7bSK+9usjQOKuyt6NxmX8y2LrP3g=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=GSrzvhVXSxQMStTJYSNWOxiIYPjsL8ZfVXNp5Vb30P3hR9GzKypU2iHN1fZw+P9/c
+         X2NXupmkRD2XBfDAuHPIQVFJ3qH9C6h4q8P4CLuREtx+gk9p4916baU+LbdxVwos4a
+         xS8Lkix/nMGYHEhA+jePdtZNW9Dtoob1W17dzxmCEj09PJw8nMdUg1mp68oWfB4kNj
+         164kabulNHSnKkXTPp3pn2FfXrZOJYyoX658qb+EPQtHr0vfC19RMOiOf07/D4aI+s
+         VpRQi4GZ/PEMJHinb8986VudjdNITTRMU4AWs39o686ioKc6/Vrygn7K+SdpKDu77o
+         KKJTV0mw7R11g==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x56JMvI82102981;
+        Thu, 6 Jun 2019 12:22:57 -0700
+Date:   Thu, 6 Jun 2019 12:22:57 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Junichi Nomura <tipbot@zytor.com>
+Message-ID: <tip-0a23ebc66a46786769dd68bfdaa3102345819b9c@git.kernel.org>
+Cc:     fanc.fnst@cn.fujitsu.com, dirk.vandermerwe@netronome.com,
+        mingo@kernel.org, bp@suse.de, dyoung@redhat.com,
+        j-nomura@ce.jp.nec.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, hpa@zytor.com
+Reply-To: mingo@kernel.org, dirk.vandermerwe@netronome.com,
+          fanc.fnst@cn.fujitsu.com, hpa@zytor.com,
+          linux-kernel@vger.kernel.org, j-nomura@ce.jp.nec.com,
+          tglx@linutronix.de, bp@suse.de, dyoung@redhat.com
+In-Reply-To: <20190408231011.GA5402@jeru.linux.bs1.fc.nec.co.jp>
+References: <20190408231011.GA5402@jeru.linux.bs1.fc.nec.co.jp>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/boot] x86/boot: Use efi_setup_data for searching RSDP on
+ kexec-ed kernels
+Git-Commit-ID: 0a23ebc66a46786769dd68bfdaa3102345819b9c
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20190606174125.4277-1-natechancellor@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        T_DATE_IN_FUTURE_96_Q autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/6/2019 10:41 AM, Nathan Chancellor wrote:
-> Prior to commit 4c47efc140fa ("scsi: lpfc: Move SCSI and NVME Stats to
-> hardware queue structures") upstream, we allocated a cstat structure in
-> lpfc_nvme_create_localport. When commit faf5a744f4f8 ("scsi: lpfc: avoid
-> uninitialized variable warning") was backported, it was placed after the
-> allocation so we leaked memory whenever this function was called and
-> that conditional was true (so whenever CONFIG_NVME_FC is disabled).
->
-> Move the IS_ENABLED if statement above the allocation since it is not
-> needed when the condition is true.
->
-> Reported-by: Pavel Machek <pavel@denx.de>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->   drivers/scsi/lpfc/lpfc_nvme.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/scsi/lpfc/lpfc_nvme.c b/drivers/scsi/lpfc/lpfc_nvme.c
-> index 099f70798fdd..645ffb5332b4 100644
-> --- a/drivers/scsi/lpfc/lpfc_nvme.c
-> +++ b/drivers/scsi/lpfc/lpfc_nvme.c
-> @@ -2477,14 +2477,14 @@ lpfc_nvme_create_localport(struct lpfc_vport *vport)
->   	lpfc_nvme_template.max_sgl_segments = phba->cfg_nvme_seg_cnt + 1;
->   	lpfc_nvme_template.max_hw_queues = phba->cfg_nvme_io_channel;
->   
-> +	if (!IS_ENABLED(CONFIG_NVME_FC))
-> +		return ret;
-> +
->   	cstat = kmalloc((sizeof(struct lpfc_nvme_ctrl_stat) *
->   			phba->cfg_nvme_io_channel), GFP_KERNEL);
->   	if (!cstat)
->   		return -ENOMEM;
->   
-> -	if (!IS_ENABLED(CONFIG_NVME_FC))
-> -		return ret;
-> -
->   	/* localport is allocated from the stack, but the registration
->   	 * call allocates heap memory as well as the private area.
->   	 */
+Commit-ID:  0a23ebc66a46786769dd68bfdaa3102345819b9c
+Gitweb:     https://git.kernel.org/tip/0a23ebc66a46786769dd68bfdaa3102345819b9c
+Author:     Junichi Nomura <j-nomura@ce.jp.nec.com>
+AuthorDate: Thu, 11 Apr 2019 15:49:32 +0200
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Thu, 6 Jun 2019 20:28:37 +0200
 
-Reviewed-by: James Smart <james.smart@broadcom.com>
+x86/boot: Use efi_setup_data for searching RSDP on kexec-ed kernels
 
+Commit
 
+  3a63f70bf4c3a ("x86/boot: Early parse RSDP and save it in boot_params")
+
+broke kexec boot on EFI systems. efi_get_rsdp_addr() in the early
+parsing code tries to search RSDP from the EFI tables but that will
+crash because the table address is virtual when the kernel was booted by
+kexec (set_virtual_address_map() has run in the first kernel and cannot
+be run again in the second kernel).
+
+In the case of kexec, the physical address of EFI tables is provided via
+efi_setup_data in boot_params, which is set up by kexec(1).
+
+Factor out the table parsing code and use different pointers depending
+on whether the kernel is booted by kexec or not.
+
+ [ bp: Massage. ]
+
+Fixes: 3a63f70bf4c3a ("x86/boot: Early parse RSDP and save it in boot_params")
+Signed-off-by: Jun'ichi Nomura <j-nomura@ce.jp.nec.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Tested-by: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
+Cc: Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc: Dave Young <dyoung@redhat.com>
+Link: https://lkml.kernel.org/r/20190408231011.GA5402@jeru.linux.bs1.fc.nec.co.jp
+---
+ arch/x86/boot/compressed/acpi.c | 143 ++++++++++++++++++++++++++++++----------
+ 1 file changed, 107 insertions(+), 36 deletions(-)
+
+diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
+index ad84239e595e..15255f388a85 100644
+--- a/arch/x86/boot/compressed/acpi.c
++++ b/arch/x86/boot/compressed/acpi.c
+@@ -44,17 +44,109 @@ static acpi_physical_address get_acpi_rsdp(void)
+ 	return addr;
+ }
+ 
+-/* Search EFI system tables for RSDP. */
+-static acpi_physical_address efi_get_rsdp_addr(void)
++/*
++ * Search EFI system tables for RSDP.  If both ACPI_20_TABLE_GUID and
++ * ACPI_TABLE_GUID are found, take the former, which has more features.
++ */
++static acpi_physical_address
++__efi_get_rsdp_addr(unsigned long config_tables, unsigned int nr_tables,
++		    bool efi_64)
+ {
+ 	acpi_physical_address rsdp_addr = 0;
+ 
+ #ifdef CONFIG_EFI
+-	unsigned long systab, systab_tables, config_tables;
++	int i;
++
++	/* Get EFI tables from systab. */
++	for (i = 0; i < nr_tables; i++) {
++		acpi_physical_address table;
++		efi_guid_t guid;
++
++		if (efi_64) {
++			efi_config_table_64_t *tbl = (efi_config_table_64_t *)config_tables + i;
++
++			guid  = tbl->guid;
++			table = tbl->table;
++
++			if (!IS_ENABLED(CONFIG_X86_64) && table >> 32) {
++				debug_putstr("Error getting RSDP address: EFI config table located above 4GB.\n");
++				return 0;
++			}
++		} else {
++			efi_config_table_32_t *tbl = (efi_config_table_32_t *)config_tables + i;
++
++			guid  = tbl->guid;
++			table = tbl->table;
++		}
++
++		if (!(efi_guidcmp(guid, ACPI_TABLE_GUID)))
++			rsdp_addr = table;
++		else if (!(efi_guidcmp(guid, ACPI_20_TABLE_GUID)))
++			return table;
++	}
++#endif
++	return rsdp_addr;
++}
++
++/* EFI/kexec support is 64-bit only. */
++#ifdef CONFIG_X86_64
++static struct efi_setup_data *get_kexec_setup_data_addr(void)
++{
++	struct setup_data *data;
++	u64 pa_data;
++
++	pa_data = boot_params->hdr.setup_data;
++	while (pa_data) {
++		data = (struct setup_data *)pa_data;
++		if (data->type == SETUP_EFI)
++			return (struct efi_setup_data *)(pa_data + sizeof(struct setup_data));
++
++		pa_data = data->next;
++	}
++	return NULL;
++}
++
++static acpi_physical_address kexec_get_rsdp_addr(void)
++{
++	efi_system_table_64_t *systab;
++	struct efi_setup_data *esd;
++	struct efi_info *ei;
++	char *sig;
++
++	esd = (struct efi_setup_data *)get_kexec_setup_data_addr();
++	if (!esd)
++		return 0;
++
++	if (!esd->tables) {
++		debug_putstr("Wrong kexec SETUP_EFI data.\n");
++		return 0;
++	}
++
++	ei = &boot_params->efi_info;
++	sig = (char *)&ei->efi_loader_signature;
++	if (strncmp(sig, EFI64_LOADER_SIGNATURE, 4)) {
++		debug_putstr("Wrong kexec EFI loader signature.\n");
++		return 0;
++	}
++
++	/* Get systab from boot params. */
++	systab = (efi_system_table_64_t *) (ei->efi_systab | ((__u64)ei->efi_systab_hi << 32));
++	if (!systab)
++		error("EFI system table not found in kexec boot_params.");
++
++	return __efi_get_rsdp_addr((unsigned long)esd->tables, systab->nr_tables, true);
++}
++#else
++static acpi_physical_address kexec_get_rsdp_addr(void) { return 0; }
++#endif /* CONFIG_X86_64 */
++
++static acpi_physical_address efi_get_rsdp_addr(void)
++{
++#ifdef CONFIG_EFI
++	unsigned long systab, config_tables;
+ 	unsigned int nr_tables;
+ 	struct efi_info *ei;
+ 	bool efi_64;
+-	int size, i;
+ 	char *sig;
+ 
+ 	ei = &boot_params->efi_info;
+@@ -88,49 +180,20 @@ static acpi_physical_address efi_get_rsdp_addr(void)
+ 
+ 		config_tables	= stbl->tables;
+ 		nr_tables	= stbl->nr_tables;
+-		size		= sizeof(efi_config_table_64_t);
+ 	} else {
+ 		efi_system_table_32_t *stbl = (efi_system_table_32_t *)systab;
+ 
+ 		config_tables	= stbl->tables;
+ 		nr_tables	= stbl->nr_tables;
+-		size		= sizeof(efi_config_table_32_t);
+ 	}
+ 
+ 	if (!config_tables)
+ 		error("EFI config tables not found.");
+ 
+-	/* Get EFI tables from systab. */
+-	for (i = 0; i < nr_tables; i++) {
+-		acpi_physical_address table;
+-		efi_guid_t guid;
+-
+-		config_tables += size;
+-
+-		if (efi_64) {
+-			efi_config_table_64_t *tbl = (efi_config_table_64_t *)config_tables;
+-
+-			guid  = tbl->guid;
+-			table = tbl->table;
+-
+-			if (!IS_ENABLED(CONFIG_X86_64) && table >> 32) {
+-				debug_putstr("Error getting RSDP address: EFI config table located above 4GB.\n");
+-				return 0;
+-			}
+-		} else {
+-			efi_config_table_32_t *tbl = (efi_config_table_32_t *)config_tables;
+-
+-			guid  = tbl->guid;
+-			table = tbl->table;
+-		}
+-
+-		if (!(efi_guidcmp(guid, ACPI_TABLE_GUID)))
+-			rsdp_addr = table;
+-		else if (!(efi_guidcmp(guid, ACPI_20_TABLE_GUID)))
+-			return table;
+-	}
++	return __efi_get_rsdp_addr(config_tables, nr_tables, efi_64);
++#else
++	return 0;
+ #endif
+-	return rsdp_addr;
+ }
+ 
+ static u8 compute_checksum(u8 *buffer, u32 length)
+@@ -220,6 +283,14 @@ acpi_physical_address get_rsdp_addr(void)
+ 	if (!pa)
+ 		pa = boot_params->acpi_rsdp_addr;
+ 
++	/*
++	 * Try to get EFI data from setup_data. This can happen when we're a
++	 * kexec'ed kernel and kexec(1) has passed all the required EFI info to
++	 * us.
++	 */
++	if (!pa)
++		pa = kexec_get_rsdp_addr();
++
+ 	if (!pa)
+ 		pa = efi_get_rsdp_addr();
+ 
