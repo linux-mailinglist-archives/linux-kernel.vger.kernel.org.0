@@ -2,176 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6EBD369E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 04:12:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CFBD369EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 04:18:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbfFFCMG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 22:12:06 -0400
-Received: from mga02.intel.com ([134.134.136.20]:19592 "EHLO mga02.intel.com"
+        id S1726649AbfFFCSg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 22:18:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726541AbfFFCLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 22:11:51 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Jun 2019 19:11:50 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.36])
-  by orsmga004.jf.intel.com with ESMTP; 05 Jun 2019 19:11:49 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Cedric Xing <cedric.xing@intel.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-sgx@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, Serge Ayoun <serge.ayoun@intel.com>,
-        Shay Katz-zamir <shay.katz-zamir@intel.com>,
-        Haitao Huang <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kai Svahn <kai.svahn@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Kai Huang <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        William Roberts <william.c.roberts@intel.com>,
-        Philip Tricca <philip.b.tricca@intel.com>
-Subject: [RFC PATCH v2 5/5] security/selinux: Add enclave_load() implementation
-Date:   Wed,  5 Jun 2019 19:11:45 -0700
-Message-Id: <20190606021145.12604-6-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190606021145.12604-1-sean.j.christopherson@intel.com>
-References: <20190606021145.12604-1-sean.j.christopherson@intel.com>
+        id S1726589AbfFFCSf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 22:18:35 -0400
+Received: from dragon (li1264-180.members.linode.com [45.79.165.180])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E44EF2075B;
+        Thu,  6 Jun 2019 02:18:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559787515;
+        bh=jPhjz3SJtpJ0/jkTHGUxExTd7E6N9MYmbVa4lf1c1qU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tx77BCu7F5RhelD9SSq0df4I0jWlsUT2lOTZRjCwaZqODpKUomkIQ26UWy8PfrQI1
+         eF/o76e5/W7yMBm40XVBo01ZxwtOAq+2sP3IpFZaNPZk2JU4+9rPg2sBPODr+0ea9i
+         RHb1wgcbAdGs8NkMV7xMZNOlMXV6wbbjeIErV08k=
+Date:   Thu, 6 Jun 2019 10:18:16 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson.Huang@nxp.com
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, leonard.crestez@nxp.com,
+        aisheng.dong@nxp.com, viresh.kumar@linaro.org, ping.bai@nxp.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
+Subject: Re: [PATCH] arm64: dts: imx8mm: Move gic node into soc node
+Message-ID: <20190606021803.GW29853@dragon>
+References: <20190603015020.41410-1-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190603015020.41410-1-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The goal of selinux_enclave_load() is to provide a facsimile of the
-existing selinux_file_mprotect() and file_map_prot_check() policies,
-but tailored to the unique properties of SGX.
+On Mon, Jun 03, 2019 at 09:50:20AM +0800, Anson.Huang@nxp.com wrote:
+> From: Anson Huang <Anson.Huang@nxp.com>
+> 
+> GIC is inside of SoC from architecture perspective, it should
+> be located inside of soc node in DT.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-For example, an enclave page is technically backed by a MAP_SHARED file,
-but the "file" is essentially shared memory that is never persisted
-anywhere and also requires execute permissions (for some pages).
+It doesn't apply to my imx/dt64 branch.  Please generate it against that
+branch for my for-next.
 
-The basic concept is to require appropriate execute permissions on the
-source of the enclave for pages that are requesting PROT_EXEC, e.g. if
-an enclave page is being loaded from a regular file, require
-FILE__EXECUTE and/or FILE__EXECMOND, and if it's coming from an
-anonymous/private mapping, require PROCESS__EXECMEM since the process
-is essentially executing from the mapping, albeit in a roundabout way.
+Shawn
 
-Note, FILE__READ and FILE__WRITE are intentionally not required even if
-the source page is backed by a regular file.  Writes to the enclave page
-are contained to the EPC, i.e. never hit the original file, and read
-permissions have already been vetted (or the VMA doesn't have PROT_READ,
-in which case loading the page into the enclave will fail).
-
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- security/selinux/hooks.c | 69 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 69 insertions(+)
-
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 3ec702cf46ca..3c5418edf51c 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -6726,6 +6726,71 @@ static void selinux_bpf_prog_free(struct bpf_prog_aux *aux)
- }
- #endif
- 
-+#ifdef CONFIG_INTEL_SGX
-+int selinux_enclave_load(struct vm_area_struct *vma, unsigned long prot)
-+{
-+	const struct cred *cred = current_cred();
-+	u32 sid = cred_sid(cred);
-+	int ret;
-+
-+	/* SGX is supported only in 64-bit kernels. */
-+	WARN_ON_ONCE(!default_noexec);
-+
-+	/* Only executable enclave pages are restricted in any way. */
-+	if (!(prot & PROT_EXEC))
-+		return 0;
-+
-+	/*
-+	 * The source page is exectuable, i.e. has already passed SELinux's
-+	 * checks, and userspace is not requesting RW->RX capabilities.
-+	 */
-+	if ((vma->vm_flags & VM_EXEC) && !(prot & PROT_WRITE))
-+		return 0;
-+
-+	/*
-+	 * The source page is not executable, or userspace is requesting the
-+	 * ability to do a RW->RX conversion.  Permissions are required as
-+	 * follows, in order of increasing privelege:
-+	 *
-+	 * EXECUTE - Load an executable enclave page without RW->RX intent from
-+	 *           a non-executable vma that is backed by a shared mapping to
-+	 *           a regular file that has not undergone COW.
-+	 *
-+	 * EXECMOD - Load an executable enclave page without RW->RX intent from
-+	 *           a non-executable vma that is backed by a shared mapping to
-+	 *           a regular file that *has* undergone COW.
-+	 *
-+	 *         - Load an enclave page *with* RW->RX intent from a shared
-+	 *           mapping to a regular file.
-+	 *
-+	 * EXECMEM - Load an exectuable enclave page from an anonymous mapping.
-+	 *
-+	 *         - Load an exectuable enclave page from a private file, e.g.
-+	 *           from a shared mapping to a hugetlbfs file.
-+	 *
-+	 *         - Load an enclave page *with* RW->RX intent from a private
-+	 *           mapping to a regular file.
-+	 *
-+	 * Note, this hybrid EXECMOD and EXECMEM behavior is intentional and
-+	 * reflects the nature of enclaves and the EPC, e.g. EPC is effectively
-+	 * a non-persistent shared file, but each enclave is a private domain
-+	 * within that shared file, so delegate to the source of the enclave.
-+	 */
-+	if (vma->vm_file && !IS_PRIVATE(file_inode(vma->vm_file) &&
-+	    ((vma->vm_flags & VM_SHARED) || !(prot & PROT_WRITE)))) {
-+		if (!vma->anon_vma && !(prot & PROT_WRITE))
-+			ret = file_has_perm(cred, vma->vm_file, FILE__EXECUTE);
-+		else
-+			ret = file_has_perm(cred, vma->vm_file, FILE__EXECMOD);
-+	} else {
-+		ret = avc_has_perm(&selinux_state,
-+				   sid, sid, SECCLASS_PROCESS,
-+				   PROCESS__EXECMEM, NULL);
-+	}
-+	return ret;
-+}
-+#endif
-+
- struct lsm_blob_sizes selinux_blob_sizes __lsm_ro_after_init = {
- 	.lbs_cred = sizeof(struct task_security_struct),
- 	.lbs_file = sizeof(struct file_security_struct),
-@@ -6968,6 +7033,10 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(bpf_map_free_security, selinux_bpf_map_free),
- 	LSM_HOOK_INIT(bpf_prog_free_security, selinux_bpf_prog_free),
- #endif
-+
-+#ifdef CONFIG_INTEL_SGX
-+	LSM_HOOK_INIT(enclave_load, selinux_enclave_load),
-+#endif
- };
- 
- static __init int selinux_init(void)
--- 
-2.21.0
-
+> ---
+>  arch/arm64/boot/dts/freescale/imx8mm.dtsi | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
+> index dc99f45..429312e 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
+> @@ -169,15 +169,6 @@
+>  		clock-output-names = "clk_ext4";
+>  	};
+>  
+> -	gic: interrupt-controller@38800000 {
+> -		compatible = "arm,gic-v3";
+> -		reg = <0x0 0x38800000 0 0x10000>, /* GIC Dist */
+> -		      <0x0 0x38880000 0 0xC0000>; /* GICR (RD_base + SGI_base) */
+> -		#interrupt-cells = <3>;
+> -		interrupt-controller;
+> -		interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+> -	};
+> -
+>  	psci {
+>  		compatible = "arm,psci-1.0";
+>  		method = "smc";
+> @@ -739,6 +730,15 @@
+>  			dma-names = "rx-tx";
+>  			status = "disabled";
+>  		};
+> +
+> +		gic: interrupt-controller@38800000 {
+> +			compatible = "arm,gic-v3";
+> +			reg = <0x38800000 0x10000>, /* GIC Dist */
+> +			      <0x38880000 0xc0000>; /* GICR (RD_base + SGI_base) */
+> +			#interrupt-cells = <3>;
+> +			interrupt-controller;
+> +			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+> +		};
+>  	};
+>  
+>  	usbphynop1: usbphynop1 {
+> -- 
+> 2.7.4
+> 
