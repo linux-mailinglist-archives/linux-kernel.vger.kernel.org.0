@@ -2,168 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 491ED36A6E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 05:17:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD71336A5D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 05:09:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbfFFDRQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 23:17:16 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:17671 "EHLO huawei.com"
+        id S1726652AbfFFDJE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 23:09:04 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:57426 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726454AbfFFDRQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 23:17:16 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id A40754191C74A36B4DEA;
-        Thu,  6 Jun 2019 11:17:08 +0800 (CST)
-Received: from [127.0.0.1] (10.177.131.64) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Thu, 6 Jun 2019
- 11:16:58 +0800
-Subject: Re: [Question] panic when write file cpuset.cpus
-To:     <tj@kernel.org>, <lizefan@huawei.com>, <hannes@cmpxchg.org>,
-        <cgroups@vger.kernel.org>, <wangkefeng.wang@huawei.com>,
-        <yi.zhang@huawei.com>
-References: <0efc2890-5cb4-2700-8de4-304e72b7dbb4@huawei.com>
-CC:     <linux-kernel@vger.kernel.org>
-From:   Chen Zhou <chenzhou10@huawei.com>
-Message-ID: <e97ef832-37de-a3f5-0cd4-4c93d97008ac@huawei.com>
-Date:   Thu, 6 Jun 2019 11:16:48 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+        id S1726427AbfFFDJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 23:09:04 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 8114E8DD1A5B94991531;
+        Thu,  6 Jun 2019 11:09:02 +0800 (CST)
+Received: from euler.huawei.com (10.175.104.193) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 6 Jun 2019 11:08:47 +0800
+From:   Wei Li <liwei391@huawei.com>
+To:     <rostedt@goodmis.org>, <mingo@redhat.com>
+CC:     <huawei.libin@huawei.com>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] ftrace: fix NULL pointer dereference in free_ftrace_func_mapper()
+Date:   Thu, 6 Jun 2019 11:17:54 +0800
+Message-ID: <20190606031754.10798-1-liwei391@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <0efc2890-5cb4-2700-8de4-304e72b7dbb4@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-X-Originating-IP: [10.177.131.64]
+Content-Type: text/plain
+X-Originating-IP: [10.175.104.193]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-K0NjIGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCg0KT24gMjAxOS82LzYgMTE6MDQs
-IENoZW4gWmhvdSB3cm90ZToNCj4gSGkgYWxsLA0KPiANCj4gSSBoaXQgdGhlIGZvbGxvd2lu
-ZyBpc3N1ZSBpbiBsaW51eCA0LjQgd2hpY2ggaXMgaGFyZCB0byByZXByb2R1Y2UuDQo+IA0K
-PiBbMjAxOTA1MjcyMjExMDZdW2JzcF9wY2lfZGV2aWNlX2dldF9iYXJdLS0tIHBCYXNlUGh5
-QWRkciA6M2EwMDgwMDAwMDAsIGxlbjo0MDAwMDAwICAtLS0NCj4gWzIwMTkwNTI3MjIxMTA2
-XVVuYWJsZSB0byBoYW5kbGUga2VybmVsIHBhZ2luZyByZXF1ZXN0IGF0IHZpcnR1YWwgYWRk
-cmVzcyAxMDAwMDAwMTANCj4gWzIwMTkwNTI3MjIxMTA3XXBnZCA9IGZmZmZmZmQzYzY5NmIw
-MDANCj4gWzIwMTkwNTI3MjIxMTA3XVsxMDAwMDAwMTBdICpwZ2Q9MDAwMDAwMDAwMDAwMDAw
-MCwgKnB1ZD0wMDAwMDAwMDAwMDAwMDAwDQo+IFsyMDE5MDUyNzIyMTEwN11JbnRlcm5hbCBl
-cnJvcjogT29wczogOTYwMDAwMDUgWyMxXSBQUkVFTVBUIFNNUA0KPiBbMjAxOTA1MjcyMjEx
-MDddTW9kdWxlcyBsaW5rZWQgaW46IGxpbnV4X3VzZXJfYmRlKE8pIGxpbnV4X2tlcm5lbF9i
-ZGUoTykgY21hYyhPKSBuc2UoTykgcHAoTykgdG0oTykgbGZlKE8pIHRpcGMoTykgcGNpZV9h
-ZXJfaGlzaShPKSBicmRfZHJ2X2xwdShPKSBoaTE2MXhfZ2xmKE8pIGhpMTYxeF9nbGMoTykg
-Y2hpcF9zZGtfYWRwdChPKSBib25kaW5nKE8pIG1lbWVudihPKSBpb2Zfc2FsKE8pIGlvZl9k
-bG9nKE8pIGlvZl9kZXZlbnQoTykgaW9mX2lvbW0oTykgZHJ2X2JzcF9waWMoTykgYnNwX2Nv
-bW1vbihPKSBwcmFtZGlzayhPKSBic3BfcHJvYyhPKSBrZGNfdWlvX2xvZyhPKSB2cnBfZW52
-X2xvZ19hcmVhKE8pIGRydl9ic3BfZm1lYShPKSBEcnZfTGFzdFdkc19LKE8pIERydl9DcHVE
-ZnhJbmZvX0soTykgRHJ2X0NwdURmeF9LKE8pIHY4X2RmeF9jcHUoTykgRHJ2X0RmeF9LKE8p
-IERydl9DcHVSZWdJbmplY3RfSyhPKSBEcnZfUmVzZXRDYXVzZV9LKE8pIERydl9LYm94X0so
-TykgZW52X2NvcmUoTykgaW9mX2RhdGEoTykgRHJ2X0wyZmx1c2hfSyhPKSBhcm02NF9jYWNo
-ZV9kZngoTykgbW1hcGRldihPKSBkcnZfZXh0ZXJuX2ludChPKSBpcnFfbW9uaXRvcihPKSBk
-cnZfYnNwX2F2cyhPKSBEcnZfUG1idXNfSyhPKSBEcnZfU21jX0soTykgYnNwX3NhbChPKSBE
-cnZfSXBzZWNfSyhPKSBEcnZfVHNlbnNvcl9LKE8pIHBjaV9oaXNpKE8pIHNlcmRlcyhPKSBE
-cnZfQ2hlY2tCb290X0soTykgRHJ2X0RqdGFnX0soTykgYWRkcl93aW4oTykgaW9mX2NiYihP
-KSBEcnZfSTJjX0soTykgaG5zX3Vpb19lbmV0KE8pIGhuc19lbmV0X2RydihPKSBobnNfZHNh
-ZihPKSBobmFlKE8pIGhuc19tZGlvKE8pIG1kaW8oTykgRHJ2X0Zsb3dDdHJsX0soTykgRHJ2
-X0dwaW9fSyhPKSBEcnZfU3lzQ2xrX0soTykgcGh5c21hcF9vZihPKSBtYXBfcm9tKE8pIGNm
-aV9jbWRzZXRfMDAwMihPKSBjZmlfcHJvYmUoTykgY2ZpX3V0aWwoTykgZ2VuX3Byb2JlKE8p
-IGNoaXByZWcoTykgcnNtKE8pIHJ0b3Nfc25hcHNob3QoTykgcnRvc19rYm94X3BhbmljKE8p
-IGJzcF93ZHQoTykgZHJ2X2JzcF9kZHIoTykgYnNwX3JlZyhPKSBEcnZfRHRzX0soTykgRHJ2
-X1N5c0N0bF9LKE8pIGFybV9zYWxfaXNzdShPKSBrc2VjdXJlYyhQTykgZXh0NCBqYmQyIGV4
-dDIgbWJjYWNoZSBvZnBhcnQgaTJjX2RldiBpMmNfY29yZSB1aW8gbmFuZCBuYW5kX2VjYyBu
-YW5kX2lkcyBjbWRsaW5lcGFydCBtdGRibG9jayBtdGRfYmxrZGV2cyBtdGQNCj4gWzIwMTkw
-NTI3MjIxMTA3XUNQVTogMiBQSUQ6IDI2NTYgQ29tbTogbW9uaXRvciBUYWludGVkOiBQICAg
-ICAgICBXICBPICAgIDQuNC4xNzEgIzENCj4gWzIwMTkwNTI3MjIxMTA3XUhhcmR3YXJlIG5h
-bWU6IEhpc2lsaWNvbiBjaGlwNl8xNiBQcm9kdWN0IEJvYXJkIChEVCkNCj4gWzIwMTkwNTI3
-MjIxMTA3XXRhc2s6IGZmZmZmZmQzYmY4MWMyNTAgdGFzay5zdGFjazogZmZmZmZmZDNiZmYw
-YzAwMA0KPiBbMjAxOTA1MjcyMjExMDddUEMgaXMgYXQgcmJfZXJhc2UrMHgxNC8weDMyMA0K
-PiBbMjAxOTA1MjcyMjExMDddTFIgaXMgYXQgZXJhc2VfaGVhZGVyKzB4NTAvMHg1NA0KPiBb
-MjAxOTA1MjcyMjExMDddcGMgOiBbPGZmZmZmZjgwMDg0NmU1Mjg+XSBsciA6IFs8ZmZmZmZm
-ODAwODNkMjQ2OD5dIHBzdGF0ZTogMDAwMDAxNDUNCj4gWzIwMTkwNTI3MjIxMTA3XXNwIDog
-ZmZmZmZmZDNiZmYwZjlhMA0KPiBbMjAxOTA1MjcyMjExMDddeDI5OiBmZmZmZmZkM2JmZjBm
-OWEwIHgyODogZmZmZmZmNjlmZThiMTk4MA0KPiBbMjAxOTA1MjcyMjExMDddeDI3OiAwMDAw
-MDAwMDAwMDAwMDAxIHgyNjogZmZmZmZmODAwOGU3ZTM0MA0KPiBbMjAxOTA1MjcyMjExMDdd
-eDI1OiBmZmZmZmY4MDA4ZTA1MDAwIHgyNDogZmZmZmZmODAwOGUzMmUyOA0KPiBbMjAxOTA1
-MjcyMjExMDddeDIzOiBmZmZmZmZkM2MwNTQyNTAwIHgyMjogZmZmZmZmODAwOGUzMjAwMA0K
-PiBbMjAxOTA1MjcyMjExMDddeDIxOiBmZmZmZmY4MDA4ZTA1MDAwIHgyMDogZmZmZmZmZDNj
-MDU0MmYwMA0KPiBbMjAxOTA1MjcyMjExMDddeDE5OiBmZmZmZmZkM2MwNTQyZmI4IHgxODog
-MDAwMDAwMDAwMDAwMDAwZg0KPiBbMjAxOTA1MjcyMjExMDddeDE3OiAwMDAwMDA3ZjliZDIw
-ZTEwIHgxNjogZmZmZmZmODAwODM2NzEwOA0KPiBbMjAxOTA1MjcyMjExMDddeDE1OiAwMDAw
-MDAwMDAwMDAxZmVlIHgxNDogMDAwMDAwMDAwMDAwMDAwMA0KPiBbMjAxOTA1MjcyMjExMDdd
-eDEzOiAwMDAwMDAwMDAwMDAwMDAwIHgxMjogMDAwMDAwMDAwMDAwMDAwMA0KPiBbMjAxOTA1
-MjcyMjExMDddeDExOiAwMDAwMDAwMDAwMDAwMDAxIHgxMDogMDAwMDAwMDAwMDAwMDAwMQ0K
-PiBbMjAxOTA1MjcyMjExMDddeDkgOiAwMDAwMDAwMDAwMDAwMDAxIHg4IDogZmZmZmZmODAw
-ODk0NjIyZA0KPiBbMjAxOTA1MjcyMjExMDddeDcgOiBmZmZmZmZkM2M2NWRkN2QwIHg2IDog
-MDAwMDAwMDAwMDAwMDAwMA0KPiBbMjAxOTA1MjcyMjExMDddeDUgOiBmZmZmZmZkM2JmODFh
-NzQwIHg0IDogMDAwMDAwMDAwMDAwMDAwMA0KPiBbMjAxOTA1MjcyMjExMDddeDMgOiAwMDAw
-MDAwMTAwMDAwMDAxIHgyIDogMDAwMDAwMDEwMDAwMDAwMA0KPiBbMjAxOTA1MjcyMjExMDdd
-eDEgOiBmZmZmZmZkM2MwNTQyNTUwIHgwIDogZmZmZmZmZDNjMDU0MmY1OA0KPiBbMjAxOTA1
-MjcyMjExMDddUHJvY2VzcyBtb25pdG9yIChwaWQ6IDI2NTYsIHN0YWNrIGxpbWl0ID0gMHhm
-ZmZmZmZkM2JmZjBjMDAwKQ0KPiBbMjAxOTA1MjcyMjExMDddDQo+IFsyMDE5MDUyNzIyMTEw
-N11bPGZmZmZmZjgwMDg0NmU1Mjg+XSByYl9lcmFzZSsweDE0LzB4MzIwDQo+IFsyMDE5MDUy
-NzIyMTEwN11bPGZmZmZmZjgwMDgzZDJmNWM+XSBkcm9wX3N5c2N0bF90YWJsZSsweDE3Yy8w
-eDFkNA0KPiBbMjAxOTA1MjcyMjExMDddWzxmZmZmZmY4MDA4M2QyZjg0Pl0gZHJvcF9zeXNj
-dGxfdGFibGUrMHgxYTQvMHgxZDQNCj4gWzIwMTkwNTI3MjIxMTA3XVs8ZmZmZmZmODAwODNk
-MzA1MD5dIHVucmVnaXN0ZXJfc3lzY3RsX3RhYmxlKzB4OWMvMHhhOA0KPiBbMjAxOTA1Mjcy
-MjExMDddWzxmZmZmZmY4MDA4M2QzMDE0Pl0gdW5yZWdpc3Rlcl9zeXNjdGxfdGFibGUrMHg2
-MC8weGE4DQo+IFsyMDE5MDUyNzIyMTEwN11bPGZmZmZmZjgwMDgyNWI4ODA+XSBwYXJ0aXRp
-b25fc2NoZWRfZG9tYWlucysweDY0LzB4MzM4DQo+IFsyMDE5MDUyNzIyMTEwN11bPGZmZmZm
-ZjgwMDgyYmQzN2M+XSByZWJ1aWxkX3NjaGVkX2RvbWFpbnNfbG9ja2VkKzB4ZTAvMHgzYzAN
-Cj4gWzIwMTkwNTI3MjIxMTA3XVs8ZmZmZmZmODAwODJiZTU5MD5dIGNwdXNldF93cml0ZV9y
-ZXNtYXNrKzB4Mjg4LzB4OGNjCQ0KPiBbMjAxOTA1MjcyMjExMDddWzxmZmZmZmY4MDA4MmI1
-NjAwPl0gY2dyb3VwX2ZpbGVfd3JpdGUrMHg2NC8weDEyOA0KPiBbMjAxOTA1MjcyMjExMDdd
-WzxmZmZmZmY4MDA4M2RhYTUwPl0ga2VybmZzX2ZvcF93cml0ZSsweDE1Yy8weDFhYw0KPiBb
-MjAxOTA1MjcyMjExMDddWzxmZmZmZmY4MDA4MzY1YzljPl0gX192ZnNfd3JpdGUrMHg2MC8w
-eDEyNA0KPiBbMjAxOTA1MjcyMjExMDddWzxmZmZmZmY4MDA4MzY2NjZjPl0gdmZzX3dyaXRl
-KzB4YjAvMHgxODQNCj4gWzIwMTkwNTI3MjIxMTA3XVs8ZmZmZmZmODAwODM2NzE3ND5dIFN5
-U193cml0ZSsweDZjLzB4Y2MNCj4gWzIwMTkwNTI3MjIxMTA3XVs8ZmZmZmZmODAwODIwMmNi
-OD5dIF9fc3lzX3RyYWNlX3JldHVybisweDAvMHg0DQo+IA0KPiANCj4gVGhlIGRpc2Fzc2Vt
-YmxlciBhbmQgdGhlIHNvdXJjZSBjb2RlIGFib3V0IHRoZSBiYWNrdHJhY2UgYXJlIGFzIGJl
-bG93Og0KPiANCj4gcmJfZXJhc2UoKS0+X19yYl9lcmFzZV9hdWdtZW50ZWQoKS0+X19yYl9j
-aGFuZ2VfY2hpbGQoKQ0KPiBfX3JiX2VyYXNlX2F1Z21lbnRlZCgpOg0KPiBmZmZmZmY4MDA4
-NDZlNTE0OiAgICAgICBhOTQwOTAwNiAgICAgICAgbGRwICAgICB4NiwgeDQsIFt4MCwgIzhd
-DQo+IGZmZmZmZjgwMDg0NmU1MTg6ICAgICAgIGI1MDAwMjQ0ICAgICAgICBjYm56ICAgIHg0
-LCBmZmZmZmY4MDA4NDZlNTYwIDxyYl9lcmFzZSsweDRjPg0KPiBmZmZmZmY4MDA4NDZlNTFj
-OiAgICAgICBmOTQwMDAwMyAgICAgICAgbGRyICAgICB4MywgW3gwXQ0KPiBfX3JiX2NoYW5n
-ZV9jaGlsZCgpOg0KPiBmZmZmZmY4MDA4NDZlNTIwOiAgICAgICBmMjdlZjQ2MiAgICAgICAg
-YW5kcyAgICB4MiwgeDMsICMweGZmZmZmZmZmZmZmZmZmZmMNCj4gZmZmZmZmODAwODQ2ZTUy
-NDogICAgICAgNTQwMDAxNDAgICAgICAgIGIuZXEgICAgZmZmZmZmODAwODQ2ZTU0YyA8cmJf
-ZXJhc2UrMHgzOD4gIC8vIGIubm9uZQ0KPiBmZmZmZmY4MDA4NDZlNTI4OiAgICAgICBmOTQw
-MDg0NCAgICAgICAgbGRyICAgICB4NCwgW3gyLCAjMTZdDQo+IGZmZmZmZjgwMDg0NmU1MmM6
-ICAgICAgIGViMDQwMDFmICAgICAgICBjbXAgICAgIHgwLCB4NA0KPiANCj4gZmZmZmZmODAw
-ODQ2ZTUzMDogICAgICAgNTQwMDAwYTEgICAgICAgIGIubmUgICAgZmZmZmZmODAwODQ2ZTU0
-NCA8cmJfZXJhc2UrMHgzMD4gIC8vIGIuYW55DQo+IF9fd3JpdGVfb25jZV9zaXplKCk6DQo+
-IGZmZmZmZjgwMDg0NmU1MzQ6ICAgICAgIGY5MDAwODQ2ICAgICAgICBzdHIgICAgIHg2LCBb
-eDIsICMxNl0NCj4gDQo+IHJiX2VyYXNlKCktPl9fcmJfZXJhc2VfYXVnbWVudGVkKCktPl9f
-cmJfY2hhbmdlX2NoaWxkKCkNCj4gc3RhdGljIF9fYWx3YXlzX2lubGluZSBzdHJ1Y3QgcmJf
-bm9kZSAqDQo+IF9fcmJfZXJhc2VfYXVnbWVudGVkKHN0cnVjdCByYl9ub2RlICpub2RlLCBz
-dHJ1Y3QgcmJfcm9vdCAqcm9vdCwNCj4gCQkgICAgIGNvbnN0IHN0cnVjdCByYl9hdWdtZW50
-X2NhbGxiYWNrcyAqYXVnbWVudCkNCj4gew0KPiAJLi4uDQo+IAlpZiAoIXRtcCkgew0KPiAJ
-CS4uLg0KPiAJCXBjID0gbm9kZS0+X19yYl9wYXJlbnRfY29sb3I7DQo+IAkJcGFyZW50ID0g
-X19yYl9wYXJlbnQocGMpOw0KPiAJCV9fcmJfY2hhbmdlX2NoaWxkKG5vZGUsIGNoaWxkLCBw
-YXJlbnQsIHJvb3QpOw0KPiAJLi4uDQo+IH0NCj4gc3RhdGljIGlubGluZSB2b2lkDQo+IF9f
-cmJfY2hhbmdlX2NoaWxkKHN0cnVjdCByYl9ub2RlICpvbGQsIHN0cnVjdCByYl9ub2RlICpu
-ZXcsDQo+IAkJICBzdHJ1Y3QgcmJfbm9kZSAqcGFyZW50LCBzdHJ1Y3QgcmJfcm9vdCAqcm9v
-dCkNCj4gew0KPiAJaWYgKHBhcmVudCkgew0KPiAJCWlmIChwYXJlbnQtPnJiX2xlZnQgPT0g
-b2xkKQ0KPiAJCQlXUklURV9PTkNFKHBhcmVudC0+cmJfbGVmdCwgbmV3KTsNCj4gCQllbHNl
-DQo+IAkJCVdSSVRFX09OQ0UocGFyZW50LT5yYl9yaWdodCwgbmV3KTsNCj4gCX0gZWxzZQ0K
-PiAJCVdSSVRFX09OQ0Uocm9vdC0+cmJfbm9kZSwgbmV3KTsNCj4gfQ0KPiANCj4gDQo+IFdo
-ZW4gcGFuaWMsIHRoZSB4MCBpcyBmZmZmZmZkM2MwNTQyZjU4IHdoaWNoIGluZGljYXRlcyB0
-aGUgZmlyc3QgcGFyYW1ldGVyIG9mIGZ1bmN0aW9uIF9fcmJfZXJhc2VfYXVnbWVudGVkLg0K
-PiANCj4gMmYzOCAgYzA1NDI1MDAgZmZmZmZmZDMgYzA1NDJmNTggZmZmZmZmZDMgMDAwMDAw
-MDAgMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAwMDANCj4gMmY1OCAgMDAwMDAwMDEgMDAwMDAw
-MDEgMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAwMDAgYzA1NDJmMDAgZmZmZmZm
-ZDMNCj4gMmY3OCAgYzA1NDJmZjggZmZmZmZmZDMgMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAw
-MDAgMDAwMDQxNmQgMDAwMDAwMDAgMDAwMDAwMDANCj4gDQo+IHgwIGlzIHRoZSAic3RydWN0
-IHJiX25vZGUgKm5vZGUiLCB0aGF0IGlzLCB0aGUgY29udGVudCBvZiB0aGUgbm9kZSBpczoN
-Cj4gc3RydWN0IHJiX25vZGUgew0KPiAJdW5zaWduZWQgbG9uZyAgX19yYl9wYXJlbnRfY29s
-b3I7ICAgICAgICAgICAgIDAwMDAwMDAxMDAwMDAwMDENCj4gCXN0cnVjdCByYl9ub2RlICpy
-Yl9yaWdodDsgICAgICAgICAgICAgICAgICAgICBmZmZmZmZkM2MwNTQyNTU4DQo+IAlzdHJ1
-Y3QgcmJfbm9kZSAqcmJfbGVmdDsgICAgICAgICAgICAgICAgICAgICAgMDAwMDAwMDAwMDAw
-MDAwMA0KPiB9IF9fYXR0cmlidXRlX18oKGFsaWduZWQoc2l6ZW9mKGxvbmcpKSkpOw0KPiAN
-Cj4gVGhlIHZhbHVlIG9mIF9fcmJfcGFyZW50X2NvbG9yIGlzIDAwMDAwMDAxMDAwMDAwMDEg
-YW5kIHRoZSBwYXJlbnQgYWRkcmVzcyBpcyAwMDAwMDAwMTAwMDAwMDAwLiBHZW5lcmFsbHks
-IHRoZSBwYXJlbnQNCj4gYWRkcmVzcyBzaG91bGQgYmUgTlVMTCBvciBhIHZhbGlkIGFkZHJl
-c3MuDQo+IA0KPiANCj4gSXMgdGhlcmUgYW55IGlkZWEgYWJvdXQgdGhpcyBpc3N1ZT8NCj4g
-DQo+IFRoYW5rcywNCj4gQ2hlbiBaaG91DQo+IA0KPiANCj4gDQo+IA0KPiANCg==
+The mapper may be NULL when called from register_ftrace_function_probe()
+with probe->data == NULL.
+
+This issue can be reproduced as follow (it may be coverd by compiler
+optimization sometime):
+
+/ # cat /sys/kernel/debug/tracing/set_ftrace_filter 
+#### all functions enabled ####
+/ # echo foo_bar:dump > /sys/kernel/debug/tracing/set_ftrace_filter 
+[  206.949100] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+[  206.952402] Mem abort info:
+[  206.952819]   ESR = 0x96000006
+[  206.955326]   Exception class = DABT (current EL), IL = 32 bits
+[  206.955844]   SET = 0, FnV = 0
+[  206.956272]   EA = 0, S1PTW = 0
+[  206.956652] Data abort info:
+[  206.957320]   ISV = 0, ISS = 0x00000006
+[  206.959271]   CM = 0, WnR = 0
+[  206.959938] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000419f3a000
+[  206.960483] [0000000000000000] pgd=0000000411a87003, pud=0000000411a83003, pmd=0000000000000000
+[  206.964953] Internal error: Oops: 96000006 [#1] SMP
+[  206.971122] Dumping ftrace buffer:
+[  206.973677]    (ftrace buffer empty)
+[  206.975258] Modules linked in:
+[  206.976631] Process sh (pid: 281, stack limit = 0x(____ptrval____))
+[  206.978449] CPU: 10 PID: 281 Comm: sh Not tainted 5.2.0-rc1+ #17
+[  206.978955] Hardware name: linux,dummy-virt (DT)
+[  206.979883] pstate: 60000005 (nZCv daif -PAN -UAO)
+[  206.980499] pc : free_ftrace_func_mapper+0x2c/0x118
+[  206.980874] lr : ftrace_count_free+0x68/0x80
+[  206.982539] sp : ffff0000182f3ab0
+[  206.983102] x29: ffff0000182f3ab0 x28: ffff8003d0ec1700 
+[  206.983632] x27: ffff000013054b40 x26: 0000000000000001 
+[  206.984000] x25: ffff00001385f000 x24: 0000000000000000 
+[  206.984394] x23: ffff000013453000 x22: ffff000013054000 
+[  206.984775] x21: 0000000000000000 x20: ffff00001385fe28 
+[  206.986575] x19: ffff000013872c30 x18: 0000000000000000 
+[  206.987111] x17: 0000000000000000 x16: 0000000000000000 
+[  206.987491] x15: ffffffffffffffb0 x14: 0000000000000000 
+[  206.987850] x13: 000000000017430e x12: 0000000000000580 
+[  206.988251] x11: 0000000000000000 x10: cccccccccccccccc 
+[  206.988740] x9 : 0000000000000000 x8 : ffff000013917550 
+[  206.990198] x7 : ffff000012fac2e8 x6 : ffff000012fac000 
+[  206.991008] x5 : ffff0000103da588 x4 : 0000000000000001 
+[  206.991395] x3 : 0000000000000001 x2 : ffff000013872a28 
+[  206.991771] x1 : 0000000000000000 x0 : 0000000000000000 
+[  206.992557] Call trace:
+[  206.993101]  free_ftrace_func_mapper+0x2c/0x118
+[  206.994827]  ftrace_count_free+0x68/0x80
+[  206.995238]  release_probe+0xfc/0x1d0
+[  206.995555]  register_ftrace_function_probe+0x4a8/0x868
+[  206.995923]  ftrace_trace_probe_callback.isra.4+0xb8/0x180
+[  206.996330]  ftrace_dump_callback+0x50/0x70
+[  206.996663]  ftrace_regex_write.isra.29+0x290/0x3a8
+[  206.997157]  ftrace_filter_write+0x44/0x60
+[  206.998971]  __vfs_write+0x64/0xf0
+[  206.999285]  vfs_write+0x14c/0x2f0
+[  206.999591]  ksys_write+0xbc/0x1b0
+[  206.999888]  __arm64_sys_write+0x3c/0x58
+[  207.000246]  el0_svc_common.constprop.0+0x408/0x5f0
+[  207.000607]  el0_svc_handler+0x144/0x1c8
+[  207.000916]  el0_svc+0x8/0xc
+[  207.003699] Code: aa0003f8 a9025bf5 aa0103f5 f946ea80 (f9400303) 
+[  207.008388] ---[ end trace 7b6d11b5f542bdf1 ]---
+[  207.010126] Kernel panic - not syncing: Fatal exception
+[  207.011322] SMP: stopping secondary CPUs
+[  207.013956] Dumping ftrace buffer:
+[  207.014595]    (ftrace buffer empty)
+[  207.015632] Kernel Offset: disabled
+[  207.017187] CPU features: 0x002,20006008
+[  207.017985] Memory Limit: none
+[  207.019825] ---[ end Kernel panic - not syncing: Fatal exception ]---
+
+Signed-off-by: Wei Li <liwei391@huawei.com>
+---
+ kernel/trace/ftrace.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index a12aff849c04..7e2488da69ac 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -4221,10 +4221,13 @@ void free_ftrace_func_mapper(struct ftrace_func_mapper *mapper,
+ 	struct ftrace_func_entry *entry;
+ 	struct ftrace_func_map *map;
+ 	struct hlist_head *hhd;
+-	int size = 1 << mapper->hash.size_bits;
+-	int i;
++	int size, i;
++
++	if (!mapper)
++		return;
+ 
+ 	if (free_func && mapper->hash.count) {
++		size = 1 << mapper->hash.size_bits;
+ 		for (i = 0; i < size; i++) {
+ 			hhd = &mapper->hash.buckets[i];
+ 			hlist_for_each_entry(entry, hhd, hlist) {
+-- 
+2.17.1
 
