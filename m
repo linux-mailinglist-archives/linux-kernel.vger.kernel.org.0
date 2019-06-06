@@ -2,143 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABB6F37D28
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 21:21:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6349E37D23
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 21:19:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729186AbfFFTVb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 15:21:31 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:52636 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728504AbfFFTVb (ORCPT
+        id S1729104AbfFFTTp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 15:19:45 -0400
+Received: from mail-qt1-f182.google.com ([209.85.160.182]:37071 "EHLO
+        mail-qt1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728504AbfFFTTo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 15:21:31 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x56JIs1x159577;
-        Thu, 6 Jun 2019 19:21:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=ZGGJPKfsk3L036pLr1d8EGwGK6t0E9/V4tYTxXtWdSk=;
- b=UlnRJc85OqZweCACVjr2mQuCCbo75VXDxn3xgd26QlcqJODiscULfKzaYDvPbQAW11O6
- G2+kAHoDFWH8H7HWw00UhDZ88W2cOglcbx8QFpkO2EpV+lSkttwnqzcRXFHzICUFY5Kk
- kADzMcVYB0Cs9Poq2Of5CFyampgqvkNCehB3mLkSInXEy6qM+viruJN3vdeLv87ZJFz1
- UmHK9+KH50VqrTf+9OwLdeHa0nSxpWBmXTSVPXX7902Mtbq92EVFho1aDI3UHnOwri11
- QTgDt4TDaFRybK7guvT19bcCjJBMfx1GGLN0oxgr0UVsdl9DLP9Jvq3L97FB9RCiQAWi kQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2suj0qtcgy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Jun 2019 19:21:07 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x56JIbns054295;
-        Thu, 6 Jun 2019 19:19:06 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2swnhaxgyj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 06 Jun 2019 19:19:06 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x56JJ57d012830;
-        Thu, 6 Jun 2019 19:19:06 GMT
-Received: from dhcp-10-132-91-225.usdhcp.oraclecorp.com (/10.132.91.225)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 06 Jun 2019 12:19:05 -0700
-Subject: Re: [PATCH] KVM: nVMX: Rename prepare_vmcs02_*_full to
- prepare_vmcs02_*_extra
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <1559834652-105872-1-git-send-email-pbonzini@redhat.com>
- <20190606184117.GJ23169@linux.intel.com>
-From:   Krish Sadhukhan <krish.sadhukhan@oracle.com>
-Message-ID: <89dd5d66-0d37-ea41-3f6d-72d5a8a9815d@oracle.com>
-Date:   Thu, 6 Jun 2019 12:19:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Thu, 6 Jun 2019 15:19:44 -0400
+Received: by mail-qt1-f182.google.com with SMTP id y57so4058420qtk.4
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 12:19:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2oS5QNLHGlJv3yS1XyyZhPfR0aQYy6cC8m3Y2LuoN4U=;
+        b=oD872j0ckEfzVVFQVCmfBjtoZOeaNs++his5eoMg5PjTNF7yLnceoZjgdQDCTYkDDi
+         U5ZE0+oiQ2AHoN/3VL0ixAYoRiMQR5nBzBwjjEWq7ekox4Vrpc0K7ZrixZ0jjjdUATE2
+         D1a0bVBctCVysjRltlusKJr79C8odIw3wgv8LSTEFwOi9Z5/pI351qHbSoEEco8tg8rz
+         OLdwc/FPbs2I8le2RfETGtWSODwSgcxWb4EBBaO2p9T9MNcQ7YQs79GpX8EVhIXt9U1Q
+         266wGP/xSRioMC0GtY5w0mnFJLKMQCx/hOlubYe2fGyvTHwHVqa+AeGqXLtTBqIFAGjM
+         9hgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2oS5QNLHGlJv3yS1XyyZhPfR0aQYy6cC8m3Y2LuoN4U=;
+        b=ruLmw5LpYDoEDHGApzo15NCZiFEstUS151FR2Pj1nqSWhw7VbrCIaH8UW122eiME83
+         lBuvQxvRWMHplM2v8gK7X25reEYWCiW3ys8CLFuP7pTErH6fngHHHpVxovyLcIaQ+mOs
+         CbAljDwHTcbbmv6k8HSeK7YblkustBu7K9RnS/sGqmAxaDy4CZdDj0JVtdUn8aMIsuld
+         mV8hfpSwbj2WFc2a6zMGJtIWaNQeykGdTEw3b7gyn8qx+qHJon82iIf+6w8TmSdjG+xq
+         H3mbcpj9DJEhdMD+h6JL7vYmVBR1yNdiyVlfCC/7OEEqXpcyc/CQapEeRbi4wD0jwH7W
+         zlZQ==
+X-Gm-Message-State: APjAAAWFt3izwtWRIxTJgC0EJ+aD/15lgrjYTmINaZOwvTu92GUo539j
+        /gATWEzzV3xBkGpL9cJsnV0=
+X-Google-Smtp-Source: APXvYqx7Imnl8WlP7WPtMnHGaDETa1iIdLlD5ktDlqTrh1dejzjRzship7BRay7fzSIyLa8+RiNElw==
+X-Received: by 2002:aed:3535:: with SMTP id a50mr43101741qte.237.1559848783662;
+        Thu, 06 Jun 2019 12:19:43 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([177.195.209.167])
+        by smtp.gmail.com with ESMTPSA id t6sm1543517qti.30.2019.06.06.12.19.42
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 06 Jun 2019 12:19:43 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 7727A41149; Thu,  6 Jun 2019 16:19:30 -0300 (-03)
+Date:   Thu, 6 Jun 2019 16:19:30 -0300
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     kan.liang@linux.intel.com, jolsa@kernel.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        ak@linux.intel.com
+Subject: Re: [PATCH V3 1/5] perf cpumap: Retrieve die id information
+Message-ID: <20190606191930.GH21245@kernel.org>
+References: <1559688644-106558-1-git-send-email-kan.liang@linux.intel.com>
+ <20190605090907.GC23116@krava>
 MIME-Version: 1.0
-In-Reply-To: <20190606184117.GJ23169@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9280 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906060128
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9280 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906060129
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190605090907.GC23116@krava>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Em Wed, Jun 05, 2019 at 11:09:07AM +0200, Jiri Olsa escreveu:
+> On Tue, Jun 04, 2019 at 03:50:40PM -0700, kan.liang@linux.intel.com wrote:
+> > From: Kan Liang <kan.liang@linux.intel.com>
+> > 
+> > There is no function to retrieve die id information of a given CPU.
+> > 
+> > Add cpu_map__get_die_id() to retrieve die id information.
+> > 
+> > Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> > ---
+> > 
+> > No changes since V2.
+> 
+> Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+> 
+> for the whole patchset
 
+Thanks, applied.
 
-On 06/06/2019 11:41 AM, Sean Christopherson wrote:
-> On Thu, Jun 06, 2019 at 05:24:12PM +0200, Paolo Bonzini wrote:
->> These function do not prepare the entire state of the vmcs02, only the
->> rarely needed parts.  Rename them to make this clearer.
->>
->> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
->> ---
->>   arch/x86/kvm/vmx/nested.c | 8 ++++----
->>   1 file changed, 4 insertions(+), 4 deletions(-)
->>
->> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
->> index 84438cf23d37..fd8150ef6cce 100644
->> --- a/arch/x86/kvm/vmx/nested.c
->> +++ b/arch/x86/kvm/vmx/nested.c
->> @@ -1955,7 +1955,7 @@ static void prepare_vmcs02_constant_state(struct vcpu_vmx *vmx)
->>   	vmx_set_constant_host_state(vmx);
->>   }
->>   
->> -static void prepare_vmcs02_early_full(struct vcpu_vmx *vmx,
->> +static void prepare_vmcs02_early_extra(struct vcpu_vmx *vmx,
-> Or maybe 'uncommon', 'rare' or 'ext'?  I don't I particularly love any of
-> the names, but they're all better than 'full'.
-
-The big chunk of the work in this function is done via 
-prepare_vmcs02_constant_state(). It seems cleaner to get rid of 
-prepare_vmcs02_early_full(), call prepare_vmcs02_constant_state() 
-directly from prepare_vmcs02_early() and move the three vmcs_write16() 
-calls to prepare_vmcs02_early().
-
->
-> Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
->
->>   				      struct vmcs12 *vmcs12)
->>   {
->>   	prepare_vmcs02_constant_state(vmx);
->> @@ -1976,7 +1976,7 @@ static void prepare_vmcs02_early(struct vcpu_vmx *vmx, struct vmcs12 *vmcs12)
->>   	u64 guest_efer = nested_vmx_calc_efer(vmx, vmcs12);
->>   
->>   	if (vmx->nested.dirty_vmcs12 || vmx->nested.hv_evmcs)
->> -		prepare_vmcs02_early_full(vmx, vmcs12);
->> +		prepare_vmcs02_early_extra(vmx, vmcs12);
->>   
->>   	/*
->>   	 * PIN CONTROLS
->> @@ -2130,7 +2130,7 @@ static void prepare_vmcs02_early(struct vcpu_vmx *vmx, struct vmcs12 *vmcs12)
->>   	}
->>   }
->>   
->> -static void prepare_vmcs02_full(struct vcpu_vmx *vmx, struct vmcs12 *vmcs12)
->> +static void prepare_vmcs02_extra(struct vcpu_vmx *vmx, struct vmcs12 *vmcs12)
->>   {
->>   	struct hv_enlightened_vmcs *hv_evmcs = vmx->nested.hv_evmcs;
->>   
->> @@ -2254,7 +2254,7 @@ static int prepare_vmcs02(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12,
->>   	struct vcpu_vmx *vmx = to_vmx(vcpu);
->>   
->>   	if (vmx->nested.dirty_vmcs12 || vmx->nested.hv_evmcs) {
->> -		prepare_vmcs02_full(vmx, vmcs12);
->> +		prepare_vmcs02_extra(vmx, vmcs12);
->>   		vmx->nested.dirty_vmcs12 = false;
->>   	}
->>   
->> -- 
->> 1.8.3.1
->>
-
+- Arnaldo
