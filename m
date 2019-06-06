@@ -2,237 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE7E63757C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 15:42:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BB9C37542
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 15:32:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728510AbfFFNlj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 09:41:39 -0400
-Received: from mga06.intel.com ([134.134.136.31]:13555 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728385AbfFFNlh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 09:41:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 06:41:36 -0700
-X-ExtLoop1: 1
-Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
-  by orsmga003.jf.intel.com with ESMTP; 06 Jun 2019 06:41:34 -0700
-From:   Tomas Winkler <tomas.winkler@intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-kernel@vger.kernel.org,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Subject: [char-misc-next 3/7 RESEND] mei: docs: update mei documentation
-Date:   Thu,  6 Jun 2019 16:31:08 +0300
-Message-Id: <20190606133108.26964-1-tomas.winkler@intel.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727792AbfFFNcv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 09:32:51 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:41744 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726924AbfFFNcv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 09:32:51 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 359FD25B77A;
+        Thu,  6 Jun 2019 23:32:49 +1000 (AEST)
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id D0F1F940356; Thu,  6 Jun 2019 15:32:46 +0200 (CEST)
+Date:   Thu, 6 Jun 2019 15:32:46 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Nguyen An Hoan <na-hoan@jinso.co.jp>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        ramesh.shanmugasundaram@bp.renesas.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        kuninori.morimoto.gx@renesas.com, magnus.damm@gmail.com,
+        yoshihiro.shimoda.uh@renesas.com, h-inayoshi@jinso.co.jp,
+        cv-dong@jinso.co.jp
+Subject: Re: [PATCH 1/2] media: dt-bindings: media: Add r8a77965 DRIF bindings
+Message-ID: <20190606133244.yso6l5ivaat4jwyo@verge.net.au>
+References: <1556014199-12698-1-git-send-email-na-hoan@jinso.co.jp>
+ <20190423105046.cshmwghdufaqp4pj@verge.net.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190423105046.cshmwghdufaqp4pj@verge.net.au>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mei driver went via multiple changes, update
-the documentation and fix formatting.
+On Tue, Apr 23, 2019 at 12:50:46PM +0200, Simon Horman wrote:
+> On Tue, Apr 23, 2019 at 07:09:58PM +0900, Nguyen An Hoan wrote:
+> > From: Hoan Nguyen An <na-hoan@jinso.co.jp>
+> > 
+> > Add r8a77965 DRIF bindings.
+> > 
+> > Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
+> 
+> According to the User's Manual Hardware, v1.50 Nov 20 2019,
+> the DRIF IP block M3-N (r8a77965) has a BITCTR register which
+> is not present on the H3 (r8a7795) or M3-W (r8a77995).
+> 
+> Does the DRIF IP block present on the M3-N (r8a77965) function
+> without support for this register in the driver?
+> 
+> If not then I think that:
+> 1) This patch should be updated to note that renesas,rcar-gen3-drif
+>    can only be used with H3 (r8a7795) and M3-W (r8a77995).
+> 2) A driver patch is required
+> 3) The DT patch, 2/2 of this series, should be updated to
+>    i) Not use renesas,rcar-gen3-drif
+>    ii) Extend the register aperture from 0x64 to 0x84.
 
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
----
- Documentation/driver-api/mei/mei.rst | 96 ++++++++++++++++++----------
- 1 file changed, 61 insertions(+), 35 deletions(-)
+Hi,
 
-diff --git a/Documentation/driver-api/mei/mei.rst b/Documentation/driver-api/mei/mei.rst
-index c7f10a4b46ff..c800d8e5f422 100644
---- a/Documentation/driver-api/mei/mei.rst
-+++ b/Documentation/driver-api/mei/mei.rst
-@@ -5,34 +5,32 @@ Introduction
- 
- The Intel Management Engine (Intel ME) is an isolated and protected computing
- resource (Co-processor) residing inside certain Intel chipsets. The Intel ME
--provides support for computer/IT management features. The feature set
--depends on the Intel chipset SKU.
-+provides support for computer/IT management and security features.
-+The actual feature set depends on the Intel chipset SKU.
- 
- The Intel Management Engine Interface (Intel MEI, previously known as HECI)
- is the interface between the Host and Intel ME. This interface is exposed
--to the host as a PCI device. The Intel MEI Driver is in charge of the
--communication channel between a host application and the Intel ME feature.
-+to the host as a PCI device, actually multiple PCI devices might be exposed.
-+The Intel MEI Driver is in charge of the communication channel between
-+a host application and the Intel ME features.
- 
--Each Intel ME feature (Intel ME Client) is addressed by a GUID/UUID and
-+Each Intel ME feature, or Intel ME Client is addressed by a unique GUID and
- each client has its own protocol. The protocol is message-based with a
--header and payload up to 512 bytes.
-+header and payload up to maximal number of bytes advertised by the client,
-+upon connection.
- 
- Intel MEI Driver
- ================
- 
--The driver exposes a misc device called /dev/mei.
-+The driver exposes a character device with device nodes /dev/meiX.
- 
- An application maintains communication with an Intel ME feature while
--/dev/mei is open. The binding to a specific feature is performed by calling
--MEI_CONNECT_CLIENT_IOCTL, which passes the desired UUID.
-+/dev/meiX is open. The binding to a specific feature is performed by calling
-+:c:macro:`MEI_CONNECT_CLIENT_IOCTL`, which passes the desired GUID.
- The number of instances of an Intel ME feature that can be opened
- at the same time depends on the Intel ME feature, but most of the
- features allow only a single instance.
- 
--The Intel AMT Host Interface (Intel AMTHI) feature supports multiple
--simultaneous user connected applications. The Intel MEI driver
--handles this internally by maintaining request queues for the applications.
--
- The driver is transparent to data that are passed between firmware feature
- and host application.
- 
-@@ -40,6 +38,8 @@ Because some of the Intel ME features can change the system
- configuration, the driver by default allows only a privileged
- user to access it.
- 
-+The session is terminated calling :c:func:`close(int fd)`.
-+
- A code snippet for an application communicating with Intel AMTHI client:
- 
- .. code-block:: C
-@@ -47,13 +47,13 @@ A code snippet for an application communicating with Intel AMTHI client:
- 	struct mei_connect_client_data data;
- 	fd = open(MEI_DEVICE);
- 
--	data.d.in_client_uuid = AMTHI_UUID;
-+	data.d.in_client_uuid = AMTHI_GUID;
- 
- 	ioctl(fd, IOCTL_MEI_CONNECT_CLIENT, &data);
- 
- 	printf("Ver=%d, MaxLen=%ld\n",
--			data.d.in_client_uuid.protocol_version,
--			data.d.in_client_uuid.max_msg_length);
-+	       data.d.in_client_uuid.protocol_version,
-+	       data.d.in_client_uuid.max_msg_length);
- 
- 	[...]
- 
-@@ -67,60 +67,86 @@ A code snippet for an application communicating with Intel AMTHI client:
- 	close(fd);
- 
- 
--IOCTLs
--======
-+User space API
-+
-+IOCTLs:
-+=======
- 
- The Intel MEI Driver supports the following IOCTL commands:
--	IOCTL_MEI_CONNECT_CLIENT	Connect to firmware Feature (client).
- 
--	usage:
--		struct mei_connect_client_data clientData;
--		ioctl(fd, IOCTL_MEI_CONNECT_CLIENT, &clientData);
-+IOCTL_MEI_CONNECT_CLIENT
-+-------------------------
-+Connect to firmware Feature/Client.
-+
-+.. code-block:: none
-+
-+	Usage:
- 
--	inputs:
--		mei_connect_client_data struct contain the following
--		input field:
-+        struct mei_connect_client_data client_data;
- 
--		in_client_uuid -	UUID of the FW Feature that needs
-+        ioctl(fd, IOCTL_MEI_CONNECT_CLIENT, &client_data);
-+
-+	Inputs:
-+
-+        struct mei_connect_client_data - contain the following
-+	Input field:
-+
-+		in_client_uuid -	GUID of the FW Feature that needs
- 					to connect to.
--	outputs:
-+         Outputs:
- 		out_client_properties - Client Properties: MTU and Protocol Version.
- 
--	error returns:
-+         Error returns:
-+
-+                ENOTTY  No such client (i.e. wrong GUID) or connection is not allowed.
- 		EINVAL	Wrong IOCTL Number
--		ENODEV	Device or Connection is not initialized or ready. (e.g. Wrong UUID)
-+		ENODEV	Device or Connection is not initialized or ready.
- 		ENOMEM	Unable to allocate memory to client internal data.
- 		EFAULT	Fatal Error (e.g. Unable to access user input data)
- 		EBUSY	Connection Already Open
- 
--	Notes:
-+:Note:
-         max_msg_length (MTU) in client properties describes the maximum
-         data that can be sent or received. (e.g. if MTU=2K, can send
-         requests up to bytes 2k and received responses up to 2k bytes).
- 
--	IOCTL_MEI_NOTIFY_SET: enable or disable event notifications
-+
-+IOCTL_MEI_NOTIFY_SET
-+---------------------
-+Enable or disable event notifications.
-+
-+
-+.. code-block:: none
- 
- 	Usage:
-+
- 		uint32_t enable;
-+
- 		ioctl(fd, IOCTL_MEI_NOTIFY_SET, &enable);
- 
--	Inputs:
-+
- 		uint32_t enable = 1;
- 		or
- 		uint32_t enable[disable] = 0;
- 
- 	Error returns:
-+
-+
- 		EINVAL	Wrong IOCTL Number
- 		ENODEV	Device  is not initialized or the client not connected
- 		ENOMEM	Unable to allocate memory to client internal data.
- 		EFAULT	Fatal Error (e.g. Unable to access user input data)
- 		EOPNOTSUPP if the device doesn't support the feature
- 
--	Notes:
-+:Note:
- 	The client must be connected in order to enable notification events
- 
- 
--	IOCTL_MEI_NOTIFY_GET : retrieve event
-+IOCTL_MEI_NOTIFY_GET
-+--------------------
-+Retrieve event
-+
-+.. code-block:: none
- 
- 	Usage:
- 		uint32_t event;
-@@ -137,7 +163,7 @@ The Intel MEI Driver supports the following IOCTL commands:
- 		EFAULT	Fatal Error (e.g. Unable to access user input data)
- 		EOPNOTSUPP if the device doesn't support the feature
- 
--	Notes:
-+:Note:
- 	The client must be connected and event notification has to be enabled
- 	in order to receive an event
- 
--- 
-2.20.1
+I'm wondering what the status of this patchset it.
 
+> 
+> > ---
+> >  Documentation/devicetree/bindings/media/renesas,drif.txt | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/media/renesas,drif.txt b/Documentation/devicetree/bindings/media/renesas,drif.txt
+> > index 0d8974a..16cdee3 100644
+> > --- a/Documentation/devicetree/bindings/media/renesas,drif.txt
+> > +++ b/Documentation/devicetree/bindings/media/renesas,drif.txt
+> > @@ -41,6 +41,7 @@ Required properties of an internal channel:
+> >  -------------------------------------------
+> >  - compatible:	"renesas,r8a7795-drif" if DRIF controller is a part of R8A7795 SoC.
+> >  		"renesas,r8a7796-drif" if DRIF controller is a part of R8A7796 SoC.
+> > +		"renesas,r8a77965-drif" if DRIF controller is a part of R8A77965 SoC.
+> >  		"renesas,rcar-gen3-drif" for a generic R-Car Gen3 compatible device.
+> >  
+> >  		When compatible with the generic version, nodes must list the
+> > -- 
+> > 2.7.4
+> > 
+> 
