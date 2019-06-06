@@ -2,79 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11048375E7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 16:00:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8958F375F1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 16:01:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727391AbfFFOAO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 10:00:14 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:48104 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728669AbfFFOAL (ORCPT
+        id S1728750AbfFFOBa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 10:01:30 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:58438 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726924AbfFFOBa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 10:00:11 -0400
-Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 3A3BFC0BA1;
-        Thu,  6 Jun 2019 13:59:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1559829590; bh=KvCwUMSc/ssxfCEfFG115Dj1KyU+yGJ4OOCQiO1T/DE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=OvWqhG7DC9kXTDHWRl+4vDmhLV4ibiqfp+y2yR8GqyZxR/1NvCUiXNvYYiwcG8RQS
-         d//2ochfyTZEAkrqqtXH0p+5EZxHOyKHzKiyD09EYrZybMkmIUMxVxRlzCY6xqcj1H
-         m19wSlHmuO6Grg5rHekpX0v9aXffekWNoEAgb7aogeAuatF6q4VpzuxiyMY0evC3yk
-         Cl9t5mX888hhdRhNjkoh5GfND26J67g6H3WP0VzTjkRbnmbnZuntMIwjIEkE43OZF4
-         RWLeMlW7L/1jQOtM0OFZvqLgb1JMMSVRNzUxSo4/2XuVsVPlf4O0Id7TrQbgnxcjt4
-         mwa8e00H1m3Hg==
-Received: from de02.synopsys.com (germany.internal.synopsys.com [10.225.17.21])
-        by mailhost.synopsys.com (Postfix) with ESMTP id E7E1FA005D;
-        Thu,  6 Jun 2019 14:00:09 +0000 (UTC)
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by de02.synopsys.com (Postfix) with ESMTP id D6F4D3F6D4;
-        Thu,  6 Jun 2019 16:00:09 +0200 (CEST)
-From:   Vitor Soares <Vitor.Soares@synopsys.com>
-To:     linux-i3c@lists.infradead.org
-Cc:     Joao.Pinto@synopsys.com, Vitor Soares <Vitor.Soares@synopsys.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] i3c: dw: add limited bus mode support
-Date:   Thu,  6 Jun 2019 16:00:03 +0200
-Message-Id: <5d0fe045c9a557f24f76a01d1066de2831b8489f.1559821228.git.vitor.soares@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1559821227.git.vitor.soares@synopsys.com>
-References: <cover.1559821227.git.vitor.soares@synopsys.com>
-In-Reply-To: <cover.1559821227.git.vitor.soares@synopsys.com>
-References: <cover.1559821227.git.vitor.soares@synopsys.com>
+        Thu, 6 Jun 2019 10:01:30 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id D318E28471A
+Message-ID: <bda48bf80add26153e531912fbfca25071934c94.camel@collabora.com>
+Subject: Re: [PATCH 03/10] mfd / platform: cros_ec: Miscellaneous character
+ device to talk with the EC
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <groeck@google.com>
+Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
+        Lee Jones <lee.jones@linaro.org>, kernel@collabora.com,
+        Dmitry Torokhov <dtor@chromium.org>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-doc@vger.kernel.org, Enno Luebbers <enno.luebbers@intel.com>,
+        Guido Kiener <guido@kiener-muenchen.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Jonathan Corbet <corbet@lwn.net>, Wu Hao <hao.wu@intel.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Jilayne Lovejoy <opensource@jilayne.com>
+Date:   Thu, 06 Jun 2019 11:01:17 -0300
+In-Reply-To: <20190604185953.GA2061@kroah.com>
+References: <20190604152019.16100-1-enric.balletbo@collabora.com>
+         <20190604152019.16100-4-enric.balletbo@collabora.com>
+         <20190604155228.GB9981@kroah.com>
+         <beaf3554bb85974eb118d7722ca55f1823b1850c.camel@collabora.com>
+         <20190604183527.GA20098@kroah.com>
+         <CABXOdTfU9KaBDhQcwvBGWCmVfnd02_ZFmPGtJsCtGQ-iO9A3Qw@mail.gmail.com>
+         <20190604185953.GA2061@kroah.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add limited bus mode support for DesignWare i3c master
+On Tue, 2019-06-04 at 20:59 +0200, Greg Kroah-Hartman wrote:
+> On Tue, Jun 04, 2019 at 11:39:21AM -0700, Guenter Roeck wrote:
+> > On Tue, Jun 4, 2019 at 11:35 AM Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > > On Tue, Jun 04, 2019 at 01:58:38PM -0300, Ezequiel Garcia wrote:
+> > > > Hey Greg,
+> > > > 
+> > > > > > + dev_info(&pdev->dev, "Created misc device /dev/%s\n",
+> > > > > > +          data->misc.name);
+> > > > > 
+> > > > > No need to be noisy, if all goes well, your code should be quiet.
+> > > > > 
+> > > > 
+> > > > I sometimes wonder about this being noise or not, so I will slightly
+> > > > hijack this thread for this discussion.
+> > > > 
+> > > > > From a kernel developer point-of-view, or even from a platform
+> > > > developer or user with a debugging hat point-of-view, having
+> > > > a "device created" or "device registered" message is often very useful.
+> > > 
+> > > For you, yes.  For someone with 30000 devices attached to their system,
+> > > it is not, and causes booting to take longer than it should be.
+> > > 
+> > > > In fact, I wish people would do this more often, so I don't have to
+> > > > deal with dynamic debug, or hack my way:
+> > > > 
+> > > > diff --git a/drivers/media/i2c/ov5647.c b/drivers/media/i2c/ov5647.c
+> > > > index 4589631798c9..473549b26bb2 100644
+> > > > --- a/drivers/media/i2c/ov5647.c
+> > > > +++ b/drivers/media/i2c/ov5647.c
+> > > > @@ -603,7 +603,7 @@ static int ov5647_probe(struct i2c_client *client,
+> > > >         if (ret < 0)
+> > > >                 goto error;
+> > > > 
+> > > > -       dev_dbg(dev, "OmniVision OV5647 camera driver probed\n");
+> > > > +       dev_info(dev, "OmniVision OV5647 camera driver probed\n");
+> > > >         return 0;
+> > > >  error:
+> > > >         media_entity_cleanup(&sd->entity);
+> > > > 
+> > > > In some subsystems, it's even a behavior I'm more or less relying on:
+> > > > 
+> > > > $ git grep v4l2_info.*registered drivers/media/ | wc -l
+> > > > 26
+> > > > 
+> > > > And on the downsides, I can't find much. It's just one little line,
+> > > > that is not even noticed unless you have logging turned on.
+> > > 
+> > > Its better to be quiet, which is why the "default driver registration"
+> > > macros do not have any printk messages in them.  When converting drivers
+> > > over to it, we made the boot process much more sane, don't try to go and
+> > > add messages for no good reason back in please.
+> > > 
+> > > dynamic debugging can be enabled on a module and line-by-line basis,
+> > > even from the boot command line.  So if you need debugging, you can
+> > > always ask someone to just reboot or unload/load the module and get the
+> > > message that way.
+> > > 
+> > 
+> > Can we by any chance make this an official policy ? I am kind of tired
+> > having to argue about this over and over again.
+> 
+> Sure, but how does anyone make any "official policy" in the kernel?  :)
+> 
+> I could just go through and delete all "look ma, a new driver/device!"
+> messages, but that might be annoying...
+> 
 
-Signed-off-by: Vitor Soares <vitor.soares@synopsys.com>
-Cc: Boris Brezillon <bbrezillon@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>
----
-Changes in v2:
-  None
+Well, I really need to task.
 
- drivers/i3c/master/dw-i3c-master.c | 1 +
- 1 file changed, 1 insertion(+)
+If it's not an official policy (and won't be anytime soon?), then
+what's preventing Enric from pushing this print on this driver,
+given he is the one maintaining the code?
 
-diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
-index 1d83c97..9612d93 100644
---- a/drivers/i3c/master/dw-i3c-master.c
-+++ b/drivers/i3c/master/dw-i3c-master.c
-@@ -599,6 +599,7 @@ static int dw_i3c_master_bus_init(struct i3c_master_controller *m)
- 
- 	switch (bus->mode) {
- 	case I3C_BUS_MODE_MIXED_FAST:
-+	case I3C_BUS_MODE_MIXED_LIMITED:
- 		ret = dw_i2c_clk_cfg(master);
- 		if (ret)
- 			return ret;
--- 
-2.7.4
+Thanks,
+Eze
 
