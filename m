@@ -2,75 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FF95369A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 04:00:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5958369B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 04:02:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726741AbfFFCAc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 22:00:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54244 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726593AbfFFCAb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 22:00:31 -0400
-Received: from dragon (li1264-180.members.linode.com [45.79.165.180])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 12B4420866;
-        Thu,  6 Jun 2019 02:00:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559786431;
-        bh=iLIh1cF5PrdXT/fdIuzZB/k+k3Z+d0zIq2E9MelXmLg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Dv5TTeCz1d2AZNEaYK00A5nsKms4beVe0/HMpGnLt7s6oxOYmK2ryuXseFxDkgcoG
-         KMffspjP3zcZ58h0JhogAVnnqLlErgIspfCvlalaTD+KafiKyvMPhYsWg94oU8mZmw
-         iN+ojzDvSH7u11XjJvT8HPYB5hzRXhx0B99kMI7A=
-Date:   Thu, 6 Jun 2019 10:00:09 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Tony Lindgren <tony@atomide.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, arm@kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Alexander Shiyan <shc_work@mail.ru>
-Subject: Re: [PATCH v2] ARM: config: Remove left-over BACKLIGHT_LCD_SUPPORT
-Message-ID: <20190606020008.GT29853@dragon>
-References: <1559633061-28003-1-git-send-email-krzk@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1559633061-28003-1-git-send-email-krzk@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S1726806AbfFFCCK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 5 Jun 2019 22:02:10 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41442 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726593AbfFFCCJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 22:02:09 -0400
+Received: by mail-pf1-f193.google.com with SMTP id q17so461411pfq.8;
+        Wed, 05 Jun 2019 19:02:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=VyKAAyyKF/StTl6Cc7Bhi0hP4Fbpr1Wnyb227vQxupA=;
+        b=lTuCSGE8jGdHt1mpj8oE5y0pNaeqonUE94Pp4sA/I3REVC7LDjhxZGajzIRthAJO9Y
+         E1/KCnJbDAhiYGjZ0jeuf27dZG7ikrXgA3qZqXlGdI5zmDJSS3diC8XzgaLwE86WqVKT
+         DfPLFcyzUu6ZeVFRi3h0JOEt/fjr0h99BkH1V2wyU0xHsVlBZV3qIYfkzvmAIkMQXQGn
+         GnLDYuks2zgsat+9WE/IdQjuQwMyJk4GonhMW6LAOOZZ7YucZMDl18z9+LxQTC6DPXI1
+         uhcv3L9Mu7gbSgXc2umbMenT9iQyJs9leOiMLiIs5Sau+QLwsZr9SUPf9q67VoXmYtDe
+         8A4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=VyKAAyyKF/StTl6Cc7Bhi0hP4Fbpr1Wnyb227vQxupA=;
+        b=dSatX4DioFEk4cZxVFJiNjOR3t0Gr7EtyadR8gTg92gUKWieX2ufou0TsdMzJwmjal
+         Gz8FOqu2Kosx40euBUTcMlMIU6sv2bsiqLs+uLHMSGh7PnXorvrUlDUYAYUzaUdldSVk
+         /KkAWw/823w06oARLFA5/4FqWDl+VXqJ01SDg+UsKcHh7pSG/3n090HbdcSLwlB8cydi
+         oFaBB6NZyvdfGvOsFv/cm9TPBD6xe/mCYVOpRqRo5A669UoMPdG90E+uofzkuKaDCqmx
+         WjZKh/WXI0oze+vdZ95L52LbekMO9muyaEpEbjJisqxViTV+Ax4aeG9unCpJk66NjTc7
+         Y7sw==
+X-Gm-Message-State: APjAAAWHpz3OBdTVUKIlY7KoltbIgnOn96xTedPfzm9YQzbld9thbRjw
+        ZIObhlUZdVji2vNlNub+YQQ=
+X-Google-Smtp-Source: APXvYqzOgkLxlVaBoCV6UwBu57yiXAf6/1tBbA/MUmQ/Fq6F3ju9AQm2TVNVsXzsM6YQZdPCsdhJiw==
+X-Received: by 2002:a63:db47:: with SMTP id x7mr860524pgi.259.1559786528992;
+        Wed, 05 Jun 2019 19:02:08 -0700 (PDT)
+Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id o66sm247961pje.8.2019.06.05.19.02.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Jun 2019 19:02:08 -0700 (PDT)
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+To:     agross@kernel.org, david.brown@linaro.org,
+        bjorn.andersson@linaro.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, marc.w.gonzalez@free.fr,
+        jcrouse@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Subject: [PATCH v2 3/3] arm64: dts: qcom: msm8998: Add gpucc node
+Date:   Wed,  5 Jun 2019 19:00:27 -0700
+Message-Id: <20190606020027.2441-1-jeffrey.l.hugo@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190606015844.2285-1-jeffrey.l.hugo@gmail.com>
+References: <20190606015844.2285-1-jeffrey.l.hugo@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 04, 2019 at 09:24:21AM +0200, Krzysztof Kozlowski wrote:
-> The CONFIG_BACKLIGHT_LCD_SUPPORT was removed in commit 8c5dc8d9f19c
-> ("video: backlight: Remove useless BACKLIGHT_LCD_SUPPORT kernel
-> symbol"). Options protected by CONFIG_BACKLIGHT_LCD_SUPPORT are now
-> available directly.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> ---
-> 
-> Changes since v1:
-> 1. Change also mini2440_defconfig.
-> ---
-...
->  arch/arm/configs/mxs_defconfig            | 1 -
+Add MSM8998 GPU Clock Controller DT node.
 
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+---
+ arch/arm64/boot/dts/qcom/msm8998.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+index 574be78a936e..cf00bfeec6b3 100644
+--- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+@@ -3,6 +3,7 @@
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/clock/qcom,gcc-msm8998.h>
++#include <dt-bindings/clock/qcom,gpucc-msm8998.h>
+ #include <dt-bindings/clock/qcom,rpmcc.h>
+ #include <dt-bindings/gpio/gpio.h>
+ 
+@@ -763,6 +764,20 @@
+ 			reg = <0x1f40000 0x20000>;
+ 		};
+ 
++		gpucc: clock-controller@5065000 {
++			compatible = "qcom,gpucc-msm8998";
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++			#power-domain-cells = <1>;
++			reg = <0x05065000 0x9000>;
++
++			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
++				 <&gcc GPLL0_OUT_MAIN>;
++			clock-names = "xo",
++				      "gpll0";
++		};
++
++
+ 		apcs_glb: mailbox@9820000 {
+ 			compatible = "qcom,msm8998-apcs-hmss-global";
+ 			reg = <0x17911000 0x1000>;
+-- 
+2.17.1
+
