@@ -2,72 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EB063795D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 18:17:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1337737951
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 18:15:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729707AbfFFQRG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 12:17:06 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49844 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729671AbfFFQRE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 12:17:04 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8D07EA78;
-        Thu,  6 Jun 2019 09:17:04 -0700 (PDT)
-Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A05EF3F690;
-        Thu,  6 Jun 2019 09:17:03 -0700 (PDT)
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v4 4/4] coresight: etb10: Do not call smp_processor_id from preemptible
-Date:   Thu,  6 Jun 2019 17:16:47 +0100
-Message-Id: <1559837807-15447-5-git-send-email-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1559837807-15447-1-git-send-email-suzuki.poulose@arm.com>
-References: <1559837807-15447-1-git-send-email-suzuki.poulose@arm.com>
+        id S1729670AbfFFQPw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 12:15:52 -0400
+Received: from mga02.intel.com ([134.134.136.20]:55622 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729165AbfFFQPv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 12:15:51 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 09:15:50 -0700
+X-ExtLoop1: 1
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga006.fm.intel.com with ESMTP; 06 Jun 2019 09:15:50 -0700
+Date:   Thu, 6 Jun 2019 09:17:02 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jeff Layton <jlayton@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH RFC 07/10] fs/ext4: Fail truncate if pages are GUP pinned
+Message-ID: <20190606161702.GA11374@iweiny-DESK2.sc.intel.com>
+References: <20190606014544.8339-1-ira.weiny@intel.com>
+ <20190606014544.8339-8-ira.weiny@intel.com>
+ <20190606105855.GG7433@quack2.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190606105855.GG7433@quack2.suse.cz>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During a perf session we try to allocate buffers on the "node" associated
-with the CPU the event is bound to. If it is not bound to a CPU, we
-use the current CPU node, using smp_processor_id(). However this is unsafe
-in a pre-emptible context and could generate the splats as below :
+On Thu, Jun 06, 2019 at 12:58:55PM +0200, Jan Kara wrote:
+> On Wed 05-06-19 18:45:40, ira.weiny@intel.com wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > If pages are actively gup pinned fail the truncate operation.
+> > 
+> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> > ---
+> >  fs/ext4/inode.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> > index 75f543f384e4..1ded83ec08c0 100644
+> > --- a/fs/ext4/inode.c
+> > +++ b/fs/ext4/inode.c
+> > @@ -4250,6 +4250,9 @@ int ext4_break_layouts(struct inode *inode, loff_t offset, loff_t len)
+> >  		if (!page)
+> >  			return 0;
+> >  
+> > +		if (page_gup_pinned(page))
+> > +			return -ETXTBSY;
+> > +
+> >  		error = ___wait_var_event(&page->_refcount,
+> >  				atomic_read(&page->_refcount) == 1,
+> >  				TASK_INTERRUPTIBLE, 0, 0,
+> 
+> This caught my eye. Does this mean that now truncate for a file which has
+> temporary gup users (such buffers for DIO) can fail with ETXTBUSY?
 
- BUG: using smp_processor_id() in preemptible [00000000] code: perf/2544
+I thought about that before and I _thought_ I had accounted for it.  But I
+think you are right...
 
-Use NUMA_NO_NODE hint instead of using the current node for events
-not bound to CPUs.
+>
+> That
+> doesn't look desirable.
 
-Fixes: 2997aa4063d97fdb39 ("coresight: etb10: implementing AUX API")
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- drivers/hwtracing/coresight/coresight-etb10.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+No not desirable at all...  Ah it just dawned on my why I thought it was ok...
+I was wrong.  :-/
 
-diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
-index d5b9ede..3810290 100644
---- a/drivers/hwtracing/coresight/coresight-etb10.c
-+++ b/drivers/hwtracing/coresight/coresight-etb10.c
-@@ -374,12 +374,10 @@ static void *etb_alloc_buffer(struct coresight_device *csdev,
- 			      struct perf_event *event, void **pages,
- 			      int nr_pages, bool overwrite)
- {
--	int node, cpu = event->cpu;
-+	int node;
- 	struct cs_buffers *buf;
- 
--	if (cpu == -1)
--		cpu = smp_processor_id();
--	node = cpu_to_node(cpu);
-+	node = (event->cpu == -1) ? NUMA_NO_NODE : cpu_to_node(event->cpu);
- 
- 	buf = kzalloc_node(sizeof(struct cs_buffers), GFP_KERNEL, node);
- 	if (!buf)
--- 
-2.7.4
+> If we would mandate layout lease while pages are
+> pinned as I suggested, this could be dealt with by checking for leases with
+> pins (breaking such lease would return error and not break it) and if
+> breaking leases succeeds (i.e., there are no long-term pinned pages), we'd
+> just wait for the remaining references as we do now.
 
+Agreed.
+
+But I'm going to respond with some of the challenges of this (and ideas I had)
+when replying to your other email.
+
+Ira
+
+> 
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
