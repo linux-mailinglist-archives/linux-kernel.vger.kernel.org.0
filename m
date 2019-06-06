@@ -2,75 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F355136A82
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 05:34:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E10AA36A7E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 05:29:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726658AbfFFDee (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 5 Jun 2019 23:34:34 -0400
-Received: from ozlabs.ru ([107.173.13.209]:53092 "EHLO ozlabs.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726331AbfFFDee (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 5 Jun 2019 23:34:34 -0400
-X-Greylist: delayed 514 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Jun 2019 23:34:34 EDT
-Received: from fstn1-p1.ozlabs.ibm.com (localhost [IPv6:::1])
-        by ozlabs.ru (Postfix) with ESMTP id 4315FAE80017;
-        Wed,  5 Jun 2019 23:25:59 -0400 (EDT)
-From:   Alexey Kardashevskiy <aik@ozlabs.ru>
+        id S1726667AbfFFD3D convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 5 Jun 2019 23:29:03 -0400
+Received: from b17.quest2playy.biz ([198.210.47.17]:54827 "EHLO
+        b17.quest2playy.biz" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726454AbfFFD3C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 5 Jun 2019 23:29:02 -0400
+Reply-To: "Loan Grant" <Loan@mfigc.info>
+From:   "Loan Grant" <Loan@eib.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>, linux-doc@vger.kernel.org,
-        Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org
-Subject: PCI: Correct the resource_alignment parameter example
-Date:   Thu,  6 Jun 2019 13:25:57 +1000
-Message-Id: <20190606032557.107542-1-aik@ozlabs.ru>
-X-Mailer: git-send-email 2.17.1
+Subject: Re: Loan grant @affordable rate
+Date:   5 Jun 2019 20:29:01 -0700
+Message-ID: <20190605202901.43597C90655E71B6@eib.org>
+MIME-Version: 1.0
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The option description requires an order and so does the option
-parsing code, however the example uses a size, fix this.
+Hello Dear,
 
-Fixes: 8b078c603249 ("PCI: Update "pci=resource_alignment" documentation")
-Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
----
- Documentation/admin-guide/kernel-parameters.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+We are a large Company based in Istanbul Turkey and we offers flexible loans and funding for all projects for as low as 2% interest rate  per annum for a period of 5-15 yrs .
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 2b8ee90bb644..dcb53d64ad74 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3340,27 +3340,28 @@
- 		resource_alignment=
- 				Format:
- 				[<order of align>@]<pci_dev>[; ...]
- 				Specifies alignment and device to reassign
- 				aligned memory resources. How to
- 				specify the device is described above.
- 				If <order of align> is not specified,
- 				PAGE_SIZE is used as alignment.
- 				PCI-PCI bridge can be specified, if resource
- 				windows need to be expanded.
- 				To specify the alignment for several
- 				instances of a device, the PCI vendor,
- 				device, subvendor, and subdevice may be
--				specified, e.g., 4096@pci:8086:9c22:103c:198f
-+				specified, e.g., 12@pci:8086:9c22:103c:198f
-+				for the 4096 alignment.
- 		ecrc=		Enable/disable PCIe ECRC (transaction layer
- 				end-to-end CRC checking).
- 				bios: Use BIOS/firmware settings. This is the
- 				the default.
- 				off: Turn ECRC off
- 				on: Turn ECRC on.
- 		hpiosize=nn[KMG]	The fixed amount of bus space which is
- 				reserved for hotplug bridge's IO window.
- 				Default size is 256 bytes.
- 		hpmemsize=nn[KMG]	The fixed amount of bus space which is
- 				reserved for hotplug bridge's memory window.
- 				Default size is 2 megabytes.
- 		hpbussize=nn	The minimum amount of additional bus numbers
--- 
-2.17.1
+We invite you to partner with us and benefit in our new Loan and Project funding program.
 
+We can approve a loan/funding for up to USD$1 Billion or more depending on the nature of business so If you need loan/ funding and for more details Send us email to customers email address only at: Loan@mfigc.info
+
+Note: We  also pay 1% agents fee for each client referred to us by agent therefore if you know any one who need genuine loan you can refer to us and get 1%.
+
+This is a Guaranteed loan/Funding  and please reply only to this email address at: Loan@mfigc.info
+
+Regards
+Haider Dawber
+Istanbul-Turkey
+Email: Loan@mfigc.info
