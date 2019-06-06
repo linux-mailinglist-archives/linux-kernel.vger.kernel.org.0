@@ -2,72 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A127B36FB2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 11:20:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 278AA36FD3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 11:29:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbfFFJUB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 05:20:01 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:48042 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727540AbfFFJUB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 05:20:01 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 8B9DE754B11790C956AC;
-        Thu,  6 Jun 2019 17:19:57 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 6 Jun 2019 17:19:46 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     JC Kuo <jckuo@nvidia.com>, Kishon Vijay Abraham I <kishon@ti.com>,
-        "Thierry Reding" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-CC:     YueHaibing <yuehaibing@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] phy: tegra: xusb: Remove set but not used variable 'priv'
-Date:   Thu, 6 Jun 2019 09:27:46 +0000
-Message-ID: <20190606092746.80310-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727817AbfFFJ2z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 05:28:55 -0400
+Received: from foss.arm.com ([217.140.101.70]:43546 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727359AbfFFJ2z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 05:28:55 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8A369341;
+        Thu,  6 Jun 2019 02:28:54 -0700 (PDT)
+Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 952BF3F690;
+        Thu,  6 Jun 2019 02:28:51 -0700 (PDT)
+Subject: Re: [PATCH 07/13] drivers: Add generic match helper by ACPI_COMPANION
+ device
+To:     rafael@kernel.org
+Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        lenb@kernel.org, linux-acpi@vger.kernel.org,
+        linux-spi@vger.kernel.org, broonie@kernel.org
+References: <1559747630-28065-1-git-send-email-suzuki.poulose@arm.com>
+ <1559747630-28065-8-git-send-email-suzuki.poulose@arm.com>
+ <CAJZ5v0h+maPj-ijKV_vvQBpHD7N-VMiAqSeyztAkiUR9E2WdmQ@mail.gmail.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <1f230eb7-f4e3-ed4e-960d-c3bbb60f0a18@arm.com>
+Date:   Thu, 6 Jun 2019 10:28:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+In-Reply-To: <CAJZ5v0h+maPj-ijKV_vvQBpHD7N-VMiAqSeyztAkiUR9E2WdmQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
-
-drivers/phy/tegra/xusb-tegra210.c: In function 'tegra210_hsic_phy_power_on':
-drivers/phy/tegra/xusb-tegra210.c:1236:31: warning:
- variable 'priv' set but not used [-Wunused-but-set-variable]
-
-It's never used, so can be removed
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/phy/tegra/xusb-tegra210.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
-index eb754baa8d71..4076b22c4087 100644
---- a/drivers/phy/tegra/xusb-tegra210.c
-+++ b/drivers/phy/tegra/xusb-tegra210.c
-@@ -1233,13 +1233,10 @@ static int tegra210_hsic_phy_power_on(struct phy *phy)
- 	struct tegra_xusb_hsic_lane *hsic = to_hsic_lane(lane);
- 	struct tegra_xusb_hsic_pad *pad = to_hsic_pad(lane->pad);
- 	struct tegra_xusb_padctl *padctl = lane->pad->padctl;
--	struct tegra210_xusb_padctl *priv;
- 	unsigned int index = lane->index;
- 	u32 value;
- 	int err;
- 
--	priv = to_tegra210_xusb_padctl(padctl);
--
- 	err = regulator_enable(pad->supply);
- 	if (err)
- 		return err;
 
 
+On 06/06/2019 10:17, Rafael J. Wysocki wrote:
+> On Wed, Jun 5, 2019 at 5:14 PM Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+>>
+>> Add a generic helper to match a device by the acpi device.
+> 
+> "by its ACPI companion device object", please.
 
+Sure.
+
+> 
+> Also, it would be good to combine this patch with the patch(es) that
+> cause device_match_acpi_dev() to be actually used.
+> 
+> Helpers without any users are arguably not useful.
+
+Sure, the helpers will be part of the part2 of the whole series,
+which will actually have the individual subsystems consuming the
+new helpers. For your reference, it is available here :
+
+http://linux-arm.org/git?p=linux-skp.git;a=shortlog;h=refs/heads/driver-cleanup/v2
+
+e.g: 
+http://linux-arm.org/git?p=linux-skp.git;a=commit;h=59534e843e2f214f1f29659993f6e423bef16b28
+
+I could simply pull those patches into this part, if you prefer that.
+However, that would be true for the other patches in the part2.
+I am open to suggestions, on how to split the series.
+
+Cheers
+Suzuki
