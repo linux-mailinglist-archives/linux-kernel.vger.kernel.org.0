@@ -2,221 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3308637AE9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:21:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B20EA37AEF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 19:22:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730116AbfFFRVj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 13:21:39 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:59694 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727009AbfFFRVi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 13:21:38 -0400
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 1043A263B33;
-        Thu,  6 Jun 2019 18:21:35 +0100 (BST)
-Date:   Thu, 6 Jun 2019 19:21:31 +0200
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     Vitor Soares <Vitor.Soares@synopsys.com>
-Cc:     linux-iio@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
-        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
-        bbrezillon@kernel.org, Joao.Pinto@synopsys.com,
-        lorenzo.bianconi83@gmail.com
-Subject: Re: [PATCH v2 3/3] iio: imu: st_lsm6dsx: add i3c basic support for
- LSM6DSO and LSM6DSR
-Message-ID: <20190606192131.355c9556@collabora.com>
-In-Reply-To: <6195f3cd21636a5f85c0107b5c3b217be868a4b9.1559831663.git.vitor.soares@synopsys.com>
-References: <cover.1559831663.git.vitor.soares@synopsys.com>
-        <6195f3cd21636a5f85c0107b5c3b217be868a4b9.1559831663.git.vitor.soares@synopsys.com>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1730129AbfFFRWl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 13:22:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60608 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726092AbfFFRWl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 13:22:41 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1878AABD0;
+        Thu,  6 Jun 2019 17:22:40 +0000 (UTC)
+Message-ID: <eb72a26b55cf17c29df6a7fd3c5def08182e00af.camel@suse.de>
+Subject: Re: [PATCH v2 4/7] cpufreq: add driver for Raspbery Pi
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>, stefan.wahren@i2se.com
+Cc:     linux-arm-kernel@lists.infradead.org, f.fainelli@gmail.com,
+        ptesarik@suse.com, mturquette@baylibre.com,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        eric@anholt.net, bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        mbrugger@suse.de, ssuloev@orpaltech.com
+Date:   Thu, 06 Jun 2019 19:22:16 +0200
+In-Reply-To: <20190606170949.4A46720652@mail.kernel.org>
+References: <20190606142255.29454-1-nsaenzjulienne@suse.de>
+         <20190606142255.29454-5-nsaenzjulienne@suse.de>
+         <20190606170949.4A46720652@mail.kernel.org>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-Pw8rcdAQwigEg8aqt+O7"
+User-Agent: Evolution 3.32.2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  6 Jun 2019 17:12:04 +0200
-Vitor Soares <Vitor.Soares@synopsys.com> wrote:
 
-> For today the st_lsm6dsx driver support LSM6DSO and LSM6DSR sensor only in
-> spi and i2c mode.
-> 
-> The LSM6DSO and LSM6DSR are also i3c capable so lets give i3c support to
-> them.
-> 
-> Signed-off-by: Vitor Soares <vitor.soares@synopsys.com>
-> ---
-> Changes in v2:
->   Add support for LSM6DSR
->   Set pm_ops to st_lsm6dsx_pm_ops
-> 
->  drivers/iio/imu/st_lsm6dsx/Kconfig          |  8 ++-
->  drivers/iio/imu/st_lsm6dsx/Makefile         |  1 +
->  drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_i3c.c | 76 +++++++++++++++++++++++++++++
->  3 files changed, 84 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_i3c.c
-> 
-> diff --git a/drivers/iio/imu/st_lsm6dsx/Kconfig b/drivers/iio/imu/st_lsm6dsx/Kconfig
-> index 002a423..8115936 100644
-> --- a/drivers/iio/imu/st_lsm6dsx/Kconfig
-> +++ b/drivers/iio/imu/st_lsm6dsx/Kconfig
-> @@ -2,11 +2,12 @@
->  
->  config IIO_ST_LSM6DSX
->  	tristate "ST_LSM6DSx driver for STM 6-axis IMU MEMS sensors"
-> -	depends on (I2C || SPI)
-> +	depends on (I2C || SPI || I3C)
->  	select IIO_BUFFER
->  	select IIO_KFIFO_BUF
->  	select IIO_ST_LSM6DSX_I2C if (I2C)
->  	select IIO_ST_LSM6DSX_SPI if (SPI_MASTER)
-> +	select IIO_ST_LSM6DSX_I3C if (I3C)
->  	help
->  	  Say yes here to build support for STMicroelectronics LSM6DSx imu
->  	  sensor. Supported devices: lsm6ds3, lsm6ds3h, lsm6dsl, lsm6dsm,
-> @@ -24,3 +25,8 @@ config IIO_ST_LSM6DSX_SPI
->  	tristate
->  	depends on IIO_ST_LSM6DSX
->  	select REGMAP_SPI
-> +
-> +config IIO_ST_LSM6DSX_I3C
-> +	tristate
-> +	depends on IIO_ST_LSM6DSX
-> +	select REGMAP_I3C
-> diff --git a/drivers/iio/imu/st_lsm6dsx/Makefile b/drivers/iio/imu/st_lsm6dsx/Makefile
-> index 28cc673..57cbcd6 100644
-> --- a/drivers/iio/imu/st_lsm6dsx/Makefile
-> +++ b/drivers/iio/imu/st_lsm6dsx/Makefile
-> @@ -5,3 +5,4 @@ st_lsm6dsx-y := st_lsm6dsx_core.o st_lsm6dsx_buffer.o \
->  obj-$(CONFIG_IIO_ST_LSM6DSX) += st_lsm6dsx.o
->  obj-$(CONFIG_IIO_ST_LSM6DSX_I2C) += st_lsm6dsx_i2c.o
->  obj-$(CONFIG_IIO_ST_LSM6DSX_SPI) += st_lsm6dsx_spi.o
-> +obj-$(CONFIG_IIO_ST_LSM6DSX_I3C) += st_lsm6dsx_i3c.o
-> diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_i3c.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_i3c.c
-> new file mode 100644
-> index 0000000..70b70d1
-> --- /dev/null
-> +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_i3c.c
-> @@ -0,0 +1,76 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018 Synopsys, Inc. and/or its affiliates.
-> + *
-> + * Author: Vitor Soares <vitor.soares@synopsys.com>
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/i3c/device.h>
-> +#include <linux/i3c/master.h>
-> +#include <linux/slab.h>
-> +#include <linux/of.h>
-> +#include <linux/regmap.h>
-> +
-> +#include "st_lsm6dsx.h"
-> +
-> +#define NAME_SIZE	32
-> +
-> +struct st_lsm6dsx_i3c_data {
-> +	const char name[NAME_SIZE];
+--=-Pw8rcdAQwigEg8aqt+O7
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I think I mentioned already that you can simply have
+Hi Stephen,
+Thanks for the review.
 
-	const char *name;
+On Thu, 2019-06-06 at 10:09 -0700, Stephen Boyd wrote:
+> Quoting Nicolas Saenz Julienne (2019-06-06 07:22:56)
+> > diff --git a/drivers/cpufreq/raspberrypi-cpufreq.c
+> > b/drivers/cpufreq/raspberrypi-cpufreq.c
+> > new file mode 100644
+> > index 000000000000..99b59d5a50aa
+> > --- /dev/null
+> > +++ b/drivers/cpufreq/raspberrypi-cpufreq.c
+> [...]
+> > +
+> > +/*
+> > + * Since the driver depends on clk-raspberrypi, which may return
+> > EPROBE_DEFER,
+> > + * all the activity is performed in the probe, which may be defered as
+> > well.
+> > + */
+> > +static struct platform_driver raspberrypi_cpufreq_driver =3D {
+> > +       .driver =3D {
+> > +               .name =3D "raspberrypi-cpufreq",
+> > +       },
+> > +       .probe          =3D raspberrypi_cpufreq_probe,
+> > +       .remove         =3D raspberrypi_cpufreq_remove,
+> > +};
+> > +module_platform_driver(raspberrypi_cpufreq_driver);
+>=20
+> How does this driver probe? Do you have a node in DT named
+> raspberrypi-cpufreq that matches and probes this? I would think this
+> would follow the drivers/cpufreq/cpufreq-dt-platdev.c design where it's
+> an initcall that probes the board compatible string.
+>
+> Or, if it depends on clk-raspberrypi probing, maybe it could create the
+> platform device in that drivers probe function.
 
-> +	enum st_lsm6dsx_hw_id id;
-> +};
-> +
-> +enum st_lsm6dsx_i3c_data_id {
-> +	ST_LSM6DSO_I3C_DATA_ID,
-> +	ST_LSM6DSR_I3C_DATA_ID,
-> +};
-> +
-> +static const struct st_lsm6dsx_i3c_data hw_data[] = {
-> +	{ ST_LSM6DSO_DEV_NAME, ST_LSM6DSO_ID },
-> +	{ ST_LSM6DSR_DEV_NAME, ST_LSM6DSR_ID },
-> +};
-> +
-> +static const struct regmap_config st_lsm6dsx_i3c_regmap_config = {
-> +	.reg_bits = 8,
-> +	.val_bits = 8,
-> +};
-> +
-> +static int st_lsm6dsx_i3c_probe(struct i3c_device *i3cdev)
-> +{
-> +	const struct i3c_device_id *id = i3c_get_device_id(i3cdev);
-> +	const struct st_lsm6dsx_i3c_data *hw_data = id->data;
-> +	struct regmap *regmap;
-> +
-> +	regmap = devm_regmap_init_i3c(i3cdev, &st_lsm6dsx_i3c_regmap_config);
-> +	if (IS_ERR(regmap)) {
-> +		dev_err(&i3cdev->dev, "Failed to register i3c regmap %d\n",
-> +			(int)PTR_ERR(regmap));
-> +		return PTR_ERR(regmap);
-> +	}
-> +
-> +	return st_lsm6dsx_probe(&i3cdev->dev, 0, hw_data->id,
-> +				hw_data->name, regmap);
-> +}
-> +
-> +static const struct i3c_device_id st_lsm6dsx_i3c_ids[] = {
-> +	I3C_DEVICE(0x0104, 0x006C, &hw_data[ST_LSM6DSO_I3C_DATA_ID]),
-> +	I3C_DEVICE(0x0104, 0x006B, &hw_data[ST_LSM6DSR_I3C_DATA_ID]),
+Well you just reviewed that patch :)
 
-Still find that form counter-intuitive since you'd have to first go
-look at what's the value of ST_LSM6DSO_I3C_DATA_ID, then go check the
-entry in hw_data to find what's in there. Too many ways to get things
-wrong IMHO.
+> > +
+> > +MODULE_AUTHOR("Nicolas Saenz Julienne <nsaenzjulienne@suse.de");
+> > +MODULE_DESCRIPTION("Raspberry Pi cpufreq driver");
+> > +MODULE_LICENSE("GPL");
+> > +MODULE_ALIAS("platform:raspberrypi-cpufreq");
+>=20
+> I don't think the module alias is needed anymore.
 
-The following form would make it much more obvious/easy to follow:
+That's surprising. I remember the driver not being loaded by udev without i=
+t.
 
-static const st_lsm6dsx_i3c_data st_lsm6dso_i3c_data = {
-	ST_LSM6DSO_DEV_NAME, ST_LSM6DSO_ID,
-};
+Regards,
+Nicolas
 
-static const st_lsm6dsx_i3c_data st_lsm6dsr_i3c_data = {
-	ST_LSM6DSR_DEV_NAME, ST_LSM6DSR_ID,
-};
 
-static const struct i3c_device_id st_lsm6dsx_i3c_ids[] = {
-	I3C_DEVICE(0x0104, 0x006C, &st_lsm6dso_i3c_data),
-	I3C_DEVICE(0x0104, 0x006B, &st_lsm6dsr_i3c_data),
-};
+--=-Pw8rcdAQwigEg8aqt+O7
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-Note that I don't see why we need to pass both the name and the ID to
-st_lsm6dsx_probe(). I'd expect the name to be easily deducible from the
-ID (using a name table whose index would match the ST_XXX_ID).
+-----BEGIN PGP SIGNATURE-----
 
-If you do this change you would actually get rid of the
-st_lsm6dsx_i3c_data struct and instead have:
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAlz5S8gACgkQlfZmHno8
+x/6ReQgAmTObVFlrCJjS+HsdqcP5Er91BEOTv2XnVOfYkRC/w/vFXhkOZIlokLgq
+kj+GwzHmUGEGzlwyGsb1cJCnOffS7QI5Y1P2pfqqF1z0+kCfNiS8RMVJh6lvazsr
+wxTIqZBjf6Qi6Hckl03htdGmFkHCP4ftoHTWP6SVjWRfm9tSzbfWSWczNMwsU2g0
+ICXOdZ1BzUiDU69Tq8yWuKFavbvp7JmHKTzGI5sV7hyiFikQZDwbivbUN8dERESJ
+aWlDO32Twc2v+W8z9ZJaWtfCcOtFA/Tkca2sZ+HHt8cxe67dPzcQIFC/BoPfTw/h
+TVzSQVZjVbG91S6E0W+ElFkMVnI8BQ==
+=zgC8
+-----END PGP SIGNATURE-----
 
-static const struct i3c_device_id st_lsm6dsx_i3c_ids[] = {
-	I3C_DEVICE(0x0104, 0x006C, (void *)ST_LSM6DSO_ID),
-	I3C_DEVICE(0x0104, 0x006B, (void *)ST_LSM6DSR_ID),
-};
-
-> +	{ /* sentinel */ },
-> +};
-> +MODULE_DEVICE_TABLE(i3c, st_lsm6dsx_i3c_ids);
-> +
-> +static struct i3c_driver st_lsm6dsx_driver = {
-> +	.driver = {
-> +		.name = "st_lsm6dsx_i3c",
-> +		.pm = &st_lsm6dsx_pm_ops,
-> +	},
-> +	.probe = st_lsm6dsx_i3c_probe,
-> +	.id_table = st_lsm6dsx_i3c_ids,
-> +};
-> +module_i3c_driver(st_lsm6dsx_driver);
-> +
-> +MODULE_AUTHOR("Vitor Soares <vitor.soares@synopsys.com>");
-> +MODULE_DESCRIPTION("STMicroelectronics st_lsm6dsx i3c driver");
-> +MODULE_LICENSE("GPL v2");
+--=-Pw8rcdAQwigEg8aqt+O7--
 
