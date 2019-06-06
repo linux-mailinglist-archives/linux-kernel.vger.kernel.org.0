@@ -2,186 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7F8337DE8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 22:14:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D744837E88
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 22:21:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728737AbfFFUOa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 16:14:30 -0400
-Received: from mail-eopbgr70052.outbound.protection.outlook.com ([40.107.7.52]:33090
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727082AbfFFUO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 16:14:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
+        id S1728900AbfFFUPM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 16:15:12 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:35744 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727082AbfFFUPK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 16:15:10 -0400
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+        by m0001303.ppops.net (8.16.0.27/8.16.0.27) with SMTP id x56KCw7x014690;
+        Thu, 6 Jun 2019 13:14:40 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=uFxS+HpbQdPGuyT6DMQGXVowWYrSTxP801cJs+y+7PE=;
+ b=iTUYgu6TweW47DLGYfU7MsGvhT3JAGxf6NtshBOvsnWXjIBMVLhcNs6Eh4fok3BxQMgh
+ 7vHSis8lo86bI6eRx5eO2wVKc88bjVhfmm8gqr8H8VWnjS18K2RYtJQzwRYioHyXyEVC
+ FYxfe1bQ5Le+6vnUB68qADnxki+kkIAK0SI= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by m0001303.ppops.net with ESMTP id 2sy0e8a4ae-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Thu, 06 Jun 2019 13:14:40 -0700
+Received: from prn-mbx01.TheFacebook.com (2620:10d:c081:6::15) by
+ prn-hub01.TheFacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Thu, 6 Jun 2019 13:14:38 -0700
+Received: from prn-hub06.TheFacebook.com (2620:10d:c081:35::130) by
+ prn-mbx01.TheFacebook.com (2620:10d:c081:6::15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Thu, 6 Jun 2019 13:14:38 -0700
+Received: from NAM01-BN3-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.30) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Thu, 6 Jun 2019 13:14:38 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=B0E1HjKonCXrDe+jQccFfs3o6VLpAeGk115hcbiJ6RA=;
- b=P/sKyPeQd8+u0095tKNbmGYczgZzYfHTXRhvj//J9+jI1W27r0v87NNNAZeGwdU53HEOLmSmbdiPt7fTRJ1Dd3JRy0PxQHyFtJ8v39L1P80lNipcXPVMPWd3NR8Hcf0ptw0skl16Sx4vbTEo9TZYpumBwJoChZnESFvQbn7zR5E=
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (10.171.182.144) by
- VI1PR05MB5214.eurprd05.prod.outlook.com (20.178.12.90) with Microsoft SMTP
+ bh=uFxS+HpbQdPGuyT6DMQGXVowWYrSTxP801cJs+y+7PE=;
+ b=mwdKQ72rcvWIW66SxyPUtEwnImhYcVTPGfk/8CKAPFJWbi3wPUCe2p3MgzgGjuV72mgwKsBMSDgZ4xFlTJ1bVvo7siBrpc++HLdCTG0ci0CJlfwTRUqi6e7O3EeMaypX2Oaxw7AhFELkxoFLx8k5Vy56RDe224jhdaCR167+Iis=
+Received: from MW2PR1501MB1993.namprd15.prod.outlook.com (52.132.149.157) by
+ MW2PR1501MB2076.namprd15.prod.outlook.com (52.132.150.28) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1965.12; Thu, 6 Jun 2019 20:14:24 +0000
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::c16d:129:4a40:9ba1]) by VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::c16d:129:4a40:9ba1%6]) with mapi id 15.20.1965.011; Thu, 6 Jun 2019
- 20:14:24 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Doug Ledford <dledford@redhat.com>
-CC:     "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] Please pull RDMA subsystem changes
-Thread-Topic: [GIT PULL] Please pull RDMA subsystem changes
-Thread-Index: AQHVHKRvaslonjpP+0u/K3AsBbZRRw==
-Date:   Thu, 6 Jun 2019 20:14:24 +0000
-Message-ID: <20190606201420.GA9763@ziepe.ca>
+ 15.20.1943.22; Thu, 6 Jun 2019 20:14:36 +0000
+Received: from MW2PR1501MB1993.namprd15.prod.outlook.com
+ ([fe80::ede1:f275:2869:8156]) by MW2PR1501MB1993.namprd15.prod.outlook.com
+ ([fe80::ede1:f275:2869:8156%7]) with mapi id 15.20.1965.011; Thu, 6 Jun 2019
+ 20:14:36 +0000
+From:   Nick Terrell <terrelln@fb.com>
+To:     Vaneet Narang <v.narang@samsung.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        "dsterba@suse.cz" <dsterba@suse.cz>,
+        Maninder Singh <maninder1.s@samsung.com>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "gustavo@embeddedor.com" <gustavo@embeddedor.com>,
+        "joe@perches.com" <joe@perches.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        AMIT SAHRAWAT <a.sahrawat@samsung.com>,
+        PANKAJ MISHRA <pankaj.m@samsung.com>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
+Subject: Re: (2) [PATCH 1/4] zstd: pass pointer rathen than structure to
+ functions
+Thread-Topic: (2) [PATCH 1/4] zstd: pass pointer rathen than structure to
+ functions
+Thread-Index: AQHVHKR2hpo9a2qp3EKL1BeVjcuANQ==
+Date:   Thu, 6 Jun 2019 20:14:36 +0000
+Message-ID: <673B6F9E-5BB7-4EB2-9E6C-A44E09367ADE@fb.com>
+References: <20190605143219.248ca514546f69946aa2e07e@linux-foundation.org>
+ <1559552526-4317-1-git-send-email-maninder1.s@samsung.com>
+ <1559552526-4317-2-git-send-email-maninder1.s@samsung.com>
+ <20190604154326.8868a10f896c148a0ce804d1@linux-foundation.org>
+ <20190605115703.GY15290@twin.jikos.cz> <20190605123253.GZ15290@suse.cz>
+ <CGME20190603090232epcas5p1630d0584e8a1aa9495edc819605664fc@epcms5p1>
+ <20190606141019epcms5p1e9c394d2c2ef37506c8004fe48edd29f@epcms5p1>
+In-Reply-To: <20190606141019epcms5p1e9c394d2c2ef37506c8004fe48edd29f@epcms5p1>
 Accept-Language: en-US
 Content-Language: en-US
-X-MS-Has-Attach: yes
+X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: MN2PR13CA0013.namprd13.prod.outlook.com
- (2603:10b6:208:160::26) To VI1PR05MB4141.eurprd05.prod.outlook.com
- (2603:10a6:803:4d::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [156.34.55.100]
+x-originating-ip: [2620:10d:c090:200::2:d31d]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 5ae9ddb0-5a1c-493a-339b-08d6eabb9195
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(49563074)(7193020);SRVR:VI1PR05MB5214;
-x-ms-traffictypediagnostic: VI1PR05MB5214:
-x-microsoft-antispam-prvs: <VI1PR05MB52142C352E2145DE879C1890CF170@VI1PR05MB5214.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1169;
+x-ms-office365-filtering-correlation-id: e05348c2-aaad-448b-6171-08d6eabb98d7
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MW2PR1501MB2076;
+x-ms-traffictypediagnostic: MW2PR1501MB2076:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <MW2PR1501MB2076D0452B066B0CD3E0E074AB170@MW2PR1501MB2076.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
 x-forefront-prvs: 00603B7EEF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(396003)(39840400004)(346002)(366004)(199004)(189003)(66616009)(14454004)(478600001)(68736007)(1076003)(256004)(36756003)(14444005)(6116002)(3846002)(486006)(99936001)(476003)(2906002)(54906003)(8936002)(4326008)(64756008)(66946007)(66556008)(66446008)(7736002)(53936002)(8676002)(81156014)(66476007)(186003)(305945005)(26005)(9686003)(6512007)(102836004)(73956011)(71200400001)(6486002)(6436002)(386003)(25786009)(6506007)(5660300002)(52116002)(66066001)(316002)(99286004)(81166006)(110136005)(86362001)(33656002)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB5214;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(136003)(346002)(39860400002)(366004)(396003)(189003)(199004)(36756003)(102836004)(83716004)(6486002)(14454004)(53546011)(6436002)(6506007)(229853002)(71200400001)(6306002)(71190400001)(53936002)(6512007)(6246003)(33656002)(5660300002)(476003)(8676002)(81156014)(81166006)(46003)(54906003)(99286004)(6916009)(8936002)(966005)(486006)(4326008)(11346002)(2616005)(446003)(76176011)(7416002)(25786009)(305945005)(7736002)(316002)(6116002)(186003)(66446008)(64756008)(68736007)(66946007)(2906002)(66476007)(82746002)(66556008)(86362001)(73956011)(76116006)(478600001)(256004);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR1501MB2076;H:MW2PR1501MB1993.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 4IAviXQAa+A1qZ9TDNaNlZ7WS04mYsGZm7BlHFHVo89214R1FgLx+yCrB208Ky2Z1zNPI5j4eQqtfyz8Iv2WXY4cj7163z+ICwTfZVHNurWMWs06AzsYMg4KhS5yM+3Fp/km1s9+sRTUGasrjnxCZvKpQxnmpbR9PrjJhBVq5daEAzgCYmREZLXpBvxeMlCJC7XaeV0JGtPTLAFQiTaqFmlm6zw9u3Es+BsYLXuQlp1StlXWxSI6j3nz7QXNLAAc8ukRfXa+QJ5KnlJEbU8lbt7oU7IqiexjNRq/hoyhsifn867yK2JOUuBBpviPCOSK/mEVo6rzq5Q/6y783S4s+c52VcZfJ9kigiaAO5rmRKoggEzpBGEl+Q3y9+BzQmrjAMHPRXYQYdBvo9MLY2+x/DApzJcyJN6MGCUsuWlh+tQ=
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ew6BAiZeqk4r7MaW"
+x-microsoft-antispam-message-info: 0Ho0cIqxZ0tDcOjYbG4ND7gqgsV+/JPgqOotwFq58vGBfEMwtI23QqYuPjQZ0bnhkaURqrD+RFOoR1LiaEteOyjtWEQSUR5w8p1jgR6OApW2zpr1/kyXB3p72agRZB4jxPYMIxBMzMXXdkFnv82xQQbkxSQkAz5E1Wx+0z/IOgnuIPnbcBwn11AVvbUV48Dho7irF+NqesErsNHAaHJ4bY4zOiSvy6o5/tzAatHhy/9Me4RzanE8HPHElG2iarrJ8CVZfDHpyRzwP9Bokb+t7dbHe+h/Ei6s3hRRyQrsnhHYjRLFa+yhVeJzxSA1mXdBTAIVupdC7tPKH2sNLlS5DqZ9xMY4NUK6C6aDLjnzwA8X/iws/XNtSBhMCGAxpx8knf2eyU9cgxNhiS8fpTl3ToSavjGLlOKEAFdm/t5Meuo=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <F6236908BE37D04F92F6F255008B1A8C@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5ae9ddb0-5a1c-493a-339b-08d6eabb9195
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2019 20:14:24.4610
+X-MS-Exchange-CrossTenant-Network-Message-Id: e05348c2-aaad-448b-6171-08d6eabb98d7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2019 20:14:36.1471
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jgg@mellanox.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB5214
+X-MS-Exchange-CrossTenant-userprincipalname: terrelln@fb.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR1501MB2076
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-06_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906060136
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---ew6BAiZeqk4r7MaW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Hi Linus,
 
-Things are looking pretty quiet here in RDMA, not too many bug fixes rolling
-in right now. Here is the first batch of proposed rc fixes.
+> On Jun 6, 2019, at 7:10 AM, Vaneet Narang <v.narang@samsung.com> wrote:
+>=20
+> Hi Andrew / David,
+>=20
+> =20
+>>>  > > -        ZSTD_parameters params =3D ZSTD_getParams(level, src_len,=
+ 0);
+>>>  > > +        static ZSTD_parameters params;
+>>>  >=20
+>>>  > > +
+>>>  > > +        params =3D ZSTD_getParams(level, src_len, 0);
+>>>  >=20
+>>>  > No thats' broken, the params can't be static as it depends on level =
+and
+>>>  > src_len. What happens if there are several requests in parallel with
+>>>  > eg. different levels?
+>=20
+> There is no need to make static for btrfs. We can keep it as a stack vari=
+able.
+> This patch set  focussed on reducing stack usage of zstd compression when=
+ triggered
+> through zram. ZRAM internally uses crypto and currently crpto uses fixed =
+level and also
+> not dependent upon source length.
 
-Thanks,
-Jason
+Can we measure the performance of these patches on btrfs and/or zram? See t=
+he benchmarks
+I ran on my original patch to btrfs for reference https://lore.kernel.org/p=
+atchwork/patch/802866/.
 
-The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+I don't expect a speed difference, but I think it is worth measuring.
 
-  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+> crypto/zstd.c: =20
+> static ZSTD_parameters zstd_params(void)
+> {
+>        return ZSTD_getParams(ZSTD_DEF_LEVEL, 0, 0);
+> }
+>=20
+>=20
+> Actually high stack usage problem with zstd compression patch gets exploi=
+ted more incase of=20
+> shrink path which gets triggered randomly from any call flow in case of l=
+ow memory and adds overhead
+> of more than 2000 byte of stack and results in stack overflow.
+>=20
+> Stack usage of alloc_page in case of low memory
+>=20
+>   72   HUF_compressWeights_wksp+0x140/0x200 =20
+>   64   HUF_writeCTable_wksp+0xdc/0x1c8     =20
+>   88   HUF_compress4X_repeat+0x214/0x450    =20
+>  208   ZSTD_compressBlock_internal+0x224/0x137c
+>  136   ZSTD_compressContinue_internal+0x210/0x3b0
+>  192   ZSTD_compressCCtx+0x6c/0x144
+>  144   zstd_compress+0x40/0x58
+>   32   crypto_compress+0x2c/0x34
+>   32   zcomp_compress+0x3c/0x44
+>   80   zram_bvec_rw+0x2f8/0xa7c
+>   64   zram_rw_page+0x104/0x170
+>   48   bdev_write_page+0x80/0xb4
+>  112   __swap_writepage+0x160/0x29c
+>   24   swap_writepage+0x3c/0x58
+>  160   shrink_page_list+0x788/0xae0
+>  128   shrink_inactive_list+0x210/0x4a8
+>  184   shrink_zone+0x53c/0x7c0
+>  160   try_to_free_pages+0x2fc/0x7cc
+>   80   __alloc_pages_nodemask+0x534/0x91c
+>=20
+> Thanks & Regards,
+> Vaneet Narang=20
+> =20
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
-
-for you to fetch changes up to 4f240dfec6bcc852b124ea7c419fb590949fbd4c:
-
-  RDMA/efa: Remove MAYEXEC flag check from mmap flow (2019-05-29 13:13:03 -0300)
-
-----------------------------------------------------------------
-5.2 First rc pull request
-
-The usual driver bug fixes and fixes for a couple of regressions introduced in
-5.2:
-
-- Fix a race on bootup with RDMA device renaming and srp. SRP also needs to
-  rename its internal sys files
-
-- Fix a memory leak in hns
-
-- Don't leak resources in efa on certain error unwinds
-
-- Don't panic in certain error unwinds in ib_register_device
-
-- Various small user visible bug fix patches for the hfi and efa drivers
-
-- Fix the 32 bit compilation break
-
-----------------------------------------------------------------
-Gal Pressman (2):
-      RDMA/uverbs: Pass udata on uverbs error unwind
-      RDMA/efa: Remove MAYEXEC flag check from mmap flow
-
-Jason Gunthorpe (1):
-      RDMA/core: Clear out the udata before error unwind
-
-Kamal Heib (1):
-      RDMA/core: Fix panic when port_data isn't initialized
-
-Kamenee Arumugam (1):
-      IB/hfi1: Validate page aligned for a given virtual address
-
-Leon Romanovsky (2):
-      RDMA/srp: Rename SRP sysfs name after IB device rename trigger
-      RDMA/hns: Fix PD memory leak for internal allocation
-
-Michal Kubecek (1):
-      mlx5: avoid 64-bit division
-
-Mike Marciniszyn (3):
-      IB/rdmavt: Fix alloc_qpn() WARN_ON()
-      IB/hfi1: Insure freeze_work work_struct is canceled on shutdown
-      IB/{qib, hfi1, rdmavt}: Correct ibv_devinfo max_mr value
-
- drivers/infiniband/core/device.c              | 49 +++++++++++++++++++--------
- drivers/infiniband/core/rdma_core.h           |  2 ++
- drivers/infiniband/core/uverbs_cmd.c          | 30 +++++++++++-----
- drivers/infiniband/core/uverbs_std_types_cq.c |  2 +-
- drivers/infiniband/core/uverbs_std_types_mr.c |  2 +-
- drivers/infiniband/hw/efa/efa_verbs.c         |  1 -
- drivers/infiniband/hw/hfi1/chip.c             |  1 +
- drivers/infiniband/hw/hfi1/user_exp_rcv.c     |  3 ++
- drivers/infiniband/hw/hfi1/verbs.c            |  2 --
- drivers/infiniband/hw/hns/hns_roce_hw_v1.c    |  1 +
- drivers/infiniband/hw/mlx5/cmd.c              |  9 +++--
- drivers/infiniband/hw/mlx5/main.c             |  2 +-
- drivers/infiniband/hw/qib/qib_verbs.c         |  2 --
- drivers/infiniband/sw/rdmavt/mr.c             |  2 ++
- drivers/infiniband/sw/rdmavt/qp.c             |  3 +-
- drivers/infiniband/ulp/srp/ib_srp.c           | 18 +++++++++-
- include/rdma/ib_verbs.h                       |  1 +
- 17 files changed, 95 insertions(+), 35 deletions(-)
-
---ew6BAiZeqk4r7MaW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEfB7FMLh+8QxL+6i3OG33FX4gmxoFAlz5dBkACgkQOG33FX4g
-mxqKzA/6A4oEKSMyJt3TMx2Z6sJoHYWqibV/AZsra4wgA0rzGPdV3cpIwg7qeccD
-dMAecHl6GILXs3dCZVKs/C5cLL9YDBBpwFWlVR4eu4BppeDA9dKt66rI2a+JFbUb
-taSjmTnNUAiBWG9HhZAy2KQMARgNcvwQ+4z5USMzUXclDTTQ3w2s4hjtxDrxOb2V
-24Xnep5VGS7ca0wNocypa1SwbilRR0Z+3axHbKvMFXT0LsJsDf52VRcX2JaxMNXG
-7L/HKI78PVQLiz0Y8qJjTiiHeM8RDpgrf8pEIa+XnUKXvTn5YoVDI8RwOyZ3qC9G
-5dLVOXOAvvJ8pLRXGwsAwvxwqHkV2EbbsODXqwXx8tqlvID7ENVMn3sZDIc9l9cp
-j3aEuh1mL3iQLxuLz9Ye2cWgUEEzrQkpIGfI25lV5VFZ/G1h77aUIANkB561jWM+
-TiVMo3/2qbY/KBQ8M7chYCx+EgrCisd6Yw4l7ghbVR5q69RMWdhNT7QP9frblva4
-p1kRW2FyQcstLol87jQJn5eSngU9lF9W4C+o28mG97Nn6pIFX7pivTwrRFi9A6LE
-5OvTvYjB7kuJNNtGmG/H1DWLBv7TIw/0Xp9X/bJs2ULG9tjYuS17gNhmH0YnX2NK
-tY59L6/d849+9Nn+28uOOoB76cugQHG6qFe2e5TzuqZMAFmxKbI=
-=FV44
------END PGP SIGNATURE-----
-
---ew6BAiZeqk4r7MaW--
