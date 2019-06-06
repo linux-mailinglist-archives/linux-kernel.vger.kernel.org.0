@@ -2,231 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B72D137E2C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 22:18:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36C3637DD4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 22:08:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729584AbfFFUPs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 16:15:48 -0400
-Received: from mga17.intel.com ([192.55.52.151]:47862 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729531AbfFFUPo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 16:15:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Jun 2019 13:15:43 -0700
-X-ExtLoop1: 1
-Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
-  by orsmga002.jf.intel.com with ESMTP; 06 Jun 2019 13:15:42 -0700
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>
-Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH v7 27/27] x86/cet/shstk: Add Shadow Stack instructions to opcode map
-Date:   Thu,  6 Jun 2019 13:06:46 -0700
-Message-Id: <20190606200646.3951-28-yu-cheng.yu@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190606200646.3951-1-yu-cheng.yu@intel.com>
-References: <20190606200646.3951-1-yu-cheng.yu@intel.com>
+        id S1728407AbfFFUId (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 16:08:33 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:42004 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727082AbfFFUIc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 16:08:32 -0400
+Received: by mail-qt1-f195.google.com with SMTP id s15so4193471qtk.9
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 13:08:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jwTK+3qegEhCDQurHdthlAfm2HEBzC8AuSyBQLKd0wk=;
+        b=H8L4iSF+E2yUjaostn80V+PTJwCs4985ILG/iUE8G8MAQFgutoft9xTOgmh3LkgoZg
+         MxeHzjh74gwAxDs+kaIdTf7lPHIsCFVG/WFx9Lj9+1hwH1hrbcTpgowl4QjggfKJSPWo
+         IFF4gUt1kRTBBjLvk1335FeW3GY+w5U8xPFfLCCQesUe8N7qoeK2TMMhOrYSV35+VkgF
+         eM1xNesr6om0gKoxHrzBllUzxHou16EOyjEn/DvWf18w6hYZKqyXt+1Yncg0ratARY7+
+         ezIrnQD3XpAbv5GGpRxffJhtbcdSGlXVn2AQEwD+FYu/sbi+Y/Ka7us873+xFx+NlEla
+         I6ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jwTK+3qegEhCDQurHdthlAfm2HEBzC8AuSyBQLKd0wk=;
+        b=jnmTWHPeJCd4or0A4jCoOEQjmUMPf0EhvgS/Kr3r++Q24sLKdkrX2W9xxhF7neR5bi
+         xsPkWlBR8RfMpE0wAtPHfCOkgkPQ/FxJHfjYhVEDPoZBW58YeHvcR20Rb6sQ1KlqrgHt
+         5H02qeL4DGXeb+d1uKW5ljIg8lSB2fbIxyhexZ76h76ZqBUGCeJ6hg37OnQ7KvNBBmQz
+         sWlOHw8mmtEWQJ0pnHu7pjn6WNJgCvhDzpbaCq732YR6vpww3h2rvP4u9pB5h8ZssTdx
+         DCvy6ol2Z1ehQbv2MhSWIRn/C2FE5OvLdCdWqa+I6Rs6aOS0jFyeEAU8vhgPJcyjgcNF
+         x8XQ==
+X-Gm-Message-State: APjAAAXJ36D8FLj8yFxvEm7v44ioch9yMoTnjzUOjhVaHGu/8Alrq8gq
+        20QbVM/3RZ6vtthVxKZ+JBaFT1zQ
+X-Google-Smtp-Source: APXvYqzbYDHqOqfJ82EpXUuPmNBKsleJduxlFIXw/9ogHPCdjHAyz7ghvCMgcsoIEzWUhBv6akg5gg==
+X-Received: by 2002:aed:39e5:: with SMTP id m92mr42823372qte.106.1559851711219;
+        Thu, 06 Jun 2019 13:08:31 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([190.15.121.82])
+        by smtp.gmail.com with ESMTPSA id a139sm1375648qkb.48.2019.06.06.13.08.29
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 06 Jun 2019 13:08:30 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 87B6C41149; Thu,  6 Jun 2019 17:08:26 -0300 (-03)
+Date:   Thu, 6 Jun 2019 17:08:26 -0300
+To:     kan.liang@linux.intel.com
+Cc:     jolsa@kernel.org, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        ak@linux.intel.com
+Subject: Re: [PATCH V3 2/5] perf header: Add die information in CPU topology
+Message-ID: <20190606200826.GI21245@kernel.org>
+References: <1559688644-106558-1-git-send-email-kan.liang@linux.intel.com>
+ <1559688644-106558-2-git-send-email-kan.liang@linux.intel.com>
+ <20190606191210.GG21245@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190606191210.GG21245@kernel.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the following shadow stack management instructions.
+Em Thu, Jun 06, 2019 at 04:12:10PM -0300, Arnaldo Carvalho de Melo escreveu:
+> Em Tue, Jun 04, 2019 at 03:50:41PM -0700, kan.liang@linux.intel.com escreveu:
+> > From: Kan Liang <kan.liang@linux.intel.com>
+> > 
+> > With the new CPUID.1F, a new level type of CPU topology, 'die', is
+> > introduced. The 'die' information in CPU topology should be added in
+> > perf header.
+> > 
+> > To be compatible with old perf.data, the patch checks the section size
+> > before reading the die information. The new info is added at the end of
+> > the cpu_topology section, the old perf tool ignores the extra data.
+> > It never reads data crossing the section boundary.
+> > 
+> > The new perf tool with the patch can be used on legacy kernel. Add a
+> > new function has_die_topology() to check if die topology information is
+> > supported by kernel. The function only check X86 and CPU 0. Assuming
+> > other CPUs have same topology.
+> 
+> You're changing the header, how would a new tool handle an old perf.data
+> where this 'die_id' is not present? What about an old tool dealing with
+> a perf.data with this die_id?
+> 
+> I couldn't see any provision for that, am I missing something?
+> 
+> /me goes to read tools/perf/util/cputopo.c ...
+> 
+> Yeah, its just the description on the perf.data doc file that confused
+> me, I'll clarify that after finishing reviewing/applying this patchkit.
 
-INCSSP:
-    Increment shadow stack pointer by the steps specified.
+So I have this on top, please check.
 
-RDSSP:
-    Read SSP register into a GPR.
+- Arnaldo
 
-SAVEPREVSSP:
-    Use "prev ssp" token at top of current shadow stack to
-    create a "restore token" on previous shadow stack.
+commit a9396a70fc7101c108e1c91fa1771557bbbb57a1
+Author: Arnaldo Carvalho de Melo <acme@redhat.com>
+Date:   Thu Jun 6 17:03:18 2019 -0300
 
-RSTORSSP:
-    Restore from a "restore token" pointed by a GPR to SSP.
+    perf data: Fix perf.data documentation for HEADER_CPU_TOPOLOGY
+    
+    The 'die' info isn't in the same array as core and socket ids, and we
+    missed the 'dies' string list, that comes right after the 'core' +
+    'socket' id variable length array, followed by the VLA for the dies.
+    
+    Cc: Adrian Hunter <adrian.hunter@intel.com>
+    Cc: Andi Kleen <ak@linux.intel.com>
+    Cc: Jiri Olsa <jolsa@kernel.org>
+    Cc: Kan Liang <kan.liang@linux.intel.com>
+    Cc: Namhyung Kim <namhyung@kernel.org>
+    Cc: Peter Zijlstra <peterz@infradead.org>
+    Fixes: c9cb12c5ba08 ("perf header: Add die information in CPU topology")
+    Link: https://lkml.kernel.org/n/tip-nubi6mxp2n8ofvlx7ph6k3h6@git.kernel.org
+    Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-WRSS:
-    Write to kernel-mode shadow stack (kernel-mode instruction).
-
-WRUSS:
-    Write to user-mode shadow stack (kernel-mode instruction).
-
-SETSSBSY:
-    Verify the "supervisor token" pointed by IA32_PL0_SSP MSR,
-    if valid, set the token to busy, and set SSP to the value
-    of IA32_PL0_SSP MSR.
-
-CLRSSBSY:
-    Verify the "supervisor token" pointed by a GPR, if valid,
-    clear the busy bit from the token.
-
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
----
- arch/x86/lib/x86-opcode-map.txt               | 26 +++++++++++++------
- tools/objtool/arch/x86/lib/x86-opcode-map.txt | 26 +++++++++++++------
- 2 files changed, 36 insertions(+), 16 deletions(-)
-
-diff --git a/arch/x86/lib/x86-opcode-map.txt b/arch/x86/lib/x86-opcode-map.txt
-index e0b85930dd77..c5e825d44766 100644
---- a/arch/x86/lib/x86-opcode-map.txt
-+++ b/arch/x86/lib/x86-opcode-map.txt
-@@ -366,7 +366,7 @@ AVXcode: 1
- 1b: BNDCN Gv,Ev (F2) | BNDMOV Ev,Gv (66) | BNDMK Gv,Ev (F3) | BNDSTX Ev,Gv
- 1c:
- 1d:
--1e:
-+1e: RDSSP Rd (F3),REX.W
- 1f: NOP Ev
- # 0x0f 0x20-0x2f
- 20: MOV Rd,Cd
-@@ -610,7 +610,17 @@ fe: paddd Pq,Qq | vpaddd Vx,Hx,Wx (66),(v1)
- ff: UD0
- EndTable
+diff --git a/tools/perf/Documentation/perf.data-file-format.txt b/tools/perf/Documentation/perf.data-file-format.txt
+index de78183f6881..5f54feb19977 100644
+--- a/tools/perf/Documentation/perf.data-file-format.txt
++++ b/tools/perf/Documentation/perf.data-file-format.txt
+@@ -151,20 +151,35 @@ struct {
  
--Table: 3-byte opcode 1 (0x0f 0x38)
-+Table: 3-byte opcode 1 (0x0f 0x01)
-+Referrer:
-+AVXcode:
-+# Skip 0x00-0xe7
-+e8: SETSSBSY (f3)
-+e9:
-+ea: SAVEPREVSSP (f3)
-+# Skip 0xeb-0xff
-+EndTable
+ 	HEADER_CPU_TOPOLOGY = 13,
+ 
+-String lists defining the core and CPU threads topology.
+-The string lists are followed by a variable length array
+-which contains core_id, die_id (for x86) and socket_id of each cpu.
+-The number of entries can be determined by the size of the
+-section minus the sizes of both string lists.
+-
+ struct {
++	/*
++	 * First revision of HEADER_CPU_TOPOLOGY
++	 *
++	 * See 'struct perf_header_string_list' definition earlier
++	 * in this file.
++	 */
 +
-+Table: 3-byte opcode 2 (0x0f 0x38)
- Referrer: 3-byte escape 1
- AVXcode: 2
- # 0x0f 0x38 0x00-0x0f
-@@ -789,12 +799,12 @@ f0: MOVBE Gy,My | MOVBE Gw,Mw (66) | CRC32 Gd,Eb (F2) | CRC32 Gd,Eb (66&F2)
- f1: MOVBE My,Gy | MOVBE Mw,Gw (66) | CRC32 Gd,Ey (F2) | CRC32 Gd,Ew (66&F2)
- f2: ANDN Gy,By,Ey (v)
- f3: Grp17 (1A)
--f5: BZHI Gy,Ey,By (v) | PEXT Gy,By,Ey (F3),(v) | PDEP Gy,By,Ey (F2),(v)
--f6: ADCX Gy,Ey (66) | ADOX Gy,Ey (F3) | MULX By,Gy,rDX,Ey (F2),(v)
-+f5: BZHI Gy,Ey,By (v) | PEXT Gy,By,Ey (F3),(v) | PDEP Gy,By,Ey (F2),(v) | WRUSS Pq,Qq (66),REX.W
-+f6: ADCX Gy,Ey (66) | ADOX Gy,Ey (F3) | MULX By,Gy,rDX,Ey (F2),(v) | WRSS Pq,Qq (66),REX.W
- f7: BEXTR Gy,Ey,By (v) | SHLX Gy,Ey,By (66),(v) | SARX Gy,Ey,By (F3),(v) | SHRX Gy,Ey,By (F2),(v)
- EndTable
- 
--Table: 3-byte opcode 2 (0x0f 0x3a)
-+Table: 3-byte opcode 3 (0x0f 0x3a)
- Referrer: 3-byte escape 2
- AVXcode: 3
- # 0x0f 0x3a 0x00-0xff
-@@ -948,7 +958,7 @@ GrpTable: Grp7
- 2: LGDT Ms | XGETBV (000),(11B) | XSETBV (001),(11B) | VMFUNC (100),(11B) | XEND (101)(11B) | XTEST (110)(11B)
- 3: LIDT Ms
- 4: SMSW Mw/Rv
--5: rdpkru (110),(11B) | wrpkru (111),(11B)
-+5: rdpkru (110),(11B) | wrpkru (111),(11B) | RSTORSSP Mq (F3)
- 6: LMSW Ew
- 7: INVLPG Mb | SWAPGS (o64),(000),(11B) | RDTSCP (001),(11B)
- EndTable
-@@ -1019,8 +1029,8 @@ GrpTable: Grp15
- 2: vldmxcsr Md (v1) | WRFSBASE Ry (F3),(11B)
- 3: vstmxcsr Md (v1) | WRGSBASE Ry (F3),(11B)
- 4: XSAVE | ptwrite Ey (F3),(11B)
--5: XRSTOR | lfence (11B)
--6: XSAVEOPT | clwb (66) | mfence (11B)
-+5: XRSTOR | lfence (11B) | INCSSP Rd (F3),REX.W
-+6: XSAVEOPT | clwb (66) | mfence (11B) | CLRSSBSY Mq (F3)
- 7: clflush | clflushopt (66) | sfence (11B)
- EndTable
- 
-diff --git a/tools/objtool/arch/x86/lib/x86-opcode-map.txt b/tools/objtool/arch/x86/lib/x86-opcode-map.txt
-index e0b85930dd77..c5e825d44766 100644
---- a/tools/objtool/arch/x86/lib/x86-opcode-map.txt
-+++ b/tools/objtool/arch/x86/lib/x86-opcode-map.txt
-@@ -366,7 +366,7 @@ AVXcode: 1
- 1b: BNDCN Gv,Ev (F2) | BNDMOV Ev,Gv (66) | BNDMK Gv,Ev (F3) | BNDSTX Ev,Gv
- 1c:
- 1d:
--1e:
-+1e: RDSSP Rd (F3),REX.W
- 1f: NOP Ev
- # 0x0f 0x20-0x2f
- 20: MOV Rd,Cd
-@@ -610,7 +610,17 @@ fe: paddd Pq,Qq | vpaddd Vx,Hx,Wx (66),(v1)
- ff: UD0
- EndTable
- 
--Table: 3-byte opcode 1 (0x0f 0x38)
-+Table: 3-byte opcode 1 (0x0f 0x01)
-+Referrer:
-+AVXcode:
-+# Skip 0x00-0xe7
-+e8: SETSSBSY (f3)
-+e9:
-+ea: SAVEPREVSSP (f3)
-+# Skip 0xeb-0xff
-+EndTable
+        struct perf_header_string_list cores; /* Variable length */
+        struct perf_header_string_list threads; /* Variable length */
 +
-+Table: 3-byte opcode 2 (0x0f 0x38)
- Referrer: 3-byte escape 1
- AVXcode: 2
- # 0x0f 0x38 0x00-0x0f
-@@ -789,12 +799,12 @@ f0: MOVBE Gy,My | MOVBE Gw,Mw (66) | CRC32 Gd,Eb (F2) | CRC32 Gd,Eb (66&F2)
- f1: MOVBE My,Gy | MOVBE Mw,Gw (66) | CRC32 Gd,Ey (F2) | CRC32 Gd,Ew (66&F2)
- f2: ANDN Gy,By,Ey (v)
- f3: Grp17 (1A)
--f5: BZHI Gy,Ey,By (v) | PEXT Gy,By,Ey (F3),(v) | PDEP Gy,By,Ey (F2),(v)
--f6: ADCX Gy,Ey (66) | ADOX Gy,Ey (F3) | MULX By,Gy,rDX,Ey (F2),(v)
-+f5: BZHI Gy,Ey,By (v) | PEXT Gy,By,Ey (F3),(v) | PDEP Gy,By,Ey (F2),(v) | WRUSS Pq,Qq (66),REX.W
-+f6: ADCX Gy,Ey (66) | ADOX Gy,Ey (F3) | MULX By,Gy,rDX,Ey (F2),(v) | WRSS Pq,Qq (66),REX.W
- f7: BEXTR Gy,Ey,By (v) | SHLX Gy,Ey,By (66),(v) | SARX Gy,Ey,By (F3),(v) | SHRX Gy,Ey,By (F2),(v)
- EndTable
++       /*
++        * Second revision of HEADER_CPU_TOPOLOGY, older tools
++        * will not consider what comes next
++        */
++
+        struct {
+ 	      uint32_t core_id;
+-	      uint32_t die_id;
+ 	      uint32_t socket_id;
+        } cpus[nr]; /* Variable length records */
++       /* 'nr' comes from previously processed HEADER_NRCPUS's nr_cpu_avail */
++
++        /*
++	 * Third revision of HEADER_CPU_TOPOLOGY, older tools
++	 * will not consider what comes next
++	 */
++
++	struct perf_header_string_list dies; /* Variable length */
++	uint32_t die_id[nr_cpus_avail]; /* from previously processed HEADER_NR_CPUS, VLA */
+ };
  
--Table: 3-byte opcode 2 (0x0f 0x3a)
-+Table: 3-byte opcode 3 (0x0f 0x3a)
- Referrer: 3-byte escape 2
- AVXcode: 3
- # 0x0f 0x3a 0x00-0xff
-@@ -948,7 +958,7 @@ GrpTable: Grp7
- 2: LGDT Ms | XGETBV (000),(11B) | XSETBV (001),(11B) | VMFUNC (100),(11B) | XEND (101)(11B) | XTEST (110)(11B)
- 3: LIDT Ms
- 4: SMSW Mw/Rv
--5: rdpkru (110),(11B) | wrpkru (111),(11B)
-+5: rdpkru (110),(11B) | wrpkru (111),(11B) | RSTORSSP Mq (F3)
- 6: LMSW Ew
- 7: INVLPG Mb | SWAPGS (o64),(000),(11B) | RDTSCP (001),(11B)
- EndTable
-@@ -1019,8 +1029,8 @@ GrpTable: Grp15
- 2: vldmxcsr Md (v1) | WRFSBASE Ry (F3),(11B)
- 3: vstmxcsr Md (v1) | WRGSBASE Ry (F3),(11B)
- 4: XSAVE | ptwrite Ey (F3),(11B)
--5: XRSTOR | lfence (11B)
--6: XSAVEOPT | clwb (66) | mfence (11B)
-+5: XRSTOR | lfence (11B) | INCSSP Rd (F3),REX.W
-+6: XSAVEOPT | clwb (66) | mfence (11B) | CLRSSBSY Mq (F3)
- 7: clflush | clflushopt (66) | sfence (11B)
- EndTable
- 
--- 
-2.17.1
-
+ Example:
