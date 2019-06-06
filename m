@@ -2,79 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D149A37809
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 17:33:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD4CB377C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 17:23:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729488AbfFFPdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 11:33:24 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:53640 "EHLO huawei.com"
+        id S1729297AbfFFPXA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 11:23:00 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32991 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728916AbfFFPdW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 11:33:22 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 6C971B97A2064D149B70;
-        Thu,  6 Jun 2019 23:23:04 +0800 (CST)
-Received: from localhost (10.202.226.61) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Thu, 6 Jun 2019
- 23:23:00 +0800
-Date:   Thu, 6 Jun 2019 16:22:49 +0100
-From:   Jonathan Cameron <jonathan.cameron@huawei.com>
-To:     Nishad Kamdar <nishadkamdar@gmail.com>
-CC:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Joe Perches" <joe@perches.com>,
-        Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, <linux-crypto@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] crypto: hisilicon - Use the correct style for SPDX
- License Identifier
-Message-ID: <20190606162249.00002da5@huawei.com>
-In-Reply-To: <20190606150612.GA4002@nishad>
-References: <20190606150612.GA4002@nishad>
-Organization: Huawei
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; i686-w64-mingw32)
+        id S1727309AbfFFPXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 11:23:00 -0400
+Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 2DBB8E100CBDDB9E06CD;
+        Thu,  6 Jun 2019 16:22:58 +0100 (IST)
+Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
+ (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 6 Jun
+ 2019 16:22:48 +0100
+Subject: Re: [PATCH v3 0/2] ima/evm fixes for v5.2
+To:     Mimi Zohar <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
+        <mjg59@google.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <stable@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+References: <20190606112620.26488-1-roberto.sassu@huawei.com>
+ <3711f387-3aef-9fbb-1bb4-dded6807b033@huawei.com>
+ <1559832596.4278.124.camel@linux.ibm.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <e5bc45e0-dd61-c2ef-ba51-2bccb7a07676@huawei.com>
+Date:   Thu, 6 Jun 2019 17:22:56 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.61]
+In-Reply-To: <1559832596.4278.124.camel@linux.ibm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.220.96.108]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 6 Jun 2019 20:36:17 +0530
-Nishad Kamdar <nishadkamdar@gmail.com> wrote:
-
-> This patch corrects the SPDX License Identifier style
-> in header file related to Crypto Drivers for Hisilicon
-> SEC Engine in Hip06 and Hip07.
-> For C header files Documentation/process/license-rules.rst
-> mandates C-like comments (opposed to C source files where
-> C++ style should be used)
+On 6/6/2019 4:49 PM, Mimi Zohar wrote:
+> On Thu, 2019-06-06 at 13:43 +0200, Roberto Sassu wrote:
+>> On 6/6/2019 1:26 PM, Roberto Sassu wrote:
+>>> Previous versions included the patch 'ima: don't ignore INTEGRITY_UNKNOWN
+>>> EVM status'. However, I realized that this patch cannot be accepted alone
+>>> because IMA-Appraisal would deny access to new files created during the
+>>> boot. With the current behavior, those files are accessible because they
+>>> have a valid security.ima (not protected by EVM) created after the first
+>>> write.
+>>>
+>>> A solution for this problem is to initialize EVM very early with a random
+>>> key. Access to created files will be granted, even with the strict
+>>> appraisal, because after the first write those files will have both
+>>> security.ima and security.evm (HMAC calculated with the random key).
+>>>
+>>> Strict appraisal will work only if it is done with signatures until the
+>>> persistent HMAC key is loaded.
+>>
+>> Changelog
+>>
+>> v2:
+>> - remove patch 1/3 (evm: check hash algorithm passed to init_desc());
+>>     already accepted
+>> - remove patch 3/3 (ima: show rules with IMA_INMASK correctly);
+>>     already accepted
+>> - add new patch (evm: add option to set a random HMAC key at early boot)
+>> - patch 2/3: modify patch description
 > 
-> Changes made by using a script provided by Joe Perches here:
-> https://lkml.org/lkml/2019/2/7/46
+> Roberto, as I tried explaining previously, this feature is not a
+> simple bug fix.  These patches, if upstreamed, will be upstreamed the
+> normal way, during an open window.  Whether they are classified as a
+> bug fix has yet to be decided.
+
+Sorry, I understood that I can claim that there is a bug. I provided a
+motivation in patch 2/2.
+
+
+> Please stop Cc'ing stable.  If I don't Cc stable before sending the pull request, then Greg and Sasha have been really good about deciding which patches should be backported.  (Please refer to the comment on "Cc'ing stable" in section "5) Select the recipients for your patch" in Documentation/process/submitting-patches.rst.)
 > 
-> Suggested-by: Joe Perches <joe@perches.com>
-> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+> I'll review these patches, but in the future please use an appropriate patch set cover letter title in the subject line.
 
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Ok.
 
-> ---
->  drivers/crypto/hisilicon/sec/sec_drv.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/crypto/hisilicon/sec/sec_drv.h b/drivers/crypto/hisilicon/sec/sec_drv.h
-> index 2d2f186674ba..4d9063a8b10b 100644
-> --- a/drivers/crypto/hisilicon/sec/sec_drv.h
-> +++ b/drivers/crypto/hisilicon/sec/sec_drv.h
-> @@ -1,4 +1,4 @@
-> -// SPDX-License-Identifier: GPL-2.0
-> +/* SPDX-License-Identifier: GPL-2.0 */
->  /* Copyright (c) 2016-2017 Hisilicon Limited. */
->  
->  #ifndef _SEC_DRV_H_
+Thanks
 
+Roberto
 
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
