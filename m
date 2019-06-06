@@ -2,92 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C19B536D57
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 09:30:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD08C36D5D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 09:32:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726723AbfFFHan (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 03:30:43 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34387 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbfFFHan (ORCPT
+        id S1726535AbfFFHcV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 03:32:21 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33479 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbfFFHcV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 03:30:43 -0400
-Received: by mail-wr1-f68.google.com with SMTP id e16so1262145wrn.1;
-        Thu, 06 Jun 2019 00:30:41 -0700 (PDT)
+        Thu, 6 Jun 2019 03:32:21 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n9so1277092wru.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Jun 2019 00:32:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=Qkp/lfM7R4/9VFytqPJOWBgUswxzuDafgwHDd1VibeQ=;
-        b=WM7kXsdm2IIbvcKh7Z43WuKK927dq/t9c1pAayHXiNqiGiEKN1/YGCLmo/j7+JvgUk
-         Wpp24mhcJAwa+3PQSNpA0BQ+EurXUl4K56KLUqkb3MRB7jqybjz/5/4iKiTWom//4ZnO
-         y18oF5vZiIhWR4uEQn2+fmVojUqWJXhQ1PlNnVUyuOKE+Wwh/Se/Slh3vHQyaOxOhZJM
-         Bt5ch+FJNsWpH16pYW2B5hhIDrFu2r5miwCSSPRR3k8L6qHZ3rBl3noqESoNWAVTrjlh
-         vj+yKFPkR91Hkp3OiCpepQkXrnzEnXFXZhU/vB1p7FK95eXu63IuIl6cVYBzZ7qBJ3Kf
-         2aRA==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=e28AQOSNVuH9BCwVassenAYllziB9rQBHwACuXiGBI0=;
+        b=R0T5B+WL33Rb+7uIk9oZ2CfauW9TfoR9f4Ly4IEcBtR8WIsyabWCxdAqgbIqipJVGg
+         U7H9DxzBMMfxBr2kAGi4+ehn+1Y5+ZdpkB3wuD5XQ7LQjyIf99N8AXJBvuc1BjDcYe77
+         2SZioFYBlg6gdCHcBAU8FPkTjViAU9eJswBY5JNKxz3qJmvflMb5Q8rrnXbX+T0yx6an
+         n1r7ZfylkrbgHy6OIiRWlg5yjXdMSUbTS+42T20qpGAGJkfGioI2/rzs94AvAHEzsSwU
+         AhMlp8Tl1wbR8bk3WaNmteA2D8wlFqwZuBu7k051aXLgM61DxJSKxg91kKvxufGw6FfS
+         OWFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=Qkp/lfM7R4/9VFytqPJOWBgUswxzuDafgwHDd1VibeQ=;
-        b=F4o7rXH1ppXYbPbK7+8CaIdYTeKR19WMG2WpeDtWs1szpcqSdXeWCKzRWzC20T1AZc
-         mbFqgQ5Bp4HiXPZEBfp6tmjO8maOGUQpMaMzBO/Gk98X3W1+ary6rTgPhrETHhaDcLks
-         Y1mZgzykHLsFsArNCgQEZWQAHasQgQQ9r3g6PBs/SXpuhYRRB2KwXzFI/KocLSknsJib
-         p9Lay3hmAXun978Y8Br6UX0Wlo2qZhERoo5PCDEI+j+TxxRjdYv4Ps4VR0f9kr0F3Q2y
-         dMUNeO1kkqKeFtEp7BhIN7nlwu8MtHvy5egJEIoVIcWCUQPIoLvRh6mmbBbUp8SPynAo
-         iQaA==
-X-Gm-Message-State: APjAAAWb9AspnvbCFsr184BPJHdv0JzJem+p/RxcnRVNh4d2+lo2YQwM
-        P+M12xILc1AnDMQlP6vWOHvBooF8hXeuBejCL3I=
-X-Google-Smtp-Source: APXvYqzDQF9AtA/eA6w8ELmIHnhcOffQB0KRrcdedaPzSfFcPn1FEaxo7KqBd8kEnLy5p7QPH1sq+nK/AaRqyKPAnAQ=
-X-Received: by 2002:adf:f78d:: with SMTP id q13mr28930531wrp.220.1559806241260;
- Thu, 06 Jun 2019 00:30:41 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=e28AQOSNVuH9BCwVassenAYllziB9rQBHwACuXiGBI0=;
+        b=JGLu22RlJUF6Mw9j+hFNXn9J+F2W3MM7Ht3a5uyj3WxzShIQfQBh+Km3HCPG+Mk6vP
+         YZCdVfWgmw5thXfoZ3lXhysnDbvMS/vOqPc8WDstohUL6tHO9CCswJt02mplFfeJ+8ds
+         quHNkTLw6Lt275OQdjF/NIhJ+0t/BzE110tZMYG0Hh8NgXeXr+KdEfINHR/CePHG8JYd
+         8pQoaWAFUU9cBwMeyUX2/qKPuewYt0jJQ52uatJOjTW0NsDCiF8CZEyjKvfc9NpMM/nG
+         zt4oMLBwx0WOwR7qonpzxoCs776zelspIklqB8rUF5R0lIeEuSUqPwbplJVSLHkiTFar
+         M7hQ==
+X-Gm-Message-State: APjAAAWrnviZ9W50dW37IUfLoYuT/qf33vURvoqCeBDZFHriomzATytR
+        n6f0wNXN42G0JfWxli3e5WI=
+X-Google-Smtp-Source: APXvYqzbAH9hxFr+sRNq84PkdhhVpJM6uCPG0O2/RRBRmeLqyquMVnHBZT7i8gSziEou+SBHmd7J8g==
+X-Received: by 2002:adf:81c8:: with SMTP id 66mr27270317wra.261.1559806339282;
+        Thu, 06 Jun 2019 00:32:19 -0700 (PDT)
+Received: from ogabbay-VM ([31.154.190.6])
+        by smtp.gmail.com with ESMTPSA id x83sm964216wmb.42.2019.06.06.00.32.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 06 Jun 2019 00:32:18 -0700 (PDT)
+Date:   Thu, 6 Jun 2019 10:32:16 +0300
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [git pull] habanalabs fixes for 5.2-rc4/5
+Message-ID: <20190606073216.GA31142@ogabbay-VM>
 MIME-Version: 1.0
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190529161157.GA27659@redhat.com> <20190604134117.GA29963@redhat.com>
- <20190605155801.GA25165@redhat.com> <20190605155833.GB25165@redhat.com> <20190606072559.GA27021@redhat.com>
-In-Reply-To: <20190606072559.GA27021@redhat.com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Thu, 6 Jun 2019 09:30:29 +0200
-Message-ID: <CA+icZUUr5Oma-HEeKOP+2M9SwCEwpeaFkanktp5eCLqkg0O67Q@mail.gmail.com>
-Subject: Re: [PATCH -mm 1/1] signal: simplify set_user_sigmask/restore_user_sigmask
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        dbueso@suse.de, axboe@kernel.dk, dave@stgolabs.net, e@80x24.org,
-        jbaron@akamai.com, linux-fsdevel@vger.kernel.org,
-        linux-aio@kvack.org, omar.kilani@gmail.com, tglx@linutronix.de,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Laight <David.Laight@aculab.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 6, 2019 at 9:28 AM Oleg Nesterov <oleg@redhat.com> wrote:
->
-> On 06/05, Oleg Nesterov wrote:
-> >
-> > +int set_user_sigmask(const sigset_t __user *umask, size_t sigsetsize)
-> >  {
-> > -     if (!usigmask)
-> > -             return 0;
-> > +     sigset_t *kmask;
->
-> Typo, this obviously should be
->
->         sigset_t kmask;
->
-> I'll send v2.
->
->
-> Dear Kbuild Test Robot, thank you very much,
->
+Hi Greg,
 
-Machines have emotions, too.
+This is a pull request containing fixes to be merged to 5.2-rc4/5.
 
-- sed@ -
+It contains 3 bug fixes. See the tag comment for more details.
+
+Thanks,
+Oded
+
+The following changes since commit 8aa75b72e3e6f0f566cd963606ec5da11b195c0b:
+
+  Merge tag 'misc-habanalabs-fixes-2019-05-24' of git://people.freedesktop.org/~gabbayo/linux into char-misc-linus (2019-05-31 09:19:42 -0700)
+
+are available in the Git repository at:
+
+  git://people.freedesktop.org/~gabbayo/linux tags/misc-habanalabs-fixes-2019-06-06
+
+for you to fetch changes up to 1f65105ffc472624b45aff8bedb819c10a85944d:
+
+  habanalabs: Read upper bits of trace buffer from RWPHI (2019-06-04 15:13:09 +0300)
+
+----------------------------------------------------------------
+This tag contains the following fixes:
+
+- Fix the code that checks whether we can use 2MB page size when mapping
+  memory in the ASIC's MMU. The current code had a "hole" which happened
+  in architectures other then x86-64.
+
+- Fix the debugfs interface to read/write from/to the device using device
+  virtual addresses. There was a bug in the translation regarding
+  addresses that were mapped using 2MB page size.
+
+- Fix a bug in the debug/profiling code, where the code didn't read the
+  full address but only the lower 32-bits of the address.
+
+----------------------------------------------------------------
+Oded Gabbay (1):
+      habanalabs: fix bug in checking huge page optimization
+
+Tomer Tayar (2):
+      habanalabs: Fix virtual address access via debugfs for 2MB pages
+      habanalabs: Read upper bits of trace buffer from RWPHI
+
+ drivers/misc/habanalabs/debugfs.c             |  5 ++++-
+ drivers/misc/habanalabs/goya/goya_coresight.c | 14 ++++++++++++--
+ drivers/misc/habanalabs/memory.c              |  6 ------
+ 3 files changed, 16 insertions(+), 9 deletions(-)
