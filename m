@@ -2,84 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 058863783D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 17:38:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D63CF37848
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 17:40:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729353AbfFFPiu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 11:38:50 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:47922 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729137AbfFFPit (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 11:38:49 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x56FVgpD018120;
-        Thu, 6 Jun 2019 17:38:47 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=0pAtotSJEz0Oq/4HijmUh/DcrMTc2nG2Sv62SxAD2VI=;
- b=LwP8SIjFnyThM2xV6pxcguKkhdQw8+gNWiDZqb1wkpIKecKY5aRfxv/brHabnorZwefm
- CE0aM4SWpdEaX3ayjsQ+3HQW/AnSuL8APjwtK3immLwl2cDmDeqwNA7Eg5FYKFCYZlHu
- nqfv/ns/BTlMZSghUVRqj4RhrSDM5szN8A/a/CkOffU+kvp8FLvjtAPA3txZ7S4LyRWA
- nT60t89Cd9W3eRtHEHUIeO6VJ9tm2aB03B87STrwQzioiv17+hWfcZjwpbb3d9IBvgRj
- dUQd5EFVNBuQnhBrjrhOJcQ2OGlozfDCegkOA2GKf4xRGeJotUyQSDxv580a7ilDhAr6 QQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2sxqycv5v8-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 06 Jun 2019 17:38:47 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A8BF23A;
-        Thu,  6 Jun 2019 15:38:46 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8160D2A49;
-        Thu,  6 Jun 2019 15:38:46 +0000 (GMT)
-Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 6 Jun 2019
- 17:38:46 +0200
-Received: from localhost (10.48.0.131) by webmail-ga.st.com (10.75.90.48) with
- Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 6 Jun 2019 17:38:45 +0200
-From:   Arnaud Pouliquen <arnaud.pouliquen@st.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <arnaud.pouliquen@st.com>
-Subject: [PATCH] remoteproc: debug: fix va dump format in carveout list
-Date:   Thu, 6 Jun 2019 17:38:39 +0200
-Message-ID: <1559835519-8165-1-git-send-email-arnaud.pouliquen@st.com>
-X-Mailer: git-send-email 2.7.4
+        id S1729389AbfFFPkg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 11:40:36 -0400
+Received: from mout.gmx.net ([212.227.17.22]:33309 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729137AbfFFPkf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 11:40:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1559835627;
+        bh=W4DJzVZu72Pfh/thQ5Y5tNvxS3terSjGRw/QoIuXP64=;
+        h=X-UI-Sender-Class:Date:From:To:Subject;
+        b=GepI+C1a9Ghez/pCGDA9Vk1VzkKOJ8e1MKxrOXEUu+OIUOfl7SwDprvteWHwLq696
+         HTPqw0APmuJNlc+UXpDNFhvPhnkjqcEHQGAef/sTAsrAQhejzX9+yB6hjQzaeaCALR
+         N9eEU17YLC9Y6DyUYeDfIz+/lP7z9mFVeYVDs3bo=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from ls3530 ([193.16.224.33]) by mail.gmx.com (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MNsw4-1hAlua33gu-00ODC6; Thu, 06
+ Jun 2019 17:40:27 +0200
+Date:   Thu, 6 Jun 2019 17:40:15 +0200
+From:   Helge Deller <deller@gmx.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        John David Anglin <dave.anglin@bell.net>
+Subject: [GIT PULL] parisc architecture fixes for kernel v5.2-rc4
+Message-ID: <20190606154015.GA13868@ls3530>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.48.0.131]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-06_11:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Provags-ID: V03:K1:yEQf42Wwdpx1HEzG+5UQkDqf7lZ8Dh9ng1uv1VbR2OOtzsQ69q9
+ H1/R2M+tOY/Dr88cFsFiEnCR1TuJQZl3KglubBrR/7amtOPOZnamY+WM3ZoZ4TGPkArUoCj
+ HZqkzsZTGqXWa8bXVy3Vwo67s9DTqEaBG4IXISB9WX5yHID6x5KucfPzl7tMZ9lDvdYscv4
+ ZDy/qvvVHfYVwCPVWC6UQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:FKH3I0ukLis=:I9IdlG5uHoZykPUAEiU+WR
+ onYH4mgxNX+zwtanyk4ZVsfez5+EWoKuOKlDJ4VHtcOwbTOrQb0xIGD0co30GQuMO0ER6kfXc
+ s8lBWt2kM6O5r8HimaIlsDKXNj32mL9qXoREP4JChZamXxd25RXUhRVnz7uR9CIUrYUcnDQE+
+ 7/5slwDMOL6kA+Ar6KSZopAWaBlAVdLLnJyB/wVbhGTjKc77QnYCRNyHzSWpjAKupxVGZgJW0
+ hLS8NTZbPnBfA0svWbESgE76JWbjDejkDOkFqNC2Cy0Jo3/0nXPZUT4mtqIjSInpR1MPN3xVK
+ sjGX18E7YDvD1zHuAoA7OktuV+B+24Se5ONQIw7UIbL/8lRkXVjAxv/nCfU8c4SpQGpGJ836G
+ AtmlHFw2S+BLgKveQscjQfllwiMiGOWXsWZhSFmZ99vDB48Bbigf4wlsPEuznwn8RfRLZ+Zfd
+ APOsAn9tRi7wV3H5Latv5kxkASAmCoHc4p4ssxLO1iFiJu2jFnjOT3NH4nBZBQSuRGguUJZe/
+ b5oG6dGw0C0kR+1icYzSbfcYCSiUWks4gEhATLYSLUcKggQXWF8Boobdal8vrsCOgSVmC3e6f
+ 0silvlBQba7aWLNaXLxg7B9lAl5HZcXiQ4VpDK4ozEgUjA39NA3a/6hviRap/V22oE6aJbByC
+ +rPynLOapyrz5EuoXt2qPeWU2+AVd4Mk+OEMRPm8wDRydb4+uqgzLc+n1WHtxkcSlHegJ8yin
+ Bnfq45z6rSGat37PQ6HvVXnMcA+/XB31nOWzH6yHO4Vqu1Lp3ijbfrWY+w60GJcPfusNlIc+G
+ pSqQZZqb6k/+Amh7y1OuejE/rOu1cnAl5JjmTWJU4HKJQTWL1XlmCIUa3Q3AFNU5S0/IZxvfO
+ +U/OWBgitQnT8WZCvnHhu0LoJ2ZSNFvvaWf7ZzpRAMDqyjW1zz4rghTgZZMzjMPC5vQwwC4Iv
+ DtGhOtWW3nABixfN4SGCa+XtyVLTtX/T0zW8M51pSGNrkv9sssPuc
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Standardize dump presentation for va, dma and da dumps by adding
-"0x" prefix for virtual address.
+Hi Linus,
 
-Fixes: 276ec9934231("remoteproc: replace "%p" with "%pK"")
+please pull some additional fixes and cleanups for the parisc architecture from:
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
----
- drivers/remoteproc/remoteproc_debugfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git parisc-5.2-3
 
-diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-index 6da934b8dc4b..91d3a75f0b41 100644
---- a/drivers/remoteproc/remoteproc_debugfs.c
-+++ b/drivers/remoteproc/remoteproc_debugfs.c
-@@ -298,7 +298,7 @@ static int rproc_carveouts_show(struct seq_file *seq, void *p)
- 	list_for_each_entry(carveout, &rproc->carveouts, node) {
- 		seq_puts(seq, "Carveout memory entry:\n");
- 		seq_printf(seq, "\tName: %s\n", carveout->name);
--		seq_printf(seq, "\tVirtual address: %pK\n", carveout->va);
-+		seq_printf(seq, "\tVirtual address: 0x%pK\n", carveout->va);
- 		seq_printf(seq, "\tDMA address: %pad\n", &carveout->dma);
- 		seq_printf(seq, "\tDevice address: 0x%x\n", carveout->da);
- 		seq_printf(seq, "\tLength: 0x%x Bytes\n\n", carveout->len);
--- 
-2.7.4
+Changes include
+- Fix crashes when accessing PCI devices on some machines like C240 and J5000.
+  The crashes were triggered because we replaced cache flushes by nops in the
+  alternative coding where we shouldn't for some machines.
+- Dave fixed a race in the usage of the sr1 space register when used to
+  load the coherence index.
+- Use the hardware lpa instruction to to load the physical address of kernel
+  virtual addresses in the iommu driver code.
+- The kernel may fail to link when CONFIG_MLONGCALLS isn't set. Solve that by
+  rearranging functions in the final vmlinux executeable.
+- Some defconfig cleanups and removal of compiler warnings.
 
+Thanks,
+Helge
+
+----------------------------------------------------------------
+Helge Deller (3):
+      parisc: Allow building 64-bit kernel without -mlong-calls compiler option
+      parisc: Fix compiler warnings in float emulation code
+      parisc: Fix crash due alternative coding for NP iopdir_fdc bit
+
+John David Anglin (2):
+      parisc: Use implicit space register selection for loading the coherence index of I/O pdirs
+      parisc: Use lpa instruction to load physical addresses in driver code
+
+Krzysztof Kozlowski (1):
+      parisc: configs: Remove useless UEVENT_HELPER_PATH
+
+Mike Rapoport (1):
+      parisc: Kconfig: remove ARCH_DISCARD_MEMBLOCK
+
+Yury Norov (1):
+      parisc/slab: cleanup after /proc/slab_allocators removal
+
+ arch/parisc/Kconfig                         |  4 ++--
+ arch/parisc/configs/712_defconfig           |  1 -
+ arch/parisc/configs/a500_defconfig          |  1 -
+ arch/parisc/configs/b180_defconfig          |  1 -
+ arch/parisc/configs/c3000_defconfig         |  1 -
+ arch/parisc/configs/c8000_defconfig         |  2 --
+ arch/parisc/configs/default_defconfig       |  1 -
+ arch/parisc/configs/generic-32bit_defconfig |  1 -
+ arch/parisc/include/asm/special_insns.h     | 24 ++++++++++++++++++++++++
+ arch/parisc/kernel/alternative.c            |  3 ++-
+ arch/parisc/kernel/vmlinux.lds.S            | 21 ++++++++++++++-------
+ arch/parisc/math-emu/cnv_float.h            |  8 ++++----
+ drivers/parisc/ccio-dma.c                   |  6 ++----
+ drivers/parisc/sba_iommu.c                  |  5 ++---
+ 14 files changed, 50 insertions(+), 29 deletions(-)
