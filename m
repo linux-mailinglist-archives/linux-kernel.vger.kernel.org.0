@@ -2,357 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8284E3738C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 13:54:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76E8D37382
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Jun 2019 13:54:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728656AbfFFLyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 6 Jun 2019 07:54:36 -0400
-Received: from mail-eopbgr700079.outbound.protection.outlook.com ([40.107.70.79]:22528
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728642AbfFFLyf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 6 Jun 2019 07:54:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t2S+pn5LyPna6Nz2xtiiNlAnJ/tJGiCkIcJYp4i5Ui8=;
- b=qgYyHazk3OSI6tf5kDuqlSgVn3KRrBEJL+VzOwz/xdosPlGDSkWt/rjPeqmHQhQAcsSjDjkDTBEUGp8BthCzH8ijwdzsU3cYhS8/cpmSGdROpkxJAjMrlWNq8woIcNa+W9d6T5CT8RdxiYbDY9/vJd2qNDEO252NZid4ziI8gfY=
-Received: from CH2PR02MB6088.namprd02.prod.outlook.com (52.132.228.94) by
- CH2PR02MB6357.namprd02.prod.outlook.com (52.132.231.91) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1943.22; Thu, 6 Jun 2019 11:54:27 +0000
-Received: from CH2PR02MB6088.namprd02.prod.outlook.com
- ([fe80::3cca:e795:ebe2:b366]) by CH2PR02MB6088.namprd02.prod.outlook.com
- ([fe80::3cca:e795:ebe2:b366%6]) with mapi id 15.20.1943.018; Thu, 6 Jun 2019
- 11:54:27 +0000
-From:   Vishal Sagar <vsagar@xilinx.com>
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Vishal Sagar <vishal.sagar@xilinx.com>
-CC:     Hyun Kwon <hyunk@xilinx.com>,
-        "laurent.pinchart@ideasonboard.com" 
-        <laurent.pinchart@ideasonboard.com>,
-        "mchehab@kernel.org" <mchehab@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        Michal Simek <michals@xilinx.com>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "hans.verkuil@cisco.com" <hans.verkuil@cisco.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Dinesh Kumar <dineshk@xilinx.com>,
-        Sandip Kothari <sandipk@xilinx.com>,
-        Luca Ceresoli <luca@lucaceresoli.net>,
-        Jacopo Mondi <jacopo@jmondi.org>
-Subject: RE: [PATCH v8 1/2] media: dt-bindings: media: xilinx: Add Xilinx MIPI
- CSI-2 Rx Subsystem
-Thread-Topic: [PATCH v8 1/2] media: dt-bindings: media: xilinx: Add Xilinx
- MIPI CSI-2 Rx Subsystem
-Thread-Index: AQHVGfMZOW4cFen74Uu6bLLV7F3ehaaLn6IAgALpoTA=
-Date:   Thu, 6 Jun 2019 11:54:27 +0000
-Message-ID: <CH2PR02MB6088D91C1EFE1C049986E118A7170@CH2PR02MB6088.namprd02.prod.outlook.com>
-References: <1559555971-193235-1-git-send-email-vishal.sagar@xilinx.com>
- <1559555971-193235-2-git-send-email-vishal.sagar@xilinx.com>
- <20190604152540.wd7c3scez2futh6z@paasikivi.fi.intel.com>
-In-Reply-To: <20190604152540.wd7c3scez2futh6z@paasikivi.fi.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=vsagar@xilinx.com; 
-x-originating-ip: [149.199.50.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 57f28c0d-8286-478d-fb7a-08d6ea75ba66
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:CH2PR02MB6357;
-x-ms-traffictypediagnostic: CH2PR02MB6357:
-x-microsoft-antispam-prvs: <CH2PR02MB63577260B38C2BC94BF0CBBEA7170@CH2PR02MB6357.namprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 00603B7EEF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(396003)(346002)(39860400002)(376002)(13464003)(51914003)(199004)(189003)(86362001)(4326008)(256004)(229853002)(2906002)(7416002)(76176011)(33656002)(305945005)(6116002)(66556008)(486006)(74316002)(9686003)(71200400001)(68736007)(5660300002)(53936002)(55016002)(478600001)(3846002)(71190400001)(316002)(52536014)(14444005)(6636002)(476003)(66946007)(73956011)(76116006)(99286004)(66446008)(6506007)(64756008)(7736002)(7696005)(66476007)(81166006)(446003)(6246003)(66066001)(186003)(11346002)(8676002)(81156014)(26005)(110136005)(54906003)(14454004)(25786009)(6436002)(53546011)(8936002)(102836004);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR02MB6357;H:CH2PR02MB6088.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: gkxnVMDTYvDyStcwERSTjWWKhaL3fa5QyzMBKnzwpZ5QtaDFF9XGY+texc7z7QDr9KJRDkElrYdNV0yot6XaHtemyJTqLuANqIyxUDo32T4EcI2Z0hqqN6KwFssfe7knA6W4DgIFMIeY65hdkrwsUUyQfHTOfqT94bkuPXA2TyJpQw6czyhWr2HvFi/AFWKhqKGi5cxwaYA1w/AB0a9A6GwjANtfykRO6jvQeks8QRAKd/YJrGECO85F9Au0BQKT9feNNiGXIvxfryF+aDhgfOhqLETX2LfA1lS6C9wBBZ/3Ls7apHFNE5vYT4+ZK3oWyK7vHK4o1/4Di9hCKucom0psSsm6NGAMkPJJ7jxnHe/K1hymLctXe/Aj1cjaLALN2jhlXKX+Ax1OJc49Ok9JvsbAkLxDQWohDmD0a4HbSz0=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1727742AbfFFLyV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 6 Jun 2019 07:54:21 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:39416 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727537AbfFFLyV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 6 Jun 2019 07:54:21 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x56BsDCx085147;
+        Thu, 6 Jun 2019 06:54:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1559822053;
+        bh=muC3ZVoaXdyRnjntNAZk0RlDaLb2ntCL0f7txF8lLm4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=ayCzE/G8bDxPQzfJ+IppvEOurHkIR5wyKGBL6QQIRnvBUuU//LmxNQFdrN8HVYhDC
+         +B2VYr87HQ3+FL9nDFlG3YuTIvhtk3F6E2WcUkD9xbnZXRz3oMNMWhT+X8tgg/x8us
+         fXoMsyuE8YjTT2w+1OXexTGqXUNUv5wmRf46ikqM=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x56BsDI8054160
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 6 Jun 2019 06:54:13 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 6 Jun
+ 2019 06:54:12 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Thu, 6 Jun 2019 06:54:12 -0500
+Received: from [192.168.2.10] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x56BsAue056641;
+        Thu, 6 Jun 2019 06:54:10 -0500
+Subject: Re: [PATCH] [RFC] dmaengine: add fifo_size member
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Sameer Pujar <spujar@nvidia.com>, Vinod Koul <vkoul@kernel.org>
+CC:     <dan.j.williams@intel.com>, <tiwai@suse.com>,
+        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <sharadg@nvidia.com>, <rlokhande@nvidia.com>, <dramesh@nvidia.com>,
+        <mkumard@nvidia.com>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <1556623828-21577-1-git-send-email-spujar@nvidia.com>
+ <20190502060446.GI3845@vkoul-mobl.Dlink>
+ <e852d576-9cc2-ed42-1a1a-d696112c88bf@nvidia.com>
+ <20190502122506.GP3845@vkoul-mobl.Dlink>
+ <3368d1e1-0d7f-f602-5b96-a978fcf4d91b@nvidia.com>
+ <20190504102304.GZ3845@vkoul-mobl.Dlink>
+ <ce0e9c0b-b909-54ae-9086-a1f0f6be903c@nvidia.com>
+ <20190506155046.GH3845@vkoul-mobl.Dlink>
+ <b7e28e73-7214-f1dc-866f-102410c88323@nvidia.com>
+ <ed95f03a-bbe7-ad62-f2e1-9bfe22ec733a@ti.com>
+ <4cab47d0-41c3-5a87-48e1-d7f085c2e091@nvidia.com>
+ <8a5b84db-c00b-fff4-543f-69d90c245660@nvidia.com>
+ <3f836a10-eaf3-f59b-7170-6fe937cf2e43@ti.com>
+ <a36302fc-3173-070b-5c97-7d2c55d5e2cc@nvidia.com>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <a08bec36-b375-6520-eff4-3d847ddfe07d@ti.com>
+Date:   Thu, 6 Jun 2019 14:54:37 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 57f28c0d-8286-478d-fb7a-08d6ea75ba66
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2019 11:54:27.7139
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: vsagar@xilinx.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR02MB6357
+In-Reply-To: <a36302fc-3173-070b-5c97-7d2c55d5e2cc@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sakari,
 
-Thanks for reviewing this.
 
-> -----Original Message-----
-> From: linux-media-owner@vger.kernel.org [mailto:linux-media-
-> owner@vger.kernel.org] On Behalf Of Sakari Ailus
-> Sent: Tuesday, June 04, 2019 8:56 PM
-> To: Vishal Sagar <vishal.sagar@xilinx.com>
-> Cc: Hyun Kwon <hyunk@xilinx.com>; laurent.pinchart@ideasonboard.com;
-> mchehab@kernel.org; robh+dt@kernel.org; mark.rutland@arm.com; Michal
-> Simek <michals@xilinx.com>; linux-media@vger.kernel.org;
-> devicetree@vger.kernel.org; hans.verkuil@cisco.com; linux-arm-
-> kernel@lists.infradead.org; linux-kernel@vger.kernel.org; Dinesh Kumar
-> <dineshk@xilinx.com>; Sandip Kothari <sandipk@xilinx.com>; Luca Ceresoli
-> <luca@lucaceresoli.net>; Jacopo Mondi <jacopo@jmondi.org>
-> Subject: Re: [PATCH v8 1/2] media: dt-bindings: media: xilinx: Add Xilinx=
- MIPI
-> CSI-2 Rx Subsystem
->=20
-> Hi Vishal,
->=20
-> Thanks for the update. A few small issues below...
->=20
-> On Mon, Jun 03, 2019 at 03:29:30PM +0530, Vishal Sagar wrote:
-> > Add bindings documentation for Xilinx MIPI CSI-2 Rx Subsystem.
-> >
-> > The Xilinx MIPI CSI-2 Rx Subsystem consists of a CSI-2 Rx controller, a
-> > DPHY in Rx mode, an optional I2C controller and a Video Format Bridge.
-> >
-> > Signed-off-by: Vishal Sagar <vishal.sagar@xilinx.com>
-> > Reviewed-by: Hyun Kwon <hyun.kwon@xilinx.com>
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > Reviewed-by: Luca Ceresoli <luca@lucaceresoli.net>
-> > ---
-> > v8
-> > - Added reset-gpios optional property to assert video_aresetn
-> >
-> > v7
-> > - Removed the control name from dt bindings
-> > - Updated the example dt node name to csi2rx
-> >
-> > v6
-> > - Added "control" after V4L2_CID_XILINX_MIPICSISS_ACT_LANES as suggeste=
-d
-> by Luca
-> > - Added reviewed by Rob Herring
-> >
-> > v5
-> > - Incorporated comments by Luca Cersoli
-> > - Removed DPHY clock from description and example
-> > - Removed bayer pattern from device tree MIPI CSI IP
-> >   doesn't deal with bayer pattern.
-> >
-> > v4
-> > - Added reviewed by Hyun Kwon
-> >
-> > v3
-> > - removed interrupt parent as suggested by Rob
-> > - removed dphy clock
-> > - moved vfb to optional properties
-> > - Added required and optional port properties section
-> > - Added endpoint property section
-> >
-> > v2
-> > - updated the compatible string to latest version supported
-> > - removed DPHY related parameters
-> > - added CSI v2.0 related property (including VCX for supporting upto 16
-> >   virtual channels).
-> > - modified csi-pxl-format from string to unsigned int type where the va=
-lue
-> >   is as per the CSI specification
-> > - Defined port 0 and port 1 as sink and source ports.
-> > - Removed max-lanes property as suggested by Rob and Sakari
-> >
-> >  .../bindings/media/xilinx/xlnx,csi2rxss.txt        | 119
-> +++++++++++++++++++++
-> >  1 file changed, 119 insertions(+)
-> >  create mode 100644
-> Documentation/devicetree/bindings/media/xilinx/xlnx,csi2rxss.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/media/xilinx/xlnx,csi2rx=
-ss.txt
-> b/Documentation/devicetree/bindings/media/xilinx/xlnx,csi2rxss.txt
-> > new file mode 100644
-> > index 0000000..fef8179
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/media/xilinx/xlnx,csi2rxss.txt
-> > @@ -0,0 +1,119 @@
-> > +Xilinx MIPI CSI2 Receiver Subsystem Device Tree Bindings
-> > +--------------------------------------------------------
-> > +
-> > +The Xilinx MIPI CSI2 Receiver Subsystem is used to capture MIPI CSI2 t=
-raffic
-> > +from compliant camera sensors and send the output as AXI4 Stream video
-> data
-> > +for image processing.
-> > +
-> > +The subsystem consists of a MIPI DPHY in slave mode which captures the
-> > +data packets. This is passed along the MIPI CSI2 Rx IP which extracts =
-the
-> > +packet data. The optional Video Format Bridge (VFB) converts this data=
- to
-> > +AXI4 Stream video data.
-> > +
-> > +For more details, please refer to PG232 Xilinx MIPI CSI-2 Receiver Sub=
-system.
-> > +
-> > +Required properties:
-> > +--------------------
-> > +- compatible: Must contain "xlnx,mipi-csi2-rx-subsystem-4.0".
-> > +- reg: Physical base address and length of the registers set for the d=
-evice.
-> > +- interrupts: Property with a value describing the interrupt number.
-> > +- clocks: List of phandles to AXI Lite and Video clocks.
-> > +- clock-names: Must contain "lite_aclk" and "video_aclk" in the same o=
-rder
-> > +  as clocks listed in clocks property.
-> > +- xlnx,csi-pxl-format: This denotes the CSI Data type selected in hw d=
-esign.
-> > +  Packets other than this data type (except for RAW8 and User defined =
-data
-> > +  types) will be filtered out. Possible values are as below -
-> > +  0x1E - YUV4228B
-> > +  0x1F - YUV42210B
-> > +  0x20 - RGB444
-> > +  0x21 - RGB555
-> > +  0x22 - RGB565
-> > +  0x23 - RGB666
-> > +  0x24 - RGB888
-> > +  0x28 - RAW6
-> > +  0x29 - RAW7
-> > +  0x2A - RAW8
-> > +  0x2B - RAW10
-> > +  0x2C - RAW12
-> > +  0x2D - RAW14
-> > +  0x2E - RAW16
-> > +  0x2F - RAW20
-> > +
-> > +
-> > +Optional properties:
-> > +--------------------
-> > +- xlnx,vfb: This is present when Video Format Bridge is enabled.
-> > +  Without this property the driver won't be loaded as IP won't be able=
- to
-> generate
-> > +  media bus format compliant stream output.
-> > +- xlnx,en-csi-v2-0: Present if CSI v2 is enabled in IP configuration.
-> > +- xlnx,en-vcx: When present, there are maximum 16 virtual channels, el=
-se
-> > +  only 4. This is present only if xlnx,en-csi-v2-0 is present.
-> > +- xlnx,en-active-lanes: present if the number of active lanes can be
-> > +  re-configured at runtime in the Protocol Configuration Register.
-> > +  Otherwise all lanes, as set in IP configuration, are always active.
-> > +- reset-gpios: Optional specifier for a GPIO that asserts video_areset=
-n.
-> > +
-> > +Ports
-> > +-----
-> > +The device node shall contain two 'port' child nodes as defined in
-> > +Documentation/devicetree/bindings/media/video-interfaces.txt.
-> > +
-> > +The port@0 is a sink port and shall connect to CSI2 source like camera=
-.
-> > +It must have the data-lanes property.
->=20
-> Technically this is wrong as data-lanes is an endpoint property. I'd just
-> leave it out here.
->=20
+On 06/06/2019 13.49, Jon Hunter wrote:
+> 
+> On 06/06/2019 11:22, Peter Ujfalusi wrote:
+> 
+> ...
+> 
+>>>>> It does sounds like that FIFO_SIZE == src/dst_maxburst in your case as
+>>>>> well.
+>>>> Not exactly equal.
+>>>> ADMA burst_size can range from 1(WORD) to 16(WORDS)
+>>>> FIFO_SIZE can be adjusted from 16(WORDS) to 1024(WORDS) [can vary in
+>>>> multiples of 16]
+>>>
+>>> So I think that the key thing to highlight here, is that the as Sameer
+>>> highlighted above for the Tegra ADMA there are two values that need to
+>>> be programmed; the DMA client FIFO size and the max burst size. The ADMA
+>>> has register fields for both of these.
+>>
+>> How does the ADMA uses the 'client FIFO size' and 'max burst size'
+>> values and what is the relation of these values to the peripheral side
+>> (ADMAIF)?
+> 
+> Per Sameer's previous comment, the FIFO size is used by the ADMA to
+> determine how much space is available in the FIFO. I assume the burst
+> size just limits how much data is transferred per transaction.
+> 
+>>> As you can see from the above the FIFO size can be much greater than the
+>>> burst size and so ideally both of these values would be passed to the DMA.
+>>>
+>>> We could get by with just passing the FIFO size (as the max burst size)
+>>> and then have the DMA driver set the max burst size depending on this,
+>>> but this does feel quite correct for this DMA. Hence, ideally, we would
+>>> like to pass both.
+>>>
+>>> We are also open to other ideas.
+>>
+>> I can not find public documentation (I think they are walled off by
+>> registration), but correct me if I'm wrong:
+> 
+> No unfortunately, you are not wrong here :-(
+> 
+>> ADMAIF - peripheral side
+>>  - kind of a small DMA for audio preipheral(s)?
+> 
+> Yes this is the interface to the APE (audio processing engine) and data
+> sent to the ADMAIF is then sent across a crossbar to one of many
+> devices/interfaces (I2S, DMIC, etc). Basically a large mux that is user
+> configurable depending on the use-case.
+> 
+>>  - Variable FIFO size
+> 
+> Yes.
+> 
+>>  - sends DMA request to ADMA per words
+> 
+> From Sameer's notes it says the ADMAIF send a signal to the ADMA per
+> word, yes.
+> 
+>> ADMA - system DMA
+>>  - receives the DMA requests from ADMAIF
+>>  - counts the requests
+>>  - based on some threshold of the counter it will send/read from ADMAIF?
+>>   - maxburst number of words probably?
+> 
+> Sounds about right to me.
+> 
+>> ADMA needs to know the ADMAIF's FIFO size because, it is the one who is
+>> managing that FIFO from the outside, making sure that it does not over
+>> or underrun?
+> 
+> Yes.
+> 
+>> And it is the one who sets the pace (in effect the DMA burst size - how
+>> many bytes the DMA jumps between refills) of refills to the ADMAIF's FIFO?
+> 
+> Yes.
+> 
+> So currently, if you look at the ADMA driver
+> (drivers/dma/tegra210-adma.c) you will see we use the src/dst_maxburst
+> for the burst, but the FIFO size is hard-coded (see the
+> TEGRA210_FIFO_CTRL_DEFAULT and TEGRA186_FIFO_CTRL_DEFAULT definitions).
+> Ideally, we should not hard-code this but pass it.
 
-Ok I will remove it from here.
+Sure, hardcoding is never good ;)
 
-> > +
-> > +The port@1 is a source port and can be connected to any video processi=
-ng IP
-> > +which can work with AXI4 Stream data.
-> > +
-> > +Required port properties:
-> > +--------------------
-> > +- reg: 0 - for sink port.
-> > +       1 - for source port.
-> > +
-> > +Optional endpoint property:
->=20
-> s/Optional/Required/
->=20
-Noted. I will change it to required.
+> Given that there are no current users of the ADMA upstream, we could
+> change the usage of the src/dst_maxburst, but being able to set the FIFO
+> size as well would be ideal.
 
-> > +---------------------------
-> > +- data-lanes: specifies MIPI CSI-2 data lanes as covered in video-
-> interfaces.txt.
-> > +  This should be in the sink port endpoint which connects to MIPI CSI2=
- source
-> > +  like sensor. The possible values are:
->=20
-> And add here that it's only needed for port 0. Or put it to the heading.
+Looking at the drivers/dma/tegra210-adma.c for the
+TEGRA*_FIFO_CTRL_DEFAULT definition it is still not clear where the
+remote FIFO size would fit.
+There are fields for overflow and starvation(?) thresholds and TX/RX
+size (assuming word length, 3 == 32bits?).
+Both threshold is set to one, so I assume currently ADMA is
+pushing/pulling data word by word.
 
-Ok.
+Not sure what the burst size is used for, my guess would be that it is
+used on the memory (DDR) side for optimized, more efficient accesses?
 
->=20
-> I think this is good with these changes.
->=20
-> > +  1       - For 1 lane enabled in IP.
-> > +  1 2     - For 2 lanes enabled in IP.
-> > +  1 2 3   - For 3 lanes enabled in IP.
-> > +  1 2 3 4 - For 4 lanes enabled in IP.
-> > +
-> > +Example:
-> > +
-> > +	xcsi2rxss_1: csi2rx@a0020000 {
-> > +		compatible =3D "xlnx,mipi-csi2-rx-subsystem-4.0";
-> > +		reg =3D <0x0 0xa0020000 0x0 0x10000>;
-> > +		interrupt-parent =3D <&gic>;
-> > +		interrupts =3D <0 95 4>;
-> > +		xlnx,csi-pxl-format =3D <0x2a>;
-> > +		xlnx,vfb;
-> > +		xlnx,en-active-lanes;
-> > +		xlnx,en-csi-v2-0;
-> > +		xlnx,en-vcx;
-> > +		clock-names =3D "lite_aclk", "video_aclk";
-> > +		clocks =3D <&misc_clk_0>, <&misc_clk_1>;
-> > +		reset-gpios =3D <&gpio 86 GPIO_ACTIVE_LOW>;
-> > +
-> > +		ports {
-> > +			#address-cells =3D <1>;
-> > +			#size-cells =3D <0>;
-> > +
-> > +			port@0 {
-> > +				/* Sink port */
-> > +				reg =3D <0>;
-> > +				csiss_in: endpoint {
-> > +					data-lanes =3D <1 2 3 4>;
-> > +					/* MIPI CSI2 Camera handle */
-> > +					remote-endpoint =3D <&camera_out>;
-> > +				};
-> > +			};
-> > +			port@1 {
-> > +				/* Source port */
-> > +				reg =3D <1>;
-> > +				csiss_out: endpoint {
-> > +					remote-endpoint =3D <&vproc_in>;
-> > +				};
-> > +			};
-> > +		};
-> > +	};
-> > --
-> > 1.8.3.1
->=20
-> How old is that? :-)
->=20
+My guess is that the threshold values are the counter limits, if the DMA
+request counter reaches it then ADMA would do a threshold limit worth of
+push/pull to ADMAIF.
+Or there is another register where the remote FIFO size can be written
+and ADMA is counting back from there until it reaches the threshold (and
+pushes/pulling again threshold amount of data) so it keeps the FIFO
+filled with at least threshold amount of data?
 
-Found out that version is nearly 6 years old.  :-)
-I will update git.
+I think in both cases the threshold would be the maxburst.
 
-> --
-> Kind regards,
->=20
-> Sakari Ailus
-> sakari.ailus@linux.intel.com
+I suppose you have the patch for adma on how to use the fifo_size
+parameter? That would help understand what you are trying to achieve better.
 
-Regards
-Vishal Sagar
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
