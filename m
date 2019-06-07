@@ -2,77 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1473539157
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:59:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7416C39186
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 18:02:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731129AbfFGP7N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:59:13 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34148 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730845AbfFGP7K (ORCPT
+        id S1730007AbfFGQCo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 12:02:44 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:38038 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728810AbfFGQCn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:59:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=QfLQNuz62ZkrzG5uaqs9OVf1qsfu/iMrKSXqcbAwsb4=; b=XrmtleJm1Mo9N2a5FeFac8NH2
-        jBnOuaePeoMzhVnYoPuIcvkdqUIS9UcsxuYJn+nl0q5CRdiCkY7V2LmtGfP97yIEagTFMaQtdDU96
-        WGzYGWeuXUnzWcuSXguPyhZZgUTGa0/7VQOhmARqBuK7O26PyzB3BbrS4v4s1ay05epmc=;
-Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hZHGm-0002r1-JW; Fri, 07 Jun 2019 15:59:08 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id B605D440046; Fri,  7 Jun 2019 16:59:07 +0100 (BST)
-Date:   Fri, 7 Jun 2019 16:59:07 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     od@zcrc.me, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spi: spi-gpio: Make probe function __init_or_module
-Message-ID: <20190607155907.GH2456@sirena.org.uk>
-References: <20190607155631.15072-1-paul@crapouillou.net>
+        Fri, 7 Jun 2019 12:02:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1559923362; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:references; bh=zrjX+l5PeyKLlwgC655C0foBZhkNjJeOz8J5di0UnrI=;
+        b=ijs4Q/Ek+i8vGOKkh0aUWY6sygKgckbDWaGyu7zHlO7vNHemPqLSYE7UvCs6JsJP2RVaH/
+        XUiGLr99rSFwnkxgWzAcqgvS40xifWm7X/rBss1JEPa9styFktxNMbyoO0xwfnvPoYefVc
+        KprUyBUI/K80kbW8NYHrIT74ByUv2UQ=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+Cc:     od@zcrc.me, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH 1/2] mtd/rawnand: ingenic-ecc: Make probe function __init_or_module
+Date:   Fri,  7 Jun 2019 18:01:59 +0200
+Message-Id: <20190607160200.16052-1-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="J5NgmdQsYR8vwsNL"
-Content-Disposition: inline
-In-Reply-To: <20190607155631.15072-1-paul@crapouillou.net>
-X-Cookie: The other line moves faster.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This allows the probe function to be dropped after the kernel finished
+its initialization, in the case where the driver was not compiled as a
+module.
 
---J5NgmdQsYR8vwsNL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/mtd/nand/raw/ingenic/ingenic_ecc.c | 2 +-
+ drivers/mtd/nand/raw/ingenic/ingenic_ecc.h | 3 ++-
+ drivers/mtd/nand/raw/ingenic/jz4780_bch.c  | 2 +-
+ 3 files changed, 4 insertions(+), 3 deletions(-)
 
-On Fri, Jun 07, 2019 at 05:56:31PM +0200, Paul Cercueil wrote:
-> This allows the probe function to be dropped after the kernel finished
-> its initialization, in the case where the driver was not compiled as a
-> module.
+diff --git a/drivers/mtd/nand/raw/ingenic/ingenic_ecc.c b/drivers/mtd/nand/raw/ingenic/ingenic_ecc.c
+index d3e085c5685a..74eff8fb5d32 100644
+--- a/drivers/mtd/nand/raw/ingenic/ingenic_ecc.c
++++ b/drivers/mtd/nand/raw/ingenic/ingenic_ecc.c
+@@ -124,7 +124,7 @@ void ingenic_ecc_release(struct ingenic_ecc *ecc)
+ }
+ EXPORT_SYMBOL(ingenic_ecc_release);
+ 
+-int ingenic_ecc_probe(struct platform_device *pdev)
++int __init_or_module ingenic_ecc_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct ingenic_ecc *ecc;
+diff --git a/drivers/mtd/nand/raw/ingenic/ingenic_ecc.h b/drivers/mtd/nand/raw/ingenic/ingenic_ecc.h
+index 2cda439b5e11..535eb8f29df6 100644
+--- a/drivers/mtd/nand/raw/ingenic/ingenic_ecc.h
++++ b/drivers/mtd/nand/raw/ingenic/ingenic_ecc.h
+@@ -4,6 +4,7 @@
+ 
+ #include <linux/compiler_types.h>
+ #include <linux/err.h>
++#include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/types.h>
+ #include <uapi/asm-generic/errno-base.h>
+@@ -78,6 +79,6 @@ struct ingenic_ecc {
+ 	struct mutex lock;
+ };
+ 
+-int ingenic_ecc_probe(struct platform_device *pdev);
++int __init_or_module ingenic_ecc_probe(struct platform_device *pdev);
+ 
+ #endif /* __DRIVERS_MTD_NAND_INGENIC_ECC_INTERNAL_H__ */
+diff --git a/drivers/mtd/nand/raw/ingenic/jz4780_bch.c b/drivers/mtd/nand/raw/ingenic/jz4780_bch.c
+index 079266a0d6cf..cc0656ac505d 100644
+--- a/drivers/mtd/nand/raw/ingenic/jz4780_bch.c
++++ b/drivers/mtd/nand/raw/ingenic/jz4780_bch.c
+@@ -229,7 +229,7 @@ static int jz4780_correct(struct ingenic_ecc *bch,
+ 	return ret;
+ }
+ 
+-static int jz4780_bch_probe(struct platform_device *pdev)
++static int __init_or_module jz4780_bch_probe(struct platform_device *pdev)
+ {
+ 	struct ingenic_ecc *bch;
+ 	int ret;
+-- 
+2.21.0.593.g511ec345e18
 
-Hopefully not since we might probe later on if something registers a new
-device...
-
---J5NgmdQsYR8vwsNL
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlz6icgACgkQJNaLcl1U
-h9Ad9wf/Wgtxk0TyVloO/xxpWXuSBoddyvwLGPNpQgU0WoznSXy9Q8G9bklGm2OY
-YRQr42szaLb26rgpWfS6m73qNGAbroMwNAzOLIasQx4a1vMPVC7cgPqQBQ7rCOY1
-lWLX0LsbTJM7lnrYxQVH48TTJtqg8JDAo4JuhrCO0Cd6USMmiBDXP1csXbYcdyLi
-7MVQD5N04g2XvMAQ3l0Y8HPU2JmzvIr0lcRRlwUo+Q4ybRF9zoDlPaxvumhmJAam
-6tbrW7iZPPdPtBgoAiDEjifXojCwPbfrL1GgUtkIRWKkkDcKGAwzTJvLFR6kVa7l
-qL8dkCcwCADNwG/O09b3O+YyD8ksLA==
-=P0kD
------END PGP SIGNATURE-----
-
---J5NgmdQsYR8vwsNL--
