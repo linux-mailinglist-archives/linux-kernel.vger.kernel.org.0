@@ -2,31 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0D7A39877
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 00:20:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D48063984F
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 00:11:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731110AbfFGWUR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 18:20:17 -0400
-Received: from [178.128.172.2] ([178.128.172.2]:52782 "EHLO TEST.localdomain"
-        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729653AbfFGWUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 18:20:17 -0400
-X-Greylist: delayed 598 seconds by postgrey-1.27 at vger.kernel.org; Fri, 07 Jun 2019 18:20:17 EDT
-Received: from localhost (TEST [127.0.0.1])
-        by TEST.localdomain (Postfix) with SMTP id 7D4ED1B7586
-        for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2019 22:09:58 +0000 (UTC)
-From:   linux-kernel@vger.kernel.org
-To:     linux-kernel@vger.kernel.org
-Reply-To: prodawez@armyspy.com
-Subject: Zdravstvuyte! Vas interesuyut kliyentskiye bazy dannykh?
-Message-Id: <20190607220958.7D4ED1B7586@TEST.localdomain>
-Date:   Fri,  7 Jun 2019 22:09:58 +0000 (UTC)
+        id S1730633AbfFGWLE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 18:11:04 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:38666 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729791AbfFGWLD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 18:11:03 -0400
+Received: by mail-lf1-f68.google.com with SMTP id b11so2705678lfa.5
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 15:11:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wwd43iQ+uxpnBtPTqymsT6s+8HUa61yC8t5RUF2PcZU=;
+        b=cx5trC4enXjixaDKj6Ievop4mO8XN9hgO9aAR04Q7aLPSDJ2c8Q6GPk2HH8EC/ErF0
+         7MJ7D8Th748v7WMTnI63ah8gmGDXq0TkGf0uJ1v/q/g/zzZU3mmkwBkVYZE1sB8w1+Mf
+         hASuZE/FTdqh3tRERGLesm/E3MnKbdXjC6lgCDZgIVjNnHUuOF3/kjmlNSijoiE1Oi6F
+         6BxGVHxQaCMURQYR9jvt9oSgPaAFcvuDitqQjzpTRn9VB4Sg97qRzuS61nw2tl9Mowoj
+         1tw9aHeC2Kb374as6WteoD0b9grq85chn9lJWbzEMwWrqkKHorAlIPnTz5cLF2GYFJAD
+         X4Dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wwd43iQ+uxpnBtPTqymsT6s+8HUa61yC8t5RUF2PcZU=;
+        b=mv3nYYiuXvbTLtVCJRyDzF3yOUXNJr4bvoVLoPsIe+cgFj/sFLsYHxmLshGOigXX69
+         peZVoC9fY/tnJcPIx4kXkXUUOdeA0/HF4hHIgdu3hiNpyJDPMAQKvkobdRXO6l2paM/k
+         AKRcX7dNlTN0naeuLiteCzzHH7SyRJAktrTouD4lAMd17utoe7ZSib2N0wPBb/Hon/zz
+         tSEuIoulbyM95AsXBuX2RmE59bDXr8NVBICNYk13z82/A8rvQK62ovvzJ9bjWmXjCGyq
+         mGC4pA6Utt/SS5Cf63Tiv6A1ozicXy/BgG+fY5kT4R09XAW7HYIxjLVRkLwUAWDUSnpt
+         50QQ==
+X-Gm-Message-State: APjAAAVEv5/FZ61AOvCzqCBUlOjohkjiYmNhx9ZSsOVJ24VYTkAYFGqL
+        Z4jUVJPofJ7OZOEX3RySqSbNPQYNjVcKkN5DSGo9hw==
+X-Google-Smtp-Source: APXvYqzlzk1opCrnSZLf1NClG2hmLjUWMYvMv5LilcvGaMM1NvQ27Pl0x01y4ezRphDXsdt6wF8raMS/qpaHuG1ixW0=
+X-Received: by 2002:a19:7616:: with SMTP id c22mr23929383lff.115.1559945461842;
+ Fri, 07 Jun 2019 15:11:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190604163311.19059-1-paul@crapouillou.net>
+In-Reply-To: <20190604163311.19059-1-paul@crapouillou.net>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sat, 8 Jun 2019 00:10:54 +0200
+Message-ID: <CACRpkdbKg22OyViYhXS=Vyps=2zQ_dmm23Xr8+dBp+uwwjheuQ@mail.gmail.com>
+Subject: Re: [PATCH] MIPS: lb60: Fix pin mappings
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>, od@zcrc.me,
+        linux-mips@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Zdravstvuyte! Vas interesuyut kliyentskiye bazy dannykh?
+On Tue, Jun 4, 2019 at 6:34 PM Paul Cercueil <paul@crapouillou.net> wrote:
 
+> The pin mappings introduced in commit 636f8ba67fb6
+> ("MIPS: JZ4740: Qi LB60: Add pinctrl configuration for several drivers")
+> are completely wrong. The pinctrl driver name is incorrect, and the
+> function and group fields are swapped.
+>
+> Fixes: 636f8ba67fb6 ("MIPS: JZ4740: Qi LB60: Add pinctrl configuration for several drivers")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
+Such things happen. Are you planning to phase all the board files over
+to use devicetree eventually?
+
+Yours,
+Linus Walleij
