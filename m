@@ -2,46 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56DB53901D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:49:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BF9A38FCE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:47:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731897AbfFGPtI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:49:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34772 "EHLO mail.kernel.org"
+        id S1731240AbfFGPpd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:45:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731869AbfFGPtG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:49:06 -0400
+        id S1730735AbfFGPpa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:45:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB55E2146E;
-        Fri,  7 Jun 2019 15:49:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 019792146E;
+        Fri,  7 Jun 2019 15:45:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922545;
-        bh=WL3vxbjU1dMtEmiUSmXm5+93WXu+jB8JtsEPTQopDYQ=;
+        s=default; t=1559922329;
+        bh=SL9zgEgp7BqO3aXwfqo9i/Vh3cSETpa2ZfNoTlqorlc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N56H/X7ijZaXuJK+oqQ1eKiOdbWg50ZSbb0dkYzswxP94Zb5cgRejVZJFX9M5r9TL
-         QHeh0Jltkrdvm4oGzi4RD6SVPZH45KngbjU+3eaaa/kpb4Zt6kmPdlNXzMV90VqqxS
-         J1YTXfD6Hx8jz9PI9KdlSF4lwLBJOUEc1mVw2bDw=
+        b=dD0qJ0ZuP2JueRLHIxOLEjkskuOQWKC5RCnJ5hmk/AarP4iFPD1HD19MfsKtigd8s
+         CyuSgMU/u8qETGCltwqEFsHkHDGlFgsnVHsXAzGxZVgJRX1R8jgp8Ecacbib2vaK8i
+         7LyQfIKpXCd/Z7gpSOFXYPnSpcCapAatUE54aS8s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhenliang Wei <weizhenliang@huawei.com>,
-        Christian Brauner <christian@brauner.io>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Ivan Delalande <colona@arista.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.1 51/85] kernel/signal.c: trace_signal_deliver when signal_group_exit
+        stable@vger.kernel.org, Michael Rodin <mrodin@de.adit-jv.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "George G. Davis" <george_davis@mentor.com>
+Subject: [PATCH 4.19 49/73] serial: sh-sci: disable DMA for uart_console
 Date:   Fri,  7 Jun 2019 17:39:36 +0200
-Message-Id: <20190607153855.208382412@linuxfoundation.org>
+Message-Id: <20190607153854.615721628@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153849.101321647@linuxfoundation.org>
-References: <20190607153849.101321647@linuxfoundation.org>
+In-Reply-To: <20190607153848.669070800@linuxfoundation.org>
+References: <20190607153848.669070800@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,50 +47,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhenliang Wei <weizhenliang@huawei.com>
+From: George G. Davis <george_davis@mentor.com>
 
-commit 98af37d624ed8c83f1953b1b6b2f6866011fc064 upstream.
+commit 099506cbbc79c0bd52b19cb6b930f256dabc3950 upstream.
 
-In the fixes commit, removing SIGKILL from each thread signal mask and
-executing "goto fatal" directly will skip the call to
-"trace_signal_deliver".  At this point, the delivery tracking of the
-SIGKILL signal will be inaccurate.
+As noted in commit 84b40e3b57ee ("serial: 8250: omap: Disable DMA for
+console UART"), UART console lines use low-level PIO only access functions
+which will conflict with use of the line when DMA is enabled, e.g. when
+the console line is also used for systemd messages. So disable DMA
+support for UART console lines.
 
-Therefore, we need to add trace_signal_deliver before "goto fatal" after
-executing sigdelset.
-
-Note: SEND_SIG_NOINFO matches the fact that SIGKILL doesn't have any info.
-
-Link: http://lkml.kernel.org/r/20190425025812.91424-1-weizhenliang@huawei.com
-Fixes: cf43a757fd4944 ("signal: Restore the stop PTRACE_EVENT_EXIT")
-Signed-off-by: Zhenliang Wei <weizhenliang@huawei.com>
-Reviewed-by: Christian Brauner <christian@brauner.io>
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
-Cc: Ivan Delalande <colona@arista.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Deepa Dinamani <deepa.kernel@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Michael Rodin <mrodin@de.adit-jv.com>
+Link: https://patchwork.kernel.org/patch/10929511/
+Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: stable@vger.kernel.org
+Signed-off-by: George G. Davis <george_davis@mentor.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/signal.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/tty/serial/sh-sci.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2441,6 +2441,8 @@ relock:
- 	if (signal_group_exit(signal)) {
- 		ksig->info.si_signo = signr = SIGKILL;
- 		sigdelset(&current->pending.signal, SIGKILL);
-+		trace_signal_deliver(SIGKILL, SEND_SIG_NOINFO,
-+				&sighand->action[SIGKILL - 1]);
- 		recalc_sigpending();
- 		goto fatal;
- 	}
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1542,6 +1542,13 @@ static void sci_request_dma(struct uart_
+ 
+ 	dev_dbg(port->dev, "%s: port %d\n", __func__, port->line);
+ 
++	/*
++	 * DMA on console may interfere with Kernel log messages which use
++	 * plain putchar(). So, simply don't use it with a console.
++	 */
++	if (uart_console(port))
++		return;
++
+ 	if (!port->dev->of_node)
+ 		return;
+ 
 
 
