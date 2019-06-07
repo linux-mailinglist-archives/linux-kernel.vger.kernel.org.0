@@ -2,257 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE394390B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:54:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B1E939074
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:52:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731635AbfFGPyE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:54:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60014 "EHLO mail.kernel.org"
+        id S1732303AbfFGPwL convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 7 Jun 2019 11:52:11 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45762 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730909AbfFGPrP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:47:15 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1730266AbfFGPwI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:52:08 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A93CE2147A;
-        Fri,  7 Jun 2019 15:47:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922434;
-        bh=pvptPq3g1s/YC0zgZxRPUtj9Bpn1MLXe4ujsPx8OBvg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=FGYxohWnSSgZC6tf/562FvC5IsbXiVD/e5y7ShsvooVus/yldujvBi0UhTu/NCTjx
-         LH5PEh9Wt31LjlAe0fxaOA6NoMrfUDOHMQx7Yt5tyfHjOlU1PMKBfKg/7heXloUArx
-         SUHeP/9rg6iyurz3q6pEGYXDzs1txWhvcTY+d+Uk=
-Date:   Sat, 8 Jun 2019 00:47:08 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Borislav Petkov <bp@alien8.de>,
-        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Nadav Amit <namit@vmware.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Edward Cree <ecree@solarflare.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: Re: [PATCH 08/15] x86/alternatives: Teach text_poke_bp() to emulate
- instructions
-Message-Id: <20190608004708.7646b287151cf613838ce05f@kernel.org>
-In-Reply-To: <20190605131945.005681046@infradead.org>
-References: <20190605130753.327195108@infradead.org>
-        <20190605131945.005681046@infradead.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        by mx1.redhat.com (Postfix) with ESMTPS id A1E209B3B7;
+        Fri,  7 Jun 2019 15:52:03 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B6A1160D7C;
+        Fri,  7 Jun 2019 15:52:00 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20190607151228.GA1872258@magnolia>
+References: <20190607151228.GA1872258@magnolia> <155991702981.15579.6007568669839441045.stgit@warthog.procyon.org.uk> <155991706083.15579.16359443779582362339.stgit@warthog.procyon.org.uk>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk, raven@themaw.net,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 02/13] uapi: General notification ring definitions [ver #4]
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <29221.1559922719.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Fri, 07 Jun 2019 16:51:59 +0100
+Message-ID: <29222.1559922719@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 07 Jun 2019 15:52:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 05 Jun 2019 15:08:01 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+Darrick J. Wong <darrick.wong@oracle.com> wrote:
 
-> In preparation for static_call support, teach text_poke_bp() to
-> emulate instructions, including CALL.
+> > +enum watch_notification_type {
+> > +	WATCH_TYPE_META		= 0,	/* Special record */
+> > +	WATCH_TYPE_MOUNT_NOTIFY	= 1,	/* Mount notification record */
+> > +	WATCH_TYPE_SB_NOTIFY	= 2,	/* Superblock notification */
+> > +	WATCH_TYPE_KEY_NOTIFY	= 3,	/* Key/keyring change notification */
+> > +	WATCH_TYPE_BLOCK_NOTIFY	= 4,	/* Block layer notifications */
+> > +#define WATCH_TYPE___NR 5
 > 
-> The current text_poke_bp() takes a @handler argument which is used as
-> a jump target when the temporary INT3 is hit by a different CPU.
+> Given the way enums work I think you can just make WATCH_TYPE___NR the
+> last element in the enum?
+
+Yeah.  I've a feeling I'd been asked not to do that, but I don't remember who
+by.
+
+> > +struct watch_notification {
 > 
-> When patching CALL instructions, this doesn't work because we'd miss
-> the PUSH of the return address. Instead, teach poke_int3_handler() to
-> emulate an instruction, typically the instruction we're patching in.
+> Kind of a long name...
+
+*shrug*.  Try to avoid conflicts with userspace symbols.
+
+> > +	__u32			type:24;	/* enum watch_notification_type */
+> > +	__u32			subtype:8;	/* Type-specific subtype (filterable) */
 > 
-> This fits almost all text_poke_bp() users, except
-> arch_unoptimize_kprobe() which restores random text, and for that site
-> we have to build an explicit emulate instruction.
-
-Hm, actually it doesn't restores randome text, since the first byte
-must always be int3. As the function name means, it just unoptimizes
-(jump based optprobe -> int3 based kprobe).
-Anyway, that is not an issue. With this patch, optprobe must still work.
-
+> 16777216 diferent types and 256 different subtypes?  My gut instinct
+> wants a better balance, though I don't know where I'd draw the line.
+> Probably 12 bits for type and 10 for subtype?  OTOH I don't have a good
+> sense of how many distinct notification types an XFS would want to send
+> back to userspace, and maybe 256 subtypes is fine.  We could always
+> reserve another watch_notification_type if we need > 256.
 > 
-> Cc: Daniel Bristot de Oliveira <bristot@redhat.com>
-> Cc: Nadav Amit <namit@vmware.com>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  arch/x86/include/asm/text-patching.h |    2 -
->  arch/x86/kernel/alternative.c        |   47 ++++++++++++++++++++++++++---------
->  arch/x86/kernel/jump_label.c         |    3 --
->  arch/x86/kernel/kprobes/opt.c        |   11 +++++---
->  4 files changed, 46 insertions(+), 17 deletions(-)
+> Ok, no objections. :)
+
+If a source wants more than 256 subtypes, it can always allocate an additional
+type.  Note that the greater the number of subtypes, the larger the filter
+structure (added in patch 5).
+
+> > +	__u32			info;
+> > +#define WATCH_INFO_OVERRUN	0x00000001	/* Event(s) lost due to overrun */
+> > +#define WATCH_INFO_ENOMEM	0x00000002	/* Event(s) lost due to ENOMEM */
+> > +#define WATCH_INFO_RECURSIVE	0x00000004	/* Change was recursive */
+> > +#define WATCH_INFO_LENGTH	0x000001f8	/* Length of record / sizeof(watch_notification) */
 > 
-> --- a/arch/x86/include/asm/text-patching.h
-> +++ b/arch/x86/include/asm/text-patching.h
-> @@ -37,7 +37,7 @@ extern void text_poke_early(void *addr,
->  extern void *text_poke(void *addr, const void *opcode, size_t len);
->  extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
->  extern int poke_int3_handler(struct pt_regs *regs);
-> -extern void text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
-> +extern void text_poke_bp(void *addr, const void *opcode, size_t len, const void *emulate);
->  extern int after_bootmem;
->  extern __ro_after_init struct mm_struct *poking_mm;
->  extern __ro_after_init unsigned long poking_addr;
-> --- a/arch/x86/kernel/alternative.c
-> +++ b/arch/x86/kernel/alternative.c
-> @@ -921,19 +921,25 @@ static void do_sync_core(void *info)
->  }
->  
->  static bool bp_patching_in_progress;
-> -static void *bp_int3_handler, *bp_int3_addr;
-> +static const void *bp_int3_opcode, *bp_int3_addr;
->  
->  int poke_int3_handler(struct pt_regs *regs)
->  {
-> +	long ip = regs->ip - INT3_INSN_SIZE + CALL_INSN_SIZE;
-> +	struct opcode {
-> +		u8 insn;
-> +		s32 rel;
-> +	} __packed opcode;
-> +
->  	/*
->  	 * Having observed our INT3 instruction, we now must observe
->  	 * bp_patching_in_progress.
->  	 *
-> -	 * 	in_progress = TRUE		INT3
-> -	 * 	WMB				RMB
-> -	 * 	write INT3			if (in_progress)
-> +	 *	in_progress = TRUE		INT3
-> +	 *	WMB				RMB
-> +	 *	write INT3			if (in_progress)
->  	 *
-> -	 * Idem for bp_int3_handler.
-> +	 * Idem for bp_int3_opcode.
->  	 */
->  	smp_rmb();
->  
-> @@ -943,8 +949,21 @@ int poke_int3_handler(struct pt_regs *re
->  	if (user_mode(regs) || regs->ip != (unsigned long)bp_int3_addr)
->  		return 0;
->  
-> -	/* set up the specified breakpoint handler */
-> -	regs->ip = (unsigned long) bp_int3_handler;
-> +	opcode = *(struct opcode *)bp_int3_opcode;
-> +
-> +	switch (opcode.insn) {
-> +	case 0xE8: /* CALL */
-> +		int3_emulate_call(regs, ip + opcode.rel);
-> +		break;
-> +
-> +	case 0xE9: /* JMP */
-> +		int3_emulate_jmp(regs, ip + opcode.rel);
-> +		break;
-> +
-> +	default: /* assume NOP */
-
-Shouldn't we check whether it is actually NOP here?
-
-> +		int3_emulate_jmp(regs, ip);
-> +		break;
-> +	}
-
-BTW, if we fix the length of patching always 5 bytes and allow user
-to apply it only from/to jump/call/nop, we may be better to remove
-"len" and rename it, something like "text_poke_branch" etc.
-
-Thank you,
-
->  
->  	return 1;
->  }
-> @@ -955,7 +974,7 @@ NOKPROBE_SYMBOL(poke_int3_handler);
->   * @addr:	address to patch
->   * @opcode:	opcode of new instruction
->   * @len:	length to copy
-> - * @handler:	address to jump to when the temporary breakpoint is hit
-> + * @emulate:	opcode to emulate, when NULL use @opcode
->   *
->   * Modify multi-byte instruction by using int3 breakpoint on SMP.
->   * We completely avoid stop_machine() here, and achieve the
-> @@ -970,19 +989,25 @@ NOKPROBE_SYMBOL(poke_int3_handler);
->   *	  replacing opcode
->   *	- sync cores
->   */
-> -void text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
-> +void text_poke_bp(void *addr, const void *opcode, size_t len, const void *emulate)
->  {
->  	unsigned char int3 = 0xcc;
->  
-> -	bp_int3_handler = handler;
-> +	bp_int3_opcode = emulate ?: opcode;
->  	bp_int3_addr = (u8 *)addr + sizeof(int3);
->  	bp_patching_in_progress = true;
->  
->  	lockdep_assert_held(&text_mutex);
->  
->  	/*
-> +	 * poke_int3_handler() relies on @opcode being a 5 byte instruction;
-> +	 * notably a JMP, CALL or NOP5_ATOMIC.
-> +	 */
-> +	BUG_ON(len != 5);
-> +
-> +	/*
->  	 * Corresponding read barrier in int3 notifier for making sure the
-> -	 * in_progress and handler are correctly ordered wrt. patching.
-> +	 * in_progress and opcode are correctly ordered wrt. patching.
->  	 */
->  	smp_wmb();
->  
-> --- a/arch/x86/kernel/jump_label.c
-> +++ b/arch/x86/kernel/jump_label.c
-> @@ -87,8 +87,7 @@ static void __ref __jump_label_transform
->  		return;
->  	}
->  
-> -	text_poke_bp((void *)jump_entry_code(entry), code, JUMP_LABEL_NOP_SIZE,
-> -		     (void *)jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
-> +	text_poke_bp((void *)jump_entry_code(entry), code, JUMP_LABEL_NOP_SIZE, NULL);
->  }
->  
->  void arch_jump_label_transform(struct jump_entry *entry,
-> --- a/arch/x86/kernel/kprobes/opt.c
-> +++ b/arch/x86/kernel/kprobes/opt.c
-> @@ -437,8 +437,7 @@ void arch_optimize_kprobes(struct list_h
->  		insn_buff[0] = RELATIVEJUMP_OPCODE;
->  		*(s32 *)(&insn_buff[1]) = rel;
->  
-> -		text_poke_bp(op->kp.addr, insn_buff, RELATIVEJUMP_SIZE,
-> -			     op->optinsn.insn);
-> +		text_poke_bp(op->kp.addr, insn_buff, RELATIVEJUMP_SIZE, NULL);
->  
->  		list_del_init(&op->list);
->  	}
-> @@ -448,12 +447,18 @@ void arch_optimize_kprobes(struct list_h
->  void arch_unoptimize_kprobe(struct optimized_kprobe *op)
->  {
->  	u8 insn_buff[RELATIVEJUMP_SIZE];
-> +	u8 emulate_buff[RELATIVEJUMP_SIZE];
->  
->  	/* Set int3 to first byte for kprobes */
->  	insn_buff[0] = BREAKPOINT_INSTRUCTION;
->  	memcpy(insn_buff + 1, op->optinsn.copied_insn, RELATIVE_ADDR_SIZE);
-> +
-> +	emulate_buff[0] = RELATIVEJUMP_OPCODE;
-> +	*(s32 *)(&emulate_buff[1]) = (s32)((long)op->optinsn.insn -
-> +			((long)op->kp.addr + RELATIVEJUMP_SIZE));
-> +
->  	text_poke_bp(op->kp.addr, insn_buff, RELATIVEJUMP_SIZE,
-> -		     op->optinsn.insn);
-> +		     emulate_buff);
->  }
->  
->  /*
+> This is a mask, isn't it?  Could we perhaps have some helpers here?
+> Something along the lines of...
 > 
+> #define WATCH_INFO_LENGTH_MASK	0x000001f8
+> #define WATCH_INFO_LENGTH_SHIFT	3
 > 
+> static inline size_t watch_notification_length(struct watch_notification *wn)
+> {
+> 	return (wn->info & WATCH_INFO_LENGTH_MASK) >> WATCH_INFO_LENGTH_SHIFT *
+> 			sizeof(struct watch_notification);
+> }
+> 
+> static inline struct watch_notification *watch_notification_next(
+> 		struct watch_notification *wn)
+> {
+> 	return wn + ((wn->info & WATCH_INFO_LENGTH_MASK) >>
+> 			WATCH_INFO_LENGTH_SHIFT);
+> }
 
+No inline functions in UAPI headers, please.  I'd love to kill off the ones
+that we have, but that would break things.
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+> ...so that we don't have to opencode all of the ring buffer walking
+> magic and stuff?
+
+There'll end up being a small userspace library, I think.
+
+> (I might also shorten the namespace from WATCH_INFO_ to WNI_ ...)
+
+I'd rather not do that.  WNI_ could mean all sorts of things - at a first
+glance, it sounds like something to do with Windows or windowing.
+
+> Hmm so the length field is 6 bits and therefore the maximum size of a
+> notification record is ... 63 * (sizeof(u32)  * 2) = 504 bytes?  Which
+> means that kernel users can send back a maximum payload of 496 bytes?
+> That's probably big enough for random fs notifications (bad metadata
+> detected, media errors, etc.)
+
+Yep.  The ring buffer is limited in capacity since it has to be unswappable so
+that notifications can be written into it from softirq context or under lock.
+
+> Judging from the sample program I guess all that userspace does is
+> allocate a memory buffer and toss it into the kernel, which then
+> initializes the ring management variables, and from there we just scan
+> around the ring buffer every time poll(watch_fd) says there's something
+> to do?
+
+Yes.  Further, if head == tail, then it's empty.  Note that since head and
+tail will go up to 4G, but the buffer is limited to less than that, there's no
+need for a requisite unusable slot in the ring as head != tail when the ring
+is full.
+
+> How does userspace tell the kernel the size of the ring buffer?
+
+If you looked in the sample program, you might have noticed this in the main()
+function:
+
+	if (ioctl(fd, IOC_WATCH_QUEUE_SET_SIZE, BUF_SIZE) == -1) {
+
+The chardev allocates the buffer and then userspace mmaps it.
+
+I need to steal the locked-page accounting from the epoll patches to stop
+someone from using this to lock away all memory.
+
+> Does (watch_notification->info & WATCH_INFO_LENGTH) == 0 have any
+> meaning besides apparently "stop looking at me"?
+
+That's an illegal value, indicating a kernel bug.
+
+> > +#define WATCH_INFO_IN_SUBTREE	0x00000200	/* Change was not at watched root */
+> > +#define WATCH_INFO_TYPE_FLAGS	0x00ff0000	/* Type-specific flags */
+> 
+> WATCH_INFO_FLAG_MASK ?
+
+Yeah.
+
+> > +#define WATCH_INFO_FLAG_0	0x00010000
+> > +#define WATCH_INFO_FLAG_1	0x00020000
+> > +#define WATCH_INFO_FLAG_2	0x00040000
+> > +#define WATCH_INFO_FLAG_3	0x00080000
+> > +#define WATCH_INFO_FLAG_4	0x00100000
+> > +#define WATCH_INFO_FLAG_5	0x00200000
+> > +#define WATCH_INFO_FLAG_6	0x00400000
+> > +#define WATCH_INFO_FLAG_7	0x00800000
+> > +#define WATCH_INFO_ID		0xff000000	/* ID of watchpoint */
+> 
+> WATCH_INFO_ID_MASK ?
+
+Sure.
+
+> > +#define WATCH_INFO_ID__SHIFT	24
+> 
+> Why double underscore here?
+
+Because it's related to WATCH_INFO_ID, but isn't a mask on ->info.
+
+> > +};
+> > +
+> > +#define WATCH_LENGTH_SHIFT	3
+> > +
+> > +struct watch_queue_buffer {
+> > +	union {
+> > +		/* The first few entries are special, containing the
+> > +		 * ring management variables.
+> 
+> The first /two/ entries, correct?
+
+Currently two.
+
+> Also, weird multiline comment style.
+
+Not really.
+
+> > +		 */
+> > +		struct {
+> > +			struct watch_notification watch; /* WATCH_TYPE_META */
+> 
+> Do these structures have to be cache-aligned for the atomic reads and
+> writes to work?
+
+I hope not, otherwise we're screwed all over the kernel, particularly with
+structure randomisation.
+
+Further, what alignment is "cache aligned"?  It can vary by CPU for a single
+arch.
+
+David
