@@ -2,62 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1AEE3918B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 18:04:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5981E3918E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 18:05:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730031AbfFGQEY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 12:04:24 -0400
-Received: from mga06.intel.com ([134.134.136.31]:37185 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729133AbfFGQEY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 12:04:24 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2019 09:04:23 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by orsmga006.jf.intel.com with ESMTP; 07 Jun 2019 09:04:22 -0700
-Date:   Fri, 7 Jun 2019 09:04:22 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Subject: Re: [PATCH] KVM: nVMX: Rename prepare_vmcs02_*_full to
- prepare_vmcs02_*_extra
-Message-ID: <20190607160422.GE9083@linux.intel.com>
-References: <1559834652-105872-1-git-send-email-pbonzini@redhat.com>
- <20190606184117.GJ23169@linux.intel.com>
- <8382fd94-aed1-51b4-007e-7579a0f35ece@redhat.com>
- <20190607141847.GA9083@linux.intel.com>
- <5762005d-1504-bb41-9583-ec549e107ce5@redhat.com>
+        id S1730086AbfFGQFK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 12:05:10 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:40382 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729606AbfFGQFJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 12:05:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1559923508; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:references; bh=hNMNkjEA3+4rNF+yp5nWqqoJfF6+ddjC2q7b5Wtp9Vo=;
+        b=UDg/xRtWKDpep/pPM+s7gBNeP1FLR4eKwaUveYyy0cPx688uODdZ+9JeBTZP8cjJ3A8weK
+        ZScRPGwxuoWkuZ2hNwzGj/K1Ot7ezBKiHyhpmZh2at/IZe9JCM2F6AX781iV7+i/lEnOkm
+        h3sjWnPoneAoss7qB8zXKqoVNB7UjN0=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc:     Artur Rojek <contact@artur-rojek.eu>, od@zcrc.me,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH] iio: ingenic-adc: Make probe function __init_or_module
+Date:   Fri,  7 Jun 2019 18:05:01 +0200
+Message-Id: <20190607160501.16369-1-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5762005d-1504-bb41-9583-ec549e107ce5@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 05:17:09PM +0200, Paolo Bonzini wrote:
-> On 07/06/19 16:18, Sean Christopherson wrote:
-> > On Fri, Jun 07, 2019 at 02:19:20PM +0200, Paolo Bonzini wrote:
-> >> On 06/06/19 20:41, Sean Christopherson wrote:
-> >>>> +static void prepare_vmcs02_early_extra(struct vcpu_vmx *vmx,
-> >>> Or maybe 'uncommon', 'rare' or 'ext'?  I don't I particularly love any of
-> >>> the names, but they're all better than 'full'.
-> >>
-> >> I thought 'ext' was short for 'extra'? :)
-> > 
-> > Ha, I (obviously) didn't make that connection.  ext == extended in my mind.
-> 
-> That's what came to mind first, but then "extended" had the same issue
-> as "full" (i.e. encompassing the "basic" set as well) so I decided you
-> knew better!
+This allows the probe function to be dropped after the kernel finished
+its initialization, in the case where the driver was not compiled as a
+module.
 
-Ah, I was thinking of "basic" and "extended" as separate states, but your
-interpretation is correct.
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/iio/adc/ingenic-adc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I probably have a slight preference for 'uncommon' over 'extra'?  I feel
-like they have equal odds of being misinterpreted, so pick your poison :-)
+diff --git a/drivers/iio/adc/ingenic-adc.c b/drivers/iio/adc/ingenic-adc.c
+index 92b1d5037ac9..027f710df843 100644
+--- a/drivers/iio/adc/ingenic-adc.c
++++ b/drivers/iio/adc/ingenic-adc.c
+@@ -279,7 +279,7 @@ static const struct iio_chan_spec ingenic_channels[] = {
+ 	},
+ };
+ 
+-static int ingenic_adc_probe(struct platform_device *pdev)
++static int __init_or_module ingenic_adc_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct iio_dev *iio_dev;
+-- 
+2.21.0.593.g511ec345e18
+
