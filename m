@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A0EE39151
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:59:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08DC93902D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:49:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731164AbfFGP6T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:58:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53968 "EHLO mail.kernel.org"
+        id S1732007AbfFGPtl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:49:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730732AbfFGPnB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:43:01 -0400
+        id S1731983AbfFGPth (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:49:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7AB372146F;
-        Fri,  7 Jun 2019 15:43:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2E5A2147A;
+        Fri,  7 Jun 2019 15:49:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922181;
-        bh=Q4JXfggz8nyiMRed+rl0trD9mJdD12aw0OQPXh78few=;
+        s=default; t=1559922577;
+        bh=4CJuhXHiVHLwn//QvJbFWxdV9qoHj3F4tHEXDE50kSo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cWHdL1BySpBErB5kJ+GULgXzz0djS8qmfW9XgWW3zfEjT/oSrNmM6oi4Wy03GEfgb
-         IGp6vTK+Xu+Mbo5wtUferJ71Sze/sC9S0e6MhWJTPHBrY8b6yfVCkXQl6mKEZbrZgx
-         T2hZtdSJJY7v4tD3+JmrtXf43508djsVB4xCoFQ0=
+        b=CmAOuuKRn/YJhwHCYYgqjUHFPPrSJswli27AC6lCgDxEnO1/xDKQFEvVLvAidiKXF
+         XfaOQODhuQgkkzX7vXYmUXwtDJ80Z21N2tFYpR8XxOuVoaxXHI4oDD7dMzpNm1Jc74
+         RF/A/ElHNriElNe4o6mkOkaqz0jGLLionu3FB1Ug=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Sebor <msebor@gcc.gnu.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 4.14 65/69] include/linux/module.h: copy __init/__exit attrs to init/cleanup_module
+        stable@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Subject: [PATCH 5.1 61/85] evm: check hash algorithm passed to init_desc()
 Date:   Fri,  7 Jun 2019 17:39:46 +0200
-Message-Id: <20190607153855.920043978@linuxfoundation.org>
+Message-Id: <20190607153856.191954590@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153848.271562617@linuxfoundation.org>
-References: <20190607153848.271562617@linuxfoundation.org>
+In-Reply-To: <20190607153849.101321647@linuxfoundation.org>
+References: <20190607153849.101321647@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,80 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-commit a6e60d84989fa0e91db7f236eda40453b0e44afa upstream.
+commit 221be106d75c1b511973301542f47d6000d0b63e upstream.
 
-The upcoming GCC 9 release extends the -Wmissing-attributes warnings
-(enabled by -Wall) to C and aliases: it warns when particular function
-attributes are missing in the aliases but not in their target.
+This patch prevents memory access beyond the evm_tfm array by checking the
+validity of the index (hash algorithm) passed to init_desc(). The hash
+algorithm can be arbitrarily set if the security.ima xattr type is not
+EVM_XATTR_HMAC.
 
-In particular, it triggers for all the init/cleanup_module
-aliases in the kernel (defined by the module_init/exit macros),
-ending up being very noisy.
-
-These aliases point to the __init/__exit functions of a module,
-which are defined as __cold (among other attributes). However,
-the aliases themselves do not have the __cold attribute.
-
-Since the compiler behaves differently when compiling a __cold
-function as well as when compiling paths leading to calls
-to __cold functions, the warning is trying to point out
-the possibly-forgotten attribute in the alias.
-
-In order to keep the warning enabled, we decided to silence
-this case. Ideally, we would mark the aliases directly
-as __init/__exit. However, there are currently around 132 modules
-in the kernel which are missing __init/__exit in their init/cleanup
-functions (either because they are missing, or for other reasons,
-e.g. the functions being called from somewhere else); and
-a section mismatch is a hard error.
-
-A conservative alternative was to mark the aliases as __cold only.
-However, since we would like to eventually enforce __init/__exit
-to be always marked,  we chose to use the new __copy function
-attribute (introduced by GCC 9 as well to deal with this).
-With it, we copy the attributes used by the target functions
-into the aliases. This way, functions that were not marked
-as __init/__exit won't have their aliases marked either,
-and therefore there won't be a section mismatch.
-
-Note that the warning would go away marking either the extern
-declaration, the definition, or both. However, we only mark
-the definition of the alias, since we do not want callers
-(which only see the declaration) to be compiled as if the function
-was __cold (and therefore the paths leading to those calls
-would be assumed to be unlikely).
-
-Link: https://lore.kernel.org/lkml/20190123173707.GA16603@gmail.com/
-Link: https://lore.kernel.org/lkml/20190206175627.GA20399@gmail.com/
-Suggested-by: Martin Sebor <msebor@gcc.gnu.org>
-Acked-by: Jessica Yu <jeyu@kernel.org>
-Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Signed-off-by: Stefan Agner <stefan@agner.ch>
+Fixes: 5feeb61183dde ("evm: Allow non-SHA1 digital signatures")
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/module.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ security/integrity/evm/evm_crypto.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -128,13 +128,13 @@ extern void cleanup_module(void);
- #define module_init(initfn)					\
- 	static inline initcall_t __maybe_unused __inittest(void)		\
- 	{ return initfn; }					\
--	int init_module(void) __attribute__((alias(#initfn)));
-+	int init_module(void) __copy(initfn) __attribute__((alias(#initfn)));
- 
- /* This is only required if you want to be unloadable. */
- #define module_exit(exitfn)					\
- 	static inline exitcall_t __maybe_unused __exittest(void)		\
- 	{ return exitfn; }					\
--	void cleanup_module(void) __attribute__((alias(#exitfn)));
-+	void cleanup_module(void) __copy(exitfn) __attribute__((alias(#exitfn)));
- 
- #endif
- 
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -89,6 +89,9 @@ static struct shash_desc *init_desc(char
+ 		tfm = &hmac_tfm;
+ 		algo = evm_hmac;
+ 	} else {
++		if (hash_algo >= HASH_ALGO__LAST)
++			return ERR_PTR(-EINVAL);
++
+ 		tfm = &evm_tfm[hash_algo];
+ 		algo = hash_algo_name[hash_algo];
+ 	}
 
 
