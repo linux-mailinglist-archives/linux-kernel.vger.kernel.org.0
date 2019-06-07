@@ -2,152 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B112398E3
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 00:37:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97F0239901
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 00:38:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731707AbfFGWht (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 18:37:49 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38457 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731585AbfFGWhr (ORCPT
+        id S1731824AbfFGWid (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 18:38:33 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:43328 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731777AbfFGWiV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 18:37:47 -0400
-Received: by mail-pg1-f193.google.com with SMTP id v11so1867908pgl.5
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 15:37:47 -0700 (PDT)
+        Fri, 7 Jun 2019 18:38:21 -0400
+Received: by mail-lf1-f66.google.com with SMTP id j29so2730099lfk.10
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 15:38:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=z4uQcLhxDEep9Dd0+N4T4ar1lYZLNVNOCQMZpRaAcgQ=;
-        b=Wu5ODvnEgN+Dz3rZXFZGppPRarqh2wkcmSq/jdU0lxIYcSNaG6l9SM/cQ7rqNOQ+cx
-         zxBOamHsP0cMwIo+6syFyWFHtQZ64LbEArNImhJSma0pDWnZQVdsP77XNYh/mmK0Dm2q
-         qWYduKxF+F5spTIpgm3Rypp+nRk8xG2J2D5aM=
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ET3CFvRFkI0MF/L2BngZV7pHB0kqkmb+NPPDszDMmzE=;
+        b=la+kAQw+qsaiVBk6+KatB7XKgUOQshyAywGFIAIvLnyWbM44AQD3zDX3pKapxSYt4a
+         u3GUBtfj6P/Oxxl9QWxXPWRsdxguE7S0o4s8Giuqu9SGAndIJjiOwd5ua0slHTTM79z7
+         dAcF+wCHd8q02R92tR4Yq0NCf8O479vhO78iKhl2OrWl2Y1o5XqX+/GXiYb2D1b8dmuo
+         H9tcj2OjLjotzInGGsDpWbD9WBl6JAipNBNP8VhjZVU8eFX5ucB5BFad8ny5ZpIjgz8x
+         ZZvgDibFSGEH9KqtYipA4wh+CJFtECjt2WUaZDyqwHr95wNMA8xxcd+iBLre6Wf5gTAq
+         El2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=z4uQcLhxDEep9Dd0+N4T4ar1lYZLNVNOCQMZpRaAcgQ=;
-        b=pVr9MNjTnDxh/sKZTf/psMJKGS0xY2eT4lsq+0G6/niDHqNjCiwWp++HM9JdRB7C0x
-         VLYbiHpETkhRHm5JwRfF3v1hfbneehQb6XAE7mV/DXe50m9VIjgB4zzML0BhfIPPJqfh
-         rTZ6OVyS9SQfpCYezMXtQgvwdkrOLD2KrlTuTXLLrHH5flLToXPSirkZIt5ds1/RGycA
-         DDlLGUkGMZIs6GyevLx+XkCyf2mjPy7HWVi8bpKfCPab7Gcv8nvHJwDdLC9rZKCzLz33
-         3RrB2lg3n8OudX5m2vVcXidLs8iuZnA1rMZWRc2cxWa/lNg/IyCGslkdZ2N/GWjFgwQJ
-         tl7w==
-X-Gm-Message-State: APjAAAX+x7+BeXHNoZwCsYUXpyjwYXTEdqgrVQYWl+eKS+fABjAIo5Kn
-        5JdnGZ0LJja5FkVRtMiTMTX5EA==
-X-Google-Smtp-Source: APXvYqxs31BYhnz3CuDYoW0F6K1ef/NQQc4dhUPxacP60w15cFP3tld8eeafi1pEevxCtCS+7gK93A==
-X-Received: by 2002:a17:90a:9504:: with SMTP id t4mr8420374pjo.100.1559947066689;
-        Fri, 07 Jun 2019 15:37:46 -0700 (PDT)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id j23sm4185193pgb.63.2019.06.07.15.37.45
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 07 Jun 2019 15:37:46 -0700 (PDT)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc:     brcm80211-dev-list.pdl@broadcom.com,
-        linux-rockchip@lists.infradead.org,
-        Double Lo <double.lo@cypress.com>, briannorris@chromium.org,
-        linux-wireless@vger.kernel.org,
-        Naveen Gupta <naveen.gupta@cypress.com>,
-        Madhan Mohan R <madhanmohan.r@cypress.com>, mka@chromium.org,
-        Wright Feng <wright.feng@cypress.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        netdev@vger.kernel.org, brcm80211-dev-list@cypress.com,
-        Douglas Anderson <dianders@chromium.org>,
-        Franky Lin <franky.lin@broadcom.com>,
-        linux-kernel@vger.kernel.org,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Ondrej Jirman <megous@megous.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH v3 5/5] brcmfmac: sdio: Don't tune while the card is off
-Date:   Fri,  7 Jun 2019 15:37:16 -0700
-Message-Id: <20190607223716.119277-6-dianders@chromium.org>
-X-Mailer: git-send-email 2.22.0.rc2.383.gf4fbbf30c2-goog
-In-Reply-To: <20190607223716.119277-1-dianders@chromium.org>
-References: <20190607223716.119277-1-dianders@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ET3CFvRFkI0MF/L2BngZV7pHB0kqkmb+NPPDszDMmzE=;
+        b=baoSTlvLpZnn+Cx48tZPqGPWWpsunjM31TgcZxtq8iPDX5SOVSR0LW3vtRLl73o4S2
+         gAAV5uZsSyeYihiuuM4woXiCWx2K/7xCr2UCpTj8sMYP1uwKxnsMFfcet+ga7odAbLqY
+         ueceYN2nqI4cnSiTNpyAXt3u79Z6SgNWpUfCMoBzgB0bDov8Y4L6KBiI90/f8hSiDNP9
+         NioseqQXqEceTppkKZlXXSJ0nLu7mY+1xedgZch6mQXCJXfTq1INw2FP4PaNv/m2YTG9
+         sonXOVWf9N39dmeNFVqABu9kC8GzhI41RkdgrXC3NXb5nHRbbdngo+O6NO0X/n07qlA8
+         3Bcg==
+X-Gm-Message-State: APjAAAUdU4FXEWifCcH5mk33j9kNoO4ZD+TH3ExoRLSFKA/0OiVh7VQp
+        6pHT8pTpUTj7ARBI4xIiDRpCSvC7qaLzNdQ6BNgA0Q==
+X-Google-Smtp-Source: APXvYqwU6tE2vqZEcO3A/q6LuYfqSxDoBrcVt4WBoMI4WPwbOyt15dI+odVEiKCLsZ0yFS2STPMXWyGJ1aaCxj2Iziw=
+X-Received: by 2002:ac2:4891:: with SMTP id x17mr16073289lfc.60.1559947100366;
+ Fri, 07 Jun 2019 15:38:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190605080259.2462-1-j-keerthy@ti.com> <20190605080259.2462-3-j-keerthy@ti.com>
+ <CAMpxmJXjMX20TAEsfEa7pqZx5-aW_rMKwS+6g9NTvRNEfuAyeA@mail.gmail.com>
+ <96dbfd50-2a45-e3dc-3928-47fbc52f9269@ti.com> <CAMRc=Mfe+K=s4OZp7VWRik7JtSU6Fpufx0yDZtYCMNh5+LSJuQ@mail.gmail.com>
+In-Reply-To: <CAMRc=Mfe+K=s4OZp7VWRik7JtSU6Fpufx0yDZtYCMNh5+LSJuQ@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sat, 8 Jun 2019 00:38:12 +0200
+Message-ID: <CACRpkda_YmWoatVEt6OO+enYVfbZ6wvP5gmRG5+h5k=DVbPi+A@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] gpio: davinci: Add new compatible for K3 AM654 SoCs
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Keerthy <j-keerthy@ti.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        Tero Kristo <t-kristo@ti.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When Broadcom SDIO cards are idled they go to sleep and a whole
-separate subsystem takes over their SDIO communication.  This is the
-Always-On-Subsystem (AOS) and it can't handle tuning requests.
+On Thu, Jun 6, 2019 at 9:49 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> =C5=9Br., 5 cze 2019 o 17:12 Keerthy <j-keerthy@ti.com> napisa=C5=82(a):
 
-Specifically, as tested on rk3288-veyron-minnie (which reports having
-BCM4354/1 in dmesg), if I force a retune in brcmf_sdio_kso_control()
-when "on = 1" (aka we're transition from sleep to wake) by whacking:
-  bus->sdiodev->func1->card->host->need_retune = 1
-...then I can often see tuning fail.  In this case dw_mmc reports "All
-phases bad!").  Note that I don't get 100% failure, presumably because
-sometimes the card itself has already transitioned away from the AOS
-itself by the time we try to wake it up.  If I force retuning when "on
-= 0" (AKA force retuning right before sending the command to go to
-sleep) then retuning is always OK.
+> > >>   static const struct of_device_id davinci_gpio_ids[] =3D {
+> > >>          { .compatible =3D "ti,keystone-gpio", keystone_gpio_get_irq=
+_chip},
+> > >> +       { .compatible =3D "ti,am654-gpio", keystone_gpio_get_irq_chi=
+p},
+> > >
+> > > Please add a patch adding this compatible to the binding document as =
+well.
+> >
+> > https://patchwork.kernel.org/patch/10976445/
+> >
+> > Posted but did not add you in Cc. Sorry about that.
+>
+> I don't see it on GPIO patchwork either. Please resend it as part of
+> this series.
 
-NOTE: we need _both_ this patch and the patch to avoid triggering
-tuning due to CRC errors in the sleep/wake transition, AKA ("brcmfmac:
-sdio: Disable auto-tuning around commands expected to fail").  Though
-both patches handle issues with Broadcom's AOS, the problems are
-distinct:
-1. We want to defer (but not ignore) asynchronous (like
-   timer-requested) tuning requests till the card is awake.  However,
-   we want to ignore CRC errors during the transition, we don't want
-   to queue deferred tuning request.
-2. You could imagine that the AOS could implement retuning but we
-   could still get errors while transitioning in and out of the AOS.
-   Similarly you could imagine a seamless transition into and out of
-   the AOS (with no CRC errors) even if the AOS couldn't handle
-   tuning.
+I see the whole other series got resent as RFC, I'll just apply these
+three and the binding patch so we don't have to pingpong these
+patches too much around :)
 
-ALSO NOTE: presumably there is never a desperate need to retune in
-order to wake up the card, since doing so is impossible.  Luckily the
-only way the card can get into sleep state is if we had a good enough
-tuning to send it a sleep command, so presumably that "good enough"
-tuning is enough to wake us up, at least with a few retries.
-
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
-
-Changes in v3:
-- ("brcmfmac: sdio: Don't tune while the card is off") new for v3.
-
-Changes in v2: None
-
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-index 4040aae1f9ed..98ffb4e90e15 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-@@ -670,6 +670,10 @@ brcmf_sdio_kso_control(struct brcmf_sdio *bus, bool on)
- 
- 	mmc_expect_errors_begin(bus->sdiodev->func1->card->host);
- 
-+	/* Cannot re-tune if device is asleep; defer till we're awake */
-+	if (on)
-+		mmc_retune_hold_now(bus->sdiodev->func1->card->host);
-+
- 	wr_val = (on << SBSDIO_FUNC1_SLEEPCSR_KSO_SHIFT);
- 	/* 1st KSO write goes to AOS wake up core if device is asleep  */
- 	brcmf_sdiod_writeb(bus->sdiodev, SBSDIO_FUNC1_SLEEPCSR, wr_val, &err);
-@@ -730,6 +734,9 @@ brcmf_sdio_kso_control(struct brcmf_sdio *bus, bool on)
- 	if (try_cnt > MAX_KSO_ATTEMPTS)
- 		brcmf_err("max tries: rd_val=0x%x err=%d\n", rd_val, err);
- 
-+	if (on)
-+		mmc_retune_release(bus->sdiodev->func1->card->host);
-+
- 	mmc_expect_errors_end(bus->sdiodev->func1->card->host);
- 
- 	return err;
--- 
-2.22.0.rc2.383.gf4fbbf30c2-goog
-
+Yours,
+Linus Walleij
