@@ -2,70 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAF7F391BB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 18:16:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB9AC391EC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 18:25:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730384AbfFGQQb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 12:16:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60150 "EHLO mail.kernel.org"
+        id S1730794AbfFGQZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 12:25:10 -0400
+Received: from mga09.intel.com ([134.134.136.24]:13437 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729127AbfFGQQa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 12:16:30 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D80402089E;
-        Fri,  7 Jun 2019 16:16:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559924190;
-        bh=/F/c4QDEf06P5tEgw0z3DOKfB8bwE9ii6Uy2T7OVa1A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ktxl9FKXcbeyfqXJgD2WhYz7AYCKu2YE/ZrTBU7NlJJJjMDemtaHGeDSfDHWqS8C7
-         TNuGQCmwwSLUGcEIk4saTherUSRQf2+s07Zd2dgFC6Kb7FOTVAE6juvZpKDu+F+wj4
-         PU/jFK1TUWVK6EtMEcNb3Fuk9Az/NwS5hefdlSTI=
-Date:   Fri, 7 Jun 2019 18:16:27 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.14 00/69] 4.14.124-stable review
-Message-ID: <20190607161627.GA9920@kroah.com>
-References: <20190607153848.271562617@linuxfoundation.org>
- <20190607161102.GA19615@roeck-us.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190607161102.GA19615@roeck-us.net>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+        id S1730634AbfFGQZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 12:25:09 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2019 09:25:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,563,1557212400"; 
+   d="scan'208";a="182720042"
+Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
+  by fmsmga002.fm.intel.com with ESMTP; 07 Jun 2019 09:25:08 -0700
+Message-ID: <1b5778f8f1336ad7a63f4621f189b7f04a56a9ed.camel@intel.com>
+Subject: Re: [PATCH v7 22/27] binfmt_elf: Extract .note.gnu.property from an
+ ELF file
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>
+Date:   Fri, 07 Jun 2019 09:17:06 -0700
+In-Reply-To: <20190607075822.GR3419@hirez.programming.kicks-ass.net>
+References: <20190606200646.3951-1-yu-cheng.yu@intel.com>
+         <20190606200646.3951-23-yu-cheng.yu@intel.com>
+         <20190607075822.GR3419@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 09:11:02AM -0700, Guenter Roeck wrote:
-> On Fri, Jun 07, 2019 at 05:38:41PM +0200, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.14.124 release.
-> > There are 69 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
+On Fri, 2019-06-07 at 09:58 +0200, Peter Zijlstra wrote:
+> On Thu, Jun 06, 2019 at 01:06:41PM -0700, Yu-cheng Yu wrote:
+> > An ELF file's .note.gnu.property indicates features the executable file
+> > can support.  For example, the property GNU_PROPERTY_X86_FEATURE_1_AND
+> > indicates the file supports GNU_PROPERTY_X86_FEATURE_1_IBT and/or
+> > GNU_PROPERTY_X86_FEATURE_1_SHSTK.
 > > 
-> > Responses should be made by Sun 09 Jun 2019 03:37:08 PM UTC.
-> > Anything received after that time might be too late.
-> >
+> > With this patch, if an arch needs to setup features from ELF properties,
+> > it needs CONFIG_ARCH_USE_GNU_PROPERTY to be set, and a specific
+> > arch_setup_property().
+> > 
+> > For example, for X86_64:
+> > 
+> > int arch_setup_property(void *ehdr, void *phdr, struct file *f, bool inter)
+> > {
+> > 	int r;
+> > 	uint32_t property;
+> > 
+> > 	r = get_gnu_property(ehdr, phdr, f, GNU_PROPERTY_X86_FEATURE_1_AND,
+> > 			     &property);
+> > 	...
+> > }
+> > 
+> > Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
+> > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 > 
-> fs/btrfs/inode.c: In function 'btrfs_add_link':
-> fs/btrfs/inode.c:6590:27: error: invalid initializer
->    struct timespec64 now = current_time(&parent_inode->vfs_inode);
->                            ^~~~~~~~~~~~
-> fs/btrfs/inode.c:6592:35: error: incompatible types when assigning to type 'struct timespec' from type 'struct timespec64'
->    parent_inode->vfs_inode.i_mtime = now;
->                                    ^
-> fs/btrfs/inode.c:6593:35: error: incompatible types when assigning to type 'struct timespec' from type 'struct timespec64'
->    parent_inode->vfs_inode.i_ctime = now;
->                                    ^
+> Did HJ write this patch as suggested by that SoB chain? If so, you lost
+> a From: line on top, if not, the SoB thing is invalid.
 
-What arch?  This builds for me here.  odd...
+I will fix that.
 
-greg k-h
+Yu-cheng
