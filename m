@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFE1438FC7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:46:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1661C38F59
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 17:40:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731193AbfFGPpN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 11:45:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56894 "EHLO mail.kernel.org"
+        id S1730113AbfFGPkk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 11:40:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728897AbfFGPpI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 11:45:08 -0400
+        id S1730062AbfFGPkh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 11:40:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20A222146E;
-        Fri,  7 Jun 2019 15:45:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 985D420840;
+        Fri,  7 Jun 2019 15:40:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559922307;
-        bh=txodAzOAtfpatqpTdhPDZNQpFJd9mfh2YwqLom6pNKI=;
+        s=default; t=1559922037;
+        bh=ESRl4YNnZZ8EBLT9NQ4ra1n7A9/hq/4DhFx8XybXgcI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sYa20e+0jCQ+uzuqcsyZhoFtNd8vSKO/kE35PxBD+QRbDj+O2DCWO86xDqxyYkLRe
-         i3VyXma5g6wpjzpjVcQ+2p4gMYtsvmw4k7akZqrKtjTXYu6H+miegDvi60z9Rh0X9p
-         yiGF2voS7XFGJYCPNaGhgQwXyzQbxAhOk34IrzXs=
+        b=TvH9NiXzlj4WtB1aJNHDC7t0eRw/+qV2IoWUibp2yXq/EXcA3zVuQsOFaGgW0DjXu
+         JyyVtoQdwKy9DnHW9ceSq+NyiGIJJ9NiTySWtJd3K+maxbCKHSCY0D8tLfpUkvTcQR
+         qGcCzHd9NNxE7QclEdZ5LJdFSiMM0DbduUmm+2oE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-Subject: [PATCH 4.19 08/73] usbip: usbip_host: fix stub_dev lock context imbalance regression
+        stable@vger.kernel.org,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 14/69] net: mvneta: Fix err code path of probe
 Date:   Fri,  7 Jun 2019 17:38:55 +0200
-Message-Id: <20190607153849.692371178@linuxfoundation.org>
+Message-Id: <20190607153850.054806461@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190607153848.669070800@linuxfoundation.org>
-References: <20190607153848.669070800@linuxfoundation.org>
+In-Reply-To: <20190607153848.271562617@linuxfoundation.org>
+References: <20190607153848.271562617@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,151 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shuah Khan <skhan@linuxfoundation.org>
+From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 
-commit 3ea3091f1bd8586125848c62be295910e9802af0 upstream.
+[ Upstream commit d484e06e25ebb937d841dac02ac1fe76ec7d4ddd ]
 
-Fix the following sparse context imbalance regression introduced in
-a patch that fixed sleeping function called from invalid context bug.
+Fix below issues in err code path of probe:
+1. we don't need to unregister_netdev() because the netdev isn't
+registered.
+2. when register_netdev() fails, we also need to destroy bm pool for
+HWBM case.
 
-kbuild test robot reported on:
-
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git  usb-linus
-
-Regressions in current branch:
-
-drivers/usb/usbip/stub_dev.c:399:9: sparse: sparse: context imbalance in 'stub_probe' - different lock contexts for basic block
-drivers/usb/usbip/stub_dev.c:418:13: sparse: sparse: context imbalance in 'stub_disconnect' - different lock contexts for basic block
-drivers/usb/usbip/stub_dev.c:464:1-10: second lock on line 476
-
-Error ids grouped by kconfigs:
-
-recent_errors
-├── i386-allmodconfig
-│   └── drivers-usb-usbip-stub_dev.c:second-lock-on-line
-├── x86_64-allmodconfig
-│   ├── drivers-usb-usbip-stub_dev.c:sparse:sparse:context-imbalance-in-stub_disconnect-different-lock-contexts-for-basic-block
-│   └── drivers-usb-usbip-stub_dev.c:sparse:sparse:context-imbalance-in-stub_probe-different-lock-contexts-for-basic-block
-└── x86_64-allyesconfig
-    └── drivers-usb-usbip-stub_dev.c:second-lock-on-line
-
-This is a real problem in an error leg where spin_lock() is called on an
-already held lock.
-
-Fix the imbalance in stub_probe() and stub_disconnect().
-
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-Fixes: 0c9e8b3cad65 ("usbip: usbip_host: fix BUG: sleeping function called from invalid context")
-Cc: stable <stable@vger.kernel.org>
+Fixes: dc35a10f68d3 ("net: mvneta: bm: add support for hardware buffer management")
+Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/usbip/stub_dev.c |   36 +++++++++++++++++++++++-------------
- 1 file changed, 23 insertions(+), 13 deletions(-)
+ drivers/net/ethernet/marvell/mvneta.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/drivers/usb/usbip/stub_dev.c
-+++ b/drivers/usb/usbip/stub_dev.c
-@@ -326,14 +326,17 @@ static int stub_probe(struct usb_device
- 		 * See driver_probe_device() in driver/base/dd.c
- 		 */
- 		rc = -ENODEV;
--		goto sdev_free;
-+		if (!busid_priv)
-+			goto sdev_free;
-+
-+		goto call_put_busid_priv;
+--- a/drivers/net/ethernet/marvell/mvneta.c
++++ b/drivers/net/ethernet/marvell/mvneta.c
+@@ -4350,7 +4350,7 @@ static int mvneta_probe(struct platform_
+ 	err = register_netdev(dev);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to register\n");
+-		goto err_free_stats;
++		goto err_netdev;
  	}
  
- 	if (udev->descriptor.bDeviceClass == USB_CLASS_HUB) {
- 		dev_dbg(&udev->dev, "%s is a usb hub device... skip!\n",
- 			 udev_busid);
- 		rc = -ENODEV;
--		goto sdev_free;
-+		goto call_put_busid_priv;
+ 	netdev_info(dev, "Using %s mac address %pM\n", mac_from,
+@@ -4369,13 +4369,11 @@ static int mvneta_probe(struct platform_
+ 	return 0;
+ 
+ err_netdev:
+-	unregister_netdev(dev);
+ 	if (pp->bm_priv) {
+ 		mvneta_bm_pool_destroy(pp->bm_priv, pp->pool_long, 1 << pp->id);
+ 		mvneta_bm_pool_destroy(pp->bm_priv, pp->pool_short,
+ 				       1 << pp->id);
  	}
- 
- 	if (!strcmp(udev->bus->bus_name, "vhci_hcd")) {
-@@ -342,7 +345,7 @@ static int stub_probe(struct usb_device
- 			udev_busid);
- 
- 		rc = -ENODEV;
--		goto sdev_free;
-+		goto call_put_busid_priv;
- 	}
- 
- 
-@@ -361,6 +364,9 @@ static int stub_probe(struct usb_device
- 	save_status = busid_priv->status;
- 	busid_priv->status = STUB_BUSID_ALLOC;
- 
-+	/* release the busid_lock */
-+	put_busid_priv(busid_priv);
-+
- 	/*
- 	 * Claim this hub port.
- 	 * It doesn't matter what value we pass as owner
-@@ -373,9 +379,6 @@ static int stub_probe(struct usb_device
- 		goto err_port;
- 	}
- 
--	/* release the busid_lock */
--	put_busid_priv(busid_priv);
--
- 	rc = stub_add_files(&udev->dev);
- 	if (rc) {
- 		dev_err(&udev->dev, "stub_add_files for %s\n", udev_busid);
-@@ -395,11 +398,17 @@ err_port:
- 	spin_lock(&busid_priv->busid_lock);
- 	busid_priv->sdev = NULL;
- 	busid_priv->status = save_status;
--sdev_free:
--	stub_device_free(sdev);
-+	spin_unlock(&busid_priv->busid_lock);
-+	/* lock is released - go to free */
-+	goto sdev_free;
-+
-+call_put_busid_priv:
- 	/* release the busid_lock */
- 	put_busid_priv(busid_priv);
- 
-+sdev_free:
-+	stub_device_free(sdev);
-+
- 	return rc;
- }
- 
-@@ -435,7 +444,9 @@ static void stub_disconnect(struct usb_d
- 	/* get stub_device */
- 	if (!sdev) {
- 		dev_err(&udev->dev, "could not get device");
--		goto call_put_busid_priv;
-+		/* release busid_lock */
-+		put_busid_priv(busid_priv);
-+		return;
- 	}
- 
- 	dev_set_drvdata(&udev->dev, NULL);
-@@ -465,7 +476,7 @@ static void stub_disconnect(struct usb_d
- 	if (!busid_priv->shutdown_busid)
- 		busid_priv->shutdown_busid = 1;
- 	/* release busid_lock */
--	put_busid_priv(busid_priv);
-+	spin_unlock(&busid_priv->busid_lock);
- 
- 	/* shutdown the current connection */
- 	shutdown_busid(busid_priv);
-@@ -480,10 +491,9 @@ static void stub_disconnect(struct usb_d
- 
- 	if (busid_priv->status == STUB_BUSID_ALLOC)
- 		busid_priv->status = STUB_BUSID_ADDED;
--
--call_put_busid_priv:
- 	/* release busid_lock */
--	put_busid_priv(busid_priv);
-+	spin_unlock(&busid_priv->busid_lock);
-+	return;
- }
- 
- #ifdef CONFIG_PM
+-err_free_stats:
+ 	free_percpu(pp->stats);
+ err_free_ports:
+ 	free_percpu(pp->ports);
 
 
