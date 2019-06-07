@@ -2,104 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AB7E38C5C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 16:14:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 327B738C63
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 16:16:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728667AbfFGOOQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 10:14:16 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:54643 "EHLO frisell.zx2c4.com"
+        id S1729034AbfFGOQS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 10:16:18 -0400
+Received: from mga17.intel.com ([192.55.52.151]:47640 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727915AbfFGOOP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 10:14:15 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id cb936dc6
-        for <linux-kernel@vger.kernel.org>;
-        Fri, 7 Jun 2019 13:42:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :from:date:message-id:subject:to:cc:content-type; s=mail; bh=OeF
-        uQrPwu5IL9s3FkHC48tIdkYU=; b=23ufbG15/HAhhqr0dMAC739K1BgGl/I8Utg
-        AsVQ+mNyxec8wC3umkFHVSI7ZuASjfEZm3t9+Ddfy/ULakh3bcxhqU8hvXWvAr8e
-        grZtwRSUNZoHixB0LiWjjsWpylQPnTuVOo2kV9DXK+8TYnqBK+u2AMcHbHDXm6GA
-        fyf555l2QowcmHE2KJ1cv1j8uT4wvqEDhRO5cBeIflLLqkyOVX/1kqWwH7yPtegZ
-        gpJqw+ToK1UEufsPWUd6X387qv/BAhCzoJYSI1JfdewHUx8aI0xko9Kb4Z7tQJzT
-        wMOteKpD+zngSlONO0raVlzz37iFA5j2FSvwRg4J1bPhXwAUa/Q==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id f229aa2e (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO)
-        for <linux-kernel@vger.kernel.org>;
-        Fri, 7 Jun 2019 13:42:35 +0000 (UTC)
-Received: by mail-ot1-f44.google.com with SMTP id r21so1969409otq.6
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 07:14:12 -0700 (PDT)
-X-Gm-Message-State: APjAAAU+4q/2W/pPwJDOZo33PtVMXK+c0YzTHYZsSfpcQtC6Gl61jmtG
-        OxrwLsTH3f44aL/VHWs8VfIlIwf98Jor6fuHrQ8=
-X-Google-Smtp-Source: APXvYqxg1/3IwWP3Q+X6sa+o268T3x+BLaVlnwR5sQtXYEWGYFh+6ptuH/NNVB1vpMQyH8Vn635GR+B+GHu7Rr5xZ+k=
-X-Received: by 2002:a9d:67d5:: with SMTP id c21mr1179546otn.243.1559916851654;
- Fri, 07 Jun 2019 07:14:11 -0700 (PDT)
+        id S1728910AbfFGOQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 10:16:17 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jun 2019 07:16:14 -0700
+X-ExtLoop1: 1
+Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
+  by orsmga002.jf.intel.com with ESMTP; 07 Jun 2019 07:16:14 -0700
+Date:   Fri, 7 Jun 2019 07:14:16 -0700
+From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To:     Stephane Eranian <eranian@google.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@suse.de>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Andi Kleen <andi.kleen@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        iommu@lists.linux-foundation.org,
+        Ricardo Neri <ricardo.neri@intel.com>
+Subject: Re: [RFC PATCH v4 17/21] x86/tsc: Switch to perf-based hardlockup
+ detector if TSC become unstable
+Message-ID: <20190607141416.GA30499@ranerica-svr.sc.intel.com>
+References: <1558660583-28561-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
+ <1558660583-28561-18-git-send-email-ricardo.neri-calderon@linux.intel.com>
+ <CABPqkBQP=JxpiQE7SVuJO3xPWvsFbAPj916RTYUgaMBDG1OdaQ@mail.gmail.com>
 MIME-Version: 1.0
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Fri, 7 Jun 2019 16:14:00 +0200
-X-Gmail-Original-Message-ID: <CAHmME9qBDtO1vJrA2Ch3SQigsu435wR7Q3vTm_3R=u=BE49S-Q@mail.gmail.com>
-Message-ID: <CAHmME9qBDtO1vJrA2Ch3SQigsu435wR7Q3vTm_3R=u=BE49S-Q@mail.gmail.com>
-Subject: infinite loop in read_hpet from ktime_get_boot_fast_ns
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, clemens@ladisch.de,
-        Sultan Alsawaf <sultan@kerneltoast.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABPqkBQP=JxpiQE7SVuJO3xPWvsFbAPj916RTYUgaMBDG1OdaQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Thomas,
+On Thu, Jun 06, 2019 at 05:35:51PM -0700, Stephane Eranian wrote:
+> Hi Ricardo,
 
-After some discussions here prior about the different clocks
-available, WireGuard uses ktime_get_boot_fast_ns() pretty extensively.
-The requirement is for a quasi-accurate monotonic counter that takes
-into account sleep time, and this seems to fit the bill pretty well.
-Sultan (CC'd) reported to me a non-reproducible bug he encountered in
-4.19.47 (arch's linux-lts package), where the CPU was hung in
-read_hpet.
+Hi Stephane,
 
-CPU: 1 PID: 7927 Comm: kworker/1:3 Tainted: G           OE     4.19.47-1-lts #1
-Hardware name: Dell Inc. XPS 15 9570/02MJVY, BIOS 1.10.1 04/26/2019
-Workqueue: wg-crypt-interface wg_packet_tx_worker [wireguard]
-RIP: 0010:read_hpet+0x67/0xc0
-Code: c0 75 11 ba 01 00 00 00 f0 0f b1 15 a3 3d 1a 01 85 c0 74 37 48
-89 cf 57 9d 0f 1f 44 00 00 48 c1 ee 20 eb 04 85 c9 74 12 f3 90 <49> 8b
-08 48 89 ca 48 c1 ea 20 89 d0 39 f2 74 ea c3 48 8b 05 89 56
-RSP: 0018:ffffb8d382533e18 EFLAGS: 00000202 ORIG_RAX: ffffffffffffff13
-RAX: 0000000018a4c89e RBX: 0000000000000000 RCX: 18a4c89e00000001
-RDX: 0000000018a4c89e RSI: 0000000018a4c89e RDI: ffffffffb8227980
-RBP: 000006c1c3f602a2 R08: ffffffffb8205040 R09: 0000000000000000
-R10: 000001d58fd28efc R11: 0000000000000000 R12: ffffffffb8259a80
-R13: 00000000ffffffff R14: 0000000518a0d8c4 R15: 000000000010fa5a
-FS:  0000000000000000(0000) GS:ffff9b90ac240000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00003663b14d9ce8 CR3: 000000030f20a006 CR4: 00000000003606e0
-Call Trace:
- ktime_get_mono_fast_ns+0x53/0xa0
- ktime_get_boot_fast_ns+0x5/0x10
- wg_packet_tx_worker+0x183/0x220 [wireguard]
- process_one_work+0x1f4/0x3e0
- worker_thread+0x2d/0x3e0
- ? process_one_work+0x3e0/0x3e0
- kthread+0x112/0x130
- ? kthread_park+0x80/0x80
- ret_from_fork+0x35/0x40
-watchdog: BUG: soft lockup - CPU#1 stuck for 23s! [kworker/1:3:7927]
+> Thanks for your contribution here. It is very important to move the
+> watchdog out of the PMU wherever possible.
 
-It looks like RIP is spinning in this loop in read_hpet:
+Indeed, using the PMU for the hardlockup detector is still the default
+option. This patch series proposes a new kernel command line to switch
+to use the HPET.
 
-do {
-    cpu_relax();
-    new.lockval = READ_ONCE(hpet.lockval);
-} while ((new.value == old.value) && arch_spin_is_locked(&new.lock));
+> 
+> On Thu, May 23, 2019 at 6:17 PM Ricardo Neri
+> <ricardo.neri-calderon@linux.intel.com> wrote:
+> >
+> > The HPET-based hardlockup detector relies on the TSC to determine if an
+> > observed NMI interrupt was originated by HPET timer. Hence, this detector
+> > can no longer be used with an unstable TSC.
+> >
+> > In such case, permanently stop the HPET-based hardlockup detector and
+> > start the perf-based detector.
+> >
+> > Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+> > ---
+> >  arch/x86/include/asm/hpet.h    | 2 ++
+> >  arch/x86/kernel/tsc.c          | 2 ++
+> >  arch/x86/kernel/watchdog_hld.c | 7 +++++++
+> >  3 files changed, 11 insertions(+)
+> >
+> > diff --git a/arch/x86/include/asm/hpet.h b/arch/x86/include/asm/hpet.h
+> > index fd99f2390714..a82cbe17479d 100644
+> > --- a/arch/x86/include/asm/hpet.h
+> > +++ b/arch/x86/include/asm/hpet.h
+> > @@ -128,6 +128,7 @@ extern int hardlockup_detector_hpet_init(void);
+> >  extern void hardlockup_detector_hpet_stop(void);
+> >  extern void hardlockup_detector_hpet_enable(unsigned int cpu);
+> >  extern void hardlockup_detector_hpet_disable(unsigned int cpu);
+> > +extern void hardlockup_detector_switch_to_perf(void);
+> >  #else
+> >  static inline struct hpet_hld_data *hpet_hardlockup_detector_assign_timer(void)
+> >  { return NULL; }
+> > @@ -136,6 +137,7 @@ static inline int hardlockup_detector_hpet_init(void)
+> >  static inline void hardlockup_detector_hpet_stop(void) {}
+> >  static inline void hardlockup_detector_hpet_enable(unsigned int cpu) {}
+> >  static inline void hardlockup_detector_hpet_disable(unsigned int cpu) {}
+> > +static void harrdlockup_detector_switch_to_perf(void) {}
+> >  #endif /* CONFIG_X86_HARDLOCKUP_DETECTOR_HPET */
+> >
+> This does not compile for me when CONFIG_X86_HARDLOCKUP_DETECTOR_HPET
+> is not enabled.
+> because:
+>    1- you have a typo on the function name
+>     2- you are missing the inline keyword
 
-I imagine this could be a bug in the hpet code, or a failure of the
-hpet hardware. But I thought it'd be most prudent to check, first,
-whether there are actually very particular conditions on when and
-where ktime_get_boot_fast_ns and friends can be called. In other
-words, maybe the bug is actually in my code. I was under the
-impression that invoking it from anywhere was fine, given the
-documentation says "NMI safe", but maybe there are still some
-requirements I should keep in mind?
+I am sorry. This was an oversight on my side. I have corrected this in
+preparation for a v5.
 
-Thanks,
-Jason
+Thanks and BR,
+Ricardo
