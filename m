@@ -2,60 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6F6A39764
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 23:10:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7003E392CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 19:09:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731123AbfFGVKW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 17:10:22 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:37304 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729915AbfFGVKW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 17:10:22 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 8816780310; Fri,  7 Jun 2019 23:10:09 +0200 (CEST)
-Date:   Fri, 7 Jun 2019 19:09:22 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [RFC] printk/sysrq: Don't play with console_loglevel
-Message-ID: <20190607170922.GA17017@xo-6d-61-c0.localdomain>
-References: <20190528002412.1625-1-dima@arista.com>
- <4a9c1b20-777d-079a-33f5-ddf0a39ff788@i-love.sakura.ne.jp>
- <20190528042208.GD26865@jagdpanzerIV>
- <90a22327-922d-6415-538a-6a3fcbe9f3e1@i-love.sakura.ne.jp>
- <20190528084825.GA9676@jagdpanzerIV>
- <966f1a8d-68ab-a808-9140-4ecf1453421d@i-love.sakura.ne.jp>
+        id S1731224AbfFGRJw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 13:09:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43582 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730196AbfFGRJw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 13:09:52 -0400
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1712B208E3;
+        Fri,  7 Jun 2019 17:09:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559927391;
+        bh=zTE9Vnc80prCH8PSEwnKTNhjRC5uBLiJcuWCP0FnZBQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZgApmZjjjZArxNzMJS92zb1duXOLfAHnxFWRojQpdAga3W+RgadVqRoCPs2s886O9
+         WexWxrHwX2eTwI87ZGkFjAOzQdHA71NFyKrqbDFaLMhyP+sGDlo9ITk+SkKm/mEv1Y
+         zCNDruhQwMAkzM7sov7CcGUS7Weuon4IZXp/aAi4=
+Date:   Fri, 7 Jun 2019 10:09:49 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     x86-ml <x86@kernel.org>, Borislav Petkov <bp@suse.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jann Horn <jannh@google.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        kvm ML <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/fpu: Update kernel's FPU state before using for the
+ fsave header
+Message-ID: <20190607170949.GA648@sol.localdomain>
+References: <20190604185358.GA820@sol.localdomain>
+ <20190605140405.2nnpqslnjpfe2ig2@linutronix.de>
+ <20190605173256.GA86462@gmail.com>
+ <20190606173026.ty7c4cvftrvfrwy3@linutronix.de>
+ <20190607142915.y52mfmgk5lvhll7n@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <966f1a8d-68ab-a808-9140-4ecf1453421d@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190607142915.y52mfmgk5lvhll7n@linutronix.de>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2019-05-28 19:15:43, Tetsuo Handa wrote:
-> On 2019/05/28 17:51, Sergey Senozhatsky wrote:
-> >> You are trying to omit passing KERN_UNSUPPRESSED by utilizing implicit printk
-> >> context information. But doesn't such attempt resemble find_printk_buffer() ?
-> > 
-> > Adding KERN_UNSUPPRESSED to all printks down the op_p->handler()
-> > line is hardly possible. At the same time I'd really prefer not
-> > to have buffering for sysrq.
+On Fri, Jun 07, 2019 at 04:29:16PM +0200, Sebastian Andrzej Siewior wrote:
+> In commit
 > 
-> I don't think it is hardly possible. And I really prefer having
-> deferred printing for SysRq.
+>   39388e80f9b0c ("x86/fpu: Don't save fxregs for ia32 frames in copy_fpstate_to_sigframe()")
+> 
+> I removed the statement
+> |       if (ia32_fxstate)
+> |               copy_fxregs_to_kernel(fpu);
+> 
+> and argued that is was wrongly merged because the content was already
+> saved in kernel's state and the content.
+> This was wrong: It is required to write it back because it is only saved
+> on the user-stack and save_fsave_header() reads it from task's
+> FPU-state. I missed that part…
+> 
+> Save x87 FPU state unless thread's FPU registers are already up to date.
+> 
+> Fixes: 39388e80f9b0c ("x86/fpu: Don't save fxregs for ia32 frames in copy_fpstate_to_sigframe()")
+> Reported-by: Eric Biggers <ebiggers@kernel.org>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+>  arch/x86/kernel/fpu/signal.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+> index 060d6188b4533..0071b794ed193 100644
+> --- a/arch/x86/kernel/fpu/signal.c
+> +++ b/arch/x86/kernel/fpu/signal.c
+> @@ -62,6 +62,11 @@ static inline int save_fsave_header(struct task_struct *tsk, void __user *buf)
+>  		struct user_i387_ia32_struct env;
+>  		struct _fpstate_32 __user *fp = buf;
+>  
+> +		fpregs_lock();
+> +		if (!test_thread_flag(TIF_NEED_FPU_LOAD))
+> +			copy_fxregs_to_kernel(&tsk->thread.fpu);
+> +		fpregs_unlock();
+> +
+>  		convert_from_fxsr(&env, tsk);
+>  
+>  		if (__copy_to_user(buf, &env, sizeof(env)) ||
+> -- 
+> 2.20.1
+> 
 
-Well, magic SysRq was meant for situation where system is in weird/broken state.
-"Give me backtrace where it is hung", etc. Direct printing is more likely to work
-in that cases.
-									Pavel
+Tested-by: Eric Biggers <ebiggers@kernel.org>
+
+- Eric
