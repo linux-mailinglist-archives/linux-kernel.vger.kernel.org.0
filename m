@@ -2,104 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08CDE398A0
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 00:27:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 932F9398B2
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Jun 2019 00:30:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731594AbfFGW1U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 18:27:20 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46311 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731343AbfFGW1U (ORCPT
+        id S1731329AbfFGWal (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 18:30:41 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46345 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730078AbfFGWal (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 18:27:20 -0400
-Received: by mail-pg1-f196.google.com with SMTP id v9so142354pgr.13
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 15:27:19 -0700 (PDT)
+        Fri, 7 Jun 2019 18:30:41 -0400
+Received: by mail-pf1-f196.google.com with SMTP id 81so1921524pfy.13
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Jun 2019 15:30:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=hraLxNELwM1NZ3lrrobGX779u9y1WVgm2X9KZ6MnzVU=;
-        b=fAQwIxWx36GcX9oIEt7f+jVMHginM+LONwFdfMNqwIhko+8c0QHYbEF8bNlyIqbI9j
-         NQNEvOKC/rk/tH80WaLOxYfIeLrNuLs39w+NLcIj3q54Q271veY67rrkNFKpfdqfZfj7
-         zJroDKjRWmVDQ90XGnNScGmFaTzL9du1I7zDspqbrM6NsrWdM1i+JbmO4PVz/elLIgeu
-         6BrmpgiXUF9dz/S6HaFuV5ThOeSRhvAkGNBoMZMOPzaVaIgbNw2niqpkC+G9ce07EdDH
-         qP3J8OITji6PPDgyiEOb7pbi42mIE/z0MQOvU/LZER5Na/CvkkoUFll6uwuMASm3splg
-         LFTQ==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=XuNCqjePqDvn4lAEhRpdjQcT7X3J/79/6r+E49pUakU=;
+        b=gw/ducDlQdQHPd+e6gp+F3SvSKhifcRtoemwoSufIWDlzHTVLxsWk5tHcjkWqm2SO1
+         tN/RRohWoYf0MJ3QN9qsILayDbUxjOjAV3YMrwQjsRKgjeyiUQEoFOhFSArcIH3cBPZt
+         yIPZU1wsKCH4uCOmfTDiErxn0oQEMRvwp7ksoCo17k+Hz8AXuXxvPyQZ92Tg3HnyoauH
+         4z1tb1/YoR4PFKHxWiR/UM6lu4eW0+8z7Tomy+M1EaWfXSWlHBTMBnk6o7IwkWKvR5JF
+         3F5Q2NB7eMmMh0R+Qm1ZebZ69zXf48qNpY+W8L+J5kNJRX9hfI5K9Qyb91brjKj2EAw8
+         fegg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=hraLxNELwM1NZ3lrrobGX779u9y1WVgm2X9KZ6MnzVU=;
-        b=WhC807rLH5L4MD3vP3zTgtBQ137eF3YwjOTUen35udCudBgWtxk9BSBq6aEFRJxN6I
-         PaoWREEmVE8rnkPT4vS/o2PdkTdTRx9x9IP0yT3zAyE/KxQ4vZM+jDxuz+Rb3ITrGovS
-         Iid7GSHdUaZxsGirtMBXoUd0z+v360uz1NanwDxdqkVCbLuc9P0CLOZV80vwU6AP8hl7
-         p6kteZQiAAjloVh3ZKpzdPAwZ+Y+dNSkFOLjCqvLW47+GfqNoIJO+Ekrm2dyIV5VkQDo
-         Bj6GY9YsS1eJhKBXUq/EJrz1mDtkm/k2V7/foSrYNlrOSqoEef1YY8sKbpXXkFzTkZiz
-         NNBw==
-X-Gm-Message-State: APjAAAX4ndQIvimGMwzmEDTNSUvJhvwXz2dPeV6l/sCKPJV5M8fgvysF
-        uzhQyuv5Qe2OtryrbzmP+RWqDQ==
-X-Google-Smtp-Source: APXvYqwFO3Q0DLnvBTYrA6mi0dVS8BZ1iVqUNQ4tJLNaZqwnxT+p/ehoHtcdu1qHh/Y6c+cHQmyQLA==
-X-Received: by 2002:a62:3287:: with SMTP id y129mr55579697pfy.101.1559946439420;
-        Fri, 07 Jun 2019 15:27:19 -0700 (PDT)
-Received: from ?IPv6:2600:1012:b018:c314:403f:c95d:60d3:b732? ([2600:1012:b018:c314:403f:c95d:60d3:b732])
-        by smtp.gmail.com with ESMTPSA id 2sm3147331pfo.41.2019.06.07.15.27.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 07 Jun 2019 15:27:18 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v7 03/14] x86/cet/ibt: Add IBT legacy code bitmap setup function
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16F203)
-In-Reply-To: <f6de9073-9939-a20d-2196-25fa223cf3fc@intel.com>
-Date:   Fri, 7 Jun 2019 15:27:16 -0700
-Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <4F7D0C3C-F239-4B67-BB05-31350F809293@amacapital.net>
-References: <20190606200926.4029-1-yu-cheng.yu@intel.com> <20190606200926.4029-4-yu-cheng.yu@intel.com> <20190607080832.GT3419@hirez.programming.kicks-ass.net> <aa8a92ef231d512b5c9855ef416db050b5ab59a6.camel@intel.com> <20190607174336.GM3436@hirez.programming.kicks-ass.net> <b3de4110-5366-fdc7-a960-71dea543a42f@intel.com> <34E0D316-552A-401C-ABAA-5584B5BC98C5@amacapital.net> <7e0b97bf1fbe6ff20653a8e4e147c6285cc5552d.camel@intel.com> <4b448cde-ee4e-1c95-0f7f-4fe694be7db6@intel.com> <0e505563f7dae3849b57fb327f578f41b760b6f7.camel@intel.com> <f6de9073-9939-a20d-2196-25fa223cf3fc@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=XuNCqjePqDvn4lAEhRpdjQcT7X3J/79/6r+E49pUakU=;
+        b=MLisZ6A5zEzXlvegwqjjtXg9GI3UB5a3ZI/RjvdUdTHh1o9u8/i8a7Tdi9ppqQowFp
+         3m684kn5sWeeDQ6/bJCHwdHfmwbYMXvBfOUpDqs/VKG5lzVeDXJ6bjimeLq5KbmcicIC
+         1WgDS44coMW6GdG8FK/Evy3hoJIMYyk9tgRkm0Ej67OsdSuhwU7oAPPI80qRZX6nDVns
+         UohlHghmmnRaNMM2mISiBd/UECmuH6waiOWuLAI6bh+Si9q0VsRcaMIKMC89O4lUATAR
+         k7xdeszJRHh8GoI3T/lsA96SVxH/4m0Oo7Aq08qjSZJvgDnI0W0QBXZ3eDYVzNQhJtob
+         liAg==
+X-Gm-Message-State: APjAAAUlAvyPI0uYL3/AWQ/zsMwhUpjbrd2igqvCnRAco8zvFUd326Uj
+        5HfJt5ixugBnnxovfW1x/1aqPw==
+X-Google-Smtp-Source: APXvYqwhZ/RJub3yjH06HYykOBY+dB3JKtBPnK4S+3FVx2KVlZSVwKWa7uqea2cume7geYK5drxJBw==
+X-Received: by 2002:a62:7656:: with SMTP id r83mr37066043pfc.56.1559946640632;
+        Fri, 07 Jun 2019 15:30:40 -0700 (PDT)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.googlemail.com with ESMTPSA id 24sm3008135pgn.32.2019.06.07.15.30.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 07 Jun 2019 15:30:36 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH v2 4/4] arm64: dts: meson-g12a-x96-max: bump bluetooth bus speed to 2Mbaud/s
+In-Reply-To: <20190607143618.32213-5-narmstrong@baylibre.com>
+References: <20190607143618.32213-1-narmstrong@baylibre.com> <20190607143618.32213-5-narmstrong@baylibre.com>
+Date:   Fri, 07 Jun 2019 15:30:36 -0700
+Message-ID: <7htvd1av03.fsf@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Neil Armstrong <narmstrong@baylibre.com> writes:
 
-> On Jun 7, 2019, at 2:09 PM, Dave Hansen <dave.hansen@intel.com> wrote:
->=20
-> On 6/7/19 1:06 PM, Yu-cheng Yu wrote:
->>> Huh, how does glibc know about all possible past and future legacy code
->>> in the application?
->> When dlopen() gets a legacy binary and the policy allows that, it will ma=
-nage
->> the bitmap:
->>=20
->>  If a bitmap has not been created, create one.
->>  Set bits for the legacy code being loaded.
->=20
-> I was thinking about code that doesn't go through GLIBC like JITs.
+> Setting to 2Mbaud/s is the nominal bus speed for common usages.
+>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-CRIU is another consideration: it would be rather annoying if CET programs c=
-an=E2=80=99t migrate between LA57 and normal machines.=
+Queued for v5.3,
+
+Thanks,
+
+Kevin
