@@ -2,151 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65BEC39629
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 21:50:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1F5539634
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 21:53:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731142AbfFGTul (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 15:50:41 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:34453 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729944AbfFGTul (ORCPT
+        id S1731210AbfFGTws (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 15:52:48 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:49818 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729548AbfFGTwr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 15:50:41 -0400
-Received: by mail-qt1-f193.google.com with SMTP id m29so3719970qtu.1;
-        Fri, 07 Jun 2019 12:50:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kmQwmNpL1gpgHz2Qe+F1FukdUbULsaf1PLYnXjQlTeE=;
-        b=aypwLzhS4LnVTT0W6nOCZvCqNPDEooF/kqBQ2h6Zdg39BU2IycMnDWat9HZCG10hIr
-         +Ph44dl719M1oiTMF4FhkvJetxBZRAdi01KAgMtDhGF2RNpXGl1cmm9ZrAQGFsGvsHjP
-         wIWGMjMF1hAeX4Dd+UY3dRewGW7em0+ePS/St0r6UJR6GuTINRZ5p7YrVKaGogovl+I9
-         4Fqdegc86Wp01G58MYWRmmxOxDarzgcjuPMuh73YmXU4fkWdTh+I6UcvLtI+vtox5mgr
-         aw/axzRZCIA4fp52ZA3GZEfIeBPmaMUU02HKcqlIEsBG3HLhMMGVNK+FiXyrpizsfud0
-         AdnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kmQwmNpL1gpgHz2Qe+F1FukdUbULsaf1PLYnXjQlTeE=;
-        b=pJWUjDAYAS5Wfg77TfNqdiiKHJ4F9p2nrmR+WnP5ucfyh6/R1lVqrtpXx+7LS0zOG3
-         WjZJDAhopE9I9W9p/uIbUeOOIYE43Ul80L56gmezsgtMR0biFiJeXxpkClMXrfZ5WFOL
-         lYJ3w/qfHk5R8ZnKZHRb3iKj7kbUtejmYBR5giqw6VPPMHCl174GgoRylAlMP/rZerBo
-         tHBpY9ri2Nvw5Erk8nHv5iq4eVNwTQKWGOCAFzQj1PN8UA+ZlLVK0Tcxj0YQNw0qMpTK
-         PFi6o/duHflMo/9n/iOrsAcM45vT0L0PWYVuVs0TW8xMZGKmeVbseTXe/I6+dur2Fk96
-         2xRw==
-X-Gm-Message-State: APjAAAWACUIx/bbf4FC8qmZoMSoqrm09QpUt2WO/kQaTqrQfmYI8b8Nx
-        7H/DZzyKbW9yT2hBiIAh/IRf/K8X
-X-Google-Smtp-Source: APXvYqyFBWpphZ5s0UNfRT0nUOz05IaPnhSTq0V5Xje+KFaqDssltFdmDfwcc2z3XiET9V/mhunkWw==
-X-Received: by 2002:ac8:805:: with SMTP id u5mr49040556qth.186.1559937040396;
-        Fri, 07 Jun 2019 12:50:40 -0700 (PDT)
-Received: from quaco.ghostprotocols.net (187-26-97-17.3g.claro.net.br. [187.26.97.17])
-        by smtp.gmail.com with ESMTPSA id y68sm1410800qkd.69.2019.06.07.12.50.39
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 07 Jun 2019 12:50:39 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id AA9AA41149; Fri,  7 Jun 2019 16:50:30 -0300 (-03)
-Date:   Fri, 7 Jun 2019 16:50:30 -0300
-To:     Thomas Richter <tmricht@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        brueckner@linux.vnet.ibm.com, heiko.carstens@de.ibm.com
-Subject: Re: [PATCH] perf test 6: Fix missing kvm module load for s390
-Message-ID: <20190607195030.GQ21245@kernel.org>
-References: <20190604053504.43073-1-tmricht@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190604053504.43073-1-tmricht@linux.ibm.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        Fri, 7 Jun 2019 15:52:47 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x57JiKEL098463;
+        Fri, 7 Jun 2019 19:52:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=2Hqgg1/dO7uDJAgCGo7yaezXbdAI6xjToJ1CY+fruaU=;
+ b=O4Q4lH3bRZ7MwIrivSjLjEanSp/1BldkeSoNEhDGZB9H8i68MirSK5kT1G9vfxNC3u4G
+ tobWGASbTP9Drb1g9Mp6AfG8qM1rx37y+y4jziC7fhhXc85/r1nyZdjc0AvVPgR6CHSx
+ mIG1Ihxno+1jVFyxrLhM0kOMgrsCEXUfm8XfDOuuOU7vnXmbp6UA1fNJI3jhDUe7a+Kj
+ 2hmnQAljFlUykUzJfFxc07Lcm1cms6sQ9cH5eVDN5A51sxAKeJHRt4ypV3oFix9CV0pf
+ SvSI14XmrW8h5CL/zA1fBwxGuMoBQ9DLdBog4cttYZAO5Rx24YoPOe0lSjwY171+j0cH Eg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2suj0r05yx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 07 Jun 2019 19:52:33 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x57JpA1j022963;
+        Fri, 7 Jun 2019 19:52:33 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2swngn8kcn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 07 Jun 2019 19:52:32 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x57JqRQt020424;
+        Fri, 7 Jun 2019 19:52:28 GMT
+Received: from oracle.com (/75.80.107.76)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 07 Jun 2019 12:52:27 -0700
+From:   Larry Bassel <larry.bassel@oracle.com>
+To:     mike.kravetz@oracle.com, willy@infradead.org,
+        dan.j.williams@intel.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
+Cc:     Larry Bassel <larry.bassel@oracle.com>
+Subject: [RFC PATCH v2 0/2] Share PMDs for FS/DAX on x86
+Date:   Fri,  7 Jun 2019 12:51:01 -0700
+Message-Id: <1559937063-8323-1-git-send-email-larry.bassel@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9281 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=641
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906070132
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9281 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=682 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906070132
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Jun 04, 2019 at 07:35:04AM +0200, Thomas Richter escreveu:
-> Command
-> 
->    # perf test -Fv 6
-> 
-> fails with error
-> 
->    running test 100 'kvm-s390:kvm_s390_create_vm' failed to parse
->     event 'kvm-s390:kvm_s390_create_vm', err -1, str 'unknown tracepoint'
->     event syntax error: 'kvm-s390:kvm_s390_create_vm'
->                          \___ unknown tracepoint
+Changes from v1 to v2:
 
-Thanks, applied,
+* Rebased on v5.2-rc3
 
-- Arnaldo
- 
-> when the kvm module is not loaded or not built in.
-> 
-> Fix this by adding a valid function which tests if the module
-> is loaded. Loaded modules (or builtin KVM support) have a
-> directory named
->   /sys/kernel/debug/tracing/events/kvm-s390
-> for this tracepoint.
-> 
-> Check for existence of this directory.
-> 
-> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> ---
->  tools/perf/tests/parse-events.c | 27 +++++++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
-> 
-> diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
-> index 4a69c07f4101..8f3c80e13584 100644
-> --- a/tools/perf/tests/parse-events.c
-> +++ b/tools/perf/tests/parse-events.c
-> @@ -18,6 +18,32 @@
->  #define PERF_TP_SAMPLE_TYPE (PERF_SAMPLE_RAW | PERF_SAMPLE_TIME | \
->  			     PERF_SAMPLE_CPU | PERF_SAMPLE_PERIOD)
->  
-> +#if defined(__s390x__)
-> +/* Return true if kvm module is available and loaded. Test this
-> + * and retun success when trace point kvm_s390_create_vm
-> + * exists. Otherwise this test always fails.
-> + */
-> +static bool kvm_s390_create_vm_valid(void)
-> +{
-> +	char *eventfile;
-> +	bool rc = false;
-> +
-> +	eventfile = get_events_file("kvm-s390");
-> +
-> +	if (eventfile) {
-> +		DIR *mydir = opendir(eventfile);
-> +
-> +		if (mydir) {
-> +			rc = true;
-> +			closedir(mydir);
-> +		}
-> +		put_events_file(eventfile);
-> +	}
-> +
-> +	return rc;
-> +}
-> +#endif
-> +
->  static int test__checkevent_tracepoint(struct perf_evlist *evlist)
->  {
->  	struct perf_evsel *evsel = perf_evlist__first(evlist);
-> @@ -1642,6 +1668,7 @@ static struct evlist_test test__events[] = {
->  	{
->  		.name  = "kvm-s390:kvm_s390_create_vm",
->  		.check = test__checkevent_tracepoint,
-> +		.valid = kvm_s390_create_vm_valid,
->  		.id    = 100,
->  	},
->  #endif
-> -- 
-> 2.21.0
+* An incorrect reference to "page table entries" was fixed (pointed
+out by Kirill Shutemov)
+
+* Renamed CONFIG_ARCH_WANT_HUGE_PMD_SHARE
+to CONFIG_ARCH_HAS_HUGE_PMD_SHARE instead of introducing
+a new config option (suggested by Dan Williams)
+
+* Removed some unnecessary #ifdef stubs (suggested by Matt Wilcox)
+
+* A previously overlooked case involving mprotect() is now handled
+properly (pointed out by Mike Kravetz)
+
+---
+
+This patchset implements sharing of page tables pointing
+to 2MiB pages (PMDs) for FS/DAX on x86.
+
+Only shared mmapings of files (i.e. neither private mmapings nor
+anonymous pages) are eligible for PMD sharing.
+
+Due to the characteristics of DAX, this code is simpler and
+less intrusive than the general case would be.
+
+In our use case (high end Oracle database using DAX/XFS/PMEM/2MiB
+pages) there would be significant memory savings.
+
+A future system might have 6 TiB of PMEM on it and
+there might be 10000 processes each mapping all of this 6 TiB.
+Here the savings would be approximately
+(6 TiB / 2 MiB) * 8 bytes (page table size) * 10000 = 240 GiB
+(and these page tables themselves would probably be in
+non-PMEM (ordinary RAM)).
+
+There would also be a reduction in page faults because in
+some cases the page fault has already been satisfied and
+the page table entry has been filled in (and so the processes
+after the first would not take a fault).
+
+The code for detecting whether PMDs can be shared and
+the implementation of sharing and unsharing is based
+on, but somewhat different than that in mm/hugetlb.c,
+though some of the code from this file could be reused and
+thus was made non-static.
+
+Larry Bassel (2):
+  Rename CONFIG_ARCH_WANT_HUGE_PMD_SHARE to
+    CONFIG_ARCH_HAS_HUGE_PMD_SHARE
+  Implement sharing/unsharing of PMDs for FS/DAX
+
+ arch/arm64/Kconfig          |   2 +-
+ arch/arm64/mm/hugetlbpage.c |   2 +-
+ arch/x86/Kconfig            |   2 +-
+ include/linux/hugetlb.h     |   4 ++
+ mm/huge_memory.c            |  37 +++++++++++++++
+ mm/hugetlb.c                |  14 +++---
+ mm/memory.c                 | 108 +++++++++++++++++++++++++++++++++++++++++++-
+ 7 files changed, 158 insertions(+), 11 deletions(-)
 
 -- 
+1.8.3.1
 
-- Arnaldo
