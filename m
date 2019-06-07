@@ -2,208 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3074938431
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 08:13:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A5BC38433
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Jun 2019 08:14:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726947AbfFGGNg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 7 Jun 2019 02:13:36 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:54382 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726336AbfFGGNg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 7 Jun 2019 02:13:36 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190607061334euoutp022faadaf2edfc4e39476ac7d01de5876c~l1eJ3vW6d2914529145euoutp02X
-        for <linux-kernel@vger.kernel.org>; Fri,  7 Jun 2019 06:13:34 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190607061334euoutp022faadaf2edfc4e39476ac7d01de5876c~l1eJ3vW6d2914529145euoutp02X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1559888014;
-        bh=rY1LsFvS8wHdYvQgg3J28EeOngDObvqh8vabpmaHDEE=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=BhKxYUCXikFGilgRAlYQ4xx+flCzIgGh+qmpVc+gNLOv18/9frJUonl1YfjZ37eg6
-         2ea7oOxJJ7hWZBA4vywc3DI/5dZLCijVAyDSl6+ephYUGSfjmgXuVmGc4dzCE7Duk0
-         1aM32DkiBqm/8/tdaX3Yulvar4dz5RKQUk6TgJSw=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190607061333eucas1p272a5a2820d275b3184631fd6a01e3ca2~l1eJJ_4Md0641406414eucas1p2U;
-        Fri,  7 Jun 2019 06:13:33 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 36.2D.04377.D800AFC5; Fri,  7
-        Jun 2019 07:13:33 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190607061332eucas1p2c4290d1bbd0970a34db5114ede6bb7ce~l1eIYI75b0641406414eucas1p2T;
-        Fri,  7 Jun 2019 06:13:32 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190607061332eusmtrp1f1ffcc682274f1ebc98b9fb1f1e2384a~l1eIIdZ1H0381503815eusmtrp1k;
-        Fri,  7 Jun 2019 06:13:32 +0000 (GMT)
-X-AuditID: cbfec7f4-12dff70000001119-83-5cfa008da2fb
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 37.D5.04140.C800AFC5; Fri,  7
-        Jun 2019 07:13:32 +0100 (BST)
-Received: from [106.120.51.74] (unknown [106.120.51.74]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190607061331eusmtip1638d4530bab6b44407d46d2f883ecdad~l1eHY7X1j3106031060eusmtip1j;
-        Fri,  7 Jun 2019 06:13:31 +0000 (GMT)
-Subject: Re: [PATCH v4 10/15] drm/bridge: tc358767: Add support for
- address-only I2C transfers
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        dri-devel@lists.freedesktop.org
-Cc:     Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Cory Tusar <cory.tusar@zii.aero>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        linux-kernel@vger.kernel.org
-From:   Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <471cea60-0eb6-920d-bf2f-c34bc3a0b272@samsung.com>
-Date:   Fri, 7 Jun 2019 08:13:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190607044550.13361-11-andrew.smirnov@gmail.com>
-Content-Transfer-Encoding: 8bit
+        id S1727117AbfFGGOC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 7 Jun 2019 02:14:02 -0400
+Received: from mail-eopbgr770077.outbound.protection.outlook.com ([40.107.77.77]:12675
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726336AbfFGGOC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 7 Jun 2019 02:14:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UWvgP5AESmhX/PNPKmPaWLcwbenW9LRcU8gReLDi4Zc=;
+ b=NpumLAegde9AGPvI7VuREtxXTxzzUtWKER8mFWhhGqOiYMhqETFQ3J5vc08aOzoJaZ3Bb6DgMmhc071PzGn/3J8H/kciM0NrFwJX87m71qxPhZ6JXc60JjGyPMWoqrMEIATZCZcjDUV6ZdtnqSiMu+6cki+A3Ew14naRjXeKXvM=
+Received: from BL0PR05MB4772.namprd05.prod.outlook.com (20.177.145.81) by
+ BL0PR05MB4932.namprd05.prod.outlook.com (52.132.15.94) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1965.12; Fri, 7 Jun 2019 06:13:58 +0000
+Received: from BL0PR05MB4772.namprd05.prod.outlook.com
+ ([fe80::ac1f:2cd2:fa9c:a886]) by BL0PR05MB4772.namprd05.prod.outlook.com
+ ([fe80::ac1f:2cd2:fa9c:a886%6]) with mapi id 15.20.1965.011; Fri, 7 Jun 2019
+ 06:13:58 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+CC:     the arch/x86 maintainers <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Edward Cree <ecree@solarflare.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: [PATCH 12/15] x86/static_call: Add out-of-line static call
+ implementation
+Thread-Topic: [PATCH 12/15] x86/static_call: Add out-of-line static call
+ implementation
+Thread-Index: AQHVG6HYgGSM897CxUKW5lJ1ubCdw6aPuR2A
+Date:   Fri, 7 Jun 2019 06:13:58 +0000
+Message-ID: <37C2FB32-3437-48CB-954D-05F683B7D80B@vmware.com>
+References: <20190605130753.327195108@infradead.org>
+ <20190605131945.254721704@infradead.org>
+In-Reply-To: <20190605131945.254721704@infradead.org>
+Accept-Language: en-US
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTcRj1d1+7jibXaezLJGlJklCujLpimkHEKIIeBllSLr1Ma1uymzOL
-        aEyx5QMzezkNhRQtRc3HzOUfupHTTDMrNPNFSdDDjErS0sx5lfzvfOec7/edAz8al7aRPnSC
-        7hyn16k0ckpMWNumn2/MdvsdrfiW5summsNYk91IslOvHATb2uzE2FeTExQ7evcNxl7NLRGx
-        L22FFDs03E6w1UUDVIRYOXpzDlM2WYZEygJzPqkcyXRiypxZhdLZ34gpf9SuUXbf7MIO0MfE
-        O+I4TYKB0weFx4jjczPbycQWON96v4o0omdeGcidBmYr5AwW4RlITEuZcgS/zR+QMPxEMFs5
-        RwrDDwSVtTNoaeVWxT2RC0uZMgQfSg4LpnEEpvwv8wJNezExYC1Z8HszB+C7qYlyeXCmE4Mr
-        tre4S6CYDTBb94ZyYQkTDkNPrAs8wfhDl71mYXklcxRG2mpIweMJHfljhAu7MzsheyxnIQTO
-        +EFqQwEuYBkMjBVhrmPADIvgc08jJaTeDRMlTxcbeMEnZ71IwL7QmZdFCPgyjJSn4cKyGUFD
-        TRMuCKHgcL4gXc3w+dTVtiCB3gXvjfXIRQPjAf3jnkIGD7huvY0LtATM6VLBvRZGuhoWH5RB
-        ac8kdQ3JLcuaWZa1sSxrY/l/txgRD5CMS+K1ao7fouOSN/EqLZ+kU2+KPautRfO/q/Ov8+cj
-        ZJs5ZUcMjeQrJBFu09FSUmXgU7R2BDQu95YYeqaipZI4VcoFTn/2pD5Jw/F2tJom5DLJRbfR
-        41JGrTrHneG4RE6/pGK0u48RQWSFOjTZ5vfLnr49oeV0gNSfn9DsJcgow9fJXsq79J1nQCu6
-        NHli1Yq4qPRDirmPmcmYBm7IoquCI73+KIYNxWErra2V6wpf1/f17WupC9GnDW58VnEnb33W
-        kS7H42CzKLDYsdWxP7LMh91j0m7rduuItXFW3cPIg8G9g80hcoKPV20OxPW86h8CSd7/WQMA
-        AA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJIsWRmVeSWpSXmKPExsVy+t/xu7o9DL9iDPomalo0d9haNB1qYLX4
-        ceUwi8XBPceZLK58fc9m8WDuTSaLzolL2C0u75rDZnH33gkWi/Xzb7E5cHk8mPqfyWPnrLvs
-        HrM7ZrJ63O8+zuTR/9fA4/iN7UwenzfJeZybepYpgCNKz6Yov7QkVSEjv7jEVina0MJIz9DS
-        Qs/IxFLP0Ng81srIVEnfziYlNSezLLVI3y5BL2Ni9wnWggMSFQdXrmNtYDwj3MXIySEhYCIx
-        bfVi9i5GLg4hgaWMEr9afjJDJMQlds9/C2ULS/y51sUGYgsJvGaU6Ntr2cXIwSEskCCxbQkj
-        SFhEwE+ia94BJpA5zAJnmSR+797JBjH0GKPE0reT2EGq2AQ0Jf5uvgk2iFfATuLu0W1gC1gE
-        VCTOHtoANklUIELizPsVLBA1ghInZz4BszkF7CV6n/SDzWEWUJf4M+8SM4QtL9G8dTaULS5x
-        68l8pgmMQrOQtM9C0jILScssJC0LGFlWMYqklhbnpucWG+kVJ+YWl+al6yXn525iBEbrtmM/
-        t+xg7HoXfIhRgINRiYd3BtPPGCHWxLLiytxDjBIczEoivGUXfsQI8aYkVlalFuXHF5XmpBYf
-        YjQFem4is5Rocj4wkeSVxBuaGppbWBqaG5sbm1koifN2CByMERJITyxJzU5NLUgtgulj4uCU
-        amC0cr8fo3pltv1+/sm8i7gzLGI7mB8cmLSUN3q/kYaxQLZwv3zdya6DPAYdMzezfrvyarOG
-        8Zcm5ddRAtnp1/dnHee+t9y4mfnfK59ld2eZlzI9SLA9yq/y+PmjV/MFGSTef+s765nlkzp9
-        6nLN+pCb22XcdYyK8zxPmgdtO6Y8/9WK6DvvWQ4osRRnJBpqMRcVJwIAcivIAuwCAAA=
-X-CMS-MailID: 20190607061332eucas1p2c4290d1bbd0970a34db5114ede6bb7ce
-X-Msg-Generator: CA
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-originating-ip: [66.170.99.2]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 5d52ecaa-8a78-4b9b-d45b-08d6eb0f541e
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BL0PR05MB4932;
+x-ms-traffictypediagnostic: BL0PR05MB4932:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <BL0PR05MB49320B076FA640521A4F8FB8D0100@BL0PR05MB4932.namprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4714;
+x-forefront-prvs: 0061C35778
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(376002)(346002)(366004)(39860400002)(189003)(199004)(66476007)(66066001)(76116006)(66946007)(73956011)(256004)(14444005)(66446008)(66556008)(64756008)(4326008)(25786009)(6506007)(53546011)(26005)(102836004)(6246003)(229853002)(81166006)(8676002)(81156014)(478600001)(8936002)(7736002)(14454004)(966005)(305945005)(45080400002)(82746002)(53936002)(6486002)(99286004)(6436002)(76176011)(6306002)(6512007)(33656002)(6916009)(316002)(68736007)(54906003)(36756003)(7416002)(5660300002)(486006)(6116002)(3846002)(446003)(71190400001)(71200400001)(83716004)(86362001)(2906002)(476003)(186003)(11346002)(2616005);DIR:OUT;SFP:1101;SCL:1;SRVR:BL0PR05MB4932;H:BL0PR05MB4772.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: UdwjdCoANiF+Z6h2FJ3mc6IzOKV3zMIa6hWmhpffpuBy/S2lnGZqgGEQNKA1PBvJxjSV205hVxxEv3iA/taRa+5Ofdz8JDPlrQxlY40MIvYCOPWxc3ruOOyqlf7ROyB/yhIUg4oznHnCdWs/Rkf2ktlz0+qJwzNrMY/L6B3gguj6ddKzcd+dZZIkZewAhzb+0/eEnPpm/agXDzarAdk5KKncJxOkPWN7AZMhpX7KbGnGBJOgRModxVAwBxLXMtERmdMkz0bbOgbBWD3VBhe//i8ttlx2X9KjVffiPyKkTCt1l6w7ZL7S6Nq8IUlTuz5aoB1SRPCDvq4DyVbKJWKB5FPKC9jar+xfstf3mACdp8eheYkASyl+Z1qUTVG3gRnFgBFKG2wsMzg32FMfQBgjRCDX/Mmk0jHMxrYV70Gb3T4=
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190607044643epcas3p288c95d8f86c74056677b22b27ca2fe30
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190607044643epcas3p288c95d8f86c74056677b22b27ca2fe30
-References: <20190607044550.13361-1-andrew.smirnov@gmail.com>
-        <CGME20190607044643epcas3p288c95d8f86c74056677b22b27ca2fe30@epcas3p2.samsung.com>
-        <20190607044550.13361-11-andrew.smirnov@gmail.com>
+Content-ID: <693ABE744B8EAA4BBA5750920BE31F3C@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5d52ecaa-8a78-4b9b-d45b-08d6eb0f541e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jun 2019 06:13:58.4559
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: namit@vmware.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR05MB4932
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07.06.2019 06:45, Andrey Smirnov wrote:
-> Transfer size of zero means a request to do an address-only
-> transfer. Since the HW support this, we probably shouldn't be just
-> ignoring such requests. While at it allow DP_AUX_I2C_MOT flag to pass
-> through, since it is supported by the HW as well.
->
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-
- --
-Regards
-Andrzej
-> Cc: Andrzej Hajda <a.hajda@samsung.com>
-> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> Cc: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
-> Cc: Philipp Zabel <p.zabel@pengutronix.de>
-> Cc: Cory Tusar <cory.tusar@zii.aero>
-> Cc: Chris Healy <cphealy@gmail.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  drivers/gpu/drm/bridge/tc358767.c | 30 +++++++++++++++++++++++-------
->  1 file changed, 23 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
-> index 7d0fbb12195b..4bb9b15e1324 100644
-> --- a/drivers/gpu/drm/bridge/tc358767.c
-> +++ b/drivers/gpu/drm/bridge/tc358767.c
-> @@ -145,6 +145,8 @@
->  
->  /* AUX channel */
->  #define DP0_AUXCFG0		0x0660
-> +#define DP0_AUXCFG0_BSIZE	GENMASK(11, 8)
-> +#define DP0_AUXCFG0_ADDR_ONLY	BIT(4)
->  #define DP0_AUXCFG1		0x0664
->  #define AUX_RX_FILTER_EN		BIT(16)
->  
-> @@ -327,6 +329,18 @@ static int tc_aux_read_data(struct tc_data *tc, void *data, size_t size)
->  	return size;
->  }
->  
-> +static u32 tc_auxcfg0(struct drm_dp_aux_msg *msg, size_t size)
-> +{
-> +	u32 auxcfg0 = msg->request;
-> +
-> +	if (size)
-> +		auxcfg0 |= FIELD_PREP(DP0_AUXCFG0_BSIZE, size - 1);
-> +	else
-> +		auxcfg0 |= DP0_AUXCFG0_ADDR_ONLY;
-> +
-> +	return auxcfg0;
-> +}
-> +
->  static ssize_t tc_aux_transfer(struct drm_dp_aux *aux,
->  			       struct drm_dp_aux_msg *msg)
->  {
-> @@ -336,9 +350,6 @@ static ssize_t tc_aux_transfer(struct drm_dp_aux *aux,
->  	u32 auxstatus;
->  	int ret;
->  
-> -	if (size == 0)
-> -		return 0;
-> -
->  	ret = tc_aux_wait_busy(tc, 100);
->  	if (ret)
->  		return ret;
-> @@ -362,8 +373,7 @@ static ssize_t tc_aux_transfer(struct drm_dp_aux *aux,
->  	if (ret)
->  		return ret;
->  	/* Start transfer */
-> -	ret = regmap_write(tc->regmap, DP0_AUXCFG0,
-> -			   ((size - 1) << 8) | request);
-> +	ret = regmap_write(tc->regmap, DP0_AUXCFG0, tc_auxcfg0(msg, size));
->  	if (ret)
->  		return ret;
->  
-> @@ -377,8 +387,14 @@ static ssize_t tc_aux_transfer(struct drm_dp_aux *aux,
->  
->  	if (auxstatus & AUX_TIMEOUT)
->  		return -ETIMEDOUT;
-> -
-> -	size = FIELD_GET(AUX_BYTES, auxstatus);
-> +	/*
-> +	 * For some reason address-only DP_AUX_I2C_WRITE (MOT), still
-> +	 * reports 1 byte transferred in its status. To deal we that
-> +	 * we ignore aux_bytes field if we know that this was an
-> +	 * address-only transfer
-> +	 */
-> +	if (size)
-> +		size = FIELD_GET(AUX_BYTES, auxstatus);
->  	msg->reply = FIELD_GET(AUX_STATUS, auxstatus);
->  
->  	switch (request) {
-
-
+PiBPbiBKdW4gNSwgMjAxOSwgYXQgNjowOCBBTSwgUGV0ZXIgWmlqbHN0cmEgPHBldGVyekBpbmZy
+YWRlYWQub3JnPiB3cm90ZToNCj4gDQo+IEZyb206IEpvc2ggUG9pbWJvZXVmIDxqcG9pbWJvZUBy
+ZWRoYXQuY29tPg0KPiANCj4gQWRkIHRoZSB4ODYgb3V0LW9mLWxpbmUgc3RhdGljIGNhbGwgaW1w
+bGVtZW50YXRpb24uICBGb3IgZWFjaCBrZXksIGENCj4gcGVybWFuZW50IHRyYW1wb2xpbmUgaXMg
+Y3JlYXRlZCB3aGljaCBpcyB0aGUgZGVzdGluYXRpb24gZm9yIGFsbCBzdGF0aWMNCj4gY2FsbHMg
+Zm9yIHRoZSBnaXZlbiBrZXkuICBUaGUgdHJhbXBvbGluZSBoYXMgYSBkaXJlY3QganVtcCB3aGlj
+aCBnZXRzDQo+IHBhdGNoZWQgYnkgc3RhdGljX2NhbGxfdXBkYXRlKCkgd2hlbiB0aGUgZGVzdGlu
+YXRpb24gZnVuY3Rpb24gY2hhbmdlcy4NCj4gDQo+IENjOiB4ODZAa2VybmVsLm9yZw0KPiBDYzog
+U3RldmVuIFJvc3RlZHQgPHJvc3RlZHRAZ29vZG1pcy5vcmc+DQo+IENjOiBKdWxpYSBDYXJ0d3Jp
+Z2h0IDxqdWxpYUBuaS5jb20+DQo+IENjOiBJbmdvIE1vbG5hciA8bWluZ29Aa2VybmVsLm9yZz4N
+Cj4gQ2M6IEFyZCBCaWVzaGV1dmVsIDxhcmQuYmllc2hldXZlbEBsaW5hcm8ub3JnPg0KPiBDYzog
+SmFzb24gQmFyb24gPGpiYXJvbkBha2FtYWkuY29tPg0KPiBDYzogTGludXMgVG9ydmFsZHMgPHRv
+cnZhbGRzQGxpbnV4LWZvdW5kYXRpb24ub3JnPg0KPiBDYzogSmlyaSBLb3NpbmEgPGprb3NpbmFA
+c3VzZS5jej4NCj4gQ2M6IFRob21hcyBHbGVpeG5lciA8dGdseEBsaW51dHJvbml4LmRlPg0KPiBD
+YzogTWFzYW1pIEhpcmFtYXRzdSA8bWhpcmFtYXRAa2VybmVsLm9yZz4NCj4gQ2M6IEJvcmlzbGF2
+IFBldGtvdiA8YnBAYWxpZW44LmRlPg0KPiBDYzogRGF2aWQgTGFpZ2h0IDxEYXZpZC5MYWlnaHRA
+QUNVTEFCLkNPTT4NCj4gQ2M6IEplc3NpY2EgWXUgPGpleXVAa2VybmVsLm9yZz4NCj4gQ2M6IEFu
+ZHkgTHV0b21pcnNraSA8bHV0b0BrZXJuZWwub3JnPg0KPiBDYzogIkguIFBldGVyIEFudmluIiA8
+aHBhQHp5dG9yLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogSm9zaCBQb2ltYm9ldWYgPGpwb2ltYm9l
+QHJlZGhhdC5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IFBldGVyIFppamxzdHJhIChJbnRlbCkgPHBl
+dGVyekBpbmZyYWRlYWQub3JnPg0KPiBMaW5rOiBodHRwczovL25hbTA0LnNhZmVsaW5rcy5wcm90
+ZWN0aW9uLm91dGxvb2suY29tLz91cmw9aHR0cHMlM0ElMkYlMkZsa21sLmtlcm5lbC5vcmclMkZy
+JTJGMDBiMDhmMjE5NGU4MDI0MWRlY2JmMjA2NjI0YjY1ODBiOWI4ODU1Yi4xNTQzMjAwODQxLmdp
+dC5qcG9pbWJvZSU0MHJlZGhhdC5jb20mYW1wO2RhdGE9MDIlN0MwMSU3Q25hbWl0JTQwdm13YXJl
+LmNvbSU3QzEzYmMwMzM4MTkzMDQ2NGEwMThlMDhkNmU5YjhmOTBlJTdDYjM5MTM4Y2EzY2VlNGI0
+YWE0ZDZjZDgzZDlkZDYyZjAlN0MwJTdDMCU3QzYzNjk1MzM3ODAwNzgxMDAzMCZhbXA7c2RhdGE9
+VW5IRVVZRVlWM0ZCU1pqNjY3bFpZekdLUm92JTJCMVBkQWpBbk0lMkJxT3ozTnMlM0QmYW1wO3Jl
+c2VydmVkPTANCj4gLS0tDQo+IGFyY2gveDg2L0tjb25maWcgICAgICAgICAgICAgICAgICAgfCAg
+ICAxIA0KPiBhcmNoL3g4Ni9pbmNsdWRlL2FzbS9zdGF0aWNfY2FsbC5oIHwgICAyOCArKysrKysr
+KysrKysrKysrKysrKysrKysrKysNCj4gYXJjaC94ODYva2VybmVsL01ha2VmaWxlICAgICAgICAg
+ICB8ICAgIDEgDQo+IGFyY2gveDg2L2tlcm5lbC9zdGF0aWNfY2FsbC5jICAgICAgfCAgIDM4ICsr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4gNCBmaWxlcyBjaGFuZ2VkLCA2
+OCBpbnNlcnRpb25zKCspDQo+IGNyZWF0ZSBtb2RlIDEwMDY0NCBhcmNoL3g4Ni9pbmNsdWRlL2Fz
+bS9zdGF0aWNfY2FsbC5oDQo+IGNyZWF0ZSBtb2RlIDEwMDY0NCBhcmNoL3g4Ni9rZXJuZWwvc3Rh
+dGljX2NhbGwuYw0KPiANCj4gLS0tIGEvYXJjaC94ODYvS2NvbmZpZw0KPiArKysgYi9hcmNoL3g4
+Ni9LY29uZmlnDQo+IEBAIC0xOTgsNiArMTk4LDcgQEAgY29uZmlnIFg4Ng0KPiAJc2VsZWN0IEhB
+VkVfRlVOQ1RJT05fQVJHX0FDQ0VTU19BUEkNCj4gCXNlbGVjdCBIQVZFX1NUQUNLUFJPVEVDVE9S
+CQlpZiBDQ19IQVNfU0FORV9TVEFDS1BST1RFQ1RPUg0KPiAJc2VsZWN0IEhBVkVfU1RBQ0tfVkFM
+SURBVElPTgkJaWYgWDg2XzY0DQo+ICsJc2VsZWN0IEhBVkVfU1RBVElDX0NBTEwNCj4gCXNlbGVj
+dCBIQVZFX1JTRVENCj4gCXNlbGVjdCBIQVZFX1NZU0NBTExfVFJBQ0VQT0lOVFMNCj4gCXNlbGVj
+dCBIQVZFX1VOU1RBQkxFX1NDSEVEX0NMT0NLDQo+IC0tLSAvZGV2L251bGwNCj4gKysrIGIvYXJj
+aC94ODYvaW5jbHVkZS9hc20vc3RhdGljX2NhbGwuaA0KPiBAQCAtMCwwICsxLDI4IEBADQo+ICsv
+KiBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMCAqLw0KPiArI2lmbmRlZiBfQVNNX1NU
+QVRJQ19DQUxMX0gNCj4gKyNkZWZpbmUgX0FTTV9TVEFUSUNfQ0FMTF9IDQo+ICsNCj4gKy8qDQo+
+ICsgKiBNYW51YWxseSBjb25zdHJ1Y3QgYSA1LWJ5dGUgZGlyZWN0IEpNUCB0byBwcmV2ZW50IHRo
+ZSBhc3NlbWJsZXIgZnJvbQ0KPiArICogb3B0aW1pemluZyBpdCBpbnRvIGEgMi1ieXRlIEpNUC4N
+Cj4gKyAqLw0KPiArI2RlZmluZSBfX0FSQ0hfU1RBVElDX0NBTExfSk1QX0xBQkVMKGtleSkgIi5M
+IiBfX3N0cmluZ2lmeShrZXkgIyMgX2FmdGVyX2ptcCkNCj4gKyNkZWZpbmUgX19BUkNIX1NUQVRJ
+Q19DQUxMX1RSQU1QX0pNUChrZXksIGZ1bmMpCQkJCVwNCj4gKwkiLmJ5dGUgMHhlOQkJCQkJCVxu
+IglcDQo+ICsJIi5sb25nICIgI2Z1bmMgIiAtICIgX19BUkNIX1NUQVRJQ19DQUxMX0pNUF9MQUJF
+TChrZXkpICJcbiIJXA0KPiArCV9fQVJDSF9TVEFUSUNfQ0FMTF9KTVBfTEFCRUwoa2V5KSAiOiIN
+Cj4gKw0KPiArLyoNCj4gKyAqIFRoaXMgaXMgYSBwZXJtYW5lbnQgdHJhbXBvbGluZSB3aGljaCBk
+b2VzIGEgZGlyZWN0IGp1bXAgdG8gdGhlIGZ1bmN0aW9uLg0KPiArICogVGhlIGRpcmVjdCBqdW1w
+IGdldCBwYXRjaGVkIGJ5IHN0YXRpY19jYWxsX3VwZGF0ZSgpLg0KPiArICovDQo+ICsjZGVmaW5l
+IEFSQ0hfREVGSU5FX1NUQVRJQ19DQUxMX1RSQU1QKGtleSwgZnVuYykJCQlcDQo+ICsJYXNtKCIu
+cHVzaHNlY3Rpb24gLnRleHQsIFwiYXhcIgkJCQlcbiIJXA0KPiArCSAgICAiLmFsaWduIDQJCQkJ
+CQlcbiIJXA0KPiArCSAgICAiLmdsb2JsICIgU1RBVElDX0NBTExfVFJBTVBfU1RSKGtleSkgIgkJ
+XG4iCVwNCj4gKwkgICAgIi50eXBlICIgU1RBVElDX0NBTExfVFJBTVBfU1RSKGtleSkgIiwgQGZ1
+bmN0aW9uCVxuIglcDQo+ICsJICAgIFNUQVRJQ19DQUxMX1RSQU1QX1NUUihrZXkpICI6CQkJXG4i
+CVwNCj4gKwkgICAgX19BUkNIX1NUQVRJQ19DQUxMX1RSQU1QX0pNUChrZXksIGZ1bmMpICIgICAg
+ICAgICAgIFxuIglcDQo+ICsJICAgICIucG9wc2VjdGlvbgkJCQkJXG4iKQ0KPiArDQo+ICsjZW5k
+aWYgLyogX0FTTV9TVEFUSUNfQ0FMTF9IICovDQo+IC0tLSBhL2FyY2gveDg2L2tlcm5lbC9NYWtl
+ZmlsZQ0KPiArKysgYi9hcmNoL3g4Ni9rZXJuZWwvTWFrZWZpbGUNCj4gQEAgLTYzLDYgKzYzLDcg
+QEAgb2JqLXkJCQkrPSB0c2MubyB0c2NfbXNyLm8gaW9fZGVsYXkubyBydA0KPiBvYmoteQkJCSs9
+IHBjaS1pb21tdV90YWJsZS5vDQo+IG9iai15CQkJKz0gcmVzb3VyY2Uubw0KPiBvYmoteQkJCSs9
+IGlycWZsYWdzLm8NCj4gK29iai15CQkJKz0gc3RhdGljX2NhbGwubw0KPiANCj4gb2JqLXkJCQkJ
+Kz0gcHJvY2Vzcy5vDQo+IG9iai15CQkJCSs9IGZwdS8NCj4gLS0tIC9kZXYvbnVsbA0KPiArKysg
+Yi9hcmNoL3g4Ni9rZXJuZWwvc3RhdGljX2NhbGwuYw0KPiBAQCAtMCwwICsxLDM4IEBADQo+ICsv
+LyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMA0KPiArI2luY2x1ZGUgPGxpbnV4L3N0
+YXRpY19jYWxsLmg+DQo+ICsjaW5jbHVkZSA8bGludXgvbWVtb3J5Lmg+DQo+ICsjaW5jbHVkZSA8
+bGludXgvYnVnLmg+DQo+ICsjaW5jbHVkZSA8YXNtL3RleHQtcGF0Y2hpbmcuaD4NCj4gKyNpbmNs
+dWRlIDxhc20vbm9zcGVjLWJyYW5jaC5oPg0KPiArDQo+ICsjZGVmaW5lIENBTExfSU5TTl9TSVpF
+IDUNCj4gKw0KPiArdm9pZCBhcmNoX3N0YXRpY19jYWxsX3RyYW5zZm9ybSh2b2lkICpzaXRlLCB2
+b2lkICp0cmFtcCwgdm9pZCAqZnVuYykNCj4gK3sNCj4gKwl1bnNpZ25lZCBjaGFyIG9wY29kZXNb
+Q0FMTF9JTlNOX1NJWkVdOw0KPiArCXVuc2lnbmVkIGNoYXIgaW5zbl9vcGNvZGU7DQo+ICsJdW5z
+aWduZWQgbG9uZyBpbnNuOw0KPiArCXMzMiBkZXN0X3JlbGF0aXZlOw0KPiArDQo+ICsJbXV0ZXhf
+bG9jaygmdGV4dF9tdXRleCk7DQo+ICsNCj4gKwlpbnNuID0gKHVuc2lnbmVkIGxvbmcpdHJhbXA7
+DQo+ICsNCj4gKwlpbnNuX29wY29kZSA9ICoodW5zaWduZWQgY2hhciAqKWluc247DQo+ICsJaWYg
+KGluc25fb3Bjb2RlICE9IDB4RTkpIHsNCj4gKwkJV0FSTl9PTkNFKDEsICJ1bmV4cGVjdGVkIHN0
+YXRpYyBjYWxsIGluc24gb3Bjb2RlIDB4JXggYXQgJXBTIiwNCj4gKwkJCSAgaW5zbl9vcGNvZGUs
+ICh2b2lkICopaW5zbik7DQo+ICsJCWdvdG8gdW5sb2NrOw0KDQpUaGlzIG1pZ2h0IGhhcHBlbiBp
+ZiBhIGtwcm9iZSBpcyBpbnN0YWxsZWQgb24gdGhlIGNhbGwsIG5vPw0KDQpJIGRvbuKAmXQga25v
+dyBpZiB5b3Ugd2FudCB0byBiZSBtb3JlIGdlbnRsZSBoYW5kbGluZyBvZiB0aGlzIGNhc2UgKG9y
+IHBlcmhhcHMNCm1vZGlmeSBjYW5fcHJvYmUoKSB0byBwcmV2ZW50IHN1Y2ggYSBjYXNlKS4NCg0K
